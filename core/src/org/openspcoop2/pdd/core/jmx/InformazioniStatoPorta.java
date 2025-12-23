@@ -35,41 +35,42 @@ import org.openspcoop2.pdd.logger.filetrace.FileTraceGovWayState;
  */
 public class InformazioniStatoPorta {
 
-	public String formatStatoPorta(String versionePdD, 
+	public String formatStatoPorta(String versionePdD,
 			String versioneBaseDati,
 			String confDir, String versioneJava, String vendorJava, String messageFactory,
-			String statoServizioPD,String statoServizioPD_abilitazioni,String statoServizioPD_disabilitazioni,
-			String statoServizioPA,String statoServizioPA_abilitazioni,String statoServizioPA_disabilitazioni,
+			String statoServizioPD,String statoServizioPDAbilitazioni,String statoServizioPDDisabilitazioni,
+			String statoServizioPA,String statoServizioPAAbilitazioni,String statoServizioPADisabilitazioni,
 			String statoServizioIM,
 			String livelloSeveritaDiagnostici,String livelloSeveritaDiagnosticiLog4j,
-			boolean log4j_diagnostica,  boolean log4j_openspcoop, boolean log4j_integrationManager, 
+			boolean log4jDiagnostica,  boolean log4jOpenspcoop, boolean log4jIntegrationManager,
 			boolean tracciamento, boolean dumpPD, boolean dumpPA,
-			boolean log4j_tracciamento, boolean log4j_dump,
+			boolean log4jTracciamento, boolean log4jDump,
 			String fileTraceGovWayState,
 			boolean errorSpecificTypeProcessRequest, boolean errorSpecificTypeProcessResponse, boolean errorSpecificTypeInternalError,
 			boolean errorStatus, boolean errorStatusInSoapFaultCode,
 			boolean errorSpecificDetails, boolean errorInstanceId, boolean errorGenerateHttpErrorCodeInSoap,
 			String infoDatabase, Map<String, String> infoConnessioneAltriDB,
-			String infoSSL, String infoCryptographyKeyLength, 
-			String infoCharset, String infoInternazionalizzazione, String infoTimeZone,  
+			String infoSSL, String infoCryptographyKeyLength,
+			String infoCharset, String infoInternazionalizzazione, String infoTimeZone,
 			String infoProprietaJavaNetworking, String infoProprietaJavaAltro, String infoProprietaSistema,
 			String infoProtocolli,
 			String informazioniInstallazione,
+			String statsDPoPJti,
 			InformazioniStatoPortaCache ... cache){
 		return formatStatoPorta(versionePdD, versioneBaseDati, confDir, versioneJava, vendorJava, messageFactory,
-				statoServizioPD,statoServizioPD_abilitazioni,statoServizioPD_disabilitazioni,
-				statoServizioPA,statoServizioPA_abilitazioni,statoServizioPA_disabilitazioni,
+				statoServizioPD,statoServizioPDAbilitazioni,statoServizioPDDisabilitazioni,
+				statoServizioPA,statoServizioPAAbilitazioni,statoServizioPADisabilitazioni,
 				statoServizioIM,
 				livelloSeveritaDiagnostici, livelloSeveritaDiagnosticiLog4j,
-				log4j_diagnostica, log4j_openspcoop, log4j_integrationManager,
+				log4jDiagnostica, log4jOpenspcoop, log4jIntegrationManager,
 				tracciamento, dumpPD, dumpPA,
-				log4j_tracciamento, log4j_dump,
+				log4jTracciamento, log4jDump,
 				fileTraceGovWayState,
 				errorSpecificTypeProcessRequest, errorSpecificTypeProcessResponse, errorSpecificTypeInternalError,
 				errorStatus, errorStatusInSoapFaultCode,
 				errorSpecificDetails, errorInstanceId, errorGenerateHttpErrorCodeInSoap,
 				infoDatabase, infoConnessioneAltriDB,
-				infoSSL, infoCryptographyKeyLength, 
+				infoSSL, infoCryptographyKeyLength,
 				infoCharset, infoInternazionalizzazione, infoTimeZone,
 				infoProprietaJavaNetworking, infoProprietaJavaAltro, infoProprietaSistema,
 				infoProtocolli,
@@ -82,39 +83,41 @@ public class InformazioniStatoPorta {
 				null, null,
 				null, null, null, null, null,
 				informazioniInstallazione,
+				statsDPoPJti,
 				cache);
 	}
 	
-	public String formatStatoPorta(String versionePdD, 
+	public String formatStatoPorta(String versionePdD,
 			String versioneBaseDati,
 			String confDir, String versioneJava, String vendorJava, String messageFactory,
-			String statoServizioPD,String statoServizioPD_abilitazioni,String statoServizioPD_disabilitazioni,
-			String statoServizioPA,String statoServizioPA_abilitazioni,String statoServizioPA_disabilitazioni,
+			String statoServizioPD,String statoServizioPDAbilitazioni,String statoServizioPDDisabilitazioni,
+			String statoServizioPA,String statoServizioPAAbilitazioni,String statoServizioPADisabilitazioni,
 			String statoServizioIM,
 			String livelloSeveritaDiagnostici,String livelloSeveritaDiagnosticiLog4j,
-			boolean log4j_diagnostica,  boolean log4j_openspcoop, boolean log4j_integrationManager, 
-			boolean tracciamento, boolean dumpPD, boolean dumpPA, 
-			boolean log4j_tracciamento, boolean log4j_dump,
+			boolean log4jDiagnostica,  boolean log4jOpenspcoop, boolean log4jIntegrationManager,
+			boolean tracciamento, boolean dumpPD, boolean dumpPA,
+			boolean log4jTracciamento, boolean log4jDump,
 			String fileTraceGovWayState,
 			boolean errorSpecificTypeProcessRequest, boolean errorSpecificTypeProcessResponse, boolean errorSpecificTypeInternalError,
 			boolean errorStatus, boolean errorStatusInSoapFaultCode,
 			boolean errorSpecificDetails, boolean errorInstanceId, boolean errorGenerateHttpErrorCodeInSoap,
-			String infoDatabase, Map<String, String> infoConnessioneAltriDB, 
-			String infoSSL, String infoCryptographyKeyLength, 
-			String infoCharset, String infoInternazionalizzazione, String infoTimeZone, 
+			String infoDatabase, Map<String, String> infoConnessioneAltriDB,
+			String infoSSL, String infoCryptographyKeyLength,
+			String infoCharset, String infoInternazionalizzazione, String infoTimeZone,
 			String infoProprietaJavaNetworking, String infoProprietaJavaAltro, String infoProprietaSistema,
 			String infoProtocolli,
 			String statoConnessioniDB, Map<String, String> statoConnessioniAltriDB, String statoConnessioniJMS,
 			String statoTransazioniId, String statoTransazioniIdProtocollo,
-			String statoTimerVerificaConnessioni, String statoConnessioniPD, String statoConnessioniPA, 
+			String statoTimerVerificaConnessioni, String statoConnessioniPD, String statoConnessioniPA,
 			String statoTimerConsegnaAsincrona,  List<InformazioniStatoPoolThreads> statoPoolThread,
 			String statoTimerGenerazioneStatisticheOrarie, String statoTimerGenerazioneStatisticheGiornaliere, String statoTimerGenerazioneSettimanali, String statoTimerGenerazioneMensili,
 			String statoTimerMessaggiEliminati, String statoTimerMessaggiScaduti, String statoTimerBuste, String statoTimerCorrelazioneApplicativa, String statoTimerMessaggiNonGestiti, String statoTimerMessaggiAnomali,
 			String statoTimerMonitoraggioRisorse, String statoTimerThreshold,
 			String statoTimerEventi, String statoTimerFileSystemRecovery, String statoTimerBusteOneway, String statoTimerBusteAsincrone, String statoTimerRepositoryStateful,
-			String informazioniInstallazione,			
+			String informazioniInstallazione,
+			String statsDPoPJti,
 			InformazioniStatoPortaCache ... cache){
-		
+
 		StringBuilder bf = new StringBuilder();
 		
 		// informazioni generali
@@ -144,15 +147,15 @@ public class InformazioniStatoPorta {
 		bf.append("\n");
 		format(bf, statoServizioPD, "Porta Delegata");
 		bf.append("\n");
-		format(bf, statoServizioPD_abilitazioni, "Porta Delegata (abilitazioni puntuali)");
+		format(bf, statoServizioPDAbilitazioni, "Porta Delegata (abilitazioni puntuali)");
 		bf.append("\n");
-		format(bf, statoServizioPD_disabilitazioni, "Porta Delegata (disabilitazioni puntuali)");
+		format(bf, statoServizioPDDisabilitazioni, "Porta Delegata (disabilitazioni puntuali)");
 		bf.append("\n");
 		format(bf, statoServizioPA, "Porta Applicativa");
 		bf.append("\n");
-		format(bf, statoServizioPA_abilitazioni, "Porta Applicativa (abilitazioni puntuali)");
+		format(bf, statoServizioPAAbilitazioni, "Porta Applicativa (abilitazioni puntuali)");
 		bf.append("\n");
-		format(bf, statoServizioPA_disabilitazioni, "Porta Applicativa (disabilitazioni puntuali)");
+		format(bf, statoServizioPADisabilitazioni, "Porta Applicativa (disabilitazioni puntuali)");
 		bf.append("\n");
 		format(bf, statoServizioIM, "Integration Manager");
 		bf.append("\n");
@@ -163,9 +166,9 @@ public class InformazioniStatoPorta {
 		bf.append("\n");
 		format(bf, livelloSeveritaDiagnostici, "Severità");
 		format(bf, livelloSeveritaDiagnosticiLog4j, "Severità Log4j");
-		format(bf, log4j_diagnostica ? "abilitato" : "disabilitato", "Log4J govway_diagnostici.log");
-		format(bf, log4j_openspcoop ? "abilitato" : "disabilitato", "Log4J openspcoop2.log");
-		format(bf, log4j_integrationManager ? "abilitato" : "disabilitato", "Log4J openspcoop2_integrationManager.log");
+		format(bf, log4jDiagnostica ? "abilitato" : "disabilitato", "Log4J govway_diagnostici.log");
+		format(bf, log4jOpenspcoop ? "abilitato" : "disabilitato", "Log4J openspcoop2.log");
+		format(bf, log4jIntegrationManager ? "abilitato" : "disabilitato", "Log4J openspcoop2_integrationManager.log");
 		bf.append("\n");
 		
 		bf.append("===========================\n");
@@ -175,8 +178,8 @@ public class InformazioniStatoPorta {
 		format(bf, tracciamento ? "abilitato" : "disabilitato", "Buste");
 		format(bf, dumpPD ? "abilitato" : "disabilitato", "Dump Binario Porta Delegata");
 		format(bf, dumpPA ? "abilitato" : "disabilitato", "Dump Binario Porta Applicativa");
-		format(bf, log4j_tracciamento ? "abilitato" : "disabilitato", "Log4J govway_tracciamento.log");
-		format(bf, log4j_dump ? "abilitato" : "disabilitato", "Log4J openspcoop2_dump.log");
+		format(bf, log4jTracciamento ? "abilitato" : "disabilitato", "Log4J govway_tracciamento.log");
+		format(bf, log4jDump ? "abilitato" : "disabilitato", "Log4J openspcoop2_dump.log");
 		FileTraceGovWayState fileTraceGovWayStateObject = null;
 		if(fileTraceGovWayState!=null && !"".equals(fileTraceGovWayState)) {
 			fileTraceGovWayStateObject = FileTraceGovWayState.toConfig(fileTraceGovWayState,false);
@@ -338,7 +341,17 @@ public class InformazioniStatoPorta {
 				bf.append("\n");
 			}
 		}
-		
+
+		if(statsDPoPJti!=null) {
+			bf.append("======================================\n");
+			bf.append("Cache DPoP JTI (Anti-Replay)\n");
+			bf.append("======================================\n");
+			bf.append("\n");
+			bf.append(statsDPoPJti);
+			bf.append("\n");
+			bf.append("\n");
+		}
+
 		if(statoConnessioniDB!=null){
 			bf.append("======================================\n");
 			bf.append("Connessioni Attive al Database Runtime\n");

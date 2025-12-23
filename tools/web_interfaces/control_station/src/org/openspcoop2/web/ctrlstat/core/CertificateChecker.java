@@ -233,6 +233,14 @@ public class CertificateChecker extends AbstractConfigChecker {
 		}
 	}
 	@Override
+	public String getJmxResourceNomeMetodoCheckCertificatiDpopJwtTokenPolicyNegoziazione() throws CoreException{
+		try {
+			return this.consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoCheckCertificatiDpopJwtTokenPolicyNegoziazione(this.aliasDefault);
+		}catch(Exception e) {
+			throw new CoreException(e.getMessage(),e);
+		}
+	}
+	@Override
 	public String getJmxResourceNomeMetodoCheckCertificatiConnettoreHttpsAttributeAuthority() throws CoreException{
 		try {
 			return this.consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoCheckCertificatiConnettoreHttpsAttributeAuthority(this.aliasDefault);

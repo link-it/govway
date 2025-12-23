@@ -42,17 +42,21 @@ public class WWWAuthenticateGenerator {
 	private WWWAuthenticateGenerator() {}
 	
 	public static OpenSPCoop2Message buildErrorMessage(WWWAuthenticateErrorCode errorCode, String realm, boolean genericError, String error, String ... scope) {
-		
+		return buildErrorMessage(HttpConstants.AUTHORIZATION_PREFIX_BEARER, errorCode, realm, genericError, error, scope);
+	}
+
+	public static OpenSPCoop2Message buildErrorMessage(String headerName, WWWAuthenticateErrorCode errorCode, String realm, boolean genericError, String error, String ... scope) {
+
 		OpenSPCoop2Message errorMessage = OpenSPCoop2MessageFactory.getDefaultMessageFactory().createEmptyMessage(MessageType.BINARY, MessageRole.FAULT);
 		ForcedResponseMessage forcedResponseMessage = new ForcedResponseMessage();
 		forcedResponseMessage.setContent(null); // vuoto
 		forcedResponseMessage.setContentType(null); // vuoto
-		forcedResponseMessage.setResponseCode(getReturnCode(errorCode)+"");	
+		forcedResponseMessage.setResponseCode(getReturnCode(errorCode)+"");
 		forcedResponseMessage.setHeadersValues(new HashMap<>());
-		String headerValue = buildHeaderValue(errorCode, realm, genericError, error, scope);
+		String headerValue = buildHeaderValue(headerName, errorCode, realm, genericError, error, scope);
 		TransportUtils.addHeader(forcedResponseMessage.getHeadersValues(), HttpConstants.AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE, headerValue);
 		errorMessage.forceResponse(forcedResponseMessage);
-		
+
 		return errorMessage;
 	}
 	
@@ -61,6 +65,7 @@ public class WWWAuthenticateGenerator {
 		case invalid_request:
 			return 400;
 		case invalid_token:
+		case invalid_dpop_proof:
 			return 401;
 		case insufficient_scope:
 			return 403;
@@ -69,8 +74,12 @@ public class WWWAuthenticateGenerator {
 	}
 	
 	public static String buildHeaderValue(WWWAuthenticateErrorCode errorCode, String realm, boolean genericError, String error, String ... scope) {
-		
-		StringBuilder bf = new StringBuilder(HttpConstants.AUTHORIZATION_PREFIX_BEARER);
+		return buildHeaderValue(HttpConstants.AUTHORIZATION_PREFIX_BEARER, errorCode, realm, genericError, error, scope);
+	}
+
+	public static String buildHeaderValue(String headerName, WWWAuthenticateErrorCode errorCode, String realm, boolean genericError, String error, String ... scope) {
+
+		StringBuilder bf = new StringBuilder(headerName);
 		bf.append("realm=\"");
 		bf.append(realm);
 		bf.append("\", error=\"");
@@ -79,6 +88,22 @@ public class WWWAuthenticateGenerator {
 		if(!genericError) {
 			bf.append(error);
 		}
+		setErrorDescription(errorCode, genericError, bf);
+		bf.append("\"");
+		if(scope!=null && scope.length>0) {
+			bf.append(", scope=\"");
+			for (int i = 0; i < scope.length; i++) {
+				if(i>0) {
+					bf.append(",");
+				}
+				bf.append(scope[i]);
+			}
+			bf.append("\"");
+		}
+
+		return bf.toString();
+	}
+	private static void setErrorDescription(WWWAuthenticateErrorCode errorCode, boolean genericError, StringBuilder bf) {
 		switch (errorCode) {
 		case invalid_request:
 			if(genericError) {
@@ -95,20 +120,12 @@ public class WWWAuthenticateGenerator {
 				bf.append("The request requires higher privileges than provided by the access token");
 			}
 			break;
-		}
-		bf.append("\"");
-		if(scope!=null && scope.length>0) {
-			bf.append(", scope=\"");
-			for (int i = 0; i < scope.length; i++) {
-				if(i>0) {
-					bf.append(",");
-				}
-				bf.append(scope[i]);	
+		case invalid_dpop_proof:
+			if(genericError) {
+				bf.append("DPoP proof invalid");
 			}
-			bf.append("\"");
+			break;
 		}
-		
-		return bf.toString();
 	}
 	
 	public static String buildBasicHeaderValue(String realm) {

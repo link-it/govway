@@ -244,6 +244,7 @@
 	<archive path="/op2_3.3.dev/lib/shared/rhino-1.7.14.1.jar"/>
 	<archive path="/op2_3.3.dev/lib/shared/hibernate-core-6.1.4.Final.jar"/>
 	<archive path="/op2_3.3.dev/lib/shared/hazelcast-5.3.8.jar"/>
+	<archive path="/op2_3.3.dev/lib/shared/caffeine-3.2.3.jar"/>
 	<!-- spring -->
         <archive path="/op2_3.3.dev/lib/spring/spring-web-5.3.39-gov4j-2.jar"/>
         <archive path="/op2_3.3.dev/lib/spring/spring-tx-5.3.39.jar"/>

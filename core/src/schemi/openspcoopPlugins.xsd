@@ -27,6 +27,7 @@
 			<xsd:enumeration value="RATE_LIMITING"/>
 			<xsd:enumeration value="TOKEN_DYNAMIC_DISCOVERY"/>
 			<xsd:enumeration value="TOKEN_VALIDAZIONE"/>
+			<xsd:enumeration value="DPOP_VALIDAZIONE"/>
 			<xsd:enumeration value="TOKEN_NEGOZIAZIONE"/>
 			<xsd:enumeration value="ATTRIBUTE_AUTHORITY"/>
 		</xsd:restriction>

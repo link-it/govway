@@ -33,6 +33,8 @@ import org.openspcoop2.utils.TipiDatabase;
  * @version $Rev$, $Date$
  */
 public class CostantiConfigurazione {
+	
+	private CostantiConfigurazione(){}
 
 	/** tipo di scelta none */
     public static final String NONE = "none";
@@ -144,10 +146,10 @@ public class CostantiConfigurazione {
     public static final String AUTENTICAZIONE_SSL = "ssl";
     public static final String AUTENTICAZIONE_PRINCIPAL = "principal";
     public static final String AUTENTICAZIONE_TOKEN = "token";
-//    public static final String AUTENTICAZIONE_PRINCIPAL_SSL_BASIC = "principalOrSslOrBasic";
-//    public static final String AUTENTICAZIONE_PRINCIPAL_BASIC = "principalOrBasic";
-//    public static final String AUTENTICAZIONE_PRINCIPAL_SSL = "principalOrSsl";
-//    public static final String AUTENTICAZIONE_SSL_BASIC = "sslOrBasic";
+    /**public static final String AUTENTICAZIONE_PRINCIPAL_SSL_BASIC = "principalOrSslOrBasic";
+    public static final String AUTENTICAZIONE_PRINCIPAL_BASIC = "principalOrBasic";
+    public static final String AUTENTICAZIONE_PRINCIPAL_SSL = "principalOrSsl";
+    public static final String AUTENTICAZIONE_SSL_BASIC = "sslOrBasic";*/
     
     public static final String AUTENTICAZIONE_PRINCIPAL_CONTAINER = "container";
     public static final String AUTENTICAZIONE_PRINCIPAL_HEADER = "header-based";
@@ -395,7 +397,12 @@ public class CostantiConfigurazione {
 	public static final String POLICY_VALIDAZIONE_CLAIMS_PARSER_TYPE_CUSTOM = "CUSTOM";
 	public static final String POLICY_VALIDAZIONE_CLAIMS_PARSER_CLASS_NAME = "policy.validazioneJWT.claimsParser.className";
 	public static final String POLICY_VALIDAZIONE_CLAIMS_PARSER_PLUGIN_TYPE = "policy.validazioneJWT.claimsParser.pluginType";
-	
+
+	public static final String POLICY_VALIDAZIONE_DPOP_CLAIMS_PARSER_TYPE = "policy.validazioneDPoP.claimsParser";
+	public static final String POLICY_VALIDAZIONE_DPOP_CLAIMS_PARSER_TYPE_CUSTOM = "CUSTOM";
+	public static final String POLICY_VALIDAZIONE_DPOP_CLAIMS_PARSER_CLASS_NAME = "policy.validazioneDPoP.claimsParser.className";
+	public static final String POLICY_VALIDAZIONE_DPOP_CLAIMS_PARSER_PLUGIN_TYPE = "policy.validazioneDPoP.claimsParser.pluginType";
+
 	public static final String POLICY_INTROSPECTION_CLAIMS_PARSER_TYPE = "policy.introspection.claimsParser";
 	public static final String POLICY_INTROSPECTION_CLAIMS_PARSER_TYPE_CUSTOM = "CUSTOM";
 	public static final String POLICY_INTROSPECTION_CLAIMS_PARSER_CLASS_NAME = "policy.introspection.claimsParser.className";

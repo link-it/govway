@@ -105,7 +105,7 @@ public class SSLConfig implements Serializable  {
 	private transient Logger logger;
 	
 	// Dynamic Map
-	private Map<String,Object> dynamicMap;
+	private transient Map<String,Object> dynamicMap;
 	
 	@Override
 	public String toString() {

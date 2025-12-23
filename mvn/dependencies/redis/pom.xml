@@ -22,6 +22,7 @@
 		<jboss-marshalling.version>2.1.3.SP1</jboss-marshalling.version>
 		<objenesis.version>3.3</objenesis.version>
 		<esotericsoftware.kryo.version>5.5.0</esotericsoftware.kryo.version>
+		<minlog.version>1.3.1</minlog.version>
 
 	</properties>
 
@@ -156,6 +157,18 @@
 			<groupId>com.esotericsoftware</groupId>
 			<artifactId>kryo</artifactId>
 			<version>${esotericsoftware.kryo.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.esotericsoftware</groupId>
+			<artifactId>minlog</artifactId>
+			<version>${minlog.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>

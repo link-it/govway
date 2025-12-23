@@ -1,3 +1,13 @@
+2025-12-23  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità #171
+	Implementato supporto DPoP (Demonstrating Proof of Possession) per token OAuth2. 
+	Aggiunta validazione del proof-of-possession tramite token DPoP nelle policy di validazione token, 
+	con protezione anti-replay basata su JTI tramite cache locale (Caffeine) o distribuita (Redis). 
+	Supportata la negoziazione di token DPoP-bound verso Authorization Server, con generazione automatica del proof JWT e gestione della chiave pubblica (jwk) nell'header. 
+	Implementato inoltre l'invio del DPoP proof verso il backend in fase di fruizione.
+
 2025-12-09  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

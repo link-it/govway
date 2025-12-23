@@ -1328,9 +1328,16 @@ public class ClassNameProperties {
 	public String[] getTokenValidazione() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.pdd.token.validazione.");
 	}
-	
-	
-	
+
+	public String getDPoPValidazione(String nome){
+		return this.getValue("org.openspcoop2.pdd.dpop.validazione.", nome);
+	}
+	public String[] getDPoPValidazione() throws UtilsException{
+		return this.getTipiGestiti("org.openspcoop2.pdd.dpop.validazione.");
+	}
+
+
+
 	/**
 	 * Ritorna una classe 'INegoziazioneTokenParser' se questa e' stata precedentemente registrata
 	 *

@@ -525,20 +525,31 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 					this.logger.info("Impostazione autenticazione (username:"+user+" password:"+password+") ["+authentication+"]",false);
 			}
 
-			
+
 			// Authentication Token
+			// Ensure token negotiation is done (may already be done in buildLocation if URL params used)
+			this.ensureTokenNegotiated(this.httpMethod);
 			NameValue nv = this.getTokenHeader();
 	    	if(nv!=null) {
 	    		if(this.requestMsg!=null && this.requestMsg.getTransportRequestContext()!=null) {
 	    			this.requestMsg.getTransportRequestContext().removeHeader(nv.getName()); // Fix: senno sovrascriveva il vecchio token
 	    		}
 	    		setRequestHeader(nv.getName(),nv.getValue(), propertiesTrasportoDebug);
-	    		if(this.debug)
+	    		if(this.debug) {
 					this.logger.info("Impostazione autenticazione token (header-name '"+nv.getName()+"' value '"+nv.getValue()+"')",false);
+	    		}
 	    	}
-	    	
-	    	
-	    	
+
+	    	// DPoP Backend Header (RFC 9449)
+	    	NameValue dpopNv = this.getDpopBackendHeader();
+	    	if(dpopNv!=null) {
+	    		setRequestHeader(dpopNv.getName(), dpopNv.getValue(), propertiesTrasportoDebug);
+	    		if(this.debug) {
+					this.logger.info("Impostazione DPoP backend (header-name '"+dpopNv.getName()+"' value '"+dpopNv.getValue()+"')",false);
+	    		}
+	    	}
+
+
 	    	// Authentication Api Key
 			String apiKey = this.properties.get(CostantiConnettori.CONNETTORE_APIKEY);
 			if(apiKey!=null && StringUtils.isNotEmpty(apiKey)){
@@ -1114,16 +1125,13 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
     	else {
     		this.location = TransportUtils.getObjectAsString(this.properties,CostantiConnettori.CONNETTORE_LOCATION);
     	}
-    	NameValue nv = this.getTokenQueryParameter();
-    	if(nv!=null) {
-    		if(this.requestMsg!=null && this.requestMsg.getTransportRequestContext()!=null) {
-    			this.requestMsg.getTransportRequestContext().removeParameter(nv.getName()); // Fix: senno sovrascriveva il vecchio token
-    		}
-    		if(this.propertiesUrlBased==null) {
-    			this.propertiesUrlBased = new HashMap<>();
-    		}
-    		TransportUtils.setParameter(this.propertiesUrlBased, nv.getName(), nv.getValue());
+
+    	String nameTokenQueryParameter = this.getNameTokenQueryParameter();
+    	if(nameTokenQueryParameter!=null && !org.apache.commons.lang3.StringUtils.isEmpty(nameTokenQueryParameter) &&
+    		this.requestMsg!=null && this.requestMsg.getTransportRequestContext()!=null) {
+    		this.requestMsg.getTransportRequestContext().removeParameter(nameTokenQueryParameter); // Fix: senno sovrascriveva il vecchio token
     	}
+    	
     	if(this.redirectLocation==null) {
 			this.location = ConnettoreUtils.buildLocationWithURLBasedParameter(this.logger!=null ? this.logger.getLogger() : null, this.requestMsg, 
 					this.connettoreHttps ? TipiConnettore.HTTPS.toString() : TipiConnettore.HTTP.toString(), 
@@ -1132,6 +1140,28 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
     	}
 		
 		this.updateLocation_forwardProxy(this.location);
+		
+    	// Ensure token negotiation and DPoP generation happen BEFORE retrieving parameters bat after location build
+    	this.ensureTokenNegotiated(this.httpMethod);
+
+    	Map<String, List<String>> newPropertiesUrlBased = null;
+    	
+    	// Authorization token
+    	NameValue nv = this.getTokenQueryParameter();
+    	if(nv!=null) {
+    		newPropertiesUrlBased = new HashMap<>();
+    		TransportUtils.setParameter(newPropertiesUrlBased, nv.getName(), nv.getValue());
+    	}
+    	// DPoP Backend Query Parameter (RFC 9449)
+    	NameValue dpopNv = this.getDpopBackendQueryParameter();
+    	if(dpopNv!=null) {
+    		if(newPropertiesUrlBased==null) {
+    			newPropertiesUrlBased = new HashMap<>();
+    		}
+    		TransportUtils.setParameter(newPropertiesUrlBased, dpopNv.getName(), dpopNv.getValue());
+    	}
+    	this.location = TransportUtils.buildUrlWithParameters(newPropertiesUrlBased, this.location, this.logger!=null ? this.logger.getLogger() : null);
+    	
     }
     
 

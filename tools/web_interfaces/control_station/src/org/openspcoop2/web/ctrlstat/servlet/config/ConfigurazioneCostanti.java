@@ -654,6 +654,7 @@ public class ConfigurazioneCostanti {
 	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_CLASSI_PLUGIN_SELEZIONATE_TRANSAZIONE = "Transazione";
 	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_CLASSI_PLUGIN_SELEZIONATE_TOKEN_DYNAMIC_DISCOVERY = "Token Dynamic Discovery";
 	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_CLASSI_PLUGIN_SELEZIONATE_TOKEN_VALIDAZIONE = "Token Validazione";
+	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_CLASSI_PLUGIN_SELEZIONATE_DPOP_VALIDAZIONE = "DPoP-Token Validazione";
 	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_CLASSI_PLUGIN_SELEZIONATE_TOKEN_NEGOZIAZIONE = "Token Negoziazione";
 	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_CLASSI_PLUGIN_SELEZIONATE_ATTRIBUTE_AUTHORITY = "Attribute Authority";
 
@@ -723,6 +724,9 @@ public class ConfigurazioneCostanti {
 	public static final String LABEL_CONFIGURAZIONE_SISTEMA_INFO_JAVA_NET = "Informazioni Java Networking";
 	public static final String LABEL_CONFIGURAZIONE_SISTEMA_INFO_PROTOCOLLI = "Informazioni "+CostantiControlStation.LABEL_PARAMETRO_PROTOCOLLI;
 	public static final String LABEL_CONFIGURAZIONE_SISTEMA_CACHE = "Cache ";
+	public static final String LABEL_CONFIGURAZIONE_SISTEMA_CACHE_DPOP_JTI = "Cache DPoP JTI (Anti-Replay)";
+	public static final String LABEL_CONFIGURAZIONE_SISTEMA_CACHE_DPOP_JTI_NESSUNA = "Nessuna cache DPoP JTI attiva";
+	public static final String PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_DPOP_JTI_STATO = "cacheDpopJtiStato";
 	public static final String LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONI = "Connessioni Attive";
 	public static final String LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_DATABASE = "Database";
 	public static final String LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_JMS = "Broker JMS";

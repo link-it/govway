@@ -2295,6 +2295,9 @@ public class OpenSPCoop2Properties {
 			if(!this.validateGestioneRetrieveTokenRefreshTokenBeforeExpire()) {
 				return false;
 			}
+			if(!this.validateGestioneRetrieveTokenDpopBackendRefreshBeforeExpire()) {
+				return false;
+			}
 			this.isGestioneRetrieveTokenRefreshTokenGrantTypeClientCredentials();
 			this.isGestioneRetrieveTokenRefreshTokenGrantTypeUsernamePassword();
 			this.isGestioneRetrieveTokenRefreshTokenGrantTypeRfc7523x509();
@@ -25148,9 +25151,109 @@ public class OpenSPCoop2Properties {
 			}
 		}
 	}
-	
-	
-	
+
+
+
+	/* ------------- Gestione Validazione Token DPoP ---------------------*/
+
+	private Boolean gestioneTokenDPoPRfc6750AcceptBearerPrefix = null;
+	public boolean isGestioneTokenDPoPRfc6750AcceptBearerPrefix() {
+		String pName = "org.openspcoop2.pdd.gestioneToken.dpop.rfc6750.acceptBearerPrefix";
+		if(this.gestioneTokenDPoPRfc6750AcceptBearerPrefix==null){
+			try{
+				String value = this.reader.getValueConvertEnvProperties(pName);
+
+				if (value != null){
+					value = value.trim();
+					this.gestioneTokenDPoPRfc6750AcceptBearerPrefix = Boolean.parseBoolean(value);
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
+					this.gestioneTokenDPoPRfc6750AcceptBearerPrefix = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, false),e);
+				this.gestioneTokenDPoPRfc6750AcceptBearerPrefix = false;
+			}
+		}
+
+		return this.gestioneTokenDPoPRfc6750AcceptBearerPrefix;
+	}
+
+	private Integer gestioneTokenDPoPIatToleranceMilliseconds = null;
+	public int getGestioneTokenDPoPIatToleranceMilliseconds() {
+		String pName = "org.openspcoop2.pdd.gestioneToken.dpop.iat.toleranceMilliseconds";
+		if(this.gestioneTokenDPoPIatToleranceMilliseconds==null){
+			try{
+				String value = this.reader.getValueConvertEnvProperties(pName);
+
+				if (value != null){
+					value = value.trim();
+					this.gestioneTokenDPoPIatToleranceMilliseconds = Integer.parseInt(value);
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, 0));
+					this.gestioneTokenDPoPIatToleranceMilliseconds = 0;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, 0),e);
+				this.gestioneTokenDPoPIatToleranceMilliseconds = 0;
+			}
+		}
+
+		return this.gestioneTokenDPoPIatToleranceMilliseconds;
+	}
+
+	private Integer gestioneTokenDPoPIatFutureToleranceMilliseconds = null;
+	public int getGestioneTokenDPoPIatFutureToleranceMilliseconds() {
+		String pName = "org.openspcoop2.pdd.gestioneToken.dpop.iat.future.toleranceMilliseconds";
+		if(this.gestioneTokenDPoPIatFutureToleranceMilliseconds==null){
+			try{
+				String value = this.reader.getValueConvertEnvProperties(pName);
+
+				if (value != null){
+					value = value.trim();
+					this.gestioneTokenDPoPIatFutureToleranceMilliseconds = Integer.parseInt(value);
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, 5000));
+					this.gestioneTokenDPoPIatFutureToleranceMilliseconds = 5000;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, 5000),e);
+				this.gestioneTokenDPoPIatFutureToleranceMilliseconds = 5000;
+			}
+		}
+
+		return this.gestioneTokenDPoPIatFutureToleranceMilliseconds;
+	}
+
+	private Integer gestioneTokenDPoPJtiLocalCacheCleanupIntervalSeconds = null;
+	public int getGestioneTokenDPoPJtiLocalCacheCleanupIntervalSeconds() {
+		String pName = "org.openspcoop2.pdd.gestioneToken.dpop.jti.localCache.cleanupIntervalSeconds";
+		if(this.gestioneTokenDPoPJtiLocalCacheCleanupIntervalSeconds==null){
+			try{
+				String value = this.reader.getValueConvertEnvProperties(pName);
+
+				if (value != null){
+					value = value.trim();
+					this.gestioneTokenDPoPJtiLocalCacheCleanupIntervalSeconds = Integer.parseInt(value);
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, 10));
+					this.gestioneTokenDPoPJtiLocalCacheCleanupIntervalSeconds = 10;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, 10),e);
+				this.gestioneTokenDPoPJtiLocalCacheCleanupIntervalSeconds = 10;
+			}
+		}
+
+		return this.gestioneTokenDPoPJtiLocalCacheCleanupIntervalSeconds;
+	}
+
+
+
 	/* ------------- Gestione Retrieve Token ---------------------*/
 	
 	private Boolean isGestioneRetrieveTokenDebug = null;
@@ -25274,7 +25377,70 @@ public class OpenSPCoop2Properties {
 		}
 		return true;
 	}
-	
+
+	// DPoP Backend - refresh before expire
+	private Integer isGestioneRetrieveTokenDpopBackendRefreshBeforeExpirePercent = null;
+	private Boolean isGestioneRetrieveTokenDpopBackendRefreshBeforeExpirePercentRead = null;
+	private String isGestioneRetrieveTokenDpopBackendRefreshBeforeExpirePercentPName = "org.openspcoop2.pdd.retrieveToken.dpop.backend.refreshBeforeExpire.percent";
+	public Integer getGestioneRetrieveTokenDpopBackendRefreshBeforeExpirePercent(){
+
+		if(this.isGestioneRetrieveTokenDpopBackendRefreshBeforeExpirePercentRead==null){
+			try{
+				String value = this.reader.getValueConvertEnvProperties(this.isGestioneRetrieveTokenDpopBackendRefreshBeforeExpirePercentPName);
+
+				if (value != null){
+					value = value.trim();
+					this.isGestioneRetrieveTokenDpopBackendRefreshBeforeExpirePercent = Integer.parseInt(value);
+				}
+
+				this.isGestioneRetrieveTokenDpopBackendRefreshBeforeExpirePercentRead=true;
+
+			}catch(java.lang.Exception e) {
+				this.logError("Proprieta' di openspcoop '"+this.isGestioneRetrieveTokenDpopBackendRefreshBeforeExpirePercentPName+"' non impostata, errore:"+e.getMessage(),e);
+				this.isGestioneRetrieveTokenDpopBackendRefreshBeforeExpirePercent = null;
+			}
+		}
+
+		return this.isGestioneRetrieveTokenDpopBackendRefreshBeforeExpirePercent;
+	}
+
+	private Integer isGestioneRetrieveTokenDpopBackendRefreshBeforeExpireSeconds = null;
+	private Boolean isGestioneRetrieveTokenDpopBackendRefreshBeforeExpireSecondsRead = null;
+	private String isGestioneRetrieveTokenDpopBackendRefreshBeforeExpireSecondsPName = "org.openspcoop2.pdd.retrieveToken.dpop.backend.refreshBeforeExpire.seconds";
+	public Integer getGestioneRetrieveTokenDpopBackendRefreshBeforeExpireSeconds(){
+
+		if(this.isGestioneRetrieveTokenDpopBackendRefreshBeforeExpireSecondsRead==null){
+			try{
+				String value = this.reader.getValueConvertEnvProperties(this.isGestioneRetrieveTokenDpopBackendRefreshBeforeExpireSecondsPName);
+
+				if (value != null){
+					value = value.trim();
+					this.isGestioneRetrieveTokenDpopBackendRefreshBeforeExpireSeconds = Integer.parseInt(value);
+				}
+
+				this.isGestioneRetrieveTokenDpopBackendRefreshBeforeExpireSecondsRead=true;
+
+			}catch(java.lang.Exception e) {
+				this.logError("Proprieta' di openspcoop '"+this.isGestioneRetrieveTokenDpopBackendRefreshBeforeExpireSecondsPName+"' non impostata, errore:"+e.getMessage(),e);
+				this.isGestioneRetrieveTokenDpopBackendRefreshBeforeExpireSeconds = null;
+			}
+		}
+
+		return this.isGestioneRetrieveTokenDpopBackendRefreshBeforeExpireSeconds;
+	}
+
+	private boolean validateGestioneRetrieveTokenDpopBackendRefreshBeforeExpire() {
+		Integer percent = getGestioneRetrieveTokenDpopBackendRefreshBeforeExpirePercent();
+		Integer seconds = getGestioneRetrieveTokenDpopBackendRefreshBeforeExpireSeconds();
+		boolean percentDefined = percent !=null && percent>0;
+		boolean secondsDefined = seconds!=null && seconds>0;
+		if(percentDefined && secondsDefined) {
+			this.logError("Non è possibile definire contemporaneamente entrambe le seguenti proprietà: '"+this.isGestioneRetrieveTokenDpopBackendRefreshBeforeExpirePercentPName+"' o '"+this.isGestioneRetrieveTokenDpopBackendRefreshBeforeExpireSecondsPName+"'");
+			return false;
+		}
+		return true;
+	}
+
 	private Boolean isGestioneRetrieveTokenRefreshTokenGrantTypeClientCredentials = null;
 	public boolean isGestioneRetrieveTokenRefreshTokenGrantTypeClientCredentials(){
 
@@ -25530,8 +25696,8 @@ public class OpenSPCoop2Properties {
 
 		String pName = "org.openspcoop2.pdd.retrieveToken.grantType_rfc7523.saveClientAssertionJWTInfo.excludeJwtSignature";
 		if(this.isGestioneRetrieveTokenGrantTypeRfc7523SaveClientAssertionJWTInfoExcludeJwtSignature==null){
-			try{  
-				String value = this.reader.getValueConvertEnvProperties(pName); 
+			try{
+				String value = this.reader.getValueConvertEnvProperties(pName);
 
 				if (value != null){
 					value = value.trim();
@@ -25549,7 +25715,107 @@ public class OpenSPCoop2Properties {
 
 		return this.isGestioneRetrieveTokenGrantTypeRfc7523SaveClientAssertionJWTInfoExcludeJwtSignature;
 	}
-	
+
+	private Boolean isGestioneRetrieveTokenDpopSaveDpopInfoTransazioniRegistrazioneInformazioniNormalizzate = null;
+	public boolean isGestioneRetrieveTokenDpopSaveDpopInfoTransazioniRegistrazioneInformazioniNormalizzate(){
+
+		String pName = "org.openspcoop2.pdd.retrieveToken.dpop.saveDpopInfo.transazioniRegistrazioneInformazioniNormalizzate";
+		if(this.isGestioneRetrieveTokenDpopSaveDpopInfoTransazioniRegistrazioneInformazioniNormalizzate==null){
+			try{
+				String value = this.reader.getValueConvertEnvProperties(pName);
+
+				if (value != null){
+					value = value.trim();
+					this.isGestioneRetrieveTokenDpopSaveDpopInfoTransazioniRegistrazioneInformazioniNormalizzate = Boolean.parseBoolean(value);
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
+					this.isGestioneRetrieveTokenDpopSaveDpopInfoTransazioniRegistrazioneInformazioniNormalizzate = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, false),e);
+				this.isGestioneRetrieveTokenDpopSaveDpopInfoTransazioniRegistrazioneInformazioniNormalizzate = false;
+			}
+		}
+
+		return this.isGestioneRetrieveTokenDpopSaveDpopInfoTransazioniRegistrazioneInformazioniNormalizzate;
+	}
+
+	private Boolean isGestioneRetrieveTokenDpopSaveDpopInfoExcludeJwtSignature = null;
+	public boolean isGestioneRetrieveTokenDpopSaveDpopInfoExcludeJwtSignature(){
+
+		String pName = "org.openspcoop2.pdd.retrieveToken.dpop.saveDpopInfo.excludeJwtSignature";
+		if(this.isGestioneRetrieveTokenDpopSaveDpopInfoExcludeJwtSignature==null){
+			try{
+				String value = this.reader.getValueConvertEnvProperties(pName);
+
+				if (value != null){
+					value = value.trim();
+					this.isGestioneRetrieveTokenDpopSaveDpopInfoExcludeJwtSignature = Boolean.parseBoolean(value);
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
+					this.isGestioneRetrieveTokenDpopSaveDpopInfoExcludeJwtSignature = true;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, true),e);
+				this.isGestioneRetrieveTokenDpopSaveDpopInfoExcludeJwtSignature = true;
+			}
+		}
+
+		return this.isGestioneRetrieveTokenDpopSaveDpopInfoExcludeJwtSignature;
+	}
+
+	private Boolean isGestioneRetrieveTokenDpopBackendSaveDpopInfoTransazioniRegistrazioneInformazioniNormalizzate = null;
+	public boolean isGestioneRetrieveTokenDpopBackendSaveDpopInfoTransazioniRegistrazioneInformazioniNormalizzate(){
+
+		String pName = "org.openspcoop2.pdd.retrieveToken.dpop.backend.saveDpopInfo.transazioniRegistrazioneInformazioniNormalizzate";
+		if(this.isGestioneRetrieveTokenDpopBackendSaveDpopInfoTransazioniRegistrazioneInformazioniNormalizzate==null){
+			try{
+				String value = this.reader.getValueConvertEnvProperties(pName);
+
+				if (value != null){
+					value = value.trim();
+					this.isGestioneRetrieveTokenDpopBackendSaveDpopInfoTransazioniRegistrazioneInformazioniNormalizzate = Boolean.parseBoolean(value);
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
+					this.isGestioneRetrieveTokenDpopBackendSaveDpopInfoTransazioniRegistrazioneInformazioniNormalizzate = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, false),e);
+				this.isGestioneRetrieveTokenDpopBackendSaveDpopInfoTransazioniRegistrazioneInformazioniNormalizzate = false;
+			}
+		}
+
+		return this.isGestioneRetrieveTokenDpopBackendSaveDpopInfoTransazioniRegistrazioneInformazioniNormalizzate;
+	}
+
+	private Boolean isGestioneRetrieveTokenDpopBackendSaveDpopInfoExcludeJwtSignature = null;
+	public boolean isGestioneRetrieveTokenDpopBackendSaveDpopInfoExcludeJwtSignature(){
+
+		String pName = "org.openspcoop2.pdd.retrieveToken.dpop.backend.saveDpopInfo.excludeJwtSignature";
+		if(this.isGestioneRetrieveTokenDpopBackendSaveDpopInfoExcludeJwtSignature==null){
+			try{
+				String value = this.reader.getValueConvertEnvProperties(pName);
+
+				if (value != null){
+					value = value.trim();
+					this.isGestioneRetrieveTokenDpopBackendSaveDpopInfoExcludeJwtSignature = Boolean.parseBoolean(value);
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
+					this.isGestioneRetrieveTokenDpopBackendSaveDpopInfoExcludeJwtSignature = true;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, true),e);
+				this.isGestioneRetrieveTokenDpopBackendSaveDpopInfoExcludeJwtSignature = true;
+			}
+		}
+
+		return this.isGestioneRetrieveTokenDpopBackendSaveDpopInfoExcludeJwtSignature;
+	}
+
 	private Boolean isGestioneRetrieveTokenSaveTokenInfoRetrieveFailed = null;
 	public boolean isGestioneRetrieveTokenSaveTokenInfoRetrieveFailed(){
 

@@ -34,6 +34,7 @@ import javax.management.MBeanConstructorInfo;
 import javax.management.MBeanException;
 import javax.management.MBeanInfo;
 import javax.management.MBeanOperationInfo;
+import javax.management.MBeanParameterInfo;
 import javax.management.NotificationBroadcasterSupport;
 import javax.management.ReflectionException;
 
@@ -41,6 +42,7 @@ import org.slf4j.Logger;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.token.GestoreToken;
+import org.openspcoop2.pdd.core.token.dpop.jti.LocalJtiCacheManager;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.utils.cache.Constants;
 
@@ -56,6 +58,11 @@ public class EngineGestioneToken extends NotificationBroadcasterSupport implemen
 
 	/** Attributi */
 	private boolean cacheAbilitata = false;
+
+	/** DPoP JTI Cache operations (anti-replay) */
+	private static final String DPOP_JTI_CACHE_METHOD_NAME_LIST_POLICIES = "listDPoPJtiCachePolicies";
+	private static final String DPOP_JTI_CACHE_METHOD_NAME_PRINT_STATS = "printStatsDPoPJtiCache";
+	private static final String DPOP_JTI_CACHE_METHOD_NAME_PRINT_STATS_ALL = "printStatsDPoPJtiCaches";
 	
 	/** getAttribute */
 	@Override
@@ -232,7 +239,25 @@ public class EngineGestioneToken extends NotificationBroadcasterSupport implemen
 			
 			return this.removeObjectCache(param1);
 		}
-		
+
+		if(actionName.equals(DPOP_JTI_CACHE_METHOD_NAME_LIST_POLICIES)){
+			return this.listDPoPJtiCachePolicies();
+		}
+
+		if(actionName.equals(DPOP_JTI_CACHE_METHOD_NAME_PRINT_STATS_ALL)){
+			return this.printStatsDPoPJtiCaches();
+		}
+
+		if(actionName.equals(DPOP_JTI_CACHE_METHOD_NAME_PRINT_STATS)){
+			if(params.length != 1)
+				throw new MBeanException(new Exception("["+DPOP_JTI_CACHE_METHOD_NAME_PRINT_STATS+"] Lunghezza parametri non corretta: "+params.length));
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			return this.printStatsDPoPJtiCache(param1);
+		}
+
 		throw new UnsupportedOperationException("Operazione "+actionName+" sconosciuta");
 	}
 	
@@ -267,19 +292,43 @@ public class EngineGestioneToken extends NotificationBroadcasterSupport implemen
 		
 		// MetaData per l'operazione removeObjectCache
 		MBeanOperationInfo removeObjectCacheOP = JMXUtils.MBEAN_OPERATION_REMOVE_OBJECT_CACHE;
-		
+
+		// MetaData per l'operazione listDPoPJtiCachePolicies
+		MBeanOperationInfo listDPoPJtiCachePoliciesOP = new MBeanOperationInfo(DPOP_JTI_CACHE_METHOD_NAME_LIST_POLICIES,
+				"Lista le policy per cui è attiva una cache DPoP JTI",
+				null,
+				String.class.getName(),
+				MBeanOperationInfo.ACTION);
+
+		// MetaData per l'operazione printStatsDPoPJtiCache (singola policy)
+		MBeanOperationInfo printStatsDPoPJtiCacheOP = new MBeanOperationInfo(DPOP_JTI_CACHE_METHOD_NAME_PRINT_STATS,
+				"Visualizza statistiche della cache DPoP JTI per una policy specifica",
+				new MBeanParameterInfo[]{
+					new MBeanParameterInfo("policyName",String.class.getName(),"Nome della policy"),
+				},
+				String.class.getName(),
+				MBeanOperationInfo.ACTION);
+
+		// MetaData per l'operazione printStatsDPoPJtiCaches (tutte le policy)
+		MBeanOperationInfo printStatsDPoPJtiCachesOP = new MBeanOperationInfo(DPOP_JTI_CACHE_METHOD_NAME_PRINT_STATS_ALL,
+				"Visualizza statistiche di tutte le cache DPoP JTI",
+				null,
+				String.class.getName(),
+				MBeanOperationInfo.ACTION);
+
 		// Mbean costruttore
 		MBeanConstructorInfo defaultConstructor = new MBeanConstructorInfo("Default Constructor","Crea e inizializza una nuova istanza del MBean",null);
 
 		// Lista attributi
 		MBeanAttributeInfo[] attributes = new MBeanAttributeInfo[]{cacheAbilitataVAR};
-		
+
 		// Lista Costruttori
 		MBeanConstructorInfo[] constructors = new MBeanConstructorInfo[]{defaultConstructor};
-		
+
 		// Lista operazioni
-		MBeanOperationInfo[] operations = new MBeanOperationInfo[]{resetCacheOP,printStatCacheOP,disabilitaCacheOP,abilitaCacheParametriOP,listKeysCacheOP,getObjectCacheOP,removeObjectCacheOP};
-		
+		MBeanOperationInfo[] operations = new MBeanOperationInfo[]{resetCacheOP,printStatCacheOP,disabilitaCacheOP,abilitaCacheParametriOP,listKeysCacheOP,getObjectCacheOP,removeObjectCacheOP,
+				listDPoPJtiCachePoliciesOP,printStatsDPoPJtiCacheOP,printStatsDPoPJtiCachesOP};
+
 		return new MBeanInfo(className,description,attributes,constructors,operations,null);
 	}
 	
@@ -400,6 +449,35 @@ public class EngineGestioneToken extends NotificationBroadcasterSupport implemen
 		}catch(Exception e){
 			this.logError(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+
+	/* ********** DPoP JTI Cache Statistics ********** */
+
+	public String listDPoPJtiCachePolicies() {
+		try {
+			return LocalJtiCacheManager.listPolicyNames("\n");
+		} catch(Exception e) {
+			this.logError(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA + e.getMessage(), e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA + e.getMessage();
+		}
+	}
+
+	public String printStatsDPoPJtiCache(String policyName) {
+		try {
+			return LocalJtiCacheManager.printStatsForPolicy(policyName);
+		} catch(Exception e) {
+			this.logError(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA + e.getMessage(), e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA + e.getMessage();
+		}
+	}
+
+	public String printStatsDPoPJtiCaches() {
+		try {
+			return LocalJtiCacheManager.printStatsAllPolicies();
+		} catch(Exception e) {
+			this.logError(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA + e.getMessage(), e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA + e.getMessage();
 		}
 	}
 

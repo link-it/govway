@@ -32,7 +32,9 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.cxf.rs.security.jose.jwk.JsonWebKey;
 import org.apache.cxf.rs.security.jose.jwk.JsonWebKeys;
+import org.apache.cxf.rs.security.jose.jwk.JwkReaderWriter;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.config.InvocazioneCredenziali;
 import org.openspcoop2.core.config.PortaApplicativa;
@@ -47,8 +49,6 @@ import org.openspcoop2.core.constants.TransferLengthModes;
 import org.openspcoop2.core.id.IDGenericProperties;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.core.mvc.properties.provider.ProviderException;
-import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
@@ -63,6 +63,9 @@ import org.openspcoop2.pdd.core.connettori.ConnettoreHTTPS;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.pdd.core.controllo_traffico.PolicyTimeoutConfig;
 import org.openspcoop2.pdd.core.dynamic.DynamicMapBuilderUtils;
+import org.openspcoop2.pdd.core.token.dpop.DPoPBackendCacheEntry;
+import org.openspcoop2.pdd.core.token.dpop.DPoPParams;
+import org.openspcoop2.pdd.core.token.dpop.InformazioniJWTDpop;
 import org.openspcoop2.pdd.core.token.parser.Claims;
 import org.openspcoop2.pdd.core.token.parser.ClaimsNegoziazione;
 import org.openspcoop2.pdd.core.token.parser.INegoziazioneTokenParser;
@@ -77,6 +80,7 @@ import org.openspcoop2.security.keystore.MerlinKeystore;
 import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.certificate.JWK;
 import org.openspcoop2.utils.certificate.KeyStore;
 import org.openspcoop2.utils.certificate.KeystoreParams;
 import org.openspcoop2.utils.certificate.KeystoreType;
@@ -184,10 +188,9 @@ public class GestoreTokenNegoziazioneUtilities {
 							refreshModeEnabled, previousToken,
 							datiRichiesta);
 					if(esito!=null && esito.isValido()) {
-						// ricontrollo tutte le date (l'ho appena preso, dovrebbero essere buone) 
+						// ricontrollo tutte le date (l'ho appena preso, dovrebbero essere buone)
 						boolean checkPerRinegoziazione = false;
-						validazioneInformazioniNegoziazioneToken(checkPerRinegoziazione, esito,  
-								policyNegoziazioneToken.isSaveErrorInCache());
+						validazioneInformazioniNegoziazioneToken(checkPerRinegoziazione, esito, policyNegoziazioneToken);
 						if(datiRichiesta!=null) {
 							datiRichiesta.setRefresh(true);
 						}
@@ -337,39 +340,53 @@ public class GestoreTokenNegoziazioneUtilities {
     	
     	return bf.toString();
     }	
-	static void validazioneInformazioniNegoziazioneToken(boolean checkPerRinegoziazione, EsitoNegoziazioneToken esitoNegoziazioneToken, boolean saveErrorInCache) {
-		
+	static void validazioneInformazioniNegoziazioneToken(boolean checkPerRinegoziazione, EsitoNegoziazioneToken esitoNegoziazioneToken,
+			PolicyNegoziazioneToken policyNegoziazioneToken) {
+
 		Date now = DateManager.getDate();
-		
+
 		if(esitoNegoziazioneToken.isValido()) {
 			esitoNegoziazioneToken.setDateValide(true); // tanto le ricontrollo adesso
 		}
-		
-		if(esitoNegoziazioneToken.isValido() &&		
-			esitoNegoziazioneToken.getInformazioniNegoziazioneToken().getExpiresIn()!=null) {			
-				
-			if(checkPerRinegoziazione) {
-				
-				OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance();
-				now = updateNowForExpire("NegoziazioneToken", now, esitoNegoziazioneToken.getInformazioniNegoziazioneToken().getRetrievedIn(), esitoNegoziazioneToken.getInformazioniNegoziazioneToken().getExpiresIn(), 
-						properties.getGestioneRetrieveTokenRefreshTokenBeforeExpirePercent(), properties.getGestioneRetrieveTokenRefreshTokenBeforeExpireSeconds());
-				
+
+		// Validazione token_type
+		if(esitoNegoziazioneToken.isValido() && policyNegoziazioneToken != null) {
+			String expectedTokenType = policyNegoziazioneToken.getExpectedTokenType();
+			if(expectedTokenType != null && !expectedTokenType.trim().isEmpty()) {
+				String actualTokenType = esitoNegoziazioneToken.getInformazioniNegoziazioneToken().getTokenType();
+				if(actualTokenType == null || !expectedTokenType.trim().equalsIgnoreCase(actualTokenType.trim())) {
+					esitoNegoziazioneToken.setTokenValidazioneFallita();
+					esitoNegoziazioneToken.setDetails("Invalid token_type: expected '"+expectedTokenType+"', found '"+(actualTokenType != null ? actualTokenType : "null")+"'");
+				}
 			}
-			
+		}
+
+		if(esitoNegoziazioneToken.isValido() &&
+			esitoNegoziazioneToken.getInformazioniNegoziazioneToken().getExpiresIn()!=null) {
+
+			if(checkPerRinegoziazione) {
+
+				OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance();
+				now = updateNowForExpire("NegoziazioneToken", now, esitoNegoziazioneToken.getInformazioniNegoziazioneToken().getRetrievedIn(), esitoNegoziazioneToken.getInformazioniNegoziazioneToken().getExpiresIn(),
+						properties.getGestioneRetrieveTokenRefreshTokenBeforeExpirePercent(), properties.getGestioneRetrieveTokenRefreshTokenBeforeExpireSeconds());
+
+			}
+
 			/*
 			 *  The lifetime in seconds of the access token.  For example, the value "3600" denotes that the access token will
 			 * expire in one hour from the time the response was generated.
-			 * If omitted, the authorization server SHOULD provide the expiration time via other means or document the default value. 
+			 * If omitted, the authorization server SHOULD provide the expiration time via other means or document the default value.
 			 **/
 			if(!now.before(esitoNegoziazioneToken.getInformazioniNegoziazioneToken().getExpiresIn())){
 				esitoNegoziazioneToken.setTokenScaduto();
 				esitoNegoziazioneToken.setDateValide(false);
-				esitoNegoziazioneToken.setDetails("AccessToken expired");	
+				esitoNegoziazioneToken.setDetails("AccessToken expired");
 			}
-			
+
 		}
-			
+
 		if(!esitoNegoziazioneToken.isValido()) {
+			boolean saveErrorInCache = policyNegoziazioneToken != null ? policyNegoziazioneToken.isSaveErrorInCache() : false;
 			esitoNegoziazioneToken.setNoCache(!saveErrorInCache);
 		}
 	}
@@ -386,7 +403,7 @@ public class GestoreTokenNegoziazioneUtilities {
 			IState state, boolean delegata, String idModulo, PortaApplicativa pa, PortaDelegata pd,
 			IDSoggetto idDominio, IDServizio idServizio,
 			boolean refreshModeEnabled, String refreshToken,
-			InformazioniNegoziazioneToken_DatiRichiesta datiRichiesta) throws TokenException, ProviderException, ProviderValidationException, UtilsException, SecurityException {
+			InformazioniNegoziazioneToken_DatiRichiesta datiRichiesta) throws TokenException, UtilsException, SecurityException {
 		
 		
 		// *** Raccola Parametri ***
@@ -676,6 +693,23 @@ public class GestoreTokenNegoziazioneUtilities {
 				if(datiRichiesta!=null && !mapHttpHeaders.isEmpty()) {
 					datiRichiesta.setHttpHeaders(mapHttpHeaders);
 				}
+			}
+		}
+
+		// DPoP proof (RFC 9449) for token endpoint - no ath claim
+		if(policyNegoziazioneToken.isDpop()) {
+			DPoPParams dpopParams = new DPoPParams();
+			dpopParams.setPolicyNegoziazioneToken(policyNegoziazioneToken);
+			dpopParams.setHttpMethod(HttpRequestMethod.POST.name());
+			dpopParams.setHttpUri(endpoint);
+			dpopParams.setBusta(busta);
+			dpopParams.setRequestInfo(requestInfo);
+			dpopParams.setLog(log);
+			String dpopProof = signDPoP(dpopParams, dynamicParameters);
+			TransportUtils.setHeader(transportRequestContext.getHeaders(), HttpConstants.AUTHORIZATION_DPOP, dpopProof);
+			if(datiRichiesta!=null) {
+				boolean infoNormalizzate = properties.isGestioneRetrieveTokenDpopSaveDpopInfoTransazioniRegistrazioneInformazioniNormalizzate();
+				datiRichiesta.setDpop(new InformazioniJWTDpop(log, dpopProof, infoNormalizzate));
 			}
 		}
 
@@ -1058,6 +1092,12 @@ public class GestoreTokenNegoziazioneUtilities {
 			kp.setPath(keystoreFile);
 		}
 		
+		fillKeystoreParamsPassword(policyNegoziazioneToken, keystoreType, kp);
+		
+		String keystoreByokPolicy = policyNegoziazioneToken.getJwtSignKeystoreByokPolicy();
+		kp.setByokPolicy(keystoreByokPolicy);
+	}
+	private static void fillKeystoreParamsPassword(PolicyNegoziazioneToken policyNegoziazioneToken, String keystoreType, KeystoreParams kp) throws TokenException {
 		String keystorePassword = policyNegoziazioneToken.getJwtSignKeystorePassword();
 		if(keystorePassword==null && 
 				!SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreType) && 
@@ -1075,9 +1115,6 @@ public class GestoreTokenNegoziazioneUtilities {
 			}
 		}
 		kp.setPassword(keystorePassword);
-		
-		String keystoreByokPolicy = policyNegoziazioneToken.getJwtSignKeystoreByokPolicy();
-		kp.setByokPolicy(keystoreByokPolicy);
 	}
 	
 	private static String signJwt(PolicyNegoziazioneToken policyNegoziazioneToken, String payload, String contentType,
@@ -1309,12 +1346,454 @@ public class GestoreTokenNegoziazioneUtilities {
 		else {
 			throw new TokenException("JWT Signed mode unknown");
 		}
-		
+
 	}
-	
-	
-	
-	
+
+
+	// ********* [NEGOZIAZIONE-TOKEN] DPOP ****************** */
+
+	private static final String DPOP_HTTP_METHOD = "htm";
+	private static final String DPOP_HTTP_URI = "htu";
+	private static final String DPOP_ACCESS_TOKEN_HASH = "ath";
+	private static final String DPOP_TYPE = "dpop+jwt";
+
+	private static String buildDPoPPayload(String httpMethod, String httpUri, String accessToken) throws TokenException, UtilsException {
+		// RFC 9449 - DPoP Proof JWT
+		JSONUtils jsonUtils = JSONUtils.getInstance(false);
+		ObjectNode dpopPayload = jsonUtils.newObjectNode();
+
+		// jti - unique identifier (REQUIRED)
+		String jti = null;
+		try {
+			jti = UniqueIdentifierManager.newUniqueIdentifier().toString();
+		} catch(Exception e) {
+			throw new TokenException("Unable to generate jti: " + e.getMessage(), e);
+		}
+		dpopPayload.put(Claims.JSON_WEB_TOKEN_RFC_7519_JWT_ID, jti);
+
+		// htm - HTTP method (REQUIRED)
+		dpopPayload.put(DPOP_HTTP_METHOD, httpMethod);
+
+		// htu - HTTP URI without query and fragment (REQUIRED)
+		String htu = TokenUtilities.normalizeHtu(httpUri);
+		dpopPayload.put(DPOP_HTTP_URI, htu);
+
+		// iat - issued at (REQUIRED)
+		long nowSeconds = DateManager.getTimeMillis() / 1000;
+		dpopPayload.put(Claims.JSON_WEB_TOKEN_RFC_7519_ISSUED_AT, nowSeconds);
+
+		// ath - access token hash (REQUIRED for backend DPoP, RFC 9449 §4.3)
+		if(accessToken != null && !accessToken.isEmpty()) {
+			String ath = computeAccessTokenHash(accessToken);
+			dpopPayload.put(DPOP_ACCESS_TOKEN_HASH, ath);
+		}
+
+		return jsonUtils.toString(dpopPayload);
+	}
+
+	public static String computeAccessTokenHash(String accessToken) throws TokenException {
+		// RFC 9449 §4.3: SHA-256 hash of the access token, base64url encoded
+		try {
+			byte[] hash = org.openspcoop2.utils.digest.DigestUtils.getDigestValue(
+					accessToken.getBytes(java.nio.charset.StandardCharsets.US_ASCII),
+					org.openspcoop2.utils.digest.DigestType.SHA256.getAlgorithmName());
+			return org.openspcoop2.utils.io.Base64Utilities.encodeBase64URLSafeString(hash);
+		} catch(Exception e) {
+			throw new TokenException("Unable to compute access token hash: " + e.getMessage(), e);
+		}
+	}
+
+	private static final String DPOP_BACKEND_CACHE_PREFIX = "DPOP_BACKEND_";
+
+	public static String buildDPoPBackendCacheKey(String policyName, String httpMethod, String httpUri, String ath) throws TokenException {
+		// Cache key: DPOP_BACKEND_policyName_htm_htu_ath
+		String htu = TokenUtilities.normalizeHtu(httpUri);
+		return DPOP_BACKEND_CACHE_PREFIX + policyName + "_" + httpMethod + "_" + htu + "_" + ath;
+	}
+
+	public static boolean isDPoPBackendCacheEntryValid(DPoPBackendCacheEntry entry, int ttlSeconds,
+			OpenSPCoop2Properties op2Properties) {
+		if(entry == null) {
+			return false;
+		}
+		long now = System.currentTimeMillis();
+		long ageMs = now - entry.getCreationTime();
+		long ttlMs = ttlSeconds * 1000L;
+
+		// Apply refresh before expire (same pattern as access token)
+		Integer refreshBeforeExpirePercent = op2Properties.getGestioneRetrieveTokenDpopBackendRefreshBeforeExpirePercent();
+		Integer refreshBeforeExpireSeconds = op2Properties.getGestioneRetrieveTokenDpopBackendRefreshBeforeExpireSeconds();
+
+		long effectiveTtlMs = ttlMs;
+		if(refreshBeforeExpirePercent != null && refreshBeforeExpirePercent > 0) {
+			effectiveTtlMs = ttlMs - (ttlMs * refreshBeforeExpirePercent / 100);
+		} else if(refreshBeforeExpireSeconds != null && refreshBeforeExpireSeconds > 0) {
+			effectiveTtlMs = ttlMs - (refreshBeforeExpireSeconds * 1000L);
+		}
+
+		return ageMs < effectiveTtlMs;
+	}
+
+	public static KeystoreParams readDPoPKeystoreParams(PolicyNegoziazioneToken policyNegoziazioneToken) throws TokenException {
+		KeystoreParams kp = new KeystoreParams();
+
+		String keystoreType = policyNegoziazioneToken.getDpopSignKeystoreType();
+		if(keystoreType == null) {
+			throw new TokenException(GestoreToken.KEYSTORE_TYPE_UNDEFINED);
+		}
+		kp.setType(keystoreType);
+
+		fillDPoPKeystoreParams(policyNegoziazioneToken, keystoreType, kp);
+
+		String keyAlias = policyNegoziazioneToken.getDpopSignKeyAlias();
+		if(keyAlias == null &&
+				!SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType) &&
+				!SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(keystoreType)) {
+			throw new TokenException(GestoreToken.KEY_ALIAS_UNDEFINED);
+		}
+		kp.setKeyAlias(keyAlias);
+
+		String keyPassword = policyNegoziazioneToken.getDpopSignKeyPassword();
+		if(keyPassword == null &&
+				!SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreType) &&
+				!SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType) &&
+				!SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(keystoreType)) {
+			boolean required = true;
+			if(KeystoreType.JKS.isType(keystoreType)) {
+				required = DBUtils.isKeystoreJksKeyPasswordRequired();
+			}
+			else if(KeystoreType.PKCS12.isType(keystoreType)) {
+				required = DBUtils.isKeystorePkcs12KeyPasswordRequired();
+			}
+			if(required) {
+				throw new TokenException(GestoreToken.KEY_PASSWORD_UNDEFINED);
+			}
+		}
+		kp.setKeyPassword(keyPassword);
+
+		return kp;
+	}
+
+	private static void fillDPoPKeystoreParams(PolicyNegoziazioneToken policyNegoziazioneToken, String keystoreType, KeystoreParams kp) throws TokenException {
+		String keystoreFile = null;
+		String keystoreFilePublicKey = null;
+		String keyPairAlgorithm = null;
+		if(SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType)) {
+			keystoreFile = policyNegoziazioneToken.getDpopSignKeystoreFile();
+			if(keystoreFile == null) {
+				throw new TokenException(GestoreToken.KEYSTORE_PRIVATE_KEY_UNDEFINED);
+			}
+			kp.setPath(keystoreFile);
+
+			keystoreFilePublicKey = policyNegoziazioneToken.getDpopSignKeystoreFilePublicKey();
+			if(keystoreFilePublicKey == null) {
+				throw new TokenException(GestoreToken.KEYSTORE_PUBLIC_KEY_UNDEFINED);
+			}
+			kp.setKeyPairPublicKeyPath(keystoreFilePublicKey);
+
+			keyPairAlgorithm = policyNegoziazioneToken.getDpopSignKeyPairAlgorithm();
+			if(keyPairAlgorithm == null) {
+				throw new TokenException(GestoreToken.KEYSTORE_KEY_PAIR_ALGORITHM_UNDEFINED);
+			}
+			kp.setKeyPairAlgorithm(keyPairAlgorithm);
+		}
+		else {
+			keystoreFile = policyNegoziazioneToken.getDpopSignKeystoreFile();
+			if(keystoreFile == null) {
+				throw new TokenException(GestoreToken.KEYSTORE_KEYSTORE_FILE_UNDEFINED);
+			}
+			kp.setPath(keystoreFile);
+		}
+
+		fillDPoPKeystoreParamsPassword(policyNegoziazioneToken, keystoreType, kp);
+
+		String keystoreByokPolicy = policyNegoziazioneToken.getDpopSignKeystoreByokPolicy();
+		kp.setByokPolicy(keystoreByokPolicy);
+	}
+	private static void fillDPoPKeystoreParamsPassword(PolicyNegoziazioneToken policyNegoziazioneToken, String keystoreType, KeystoreParams kp) throws TokenException {
+		String keystorePassword = policyNegoziazioneToken.getDpopSignKeystorePassword();
+		if(keystorePassword == null &&
+				!SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreType) &&
+				!SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType) &&
+				!SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(keystoreType)) {
+			boolean required = true;
+			if(KeystoreType.JKS.isType(keystoreType)) {
+				required = DBUtils.isKeystoreJksPasswordRequired();
+			}
+			else if(KeystoreType.PKCS12.isType(keystoreType)) {
+				required = DBUtils.isKeystorePkcs12PasswordRequired();
+			}
+			if(required) {
+				throw new TokenException(GestoreToken.KEYSTORE_KEYSTORE_PASSWORD_UNDEFINED);
+			}
+		}
+		kp.setPassword(keystorePassword);
+	}
+
+	public static String signDPoP(DPoPParams params) throws TokenException, SecurityException, UtilsException {
+		// Extract dynamic parameters from params (set during negotiation for backend proof)
+		return signDPoP(params, params.getDynamicParameters());
+	}
+
+	static String signDPoP(DPoPParams params, NegoziazioneTokenDynamicParameters dynamicParameters) throws TokenException, SecurityException, UtilsException {
+
+		PolicyNegoziazioneToken policyNegoziazioneToken = params.getPolicyNegoziazioneToken();
+		Busta busta = params.getBusta();
+		RequestInfo requestInfo = params.getRequestInfo();
+		Logger log = params.getLog();
+
+		String signAlgo = policyNegoziazioneToken.getDpopSignAlgorithm();
+		if(signAlgo == null) {
+			throw new TokenException("DPoP SignAlgorithm undefined");
+		}
+
+		// Build payload (accessToken is used for ath claim in backend DPoP)
+		String payload = buildDPoPPayload(params.getHttpMethod(), params.getHttpUri(), params.getAccessToken());
+
+		// Determine keystore source and load keystore
+		KeyStore ks = null;
+		KeyPairStore keyPairStore = null;
+		JWKSetStore jwtStore = null;
+		String keyAlias = null;
+		String keyPassword = null;
+
+		if(policyNegoziazioneToken.isDpopSignKeystoreApplicativoModI()) {
+			// Use keystore from applicativo ModI
+			Map<String, Object> dynamicMap = null;
+			if(dynamicParameters.isByokPolicyDefinedApplicativoModI()) {
+				dynamicMap = DynamicMapBuilderUtils.buildDynamicMap(busta, requestInfo, dynamicParameters.getPddContext(), log);
+			}
+
+			String keystoreType = dynamicParameters.getTipoKeystoreApplicativoModI();
+			if(keystoreType == null) {
+				throw new TokenException(GestoreToken.KEYSTORE_TYPE_UNDEFINED);
+			}
+			if(SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType)) {
+				keyPairStore = dynamicParameters.getKeyPairStoreApplicativoModI(dynamicMap);
+				if(keyPairStore == null) {
+					throw new TokenException(GestoreToken.KEYSTORE_KEYPAIR_UNDEFINED);
+				}
+			}
+			else if(SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreType)) {
+				jwtStore = dynamicParameters.getJWKSetStoreApplicativoModI(dynamicMap);
+				if(jwtStore == null) {
+					throw new TokenException(GestoreToken.KEYSTORE_KEYSTORE_UNDEFINED);
+				}
+			}
+			else {
+				ks = dynamicParameters.getKeystoreApplicativoModI(dynamicMap);
+				if(ks == null) {
+					throw new TokenException(GestoreToken.KEYSTORE_KEYSTORE_UNDEFINED);
+				}
+			}
+
+			keyAlias = dynamicParameters.getKeyAliasApplicativoModI();
+			if(keyAlias == null &&
+					!SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType) &&
+					!SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(keystoreType)) {
+				throw new TokenException(GestoreToken.KEY_ALIAS_UNDEFINED);
+			}
+			keyPassword = dynamicParameters.getKeyPasswordApplicativoModI();
+			if(keyPassword == null &&
+					!SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreType) &&
+					!SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType) &&
+					!SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(keystoreType)) {
+				throw new TokenException(GestoreToken.KEY_PASSWORD_UNDEFINED);
+			}
+		}
+		else if(policyNegoziazioneToken.isDpopSignKeystoreFruizioneModI()) {
+			// Use keystore from fruizione ModI
+			Map<String, Object> dynamicMap = null;
+			if(dynamicParameters.isByokPolicyDefinedFruizioneModI()) {
+				dynamicMap = DynamicMapBuilderUtils.buildDynamicMap(busta, requestInfo, dynamicParameters.getPddContext(), log);
+			}
+
+			String keystoreType = dynamicParameters.getTipoKeystoreFruizioneModI();
+			if(keystoreType == null) {
+				throw new TokenException(GestoreToken.KEYSTORE_TYPE_UNDEFINED);
+			}
+			if(SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType)) {
+				keyPairStore = dynamicParameters.getKeyPairStoreFruizioneModI(dynamicMap);
+				if(keyPairStore == null) {
+					throw new TokenException(GestoreToken.KEYSTORE_KEYPAIR_UNDEFINED);
+				}
+			}
+			else if(SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreType)) {
+				jwtStore = dynamicParameters.getJWKSetStoreFruizioneModI(dynamicMap);
+				if(jwtStore == null) {
+					throw new TokenException(GestoreToken.KEYSTORE_KEYSTORE_UNDEFINED);
+				}
+			}
+			else {
+				ks = dynamicParameters.getKeystoreFruizioneModI(dynamicMap);
+				if(ks == null) {
+					throw new TokenException(GestoreToken.KEYSTORE_KEYSTORE_UNDEFINED);
+				}
+			}
+
+			keyAlias = dynamicParameters.getKeyAliasFruizioneModI();
+			if(keyAlias == null &&
+					!SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType) &&
+					!SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(keystoreType)) {
+				throw new TokenException(GestoreToken.KEY_ALIAS_UNDEFINED);
+			}
+			keyPassword = dynamicParameters.getKeyPasswordFruizioneModI();
+			if(keyPassword == null &&
+					!SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreType) &&
+					!SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType) &&
+					!SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(keystoreType)) {
+				throw new TokenException(GestoreToken.KEY_PASSWORD_UNDEFINED);
+			}
+		}
+		else {
+			// Use keystore from negotiation policy
+			KeystoreParams kp = readDPoPKeystoreParams(policyNegoziazioneToken);
+
+			String keystoreType = kp.getType();
+			String keystoreFile = kp.getPath();
+			String keystoreFilePublicKey = kp.getKeyPairPublicKeyPath();
+			String keyPairAlgorithm = kp.getKeyPairAlgorithm();
+			String keystorePassword = kp.getPassword();
+
+			keyAlias = kp.getKeyAlias();
+			keyPassword = kp.getKeyPassword();
+
+			String keystoreByokPolicy = kp.getByokPolicy();
+
+			// BYOK for policy keystore
+			BYOKRequestParams byokParams = null;
+			if(BYOKProvider.isPolicyDefined(keystoreByokPolicy)) {
+				PdDContext ctx = (dynamicParameters != null) ? dynamicParameters.getPddContext() : params.getPddContext();
+				Map<String, Object> dynamicMap = DynamicMapBuilderUtils.buildDynamicMap(busta,
+						requestInfo, ctx, log);
+				byokParams = BYOKProvider.getBYOKRequestParamsByUnwrapBYOKPolicy(keystoreByokPolicy, dynamicMap);
+			}
+
+			if(SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType)) {
+				keyPairStore = GestoreKeystoreCache.getKeyPairStore(requestInfo, keystoreFile, keystoreFilePublicKey, keyPassword, keyPairAlgorithm, byokParams);
+			}
+			else if(SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreType)) {
+				jwtStore = GestoreKeystoreCache.getJwkSetStore(requestInfo, keystoreFile, byokParams);
+			}
+			else {
+				MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(requestInfo, keystoreFile, keystoreType, keystorePassword, byokParams);
+				if(merlinKs == null) {
+					throw new TokenException("Accesso al keystore '" + keystoreFile + "' non riuscito");
+				}
+				ks = merlinKs.getKeyStore();
+			}
+		}
+
+		// Setup JWT headers for DPoP
+		JWSOptions options = new JWSOptions(JOSESerialization.COMPACT);
+		JwtHeaders jwtHeaders = new JwtHeaders();
+		jwtHeaders.setType(DPOP_TYPE);  // REQUIRED: typ = dpop+jwt
+
+		// Extract public key as JWK and set in header (REQUIRED for DPoP)
+		JsonWebKey publicJwk = extractPublicJwk(ks, keyPairStore, jwtStore, keyAlias);
+		// RFC 9449: The JWK in DPoP header must contain ONLY the public key material
+		// Remove metadata fields: kid, alg, use, key_ops, etc.
+		// We manipulate the JSON directly to remove unwanted fields
+		JwkReaderWriter jwkWriter = new JwkReaderWriter();
+		String jwkJson = jwkWriter.jwkToJson(publicJwk);
+
+		// Parse JSON and remove metadata fields
+		JSONUtils jsonUtils = JSONUtils.getInstance();
+		com.fasterxml.jackson.databind.JsonNode jwkNode = jsonUtils.getAsNode(jwkJson);
+		if(jwkNode instanceof com.fasterxml.jackson.databind.node.ObjectNode) {
+			com.fasterxml.jackson.databind.node.ObjectNode jwkObj = (com.fasterxml.jackson.databind.node.ObjectNode) jwkNode;
+			jwkObj.remove(Claims.JSON_WEB_TOKEN_RFC_7515_KEY_ID);
+			jwkObj.remove(Claims.JSON_WEB_TOKEN_RFC_7515_ALGORITHM);
+			jwkObj.remove(Claims.JSON_WEB_KEY_RFC_7517_PUBLIC_KEY_USE);
+			jwkObj.remove(Claims.JSON_WEB_KEY_RFC_7517_KEY_OPERATIONS);
+			jwkObj.remove(Claims.JSON_WEB_KEY_RFC_7517_X509_CERTIFICATE_CHAIN);
+			jwkObj.remove(Claims.JSON_WEB_KEY_RFC_7517_X509_CERTIFICATE_SHA1_THUMBPRINT);
+			jwkObj.remove(Claims.JSON_WEB_KEY_RFC_7517_X509_CERTIFICATE_SHA256_THUMBPRINT);
+			jwkObj.remove(Claims.JSON_WEB_KEY_RFC_7517_X509_URL);
+			jwkJson = jsonUtils.toString(jwkObj);
+		}
+
+		@SuppressWarnings("unchecked")
+		java.util.Map<String, Object> jwkMap = jsonUtils.getAsObject(jwkJson, java.util.Map.class);
+		jwtHeaders.setJwKeyRaw(jwkMap);
+
+		// Sign
+		JsonSignature jsonSignature = null;
+		if(keyPairStore != null || jwtStore != null) {
+			JsonWebKeys jwk = null;
+			if(keyPairStore != null) {
+				jwk = keyPairStore.getJwkSet().getJsonWebKeys();
+				keyAlias = keyPairStore.getJwkSetKid();
+			}
+			else {
+				jwk = jwtStore.getJwkSet().getJsonWebKeys();
+			}
+			jsonSignature = new JsonSignature(jwk, false, keyAlias, signAlgo, jwtHeaders, options);
+		}
+		else {
+			jsonSignature = new JsonSignature(ks, false, keyAlias, keyPassword, signAlgo, jwtHeaders, options);
+		}
+		
+		return jsonSignature.sign(payload);
+	}
+
+	private static JsonWebKey extractPublicJwk(KeyStore ks, KeyPairStore keyPairStore,
+			JWKSetStore jwtStore, String keyAlias) throws TokenException, UtilsException, SecurityException {
+		JsonWebKey fullKey = null;
+
+		if(keyPairStore != null) {
+			// For KeyPair, get the first key from JWK set
+			JsonWebKeys jwks = keyPairStore.getJwkSet().getJsonWebKeys();
+			if(jwks.getKeys() != null && !jwks.getKeys().isEmpty()) {
+				fullKey = jwks.getKeys().get(0);
+			}
+			else {
+				throw new TokenException("No keys found in KeyPairStore");
+			}
+		}
+		else if(jwtStore != null) {
+			// For JWKSet, find by alias
+			JsonWebKeys jwks = jwtStore.getJwkSet().getJsonWebKeys();
+			if(keyAlias != null) {
+				fullKey = jwks.getKey(keyAlias);
+			}
+			// Fallback to first key
+			if(fullKey == null && jwks.getKeys() != null && !jwks.getKeys().isEmpty()) {
+				fullKey = jwks.getKeys().get(0);
+			}
+			if(fullKey == null) {
+				throw new TokenException("No keys found in JWKSetStore");
+			}
+		}
+		else if(ks != null) {
+			// For JKS/PKCS12, extract public key and convert to JWK
+			JWK jwk = new JWK(ks, keyAlias);
+			fullKey = jwk.getJsonWebKey();
+		}
+		else {
+			throw new TokenException("No keystore available to extract public JWK");
+		}
+
+		return extractPublicJwk(fullKey);
+	}
+	private static JsonWebKey extractPublicJwk(JsonWebKey fullKey) throws TokenException {
+		// Convert to public key only (remove private key material)
+		// Use CXF JwkUtils to convert: fullKey → PublicKey → new JWK (public only)
+		String keyType = fullKey.getKeyType() != null ? fullKey.getKeyType().name() : null;
+		if(org.apache.cxf.rs.security.jose.jwk.KeyType.RSA.name().equals(keyType)) {
+			java.security.interfaces.RSAPublicKey publicKey = org.apache.cxf.rs.security.jose.jwk.JwkUtils.toRSAPublicKey(fullKey);
+			return org.apache.cxf.rs.security.jose.jwk.JwkUtils.fromRSAPublicKey(publicKey, fullKey.getAlgorithm());
+		}
+		else if(org.apache.cxf.rs.security.jose.jwk.KeyType.EC.name().equals(keyType)) {
+			java.security.interfaces.ECPublicKey publicKey = org.apache.cxf.rs.security.jose.jwk.JwkUtils.toECPublicKey(fullKey);
+			return org.apache.cxf.rs.security.jose.jwk.JwkUtils.fromECPublicKey(publicKey, fullKey.getAlgorithm());
+		}
+		else {
+			throw new TokenException("Unsupported key type for DPoP: " + keyType + " (only RSA and EC are supported)");
+		}
+	}
+
+
 	// ********* [NEGOZIAZIONE-TOKEN] UTILITIES INTERNE ****************** */
 	
 	public static Date updateNowForExpire(String debugMetodoChiamante, Date nowParam, Date iat, Date exp, Integer refreshTokenBeforeExpirePercent, Integer refreshTokenBeforeExpireSeconds) {

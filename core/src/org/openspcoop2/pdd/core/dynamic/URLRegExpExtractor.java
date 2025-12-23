@@ -20,6 +20,7 @@
 
 package org.openspcoop2.pdd.core.dynamic;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.openspcoop2.utils.regexp.RegExpException;
@@ -34,9 +35,11 @@ import org.slf4j.Logger;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class URLRegExpExtractor {
+public class URLRegExpExtractor implements Serializable {
 
-	private Logger log;
+	private static final long serialVersionUID = 1L;
+
+	private transient Logger log;
 	
 	private String url;
 	
@@ -50,19 +53,26 @@ public class URLRegExpExtractor {
 		return v!=null && !"".equals(v);
 	}
 	
+	private String getMessaggioNotFound(String tipo,String pattern, RegExpNotFoundException e) {
+		return "Estrazione ("+tipo+") '"+pattern+"' non ha trovato risultati: "+e.getMessage();
+	}
+	private String getMessaggioErrore(String tipo,String pattern, Exception e) {
+		return "Estrazione ("+tipo+") '"+pattern+"' fallita: "+e.getMessage();
+	}
+	
 	public String read(String pattern) throws DynamicException {
 		String valore = null;
 		try {
 			valore = RegularExpressionEngine.getStringMatchPattern(this.url, pattern);
 		}
 		catch(RegExpNotFoundException e){
-			this.log.debug("Estrazione '"+pattern+"' non ha trovato risultati: "+e.getMessage(),e);
+			this.log.debug(getMessaggioNotFound("read",pattern, e),e);
 		}
 		catch(RegExpException e){
 			throw new DynamicException(e.getMessage(),e);
 		}
 		catch(Exception e){
-			throw new DynamicException("Estrazione '"+pattern+"' fallita: "+e.getMessage(),e);
+			throw new DynamicException(getMessaggioErrore("read", pattern, e),e);
 		}
 		return valore;
 	}
@@ -73,13 +83,13 @@ public class URLRegExpExtractor {
 			valore = RegularExpressionEngine.getAllStringMatchPattern(this.url, pattern);
 		}
 		catch(RegExpNotFoundException e){
-			this.log.debug("Estrazione '"+pattern+"' non ha trovato risultati: "+e.getMessage(),e);
+			this.log.debug(getMessaggioNotFound("readList",pattern, e),e);
 		}
 		catch(RegExpException e){
 			throw new DynamicException(e.getMessage(),e);
 		}
 		catch(Exception e){
-			throw new DynamicException("Estrazione '"+pattern+"' fallita: "+e.getMessage(),e);
+			throw new DynamicException(getMessaggioErrore("readList", pattern, e),e);
 		}
 		return valore;
 	}
@@ -97,13 +107,13 @@ public class URLRegExpExtractor {
 			valore = RegularExpressionEngine.getStringFindPattern(this.url, pattern);
 		}
 		catch(RegExpNotFoundException e){
-			this.log.debug("Estrazione '"+pattern+"' non ha trovato risultati: "+e.getMessage(),e);
+			this.log.debug(getMessaggioNotFound("find",pattern, e),e);
 		}
 		catch(RegExpException e){
 			throw new DynamicException(e.getMessage(),e);
 		}
 		catch(Exception e){
-			throw new DynamicException("Estrazione '"+pattern+"' fallita: "+e.getMessage(),e);
+			throw new DynamicException(getMessaggioErrore("find", pattern, e),e);
 		}
 		return valore;
 	}
@@ -114,13 +124,13 @@ public class URLRegExpExtractor {
 			valore = RegularExpressionEngine.getAllStringFindPattern(this.url, pattern);
 		}
 		catch(RegExpNotFoundException e){
-			this.log.debug("Estrazione '"+pattern+"' non ha trovato risultati: "+e.getMessage(),e);
+			this.log.debug(getMessaggioNotFound("findAll",pattern, e),e);
 		}
 		catch(RegExpException e){
 			throw new DynamicException(e.getMessage(),e);
 		}
 		catch(Exception e){
-			throw new DynamicException("Estrazione '"+pattern+"' fallita: "+e.getMessage(),e);
+			throw new DynamicException(getMessaggioErrore("findAll", pattern, e),e);
 		}
 		return valore;
 	}

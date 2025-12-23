@@ -26,6 +26,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.openspcoop2.pdd.core.token.dpop.InformazioniJWTDpop;
+
 /**     
  * InformazioniNegoziazioneTokenSourceTransaction
  *
@@ -51,6 +53,7 @@ public class InformazioniNegoziazioneToken_DatiRichiesta  extends org.openspcoop
 	private String clientId;
 	private String clientToken;
 	private InformazioniJWTClientAssertion jwtClientAssertion;
+	private InformazioniJWTDpop dpop;
 	private String username;
 	private List<String> scope;
 	private String audience;
@@ -107,6 +110,12 @@ public class InformazioniNegoziazioneToken_DatiRichiesta  extends org.openspcoop
 	}
 	public void setJwtClientAssertion(InformazioniJWTClientAssertion jwtClientAssertion) {
 		this.jwtClientAssertion = jwtClientAssertion;
+	}
+	public InformazioniJWTDpop getDpop() {
+		return this.dpop;
+	}
+	public void setDpop(InformazioniJWTDpop dpop) {
+		this.dpop = dpop;
 	}
 	public String getUsername() {
 		return this.username;
