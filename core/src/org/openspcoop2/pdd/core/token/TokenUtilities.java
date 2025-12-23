@@ -88,6 +88,9 @@ public class TokenUtilities {
 	public static Properties getValidazioneJwtClaimsMappingProperties(Map<String, Properties> mapProperties) {
 		return mapProperties.get(Costanti.VALIDAZIONE_JWT_TOKEN_PARSER_COLLECTION_ID);
 	}
+	public static Properties getValidazioneDPoPClaimsMappingProperties(Map<String, Properties> mapProperties) {
+		return mapProperties.get(Costanti.VALIDAZIONE_DPOP_TOKEN_PARSER_COLLECTION_ID);
+	}
 	public static Properties getIntrospectionClaimsMappingProperties(Map<String, Properties> mapProperties) {
 		return mapProperties.get(Costanti.INTROSPECTION_TOKEN_PARSER_COLLECTION_ID);
 	}
@@ -175,7 +178,18 @@ public class TokenUtilities {
 		Map<String, Properties> multiProperties = getMultiProperties(gp);
 		return isUserInfoEnabled(multiProperties);
 	}
-	
+
+	public static boolean isDPoPValidationEnabled(Map<String, Properties> mapProperties) {
+		return isDPoPValidationEnabled(getDefaultProperties(mapProperties));
+	}
+	public static boolean isDPoPValidationEnabled(Properties pDefault) {
+		return isEnabled(pDefault, Costanti.POLICY_DPOP_VALIDATION);
+	}
+	public static boolean isDPoPValidationEnabled(GenericProperties gp) throws ProviderException {
+		Map<String, Properties> multiProperties = getMultiProperties(gp);
+		return isDPoPValidationEnabled(multiProperties);
+	}
+
 	public static boolean isTokenForwardEnabled(Map<String, Properties> mapProperties) {
 		return isTokenForwardEnabled(getDefaultProperties(mapProperties));
 	}
@@ -301,6 +315,8 @@ public class TokenUtilities {
 		
 		policy.setTokenOpzionale(false);
 		
+		policy.setDPoPValidation(false);
+		
 		policy.setDynamicDiscovery(false);
 		
 		policy.setValidazioneJWT(false);
@@ -325,6 +341,9 @@ public class TokenUtilities {
 		if(gestioneToken.getTokenOpzionale()!=null) {
 			policy.setTokenOpzionale(org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO.equals(gestioneToken.getTokenOpzionale()));
 		}
+		
+		boolean dpopyEnabledDaPolicy = isDPoPValidationEnabled(multiProperties);
+		policy.setDPoPValidation(dpopyEnabledDaPolicy);
 		
 		boolean dynamicDiscoveryEnabledDaPolicy = isDynamicDiscoveryEnabled(multiProperties);
 		policy.setDynamicDiscovery(dynamicDiscoveryEnabledDaPolicy);
@@ -579,7 +598,96 @@ public class TokenUtilities {
 			keystoreParams.setKeyPairAlgorithm(keyPairAlgorithm);
 		}
 	}
-	
+
+	public static KeystoreParams getDpopKeystoreParams(GenericProperties gp) throws Exception {
+		PolicyNegoziazioneToken policy = TokenUtilities.convertTo(gp);
+		return getDpopKeystoreParams(policy);
+	}
+	public static KeystoreParams getDpopKeystoreParams(PolicyNegoziazioneToken policy) throws TokenException {
+
+		if(!policy.isDpop()) {
+			throw new TokenException("La configurazione nella policy "+policy.getName()+" non utilizza la funzionalità DPoP");
+		}
+
+		String keystoreType = policy.getDpopSignKeystoreType();
+		if(keystoreType==null) {
+			throw new TokenException("DPoP Signature keystore type undefined");
+		}
+		String keystoreFile = policy.getDpopSignKeystoreFile();
+		if(keystoreFile==null) {
+			throw new TokenException("DPoP Signature keystore file undefined");
+		}
+		String keystorePassword = policy.getDpopSignKeystorePassword();
+		if(keystorePassword==null &&
+				!SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreType) &&
+				!SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType)) {
+			boolean required = true;
+			if(KeystoreType.JKS.isType(keystoreType)) {
+				required = DBUtils.isKeystoreJksPasswordRequired();
+			}
+			else if(KeystoreType.PKCS12.isType(keystoreType)) {
+				required = DBUtils.isKeystorePkcs12PasswordRequired();
+			}
+			if(required) {
+				throw new TokenException("DPoP Signature keystore password undefined");
+			}
+		}
+		String keyAlias = policy.getDpopSignKeyAlias();
+		if(keyAlias==null &&
+			!SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType)) {
+			throw new TokenException("DPoP Signature key alias undefined");
+		}
+
+		String keyPassword = policy.getDpopSignKeyPassword();
+		if(keyPassword==null &&
+				!SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreType) &&
+				!SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType)) {
+			boolean required = true;
+			if(KeystoreType.JKS.isType(keystoreType)) {
+				required = DBUtils.isKeystoreJksKeyPasswordRequired();
+			}
+			else if(KeystoreType.PKCS12.isType(keystoreType)) {
+				required = DBUtils.isKeystorePkcs12KeyPasswordRequired();
+			}
+			if(required) {
+				throw new TokenException("DPoP Signature key password undefined");
+			}
+		}
+
+		String keystoreByokPolicy = policy.getDpopSignKeystoreByokPolicy();
+
+		KeystoreParams keystoreParams = new KeystoreParams();
+		keystoreParams.setPath(keystoreFile);
+		keystoreParams.setType(keystoreType);
+		keystoreParams.setPassword(keystorePassword);
+		keystoreParams.setKeyAlias(keyAlias);
+		keystoreParams.setKeyPassword(keyPassword);
+		keystoreParams.setByokPolicy(keystoreByokPolicy);
+
+		fillDpopKeyPairParameters(keystoreParams, keystoreType, policy);
+
+		return keystoreParams;
+
+	}
+
+	private static void fillDpopKeyPairParameters(KeystoreParams keystoreParams, String keystoreType, PolicyNegoziazioneToken policy) throws TokenException {
+		if(SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType)) {
+			String keystorePublicKeyFile = policy.getDpopSignKeystoreFilePublicKey();
+			if(keystorePublicKeyFile==null) {
+				throw new TokenException("DPoP Signature public key file undefined");
+			}
+			keystoreParams.setKeyPairPublicKeyPath(keystorePublicKeyFile);
+		}
+
+		if(SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType)) {
+			String keyPairAlgorithm = policy.getDpopSignKeyPairAlgorithm();
+			if(keyPairAlgorithm==null) {
+				throw new TokenException("DPoP Signature key pair algorithm undefined");
+			}
+			keystoreParams.setKeyPairAlgorithm(keyPairAlgorithm);
+		}
+	}
+
 	public static PolicyNegoziazioneToken convertTo(GenericProperties gp) throws Exception { 
 		
 		PolicyNegoziazioneToken policy = new PolicyNegoziazioneToken();
@@ -1121,7 +1229,7 @@ public class TokenUtilities {
 	public static void injectSameKeystoreForHttpsClient(Properties sslConfig, Properties sslClientConfig) {
 		if(!sslClientConfig.containsKey(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_LOCATION) && !sslClientConfig.containsKey(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_PASSWORD)) {
 			// modalita usa valori del truststore
-			String trustStoreLocation = sslConfig.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_LOCATION); 
+			String trustStoreLocation = sslConfig.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
 			String trustStorePassword = sslConfig.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
 			if(trustStoreLocation!=null) {
 				sslClientConfig.put(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_LOCATION, trustStoreLocation);
@@ -1129,6 +1237,26 @@ public class TokenUtilities {
 					sslClientConfig.put(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_PASSWORD, trustStorePassword);
 				}
 			}
+		}
+	}
+
+	public static String normalizeHtu(String url) throws TokenException {
+		// Remove query string and fragment from URL as per RFC 9449
+		try {
+			java.net.URI uri = new java.net.URI(url);
+			return new java.net.URI(uri.getScheme(), uri.getAuthority(), uri.getPath(), null, null).toString();
+		} catch(Exception e) {
+			throw new TokenException("Invalid URL for htu: " + e.getMessage(), e);
+		}
+	}
+
+	public static String computeJwkThumbprint(org.apache.cxf.rs.security.jose.jwk.JsonWebKey jwk) throws TokenException {
+		// Compute JWK thumbprint as per RFC 7638
+		try {
+			// Use Apache CXF JwkUtils to compute thumbprint
+			return org.apache.cxf.rs.security.jose.jwk.JwkUtils.getThumbprint(jwk);
+		} catch(Exception e) {
+			throw new TokenException("Error computing JWK thumbprint: " + e.getMessage(), e);
 		}
 	}
 }

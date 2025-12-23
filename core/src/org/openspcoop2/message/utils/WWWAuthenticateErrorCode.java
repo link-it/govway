@@ -43,12 +43,16 @@ public enum WWWAuthenticateErrorCode {
 //	     request a new access token and retry the protected resource
 //	     request.
 
-		 insufficient_scope;
+		 insufficient_scope,
 //	     The request requires higher privileges than provided by the
 //	     access token.  The resource server SHOULD respond with the HTTP
 //	     403 (Forbidden) status code and MAY include the "scope"
 //	     attribute with the scope necessary to access the protected
 //	     resource.
 
-	
+		 invalid_dpop_proof;
+//	     RFC 9449: The DPoP proof is invalid. The resource server SHOULD
+//	     respond with the HTTP 401 (Unauthorized) status code.
+
+
 }

@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.DumpConfigurazione;
 import org.openspcoop2.core.config.InvocazioneCredenziali;
 import org.openspcoop2.core.config.PortaApplicativa;
@@ -75,6 +76,7 @@ import org.openspcoop2.pdd.core.response_caching.ResponseCached;
 import org.openspcoop2.pdd.core.token.EsitoNegoziazioneToken;
 import org.openspcoop2.pdd.core.token.GestoreToken;
 import org.openspcoop2.pdd.core.token.PolicyNegoziazioneToken;
+import org.openspcoop2.pdd.core.token.TokenException;
 import org.openspcoop2.pdd.core.transazioni.Transaction;
 import org.openspcoop2.pdd.core.transazioni.TransactionContext;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
@@ -90,9 +92,11 @@ import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.utils.ModIUtils;
 import org.openspcoop2.protocol.utils.ModIValidazioneSemanticaProfiloSicurezza;
+import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.utils.MapKey;
 import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
@@ -100,6 +104,7 @@ import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
+import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.slf4j.Logger;
 
@@ -257,6 +262,8 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 
 	/** Policy Token */
 	private PolicyNegoziazioneToken policyNegoziazioneToken;
+	private String dpopBackendProof;
+	private EsitoNegoziazioneToken cachedEsitoNegoziazioneToken;
 	protected PolicyTimeoutConfig policyTimeoutConfig;
 	
 	protected Date dataRichiestaInoltrata;
@@ -686,23 +693,173 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 	protected NameValue getTokenQueryParameter() throws ConnettoreException {
 		return this.getTokenParameter(false);
 	}
+	protected String getNameTokenHeader() throws ConnettoreException {
+		return this.readNameTokenParameter(true);
+	}
+	protected String getNameTokenQueryParameter() throws ConnettoreException {
+		return this.readNameTokenParameter(false);
+	}
+	protected NameValue getDpopBackendHeader() {
+		return this.getDpopBackendParameter(true);
+	}
+	protected NameValue getDpopBackendQueryParameter() {
+		return this.getDpopBackendParameter(false);
+	}
+	private NameValue getDpopBackendParameter(boolean header) {
+		if(this.dpopBackendProof == null || this.policyNegoziazioneToken == null || !this.policyNegoziazioneToken.isDpop()) {
+			return null;
+		}
+		String forwardDpopMode = this.policyNegoziazioneToken.getForwardDpopMode();
+		// Default: RFC 9449 header
+		NameValue n = getDpopBackendParameter(header, forwardDpopMode);
+		if(n != null) {
+			n.setValue(this.dpopBackendProof);
+		}
+		return n;
+	}
+	private NameValue getDpopBackendParameter(boolean header,String forwardDpopMode) {
+		NameValue n = null;
+		if(org.openspcoop2.pdd.core.token.Costanti.POLICY_RETRIEVE_TOKEN_FORWARD_DPOP_MODE_RFC9449_HEADER.equals(forwardDpopMode) ||
+				forwardDpopMode == null || forwardDpopMode.isEmpty()) {
+			if(header) {
+				n = new NameValue();
+				n.setName(HttpConstants.AUTHORIZATION_DPOP);
+			}
+			else {
+				return null;
+			}
+		}
+		else if(org.openspcoop2.pdd.core.token.Costanti.POLICY_RETRIEVE_TOKEN_FORWARD_DPOP_MODE_CUSTOM_HEADER.equals(forwardDpopMode)) {
+			if(header) {
+				n = new NameValue();
+				n.setName(this.policyNegoziazioneToken.getForwardDpopModeCustomHeader());
+			}
+			else {
+				return null;
+			}
+		}
+		else if(org.openspcoop2.pdd.core.token.Costanti.POLICY_RETRIEVE_TOKEN_FORWARD_DPOP_MODE_CUSTOM_URL.equals(forwardDpopMode)) {
+			if(!header) {
+				n = new NameValue();
+				n.setName(this.policyNegoziazioneToken.getForwardDpopModeCustomUrl());
+			}
+			else {
+				return null;
+			}
+		}
+		return n;
+	}
+
+	protected void ensureTokenNegotiated(HttpRequestMethod httpMethod) throws ConnettoreException {
+		if(this.cachedEsitoNegoziazioneToken != null) {
+			return; // Already negotiated
+		}
+
+		if(this.policyNegoziazioneToken == null) {
+			return; // No token policy configured
+		}
+
+		try {
+			GestoreToken.validazioneConfigurazione(this.policyNegoziazioneToken);
+
+			if(this.debug) {
+				this.logger.debug("Negoziazione token '"+this.policyNegoziazioneToken.getName()+"' ...");
+			}
+			logPersonalizzato("negoziazioneToken.inCorso");
+
+			// Negotiate token
+			EsitoNegoziazioneToken esitoNegoziazione = GestoreToken.endpointToken(this.debug, this.logger.getLogger(), this.policyNegoziazioneToken,
+					this.busta, this.requestInfo,
+					ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo) ? TipoPdD.APPLICATIVA : TipoPdD.DELEGATA, this.idModulo, this.pa, this.pd,
+					this.getPddContext(), this.getProtocolFactory());
+
+			if(this.debug) {
+				this.logger.debug("Negoziazione token '"+this.policyNegoziazioneToken.getName()+"' terminata");
+			}
+
+			if(esitoNegoziazione==null) {
+				throw new ConnettoreException("Esito Negoziazione non ritornato ?");
+			}
+			if(!esitoNegoziazione.isValido()) {
+				throw new ConnettoreException(esitoNegoziazione.getDetails(),esitoNegoziazione.getEccezioneProcessamento());
+			}
+
+			SimpleDateFormat sdf = DateUtils.getDefaultDateTimeFormatter(FORMAT);
+			if(esitoNegoziazione.isInCache()) {
+				if(esitoNegoziazione.getInformazioniNegoziazioneToken().getExpiresIn()!=null) {
+					this.logger.debug("Presente in cache access_token '"+esitoNegoziazione.getToken()+"'; expire in ("+sdf.format(esitoNegoziazione.getInformazioniNegoziazioneToken().getExpiresIn())+")");
+				}
+				else {
+					this.logger.debug("Presente in cache access_token '"+esitoNegoziazione.getToken()+"'; no expire");
+				}
+				logPersonalizzato("negoziazioneToken.inCache");
+			}
+			else {
+				if(esitoNegoziazione.getInformazioniNegoziazioneToken().getExpiresIn()!=null) {
+					this.logger.debug("Recuperato access_token '"+esitoNegoziazione.getToken()+"'; expire in ("+sdf.format(esitoNegoziazione.getInformazioniNegoziazioneToken().getExpiresIn())+")");
+				}
+				else {
+					this.logger.debug("Recuperato access_token '"+esitoNegoziazione.getToken()+"'; no expire");
+				}
+				logPersonalizzato("negoziazioneToken.completata");
+			}
+
+			if(this.modIValidazioneSemanticaProfiloSicurezza!=null) {
+				String jti = ModIUtils.readJti(esitoNegoziazione.getToken(), this.logger.getLogger());
+				if(jti!=null && StringUtils.isNotEmpty(jti)) {
+					ModIUtils.replaceBustaIdWithJtiTokenId(this.modIValidazioneSemanticaProfiloSicurezza, jti);
+					if(this.msgDiagnostico!=null) {
+						this.msgDiagnostico.updateKeywordIdMessaggioRichiesta(this.busta.getID());
+					}
+					if(this.getPddContext()!=null) {
+						this.getPddContext().put(org.openspcoop2.core.constants.Costanti.MODI_JTI_REQUEST_ID, jti);
+					}
+				}
+
+				logPersonalizzato("inoltroInCorso");
+			}
+
+			this.cachedEsitoNegoziazioneToken = esitoNegoziazione;
+
+			// Generate DPoP backend if needed
+			boolean dpopEnabled = this.policyNegoziazioneToken.isDpop();
+			generateDPoP(dpopEnabled, httpMethod, esitoNegoziazione);
+
+		} catch(Exception e) {
+			if(this.getPddContext()!=null) {
+				this.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.ERRORE_NEGOZIAZIONE_TOKEN, "true");
+			}
+			this.logger.error("Errore durante la negoziazione del token: " + e.getMessage(), e);
+			throw new ConnettoreException("Errore durante la negoziazione del token: " + e.getMessage(), e);
+		}
+	}
+
 	private ModIValidazioneSemanticaProfiloSicurezza modIValidazioneSemanticaProfiloSicurezza;
 	public void setModIValidazioneSemanticaProfiloSicurezza(
 			ModIValidazioneSemanticaProfiloSicurezza modIValidazioneSemanticaProfiloSicurezza) {
 		this.modIValidazioneSemanticaProfiloSicurezza = modIValidazioneSemanticaProfiloSicurezza;
 	}
+	private String readNameTokenParameter(boolean header) throws ConnettoreException {
+		NameValue nv = getTokenParameterEngine(true, header);
+		return nv!=null ? nv.getName() : null;
+	}
 	private NameValue getTokenParameter(boolean header) throws ConnettoreException {
+		return getTokenParameterEngine(false, header);
+	}
+	private NameValue getTokenParameterEngine(boolean onlyName, boolean header) throws ConnettoreException {
 		if(this.policyNegoziazioneToken!=null) {
 			try {
-				GestoreToken.validazioneConfigurazione(this.policyNegoziazioneToken); // assicura che la configurazione sia corretta
-				
 				String forwardMode = this.policyNegoziazioneToken.getForwardTokenMode();
 				NameValue n = null;
 				if(org.openspcoop2.pdd.core.token.Costanti.POLICY_RETRIEVE_TOKEN_FORWARD_MODE_RFC6750_HEADER.equals(forwardMode)) {
 					if(header) {
 						n = new NameValue();
 						n.setName(HttpConstants.AUTHORIZATION);
-						n.setValue(HttpConstants.AUTHORIZATION_PREFIX_BEARER);
+						if(!onlyName) {
+							// RFC 9449: use "DPoP" instead of "Bearer" when DPoP is enabled
+							boolean dpopEnabled = this.policyNegoziazioneToken.isDpop();
+							n.setValue(dpopEnabled ? HttpConstants.AUTHORIZATION_PREFIX_DPOP : HttpConstants.AUTHORIZATION_PREFIX_BEARER);
+						}
 					}
 					else {
 						return null;
@@ -736,66 +893,25 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 					}
 				}
 				
-				if(this.debug) {
-					this.logger.debug("Negoziazione token '"+this.policyNegoziazioneToken.getName()+"' ...");
-				}
-				logPersonalizzato("negoziazioneToken.inCorso");
-				EsitoNegoziazioneToken esitoNegoziazione = GestoreToken.endpointToken(this.debug, this.logger.getLogger(), this.policyNegoziazioneToken, 
-						this.busta, this.requestInfo, 
-						ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo) ? TipoPdD.APPLICATIVA : TipoPdD.DELEGATA, this.idModulo, this.pa, this.pd,
-						this.getPddContext(), this.getProtocolFactory());
-				if(this.debug) {
-					this.logger.debug("Negoziazione token '"+this.policyNegoziazioneToken.getName()+"' terminata");
-				}
-				
-				SimpleDateFormat sdf = DateUtils.getDefaultDateTimeFormatter(FORMAT);
-								
-				if(esitoNegoziazione==null) {
-					throw new ConnettoreException("Esito Negoziazione non ritornato ?");
-				}
-				if(!esitoNegoziazione.isValido()) {
-					throw new ConnettoreException(esitoNegoziazione.getDetails(),esitoNegoziazione.getEccezioneProcessamento());
-				}
-				if(esitoNegoziazione.isInCache()) {
-					if(esitoNegoziazione.getInformazioniNegoziazioneToken().getExpiresIn()!=null) {
-						this.logger.debug("Presente in cache access_token '"+esitoNegoziazione.getToken()+"'; expire in ("+sdf.format(esitoNegoziazione.getInformazioniNegoziazioneToken().getExpiresIn())+")");
+				if(!onlyName) {
+
+					// Use cached negotiation result
+					if(this.cachedEsitoNegoziazioneToken == null) {
+						throw new ConnettoreException("Token negotiation not performed yet");
 					}
-					else {
-						this.logger.debug("Presente in cache access_token '"+esitoNegoziazione.getToken()+"'; no expire");
-					}
-					logPersonalizzato("negoziazioneToken.inCache");
-				}
-				else {
-					if(esitoNegoziazione.getInformazioniNegoziazioneToken().getExpiresIn()!=null) {
-						this.logger.debug("Recuperato access_token '"+esitoNegoziazione.getToken()+"'; expire in ("+sdf.format(esitoNegoziazione.getInformazioniNegoziazioneToken().getExpiresIn())+")");
-					}
-					else {
-						this.logger.debug("Recuperato access_token '"+esitoNegoziazione.getToken()+"'; no expire");
-					}
-					logPersonalizzato("negoziazioneToken.completata");
-				}
-				
-				if(this.modIValidazioneSemanticaProfiloSicurezza!=null) {
-					String jti = ModIUtils.readJti(esitoNegoziazione.getToken(), this.logger.getLogger());
-					if(jti!=null && StringUtils.isNotEmpty(jti)) {
-						ModIUtils.replaceBustaIdWithJtiTokenId(this.modIValidazioneSemanticaProfiloSicurezza, jti);
-						if(this.msgDiagnostico!=null) {
-							this.msgDiagnostico.updateKeywordIdMessaggioRichiesta(this.busta.getID());
+					EsitoNegoziazioneToken esitoNegoziazione = this.cachedEsitoNegoziazioneToken;
+					
+					if(n!=null) {
+						if(n.getValue()!=null) {
+							n.setValue(n.getValue()+esitoNegoziazione.getToken());
 						}
-						if(this.getPddContext()!=null) {
-							this.getPddContext().put(org.openspcoop2.core.constants.Costanti.MODI_JTI_REQUEST_ID, jti);
+						else {
+							n.setValue(esitoNegoziazione.getToken());
 						}
 					}
 					
-					logPersonalizzato("inoltroInCorso");
 				}
-				
-				if(n.getValue()!=null) {
-					n.setValue(n.getValue()+esitoNegoziazione.getToken());
-				}
-				else {
-					n.setValue(esitoNegoziazione.getToken());
-				}
+
 				return n;
 
 			}catch(Exception e) {
@@ -814,6 +930,64 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 				this.msgDiagnostico.logPersonalizzato(idDiagnostico);
 			}catch(Exception t) {
 				this.logger.error("Emissione diagnostica '"+idDiagnostico+"' fallita: "+t.getMessage(),t);
+			}
+		}
+	}
+	private void generateDPoP(boolean dpopEnabled, HttpRequestMethod httpMethod, EsitoNegoziazioneToken esitoNegoziazione) throws ConnettoreException {
+		// Generate DPoP backend proof if DPoP is enabled
+		if(dpopEnabled && this.location != null) {
+			try {
+				String httpMethodStr = httpMethod != null ? httpMethod.name() : HttpRequestMethod.GET.name();
+				String accessToken = esitoNegoziazione.getToken();
+
+				org.openspcoop2.pdd.core.token.dpop.DPoPParams dpopParams = new org.openspcoop2.pdd.core.token.dpop.DPoPParams();
+				dpopParams.setPolicyNegoziazioneToken(this.policyNegoziazioneToken);
+				dpopParams.setHttpMethod(httpMethodStr);
+				dpopParams.setHttpUri(this.location);
+				dpopParams.setAccessToken(accessToken);
+				dpopParams.setBusta(this.busta);
+				dpopParams.setRequestInfo(this.requestInfo);
+				dpopParams.setPddContext(this.getPddContext());
+				dpopParams.setLog(this.logger.getLogger());
+
+				generateDPoP(dpopParams, esitoNegoziazione);
+			} catch(Exception dpopEx) {
+				throw new ConnettoreException("Generazione DPoP backend proof fallita: "+dpopEx.getMessage(), dpopEx);
+			}
+		}
+	}
+	private void generateDPoP(org.openspcoop2.pdd.core.token.dpop.DPoPParams dpopParams, EsitoNegoziazioneToken esitoNegoziazione) throws CoreException, TokenException, SecurityException, UtilsException {
+		// Extract dynamic parameters saved during negotiation for backend DPoP generation
+		if(esitoNegoziazione!=null && esitoNegoziazione.getInformazioniNegoziazioneToken()!=null) {
+			org.openspcoop2.pdd.core.token.NegoziazioneTokenDynamicParameters dynamicParameters =
+					esitoNegoziazione.getInformazioniNegoziazioneToken().getDynamicParameters();
+			dpopParams.setDynamicParameters(dynamicParameters);
+		}
+
+		org.openspcoop2.pdd.core.token.dpop.EsitoDPoPBackend esitoDPoP = GestoreToken.getDPoPBackendProof(dpopParams);
+		this.dpopBackendProof = esitoDPoP.getDpopProof();
+		if(esitoNegoziazione!=null) {
+			esitoNegoziazione.setDpopBackendInCache(esitoDPoP.isInCache());
+		}
+
+		// Salva il DPoP backend nell'oggetto InformazioniNegoziazioneToken per persistenza su DB
+		if(esitoNegoziazione!=null && esitoNegoziazione.getInformazioniNegoziazioneToken() != null) {
+			boolean infoNormalizzate = this.openspcoopProperties.isGestioneRetrieveTokenDpopBackendSaveDpopInfoTransazioniRegistrazioneInformazioniNormalizzate();
+			org.openspcoop2.pdd.core.token.dpop.InformazioniJWTDpop dpopBackendInfo =
+					new org.openspcoop2.pdd.core.token.dpop.InformazioniJWTDpop(this.logger.getLogger(), this.dpopBackendProof, infoNormalizzate);
+			esitoNegoziazione.getInformazioniNegoziazioneToken().setDpopBackend(dpopBackendInfo);
+		}
+
+		if(this.debug) {
+			String cacheMsg = esitoDPoP.isInCache() ? " (in cache)" : "";
+			this.logger.debug("DPoP backend proof generato"+cacheMsg+" per '"+this.location+"'");
+		}
+		if(this.msgDiagnostico!=null) {
+			try {
+				String diagnosticKey = esitoDPoP.isInCache() ? "dpopBackend.inCache" : "dpopBackend.completato";
+				this.msgDiagnostico.logPersonalizzato(diagnosticKey);
+			}catch(Exception t) {
+				this.logger.error("Emissione diagnostica DPoP backend fallita: "+t.getMessage(),t);
 			}
 		}
 	}

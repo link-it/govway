@@ -20,6 +20,7 @@
 
 package org.openspcoop2.pdd.core.dynamic;
 
+import java.io.Serializable;
 import java.util.Map;
 
 import org.openspcoop2.core.id.IDServizio;
@@ -37,10 +38,12 @@ import org.slf4j.Logger;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class DynamicConfig {
+public class DynamicConfig implements Serializable {
 	
-	private Logger log;
-	private Map<String, Object> dynamicMap;
+	private static final long serialVersionUID = 1L;
+	
+	private transient Logger log;
+	private transient Map<String, Object> dynamicMap;
 	private RequestInfo requestInfo;
 	
 	private Busta busta;
@@ -64,7 +67,7 @@ public class DynamicConfig {
 		}
 		else if(this.busta==null && this.dynamicMap!=null && !this.dynamicMap.isEmpty()) {
 			Object o = this.dynamicMap.get(Costanti.MAP_BUSTA_OBJECT);
-			if(o!=null && o instanceof Busta) {
+			if(o instanceof Busta) {
 				this.busta = (Busta) o;
 			}
 		}
@@ -91,7 +94,7 @@ public class DynamicConfig {
 		}
 		if(this.dynamicMap!=null && !this.dynamicMap.isEmpty()) {
 			Object o = this.dynamicMap.get(Costanti.MAP_API_IMPL_CONFIG_PROPERTY);
-			if(o!=null && o instanceof Map<?, ?>) {
+			if(o instanceof Map<?, ?>) {
 				this.mapConfig = (Map<String, String>) o;
 			}
 		}
@@ -111,7 +114,7 @@ public class DynamicConfig {
 		}
 		else if(this.busta==null && this.dynamicMap!=null && !this.dynamicMap.isEmpty()) {
 			Object o = this.dynamicMap.get(Costanti.MAP_BUSTA_OBJECT);
-			if(o!=null && o instanceof Busta) {
+			if(o instanceof Busta) {
 				this.busta = (Busta) o;
 			}
 		}
@@ -133,7 +136,7 @@ public class DynamicConfig {
 		}
 		if(this.dynamicMap!=null && !this.dynamicMap.isEmpty()) {
 			Object o = this.dynamicMap.get(Costanti.MAP_SOGGETTO_EROGATORE_CONFIG_PROPERTY);
-			if(o!=null && o instanceof Map<?, ?>) {
+			if(o instanceof Map<?, ?>) {
 				this.mapProviderOrganizationConfig = (Map<String, String>) o;
 			}
 		}
@@ -153,7 +156,7 @@ public class DynamicConfig {
 		}
 		else if(this.busta==null && this.dynamicMap!=null && !this.dynamicMap.isEmpty()) {
 			Object o = this.dynamicMap.get(Costanti.MAP_BUSTA_OBJECT);
-			if(o!=null && o instanceof Busta) {
+			if(o instanceof Busta) {
 				this.busta = (Busta) o;
 			}
 		}
@@ -172,7 +175,7 @@ public class DynamicConfig {
 		}
 		if(this.dynamicMap!=null && !this.dynamicMap.isEmpty()) {
 			Object o = this.dynamicMap.get(Costanti.MAP_SOGGETTO_FRUITORE_CONFIG_PROPERTY);
-			if(o!=null && o instanceof Map<?, ?>) {
+			if(o instanceof Map<?, ?>) {
 				this.mapClientOrganizationConfig = (Map<String, String>) o;
 			}
 		}
@@ -187,7 +190,7 @@ public class DynamicConfig {
 		
 		if(this.busta==null && this.dynamicMap!=null && !this.dynamicMap.isEmpty()) {
 			Object o = this.dynamicMap.get(Costanti.MAP_BUSTA_OBJECT);
-			if(o!=null && o instanceof Busta) {
+			if(o instanceof Busta) {
 				this.busta = (Busta) o;
 			}
 		}
@@ -209,7 +212,7 @@ public class DynamicConfig {
 		}
 		if(this.dynamicMap!=null && !this.dynamicMap.isEmpty()) {
 			Object o = this.dynamicMap.get(Costanti.MAP_APPLICATIVO_CONFIG_PROPERTY);
-			if(o!=null && o instanceof Map<?, ?>) {
+			if(o instanceof Map<?, ?>) {
 				this.mapClientApplicationConfig = (Map<String, String>) o;
 			}
 		}
@@ -229,7 +232,7 @@ public class DynamicConfig {
 		}
 		if(this.dynamicMap!=null && !this.dynamicMap.isEmpty()) {
 			Object o = this.dynamicMap.get(Costanti.MAP_APPLICATIVO_TOKEN);
-			if(o!=null && o instanceof IDServizioApplicativo) {
+			if(o instanceof IDServizioApplicativo) {
 				this.tokenTokenClientApplicationId = (IDServizioApplicativo) o;
 				this.tokenTokenClientOrganizationId = this.tokenTokenClientApplicationId.getIdSoggettoProprietario();
 			}
@@ -245,7 +248,7 @@ public class DynamicConfig {
 		}
 		if(this.dynamicMap!=null && !this.dynamicMap.isEmpty()) {
 			Object o = this.dynamicMap.get(Costanti.MAP_SOGGETTO_PROPRIETARIO_APPLICATIVO_TOKEN_CONFIG_PROPERTY);
-			if(o!=null && o instanceof Map<?, ?>) {
+			if(o instanceof Map<?, ?>) {
 				this.mapTokenClientOrganizationConfig = (Map<String, String>) o;
 			}
 		}
@@ -260,7 +263,7 @@ public class DynamicConfig {
 		
 		if(this.dynamicMap!=null && !this.dynamicMap.isEmpty()) {
 			Object o = this.dynamicMap.get(Costanti.MAP_APPLICATIVO_TOKEN);
-			if(o!=null && o instanceof IDServizioApplicativo) {
+			if(o instanceof IDServizioApplicativo) {
 				this.tokenTokenClientApplicationId = (IDServizioApplicativo) o;
 				this.tokenTokenClientOrganizationId = this.tokenTokenClientApplicationId.getIdSoggettoProprietario();
 			}
@@ -276,7 +279,7 @@ public class DynamicConfig {
 		}
 		if(this.dynamicMap!=null && !this.dynamicMap.isEmpty()) {
 			Object o = this.dynamicMap.get(Costanti.MAP_APPLICATIVO_TOKEN_CONFIG_PROPERTY);
-			if(o!=null && o instanceof Map<?, ?>) {
+			if(o instanceof Map<?, ?>) {
 				this.mapTokenClientApplicationConfig = (Map<String, String>) o;
 			}
 		}
@@ -290,27 +293,27 @@ public class DynamicConfig {
 	
 	// metodi diretti
 	
-	public String getApi(String pName) throws DynamicException {
+	public String getApi(String pName) {
 		return this.getValue(getMapConfig(), pName);
 	}
 	
-	public String getProviderOrganization(String pName) throws DynamicException {
+	public String getProviderOrganization(String pName) {
 		return this.getValue(getMapProviderOrganizationConfig(), pName);
 	}
 	
-	public String getClientApplication(String pName) throws DynamicException {
+	public String getClientApplication(String pName) {
 		return this.getValue(getMapClientApplicationConfig(), pName);
 	}
 	
-	public String getClientOrganization(String pName) throws DynamicException {
+	public String getClientOrganization(String pName) {
 		return this.getValue(getMapClientOrganizationConfig(), pName);
 	}
 	
-	public String getTokenClientApplication(String pName) throws DynamicException {
+	public String getTokenClientApplication(String pName) {
 		return this.getValue(getMapTokenClientApplicationConfig(), pName);
 	}
 	
-	public String getTokenClientOrganization(String pName) throws DynamicException {
+	public String getTokenClientOrganization(String pName) {
 		return this.getValue(getMapTokenClientOrganizationConfig(), pName);
 	}
 	
@@ -320,47 +323,47 @@ public class DynamicConfig {
 	
 	// ** applicativo client **
 	
-	public String apiSearchByClientApplication(String pNameParam) throws DynamicException {
+	public String apiSearchByClientApplication(String pNameParam) {
 		
-		IDServizioApplicativo clientApplicationId = getClientApplicationId();
+		IDServizioApplicativo clientApplicationIdCheck = getClientApplicationId();
 		
 		// 1. Cerco nell'api con nome '<clientOrganizationName>.<clientApplicationName>.<pName>'
 		// 2. Cerco nella fruizione con nome '<clientApplicationName>.<pName>'
 		// 3. Cerco nella fruizione con nome '<clientOrganizationName>.<pName>'
 		// 4. Proprietà di default
 		
-		return apiSearchByClientApplication(pNameParam, clientApplicationId);
+		return apiSearchByClientApplication(pNameParam, clientApplicationIdCheck);
 	}
 	
-	public String clientApplicationSearch(String pNameParam) throws DynamicException {
+	public String clientApplicationSearch(String pNameParam) {
 		
-		Map<String, String> mapClientApplicationConfig = getMapClientApplicationConfig();
+		Map<String, String> mapClientApplicationConfigCheck = getMapClientApplicationConfig();
 		
 		// 1. Cerco nell'applicativo con nome '<nomeErogatore>.<nomeApiImpl>.v<versioneApiImpl>.<pName>'
 		// 2. Cerco nell'applicativo con nome '<nomeApiImpl>.v<nomeApiImpl>.<pName>'
 		// 3. Cerco nell'applicativo con nome '<nomeErogatore>.<pName>'
 		// 4. Proprietà di default <pName>
 		
-		return searchByAPI(pNameParam, mapClientApplicationConfig);
+		return searchByAPI(pNameParam, mapClientApplicationConfigCheck);
 	}
 	
-	public String clientOrganizationSearch(String pNameParam) throws DynamicException {
+	public String clientOrganizationSearch(String pNameParam) {
 		
-		Map<String, String> mapClientOrganizationConfig = getMapClientOrganizationConfig();
+		Map<String, String> mapClientOrganizationConfigCheck = getMapClientOrganizationConfig();
 		
 		// 1. Cerco nel soggetto dell'applicativo con nome '<nomeErogatore>.<nomeApiImpl>.v<versioneApiImpl>.<pName>'
 		// 2. Cerco nel soggetto dell'applicativo con nome '<nomeApiImpl>.v<nomeApiImpl>.<pName>'
 		// 3. Cerco nel soggetto dell'applicativo con nome '<nomeErogatore>.<pName>'
 		// 4. Proprietà di default <pName>
 		
-		return searchByAPI(pNameParam, mapClientOrganizationConfig);
+		return searchByAPI(pNameParam, mapClientOrganizationConfigCheck);
 		
 	}
 	
 	
 	// ** applicativo token client **
 	
-	public String apiSearchByTokenClientApplication(String pNameParam) throws DynamicException {
+	public String apiSearchByTokenClientApplication(String pNameParam) {
 		
 		IDServizioApplicativo tokenClientApplicationId = getTokenClientApplicationId();
 		
@@ -372,42 +375,42 @@ public class DynamicConfig {
 		return apiSearchByClientApplication(pNameParam, tokenClientApplicationId);
 	}
 	
-	public String tokenClientApplicationSearch(String pNameParam) throws DynamicException {
+	public String tokenClientApplicationSearch(String pNameParam) {
 		
-		Map<String, String> mapTokenClientApplicationConfig = getMapTokenClientApplicationConfig();
+		Map<String, String> mapTokenClientApplicationConfigCheck = getMapTokenClientApplicationConfig();
 		
 		// 1. Cerco nell'applicativo con nome '<nomeErogatore>.<nomeApiImpl>.v<versioneApiImpl>.<pName>'
 		// 2. Cerco nell'applicativo con nome '<nomeApiImpl>.v<nomeApiImpl>.<pName>'
 		// 3. Cerco nell'applicativo con nome '<nomeErogatore>.<pName>'
 		// 4. Proprietà di default <pName>
 		
-		return searchByAPI(pNameParam, mapTokenClientApplicationConfig);
+		return searchByAPI(pNameParam, mapTokenClientApplicationConfigCheck);
 	}
 	
-	public String tokenClientOrganizationSearch(String pNameParam) throws DynamicException {
+	public String tokenClientOrganizationSearch(String pNameParam) {
 		
-		Map<String, String> mapTokenClientOrganizationConfig = getMapTokenClientOrganizationConfig();
+		Map<String, String> mapTokenClientOrganizationConfigCheck = getMapTokenClientOrganizationConfig();
 		
 		// 1. Cerco nel soggetto dell'applicativo con nome '<nomeErogatore>.<nomeApiImpl>.v<versioneApiImpl>.<pName>'
 		// 2. Cerco nel soggetto dell'applicativo con nome '<nomeApiImpl>.v<nomeApiImpl>.<pName>'
 		// 3. Cerco nel soggetto dell'applicativo con nome '<nomeErogatore>.<pName>'
 		// 4. Proprietà di default <pName>
 		
-		return searchByAPI(pNameParam, mapTokenClientOrganizationConfig);
+		return searchByAPI(pNameParam, mapTokenClientOrganizationConfigCheck);
 		
 	}
 	
 	
 	// ** provider **
 	
-	public String providerSearch(String pNameParam) throws DynamicException {
+	public String providerSearch(String pNameParam) {
 		
-		Map<String, String> mapProviderOrganizationConfig = getMapProviderOrganizationConfig();
+		Map<String, String> mapProviderOrganizationConfigCheck = getMapProviderOrganizationConfig();
 		
 		// 1. Cerco nel soggetto erogatore con nome '<nomeApiImpl>.v<nomeApiImpl>.<pName>'
 		// 2. Proprietà di default <pName>
 		
-		return searchByAPIwithoutProvider(pNameParam, mapProviderOrganizationConfig);
+		return searchByAPIwithoutProvider(pNameParam, mapProviderOrganizationConfigCheck);
 		
 	}
 	
@@ -415,15 +418,15 @@ public class DynamicConfig {
 	
 	// Utility
 	
-	private String apiSearchByClientApplication(String pNameParam, IDServizioApplicativo idSA) throws DynamicException {
+	private String apiSearchByClientApplication(String pNameParam, IDServizioApplicativo idSA) {
 		
-		Map<String, String> mapConfig = getMapConfig();
+		Map<String, String> mapConfigCheck = getMapConfig();
 		
 		// 1. Cerco nell'api con nome '<clientOrganizationName>.<tokenClientApplicationName>.<pName>'
 		if(idSA!=null && idSA.getNome()!=null && 
 				idSA.getIdSoggettoProprietario()!=null && idSA.getIdSoggettoProprietario().getNome()!=null) {
 			String pName = idSA.getIdSoggettoProprietario().getNome()+"."+idSA.getNome()+"."+pNameParam;
-			String v = this.getValue(mapConfig, pName);
+			String v = this.getValue(mapConfigCheck, pName);
 			if(v!=null) {
 				return v;
 			}
@@ -432,7 +435,7 @@ public class DynamicConfig {
 		// 2. Cerco nella fruizione con nome '<clientApplicationName>.<pName>'
 		if(idSA!=null && idSA.getNome()!=null) {
 			String pName = idSA.getNome()+"."+pNameParam;
-			String v = this.getValue(mapConfig, pName);
+			String v = this.getValue(mapConfigCheck, pName);
 			if(v!=null) {
 				return v;
 			}
@@ -442,24 +445,24 @@ public class DynamicConfig {
 		if(idSA!=null && 
 				idSA.getIdSoggettoProprietario()!=null && idSA.getIdSoggettoProprietario().getNome()!=null) {
 			String pName = idSA.getIdSoggettoProprietario().getNome()+"."+pNameParam;
-			String v = this.getValue(mapConfig, pName);
+			String v = this.getValue(mapConfigCheck, pName);
 			if(v!=null) {
 				return v;
 			}
 		}
 				
 		// 4. Proprietà di default <pName>
-		return this.getValue(mapConfig, pNameParam);
+		return this.getValue(mapConfigCheck, pNameParam);
 	}
 	
-	private String searchByAPI(String pNameParam, Map<String, String> map) throws DynamicException {
+	private String searchByAPI(String pNameParam, Map<String, String> map) {
 		
-		IDServizio configId = this.getConfigId();
+		IDServizio configIdCheck = this.getConfigId();
 		
 		// 1. Cerco con nome '<nomeErogatore>.<nomeApiImpl>.v<versioneApiImpl>.<pName>'
-		if(configId!=null && configId.getNome()!=null && configId.getVersione()!=null && 
-				configId.getSoggettoErogatore()!=null && configId.getSoggettoErogatore().getNome()!=null) {
-			String pName = configId.getSoggettoErogatore().getNome() +"." + configId.getNome() + ".v"+configId.getVersione()+"."+pNameParam;
+		if(configIdCheck!=null && configIdCheck.getNome()!=null && configIdCheck.getVersione()!=null && 
+				configIdCheck.getSoggettoErogatore()!=null && configIdCheck.getSoggettoErogatore().getNome()!=null) {
+			String pName = configIdCheck.getSoggettoErogatore().getNome() +"." + configIdCheck.getNome() + ".v"+configIdCheck.getVersione()+"."+pNameParam;
 			String v = this.getValue(map, pName);
 			if(v!=null) {
 				return v;
@@ -467,8 +470,8 @@ public class DynamicConfig {
 		}
 		
 		// 2. Cerco con nome '<nomeApiImpl>.v<nomeApiImpl>.<pName>'
-		if(configId!=null && configId.getNome()!=null && configId.getVersione()!=null) {
-			String pName = configId.getNome() + ".v"+configId.getVersione()+"."+pNameParam;
+		if(configIdCheck!=null && configIdCheck.getNome()!=null && configIdCheck.getVersione()!=null) {
+			String pName = configIdCheck.getNome() + ".v"+configIdCheck.getVersione()+"."+pNameParam;
 			String v = this.getValue(map, pName);
 			if(v!=null) {
 				return v;
@@ -476,9 +479,9 @@ public class DynamicConfig {
 		}
 		
 		// 3. Cerco con nome '<nomeErogatore>.<pName>'
-		if(configId!=null && 
-				configId.getSoggettoErogatore()!=null && configId.getSoggettoErogatore().getNome()!=null) {
-			String pName = configId.getSoggettoErogatore().getNome() +"." + pNameParam;
+		if(configIdCheck!=null && 
+				configIdCheck.getSoggettoErogatore()!=null && configIdCheck.getSoggettoErogatore().getNome()!=null) {
+			String pName = configIdCheck.getSoggettoErogatore().getNome() +"." + pNameParam;
 			String v = this.getValue(map, pName);
 			if(v!=null) {
 				return v;
@@ -489,13 +492,13 @@ public class DynamicConfig {
 		return this.getValue(map, pNameParam);
 	}
 	
-	private String searchByAPIwithoutProvider(String pNameParam, Map<String, String> map) throws DynamicException {
+	private String searchByAPIwithoutProvider(String pNameParam, Map<String, String> map) {
 		
-		IDServizio configId = this.getConfigId();
+		IDServizio configIdCheck = this.getConfigId();
 		
 		// 1. Cerco con nome '<nomeApiImpl>.v<nomeApiImpl>.<pName>'
-		if(configId!=null && configId.getNome()!=null && configId.getVersione()!=null) {
-			String pName = configId.getNome() + ".v"+configId.getVersione()+"."+pNameParam;
+		if(configIdCheck!=null && configIdCheck.getNome()!=null && configIdCheck.getVersione()!=null) {
+			String pName = configIdCheck.getNome() + ".v"+configIdCheck.getVersione()+"."+pNameParam;
 			String v = this.getValue(map, pName);
 			if(v!=null) {
 				return v;
@@ -508,7 +511,8 @@ public class DynamicConfig {
 	
 	private String getValue(Map<String, String> map, String pName) {
 		if(map!=null && !map.isEmpty()) {
-			for (String name : map.keySet()) {
+			for (Map.Entry<String,String> entry : map.entrySet()) {
+				String name = entry.getKey();
 				if(name.equals(pName)) {
 					return map.get(name);
 				}

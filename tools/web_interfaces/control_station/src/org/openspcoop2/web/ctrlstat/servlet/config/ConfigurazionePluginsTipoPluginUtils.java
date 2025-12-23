@@ -81,6 +81,8 @@ public class ConfigurazionePluginsTipoPluginUtils {
 		
 		valori.add(TipoPlugin.TOKEN_VALIDAZIONE.toString());
 		
+		valori.add(TipoPlugin.DPOP_VALIDAZIONE.toString());
+		
 		valori.add(TipoPlugin.TOKEN_NEGOZIAZIONE.toString());
 		
 		valori.add(TipoPlugin.ATTRIBUTE_AUTHORITY.toString());
@@ -144,6 +146,8 @@ public class ConfigurazionePluginsTipoPluginUtils {
 			return ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_CLASSI_PLUGIN_SELEZIONATE_TOKEN_DYNAMIC_DISCOVERY;
 		case TOKEN_VALIDAZIONE:
 			return ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_CLASSI_PLUGIN_SELEZIONATE_TOKEN_VALIDAZIONE;
+		case DPOP_VALIDAZIONE:
+			return ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_CLASSI_PLUGIN_SELEZIONATE_DPOP_VALIDAZIONE;
 		case TOKEN_NEGOZIAZIONE:
 			return ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_CLASSI_PLUGIN_SELEZIONATE_TOKEN_NEGOZIAZIONE;
 		case ATTRIBUTE_AUTHORITY:
@@ -260,6 +264,7 @@ public class ConfigurazionePluginsTipoPluginUtils {
 			case TRANSAZIONE:
 			case TOKEN_DYNAMIC_DISCOVERY:
 			case TOKEN_VALIDAZIONE:
+			case DPOP_VALIDAZIONE:
 			case TOKEN_NEGOZIAZIONE:
 			case ATTRIBUTE_AUTHORITY:
 				return null;
@@ -327,6 +332,7 @@ public class ConfigurazionePluginsTipoPluginUtils {
 			case TRANSAZIONE:
 			case TOKEN_DYNAMIC_DISCOVERY:
 			case TOKEN_VALIDAZIONE:
+			case DPOP_VALIDAZIONE:
 			case TOKEN_NEGOZIAZIONE:
 			case ATTRIBUTE_AUTHORITY:
 				break;
@@ -536,6 +542,10 @@ public class ConfigurazionePluginsTipoPluginUtils {
 			info.setHeaderBody(infoSingola);
 			listBody.add(org.openspcoop2.pdd.core.token.parser.ITokenParser.class.getName());
 			break;
+		case DPOP_VALIDAZIONE:
+			info.setHeaderBody(infoSingola);
+			listBody.add(org.openspcoop2.pdd.core.token.parser.IDPoPParser.class.getName());
+			break;
 		case TOKEN_NEGOZIAZIONE:
 			info.setHeaderBody(infoSingola);
 			listBody.add(org.openspcoop2.pdd.core.token.parser.INegoziazioneTokenParser.class.getName());
@@ -635,6 +645,7 @@ public class ConfigurazionePluginsTipoPluginUtils {
 			case TRANSAZIONE:
 			case TOKEN_DYNAMIC_DISCOVERY:
 			case TOKEN_VALIDAZIONE:
+			case DPOP_VALIDAZIONE:
 			case TOKEN_NEGOZIAZIONE:
 			case ATTRIBUTE_AUTHORITY:
 				break;
@@ -669,6 +680,7 @@ public class ConfigurazionePluginsTipoPluginUtils {
 			case TRANSAZIONE:
 			case TOKEN_DYNAMIC_DISCOVERY:
 			case TOKEN_VALIDAZIONE:
+			case DPOP_VALIDAZIONE:
 			case TOKEN_NEGOZIAZIONE:
 			case ATTRIBUTE_AUTHORITY:
 				return null;
@@ -732,6 +744,7 @@ public class ConfigurazionePluginsTipoPluginUtils {
 		case TRANSAZIONE:
 		case TOKEN_DYNAMIC_DISCOVERY:
 		case TOKEN_VALIDAZIONE:
+		case DPOP_VALIDAZIONE:
 		case TOKEN_NEGOZIAZIONE:
 		case ATTRIBUTE_AUTHORITY:
 			break;

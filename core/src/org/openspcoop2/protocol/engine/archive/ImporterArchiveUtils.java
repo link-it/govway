@@ -4071,6 +4071,7 @@ public class ImporterArchiveUtils {
 				TipoPlugin tipoPlugin = null;
 				if(tokenValidazione) {
 					tokenName.add(CostantiConfigurazione.POLICY_VALIDAZIONE_CLAIMS_PARSER_PLUGIN_TYPE);
+					tokenName.add(CostantiConfigurazione.POLICY_VALIDAZIONE_DPOP_CLAIMS_PARSER_PLUGIN_TYPE);
 					tokenName.add(CostantiConfigurazione.POLICY_INTROSPECTION_CLAIMS_PARSER_PLUGIN_TYPE);
 					tokenName.add(CostantiConfigurazione.POLICY_USER_INFO_CLAIMS_PARSER_PLUGIN_TYPE);
 					tipoPlugin = TipoPlugin.TOKEN_VALIDAZIONE;

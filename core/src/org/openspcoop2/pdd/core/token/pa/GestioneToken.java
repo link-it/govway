@@ -74,9 +74,25 @@ public class GestioneToken {
     	}
     	
     	return esito;
-    	
+
     }
-    
+
+    public EsitoPresenzaDPoPPortaApplicativa verificaPresenzaDPoP(DatiInvocazionePortaApplicativa datiInvocazione) {
+
+    	EsitoPresenzaDPoPPortaApplicativa esito = (EsitoPresenzaDPoPPortaApplicativa) GestoreToken.verificaPostazioneDPoP(datiInvocazione, GestoreToken.PORTA_APPLICATIVA);
+
+    	if(esito.getEccezioneProcessamento()!=null) {
+    		esito.setErroreCooperazione(ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreCooperazione());
+    	}
+    	else if(!esito.isPresente() &&
+    		esito.getErrorMessage()==null) {
+    		esito.setErroreCooperazione(ErroriCooperazione.TOKEN_NON_PRESENTE.getErroreCooperazione());
+    	}
+
+    	return esito;
+
+    }
+
     public EsitoDynamicDiscoveryPortaApplicativa dynamicDiscovery(Busta busta, DatiInvocazionePortaApplicativa datiInvocazione, EsitoPresenzaToken token) throws TokenException {
     	try {
         	
@@ -168,7 +184,31 @@ public class GestioneToken {
     		throw new TokenException(e.getMessage(),e); // errore di processamento
     	}
 	}
-	
+
+	public EsitoValidazioneDPoPPortaApplicativa validazioneDPoP(Busta busta, DatiInvocazionePortaApplicativa datiInvocazione,
+			EsitoPresenzaDPoPPortaApplicativa esitoPresenzaDPoP, EsitoGestioneToken esitoGestioneToken, String accessToken) throws TokenException {
+		try {
+
+			EsitoValidazioneDPoPPortaApplicativa esito = (EsitoValidazioneDPoPPortaApplicativa) GestoreToken.validazioneDPoP(this.log, datiInvocazione,
+					this.pddContext, this.protocolFactory,
+					esitoPresenzaDPoP, esitoGestioneToken, accessToken, GestoreToken.PORTA_APPLICATIVA,
+					busta, getDominio(datiInvocazione), getServizio(datiInvocazione));
+
+			if(esito.getEccezioneProcessamento()!=null) {
+				esito.setErroreCooperazione(ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreCooperazione());
+			}
+			else if(!esito.isValido() &&
+				esito.getErrorMessage()==null) {
+				esito.setErroreCooperazione(ErroriCooperazione.TOKEN_NON_VALIDO.getErroreCooperazione());
+			}
+
+			return esito;
+
+		}catch(Exception e) {
+			throw new TokenException(e.getMessage(),e); // errore di processamento
+		}
+	}
+
 	public void forwardToken(AbstractDatiInvocazione datiInvocazione, EsitoPresenzaTokenPortaApplicativa esitoPresenzaToken,
 			EsitoGestioneToken esitoValidazioneJWT, EsitoGestioneToken esitoIntrospection, EsitoGestioneToken esitoUserInfo,
 			InformazioniToken informazioniTokenNormalizzate,
@@ -187,7 +227,7 @@ public class GestioneToken {
     	}
 	}
 	
-	private IDSoggetto getDominio(DatiInvocazionePortaApplicativa datiInvocazione) {
+	public static IDSoggetto getDominio(DatiInvocazionePortaApplicativa datiInvocazione) {
 		IDSoggetto soggetto = null;
 		if(datiInvocazione.getPa()!=null) {
 			soggetto = new IDSoggetto(datiInvocazione.getPa().getTipoSoggettoProprietario(), datiInvocazione.getPa().getNomeSoggettoProprietario());
@@ -197,7 +237,7 @@ public class GestioneToken {
 		}
 		return soggetto;
 	}
-	private IDServizio getServizio(DatiInvocazionePortaApplicativa datiInvocazione) throws DriverRegistroServiziException {
+	public static IDServizio getServizio(DatiInvocazionePortaApplicativa datiInvocazione) throws DriverRegistroServiziException {
 		IDServizio servizio = null;
 		if(datiInvocazione.getPa()!=null) {
 			servizio = IDServizioFactory.getInstance().getIDServizioFromValues(datiInvocazione.getPa().getServizio().getTipo(), datiInvocazione.getPa().getServizio().getNome(), 

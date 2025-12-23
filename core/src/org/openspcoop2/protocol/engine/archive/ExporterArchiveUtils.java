@@ -857,7 +857,7 @@ public class ExporterArchiveUtils {
 								}
 							}
 						}
-						else if(CostantiConfigurazione.POLICY_VALIDAZIONE_CLAIMS_PARSER_TYPE.equals(p.getNome()) && 
+						else if(CostantiConfigurazione.POLICY_VALIDAZIONE_CLAIMS_PARSER_TYPE.equals(p.getNome()) &&
 								CostantiConfigurazione.POLICY_VALIDAZIONE_CLAIMS_PARSER_TYPE_CUSTOM.equals(p.getValore())) {
 							for (int j = 0; j < policy.sizePropertyList(); j++) {
 								Property pJ = policy.getProperty(j);
@@ -866,7 +866,20 @@ public class ExporterArchiveUtils {
 										ArchiveCascadeConfiguration cascadeConfigPlugin = new ArchiveCascadeConfiguration();
 										cascadeConfigPlugin.setCascadePluginConfigurazione(true);
 										readPlugin_classe(archive, TipoPlugin.TOKEN_VALIDAZIONE.getValue(), pJ.getValore(), cascadeConfigPlugin, provenienza);
-									}catch(DriverConfigurazioneNotFound notFound) {}		
+									}catch(DriverConfigurazioneNotFound notFound) {}
+								}
+							}
+						}
+						else if(CostantiConfigurazione.POLICY_VALIDAZIONE_DPOP_CLAIMS_PARSER_TYPE.equals(p.getNome()) &&
+								CostantiConfigurazione.POLICY_VALIDAZIONE_DPOP_CLAIMS_PARSER_TYPE_CUSTOM.equals(p.getValore())) {
+							for (int j = 0; j < policy.sizePropertyList(); j++) {
+								Property pJ = policy.getProperty(j);
+								if(CostantiConfigurazione.POLICY_VALIDAZIONE_DPOP_CLAIMS_PARSER_PLUGIN_TYPE.equals(pJ.getNome())) {
+									try {
+										ArchiveCascadeConfiguration cascadeConfigPlugin = new ArchiveCascadeConfiguration();
+										cascadeConfigPlugin.setCascadePluginConfigurazione(true);
+										readPlugin_classe(archive, TipoPlugin.DPOP_VALIDAZIONE.getValue(), pJ.getValore(), cascadeConfigPlugin, provenienza);
+									}catch(DriverConfigurazioneNotFound notFound) {}
 								}
 							}
 						}

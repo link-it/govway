@@ -75,9 +75,26 @@ public class GestioneToken {
     	}
     	
     	return esito;
-    	
+
     }
-    
+
+    public EsitoPresenzaDPoPPortaDelegata verificaPresenzaDPoP(DatiInvocazionePortaDelegata datiInvocazione) {
+
+    	EsitoPresenzaDPoPPortaDelegata esito = (EsitoPresenzaDPoPPortaDelegata) GestoreToken.verificaPostazioneDPoP(datiInvocazione, GestoreToken.PORTA_DELEGATA);
+
+    	if(esito.getEccezioneProcessamento()!=null) {
+    		esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_560_GESTIONE_TOKEN));
+    	}
+    	else if(!esito.isPresente() &&
+    		esito.getErrorMessage()==null) {
+    		esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_443_TOKEN_NON_PRESENTE.getErroreIntegrazione());
+    	}
+
+    	return esito;
+
+    }
+
     public EsitoDynamicDiscoveryPortaDelegata dynamicDiscovery(DatiInvocazionePortaDelegata datiInvocazione, EsitoPresenzaToken token) throws TokenException {
     	try {
         	
@@ -189,7 +206,36 @@ public class GestioneToken {
     		throw new TokenException(e.getMessage(),e); // errore di processamento
     	}
 	}
-	
+
+	public EsitoValidazioneDPoPPortaDelegata validazioneDPoP(DatiInvocazionePortaDelegata datiInvocazione,
+			EsitoPresenzaDPoPPortaDelegata esitoPresenzaDPoP, EsitoGestioneToken esitoGestioneToken, String accessToken) throws TokenException {
+		try {
+
+			IDSoggetto soggettoFruitore = getDominio(datiInvocazione);
+			IDServizio idServizio = getServizio(datiInvocazione);
+			Busta busta = getBusta(datiInvocazione, soggettoFruitore, idServizio);
+
+			EsitoValidazioneDPoPPortaDelegata esito = (EsitoValidazioneDPoPPortaDelegata) GestoreToken.validazioneDPoP(this.log, datiInvocazione,
+					this.pddContext, this.protocolFactory,
+					esitoPresenzaDPoP, esitoGestioneToken, accessToken, GestoreToken.PORTA_DELEGATA,
+					busta, soggettoFruitore, idServizio);
+
+			if(esito.getEccezioneProcessamento()!=null) {
+				esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_560_GESTIONE_TOKEN));
+			}
+			else if(!esito.isValido() &&
+				esito.getErrorMessage()==null) {
+				esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_444_TOKEN_NON_VALIDO.getErroreIntegrazione());
+			}
+
+			return esito;
+
+		}catch(Exception e) {
+			throw new TokenException(e.getMessage(),e); // errore di processamento
+		}
+	}
+
 	public void forwardToken(DatiInvocazionePortaDelegata datiInvocazione, EsitoPresenzaTokenPortaDelegata esitoPresenzaToken,
 			EsitoGestioneToken esitoValidazioneJWT, EsitoGestioneToken esitoIntrospection, EsitoGestioneToken esitoUserInfo,
 			InformazioniToken informazioniTokenNormalizzate) throws TokenException {
@@ -211,14 +257,14 @@ public class GestioneToken {
     	}
 	}
 	
-	private IDSoggetto getDominio(DatiInvocazionePortaDelegata datiInvocazione) {
+	public static IDSoggetto getDominio(DatiInvocazionePortaDelegata datiInvocazione) {
 		IDSoggetto soggetto = null;
 		if(datiInvocazione.getPd()!=null) {
 			soggetto = new IDSoggetto(datiInvocazione.getPd().getTipoSoggettoProprietario(), datiInvocazione.getPd().getNomeSoggettoProprietario());
 		}
 		return soggetto;
 	}
-	private IDServizio getServizio(DatiInvocazionePortaDelegata datiInvocazione) throws DriverRegistroServiziException {
+	public static IDServizio getServizio(DatiInvocazionePortaDelegata datiInvocazione) throws DriverRegistroServiziException {
 		IDServizio servizio = null;
 		if(datiInvocazione.getPd()!=null) {
 			servizio = IDServizioFactory.getInstance().getIDServizioFromValues(datiInvocazione.getPd().getServizio().getTipo(), datiInvocazione.getPd().getServizio().getNome(), 

@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.cxf.common.util.Base64UrlUtility;
 import org.apache.cxf.rs.security.jose.common.KeyManagementUtils;
@@ -69,6 +70,8 @@ public class JwtHeaders {
 	boolean x509IncludeCertSha256 = false;
 	private URI jwkUrl;
 	private JsonWebKey jwKey;
+	// For DPoP: JWK as raw Map without metadata (bypasses CXF JwkUtils.includeCertChain that adds alg)
+	private Map<String,Object> jwKeyRaw;
 	private HashMap<String, String> extensions = new HashMap<>();
 	
 	public void setType(String type) {
@@ -106,6 +109,9 @@ public class JwtHeaders {
 	}
 	public void setJwKey(JsonWebKeys jsonWebKeys, String alias) throws UtilsException {
 		this.jwKey = JsonUtils.readKey(jsonWebKeys, alias);
+	}
+	public void setJwKeyRaw(Map<String,Object> jwKeyRaw) {
+		this.jwKeyRaw = jwKeyRaw;
 	}
 	public void addExtension(String hdr, String value) {
 		this.extensions.put(hdr, value);
@@ -182,7 +188,7 @@ public class JwtHeaders {
 		if(this.jwkUrl!=null) {
 			list.add(JWT_HDR_JKU);
 		}
-		if(this.jwKey!=null) {
+		if(this.jwKey!=null || this.jwKeyRaw!=null) {
 			list.add(JWT_HDR_JWK);
 		}
 		if(this.extensions!=null && !this.extensions.isEmpty()) {
@@ -272,7 +278,13 @@ public class JwtHeaders {
 				hdrs.setJsonWebKeysUrl(this.jwkUrl.toString());
 			}
 		}
-		if(this.jwKey!=null) {
+		if(this.jwKeyRaw!=null) {
+			// DPoP: Use raw Map to bypass CXF JwkUtils.includeCertChain that adds metadata (alg, etc.)
+			if(!hdrs.containsHeader(JWT_HDR_JWK) || forceOverride) {
+				hdrs.setHeader(JWT_HDR_JWK, this.jwKeyRaw);
+			}
+		}
+		else if(this.jwKey!=null) {
 			if(!hdrs.containsHeader(JWT_HDR_JWK) || forceOverride) {
 				JwkUtils.includeCertChain(this.jwKey, hdrs, algorithm);
 				JwkUtils.includePublicKey(this.jwKey, hdrs, algorithm);

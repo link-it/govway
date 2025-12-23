@@ -2324,6 +2324,18 @@ public class Info {
 		return correctValue(v, defaultValue);
 	}
 	
+	public java.lang.String getRetrievedTokenRequestDPoP() {
+		return getRetrievedTokenRequestDPoP(null);
+	}
+	public java.lang.String getRetrievedTokenRequestDPoP(String defaultValue) {
+		String v = null;
+		if(this.informazioniNegoziazioneToken!=null && this.informazioniNegoziazioneToken.getRequest()!=null 
+				&& this.informazioniNegoziazioneToken.getRequest().getDpop()!=null) {
+			v = this.informazioniNegoziazioneToken.getRequest().getDpop().getToken();
+		}	
+		return correctValue(v, defaultValue);
+	}
+	
 	public java.lang.String getRetrievedTokenRequestClientId() {
 		return getRetrievedTokenRequestClientId(null);
 	}
@@ -2364,6 +2376,17 @@ public class Info {
 		String v = null;
 		if(this.informazioniNegoziazioneToken!=null && this.informazioniNegoziazioneToken.getRequest()!=null) {
 			v = this.informazioniNegoziazioneToken.getRequest().getEndpoint();
+		}	
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getRetrievedTokenDPoPBackend() {
+		return getRetrievedTokenDPoPBackend(null);
+	}
+	public java.lang.String getRetrievedTokenDPoPBackend(String defaultValue) {
+		String v = null;
+		if(this.informazioniNegoziazioneToken!=null && this.informazioniNegoziazioneToken.getDpopBackend()!=null) {
+			v = this.informazioniNegoziazioneToken.getRequest().getDpop().getToken();
 		}	
 		return correctValue(v, defaultValue);
 	}

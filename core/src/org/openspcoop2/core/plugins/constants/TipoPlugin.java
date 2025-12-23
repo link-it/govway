@@ -66,6 +66,8 @@ public enum TipoPlugin implements IEnumeration , Serializable , Cloneable {
 	TOKEN_DYNAMIC_DISCOVERY ("TOKEN_DYNAMIC_DISCOVERY"),
 	@jakarta.xml.bind.annotation.XmlEnumValue("TOKEN_VALIDAZIONE")
 	TOKEN_VALIDAZIONE ("TOKEN_VALIDAZIONE"),
+	@jakarta.xml.bind.annotation.XmlEnumValue("DPOP_VALIDAZIONE")
+	DPOP_VALIDAZIONE ("DPOP_VALIDAZIONE"),
 	@jakarta.xml.bind.annotation.XmlEnumValue("TOKEN_NEGOZIAZIONE")
 	TOKEN_NEGOZIAZIONE ("TOKEN_NEGOZIAZIONE"),
 	@jakarta.xml.bind.annotation.XmlEnumValue("ATTRIBUTE_AUTHORITY")

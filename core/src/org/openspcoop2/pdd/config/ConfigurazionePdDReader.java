@@ -6188,9 +6188,128 @@ public class ConfigurazionePdDReader {
 		return check;
 	}
 
+	protected CertificateCheck checkCertificatiDpopJwtTokenPolicyNegoziazione(Connection connectionPdD,boolean useCache,
+			String nome, int sogliaWarningGiorni,
+			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+
+		if(connectionPdD!=null) {
+			// nop
+		}
+
+		if(useCache) {
+			throw new DriverConfigurazioneException("Not Implemented");
+		}
+
+		GenericProperties gp = null;
+		IDriverConfigurazioneGet driver = this.configurazionePdD.getDriverConfigurazionePdD();
+		if(driver instanceof DriverConfigurazioneDB) {
+			DriverConfigurazioneDB driverDB = (DriverConfigurazioneDB) driver;
+			gp = driverDB.getGenericProperties(org.openspcoop2.pdd.core.token.Costanti.TIPOLOGIA_RETRIEVE, nome);
+		}
+		else {
+			throw new DriverConfigurazioneException("Not Implemented with driver '"+driver.getClass().getName()+"'");
+		}
+		return checkCertificatiDpopJwtTokenPolicyNegoziazione(gp, sogliaWarningGiorni,
+				addCertificateDetails, separator, newLine,
+				this.logger);
+	}
+	public static final String ID_CONFIGURAZIONE_TOKEN_NEGOZIAZIONE_DPOP_JWT = "Configurazione DPoP";
+	public static CertificateCheck checkCertificatiDpopJwtTokenPolicyNegoziazione(GenericProperties gp, int sogliaWarningGiorni,
+			boolean addCertificateDetails, String separator, String newLine,
+			Logger log) throws DriverConfigurazioneException {
+
+		KeystoreParams keystoreParams = null;
+		try {
+			PolicyNegoziazioneToken policy = TokenUtilities.convertTo(gp);
+			if(!policy.isDpop()) {
+				throw new DriverConfigurazioneException("La configurazione nella policy "+gp.getNome()+" non utilizza la funzionalità DPoP");
+			}
+			// DPoP JWT
+			keystoreParams = TokenUtilities.getDpopKeystoreParams(policy);
+		}catch(Exception t) {
+			throw new DriverConfigurazioneException(t.getMessage(),t);
+		}
+
+		CertificateCheck check = null;
+		boolean classpathSupported = true;
+
+		String storeDetails = null; // per evitare duplicazione
+
+		if(keystoreParams!=null) {
+			try {
+
+				if(Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE.equalsIgnoreCase(keystoreParams.getPath())) {
+					throw new DriverConfigurazioneException("Nella configurazione della policy "+gp.getNome()+" la funzionalità di DPoP utilizza la modalità '"+Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_LABEL+"'; la validazione dei certificati verrà effettuata su ogni singolo applicativo");
+				}
+				if(Costanti.KEYSTORE_TYPE_FRUIZIONE_MODI_VALUE.equalsIgnoreCase(keystoreParams.getPath())) {
+					throw new DriverConfigurazioneException("Nella configurazione della policy "+gp.getNome()+" la funzionalità di DPoP utilizza la modalità '"+Costanti.KEYSTORE_TYPE_FRUIZIONE_MODI_LABEL+"'; la validazione dei certificati verrà effettuata sulla fruizione");
+				}
+
+				if(SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreParams.getType())) {
+					IBYOKUnwrapManager byokUnwrapManager = BYOKUnwrapFactory.getBYOKUnwrapManager(keystoreParams.getByokPolicy(), log);
+
+					check = CertificateUtils.checkKeyPair(classpathSupported, keystoreParams.getPath(), keystoreParams.getKeyPairPublicKeyPath(), keystoreParams.getKeyPassword(), keystoreParams.getKeyPairAlgorithm(),
+							byokUnwrapManager,
+							false, //addCertificateDetails,
+							separator, newLine);
+					if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+						storeDetails = CertificateUtils.toStringKeyPair(keystoreParams,
+								separator, newLine);
+					}
+				}
+				else if(SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreParams.getType())) {
+					IBYOKUnwrapManager byokUnwrapManager = BYOKUnwrapFactory.getBYOKUnwrapManager(keystoreParams.getByokPolicy(), log);
+
+					check = CertificateUtils.checkKeystoreJWKs(classpathSupported, keystoreParams.getPath(), keystoreParams.getKeyAlias(),
+							byokUnwrapManager,
+							false, //addCertificateDetails,
+							separator, newLine);
+					if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+						storeDetails = CertificateUtils.toStringKeystoreJWKs(keystoreParams,
+								separator, newLine);
+					}
+				}
+				else {
+					IBYOKUnwrapManager byokUnwrapManager = BYOKUnwrapFactory.getBYOKUnwrapManager(keystoreParams.getByokPolicy(), log);
+
+					check = CertificateUtils.checkKeyStore(keystoreParams.getPath(), classpathSupported, keystoreParams.getType(),
+							keystoreParams.getPassword(),
+							byokUnwrapManager,
+							keystoreParams.getKeyAlias(), keystoreParams.getKeyPassword(),
+							sogliaWarningGiorni,
+							false, //addCertificateDetails,
+							separator, newLine,
+							log);
+					if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+						storeDetails = CertificateUtils.toStringKeyStore(keystoreParams,
+								separator, newLine);
+					}
+				}
+
+			}catch(Exception t) {
+				throw new DriverConfigurazioneException(t.getMessage(),t);
+			}
+		}
+
+		if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+			String id = ID_CONFIGURAZIONE_TOKEN_NEGOZIAZIONE_DPOP_JWT;
+			if(addCertificateDetails && storeDetails!=null) {
+				id = id + newLine + storeDetails;
+			}
+			check.setConfigurationId(id);
+		}
+
+		if(check==null) {
+			// connettore https con truststore 'all' senza client autentication
+			check = new CertificateCheck();
+			check.setStatoCheck(StatoCheck.OK);
+		}
+
+		return check;
+	}
 
 	protected CertificateCheck checkCertificatiConnettoreHttpsAttributeAuthority(Connection connectionPdD,boolean useCache,
-			String nome, int sogliaWarningGiorni, 
+			String nome, int sogliaWarningGiorni,
 			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
 		
 		if(connectionPdD!=null) {

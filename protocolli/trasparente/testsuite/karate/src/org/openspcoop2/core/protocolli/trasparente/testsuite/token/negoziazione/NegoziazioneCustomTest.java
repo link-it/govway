@@ -125,7 +125,7 @@ public class NegoziazioneCustomTest extends ConfigLoader {
 		
 		NegoziazioneTest._test(logCore, api_negoziazione, "azure", headers,
 				true,
-				"Errore avvenuto durante la consegna HTTP: AccessToken expired",
+				"Errore avvenuto durante la consegna HTTP: Errore durante la negoziazione del token: AccessToken expired",
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"custom\"",
 				"\"client_id\":\"5E29463D-71DA-4FE0-8E69-999B57DB23B0\"",
@@ -586,7 +586,7 @@ public class NegoziazioneCustomTest extends ConfigLoader {
 		
 		NegoziazioneTest._test(logCore, api_negoziazione, "mapping_azure", headers,
 				true,
-				"Errore avvenuto durante la consegna HTTP: AccessToken expired",
+				"Errore avvenuto durante la consegna HTTP: Errore durante la negoziazione del token: AccessToken expired",
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"custom\"",
 				"\"endpoint\":\""+endpoint+"\"",

@@ -408,6 +408,8 @@ Tutte le informazioni sono ritornate in millisecondi. È possibile ottenere le m
 
 - retrievedTokenRequestJwtClientAssertion: asserzione jwt generata durante una negoziazione con grant type 'rfc7523_x509';
 
+- retrievedTokenRequestDPoP: DPoP (Demonstrating Proof-of-Possession) JWT generato durante la negoziazione del token con l'authorization server (RFC 9449);
+
 - retrievedTokenRequestClientId: clientId utilizzato durante la negoziazione del token;
 
 - retrievedTokenRequestClientToken: bearer token utilizzato durante la negoziazione del token;
@@ -415,7 +417,9 @@ Tutte le informazioni sono ritornate in millisecondi. È possibile ottenere le m
 - retrievedTokenRequestUsername: username utilizzato durante una negoziazione del token con grant type 'usernamePassword';
 
 - retrievedTokenRequestUrl: endpoint dell'authorization server.
-	
+
+- retrievedTokenDPoPBackend: DPoP (Demonstrating Proof-of-Possession) JWT generato per la chiamata al backend utilizzando l'access token ottenuto dalla negoziazione (RFC 9449).
+
 **Informazioni specifiche dei Profili di Interoperabilità**
 
 - requestPropertiesKeys: nomi delle proprietà associate alla traccia della richiesta;

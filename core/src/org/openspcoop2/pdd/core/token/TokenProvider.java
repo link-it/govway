@@ -39,8 +39,11 @@ import org.openspcoop2.core.mvc.properties.provider.ProviderInfo;
 import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
 import org.openspcoop2.core.plugins.constants.TipoPlugin;
 import org.openspcoop2.pdd.core.dynamic.DynamicHelperCostanti;
+import org.openspcoop2.pdd.core.token.parser.IDPoPParser;
+import org.openspcoop2.pdd.core.token.parser.IDynamicDiscoveryParser;
 import org.openspcoop2.pdd.core.token.parser.ITokenParser;
 import org.openspcoop2.pdd.core.token.parser.TipologiaClaims;
+import org.openspcoop2.pdd.core.token.parser.TipologiaClaimsDPoP;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.jose.JOSECostanti;
 import org.openspcoop2.security.message.jose.SecurityProvider;
@@ -96,6 +99,7 @@ public class TokenProvider implements IProvider {
 		boolean validazione = TokenUtilities.isValidazioneEnabled(pDefault);
 		boolean introspection = TokenUtilities.isIntrospectionEnabled(pDefault);
 		boolean userInfo = TokenUtilities.isUserInfoEnabled(pDefault);
+		boolean dpopValidation = TokenUtilities.isDPoPValidationEnabled(pDefault);
 		boolean forward = TokenUtilities.isTokenForwardEnabled(pDefault);
 				
 		if(!validazione &&  !introspection && !userInfo && !forward) {
@@ -110,7 +114,11 @@ public class TokenProvider implements IProvider {
 		if(validazione) {
 			validateValidazioneJWT(mapProperties, pDefault, tokenType, dynamicDiscovery);
 		}
-		
+
+		if(dpopValidation) {
+			validateValidazioneDPoP(pDefault);
+		}
+
 		boolean endpointSSL = TokenUtilities.isEnabled(pDefault, Costanti.POLICY_ENDPOINT_HTTPS_STATO);
 		if(endpointSSL) {
 			validateEndpointSsl(mapProperties);
@@ -291,6 +299,60 @@ public class TokenProvider implements IProvider {
 				}
 				if(className.contains(" ")) {
 					throw new ProviderValidationException("Non indicare spazi nella classe del parser dei claims da utilizzare dopo la validazione JWT");
+				}
+			}
+		}
+	}
+	private void validateValidazioneDPoP(Properties pDefault) throws ProviderValidationException {
+
+		String dpopSource = pDefault.getProperty(Costanti.POLICY_DPOP_SOURCE);
+		if(dpopSource==null || "".equals(dpopSource)) {
+			throw new ProviderValidationException("Non è stata indicata la posizione del DPoP token");
+		}
+		if(Costanti.POLICY_DPOP_SOURCE_CUSTOM_HEADER.equals(dpopSource)) {
+			String headerName = pDefault.getProperty(Costanti.POLICY_DPOP_SOURCE_HEADER);
+			if(headerName==null || "".equals(headerName)) {
+				throw new ProviderValidationException("Non è stato indicato il nome dell'header HTTP che contiene il DPoP token");
+			}
+			InputValidationUtils.validateTextAreaInput(headerName, "Validazione DPoP - Header HTTP");
+		}
+		else if(Costanti.POLICY_DPOP_SOURCE_CUSTOM_URL.equals(dpopSource)) {
+			String parameterName = pDefault.getProperty(Costanti.POLICY_DPOP_SOURCE_QUERY_PARAMETER);
+			if(parameterName==null || "".equals(parameterName)) {
+				throw new ProviderValidationException("Non è stato indicato il nome del parametro della URL che contiene il DPoP token");
+			}
+			InputValidationUtils.validateTextAreaInput(parameterName, "Validazione DPoP - Parametro URL");
+		}
+
+		String parserType = pDefault.getProperty(Costanti.POLICY_VALIDAZIONE_DPOP_CLAIMS_PARSER_TYPE);
+		if(parserType==null || "".equals(parserType)) {
+			throw new ProviderValidationException("Non è stato indicato il formato del DPoP token");
+		}
+		try {
+			TipologiaClaimsDPoP tipo = TipologiaClaimsDPoP.valueOf(parserType);
+			if(tipo==null) {
+				throw new ProviderValidationException(SCONOSCIUTO);
+			}
+		}catch(Exception e) {
+			throw new ProviderValidationException(getPrefixParserType(parserType)+", per i claims da utilizzare dopo la validazione DPoP, sconosciuto");
+		}
+		if(TipologiaClaimsDPoP.CUSTOM.name().equals(parserType)) {
+			validateValidazioneDPoPCustomParser(pDefault);
+		}
+	}
+	private void validateValidazioneDPoPCustomParser(Properties pDefault) throws ProviderValidationException {
+		String pluginType = pDefault.getProperty(Costanti.POLICY_VALIDAZIONE_DPOP_CLAIMS_PARSER_PLUGIN_TYPE);
+		if(pluginType!=null && StringUtils.isNotEmpty(pluginType) && CostantiConfigurazione.POLICY_ID_NON_DEFINITA.equals(pluginType)) {
+			String className = pDefault.getProperty(Costanti.POLICY_VALIDAZIONE_DPOP_CLAIMS_PARSER_CLASS_NAME);
+			if(CostantiConfigurazione.POLICY_ID_NON_DEFINITA.equals(className)) {
+				throw new ProviderValidationException("Deve essere selezionato un plugin per il parser dei claims del DPoP token");
+			}
+			else {
+				if(className==null || "".equals(className)) {
+					throw new ProviderValidationException("Non è stata fornita la classe del parser dei claims da utilizzare dopo la validazione DPoP");
+				}
+				if(className.contains(" ")) {
+					throw new ProviderValidationException("Non indicare spazi nella classe del parser dei claims da utilizzare dopo la validazione DPoP");
 				}
 			}
 		}
@@ -1010,6 +1072,9 @@ public class TokenProvider implements IProvider {
 				Costanti.ID_USER_INFO_CUSTOM_PARSER_PLUGIN_CHOICE.equals(id)) {
 			return TokenUtilities.getTokenPluginValues(externalResources, TipoPlugin.TOKEN_VALIDAZIONE);
 		}
+		else if(Costanti.ID_VALIDAZIONE_DPOP_CUSTOM_PARSER_PLUGIN_CHOICE.equals(id)) {
+			return TokenUtilities.getTokenPluginValues(externalResources, TipoPlugin.DPOP_VALIDAZIONE);
+		}
 		return l;
 	}
 	private List<String> getHttpRequestMethodValues() {
@@ -1105,6 +1170,9 @@ public class TokenProvider implements IProvider {
 				||
 				Costanti.ID_USER_INFO_CUSTOM_PARSER_PLUGIN_CHOICE.equals(id)) {
 			return TokenUtilities.getTokenPluginLabels(externalResources, TipoPlugin.TOKEN_VALIDAZIONE);
+		}
+		else if(Costanti.ID_VALIDAZIONE_DPOP_CUSTOM_PARSER_PLUGIN_CHOICE.equals(id)) {
+			return TokenUtilities.getTokenPluginLabels(externalResources, TipoPlugin.DPOP_VALIDAZIONE);
 		}
 		return this.getValues(id); // torno uguale ai valori negli altri casi
 	}
@@ -1293,6 +1361,10 @@ public class TokenProvider implements IProvider {
 			) {
 			return TokenUtilities.dynamicUpdateTokenPluginChoice(externalResources, TipoPlugin.TOKEN_VALIDAZIONE, item, actualValue);
 		}
+		else if(Costanti.ID_VALIDAZIONE_DPOP_CUSTOM_PARSER_PLUGIN_CHOICE.equals(item.getName())
+			) {
+			return TokenUtilities.dynamicUpdateTokenPluginChoice(externalResources, TipoPlugin.DPOP_VALIDAZIONE, item, actualValue);
+		}
 		else if(Costanti.ID_DYNAMIC_DISCOVERY_CUSTOM_PARSER_PLUGIN_CLASSNAME.equals(item.getName())
 			) {
 			return dynamicUpdateTokenDynamicDiscoveryPluginClassName(items, mapNameValue, item, actualValue, externalResources);
@@ -1302,6 +1374,10 @@ public class TokenProvider implements IProvider {
 				Costanti.ID_USER_INFO_CUSTOM_PARSER_PLUGIN_CLASSNAME.equals(item.getName())
 			) {
 			return dynamicUpdateTokenPluginClassName(items, mapNameValue, item, actualValue, externalResources);
+		}
+		else if(Costanti.ID_VALIDAZIONE_DPOP_CUSTOM_PARSER_PLUGIN_CLASSNAME.equals(item.getName())
+			) {
+			return dynamicUpdateDPoPValidazionePluginClassName(items, mapNameValue, item, actualValue, externalResources);
 		}
 		return actualValue;
 	}
@@ -1405,9 +1481,15 @@ public class TokenProvider implements IProvider {
 		else {
 			idChoice = Costanti.ID_USER_INFO_CUSTOM_PARSER_PLUGIN_CHOICE;
 		}
-		return TokenUtilities.dynamicUpdateTokenPluginClassName(externalResources, TipoPlugin.TOKEN_VALIDAZIONE, 
-				items, mapNameValue, item, 
-				idChoice, actualValue);		
+		return TokenUtilities.dynamicUpdateTokenPluginClassName(externalResources, TipoPlugin.TOKEN_VALIDAZIONE,
+				items, mapNameValue, item,
+				idChoice, actualValue);
+	}
+	private String dynamicUpdateDPoPValidazionePluginClassName(List<?> items, Map<String, String> mapNameValue, Item item, String actualValue, ExternalResources externalResources) {
+		String idChoice = Costanti.ID_VALIDAZIONE_DPOP_CUSTOM_PARSER_PLUGIN_CHOICE;
+		return TokenUtilities.dynamicUpdateTokenPluginClassName(externalResources, TipoPlugin.DPOP_VALIDAZIONE,
+				items, mapNameValue, item,
+				idChoice, actualValue);
 	}
 
 	@Override
@@ -1421,7 +1503,21 @@ public class TokenProvider implements IProvider {
 			pInfo.getListBody().add(ITokenParser.class.getName());
 			return pInfo;
 		}
-		
+		else if(Costanti.ID_VALIDAZIONE_DPOP_CUSTOM_PARSER_PLUGIN_CLASSNAME.equals(id)) {
+			ProviderInfo pInfo = new ProviderInfo();
+			pInfo.setHeaderBody(DynamicHelperCostanti.PLUGIN_CLASSNAME_INFO_SINGOLA);
+			pInfo.setListBody(new ArrayList<>());
+			pInfo.getListBody().add(IDPoPParser.class.getName());
+			return pInfo;
+		}
+		else if(Costanti.ID_DYNAMIC_DISCOVERY_CUSTOM_PARSER_PLUGIN_CLASSNAME.equals(id)) {
+			ProviderInfo pInfo = new ProviderInfo();
+			pInfo.setHeaderBody(DynamicHelperCostanti.PLUGIN_CLASSNAME_INFO_SINGOLA);
+			pInfo.setListBody(new ArrayList<>());
+			pInfo.getListBody().add(IDynamicDiscoveryParser.class.getName());
+			return pInfo;
+		}
+
 		return null;
 	}
 }

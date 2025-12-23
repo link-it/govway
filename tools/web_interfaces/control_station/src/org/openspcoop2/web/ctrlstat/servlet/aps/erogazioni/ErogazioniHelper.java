@@ -4064,13 +4064,13 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 					KeystoreParams keystoreParams = null;
 					try {
 						if(policyNegoziazione.isRfc7523x509Grant()) {
-							// JWS Compact   			
+							// JWS Compact
 							keystoreParams = TokenUtilities.getSignedJwtKeystoreParams(policyNegoziazione);
 						}
 					}catch(Exception t) {
 						throw new DriverConfigurazioneException(t.getMessage(),t);
 					}
-					
+
 					boolean riferimentoApplicativoModi = keystoreParams!=null && org.openspcoop2.pdd.core.token.Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE.equalsIgnoreCase(keystoreParams.getPath());
 					boolean riferimentoFruizioneModi = keystoreParams!=null && org.openspcoop2.pdd.core.token.Costanti.KEYSTORE_TYPE_FRUIZIONE_MODI_VALUE.equalsIgnoreCase(keystoreParams.getPath());
 					if(keystoreParams!=null &&
@@ -4078,11 +4078,31 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 							!riferimentoFruizioneModi) {
 						signedJwt = true;
 					}
-					
-					if(https || signedJwt) {
-						StringBuilder sbDetailsWarningTokenPolicyNegoziazioneSecured = new StringBuilder(); 
+
+					boolean dpopJwt = false;
+					KeystoreParams keystoreParamsDpop = null;
+					boolean riferimentoApplicativoModiDpop = false;
+					boolean riferimentoFruizioneModiDpop = false;
+					try {
+						if(policyNegoziazione.isDpop()) {
+							keystoreParamsDpop = TokenUtilities.getDpopKeystoreParams(policyNegoziazione);
+						}
+					}catch(Exception t) {
+						throw new DriverConfigurazioneException(t.getMessage(),t);
+					}
+
+					riferimentoApplicativoModiDpop = keystoreParamsDpop!=null && org.openspcoop2.pdd.core.token.Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE.equalsIgnoreCase(keystoreParamsDpop.getPath());
+					riferimentoFruizioneModiDpop = keystoreParamsDpop!=null && org.openspcoop2.pdd.core.token.Costanti.KEYSTORE_TYPE_FRUIZIONE_MODI_VALUE.equalsIgnoreCase(keystoreParamsDpop.getPath());
+					if(keystoreParamsDpop!=null &&
+							!riferimentoApplicativoModiDpop &&
+							!riferimentoFruizioneModiDpop) {
+						dpopJwt = true;
+					}
+
+					if(https || signedJwt || dpopJwt) {
+						StringBuilder sbDetailsWarningTokenPolicyNegoziazioneSecured = new StringBuilder();
 						certificateChecker.checkTokenPolicyNegoziazione(sbDetailsError, sbDetailsWarningTokenPolicyNegoziazioneSecured,
-							https, signedJwt,
+							https, signedJwt, dpopJwt,
 							gp,
 							sogliaWarningGiorni);
 						if(sbDetailsWarningTokenPolicyNegoziazione.length()<=0 && sbDetailsWarningTokenPolicyNegoziazioneSecured.length()>0) {

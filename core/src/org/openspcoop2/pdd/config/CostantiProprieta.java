@@ -213,12 +213,45 @@ public class CostantiProprieta {
 	public static boolean isTokenValidationClaimsNbfRequired(List<Proprieta> proprieta, boolean defaultValue) {
 		return readBooleanValueWithDefault(proprieta, TOKEN_VALIDATION_CLAIMS_NBF_REQUIRED, defaultValue, TOKEN_VALIDATION_CLAIMS_VALUE_ENABLED, TOKEN_VALIDATION_CLAIMS_VALUE_DISABLED);
 	}
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+	// ****  DPOP VALIDATION *****
+
+	public static final String DPOP_VALIDATION_HTU_PREFIX_URL = "tokenValidation.dpop.htu.prefixUrl";
+	public static final String DPOP_VALIDATION_HTU_BASE_URL = "tokenValidation.dpop.htu.baseUrl";
+
+	public static List<String> getDPoPValidationHtuPrefixUrls(List<Proprieta> proprieta) {
+		List<String> l = null;
+		String v = readValue(proprieta, DPOP_VALIDATION_HTU_PREFIX_URL);
+		if(v==null || StringUtils.isEmpty(v)) {
+			return l;
+		}
+		l = new ArrayList<>();
+		initList(l, v);
+		return l.isEmpty() ? null : l;
+	}
+
+	public static List<String> getDPoPValidationHtuBaseUrls(List<Proprieta> proprieta) {
+		List<String> l = null;
+		String v = readValue(proprieta, DPOP_VALIDATION_HTU_BASE_URL);
+		if(v==null || StringUtils.isEmpty(v)) {
+			return l;
+		}
+		l = new ArrayList<>();
+		initList(l, v);
+		return l.isEmpty() ? null : l;
+	}
+
+
+
+
+
+
+
 	// ****  ATTRIBUTE AUTHORITY *****
 	
 	public static final String ATTRIBUTE_AUTHORITY_VALUE_ENABLED = CertificateValidityCheck.CONFIG_VALUE_ENABLED;

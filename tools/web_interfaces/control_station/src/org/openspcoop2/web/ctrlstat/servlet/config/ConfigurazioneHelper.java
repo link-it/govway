@@ -6549,21 +6549,54 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					}
 				}
 			}
-						
+
+			// DPoP JTI Cache (Anti-Replay)
+			de = newDataElementStyleRuntime();
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CACHE_DPOP_JTI);
+			de.setType(DataElementType.SUBTITLE);
+			dati.add(de);
+
+			String statoDPoPJti = null;
+			try{
+				statoDPoPJti = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdDConfigurazioneSistemaType(alias),
+						this.confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaGestioneToken(alias),
+						this.confCore.getJmxPdDConfigurazioneSistemaNomeMetodoPrintStatsDPoPJtiCaches(alias));
+				if(this.isErroreHttp(statoDPoPJti, "statistiche cache DPoP JTI")){
+					statoDPoPJti = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CACHE_DPOP_JTI_NESSUNA;
+				}
+			}catch(Exception e){
+				this.logError("Errore durante la lettura delle statistiche cache DPoP JTI (jmxResourcePdD): "+e.getMessage(),e);
+				statoDPoPJti = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CACHE_DPOP_JTI_NESSUNA;
+			}
+
+			de = newDataElementStyleRuntime();
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_STATO);
+			if(statoDPoPJti!=null){
+				statoDPoPJti = StringEscapeUtils.escapeHtml4(statoDPoPJti);
+			}
+			de.setValue(statoDPoPJti);
+			de.setLabelAffiancata(false);
+			de.setType(DataElementType.TEXT_AREA_NO_EDIT);
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_DPOP_JTI_STATO);
+			de.setSize(this.getSize());
+			de.setRows(10);
+			de.setCols(80);
+			dati.add(de);
+
 		}
-			
-		
+
+
 		String stato = null;
-				
-		
+
+
 		if(!this.confCore.isClusterAsyncUpdate()) {
-		
+
 			de = newDataElementStyleRuntime();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONI);
 			de.setType(DataElementType.TITLE);
 			de.abilitaRefresh();
 			dati.add(de);
-			
+
 			de = newDataElementStyleRuntime();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_DATABASE);
 			de.setType(DataElementType.SUBTITLE);

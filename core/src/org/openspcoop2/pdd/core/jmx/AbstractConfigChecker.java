@@ -153,6 +153,7 @@ public abstract class AbstractConfigChecker {
 	public abstract String getJmxResourceNomeMetodoCheckCertificatiForwardToJwtTokenPolicyValidazione() throws CoreException;
 	public abstract String getJmxResourceNomeMetodoCheckCertificatiConnettoreHttpsTokenPolicyNegoziazione() throws CoreException;
 	public abstract String getJmxResourceNomeMetodoCheckCertificatiSignedJwtTokenPolicyNegoziazione() throws CoreException;
+	public abstract String getJmxResourceNomeMetodoCheckCertificatiDpopJwtTokenPolicyNegoziazione() throws CoreException;
 	public abstract String getJmxResourceNomeMetodoCheckCertificatiConnettoreHttpsAttributeAuthority() throws CoreException;
 	public abstract String getJmxResourceNomeMetodoCheckCertificatiAttributeAuthorityJwtRichiesta() throws CoreException;
 	public abstract String getJmxResourceNomeMetodoCheckCertificatiAttributeAuthorityJwtRisposta() throws CoreException;
@@ -509,29 +510,37 @@ public abstract class AbstractConfigChecker {
 	
 	
 	public void checkTokenPolicyNegoziazione(StringBuilder sbDetailsError, StringBuilder sbDetailsWarning,
-			boolean https, boolean signedJwt,
+			boolean https, boolean signedJwt, boolean dpopJwt,
 			GenericProperties gp,
 			int sogliaWarningGiorni) throws CoreException {
-		
+
 		StringBuilder sbError = new StringBuilder();
-		
+
 		StringBuilder sbWarning = new StringBuilder();
 		StringBuilder sbWarningSignedJwt = new StringBuilder();
-		
+		StringBuilder sbWarningDpopJwt = new StringBuilder();
+
 		if(https) {
-			checkCertificateGenericProperties(sbError, sbWarning, 
+			checkCertificateGenericProperties(sbError, sbWarning,
 					sogliaWarningGiorni,
 					getJmxResourceNomeMetodoCheckCertificatiConnettoreHttpsTokenPolicyNegoziazione(),
 					gp.getNome());
 		}
 		if(sbError.length()<=0 &&
 			signedJwt) {
-			checkCertificateGenericProperties(sbError, sbWarningSignedJwt, 
+			checkCertificateGenericProperties(sbError, sbWarningSignedJwt,
 					sogliaWarningGiorni,
-					getJmxResourceNomeMetodoCheckCertificatiSignedJwtTokenPolicyNegoziazione(), 
+					getJmxResourceNomeMetodoCheckCertificatiSignedJwtTokenPolicyNegoziazione(),
 					gp.getNome());
 		}
-		
+		if(sbError.length()<=0 &&
+			dpopJwt) {
+			checkCertificateGenericProperties(sbError, sbWarningDpopJwt,
+					sogliaWarningGiorni,
+					getJmxResourceNomeMetodoCheckCertificatiDpopJwtTokenPolicyNegoziazione(),
+					gp.getNome());
+		}
+
 		if(sbError.length()>0) {
 			sbDetailsError.append(sbError.toString());
 		}
@@ -542,8 +551,11 @@ public abstract class AbstractConfigChecker {
 			else if(sbWarningSignedJwt.length()>0) {
 				sbDetailsWarning.append(sbWarningSignedJwt.toString());
 			}
+			else if(sbWarningDpopJwt.length()>0) {
+				sbDetailsWarning.append(sbWarningDpopJwt.toString());
+			}
 		}
-		
+
 	}
 	
 	

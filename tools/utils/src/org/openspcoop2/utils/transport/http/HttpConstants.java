@@ -115,9 +115,15 @@ public class HttpConstants {
 	public static final String AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE = "WWW-Authenticate";
 	public static final String AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE_BASIC_REALM_PREFIX = "Basic realm=\"\"";
 	public static final String AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE_BASIC_REALM_SUFFIX = "\"";
-    public static final String AUTHORIZATION_HEADER_API_KEY = "X-API-KEY";
-    public static final String AUTHORIZATION_HEADER_APP_ID = "X-APP-ID";
-	
+
+	/** Authorization API Key */
+	public static final String AUTHORIZATION_HEADER_API_KEY = "X-API-KEY";
+	public static final String AUTHORIZATION_HEADER_APP_ID = "X-APP-ID";
+
+	/** DPoP (RFC 9449) */
+	public static final String AUTHORIZATION_DPOP = "DPoP";
+	public static final String AUTHORIZATION_PREFIX_DPOP = AUTHORIZATION_DPOP+" ";
+
 	/** Download */
 	public static final String CONTENT_DISPOSITION = "Content-Disposition";
 	public static final String CONTENT_DISPOSITION_ATTACH_FILE_PREFIX = "attachment; filename=";

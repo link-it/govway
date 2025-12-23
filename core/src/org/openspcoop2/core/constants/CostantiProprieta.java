@@ -84,7 +84,9 @@ public class CostantiProprieta {
 	public static final String POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYSTORE_PASSWORD = "policy.retrieveToken.jwt.signature.keystorePassword";
 	public static final String POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEY_PASSWORD = "policy.retrieveToken.jwt.signature.keyPassword";
 	public static final String POLICY_RETRIEVE_TOKEN_JWT_CLIENT_SECRET= "policy.retrieveToken.jwt.clientSecret";
-	
+	public static final String POLICY_RETRIEVE_TOKEN_DPOP_SIGN_KEYSTORE_PASSWORD = "policy.retrieveToken.dpop.signature.keystorePassword";
+	public static final String POLICY_RETRIEVE_TOKEN_DPOP_SIGN_KEY_PASSWORD = "policy.retrieveToken.dpop.signature.keyPassword";
+
 	private static List<String> tokenRetrieveProperties = new ArrayList<>();
 	public static List<String> getTokenRetrieveProperties() {
 		return tokenRetrieveProperties;
@@ -96,6 +98,8 @@ public class CostantiProprieta {
 		tokenRetrieveProperties.add(POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYSTORE_PASSWORD);
 		tokenRetrieveProperties.add(POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEY_PASSWORD);
 		tokenRetrieveProperties.add(POLICY_RETRIEVE_TOKEN_JWT_CLIENT_SECRET);
+		tokenRetrieveProperties.add(POLICY_RETRIEVE_TOKEN_DPOP_SIGN_KEYSTORE_PASSWORD);
+		tokenRetrieveProperties.add(POLICY_RETRIEVE_TOKEN_DPOP_SIGN_KEY_PASSWORD);
 		tokenRetrieveProperties.add(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
 		tokenRetrieveProperties.add(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
 		tokenRetrieveProperties.add(CostantiConnettori.CONNETTORE_HTTPS_KEY_PASSWORD);

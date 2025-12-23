@@ -41,15 +41,33 @@ public class Claims {
 	public static final String JSON_WEB_TOKEN_RFC_7519_JWT_ID = "jti";
 
 	// https://tools.ietf.org/html/rfc7515
-	
+
 	public static final String JSON_WEB_TOKEN_RFC_7515_ALGORITHM = "alg";
 	public static final String JSON_WEB_TOKEN_RFC_7515_TYPE = "typ";
 	public static final String JSON_WEB_TOKEN_RFC_7515_CONTENT_TYPE = "cty";
+	public static final String JSON_WEB_TOKEN_RFC_7515_KEY_ID = "kid";
+
+	// https://tools.ietf.org/html/rfc7517 (JWK)
+	
+	public static final String JSON_WEB_KEY_RFC_7517_KEY_TYPE = "kty";
+	public static final String JSON_WEB_KEY_RFC_7517_PUBLIC_KEY_USE = "use";
+	public static final String JSON_WEB_KEY_RFC_7517_KEY_OPERATIONS = "key_ops";
+	public static final String JSON_WEB_KEY_RFC_7517_X509_URL = "x5u";
+	public static final String JSON_WEB_KEY_RFC_7517_X509_CERTIFICATE_CHAIN = "x5c";
+	public static final String JSON_WEB_KEY_RFC_7517_X509_CERTIFICATE_SHA1_THUMBPRINT = "x5t";
+	public static final String JSON_WEB_KEY_RFC_7517_X509_CERTIFICATE_SHA256_THUMBPRINT = "x5t#S256";
 	
 	// https://www.rfc-editor.org/rfc/rfc9068.html
-	
+
 	public static final String JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068_CLIENT_ID = "client_id";
-	
+
+	// https://www.rfc-editor.org/rfc/rfc9449.html
+
+	public static final String DPOP_RFC9449_JWK = "jwk";
+	public static final String DPOP_RFC9449_HTTP_METHOD = "htm";
+	public static final String DPOP_RFC9449_HTTP_URI = "htu";
+	public static final String DPOP_RFC9449_ACCESS_TOKEN_HASH = "ath";
+
 	// https://tools.ietf.org/html/rfc7662
 	
 	public static final String INTROSPECTION_RESPONSE_RFC_7662_ACTIVE = "active";

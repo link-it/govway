@@ -326,16 +326,13 @@ public abstract class ConnettoreExtBaseHTTP extends ConnettoreBaseHTTP {
 		else {
 			this.location = TransportUtils.getObjectAsString(this.properties,CostantiConnettori.CONNETTORE_LOCATION);
 		}
-		NameValue nv = this.getTokenQueryParameter();
-		if(nv!=null) {
-			if(this.requestMsg!=null && this.requestMsg.getTransportRequestContext()!=null) {
-				this.requestMsg.getTransportRequestContext().removeParameter(nv.getName()); // Fix: senno sovrascriveva il vecchio token
-			}
-			if(this.propertiesUrlBased==null) {
-				this.propertiesUrlBased = new HashMap<>();
-			}
-			TransportUtils.setParameter(this.propertiesUrlBased, nv.getName(), nv.getValue());
-		}
+		
+		String nameTokenQueryParameter = this.getNameTokenQueryParameter();
+    	if(nameTokenQueryParameter!=null && !org.apache.commons.lang3.StringUtils.isEmpty(nameTokenQueryParameter) &&
+    		this.requestMsg!=null && this.requestMsg.getTransportRequestContext()!=null) {
+    		this.requestMsg.getTransportRequestContext().removeParameter(nameTokenQueryParameter); // Fix: senno sovrascriveva il vecchio token
+    	}
+    	
 		if(this.redirectLocation==null) {
 			this.location = ConnettoreUtils.buildLocationWithURLBasedParameter(this.logger!=null ? this.logger.getLogger() : null, this.requestMsg, 
 					this.getTipoImplConnettore(), 
@@ -344,6 +341,27 @@ public abstract class ConnettoreExtBaseHTTP extends ConnettoreBaseHTTP {
 		}
 
 		this.updateLocationForwardProxy(this.location);
+		
+    	// Ensure token negotiation and DPoP generation happen BEFORE retrieving parameters bat after location build
+    	this.ensureTokenNegotiated(this.httpMethod);
+
+    	Map<String, List<String>> newPropertiesUrlBased = null;
+    	
+    	// Authorization token
+    	NameValue nv = this.getTokenQueryParameter();
+    	if(nv!=null) {
+    		newPropertiesUrlBased = new HashMap<>();
+    		TransportUtils.setParameter(newPropertiesUrlBased, nv.getName(), nv.getValue());
+    	}
+    	// DPoP Backend Query Parameter (RFC 9449)
+    	NameValue dpopNv = this.getDpopBackendQueryParameter();
+    	if(dpopNv!=null) {
+    		if(newPropertiesUrlBased==null) {
+    			newPropertiesUrlBased = new HashMap<>();
+    		}
+    		TransportUtils.setParameter(newPropertiesUrlBased, dpopNv.getName(), dpopNv.getValue());
+    	}
+    	this.location = TransportUtils.buildUrlWithParameters(newPropertiesUrlBased, this.location, this.logger!=null ? this.logger.getLogger() : null);
 	}
 
 

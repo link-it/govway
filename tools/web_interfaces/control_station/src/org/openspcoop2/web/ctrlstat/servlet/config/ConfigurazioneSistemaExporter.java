@@ -717,7 +717,17 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 				i++;
 			}
 		}
-		
+
+		String statsDPoPJti = null;
+		try{
+			statsDPoPJti = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias),
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaGestioneToken(alias),
+					confCore.getJmxPdDConfigurazioneSistemaNomeMetodoPrintStatsDPoPJtiCaches(alias));
+		}catch(Exception e){
+			ControlStationCore.logError("Errore durante la lettura delle statistiche cache DPoP JTI (jmxResourcePdD): "+e.getMessage(),e);
+			statsDPoPJti = null;
+		}
+
 		String statoConnessioniDB = null;
 		if(!confCore.isClusterAsyncUpdate()) {
 			try{
@@ -1137,6 +1147,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 				statoTimerMonitoraggioRisorse, statoTimerThreshold,
 				statoTimerEventi, statoTimerFileSystemRecovery, statoTimerBusteOneway, statoTimerBusteAsincrone, statoTimerRepositoryStateful,
 				infoInstallazione,
+				statsDPoPJti,
 				cacheArray);
 	}
 }

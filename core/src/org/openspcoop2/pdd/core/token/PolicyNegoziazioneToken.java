@@ -402,4 +402,69 @@ public class PolicyNegoziazioneToken extends AbstractPolicyToken implements Seri
 		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYSTORE_BYOK_POLICY);
 	}
 
+	public boolean isDpop() {
+		return "true".equalsIgnoreCase(this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_DPOP));
+	}
+	public String getDpopSignAlgorithm() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_DPOP_SIGN_ALGORITHM);
+	}
+	public String getDpopSignKeystoreType() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_DPOP_SIGN_KEYSTORE_TYPE);
+	}
+	public String getDpopSignKeystoreFile() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_DPOP_SIGN_KEYSTORE_FILE);
+	}
+	public String getDpopSignKeystoreFilePublicKey() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_DPOP_SIGN_KEYSTORE_FILE_PUBLIC_KEY);
+	}
+	public String getDpopSignKeyPairAlgorithm() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_DPOP_SIGN_KEYPAIR_ALGORITHM);
+	}
+	public String getDpopSignKeystorePassword() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_DPOP_SIGN_KEYSTORE_PASSWORD);
+	}
+	public String getDpopSignKeyAlias() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_DPOP_SIGN_KEY_ALIAS);
+	}
+	public String getDpopSignKeyPassword() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_DPOP_SIGN_KEY_PASSWORD);
+	}
+	public String getDpopSignKeystoreByokPolicy() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_DPOP_SIGN_KEYSTORE_BYOK_POLICY);
+	}
+	public boolean isDpopSignKeystoreApplicativoModI() {
+		return Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE.equals(getDpopSignKeystoreType());
+	}
+	public boolean isDpopSignKeystoreFruizioneModI() {
+		return Costanti.KEYSTORE_TYPE_FRUIZIONE_MODI_VALUE.equals(getDpopSignKeystoreType());
+	}
+	public boolean isDpopCacheEnabled() {
+		return "true".equalsIgnoreCase(this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_DPOP_CACHE_ENABLED));
+	}
+	public int getDpopCacheTtl() {
+		String ttl = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_DPOP_CACHE_TTL);
+		if(ttl != null && !ttl.isEmpty()) {
+			try {
+				return Integer.parseInt(ttl);
+			} catch(NumberFormatException e) {
+				// default
+			}
+		}
+		return 300; // default 5 minuti
+	}
+
+	public String getForwardDpopMode() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_FORWARD_DPOP_MODE);
+	}
+	public String getForwardDpopModeCustomHeader() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_FORWARD_DPOP_MODE_CUSTOM_HEADER_NAME);
+	}
+	public String getForwardDpopModeCustomUrl() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_FORWARD_DPOP_MODE_CUSTOM_URL_PARAMETER_NAME);
+	}
+
+	public String getExpectedTokenType() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_EXPECTED_TOKEN_TYPE);
+	}
+
 }

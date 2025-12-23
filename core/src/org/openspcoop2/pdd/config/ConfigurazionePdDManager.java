@@ -1874,13 +1874,20 @@ public class ConfigurazionePdDManager {
 				addCertificateDetails, separator, newLine);
 	}
 	
-	public CertificateCheck checkCertificatiSignedJwtTokenPolicyNegoziazione(String nomePolicy, int sogliaWarningGiorni, 
+	public CertificateCheck checkCertificatiSignedJwtTokenPolicyNegoziazione(String nomePolicy, int sogliaWarningGiorni,
 			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
 		return this.configurazionePdDReader.checkCertificatiSignedJwtTokenPolicyNegoziazione(null, false,
-				nomePolicy, sogliaWarningGiorni, 
+				nomePolicy, sogliaWarningGiorni,
 				addCertificateDetails, separator, newLine);
 	}
-	
+
+	public CertificateCheck checkCertificatiDpopJwtTokenPolicyNegoziazione(String nomePolicy, int sogliaWarningGiorni,
+			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		return this.configurazionePdDReader.checkCertificatiDpopJwtTokenPolicyNegoziazione(null, false,
+				nomePolicy, sogliaWarningGiorni,
+				addCertificateDetails, separator, newLine);
+	}
+
 	public CertificateCheck checkCertificatiConnettoreHttpsAttributeAuthority(String nomePolicy, int sogliaWarningGiorni, 
 			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
 		return this.configurazionePdDReader.checkCertificatiConnettoreHttpsAttributeAuthority(null, false,

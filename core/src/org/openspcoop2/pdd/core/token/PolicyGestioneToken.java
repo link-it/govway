@@ -30,11 +30,14 @@ import java.util.Properties;
 import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.pdd.config.dynamic.PddPluginLoader;
+import org.openspcoop2.pdd.core.token.parser.BasicDPoPParser;
 import org.openspcoop2.pdd.core.token.parser.BasicDynamicDiscoveryParser;
 import org.openspcoop2.pdd.core.token.parser.BasicTokenParser;
+import org.openspcoop2.pdd.core.token.parser.IDPoPParser;
 import org.openspcoop2.pdd.core.token.parser.IDynamicDiscoveryParser;
 import org.openspcoop2.pdd.core.token.parser.ITokenParser;
 import org.openspcoop2.pdd.core.token.parser.TipologiaClaims;
+import org.openspcoop2.pdd.core.token.parser.TipologiaClaimsDPoP;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.jose.JOSEUtils;
 import org.openspcoop2.utils.resources.ClassLoaderUtilities;
@@ -55,7 +58,9 @@ public class PolicyGestioneToken extends AbstractPolicyToken implements Serializ
 	private static final long serialVersionUID = 1L;
 	
 	private boolean tokenOpzionale;
-	
+
+	private boolean dpopValidation;
+
 	private boolean dynamicDiscovery;
 	
 	private boolean validazioneJWT;
@@ -75,6 +80,12 @@ public class PolicyGestioneToken extends AbstractPolicyToken implements Serializ
 	}
 	public void setTokenOpzionale(boolean tokenOpzionale) {
 		this.tokenOpzionale = tokenOpzionale;
+	}
+	public boolean isDPoPValidation() {
+		return this.dpopValidation;
+	}
+	public void setDPoPValidation(boolean dpopValidation) {
+		this.dpopValidation = dpopValidation;
 	}
 	public boolean isDynamicDiscovery() {
 		return this.dynamicDiscovery;
@@ -373,7 +384,86 @@ public class PolicyGestioneToken extends AbstractPolicyToken implements Serializ
 	public List<String> getValidazioneJWTHeaderAlg() {
 		return TokenUtilities.getClaims(this.defaultProperties, Costanti.POLICY_VALIDAZIONE_JWS_HEADER_ALG);
 	}
-	
+
+	// DPoP Validation
+	public String getDPoPSource() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_DPOP_SOURCE);
+	}
+	public String getDPoPSourceHeaderName() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_DPOP_SOURCE_HEADER);
+	}
+	public String getDPoPSourceQueryParameterName() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_DPOP_SOURCE_QUERY_PARAMETER);
+	}
+
+	public String getValidazioneDPoPClaimsParserType() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_VALIDAZIONE_DPOP_CLAIMS_PARSER_TYPE);
+	}
+	public String getValidazioneDPoPClaimsParserClassName() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_VALIDAZIONE_DPOP_CLAIMS_PARSER_CLASS_NAME);
+	}
+	public String getValidazioneDPoPClaimsParserPluginType() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_VALIDAZIONE_DPOP_CLAIMS_PARSER_PLUGIN_TYPE);
+	}
+
+	public boolean isValidazioneDPoPHeader() {
+		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.POLICY_VALIDAZIONE_DPOP_HEADER);
+	}
+	public List<String> getValidazioneDPoPHeaderTyp() {
+		return TokenUtilities.getClaims(this.defaultProperties, Costanti.POLICY_VALIDAZIONE_DPOP_HEADER_TYP);
+	}
+	public List<String> getValidazioneDPoPHeaderAlg() {
+		return TokenUtilities.getClaims(this.defaultProperties, Costanti.POLICY_VALIDAZIONE_DPOP_HEADER_ALG);
+	}
+
+	public Integer getValidazioneDPoPPayloadTtl() {
+		String value = this.defaultProperties.getProperty(Costanti.POLICY_VALIDAZIONE_DPOP_PAYLOAD_TTL);
+		return value != null && !value.trim().isEmpty() ? Integer.parseInt(value) : null;
+	}
+	public String getValidazioneDPoPJtiValidation() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_VALIDAZIONE_DPOP_JTI_VALIDATION);
+	}
+	public Long getValidazioneDPoPJtiMaxSize() {
+		String value = this.defaultProperties.getProperty(Costanti.POLICY_VALIDAZIONE_DPOP_JTI_MAX_SIZE);
+		return value != null && !value.trim().isEmpty() ? Long.parseLong(value) : null;
+	}
+
+	public IDPoPParser getValidazioneDPoPParser() throws TokenException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+		IDPoPParser parser = null;
+		String parserTypeValue = this.defaultProperties.getProperty(Costanti.POLICY_VALIDAZIONE_DPOP_CLAIMS_PARSER_TYPE);
+		TipologiaClaimsDPoP tipologiaClaims = null;
+		if(parserTypeValue==null || parserTypeValue.trim().isEmpty()) {
+			tipologiaClaims = TipologiaClaimsDPoP.RFC9449; // default value
+		}
+		else {
+			tipologiaClaims = TipologiaClaimsDPoP.valueOf(parserTypeValue);
+		}
+		if(TipologiaClaimsDPoP.CUSTOM.equals(tipologiaClaims)) {
+			String className = this.defaultProperties.getProperty(Costanti.POLICY_VALIDAZIONE_DPOP_CLAIMS_PARSER_CLASS_NAME);
+			if(className!=null && StringUtils.isNotEmpty(className) && !CostantiConfigurazione.POLICY_ID_NON_DEFINITA.equals(className)) {
+				parser = (IDPoPParser) ClassLoaderUtilities.newInstance(className);
+			}
+			else {
+				String tipo = this.defaultProperties.getProperty(Costanti.POLICY_VALIDAZIONE_DPOP_CLAIMS_PARSER_PLUGIN_TYPE);
+				if(tipo!=null && StringUtils.isNotEmpty(tipo) && !CostantiConfigurazione.POLICY_ID_NON_DEFINITA.equals(tipo)) {
+			    	try{
+						PddPluginLoader pluginLoader = PddPluginLoader.getInstance();
+						parser = pluginLoader.newDPoPValidazione(tipo);
+					}catch(Exception e){
+						throw new TokenException(e.getMessage(),e); // descrizione errore già corretta
+					}
+				}
+				else {
+					throw new TokenException("Deve essere selezionato un plugin per il parser del token DPoP");
+				}
+			}
+		}
+		else{
+			parser = new BasicDPoPParser(tipologiaClaims, TokenUtilities.getValidazioneDPoPClaimsMappingProperties(this.properties));
+		}
+		return parser;
+	}
+
 	public String getIntrospectionEndpoint() {
 		return this.defaultProperties.getProperty(Costanti.POLICY_INTROSPECTION_URL);
 	}

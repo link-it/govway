@@ -342,6 +342,8 @@ public class ConnettoreHTTP extends ConnettoreExtBaseHTTP {
 
 			
 			// Authentication Token
+			// Ensure token negotiation is done (may already be done in buildLocation if URL params used)
+			this.ensureTokenNegotiated(this.httpMethod);
 			NameValue nv = this.getTokenHeader();
 	    	if(nv!=null) {
 	    		if(this.requestMsg!=null && this.requestMsg.getTransportRequestContext()!=null) {
@@ -350,6 +352,15 @@ public class ConnettoreHTTP extends ConnettoreExtBaseHTTP {
 	    		setRequestHeader(nv.getName(),nv.getValue(), propertiesTrasportoDebug);
 	    		if(this.debug) {
 					this.logger.info("Impostazione autenticazione token (header-name '"+nv.getName()+"' value '"+nv.getValue()+"')",false);
+	    		}
+	    	}
+
+	    	// DPoP Backend Header (RFC 9449)
+	    	NameValue dpopNv = this.getDpopBackendHeader();
+	    	if(dpopNv!=null) {
+	    		setRequestHeader(dpopNv.getName(), dpopNv.getValue(), propertiesTrasportoDebug);
+	    		if(this.debug) {
+					this.logger.info("Impostazione DPoP backend (header-name '"+dpopNv.getName()+"' value '"+dpopNv.getValue()+"')",false);
 	    		}
 	    	}
 	    	

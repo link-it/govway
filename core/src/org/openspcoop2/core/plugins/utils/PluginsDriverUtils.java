@@ -60,6 +60,14 @@ import org.slf4j.Logger;
  */
 public class PluginsDriverUtils {
 
+	private PluginsDriverUtils() {}
+	
+	private static void logDebug(Logger log, String msg) {
+		if(log!=null) {
+			log.debug(msg);
+		}
+	}
+	
 	public static int numeroPluginsClassiList(Connection con, Logger log, String tipoDB) throws ServiceException {
 		String nomeMetodo = "numeroPluginsClassiList";
 		int val = 0;
@@ -81,7 +89,7 @@ public class PluginsDriverUtils {
 			return val;
 
 		} catch (Exception qe) {
-			throw new ServiceException("[" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+			throw new ServiceException("[" + nomeMetodo + "] failed : " + qe.getMessage(),qe);
 		} 
 	}
 	
@@ -100,11 +108,11 @@ public class PluginsDriverUtils {
 		
 		String filterStato = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_STATO);
 		
-		log.debug("search : " + search);
-		log.debug("filterTipoPlugin : " + filterTipoPlugin);
-		log.debug("filterStato : " + filterStato);
+		logDebug(log, "search : " + search);
+		logDebug(log, "filterTipoPlugin : " + filterTipoPlugin);
+		logDebug(log, "filterStato : " + filterStato);
 		
-		List<Plugin> lista = new ArrayList<Plugin>();
+		List<Plugin> lista = new ArrayList<>();
 
 		try {
 			ServiceManagerProperties properties = new ServiceManagerProperties();
@@ -131,17 +139,17 @@ public class PluginsDriverUtils {
 				addAnd = true;
 			}
 			
-			if(filterStato!=null && !filterStato.equals("")) {
-				if(Filtri.FILTRO_STATO_VALORE_ABILITATO.equals(filterStato) || Filtri.FILTRO_STATO_VALORE_DISABILITATO.equals(filterStato)) {
+			if(filterStato!=null && !filterStato.equals("") &&
+				(Filtri.FILTRO_STATO_VALORE_ABILITATO.equals(filterStato) || Filtri.FILTRO_STATO_VALORE_DISABILITATO.equals(filterStato)) 
+				){
 					
-					if(addAnd) {
-						expr.and();
-					}
-					addAnd = true;
-					
-					expr.equals(Plugin.model().STATO, Filtri.FILTRO_STATO_VALORE_ABILITATO.equals(filterStato));
-					
+				if(addAnd) {
+					expr.and();
 				}
+				addAnd = true;
+				
+				expr.equals(Plugin.model().STATO, Filtri.FILTRO_STATO_VALORE_ABILITATO.equals(filterStato));
+				
 			}
 			
 			if(!filterTipoPlugin.equals("")) {
@@ -158,7 +166,7 @@ public class PluginsDriverUtils {
 				case AUTORIZZAZIONE_CONTENUTI:
 				case INTEGRAZIONE:
 					String filtroRuolo = SearchUtils.getFilter(ricerca, idLista, PluginCostanti.FILTRO_RUOLO_NOME);
-					log.debug("filtroRuolo : " + filtroRuolo);
+					logDebug(log, "filtroRuolo : " + filtroRuolo);
 					
 					if(!filtroRuolo.equals("")) {
 						
@@ -175,7 +183,7 @@ public class PluginsDriverUtils {
 					break;
 				case SERVICE_HANDLER:
 					String filtroShTipo = SearchUtils.getFilter(ricerca, idLista, PluginCostanti.FILTRO_SERVICE_HANDLER_NOME);
-					log.debug("filtroShTipo : " + filtroShTipo);
+					logDebug(log, "filtroShTipo : " + filtroShTipo);
 					
 					if(!filtroShTipo.equals("")) {
 						expr.equals(Plugin.model().PLUGIN_PROPRIETA_COMPATIBILITA.NOME, PluginCostanti.FILTRO_SERVICE_HANDLER_NOME)
@@ -185,27 +193,27 @@ public class PluginsDriverUtils {
 				case MESSAGE_HANDLER:
 					// message handler e ruolo messa ge handler
 					String filtroMhRuolo = SearchUtils.getFilter(ricerca, idLista, PluginCostanti.FILTRO_RUOLO_MESSAGE_HANDLER_NOME);
-					log.debug("filtroMhRuolo : " + filtroMhRuolo);
+					logDebug(log, "filtroMhRuolo : " + filtroMhRuolo);
 					boolean ruoloDefined = !filtroMhRuolo.equals("");
 					
 					String filtroMhTipo = SearchUtils.getFilter(ricerca, idLista, PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_NOME);
-					log.debug("filtroMhTipo : " + filtroMhTipo);
+					logDebug(log, "filtroMhTipo : " + filtroMhTipo);
 					boolean tipoDefined = !filtroMhTipo.equals("");
 										
 					if(tipoDefined && ruoloDefined) {
 						
-						IAliasTableField ruolo_name = new AliasTableComplexField((ComplexField)Plugin.model().PLUGIN_PROPRIETA_COMPATIBILITA.NOME, FilterUtils.getNextAliasPluginsTable());
-						IAliasTableField ruolo_valore = new AliasTableComplexField((ComplexField)Plugin.model().PLUGIN_PROPRIETA_COMPATIBILITA.VALORE, ruolo_name.getAliasTable());
+						IAliasTableField ruoloName = new AliasTableComplexField((ComplexField)Plugin.model().PLUGIN_PROPRIETA_COMPATIBILITA.NOME, FilterUtils.getNextAliasPluginsTable());
+						IAliasTableField ruoloValore = new AliasTableComplexField((ComplexField)Plugin.model().PLUGIN_PROPRIETA_COMPATIBILITA.VALORE, ruoloName.getAliasTable());
 						
-						IAliasTableField tipo_name = new AliasTableComplexField((ComplexField)Plugin.model().PLUGIN_PROPRIETA_COMPATIBILITA.NOME, FilterUtils.getNextAliasPluginsTable());
-						IAliasTableField tipo_valore = new AliasTableComplexField((ComplexField)Plugin.model().PLUGIN_PROPRIETA_COMPATIBILITA.VALORE, tipo_name.getAliasTable());
+						IAliasTableField tipoName = new AliasTableComplexField((ComplexField)Plugin.model().PLUGIN_PROPRIETA_COMPATIBILITA.NOME, FilterUtils.getNextAliasPluginsTable());
+						IAliasTableField tipoValore = new AliasTableComplexField((ComplexField)Plugin.model().PLUGIN_PROPRIETA_COMPATIBILITA.VALORE, tipoName.getAliasTable());
 						
 						expr.
 							and().
-							equals(ruolo_name, PluginCostanti.FILTRO_RUOLO_MESSAGE_HANDLER_NOME).
-							equals(ruolo_valore, filtroMhRuolo).
-							equals(tipo_name, PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_NOME).
-							equals(tipo_valore, filtroMhTipo);
+							equals(ruoloName, PluginCostanti.FILTRO_RUOLO_MESSAGE_HANDLER_NOME).
+							equals(ruoloValore, filtroMhRuolo).
+							equals(tipoName, PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_NOME).
+							equals(tipoValore, filtroMhTipo);
 					}
 					else if(tipoDefined) {
 						expr.equals(Plugin.model().PLUGIN_PROPRIETA_COMPATIBILITA.NOME, PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_NOME)
@@ -219,7 +227,7 @@ public class PluginsDriverUtils {
 					break;
 				case ALLARME:
 					String filtroApplicabilita = SearchUtils.getFilter(ricerca, idLista, PluginCostanti.FILTRO_APPLICABILITA_NOME);
-					log.debug("filtroApplicabilita : " + filtroApplicabilita);
+					logDebug(log, "filtroApplicabilita : " + filtroApplicabilita);
 					
 					if(!filtroApplicabilita.equals("")) {
 						
@@ -245,6 +253,7 @@ public class PluginsDriverUtils {
 				case TRANSAZIONE:
 				case TOKEN_DYNAMIC_DISCOVERY:
 				case TOKEN_VALIDAZIONE:
+				case DPOP_VALIDAZIONE:
 				case TOKEN_NEGOZIAZIONE:
 				case ATTRIBUTE_AUTHORITY:
 					break;
@@ -270,7 +279,7 @@ public class PluginsDriverUtils {
 			return lista;
 
 		} catch (Exception qe) {
-			throw new ServiceException("[" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+			throw new ServiceException("[" + nomeMetodo + "] list failed : " + qe.getMessage(),qe);
 		} 
 	}
 	
@@ -288,7 +297,7 @@ public class PluginsDriverUtils {
 			pluginService.create(plugin);
 			
 		} catch (Exception qe) {
-			throw new ServiceException("[" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+			throw new ServiceException("[" + nomeMetodo + "] create failed : " + qe.getMessage(),qe);
 		}
 	}
 	
@@ -306,7 +315,7 @@ public class PluginsDriverUtils {
 			pluginService.update(plugin.getOldIdPlugin(), plugin);
 			
 		} catch (Exception qe) {
-			throw new ServiceException("[" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+			throw new ServiceException("[" + nomeMetodo + "] update failed : " + qe.getMessage(),qe);
 		} 
 	}
 	
@@ -324,24 +333,24 @@ public class PluginsDriverUtils {
 			pluginService.delete(plugin);
 			
 		} catch (Exception qe) {
-			throw new ServiceException("[" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+			throw new ServiceException("[" + nomeMetodo + "] delete failed : " + qe.getMessage(),qe);
 		} 
 	}
 
 	public static boolean existsPlugin(TipoPlugin tipoPlugin, String tipo, String label, String className, Connection con, Logger log, String tipoDB) throws ServiceException {
-		return _existsPlugin(tipoPlugin, tipo, label, className, con, log, tipoDB);
+		return existsPluginEngine(tipoPlugin, tipo, label, className, con, log, tipoDB);
 	}
 	public static boolean existsPluginConTipo(TipoPlugin tipoPlugin, String tipo, Connection con, Logger log, String tipoDB) throws ServiceException {
-		return _existsPlugin(tipoPlugin, tipo, null, null, con, log, tipoDB);
+		return existsPluginEngine(tipoPlugin, tipo, null, null, con, log, tipoDB);
 	}
 	public static boolean existsPluginConLabel(TipoPlugin tipoPlugin, String label, Connection con, Logger log, String tipoDB) throws ServiceException {
-		return _existsPlugin(tipoPlugin, null, label, null, con, log, tipoDB);
+		return existsPluginEngine(tipoPlugin, null, label, null, con, log, tipoDB);
 	}
 	public static boolean existsPluginConClassName(TipoPlugin tipoPlugin, String className, Connection con, Logger log, String tipoDB) throws ServiceException {
-		return _existsPlugin(tipoPlugin, null, null, className, con, log, tipoDB);
+		return existsPluginEngine(tipoPlugin, null, null, className, con, log, tipoDB);
 	}
 	
-	private static boolean _existsPlugin(TipoPlugin tipoPlugin, String tipo, String label, String className, Connection con, Logger log, String tipoDB) throws ServiceException {
+	private static boolean existsPluginEngine(TipoPlugin tipoPlugin, String tipo, String label, String className, Connection con, Logger log, String tipoDB) throws ServiceException {
 		String nomeMetodo = "existsPlugin";
 		
 		try {
@@ -354,7 +363,7 @@ public class PluginsDriverUtils {
 			
 			IExpression expr = pluginServiceSearch.newExpression();
 			
-			List<IExpression> list = new ArrayList<IExpression>();
+			List<IExpression> list = new ArrayList<>();
 			
 			if(tipo!=null) {
 				IExpression tipoExp = pluginServiceSearch.newExpression();
@@ -378,7 +387,7 @@ public class PluginsDriverUtils {
 			
 			return count.longValue() > 0;
 		} catch (Exception qe) {
-			throw new ServiceException("[" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+			throw new ServiceException("[" + nomeMetodo + "] check failed : " + qe.getMessage(),qe);
 		} 
 	}
 
@@ -405,7 +414,7 @@ public class PluginsDriverUtils {
 			
 			return plugin;
 		} catch (Exception qe) {
-			throw new ServiceException("[" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+			throw new ServiceException("[" + nomeMetodo + "] getById failed : " + qe.getMessage(),qe);
 		}
 	}
 	
@@ -439,12 +448,12 @@ public class PluginsDriverUtils {
 		} 
 		catch (NotFoundException notFound) {
 			if(throwNotFound) {
-				throw new NotFoundException("[" + nomeMetodo + "] Errore : " + notFound.getMessage(),notFound);
+				throw new NotFoundException("[" + nomeMetodo + "] get failed : " + notFound.getMessage(),notFound);
 			}
 			return null;
 		}
 		catch (Exception qe) {
-			throw new ServiceException("[" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+			throw new ServiceException("[" + nomeMetodo + "] get failed : " + qe.getMessage(),qe);
 		}
 	}
 	

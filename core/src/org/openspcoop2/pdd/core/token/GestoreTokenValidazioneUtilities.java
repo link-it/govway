@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.cxf.rs.security.jose.jwk.JsonWebKey;
 import org.apache.cxf.rs.security.jose.jwk.JsonWebKeys;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.DBUtils;
@@ -39,6 +40,7 @@ import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
+import org.openspcoop2.core.config.constants.RuoloContesto;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.CostantiLabel;
@@ -46,6 +48,10 @@ import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.constants.TransferLengthModes;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.AccordoServizioParteComune;
+import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
@@ -58,6 +64,8 @@ import org.openspcoop2.pdd.config.CostantiProprieta;
 import org.openspcoop2.pdd.config.ForwardProxy;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.PDNDResolver;
+import org.openspcoop2.pdd.config.UrlInvocazioneAPI;
+import org.openspcoop2.pdd.config.UrlInvocazioneAPIUtils;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.connettori.ConnettoreBaseHTTP;
@@ -69,16 +77,25 @@ import org.openspcoop2.pdd.core.connettori.httpcore5.ConnettoreHTTPSCORE;
 import org.openspcoop2.pdd.core.controllo_traffico.PolicyTimeoutConfig;
 import org.openspcoop2.pdd.core.dynamic.DynamicException;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
+import org.openspcoop2.pdd.core.token.dpop.DPoP;
+import org.openspcoop2.pdd.core.token.dpop.EsitoPresenzaDPoP;
+import org.openspcoop2.pdd.core.token.dpop.EsitoValidazioneDPoP;
+import org.openspcoop2.pdd.core.token.dpop.jti.IJtiValidator;
+import org.openspcoop2.pdd.core.token.dpop.jti.JtiValidatorFactory;
 import org.openspcoop2.pdd.core.token.pa.DatiInvocazionePortaApplicativa;
 import org.openspcoop2.pdd.core.token.pa.EsitoDynamicDiscoveryPortaApplicativa;
 import org.openspcoop2.pdd.core.token.pa.EsitoGestioneTokenPortaApplicativa;
+import org.openspcoop2.pdd.core.token.pa.EsitoValidazioneDPoPPortaApplicativa;
 import org.openspcoop2.pdd.core.token.parser.Claims;
+import org.openspcoop2.pdd.core.token.parser.IDPoPParser;
 import org.openspcoop2.pdd.core.token.parser.IDynamicDiscoveryParser;
 import org.openspcoop2.pdd.core.token.parser.ITokenParser;
 import org.openspcoop2.pdd.core.token.pd.DatiInvocazionePortaDelegata;
 import org.openspcoop2.pdd.core.token.pd.EsitoDynamicDiscoveryPortaDelegata;
 import org.openspcoop2.pdd.core.token.pd.EsitoGestioneTokenPortaDelegata;
+import org.openspcoop2.pdd.core.token.pd.EsitoValidazioneDPoPPortaDelegata;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -89,6 +106,7 @@ import org.openspcoop2.protocol.sdk.SecurityToken;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.utils.ModIUtils;
+import org.openspcoop2.protocol.utils.PorteNamingUtils;
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.keystore.CRLCertstore;
 import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
@@ -97,6 +115,7 @@ import org.openspcoop2.security.keystore.cache.GestoreOCSPValidator;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.LoggerBuffer;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.certificate.JWKSet;
@@ -798,11 +817,580 @@ public class GestoreTokenValidazioneUtilities {
 		
 		return esitoGestioneToken;
 	}
+
+
+
+
+	// ********* [VALIDAZIONE-TOKEN] VALIDAZIONE DPOP ****************** */
+
+	static EsitoValidazioneDPoP validazioneDPoPEngine(Logger log, AbstractDatiInvocazione datiInvocazione,
+			EsitoPresenzaDPoP esitoPresenzaDPoP, EsitoGestioneToken esitoGestioneToken,
+			IProtocolFactory<?> protocolFactory, String accessToken, boolean portaDelegata, PdDContext pddContext,
+			Busta busta, IDSoggetto idDominio, IDServizio idServizio) {
+
+		if(pddContext!=null && idDominio!=null && idServizio!=null && busta!=null) {
+			// nop
+		}
+		
+		String dpopToken = esitoPresenzaDPoP.getToken();
+		
+		EsitoValidazioneDPoP esitoValidazioneDPoP = null;
+		if(portaDelegata) {
+			esitoValidazioneDPoP = new EsitoValidazioneDPoPPortaDelegata();
+		}
+		else {
+			esitoValidazioneDPoP = new EsitoValidazioneDPoPPortaApplicativa();
+		}
+
+		esitoValidazioneDPoP.setTokenInternalError();
+		esitoValidazioneDPoP.setToken(dpopToken);
+
+		try{
+			PolicyGestioneToken policyGestioneToken = datiInvocazione.getPolicyGestioneToken();
+
+			String detailsError = null;
+			DPoP informazioniDPoP = null;
+			Exception eProcess = null;
+
+			try {
+				// Step 1: Parse e validazione firma DPoP JWT
+				IDPoPParser dpopParser = parseDPoPToken(dpopToken, policyGestioneToken);
+				DPoP dpop = new DPoP();
+				
+				// Step 2: Validazione header (typ, alg)
+				validazioneDPoPHeader(dpop, dpopParser, policyGestioneToken);
+
+				// Step 3: Validazione payload claims (htm, htu, ath, iat, jti)
+				validazioneDPoPPayload(dpop, dpopParser, policyGestioneToken, datiInvocazione, protocolFactory, pddContext, accessToken, log);
+
+				// Step 4: Verifica cnf.jkt (JWK thumbprint)
+				validazioneDPoPCnfJkt(dpop, dpopParser, esitoGestioneToken, log);
+
+				// Se arriviamo qui, validazione DPoP completata con successo
+				informazioniDPoP = dpop;				
+
+			}catch(Exception e) {
+				log.debug(GestoreToken.getMessageTokenNonValido(e),e);
+				detailsError = GestoreToken.getMessageTokenNonValido(e);
+				eProcess = e;
+			}
+
+			if(informazioniDPoP!=null) {
+				esitoValidazioneDPoP.setTokenValido();
+				esitoValidazioneDPoP.setInformazioniDPoP(informazioniDPoP);
+				esitoValidazioneDPoP.setNoCache(false);
+			}
+			else {
+				esitoValidazioneDPoP.setTokenValidazioneFallita();
+				esitoValidazioneDPoP.setNoCache(true);
+				esitoValidazioneDPoP.setEccezioneProcessamento(eProcess);
+				if(detailsError!=null) {
+					esitoValidazioneDPoP.setDetails(detailsError);
+				}
+				else {
+					esitoValidazioneDPoP.setDetails("Invalid DPoP ");
+				}
+
+				if(policyGestioneToken.isMessageErrorGenerateEmptyMessage()) {
+					esitoValidazioneDPoP.setErrorMessage(WWWAuthenticateGenerator.buildErrorMessage(HttpConstants.AUTHORIZATION_PREFIX_DPOP, WWWAuthenticateErrorCode.invalid_dpop_proof, policyGestioneToken.getRealm(),
+							policyGestioneToken.isMessageErrorGenerateGenericMessage(), esitoValidazioneDPoP.getDetails()));
+				}
+				else {
+					esitoValidazioneDPoP.setWwwAuthenticateErrorHeader(WWWAuthenticateGenerator.buildHeaderValue(HttpConstants.AUTHORIZATION_PREFIX_DPOP, WWWAuthenticateErrorCode.invalid_dpop_proof, policyGestioneToken.getRealm(),
+							policyGestioneToken.isMessageErrorGenerateGenericMessage(), esitoValidazioneDPoP.getDetails()));
+				}
+			}
+
+		}catch(Exception e){
+			esitoValidazioneDPoP.setTokenInternalError();
+			esitoValidazioneDPoP.setDetails(e.getMessage());
+			esitoValidazioneDPoP.setEccezioneProcessamento(e);
+		}
+
+		return esitoValidazioneDPoP;
+	}
+
+	private static IDPoPParser parseDPoPToken(String dpopToken, PolicyGestioneToken policyGestioneToken) throws TokenException {
+		// Verifica formato JWS (3 parti separate da '.')
+		String[] parts = dpopToken.split("\\.");
+		if(parts.length != 3) {
+			throw new TokenException("Invalid DPoP token format: expected JWS Compact (3 parts), found "+parts.length+" parts");
+		}
+
+		// Inizializza parser configurato
+		IDPoPParser dpopParser = null;
+		try {
+			dpopParser = policyGestioneToken.getValidazioneDPoPParser();
+			dpopParser.init(dpopToken);
+		}catch(Exception e) {
+			throw new TokenException("Invalid DPoP token: "+e.getMessage(),e);
+		}
+
+		// Validazione firma usando jwk dall'header
+		JsonWebKey jsonWebKey = null;
+		try {
+			jsonWebKey = dpopParser.getJsonWebKey();
+		}catch(Exception e) {
+			throw new TokenException("Invalid DPoP token: header 'jwk' invalid: "+e.getMessage(),e);
+		}
+		if(jsonWebKey == null) {
+			throw new TokenException("Invalid DPoP token: header 'jwk' not present or invalid");
+		}
+
+		// Get algorithm from DPoP header
+		String algorithm = dpopParser.getAlgorithm();
+		if(algorithm == null || algorithm.trim().isEmpty()) {
+			throw new TokenException("Invalid DPoP token: header 'alg' not present or invalid");
+		}
+
+		JWTOptions options = new JWTOptions(JOSESerialization.COMPACT);
+		try {
+			// Pass algorithm explicitly to JsonVerifySignature
+			JsonVerifySignature jsonVerifySignature = new JsonVerifySignature(jsonWebKey, false, algorithm, options);
+			if(!jsonVerifySignature.verify(dpopToken)) {
+				throw new TokenException("Invalid DPoP token: signature verification failed");
+			}
+		}catch(Exception e) {
+			throw new TokenException("Invalid DPoP token: signature verification failed: "+e.getMessage(),e);
+		}
+
+		return dpopParser;
+	}
+
+	private static void validazioneDPoPHeader(DPoP dpop, IDPoPParser dpopParser, PolicyGestioneToken policyGestioneToken) throws TokenException {
+		// Validazione typ
+		String typ = dpopParser.getType();
+		List<String> expectedTyp = policyGestioneToken.getValidazioneDPoPHeaderTyp();
+		validazioneDPoPInformazioniTokenHeader(typ, expectedTyp, Claims.JSON_WEB_TOKEN_RFC_7515_TYPE);
+		dpop.setTyp(typ);
+
+		// Validazione alg
+		String alg = dpopParser.getAlgorithm();
+		List<String> expectedAlg = policyGestioneToken.getValidazioneDPoPHeaderAlg();
+		validazioneDPoPInformazioniTokenHeader(alg, expectedAlg, Claims.JSON_WEB_TOKEN_RFC_7515_ALGORITHM);
+		dpop.setAlg(alg);
+	}
+	private static void validazioneDPoPInformazioniTokenHeader(String v, List<String> expectedValues, String claim) throws TokenException {
+		if(expectedValues!=null && !expectedValues.isEmpty()) {
+			if(v==null || StringUtils.isEmpty(v)) {
+				throw new TokenException("Expected claim '"+claim+"' not found");
+			}
+			boolean find = false;
+			for (String vCheck : expectedValues) {
+				if(v.equalsIgnoreCase(vCheck)) {
+					find = true;
+					break;
+				}
+			}
+			if(!find) {
+				throw new TokenException("Claim '"+claim+"' with invalid value '"+v+"'");
+			}
+		}
+	}
+
+	private static void validazioneDPoPPayload(DPoP dpop, IDPoPParser dpopParser, PolicyGestioneToken policyGestioneToken,
+			AbstractDatiInvocazione datiInvocazione,
+			IProtocolFactory<?> protocolFactory, PdDContext pddContext,
+			String accessToken, Logger log) throws TokenException {
+
+		// Validazione htm (HTTP method)
+		validazioneDPoPHtm(dpop, dpopParser, datiInvocazione);
+
+		// Validazione htu (HTTP URI)
+		validazioneDPoPHtu(dpop, dpopParser, datiInvocazione, protocolFactory, pddContext, log);
+
+		// Validazione ath (access token hash)
+		validazioneDPoPAth(dpop, dpopParser, accessToken);
+
+		// Validazione iat (issued at)
+		validazioneDPoPIat(dpop, dpopParser, policyGestioneToken);
+
+		// Validazione jti (JWT ID)
+		validazioneDPoPJti(dpop, dpopParser, policyGestioneToken, log);
+	}
+
+	private static void validazioneDPoPHtm(DPoP dpop, IDPoPParser dpopParser, AbstractDatiInvocazione datiInvocazione) throws TokenException {
+		String htm = dpopParser.getHttpMethod();
+		if(htm == null || htm.trim().isEmpty()) {
+			throw new TokenException("Invalid DPoP token: claim 'htm' is missing");
+		}
+		dpop.setHtm(htm);
+		
+		TransportRequestContext transportRequestContext = datiInvocazione.getInfoConnettoreIngresso().getUrlProtocolContext();
+		String actualMethod = transportRequestContext.getRequestType();
+		if(!htm.equalsIgnoreCase(actualMethod)) {
+			throw new TokenException("Invalid DPoP token: claim 'htm' ("+htm+") does not match HTTP method of the request ("+actualMethod+")");
+		}
+	}
+
+	private static void validazioneDPoPHtu(DPoP dpop, IDPoPParser dpopParser, AbstractDatiInvocazione datiInvocazione,
+			IProtocolFactory<?> protocolFactory, PdDContext pddContext, Logger log) throws TokenException {
+
+		StringBuilder interfaceName = new StringBuilder();
+		UrlInvocazioneAPI configUrl = getBaseUrlInvocazione(datiInvocazione, protocolFactory, pddContext, interfaceName);
+
+		String htu = dpopParser.getHttpUri();
+		if(htu == null || htu.trim().isEmpty()) {
+			throw new TokenException("Invalid DPoP token: claim 'htu' is missing");
+		}
+		dpop.setHtu(htu);
+
+		List<String> prefixAggiuntivi = null;
+		List<String> baseUrlAggiuntive = null;
+		try {
+			List<Proprieta> listProprieta = readProprieta(datiInvocazione);
+			if(listProprieta!=null && !listProprieta.isEmpty()) {
+				prefixAggiuntivi = CostantiProprieta.getDPoPValidationHtuPrefixUrls(listProprieta);
+				baseUrlAggiuntive = CostantiProprieta.getDPoPValidationHtuBaseUrls(listProprieta);
+			}
+		}catch(Exception e) {
+			throw new TokenException("Error reading DPoP HTU validation properties from API configuration: "+e.getMessage(), e);
+		}
+		
+		// Normalizza actualUri rimuovendo query string e fragment
+		// baseUrlAggiuntive può essere null o una lista di URL base configurati dalla policy
+		StringBuilder sbNormalizedActualUri = new StringBuilder();
+		if(!matchUrlInvocata(log, datiInvocazione, configUrl, prefixAggiuntivi, baseUrlAggiuntive, htu, 
+				interfaceName.length()>0 ? interfaceName.toString() : null,
+				sbNormalizedActualUri)) {
+			throw new TokenException("Invalid DPoP token: claim 'htu' ("+htu+") does not match request URI ("+sbNormalizedActualUri+")");
+		}
+
+	}
+	private static UrlInvocazioneAPI getBaseUrlInvocazione(AbstractDatiInvocazione datiInvocazione, IProtocolFactory<?> protocolFactory, PdDContext pddContext, StringBuilder interfaceName) throws TokenException {
+		boolean soap = datiInvocazione!=null && datiInvocazione.getMessage()!=null && org.openspcoop2.message.constants.ServiceBinding.SOAP.equals(datiInvocazione.getMessage().getServiceBinding()); 
+		AccordoServizioParteComune aspc=null; 
+		RuoloContesto ruoloContesto=null; 
+		String nomePorta=null;
+		IDSoggetto proprietarioPorta=null;
+		
+		if(datiInvocazione==null) {
+			return null;
+		}
+		
+		if(pddContext!=null && pddContext.containsKey(CostantiPdD.NOME_PORTA_INVOCATA)) {
+			nomePorta = (String) pddContext.getObject(CostantiPdD.NOME_PORTA_INVOCATA);
+		}
+		else if(datiInvocazione.getRequestInfo()!=null && datiInvocazione.getRequestInfo().getProtocolContext()!=null){
+			nomePorta = datiInvocazione.getRequestInfo().getProtocolContext().getInterfaceName();
+		}
+		
+		try {
+			IDServizio idServizio = null;
+			if(datiInvocazione instanceof DatiInvocazionePortaDelegata) {
+				DatiInvocazionePortaDelegata d = (DatiInvocazionePortaDelegata) datiInvocazione;
+				ruoloContesto = RuoloContesto.PORTA_DELEGATA;
+				PortaDelegata pd = d.getPd();
+				if(pd==null && d.getIdPD()!=null) {
+					ConfigurazionePdDManager configManager = ConfigurazionePdDManager.getInstance(datiInvocazione.getState());
+					pd = configManager.getPortaDelegataSafeMethod(d.getIdPD(), datiInvocazione.getRequestInfo());
+				}
+				if(pd!=null) {
+					if(nomePorta==null) {
+						nomePorta = pd.getNome();
+					}
+					proprietarioPorta = new IDSoggetto(pd.getTipoSoggettoProprietario(), pd.getNomeSoggettoProprietario());
+					if(pd.getServizio()!=null && pd.getSoggettoErogatore()!=null) {
+						idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(pd.getServizio().getTipo(), pd.getServizio().getNome(), 
+								pd.getSoggettoErogatore().getTipo(), pd.getSoggettoErogatore().getNome(), 
+								pd.getServizio().getVersione());
+					}
+					if(nomePorta!=null && interfaceName!=null) {
+						PorteNamingUtils namingUtils = new PorteNamingUtils(protocolFactory);
+						interfaceName.append(namingUtils.normalizePD(nomePorta));
+					}
+				}
+			}
+			else if(datiInvocazione instanceof DatiInvocazionePortaApplicativa) {
+				DatiInvocazionePortaApplicativa d = (DatiInvocazionePortaApplicativa) datiInvocazione;
+				ruoloContesto = RuoloContesto.PORTA_APPLICATIVA;
+				
+				PortaApplicativa pa = d.getPa();
+				if(pa==null && d.getIdPA()!=null) {
+					ConfigurazionePdDManager configManager = ConfigurazionePdDManager.getInstance(datiInvocazione.getState());
+					pa = configManager.getPortaApplicativaSafeMethod(d.getIdPA(), datiInvocazione.getRequestInfo());
+				}
+				if(pa!=null) {
+					if(nomePorta==null) {
+						nomePorta = pa.getNome();
+					}
+					proprietarioPorta = new IDSoggetto(pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario());
+					if(pa.getServizio()!=null) {
+						idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(pa.getServizio().getTipo(), pa.getServizio().getNome(), 
+								pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario(), 
+								pa.getServizio().getVersione());
+					}
+					if(nomePorta!=null && interfaceName!=null) {
+						PorteNamingUtils namingUtils = new PorteNamingUtils(protocolFactory);
+						interfaceName.append(namingUtils.normalizePA(nomePorta));
+					}
+				}
+			}
+			if(idServizio!=null) {
+				RegistroServiziManager regManager = RegistroServiziManager.getInstance(datiInvocazione.getState());
+				AccordoServizioParteSpecifica asps = regManager.getAccordoServizioParteSpecifica(idServizio, null, false, datiInvocazione.getRequestInfo());
+				if(asps!=null) {
+					aspc = regManager.getAccordoServizioParteComune(IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune()), null, false, false, datiInvocazione.getRequestInfo());
+				}
+			}
+			
+			 return UrlInvocazioneAPIUtils.getUrlInvocazioneObject(protocolFactory, datiInvocazione.getState(), datiInvocazione.getRequestInfo(), 
+					!soap, aspc, ruoloContesto, nomePorta, proprietarioPorta);
+			
+		}catch(Exception e) {
+			throw new TokenException(e.getMessage(),e);
+		}
+	}
+	private static String nomrmalizeSlashUrl(String u) {
+		String s = u;
+		if(s.startsWith("/") && s.length()>1) {
+			s = s.substring(1);
+		}
+		if(s.endsWith("/") && s.length()>1) {
+			s = s.substring(0,s.length()-1);
+		}
+		if(s.length()==1 && "".equals(s)) {
+			return null;
+		}
+		return s;
+	}
+	private static boolean matchUrlInvocata(Logger log, AbstractDatiInvocazione datiInvocazione, UrlInvocazioneAPI urlInvocazione, List<String> prefixAggiuntivi,  List<String> baseUrlAggiuntive, 
+			String htu, String interfaceName, StringBuilder sbNormalizedActualUri) {
+		
+		String prefix = urlInvocazione.getBaseUrl(); // es. http://localhost:8080/govway/
+		String protocolContext = null;
+		if(urlInvocazione.getContext()!=null && interfaceName!=null && urlInvocazione.getContext().contains(interfaceName)) {
+			String c = nomrmalizeSlashUrl(urlInvocazione.getContext());
+			String i = nomrmalizeSlashUrl(interfaceName);
+			if(c!=null && i!=null && c.endsWith(i) && c.length()>i.length()) {
+				protocolContext = c.replace(i, "");
+			}
+		}
+		/**String nomeContesto = getUrlInvocazione.getContext(); // /ENTE/Servizio/v1
+		if(nomeContesto.startsWith("/")) {
+			nomeContesto = nomeContesto.substring(1);
+		}*/
+		String functionParameters = datiInvocazione.getRequestInfo().getProtocolContext().getFunctionParameters(); // ENTE/servizio/v1/azione
+		if(functionParameters.startsWith("/")) {
+			functionParameters = functionParameters.substring(1);
+		}
+		
+		String urlDefault = null;
+		if(protocolContext==null) {
+			urlDefault = Utilities.buildUrl(prefix, functionParameters);
+		}
+		else {
+			urlDefault = Utilities.buildUrl(prefix, protocolContext);
+			urlDefault = Utilities.buildUrl(urlDefault, functionParameters);
+		}
+		try {
+			String normalizedActualUri = TokenUtilities.normalizeHtu(urlDefault);
+			sbNormalizedActualUri.append(normalizedActualUri);
+			if(htu.equals(normalizedActualUri)) {
+				return true;
+			}
+		}catch(Exception e) {
+			log.error("normalizeHtu ["+urlDefault+"] operation failed: "+e.getMessage(),e);
+		}
+		
+		if(prefixAggiuntivi!=null && !prefixAggiuntivi.isEmpty()) {
+			if(matchUrlInvocataPrefix(prefixAggiuntivi, null, functionParameters, htu, sbNormalizedActualUri, log) ) {
+				return true;
+			}
+			// provo anche con il context
+			if(matchUrlInvocataPrefix(prefixAggiuntivi, protocolContext, functionParameters, htu, sbNormalizedActualUri, log) ) {
+				return true;
+			}
+		}
+		
+		if(baseUrlAggiuntive==null || baseUrlAggiuntive.isEmpty()) {
+			return false;
+		}
+		
+		if(urlDefault!=null && !urlDefault.isEmpty()) {
+			
+			// Devo prima calcolare il contesto invocato
+			String contestoInvocato = "";
+			String nomeContesto = urlInvocazione.getContext(); // /ENTE/Servizio/v1
+			if(nomeContesto.startsWith("/")) {
+				nomeContesto = nomeContesto.substring(1);
+			}
+			if(functionParameters.startsWith(nomeContesto) && functionParameters.length()>nomeContesto.length()) {
+				contestoInvocato = functionParameters.substring(nomeContesto.length());
+			}
+			
+			for (String baseUrlNew : baseUrlAggiuntive) {
+				String newUrl = Utilities.buildUrl(baseUrlNew, contestoInvocato);
+				try {
+					String normalizedNewUrl = TokenUtilities.normalizeHtu(newUrl);
+					if(sbNormalizedActualUri.length()>0) {
+						sbNormalizedActualUri.append(",");
+					}
+					sbNormalizedActualUri.append(normalizedNewUrl);
+					if(htu.equals(normalizedNewUrl)) {
+						return true;
+					}
+				}catch(Exception e) {
+					log.error("normalizeHtu newUrl ["+newUrl+"] failed: "+e.getMessage(),e);
+				}
+			}
+		}
+		
+		return false;
+	}
+	private static boolean matchUrlInvocataPrefix(List<String> prefixAggiuntivi, String protocolContext, String functionParameters, String htu, StringBuilder sbNormalizedActualUri, Logger log) {
+		for (String prefixNew : prefixAggiuntivi) {
+			
+			String urlPrefixNew = null;
+			if(protocolContext==null) {
+				urlPrefixNew = Utilities.buildUrl(prefixNew, functionParameters);
+			}
+			else {
+				urlPrefixNew = Utilities.buildUrl(prefixNew, protocolContext);
+				urlPrefixNew = Utilities.buildUrl(urlPrefixNew, functionParameters);
+			}
+			try {
+				String normalizedActualUri = TokenUtilities.normalizeHtu(urlPrefixNew);
+				if(sbNormalizedActualUri.length()>0) {
+					sbNormalizedActualUri.append(",");
+				}
+				sbNormalizedActualUri.append(normalizedActualUri);
+				if(htu.equals(normalizedActualUri)) {
+					return true;
+				}
+			}catch(Exception e) {
+				log.error("normalizeHtu (prefix) ["+urlPrefixNew+"] failed: "+e.getMessage(),e);
+			}
+		}
+		return false;
+	}
+
+	private static void validazioneDPoPAth(DPoP dpop, IDPoPParser dpopParser, String accessToken) throws TokenException {
+		String ath = dpopParser.getAccessTokenHash();
+		if(ath == null || ath.trim().isEmpty()) {
+			throw new TokenException("Invalid DPoP token: claim 'ath' is missing");
+		}
+		dpop.setAth(ath);
+		
+		// Calcola SHA-256 dell'access token
+		String computedAth = GestoreTokenNegoziazioneUtilities.computeAccessTokenHash(accessToken);
+		if(!ath.equals(computedAth)) {
+			throw new TokenException("Invalid DPoP token: claim 'ath' does not match SHA-256 hash of the access token");
+		}
+	}
+
+	private static void validazioneDPoPIat(DPoP dpop, IDPoPParser dpopParser, PolicyGestioneToken policyGestioneToken) throws TokenException {
+		Date iat = dpopParser.getIssuedAt();
+		if(iat == null) {
+			throw new TokenException("Invalid DPoP token: claim 'iat' is missing");
+		}
+		dpop.setIat(iat);
+		
+		Date now = DateManager.getDate();
+		long iatTime = iat.getTime();
+		long nowTime = now.getTime();
+
+		// Verifica che non sia troppo nel futuro
+		long futureToleranceMs = OpenSPCoop2Properties.getInstance().getGestioneTokenDPoPIatFutureToleranceMilliseconds();
+		if(iatTime > (nowTime + futureToleranceMs)) {
+			throw new TokenException("Invalid DPoP token: claim 'iat' is in the future ("+DateUtils.getSimpleDateFormatMs().format(iat)+", future tolerance: "+futureToleranceMs+"ms)");
+		}
+
+		// Verifica TTL se configurato
+		Integer ttlSeconds = policyGestioneToken.getValidazioneDPoPPayloadTtl();
+		if(ttlSeconds != null && ttlSeconds > 0) {
+			long toleranceMs = OpenSPCoop2Properties.getInstance().getGestioneTokenDPoPIatToleranceMilliseconds();
+			long expirationTime = iatTime + (ttlSeconds * 1000) + toleranceMs;
+			if(nowTime > expirationTime) {
+				throw new TokenException("Expired DPoP token: iat ("+DateUtils.getSimpleDateFormatMs().format(iat)+") + TTL ("+ttlSeconds+"s) + tolerance ("+toleranceMs+"ms) < now");
+			}
+		}
+	}
 	
-	
-	
-	
-	
+	private static void validazioneDPoPJti(DPoP dpop, IDPoPParser dpopParser, PolicyGestioneToken policyGestioneToken, Logger log) throws TokenException {
+		String jti = dpopParser.getJWTIdentifier();
+		if(jti == null || jti.trim().isEmpty()) {
+			throw new TokenException("Invalid DPoP token: claim 'jti' is missing");
+		}
+		dpop.setJti(jti);
+
+		// Crea validator tramite factory
+		IJtiValidator validator = null;
+		try {
+			validator = JtiValidatorFactory.createValidator(policyGestioneToken);
+		} catch (Exception e) {
+			/**log.error("Failed to create JTI validator for policy [{}]: {}", policyGestioneToken.getName(), e.getMessage(), e);*/
+			throw new TokenException("DPoP JTI validation failed: "+e.getMessage(), e);
+		}
+
+		// Verifica se validator è disponibile (per distribuito verifica Redis)
+		if(!validator.isAvailable()) {
+			log.error("JTI validator not available for policy [{}]", policyGestioneToken.getName());
+			throw new TokenException("DPoP JTI validation failed: validator not available");
+		}
+
+		// Calcola toleranceMillis per validazione temporale (stesso usato in validazioneDPoPIat)
+		Integer ttlSeconds = policyGestioneToken.getValidazioneDPoPPayloadTtl();
+		long toleranceMs = OpenSPCoop2Properties.getInstance().getGestioneTokenDPoPIatToleranceMilliseconds();
+		long toleranceTotal = (ttlSeconds != null ? ttlSeconds * 1000 : 0) + toleranceMs;
+
+		// Valida e memorizza JTI
+		try {
+			validator.validateAndStore(policyGestioneToken.getName(), jti, dpopParser, toleranceTotal);
+			log.debug("DPoP JTI [{}] validated successfully for policy [{}]", jti, policyGestioneToken.getName());
+		} catch (UtilsException e) {
+			/**log.error("JTI validation error for policy [{}]: {}", policyGestioneToken.getName(), e.getMessage(), e);*/
+			throw new TokenException("DPoP JTI validation failed: "+e.getMessage(), e);
+		}
+	}
+
+	private static void validazioneDPoPCnfJkt(DPoP dpop, IDPoPParser dpopParser, EsitoGestioneToken esitoGestioneToken, Logger log) throws TokenException {
+		InformazioniToken informazioniToken = esitoGestioneToken.getInformazioniToken();
+		if(informazioniToken == null || informazioniToken.getClaims() == null) {
+			throw new TokenException("Invalid DPoP token: cannot verify 'cnf.jkt', access token does not contain claims");
+		}
+
+		// Estrai cnf claim dall'access token
+		Object cnfObj = informazioniToken.getClaims().get("cnf.jkt");
+		String jktFromAccessToken = null;
+		if(cnfObj instanceof String){
+			jktFromAccessToken = (String) cnfObj;
+		}
+		else {
+			throw new TokenException("Invalid DPoP token: access token does not contain claim 'cnf'");
+		}
+		if(org.apache.commons.lang3.StringUtils.isEmpty(jktFromAccessToken)) {
+			throw new TokenException("Invalid DPoP token: access token claim 'cnf' does not contain 'jkt'");
+		}
+
+		// Calcola thumbprint RFC 7638 del jwk dal DPoP token
+		JsonWebKey dpopJwk = null;
+		try {
+			/**String jwk = dpopParser.getJsonWebKeyAsString();
+			dpop.setJwk(jwk);*/
+			dpopJwk = dpopParser.getJsonWebKey();
+		}catch(Exception e) {
+			throw new TokenException("Invalid DPoP token: cannot compute thumbprint, jwk invalid: "+e.getMessage(),e);
+		}
+		if(dpopJwk == null) {
+			throw new TokenException("Invalid DPoP token: cannot compute thumbprint, jwk not present");
+		}
+
+		String computedThumbprint = TokenUtilities.computeJwkThumbprint(dpopJwk);
+		dpop.setJwkThumbprint(computedThumbprint);
+
+		// Confronta thumbprint
+		if(!jktFromAccessToken.equals(computedThumbprint)) {
+			throw new TokenException("Invalid DPoP token: thumbprint 'jkt' from access token ("+jktFromAccessToken+") does not match computed thumbprint of DPoP jwk ("+computedThumbprint+")");
+		}
+
+		String msg = "Validation cnf.jkt completed successfully (thumbprint: "+computedThumbprint+")";
+		log.debug(msg);
+	}
+
+
+
+
 	// ********* [VALIDAZIONE-TOKEN] FORWARD TOKEN ****************** */
 	
 	static boolean deleteTokenReceived(AbstractDatiInvocazione datiInvocazione, EsitoPresenzaToken esitoPresenzaToken,

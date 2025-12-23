@@ -1826,6 +1826,8 @@ public class ControlStationCore {
 	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoResetConnettoriPrioritari  = new HashMap<>();
 	private Map<String, String> jmxPdDConfigurazioneSistemaNomeRisorsaSystemPropertiesPdD = new HashMap<>();
 	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoRefreshPersistentConfiguration = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeRisorsaGestioneToken = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoPrintStatsDPoPJtiCaches = new HashMap<>();
 	private Map<String, String> jmxPdDConfigurazioneSistemaNomeRisorsaDatiRichieste = new HashMap<>();
 	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoRemoveRateLimitingGlobalConfigCache = new HashMap<>();
 	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoRemoveRateLimitingAPIConfigCache = new HashMap<>();
@@ -2309,6 +2311,12 @@ public class ControlStationCore {
 	}
 	public String getJmxPdDConfigurazioneSistemaNomeMetodoRefreshPersistentConfiguration(String alias) {
 		return this.jmxPdDConfigurazioneSistemaNomeMetodoRefreshPersistentConfiguration.get(alias);
+	}
+	public String getJmxPdDConfigurazioneSistemaNomeRisorsaGestioneToken(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeRisorsaGestioneToken.get(alias);
+	}
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoPrintStatsDPoPJtiCaches(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoPrintStatsDPoPJtiCaches.get(alias);
 	}
 	public String getJmxPdDConfigurazioneSistemaNomeRisorsaDatiRichieste(String alias) {
 		return this.jmxPdDConfigurazioneSistemaNomeRisorsaDatiRichieste.get(alias);
@@ -3007,6 +3015,8 @@ public class ControlStationCore {
 		this.jmxPdDConfigurazioneSistemaNomeMetodoResetConnettoriPrioritari = core.jmxPdDConfigurazioneSistemaNomeMetodoResetConnettoriPrioritari;
 		this.jmxPdDConfigurazioneSistemaNomeRisorsaSystemPropertiesPdD = core.jmxPdDConfigurazioneSistemaNomeRisorsaSystemPropertiesPdD;
 		this.jmxPdDConfigurazioneSistemaNomeMetodoRefreshPersistentConfiguration = core.jmxPdDConfigurazioneSistemaNomeMetodoRefreshPersistentConfiguration;
+		this.jmxPdDConfigurazioneSistemaNomeRisorsaGestioneToken = core.jmxPdDConfigurazioneSistemaNomeRisorsaGestioneToken;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoPrintStatsDPoPJtiCaches = core.jmxPdDConfigurazioneSistemaNomeMetodoPrintStatsDPoPJtiCaches;
 		this.jmxPdDConfigurazioneSistemaNomeRisorsaDatiRichieste = core.jmxPdDConfigurazioneSistemaNomeRisorsaDatiRichieste;
 		this.jmxPdDConfigurazioneSistemaNomeMetodoRemoveRateLimitingGlobalConfigCache = core.jmxPdDConfigurazioneSistemaNomeMetodoRemoveRateLimitingGlobalConfigCache;
 		this.jmxPdDConfigurazioneSistemaNomeMetodoRemoveRateLimitingAPIConfigCache = core.jmxPdDConfigurazioneSistemaNomeMetodoRemoveRateLimitingAPIConfigCache;
@@ -3544,6 +3554,8 @@ public class ControlStationCore {
 					this.jmxPdDConfigurazioneSistemaNomeMetodoResetConnettoriPrioritari.put(alias, consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoResetConnettoriPrioritari(alias));
 					this.jmxPdDConfigurazioneSistemaNomeRisorsaSystemPropertiesPdD.put(alias, consoleProperties.getJmxPdDConfigurazioneSistemaNomeRisorsaSystemPropertiesPdD(alias));
 					this.jmxPdDConfigurazioneSistemaNomeMetodoRefreshPersistentConfiguration.put(alias, consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoRefreshPersistentConfiguration(alias));
+					this.jmxPdDConfigurazioneSistemaNomeRisorsaGestioneToken.put(alias, consoleProperties.getJmxPdDConfigurazioneSistemaNomeRisorsaGestioneToken(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoPrintStatsDPoPJtiCaches.put(alias, consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoPrintStatsDPoPJtiCaches(alias));
 					this.jmxPdDConfigurazioneSistemaNomeRisorsaDatiRichieste.put(alias, consoleProperties.getJmxPdDConfigurazioneSistemaNomeRisorsaDatiRichieste(alias));
 					this.jmxPdDConfigurazioneSistemaNomeMetodoRemoveRateLimitingGlobalConfigCache.put(alias, consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoRemoveRateLimitingGlobalConfigCache(alias));
 					this.jmxPdDConfigurazioneSistemaNomeMetodoRemoveRateLimitingAPIConfigCache.put(alias, consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoRemoveRateLimitingAPIConfigCache(alias));

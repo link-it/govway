@@ -61,7 +61,14 @@ import org.openspcoop2.pdd.core.token.attribute_authority.InformazioniAttributi;
 import org.openspcoop2.pdd.core.token.attribute_authority.PolicyAttributeAuthority;
 import org.openspcoop2.pdd.core.token.attribute_authority.pa.DatiInvocazionePortaApplicativa;
 import org.openspcoop2.pdd.core.token.attribute_authority.pd.DatiInvocazionePortaDelegata;
+import org.openspcoop2.pdd.core.token.dpop.DPoPBackendCacheEntry;
+import org.openspcoop2.pdd.core.token.dpop.DPoPParams;
+import org.openspcoop2.pdd.core.token.dpop.EsitoDPoPBackend;
+import org.openspcoop2.pdd.core.token.dpop.EsitoPresenzaDPoP;
+import org.openspcoop2.pdd.core.token.dpop.EsitoValidazioneDPoP;
+import org.openspcoop2.pdd.core.token.pa.EsitoPresenzaDPoPPortaApplicativa;
 import org.openspcoop2.pdd.core.token.pa.EsitoPresenzaTokenPortaApplicativa;
+import org.openspcoop2.pdd.core.token.pd.EsitoPresenzaDPoPPortaDelegata;
 import org.openspcoop2.pdd.core.token.pd.EsitoPresenzaTokenPortaDelegata;
 import org.openspcoop2.pdd.core.transazioni.Transaction;
 import org.openspcoop2.pdd.core.transazioni.TransactionContext;
@@ -75,6 +82,7 @@ import org.openspcoop2.protocol.sdk.SecurityToken;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.state.URLProtocolContext;
+import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.message.jose.JOSEUtils;
 import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.UtilsException;
@@ -223,8 +231,31 @@ public class GestoreToken {
 			s = initLockNegoziazione(nomePolicy);
 		}
 		return s;
-	} 
-	
+	}
+
+	private static final Map<String, org.openspcoop2.utils.Semaphore> _lockDPoPBackend = new HashMap<>();
+	private static synchronized org.openspcoop2.utils.Semaphore initLockDPoPBackend(String keyCache){
+		org.openspcoop2.utils.Semaphore s = _lockDPoPBackend.get(keyCache);
+		if(s==null) {
+			Integer permits = OpenSPCoop2Properties.getInstance().getGestioneRetrieveTokenLockPermits();
+			if(permits!=null && permits.intValue()>1) {
+				s = new org.openspcoop2.utils.Semaphore("GestoreTokenDPoPBackend_"+keyCache, permits);
+			}
+			else {
+				s = new org.openspcoop2.utils.Semaphore("GestoreTokenDPoPBackend_"+keyCache);
+			}
+			_lockDPoPBackend.put(keyCache, s);
+		}
+		return s;
+	}
+	private static org.openspcoop2.utils.Semaphore getLockDPoPBackend(String keyCache){
+		org.openspcoop2.utils.Semaphore s = _lockDPoPBackend.get(keyCache);
+		if(s==null) {
+			s = initLockDPoPBackend(keyCache);
+		}
+		return s;
+	}
+
 	private static final Map<String, org.openspcoop2.utils.Semaphore> _lockAttributeAuthority = new HashMap<>();
 	private static synchronized org.openspcoop2.utils.Semaphore initLockAttributeAuthority(String nomePolicy){
 		org.openspcoop2.utils.Semaphore s = _lockAttributeAuthority.get(nomePolicy);
@@ -383,7 +414,7 @@ public class GestoreToken {
 			}
 		}
 	}
-	
+
 	public static String printStatsGestioneTokenCache(String separator) throws TokenException{
 		try{
 			if(GestoreToken.cacheGestioneToken!=null){
@@ -981,6 +1012,14 @@ public class GestoreToken {
 	private static final String INFO_TRASPORTO_NON_PRESENTI = "Informazioni di trasporto non presenti";
 	private static final String CONTENENTE_IL_TOKEN = "contenente il token";
 	
+	private static String getDettaglioErroreHeaderPresentePiuVolte(String nome) {
+		return "Sono stati rilevati più di un header http '"+nome+"'";
+	}
+	private static String getDettaglioErroreHeaderPrefixErrato(String nome, String authPrefix, String primaryPrefix) {
+		return "Riscontrato header http '"+nome+"' valorizzato tramite autenticazione '"+authPrefix+
+				"'; la configurazione richiede invece la presenza di un token valorizzato tramite autenticazione '"+primaryPrefix+"' ";
+	}
+	
 	public static EsitoPresenzaToken verificaPosizioneToken(AbstractDatiInvocazione datiInvocazione, boolean portaDelegata) {
 		
 		EsitoPresenzaToken esitoPresenzaToken = null;
@@ -1014,18 +1053,57 @@ public class GestoreToken {
         			}
     				if(Costanti.POLICY_TOKEN_SOURCE_RFC6750.equals(source) ||
     	    				Costanti.POLICY_TOKEN_SOURCE_RFC6750_HEADER.equals(source)) {
-    					if(urlProtocolContext.getCredential()==null || urlProtocolContext.getCredential().getBearerToken()==null) {
-    						if(urlProtocolContext.getCredential()!=null && urlProtocolContext.getCredential().getUsername()!=null) {
-    							detailsErrorHeader = "Riscontrato header http '"+HttpConstants.AUTHORIZATION+"' valorizzato tramite autenticazione '"+HttpConstants.AUTHORIZATION_PREFIX_BASIC+
-    									"'; la configurazione richiede invece la presenza di un token valorizzato tramite autenticazione '"+HttpConstants.AUTHORIZATION_PREFIX_BEARER+"' ";
+
+    					// Determine expected prefix based on DPoP validation
+    					boolean dpopValidationEnabled = policyGestioneToken.isDPoPValidation();
+    					boolean acceptBearerPrefix = dpopValidationEnabled && OpenSPCoop2Properties.getInstance().isGestioneTokenDPoPRfc6750AcceptBearerPrefix();
+    					String primaryPrefix = dpopValidationEnabled ? HttpConstants.AUTHORIZATION_PREFIX_DPOP : HttpConstants.AUTHORIZATION_PREFIX_BEARER;
+
+    					List<String> authValues = urlProtocolContext.getHeaderValues(HttpConstants.AUTHORIZATION);
+    					if(authValues!=null && !authValues.isEmpty()) {
+    						if(authValues.size()>1) {
+    							detailsErrorHeader = getDettaglioErroreHeaderPresentePiuVolte(HttpConstants.AUTHORIZATION);
     						}
     						else {
-    							detailsErrorHeader = "Non è stato riscontrato un header http '"+HttpConstants.AUTHORIZATION+"' valorizzato tramite autenticazione '"+HttpConstants.AUTHORIZATION_PREFIX_BEARER+"' e contenente un token";
+    							String authHeader = authValues.get(0);
+    							if(authHeader!=null && authHeader.length()>0) {
+    								if(authHeader.startsWith(primaryPrefix)) {
+    									// Found expected prefix
+    									token = authHeader.substring(primaryPrefix.length());
+    									esitoPresenzaToken.setHeaderHttp(HttpConstants.AUTHORIZATION);
+    								}
+    								else if(acceptBearerPrefix && authHeader.startsWith(HttpConstants.AUTHORIZATION_PREFIX_BEARER)) {
+    									// DPoP validation + accept Bearer fallback
+    									token = authHeader.substring(HttpConstants.AUTHORIZATION_PREFIX_BEARER.length());
+    									esitoPresenzaToken.setHeaderHttp(HttpConstants.AUTHORIZATION);
+    								}
+    								else if(authHeader.startsWith(HttpConstants.AUTHORIZATION_PREFIX_BASIC)) {
+    									detailsErrorHeader = getDettaglioErroreHeaderPrefixErrato(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BASIC, primaryPrefix);
+    								}
+    								else if(authHeader.startsWith(HttpConstants.AUTHORIZATION_PREFIX_BEARER) || authHeader.startsWith(HttpConstants.AUTHORIZATION_PREFIX_DPOP)) {
+    									// Wrong prefix between Bearer/DPoP
+    									String foundPrefix = authHeader.startsWith(HttpConstants.AUTHORIZATION_PREFIX_BEARER) ? HttpConstants.AUTHORIZATION_PREFIX_BEARER : HttpConstants.AUTHORIZATION_PREFIX_DPOP;
+    									detailsErrorHeader = getDettaglioErroreHeaderPrefixErrato(HttpConstants.AUTHORIZATION, foundPrefix, primaryPrefix);
+    								}
+    								else {
+    									// Unknown prefix - extract first word
+    									String detectedPrefix = authHeader.split("\\s+")[0];
+    									String expectedDescription = acceptBearerPrefix ?
+    											"'"+primaryPrefix+"' o '"+HttpConstants.AUTHORIZATION_PREFIX_BEARER+"'" :
+    											"'"+primaryPrefix+"'";
+    									detailsErrorHeader = getDettaglioErroreHeaderPrefixErrato(HttpConstants.AUTHORIZATION, detectedPrefix, expectedDescription);
+    								}
+    							}
+    							else {
+    								detailsErrorHeader = "Header http '"+HttpConstants.AUTHORIZATION+"' presente ma vuoto";
+    							}
     						}
     					}
     					else {
-    						token = urlProtocolContext.getCredential().getBearerToken();
-    						esitoPresenzaToken.setHeaderHttp(HttpConstants.AUTHORIZATION);
+    						String expectedDescription = acceptBearerPrefix ?
+    								"'"+primaryPrefix+"' o '"+HttpConstants.AUTHORIZATION_PREFIX_BEARER+"'" :
+    								"'"+primaryPrefix+"'";
+    						detailsErrorHeader = "Non è stato riscontrato un header http '"+HttpConstants.AUTHORIZATION+"' valorizzato tramite autenticazione "+expectedDescription+" e contenente un token";
     					}
     				}
     				else {
@@ -1038,7 +1116,7 @@ public class GestoreToken {
     						detailsErrorHeader = "Non è stato riscontrato l'header http '"+headerName+"' "+CONTENENTE_IL_TOKEN;
     					}
     					else if(values.size()>1) {
-    						detailsErrorHeader = "Sono stati rilevati più di un header http '"+headerName+"'";
+    						detailsErrorHeader = getDettaglioErroreHeaderPresentePiuVolte(headerName);
     					}
     					else {
     						esitoPresenzaToken.setHeaderHttp(headerName);
@@ -1209,13 +1287,137 @@ public class GestoreToken {
 		
 		return esitoPresenzaToken;
 	}
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+	// ********* [VALIDAZIONE-TOKEN] VERIFICA POSIZIONE DPOP ****************** */
+
+	private static final String CONTENENTE_IL_DPOP = "contenente il DPoP";
+
+	public static EsitoPresenzaDPoP verificaPostazioneDPoP(AbstractDatiInvocazione datiInvocazione, boolean portaDelegata) {
+
+		EsitoPresenzaDPoP esitoPresenzaDPoP = null;
+		if(portaDelegata) {
+			esitoPresenzaDPoP = new EsitoPresenzaDPoPPortaDelegata();
+		}
+		else {
+			esitoPresenzaDPoP = new EsitoPresenzaDPoPPortaApplicativa();
+		}
+
+		esitoPresenzaDPoP.setPresente(false);
+		try{
+			PolicyGestioneToken policyGestioneToken = datiInvocazione.getPolicyGestioneToken();
+    		String source = policyGestioneToken.getDPoPSource();
+
+
+			String dpopToken = null;
+
+    		String detailsErrorHeader = null;
+    		if(Costanti.POLICY_DPOP_SOURCE_RFC9449_HEADER.equals(source) ||
+    				Costanti.POLICY_DPOP_SOURCE_CUSTOM_HEADER.equals(source)) {
+    			if(datiInvocazione.getInfoConnettoreIngresso()==null ||
+    					datiInvocazione.getInfoConnettoreIngresso().getUrlProtocolContext()==null) {
+    				detailsErrorHeader = INFO_TRASPORTO_NON_PRESENTI;
+    			}
+    			else {
+    				URLProtocolContext urlProtocolContext = datiInvocazione.getInfoConnettoreIngresso().getUrlProtocolContext();
+    				if(urlProtocolContext.getHeaders()==null || urlProtocolContext.getHeaders().size()<=0) {
+    					detailsErrorHeader = "Header di trasporto non presenti";
+        			}
+    				String headerName = null;
+    				if(Costanti.POLICY_DPOP_SOURCE_RFC9449_HEADER.equals(source)) {
+    					headerName = HttpConstants.AUTHORIZATION_DPOP;
+    				}
+    				else {
+    					headerName = policyGestioneToken.getDPoPSourceHeaderName();
+    				}
+    				List<String> values =  urlProtocolContext.getHeaderValues(headerName);
+    				if(values!=null && !values.isEmpty()) {
+    					dpopToken = values.get(0);
+    				}
+    				if(dpopToken==null) {
+    					detailsErrorHeader = "Non è stato riscontrato l'header http '"+headerName+"' "+CONTENENTE_IL_DPOP;
+    				}
+    				else if(values.size()>1) {
+    					detailsErrorHeader = getDettaglioErroreHeaderPresentePiuVolte(headerName);
+    				}
+    				else {
+    					esitoPresenzaDPoP.setHeaderHttp(headerName);
+    				}
+    			}
+    		}
+
+    		String detailsErrorUrl = null;
+    		if(Costanti.POLICY_DPOP_SOURCE_CUSTOM_URL.equals(source)) {
+    			if(datiInvocazione.getInfoConnettoreIngresso()==null ||
+    					datiInvocazione.getInfoConnettoreIngresso().getUrlProtocolContext()==null) {
+    				detailsErrorUrl = INFO_TRASPORTO_NON_PRESENTI;
+    			}
+    			else {
+    				URLProtocolContext urlProtocolContext = datiInvocazione.getInfoConnettoreIngresso().getUrlProtocolContext();
+    				if(urlProtocolContext.getParameters()==null || urlProtocolContext.getParameters().size()<=0) {
+    					detailsErrorUrl = "Parametri nella URL non presenti";
+        			}
+    				String propertyUrlName = policyGestioneToken.getDPoPSourceQueryParameterName();
+    				List<String> values = urlProtocolContext.getParameterValues(propertyUrlName);
+					if(values!=null && !values.isEmpty()) {
+						dpopToken = values.get(0);
+					}
+					if(dpopToken==null) {
+						detailsErrorUrl = "Non è stato riscontrata la proprietà della URL '"+propertyUrlName+"' "+CONTENENTE_IL_DPOP;
+					}
+					else if(values!=null && values.size()>1) {
+						detailsErrorUrl = "Sono state rilevate più proprietà della URL '"+propertyUrlName+"'";
+					}
+					else {
+						esitoPresenzaDPoP.setPropertyUrl(propertyUrlName);
+					}
+    			}
+    		}
+
+    		String detailsError = null;
+    		if(detailsErrorHeader!=null) {
+    			detailsError = detailsErrorHeader;
+    		}
+    		if(detailsErrorUrl!=null) {
+    			detailsError = detailsErrorUrl;
+    		}
+
+
+    		if(dpopToken!=null) {
+				esitoPresenzaDPoP.setToken(dpopToken);
+				esitoPresenzaDPoP.setPresente(true);
+			}
+    		else {
+    			if(detailsError!=null) {
+					esitoPresenzaDPoP.setDetails(detailsError);
+				}
+				else {
+					esitoPresenzaDPoP.setDetails("DPoP non individuato tramite la configurazione indicata");
+				}
+    			if(policyGestioneToken.isMessageErrorGenerateEmptyMessage()) {
+	    			esitoPresenzaDPoP.setErrorMessage(WWWAuthenticateGenerator.buildErrorMessage(WWWAuthenticateErrorCode.invalid_request, policyGestioneToken.getRealm(),
+	    					policyGestioneToken.isMessageErrorGenerateGenericMessage(), esitoPresenzaDPoP.getDetails()));
+    			}
+    			else {
+    				esitoPresenzaDPoP.setWwwAuthenticateErrorHeader(WWWAuthenticateGenerator.buildHeaderValue(WWWAuthenticateErrorCode.invalid_request, policyGestioneToken.getRealm(),
+	    					policyGestioneToken.isMessageErrorGenerateGenericMessage(), esitoPresenzaDPoP.getDetails()));
+    			}
+    		}
+
+    	}catch(Exception e){
+    		esitoPresenzaDPoP.setDetails(e.getMessage());
+    		esitoPresenzaDPoP.setEccezioneProcessamento(e);
+    	}
+
+		return esitoPresenzaDPoP;
+	}
+
+
+
+
+
 	// ********* [VALIDAZIONE-TOKEN] DYNAMIC DISCOVERY ****************** */
 	
 	public static final String DYNAMIC_DISCOVERY_FUNCTION = "DynamicDiscovery";
@@ -1683,6 +1885,27 @@ public class GestoreToken {
 	
 	
 	
+
+
+	// ********* [VALIDAZIONE-TOKEN] DPOP ****************** */
+
+	public static EsitoValidazioneDPoP validazioneDPoP(Logger log, AbstractDatiInvocazione datiInvocazione,
+			PdDContext pddContext, IProtocolFactory<?> protocolFactory,
+			EsitoPresenzaDPoP esitoPresenzaDPoP, EsitoGestioneToken esitoGestioneToken,
+			String accessToken, boolean portaDelegata,
+			Busta busta, IDSoggetto idDominio, IDServizio idServizio) throws Exception {
+
+		// Nessuna cache per DPoP: ogni richiesta ha un DPoP univoco (iat+jti)
+		EsitoValidazioneDPoP esitoValidazioneDPoP = GestoreTokenValidazioneUtilities.validazioneDPoPEngine(log, datiInvocazione,
+				esitoPresenzaDPoP, esitoGestioneToken,
+				protocolFactory, accessToken, portaDelegata, pddContext,
+				busta, idDominio, idServizio);
+
+		return esitoValidazioneDPoP;
+	}
+
+
+
 	// ********* [VALIDAZIONE-TOKEN] FORWARD TOKEN ****************** */
 	
 	public static void forwardToken(Logger log, String idTransazione, AbstractDatiInvocazione datiInvocazione, EsitoPresenzaToken esitoPresenzaToken, 
@@ -1965,10 +2188,9 @@ public class GestoreToken {
 					datiRichiesta);
 			
 			if(esitoNegoziazioneToken!=null && esitoNegoziazioneToken.isValido()) {
-				// ricontrollo tutte le date (l'ho appena preso, dovrebbero essere buone) 
+				// ricontrollo tutte le date (l'ho appena preso, dovrebbero essere buone)
 				boolean checkPerRinegoziazione = false;
-				GestoreTokenNegoziazioneUtilities.validazioneInformazioniNegoziazioneToken(checkPerRinegoziazione, esitoNegoziazioneToken,  
-						policyNegoziazioneToken.isSaveErrorInCache());
+				GestoreTokenNegoziazioneUtilities.validazioneInformazioniNegoziazioneToken(checkPerRinegoziazione, esitoNegoziazioneToken, policyNegoziazioneToken);
 			}
 			
 		}
@@ -2046,10 +2268,9 @@ public class GestoreToken {
 						}
 						
 						if(esitoNegoziazioneToken.isValido()) {
-							// ricontrollo tutte le date (l'ho appena preso, dovrebbero essere buone) 
+							// ricontrollo tutte le date (l'ho appena preso, dovrebbero essere buone)
 							boolean checkPerRinegoziazione = false;
-							GestoreTokenNegoziazioneUtilities.validazioneInformazioniNegoziazioneToken(checkPerRinegoziazione, esitoNegoziazioneToken,  
-									policyNegoziazioneToken.isSaveErrorInCache());
+							GestoreTokenNegoziazioneUtilities.validazioneInformazioniNegoziazioneToken(checkPerRinegoziazione, esitoNegoziazioneToken, policyNegoziazioneToken);
 						}
 					}
 					else {
@@ -2059,8 +2280,7 @@ public class GestoreToken {
 						if(esitoNegoziazioneToken.isValido()) {
 							// controllo la data qua
 							boolean checkPerRinegoziazione = true;
-							GestoreTokenNegoziazioneUtilities.validazioneInformazioniNegoziazioneToken(checkPerRinegoziazione, esitoNegoziazioneToken,  
-									policyNegoziazioneToken.isSaveErrorInCache());
+							GestoreTokenNegoziazioneUtilities.validazioneInformazioniNegoziazioneToken(checkPerRinegoziazione, esitoNegoziazioneToken, policyNegoziazioneToken);
 							if(!esitoNegoziazioneToken.isValido() && !esitoNegoziazioneToken.isDateValide()) {
 								// DEVO riavviare la negoziazione poichè è scaduto
 								GestoreToken.cacheGestioneToken.remove(keyCache);
@@ -2083,8 +2303,7 @@ public class GestoreToken {
 				if(esitoNegoziazioneToken.isValido()) {
 					// controllo la data qua
 					boolean checkPerRinegoziazione = true;
-					GestoreTokenNegoziazioneUtilities.validazioneInformazioniNegoziazioneToken(checkPerRinegoziazione, esitoNegoziazioneToken,  
-							policyNegoziazioneToken.isSaveErrorInCache());
+					GestoreTokenNegoziazioneUtilities.validazioneInformazioniNegoziazioneToken(checkPerRinegoziazione, esitoNegoziazioneToken, policyNegoziazioneToken);
 					if(!esitoNegoziazioneToken.isValido() && !esitoNegoziazioneToken.isDateValide()) {
 						
 						org.openspcoop2.utils.Semaphore lockNegoziazione = getLockNegoziazione(policyName);
@@ -2135,24 +2354,121 @@ public class GestoreToken {
 		if(pddContext!=null && policyNegoziazioneToken.isPDND()) {
 			pddContext.put(CostantiPdD.TOKEN_NEGOZIAZIONE_PDND, CostantiPdD.TOKEN_ESITO_TRUE);
 		}
-		
+
+		// DPoP: Save dynamic parameters for backend proof generation
+		if(esitoNegoziazioneToken!=null && esitoNegoziazioneToken.getInformazioniNegoziazioneToken()!=null) {
+			esitoNegoziazioneToken.getInformazioniNegoziazioneToken().setDynamicParameters(dynamicParameters);
+		}
+
 		return esitoNegoziazioneToken;
 	}
-	
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+	// ********* [NEGOZIAZIONE-TOKEN] DPOP BACKEND ****************** */
+
+	private static final String DPOP_BACKEND_FUNCTION = "DPoPBackend";
+
+	public static EsitoDPoPBackend getDPoPBackendProof(DPoPParams dpopParams) throws CoreException, TokenException, SecurityException, UtilsException {
+		PolicyNegoziazioneToken policyNegoziazioneToken = dpopParams.getPolicyNegoziazioneToken();
+		if(policyNegoziazioneToken==null) {
+			throw new CoreException("PolicyNegoziazioneToken is null");
+		}
+
+		String policyName = policyNegoziazioneToken.getName();
+		boolean dpopCacheEnabled = policyNegoziazioneToken.isDpopCacheEnabled();
+		int ttlSeconds = policyNegoziazioneToken.getDpopCacheTtl();
+		String idTransazione = (dpopParams.getPddContext()!=null && dpopParams.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ?
+				PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, dpopParams.getPddContext()) : null;
+		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
+
+		EsitoDPoPBackend esito = new EsitoDPoPBackend();
+		DPoPBackendCacheEntry dpopEntry = null;
+
+		if(!dpopCacheEnabled || GestoreToken.cacheGestioneToken==null){
+			// Cache disabled, generate new DPoP
+			String dpopProof = GestoreTokenNegoziazioneUtilities.signDPoP(dpopParams);
+			esito.setDpopProof(dpopProof);
+			esito.setInCache(false);
+		}
+		else{
+			String funzione = DPOP_BACKEND_FUNCTION;
+			String keyCache = GestoreTokenNegoziazioneUtilities.buildDPoPBackendCacheKey(policyName,
+					dpopParams.getHttpMethod(), dpopParams.getHttpUri(),
+					GestoreTokenNegoziazioneUtilities.computeAccessTokenHash(dpopParams.getAccessToken()));
+
+			// Fix: first check cache without lock
+			org.openspcoop2.utils.cache.CacheResponse response =
+					(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheGestioneToken.get(keyCache);
+			if(response != null && response.getObject()!=null){
+				GestoreToken.loggerDebug(GestoreToken.getMessageObjectInCache(response, keyCache, funzione));
+				dpopEntry = (DPoPBackendCacheEntry) response.getObject();
+				// Check if still valid
+				if(GestoreTokenNegoziazioneUtilities.isDPoPBackendCacheEntryValid(dpopEntry, ttlSeconds, op2Properties)) {
+					esito.setDpopProof(dpopEntry.getDpopProof());
+					esito.setInCache(true);
+				} else {
+					// Expired
+					dpopEntry = null;
+				}
+			}
+
+			if(dpopEntry==null) {
+				org.openspcoop2.utils.Semaphore lockDPoPBackend = getLockDPoPBackend(keyCache);
+				SemaphoreLock lock = lockDPoPBackend.acquire("getDPoPBackend", idTransazione);
+				try {
+					// Double check after lock
+					response = (org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheGestioneToken.get(keyCache);
+					if(response != null && response.getObject()!=null){
+						GestoreToken.loggerDebug(GestoreToken.getMessageObjectInCache(response, keyCache, funzione));
+						dpopEntry = (DPoPBackendCacheEntry) response.getObject();
+						if(GestoreTokenNegoziazioneUtilities.isDPoPBackendCacheEntryValid(dpopEntry, ttlSeconds, op2Properties)) {
+							esito.setDpopProof(dpopEntry.getDpopProof());
+							esito.setInCache(true);
+						} else {
+							dpopEntry = null;
+						}
+					}
+
+					if(dpopEntry==null) {
+						// Generate new DPoP
+						GestoreToken.loggerDebug(getPrefixOggettoConChiave(keyCache)+getSuffixEseguiOperazione(funzione));
+						String dpopProof = GestoreTokenNegoziazioneUtilities.signDPoP(dpopParams);
+						esito.setDpopProof(dpopProof);
+						esito.setInCache(false);
+
+						// Store in cache
+						GestoreToken.loggerInfo(getMessaggioAggiuntaOggettoInCache(keyCache));
+						try{
+							DPoPBackendCacheEntry newEntry = new DPoPBackendCacheEntry(dpopProof);
+							org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
+							responseCache.setObject(newEntry);
+							GestoreToken.cacheGestioneToken.put(keyCache,responseCache);
+						}catch(UtilsException e){
+							GestoreToken.loggerError(getMessaggioErroreInserimentoInCache(keyCache, e));
+						}
+					}
+				}finally {
+					lockDPoPBackend.release(lock, "getDPoPBackend", idTransazione);
+				}
+			}
+		}
+
+		return esito;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
 	// ********* [ATTRIBUTE AUTHORITY] VALIDAZIONE CONFIGURAZIONE ****************** */
-	
+
 	public static void validazioneConfigurazione(PolicyAttributeAuthority policyAttributeAuthority) throws ProviderException, ProviderValidationException {
 		AttributeAuthorityProvider p = new AttributeAuthorityProvider();
 		p.validate(policyAttributeAuthority.getProperties());

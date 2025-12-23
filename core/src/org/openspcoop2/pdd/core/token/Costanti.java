@@ -60,6 +60,7 @@ public class Costanti {
 	public static final MapKey<String> PDD_CONTEXT_TOKEN_ESITO_VALIDAZIONE = Map.newMapKey("TOKEN_ESITO_VALIDAZIONE");
 	public static final MapKey<String> PDD_CONTEXT_TOKEN_ESITO_INTROSPECTION = Map.newMapKey("TOKEN_ESITO_INTROSPECTION");
 	public static final MapKey<String> PDD_CONTEXT_TOKEN_ESITO_USER_INFO = Map.newMapKey("TOKEN_ESITO_USER_INFO");
+	public static final MapKey<String> PDD_CONTEXT_TOKEN_ESITO_DPOP_VALIDAZIONE = Map.newMapKey("TOKEN_ESITO_DPOP_VALIDAZIONE");
 	public static final MapKey<String> PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE = Map.newMapKey("TOKEN_INFORMAZIONI_NORMALIZZATE");
 	public static final MapKey<String> PDD_CONTEXT_TOKEN_INFORMAZIONI_PDND_CLIENT_READ = Map.newMapKey("TOKEN_INFORMAZIONI_PDND_READ");
 	public static final MapKey<String> PDD_CONTEXT_ATTRIBUTI_INFORMAZIONI_NORMALIZZATE = Map.newMapKey("ATTRIBUTI_INFORMAZIONI_NORMALIZZATE");
@@ -90,9 +91,10 @@ public class Costanti {
 
 	public static final String DYNAMIC_DISCOVERY_PARSER_COLLECTION_ID = "dynamicDiscoveryParserPropRefId";
 	public static final String VALIDAZIONE_JWT_TOKEN_PARSER_COLLECTION_ID = "validazioneJwtTokenParserPropRefId";
+	public static final String VALIDAZIONE_DPOP_TOKEN_PARSER_COLLECTION_ID = "validazioneDPoPTokenParserPropRefId";
 	public static final String INTROSPECTION_TOKEN_PARSER_COLLECTION_ID = "introspectionTokenParserPropRefId";
 	public static final String USERINFO_TOKEN_PARSER_COLLECTION_ID = "userInfoTokenParserPropRefId";
-	
+
 	public static final String TOKEN_PARSER_ISSUER = "token.parser.issuer";
 	public static final String TOKEN_PARSER_SUBJECT = "token.parser.subject";
 	public static final String TOKEN_PARSER_AUDIENCE = "token.parser.audience";
@@ -109,8 +111,18 @@ public class Costanti {
 	public static final String TOKEN_PARSER_USER_MIDDLE_NAME = "token.parser.user.middleName";
 	public static final String TOKEN_PARSER_USER_FAMILY_NAME = "token.parser.user.familyName";
 	public static final String TOKEN_PARSER_USER_EMAIL = "token.parser.user.eMail";
-	
-	
+
+	// DPoP Token Parser (MAPPING) - Header claims
+	public static final String DPOP_TOKEN_PARSER_TYP = "dpop.parser.typ";
+	public static final String DPOP_TOKEN_PARSER_ALG = "dpop.parser.alg";
+	public static final String DPOP_TOKEN_PARSER_JWK = "dpop.parser.jwk";
+	// DPoP Token Parser (MAPPING) - Payload claims
+	public static final String DPOP_TOKEN_PARSER_JTI = "dpop.parser.jti";
+	public static final String DPOP_TOKEN_PARSER_HTM = "dpop.parser.htm";
+	public static final String DPOP_TOKEN_PARSER_HTU = "dpop.parser.htu";
+	public static final String DPOP_TOKEN_PARSER_IAT = "dpop.parser.iat";
+	public static final String DPOP_TOKEN_PARSER_ATH = "dpop.parser.ath";
+
 	// Policy id
 	
 	public static final String GESTIONE_TOKEN_VALIDATION_ACTION_NONE = "NessunaValidazione";
@@ -192,7 +204,28 @@ public class Costanti {
 	public static final String POLICY_VALIDAZIONE_JWS_HEADER_TYP = "policy.validazioneJWT.header.typ";
 	public static final String POLICY_VALIDAZIONE_JWS_HEADER_CTY = "policy.validazioneJWT.header.cty";
 	public static final String POLICY_VALIDAZIONE_JWS_HEADER_ALG = "policy.validazioneJWT.header.alg";
-	
+
+	// DPoP Validation
+	public static final String POLICY_DPOP_VALIDATION = "policy.dpop.validation";
+	public static final String POLICY_DPOP_SOURCE = "policy.dpop.source";
+	public static final String POLICY_DPOP_SOURCE_RFC9449_HEADER = "RFC9449_header";
+	public static final String POLICY_DPOP_SOURCE_CUSTOM_HEADER = "CUSTOM_header";
+	public static final String POLICY_DPOP_SOURCE_CUSTOM_URL = "CUSTOM_url";
+	public static final String POLICY_DPOP_SOURCE_HEADER = "policy.dpop.source.header";
+	public static final String POLICY_DPOP_SOURCE_QUERY_PARAMETER = "policy.dpop.source.queryParameter";
+
+	public static final String POLICY_VALIDAZIONE_DPOP_CLAIMS_PARSER_TYPE = CostantiConfigurazione.POLICY_VALIDAZIONE_DPOP_CLAIMS_PARSER_TYPE;
+	public static final String POLICY_VALIDAZIONE_DPOP_CLAIMS_PARSER_CLASS_NAME = CostantiConfigurazione.POLICY_VALIDAZIONE_DPOP_CLAIMS_PARSER_CLASS_NAME;
+	public static final String POLICY_VALIDAZIONE_DPOP_CLAIMS_PARSER_PLUGIN_TYPE = CostantiConfigurazione.POLICY_VALIDAZIONE_DPOP_CLAIMS_PARSER_PLUGIN_TYPE;
+
+	public static final String POLICY_VALIDAZIONE_DPOP_HEADER = "policy.validazioneDPoP.header";
+	public static final String POLICY_VALIDAZIONE_DPOP_HEADER_TYP = "policy.validazioneDPoP.header.typ";
+	public static final String POLICY_VALIDAZIONE_DPOP_HEADER_ALG = "policy.validazioneDPoP.header.alg";
+
+	public static final String POLICY_VALIDAZIONE_DPOP_PAYLOAD_TTL = "policy.validazioneDPoP.payload.ttl";
+	public static final String POLICY_VALIDAZIONE_DPOP_JTI_VALIDATION = "policy.validazioneDPoP.jti.validation";
+	public static final String POLICY_VALIDAZIONE_DPOP_JTI_MAX_SIZE = "policy.validazioneDPoP.jti.maxSize";
+
 	public static final String POLICY_INTROSPECTION_STATO = "policy.introspection.stato";
 	public static final String POLICY_INTROSPECTION_SAVE_ERROR_IN_CACHE = "policy.introspection.saveErrorInCache";
 	public static final String POLICY_INTROSPECTION_URL = "policy.introspection.endpoint.url";
@@ -356,7 +389,22 @@ public class Costanti {
 	public static final String POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEY_ALIAS= "policy.retrieveToken.jwt.signature.keyAlias";
 	public static final String POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEY_PASSWORD= CostantiProprieta.POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEY_PASSWORD;
 	public static final String POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYSTORE_BYOK_POLICY= "policy.retrieveToken.jwt.signature.byok";
-	
+
+	public static final String POLICY_RETRIEVE_TOKEN_DPOP = "policy.retrieveToken.dpop";
+	public static final String POLICY_RETRIEVE_TOKEN_DPOP_SIGN_ALGORITHM = "policy.retrieveToken.dpop.signature.algorithm";
+	public static final String POLICY_RETRIEVE_TOKEN_DPOP_SIGN_KEYSTORE_TYPE = "policy.retrieveToken.dpop.signature.keystoreType";
+	public static final String POLICY_RETRIEVE_TOKEN_DPOP_SIGN_KEYSTORE_FILE = "policy.retrieveToken.dpop.signature.keystoreFile";
+	public static final String POLICY_RETRIEVE_TOKEN_DPOP_SIGN_KEYSTORE_FILE_PUBLIC_KEY = "policy.retrieveToken.dpop.signature.keystoreFilePublicKey";
+	public static final String POLICY_RETRIEVE_TOKEN_DPOP_SIGN_KEYPAIR_ALGORITHM = "policy.retrieveToken.dpop.signature.keyPairAlgorithm";
+	public static final String POLICY_RETRIEVE_TOKEN_DPOP_SIGN_KEYSTORE_PASSWORD = CostantiProprieta.POLICY_RETRIEVE_TOKEN_DPOP_SIGN_KEYSTORE_PASSWORD;
+	public static final String POLICY_RETRIEVE_TOKEN_DPOP_SIGN_KEY_ALIAS = "policy.retrieveToken.dpop.signature.keyAlias";
+	public static final String POLICY_RETRIEVE_TOKEN_DPOP_SIGN_KEY_PASSWORD = CostantiProprieta.POLICY_RETRIEVE_TOKEN_DPOP_SIGN_KEY_PASSWORD;
+	public static final String POLICY_RETRIEVE_TOKEN_DPOP_SIGN_KEYSTORE_BYOK_POLICY = "policy.retrieveToken.dpop.signature.byok";
+	public static final String POLICY_RETRIEVE_TOKEN_DPOP_CACHE_ENABLED = "policy.retrieveToken.dpop.cache.enabled";
+	public static final String POLICY_RETRIEVE_TOKEN_DPOP_CACHE_TTL = "policy.retrieveToken.dpop.cache.ttl";
+
+	public static final String POLICY_RETRIEVE_TOKEN_EXPECTED_TOKEN_TYPE = "policy.expectedTokenType";
+
 	public static final String POLICY_RETRIEVE_TOKEN_FORWARD_MODE = "policy.tokenForward.mode";
 	public static final String POLICY_RETRIEVE_TOKEN_FORWARD_MODE_RFC6750_HEADER = "RFC6750_header";
 	public static final String POLICY_RETRIEVE_TOKEN_FORWARD_MODE_RFC6750_URL = "RFC6750_url";
@@ -365,7 +413,14 @@ public class Costanti {
 	public static final String POLICY_RETRIEVE_TOKEN_FORWARD_MODE_CUSTOM_HEADER_NAME = "policy.tokenForward.mode.header";
 	public static final String POLICY_RETRIEVE_TOKEN_FORWARD_MODE_CUSTOM_URL_PARAMETER_NAME = "policy.tokenForward.mode.queryParameter";
 
-	
+	public static final String POLICY_RETRIEVE_TOKEN_FORWARD_DPOP_MODE = "policy.tokenForward.dpop.mode";
+	public static final String POLICY_RETRIEVE_TOKEN_FORWARD_DPOP_MODE_RFC9449_HEADER = "RFC9449_header";
+	public static final String POLICY_RETRIEVE_TOKEN_FORWARD_DPOP_MODE_CUSTOM_HEADER = "CUSTOM_header";
+	public static final String POLICY_RETRIEVE_TOKEN_FORWARD_DPOP_MODE_CUSTOM_URL = "CUSTOM_url";
+	public static final String POLICY_RETRIEVE_TOKEN_FORWARD_DPOP_MODE_CUSTOM_HEADER_NAME = "policy.tokenForward.dpop.mode.header";
+	public static final String POLICY_RETRIEVE_TOKEN_FORWARD_DPOP_MODE_CUSTOM_URL_PARAMETER_NAME = "policy.tokenForward.dpop.mode.queryParameter";
+
+
 	// VALORE VUOTO
 	
 	public static final String POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED = "${undefined}";
@@ -404,7 +459,7 @@ public class Costanti {
 	
 	public static final String RFC6750_URI_QUERY_PARAMETER_ACCESS_TOKEN = "access_token";
 	public static final String RFC6750_FORM_PARAMETER_ACCESS_TOKEN = "access_token";
-	
+
 	// ELEMENTI ID 
 	
 	public static final String ID_RETRIEVE_ENDPOINT_URL = "endpointURL";
@@ -460,9 +515,13 @@ public class Costanti {
 	public static final String ID_RETRIEVE_TOKEN_METHOD_RFC_7523_CLIENT_SECRET_LABEL = "Signed JWT with Client Secret";
 	public static final String ID_RETRIEVE_TOKEN_METHOD_CUSTOM_LABEL = "Personalizzato";
 	public static final String ID_RETRIEVE_TOKEN_JWT_EXPIRED_TTL_SECONDS= "jwtExpTtl";
+	public static final String ID_RETRIEVE_TOKEN_DPOP = "dpop";
 	public static final String ID_RETRIEVE_TOKEN_JWT_SYMMETRIC_SIGN_ALGORITHM = "jwtSymmetricSignatureAlgorithm";
 	public static final String ID_RETRIEVE_TOKEN_JWT_ASYMMETRIC_SIGN_ALGORITHM = "jwtAsymmetricSignatureAlgorithm";
-	
+	public static final String ID_RETRIEVE_TOKEN_DPOP_ASYMMETRIC_SIGN_ALGORITHM = "dpopAsymmetricSignatureAlgorithm";
+
+	public static final String ID_RETRIEVE_TOKEN_EXPECTED_TOKEN_TYPE = "expectedTokenType";
+
 	public static final String ID_INTROSPECTION_HTTP_METHOD = "introspectionHttpMethod";
 	
 	public static final String ID_USER_INFO_HTTP_METHOD = "userInfoHttpMethod";
@@ -580,11 +639,13 @@ public class Costanti {
 	
 	public static final String ID_DYNAMIC_DISCOVERY_CUSTOM_PARSER_PLUGIN_CLASSNAME = "discoveryParserCustom";
 	public static final String ID_VALIDAZIONE_JWT_CUSTOM_PARSER_PLUGIN_CLASSNAME = "validazioneJwtParserCustom";
+	public static final String ID_VALIDAZIONE_DPOP_CUSTOM_PARSER_PLUGIN_CLASSNAME = "validazioneDPoPParserCustom";
 	public static final String ID_INTROSPECTION_CUSTOM_PARSER_PLUGIN_CLASSNAME = "introspectionParserCustom";
 	public static final String ID_USER_INFO_CUSTOM_PARSER_PLUGIN_CLASSNAME = "userInfoParserCustom";
 	
 	public static final String ID_DYNAMIC_DISCOVERY_CUSTOM_PARSER_PLUGIN_CHOICE = "discoveryParserCustomPluginChoice";
 	public static final String ID_VALIDAZIONE_JWT_CUSTOM_PARSER_PLUGIN_CHOICE = "validazioneJwtParserCustomPluginChoice";
+	public static final String ID_VALIDAZIONE_DPOP_CUSTOM_PARSER_PLUGIN_CHOICE = "validazioneDPoPParserCustomPluginChoice";
 	public static final String ID_INTROSPECTION_CUSTOM_PARSER_PLUGIN_CHOICE = "introspectionParserCustomPluginChoice";
 	public static final String ID_USER_INFO_CUSTOM_PARSER_PLUGIN_CHOICE = "userInfoParserCustomPluginChoice";
 	
@@ -597,7 +658,18 @@ public class Costanti {
 	public static final String ID_NEGOZIAZIONE_JWT_KEYSTORE_PASSWORD_PRIVATE_KEY = "jwtPasswordChiavePrivata";
 	public static final String ID_NEGOZIAZIONE_JWT_KEYSTORE_PASSWORD_PRIVATE_KEY_OPZIONALE = "jwtPasswordChiavePrivataOpzionale";
 	public static final String ID_NEGOZIAZIONE_JWT_KEYSTORE_BYOK_POLICY = "jwtByokPolicy";
-		
+
+	public static final String ID_NEGOZIAZIONE_DPOP_KEYSTORE_TYPE = "dpopKeystoreType";
+	public static final String ID_NEGOZIAZIONE_DPOP_KEYSTORE_TYPE_NO_MODI = "dpopKeystoreTypeNoModi";
+	public static final String ID_NEGOZIAZIONE_DPOP_KEYSTORE_FILE = "dpopKeystoreFile";
+	public static final String ID_NEGOZIAZIONE_DPOP_KEYSTORE_FILE_PRIVATE_KEY = "dpopKeystorePrivateKey";
+	public static final String ID_NEGOZIAZIONE_DPOP_KEYSTORE_FILE_PUBLIC_KEY = "dpopKeystorePublicKey";
+	public static final String ID_NEGOZIAZIONE_DPOP_KEYSTORE_PASSWORD = "dpopKeystorePassword";
+	public static final String ID_NEGOZIAZIONE_DPOP_KEYSTORE_ALIAS_PRIVATE_KEY = "dpopAliasChiavePrivata";
+	public static final String ID_NEGOZIAZIONE_DPOP_KEYSTORE_PASSWORD_PRIVATE_KEY = "dpopPasswordChiavePrivata";
+	public static final String ID_NEGOZIAZIONE_DPOP_KEYSTORE_PASSWORD_PRIVATE_KEY_OPZIONALE = "dpopPasswordChiavePrivataOpzionale";
+	public static final String ID_NEGOZIAZIONE_DPOP_KEYSTORE_BYOK_POLICY = "dpopByokPolicy";
+
 	public static final String ID_NEGOZIAZIONE_CUSTOM_PARSER_PLUGIN_CLASSNAME = "customTokenParserCustomPlugin";
 	public static final String ID_NEGOZIAZIONE_CUSTOM_PARSER_PLUGIN_CHOICE = "customTokenParserCustomPluginChoice";
 	

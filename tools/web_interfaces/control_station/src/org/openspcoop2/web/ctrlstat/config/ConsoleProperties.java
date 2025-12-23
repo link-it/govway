@@ -1419,6 +1419,9 @@ public class ConsoleProperties {
 	public String getJmxPdDConfigurazioneSistemaNomeMetodoCheckCertificatiSignedJwtTokenPolicyNegoziazione(String alias) throws UtilsException {
 		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatiSignedJwtTokenPolicyNegoziazione");
 	}
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoCheckCertificatiDpopJwtTokenPolicyNegoziazione(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatiDpopJwtTokenPolicyNegoziazione");
+	}
 	public String getJmxPdDConfigurazioneSistemaNomeMetodoCheckCertificatiConnettoreHttpsAttributeAuthority(String alias) throws UtilsException {
 		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatiConnettoreHttpsAttributeAuthority");
 	}
@@ -1532,6 +1535,12 @@ public class ConsoleProperties {
 	}
 	public String getJmxPdDConfigurazioneSistemaNomeMetodoRefreshPersistentConfiguration(String alias) throws UtilsException {
 		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.refreshPersistentConfiguration");
+	}
+	public String getJmxPdDConfigurazioneSistemaNomeRisorsaGestioneToken(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeRisorsaGestioneToken");
+	}
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoPrintStatsDPoPJtiCaches(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.printStatsDPoPJtiCaches");
 	}
 	public String getJmxPdDConfigurazioneSistemaNomeRisorsaDatiRichieste(String alias) throws UtilsException {
 		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeRisorsaDatiRichieste");

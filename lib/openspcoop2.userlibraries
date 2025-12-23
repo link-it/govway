@@ -210,6 +210,7 @@
 	<archive path="/op2_3.4.dev/lib/shared/rhino-1.8.1.jar"/>
 	<archive path="/op2_3.4.dev/lib/shared/hazelcast-5.3.8.jar"/>
 	<archive path="/op2_3.4.dev/lib/shared/hibernate-core-6.6.18.Final.jar"/>
+	<archive path="/op2_3.4.dev/lib/shared/caffeine-3.2.3.jar"/>
 	<!-- spring -->
         <archive path="/op2_3.4.dev/lib/spring/spring-web-6.2.11.jar"/>
         <archive path="/op2_3.4.dev/lib/spring/spring-tx-6.2.11.jar"/>
