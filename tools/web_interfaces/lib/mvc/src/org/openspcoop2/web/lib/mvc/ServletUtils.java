@@ -1427,6 +1427,9 @@ public class ServletUtils {
 		// Escape HTML per sicurezza
 		sanitized = StringEscapeUtils.escapeHtml4(sanitized);
 
+		 // Ripristina &#10; per i newline nel tooltip (dopo che escapeHtml l'ha escapato)
+		sanitized = sanitized.replace("&amp;#10;", "&#10;");
+		
 		return sanitized;
 	}
 }

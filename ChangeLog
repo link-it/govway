@@ -1,3 +1,9 @@
+2025-12-23 Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug
+	Il testo dei tooltip che contenevano un ritorno a capo veniva visualizzato in modo errato, mostrando la sequenza '&#10;'.
+
 2025-12-23  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
