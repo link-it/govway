@@ -71,39 +71,47 @@ public class LocalJtiCacheManager {
 	 */
 	private static ScheduledExecutorService cleanupScheduler = null;
 	private static final AtomicBoolean schedulerInitialized = new AtomicBoolean(false);
+	private static final Object schedulerLock = new Object();
 
 	/**
 	 * Inizializza lo scheduler di cleanup se configurato (intervallo > 0).
-	 * Thread-safe tramite AtomicBoolean: garantisce inizializzazione singola.
+	 * Thread-safe tramite sincronizzazione su schedulerLock.
 	 * Chiamato automaticamente alla prima creazione di cache.
 	 */
 	private static void initCleanupSchedulerIfNeeded() {
-		if (schedulerInitialized.compareAndSet(false, true)) {
-			try {
-				int intervalSeconds = OpenSPCoop2Properties.getInstance().getGestioneTokenDPoPJtiLocalCacheCleanupIntervalSeconds();
-				if (intervalSeconds > 0) {
-					cleanupScheduler = Executors.newSingleThreadScheduledExecutor(r -> {
-						Thread t = new Thread(r, "JTI-Cache-Cleanup");
-						t.setDaemon(true);
-						return t;
-					});
-					cleanupScheduler.scheduleAtFixedRate(() -> {
-						try {
-							if (!cacheRegistry.isEmpty()) {
-								cacheRegistry.values().forEach(Cache::cleanUp);
-							}
-						} catch (Exception e) {
-							logger.error("Error during JTI cache cleanup: {}", e.getMessage(), e);
-						}
-					}, intervalSeconds, intervalSeconds, TimeUnit.SECONDS);
-					logger.info("JTI cache cleanup scheduler started with interval {} seconds", intervalSeconds);
-				} else {
-					logger.info("JTI cache cleanup scheduler disabled (interval=0)");
+		if (!schedulerInitialized.get()) {
+			synchronized (schedulerLock) {
+				if (schedulerInitialized.compareAndSet(false, true)) {
+					initCleanupScheduler();
 				}
-			} catch (Exception e) {
-				logger.error("Failed to initialize JTI cache cleanup scheduler: {}", e.getMessage(), e);
-				schedulerInitialized.set(false);
 			}
+		}
+	}
+	private static void initCleanupScheduler() {
+		try {
+			int intervalSeconds = OpenSPCoop2Properties.getInstance().getGestioneTokenDPoPJtiLocalCacheCleanupIntervalSeconds();
+			if (intervalSeconds > 0) {
+				cleanupScheduler = Executors.newSingleThreadScheduledExecutor(r -> {
+					Thread t = new Thread(r, "JTI-Cache-Cleanup");
+					t.setDaemon(true);
+					return t;
+				});
+				cleanupScheduler.scheduleAtFixedRate(() -> {
+					try {
+						if (!cacheRegistry.isEmpty()) {
+							cacheRegistry.values().forEach(Cache::cleanUp);
+						}
+					} catch (Exception e) {
+						logger.error("Error during JTI cache cleanup: {}", e.getMessage(), e);
+					}
+				}, intervalSeconds, intervalSeconds, TimeUnit.SECONDS);
+				logger.info("JTI cache cleanup scheduler started with interval {} seconds", intervalSeconds);
+			} else {
+				logger.info("JTI cache cleanup scheduler disabled (interval=0)");
+			}
+		} catch (Exception e) {
+			logger.error("Failed to initialize JTI cache cleanup scheduler: {}", e.getMessage(), e);
+			schedulerInitialized.set(false);
 		}
 	}
 
@@ -174,10 +182,12 @@ public class LocalJtiCacheManager {
 	 */
 	public static void shutdownAll() {
 		logger.info("Shutting down all JTI caches ({} policies)", cacheRegistry.size());
-		if (cleanupScheduler != null) {
-			cleanupScheduler.shutdownNow();
-			cleanupScheduler = null;
-			schedulerInitialized.set(false);
+		synchronized (schedulerLock) {
+			if (cleanupScheduler != null) {
+				cleanupScheduler.shutdownNow();
+				cleanupScheduler = null;
+				schedulerInitialized.set(false);
+			}
 		}
 		cacheRegistry.forEach((policyName, cache) -> {
 			cache.invalidateAll();
