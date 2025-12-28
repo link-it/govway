@@ -96,7 +96,7 @@
 		<!-- libraries -->
 		<lib.ant.version>1.10.11</lib.ant.version>
 		<lib.org.eclipse.jgit.version>7.3.0.202506031305-r</lib.org.eclipse.jgit.version>
-		<lib.log4j.version>2.25.0</lib.log4j.version>
+		<lib.log4j.version>2.25.3</lib.log4j.version>
 
 	</properties>
 

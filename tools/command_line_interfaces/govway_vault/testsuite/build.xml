@@ -31,7 +31,7 @@
 		</fileset>
 		<fileset dir="${required_lib}/log">
 			<include name="*.jar"/>
-			<exclude name="log4j-slf4j2-impl-2.25.0.jar"/> <!-- per evitare errore SLF4J(W): Class path contains multiple SLF4J providers. (uso logback) -->
+			<exclude name="log4j-slf4j2-impl-2.25.3.jar"/> <!-- per evitare errore SLF4J(W): Class path contains multiple SLF4J providers. (uso logback) -->
 		</fileset>
 		<fileset dir="${required_lib}/json">
 			<include name="*.jar"/>
