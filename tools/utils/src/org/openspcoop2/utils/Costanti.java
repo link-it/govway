@@ -70,12 +70,13 @@ public class Costanti {
 	
 
 	// proprieta aggiunte ai *.log4j2.properties
-	public static final String PROP_ENABLE_STDOUT = "option.stdout";
-	public static final String PROP_ENABLE_JSON = "option.json";
-	public static final String PROP_ENABLE_JSON_TEMPLATE = "option.json.template";
-	public static final String PROP_ENABLE_LOG_CLUSTERID = "option.clusterId";
-	public static final String PROP_ENABLE_LOG_CLUSTERID_STRATEGY = "option.clusterId.strategy";
-	public static final String PROP_ENABLE_LOG_CLUSTERID_ENV = "option.clusterId.env";
+	public static final String PROP_PREFIX = "option.";
+	public static final String PROP_ENABLE_STDOUT = PROP_PREFIX+"stdout";
+	public static final String PROP_ENABLE_JSON = PROP_PREFIX+"json";
+	public static final String PROP_ENABLE_JSON_TEMPLATE = PROP_PREFIX+"json.template";
+	public static final String PROP_ENABLE_LOG_CLUSTERID = PROP_PREFIX+"clusterId";
+	public static final String PROP_ENABLE_LOG_CLUSTERID_STRATEGY = PROP_PREFIX+"clusterId.strategy";
+	public static final String PROP_ENABLE_LOG_CLUSTERID_ENV = PROP_PREFIX+"clusterId.env";
 
 	public static final String LOG_CLUSTERID_STRATEGY_FILENAME = "fileName";
 	public static final String LOG_CLUSTERID_STRATEGY_DIRECTORY = "directory";
