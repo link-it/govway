@@ -30,7 +30,7 @@ import org.openspcoop2.protocol.modipa.constants.ModISignalHubOperation;
 import org.openspcoop2.utils.MapKey;
 
 /**
- * SignalHubPushInRequestHandler
+ * SignalHubPushParams
  *
  * @author Tommaso Burlon (tommaso.burlon@link.it)
  * @author $Author$

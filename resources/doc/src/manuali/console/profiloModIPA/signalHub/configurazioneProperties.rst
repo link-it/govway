@@ -11,6 +11,12 @@ Per disabilitare il supporto a Signal-Hub, è possibile inserire la seguente pro
 
 ``org.openspcoop2.protocol.modipa.signalHub.enabled=false``
 
+**Opzionalità della pseudoanonimizzazione**
+
+Per rendere opzionale la pseudoanonimizzazione dell'id degli oggetti e far comparire la relativa checkbox sulla maschera di configurazione di signal-hub, abilitare la properties:
+
+``org.openspcoop2.protocol.modipa.signalHub.pseudonymization.choice.enabled=true``
+
 **Funzioni di hash**
 
 È possibile modificare la lista degli algoritmi disponibili per la generazione dell’hash, così come l’algoritmo di default, attraverso le seguenti proprietà:
