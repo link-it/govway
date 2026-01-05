@@ -32751,7 +32751,77 @@ public class OpenSPCoop2Properties {
 
 		return this.getControlloTrafficoGestorePolicyInMemoryHazelcastLocalCacheUpdateInterval;
 	}
-	
+
+	private Boolean isControlloTrafficoGestorePolicyInMemoryHazelcastOrphanedProxiesCleanupEnabled = null;
+	public boolean isControlloTrafficoGestorePolicyInMemoryHazelcastOrphanedProxiesCleanupEnabled() {
+		if(this.isControlloTrafficoGestorePolicyInMemoryHazelcastOrphanedProxiesCleanupEnabled==null){
+			String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST.orphanedProxiesCleanup.enabled";
+			try{
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name!=null){
+					name = name.trim();
+					this.isControlloTrafficoGestorePolicyInMemoryHazelcastOrphanedProxiesCleanupEnabled = Boolean.parseBoolean(name);
+				}else{
+					this.isControlloTrafficoGestorePolicyInMemoryHazelcastOrphanedProxiesCleanupEnabled = true;
+				}
+			} catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, true),e);
+				this.isControlloTrafficoGestorePolicyInMemoryHazelcastOrphanedProxiesCleanupEnabled = true;
+			}
+		}
+		return this.isControlloTrafficoGestorePolicyInMemoryHazelcastOrphanedProxiesCleanupEnabled;
+	}
+
+	private Integer getControlloTrafficoGestorePolicyInMemoryHazelcastOrphanedProxiesCleanupInterval = null;
+	public Integer getControlloTrafficoGestorePolicyInMemoryHazelcastOrphanedProxiesCleanupInterval() {
+		if(this.getControlloTrafficoGestorePolicyInMemoryHazelcastOrphanedProxiesCleanupInterval==null){
+			String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST.orphanedProxiesCleanup.interval";
+
+			try{
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if (name != null) {
+					name = name.trim();
+					this.getControlloTrafficoGestorePolicyInMemoryHazelcastOrphanedProxiesCleanupInterval = Integer.valueOf(name);
+				} else {
+					this.logWarn(getMessaggioProprietaNonImpostata(pName,60));
+					this.getControlloTrafficoGestorePolicyInMemoryHazelcastOrphanedProxiesCleanupInterval = 60;
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName,e,60),e);
+				this.getControlloTrafficoGestorePolicyInMemoryHazelcastOrphanedProxiesCleanupInterval = 60;
+			}
+		}
+
+		return this.getControlloTrafficoGestorePolicyInMemoryHazelcastOrphanedProxiesCleanupInterval;
+	}
+
+	private Long getControlloTrafficoGestorePolicyInMemoryHazelcastOrphanedProxyThresholdMs = null;
+	public Long getControlloTrafficoGestorePolicyInMemoryHazelcastOrphanedProxyThresholdMs() {
+		if(this.getControlloTrafficoGestorePolicyInMemoryHazelcastOrphanedProxyThresholdMs==null){
+			String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST.orphanedProxy.thresholdHours";
+
+			try{
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if (name != null) {
+					name = name.trim();
+					long hours = Long.parseLong(name);
+					this.getControlloTrafficoGestorePolicyInMemoryHazelcastOrphanedProxyThresholdMs = hours * 60 * 60 * 1000;
+				} else {
+					this.logWarn(getMessaggioProprietaNonImpostata(pName,48));
+					this.getControlloTrafficoGestorePolicyInMemoryHazelcastOrphanedProxyThresholdMs = 48L * 60 * 60 * 1000;
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName,e,48),e);
+				this.getControlloTrafficoGestorePolicyInMemoryHazelcastOrphanedProxyThresholdMs = 48L * 60 * 60 * 1000;
+			}
+		}
+
+		return this.getControlloTrafficoGestorePolicyInMemoryHazelcastOrphanedProxyThresholdMs;
+	}
+
 	private Boolean isHazelcastSecurityRecommendationsEnabled = null;
 	public boolean isHazelcastSecurityRecommendationsEnabled() {	
 		if(this.isHazelcastSecurityRecommendationsEnabled==null){
