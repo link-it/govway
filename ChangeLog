@@ -1,3 +1,8 @@
+2026-01-05  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunto timer periodico per la pulizia dei proxy Hazelcast orfani (contatori di intervalli di rate limiting terminati)
+
 2025-12-28  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

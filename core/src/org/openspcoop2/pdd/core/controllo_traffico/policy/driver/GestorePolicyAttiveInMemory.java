@@ -135,11 +135,20 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 		case HAZELCAST_NEAR_CACHE:
 		case HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP:
 		case HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP:
+		case HAZELCAST_REPLICATED_MAP:
+			HazelcastManager.getInstance(this.type);
+			break;
 		case HAZELCAST_PNCOUNTER:
 		case HAZELCAST_ATOMIC_LONG:
 		case HAZELCAST_ATOMIC_LONG_ASYNC:
-		case HAZELCAST_REPLICATED_MAP:
 			HazelcastManager.getInstance(this.type);
+			if(!OpenSPCoop2Startup.isStartedTimerHazelcastOrphanedProxiesCleanup()) {
+				try {
+					OpenSPCoop2Startup.startTimerHazelcastOrphanedProxiesCleanup();
+				}catch(Exception e) {
+					throw new PolicyException(e.getMessage(),e);
+				}
+			}
 			break;
 		case HAZELCAST_LOCAL_CACHE:
 			HazelcastManager.getInstance(this.type);
@@ -305,13 +314,18 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 		/**synchronized (this.mapActiveThreadsPolicy) {*/
 		SemaphoreLock slock = this.lock.acquireThrowRuntime("removeActiveThreadsPolicy");
 		try {
-			
+
 			if(this.isStop){
 				throw new PolicyShutdownException("Policy Manager shutdown");
 			}
-			
-			if(this.mapActiveThreadsPolicy.containsKey(idActivePolicy)){
-				this.mapActiveThreadsPolicy.remove(idActivePolicy);
+
+			IPolicyGroupByActiveThreadsInMemory policy = this.mapActiveThreadsPolicy.remove(idActivePolicy);
+			if(policy!=null) {
+				try {
+					policy.remove();
+				}catch(Throwable e) {
+					this.log.error("removeActiveThreadsPolicy failed: "+e.getMessage(),e);
+				}
 			}
 		}finally {
 			this.lock.release(slock, "removeActiveThreadsPolicy");
@@ -339,11 +353,18 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 		/**synchronized (this.mapActiveThreadsPolicy) {*/
 		SemaphoreLock slock = this.lock.acquireThrowRuntime("removeAllActiveThreadsPolicy");
 		try {
-			
+
 			if(this.isStop){
 				throw new PolicyShutdownException("Policy Manager shutdown");
 			}
-			
+
+			for (IPolicyGroupByActiveThreadsInMemory policy : this.mapActiveThreadsPolicy.values()) {
+				try {
+					policy.remove();
+				}catch(Throwable e) {
+					this.log.error("removeAllActiveThreadsPolicy (policy.remove) failed: "+e.getMessage(),e);
+				}
+			}
 			this.mapActiveThreadsPolicy.clear();
 		}finally {
 			this.lock.release(slock, "removeAllActiveThreadsPolicy");
@@ -867,6 +888,6 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 		}
 		throw new PolicyException("Unsupported type '"+this.type+"'");
 	}
-	
+
 }
 

@@ -30,6 +30,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyException;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreadsType;
+import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.json.JsonPathExpressionEngine;
 import org.openspcoop2.utils.json.JsonPathNotFoundException;
@@ -380,6 +381,9 @@ public class HazelcastManager {
 				if(!definedInstance) {
 					ncInstance.setJoin(ncShared.getJoin());
 					if(ncInstance.getJoin().getTcpIpConfig()!=null) {
+						if(ncShared.getJoin().getTcpIpConfig().getConnectionTimeoutSeconds()>0) {
+							ncInstance.getJoin().getTcpIpConfig().setConnectionTimeoutSeconds(ncShared.getJoin().getTcpIpConfig().getConnectionTimeoutSeconds());
+						}
 						if(portHazelcastConfigInstance!=null && portHazelcastConfigInstance.intValue()>0) {
 							if(ncInstance.getJoin().getTcpIpConfig().getMembers()!=null && !ncInstance.getJoin().getTcpIpConfig().getMembers().isEmpty()) {
 								// Se vengono usate le porte, devo clonare la lista e sistemarla con la porta usata sull'attuale istanza
@@ -528,6 +532,187 @@ public class HazelcastManager {
 		}
 	}
 	
+	/**
+	 * Pulisce i proxy Hazelcast orfani (contatori di intervalli passati).
+	 *
+	 * <h3>Perché si creano proxy orfani</h3>
+	 * <p>
+	 * Ogni policy di rate limiting ha un intervallo temporale (minutale, orario, giornaliero).
+	 * Per ogni intervallo vengono creati contatori Hazelcast con nomi che includono il timestamp:
+	 * <pre>pncounter-GROUPHASH--policyRequestCounter-i-TIMESTAMP-c-CONFIGTIMESTAMP-rl</pre>
+	 * </p>
+	 *
+	 * <h3>Perché non vengono rimossi automaticamente</h3>
+	 * <p>
+	 * Il codice in DatiCollezionatiDistributed* usa un meccanismo di "cestino a due fasi":
+	 * i contatori vengono eliminati al secondo cambio di intervallo per evitare race condition
+	 * tra nodi del cluster. Tuttavia questo meccanismo funziona solo se la stessa istanza
+	 * che ha creato il contatore riceve richieste anche negli intervalli successivi.
+	 * </p>
+	 *
+	 * <h3>Scenari che creano orfani</h3>
+	 * <ul>
+	 *   <li><b>Restart del nodo</b>: dopo un restart la mappa locale è vuota, quindi non sa quali contatori eliminare</li>
+	 *   <li><b>Traffico sporadico</b>: se un gruppo (es. un IP) fa richieste solo in un intervallo e poi smette</li>
+	 *   <li><b>Bilanciamento del carico</b>: se le richieste successive vanno su un nodo diverso</li>
+	 *   <li><b>Policy rimosse/modificate</b>: i vecchi contatori restano in Hazelcast</li>
+	 * </ul>
+	 *
+	 * <p>
+	 * Questo metodo risolve il problema facendo una scansione periodica basata sul timestamp
+	 * nel nome del contatore, indipendentemente dallo stato locale del nodo.
+	 * </p>
+	 *
+	 * @param thresholdMs soglia in millisecondi per considerare un proxy orfano
+	 * @return numero di proxy rimossi
+	 */
+	public static int cleanupOrphanedProxies(long thresholdMs) {
+		int removed = 0;
+		if(staticMapInstance == null || staticMapInstance.isEmpty()) {
+			return removed;
+		}
+
+		Logger logControlloTraffico = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(true);
+		
+		long now = org.openspcoop2.utils.date.DateManager.getTimeMillis();
+		long threshold = now - thresholdMs;
+
+		java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+
+		if(logControlloTraffico!=null) {
+			String msg = "Cleanup orphaned proxies: threshold=" + sdf.format(new java.util.Date(threshold)) + " (" + (thresholdMs / 3600000) + " hours ago)";
+			logControlloTraffico.info(msg);
+		}
+
+		// Pulisco solo per i tipi counter
+		PolicyGroupByActiveThreadsType[] counterTypes = {
+			PolicyGroupByActiveThreadsType.HAZELCAST_PNCOUNTER,
+			PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG,
+			PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG_ASYNC
+		};
+
+		for (PolicyGroupByActiveThreadsType type : counterTypes) {
+			HazelcastInstance hazelcast = staticMapInstance.get(type);
+			if(hazelcast == null) {
+				continue;
+			}
+
+			try {
+				java.util.Collection<com.hazelcast.core.DistributedObject> objects = hazelcast.getDistributedObjects();
+
+				int countWithInterval = 0;
+				int countWithoutInterval = 0;
+				int countRecent = 0;
+				int removedForType = 0;
+				long oldestInterval = Long.MAX_VALUE;
+				long newestIntervalRemoved = Long.MIN_VALUE;
+				long newestInterval = Long.MIN_VALUE;
+
+				for (com.hazelcast.core.DistributedObject obj : objects) {
+					String name = obj.getName();
+					if(name == null) {
+						continue;
+					}
+
+					// Pulisce SOLO oggetti con intervallo (-i-)
+					// Pattern: ...-policyRequestCounter-i-TIMESTAMP-c-...
+					// Gli oggetti senza -i- (es. activeRequestCounter, updatePolicyDate) sono legati al gruppo
+					// e devono essere distrutti solo quando il gruppo viene rimosso
+					int intervalIndex = name.indexOf("-i-");
+					if(intervalIndex < 0) {
+						// Oggetto senza intervallo, lo saltiamo
+						countWithoutInterval++;
+						continue;
+					}
+
+					countWithInterval++;
+
+					// Estrae il timestamp dell'intervallo
+					int timestampStart = intervalIndex + 3;
+					int timestampEnd = name.indexOf("-c-", timestampStart);
+					if(timestampEnd < 0) {
+						timestampEnd = name.length();
+					}
+
+					String timestampStr = name.substring(timestampStart, timestampEnd);
+					try {
+						long timestamp = Long.parseLong(timestampStr);
+
+						// Traccia intervallo più vecchio e più recente
+						if(timestamp < oldestInterval) {
+							oldestInterval = timestamp;
+						}
+						if(timestamp > newestInterval) {
+							newestInterval = timestamp;
+						}
+
+						if(timestamp < threshold) {
+							// Il proxy è orfano (intervallo passato), lo distruggo
+							try {
+								obj.destroy();
+								removed++;
+								removedForType++;
+								if(logControlloTraffico!=null) {
+									String msg = "Destroyed orphaned proxy: " + name + " (intervalDate=" + sdf.format(new java.util.Date(timestamp)) + ")";
+									logControlloTraffico.debug(msg);
+								}
+								if(timestamp > newestIntervalRemoved) {
+									newestIntervalRemoved = timestamp;
+								}
+							} catch(Throwable t) {
+								if(logControlloTraffico!=null) {
+									String msg = "Error destroying orphaned proxy " + name + ": " + t.getMessage();
+									logControlloTraffico.error(msg,t);
+								}
+							}
+						} else {
+							countRecent++;
+						}
+					} catch(NumberFormatException nfe) {
+						// Non riesco a parsare il timestamp, salto questo proxy
+						if(logControlloTraffico!=null) {
+							String msg = "Cannot parse timestamp from proxy name: " + name;
+							logControlloTraffico.debug(msg);
+						}
+					}
+				}
+
+				StringBuilder sb = new StringBuilder();
+				sb.append("Type ").append(type).append(": total=").append(objects.size());
+				sb.append(", withInterval=").append(countWithInterval);
+				sb.append(", withoutInterval=").append(countWithoutInterval);
+				sb.append(", recent=").append(countRecent);
+				sb.append(", removed=").append(removedForType);
+				if(countWithInterval > 0 && oldestInterval != Long.MAX_VALUE) {
+					sb.append(", oldest=").append(sdf.format(new java.util.Date(oldestInterval)));
+				}
+				if(countWithInterval > 0 && newestInterval != Long.MIN_VALUE) {
+					sb.append(", newest=").append(sdf.format(new java.util.Date(newestInterval)));
+				}
+				if(countWithInterval > 0 && newestIntervalRemoved != Long.MIN_VALUE) {
+					sb.append(", newest-removed=").append(sdf.format(new java.util.Date(newestIntervalRemoved)));
+				}
+				if(logControlloTraffico!=null) {
+					String msg = sb.toString();
+					logControlloTraffico.info(msg);
+				}
+
+			} catch(Throwable t) {
+				if(logControlloTraffico!=null) {
+					String msg = "Error during cleanup of orphaned proxies for type " + type + ": " + t.getMessage();
+					logControlloTraffico.error(msg,t);
+				}
+			}
+		}
+
+		if(logControlloTraffico!=null) {
+			String msg = "Cleanup orphaned proxies finished: removed " + removed + " proxies";
+			logControlloTraffico.info(msg);
+		}
+
+		return removed;
+	}
+
 	public static synchronized void close() {
 		if(HazelcastManager.staticMapInstance!=null && !HazelcastManager.staticMapInstance.isEmpty()) {
 			for (PolicyGroupByActiveThreadsType type : HazelcastManager.staticMapInstance.keySet()) {

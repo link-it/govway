@@ -173,6 +173,7 @@ import org.openspcoop2.pdd.services.core.RicezioneContenutiApplicativi;
 import org.openspcoop2.pdd.services.skeleton.IntegrationManager;
 import org.openspcoop2.pdd.timers.TimerClusterDinamicoThread;
 import org.openspcoop2.pdd.timers.TimerClusteredRateLimitingLocalCache;
+import org.openspcoop2.pdd.timers.TimerHazelcastOrphanedProxiesCleanup;
 import org.openspcoop2.pdd.timers.TimerConsegnaContenutiApplicativi;
 import org.openspcoop2.pdd.timers.TimerConsegnaContenutiApplicativiThread;
 import org.openspcoop2.pdd.timers.TimerEventiThread;
@@ -364,7 +365,10 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 	
 	/** Clustered Rate Limiting Timer */
 	private static TimerClusteredRateLimitingLocalCache timerClusteredRateLimitingLocalCache;
-		
+
+	/** Hazelcast Orphaned Proxies Cleanup Timer */
+	private static TimerHazelcastOrphanedProxiesCleanup timerHazelcastOrphanedProxiesCleanup;
+
 	/** UUIDProducer */
 	private UniversallyUniqueIdentifierProducer universallyUniqueIdentifierProducer;
 	
@@ -4242,8 +4246,29 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			logControlloTraffico.info("Thread per l'aggiornamento della LocalCache tramite Hazelcast avviato correttamente");
 		}
 	}
-	
-	
+
+	public static boolean isStartedTimerHazelcastOrphanedProxiesCleanup() {
+		return OpenSPCoop2Startup.timerHazelcastOrphanedProxiesCleanup!=null;
+	}
+	public static void startTimerHazelcastOrphanedProxiesCleanup() throws Exception {
+		if(OpenSPCoop2Startup.timerHazelcastOrphanedProxiesCleanup == null) {
+			initTimerHazelcastOrphanedProxiesCleanup();
+		}
+	}
+	private static synchronized void initTimerHazelcastOrphanedProxiesCleanup() throws Exception {
+		if(OpenSPCoop2Startup.timerHazelcastOrphanedProxiesCleanup == null) {
+			OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance();
+			if(properties.isControlloTrafficoGestorePolicyInMemoryHazelcastOrphanedProxiesCleanupEnabled()) {
+				Logger logControlloTraffico = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(true);
+				OpenSPCoop2Startup.timerHazelcastOrphanedProxiesCleanup = new TimerHazelcastOrphanedProxiesCleanup(OpenSPCoop2Logger.getLoggerOpenSPCoopTimers());
+				OpenSPCoop2Startup.timerHazelcastOrphanedProxiesCleanup.setTimeout(properties.getControlloTrafficoGestorePolicyInMemoryHazelcastOrphanedProxiesCleanupInterval());
+				OpenSPCoop2Startup.timerHazelcastOrphanedProxiesCleanup.start();
+				logControlloTraffico.info("Thread per il cleanup dei proxy Hazelcast orfani avviato correttamente");
+			}
+		}
+	}
+
+
 	/**
 	 * Undeploy dell'applicazione WEB di OpenSPCoop
 	 *
