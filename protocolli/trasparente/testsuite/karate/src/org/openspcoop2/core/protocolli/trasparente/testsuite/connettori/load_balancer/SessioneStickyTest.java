@@ -986,9 +986,9 @@ public class SessioneStickyTest extends ConfigLoader {
 			
 			int index = i%richieste.size();
 			if (!responsesByKind.containsKey(index)) {
-				responsesByKind.put(index, new ArrayList<HttpResponse>());
+				responsesByKind.put(index, java.util.Collections.synchronizedList(new ArrayList<HttpResponse>()));
 			}
-			
+
 			executor.execute(() -> {
 				var resp = org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.makeRequest(richieste.get(index));
 				responsesByKind.get(index).add(resp);

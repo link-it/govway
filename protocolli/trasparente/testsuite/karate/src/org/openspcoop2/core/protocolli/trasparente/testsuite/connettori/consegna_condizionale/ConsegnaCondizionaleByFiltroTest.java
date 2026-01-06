@@ -465,9 +465,9 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 		int nThreads = Common.sogliaRichiesteSimultanee; 
 		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(nThreads);
 
-		for (var connettore : requestsByConnettore.keySet()) {			
-			responsesByConnettore.put(connettore, new ArrayList<>());
-			
+		for (var connettore : requestsByConnettore.keySet()) {
+			responsesByConnettore.put(connettore, java.util.Collections.synchronizedList(new ArrayList<>()));
+
 			executor.execute(() -> {
 				for(var request : requestsByConnettore.get(connettore)) {
 					responsesByConnettore.get(connettore).addAll(org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.makeSequentialRequests(request, requests_per_batch));

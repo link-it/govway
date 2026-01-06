@@ -174,7 +174,7 @@ public class Common {
 		int nthreads = Integer.valueOf(System.getProperty("soglia_richieste_simultanee"));
 		var logger = ConfigLoader.getLoggerCore();
 
-		final List<HttpResponse> responses = new java.util.ArrayList<>();
+		final List<HttpResponse> responses = java.util.Collections.synchronizedList(new java.util.ArrayList<>());
 		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(nthreads);
 
 		for (int i = 0; i < count; i++) {

@@ -302,9 +302,9 @@ public class CommonConsegnaMultipla {
 		int nThreads = Common.sogliaRichiesteSimultanee; 
 		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(nThreads);
 		
-		for (var request : requests) {			
-			responses.put(request, new java.util.ArrayList<>());
-			
+		for (var request : requests) {
+			responses.put(request, java.util.Collections.synchronizedList(new java.util.ArrayList<>()));
+
 			for (int i=0; i<requests_per_batch; i++) {
 				executor.execute( () -> {
 					responses.get(request).add(Utils.makeRequest(request.request));

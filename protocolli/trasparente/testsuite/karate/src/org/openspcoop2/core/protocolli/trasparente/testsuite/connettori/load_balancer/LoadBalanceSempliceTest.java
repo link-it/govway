@@ -239,8 +239,8 @@ public class LoadBalanceSempliceTest extends ConfigLoader {
 		
 		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(nthreads);
 
-		List<HttpResponse> wholeResponses = new java.util.ArrayList<>();
-		
+		List<HttpResponse> wholeResponses = java.util.Collections.synchronizedList(new java.util.ArrayList<>());
+
 		Map<Integer,String> indiciConnettori = new ConcurrentHashMap<>();
 		
 		for (int i = 0; i < nthreads; i++) {

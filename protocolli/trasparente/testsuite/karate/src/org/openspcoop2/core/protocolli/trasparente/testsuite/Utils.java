@@ -344,7 +344,7 @@ public class Utils {
 			return new java.util.ArrayList<>();
 		}
 		
-		final List<HttpResponse> responses = new java.util.ArrayList<>();
+		final List<HttpResponse> responses = java.util.Collections.synchronizedList(new java.util.ArrayList<>());
 		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(count);
 
 		for (int i = 0; i < count; i++) {
