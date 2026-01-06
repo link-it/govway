@@ -1316,8 +1316,18 @@ public final class SoggettiChange extends Action {
 
 			if(soggettiCore.isRegistroServiziLocale()){
 				if ((strutsBean.codiceIpa != null && !"".equals(strutsBean.codiceIpa))) {
-					String oldCodiceIpa = soggettiCore.getCodiceIPADefault(strutsBean.protocollo, new IDSoggetto(oldtipoprov,oldnomeprov), false);
-					if (oldCodiceIpa.equals(strutsBean.codiceIpa)) {
+					IDSoggetto oldIdSoggetto = new IDSoggetto(oldtipoprov,oldnomeprov);
+					String oldCodiceIpa = soggettiCore.getCodiceIPADefault(strutsBean.protocollo, oldIdSoggetto, false);
+					boolean isPrecedenteCodice = oldCodiceIpa.equals(strutsBean.codiceIpa);
+					if(!isPrecedenteCodice && 
+							oldCodiceIpa!=null && oldCodiceIpa.contains("/") && 
+							!strutsBean.codiceIpa.contains("/") &&
+							oldCodiceIpa.replace("/", "").equals(strutsBean.codiceIpa)) {
+						// Fix: issue govway 272
+						// L'istaller produce un codice IPA senza /
+						isPrecedenteCodice = true;
+					}
+					if (isPrecedenteCodice) {
 						// il codice ipa e' rimasto invariato
 						// setto il codice ipa di default (in caso sia cambiato il nome)
 						soggettoRegistry.setCodiceIpa(soggettiCore.getCodiceIPADefault(strutsBean.protocollo, new IDSoggetto(strutsBean.tipoprov,strutsBean.nomeprov), false));
