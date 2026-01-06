@@ -156,15 +156,15 @@
 	<archive path="/op2_3.4.dev/lib/pdf/fontbox-2.0.34.jar"/>
 	<archive path="/op2_3.4.dev/lib/pdf/boxable-1.7.0.jar"/>
 	<!-- redis -->
-	<archive path="/op2_3.4.dev/lib/redis/redisson-3.50.0.jar"/>
-	<archive path="/op2_3.4.dev/lib/redis/netty-resolver-4.1.127.Final.jar"/>
-	<archive path="/op2_3.4.dev/lib/redis/netty-resolver-dns-4.1.127.Final.jar"/>
-	<archive path="/op2_3.4.dev/lib/redis/netty-buffer-4.1.127.Final.jar"/>
-	<archive path="/op2_3.4.dev/lib/redis/netty-common-4.1.127.Final.jar"/>
-	<archive path="/op2_3.4.dev/lib/redis/netty-transport-4.1.127.Final.jar"/>
-	<archive path="/op2_3.4.dev/lib/redis/netty-codec-4.1.127.Final.jar"/>
-	<archive path="/op2_3.4.dev/lib/redis/netty-codec-dns-4.1.127.Final.jar"/>
-	<archive path="/op2_3.4.dev/lib/redis/netty-transport-native-unix-common-4.1.127.Final.jar"/>
+	<archive path="/op2_3.4.dev/lib/redis/redisson-4.1.0.jar"/>
+	<archive path="/op2_3.4.dev/lib/redis/netty-resolver-4.2.9.Final.jar"/>
+	<archive path="/op2_3.4.dev/lib/redis/netty-resolver-dns-4.2.9.Final.jar"/>
+	<archive path="/op2_3.4.dev/lib/redis/netty-buffer-4.2.9.Final.jar"/>
+	<archive path="/op2_3.4.dev/lib/redis/netty-common-4.2.9.Final.jar"/>
+	<archive path="/op2_3.4.dev/lib/redis/netty-transport-4.2.9.Final.jar"/>
+	<archive path="/op2_3.4.dev/lib/redis/netty-codec-4.2.9.Final.jar"/>
+	<archive path="/op2_3.4.dev/lib/redis/netty-codec-dns-4.2.9.Final.jar"/>
+	<archive path="/op2_3.4.dev/lib/redis/netty-transport-native-unix-common-4.2.9.Final.jar"/>
 	<archive path="/op2_3.4.dev/lib/redis/jboss-marshalling-2.2.3.Final.jar"/>
 	<archive path="/op2_3.4.dev/lib/redis/jboss-marshalling-river-2.2.3.Final.jar"/>
 	<!-- reports -->

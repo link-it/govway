@@ -66,10 +66,10 @@ public class RedissonManager {
 			
 			try {
 				Config redisConf = new Config();
+				redisConf.setSslVerificationMode(SslVerificationMode.STRICT);
 				redisConf.useClusterServers()
 					.addNodeAddress(RedissonManager.connectionUrl.toArray(new String[1]))
-					.setReadMode(ReadMode.MASTER_SLAVE)
-					.setSslVerificationMode(SslVerificationMode.STRICT);
+					.setReadMode(ReadMode.MASTER_SLAVE);
 				redisson = Redisson.create(redisConf);
 				RedissonManager.logStartup.info("Inizializzazione RedissonClient effettuata con successo");
 				RedissonManager.log.info("Inizializzazione RedissonClient effettuata con successo");

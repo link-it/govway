@@ -17,8 +17,8 @@
 
 		<jar.group.name>redis</jar.group.name>
 		
-		<redisson.version>3.50.0</redisson.version>
-		<netty.version>4.1.127.Final</netty.version>
+		<redisson.version>4.1.0</redisson.version>
+		<netty.version>4.2.9.Final</netty.version>
 		<jboss-marshalling.version>2.2.3.Final</jboss-marshalling.version>
 		<objenesis.version>3.4</objenesis.version>
 		<esotericsoftware.kryo.version>5.6.2</esotericsoftware.kryo.version>
@@ -98,6 +98,17 @@
 		<dependency>
 			<groupId>io.netty</groupId>
 			<artifactId>netty-codec</artifactId>
+			<version>${netty.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-codec-base</artifactId>
 			<version>${netty.version}</version>
 			<exclusions>
 				<exclusion>
