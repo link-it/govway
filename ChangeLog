@@ -1,11 +1,18 @@
-2025-01-06  Andrea Poli <apoli@link.it>
+2026-01-06 Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug #1699
+	Corretta problematica presente nella funzionalità di export che generava una risposta con codice http 302 con URL eccessivamente lungo; 
+	gli oggetti da esportare vengono ora salvati in sessione invece che nella query string.
+
+2026-01-06  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]
 	Risolto Bug
 	(https://github.com/link-it/govway/issues/272)
 	Corretta anomalia che si presentava durante la modifica del nome di un soggetto quando il codice IPA generato dall'installer (senza /) differiva da quello calcolato di default (con /).
 
-2025-01-06  Andrea Poli <apoli@link.it>
+2026-01-06  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
 	Risolto Bug

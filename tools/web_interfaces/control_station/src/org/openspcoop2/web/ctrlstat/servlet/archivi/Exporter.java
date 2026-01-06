@@ -387,8 +387,10 @@ public final class Exporter extends Action {
 				if(prevIdTab != null) {
 					send = send + "&" + Costanti.PARAMETER_TAB_KEY +"=" + prevIdTab;
 				}
+				// Salva gli ID da esportare in sessione invece che in query string per evitare limiti di lunghezza URL
 				if(objToExport!=null && !"".equals(objToExport)){
-					send = send + "&" + Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE+"="+ objToExport;
+					ServletUtils.setObjectIntoSession(request, session, objToExport,
+							ArchiviCostanti.SESSION_ATTRIBUTE_EXPORT_OBJECTS);
 				}
 				if(protocollo!=null && !"".equals(protocollo)){
 					send = send + "&" + ArchiviCostanti.PARAMETRO_ARCHIVI_PROTOCOLLO+"="+ protocollo;

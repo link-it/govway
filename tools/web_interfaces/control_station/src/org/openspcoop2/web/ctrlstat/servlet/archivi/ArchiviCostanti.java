@@ -145,8 +145,13 @@ public class ArchiviCostanti {
 			LABEL_IMPORT_ERROR_INFORMAZIONI_PORT_TYPE_RIFERITO_MESSAGGIO_KEY+") non risulta registrato nell'accordo di servizio parte comune (o composto) riferito. Selezionare uno dei servizi esistenti";
 	
 	
+	/* SESSION ATTRIBUTE */
+
+	public static final String SESSION_ATTRIBUTE_EXPORT_OBJECTS = Costanti.SESSION_ATTRIBUTE_TAB_KEY_PREFIX + "exportObjects";
+
+
 	/* PARAMETRI */
-	
+
 	public static final String PARAMETRI_ARCHIVI = "params";
 	
 	public static final String PARAMETRO_ARCHIVI_ID = "id";
