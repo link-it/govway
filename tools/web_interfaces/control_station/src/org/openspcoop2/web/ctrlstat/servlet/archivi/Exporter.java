@@ -386,8 +386,10 @@ public final class Exporter extends Action {
 						ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_TIPO+"="+servletSourceExport;
 				// Identificativo TAB
 				send = send + "&" + Costanti.PARAMETER_TAB_KEY +"=" + archiviHelper.getParameter(Costanti.PARAMETER_PREV_TAB_KEY);
+				// Salva gli ID da esportare in sessione invece che in query string per evitare limiti di lunghezza URL
 				if(objToExport!=null && !"".equals(objToExport)){
-					send = send + "&" + Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE+"="+ objToExport;
+					ServletUtils.setObjectIntoSession(request, session, objToExport,
+							ArchiviCostanti.SESSION_ATTRIBUTE_EXPORT_OBJECTS);
 				}
 				if(protocollo!=null && !"".equals(protocollo)){
 					send = send + "&" + ArchiviCostanti.PARAMETRO_ARCHIVI_PROTOCOLLO+"="+ protocollo;

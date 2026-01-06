@@ -125,8 +125,18 @@ public class ArchiviExporter extends HttpServlet {
 			ArchiveType archiveType = ArchiveType.valueOf(servletSourceExport);
 			
 			
-			// Elementi selezionati per l'export
-			String objToExport = archiviHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE); 
+			// Elementi selezionati per l'export (prima dalla sessione, poi dai parametri per retrocompatibilità)
+			String objToExport = ServletUtils.getObjectFromSession(request, session, String.class,
+					ArchiviCostanti.SESSION_ATTRIBUTE_EXPORT_OBJECTS);
+			if(objToExport == null || "".equals(objToExport)) {
+				// Fallback per retrocompatibilità con vecchi link/bookmark
+				objToExport = archiviHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
+			}
+			// Rimuovi dalla sessione dopo l'uso per evitare duplicazioni
+			if(objToExport != null) {
+				ServletUtils.removeObjectFromSession(request, session,
+						ArchiviCostanti.SESSION_ATTRIBUTE_EXPORT_OBJECTS);
+			} 
 			
 			
 			// Cascade
