@@ -97,12 +97,12 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 		// Testo l'instradamento verso il connettore rotto solo in questo test.
 		HttpRequest[] requestsByConnettore = { request0, request1, request2, request3, requestRotto };
 		List<List<HttpResponse>> responsesByConnettore = new ArrayList<>(requestsByConnettore.length);
-		responsesByConnettore.add(new ArrayList<>());
-		responsesByConnettore.add(new ArrayList<>());
-		responsesByConnettore.add(new ArrayList<>());
-		responsesByConnettore.add(new ArrayList<>());
-		responsesByConnettore.add(new ArrayList<>());
-		
+		responsesByConnettore.add(java.util.Collections.synchronizedList(new ArrayList<>()));
+		responsesByConnettore.add(java.util.Collections.synchronizedList(new ArrayList<>()));
+		responsesByConnettore.add(java.util.Collections.synchronizedList(new ArrayList<>()));
+		responsesByConnettore.add(java.util.Collections.synchronizedList(new ArrayList<>()));
+		responsesByConnettore.add(java.util.Collections.synchronizedList(new ArrayList<>()));
+
 		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(15);
 
 		for (int i = 0; i < 15; i++) {			
@@ -368,7 +368,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 
 		// Inizializzo le risposte, alla richiesta di indice i verrà assegnato il connettore di indice i
 		// responsesByConnettore.get(i) restituisce le risposte relative all'i-esimo connettore
-		Common.connettoriAbilitati.forEach( c -> responsesByConnettore.add(new java.util.ArrayList<>()));
+		Common.connettoriAbilitati.forEach( c -> responsesByConnettore.add(java.util.Collections.synchronizedList(new java.util.ArrayList<>())));
 
 		// Voglio usare tutti gli headers possibili, quindi pesco ogni volta un nome di header 
 		// appartenente alla classe Forwarded-For diverso.
@@ -714,9 +714,9 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 		var ret = new ArrayList<List<HttpResponse>>(requests.size());
 	
 		for (int i = 0; i < requests.size(); i++) {
-			ret.add(new java.util.ArrayList<>());
+			ret.add(java.util.Collections.synchronizedList(new java.util.ArrayList<>()));
 			int index = i;
-	
+
 			executor.execute(() -> {
 				ret.get(index).addAll(org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.makeSequentialRequests(requests.get(index), nsequential_requests));
 			});

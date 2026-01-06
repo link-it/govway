@@ -715,7 +715,7 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 		
 		Map<String, List<HttpResponse>> responsesByPool = new ConcurrentHashMap<>();
 		for(var e : requestsByPool.keySet()) {
-			responsesByPool.put(e, new ArrayList<>());
+			responsesByPool.put(e, java.util.Collections.synchronizedList(new ArrayList<>()));
 		}
 		
 		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(Common.sogliaRichiesteSimultanee);
