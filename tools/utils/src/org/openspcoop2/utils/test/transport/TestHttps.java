@@ -50,12 +50,12 @@ public class TestHttps {
 	
 	@BeforeClass(alwaysRun = true)
 	public void startServer() throws IOException {
-		HttpTest.startServers();
+		HttpsTest.startHttpsServers();
 	}
-	
+
 	@AfterClass(alwaysRun = true)
 	public void stopServer() {
-		HttpTest.stopServers();
+		HttpsTest.stopHttpsServers();
 	}
 	
 	@DataProvider(name="libraryDP")
