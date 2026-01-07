@@ -27,7 +27,6 @@ import java.security.cert.CertificateException;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.test.Costanti;
 import org.openspcoop2.utils.transport.http.HttpLibrary;
-import org.openspcoop2.utils.transport.http.test.HttpTest;
 import org.openspcoop2.utils.transport.http.test.HttpsTest;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
