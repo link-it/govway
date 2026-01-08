@@ -14124,17 +14124,17 @@ public class ConsoleHelper implements IConsoleHelper {
 		try {
 			/**List<String> valuesList = Arrays.asList(CostantiControlStation.SELECT_VALUES_STATO_FUNZIONALITA);*/
 			// non ha senso in modi controllare quelli disabilitati
-			String [] valueAbilitatoOnly = {StatoFunzionalita.ABILITATO.getValue()};
+			String [] valueAbilitatoOnly = {StatoFunzionalita.ABILITATO.getValue(), StatoFunzionalita.DISABILITATO.getValue()};
 			List<String> valuesList = Arrays.asList(valueAbilitatoOnly);
 			int length = valuesList.size() + 1;
+			
+			String [] labels = {CostantiControlStation.LABEL_PARAMETRO_SOGGETTO_QUALSIASI,
+					CostantiControlStation.LABEL_STATO_ABILITATO,
+					CostantiControlStation.LABEL_STATO_DISABILITATO};
 				
 			String [] values = new String[length];
-			String [] labels = new String[length];
-			labels[0] = CostantiControlStation.LABEL_PARAMETRO_SOGGETTO_QUALSIASI;
-			values[0] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SOGGETTO_QUALSIASI;
-			
+			values[0] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SOGGETTO_QUALSIASI;	
 			for (int i = 0; i < valuesList.size(); i++) {
-				labels[(i+1)] = valuesList.get(i);
 				values[(i+1)] = valuesList.get(i);
 			}
 			
@@ -14175,6 +14175,47 @@ public class ConsoleHelper implements IConsoleHelper {
 			String infoUtenteValue = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_INFORMAZIONI_UTENTE);
 			
 			this.pd.addFilter(Filtri.FILTRO_MODI_INFORMAZIONI_UTENTE, CostantiControlStation.LABEL_FILTRO_MODIPA_INFO_UTENTE, infoUtenteValue, values, labels, false, this.getSize());
+		} catch (Exception e) {
+			this.logError("Exception: " + e.getMessage(), e);
+			throw new DriverControlStationException(e);
+		}
+	}
+
+	public void addFilterModISignalHub(ISearch ricerca, int idLista) throws DriverControlStationException{
+		try {
+			String [] values = {CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SOGGETTO_QUALSIASI,
+					StatoFunzionalita.ABILITATO.getValue(),
+					StatoFunzionalita.DISABILITATO.getValue()};
+			String [] labels = {CostantiControlStation.LABEL_PARAMETRO_SOGGETTO_QUALSIASI,
+					CostantiControlStation.LABEL_STATO_ABILITATO,
+					CostantiControlStation.LABEL_STATO_DISABILITATO};
+
+			String signalHubValue = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_SIGNAL_HUB);
+
+			this.pd.addFilter(Filtri.FILTRO_MODI_SIGNAL_HUB, CostantiLabel.MODIPA_API_IMPL_INFO_SIGNAL_HUB_LABEL,
+					signalHubValue, values, labels, false, this.getSize());
+		} catch (Exception e) {
+			this.logError("Exception: " + e.getMessage(), e);
+			throw new DriverControlStationException(e);
+		}
+	}
+
+	public void addFilterModIServiceId(ISearch ricerca, int idLista) throws DriverControlStationException{
+		try {
+			String serviceIdValue = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_SERVICE_ID);
+			this.pd.addTextFilter(Filtri.FILTRO_MODI_SERVICE_ID, CostantiLabel.MODIPA_API_IMPL_INFO_ESERVICE_ID_LABEL,
+					serviceIdValue, this.getSize());
+		} catch (Exception e) {
+			this.logError("Exception: " + e.getMessage(), e);
+			throw new DriverControlStationException(e);
+		}
+	}
+
+	public void addFilterModIDescriptorId(ISearch ricerca, int idLista) throws DriverControlStationException{
+		try {
+			String descriptorIdValue = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_DESCRIPTOR_ID);
+			this.pd.addTextFilter(Filtri.FILTRO_MODI_DESCRIPTOR_ID, CostantiLabel.MODIPA_API_IMPL_INFO_DESCRIPTOR_ID_LABEL,
+					descriptorIdValue, this.getSize());
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);

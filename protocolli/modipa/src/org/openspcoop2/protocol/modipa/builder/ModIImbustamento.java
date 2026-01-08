@@ -60,6 +60,7 @@ import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.modipa.ModIBustaRawContent;
+import org.openspcoop2.protocol.modipa.authorization.SignalHubPushParams;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
 import org.openspcoop2.protocol.modipa.constants.ModIHeaderType;
@@ -318,7 +319,7 @@ public class ModIImbustamento {
 			
 			/* *** SIGNAL HUB PUSH SIGNALS *** */	
 			if (RuoloMessaggio.RICHIESTA.equals(ruoloMessaggio)
-					&& context.containsKey(ModICostanti.MODIPA_KEY_INFO_SIGNAL_HUB_SIGNAL_TYPE)) {
+					&& context.containsKey(ModICostanti.MODIPA_KEY_INFO_SIGNAL_HUB_PUSH_PARAMS)) {
 				msg = this.computeSignalHubMessage(msg, context, protocolFactory, state);
 			}
 			
@@ -947,11 +948,12 @@ public class ModIImbustamento {
 			IProtocolFactory<?> protocolFactory, IState state) throws ProtocolException, UtilsException, DriverConfigurazioneException {
 		
 		// ottengo le informazioni inserite dall'handler
-		IDServizio idServizio = (IDServizio) context.get(ModICostanti.MODIPA_KEY_INFO_SIGNAL_HUB_SERVICE);
-		String objectId = (String) context.get(ModICostanti.MODIPA_KEY_INFO_SIGNAL_HUB_OBJECT_ID);
-		String objectType = (String) context.get(ModICostanti.MODIPA_KEY_INFO_SIGNAL_HUB_OBJECT_TYPE);
-		ModISignalHubOperation signalType = (ModISignalHubOperation) context.get(ModICostanti.MODIPA_KEY_INFO_SIGNAL_HUB_SIGNAL_TYPE);
-		String serviceId = (String) context.get(ModICostanti.MODIPA_KEY_INFO_SIGNAL_HUB_ESERVICE_ID);
+		SignalHubPushParams params = SignalHubPushParams.load(context);
+		IDServizio idServizio = params.getIdServizio();
+		String objectId = params.getObjectId();
+		String objectType = params.getObjectType();
+		ModISignalHubOperation signalType = params.getSignalType();
+		String serviceId = params.getEServiceId();
 		
 		// configuro il generatore di numeri seriali
 		ConfigurazionePdD config = protocolFactory.getConfigurazionePdD();
@@ -974,21 +976,28 @@ public class ModIImbustamento {
 			objectId = "-";
 			objectType = "-";
 		} else {
-			
-			// per le operazione UPDATE, CREATE, DELETE ottengo i dati per produrre il digest dell'id
-			DigestServiceParams param = obtainDigestServiceParam(context, idServizio, serialGenerator, serialGeneratorParameter);
-			
-			// configuro il generatore di digest
-			DigestConfig digestConfig = new DigestConfig();
-			digestConfig.setDigestType(param.getDigestAlgorithm());
-			digestConfig.setSaltLength(param.getSeed().length);
-			digestConfig.setHashComposition(this.modiProperties.getSignalHubHashCompose());
-			digestConfig.setBase64Encode(true);
-			
-			IDigest digestGenerator = DigestFactory.getDigest(this.log, digestConfig);
-			
-			// produco il digest e il numero seriale del segnale
-			objectId = new String(digestGenerator.digest(objectId.getBytes(), param.getSeed()));
+
+			// Verifico se la pseudoanonimizzazione è abilitata
+			boolean pseudonymizationEnabled = isPseudonymizationEnabled(context);
+
+			if(pseudonymizationEnabled) {
+				// per le operazione UPDATE, CREATE, DELETE ottengo i dati per produrre il digest dell'id
+				DigestServiceParams param = obtainDigestServiceParam(context, idServizio, serialGenerator, serialGeneratorParameter);
+
+				// configuro il generatore di digest
+				DigestConfig digestConfig = new DigestConfig();
+				digestConfig.setDigestType(param.getDigestAlgorithm());
+				digestConfig.setSaltLength(param.getSeed().length);
+				digestConfig.setHashComposition(this.modiProperties.getSignalHubHashCompose());
+				digestConfig.setBase64Encode(true);
+
+				IDigest digestGenerator = DigestFactory.getDigest(this.log, digestConfig);
+
+				// produco il digest e il numero seriale del segnale
+				objectId = new String(digestGenerator.digest(objectId.getBytes(), param.getSeed()));
+			}
+			// Se pseudonymization è disabilitata, l'objectId rimane invariato (non viene fatto l'hash)
+
 			signalId = Long.valueOf(serialGenerator.buildID(serialGeneratorParameter));
 		}
 		
@@ -1019,7 +1028,32 @@ public class ModIImbustamento {
 		
 		return msg;
 	}
-	
+
+	private boolean isPseudonymizationEnabled(Context context) throws ProtocolException {
+		// Ottiene le protocol properties dal context
+		List<ProtocolProperty> eServiceProperties = SignalHubUtils.obtainSignalHubProtocolProperty(context);
+
+		// Se la scelta della pseudonymization non è abilitata dalle properties globali,
+		// la pseudonymization è sempre attiva (default behavior)
+		if(!this.modiProperties.isSignalHubPseudonymizationChoiceEnabled()) {
+			return true;
+		}
+
+		// Cerca la property specifica della pseudonymization
+		for (ProtocolProperty pp : eServiceProperties) {
+			if(ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PSEUDONYMIZATION_ID.equals(pp.getName())) {
+				if(pp.getBooleanValue() != null) {
+					return pp.getBooleanValue();
+				}
+				// Se il valore è null, usa true come default
+				return true;
+			}
+		}
+
+		// Se la property non esiste, usa true come default (backward compatibility)
+		return true;
+	}
+
 	private static final String ERROR_MESSAGE_SEED_NOT_UPDATED = "seed update non riuscito";
 	private DigestServiceParams obtainDigestServiceParam(Context context, IDServizio idServizio, IDSerialGenerator serialGenerator, IDSerialGeneratorParameter serialGeneratorParameter) throws ProtocolException, UtilsException, DriverConfigurazioneException {		
 		

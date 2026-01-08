@@ -46,12 +46,14 @@ import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.handlers.InRequestContext;
 import org.openspcoop2.pdd.core.handlers.InRequestHandler;
 import org.openspcoop2.protocol.basic.registry.RegistryReader;
+import org.openspcoop2.protocol.modipa.authorization.SignalHubPushParams;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;
 import org.openspcoop2.protocol.modipa.config.ModISignalHubConfig;
 import org.openspcoop2.protocol.modipa.config.ModISignalHubParamConfig;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
 import org.openspcoop2.protocol.modipa.constants.ModISignalHubOperation;
 import org.openspcoop2.protocol.modipa.properties.ModIDynamicConfigurationAccordiParteComuneUtilities;
+import org.openspcoop2.protocol.modipa.utils.ModISecurityConfig;
 import org.openspcoop2.protocol.modipa.utils.ModIUtilities;
 import org.openspcoop2.protocol.registry.RegistroServiziReader;
 import org.openspcoop2.protocol.sdk.Context;
@@ -67,6 +69,7 @@ import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.utils.service.beans.utils.ProfiloUtils;
+import org.openspcoop2.utils.sql.LikeConfig;
 import org.slf4j.Logger;
 
 /**
@@ -182,12 +185,12 @@ public class SignalHubPushInProtocolRequestHandler implements InRequestHandler {
 	private String getDynamicProperty(List<ProtocolProperty> props, ModISignalHubParamConfig param, Context context, Map<String, Object> dynamicMap, boolean useDefault) throws ProtocolException {
 		try {
 			String key = CostantiDB.MODIPA_API_IMPL_PUSH_SIGNAL_HUB_PARAM_VALUE_ID_PREFIX + param.getPropertyId();
-			String mode = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(props, CostantiDB.MODIPA_API_IMPL_PUSH_SIGNAL_HUB_PARAM_MODE_ID_PREFIX + param.getPropertyId());
+			String mode = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(props, CostantiDB.MODIPA_API_IMPL_PUSH_SIGNAL_HUB_PARAM_MODE_ID_PREFIX + param.getPropertyId());
 			String ridefinedValue = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(props, CostantiDB.MODIPA_API_IMPL_PUSH_SIGNAL_HUB_PARAM_VALUE_ID_PREFIX + param.getPropertyId());
 			List<String> values = null;
 					
 			// se il campo e' stato ridefinito uso il template ridefinito altrimenti quello di default
-			if (!useDefault && mode.equals(CostantiDB.MODIPA_PROFILO_RIDEFINISCI)) {
+			if (!useDefault && CostantiDB.MODIPA_PROFILO_RIDEFINISCI.equals(mode)) {
 				values = List.of(ridefinedValue);
 			} else {
 				values = param.getRules();
@@ -241,11 +244,12 @@ public class SignalHubPushInProtocolRequestHandler implements InRequestHandler {
 		String service = null;
 		String serviceVersion = null;
 		String serviceId = null;
+		String descriptorId = null;
 		
 		service = getDynamicProperty(props, claims.get("service"), context.getPddContext(), dynamicMap, isSeedUpdate);
 		serviceVersion = getDynamicProperty(props, claims.get("serviceVersion"), context.getPddContext(), dynamicMap, isSeedUpdate);
 		serviceId = getDynamicProperty(props, claims.get("serviceId"), context.getPddContext(), dynamicMap, isSeedUpdate);
-		
+		descriptorId = getDynamicProperty(props, claims.get("descriptorId"), context.getPddContext(), dynamicMap, isSeedUpdate);
 		
 		IRegistryReader reader = this.getIRegistryReader(context);
 		
@@ -255,6 +259,8 @@ public class SignalHubPushInProtocolRequestHandler implements InRequestHandler {
 		if (serviceId == null && (service == null || serviceVersion == null)) {
 			throw newHandlerException("Un serviceId o in alternativa il nome e la versione devono essere obbligatoriamente indicati per poter individuare il servizio", IntegrationFunctionError.BAD_REQUEST);
 		}
+		
+		SignalHubPushParams params = new SignalHubPushParams();
 		
 		// se tutte le informazioni sono presenti ottengo il serviceId a partire dall'id del servizio
 		if (serviceId == null) {
@@ -277,17 +283,30 @@ public class SignalHubPushInProtocolRequestHandler implements InRequestHandler {
 						service,
 						this.getFruitore(context), 
 						versioneServizio);
-						AccordoServizioParteSpecifica asps = reader.getAccordoServizioParteSpecifica(idServizio);
-						eServiceProperties = asps.getProtocolPropertyList();
+					AccordoServizioParteSpecifica asps = reader.getAccordoServizioParteSpecifica(idServizio);
+					eServiceProperties = asps.getProtocolPropertyList();
 			}catch(RegistryNotFound notFound) {
 				String nomeSoggetto = idServizio!=null && idServizio.getSoggettoErogatore()!=null && idServizio.getSoggettoErogatore().getNome()!=null ? idServizio.getSoggettoErogatore().getNome() : "Non identificato";
 				throw newHandlerException("Il soggetto '"+nomeSoggetto+"' non risulta erogare un servizio con nome '"+service+"'  e versione '"+versioneServizio+"'", IntegrationFunctionError.BAD_REQUEST);
 			}
-		} else {
+			
+			try {
+				serviceId = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(eServiceProperties, ModICostanti.MODIPA_API_IMPL_INFO_ESERVICE_ID);
+			}catch(Exception e) {
+				// succede nel caso di name e version
+				throw newHandlerException("L'erogazione del servizio indicato non contiene la configurazione relativa al serviceId", IntegrationFunctionError.BAD_REQUEST);
+			}
+			
+		} 
+		
+		if (eServiceProperties == null) {
 			// altrimenti ottengo l'id sdel servizio partendo dal serviceId
 			ProtocolFiltroRicercaServizi filter = new ProtocolFiltroRicercaServizi();
 			ProtocolProperties filterProps = new ProtocolProperties();
 			filterProps.addProperty(ModICostanti.MODIPA_API_IMPL_INFO_ESERVICE_ID, serviceId);
+			if (descriptorId != null) {
+				filterProps.addProperty(ModICostanti.MODIPA_API_IMPL_INFO_DESCRIPTOR_ID, descriptorId, LikeConfig.contains(true));
+			}
 			filter.setProtocolPropertiesServizi(filterProps);
 			
 			List<IDServizio> idServices = null;
@@ -299,8 +318,22 @@ public class SignalHubPushInProtocolRequestHandler implements InRequestHandler {
 			logger.debug("id servizi: {}", idServices);
 			
 			if (idServices==null || idServices.isEmpty() || idServices.get(0)==null) {
-				throw newHandlerException("Non esiste una erogazione di servizio registrato con l'id servizio '"+serviceId+"' indicato", IntegrationFunctionError.BAD_REQUEST);
+				String error = "Non esiste una erogazione di servizio registrato con l'id servizio '"+serviceId+"'";
+				if (descriptorId != null)
+					error = error + " e id descrittore '" + descriptorId + "'";
+				else
+					error = error + " indicato";
+				throw newHandlerException(error, IntegrationFunctionError.BAD_REQUEST);
 			}
+			
+			if (idServices.size() > 1 && descriptorId == null) {
+				throw newHandlerException("Sono presenti '" + idServices.size() + "' servizi con serviceId  '"+serviceId+"' per individuare univocamente il servizio è richiesto anche il descriptorId", IntegrationFunctionError.BAD_REQUEST);
+			}
+			
+			if (idServices.size() > 1) {
+				throw newHandlerException("Sono presenti '" + idServices.size() + "' servizi con serviceId  '"+serviceId+"' e descriptorId '" + descriptorId + "', la coppia (serviceId,descriptorId) deve essere univoca", IntegrationFunctionError.BAD_REQUEST);
+			}
+						
 			
 			idServizio = idServices.get(0);
 			
@@ -313,14 +346,16 @@ public class SignalHubPushInProtocolRequestHandler implements InRequestHandler {
 
 			AccordoServizioParteSpecifica asps = reader.getAccordoServizioParteSpecifica(idServizio);
 			eServiceProperties = asps.getProtocolPropertyList();
+			
+			if (descriptorId != null) {
+				List<String> descriptorIds = ModISecurityConfig.convertToList(ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(eServiceProperties, ModICostanti.MODIPA_API_IMPL_INFO_DESCRIPTOR_ID));
+				if (!descriptorIds.contains(descriptorId)) {
+					String error = "Non esiste una erogazione di servizio registrato con l'id servizio '"+serviceId+"' e id descrittore '" + descriptorId + "'";
+					throw newHandlerException(error, IntegrationFunctionError.BAD_REQUEST);
+				}
+			}
 		}
-		
-		try {
-			serviceId = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(eServiceProperties, ModICostanti.MODIPA_API_IMPL_INFO_ESERVICE_ID);
-		}catch(Exception e) {
-			// succede nel caso di name e version
-			throw newHandlerException("L'erogazione del servizio indicato non contiene la configurazione relativa al serviceId", IntegrationFunctionError.BAD_REQUEST);
-		}
+	
 		
 		try {
 			BooleanNullable signalHub = ProtocolPropertiesUtils.getOptionalBooleanValuePropertyRegistry(eServiceProperties, ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_ID);
@@ -334,11 +369,16 @@ public class SignalHubPushInProtocolRequestHandler implements InRequestHandler {
 			throw newHandlerException(msg, IntegrationFunctionError.BAD_REQUEST);
 		}
 		
-		context.getPddContext().addObject(ModICostanti.MODIPA_KEY_INFO_SIGNAL_HUB_OBJECT_ID, objectId);
-		context.getPddContext().addObject(ModICostanti.MODIPA_KEY_INFO_SIGNAL_HUB_ESERVICE_ID, serviceId);
-		context.getPddContext().addObject(ModICostanti.MODIPA_KEY_INFO_SIGNAL_HUB_SERVICE, idServizio);
-		context.getPddContext().addObject(ModICostanti.MODIPA_KEY_INFO_SIGNAL_HUB_OBJECT_TYPE, objectType);
-		context.getPddContext().addObject(ModICostanti.MODIPA_KEY_INFO_SIGNAL_HUB_SIGNAL_TYPE, signalType);
+		params.setObjectId(objectId);
+		params.setIdServizio(idServizio);
+		params.setEServiceId(serviceId);
+		params.setObjectType(objectType);
+		params.setSignalType(signalType);
+		params.addRequiredAuthorization(
+				ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(eServiceProperties, ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_SA_ID),
+				ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(eServiceProperties, ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_ROLE_ID));
+		
+		params.save(context.getPddContext());
 		context.getPddContext().addObject(ModICostanti.MODIPA_KEY_INFO_SIGNAL_HUB_PROPERTIES, eServiceProperties);
 	}
 

@@ -329,6 +329,7 @@ Prerequisiti:
 	- aggiungere al file /etc/govway/modipa_local.properties le linee:
 		org.openspcoop2.protocol.modipa.signalHub.enabled=true
 		org.openspcoop2.protocol.modipa.signalHub.seed.history=3
+		org.openspcoop2.protocol.modipa.signalHub.pseudonymization.choice.enabled=true
 
 + Aggiungere in /etc/hosts la riga
 	127.0.0.1 Erogatore

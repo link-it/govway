@@ -106,5 +106,27 @@ Scenario: (isTest('seed_failing') || isTest('seed_failing_no_seed')) && request.
     * def responseStatus = 503;
     * def responseHeaders = ({ 'GovWay-TestSuite-Seed-Sent': 1})
     * def response = ({ signalId: sigId })
+
+Scenario: isTest('push_multiple_id')
+
+	* match request ==
+		"""
+		{
+			signalId: #number,
+			objectType : 'objectType',
+  			objectId : '#string',
+  			eserviceId : 'eServiceMultiple',
+  			signalType : 'UPDATE',
+		}
+		"""
+	* def objectId = getHeader('GovWay-TestSuite-Plain-Object-ID')
+	* def shouldHash = getHeader('GovWay-TestSuite-Hash')
+	* def hash = shouldHash == 'true' ? compute_digest('SHA-256', objectId + get_seed('DemoSoggettoErogatore','SignalHubTestYesDigest')) : objectId
+	* karate.log("shouldHash: " + shouldHash + ", plain id: " + objectId + ", hash: " + hash)
+	* match hash == request.objectId
+    * def sigId = request.signalId
+    * def responseStatus = 200
+    * def response = ({ signalId: sigId })
+    * def responseHeaders = ({ 'GovWay-TestSuite-Signal-Sent': 1})
     
     

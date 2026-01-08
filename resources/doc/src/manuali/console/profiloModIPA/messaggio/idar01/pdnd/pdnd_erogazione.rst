@@ -71,6 +71,12 @@ Il controllo dei tre valori sopra indicati può essere attivato configurando i r
 
 Durante la fase di validazione del voucher, il sistema verifica la corrispondenza tra i valori dei claims configurati nella console e quelli presenti nel voucher stesso.
 
+.. note::
+   La verifica runtime dei claims può essere disattivata tramite le proprietà descritte nella sezione :ref:`modipa_signalhub_properties` alla voce "Verifica runtime dei valori nel token PDND".
+
+.. note::
+   La possibilità di registrare più erogazioni o soggetti con gli stessi identificativi PDND (eServiceId, descriptorId, producerId) è configurabile tramite le proprietà di controllo di univocità descritte nella sezione :ref:`modipa_signalhub_properties`.
+
 .. figure:: ../../../../_figure_console/modipa_erogazione_secMessaggio_pdnd_serviceIdDescriptorId.png
     :scale: 70%
     :name: erogazione_secMessaggio_pdnd_serviceIdDescriptorId_fig
