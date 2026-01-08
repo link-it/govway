@@ -314,11 +314,16 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 				/* *** SIGNAL HUB *** */
 				List<ProtocolProperty> protoProps = asps.getProtocolProperty();
 				if (!protoProps.isEmpty() && ProtocolPropertiesUtils.getBooleanValuePropertyRegistry(protoProps, ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_ID, false)) {
-					String operation = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(protoProps, ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_ID);
+					ProtocolProperty operation = ProtocolPropertiesUtils.getProtocolPropertyRegistry(protoProps, ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_ID, false);
+					ProtocolProperty pseudonymization = ProtocolPropertiesUtils.getProtocolPropertyRegistry(protoProps, ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PSEUDONYMIZATION_ID, false);
 					
-					if (azione.equals(operation)) {
-						this.context.addObject(ModICostanti.MODIPA_KEY_INFO_SIGNAL_HUB_PROPERTIES, protoProps);
-						this.context.addObject(CostantiPdD.KEY_OVERRIDE_CONNETTORE, ModICostanti.MODIPA_CONNETTORE_SIGNAL_HUB_PSEUDONYMIZATION);
+					if (pseudonymization == null || !Boolean.FALSE.equals(pseudonymization.getBooleanValue())) {
+						if (operation == null) {
+							throw new ProtocolException("Required property ["+ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_ID+"] not found");
+						} else if (azione.equals(operation.getValue())) {
+							this.context.addObject(ModICostanti.MODIPA_KEY_INFO_SIGNAL_HUB_PROPERTIES, protoProps);
+							this.context.addObject(CostantiPdD.KEY_OVERRIDE_CONNETTORE, ModICostanti.MODIPA_CONNETTORE_SIGNAL_HUB_PSEUDONYMIZATION);
+						}
 					}
 				}
 				

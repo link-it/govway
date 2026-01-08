@@ -1,3 +1,10 @@
+2026-01-08  Tommaso Burlon <tommaso.burlon@link.it>
+
+	* [ProtocolloModIPA]
+	Aggiunta funzionalità #1677
+	Miglioramento della funzionalità SignalHub con aggiunta del supporto per la configurazione senza pseudoanonimizzazione nelle erogazioni 
+	e relativi aggiornamenti a console, API REST e documentazione.
+
 2026-01-06 Giuliano Pintori <pintori@link.it>
 
 	* [GovWayConsole]

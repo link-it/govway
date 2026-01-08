@@ -343,7 +343,7 @@ public final class CostantiDB {
     public static final String REMOTE_STORE_KEY = "remote_store_key";
     
     /** Costanti Digest Service params **/
-    public static boolean serviziDigestEnabled = true;
+    private static boolean serviziDigestEnabled = true;
     public static boolean isServiziDigestEnabled() {
 		return serviziDigestEnabled;
 	}
@@ -1149,6 +1149,7 @@ public final class CostantiDB {
     
     public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_ID = "modipaInfoGenSignalHub";
     public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_ID = "modipaInfoGenSignalHubOp";
+    public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_PSEUDONYMIZATION_ID = "modipaInfoGenSignalHubPseudonymization";
     public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_ALGORITHM_ID = "modipaInfoGenSignalHubAlg";
     public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_SIZE_ID = "modipaInfoGenSignalHubSeedSize";
     public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_LIFETIME_ID = "modipaInfoGenSignalHubSeedLifetime";
@@ -1170,6 +1171,20 @@ public final class CostantiDB {
     
     public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_PATTERN = "ProfiloSicurezzaAudit";
     public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_SCHEMA = "ProfiloSicurezzaAudit-SchemaDati";
+    
+    
+    /**
+     * STATO MVC
+     */
+    
+	public static final String DATA_ELEMENT_VIEW_NAME = "view";
+	public static final String DATA_ELEMENT_EDIT_MODE_NAME = "edit-mode";
+	public static final String DATA_ELEMENT_EDIT_MODE_DISABLE_NAME = "view-noeditbutton";
+	public static final String DATA_ELEMENT_DISABLE_ONLY_BUTTON = "view-nobutton";
+	
+	public static final String DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_IN_PROGRESS_POSTBACK = "in_progress_postback";
+	public static final String DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_IN_PROGRESS = "in_progress";
+	public static final String DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_END = "end";
     
     
     /**

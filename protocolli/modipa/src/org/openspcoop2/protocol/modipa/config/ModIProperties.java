@@ -489,6 +489,7 @@ public class ModIProperties {
 			
 			/* **** Signal Hub **** */
 			if(isSignalHubEnabled()) {
+				this.isSignalHubPseudonymizationChoiceEnabled();
 				this.getSignalHubAlgorithms();
 				this.getSignalHubDefaultAlgorithm();
 				this.getSignalHubSeedSize();
@@ -1632,7 +1633,7 @@ public class ModIProperties {
 		if(this.isPdndDescriptorIdCheckUnique==null){
 			
 			Boolean defaultValue =false;
-			String propertyName = "org.openspcoop2.protocol.modipa.pdnd.descriptorId.checkUnique";
+			String propertyName = "org.openspcoop2.protocol.modipa.pdnd.descriptorId.console.checkUnique";
 			
 			try{  
 				String value = this.reader.getValueConvertEnvProperties(propertyName); 
@@ -6318,7 +6319,34 @@ public class ModIProperties {
 
 		return this.signalHubEnabled;
 	}
-	
+
+	private Boolean signalHubPseudonymizationChoiceEnabled = null;
+	public boolean isSignalHubPseudonymizationChoiceEnabled(){
+		if(this.signalHubPseudonymizationChoiceEnabled==null){
+
+			Boolean defaultValue = true;
+			String propertyName = "org.openspcoop2.protocol.modipa.signalHub.pseudonymization.choice.enabled";
+
+			try{
+				String value = this.reader.getValueConvertEnvProperties(propertyName);
+
+				if (value != null){
+					value = value.trim();
+					this.signalHubPseudonymizationChoiceEnabled = Boolean.parseBoolean(value);
+				}else{
+					this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue));
+					this.signalHubPseudonymizationChoiceEnabled = defaultValue;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue)+getSuffixErrore(e));
+				this.signalHubPseudonymizationChoiceEnabled = defaultValue;
+			}
+		}
+
+		return this.signalHubPseudonymizationChoiceEnabled;
+	}
+
 	private List<String> signalHubAlgorithms= null;
 	public List<String> getSignalHubAlgorithms() throws ProtocolException{
     	if(this.signalHubAlgorithms==null){

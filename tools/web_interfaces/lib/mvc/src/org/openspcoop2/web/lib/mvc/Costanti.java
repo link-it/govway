@@ -20,6 +20,8 @@
 
 package org.openspcoop2.web.lib.mvc;
 
+import org.openspcoop2.core.constants.CostantiDB;
+
 /**
  * Costanti
  * 
@@ -211,14 +213,14 @@ public class Costanti {
 	
 	/** DATA ELEMENT **/
 	
-	public static final String DATA_ELEMENT_VIEW_NAME = "view";
-	public static final String DATA_ELEMENT_EDIT_MODE_NAME = "edit-mode";
-	public static final String DATA_ELEMENT_EDIT_MODE_DISABLE_NAME = "view-noeditbutton";
-	public static final String DATA_ELEMENT_DISABLE_ONLY_BUTTON = "view-nobutton";
+	public static final String DATA_ELEMENT_VIEW_NAME = CostantiDB.DATA_ELEMENT_VIEW_NAME;
+	public static final String DATA_ELEMENT_EDIT_MODE_NAME = CostantiDB.DATA_ELEMENT_EDIT_MODE_NAME;
+	public static final String DATA_ELEMENT_EDIT_MODE_DISABLE_NAME = CostantiDB.DATA_ELEMENT_EDIT_MODE_DISABLE_NAME;
+	public static final String DATA_ELEMENT_DISABLE_ONLY_BUTTON = CostantiDB.DATA_ELEMENT_DISABLE_ONLY_BUTTON;
 	
-	public static final String DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_IN_PROGRESS_POSTBACK = "in_progress_postback";
-	public static final String DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_IN_PROGRESS = "in_progress";
-	public static final String DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_END = "end";
+	public static final String DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_IN_PROGRESS_POSTBACK = CostantiDB.DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_IN_PROGRESS_POSTBACK;
+	public static final String DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_IN_PROGRESS = CostantiDB.DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_IN_PROGRESS;
+	public static final String DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_END = CostantiDB.DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_END;
 	
 	public static final DataElement DATA_ELEMENT_HIDDENT_EDIT_MODE_END = new DataElement();
 	static{

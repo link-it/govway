@@ -55,6 +55,7 @@ import org.openspcoop2.utils.sql.SQLObjectFactory;
  * 
  * @author Sandra Giangrandi (sandra@link.it)
  * @author Stefano Corallo (corallo@link.it)
+ * @author Tommaso Burlon (tommaso.burlon@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
@@ -780,7 +781,8 @@ public class DriverRegistroServiziDB_accordiParteSpecificaSearchDriver {
 				}
 			}
 		}
-		 
+		
+		
 		String filtroModISicurezzaCanale = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_SICUREZZA_CANALE);
 		String filtroModISicurezzaMessaggio = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_SICUREZZA_MESSAGGIO);
 		String filtroModISorgenteToken = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_SORGENTE_TOKEN);
@@ -788,6 +790,11 @@ public class DriverRegistroServiziDB_accordiParteSpecificaSearchDriver {
 		String filtroModIAudience = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_AUDIENCE);
 		String filtroModIInfoUtente = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_INFORMAZIONI_UTENTE);
 		String filtroModIDigestRichiesta = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_DIGEST_RICHIESTA);
+		String filtroSignalHub = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_SIGNAL_HUB);
+		String filtroServiceId = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_SERVICE_ID);
+		String filtroDescriptorId = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_DESCRIPTOR_ID);
+
+		
 		if((filtroModISicurezzaCanale!=null && "".equals(filtroModISicurezzaCanale))) {
 			filtroModISicurezzaCanale=null;
 		}
@@ -813,10 +820,33 @@ public class DriverRegistroServiziDB_accordiParteSpecificaSearchDriver {
 		if((filtroModIAudience!=null && "".equals(filtroModIAudience))) {
 			filtroModIAudience=null;
 		}
-		boolean filtroModI = filtroModISicurezzaCanale!=null || filtroModISicurezzaMessaggio!=null ||
-				filtroModISorgenteToken!=null ||
-				filtroModIDigestRichiestaEnabled!=null || filtroModIInfoUtente!=null ||
-				filtroModIKeystorePath!=null || filtroModIAudience!=null;
+		Boolean filtroSignalHubEnabled = null;
+		if(CostantiDB.STATO_FUNZIONALITA_ABILITATO.equals(filtroSignalHub)) {
+			filtroSignalHubEnabled = true;
+		}
+		else if(CostantiDB.STATO_FUNZIONALITA_DISABILITATO.equals(filtroSignalHub)) {
+			filtroSignalHubEnabled = false;
+		}
+		
+		if((filtroDescriptorId!=null && "".equals(filtroDescriptorId))) {
+			filtroDescriptorId=null;
+		}
+		if((filtroServiceId!=null && "".equals(filtroServiceId))) {
+			filtroServiceId=null;
+		}
+		DBUtils.FiltroModIErogazioneFruizione filterModIErogazioneFruizione = new DBUtils.FiltroModIErogazioneFruizione();
+		filterModIErogazioneFruizione.setSicurezzaCanale(filtroModISicurezzaCanale);
+		filterModIErogazioneFruizione.setSicurezzaMessaggio(filtroModISicurezzaMessaggio);
+		filterModIErogazioneFruizione.setSorgenteToken(filtroModISorgenteToken);
+		filterModIErogazioneFruizione.setKeystore(filtroModIKeystorePath);
+		filterModIErogazioneFruizione.setAudience(filtroModIAudience);
+		filterModIErogazioneFruizione.setInfoUtente(filtroModIInfoUtente);
+		filterModIErogazioneFruizione.setDigestRichiesta(filtroModIDigestRichiestaEnabled);
+		filterModIErogazioneFruizione.setSignalHub(filtroSignalHubEnabled);
+		filterModIErogazioneFruizione.setServiceId(filtroServiceId);
+		filterModIErogazioneFruizione.setDescriptorId(filtroDescriptorId);
+		
+		boolean filtroModI = filterModIErogazioneFruizione.isFilterEnabled();
 		
 		String filtroProprietaNome = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROPRIETA_NOME);
 		String filtroProprietaValore = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROPRIETA_VALORE);
@@ -861,13 +891,16 @@ public class DriverRegistroServiziDB_accordiParteSpecificaSearchDriver {
 		this.driver.logDebug("filtroConnettoreKeystore : " + filtroConnettoreKeystore);
 		this.driver.logDebug("filtroConnettoreDebug : " + filtroConnettoreDebug);
 		this.driver.logDebug("filtroConnettoreTipoPlugin : " + filtroConnettoreTipoPlugin);
-		this.driver.logDebug("filtroModISicurezzaCanale : " + filtroModISicurezzaCanale);
-		this.driver.logDebug("filtroModISicurezzaMessaggio : " + filtroModISicurezzaMessaggio);
-		this.driver.logDebug("filtroModISorgenteToken : " + filtroModISorgenteToken);
-		this.driver.logDebug("filtroModIKeystorePath : " + filtroModIKeystorePath);
-		this.driver.logDebug("filtroModIAudience : " + filtroModIAudience);
-		this.driver.logDebug("filtroModIInfoUtente : " + filtroModIInfoUtente);
-		this.driver.logDebug("filtroModIDigestRichiesta : " + filtroModIDigestRichiesta);
+		this.driver.logDebug("filtroModISicurezzaCanale : " + filterModIErogazioneFruizione.getSicurezzaCanale());
+		this.driver.logDebug("filtroModISicurezzaMessaggio : " + filterModIErogazioneFruizione.getSicurezzaMessaggio());
+		this.driver.logDebug("filtroModISorgenteToken : " + filterModIErogazioneFruizione.getSorgenteToken());
+		this.driver.logDebug("filtroModIKeystorePath : " + filterModIErogazioneFruizione.getKeystore());
+		this.driver.logDebug("filtroModIAudience : " + filterModIErogazioneFruizione.getAudience());
+		this.driver.logDebug("filtroModIInfoUtente : " + filterModIErogazioneFruizione.getInfoUtente());
+		this.driver.logDebug("filtroModIDigestRichiesta : " + filterModIErogazioneFruizione.getDigestRichiesta());
+		this.driver.logDebug("filtroSignalHub : " + filterModIErogazioneFruizione.getSignalHub());
+		this.driver.logDebug("filtroServiceId : " + filterModIErogazioneFruizione.getServiceId());
+		this.driver.logDebug("filtroDescriptorId : " + filterModIErogazioneFruizione.getDescriptorId());
 		this.driver.logDebug("filtroProprietaNome : " + filtroProprietaNome);
 		this.driver.logDebug("filtroProprietaValore : " + filtroProprietaValore);
 		
@@ -1018,10 +1051,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaSearchDriver {
 					}
 					if(filtroModI) {
 						DBUtils.setFiltriModIErogazione(sqlQueryObject, this.driver.tipoDB,
-								filtroModISicurezzaCanale, filtroModISicurezzaMessaggio,
-								filtroModISorgenteToken,
-								filtroModIDigestRichiestaEnabled, filtroModIInfoUtente,
-								filtroModIKeystorePath, filtroModIAudience);
+								filterModIErogazioneFruizione);
 					}
 					if(filtroProprieta) {
 						DBUtils.setFiltriProprietaErogazione(sqlQueryObject, this.driver.tipoDB, 
@@ -1177,10 +1207,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaSearchDriver {
 					}
 					if(filtroModI) {
 						DBUtils.setFiltriModIFruizione(sqlQueryObject, this.driver.tipoDB,
-								filtroModISicurezzaCanale, filtroModISicurezzaMessaggio,
-								filtroModISorgenteToken,
-								filtroModIDigestRichiestaEnabled, filtroModIInfoUtente,
-								filtroModIKeystorePath, filtroModIAudience);
+								filterModIErogazioneFruizione);
 					}
 					if(filtroProprieta) {
 						DBUtils.setFiltriProprietaFruizione(sqlQueryObject, this.driver.tipoDB, 
@@ -1230,10 +1257,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaSearchDriver {
 					}
 					if(filtroModI) {
 						DBUtils.setFiltriModIErogazione(sqlQueryObject, this.driver.tipoDB,
-								filtroModISicurezzaCanale, filtroModISicurezzaMessaggio,
-								filtroModISorgenteToken,
-								filtroModIDigestRichiestaEnabled, filtroModIInfoUtente,
-								filtroModIKeystorePath, filtroModIAudience);
+								filterModIErogazioneFruizione);
 					}
 					if(filtroProprieta) {
 						DBUtils.setFiltriProprietaErogazione(sqlQueryObject, this.driver.tipoDB, 
@@ -1420,10 +1444,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaSearchDriver {
 					}
 					if(filtroModI) {
 						DBUtils.setFiltriModIFruizione(sqlQueryObject, this.driver.tipoDB,
-								filtroModISicurezzaCanale, filtroModISicurezzaMessaggio,
-								filtroModISorgenteToken,
-								filtroModIDigestRichiestaEnabled, filtroModIInfoUtente,
-								filtroModIKeystorePath, filtroModIAudience);
+								filterModIErogazioneFruizione);
 					}
 					if(filtroProprieta) {
 						DBUtils.setFiltriProprietaFruizione(sqlQueryObject, this.driver.tipoDB, 
@@ -1473,10 +1494,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaSearchDriver {
 					}
 					if(filtroModI) {
 						DBUtils.setFiltriModIErogazione(sqlQueryObject, this.driver.tipoDB,
-								filtroModISicurezzaCanale, filtroModISicurezzaMessaggio,
-								filtroModISorgenteToken,
-								filtroModIDigestRichiestaEnabled, filtroModIInfoUtente,
-								filtroModIKeystorePath, filtroModIAudience);
+								filterModIErogazioneFruizione);
 					}
 					if(filtroProprieta) {
 						DBUtils.setFiltriProprietaErogazione(sqlQueryObject, this.driver.tipoDB, 
@@ -1662,10 +1680,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaSearchDriver {
 					}
 					if(filtroModI) {
 						DBUtils.setFiltriModIFruizione(sqlQueryObject, this.driver.tipoDB,
-								filtroModISicurezzaCanale, filtroModISicurezzaMessaggio,
-								filtroModISorgenteToken,
-								filtroModIDigestRichiestaEnabled, filtroModIInfoUtente,
-								filtroModIKeystorePath, filtroModIAudience);
+								filterModIErogazioneFruizione);
 					}
 					if(filtroProprieta) {
 						DBUtils.setFiltriProprietaFruizione(sqlQueryObject, this.driver.tipoDB, 
@@ -1715,10 +1730,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaSearchDriver {
 					}
 					if(filtroModI) {
 						DBUtils.setFiltriModIErogazione(sqlQueryObject, this.driver.tipoDB,
-								filtroModISicurezzaCanale, filtroModISicurezzaMessaggio,
-								filtroModISorgenteToken,
-								filtroModIDigestRichiestaEnabled, filtroModIInfoUtente,
-								filtroModIKeystorePath, filtroModIAudience);
+								filterModIErogazioneFruizione);
 					}
 					if(filtroProprieta) {
 						DBUtils.setFiltriProprietaErogazione(sqlQueryObject, this.driver.tipoDB, 

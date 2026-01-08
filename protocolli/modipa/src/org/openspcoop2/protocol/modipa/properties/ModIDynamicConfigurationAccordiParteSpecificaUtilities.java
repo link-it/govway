@@ -304,7 +304,7 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 		
 		boolean pdnd = ModISecurityUtils.isSicurezzaMessaggioGenerazioneTokenIdAuthPDND(api, portType);
 		if(pdnd && !fruizioni) {
-			ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtilities.updatePdndInfo(consoleConfiguration, properties,
+			ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtilities.updatePdndInfo(consoleConfiguration, consoleHelper, properties,
 					api, portType, id,
 					registryReader,
 					configIntegrationReader,
@@ -392,7 +392,7 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 	
 	private static final String PREFIX_VERIFICATO_QUANTO_INDICATO_IN = "Verificare quanto indicato in ";
 	
-	static boolean validateDynamicConfigParteSpecifica(ModIProperties modiProperties,
+	static boolean validateDynamicConfigParteSpecifica(Logger log, ModIProperties modiProperties,
 			ConsoleConfiguration consoleConfiguration, IConsoleHelper consoleHelper, ProtocolProperties properties, IDServizio id,
 			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, boolean fruizioni) throws ProtocolException {
 		
@@ -442,7 +442,7 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 		
 		boolean pdnd = ModISecurityUtils.isSicurezzaMessaggioGenerazioneTokenIdAuthPDND(api, portType);
 		if(pdnd && !fruizioni) {
-			ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtilities.validatePdndInfo(registryReader, configIntegrationReader, api, id, portType, consoleConfiguration, properties);
+			ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtilities.validatePdndInfo(registryReader, configIntegrationReader, api, id, portType, consoleConfiguration, properties, log);
 		}
 		
 		

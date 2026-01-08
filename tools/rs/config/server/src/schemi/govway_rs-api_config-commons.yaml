@@ -2042,11 +2042,6 @@ components:
           signal_hub: 
              $ref: '#/components/schemas/ErogazioneModISignalHub'
     ErogazioneModISignalHub:
-      required:
-        - "risorsa"
-        - "algoritmo"
-        - "dimensione_seme"
-        - "giorni_rotazione"
       type: object
       properties:
          risorsa:
@@ -2067,6 +2062,9 @@ components:
             type: string
          ruolo:
             type: string
+         pseudoanonimizzazione:
+            type: boolean
+            default: true
     # ModI Fruizione
     FruizioneModI:
       type: object

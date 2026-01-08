@@ -951,7 +951,10 @@ public class ModIConsoleCostanti {
 	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_SIZE_ERROR_WRONG = "Dimensione del seme per la generazione del digest non riconosciuto tra quelli indicate tra le proprieta ModI";
 	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_ERROR_UNDEFINED = "SignalHub richiede che sia indicata l'operazione che esporrà le informazioni di pseudoanonimizzazione";
 	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_ID = ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_ID;
-	
+
+	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_PSEUDONYMIZATION_LABEL = CostantiLabel.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PSEUDONYMIZATION_LABEL;
+	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_PSEUDONYMIZATION_ID = ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PSEUDONYMIZATION_ID;
+
 	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_ALGORITHM_LABEL = CostantiLabel.MODIPA_API_IMPL_INFO_SIGNAL_HUB_ALGORITHM_LABEL;
 	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_ALGORITHM_ID = ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_ALGORITHM_ID;
 	

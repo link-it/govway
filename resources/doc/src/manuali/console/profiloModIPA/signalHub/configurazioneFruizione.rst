@@ -26,6 +26,7 @@ La pubblicazione di una variazione di dato richiede che siano fornite le seguent
 - govway_signal_object_type o GovWay-Signal-ObjectType: campo libero per GovWay; rappresenta il tipo di oggetto a cui fa riferimento il segnale;
 - govway_signal_type o GovWay-Signal-Type: deve essere utilizzato un valore tra CREATE, UPDATE o DELETE;
 - govway_signal_service_id o GovWay-Signal-ServiceId: service id della PDND configurato nella maschera del servizio descritto nella sezione :ref:`modipa_signalhub_configurazione_erogazione`
+- govway_signal_descriptor_id o GovWay-Signal-DescriptorId (parametro obbligatorio solo in presenza di servizi con il medesimo serviceId): descriptor id della PDND configurato nella maschera del servizio descritto nella sezione :ref:`modipa_signalhub_configurazione_erogazione`
 
 Il servizio per cui si intende pubblicare una variazione di dato può essere riferito in una modalità alternativa al service id tramite i seguenti due parametri:
 
@@ -35,7 +36,7 @@ Il servizio per cui si intende pubblicare una variazione di dato può essere rif
 È anche possibile personalizzare la modalità di integrazione con la fruizione built-in attuando una personalizzazione nella scheda di modifica del profilo di interoperabilità relativa alla fruizione come mostrata in figura ':numref:`SignalHubFuizioneConfigurazione`'.
 
 .. figure:: ../../_figure_console/SignalHubFruizioneConfigurazione.png
-    :scale: 90%
+    :scale: 70%
     :align: center
     :name: SignalHubFuizioneConfigurazione
 

@@ -19,24 +19,24 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
-import javax.validation.constraints.*;
+import javax.validation.Valid;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import javax.validation.Valid;
 
 public class ErogazioneModISignalHub  {
   
-  @Schema(example = "/pseudonymization", required = true, description = "")
+  @Schema(example = "/pseudonymization", description = "")
   private String risorsa = null;
   
-  @Schema(example = "SHA-256", required = true, description = "")
+  @Schema(example = "SHA-256", description = "")
   private String algoritmo = null;
   
-  @Schema(example = "16", required = true, description = "")
+  @Schema(example = "16", description = "")
   private Integer dimensioneSeme = null;
   
-  @Schema(example = "15", required = true, description = "")
+  @Schema(example = "15", description = "")
   private Integer giorniRotazione = null;
   
   @Schema(description = "")
@@ -44,12 +44,14 @@ public class ErogazioneModISignalHub  {
   
   @Schema(description = "")
   private String ruolo = null;
+  
+  @Schema(description = "")
+  private Boolean pseudoanonimizzazione = true;
  /**
    * Get risorsa
    * @return risorsa
   **/
   @JsonProperty("risorsa")
-  @NotNull
   @Valid
   public String getRisorsa() {
     return this.risorsa;
@@ -69,7 +71,6 @@ public class ErogazioneModISignalHub  {
    * @return algoritmo
   **/
   @JsonProperty("algoritmo")
-  @NotNull
   @Valid
   public String getAlgoritmo() {
     return this.algoritmo;
@@ -89,7 +90,6 @@ public class ErogazioneModISignalHub  {
    * @return dimensioneSeme
   **/
   @JsonProperty("dimensione_seme")
-  @NotNull
   @Valid
   public Integer getDimensioneSeme() {
     return this.dimensioneSeme;
@@ -109,7 +109,6 @@ public class ErogazioneModISignalHub  {
    * @return giorniRotazione
   **/
   @JsonProperty("giorni_rotazione")
-  @NotNull
   @Valid
   public Integer getGiorniRotazione() {
     return this.giorniRotazione;
@@ -162,18 +161,38 @@ public class ErogazioneModISignalHub  {
     return this;
   }
 
+ /**
+   * Get pseudoanonimizzazione
+   * @return pseudoanonimizzazione
+  **/
+  @JsonProperty("pseudoanonimizzazione")
+  @Valid
+  public Boolean isPseudoanonimizzazione() {
+    return this.pseudoanonimizzazione;
+  }
+
+  public void setPseudoanonimizzazione(Boolean pseudoanonimizzazione) {
+    this.pseudoanonimizzazione = pseudoanonimizzazione;
+  }
+
+  public ErogazioneModISignalHub pseudoanonimizzazione(Boolean pseudoanonimizzazione) {
+    this.pseudoanonimizzazione = pseudoanonimizzazione;
+    return this;
+  }
+
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class ErogazioneModISignalHub {\n");
     
-    sb.append("    risorsa: ").append(ErogazioneModISignalHub.toIndentedString(this.risorsa)).append("\n");
-    sb.append("    algoritmo: ").append(ErogazioneModISignalHub.toIndentedString(this.algoritmo)).append("\n");
-    sb.append("    dimensioneSeme: ").append(ErogazioneModISignalHub.toIndentedString(this.dimensioneSeme)).append("\n");
-    sb.append("    giorniRotazione: ").append(ErogazioneModISignalHub.toIndentedString(this.giorniRotazione)).append("\n");
-    sb.append("    applicativo: ").append(ErogazioneModISignalHub.toIndentedString(this.applicativo)).append("\n");
-    sb.append("    ruolo: ").append(ErogazioneModISignalHub.toIndentedString(this.ruolo)).append("\n");
+    sb.append("    risorsa: ").append(toIndentedString(this.risorsa)).append("\n");
+    sb.append("    algoritmo: ").append(toIndentedString(this.algoritmo)).append("\n");
+    sb.append("    dimensioneSeme: ").append(toIndentedString(this.dimensioneSeme)).append("\n");
+    sb.append("    giorniRotazione: ").append(toIndentedString(this.giorniRotazione)).append("\n");
+    sb.append("    applicativo: ").append(toIndentedString(this.applicativo)).append("\n");
+    sb.append("    ruolo: ").append(toIndentedString(this.ruolo)).append("\n");
+    sb.append("    pseudoanonimizzazione: ").append(toIndentedString(this.pseudoanonimizzazione)).append("\n");
     sb.append("}");
     return sb.toString();
   }
