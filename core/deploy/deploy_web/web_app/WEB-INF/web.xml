@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+<web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
     <display-name>OpenSPCoop2</display-name>
 
 
@@ -89,9 +89,9 @@
 
     <!-- Servlet: CXF -->
     <servlet>
-        <servlet-name>CXFServlet</servlet-name>
         <display-name>CXF Servlet</display-name>
-        <servlet-class> org.apache.cxf.transport.servlet.CXFServlet </servlet-class>
+	<servlet-name>CXFServlet</servlet-name>
+	<servlet-class> org.apache.cxf.transport.servlet.CXFServlet </servlet-class>
 		<init-param>
 			<param-name>hide-service-list-page</param-name>
 			<param-value>true</param-value>
@@ -111,9 +111,9 @@
 
     <!-- OpenSPCoop: Servizio di dispatching dei servizi della Porta -->
     <servlet>
-        <servlet-name>OpenSPCoop2Servlet</servlet-name>
-        <display-name>OpenSPCoop2 Servlet</display-name>
-        <servlet-class>org.openspcoop2.pdd.services.connector.OpenSPCoop2Servlet</servlet-class>
+	<display-name>OpenSPCoop2 Servlet</display-name>
+	<servlet-name>OpenSPCoop2Servlet</servlet-name>
+	<servlet-class>org.openspcoop2.pdd.services.connector.OpenSPCoop2Servlet</servlet-class>
     </servlet>
 
 

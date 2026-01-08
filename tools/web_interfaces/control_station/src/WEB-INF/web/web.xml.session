@@ -4,9 +4,9 @@
          the timeout for a particular session dynamically by using
          HttpSession.getMaxInactiveInterval(). -->
   <session-config>
+    <session-timeout>120</session-timeout>
     <cookie-config>
         <name>JSESSIONID_GW_CONSOLE</name>
     </cookie-config>
-    <session-timeout>120</session-timeout>
   </session-config>
 
