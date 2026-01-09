@@ -2,7 +2,7 @@
 
 	* [GovWayCore, GovWayConsole, GovWayMonitor]
 	Risolto Bug #1700
-	Aggiornato il descriptor web.xml dalla versione 2.5 alla 3.0 e corretto l'ordine degli elementi XML 
+	Aggiornato il descriptor web.xml dalla versione 2.5 alla 3.1 e corretto l'ordine degli elementi XML 
 	per garantire la compatibilità con l'opzione Tomcat '-Dorg.apache.catalina.STRICT_SERVLET_COMPLIANCE=true'
 
 2026-01-08  Tommaso Burlon <tommaso.burlon@link.it>
