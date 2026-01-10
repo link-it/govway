@@ -317,8 +317,7 @@ public class RestTest extends ConfigLoader {
 		
 		logCore.info("Test [THREADS:"+THREADS+"] con resource '"+resource+"' errore '"+errore+"' ...");
 		
-		@SuppressWarnings("unchecked")
-		List<HttpResponse> responses = (List<HttpResponse>) ((ArrayList<HttpResponse>) org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.makeParallelRequests(request, THREADS)).clone();
+		List<HttpResponse> responses = new ArrayList<>(org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.makeParallelRequests(request, THREADS));
 		
 		logCore.info("Test [THREADS:"+THREADS+"] con resource '"+resource+"' errore '"+errore+"' finito");
 		
