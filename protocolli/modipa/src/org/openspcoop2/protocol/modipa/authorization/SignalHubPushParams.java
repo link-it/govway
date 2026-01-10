@@ -47,7 +47,8 @@ public class SignalHubPushParams implements Serializable {
 	private ModISignalHubOperation signalType;
 	private IDServizio idServizio;
 	
-	private static class RequiredKeys {
+	private static class RequiredKeys implements Serializable {
+		private static final long serialVersionUID = 1L;
 		String serviceName;
 		String roleName;
 	}
