@@ -3765,20 +3765,37 @@ public class RegistroServiziReader {
 			}
 		}
 		
-		if(keystoreParams==null && !sicurezzaRisposta) {
-			// non ci sono certificati da controllare
-			CertificateCheck check = new CertificateCheck();
-			check.setStatoCheck(StatoCheck.OK);
-			return check;
+		KeystoreParams dpopKeystoreParams = null;
+		try {
+			dpopKeystoreParams = ModIUtils.getFruizioneDPoPKeystoreParams(fruitore.getProtocolPropertyList());
+		}catch(Exception e) {
+			throw new DriverRegistroServiziException(e.getMessage(),e);
 		}
-		
-		return _checkStore(keystoreParams, byokUnwrapFactory,
-				truststoreParams,
-				truststoreSslParams, 
-				sogliaWarningGiorni, 
-				addCertificateDetails, separator, newLine,
-				log,
-				trustStoreRemoteConfig);
+
+		CertificateCheck check = null;
+
+		if(keystoreParams==null && !sicurezzaRisposta && dpopKeystoreParams==null) {
+			// non ci sono certificati da controllare
+			check = new CertificateCheck();
+			check.setStatoCheck(StatoCheck.OK);
+		}
+		else if(keystoreParams!=null || sicurezzaRisposta) {
+			check = _checkStore(keystoreParams, byokUnwrapFactory,
+					truststoreParams,
+					truststoreSslParams,
+					sogliaWarningGiorni,
+					addCertificateDetails, separator, newLine,
+					log,
+					trustStoreRemoteConfig);
+		}
+
+		// Verifica keystore DPoP se presente
+		if(dpopKeystoreParams!=null && (check==null || StatoCheck.OK.equals(check.getStatoCheck()))) {
+			check = _checkDPoPKeystore(dpopKeystoreParams, byokUnwrapFactory, sogliaWarningGiorni,
+					addCertificateDetails, separator, newLine, log);
+		}
+
+		return check;
 	}
 	
 	public static final String ID_CONFIGURAZIONE_FIRMA_MODI = "Configurazione della firma "+CostantiLabel.MODIPA_PROTOCOL_LABEL;
@@ -3949,10 +3966,99 @@ public class RegistroServiziReader {
 		
 		return check;
 	}
-	
-	
-	
-	
+
+	private static final String ID_CONFIGURAZIONE_DPOP = "Configurazione DPoP";
+	private static CertificateCheck _checkDPoPKeystore(KeystoreParams keystoreParams, IBYOKUnwrapFactory byokUnwrapFactory,
+			int sogliaWarningGiorni,
+			boolean addCertificateDetails, String separator, String newLine,
+			Logger log) throws DriverRegistroServiziException {
+
+		if(keystoreParams==null) {
+			return null;
+		}
+
+		CertificateCheck check = null;
+		boolean classpathSupported = false;
+
+		String storeDetails = null;
+
+		try {
+			if(CostantiDB.KEYSTORE_TYPE_KEY_PAIR.equalsIgnoreCase(keystoreParams.getType())) {
+				IBYOKUnwrapManager byokUnwrapManager = null;
+				if(byokUnwrapFactory!=null && keystoreParams.getByokPolicy()!=null) {
+					byokUnwrapManager = byokUnwrapFactory.newInstance(keystoreParams.getByokPolicy(),log);
+				}
+				check = org.openspcoop2.protocol.registry.CertificateUtils.checkKeyPair(classpathSupported, keystoreParams.getPath(), keystoreParams.getKeyPairPublicKeyPath(), keystoreParams.getKeyPassword(), keystoreParams.getKeyPairAlgorithm(),
+						byokUnwrapManager,
+						false, //addCertificateDetails,
+						separator, newLine);
+				if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+					storeDetails = org.openspcoop2.protocol.registry.CertificateUtils.toStringKeyPair(keystoreParams,
+							separator, newLine);
+				}
+			}
+			else if(CostantiDB.KEYSTORE_TYPE_PUBLIC_KEY.equalsIgnoreCase(keystoreParams.getType())) {
+				throw new DriverConfigurazioneException("Nella configurazione DPoP viene utilizzato un keystore "+CostantiLabel.KEYSTORE_TYPE_PUBLIC_KEY+" non compatibile la firma dei messaggi");
+			}
+			else if(CostantiDB.KEYSTORE_TYPE_JWK.equalsIgnoreCase(keystoreParams.getType())) {
+				IBYOKUnwrapManager byokUnwrapManager = null;
+				if(byokUnwrapFactory!=null && keystoreParams.getByokPolicy()!=null) {
+					byokUnwrapManager = byokUnwrapFactory.newInstance(keystoreParams.getByokPolicy(),log);
+				}
+				check = org.openspcoop2.protocol.registry.CertificateUtils.checkKeystoreJWKs(classpathSupported, keystoreParams.getPath(), keystoreParams.getKeyAlias(),
+						byokUnwrapManager,
+						false, //addCertificateDetails,
+						separator, newLine);
+				if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+					storeDetails = org.openspcoop2.protocol.registry.CertificateUtils.toStringKeystoreJWKs(keystoreParams,
+							separator, newLine);
+				}
+			}
+			else {
+				IBYOKUnwrapManager byokUnwrapManager = null;
+				if(byokUnwrapFactory!=null && keystoreParams.getByokPolicy()!=null) {
+					byokUnwrapManager = byokUnwrapFactory.newInstance(keystoreParams.getByokPolicy(),log);
+				}
+				if(keystoreParams.getStore()!=null) {
+					check = org.openspcoop2.protocol.registry.CertificateUtils.checkKeyStore(CostantiLabel.STORE_CARICATO_BASEDATI, keystoreParams.getStore(), keystoreParams.getType(), keystoreParams.getPassword(),
+							byokUnwrapManager,
+							keystoreParams.getKeyAlias(), keystoreParams.getKeyPassword(),
+							sogliaWarningGiorni,
+							false, //addCertificateDetails,
+							separator, newLine,
+							log);
+				}
+				else {
+					check = org.openspcoop2.protocol.registry.CertificateUtils.checkKeyStore(keystoreParams.getPath(), classpathSupported, keystoreParams.getType(), keystoreParams.getPassword(),
+							byokUnwrapManager,
+							keystoreParams.getKeyAlias(), keystoreParams.getKeyPassword(),
+							sogliaWarningGiorni,
+							false, //addCertificateDetails,
+							separator, newLine,
+							log);
+				}
+				if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+					storeDetails = org.openspcoop2.protocol.registry.CertificateUtils.toStringKeyStore(keystoreParams, separator, newLine);
+				}
+			}
+		}catch(Throwable t) {
+			throw new DriverRegistroServiziException(t.getMessage(),t);
+		}
+
+		if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+			String id = ID_CONFIGURAZIONE_DPOP;
+			if(addCertificateDetails && storeDetails!=null) {
+				id = id + newLine + storeDetails;
+			}
+			check.setConfigurationId(id);
+		}
+
+		return check;
+	}
+
+
+
+
 	/* ********  R I C E R C A  E L E M E N T I   P R I M I T I V I  ******** */
 	
 	public PortaDominio getPortaDominio(Connection connectionPdD,String nome,String nomeRegistro) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{

@@ -50,6 +50,7 @@ import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.utils.ModIKeystoreUtils;
+import org.openspcoop2.protocol.utils.ModIKeystoreUtils.ModIKeystoreConfigType;
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.keystore.JWKSetStore;
 import org.openspcoop2.security.keystore.KeyPairStore;
@@ -57,6 +58,9 @@ import org.openspcoop2.security.keystore.MerlinKeystore;
 import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
 import org.openspcoop2.utils.certificate.byok.BYOKProvider;
 import org.openspcoop2.utils.certificate.byok.BYOKRequestParams;
+import org.openspcoop2.utils.digest.DigestEncoding;
+import org.openspcoop2.utils.digest.DigestType;
+import org.openspcoop2.utils.digest.DigestUtils;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 
 /**
@@ -109,10 +113,12 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 	private ServizioApplicativo applicativoRichiedente;
 	private String kidApplicativoModI; // nella chiave della cache non viene aggiunto il kid ma l'applicativo richiedente, poichè il kid potrebbe essere condiviso tra più applicativi
 	private ModIKeystoreUtils keystoreApplicativoModI;
-	
+	private ModIKeystoreUtils keystoreDPoPApplicativoModI;
+
 	private IDFruizione idFruizione;
 	private String kidFruizioneModI; // nella chiave della cache non viene aggiunto il kid ma l'identificativo della fruizione, poichè il kid potrebbe essere condiviso tra più fruizioni
 	private ModIKeystoreUtils keystoreFruizioneModI;
+	private ModIKeystoreUtils keystoreDPoPFruizioneModI;
 	
 	
 	// static config
@@ -142,10 +148,12 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 	private static boolean httpPayloadTemplateTypeCacheKey; 
 	private static boolean httpPayloadCacheKey; 
 	
-	private static boolean applicativoRichiedenteCacheKey; 
-	
-	private static boolean fruizioneCacheKey; 
-	
+	private static boolean applicativoRichiedenteCacheKey;
+	private static boolean dpopKeystoreApplicativoCacheKey;
+
+	private static boolean fruizioneCacheKey;
+	private static boolean dpopKeystoreFruizioneCacheKey;
+
 	private static Boolean initCacheKey = null;
 	private static synchronized void initCacheKey() {
 		if(initCacheKey==null) {
@@ -176,10 +184,12 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 			httpPayloadTemplateTypeCacheKey = op2Properties.isGestioneRetrieveTokenCacheKey(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_HTTP_PAYLOAD_TEMPLATE_TYPE); 
 			httpPayloadCacheKey = op2Properties.isGestioneRetrieveTokenCacheKey(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_HTTP_PAYLOAD); 
 
-			applicativoRichiedenteCacheKey = op2Properties.isGestioneRetrieveTokenCacheKey(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_FORM_APPLICATIVE_REQUESTER); 
-			
-			fruizioneCacheKey = op2Properties.isGestioneRetrieveTokenCacheKey(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_FORM_OUTBOUND_INTERFACE); 
-						
+			applicativoRichiedenteCacheKey = op2Properties.isGestioneRetrieveTokenCacheKey(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_FORM_APPLICATIVE_REQUESTER);
+			dpopKeystoreApplicativoCacheKey = op2Properties.isGestioneRetrieveTokenCacheKey(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_DPOP_KEYSTORE_APPLICATIVE_REQUESTER);
+
+			fruizioneCacheKey = op2Properties.isGestioneRetrieveTokenCacheKey(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_FORM_OUTBOUND_INTERFACE);
+			dpopKeystoreFruizioneCacheKey = op2Properties.isGestioneRetrieveTokenCacheKey(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_DPOP_KEYSTORE_OUTBOUND_INTERFACE);
+
 			initCacheKey = true;
 		}
 	}
@@ -313,6 +323,15 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 					}catch(Exception t) {
 						throw new TokenException(prefixError+"non è utilizzabile: "+t.getMessage(),t);
 					}
+
+					if(policyNegoziazioneToken.isDpop() && policyNegoziazioneToken.isDpopSignKeystoreApplicativoModI() &&
+							ModIKeystoreUtils.isKeystoreConfigEnabled(this.applicativoRichiedente, ModIKeystoreConfigType.DPOP)) {
+						try {
+							this.keystoreDPoPApplicativoModI = new ModIKeystoreUtils(this.applicativoRichiedente, ModIKeystoreConfigType.DPOP);
+						}catch(Exception t) {
+							throw new TokenException(prefixError+"(DPoP) non è utilizzabile: "+t.getMessage(),t);
+						}
+					}
 				}
 				else if(policyNegoziazioneToken.isJwtSignKeystoreFruizioneModI()) {
 					String prefixError = "Il tipo di keystore indicato nella token policy '"+policyNegoziazioneToken.getName()+"' "; 
@@ -365,7 +384,29 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 					}catch(Exception t) {
 						throw new TokenException(prefixError+"non è utilizzabile: "+t.getMessage(),t);
 					}
-					
+
+					if(policyNegoziazioneToken.isDpop() && policyNegoziazioneToken.isDpopSignKeystoreFruizioneModI()) {
+						if(ModIKeystoreUtils.isKeystoreConfigRidefinito(this.idFruizione.getIdFruitore(), asps, ModIKeystoreConfigType.DPOP)) {
+							try {
+								this.keystoreDPoPFruizioneModI = new ModIKeystoreUtils(this.idFruizione.getIdFruitore(), asps, ModIKeystoreConfigType.DPOP);
+							}catch(Exception t) {
+								throw new TokenException(prefixError+"(DPoP) non è utilizzabile: "+t.getMessage(),t);
+							}
+						}
+						else if(ModIKeystoreUtils.isKeystoreConfigDefault(this.idFruizione.getIdFruitore(), asps, ModIKeystoreConfigType.DPOP)) {
+							try {
+								this.keystoreDPoPFruizioneModI = new ModIKeystoreUtils(this.idFruizione.getIdFruitore(), asps, ModIKeystoreConfigType.DPOP,
+										NegoziazioneTokenDynamicParametersModIUtils.getSicurezzaMessaggioCertificatiKeyStoreTipo(),
+										NegoziazioneTokenDynamicParametersModIUtils.getSicurezzaMessaggioCertificatiKeyStorePath(),
+										NegoziazioneTokenDynamicParametersModIUtils.getSicurezzaMessaggioCertificatiKeyStorePassword(),
+										NegoziazioneTokenDynamicParametersModIUtils.getSicurezzaMessaggioCertificatiKeyAlias(),
+										NegoziazioneTokenDynamicParametersModIUtils.getSicurezzaMessaggioCertificatiKeyPassword());
+							}catch(Exception t) {
+								throw new TokenException(prefixError+"(DPoP default) non è utilizzabile: "+t.getMessage(),t);
+							}
+						}
+					}
+
 					listProtocolPropertiesFruizione = ProtocolPropertiesUtils.getProtocolProperties(true, this.idFruizione.getIdFruitore(), asps);
 				}
 			}
@@ -884,14 +925,26 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 			}
 			sb.append("applicativeRequester:").append(this.idApplicativoRichiedente.toFormatString());
 		}
-		
+		if(this.keystoreDPoPApplicativoModI!=null && (!cacheKey || dpopKeystoreApplicativoCacheKey)) {
+			if(sb.length()>0) {
+				sb.append(separator);
+			}
+			sb.append("dpopKeystoreApplicativeRequester:").append(getDPoPKeystoreCacheKeyValue(this.keystoreDPoPApplicativoModI));
+		}
+
 		if(this.idFruizione!=null && (!cacheKey || fruizioneCacheKey)) {
 			if(sb.length()>0) {
 				sb.append(separator);
 			}
 			sb.append("outbound:").append(this.idFruizione.toFormatString());
 		}
-		
+		if(this.keystoreDPoPFruizioneModI!=null && (!cacheKey || dpopKeystoreFruizioneCacheKey)) {
+			if(sb.length()>0) {
+				sb.append(separator);
+			}
+			sb.append("dpopKeystoreOutboundInterface:").append(getDPoPKeystoreCacheKeyValue(this.keystoreDPoPFruizioneModI));
+		}
+
 		return sb.toString();
 	}
 	
@@ -1081,7 +1134,82 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 	public String getKeyPasswordApplicativoModI() {
 		return this.keystoreApplicativoModI.getSecurityMessageKeyPassword();
 	}
-	
+
+	public boolean hasKeystoreDPoPApplicativoModI() {
+		return this.keystoreDPoPApplicativoModI != null;
+	}
+	public String getTipoKeystoreDPoPApplicativoModI() {
+		return this.keystoreDPoPApplicativoModI.getSecurityMessageKeystoreType();
+	}
+	public boolean isByokPolicyDefinedDPoPApplicativoModI() {
+		return BYOKProvider.isPolicyDefined(this.keystoreDPoPApplicativoModI.getSecurityMessageKeystoreByokPolicy());
+	}
+	public KeyPairStore getKeyPairStoreDPoPApplicativoModI(Map<String,Object> dynamicMap) throws TokenException, SecurityException{
+
+		String keystoreFile = this.keystoreDPoPApplicativoModI.getSecurityMessageKeystorePath();
+		if(keystoreFile==null) {
+			throw new TokenException("DPoP Signature private key file undefined");
+		}
+		String keystoreFilePublicKey = this.keystoreDPoPApplicativoModI.getSecurityMessageKeystorePathPublicKey();
+		if(keystoreFilePublicKey==null) {
+			throw new TokenException("DPoP Signature public key file undefined");
+		}
+		String keyPairAlgorithm = this.keystoreDPoPApplicativoModI.getSecurityMessageKeystoreKeyAlgorithm();
+		if(keyPairAlgorithm==null) {
+			throw new TokenException("DPoP Signature key pair algorithm undefined");
+		}
+
+		String keyPassword = this.keystoreDPoPApplicativoModI.getSecurityMessageKeyPassword();
+
+		String keystoreByokPolicy = this.keystoreDPoPApplicativoModI.getSecurityMessageKeystoreByokPolicy();
+		BYOKRequestParams byokParams = getBYOKRequestParams(keystoreByokPolicy, dynamicMap);
+
+		return GestoreKeystoreCache.getKeyPairStore(this.getRequestInfo(), keystoreFile, keystoreFilePublicKey, keyPassword, keyPairAlgorithm, byokParams);
+	}
+	public JWKSetStore getJWKSetStoreDPoPApplicativoModI(Map<String,Object> dynamicMap) throws TokenException, SecurityException{
+
+		String keystoreFile = this.keystoreDPoPApplicativoModI.getSecurityMessageKeystorePath();
+		if(keystoreFile==null) {
+			throw new TokenException("DPoP Signature keystore file undefined");
+		}
+
+		String keystoreByokPolicy = this.keystoreDPoPApplicativoModI.getSecurityMessageKeystoreByokPolicy();
+		BYOKRequestParams byokParams = getBYOKRequestParams(keystoreByokPolicy, dynamicMap);
+
+		return GestoreKeystoreCache.getJwkSetStore(this.getRequestInfo(), keystoreFile, byokParams);
+	}
+	public org.openspcoop2.utils.certificate.KeyStore getKeystoreDPoPApplicativoModI(Map<String,Object> dynamicMap) throws TokenException, SecurityException{
+		if(this.keystoreDPoPApplicativoModI.getSecurityMessageKeystorePath()!=null || this.keystoreDPoPApplicativoModI.isSecurityMessageKeystoreHSM()) {
+
+			String keystoreByokPolicy = this.keystoreDPoPApplicativoModI.getSecurityMessageKeystoreByokPolicy();
+			BYOKRequestParams byokParams = null;
+			if(this.keystoreDPoPApplicativoModI.getSecurityMessageKeystorePath()!=null) {
+				byokParams = getBYOKRequestParams(keystoreByokPolicy, dynamicMap);
+			}
+
+			MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(this.getRequestInfo(), this.keystoreDPoPApplicativoModI.getSecurityMessageKeystorePath(), this.keystoreDPoPApplicativoModI.getSecurityMessageKeystoreType(),
+					this.keystoreDPoPApplicativoModI.getSecurityMessageKeystorePassword(), byokParams);
+			if(merlinKs==null) {
+				throw new TokenException("Accesso al keystore DPoP '"+this.keystoreDPoPApplicativoModI.getSecurityMessageKeystorePath()+"' non riuscito");
+			}
+			return merlinKs.getKeyStore();
+		}
+		else {
+			MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(this.getRequestInfo(), this.keystoreDPoPApplicativoModI.getSecurityMessageKeystoreArchive(), this.keystoreDPoPApplicativoModI.getSecurityMessageKeystoreType(),
+					this.keystoreDPoPApplicativoModI.getSecurityMessageKeystorePassword());
+			if(merlinKs==null) {
+				throw new TokenException("Accesso al keystore DPoP non riuscito");
+			}
+			return merlinKs.getKeyStore();
+		}
+	}
+	public String getKeyAliasDPoPApplicativoModI() {
+		return this.keystoreDPoPApplicativoModI.getSecurityMessageKeyAlias();
+	}
+	public String getKeyPasswordDPoPApplicativoModI() {
+		return this.keystoreDPoPApplicativoModI.getSecurityMessageKeyPassword();
+	}
+
 	public IDFruizione getIdFruizione() {
 		return this.idFruizione;
 	}
@@ -1159,8 +1287,97 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 	public String getKeyPasswordFruizioneModI() {
 		return this.keystoreFruizioneModI.getSecurityMessageKeyPassword();
 	}
-	
-	
+
+	public boolean hasKeystoreDPoPFruizioneModI() {
+		return this.keystoreDPoPFruizioneModI != null;
+	}
+	public String getTipoKeystoreDPoPFruizioneModI() {
+		return this.keystoreDPoPFruizioneModI.getSecurityMessageKeystoreType();
+	}
+	public boolean isByokPolicyDefinedDPoPFruizioneModI() {
+		return BYOKProvider.isPolicyDefined(this.keystoreDPoPFruizioneModI.getSecurityMessageKeystoreByokPolicy());
+	}
+	public KeyPairStore getKeyPairStoreDPoPFruizioneModI(Map<String,Object> dynamicMap) throws TokenException, SecurityException{
+
+		String keystoreFile = this.keystoreDPoPFruizioneModI.getSecurityMessageKeystorePath();
+		if(keystoreFile==null) {
+			throw new TokenException("DPoP Signature private key file undefined");
+		}
+		String keystoreFilePublicKey = this.keystoreDPoPFruizioneModI.getSecurityMessageKeystorePathPublicKey();
+		if(keystoreFilePublicKey==null) {
+			throw new TokenException("DPoP Signature public key file undefined");
+		}
+		String keyPairAlgorithm = this.keystoreDPoPFruizioneModI.getSecurityMessageKeystoreKeyAlgorithm();
+		if(keyPairAlgorithm==null) {
+			throw new TokenException("DPoP Signature key pair algorithm undefined");
+		}
+
+		String keyPassword = this.keystoreDPoPFruizioneModI.getSecurityMessageKeyPassword();
+
+		String keystoreByokPolicy = this.keystoreDPoPFruizioneModI.getSecurityMessageKeystoreByokPolicy();
+		BYOKRequestParams byokParams = getBYOKRequestParams(keystoreByokPolicy, dynamicMap);
+
+		return GestoreKeystoreCache.getKeyPairStore(this.getRequestInfo(), keystoreFile, keystoreFilePublicKey, keyPassword, keyPairAlgorithm, byokParams);
+	}
+	public JWKSetStore getJWKSetStoreDPoPFruizioneModI(Map<String,Object> dynamicMap) throws TokenException, SecurityException{
+
+		String keystoreFile = this.keystoreDPoPFruizioneModI.getSecurityMessageKeystorePath();
+		if(keystoreFile==null) {
+			throw new TokenException("DPoP Signature keystore file undefined");
+		}
+
+		String keystoreByokPolicy = this.keystoreDPoPFruizioneModI.getSecurityMessageKeystoreByokPolicy();
+		BYOKRequestParams byokParams = getBYOKRequestParams(keystoreByokPolicy, dynamicMap);
+
+		return GestoreKeystoreCache.getJwkSetStore(this.getRequestInfo(), keystoreFile, byokParams);
+	}
+	public org.openspcoop2.utils.certificate.KeyStore getKeystoreDPoPFruizioneModI(Map<String,Object> dynamicMap) throws TokenException, SecurityException{
+		if(this.keystoreDPoPFruizioneModI.getSecurityMessageKeystorePath()!=null || this.keystoreDPoPFruizioneModI.isSecurityMessageKeystoreHSM()) {
+
+			String keystoreByokPolicy = this.keystoreDPoPFruizioneModI.getSecurityMessageKeystoreByokPolicy();
+			BYOKRequestParams byokParams = null;
+			if(this.keystoreDPoPFruizioneModI.getSecurityMessageKeystorePath()!=null) {
+				byokParams = getBYOKRequestParams(keystoreByokPolicy, dynamicMap);
+			}
+
+			MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(this.getRequestInfo(), this.keystoreDPoPFruizioneModI.getSecurityMessageKeystorePath(), this.keystoreDPoPFruizioneModI.getSecurityMessageKeystoreType(),
+					this.keystoreDPoPFruizioneModI.getSecurityMessageKeystorePassword(), byokParams);
+			if(merlinKs==null) {
+				throw new TokenException("Accesso al keystore DPoP '"+this.keystoreDPoPFruizioneModI.getSecurityMessageKeystorePath()+"' non riuscito");
+			}
+			return merlinKs.getKeyStore();
+		}
+		else {
+			MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(this.getRequestInfo(), this.keystoreDPoPFruizioneModI.getSecurityMessageKeystoreArchive(), this.keystoreDPoPFruizioneModI.getSecurityMessageKeystoreType(),
+					this.keystoreDPoPFruizioneModI.getSecurityMessageKeystorePassword());
+			if(merlinKs==null) {
+				throw new TokenException("Accesso al keystore DPoP non riuscito");
+			}
+			return merlinKs.getKeyStore();
+		}
+	}
+	public String getKeyAliasDPoPFruizioneModI() {
+		return this.keystoreDPoPFruizioneModI.getSecurityMessageKeyAlias();
+	}
+	public String getKeyPasswordDPoPFruizioneModI() {
+		return this.keystoreDPoPFruizioneModI.getSecurityMessageKeyPassword();
+	}
+
+
+	private static String getDPoPKeystoreCacheKeyValue(ModIKeystoreUtils keystoreUtils) {
+		if(keystoreUtils.getSecurityMessageKeystorePath()!=null) {
+			return keystoreUtils.getSecurityMessageKeystorePath();
+		}
+		else if(keystoreUtils.getSecurityMessageKeystoreArchive()!=null) {
+			try {
+				return "archive-sha256:" + DigestUtils.getDigestValue(keystoreUtils.getSecurityMessageKeystoreArchive(), DigestType.SHA256.getAlgorithmName(), DigestEncoding.HEX);
+			} catch(Exception e) {
+				return "archive-length:" + keystoreUtils.getSecurityMessageKeystoreArchive().length;
+			}
+		}
+		return "unknown";
+	}
+
 	private BYOKRequestParams getBYOKRequestParams(String keystoreByokPolicy, Map<String,Object> dynamicMap) throws SecurityException {
 		return BYOKUnwrapPolicyUtilities.getBYOKRequestParams(keystoreByokPolicy, dynamicMap);
 	}

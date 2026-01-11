@@ -1054,11 +1054,31 @@ public class ModIPropertiesUtils {
 			for (int i = 0; i < gp.sizePropertyList(); i++) {
 				if(org.openspcoop2.pdd.core.token.Costanti.POLICY_RETRIEVE_TOKEN_MODE_PDND.equals(gp.getProperty(i).getNome())){
 					String v = gp.getProperty(i).getValore();
-					pdnd = isEnabled(v); 
+					pdnd = isEnabled(v);
 				}
 			}
 		}
 		return pdnd;
+	}
+	public static boolean isTokenPolicyDPoP(IConfigIntegrationReader configIntegrationReader, String tokenPolicy) throws ProtocolException {
+		try {
+			GenericProperties gp = configIntegrationReader.getTokenPolicyNegoziazione(tokenPolicy);
+			return isTokenPolicyDPoP(gp);
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
+	}
+	public static boolean isTokenPolicyDPoP(GenericProperties gp) {
+		boolean dpop = false;
+		if(gp!=null && gp.sizePropertyList()>0) {
+			for (int i = 0; i < gp.sizePropertyList(); i++) {
+				if(org.openspcoop2.pdd.core.token.Costanti.POLICY_RETRIEVE_TOKEN_DPOP.equals(gp.getProperty(i).getNome())){
+					String v = gp.getProperty(i).getValore();
+					dpop = isEnabled(v);
+				}
+			}
+		}
+		return dpop;
 	}
 	public static String getTokenPolicyPdndPurposeId(IConfigIntegrationReader configIntegrationReader, String tokenPolicy) throws ProtocolException {
 		try {

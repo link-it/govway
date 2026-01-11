@@ -5288,74 +5288,136 @@ public class ConfigurazionePdDReader {
 		}
 		
 		KeystoreParams keystoreParams = ModIUtils.getApplicativoKeystoreParams(sa.getProtocolPropertyList());
-		if(keystoreParams==null) {
+		KeystoreParams dpopKeystoreParams = ModIUtils.getApplicativoDPoPKeystoreParams(sa.getProtocolPropertyList());
+		if(keystoreParams==null && dpopKeystoreParams==null) {
 			throw new DriverConfigurazioneException("Non risulta alcun keystore, da utilizzare per la firma "+CostantiLabel.MODIPA_PROTOCOL_LABEL+", associato all'applicativo");
 		}
-		
+
 		CertificateCheck check = null;
 		boolean classpathSupported = false;
-		try {
-			if(SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreParams.getType())) {
-				IBYOKUnwrapManager byokUnwrapManager = BYOKUnwrapFactory.getBYOKUnwrapManager(keystoreParams.getByokPolicy(), log);
-				
-				check = CertificateUtils.checkKeyPair(classpathSupported, keystoreParams.getPath(), keystoreParams.getKeyPairPublicKeyPath(), keystoreParams.getKeyPassword(), keystoreParams.getKeyPairAlgorithm(),
-						byokUnwrapManager,
-						false, //addCertificateDetails,  
-						separator, newLine);
-			}
-			else if(SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(keystoreParams.getType())) {
-				throw new DriverConfigurazioneException("Nell'Applicativo "+sa.getNome()+" la configurazione ModI utilizza un keystore "+SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_LABEL+" non compatibile la firma dei messaggi");
-			}
-			else if(SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreParams.getType())) {
-				IBYOKUnwrapManager byokUnwrapManager = BYOKUnwrapFactory.getBYOKUnwrapManager(keystoreParams.getByokPolicy(), log);
-				
-				check = CertificateUtils.checkKeystoreJWKs(classpathSupported, keystoreParams.getPath(), keystoreParams.getKeyAlias(), byokUnwrapManager,
-						false, //addCertificateDetails,  
-						separator, newLine);
-			}
-			else {
-				IBYOKUnwrapManager byokUnwrapManager = BYOKUnwrapFactory.getBYOKUnwrapManager(keystoreParams.getByokPolicy(), log);
-				
-				if(keystoreParams.getStore()!=null) {
-					check = CertificateUtils.checkKeyStore(CostantiLabel.STORE_CARICATO_BASEDATI, keystoreParams.getStore(), keystoreParams.getType(), keystoreParams.getPassword(), 
+		if(keystoreParams!=null) {
+			try {
+				if(SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreParams.getType())) {
+					IBYOKUnwrapManager byokUnwrapManager = BYOKUnwrapFactory.getBYOKUnwrapManager(keystoreParams.getByokPolicy(), log);
+					
+					check = CertificateUtils.checkKeyPair(classpathSupported, keystoreParams.getPath(), keystoreParams.getKeyPairPublicKeyPath(), keystoreParams.getKeyPassword(), keystoreParams.getKeyPairAlgorithm(),
 							byokUnwrapManager,
-							keystoreParams.getKeyAlias(), keystoreParams.getKeyPassword(),
-							sogliaWarningGiorni, 
-							addCertificateDetails, separator, newLine,
-							log);
+							false, //addCertificateDetails,  
+							separator, newLine);
+				}
+				else if(SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(keystoreParams.getType())) {
+					throw new DriverConfigurazioneException("Nell'Applicativo "+sa.getNome()+" la configurazione ModI utilizza un keystore "+SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_LABEL+" non compatibile la firma dei messaggi");
+				}
+				else if(SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreParams.getType())) {
+					IBYOKUnwrapManager byokUnwrapManager = BYOKUnwrapFactory.getBYOKUnwrapManager(keystoreParams.getByokPolicy(), log);
+					
+					check = CertificateUtils.checkKeystoreJWKs(classpathSupported, keystoreParams.getPath(), keystoreParams.getKeyAlias(), byokUnwrapManager,
+							false, //addCertificateDetails,  
+							separator, newLine);
 				}
 				else {
-					check = CertificateUtils.checkKeyStore(keystoreParams.getPath(), classpathSupported, keystoreParams.getType(), keystoreParams.getPassword(), 
-							byokUnwrapManager,
-							keystoreParams.getKeyAlias(), keystoreParams.getKeyPassword(),
-							sogliaWarningGiorni, 
-							addCertificateDetails, separator, newLine,
-							log);
+					IBYOKUnwrapManager byokUnwrapManager = BYOKUnwrapFactory.getBYOKUnwrapManager(keystoreParams.getByokPolicy(), log);
+					
+					if(keystoreParams.getStore()!=null) {
+						check = CertificateUtils.checkKeyStore(CostantiLabel.STORE_CARICATO_BASEDATI, keystoreParams.getStore(), keystoreParams.getType(), keystoreParams.getPassword(), 
+								byokUnwrapManager,
+								keystoreParams.getKeyAlias(), keystoreParams.getKeyPassword(),
+								sogliaWarningGiorni, 
+								addCertificateDetails, separator, newLine,
+								log);
+					}
+					else {
+						check = CertificateUtils.checkKeyStore(keystoreParams.getPath(), classpathSupported, keystoreParams.getType(), keystoreParams.getPassword(), 
+								byokUnwrapManager,
+								keystoreParams.getKeyAlias(), keystoreParams.getKeyPassword(),
+								sogliaWarningGiorni, 
+								addCertificateDetails, separator, newLine,
+								log);
+					}
+				}
+			}catch(Exception t) {
+				throw new DriverConfigurazioneException(t.getMessage(),t);
+			}
+
+			if(check==null || StatoCheck.OK.equals(check.getStatoCheck())) {
+				byte[] cert = ModIUtils.getApplicativoKeystoreCertificate(sa.getProtocolPropertyList());
+				if(cert!=null && cert.length>0) {
+					try {
+						check = CertificateUtils.checkSingleCertificate("Certificato associato al keystore ModI", cert,
+								sogliaWarningGiorni,
+								separator, newLine);
+					}catch(Exception t) {
+						throw new DriverConfigurazioneException(t.getMessage(),t);
+					}
 				}
 			}
-		}catch(Exception t) {
-			throw new DriverConfigurazioneException(t.getMessage(),t);
 		}
 
+		// Verifica keystore DPoP se presente
 		if(check==null || StatoCheck.OK.equals(check.getStatoCheck())) {
-			byte[] cert = ModIUtils.getApplicativoKeystoreCertificate(sa.getProtocolPropertyList());
-			if(cert!=null && cert.length>0) {
+			if(dpopKeystoreParams!=null) {
 				try {
-					return CertificateUtils.checkSingleCertificate("Certificato associato al keystore ModI", cert, 
-							sogliaWarningGiorni, 
-							separator, newLine);
+					check = checkKeystoreModI("DPoP", dpopKeystoreParams, sa.getNome(), sogliaWarningGiorni,
+							addCertificateDetails, separator, newLine, log);
 				}catch(Exception t) {
 					throw new DriverConfigurazioneException(t.getMessage(),t);
 				}
 			}
 		}
-		
+
 		return check;
 	}
 
-	
+	private static CertificateCheck checkKeystoreModI(String keystoreLabel, KeystoreParams keystoreParams, String applicativoNome,
+			int sogliaWarningGiorni, boolean addCertificateDetails, String separator, String newLine, Logger log) throws Exception {
+		CertificateCheck check = null;
+		boolean classpathSupported = false;
+
+		if(SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreParams.getType())) {
+			IBYOKUnwrapManager byokUnwrapManager = BYOKUnwrapFactory.getBYOKUnwrapManager(keystoreParams.getByokPolicy(), log);
+
+			check = CertificateUtils.checkKeyPair(classpathSupported, keystoreParams.getPath(), keystoreParams.getKeyPairPublicKeyPath(), keystoreParams.getKeyPassword(), keystoreParams.getKeyPairAlgorithm(),
+					byokUnwrapManager,
+					false, //addCertificateDetails,
+					separator, newLine);
+		}
+		else if(SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(keystoreParams.getType())) {
+			throw new DriverConfigurazioneException("Nell'Applicativo "+applicativoNome+" la configurazione "+keystoreLabel+" utilizza un keystore "+SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_LABEL+" non compatibile la firma dei messaggi");
+		}
+		else if(SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreParams.getType())) {
+			IBYOKUnwrapManager byokUnwrapManager = BYOKUnwrapFactory.getBYOKUnwrapManager(keystoreParams.getByokPolicy(), log);
+
+			check = CertificateUtils.checkKeystoreJWKs(classpathSupported, keystoreParams.getPath(), keystoreParams.getKeyAlias(), byokUnwrapManager,
+					false, //addCertificateDetails,
+					separator, newLine);
+		}
+		else {
+			IBYOKUnwrapManager byokUnwrapManager = BYOKUnwrapFactory.getBYOKUnwrapManager(keystoreParams.getByokPolicy(), log);
+
+			if(keystoreParams.getStore()!=null) {
+				check = CertificateUtils.checkKeyStore(CostantiLabel.STORE_CARICATO_BASEDATI, keystoreParams.getStore(), keystoreParams.getType(), keystoreParams.getPassword(),
+						byokUnwrapManager,
+						keystoreParams.getKeyAlias(), keystoreParams.getKeyPassword(),
+						sogliaWarningGiorni,
+						addCertificateDetails, separator, newLine,
+						log);
+			}
+			else {
+				check = CertificateUtils.checkKeyStore(keystoreParams.getPath(), classpathSupported, keystoreParams.getType(), keystoreParams.getPassword(),
+						byokUnwrapManager,
+						keystoreParams.getKeyAlias(), keystoreParams.getKeyPassword(),
+						sogliaWarningGiorni,
+						addCertificateDetails, separator, newLine,
+						log);
+			}
+		}
+
+		return check;
+	}
+
+
 	protected CertificateCheck checkCertificatiConnettoreHttpsById(Connection connectionPdD,boolean useCache,
-			long idConnettore, int sogliaWarningGiorni, 
+			long idConnettore, int sogliaWarningGiorni,
 			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
 		
 		if(connectionPdD!=null) {

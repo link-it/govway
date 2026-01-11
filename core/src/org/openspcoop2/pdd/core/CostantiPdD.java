@@ -312,9 +312,11 @@ public class CostantiPdD {
     
     // Applicativo Richiedente
     public static final String HEADER_INTEGRAZIONE_TOKEN_FORM_APPLICATIVE_REQUESTER = "applicativeRequester";
-    
+    public static final String HEADER_INTEGRAZIONE_TOKEN_DPOP_KEYSTORE_APPLICATIVE_REQUESTER = "dpopKeystoreApplicativeRequester";
+
     // Fruizione
     public static final String HEADER_INTEGRAZIONE_TOKEN_FORM_OUTBOUND_INTERFACE = "outboundInterface";
+    public static final String HEADER_INTEGRAZIONE_TOKEN_DPOP_KEYSTORE_OUTBOUND_INTERFACE = "dpopKeystoreOutboundInterface";
     
     /** Attesa attiva di default effettuata per ottenere un lock, in millisecondi */
     public static final long GET_LOCK_ATTESA_ATTIVA = 90l * 1000l; // 2 minuti

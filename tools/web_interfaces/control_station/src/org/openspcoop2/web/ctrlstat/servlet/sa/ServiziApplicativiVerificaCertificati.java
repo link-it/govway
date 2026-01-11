@@ -283,6 +283,11 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 				if(modi){
 					KeystoreParams keystoreParams =	org.openspcoop2.protocol.utils.ModIUtils.getApplicativoKeystoreParams(sa.getProtocolPropertyList());
 					sicurezzaMessaggioModi = keystoreParams!= null;
+					// Verifica anche keystore DPoP
+					if(!sicurezzaMessaggioModi) {
+						KeystoreParams dpopKeystoreParams = org.openspcoop2.protocol.utils.ModIUtils.getApplicativoDPoPKeystoreParams(sa.getProtocolPropertyList());
+						sicurezzaMessaggioModi = dpopKeystoreParams!= null;
+					}
 				}
 				
 				// connettore https

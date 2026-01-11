@@ -1030,7 +1030,32 @@ public final class CostantiDB {
     
     public static final String MODIPA_KEY_CN_SUBJECT = "modipaKeyCNSubject";
     public static final String MODIPA_KEY_CN_ISSUER = "modipaKeyCNIssuer";
-    
+
+    // DPoP Keystore - Applicativo
+    public static final String MODIPA_DPOP_STATO = "modipaDPoPStato";
+
+    public static final String MODIPA_DPOP_KEYSTORE_MODE = "modipaDPoPKeystoreMode";
+
+    public static final String MODIPA_DPOP_KEYSTORE_TYPE = "modipaDPoPKeystoreType";
+
+    public static final String MODIPA_DPOP_KEYSTORE_PATH = "modipaDPoPKeystorePath";
+
+    public static final String MODIPA_DPOP_KEYSTORE_PATH_PUBLIC_KEY = "modipaDPoPKeystorePathPublicKey";
+
+    public static final String MODIPA_DPOP_KEYSTORE_KEY_ALGORITHM = "modipaDPoPKeystoreKeyPairAlgo";
+
+    public static final String MODIPA_DPOP_KEYSTORE_PASSWORD = "modipaDPoPKeystorePassword";
+
+    public static final String MODIPA_DPOP_KEYSTORE_BYOK_POLICY = "modipaDPoPKeystoreByokPolicy";
+
+    public static final String MODIPA_DPOP_KEYSTORE_ARCHIVE = "modipaDPoPKeystoreArchive";
+
+    public static final String MODIPA_DPOP_KEY_ALIAS = "modipaDPoPKeyAlias";
+    public static final String MODIPA_DPOP_KEY_PASSWORD = "modipaDPoPKeyPassword";
+
+    // DPoP Keystore - Fruizione
+    public static final String MODIPA_DPOP_FRUIZIONE_KEYSTORE_MODE = "modipaDPoPFruizioneKeystoreMode";
+
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_MODE = "modipaTruststoreMode";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE = "modipaTruststoreType";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PATH = "modipaTruststorePath";
