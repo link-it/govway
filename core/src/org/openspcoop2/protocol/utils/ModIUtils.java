@@ -1348,46 +1348,139 @@ public class ModIUtils {
 	}
 	
 	public static byte[] getApplicativoKeystoreCertificate(List<org.openspcoop2.core.config.ProtocolProperty> protocolPropertyList) {
-		
+
 		byte[] b = null;
-		
+
 		if(protocolPropertyList==null || protocolPropertyList.isEmpty()) {
 			return b;
 		}
-		
+
 		String sicurezza = getStringValueConfig(protocolPropertyList,CostantiDB.MODIPA_SICUREZZA_MESSAGGIO);
 		if("true".equals(sicurezza)) {
-			
+
 			return getBinaryValueConfig(protocolPropertyList, CostantiDB.MODIPA_KEYSTORE_CERTIFICATE);
-			
+
 		}
-	
+
 		return b;
 	}
-	
+
+	public static KeystoreParams getApplicativoDPoPKeystoreParams(List<org.openspcoop2.core.config.ProtocolProperty> protocolPropertyList) {
+
+		if(protocolPropertyList==null || protocolPropertyList.isEmpty()) {
+			return null;
+		}
+
+		KeystoreParams keystoreParams = null;
+
+		String dpopStato = getStringValueConfig(protocolPropertyList,CostantiDB.MODIPA_DPOP_STATO);
+		if("true".equals(dpopStato)) {
+
+			boolean keystoreModePath = false;
+			boolean keystoreModeArchive = false;
+			boolean keystoreModeHsm = false;
+			String mode = getStringValueConfig(protocolPropertyList, CostantiDB.MODIPA_DPOP_KEYSTORE_MODE);
+			String path = null;
+			String type = CostantiDB.MODIPA_DPOP_KEYSTORE_TYPE;
+			if(CostantiDB.MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE.equals(mode)) {
+				keystoreModeArchive = true;
+			}
+			else if(CostantiDB.MODIPA_KEYSTORE_MODE_VALUE_PATH.equals(mode)) {
+				keystoreModePath = true;
+				path = CostantiDB.MODIPA_DPOP_KEYSTORE_PATH;
+			}
+			else if(CostantiDB.MODIPA_KEYSTORE_MODE_VALUE_HSM.equals(mode)) {
+				keystoreModeHsm = true;
+			}
+
+			String vType = null;
+			if(type!=null) {
+				vType = getStringValueConfig(protocolPropertyList, type);
+			}
+
+			String vPath = null;
+			byte[] vStore = null;
+			if(keystoreModeHsm) {
+				vPath = CostantiLabel.STORE_HSM;
+			}
+			else if(keystoreModePath && path!=null) {
+				vPath = getStringValueConfig(protocolPropertyList, path);
+			}
+			else if(keystoreModeArchive) {
+				vPath = CostantiLabel.STORE_CARICATO_BASEDATI;
+				vStore = getBinaryValueConfig(protocolPropertyList, CostantiDB.MODIPA_DPOP_KEYSTORE_ARCHIVE);
+			}
+
+			String pw = CostantiDB.MODIPA_DPOP_KEYSTORE_PASSWORD;
+			String vPassword = getStringValueConfig(protocolPropertyList, pw);
+
+			String aliasKey = CostantiDB.MODIPA_DPOP_KEY_ALIAS;
+			String vAliasKey = getStringValueConfig(protocolPropertyList, aliasKey);
+
+			String passwordKey = CostantiDB.MODIPA_DPOP_KEY_PASSWORD;
+			String vPassordKey = getStringValueConfig(protocolPropertyList, passwordKey);
+
+			String vPathPublicKey = null;
+			if(KeystoreType.KEY_PAIR.getNome().equals(vType)) {
+				vPathPublicKey = getStringValueConfig(protocolPropertyList, CostantiDB.MODIPA_DPOP_KEYSTORE_PATH_PUBLIC_KEY);
+			}
+
+			String vKeyPairAlgorithm = null;
+			if(KeystoreType.KEY_PAIR.getNome().equals(vType) || KeystoreType.PUBLIC_KEY.getNome().equals(vType)) {
+				vKeyPairAlgorithm = getStringValueConfig(protocolPropertyList, CostantiDB.MODIPA_DPOP_KEYSTORE_KEY_ALGORITHM);
+			}
+
+			String byok = CostantiDB.MODIPA_DPOP_KEYSTORE_BYOK_POLICY;
+			String vByok = null;
+			if(!keystoreModeArchive && !keystoreModeHsm) {
+				vByok = getStringValueConfig(protocolPropertyList, byok);
+			}
+
+			keystoreParams = new KeystoreParams();
+			keystoreParams.setType(vType);
+			keystoreParams.setPath(vPath);
+			keystoreParams.setStore(vStore);
+			keystoreParams.setPassword(vPassword);
+			keystoreParams.setKeyAlias(vAliasKey);
+			keystoreParams.setKeyPassword(vPassordKey);
+			keystoreParams.setKeyPairPublicKeyPath(vPathPublicKey);
+			keystoreParams.setKeyPairAlgorithm(vKeyPairAlgorithm);
+			keystoreParams.setByokPolicy(vByok);
+
+		}
+
+		return keystoreParams;
+	}
+
 	public static boolean existsStoreConfig(List<org.openspcoop2.core.registry.ProtocolProperty> protocolPropertyList, boolean includeRemoteStore,
 			boolean checkModeFruizioneKeystoreId) throws ProtocolException {
 		KeystoreParams keystoreParams = null;
-		try { 
+		try {
 			keystoreParams = ModIUtils.getKeyStoreParams(protocolPropertyList,
 					checkModeFruizioneKeystoreId);
 		}catch(Exception e) {
 			throw new ProtocolException(e.getMessage(),e);
 		}
 		KeystoreParams truststoreParams = null;
-		try { 
+		try {
 			truststoreParams = ModIUtils.getTrustStoreParams(protocolPropertyList);
 		}catch(Exception e) {
 			throw new ProtocolException(e.getMessage(),e);
 		}
 		KeystoreParams truststoreSslParams = null;
-		try { 
+		try {
 			truststoreSslParams = ModIUtils.getTrustStoreSSLParams(protocolPropertyList);
 		}catch(Exception e) {
 			throw new ProtocolException(e.getMessage(),e);
 		}
-		
-		boolean existsStore = keystoreParams!=null || truststoreParams!=null || truststoreSslParams!=null;
+		KeystoreParams dpopKeystoreParams = null;
+		try {
+			dpopKeystoreParams = ModIUtils.getFruizioneDPoPKeystoreParams(protocolPropertyList);
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
+
+		boolean existsStore = keystoreParams!=null || truststoreParams!=null || truststoreSslParams!=null || dpopKeystoreParams!=null;
 		if(!includeRemoteStore) {
 			return existsStore;
 		}
@@ -1596,7 +1689,104 @@ public class ModIUtils {
 		return keystoreParams;
 	}
 
-	
+	public static KeystoreParams getFruizioneDPoPKeystoreParams(List<org.openspcoop2.core.registry.ProtocolProperty> protocolPropertyList) throws ProtocolException {
+
+		if(protocolPropertyList==null || protocolPropertyList.isEmpty()) {
+			return null;
+		}
+
+		String dpopMode = getStringValue(protocolPropertyList, CostantiDB.MODIPA_DPOP_FRUIZIONE_KEYSTORE_MODE);
+		if(dpopMode==null || StringUtils.isEmpty(dpopMode) ||
+				CostantiDB.MODIPA_PROFILO_UNDEFINED.equals(dpopMode)) {
+			return null;
+		}
+
+		if(CostantiDB.MODIPA_PROFILO_DEFAULT.equals(dpopMode)) {
+			// Utilizza il keystore di default definito in modi.properties
+			return ModIUtils.getSicurezzaMessaggioCertificatiKeyStore();
+		}
+
+		if(!CostantiDB.MODIPA_PROFILO_RIDEFINISCI.equals(dpopMode)) {
+			return null;
+		}
+
+		KeystoreParams keystoreParams = null;
+
+		boolean keystoreModePath = false;
+		boolean keystoreModeArchive = false;
+		boolean keystoreModeHsm = false;
+		String mode = getStringValue(protocolPropertyList, CostantiDB.MODIPA_DPOP_KEYSTORE_MODE);
+		String path = null;
+		String type = CostantiDB.MODIPA_DPOP_KEYSTORE_TYPE;
+		if(CostantiDB.MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE.equals(mode)) {
+			keystoreModeArchive = true;
+		}
+		else if(CostantiDB.MODIPA_KEYSTORE_MODE_VALUE_PATH.equals(mode)) {
+			keystoreModePath = true;
+			path = CostantiDB.MODIPA_DPOP_KEYSTORE_PATH;
+		}
+		else if(CostantiDB.MODIPA_KEYSTORE_MODE_VALUE_HSM.equals(mode)) {
+			keystoreModeHsm = true;
+		}
+
+		String vType = null;
+		if(type!=null) {
+			vType = getStringValue(protocolPropertyList, type);
+		}
+
+		String vPath = null;
+		byte[] vStore = null;
+		if(keystoreModeHsm) {
+			vPath = CostantiLabel.STORE_HSM;
+		}
+		else if(keystoreModePath && path!=null) {
+			vPath = getStringValue(protocolPropertyList, path);
+		}
+		else if(keystoreModeArchive) {
+			vPath = CostantiLabel.STORE_CARICATO_BASEDATI;
+			vStore = getBinaryValue(protocolPropertyList, CostantiDB.MODIPA_DPOP_KEYSTORE_ARCHIVE);
+		}
+
+		String pw = CostantiDB.MODIPA_DPOP_KEYSTORE_PASSWORD;
+		String vPassword = getStringValue(protocolPropertyList, pw);
+
+		String aliasKey = CostantiDB.MODIPA_DPOP_KEY_ALIAS;
+		String vAliasKey = getStringValue(protocolPropertyList, aliasKey);
+
+		String passwordKey = CostantiDB.MODIPA_DPOP_KEY_PASSWORD;
+		String vPasswordKey = getStringValue(protocolPropertyList, passwordKey);
+
+		String vPathPublicKey = null;
+		if(KeystoreType.KEY_PAIR.getNome().equals(vType)) {
+			vPathPublicKey = getStringValue(protocolPropertyList, CostantiDB.MODIPA_DPOP_KEYSTORE_PATH_PUBLIC_KEY);
+		}
+
+		String vKeyPairAlgorithm = null;
+		if(KeystoreType.KEY_PAIR.getNome().equals(vType) || KeystoreType.PUBLIC_KEY.getNome().equals(vType)) {
+			vKeyPairAlgorithm = getStringValue(protocolPropertyList, CostantiDB.MODIPA_DPOP_KEYSTORE_KEY_ALGORITHM);
+		}
+
+		String byok = CostantiDB.MODIPA_DPOP_KEYSTORE_BYOK_POLICY;
+		String vByok = null;
+		if(!keystoreModeArchive && !keystoreModeHsm) {
+			vByok = getStringValue(protocolPropertyList, byok);
+		}
+
+		keystoreParams = new KeystoreParams();
+		keystoreParams.setType(vType);
+		keystoreParams.setPath(vPath);
+		keystoreParams.setStore(vStore);
+		keystoreParams.setPassword(vPassword);
+		keystoreParams.setKeyAlias(vAliasKey);
+		keystoreParams.setKeyPassword(vPasswordKey);
+		keystoreParams.setKeyPairPublicKeyPath(vPathPublicKey);
+		keystoreParams.setKeyPairAlgorithm(vKeyPairAlgorithm);
+		keystoreParams.setByokPolicy(vByok);
+
+		return keystoreParams;
+	}
+
+
 	private static String getStringValue(List<ProtocolProperty> protocolPropertyList, String id) {
 		for (ProtocolProperty protocolProperty : protocolPropertyList) {
 			if(protocolProperty.getName().equals(id)) {

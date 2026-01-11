@@ -1579,42 +1579,44 @@ public class GestoreTokenNegoziazioneUtilities {
 		String keyPassword = null;
 
 		if(policyNegoziazioneToken.isDpopSignKeystoreApplicativoModI()) {
-			// Use keystore from applicativo ModI
+			// Use keystore from applicativo ModI (DPoP-specific if available, otherwise standard ModI)
+			boolean useDPoPKeystore = dynamicParameters.hasKeystoreDPoPApplicativoModI();
+
 			Map<String, Object> dynamicMap = null;
-			if(dynamicParameters.isByokPolicyDefinedApplicativoModI()) {
+			if(useDPoPKeystore ? dynamicParameters.isByokPolicyDefinedDPoPApplicativoModI() : dynamicParameters.isByokPolicyDefinedApplicativoModI()) {
 				dynamicMap = DynamicMapBuilderUtils.buildDynamicMap(busta, requestInfo, dynamicParameters.getPddContext(), log);
 			}
 
-			String keystoreType = dynamicParameters.getTipoKeystoreApplicativoModI();
+			String keystoreType = useDPoPKeystore ? dynamicParameters.getTipoKeystoreDPoPApplicativoModI() : dynamicParameters.getTipoKeystoreApplicativoModI();
 			if(keystoreType == null) {
 				throw new TokenException(GestoreToken.KEYSTORE_TYPE_UNDEFINED);
 			}
 			if(SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType)) {
-				keyPairStore = dynamicParameters.getKeyPairStoreApplicativoModI(dynamicMap);
+				keyPairStore = useDPoPKeystore ? dynamicParameters.getKeyPairStoreDPoPApplicativoModI(dynamicMap) : dynamicParameters.getKeyPairStoreApplicativoModI(dynamicMap);
 				if(keyPairStore == null) {
 					throw new TokenException(GestoreToken.KEYSTORE_KEYPAIR_UNDEFINED);
 				}
 			}
 			else if(SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreType)) {
-				jwtStore = dynamicParameters.getJWKSetStoreApplicativoModI(dynamicMap);
+				jwtStore = useDPoPKeystore ? dynamicParameters.getJWKSetStoreDPoPApplicativoModI(dynamicMap) : dynamicParameters.getJWKSetStoreApplicativoModI(dynamicMap);
 				if(jwtStore == null) {
 					throw new TokenException(GestoreToken.KEYSTORE_KEYSTORE_UNDEFINED);
 				}
 			}
 			else {
-				ks = dynamicParameters.getKeystoreApplicativoModI(dynamicMap);
+				ks = useDPoPKeystore ? dynamicParameters.getKeystoreDPoPApplicativoModI(dynamicMap) : dynamicParameters.getKeystoreApplicativoModI(dynamicMap);
 				if(ks == null) {
 					throw new TokenException(GestoreToken.KEYSTORE_KEYSTORE_UNDEFINED);
 				}
 			}
 
-			keyAlias = dynamicParameters.getKeyAliasApplicativoModI();
+			keyAlias = useDPoPKeystore ? dynamicParameters.getKeyAliasDPoPApplicativoModI() : dynamicParameters.getKeyAliasApplicativoModI();
 			if(keyAlias == null &&
 					!SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType) &&
 					!SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(keystoreType)) {
 				throw new TokenException(GestoreToken.KEY_ALIAS_UNDEFINED);
 			}
-			keyPassword = dynamicParameters.getKeyPasswordApplicativoModI();
+			keyPassword = useDPoPKeystore ? dynamicParameters.getKeyPasswordDPoPApplicativoModI() : dynamicParameters.getKeyPasswordApplicativoModI();
 			if(keyPassword == null &&
 					!SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreType) &&
 					!SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType) &&
@@ -1623,42 +1625,44 @@ public class GestoreTokenNegoziazioneUtilities {
 			}
 		}
 		else if(policyNegoziazioneToken.isDpopSignKeystoreFruizioneModI()) {
-			// Use keystore from fruizione ModI
+			// Use keystore from fruizione ModI (DPoP-specific if available, otherwise standard ModI)
+			boolean useDPoPKeystore = dynamicParameters.hasKeystoreDPoPFruizioneModI();
+
 			Map<String, Object> dynamicMap = null;
-			if(dynamicParameters.isByokPolicyDefinedFruizioneModI()) {
+			if(useDPoPKeystore ? dynamicParameters.isByokPolicyDefinedDPoPFruizioneModI() : dynamicParameters.isByokPolicyDefinedFruizioneModI()) {
 				dynamicMap = DynamicMapBuilderUtils.buildDynamicMap(busta, requestInfo, dynamicParameters.getPddContext(), log);
 			}
 
-			String keystoreType = dynamicParameters.getTipoKeystoreFruizioneModI();
+			String keystoreType = useDPoPKeystore ? dynamicParameters.getTipoKeystoreDPoPFruizioneModI() : dynamicParameters.getTipoKeystoreFruizioneModI();
 			if(keystoreType == null) {
 				throw new TokenException(GestoreToken.KEYSTORE_TYPE_UNDEFINED);
 			}
 			if(SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType)) {
-				keyPairStore = dynamicParameters.getKeyPairStoreFruizioneModI(dynamicMap);
+				keyPairStore = useDPoPKeystore ? dynamicParameters.getKeyPairStoreDPoPFruizioneModI(dynamicMap) : dynamicParameters.getKeyPairStoreFruizioneModI(dynamicMap);
 				if(keyPairStore == null) {
 					throw new TokenException(GestoreToken.KEYSTORE_KEYPAIR_UNDEFINED);
 				}
 			}
 			else if(SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreType)) {
-				jwtStore = dynamicParameters.getJWKSetStoreFruizioneModI(dynamicMap);
+				jwtStore = useDPoPKeystore ? dynamicParameters.getJWKSetStoreDPoPFruizioneModI(dynamicMap) : dynamicParameters.getJWKSetStoreFruizioneModI(dynamicMap);
 				if(jwtStore == null) {
 					throw new TokenException(GestoreToken.KEYSTORE_KEYSTORE_UNDEFINED);
 				}
 			}
 			else {
-				ks = dynamicParameters.getKeystoreFruizioneModI(dynamicMap);
+				ks = useDPoPKeystore ? dynamicParameters.getKeystoreDPoPFruizioneModI(dynamicMap) : dynamicParameters.getKeystoreFruizioneModI(dynamicMap);
 				if(ks == null) {
 					throw new TokenException(GestoreToken.KEYSTORE_KEYSTORE_UNDEFINED);
 				}
 			}
 
-			keyAlias = dynamicParameters.getKeyAliasFruizioneModI();
+			keyAlias = useDPoPKeystore ? dynamicParameters.getKeyAliasDPoPFruizioneModI() : dynamicParameters.getKeyAliasFruizioneModI();
 			if(keyAlias == null &&
 					!SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType) &&
 					!SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(keystoreType)) {
 				throw new TokenException(GestoreToken.KEY_ALIAS_UNDEFINED);
 			}
-			keyPassword = dynamicParameters.getKeyPasswordFruizioneModI();
+			keyPassword = useDPoPKeystore ? dynamicParameters.getKeyPasswordDPoPFruizioneModI() : dynamicParameters.getKeyPasswordFruizioneModI();
 			if(keyPassword == null &&
 					!SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreType) &&
 					!SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType) &&

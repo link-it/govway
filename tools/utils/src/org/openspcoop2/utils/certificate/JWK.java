@@ -201,7 +201,12 @@ public class JWK {
 	private synchronized void initCxf() throws UtilsException {
 		if(this.jwkCxf==null) {
 			if(this.jwkJson==null){
-				throw new UtilsException("Json not defined");
+				if(this.jwkNimbusds!=null) {
+					initJson(); // generate jwkJson from jwkNimbusds
+				}
+				else {
+					throw new UtilsException("Json not defined");
+				}
 			}
 			this.jwkCxf = this.engineCxf.jsonToJwk(this.jwkJson);
 		}

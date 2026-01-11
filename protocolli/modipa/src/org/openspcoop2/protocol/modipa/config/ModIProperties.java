@@ -2265,7 +2265,7 @@ public class ModIProperties {
 			params = new KeystoreParams();
 			params.setType(keystoreType);
 			params.setPath(getSicurezzaMessaggioCertificatiKeyStorePath());
-			params.setPassword(getSicurezzaMessaggioCertificatiKeyPassword());
+			params.setPassword(getSicurezzaMessaggioCertificatiKeyStorePassword());
 			params.setKeyAlias(getSicurezzaMessaggioCertificatiKeyAlias());
 			params.setKeyPassword(getSicurezzaMessaggioCertificatiKeyPassword());
 		}

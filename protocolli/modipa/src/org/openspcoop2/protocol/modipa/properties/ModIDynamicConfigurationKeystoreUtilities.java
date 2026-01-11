@@ -763,8 +763,575 @@ public class ModIDynamicConfigurationKeystoreUtilities {
 		}
 		return null;
 	}
-	
-	
+
+
+	static void addDPoPKeystoreConfig(ConsoleConfiguration configuration, boolean requiredValue) throws ProtocolException {
+
+		BaseConsoleItem subTitleItem =
+				ProtocolPropertiesFactory.newSubTitleItem(
+						ModIConsoleCostanti.MODIPA_DPOP_SUBTITLE_ID,
+						ModIConsoleCostanti.MODIPA_DPOP_SUBTITLE_LABEL);
+		subTitleItem.setType(ConsoleItemType.HIDDEN);
+		configuration.addConsoleItem(subTitleItem);
+
+		BooleanConsoleItem statoItem = (BooleanConsoleItem)
+				ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.BOOLEAN,
+				ConsoleItemType.HIDDEN,
+				ModIConsoleCostanti.MODIPA_DPOP_STATO_ID,
+				ModIConsoleCostanti.MODIPA_DPOP_STATO_LABEL);
+		statoItem.setDefaultValue(false);
+		statoItem.setReloadOnChange(true, true);
+		configuration.addConsoleItem(statoItem);
+
+		StringConsoleItem modeItem = (StringConsoleItem)
+				ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
+				ConsoleItemType.HIDDEN,
+				ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_MODE_ID,
+				ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_MODE_LABEL);
+		modeItem.setDefaultValue(ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_MODE_DEFAULT_VALUE);
+		modeItem.setReloadOnChange(true, true);
+		configuration.addConsoleItem(modeItem);
+
+		addDPoPKeystoreFields(configuration, requiredValue);
+	}
+
+	static void addDPoPKeystoreConfigFruizione(ConsoleConfiguration configuration, boolean requiredValue) throws ProtocolException {
+		StringConsoleItem modeItem = (StringConsoleItem)
+				ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
+				ConsoleItemType.HIDDEN,
+				ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_MODE_ID,
+				ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_MODE_LABEL);
+		modeItem.setDefaultValue(ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_MODE_DEFAULT_VALUE);
+		modeItem.setReloadOnChange(true, true);
+		configuration.addConsoleItem(modeItem);
+
+		addDPoPKeystoreFields(configuration, requiredValue);
+	}
+
+	private static void addDPoPKeystoreFields(ConsoleConfiguration configuration, boolean requiredValue) throws ProtocolException {
+
+		StringConsoleItem typeItem = (StringConsoleItem)
+				ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
+				ConsoleItemType.HIDDEN,
+				ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_TYPE_ID,
+				ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_TYPE_LABEL);
+		typeItem.setDefaultValue(ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_TYPE_DEFAULT_VALUE);
+		typeItem.setReloadOnChange(true, true);
+		configuration.addConsoleItem(typeItem);
+
+		AbstractConsoleItem<?> archiveItem =
+				ProtocolPropertiesFactory.newConsoleItem(
+						ConsoleItemValueType.BINARY,
+						ConsoleItemType.HIDDEN,
+						ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_ARCHIVE_ID,
+						ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_ARCHIVE_LABEL);
+		((BinaryConsoleItem)archiveItem).setShowContent(false);
+		((BinaryConsoleItem)archiveItem).setReadOnly(false);
+		((BinaryConsoleItem)archiveItem).setRequired(true);
+		((BinaryConsoleItem)archiveItem).setNoteUpdate(ModIConsoleCostanti.MODIPA_KEYSTORE_ARCHIVE_NOTE_UPDATE);
+		((BinaryConsoleItem)archiveItem).setLock(true);
+		configuration.addConsoleItem(archiveItem);
+
+		AbstractConsoleItem<?> pathItem =
+				ProtocolPropertiesFactory.newConsoleItem(
+						ConsoleItemValueType.STRING,
+						ConsoleItemType.HIDDEN,
+						ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_PATH_ID,
+						ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_PATH_LABEL);
+		configuration.addConsoleItem(pathItem);
+
+		AbstractConsoleItem<?> pathPublicKeyItem =
+				ProtocolPropertiesFactory.newConsoleItem(
+						ConsoleItemValueType.STRING,
+						ConsoleItemType.HIDDEN,
+						ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_PATH_PUBLIC_KEY_ID,
+						ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_PATH_PUBLIC_KEY_LABEL);
+		configuration.addConsoleItem(pathPublicKeyItem);
+
+		StringConsoleItem pathKeyAlgorithmItem = (StringConsoleItem)
+				ProtocolPropertiesFactory.newConsoleItem(
+						ConsoleItemValueType.STRING,
+						ConsoleItemType.HIDDEN,
+						ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_KEY_ALGORITHM_ID,
+						ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_KEY_ALGORITHM_LABEL);
+		pathKeyAlgorithmItem.setDefaultValue(ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_KEY_ALGORITHM_DEFAULT_VALUE);
+		configuration.addConsoleItem(pathKeyAlgorithmItem);
+
+		AbstractConsoleItem<?> keystorePasswordItem =
+				ProtocolPropertiesFactory.newConsoleItem(
+						ConsoleItemValueType.STRING,
+						ConsoleItemType.LOCK_HIDDEN,
+						ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_PASSWORD_ID,
+						ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_PASSWORD_LABEL);
+		keystorePasswordItem.setRequired(requiredValue);
+		configuration.addConsoleItem(keystorePasswordItem);
+
+		AbstractConsoleItem<?> keyAliasItem =
+				ProtocolPropertiesFactory.newConsoleItem(
+						ConsoleItemValueType.STRING,
+						ConsoleItemType.HIDDEN,
+						ModIConsoleCostanti.MODIPA_DPOP_KEY_ALIAS_ID,
+						ModIConsoleCostanti.MODIPA_DPOP_KEY_ALIAS_LABEL);
+		keyAliasItem.setRequired(requiredValue);
+		configuration.addConsoleItem(keyAliasItem);
+
+		AbstractConsoleItem<?> keyPasswordItem =
+				ProtocolPropertiesFactory.newConsoleItem(
+						ConsoleItemValueType.STRING,
+						ConsoleItemType.LOCK_HIDDEN,
+						ModIConsoleCostanti.MODIPA_DPOP_KEY_PASSWORD_ID,
+						ModIConsoleCostanti.MODIPA_DPOP_KEY_PASSWORD_LABEL);
+		keyPasswordItem.setRequired(requiredValue);
+		configuration.addConsoleItem(keyPasswordItem);
+
+		AbstractConsoleItem<?> keystoreByokPolicyItem =
+				ProtocolPropertiesFactory.newConsoleItem(
+						ConsoleItemValueType.STRING,
+						ConsoleItemType.HIDDEN,
+						ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_BYOK_POLICY_ID,
+						ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_BYOK_POLICY_LABEL);
+		keystoreByokPolicyItem.setRequired(false);
+		configuration.addConsoleItem(keystoreByokPolicyItem);
+	}
+
+	static void updateDPoPKeystoreConfig(ConsoleConfiguration consoleConfiguration, ProtocolProperties properties,
+			boolean dpopAbilitato, boolean requiredValue, boolean rest) throws ProtocolException {
+
+		BaseConsoleItem subTitleItem =
+				ProtocolPropertiesUtils.getBaseConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_DPOP_SUBTITLE_ID);
+		if(subTitleItem!=null) {
+			subTitleItem.setType(ConsoleItemType.SUBTITLE);
+		}
+
+		AbstractConsoleItem<?> statoItem =
+				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_DPOP_STATO_ID);
+		if(statoItem!=null) {
+			statoItem.setType(ConsoleItemType.CHECKBOX);
+		}
+
+		AbstractConsoleItem<?> modeItem =
+				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_MODE_ID);
+		if(modeItem!=null) {
+			if(dpopAbilitato) {
+				modeItem.setType(ConsoleItemType.SELECT);
+			}
+			else {
+				modeItem.setType(ConsoleItemType.HIDDEN);
+			}
+			((StringConsoleItem)modeItem).addLabelValue(ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_MODE_LABEL_ARCHIVE,
+					ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_MODE_VALUE_ARCHIVE);
+			((StringConsoleItem)modeItem).addLabelValue(ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_MODE_LABEL_PATH,
+					ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_MODE_VALUE_PATH);
+			if(HSMUtils.existsTipologieKeystoreHSM(false, false)) {
+				((StringConsoleItem)modeItem).addLabelValue(ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_MODE_LABEL_HSM,
+						ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_MODE_VALUE_HSM);
+			}
+		}
+
+		StringProperty selectModeItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_MODE_ID);
+		AbstractConsoleItem<?> archiveItem =
+				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_ARCHIVE_ID);
+		AbstractConsoleItem<?> pathItem =
+				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_PATH_ID);
+
+		boolean hsm = false;
+		boolean archive = false;
+		String modalita = ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_MODE_DEFAULT_VALUE;
+		if(selectModeItemValue!=null && selectModeItemValue.getValue()!=null && !"".equals(selectModeItemValue.getValue())) {
+			modalita = selectModeItemValue.getValue();
+		}
+
+		if(dpopAbilitato) {
+
+			if(selectModeItemValue!=null &&
+					(selectModeItemValue.getValue()==null || "".equals(selectModeItemValue.getValue()))) {
+				selectModeItemValue.setValue(modalita);
+			}
+
+			if(ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_MODE_VALUE_HSM.equals(modalita)) {
+
+				hsm = true;
+
+				archiveItem.setType(ConsoleItemType.HIDDEN);
+				archiveItem.setRequired(false);
+				BinaryProperty archiveItemValue = (BinaryProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_ARCHIVE_ID);
+				if(archiveItemValue!=null) {
+					archiveItemValue.setValue(null);
+					archiveItemValue.setFileName(null);
+					archiveItemValue.setClearContent(true);
+				}
+
+				pathItem.setType(ConsoleItemType.HIDDEN);
+				pathItem.setRequired(false);
+				StringProperty pathItemItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_PATH_ID);
+				if(pathItemItemValue!=null) {
+					pathItemItemValue.setValue(null);
+				}
+
+				StringProperty keyPasswordItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_DPOP_KEY_PASSWORD_ID);
+				if(keyPasswordItemValue!=null) {
+					keyPasswordItemValue.setValue(null);
+				}
+
+				StringProperty keystorePasswordItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_PASSWORD_ID);
+				if(keystorePasswordItemValue!=null) {
+					keystorePasswordItemValue.setValue(null);
+				}
+
+				StringProperty keystoreByokPolicyItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_BYOK_POLICY_ID);
+				if(keystoreByokPolicyItemValue!=null) {
+					keystoreByokPolicyItemValue.setValue(null);
+				}
+			}
+			else if(ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_MODE_VALUE_ARCHIVE.equals(modalita)) {
+
+				archive = true;
+
+				archiveItem.setType(ConsoleItemType.FILE);
+				archiveItem.setRequired(requiredValue);
+
+				pathItem.setType(ConsoleItemType.HIDDEN);
+				pathItem.setRequired(false);
+				StringProperty pathItemItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_PATH_ID);
+				if(pathItemItemValue!=null) {
+					pathItemItemValue.setValue(null);
+				}
+			}
+			else {
+				// PATH
+				archiveItem.setType(ConsoleItemType.HIDDEN);
+				archiveItem.setRequired(false);
+				BinaryProperty archiveItemValue = (BinaryProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_ARCHIVE_ID);
+				if(archiveItemValue!=null) {
+					archiveItemValue.setValue(null);
+					archiveItemValue.setFileName(null);
+					archiveItemValue.setClearContent(true);
+				}
+
+				pathItem.setType(ConsoleItemType.TEXT_AREA);
+				((StringConsoleItem)pathItem).setRows(3);
+				pathItem.setRequired(requiredValue);
+			}
+		}
+		else {
+			if(pathItem!=null) {
+				pathItem.setType(ConsoleItemType.HIDDEN);
+				pathItem.setRequired(false);
+			}
+
+			StringProperty pathItemItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_PATH_ID);
+			if(pathItemItemValue!=null) {
+				pathItemItemValue.setValue(null);
+			}
+
+			if(archiveItem!=null) {
+				archiveItem.setType(ConsoleItemType.HIDDEN);
+				archiveItem.setRequired(false);
+			}
+
+			BinaryProperty archiveItemValue = (BinaryProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_ARCHIVE_ID);
+			if(archiveItemValue!=null) {
+				archiveItemValue.setValue(null);
+				archiveItemValue.setFileName(null);
+				archiveItemValue.setClearContent(true);
+			}
+		}
+
+		AbstractConsoleItem<?> typeItem =
+				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_TYPE_ID);
+		List<String> lHsmTypes = null;
+		if(typeItem!=null) {
+			if(hsm) {
+				lHsmTypes = new ArrayList<>();
+				HSMUtils.fillTipologieKeystore(false, false, lHsmTypes);
+				if(lHsmTypes!=null && !lHsmTypes.isEmpty()) {
+					for (String hsmType : lHsmTypes) {
+						((StringConsoleItem)typeItem).addLabelValue(hsmType, hsmType);
+					}
+				}
+			}
+			else {
+				((StringConsoleItem)typeItem).addLabelValue(ModIConsoleCostanti.MODIPA_KEYSTORE_TYPE_LABEL_JKS,
+						ModIConsoleCostanti.MODIPA_KEYSTORE_TYPE_VALUE_JKS);
+				((StringConsoleItem)typeItem).addLabelValue(ModIConsoleCostanti.MODIPA_KEYSTORE_TYPE_LABEL_PKCS12,
+						ModIConsoleCostanti.MODIPA_KEYSTORE_TYPE_VALUE_PKCS12);
+				if(ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_MODE_VALUE_PATH.equals(modalita) && rest) {
+					((StringConsoleItem)typeItem).addLabelValue(ModIConsoleCostanti.MODIPA_KEYSTORE_TYPE_LABEL_JWK,
+							ModIConsoleCostanti.MODIPA_KEYSTORE_TYPE_VALUE_JWK);
+					((StringConsoleItem)typeItem).addLabelValue(ModIConsoleCostanti.MODIPA_KEYSTORE_TYPE_LABEL_KEY_PAIR,
+							ModIConsoleCostanti.MODIPA_KEYSTORE_TYPE_VALUE_KEY_PAIR);
+				}
+			}
+			if(dpopAbilitato) {
+				typeItem.setType(ConsoleItemType.SELECT);
+			}
+			else {
+				typeItem.setType(ConsoleItemType.HIDDEN);
+			}
+		}
+
+		StringProperty typeItemItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_TYPE_ID);
+		String keystoreType = null;
+		boolean keystoreKeyPair = false;
+		boolean keystoreJWK = false;
+		boolean keystoreJks = false;
+		boolean keystorePkcs12 = false;
+		if(typeItemItemValue!=null && typeItemItemValue.getValue()!=null) {
+			keystoreType = typeItemItemValue.getValue();
+			if(hsm && (lHsmTypes==null || !lHsmTypes.contains(keystoreType))) {
+				keystoreType = null;
+				typeItemItemValue.setValue(null);
+			}
+
+			keystoreKeyPair = ModIConsoleCostanti.MODIPA_KEYSTORE_TYPE_VALUE_KEY_PAIR.equals(keystoreType);
+			keystoreJWK = ModIConsoleCostanti.MODIPA_KEYSTORE_TYPE_VALUE_JWK.equals(keystoreType);
+
+			if(ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_MODE_VALUE_ARCHIVE.equals(modalita) &&
+				(keystoreKeyPair || keystoreJWK)
+				){
+				keystoreKeyPair = false;
+				keystoreJWK = false;
+				keystoreType = ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_TYPE_DEFAULT_VALUE;
+				typeItemItemValue.setValue(keystoreType);
+			}
+			if(keystoreType==null || "".equals(keystoreType)) {
+				keystoreJks = ModIConsoleCostanti.MODIPA_KEYSTORE_TYPE_VALUE_JKS.equals(ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_TYPE_DEFAULT_VALUE);
+				keystorePkcs12 = ModIConsoleCostanti.MODIPA_KEYSTORE_TYPE_VALUE_PKCS12.equals(ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_TYPE_DEFAULT_VALUE);
+			}
+			else {
+				keystoreJks = ModIConsoleCostanti.MODIPA_KEYSTORE_TYPE_VALUE_JKS.equals(keystoreType);
+				keystorePkcs12 = ModIConsoleCostanti.MODIPA_KEYSTORE_TYPE_VALUE_PKCS12.equals(keystoreType);
+			}
+		}
+
+		AbstractConsoleItem<?> pathPublicKeyItem =
+				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_PATH_PUBLIC_KEY_ID);
+		boolean pathPublicKeyRestoreDefaultValue = true;
+		if(pathPublicKeyItem!=null && dpopAbilitato &&
+			ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_MODE_VALUE_PATH.equals(modalita) &&
+			keystoreKeyPair) {
+			pathPublicKeyItem.setType(ConsoleItemType.TEXT_AREA);
+			((StringConsoleItem)pathPublicKeyItem).setRows(3);
+			pathPublicKeyItem.setRequired(true);
+			pathPublicKeyRestoreDefaultValue = false;
+
+			// Ridefinisco anche label Path
+			if(pathItem!=null) {
+				pathItem.setLabel(ModIConsoleCostanti.MODIPA_KEYSTORE_PATH_PRIVATE_KEY_LABEL);
+			}
+		}
+		if(pathPublicKeyRestoreDefaultValue) {
+			if(pathPublicKeyItem!=null) {
+				pathPublicKeyItem.setType(ConsoleItemType.HIDDEN);
+				pathPublicKeyItem.setRequired(false);
+			}
+			StringProperty pathPublicKeyItemItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_PATH_PUBLIC_KEY_ID);
+			if(pathPublicKeyItemItemValue!=null) {
+				pathPublicKeyItemItemValue.setValue(null);
+			}
+
+			// Ripristino anche label Path
+			if(pathItem!=null) {
+				pathItem.setLabel(ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_PATH_LABEL);
+			}
+		}
+
+
+		AbstractConsoleItem<?> keystorePasswordItem =
+				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_PASSWORD_ID);
+		if(keystorePasswordItem!=null) {
+			if(dpopAbilitato && !hsm && !keystoreKeyPair && !keystoreJWK) {
+				keystorePasswordItem.setType(ConsoleItemType.LOCK);
+				if(
+						(keystoreJks && !DBUtils.isKeystoreJksPasswordRequired())
+						||
+						(keystorePkcs12 && !DBUtils.isKeystorePkcs12PasswordRequired())
+				) {
+					keystorePasswordItem.setRequired(false);
+				}
+			}
+			else {
+				keystorePasswordItem.setType(ConsoleItemType.LOCK_HIDDEN);
+
+				StringProperty keystorePasswordItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_PASSWORD_ID);
+				if(keystorePasswordItemValue!=null) {
+					keystorePasswordItemValue.setValue(null);
+				}
+			}
+		}
+
+		AbstractConsoleItem<?> keystoreByokItem =
+				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_BYOK_POLICY_ID);
+		if(keystoreByokItem!=null) {
+			BYOKProvider byokProvider = null;
+			try {
+				byokProvider = BYOKProvider.getUnwrapInstance();
+			}catch(Exception e) {
+				throw new ProtocolException(e.getMessage(),e);
+			}
+			if(dpopAbilitato && !hsm && !archive && byokProvider.isByokEnabled()) {
+
+				List<String> ocspTypes = byokProvider.getValues();
+				List<String> ocspLabels = byokProvider.getLabels();
+				for (int i = 0; i < ocspTypes.size(); i++) {
+					String type = ocspTypes.get(i);
+					String label = ocspLabels.get(i);
+					((StringConsoleItem)keystoreByokItem).addLabelValue(label, type);
+				}
+
+				keystoreByokItem.setType(ConsoleItemType.SELECT);
+			}
+			else {
+				keystoreByokItem.setType(ConsoleItemType.HIDDEN);
+
+				StringProperty keystoreByokPolicyItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_BYOK_POLICY_ID);
+				if(keystoreByokPolicyItemValue!=null) {
+					keystoreByokPolicyItemValue.setValue(null);
+				}
+			}
+		}
+
+		AbstractConsoleItem<?> keyAliasItem =
+				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_DPOP_KEY_ALIAS_ID);
+		if(keyAliasItem!=null) {
+			if(dpopAbilitato && !keystoreKeyPair) {
+				keyAliasItem.setType(ConsoleItemType.TEXT_EDIT);
+			}
+			else {
+				keyAliasItem.setType(ConsoleItemType.HIDDEN);
+
+				StringProperty keyAliasItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_DPOP_KEY_ALIAS_ID);
+				if(keyAliasItemValue!=null) {
+					keyAliasItemValue.setValue(null);
+				}
+			}
+		}
+
+		AbstractConsoleItem<?> keyPasswordItem =
+				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_DPOP_KEY_PASSWORD_ID);
+		if(keyPasswordItem!=null) {
+			if(dpopAbilitato && (!hsm || HSMUtils.isHsmConfigurableKeyPassword()) && !keystoreJWK) {
+				keyPasswordItem.setType(ConsoleItemType.LOCK);
+
+				if(
+						keystoreKeyPair
+						||
+						(keystoreJks && !DBUtils.isKeystoreJksKeyPasswordRequired())
+						||
+						(keystorePkcs12 && !DBUtils.isKeystorePkcs12KeyPasswordRequired())
+				) {
+					keyPasswordItem.setRequired(false);
+				}
+			}
+			else {
+				keyPasswordItem.setType(ConsoleItemType.LOCK_HIDDEN);
+
+				StringProperty keyPasswordItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_DPOP_KEY_PASSWORD_ID);
+				if(keyPasswordItemValue!=null) {
+					keyPasswordItemValue.setValue(null);
+				}
+
+				keyPasswordItem.setRequired(requiredValue);
+			}
+		}
+
+		StringProperty keyPairAlgorithmItemItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_KEY_ALGORITHM_ID);
+		if(keystoreKeyPair &&
+			keyPairAlgorithmItemItemValue!=null &&
+			(keyPairAlgorithmItemItemValue.getValue()==null || StringUtils.isEmpty(keyPairAlgorithmItemItemValue.getValue()))) {
+			keyPairAlgorithmItemItemValue.setValue(ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_KEY_ALGORITHM_DEFAULT_VALUE);
+		}
+	}
+
+	static void hideDPoPKeystoreConfig(ConsoleConfiguration configuration, ProtocolProperties properties) throws ProtocolException {
+
+		AbstractConsoleItem<?> typeItem =
+				ProtocolPropertiesUtils.getAbstractConsoleItem(configuration.getConsoleItem(), ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_TYPE_ID);
+		if(typeItem!=null) {
+			typeItem.setType(ConsoleItemType.HIDDEN);
+		}
+		StringProperty typeItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_TYPE_ID);
+		if(typeItemValue!=null) {
+			typeItemValue.setValue(null);
+		}
+
+		AbstractConsoleItem<?> archiveItem =
+				ProtocolPropertiesUtils.getAbstractConsoleItem(configuration.getConsoleItem(), ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_ARCHIVE_ID);
+		if(archiveItem!=null) {
+			archiveItem.setType(ConsoleItemType.HIDDEN);
+			archiveItem.setRequired(false);
+		}
+		BinaryProperty archiveItemValue = (BinaryProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_ARCHIVE_ID);
+		if(archiveItemValue!=null) {
+			archiveItemValue.setValue(null);
+			archiveItemValue.setFileName(null);
+			archiveItemValue.setClearContent(true);
+		}
+
+		AbstractConsoleItem<?> pathItem =
+				ProtocolPropertiesUtils.getAbstractConsoleItem(configuration.getConsoleItem(), ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_PATH_ID);
+		if(pathItem!=null) {
+			pathItem.setType(ConsoleItemType.HIDDEN);
+			pathItem.setRequired(false);
+		}
+		StringProperty pathItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_PATH_ID);
+		if(pathItemValue!=null) {
+			pathItemValue.setValue(null);
+		}
+
+		AbstractConsoleItem<?> pathPublicKeyItem =
+				ProtocolPropertiesUtils.getAbstractConsoleItem(configuration.getConsoleItem(), ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_PATH_PUBLIC_KEY_ID);
+		if(pathPublicKeyItem!=null) {
+			pathPublicKeyItem.setType(ConsoleItemType.HIDDEN);
+			pathPublicKeyItem.setRequired(false);
+		}
+		StringProperty pathPublicKeyItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_PATH_PUBLIC_KEY_ID);
+		if(pathPublicKeyItemValue!=null) {
+			pathPublicKeyItemValue.setValue(null);
+		}
+
+		AbstractConsoleItem<?> keystorePasswordItem =
+				ProtocolPropertiesUtils.getAbstractConsoleItem(configuration.getConsoleItem(), ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_PASSWORD_ID);
+		if(keystorePasswordItem!=null) {
+			keystorePasswordItem.setType(ConsoleItemType.LOCK_HIDDEN);
+		}
+		StringProperty keystorePasswordItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_PASSWORD_ID);
+		if(keystorePasswordItemValue!=null) {
+			keystorePasswordItemValue.setValue(null);
+		}
+
+		AbstractConsoleItem<?> keyAliasItem =
+				ProtocolPropertiesUtils.getAbstractConsoleItem(configuration.getConsoleItem(), ModIConsoleCostanti.MODIPA_DPOP_KEY_ALIAS_ID);
+		if(keyAliasItem!=null) {
+			keyAliasItem.setType(ConsoleItemType.HIDDEN);
+		}
+		StringProperty keyAliasItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_DPOP_KEY_ALIAS_ID);
+		if(keyAliasItemValue!=null) {
+			keyAliasItemValue.setValue(null);
+		}
+
+		AbstractConsoleItem<?> keyPasswordItem =
+				ProtocolPropertiesUtils.getAbstractConsoleItem(configuration.getConsoleItem(), ModIConsoleCostanti.MODIPA_DPOP_KEY_PASSWORD_ID);
+		if(keyPasswordItem!=null) {
+			keyPasswordItem.setType(ConsoleItemType.LOCK_HIDDEN);
+		}
+		StringProperty keyPasswordItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_DPOP_KEY_PASSWORD_ID);
+		if(keyPasswordItemValue!=null) {
+			keyPasswordItemValue.setValue(null);
+		}
+
+		AbstractConsoleItem<?> keystoreByokItem =
+				ProtocolPropertiesUtils.getAbstractConsoleItem(configuration.getConsoleItem(), ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_BYOK_POLICY_ID);
+		if(keystoreByokItem!=null) {
+			keystoreByokItem.setType(ConsoleItemType.HIDDEN);
+		}
+		StringProperty keystoreByokPolicyItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_BYOK_POLICY_ID);
+		if(keystoreByokPolicyItemValue!=null) {
+			keystoreByokPolicyItemValue.setValue(null);
+		}
+	}
+
+
 	static void addTrustStoreSSLConfigChoice(ConsoleConfiguration configuration, boolean x5u) throws ProtocolException {
 		addTrustStoreConfigChoice(configuration, true, false, 
 				false, 

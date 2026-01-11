@@ -165,15 +165,23 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 			}
 			if(ModISecurityUtils.isProfiloSicurezzaMessaggioApplicabileRisposta(api, portType, true)) {
 				ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtilities.addSicurezzaMessaggio(modiProperties,
-					configuration, rest, fruizioni, false, casoSpecialeModificaNomeFruizione, digest, 
+					configuration, rest, fruizioni, false, casoSpecialeModificaNomeFruizione, digest,
 					patternDatiCorniceSicurezza, schemaDatiCorniceSicurezza,
 					headerDuplicati,
 					consoleOperationType, consoleHelper, registryReader, configIntegrationReader, id, idFruitore,
 					riferimentoX509, kidMode,
-					false, 
+					false,
 					tokenNonLocale);
 			}
-			
+
+			if(fruizioni) {
+				boolean dpopEnabled = ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtilities.isFruizioneDPoPEnabled(
+						consoleOperationType, consoleHelper, registryReader, configIntegrationReader, id, idFruitore);
+				if(dpopEnabled) {
+					ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtilities.addDPoPKeystoreConfigFruizione(configuration);
+				}
+			}
+
 			return configuration;
 			
 		}
@@ -192,7 +200,7 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 				}
 				
 				ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtilities.addSicurezzaMessaggio(modiProperties,
-						configuration, forceRest, fruizioni, true, casoSpecialeModificaNomeFruizione, 
+						configuration, forceRest, fruizioni, true, casoSpecialeModificaNomeFruizione,
 						false,  // digest
 						patternDatiCorniceSicurezza, schemaDatiCorniceSicurezza,
 						false, // headerDuplicati
@@ -201,8 +209,16 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 						false, // kidMode
 						true, // audit
 						tokenNonLocale // tokenNonLocale
-						); 
-				
+						);
+
+				if(fruizioni) {
+					boolean dpopEnabled = ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtilities.isFruizioneDPoPEnabled(
+							consoleOperationType, consoleHelper, registryReader, configIntegrationReader, id, idFruitore);
+					if(dpopEnabled) {
+						ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtilities.addDPoPKeystoreConfigFruizione(configuration);
+					}
+				}
+
 				return configuration; // NOTA: contiene già i dati richiesti in sicurezza OAuth
 				
 			}
@@ -222,11 +238,17 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 				if(tokenSignedJWT) {
 					/**this.addKeStoreConfigOAuth_choice(configuration);*/
 					ModIDynamicConfigurationKeystoreUtilities.addTrustStoreKeystoreFruizioneOAuthConfigChoice(configuration);
-					
+
 					/**boolean requiredValue = casoSpecialeModificaNomeFruizione ? false : true;*/
 					boolean requiredValue = true;
 					ModIDynamicConfigurationKeystoreUtilities.addKeystoreConfig(configuration, true, false, requiredValue);
-				
+
+					boolean dpopEnabled = ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtilities.isFruizioneDPoPEnabled(
+							consoleOperationType, consoleHelper, registryReader, configIntegrationReader, id, idFruitore);
+					if(dpopEnabled) {
+						ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtilities.addDPoPKeystoreConfigFruizione(configuration);
+					}
+
 					return configuration;
 				}
 			}
@@ -333,13 +355,17 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 			}
 			if(ModISecurityUtils.isProfiloSicurezzaMessaggioApplicabileRisposta(api, portType, true)) {
 				ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtilities.updateSicurezzaMessaggio(modiProperties,
-					consoleConfiguration, properties, rest, fruizioni, false, casoSpecialeModificaNomeFruizione, 
+					consoleConfiguration, properties, rest, fruizioni, false, casoSpecialeModificaNomeFruizione,
 					patternDatiCorniceSicurezza, schemaDatiCorniceSicurezza,
 					headerDuplicati, consoleHelper,
 					kidMode,
 					tokenNonLocale);
 			}
-			
+
+			if(fruizioni) {
+				ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtilities.updateDPoPKeystoreConfigFruizione(consoleConfiguration, properties, rest);
+			}
+
 		}
 		else {
 			
@@ -353,17 +379,21 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 				boolean kidMode = true;
 				
 				ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtilities.updateSicurezzaMessaggio(modiProperties,
-						consoleConfiguration, properties, forceRest, fruizioni, true, casoSpecialeModificaNomeFruizione, 
+						consoleConfiguration, properties, forceRest, fruizioni, true, casoSpecialeModificaNomeFruizione,
 						patternDatiCorniceSicurezza, schemaDatiCorniceSicurezza,
 						false, // headerDuplicati
 						consoleHelper,
 						kidMode,
 						false // tokenNonLocale
 						);
-				
+
+				if(fruizioni) {
+					ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtilities.updateDPoPKeystoreConfigFruizione(consoleConfiguration, properties, forceRest);
+				}
+
 			}
-			
-			
+
+
 			// Sicurezza OAuth
 			
 			if(fruizioni) {
@@ -378,15 +408,17 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 				boolean checkRidefinisciOauth = false;
 				
 				rest = true; // forzo comportamento come fosse REST poichè si tratta della configurazione necessaria per generare token JWT
-				
+
 				ModIDynamicConfigurationKeystoreUtilities.updateKeystoreConfig(consoleConfiguration, properties, true, checkRidefinisciOauth,
-						hideSceltaArchivioFilePath, addHiddenSubjectIssuer, 
+						hideSceltaArchivioFilePath, addHiddenSubjectIssuer,
 						requiredValue, null,
 						rest);
+
+				ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtilities.updateDPoPKeystoreConfigFruizione(consoleConfiguration, properties, rest);
 			}
-			
+
 		}
-		
+
 		return true;
 	}
 	
@@ -951,15 +983,124 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 		StringProperty tokenKidItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_OAUTH_KID_ID);
 		if(tokenKidItemValue!=null && tokenKidItemValue.getValue()!=null && StringUtils.isNotEmpty(tokenKidItemValue.getValue())) {
 			try {
-				InputValidationUtils.validateTextAreaInput(tokenKidItemValue.getValue(), 
+				InputValidationUtils.validateTextAreaInput(tokenKidItemValue.getValue(),
 						ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_OAUTH_KID_LABEL);
 			}catch(Exception e) {
 				throw new ProtocolException(e.getMessage(),e);
 			}
 		}
 
-		
-		
+		// validazione DPoP se fruizioni e ridefinito
+		if(fruizioni) {
+			StringProperty dpopModeItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_DPOP_FRUIZIONE_KEYSTORE_MODE_ID);
+			boolean ridefinisci = dpopModeItemValue!=null && dpopModeItemValue.getValue()!=null &&
+					ModIConsoleCostanti.MODIPA_DPOP_FRUIZIONE_KEYSTORE_MODE_VALUE_RIDEFINITO.equals(dpopModeItemValue.getValue());
+
+			if(ridefinisci) {
+				// DPoP Keystore Path
+				AbstractConsoleItem<?> dpopKeystorePathItem =
+						ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(),
+								ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_PATH_ID
+								);
+				if(dpopKeystorePathItem!=null) {
+					StringProperty dpopKeystorePathItemValue =
+							(StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_PATH_ID);
+					if(dpopKeystorePathItemValue!=null && dpopKeystorePathItemValue.getValue()!=null && !"".equals(dpopKeystorePathItemValue.getValue())) {
+						try {
+							String keystoreType = null;
+							StringProperty dpopKeystoreTypeItemValue =
+									(StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_TYPE_ID);
+							if(dpopKeystoreTypeItemValue!=null && dpopKeystoreTypeItemValue.getValue()!=null) {
+								keystoreType = dpopKeystoreTypeItemValue.getValue();
+							}
+
+							InputValidationUtils.validateTextAreaInput(dpopKeystorePathItemValue.getValue(),
+									ModIConsoleCostanti.MODIPA_DPOP_FRUIZIONE_KEYSTORE_SUBTITLE_LABEL +" - "+
+									((ModIConsoleCostanti.MODIPA_KEYSTORE_TYPE_VALUE_KEY_PAIR.equals(keystoreType))? ModIConsoleCostanti.MODIPA_KEYSTORE_PATH_PRIVATE_KEY_LABEL : ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_PATH_LABEL));
+						}catch(Exception e) {
+							throw new ProtocolException(e.getMessage(),e);
+						}
+					}
+				}
+
+				// DPoP Keystore Path 'PublicKey'
+				AbstractConsoleItem<?> dpopKeystorePathPublicKeyItem =
+						ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(),
+								ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_PATH_PUBLIC_KEY_ID
+								);
+				if(dpopKeystorePathPublicKeyItem!=null) {
+					StringProperty dpopKeystorePathPublicKeyItemValue =
+							(StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_PATH_PUBLIC_KEY_ID);
+					if(dpopKeystorePathPublicKeyItemValue!=null && dpopKeystorePathPublicKeyItemValue.getValue()!=null && !"".equals(dpopKeystorePathPublicKeyItemValue.getValue())) {
+						try {
+							InputValidationUtils.validateTextAreaInput(dpopKeystorePathPublicKeyItemValue.getValue(),
+									ModIConsoleCostanti.MODIPA_DPOP_FRUIZIONE_KEYSTORE_SUBTITLE_LABEL +" - "+
+									ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_PATH_PUBLIC_KEY_LABEL);
+						}catch(Exception e) {
+							throw new ProtocolException(e.getMessage(),e);
+						}
+					}
+				}
+
+				// DPoP Keystore password
+				AbstractConsoleItem<?> dpopKeystorePasswordItem =
+						ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(),
+								ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_PASSWORD_ID
+								);
+				if(dpopKeystorePasswordItem!=null) {
+					StringProperty dpopKeystorePasswordItemValue =
+							(StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_PASSWORD_ID);
+					if(dpopKeystorePasswordItemValue!=null && dpopKeystorePasswordItemValue.getValue()!=null && !"".equals(dpopKeystorePasswordItemValue.getValue())) {
+						try {
+							InputValidationUtils.validateTextInput(dpopKeystorePasswordItemValue.getValue(),
+									ModIConsoleCostanti.MODIPA_DPOP_FRUIZIONE_KEYSTORE_SUBTITLE_LABEL +" - "+
+									ModIConsoleCostanti.MODIPA_DPOP_KEYSTORE_PASSWORD_LABEL);
+						}catch(Exception e) {
+							throw new ProtocolException(e.getMessage(),e);
+						}
+					}
+				}
+
+				// DPoP Key password
+				AbstractConsoleItem<?> dpopKeyPasswordItem =
+						ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(),
+								ModIConsoleCostanti.MODIPA_DPOP_KEY_PASSWORD_ID
+								);
+				if(dpopKeyPasswordItem!=null) {
+					StringProperty dpopKeyPasswordItemValue =
+							(StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_DPOP_KEY_PASSWORD_ID);
+					if(dpopKeyPasswordItemValue!=null && dpopKeyPasswordItemValue.getValue()!=null && !"".equals(dpopKeyPasswordItemValue.getValue())) {
+						try {
+							InputValidationUtils.validateTextInput(dpopKeyPasswordItemValue.getValue(),
+									ModIConsoleCostanti.MODIPA_DPOP_FRUIZIONE_KEYSTORE_SUBTITLE_LABEL +" - "+
+									ModIConsoleCostanti.MODIPA_DPOP_KEY_PASSWORD_LABEL);
+						}catch(Exception e) {
+							throw new ProtocolException(e.getMessage(),e);
+						}
+					}
+				}
+
+				// DPoP Key alias
+				AbstractConsoleItem<?> dpopKeyAliasItem =
+						ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(),
+								ModIConsoleCostanti.MODIPA_DPOP_KEY_ALIAS_ID
+								);
+				if(dpopKeyAliasItem!=null) {
+					StringProperty dpopKeyAliasItemValue =
+							(StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_DPOP_KEY_ALIAS_ID);
+					if(dpopKeyAliasItemValue!=null && dpopKeyAliasItemValue.getValue()!=null && !"".equals(dpopKeyAliasItemValue.getValue())) {
+						try {
+							InputValidationUtils.validateTextInput(dpopKeyAliasItemValue.getValue(),
+									ModIConsoleCostanti.MODIPA_DPOP_FRUIZIONE_KEYSTORE_SUBTITLE_LABEL +" - "+
+									ModIConsoleCostanti.MODIPA_DPOP_KEY_ALIAS_LABEL);
+						}catch(Exception e) {
+							throw new ProtocolException(e.getMessage(),e);
+						}
+					}
+				}
+			}
+		}
+
 		return true;
 	}
 	

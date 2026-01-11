@@ -48,6 +48,10 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
  */
 public class ModIKeystoreUtils {
 
+	public enum ModIKeystoreConfigType {
+		DPOP
+	}
+
 	protected String securityMessageKeystoreMode = null;
 	protected byte[] securityMessageKeystoreArchive = null;
 	protected String securityMessageKeystoreType = null;
@@ -464,5 +468,400 @@ public class ModIKeystoreUtils {
 
 	public String getSecurityMessageKeystoreKeyAlgorithm() {
 		return this.securityMessageKeystoreKeyAlgorithm;
+	}
+
+
+	// *** Costruttori per tipi di keystore aggiuntivi (es. DPoP) ***
+
+	public static boolean isKeystoreConfigEnabled(ServizioApplicativo sa, ModIKeystoreConfigType configType) throws ProtocolException {
+		String statoPropertyName = null;
+		switch(configType) {
+		case DPOP:
+			statoPropertyName = CostantiDB.MODIPA_DPOP_STATO;
+			break;
+		}
+		return ProtocolPropertiesUtils.getBooleanValuePropertyConfig(sa.getProtocolPropertyList(), statoPropertyName, false);
+	}
+
+	public static boolean isKeystoreConfigRidefinito(IDSoggetto soggettoFruitore, AccordoServizioParteSpecifica asps, ModIKeystoreConfigType configType) throws ProtocolException {
+		String keystoreFruizioneModePropertyName = null;
+		switch(configType) {
+		case DPOP:
+			keystoreFruizioneModePropertyName = CostantiDB.MODIPA_DPOP_FRUIZIONE_KEYSTORE_MODE;
+			break;
+		}
+		List<ProtocolProperty> listProtocolProperties = ProtocolPropertiesUtils.getProtocolProperties(true, soggettoFruitore, asps);
+		String fruizioneMode = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(listProtocolProperties, keystoreFruizioneModePropertyName);
+		return CostantiDB.MODIPA_PROFILO_RIDEFINISCI.equals(fruizioneMode);
+	}
+
+	public static boolean isKeystoreConfigDefault(IDSoggetto soggettoFruitore, AccordoServizioParteSpecifica asps, ModIKeystoreConfigType configType) throws ProtocolException {
+		String keystoreFruizioneModePropertyName = null;
+		switch(configType) {
+		case DPOP:
+			keystoreFruizioneModePropertyName = CostantiDB.MODIPA_DPOP_FRUIZIONE_KEYSTORE_MODE;
+			break;
+		}
+		List<ProtocolProperty> listProtocolProperties = ProtocolPropertiesUtils.getProtocolProperties(true, soggettoFruitore, asps);
+		String fruizioneMode = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(listProtocolProperties, keystoreFruizioneModePropertyName);
+		return CostantiDB.MODIPA_PROFILO_DEFAULT.equals(fruizioneMode);
+	}
+
+	public ModIKeystoreUtils(ServizioApplicativo sa, ModIKeystoreConfigType configType) throws ProtocolException, UtilsException {
+
+		String statoPropertyName = null;
+		String keystoreModePropertyName = null;
+		String keystoreTypePropertyName = null;
+		String keystoreArchivePropertyName = null;
+		String keystorePathPropertyName = null;
+		String keystorePathPublicKeyPropertyName = null;
+		String keystoreKeyAlgorithmPropertyName = null;
+		String keystorePasswordPropertyName = null;
+		String keystoreByokPolicyPropertyName = null;
+		String keyAliasPropertyName = null;
+		String keyPasswordPropertyName = null;
+
+		switch(configType) {
+		case DPOP:
+			statoPropertyName = CostantiDB.MODIPA_DPOP_STATO;
+			keystoreModePropertyName = CostantiDB.MODIPA_DPOP_KEYSTORE_MODE;
+			keystoreTypePropertyName = CostantiDB.MODIPA_DPOP_KEYSTORE_TYPE;
+			keystoreArchivePropertyName = CostantiDB.MODIPA_DPOP_KEYSTORE_ARCHIVE;
+			keystorePathPropertyName = CostantiDB.MODIPA_DPOP_KEYSTORE_PATH;
+			keystorePathPublicKeyPropertyName = CostantiDB.MODIPA_DPOP_KEYSTORE_PATH_PUBLIC_KEY;
+			keystoreKeyAlgorithmPropertyName = CostantiDB.MODIPA_DPOP_KEYSTORE_KEY_ALGORITHM;
+			keystorePasswordPropertyName = CostantiDB.MODIPA_DPOP_KEYSTORE_PASSWORD;
+			keystoreByokPolicyPropertyName = CostantiDB.MODIPA_DPOP_KEYSTORE_BYOK_POLICY;
+			keyAliasPropertyName = CostantiDB.MODIPA_DPOP_KEY_ALIAS;
+			keyPasswordPropertyName = CostantiDB.MODIPA_DPOP_KEY_PASSWORD;
+			break;
+		}
+
+		boolean stato = ProtocolPropertiesUtils.getBooleanValuePropertyConfig(sa.getProtocolPropertyList(), statoPropertyName, false);
+		if(!stato) {
+			throw new ProtocolException("La configurazione "+configType.name()+" non è abilitata per l'applicativo "+sa.getNome()+" ("+sa.getNomeSoggettoProprietario()+")");
+		}
+
+		this.securityMessageKeystoreMode = ProtocolPropertiesUtils.getRequiredStringValuePropertyConfig(sa.getProtocolPropertyList(), keystoreModePropertyName);
+		if(CostantiDB.MODIPA_KEYSTORE_MODE_VALUE_HSM.equals(this.securityMessageKeystoreMode)) {
+			this.securityMessageKeystoreHSM = true;
+		}
+		else if(CostantiDB.MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE.equals(this.securityMessageKeystoreMode)) {
+			this.securityMessageKeystoreArchive = ProtocolPropertiesUtils.getRequiredBinaryValuePropertyConfig(sa.getProtocolPropertyList(), keystoreArchivePropertyName);
+		}
+		else {
+			this.securityMessageKeystorePath = ProtocolPropertiesUtils.getRequiredStringValuePropertyConfig(sa.getProtocolPropertyList(), keystorePathPropertyName);
+
+			try {
+				HttpUtilities.validateUri(this.securityMessageKeystorePath, true);
+			}catch(Exception e) {
+				throw new ProtocolException("["+this.securityMessageKeystorePath+"] "+e.getMessage(),e);
+			}
+		}
+
+		this.securityMessageKeystoreType = ProtocolPropertiesUtils.getRequiredStringValuePropertyConfig(sa.getProtocolPropertyList(), keystoreTypePropertyName);
+
+		if(this.securityMessageKeystoreHSM) {
+			this.securityMessageKeystorePath = HSMUtils.KEYSTORE_HSM_PREFIX+this.securityMessageKeystoreType;
+		}
+
+		if(!this.securityMessageKeystoreHSM) {
+			if(CostantiDB.KEYSTORE_TYPE_KEY_PAIR.equalsIgnoreCase(this.securityMessageKeystoreType)) {
+				this.securityMessageKeystorePathPublicKey = ProtocolPropertiesUtils.getRequiredStringValuePropertyConfig(sa.getProtocolPropertyList(), keystorePathPublicKeyPropertyName);
+			}
+
+			if(CostantiDB.KEYSTORE_TYPE_KEY_PAIR.equalsIgnoreCase(this.securityMessageKeystoreType) ||
+				CostantiDB.KEYSTORE_TYPE_PUBLIC_KEY.equalsIgnoreCase(this.securityMessageKeystoreType)) {
+				this.securityMessageKeystoreKeyAlgorithm = ProtocolPropertiesUtils.getOptionalStringValuePropertyConfig(sa.getProtocolPropertyList(), keystoreKeyAlgorithmPropertyName);
+				if(this.securityMessageKeystoreKeyAlgorithm==null || StringUtils.isEmpty(this.securityMessageKeystoreKeyAlgorithm)) {
+					this.securityMessageKeystoreKeyAlgorithm = CostantiDB.MODIPA_KEYSTORE_KEY_ALGORITHM_DEFAULT_VALUE;
+				}
+			}
+		}
+
+		if(!this.securityMessageKeystoreHSM) {
+			if(!CostantiDB.KEYSTORE_TYPE_JWK.equalsIgnoreCase(this.securityMessageKeystoreType) &&
+					!CostantiDB.KEYSTORE_TYPE_KEY_PAIR.equalsIgnoreCase(this.securityMessageKeystoreType) &&
+					!CostantiDB.KEYSTORE_TYPE_PUBLIC_KEY.equalsIgnoreCase(this.securityMessageKeystoreType)) {
+				boolean required = true;
+				if(
+						(KeystoreType.JKS.isType(this.securityMessageKeystoreType) && !DBUtils.isKeystoreJksPasswordRequired())
+						||
+						(KeystoreType.PKCS12.isType(this.securityMessageKeystoreType) && !DBUtils.isKeystorePkcs12PasswordRequired())
+				) {
+					required = false;
+				}
+				if(required) {
+					this.securityMessageKeystorePassword = ProtocolPropertiesUtils.getRequiredStringValuePropertyConfig(sa.getProtocolPropertyList(), keystorePasswordPropertyName);
+				}
+				else {
+					this.securityMessageKeystorePassword = ProtocolPropertiesUtils.getOptionalStringValuePropertyConfig(sa.getProtocolPropertyList(), keystorePasswordPropertyName);
+				}
+			}
+			else {
+				this.securityMessageKeystorePassword = ProtocolPropertiesUtils.getOptionalStringValuePropertyConfig(sa.getProtocolPropertyList(), keystorePasswordPropertyName);
+			}
+		}
+		else {
+			this.securityMessageKeystorePassword = HSMUtils.KEYSTORE_HSM_STORE_PASSWORD_UNDEFINED;
+		}
+
+		if(!this.securityMessageKeystoreHSM && !CostantiDB.MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE.equals(this.securityMessageKeystoreMode)) {
+			this.securityMessageKeystoreByokPolicy = ProtocolPropertiesUtils.getOptionalStringValuePropertyConfig(sa.getProtocolPropertyList(), keystoreByokPolicyPropertyName);
+		}
+		else {
+			this.securityMessageKeystoreByokPolicy = BYOKProvider.BYOK_POLICY_UNDEFINED;
+		}
+
+		if(!CostantiDB.KEYSTORE_TYPE_KEY_PAIR.equalsIgnoreCase(this.securityMessageKeystoreType) &&
+				!CostantiDB.KEYSTORE_TYPE_PUBLIC_KEY.equalsIgnoreCase(this.securityMessageKeystoreType)) {
+			this.securityMessageKeyAlias = ProtocolPropertiesUtils.getRequiredStringValuePropertyConfig(sa.getProtocolPropertyList(), keyAliasPropertyName);
+		}
+
+		if(!this.securityMessageKeystoreHSM) {
+			if(!CostantiDB.KEYSTORE_TYPE_JWK.equalsIgnoreCase(this.securityMessageKeystoreType) &&
+					!CostantiDB.KEYSTORE_TYPE_KEY_PAIR.equalsIgnoreCase(this.securityMessageKeystoreType) &&
+					!CostantiDB.KEYSTORE_TYPE_PUBLIC_KEY.equalsIgnoreCase(this.securityMessageKeystoreType)) {
+				boolean required = true;
+				if(
+						(KeystoreType.JKS.isType(this.securityMessageKeystoreType) && !DBUtils.isKeystoreJksKeyPasswordRequired())
+						||
+						(KeystoreType.PKCS12.isType(this.securityMessageKeystoreType) && !DBUtils.isKeystorePkcs12KeyPasswordRequired())
+				) {
+					required = false;
+				}
+				if(required) {
+					this.securityMessageKeyPassword = ProtocolPropertiesUtils.getRequiredStringValuePropertyConfig(sa.getProtocolPropertyList(), keyPasswordPropertyName);
+				}
+				else {
+					this.securityMessageKeyPassword = ProtocolPropertiesUtils.getOptionalStringValuePropertyConfig(sa.getProtocolPropertyList(), keyPasswordPropertyName);
+				}
+			}
+			else {
+				this.securityMessageKeyPassword = ProtocolPropertiesUtils.getOptionalStringValuePropertyConfig(sa.getProtocolPropertyList(), keyPasswordPropertyName);
+			}
+		}
+		else if(HSMUtils.isHsmConfigurableKeyPassword()) {
+			this.securityMessageKeyPassword = ProtocolPropertiesUtils.getRequiredStringValuePropertyConfig(sa.getProtocolPropertyList(), keyPasswordPropertyName);
+		}
+		else {
+			this.securityMessageKeyPassword = HSMUtils.KEYSTORE_HSM_PRIVATE_KEY_PASSWORD_UNDEFINED;
+		}
+	}
+
+	public ModIKeystoreUtils(IDSoggetto soggettoFruitore, AccordoServizioParteSpecifica asps, ModIKeystoreConfigType configType) throws ProtocolException, UtilsException {
+
+		String keystoreFruizioneModePropertyName = null;
+		String keystoreModePropertyName = null;
+		String keystoreTypePropertyName = null;
+		String keystoreArchivePropertyName = null;
+		String keystorePathPropertyName = null;
+		String keystorePathPublicKeyPropertyName = null;
+		String keystoreKeyAlgorithmPropertyName = null;
+		String keystorePasswordPropertyName = null;
+		String keystoreByokPolicyPropertyName = null;
+		String keyAliasPropertyName = null;
+		String keyPasswordPropertyName = null;
+
+		switch(configType) {
+		case DPOP:
+			keystoreFruizioneModePropertyName = CostantiDB.MODIPA_DPOP_FRUIZIONE_KEYSTORE_MODE;
+			keystoreModePropertyName = CostantiDB.MODIPA_DPOP_KEYSTORE_MODE;
+			keystoreTypePropertyName = CostantiDB.MODIPA_DPOP_KEYSTORE_TYPE;
+			keystoreArchivePropertyName = CostantiDB.MODIPA_DPOP_KEYSTORE_ARCHIVE;
+			keystorePathPropertyName = CostantiDB.MODIPA_DPOP_KEYSTORE_PATH;
+			keystorePathPublicKeyPropertyName = CostantiDB.MODIPA_DPOP_KEYSTORE_PATH_PUBLIC_KEY;
+			keystoreKeyAlgorithmPropertyName = CostantiDB.MODIPA_DPOP_KEYSTORE_KEY_ALGORITHM;
+			keystorePasswordPropertyName = CostantiDB.MODIPA_DPOP_KEYSTORE_PASSWORD;
+			keystoreByokPolicyPropertyName = CostantiDB.MODIPA_DPOP_KEYSTORE_BYOK_POLICY;
+			keyAliasPropertyName = CostantiDB.MODIPA_DPOP_KEY_ALIAS;
+			keyPasswordPropertyName = CostantiDB.MODIPA_DPOP_KEY_PASSWORD;
+			break;
+		}
+
+		List<ProtocolProperty> listProtocolProperties = ProtocolPropertiesUtils.getProtocolProperties(true, soggettoFruitore, asps);
+
+		String fruizioneMode = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(listProtocolProperties, keystoreFruizioneModePropertyName);
+		if(fruizioneMode==null || StringUtils.isEmpty(fruizioneMode) ||
+				CostantiDB.MODIPA_PROFILO_UNDEFINED.equals(fruizioneMode) ||
+				CostantiDB.MODIPA_PROFILO_DEFAULT.equals(fruizioneMode) ||
+				!CostantiDB.MODIPA_PROFILO_RIDEFINISCI.equals(fruizioneMode)) {
+			throw new ProtocolException("La configurazione "+configType.name()+" non è ridefinita per la fruizione");
+		}
+
+		this.securityMessageKeystoreMode = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, keystoreModePropertyName);
+		if(CostantiDB.MODIPA_KEYSTORE_MODE_VALUE_HSM.equals(this.securityMessageKeystoreMode)) {
+			this.securityMessageKeystoreHSM = true;
+		}
+		else if(CostantiDB.MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE.equals(this.securityMessageKeystoreMode)) {
+			this.securityMessageKeystoreArchive = ProtocolPropertiesUtils.getRequiredBinaryValuePropertyRegistry(listProtocolProperties, keystoreArchivePropertyName);
+		}
+		else {
+			this.securityMessageKeystorePath = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, keystorePathPropertyName);
+
+			try {
+				HttpUtilities.validateUri(this.securityMessageKeystorePath, true);
+			}catch(Exception e) {
+				throw new ProtocolException("["+this.securityMessageKeystorePath+"] "+e.getMessage(),e);
+			}
+		}
+
+		this.securityMessageKeystoreType = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, keystoreTypePropertyName);
+
+		if(this.securityMessageKeystoreHSM) {
+			this.securityMessageKeystorePath = HSMUtils.KEYSTORE_HSM_PREFIX+this.securityMessageKeystoreType;
+		}
+
+		if(!this.securityMessageKeystoreHSM) {
+			if(CostantiDB.KEYSTORE_TYPE_KEY_PAIR.equalsIgnoreCase(this.securityMessageKeystoreType)) {
+				this.securityMessageKeystorePathPublicKey = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, keystorePathPublicKeyPropertyName);
+			}
+
+			if(CostantiDB.KEYSTORE_TYPE_KEY_PAIR.equalsIgnoreCase(this.securityMessageKeystoreType) ||
+				CostantiDB.KEYSTORE_TYPE_PUBLIC_KEY.equalsIgnoreCase(this.securityMessageKeystoreType)) {
+				this.securityMessageKeystoreKeyAlgorithm = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(listProtocolProperties, keystoreKeyAlgorithmPropertyName);
+				if(this.securityMessageKeystoreKeyAlgorithm==null || StringUtils.isEmpty(this.securityMessageKeystoreKeyAlgorithm)) {
+					this.securityMessageKeystoreKeyAlgorithm = CostantiDB.MODIPA_KEYSTORE_KEY_ALGORITHM_DEFAULT_VALUE;
+				}
+			}
+		}
+
+		if(!this.securityMessageKeystoreHSM) {
+			if(!CostantiDB.KEYSTORE_TYPE_JWK.equalsIgnoreCase(this.securityMessageKeystoreType) &&
+				!CostantiDB.KEYSTORE_TYPE_KEY_PAIR.equalsIgnoreCase(this.securityMessageKeystoreType) &&
+				!CostantiDB.KEYSTORE_TYPE_PUBLIC_KEY.equalsIgnoreCase(this.securityMessageKeystoreType)) {
+				boolean required = true;
+				if(
+						(KeystoreType.JKS.isType(this.securityMessageKeystoreType) && !DBUtils.isKeystoreJksPasswordRequired())
+						||
+						(KeystoreType.PKCS12.isType(this.securityMessageKeystoreType) && !DBUtils.isKeystorePkcs12PasswordRequired())
+				) {
+					required = false;
+				}
+				if(required) {
+					this.securityMessageKeystorePassword = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, keystorePasswordPropertyName);
+				}
+				else {
+					this.securityMessageKeystorePassword = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(listProtocolProperties, keystorePasswordPropertyName);
+				}
+			}
+			else {
+				this.securityMessageKeystorePassword = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(listProtocolProperties, keystorePasswordPropertyName);
+			}
+		}
+		else {
+			this.securityMessageKeystorePassword = HSMUtils.KEYSTORE_HSM_STORE_PASSWORD_UNDEFINED;
+		}
+
+		if(!this.securityMessageKeystoreHSM && !CostantiDB.MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE.equals(this.securityMessageKeystoreMode)) {
+			this.securityMessageKeystoreByokPolicy = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(listProtocolProperties, keystoreByokPolicyPropertyName);
+		}
+		else {
+			this.securityMessageKeystoreByokPolicy = BYOKProvider.BYOK_POLICY_UNDEFINED;
+		}
+
+		if(!CostantiDB.KEYSTORE_TYPE_KEY_PAIR.equalsIgnoreCase(this.securityMessageKeystoreType) &&
+				!CostantiDB.KEYSTORE_TYPE_PUBLIC_KEY.equalsIgnoreCase(this.securityMessageKeystoreType)) {
+			this.securityMessageKeyAlias = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, keyAliasPropertyName);
+		}
+
+		if(!this.securityMessageKeystoreHSM) {
+			if(!CostantiDB.KEYSTORE_TYPE_JWK.equalsIgnoreCase(this.securityMessageKeystoreType) &&
+					!CostantiDB.KEYSTORE_TYPE_KEY_PAIR.equalsIgnoreCase(this.securityMessageKeystoreType) &&
+					!CostantiDB.KEYSTORE_TYPE_PUBLIC_KEY.equalsIgnoreCase(this.securityMessageKeystoreType)) {
+				boolean required = true;
+				if(
+						(KeystoreType.JKS.isType(this.securityMessageKeystoreType) && !DBUtils.isKeystoreJksKeyPasswordRequired())
+						||
+						(KeystoreType.PKCS12.isType(this.securityMessageKeystoreType) && !DBUtils.isKeystorePkcs12KeyPasswordRequired())
+				) {
+					required = false;
+				}
+				if(required) {
+					this.securityMessageKeyPassword = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, keyPasswordPropertyName);
+				}
+				else {
+					this.securityMessageKeyPassword = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(listProtocolProperties, keyPasswordPropertyName);
+				}
+			}
+			else {
+				this.securityMessageKeyPassword = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(listProtocolProperties, keyPasswordPropertyName);
+			}
+		}
+		else if(HSMUtils.isHsmConfigurableKeyPassword()) {
+			this.securityMessageKeyPassword = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, keyPasswordPropertyName);
+		}
+		else {
+			this.securityMessageKeyPassword = HSMUtils.KEYSTORE_HSM_PRIVATE_KEY_PASSWORD_UNDEFINED;
+		}
+	}
+
+	// Costruttore per fruizioni con DPoP "Default" - usa i valori di default da modi.properties
+	public ModIKeystoreUtils(IDSoggetto soggettoFruitore, AccordoServizioParteSpecifica asps, ModIKeystoreConfigType configType,
+			String modIpropertiesSecurityMessageKeystoreType,
+			String modIpropertiesSecurityMessageKeystorePath,
+			String modIpropertiesSecurityMessageKeystorePassword,
+			String modIpropertiesSecurityMessageKeyAlias,
+			String modIpropertiesSecurityMessageKeyPassword) throws ProtocolException, UtilsException {
+
+		String keystoreFruizioneModePropertyName = null;
+		String prefix = null;
+
+		switch(configType) {
+		case DPOP:
+			keystoreFruizioneModePropertyName = CostantiDB.MODIPA_DPOP_FRUIZIONE_KEYSTORE_MODE;
+			prefix = CostantiLabel.MODIPA_DPOP_SUBTITLE_LABEL + " - " + CostantiLabel.MODIPA_DPOP_KEYSTORE_MODE_LABEL;
+			break;
+		}
+
+		List<ProtocolProperty> listProtocolProperties = ProtocolPropertiesUtils.getProtocolProperties(true, soggettoFruitore, asps);
+
+		String fruizioneMode = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(listProtocolProperties, keystoreFruizioneModePropertyName);
+		if(fruizioneMode==null || StringUtils.isEmpty(fruizioneMode) ||
+				CostantiDB.MODIPA_PROFILO_UNDEFINED.equals(fruizioneMode) ||
+				CostantiDB.MODIPA_PROFILO_RIDEFINISCI.equals(fruizioneMode)) {
+			throw new ProtocolException("La configurazione "+configType.name()+" non utilizza un keystore di default per la fruizione");
+		}
+
+		// Utilizza i valori di default passati come parametri (da modi.properties)
+		this.securityMessageKeystoreType = modIpropertiesSecurityMessageKeystoreType;
+		if(this.securityMessageKeystoreType!=null) {
+
+			this.securityMessageKeystoreHSM = HSMUtils.isKeystoreHSM(this.securityMessageKeystoreType);
+
+			if(this.securityMessageKeystoreHSM) {
+				this.securityMessageKeystorePath = HSMUtils.KEYSTORE_HSM_PREFIX+this.securityMessageKeystoreType;
+			}
+			else {
+
+				this.securityMessageKeystorePath = modIpropertiesSecurityMessageKeystorePath;
+				try {
+					HttpUtilities.validateUri(this.securityMessageKeystorePath, true);
+				}catch(Exception e) {
+					throw new ProtocolException(prefix+" ["+this.securityMessageKeystorePath+"] "+e.getMessage(),e);
+				}
+
+			}
+
+			if(!this.securityMessageKeystoreHSM) {
+				this.securityMessageKeystorePassword = modIpropertiesSecurityMessageKeystorePassword;
+			}
+			else {
+				this.securityMessageKeystorePassword = HSMUtils.KEYSTORE_HSM_STORE_PASSWORD_UNDEFINED;
+			}
+
+			this.securityMessageKeyAlias = modIpropertiesSecurityMessageKeyAlias;
+
+			if(!this.securityMessageKeystoreHSM || HSMUtils.isHsmConfigurableKeyPassword()) {
+				this.securityMessageKeyPassword = modIpropertiesSecurityMessageKeyPassword;
+			}
+			else {
+				this.securityMessageKeyPassword = HSMUtils.KEYSTORE_HSM_PRIVATE_KEY_PASSWORD_UNDEFINED;
+			}
+
+		}
+		else {
+			throw new ProtocolException(prefix+" default non definito nelle proprietà di protocollo");
+		}
 	}
 }

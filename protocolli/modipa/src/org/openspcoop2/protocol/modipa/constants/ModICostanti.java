@@ -178,7 +178,41 @@ public class ModICostanti {
     
     public static final String MODIPA_KEY_CN_SUBJECT = CostantiDB.MODIPA_KEY_CN_SUBJECT;
     public static final String MODIPA_KEY_CN_ISSUER = CostantiDB.MODIPA_KEY_CN_ISSUER;
-        
+
+    // DPoP Keystore - Applicativo
+    public static final String MODIPA_DPOP_STATO = CostantiDB.MODIPA_DPOP_STATO;
+
+    public static final String MODIPA_DPOP_KEYSTORE_MODE = CostantiDB.MODIPA_DPOP_KEYSTORE_MODE;
+
+    public static final String MODIPA_DPOP_KEYSTORE_TYPE = CostantiDB.MODIPA_DPOP_KEYSTORE_TYPE;
+
+    public static final String MODIPA_DPOP_KEYSTORE_PATH = CostantiDB.MODIPA_DPOP_KEYSTORE_PATH;
+
+    public static final String MODIPA_DPOP_KEYSTORE_PATH_PUBLIC_KEY = CostantiDB.MODIPA_DPOP_KEYSTORE_PATH_PUBLIC_KEY;
+
+    public static final String MODIPA_DPOP_KEYSTORE_KEY_ALGORITHM = CostantiDB.MODIPA_DPOP_KEYSTORE_KEY_ALGORITHM;
+
+    public static final String MODIPA_DPOP_KEYSTORE_PASSWORD = CostantiDB.MODIPA_DPOP_KEYSTORE_PASSWORD;
+
+    public static final String MODIPA_DPOP_KEYSTORE_BYOK_POLICY = CostantiDB.MODIPA_DPOP_KEYSTORE_BYOK_POLICY;
+
+    public static final String MODIPA_DPOP_KEYSTORE_ARCHIVE = CostantiDB.MODIPA_DPOP_KEYSTORE_ARCHIVE;
+
+    public static final String MODIPA_DPOP_KEY_ALIAS = CostantiDB.MODIPA_DPOP_KEY_ALIAS;
+    public static final String MODIPA_DPOP_KEY_PASSWORD = CostantiDB.MODIPA_DPOP_KEY_PASSWORD;
+
+    // DPoP Keystore - Fruizione
+    public static final String MODIPA_DPOP_FRUIZIONE_KEYSTORE_MODE = CostantiDB.MODIPA_DPOP_FRUIZIONE_KEYSTORE_MODE;
+
+    // DPoP Labels
+    public static final String MODIPA_DPOP_SUBTITLE_LABEL = CostantiLabel.MODIPA_DPOP_SUBTITLE_LABEL;
+    public static final String MODIPA_DPOP_STATO_LABEL = CostantiLabel.MODIPA_DPOP_STATO_LABEL;
+    public static final String MODIPA_DPOP_KEYSTORE_MODE_LABEL = CostantiLabel.MODIPA_DPOP_KEYSTORE_MODE_LABEL;
+    public static final String MODIPA_DPOP_FRUIZIONE_KEYSTORE_MODE_LABEL = CostantiLabel.MODIPA_DPOP_FRUIZIONE_KEYSTORE_MODE_LABEL;
+    public static final String MODIPA_DPOP_FRUIZIONE_KEYSTORE_MODE_LABEL_UNDEFINED = CostantiLabel.MODIPA_DPOP_FRUIZIONE_KEYSTORE_MODE_LABEL_UNDEFINED;
+    public static final String MODIPA_DPOP_FRUIZIONE_KEYSTORE_MODE_LABEL_DEFAULT = CostantiLabel.MODIPA_DPOP_FRUIZIONE_KEYSTORE_MODE_LABEL_DEFAULT;
+    public static final String MODIPA_DPOP_FRUIZIONE_KEYSTORE_MODE_LABEL_RIDEFINISCI = CostantiLabel.MODIPA_DPOP_FRUIZIONE_KEYSTORE_MODE_LABEL_RIDEFINISCI;
+
     public static final String MODIPA_PROFILO_UNDEFINED = CostantiDB.MODIPA_PROFILO_UNDEFINED;
     public static final String MODIPA_PROFILO_DEFAULT = CostantiDB.MODIPA_PROFILO_DEFAULT;
     public static final String MODIPA_PROFILO_RIDEFINISCI = CostantiDB.MODIPA_PROFILO_RIDEFINISCI;

@@ -422,8 +422,13 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				if(modi){
 					KeystoreParams keystoreParams =	org.openspcoop2.protocol.utils.ModIUtils.getApplicativoKeystoreParams(sa.getProtocolPropertyList());
 					sicurezzaMessaggioModi = keystoreParams!= null;
+					// Verifica anche keystore DPoP
+					if(!sicurezzaMessaggioModi) {
+						KeystoreParams dpopKeystoreParams = org.openspcoop2.protocol.utils.ModIUtils.getApplicativoDPoPKeystoreParams(sa.getProtocolPropertyList());
+						sicurezzaMessaggioModi = dpopKeystoreParams!= null;
+					}
 				}
-				
+
 				if(ssl || sicurezzaMessaggioModi || server) {
 					this.pd.addComandoVerificaCertificatiElementoButton(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_VERIFICA_CERTIFICATI, listaParametriChange);
 				}
@@ -3307,14 +3312,19 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			if(modi){
 				KeystoreParams keystoreParams =	org.openspcoop2.protocol.utils.ModIUtils.getApplicativoKeystoreParams(sa.getProtocolPropertyList());
 				sicurezzaMessaggioModi = keystoreParams!= null;
+				// Verifica anche keystore DPoP
+				if(!sicurezzaMessaggioModi) {
+					KeystoreParams dpopKeystoreParams = org.openspcoop2.protocol.utils.ModIUtils.getApplicativoDPoPKeystoreParams(sa.getProtocolPropertyList());
+					sicurezzaMessaggioModi = dpopKeystoreParams!= null;
+				}
 			}
-			
+
 			if(ssl || sicurezzaMessaggioModi || server) {
 				this.addVerificaCertificatiButton(e, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_VERIFICA_CERTIFICATI, listaParametriChange);
 			}
 		}
-		
-		// Verifica connettività 
+
+		// Verifica connettività
 		if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(sa.getTipo())) {
 			List<Parameter> listaParametriVerificaConnettivitaChange = new ArrayList<>();
 			listaParametriVerificaConnettivitaChange.addAll(listaParametriChange);

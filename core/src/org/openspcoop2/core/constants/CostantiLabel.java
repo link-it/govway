@@ -393,6 +393,15 @@ public final class CostantiLabel {
     public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_STORE_MODE_LABEL_DEFAULT = MODIPA_LABEL_DEFAULT;
     public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_STORE_MODE_LABEL_RIDEFINISCI = MODIPA_LABEL_RIDEFINISCI;
 
+    // DPoP
+    public static final String MODIPA_DPOP_SUBTITLE_LABEL = "DPoP";
+    public static final String MODIPA_DPOP_STATO_LABEL = "Abilitato";
+    public static final String MODIPA_DPOP_KEYSTORE_MODE_LABEL = "KeyStore";
+    public static final String MODIPA_DPOP_FRUIZIONE_KEYSTORE_MODE_LABEL = "KeyStore";
+    public static final String MODIPA_DPOP_FRUIZIONE_KEYSTORE_MODE_LABEL_UNDEFINED = MODIPA_LABEL_UNDEFINED;
+    public static final String MODIPA_DPOP_FRUIZIONE_KEYSTORE_MODE_LABEL_DEFAULT = MODIPA_LABEL_DEFAULT;
+    public static final String MODIPA_DPOP_FRUIZIONE_KEYSTORE_MODE_LABEL_RIDEFINISCI = MODIPA_LABEL_RIDEFINISCI;
+
     public static final String MODIPA_API_IMPL_INFO_LABEL = "Informazioni Generali";
     
     public static final String MODIPA_API_IMPL_INFO_ESERVICE_ID_LABEL = "Identificativo eService";

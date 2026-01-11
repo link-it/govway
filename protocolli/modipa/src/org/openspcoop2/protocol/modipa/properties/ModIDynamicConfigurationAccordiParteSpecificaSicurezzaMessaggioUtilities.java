@@ -881,17 +881,18 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 	
 	static boolean addSicurezzaTokenSignedJWT(boolean rest,
 			ConsoleConfiguration configuration,
-			ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, 
-			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, 
+			ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper,
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader,
 			IDServizio idServizio, IDSoggetto idFruitore,
 			boolean sicurezzaMessaggioPresente) throws ProtocolException {
-				
+
 		if( registryReader!=null && configIntegrationReader!=null ) {
-			
+
 			boolean tokenSignedJWT = false;
 			boolean pdnd = false;
+			boolean dpop = false;
 			if(ConsoleOperationType.ADD.equals(consoleOperationType)) {
-				
+
 				String tokenPolicyViaAPI = null;
 				try {
 					tokenPolicyViaAPI = consoleHelper.getParameter(Costanti.CONSOLE_PARAMETRO_CONNETTORE_TOKEN_POLICY_VIA_API);
@@ -903,9 +904,10 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 					if(tokenSignedJWT) {
 						pdnd = isTokenPolicyPdnd(configIntegrationReader, tokenPolicyViaAPI);
 					}
+					dpop = isTokenPolicyDPoP(configIntegrationReader, tokenPolicyViaAPI);
 				}
 				else {
-				
+
 					String tokenPolicyStato = null;
 					try {
 						tokenPolicyStato = consoleHelper.getParameter(Costanti.CONSOLE_PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO);
@@ -913,7 +915,7 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 						throw new ProtocolException(e.getMessage(),e);
 					}
 					if(isEnabled(tokenPolicyStato)) {
-					
+
 						String tokenPolicy = null;
 						try {
 							tokenPolicy = consoleHelper.getParameter(Costanti.CONSOLE_PARAMETRO_CONNETTORE_TOKEN_POLICY);
@@ -925,10 +927,11 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 							if(tokenSignedJWT) {
 								pdnd = isTokenPolicyPdnd(configIntegrationReader, tokenPolicy);
 							}
+							dpop = isTokenPolicyDPoP(configIntegrationReader, tokenPolicy);
 						}
-						
+
 					}
-					
+
 				}
 			}
 			else {
@@ -956,6 +959,10 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 															// se non ne ho trovata ancora una pdnd, verifico
 															pdnd = isTokenPolicyPdnd(configIntegrationReader, tokenPolicy);
 														}
+														if(!dpop) {
+															// se non ne ho trovata ancora una dpop, verifico
+															dpop = isTokenPolicyDPoP(configIntegrationReader, tokenPolicy);
+														}
 													}
 												}
 											}
@@ -978,6 +985,10 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 																	// se non ne ho trovata ancora una pdnd, verifico
 																	pdnd = isTokenPolicyPdnd(configIntegrationReader, tokenPolicy);
 																}
+																if(!dpop) {
+																	// se non ne ho trovata ancora una dpop, verifico
+																	dpop = isTokenPolicyDPoP(configIntegrationReader, tokenPolicy);
+																}
 															}
 														}
 													}
@@ -996,20 +1007,46 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 			}
 			
 			if(tokenSignedJWT) {
-			
+
 				addSicurezzaOAuth(rest, configuration,
 						pdnd,
 						sicurezzaMessaggioPresente,
 						true);
-				
+
 			}
-			
+
 			return tokenSignedJWT;
 		}
-		
+
 		return false;
 	}
-	
+
+	static void addDPoPKeystoreConfigFruizione(ConsoleConfiguration configuration) throws ProtocolException {
+
+		BaseConsoleItem titleItem =
+				ProtocolPropertiesFactory.newTitleItem(
+						ModIConsoleCostanti.MODIPA_API_IMPL_DPOP_TITLE_ID,
+						ModIConsoleCostanti.MODIPA_API_IMPL_DPOP_TITLE_LABEL);
+		configuration.addConsoleItem(titleItem);
+
+		StringConsoleItem modeItem = (StringConsoleItem)
+				ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
+				ConsoleItemType.SELECT,
+				ModIConsoleCostanti.MODIPA_DPOP_FRUIZIONE_KEYSTORE_MODE_ID,
+				ModIConsoleCostanti.MODIPA_DPOP_FRUIZIONE_KEYSTORE_MODE_LABEL);
+		modeItem.addLabelValue(ModIConsoleCostanti.MODIPA_DPOP_FRUIZIONE_KEYSTORE_MODE_LABEL_UNDEFINED,
+				ModIConsoleCostanti.MODIPA_DPOP_FRUIZIONE_KEYSTORE_MODE_VALUE_UNDEFINED);
+		modeItem.addLabelValue(ModIConsoleCostanti.MODIPA_DPOP_FRUIZIONE_KEYSTORE_MODE_LABEL_DEFAULT,
+				ModIConsoleCostanti.MODIPA_DPOP_FRUIZIONE_KEYSTORE_MODE_VALUE_DEFAULT);
+		modeItem.addLabelValue(ModIConsoleCostanti.MODIPA_DPOP_FRUIZIONE_KEYSTORE_MODE_LABEL_RIDEFINITO,
+				ModIConsoleCostanti.MODIPA_DPOP_FRUIZIONE_KEYSTORE_MODE_VALUE_RIDEFINITO);
+		modeItem.setDefaultValue(ModIConsoleCostanti.MODIPA_DPOP_FRUIZIONE_KEYSTORE_MODE_VALUE_UNDEFINED);
+		modeItem.setReloadOnChange(true, true);
+		configuration.addConsoleItem(modeItem);
+
+		ModIDynamicConfigurationKeystoreUtilities.addDPoPKeystoreConfigFruizione(configuration, true);
+	}
+
 	private static void addSicurezzaOAuth(boolean rest,
 			ConsoleConfiguration configuration,
 			ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, 
@@ -1162,7 +1199,104 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 	static boolean isTokenPolicyPdnd(IConfigIntegrationReader configIntegrationReader, String tokenPolicy) throws ProtocolException {
 		return ModIPropertiesUtils.isTokenPolicyPdnd(configIntegrationReader, tokenPolicy);
 	}
-	
+
+	static boolean isTokenPolicyDPoP(IConfigIntegrationReader configIntegrationReader, String tokenPolicy) throws ProtocolException {
+		return ModIPropertiesUtils.isTokenPolicyDPoP(configIntegrationReader, tokenPolicy);
+	}
+
+	static boolean isFruizioneDPoPEnabled(ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper,
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader,
+			IDServizio idServizio, IDSoggetto idFruitore) throws ProtocolException {
+
+		if(registryReader==null || configIntegrationReader==null) {
+			return false;
+		}
+
+		boolean dpop = false;
+		if(ConsoleOperationType.ADD.equals(consoleOperationType)) {
+
+			String tokenPolicyViaAPI = null;
+			try {
+				tokenPolicyViaAPI = consoleHelper.getParameter(Costanti.CONSOLE_PARAMETRO_CONNETTORE_TOKEN_POLICY_VIA_API);
+			}catch(Exception e) {
+				throw new ProtocolException(e.getMessage(),e);
+			}
+			if(tokenPolicyViaAPI!=null && StringUtils.isNotEmpty(tokenPolicyViaAPI) && !Costanti.CONSOLE_DEFAULT_VALUE_NON_SELEZIONATO.equals(tokenPolicyViaAPI)) {
+				dpop = isTokenPolicyDPoP(configIntegrationReader, tokenPolicyViaAPI);
+			}
+			else {
+				String tokenPolicyStato = null;
+				try {
+					tokenPolicyStato = consoleHelper.getParameter(Costanti.CONSOLE_PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO);
+				}catch(Exception e) {
+					throw new ProtocolException(e.getMessage(),e);
+				}
+				if(isEnabled(tokenPolicyStato)) {
+					String tokenPolicy = null;
+					try {
+						tokenPolicy = consoleHelper.getParameter(Costanti.CONSOLE_PARAMETRO_CONNETTORE_TOKEN_POLICY);
+					}catch(Exception e) {
+						throw new ProtocolException(e.getMessage(),e);
+					}
+					if(tokenPolicy!=null && StringUtils.isNotEmpty(tokenPolicy) && !Costanti.CONSOLE_DEFAULT_VALUE_NON_SELEZIONATO.equals(tokenPolicy)) {
+						dpop = isTokenPolicyDPoP(configIntegrationReader, tokenPolicy);
+					}
+				}
+			}
+		}
+		else {
+			if(idServizio!=null && idFruitore!=null) {
+				try {
+					AccordoServizioParteSpecifica asps = registryReader.getAccordoServizioParteSpecifica(idServizio, false);
+					if(asps!=null && asps.sizeFruitoreList()>0) {
+						for (Fruitore fruitore : asps.getFruitoreList()) {
+							if(fruitore!=null) {
+								IDSoggetto check = new IDSoggetto(fruitore.getTipo(), fruitore.getNome());
+								if(idFruitore.equals(check)) {
+									if(fruitore.getConnettore()!=null && !TipiConnettore.DISABILITATO.getNome().equals(fruitore.getConnettore().getTipo()) &&
+										fruitore.getConnettore().sizePropertyList()>0) {
+										for (Property p : fruitore.getConnettore().getPropertyList()) {
+											if(CostantiConnettori.CONNETTORE_TOKEN_POLICY.equals(p.getNome())){
+												String tokenPolicy = p.getValore();
+												if(tokenPolicy!=null && StringUtils.isNotEmpty(tokenPolicy) && !Costanti.CONSOLE_DEFAULT_VALUE_NON_SELEZIONATO.equals(tokenPolicy)) {
+													if(!dpop) {
+														dpop = isTokenPolicyDPoP(configIntegrationReader, tokenPolicy);
+													}
+												}
+											}
+										}
+									}
+									if(!dpop && fruitore.getConfigurazioneAzioneList()!=null && !fruitore.getConfigurazioneAzioneList().isEmpty()) {
+										for (ConfigurazioneServizioAzione csa : fruitore.getConfigurazioneAzioneList()) {
+											if(csa!=null &&
+												csa.getConnettore()!=null && !TipiConnettore.DISABILITATO.getNome().equals(csa.getConnettore().getTipo()) &&
+												csa.getConnettore().sizePropertyList()>0) {
+												for (Property p : csa.getConnettore().getPropertyList()) {
+													if(CostantiConnettori.CONNETTORE_TOKEN_POLICY.equals(p.getNome())){
+														String tokenPolicy = p.getValore();
+														if(tokenPolicy!=null && StringUtils.isNotEmpty(tokenPolicy) && !Costanti.CONSOLE_DEFAULT_VALUE_NON_SELEZIONATO.equals(tokenPolicy)) {
+															if(!dpop) {
+																dpop = isTokenPolicyDPoP(configIntegrationReader, tokenPolicy);
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}catch(Exception e) {
+					throw new ProtocolException(e.getMessage(),e);
+				}
+			}
+		}
+
+		return dpop;
+	}
+
 	private static boolean isEnabled(String v) {
 		return "true".equals(v) || "yes".equals(v);
 	}
@@ -2191,18 +2325,34 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 		}
 		
 		if(fruizione && request) {
-			
+
 			boolean hideSceltaArchivioFilePath = false;
 			boolean addHiddenSubjectIssuer = false;
-			ModIDynamicConfigurationKeystoreUtilities.updateKeystoreConfig(consoleConfiguration, properties, true, 
-					hideSceltaArchivioFilePath, addHiddenSubjectIssuer, 
+			ModIDynamicConfigurationKeystoreUtilities.updateKeystoreConfig(consoleConfiguration, properties, true,
+					hideSceltaArchivioFilePath, addHiddenSubjectIssuer,
 					requiredValue, null,
 					rest);
 		}
-		
-		
+
+
 	}
-	
+
+	static void updateDPoPKeystoreConfigFruizione(ConsoleConfiguration configuration, ProtocolProperties properties, boolean rest) throws ProtocolException {
+
+		StringProperty dpopModeItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_DPOP_FRUIZIONE_KEYSTORE_MODE_ID);
+		boolean ridefinisci = dpopModeItemValue!=null && dpopModeItemValue.getValue()!=null &&
+				ModIConsoleCostanti.MODIPA_DPOP_FRUIZIONE_KEYSTORE_MODE_VALUE_RIDEFINITO.equals(dpopModeItemValue.getValue());
+
+		if(ridefinisci) {
+			// Mostra i campi del keystore DPoP
+			ModIDynamicConfigurationKeystoreUtilities.updateDPoPKeystoreConfig(configuration, properties, true, true, rest);
+		}
+		else {
+			// Nascondi i campi del keystore DPoP
+			ModIDynamicConfigurationKeystoreUtilities.hideDPoPKeystoreConfig(configuration, properties);
+		}
+	}
+
 	private static void updateSicurezzaOAuth(ConsoleConfiguration configuration, ProtocolProperties properties, boolean ridefinisci) throws ProtocolException {
 		
 		AbstractConsoleItem<?> profiloSicurezzaOauthKidItem = 	
