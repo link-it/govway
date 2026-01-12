@@ -25,41 +25,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.Valid;
 
-public class ModIApplicativoSicurezzaMessaggio  {
-  
-  @Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED, description = "")
-  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXISTING_PROPERTY, property = "tipologia", visible = true )
-  @com.fasterxml.jackson.annotation.JsonSubTypes({
-    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ModIKeyStoreArchive.class, name = "archivio"),
-    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ModIKeyStoreFileApplicativo.class, name = "filesystem"),
-    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ModIKeyStoreHSMApplicativo.class, name = "hsm")  })
-  private OneOfModIApplicativoSicurezzaMessaggioKeystore keystore = null;
+public class ModIApplicativoSicurezzaMessaggio extends ModIBaseApplicativoKeystore {
   
   @Schema(description = "")
   private String replyAudience = null;
   
   @Schema(description = "")
   private String urlX5u = null;
- /**
-   * Get keystore
-   * @return keystore
-  **/
-  @JsonProperty("keystore")
-  @NotNull
-  @Valid
-  public OneOfModIApplicativoSicurezzaMessaggioKeystore getKeystore() {
-    return this.keystore;
-  }
-
-  public void setKeystore(OneOfModIApplicativoSicurezzaMessaggioKeystore keystore) {
-    this.keystore = keystore;
-  }
-
-  public ModIApplicativoSicurezzaMessaggio keystore(OneOfModIApplicativoSicurezzaMessaggioKeystore keystore) {
-    this.keystore = keystore;
-    return this;
-  }
-
  /**
    * Get replyAudience
    * @return replyAudience
@@ -103,8 +75,7 @@ public class ModIApplicativoSicurezzaMessaggio  {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class ModIApplicativoSicurezzaMessaggio {\n");
-    
-    sb.append("    keystore: ").append(ModIApplicativoSicurezzaMessaggio.toIndentedString(this.keystore)).append("\n");
+    sb.append("    ").append(ModIApplicativoSicurezzaMessaggio.toIndentedString(super.toString())).append("\n");
     sb.append("    replyAudience: ").append(ModIApplicativoSicurezzaMessaggio.toIndentedString(this.replyAudience)).append("\n");
     sb.append("    urlX5u: ").append(ModIApplicativoSicurezzaMessaggio.toIndentedString(this.urlX5u)).append("\n");
     sb.append("}");

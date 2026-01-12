@@ -40,7 +40,19 @@ var expected = modi;
 expected.keystore = expected.keystore != null ? expected.keystore : { "modalita" : "default" }
 
 return expected;
-} 
+}
+"""
+
+* def getExpectedDPoP =
+"""
+function(modi_dpop) {
+if (modi_dpop == null) return null;
+var expected = modi_dpop;
+
+expected.keystore = expected.keystore != null ? expected.keystore : { "modalita" : "default" }
+
+return expected;
+}
 """
 
 * def getExpectedSOAP =
@@ -119,6 +131,51 @@ Examples:
 |fruizione_modi_oauth_keystore_ridefinito_keypair_nopassw.json|
 |fruizione_modi_oauth_keystore_ridefinito_archivio.json|
 |fruizione_modi_oauth_keystore_ridefinito_hsm.json|
+
+
+
+@UpdatePetstore_modi_OAUTH_fruizioni_dpop
+Scenario Outline: Fruizioni Aggiornamento Petstore OAUTH DPoP <nome>
+
+		* def erogatore = read('soggetto_erogatore.json')
+		* eval randomize (erogatore, ["nome", "credenziali.username"])
+
+		# Usa una fruizione con token policy DPoP come base per le modifiche DPoP
+		* def fruizione_petstore = read('fruizione_modi_oauth_dpop_keystore_default.json')
+		* eval fruizione_petstore.api_nome = api_petstore_oauth.nome
+		* eval fruizione_petstore.fruizione_nome = api_petstore_oauth.nome
+		* eval fruizione_petstore.api_versione = api_petstore_oauth.versione
+		* eval fruizione_petstore.erogatore = erogatore.nome
+		* eval fruizione_petstore.api_referente = api_petstore_oauth.referente
+
+		* def petstore_key = fruizione_petstore.erogatore + '/' + fruizione_petstore.fruizione_nome + '/' + fruizione_petstore.api_versione
+		* def api_petstore_path = 'api/' + api_petstore_oauth.nome + '/' + api_petstore_oauth.versione
+
+		* def fruizione_petstore_update = read('<nome>')
+
+    * call create ({ resourcePath: 'api', body: api_petstore_oauth, query_params: query_param_profilo_modi })
+    * call create ({ resourcePath: 'soggetti', body: erogatore })
+    * call create ( { resourcePath: 'fruizioni', body: fruizione_petstore,  key: petstore_key, query_params: query_param_profilo_modi } )
+    * def update_body = fruizione_petstore_update.modi_dpop != null ? {modi: fruizione_petstore_update.modi, modi_dpop: fruizione_petstore_update.modi_dpop} : {modi: fruizione_petstore_update.modi}
+    * call put ( { resourcePath: 'fruizioni/'+petstore_key+'/modi', body: update_body, query_params: query_param_profilo_modi } )
+		* call get ( { resourcePath: 'fruizioni', key: petstore_key + '/modi', query_params: query_param_profilo_modi } )
+		* def expected = getExpectedOAUTH(fruizione_petstore_update.modi)
+    * match response.modi == expected
+    * def expectedDpop = getExpectedDPoP(fruizione_petstore_update.modi_dpop)
+    * if (expectedDpop != null) karate.match('response.modi_dpop == expectedDpop')
+    * call delete ({ resourcePath: 'fruizioni/' + petstore_key, query_params: query_param_profilo_modi } )
+    * call delete ({ resourcePath: 'soggetti/' + erogatore.nome })
+    * call delete ({ resourcePath: api_petstore_path, query_params: query_param_profilo_modi } )
+
+Examples:
+|nome|
+|fruizione_modi_oauth_dpop_keystore_default.json|
+|fruizione_modi_oauth_dpop_keystore_ridefinito.json|
+|fruizione_modi_oauth_dpop_keystore_ridefinito_jwk.json|
+|fruizione_modi_oauth_dpop_keystore_ridefinito_keypair.json|
+|fruizione_modi_oauth_dpop_keystore_ridefinito_keypair_nopassw.json|
+|fruizione_modi_oauth_dpop_keystore_ridefinito_archivio.json|
+|fruizione_modi_oauth_dpop_keystore_ridefinito_hsm.json|
 
 
 
@@ -483,6 +540,32 @@ Examples:
 |fruizione_modi_rest_iu_codice_ente.json|fruizione_modi_rest.json|api_modi_rest_no_info_utente.json|Impossibile settare info utente|
 
 
+@UpdateFruizione_400_modi_dpop
+Scenario: Fruizioni Aggiornamento modi 400 DPoP senza token policy abilitata
+
+	* def erogatore = read('soggetto_erogatore.json')
+	* eval randomize (erogatore, ["nome", "credenziali.username"])
+
+	* def fruizione_petstore = read('fruizione_modi_oauth.json')
+	* eval fruizione_petstore.api_nome = api_petstore_oauth.nome
+	* eval fruizione_petstore.fruizione_nome = api_petstore_oauth.nome
+	* eval fruizione_petstore.api_versione = api_petstore_oauth.versione
+	* eval fruizione_petstore.erogatore = erogatore.nome
+	* eval fruizione_petstore.api_referente = api_petstore_oauth.referente
+
+	* def petstore_key = fruizione_petstore.erogatore + '/' + fruizione_petstore.fruizione_nome + '/' + fruizione_petstore.api_versione
+	* def api_petstore_path = 'api/' + api_petstore_oauth.nome + '/' + api_petstore_oauth.versione
+
+	* def fruizione_petstore_update = read('fruizione_modi_oauth_dpop_token_policy_senza_dpop.json')
+
+	* call create ({ resourcePath: 'api', body: api_petstore_oauth, query_params: query_param_profilo_modi })
+	* call create ({ resourcePath: 'soggetti', body: erogatore })
+	* call create ( { resourcePath: 'fruizioni', body: fruizione_petstore,  key: petstore_key, query_params: query_param_profilo_modi } )
+	* call update_400 ( { resourcePath: 'fruizioni/'+petstore_key+'/modi', body: {modi: fruizione_petstore_update.modi, modi_dpop: fruizione_petstore_update.modi_dpop}, query_params: query_param_profilo_modi } )
+	* match response.detail == 'La configurazione DPoP richiede un connettore con una token policy di negoziazione che abbia DPoP abilitato'
+	* call delete ({ resourcePath: 'fruizioni/' + petstore_key, query_params: query_param_profilo_modi } )
+	* call delete ({ resourcePath: 'soggetti/' + erogatore.nome })
+	* call delete ({ resourcePath: api_petstore_path, query_params: query_param_profilo_modi } )
 
 
 @UpdateFruizione_204_modi_audit_REST

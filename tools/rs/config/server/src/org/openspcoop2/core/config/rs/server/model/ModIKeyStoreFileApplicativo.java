@@ -23,7 +23,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.Valid;
 
-public class ModIKeyStoreFileApplicativo extends ModIKeyStoreFile implements OneOfModIApplicativoSicurezzaMessaggioKeystore {
+public class ModIKeyStoreFileApplicativo extends ModIKeyStoreFile implements OneOfModIBaseApplicativoKeystoreKeystore {
   
   @Schema(description = "")
   private byte[] keystoreCertificato = null;

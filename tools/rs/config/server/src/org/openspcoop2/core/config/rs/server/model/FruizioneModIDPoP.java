@@ -23,26 +23,30 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.Valid;
 
-public class ModIKeyStoreHSMApplicativo extends ModIKeyStoreHSM implements OneOfModIBaseApplicativoKeystoreKeystore {
+public class FruizioneModIDPoP  {
   
   @Schema(description = "")
-  private byte[] keystoreCertificato = null;
+  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXISTING_PROPERTY, property = "modalita", visible = true )
+  @com.fasterxml.jackson.annotation.JsonSubTypes({
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ModIKeyStoreDefault.class, name = "default"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ModIKeyStoreRidefinito.class, name = "ridefinito")  })
+  private OneOfFruizioneModIDPoPKeystore keystore = null;
  /**
-   * Get keystoreCertificato
-   * @return keystoreCertificato
+   * Get keystore
+   * @return keystore
   **/
-  @JsonProperty("keystore_certificato")
+  @JsonProperty("keystore")
   @Valid
-  public byte[] getKeystoreCertificato() {
-    return this.keystoreCertificato;
+  public OneOfFruizioneModIDPoPKeystore getKeystore() {
+    return this.keystore;
   }
 
-  public void setKeystoreCertificato(byte[] keystoreCertificato) {
-    this.keystoreCertificato = keystoreCertificato;
+  public void setKeystore(OneOfFruizioneModIDPoPKeystore keystore) {
+    this.keystore = keystore;
   }
 
-  public ModIKeyStoreHSMApplicativo keystoreCertificato(byte[] keystoreCertificato) {
-    this.keystoreCertificato = keystoreCertificato;
+  public FruizioneModIDPoP keystore(OneOfFruizioneModIDPoPKeystore keystore) {
+    this.keystore = keystore;
     return this;
   }
 
@@ -50,9 +54,9 @@ public class ModIKeyStoreHSMApplicativo extends ModIKeyStoreHSM implements OneOf
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class ModIKeyStoreHSMApplicativo {\n");
-    sb.append("    ").append(ModIKeyStoreHSMApplicativo.toIndentedString(super.toString())).append("\n");
-    sb.append("    keystoreCertificato: ").append(ModIKeyStoreHSMApplicativo.toIndentedString(this.keystoreCertificato)).append("\n");
+    sb.append("class FruizioneModIDPoP {\n");
+    
+    sb.append("    keystore: ").append(FruizioneModIDPoP.toIndentedString(this.keystore)).append("\n");
     sb.append("}");
     return sb.toString();
   }

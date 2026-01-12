@@ -25,7 +25,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.Valid;
 
-public class ModIKeyStoreRidefinito  implements OneOfErogazioneModIRestRispostaSicurezzaMessaggioKeystore, OneOfErogazioneModISoapRispostaSicurezzaMessaggioKeystore, OneOfFruizioneModIOAuthKeystore, OneOfFruizioneModIRestRichiestaSicurezzaMessaggioKeystore, OneOfFruizioneModISoapRichiestaSicurezzaMessaggioKeystore {
+public class ModIKeyStoreRidefinito  implements OneOfErogazioneModIRestRispostaSicurezzaMessaggioKeystore, OneOfErogazioneModISoapRispostaSicurezzaMessaggioKeystore, OneOfFruizioneModIDPoPKeystore, OneOfFruizioneModIOAuthKeystore, OneOfFruizioneModIRestRichiestaSicurezzaMessaggioKeystore, OneOfFruizioneModISoapRichiestaSicurezzaMessaggioKeystore {
   
   @Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED, description = "")
   private StatoDefaultRidefinitoEnum modalita = null;

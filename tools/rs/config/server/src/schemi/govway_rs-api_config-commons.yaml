@@ -2081,7 +2081,9 @@ components:
             mapping:
               'oauth': '#/components/schemas/FruizioneModIOAuth'
               'soap': '#/components/schemas/FruizioneModISoap'
-              'rest': '#/components/schemas/FruizioneModIRest' 
+              'rest': '#/components/schemas/FruizioneModIRest'
+        modi_dpop:
+           $ref: '#/components/schemas/FruizioneModIDPoP'
       
     # ModI Fruizione OAUTH
     BaseFruizioneModIOAuth:
@@ -2114,6 +2116,21 @@ components:
                   mapping:
                     'default': '#/components/schemas/ModIKeyStoreDefault'
                     'ridefinito': '#/components/schemas/ModIKeyStoreRidefinito'
+
+    # ModI Fruizione DPoP
+    FruizioneModIDPoP:
+      type: object
+      properties:
+        keystore:
+           type: object
+           oneOf:
+             - $ref: '#/components/schemas/ModIKeyStoreDefault'
+             - $ref: '#/components/schemas/ModIKeyStoreRidefinito'
+           discriminator:
+             propertyName: modalita
+             mapping:
+               'default': '#/components/schemas/ModIKeyStoreDefault'
+               'ridefinito': '#/components/schemas/ModIKeyStoreRidefinito'
 
     # ModI Fruizione SOAP
     FruizioneModISoap:
@@ -2467,7 +2484,9 @@ components:
            $ref: '#/components/schemas/ModIApplicativoSicurezzaMessaggio'
         token:
           $ref: '#/components/schemas/ModIApplicativoAuthenticationToken'
-    ModIApplicativoSicurezzaMessaggio:
+        dpop:
+           $ref: '#/components/schemas/ModIBaseApplicativoKeystore'
+    ModIBaseApplicativoKeystore:
       type: object      
       required:
         - keystore
@@ -2484,12 +2503,18 @@ components:
               'archivio': '#/components/schemas/ModIKeyStoreArchive'
               'filesystem': '#/components/schemas/ModIKeyStoreFileApplicativo'
               'hsm': '#/components/schemas/ModIKeyStoreHSMApplicativo'
-        reply_audience:
-           type: string
-           maxLength: 4000
-        url_x5u:
-          type: string
-          maxLength: 4000 
+    ModIApplicativoSicurezzaMessaggio:
+      type: object      
+      allOf:
+        - $ref: '#/components/schemas/ModIBaseApplicativoKeystore'
+        - type: object
+          properties:
+            reply_audience:
+              type: string
+              maxLength: 4000
+            url_x5u:
+              type: string
+              maxLength: 4000
     ModIApplicativoAuthenticationToken:
       type: object
       required:

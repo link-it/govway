@@ -8772,6 +8772,8 @@ components:
             - $ref: "#/components/schemas/FruizioneModIOAuth"
             - $ref: "#/components/schemas/FruizioneModISoap"
             - $ref: "#/components/schemas/FruizioneModIRest"
+          modi_dpop:
+            $ref: "#/components/schemas/FruizioneModIDPoP"
     FruizioneItem:
       type: "object"
       allOf:
@@ -11008,6 +11010,8 @@ components:
           - $ref: "#/components/schemas/FruizioneModIOAuth"
           - $ref: "#/components/schemas/FruizioneModISoap"
           - $ref: "#/components/schemas/FruizioneModIRest"
+        modi_dpop:
+          $ref: "#/components/schemas/FruizioneModIDPoP"
     BaseFruizioneModIOAuth:
       type: "object"
       properties:
@@ -11037,6 +11041,19 @@ components:
             oneOf:
             - $ref: "#/components/schemas/ModIKeyStoreDefault"
             - $ref: "#/components/schemas/ModIKeyStoreRidefinito"
+    FruizioneModIDPoP:
+      type: "object"
+      properties:
+        keystore:
+          type: "object"
+          discriminator:
+            propertyName: "modalita"
+            mapping:
+              default: "#/components/schemas/ModIKeyStoreDefault"
+              ridefinito: "#/components/schemas/ModIKeyStoreRidefinito"
+          oneOf:
+          - $ref: "#/components/schemas/ModIKeyStoreDefault"
+          - $ref: "#/components/schemas/ModIKeyStoreRidefinito"
     FruizioneModISoap:
       required:
       - "protocollo"
@@ -11379,7 +11396,9 @@ components:
           $ref: "#/components/schemas/ModIApplicativoSicurezzaMessaggio"
         token:
           $ref: "#/components/schemas/ModIApplicativoAuthenticationToken"
-    ModIApplicativoSicurezzaMessaggio:
+        dpop:
+          $ref: "#/components/schemas/ModIBaseApplicativoKeystore"
+    ModIBaseApplicativoKeystore:
       required:
       - "keystore"
       type: "object"
@@ -11396,12 +11415,18 @@ components:
           - $ref: "#/components/schemas/ModIKeyStoreArchive"
           - $ref: "#/components/schemas/ModIKeyStoreFileApplicativo"
           - $ref: "#/components/schemas/ModIKeyStoreHSMApplicativo"
-        reply_audience:
-          maxLength: 4000
-          type: "string"
-        url_x5u:
-          maxLength: 4000
-          type: "string"
+    ModIApplicativoSicurezzaMessaggio:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/ModIBaseApplicativoKeystore"
+      - type: "object"
+        properties:
+          reply_audience:
+            maxLength: 4000
+            type: "string"
+          url_x5u:
+            maxLength: 4000
+            type: "string"
     ModIApplicativoAuthenticationToken:
       required:
       - "identificativo"

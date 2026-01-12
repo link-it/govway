@@ -25,51 +25,32 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.Valid;
 
-public class ModIKeyStoreArchive extends BaseKeyStoreArchive implements OneOfModIBaseApplicativoKeystoreKeystore, OneOfModIKeyStoreRidefinitoDatiKeystore {
+public class ModIBaseApplicativoKeystore  {
   
   @Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED, description = "")
-  private ModIKeystoreTipologiaEnum tipologia = null;
-  
-  @Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED, description = "")
-  private ModIKeystoreEnum keystoreTipo = null;
+  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXISTING_PROPERTY, property = "tipologia", visible = true )
+  @com.fasterxml.jackson.annotation.JsonSubTypes({
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ModIKeyStoreArchive.class, name = "archivio"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ModIKeyStoreFileApplicativo.class, name = "filesystem"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ModIKeyStoreHSMApplicativo.class, name = "hsm")  })
+  private OneOfModIBaseApplicativoKeystoreKeystore keystore = null;
  /**
-   * Get tipologia
-   * @return tipologia
+   * Get keystore
+   * @return keystore
   **/
-  @Override
-@JsonProperty("tipologia")
+  @JsonProperty("keystore")
   @NotNull
   @Valid
-  public ModIKeystoreTipologiaEnum getTipologia() {
-    return this.tipologia;
+  public OneOfModIBaseApplicativoKeystoreKeystore getKeystore() {
+    return this.keystore;
   }
 
-  public void setTipologia(ModIKeystoreTipologiaEnum tipologia) {
-    this.tipologia = tipologia;
+  public void setKeystore(OneOfModIBaseApplicativoKeystoreKeystore keystore) {
+    this.keystore = keystore;
   }
 
-  public ModIKeyStoreArchive tipologia(ModIKeystoreTipologiaEnum tipologia) {
-    this.tipologia = tipologia;
-    return this;
-  }
-
- /**
-   * Get keystoreTipo
-   * @return keystoreTipo
-  **/
-  @JsonProperty("keystore_tipo")
-  @NotNull
-  @Valid
-  public ModIKeystoreEnum getKeystoreTipo() {
-    return this.keystoreTipo;
-  }
-
-  public void setKeystoreTipo(ModIKeystoreEnum keystoreTipo) {
-    this.keystoreTipo = keystoreTipo;
-  }
-
-  public ModIKeyStoreArchive keystoreTipo(ModIKeystoreEnum keystoreTipo) {
-    this.keystoreTipo = keystoreTipo;
+  public ModIBaseApplicativoKeystore keystore(OneOfModIBaseApplicativoKeystoreKeystore keystore) {
+    this.keystore = keystore;
     return this;
   }
 
@@ -77,10 +58,9 @@ public class ModIKeyStoreArchive extends BaseKeyStoreArchive implements OneOfMod
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class ModIKeyStoreArchive {\n");
-    sb.append("    ").append(ModIKeyStoreArchive.toIndentedString(super.toString())).append("\n");
-    sb.append("    tipologia: ").append(ModIKeyStoreArchive.toIndentedString(this.tipologia)).append("\n");
-    sb.append("    keystoreTipo: ").append(ModIKeyStoreArchive.toIndentedString(this.keystoreTipo)).append("\n");
+    sb.append("class ModIBaseApplicativoKeystore {\n");
+    
+    sb.append("    keystore: ").append(ModIBaseApplicativoKeystore.toIndentedString(this.keystore)).append("\n");
     sb.append("}");
     return sb.toString();
   }

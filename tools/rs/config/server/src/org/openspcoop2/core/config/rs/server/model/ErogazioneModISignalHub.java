@@ -185,13 +185,13 @@ public class ErogazioneModISignalHub  {
     StringBuilder sb = new StringBuilder();
     sb.append("class ErogazioneModISignalHub {\n");
     
-    sb.append("    risorsa: ").append(toIndentedString(this.risorsa)).append("\n");
-    sb.append("    algoritmo: ").append(toIndentedString(this.algoritmo)).append("\n");
-    sb.append("    dimensioneSeme: ").append(toIndentedString(this.dimensioneSeme)).append("\n");
-    sb.append("    giorniRotazione: ").append(toIndentedString(this.giorniRotazione)).append("\n");
-    sb.append("    applicativo: ").append(toIndentedString(this.applicativo)).append("\n");
-    sb.append("    ruolo: ").append(toIndentedString(this.ruolo)).append("\n");
-    sb.append("    pseudoanonimizzazione: ").append(toIndentedString(this.pseudoanonimizzazione)).append("\n");
+    sb.append("    risorsa: ").append(ErogazioneModISignalHub.toIndentedString(this.risorsa)).append("\n");
+    sb.append("    algoritmo: ").append(ErogazioneModISignalHub.toIndentedString(this.algoritmo)).append("\n");
+    sb.append("    dimensioneSeme: ").append(ErogazioneModISignalHub.toIndentedString(this.dimensioneSeme)).append("\n");
+    sb.append("    giorniRotazione: ").append(ErogazioneModISignalHub.toIndentedString(this.giorniRotazione)).append("\n");
+    sb.append("    applicativo: ").append(ErogazioneModISignalHub.toIndentedString(this.applicativo)).append("\n");
+    sb.append("    ruolo: ").append(ErogazioneModISignalHub.toIndentedString(this.ruolo)).append("\n");
+    sb.append("    pseudoanonimizzazione: ").append(ErogazioneModISignalHub.toIndentedString(this.pseudoanonimizzazione)).append("\n");
     sb.append("}");
     return sb.toString();
   }
