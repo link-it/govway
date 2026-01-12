@@ -25,48 +25,32 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class ModIApplicativoSicurezzaMessaggio extends ModIBaseApplicativoKeystore {
+public class ModIBaseApplicativoKeystore  {
   
-  @Schema(description = "")
-  private String replyAudience = null;
-  
-  @Schema(description = "")
-  private String urlX5u = null;
+  @Schema(required = true, description = "")
+  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXISTING_PROPERTY, property = "tipologia", visible = true )
+  @com.fasterxml.jackson.annotation.JsonSubTypes({
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ModIKeyStoreArchive.class, name = "archivio"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ModIKeyStoreFileApplicativo.class, name = "filesystem"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ModIKeyStoreHSMApplicativo.class, name = "hsm")  })
+  private OneOfModIBaseApplicativoKeystoreKeystore keystore = null;
  /**
-   * Get replyAudience
-   * @return replyAudience
+   * Get keystore
+   * @return keystore
   **/
-  @JsonProperty("reply_audience")
+  @JsonProperty("keystore")
+  @NotNull
   @Valid
- @Size(max=4000)  public String getReplyAudience() {
-    return this.replyAudience;
+  public OneOfModIBaseApplicativoKeystoreKeystore getKeystore() {
+    return this.keystore;
   }
 
-  public void setReplyAudience(String replyAudience) {
-    this.replyAudience = replyAudience;
+  public void setKeystore(OneOfModIBaseApplicativoKeystoreKeystore keystore) {
+    this.keystore = keystore;
   }
 
-  public ModIApplicativoSicurezzaMessaggio replyAudience(String replyAudience) {
-    this.replyAudience = replyAudience;
-    return this;
-  }
-
- /**
-   * Get urlX5u
-   * @return urlX5u
-  **/
-  @JsonProperty("url_x5u")
-  @Valid
- @Size(max=4000)  public String getUrlX5u() {
-    return this.urlX5u;
-  }
-
-  public void setUrlX5u(String urlX5u) {
-    this.urlX5u = urlX5u;
-  }
-
-  public ModIApplicativoSicurezzaMessaggio urlX5u(String urlX5u) {
-    this.urlX5u = urlX5u;
+  public ModIBaseApplicativoKeystore keystore(OneOfModIBaseApplicativoKeystoreKeystore keystore) {
+    this.keystore = keystore;
     return this;
   }
 
@@ -74,10 +58,9 @@ public class ModIApplicativoSicurezzaMessaggio extends ModIBaseApplicativoKeysto
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class ModIApplicativoSicurezzaMessaggio {\n");
-    sb.append("    ").append(ModIApplicativoSicurezzaMessaggio.toIndentedString(super.toString())).append("\n");
-    sb.append("    replyAudience: ").append(ModIApplicativoSicurezzaMessaggio.toIndentedString(this.replyAudience)).append("\n");
-    sb.append("    urlX5u: ").append(ModIApplicativoSicurezzaMessaggio.toIndentedString(this.urlX5u)).append("\n");
+    sb.append("class ModIBaseApplicativoKeystore {\n");
+    
+    sb.append("    keystore: ").append(ModIBaseApplicativoKeystore.toIndentedString(this.keystore)).append("\n");
     sb.append("}");
     return sb.toString();
   }

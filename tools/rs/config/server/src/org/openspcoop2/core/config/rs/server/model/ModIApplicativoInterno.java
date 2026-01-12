@@ -35,6 +35,9 @@ public class ModIApplicativoInterno  implements OneOfApplicativoModi {
   
   @Schema(description = "")
   private ModIApplicativoAuthenticationToken token = null;
+  
+  @Schema(description = "")
+  private ModIBaseApplicativoKeystore dpop = null;
  /**
    * Get dominio
    * @return dominio
@@ -94,6 +97,25 @@ public class ModIApplicativoInterno  implements OneOfApplicativoModi {
     return this;
   }
 
+ /**
+   * Get dpop
+   * @return dpop
+  **/
+  @JsonProperty("dpop")
+  @Valid
+  public ModIBaseApplicativoKeystore getDpop() {
+    return this.dpop;
+  }
+
+  public void setDpop(ModIBaseApplicativoKeystore dpop) {
+    this.dpop = dpop;
+  }
+
+  public ModIApplicativoInterno dpop(ModIBaseApplicativoKeystore dpop) {
+    this.dpop = dpop;
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -103,6 +125,7 @@ public class ModIApplicativoInterno  implements OneOfApplicativoModi {
     sb.append("    dominio: ").append(ModIApplicativoInterno.toIndentedString(this.dominio)).append("\n");
     sb.append("    sicurezzaMessaggio: ").append(ModIApplicativoInterno.toIndentedString(this.sicurezzaMessaggio)).append("\n");
     sb.append("    token: ").append(ModIApplicativoInterno.toIndentedString(this.token)).append("\n");
+    sb.append("    dpop: ").append(ModIApplicativoInterno.toIndentedString(this.dpop)).append("\n");
     sb.append("}");
     return sb.toString();
   }

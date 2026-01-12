@@ -33,6 +33,7 @@ import org.openspcoop2.core.config.rs.server.model.ModIApplicativoAuthentication
 import org.openspcoop2.core.config.rs.server.model.ModIApplicativoEsterno;
 import org.openspcoop2.core.config.rs.server.model.ModIApplicativoInterno;
 import org.openspcoop2.core.config.rs.server.model.ModIApplicativoSicurezzaMessaggio;
+import org.openspcoop2.core.config.rs.server.model.ModIBaseApplicativoKeystore;
 import org.openspcoop2.core.config.rs.server.model.ModIKeyStoreArchive;
 import org.openspcoop2.core.config.rs.server.model.ModIKeyStoreFileApplicativo;
 import org.openspcoop2.core.config.rs.server.model.ModIKeyStoreHSMApplicativo;
@@ -205,6 +206,66 @@ public class ModiApplicativiApiHelper {
 						}
 					}
 
+					if(mai.getDpop()!=null && mai.getDpop().getKeystore()!=null) {
+						p.addProperty(ProtocolPropertiesFactory.newProperty(ModICostanti.MODIPA_DPOP_STATO, true));
+
+						if(mai.getDpop().getKeystore().getTipologia().equals(ModIKeystoreTipologiaEnum.HSM)) {
+							ModIKeyStoreHSMApplicativo hsmKeystore = (ModIKeyStoreHSMApplicativo)mai.getDpop().getKeystore();
+							p.addProperty(ModICostanti.MODIPA_DPOP_KEYSTORE_MODE, ModICostanti.MODIPA_KEYSTORE_MODE_VALUE_HSM);
+							p.addProperty(ModICostanti.MODIPA_DPOP_KEYSTORE_TYPE, hsmKeystore.getPcks11Tipo());
+							p.addProperty(ModICostanti.MODIPA_DPOP_KEY_ALIAS, hsmKeystore.getKeyAlias());
+						}
+						else if(mai.getDpop().getKeystore().getTipologia().equals(ModIKeystoreTipologiaEnum.FILESYSTEM)) {
+							ModIKeyStoreFileApplicativo fsKeystore = (ModIKeyStoreFileApplicativo)mai.getDpop().getKeystore();
+							p.addProperty(ModICostanti.MODIPA_DPOP_KEYSTORE_MODE, ModICostanti.MODIPA_KEYSTORE_MODE_VALUE_PATH);
+
+							String tipo = null;
+							switch(fsKeystore.getKeystoreTipo()) {
+								case JKS:tipo = ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_JKS;
+									break;
+								case PKCS12:tipo = ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_PKCS12;
+									break;
+								case JWK:tipo = ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_JWK;
+									break;
+								case KEYS:tipo = ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_KEY_PAIR;
+									break;
+								default:
+									break;
+							}
+
+							p.addProperty(ModICostanti.MODIPA_DPOP_KEYSTORE_TYPE, tipo);
+							p.addProperty(ModICostanti.MODIPA_DPOP_KEY_ALIAS, fsKeystore.getKeyAlias());
+							p.addProperty(ModICostanti.MODIPA_DPOP_KEY_PASSWORD, fsKeystore.getKeyPassword());
+							p.addProperty(ModICostanti.MODIPA_DPOP_KEYSTORE_PASSWORD, fsKeystore.getKeystorePassword());
+							p.addProperty(ModICostanti.MODIPA_DPOP_KEYSTORE_PATH, fsKeystore.getKeystorePath());
+							if(fsKeystore.getPublicKeyPath()!=null && StringUtils.isNotEmpty(fsKeystore.getPublicKeyPath())) {
+								p.addProperty(ModICostanti.MODIPA_DPOP_KEYSTORE_PATH_PUBLIC_KEY, fsKeystore.getPublicKeyPath());
+							}
+							p.addProperty(ModICostanti.MODIPA_DPOP_KEYSTORE_BYOK_POLICY, fsKeystore.getKeystoreByokPolicy());
+						} else {
+							ModIKeyStoreArchive archiveKeystore = (ModIKeyStoreArchive)mai.getDpop().getKeystore();
+							p.addProperty(ModICostanti.MODIPA_DPOP_KEYSTORE_MODE, ModICostanti.MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE);
+
+							String tipo = null;
+							String filename = null;
+
+							switch(archiveKeystore.getKeystoreTipo()) {
+							case JKS:tipo = ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_JKS; filename = "Keystore.jks";
+							break;
+							case PKCS12:tipo = ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_PKCS12; filename = "Keystore.p12";
+							break;
+							default:
+								break;
+							}
+
+							p.addProperty(ModICostanti.MODIPA_DPOP_KEYSTORE_TYPE, tipo);
+							p.addProperty(ModICostanti.MODIPA_DPOP_KEY_ALIAS, archiveKeystore.getKeyAlias());
+							p.addProperty(ModICostanti.MODIPA_DPOP_KEY_PASSWORD, archiveKeystore.getKeyPassword());
+							p.addProperty(ModICostanti.MODIPA_DPOP_KEYSTORE_PASSWORD, archiveKeystore.getKeystorePassword());
+							p.addProperty(ModICostanti.MODIPA_DPOP_KEYSTORE_ARCHIVE, archiveKeystore.getKeystoreArchivio(), filename, filename);
+						}
+					}
+
 				} else {
 					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Configurazione 'ModI' non valida");
 				}
@@ -362,8 +423,81 @@ public class ModiApplicativiApiHelper {
 				
 				app.setToken(token);
 			}
-			
-			if(enabledSicurezzaMessaggio || enabledSicurezzaToken) {
+
+			boolean enabledDpop = false;
+			ap = ProtocolPropertiesHelper.getProperty(p, ModICostanti.MODIPA_DPOP_STATO, false);
+			if(ap!=null && ap.getValue()!=null) {
+				enabledDpop = ProtocolPropertiesHelper.getBooleanProperty(p, ModICostanti.MODIPA_DPOP_STATO, true);
+			}
+
+			if(enabledDpop) {
+				ModIBaseApplicativoKeystore dpop = new ModIBaseApplicativoKeystore();
+
+				String keystoreModeString = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_DPOP_KEYSTORE_MODE, true);
+
+				if(keystoreModeString.equals(ModICostanti.MODIPA_KEYSTORE_MODE_VALUE_HSM)) {
+					ModIKeyStoreHSMApplicativo datiKeystore = new ModIKeyStoreHSMApplicativo();
+					datiKeystore.tipologia(ModIKeystoreTipologiaEnum.HSM);
+
+					String keystoreTipoString = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_DPOP_KEYSTORE_TYPE, true);
+					datiKeystore.setPcks11Tipo(keystoreTipoString);
+					datiKeystore.setKeyAlias(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_DPOP_KEY_ALIAS, true));
+
+					dpop.setKeystore(datiKeystore);
+				}
+				else if(keystoreModeString.equals(ModICostanti.MODIPA_KEYSTORE_MODE_VALUE_PATH)) {
+					ModIKeyStoreFileApplicativo datiKeystore = new ModIKeyStoreFileApplicativo();
+					datiKeystore.tipologia(ModIKeystoreTipologiaEnum.FILESYSTEM);
+
+					ModIKeystoreFullEnum keystoreTipo = null;
+
+					String keystoreTipoString = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_DPOP_KEYSTORE_TYPE, true);
+
+					if(keystoreTipoString.equals(ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_JKS)) {
+						keystoreTipo = ModIKeystoreFullEnum.JKS;
+					} else if(keystoreTipoString.equals(ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_PKCS12)) {
+						keystoreTipo = ModIKeystoreFullEnum.PKCS12;
+					} else if(keystoreTipoString.equals(ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_JWK)) {
+						keystoreTipo = ModIKeystoreFullEnum.JWK;
+					} else if(keystoreTipoString.equals(ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_KEY_PAIR)) {
+						keystoreTipo = ModIKeystoreFullEnum.KEYS;
+					}
+
+					datiKeystore.setKeystoreTipo(keystoreTipo);
+					datiKeystore.setKeyAlias(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_DPOP_KEY_ALIAS, true));
+					datiKeystore.setKeyPassword(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_DPOP_KEY_PASSWORD, true));
+					datiKeystore.setKeystorePassword(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_DPOP_KEYSTORE_PASSWORD, true));
+					datiKeystore.setKeystorePath(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_DPOP_KEYSTORE_PATH, true));
+					datiKeystore.setPublicKeyPath(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_DPOP_KEYSTORE_PATH_PUBLIC_KEY, false));
+					datiKeystore.setKeystoreByokPolicy(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_DPOP_KEYSTORE_BYOK_POLICY, false));
+
+					dpop.setKeystore(datiKeystore);
+				} else if(keystoreModeString.equals(ModICostanti.MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE)) {
+					ModIKeyStoreArchive datiKeystore = new ModIKeyStoreArchive().tipologia(ModIKeystoreTipologiaEnum.ARCHIVIO);
+
+					ModIKeystoreEnum keystoreTipo = null;
+
+					String keystoreTipoString = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_DPOP_KEYSTORE_TYPE, true);
+
+					if(keystoreTipoString.equals(ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_JKS)) {
+						keystoreTipo = ModIKeystoreEnum.JKS;
+					} else if(keystoreTipoString.equals(ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_PKCS12)) {
+						keystoreTipo = ModIKeystoreEnum.PKCS12;
+					}
+
+					datiKeystore.setKeystoreTipo(keystoreTipo);
+					datiKeystore.setKeyAlias(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_DPOP_KEY_ALIAS, true));
+					datiKeystore.setKeyPassword(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_DPOP_KEY_PASSWORD, true));
+					datiKeystore.setKeystorePassword(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_DPOP_KEYSTORE_PASSWORD, true));
+					datiKeystore.setKeystoreArchivio(ProtocolPropertiesHelper.getByteArrayProperty(p, ModICostanti.MODIPA_DPOP_KEYSTORE_ARCHIVE, true));
+
+					dpop.setKeystore(datiKeystore);
+				}
+
+				app.setDpop(dpop);
+			}
+
+			if(enabledSicurezzaMessaggio || enabledSicurezzaToken || enabledDpop) {
 				// modi richiede la presenza obbligatoria della sicurezza
 				ret.setModi(app);
 			}

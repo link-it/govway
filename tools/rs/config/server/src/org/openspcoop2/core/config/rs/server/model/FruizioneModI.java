@@ -34,6 +34,9 @@ public class FruizioneModI  {
     @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FruizioneModISoap.class, name = "soap"),
     @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FruizioneModIRest.class, name = "rest")  })
   private OneOfFruizioneModIModi modi = null;
+  
+  @Schema(description = "")
+  private FruizioneModIDPoP modiDpop = null;
  /**
    * Get modi
    * @return modi
@@ -54,6 +57,25 @@ public class FruizioneModI  {
     return this;
   }
 
+ /**
+   * Get modiDpop
+   * @return modiDpop
+  **/
+  @JsonProperty("modi_dpop")
+  @Valid
+  public FruizioneModIDPoP getModiDpop() {
+    return this.modiDpop;
+  }
+
+  public void setModiDpop(FruizioneModIDPoP modiDpop) {
+    this.modiDpop = modiDpop;
+  }
+
+  public FruizioneModI modiDpop(FruizioneModIDPoP modiDpop) {
+    this.modiDpop = modiDpop;
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -61,6 +83,7 @@ public class FruizioneModI  {
     sb.append("class FruizioneModI {\n");
     
     sb.append("    modi: ").append(FruizioneModI.toIndentedString(this.modi)).append("\n");
+    sb.append("    modiDpop: ").append(FruizioneModI.toIndentedString(this.modiDpop)).append("\n");
     sb.append("}");
     return sb.toString();
   }

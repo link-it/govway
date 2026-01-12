@@ -50,6 +50,7 @@ import org.openspcoop2.core.config.rs.server.model.ErogazioneModISoapRisposta;
 import org.openspcoop2.core.config.rs.server.model.ErogazioneModISoapRispostaSicurezzaMessaggio;
 import org.openspcoop2.core.config.rs.server.model.Fruizione;
 import org.openspcoop2.core.config.rs.server.model.FruizioneModI;
+import org.openspcoop2.core.config.rs.server.model.FruizioneModIDPoP;
 import org.openspcoop2.core.config.rs.server.model.FruizioneModIOAuth;
 import org.openspcoop2.core.config.rs.server.model.FruizioneModIRest;
 import org.openspcoop2.core.config.rs.server.model.FruizioneModIRestRichiesta;
@@ -92,6 +93,7 @@ import org.openspcoop2.core.config.rs.server.model.OneOfFruizioneModi;
 import org.openspcoop2.core.config.rs.server.model.StatoDefaultRidefinitoEnum;
 import org.openspcoop2.core.config.rs.server.model.TipoApiEnum;
 import org.openspcoop2.core.config.rs.server.model.TipoConfigurazioneFruizioneEnum;
+import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Operation;
@@ -116,6 +118,9 @@ import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.certificate.remote.RemoteStoreConfig;
 import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
+import org.openspcoop2.core.config.GenericProperties;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 
 /**
  * ModiErogazioniApiHelper
@@ -137,7 +142,8 @@ public class ModiErogazioniApiHelper {
 	private static final String TIPO_TRUSTSTORE_SCONOSCIUTO_PREFIX = "Tipo truststore sconosciuto: ";
 	private static final String TIPO_TRUSTSTORE_JWK_NON_SUPPORTATO_SSL = "Truststore JWK non supportato con configurazione ssl";
 	private static final String TIPO_TRUSTSTORE_PDND_NON_SUPPORTATO_SSL = "Truststore PDND non supportato con configurazione ssl";
-	
+	private static final String DPOP_RICHIEDE_TOKEN_POLICY_CON_DPOP_ABILITATO = "La configurazione DPoP richiede un connettore con una token policy di negoziazione che abbia DPoP abilitato";
+
 	public static FruizioneModI getFruizioneModI(AccordoServizioParteSpecifica asps, ErogazioniEnv env, ProfiloEnum profilo, Map <String, AbstractProperty<?>> p) throws CoreException, DriverRegistroServiziNotFound, DriverRegistroServiziException {
 		if(profilo == null || (!profilo.equals(ProfiloEnum.MODI) && !profilo.equals(ProfiloEnum.MODIPA))) {
 			throw FaultCode.RICHIESTA_NON_VALIDA.toException(ModiErogazioniApiHelper.OPERAZIONE_UTILIZZABILE_SOLO_CON_MODI);
@@ -161,8 +167,14 @@ public class ModiErogazioniApiHelper {
 					fruizionemodi.setModi(ModiErogazioniApiHelper.getFruizioneModIRest(p, schemaAudit));
 				}
 			}
+
+			// DPoP è una configurazione opzionale aggiuntiva
+			FruizioneModIDPoP dpop = ModiErogazioniApiHelper.getFruizioneModIDPoP(p);
+			if(dpop!=null) {
+				fruizionemodi.setModiDpop(dpop);
+			}
 		}
-		
+
 		return fruizionemodi;
 	}
 	
@@ -1024,11 +1036,103 @@ public class ModiErogazioniApiHelper {
 			}
 			
 			return oauth;
-			
+
 		}
 		return null;
 	}
-	
+
+	private static FruizioneModIDPoP getFruizioneModIDPoP(Map<String, AbstractProperty<?>> p) throws CoreException {
+
+		String modeDpopKeystore = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_DPOP_FRUIZIONE_KEYSTORE_MODE, false);
+		if(modeDpopKeystore!=null && StringUtils.isNotEmpty(modeDpopKeystore) &&
+				!modeDpopKeystore.equals(ModICostanti.MODIPA_PROFILO_UNDEFINED)) {
+
+			FruizioneModIDPoP dpop = new FruizioneModIDPoP();
+
+			if(modeDpopKeystore.equals(ModICostanti.MODIPA_PROFILO_RIDEFINISCI)) {
+
+				ModIKeyStoreRidefinito ks = ModiErogazioniApiHelper.readDPoPKeystoreRidefinito(p);
+				dpop.setKeystore(ks);
+
+			} else {
+
+				ModIKeyStoreDefault ks = new ModIKeyStoreDefault().modalita(StatoDefaultRidefinitoEnum.DEFAULT);
+				dpop.setKeystore(ks);
+
+			}
+
+			return dpop;
+
+		}
+		return null;
+	}
+
+	private static ModIKeyStoreRidefinito readDPoPKeystoreRidefinito(Map<String, AbstractProperty<?>> p) throws CoreException {
+
+		ModIKeyStoreRidefinito ks = new ModIKeyStoreRidefinito().modalita(StatoDefaultRidefinitoEnum.RIDEFINITO);
+
+		String keystoreModeString = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_DPOP_KEYSTORE_MODE, true);
+
+		if(keystoreModeString.equals(ModICostanti.MODIPA_KEYSTORE_MODE_VALUE_HSM)) {
+			ModIKeyStoreHSM datiKeystore = new ModIKeyStoreHSM().tipologia(ModIKeystoreTipologiaEnum.HSM);
+
+			String keystoreTipoString = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_DPOP_KEYSTORE_TYPE, true);
+			datiKeystore.setPcks11Tipo(keystoreTipoString);
+			datiKeystore.setKeyAlias(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_DPOP_KEY_ALIAS, true));
+
+			ks.setDatiKeystore(datiKeystore);
+		}
+		else if(keystoreModeString.equals(ModICostanti.MODIPA_KEYSTORE_MODE_VALUE_PATH)) {
+			ModIKeyStoreFile datiKeystore = new ModIKeyStoreFile().tipologia(ModIKeystoreTipologiaEnum.FILESYSTEM);
+
+			ModIKeystoreFullEnum keystoreTipo = null;
+
+			String keystoreTipoString = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_DPOP_KEYSTORE_TYPE, true);
+
+			if(keystoreTipoString.equals(ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_JKS)) {
+				keystoreTipo = ModIKeystoreFullEnum.JKS;
+			} else if(keystoreTipoString.equals(ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_PKCS12)) {
+				keystoreTipo = ModIKeystoreFullEnum.PKCS12;
+			} else if(keystoreTipoString.equals(ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_JWK)) {
+				keystoreTipo = ModIKeystoreFullEnum.JWK;
+			} else if(keystoreTipoString.equals(ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_KEY_PAIR)) {
+				keystoreTipo = ModIKeystoreFullEnum.KEYS;
+			}
+
+			datiKeystore.setKeystoreTipo(keystoreTipo);
+			datiKeystore.setKeyAlias(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_DPOP_KEY_ALIAS, true));
+			datiKeystore.setKeyPassword(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_DPOP_KEY_PASSWORD, true));
+			datiKeystore.setKeystorePassword(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_DPOP_KEYSTORE_PASSWORD, true));
+			datiKeystore.setKeystorePath(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_DPOP_KEYSTORE_PATH, true));
+			datiKeystore.setPublicKeyPath(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_DPOP_KEYSTORE_PATH_PUBLIC_KEY, false));
+			datiKeystore.setKeystoreByokPolicy(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_DPOP_KEYSTORE_BYOK_POLICY, false));
+
+			ks.setDatiKeystore(datiKeystore);
+		} else if(keystoreModeString.equals(ModICostanti.MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE)) {
+			ModIKeyStoreArchive datiKeystore = new ModIKeyStoreArchive().tipologia(ModIKeystoreTipologiaEnum.ARCHIVIO);
+
+			ModIKeystoreEnum keystoreTipo = null;
+
+			String keystoreTipoString = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_DPOP_KEYSTORE_TYPE, true);
+
+			if(keystoreTipoString.equals(ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_JKS)) {
+				keystoreTipo = ModIKeystoreEnum.JKS;
+			} else if(keystoreTipoString.equals(ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_PKCS12)) {
+				keystoreTipo = ModIKeystoreEnum.PKCS12;
+			}
+
+			datiKeystore.setKeystoreTipo(keystoreTipo);
+			datiKeystore.setKeyAlias(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_DPOP_KEY_ALIAS, true));
+			datiKeystore.setKeyPassword(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_DPOP_KEY_PASSWORD, true));
+			datiKeystore.setKeystorePassword(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_DPOP_KEYSTORE_PASSWORD, true));
+			datiKeystore.setKeystoreArchivio(ProtocolPropertiesHelper.getByteArrayProperty(p, ModICostanti.MODIPA_DPOP_KEYSTORE_ARCHIVE, true));
+
+			ks.setDatiKeystore(datiKeystore);
+		}
+
+		return ks;
+	}
+
 	private static FruizioneModISoap getFruizioneModISoap(Map<String, AbstractProperty<?>> p, String schemaAudit) throws CoreException {
 
 		FruizioneModISoap modi = new FruizioneModISoap();
@@ -1744,9 +1848,19 @@ public class ModiErogazioniApiHelper {
 		return ModiErogazioniApiHelper.getModiProtocolProperties(aspc, asps, body.getModi(), ModiErogazioniApiHelper.getErogazioneConf(asps, env), required);
 	}
 
-	public static ProtocolProperties getProtocolProperties(Fruizione body, AccordoServizioParteSpecifica asps, ErogazioniEnv env, boolean required) 
-			throws DriverRegistroServiziNotFound, DriverRegistroServiziException {		
-		return ModiErogazioniApiHelper.getModiProtocolProperties(body.getModi(), ModiErogazioniApiHelper.getFruizioneConf(asps, env), required);
+	public static ProtocolProperties getProtocolProperties(Fruizione body, AccordoServizioParteSpecifica asps, ErogazioniEnv env, boolean required)
+			throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
+		ProtocolProperties p = ModiErogazioniApiHelper.getModiProtocolProperties(body.getModi(), ModiErogazioniApiHelper.getFruizioneConf(asps, env), required);
+
+		// DPoP è una configurazione opzionale aggiuntiva
+		if(body.getModiDpop()!=null) {
+			if(p==null) {
+				p = new ProtocolProperties();
+			}
+			ModiErogazioniApiHelper.getDPoPProperties(body.getModiDpop(), p);
+		}
+
+		return p;
 	}
 
 	public static ProtocolProperties updateModiProtocolProperties(AccordoServizioParteComune aspc, AccordoServizioParteSpecifica asps, ProfiloEnum profilo, OneOfErogazioneModIModi modi, ErogazioniEnv env) 
@@ -1760,15 +1874,29 @@ public class ModiErogazioniApiHelper {
 
 	}
 
-	public static ProtocolProperties updateModiProtocolProperties(AccordoServizioParteSpecifica asps, ProfiloEnum profilo, OneOfFruizioneModIModi modi, ErogazioniEnv env) 
+	public static ProtocolProperties updateModiProtocolProperties(AccordoServizioParteSpecifica asps, ProfiloEnum profilo, OneOfFruizioneModIModi modi, ErogazioniEnv env)
+			throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
+		return updateModiProtocolProperties(asps, profilo, modi, null, env);
+	}
+
+	public static ProtocolProperties updateModiProtocolProperties(AccordoServizioParteSpecifica asps, ProfiloEnum profilo, OneOfFruizioneModIModi modi, FruizioneModIDPoP modiDpop, ErogazioniEnv env)
 			throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
 		if(profilo == null || (!profilo.equals(ProfiloEnum.MODI) && !profilo.equals(ProfiloEnum.MODIPA))) {
 			throw FaultCode.RICHIESTA_NON_VALIDA.toException(ModiErogazioniApiHelper.OPERAZIONE_UTILIZZABILE_SOLO_CON_MODI);
 		}
 
 		FruizioneConf fruizioneConf = ModiErogazioniApiHelper.getFruizioneConf(asps, env);
-		return ModiErogazioniApiHelper.getModiProtocolProperties(modi, fruizioneConf);
+		ProtocolProperties p = ModiErogazioniApiHelper.getModiProtocolProperties(modi, fruizioneConf);
 
+		// DPoP è una configurazione opzionale aggiuntiva
+		if(modiDpop!=null) {
+			if(p==null) {
+				p = new ProtocolProperties();
+			}
+			ModiErogazioniApiHelper.getDPoPProperties(modiDpop, p);
+		}
+
+		return p;
 	}
 
 	private static ProtocolProperties getModiProtocolProperties(AccordoServizioParteComune aspc, AccordoServizioParteSpecifica asps, OneOfErogazioneModIModi modi, ErogazioneConf erogazioneConf) {
@@ -3051,15 +3179,103 @@ public class ModiErogazioniApiHelper {
 			}
 		}
 	}
-	
+
+	private static void getDPoPProperties(FruizioneModIDPoP modi, ProtocolProperties p) {
+		if(modi!=null && modi.getKeystore()!=null) {
+			if(modi.getKeystore().getModalita().equals(StatoDefaultRidefinitoEnum.DEFAULT)) {
+
+				ModiErogazioniApiHelper.setDPoPKeystoreDefaultProperties(p);
+
+			} else {
+
+				ModIKeyStoreRidefinito keystoreRidefinito = (ModIKeyStoreRidefinito)modi.getKeystore();
+				ModiErogazioniApiHelper.setDPoPKeystoreRidefinitoProperties(p, keystoreRidefinito);
+
+			}
+		}
+	}
+
+	private static void setDPoPKeystoreDefaultProperties(ProtocolProperties p) {
+		p.addProperty(ModICostanti.MODIPA_DPOP_FRUIZIONE_KEYSTORE_MODE, ModICostanti.MODIPA_PROFILO_DEFAULT);
+		p.addProperty(ModICostanti.MODIPA_DPOP_KEYSTORE_MODE, ModICostanti.MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE);
+		p.addProperty(ModICostanti.MODIPA_DPOP_KEYSTORE_TYPE, ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_JKS);
+		p.addProperty(ModICostanti.MODIPA_DPOP_KEY_ALIAS, "");
+		p.addProperty(ModICostanti.MODIPA_DPOP_KEY_PASSWORD, "");
+		p.addProperty(ModICostanti.MODIPA_DPOP_KEYSTORE_PASSWORD, "");
+		p.addProperty(ModICostanti.MODIPA_DPOP_KEYSTORE_PATH, "");
+		p.addProperty(ModICostanti.MODIPA_DPOP_KEYSTORE_BYOK_POLICY, "");
+	}
+
+	private static void setDPoPKeystoreRidefinitoProperties(ProtocolProperties p, ModIKeyStoreRidefinito keystoreRidefinito) {
+		p.addProperty(ModICostanti.MODIPA_DPOP_FRUIZIONE_KEYSTORE_MODE, ModICostanti.MODIPA_PROFILO_RIDEFINISCI);
+
+		if(keystoreRidefinito.getDatiKeystore().getTipologia().equals(ModIKeystoreTipologiaEnum.HSM)) {
+			ModIKeyStoreHSM hsmKeystore = (ModIKeyStoreHSM)keystoreRidefinito.getDatiKeystore();
+			p.addProperty(ModICostanti.MODIPA_DPOP_KEYSTORE_MODE, ModICostanti.MODIPA_KEYSTORE_MODE_VALUE_HSM);
+
+			p.addProperty(ModICostanti.MODIPA_DPOP_KEYSTORE_TYPE, hsmKeystore.getPcks11Tipo());
+			p.addProperty(ModICostanti.MODIPA_DPOP_KEY_ALIAS, hsmKeystore.getKeyAlias());
+
+		}
+		else if(keystoreRidefinito.getDatiKeystore().getTipologia().equals(ModIKeystoreTipologiaEnum.FILESYSTEM)) {
+			ModIKeyStoreFile fsKeystore = (ModIKeyStoreFile)keystoreRidefinito.getDatiKeystore();
+			p.addProperty(ModICostanti.MODIPA_DPOP_KEYSTORE_MODE, ModICostanti.MODIPA_KEYSTORE_MODE_VALUE_PATH);
+
+			String tipo = null;
+			switch(fsKeystore.getKeystoreTipo()) {
+				case JKS:tipo = ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_JKS;
+					break;
+				case PKCS12:tipo = ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_PKCS12;
+					break;
+				case JWK:tipo = ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_JWK;
+					break;
+				case KEYS:tipo = ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_KEY_PAIR;
+					break;
+				default:
+					break;
+			}
+
+			p.addProperty(ModICostanti.MODIPA_DPOP_KEYSTORE_TYPE, tipo);
+			p.addProperty(ModICostanti.MODIPA_DPOP_KEY_ALIAS, fsKeystore.getKeyAlias());
+			p.addProperty(ModICostanti.MODIPA_DPOP_KEY_PASSWORD, fsKeystore.getKeyPassword());
+			p.addProperty(ModICostanti.MODIPA_DPOP_KEYSTORE_PASSWORD, fsKeystore.getKeystorePassword());
+			p.addProperty(ModICostanti.MODIPA_DPOP_KEYSTORE_PATH, fsKeystore.getKeystorePath());
+			if(fsKeystore.getPublicKeyPath()!=null && StringUtils.isNotEmpty(fsKeystore.getPublicKeyPath())) {
+				p.addProperty(ModICostanti.MODIPA_DPOP_KEYSTORE_PATH_PUBLIC_KEY, fsKeystore.getPublicKeyPath());
+			}
+			p.addProperty(ModICostanti.MODIPA_DPOP_KEYSTORE_BYOK_POLICY, fsKeystore.getKeystoreByokPolicy());
+		} else {
+			ModIKeyStoreArchive archiveKeystore = (ModIKeyStoreArchive)keystoreRidefinito.getDatiKeystore();
+			p.addProperty(ModICostanti.MODIPA_DPOP_KEYSTORE_MODE, ModICostanti.MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE);
+
+			String tipo = null;
+			String filename = null;
+
+			switch(archiveKeystore.getKeystoreTipo()) {
+			case JKS:tipo = ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_JKS; filename = "Keystore.jks";
+				break;
+			case PKCS12:tipo = ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_PKCS12; filename = "Keystore.p12";
+				break;
+			default:
+				break;
+			}
+
+			p.addProperty(ModICostanti.MODIPA_DPOP_KEYSTORE_TYPE, tipo);
+			p.addProperty(ModICostanti.MODIPA_DPOP_KEY_ALIAS, archiveKeystore.getKeyAlias());
+			p.addProperty(ModICostanti.MODIPA_DPOP_KEY_PASSWORD, archiveKeystore.getKeyPassword());
+			p.addProperty(ModICostanti.MODIPA_DPOP_KEYSTORE_PASSWORD, archiveKeystore.getKeystorePassword());
+			p.addProperty(ModICostanti.MODIPA_DPOP_KEYSTORE_ARCHIVE, archiveKeystore.getKeystoreArchivio(), filename, filename);
+		}
+	}
+
 	private static void getSOAPProperties(FruizioneModISoap modi, ProtocolProperties p, FruizioneConf fruizioneConf) {
 
 		if(!fruizioneConf.sicurezzaMessaggioAPIAbilitata) {
 			throw FaultCode.RICHIESTA_NON_VALIDA.toException(ModiErogazioniApiHelper.IMPOSSIBILE_ABILITARE_SICUREZZA);
 		}
-		
+
 		// **** richiesta ****
-		
+
 		FruizioneModISoapRichiestaSicurezzaMessaggio sicurezzaMessaggioRichiesta = modi.getRichiesta().getSicurezzaMessaggio();
 		
 		String algo = null;
@@ -3444,6 +3660,87 @@ public class ModiErogazioniApiHelper {
 		}
 
 		infoGenerali.setSignalHub(signalHubConf);
+	}
+
+	public static boolean isTokenPolicyDPoP(String tokenPolicy, ErogazioniEnv env) {
+		if(tokenPolicy == null || tokenPolicy.isEmpty()) {
+			return false;
+		}
+		try {
+			GenericProperties gp = env.configCore.getGenericProperties(tokenPolicy, org.openspcoop2.core.config.constants.CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_RETRIEVE, false);
+			return isTokenPolicyDPoPInternal(gp);
+		} catch (DriverConfigurazioneException | DriverConfigurazioneNotFound e) {
+			return false;
+		}
+	}
+
+	private static boolean isTokenPolicyDPoPInternal(GenericProperties gp) {
+		if(gp != null && gp.sizePropertyList() > 0) {
+			for (int i = 0; i < gp.sizePropertyList(); i++) {
+				if(org.openspcoop2.pdd.core.token.Costanti.POLICY_RETRIEVE_TOKEN_DPOP.equals(gp.getProperty(i).getNome())){
+					String v = gp.getProperty(i).getValore();
+					return "true".equalsIgnoreCase(v);
+				}
+			}
+		}
+		return false;
+	}
+
+	public static boolean isFruizioneDPoPEnabledByConnectors(org.openspcoop2.core.registry.Fruitore fruitore, ErogazioniEnv env) {
+		if(fruitore == null) {
+			return false;
+		}
+
+		// Verifica connettore principale del fruitore
+		if(fruitore.getConnettore() != null &&
+			!TipiConnettore.DISABILITATO.getNome().equals(fruitore.getConnettore().getTipo()) &&
+			fruitore.getConnettore().sizePropertyList() > 0) {
+			for (org.openspcoop2.core.registry.Property p : fruitore.getConnettore().getPropertyList()) {
+				if(org.openspcoop2.core.constants.CostantiConnettori.CONNETTORE_TOKEN_POLICY.equals(p.getNome())){
+					String tokenPolicy = p.getValore();
+					if(tokenPolicy != null && !tokenPolicy.isEmpty() && isTokenPolicyDPoP(tokenPolicy, env)) {
+						return true;
+					}
+				}
+			}
+		}
+
+		// Verifica connettori dei gruppi (configurazioni per azione)
+		if(fruitore.getConfigurazioneAzioneList() != null && !fruitore.getConfigurazioneAzioneList().isEmpty()) {
+			for (org.openspcoop2.core.registry.ConfigurazioneServizioAzione csa : fruitore.getConfigurazioneAzioneList()) {
+				if(csa != null && csa.getConnettore() != null &&
+					!TipiConnettore.DISABILITATO.getNome().equals(csa.getConnettore().getTipo()) &&
+					csa.getConnettore().sizePropertyList() > 0) {
+					for (org.openspcoop2.core.registry.Property p : csa.getConnettore().getPropertyList()) {
+						if(org.openspcoop2.core.constants.CostantiConnettori.CONNETTORE_TOKEN_POLICY.equals(p.getNome())){
+							String tokenPolicy = p.getValore();
+							if(tokenPolicy != null && !tokenPolicy.isEmpty() && isTokenPolicyDPoP(tokenPolicy, env)) {
+								return true;
+							}
+						}
+					}
+				}
+			}
+		}
+
+		return false;
+	}
+
+	public static void validateDPoPConfigurationCreate(FruizioneModIDPoP modiDpop, Fruizione body, ErogazioniEnv env) {
+		if(modiDpop != null) {
+			String tokenPolicy = (body.getConnettore() != null) ? body.getConnettore().getTokenPolicy() : null;
+			if(tokenPolicy == null || tokenPolicy.isEmpty() || !isTokenPolicyDPoP(tokenPolicy, env)) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(DPOP_RICHIEDE_TOKEN_POLICY_CON_DPOP_ABILITATO);
+			}
+		}
+	}
+
+	public static void validateDPoPConfigurationUpdate(FruizioneModIDPoP modiDpop, org.openspcoop2.core.registry.Fruitore fruitore, ErogazioniEnv env) {
+		if(modiDpop != null) {
+			if(!isFruizioneDPoPEnabledByConnectors(fruitore, env)) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(DPOP_RICHIEDE_TOKEN_POLICY_CON_DPOP_ABILITATO);
+			}
+		}
 	}
 
 }

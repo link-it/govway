@@ -13,6 +13,9 @@ Configurare l'ambiente di esecuzione dei test:
 	- Importare tramite la funziona Importa della govwayConsole il file presente sotto deploy/token_policy/GovWayTokenPolicy_retrievePolicyToken_api-config-test-jwt.zip, avendo cura di impostare il flag 'Policy di Configurazione'
 	  In alternativa utilizzare il comando sql: deploy/token_policy/GovWayTokenPolicy_retrievePolicyToken_api-config-test-jwt.sql
 
+	- Per i test DPoP nelle fruizioni, importare tramite la funzione Importa della govwayConsole il file presente sotto deploy/token_policy/GovWayTokenPolicy_retrievePolicyToken_api-config-test-jwt-dpop.zip, avendo cura di impostare il flag 'Policy di Configurazione'
+	  In alternativa utilizzare il comando sql: deploy/token_policy/GovWayTokenPolicy_retrievePolicyToken_api-config-test-jwt-dpop.sql
+
 	- cp tools/utils/src/org/openspcoop2/utils/certificate/test/govway_test_hsm.properties  /etc/govway/hsm.properties
 
 	- ATTENZIONE!!! Non abilitare il byok tramite la proprietà 'govway.security' nel file 'byok.properties' altrimenti i test di comparazione falliscono

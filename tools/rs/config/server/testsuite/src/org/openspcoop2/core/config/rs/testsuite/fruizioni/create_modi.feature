@@ -40,7 +40,19 @@ var expected = modi;
 expected.keystore = expected.keystore != null ? expected.keystore : { "modalita" : "default" }
 
 return expected;
-} 
+}
+"""
+
+* def getExpectedDPoP =
+"""
+function(modi_dpop) {
+if (modi_dpop == null) return null;
+var expected = modi_dpop;
+
+expected.keystore = expected.keystore != null ? expected.keystore : { "modalita" : "default" }
+
+return expected;
+}
 """
 
 * def getExpectedSOAP =
@@ -102,6 +114,8 @@ Scenario Outline: Fruizioni Creazione 204 OAUTH <nome>
 		* call get ( { resourcePath: 'fruizioni', key: petstore_key + '/modi', query_params: query_param_profilo_modi } )
 		* def expected = getExpectedOAUTH(fruizione_petstore.modi)
     * match response.modi == expected
+    * def expectedDpop = getExpectedDPoP(fruizione_petstore.modi_dpop)
+    * if (expectedDpop != null) karate.match('response.modi_dpop == expectedDpop')
     * call delete ({ resourcePath: 'fruizioni/' + petstore_key, query_params: query_param_profilo_modi } )
     * call delete ({ resourcePath: 'soggetti/' + erogatore.nome })
     * call delete ({ resourcePath: api_petstore_path, query_params: query_param_profilo_modi } )
@@ -117,6 +131,13 @@ Examples:
 |fruizione_modi_oauth_keystore_ridefinito_keypair_nopassw.json|
 |fruizione_modi_oauth_keystore_ridefinito_archivio.json|
 |fruizione_modi_oauth_keystore_ridefinito_hsm.json|
+|fruizione_modi_oauth_dpop_keystore_default.json|
+|fruizione_modi_oauth_dpop_keystore_ridefinito.json|
+|fruizione_modi_oauth_dpop_keystore_ridefinito_jwk.json|
+|fruizione_modi_oauth_dpop_keystore_ridefinito_keypair.json|
+|fruizione_modi_oauth_dpop_keystore_ridefinito_keypair_nopassw.json|
+|fruizione_modi_oauth_dpop_keystore_ridefinito_archivio.json|
+|fruizione_modi_oauth_dpop_keystore_ridefinito_hsm.json|
 
 
 
@@ -392,6 +413,7 @@ Examples:
 |fruizione_modi_rest_iu_codice_ente.json|api_modi_rest_no_info_utente.json|Impossibile settare info utente|
 |fruizione_modi_rest_contemporaneita_default.json|api_modi_rest.json|L\'API implementata non risulta configurata per gestire la contemporaneità dei token AGID che servirebbe alle opzioni indicate per la richiesta|
 |fruizione_modi_rest_contemporaneita_soloRisposta.json|api_modi_rest.json|L\'API implementata non risulta configurata per gestire la contemporaneità dei token AGID che servirebbe alle opzioni indicate per la risposta|
+|fruizione_modi_oauth_dpop_token_policy_senza_dpop.json|api_modi_oauth.json|La configurazione DPoP richiede un connettore con una token policy di negoziazione che abbia DPoP abilitato|
 
 
 

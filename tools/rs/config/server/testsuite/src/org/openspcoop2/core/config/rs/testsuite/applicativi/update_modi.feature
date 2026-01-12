@@ -144,6 +144,12 @@ Examples:
 |applicativo_interno_token.json|
 |applicativo_interno_token_solo_clientId.json|
 |applicativo_interno_token_solo_clientIdConKID.json|
+|applicativo_interno_dpop_keystore_archive.json|
+|applicativo_interno_dpop_keystore_file.json|
+|applicativo_interno_dpop_keystore_hsm.json|
+|applicativo_interno_dpop_keystore_file_jwk.json|
+|applicativo_interno_dpop_keystore_file_keypair.json|
+|applicativo_interno_sicurezza_dpop_keystore_archive.json|
 
 
 @Update400_modi_applicativi_interni
