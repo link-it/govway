@@ -47,6 +47,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpUpgradeHandler;
@@ -54,34 +55,37 @@ import javax.servlet.http.Part;
 
 /**
  * Classe per simulare una richiesta servlet http in cui si possono sovrascrivere
- * vari elementi
- * 
+ * vari elementi.
+ *
+ * Estende HttpServletRequestWrapper per garantire la compatibilità con
+ * l'opzione Tomcat STRICT_SERVLET_COMPLIANCE (verifica SRV.8.2 e SRV.14.2.5.1).
+ *
  * @author Tommaso Burlon (tommaso.burlon@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class MockHttpServletRequest implements HttpServletRequest {
+public class MockHttpServletRequest extends HttpServletRequestWrapper {
 
 	private AsyncContext asyncContext = null;
 	private Map<String, Object> attributes = null;
 	private Map<String, List<String>> headers = null;
 	private String characterEncoding = null;
 	private DispatcherType dispatcherType = null;
-	private HttpServletRequest req = null;
 	private MockServletInputStream is = null;
-	
-	public MockHttpServletRequest() {
-	}
-	
+
 	public MockHttpServletRequest(HttpServletRequest req) {
-		this.req = req;
+		super(req);
 	}
-	
+
+	private HttpServletRequest getHttpServletRequest() {
+		return (HttpServletRequest) getRequest();
+	}
+
 	@Override
 	public AsyncContext getAsyncContext() {
 		if (this.asyncContext != null)
 			return this.asyncContext;
-		return this.req.getAsyncContext();
+		return getHttpServletRequest().getAsyncContext();
 	}
 	public void setAsyncContext(AsyncContext asyncContext) {
 		this.asyncContext = asyncContext;
@@ -91,13 +95,13 @@ public class MockHttpServletRequest implements HttpServletRequest {
 	public Object getAttribute(String arg0) {
 		if (this.attributes != null)
 			return this.attributes.get(arg0);
-		return this.req.getAttribute(arg0);
+		return getHttpServletRequest().getAttribute(arg0);
 	}
 	@Override
 	public Enumeration<String> getAttributeNames() {
 		if (this.attributes != null)
 			return Collections.enumeration(this.attributes.keySet());
-		return this.req.getAttributeNames();
+		return getHttpServletRequest().getAttributeNames();
 	}
 	public void setAttributes(Map<String, Object> attributes) {
 		this.attributes = attributes;
@@ -107,7 +111,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
 	public String getCharacterEncoding() {
 		if (this.characterEncoding != null)
 			return this.characterEncoding;
-		return this.req.getCharacterEncoding();
+		return getHttpServletRequest().getCharacterEncoding();
 	}
 	public void setWrappedCharacterEncoding(String enc) {
 		this.characterEncoding = enc;
@@ -132,7 +136,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
 	public DispatcherType getDispatcherType() {
 		if (this.dispatcherType != null)
 			return this.dispatcherType;
-		return this.req.getDispatcherType();
+		return getHttpServletRequest().getDispatcherType();
 	}
 	public void setDispatcherType(DispatcherType dispatcherType) {
 		this.dispatcherType = dispatcherType;
@@ -142,64 +146,64 @@ public class MockHttpServletRequest implements HttpServletRequest {
 	public ServletInputStream getInputStream() throws IOException {
 		if (this.is != null)
 			return this.is;
-		return this.req.getInputStream();
+		return getHttpServletRequest().getInputStream();
 	}
 
 	@Override
 	public String getLocalAddr() {
-		return this.req.getLocalAddr();
+		return getHttpServletRequest().getLocalAddr();
 	}
 
 	@Override
 	public String getLocalName() {
-		return this.req.getLocalName();
+		return getHttpServletRequest().getLocalName();
 	}
 
 	@Override
 	public int getLocalPort() {
-		return this.req.getLocalPort();
+		return getHttpServletRequest().getLocalPort();
 	}
 
 	@Override
 	public Locale getLocale() {
-		return this.req.getLocale();
+		return getHttpServletRequest().getLocale();
 	}
 
 	@Override
 	public Enumeration<Locale> getLocales() {
-		return this.req.getLocales();
+		return getHttpServletRequest().getLocales();
 	}
 
 	@Override
 	public String getParameter(String arg0) {
-		return this.req.getParameter(arg0);
+		return getHttpServletRequest().getParameter(arg0);
 	}
 
 	@Override
 	public Map<String, String[]> getParameterMap() {
-		return this.req.getParameterMap();
+		return getHttpServletRequest().getParameterMap();
 	}
 
 	@Override
 	public Enumeration<String> getParameterNames() {
-		return this.req.getParameterNames();
+		return getHttpServletRequest().getParameterNames();
 	}
 
 	@Override
 	public String[] getParameterValues(String arg0) {
-		return this.req.getParameterValues(arg0);
+		return getHttpServletRequest().getParameterValues(arg0);
 	}
 
 	@Override
 	public String getProtocol() {
-		return this.req.getProtocol();
+		return getHttpServletRequest().getProtocol();
 	}
 
 	@Override
 	public BufferedReader getReader() throws IOException {
 		if (this.is != null)
 			return new BufferedReader(new InputStreamReader(this.is, StandardCharsets.UTF_8));
-		return this.req.getReader();
+		return getHttpServletRequest().getReader();
 	}
 
 	/**
@@ -209,113 +213,113 @@ public class MockHttpServletRequest implements HttpServletRequest {
 	@Deprecated(since="3.3")
 	@Override
 	public String getRealPath(String arg0) {
-		return this.req.getRealPath(arg0);
+		return getHttpServletRequest().getRealPath(arg0);
 	}
 
 	@Override
 	public String getRemoteAddr() {
-		return this.req.getRemoteAddr();
+		return getHttpServletRequest().getRemoteAddr();
 	}
 
 	@Override
 	public String getRemoteHost() {
-		return this.req.getRemoteHost();
+		return getHttpServletRequest().getRemoteHost();
 	}
 
 	@Override
 	public int getRemotePort() {
-		return this.req.getRemotePort();
+		return getHttpServletRequest().getRemotePort();
 	}
 
 	@Override
 	public RequestDispatcher getRequestDispatcher(String arg0) {
-		return this.req.getRequestDispatcher(arg0);
+		return getHttpServletRequest().getRequestDispatcher(arg0);
 	}
 
 	@Override
 	public String getScheme() {
-		return this.req.getScheme();
+		return getHttpServletRequest().getScheme();
 	}
 
 	@Override
 	public String getServerName() {
-		return this.req.getServerName();
+		return getHttpServletRequest().getServerName();
 	}
 
 	@Override
 	public int getServerPort() {
-		return this.req.getServerPort();
+		return getHttpServletRequest().getServerPort();
 	}
 
 	@Override
 	public ServletContext getServletContext() {
-		return this.req.getServletContext();
+		return getHttpServletRequest().getServletContext();
 	}
 
 	@Override
 	public boolean isAsyncStarted() {
-		return this.req.isAsyncStarted();
+		return getHttpServletRequest().isAsyncStarted();
 	}
 
 	@Override
 	public boolean isAsyncSupported() {
-		return this.req.isAsyncSupported();
+		return getHttpServletRequest().isAsyncSupported();
 	}
 
 	@Override
 	public boolean isSecure() {
-		return this.req.isSecure();
+		return getHttpServletRequest().isSecure();
 	}
 
 	@Override
 	public void removeAttribute(String arg0) {
-		this.req.removeAttribute(arg0);
+		getHttpServletRequest().removeAttribute(arg0);
 	}
 
 	@Override
 	public void setAttribute(String arg0, Object arg1) {
-		this.req.setAttribute(arg0, arg1);
+		getHttpServletRequest().setAttribute(arg0, arg1);
 
 	}
 
 	@Override
 	public void setCharacterEncoding(String arg0) throws UnsupportedEncodingException {
-		this.req.setCharacterEncoding(arg0);
+		getHttpServletRequest().setCharacterEncoding(arg0);
 	}
 
 	@Override
 	public AsyncContext startAsync() throws IllegalStateException {
-		return this.req.startAsync();
+		return getHttpServletRequest().startAsync();
 	}
 
 	@Override
 	public AsyncContext startAsync(ServletRequest arg0, ServletResponse arg1) throws IllegalStateException {
-		return this.req.startAsync(arg0, arg1);
+		return getHttpServletRequest().startAsync(arg0, arg1);
 	}
 
 	@Override
 	public boolean authenticate(HttpServletResponse arg0) throws IOException, ServletException {
-		return this.req.authenticate(arg0);
+		return getHttpServletRequest().authenticate(arg0);
 	}
 
 	@Override
 	public String changeSessionId() {
-		return this.req.changeSessionId();
+		return getHttpServletRequest().changeSessionId();
 	}
 
 	@Override
 	public String getAuthType() {
-		return this.req.getAuthType();
+		return getHttpServletRequest().getAuthType();
 	}
 
 	@Override
 	public String getContextPath() {
-		return this.req.getContextPath();
+		return getHttpServletRequest().getContextPath();
 	}
 
 	@Override
 	public Cookie[] getCookies() {
-		return this.req.getCookies();
+		return getHttpServletRequest().getCookies();
 	}
 
 	@Override
@@ -339,7 +343,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
 				return String.join(",", this.headers.get(arg0));
 			}
 		}
-		return this.req.getHeader(arg0);
+		return getHttpServletRequest().getHeader(arg0);
 	}
 
 	@Override
@@ -347,8 +351,8 @@ public class MockHttpServletRequest implements HttpServletRequest {
 		Set<String> names = new HashSet<>();
 		if (this.headers != null)
 			names.addAll(this.headers.keySet());
-		if (this.req != null)
-			this.req.getHeaderNames().asIterator().forEachRemaining(name ->
+		if (getHttpServletRequest() != null)
+			getHttpServletRequest().getHeaderNames().asIterator().forEachRemaining(name ->
 				names.add(preProcessHeaderName(name))
 			);
 		return Collections.enumeration(names);
@@ -360,8 +364,8 @@ public class MockHttpServletRequest implements HttpServletRequest {
 		Set<String> values = new HashSet<>();
 		if (this.headers != null)
 			values.addAll(Objects.requireNonNullElse(this.headers.getOrDefault(arg0, List.of()), List.of()));
-		if (this.req != null && values.isEmpty())
-			this.req.getHeaders(arg0).asIterator().forEachRemaining(values::add);
+		if (getHttpServletRequest() != null && values.isEmpty())
+			getHttpServletRequest().getHeaders(arg0).asIterator().forEachRemaining(values::add);
 		return Collections.enumeration(values.stream().filter(o -> o != null).collect(Collectors.toList()));
 	}
 
@@ -372,47 +376,47 @@ public class MockHttpServletRequest implements HttpServletRequest {
 
 	@Override
 	public String getMethod() {
-		return this.req.getMethod();
+		return getHttpServletRequest().getMethod();
 	}
 
 	@Override
 	public Part getPart(String arg0) throws IOException, ServletException {
-		return this.req.getPart(arg0);
+		return getHttpServletRequest().getPart(arg0);
 	}
 
 	@Override
 	public Collection<Part> getParts() throws IOException, ServletException {
-		return this.req.getParts();
+		return getHttpServletRequest().getParts();
 	}
 
 	@Override
 	public String getPathInfo() {
-		return this.req.getPathInfo();
+		return getHttpServletRequest().getPathInfo();
 	}
 
 	@Override
 	public String getPathTranslated() {
-		return this.req.getPathTranslated();
+		return getHttpServletRequest().getPathTranslated();
 	}
 
 	@Override
 	public String getQueryString() {
-		return this.req.getQueryString();
+		return getHttpServletRequest().getQueryString();
 	}
 
 	@Override
 	public String getRemoteUser() {
-		return this.req.getRemoteUser();
+		return getHttpServletRequest().getRemoteUser();
 	}
 
 	@Override
 	public String getRequestURI() {
-		return this.req.getRequestURI();
+		return getHttpServletRequest().getRequestURI();
 	}
 
 	@Override
 	public StringBuffer getRequestURL() {
-		return this.req.getRequestURL();
+		return getHttpServletRequest().getRequestURL();
 	}
 
 	@Override
@@ -422,32 +426,32 @@ public class MockHttpServletRequest implements HttpServletRequest {
 
 	@Override
 	public String getServletPath() {
-		return this.req.getServletPath();
+		return getHttpServletRequest().getServletPath();
 	}
 
 	@Override
 	public HttpSession getSession() {
-		return this.req.getSession();
+		return getHttpServletRequest().getSession();
 	}
 
 	@Override
 	public HttpSession getSession(boolean arg0) {
-		return this.req.getSession(arg0);
+		return getHttpServletRequest().getSession(arg0);
 	}
 
 	@Override
 	public Principal getUserPrincipal() {
-		return this.req.getUserPrincipal();
+		return getHttpServletRequest().getUserPrincipal();
 	}
 
 	@Override
 	public boolean isRequestedSessionIdFromCookie() {
-		return this.req.isRequestedSessionIdFromCookie();
+		return getHttpServletRequest().isRequestedSessionIdFromCookie();
 	}
 
 	@Override
 	public boolean isRequestedSessionIdFromURL() {
-		return this.req.isRequestedSessionIdFromURL();
+		return getHttpServletRequest().isRequestedSessionIdFromURL();
 	}
 
 	/**
@@ -457,32 +461,32 @@ public class MockHttpServletRequest implements HttpServletRequest {
 	@Deprecated(since="3.3")
 	@Override
 	public boolean isRequestedSessionIdFromUrl() {
-		return this.req.isRequestedSessionIdFromUrl();
+		return getHttpServletRequest().isRequestedSessionIdFromUrl();
 	}
 
 	@Override
 	public boolean isRequestedSessionIdValid() {
-		return this.req.isRequestedSessionIdValid();
+		return getHttpServletRequest().isRequestedSessionIdValid();
 	}
 
 	@Override
 	public boolean isUserInRole(String arg0) {
-		return this.req.isUserInRole(arg0);
+		return getHttpServletRequest().isUserInRole(arg0);
 	}
 
 	@Override
 	public void login(String arg0, String arg1) throws ServletException {
-		this.req.login(arg0, arg1);
+		getHttpServletRequest().login(arg0, arg1);
 	}
 
 	@Override
 	public void logout() throws ServletException {
-		this.req.logout();
+		getHttpServletRequest().logout();
 	}
 
 	@Override
 	public <T extends HttpUpgradeHandler> T upgrade(Class<T> arg0) throws IOException, ServletException {
-		return this.req.upgrade(arg0);
+		return getHttpServletRequest().upgrade(arg0);
 	}
 
 	public void setHeaders(Map<String, List<String>> headers) {

@@ -1,3 +1,11 @@
+2026-01-12  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloModIPA]
+	Risolto Bug #1700
+	Aggiunta compatibilità con l'opzione Tomcat STRICT_SERVLET_COMPLIANCE: 
+	le classi MockHttpServletRequest e MockHttpServletResponse estendono ora i rispettivi wrapper (HttpServletRequestWrapper/HttpServletResponseWrapper) 
+	per soddisfare le verifiche SRV.8.2 e SRV.14.2.5.1 durante l'uso di RequestDispatcher.forward() utilizzato dalla funzionalità di pseudoanonimizzazione degli id in SignalHub
+
 2026-01-08  Tommaso Burlon <tommaso.burlon@link.it>
 
 	* [GovWayCore, GovWayConsole, GovWayMonitor]

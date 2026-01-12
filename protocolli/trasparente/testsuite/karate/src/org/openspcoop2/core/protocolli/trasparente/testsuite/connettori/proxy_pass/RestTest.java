@@ -737,7 +737,8 @@ public class RestTest extends ConfigLoader {
 			if(c1.getValue()!=null) {
 				assertEquals(msg+" (getValue)", c1.getValue(), c2.getValue());
 			}
-			if(c1.getPath().contains("?")){
+			if(c1.getPath().contains("?") || Utils.isJenkins()){
+				// Version=1 è atteso quando il path contiene "?" o in ambiente Jenkins dove Tomcat usa STRICT_SERVLET_COMPLIANCE=true (RFC2109)
 				assertEquals(msg+" (getVersion)", 1, c2.getVersion());
 			}
 			else {

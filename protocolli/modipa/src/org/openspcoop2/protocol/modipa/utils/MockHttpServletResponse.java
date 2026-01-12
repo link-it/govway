@@ -31,16 +31,19 @@ import java.util.Map;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponseWrapper;
 
 /**
- * Classe per simulare una risposta servlet http
- * 
- * 
+ * Classe per simulare una risposta servlet http.
+ *
+ * Estende HttpServletResponseWrapper per garantire la compatibilità con
+ * l'opzione Tomcat STRICT_SERVLET_COMPLIANCE (verifica SRV.8.2 e SRV.14.2.5.1).
+ *
  * @author Tommaso Burlon (tommaso.burlon@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class MockHttpServletResponse implements HttpServletResponse {
+public class MockHttpServletResponse extends HttpServletResponseWrapper {
 
 	private String contentType;
 	private Long contentLength;
@@ -51,9 +54,13 @@ public class MockHttpServletResponse implements HttpServletResponse {
 	private MockServletOutputStream outputStream = new MockServletOutputStream();
 	private boolean committed = false;
 	private Locale locale = null;
-	
+
 	private List<Cookie> cookies = new ArrayList<>();
-	
+
+	public MockHttpServletResponse(HttpServletResponse response) {
+		super(response);
+	}
+
 	@Override
 	public void flushBuffer() throws IOException {
 		this.committed = true;

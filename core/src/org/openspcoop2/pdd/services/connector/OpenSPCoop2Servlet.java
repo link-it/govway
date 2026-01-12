@@ -292,6 +292,7 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 			}
 			
 			URLProtocolContext protocolContext = new URLProtocolContextImpl(req, logCore, printCertificate, customContexts);
+			protocolContext.setHttpServletResponse(res);
 			String function = protocolContext.getFunction();
 			IDService idServiceCustom = protocolContext.getIdServiceCustom();
 			

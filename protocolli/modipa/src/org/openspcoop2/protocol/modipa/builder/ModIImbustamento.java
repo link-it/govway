@@ -1113,9 +1113,9 @@ public class ModIImbustamento {
 		RequestInfo reqInfo = (RequestInfo) context.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
 		String eServiceId = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(eServiceProperties, ModICostanti.MODIPA_API_IMPL_INFO_ESERVICE_ID);
 		
-		// creo una richiesta e risposta servlet mock per inviare un segnale di SEEDUPDATE alla stessa porta delegata con le stesse credenziali 
+		// creo una richiesta e risposta servlet mock per inviare un segnale di SEEDUPDATE alla stessa porta delegata con le stesse credenziali
 		MockHttpServletRequest req = new MockHttpServletRequest(reqInfo.getProtocolContext().getHttpServletRequest());
-		MockHttpServletResponse res = new MockHttpServletResponse();
+		MockHttpServletResponse res = new MockHttpServletResponse(reqInfo.getProtocolContext().getHttpServletResponse());
 		
 		Transaction transaction = null;
 		try (MockServletInputStream is = new MockServletInputStream()) {

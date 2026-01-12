@@ -516,10 +516,10 @@ public class ModIKeystoreUtils {
 		String keystorePathPropertyName = null;
 		String keystorePathPublicKeyPropertyName = null;
 		String keystoreKeyAlgorithmPropertyName = null;
-		String keystorePasswordPropertyName = null;
+		String keystorePsPropertyName = null;
 		String keystoreByokPolicyPropertyName = null;
 		String keyAliasPropertyName = null;
-		String keyPasswordPropertyName = null;
+		String keyPsPropertyName = null;
 
 		switch(configType) {
 		case DPOP:
@@ -530,10 +530,10 @@ public class ModIKeystoreUtils {
 			keystorePathPropertyName = CostantiDB.MODIPA_DPOP_KEYSTORE_PATH;
 			keystorePathPublicKeyPropertyName = CostantiDB.MODIPA_DPOP_KEYSTORE_PATH_PUBLIC_KEY;
 			keystoreKeyAlgorithmPropertyName = CostantiDB.MODIPA_DPOP_KEYSTORE_KEY_ALGORITHM;
-			keystorePasswordPropertyName = CostantiDB.MODIPA_DPOP_KEYSTORE_PASSWORD;
+			keystorePsPropertyName = CostantiDB.MODIPA_DPOP_KEYSTORE_PASSWORD;
 			keystoreByokPolicyPropertyName = CostantiDB.MODIPA_DPOP_KEYSTORE_BYOK_POLICY;
 			keyAliasPropertyName = CostantiDB.MODIPA_DPOP_KEY_ALIAS;
-			keyPasswordPropertyName = CostantiDB.MODIPA_DPOP_KEY_PASSWORD;
+			keyPsPropertyName = CostantiDB.MODIPA_DPOP_KEY_PASSWORD;
 			break;
 		}
 
@@ -592,14 +592,14 @@ public class ModIKeystoreUtils {
 					required = false;
 				}
 				if(required) {
-					this.securityMessageKeystorePassword = ProtocolPropertiesUtils.getRequiredStringValuePropertyConfig(sa.getProtocolPropertyList(), keystorePasswordPropertyName);
+					this.securityMessageKeystorePassword = ProtocolPropertiesUtils.getRequiredStringValuePropertyConfig(sa.getProtocolPropertyList(), keystorePsPropertyName);
 				}
 				else {
-					this.securityMessageKeystorePassword = ProtocolPropertiesUtils.getOptionalStringValuePropertyConfig(sa.getProtocolPropertyList(), keystorePasswordPropertyName);
+					this.securityMessageKeystorePassword = ProtocolPropertiesUtils.getOptionalStringValuePropertyConfig(sa.getProtocolPropertyList(), keystorePsPropertyName);
 				}
 			}
 			else {
-				this.securityMessageKeystorePassword = ProtocolPropertiesUtils.getOptionalStringValuePropertyConfig(sa.getProtocolPropertyList(), keystorePasswordPropertyName);
+				this.securityMessageKeystorePassword = ProtocolPropertiesUtils.getOptionalStringValuePropertyConfig(sa.getProtocolPropertyList(), keystorePsPropertyName);
 			}
 		}
 		else {
@@ -631,18 +631,18 @@ public class ModIKeystoreUtils {
 					required = false;
 				}
 				if(required) {
-					this.securityMessageKeyPassword = ProtocolPropertiesUtils.getRequiredStringValuePropertyConfig(sa.getProtocolPropertyList(), keyPasswordPropertyName);
+					this.securityMessageKeyPassword = ProtocolPropertiesUtils.getRequiredStringValuePropertyConfig(sa.getProtocolPropertyList(), keyPsPropertyName);
 				}
 				else {
-					this.securityMessageKeyPassword = ProtocolPropertiesUtils.getOptionalStringValuePropertyConfig(sa.getProtocolPropertyList(), keyPasswordPropertyName);
+					this.securityMessageKeyPassword = ProtocolPropertiesUtils.getOptionalStringValuePropertyConfig(sa.getProtocolPropertyList(), keyPsPropertyName);
 				}
 			}
 			else {
-				this.securityMessageKeyPassword = ProtocolPropertiesUtils.getOptionalStringValuePropertyConfig(sa.getProtocolPropertyList(), keyPasswordPropertyName);
+				this.securityMessageKeyPassword = ProtocolPropertiesUtils.getOptionalStringValuePropertyConfig(sa.getProtocolPropertyList(), keyPsPropertyName);
 			}
 		}
 		else if(HSMUtils.isHsmConfigurableKeyPassword()) {
-			this.securityMessageKeyPassword = ProtocolPropertiesUtils.getRequiredStringValuePropertyConfig(sa.getProtocolPropertyList(), keyPasswordPropertyName);
+			this.securityMessageKeyPassword = ProtocolPropertiesUtils.getRequiredStringValuePropertyConfig(sa.getProtocolPropertyList(), keyPsPropertyName);
 		}
 		else {
 			this.securityMessageKeyPassword = HSMUtils.KEYSTORE_HSM_PRIVATE_KEY_PASSWORD_UNDEFINED;
@@ -658,10 +658,10 @@ public class ModIKeystoreUtils {
 		String keystorePathPropertyName = null;
 		String keystorePathPublicKeyPropertyName = null;
 		String keystoreKeyAlgorithmPropertyName = null;
-		String keystorePasswordPropertyName = null;
+		String keystorePsPropertyName = null;
 		String keystoreByokPolicyPropertyName = null;
 		String keyAliasPropertyName = null;
-		String keyPasswordPropertyName = null;
+		String keyPsPropertyName = null;
 
 		switch(configType) {
 		case DPOP:
@@ -672,10 +672,10 @@ public class ModIKeystoreUtils {
 			keystorePathPropertyName = CostantiDB.MODIPA_DPOP_KEYSTORE_PATH;
 			keystorePathPublicKeyPropertyName = CostantiDB.MODIPA_DPOP_KEYSTORE_PATH_PUBLIC_KEY;
 			keystoreKeyAlgorithmPropertyName = CostantiDB.MODIPA_DPOP_KEYSTORE_KEY_ALGORITHM;
-			keystorePasswordPropertyName = CostantiDB.MODIPA_DPOP_KEYSTORE_PASSWORD;
+			keystorePsPropertyName = CostantiDB.MODIPA_DPOP_KEYSTORE_PASSWORD;
 			keystoreByokPolicyPropertyName = CostantiDB.MODIPA_DPOP_KEYSTORE_BYOK_POLICY;
 			keyAliasPropertyName = CostantiDB.MODIPA_DPOP_KEY_ALIAS;
-			keyPasswordPropertyName = CostantiDB.MODIPA_DPOP_KEY_PASSWORD;
+			keyPsPropertyName = CostantiDB.MODIPA_DPOP_KEY_PASSWORD;
 			break;
 		}
 
@@ -739,14 +739,14 @@ public class ModIKeystoreUtils {
 					required = false;
 				}
 				if(required) {
-					this.securityMessageKeystorePassword = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, keystorePasswordPropertyName);
+					this.securityMessageKeystorePassword = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, keystorePsPropertyName);
 				}
 				else {
-					this.securityMessageKeystorePassword = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(listProtocolProperties, keystorePasswordPropertyName);
+					this.securityMessageKeystorePassword = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(listProtocolProperties, keystorePsPropertyName);
 				}
 			}
 			else {
-				this.securityMessageKeystorePassword = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(listProtocolProperties, keystorePasswordPropertyName);
+				this.securityMessageKeystorePassword = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(listProtocolProperties, keystorePsPropertyName);
 			}
 		}
 		else {
@@ -778,18 +778,18 @@ public class ModIKeystoreUtils {
 					required = false;
 				}
 				if(required) {
-					this.securityMessageKeyPassword = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, keyPasswordPropertyName);
+					this.securityMessageKeyPassword = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, keyPsPropertyName);
 				}
 				else {
-					this.securityMessageKeyPassword = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(listProtocolProperties, keyPasswordPropertyName);
+					this.securityMessageKeyPassword = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(listProtocolProperties, keyPsPropertyName);
 				}
 			}
 			else {
-				this.securityMessageKeyPassword = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(listProtocolProperties, keyPasswordPropertyName);
+				this.securityMessageKeyPassword = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(listProtocolProperties, keyPsPropertyName);
 			}
 		}
 		else if(HSMUtils.isHsmConfigurableKeyPassword()) {
-			this.securityMessageKeyPassword = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, keyPasswordPropertyName);
+			this.securityMessageKeyPassword = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, keyPsPropertyName);
 		}
 		else {
 			this.securityMessageKeyPassword = HSMUtils.KEYSTORE_HSM_PRIVATE_KEY_PASSWORD_UNDEFINED;

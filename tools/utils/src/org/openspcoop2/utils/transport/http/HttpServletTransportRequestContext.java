@@ -28,6 +28,7 @@ import java.util.List;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.resources.Charset;
@@ -47,17 +48,26 @@ public class HttpServletTransportRequestContext extends org.openspcoop2.utils.tr
 
 	// Senno se l'oggetto non e' serializzabile
 	private transient HttpServletRequest httpServletRequest;
-	
+
 	public HttpServletRequest getHttpServletRequest() {
 		return this.httpServletRequest;
 	}
 	public void updateHttpServletRequest(HttpServletRequest httpServletRequest) {
 		this.httpServletRequest = httpServletRequest;
 	}
-	
+
+	// Può servire per implementare HttpServletResponseWrapper che richiede il wrap della response originale
+	private transient HttpServletResponse httpServletResponse;
+
+	public HttpServletResponse getHttpServletResponse() {
+		return this.httpServletResponse;
+	}
+	public void setHttpServletResponse(HttpServletResponse httpServletResponse) {
+		this.httpServletResponse = httpServletResponse;
+	}
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 		
