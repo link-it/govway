@@ -1891,16 +1891,36 @@ public class DBUtils {
 		}
 		
 		if (modiFilter.getServiceId() != null) {
-			ISQLQueryObject sqlServiceId = buildSQLQueryObjectProtocolProperties(proprietario, tabellaDB,
-					tipoDB, CostantiDB.MODIPA_API_IMPL_INFO_ESERVICE_ID, null, modiFilter.getServiceId(), null);
-			sqlQueryObject.addWhereExistsCondition(false, sqlServiceId);
+			addWhereExistConditionPropertyCSV(proprietario, tabellaDB,
+					sqlQueryObject, tipoDB, 
+					CostantiDB.MODIPA_API_IMPL_INFO_ESERVICE_ID, modiFilter.getServiceId());
 		}
-		
+
 		if (modiFilter.getDescriptorId() != null) {
-			ISQLQueryObject sqlDescriptorId = buildSQLQueryObjectProtocolProperties(proprietario, tabellaDB,
-					tipoDB, CostantiDB.MODIPA_API_IMPL_INFO_DESCRIPTOR_ID, null, modiFilter.getDescriptorId(), null);
-			sqlQueryObject.addWhereExistsCondition(false, sqlDescriptorId);
+			addWhereExistConditionPropertyCSV(proprietario, tabellaDB,
+					sqlQueryObject, tipoDB, 
+					CostantiDB.MODIPA_API_IMPL_INFO_DESCRIPTOR_ID, modiFilter.getDescriptorId());
 		}
+	}
+	private static void addWhereExistConditionPropertyCSV(ProprietariProtocolProperty proprietario, String tabellaDB,
+			ISQLQueryObject sqlQueryObject, String tipoDB, 
+			String id, String value) throws Exception {
+		ISQLQueryObject sqlServiceIdEquals = buildSQLQueryObjectProtocolProperties(proprietario, tabellaDB,
+				tipoDB, id, value, null, null);
+		ISQLQueryObject sqlServiceIdStart = buildSQLQueryObjectProtocolProperties(proprietario, tabellaDB,
+				tipoDB, id, null, null, null);
+		sqlServiceIdStart.addWhereLikeCondition(CostantiDB.PROTOCOL_PROPERTIES+".value_string", value+",", LikeConfig.startsWith(true));
+		ISQLQueryObject sqlServiceIdEnd = buildSQLQueryObjectProtocolProperties(proprietario, tabellaDB,
+				tipoDB, id, null, null, null);
+		sqlServiceIdEnd.addWhereLikeCondition(CostantiDB.PROTOCOL_PROPERTIES+".value_string", ","+value, LikeConfig.endsWith(true));
+		ISQLQueryObject sqlServiceIdContains = buildSQLQueryObjectProtocolProperties(proprietario, tabellaDB,
+				tipoDB, id, null, null, null);
+		sqlServiceIdContains.addWhereLikeCondition(CostantiDB.PROTOCOL_PROPERTIES+".value_string", ","+value+",", LikeConfig.contains(true));
+		sqlQueryObject.addWhereCondition(false, 
+				sqlQueryObject.getWhereExistsCondition(false, sqlServiceIdEquals),
+				sqlQueryObject.getWhereExistsCondition(false, sqlServiceIdStart),
+				sqlQueryObject.getWhereExistsCondition(false, sqlServiceIdEnd),
+				sqlQueryObject.getWhereExistsCondition(false, sqlServiceIdContains));
 	}
 	
 	public static void setFiltriModIFruizione(ISQLQueryObject sqlQueryObject, String tipoDB,
