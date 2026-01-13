@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ GovWay - A customizable API Gateway
+ https://govway.org
+
+ Copyright (c) 2005-2025 Link.it srl (https://link.it).
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License version 3, as published by
+ the Free Software Foundation.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
+                             http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
+         version="4.0">
+
+    <display-name>govway-statistiche-timer</display-name>
+    <description>GovWay Statistiche Timer Service</description>
+
+    <!-- Startup Listener -->
+    <listener>
+        <listener-class>org.openspcoop2.core.statistiche.server.StatisticheServletListener</listener-class>
+    </listener>
+
+</web-app>

@@ -1,0 +1,115 @@
+<project name="openspcoop2-war-statistiche-server">
+    <description>
+        Produzione del WAR per il servizio timer statistiche
+    </description>
+
+
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+          <classpath>
+              <pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+          </classpath>
+	</taskdef>
+
+	<target name="-war_statistiche">
+
+		<if>
+			<equals arg1="${as}" arg2="jboss7"/>
+			<then>
+				<copy file="${src_statistiche}/WEB-INF/${jboss_deployment_structure}.${as}"
+						tofile="${tmp_jboss_conf}/${jboss_deployment_structure}" />
+			</then>
+ 		</if>
+		<if>
+			<matches string="${as}" pattern="wildfly.*"/>
+			<then>
+				<if>
+					<or>
+						<matches string="${as}" pattern="wildfly22"/>
+						<matches string="${as}" pattern="wildfly23"/>
+						<matches string="${as}" pattern="wildfly24"/>
+						<matches string="${as}" pattern="wildfly25"/>
+						<matches string="${as}" pattern="wildfly26"/>
+					</or>
+					<then>
+						<copy file="${src_statistiche}/WEB-INF/${jboss_deployment_structure}.wildfly22"
+							tofile="${tmp_jboss_conf}/${jboss_deployment_structure}" />
+					</then>
+					<else>
+						<copy file="${src_statistiche}/WEB-INF/${jboss_deployment_structure}.wildfly8"
+							tofile="${tmp_jboss_conf}/${jboss_deployment_structure}" />
+					</else>
+				</if>
+			</then>
+ 		</if>
+
+		<!-- Properties -->
+		<delete dir="${build_statistiche}/properties" />
+		<mkdir dir="${build_statistiche}/properties" />
+		<copy todir="${build_statistiche}/properties">
+			<fileset dir="${properties_statistiche}">
+				<include name="*.properties"/>
+			</fileset>
+		</copy>
+
+		<war destfile="${dist_statistiche}/govwayStatistiche.war" webxml="${src_statistiche}/WEB-INF/web.xml">
+
+			<webinf dir="${tmp_jboss_conf}">
+				<include name="${jboss_classloading}" />
+			</webinf>
+			<webinf dir="${src_statistiche}/WEB-INF">
+				<include name="${jboss_scanning}" />
+			</webinf>
+			<webinf dir="${tmp_jboss_conf}">
+				<include name="${jboss_deployment_structure}" />
+			</webinf>
+
+			<!-- JAR OpenSPCoop2 necessari -->
+			<lib dir="${openspcoop2.dist}">
+				<!-- Core: DAOFactory, PropertiesEnvUtils, statistiche.constants -->
+				<include name="openspcoop2_core_*.jar"/>
+				<!-- Utils: LoggerWrapperFactory, TipiDatabase, semaphore.*, certificate.* -->
+				<include name="openspcoop2_utils_*.jar"/>
+				<!-- Monitor: StatisticsConfig, StatisticsLibrary -->
+				<include name="openspcoop2_monitor_*.jar"/>
+				<!-- Protocol: ProtocolFactoryManager, Costanti -->
+				<include name="openspcoop2_protocol_*.jar"/>
+				<!-- Protocol-API: ConfigurazionePdD -->
+				<include name="openspcoop2_protocol-api_*.jar"/>
+				<!-- PDD: BYOKMapProperties, DynamicInfo/Utils -->
+				<include name="openspcoop2_pdd_*.jar"/>
+				<!-- Security: HSMManager, BYOKManager (transitive) -->
+				<include name="openspcoop2_security_*.jar"/>
+				<!-- Generic-Project: dipendenza transitiva di core -->
+				<include name="openspcoop2_generic-project_*.jar"/>
+			</lib>
+			<!-- JAR compilato del progetto -->
+			<lib dir="${dist_statistiche}">
+				<include name="openspcoop2_*.jar"/>
+			</lib>
+
+			<lib dir="${openspcoop2.lib}/shared">
+				<include name="${xerces_jar}"/>
+				<include name="${xml_apis_jar}"/>
+				<include name="${xalan_jar}"/>
+				<include name="${xalan_serializer_jar}"/>
+			</lib>
+			<lib dir="${openspcoop2.lib}/commons">
+				<include name="commons-lang3-*.jar"/>
+				<include name="commons-io-*.jar"/>
+				<include name="${commons_logging_jar}"/>
+			</lib>
+			<lib dir="${openspcoop2.lib}/log">
+				<include name="slf4j-api-*.jar"/>
+				<include name="log4j*.jar"/>
+			</lib>
+
+			<classes dir="${build_statistiche}/properties">
+				<include name="*.properties"/>
+			</classes>
+
+		</war>
+
+	</target>
+
+</project>
