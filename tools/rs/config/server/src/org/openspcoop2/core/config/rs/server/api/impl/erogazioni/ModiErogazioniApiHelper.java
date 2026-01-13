@@ -1890,9 +1890,6 @@ public class ModiErogazioniApiHelper {
 
 		// DPoP è una configurazione opzionale aggiuntiva
 		if(modiDpop!=null) {
-			if(p==null) {
-				p = new ProtocolProperties();
-			}
 			ModiErogazioniApiHelper.getDPoPProperties(modiDpop, p);
 		}
 
@@ -3728,7 +3725,7 @@ public class ModiErogazioniApiHelper {
 
 	public static void validateDPoPConfigurationCreate(FruizioneModIDPoP modiDpop, Fruizione body, ErogazioniEnv env) {
 		if(modiDpop != null) {
-			String tokenPolicy = (body.getConnettore() != null) ? body.getConnettore().getTokenPolicy() : null;
+			String tokenPolicy = body.getConnettore().getTokenPolicy();
 			if(tokenPolicy == null || tokenPolicy.isEmpty() || !isTokenPolicyDPoP(tokenPolicy, env)) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(DPOP_RICHIEDE_TOKEN_POLICY_CON_DPOP_ABILITATO);
 			}
