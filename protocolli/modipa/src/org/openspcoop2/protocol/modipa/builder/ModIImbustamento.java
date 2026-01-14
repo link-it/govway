@@ -1131,7 +1131,9 @@ public class ModIImbustamento {
 			// rimuove la transazione corrente dal contesto in quanto verra eseguita la transazione per il SEEDUPDATE
 			transaction = TransactionContext.removeTransaction(reqInfo.getIdTransazione());
 		
-			req.getRequestDispatcher(req.getPathInfo()).forward(req, res);
+			/** req.getRequestDispatcher(req.getPathInfo()).forward(req, res);*/ 
+			// utilizzo include poichè altrimenti con il forward tomcat prende il controllo della response originale (facade) e utilizza quella e otteniamo una risposta vuota al chiamante
+			req.getRequestDispatcher(req.getPathInfo()).include(req, res);
 		} catch (Exception e) {
 			throw newSeedUpdateException(e);
 		} finally {

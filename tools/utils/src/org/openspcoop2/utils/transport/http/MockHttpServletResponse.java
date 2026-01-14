@@ -1,9 +1,9 @@
 /*
- * GovWay - A customizable API Gateway 
+ * GovWay - A customizable API Gateway
  * https://govway.org
- * 
- * Copyright (c) 2005-2026 Link.it srl (https://link.it). 
- * 
+ *
+ * Copyright (c) 2005-2026 Link.it srl (https://link.it).
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
  * the Free Software Foundation.
@@ -54,7 +54,6 @@ public class MockHttpServletResponse extends HttpServletResponseWrapper {
 	private MockServletOutputStream outputStream = new MockServletOutputStream();
 	private boolean committed = false;
 	private Locale locale = null;
-
 	private List<Cookie> cookies = new ArrayList<>();
 
 	public MockHttpServletResponse(HttpServletResponse response) {
@@ -110,7 +109,9 @@ public class MockHttpServletResponse extends HttpServletResponseWrapper {
 
 	@Override
 	public void resetBuffer() {
-		this.outputStream = new MockServletOutputStream();
+		// Non creare un nuovo outputStream: mantieni lo stesso riferimento
+		// per evitare la perdita di dati quando Tomcat chiama resetBuffer
+		this.outputStream.getByteArrayOutputStream().reset();
 	}
 
 	@Override
@@ -121,27 +122,23 @@ public class MockHttpServletResponse extends HttpServletResponseWrapper {
 	@Override
 	public void setCharacterEncoding(String arg0) {
 		this.characterEncoding = arg0;
-
 	}
 
 	@Override
 	public void setContentLength(int arg0) {
 		this.contentLength = Long.valueOf(arg0);
-
 	}
 
 	@Override
 	public void setContentLengthLong(long arg0) {
 		this.contentLength = arg0;
-
 	}
 
 	@Override
 	public void setContentType(String arg0) {
 		this.contentType = arg0;
-
 	}
-	
+
 	public Long getContentLength() {
 		return this.contentLength;
 	}
@@ -158,18 +155,17 @@ public class MockHttpServletResponse extends HttpServletResponseWrapper {
 
 	@Override
 	public void addDateHeader(String arg0, long arg1) {
-		this.headers.getOrDefault(arg0, new ArrayList<>()).add(String.valueOf(arg1));
+		this.headers.computeIfAbsent(arg0, k -> new ArrayList<>()).add(String.valueOf(arg1));
 	}
 
 	@Override
 	public void addHeader(String arg0, String arg1) {
-		this.headers.getOrDefault(arg0, new ArrayList<>()).add(arg1);
+		this.headers.computeIfAbsent(arg0, k -> new ArrayList<>()).add(arg1);
 	}
 
 	@Override
 	public void addIntHeader(String arg0, int arg1) {
-		this.headers.getOrDefault(arg0, new ArrayList<>()).add(String.valueOf(arg1));
-
+		this.headers.computeIfAbsent(arg0, k -> new ArrayList<>()).add(String.valueOf(arg1));
 	}
 
 	@Override
@@ -224,27 +220,26 @@ public class MockHttpServletResponse extends HttpServletResponseWrapper {
 
 	@Override
 	public void setDateHeader(String arg0, long arg1) {
-		this.headers.getOrDefault(arg0, new ArrayList<>()).clear();
-		this.headers.getOrDefault(arg0, new ArrayList<>()).add(String.valueOf(arg1));
+		List<String> list = this.headers.computeIfAbsent(arg0, k -> new ArrayList<>());
+		list.clear();
+		list.add(String.valueOf(arg1));
 	}
 
 	@Override
 	public void setHeader(String arg0, String arg1) {
 		List<String> list = new ArrayList<>();
 		list.addAll(List.of(arg1.split(",")));
-		this.headers.put(arg1, list);
+		this.headers.put(arg0, list);
 	}
 
 	@Override
 	public void setIntHeader(String arg0, int arg1) {
 		this.headers.put(arg0, List.of(String.valueOf(arg1)));
-
 	}
 
 	@Override
 	public void setStatus(int arg0) {
 		this.status = arg0;
 	}
-
 
 }
