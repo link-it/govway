@@ -63,6 +63,9 @@ import com.hazelcast.spi.exception.DistributedObjectDestroyedException;
 public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati implements IDatiCollezionatiDistributed{
 
 	private static final long serialVersionUID = 1L;
+
+	// Prefisso per evitare collisioni di nomi con altre implementazioni (es. PNCounter)
+	public static final String COUNTER_PREFIX = "al-";
 	
 	private final transient org.openspcoop2.utils.Semaphore lock = new org.openspcoop2.utils.Semaphore("DatiCollezionatiDistributedAtomicLong");
 
@@ -276,6 +279,7 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 	private DatoAtomicLong initPolicyDate() {
 		if(this.policyRealtime!=null && this.policyRealtime){
 			return new DatoAtomicLong(this.hazelcast,
+					COUNTER_PREFIX+
 					this.groupByPolicyMapIdHashCode+
 					BuilderDatiCollezionatiDistributed.DISTRUBUITED_POLICY_DATE+
 					(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1),
@@ -286,6 +290,7 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 	private DatoAtomicLong initUpdatePolicyDate() {
 		if(this.policyRealtime!=null && this.policyRealtime){
 			return new DatoAtomicLong(this.hazelcast,
+					COUNTER_PREFIX+
 					this.groupByPolicyMapIdHashCode+
 					BuilderDatiCollezionatiDistributed.DISTRUBUITED_UPDATE_POLICY_DATE+
 					(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1),
@@ -296,6 +301,7 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 	private DatoAtomicLong initPolicyDegradoPrestazionaleDate() {
 		if(this.policyDegradoPrestazionaleRealtime!=null && this.policyDegradoPrestazionaleRealtime){
 			return new DatoAtomicLong(this.hazelcast,
+					COUNTER_PREFIX+
 					this.groupByPolicyMapIdHashCode+
 					BuilderDatiCollezionatiDistributed.DISTRUBUITED_POLICY_DEGRADO_PRESTAZIONALE_DATE+
 					(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1),
@@ -308,6 +314,7 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 		// Crea il contatore per la data dell'intervallo solo se la gestione a intervalli è abilitata
 		if(this.richiesteSimultaneeIntervalloSecondi > 0) {
 			return new DatoAtomicLong(this.hazelcast,
+					COUNTER_PREFIX+
 					this.groupByPolicyMapIdHashCode+
 					BuilderDatiCollezionatiDistributed.DISTRUBUITED_POLICY_DATE+ // riuso lo stesso suffisso
 					"activeRequest"+
@@ -357,6 +364,7 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 		// Altrimenti crea un contatore senza timestamp (comportamento legacy)
 		if(intervalDate != null && intervalDate > 0) {
 			return new DatoAtomicLong(this.hazelcast,
+					COUNTER_PREFIX+
 					this.groupByPolicyMapIdHashCode+
 					BuilderDatiCollezionatiDistributed.DISTRUBUITED_INTERVAL_ACTIVE_REQUEST_COUNTER+
 					intervalDate+
@@ -365,6 +373,7 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 					this.policyType);
 		} else {
 			return new DatoAtomicLong(this.hazelcast,
+					COUNTER_PREFIX+
 					this.groupByPolicyMapIdHashCode+
 					BuilderDatiCollezionatiDistributed.DISTRUBUITED_ACTIVE_REQUEST_COUNTER+
 					(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1),
@@ -377,6 +386,7 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 		if(this.policyRealtime!=null && this.policyRealtime){
 
 			this.distributedPolicyRequestCounter = new DatoAtomicLong(this.hazelcast,
+					COUNTER_PREFIX+
 					this.groupByPolicyMapIdHashCode+
 					BuilderDatiCollezionatiDistributed.DISTRUBUITED_INTERVAL_POLICY_REQUEST_COUNTER+
 					policyDate+
@@ -386,6 +396,7 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 			/**System.out.println("INIT DATA["+org.openspcoop2.utils.date.DateManager.getDate()+"]["+org.openspcoop2.utils.date.DateManager.getTimeMillis()+"] cout-> ["+this.distributedPolicyRequestCounter.getName()+"]");*/
 
 			this.distributedPolicyDenyRequestCounter = new DatoAtomicLong(this.hazelcast,
+					COUNTER_PREFIX+
 					this.groupByPolicyMapIdHashCode+
 					BuilderDatiCollezionatiDistributed.DISTRUBUITED_INTERVAL_POLICY_DENY_REQUEST_COUNTER+
 					policyDate+
@@ -396,6 +407,7 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 
 			if(this.tipoRisorsa==null || !isRisorsaContaNumeroRichieste(this.tipoRisorsa)){
 				this.distributedPolicyCounter = new DatoAtomicLong(this.hazelcast,
+						COUNTER_PREFIX+
 						this.groupByPolicyMapIdHashCode+
 						BuilderDatiCollezionatiDistributed.DISTRUBUITED_INTERVAL_POLICY_COUNTER+
 						policyDate+
@@ -411,6 +423,7 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 
 		if(this.policyDegradoPrestazionaleRealtime!=null && this.policyDegradoPrestazionaleRealtime){
 			this.distributedPolicyDegradoPrestazionaleCounter = new DatoAtomicLong(this.hazelcast,
+					COUNTER_PREFIX+
 					this.groupByPolicyMapIdHashCode+
 					BuilderDatiCollezionatiDistributed.DISTRUBUITED_INTERVAL_POLICY_DEGRADO_PRESTAZIONALE_COUNTER+
 					policyDate+
@@ -419,6 +432,7 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 					this.policyType);
 
 			this.distributedPolicyDegradoPrestazionaleRequestCounter = new DatoAtomicLong(this.hazelcast,
+					COUNTER_PREFIX+
 					this.groupByPolicyMapIdHashCode+
 					BuilderDatiCollezionatiDistributed.DISTRUBUITED_INTERVAL_POLICY_DEGRADO_PRESTAZIONALE_REQUEST_COUNTER+
 					policyDate+

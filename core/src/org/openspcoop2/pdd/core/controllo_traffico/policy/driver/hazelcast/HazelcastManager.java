@@ -32,6 +32,8 @@ import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyException;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreadsType;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.counters.DatiCollezionatiDistributedAtomicLong;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.counters.DatiCollezionatiDistributedPNCounter;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
@@ -786,7 +788,7 @@ public class HazelcastManager {
 
 				// Per PNCOUNTER, pulisce e mostra anche i contatori delle date dal registry (sono AtomicLong nel CP Subsystem)
 				if(type == PolicyGroupByActiveThreadsType.HAZELCAST_PNCOUNTER && atomicLongRegistryEnabled) {
-					removed += cleanupAndLogAtomicLongRegistryForPNCounter(type, activePolicyIds, logControlloTraffico, sdf);
+					removed += cleanupAndLogAtomicLongRegistryForPNCounter(type, activePolicyIds, thresholdMs, logControlloTraffico, sdf);
 				}
 
 			} catch(Throwable t) {
@@ -897,14 +899,18 @@ public class HazelcastManager {
 			int countRecent = 0;
 			int removedForType = 0;
 			int removedWithoutInterval = 0;
+			int skippedRecent = 0;
 			long oldestInterval = Long.MAX_VALUE;
 			long newestIntervalRemoved = Long.MIN_VALUE;
 			long newestInterval = Long.MIN_VALUE;
 
+			// Soglia temporale: non eliminare contatori registrati entro thresholdMs
+			long registrationThreshold = now - thresholdMs;
+
 			// Raccolta policy attive (con almeno un contatore recente con intervallo)
 			List<String> activePolicyIds = new ArrayList<>();
-			// Raccolta contatori senza intervallo per la seconda passata
-			List<String> countersWithoutInterval = new ArrayList<>();
+			// Raccolta contatori senza intervallo per la seconda passata (con il loro timestamp di registrazione)
+			List<java.util.Map.Entry<String, Long>> countersWithoutInterval = new ArrayList<>();
 
 			// Prima passata: elabora contatori CON intervallo e raccogli quelli SENZA
 			for (java.util.Map.Entry<String, Long> entry : registry.entrySet()) {
@@ -916,9 +922,9 @@ public class HazelcastManager {
 
 				int intervalIndex = name.indexOf("-i-");
 				if(intervalIndex < 0) {
-					// Contatore senza intervallo: lo raccogliamo per la seconda passata
+					// Contatore senza intervallo: lo raccogliamo per la seconda passata (con il timestamp di registrazione)
 					countWithoutInterval++;
-					countersWithoutInterval.add(name);
+					countersWithoutInterval.add(entry);
 					continue;
 				}
 
@@ -979,9 +985,22 @@ public class HazelcastManager {
 			}
 
 			// Seconda passata: rimuovi i contatori senza intervallo di policy non più attive
-			for(String name : countersWithoutInterval) {
+			for(java.util.Map.Entry<String, Long> entry : countersWithoutInterval) {
+				String name = entry.getKey();
+				Long registrationTime = entry.getValue();
 				String policyId = extractPolicyId(name, false);
 				if(policyId != null && !activePolicyIds.contains(policyId)) {
+					// Verifica se il contatore è stato registrato di recente (potrebbe essere in fase di inizializzazione)
+					if(registrationTime != null && registrationTime > registrationThreshold) {
+						// Contatore registrato di recente, non eliminare
+						skippedRecent++;
+						if(logControlloTraffico != null) {
+							String msg = "Skipping recently registered AtomicLong counter: " + name +
+									" (registered=" + sdf.format(new java.util.Date(registrationTime)) + ")";
+							logControlloTraffico.debug(msg);
+						}
+						continue;
+					}
 					// La policy non ha più contatori recenti, rimuovi anche i contatori senza intervallo
 					try {
 						hazelcast.getCPSubsystem().getAtomicLong(name).destroy();
@@ -1011,6 +1030,9 @@ public class HazelcastManager {
 			sb.append(", recent=").append(countRecent);
 			sb.append(", removedWithInterval=").append(removedForType);
 			sb.append(", removedWithoutInterval=").append(removedWithoutInterval);
+			if(skippedRecent > 0) {
+				sb.append(", skippedRecent=").append(skippedRecent);
+			}
 			if(countWithInterval > 0 && oldestInterval != Long.MAX_VALUE) {
 				sb.append(", oldest=").append(sdf.format(new java.util.Date(oldestInterval)));
 			}
@@ -1051,9 +1073,10 @@ public class HazelcastManager {
 		}
 		String name = counterName;
 		// Per PNCOUNTER il formato è: pncounter-HASHCODE--tipo-i-...
-		// Per AtomicLong il formato è: HASHCODE-tipo-i-...
+		// Per AtomicLong il formato è: al-HASHCODE-tipo-i-...
+		// Per AtomicLong ausiliari di PNCounter il formato è: pn_al-HASHCODE-tipo-i-...
 		if(isPNCounter) {
-			String prefix = "pncounter-";
+			String prefix = DatiCollezionatiDistributedPNCounter.PNCOUNTER_PREFIX;
 			if(name.startsWith(prefix)) {
 				name = name.substring(prefix.length());
 			}
@@ -1063,6 +1086,14 @@ public class HazelcastManager {
 				return name.substring(0, doubleHyphenIndex);
 			}
 		} else {
+			// Rimuove il prefisso se presente (al- o pn_al-)
+			String alPrefix = DatiCollezionatiDistributedAtomicLong.COUNTER_PREFIX;
+			String pnAlPrefix = DatiCollezionatiDistributedPNCounter.ATOMIC_LONG_PREFIX;
+			if(name.startsWith(alPrefix)) {
+				name = name.substring(alPrefix.length());
+			} else if(name.startsWith(pnAlPrefix)) {
+				name = name.substring(pnAlPrefix.length());
+			}
 			// Per AtomicLong il formato è: HASHCODE-tipo... dove tipo inizia con una lettera
 			// L'hashcode può essere negativo (es. -1193533566), quindi cerchiamo il primo "-" seguito da lettera
 			for(int i = 0; i < name.length() - 1; i++) {
@@ -1082,12 +1113,13 @@ public class HazelcastManager {
 	 *
 	 * @param type tipo di policy
 	 * @param activePolicyIds lista delle policy attive (con contatori PNCounter recenti)
+	 * @param thresholdMs soglia in millisecondi - i contatori registrati entro questa soglia non vengono eliminati
 	 * @param logControlloTraffico logger
 	 * @param sdf formato data per il log
 	 * @return numero di contatori rimossi
 	 */
 	private static int cleanupAndLogAtomicLongRegistryForPNCounter(PolicyGroupByActiveThreadsType type,
-			List<String> activePolicyIds, Logger logControlloTraffico, java.text.SimpleDateFormat sdf) {
+			List<String> activePolicyIds, long thresholdMs, Logger logControlloTraffico, java.text.SimpleDateFormat sdf) {
 		int removed = 0;
 
 		if(staticMapInstance == null) {
@@ -1115,6 +1147,11 @@ public class HazelcastManager {
 				int countWithoutInterval = 0;
 				int removedWithInterval = 0;
 				int removedWithoutInterval = 0;
+				int skippedRecent = 0;
+
+				// Soglia temporale: non eliminare contatori registrati entro thresholdMs
+				long now = org.openspcoop2.utils.date.DateManager.getTimeMillis();
+				long registrationThreshold = now - thresholdMs;
 
 				// Raccoglie i nomi per evitare ConcurrentModificationException
 				List<String> counterNames = new ArrayList<>(registry.keySet());
@@ -1125,7 +1162,7 @@ public class HazelcastManager {
 					}
 
 					// Estrae il policyId (per AtomicLong delle date, il formato è lo stesso di PNCounter senza prefisso)
-					// Il nome è tipo: "1193533566-updatePolicyDate" o "1193533566-updatePolicyDate-i-TIMESTAMP"
+					// Il nome è tipo: "pn_al-1193533566-updatePolicyDate" o "al-1193533566-updatePolicyDate-i-TIMESTAMP"
 					String policyId = extractPolicyId(name, false);
 
 					boolean hasInterval = name.contains("-i-");
@@ -1135,8 +1172,21 @@ public class HazelcastManager {
 						countWithoutInterval++;
 					}
 
-					// Se la policy non è più attiva, rimuove il contatore delle date
+					// Se la policy non è più attiva, verifica se il contatore è stato registrato di recente
 					if(policyId != null && !activePolicyIds.contains(policyId)) {
+						// Legge il timestamp di registrazione dal registry
+						Long registrationTime = registry.get(name);
+						if(registrationTime != null && registrationTime > registrationThreshold) {
+							// Contatore registrato di recente, non eliminare (potrebbe essere in fase di inizializzazione)
+							skippedRecent++;
+							if(logControlloTraffico != null) {
+								String msg = "Skipping recently registered AtomicLong date counter: " + name +
+										" (registered=" + sdf.format(new java.util.Date(registrationTime)) + ")";
+								logControlloTraffico.debug(msg);
+							}
+							continue;
+						}
+
 						try {
 							hazelcast.getCPSubsystem().getAtomicLong(name).destroy();
 							registry.remove(name);
@@ -1163,10 +1213,15 @@ public class HazelcastManager {
 					int finalWithInterval = countWithInterval - removedWithInterval;
 					int finalWithoutInterval = countWithoutInterval - removedWithoutInterval;
 					int total = finalWithInterval + finalWithoutInterval;
-					String msg = "Type " + type + " (AtomicLong dates via registry): total=" + total +
-							", withInterval=" + finalWithInterval + ", withoutInterval=" + finalWithoutInterval +
-							", removed=" + (removedWithInterval + removedWithoutInterval);
-					logControlloTraffico.info(msg);
+					StringBuilder sb = new StringBuilder();
+					sb.append("Type ").append(type).append(" (AtomicLong dates via registry): total=").append(total);
+					sb.append(", withInterval=").append(finalWithInterval);
+					sb.append(", withoutInterval=").append(finalWithoutInterval);
+					sb.append(", removed=").append(removedWithInterval + removedWithoutInterval);
+					if(skippedRecent > 0) {
+						sb.append(", skippedRecent=").append(skippedRecent);
+					}
+					logControlloTraffico.info(sb.toString());
 				}
 			}
 		} catch(Throwable t) {

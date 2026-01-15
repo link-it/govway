@@ -62,6 +62,11 @@ import com.hazelcast.spi.exception.DistributedObjectDestroyedException;
 public class DatiCollezionatiDistributedPNCounter extends DatiCollezionati implements IDatiCollezionatiDistributed {
 
 	private static final long serialVersionUID = 1L;
+
+	// Prefisso per i PNCounter - non modificare, configurato in hazelcast config (govway.hazelcast-pn-counters.yaml)
+	public static final String PNCOUNTER_PREFIX = "pncounter-";
+	// Prefisso per i DatoAtomicLong ausiliari (date) - per evitare collisioni con altre implementazioni (es. AtomicLong)
+	public static final String ATOMIC_LONG_PREFIX = "pn_al-";
 	
 	private final transient org.openspcoop2.utils.Semaphore lock = new org.openspcoop2.utils.Semaphore("DatiCollezionatiDistributedPNCounter");
 
@@ -115,7 +120,7 @@ public class DatiCollezionatiDistributedPNCounter extends DatiCollezionati imple
 		String configDate = BuilderDatiCollezionatiDistributed.DISTRUBUITED_SUFFIX_CONFIG_DATE+
 				(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1);
 		
-		return "pncounter-"+this.groupByPolicyMapIdHashCode+"-"+name+t+configDate+"-rl"; // non modificare inizio e fine poichè configurato in hazelcast config
+		return PNCOUNTER_PREFIX+this.groupByPolicyMapIdHashCode+"-"+name+t+configDate+"-rl"; // non modificare inizio e fine poichè configurato in hazelcast config
 	}
 	
 	public DatiCollezionatiDistributedPNCounter(Logger log, Date updatePolicyDate, Date gestorePolicyConfigDate, HazelcastInstance hazelcast, IDUnivocoGroupByPolicyMapId groupByPolicyMapId, ActivePolicy activePolicy,
@@ -290,6 +295,7 @@ public class DatiCollezionatiDistributedPNCounter extends DatiCollezionati imple
 	private DatoAtomicLong initPolicyDate() {
 		if(this.policyRealtime!=null && this.policyRealtime){
 			return new DatoAtomicLong(this.hazelcast,
+					ATOMIC_LONG_PREFIX+
 					this.groupByPolicyMapIdHashCode+
 					BuilderDatiCollezionatiDistributed.DISTRUBUITED_POLICY_DATE+
 					(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1),
@@ -300,6 +306,7 @@ public class DatiCollezionatiDistributedPNCounter extends DatiCollezionati imple
 	private DatoAtomicLong initUpdatePolicyDate() {
 		if(this.policyRealtime!=null && this.policyRealtime){
 			return new DatoAtomicLong(this.hazelcast,
+					ATOMIC_LONG_PREFIX+
 					this.groupByPolicyMapIdHashCode+
 					BuilderDatiCollezionatiDistributed.DISTRUBUITED_UPDATE_POLICY_DATE+
 					(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1),
@@ -310,6 +317,7 @@ public class DatiCollezionatiDistributedPNCounter extends DatiCollezionati imple
 	private DatoAtomicLong initPolicyDegradoPrestazionaleDate() {
 		if(this.policyDegradoPrestazionaleRealtime!=null && this.policyDegradoPrestazionaleRealtime){
 			return new DatoAtomicLong(this.hazelcast,
+					ATOMIC_LONG_PREFIX+
 					this.groupByPolicyMapIdHashCode+
 					BuilderDatiCollezionatiDistributed.DISTRUBUITED_POLICY_DEGRADO_PRESTAZIONALE_DATE+
 					(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1),
@@ -322,6 +330,7 @@ public class DatiCollezionatiDistributedPNCounter extends DatiCollezionati imple
 		// Crea il contatore per la data dell'intervallo solo se la gestione a intervalli è abilitata
 		if(this.richiesteSimultaneeIntervalloSecondi > 0) {
 			return new DatoAtomicLong(this.hazelcast,
+					ATOMIC_LONG_PREFIX+
 					this.groupByPolicyMapIdHashCode+
 					BuilderDatiCollezionatiDistributed.DISTRUBUITED_POLICY_DATE+
 					"activeRequest"+
