@@ -98,6 +98,10 @@ public class DatoRAtomicLong {
 		// perché Redis non permette di impostare EXPIRE su chiavi che non esistono ancora.
 		// getAtomicLong() non crea la chiave in Redis finché non viene fatta una scrittura.
 	}
+	
+	public String getName() {
+		return this.name;
+	}
 
 	/**
 	 * Applica il TTL al contatore se configurato e non ancora applicato (versione sincrona)

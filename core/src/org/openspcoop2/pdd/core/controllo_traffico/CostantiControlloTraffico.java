@@ -45,11 +45,13 @@ public class CostantiControlloTraffico {
 	public static final MapKey<String> PDD_CONTEXT_LIST_POLICY_APPLICABILE = Map.newMapKey("POLICY_APPLICABILE");
 	public static final MapKey<String> PDD_CONTEXT_LIST_POLICY_VIOLATA = Map.newMapKey("POLICY_VIOLATA");
 	public static final MapKey<String> PDD_CONTEXT_MAX_REQUEST_THREAD_REGISTRATO = Map.newMapKey("MAX_REQUEST_VIOLATED");
+	public static final MapKey<String> PDD_CONTEXT_MAX_REQUEST_THREAD_INCREMENT_ESEGUITO = Map.newMapKey("MAX_REQUEST_THREAD_INCREMENT_ESEGUITO");
 	public static final MapKey<String> PDD_CONTEXT_MAX_REQUEST_VIOLATED_EVENTO = Map.newMapKey("MAX_REQUEST_VIOLATED_EVENTO");
 	public static final MapKey<String> PDD_CONTEXT_MAX_REQUEST_VIOLATED_URL_INVOCAZIONE = Map.newMapKey("MAX_REQUEST_VIOLATED_URL_INVOCAZIONE");
 	public static final MapKey<String> PDD_CONTEXT_MAX_REQUEST_VIOLATED_CREDENZIALI = Map.newMapKey("MAX_REQUEST_VIOLATED_CREDENZIALI");
 	public static final MapKey<String> PDD_CONTEXT_HEADER_RATE_LIMITING = Map.newMapKey("HEADER_RATE_LIMITING");
-	
+	public static final MapKey<String> PDD_CONTEXT_ACTIVE_REQUEST_COUNTER_POLICY_DATE = Map.newMapKey("ACTIVE_REQUEST_COUNTER_POLICY_DATE");
+
 	public static final String PARAMETRO_CONTROLLO_TRAFFICO_REDEFINE_TEMPI_RISPOSTA = "CTRedefineTempiRisposta";
 	public static final String PARAMETRO_CONTROLLO_TRAFFICO_CONNECTION_TIMEOUT = "CTConnectionTimeout";
 	public static final String PARAMETRO_CONTROLLO_TRAFFICO_READ_TIMEOUT = "CTReadTimeout";

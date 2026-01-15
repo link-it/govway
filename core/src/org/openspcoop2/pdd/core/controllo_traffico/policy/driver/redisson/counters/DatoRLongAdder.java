@@ -95,6 +95,10 @@ public class DatoRLongAdder {
 	private void initCounter() {
 		this.counter = this.redisson.getLongAdder(this.name);
 	}
+	
+	public String getName() {
+		return this.name;
+	}
 
 	/**
 	 * Applica il TTL al contatore se configurato e non ancora applicato

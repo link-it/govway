@@ -122,16 +122,25 @@ public class GestoreControlloTraffico {
 			
 			// utilizzo una variabile atomica per gestire la concorrenza
 			long currentActiveThreads = this.activeThreads.incrementAndGet();
-			
+			// Traccia nel contesto che l'incremento del contatore activeThreads è stato effettuato
+			if(pddContext != null) {
+				pddContext.addObject(CostantiControlloTraffico.PDD_CONTEXT_MAX_REQUEST_THREAD_INCREMENT_ESEGUITO, true);
+			}
+
 			/**System.out.println("["+idTransazione+"] DOPO: "+currentActiveThreads);*/
-			
+
 			// nel caso l'incremento abbia superato il massimo di thread consentiti devo decrementare il contatore
 			if (currentActiveThreads > maxThreadsPrimitive) {
 				errorSync = true;
-				
+
 				// nel caso warningOnly posso continuare indisturbato
-				if (!warningOnly.booleanValue())
+				if (!warningOnly.booleanValue()) {
 					this.activeThreads.decrementAndGet();
+					// Aggiorna il contesto: il contatore è stato decrementato per superamento limite
+					if(pddContext != null) {
+						pddContext.addObject(CostantiControlloTraffico.PDD_CONTEXT_MAX_REQUEST_THREAD_INCREMENT_ESEGUITO, false);
+					}
+				}
 			}
 			
 			// nel caso il thread sia stato correttamente aggiunto controllo la congestione
@@ -235,8 +244,18 @@ public class GestoreControlloTraffico {
 		}
 	}
 		
-	public void removeThread() {		
-		this.activeThreads.decrementAndGet();
+	public void removeThread(org.openspcoop2.protocol.sdk.Context context) {
+		// Verifica se l'incremento è stato effettivamente eseguito prima di decrementare
+		// per evitare potenziali contatori negativi in caso di chiamate spurie
+		Boolean incrementEseguito = null;
+		if(context != null) {
+			incrementEseguito = (Boolean) context.getObject(CostantiControlloTraffico.PDD_CONTEXT_MAX_REQUEST_THREAD_INCREMENT_ESEGUITO);
+		}
+		if(incrementEseguito != null && incrementEseguito.booleanValue()) {
+			this.activeThreads.decrementAndGet();
+			// Aggiorna il flag per evitare decrementi multipli
+			context.addObject(CostantiControlloTraffico.PDD_CONTEXT_MAX_REQUEST_THREAD_INCREMENT_ESEGUITO, false);
+		}
 	}
 	
 	public long sizeActiveThreads(){

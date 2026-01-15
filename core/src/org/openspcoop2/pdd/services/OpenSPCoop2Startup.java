@@ -4585,6 +4585,27 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 		
 		// Gestione Stato ControlloTraffico
 		if(properties!=null && properties.isControlloTrafficoEnabled()){
+
+			// IMPORTANTE: Fermare i timer di cleanup PRIMA della serializzazione
+			// per evitare che i contatori vengano distrutti durante la lettura
+			if (OpenSPCoop2Startup.timerClusteredRateLimitingLocalCache != null) {
+				OpenSPCoop2Startup.timerClusteredRateLimitingLocalCache.setStop(true);
+			}
+			if (OpenSPCoop2Startup.timerHazelcastOrphanedProxiesCleanup != null) {
+				OpenSPCoop2Startup.timerHazelcastOrphanedProxiesCleanup.setStop(true);
+				// Attende che il timer completi il ciclo corrente (max 30 secondi)
+				int maxWait = 300;
+				while(!OpenSPCoop2Startup.timerHazelcastOrphanedProxiesCleanup.isFinished() && maxWait > 0) {
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException e) {
+						Thread.currentThread().interrupt();
+						break;
+					}
+					maxWait--;
+				}
+			}
+
 			OutputStream out = null;
 			Logger logControlloTraffico = null;
 			List<PolicyGroupByActiveThreadsType> tipiGestorePolicyRateLimiting = null;
@@ -4652,12 +4673,8 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					}
 				}
 			}
-			
-			if (OpenSPCoop2Startup.timerClusteredRateLimitingLocalCache != null) {
-				OpenSPCoop2Startup.timerClusteredRateLimitingLocalCache.setStop(true);		
-			}
 		}
-		
+
 		// Fermo timer runtime
 		if(this.serverJ2EE){
 			try {

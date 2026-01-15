@@ -146,21 +146,29 @@ public class PreInRequestHandlerGestioneControlloTraffico {
 			}
 			
 		}catch(Exception e){
-			
+
 			// il metodo gestore.addThread((..) ha sollevato una eccezione.
-			
+
 			if(maxThreadsWarningOnly!=null &&  maxThreadsWarningOnly.booleanValue()) {
-				
+
 				// Devo comunque impostare questa variabile nel contesto, in modo che l'handler di uscita rimuovi il thread.
 				context.getPddContext().addObject(CostantiControlloTraffico.PDD_CONTEXT_MAX_REQUEST_THREAD_REGISTRATO, true);
-				
+
 				// salvo nel contesto che è stato violato il parametro max-threads e salvo anche l'evento 'LIMITE_RICHIESTE_SIMULTANEE_VIOLAZIONE' con severita' warning only
-				context.getPddContext().addObject(CostantiControlloTraffico.PDD_CONTEXT_MAX_REQUEST_VIOLATED_EVENTO, 
+				context.getPddContext().addObject(CostantiControlloTraffico.PDD_CONTEXT_MAX_REQUEST_VIOLATED_EVENTO,
 						TipoEvento.CONTROLLO_TRAFFICO_NUMERO_MASSIMO_RICHIESTE_SIMULTANEE.getValue()+"_"+CodiceEventoControlloTraffico.VIOLAZIONE_WARNING_ONLY.getValue());
 			}
 			else {
-							
-				// salvo nel contesto che è stato violato il parametro max-threads in modo che l'handler di uscita sappia che non deve decrementare il numero di threads, 
+
+				// Gestione eccezioni inaspettate: se il contatore è stato incrementato ma non ancora decrementato,
+				// removeThread decrementa e aggiorna il flag INCREMENT_ESEGUITO per evitare potenziali contatori orfani
+				try {
+					GestoreControlloTraffico.getInstance().removeThread(context.getPddContext());
+				} catch(Exception eRemove) {
+					// ignore: errore durante il decremento del contatore
+				}
+
+				// salvo nel contesto che è stato violato il parametro max-threads in modo che l'handler di uscita sappia che non deve decrementare il numero di threads,
 				// essendo stato bloccato in questa fase
 				context.getPddContext().addObject(CostantiControlloTraffico.PDD_CONTEXT_MAX_REQUEST_THREAD_REGISTRATO, false);
 				
