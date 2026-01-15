@@ -1,3 +1,19 @@
+2026-01-15  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Risolto Bug #1703
+	Sono stati effettuati i seguenti interventi nel core:
+	- Aggiunta gestione a intervalli temporali per i contatori delle richieste simultanee in ambienti distribuiti (Hazelcast/Redis). 
+	  Previene contatori "zombie" quando una JVM termina in modo anomalo (crash, kill -9, OOM).
+        - [Hazelcast] Aggiunto registry IMap per tracciare i contatori del CP Subsystem (AtomicLong/AtomicLongAsync), necessario per il cleanup dei contatori orfani,
+          poiché gli oggetti CP non sono enumerabili.
+        - [Hazelcast] Aggiornato timer di cleanup per rimozione automatica dei contatori orfani (proxy non più utilizzati) migliorando anche i log forniti.
+        - Corretta gestione del decremento contatori al termine della richiesta per evitare  valori negativi in caso di cambio intervallo durante l'elaborazione, 
+          sia per le policy di rate limiting che per il controllo richieste simultanee globali.
+        Inoltre sono state corrette le seguenti anomalie nella console di gestione:
+        - Corretto il filtro nella lista delle policy attivate per gestire anche la tipologia 'richieste simultanee' che non veniva correttamente visualizzata una volta creata.	
+        - Corretto reset automatico dei valori di 'Misurazione' e 'Algoritmo' nelle opzioni avanzate di Rate Limiting quando non sono più compatibili con l'implementazione  selezionata.
+
 2026-01-12  Andrea Poli <apoli@link.it>
 
 	* [ProtocolloModIPA]

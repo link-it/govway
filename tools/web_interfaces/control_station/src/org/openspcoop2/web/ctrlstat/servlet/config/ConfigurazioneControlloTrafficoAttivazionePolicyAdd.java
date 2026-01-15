@@ -314,7 +314,8 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyAdd extends Action 
 					confHelper.gestisciCriteriFiltroRisorsaPolicy(ricerca, ruoloPorta, nomePorta);
 			
 			// imposto come filtro il tipo di risorsa creata in modo da vederlo subito nella lista
-			ricerca.addFilter(idLista, Filtri.FILTRO_TIPO_RISORSA_POLICY, infoPolicy.getTipoRisorsa().getValue());
+			TipoRisorsaPolicyAttiva tipoRisorsaPolicyAttiva = TipoRisorsaPolicyAttiva.getTipo(infoPolicy.getTipoRisorsa(), infoPolicy.isCheckRichiesteSimultanee());
+			ricerca.addFilter(idLista, Filtri.FILTRO_TIPO_RISORSA_POLICY, tipoRisorsaPolicyAttiva.getValue());
 			
 			List<AttivazionePolicy> lista = confCore.attivazionePolicyList(ricerca, ruoloPorta, nomePorta);
 			

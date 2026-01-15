@@ -63,7 +63,7 @@ public class PostOutResponseHandlerGestioneControlloTraffico {
 				timeStart = DateManager.getTimeMillis();
 			}
 			try {
-				GestoreControlloTraffico.getInstance().removeThread();
+				GestoreControlloTraffico.getInstance().removeThread(context);
 			} catch (Exception e) {
 				logger.error("["+idTransazione+"] Errore durante la rimozione del thread all'interno della lista dei threads attivi",e);
 			}

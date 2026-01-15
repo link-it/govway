@@ -22,7 +22,9 @@ package org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.coun
 
 import java.util.concurrent.CompletionStage;
 
+import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreadsType;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.HazelcastManager;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsRuntimeException;
@@ -46,25 +48,44 @@ public class DatoAtomicLong {
 
 	private HazelcastInstance hazelcast;
 	private String name;
-	
+
 	private IAtomicLong counter;
-	
+
 	private int failover = -1;
 	private int failoverCheckEveryMs = -1;
-	
+
 	private Logger logControlloTraffico;
-	
+
+	// Per il registry IMap (cleanup degli orfani)
+	private PolicyGroupByActiveThreadsType policyType;
+	private boolean registryEnabled = false;
+
 	public DatoAtomicLong(HazelcastInstance hazelcast, String name) {
+		this(hazelcast, name, null);
+	}
+
+	public DatoAtomicLong(HazelcastInstance hazelcast, String name, PolicyGroupByActiveThreadsType policyType) {
 		this.hazelcast = hazelcast;
 		this.name = name;
+		this.policyType = policyType;
 		this.initCounter();
 		OpenSPCoop2Properties op2Props = OpenSPCoop2Properties.getInstance();
 		this.failover = op2Props.getHazelcastCPSubsystemDistributedObjectDestroyedExceptionFailover();
 		this.failoverCheckEveryMs = op2Props.getHazelcastCPSubsystemDistributedObjectDestroyedExceptionFailoverCheckEveryMs();
 		this.logControlloTraffico = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(op2Props.isControlloTrafficoDebug());
+
+		// Registra nel registry se abilitato e il tipo è specificato
+		if(this.policyType != null && op2Props.isControlloTrafficoGestorePolicyInMemoryHazelcastAtomicLongRegistryEnabled()) {
+			this.registryEnabled = true;
+			HazelcastManager.registerAtomicLongCounter(this.policyType, this.name);
+		}
 	}
 	private void initCounter() {
 		this.counter = this.hazelcast.getCPSubsystem().getAtomicLong(this.name);
+	}
+	
+	public String getName() {
+		return this.name;
 	}
 	
 	public void set(long value) {
@@ -104,6 +125,11 @@ public class DatoAtomicLong {
 	}
 	public void destroy() {
 		process(AtomicLongOperation.DESTROY, -1, -1);
+		// Deregistra dal registry dopo aver distrutto con successo
+		// Se destroy fallisce (lancia eccezione), il contatore rimane nel registry per tentativi futuri
+		if(this.registryEnabled && this.policyType != null) {
+			HazelcastManager.unregisterAtomicLongCounter(this.policyType, this.name);
+		}
 	}
 	
 	private AtomicLongResponse process(AtomicLongOperation op, long arg1, long arg2) {

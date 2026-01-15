@@ -32822,6 +32822,51 @@ public class OpenSPCoop2Properties {
 		return this.getControlloTrafficoGestorePolicyInMemoryHazelcastOrphanedProxyThresholdMs;
 	}
 
+	// Abilita il registry IMap per tracciare i contatori AtomicLong del CP Subsystem (per HAZELCAST_ATOMIC_LONG e HAZELCAST_ATOMIC_LONG_ASYNC)
+	// Necessario per il cleanup degli orfani poiché gli oggetti del CP Subsystem non sono enumerabili tramite getDistributedObjects()
+	private Boolean isControlloTrafficoGestorePolicyInMemoryHazelcastAtomicLongRegistryEnabled = null;
+	public boolean isControlloTrafficoGestorePolicyInMemoryHazelcastAtomicLongRegistryEnabled() {
+		if(this.isControlloTrafficoGestorePolicyInMemoryHazelcastAtomicLongRegistryEnabled==null){
+			String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST.atomicLong.registry.enabled";
+			try{
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name!=null){
+					name = name.trim();
+					this.isControlloTrafficoGestorePolicyInMemoryHazelcastAtomicLongRegistryEnabled = Boolean.parseBoolean(name);
+				}else{
+					this.isControlloTrafficoGestorePolicyInMemoryHazelcastAtomicLongRegistryEnabled = true;
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, true));
+				this.isControlloTrafficoGestorePolicyInMemoryHazelcastAtomicLongRegistryEnabled = true;
+			}
+		}
+		return this.isControlloTrafficoGestorePolicyInMemoryHazelcastAtomicLongRegistryEnabled;
+	}
+
+	// Abilita il conteggio delle policy attive distinte nei log di cleanup degli orfani Hazelcast
+	private Boolean isControlloTrafficoGestorePolicyInMemoryHazelcastActivePoliciesCountLogEnabled = null;
+	public boolean isControlloTrafficoGestorePolicyInMemoryHazelcastActivePoliciesCountLogEnabled() {
+		if(this.isControlloTrafficoGestorePolicyInMemoryHazelcastActivePoliciesCountLogEnabled==null){
+			String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST.activePoliciesCount.log.enabled";
+			try{
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name!=null){
+					name = name.trim();
+					this.isControlloTrafficoGestorePolicyInMemoryHazelcastActivePoliciesCountLogEnabled = Boolean.parseBoolean(name);
+				}else{
+					this.isControlloTrafficoGestorePolicyInMemoryHazelcastActivePoliciesCountLogEnabled = true;
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, true));
+				this.isControlloTrafficoGestorePolicyInMemoryHazelcastActivePoliciesCountLogEnabled = true;
+			}
+		}
+		return this.isControlloTrafficoGestorePolicyInMemoryHazelcastActivePoliciesCountLogEnabled;
+	}
+
 	private Boolean isHazelcastSecurityRecommendationsEnabled = null;
 	public boolean isHazelcastSecurityRecommendationsEnabled() {	
 		if(this.isHazelcastSecurityRecommendationsEnabled==null){
@@ -33276,6 +33321,36 @@ public class OpenSPCoop2Properties {
 		return this.isControlloTrafficoGestorePolicyInMemoryRedisTTLRenewOnWriteWithoutInterval;
 	}
 
+	private Integer controlloTrafficoGestorePolicyInMemoryRichiesteSimultaneeIntervalloSecondi = null;
+	private Boolean controlloTrafficoGestorePolicyInMemoryRichiesteSimultaneeIntervalloSecondiReaded = null;
+	public int getControlloTrafficoGestorePolicyInMemoryRichiesteSimultaneeIntervalloSecondi() {
+		String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.richiesteSimultanee.intervalloSecondi";
+
+		if(this.controlloTrafficoGestorePolicyInMemoryRichiesteSimultaneeIntervalloSecondiReaded==null){
+			try{
+				String value = this.reader.getValueConvertEnvProperties(pName);
+
+				if(value!=null){
+					value = value.trim();
+					this.controlloTrafficoGestorePolicyInMemoryRichiesteSimultaneeIntervalloSecondi = Integer.parseInt(value);
+				}else{
+					// Valore non definito: funzionalità disabilitata (comportamento legacy senza finestre temporali)
+					// Per abilitare, definire in govway.properties un valore > 0 (es. 3600 per 1 ora).
+					// Con intervallo > 0, i contatori delle richieste simultanee vengono gestiti con finestre
+					// temporali: al cambio di finestra i vecchi contatori vengono abbandonati, evitando
+					// accumulo di contatori orfani in caso di crash o timeout.
+					this.controlloTrafficoGestorePolicyInMemoryRichiesteSimultaneeIntervalloSecondi = -1;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logError(getMessaggioProprietaNonImpostata(pName, e, -1),e);
+				this.controlloTrafficoGestorePolicyInMemoryRichiesteSimultaneeIntervalloSecondi = -1;
+			}
+			this.controlloTrafficoGestorePolicyInMemoryRichiesteSimultaneeIntervalloSecondiReaded = true;
+		}
+
+		return this.controlloTrafficoGestorePolicyInMemoryRichiesteSimultaneeIntervalloSecondi;
+	}
 
 	private String getControlloTrafficoGestorePolicyWSUrl = null;
 	public String getControlloTrafficoGestorePolicyWSUrl() throws CoreException {	

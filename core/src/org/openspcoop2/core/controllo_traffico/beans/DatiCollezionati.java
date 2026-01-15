@@ -80,7 +80,9 @@ public class DatiCollezionati implements Serializable {
 	private Long manuallyResetPolicyTimeMillis = null;
 
 	private static final MapKey<String> START_PROCESS_REQUEST_TIME_MS = Map.newMapKey("START_PROCESS_REQUEST_TIME_MS");
-	
+	// Mappa policyId -> intervalDate per gestire più policy nella stessa transazione
+	private static final MapKey<String> ACTIVE_REQUEST_COUNTER_INTERVAL_DATES = Map.newMapKey("ACTIVE_REQUEST_COUNTER_INTERVAL_DATES");
+
 	// dati iniziali
 	private UnitaTemporale policyDateTypeInterval = null;
 	private Integer policyDateInterval = null;
@@ -443,7 +445,13 @@ public class DatiCollezionati implements Serializable {
 		}
 		bf.append("\tRichieste Attive: ");
 		bf.append(this.getActiveRequestCounter(true));
-		
+		Long activeRequestIntervalDate = this.getActiveRequestCounterIntervalDate();
+		if(activeRequestIntervalDate != null && activeRequestIntervalDate > 0) {
+			bf.append("\n");
+			bf.append("\tData Intervallo Richieste Attive: ");
+			bf.append(dateformat.format(new Date(activeRequestIntervalDate)));
+		}
+
 		// data di creazione
 		bf.append("\n");
 		bf.append("\tData Attivazione Policy: ");
@@ -1179,42 +1187,106 @@ public class DatiCollezionati implements Serializable {
 	
 	
 	
-	protected void internalRegisterStartRequestIncrementActiveRequestCounter(DatiCollezionati datiCollezionatiPerPolicyVerifier) {
+	protected void internalRegisterStartRequestIncrementActiveRequestCounter(DatiCollezionati datiCollezionatiPerPolicyVerifier, Map<Object> ctx) {
 		this.activeRequestCounter++;
 		if(datiCollezionatiPerPolicyVerifier!=null) {
 			datiCollezionatiPerPolicyVerifier.activeRequestCounter = this.activeRequestCounter;
 		}
+		// Salva la data dell'intervallo nel contesto (se gestione a intervalli abilitata)
+		// Nella classe base non fa nulla, le sottoclassi distribuite salvano la data DOPO l'increment
 	}
+
+	/**
+	 * Salva la data dell'intervallo nel contesto.
+	 * Metodo helper per le sottoclassi distribuite che devono salvare la data DOPO l'increment.
+	 * La data viene salvata in una mappa per policy, per gestire il caso di più policy nella stessa transazione.
+	 */
+	@SuppressWarnings("unchecked")
+	protected void saveActiveRequestCounterIntervalDateInContext(Map<Object> ctx, Long intervalDate) {
+		if(ctx != null && intervalDate != null) {
+			String policyId = getPolicyIdForContext();
+			if(policyId != null) {
+				java.util.Map<String, Long> intervalDates = (java.util.Map<String, Long>) ctx.get(ACTIVE_REQUEST_COUNTER_INTERVAL_DATES);
+				if(intervalDates == null) {
+					intervalDates = new java.util.HashMap<>();
+					ctx.put(ACTIVE_REQUEST_COUNTER_INTERVAL_DATES, intervalDates);
+				}
+				intervalDates.put(policyId, intervalDate);
+			}
+		}
+	}
+
+	/**
+	 * Restituisce l'identificativo univoco della policy per l'uso nel contesto.
+	 * Nella classe base restituisce null.
+	 * Le sottoclassi distribuite devono fare override per restituire un identificativo univoco.
+	 * @return l'identificativo univoco della policy, o null se non gestito
+	 */
+	protected String getPolicyIdForContext() {
+		return null;
+	}
+
+	/**
+	 * Restituisce la data dell'intervallo corrente per le richieste simultanee.
+	 * Nella classe base restituisce null (nessun intervallo gestito).
+	 * Le sottoclassi distribuite possono fare override per restituire la data dell'intervallo
+	 * quando la gestione a intervalli è abilitata.
+	 * @return la data dell'intervallo corrente, o null se non gestito
+	 */
+	protected Long getActiveRequestCounterIntervalDate() {
+		return null;
+	}
+
+	/**
+	 * Recupera la data dell'intervallo dal contesto per questa policy.
+	 * @param ctx il contesto della transazione
+	 * @return la data dell'intervallo salvata, o null se non presente
+	 */
+	@SuppressWarnings("unchecked")
+	protected Long getActiveRequestCounterIntervalDateFromContext(Map<Object> ctx) {
+		if(ctx != null) {
+			String policyId = getPolicyIdForContext();
+			if(policyId != null) {
+				java.util.Map<String, Long> intervalDates = (java.util.Map<String, Long>) ctx.get(ACTIVE_REQUEST_COUNTER_INTERVAL_DATES);
+				if(intervalDates != null) {
+					return intervalDates.get(policyId);
+				}
+			}
+		}
+		return null;
+	}
+
 	public void registerStartRequest(Logger log, ActivePolicy activePolicy, Map<Object> ctx){
 		registerStartRequest(log, activePolicy, ctx, null);
 	}
 	public void registerStartRequest(Logger log, ActivePolicy activePolicy, Map<Object> ctx, DatiCollezionati datiCollezionatiPerPolicyVerifier){
-		
+
 		if(this.creationDate==null){
 			this.initDatiIniziali(activePolicy);
 		}
-		
-		internalRegisterStartRequestIncrementActiveRequestCounter(datiCollezionatiPerPolicyVerifier);
-		
-		if(this.getPolicyDateWindowInterval()!=null && 
+
+		// La data dell'intervallo viene salvata nel contesto DOPO l'increment nelle sottoclassi distribuite
+		internalRegisterStartRequestIncrementActiveRequestCounter(datiCollezionatiPerPolicyVerifier, ctx);
+
+		if(this.getPolicyDateWindowInterval()!=null &&
 				!TipoFinestra.SCORREVOLE.equals(this.getPolicyDateWindowInterval())){
-			
+
 			this.checkPolicyCounterForDate(log,activePolicy);
-						
+
 		}
 
-		if(this.getPolicyDegradoPrestazionaleDateWindowInterval()!=null && 
+		if(this.getPolicyDegradoPrestazionaleDateWindowInterval()!=null &&
 				!TipoFinestra.SCORREVOLE.equals(this.getPolicyDegradoPrestazionaleDateWindowInterval())){
-			
+
 			this.checkPolicyCounterForDateDegradoPrestazionale(log,activePolicy);
-			
+
 			/**if(this.policyDegradoPrestazionaleRealtime){
-			// Essendo il degrado un tempo medio anche il numero di richieste lo devo incrementare quando aggiungo anche la latenza, 
+			// Essendo il degrado un tempo medio anche il numero di richieste lo devo incrementare quando aggiungo anche la latenza,
 			// senno poi la divisione (per l'avg) rispetto al numero di richieste è falsata
 			// poiche' tengo conto anche delle richieste in corso, nonostante per queste non disponga ancora nella latenza
 			}*/
 		}
-		
+
 		if(this.manuallyResetPolicyTimeMillis!=null && ctx!=null) {
 			ctx.put(START_PROCESS_REQUEST_TIME_MS, DateManager.getTimeMillis());
 			/**System.out.println("IMPOSTATO IN CONTESTO: '"+DateManager.getTimeMillis()+"'");*/
@@ -1270,16 +1342,31 @@ public class DatiCollezionati implements Serializable {
 		this.policyDegradoPrestazionaleCounter = this.policyDegradoPrestazionaleCounter + latenza;
 	}
 	public void registerEndRequest(Logger log, ActivePolicy activePolicy, Map<Object> ctx, MisurazioniTransazione dati){
-		
+
 		if(log!=null) {
 			// nop
 		}
 		if(this.creationDate==null){
 			return; // non inizializzato?
 		}
-		
-		internalRegisterEndRequestDecrementActiveRequestCounter();
-				
+
+		// Verifica se l'intervallo delle richieste simultanee è cambiato rispetto allo start
+		// Se cambiato, non decrementa il contatore (il vecchio contatore verrà abbandonato)
+		boolean skipDecrementBecauseIntervalChanged = false;
+		if(ctx != null) {
+			Long startIntervalDate = getActiveRequestCounterIntervalDateFromContext(ctx);
+			if(startIntervalDate != null) {
+				Long currentIntervalDate = getActiveRequestCounterIntervalDate();
+				if(currentIntervalDate != null && !startIntervalDate.equals(currentIntervalDate)) {
+					skipDecrementBecauseIntervalChanged = true;
+				}
+			}
+		}
+
+		if(!skipDecrementBecauseIntervalChanged) {
+			internalRegisterEndRequestDecrementActiveRequestCounter();
+		}
+
 		// Il decrement delle richieste attive deve comunque essere attuato poichè il reset dei contatori non insiste sul numero di richieste attive
 		if(skipBecauseManuallyResetAfterStartRequest("registerEndRequest", ctx)) {
 			return;

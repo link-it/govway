@@ -23004,7 +23004,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			else {
 				de.setValues(values);
 				de.setLabels(org.openspcoop2.core.controllo_traffico.constants.Costanti.getLABELS_MODALITA_CONTATORI(this.core.getControlloTrafficoPolicyRateLimitingTipiGestori(),ctImplementazione));
-				if(ctContatori==null || StringUtils.isEmpty(ctContatori)) {
+				if(ctContatori==null || StringUtils.isEmpty(ctContatori) || !values.contains(ctContatori)) {
 					ctContatori = values.get(0);
 				}
 				de.setSelected(ctContatori);
@@ -23013,8 +23013,8 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 		}
 		dati.add(de);
-		
-		
+
+
 		de = new DataElement();
 		de.setName(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_TIPOLOGIA);
 		de.setLabel(org.openspcoop2.core.controllo_traffico.constants.Costanti.LABEL_MODALITA_TIPOLOGIA);
@@ -23035,7 +23035,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			else {
 				de.setValues(values);
 				de.setLabels(org.openspcoop2.core.controllo_traffico.constants.Costanti.getLABELS_MODALITA_TIPOLOGIA(this.core.getControlloTrafficoPolicyRateLimitingTipiGestori(), ctImplementazione, ctContatori));
-				if(ctTipologia==null || StringUtils.isEmpty(ctTipologia)) {
+				if(ctTipologia==null || StringUtils.isEmpty(ctTipologia) || !values.contains(ctTipologia)) {
 					ctTipologia = values.get(0);
 				}
 				de.setSelected(ctTipologia);

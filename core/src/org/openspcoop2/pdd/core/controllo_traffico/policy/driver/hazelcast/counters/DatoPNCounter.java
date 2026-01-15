@@ -64,6 +64,10 @@ public class DatoPNCounter {
 		this.counter = this.hazelcast.getPNCounter(this.name);
 	}
 	
+	public String getName() {
+		return this.name;
+	}
+	
 	public long get() {
 		PNCounterResponse r = process(PNCounterOperation.GET, -1, -1);
 		return r!=null ? r.valueL : -1; // else non dovrebbe succedere mai

@@ -70,7 +70,9 @@ public class EndRequestProcessor implements EntryProcessor<IDUnivocoGroupByPolic
 		/**System.out.println("<"+idTransazione+"> registerStartRequest distribuita");*/
 		DatiCollezionati datiCollezionati = entry.getValue();
 		if(datiCollezionati == null) {
-			System.out.println("<"/*+idTransazione*/+">updateDatiStartRequestApplicabile Non sono presenti alcun threads registrati per la richiesta con dati identificativi ["+entry.getKey().toString()+"]");
+			/**
+			System.out.println("<"+idTransazione+">updateDatiStartRequestApplicabile Non sono presenti alcun threads registrati per la richiesta con dati identificativi ["+entry.getKey().toString()+"]");
+			*/
 			return false;
 		}
 		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
@@ -95,7 +97,7 @@ public class EndRequestProcessor implements EntryProcessor<IDUnivocoGroupByPolic
 						this.isViolata);
 			}catch(Exception e) {
 				/**throw new PolicyException(e.getMessage(),e); Ristabilire il comportamento corretto in questo caso, bisogna sollevare una eccezione nel nodo che ha chiamato questo processor*/
-				System.out.println("<"/*+idTransazione*/+">EndRequestProcessor, errore sulla policy con dati identificativi ["+entry.getKey().toString()+"]: " + e.getMessage());
+				/**System.out.println("<"+idTransazione+">EndRequestProcessor, errore sulla policy con dati identificativi ["+entry.getKey().toString()+"]: " + e.getMessage());*/
 				return false;
 			}
 			
