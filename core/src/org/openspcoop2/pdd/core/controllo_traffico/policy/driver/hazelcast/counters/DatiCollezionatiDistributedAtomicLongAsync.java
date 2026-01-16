@@ -75,7 +75,7 @@ public class DatiCollezionatiDistributedAtomicLongAsync extends DatiCollezionati
 			// Salva la data dell'intervallo nel contesto DOPO l'increment
 			// In caso di cambio intervallo durante la richiesta, potrebbe causare valori negativi
 			// che sono preferibili ai positivi (negativi = permissivo, positivi = restrittivo)
-			saveIntervalDateInContext(ctx);
+			saveIntervalDateInContextForALAsync(ctx);
 		}
 		else {
 			super.internalRegisterStartRequestIncrementActiveRequestCounter(datiCollezionatiPerPolicyVerifier, ctx);
@@ -86,7 +86,7 @@ public class DatiCollezionatiDistributedAtomicLongAsync extends DatiCollezionati
 	 * Salva la data dell'intervallo corrente nel contesto.
 	 * Deve essere chiamato DOPO l'increment.
 	 */
-	private void saveIntervalDateInContext(org.openspcoop2.utils.Map<Object> ctx) {
+	private void saveIntervalDateInContextForALAsync(org.openspcoop2.utils.Map<Object> ctx) {
 		if(ctx != null && this.richiesteSimultaneeIntervalloSecondi > 0) {
 			Long intervalDate = getActiveRequestCounterIntervalDate();
 			saveActiveRequestCounterIntervalDateInContext(ctx, intervalDate);
