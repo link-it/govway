@@ -2,7 +2,8 @@ elencoTestModiOutRest="out-rest_modi_db-trace_integrity_agid-auth_request-only
                         out-rest_modi_db-trace_integrity_oauth2-auth_request-only out-rest_modi_db-trace_integrity02_oauth2-auth_request-only
 			out-rest_modi_db-trace_integrity_agid-auth_request-digest-in-response 
                         out-rest_modi_db-trace_integrity_oauth2-auth_request-digest-in-response out-rest_modi_db-trace_integrity02_oauth2-auth_request-digest-in-response
-			out-rest_modi_db-trace_audit_agid-auth_request-only out-rest_modi_db-trace_audit_oauth2-auth_request-only"
+			out-rest_modi_db-trace_audit_agid-auth_request-only out-rest_modi_db-trace_audit_oauth2-auth_request-only
+			out-rest_modi_db-trace_integrity02_oauth2_dpop-auth_request-only out-rest_modi_db-trace_audit_oauth2_dpop-auth_request-only"
 
 tests["out-rest_modi_db-trace_integrity_agid-auth_request-only"]=out_rest_modi_DBTrace_Integrity_AgidAuth_OnlyRequest
 tests["out-rest_modi_db-trace_integrity_agid-auth_request-digest-in-response"]=out_rest_modi_DBTrace_Integrity_AgidAuth_RequestDigestInResponse
@@ -12,6 +13,8 @@ tests["out-rest_modi_db-trace_integrity_oauth2-auth_request-digest-in-response"]
 tests["out-rest_modi_db-trace_integrity02_oauth2-auth_request-digest-in-response"]=out_rest_modi_DBTrace_Integrity02_OAuth2Auth_RequestDigestInResponse
 tests["out-rest_modi_db-trace_audit_agid-auth_request-only"]=out_rest_modi_DBTrace_Audit_AgidAuth_OnlyRequest
 tests["out-rest_modi_db-trace_audit_oauth2-auth_request-only"]=out_rest_modi_DBTrace_Audit_OAuth2Auth_OnlyRequest
+tests["out-rest_modi_db-trace_integrity02_oauth2_dpop-auth_request-only"]=out_rest_modi_DBTrace_Integrity02_OAuth2Auth_DPoP_OnlyRequest
+tests["out-rest_modi_db-trace_audit_oauth2_dpop-auth_request-only"]=out_rest_modi_DBTrace_Audit_OAuth2Auth_DPoP_OnlyRequest
 
 
 function out_rest_modi_DBTrace_Integrity_AgidAuth_OnlyRequest() {
@@ -119,4 +122,30 @@ function out_rest_modi_DBTrace_Audit_OAuth2Auth_OnlyRequest() {
 	contentType=application/json
 	outputDir=${resultDir}/${FUNCNAME[0]}
 	description="LineeGuida con header Agid con pattern Integrity_REST_02 e header OAuth nella sola richiesta con in più il token di audit"
+}
+
+function out_rest_modi_DBTrace_Integrity02_OAuth2Auth_DPoP_OnlyRequest() {
+	jmeterTestFile=${jmeterRestTestFile}
+	profiloSicurezza=none
+	profiloMessaggi=none
+	protocollo=rest
+	bound=out/ENTE
+	tipiTest=ProxyFruitoreDPoP
+	azione=test7
+	contentType=application/json
+	outputDir=${resultDir}/${FUNCNAME[0]}
+	description="LineeGuida con header Agid con pattern Integrity_REST_02 e header OAuth nella sola richiesta con in più il DPoP"
+}
+
+function out_rest_modi_DBTrace_Audit_OAuth2Auth_DPoP_OnlyRequest() {
+	jmeterTestFile=${jmeterRestTestFile}
+	profiloSicurezza=none
+	profiloMessaggi=none
+	protocollo=rest
+	bound=out/ENTE
+	tipiTest=ProxyFruitoreDPoP
+	azione=test10
+	contentType=application/json
+	outputDir=${resultDir}/${FUNCNAME[0]}
+	description="LineeGuida con header Agid con pattern Integrity_REST_02 e header OAuth nella sola richiesta con in più il token di audit e DPoP"
 }

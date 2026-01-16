@@ -4,7 +4,9 @@ elencoTestModiRest="rest_modi_db-trace_integrity_agid-auth_request-only
 			rest_modi_db-trace_integrity_oauth2-auth_request-digest-in-response rest_modi_db-trace_integrity02_oauth2-auth_request-digest-in-response
 			rest_modi_db-trace_integrity_agid-auth_request-only_no-duplicates 
 			rest_modi_db-trace_integrity_oauth2-auth_request-only_no-duplicates
-			rest_modi_db-trace_audit_agid-auth_request-only rest_modi_db-trace_audit_oauth2-auth_request-only"
+			rest_modi_db-trace_audit_agid-auth_request-only rest_modi_db-trace_audit_oauth2-auth_request-only
+			rest_modi_db-trace_integrity02_oauth2-dpop-auth_request-only rest_modi_db-trace_integrity02_oauth2-dpop-redis-auth_request-only 
+			rest_modi_db-trace_audit_oauth2-dpop-auth_request-only rest_modi_db-trace_audit_oauth2-dpop-redis-auth_request-only"
 
 tests["rest_modi_db-trace_integrity_agid-auth_request-only"]=rest_modi_DBTrace_Integrity_AgidAuth_OnlyRequest
 tests["rest_modi_db-trace_integrity_agid-auth_request-digest-in-response"]=rest_modi_DBTrace_Integrity_AgidAuth_RequestDigestInResponse
@@ -16,6 +18,10 @@ tests["rest_modi_db-trace_integrity02_oauth2-auth_request-digest-in-response"]=r
 tests["rest_modi_db-trace_integrity_oauth2-auth_request-only_no-duplicates"]=rest_modi_DBTrace_Integrity_OAuth2Auth_OnlyRequest_NoDuplicates
 tests["rest_modi_db-trace_audit_agid-auth_request-only"]=rest_modi_DBTrace_Audit_AgidAuth_OnlyRequest
 tests["rest_modi_db-trace_audit_oauth2-auth_request-only"]=rest_modi_DBTrace_Audit_OAuth2Auth_OnlyRequest
+tests["rest_modi_db-trace_integrity02_oauth2-dpop-auth_request-only"]=rest_modi_DBTrace_Integrity02_OAuth2Auth_DPoP_OnlyRequest
+tests["rest_modi_db-trace_integrity02_oauth2-dpop-redis-auth_request-only"]=rest_modi_DBTrace_Integrity02_OAuth2Auth_DPoPRedis_OnlyRequest
+tests["rest_modi_db-trace_audit_oauth2-dpop-auth_request-only"]=rest_modi_DBTrace_Audit_OAuth2Auth_DPoP_OnlyRequest
+tests["rest_modi_db-trace_audit_oauth2-dpop-redis-auth_request-only"]=rest_modi_DBTrace_Audit_OAuth2Auth_DPoPRedis_OnlyRequest
 
 
 function rest_modi_DBTrace_Integrity_AgidAuth_OnlyRequest() {
@@ -141,4 +147,52 @@ function rest_modi_DBTrace_Audit_OAuth2Auth_OnlyRequest() {
 	contentType=application/json
 	outputDir=${resultDir}/${FUNCNAME[0]}
 	description="LineeGuida con header Agid con pattern Integrity_REST_02 e header OAuth nella sola richiesta con in più il token di audit"
+}
+
+function rest_modi_DBTrace_Integrity02_OAuth2Auth_DPoP_OnlyRequest() {
+	jmeterTestFile=${jmeterRestTestFile}
+	profiloSicurezza=digestKidDPoP
+	profiloMessaggi=none
+	protocollo=rest
+	tipiTest=ProxyDPoP
+	azione=test7
+	contentType=application/json
+	outputDir=${resultDir}/${FUNCNAME[0]}
+	description="LineeGuida con header Agid con pattern Integrity_REST_02 e header OAuth nella sola richiesta con in più il DPoP (validazione jti locale)"
+}
+
+function rest_modi_DBTrace_Integrity02_OAuth2Auth_DPoPRedis_OnlyRequest() {
+	jmeterTestFile=${jmeterRestTestFile}
+	profiloSicurezza=digestKidDPoPRedis
+	profiloMessaggi=none
+	protocollo=rest
+	tipiTest=ProxyDPoPRedis
+	azione=test7
+	contentType=application/json
+	outputDir=${resultDir}/${FUNCNAME[0]}
+	description="LineeGuida con header Agid con pattern Integrity_REST_02 e header OAuth nella sola richiesta con in più il DPoP (validazione jti tramite Redis)"
+}
+
+function rest_modi_DBTrace_Audit_OAuth2Auth_DPoP_OnlyRequest() {
+	jmeterTestFile=${jmeterRestTestFile}
+	profiloSicurezza=digestAuditKidDPoP
+	profiloMessaggi=none
+	protocollo=rest
+	tipiTest=ProxyDPoP
+	azione=test10
+	contentType=application/json
+	outputDir=${resultDir}/${FUNCNAME[0]}
+	description="LineeGuida con header Agid con pattern Integrity_REST_02 e header OAuth nella sola richiesta con in più il token di audit e DPoP (validazione jti locale)"
+}
+
+function rest_modi_DBTrace_Audit_OAuth2Auth_DPoPRedis_OnlyRequest() {
+	jmeterTestFile=${jmeterRestTestFile}
+	profiloSicurezza=digestAuditKidDPoPRedis
+	profiloMessaggi=none
+	protocollo=rest
+	tipiTest=ProxyDPoPRedis
+	azione=test10
+	contentType=application/json
+	outputDir=${resultDir}/${FUNCNAME[0]}
+	description="LineeGuida con header Agid con pattern Integrity_REST_02 e header OAuth nella sola richiesta con in più il token di audit e DPoP (validazione jti tramite Redis)"
 }

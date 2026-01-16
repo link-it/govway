@@ -936,12 +936,14 @@ public class DBOggettiInUsoUtils_accordiRest {
 						}
 						
 						isInUso = true;
-						
+
 					}
+					risultato.close();
+					stmt.close();
 				}
 			}
-			
-			
+
+
 
 			return isInUso;
 
