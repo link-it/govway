@@ -1006,7 +1006,7 @@ public class GestoreTokenValidazioneUtilities {
 		validazioneDPoPIat(dpop, dpopParser, policyGestioneToken);
 
 		// Validazione jti (JWT ID)
-		validazioneDPoPJti(dpop, dpopParser, policyGestioneToken, log);
+		validazioneDPoPJti(dpop, dpopParser, policyGestioneToken, datiInvocazione, pddContext, log);
 	}
 
 	private static void validazioneDPoPHtm(DPoP dpop, IDPoPParser dpopParser, AbstractDatiInvocazione datiInvocazione) throws TokenException {
@@ -1300,14 +1300,15 @@ public class GestoreTokenValidazioneUtilities {
 		Integer ttlSeconds = policyGestioneToken.getValidazioneDPoPPayloadTtl();
 		if(ttlSeconds != null && ttlSeconds > 0) {
 			long toleranceMs = OpenSPCoop2Properties.getInstance().getGestioneTokenDPoPIatToleranceMilliseconds();
-			long expirationTime = iatTime + (ttlSeconds * 1000) + toleranceMs;
+			long expirationTime = iatTime + (ttlSeconds * 1000L) + toleranceMs;
 			if(nowTime > expirationTime) {
 				throw new TokenException("Expired DPoP token: iat ("+DateUtils.getSimpleDateFormatMs().format(iat)+") + TTL ("+ttlSeconds+"s) + tolerance ("+toleranceMs+"ms) < now");
 			}
 		}
 	}
 	
-	private static void validazioneDPoPJti(DPoP dpop, IDPoPParser dpopParser, PolicyGestioneToken policyGestioneToken, Logger log) throws TokenException {
+	private static void validazioneDPoPJti(DPoP dpop, IDPoPParser dpopParser, PolicyGestioneToken policyGestioneToken,
+			AbstractDatiInvocazione datiInvocazione, PdDContext pddContext, Logger log) throws TokenException {
 		String jti = dpopParser.getJWTIdentifier();
 		if(jti == null || jti.trim().isEmpty()) {
 			throw new TokenException("Invalid DPoP token: claim 'jti' is missing");
@@ -1332,16 +1333,35 @@ public class GestoreTokenValidazioneUtilities {
 		// Calcola toleranceMillis per validazione temporale (stesso usato in validazioneDPoPIat)
 		Integer ttlSeconds = policyGestioneToken.getValidazioneDPoPPayloadTtl();
 		long toleranceMs = OpenSPCoop2Properties.getInstance().getGestioneTokenDPoPIatToleranceMilliseconds();
-		long toleranceTotal = (ttlSeconds != null ? ttlSeconds * 1000 : 0) + toleranceMs;
+		long toleranceTotal = (ttlSeconds != null ? ttlSeconds * 1000L : 0) + toleranceMs;
+
+		// Ottieni JTI per la validazione (può essere l'ID transazione se modalità test attiva)
+		String jtiForValidation = getJtiForValidation(jti, datiInvocazione, pddContext);
 
 		// Valida e memorizza JTI
 		try {
-			validator.validateAndStore(policyGestioneToken.getName(), jti, dpopParser, toleranceTotal);
+			validator.validateAndStore(policyGestioneToken.getName(), jtiForValidation, dpopParser, toleranceTotal);
 			log.debug("DPoP JTI [{}] validated successfully for policy [{}]", jti, policyGestioneToken.getName());
 		} catch (UtilsException e) {
 			/**log.error("JTI validation error for policy [{}]: {}", policyGestioneToken.getName(), e.getMessage(), e);*/
 			throw new TokenException("DPoP JTI validation failed: "+e.getMessage(), e);
 		}
+	}
+
+	private static String getJtiForValidation(String jti, AbstractDatiInvocazione datiInvocazione, PdDContext pddContext) throws TokenException {
+		try {
+			List<Proprieta> listProprieta = readProprieta(datiInvocazione);
+			if(listProprieta!=null && !listProprieta.isEmpty() &&
+					CostantiProprieta.isFiltroDuplicatiDpopTestEnabled(listProprieta, false)) {
+				String idTransazione = PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext);
+				if(idTransazione!=null && !idTransazione.isEmpty()) {
+					return idTransazione;
+				}
+			}
+		} catch(Exception e) {
+			throw new TokenException("Error reading DPoP JTI test properties from API configuration: "+e.getMessage(), e);
+		}
+		return jti;
 	}
 
 	private static void validazioneDPoPCnfJkt(DPoP dpop, IDPoPParser dpopParser, EsitoGestioneToken esitoGestioneToken, Logger log) throws TokenException {

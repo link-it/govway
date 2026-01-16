@@ -1,0 +1,77 @@
+Per disabilitare il controllo sulla presenza obbligatoria del purposeId nel token di audit:                                                                                                                
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.expectedPurposeId=false                                                                                                                           
+                                                                                                                                                                                                             
+Per disabilitare il confronto tra il purposeId presente nel token di audit e quello nel token di autorizzazione:                                                                                           
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.compareAuthorizationPurposeId=false    
+
+
+
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStores=pdnd,...,SimulazionePDND,SimulazionePDND-DPoP,SimulazionePDND-DPoP-Redis
+....
+
+# Tipo di certificato recuperato
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.SimulazionePDND.keyType=jwk
+
+# Configurazione utilizzata per invocare il servizio esposto sulla PDND per l'ottenimento delle chiavi pubbliche rispetto al kid
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.SimulazionePDND.name=SimulazionePDND
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.SimulazionePDND.label=SimulazionePDND
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.SimulazionePDND.tokenPolicy=SimulazionePDND
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.SimulazionePDND.baseUrl=http://127.0.0.1:8080/govway/rest/NON_DOVREBBE_ESSERE_USATA
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.SimulazionePDND.keyId.mode=URL_SUFFIX
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.SimulazionePDND.readTimeout=15000
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.SimulazionePDND.connectTimeout=10000
+
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.SimulazionePDND.api.keys.version=2
+#org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.SimulazionePDND.api.events.version=2
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.SimulazionePDND.api.clients.version=2
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.SimulazionePDND.api.organizations.version=2
+
+# Credenziali http-basic
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.SimulazionePDND.http.username=GovWayRUN
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.SimulazionePDND.http.password=123456
+
+
+
+# Tipo di certificato recuperato
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.SimulazionePDND-DPoP.keyType=jwk
+
+# Configurazione utilizzata per invocare il servizio esposto sulla PDND per l'ottenimento delle chiavi pubbliche rispetto al kid
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.SimulazionePDND-DPoP.name=SimulazionePDND-DPoP
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.SimulazionePDND-DPoP.label=SimulazionePDND-DPoP
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.SimulazionePDND-DPoP.tokenPolicy=SimulazionePDND-DPoP
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.SimulazionePDND-DPoP.baseUrl=http://127.0.0.1:8080/govway/rest/NON_DOVREBBE_ESSERE_USATA
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.SimulazionePDND-DPoP.keyId.mode=URL_SUFFIX
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.SimulazionePDND-DPoP.readTimeout=15000
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.SimulazionePDND-DPoP.connectTimeout=10000
+
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.SimulazionePDND-DPoP.api.keys.version=2
+#org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.SimulazionePDND-DPoP.api.events.version=2
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.SimulazionePDND-DPoP.api.clients.version=2
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.SimulazionePDND-DPoP.api.organizations.version=2
+
+# Credenziali http-basic
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.SimulazionePDND-DPoP.http.username=GovWayRUN
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.SimulazionePDND-DPoP.http.password=123456
+
+
+
+# Tipo di certificato recuperato
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.SimulazionePDND-DPoP-Redis.keyType=jwk
+
+# Configurazione utilizzata per invocare il servizio esposto sulla PDND per l'ottenimento delle chiavi pubbliche rispetto al kid
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.SimulazionePDND-DPoP-Redis.name=SimulazionePDND-DPoP-Redis
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.SimulazionePDND-DPoP-Redis.label=SimulazionePDND-DPoP-Redis
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.SimulazionePDND-DPoP-Redis.tokenPolicy=SimulazionePDND-DPoP-Redis
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.SimulazionePDND-DPoP-Redis.baseUrl=http://127.0.0.1:8080/govway/rest/NON_DOVREBBE_ESSERE_USATA
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.SimulazionePDND-DPoP-Redis.keyId.mode=URL_SUFFIX
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.SimulazionePDND-DPoP-Redis.readTimeout=15000
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.SimulazionePDND-DPoP-Redis.connectTimeout=10000
+
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.SimulazionePDND-DPoP-Redis.api.keys.version=2
+#org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.SimulazionePDND-DPoP-Redis.api.events.version=2
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.SimulazionePDND-DPoP-Redis.api.clients.version=2
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.SimulazionePDND-DPoP-Redis.api.organizations.version=2
+
+# Credenziali http-basic
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.SimulazionePDND-DPoP-Redis.http.username=GovWayRUN
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.SimulazionePDND-DPoP-Redis.http.password=123456

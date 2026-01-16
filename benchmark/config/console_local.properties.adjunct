@@ -1,0 +1,2 @@
+# Abilitare questa opzione per gli stress test, per vedere le configurazioni su console
+policyGestioneToken.pdnd.useAllPDNDStores=true

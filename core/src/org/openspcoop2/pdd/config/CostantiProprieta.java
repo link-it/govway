@@ -247,7 +247,16 @@ public class CostantiProprieta {
 	}
 
 
+	// ****  FILTRO DUPLICATI DPOP *****
 
+	public static final String FILTRO_DUPLICATI_DPOP_TEST_ENABLED = VALUE_ENABLED;
+	public static final String FILTRO_DUPLICATI_DPOP_TEST_DISABLED = VALUE_DISABLED;
+
+	private static final String FILTRO_DUPLICATI_DPOP_TEST = "dpop-duplicates-filter-test.enabled";
+
+	public static boolean isFiltroDuplicatiDpopTestEnabled(List<Proprieta> proprieta, boolean defaultValue) {
+		return readBooleanValueWithDefault(proprieta, FILTRO_DUPLICATI_DPOP_TEST, defaultValue, FILTRO_DUPLICATI_DPOP_TEST_ENABLED, FILTRO_DUPLICATI_DPOP_TEST_DISABLED);
+	}
 
 
 
