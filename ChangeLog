@@ -1,3 +1,9 @@
+2026-01-16 Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug #1701
+	Corretto path hard-coded nella pagina index.html per consentire il deploy con context path personalizzati.
+
 2026-01-15  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole]
