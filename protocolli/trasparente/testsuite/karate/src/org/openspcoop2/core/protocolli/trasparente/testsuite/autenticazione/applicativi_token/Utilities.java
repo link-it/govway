@@ -596,13 +596,13 @@ public class Utilities {
 				error = "AuthorizationContentDeny";
 				msg = "Unauthorized request content";
 			}
-			verifyKo(response, error, code, msg, true,
+			verifyKo(idTransazione, response, error, code, msg, true,
 					rest, soapPrefixError,
 					logCore);
 		
 		}
 		else {
-			verifyOk(response, 200, contentType);
+			verifyOk(idTransazione, response, 200, contentType);
 		}
 						
 		DBVerifier.verify(idTransazione, esitoExpected, msgError,
@@ -613,32 +613,33 @@ public class Utilities {
 		
 	}
 	
-	public static void verifyOk(HttpResponse response, int code, String expectedContentType) {
+	public static void verifyOk(String idTransazione, HttpResponse response, int code, String expectedContentType) {
 		
-		assertEquals(code, response.getResultHTTPOperation());
-		assertEquals(expectedContentType, response.getContentType());
+		assertEquals("id["+idTransazione+"] expectedReturnCode:"+code+ " found:"+response.getResultHTTPOperation(), code, response.getResultHTTPOperation());
+		assertEquals("id["+idTransazione+"] expectedContentType:"+expectedContentType+ " found:"+response.getContentType(), expectedContentType, response.getContentType());
 		
 	}
 	
-	public static void verifyKo(HttpResponse response, String error, int code, String errorMsg, boolean checkErrorTypeGovWay, 
+	public static void verifyKo(String idTransazione, HttpResponse response, String error, int code, String errorMsg, boolean checkErrorTypeGovWay, 
 			boolean rest, String soapPrefixError,
 			Logger log) {
-		verifyKo(response, error, code, errorMsg, checkErrorTypeGovWay, 
+		verifyKo(idTransazione, response, error, code, errorMsg, checkErrorTypeGovWay, 
 				rest, soapPrefixError,
 				error,
 				log);
 	}
-	public static void verifyKo(HttpResponse response, String error, int code, String errorMsg, boolean checkErrorTypeGovWay, 
+	public static void verifyKo(String idTransazione, HttpResponse response, String error, int code, String errorMsg, boolean checkErrorTypeGovWay, 
 			boolean rest, String soapPrefixError,
 			String errorHTTP,
 			Logger log) {
 		
 		if(rest) {
 		
-			assertEquals(code, response.getResultHTTPOperation());
+			assertEquals("id["+idTransazione+"] expectedReturnCode:"+code+ " found:"+response.getResultHTTPOperation(), code, response.getResultHTTPOperation());
 			
 			if(error!=null) {
-				assertEquals(HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807, response.getContentType());
+				assertEquals("id["+idTransazione+"] expectedContentType:"+HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807+ " found:"+response.getContentType(), 
+						HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807, response.getContentType());
 				
 				try {
 					JsonPathExpressionEngine jsonPath = new JsonPathExpressionEngine();
@@ -667,8 +668,9 @@ public class Utilities {
 		
 		else {
 			
-			assertEquals(500, response.getResultHTTPOperation());
-			assertEquals(HttpConstants.CONTENT_TYPE_SOAP_1_1, response.getContentType());
+			assertEquals("id["+idTransazione+"] expectedReturnCode:"+500+ " found:"+response.getResultHTTPOperation(), 500, response.getResultHTTPOperation());
+			assertEquals("id["+idTransazione+"] expectedContentType:"+HttpConstants.CONTENT_TYPE_SOAP_1_1+ " found:"+response.getContentType(),
+					HttpConstants.CONTENT_TYPE_SOAP_1_1, response.getContentType());
 			
 			try {
 				OpenSPCoop2MessageFactory factory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();

@@ -116,22 +116,22 @@ public class HttpProxyUtils {
 		return s.replace("PORT", port+"").replace("METHOD", method.name());
 	}
 	
-	private static void verifyKoRest(Logger log,HttpResponse response, String error, int code, String errorMsg, boolean checkErrorTypeGovWay) {
+	private static void verifyKoRest(Logger log,String idTransazione, HttpResponse response, String error, int code, String errorMsg, boolean checkErrorTypeGovWay) {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.autenticazione.applicativi_token.Utilities.
-			verifyKo(response, error, code, errorMsg, checkErrorTypeGovWay, 
+			verifyKo(idTransazione, response, error, code, errorMsg, checkErrorTypeGovWay, 
 					true, null, log);
 	}
-	private static void verifyKoSoap(Logger log,HttpResponse response, String error, int code, String errorMsg, boolean checkErrorTypeGovWay, String soapPrefixError, String errorHttp) {
+	private static void verifyKoSoap(Logger log,String idTransazione, HttpResponse response, String error, int code, String errorMsg, boolean checkErrorTypeGovWay, String soapPrefixError, String errorHttp) {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.autenticazione.applicativi_token.Utilities.
-			verifyKo(response, error, code, errorMsg, checkErrorTypeGovWay, 
+			verifyKo(idTransazione, response, error, code, errorMsg, checkErrorTypeGovWay, 
 					false, soapPrefixError, errorHttp, log);
 	}
 	
-	private static void verifyOk(HttpResponse response, int code, String expectedContentType) {
+	private static void verifyOk(String idTransazione, HttpResponse response, int code, String expectedContentType) {
 		
-		assertEquals(code, response.getResultHTTPOperation());
+		assertEquals("id["+idTransazione+"] expectedReturnCode:"+code+ " found:"+response.getResultHTTPOperation(), code, response.getResultHTTPOperation());
 		if(expectedContentType!=null) {
-			assertEquals(expectedContentType, response.getContentType());
+			assertEquals("id["+idTransazione+"] expectedContentType:"+expectedContentType+ " found:"+response.getContentType(), expectedContentType, response.getContentType());
 		}
 		
 	}
@@ -201,34 +201,34 @@ public class HttpProxyUtils {
 				}
 				code = 407;
 				if(soap) {
-					assertEquals(500, response.getResultHTTPOperation());
-					assertEquals(HttpConstants.CONTENT_TYPE_SOAP_1_1, response.getContentType());
+					assertEquals("id["+idTransazione+"] expectedReturnCode:"+500+ " found:"+response.getResultHTTPOperation(), 500, response.getResultHTTPOperation());
+					assertEquals("id["+idTransazione+"] expectedContentType:"+HttpConstants.CONTENT_TYPE_SOAP_1_1+ " found:"+response.getContentType(), HttpConstants.CONTENT_TYPE_SOAP_1_1, response.getContentType());
 				}
 				else {
-					assertEquals(code, response.getResultHTTPOperation());
+					assertEquals("id["+idTransazione+"] expectedReturnCode:"+code+ " found:"+response.getResultHTTPOperation(), code, response.getResultHTTPOperation());
 				}
 			}
 			else if(HttpRequestMethod.HEAD.equals(method)) {
 				if(soap) {
-					assertEquals(500, response.getResultHTTPOperation());
-					assertEquals(HttpConstants.CONTENT_TYPE_SOAP_1_1, response.getContentType());
+					assertEquals("id["+idTransazione+"] expectedReturnCode:"+500+ " found:"+response.getResultHTTPOperation(), 500, response.getResultHTTPOperation());
+					assertEquals("id["+idTransazione+"] expectedContentType:"+HttpConstants.CONTENT_TYPE_SOAP_1_1+ " found:"+response.getContentType(), HttpConstants.CONTENT_TYPE_SOAP_1_1, response.getContentType());
 				}
 				else {
-					assertEquals(code, response.getResultHTTPOperation());
-					assertEquals(HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807, response.getContentType());
+					assertEquals("id["+idTransazione+"] expectedReturnCode:"+code+ " found:"+response.getResultHTTPOperation(), code, response.getResultHTTPOperation());
+					assertEquals("id["+idTransazione+"] expectedContentType:"+HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807+ " found:"+response.getContentType(), HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807, response.getContentType());
 				}
 			}
 			else {
 				if(soap) {
-					HttpProxyUtils.verifyKoSoap(logCore, response, error, code, msg, checkErrorTypeGovWay, soapPrefixError, errorHttp);
+					HttpProxyUtils.verifyKoSoap(logCore, idTransazione, response, error, code, msg, checkErrorTypeGovWay, soapPrefixError, errorHttp);
 				}
 				else {
-					HttpProxyUtils.verifyKoRest(logCore, response, error, code, msg, checkErrorTypeGovWay);
+					HttpProxyUtils.verifyKoRest(logCore, idTransazione, response, error, code, msg, checkErrorTypeGovWay);
 				}
 			}
 		}
 		else {
-			HttpProxyUtils.verifyOk(response, 200, contentType);
+			HttpProxyUtils.verifyOk(idTransazione, response, 200, contentType);
 		}
 		
 		DBVerifier.verify(idTransazione, esitoExpected, msgDiagnostico);
