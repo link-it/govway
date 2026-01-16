@@ -157,22 +157,22 @@ public class Utils {
 //		
 //	}
 	
-	private static void verifyKoRest(Logger log,HttpResponse response, String error, int code, String errorMsg, boolean checkErrorTypeGovWay) {
+	private static void verifyKoRest(Logger log,String idTransazione, HttpResponse response, String error, int code, String errorMsg, boolean checkErrorTypeGovWay) {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.autenticazione.applicativi_token.Utilities.
-			verifyKo(response, error, code, errorMsg, checkErrorTypeGovWay, 
+			verifyKo(idTransazione, response, error, code, errorMsg, checkErrorTypeGovWay, 
 					true, null, log);
 	}
-	private static void verifyKoSoap(Logger log,HttpResponse response, String error, int code, String errorMsg, boolean checkErrorTypeGovWay, String soapPrefixError, String errorHttp) {
+	private static void verifyKoSoap(Logger log,String idTransazione, HttpResponse response, String error, int code, String errorMsg, boolean checkErrorTypeGovWay, String soapPrefixError, String errorHttp) {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.autenticazione.applicativi_token.Utilities.
-			verifyKo(response, error, code, errorMsg, checkErrorTypeGovWay, 
+			verifyKo(idTransazione, response, error, code, errorMsg, checkErrorTypeGovWay, 
 					false, soapPrefixError, errorHttp, log);
 	}
 	
-	private static void verifyOk(HttpResponse response, int code, String expectedContentType) {
+	private static void verifyOk(String idTransazione, HttpResponse response, int code, String expectedContentType) {
 		
-		assertEquals(code, response.getResultHTTPOperation());
+		assertEquals("id["+idTransazione+"] expectedReturnCode:"+code+ " found:"+response.getResultHTTPOperation(), code, response.getResultHTTPOperation());
 		if(expectedContentType!=null) {
-			assertEquals(expectedContentType, response.getContentType());
+			assertEquals("id["+idTransazione+"] expectedContentType:"+expectedContentType+ " found:"+response.getContentType(), expectedContentType, response.getContentType());
 		}
 		
 	}
@@ -449,14 +449,14 @@ public class Utils {
 			String errorHttp = errorHttpNull ? null : error;
 			
 			if(soap) {
-				Utils.verifyKoSoap(logCore, response, error, code, msg, checkErrorTypeGovWay, soapPrefixError, errorHttp);
+				Utils.verifyKoSoap(logCore, idTransazione, response, error, code, msg, checkErrorTypeGovWay, soapPrefixError, errorHttp);
 			}
 			else {
-				Utils.verifyKoRest(logCore, response, error, code, msg, checkErrorTypeGovWay);
+				Utils.verifyKoRest(logCore, idTransazione, response, error, code, msg, checkErrorTypeGovWay);
 			}
 		}
 		else {
-			Utils.verifyOk(response, 200, contentType);
+			Utils.verifyOk(idTransazione, response, 200, contentType);
 		}
 		
 		String [] msgErrore = null;

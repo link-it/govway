@@ -288,12 +288,12 @@ public class WSSecurityUsernameTokenTest extends ConfigLoader {
 			String errorHttp = errorHttpNull ? null : error;
 			
 			org.openspcoop2.core.protocolli.trasparente.testsuite.autenticazione.applicativi_token.Utilities.
-			verifyKo(response, error, code, msg, checkErrorTypeGovWay, 
+			verifyKo(idTransazione, response, error, code, msg, checkErrorTypeGovWay, 
 					false, soapPrefixError, errorHttp, ConfigLoader.logCore);
 
 		}
 		else {
-			org.openspcoop2.core.protocolli.trasparente.testsuite.autenticazione.applicativi_token.Utilities.verifyOk(response, 200, contentType);
+			org.openspcoop2.core.protocolli.trasparente.testsuite.autenticazione.applicativi_token.Utilities.verifyOk(idTransazione, response, 200, contentType);
 		}
 		
 		String [] msgErrore = null;
