@@ -60,4 +60,10 @@ then
 	exit 2
 fi
 
+RESULT=$(PGPASSWORD=${PASSWORD} psql ${DATABASE} ${IDENTITA} -h ${SERVER} -t -c "select id from dump_messaggi order by dump_timestamp DESC LIMIT 1;")
+if [ ! -z "${RESULT}" ]
+then
+	echo "Rilevati dump: ${RESULT}"
+	exit 2
+fi
 
