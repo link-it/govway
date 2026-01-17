@@ -396,6 +396,31 @@ Tutte le informazioni sono ritornate in millisecondi. È possibile ottenere le m
 
 - tokenCertificateIssuerDNInfo(String oid): ritorna l'informazione indicata come parametro relativa all'issuer del certificato con cui è stato firmato il token JWT.
 
+.. note::
+      Le informazioni seguenti sono presenti solamente se è stata abilitata la validazione DPoP del token
+
+- tokenDPoPRaw: DPoP token presente nella richiesta; 
+
+- tokenDPoPHeaderRaw: porzione dell'header relativa al token DPoP presente nella richiesta, in formato base64; 
+
+- tokenDPoPPayloadRaw: porzione del payload relativa al token DPoP presente nella richiesta, in formato base64; 
+
+- tokenDPoPDecodedHeader: contenuto decodificato dell'header presente nel token DPoP; 
+
+- tokenDPoPDecodedPayload: contenuto decodificato del payload presente nel token DPoP; 
+
+- tokenDPoPHeaderClaim(nomeClaim): valore del claim indicato come parametro e presente nell'header del token DPoP;
+
+- tokenDPoPPayloadClaim(nomeClaim): valore del claim indicato come parametro e presente nel payload del token DPoP;
+	
+- tokenDPoPHeaderClaims(): claims (nome=valore) presenti nell'header del token DPoP;
+	
+- tokenDPoPHeaderClaims(claimSeparator, nameValueSeparator): simile alla precedente opzione, consente di indicare i separatori utilizzati;
+
+- tokenDPoPPayloadClaims(): claims (nome=valore) presenti nel payload del token DPoP;
+	
+- tokenDPoPPayloadClaims(claimSeparator, nameValueSeparator): simile alla precedente opzione, consente di indicare i separatori utilizzati;
+
 **Negoziazione Token**
 
 - retrievedAccessToken: access token ottenuto dall'authorization server configurato nella Token Policy associata al connettore;

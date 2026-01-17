@@ -309,6 +309,12 @@ public class GestoreTokenValidazioneUtilities {
     						if(jsonCompactVerify.getX509Certificate()!=null) {
     							restSecurityToken.setCertificate(new CertificateInfo(jsonCompactVerify.getX509Certificate(), "access_token"));
     						}
+    						if(jsonCompactVerify.getJsonWebKey()!=null) {
+    							restSecurityToken.setJsonWebKey(jsonCompactVerify.getJsonWebKey());
+    						}
+    						if(jsonCompactVerify.getRsaPublicKey()!=null) {
+    							restSecurityToken.setPublicKey(jsonCompactVerify.getRsaPublicKey());
+    						}
     						if(jsonCompactVerify.getKid()!=null) {
     							restSecurityToken.setKid(jsonCompactVerify.getKid());
     						}
@@ -351,6 +357,12 @@ public class GestoreTokenValidazioneUtilities {
 						restSecurityToken = new RestMessageSecurityToken();
 						if(jsonDecrypt.getX509Certificate()!=null) {
 							restSecurityToken.setCertificate(new CertificateInfo(jsonDecrypt.getX509Certificate(), "access_token"));
+						}
+						if(jsonDecrypt.getJsonWebKey()!=null) {
+							restSecurityToken.setJsonWebKey(jsonDecrypt.getJsonWebKey());
+						}
+						if(jsonDecrypt.getRsaPublicKey()!=null) {
+							restSecurityToken.setPublicKey(jsonDecrypt.getRsaPublicKey());
 						}
 						if(jsonDecrypt.getKid()!=null) {
 							restSecurityToken.setKid(jsonDecrypt.getKid());
@@ -847,12 +859,13 @@ public class GestoreTokenValidazioneUtilities {
 			String detailsError = null;
 			DPoP informazioniDPoP = null;
 			Exception eProcess = null;
+			RestMessageSecurityToken restSecurityToken = null;
 
 			try {
 				// Step 1: Parse e validazione firma DPoP JWT
 				IDPoPParser dpopParser = parseDPoPToken(dpopToken, policyGestioneToken);
 				DPoP dpop = new DPoP();
-				
+
 				// Step 2: Validazione header (typ, alg)
 				validazioneDPoPHeader(dpop, dpopParser, policyGestioneToken);
 
@@ -863,7 +876,21 @@ public class GestoreTokenValidazioneUtilities {
 				validazioneDPoPCnfJkt(dpop, dpopParser, esitoGestioneToken, log);
 
 				// Se arriviamo qui, validazione DPoP completata con successo
-				informazioniDPoP = dpop;				
+				informazioniDPoP = dpop;
+
+				// Costruzione RestMessageSecurityToken (come per JWT)
+				if(pddContext!=null) {
+					restSecurityToken = new RestMessageSecurityToken();
+					JsonWebKey jsonWebKey = dpopParser.getJsonWebKey();
+					if(jsonWebKey!=null) {
+						restSecurityToken.setJsonWebKey(jsonWebKey);
+					}
+					restSecurityToken.setToken(dpopToken);
+					if(esitoPresenzaDPoP!=null) {
+						restSecurityToken.setHttpHeaderName(esitoPresenzaDPoP.getHeaderHttp());
+						restSecurityToken.setQueryParameterName(esitoPresenzaDPoP.getPropertyUrl());
+					}
+				}
 
 			}catch(Exception e) {
 				log.debug(GestoreToken.getMessageTokenNonValido(e),e);
@@ -875,6 +902,7 @@ public class GestoreTokenValidazioneUtilities {
 				esitoValidazioneDPoP.setTokenValido();
 				esitoValidazioneDPoP.setInformazioniDPoP(informazioniDPoP);
 				esitoValidazioneDPoP.setNoCache(false);
+				esitoValidazioneDPoP.setRestSecurityToken(restSecurityToken);
 			}
 			else {
 				esitoValidazioneDPoP.setTokenValidazioneFallita();

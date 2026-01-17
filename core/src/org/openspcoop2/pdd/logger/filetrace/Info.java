@@ -1773,6 +1773,8 @@ public class Info {
 		return correctValue(v, defaultValue);
 	}
 	
+	
+	
 	public java.lang.String getTokenRaw() {
 		return getTokenRaw(null);
 	}
@@ -1958,6 +1960,124 @@ public class Info {
 		if(this.securityToken!=null && this.securityToken.getAccessToken()!=null && this.securityToken.getAccessToken().getCertificate()!=null &&
 			this.securityToken.getAccessToken().getCertificate().getIssuer()!=null) {
 			v = this.securityToken.getAccessToken().getCertificate().getIssuer().getInfo(oid);
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	
+	public java.lang.String getTokenDPoPRaw() {
+		return getTokenDPoPRaw(null);
+	}
+	public java.lang.String getTokenDPoPRaw(String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getDpopToken()!=null) {
+			v = this.securityToken.getDpopToken().getToken();
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenDPoPHeaderRaw() {
+		return getTokenDPoPHeaderRaw(null);
+	}
+	public java.lang.String getTokenDPoPHeaderRaw(String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getDpopToken()!=null) {
+			v = this.securityToken.getDpopToken().getHeader();
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenDPoPDecodedHeader() {
+		return getTokenDPoPDecodedHeader(null);
+	}
+	public java.lang.String getTokenDPoPDecodedHeader(String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getDpopToken()!=null) {
+			v = this.securityToken.getDpopToken().getDecodedHeader();
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenDPoPHeaderClaim(String tokenClaim) {
+		return getTokenDPoPHeaderClaim(tokenClaim, null);
+	}
+	public java.lang.String getTokenDPoPHeaderClaim(String tokenClaim, String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getDpopToken()!=null) {
+			try {
+				v = this.securityToken.getDpopToken().getHeaderClaim(tokenClaim);
+			}catch(Exception t) {
+				this.log.error("getTokenDPoPHeaderClaim("+tokenClaim+")"+getErrorSuffix(t),t);
+			}
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenDPoPHeaderClaims() {
+		return getTokenDPoPHeaderClaims(",", "=", null);
+	}
+	public java.lang.String getTokenDPoPHeaderClaims(String claimSeparator, String nameValueSeparator, String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getDpopToken()!=null) {
+			try {
+				Map<String, String> map = this.securityToken.getDpopToken().getHeaderClaims();
+				v = formatTokenClaims(map, claimSeparator, nameValueSeparator);
+			}catch(Exception t) {
+				this.log.error("getTokenDPoPHeaderClaims("+claimSeparator+","+nameValueSeparator+")"+getErrorSuffix(t),t);
+			}
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenDPoPPayloadRaw() {
+		return getTokenDPoPPayloadRaw(null);
+	}
+	public java.lang.String getTokenDPoPPayloadRaw(String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getDpopToken()!=null) {
+			v = this.securityToken.getDpopToken().getPayload();
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenDPoPDecodedPayload() {
+		return getTokenDPoPDecodedPayload(null);
+	}
+	public java.lang.String getTokenDPoPDecodedPayload(String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getDpopToken()!=null) {
+			v = this.securityToken.getDpopToken().getDecodedPayload();
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenDPoPPayloadClaim(String tokenClaim) {
+		return getTokenDPoPPayloadClaim(tokenClaim, null);
+	}
+	public java.lang.String getTokenDPoPPayloadClaim(String tokenClaim, String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getDpopToken()!=null) {
+			try {
+				v = this.securityToken.getDpopToken().getPayloadClaim(tokenClaim);
+			}catch(Exception t) {
+				this.log.error("getTokenDPoPPayloadClaim("+tokenClaim+")"+getErrorSuffix(t),t);
+			}
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenDPoPPayloadClaims() {
+		return getTokenDPoPPayloadClaims(",", "=", null);
+	}
+	public java.lang.String getTokenDPoPPayloadClaims(String claimSeparator, String nameValueSeparator, String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getDpopToken()!=null) {
+			try {
+				Map<String, String> map = this.securityToken.getDpopToken().getPayloadClaims();
+				v = formatTokenClaims(map, claimSeparator, nameValueSeparator);
+			}catch(Exception t) {
+				this.log.error("getTokenDPoPPayloadClaims("+claimSeparator+","+nameValueSeparator+")"+getErrorSuffix(t),t);
+			}
 		}
 		return correctValue(v, defaultValue);
 	}
@@ -2269,6 +2389,9 @@ public class Info {
 		if(this.informazioniNegoziazioneToken!=null) {
 			v = this.informazioniNegoziazioneToken.getAccessToken();
 		}	
+		else if(this.securityToken!=null && this.securityToken.getAuthorization()!=null) {
+			v = this.securityToken.getAuthorization().getToken();
+		}
 		return correctValue(v, defaultValue);
 	}
 	
@@ -2286,7 +2409,7 @@ public class Info {
 				List<String> lClaimValues = TokenUtilities.getClaimValues(valueInfoTokenObject);
 				v = TokenUtilities.getClaimValuesAsString(lClaimValues);
 			}
-		}	
+		}
 		return correctValue(v, defaultValue);
 	}
 	
@@ -2388,6 +2511,9 @@ public class Info {
 		if(this.informazioniNegoziazioneToken!=null && this.informazioniNegoziazioneToken.getDpopBackend()!=null) {
 			v = this.informazioniNegoziazioneToken.getRequest().getDpop().getToken();
 		}	
+		else if(this.securityToken!=null && this.securityToken.getDpopToken()!=null) {
+			v = this.securityToken.getDpopToken().getToken();
+		}
 		return correctValue(v, defaultValue);
 	}
 	
