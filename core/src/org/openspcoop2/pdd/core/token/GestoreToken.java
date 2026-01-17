@@ -1900,6 +1900,14 @@ public class GestoreToken {
 				esitoPresenzaDPoP, esitoGestioneToken,
 				protocolFactory, accessToken, portaDelegata, pddContext,
 				busta, idDominio, idServizio);
+		
+		SecurityToken securityToken = null;
+		if(
+				// esitoGestioneToken.isValido() && se non si genera comunque un security token non si hanno i json recuperati tramite la PDND 
+				esitoValidazioneDPoP.getRestSecurityToken()!=null) {
+			securityToken = SecurityTokenUtilities.newSecurityToken(pddContext);
+			securityToken.setDpopToken(esitoValidazioneDPoP.getRestSecurityToken()); 
+		}
 
 		return esitoValidazioneDPoP;
 	}
@@ -2453,6 +2461,15 @@ public class GestoreToken {
 			}
 		}
 
+		SecurityToken securityToken = null;
+		if(
+				esito.getDpopProof()!=null) {
+			securityToken = SecurityTokenUtilities.newSecurityToken(dpopParams.getPddContext());
+			RestMessageSecurityToken dpop = new RestMessageSecurityToken();
+			dpop.setToken(esito.getDpopProof());
+			securityToken.setDpopToken(dpop);
+		}
+		
 		return esito;
 	}
 

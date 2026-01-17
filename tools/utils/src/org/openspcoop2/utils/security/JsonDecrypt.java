@@ -452,10 +452,14 @@ public class JsonDecrypt {
 	
 	
 	private X509Certificate x509Certificate;
+	private JsonWebKey jsonWebKey;
 	private RSAPublicKey rsaPublicKey;
 	private String kid;
 	public X509Certificate getX509Certificate() {
 		return this.x509Certificate;
+	}
+	public JsonWebKey getJsonWebKey() {
+		return this.jsonWebKey;
 	}
 	public RSAPublicKey getRsaPublicKey() {
 		return this.rsaPublicKey;
@@ -464,6 +468,10 @@ public class JsonDecrypt {
 		return this.kid;
 	}
 	
+	private static final String PROCESS_PREFIX = "Process '";
+	private static final String RESOURCE_PREFIX = "Resource '";
+	private static final String RETRIEVE_PREFIX = "Retrieve '";
+	private static final String ERROR_SEPARATOR = "' error: ";
 	private JweDecryptionProvider getProvider(JweHeaders jweHeaders, JweHeaders jweUnprotectedHeaders) throws UtilsException {
 		
 		JweDecryptionProvider providerBuild = this.provider;
@@ -511,7 +519,7 @@ public class JsonDecrypt {
 					}
 					providerBuild = getProviderX509(certificatoInfo, keyAlgo, contentAlgo);
 				}catch(Exception e) {
-					throw new UtilsException("Process '"+JwtHeaders.JWT_HDR_X5C+"' error: "+e.getMessage(),e);
+					throw new UtilsException(PROCESS_PREFIX+JwtHeaders.JWT_HDR_X5C+ERROR_SEPARATOR+e.getMessage(),e);
 				}
 			}
 			else if(jweHeaders.getJsonWebKey()!=null && this.options.isPermitUseHeaderJWK()) {
@@ -523,7 +531,7 @@ public class JsonDecrypt {
 					JsonWebKey webKey = jweHeaders.getJsonWebKey();
 					providerBuild = getProviderJWK(webKey, keyAlgo, contentAlgo);
 				}catch(Exception e) {
-					throw new UtilsException("Process '"+JwtHeaders.JWT_HDR_JWK+"' error: "+e.getMessage(),e);
+					throw new UtilsException(PROCESS_PREFIX+JwtHeaders.JWT_HDR_JWK+ERROR_SEPARATOR+e.getMessage(),e);
 				}
 			}
 			else if(
@@ -556,18 +564,18 @@ public class JsonDecrypt {
 								httpResponse = HttpUtilities.getHTTPResponse(path);
 							}
 						}catch(Exception e) {
-							throw new UtilsException("Resource '"+path+"' unavailable: "+e.getMessage(),e);
+							throw new UtilsException(RESOURCE_PREFIX+path+"' unavailable: "+e.getMessage(),e);
 						}
 						if(httpResponse==null || httpResponse.getContent()==null) {
-							throw new UtilsException("Resource '"+path+"' unavailable");
+							throw new UtilsException(RESOURCE_PREFIX+path+"' unavailable");
 						}
 						if(httpResponse.getResultHTTPOperation()!=200) {
-							throw new UtilsException("Retrieve '"+path+"' failed (returnCode:"+httpResponse.getResultHTTPOperation()+")");
+							throw new UtilsException(RETRIEVE_PREFIX+path+"' failed (returnCode:"+httpResponse.getResultHTTPOperation()+")");
 						}
 						cer = httpResponse.getContent();
 					}
 					if(cer==null) {
-						throw new UtilsException("Resource '"+path+"' unavailable");
+						throw new UtilsException(RESOURCE_PREFIX+path+"' unavailable");
 					}
 					
 					if(x509) {
@@ -582,23 +590,23 @@ public class JsonDecrypt {
 					else {
 						JWKSet set = new JWKSet(new String(cer));
 						JsonWebKeys jsonWebKeysBuild = set.getJsonWebKeys();
-						JsonWebKey jsonWebKey = null;
+						JsonWebKey jsonWebKeyByUrl = null;
 						if(jsonWebKeysBuild.size()==1) {
-							jsonWebKey = jsonWebKeysBuild.getKeys().get(0);
+							jsonWebKeyByUrl = jsonWebKeysBuild.getKeys().get(0);
 						}
 						else {
 							if(jweHeaders.getKeyId()==null) {
 								throw new UtilsException("Kid non definito e JwkSet contiene più di un certificato");
 							}
-							jsonWebKey = jsonWebKeysBuild.getKey(jweHeaders.getKeyId());
+							jsonWebKeyByUrl = jsonWebKeysBuild.getKey(jweHeaders.getKeyId());
 						}
-						if(jsonWebKey==null) {
+						if(jsonWebKeyByUrl==null) {
 							throw new UtilsException("JsonWebKey non trovata");
 						}
-						providerBuild = getProviderJWK(jsonWebKey, keyAlgo, contentAlgo);
+						providerBuild = getProviderJWK(jsonWebKeyByUrl, keyAlgo, contentAlgo);
 					}
 				}catch(Exception e) {
-					throw new UtilsException("Process '"+hdr+"' error: "+e.getMessage(),e);
+					throw new UtilsException(PROCESS_PREFIX+hdr+ERROR_SEPARATOR+e.getMessage(),e);
 				}
 			}
 			else if(jweHeaders.getKeyId()!=null && this.options.isPermitUseHeaderKID()) {
@@ -611,14 +619,14 @@ public class JsonDecrypt {
 				try {
 					this.kid = jweHeaders.getKeyId();
 					if(this.jsonWebKeys!=null) {
-						JsonWebKey jsonWebKey = null;
+						JsonWebKey jsonWebKeyByKid = null;
 						try {
-							jsonWebKey = this.jsonWebKeys.getKey(this.kid);
+							jsonWebKeyByKid = this.jsonWebKeys.getKey(this.kid);
 						}catch(Exception e) {
 							// key non esistente
 						}
-						if(jsonWebKey!=null) {
-							providerBuild = getProviderJWK(jsonWebKey, keyAlgo, contentAlgo);
+						if(jsonWebKeyByKid!=null) {
+							providerBuild = getProviderJWK(jsonWebKeyByKid, keyAlgo, contentAlgo);
 						}
 					}
 					if(providerBuild==null &&
@@ -645,7 +653,7 @@ public class JsonDecrypt {
 						}
 					}
 				}catch(Exception e) {
-					throw new UtilsException("Process '"+JwtHeaders.JWT_HDR_KID+"' error: "+e.getMessage(),e);
+					throw new UtilsException(PROCESS_PREFIX+JwtHeaders.JWT_HDR_KID+ERROR_SEPARATOR+e.getMessage(),e);
 				}
 			}
 			else if(
@@ -693,7 +701,7 @@ public class JsonDecrypt {
 						throw new UtilsException("Certificato indicato non è nel formato X.509");
 					}
 				}catch(Exception e) {
-					throw new UtilsException("Process '"+hdr+"' error: "+e.getMessage(),e);
+					throw new UtilsException(PROCESS_PREFIX+hdr+ERROR_SEPARATOR+e.getMessage(),e);
 				}
 			}
 			else {
@@ -781,6 +789,7 @@ public class JsonDecrypt {
 		if(this.jsonWebKeys==null) {
 			throw new UtilsException("JWKSet da utilizzare per il recupero dei certificati non definito");
 		}
+		this.jsonWebKey = webKey;
 		this.rsaPublicKey = JwkUtils.toRSAPublicKey(webKey);
 		List<JsonWebKey> keys = this.jsonWebKeys.getKeys();
 		if(keys==null || keys.isEmpty()) {

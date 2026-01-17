@@ -37,6 +37,7 @@ public class SecurityToken implements Serializable {
 	
 	private ChannelSecurityToken channel;
 	private RestMessageSecurityToken accessToken;
+	private RestMessageSecurityToken dpopToken;
 	private SecurityTokenModI modI;
 	
 	public ChannelSecurityToken getChannel() {
@@ -50,6 +51,12 @@ public class SecurityToken implements Serializable {
 	}
 	public void setAccessToken(RestMessageSecurityToken accessToken) {
 		this.accessToken = accessToken;
+	}
+	public RestMessageSecurityToken getDpopToken() {
+		return this.dpopToken;
+	}
+	public void setDpopToken(RestMessageSecurityToken dpopToken) {
+		this.dpopToken = dpopToken;
 	}
 	
 	public SecurityTokenModI getModI() {

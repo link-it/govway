@@ -407,10 +407,14 @@ public class JsonVerifySignature {
 	}
 	
 	private X509Certificate x509Certificate;
+	private JsonWebKey jsonWebKey;
 	private PublicKey publicKey;
 	private String kid;
 	public X509Certificate getX509Certificate() {
 		return this.x509Certificate;
+	}
+	public JsonWebKey getJsonWebKey() {
+		return this.jsonWebKey;
 	}
 	public PublicKey getRsaPublicKey() {
 		return this.publicKey;
@@ -464,7 +468,8 @@ public class JsonVerifySignature {
 			}
 			else if(jwsHeaders.getJsonWebKey()!=null && this.options.isPermitUseHeaderJWK()) {
 				try {
-					this.publicKey = JwkUtils.toRSAPublicKey(jwsHeaders.getJsonWebKey());
+					this.jsonWebKey = jwsHeaders.getJsonWebKey();
+					this.publicKey = JwkUtils.toRSAPublicKey(this.jsonWebKey);
 					providerReturn = JwsUtils.getPublicKeySignatureVerifier(this.publicKey, algo);
 				}catch(Exception e) {
 					throw new UtilsException(getProcessErrorMsg(JwtHeaders.JWT_HDR_JWK,e),e);
@@ -518,20 +523,19 @@ public class JsonVerifySignature {
 					else {
 						JWKSet set = new JWKSet(new String(cer));
 						JsonWebKeys jsonWebKeysInternal = set.getJsonWebKeys();
-						JsonWebKey jsonWebKey = null;
 						if(jsonWebKeysInternal.size()==1) {
-							jsonWebKey = jsonWebKeysInternal.getKeys().get(0);
+							this.jsonWebKey = jsonWebKeysInternal.getKeys().get(0);
 						}
 						else {
 							if(jwsHeaders.getKeyId()==null) {
 								throw new UtilsException("Kid non definito e JwkSet contiene più di un certificato");
 							}
-							jsonWebKey = jsonWebKeysInternal.getKey(jwsHeaders.getKeyId());
+							this.jsonWebKey = jsonWebKeysInternal.getKey(jwsHeaders.getKeyId());
 						}
-						if(jsonWebKey==null) {
+						if(this.jsonWebKey==null) {
 							throw new UtilsException("JsonWebKey non trovata");
 						}
-						this.publicKey = JwkUtils.toRSAPublicKey(jsonWebKey);
+						this.publicKey = JwkUtils.toRSAPublicKey(this.jsonWebKey);
 						providerReturn = JwsUtils.getPublicKeySignatureVerifier(this.publicKey, algo);
 					}
 				}catch(Exception e) {
@@ -542,9 +546,9 @@ public class JsonVerifySignature {
 				try {
 					this.kid = jwsHeaders.getKeyId();
 					if(this.jsonWebKeys!=null) {
-						JsonWebKey jsonWebKey = getJsonWebKeyByKidIgnoreException();
-						if(jsonWebKey!=null) {
-							this.publicKey = JwkUtils.toRSAPublicKey(jsonWebKey);
+						this.jsonWebKey = getJsonWebKeyByKidIgnoreException();
+						if(this.jsonWebKey!=null) {
+							this.publicKey = JwkUtils.toRSAPublicKey(this.jsonWebKey);
 							providerReturn = JwsUtils.getPublicKeySignatureVerifier(this.publicKey, algo);
 						}
 					}
@@ -683,9 +687,9 @@ public class JsonVerifySignature {
 			if(jwk==null) {
 				throw this.newUtilsExceptionErrorKidUnavailable(true);
 			}
-			JsonWebKey jsonWebKey = jwk.getJsonWebKey();
-			if(jsonWebKey!=null) {
-				this.publicKey = JwkUtils.toRSAPublicKey(jsonWebKey);
+			this.jsonWebKey = jwk.getJsonWebKey();
+			if(this.jsonWebKey!=null) {
+				this.publicKey = JwkUtils.toRSAPublicKey(this.jsonWebKey);
 				return JwsUtils.getPublicKeySignatureVerifier(this.publicKey, algo);
 			}
 			else {

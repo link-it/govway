@@ -23,6 +23,7 @@
 package org.openspcoop2.pdd.core.token.dpop;
 
 import org.openspcoop2.pdd.core.token.AbstractEsitoValidazioneToken;
+import org.openspcoop2.protocol.sdk.RestMessageSecurityToken;
 
 /**
  * Esito di un processo di validazione DPoP token.
@@ -41,12 +42,19 @@ public abstract class EsitoValidazioneDPoP extends AbstractEsitoValidazioneToken
 
 	/** Informazioni sul DPoP token */
 	private DPoP dpop;
+	private RestMessageSecurityToken restSecurityToken;
 
 	public DPoP getInformazioniDPoP() {
 		return this.dpop;
 	}
 	public void setInformazioniDPoP(DPoP dpop) {
 		this.dpop = dpop;
+	}
+	public RestMessageSecurityToken getRestSecurityToken() {
+		return this.restSecurityToken;
+	}
+	public void setRestSecurityToken(RestMessageSecurityToken restSecurityToken) {
+		this.restSecurityToken = restSecurityToken;
 	}
 
 	@Override
