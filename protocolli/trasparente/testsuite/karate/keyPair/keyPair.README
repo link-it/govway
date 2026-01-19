@@ -39,3 +39,48 @@ TEST 4 con chiave pubblica 'keyPair-test.rsa.pkcs1_encrypted.publicKey.pem' e pr
 
 
 Per tutte le chiavi cifrate usare come password 123456
+
+
+
+
+=======
+PS256 (RSA-PSS con SHA-256)                                                                                                                                                                   
+======
+     
+NOTA: per JWT/JWS la maggior parte delle implementazioni (inclusa CXF) accetta chiavi RSA standard per PS256. La differenza chiave è:
+- RSA standard: può essere usata per RS256, RS384, RS512, PS256, PS384, PS512
+- RSA-PSS: può essere usata SOLO per PS256, PS384, PS512
+
+Inoltre le chiavi RSA-PSS specifiche non sono ben supportate nella conversione JWK da Nimbus/CXF.
+
+# Genera chiave privata RSA-PSS 2048 bit senza password
+openssl genpkey -algorithm RSA-PSS -pkeyopt rsa_keygen_bits:2048 -out keyPair-test-ps256_private.pem
+# Estrai chiave pubblica                                                                                                                                                                        
+openssl pkey -in keyPair-test-ps256_private.pem -pubout -out keyPair-test-ps256_public.pem
+
+# Genera chiave privata RSA-PSS 2048 bit con password
+openssl genpkey -algorithm RSA-PSS -pkeyopt rsa_keygen_bits:2048 -aes256 -pass pass:123456 -out keyPair-test-ps256_encrypted_private.pem
+# Estrai chiave pubblica
+openssl pkey -in keyPair-test-ps256_encrypted_private.pem -passin pass:123456 -pubout -out keyPair-test-ps256_encrypted_public.pem
+                                                                                             
+NOTA: L'opzione -aes256 cifra la chiave con AES-256. Puoi anche usare -des3 o -aes128 se preferisci altri algoritmi di cifratura.
+Per tutte le chiavi cifrate viene usata la password 123456 (passata tramite -passout/-passin pass:123456)
+
+=======                                                                                                                                                                                                    
+ES256 (ECDSA con curva P-256)                                                                                                                                                                        
+=======                                                                                                                                                                                                             
+  
+ES256 usa chiavi EC con curva P-256 (secp256r1/prime256v1):                                                                                                                                 
+                                                                                                                                                                                                             
+# Genera chiave privata EC con curva P-256 senza password
+openssl ecparam -name prime256v1 -genkey -noout -out keyPair-test-es256_private.pem
+# Estrai chiave pubblica
+openssl ec -in keyPair-test-es256_private.pem -pubout -out keyPair-test-es256_public.pem
+
+# Genera chiave privata EC con curva P-256 con password
+openssl ecparam -name prime256v1 -genkey -noout | openssl ec -aes256 -passout pass:123456 -out keyPair-test-es256_encrypted_private.pem
+# Estrai chiave pubblica
+openssl ec -in keyPair-test-es256_encrypted_private.pem -passin pass:123456 -pubout -out keyPair-test-es256_encrypted_public.pem
+
+NOTA: L'opzione -aes256 cifra la chiave con AES-256. Puoi anche usare -des3 o -aes128 se preferisci altri algoritmi di cifratura.
+Per tutte le chiavi cifrate viene usata la password 123456 (passata tramite -passout/-passin pass:123456)

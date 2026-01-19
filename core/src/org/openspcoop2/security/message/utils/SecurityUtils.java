@@ -22,8 +22,10 @@ package org.openspcoop2.security.message.utils;
 import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.utils.certificate.KeyUtils;
 import org.openspcoop2.core.config.MessageSecurityFlowParameter;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
@@ -362,5 +364,21 @@ public class SecurityUtils {
 		String [] tmp = nome.split(CostantiProprieta.KEY_PROPERTIES_DEFAULT_SEPARATOR);
 		return (tmp!=null && tmp.length>1 && tmp[1]!=null &&
 			tmp[1].startsWith(check)) ;
+	}
+
+	public static void dynamicUpdateKeyPairAlgorithm(Properties p, String signatureAlgorithm) {
+		// Se l'algoritmo è ES256, ES384 o ES512, il keyPairAlgorithm deve essere EC
+		// Altrimenti RSA (per RS256, RS384, RS512, PS256, PS384, PS512)
+		if(signatureAlgorithm != null && p != null) {
+			String type = p.getProperty(SecurityConstants.JOSE_KEYSTORE_TYPE);
+			if(SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(type) ||
+			   SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(type)) {
+				String keyPairAlgorithm = KeyUtils.ALGO_RSA;
+				if(signatureAlgorithm.toUpperCase().startsWith("ES")) {
+					keyPairAlgorithm = KeyUtils.ALGO_EC;
+				}
+				p.put(SecurityConstants.JOSE_KEYSTORE_KEY_ALGORITHM, keyPairAlgorithm);
+			}
+		}
 	}
 }

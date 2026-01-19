@@ -183,6 +183,7 @@ public class Costanti {
 	public static final String POLICY_ENDPOINT_SSL_CLIENT_CONFIG = "sslClientConfig";
 	
 	public static final String POLICY_VALIDAZIONE_STATO = "policy.validazioneJWT.stato";
+	public static final String POLICY_VALIDAZIONE_SIGNATURE_ALGORITHM = "policy.validazioneJWT.signature.algorithm";
 	public static final String POLICY_VALIDAZIONE_SAVE_ERROR_IN_CACHE = "policy.validazioneJWT.saveErrorInCache";
 	public static final String POLICY_VALIDAZIONE_JWS_VERIFICA_PROP_REF_ID = SecurityConstants.SIGNATURE_VERIFICATION_PROPERTY_REF_ID;
 	public static final String POLICY_VALIDAZIONE_JWE_DECRYPT_PROP_REF_ID = SecurityConstants.DECRYPTION_PROPERTY_REF_ID;
@@ -519,6 +520,8 @@ public class Costanti {
 	public static final String ID_RETRIEVE_TOKEN_JWT_SYMMETRIC_SIGN_ALGORITHM = "jwtSymmetricSignatureAlgorithm";
 	public static final String ID_RETRIEVE_TOKEN_JWT_ASYMMETRIC_SIGN_ALGORITHM = "jwtAsymmetricSignatureAlgorithm";
 	public static final String ID_RETRIEVE_TOKEN_DPOP_ASYMMETRIC_SIGN_ALGORITHM = "dpopAsymmetricSignatureAlgorithm";
+	public static final String ID_NEGOZIAZIONE_JWT_KEYSTORE_KEYPAIR_ALGORITHM = "jwtKeystoreKeyPairAlgorithm";
+	public static final String ID_NEGOZIAZIONE_DPOP_KEYSTORE_KEYPAIR_ALGORITHM = "dpopKeystoreKeyPairAlgorithm";
 
 	public static final String ID_RETRIEVE_TOKEN_EXPECTED_TOKEN_TYPE = "expectedTokenType";
 
@@ -533,6 +536,8 @@ public class Costanti {
 	public static final String ID_JWS_ENCRYPT_KEY_ALGORITHM = "tokenForwardInfoRaccolteModeJWEKeyAlgorithm";
 	
 	public static final String ID_JWS_ENCRYPT_CONTENT_ALGORITHM = "tokenForwardInfoRaccolteModeJWEContentAlgorithm";
+	
+	public static final String ID_VALIDAZIONE_JWT_ASYMMETRIC_SIGN_ALGORITHM = "validazioneJWTAsymmetricSignatureAlgorithm";
 	
 	public static final String ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE = "validazioneJwtTruststoreType";
 	public static final String ID_VALIDAZIONE_JWT_TRUSTSTORE_FILE = "validazioneJwtTruststoreFile";

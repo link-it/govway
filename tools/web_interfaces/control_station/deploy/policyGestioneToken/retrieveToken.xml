@@ -168,6 +168,41 @@
 	
 		</subsection>
 
+		<subsection label="JWT Signature">
+			<conditions>
+				<condition and="false">
+					<equals name="retrieveTokenMethod" value="rfc7523_x509"/>
+					<equals name="retrieveTokenMethod" value="rfc7523_clientSecret"/>
+				</condition>
+			</conditions>
+
+			<item type="select" name="jwtSymmetricSignatureAlgorithm" label="Signature Algorithm" >
+				<conditions>
+					<condition and="false">
+						<equals name="retrieveTokenMethod" value="rfc7523_clientSecret"/>
+					</condition>
+				</conditions>
+			      	<property name="policy.retrieveToken.jwt.signature.algorithm"/>
+			</item>
+			<item type="select" name="jwtAsymmetricSignatureAlgorithm" label="Signature Algorithm" reloadOnChange="true">
+				<conditions>
+					<condition and="false">
+						<equals name="retrieveTokenMethod" value="rfc7523_x509"/>
+					</condition>
+				</conditions>
+			      	<property name="policy.retrieveToken.jwt.signature.algorithm"/>
+			</item>
+			
+			<item type="lock" name="jwtSecret" label="Client Secret" required="true">
+				<conditions>
+					<condition and="false">
+						<equals name="retrieveTokenMethod" value="rfc7523_clientSecret"/>
+					</condition>
+				</conditions>
+			      	<property name="policy.retrieveToken.jwt.clientSecret" />
+			</item>
+		</subsection>
+
 		<subsection label="JWT KeyStore">
 			<conditions>
 				<condition and="false">
@@ -248,41 +283,6 @@
 				<property name="policy.retrieveToken.jwt.signature.byok" />
 			</item>
 
-		</subsection>
-
-		<subsection label="JWT Signature">
-			<conditions>
-				<condition and="false">
-					<equals name="retrieveTokenMethod" value="rfc7523_x509"/>
-					<equals name="retrieveTokenMethod" value="rfc7523_clientSecret"/>
-				</condition>
-			</conditions>
-
-			<item type="select" name="jwtSymmetricSignatureAlgorithm" label="Signature Algorithm" >
-				<conditions>
-					<condition and="false">
-						<equals name="retrieveTokenMethod" value="rfc7523_clientSecret"/>
-					</condition>
-				</conditions>
-			      	<property name="policy.retrieveToken.jwt.signature.algorithm"/>
-			</item>
-			<item type="select" name="jwtAsymmetricSignatureAlgorithm" label="Signature Algorithm" >
-				<conditions>
-					<condition and="false">
-						<equals name="retrieveTokenMethod" value="rfc7523_x509"/>
-					</condition>
-				</conditions>
-			      	<property name="policy.retrieveToken.jwt.signature.algorithm"/>
-			</item>
-
-			<item type="lock" name="jwtSecret" label="Client Secret" required="true">
-				<conditions>
-					<condition and="false">
-						<equals name="retrieveTokenMethod" value="rfc7523_clientSecret"/>
-					</condition>
-				</conditions>
-			      	<property name="policy.retrieveToken.jwt.clientSecret" />
-			</item>
 		</subsection>
 
 		<subsection label="JWT Header">
@@ -1223,7 +1223,7 @@
 			</condition>	
 		</conditions>
 		
-		<item type="select" name="dpopAsymmetricSignatureAlgorithm" label="Signature Algorithm" >
+		<item type="select" name="dpopAsymmetricSignatureAlgorithm" label="Signature Algorithm" reloadOnChange="true">
 		      	<property name="policy.retrieveToken.dpop.signature.algorithm"/>
 		</item>
 
@@ -1295,7 +1295,7 @@
 						<equals name="dpopKeystoreTypeNoModi" value="keys"/>
 					</condition>
 				</conditions>
-				<property name="policy.retrieveToken.dpop.signature.keyPairAlgorithm" />
+				<property name="policy.retrieveToken.dpop.signature.keyPairAlgorithm"/>
 			</item>
 			<item type="lock" name="dpopKeystorePassword" label="Password" required="true">
 				<conditions and="true">

@@ -102,3 +102,103 @@ cat govway_test.pem > client-test.rsa.pkcs8.certificatesPrivateKey.pem
 cat govway_test_2.pem >> client-test.rsa.pkcs8.certificatesPrivateKey.pem
 cat govway_test_3.pem >> client-test.rsa.pkcs8.certificatesPrivateKey.pem
 cat client-test.rsa.pkcs8.privateKey.pem >> client-test.rsa.pkcs8.certificatesPrivateKey.pem
+
+
+
+=======
+Per creare chiavi private e pubbliche ECDSA (EC P-256 per ES256):
+=======
+
+# Genera chiave privata EC con curva P-256 senza password (formato SEC1: -----BEGIN EC PRIVATE KEY-----)
+openssl ecparam -name prime256v1 -genkey -noout -out client-test.ec.sec1.privateKey.pem
+# Genera chiave privata EC con curva P-256 senza password nel formato DER
+openssl ec -in client-test.ec.sec1.privateKey.pem -outform DER -out client-test.ec.sec1.privateKey.der
+
+# Genera chiave privata EC con curva P-256 con password (formato SEC1 encrypted)
+openssl ecparam -name prime256v1 -genkey -noout | openssl ec -aes256 -passout pass:123456 -out client-test.ec.sec1_encrypted.privateKey.pem
+
+# Estrae la chiave pubblica dalla chiave privata, nel formato PEM
+openssl ec -in client-test.ec.sec1.privateKey.pem -pubout -out client-test.ec.publicKey.pem
+# Estrae la chiave pubblica dalla chiave privata, nel formato DER
+openssl ec -in client-test.ec.sec1.privateKey.pem -pubout -outform DER -out client-test.ec.publicKey.der
+
+# Converte la chiave privata nel formato PKCS8 non cifrato PEM: -----BEGIN PRIVATE KEY-----
+openssl pkcs8 -topk8 -inform PEM -outform PEM -nocrypt -in client-test.ec.sec1.privateKey.pem -out client-test.ec.pkcs8.privateKey.pem
+# Converte la chiave privata nel formato PKCS8 non cifrato DER
+openssl pkcs8 -topk8 -inform PEM -outform DER -nocrypt -in client-test.ec.sec1.privateKey.pem -out client-test.ec.pkcs8.privateKey.der
+
+# Converte la chiave privata nel formato PKCS8 cifrato PEM: -----BEGIN ENCRYPTED PRIVATE KEY-----
+openssl pkcs8 -topk8 -inform PEM -outform PEM -passout pass:123456 -in client-test.ec.sec1.privateKey.pem -out client-test.ec.pkcs8_encrypted.privateKey.pem
+# Converte la chiave privata nel formato PKCS8 cifrato DER
+openssl pkcs8 -topk8 -inform PEM -outform DER -passout pass:123456 -in client-test.ec.sec1.privateKey.pem -out client-test.ec.pkcs8_encrypted.privateKey.der
+
+Per tutte le chiavi cifrate viene usata la password 123456 (passata tramite -passout/-passin pass:123456)
+
+Di seguito i comandi per ottenere file che contengono sia la chiave privata che quella pubblica:
+
+cat client-test.ec.sec1.privateKey.pem > client-test.ec.sec1.privatePublicKey.pem
+cat client-test.ec.publicKey.pem >> client-test.ec.sec1.privatePublicKey.pem
+
+cat client-test.ec.publicKey.pem > client-test.ec.sec1.publicPrivateKey.pem
+cat client-test.ec.sec1.privateKey.pem >> client-test.ec.sec1.publicPrivateKey.pem
+
+cat client-test.ec.sec1_encrypted.privateKey.pem > client-test.ec.sec1_encrypted.privatePublicKey.pem
+cat client-test.ec.publicKey.pem >> client-test.ec.sec1_encrypted.privatePublicKey.pem
+
+cat client-test.ec.publicKey.pem > client-test.ec.sec1_encrypted.publicPrivateKey.pem
+cat client-test.ec.sec1_encrypted.privateKey.pem >> client-test.ec.sec1_encrypted.publicPrivateKey.pem
+
+cat client-test.ec.pkcs8.privateKey.pem > client-test.ec.pkcs8.privatePublicKey.pem
+cat client-test.ec.publicKey.pem >> client-test.ec.pkcs8.privatePublicKey.pem
+
+cat client-test.ec.publicKey.pem > client-test.ec.pkcs8.publicPrivateKey.pem
+cat client-test.ec.pkcs8.privateKey.pem >> client-test.ec.pkcs8.publicPrivateKey.pem
+
+cat client-test.ec.pkcs8_encrypted.privateKey.pem > client-test.ec.pkcs8_encrypted.privatePublicKey.pem
+cat client-test.ec.publicKey.pem >> client-test.ec.pkcs8_encrypted.privatePublicKey.pem
+
+cat client-test.ec.publicKey.pem > client-test.ec.pkcs8_encrypted.publicPrivateKey.pem
+cat client-test.ec.pkcs8_encrypted.privateKey.pem >> client-test.ec.pkcs8_encrypted.publicPrivateKey.pem
+
+
+
+=======
+Per creare chiavi private e pubbliche RSA-PSS (per PS256):
+=======
+
+NOTA: per JWT/JWS la maggior parte delle implementazioni (inclusa CXF) accetta chiavi RSA standard per PS256.
+La differenza chiave è:
+- RSA standard: può essere usata per RS256, RS384, RS512, PS256, PS384, PS512
+- RSA-PSS: può essere usata SOLO per PS256, PS384, PS512
+Inoltre le chiavi RSA-PSS specifiche non sono ben supportate nella conversione JWK da Nimbus/CXF.
+
+# Genera chiave privata RSA-PSS 2048 bit senza password (formato PKCS8: -----BEGIN PRIVATE KEY-----)
+openssl genpkey -algorithm RSA-PSS -pkeyopt rsa_keygen_bits:2048 -out client-test.rsapss.pkcs8.privateKey.pem
+# Genera chiave privata RSA-PSS 2048 bit senza password nel formato DER
+openssl pkey -in client-test.rsapss.pkcs8.privateKey.pem -outform DER -out client-test.rsapss.pkcs8.privateKey.der
+
+# Genera chiave privata RSA-PSS 2048 bit con password
+openssl genpkey -algorithm RSA-PSS -pkeyopt rsa_keygen_bits:2048 -aes256 -pass pass:123456 -out client-test.rsapss.pkcs8_encrypted.privateKey.pem
+# Converte la chiave privata nel formato PKCS8 cifrato DER
+openssl pkcs8 -topk8 -in client-test.rsapss.pkcs8.privateKey.pem -outform DER -passout pass:123456 -out client-test.rsapss.pkcs8_encrypted.privateKey.der
+
+# Estrae la chiave pubblica dalla chiave privata, nel formato PEM
+openssl pkey -in client-test.rsapss.pkcs8.privateKey.pem -pubout -out client-test.rsapss.publicKey.pem
+# Estrae la chiave pubblica dalla chiave privata, nel formato DER
+openssl pkey -in client-test.rsapss.pkcs8.privateKey.pem -pubout -outform DER -out client-test.rsapss.publicKey.der
+
+Per tutte le chiavi cifrate viene usata la password 123456 (passata tramite -pass/-passin pass:123456)
+
+Di seguito i comandi per ottenere file che contengono sia la chiave privata che quella pubblica:
+
+cat client-test.rsapss.pkcs8.privateKey.pem > client-test.rsapss.pkcs8.privatePublicKey.pem
+cat client-test.rsapss.publicKey.pem >> client-test.rsapss.pkcs8.privatePublicKey.pem
+
+cat client-test.rsapss.publicKey.pem > client-test.rsapss.pkcs8.publicPrivateKey.pem
+cat client-test.rsapss.pkcs8.privateKey.pem >> client-test.rsapss.pkcs8.publicPrivateKey.pem
+
+cat client-test.rsapss.pkcs8_encrypted.privateKey.pem > client-test.rsapss.pkcs8_encrypted.privatePublicKey.pem
+cat client-test.rsapss.publicKey.pem >> client-test.rsapss.pkcs8_encrypted.privatePublicKey.pem
+
+cat client-test.rsapss.publicKey.pem > client-test.rsapss.pkcs8_encrypted.publicPrivateKey.pem
+cat client-test.rsapss.pkcs8_encrypted.privateKey.pem >> client-test.rsapss.pkcs8_encrypted.publicPrivateKey.pem

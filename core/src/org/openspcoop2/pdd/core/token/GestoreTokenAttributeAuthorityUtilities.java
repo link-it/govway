@@ -85,6 +85,7 @@ import org.openspcoop2.pdd.services.connector.FormUrlEncodedHttpServletRequest;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.RestMessageSecurityToken;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.security.SecurityException;
@@ -190,6 +191,12 @@ public class GestoreTokenAttributeAuthorityUtilities {
 	    			// JWS Compact   			
 	    			JsonVerifySignature jsonCompactVerify = null;
 	    			try {
+	    				String rispostaAsString = new String(risposta);
+	    				RestMessageSecurityToken check = new RestMessageSecurityToken();
+	    				check.setToken(rispostaAsString);
+	    				
+	    				String signatureAlgorithm = policyAttributeAuthority.getResponseJwsSignatureAlgorithm(check);
+	    				
 	    				JWTOptions options = new JWTOptions(JOSESerialization.COMPACT);
 	    				Properties p = policyAttributeAuthority.getProperties().get(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.POLICY_VALIDAZIONE_JWS_VERIFICA_PROP_REF_ID);
 	    				TokenUtilities.injectJOSEConfig(p, policyAttributeAuthority, null,  
@@ -293,13 +300,16 @@ public class GestoreTokenAttributeAuthorityUtilities {
 						}
 						    				
 						if(jsonCompactVerify==null) {
-							jsonCompactVerify = new JsonVerifySignature(p, options);
+							jsonCompactVerify = new JsonVerifySignature(p, signatureAlgorithm, options);
+						}
+						else {
+							jsonCompactVerify.setSignatureAlgorithm(signatureAlgorithm);
 						}
 						
 						jsonCompactVerify.setJksPasswordRequired(DBUtils.isTruststoreJksPasswordRequired());
 						jsonCompactVerify.setPkcs12PasswordRequired(DBUtils.isTruststorePkcs12PasswordRequired());
 						
-	    				if(jsonCompactVerify.verify(new String(risposta))) {
+	    				if(jsonCompactVerify.verify(rispostaAsString)) {
 	    					if(tokenParser instanceof BasicRetrieveAttributeAuthorityResponseParser) {
 	    						decodedPayload = jsonCompactVerify.getDecodedPayload(); 
 	    					}

@@ -44,6 +44,7 @@ import org.openspcoop2.pdd.core.token.TokenUtilities;
 import org.openspcoop2.pdd.core.token.parser.Claims;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.utils.AbstractSecurityProvider;
+import org.openspcoop2.security.utils.SignatureAlgorithmUtilities;
 import org.openspcoop2.utils.UtilsRuntimeException;
 import org.openspcoop2.utils.certificate.byok.BYOKProvider;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
@@ -309,7 +310,7 @@ public class AttributeAuthorityProvider implements IProvider {
 	public List<String> getValues(String id, ExternalResources externalResources) throws ProviderException{
 		List<String> values = null;
 		if(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_SIGNATURE_ALGORITHM.equals(id)) {
-			return getValuesSignatureAlgorithm();
+			return SignatureAlgorithmUtilities.getValuesSignatureAlgorithm(false, false);
 		}
 		else if(Costanti.ID_TIPOLOGIA_HTTPS.equals(id)) {
 			List<String> tipologie = null;
@@ -343,20 +344,10 @@ public class AttributeAuthorityProvider implements IProvider {
 		else if(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_PARSER_TOKEN_CUSTOM_PLUGIN_CHOICE.equals(id)) {
 			return TokenUtilities.getTokenPluginValues(externalResources, TipoPlugin.ATTRIBUTE_AUTHORITY);
 		}
-		return values;
-	}
-	private List<String> getValuesSignatureAlgorithm() {
-		List<String> l = new ArrayList<>();
-		org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm [] tmp = org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm.values();
-		for (int i = 0; i < tmp.length; i++) {
-			if(org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm.NONE.equals(tmp[i])) {
-				continue;
-			}
-			if(!tmp[i].name().toLowerCase().startsWith("hs")) {
-				l.add(tmp[i].name());
-			}
+		else if(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_RISPOSTA_JWS_ASYMMETRIC_SIGN_ALGORITHM.equals(id)) {
+			return SignatureAlgorithmUtilities.getValuesSignatureAlgorithm(false, true);
 		}
-		return l;
+		return values;
 	}
 
 	@Override
@@ -366,7 +357,7 @@ public class AttributeAuthorityProvider implements IProvider {
 	@Override
 	public List<String> getLabels(String id, ExternalResources externalResources) throws ProviderException{
 		if(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_SIGNATURE_ALGORITHM.equals(id)) {
-			return getLabelsSignatureAlgorithm(id);
+			return SignatureAlgorithmUtilities.getLabelsSignatureAlgorithm(false, false);
 		}
 		else if(Costanti.ID_AA_JWS_TRUSTSTORE_TYPE.equals(id) || 
 				Costanti.ID_AA_JWS_KEYSTORE_TYPE.equals(id) || 
@@ -391,24 +382,10 @@ public class AttributeAuthorityProvider implements IProvider {
 		else if(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_PARSER_TOKEN_CUSTOM_PLUGIN_CHOICE.equals(id)) {
 			return TokenUtilities.getTokenPluginLabels(externalResources, TipoPlugin.ATTRIBUTE_AUTHORITY);
 		}
-		return this.getValues(id); // torno uguale ai valori negli altri casi
-	}
-	private List<String> getLabelsSignatureAlgorithm(String id) throws ProviderException{
-		List<String> l = this.getValues(id);
-		List<String> labels = new ArrayList<>();
-		for (String value : l) {
-			if(value.contains("_")) {
-				String t = "" + value;
-				while(t.contains("_")) {
-					t = t.replace("_", "-");
-				}
-				labels.add(t);
-			}
-			else {
-				labels.add(value);
-			}
+		else if(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_RISPOSTA_JWS_ASYMMETRIC_SIGN_ALGORITHM.equals(id)) {
+			return SignatureAlgorithmUtilities.getLabelsSignatureAlgorithm(false, true);
 		}
-		return labels;
+		return this.getValues(id); // torno uguale ai valori negli altri casi
 	}
 
 	private static boolean secret = false;

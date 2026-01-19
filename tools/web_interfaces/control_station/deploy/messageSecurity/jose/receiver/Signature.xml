@@ -35,10 +35,22 @@
 			</values>
 			<property name="signatureMode" />
 		</item>
-		
+
 		<item type="checkbox" name="joseUseHeaders" label="Use Headers" defaultSelected="false" reloadOnChange="true">
 			<property name="joseUseHeaders"/>
 		</item>
+
+		<item type="select" name="jwtAsyncSignatureAlgorithm" label="Signature Algorithm">
+			<conditions and="true">
+				<condition>
+			                <equals name="signatureMode" value="compact"/>
+			        </condition>
+				<condition and="true">
+					<selected name="joseUseHeaders"/>
+				</condition>
+			</conditions>
+			<property name="signatureAlgorithm" />
+		</item>	
 		
 		<item type="checkbox" name="signatureDetached" label="Detached" defaultSelected="false" reloadOnChange="true">
 			<property name="signatureDetached"/>
@@ -152,14 +164,27 @@
 				</conditions>
 			    <property name="rs.security.key.password" properties="signaturePropRefId" />
 			</item>
-			<item type="select" name="signatureAlgorithm" label="Signature Algorithm" reloadOnChange="true" default="HS256">
+
+			<item type="select" name="symmSignatureAlgorithm" label="Signature Algorithm" default="HS256">
 				<conditions>
 					<condition and="true">
 						<equals name="truststoreType" value="jceks"/>
 					</condition>
 				</conditions>
-		      	<property name="rs.security.signature.algorithm" properties="signaturePropRefId" />
+		      		<property name="rs.security.signature.algorithm" properties="signaturePropRefId" />
 			</item>
+			<item type="select" name="asyncSignatureAlgorithm" label="Signature Algorithm">
+				<conditions and="true">
+					<condition and="true" not="true">
+						<equals name="truststoreType" value="jceks"/>
+					</condition>
+					<condition>
+					        <equals name="signatureMode" value="compact"/>
+					</condition>
+				</conditions>
+		      		<property name="signatureAlgorithm" />
+			</item>	
+
 			<item type="select" name="keystoreByokPolicy" label="BYOK Policy" default="" reloadOnChange="true">
 				<conditions>
 					<condition and="true">

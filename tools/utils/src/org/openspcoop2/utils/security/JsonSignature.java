@@ -29,7 +29,6 @@ import javax.crypto.SecretKey;
 
 import org.apache.cxf.rs.security.jose.jwk.JsonWebKey;
 import org.apache.cxf.rs.security.jose.jwk.JsonWebKeys;
-import org.apache.cxf.rs.security.jose.jwk.JwkUtils;
 import org.apache.cxf.rs.security.jose.jws.JwsCompactProducer;
 import org.apache.cxf.rs.security.jose.jws.JwsException;
 import org.apache.cxf.rs.security.jose.jws.JwsHeaders;
@@ -37,6 +36,7 @@ import org.apache.cxf.rs.security.jose.jws.JwsJsonProducer;
 import org.apache.cxf.rs.security.jose.jws.JwsSignatureProvider;
 import org.apache.cxf.rs.security.jose.jws.JwsUtils;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.certificate.JwkUtils;
 import org.openspcoop2.utils.certificate.KeyStore;
 import org.openspcoop2.utils.certificate.KeystoreType;
 
@@ -149,7 +149,7 @@ public class JsonSignature {
 		this(jsonWebKey, secretKey, signatureAlgorithm, 
 				null, options);
 	}
-	public JsonSignature(JsonWebKey jsonWebKey, boolean secretKey, String signatureAlgorithm, 
+	public JsonSignature(JsonWebKey jsonWebKey, boolean secretKey, String signatureAlgorithm,
 			JwtHeaders jwtHeaders, JWSOptions options) throws UtilsException{
 		try {
 			org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm algo = org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm.getAlgorithm(signatureAlgorithm);
@@ -159,7 +159,8 @@ public class JsonSignature {
 					throw new UtilsException("(JsonWebKey) JwsSignatureProvider init failed; check signature algorithm ("+signatureAlgorithm+")");
 				}
 			}else {
-				this.provider = JwsUtils.getPrivateKeySignatureProvider(JwkUtils.toRSAPrivateKey(jsonWebKey), algo);
+				PrivateKey pKey = JwkUtils.toPrivateKey(jsonWebKey);
+				this.provider = JwsUtils.getPrivateKeySignatureProvider(pKey, algo);
 			}
 			this.options=options;
 			this.jwtHeaders = jwtHeaders;

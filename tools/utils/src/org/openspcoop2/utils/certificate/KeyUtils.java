@@ -29,7 +29,11 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
 import org.apache.commons.lang.StringUtils;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
+import org.bouncycastle.asn1.sec.ECPrivateKey;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
 import org.bouncycastle.openssl.PEMDecryptorProvider;
 import org.bouncycastle.openssl.PEMEncryptedKeyPair;
 import org.bouncycastle.openssl.PEMKeyPair;
@@ -201,22 +205,46 @@ public class KeyUtils {
 			throw new UtilsException(e.getMessage(),e);
 		}
 	}
-	
+
+	public PrivateKey readSEC1PrivateKeyDERFormat(byte[] privateKey) throws UtilsException {
+		// Legge chiavi EC in formato SEC1 DER (generato con: openssl ec -outform DER)
+		try {
+			ECPrivateKey ecPrivateKey = ECPrivateKey.getInstance(privateKey);
+			ASN1ObjectIdentifier curveOid = (ASN1ObjectIdentifier) ecPrivateKey.getParametersObject();
+			AlgorithmIdentifier algId = new AlgorithmIdentifier(X9ObjectIdentifiers.id_ecPublicKey, curveOid);
+			PrivateKeyInfo privKeyInfo = new PrivateKeyInfo(algId, ecPrivateKey);
+			PKCS8EncodedKeySpec specPriv = new PKCS8EncodedKeySpec(privKeyInfo.getEncoded());
+			return this.kf.generatePrivate(specPriv);
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
+
 	public PrivateKey getPrivateKey(byte[] privateKey) throws UtilsException {
-		
+
 		PEMReader pemArchive = new PEMReader(privateKey);
 		if(pemArchive.getPrivateKey()!=null) {
 			privateKey = pemArchive.getPrivateKey().getBytes();
-			
-			if(pemArchive.isPkcs1()) {
-				return this.readPKCS1PrivateKeyPEMFormat(privateKey);	
+
+			if(pemArchive.isPkcs1() || pemArchive.isSec1ec()) {
+				return this.readPKCS1PrivateKeyPEMFormat(privateKey);
 			}
 			else if(pemArchive.isPkcs8()) {
 				return this.readPKCS8PrivateKeyPEMFormat(privateKey);
 			}
 		}
-		
-		return readPKCS8PrivateKeyDERFormat(privateKey);
+
+		try {
+			return readPKCS8PrivateKeyDERFormat(privateKey);
+		}catch(Exception e) {
+			// provo con SEC1 DER (chiavi EC)
+			try {
+				return readSEC1PrivateKeyDERFormat(privateKey);
+			}catch(Exception ignore) {
+				// rilancio eccezione precedente
+				throw new UtilsException(e.getMessage(),e);
+			}
+		}
 	}
 	
 	
@@ -293,15 +321,15 @@ public class KeyUtils {
 	}
 	
 	public PrivateKey getPrivateKey(byte[] privateKey, String password) throws UtilsException {
-		
+
 		PEMReader pemArchive = new PEMReader(privateKey);
 		if(pemArchive.getPrivateKey()!=null) {
 			privateKey = pemArchive.getPrivateKey().getBytes();
-			
+
 			if(pemArchive.isPkcs8encrypted()) {
 				return this.readPKCS8EncryptedPrivateKeyPEMFormat(privateKey, password);
 			}
-			else if(pemArchive.isPkcs1()) {
+			else if(pemArchive.isPkcs1() || pemArchive.isSec1ec()) {
 				try {
 					return this.readPKCS1EncryptedPrivateKeyPEMFormat(privateKey, password);
 				}catch(Exception e) {
@@ -312,7 +340,7 @@ public class KeyUtils {
 						// rilancio eccezione precedente
 						throw new UtilsException(e.getMessage(),e);
 					}
-				}	
+				}
 			}
 			else if(pemArchive.isPkcs8()) {
 				return this.readPKCS8PrivateKeyPEMFormat(privateKey);
@@ -326,12 +354,17 @@ public class KeyUtils {
 			try {
 				return readPKCS8PrivateKeyDERFormat(privateKey);
 			}catch(Exception ignore) {
-				// rilancio eccezione precedente
-				throw new UtilsException(e.getMessage(),e);
+				// provo con SEC1 DER (chiavi EC)
+				try {
+					return readSEC1PrivateKeyDERFormat(privateKey);
+				}catch(Exception ignore2) {
+					// rilancio eccezione precedente
+					throw new UtilsException(e.getMessage(),e);
+				}
 			}
 		}
-		
+
 	}
 
-	
+
 }

@@ -704,10 +704,19 @@
 			</values>
 			<property name="policy.attributeAuthority.response.type" />
 		</item>
+		
+		<item type="select" name="aaResponseAsymmetricSignatureAlgorithm" label="Signature Algorithm" >
+			<conditions>
+				<condition and="true">
+					<equals name="aaResponse" value="jws"/>
+				</condition>
+			</conditions>
+		      	<property name="policy.attributeAuthority.response.signature.algorithm"/>
+		</item>
 		<item type="text" name="aaResponseAudience" label="Audience" required="false" note="Se definito viene confrontato con l'audience presente nel token">
 			<conditions>
 				<condition>
-					<equals name="aaResponse" value="jwt"/>
+					<equals name="aaResponse" value="jws"/>
 				</condition>
 			</conditions>
 			<property name="policy.attributeAuthority.response.jwt.audience" />
