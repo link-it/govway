@@ -36,10 +36,13 @@ public class PEMReader implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
-	public static final String PKCS1_BEGIN = "-----BEGIN RSA PRIVATE KEY-----"; 
+	public static final String PKCS1_BEGIN = "-----BEGIN RSA PRIVATE KEY-----";
     public static final String PKCS1_END = "-----END RSA PRIVATE KEY-----";
 
-    public static final String PKCS8_BEGIN = "-----BEGIN PRIVATE KEY-----"; 
+    public static final String SEC1_EC_BEGIN = "-----BEGIN EC PRIVATE KEY-----";
+    public static final String SEC1_EC_END = "-----END EC PRIVATE KEY-----";
+
+    public static final String PKCS8_BEGIN = "-----BEGIN PRIVATE KEY-----";
     public static final String PKCS8_END = "-----END PRIVATE KEY-----";
     
     public static final String PKCS8_ENCRYPTED_BEGIN = "-----BEGIN ENCRYPTED PRIVATE KEY-----"; 
@@ -56,6 +59,7 @@ public class PEMReader implements Serializable {
 	private String publicKey;
 	private List<String> certificates = new ArrayList<>();
 	private boolean pkcs1; // l'encrypted dell'1 è una informazione interna
+	private boolean sec1ec; // SEC1 EC private key
 	private boolean pkcs8;
 	private boolean pkcs8encrypted;
 	
@@ -88,6 +92,10 @@ public class PEMReader implements Serializable {
 		if(pkcs1 && pem.contains(PKCS1_BEGIN)) {
 			this.privateKey = read(pem, PKCS1_BEGIN, PKCS1_END);
 			this.pkcs1 = this.privateKey!=null && StringUtils.isNotEmpty(this.privateKey);
+		}
+		else if(pkcs1 && pem.contains(SEC1_EC_BEGIN)) {
+			this.privateKey = read(pem, SEC1_EC_BEGIN, SEC1_EC_END);
+			this.sec1ec = this.privateKey!=null && StringUtils.isNotEmpty(this.privateKey);
 		}
 		else if(pkcs8 && pem.contains(PKCS8_BEGIN)) {
 			this.privateKey = read(pem, PKCS8_BEGIN, PKCS8_END);
@@ -173,6 +181,9 @@ public class PEMReader implements Serializable {
 	
 	public boolean isPkcs1() {
 		return this.pkcs1;
+	}
+	public boolean isSec1ec() {
+		return this.sec1ec;
 	}
 	public boolean isPkcs8() {
 		return this.pkcs8;

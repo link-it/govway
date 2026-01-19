@@ -30,6 +30,7 @@ import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.utils.AbstractSecurityProvider;
+import org.openspcoop2.security.utils.SignatureAlgorithmUtilities;
 import org.openspcoop2.utils.security.JOSESerialization;
 import org.openspcoop2.utils.security.JWTOptions;
 
@@ -72,12 +73,18 @@ public class SecurityProvider extends AbstractSecurityProvider {
 	@Override
 	public List<String> getValues(String id) throws ProviderException {
 		if(JOSECostanti.ID_SIGNATURE_ALGORITHM.equals(id)) {
-			List<String> l = new ArrayList<>();
-			org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm [] tmp = org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm.values();
-			for (int i = 0; i < tmp.length; i++) {
-				l.add(tmp[i].name());
-			}
+			List<String> l = SignatureAlgorithmUtilities.getValuesSignatureAlgorithm(true, false);
+			l.addAll(SignatureAlgorithmUtilities.getValuesSignatureAlgorithm(false, false));
 			return l;
+		}
+		else if(JOSECostanti.ID_SYMMETRIC_SIGNATURE_ALGORITHM.equals(id)) {
+			return SignatureAlgorithmUtilities.getValuesSignatureAlgorithm(true, false);
+		}
+		else if(JOSECostanti.ID_ASYMMETRIC_SIGNATURE_ALGORITHM.equals(id)) {
+			return SignatureAlgorithmUtilities.getValuesSignatureAlgorithm(false, false);
+		}
+		else if(JOSECostanti.ID_JWT_ASYMMETRIC_SIGNATURE_ALGORITHM.equals(id)) {
+			return SignatureAlgorithmUtilities.getValuesSignatureAlgorithm(false, true);
 		}
 		else if(JOSECostanti.ID_ENCRYPT_KEY_ALGORITHM.equals(id)) {
 			List<String> l = new ArrayList<>();
@@ -121,8 +128,21 @@ public class SecurityProvider extends AbstractSecurityProvider {
 
 	@Override
 	public List<String> getLabels(String id) throws ProviderException {
-		if(JOSECostanti.ID_SIGNATURE_ALGORITHM.equals(id) ||
-				JOSECostanti.ID_ENCRYPT_KEY_ALGORITHM.equals(id) ||
+		if(JOSECostanti.ID_SIGNATURE_ALGORITHM.equals(id)) {
+			List<String> l = SignatureAlgorithmUtilities.getLabelsSignatureAlgorithm(true, false);
+			l.addAll(SignatureAlgorithmUtilities.getLabelsSignatureAlgorithm(false, false));
+			return l;
+		}
+		else if(JOSECostanti.ID_SYMMETRIC_SIGNATURE_ALGORITHM.equals(id)) {
+			return SignatureAlgorithmUtilities.getLabelsSignatureAlgorithm(true, false);
+		}
+		else if(JOSECostanti.ID_ASYMMETRIC_SIGNATURE_ALGORITHM.equals(id)) {
+			return SignatureAlgorithmUtilities.getLabelsSignatureAlgorithm(false, false);
+		}
+		else if(JOSECostanti.ID_JWT_ASYMMETRIC_SIGNATURE_ALGORITHM.equals(id)) {
+			return SignatureAlgorithmUtilities.getLabelsSignatureAlgorithm(false, true);
+		}
+		else if(JOSECostanti.ID_ENCRYPT_KEY_ALGORITHM.equals(id) ||
 				JOSECostanti.ID_ENCRYPT_CONTENT_ALGORITHM.equals(id)) {
 			List<String> l = this.getValues(id);
 			List<String> labels = new ArrayList<>();

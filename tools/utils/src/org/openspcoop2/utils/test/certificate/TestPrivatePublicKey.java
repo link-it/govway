@@ -249,11 +249,258 @@ public class TestPrivatePublicKey {
 	
 	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".certificatesPrivateKey.pkcs8.pem"})
 	public void testCertificatesPrivateKeyPkcs8PEM() throws UtilsException{
-		
+
 		logInCorso("certificatesPrivateKey.pkcs8.pem");
 		org.openspcoop2.utils.certificate.test.PrivatePublicKeyTest.testCertificatesPrivateKeyPkcs8PEM();
 		logFinished("certificatesPrivateKey.pkcs8.pem");
-		
+
 	}
-	
+
+	// ========== EC (ECDSA) tests ==========
+
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".ec.privateKey.sec1.pem"})
+	public void testEcPrivateKeySec1PEM() throws UtilsException{
+
+		logInCorso("ec.privateKey.sec1.pem");
+		org.openspcoop2.utils.certificate.test.PrivatePublicKeyTest.testEcPrivateKeySec1PEM();
+		logFinished("ec.privateKey.sec1.pem");
+
+	}
+
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".ec.privateKey.sec1.der"})
+	public void testEcPrivateKeySec1DER() throws UtilsException{
+
+		logInCorso("ec.privateKey.sec1.der");
+		org.openspcoop2.utils.certificate.test.PrivatePublicKeyTest.testEcPrivateKeySec1DER();
+		logFinished("ec.privateKey.sec1.der");
+
+	}
+
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".ec.privateKey.sec1_encrypted.pem"})
+	public void testEcPrivateKeySec1EncryptedPEM() throws UtilsException{
+
+		logInCorso("ec.privateKey.sec1_encrypted.pem");
+		org.openspcoop2.utils.certificate.test.PrivatePublicKeyTest.testEcPrivateKeySec1EncryptedPEM();
+		logFinished("ec.privateKey.sec1_encrypted.pem");
+
+	}
+
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".ec.privateKey.pkcs8.pem"})
+	public void testEcPrivateKeyPkcs8PEM() throws UtilsException{
+
+		logInCorso("ec.privateKey.pkcs8.pem");
+		org.openspcoop2.utils.certificate.test.PrivatePublicKeyTest.testEcPrivateKeyPkcs8PEM();
+		logFinished("ec.privateKey.pkcs8.pem");
+
+	}
+
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".ec.privateKey.pkcs8.der"})
+	public void testEcPrivateKeyPkcs8DER() throws UtilsException{
+
+		logInCorso("ec.privateKey.pkcs8.der");
+		org.openspcoop2.utils.certificate.test.PrivatePublicKeyTest.testEcPrivateKeyPkcs8DER();
+		logFinished("ec.privateKey.pkcs8.der");
+
+	}
+
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".ec.privateKey.pkcs8_encrypted.pem"})
+	public void testEcPrivateKeyPkcs8EncryptedPEM() throws UtilsException{
+
+		logInCorso("ec.privateKey.pkcs8_encrypted.pem");
+		org.openspcoop2.utils.certificate.test.PrivatePublicKeyTest.testEcPrivateKeyPkcs8EncryptedPEM();
+		logFinished("ec.privateKey.pkcs8_encrypted.pem");
+
+	}
+
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".ec.privateKey.pkcs8_encrypted.der"})
+	public void testEcPrivateKeyPkcs8EncryptedDER() throws UtilsException{
+
+		logInCorso("ec.privateKey.pkcs8_encrypted.der");
+		org.openspcoop2.utils.certificate.test.PrivatePublicKeyTest.testEcPrivateKeyPkcs8EncryptedDER();
+		logFinished("ec.privateKey.pkcs8_encrypted.der");
+
+	}
+
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".ec.publicKey.pem"})
+	public void testEcPublicKeyPEM() throws UtilsException{
+
+		logInCorso("ec.publicKey.pem");
+		org.openspcoop2.utils.certificate.test.PrivatePublicKeyTest.testEcPublicKeyPEM();
+		logFinished("ec.publicKey.pem");
+
+	}
+
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".ec.publicKey.der"})
+	public void testEcPublicKeyDER() throws UtilsException{
+
+		logInCorso("ec.publicKey.der");
+		org.openspcoop2.utils.certificate.test.PrivatePublicKeyTest.testEcPublicKeyDER();
+		logFinished("ec.publicKey.der");
+
+	}
+
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".ec.privatePublicKey.sec1.pem"})
+	public void testEcPrivatePublicKeySec1PEM() throws UtilsException{
+
+		logInCorso("ec.privatePublicKey.sec1.pem");
+		org.openspcoop2.utils.certificate.test.PrivatePublicKeyTest.testEcPrivatePublicKeySec1PEM();
+		logFinished("ec.privatePublicKey.sec1.pem");
+
+	}
+
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".ec.publicPrivateKey.sec1.pem"})
+	public void testEcPublicPrivateKeySec1PEM() throws UtilsException{
+
+		logInCorso("ec.publicPrivateKey.sec1.pem");
+		org.openspcoop2.utils.certificate.test.PrivatePublicKeyTest.testEcPublicPrivateKeySec1PEM();
+		logFinished("ec.publicPrivateKey.sec1.pem");
+
+	}
+
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".ec.privatePublicKey.sec1_encrypted.pem"})
+	public void testEcPrivatePublicKeySec1EncryptedPEM() throws UtilsException{
+
+		logInCorso("ec.privatePublicKey.sec1_encrypted.pem");
+		org.openspcoop2.utils.certificate.test.PrivatePublicKeyTest.testEcPrivatePublicKeySec1EncryptedPEM();
+		logFinished("ec.privatePublicKey.sec1_encrypted.pem");
+
+	}
+
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".ec.publicPrivateKey.sec1_encrypted.pem"})
+	public void testEcPublicPrivateKeySec1EncryptedPEM() throws UtilsException{
+
+		logInCorso("ec.publicPrivateKey.sec1_encrypted.pem");
+		org.openspcoop2.utils.certificate.test.PrivatePublicKeyTest.testEcPublicPrivateKeySec1EncryptedPEM();
+		logFinished("ec.publicPrivateKey.sec1_encrypted.pem");
+
+	}
+
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".ec.privatePublicKey.pkcs8.pem"})
+	public void testEcPrivatePublicKeyPkcs8PEM() throws UtilsException{
+
+		logInCorso("ec.privatePublicKey.pkcs8.pem");
+		org.openspcoop2.utils.certificate.test.PrivatePublicKeyTest.testEcPrivatePublicKeyPkcs8PEM();
+		logFinished("ec.privatePublicKey.pkcs8.pem");
+
+	}
+
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".ec.publicPrivateKey.pkcs8.pem"})
+	public void testEcPublicPrivateKeyPkcs8PEM() throws UtilsException{
+
+		logInCorso("ec.publicPrivateKey.pkcs8.pem");
+		org.openspcoop2.utils.certificate.test.PrivatePublicKeyTest.testEcPublicPrivateKeyPkcs8PEM();
+		logFinished("ec.publicPrivateKey.pkcs8.pem");
+
+	}
+
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".ec.privatePublicKey.pkcs8_encrypted.pem"})
+	public void testEcPrivatePublicKeyPkcs8EncryptedPEM() throws UtilsException{
+
+		logInCorso("ec.privatePublicKey.pkcs8_encrypted.pem");
+		org.openspcoop2.utils.certificate.test.PrivatePublicKeyTest.testEcPrivatePublicKeyPkcs8EncryptedPEM();
+		logFinished("ec.privatePublicKey.pkcs8_encrypted.pem");
+
+	}
+
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".ec.publicPrivateKey.pkcs8_encrypted.pem"})
+	public void testEcPublicPrivateKeyPkcs8EncryptedPEM() throws UtilsException{
+
+		logInCorso("ec.publicPrivateKey.pkcs8_encrypted.pem");
+		org.openspcoop2.utils.certificate.test.PrivatePublicKeyTest.testEcPublicPrivateKeyPkcs8EncryptedPEM();
+		logFinished("ec.publicPrivateKey.pkcs8_encrypted.pem");
+
+	}
+
+	// ========== RSA-PSS tests ==========
+
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".rsapss.privateKey.pkcs8.pem"})
+	public void testRsaPssPrivateKeyPkcs8PEM() throws UtilsException{
+
+		logInCorso("rsapss.privateKey.pkcs8.pem");
+		org.openspcoop2.utils.certificate.test.PrivatePublicKeyTest.testRsaPssPrivateKeyPkcs8PEM();
+		logFinished("rsapss.privateKey.pkcs8.pem");
+
+	}
+
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".rsapss.privateKey.pkcs8.der"})
+	public void testRsaPssPrivateKeyPkcs8DER() throws UtilsException{
+
+		logInCorso("rsapss.privateKey.pkcs8.der");
+		org.openspcoop2.utils.certificate.test.PrivatePublicKeyTest.testRsaPssPrivateKeyPkcs8DER();
+		logFinished("rsapss.privateKey.pkcs8.der");
+
+	}
+
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".rsapss.privateKey.pkcs8_encrypted.pem"})
+	public void testRsaPssPrivateKeyPkcs8EncryptedPEM() throws UtilsException{
+
+		logInCorso("rsapss.privateKey.pkcs8_encrypted.pem");
+		org.openspcoop2.utils.certificate.test.PrivatePublicKeyTest.testRsaPssPrivateKeyPkcs8EncryptedPEM();
+		logFinished("rsapss.privateKey.pkcs8_encrypted.pem");
+
+	}
+
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".rsapss.privateKey.pkcs8_encrypted.der"})
+	public void testRsaPssPrivateKeyPkcs8EncryptedDER() throws UtilsException{
+
+		logInCorso("rsapss.privateKey.pkcs8_encrypted.der");
+		org.openspcoop2.utils.certificate.test.PrivatePublicKeyTest.testRsaPssPrivateKeyPkcs8EncryptedDER();
+		logFinished("rsapss.privateKey.pkcs8_encrypted.der");
+
+	}
+
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".rsapss.publicKey.pem"})
+	public void testRsaPssPublicKeyPEM() throws UtilsException{
+
+		logInCorso("rsapss.publicKey.pem");
+		org.openspcoop2.utils.certificate.test.PrivatePublicKeyTest.testRsaPssPublicKeyPEM();
+		logFinished("rsapss.publicKey.pem");
+
+	}
+
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".rsapss.publicKey.der"})
+	public void testRsaPssPublicKeyDER() throws UtilsException{
+
+		logInCorso("rsapss.publicKey.der");
+		org.openspcoop2.utils.certificate.test.PrivatePublicKeyTest.testRsaPssPublicKeyDER();
+		logFinished("rsapss.publicKey.der");
+
+	}
+
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".rsapss.privatePublicKey.pkcs8.pem"})
+	public void testRsaPssPrivatePublicKeyPkcs8PEM() throws UtilsException{
+
+		logInCorso("rsapss.privatePublicKey.pkcs8.pem");
+		org.openspcoop2.utils.certificate.test.PrivatePublicKeyTest.testRsaPssPrivatePublicKeyPkcs8PEM();
+		logFinished("rsapss.privatePublicKey.pkcs8.pem");
+
+	}
+
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".rsapss.publicPrivateKey.pkcs8.pem"})
+	public void testRsaPssPublicPrivateKeyPkcs8PEM() throws UtilsException{
+
+		logInCorso("rsapss.publicPrivateKey.pkcs8.pem");
+		org.openspcoop2.utils.certificate.test.PrivatePublicKeyTest.testRsaPssPublicPrivateKeyPkcs8PEM();
+		logFinished("rsapss.publicPrivateKey.pkcs8.pem");
+
+	}
+
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".rsapss.privatePublicKey.pkcs8_encrypted.pem"})
+	public void testRsaPssPrivatePublicKeyPkcs8EncryptedPEM() throws UtilsException{
+
+		logInCorso("rsapss.privatePublicKey.pkcs8_encrypted.pem");
+		org.openspcoop2.utils.certificate.test.PrivatePublicKeyTest.testRsaPssPrivatePublicKeyPkcs8EncryptedPEM();
+		logFinished("rsapss.privatePublicKey.pkcs8_encrypted.pem");
+
+	}
+
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".rsapss.publicPrivateKey.pkcs8_encrypted.pem"})
+	public void testRsaPssPublicPrivateKeyPkcs8EncryptedPEM() throws UtilsException{
+
+		logInCorso("rsapss.publicPrivateKey.pkcs8_encrypted.pem");
+		org.openspcoop2.utils.certificate.test.PrivatePublicKeyTest.testRsaPssPublicPrivateKeyPkcs8EncryptedPEM();
+		logFinished("rsapss.publicPrivateKey.pkcs8_encrypted.pem");
+
+	}
+
 }

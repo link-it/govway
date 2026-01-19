@@ -1810,12 +1810,51 @@ public class GestoreTokenNegoziazioneUtilities {
 		}
 		else if(org.apache.cxf.rs.security.jose.jwk.KeyType.EC.name().equals(keyType)) {
 			java.security.interfaces.ECPublicKey publicKey = org.apache.cxf.rs.security.jose.jwk.JwkUtils.toECPublicKey(fullKey);
-			return org.apache.cxf.rs.security.jose.jwk.JwkUtils.fromECPublicKey(publicKey, fullKey.getAlgorithm());
+			// Il secondo parametro di fromECPublicKey è il nome della curva (es. "P-256"), non l'algoritmo (es. "ES256")
+			String ecCurve = (String) fullKey.getProperty(org.apache.cxf.rs.security.jose.jwk.JsonWebKey.EC_CURVE);
+			return org.apache.cxf.rs.security.jose.jwk.JwkUtils.fromECPublicKey(publicKey, ecCurve);
 		}
 		else {
 			throw new TokenException("Unsupported key type for DPoP: " + keyType + " (only RSA and EC are supported)");
 		}
 	}
+
+	/**
+	 * Metodo alternativo che crea una copia del JWK rimuovendo solo il materiale della chiave privata.
+	 * A differenza di extractPublicJwk, questo metodo preserva altri claim come kid, alg, use, key_ops, ecc.
+	 * Evita la conversione round-trip JWK → Java Key → JWK.
+	 * Questi claim non devono risiedere in un DPoP token (es. PDND li rifiuta)
+	 *
+	 * NOTA: I valori x e y risultano identici tra i due metodi, quindi non c'è corruzione delle coordinate.
+	 * La differenza principale è che questo metodo mantiene i metadati aggiuntivi del JWK originale.
+	 *
+	private static JsonWebKey extractPublicJwkAlternative(JsonWebKey fullKey) throws TokenException {
+		String keyType = fullKey.getKeyType() != null ? fullKey.getKeyType().name() : null;
+
+		JsonWebKey publicJwk = new JsonWebKey();
+		// Copia tutte le proprietà dal JWK originale
+		publicJwk.asMap().putAll(fullKey.asMap());
+
+		if(org.apache.cxf.rs.security.jose.jwk.KeyType.RSA.name().equals(keyType)) {
+			// Rimuove i parametri privati RSA
+			publicJwk.asMap().remove(JsonWebKey.RSA_PRIVATE_EXP);           // d
+			publicJwk.asMap().remove(JsonWebKey.RSA_FIRST_PRIME_FACTOR);    // p
+			publicJwk.asMap().remove(JsonWebKey.RSA_SECOND_PRIME_FACTOR);   // q
+			publicJwk.asMap().remove(JsonWebKey.RSA_FIRST_PRIME_CRT);       // dp
+			publicJwk.asMap().remove(JsonWebKey.RSA_SECOND_PRIME_CRT);      // dq
+			publicJwk.asMap().remove(JsonWebKey.RSA_FIRST_CRT_COEFFICIENT); // qi
+		}
+		else if(org.apache.cxf.rs.security.jose.jwk.KeyType.EC.name().equals(keyType)) {
+			// Rimuove il parametro privato EC
+			publicJwk.asMap().remove(JsonWebKey.EC_PRIVATE_KEY);            // d
+		}
+		else {
+			throw new TokenException("Unsupported key type for DPoP: " + keyType + " (only RSA and EC are supported)");
+		}
+
+		return publicJwk;
+	}
+	*/
 
 
 	// ********* [NEGOZIAZIONE-TOKEN] UTILITIES INTERNE ****************** */

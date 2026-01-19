@@ -48,6 +48,7 @@ import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.jose.JOSECostanti;
 import org.openspcoop2.security.message.jose.SecurityProvider;
 import org.openspcoop2.security.message.utils.AbstractSecurityProvider;
+import org.openspcoop2.security.utils.SignatureAlgorithmUtilities;
 import org.openspcoop2.utils.UtilsRuntimeException;
 import org.openspcoop2.utils.certificate.byok.BYOKProvider;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
@@ -1056,6 +1057,9 @@ public class TokenProvider implements IProvider {
 				Costanti.ID_VALIDAZIONE_JWT_KEYSTORE_BYOK_POLOCY.equals(id) ) {
 			return this.byokProvider.getValues();
 		}
+		else if(Costanti.ID_VALIDAZIONE_JWT_ASYMMETRIC_SIGN_ALGORITHM.equals(id)) {
+			return SignatureAlgorithmUtilities.getValuesSignatureAlgorithm(false, true);
+		}
 		else {
 			return getValuesContinue1(id, externalResources);
 		}
@@ -1143,6 +1147,9 @@ public class TokenProvider implements IProvider {
 				Costanti.ID_HTTPS_KEYSTORE_BYOK_POLICY.equals(id) ||
 				Costanti.ID_VALIDAZIONE_JWT_KEYSTORE_BYOK_POLOCY.equals(id)) {
 			return this.byokProvider.getLabels();
+		}
+		else if(Costanti.ID_VALIDAZIONE_JWT_ASYMMETRIC_SIGN_ALGORITHM.equals(id)) {
+			return SignatureAlgorithmUtilities.getLabelsSignatureAlgorithm(false, true);
 		}
 		else {
 			return getLabelsContinue1(id, externalResources);

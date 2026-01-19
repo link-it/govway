@@ -32,8 +32,12 @@ import org.openspcoop2.pdd.config.dynamic.PddPluginLoader;
 import org.openspcoop2.pdd.core.token.AbstractPolicyToken;
 import org.openspcoop2.pdd.core.token.TokenException;
 import org.openspcoop2.pdd.core.token.TokenUtilities;
+import org.openspcoop2.pdd.core.token.parser.Claims;
+import org.openspcoop2.protocol.sdk.RestMessageSecurityToken;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.jose.JOSEUtils;
+import org.openspcoop2.security.utils.SignatureAlgorithmUtilities;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.slf4j.Logger;
@@ -298,7 +302,7 @@ public class PolicyAttributeAuthority extends AbstractPolicyToken implements Ser
 	public boolean isResponseCustom() {
 		return Costanti.AA_RESPONSE_TYPE_VALUE_CUSTOM.equals(this.getResponseType());
 	}
-	
+		
 	public boolean isResponseJwsLocationHttp() {
 		String location = this.getResponseJwsLocation();
 		return location !=null && 
@@ -319,6 +323,14 @@ public class PolicyAttributeAuthority extends AbstractPolicyToken implements Ser
 	}
 	public String getResponseJwsCrl() {
 		return this.defaultProperties.getProperty(SecurityConstants.SIGNATURE_CRL);
+	}
+	
+	public String getResponseJwsSignatureAlgorithm(RestMessageSecurityToken token) throws UtilsException {
+		String pAlgo = this.defaultProperties.getProperty(Costanti.AA_RESPONSE_SIGNATURE_ALGORITHM);
+		if(pAlgo==null || org.apache.commons.lang3.StringUtils.isEmpty(pAlgo) || SignatureAlgorithmUtilities.VALUE_DEFINITO_HEANDER.equals(pAlgo)) {
+			return token.getHeaderClaim(Claims.JSON_WEB_TOKEN_RFC_7515_ALGORITHM);
+		}
+		return pAlgo;
 	}
 	
 	public String getResponseAudience() {

@@ -113,6 +113,7 @@ import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
 import org.openspcoop2.security.keystore.cache.GestoreOCSPResource;
 import org.openspcoop2.security.keystore.cache.GestoreOCSPValidator;
 import org.openspcoop2.security.message.constants.SecurityConstants;
+import org.openspcoop2.security.message.utils.SecurityUtils;
 import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.LoggerBuffer;
 import org.openspcoop2.utils.Utilities;
@@ -302,14 +303,17 @@ public class GestoreTokenValidazioneUtilities {
     			// JWS Compact   			
     			JsonVerifySignature jsonCompactVerify = null;
     			try {
+    				RestMessageSecurityToken check = new RestMessageSecurityToken();
+    				check.setToken(token);
     				jsonCompactVerify = getJsonVerifySignatureJWS(log, pddContext, datiInvocazione, policyGestioneToken, dynamicDiscovery, 
     						busta, idDominio, idServizio,
-    						portaDelegata);
+    						portaDelegata,
+    						check);
     				
     				if(jsonCompactVerify.verify(token)) {
     					informazioniToken = new InformazioniToken(SorgenteInformazioniToken.JWT,jsonCompactVerify.getDecodedPayload(),tokenParser);
     					if( pddContext!=null ) {
-    						restSecurityToken = new RestMessageSecurityToken();
+    						restSecurityToken = check;
     						if(jsonCompactVerify.getX509Certificate()!=null) {
     							restSecurityToken.setCertificate(new CertificateInfo(jsonCompactVerify.getX509Certificate(), "access_token"));
     						}
@@ -322,7 +326,6 @@ public class GestoreTokenValidazioneUtilities {
     						if(jsonCompactVerify.getKid()!=null) {
     							restSecurityToken.setKid(jsonCompactVerify.getKid());
     						}
-    						restSecurityToken.setToken(token);
     						if(esitoPresenzaToken!=null) {
     							restSecurityToken.setHttpHeaderName(esitoPresenzaToken.getHeaderHttp());
     							restSecurityToken.setQueryParameterName(esitoPresenzaToken.getPropertyUrl());
@@ -365,8 +368,8 @@ public class GestoreTokenValidazioneUtilities {
 						if(jsonDecrypt.getJsonWebKey()!=null) {
 							restSecurityToken.setJsonWebKey(jsonDecrypt.getJsonWebKey());
 						}
-						if(jsonDecrypt.getRsaPublicKey()!=null) {
-							restSecurityToken.setPublicKey(jsonDecrypt.getRsaPublicKey());
+						if(jsonDecrypt.getPublicKey()!=null) {
+							restSecurityToken.setPublicKey(jsonDecrypt.getPublicKey());
 						}
 						if(jsonDecrypt.getKid()!=null) {
 							restSecurityToken.setKid(jsonDecrypt.getKid());
@@ -430,12 +433,19 @@ public class GestoreTokenValidazioneUtilities {
 	
 	private static JsonVerifySignature getJsonVerifySignatureJWS(Logger log, Context context, AbstractDatiInvocazione datiInvocazione, PolicyGestioneToken policyGestioneToken, DynamicDiscovery dynamicDiscovery,
 			Busta busta, IDSoggetto idDominio, IDServizio idServizio,
-			boolean portaDelegata) throws TokenException, UtilsException, SecurityException {
+			boolean portaDelegata,
+			RestMessageSecurityToken token) throws TokenException, UtilsException, SecurityException {
 		// JWS Compact   			
 		JsonVerifySignature jsonCompactVerify = null;
 
+		String signatureAlgorithm = policyGestioneToken.getValidazioneJWTSignatureAlgorithm(token);
+
 		JWTOptions options = new JWTOptions(JOSESerialization.COMPACT);
 		Properties p = policyGestioneToken.getProperties().get(Costanti.POLICY_VALIDAZIONE_JWS_VERIFICA_PROP_REF_ID);
+
+		// Imposta dinamicamente il keyPairAlgorithm in base all'algoritmo di firma
+		SecurityUtils.dynamicUpdateKeyPairAlgorithm(p, signatureAlgorithm);
+
 		TokenUtilities.injectJOSEConfig(p, policyGestioneToken, dynamicDiscovery,  
 				busta, idDominio, idServizio,
 				context, log,
@@ -577,15 +587,18 @@ public class GestoreTokenValidazioneUtilities {
 		}
 		
 		if(jsonCompactVerify==null) {
-			jsonCompactVerify = new JsonVerifySignature(p, options);
+			jsonCompactVerify = new JsonVerifySignature(p, signatureAlgorithm, options);
+		}
+		else {
+			jsonCompactVerify.setSignatureAlgorithm(signatureAlgorithm);
 		}
 		
 		jsonCompactVerify.setJksPasswordRequired(DBUtils.isTruststoreJksPasswordRequired());
 		jsonCompactVerify.setPkcs12PasswordRequired(DBUtils.isTruststorePkcs12PasswordRequired());
-		
+
 		return jsonCompactVerify;
 	}
-	
+
 	private static JsonDecrypt getJsonDecrypt(Logger log, Context context, AbstractDatiInvocazione datiInvocazione, PolicyGestioneToken policyGestioneToken, DynamicDiscovery dynamicDiscovery,
 			Busta busta, IDSoggetto idDominio, IDServizio idServizio,
 			boolean portaDelegata) throws TokenException, UtilsException, SecurityException {
@@ -844,7 +857,7 @@ public class GestoreTokenValidazioneUtilities {
 			// nop
 		}
 		
-		String dpopToken = esitoPresenzaDPoP.getToken();
+		String dpopToken = esitoPresenzaDPoP!=null ? esitoPresenzaDPoP.getToken() : null;
 		
 		EsitoValidazioneDPoP esitoValidazioneDPoP = null;
 		if(portaDelegata) {
@@ -939,6 +952,11 @@ public class GestoreTokenValidazioneUtilities {
 	}
 
 	private static IDPoPParser parseDPoPToken(String dpopToken, PolicyGestioneToken policyGestioneToken) throws TokenException {
+		
+		if(dpopToken==null) {
+			throw new TokenException("DPoP token not found");
+		}
+		
 		// Verifica formato JWS (3 parti separate da '.')
 		String[] parts = dpopToken.split("\\.");
 		if(parts.length != 3) {
@@ -969,6 +987,9 @@ public class GestoreTokenValidazioneUtilities {
 		String algorithm = dpopParser.getAlgorithm();
 		if(algorithm == null || algorithm.trim().isEmpty()) {
 			throw new TokenException("Invalid DPoP token: header 'alg' not present or invalid");
+		}
+		if(org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm.NONE.name().equalsIgnoreCase(algorithm)) {
+			throw new TokenException("Invalid DPoP token: header 'alg=none' is not allowed");
 		}
 
 		JWTOptions options = new JWTOptions(JOSESerialization.COMPACT);

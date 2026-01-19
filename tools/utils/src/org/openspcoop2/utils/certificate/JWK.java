@@ -31,6 +31,8 @@ import org.openspcoop2.utils.json.JSONUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.nimbusds.jose.Algorithm;
+import com.nimbusds.jose.jwk.Curve;
+import com.nimbusds.jose.jwk.ECKey;
 import com.nimbusds.jose.jwk.KeyUse;
 import com.nimbusds.jose.jwk.OctetSequenceKey;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -90,7 +92,8 @@ public class JWK {
 				throw new UtilsException("Alias '"+alias+"' undefined");
 			}
 			PublicKey publicKey = keystore.getPublicKey(alias);
-			if(publicKey instanceof java.security.interfaces.RSAPublicKey) {
+			if(publicKey instanceof java.security.interfaces.RSAPublicKey ||
+					publicKey instanceof java.security.interfaces.ECPublicKey) {
 				PrivateKey privateKey = null;
 				if(passwordPrivateKey!=null) {
 					privateKey = keystore.getPrivateKey(alias, passwordPrivateKey);
@@ -136,18 +139,10 @@ public class JWK {
 	private void initEngine(PublicKey publicKey, PrivateKey privateKey, String kid, KeyUse use) throws UtilsException {
 		try {
 			if(publicKey instanceof java.security.interfaces.RSAPublicKey) {
-				java.security.interfaces.RSAPublicKey p = (java.security.interfaces.RSAPublicKey) publicKey;
-				RSAKey.Builder builder = new RSAKey.Builder(p);
-				if(privateKey!=null) {
-					builder.privateKey(privateKey);
-				}
-				if(kid!=null) {
-					builder.keyID(kid);
-				}
-				if(use!=null) {
-					builder.keyUse(use);
-				}
-				this.jwkNimbusds = builder.build();
+				initRSAEngine(publicKey, privateKey, kid, use);
+			}
+			else if(publicKey instanceof java.security.interfaces.ECPublicKey) {
+				initECEngine(publicKey, privateKey, kid, use);
 			}
 			else {
 				if(publicKey==null) {
@@ -160,6 +155,35 @@ public class JWK {
 		}catch(Exception e) {
 			throw new UtilsException(e.getMessage(),e);
 		}
+	}
+	private void initRSAEngine(PublicKey publicKey, PrivateKey privateKey, String kid, KeyUse use) {
+		java.security.interfaces.RSAPublicKey p = (java.security.interfaces.RSAPublicKey) publicKey;
+		RSAKey.Builder builder = new RSAKey.Builder(p);
+		if(privateKey!=null) {
+			builder.privateKey(privateKey);
+		}
+		if(kid!=null) {
+			builder.keyID(kid);
+		}
+		if(use!=null) {
+			builder.keyUse(use);
+		}
+		this.jwkNimbusds = builder.build();
+	}
+	private void initECEngine(PublicKey publicKey, PrivateKey privateKey, String kid, KeyUse use) {
+		java.security.interfaces.ECPublicKey p = (java.security.interfaces.ECPublicKey) publicKey;
+		Curve curve = Curve.forECParameterSpec(p.getParams());
+		ECKey.Builder builder = new ECKey.Builder(curve, p);
+		if(privateKey instanceof java.security.interfaces.ECPrivateKey) {
+			builder.privateKey((java.security.interfaces.ECPrivateKey) privateKey);
+		}
+		if(kid!=null) {
+			builder.keyID(kid);
+		}
+		if(use!=null) {
+			builder.keyUse(use);
+		}
+		this.jwkNimbusds = builder.build();
 	}
 	
 	public JWK(javax.crypto.SecretKey secretKey) throws UtilsException {
@@ -224,7 +248,7 @@ public class JWK {
 				throw new UtilsException("Json not defined");
 			}
 			try {
-				this.jwkNimbusds = RSAKey.parse(this.jwkJson);
+				this.jwkNimbusds = com.nimbusds.jose.jwk.JWK.parse(this.jwkJson);
 			}catch(Exception e) {
 				throw new UtilsException(e.getMessage(),e);
 			}

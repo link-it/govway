@@ -44,7 +44,9 @@ import org.openspcoop2.pdd.core.token.parser.ClaimsNegoziazione;
 import org.openspcoop2.pdd.core.token.parser.INegoziazioneTokenParser;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.utils.AbstractSecurityProvider;
+import org.openspcoop2.security.utils.SignatureAlgorithmUtilities;
 import org.openspcoop2.utils.UtilsRuntimeException;
+import org.openspcoop2.utils.certificate.KeyUtils;
 import org.openspcoop2.utils.certificate.byok.BYOKProvider;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.certificate.ocsp.OCSPProvider;
@@ -600,7 +602,8 @@ public class NegoziazioneTokenProvider implements IProvider {
 		else if(Costanti.ID_RETRIEVE_TOKEN_JWT_SYMMETRIC_SIGN_ALGORITHM.equals(id) ||
 				Costanti.ID_RETRIEVE_TOKEN_JWT_ASYMMETRIC_SIGN_ALGORITHM.equals(id) ||
 				Costanti.ID_RETRIEVE_TOKEN_DPOP_ASYMMETRIC_SIGN_ALGORITHM.equals(id)) {
-			return getValuesSignatureAlgorithm(id);
+			boolean symmetric = Costanti.ID_RETRIEVE_TOKEN_JWT_SYMMETRIC_SIGN_ALGORITHM.equals(id);
+			return SignatureAlgorithmUtilities.getValuesSignatureAlgorithm(symmetric);
 		}
 		else if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE.equals(id) ||
 				Costanti.ID_NEGOZIAZIONE_DPOP_KEYSTORE_TYPE.equals(id) ||
@@ -630,26 +633,6 @@ public class NegoziazioneTokenProvider implements IProvider {
 		}
 		return values;
 	}
-	private List<String> getValuesSignatureAlgorithm(String id) {
-		List<String> l = new ArrayList<>();
-		org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm [] tmp = org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm.values();
-		for (int i = 0; i < tmp.length; i++) {
-			if(org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm.NONE.equals(tmp[i])) {
-				continue;
-			}
-			if(Costanti.ID_RETRIEVE_TOKEN_JWT_SYMMETRIC_SIGN_ALGORITHM.equals(id)) {
-				if(tmp[i].name().toLowerCase().startsWith("hs")) {
-					l.add(tmp[i].name());
-				}
-			}
-			else {
-				if(!tmp[i].name().toLowerCase().startsWith("hs")) {
-					l.add(tmp[i].name());
-				}
-			}
-		}
-		return l;
-	}
 
 	@Override
 	public List<String> getLabels(String id) throws ProviderException {
@@ -669,7 +652,8 @@ public class NegoziazioneTokenProvider implements IProvider {
 		else if(Costanti.ID_RETRIEVE_TOKEN_JWT_SYMMETRIC_SIGN_ALGORITHM.equals(id) ||
 				Costanti.ID_RETRIEVE_TOKEN_JWT_ASYMMETRIC_SIGN_ALGORITHM.equals(id) ||
 				Costanti.ID_RETRIEVE_TOKEN_DPOP_ASYMMETRIC_SIGN_ALGORITHM.equals(id)) {
-			return getLabelsSignatureAlgorithm(id);
+			boolean symmetric = Costanti.ID_RETRIEVE_TOKEN_JWT_SYMMETRIC_SIGN_ALGORITHM.equals(id);
+			return SignatureAlgorithmUtilities.getLabelsSignatureAlgorithm(symmetric);
 		}
 		else if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE.equals(id) ||
 				Costanti.ID_NEGOZIAZIONE_DPOP_KEYSTORE_TYPE.equals(id) ||
@@ -690,23 +674,6 @@ public class NegoziazioneTokenProvider implements IProvider {
 			return this.byokProvider.getLabels();
 		}
 		return this.getValues(id); // torno uguale ai valori negli altri casi
-	}
-	private List<String> getLabelsSignatureAlgorithm(String id) throws ProviderException{
-		List<String> l = this.getValues(id);
-		List<String> labels = new ArrayList<>();
-		for (String value : l) {
-			if(value.contains("_")) {
-				String t = "" + value;
-				while(t.contains("_")) {
-					t = t.replace("_", "-");
-				}
-				labels.add(t);
-			}
-			else {
-				labels.add(value);
-			}
-		}
-		return labels;
 	}
 	
 	private static boolean secret = false;
@@ -960,6 +927,10 @@ public class NegoziazioneTokenProvider implements IProvider {
 		else if(Costanti.ID_RETRIEVE_TOKEN_EXPECTED_TOKEN_TYPE.equals(item.getName())) {
 			return dynamicUpdateExpectedTokenType(items, mapNameValue, item, actualValue);
 		}
+		else if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_KEYPAIR_ALGORITHM.equals(item.getName()) ||
+				Costanti.ID_NEGOZIAZIONE_DPOP_KEYSTORE_KEYPAIR_ALGORITHM.equals(item.getName())) {
+			return dynamicUpdateKeyPairAlgorithm(items, mapNameValue, item, actualValue);
+		}
 
 		return actualValue;
 	}
@@ -1097,6 +1068,11 @@ public class NegoziazioneTokenProvider implements IProvider {
 		return AbstractSecurityProvider.processStoreByokPolicy(type, items, mapNameValue, item, actualValue);
 	}
 	private String dynamicUpdateExpectedTokenType(List<?> items, Map<String, String> mapNameValue, Item item, String actualValue) {
+		
+		if(item!=null) {
+			// nop
+		}
+		
 		// Legge lo stato del checkbox DPoP
 		String dpopValue = AbstractSecurityProvider.readValue(Costanti.ID_RETRIEVE_TOKEN_DPOP, items, mapNameValue);
 		boolean dpopEnabled = "true".equalsIgnoreCase(dpopValue) || "selected".equalsIgnoreCase(dpopValue) || "yes".equalsIgnoreCase(dpopValue);
@@ -1114,5 +1090,33 @@ public class NegoziazioneTokenProvider implements IProvider {
 
 		// Se l'utente ha impostato un valore custom, lo mantiene
 		return actualValue;
+	}
+	private String dynamicUpdateKeyPairAlgorithm(List<?> items, Map<String, String> mapNameValue, Item item, String actualValue) {
+		
+		if(actualValue!=null) {
+			// null
+		}
+		
+		// Determina quale algoritmo di firma leggere in base al campo
+		String signatureAlgorithmFieldName;
+		if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_KEYPAIR_ALGORITHM.equals(item.getName())) {
+			signatureAlgorithmFieldName = Costanti.ID_RETRIEVE_TOKEN_JWT_ASYMMETRIC_SIGN_ALGORITHM;
+		} else {
+			signatureAlgorithmFieldName = Costanti.ID_RETRIEVE_TOKEN_DPOP_ASYMMETRIC_SIGN_ALGORITHM;
+		}
+
+		// Legge il valore dell'algoritmo di firma selezionato
+		String signatureAlgorithm = AbstractSecurityProvider.readValue(signatureAlgorithmFieldName, items, mapNameValue);
+
+		// Se l'algoritmo è ES256, ES384 o ES512, il keyPairAlgorithm deve essere EC
+		if(signatureAlgorithm != null &&
+				(signatureAlgorithm.startsWith("ES"))) {
+			item.setValue(KeyUtils.ALGO_EC);
+			return KeyUtils.ALGO_EC;
+		}
+
+		// Per tutti gli altri algoritmi (RS256, RS384, RS512, PS256, PS384, PS512), usa RSA
+		item.setValue(KeyUtils.ALGO_RSA);
+		return KeyUtils.ALGO_RSA;
 	}
 }

@@ -29,10 +29,10 @@ import java.security.cert.X509Certificate;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.common.util.Base64UrlUtility;
 import org.apache.cxf.rs.security.jose.jwk.JsonWebKey;
 import org.apache.cxf.rs.security.jose.jwk.JsonWebKeys;
-import org.apache.cxf.rs.security.jose.jwk.JwkUtils;
 import org.apache.cxf.rs.security.jose.jws.JwsCompactConsumer;
 import org.apache.cxf.rs.security.jose.jws.JwsHeaders;
 import org.apache.cxf.rs.security.jose.jws.JwsJsonConsumer;
@@ -45,6 +45,7 @@ import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.certificate.JWK;
 import org.openspcoop2.utils.certificate.JWKSet;
+import org.openspcoop2.utils.certificate.JwkUtils;
 import org.openspcoop2.utils.certificate.KeyStore;
 import org.openspcoop2.utils.certificate.remote.IRemoteStoreProvider;
 import org.openspcoop2.utils.certificate.remote.RemoteKeyType;
@@ -122,14 +123,29 @@ public class JsonVerifySignature {
 	}	
 
 	public JsonVerifySignature(Properties props, JWTOptions options) throws UtilsException{
+		initByProps(props, null, options);
+	}
+	public JsonVerifySignature(Properties props, String signatureAlgorithm, JWTOptions options) throws UtilsException{
+		initByProps(props, signatureAlgorithm, options);
+	}
+	private void initByProps(Properties props, String signatureAlgorithm, JWTOptions options) throws UtilsException{
 		try {
+			org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm algo = null;
+			if(signatureAlgorithm!=null) {
+				algo = org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm.getAlgorithm(signatureAlgorithm);	
+				checkSignatureAlgorithm(algo);
+				if(!props.contains(RSSecurityConstants.RSSEC_SIGNATURE_ALGORITHM)) {
+					props.put(RSSecurityConstants.RSSEC_SIGNATURE_ALGORITHM, algo.name());
+				}
+			}
+			
 			this.propsConfig = props;
 			this.dynamicProvider = JsonUtils.isDynamicProvider(props); // rimuove l'alias
 			if(this.dynamicProvider) {
 				this.properties = props;
 			}
 			else {
-				this.provider = loadProviderFromProperties(props, null); // nel caso di jceks deve essere definito l'algoritmo se non e' dinamico
+				this.provider = loadProviderFromProperties(props, algo); // nel caso di jceks deve essere definito l'algoritmo se non e' dinamico
 			}
 			this.options = options;
 		}catch(Exception t) {
@@ -178,6 +194,7 @@ public class JsonVerifySignature {
 	public JsonVerifySignature(KeyStore keystore, String alias, String signatureAlgorithm, JWTOptions options) throws UtilsException{
 		try {
 			org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm algo = org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm.getAlgorithm(signatureAlgorithm);
+			checkSignatureAlgorithm(algo);
 			this.provider = JwsUtils.getPublicKeySignatureVerifier((X509Certificate) keystore.getCertificate(alias), algo);
 			this.options=options;
 			
@@ -194,6 +211,7 @@ public class JsonVerifySignature {
 	public JsonVerifySignature(KeyStore keystore, String alias, String passwordPrivateKey, String signatureAlgorithm, JWTOptions options) throws UtilsException{
 		try {
 			org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm algo = org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm.getAlgorithm(signatureAlgorithm);
+			checkSignatureAlgorithm(algo);
 			this.provider = JwsUtils.getHmacSignatureVerifier(keystore.getSecretKey(alias, passwordPrivateKey).getEncoded(), algo);
 			if(this.provider==null) {
 				throw new UtilsException("(JCEKS) JwsSignatureVerifier init failed; check signature algorithm ("+signatureAlgorithm+")");
@@ -213,6 +231,7 @@ public class JsonVerifySignature {
 	public JsonVerifySignature(JsonWebKey jsonWebKey, boolean secretKey, String signatureAlgorithm, JWTOptions options) throws UtilsException{
 		try {
 			org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm algo = org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm.getAlgorithm(signatureAlgorithm);
+			checkSignatureAlgorithm(algo);
 			if(secretKey) {
 				this.provider = JwsUtils.getSignatureVerifier(jsonWebKey, algo);
 				if(this.provider==null) {
@@ -220,7 +239,7 @@ public class JsonVerifySignature {
 				}
 			}
 			else {
-				this.provider = JwsUtils.getPublicKeySignatureVerifier(JwkUtils.toRSAPublicKey(jsonWebKey), algo);
+				this.provider = JwsUtils.getPublicKeySignatureVerifier(JwkUtils.toPublicKey(jsonWebKey), algo);
 			}
 			this.options=options;
 		}catch(Exception t) {
@@ -231,6 +250,7 @@ public class JsonVerifySignature {
 	public JsonVerifySignature(String secret, String signatureAlgorithm, JWTOptions options) throws UtilsException{
 		try {
 			org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm algo = org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm.getAlgorithm(signatureAlgorithm);
+			checkSignatureAlgorithm(algo);
 			this.provider = JwsUtils.getHmacSignatureVerifier(secret.getBytes(), algo);
 			if(this.provider==null) {
 				throw new UtilsException("(Secret) JwsSignatureVerifier init failed; check signature algorithm ("+signatureAlgorithm+")");
@@ -422,7 +442,29 @@ public class JsonVerifySignature {
 	public String getKid() {
 		return this.kid;
 	}
-
+	
+	private String signatureAlgorithm;
+	public String getSignatureAlgorithm() {
+		return this.signatureAlgorithm;
+	}
+	public void setSignatureAlgorithm(String signatureAlgorithm) {
+		this.signatureAlgorithm = signatureAlgorithm;
+	}
+	
+	private boolean permitNoneAlgorithm = false; // default by security
+	public boolean isPermitNoneAlgorithm() {
+		return this.permitNoneAlgorithm;
+	}
+	public void setPermitNoneAlgorithm(boolean permitNoneAlgorithm) {
+		this.permitNoneAlgorithm = permitNoneAlgorithm;
+	}
+	private void checkSignatureAlgorithm(org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm algo) throws UtilsException {
+		if(algo!=null && org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm.NONE.equals(algo) &&
+				!this.permitNoneAlgorithm) {
+			throw new UtilsException("SignatureAlgorithm 'none' is not allowed");
+		}
+	}
+	
 	private String getProcessErrorMsg(String mode, Exception e) {
 		return "Process '"+mode+"' error: "+e.getMessage();
 	}
@@ -432,7 +474,16 @@ public class JsonVerifySignature {
 		if(jwsHeaders==null) {
 			return providerReturn;
 		}
-				
+	
+		org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm algo = null;
+		if(this.signatureAlgorithm!=null && !StringUtils.isNotEmpty(this.signatureAlgorithm)) {
+			algo = org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm.getAlgorithm(this.signatureAlgorithm);
+		}
+		else {
+			algo = jwsHeaders.getSignatureAlgorithm();
+		}
+		checkSignatureAlgorithm(algo);
+		
 		if(this.dynamicProvider) {
 			/** String alias = JsonUtils.readAlias(jsonSignature); */
 			String alias = jwsHeaders.getKeyId();
@@ -440,11 +491,10 @@ public class JsonVerifySignature {
 			pNew.putAll(this.properties);
 			/** System.out.println("ALIAS ["+alias+"]"); */
 			pNew.put(RSSecurityConstants.RSSEC_KEY_STORE_ALIAS, alias);
-			providerReturn = loadProviderFromProperties(pNew, jwsHeaders.getSignatureAlgorithm());
+			providerReturn = loadProviderFromProperties(pNew, algo);
 		}
 		
 		if(providerReturn==null) {
-			org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm algo = jwsHeaders.getSignatureAlgorithm();
 			if(algo==null) {
 				throw new UtilsException("SignatureAlgorithm not found");
 			}
@@ -469,7 +519,7 @@ public class JsonVerifySignature {
 			else if(jwsHeaders.getJsonWebKey()!=null && this.options.isPermitUseHeaderJWK()) {
 				try {
 					this.jsonWebKey = jwsHeaders.getJsonWebKey();
-					this.publicKey = JwkUtils.toRSAPublicKey(this.jsonWebKey);
+					this.publicKey = JwkUtils.toPublicKey(this.jsonWebKey);
 					providerReturn = JwsUtils.getPublicKeySignatureVerifier(this.publicKey, algo);
 				}catch(Exception e) {
 					throw new UtilsException(getProcessErrorMsg(JwtHeaders.JWT_HDR_JWK,e),e);
@@ -535,7 +585,7 @@ public class JsonVerifySignature {
 						if(this.jsonWebKey==null) {
 							throw new UtilsException("JsonWebKey non trovata");
 						}
-						this.publicKey = JwkUtils.toRSAPublicKey(this.jsonWebKey);
+						this.publicKey = JwkUtils.toPublicKey(this.jsonWebKey);
 						providerReturn = JwsUtils.getPublicKeySignatureVerifier(this.publicKey, algo);
 					}
 				}catch(Exception e) {
@@ -548,7 +598,7 @@ public class JsonVerifySignature {
 					if(this.jsonWebKeys!=null) {
 						this.jsonWebKey = getJsonWebKeyByKidIgnoreException();
 						if(this.jsonWebKey!=null) {
-							this.publicKey = JwkUtils.toRSAPublicKey(this.jsonWebKey);
+							this.publicKey = JwkUtils.toPublicKey(this.jsonWebKey);
 							providerReturn = JwsUtils.getPublicKeySignatureVerifier(this.publicKey, algo);
 						}
 					}
@@ -689,7 +739,7 @@ public class JsonVerifySignature {
 			}
 			this.jsonWebKey = jwk.getJsonWebKey();
 			if(this.jsonWebKey!=null) {
-				this.publicKey = JwkUtils.toRSAPublicKey(this.jsonWebKey);
+				this.publicKey = JwkUtils.toPublicKey(this.jsonWebKey);
 				return JwsUtils.getPublicKeySignatureVerifier(this.publicKey, algo);
 			}
 			else {

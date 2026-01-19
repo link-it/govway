@@ -33,13 +33,17 @@ import org.openspcoop2.pdd.config.dynamic.PddPluginLoader;
 import org.openspcoop2.pdd.core.token.parser.BasicDPoPParser;
 import org.openspcoop2.pdd.core.token.parser.BasicDynamicDiscoveryParser;
 import org.openspcoop2.pdd.core.token.parser.BasicTokenParser;
+import org.openspcoop2.pdd.core.token.parser.Claims;
 import org.openspcoop2.pdd.core.token.parser.IDPoPParser;
 import org.openspcoop2.pdd.core.token.parser.IDynamicDiscoveryParser;
 import org.openspcoop2.pdd.core.token.parser.ITokenParser;
 import org.openspcoop2.pdd.core.token.parser.TipologiaClaims;
 import org.openspcoop2.pdd.core.token.parser.TipologiaClaimsDPoP;
+import org.openspcoop2.protocol.sdk.RestMessageSecurityToken;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.jose.JOSEUtils;
+import org.openspcoop2.security.utils.SignatureAlgorithmUtilities;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 
@@ -320,6 +324,13 @@ public class PolicyGestioneToken extends AbstractPolicyToken implements Serializ
 	
 	
 	
+	public String getValidazioneJWTSignatureAlgorithm(RestMessageSecurityToken token) throws UtilsException {
+		String pAlgo = this.defaultProperties.getProperty(Costanti.POLICY_VALIDAZIONE_SIGNATURE_ALGORITHM);
+		if(pAlgo==null || org.apache.commons.lang3.StringUtils.isEmpty(pAlgo) || SignatureAlgorithmUtilities.VALUE_DEFINITO_HEANDER.equals(pAlgo)) {
+			return token.getHeaderClaim(Claims.JSON_WEB_TOKEN_RFC_7515_ALGORITHM);
+		}
+		return pAlgo;
+	}
 	public boolean isValidazioneJWTLocationHttp() {
 		String location = this.getValidazioneJWTLocation();
 		return location !=null && 

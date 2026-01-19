@@ -108,6 +108,8 @@ public class Costanti {
 	public static final String AA_RESPONSE_PARSER_PLUGIN_TYPE = CostantiConfigurazione.AA_RESPONSE_PARSER_PLUGIN_TYPE;
 	public static final String AA_RESPONSE_ATTRIBUTES = "policy.attributeAuthority.response.jwt.attributes";
 	
+	public static final String AA_RESPONSE_SIGNATURE_ALGORITHM = "policy.attributeAuthority.response.signature.algorithm";
+	
 	public static final String AA_RESPONSE_AUDIENCE = "policy.attributeAuthority.response.jwt.audience";
 	
 	public static final String POLICY_VALIDAZIONE_JWS_VERIFICA_PROP_REF_ID = "signatureVerifyPropRefId";
@@ -130,6 +132,7 @@ public class Costanti {
 	public static final String ID_AA_RICHIESTA_PAYLOAD_TEMPLATE = "aaRichiestaPayloadTemplate";
 	public static final String ID_AA_RICHIESTA_PAYLOAD_TEMPLATE_FREEMARKER = "aaRichiestaPayloadTemplateFreemarker";
 	public static final String ID_AA_RICHIESTA_PAYLOAD_TEMPLATE_VELOCITY = "aaRichiestaPayloadTemplateVelocity";
+	public static final String ID_AA_RISPOSTA_JWS_ASYMMETRIC_SIGN_ALGORITHM = "aaResponseAsymmetricSignatureAlgorithm";
 	public static final String ID_AA_RISPOSTA_JWS_PAYLOAD_AUDIENCE = "aaResponseAudience";
 	
 	public static final String ID_AA_SIGNATURE_ALGORITHM = "aaSignatureAlgorithm";

@@ -37,6 +37,7 @@ import org.openspcoop2.message.OpenSPCoop2RestMessage;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.RestMessageSecurityToken;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.security.SecurityException;
@@ -51,6 +52,7 @@ import org.openspcoop2.security.message.utils.EncryptionBean;
 import org.openspcoop2.security.message.utils.KeystoreUtils;
 import org.openspcoop2.security.message.utils.PropertiesUtils;
 import org.openspcoop2.security.message.utils.SignatureBean;
+import org.openspcoop2.security.utils.SignatureAlgorithmUtilities;
 import org.openspcoop2.utils.LoggerBuffer;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.certificate.JWKSet;
@@ -134,6 +136,7 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 				throw new SecurityException(JOSECostanti.JOSE_ENGINE_DESCRIPTION+" require one function beetwen encrypt or signature");
 			}
 			
+			String httpPayload = restJsonMessage.getContent(bufferMessageReadOnly, idTransazione);
 			
 			
 			
@@ -161,12 +164,23 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 				}catch(NotFoundException e) {
 					notFound = e;
 				}
+				
+				String signatureAlgorithm = (String) messageSecurityContext.getIncomingProperties().get(SecurityConstants.SIGNATURE_ALGORITHM);
+				if(signatureAlgorithm==null || org.apache.commons.lang3.StringUtils.isEmpty(signatureAlgorithm) || SignatureAlgorithmUtilities.VALUE_DEFINITO_HEANDER.equals(signatureAlgorithm)) {
+					String algHeader = "alg";
+					if(JOSESerialization.COMPACT.equals(this.joseSerialization)) {
+						RestMessageSecurityToken check = new RestMessageSecurityToken();
+	    				check.setToken(httpPayload);
+						signatureAlgorithm = check.getHeaderClaim(algHeader);
+					}
+				}
+				
 				if(bean!=null) {
 					Properties signatureProperties = bean.getProperties();
 					boolean throwError = true;
 					Map<String,Object> dynamicMap = Costanti.readDynamicMap(ctx);
     				JOSEUtils.injectKeystore(requestInfo, dynamicMap, signatureProperties, messageSecurityContext.getLog(), throwError); // serve per leggere il keystore dalla cache
-					this.jsonVerifierSignature = new JsonVerifySignature(signatureProperties, options);	
+					this.jsonVerifierSignature = new JsonVerifySignature(signatureProperties, signatureAlgorithm, options);	
 				}
 				else if(useHeaders) {
 					
@@ -197,6 +211,8 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 						KeyStore trustStoreSsl = JOSEUtils.readTrustStoreSsl(requestInfo, messageSecurityContext.getIncomingProperties());
 						this.jsonVerifierSignature = new JsonVerifySignature(trustStoreSsl, trustStore, options);
 					}
+					
+					this.jsonVerifierSignature.setSignatureAlgorithm(signatureAlgorithm);
 				}
 				else {	
 					KeyStore signatureKS = null;
@@ -228,7 +244,6 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 						throw new SecurityException(JOSECostanti.JOSE_ENGINE_VERIFIER_SIGNATURE_DESCRIPTION+" require alias certificate");
 					}
 					
-					String signatureAlgorithm = (String) messageSecurityContext.getIncomingProperties().get(SecurityConstants.SIGNATURE_ALGORITHM);
 					if(signatureAlgorithm==null || "".equals(signatureAlgorithm.trim())){
 						throw new SecurityException(JOSECostanti.JOSE_ENGINE_VERIFIER_SIGNATURE_DESCRIPTION+" require '"+SecurityConstants.SIGNATURE_ALGORITHM+"' property");
 					}
@@ -353,9 +368,9 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 				boolean verify = false;
 				try {
 					if(this.detached) {
-						verify = this.jsonVerifierSignature.verifyDetached(detachedSignature, restJsonMessage.getContent(bufferMessageReadOnly, idTransazione));
+						verify = this.jsonVerifierSignature.verifyDetached(detachedSignature, httpPayload);
 					}else {
-						verify = this.jsonVerifierSignature.verify(restJsonMessage.getContent(bufferMessageReadOnly, idTransazione));
+						verify = this.jsonVerifierSignature.verify(httpPayload);
 					}
 				}catch(Exception e) {
 					throw new SecurityException("Signature verification failed: "+e.getMessage(),e);
@@ -576,7 +591,7 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 							
 				encryptProcess = true; // le eccezioni lanciate da adesso sono registrato con codice relative alla verifica
 				try {
-					this.jsonDecrypt.decrypt(restJsonMessage.getContent(bufferMessageReadOnly, idTransazione));
+					this.jsonDecrypt.decrypt(httpPayload);
 				}catch(Exception e) {
 					throw new SecurityException("Decrypt failed: "+e.getMessage(),e);
 				}
@@ -701,7 +716,7 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 			return this.jsonVerifierSignature.getRsaPublicKey();
 		}
 		else if(this.jsonDecrypt!=null) {
-			return this.jsonDecrypt.getRsaPublicKey();
+			return this.jsonDecrypt.getPublicKey();
 		}
 		return null;
 	}

@@ -42,6 +42,9 @@ public class JOSECostanti {
 	// SELECT LIST ID
 	
 	public static final String ID_SIGNATURE_ALGORITHM = "signatureAlgorithm";
+	public static final String ID_SYMMETRIC_SIGNATURE_ALGORITHM = "symmSignatureAlgorithm";
+	public static final String ID_ASYMMETRIC_SIGNATURE_ALGORITHM = "asyncSignatureAlgorithm";
+	public static final String ID_JWT_ASYMMETRIC_SIGNATURE_ALGORITHM = "jwtAsyncSignatureAlgorithm";
 	
 	public static final String ID_ENCRYPT_KEY_ALGORITHM = "encryptionKeyAlgorithm";
 	

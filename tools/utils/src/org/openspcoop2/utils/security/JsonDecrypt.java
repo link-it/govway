@@ -26,7 +26,7 @@ import java.security.PrivateKey;
 import java.security.cert.CertStore;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
-import java.security.interfaces.RSAPublicKey;
+import java.security.PublicKey;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
@@ -42,12 +42,12 @@ import org.apache.cxf.rs.security.jose.jwe.JweJsonConsumer;
 import org.apache.cxf.rs.security.jose.jwe.JweUtils;
 import org.apache.cxf.rs.security.jose.jwk.JsonWebKey;
 import org.apache.cxf.rs.security.jose.jwk.JsonWebKeys;
-import org.apache.cxf.rs.security.jose.jwk.JwkUtils;
 import org.apache.cxf.rt.security.rs.RSSecurityConstants;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.certificate.JWKSet;
+import org.openspcoop2.utils.certificate.JwkUtils;
 import org.openspcoop2.utils.certificate.KeyStore;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
@@ -291,7 +291,7 @@ public class JsonDecrypt {
 					throw new UtilsException("(JsonWebKey) JwsDecryptionProvider init failed; check content algorithm ("+contentAlgorithm+")");
 				}
 			}else {
-				this.provider = JweUtils.createJweDecryptionProvider( JwkUtils.toRSAPrivateKey(jsonWebKey), keyAlgo, contentAlgo);
+				this.provider = JweUtils.createJweDecryptionProvider( JwkUtils.toPrivateKey(jsonWebKey), keyAlgo, contentAlgo);
 			}
 
 		}catch(Exception t) {
@@ -453,7 +453,7 @@ public class JsonDecrypt {
 	
 	private X509Certificate x509Certificate;
 	private JsonWebKey jsonWebKey;
-	private RSAPublicKey rsaPublicKey;
+	private PublicKey publicKey;
 	private String kid;
 	public X509Certificate getX509Certificate() {
 		return this.x509Certificate;
@@ -461,8 +461,8 @@ public class JsonDecrypt {
 	public JsonWebKey getJsonWebKey() {
 		return this.jsonWebKey;
 	}
-	public RSAPublicKey getRsaPublicKey() {
-		return this.rsaPublicKey;
+	public PublicKey getPublicKey() {
+		return this.publicKey;
 	}
 	public String getKid() {
 		return this.kid;
@@ -790,7 +790,7 @@ public class JsonDecrypt {
 			throw new UtilsException("JWKSet da utilizzare per il recupero dei certificati non definito");
 		}
 		this.jsonWebKey = webKey;
-		this.rsaPublicKey = JwkUtils.toRSAPublicKey(webKey);
+		this.publicKey = JwkUtils.toPublicKey(webKey);
 		List<JsonWebKey> keys = this.jsonWebKeys.getKeys();
 		if(keys==null || keys.isEmpty()) {
 			throw new UtilsException("JWKSet da utilizzare per il recupero dei certificati vuoto");
@@ -803,6 +803,6 @@ public class JsonDecrypt {
 				break;
 			}
 		}
-		return JweUtils.createJweDecryptionProvider( JwkUtils.toRSAPrivateKey(privateKey), keyAlgo, contentAlgo);
+		return JweUtils.createJweDecryptionProvider( JwkUtils.toPrivateKey(privateKey), keyAlgo, contentAlgo);
 	}
 }

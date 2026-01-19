@@ -33,7 +33,7 @@ import org.apache.cxf.rs.security.jose.jwe.JweJsonProducer;
 import org.apache.cxf.rs.security.jose.jwe.JweUtils;
 import org.apache.cxf.rs.security.jose.jwk.JsonWebKey;
 import org.apache.cxf.rs.security.jose.jwk.JsonWebKeys;
-import org.apache.cxf.rs.security.jose.jwk.JwkUtils;
+import org.openspcoop2.utils.certificate.JwkUtils;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.KeyStore;
 
@@ -213,7 +213,7 @@ public class JsonEncrypt {
 					throw new UtilsException("(JsonWebKey) JwsEncryptionProvider init failed; check content algorithm ("+contentAlgorithm+")");
 				}
 			}else {
-				this.provider = JweUtils.createJweEncryptionProvider(JwkUtils.toRSAPublicKey(jsonWebKey), this.keyAlgorithm, this.contentAlgorithm, compression);
+				this.provider = JweUtils.createJweEncryptionProvider(JwkUtils.toPublicKey(jsonWebKey), this.keyAlgorithm, this.contentAlgorithm, compression);
 			}
 			
 			this.jwtHeaders = jwtHeaders;
