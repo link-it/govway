@@ -189,6 +189,8 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 				asps = env.apsCore.getServizio(idAps);
 			}
 
+			env.apsCore.setDataCreazioneServizio(asps);
+			
 			ProtocolProperties protocolProperties = null;
 			if(profilo != null) {
 				AccordoServizioParteComune accordoFull = null;

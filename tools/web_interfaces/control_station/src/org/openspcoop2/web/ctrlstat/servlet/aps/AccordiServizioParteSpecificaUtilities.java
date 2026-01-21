@@ -243,7 +243,7 @@ public class AccordiServizioParteSpecificaUtilities {
 		return !pddCore.isPddEsterna(soggetto.getPortaDominio());
 	}
 	
-	public static void create(AccordoServizioParteSpecifica asps,boolean alreadyExists,
+	public static void create(String superUser, AccordoServizioParteSpecifica asps,boolean alreadyExists,
 			IDServizio idServizio, IDSoggetto idFruitore, String tipoProtocollo, ServiceBinding serviceBinding,
 			long idProv, // id del database relativo al soggetto. 
 			Connettore connettore,		
@@ -328,9 +328,9 @@ public class AccordiServizioParteSpecificaUtilities {
 		}
 
 		if(alreadyExists) {
-			apsCore.performUpdateOperation(asps.getSuperUser(), apsHelper.smista(), asps); // aggiorno aps
+			apsCore.performUpdateOperation(superUser, apsHelper.smista(), asps); // aggiorno aps
 		}
-		apsCore.performCreateOperation(asps.getSuperUser(), apsHelper.smista(), listaOggettiDaCreare.toArray());
+		apsCore.performCreateOperation(superUser, apsHelper.smista(), listaOggettiDaCreare.toArray());
 	}
 	
 	public static void generaPortaApplicativa(List<Object> listaOggettiDaCreare,

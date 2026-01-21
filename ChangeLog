@@ -1,3 +1,13 @@
+2026-01-21  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug #1704
+	Corretta un’anomalia in contesto multi-tenant nella gestione delle fruizioni verso la stessa API: 
+	in fase di creazione di una nuova fruizione da parte di un secondo utente gestore, 
+	venivano erroneamente riportate le utenze della fruizione precedentemente creata da un altro utente. 
+	Inoltre, la modifica della nuova fruizione poteva propagare in modo errato l’utenza dell’ultima modifica anche alla fruizione originale.
+	Infine, corretta un’anomalia che, durante un’operazione di importazione, riportava erroneamente nella nuova base dati le utenze e le date presenti negli archivi.
+
 2026-01-19  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

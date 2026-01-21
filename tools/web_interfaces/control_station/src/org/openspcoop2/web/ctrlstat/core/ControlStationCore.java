@@ -8596,6 +8596,7 @@ public class ControlStationCore {
 	}
 	private void setProprietaOggettoAccordoServizioParteSpecifica(String superUser, Object oggetto, boolean create, boolean update) {
 		org.openspcoop2.core.registry.ProprietaOggetto pOggetto = null;
+		boolean set = true;
 		if (oggetto instanceof AccordoServizioParteSpecifica) {
 			AccordoServizioParteSpecifica a = (AccordoServizioParteSpecifica) oggetto;
 			
@@ -8604,7 +8605,7 @@ public class ControlStationCore {
 			// modifica solo dei dati di una erogazione (si usa setDataAggiornamentoServizio)
 			// modifica effettuata in una fruizione o in una erogazione che comunque impatta su tutte le fruizioni/erogazioni esistenti
 			
-			boolean isFruitoreSingolo = setProprietaOggettoAccordoServizioParteSpecificaFruitore(superUser, a);
+			boolean isFruitoreSingolo = setProprietaOggettoAccordoServizioParteSpecificaFruitore(superUser, a, create, update);
 			
 			if(!isFruitoreSingolo) {
 				if(create && a.getProprietaOggetto()==null) {
@@ -8615,9 +8616,16 @@ public class ControlStationCore {
 				if(isDataAggiornamentoServizio(a) ) {
 					setProprietaOggettoAccordoServizioParteSpecificaResetFruitori(a);
 				}
+				if(update && isDataCreazioneServizio(a)) {
+					// forzo aggiornamento in driver update per la creazione
+					set = false;
+					pOggetto.setUtenteRichiedente(superUser);
+				}
 			}
 		}
-		setProprietaOggetto(superUser, pOggetto, create, update);
+		if(set) {
+			setProprietaOggetto(superUser, pOggetto, create, update);
+		}
 	}
 	private void setProprietaOggettoAccordoServizioParteSpecificaResetFruitori(AccordoServizioParteSpecifica a) {
 		if(a.sizeFruitoreList()>0) {
@@ -8627,7 +8635,20 @@ public class ControlStationCore {
 		}
 	}
 	
-	private static final Date DATA_CREAZIONE = new Date(0);
+	private static final Date DATA_CREAZIONE = CostantiDB.PROPRIETA_DATA_UNSET;
+	public void setDataCreazioneServizio(AccordoServizioParteSpecifica asps) {
+		if(asps!=null) {
+			if(asps.getProprietaOggetto()==null) {
+				asps.setProprietaOggetto(new org.openspcoop2.core.registry.ProprietaOggetto());
+			}
+			asps.getProprietaOggetto().setDataCreazione(DATA_CREAZIONE);
+		}
+	}
+	private boolean isDataCreazioneServizio(AccordoServizioParteSpecifica asps) {
+		return asps!=null && asps.getProprietaOggetto()!=null &&
+				asps.getProprietaOggetto().getDataCreazione()!=null && 
+				DATA_CREAZIONE.equals(asps.getProprietaOggetto().getDataCreazione());
+	}
 	public void setDataCreazioneFruitore(Fruitore fr) {
 		if(fr!=null) {
 			if(fr.getProprietaOggetto()==null) {
@@ -8642,7 +8663,7 @@ public class ControlStationCore {
 				DATA_CREAZIONE.equals(fr.getProprietaOggetto().getDataCreazione());
 	}
 	
-	private static final Date DATA_AGGIORNAMENTO = new Date(0);
+	private static final Date DATA_AGGIORNAMENTO = CostantiDB.PROPRIETA_DATA_UNSET;
 	private boolean isDataAggiornamentoServizio(AccordoServizioParteSpecifica asps) {
 		return asps!=null && asps.getProprietaOggetto()!=null &&
 				asps.getProprietaOggetto().getDataUltimaModifica()!=null && 
@@ -8670,7 +8691,7 @@ public class ControlStationCore {
 				DATA_AGGIORNAMENTO.equals(fr.getProprietaOggetto().getDataUltimaModifica());
 	}
 	
-	private boolean setProprietaOggettoAccordoServizioParteSpecificaFruitore(String superUser, AccordoServizioParteSpecifica a) {
+	private boolean setProprietaOggettoAccordoServizioParteSpecificaFruitore(String superUser, AccordoServizioParteSpecifica a, boolean create, boolean update) {
 		boolean isFruitoreSingolo = false;
 		if(a.sizeFruitoreList()>0) {
 			isFruitoreSingolo = setProprietaOggettoAccordoServizioParteSpecificaSingoloFruitore(superUser, a);
@@ -8680,8 +8701,8 @@ public class ControlStationCore {
 			for (Fruitore fr : a.getFruitoreList()) {
 				if(fr.getProprietaOggetto()==null) {
 					fr.setProprietaOggetto(new org.openspcoop2.core.registry.ProprietaOggetto());
+					setProprietaOggetto(superUser, fr.getProprietaOggetto(), create, update);
 				}
-				setProprietaOggetto(superUser, fr.getProprietaOggetto(), false, true);
 			}
 		}
 		return isFruitoreSingolo;
