@@ -413,6 +413,22 @@ public class DriverRegistroServiziDB_accordiParteSpecificaLIB {
 					throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDAccordoServizioParteSpecifica] id connettore nullo.");
 				connettore.setId(idConnettore);
 
+				String forceUtenteRichiedente = null;
+				Timestamp forceDataCreazione = null;
+				if(asps.getProprietaOggetto()!=null && asps.getProprietaOggetto().getDataCreazione()!=null &&
+						CostantiDB.PROPRIETA_DATA_UNSET.equals(asps.getProprietaOggetto().getDataCreazione())) {
+					// forzo la creazione
+					
+					if(asps.getProprietaOggetto()!=null && asps.getProprietaOggetto().getUtenteRichiedente()!=null) {
+						forceUtenteRichiedente = asps.getProprietaOggetto().getUtenteRichiedente();
+					}
+					else {
+						forceUtenteRichiedente = superUser;
+					}
+					
+					forceDataCreazione = DateManager.getTimestamp();
+				}
+				
 				String utenteUltimaModifica = null;
 				if(asps.getProprietaOggetto()!=null && asps.getProprietaOggetto().getUtenteUltimaModifica()!=null) {
 					utenteUltimaModifica = asps.getProprietaOggetto().getUtenteUltimaModifica();
@@ -450,6 +466,12 @@ public class DriverRegistroServiziDB_accordiParteSpecificaLIB {
 				if(asps.getOraRegistrazione()!=null)
 					sqlQueryObject.addUpdateField("ora_registrazione", "?");
 				sqlQueryObject.addUpdateField("message_type", "?");
+				if(forceUtenteRichiedente!=null) {
+					sqlQueryObject.addUpdateField(CostantiDB.PROPRIETA_OGGETTO_UTENTE_RICHIEDENTE, "?");
+				}
+				if(forceDataCreazione!=null) {
+					sqlQueryObject.addUpdateField(CostantiDB.PROPRIETA_OGGETTO_DATA_CREAZIONE, "?");
+				}
 				if(utenteUltimaModifica!=null) {
 					sqlQueryObject.addUpdateField(CostantiDB.PROPRIETA_OGGETTO_UTENTE_ULTIMA_MODIFICA, "?");
 				}
@@ -490,6 +512,14 @@ public class DriverRegistroServiziDB_accordiParteSpecificaLIB {
 				
 				updateStmt.setString(index++, DriverRegistroServiziDB_LIB.getValue(asps.getMessageType()));
 	
+				if(forceUtenteRichiedente!=null) {
+					updateStmt.setString(index++, forceUtenteRichiedente);
+				}
+				
+				if(forceDataCreazione!=null) {
+					updateStmt.setTimestamp(index++, forceDataCreazione);
+				}
+				
 				if(utenteUltimaModifica!=null) {
 					updateStmt.setString(index++, utenteUltimaModifica);
 				}

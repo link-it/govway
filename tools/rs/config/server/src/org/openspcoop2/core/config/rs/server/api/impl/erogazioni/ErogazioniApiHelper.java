@@ -1923,6 +1923,7 @@ public class ErogazioniApiHelper {
 		}
 		
         AccordiServizioParteSpecificaUtilities.create(
+        		env.userLogin,
         		asps,
         		alreadyExists, 
 				idServizio,											// idServizio,

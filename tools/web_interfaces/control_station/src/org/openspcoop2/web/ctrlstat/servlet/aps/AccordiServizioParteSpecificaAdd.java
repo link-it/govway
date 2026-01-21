@@ -1960,7 +1960,11 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				fruitore.setNome(strutsBean.nomeSoggettoFruitore);
 				fruitore.setStatoPackage(strutsBean.statoPackage);
 				fruitore.setConnettore(connettore);
+				apsCore.setDataCreazioneFruitore(fruitore);
 				asps.addFruitore(fruitore);
+			}
+			else {
+				apsCore.setDataCreazioneServizio(asps);
 			}
 			
 			/**			Spostato sopra a livello di edit in progress			
@@ -2280,7 +2284,9 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				ruolo = strutsBean.fruizioneRuolo;
 			}
 			
-			AccordiServizioParteSpecificaUtilities.create(asps, alreadyExists, 
+			String superUser = ServletUtils.getUserLoginFromSession(session);
+			
+			AccordiServizioParteSpecificaUtilities.create(superUser, asps, alreadyExists, 
 					idServizio, idFruitore, strutsBean.tipoProtocollo, strutsBean.serviceBinding, 
 					idProv, 
 					connettore, 

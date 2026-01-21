@@ -22,6 +22,8 @@
 
 package org.openspcoop2.core.constants;
 
+import java.util.Date;
+
 import org.openspcoop2.utils.certificate.KeyUtils;
 import org.openspcoop2.utils.certificate.KeystoreType;
 
@@ -93,6 +95,8 @@ public final class CostantiDB {
     public static final String PROPRIETA_OGGETTO_ALIAS_DATA_CREAZIONE = "prop_obj_dc";
     public static final String PROPRIETA_OGGETTO_ALIAS_UTENTE_ULTIMA_MODIFICA = "prop_obj_um";
     public static final String PROPRIETA_OGGETTO_ALIAS_DATA_ULTIMA_MODIFICA = "prop_obj_dm";
+    
+    public static final Date PROPRIETA_DATA_UNSET = new Date(0);
     
     /*REGSERV*/
     public static final String PROTOCOL_PROPERTIES = "protocol_properties";

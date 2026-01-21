@@ -466,9 +466,9 @@ public class ImporterArchiveUtils {
 			// Divisione asps che implementano accordi di servizio parte comune,
 			// da asps che implementano servizi composti
 			List<ArchiveAccordoServizioParteSpecifica> listAccordiServizioParteSpecifica = 
-					new ArrayList<ArchiveAccordoServizioParteSpecifica>();
+					new ArrayList<>();
 			List<ArchiveAccordoServizioParteSpecifica> listAccordiServizioParteSpecifica_serviziComposti = 
-					new ArrayList<ArchiveAccordoServizioParteSpecifica>();
+					new ArrayList<>();
 			for (int i = 0; i < archive.getAccordiServizioParteSpecifica().size(); i++) {
 				ArchiveAccordoServizioParteSpecifica archiveAccordoServizioParteSpecifica =
 						archive.getAccordiServizioParteSpecifica().get(i);
@@ -506,8 +506,8 @@ public class ImporterArchiveUtils {
 			
 			
 			// Preparo Liste di Mapping da creare una volta registrati sia gli accordi (servizi e fruitori) che le porte (delegate e applicative)
-			List<MappingErogazionePortaApplicativa> listMappingErogazionePA = new ArrayList<MappingErogazionePortaApplicativa>();
-			List<MappingFruizionePortaDelegata> listMappingFruizionePD = new ArrayList<MappingFruizionePortaDelegata>();
+			List<MappingErogazionePortaApplicativa> listMappingErogazionePA = new ArrayList<>();
+			List<MappingFruizionePortaDelegata> listMappingFruizionePD = new ArrayList<>();
 			
 			
 			// Accordi di Servizio Parte Specifica (implementano accordi di servizio parte comune)
@@ -916,6 +916,10 @@ public class ImporterArchiveUtils {
 			// --- ora registrazione
 			archivePdd.getPortaDominio().setOraRegistrazione(DateManager.getDate());
 			
+			// --- ProprietaOggetti
+			// vengono impostate durante il caricamento, non si devono ereditare quelle in export
+			/**archivePdd.getPortaDominio().setProprietaOggetto(null);*/
+			
 			
 			// --- upload ---
 			boolean create = false;
@@ -1005,6 +1009,10 @@ public class ImporterArchiveUtils {
 			// --- ora registrazione
 			archiveGruppo.getGruppo().setOraRegistrazione(DateManager.getDate());
 			
+			// --- ProprietaOggetti
+			// vengono impostate durante il caricamento, non si devono ereditare quelle in export
+			archiveGruppo.getGruppo().setProprietaOggetto(null);
+			
 			
 			// --- upload ---
 			boolean create = false;
@@ -1088,6 +1096,10 @@ public class ImporterArchiveUtils {
 			// --- ora registrazione
 			archiveRuolo.getRuolo().setOraRegistrazione(DateManager.getDate());
 			
+			// --- ProprietaOggetti
+			// vengono impostate durante il caricamento, non si devono ereditare quelle in export
+			archiveRuolo.getRuolo().setProprietaOggetto(null);
+			
 			
 			// --- upload ---
 			boolean create = false;
@@ -1168,6 +1180,10 @@ public class ImporterArchiveUtils {
 			
 			// --- ora registrazione
 			archiveScope.getScope().setOraRegistrazione(DateManager.getDate());
+			
+			// --- ProprietaOggetti
+			// vengono impostate durante il caricamento, non si devono ereditare quelle in export
+			archiveScope.getScope().setProprietaOggetto(null);
 			
 			
 			// --- upload ---
@@ -1414,6 +1430,10 @@ public class ImporterArchiveUtils {
 				
 				// --- ora registrazione
 				archiveSoggetto.getSoggettoRegistro().setOraRegistrazione(DateManager.getDate());
+				
+				// --- ProprietaOggetti
+				// vengono impostate durante il caricamento, non si devono ereditare quelle in export
+				archiveSoggetto.getSoggettoRegistro().setProprietaOggetto(null);
 				
 				
 				
@@ -1761,6 +1781,10 @@ public class ImporterArchiveUtils {
 			// --- ora registrazione
 			archiveServizioApplicativo.getServizioApplicativo().setOraRegistrazione(DateManager.getDate());
 			
+			// --- ProprietaOggetti
+			// vengono impostate durante il caricamento, non si devono ereditare quelle in export
+			archiveServizioApplicativo.getServizioApplicativo().setProprietaOggetto(null);
+			
 			
 			
 			// --- upload ---
@@ -1910,6 +1934,10 @@ public class ImporterArchiveUtils {
 			
 			// --- ora registrazione
 			archiveAccordoCooperazione.getAccordoCooperazione().setOraRegistrazione(DateManager.getDate());
+			
+			// --- ProprietaOggetti
+			// vengono impostate durante il caricamento, non si devono ereditare quelle in export
+			/**archiveAccordoCooperazione.getAccordoCooperazione().setProprietaOggetto(null);*/
 			
 			
 			
@@ -2145,6 +2173,10 @@ public class ImporterArchiveUtils {
 			
 			// --- ora registrazione
 			archiveAccordoServizioParteComune.getAccordoServizioParteComune().setOraRegistrazione(DateManager.getDate());
+			
+			// --- ProprietaOggetti
+			// vengono impostate durante il caricamento, non si devono ereditare quelle in export
+			archiveAccordoServizioParteComune.getAccordoServizioParteComune().setProprietaOggetto(null);
 			
 			
 			
@@ -2395,6 +2427,10 @@ public class ImporterArchiveUtils {
 			
 			// --- ora registrazione
 			archiveAccordoServizioComposto.getAccordoServizioParteComune().setOraRegistrazione(DateManager.getDate());
+			
+			// --- ProprietaOggetti
+			// vengono impostate durante il caricamento, non si devono ereditare quelle in export
+			archiveAccordoServizioComposto.getAccordoServizioParteComune().setProprietaOggetto(null);
 			
 			
 			
@@ -2817,6 +2853,10 @@ public class ImporterArchiveUtils {
 			// --- ora registrazione
 			archiveAccordoServizioParteSpecifica.getAccordoServizioParteSpecifica().setOraRegistrazione(DateManager.getDate());
 			
+			// --- ProprietaOggetti
+			// vengono impostate durante il caricamento, non si devono ereditare quelle in export
+			archiveAccordoServizioParteSpecifica.getAccordoServizioParteSpecifica().setProprietaOggetto(null);
+			
 			
 			// --- upload ---
 			org.openspcoop2.core.registry.driver.utils.XMLDataConverter.
@@ -3080,6 +3120,10 @@ public class ImporterArchiveUtils {
 			// --- ora registrazione
 			archiveFruitore.getFruitore().setOraRegistrazione(DateManager.getDate());
 			
+			// --- ProprietaOggetti
+			// vengono impostate durante il caricamento, non si devono ereditare quelle in export
+			archiveFruitore.getFruitore().setProprietaOggetto(null);
+			
 			
 						
 			// --- upload ---
@@ -3324,6 +3368,10 @@ public class ImporterArchiveUtils {
 			
 			// --- ora registrazione
 			pd.setOraRegistrazione(DateManager.getDate());
+			
+			// --- ProprietaOggetti
+			// vengono impostate durante il caricamento, non si devono ereditare quelle in export
+			pd.setProprietaOggetto(null);
 			
 			
 			// --- set dati obbligatori nel db ----
@@ -3605,6 +3653,10 @@ public class ImporterArchiveUtils {
 			
 			// --- ora registrazione
 			pa.setOraRegistrazione(DateManager.getDate());
+			
+			// --- ProprietaOggetti
+			// vengono impostate durante il caricamento, non si devono ereditare quelle in export
+			pa.setProprietaOggetto(null);
 			
 			
 			// --- set dati obbligatori nel db ----
@@ -4135,6 +4187,9 @@ public class ImporterArchiveUtils {
 			// --- ora registrazione
 			// non esistenti
 			
+			// --- ProprietaOggetti
+			// vengono impostate durante il caricamento, non si devono ereditare quelle in export
+			archiveGenericProperties.getPolicy().setProprietaOggetto(null);
 			
 			// --- upload ---
 			boolean create = false;
