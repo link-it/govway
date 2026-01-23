@@ -56,6 +56,7 @@ import org.openspcoop2.security.keystore.JWKSetStore;
 import org.openspcoop2.security.keystore.KeyPairStore;
 import org.openspcoop2.security.keystore.MerlinKeystore;
 import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
+import org.openspcoop2.security.utils.SignatureAlgorithmUtilities;
 import org.openspcoop2.utils.certificate.byok.BYOKProvider;
 import org.openspcoop2.utils.certificate.byok.BYOKRequestParams;
 import org.openspcoop2.utils.digest.DigestEncoding;
@@ -262,7 +263,17 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 		if(policyNegoziazioneToken.isRfc7523x509Grant() || policyNegoziazioneToken.isRfc7523ClientSecretGrant()) {
 			
 			if(policyNegoziazioneToken.isRfc7523x509Grant()) {
-				if(policyNegoziazioneToken.isJwtSignKeystoreApplicativoModI()) {
+				
+				boolean usaApplicativoKeystore = policyNegoziazioneToken.isJwtSignKeystoreApplicativoModI();
+				boolean usaApplicativoDPoPKeystore = policyNegoziazioneToken.isDpop() && policyNegoziazioneToken.isDpopSignKeystoreApplicativoModI();
+				boolean usaFruizioneKeystore = false;
+				boolean usaFruizioneDPoPKeystore = false;
+				if(!usaApplicativoKeystore && !usaApplicativoDPoPKeystore) {
+					usaFruizioneKeystore = policyNegoziazioneToken.isJwtSignKeystoreFruizioneModI();
+					usaFruizioneDPoPKeystore = policyNegoziazioneToken.isDpop() && policyNegoziazioneToken.isDpopSignKeystoreFruizioneModI();
+				}
+				
+				if(usaApplicativoKeystore || usaApplicativoDPoPKeystore) {
 					String prefixError = "Il tipo di keystore indicato nella token policy '"+policyNegoziazioneToken.getName()+"' "; 
 					if(busta.getServizioApplicativoFruitore()==null) {
 						throw new TokenException(prefixError+ERRORE_RICHIEDE_AUTENTICAZIONE_IDENTIFICAZIONE_APPLICATIVO);
@@ -317,23 +328,29 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 					}
 					
 					idApp = this.idApplicativoRichiedente.getNome() + " (Soggetto: "+this.idApplicativoRichiedente.getIdSoggettoProprietario().getNome()+")";
-					
-					try {
-						this.keystoreApplicativoModI = new ModIKeystoreUtils(this.applicativoRichiedente, "Token Policy Negoziazione - Signed JWT");
-					}catch(Exception t) {
-						throw new TokenException(prefixError+"non è utilizzabile: "+t.getMessage(),t);
-					}
 
-					if(policyNegoziazioneToken.isDpop() && policyNegoziazioneToken.isDpopSignKeystoreApplicativoModI() &&
-							ModIKeystoreUtils.isKeystoreConfigEnabled(this.applicativoRichiedente, ModIKeystoreConfigType.DPOP)) {
+					if(usaApplicativoDPoPKeystore && ModIKeystoreUtils.isKeystoreConfigEnabled(this.applicativoRichiedente, ModIKeystoreConfigType.DPOP)) {
 						try {
 							this.keystoreDPoPApplicativoModI = new ModIKeystoreUtils(this.applicativoRichiedente, ModIKeystoreConfigType.DPOP);
 						}catch(Exception t) {
 							throw new TokenException(prefixError+"(DPoP) non è utilizzabile: "+t.getMessage(),t);
 						}
 					}
+					
+					if(usaApplicativoKeystore || (usaApplicativoDPoPKeystore && this.keystoreDPoPApplicativoModI==null)) {
+						try {
+							String tipo = "Signed JWT";
+							if(!usaApplicativoKeystore) {
+								tipo = "DPoP";
+							}
+							this.keystoreApplicativoModI = new ModIKeystoreUtils(this.applicativoRichiedente, "Token Policy Negoziazione - "+tipo);
+						}catch(Exception t) {
+							throw new TokenException(prefixError+"non è utilizzabile: "+t.getMessage(),t);
+						}
+					}
+
 				}
-				else if(policyNegoziazioneToken.isJwtSignKeystoreFruizioneModI()) {
+				else if(usaFruizioneKeystore || usaFruizioneDPoPKeystore) {
 					String prefixError = "Il tipo di keystore indicato nella token policy '"+policyNegoziazioneToken.getName()+"' "; 
 					
 					if(busta.getTipoMittente()==null || busta.getMittente()==null) {
@@ -374,18 +391,7 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 										
 					idFruizioneLabel = this.idFruizione.getIdFruitore().getNome() + " -> "+this.idFruizione.getIdServizio().getNome()+" (Soggetto: "+this.idFruizione.getIdServizio().getSoggettoErogatore().getNome()+")";
 					
-					try {
-						this.keystoreFruizioneModI = new ModIKeystoreUtils(true, this.idFruizione.getIdFruitore(), asps, "Token Policy Negoziazione - Signed JWT",
-								NegoziazioneTokenDynamicParametersModIUtils.getSicurezzaMessaggioCertificatiKeyStoreTipo(),
-								NegoziazioneTokenDynamicParametersModIUtils.getSicurezzaMessaggioCertificatiKeyStorePath(),
-								NegoziazioneTokenDynamicParametersModIUtils.getSicurezzaMessaggioCertificatiKeyStorePassword(),
-								NegoziazioneTokenDynamicParametersModIUtils.getSicurezzaMessaggioCertificatiKeyAlias(),
-								NegoziazioneTokenDynamicParametersModIUtils.getSicurezzaMessaggioCertificatiKeyPassword());
-					}catch(Exception t) {
-						throw new TokenException(prefixError+"non è utilizzabile: "+t.getMessage(),t);
-					}
-
-					if(policyNegoziazioneToken.isDpop() && policyNegoziazioneToken.isDpopSignKeystoreFruizioneModI()) {
+					if(usaFruizioneDPoPKeystore) {
 						if(ModIKeystoreUtils.isKeystoreConfigRidefinito(this.idFruizione.getIdFruitore(), asps, ModIKeystoreConfigType.DPOP)) {
 							try {
 								this.keystoreDPoPFruizioneModI = new ModIKeystoreUtils(this.idFruizione.getIdFruitore(), asps, ModIKeystoreConfigType.DPOP);
@@ -404,6 +410,23 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 							}catch(Exception t) {
 								throw new TokenException(prefixError+"(DPoP default) non è utilizzabile: "+t.getMessage(),t);
 							}
+						}
+					}
+					
+					if(usaFruizioneKeystore || (usaFruizioneDPoPKeystore && this.keystoreDPoPFruizioneModI==null)) {
+						try {
+							String tipo = "Signed JWT";
+							if(!usaFruizioneKeystore) {
+								tipo = "DPoP";
+							}
+							this.keystoreFruizioneModI = new ModIKeystoreUtils(true, this.idFruizione.getIdFruitore(), asps, "Token Policy Negoziazione - "+tipo,
+									NegoziazioneTokenDynamicParametersModIUtils.getSicurezzaMessaggioCertificatiKeyStoreTipo(),
+									NegoziazioneTokenDynamicParametersModIUtils.getSicurezzaMessaggioCertificatiKeyStorePath(),
+									NegoziazioneTokenDynamicParametersModIUtils.getSicurezzaMessaggioCertificatiKeyStorePassword(),
+									NegoziazioneTokenDynamicParametersModIUtils.getSicurezzaMessaggioCertificatiKeyAlias(),
+									NegoziazioneTokenDynamicParametersModIUtils.getSicurezzaMessaggioCertificatiKeyPassword());
+						}catch(Exception t) {
+							throw new TokenException(prefixError+"non è utilizzabile: "+t.getMessage(),t);
 						}
 					}
 
@@ -1079,7 +1102,22 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 		if(keystoreFilePublicKey==null) {
 			throw new TokenException("JWT Signature public key file undefined");
 		}
-		String keyPairAlgorithm = this.keystoreApplicativoModI.getSecurityMessageKeystoreKeyAlgorithm();
+
+		// Correggo l'algoritmo rispetto al signature algo
+		String keyPairAlgorithm = null;
+		String signAlgo = null;
+		if(this.policyNegoziazioneToken.isJwtSignKeystoreApplicativoModI()) {
+			signAlgo = this.policyNegoziazioneToken.getJwtSignAlgorithm();
+		}
+		else if(this.policyNegoziazioneToken.isDpopSignKeystoreApplicativoModI()) {
+			signAlgo = this.policyNegoziazioneToken.getDpopSignAlgorithm();
+		}
+		if(signAlgo!=null) {
+			keyPairAlgorithm = SignatureAlgorithmUtilities.covertToKeyPairAlgorithm(signAlgo);
+		}
+		if(keyPairAlgorithm==null) {
+			keyPairAlgorithm = this.keystoreApplicativoModI.getSecurityMessageKeystoreKeyAlgorithm();
+		}
 		if(keyPairAlgorithm==null) {
 			throw new TokenException("JWT Signature key pair algorithm undefined");
 		}
@@ -1154,7 +1192,19 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 		if(keystoreFilePublicKey==null) {
 			throw new TokenException("DPoP Signature public key file undefined");
 		}
-		String keyPairAlgorithm = this.keystoreDPoPApplicativoModI.getSecurityMessageKeystoreKeyAlgorithm();
+		
+		// Correggo l'algoritmo rispetto al signature algo
+		String keyPairAlgorithm = null;
+		String signAlgo = null;
+		if(this.policyNegoziazioneToken.isDpopSignKeystoreApplicativoModI()) {
+			signAlgo = this.policyNegoziazioneToken.getDpopSignAlgorithm();
+		}
+		if(signAlgo!=null) {
+			keyPairAlgorithm = SignatureAlgorithmUtilities.covertToKeyPairAlgorithm(signAlgo);
+		}
+		if(keyPairAlgorithm==null) {
+			keyPairAlgorithm = this.keystoreDPoPApplicativoModI.getSecurityMessageKeystoreKeyAlgorithm();
+		}
 		if(keyPairAlgorithm==null) {
 			throw new TokenException("DPoP Signature key pair algorithm undefined");
 		}
@@ -1232,7 +1282,22 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 		if(keystoreFilePublicKey==null) {
 			throw new TokenException("JWT Signature public key file undefined");
 		}
-		String keyPairAlgorithm = this.keystoreFruizioneModI.getSecurityMessageKeystoreKeyAlgorithm();
+		
+		// Correggo l'algoritmo rispetto al signature algo
+		String keyPairAlgorithm = null;
+		String signAlgo = null;
+		if(this.policyNegoziazioneToken.isJwtSignKeystoreFruizioneModI()) {
+			signAlgo = this.policyNegoziazioneToken.getJwtSignAlgorithm();
+		}
+		else if(this.policyNegoziazioneToken.isDpopSignKeystoreFruizioneModI()) {
+			signAlgo = this.policyNegoziazioneToken.getDpopSignAlgorithm();
+		}
+		if(signAlgo!=null) {
+			keyPairAlgorithm = SignatureAlgorithmUtilities.covertToKeyPairAlgorithm(signAlgo);
+		}
+		if(keyPairAlgorithm==null) {
+			keyPairAlgorithm = this.keystoreFruizioneModI.getSecurityMessageKeystoreKeyAlgorithm();
+		}
 		if(keyPairAlgorithm==null) {
 			throw new TokenException("JWT Signature key pair algorithm undefined");
 		}
@@ -1307,7 +1372,22 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 		if(keystoreFilePublicKey==null) {
 			throw new TokenException("DPoP Signature public key file undefined");
 		}
-		String keyPairAlgorithm = this.keystoreDPoPFruizioneModI.getSecurityMessageKeystoreKeyAlgorithm();
+		
+		// Correggo l'algoritmo rispetto al signature algo
+		String keyPairAlgorithm = null;
+		String signAlgo = null;
+		if(this.policyNegoziazioneToken.isJwtSignKeystoreFruizioneModI()) {
+			signAlgo = this.policyNegoziazioneToken.getJwtSignAlgorithm();
+		}
+		else if(this.policyNegoziazioneToken.isDpopSignKeystoreFruizioneModI()) {
+			signAlgo = this.policyNegoziazioneToken.getDpopSignAlgorithm();
+		}
+		if(signAlgo!=null) {
+			keyPairAlgorithm = SignatureAlgorithmUtilities.covertToKeyPairAlgorithm(signAlgo);
+		}
+		if(keyPairAlgorithm==null) {
+			keyPairAlgorithm = this.keystoreDPoPFruizioneModI.getSecurityMessageKeystoreKeyAlgorithm();
+		}
 		if(keyPairAlgorithm==null) {
 			throw new TokenException("DPoP Signature key pair algorithm undefined");
 		}

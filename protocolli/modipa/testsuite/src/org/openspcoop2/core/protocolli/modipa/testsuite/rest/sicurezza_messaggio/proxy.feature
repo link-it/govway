@@ -12683,8 +12683,69 @@ Scenario: isTest('audit-rest-jwk-0401-differentAudienceAsArray')
 
 
 
+########################
+#       DPOP           #
+########################
 
 
+Scenario: isTest('dpop-duplicate-local-error')
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/DemoNegoziazioneTokenDPoP-RS256/v1')
+    
+    * match responseStatus == 401
+    * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/dpop_duplicate.json')
+    * match header GovWay-Transaction-ErrorType == 'TokenAuthenticationFailed'
+    * match header WWW-Authenticate == 'DPoP realm="ModI-NegoziazionePDND-Validazione-DPoP-RS256", error="invalid_dpop_proof", error_description="DPoP proof invalid"'
+
+Scenario: isTest('dpop-duplicate-local-ok')
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/DemoNegoziazioneTokenDPoP-RS256/v1')
+    
+    * match responseStatus == 200
+    
+Scenario: isTest('dpop-duplicate-redis-error')
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/DemoNegoziazioneTokenDPoP-RS256-Redis/v1')
+    
+    * match responseStatus == 401
+    * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/dpop_duplicate.json')
+    * match header GovWay-Transaction-ErrorType == 'TokenAuthenticationFailed'
+    * match header WWW-Authenticate == 'DPoP realm="ModI-NegoziazionePDND-Validazione-DPoP-RS256-Redis", error="invalid_dpop_proof", error_description="DPoP proof invalid"'
+
+Scenario: isTest('dpop-duplicate-redis-ok')
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/DemoNegoziazioneTokenDPoP-RS256-Redis/v1')
+    
+    * match responseStatus == 200    
+
+Scenario: isTest('dpop-duplicate-disabilitato-ok')
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/DemoNegoziazioneTokenDPoP-RS256-FiltroDuplicatiDisabilitato/v1')
+    
+    * match responseStatus == 200 
+
+Scenario: isTest('dpop-htm')
+
+    # Imposta il metodo HTTP desiderato
+    * karate.set('requestMethod', 'PUT')
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/DemoNegoziazioneTokenDPoP-RS256/v1')
+    
+    * match responseStatus == 401
+    * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/dpop_duplicate.json')
+    * match header GovWay-Transaction-ErrorType == 'TokenAuthenticationFailed'
+    * match header WWW-Authenticate == 'DPoP realm="ModI-NegoziazionePDND-Validazione-DPoP-RS256", error="invalid_dpop_proof", error_description="DPoP proof invalid"'
+
+Scenario: isTest('dpop-expired')
+
+    * java.lang.Thread.sleep(5000)
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/DemoNegoziazioneTokenDPoP-RS256-Redis/v1')
+    
+    * match responseStatus == 401
+    * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/dpop_duplicate.json')
+    * match header GovWay-Transaction-ErrorType == 'TokenAuthenticationFailed'
+    * match header WWW-Authenticate == 'DPoP realm="ModI-NegoziazionePDND-Validazione-DPoP-RS256-Redis", error="invalid_dpop_proof", error_description="DPoP proof invalid"'
 
 ########################
 #       SUAP           #

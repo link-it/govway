@@ -912,7 +912,9 @@ public class GestoreTokenValidazioneUtilities {
 			}catch(Exception e) {
 				log.debug(GestoreToken.getMessageTokenNonValido(e),e);
 				detailsError = GestoreToken.getMessageTokenNonValido(e);
-				eProcess = e;
+				if(!(e instanceof TokenException)) {
+					eProcess = e;
+				}
 			}
 
 			if(informazioniDPoP!=null) {
@@ -1040,7 +1042,7 @@ public class GestoreTokenValidazioneUtilities {
 	private static void validazioneDPoPPayload(DPoP dpop, IDPoPParser dpopParser, PolicyGestioneToken policyGestioneToken,
 			AbstractDatiInvocazione datiInvocazione,
 			IProtocolFactory<?> protocolFactory, PdDContext pddContext,
-			String accessToken, Logger log) throws TokenException {
+			String accessToken, Logger log) throws TokenException, UtilsException {
 
 		// Validazione htm (HTTP method)
 		validazioneDPoPHtm(dpop, dpopParser, datiInvocazione);
@@ -1073,7 +1075,7 @@ public class GestoreTokenValidazioneUtilities {
 	}
 
 	private static void validazioneDPoPHtu(DPoP dpop, IDPoPParser dpopParser, AbstractDatiInvocazione datiInvocazione,
-			IProtocolFactory<?> protocolFactory, PdDContext pddContext, Logger log) throws TokenException {
+			IProtocolFactory<?> protocolFactory, PdDContext pddContext, Logger log) throws TokenException, UtilsException {
 
 		StringBuilder interfaceName = new StringBuilder();
 		UrlInvocazioneAPI configUrl = getBaseUrlInvocazione(datiInvocazione, protocolFactory, pddContext, interfaceName);
@@ -1093,7 +1095,8 @@ public class GestoreTokenValidazioneUtilities {
 				baseUrlAggiuntive = CostantiProprieta.getDPoPValidationHtuBaseUrls(listProprieta);
 			}
 		}catch(Exception e) {
-			throw new TokenException("Error reading DPoP HTU validation properties from API configuration: "+e.getMessage(), e);
+			// Usa una eccezione differente per non far tornare la motivazione al client
+			throw new UtilsException("Error reading DPoP HTU validation properties from API configuration: "+e.getMessage(), e);
 		}
 		
 		// Normalizza actualUri rimuovendo query string e fragment
@@ -1220,6 +1223,8 @@ public class GestoreTokenValidazioneUtilities {
 			nomeContesto = nomeContesto.substring(1);
 		}*/
 		String functionParameters = datiInvocazione.getRequestInfo().getProtocolContext().getFunctionParameters(); // ENTE/servizio/v1/azione
+		String protocolWebContext = datiInvocazione.getRequestInfo().getProtocolContext().getProtocolWebContext(); // es. rest
+		String function = datiInvocazione.getRequestInfo().getProtocolContext().getFunction(); // es. in
 		if(functionParameters.startsWith("/")) {
 			functionParameters = functionParameters.substring(1);
 		}
@@ -1264,8 +1269,31 @@ public class GestoreTokenValidazioneUtilities {
 			if(nomeContesto.startsWith("/")) {
 				nomeContesto = nomeContesto.substring(1);
 			}
+			
 			if(functionParameters.startsWith(nomeContesto) && functionParameters.length()>nomeContesto.length()) {
 				contestoInvocato = functionParameters.substring(nomeContesto.length());
+			}
+			else {
+				StringBuilder checkUrl = new StringBuilder();
+				if(protocolWebContext!=null && org.apache.commons.lang3.StringUtils.isNotEmpty(protocolWebContext)) {
+					checkUrl.append(protocolWebContext);
+					if(!protocolWebContext.endsWith("/")) {
+						checkUrl.append("/");
+					}
+				}
+				if(function!=null && org.apache.commons.lang3.StringUtils.isNotEmpty(function)) {
+					checkUrl.append(function);
+					if(!function.endsWith("/")) {
+						checkUrl.append("/");
+					}
+				}
+				if(checkUrl.length()>0) {
+					checkUrl.append(functionParameters);
+					String newFunctionParameters = checkUrl.toString();
+					if(newFunctionParameters.startsWith(nomeContesto) && newFunctionParameters.length()>nomeContesto.length()) {
+						contestoInvocato = newFunctionParameters.substring(nomeContesto.length());
+					}
+				}
 			}
 			
 			for (String baseUrlNew : baseUrlAggiuntive) {
@@ -1351,13 +1379,13 @@ public class GestoreTokenValidazioneUtilities {
 			long toleranceMs = OpenSPCoop2Properties.getInstance().getGestioneTokenDPoPIatToleranceMilliseconds();
 			long expirationTime = iatTime + (ttlSeconds * 1000L) + toleranceMs;
 			if(nowTime > expirationTime) {
-				throw new TokenException("Expired DPoP token: iat ("+DateUtils.getSimpleDateFormatMs().format(iat)+") + TTL ("+ttlSeconds+"s) + tolerance ("+toleranceMs+"ms) < now");
+				throw new TokenException("Expired DPoP token (iat:"+DateUtils.getSimpleDateFormatMs().format(iat)+"), TTL:"+ttlSeconds+"s, tolerance:"+toleranceMs+"ms)");
 			}
 		}
 	}
 	
 	private static void validazioneDPoPJti(DPoP dpop, IDPoPParser dpopParser, PolicyGestioneToken policyGestioneToken,
-			AbstractDatiInvocazione datiInvocazione, PdDContext pddContext, Logger log) throws TokenException {
+			AbstractDatiInvocazione datiInvocazione, PdDContext pddContext, Logger log) throws TokenException, UtilsException {
 		String jti = dpopParser.getJWTIdentifier();
 		if(jti == null || jti.trim().isEmpty()) {
 			throw new TokenException("Invalid DPoP token: claim 'jti' is missing");
@@ -1375,8 +1403,9 @@ public class GestoreTokenValidazioneUtilities {
 
 		// Verifica se validator è disponibile (per distribuito verifica Redis)
 		if(!validator.isAvailable()) {
+			// Lancio eccezione differente per non far tornare il messaggio al client
 			log.error("JTI validator not available for policy [{}]", policyGestioneToken.getName());
-			throw new TokenException("DPoP JTI validation failed: validator not available");
+			throw new UtilsException("DPoP JTI validation failed: validator not available");
 		}
 
 		// Calcola toleranceMillis per validazione temporale (stesso usato in validazioneDPoPIat)
@@ -1391,13 +1420,16 @@ public class GestoreTokenValidazioneUtilities {
 		try {
 			validator.validateAndStore(policyGestioneToken.getName(), jtiForValidation, dpopParser, toleranceTotal);
 			log.debug("DPoP JTI [{}] validated successfully for policy [{}]", jti, policyGestioneToken.getName());
-		} catch (UtilsException e) {
-			/**log.error("JTI validation error for policy [{}]: {}", policyGestioneToken.getName(), e.getMessage(), e);*/
+		} catch (TokenException e) {
+			/**log.error("JTI validation failed for policy [{}]: {}", policyGestioneToken.getName(), e.getMessage(), e);*/
 			throw new TokenException("DPoP JTI validation failed: "+e.getMessage(), e);
+		} catch (Exception e) {
+			/**log.error("JTI validation error for policy [{}]: {}", policyGestioneToken.getName(), e.getMessage(), e);*/
+			throw new UtilsException("DPoP JTI validation error: "+e.getMessage(), e);
 		}
 	}
 
-	private static String getJtiForValidation(String jti, AbstractDatiInvocazione datiInvocazione, PdDContext pddContext) throws TokenException {
+	private static String getJtiForValidation(String jti, AbstractDatiInvocazione datiInvocazione, PdDContext pddContext) throws UtilsException {
 		try {
 			List<Proprieta> listProprieta = readProprieta(datiInvocazione);
 			if(listProprieta!=null && !listProprieta.isEmpty() &&
@@ -1408,7 +1440,7 @@ public class GestoreTokenValidazioneUtilities {
 				}
 			}
 		} catch(Exception e) {
-			throw new TokenException("Error reading DPoP JTI test properties from API configuration: "+e.getMessage(), e);
+			throw new UtilsException("Error reading DPoP JTI test properties from API configuration: "+e.getMessage(), e);
 		}
 		return jti;
 	}

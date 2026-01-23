@@ -93,7 +93,7 @@ public class LocalJtiValidator implements IJtiValidator {
 			long currentSize = cache.estimatedSize();
 			if (currentSize >= this.maxSize) {
 				logger.error("JTI cache full for policy [{}]: size={}/{} - rejecting JTI [{}]", policyName, currentSize, this.maxSize, jti);
-				throw new TokenException("DPoP JTI validation failed: local cache capacity exceeded ("+currentSize+"/"+this.maxSize+" entries). Consider increasing cache size or switching to distributed validation");
+				throw new UtilsException("DPoP JTI validation failed: local cache capacity exceeded ("+currentSize+"/"+this.maxSize+" entries). Consider increasing cache size or switching to distributed validation");
 			}
 		}
 		// ALTRIMENTI (LRU Policy): Caffeine fa eviction automatica, nessun check necessario

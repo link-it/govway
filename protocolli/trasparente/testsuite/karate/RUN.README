@@ -328,6 +328,9 @@ Su tomcat 11, essendo i controlli più rigidi, è necessario aggiungere anche qu
 - Copiare le chiavi definite nel file keyPair/keyPair.README in /etc/govway/keys:
   cp keyPair/*.pem /etc/govway/keys/
   cp keyPair/*.der /etc/govway/keys/
+  
+- Copiare le rappresentazioni JWK delle chiavi definite nel file keyPair/ in /etc/govway/keys:
+  cp keyPair/jwks/*.jwks /etc/govway/keys/
 
 - Impostare in govway_local.properties per i test sulla sovrascrittura della configurazione https della jvm:
 

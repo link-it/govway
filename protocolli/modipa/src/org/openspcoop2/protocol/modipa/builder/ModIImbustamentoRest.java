@@ -69,6 +69,7 @@ import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.engine.MessageSecurityContext_impl;
 import org.openspcoop2.security.message.jose.MessageSecuritySender_jose;
 import org.openspcoop2.security.message.utils.SignatureBean;
+import org.openspcoop2.security.utils.SignatureAlgorithmUtilities;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.certificate.CertificateUtils;
 import org.openspcoop2.utils.certificate.JWKSet;
@@ -1192,8 +1193,11 @@ public class ModIImbustamentoRest {
 			}
 			else if(CostantiDB.KEYSTORE_TYPE_KEY_PAIR.equalsIgnoreCase(keystoreConfig.getSecurityMessageKeystoreType())) {
 				try {
+					String keyPairAlgo = null;
+					/**keyPairAlgo = keystoreConfig.getSecurityMessageKeystoreKeyAlgorithm();*/
+					keyPairAlgo = SignatureAlgorithmUtilities.covertToKeyPairAlgorithm(algorithm);
 					KeyPairStore keyPairStore = GestoreKeystoreCache.getKeyPairStore(requestInfo, keystoreConfig.getSecurityMessageKeystorePath(), keystoreConfig.getSecurityMessageKeystorePathPublicKey(), 
-							keystoreConfig.getSecurityMessageKeyPassword(), keystoreConfig.getSecurityMessageKeystoreKeyAlgorithm(), 
+							keystoreConfig.getSecurityMessageKeyPassword(), keyPairAlgo,
 							byokParams);
 					if(keyPairStore==null) {
 						throw newProtocolExceptionAccessoKeystoreNonRiuscito(keystoreConfig.getSecurityMessageKeystoreType(),keystoreConfig.getSecurityMessageKeystorePath());
