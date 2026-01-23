@@ -200,6 +200,13 @@ public class ModIKeystoreUtils {
 			
 			String mode = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, 
 					CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_MODE);
+			if(fruizione) {
+				String fruizioneMode = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(listProtocolProperties, 
+						CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_FRUIZIONE_KEYSTORE_MODE);
+				if(CostantiDB.MODIPA_KEYSTORE_FRUIZIONE_TOKEN_POLICY.equals(fruizioneMode)) {
+					mode = CostantiDB.MODIPA_PROFILO_UNDEFINED;
+				}
+			}
 			boolean ridefinisci = CostantiDB.MODIPA_PROFILO_RIDEFINISCI.equals(mode);
 			boolean undefined = CostantiDB.MODIPA_PROFILO_UNDEFINED.equals(mode);
 			

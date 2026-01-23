@@ -230,6 +230,7 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.beans.WriteToSerializerType;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.certificate.CertificateFactory;
+import org.openspcoop2.utils.certificate.KeyUtils;
 import org.openspcoop2.utils.certificate.byok.BYOKManager;
 import org.openspcoop2.utils.certificate.hsm.HSMManager;
 import org.openspcoop2.utils.certificate.ocsp.OCSPManager;
@@ -794,6 +795,10 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					}
 				}				
 			}*/
+			if(propertiesReader.isUseBouncyCastleProviderForCertificate()) {
+				OpenSPCoop2Startup.logStartupInfo("Add Bouncycastle in KeyUtils");
+				KeyUtils.setUseBouncyCastleProvider(true);
+			}
 			if(propertiesReader.isUseBouncyCastleProviderForCertificate()) {
 				OpenSPCoop2Startup.logStartupInfo("Add Bouncycastle in CertificateFactory");
 				CertificateFactory.setUseBouncyCastleProvider(true);

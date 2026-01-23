@@ -49,6 +49,7 @@ import org.openspcoop2.security.keystore.MerlinTruststore;
 import org.openspcoop2.security.keystore.PublicKeyStore;
 import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
 import org.openspcoop2.security.message.constants.SecurityConstants;
+import org.openspcoop2.security.utils.SignatureAlgorithmUtilities;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
@@ -795,8 +796,15 @@ public class JOSEUtils {
 					
 					String privateKeyPassword = properties.getProperty(RSSecurityConstants.RSSEC_KEY_PSWD);
 					
+					String signatureAlgo = properties.getProperty(RSSecurityConstants.RSSEC_SIGNATURE_ALGORITHM);
+					if(signatureAlgo==null || org.apache.commons.lang3.StringUtils.isEmpty(signatureAlgo)) {
+						signatureAlgo = properties.getProperty(SecurityConstants.SIGNATURE_ALGORITHM);
+					}
+					String algorithmProperty = SignatureAlgorithmUtilities.covertToKeyPairAlgorithm(signatureAlgo);
 					String algorithmPropertyName =  SecurityConstants.JOSE_KEYSTORE_KEY_ALGORITHM;
-					String algorithmProperty = properties.getProperty(algorithmPropertyName);
+					if(algorithmProperty==null) {
+						algorithmProperty = properties.getProperty(algorithmPropertyName);
+					}
 					
 					String publicKeyPropertyName =  SecurityConstants.JOSE_KEYSTORE_PUBLIC_KEY;
 					String publicKeyProperty = properties.getProperty(publicKeyPropertyName);

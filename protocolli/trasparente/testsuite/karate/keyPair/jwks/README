@@ -1,0 +1,66 @@
+Conversione chiavi pubbliche in JWKS
+=====================================
+
+Questa directory contiene i file JWKS (JSON Web Key Set) generati dalle chiavi pubbliche.
+
+Requisiti
+---------
+Python 3.6+ con la libreria jwcrypto:
+
+    pip install jwcrypto
+
+
+Generazione dei file JWKS
+-------------------------
+Eseguire lo script dalla directory corrente:
+
+    cd jwks
+    python pem_to_jwks.py
+
+Lo script converte automaticamente le seguenti chiavi pubbliche univoche (una per ogni coppia di chiavi, indipendentemente dal formato PEM/DER):
+
+    Chiave sorgente                              -> File JWKS generato
+    -------------------------------------------------------------------------
+    keyPair-test.rsa.publicKey.pem               -> keyPair-test-rsa.jwks
+    keyPair-test.rsa.pkcs1_encrypted.publicKey.pem -> keyPair-test-rsa-pkcs1-encrypted.jwks
+    keyPair-test-ps256_public.pem                -> keyPair-test-ps256.jwks
+    keyPair-test-ps256_encrypted_public.pem      -> keyPair-test-ps256-encrypted.jwks
+    keyPair-test-es256_public.pem                -> keyPair-test-es256.jwks
+    keyPair-test-es256_encrypted_public.pem      -> keyPair-test-es256-encrypted.jwks
+
+
+Formato JWKS
+------------
+I file generati sono in formato JSON Web Key Set (RFC 7517):
+
+{
+  "keys": [
+    {
+      "kty": "EC",
+      "crv": "P-256",
+      "x": "...",
+      "y": "..."
+    }
+  ]
+}
+
+Per chiavi RSA:
+{
+  "keys": [
+    {
+      "kty": "RSA",
+      "n": "...",
+      "e": "AQAB"
+    }
+  ]
+}
+
+
+Utilizzo manuale
+----------------
+Per convertire una singola chiave manualmente:
+
+    python -c "
+from pem_to_jwks import convert_single_key
+convert_single_key('../keyPair-test-es256_public.pem', 'my-key.jwks')
+"

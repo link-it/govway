@@ -1,0 +1,11 @@
+{
+  "keys": [
+    {
+      "crv": "P-256",
+      "kid": "LGzWm02YKdb2J3wPbobR3E_8nrWZApXgGFw09S4ILsA",
+      "kty": "EC",
+      "x": "fRC2KjHL5UerwMGBA4IHxK7t3CzEaiUQPa6qRVYW_EQ",
+      "y": "3o8h-EBpfTnA0kcgVxDLRZ5h2UQrRejxRkjnQjCuxOk"
+    }
+  ]
+}

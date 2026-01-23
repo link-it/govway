@@ -26,15 +26,15 @@ import java.util.Map;
 
 import javax.xml.soap.SOAPException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.UtilsRuntimeException;
 import org.openspcoop2.utils.mime.MultipartUtils;
 import org.openspcoop2.utils.regexp.RegExpNotFoundException;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.slf4j.Logger;
 
-//import javax.mail.internet.ContentType;
-//import javax.mail.internet.ParameterList;
 import com.sun.xml.messaging.saaj.packaging.mime.internet.ContentType;
 import com.sun.xml.messaging.saaj.packaging.mime.internet.ParameterList;
 
@@ -49,6 +49,7 @@ import com.sun.xml.messaging.saaj.packaging.mime.internet.ParameterList;
  */
 public class ContentTypeUtilities {
 	
+	private ContentTypeUtilities() {}
 	
 	
 	// Utilities generiche
@@ -59,7 +60,7 @@ public class ContentTypeUtilities {
 				
 				(new javax.mail.internet.ContentType(ct)).getBaseType(); // uso javax.mail per validare, restituisce un errore migliore
 				
-				if(ContentTypeUtilities.isMultipart(ct)){
+				if(ContentTypeUtilities.isMultipartRelated(ct)){
 					String internal = ContentTypeUtilities.getInternalMultipartContentType(ct);
 					if(internal!=null){
 						ContentTypeUtilities.isMtom(internal);
@@ -78,13 +79,13 @@ public class ContentTypeUtilities {
 		}
 	}
 	
-	public static String buildContentType(String baseType,Map<String, String> parameters) throws UtilsException{
+	public static String buildContentType(String baseType,Map<String, String> parameters) {
 		try{
 			ContentType cType = new ContentType(baseType);
 			if(parameters!=null && parameters.size()>0){
 				Iterator<String> itP = parameters.keySet().iterator();
 				while (itP.hasNext()) {
-					String parameterName = (String) itP.next();
+					String parameterName = itP.next();
 					String parameterValue = parameters.get(parameterName);
 					if(cType.getParameterList()==null){
 						cType.setParameterList(new ParameterList());
@@ -95,7 +96,7 @@ public class ContentTypeUtilities {
 				
 			}
 			
-			/*
+			/**
 			 * //import javax.mail.internet.ContentType;
 				//import javax.mail.internet.ParameterList;
 
@@ -109,6 +110,7 @@ public class ContentTypeUtilities {
 			String ct = cType.toString(); // il toString in presenza di action con valore http://... non funziona correttamente e genera valori action*0 e action*1
 			
 			// Reimplementare il toString non basta poiche' i ':' fanno schiantare un successivo parser del javax.mail.internet.ContentType
+			/**
 //			StringBuilder ctBufferParam = new StringBuilder();
 //			ParameterList pList = cType.getParameterList();
 //			if(pList!=null && pList.size()>0) {
@@ -123,11 +125,12 @@ public class ContentTypeUtilities {
 //			if(ctBufferParam.length()>0) {
 //				ct = ct + ctBufferParam.toString();
 //			}
+			 */
 			ct = normalizeToRfc7230(ct);			
 			ct = ct.trim();
 			return ct;
 		}catch(Exception e){
-			throw new RuntimeException("Error during buildContentType: "+e.getMessage(), e);
+			throw new UtilsRuntimeException("Error during buildContentType: "+e.getMessage(), e);
 		}
 	}
 	
@@ -202,10 +205,14 @@ public class ContentTypeUtilities {
 			return true;
 		}
 		
-		String baseTypeHttp = contentTypeParam!=null ? ContentTypeUtilities.readBaseTypeFromContentType(contentTypeParam) : null;
+		String baseTypeHttp = contentTypeParam!=null && StringUtils.isNotEmpty(contentTypeParam) ? ContentTypeUtilities.readBaseTypeFromContentType(contentTypeParam) : null;
+		if(baseTypeHttp!=null) {
+			baseTypeHttp = baseTypeHttp.toLowerCase(); // case insensitive
+		}
 		
 		boolean found = false;
-		for (String checkContentType : contentTypeAttesi) {
+		for (String checkContentTypeOrig : contentTypeAttesi) {
+			String checkContentType = checkContentTypeOrig.toLowerCase(); // case insensitive
 			if("empty".equals(checkContentType)){
 				if(baseTypeHttp==null || "".equals(baseTypeHttp)) {
 					found = true;
@@ -323,28 +330,25 @@ public class ContentTypeUtilities {
 		return isMultipartRelated(cType);
 	}
 	public static boolean isMultipartRelated(String cType) throws UtilsException {
-		return _isMultipart(cType, HttpConstants.CONTENT_TYPE_MULTIPART_RELATED);
+		return isMultipartEngine(cType, HttpConstants.CONTENT_TYPE_MULTIPART_RELATED);
 	}
 	public static boolean isMultipartMixed(String cType) throws UtilsException {
-		return _isMultipart(cType, HttpConstants.CONTENT_TYPE_MULTIPART_MIXED);
+		return isMultipartEngine(cType, HttpConstants.CONTENT_TYPE_MULTIPART_MIXED);
 	}
 	public static boolean isMultipartAlternative(String cType) throws UtilsException {
-		return _isMultipart(cType, HttpConstants.CONTENT_TYPE_MULTIPART_ALTERNATIVE);
+		return isMultipartEngine(cType, HttpConstants.CONTENT_TYPE_MULTIPART_ALTERNATIVE);
 	}
 	public static boolean isMultipartFormData(String cType) throws UtilsException {
-		return _isMultipart(cType, HttpConstants.CONTENT_TYPE_MULTIPART_FORM_DATA);
+		return isMultipartEngine(cType, HttpConstants.CONTENT_TYPE_MULTIPART_FORM_DATA);
 	}
-	private static boolean _isMultipart(String cType, String expected) throws UtilsException {
+	private static boolean isMultipartEngine(String cType, String expected) throws UtilsException {
 		try{
 			ContentType contentType = new ContentType(cType);
 			String baseType = contentType.getBaseType();
 			if(baseType!=null) {
 				baseType = baseType.toLowerCase();
 			}
-			if(baseType!=null && baseType.equals(expected)){
-				return true;
-			}
-			return false;
+			return baseType!=null && baseType.equals(expected);
 			
 		} catch (Exception e) {
 			throw new UtilsException(e.getMessage(),e);
@@ -378,7 +382,7 @@ public class ContentTypeUtilities {
 			String internalContentType = null;
 			boolean mtom = false;
 			if(baseType == null) {
-				internalContentType = null;
+				/**internalContentType = null;*/
 			}
 			else if(baseType.equals(HttpConstants.CONTENT_TYPE_MULTIPART_RELATED)){
 				String typeParam = contentType.getParameter(HttpConstants.CONTENT_TYPE_MULTIPART_PARAMETER_TYPE); 
@@ -412,19 +416,19 @@ public class ContentTypeUtilities {
 	}
 	public static String buildMultipartContentType(String subtype, byte [] message, String type) throws UtilsException{
 		if(MultipartUtils.messageWithAttachment(message)){
-			String IDfirst  = MultipartUtils.firstContentID(message);
-			return buildMultipartContentType(subtype, message, type, IDfirst);
+			String idfirst  = MultipartUtils.firstContentID(message);
+			return buildMultipartContentType(subtype, message, type, idfirst);
 		}
 		throw new UtilsException("Messaggio non contiene una struttura mime");
 	}
 	@Deprecated
-	public static String buildMultipartContentType(byte [] message, String type, String ID) throws UtilsException{
-		return buildMultipartRelatedContentType(message, type, ID);
+	public static String buildMultipartContentType(byte [] message, String type, String id) throws UtilsException{
+		return buildMultipartRelatedContentType(message, type, id);
 	}
-	public static String buildMultipartRelatedContentType(byte [] message, String type, String ID) throws UtilsException{
-		return buildMultipartContentType(HttpConstants.CONTENT_TYPE_MULTIPART_RELATED_SUBTYPE, message, type, ID);
+	public static String buildMultipartRelatedContentType(byte [] message, String type, String id) throws UtilsException{
+		return buildMultipartContentType(HttpConstants.CONTENT_TYPE_MULTIPART_RELATED_SUBTYPE, message, type, id);
 	}
-	public static String buildMultipartContentType(String subtype, byte [] message, String type, String ID) throws UtilsException{
+	public static String buildMultipartContentType(String subtype, byte [] message, String type, String id) throws UtilsException{
 		if(MultipartUtils.messageWithAttachment(message)){
 						
 			String boundary = MultipartUtils.findBoundary(message);
@@ -436,8 +440,8 @@ public class ContentTypeUtilities {
 			if(type!=null){
 				bf.append("; ").append(HttpConstants.CONTENT_TYPE_MULTIPART_PARAMETER_TYPE).append("=\"").append(type).append("\"");
 			}
-			if(ID!=null){
-				bf.append("; ").append(HttpConstants.CONTENT_TYPE_MULTIPART_PARAMETER_START).append("=\"").append(ID).append("\"");
+			if(id!=null){
+				bf.append("; ").append(HttpConstants.CONTENT_TYPE_MULTIPART_PARAMETER_START).append("=\"").append(id).append("\"");
 			}
 			bf.append("; ").append(HttpConstants.CONTENT_TYPE_MULTIPART_PARAMETER_BOUNDARY).append("=\"").append(boundary.substring(2,boundary.length())).append("\"");
 			
@@ -498,7 +502,7 @@ public class ContentTypeUtilities {
 			if(contentType.getBaseType()==null){
 				throw new UtilsException("ContentType.baseType non definito");
 			}
-			if(HttpConstants.CONTENT_TYPE_MULTIPART_RELATED.equals(contentType.getBaseType().toLowerCase())==false){
+			if(!HttpConstants.CONTENT_TYPE_MULTIPART_RELATED.equalsIgnoreCase(contentType.getBaseType())){
 				throw new UtilsException("ContentType.baseType ["+contentType.getBaseType()+
 						"] differente da quello atteso per un messaggio MTOM/XOP ["+HttpConstants.CONTENT_TYPE_MULTIPART_RELATED+"]");
 			}
@@ -512,7 +516,7 @@ public class ContentTypeUtilities {
 				throw new UtilsException("ContentType non conforme a quanto definito nella specifica MTOM/XOP (Parametro '"+
 						HttpConstants.CONTENT_TYPE_MULTIPART_PARAMETER_TYPE+"' non presente)");
 			}
-			if(HttpConstants.CONTENT_TYPE_APPLICATION_XOP_XML.equals(type.toLowerCase())==false){
+			if(!HttpConstants.CONTENT_TYPE_APPLICATION_XOP_XML.equalsIgnoreCase(type)){
 				throw new UtilsException("ContentType.parameters."+HttpConstants.CONTENT_TYPE_MULTIPART_PARAMETER_TYPE+" ["+type+
 						"] differente da quello atteso per un messaggio MTOM/XOP ["+HttpConstants.CONTENT_TYPE_APPLICATION_XOP_XML+"]");
 			}
@@ -548,5 +552,66 @@ public class ContentTypeUtilities {
 		} catch (Exception e) {
 			throw new UtilsException(e.getMessage(),e);
 		}
+	}
+	
+	
+	
+	
+	// equals
+	
+	public static boolean equals(List<String> hdrFound, String hdrExpected) {
+		if(hdrFound!=null && !hdrFound.isEmpty()) {
+			for (String h : hdrFound) {
+				if(equals(h, hdrExpected)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	public static boolean equals(String hdrFound, String hdrExpected) {
+		
+		/**
+		 * RFC 2045 - Section 5.1 (MIME)
+		   La specifica RFC 2045, sezione 5.1, che definisce la grammatica ABNF per i media types:
+			Content-Type := type "/" subtype *(";" parameter)
+			parameter := attribute "=" value
+			E nella stessa sezione specifica:
+			"White space characters MUST NOT be generated between a token and the ";" that follows it, but such white space is permitted in received headers and MUST be discarded before the Content-Type value is interpreted."
+			
+			Per il contesto HTTP specifico, RFC 7231 (HTTP/1.1 Semantics) sezione 3.1.1.1 definisce:
+			media-type = type "/" subtype *( OWS ";" OWS parameter )
+			OWS = *( SP / HTAB )  ; optional whitespace
+			Dove OWS (Optional WhiteSpace) indica esplicitamente che gli spazi sono opzionali attorno al punto e virgola.
+			
+			La versione più aggiornata è RFC 9110, sezione 8.3.1:
+			media-type = type "/" subtype parameters
+			parameters = *( OWS ";" OWS [ parameter ] )
+			Conferma lo stesso comportamento.
+			
+			Conclusione: Gli spazi attorno al ; sono esplicitamente permessi e devono essere ignorati durante il parsing secondo RFC 2045, RFC 7231 e RFC 9110.
+		 */
+		/**
+		 * Non gestisce RFC 2045 - Section 5.1: The type, subtype, and parameter names are not case sensitive.
+		 * I parameter name differenti li rileva diversi 
+		 *"
+		 * org.springframework.http.MediaType mtHdrFound = org.springframework.http.MediaType.parseMediaType(hdrFound);
+		org.springframework.http.MediaType mtHdrExpected = org.springframework.http.MediaType.parseMediaType(hdrExpected);*/
+		
+		/**
+		 * RFC 2045 specifica:
+		  "Parameter values might or might not be case-sensitive, depending on the semantics of the parameter name."
+		 Per il parametro charset: Case-Insensitive
+		RFC 2978 (IANA Charset Registration) e RFC 2046 specificano che i valori di charset sono case-insensitive:
+			charset=UTF-8 = charset=utf-8 = charset=Utf-8 sono equivalenti
+		  Questo aspetto del valore del charset non viene gestito
+		 * javax.ws.rs.core.MediaType mtHdrFound = javax.ws.rs.core.MediaType.valueOf(hdrFound);
+		javax.ws.rs.core.MediaType mtHdrExpected = javax.ws.rs.core.MediaType.valueOf(hdrExpected);
+		*/
+		
+		com.google.common.net.MediaType mtHdrFound = com.google.common.net.MediaType.parse(hdrFound);
+		com.google.common.net.MediaType mtHdrExpected = com.google.common.net.MediaType.parse(hdrExpected);
+		
+		return mtHdrFound.equals(mtHdrExpected);
 	}
 }

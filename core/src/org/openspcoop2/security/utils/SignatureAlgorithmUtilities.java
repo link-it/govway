@@ -23,6 +23,8 @@ package org.openspcoop2.security.utils;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openspcoop2.utils.certificate.KeyUtils;
+
 /**     
  * SignatureAlgorithmUtilities
  *
@@ -86,5 +88,18 @@ public class SignatureAlgorithmUtilities {
 			}
 		}
 		return labels;
+	}
+	
+	public static String covertToKeyPairAlgorithm(String signatureAlgorithm) {
+		if(signatureAlgorithm==null) {
+			return null;
+		}
+		if(signatureAlgorithm.toLowerCase().startsWith("es")) {
+			return KeyUtils.ALGO_EC;
+		}
+		else if(signatureAlgorithm.toLowerCase().startsWith("rs") || signatureAlgorithm.toLowerCase().startsWith("ps")) {
+			return KeyUtils.ALGO_RSA;
+		}
+		return null;
 	}
 }

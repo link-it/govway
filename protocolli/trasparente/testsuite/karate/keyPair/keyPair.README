@@ -38,49 +38,143 @@ openssl rsa -in keyPair-test.rsa.pkcs1_encrypted.privateKey.pem -pubout -out key
 TEST 4 con chiave pubblica 'keyPair-test.rsa.pkcs1_encrypted.publicKey.pem' e privata keyPair-test.rsa.pkcs1_encrypted.privateKey.pem
 
 
+TABELLA DI CORRISPONDENZA CHIAVI RSA
+------------------------------------
+
+--- RSA (Coppia 1) ---
+Generata da: openssl genrsa ... -out keyPair-test.rsa.pkcs1.privateKey.pem
+
+Chiave Privata                                    | Chiave Pubblica
+--------------------------------------------------|----------------------------------
+keyPair-test.rsa.pkcs1.privateKey.pem             | keyPair-test.rsa.publicKey.pem
+keyPair-test.rsa.pkcs1.privateKey.der             | keyPair-test.rsa.publicKey.der
+keyPair-test.rsa.pkcs8.privateKey.pem             | keyPair-test.rsa.publicKey.pem
+keyPair-test.rsa.pkcs8.privateKey.der             | keyPair-test.rsa.publicKey.der
+keyPair-test.rsa.pkcs8_encrypted.privateKey.pem   | keyPair-test.rsa.publicKey.pem
+keyPair-test.rsa.pkcs8_encrypted.privateKey.der   | keyPair-test.rsa.publicKey.der
+
+--- RSA (Coppia 2 - PKCS1 encrypted) ---
+Generata da: openssl genrsa -aes128 ... -out keyPair-test.rsa.pkcs1_encrypted.privateKey.pem
+
+Chiave Privata                                    | Chiave Pubblica
+--------------------------------------------------|------------------------------------------
+keyPair-test.rsa.pkcs1_encrypted.privateKey.pem   | keyPair-test.rsa.pkcs1_encrypted.publicKey.pem
+
+
 Per tutte le chiavi cifrate usare come password 123456
 
 
 
 
 =======
-PS256 (RSA-PSS con SHA-256)                                                                                                                                                                   
+PS256 (RSA-PSS con SHA-256)
 ======
-     
+
 NOTA: per JWT/JWS la maggior parte delle implementazioni (inclusa CXF) accetta chiavi RSA standard per PS256. La differenza chiave è:
 - RSA standard: può essere usata per RS256, RS384, RS512, PS256, PS384, PS512
 - RSA-PSS: può essere usata SOLO per PS256, PS384, PS512
 
 Inoltre le chiavi RSA-PSS specifiche non sono ben supportate nella conversione JWK da Nimbus/CXF.
 
-# Genera chiave privata RSA-PSS 2048 bit senza password
+# Genera chiave privata RSA-PSS 2048 bit senza password (formato PKCS8: -----BEGIN PRIVATE KEY-----)
 openssl genpkey -algorithm RSA-PSS -pkeyopt rsa_keygen_bits:2048 -out keyPair-test-ps256_private.pem
-# Estrai chiave pubblica                                                                                                                                                                        
+# Genera chiave privata RSA-PSS 2048 bit senza password nel formato DER
+openssl pkey -in keyPair-test-ps256_private.pem -outform DER -out keyPair-test-ps256_private.der
+
+# Estrai chiave pubblica nel formato PEM
 openssl pkey -in keyPair-test-ps256_private.pem -pubout -out keyPair-test-ps256_public.pem
+# Estrai chiave pubblica nel formato DER
+openssl pkey -in keyPair-test-ps256_private.pem -pubout -outform DER -out keyPair-test-ps256_public.der
 
-# Genera chiave privata RSA-PSS 2048 bit con password
+# Genera chiave privata RSA-PSS 2048 bit con password (formato PKCS8 cifrato)
 openssl genpkey -algorithm RSA-PSS -pkeyopt rsa_keygen_bits:2048 -aes256 -pass pass:123456 -out keyPair-test-ps256_encrypted_private.pem
-# Estrai chiave pubblica
+# Converte la chiave privata nel formato PKCS8 cifrato DER
+openssl pkcs8 -topk8 -in keyPair-test-ps256_private.pem -outform DER -passout pass:123456 -out keyPair-test-ps256_encrypted_private.der
+
+# Estrai chiave pubblica nel formato PEM (dalla chiave cifrata)
 openssl pkey -in keyPair-test-ps256_encrypted_private.pem -passin pass:123456 -pubout -out keyPair-test-ps256_encrypted_public.pem
-                                                                                             
+# Estrai chiave pubblica nel formato DER (dalla chiave cifrata)
+openssl pkey -in keyPair-test-ps256_encrypted_private.pem -passin pass:123456 -pubout -outform DER -out keyPair-test-ps256_encrypted_public.der
+
 NOTA: L'opzione -aes256 cifra la chiave con AES-256. Puoi anche usare -des3 o -aes128 se preferisci altri algoritmi di cifratura.
 Per tutte le chiavi cifrate viene usata la password 123456 (passata tramite -passout/-passin pass:123456)
 
-=======                                                                                                                                                                                                    
-ES256 (ECDSA con curva P-256)                                                                                                                                                                        
-=======                                                                                                                                                                                                             
-  
-ES256 usa chiavi EC con curva P-256 (secp256r1/prime256v1):                                                                                                                                 
-                                                                                                                                                                                                             
-# Genera chiave privata EC con curva P-256 senza password
+TABELLA DI CORRISPONDENZA CHIAVI RSA-PSS / PS256
+------------------------------------------------
+
+--- RSA-PSS (Coppia 1) ---
+Generata da: openssl genpkey -algorithm RSA-PSS ... -out keyPair-test-ps256_private.pem
+
+Chiave Privata                                    | Chiave Pubblica
+--------------------------------------------------|----------------------------------
+keyPair-test-ps256_private.pem                    | keyPair-test-ps256_public.pem
+keyPair-test-ps256_private.der                    | keyPair-test-ps256_public.der
+
+--- RSA-PSS (Coppia 2 - encrypted) ---
+Generata da: openssl genpkey -algorithm RSA-PSS -aes256 ... -out keyPair-test-ps256_encrypted_private.pem
+
+Chiave Privata                                    | Chiave Pubblica
+--------------------------------------------------|------------------------------------------
+keyPair-test-ps256_encrypted_private.pem          | keyPair-test-ps256_encrypted_public.pem
+keyPair-test-ps256_encrypted_private.der          | keyPair-test-ps256_encrypted_public.der
+
+
+=======
+ES256 (ECDSA con curva P-256)
+=======
+
+ES256 usa chiavi EC con curva P-256 (secp256r1/prime256v1):
+
+# Genera chiave privata EC con curva P-256 senza password (formato SEC1: -----BEGIN EC PRIVATE KEY-----)
 openssl ecparam -name prime256v1 -genkey -noout -out keyPair-test-es256_private.pem
-# Estrai chiave pubblica
-openssl ec -in keyPair-test-es256_private.pem -pubout -out keyPair-test-es256_public.pem
+# Genera chiave privata EC con curva P-256 senza password nel formato DER
+openssl ec -in keyPair-test-es256_private.pem -outform DER -out keyPair-test-es256_private.der
 
-# Genera chiave privata EC con curva P-256 con password
+# Estrai chiave pubblica nel formato PEM
+openssl ec -in keyPair-test-es256_private.pem -pubout -out keyPair-test-es256_public.pem
+# Estrai chiave pubblica nel formato DER
+openssl ec -in keyPair-test-es256_private.pem -pubout -outform DER -out keyPair-test-es256_public.der
+
+# Converte la chiave privata nel formato PKCS8 non cifrato PEM: -----BEGIN PRIVATE KEY-----
+openssl pkcs8 -topk8 -inform PEM -outform PEM -nocrypt -in keyPair-test-es256_private.pem -out keyPair-test-es256_pkcs8_private.pem
+# Converte la chiave privata nel formato PKCS8 non cifrato DER
+openssl pkcs8 -topk8 -inform PEM -outform DER -nocrypt -in keyPair-test-es256_private.pem -out keyPair-test-es256_pkcs8_private.der
+
+# Genera chiave privata EC con curva P-256 con password (formato SEC1 encrypted)
 openssl ecparam -name prime256v1 -genkey -noout | openssl ec -aes256 -passout pass:123456 -out keyPair-test-es256_encrypted_private.pem
-# Estrai chiave pubblica
+
+# Converte la chiave privata nel formato PKCS8 cifrato PEM: -----BEGIN ENCRYPTED PRIVATE KEY-----
+openssl pkcs8 -topk8 -inform PEM -outform PEM -passout pass:123456 -in keyPair-test-es256_private.pem -out keyPair-test-es256_pkcs8_encrypted_private.pem
+# Converte la chiave privata nel formato PKCS8 cifrato DER
+openssl pkcs8 -topk8 -inform PEM -outform DER -passout pass:123456 -in keyPair-test-es256_private.pem -out keyPair-test-es256_pkcs8_encrypted_private.der
+
+# Estrai chiave pubblica nel formato PEM (dalla chiave cifrata)
 openssl ec -in keyPair-test-es256_encrypted_private.pem -passin pass:123456 -pubout -out keyPair-test-es256_encrypted_public.pem
+# Estrai chiave pubblica nel formato DER (dalla chiave cifrata)
+openssl ec -in keyPair-test-es256_encrypted_private.pem -passin pass:123456 -pubout -outform DER -out keyPair-test-es256_encrypted_public.der
 
 NOTA: L'opzione -aes256 cifra la chiave con AES-256. Puoi anche usare -des3 o -aes128 se preferisci altri algoritmi di cifratura.
 Per tutte le chiavi cifrate viene usata la password 123456 (passata tramite -passout/-passin pass:123456)
+
+TABELLA DI CORRISPONDENZA CHIAVI EC / ES256
+-------------------------------------------
+
+--- EC (Coppia 1) ---
+Generata da: openssl ecparam -name prime256v1 -genkey ... -out keyPair-test-es256_private.pem
+
+Chiave Privata                                    | Chiave Pubblica
+--------------------------------------------------|----------------------------------
+keyPair-test-es256_private.pem                    | keyPair-test-es256_public.pem
+keyPair-test-es256_private.der                    | keyPair-test-es256_public.der
+keyPair-test-es256_pkcs8_private.pem              | keyPair-test-es256_public.pem
+keyPair-test-es256_pkcs8_private.der              | keyPair-test-es256_public.der
+keyPair-test-es256_pkcs8_encrypted_private.pem    | keyPair-test-es256_public.pem
+keyPair-test-es256_pkcs8_encrypted_private.der    | keyPair-test-es256_public.der
+
+--- EC (Coppia 2 - SEC1 encrypted) ---
+Generata da: openssl ecparam ... | openssl ec -aes256 ... -out keyPair-test-es256_encrypted_private.pem
+
+Chiave Privata                                    | Chiave Pubblica
+--------------------------------------------------|------------------------------------------
+keyPair-test-es256_encrypted_private.pem          | keyPair-test-es256_encrypted_public.pem
+                                                  | keyPair-test-es256_encrypted_public.der

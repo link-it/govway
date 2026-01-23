@@ -76,6 +76,7 @@ import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.digest.DigestEncoding;
 import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.transport.TransportUtils;
+import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.slf4j.Logger;
@@ -1354,12 +1355,22 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 								}
 								else if(hdrFound.size()==1) {
 									valueInHttpHeader = hdrFound.get(0);
-									valid = hdrAttesoValue.equals(valueInHttpHeader);
+									if(HttpConstants.CONTENT_TYPE.equalsIgnoreCase(hdrName)) {
+										valid = ContentTypeUtilities.equals(valueInHttpHeader, hdrAttesoValue);
+									}
+									else {
+										valid = hdrAttesoValue.equals(valueInHttpHeader);
+									}
 								}
 								else {
 									multiHeader = true;
 									valueInHttpHeader = hdrFound.toString();
-									valid = hdrFound.contains(hdrAttesoValue); 
+									if(HttpConstants.CONTENT_TYPE.equalsIgnoreCase(hdrName)) {
+										valid = ContentTypeUtilities.equals(hdrFound, hdrAttesoValue);
+									}
+									else {
+										valid = hdrFound.contains(hdrAttesoValue);
+									}
 								}
 																
 								/**System.out.println("VALID HDR '"+hdrName+"': "+valid);*/
@@ -1401,6 +1412,7 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 		
 		return token;
 	}
+	
 	
 	private void readSignedHeaders(Object signedHeaders, List<Eccezione> erroriValidazione, String prefix, boolean headerDuplicati,
 			Busta busta, Map<String, List<String>> headerHttpAttesi,
