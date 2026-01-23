@@ -803,6 +803,9 @@ public class JsonDecrypt {
 				break;
 			}
 		}
+		if(privateKey == null) {
+			throw new UtilsException("JWKSet: chiave privata con 'n' corrispondente non trovata");
+		}
 		return JweUtils.createJweDecryptionProvider( JwkUtils.toPrivateKey(privateKey), keyAlgo, contentAlgo);
 	}
 }
