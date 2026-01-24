@@ -23,6 +23,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
 import java.security.KeyFactory;
 import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.PublicKey;
@@ -67,7 +68,7 @@ public class KeyUtils {
 	public static final String ALGO_DH = "DH"; // Diffie-Hellman
 	public static final String ALGO_EC = "EC"; // Elliptic Curve Digital Signature Algorithm o ECDH (Elliptic Curve Diffie-Hellman).
 
-	private static volatile boolean useBouncyCastleProvider = false;
+	private static volatile boolean useBouncyCastleProvider = true;
 	public static boolean isUseBouncyCastleProvider() {
 		return useBouncyCastleProvider;
 	}
@@ -108,7 +109,7 @@ public class KeyUtils {
 	public KeyUtils(String algo) throws UtilsException {
 		try {
 			this.algorithm = algo;
-			this.kf = KeyFactory.getInstance(algo, getProvider());
+			this.kf = getKeyFactoryEngine(algo);
 			this.keyFactoryMap.put(algo, this.kf);
 		}catch(Exception e) {
 			throw new UtilsException(e.getMessage(),e);
@@ -118,11 +119,20 @@ public class KeyUtils {
 	private KeyFactory getKeyFactory(String algo) {
 		return this.keyFactoryMap.computeIfAbsent(algo, a -> {
 			try {
-				return KeyFactory.getInstance(a, getProvider());
+				return getKeyFactoryEngine(a);
 			} catch (Exception e) {
 				throw new UtilsRuntimeException(e.getMessage(), e);
 			}
 		});
+	}
+	private KeyFactory getKeyFactoryEngine(String algo) throws NoSuchAlgorithmException {
+		Provider p = getProvider();
+		if(p!=null) {
+			return KeyFactory.getInstance(algo, p);
+		}
+		else{
+			return KeyFactory.getInstance(algo);
+		}
 	}
 	
 	public String getAlgorithm() {
