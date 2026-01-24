@@ -581,6 +581,10 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					}
 				}				
 			}
+			if(propertiesReader.isUseBouncyCastleProviderForCertificate()) {
+				OpenSPCoop2Startup.logStartupInfo("Add Bouncycastle in KeyUtils");
+				KeyUtils.setUseBouncyCastleProvider(true);
+			}
 			
 			
 			
@@ -795,10 +799,6 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					}
 				}				
 			}*/
-			if(propertiesReader.isUseBouncyCastleProviderForCertificate()) {
-				OpenSPCoop2Startup.logStartupInfo("Add Bouncycastle in KeyUtils");
-				KeyUtils.setUseBouncyCastleProvider(true);
-			}
 			if(propertiesReader.isUseBouncyCastleProviderForCertificate()) {
 				OpenSPCoop2Startup.logStartupInfo("Add Bouncycastle in CertificateFactory");
 				CertificateFactory.setUseBouncyCastleProvider(true);
