@@ -22,7 +22,7 @@ set COMMAND="%JAVA_HOME%\bin\java"
 goto end
 
 :nojava
-echo "Il Batch richiede Java Runtime Environment (JRE) 11 (https://jdk.java.net/archive/)"
+echo "Il tool richiede Java Runtime Environment (JRE) 21"
 echo Se la jvm e' gia installata provare a settare la variabile JAVA_HOME
 goto end
 

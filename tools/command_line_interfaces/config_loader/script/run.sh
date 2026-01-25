@@ -1,6 +1,6 @@
 # controllo JAVA_HOME
 if [ "$JAVA_HOME" = "" ] ; then
-        echo "Il Batch richiede Java Runtime Environment (JRE) 11 (https://jdk.java.net/archive/)"
+        echo "Il tool richiede Java Runtime Environment (JRE) 21"
         echo "Se la jvm e' gia installata provare a settare la variabile JAVA_HOME"
         exit 1;
 fi
