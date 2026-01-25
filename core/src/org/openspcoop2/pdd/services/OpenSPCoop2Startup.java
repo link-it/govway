@@ -2922,6 +2922,22 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			
 			/* ----------- Gestori utilizzati dal Controllo Traffico ------------ */
+			
+			Logger logControlloTraffico = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(propertiesReader.isControlloTrafficoDebug());
+			
+			// RedisManager
+			if(propertiesReader.isRedisEngineEnabled()) {
+				try{
+					RedissonManager.initialize(log, logControlloTraffico, propertiesReader.getControlloTrafficoGestorePolicyInMemoryRedisConnectionUrl());
+					boolean throwInitializingException = 
+								OpenSPCoop2Properties.getInstance().isControlloTrafficoGestorePolicyInMemoryRedisThrowExceptionIfRedisNotReady();
+					RedissonManager.getRedissonClient(throwInitializingException);
+				}catch(Exception e){
+					msgDiag.logStartupError(e,"Inizializzazione RedisManager");
+					return;
+				}
+			}
+			
 			if(propertiesReader.isControlloTrafficoEnabled()){
 						
 				try{
@@ -2930,8 +2946,6 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					msgDiag.logStartupError(e,"Inizializzazione Configurazione ControlloTraffico");
 					return;
 				}
-				
-				Logger logControlloTraffico = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(propertiesReader.isControlloTrafficoDebug());
 				
 				// Cache ControlloTraffico DatiStatistici
 				try{
@@ -3014,7 +3028,9 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					}
 				}
 				
-				// RedisManager
+				// RedisManager 
+				// Spostato sopra poichè serve anche a DPoP
+				/**
 				if(propertiesReader.isRedisEngineEnabled()) {
 					try{
 						RedissonManager.initialize(log, logControlloTraffico, propertiesReader.getControlloTrafficoGestorePolicyInMemoryRedisConnectionUrl());
@@ -3023,6 +3039,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						return;
 					}
 				}
+				*/
 				
 				// Gestore RateLimiting
 				List<PolicyGroupByActiveThreadsType> listGestorePolicyRT = null;
