@@ -99,9 +99,19 @@
 		</if>
 			
 		<!-- web.xml.filters -->
+		<if> 
+			<or>
+				<matches string="${as}" pattern="tomcat.*"/>
+			</or>
+			<then>
+				<concat destfile="${build_govwayMonitor_war}/WEB-INF/web.xml" append="yes">
+					<filelist dir="${src_webinf_govwayMonitor}/web" files="web.xml.filters.first.tomcat"/>
+				</concat>
+			</then>
+		</if>
 		<concat destfile="${build_govwayMonitor_war}/WEB-INF/web.xml" append="yes">
 			<filelist dir="${src_webinf_govwayMonitor}/web" files="web.xml.filters"/>
-		</concat>
+		</concat>		
 		<if>
 			<not>
 				<equals arg1="${plugins.classpath.web.xml.filters}" arg2=""/>
