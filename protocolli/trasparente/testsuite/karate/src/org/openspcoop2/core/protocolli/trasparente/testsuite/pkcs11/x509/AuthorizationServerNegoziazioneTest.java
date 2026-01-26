@@ -33,6 +33,9 @@ public class AuthorizationServerNegoziazioneTest extends ConfigLoader {
 
 	public static final String api_negoziazione = "TestNegoziazioneAuthorizationServer";
 	
+	public static final String operazione_negoziazione_dpop = "NegoziazioneDPoP";
+	public static final String operazione_negoziazione_signed_jwt = "NegoziazioneSignedJWT";
+	
 	
 	@Test
 	public void trustAll_noAlias() throws Exception {
@@ -59,7 +62,17 @@ public class AuthorizationServerNegoziazioneTest extends ConfigLoader {
 		
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		
-		Utils.testJson(logCore, api_negoziazione, "NegoziazioneSignedJWT", 
+		Utils.testJson(logCore, api_negoziazione, operazione_negoziazione_signed_jwt, 
+				null, null, 
+				null, null, null);
+	}
+	
+	@Test
+	public void dpop() throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		
+		Utils.testJson(logCore, api_negoziazione, operazione_negoziazione_dpop, 
 				null, null, 
 				null, null, null);
 	}

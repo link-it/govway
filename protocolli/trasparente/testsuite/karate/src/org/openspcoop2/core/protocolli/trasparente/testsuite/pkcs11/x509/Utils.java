@@ -218,6 +218,9 @@ public class Utils {
 		}
 		else if(AuthorizationServerNegoziazioneTest.api_negoziazione.equals(api)) {
 			testId = operazione;
+			if(AuthorizationServerNegoziazioneTest.operazione_negoziazione_dpop.equals(operazione)) {
+				testId = AuthorizationServerNegoziazioneTest.operazione_negoziazione_signed_jwt;
+			}
 		}
 		else if(AttributeAuthorityTest.api.equals(api)) {
 			testId = operazione;
@@ -276,7 +279,6 @@ public class Utils {
 		}
 		DBVerifier.verify(idTransazione, esitoExpectedFruizione, msgErroreFruizione,
 				null, fruizioneRequestContent, msgResponseDetail);
-		
 		if(checkErogatore) {
 			if(msgErroreErogazione==null || mittente!=null) {
 				if(testId!=null) {
