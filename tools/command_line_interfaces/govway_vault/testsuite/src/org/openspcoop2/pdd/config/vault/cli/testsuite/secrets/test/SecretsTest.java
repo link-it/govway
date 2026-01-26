@@ -131,8 +131,19 @@ public class SecretsTest extends ConfigLoader {
 	
 	public static final String OP_MODI_PATH = "modi-path";
 	public static final String OP_MODI_ARCHIVIO = "modi-archivio";
-	
-	
+
+	public static final String API_DPOP = "VaultTestDPoP";
+	public static final String API_DPOP_PATH_FRUIZIONE = "VaultTestDPoPPathFruizione";
+	public static final String API_DPOP_ARCHIVIO_FRUIZIONE = "VaultTestDPoPArchivioFruizione";
+
+	public static final String OP_DPOP_TOKEN = "token";
+	public static final String OP_DPOP_PATH = "path";
+	public static final String OP_DPOP_ARCHIVIO = "archivio";
+
+	public static final String APPLICATIVO_DPOP_PATH = "ApplicativoVaultModiDPoPPath";
+	public static final String APPLICATIVO_DPOP_ARCHIVIO = "ApplicativoVaultModiDPoPArchive";
+
+
 	public static final String API_TOKEN_POLICY_VALIDAZIONE = "TestVaultValidazioneAuthorizationServer";
 	public static final String API_TOKEN_POLICY_VALIDAZIONE_OP_INTROSPECTION_USER_INFO_TLS = "TLS-introspection-userInfo";
 	public static final String API_TOKEN_POLICY_VALIDAZIONE_OP_VALIDAZIONE_JWS = "Vault-ValidazioneJWS";
@@ -897,9 +908,11 @@ public class SecretsTest extends ConfigLoader {
 		ConfigLoader.dbUtils.updateByokPolicyGenericProperties(oldPolicy, org.openspcoop2.pdd.core.token.Costanti.POLICY_ENDPOINT_SSL_CLIENT_CONFIG+CostantiProprieta.KEY_PROPERTIES_CUSTOM_SEPARATOR+CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_BYOK_POLICY, newPolicy);
 		ConfigLoader.dbUtils.updateByokPolicyGenericProperties(oldPolicy, org.openspcoop2.pdd.core.token.Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYSTORE_BYOK_POLICY, newPolicy);
 		ConfigLoader.dbUtils.updateByokPolicyGenericProperties(oldPolicy, org.openspcoop2.pdd.core.token.attribute_authority.Costanti.AA_REQUEST_JWT_SIGN_KEYSTORE_BYOK_POLICY, newPolicy);
-		
+		ConfigLoader.dbUtils.updateByokPolicyGenericProperties(oldPolicy, org.openspcoop2.pdd.core.token.Costanti.POLICY_RETRIEVE_TOKEN_DPOP_SIGN_KEYSTORE_BYOK_POLICY, newPolicy);
+
 		ConfigLoader.dbUtils.updateByokPolicyProtocolProperties(oldPolicy, CostantiDB.MODIPA_KEYSTORE_BYOK_POLICY, newPolicy);
-		
+		ConfigLoader.dbUtils.updateByokPolicyProtocolProperties(oldPolicy, CostantiDB.MODIPA_DPOP_KEYSTORE_BYOK_POLICY, newPolicy);
+
 	}
 	
 	
@@ -964,10 +977,30 @@ public class SecretsTest extends ConfigLoader {
 		logCoreInfo(prefixLogFruizione+OP_MODI_PATH);		
 		Utilities.testRest(logCore, TipoServizio.FRUIZIONE, API_CONNETTORI_APPLICATIVO, OP_MODI_PATH);
 		
-		logCoreInfo(prefixLogFruizione+OP_MODI_PATH);		
+		logCoreInfo(prefixLogFruizione+OP_MODI_PATH);
 		Utilities.testRest(logCore, TipoServizio.FRUIZIONE, API_CONNETTORI_APPLICATIVO, OP_MODI_ARCHIVIO);
-		
-		
+
+		// DPoP - negoziazione token base
+		logCoreInfo(prefixLogFruizione+OP_DPOP_TOKEN);
+		Utilities.testRest(logCore, TipoServizio.FRUIZIONE, API_DPOP, OP_DPOP_TOKEN);
+
+		// DPoP - negoziazione token con keystore definito nell'applicativo (path)
+		logCoreInfo(prefixLogFruizione+OP_DPOP_PATH+" (applicativo)");
+		Utilities.testRest(logCore, TipoServizio.FRUIZIONE, API_DPOP, OP_DPOP_PATH);
+
+		// DPoP - negoziazione token con keystore definito nell'applicativo (archivio)
+		logCoreInfo(prefixLogFruizione+OP_DPOP_ARCHIVIO+" (applicativo)");
+		Utilities.testRest(logCore, TipoServizio.FRUIZIONE, API_DPOP, OP_DPOP_ARCHIVIO);
+
+		// DPoP - negoziazione token con keystore definito nella fruizione (path)
+		logCoreInfo(prefixLogFruizione+OP_DPOP_PATH+" (fruizione)");
+		Utilities.testRest(logCore, TipoServizio.FRUIZIONE, API_DPOP_PATH_FRUIZIONE, OP_DPOP_PATH);
+
+		// DPoP - negoziazione token con keystore definito nella fruizione (archivio)
+		logCoreInfo(prefixLogFruizione+OP_DPOP_ARCHIVIO+" (fruizione)");
+		Utilities.testRest(logCore, TipoServizio.FRUIZIONE, API_DPOP_ARCHIVIO_FRUIZIONE, OP_DPOP_ARCHIVIO);
+
+
 		logCoreInfo(prefixLogErogazione+API_TOKEN_POLICY_VALIDAZIONE_OP_INTROSPECTION_USER_INFO_TLS);		
 		Utilities.testRest(logCore, TipoServizio.EROGAZIONE, API_TOKEN_POLICY_VALIDAZIONE, API_TOKEN_POLICY_VALIDAZIONE_OP_INTROSPECTION_USER_INFO_TLS);
 		
@@ -1287,18 +1320,24 @@ public class SecretsTest extends ConfigLoader {
 
 	}
 	private void verificheDatabaseInChiaroProtocolProperties() throws UtilsException, DriverRegistroServiziException {
-		
+
 		logCoreInfo("verificheDatabaseInChiaroProtocolProperties");
-		
+
 		// -- erogazioni --
 		verificheDatabaseInChiaroProtocolPropertiesErogazioni();
-		
-		// -- fruizioni -- 
+
+		// -- fruizioni --
 		verificheDatabaseInChiaroProtocolPropertiesFruizioni();
-		
-		// -- applicativi -- 
+
+		// -- applicativi --
 		verificheDatabaseInChiaroProtocolPropertiesApplicativi();
-		
+
+		// -- DPoP: fruizioni con keystore ridefinito --
+		verificheDatabaseInChiaroProtocolPropertiesFruizioniDPoP();
+
+		// -- DPoP: applicativi con keystore --
+		verificheDatabaseInChiaroProtocolPropertiesApplicativiDPoP();
+
 	}
 	private String getPrefissoServizio(IDServizio idServizio) {
 		return "servizio '"+idServizio.toFormatString()+"' ";
@@ -1467,8 +1506,99 @@ public class SecretsTest extends ConfigLoader {
 		assertEquals(getMessageExpected(prefissoServizio+PP_PREFIX+CostantiDB.MODIPA_KEYSTORE_ARCHIVE, v, vAtteso), 
 				vAtteso, v);
 	}
+	private void verificheDatabaseInChiaroProtocolPropertiesFruizioniDPoP() throws UtilsException, DriverRegistroServiziException {
+
+		Map<String, String> verifiche = new HashMap<>();
+		verifiche.put(CostantiDB.MODIPA_DPOP_KEYSTORE_PASSWORD, PASSWORD_123456);
+		verifiche.put(CostantiDB.MODIPA_DPOP_KEY_PASSWORD, PASSWORD_123456);
+
+		IDSoggetto idFruitore = new IDSoggetto(Costanti.MODIPA_PROTOCOL_NAME, SOGGETTO_INTERNO_FRUITORE);
+
+		// Fruizione con keystore DPoP path
+		IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(Costanti.MODIPA_PROTOCOL_NAME, API_DPOP_PATH_FRUIZIONE,
+				new IDSoggetto(Costanti.MODIPA_PROTOCOL_NAME, SOGGETTO_INTERNO), 1);
+		String prefissoServizio = getPrefissoFruizione(idFruitore, idServizio);
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			String pName = entry.getKey();
+			String vAtteso = entry.getValue();
+			String v = ConfigLoader.dbUtils.getProtocolPropertyPropertyFruitoreStringValue(idFruitore, idServizio, pName);
+			assertEquals(getMessageExpected(prefissoServizio+PP_PREFIX+pName, v, vAtteso),
+					vAtteso, v);
+			v = ConfigLoader.dbUtils.getProtocolPropertyPropertyFruitoreStringEncValue(idFruitore, idServizio, pName);
+			assertEquals(getMessageExpectedNull(prefissoServizio+PP_PREFIX+pName, v),
+					null, v);
+		}
+
+		// Fruizione con keystore DPoP archivio
+		idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(Costanti.MODIPA_PROTOCOL_NAME, API_DPOP_ARCHIVIO_FRUIZIONE,
+				new IDSoggetto(Costanti.MODIPA_PROTOCOL_NAME, SOGGETTO_INTERNO), 1);
+		prefissoServizio = getPrefissoFruizione(idFruitore, idServizio);
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			String pName = entry.getKey();
+			String vAtteso = entry.getValue();
+			String v = ConfigLoader.dbUtils.getProtocolPropertyPropertyFruitoreStringValue(idFruitore, idServizio, pName);
+			assertEquals(getMessageExpected(prefissoServizio+PP_PREFIX+pName, v, vAtteso),
+					vAtteso, v);
+			v = ConfigLoader.dbUtils.getProtocolPropertyPropertyFruitoreStringEncValue(idFruitore, idServizio, pName);
+			assertEquals(getMessageExpectedNull(prefissoServizio+PP_PREFIX+pName, v),
+					null, v);
+		}
+		// binary
+		byte[] pkcs12 = ConfigLoader.dbUtils.getProtocolPropertyPropertyFruitoreBinaryValue(idFruitore, idServizio, CostantiDB.MODIPA_DPOP_KEYSTORE_ARCHIVE);
+		Certificate cert = ArchiveLoader.loadFromKeystorePKCS12(pkcs12, APPLICATIVO_CLIENT_2, PASSWORD_123456);
+		String v = cert.getCertificate().getSubject().getCN();
+		String vAtteso = APPLICATIVO_CLIENT_2;
+		assertEquals(getMessageExpected(prefissoServizio+PP_PREFIX+CostantiDB.MODIPA_DPOP_KEYSTORE_ARCHIVE, v, vAtteso),
+				vAtteso, v);
+	}
+	private void verificheDatabaseInChiaroProtocolPropertiesApplicativiDPoP() throws UtilsException {
+
+		Map<String, String> verifiche = new HashMap<>();
+		verifiche.put(CostantiDB.MODIPA_DPOP_KEYSTORE_PASSWORD, PASSWORD_123456);
+		verifiche.put(CostantiDB.MODIPA_DPOP_KEY_PASSWORD, PASSWORD_123456);
+
+		IDSoggetto idFruitore = new IDSoggetto(Costanti.MODIPA_PROTOCOL_NAME, SOGGETTO_INTERNO_FRUITORE);
+
+		IDServizioApplicativo idServizioApplicativo = new IDServizioApplicativo();
+		idServizioApplicativo.setIdSoggettoProprietario(idFruitore);
+
+		// Applicativo con keystore DPoP path
+		idServizioApplicativo.setNome(APPLICATIVO_DPOP_PATH);
+		String prefissoServizio = getPrefissoApplicativo(idServizioApplicativo);
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			String pName = entry.getKey();
+			String vAtteso = entry.getValue();
+			String v = ConfigLoader.dbUtils.getProtocolPropertyPropertyApplicativoStringValue(idServizioApplicativo, pName);
+			assertEquals(getMessageExpected(prefissoServizio+PP_PREFIX+pName, v, vAtteso),
+					vAtteso, v);
+			v = ConfigLoader.dbUtils.getProtocolPropertyPropertyApplicativoStringEncValue(idServizioApplicativo, pName);
+			assertEquals(getMessageExpectedNull(prefissoServizio+PP_PREFIX+pName, v),
+					null, v);
+		}
+
+		// Applicativo con keystore DPoP archivio
+		idServizioApplicativo.setNome(APPLICATIVO_DPOP_ARCHIVIO);
+		prefissoServizio = getPrefissoApplicativo(idServizioApplicativo);
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			String pName = entry.getKey();
+			String vAtteso = entry.getValue();
+			String v = ConfigLoader.dbUtils.getProtocolPropertyPropertyApplicativoStringValue(idServizioApplicativo, pName);
+			assertEquals(getMessageExpected(prefissoServizio+PP_PREFIX+pName, v, vAtteso),
+					vAtteso, v);
+			v = ConfigLoader.dbUtils.getProtocolPropertyPropertyApplicativoStringEncValue(idServizioApplicativo, pName);
+			assertEquals(getMessageExpectedNull(prefissoServizio+PP_PREFIX+pName, v),
+					null, v);
+		}
+		// binary
+		byte[] pkcs12 = ConfigLoader.dbUtils.getProtocolPropertyPropertyApplicativoBinaryValue(idServizioApplicativo, CostantiDB.MODIPA_DPOP_KEYSTORE_ARCHIVE);
+		Certificate cert = ArchiveLoader.loadFromKeystorePKCS12(pkcs12, APPLICATIVO_CLIENT_2, PASSWORD_123456);
+		String v = cert.getCertificate().getSubject().getCN();
+		String vAtteso = APPLICATIVO_CLIENT_2;
+		assertEquals(getMessageExpected(prefissoServizio+PP_PREFIX+CostantiDB.MODIPA_DPOP_KEYSTORE_ARCHIVE, v, vAtteso),
+				vAtteso, v);
+	}
 	private void verificheDatabaseInChiaroGenericProperties() throws UtilsException {
-		
+
 		logCoreInfo("verificheDatabaseInChiaroGenericProperties");
 		
 		// -- tokenPolicy validazione --
@@ -2171,17 +2301,23 @@ public class SecretsTest extends ConfigLoader {
 
 	}
 	private void verificheDatabaseCifratoProtocolProperties(String prefix) throws UtilsException, DriverRegistroServiziException {
-		
+
 		logCoreInfo("verificheDatabaseCifratoProtocolProperties");
-		
+
 		// -- erogazioni --
 		verificheDatabaseCifratoProtocolPropertiesErogazioni(prefix);
-		
-		// -- fruizioni -- 
+
+		// -- fruizioni --
 		verificheDatabaseCifratoProtocolPropertiesFruizioni(prefix);
-		
-		// -- applicativi -- 
+
+		// -- applicativi --
 		verificheDatabaseCifratoProtocolPropertiesApplicativi(prefix);
+
+		// -- DPoP: fruizioni con keystore ridefinito --
+		verificheDatabaseCifratoProtocolPropertiesFruizioniDPoP(prefix);
+
+		// -- DPoP: applicativi con keystore --
+		verificheDatabaseCifratoProtocolPropertiesApplicativiDPoP(prefix);
 
 	}
 	private void verificheDatabaseCifratoProtocolPropertiesErogazioni(String prefix) throws UtilsException, DriverRegistroServiziException {
@@ -2343,16 +2479,106 @@ public class SecretsTest extends ConfigLoader {
 		byte[] pkcs12 = ConfigLoader.dbUtils.getProtocolPropertyPropertyApplicativoBinaryValue(idServizioApplicativo, CostantiDB.MODIPA_KEYSTORE_ARCHIVE);
 		String v = new String(pkcs12);
 		boolean expected = v.startsWith(prefix) && v.length()>prefix.length();
-		assertTrue(getMessageExpectedStartsWith(prefissoServizio+PP_PREFIX+CostantiDB.MODIPA_KEYSTORE_ARCHIVE, v, prefix), 
+		assertTrue(getMessageExpectedStartsWith(prefissoServizio+PP_PREFIX+CostantiDB.MODIPA_KEYSTORE_ARCHIVE, v, prefix),
+				expected);
+	}
+	private void verificheDatabaseCifratoProtocolPropertiesFruizioniDPoP(String prefix) throws UtilsException, DriverRegistroServiziException {
+
+		Map<String, String> verifiche = new HashMap<>();
+		verifiche.put(CostantiDB.MODIPA_DPOP_KEYSTORE_PASSWORD, PASSWORD_123456);
+		verifiche.put(CostantiDB.MODIPA_DPOP_KEY_PASSWORD, PASSWORD_123456);
+
+		IDSoggetto idFruitore = new IDSoggetto(Costanti.MODIPA_PROTOCOL_NAME, SOGGETTO_INTERNO_FRUITORE);
+
+		// Fruizione con keystore DPoP path
+		IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(Costanti.MODIPA_PROTOCOL_NAME, API_DPOP_PATH_FRUIZIONE,
+				new IDSoggetto(Costanti.MODIPA_PROTOCOL_NAME, SOGGETTO_INTERNO), 1);
+		String prefissoServizio = getPrefissoFruizione(idFruitore, idServizio);
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			String pName = entry.getKey();
+			String vAtteso = prefix;
+			String v = ConfigLoader.dbUtils.getProtocolPropertyPropertyFruitoreStringValue(idFruitore, idServizio, pName);
+			assertEquals(getMessageExpected(prefissoServizio+PP_PREFIX+pName, v, vAtteso),
+					vAtteso, v);
+			v = ConfigLoader.dbUtils.getProtocolPropertyPropertyFruitoreStringEncValue(idFruitore, idServizio, pName);
+			boolean expected = v!=null && v.startsWith(prefix) && v.length()>prefix.length();
+			assertTrue(getMessageExpectedStartsWith(prefissoServizio+PP_PREFIX+pName, v, prefix),
+					expected);
+		}
+
+		// Fruizione con keystore DPoP archivio
+		idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(Costanti.MODIPA_PROTOCOL_NAME, API_DPOP_ARCHIVIO_FRUIZIONE,
+				new IDSoggetto(Costanti.MODIPA_PROTOCOL_NAME, SOGGETTO_INTERNO), 1);
+		prefissoServizio = getPrefissoFruizione(idFruitore, idServizio);
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			String pName = entry.getKey();
+			String vAtteso = prefix;
+			String v = ConfigLoader.dbUtils.getProtocolPropertyPropertyFruitoreStringValue(idFruitore, idServizio, pName);
+			assertEquals(getMessageExpected(prefissoServizio+PP_PREFIX+pName, v, vAtteso),
+					vAtteso, v);
+			v = ConfigLoader.dbUtils.getProtocolPropertyPropertyFruitoreStringEncValue(idFruitore, idServizio, pName);
+			boolean expected = v!=null && v.startsWith(prefix) && v.length()>prefix.length();
+			assertTrue(getMessageExpectedStartsWith(prefissoServizio+PP_PREFIX+pName, v, prefix),
+					expected);
+		}
+		// binary
+		byte[] pkcs12 = ConfigLoader.dbUtils.getProtocolPropertyPropertyFruitoreBinaryValue(idFruitore, idServizio, CostantiDB.MODIPA_DPOP_KEYSTORE_ARCHIVE);
+		String v = new String(pkcs12);
+		boolean expected = v.startsWith(prefix) && v.length()>prefix.length();
+		assertTrue(getMessageExpectedStartsWith(prefissoServizio+PP_PREFIX+CostantiDB.MODIPA_DPOP_KEYSTORE_ARCHIVE, v, prefix),
+				expected);
+	}
+	private void verificheDatabaseCifratoProtocolPropertiesApplicativiDPoP(String prefix) throws UtilsException {
+
+		Map<String, String> verifiche = new HashMap<>();
+		verifiche.put(CostantiDB.MODIPA_DPOP_KEYSTORE_PASSWORD, PASSWORD_123456);
+		verifiche.put(CostantiDB.MODIPA_DPOP_KEY_PASSWORD, PASSWORD_123456);
+
+		IDSoggetto idFruitore = new IDSoggetto(Costanti.MODIPA_PROTOCOL_NAME, SOGGETTO_INTERNO_FRUITORE);
+
+		IDServizioApplicativo idServizioApplicativo = new IDServizioApplicativo();
+		idServizioApplicativo.setIdSoggettoProprietario(idFruitore);
+
+		// Applicativo con keystore DPoP path
+		idServizioApplicativo.setNome(APPLICATIVO_DPOP_PATH);
+		String prefissoServizio = getPrefissoApplicativo(idServizioApplicativo);
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			String pName = entry.getKey();
+			String vAtteso = prefix;
+			String v = ConfigLoader.dbUtils.getProtocolPropertyPropertyApplicativoStringValue(idServizioApplicativo, pName);
+			assertEquals(getMessageExpected(prefissoServizio+PP_PREFIX+pName, v, vAtteso),
+					vAtteso, v);
+			v = ConfigLoader.dbUtils.getProtocolPropertyPropertyApplicativoStringEncValue(idServizioApplicativo, pName);
+			boolean expected = v!=null && v.startsWith(prefix) && v.length()>prefix.length();
+			assertTrue(getMessageExpectedStartsWith(prefissoServizio+PP_PREFIX+pName, v, prefix),
+					expected);
+		}
+
+		// Applicativo con keystore DPoP archivio
+		idServizioApplicativo.setNome(APPLICATIVO_DPOP_ARCHIVIO);
+		prefissoServizio = getPrefissoApplicativo(idServizioApplicativo);
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			String pName = entry.getKey();
+			String vAtteso = prefix;
+			String v = ConfigLoader.dbUtils.getProtocolPropertyPropertyApplicativoStringValue(idServizioApplicativo, pName);
+			assertEquals(getMessageExpected(prefissoServizio+PP_PREFIX+pName, v, vAtteso),
+					vAtteso, v);
+			v = ConfigLoader.dbUtils.getProtocolPropertyPropertyApplicativoStringEncValue(idServizioApplicativo, pName);
+			boolean expected = v!=null && v.startsWith(prefix) && v.length()>prefix.length();
+			assertTrue(getMessageExpectedStartsWith(prefissoServizio+PP_PREFIX+pName, v, prefix),
+					expected);
+		}
+		// binary
+		byte[] pkcs12 = ConfigLoader.dbUtils.getProtocolPropertyPropertyApplicativoBinaryValue(idServizioApplicativo, CostantiDB.MODIPA_DPOP_KEYSTORE_ARCHIVE);
+		String v = new String(pkcs12);
+		boolean expected = v.startsWith(prefix) && v.length()>prefix.length();
+		assertTrue(getMessageExpectedStartsWith(prefissoServizio+PP_PREFIX+CostantiDB.MODIPA_DPOP_KEYSTORE_ARCHIVE, v, prefix),
 				expected);
 	}
 
-	
-	
-	
-	
-	
-	
+
+
+
 	// ** VERIFICHE PROPRIETA CHIARO **
 	
 	private void verificheProprietaChiaro() throws UtilsException {

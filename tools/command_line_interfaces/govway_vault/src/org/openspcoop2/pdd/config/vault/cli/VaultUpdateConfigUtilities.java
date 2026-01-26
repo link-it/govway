@@ -316,9 +316,14 @@ public class VaultUpdateConfigUtilities {
 		updateProtocolProperties(CostantiDB.MODIPA_KEY_PASSWORD, false, output);
 		updateProtocolProperties(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PASSWORD, false, output);
 		updateProtocolProperties(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_PASSWORD, false, output);
-		
+
 		updateProtocolProperties(CostantiDB.MODIPA_KEYSTORE_ARCHIVE, true, output);
-		
+
+		updateProtocolProperties(CostantiDB.MODIPA_DPOP_KEYSTORE_PASSWORD, false, output);
+		updateProtocolProperties(CostantiDB.MODIPA_DPOP_KEY_PASSWORD, false, output);
+
+		updateProtocolProperties(CostantiDB.MODIPA_DPOP_KEYSTORE_ARCHIVE, true, output);
+
 		VaultTools.logCoreDebug("Conversione protocol properties terminata");
 	}
 	private void processProperties(StringBuilder output) throws CoreException {

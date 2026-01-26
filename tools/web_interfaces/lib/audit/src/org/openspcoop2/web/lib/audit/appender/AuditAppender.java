@@ -726,7 +726,9 @@ public class AuditAppender {
 		return CostantiDB.MODIPA_KEYSTORE_PASSWORD.equals(nomeProprieta) ||
 				CostantiDB.MODIPA_KEY_PASSWORD.equals(nomeProprieta) ||
 				CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PASSWORD.equals(nomeProprieta) ||
-				CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_PASSWORD.equals(nomeProprieta);
+				CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_PASSWORD.equals(nomeProprieta) ||
+				CostantiDB.MODIPA_DPOP_KEYSTORE_PASSWORD.equals(nomeProprieta) ||
+				CostantiDB.MODIPA_DPOP_KEY_PASSWORD.equals(nomeProprieta);
 	}
 
 	/**
