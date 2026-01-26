@@ -594,6 +594,8 @@
 	
 	<hidden property="antinstaller_plugin_suap_errors" value="true"/>
 
+	<hidden property="antinstaller_plugin_fonte_autentica" value="true"/>
+
     </page>
 
     <page name="profili_nuovaInstallazione" type="input" displayText="Profili di Interoperabilità"

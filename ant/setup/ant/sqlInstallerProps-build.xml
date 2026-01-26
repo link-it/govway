@@ -640,7 +640,11 @@ INSERT INTO generic_properties (nome, descrizione, tipologia, tipo) VALUES ('@ID
 		
 		<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '009-006:Plugin SUAP Errors:antinstaller_plugin_suap_errors', '@VALORE@');
 </concat>
-		<replace file="${fileSqlProps}" token="@VALORE@" value="${antinstaller_plugin_suap_errors}"/>		
+		<replace file="${fileSqlProps}" token="@VALORE@" value="${antinstaller_plugin_suap_errors}"/>
+
+		<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '009-007:Plugin Fonte Autentica:antinstaller_plugin_fonte_autentica', '@VALORE@');
+</concat>
+		<replace file="${fileSqlProps}" token="@VALORE@" value="${antinstaller_plugin_fonte_autentica}"/>
 
 
 		<!-- Profili di Interoperabilità: 010 -->

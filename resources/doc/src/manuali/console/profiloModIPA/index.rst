@@ -21,3 +21,4 @@ La struttura complessiva del processo di configurazione si mantiene analoga a qu
         profiliInterazione
         signalHub
         tracingPdnd
+        itwallet/index

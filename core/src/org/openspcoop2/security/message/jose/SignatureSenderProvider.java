@@ -20,14 +20,18 @@
 
 package org.openspcoop2.security.message.jose;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.mvc.properties.provider.InputValidationUtils;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
+import org.openspcoop2.core.mvc.properties.provider.ProviderInfo;
 import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
 import org.openspcoop2.core.mvc.properties.utils.MultiPropertiesUtilities;
+import org.openspcoop2.pdd.core.dynamic.DynamicHelperCostanti;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 
 /**     
@@ -74,8 +78,35 @@ public class SignatureSenderProvider extends KeyStoreSecurityProvider {
 		if(file!=null && StringUtils.isNotEmpty(file)) {
 			InputValidationUtils.validateTextAreaInput(file, "Content Type (cty) - Critical Headers (crit)");
 		}
-		
-		
+
+
 	}
-	
+
+	@Override
+	public ProviderInfo getProviderInfo(String id) throws ProviderException {
+		if("issuer".equals(id) || "audienceManual".equals(id) || "ttl".equals(id)) {
+			ProviderInfo pInfo = new ProviderInfo();
+			pInfo.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
+			List<String> listBody = new ArrayList<>();
+			listBody.add(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO_TOKEN_INFO);
+			listBody.add(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO_HEADER);
+			listBody.add(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO_CONTEXT);
+			listBody.add(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO_BUSTA);
+			pInfo.setListBody(listBody);
+			return pInfo;
+		}
+		else if("httpStatusCodes".equals(id)) {
+			ProviderInfo pInfo = new ProviderInfo();
+			pInfo.setHeaderBody("Codici HTTP di risposta del backend che attivano la firma.");
+			List<String> listBody = new ArrayList<>();
+			listBody.add("<b>Singolo codice</b>: 200");
+			listBody.add("<b>Lista</b>: 200,202,404");
+			listBody.add("<b>Range</b>: 200-299");
+			listBody.add("<b>Range aperto</b>: -299 (fino a 299), 500- (da 500 in poi)");
+			pInfo.setListBody(listBody);
+			return pInfo;
+		}
+		return super.getProviderInfo(id);
+	}
+
 }

@@ -392,6 +392,7 @@
 		<var name="preloading-api-soap-status" value="" />
 		<var name="preloading-token-policy-google" value="" />
 		<var name="preloading-plugin-suap-errors" value="" />
+		<var name="preloading-plugin-fonte-autentica" value="" />
 		<if>
 			<and>
 				<istrue value="${antinstaller_protocollo_modipa}"/>
@@ -449,7 +450,15 @@
 				<var name="preloading-plugin-suap-errors" value=",/PluginSuapErrors.zip" />
 			</then>
 		</if>
-		<var name="preloading-packages" value="/RateLimiting.zip,/RateLimiting_policies.zip${preloading-plugin-suap-errors}${preloading-token-policy-google}${preloading-token-policy-pdnd}${preloading-api-pdnd}${preloading-api-config}${preloading-api-monitor}${preloading-api-rest-status}${preloading-api-soap-status}" />
+		<if>
+			<and>
+				<istrue value="${antinstaller_plugin_fonte_autentica}"/>
+			</and>
+			<then>
+				<var name="preloading-plugin-fonte-autentica" value=",/PluginFonteAutentica.zip" />
+			</then>
+		</if>
+		<var name="preloading-packages" value="/RateLimiting.zip,/RateLimiting_policies.zip${preloading-plugin-suap-errors}${preloading-plugin-fonte-autentica}${preloading-token-policy-google}${preloading-token-policy-pdnd}${preloading-api-pdnd}${preloading-api-config}${preloading-api-monitor}${preloading-api-rest-status}${preloading-api-soap-status}" />
 		<antcall target="set_property">
 			<param name="file" value="${file}"/>
 			<param name="token" value="org.openspcoop2.pdd.config.preLoading.locale"/>
