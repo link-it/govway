@@ -70,8 +70,9 @@ public class Utilities {
 		}
 		
 		String protocollo = spcoop ? "/spcoop" : "";
-		if(!spcoop && 
-				(SecretsTest.OP_MODI_PATH.equals(operazione)) || SecretsTest.OP_MODI_ARCHIVIO.equals(operazione)){
+		if(!spcoop &&
+				(SecretsTest.OP_MODI_PATH.equals(operazione) || SecretsTest.OP_MODI_ARCHIVIO.equals(operazione) ||
+				 SecretsTest.OP_DPOP_TOKEN.equals(operazione) || SecretsTest.OP_DPOP_PATH.equals(operazione) || SecretsTest.OP_DPOP_ARCHIVIO.equals(operazione))){
 			protocollo = "/rest";
 		}
 		
@@ -118,7 +119,7 @@ public class Utilities {
 	
 	private static void setCredenziali(String api, String operazione, HttpRequest request) throws UtilsException {
 		if(SecretsTest.API_PROPRIETA.equals(api) &&
-				(SecretsTest.OP_PROPRIETA_APPLICATIVO.equals(operazione) || SecretsTest.OP_PROPRIETA_SOGGETTO.equals(operazione)) 
+				(SecretsTest.OP_PROPRIETA_APPLICATIVO.equals(operazione) || SecretsTest.OP_PROPRIETA_SOGGETTO.equals(operazione))
 					){
 			request.setUsername("TestVaultApplicativoProprieta");
 			request.setPassword("123456");
@@ -131,6 +132,16 @@ public class Utilities {
 				request.setUsername("ApplicativoVaultModiArchivio");
 			}
 			request.setPassword("123456");
+		}
+		else if(SecretsTest.API_DPOP.equals(api)){
+			if(SecretsTest.OP_DPOP_PATH.equals(operazione)) {
+				request.setUsername(SecretsTest.APPLICATIVO_DPOP_PATH);
+				request.setPassword("123456");
+			}
+			else if(SecretsTest.OP_DPOP_ARCHIVIO.equals(operazione)) {
+				request.setUsername(SecretsTest.APPLICATIVO_DPOP_ARCHIVIO);
+				request.setPassword("123456");
+			}
 		}
 		else if(SecretsTest.API_TOKEN_POLICY_VALIDAZIONE.equals(api)){
 			String token = null;
