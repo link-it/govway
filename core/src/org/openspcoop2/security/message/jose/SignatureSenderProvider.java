@@ -31,7 +31,6 @@ import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.core.mvc.properties.provider.ProviderInfo;
 import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
 import org.openspcoop2.core.mvc.properties.utils.MultiPropertiesUtilities;
-import org.openspcoop2.pdd.core.dynamic.DynamicHelperCostanti;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 
 /**     
@@ -82,16 +81,22 @@ public class SignatureSenderProvider extends KeyStoreSecurityProvider {
 
 	}
 
+	private static final String LABEL_INFO_HEADER = "Il valore può essere definito come costante o contenere parti dinamiche risolte a runtime dal Gateway.\nLe espressioni utilizzabili sono:";
+	private static final String LABEL_INFO_TOKEN = "<b>${tokenInfo:FIELD}</b>: permette di accedere ai claim di un token (es. ${tokenInfo:sub})";
+	private static final String LABEL_INFO_HTTP_HEADER = "<b>${header:NAME}</b>: valore presente nell'header http che possiede il nome 'NAME'";
+	private static final String LABEL_INFO_CONTEXT = "<b>${context:FIELD}</b>: permette di accedere al contesto della richiesta";
+	private static final String LABEL_INFO_BUSTA = "<b>${busta:FIELD}</b>: permette di utilizzare informazioni generiche del profilo (es. ${busta:mittente})";
+
 	@Override
 	public ProviderInfo getProviderInfo(String id) throws ProviderException {
 		if("issuer".equals(id) || "audienceManual".equals(id) || "ttl".equals(id)) {
 			ProviderInfo pInfo = new ProviderInfo();
-			pInfo.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
+			pInfo.setHeaderBody(LABEL_INFO_HEADER);
 			List<String> listBody = new ArrayList<>();
-			listBody.add(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO_TOKEN_INFO);
-			listBody.add(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO_HEADER);
-			listBody.add(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO_CONTEXT);
-			listBody.add(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO_BUSTA);
+			listBody.add(LABEL_INFO_TOKEN);
+			listBody.add(LABEL_INFO_HTTP_HEADER);
+			listBody.add(LABEL_INFO_CONTEXT);
+			listBody.add(LABEL_INFO_BUSTA);
 			pInfo.setListBody(listBody);
 			return pInfo;
 		}

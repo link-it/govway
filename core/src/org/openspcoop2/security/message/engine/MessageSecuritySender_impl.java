@@ -33,9 +33,9 @@ import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.message.exception.MessageNotSupportedException;
-import org.openspcoop2.pdd.core.dynamic.DynamicException;
-import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.protocol.sdk.Context;
+import org.openspcoop2.utils.DynamicStringReplace;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.message.IMessageSecuritySender;
@@ -81,14 +81,14 @@ public class MessageSecuritySender_impl extends MessageSecuritySender {
 		return false;
 	}
 
-	private String resolveDynamicValue(String name, String value, Map<String, Object> dynamicMap, Context context) throws SecurityException {
+	private String resolveDynamicValue(String name, String value, Map<String, Object> dynamicMap) throws SecurityException {
 		if (value == null || dynamicMap == null) {
 			return value;
 		}
 		try {
-			return DynamicUtils.convertDynamicPropertyValue(name, value, dynamicMap, context);
-		} catch (DynamicException e) {
-			throw new SecurityException(e.getMessage(), e);
+			return DynamicStringReplace.replace(value, dynamicMap, true);
+		} catch (UtilsException e) {
+			throw new SecurityException("Errore nella risoluzione del valore dinamico per '" + name + "': " + e.getMessage(), e);
 		}
 	}
 
@@ -152,27 +152,25 @@ public class MessageSecuritySender_impl extends MessageSecuritySender {
 	
 	private JSONObject addIssClaim(Context context, OpenSPCoop2Message message, JSONObject existingJson, String policy) throws SecurityException, MessageException, MessageNotSupportedException {
 		Map<String, Object> dynamicMap = Costanti.readDynamicMap(context);
-		
+
 		String iss = getOutgoingProperty(SecurityConstants.JWT_CLAIMS_ISSUER);
 		if (iss != null) {
 			if (existingJson == null)
 				existingJson = getJsonMessage(message);
-			
-			iss = resolveDynamicValue("iss", iss, dynamicMap, context);
+
+			iss = resolveDynamicValue("iss", iss, dynamicMap);
 			Object resolvedIss = resolveClaimValue(existingJson, "iss", iss, policy);
 			if (resolvedIss != null) {
 				message.castAsRestJson().addSimpleElement("iss", resolvedIss);
 			}
 		}
-		
+
 		return existingJson;
 	}
 	
 	private JSONObject addAudClaim(Context context, OpenSPCoop2Message message, JSONObject existingJson, String policy) throws SecurityException, MessageException, MessageNotSupportedException {
 		Map<String, Object> dynamicMap = Costanti.readDynamicMap(context);
-		if (existingJson == null)
-			existingJson = getJsonMessage(message);
-		
+
 		String audMode = getOutgoingProperty(SecurityConstants.JWT_CLAIMS_AUDIENCE_MODE);
 		String aud = getOutgoingProperty(SecurityConstants.JWT_CLAIMS_AUDIENCE_VALUE);
 		if (SecurityConstants.JWT_CLAIMS_AUDIENCE_MODE_VOUCHER.equals(audMode)) {
@@ -181,26 +179,26 @@ public class MessageSecuritySender_impl extends MessageSecuritySender {
 		if (aud != null) {
 			if (existingJson == null)
 				existingJson = getJsonMessage(message);
-			
-			aud = resolveDynamicValue("aud", aud, dynamicMap, context);
+
+			aud = resolveDynamicValue("aud", aud, dynamicMap);
 			Object resolvedAud = resolveClaimValue(existingJson, "aud", aud, policy);
 			if (resolvedAud != null) {
 				message.castAsRestJson().addSimpleElement("aud", resolvedAud);
 			}
 		}
-		
+
 		return existingJson;
 	}
 	
 	private JSONObject addExpClaim(Context context, OpenSPCoop2Message message, JSONObject existingJson, String policy) throws SecurityException, MessageException, MessageNotSupportedException {
 		Map<String, Object> dynamicMap = Costanti.readDynamicMap(context);
-		
+
 		String ttl = getOutgoingProperty(SecurityConstants.JWT_CLAIMS_EXPIRED_TTL);
 		if (ttl != null) {
 			if (existingJson == null)
 				existingJson = getJsonMessage(message);
-			
-			ttl = resolveDynamicValue("ttl", ttl, dynamicMap, context);
+
+			ttl = resolveDynamicValue("ttl", ttl, dynamicMap);
 			long instant = Instant.now().getEpochSecond();
 
 			Object resolvedIat = resolveClaimValue(existingJson, "iat", instant, policy);
@@ -225,13 +223,13 @@ public class MessageSecuritySender_impl extends MessageSecuritySender {
 	
 	private JSONObject addJtiClaim(Context context, OpenSPCoop2Message message, JSONObject existingJson, String policy) throws SecurityException, MessageException, MessageNotSupportedException {
 		Map<String, Object> dynamicMap = Costanti.readDynamicMap(context);
-		
+
 		String jtiMode = getOutgoingProperty(SecurityConstants.JWT_CLAIMS_JTI_MODE);
 		String jti = getOutgoingProperty(SecurityConstants.JWT_CLAIMS_JTI_VALUE);
 		if (SecurityConstants.JWT_CLAIMS_JTI_MODE_TRANSACTION_ID.equals(jtiMode)) {
 			jti = message.getTransactionId();
 		} else if (jti != null) {
-			jti = resolveDynamicValue("jti", jti, dynamicMap, context);
+			jti = resolveDynamicValue("jti", jti, dynamicMap);
 		}
 		if (jti != null) {
 			if (existingJson == null)
