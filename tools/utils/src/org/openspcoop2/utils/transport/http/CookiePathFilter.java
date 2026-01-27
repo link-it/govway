@@ -225,7 +225,7 @@ class CookiePathResponseWrapper extends HttpServletResponseWrapper {
 			}
 		} catch (Exception e) {
 			log("[CookiePathFilter] processSetCookieHeaders - errore: " + e.getMessage());
-			e.printStackTrace();
+			/**e.printStackTrace();*/
 		}
 	}
 
