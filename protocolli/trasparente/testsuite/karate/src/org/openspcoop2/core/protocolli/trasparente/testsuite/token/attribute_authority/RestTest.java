@@ -65,7 +65,7 @@ public class RestTest extends ConfigLoader {
 	
 	private static final String ERRORE_CERTIFICATO_SCADUTO = "Certificato presente nell'header 'x5c' scaduto: certificate expired";
 	
-	private static final String TIPO_TEST_VALIDITY_CHECK = "validityCheck"; 
+	static final String TIPO_TEST_VALIDITY_CHECK = "validityCheck"; 
 	
 	
 	// *** singleAA: autorizzazione per contenuti (AA JWS Bearer) ***
