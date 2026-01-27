@@ -97,6 +97,7 @@ import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
 import org.openspcoop2.security.keystore.cache.GestoreOCSPResource;
 import org.openspcoop2.security.keystore.cache.GestoreOCSPValidator;
 import org.openspcoop2.security.message.constants.SecurityConstants;
+import org.openspcoop2.security.message.utils.SecurityUtils;
 import org.openspcoop2.utils.LoggerBuffer;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.JWKSet;
@@ -199,6 +200,10 @@ public class GestoreTokenAttributeAuthorityUtilities {
 	    				
 	    				JWTOptions options = new JWTOptions(JOSESerialization.COMPACT);
 	    				Properties p = policyAttributeAuthority.getProperties().get(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.POLICY_VALIDAZIONE_JWS_VERIFICA_PROP_REF_ID);
+
+	    				// Imposta dinamicamente il keyPairAlgorithm in base all'algoritmo di firma
+	    				SecurityUtils.dynamicUpdateKeyPairAlgorithm(p, signatureAlgorithm);
+
 	    				TokenUtilities.injectJOSEConfig(p, policyAttributeAuthority, null,  
 	    						busta, idDominio, idServizio,
 	    						context, log,

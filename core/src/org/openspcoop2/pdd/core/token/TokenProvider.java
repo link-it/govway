@@ -50,6 +50,7 @@ import org.openspcoop2.security.message.jose.SecurityProvider;
 import org.openspcoop2.security.message.utils.AbstractSecurityProvider;
 import org.openspcoop2.security.utils.SignatureAlgorithmUtilities;
 import org.openspcoop2.utils.UtilsRuntimeException;
+import org.openspcoop2.utils.certificate.KeyUtils;
 import org.openspcoop2.utils.certificate.byok.BYOKProvider;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.certificate.ocsp.OCSPProvider;
@@ -1351,6 +1352,9 @@ public class TokenProvider implements IProvider {
 				Costanti.ID_VALIDAZIONE_JWT_KEYSTORE_BYOK_POLOCY.equals(item.getName())) {
 			return dynamicUpdateByok(items, mapNameValue, item, actualValue);
 		}
+		else if(Costanti.ID_TOKEN_FORWARD_JWS_KEYSTORE_KEYPAIR_ALGORITHM.equals(item.getName())) {
+			return dynamicUpdateKeyPairAlgorithm(items, mapNameValue, item, actualValue);
+		}
 		else {
 			return dynamicUpdateContinue1(items, mapNameValue, item, actualValue, externalResources);
 		}
@@ -1470,6 +1474,27 @@ public class TokenProvider implements IProvider {
 		}
 		
 		return AbstractSecurityProvider.processStoreByokPolicy(type, items, mapNameValue, item, actualValue);
+	}
+	private String dynamicUpdateKeyPairAlgorithm(List<?> items, Map<String, String> mapNameValue, Item item, String actualValue) {
+		// Verifica che il tipo di keystore sia 'keys' (Key Pair)
+		String keystoreType = AbstractSecurityProvider.readValue(Costanti.ID_TOKEN_FORWARD_JWS_KEYSTORE_TYPE, items, mapNameValue);
+		if(keystoreType==null || !SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType)) {
+			// non è un keystore di tipo Key Pair, non serve aggiornare l'algoritmo
+			return actualValue;
+		}
+
+		// Legge il valore dell'algoritmo di firma selezionato
+		String signatureAlgorithm = AbstractSecurityProvider.readValue(Costanti.ID_JWS_SIGNATURE_ALGORITHM, items, mapNameValue);
+
+		// Converte l'algoritmo di firma in algoritmo del key pair
+		String keyPairAlgorithm = SignatureAlgorithmUtilities.covertToKeyPairAlgorithm(signatureAlgorithm);
+		if(keyPairAlgorithm == null) {
+			// Default RSA se non riconosciuto
+			keyPairAlgorithm = KeyUtils.ALGO_RSA;
+		}
+
+		item.setValue(keyPairAlgorithm);
+		return keyPairAlgorithm;
 	}
 	private String dynamicUpdateTokenDynamicDiscoveryPluginClassName(List<?> items, Map<String, String> mapNameValue, Item item, String actualValue, ExternalResources externalResources) {
 		String idChoice = Costanti.ID_DYNAMIC_DISCOVERY_CUSTOM_PARSER_PLUGIN_CHOICE;

@@ -2359,7 +2359,7 @@
 				</conditions>
 				<property name="rs.security.keystore.file.public" properties="signaturePropRefId" />
 			</item>
-			<item type="hidden" name="jwtKeystoreKeyPairAlgorithm" value="RSA">
+			<item type="hidden" name="tokenForwardInfoRaccolteModeJWSKeystoreKeyPairAlgorithm" value="RSA">
 				<conditions and="true">
 					<condition and="false">
 						<equals name="tokenForwardInfoRaccolteModeJWSKeystoreType" value="keys"/>

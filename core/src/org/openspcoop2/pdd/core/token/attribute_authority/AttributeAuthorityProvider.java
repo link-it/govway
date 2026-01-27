@@ -46,6 +46,7 @@ import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.utils.AbstractSecurityProvider;
 import org.openspcoop2.security.utils.SignatureAlgorithmUtilities;
 import org.openspcoop2.utils.UtilsRuntimeException;
+import org.openspcoop2.utils.certificate.KeyUtils;
 import org.openspcoop2.utils.certificate.byok.BYOKProvider;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.certificate.ocsp.OCSPProvider;
@@ -584,6 +585,16 @@ public class AttributeAuthorityProvider implements IProvider {
 				Costanti.ID_HTTPS_KEYSTORE_BYOK_POLICY.equals(item.getName())) {
 			return dynamicUpdateByok(items, mapNameValue, item, actualValue);
 		}
+		else if(Costanti.ID_AA_JWS_KEYSTORE_KEYPAIR_ALGORITHM.equals(item.getName())) {
+			return dynamicUpdateKeyAlgorithm(items, mapNameValue, item, actualValue,
+					Costanti.ID_AA_JWS_KEYSTORE_TYPE, SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE,
+					Costanti.ID_AA_JWS_SIGNATURE_ALGORITHM);
+		}
+		else if(Costanti.ID_AA_JWS_TRUSTSTORE_PUBLICKEY_ALGORITHM.equals(item.getName())) {
+			return dynamicUpdateKeyAlgorithm(items, mapNameValue, item, actualValue,
+					Costanti.ID_AA_JWS_TRUSTSTORE_TYPE, SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE,
+					Costanti.ID_AA_RESPONSE_JWS_SIGNATURE_ALGORITHM);
+		}
 		else if(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_PARSER_TOKEN_CUSTOM_PLUGIN_CHOICE.equals(item.getName())) {
 			return TokenUtilities.dynamicUpdateTokenPluginChoice(externalResources, TipoPlugin.ATTRIBUTE_AUTHORITY, item, actualValue);
 		}
@@ -652,6 +663,33 @@ public class AttributeAuthorityProvider implements IProvider {
 		}
 		
 		return AbstractSecurityProvider.processStoreByokPolicy(type, items, mapNameValue, item, actualValue);
+	}
+	private String dynamicUpdateKeyAlgorithm(List<?> items, Map<String, String> mapNameValue, Item item, String actualValue,
+			String storeTypeId, String expectedStoreType, String signatureAlgorithmId) {
+		// Verifica che il tipo di store sia quello atteso
+		String storeType = AbstractSecurityProvider.readValue(storeTypeId, items, mapNameValue);
+		if(storeType==null || !expectedStoreType.equalsIgnoreCase(storeType)) {
+			// non è lo store type atteso, non serve aggiornare l'algoritmo
+			return actualValue;
+		}
+
+		// Legge il valore dell'algoritmo di firma selezionato
+		String signatureAlgorithm = AbstractSecurityProvider.readValue(signatureAlgorithmId, items, mapNameValue);
+
+		// Se l'algoritmo è "alg" (definito nel token), non possiamo determinare l'algoritmo della chiave a tempo di configurazione
+		if(SignatureAlgorithmUtilities.VALUE_DEFINITO_HEANDER.equals(signatureAlgorithm)) {
+			return actualValue;
+		}
+
+		// Converte l'algoritmo di firma in algoritmo del key pair
+		String keyPairAlgorithm = SignatureAlgorithmUtilities.covertToKeyPairAlgorithm(signatureAlgorithm);
+		if(keyPairAlgorithm == null) {
+			// Default RSA se non riconosciuto
+			keyPairAlgorithm = KeyUtils.ALGO_RSA;
+		}
+
+		item.setValue(keyPairAlgorithm);
+		return keyPairAlgorithm;
 	}
 
 }
