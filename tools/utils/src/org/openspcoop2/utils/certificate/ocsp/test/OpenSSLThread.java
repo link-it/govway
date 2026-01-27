@@ -117,12 +117,11 @@ public class OpenSSLThread extends AbstractBaseThread {
 	public synchronized void close() {
 		
 		if(this.process!=null) {
-			
 			this.process.descendants().forEach(ph -> {
-			    ph.destroy();
+			    ph.destroyForcibly();
 			});
-	
-			this.process.destroy();
+
+			this.process.destroyForcibly();
 			
 			boolean terminated = false;
 			while(terminated == false){
