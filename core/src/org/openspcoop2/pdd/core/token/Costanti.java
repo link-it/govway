@@ -542,7 +542,8 @@ public class Costanti {
 	public static final String ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE = "validazioneJwtTruststoreType";
 	public static final String ID_VALIDAZIONE_JWT_TRUSTSTORE_FILE = "validazioneJwtTruststoreFile";
 	public static final String ID_VALIDAZIONE_JWT_TRUSTSTORE_PASSWORD = "validazioneJwtTruststorePassword";
-	
+	public static final String ID_VALIDAZIONE_JWT_TRUSTSTORE_PUBLICKEY_ALGORITHM = "validazioneJwtTruststorePublicKeyAlgorithm";
+
 	public static final String ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE = "validazioneJwtTruststoreTypeSelectCertificate";
 	public static final String ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_ALIAS = "alias";
 	public static final String ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_LABEL_ALIAS = "Alias in TrustStore";
@@ -635,7 +636,8 @@ public class Costanti {
 	public static final String ID_TOKEN_FORWARD_JWS_KEYSTORE_PASSWORD = "tokenForwardInfoRaccolteModeJWSKeystorePassword";
 	public static final String ID_TOKEN_FORWARD_JWS_KEYSTORE_PASSWORD_PRIVATE_KEY = "tokenForwardInfoRaccolteModeJWSKeystorePrivateKeyPassword";
 	public static final String ID_TOKEN_FORWARD_JWS_KEYSTORE_BYOK_POLICY = "tokenForwardInfoRaccolteModeJWSKeystoreByokPolicy";
-	
+	public static final String ID_TOKEN_FORWARD_JWS_KEYSTORE_KEYPAIR_ALGORITHM = "tokenForwardInfoRaccolteModeJWSKeystoreKeyPairAlgorithm";
+
 	public static final String ID_TOKEN_FORWARD_JWE_KEYSTORE_TYPE = "tokenForwardInfoRaccolteModeJWEContentKeystoreType";
 	public static final String ID_TOKEN_FORWARD_JWE_KEYSTORE_FILE = "tokenForwardInfoRaccolteModeJWEContentKeystoreFile";
 	public static final String ID_TOKEN_FORWARD_JWE_KEYSTORE_PASSWORD = "tokenForwardInfoRaccolteModeJWEContentKeystorePassword";
@@ -683,12 +685,16 @@ public class Costanti {
 	public static final String ID_AA_JWS_KEYSTORE_PASSWORD = "aaJWSKeystorePassword";
 	public static final String ID_AA_JWS_KEYSTORE_PASSWORD_PRIVATE_KEY = "aaJWSKeystorePrivateKeyPassword";
 	public static final String ID_AA_JWS_KEYSTORE_BYOK_POLICY = "aaJWSKeystoreByokPolicy";
-	
+	public static final String ID_AA_JWS_KEYSTORE_KEYPAIR_ALGORITHM = "aaJWSKeystoreKeyPairAlgorithm";
+	public static final String ID_AA_JWS_SIGNATURE_ALGORITHM = "aaSignatureAlgorithm";
+
 	public static final String ID_AA_JWS_TRUSTSTORE_TYPE = "aaJWSTruststoreType";
 	public static final String ID_AA_JWS_TRUSTSTORE_FILE = "aaJWSTruststoreFile";
 	public static final String ID_AA_JWS_TRUSTSTORE_PASSWORD = "aaJWSTruststorePassword";
+	public static final String ID_AA_JWS_TRUSTSTORE_PUBLICKEY_ALGORITHM = "aaJWSTruststorePublicKeyAlgorithm";
 	public static final String ID_AA_JWS_TRUSTSTORE_TYPE_SELECT_CERTIFICATE = "aaJWSTruststoreTypeSelectCertificate";
 	public static final String ID_AA_JWS_TRUSTSTORE_TYPE_SELECT_JWK_PUBLIC_KEY = "aaJWSTruststoreTypeSelectJWKPublicKey";
 	public static final String ID_AA_JWS_TRUSTSTORE_OCSP_POLICY = "aaJWSTruststoreOcspPolicy";
+	public static final String ID_AA_RESPONSE_JWS_SIGNATURE_ALGORITHM = "aaResponseAsymmetricSignatureAlgorithm";
 
 }

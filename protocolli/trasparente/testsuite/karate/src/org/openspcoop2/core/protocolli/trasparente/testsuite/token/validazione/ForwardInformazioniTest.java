@@ -400,6 +400,47 @@ public class ForwardInformazioniTest extends ConfigLoader {
 	
 	
 	
+	@Test
+	public void govwayJws_keyPairProtectedSignerES() throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		Map<String, List<String>> values = new HashMap<>();
+		Map<String, String> headers = new HashMap<>();
+		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+
+				buildJWT(values));
+		
+		HttpResponse response = Utilities._test(logCore, forwardAlternativeSigner, "keyPairProtectedES", headers,  null,
+				null,
+				null, null);
+		
+		checkGovWayJwt("govway-testsuite-govway-jwt-es", response, values, false,
+				SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE);
+	}
+	
+	
+	@Test
+	public void govwayJws_keyPairUnprotectedSignerES() throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		Map<String, List<String>> values = new HashMap<>();
+		Map<String, String> headers = new HashMap<>();
+		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+
+				buildJWT(values));
+		
+		HttpResponse response = Utilities._test(logCore, forwardAlternativeSigner, "keyPairUnprotectedES", headers,  null,
+				null,
+				null, null);
+		
+		checkGovWayJwt("govway-testsuite-govway-jwt-es", response, values, false,
+				SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE);
+	}
+	
+	
+	
 	
 	private static String ID = "ID";
 	private static String TIME = "TIME";
@@ -559,7 +600,14 @@ public class ForwardInformazioniTest extends ConfigLoader {
 			else if(SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equals(keystoreType)) {
 				f = File.createTempFile("test", ".jwk");
 				alias = "testsuite-govway";
-				String jwks = JWKPublicKeyConverter.convert(KeyUtils.getInstance().getPublicKey(FileSystemUtilities.readBytesFromFile(ConfigLoader.getGovwayCfgKeys() + "/keyPair-test.rsa.publicKey.pem")), alias, true, false);
+				String fileName = ConfigLoader.getGovwayCfgKeys() + "/keyPair-test.rsa.publicKey.pem";
+				String keyPairAlgo = null;
+				if("govway-testsuite-govway-jwt-es".equals(hdrAtteso)) {
+					fileName = ConfigLoader.getGovwayCfgKeys() + "/keyPair-test-es256_public.pem";
+					keyPairAlgo = KeyUtils.ALGO_EC;
+				}
+				KeyUtils keyUtils = keyPairAlgo!=null ? KeyUtils.getInstance(keyPairAlgo) : KeyUtils.getInstance();
+				String jwks = JWKPublicKeyConverter.convert(keyUtils.getPublicKey(FileSystemUtilities.readBytesFromFile(fileName)), alias, true, false);
 				FileSystemUtilities.writeFile(f, jwks.getBytes());
 				file = f.getAbsolutePath();
 			}
@@ -594,7 +642,12 @@ public class ForwardInformazioniTest extends ConfigLoader {
 			}
 			else {
 			
-				props.put("rs.security.signature.algorithm","RS256");
+				if("govway-testsuite-govway-jwt-es".equals(hdrAtteso)) {
+					props.put("rs.security.signature.algorithm","ES256");
+				}
+				else {
+					props.put("rs.security.signature.algorithm","RS256");
+				}
 				props.put("rs.security.signature.include.cert","false");
 				props.put("rs.security.signature.include.key.id","true");
 				props.put("rs.security.signature.include.public.key","false");

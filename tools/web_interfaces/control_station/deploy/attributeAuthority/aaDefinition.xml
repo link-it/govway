@@ -350,6 +350,16 @@
 			<property name="policy.attributeAuthority.request.type" />
 		</item>
 
+		<item type="select" name="aaSignatureAlgorithm" label="Signature Algorithm" reloadOnChange="true">
+			<conditions and="true">
+				<condition and="false">
+					<equals name="aaRequestTypeWithPayload" value="jws"/>
+					<equals name="aaRequestTypeWithoutPayload" value="jws"/>
+				</condition>
+			</conditions>			
+		      	<property name="policy.attributeAuthority.request.jws.signature.algorithm" />
+		</item>
+
 		<subsection label="JWS KeyStore">
 
 			<conditions and="true">
@@ -442,10 +452,6 @@
 					<equals name="aaRequestTypeWithoutPayload" value="jws"/>
 				</condition>
 			</conditions>
-
-			<item type="select" name="aaSignatureAlgorithm" label="Signature Algorithm" reloadOnChange="true">
-			      	<property name="policy.attributeAuthority.request.jws.signature.algorithm" />
-			</item>
 
 			<item type="select" name="aaSignatureIncludeKid" label="Key Id (kid)" reloadOnChange="true" >
 				<values>

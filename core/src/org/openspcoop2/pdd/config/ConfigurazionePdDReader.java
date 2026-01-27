@@ -218,6 +218,7 @@ import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.cache.CacheType;
 import org.openspcoop2.utils.certificate.CertificateInfo;
+import org.openspcoop2.utils.certificate.KeyUtils;
 import org.openspcoop2.utils.certificate.KeystoreParams;
 import org.openspcoop2.utils.crypt.CryptConfig;
 import org.openspcoop2.utils.transport.TransportUtils;
@@ -5792,16 +5793,28 @@ public class ConfigurazionePdDReader {
 					if(truststoreParams.getPath().startsWith(JOSEUtils.HTTP_PROTOCOL) || truststoreParams.getPath().startsWith(JOSEUtils.HTTPS_PROTOCOL)) {
 						byte [] store = getStoreCertificatiTokenPolicy(policy, truststoreParams, log);
 						check = CertificateUtils.checkPublicKey(truststoreParams.getPath(), store, truststoreParams.getKeyPairAlgorithm(),
-								false, //addCertificateDetails,  
+								false, //addCertificateDetails,
 								separator, newLine);
+						if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck()) &&
+								(truststoreParams.getKeyPairAlgorithm()==null || KeyUtils.ALGO_RSA.equals(truststoreParams.getKeyPairAlgorithm()))) {
+							check = CertificateUtils.checkPublicKey(truststoreParams.getPath(), store, KeyUtils.ALGO_EC,
+									false, //addCertificateDetails,
+									separator, newLine);
+						}
 					}
 					else {
 						check = CertificateUtils.checkPublicKey(classpathSupported, truststoreParams.getPath(), truststoreParams.getKeyPairAlgorithm(),
-								false, //addCertificateDetails,  
+								false, //addCertificateDetails,
 								separator, newLine);
+						if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck()) &&
+								(truststoreParams.getKeyPairAlgorithm()==null || KeyUtils.ALGO_RSA.equals(truststoreParams.getKeyPairAlgorithm()))) {
+							check = CertificateUtils.checkPublicKey(classpathSupported, truststoreParams.getPath(), KeyUtils.ALGO_EC,
+									false, //addCertificateDetails,
+									separator, newLine);
+						}
 					}
 					if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
-						storeDetails = CertificateUtils.toStringPublicKey(truststoreParams, 
+						storeDetails = CertificateUtils.toStringPublicKey(truststoreParams,
 								separator, newLine);
 					}
 				}
@@ -6595,33 +6608,45 @@ public class ConfigurazionePdDReader {
 					if(keystoreParams.getPath().startsWith(JOSEUtils.HTTP_PROTOCOL) || keystoreParams.getPath().startsWith(JOSEUtils.HTTPS_PROTOCOL)) {
 						byte [] store = getStoreCertificatiTokenPolicy(policy, keystoreParams, log);
 						check = CertificateUtils.checkPublicKey(keystoreParams.getPath(), store, keystoreParams.getKeyPairAlgorithm(),
-								false, //addCertificateDetails,  
+								false, //addCertificateDetails,
 								separator, newLine);
+						if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck()) &&
+								(keystoreParams.getKeyPairAlgorithm()==null || KeyUtils.ALGO_RSA.equals(keystoreParams.getKeyPairAlgorithm()))) {
+							check = CertificateUtils.checkPublicKey(keystoreParams.getPath(), store, KeyUtils.ALGO_EC,
+									false, //addCertificateDetails,
+									separator, newLine);
+						}
 					}
 					else {
 						check = CertificateUtils.checkPublicKey(classpathSupported, keystoreParams.getPath(), keystoreParams.getKeyPairAlgorithm(),
-								false, //addCertificateDetails,  
+								false, //addCertificateDetails,
 								separator, newLine);
+						if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck()) &&
+								(keystoreParams.getKeyPairAlgorithm()==null || KeyUtils.ALGO_RSA.equals(keystoreParams.getKeyPairAlgorithm()))) {
+							check = CertificateUtils.checkPublicKey(classpathSupported, keystoreParams.getPath(), KeyUtils.ALGO_EC,
+									false, //addCertificateDetails,
+									separator, newLine);
+						}
 					}
 					if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
-						storeDetails = CertificateUtils.toStringPublicKey(keystoreParams, 
+						storeDetails = CertificateUtils.toStringPublicKey(keystoreParams,
 								separator, newLine);
 					}
 				}
 				else if(SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreParams.getType())) {
 					if(keystoreParams.getPath().startsWith(JOSEUtils.HTTP_PROTOCOL) || keystoreParams.getPath().startsWith(JOSEUtils.HTTPS_PROTOCOL)) {
 						byte [] store = getStoreCertificatiTokenPolicy(policy, keystoreParams, log);
-						check = CertificateUtils.checkTruststoreJWKs(keystoreParams.getPath(), new String(store), keystoreParams.getKeyAlias(), 
-								false, //addCertificateDetails,  
+						check = CertificateUtils.checkTruststoreJWKs(keystoreParams.getPath(), new String(store), keystoreParams.getKeyAlias(),
+								false, //addCertificateDetails,
 								separator, newLine);
 					}
 					else {
-						check = CertificateUtils.checkTruststoreJWKs(classpathSupported, keystoreParams.getPath(), keystoreParams.getKeyAlias(), 
-								false, //addCertificateDetails,  
+						check = CertificateUtils.checkTruststoreJWKs(classpathSupported, keystoreParams.getPath(), keystoreParams.getKeyAlias(),
+								false, //addCertificateDetails,
 								separator, newLine);
 					}
 					if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
-						storeDetails = CertificateUtils.toStringTruststoreJWKs(keystoreParams, 
+						storeDetails = CertificateUtils.toStringTruststoreJWKs(keystoreParams,
 								separator, newLine);
 					}
 				}
