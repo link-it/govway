@@ -37,18 +37,40 @@ public class AttributeAuthorityKeystoreECTest extends ConfigLoader {
 	
 	@Test
 	public void ecNoPassword() throws Exception {
-		test(API, "ecNoPassword");
+		test(API, "ecNoPassword", "TestAttributeAuthority-keyEC-NoPassword", true);
 	}
 	@Test
 	public void ecWithPassword() throws Exception {
-		test(API, "ecWithPassword");
+		test(API, "ecWithPassword", "TestAttributeAuthority-keyEC-WithPassword", true);
+	}
+	
+	
+	@Test
+	public void ecNoPasswordAudErrata() throws Exception {
+		test(API, "ecNoPassword", "TestAttributeAuthority-keyEC-NoPassword", false);
+	}
+	@Test
+	public void ecWithPasswordAudErrata() throws Exception {
+		test(API, "ecWithPassword", "TestAttributeAuthority-keyEC-WithPassword", false);
 	}
 		
 	
-	private void test(String api, String azione) throws Exception {
+	private void test(String api, String azione, String nomeAA, boolean audOk) throws Exception {
 		AAHeaderMap map = new AAHeaderMap();
+		
+		String msgErrore = null;
+		String tipoTest = "singleAA_authzContenuti";
+		if(audOk) {
+			map.httpHeaders.put("GovWay-TestSuite-AAExpectedAudience", map.httpHeaders.get("GovWay-TestSuite-AAAudience"));
+		}
+		else {
+			map.httpHeaders.put("GovWay-TestSuite-AAExpectedAudience", map.httpHeaders.get("GovWay-TestSuite-AAAudience")+"VALOREDIFFERENTE");
+			msgErrore = "Recupero attributi dall'Authority '"+nomeAA+"' fallito: Invalid audience";
+			tipoTest = RestTest.TIPO_TEST_VALIDITY_CHECK;
+		}
+		
 		map.applicativo="ApplicativoSoggettoInternoTestFruitore1";
 		RestTest._test(TipoServizio.EROGAZIONE, api, azione,
-				"singleAA_authzContenuti", null, map);
+				tipoTest, msgErrore, map);
 	}
 }
