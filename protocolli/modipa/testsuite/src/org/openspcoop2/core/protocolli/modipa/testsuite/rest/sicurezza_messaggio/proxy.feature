@@ -12740,12 +12740,12 @@ Scenario: isTest('dpop-expired')
 
     * java.lang.Thread.sleep(5000)
 
-    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/DemoNegoziazioneTokenDPoP-RS256-Redis/v1')
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/DemoNegoziazioneTokenDPoP-RS256-TTL5Secondi/v1')
     
     * match responseStatus == 401
     * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/dpop_duplicate.json')
     * match header GovWay-Transaction-ErrorType == 'TokenAuthenticationFailed'
-    * match header WWW-Authenticate == 'DPoP realm="ModI-NegoziazionePDND-Validazione-DPoP-RS256-Redis", error="invalid_dpop_proof", error_description="DPoP proof invalid"'
+    * match header WWW-Authenticate == 'DPoP realm="ModI-NegoziazionePDND-Validazione-DPoP-RS256-TTL5Secondi", error="invalid_dpop_proof", error_description="DPoP proof invalid"'
 
 ########################
 #       SUAP           #

@@ -510,4 +510,4 @@ And match header Agid-JWT-Signature == '#notpresent'
 
 Examples:
 | tipo-test | azione | policy-name |
-| DemoNegoziazioneTokenDPoP-RS256-CacheEnabled | base | ModI-NegoziazionePDND-Validazione-DPoP-RS256-Redis |
+| DemoNegoziazioneTokenDPoP-RS256-CacheEnabled | base | ModI-NegoziazionePDND-Validazione-DPoP-RS256-TTL5Secondi |

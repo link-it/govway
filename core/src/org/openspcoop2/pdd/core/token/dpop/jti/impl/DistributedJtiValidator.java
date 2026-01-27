@@ -138,8 +138,12 @@ public class DistributedJtiValidator implements IJtiValidator {
 	public boolean isAvailable() {
 		// Verifica disponibilità RedissonClient
 		try {
-			return RedissonManager.isRedissonClientInitialized() &&
-					RedissonManager.getRedissonClient(false) != null;
+			if(RedissonManager.isRedissonClientInitialized()) {
+				return true;
+			}
+			else {
+				return RedissonManager.getRedissonClient(true) != null;
+			}
 		} catch (Exception e) {
 			logger.warn("Redis not available for JTI validation: {}", e.getMessage(), e);
 			return false;
