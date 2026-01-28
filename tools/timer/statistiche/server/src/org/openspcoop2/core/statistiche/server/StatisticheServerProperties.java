@@ -34,7 +34,6 @@ import org.openspcoop2.monitor.engine.statistic.StatisticsForceIndexConfig;
 import org.openspcoop2.monitor.engine.statistic.StatisticsGroupByConfig;
 import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.UtilsException;
-import org.openspcoop2.utils.properties.PropertiesReader;
 import org.openspcoop2.utils.transport.http.HttpRequestConfig;
 import org.slf4j.Logger;
 
@@ -108,61 +107,79 @@ public class StatisticheServerProperties {
 	private volatile boolean timerPdndGenerazioneEnabled = false;
 	private volatile boolean timerPdndPubblicazioneEnabled = false;
 
-	private volatile long timerStatisticheOrarieIntervalloMinuti = 60;
-	private volatile long timerStatisticheGiornaliereIntervalloMinuti = 1440; // 24 ore
-	private volatile long timerStatisticheSettimanaliIntervalloMinuti = 10080; // 7 giorni
-	private volatile long timerStatisticheMensiliIntervalloMinuti = 43200; // 30 giorni
-	private volatile long timerPdndGenerazioneIntervalloMinuti = 60;
-	private volatile long timerPdndPubblicazioneIntervalloMinuti = 60;
+	// Intervalli in secondi (allineati con GovWay)
+	private volatile long timerStatisticheOrarieIntervalloSecondi = 300; // ogni 5 minuti
+	private volatile long timerStatisticheGiornaliereIntervalloSecondi = 1800; // ogni 30 minuti
+	private volatile long timerStatisticheSettimanaliIntervalloSecondi = 3600; // ogni ora
+	private volatile long timerStatisticheMensiliIntervalloSecondi = 7200; // ogni 2 ore
+	private volatile long timerPdndGenerazioneIntervalloSecondi = 3600; // ogni ora
+	private volatile long timerPdndPubblicazioneIntervalloSecondi = 3600; // ogni ora
 
-	private volatile long timerStatisticheOrarieDelayInizialeMinuti = 5;
-	private volatile long timerStatisticheGiornaliereDelayInizialeMinuti = 10;
-	private volatile long timerStatisticheSettimanaliDelayInizialeMinuti = 15;
-	private volatile long timerStatisticheMensiliDelayInizialeMinuti = 20;
-	private volatile long timerPdndGenerazioneDelayInizialeMinuti = 5;
-	private volatile long timerPdndPubblicazioneDelayInizialeMinuti = 10;
+	private volatile long timerStatisticheOrarieDelayInizialeSecondi = 60;
+	private volatile long timerStatisticheGiornaliereDelayInizialeSecondi = 120;
+	private volatile long timerStatisticheSettimanaliDelayInizialeSecondi = 180;
+	private volatile long timerStatisticheMensiliDelayInizialeSecondi = 240;
+	private volatile long timerPdndGenerazioneDelayInizialeSecondi = 300;
+	private volatile long timerPdndPubblicazioneDelayInizialeSecondi = 360;
 
-	// Configurazione Semaforo/Lock
+	// Configurazione Semaforo/Lock (allineata con GovWay)
+	// Le properties sono in SECONDI (tranne checkInterval e serializable che sono in ms)
+	// ma i getter restituiscono MILLISECONDI dove necessario
 	private volatile boolean semaphoreEnabled = true;
 	private String semaphoreNodeId = null;
 	private String semaphoreDatabaseType = null;
-	private volatile long semaphoreLockMaxLife = 30000; // 30 secondi
-	private volatile long semaphoreLockIdleTime = 30000; // 30 secondi
+	private volatile long semaphoreLockMaxLifeSeconds = 7200; // 2 ore (come GovWay)
+	private volatile long semaphoreLockIdleTimeSeconds = 600; // 10 minuti (come GovWay)
 	private volatile long semaphoreSerializableTimeWaitMs = 60000; // 60 secondi
 	private volatile int semaphoreSerializableNextIntervalTimeMs = 100;
-	private volatile long semaphoreLockAttesaAttiva = 60000; // 60 secondi
-	private volatile int semaphoreLockCheckInterval = 500; // 500 ms
+	private volatile long semaphoreLockAttesaAttivaSeconds = 90; // 90 secondi (come GovWay)
+	private volatile int semaphoreLockCheckIntervalMs = 50; // 50 ms (come GovWay)
 
-	private PropertiesReader props;
+	private StatisticheServerInstanceProperties props;
+	private Properties rawProperties;
+	private String confDirectory;
 
 
 	private StatisticheServerProperties(Logger log) throws UtilsException {
 
-		Properties pr = new Properties();
+		this.rawProperties = new Properties();
 		try {
 			InputStream is = StatisticheServerProperties.class.getResourceAsStream(StatisticheServerProperties.PROPERTIES_FILE);
 			if(is == null) {
 				throw new UtilsException("File '"+PROPERTIES_FILE+"' not found in classpath");
 			}
-			pr.load(is);
+			this.rawProperties.load(is);
 		} catch(UtilsException e) {
 			throw e;
 		} catch(Exception e) {
 			throw new UtilsException("Errore durante l'init delle properties: "+e.getMessage(), e);
 		}
-		this.props = new PropertiesReader(pr, true);
+
+		// Leggo la directory di configurazione (prima di creare InstanceProperties)
+		this.confDirectory = this.rawProperties.getProperty("confDirectory");
+		if(this.confDirectory != null) {
+			this.confDirectory = this.confDirectory.trim();
+			this.confDirectory = PropertiesEnvUtils.resolveGovWayEnvVariables(this.confDirectory);
+		}
+
+		// Creo InstanceProperties con supporto per file locali di override
+		this.props = new StatisticheServerInstanceProperties(this.rawProperties, log, this.confDirectory);
 
 		try {
-			PropertiesEnvUtils.checkRequiredEnvProperties(this.props.readProperties("env."), log, "statistiche-server");
+			PropertiesEnvUtils.checkRequiredEnvProperties(this.props.readPropertiesConvertEnvProperties("env."), log, "statistiche-server");
 		} catch(Exception e) {
 			throw new UtilsException("Errore durante l'init delle properties: "+e.getMessage(), e);
 		}
 
 		try {
-			this.statisticheGenerazioneForceIndexConfig = new StatisticsForceIndexConfig(pr);
+			this.statisticheGenerazioneForceIndexConfig = new StatisticsForceIndexConfig(this.rawProperties);
 		} catch(Exception e) {
 			throw new UtilsException(e.getMessage(), e);
 		}
+	}
+
+	public String getConfDirectory() {
+		return this.confDirectory;
 	}
 
 	public void initProperties() throws UtilsException {
@@ -189,7 +206,13 @@ public class StatisticheServerProperties {
 			this.pddMonitorFrameworkRepositoryJars = new File(tmp);
 		}
 
-		this.pdndTracingRequestConfig = new HttpRequestConfig("statistiche.pdnd.tracciamento", this.props);
+		this.pdndTracingRequestConfig = new HttpRequestConfig("statistiche.pdnd.tracciamento", key -> {
+			try {
+				return this.props.getValueConvertEnvProperties(key);
+			} catch (UtilsException e) {
+				return null;
+			}
+		});
 
 		String value = getProperty("statistiche.pdnd.tracciamento.soggetti.enabled", false);
 		if (value == null || StringUtils.isEmpty(value.trim())) {
@@ -237,19 +260,20 @@ public class StatisticheServerProperties {
 		this.timerPdndGenerazioneEnabled = this.getBooleanProperty("timer.pdnd.generazione.enabled", false);
 		this.timerPdndPubblicazioneEnabled = this.getBooleanProperty("timer.pdnd.pubblicazione.enabled", false);
 
-		this.timerStatisticheOrarieIntervalloMinuti = this.getLongProperty("timer.statistiche.orarie.intervalloMinuti", false, 60);
-		this.timerStatisticheGiornaliereIntervalloMinuti = this.getLongProperty("timer.statistiche.giornaliere.intervalloMinuti", false, 1440);
-		this.timerStatisticheSettimanaliIntervalloMinuti = this.getLongProperty("timer.statistiche.settimanali.intervalloMinuti", false, 10080);
-		this.timerStatisticheMensiliIntervalloMinuti = this.getLongProperty("timer.statistiche.mensili.intervalloMinuti", false, 43200);
-		this.timerPdndGenerazioneIntervalloMinuti = this.getLongProperty("timer.pdnd.generazione.intervalloMinuti", false, 60);
-		this.timerPdndPubblicazioneIntervalloMinuti = this.getLongProperty("timer.pdnd.pubblicazione.intervalloMinuti", false, 60);
+		// Intervalli in secondi (allineati con GovWay)
+		this.timerStatisticheOrarieIntervalloSecondi = this.getLongProperty("timer.statistiche.orarie.intervalloSecondi", false, 300);
+		this.timerStatisticheGiornaliereIntervalloSecondi = this.getLongProperty("timer.statistiche.giornaliere.intervalloSecondi", false, 1800);
+		this.timerStatisticheSettimanaliIntervalloSecondi = this.getLongProperty("timer.statistiche.settimanali.intervalloSecondi", false, 3600);
+		this.timerStatisticheMensiliIntervalloSecondi = this.getLongProperty("timer.statistiche.mensili.intervalloSecondi", false, 7200);
+		this.timerPdndGenerazioneIntervalloSecondi = this.getLongProperty("timer.pdnd.generazione.intervalloSecondi", false, 3600);
+		this.timerPdndPubblicazioneIntervalloSecondi = this.getLongProperty("timer.pdnd.pubblicazione.intervalloSecondi", false, 3600);
 
-		this.timerStatisticheOrarieDelayInizialeMinuti = this.getLongProperty("timer.statistiche.orarie.delayInizialeMinuti", false, 5);
-		this.timerStatisticheGiornaliereDelayInizialeMinuti = this.getLongProperty("timer.statistiche.giornaliere.delayInizialeMinuti", false, 10);
-		this.timerStatisticheSettimanaliDelayInizialeMinuti = this.getLongProperty("timer.statistiche.settimanali.delayInizialeMinuti", false, 15);
-		this.timerStatisticheMensiliDelayInizialeMinuti = this.getLongProperty("timer.statistiche.mensili.delayInizialeMinuti", false, 20);
-		this.timerPdndGenerazioneDelayInizialeMinuti = this.getLongProperty("timer.pdnd.generazione.delayInizialeMinuti", false, 5);
-		this.timerPdndPubblicazioneDelayInizialeMinuti = this.getLongProperty("timer.pdnd.pubblicazione.delayInizialeMinuti", false, 10);
+		this.timerStatisticheOrarieDelayInizialeSecondi = this.getLongProperty("timer.statistiche.orarie.delayInizialeSecondi", false, 60);
+		this.timerStatisticheGiornaliereDelayInizialeSecondi = this.getLongProperty("timer.statistiche.giornaliere.delayInizialeSecondi", false, 120);
+		this.timerStatisticheSettimanaliDelayInizialeSecondi = this.getLongProperty("timer.statistiche.settimanali.delayInizialeSecondi", false, 180);
+		this.timerStatisticheMensiliDelayInizialeSecondi = this.getLongProperty("timer.statistiche.mensili.delayInizialeSecondi", false, 240);
+		this.timerPdndGenerazioneDelayInizialeSecondi = this.getLongProperty("timer.pdnd.generazione.delayInizialeSecondi", false, 300);
+		this.timerPdndPubblicazioneDelayInizialeSecondi = this.getLongProperty("timer.pdnd.pubblicazione.delayInizialeSecondi", false, 360);
 
 		// Semaphore configuration
 		this.semaphoreEnabled = this.getBooleanProperty("semaphore.enabled", false);
@@ -263,19 +287,20 @@ public class StatisticheServerProperties {
 			}
 		}
 		this.semaphoreDatabaseType = this.getProperty("semaphore.databaseType", this.semaphoreEnabled);
-		this.semaphoreLockMaxLife = this.getLongProperty("semaphore.lock.maxLife", false, 30000);
-		this.semaphoreLockIdleTime = this.getLongProperty("semaphore.lock.idleTime", false, 30000);
+		// Lettura in secondi (come GovWay), i getter convertiranno in ms dove necessario
+		this.semaphoreLockMaxLifeSeconds = this.getLongProperty("semaphore.lock.maxLife", false, 7200);
+		this.semaphoreLockIdleTimeSeconds = this.getLongProperty("semaphore.lock.idleTime", false, 600);
 		this.semaphoreSerializableTimeWaitMs = this.getLongProperty("semaphore.serializable.timeWaitMs", false, 60000);
 		this.semaphoreSerializableNextIntervalTimeMs = (int) this.getLongProperty("semaphore.serializable.nextIntervalTimeMs", false, 100);
-		this.semaphoreLockAttesaAttiva = this.getLongProperty("semaphore.lock.attesaAttiva", false, 60000);
-		this.semaphoreLockCheckInterval = (int) this.getLongProperty("semaphore.lock.checkInterval", false, 500);
+		this.semaphoreLockAttesaAttivaSeconds = this.getLongProperty("semaphore.lock.attesaAttiva", false, 90);
+		this.semaphoreLockCheckIntervalMs = (int) this.getLongProperty("semaphore.lock.checkInterval", false, 50);
 	}
 
 	private String getProperty(String name, boolean required) throws UtilsException {
-		String tmp = this.props.getValue_convertEnvProperties(name);
+		String tmp = this.props.getValueConvertEnvProperties(name);
 		if(tmp == null) {
 			if(required) {
-				throw new UtilsException("Property '"+name+"' not found");
+				throw new UtilsException(String.format("Property '%s' not found", name));
 			}
 			else {
 				return null;
@@ -295,7 +320,7 @@ public class StatisticheServerProperties {
 			try {
 				return Boolean.parseBoolean(tmp);
 			} catch(Exception e) {
-				throw new UtilsException("Property '"+name+"' wrong boolean format: "+e.getMessage());
+				throw new UtilsException(String.format("Property '%s' wrong boolean format: %s", name, e.getMessage()));
 			}
 		}
 		else {
@@ -486,42 +511,42 @@ public class StatisticheServerProperties {
 		return this.timerPdndPubblicazioneEnabled;
 	}
 
-	public long getTimerStatisticheOrarieIntervalloMinuti() {
-		return this.timerStatisticheOrarieIntervalloMinuti;
+	public long getTimerStatisticheOrarieIntervalloSecondi() {
+		return this.timerStatisticheOrarieIntervalloSecondi;
 	}
-	public long getTimerStatisticheGiornaliereIntervalloMinuti() {
-		return this.timerStatisticheGiornaliereIntervalloMinuti;
+	public long getTimerStatisticheGiornaliereIntervalloSecondi() {
+		return this.timerStatisticheGiornaliereIntervalloSecondi;
 	}
-	public long getTimerStatisticheSettimanaliIntervalloMinuti() {
-		return this.timerStatisticheSettimanaliIntervalloMinuti;
+	public long getTimerStatisticheSettimanaliIntervalloSecondi() {
+		return this.timerStatisticheSettimanaliIntervalloSecondi;
 	}
-	public long getTimerStatisticheMensiliIntervalloMinuti() {
-		return this.timerStatisticheMensiliIntervalloMinuti;
+	public long getTimerStatisticheMensiliIntervalloSecondi() {
+		return this.timerStatisticheMensiliIntervalloSecondi;
 	}
-	public long getTimerPdndGenerazioneIntervalloMinuti() {
-		return this.timerPdndGenerazioneIntervalloMinuti;
+	public long getTimerPdndGenerazioneIntervalloSecondi() {
+		return this.timerPdndGenerazioneIntervalloSecondi;
 	}
-	public long getTimerPdndPubblicazioneIntervalloMinuti() {
-		return this.timerPdndPubblicazioneIntervalloMinuti;
+	public long getTimerPdndPubblicazioneIntervalloSecondi() {
+		return this.timerPdndPubblicazioneIntervalloSecondi;
 	}
 
-	public long getTimerStatisticheOrarieDelayInizialeMinuti() {
-		return this.timerStatisticheOrarieDelayInizialeMinuti;
+	public long getTimerStatisticheOrarieDelayInizialeSecondi() {
+		return this.timerStatisticheOrarieDelayInizialeSecondi;
 	}
-	public long getTimerStatisticheGiornaliereDelayInizialeMinuti() {
-		return this.timerStatisticheGiornaliereDelayInizialeMinuti;
+	public long getTimerStatisticheGiornaliereDelayInizialeSecondi() {
+		return this.timerStatisticheGiornaliereDelayInizialeSecondi;
 	}
-	public long getTimerStatisticheSettimanaliDelayInizialeMinuti() {
-		return this.timerStatisticheSettimanaliDelayInizialeMinuti;
+	public long getTimerStatisticheSettimanaliDelayInizialeSecondi() {
+		return this.timerStatisticheSettimanaliDelayInizialeSecondi;
 	}
-	public long getTimerStatisticheMensiliDelayInizialeMinuti() {
-		return this.timerStatisticheMensiliDelayInizialeMinuti;
+	public long getTimerStatisticheMensiliDelayInizialeSecondi() {
+		return this.timerStatisticheMensiliDelayInizialeSecondi;
 	}
-	public long getTimerPdndGenerazioneDelayInizialeMinuti() {
-		return this.timerPdndGenerazioneDelayInizialeMinuti;
+	public long getTimerPdndGenerazioneDelayInizialeSecondi() {
+		return this.timerPdndGenerazioneDelayInizialeSecondi;
 	}
-	public long getTimerPdndPubblicazioneDelayInizialeMinuti() {
-		return this.timerPdndPubblicazioneDelayInizialeMinuti;
+	public long getTimerPdndPubblicazioneDelayInizialeSecondi() {
+		return this.timerPdndPubblicazioneDelayInizialeSecondi;
 	}
 
 	// Semaphore getters
@@ -535,11 +560,13 @@ public class StatisticheServerProperties {
 	public String getSemaphoreDatabaseType() {
 		return this.semaphoreDatabaseType;
 	}
+	/** @return maxLife in secondi (per SemaphoreConfiguration) */
 	public long getSemaphoreLockMaxLife() {
-		return this.semaphoreLockMaxLife;
+		return this.semaphoreLockMaxLifeSeconds;
 	}
+	/** @return idleTime in secondi (per SemaphoreConfiguration) */
 	public long getSemaphoreLockIdleTime() {
-		return this.semaphoreLockIdleTime;
+		return this.semaphoreLockIdleTimeSeconds;
 	}
 	public long getSemaphoreSerializableTimeWaitMs() {
 		return this.semaphoreSerializableTimeWaitMs;
@@ -547,10 +574,12 @@ public class StatisticheServerProperties {
 	public int getSemaphoreSerializableNextIntervalTimeMs() {
 		return this.semaphoreSerializableNextIntervalTimeMs;
 	}
+	/** @return attesaAttiva in millisecondi (per ciclo di acquisizione lock) */
 	public long getSemaphoreLockAttesaAttiva() {
-		return this.semaphoreLockAttesaAttiva;
+		return this.semaphoreLockAttesaAttivaSeconds * 1000; // converti in ms
 	}
+	/** @return checkInterval in millisecondi */
 	public int getSemaphoreLockCheckInterval() {
-		return this.semaphoreLockCheckInterval;
+		return this.semaphoreLockCheckIntervalMs;
 	}
 }

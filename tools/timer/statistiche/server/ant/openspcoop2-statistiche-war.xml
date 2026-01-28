@@ -11,6 +11,13 @@
           </classpath>
 	</taskdef>
 
+	<!-- Protocolli abilitati (default: solo trasparente) -->
+	<property name="protocollo_trasparente" value="true"/>
+	<property name="protocollo_modipa" value="true"/>
+	<property name="protocollo_spcoop" value="false"/>
+	<property name="protocollo_as4" value="false"/>
+	<property name="protocollo_sdi" value="false"/>
+
 	<target name="-war_statistiche">
 
 		<if>
@@ -72,16 +79,24 @@
 				<include name="openspcoop2_utils_*.jar"/>
 				<!-- Monitor: StatisticsConfig, StatisticsLibrary -->
 				<include name="openspcoop2_monitor_*.jar"/>
-				<!-- Protocol: ProtocolFactoryManager, Costanti -->
+				<include name="openspcoop2_monitor-api_*.jar"/>
+				<!-- Protocol: ProtocolFactoryManager, ConfigurazionePdD -->
 				<include name="openspcoop2_protocol_*.jar"/>
-				<!-- Protocol-API: ConfigurazionePdD -->
 				<include name="openspcoop2_protocol-api_*.jar"/>
 				<!-- PDD: BYOKMapProperties, DynamicInfo/Utils -->
 				<include name="openspcoop2_pdd_*.jar"/>
+				<!-- Message: OpenSPCoop2Message (dipendenza transitiva di pdd.core.dynamic) -->
+				<include name="openspcoop2_message_*.jar"/>
 				<!-- Security: HSMManager, BYOKManager (transitive) -->
 				<include name="openspcoop2_security_*.jar"/>
 				<!-- Generic-Project: dipendenza transitiva di core -->
 				<include name="openspcoop2_generic-project_*.jar"/>
+				<!-- Schemi XSD: protocolManifest.xsd e altri schemi necessari -->
+				<include name="openspcoop2_schemi-xsd_*.jar"/>
+			</lib>
+			<!-- Monitor SDK: StatisticException e altre classi SDK -->
+			<lib dir="${openspcoop2.dist}/monitor-api">
+				<include name="openspcoop2_monitor-sdk_*.jar"/>
 			</lib>
 			<!-- JAR compilato del progetto -->
 			<lib dir="${dist_statistiche}">
@@ -93,15 +108,23 @@
 				<include name="${xml_apis_jar}"/>
 				<include name="${xalan_jar}"/>
 				<include name="${xalan_serializer_jar}"/>
+				<!-- joda-time: dipendenza di DateUtils per semaphore -->
+				<include name="joda-time-*.jar"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/commons">
+				<include name="commons-lang-*.jar"/>
 				<include name="commons-lang3-*.jar"/>
 				<include name="commons-io-*.jar"/>
+				<include name="commons-collections-3*.jar"/>
+				<include name="commons-collections4-*.jar"/>
 				<include name="${commons_logging_jar}"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/log">
 				<include name="slf4j-api-*.jar"/>
 				<include name="log4j*.jar"/>
+			</lib>
+			<lib dir="${openspcoop2.lib}/saaj">
+				<include name="saaj-impl-*.jar"/>
 			</lib>
 
 			<classes dir="${build_statistiche}/properties">
@@ -109,6 +132,63 @@
 			</classes>
 
 		</war>
+
+		<!-- Aggiunta JAR protocolli selezionati (da openspcoop2_jars = /dist) -->
+		<!-- trasparente -->
+		<if>
+			<istrue value="${protocollo_trasparente}" />
+			<then>
+				<jar destfile="${dist_statistiche}/govwayStatistiche.war" update="true">
+					<zipfileset dir="${openspcoop2_jars}" prefix="WEB-INF/lib">
+						<include name="openspcoop2_trasparente-protocol-*.jar"/>
+					</zipfileset>
+				</jar>
+			</then>
+		</if>
+		<!-- modipa -->
+		<if>
+			<istrue value="${protocollo_modipa}" />
+			<then>
+				<jar destfile="${dist_statistiche}/govwayStatistiche.war" update="true">
+					<zipfileset dir="${openspcoop2_jars}" prefix="WEB-INF/lib">
+						<include name="openspcoop2_modipa-protocol-*.jar"/>
+					</zipfileset>
+				</jar>
+			</then>
+		</if>
+		<!-- spcoop -->
+		<if>
+			<istrue value="${protocollo_spcoop}" />
+			<then>
+				<jar destfile="${dist_statistiche}/govwayStatistiche.war" update="true">
+					<zipfileset dir="${openspcoop2_jars}" prefix="WEB-INF/lib">
+						<include name="openspcoop2_spcoop-protocol-*.jar"/>
+					</zipfileset>
+				</jar>
+			</then>
+		</if>
+		<!-- as4 -->
+		<if>
+			<istrue value="${protocollo_as4}" />
+			<then>
+				<jar destfile="${dist_statistiche}/govwayStatistiche.war" update="true">
+					<zipfileset dir="${openspcoop2_jars}" prefix="WEB-INF/lib">
+						<include name="openspcoop2_as4-protocol-*.jar"/>
+					</zipfileset>
+				</jar>
+			</then>
+		</if>
+		<!-- sdi -->
+		<if>
+			<istrue value="${protocollo_sdi}" />
+			<then>
+				<jar destfile="${dist_statistiche}/govwayStatistiche.war" update="true">
+					<zipfileset dir="${openspcoop2_jars}" prefix="WEB-INF/lib">
+						<include name="openspcoop2_sdi-protocol-*.jar"/>
+					</zipfileset>
+				</jar>
+			</then>
+		</if>
 
 	</target>
 

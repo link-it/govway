@@ -28,7 +28,9 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import org.openspcoop2.core.commons.dao.DAOFactory;
+import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
 import org.openspcoop2.core.statistiche.constants.TipoIntervalloStatistico;
+import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.monitor.engine.statistic.StatisticsConfig;
 import org.openspcoop2.monitor.engine.statistic.StatisticsLibrary;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
@@ -53,10 +55,7 @@ import org.slf4j.Logger;
  */
 public class StatisticheServerExecutor {
 
-	private static final String SEMAPHORE_APPLICATIVE_ID_PREFIX = "StatisticheServer_";
-
 	private final Logger logCore;
-	private final Logger logSql;
 	private final StatisticheServerProperties serverProperties;
 
 	private ScheduledExecutorService scheduler;
@@ -72,9 +71,8 @@ public class StatisticheServerExecutor {
 	private Map<TipoIntervalloStatistico, Semaphore> semaphores;
 	private Map<TipoIntervalloStatistico, InfoStatistics> semaphoreStatistics;
 
-	public StatisticheServerExecutor(Logger logCore, Logger logSql, StatisticheServerProperties serverProperties) {
-		this.logCore = logCore;
-		this.logSql = logSql;
+	public StatisticheServerExecutor(StatisticheServerProperties serverProperties) {
+		this.logCore = StatisticheServerLogger.getInstance().getLoggerServer();
 		this.serverProperties = serverProperties;
 		this.semaphores = new EnumMap<>(TipoIntervalloStatistico.class);
 		this.semaphoreStatistics = new EnumMap<>(TipoIntervalloStatistico.class);
@@ -101,48 +99,48 @@ public class StatisticheServerExecutor {
 		if(this.serverProperties.isTimerStatisticheOrarieEnabled()) {
 			this.timerStatisticheOrarie = scheduleTimer(
 				TipoIntervalloStatistico.STATISTICHE_ORARIE,
-				this.serverProperties.getTimerStatisticheOrarieDelayInizialeMinuti(),
-				this.serverProperties.getTimerStatisticheOrarieIntervalloMinuti()
+				this.serverProperties.getTimerStatisticheOrarieDelayInizialeSecondi(),
+				this.serverProperties.getTimerStatisticheOrarieIntervalloSecondi()
 			);
 		}
 
 		if(this.serverProperties.isTimerStatisticheGiornaliereEnabled()) {
 			this.timerStatisticheGiornaliere = scheduleTimer(
 				TipoIntervalloStatistico.STATISTICHE_GIORNALIERE,
-				this.serverProperties.getTimerStatisticheGiornaliereDelayInizialeMinuti(),
-				this.serverProperties.getTimerStatisticheGiornaliereIntervalloMinuti()
+				this.serverProperties.getTimerStatisticheGiornaliereDelayInizialeSecondi(),
+				this.serverProperties.getTimerStatisticheGiornaliereIntervalloSecondi()
 			);
 		}
 
 		if(this.serverProperties.isTimerStatisticheSettimanaliEnabled()) {
 			this.timerStatisticheSettimanali = scheduleTimer(
 				TipoIntervalloStatistico.STATISTICHE_SETTIMANALI,
-				this.serverProperties.getTimerStatisticheSettimanaliDelayInizialeMinuti(),
-				this.serverProperties.getTimerStatisticheSettimanaliIntervalloMinuti()
+				this.serverProperties.getTimerStatisticheSettimanaliDelayInizialeSecondi(),
+				this.serverProperties.getTimerStatisticheSettimanaliIntervalloSecondi()
 			);
 		}
 
 		if(this.serverProperties.isTimerStatisticheMensiliEnabled()) {
 			this.timerStatisticheMensili = scheduleTimer(
 				TipoIntervalloStatistico.STATISTICHE_MENSILI,
-				this.serverProperties.getTimerStatisticheMensiliDelayInizialeMinuti(),
-				this.serverProperties.getTimerStatisticheMensiliIntervalloMinuti()
+				this.serverProperties.getTimerStatisticheMensiliDelayInizialeSecondi(),
+				this.serverProperties.getTimerStatisticheMensiliIntervalloSecondi()
 			);
 		}
 
 		if(this.serverProperties.isTimerPdndGenerazioneEnabled()) {
 			this.timerPdndGenerazione = scheduleTimer(
 				TipoIntervalloStatistico.PDND_GENERAZIONE_TRACCIAMENTO,
-				this.serverProperties.getTimerPdndGenerazioneDelayInizialeMinuti(),
-				this.serverProperties.getTimerPdndGenerazioneIntervalloMinuti()
+				this.serverProperties.getTimerPdndGenerazioneDelayInizialeSecondi(),
+				this.serverProperties.getTimerPdndGenerazioneIntervalloSecondi()
 			);
 		}
 
 		if(this.serverProperties.isTimerPdndPubblicazioneEnabled()) {
 			this.timerPdndPubblicazione = scheduleTimer(
 				TipoIntervalloStatistico.PDND_PUBBLICAZIONE_TRACCIAMENTO,
-				this.serverProperties.getTimerPdndPubblicazioneDelayInizialeMinuti(),
-				this.serverProperties.getTimerPdndPubblicazioneIntervalloMinuti()
+				this.serverProperties.getTimerPdndPubblicazioneDelayInizialeSecondi(),
+				this.serverProperties.getTimerPdndPubblicazioneIntervalloSecondi()
 			);
 		}
 
@@ -197,7 +195,7 @@ public class StatisticheServerExecutor {
 		try {
 			TipiDatabase databaseType = TipiDatabase.toEnumConstant(this.serverProperties.getSemaphoreDatabaseType());
 
-			// Crea configurazione comune
+			// Crea configurazione comune (allineata con GestoreMessaggi.newSemaphoreConfiguration)
 			SemaphoreConfiguration config = new SemaphoreConfiguration();
 			config.setIdNode(this.serverProperties.getSemaphoreNodeId());
 			config.setMaxLife(this.serverProperties.getSemaphoreLockMaxLife());
@@ -205,17 +203,19 @@ public class StatisticheServerExecutor {
 			config.setSerializableTimeWaitMs(this.serverProperties.getSemaphoreSerializableTimeWaitMs());
 			config.setSerializableNextIntervalTimeMs(this.serverProperties.getSemaphoreSerializableNextIntervalTimeMs());
 			config.setEmitEvent(false);
+			config.setSerializableLevel(false); // come in GestoreMessaggi
 
 			// Crea un semaforo per ogni tipo di statistica abilitata
 			for(TipoIntervalloStatistico tipo : TipoIntervalloStatistico.values()) {
 				if(isTimerEnabledForType(tipo)) {
-					String applicativeId = SEMAPHORE_APPLICATIVE_ID_PREFIX + tipo.getValue();
+					// Usa gli stessi ID lock della PDD (TipoLock.getLockStatistico)
+					String lockId = getLockIdForStatistica(tipo);
 					InfoStatistics infoStats = new InfoStatistics();
-					Semaphore semaphore = new Semaphore(infoStats, SemaphoreMapping.newInstance(applicativeId),
+					Semaphore semaphore = new Semaphore(infoStats, SemaphoreMapping.newInstance(lockId),
 							config, databaseType, this.logCore);
 					this.semaphores.put(tipo, semaphore);
 					this.semaphoreStatistics.put(tipo, infoStats);
-					this.logCore.info("Semaforo creato per {}", tipo.getValue());
+					this.logCore.info("Semaforo creato per {} con lockId={}", tipo.getValue(), lockId);
 				}
 			}
 			this.logCore.info("Inizializzazione semafori completata");
@@ -225,6 +225,19 @@ public class StatisticheServerExecutor {
 			this.semaphores.clear();
 			this.semaphoreStatistics.clear();
 		}
+	}
+
+	/**
+	 * Genera l'ID del lock per il tipo di statistica.
+	 * IMPORTANTE: Deve essere identico a TipoLock.getLockStatistico() della PDD
+	 * per garantire il lock distribuito tra PDD e WAR statistiche.
+	 */
+	private String getLockIdForStatistica(TipoIntervalloStatistico tipo) {
+		if(TipoIntervalloStatistico.PDND_GENERAZIONE_TRACCIAMENTO.equals(tipo) ||
+		   TipoIntervalloStatistico.PDND_PUBBLICAZIONE_TRACCIAMENTO.equals(tipo)) {
+			return tipo.getValue();
+		}
+		return "Generazione" + tipo.getValue();
 	}
 
 	private boolean isTimerEnabledForType(TipoIntervalloStatistico tipo) {
@@ -247,14 +260,14 @@ public class StatisticheServerExecutor {
 	}
 
 	private ScheduledFuture<?> scheduleTimer(TipoIntervalloStatistico tipo, long delayMinuti, long intervalloMinuti) {
-		this.logCore.info("Scheduling timer {} - delay iniziale: {} minuti, intervallo: {} minuti",
+		this.logCore.info("Scheduling timer {} - delay iniziale: {} secondi, intervallo: {} secondi",
 			tipo.getValue(), delayMinuti, intervalloMinuti);
 
 		return this.scheduler.scheduleAtFixedRate(
 			() -> eseguiJob(tipo),
 			delayMinuti,
 			intervalloMinuti,
-			TimeUnit.MINUTES
+			TimeUnit.SECONDS
 		);
 	}
 
@@ -267,16 +280,27 @@ public class StatisticheServerExecutor {
 
 	private void eseguiJob(TipoIntervalloStatistico tipoStatistica) {
 		String tipoStr = tipoStatistica.getValue();
+
+		// Ottieni istanza singleton del logger
+		StatisticheServerLogger serverLogger = StatisticheServerLogger.getInstance();
+
+		// Logger del server per messaggi generali
 		this.logCore.info("Avvio job statistiche: {}", tipoStr);
+
 
 		StatisticsLibrary sLibrary = null;
 		Connection connection = null;
+		StatisticheServerDBManager dbManager = null;
 		boolean lockAcquired = false;
 		Semaphore semaphore = this.semaphores.get(tipoStatistica);
 
 		try {
-			// Crea configurazione statistiche
-			StatisticsConfig statisticsConfig = createStatisticsConfig(tipoStatistica);
+			boolean debug = this.serverProperties.isStatisticheGenerazioneDebug();
+			Logger logStatistica = serverLogger.getLoggerStatistiche(tipoStatistica, debug);
+			Logger logStatisticaSql = serverLogger.getLoggerStatisticheSql(tipoStatistica, debug);
+			
+			// Crea configurazione statistiche con i logger specifici
+			StatisticsConfig statisticsConfig = createStatisticsConfig(tipoStatistica, logStatistica, logStatisticaSql);
 
 			// Verifica se il job è abilitato (per PDND verifica protocollo ModI)
 			if(!isJobEnabled(tipoStatistica, statisticsConfig)) {
@@ -284,39 +308,46 @@ public class StatisticheServerExecutor {
 				return;
 			}
 
-			// Crea ServiceManagers
-			DAOFactory daoFactory = DAOFactory.getInstance(this.logSql);
+			// Ottiene connessione dal DBManager
+			dbManager = StatisticheServerDBManager.getInstance(logStatisticaSql);
+			connection = dbManager.getConnection();
+			if(connection == null) {
+				throw new Exception("Connessione al database non disponibile");
+			}
+
+			// Acquisizione lock se semaforo abilitato
+			if(semaphore != null) {
+				connection.setAutoCommit(true);
+				lockAcquired = acquireLock(semaphore, connection, tipoStr);
+				if(!lockAcquired) {
+					this.logCore.info("Lock non acquisito per {}, job già in esecuzione su altro nodo", tipoStr);
+					return;
+				}
+				logStatistica.debug("Lock acquisito per {}", tipoStr);
+			}
+
+			// Crea ServiceManagers passando la connessione
+			DAOFactory daoFactory = DAOFactory.getInstance(logStatisticaSql);
+			DAOFactoryProperties daoFactoryProperties = DAOFactoryProperties.getInstance(logStatisticaSql);
+
+			ServiceManagerProperties smPropertiesStatistiche =
+				daoFactoryProperties.getServiceManagerProperties(org.openspcoop2.core.statistiche.utils.ProjectInfo.getInstance());
+			smPropertiesStatistiche.setShowSql(this.serverProperties.isStatisticheGenerazioneDebug());
+
+			ServiceManagerProperties smPropertiesTransazioni =
+				daoFactoryProperties.getServiceManagerProperties(org.openspcoop2.core.transazioni.utils.ProjectInfo.getInstance());
+			smPropertiesTransazioni.setShowSql(this.serverProperties.isStatisticheGenerazioneDebug());
 
 			org.openspcoop2.core.statistiche.dao.IServiceManager statisticheSM =
 				(org.openspcoop2.core.statistiche.dao.IServiceManager)
 					daoFactory.getServiceManager(org.openspcoop2.core.statistiche.utils.ProjectInfo.getInstance(),
-						this.logSql);
+						connection, smPropertiesStatistiche, logStatisticaSql);
 
 			org.openspcoop2.core.transazioni.dao.IServiceManager transazioniSM =
 				(org.openspcoop2.core.transazioni.dao.IServiceManager)
 					daoFactory.getServiceManager(org.openspcoop2.core.transazioni.utils.ProjectInfo.getInstance(),
-						this.logSql);
+						connection, smPropertiesTransazioni, logStatisticaSql);
 
-			
-			if (statisticheSM instanceof org.openspcoop2.core.statistiche.dao.jdbc.JDBCLimitedServiceManager) {
-				connection = ((org.openspcoop2.core.statistiche.dao.jdbc.JDBCLimitedServiceManager) statisticheSM)
-						.getConnection();
-			}
-			
-			// Acquisizione lock se semaforo abilitato
-			
-			if(semaphore != null) {
-				if(connection != null) {
-					connection.setAutoCommit(true);
-					lockAcquired = acquireLock(semaphore, connection, tipoStr);
-					if(!lockAcquired) {
-						this.logCore.info("Lock non acquisito per {}, job già in esecuzione su altro nodo", tipoStr);
-						return;
-					}
-					this.logCore.debug("Lock acquisito per {}", tipoStr);
-				}
-			}
-			
 			org.openspcoop2.monitor.engine.config.statistiche.dao.IServiceManager pluginsStatisticheSM = null;
 			org.openspcoop2.core.plugins.dao.IServiceManager pluginsBaseSM = null;
 			org.openspcoop2.core.commons.search.dao.IServiceManager utilsSM = null;
@@ -326,26 +357,42 @@ public class StatisticheServerExecutor {
 					|| statisticsConfig.isPdndTracciamentoGenerazione()
 					|| statisticsConfig.isPdndTracciamentoPubblicazione()) {
 
+				ServiceManagerProperties smPropertiesPluginsStatistiche =
+					daoFactoryProperties.getServiceManagerProperties(org.openspcoop2.monitor.engine.config.statistiche.utils.ProjectInfo.getInstance());
+				smPropertiesPluginsStatistiche.setShowSql(this.serverProperties.isStatisticheGenerazioneDebug());
+
+				ServiceManagerProperties smPropertiesPluginsBase =
+					daoFactoryProperties.getServiceManagerProperties(org.openspcoop2.core.plugins.utils.ProjectInfo.getInstance());
+				smPropertiesPluginsBase.setShowSql(this.serverProperties.isStatisticheGenerazioneDebug());
+
+				ServiceManagerProperties smPropertiesUtils =
+					daoFactoryProperties.getServiceManagerProperties(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
+				smPropertiesUtils.setShowSql(this.serverProperties.isStatisticheGenerazioneDebug());
+
 				pluginsStatisticheSM = (org.openspcoop2.monitor.engine.config.statistiche.dao.IServiceManager)
 					daoFactory.getServiceManager(
 						org.openspcoop2.monitor.engine.config.statistiche.utils.ProjectInfo.getInstance(),
-							this.logSql);
+							connection, smPropertiesPluginsStatistiche, logStatisticaSql);
 
 				pluginsBaseSM = (org.openspcoop2.core.plugins.dao.IServiceManager)
 					daoFactory.getServiceManager(
 						org.openspcoop2.core.plugins.utils.ProjectInfo.getInstance(),
-							this.logSql);
+							connection, smPropertiesPluginsBase, logStatisticaSql);
 
 				utilsSM = (org.openspcoop2.core.commons.search.dao.IServiceManager)
 					daoFactory.getServiceManager(
 						org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance(),
-							this.logSql);
+							connection, smPropertiesUtils, logStatisticaSql);
 
 				if(this.serverProperties.isAnalisiTransazioniCustom()) {
+					ServiceManagerProperties smPropertiesPluginsTransazioni =
+						daoFactoryProperties.getServiceManagerProperties(org.openspcoop2.monitor.engine.config.transazioni.utils.ProjectInfo.getInstance());
+					smPropertiesPluginsTransazioni.setShowSql(this.serverProperties.isStatisticheGenerazioneDebug());
+
 					pluginsTransazioniSM = (org.openspcoop2.monitor.engine.config.transazioni.dao.IServiceManager)
 						daoFactory.getServiceManager(
 							org.openspcoop2.monitor.engine.config.transazioni.utils.ProjectInfo.getInstance(),
-								this.logSql);
+								connection, smPropertiesPluginsTransazioni, logStatisticaSql);
 				}
 			}
 
@@ -377,7 +424,8 @@ public class StatisticheServerExecutor {
 			this.logCore.info("Job statistiche {} completato con successo", tipoStr);
 
 		} catch(Exception e) {
-			this.logCore.error("Errore durante esecuzione job statistiche " + tipoStr + ": " + e.getMessage(), e);
+			Logger logStatisticaError = serverLogger.getLoggerStatistiche(tipoStatistica, false);
+			logStatisticaError.error("Errore durante esecuzione job statistiche " + tipoStr + ": " + e.getMessage(), e);
 		} finally {
 			// Rilascia lock
 			if(lockAcquired && semaphore != null && connection != null) {
@@ -385,16 +433,13 @@ public class StatisticheServerExecutor {
 					releaseLock(semaphore, connection, tipoStr);
 					this.logCore.debug("Lock rilasciato per {}", tipoStr);
 				} catch(Exception e) {
-					this.logCore.error("Errore durante rilascio lock per " + tipoStr + ": " + e.getMessage(), e);
+					Logger logStatisticaError = serverLogger.getLoggerStatistiche(tipoStatistica, false);
+					logStatisticaError.error("Errore durante rilascio lock per " + tipoStr + ": " + e.getMessage(), e);
 				}
 			}
-			// Chiudi connessione
-			if(connection != null) {
-				try {
-					connection.close();
-				} catch(Exception e) {
-					this.logCore.error("Errore durante chiusura connessione: " + e.getMessage(), e);
-				}
+			// Rilascia connessione tramite DBManager
+			if(dbManager != null && connection != null) {
+				dbManager.releaseConnection(connection);
 			}
 			// Chiudi library
 			if(sLibrary != null) {
@@ -435,11 +480,12 @@ public class StatisticheServerExecutor {
 		}
 	}
 
-	private StatisticsConfig createStatisticsConfig(TipoIntervalloStatistico tipoStatistica) throws Exception {
+	private StatisticsConfig createStatisticsConfig(TipoIntervalloStatistico tipoStatistica,
+			Logger logStatistica, Logger logStatisticaSql) throws Exception {
 		StatisticsConfig statisticsConfig = new StatisticsConfig(false);
 
-		statisticsConfig.setLogCore(this.logCore);
-		statisticsConfig.setLogSql(this.logSql);
+		statisticsConfig.setLogCore(logStatistica);
+		statisticsConfig.setLogSql(logStatisticaSql);
 		statisticsConfig.setPdndTracciamentoRequestConfig(this.serverProperties.getPdndTracingRequestConfig());
 		statisticsConfig.setPdndTracciamentoSoggettiEnabled(this.serverProperties.getPdndTracingSoggettiEnabled());
 		statisticsConfig.setPdndTracciamentoSoggettiDisabled(this.serverProperties.isPdndTracingSoggettiDisabled());

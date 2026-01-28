@@ -20,6 +20,7 @@
 package org.openspcoop2.core.statistiche.server;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,11 +37,16 @@ import org.openspcoop2.pdd.core.dynamic.DynamicInfo;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
+import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.utils.Costanti;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.byok.BYOKManager;
 import org.openspcoop2.utils.certificate.hsm.HSMManager;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
+import org.openspcoop2.utils.properties.CollectionProperties;
 import org.openspcoop2.utils.properties.MapProperties;
+import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.security.ProviderUtils;
 import org.slf4j.Logger;
@@ -58,9 +64,10 @@ public class StatisticheServletListener implements ServletContextListener {
 
 	private static final String LOGGER_PREFIX = "govway.statistiche.server";
 	private static final String LOG4J_PROPERTIES = "/statistiche-server.log4j2.properties";
+	private static final String LOG4J_PROPERTIES_LOCAL = "/statistiche-server_local.log4j2.properties";
+	private static final String LOG4J_PROPERTIES_LOCAL_VARIABLE = "STATISTICHE_SERVER_LOG_PROPERTIES";
 
 	private Logger logCore = null;
-	private Logger logSql = null;
 	private StatisticheServerExecutor executor = null;
 
 	@Override
@@ -99,11 +106,10 @@ public class StatisticheServletListener implements ServletContextListener {
 			// Aggiorna logger se debug abilitato
 			if(serverProperties.isStatisticheGenerazioneDebug()) {
 				this.logCore = LoggerWrapperFactory.getLogger(LOGGER_PREFIX);
-				this.logSql = LoggerWrapperFactory.getLogger(LOGGER_PREFIX + ".sql");
 			}
 
 			// Avvia esecutor
-			this.executor = new StatisticheServerExecutor(this.logCore, this.logSql, serverProperties);
+			this.executor = new StatisticheServerExecutor(serverProperties);
 			this.executor.start();
 
 			this.logCore.info("Servizio statistiche inizializzato correttamente");
@@ -112,7 +118,7 @@ public class StatisticheServletListener implements ServletContextListener {
 			String msg = "Errore durante l'inizializzazione del servizio statistiche: " + e.getMessage();
 			if(this.logCore != null)
 				this.logCore.error(msg, e);
-			throw new RuntimeException("Inizializzazione servizio statistiche fallita", e);
+			throw new IllegalStateException("Inizializzazione servizio statistiche fallita", e);
 		}
 	}
 
@@ -139,22 +145,48 @@ public class StatisticheServletListener implements ServletContextListener {
 	}
 
 
-	private void initLogging() throws Exception {
+	private void initLogging() throws IllegalStateException, IOException, UtilsException {
+		// Carica properties di base dal classpath
 		Properties props = new Properties();
 		try(InputStream is = StatisticheServletListener.class.getResourceAsStream(LOG4J_PROPERTIES)) {
 			if(is == null) {
-				throw new Exception("File '"+LOG4J_PROPERTIES+"' not found in classpath");
+				throw new IllegalStateException("File '"+LOG4J_PROPERTIES+"' not found in classpath");
 			}
 			props.load(is);
-			PropertiesEnvUtils.resolveGovWayEnvVariables(props);
-			LoggerWrapperFactory.setDefaultConsoleLogConfiguration(Level.ERROR);
-			LoggerWrapperFactory.setLogConfiguration(props);
-			this.logCore = LoggerWrapperFactory.getLogger(LOGGER_PREFIX + ".error");
-			this.logSql = LoggerWrapperFactory.getLogger(LOGGER_PREFIX + ".sql.error");
 		}
+
+		// Cerca file locale di override (stesso ordine di ricerca delle properties)
+		// 1. Variabile sistema/java STATISTICHE_SERVER_LOG_PROPERTIES
+		// 2. OPENSPCOOP2_LOCAL_HOME/statistiche-server.log4j2.local.properties
+		// 3. confDirectory/statistiche-server.log4j2.local.properties
+		CollectionProperties localProps = PropertiesUtilities.searchLocalImplementation(
+			Costanti.OPENSPCOOP2_LOCAL_HOME,
+			LoggerWrapperFactory.getLogger(StatisticheServletListener.class),
+			LOG4J_PROPERTIES_LOCAL_VARIABLE,
+			LOG4J_PROPERTIES_LOCAL,
+			null, // confDirectory non ancora disponibile, sarà usato OPENSPCOOP2_LOCAL_HOME
+			true
+		);
+
+		// Sovrascrivi con properties locali se trovate
+		if(localProps != null && localProps.size() > 0) {
+			java.util.Enumeration<?> en = localProps.propertyNames();
+			while(en.hasMoreElements()) {
+				String key = (String) en.nextElement();
+				String value = localProps.get(key);
+				if(value != null) {
+					props.setProperty(key, value);
+				}
+			}
+		}
+
+		PropertiesEnvUtils.resolveGovWayEnvVariables(props);
+		LoggerWrapperFactory.setDefaultConsoleLogConfiguration(Level.ERROR);
+		LoggerWrapperFactory.setLogConfiguration(props);
+		this.logCore = LoggerWrapperFactory.getLogger(LOGGER_PREFIX + ".error");
 	}
 
-	private void initMapProperties(StatisticheServerProperties serverProperties) throws Exception {
+	private void initMapProperties(StatisticheServerProperties serverProperties) throws UtilsException {
 		String mapConfig = serverProperties.getEnvMapConfig();
 		if(StringUtils.isNotEmpty(mapConfig)) {
 			this.logCore.info("Inizializzazione environment in corso...");
@@ -171,7 +203,7 @@ public class StatisticheServletListener implements ServletContextListener {
 		}
 	}
 
-	private void initSecurityProvider(StatisticheServerProperties serverProperties) throws Exception {
+	private void initSecurityProvider(StatisticheServerProperties serverProperties) throws UtilsException  {
 		this.logCore.info("Inizializzazione security provider...");
 		if(serverProperties.isSecurityLoadBouncyCastleProvider()) {
 			ProviderUtils.addBouncyCastleAfterSun(true);
@@ -180,7 +212,7 @@ public class StatisticheServletListener implements ServletContextListener {
 		this.logCore.info("Inizializzazione security provider effettuata con successo");
 	}
 
-	private void initHSMManager(StatisticheServerProperties serverProperties) throws Exception {
+	private void initHSMManager(StatisticheServerProperties serverProperties) throws UtilsException {
 		String hsmConfig = serverProperties.getHSMConfigurazione();
 		if(StringUtils.isNotEmpty(hsmConfig)) {
 			this.logCore.info("Inizializzazione HSM in corso...");
@@ -191,7 +223,7 @@ public class StatisticheServletListener implements ServletContextListener {
 		}
 	}
 
-	private BYOKManager initBYOKManager(StatisticheServerProperties serverProperties) throws Exception {
+	private BYOKManager initBYOKManager(StatisticheServerProperties serverProperties) throws UtilsException {
 		BYOKManager byokManager = null;
 		String byokConfig = serverProperties.getBYOKConfigurazione();
 		if(StringUtils.isNotEmpty(byokConfig)) {
@@ -208,7 +240,7 @@ public class StatisticheServletListener implements ServletContextListener {
 		return byokManager;
 	}
 
-	private void initSecrets(StatisticheServerProperties serverProperties, BYOKManager byokManager) throws Exception {
+	private void initSecrets(StatisticheServerProperties serverProperties, BYOKManager byokManager) throws UtilsException {
 		String secretsConfig = serverProperties.getBYOKEnvSecretsConfig();
 		if(byokManager != null && StringUtils.isNotEmpty(secretsConfig)) {
 			this.logCore.info("Inizializzazione secrets in corso...");
@@ -230,7 +262,7 @@ public class StatisticheServletListener implements ServletContextListener {
 		}
 	}
 
-	private void initProtocolFactoryManager(StatisticheServerProperties serverProperties) throws Exception {
+	private void initProtocolFactoryManager(StatisticheServerProperties serverProperties) throws ProtocolException {
 		this.logCore.info("Inizializzazione ProtocolFactoryManager in corso...");
 		ConfigurazionePdD configPdD = new ConfigurazionePdD();
 		configPdD.setAttesaAttivaJDBC(-1);

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project name="GovWayStatistiche_LocalEnv" basedir=".">
+
+	<!-- root di OpenSPCoop -->
+	<property name="openspcoop2" location="../../../.."/>
+	<property name="openspcoop2.dist" location="${openspcoop2}/core/dist"/>
+	<property name="openspcoop2_jars" location="${openspcoop2}/dist"/>
+
+	<!-- ApplicationServer version -->
+	<!-- Valori possibili: jboss7, wildfly, wildfly26, tomcat9 -->
+	<property name="as" value="wildfly26" />
+
+	<!-- Librerie -->
+	<property name="required_lib_statistiche" location="${openspcoop2}/lib/"/>
+	<property name="required_lib" value="${required_lib_statistiche}"/>
+	<property name="openspcoop2.lib" location="${required_lib_statistiche}"/>
+
+	<!-- Build-Options -->
+	<property name="buildAsRelease" value="false"/>
+	<property name="buildStatistiche" value="true"/>
+	<property name="buildAPI" value="false"/>
+
+	<!-- Specifica se inserire le informazioni di debug nelle classi -->
+	<property name="debug" value="true" />
+	<property name="printServerInfo" value="false" />
+
+	<!-- Directory dell'Application Server (opzionale, per deploy diretto) -->
+	<!--
+	<property name="appServer" location="/opt/wildfly" />
+	<property name="appServer_deploy_dir" location="${appServer}/standalone/deployments" />
+	-->
+
+</project>
