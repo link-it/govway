@@ -414,6 +414,7 @@ public class Costanti {
 	public static final String POLICY_RETRIEVE_TOKEN_FORWARD_MODE_CUSTOM_HEADER_NAME = "policy.tokenForward.mode.header";
 	public static final String POLICY_RETRIEVE_TOKEN_FORWARD_MODE_CUSTOM_URL_PARAMETER_NAME = "policy.tokenForward.mode.queryParameter";
 
+	public static final String POLICY_RETRIEVE_TOKEN_FORWARD_DPOP_STATO = "policy.tokenForward.dpop.stato";
 	public static final String POLICY_RETRIEVE_TOKEN_FORWARD_DPOP_MODE = "policy.tokenForward.dpop.mode";
 	public static final String POLICY_RETRIEVE_TOKEN_FORWARD_DPOP_MODE_RFC9449_HEADER = "RFC9449_header";
 	public static final String POLICY_RETRIEVE_TOKEN_FORWARD_DPOP_MODE_CUSTOM_HEADER = "CUSTOM_header";

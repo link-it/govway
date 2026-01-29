@@ -225,7 +225,8 @@ public class Utilities extends ConfigLoader {
 							IntrospectionDynamicDiscoveryTest.validazione.equals(api) ||
 							IntrospectionKeystoreSenzaPasswordTest.validazione_dynamic_discovery.equals(api) ||
 							UserInfoDynamicDiscoveryTest.validazione.equals(api) ||
-							UserInfoKeystoreSenzaPasswordTest.validazione_dynamic_discovery.equals(api))) {
+							UserInfoKeystoreSenzaPasswordTest.validazione_dynamic_discovery.equals(api)) ||
+							ValidazioneDPoPTest.API.equals(api)) {
 				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_TOKEN);
 				code = 401;
 				error = "TokenAuthenticationFailed";
@@ -307,6 +308,7 @@ public class Utilities extends ConfigLoader {
 	public static CredenzialiMittenteVerifier credenzialiMittente_clientIdNull = new CredenzialiMittenteVerifier(subject, issuer, null, username, email);
 	public static CredenzialiMittenteVerifier credenzialiMittente_usernameNull = new CredenzialiMittenteVerifier(subject, issuer, client_id, null, email);
 	public static CredenzialiMittenteVerifier credenzialiMittente_emailNull = new CredenzialiMittenteVerifier(subject, issuer, client_id, username, null);
+	public static CredenzialiMittenteVerifier credenzialiMittente_usernameMailNull = new CredenzialiMittenteVerifier(subject, issuer, client_id, null, null);
 	
 	public static CredenzialiMittenteVerifier credenzialiMittente_clientIdInvalid = new CredenzialiMittenteVerifier(subject, issuer, client_id_invalid, username, email);
 	public static CredenzialiMittenteVerifier credenzialiMittente_usernameInvalid = new CredenzialiMittenteVerifier(subject, issuer, client_id, username_invalid, email);

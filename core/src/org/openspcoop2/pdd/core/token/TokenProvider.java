@@ -792,17 +792,53 @@ public class TokenProvider implements IProvider {
 	private void validateInformazioniRaccolte(Map<String, Properties> mapProperties, Properties pDefault) throws ProviderValidationException {
 		boolean forwardTrasparente = TokenUtilities.isEnabled(pDefault, Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_STATO);
 		boolean forwardInformazioniRaccolte = TokenUtilities.isEnabled(pDefault, Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_STATO);
+		boolean forwardDPoP = TokenUtilities.isEnabled(pDefault, Costanti.POLICY_RETRIEVE_TOKEN_FORWARD_DPOP_STATO);
 
-		if(!forwardTrasparente && !forwardInformazioniRaccolte) {
+		if(!forwardTrasparente && !forwardInformazioniRaccolte && !forwardDPoP) {
 			throw new ProviderValidationException("Almeno una modalità di forward del token deve essere selezionata");
 		}
-		
+
 		if(forwardTrasparente) {
 			validateInformazioniRaccolteForwardTrasparente(pDefault);
 		}
-		
+
+		if(forwardDPoP) {
+			validateForwardDPoP(pDefault);
+		}
+
 		if(forwardInformazioniRaccolte) {
-			validateInformazioniRaccolteForward(mapProperties, pDefault);		
+			validateInformazioniRaccolteForward(mapProperties, pDefault);
+		}
+	}
+	private void validateForwardDPoP(Properties pDefault) throws ProviderValidationException {
+		String mode = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_FORWARD_DPOP_MODE);
+		if(mode==null) {
+			throw new ProviderValidationException("Nessuna modalità di forward DPoP indicata");
+		}
+		if(!Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_AS_RECEIVED.equals(mode) &&
+				!Costanti.POLICY_RETRIEVE_TOKEN_FORWARD_DPOP_MODE_RFC9449_HEADER.equals(mode) &&
+				!Costanti.POLICY_RETRIEVE_TOKEN_FORWARD_DPOP_MODE_CUSTOM_HEADER.equals(mode) &&
+				!Costanti.POLICY_RETRIEVE_TOKEN_FORWARD_DPOP_MODE_CUSTOM_URL.equals(mode)
+				) {
+			throw new ProviderValidationException("La modalità di forward DPoP indicata '"+mode+"' "+NON_SUPPORTATA);
+		}
+		if(Costanti.POLICY_RETRIEVE_TOKEN_FORWARD_DPOP_MODE_CUSTOM_HEADER.equals(mode)) {
+			String hdr = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_FORWARD_DPOP_MODE_CUSTOM_HEADER_NAME);
+			if(hdr==null || "".equals(hdr)) {
+				throw new ProviderValidationException("La modalità di forward DPoP indicata prevede l'indicazione del nome di un header http");
+			}
+			if(hdr.contains(" ")) {
+				throw new ProviderValidationException("Non indicare spazi nel nome dell'header HTTP indicato per la modalità di forward DPoP");
+			}
+		}
+		else if(Costanti.POLICY_RETRIEVE_TOKEN_FORWARD_DPOP_MODE_CUSTOM_URL.equals(mode)) {
+			String url = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_FORWARD_DPOP_MODE_CUSTOM_URL_PARAMETER_NAME);
+			if(url==null || "".equals(url)) {
+				throw new ProviderValidationException("La modalità di forward DPoP indicata prevede l'indicazione del nome di una proprietà della url");
+			}
+			if(url.contains(" ")) {
+				throw new ProviderValidationException("Non indicare spazi nel nome della proprietà della url indicata per la modalità di forward DPoP");
+			}
 		}
 	}
 	private void validateInformazioniRaccolteForwardTrasparente(Properties pDefault) throws ProviderValidationException {

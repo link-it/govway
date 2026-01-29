@@ -1606,7 +1606,67 @@ public class GestoreTokenValidazioneUtilities {
 			TransportUtils.setParameter(tokenForward.getUrl(),forwardTrasparenteModeUrl, token);
 		}
 	}
-	
+
+	static boolean deleteDPoPReceived(AbstractDatiInvocazione datiInvocazione, EsitoPresenzaDPoP esitoPresenzaDPoP,
+			boolean forwardDPoP, String forwardDPoPModeHeader, String forwardDPoPModeUrl) throws TokenException {
+
+		PolicyGestioneToken policyGestioneToken = datiInvocazione.getPolicyGestioneToken();
+
+		boolean remove = false;
+		if(esitoPresenzaDPoP.getHeaderHttp()!=null) {
+			if(
+				(!policyGestioneToken.isForwardToken())
+				||
+				(!forwardDPoP)
+				||
+				(!esitoPresenzaDPoP.getHeaderHttp().equalsIgnoreCase(forwardDPoPModeHeader))
+			){
+				remove = true;
+			}
+			if(remove) {
+				datiInvocazione.getMessage().getTransportRequestContext().removeHeader(esitoPresenzaDPoP.getHeaderHttp());
+			}
+		}
+		else if(esitoPresenzaDPoP.getPropertyUrl()!=null) {
+			if(
+				(!policyGestioneToken.isForwardToken())
+				||
+				(!forwardDPoP)
+				||
+				(!esitoPresenzaDPoP.getPropertyUrl().equals(forwardDPoPModeUrl))
+			){
+				remove = true;
+			}
+			if(remove) {
+				datiInvocazione.getMessage().getTransportRequestContext().removeParameter(esitoPresenzaDPoP.getPropertyUrl());
+			}
+		}
+		return remove;
+	}
+
+	static void forwardDPoPTrasparenteEngine(String dpopToken, EsitoPresenzaDPoP esitoPresenzaDPoP,
+			TokenForward tokenForward, String forwardDPoPMode, String forwardDPoPModeHeader,
+			String forwardDPoPModeUrl) throws TokenException {
+
+		if(Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_AS_RECEIVED.equals(forwardDPoPMode)) {
+			if(esitoPresenzaDPoP.getHeaderHttp()!=null) {
+				TransportUtils.setHeader(tokenForward.getTrasporto(), esitoPresenzaDPoP.getHeaderHttp(), dpopToken);
+			}
+			else if(esitoPresenzaDPoP.getPropertyUrl()!=null) {
+				TransportUtils.setParameter(tokenForward.getUrl(), esitoPresenzaDPoP.getPropertyUrl(), dpopToken);
+			}
+		}
+		else if(Costanti.POLICY_RETRIEVE_TOKEN_FORWARD_DPOP_MODE_RFC9449_HEADER.equals(forwardDPoPMode)) {
+			TransportUtils.setHeader(tokenForward.getTrasporto(), HttpConstants.AUTHORIZATION_DPOP, dpopToken);
+		}
+		else if(Costanti.POLICY_RETRIEVE_TOKEN_FORWARD_DPOP_MODE_CUSTOM_HEADER.equals(forwardDPoPMode)) {
+			TransportUtils.setHeader(tokenForward.getTrasporto(), forwardDPoPModeHeader, dpopToken);
+		}
+		else if(Costanti.POLICY_RETRIEVE_TOKEN_FORWARD_DPOP_MODE_CUSTOM_URL.equals(forwardDPoPMode)) {
+			TransportUtils.setParameter(tokenForward.getUrl(), forwardDPoPModeUrl, dpopToken);
+		}
+	}
+
 	static void forwardInfomazioniRaccolteEngine(boolean portaDelegata, String idTransazione, TokenForward tokenForward,
 			EsitoGestioneToken esitoValidazioneJWT, EsitoGestioneToken esitoIntrospection, EsitoGestioneToken esitoUserInfo,
 			InformazioniToken informazioniTokenNormalizzate,

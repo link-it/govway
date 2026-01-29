@@ -1893,7 +1893,7 @@ public class GestoreToken {
 			PdDContext pddContext, IProtocolFactory<?> protocolFactory,
 			EsitoPresenzaDPoP esitoPresenzaDPoP, EsitoGestioneToken esitoGestioneToken,
 			String accessToken, boolean portaDelegata,
-			Busta busta, IDSoggetto idDominio, IDServizio idServizio) throws Exception {
+			Busta busta, IDSoggetto idDominio, IDServizio idServizio) {
 
 		// Nessuna cache per DPoP: ogni richiesta ha un DPoP univoco (iat+jti)
 		EsitoValidazioneDPoP esitoValidazioneDPoP = GestoreTokenValidazioneUtilities.validazioneDPoPEngine(log, datiInvocazione,
@@ -1916,11 +1916,12 @@ public class GestoreToken {
 
 	// ********* [VALIDAZIONE-TOKEN] FORWARD TOKEN ****************** */
 	
-	public static void forwardToken(Logger log, String idTransazione, AbstractDatiInvocazione datiInvocazione, EsitoPresenzaToken esitoPresenzaToken, 
-			EsitoGestioneToken esitoValidazioneJWT, EsitoGestioneToken esitoIntrospection, EsitoGestioneToken esitoUserInfo, 
+	public static void forwardToken(Logger log, String idTransazione, AbstractDatiInvocazione datiInvocazione, EsitoPresenzaToken esitoPresenzaToken,
+			EsitoPresenzaDPoP esitoPresenzaDPoP,
+			EsitoGestioneToken esitoValidazioneJWT, EsitoGestioneToken esitoIntrospection, EsitoGestioneToken esitoUserInfo,
 			InformazioniToken informazioniTokenNormalizzate,
 			boolean portaDelegata,
-			PdDContext pddContext, Busta busta) throws Exception {
+			PdDContext pddContext, Busta busta) throws CoreException, SecurityException, TokenException, UtilsException {
 		
 		if(datiInvocazione==null) {
 			throw new CoreException("Dati invocazioni is null");
@@ -1954,10 +1955,36 @@ public class GestoreToken {
 				} 
 				else if(Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_CUSTOM_URL.equals(forwardTrasparenteMode)) {
 					forwardTrasparenteModeUrl = policyGestioneToken.getForwardTokenTrasparenteModeCustomUrl();
-				} 
+				}
 			}
 		}
-		
+
+		// DPoP Forward
+		boolean forwardDPoP = false;
+		String forwardDPoPMode = null;
+		String forwardDPoPModeHeader = null;
+		String forwardDPoPModeUrl = null;
+		if(policyGestioneToken.isForwardToken() && policyGestioneToken.isDPoPValidation() &&
+		   esitoPresenzaDPoP != null && esitoPresenzaDPoP.isPresente()) {
+			forwardDPoP = policyGestioneToken.isForwardDPoP();
+			if(forwardDPoP) {
+				forwardDPoPMode = policyGestioneToken.getForwardDPoPMode();
+				if(Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_AS_RECEIVED.equals(forwardDPoPMode)) {
+					forwardDPoPModeHeader = esitoPresenzaDPoP.getHeaderHttp();
+					forwardDPoPModeUrl = esitoPresenzaDPoP.getPropertyUrl();
+				}
+				else if(Costanti.POLICY_RETRIEVE_TOKEN_FORWARD_DPOP_MODE_RFC9449_HEADER.equals(forwardDPoPMode)) {
+					forwardDPoPModeHeader = HttpConstants.AUTHORIZATION_DPOP;
+				}
+				else if(Costanti.POLICY_RETRIEVE_TOKEN_FORWARD_DPOP_MODE_CUSTOM_HEADER.equals(forwardDPoPMode)) {
+					forwardDPoPModeHeader = policyGestioneToken.getForwardDPoPModeCustomHeader();
+				}
+				else if(Costanti.POLICY_RETRIEVE_TOKEN_FORWARD_DPOP_MODE_CUSTOM_URL.equals(forwardDPoPMode)) {
+					forwardDPoPModeUrl = policyGestioneToken.getForwardDPoPModeCustomUrl();
+				}
+			}
+		}
+
 		boolean infoRaccolte = false;
 		String forwardInformazioniRaccolteMode = null;
 		Properties jwtSecurity = null;
@@ -2028,21 +2055,42 @@ public class GestoreToken {
 		// Elimino token ricevuto
 		boolean delete = GestoreTokenValidazioneUtilities.deleteTokenReceived(datiInvocazione, esitoPresenzaToken, trasparente, forwardTrasparenteModeHeader, forwardTrasparenteModeUrl);
 		boolean soap = datiInvocazione!=null && datiInvocazione.getMessage()!=null && org.openspcoop2.message.constants.ServiceBinding.SOAP.equals(datiInvocazione.getMessage().getServiceBinding());
-		
-		if(trasparente && 
+
+		// Elimino DPoP ricevuto
+		boolean deleteDPoP = false;
+		if(esitoPresenzaDPoP != null && esitoPresenzaDPoP.isPresente()) {
+			deleteDPoP = GestoreTokenValidazioneUtilities.deleteDPoPReceived(datiInvocazione, esitoPresenzaDPoP,
+					forwardDPoP, forwardDPoPModeHeader, forwardDPoPModeUrl);
+		}
+
+		// Forward Authorization trasparente
+		if(trasparente &&
 				(
 						delete // eventualmente effettuo il forward di altri header
-						|| 
+						||
 						soap // anche gli header originali non vengono inoltrati
 				)
 		) {
-			
-			// Forward trasparente
-			
+
 			// la delete ha tenuto conto dell'opzione di forward prima di eliminare
 			GestoreTokenValidazioneUtilities.forwardTokenTrasparenteEngine(token, esitoPresenzaToken, tokenForward, forwardTrasparenteMode, forwardTrasparenteModeHeader, forwardTrasparenteModeUrl);
 		}
-		
+
+		// Forward DPoP
+		if(forwardDPoP && esitoPresenzaDPoP != null && esitoPresenzaDPoP.isPresente() &&
+				(
+						deleteDPoP // eventualmente effettuo il forward di altri header
+						|| 
+						soap // anche gli header originali non vengono inoltrati
+				)
+				) {
+			
+			// la delete ha tenuto conto dell'opzione di forward prima di eliminare
+			String dpopToken = esitoPresenzaDPoP.getToken();
+			GestoreTokenValidazioneUtilities.forwardDPoPTrasparenteEngine(dpopToken, esitoPresenzaDPoP,
+					tokenForward, forwardDPoPMode, forwardDPoPModeHeader, forwardDPoPModeUrl);
+		}
+
 		if(infoRaccolte) {
 			
 			// Forward informazioni raccolte
@@ -2095,7 +2143,7 @@ public class GestoreToken {
 		return list;
 	}
 	
-	public static InformazioniToken normalizeInformazioniToken(List<InformazioniToken> list) throws Exception {
+	public static InformazioniToken normalizeInformazioniToken(List<InformazioniToken> list) throws UtilsException {
 		if(list.size()==1) {
 			return list.get(0);
 		}
