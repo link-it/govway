@@ -96,19 +96,42 @@ public class HttpProxyThread extends AbstractBaseThread {
 	
 	@Override
 	protected void process() {
-				
+
 		if(this.process == null) {
 			try {
 				String command = FileSystemUtilities.readFile(this.fScript);
 				System.out.println("INVOKE from file '"+this.fScript.getAbsolutePath()+"':\n\t '"+command+"'");
-				
+
+				// Verifica esistenza comando mitmdump
+				File mitmdumpFile = new File("/usr/local/bin/mitmdump");
+				System.out.println("mitmdump exists: " + mitmdumpFile.exists() + ", executable: " + mitmdumpFile.canExecute());
+
+				// Verifica esistenza keystore
+				File keystoreFile = new File("/etc/govway/keys/erogatore.jks");
+				System.out.println("keystore exists: " + keystoreFile.exists() + ", readable: " + keystoreFile.canRead());
+
+				// Verifica esistenza certificato generato
+				System.out.println("cert file exists: " + this.fCert.exists() + ", size: " + this.fCert.length());
+
 				this.process = Runtime.getRuntime().exec(this.fScript.getAbsolutePath());
 				System.out.println("PROCESS FINISH");
 				//System.out.println("ESCE?");
-				
+
 				this.isDebug = this.process.getInputStream();
 				this.isError = this.process.getErrorStream();
-				
+
+				// Attende un po' e prova a leggere subito gli errori
+				try {
+					Thread.sleep(500);
+					if(this.isError.available() > 0) {
+						byte[] errorBytes = new byte[this.isError.available()];
+						this.isError.read(errorBytes);
+						System.out.println("IMMEDIATE ERROR OUTPUT: " + new String(errorBytes));
+					}
+				} catch(Exception e) {
+					// ignore
+				}
+
 			}catch(Throwable t) {
 				System.out.println("INVOKE ERROR");
 				t.printStackTrace(System.out);
@@ -119,14 +142,14 @@ public class HttpProxyThread extends AbstractBaseThread {
 	
 	@Override
 	public synchronized void close() {
-		
+
 		if(this.process!=null) {
-			
+
 			this.process.descendants().forEach(ph -> {
-			    ph.destroy();
+			    ph.destroyForcibly();
 			});
-	
-			this.process.destroy();
+
+			this.process.destroyForcibly();
 			
 			boolean terminated = false;
 			while(terminated == false){
@@ -180,12 +203,12 @@ public class HttpProxyThread extends AbstractBaseThread {
 			while(terminated == false){
 				try{
 					Utilities.sleep(500);
-					this.process.exitValue();
+					exitValue = this.process.exitValue();
 					terminated = true;
 				}catch(java.lang.IllegalThreadStateException exit){}
 			}
 		}
-		else {	
+		else {
 			try{
 				exitValue = this.process.exitValue();
 				terminated = true;
@@ -197,7 +220,9 @@ public class HttpProxyThread extends AbstractBaseThread {
 			return true;
 		}
 		else {
-			System.out.println("Process terminated with code: "+exitValue);
+			// exit code 137 = 128 + 9 (SIGKILL) is expected when process is terminated via destroyForcibly()
+			String exitCodeInfo = (exitValue == 137) ? " (expected: SIGKILL from destroyForcibly)" : "";
+			System.out.println("Process terminated with code: "+exitValue+exitCodeInfo);
 		}
 
 		try(java.io.BufferedInputStream berror = new java.io.BufferedInputStream(this.isError);){
