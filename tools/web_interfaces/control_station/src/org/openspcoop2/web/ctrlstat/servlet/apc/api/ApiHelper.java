@@ -26,7 +26,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -885,7 +884,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 			else {
 				descrizione =  as.getDescrizione() ;
 			}
-			de.setValue(descrizione!=null ? StringEscapeUtils.escapeHtml(descrizione) : null);
+			de.setValue(descrizione);
 			de.setToolTip(as.getDescrizione());
 			de.setCopyToClipboard(as.getDescrizione());
 			listParametersApi.get(0).setValue(ApiCostanti.VALORE_PARAMETRO_APC_API_DESCRIZIONE);

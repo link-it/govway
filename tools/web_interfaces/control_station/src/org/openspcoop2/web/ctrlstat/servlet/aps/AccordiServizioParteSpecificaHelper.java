@@ -3912,7 +3912,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						if(descrizione!=null && descrizione.length()>length) {
 							descrizione = descrizione.substring(0, (length-4)) + " ...";
 						}
-						de.setValue(descrizione!=null ? StringEscapeUtils.escapeHtml(descrizione) : null);
+						de.setValue(descrizione);
 						de.setToolTip(paAssociata.getDescrizione());
 						de.setCopyToClipboard(paAssociata.getDescrizione());
 						
@@ -5751,7 +5751,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						if(descrizione!=null && descrizione.length()>length) {
 							descrizione = descrizione.substring(0, (length-4)) + " ...";
 						}
-						de.setValue(descrizione!=null ? StringEscapeUtils.escapeHtml(descrizione) : null);
+						de.setValue(descrizione);
 						de.setToolTip(pdAssociata.getDescrizione());
 						de.setCopyToClipboard(pdAssociata.getDescrizione());	
 						
@@ -7070,7 +7070,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			de.setType(DataElementType.TEXT_AREA);
 			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_DESCRIZIONE);
 			de.setSize(getSize());
-			de.setValue(descrizione!=null ? StringEscapeUtils.escapeHtml(descrizione) : "");
+			de.setValue(descrizione!=null ? descrizione : "");
 			if( !modificaAbilitata && StringUtils.isBlank(descrizione))
 				de.setValue("");
 			
@@ -7106,7 +7106,12 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			}
 			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_DESCRIZIONE_MODIFICA);
 			de.setSize(getSize());
-			de.setValue(descrizioneModificata!=null ? StringEscapeUtils.escapeHtml(descrizioneModificata) : "");
+			if(modificaAbilitata) {
+				de.setValue(descrizioneModificata); // escape gestito da libreria
+			}
+			else {
+				de.setValue(descrizioneModificata!=null ? StringEscapeUtils.escapeHtml(descrizioneModificata) : "");
+			}
 			if( !modificaAbilitata && StringUtils.isBlank(descrizioneModificata))
 				de.setValue("");
 			

@@ -28,7 +28,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -2119,7 +2118,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			if(descrizione!=null && descrizione.length()>length) {
 				descrizione = descrizione.substring(0, (length-4)) + " ...";
 			}
-			de.setValue(descrizione!=null ? StringEscapeUtils.escapeHtml(descrizione) : null);
+			de.setValue(descrizione);
 			de.setToolTip(gestioneFruitori ? fruitore.getDescrizione() : asps.getDescrizione());
 			de.setCopyToClipboard(gestioneFruitori ? fruitore.getDescrizione() : asps.getDescrizione());
 			

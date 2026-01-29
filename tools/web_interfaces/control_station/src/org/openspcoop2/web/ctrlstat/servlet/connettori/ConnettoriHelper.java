@@ -2116,7 +2116,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					de = new DataElement();
 					de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_SUBJECT);
 					de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_SUBJECT);
-					de.setValue(StringEscapeUtils.escapeHtml(tipoCredenzialiSSLAliasCertificatoSubject));
+					de.setValue(tipoCredenzialiSSLAliasCertificatoSubject);
 					if(StringUtils.isNotEmpty(tipoCredenzialiSSLAliasCertificatoSubject)) {
 						de.setType(DataElementType.TEXT_AREA_NO_EDIT);
 						de.setRows(CostantiControlStation.LABEL_PARAMETRO_TEXT_AREA_SIZE);
@@ -2129,7 +2129,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					de = new DataElement();
 					de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_ISSUER);
 					de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_ISSUER);
-					de.setValue(StringEscapeUtils.escapeHtml(tipoCredenzialiSSLAliasCertificatoIssuer));
+					de.setValue(tipoCredenzialiSSLAliasCertificatoIssuer);
 					if(StringUtils.isNotEmpty(tipoCredenzialiSSLAliasCertificatoIssuer)) {
 						de.setType(DataElementType.TEXT_AREA_NO_EDIT);
 						de.setRows(CostantiControlStation.LABEL_PARAMETRO_TEXT_AREA_SIZE);
@@ -2263,7 +2263,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					// 1b. TextArea Subject
 					de = new DataElement();
 					de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_SUBJECT);
-					de.setValue(StringEscapeUtils.escapeHtml(subject));
+					de.setValue(subject);
 					de.setType(DataElementType.TEXT_AREA);
 					de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_SUBJECT);
 					de.setRows(CostantiControlStation.LABEL_PARAMETRO_TEXT_AREA_SIZE);
@@ -2277,7 +2277,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_ISSUER);
 					if(!ServletUtils.isCheckBoxEnabled(tipoCredenzialiSSLConfigurazioneManualeSelfSigned)) {
 						de.setType(DataElementType.TEXT_AREA);
-						de.setValue(StringEscapeUtils.escapeHtml(issuer));
+						de.setValue(issuer);
 						de.setRows(CostantiControlStation.LABEL_PARAMETRO_TEXT_AREA_SIZE);
 						de.setSize(this.getSize());
 					} else {
@@ -6278,7 +6278,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				de = new DataElement();
 				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_SUBJECT);
 				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_SUBJECT);
-				de.setValue(StringEscapeUtils.escapeHtml(tipoCredenzialiSSLAliasCertificatoSubject));
+				de.setValue(tipoCredenzialiSSLAliasCertificatoSubject);
 				if(StringUtils.isNotEmpty(tipoCredenzialiSSLAliasCertificatoSubject)) {
 					de.setType(DataElementType.TEXT_AREA_NO_EDIT);
 					de.setRows(CostantiControlStation.LABEL_PARAMETRO_TEXT_AREA_SIZE);
@@ -6291,7 +6291,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				de = new DataElement();
 				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_ISSUER);
 				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_ISSUER);
-				de.setValue(StringEscapeUtils.escapeHtml(tipoCredenzialiSSLAliasCertificatoIssuer));
+				de.setValue(tipoCredenzialiSSLAliasCertificatoIssuer);
 				if(StringUtils.isNotEmpty(tipoCredenzialiSSLAliasCertificatoIssuer)) {
 					de.setType(DataElementType.TEXT_AREA_NO_EDIT);
 					de.setRows(CostantiControlStation.LABEL_PARAMETRO_TEXT_AREA_SIZE);
@@ -6434,7 +6434,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				// 1b. TextArea Subject
 				de = new DataElement();
 				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_SUBJECT);
-				de.setValue(StringEscapeUtils.escapeHtml(subject));
+				de.setValue(subject);
 				de.setType(DataElementType.TEXT_AREA);
 				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_SUBJECT);
 				de.setRows(CostantiControlStation.LABEL_PARAMETRO_TEXT_AREA_SIZE);
@@ -6448,7 +6448,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_ISSUER);
 				if(!ServletUtils.isCheckBoxEnabled(tipoCredenzialiSSLConfigurazioneManualeSelfSigned)) {
 					de.setType(DataElementType.TEXT_AREA);
-					de.setValue(StringEscapeUtils.escapeHtml(issuer));
+					de.setValue(issuer);
 					de.setRows(CostantiControlStation.LABEL_PARAMETRO_TEXT_AREA_SIZE);
 					de.setSize(this.getSize());
 				} else {

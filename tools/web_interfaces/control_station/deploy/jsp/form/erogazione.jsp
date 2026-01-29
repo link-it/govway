@@ -182,6 +182,8 @@
 												textValNoEdit = textValNoEdit.substring(0,(Costanti.LUNGHEZZA_RIGA_TESTO_TABELLA -3)) + "...";
 											}
 											
+											textValNoEdit = StringEscapeUtils.escapeHtml(textValNoEdit);
+											
 											String deTextId = rowName+"_txt";
 											String dataCopy = "";
 											

@@ -1960,7 +1960,15 @@
 			</conditions>
 			<property name="policy.tokenForward.infoRaccolte.stato" />
 		</item>
-		
+		<item type="checkbox" name="tokenForwardDPoP" label="DPoP" defaultSelected="false" reloadOnChange="true">
+			<conditions>
+				<condition and="true">
+					<selected name="dpopValidation"/>
+				</condition>
+			</conditions>
+			<property name="policy.tokenForward.dpop.stato" />
+		</item>
+
 		<subsection label="Originale">
 
 			<conditions>
@@ -2002,9 +2010,9 @@
 				</conditions>
 			    <property name="policy.tokenForward.trasparente.mode.queryParameter" />
 			</item>
-			
+
 		</subsection>
-		
+
 		<subsection label="Informazioni Raccolte">
 		
 			<conditions>
@@ -2459,6 +2467,44 @@
 			</item>
 
 		</subsection>
+		
+		<subsection label="DPoP">
+
+			<conditions>
+				<condition and="true">
+					<selected name="tokenForwardDPoP"/>
+				</condition>
+			</conditions>
+
+			<item type="select" name="tokenForwardDPoPMode" label="Modalità" default="asReceived" reloadOnChange="true">
+				<values>
+					<value value="asReceived" label="Come è stato ricevuto"/>
+					<value value="RFC9449_header" label="RFC 9449 - DPoP Header"/>
+					<value value="CUSTOM_header" label="Header HTTP"/>
+					<value value="CUSTOM_url" label="Parametro URL"/>
+				</values>
+				<property name="policy.tokenForward.dpop.mode" />
+			</item>
+
+			<item type="text" name="tokenForwardDPoPModeHeader" label="Nome Header HTTP" required="true">
+				<conditions>
+					<condition>
+						<equals name="tokenForwardDPoPMode" value="CUSTOM_header"/>
+					</condition>
+				</conditions>
+				<property name="policy.tokenForward.dpop.mode.header" />
+			</item>
+
+			<item type="text" name="tokenForwardDPoPModeQueryParameter" label="Nome Parametro URL" required="true">
+				<conditions>
+					<condition>
+						<equals name="tokenForwardDPoPMode" value="CUSTOM_url"/>
+					</condition>
+				</conditions>
+				<property name="policy.tokenForward.dpop.mode.queryParameter" />
+			</item>
+
+		</subsection>		
 		
 	</section>
 

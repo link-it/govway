@@ -32,7 +32,6 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
@@ -3470,7 +3469,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 		de = new DataElement();
 		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_DESCRIZIONE);
-		de.setValue(StringEscapeUtils.escapeHtml(descr));
+		de.setValue(descr);
 		if( tipoOperazione.equals(TipoOperazione.ADD) || (gestioneDescrizione && modificheAbilitate)){
 			de.setType(DataElementType.TEXT_AREA);
 			if(gestioneDescrizione && !tipoOperazione.equals(TipoOperazione.ADD)) {
