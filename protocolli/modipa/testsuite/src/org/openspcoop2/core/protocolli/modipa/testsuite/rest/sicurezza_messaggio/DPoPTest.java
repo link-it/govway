@@ -45,7 +45,8 @@ import com.intuit.karate.netty.FeatureServer;
 */
 @RunWith(Karate.class)
 @KarateOptions(features = {
-    "classpath:test/rest/sicurezza-messaggio/dpop.feature"
+    "classpath:test/rest/sicurezza-messaggio/dpop.feature",
+    "classpath:test/rest/sicurezza-messaggio/dpop_redis.feature" // la tengo a parte perchè su jenkins falliva
     })
 public class DPoPTest extends ConfigLoader {
     

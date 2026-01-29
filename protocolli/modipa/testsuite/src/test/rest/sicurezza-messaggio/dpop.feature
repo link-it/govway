@@ -272,7 +272,7 @@ Examples:
 
 
 @tokenPolicyRSCacheEnabled
-Scenario Outline: Test negoziazione ok; chiavi 'RS' presenti in token Policy con cache di 5 secondi per il riuso del DPoP token. Il test verifica anche l'utilizzo della proprietà 'tokenValidation.dpop.htu.baseUrl'
+Scenario Outline: Test negoziazione ok; chiavi 'RS' presenti in token Policy con cache di 5 secondi per il riuso del DPoP token. Il test verifica anche l'utilizzo della proprietà 'tokenValidation.dpop.htu.baseUrl'. Policy <policy-name>
 
 Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/<tipo-test>/v1"
 And path '<azione>'
@@ -342,7 +342,7 @@ And match header Agid-JWT-Signature == '#notpresent'
 Examples:
 | tipo-test | azione | tipo-filtro | policy-name |
 | DemoNegoziazioneTokenDPoP-RS256-CacheEnabled | base | local | ModI-NegoziazionePDND-Validazione-DPoP-RS256 |
-| DemoNegoziazioneTokenDPoP-RS256-CacheEnabled | base | redis | ModI-NegoziazionePDND-Validazione-DPoP-RS256-Redis |
+
 
 
 

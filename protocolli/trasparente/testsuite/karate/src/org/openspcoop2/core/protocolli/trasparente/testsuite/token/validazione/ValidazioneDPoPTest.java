@@ -464,13 +464,13 @@ public class ValidazioneDPoPTest extends ConfigLoader {
 	// ===== Path delle chiavi =====
 
 	// RSA
-	private static final String RSA_PRIVATE_KEY_PATH = "/etc/govway/keys/keyPair-test.rsa.pkcs8_encrypted.privateKey.pem";
-	private static final String RSA_PUBLIC_KEY_PATH = "/etc/govway/keys/keyPair-test.rsa.publicKey.pem";
+	private static final String RSA_PRIVATE_KEY_PATH = ConfigLoader.getGovwayCfgKeys() +"/keyPair-test.rsa.pkcs8_encrypted.privateKey.pem";
+	private static final String RSA_PUBLIC_KEY_PATH = ConfigLoader.getGovwayCfgKeys() +"/keyPair-test.rsa.publicKey.pem";
 	private static final String RSA_KEY_PASSWORD = "123456";
 
 	// EC (ES256)
-	private static final String EC_PRIVATE_KEY_PATH = "/etc/govway/keys/keyPair-test-es256_pkcs8_encrypted_private.pem";
-	private static final String EC_PUBLIC_KEY_PATH = "/etc/govway/keys/keyPair-test-es256_public.pem";
+	private static final String EC_PRIVATE_KEY_PATH = ConfigLoader.getGovwayCfgKeys() +"/keyPair-test-es256_pkcs8_encrypted_private.pem";
+	private static final String EC_PUBLIC_KEY_PATH = ConfigLoader.getGovwayCfgKeys() +"/keyPair-test-es256_public.pem";
 	private static final String EC_KEY_PASSWORD = "123456";
 
 	// ===== KeyPair caricate dai file =====
