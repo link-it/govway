@@ -20,7 +20,7 @@
 <%@page import="org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation"%>
 <%@page import="org.apache.commons.lang3.StringUtils"%>
 <%@page import="org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti"%>
-<%@ page session="true" import="java.util.*, org.openspcoop2.web.lib.mvc.*" %>
+<%@ page session="true" import="java.util.*, org.apache.commons.text.StringEscapeUtils, org.openspcoop2.web.lib.mvc.*" %>
 <link rel="stylesheet" href="css/ui.tabs.css" type="text/css">
 <%
 	String iddati = "";
@@ -310,7 +310,9 @@ function Esporta(tipo) {
 																		}
 																		textValNoEdit = textValNoEdit.substring(0,(Costanti.LUNGHEZZA_RIGA_TESTO_TABELLA -3)) + "...";
 																	}
-																	
+
+																	textValNoEdit = StringEscapeUtils.escapeHtml4(textValNoEdit);
+
 																	String deTextId = rowName+"_txt";
 																	String dataCopy = "";
 																	

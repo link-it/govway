@@ -27,7 +27,6 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Entities;
 import org.jsoup.safety.Safelist;
 import org.openspcoop2.web.lib.mvc.security.exception.ValidationException;
@@ -237,10 +236,26 @@ public class Validatore {
 			return null;
 		}
 
+		// Escape delle '&' per evitare che Jsoup le interpreti come entità HTML.
+		// Jsoup è "tollerante" e riconosce entità HTML anche senza il ';' finale (es. '&not' viene interpretato come '¬').
+		// L'escape garantisce che il testo venga preservato esattamente come inserito dall'utente.
+		// L'Entities.unescape() finale ripristinerà le '&' originali.
+		String valueToClean = originalValue.replace("&", "&amp;");
+
 		Document.OutputSettings os = new Document.OutputSettings().prettyPrint(false);
 		if(usaValidazioneTextArea) {
+			/**
+			 * Questo codice serviva prima dell'intervento dell'issue 1707 che ha spostato l'escape html dalle pagine java (helper) alle jsp (edit-page.jsp)
+			 * per quanto riguarda il tipo di campo textarea.
+			 *
+			 * Grazie a questo: 
+			 * Quindi la sanificazione Jsoup in input è ridondante e causa solo problemi. Se l'utente inserisce <script>alert(1)</script>:                                                                           
+  			1. Viene salvato così nel DB                                                                                                                                                                          
+  			2. Quando viene visualizzato, escapeHtml4() lo trasforma in &lt;script&gt;alert(1)&lt;/script&gt;                                                                                                     
+  			3. Il browser mostra il testo letterale, nessun XSS       
+			 * 
 			// pulizia del contenuto della textarea
-			String cleaned = Jsoup.clean(originalValue, "", this.safelist, os);
+			String cleaned = Jsoup.clean(valueToClean, "", this.safelist, os);
 
 			// inserisco una root fittizia, così non viene toccato il body radice del Document
 			Document tmp = Jsoup.parse("<x-root>" + cleaned + "</x-root>");
@@ -252,10 +267,13 @@ public class Validatore {
 
 			String result = tmp.selectFirst("x-root").html();
 
-			// unascape delle entità HTML
+			// unescape delle entità HTML
 			return Entities.unescape(result);
+			*/
+			return originalValue;
 		}
 
-		return Entities.unescape(Jsoup.parse(Jsoup.clean(originalValue, "", this.safelist, os)).body().html());
+		/** Rimane necessario il jsou.parse per gli altri parametri; valutare se spostare l'escape come fatto per le text area */
+		return Entities.unescape(Jsoup.parse(Jsoup.clean(valueToClean, "", this.safelist, os)).body().html());
 	}
 }

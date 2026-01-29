@@ -1,3 +1,11 @@
+2026-01-29  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug #1707
+	Risolta anomalia che codificava come carattere speciale la dicitura '&not' nelle textarea. 
+	Nell'intervento è stato riorganizzato il meccanismo di escape HTML, centralizzandolo nei JSP al momento della visualizzazione e rimuovendolo dai Java Helper, 
+	con correzione del Validatore per evitare che Jsoup interpreti erroneamente le entità HTML incomplete.
+
 2026-01-27  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

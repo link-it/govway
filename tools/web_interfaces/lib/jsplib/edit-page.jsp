@@ -1104,7 +1104,7 @@ for (int i = 0; i < dati.size(); i++) {
 							     					} else {
 							     						String taNoEdit = type.equals("textarea") ? " " : " readonly ";
 							     						%><div class="txtA_div">
-							     							<textarea id="<%=inputId %>" <%=taNoEdit %> rows='<%= de.getRows() %>' cols='<%= de.getCols() %>' name="<%= deName  %>" class="<%= classInput %>"><%= de.getValue() %></textarea>
+							     							<textarea id="<%=inputId %>" <%=taNoEdit %> rows='<%= de.getRows() %>' cols='<%= de.getCols() %>' name="<%= deName  %>" class="<%= classInput %>"><%= StringEscapeUtils.escapeHtml4(de.getValue()) %></textarea>
 							     							<% 
 													      		if(deInfo != null){
 													      			String idDivIconInfo = "divIconInfo_"+i;

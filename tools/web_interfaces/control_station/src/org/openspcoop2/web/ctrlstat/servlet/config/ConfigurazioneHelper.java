@@ -4958,9 +4958,6 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.logError("Errore durante la lettura della versione della base dati (jmxResourcePdD): "+e.getMessage(),e);
 			versioneBaseDati = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 		}
-		if(versioneBaseDati!=null){
-			versioneBaseDati = StringEscapeUtils.escapeHtml4(versioneBaseDati);
-		}
 		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_VERSIONE_BASE_DATI);
 		de.setValue(versioneBaseDati);
@@ -5064,12 +5061,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.logError("Errore durante la lettura della message factory (jmxResourcePdD): "+e.getMessage(),e);
 			messageFactory = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 		}
-		/**if(messageFactory!=null){
-			messageFactory = StringEscapeUtils.escapeHtml4(messageFactory);
-		}*/
 		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_MESSAGE_FACTORY);
-		de.setValue(messageFactory.trim().contains(" ") ? messageFactory.trim().replaceAll(" ", "\n") : messageFactory);
+		de.setValue(messageFactory.trim().contains(" ") ? messageFactory.trim().replace(" ", "\n") : messageFactory);
 		de.setType(DataElementType.TEXT_AREA_NO_EDIT);
 		de.setRows(2);
 		de.setCols(60);
@@ -6571,9 +6565,6 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 			de = newDataElementStyleRuntime();
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_STATO);
-			if(statoDPoPJti!=null){
-				statoDPoPJti = StringEscapeUtils.escapeHtml4(statoDPoPJti);
-			}
 			de.setValue(statoDPoPJti);
 			de.setLabelAffiancata(false);
 			de.setType(DataElementType.TEXT_AREA_NO_EDIT);
@@ -6618,9 +6609,6 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			de = newDataElementStyleRuntime();
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_STATO);
-			if(stato!=null){
-				stato = StringEscapeUtils.escapeHtml4(stato);
-			}
 			de.setValue(stato);
 			de.setLabelAffiancata(false);
 			de.setType(DataElementType.TEXT_AREA_NO_EDIT);
@@ -6647,9 +6635,6 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					
 					de = newDataElementStyleRuntime();
 					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_STATO);
-					if(statoConnessioniAltroDB!=null){
-						statoConnessioniAltroDB = StringEscapeUtils.escapeHtml4(statoConnessioniAltroDB);
-					}
 					de.setValue(statoConnessioniAltroDB);
 					de.setLabelAffiancata(false);
 					de.setType(DataElementType.TEXT_AREA_NO_EDIT);
@@ -6684,9 +6669,6 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			de = newDataElementStyleRuntime();
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_STATO);
-			if(stato!=null){
-				stato = StringEscapeUtils.escapeHtml4(stato);
-			}
 			de.setValue(stato);
 			de.setLabelAffiancata(false);
 			de.setType(DataElementType.TEXT_AREA_NO_EDIT);
@@ -6730,9 +6712,6 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			de = newDataElementStyleRuntime();
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_TRANSAZIONI_STATO);
-			if(stato!=null){
-				stato = StringEscapeUtils.escapeHtml4(stato);
-			}
 			de.setValue(stato);
 			de.setLabelAffiancata(false);
 			de.setType(DataElementType.TEXT_AREA_NO_EDIT);
@@ -6764,9 +6743,6 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			de = newDataElementStyleRuntime();
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_TRANSAZIONI_STATO);
-			if(stato!=null){
-				stato = StringEscapeUtils.escapeHtml4(stato);
-			}
 			de.setValue(stato);
 			de.setLabelAffiancata(false);
 			de.setType(DataElementType.TEXT_AREA_NO_EDIT);
@@ -6817,9 +6793,6 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			de = newDataElementStyleRuntime();
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_STATO);
-			if(stato!=null){
-				stato = StringEscapeUtils.escapeHtml4(stato);
-			}
 			de.setValue(stato);
 			de.setLabelAffiancata(false);
 			de.setType(DataElementType.TEXT_AREA_NO_EDIT);
@@ -6853,9 +6826,6 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			de = newDataElementStyleRuntime();
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_STATO);
-			if(stato!=null){
-				stato = StringEscapeUtils.escapeHtml4(stato);
-			}
 			de.setValue(stato);
 			de.setLabelAffiancata(false);
 			de.setType(DataElementType.TEXT_AREA_NO_EDIT);
@@ -6905,9 +6875,6 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_BIO_CONNECTION_MANAGER_STATUS);
-		if(stato!=null){
-			stato = StringEscapeUtils.escapeHtml4(stato);
-		}
 		de.setValue(stato);
 		de.setLabelAffiancata(false);
 		de.setType(DataElementType.TEXT_AREA_NO_EDIT);
@@ -6948,9 +6915,6 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_NIO_CONNECTION_MANAGER_STATUS);
-		if(stato!=null){
-			stato = StringEscapeUtils.escapeHtml4(stato);
-		}
 		de.setValue(stato);
 		de.setLabelAffiancata(false);
 		de.setType(DataElementType.TEXT_AREA_NO_EDIT);
@@ -6978,9 +6942,6 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			de = newDataElementStyleRuntime();
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_NIO_CONNECTION_MANAGER_THREADS_POOL);
-			if(stato!=null){
-				stato = StringEscapeUtils.escapeHtml4(stato);
-			}
 			de.setValue(stato);
 			de.setLabelAffiancata(false);
 			de.setType(DataElementType.TEXT_AREA_NO_EDIT);
@@ -7006,9 +6967,6 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			de = newDataElementStyleRuntime();
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_NIO_CONNECTION_MANAGER_THREADS_IOREACTOR);
-			if(stato!=null){
-				stato = StringEscapeUtils.escapeHtml4(stato);
-			}
 			de.setValue(stato);
 			de.setLabelAffiancata(false);
 			de.setType(DataElementType.TEXT_AREA_NO_EDIT);
@@ -7065,9 +7023,6 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				
 				de = newDataElementStyleRuntime();
 				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_THREAD_POOL_STATO);
-				if(stato!=null){
-					stato = StringEscapeUtils.escapeHtml4(stato);
-				}
 				de.setValue(stato);
 				de.setLabelAffiancata(false);
 				de.setType(DataElementType.TEXT_AREA_NO_EDIT);
@@ -7094,9 +7049,6 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				
 				de = newDataElementStyleRuntime();
 				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_POOL_CONFIG);
-				if(configurazioneCoda!=null){
-					configurazioneCoda = StringEscapeUtils.escapeHtml4(configurazioneCoda);
-				}
 				de.setValue(configurazioneCoda);
 				de.setLabelAffiancata(false);
 				de.setType(DataElementType.TEXT_AREA_NO_EDIT);
@@ -7123,9 +7075,6 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				
 				de = newDataElementStyleRuntime();
 				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_POOL_CONNNETTORI_PRIORITARI);
-				if(connettoriPrioritari!=null){
-					connettoriPrioritari = StringEscapeUtils.escapeHtml4(connettoriPrioritari);
-				}
 				de.setValue(connettoriPrioritari);
 				de.setLabelAffiancata(false);
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_THREADS_CONSEGNA_APPLICATIVI_CONNNETTORI_PRIORITARI);
@@ -7362,9 +7311,6 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_ATTIVI_STATO);
 			if("".equals(stato)) {
 				stato = "Nessun allarme attivo";
-			}
-			if(stato!=null){
-				stato = StringEscapeUtils.escapeHtml4(stato);
 			}
 			de.setValue(stato);
 			de.setLabelAffiancata(false);
@@ -10834,7 +10780,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_DESCRIZIONE);
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_DESCRIZIONE);
-		de.setValue(StringEscapeUtils.escapeHtml4(policy.getDescrizione()));
+		de.setValue(policy.getDescrizione());
 		if(editMode) {
 			de.setType(DataElementType.TEXT_AREA);
 			de.setLabelAffiancata(true);
