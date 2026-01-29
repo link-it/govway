@@ -668,7 +668,8 @@ public class RicezioneContenutiApplicativiGestioneToken {
 							}
 												
 							this.msgDiag.mediumDebug("Gestione forward token ...");
-							gestioneTokenEngine.forwardToken(datiInvocazione,esitoPresenzaToken,
+							gestioneTokenEngine.forwardToken(datiInvocazione, esitoPresenzaToken,
+									esitoPresenzaDPoP,
 									esitoValidazioneToken, esitoIntrospectionToken, esitoUserInfoToken,
 									informazioniTokenNormalizzate);
 							this.msgDiag.mediumDebug("Gestione forward token completata");

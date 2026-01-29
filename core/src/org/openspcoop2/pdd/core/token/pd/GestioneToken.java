@@ -237,24 +237,26 @@ public class GestioneToken {
 	}
 
 	public void forwardToken(DatiInvocazionePortaDelegata datiInvocazione, EsitoPresenzaTokenPortaDelegata esitoPresenzaToken,
+			EsitoPresenzaDPoPPortaDelegata esitoPresenzaDPoP,
 			EsitoGestioneToken esitoValidazioneJWT, EsitoGestioneToken esitoIntrospection, EsitoGestioneToken esitoUserInfo,
 			InformazioniToken informazioniTokenNormalizzate) throws TokenException {
 		try {
-        	
-    		IDSoggetto soggettoFruitore = getDominio(datiInvocazione);
-    		IDServizio idServizio = getServizio(datiInvocazione);
-    		Busta busta = getBusta(datiInvocazione, soggettoFruitore, idServizio);
-			
-    		GestoreToken.forwardToken(this.log, this.idTransazione,
-    				datiInvocazione, esitoPresenzaToken, 
-    				esitoValidazioneJWT, esitoIntrospection, esitoUserInfo,
-    				informazioniTokenNormalizzate,
-    				GestoreToken.PORTA_DELEGATA,
-    				this.pddContext, busta);
-    		
-    	}catch(Exception e) {
-    		throw new TokenException(e.getMessage(),e); // errore di processamento
-    	}
+
+			IDSoggetto soggettoFruitore = getDominio(datiInvocazione);
+			IDServizio idServizio = getServizio(datiInvocazione);
+			Busta busta = getBusta(datiInvocazione, soggettoFruitore, idServizio);
+
+			GestoreToken.forwardToken(this.log, this.idTransazione,
+					datiInvocazione, esitoPresenzaToken,
+					esitoPresenzaDPoP,
+					esitoValidazioneJWT, esitoIntrospection, esitoUserInfo,
+					informazioniTokenNormalizzate,
+					GestoreToken.PORTA_DELEGATA,
+					this.pddContext, busta);
+
+		}catch(Exception e) {
+			throw new TokenException(e.getMessage(),e); // errore di processamento
+		}
 	}
 	
 	public static IDSoggetto getDominio(DatiInvocazionePortaDelegata datiInvocazione) {

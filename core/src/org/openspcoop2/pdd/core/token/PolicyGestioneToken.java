@@ -630,7 +630,21 @@ public class PolicyGestioneToken extends AbstractPolicyToken implements Serializ
 	public String getForwardTokenTrasparenteModeCustomUrl() {
 		return this.defaultProperties.getProperty(Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_CUSTOM_URL_PARAMETER_NAME);
 	}
-	
+
+	// DPoP Forward
+	public boolean isForwardDPoP() {
+		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.POLICY_RETRIEVE_TOKEN_FORWARD_DPOP_STATO);
+	}
+	public String getForwardDPoPMode() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_FORWARD_DPOP_MODE);
+	}
+	public String getForwardDPoPModeCustomHeader() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_FORWARD_DPOP_MODE_CUSTOM_HEADER_NAME);
+	}
+	public String getForwardDPoPModeCustomUrl() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_FORWARD_DPOP_MODE_CUSTOM_URL_PARAMETER_NAME);
+	}
+
 	public boolean isForwardTokenInformazioniRaccolte() {
 		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_STATO);	
 	}

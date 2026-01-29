@@ -210,21 +210,23 @@ public class GestioneToken {
 	}
 
 	public void forwardToken(AbstractDatiInvocazione datiInvocazione, EsitoPresenzaTokenPortaApplicativa esitoPresenzaToken,
+			EsitoPresenzaDPoPPortaApplicativa esitoPresenzaDPoP,
 			EsitoGestioneToken esitoValidazioneJWT, EsitoGestioneToken esitoIntrospection, EsitoGestioneToken esitoUserInfo,
 			InformazioniToken informazioniTokenNormalizzate,
 			Busta busta) throws TokenException {
 		try {
-        	
-    		GestoreToken.forwardToken(this.log, this.idTransazione,
-    				datiInvocazione, esitoPresenzaToken, 
-    				esitoValidazioneJWT, esitoIntrospection, esitoUserInfo,
-    				informazioniTokenNormalizzate,
-    				GestoreToken.PORTA_APPLICATIVA,
-    				this.pddContext, busta);
-    		
-    	}catch(Exception e) {
-    		throw new TokenException(e.getMessage(),e); // errore di processamento
-    	}
+
+			GestoreToken.forwardToken(this.log, this.idTransazione,
+					datiInvocazione, esitoPresenzaToken,
+					esitoPresenzaDPoP,
+					esitoValidazioneJWT, esitoIntrospection, esitoUserInfo,
+					informazioniTokenNormalizzate,
+					GestoreToken.PORTA_APPLICATIVA,
+					this.pddContext, busta);
+
+		}catch(Exception e) {
+			throw new TokenException(e.getMessage(),e); // errore di processamento
+		}
 	}
 	
 	public static IDSoggetto getDominio(DatiInvocazionePortaApplicativa datiInvocazione) {

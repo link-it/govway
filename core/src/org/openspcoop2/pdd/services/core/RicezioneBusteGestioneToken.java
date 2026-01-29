@@ -718,7 +718,8 @@ public class RicezioneBusteGestioneToken {
 							}
 										
 							this.msgDiag.mediumDebug("Gestione forward token ...");
-							gestioneTokenEngine.forwardToken(datiInvocazione,esitoPresenzaToken,
+							gestioneTokenEngine.forwardToken(datiInvocazione, esitoPresenzaToken,
+									esitoPresenzaDPoP,
 									esitoValidazioneToken, esitoIntrospectionToken, esitoUserInfoToken,
 									informazioniTokenNormalizzate,
 									this.bustaRichiesta);
