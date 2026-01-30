@@ -1,3 +1,9 @@
+2026-01-30 Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug #1709
+	Le sezioni relative al controllo degli accessi per le erogazioni e le fruizioni non risultano più richiudibili.
+
 2026-01-29  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]
