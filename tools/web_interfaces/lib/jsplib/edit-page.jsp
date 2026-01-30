@@ -163,8 +163,8 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 $(document).ready(function () {
 
     $(".accordionFieldsetSection").each(function () {
-        const divEsternoId = $(this).attr("id"); // es: fieldset_de_name_1__divEsterno
-        const baseId = divEsternoId.replace("__divEsterno", "");
+        const fieldsetId = $(this).attr("id"); // es: de_name_0__fieldset
+        const baseId = fieldsetId.replace("__fieldset", "");
         const sectionId = baseId + "__id";
         const anchorId = baseId + "__anchor";
         const iconId = baseId + "__icon";
@@ -173,7 +173,7 @@ $(document).ready(function () {
         const tooltipVisualizzaSezione = '<%= Costanti.TOOLTIP_VISUALIZZA_FIELDSET%>';
         const iconVisualizzaSezione = '<%= Costanti.ICON_VISUALIZZA_FIELDSET%>';
 
-        var aperto = $(this).hasClass("subtitleOpen");
+        var aperto = !$(this).hasClass("fieldsetCollapsed");
 
         // Inizializza visibilità al load
         if (aperto) {
@@ -195,33 +195,33 @@ $(document).ready(function () {
     });
     
     function apriFieldset(baseId, iconNascondiSezione, tooltipNascondiSezione) {
-        const sectionId = baseId + "__id";
-        const anchorId  = baseId + "__anchor";
-        const iconId    = baseId + "__icon";
-        const divId     = baseId + "__divEsterno";
+        const sectionId  = baseId + "__id";
+        const anchorId   = baseId + "__anchor";
+        const iconId     = baseId + "__icon";
+        const fieldsetId = baseId + "__fieldset";
 
         $("#" + sectionId).show();
         $("#" + iconId).html(iconNascondiSezione).attr("title", tooltipNascondiSezione);
         $("#" + anchorId).attr("title", tooltipNascondiSezione);
-        $("#" + divId).removeClass("fieldsetCollapsed");
+        $("#" + fieldsetId).removeClass("fieldsetCollapsed");
         inizializzaSelectSezione(sectionId);
     }
 
     function chiudiFieldset(baseId, iconVisualizzaSezione, tooltipVisualizzaSezione) {
-        const sectionId = baseId + "__id";
-        const anchorId  = baseId + "__anchor";
-        const iconId    = baseId + "__icon";
-        const divId     = baseId + "__divEsterno";
+        const sectionId  = baseId + "__id";
+        const anchorId   = baseId + "__anchor";
+        const iconId     = baseId + "__icon";
+        const fieldsetId = baseId + "__fieldset";
 
         $("#" + sectionId).hide();
         $("#" + iconId).html(iconVisualizzaSezione).attr("title", tooltipVisualizzaSezione);
         $("#" + anchorId).attr("title", tooltipVisualizzaSezione);
-        $("#" + divId).addClass("fieldsetCollapsed");
+        $("#" + fieldsetId).addClass("fieldsetCollapsed");
     }
 
     function chiudiTuttiFieldset(exceptBaseId, iconVisualizzaSezione, tooltipVisualizzaSezione) {
         $(".accordionFieldsetSection").each(function () {
-            const b = this.id.replace("__divEsterno", "");
+            const b = this.id.replace("__fieldset", "");
             if (b === exceptBaseId) return;
             chiudiFieldset(b, iconVisualizzaSezione, tooltipVisualizzaSezione);
         });
