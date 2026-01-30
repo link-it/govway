@@ -166,7 +166,6 @@
 								<suppressionFile>${owasp.falsePositives.dir}/CVE-2025-22228.xml</suppressionFile>
 								<suppressionFile>${owasp.falsePositives.dir}/CVE-2018-1258.xml</suppressionFile>
 								<suppressionFile>${owasp.falsePositives.dir}/CVE-2025-10492.xml</suppressionFile>
-								<suppressionFile>${owasp.falsePositives.dir}/CVE-2025-15104.xml</suppressionFile>
 							</suppressionFiles>
 							<nvdApiDelay>120000</nvdApiDelay><!-- 2 minuti -->
 							<nvdMaxRetryCount>3</nvdMaxRetryCount> <!-- 3 max tentativi visto il timeout alto -->
