@@ -4797,7 +4797,27 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		}
 		return l;
 	}
-	
+
+	public List<String> getAllActionsRedefinedMappingFruizione(List<MappingFruizionePortaDelegata> lista) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		// Restituisce le azioni già assegnate a gruppi specifici (non default)
+		List<String> azioniRidefinite = new ArrayList<>();
+		if(lista!=null && !lista.isEmpty()) {
+			for (MappingFruizionePortaDelegata mappingFruizionePortaDelegata : lista) {
+				if(!mappingFruizionePortaDelegata.isDefault()) {
+					PortaDelegata pdAssociata = this.porteDelegateCore.getPortaDelegata(mappingFruizionePortaDelegata.getIdPortaDelegata());
+					if(pdAssociata.getAzione() != null && pdAssociata.getAzione().getAzioneDelegataList()!=null) {
+						for (String az : pdAssociata.getAzione().getAzioneDelegataList()) {
+							if(!azioniRidefinite.contains(az)) {
+								azioniRidefinite.add(az);
+							}
+						}
+					}
+				}
+			}
+		}
+		return azioniRidefinite;
+	}
+
 	public boolean allActionsRedefinedMappingFruizione(List<String> azioni, List<MappingFruizionePortaDelegata> lista) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		// verifico se tutte le azioni sono definite in regole specifiche
 		boolean all = true;
@@ -7773,15 +7793,17 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				
 				boolean forcePDND = false;
 				boolean forceOAuth = false;
-								
-				BooleanNullable forceHttpsClientWrapper = BooleanNullable.NULL(); 
-				BooleanNullable forcePDNDWrapper = BooleanNullable.NULL(); 
-				BooleanNullable forceOAuthWrapper = BooleanNullable.NULL(); 
-				
-				this.readModIConfiguration(forceHttpsClientWrapper, forcePDNDWrapper, forceOAuthWrapper, 
-						idAccordoParteComune, portType, 
+				boolean forceDPoP = false;
+
+				BooleanNullable forceHttpsClientWrapper = BooleanNullable.NULL();
+				BooleanNullable forcePDNDWrapper = BooleanNullable.NULL();
+				BooleanNullable forceOAuthWrapper = BooleanNullable.NULL();
+				BooleanNullable forceDPoPWrapper = BooleanNullable.NULL();
+
+				this.readModIConfiguration(forceHttpsClientWrapper, forcePDNDWrapper, forceOAuthWrapper, forceDPoPWrapper,
+						idAccordoParteComune, portType,
 						null);
-				
+
 				if(forceHttpsClientWrapper.getValue()!=null) {
 					forceDisableOptional = forceHttpsClientWrapper.getValue().booleanValue();
 				}
@@ -7790,6 +7812,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				}
 				if(forceOAuthWrapper.getValue()!=null) {
 					forceOAuth = forceOAuthWrapper.getValue().booleanValue();
+				}
+				if(forceDPoPWrapper.getValue()!=null) {
+					forceDPoP = forceDPoPWrapper.getValue().booleanValue();
 				}
 				
 				if (forcePDND || forceOAuth) {
@@ -7800,27 +7825,37 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					gestioneToken = StatoFunzionalita.ABILITATO.getValue();
 					
 					if(forcePDND) {
-						List<String> tokenPolicies = this.getTokenPolicyGestione(true, false, 
+						List<String> tokenPolicies = this.getTokenPolicyGestione(true, false, forceDPoP,
 								false, // alla posizione 0 NON viene aggiunto -
-								gestioneTokenPolicy, tipoOp); 
+								gestioneTokenPolicy, tipoOp);
 						if(tokenPolicies!=null && !tokenPolicies.isEmpty()) {
 							if(gestioneTokenPolicy==null || StringUtils.isEmpty(gestioneTokenPolicy) || CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO.equals(gestioneTokenPolicy)) {
-								gestioneTokenPolicy = tokenPolicies.get(0); 
+								gestioneTokenPolicy = tokenPolicies.get(0);
 							}
 							gestioneTokenPolicyLabels = tokenPolicies.toArray(new String[1]);
 							gestioneTokenPolicyValues = tokenPolicies.toArray(new String[1]);
 						}
+						else {
+							gestioneTokenPolicyLabels = new String[] {CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO};
+							gestioneTokenPolicyValues = gestioneTokenPolicyLabels;
+							gestioneTokenPolicy = gestioneTokenPolicyLabels[0];
+						}
 					}
 					else {
-						List<String> tokenPolicies = this.getTokenPolicyGestione(false, true, 
+						List<String> tokenPolicies = this.getTokenPolicyGestione(false, true, forceDPoP,
 								false, // alla posizione 0 NON viene aggiunto -
-								gestioneTokenPolicy, tipoOp); 
+								gestioneTokenPolicy, tipoOp);
 						if(tokenPolicies!=null && !tokenPolicies.isEmpty()) {
 							if(gestioneTokenPolicy==null || StringUtils.isEmpty(gestioneTokenPolicy) || CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO.equals(gestioneTokenPolicy)) {
-								gestioneTokenPolicy = tokenPolicies.get(0); 
+								gestioneTokenPolicy = tokenPolicies.get(0);
 							}
 							gestioneTokenPolicyLabels = tokenPolicies.toArray(new String[1]);
 							gestioneTokenPolicyValues = tokenPolicies.toArray(new String[1]);
+						}
+						else {
+							gestioneTokenPolicyLabels = new String[] {CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO};
+							gestioneTokenPolicyValues = gestioneTokenPolicyLabels;
+							gestioneTokenPolicy = gestioneTokenPolicyLabels[0];
 						}
 					}
 					
@@ -9704,11 +9739,11 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				forceHttps = forceAutenticato;
 				
 				if(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_NUOVA.equals(modeCreazione)) {
-					
-					BooleanNullable forcePDNDWrapper = BooleanNullable.NULL(); 
-					BooleanNullable forceOAuthWrapper = BooleanNullable.NULL(); 
-					this.readModIConfiguration(BooleanNullable.NULL(), forcePDNDWrapper, forceOAuthWrapper, 
-							this.idAccordoFactory.getIDAccordoFromAccordo(as),asps.getPortType(), 
+
+					BooleanNullable forcePDNDWrapper = BooleanNullable.NULL();
+					BooleanNullable forceOAuthWrapper = BooleanNullable.NULL();
+					this.readModIConfiguration(BooleanNullable.NULL(), forcePDNDWrapper, forceOAuthWrapper, BooleanNullable.NULL(),
+							this.idAccordoFactory.getIDAccordoFromAccordo(as),asps.getPortType(),
 							azioniDisponibiliList!=null && azioniDisponibiliList.length>0 ? Arrays.asList(azioniDisponibiliList) : null); // verifica per tutte le azioni disponibili
 					boolean forcePDND = false;
 					boolean forceOAuth = false;
@@ -9721,24 +9756,26 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					if (forcePDND || forceOAuth) {
 						deAzione.setPostBack(true);
 					}
-					
+
 				}
-				
+
 				boolean forcePDND = false;
 				boolean forceOAuth = false;
-								
-				BooleanNullable forceHttpsClientWrapper = BooleanNullable.NULL(); 
-				BooleanNullable forcePDNDWrapper = BooleanNullable.NULL(); 
-				BooleanNullable forceOAuthWrapper = BooleanNullable.NULL(); 
-				
+				boolean forceDPoP = false;
+
+				BooleanNullable forceHttpsClientWrapper = BooleanNullable.NULL();
+				BooleanNullable forcePDNDWrapper = BooleanNullable.NULL();
+				BooleanNullable forceOAuthWrapper = BooleanNullable.NULL();
+				BooleanNullable forceDPoPWrapper = BooleanNullable.NULL();
+
 				List<String> azioniList = null;
 				if(azioni!=null && azioni.length>0) {
 					azioniList = Arrays.asList(azioni);
 				}
-				this.readModIConfiguration(forceHttpsClientWrapper, forcePDNDWrapper, forceOAuthWrapper, 
-						this.idAccordoFactory.getIDAccordoFromAccordo(as),asps.getPortType(), 
+				this.readModIConfiguration(forceHttpsClientWrapper, forcePDNDWrapper, forceOAuthWrapper, forceDPoPWrapper,
+						this.idAccordoFactory.getIDAccordoFromAccordo(as),asps.getPortType(),
 						azioniList);
-				
+
 				if(forceHttpsClientWrapper.getValue()!=null) {
 					forceDisableOptional = forceHttpsClientWrapper.getValue().booleanValue();
 				}
@@ -9747,6 +9784,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				}
 				if(forceOAuthWrapper.getValue()!=null) {
 					forceOAuth = forceOAuthWrapper.getValue().booleanValue();
+				}
+				if(forceDPoPWrapper.getValue()!=null) {
+					forceDPoP = forceDPoPWrapper.getValue().booleanValue();
 				}
 				
 				if (forcePDND || forceOAuth) {
@@ -9757,24 +9797,24 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					gestioneToken = StatoFunzionalita.ABILITATO.getValue();
 					
 					if(forcePDND) {
-						List<String> tokenPolicies = this.getTokenPolicyGestione(true, false, 
+						List<String> tokenPolicies = this.getTokenPolicyGestione(true, false, forceDPoP,
 								false, // alla posizione 0 NON viene aggiunto -
 								gestioneTokenPolicy, tipoOperazione);
 						if(tokenPolicies!=null && !tokenPolicies.isEmpty()) {
 							if(gestioneTokenPolicy==null || StringUtils.isEmpty(gestioneTokenPolicy) || CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO.equals(gestioneTokenPolicy)) {
-								gestioneTokenPolicy = tokenPolicies.get(0); 
+								gestioneTokenPolicy = tokenPolicies.get(0);
 							}
 							gestioneTokenPolicyLabels = tokenPolicies.toArray(new String[1]);
 							gestioneTokenPolicyValues = tokenPolicies.toArray(new String[1]);
 						}
 					}
 					else {
-						List<String> tokenPolicies = this.getTokenPolicyGestione(false, true, 
+						List<String> tokenPolicies = this.getTokenPolicyGestione(false, true, forceDPoP,
 								false, // alla posizione 0 NON viene aggiunto -
 								gestioneTokenPolicy, tipoOperazione);
 						if(tokenPolicies!=null && !tokenPolicies.isEmpty()) {
 							if(gestioneTokenPolicy==null || StringUtils.isEmpty(gestioneTokenPolicy) || CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO.equals(gestioneTokenPolicy)) {
-								gestioneTokenPolicy = tokenPolicies.get(0); 
+								gestioneTokenPolicy = tokenPolicies.get(0);
 							}
 							gestioneTokenPolicyLabels = tokenPolicies.toArray(new String[1]);
 							gestioneTokenPolicyValues = tokenPolicies.toArray(new String[1]);
@@ -10174,6 +10214,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AZIONI);
 		de.setRows(CostantiControlStation.RIGHE_MULTISELECT_AZIONI);
 		de.setRequired(true); 
+		de.setPostBack(true);
 		dati.add(de);
 		
 		

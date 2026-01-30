@@ -451,6 +451,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 			String tokenPolicy = null;
 			boolean forcePDND = false;
 			boolean forceOAuth = false;
+			boolean forceDPoP = false;
 			String proxyEnabled = null;
 			String proxyHostname  = null;
 			String proxyPort  = null;
@@ -897,7 +898,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 					requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 					requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-					autenticazioneToken, tokenPolicy, forcePDND, forceOAuth,
+					autenticazioneToken, tokenPolicy, forcePDND, forceOAuth, forceDPoP,
 					listExtendedConnettore, false,
 					protocollo,false,false
 					, false, servizioApplicativoServerEnabled, servizioApplicativoServer, null,

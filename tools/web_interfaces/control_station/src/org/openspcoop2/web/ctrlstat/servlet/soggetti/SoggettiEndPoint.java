@@ -110,7 +110,8 @@ public final class SoggettiEndPoint extends Action {
 			String tokenPolicy = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY);
 			boolean forcePDND = false;
 			boolean forceOAuth = false;
-			
+			boolean forceDPoP = false;
+
 			// proxy
 			String proxyEnabled = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
 			String proxyHostname = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
@@ -590,7 +591,7 @@ public final class SoggettiEndPoint extends Action {
 						requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 						requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-						autenticazioneToken,tokenPolicy, forcePDND, forceOAuth,
+						autenticazioneToken,tokenPolicy, forcePDND, forceOAuth, forceDPoP,
 						listExtendedConnettore, false,
 						protocollo, false, false
 						, false, false, null, null,
@@ -646,7 +647,7 @@ public final class SoggettiEndPoint extends Action {
 						requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 						requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-						autenticazioneToken,tokenPolicy, forcePDND, forceOAuth,
+						autenticazioneToken,tokenPolicy, forcePDND, forceOAuth, forceDPoP,
 						listExtendedConnettore, false,
 						protocollo, false, false
 						, false, false, null, null,

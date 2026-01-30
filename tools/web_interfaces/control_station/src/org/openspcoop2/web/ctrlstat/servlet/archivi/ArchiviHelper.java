@@ -2946,7 +2946,8 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			String tokenPolicy = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY);
 			boolean forcePDND = false;
 			boolean forceOAuth = false;
-			
+			boolean forceDPoP = false;
+
 			// proxy
 			proxyEnabled = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
 			proxyHostname = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
@@ -3094,7 +3095,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 					requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 					requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-					autenticazioneToken,tokenPolicy, forcePDND, forceOAuth,
+					autenticazioneToken,tokenPolicy, forcePDND, forceOAuth, forceDPoP,
 					listExtendedConnettore, forceEnabled,
 					null, false,false
 					, false, false, null, null,

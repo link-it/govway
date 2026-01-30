@@ -741,6 +741,9 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				// filtro digest richiesta
 				this.addFilterModIDigestRichiesta(ricerca, idLista);
 
+				// filtro DPoP
+				this.addFilterModIDPoP(ricerca, idLista);
+
 				// filtro informazioni utente
 				this.addFilterModIInfoUtente(ricerca, idLista);
 				

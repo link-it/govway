@@ -236,6 +236,7 @@ public final class Filtri
 	public static final String FILTRO_MODI_SICUREZZA_TOKEN_CLIENT_ID = "filtroModiTokenClientId";
 	public static final String FILTRO_MODI_AUDIENCE = "filtroModiAudience";
 	public static final String FILTRO_MODI_DIGEST_RICHIESTA = "filtroModiDigestRich";
+	public static final String FILTRO_MODI_DPOP = "filtroModiDPoP";
 	public static final String FILTRO_MODI_INFORMAZIONI_UTENTE = "filtroModiInfoUtente";
 	public static final String FILTRO_MODI_SIGNAL_HUB = "filtroModiSignalHub";
 	public static final String FILTRO_MODI_SERVICE_ID = "filtroModiServiceId";

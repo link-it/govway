@@ -1834,15 +1834,17 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				
 				boolean forcePDND = false;
 				boolean forceOAuth = false;
-				
-				BooleanNullable forceHttpsClientWrapper = BooleanNullable.NULL(); 
-				BooleanNullable forcePDNDWrapper = BooleanNullable.NULL(); 
-				BooleanNullable forceOAuthWrapper = BooleanNullable.NULL(); 
-				
-				this.readModIConfiguration(forceHttpsClientWrapper, forcePDNDWrapper, forceOAuthWrapper, 
-						IDAccordoFactory.getInstance().getIDAccordoFromAccordo(aspc),asps!=null ? asps.getPortType() : null, 
+				boolean forceDPoP = false;
+
+				BooleanNullable forceHttpsClientWrapper = BooleanNullable.NULL();
+				BooleanNullable forcePDNDWrapper = BooleanNullable.NULL();
+				BooleanNullable forceOAuthWrapper = BooleanNullable.NULL();
+				BooleanNullable forceDPoPWrapper = BooleanNullable.NULL();
+
+				this.readModIConfiguration(forceHttpsClientWrapper, forcePDNDWrapper, forceOAuthWrapper, forceDPoPWrapper,
+						IDAccordoFactory.getInstance().getIDAccordoFromAccordo(aspc),asps!=null ? asps.getPortType() : null,
 						null);
-				
+
 				if(forceHttpsClientWrapper.getValue()!=null) {
 					forceDisableOptional = forceHttpsClientWrapper.getValue().booleanValue();
 				}
@@ -1852,13 +1854,16 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				if(forceOAuthWrapper.getValue()!=null) {
 					forceOAuth = forceOAuthWrapper.getValue().booleanValue();
 				}
+				if(forceDPoPWrapper.getValue()!=null) {
+					forceDPoP = forceDPoPWrapper.getValue().booleanValue();
+				}
 
 				if (forcePDND || forceOAuth) {
-					
+
 					forceGestioneToken = true;
-					
+
 					if(forcePDND) {
-						List<String> tokenPolicies = this.getTokenPolicyGestione(true, false, 
+						List<String> tokenPolicies = this.getTokenPolicyGestione(true, false, forceDPoP,
 								true,
 								gestioneTokenPolicy, tipoOp);
 						if(tokenPolicies!=null && !tokenPolicies.isEmpty()) {
@@ -1867,7 +1872,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						}
 					}
 					else {
-						List<String> tokenPolicies = this.getTokenPolicyGestione(false, true, 
+						List<String> tokenPolicies = this.getTokenPolicyGestione(false, true, forceDPoP,
 								true,
 								gestioneTokenPolicy, tipoOp);
 						if(tokenPolicies!=null && !tokenPolicies.isEmpty()) {
@@ -1875,7 +1880,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 							gestioneTokenPolicyValues = tokenPolicies.toArray(new String[1]);
 						}
 					}
-					
+
 				}
 			}
 			

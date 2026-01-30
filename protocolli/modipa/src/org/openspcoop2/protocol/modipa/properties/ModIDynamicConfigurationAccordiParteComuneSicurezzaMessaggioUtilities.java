@@ -285,9 +285,22 @@ public class ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtiliti
 		profiloSicurezzaMessaggioRequestDigest.setInfo(cDigest);
 		profiloSicurezzaMessaggioRequestDigest.setLabelRight(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REQUEST_DIGEST_LABEL_RIGHT);
 		configuration.addConsoleItem(profiloSicurezzaMessaggioRequestDigest);
-		
-		
-		BooleanConsoleItem profiloSicurezzaMessaggioCorniceSicurezza = (BooleanConsoleItem) 
+
+
+		// DPoP Checkbox - visibile solo quando sorgente token e' PDND o OAuth
+		BooleanConsoleItem profiloSicurezzaMessaggioDPoP = (BooleanConsoleItem)
+				ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.BOOLEAN,
+				ConsoleItemType.CHECKBOX,
+				ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_DPOP_ID,
+				ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_DPOP_LABEL);
+		profiloSicurezzaMessaggioDPoP.setDefaultValue(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_DPOP_DEFAULT_VALUE);
+		profiloSicurezzaMessaggioDPoP.setLabelRight(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_DPOP_LABEL_RIGHT);
+		// Inizialmente nascosto, verra' mostrato nel metodo update se sorgente e' PDND/OAuth
+		profiloSicurezzaMessaggioDPoP.setType(ConsoleItemType.HIDDEN);
+		configuration.addConsoleItem(profiloSicurezzaMessaggioDPoP);
+
+
+		BooleanConsoleItem profiloSicurezzaMessaggioCorniceSicurezza = (BooleanConsoleItem)
 				ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.BOOLEAN,
 				ConsoleItemType.CHECKBOX,
 				ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_ID,
@@ -669,10 +682,33 @@ public class ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtiliti
 				}
 			}
 		}
-		
-		
+
+
+		// Gestione visibilita' checkbox DPoP
+		AbstractConsoleItem<?> profiloSicurezzaMessaggioDPoPItem =
+				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_DPOP_ID);
+		if(profiloSicurezzaMessaggioDPoPItem != null) {
+			// Visibile solo se:
+			// 1. E' un profilo di sicurezza messaggio valido (01, 02, 03, 04)
+			// 2. La sorgente token e' PDND o OAuth (non locale)
+			boolean showDPoP = (isSicurezza01 || isSicurezza02 || isSicurezza03 || (isSicurezza04 && !sicurezzaSoloSullaRispostaPerIdar04))
+					&& !sorgenteTokenLocale;
+			if(showDPoP) {
+				profiloSicurezzaMessaggioDPoPItem.setType(ConsoleItemType.CHECKBOX);
+			} else {
+				profiloSicurezzaMessaggioDPoPItem.setType(ConsoleItemType.HIDDEN);
+				// Reset del valore quando viene nascosto
+				BooleanProperty dpopValue = (BooleanProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties,
+						ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_DPOP_ID);
+				if(dpopValue != null) {
+					dpopValue.setValue(false);
+				}
+			}
+		}
+
+
 		if(rest) {
-			AbstractConsoleItem<?> profiloSicurezzaMessaggioHeaderItem = 	
+			AbstractConsoleItem<?> profiloSicurezzaMessaggioHeaderItem =
 					ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_ID);
 			AbstractConsoleItem<?> profiloSicurezzaMessaggioHeaderCustomItem = 	
 					ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_ID);

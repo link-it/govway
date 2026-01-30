@@ -213,7 +213,8 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			String tokenPolicy = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY);
 			boolean forcePDND = false;
 			boolean forceOAuth = false;
-			
+			boolean forceDPoP = false;
+
 			// proxy
 			String proxyEnabled = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
 			String proxyHostname = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
@@ -768,7 +769,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 								requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 								requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-								autenticazioneToken, tokenPolicy, forcePDND, forceOAuth,
+								autenticazioneToken, tokenPolicy, forcePDND, forceOAuth, forceDPoP,
 								listExtendedConnettore, forceEnableConnettore,
 								protocollo,false,false, isApplicativiServerEnabled, erogazioneServizioApplicativoServerEnabled,
 								erogazioneServizioApplicativoServer, saSoggetti,
@@ -866,7 +867,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 							requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 							requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-							autenticazioneToken, tokenPolicy, forcePDND, forceOAuth,
+							autenticazioneToken, tokenPolicy, forcePDND, forceOAuth, forceDPoP,
 							listExtendedConnettore, forceEnableConnettore,
 							protocollo,false,false, isApplicativiServerEnabled, erogazioneServizioApplicativoServerEnabled,
 							erogazioneServizioApplicativoServer, saSoggetti,
@@ -902,16 +903,17 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			if (apsHelper.isProfiloModIPA(protocollo) && asps != null) {
 				BooleanNullable forceHttpsClientWrapper = BooleanNullable.NULL(); 
 				BooleanNullable forcePDNDWrapper = BooleanNullable.NULL(); 
-				BooleanNullable forceOAuthWrapper = BooleanNullable.NULL(); 
-				
+				BooleanNullable forceOAuthWrapper = BooleanNullable.NULL();
+				BooleanNullable forceDPoPWrapper = BooleanNullable.NULL();
+
 				List<String> azioniList = null;
 				if(azioni!=null && azioni.length>0) {
 					azioniList = Arrays.asList(azioni);
 				}
-				apsHelper.readModIConfiguration(forceHttpsClientWrapper, forcePDNDWrapper, forceOAuthWrapper, 
-						idAccordo,asps.getPortType(), 
+				apsHelper.readModIConfiguration(forceHttpsClientWrapper, forcePDNDWrapper, forceOAuthWrapper, forceDPoPWrapper,
+						idAccordo,asps.getPortType(),
 						azioniList);
-				
+
 				boolean forceDisableOptional = false;
 				if(forceHttpsClientWrapper.getValue()!=null) {
 					forceDisableOptional = forceHttpsClientWrapper.getValue().booleanValue();
@@ -921,6 +923,9 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 				}
 				if(forceOAuthWrapper.getValue()!=null) {
 					forceOAuth = forceOAuthWrapper.getValue().booleanValue();
+				}
+				if(forceDPoPWrapper.getValue()!=null) {
+					forceDPoP = forceDPoPWrapper.getValue().booleanValue();
 				}
 				
 				erogazioneAutenticazioneOpzionale = forceDisableOptional ? Costanti.CHECK_BOX_DISABLED : Costanti.CHECK_BOX_ENABLED;
@@ -933,17 +938,17 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 					gestioneToken = StatoFunzionalita.ABILITATO.getValue();
 					
 					if(forcePDND) {
-						List<String> tokenPolicies = apsHelper.getTokenPolicyGestione(true, false, 
+						List<String> tokenPolicies = apsHelper.getTokenPolicyGestione(true, false, forceDPoP,
 								false, // alla posizione 0 NON viene aggiunto -
 								gestioneTokenPolicy, TipoOperazione.ADD);
 						if(tokenPolicies!=null && !tokenPolicies.isEmpty() &&
-							(gestioneTokenPolicy==null || StringUtils.isEmpty(gestioneTokenPolicy)) 
+							(gestioneTokenPolicy==null || StringUtils.isEmpty(gestioneTokenPolicy))
 							){
 							gestioneTokenPolicy = tokenPolicies.get(0);  // dovrebbe già essere stata selezionata prima
 						}
 					}
 					else {
-						List<String> tokenPolicies = apsHelper.getTokenPolicyGestione(false, true, 
+						List<String> tokenPolicies = apsHelper.getTokenPolicyGestione(false, true, forceDPoP,
 								false, // alla posizione 0 NON viene aggiunto -
 								gestioneTokenPolicy, TipoOperazione.ADD);
 						if(tokenPolicies!=null && !tokenPolicies.isEmpty() &&

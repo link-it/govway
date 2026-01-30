@@ -546,17 +546,19 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			boolean forceHttpsClient = false;
 			boolean forcePDND = false;
 			boolean forceOAuth = false;
+			boolean forceDPoP = false;
 			if(apsHelper.isProfiloModIPA(protocollo)) {
 				forceHttps = apsHelper.forceHttpsProfiloModiPA();
-				
-				BooleanNullable forceHttpsClientWrapper = BooleanNullable.NULL(); 
-				BooleanNullable forcePDNDWrapper = BooleanNullable.NULL(); 
-				BooleanNullable forceOAuthWrapper = BooleanNullable.NULL(); 
-				
-				apsHelper.readModIConfiguration(forceHttpsClientWrapper, forcePDNDWrapper, forceOAuthWrapper, 
-						IDAccordoFactory.getInstance().getIDAccordoFromAccordo(as), asps.getPortType(), 
+
+				BooleanNullable forceHttpsClientWrapper = BooleanNullable.NULL();
+				BooleanNullable forcePDNDWrapper = BooleanNullable.NULL();
+				BooleanNullable forceOAuthWrapper = BooleanNullable.NULL();
+				BooleanNullable forceDPoPWrapper = BooleanNullable.NULL();
+
+				apsHelper.readModIConfiguration(forceHttpsClientWrapper, forcePDNDWrapper, forceOAuthWrapper, forceDPoPWrapper,
+						IDAccordoFactory.getInstance().getIDAccordoFromAccordo(as), asps.getPortType(),
 						null);
-				
+
 				if(forceHttpsClientWrapper.getValue()!=null) {
 					forceHttpsClient = forceHttpsClientWrapper.getValue().booleanValue();
 				}
@@ -566,7 +568,10 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 				if(forceOAuthWrapper.getValue()!=null) {
 					forceOAuth = forceOAuthWrapper.getValue().booleanValue();
 				}
-				
+				if(forceDPoPWrapper.getValue()!=null) {
+					forceDPoP = forceDPoPWrapper.getValue().booleanValue();
+				}
+
 			}
 			
 			// Token Policy
@@ -805,7 +810,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 								strutsBean.requestOutputFileName, strutsBean.requestOutputFileNamePermissions, strutsBean.requestOutputFileNameHeaders, strutsBean.requestOutputFileNameHeadersPermissions,
 								strutsBean.requestOutputParentDirCreateIfNotExists,strutsBean.requestOutputOverwriteIfExists,
 								strutsBean.responseInputMode, strutsBean.responseInputFileName, strutsBean.responseInputFileNameHeaders, strutsBean.responseInputDeleteAfterRead, strutsBean.responseInputWaitTime,
-								strutsBean.autenticazioneToken,strutsBean.tokenPolicy, forcePDND, forceOAuth,
+								strutsBean.autenticazioneToken,strutsBean.tokenPolicy, forcePDND, forceOAuth, forceDPoP,
 								listExtendedConnettore, false,
 								protocollo, forceHttps, forceHttpsClient, false, false, null, null,
 								strutsBean.autenticazioneApiKey, strutsBean.useOAS3Names, strutsBean.useAppId, strutsBean.apiKeyHeader, strutsBean.apiKeyValue, strutsBean.appIdHeader, strutsBean.appIdValue,
@@ -957,7 +962,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 							strutsBean.requestOutputFileName, strutsBean.requestOutputFileNamePermissions, strutsBean.requestOutputFileNameHeaders, strutsBean.requestOutputFileNameHeadersPermissions,
 							strutsBean.requestOutputParentDirCreateIfNotExists,strutsBean.requestOutputOverwriteIfExists,
 							strutsBean.responseInputMode, strutsBean.responseInputFileName, strutsBean.responseInputFileNameHeaders, strutsBean.responseInputDeleteAfterRead, strutsBean.responseInputWaitTime,
-							strutsBean.autenticazioneToken,strutsBean.tokenPolicy, forcePDND, forceOAuth,
+							strutsBean.autenticazioneToken,strutsBean.tokenPolicy, forcePDND, forceOAuth, forceDPoP,
 							listExtendedConnettore, false,
 							protocollo, forceHttps, forceHttpsClient, false, false, null, null,
 							strutsBean.autenticazioneApiKey, strutsBean.useOAS3Names, strutsBean.useAppId, strutsBean.apiKeyHeader, strutsBean.apiKeyValue, strutsBean.appIdHeader, strutsBean.appIdValue,
@@ -1124,7 +1129,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 								strutsBean.requestOutputFileName, strutsBean.requestOutputFileNamePermissions, strutsBean.requestOutputFileNameHeaders, strutsBean.requestOutputFileNameHeadersPermissions,
 								strutsBean.requestOutputParentDirCreateIfNotExists,strutsBean.requestOutputOverwriteIfExists,
 								strutsBean.responseInputMode, strutsBean.responseInputFileName, strutsBean.responseInputFileNameHeaders, strutsBean.responseInputDeleteAfterRead, strutsBean.responseInputWaitTime,
-								strutsBean.autenticazioneToken,strutsBean.tokenPolicy, forcePDND, forceOAuth,
+								strutsBean.autenticazioneToken,strutsBean.tokenPolicy, forcePDND, forceOAuth, forceDPoP,
 								listExtendedConnettore, false,
 								protocollo, forceHttps, forceHttpsClient, false, false, null, null,
 								strutsBean.autenticazioneApiKey, strutsBean.useOAS3Names, strutsBean.useAppId, strutsBean.apiKeyHeader, strutsBean.apiKeyValue, strutsBean.appIdHeader, strutsBean.appIdValue,

@@ -166,7 +166,8 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 			String tokenPolicy = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY);
 			boolean forcePDND = false;
 			boolean forceOAuth = false;
-						
+			boolean forceDPoP = false;
+
 			// proxy
 			String proxyEnabled = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
 			String proxyHostname = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
@@ -858,7 +859,7 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 						requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 						requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-						autenticazioneToken,tokenPolicy, forcePDND, forceOAuth,
+						autenticazioneToken,tokenPolicy, forcePDND, forceOAuth, forceDPoP,
 						listExtendedConnettore, forceEnabled,
 						nomeProtocollo, false, false
 						, false, erogazioneServizioApplicativoServerEnabled, null, null,
@@ -921,7 +922,7 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 						requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 						requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-						autenticazioneToken,tokenPolicy, forcePDND, forceOAuth,
+						autenticazioneToken,tokenPolicy, forcePDND, forceOAuth, forceDPoP,
 						listExtendedConnettore, forceEnabled,
 						nomeProtocollo, false, false
 						, false, erogazioneServizioApplicativoServerEnabled, null, null,

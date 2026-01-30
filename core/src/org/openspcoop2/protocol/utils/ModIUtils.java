@@ -91,6 +91,7 @@ public class ModIUtils {
 	public static final String API_SICUREZZA_MESSAGGIO_HTTP_HEADER = API_SICUREZZA_MESSAGGIO_PREFIX+"-http-header";
 	public static final String API_SICUREZZA_MESSAGGIO_APPLICABILITA = API_SICUREZZA_MESSAGGIO_PREFIX+"-applicability";
 	public static final String API_SICUREZZA_MESSAGGIO_REQUEST_DIGEST = API_SICUREZZA_MESSAGGIO_PREFIX+"-request-digest";
+	public static final String API_SICUREZZA_MESSAGGIO_DPOP = API_SICUREZZA_MESSAGGIO_PREFIX+"-dpop";
 	public static final String API_SICUREZZA_MESSAGGIO_USER_INFO = API_SICUREZZA_MESSAGGIO_PREFIX+"-user-info";
 	
 	private static final String REQUEST_PREFIX = "request-";
@@ -164,6 +165,7 @@ public class ModIUtils {
 		boolean rest = ServiceBinding.REST.equals(aspc.getServiceBinding());
 		boolean digest = isProfiloSicurezzaMessaggioConIntegritaX509(aspc, asps.getPortType()) || isProfiloSicurezzaMessaggioConIntegritaKid(aspc, asps.getPortType());
 		boolean digestRichiesta = isProfiloSicurezzaMessaggioRequestDigest(aspc, asps.getPortType());
+		boolean dpop = isProfiloSicurezzaMessaggioDPoP(aspc, asps.getPortType());
 		boolean corniceSicurezza = isProfiloSicurezzaMessaggioCorniceSicurezza(aspc, asps.getPortType());
 		String patternDatiCorniceSicurezza = null;
 		String schemaDatiCorniceSicurezza = null;
@@ -402,7 +404,11 @@ public class ModIUtils {
 			// Request Digest
 			map.put(API_SICUREZZA_MESSAGGIO_REQUEST_DIGEST,
 					digestRichiesta ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue());
-			
+
+			// DPoP
+			map.put(API_SICUREZZA_MESSAGGIO_DPOP,
+					dpop ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue());
+
 			// Cornice Sicurezza
 			if(corniceSicurezza) {
 				if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_OLD.equals(patternDatiCorniceSicurezza)) {
@@ -1149,6 +1155,17 @@ public class ModIUtils {
 	}
 	private static boolean isProfiloSicurezzaMessaggioRequestDigest(AccordoServizioParteComune api, String portType) {
 		List<String> tmp = RegistroServiziUtils.fillPropertyProtocollo(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REQUEST_DIGEST, api, portType, true);
+		if(tmp!=null && !tmp.isEmpty()) {
+			for (String v : tmp) {
+				if(v!=null && "true".equals(v)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	private static boolean isProfiloSicurezzaMessaggioDPoP(AccordoServizioParteComune api, String portType) {
+		List<String> tmp = RegistroServiziUtils.fillPropertyProtocollo(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_DPOP, api, portType, true);
 		if(tmp!=null && !tmp.isEmpty()) {
 			for (String v : tmp) {
 				if(v!=null && "true".equals(v)) {

@@ -73,10 +73,11 @@ public class DBUtils {
 		private String sicurezzaMessaggio;
 		private String sorgenteToken;
 		private Boolean digestRichiesta;
+		private Boolean dpop;
 		private String infoUtente;
 		private String keystore;
 		private String audience;
-		
+
 		private Boolean signalHub;
 		private String serviceId;
 		private String descriptorId;
@@ -115,6 +116,14 @@ public class DBUtils {
 
 		public void setDigestRichiesta(Boolean digestRichiesta) {
 			this.digestRichiesta = digestRichiesta;
+		}
+
+		public Boolean getDpop() {
+			return this.dpop;
+		}
+
+		public void setDpop(Boolean dpop) {
+			this.dpop = dpop;
 		}
 
 		public String getInfoUtente() {
@@ -166,10 +175,11 @@ public class DBUtils {
 		}
 		
 		public boolean isFilterEnabled() {
-			return this.sicurezzaCanale != null 
-					|| this.sicurezzaMessaggio != null 
-					|| this.sorgenteToken != null 
+			return this.sicurezzaCanale != null
+					|| this.sicurezzaMessaggio != null
+					|| this.sorgenteToken != null
 					|| this.digestRichiesta != null
+					|| this.dpop != null
 					|| this.infoUtente != null
 					|| this.keystore != null
 					|| this.audience != null
@@ -1998,14 +2008,15 @@ public class DBUtils {
 	public static void setFiltriModI(ISQLQueryObject sqlQueryObject, String tipoDB,
 			String filtroModISicurezzaCanale, String filtroModISicurezzaMessaggio,
 			String filtroModISorgenteToken,
-			Boolean filtroModIDigestRichiesta, String filtroModIInfoUtente) throws Exception {
+			Boolean filtroModIDigestRichiesta, Boolean filtroModIDPoP, String filtroModIInfoUtente) throws Exception {
 		FiltroModIErogazioneFruizione modiFilter = new FiltroModIErogazioneFruizione();
 		modiFilter.setSicurezzaMessaggio(filtroModISicurezzaMessaggio);
 		modiFilter.setSicurezzaCanale(filtroModISicurezzaCanale);
 		modiFilter.setSorgenteToken(filtroModISorgenteToken);
 		modiFilter.setDigestRichiesta(filtroModIDigestRichiesta);
+		modiFilter.setDpop(filtroModIDPoP);
 		modiFilter.setInfoUtente(filtroModIInfoUtente);
-		
+
 		setFiltriModI(sqlQueryObject, tipoDB, modiFilter);
 	}
 	
@@ -2050,17 +2061,33 @@ public class DBUtils {
 			}
 		}
 		if(modiFilter.getDigestRichiesta()!=null) {
-			
+
 			List<String> query = new ArrayList<>();
-			
+
 			ISQLQueryObject sqlAccordoSec = buildSQLQueryObjectProtocolProperties(ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_COMUNE, CostantiDB.ACCORDI,
 					tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REQUEST_DIGEST, null, null, true);
 			query.add(sqlQueryObject.getWhereExistsCondition(!modiFilter.getDigestRichiesta(), sqlAccordoSec)); // viene forzato il valore true e usato il notExists true o false per supportare il caso di configurazioni senza la proprietà
-			
+
 			addRestCondition(query, sqlQueryObject, tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REQUEST_DIGEST, null, modiFilter.getDigestRichiesta());
-			
+
 			addSoapCondition(query, sqlQueryObject, tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REQUEST_DIGEST, null, modiFilter.getDigestRichiesta());
-			
+
+			if(!query.isEmpty()) {
+				sqlQueryObject.addWhereCondition(false, query.toArray(new String[1]));
+			}
+		}
+		if(modiFilter.getDpop()!=null) {
+
+			List<String> query = new ArrayList<>();
+
+			ISQLQueryObject sqlAccordoSec = buildSQLQueryObjectProtocolProperties(ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_COMUNE, CostantiDB.ACCORDI,
+					tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_DPOP, null, null, true);
+			query.add(sqlQueryObject.getWhereExistsCondition(!modiFilter.getDpop(), sqlAccordoSec)); // viene forzato il valore true e usato il notExists true o false per supportare il caso di configurazioni senza la proprietà
+
+			addRestCondition(query, sqlQueryObject, tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_DPOP, null, modiFilter.getDpop());
+
+			addSoapCondition(query, sqlQueryObject, tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_DPOP, null, modiFilter.getDpop());
+
 			if(!query.isEmpty()) {
 				sqlQueryObject.addWhereCondition(false, query.toArray(new String[1]));
 			}

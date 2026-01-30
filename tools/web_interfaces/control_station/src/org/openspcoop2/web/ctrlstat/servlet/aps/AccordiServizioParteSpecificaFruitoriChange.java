@@ -575,17 +575,40 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			boolean forceHttpsClient = false;
 			boolean forcePDND = false;
 			boolean forceOAuth = false;
+			boolean forceDPoP = false;
 			if(apsHelper.isProfiloModIPA(protocollo)) {
 				forceHttps = apsHelper.forceHttpsProfiloModiPA();
-				
-				BooleanNullable forceHttpsClientWrapper = BooleanNullable.NULL(); 
-				BooleanNullable forcePDNDWrapper = BooleanNullable.NULL(); 
-				BooleanNullable forceOAuthWrapper = BooleanNullable.NULL(); 
-				
-				apsHelper.readModIConfiguration(forceHttpsClientWrapper, forcePDNDWrapper, forceOAuthWrapper, 
-						IDAccordoFactory.getInstance().getIDAccordoFromAccordo(as), asps.getPortType(), 
-						configurazioneServizioAzione!=null?configurazioneServizioAzione.getAzioneList() : null);
-				
+
+				BooleanNullable forceHttpsClientWrapper = BooleanNullable.NULL();
+				BooleanNullable forcePDNDWrapper = BooleanNullable.NULL();
+				BooleanNullable forceOAuthWrapper = BooleanNullable.NULL();
+				BooleanNullable forceDPoPWrapper = BooleanNullable.NULL();
+
+				List<String> azioniList = null;
+				List<String> azioniRidefinite = null;
+				if(configurazioneServizioAzione!=null) {
+					azioniList = configurazioneServizioAzione.getAzioneList();
+				}
+				else if(azioneConnettoreIdPorta!=null && !"".equals(azioneConnettoreIdPorta)) {
+					// Verifico se è il mapping di default con altri gruppi
+					PorteDelegateCore pdCore = new PorteDelegateCore(apsCore);
+					PortaDelegata pdCorrente = pdCore.getPortaDelegata(Long.parseLong(azioneConnettoreIdPorta));
+					MappingFruizionePortaDelegata mappingFruizione = pdCore.getMappingFruizionePortaDelegata(pdCorrente);
+					if(mappingFruizione!=null && mappingFruizione.isDefault()) {
+						List<IDServizio> listIdServizio = new ArrayList<>();
+						listIdServizio.add(idServizioObject);
+						List<MappingFruizionePortaDelegata> listaMappingFruizione = pdCore.getMapping(listIdServizio, false, true);
+						if(listaMappingFruizione!=null && !listaMappingFruizione.isEmpty()) {
+							// Esistono altri gruppi, calcolo le azioni ridefinite da escludere
+							azioniRidefinite = apsHelper.getAllActionsRedefinedMappingFruizione(listaMappingFruizione);
+						}
+					}
+				}
+
+				apsHelper.readModIConfiguration(forceHttpsClientWrapper, forcePDNDWrapper, forceOAuthWrapper, forceDPoPWrapper,
+						IDAccordoFactory.getInstance().getIDAccordoFromAccordo(as), asps.getPortType(),
+						azioniList, azioniRidefinite);
+
 				if(forceHttpsClientWrapper.getValue()!=null) {
 					forceHttpsClient = forceHttpsClientWrapper.getValue().booleanValue();
 				}
@@ -594,6 +617,9 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 				}
 				if(forceOAuthWrapper.getValue()!=null) {
 					forceOAuth = forceOAuthWrapper.getValue().booleanValue();
+				}
+				if(forceDPoPWrapper.getValue()!=null) {
+					forceDPoP = forceDPoPWrapper.getValue().booleanValue();
 				}
 			}
 			
@@ -1051,7 +1077,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 								requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 								requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-								autenticazioneToken, tokenPolicy, forcePDND, forceOAuth,
+								autenticazioneToken, tokenPolicy, forcePDND, forceOAuth, forceDPoP,
 								listExtendedConnettore, forceEnableConnettore,
 								protocollo, forceHttps, forceHttpsClient, false, false, null, null,
 								autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
@@ -1215,7 +1241,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 							requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 							requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-							autenticazioneToken, tokenPolicy,  forcePDND, forceOAuth,
+							autenticazioneToken, tokenPolicy,  forcePDND, forceOAuth, forceDPoP,
 							listExtendedConnettore, forceEnableConnettore,
 							protocollo, forceHttps, forceHttpsClient, false, false, null, null,
 							autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
@@ -1294,7 +1320,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 						requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 						requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-						autenticazioneToken, tokenPolicy, forcePDND, forceOAuth,
+						autenticazioneToken, tokenPolicy, forcePDND, forceOAuth, forceDPoP,
 						listExtendedConnettore, forceEnableConnettore,
 						protocollo, forceHttps, forceHttpsClient, false, false, null, null,
 						autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
@@ -1552,7 +1578,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 								requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 								requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-								autenticazioneToken, tokenPolicy, forcePDND, forceOAuth,
+								autenticazioneToken, tokenPolicy, forcePDND, forceOAuth, forceDPoP,
 								listExtendedConnettore, forceEnableConnettore,
 								protocollo, forceHttps, forceHttpsClient, false, false, null, null,
 								autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
