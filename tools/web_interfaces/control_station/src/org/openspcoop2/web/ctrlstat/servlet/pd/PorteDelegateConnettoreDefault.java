@@ -326,22 +326,39 @@ public class PorteDelegateConnettoreDefault extends Action {
 			boolean forceHttpsClient = false;
 			boolean forcePDND = false;
 			boolean forceOAuth = false;
+			boolean forceDPoP = false;
 			if(asps!=null && porteDelegateHelper.isProfiloModIPA(protocollo)) {
 				forceHttps = porteDelegateHelper.forceHttpsProfiloModiPA();
 				
-				BooleanNullable forceHttpsClientWrapper = BooleanNullable.NULL(); 
-				BooleanNullable forcePDNDWrapper = BooleanNullable.NULL(); 
-				BooleanNullable forceOAuthWrapper = BooleanNullable.NULL(); 
-				
+				BooleanNullable forceHttpsClientWrapper = BooleanNullable.NULL();
+				BooleanNullable forcePDNDWrapper = BooleanNullable.NULL();
+				BooleanNullable forceOAuthWrapper = BooleanNullable.NULL();
+				BooleanNullable forceDPoPWrapper = BooleanNullable.NULL();
+
 				List<String> azioniList = null;
+				List<String> azioniRidefinite = null;
 				if(portaDelegata!=null && portaDelegata.getAzione()!=null && portaDelegata.getAzione().sizeAzioneDelegataList()>0) {
 					azioniList = portaDelegata.getAzione().getAzioneDelegataList();
 				}
-				
-				porteDelegateHelper.readModIConfiguration(forceHttpsClientWrapper, forcePDNDWrapper, forceOAuthWrapper, 
-						IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune()), asps.getPortType(), 
-						azioniList);
-				
+				else {
+					// Verifico se è il mapping di default con altri gruppi
+					MappingFruizionePortaDelegata mappingFruizione = porteDelegateCore.getMappingFruizionePortaDelegata(portaDelegata);
+					if(mappingFruizione!=null && mappingFruizione.isDefault()) {
+						List<IDServizio> listIdServizio = new ArrayList<>();
+						listIdServizio.add(idServizio);
+						List<MappingFruizionePortaDelegata> listaMappingFruizione = porteDelegateCore.getMapping(listIdServizio, false, true);
+						if(listaMappingFruizione!=null && !listaMappingFruizione.isEmpty()) {
+							// Esistono altri gruppi, calcolo le azioni ridefinite da escludere
+							AccordiServizioParteSpecificaHelper aspsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
+							azioniRidefinite = aspsHelper.getAllActionsRedefinedMappingFruizione(listaMappingFruizione);
+						}
+					}
+				}
+
+				porteDelegateHelper.readModIConfiguration(forceHttpsClientWrapper, forcePDNDWrapper, forceOAuthWrapper, forceDPoPWrapper,
+						IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune()), asps.getPortType(),
+						azioniList, azioniRidefinite);
+
 				if(forceHttpsClientWrapper.getValue()!=null) {
 					forceHttpsClient = forceHttpsClientWrapper.getValue().booleanValue();
 				}
@@ -350,6 +367,9 @@ public class PorteDelegateConnettoreDefault extends Action {
 				}
 				if(forceOAuthWrapper.getValue()!=null) {
 					forceOAuth = forceOAuthWrapper.getValue().booleanValue();
+				}
+				if(forceDPoPWrapper.getValue()!=null) {
+					forceDPoP = forceDPoPWrapper.getValue().booleanValue();
 				}
 				
 			}
@@ -534,7 +554,7 @@ public class PorteDelegateConnettoreDefault extends Action {
 							requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 							requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-							autenticazioneToken,tokenPolicy,forcePDND,forceOAuth,
+							autenticazioneToken,tokenPolicy,forcePDND,forceOAuth,forceDPoP,
 							listExtendedConnettore, forceEnableConnettore,
 							protocollo, forceHttps, forceHttpsClient, false, servizioApplicativoServerEnabled,servizioApplicativoServer, null,
 							autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
@@ -614,7 +634,7 @@ public class PorteDelegateConnettoreDefault extends Action {
 							requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 							requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-							autenticazioneToken,tokenPolicy,forcePDND,forceOAuth,
+							autenticazioneToken,tokenPolicy,forcePDND,forceOAuth,forceDPoP,
 							listExtendedConnettore, forceEnableConnettore,
 							protocollo, forceHttps, forceHttpsClient, false, servizioApplicativoServerEnabled,servizioApplicativoServer, null,
 							autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,

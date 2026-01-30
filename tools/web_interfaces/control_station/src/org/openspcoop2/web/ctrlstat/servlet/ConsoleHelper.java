@@ -5500,7 +5500,9 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setType(DataElementType.TITLE);
 			de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_TITLE);
 			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_GESTIONE_TOKEN);
-			de.setStatoAperturaSezioni(STATO_APERTURA_SEZIONI.CHIUSO);
+			if(!TipoOperazione.ADD.equals(tipoOperazione)) {
+				de.setStatoAperturaSezioni(STATO_APERTURA_SEZIONI.CHIUSO);
+			}
 			dati.add(de);
 			
 			String [] valoriAbilitazione = {StatoFunzionalita.DISABILITATO.getValue(), StatoFunzionalita.ABILITATO.getValue()};
@@ -5524,19 +5526,19 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			if(StatoFunzionalita.ABILITATO.getValue().equals(gestioneToken)){
 				// nome della policy da utilizzare
-				de = new DataElement();
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_POLICY);
-				de.setType(DataElementType.SELECT);
-				de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_POLICY);
-				de.setValues(gestioneTokenPolicyValues);
-				de.setValues(gestioneTokenPolicyLabels);
-				de.setSelected(gestioneTokenPolicy);
-				de.setRequired(true);
+				DataElement dePolicies = new DataElement();
+				dePolicies.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_POLICY);
+				dePolicies.setType(DataElementType.SELECT);
+				dePolicies.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_POLICY);
+				dePolicies.setValues(gestioneTokenPolicyValues);
+				dePolicies.setLabels(gestioneTokenPolicyLabels);
+				dePolicies.setSelected(gestioneTokenPolicy);
+				dePolicies.setRequired(true);
 				if(forceGestioneToken) {
-					de.setValoreDefaultSelect(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO);
+					dePolicies.setValoreDefaultSelect(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO);
 				}
-				de.setPostBack(true);
-				dati.add(de);
+				dePolicies.setPostBack(true);
+				dati.add(dePolicies);
 				
 				if(gestioneTokenPolicy != null && !gestioneTokenPolicy.equals(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO)) {
 					
@@ -5669,9 +5671,72 @@ public class ConsoleHelper implements IConsoleHelper {
 					}
 					dati.add(de);
 				}
+				
+				// Verifico se ci sono policy disponibili (escludendo il valore non selezionato)
+				boolean policyDisponibili = false;
+				if(gestioneTokenPolicyValues != null && gestioneTokenPolicyValues.length > 0) {
+					for (String v : gestioneTokenPolicyValues) {
+						if(!CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO.equals(v)) {
+							policyDisponibili = true;
+							break;
+						}
+					}
+				}
+
+				// Verifico se la policy selezionata è nella lista
+				boolean policySelezionataPresente = false;
+				boolean policySelezionataValida = gestioneTokenPolicy != null &&
+						!gestioneTokenPolicy.equals(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO) &&
+						StringUtils.isNotEmpty(gestioneTokenPolicy);
+				if(policySelezionataValida && gestioneTokenPolicyValues != null) {
+					for (String v : gestioneTokenPolicyValues) {
+						if(gestioneTokenPolicy.equals(v)) {
+							policySelezionataPresente = true;
+							break;
+						}
+					}
+				}
+
+				// Se la policy selezionata non è nella lista, la aggiungo
+				if(policySelezionataValida && !policySelezionataPresente) {
+					List<String> newValues = new ArrayList<>();
+					List<String> newLabels = new ArrayList<>();
+					if(gestioneTokenPolicyValues != null && gestioneTokenPolicyValues.length>0) {
+						newValues.addAll(Arrays.asList(gestioneTokenPolicyValues));
+					}
+					if(gestioneTokenPolicyLabels != null && gestioneTokenPolicyValues.length>0) {
+						newLabels.addAll(Arrays.asList(gestioneTokenPolicyValues));
+					}
+					newValues.add(gestioneTokenPolicy);
+					newLabels.add(gestioneTokenPolicy);
+					gestioneTokenPolicyValues = newValues.toArray(new String[0]);
+					gestioneTokenPolicyLabels = newLabels.toArray(new String[0]);
+					dePolicies.setValues(gestioneTokenPolicyValues);
+					dePolicies.setLabels(gestioneTokenPolicyLabels);
+				}
+
+				if(policySelezionataValida && !policySelezionataPresente) {
+					de = new DataElement();
+					de.setLabel("");
+					de.setType(DataElementType.TEXT);
+					de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_POLICY+"_nonCompatibile");
+					de.setValue(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_POLICY_SELEZIONATA_NON_COMPATIBILE);
+					dati.add(de);
+				}
+				else if(!policyDisponibili) {
+					de = new DataElement();
+					de.setLabel("");
+					de.setType(DataElementType.TEXT);
+					de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_POLICY+"_nonDisponibili");
+					de.setValue(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_POLICY_NON_COMPATIBILI);
+					dati.add(de);
+				}
+				 
 			}
 			
-			this.impostaAperturaTitle(dati, CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_TITLE);
+			if(!TipoOperazione.ADD.equals(tipoOperazione)) {
+				this.impostaAperturaTitle(dati, CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_TITLE);
+			}
 			
 		} else {
 			// stato abilitazione
@@ -12707,27 +12772,27 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 	}
 
-	public List<String> getTokenPolicyGestione(boolean forcePDND, boolean forceOAuth,
+	public List<String> getTokenPolicyGestione(boolean forcePDND, boolean forceOAuth, boolean forceDPoP,
 			boolean addElementNonSelezionatoSeMaggioreUno,
 			String checkTokenPolicyConfigurataPresente, TipoOperazione tipoOperazione) throws DriverConfigurazioneException{
-		return getTokenPolicy(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN, forcePDND, forceOAuth,
+		return getTokenPolicy(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN, forcePDND, forceOAuth, forceDPoP,
 				addElementNonSelezionatoSeMaggioreUno,
 				checkTokenPolicyConfigurataPresente, tipoOperazione);
 	}
-	public List<String> getTokenPolicyNegoziazione(boolean forcePDND, boolean forceOAuth,
+	public List<String> getTokenPolicyNegoziazione(boolean forcePDND, boolean forceOAuth, boolean forceDPoP,
 			boolean addElementNonSelezionatoSeMaggioreUno,
 			String checkTokenPolicyConfigurataPresente, TipoOperazione tipoOperazione) throws DriverConfigurazioneException{
-		return getTokenPolicy(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_RETRIEVE_POLICY_TOKEN, forcePDND, forceOAuth,
+		return getTokenPolicy(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_RETRIEVE_POLICY_TOKEN, forcePDND, forceOAuth, forceDPoP,
 				addElementNonSelezionatoSeMaggioreUno,
 				checkTokenPolicyConfigurataPresente, tipoOperazione);
 	}
-	private List<String> getTokenPolicy(String tipologia, boolean forcePDND, boolean forceOAuth,
+	private List<String> getTokenPolicy(String tipologia, boolean forcePDND, boolean forceOAuth, boolean forceDPoP,
 			boolean addElementNonSelezionatoSeMaggioreUno,
 			String checkTokenPolicyConfigurataPresente, TipoOperazione tipoOperazione) throws DriverConfigurazioneException{
 		List<GenericProperties> gestorePolicyTokenList = this.confCore.gestorePolicyTokenList(null, tipologia, null);
-		
+
 		boolean retrieve = ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_RETRIEVE_POLICY_TOKEN.equals(tipologia);
-		List<String> l = filterPolicy(retrieve, gestorePolicyTokenList, forcePDND, forceOAuth);
+		List<String> l = filterPolicy(retrieve, gestorePolicyTokenList, forcePDND, forceOAuth, forceDPoP);
 		
 		List<String> returnList = new ArrayList<>();
 		if(!l.isEmpty()) {
@@ -12755,17 +12820,17 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		return returnList;
 	}
-	private List<String> filterPolicy(boolean retrieve, List<GenericProperties> gestorePolicyTokenList, boolean forcePDND, boolean forceOAuth){
+	private List<String> filterPolicy(boolean retrieve, List<GenericProperties> gestorePolicyTokenList, boolean forcePDND, boolean forceOAuth, boolean forceDPoP){
 		List<String> policyFiltered = new ArrayList<>();
 		for (int i = 0; i < gestorePolicyTokenList.size(); i++) {
 			GenericProperties genericProperties = gestorePolicyTokenList.get(i);
 			String nome = genericProperties.getNome();
 			if(forcePDND || forceOAuth) {
 				if(retrieve) {
-					addFilteredPolicyNegoziazione(genericProperties.getPropertyList(), policyFiltered, nome, forcePDND, forceOAuth);
+					addFilteredPolicyNegoziazione(genericProperties.getPropertyList(), policyFiltered, nome, forcePDND, forceOAuth, forceDPoP);
 				}
 				else {
-					addFilteredPolicyGestione(policyFiltered, nome, forcePDND, forceOAuth);
+					addFilteredPolicyGestione(genericProperties.getPropertyList(), policyFiltered, nome, forcePDND, forceOAuth, forceDPoP);
 				}
 			}
 			else {
@@ -12774,40 +12839,71 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 		return policyFiltered;
 	}
-	private void addFilteredPolicyGestione(List<String> policyFiltered, String nome, boolean forcePDND, boolean forceOAuth){
+	private void addFilteredPolicyGestione(List<Property> gp, List<String> policyFiltered, String nome, boolean forcePDND, boolean forceOAuth, boolean forceDPoP){
+		boolean policyCompatibile = false;
 		if(this.connettoriCore.isPolicyGestioneTokenPDND(nome)) {
 			if(forcePDND) {
-				policyFiltered.add(nome);
+				policyCompatibile = true;
 			}
 		}
 		else {
 			if(forceOAuth) {
+				policyCompatibile = true;
+			}
+		}
+
+		if(policyCompatibile) {
+			if(!forceDPoP || isPolicyDPoPValidazione(gp)) {
 				policyFiltered.add(nome);
 			}
 		}
 	}
-	private void addFilteredPolicyNegoziazione(List<Property> gp, List<String> policyFiltered, String nome, boolean forcePDND, boolean forceOAuth){
-		
+	private void addFilteredPolicyNegoziazione(List<Property> gp, List<String> policyFiltered, String nome, boolean forcePDND, boolean forceOAuth, boolean forceDPoP){
+
 		boolean pdnd = false;
+		boolean dpop = false;
+		boolean foundPdnd = false;
+		boolean foundDpop = false;
 		if(gp!=null && !gp.isEmpty()) {
 			for (Property p : gp) {
-				if(org.openspcoop2.pdd.core.token.Costanti.POLICY_RETRIEVE_TOKEN_MODE_PDND.equals(p.getNome())) {
+				String propertyName = p.getNome();
+				if(!foundPdnd && org.openspcoop2.pdd.core.token.Costanti.POLICY_RETRIEVE_TOKEN_MODE_PDND.equals(propertyName)) {
 					pdnd = "true".equalsIgnoreCase(p.getValore());
+					foundPdnd = true;
+				}
+				else if(!foundDpop && org.openspcoop2.pdd.core.token.Costanti.POLICY_RETRIEVE_TOKEN_DPOP.equals(propertyName)) {
+					dpop = "true".equalsIgnoreCase(p.getValore());
+					foundDpop = true;
+				}
+				if(foundPdnd && foundDpop) {
 					break;
 				}
 			}
 		}
-		
-		if(pdnd) {
-			if(forcePDND) {
+
+		boolean policyCompatibile = (pdnd && forcePDND) || (!pdnd && forceOAuth);
+
+		if(policyCompatibile) {
+			if(!forceDPoP || dpop) {
 				policyFiltered.add(nome);
 			}
 		}
-		else {
-			if(forceOAuth) {
-				policyFiltered.add(nome);
+	}
+	/**private boolean isPolicyDPoPNegoziazione(List<Property> gp) {
+		return isPolicyDPoPEngine(gp, org.openspcoop2.pdd.core.token.Costanti.POLICY_RETRIEVE_TOKEN_DPOP);
+	}*/
+	private boolean isPolicyDPoPValidazione(List<Property> gp) {
+		return isPolicyDPoPEngine(gp, org.openspcoop2.pdd.core.token.Costanti.POLICY_DPOP_VALIDATION);
+	}
+	private boolean isPolicyDPoPEngine(List<Property> gp, String propertyName) {
+		if(gp!=null && !gp.isEmpty()) {
+			for (Property p : gp) {
+				if(propertyName.equals(p.getNome())) {
+					return "true".equalsIgnoreCase(p.getValore());
+				}
 			}
 		}
+		return false;
 	}
 	
 	public void addFilterCredenzialeTokenPolicy(String tokenPolicy, boolean postBack) throws DriverControlStationException{
@@ -14127,27 +14223,53 @@ public class ConsoleHelper implements IConsoleHelper {
 			String [] valueAbilitatoOnly = {StatoFunzionalita.ABILITATO.getValue(), StatoFunzionalita.DISABILITATO.getValue()};
 			List<String> valuesList = Arrays.asList(valueAbilitatoOnly);
 			int length = valuesList.size() + 1;
-			
+
 			String [] labels = {CostantiControlStation.LABEL_PARAMETRO_SOGGETTO_QUALSIASI,
 					CostantiControlStation.LABEL_STATO_ABILITATO,
 					CostantiControlStation.LABEL_STATO_DISABILITATO};
-				
+
 			String [] values = new String[length];
-			values[0] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SOGGETTO_QUALSIASI;	
+			values[0] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SOGGETTO_QUALSIASI;
 			for (int i = 0; i < valuesList.size(); i++) {
 				values[(i+1)] = valuesList.get(i);
 			}
-			
+
 			String digestRichiestaValue = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_DIGEST_RICHIESTA);
-			
-			this.pd.addFilter(Filtri.FILTRO_MODI_DIGEST_RICHIESTA, CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REQUEST_DIGEST_LABEL, 
+
+			this.pd.addFilter(Filtri.FILTRO_MODI_DIGEST_RICHIESTA, CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REQUEST_DIGEST_LABEL,
 					digestRichiestaValue, values, labels, false, this.getSize());
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
-	
+
+	public void addFilterModIDPoP(ISearch ricerca, int idLista) throws DriverControlStationException{
+		try {
+			String [] valueAbilitatoOnly = {StatoFunzionalita.ABILITATO.getValue(), StatoFunzionalita.DISABILITATO.getValue()};
+			List<String> valuesList = Arrays.asList(valueAbilitatoOnly);
+			int length = valuesList.size() + 1;
+
+			String [] labels = {CostantiControlStation.LABEL_PARAMETRO_SOGGETTO_QUALSIASI,
+					CostantiControlStation.LABEL_STATO_ABILITATO,
+					CostantiControlStation.LABEL_STATO_DISABILITATO};
+
+			String [] values = new String[length];
+			values[0] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SOGGETTO_QUALSIASI;
+			for (int i = 0; i < valuesList.size(); i++) {
+				values[(i+1)] = valuesList.get(i);
+			}
+
+			String dpopValue = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_DPOP);
+
+			this.pd.addFilter(Filtri.FILTRO_MODI_DPOP, CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_DPOP_LABEL,
+					dpopValue, values, labels, false, this.getSize());
+		} catch (Exception e) {
+			this.logError("Exception: " + e.getMessage(), e);
+			throw new DriverControlStationException(e);
+		}
+	}
+
 	public void addFilterModIInfoUtente(ISearch ricerca, int idLista) throws DriverControlStationException{
 		try {
 			String [] v = {CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_AUDIT_REST_01, 
@@ -21484,48 +21606,82 @@ public class ConsoleHelper implements IConsoleHelper {
 	public boolean forceHttpsProfiloModiPA() {
 		return true;
 	}
-	public void readModIConfiguration(BooleanNullable forceHttpsClient, BooleanNullable forcePDND, BooleanNullable forceOAuth, 
-			IDAccordo idAccordoParteComune, String portType, 
+	public void readModIConfiguration(BooleanNullable forceHttpsClient, BooleanNullable forcePDND, BooleanNullable forceOAuth, BooleanNullable forceDPoP,
+			IDAccordo idAccordoParteComune, String portType,
 			List<String> azioneGruppo) throws DriverRegistroServiziException, DriverRegistroServiziNotFound {
+		readModIConfiguration(forceHttpsClient, forcePDND, forceOAuth, forceDPoP,
+				idAccordoParteComune, portType,
+				azioneGruppo, null);
+	}
+	public void readModIConfiguration(BooleanNullable forceHttpsClient, BooleanNullable forcePDND, BooleanNullable forceOAuth, BooleanNullable forceDPoP,
+			IDAccordo idAccordoParteComune, String portType,
+			List<String> azioneGruppo, List<String> azioniDaEscludere) throws DriverRegistroServiziException, DriverRegistroServiziNotFound {
 		AccordoServizioParteComune aspc = this.apcCore.getAccordoServizioFull(idAccordoParteComune,false);
-		
+
 		// Sicurezza canale
 		readForceHttpsClient(aspc, forceHttpsClient);
-		
-		// SorgenteToken
+
+		// SorgenteToken e DPoP
 		String propertyNameSicurezzaRidefinita = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_ACTION_MODE;
-		
+
 		BooleanNullable forcePDNDApi=null;
 		BooleanNullable forceOAuthApi=null;
-		if(azioneGruppo==null || azioneGruppo.isEmpty()) {
-			readForceTokenPolicy(aspc.getProtocolPropertyList(), forcePDND, forceOAuth);
-			if(forcePDND.getValue()!=null && forceOAuth.getValue()!=null) {
+		BooleanNullable forceDPoPApi=null;
+		if(
+			((azioneGruppo==null) || (azioneGruppo.isEmpty()))
+			&&
+			((azioniDaEscludere==null) || (azioniDaEscludere.isEmpty()))
+		) {
+			readForceTokenPolicy(aspc.getProtocolPropertyList(), forcePDND, forceOAuth, forceDPoP);
+			if(forcePDND.getValue()!=null && forceOAuth.getValue()!=null && forceDPoP.getValue()!=null) {
 				return;
 			}
 		}
 		else {
 			forcePDNDApi=BooleanNullable.NULL();
 			forceOAuthApi=BooleanNullable.NULL();
-			readForceTokenPolicy(aspc.getProtocolPropertyList(), forcePDNDApi, forceOAuthApi);
+			forceDPoPApi=BooleanNullable.NULL();
+			readForceTokenPolicy(aspc.getProtocolPropertyList(), forcePDNDApi, forceOAuthApi, forceDPoPApi);
 		}
-		
+
 		if(org.openspcoop2.core.registry.constants.ServiceBinding.SOAP.equals(aspc.getServiceBinding())) {
-			readForceTokenPolicySoap(forcePDND, forceOAuth, 
-					aspc, portType, azioneGruppo,
-					propertyNameSicurezzaRidefinita, forcePDNDApi, forceOAuthApi);
+			readForceTokenPolicySoap(forcePDND, forceOAuth, forceDPoP,
+					aspc, portType, azioneGruppo, azioniDaEscludere,
+					propertyNameSicurezzaRidefinita, forcePDNDApi, forceOAuthApi, forceDPoPApi);
 		}
 		else {
-			readForceTokenPolicyRest(forcePDND, forceOAuth, 
-					aspc, azioneGruppo,
-					propertyNameSicurezzaRidefinita, forcePDNDApi, forceOAuthApi);
+			readForceTokenPolicyRest(forcePDND, forceOAuth, forceDPoP,
+					aspc, azioneGruppo, azioniDaEscludere,
+					propertyNameSicurezzaRidefinita, forcePDNDApi, forceOAuthApi, forceDPoPApi);
 		}
-		
+
 		if(forcePDND.getValue()==null) {
 			forcePDND.setValue(false);
 		}
 		if(forceOAuth.getValue()==null) {
 			forceOAuth.setValue(false);
 		}
+		if(forceDPoP.getValue()==null) {
+			forceDPoP.setValue(false);
+		}
+	}
+	private void readForceDPoP(List<ProtocolProperty> list, BooleanNullable forceDPoP) {
+		String propertyName = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_DPOP;
+		if(list!=null && !list.isEmpty()) {
+			for (ProtocolProperty pp : list) {
+				if(pp.getName().equals(propertyName)) {
+					Boolean value = pp.getBooleanValue();
+					if(value != null && value.booleanValue()) {
+						forceDPoP.setValue(true);
+					}
+					else {
+						forceDPoP.setValue(false);
+					}
+					return;
+				}
+			}
+		}
+		forceDPoP.setValue(false);
 	}
 	private void readForceHttpsClient(AccordoServizioParteComune aspc, BooleanNullable forceHttpsClient) {
 		String propertyName = CostantiDB.MODIPA_PROFILO_SICUREZZA_CANALE;
@@ -21541,72 +21697,84 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 		forceHttpsClient.setValue(false);
 	}
-	private void readForceTokenPolicySoap(BooleanNullable forcePDND, BooleanNullable forceOAuth, 
-			AccordoServizioParteComune aspc, String portType, List<String> azioneGruppo, 
-			String propertyNameSicurezzaRidefinita, BooleanNullable forcePDNDApi, BooleanNullable forceOAuthApi) {
+	private void readForceTokenPolicySoap(BooleanNullable forcePDND, BooleanNullable forceOAuth, BooleanNullable forceDPoP,
+			AccordoServizioParteComune aspc, String portType, List<String> azioneGruppo, List<String> azioniDaEscludere,
+			String propertyNameSicurezzaRidefinita, BooleanNullable forcePDNDApi, BooleanNullable forceOAuthApi, BooleanNullable forceDPoPApi) {
 		if(portType!=null) {
 			if(aspc.sizePortTypeList()>0) {
 				for (PortType pt : aspc.getPortTypeList()) {
 					if(portType.equals(pt.getNome()) &&
 						pt.sizeAzioneList()>0) {
-						readForceTokenPolicySoapOperation(forcePDND, forceOAuth, 
-								pt, azioneGruppo, 
-								propertyNameSicurezzaRidefinita, forcePDNDApi, forceOAuthApi);
+						readForceTokenPolicySoapOperation(forcePDND, forceOAuth, forceDPoP,
+								pt, azioneGruppo, azioniDaEscludere,
+								propertyNameSicurezzaRidefinita, forcePDNDApi, forceOAuthApi, forceDPoPApi);
 					}
 				}
 			}
 		}
 		else {
-			readForceTokenPolicySoapAzione(forcePDND, forceOAuth, 
-					aspc, azioneGruppo, 
-					propertyNameSicurezzaRidefinita, forcePDNDApi, forceOAuthApi);
+			readForceTokenPolicySoapAzione(forcePDND, forceOAuth, forceDPoP,
+					aspc, azioneGruppo, azioniDaEscludere,
+					propertyNameSicurezzaRidefinita, forcePDNDApi, forceOAuthApi, forceDPoPApi);
 		}
 	}
-	private void readForceTokenPolicySoapOperation(BooleanNullable forcePDND, BooleanNullable forceOAuth, 
-			PortType pt, List<String> azioneGruppo, 
-			String propertyNameSicurezzaRidefinita, BooleanNullable forcePDNDApi, BooleanNullable forceOAuthApi) {
+	private void readForceTokenPolicySoapOperation(BooleanNullable forcePDND, BooleanNullable forceOAuth, BooleanNullable forceDPoP,
+			PortType pt, List<String> azioneGruppo, List<String> azioniDaEscludere,
+			String propertyNameSicurezzaRidefinita, BooleanNullable forcePDNDApi, BooleanNullable forceOAuthApi, BooleanNullable forceDPoPApi) {
 		for (Operation op : pt.getAzioneList()) {
-			if(azioneGruppo==null || azioneGruppo.contains(op.getNome())) {
-				readForceTokenPolicy(op.getProtocolPropertyList(), forcePDND, forceOAuth,  
-						propertyNameSicurezzaRidefinita, forcePDNDApi, forceOAuthApi);
-				if(forcePDND.getValue()!=null && forceOAuth.getValue()!=null) {
+			if(
+				((azioneGruppo==null) || (azioneGruppo.contains(op.getNome())))
+				&&
+				((azioniDaEscludere==null) || (!azioniDaEscludere.contains(op.getNome())))
+			) {
+				readForceTokenPolicy(op.getProtocolPropertyList(), forcePDND, forceOAuth, forceDPoP,
+						propertyNameSicurezzaRidefinita, forcePDNDApi, forceOAuthApi, forceDPoPApi);
+				if(forcePDND.getValue()!=null && forceOAuth.getValue()!=null && forceDPoP.getValue()!=null) {
 					return;
 				}
 			}
 		}
 	}
-	private void readForceTokenPolicySoapAzione(BooleanNullable forcePDND, BooleanNullable forceOAuth, 
-			AccordoServizioParteComune aspc, List<String> azioneGruppo, 
-			String propertyNameSicurezzaRidefinita, BooleanNullable forcePDNDApi, BooleanNullable forceOAuthApi) {
+	private void readForceTokenPolicySoapAzione(BooleanNullable forcePDND, BooleanNullable forceOAuth, BooleanNullable forceDPoP,
+			AccordoServizioParteComune aspc, List<String> azioneGruppo, List<String> azioniDaEscludere,
+			String propertyNameSicurezzaRidefinita, BooleanNullable forcePDNDApi, BooleanNullable forceOAuthApi, BooleanNullable forceDPoPApi) {
 		if(aspc.sizeAzioneList()>0) {
 			for (Azione az : aspc.getAzioneList()) {
-				if(azioneGruppo==null || azioneGruppo.contains(az.getNome())) {
-					readForceTokenPolicy(az.getProtocolPropertyList(), forcePDND, forceOAuth,  
-							propertyNameSicurezzaRidefinita, forcePDNDApi, forceOAuthApi);
-					if(forcePDND.getValue()!=null && forceOAuth.getValue()!=null) {
+				if(
+					((azioneGruppo==null) || (azioneGruppo.contains(az.getNome())))
+					&&
+					((azioniDaEscludere==null) || (!azioniDaEscludere.contains(az.getNome())))
+				) {
+					readForceTokenPolicy(az.getProtocolPropertyList(), forcePDND, forceOAuth, forceDPoP,
+							propertyNameSicurezzaRidefinita, forcePDNDApi, forceOAuthApi, forceDPoPApi);
+					if(forcePDND.getValue()!=null && forceOAuth.getValue()!=null && forceDPoP.getValue()!=null) {
 						return;
 					}
 				}
 			}
 		}
 	}
-	private void readForceTokenPolicyRest(BooleanNullable forcePDND, BooleanNullable forceOAuth, 
-			AccordoServizioParteComune aspc, List<String> azioneGruppo, 
-			String propertyNameSicurezzaRidefinita, BooleanNullable forcePDNDApi, BooleanNullable forceOAuthApi) {
+	private void readForceTokenPolicyRest(BooleanNullable forcePDND, BooleanNullable forceOAuth, BooleanNullable forceDPoP,
+			AccordoServizioParteComune aspc, List<String> azioneGruppo, List<String> azioniDaEscludere,
+			String propertyNameSicurezzaRidefinita, BooleanNullable forcePDNDApi, BooleanNullable forceOAuthApi, BooleanNullable forceDPoPApi) {
 		if(aspc.sizeResourceList()>0) {
 			for (Resource res : aspc.getResource()) {
-				if(azioneGruppo==null || azioneGruppo.contains(res.getNome())) {
-					readForceTokenPolicy(res.getProtocolPropertyList(), forcePDND, forceOAuth, 
-							propertyNameSicurezzaRidefinita, forcePDNDApi, forceOAuthApi);
-					if(forcePDND.getValue()!=null && forceOAuth.getValue()!=null) {
+				if(
+					((azioneGruppo==null) || (azioneGruppo.contains(res.getNome())))
+					&&
+					((azioniDaEscludere==null) || (!azioniDaEscludere.contains(res.getNome())))
+				) {
+					readForceTokenPolicy(res.getProtocolPropertyList(), forcePDND, forceOAuth, forceDPoP,
+							propertyNameSicurezzaRidefinita, forcePDNDApi, forceOAuthApi, forceDPoPApi);
+					if(forcePDND.getValue()!=null && forceOAuth.getValue()!=null && forceDPoP.getValue()!=null) {
 						return;
 					}
 				}
 			}
 		}
 	}
-	private void readForceTokenPolicy(List<ProtocolProperty> list, BooleanNullable forcePDND, BooleanNullable forceOAuth, 
-			String propertyNameSicurezzaRidefinita, BooleanNullable forcePDNDApi, BooleanNullable forceOAuthApi) {
+	private void readForceTokenPolicy(List<ProtocolProperty> list, BooleanNullable forcePDND, BooleanNullable forceOAuth, BooleanNullable forceDPoP,
+			String propertyNameSicurezzaRidefinita, BooleanNullable forcePDNDApi, BooleanNullable forceOAuthApi, BooleanNullable forceDPoPApi) {
 		if(list!=null && !list.isEmpty()) {
 			boolean leggiSorgente = true;
 			if(propertyNameSicurezzaRidefinita!=null) {
@@ -21623,16 +21791,19 @@ public class ConsoleHelper implements IConsoleHelper {
 							if(forceOAuthApi!=null && forceOAuthApi.getValue()!=null) {
 								forceOAuth.setValue(forceOAuthApi.getValue());
 							}
+							if(forceDPoPApi!=null && forceDPoPApi.getValue()!=null) {
+								forceDPoP.setValue(forceDPoPApi.getValue());
+							}
 						}
 					}
 				}
 			}
 			if(leggiSorgente) {
-				readForceTokenPolicy(list, forcePDND, forceOAuth);
+				readForceTokenPolicy(list, forcePDND, forceOAuth, forceDPoP);
 			}
 		}
 	}
-	private void readForceTokenPolicy(List<ProtocolProperty> list, BooleanNullable forcePDND, BooleanNullable forceOAuth) {
+	private void readForceTokenPolicy(List<ProtocolProperty> list, BooleanNullable forcePDND, BooleanNullable forceOAuth, BooleanNullable forceDPoP) {
 		String propertyNameSorgenteToken = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH;
 		for (ProtocolProperty pp : list) {
 			if(pp.getName().equals(propertyNameSorgenteToken)) {
@@ -21643,6 +21814,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				}
 			}
 		}
+		readForceDPoP(list, forceDPoP);
 	}
 	private void setForceTokenPolicy(BooleanNullable forcePDND, BooleanNullable forceOAuth, String value) {
 		if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_PDND.equals(value)) {
@@ -22080,8 +22252,28 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 		return l;
 	}
-	
-	public boolean isSoapOneWay(PortaApplicativa portaApplicativa, MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa, 
+
+	public List<String> getAllActionsRedefinedMappingErogazione(List<MappingErogazionePortaApplicativa> lista) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		// Restituisce le azioni già assegnate a gruppi specifici (non default)
+		List<String> azioniRidefinite = new ArrayList<>();
+		if(lista!=null && !lista.isEmpty()) {
+			for (MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa : lista) {
+				if(!mappingErogazionePortaApplicativa.isDefault()) {
+					PortaApplicativa paAssociata = this.porteApplicativeCore.getPortaApplicativa(mappingErogazionePortaApplicativa.getIdPortaApplicativa());
+					if(paAssociata.getAzione() != null && paAssociata.getAzione().getAzioneDelegataList()!=null) {
+						for (String az : paAssociata.getAzione().getAzioneDelegataList()) {
+							if(!azioniRidefinite.contains(az)) {
+								azioniRidefinite.add(az);
+							}
+						}
+					}
+				}
+			}
+		}
+		return azioniRidefinite;
+	}
+
+	public boolean isSoapOneWay(PortaApplicativa portaApplicativa, MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa,
 			AccordoServizioParteSpecifica asps, AccordoServizioParteComuneSintetico as, ServiceBinding serviceBinding) 
 					throws DriverControlStationException, DriverRegistroServiziException, DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		boolean isSoapOneWay = false;

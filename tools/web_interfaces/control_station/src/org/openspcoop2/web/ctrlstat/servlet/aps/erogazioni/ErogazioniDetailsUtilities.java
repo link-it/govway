@@ -887,7 +887,13 @@ public class ErogazioniDetailsUtilities {
 				sb.append(CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REQUEST_DIGEST_LABEL);
 				sb.append(separator);
 				sb.append(map.get(ModIUtils.API_SICUREZZA_MESSAGGIO_REQUEST_DIGEST));
-				
+
+				// DPoP
+				sb.append(newLine);
+				sb.append(CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_DPOP_LABEL);
+				sb.append(separator);
+				sb.append(map.get(ModIUtils.API_SICUREZZA_MESSAGGIO_DPOP));
+
 				// CorniceSicurezza
 				sb.append(newLine);
 				sb.append(CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_LABEL);

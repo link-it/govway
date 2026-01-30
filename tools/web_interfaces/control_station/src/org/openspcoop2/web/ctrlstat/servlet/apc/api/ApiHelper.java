@@ -204,7 +204,10 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 				
 				// filtro digest richiesta
 				this.addFilterModIDigestRichiesta(ricerca, idLista);
-				
+
+				// filtro DPoP
+				this.addFilterModIDPoP(ricerca, idLista);
+
 				// filtro ifo utente
 				this.addFilterModIInfoUtente(ricerca, idLista);
 				

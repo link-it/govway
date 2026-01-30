@@ -401,21 +401,23 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 			boolean forceHttpsClient = false;
 			boolean forcePDND = false;
 			boolean forceOAuth = false;
+			boolean forceDPoP = false;
 			if(idAccordo!=null && apsHelper.isProfiloModIPA(protocollo)) {
 				forceHttps = apsHelper.forceHttpsProfiloModiPA();
-				
-				BooleanNullable forceHttpsClientWrapper = BooleanNullable.NULL(); 
-				BooleanNullable forcePDNDWrapper = BooleanNullable.NULL(); 
-				BooleanNullable forceOAuthWrapper = BooleanNullable.NULL(); 
-				
+
+				BooleanNullable forceHttpsClientWrapper = BooleanNullable.NULL();
+				BooleanNullable forcePDNDWrapper = BooleanNullable.NULL();
+				BooleanNullable forceOAuthWrapper = BooleanNullable.NULL();
+				BooleanNullable forceDPoPWrapper = BooleanNullable.NULL();
+
 				List<String> azioniList = null;
 				if(azioni!=null && azioni.length>0) {
 					azioniList = Arrays.asList(azioni);
 				}
-				apsHelper.readModIConfiguration(forceHttpsClientWrapper, forcePDNDWrapper, forceOAuthWrapper, 
-						idAccordo,portType, 
+				apsHelper.readModIConfiguration(forceHttpsClientWrapper, forcePDNDWrapper, forceOAuthWrapper, forceDPoPWrapper,
+						idAccordo,portType,
 						azioniList);
-				
+
 				if(forceHttpsClientWrapper.getValue()!=null) {
 					forceHttpsClient = forceHttpsClientWrapper.getValue().booleanValue();
 				}
@@ -425,7 +427,10 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 				if(forceOAuthWrapper.getValue()!=null) {
 					forceOAuth = forceOAuthWrapper.getValue().booleanValue();
 				}
-				
+				if(forceDPoPWrapper.getValue()!=null) {
+					forceDPoP = forceDPoPWrapper.getValue().booleanValue();
+				}
+
 			}
 			
 			// Prendo le azioni  disponibili
@@ -736,7 +741,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 								requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 								requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-								autenticazioneToken, tokenPolicy, forcePDND, forceOAuth,
+								autenticazioneToken, tokenPolicy, forcePDND, forceOAuth, forceDPoP,
 								listExtendedConnettore, forceEnableConnettore,
 								protocollo, forceHttps, forceHttpsClient, false, servizioApplicativoServerEnabled,servizioApplicativoServer, null,
 								autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
@@ -833,7 +838,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 							requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 							requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-							autenticazioneToken, tokenPolicy, forcePDND, forceOAuth,
+							autenticazioneToken, tokenPolicy, forcePDND, forceOAuth, forceDPoP,
 							listExtendedConnettore, forceEnableConnettore,
 							protocollo, forceHttps, forceHttpsClient, false, servizioApplicativoServerEnabled,servizioApplicativoServer, null,
 							autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,

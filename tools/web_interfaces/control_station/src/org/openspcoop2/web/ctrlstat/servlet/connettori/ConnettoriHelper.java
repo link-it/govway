@@ -715,7 +715,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String requestOutputFileName, String requestOutputFileNamePermissions, String requestOutputFileNameHeaders, String requestOutputFileNameHeadersPermissions,
 			String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
-			boolean autenticazioneToken, String tokenPolicy, boolean forcePDND, boolean forceOAuth,
+			boolean autenticazioneToken, String tokenPolicy, boolean forcePDND, boolean forceOAuth, boolean forceDPoP,
 			List<ExtendedConnettore> listExtendedConnettore, boolean forceEnabled,
 			String protocollo, boolean forceHttps, boolean forceHttpsClient,
 			boolean visualizzaSezioneSAServer, boolean servizioApplicativoServerEnabled, String servizioApplicativoServer, String[] listaSAServer,
@@ -739,7 +739,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 				requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 				responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-				autenticazioneToken, tokenPolicy, forcePDND, forceOAuth,
+				autenticazioneToken, tokenPolicy, forcePDND, forceOAuth, forceDPoP,
 				listExtendedConnettore, forceEnabled,
 				protocollo, forceHttps, forceHttpsClient,visualizzaSezioneSAServer, servizioApplicativoServerEnabled, servizioApplicativoServer, listaSAServer,
 				autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
@@ -1219,10 +1219,10 @@ public class ConnettoriHelper extends ConsoleHelper {
 	
 
 	
-	public List<DataElement> addTokenPolicy(List<DataElement> dati, String tokenPolicy, boolean forcePDND, boolean forceOAuth, TipoOperazione tipoOperazione,
+	public List<DataElement> addTokenPolicy(List<DataElement> dati, String tokenPolicy, boolean forcePDND, boolean forceOAuth, boolean forceDPoP, TipoOperazione tipoOperazione,
 			boolean postBackViaPost) throws DriverConfigurazioneException{
-	
-		List<String> policyFiltered = getTokenPolicyNegoziazione(forcePDND, forceOAuth, 
+
+		List<String> policyFiltered = getTokenPolicyNegoziazione(forcePDND, forceOAuth, forceDPoP,
 				true,
 				tokenPolicy, tipoOperazione);
 		if(!policyFiltered.contains(tokenPolicy)) {
@@ -2651,7 +2651,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String requestOutputFileName, String requestOutputFileNamePermissions, String requestOutputFileNameHeaders, String requestOutputFileNameHeadersPermissions,
 			String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
-			boolean autenticazioneToken, String tokenPolicy, boolean forcePDND, boolean forceOAuth,
+			boolean autenticazioneToken, String tokenPolicy, boolean forcePDND, boolean forceOAuth, boolean forceDPoP,
 			List<ExtendedConnettore> listExtendedConnettore, boolean forceEnabled,
 			String protocollo, boolean forceHttps, boolean forceHttpsClient,
 			boolean visualizzaSezioneSAServer, boolean servizioApplicativoServerEnabled, String servizioApplicativoServer, String[] listaSAServer,
@@ -2985,12 +2985,11 @@ public class ConnettoriHelper extends ConsoleHelper {
 						de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_BEARER);
 						de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO+CostantiControlStation.PARAMETRO_SUFFIX_LABEL);
 						de.setType(DataElementType.TEXT);
-						if(forcePDND) {
-							de.setValue(ConnettoriCostanti.LABEL_CONNETTORE_BEARER_MODI_PDND);
+						String labelBearer = forcePDND ? ConnettoriCostanti.LABEL_CONNETTORE_BEARER_MODI_PDND : ConnettoriCostanti.LABEL_CONNETTORE_BEARER_MODI_OAUTH;
+						if(forceDPoP) {
+							labelBearer = labelBearer + ConnettoriCostanti.LABEL_CONNETTORE_BEARER_MODI_DPOP_SUFFIX;
 						}
-						else {
-							de.setValue(ConnettoriCostanti.LABEL_CONNETTORE_BEARER_MODI_OAUTH);
-						}
+						de.setValue(labelBearer);
 						dati.add(de);
 					}
 					
@@ -3100,7 +3099,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 								
 				// Token Autenticazione
 				if (autenticazioneToken) {
-					this.addTokenPolicy(dati, tokenPolicy, forcePDND, forceOAuth, tipoOperazione,
+					this.addTokenPolicy(dati, tokenPolicy, forcePDND, forceOAuth, forceDPoP, tipoOperazione,
 							postBackViaPost);
 				}
 			
@@ -3348,12 +3347,11 @@ public class ConnettoriHelper extends ConsoleHelper {
 						de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_BEARER);
 						de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO+CostantiControlStation.PARAMETRO_SUFFIX_LABEL);
 						de.setType(DataElementType.TEXT);
-						if(forcePDND) {
-							de.setValue(ConnettoriCostanti.LABEL_CONNETTORE_BEARER_MODI_PDND);
+						String labelBearer = forcePDND ? ConnettoriCostanti.LABEL_CONNETTORE_BEARER_MODI_PDND : ConnettoriCostanti.LABEL_CONNETTORE_BEARER_MODI_OAUTH;
+						if(forceDPoP) {
+							labelBearer = labelBearer + ConnettoriCostanti.LABEL_CONNETTORE_BEARER_MODI_DPOP_SUFFIX;
 						}
-						else {
-							de.setValue(ConnettoriCostanti.LABEL_CONNETTORE_BEARER_MODI_OAUTH);
-						}
+						de.setValue(labelBearer);
 						dati.add(de);
 					}
 					
@@ -3467,7 +3465,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				
 				// Token Autenticazione
 				if (autenticazioneToken) {
-					this.addTokenPolicy(dati, tokenPolicy, forcePDND, forceOAuth, tipoOperazione,
+					this.addTokenPolicy(dati, tokenPolicy, forcePDND, forceOAuth, forceDPoP, tipoOperazione,
 							postBackViaPost);
 				}
 				

@@ -1487,7 +1487,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 					requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-					autenticazioneToken, tokenPolicy, false, false,
+					autenticazioneToken, tokenPolicy, false, false, false,
 					listExtendedConnettore, connettoreErogatoreForceEnabled,
 					nomeProtocollo, false, false
 					, false, servizioApplicativoServerEnabled, null, null,

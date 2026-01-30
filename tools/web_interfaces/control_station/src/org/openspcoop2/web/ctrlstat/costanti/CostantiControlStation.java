@@ -468,6 +468,8 @@ public class CostantiControlStation {
 	public static final String LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_INTROSPECTION = "Introspection";
 	public static final String LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_USERINFO = "User Info";
 	public static final String LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_TOKEN_FORWARD = "Token Forward";
+	public static final String LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_POLICY_NON_COMPATIBILI = "Non esistono policy compatibili con la configurazione dell'API";
+	public static final String LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_POLICY_SELEZIONATA_NON_COMPATIBILE = "Attenzione: policy selezionata non compatibile con la configurazione dell'API";
 	public static final String LABEL_PARAMETRO_PORTE_ELEMENTO_XML = "Elemento";
 	
 	public static final String LABEL_GESTIONE_MESSAGE_ENGINE = "Tipo";

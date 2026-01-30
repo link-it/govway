@@ -655,6 +655,7 @@ public class DriverRegistroServiziDB_accordiSinteticiDriver {
 		String filtroModISicurezzaMessaggio = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_SICUREZZA_MESSAGGIO);
 		String filtroModISorgenteToken = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_SORGENTE_TOKEN);
 		String filtroModIDigestRichiesta = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_DIGEST_RICHIESTA);
+		String filtroModIDPoP = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_DPOP);
 		String filtroModIInfoUtente = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_INFORMAZIONI_UTENTE);
 		if((filtroModISicurezzaCanale!=null && "".equals(filtroModISicurezzaCanale))) {
 			filtroModISicurezzaCanale=null;
@@ -672,12 +673,19 @@ public class DriverRegistroServiziDB_accordiSinteticiDriver {
 		else if(CostantiDB.STATO_FUNZIONALITA_DISABILITATO.equals(filtroModIDigestRichiesta)) {
 			filtroModIDigestRichiestaEnabled = false;
 		}
+		Boolean filtroModIDPoPEnabled = null;
+		if(CostantiDB.STATO_FUNZIONALITA_ABILITATO.equals(filtroModIDPoP)) {
+			filtroModIDPoPEnabled = true;
+		}
+		else if(CostantiDB.STATO_FUNZIONALITA_DISABILITATO.equals(filtroModIDPoP)) {
+			filtroModIDPoPEnabled = false;
+		}
 		if((filtroModIInfoUtente!=null && "".equals(filtroModIInfoUtente))) {
 			filtroModIInfoUtente=null;
 		}
 		boolean filtroModI = filtroModISicurezzaCanale!=null || filtroModISicurezzaMessaggio!=null ||
 				filtroModISorgenteToken!=null ||
-				filtroModIDigestRichiestaEnabled!=null || filtroModIInfoUtente!=null;
+				filtroModIDigestRichiestaEnabled!=null || filtroModIDPoPEnabled!=null || filtroModIInfoUtente!=null;
 		
 		boolean searchCanale = false;
 		boolean canaleDefault = false;
@@ -790,7 +798,7 @@ public class DriverRegistroServiziDB_accordiSinteticiDriver {
 				DBUtils.setFiltriModI(sqlQueryObject, this.driver.tipoDB,
 						filtroModISicurezzaCanale, filtroModISicurezzaMessaggio,
 						filtroModISorgenteToken,
-						filtroModIDigestRichiestaEnabled, filtroModIInfoUtente);
+						filtroModIDigestRichiestaEnabled, filtroModIDPoPEnabled, filtroModIInfoUtente);
 			}
 			
 			sqlQueryObject.setANDLogicOperator(true);
@@ -878,7 +886,7 @@ public class DriverRegistroServiziDB_accordiSinteticiDriver {
 				DBUtils.setFiltriModI(sqlQueryObject, this.driver.tipoDB,
 						filtroModISicurezzaCanale, filtroModISicurezzaMessaggio,
 						filtroModISorgenteToken,
-						filtroModIDigestRichiestaEnabled, filtroModIInfoUtente);
+						filtroModIDigestRichiestaEnabled, filtroModIDPoPEnabled, filtroModIInfoUtente);
 			}
 			
 			sqlQueryObject.setANDLogicOperator(true);

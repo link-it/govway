@@ -790,6 +790,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaSearchDriver {
 		String filtroModIAudience = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_AUDIENCE);
 		String filtroModIInfoUtente = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_INFORMAZIONI_UTENTE);
 		String filtroModIDigestRichiesta = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_DIGEST_RICHIESTA);
+		String filtroModIDPoP = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_DPOP);
 		String filtroSignalHub = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_SIGNAL_HUB);
 		String filtroServiceId = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_SERVICE_ID);
 		String filtroDescriptorId = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_DESCRIPTOR_ID);
@@ -810,6 +811,13 @@ public class DriverRegistroServiziDB_accordiParteSpecificaSearchDriver {
 		}
 		else if(CostantiDB.STATO_FUNZIONALITA_DISABILITATO.equals(filtroModIDigestRichiesta)) {
 			filtroModIDigestRichiestaEnabled = false;
+		}
+		Boolean filtroModIDPoPEnabled = null;
+		if(CostantiDB.STATO_FUNZIONALITA_ABILITATO.equals(filtroModIDPoP)) {
+			filtroModIDPoPEnabled = true;
+		}
+		else if(CostantiDB.STATO_FUNZIONALITA_DISABILITATO.equals(filtroModIDPoP)) {
+			filtroModIDPoPEnabled = false;
 		}
 		if((filtroModIInfoUtente!=null && "".equals(filtroModIInfoUtente))) {
 			filtroModIInfoUtente=null;
@@ -842,6 +850,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaSearchDriver {
 		filterModIErogazioneFruizione.setAudience(filtroModIAudience);
 		filterModIErogazioneFruizione.setInfoUtente(filtroModIInfoUtente);
 		filterModIErogazioneFruizione.setDigestRichiesta(filtroModIDigestRichiestaEnabled);
+		filterModIErogazioneFruizione.setDpop(filtroModIDPoPEnabled);
 		filterModIErogazioneFruizione.setSignalHub(filtroSignalHubEnabled);
 		filterModIErogazioneFruizione.setServiceId(filtroServiceId);
 		filterModIErogazioneFruizione.setDescriptorId(filtroDescriptorId);
@@ -998,10 +1007,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaSearchDriver {
 					}
 					if(filtroModI) {
 						DBUtils.setFiltriModIFruizione(sqlQueryObject, this.driver.tipoDB,
-								filtroModISicurezzaCanale, filtroModISicurezzaMessaggio,
-								filtroModISorgenteToken,
-								filtroModIDigestRichiestaEnabled, filtroModIInfoUtente,
-								filtroModIKeystorePath, filtroModIAudience);
+								filterModIErogazioneFruizione);
 					}
 					if(filtroProprieta) {
 						DBUtils.setFiltriProprietaFruizione(sqlQueryObject, this.driver.tipoDB, 

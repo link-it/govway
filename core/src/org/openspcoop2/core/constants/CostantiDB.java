@@ -1083,6 +1083,9 @@ public final class CostantiDB {
     // DPoP Keystore - Fruizione
     public static final String MODIPA_DPOP_FRUIZIONE_KEYSTORE_MODE = "modipaDPoPFruizioneKeystoreMode";
 
+    // DPoP a livello API
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_DPOP = "modipaProfiloSicurezzaMessaggioDPoP";
+
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_MODE = "modipaTruststoreMode";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE = "modipaTruststoreType";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PATH = "modipaTruststorePath";

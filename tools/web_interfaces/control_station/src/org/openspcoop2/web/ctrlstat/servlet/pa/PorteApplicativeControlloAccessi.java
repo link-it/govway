@@ -50,6 +50,7 @@ import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.constants.RuoloTipologia;
@@ -267,24 +268,45 @@ public class PorteApplicativeControlloAccessi extends Action {
 			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoSoggettoProprietario);
 			boolean isSupportatoAutenticazione = soggettiCore.isSupportatoAutenticazioneSoggetti(protocollo);
 						
-			boolean forceAutenticato = false; 
+			boolean forceAutenticato = false;
 			boolean forceHttps = false;
 			boolean forceDisableOptional = false;
 			boolean forcePDND = false;
 			boolean forceOAuth = false;
+			boolean forceDPoP = false;
 			boolean forceGestioneToken = false;
 			if(porteApplicativeHelper.isProfiloModIPA(protocollo)) {
 				forceAutenticato = true; // in modI ci vuole sempre autenticazione https sull'erogazione (cambia l'opzionalita' o meno)
 				forceHttps = forceAutenticato;
-				
-				BooleanNullable forceHttpsClientWrapper = BooleanNullable.NULL(); 
-				BooleanNullable forcePDNDWrapper = BooleanNullable.NULL(); 
-				BooleanNullable forceOAuthWrapper = BooleanNullable.NULL(); 
-				
-				porteApplicativeHelper.readModIConfiguration(forceHttpsClientWrapper, forcePDNDWrapper, forceOAuthWrapper, 
-						IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune()), asps.getPortType(), 
-						pa.getAzione()!=null && pa.getAzione().getAzioneDelegataList()!=null && !pa.getAzione().getAzioneDelegataList().isEmpty() ? pa.getAzione().getAzioneDelegataList() : null);
-				
+
+				BooleanNullable forceHttpsClientWrapper = BooleanNullable.NULL();
+				BooleanNullable forcePDNDWrapper = BooleanNullable.NULL();
+				BooleanNullable forceOAuthWrapper = BooleanNullable.NULL();
+				BooleanNullable forceDPoPWrapper = BooleanNullable.NULL();
+
+				List<String> azioniList = null;
+				List<String> azioniRidefinite = null;
+				if(pa.getAzione()!=null && pa.getAzione().getAzioneDelegataList()!=null && !pa.getAzione().getAzioneDelegataList().isEmpty()) {
+					azioniList = pa.getAzione().getAzioneDelegataList();
+				}
+				else {
+					// Verifico se è il mapping di default con altri gruppi
+					MappingErogazionePortaApplicativa mappingErogazione = porteApplicativeCore.getMappingErogazionePortaApplicativa(pa);
+					if(mappingErogazione!=null && mappingErogazione.isDefault()) {
+						List<IDServizio> listIdServizio = new ArrayList<>();
+						listIdServizio.add(idServizio);
+						List<MappingErogazionePortaApplicativa> listaMappingErogazione = porteApplicativeCore.getMapping(listIdServizio, false, true);
+						if(listaMappingErogazione!=null && !listaMappingErogazione.isEmpty()) {
+							// Esistono altri gruppi, calcolo le azioni ridefinite da escludere
+							azioniRidefinite = porteApplicativeHelper.getAllActionsRedefinedMappingErogazione(listaMappingErogazione);
+						}
+					}
+				}
+
+				porteApplicativeHelper.readModIConfiguration(forceHttpsClientWrapper, forcePDNDWrapper, forceOAuthWrapper, forceDPoPWrapper,
+						IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune()), asps.getPortType(),
+						azioniList, azioniRidefinite);
+
 				if(forceHttpsClientWrapper.getValue()!=null) {
 					forceDisableOptional = forceHttpsClientWrapper.getValue().booleanValue();
 				}
@@ -293,6 +315,9 @@ public class PorteApplicativeControlloAccessi extends Action {
 				}
 				if(forceOAuthWrapper.getValue()!=null) {
 					forceOAuth = forceOAuthWrapper.getValue().booleanValue();
+				}
+				if(forceDPoPWrapper.getValue()!=null) {
+					forceDPoP = forceDPoPWrapper.getValue().booleanValue();
 				}
 
 				if(forcePDND || forceOAuth) {
@@ -404,7 +429,7 @@ public class PorteApplicativeControlloAccessi extends Action {
 				}
 				
 				if(forcePDND) {
-					List<String> tokenPolicies = porteApplicativeHelper.getTokenPolicyGestione(true, false, 
+					List<String> tokenPolicies = porteApplicativeHelper.getTokenPolicyGestione(true, false, forceDPoP,
 							true,
 							policyConfigurata, TipoOperazione.CHANGE);
 					if(tokenPolicies!=null && !tokenPolicies.isEmpty()) {
@@ -413,7 +438,7 @@ public class PorteApplicativeControlloAccessi extends Action {
 					}
 				}
 				else {
-					List<String> tokenPolicies = porteApplicativeHelper.getTokenPolicyGestione(false, true, 
+					List<String> tokenPolicies = porteApplicativeHelper.getTokenPolicyGestione(false, true, forceDPoP,
 							true,
 							policyConfigurata, TipoOperazione.CHANGE);
 					if(tokenPolicies!=null && !tokenPolicies.isEmpty()) {

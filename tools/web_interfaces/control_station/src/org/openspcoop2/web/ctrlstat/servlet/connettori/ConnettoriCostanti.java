@@ -82,6 +82,7 @@ public class ConnettoriCostanti {
 	public static final String LABEL_CONNETTORE_API_KEY = "Autenticazione API Key";
 	public static final String LABEL_CONNETTORE_BEARER_MODI_PDND = "Negoziazione Token tramite PDND";
 	public static final String LABEL_CONNETTORE_BEARER_MODI_OAUTH = "Negoziazione Token tramite Authorization Server OAuth";
+	public static final String LABEL_CONNETTORE_BEARER_MODI_DPOP_SUFFIX = " (DPoP)";
 	public static final String LABEL_CONNETTORE_HTTPS = "Autenticazione Https";
 	public static final String LABEL_CONNETTORE_TEMPI_RISPOSTA = "Tempi Risposta";
 	public static final String LABEL_CONNETTORE_OPZIONI_AVANZATE = "Opzioni Avanzate";

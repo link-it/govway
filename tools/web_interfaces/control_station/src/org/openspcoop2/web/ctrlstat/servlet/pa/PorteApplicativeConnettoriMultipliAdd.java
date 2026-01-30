@@ -180,6 +180,7 @@ public final class PorteApplicativeConnettoriMultipliAdd extends Action {
 			String tokenPolicy = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY);
 			boolean forcePDND = false;
 			boolean forceOAuth = false;
+			boolean forceDPoP = false;
 
 			// proxy
 			String proxyEnabled = porteApplicativeHelper.getParametroBoolean(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
@@ -607,7 +608,7 @@ public final class PorteApplicativeConnettoriMultipliAdd extends Action {
 						requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 						requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-						autenticazioneToken,tokenPolicy, forcePDND, forceOAuth,
+						autenticazioneToken,tokenPolicy, forcePDND, forceOAuth, forceDPoP,
 						listExtendedConnettore, forceEnableConnettore,
 						protocollo,false,false, isApplicativiServerEnabled, erogazioneServizioApplicativoServerEnabled,
 						erogazioneServizioApplicativoServer, ServiziApplicativiHelper.toArray(listaIdSAServer),
@@ -700,7 +701,7 @@ public final class PorteApplicativeConnettoriMultipliAdd extends Action {
 						requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 						requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-						autenticazioneToken,tokenPolicy, forcePDND, forceOAuth,
+						autenticazioneToken,tokenPolicy, forcePDND, forceOAuth, forceDPoP,
 						listExtendedConnettore, forceEnableConnettore,
 						protocollo,false,false, isApplicativiServerEnabled, erogazioneServizioApplicativoServerEnabled,
 						erogazioneServizioApplicativoServer, ServiziApplicativiHelper.toArray(listaIdSAServer),
