@@ -100,7 +100,7 @@ La configurazione può essere attuata nel file standalone.xml che si trova all�
 
 .. note::
 
-   A partire dalla versione 25 di wildfly, nella configurazione di default è abilitato un application-security-domain 'other' che rende obbligatoria la presenza di credenziali valide per invocare applicazioni web. Come indicato nella sezione :ref:`securityDomainOther`, poichè la gestione delle autorizzazioni avviene normalmente su GovWay si deve procedere a disabilitare l'application security domain commentandone la definizione all'interno della configurazione 'undertow':
+   A partire dalla versione 25 di wildfly, nella configurazione di default è abilitato un application-security-domain 'other' che rende obbligatoria la presenza di credenziali valide per invocare applicazioni web. Come indicato nella sezione :ref:`securityDomainOther`, poiché la gestione delle autorizzazioni avviene normalmente su GovWay si deve procedere a disabilitare l'application security domain commentandone la definizione all'interno della configurazione 'undertow':
 
    ::
 

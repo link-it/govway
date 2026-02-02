@@ -28,13 +28,16 @@ import org.openspcoop2.utils.serialization.SerializationConfig;
 import org.openspcoop2.utils.serialization.SerializationFactory;
 import org.openspcoop2.utils.serialization.SerializationFactory.SERIALIZATION_TYPE;
 
-/**     
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+/**
  * TimerGestoreChiaviPDNDEvents
  *
  * @author Poli Andrea (poli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class TimerGestoreChiaviPDNDEvents {
 
 	/** Esempi:

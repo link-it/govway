@@ -81,6 +81,8 @@ public class PageData implements Serializable {
 	String labelBottoneInvia = null;
 	String labelBottoneFiltra = null;
 	String labelBottoneRipulsci = null;
+	String labelBottoneCustom = null;
+	String funzioneBottoneCustom = null;
 	
 	private boolean showAjaxStatusBottoneInvia = true;
 	private boolean showAjaxStatusBottoneFiltra = true;
@@ -417,6 +419,9 @@ public class PageData implements Serializable {
 	}
 	
 	public void addTextFilter(String name, String label, String value, int size) throws PageDataException{
+		addTextFilter(name, label, value, size, false) ;
+	}
+	public void addTextFilter(String name, String label, String value, int size, boolean noedit) throws PageDataException{
 		if(this.filterNames == null) {
 			this.filterNames = new ArrayList<>();
 			this.filterValues = new ArrayList<>();
@@ -432,7 +437,7 @@ public class PageData implements Serializable {
 		this.filterNames.add(deName);
 		
 		DataElement deValue = new DataElement();
-		deValue.setType(DataElementType.TEXT_EDIT);
+		deValue.setType(noedit ? DataElementType.TEXT : DataElementType.TEXT_EDIT);
 		deValue.setName(getParametroFilterValue(this.filterValues.size()));
 		if(label==null) {
 			throw new PageDataException("Label not found");
@@ -810,7 +815,26 @@ public class PageData implements Serializable {
 	public void setLabelBottoneRipulsci(String labelBottoneRipulsci) {
 		this.labelBottoneRipulsci = labelBottoneRipulsci;
 	}
+	
+	public String getLabelBottoneCustom() {
+		return this.labelBottoneCustom;
+	}
 
+	public void setLabelBottoneCustom(String labelBottoneCustom) {
+		this.labelBottoneCustom = labelBottoneCustom;
+	}
+
+	public String getFunzioneBottoneCustom() {
+		return this.funzioneBottoneCustom;
+	}
+
+	public void setFunzioneBottoneCustom(String funzioneBottoneCustom) {
+		this.funzioneBottoneCustom = funzioneBottoneCustom;
+	}
+	public void setFunzioneBottoneCustomDefault(String nomeButton) {
+		this.funzioneBottoneCustom = "customAction(document.form,'"+nomeButton+"');";
+	}
+	
 	public boolean isShowAjaxStatusBottoneInvia() {
 		return this.showAjaxStatusBottoneInvia;
 	}

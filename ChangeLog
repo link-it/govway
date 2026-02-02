@@ -1,3 +1,9 @@
+2026-02-01  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità #1678
+	Aggiunto il supporto completo per l'integrazione con le API di Interoperabilità PDND versione 2, promossa come versione predefinita per le nuove installazioni.
+
 2026-01-30 Giuliano Pintori <pintori@link.it>
 
 	* [GovWayConsole]

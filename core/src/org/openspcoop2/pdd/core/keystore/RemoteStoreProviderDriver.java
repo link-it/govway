@@ -33,7 +33,6 @@ import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.PDNDConfigUtilities;
 import org.openspcoop2.pdd.core.eventi.GestoreEventi;
 import org.openspcoop2.pdd.timers.TimerException;
-import org.openspcoop2.pdd.timers.pdnd.TimerGestoreChiaviPDNDEvent;
 import org.openspcoop2.pdd.timers.pdnd.TimerGestoreChiaviPDNDLib;
 import org.openspcoop2.security.keystore.cache.RemoteStoreClientInfoCache;
 import org.openspcoop2.utils.SemaphoreLock;
@@ -236,16 +235,17 @@ public class RemoteStoreProviderDriver implements IRemoteStoreProvider {
 			this.log.debug(msg);
 			
 			if(OpenSPCoop2Properties.getInstance().isGestoreChiaviPDNDEventiAdd()) {
-				Evento evento = TimerGestoreChiaviPDNDLib.buildEvento(TimerGestoreChiaviPDNDEvent.EVENT_TYPE_ADDED, keyId, "La chiave è stata aggiunta al repository locale");
-				registerEvent(evento, keyId);
+				String eventType = TimerGestoreChiaviPDNDLib.TIPO_EVENTO_ADD;
+				Evento evento = TimerGestoreChiaviPDNDLib.buildEvento(eventType, keyId, "La chiave è stata aggiunta al repository locale");
+				registerEvent(evento, keyId, eventType);
 			}
 		}
 	}
-	private void registerEvent(Evento evento, String keyId) {
+	private void registerEvent(Evento evento, String keyId, String eventType) {
 		try {
 			GestoreEventi.getInstance().log(evento);
 		}catch(Exception e) {
-			String msgError = "Registrazione evento per kid '"+keyId+"' (eventType:"+TimerGestoreChiaviPDNDEvent.EVENT_TYPE_ADDED+") non riuscita: "+e.getMessage();
+			String msgError = "Registrazione evento per kid '"+keyId+"' (eventType:"+eventType+") non riuscita: "+e.getMessage();
 			this.log.error(msgError,e);
 		}
 	}

@@ -104,4 +104,35 @@ public class RemoteStoresCore extends ControlStationCore {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
 	}
+	
+	public String getLastEventIdRemoteStore(long idRemoteStore) throws DriverControlStationException {
+		Connection con = null;
+		String nomeMetodo = "getLastEventIdRemoteStore";
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			return RemoteStoreProviderDriverUtils.getLastEventIdRemoteStore(con, this.tipoDB, idRemoteStore);
+		} catch (KeystoreException e) {
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverControlStationException(getPrefixError(nomeMetodo,  e),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	public void resetLastEventIdRemoteStore(long idRemoteStore) throws DriverControlStationException {
+		Connection con = null;
+		String nomeMetodo = "restLastEventIdRemoteStore";
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			RemoteStoreProviderDriverUtils.resetLastEventIdRemoteStore(con, this.tipoDB, idRemoteStore);
+		} catch (KeystoreException e) {
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverControlStationException(getPrefixError(nomeMetodo,  e),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
 }

@@ -36,11 +36,13 @@ import org.openspcoop2.pdd.core.keystore.RemoteStoreKeyEntry;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCostanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.PageData;
+import org.openspcoop2.web.lib.mvc.PageDataException;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 
@@ -62,7 +64,7 @@ public class RemoteStoresHelper extends ConsoleHelper{
 	}
 
 
-	public void prepareRemoteStoreKeysList(ConsoleSearch ricerca, List<RemoteStoreKeyEntry> lista, long remoteStoreId) {
+	public void prepareRemoteStoreKeysList(ConsoleSearch ricerca, List<RemoteStoreKeyEntry> lista, long remoteStoreId, String lastEventId) {
 		try {
 			Parameter pIdRemoteStore = new Parameter(RemoteStoresCostanti.PARAMETRO_REMOTE_STORE_ID, remoteStoreId + "");
 			
@@ -89,6 +91,9 @@ public class RemoteStoresHelper extends ConsoleHelper{
 
 			String filterRemoteStoreOrganizzazione = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_REMOTE_STORE_KEY_ORGANIZZAZIONE);
 			this.addFilterRemoteStoreOrganizzazione(filterRemoteStoreOrganizzazione);
+			
+			String filterRemoteStoreLastEventId = lastEventId!=null && org.apache.commons.lang3.StringUtils.isNotEmpty(lastEventId) ? lastEventId : "-"; /**SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_REMOTE_STORE_KEY_LAST_EVENT_ID);*/
+			this.addFilterRemoteStoreLastEventiId(filterRemoteStoreLastEventId);
 
 			this.pd.setIndex(offset);
 			this.pd.setPageSize(limit);
@@ -122,6 +127,12 @@ public class RemoteStoresHelper extends ConsoleHelper{
 			this.pd.setDati(dati);
 			// rimuovo il tasto add
 			this.pd.setAddButton(false);
+			
+			
+			// Bottone svuota last Eventi ID
+			this.pd.setLabelBottoneCustom(RemoteStoresCostanti.LABEL_RESET_LAST_EVENT_ID);
+			this.pd.setFunzioneBottoneCustomDefault(RemoteStoresCostanti.PARAMETRO_REMOTE_STORE_KEY_RESET_LAST_EVENT_ID);
+			
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
 		}
@@ -227,21 +238,27 @@ public class RemoteStoresHelper extends ConsoleHelper{
 	
 	
 	
-	private void addFilterRemoteStoreOrganizzazione(String filterRemoteStoreOrganizzazione) throws Exception {
+	private void addFilterRemoteStoreOrganizzazione(String filterRemoteStoreOrganizzazione) throws PageDataException {
 		String label = RemoteStoresCostanti.LABEL_PARAMETRO_REMOTE_STORE_KEY_ORGANIZATION_DETAILS;
 		this.pd.addTextFilter(Filtri.FILTRO_REMOTE_STORE_KEY_ORGANIZZAZIONE, label, filterRemoteStoreOrganizzazione, this.getSize());
 	}
 	
-	private void addFilterRemoteStoreClientId(String filterRemoteStoreClientId) throws Exception {
+	private void addFilterRemoteStoreLastEventiId(String lastEventId) throws PageDataException {
+		String label = RemoteStoresCostanti.LABEL_PARAMETRO_REMOTE_STORE_KEY_LAST_EVENT_ID;
+		boolean noedit = true;
+		this.pd.addTextFilter(Filtri.FILTRO_REMOTE_STORE_KEY_LAST_EVENT_ID, label, lastEventId, this.getSize(), noedit);
+	}
+	
+	private void addFilterRemoteStoreClientId(String filterRemoteStoreClientId) throws PageDataException {
 		String label = RemoteStoresCostanti.LABEL_PARAMETRO_REMOTE_STORE_KEY_CLIENT_ID;
 		this.pd.addTextFilter(Filtri.FILTRO_REMOTE_STORE_KEY_CLIENT_ID, label, filterRemoteStoreClientId, this.getSize());
 	}
 	
-	private void addFilterRemoteStoreKid(String filterRemoteStoreKid) throws Exception {
+	private void addFilterRemoteStoreKid(String filterRemoteStoreKid) throws PageDataException {
 		String label = RemoteStoresCostanti.LABEL_PARAMETRO_REMOTE_STORE_KEY_KID;
 		this.pd.addTextFilter(Filtri.FILTRO_REMOTE_STORE_KEY_KID, label, filterRemoteStoreKid, this.getSize());
 	}
-	private void addFilterRemoteStoreId(String filterRemoteStoreId, boolean postback) throws Exception {
+	private void addFilterRemoteStoreId(String filterRemoteStoreId, boolean postback) throws DriverControlStationException, PageDataException {
 		// se e' presente solo un remote store allora inserisco un campo hidden altriment una select list
 		List<RemoteStore> remoteStoresList = this.remoteStoresCore.remoteStoresList();
 		

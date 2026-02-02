@@ -78,7 +78,7 @@ L'identificativo di sessione utilizzato è individuabile tramite una delle segue
     Load Balancer con Passive Health Check
 
 
-È infine possibile attivare una funzione di selezione dei connettori che partecipano al bilanciamento delle richieste in funzione di parametri della richiesta stessa (:numref:`LoadBalancerSelezioneCondizionale`). Per ulteriori dettagli sulle modalità di selezione condizionale dei connettori si rimanda alla sezione :ref:`consegnaCondizionaleConnettore` poichè gli aspetti di questa configurazione sono identici a quelli descritti per la funzionalità di consegna condizionale.
+È infine possibile attivare una funzione di selezione dei connettori che partecipano al bilanciamento delle richieste in funzione di parametri della richiesta stessa (:numref:`LoadBalancerSelezioneCondizionale`). Per ulteriori dettagli sulle modalità di selezione condizionale dei connettori si rimanda alla sezione :ref:`consegnaCondizionaleConnettore` poiché gli aspetti di questa configurazione sono identici a quelli descritti per la funzionalità di consegna condizionale.
 
 
 .. figure:: ../../../_figure_console/LoadBalancerSelezioneCondizionale.png

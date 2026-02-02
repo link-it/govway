@@ -79,6 +79,7 @@ public class RemoteStoresCostanti {
 	public static final String PARAMETRO_REMOTE_STORE_KEY_CLIENT_DATA_AGGIORNAMENTO = "remoteStoreKeyClientDataAgg";
 	public static final String PARAMETRO_REMOTE_STORE_KEY_DATA_REGISTRAZIONE = "remoteStoreKeyDataReg";
 	public static final String PARAMETRO_REMOTE_STORE_KEY_DATA_AGGIORAMENTO = "remoteStoreKeyDataAgg";
+	public static final String PARAMETRO_REMOTE_STORE_KEY_RESET_LAST_EVENT_ID = "remoteStoreKeyResetLastEventId";
 
 	
 	/* LABEL PARAMETRI */
@@ -94,8 +95,12 @@ public class RemoteStoresCostanti {
 	public static final String LABEL_PARAMETRO_REMOTE_STORE_KEY_CLIENT_DATA_AGGIORNAMENTO = "Data Ultimo Aggiornamento";
 	public static final String LABEL_PARAMETRO_REMOTE_STORE_KEY_DATA_REGISTRAZIONE = "Data Registrazione";
 	public static final String LABEL_PARAMETRO_REMOTE_STORE_KEY_DATA_AGGIORAMENTO = "Data Ultimo Aggiornamento";
+	public static final String LABEL_PARAMETRO_REMOTE_STORE_KEY_LAST_EVENT_ID = "Last Eventi Id";
 	public static final String LABEL_DOWNLOAD = "Download";
 	public static final String LABEL_INFORMAZIONI_CLIENT = "Informazioni Client";
+	public static final String LABEL_RESET_LAST_EVENT_ID = "Reset Last Event ID";
+	public static final String LABEL_RESET_LAST_EVENT_ID_RESET_OK = "Reset completato: in attesa del primo evento";
+	public static final String LABEL_RESET_LAST_EVENT_ID_RESET_KO = "!! Reset failed; see error logs !!";
 	
 	/* VALORI PARAMETRI */
 	public static final String VALUE_PARAMETRO_REMOTE_STORE_KEY_KID_STARTS_WITH_CLIENT_ID = PDNDResolver.REMOTE_STORE_KEY_KID_STARTS_WITH_CLIENT_ID;

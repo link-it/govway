@@ -11,7 +11,7 @@ La PDND mette a disposizione delle `API <https://docs.pagopa.it/interoperabilita
 
 - *Consultazione degli eventi*: le API consentono di acquisire informazioni relative alle modifiche delle chiavi crittografiche registrate sulla PDND; la risorsa viene utilizzata da GovWay per mantenere aggiornata la cache locale delle chiavi scaricate dalla PDND.
 
-- *Recupero delle informazioni del client*: è possibile ottenere informazioni di dettaglioi su un client tramite un’operazione che richiede il relativo clientId come parametro; la risorsa viene impiegata da GovWay per arricchire i dati tracciati sul mittente.
+- *Recupero delle informazioni del client*: è possibile ottenere informazioni di dettaglio su un client tramite un’operazione che richiede il relativo clientId come parametro; la risorsa viene impiegata da GovWay per arricchire i dati tracciati sul mittente.
 
 - *Recupero delle informazioni dell'organizzazione*: è possibile accedere ai dettagli di un’organizzazione tramite un’operazione che richiede il relativo identificativo come parametro; anche questa risorsa viene utilizzata da GovWay per arricchire le informazioni tracciate sul mittente.
 
@@ -19,20 +19,19 @@ Ci sono due versioni di API messe a disposizione sulla PDND:
 
 - v1:le operazioni sopra descritte corrispondono alle seguenti chiamate: 
 
-   - *GET /keys/{kid}*
-   - *GET /events/keys*
-   - *GET /clients/{clientId}*
-   - *GET /organizations/{organizationId}*.
+   - *GET /keys/{kid}* per le chiavi client e server
+   - *GET /events/keys* per la consultazione degli eventi
+   - *GET /clients/{clientId}* per i dettagli sul client.
+   - *GET /organizations/{organizationId}* per i dettagli sull'organizzazione. .
    
 - v2: per questa versione (`con documentazione ufficiale on-line <https://developer.pagopa.it/pdnd-interoperabilita/api/pdnd-core-v2#/>`_) le operazioni corrispondono a:
 
    - *GET /keys/{kid}* per le chiavi client
    - *GET /producerKeys/{kid}/* per le chiavi server
-   - *GET /clients/{clientId}* 
+   - *GET /keyEvents* per la consultazione degli eventi
+   - *GET /clients/{clientId}* per i dettagli sul client
    - *GET /tenants/{tenantId}* per i dettagli sull'organizzazione. 
    
-  Attualmente non è ancora disponibile una risorsa per la consultazione degli eventi per la v2. Tale funzionalità verrà introdotta a fine ottobre, come indicato nell'`issue PDND 1397 <https://github.com/pagopa/pdnd-interop-frontend/issues/1397>`_.
-
 L'endpoint di esposizione delle API e la specifica OpenAPI, come indicato nella sezione `API PDND - Dove si trovano? <https://docs.pagopa.it/interoperabilita-1/manuale-operativo/api-esposte-da-pdnd-interoperabilita#dove-si-trovano>`_,  sono reperibili all'interno della sezione "Fruizione > I tuoi client api interop" e variano in funzione dell'ambiente in cui ci si trova.
 
 Per poter fruire delle API delle PDND deve essere registrato sulla PDND un `client di tipo 'api interop' <https://docs.pagopa.it/interoperabilita-1/manuale-operativo/client-e-materiale-crittografico>`_ caricando il certificato di firma che verrà utilizzato per richiedere il token. Al termina della registrazione si otterrà un identificativo univoco della propria identità ('*client_id*' o '*sub*') e un identificativo associato al certificato caricato ('*kid*').
@@ -43,6 +42,11 @@ Per poter fruire delle API delle PDND deve essere registrato sulla PDND un `clie
 
 	La chiave registrata sulla PDND per quanto concerne il client di tipo 'api interop' DEVE essere differente da quello che verrà utilizzato per firmare i normali token previsti dai pattern di sicurezza messaggio e audit (es. differente dalla chiave indicata nella sezione ':ref:`modipa_passiPreliminari_keystore`').
 
+.. note::
+	
+	**Passaggio ad una differente versione delle API**
+
+	Di seguito vengono fornite tutte le indicazioni per configurare l'integrazione con le API di interoperabilità. Se un'integrazione era già stata attivata e la raccolta eventi era già attiva, il cambio di versione richiede un'operazione aggiuntiva una volta riavviato il sistema con la nuova versione indicata (es. passaggio da 1 a 2). Le operazioni necessarie vengono descritte nella sezione :ref:`modipa_sicurezza_avanzate_pdndConfAvanzata_api_verificaEventi`. 
 
 **Configurazione di GovWay**
 
@@ -122,8 +126,15 @@ Per consentire a GovWay di utilizzare le risorse precedentemente descritte, veng
 	- *baseUrl* (obbligatorio): definisce la base url dell'API di interoperabilità PDND; indicare nella url la versione dell'API PDND che si desidera utilizzare. 
 	
 	  .. note::
-	
-	  	  Attualmente non è ancora disponibile una risorsa per la consultazione degli eventi per la v2. Tale funzionalità verrà introdotta a fine ottobre, come indicato nell'`issue PDND 1397 <https://github.com/pagopa/pdnd-interop-frontend/issues/1397>`_. Per continuare ad utilizzare la v1 dell'api per la raccolta degli eventi è necessario configurata correttamente entrambe le fruizioni built-in ed aggiungere nel file "/etc/govway/modipa_local.properties" la proprietà "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.pdnd.api.events.version=1".
+
+	  	  È possibile utilizzare una versione differente delle API di interoperabilità per operazioni specifiche, configurando nel file "/etc/govway/modipa_local.properties" le seguenti proprietà:
+
+	  	  - *org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.pdnd.api.keys.version*: versione dell'API per il recupero delle chiavi
+	  	  - *org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.pdnd.api.events.version*: versione dell'API per la consultazione degli eventi
+	  	  - *org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.pdnd.api.clients.version*: versione dell'API per il recupero delle informazioni del client
+	  	  - *org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.pdnd.api.organizations.version*: versione dell'API per il recupero delle informazioni dell'organizzazione
+
+	  	  Questa configurazione richiede che entrambe le fruizioni built-in (v1 e v2) siano configurate correttamente.
 	
 	- *connectTimeout* e *readTimeout* (obbligatorio): consentono di impostare rispettivamente i limiti temporali per l'instaurazione di una connessione e la ricezione di una risposta dalla PDND;
 	- *http.username* e *http.password* (opzionale): se definite GovWay invocherà la fruizione utilizzando le credenziali http basic indicate; la keyword speciale '#none#' è utilizzabile per ridefinire la configurazione allo scopo di disabilitare l'invio delle credenziali.

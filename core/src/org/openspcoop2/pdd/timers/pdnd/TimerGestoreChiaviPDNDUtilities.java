@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.pdd.timers.pdnd;
 
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.pdd.timers.TimerException;
 import org.openspcoop2.utils.certificate.remote.RemoteStoreConfig;
 import org.openspcoop2.utils.transport.http.ExternalResourceUtils;
@@ -52,14 +53,16 @@ public class TimerGestoreChiaviPDNDUtilities {
 		this.limit = limit;
 	}
 	
-	public TimerGestoreChiaviPDNDEvents readNextEvents(long lastEventId) throws TimerException {
+	public TimerGestoreChiaviPDNDEvents readNextEvents(String lastEventId) throws TimerException {
 		
 		String responseJson = null;
 		try {
 		
 			StringBuilder sb = new StringBuilder(this.urlCheckEventi).append("?");
-			sb.append(this.parameterLastEventId).append("=").append(lastEventId);
-			sb.append("&");
+			if(lastEventId!=null && StringUtils.isNotEmpty(lastEventId)) {
+				sb.append(this.parameterLastEventId).append("=").append(lastEventId);
+				sb.append("&");
+			}
 			sb.append(this.parameterLimit).append("=").append(this.limit);
 			
 			String url = sb.toString();

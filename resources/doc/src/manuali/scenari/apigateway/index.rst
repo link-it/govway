@@ -6,7 +6,7 @@ Profilo 'API Gateway'
 
 Nelle sezioni successive verranno mostrati degli scenari di esempio di una API Rest erogata con profilo “API Gateway".
 
-Nel primo scenario descritto la sua fruizione è a disposizione di qualsiasi client poichè non vi sono meccanismi di autenticazione/autorizzazione configurati.
+Nel primo scenario descritto la sua fruizione è a disposizione di qualsiasi client poiché non vi sono meccanismi di autenticazione/autorizzazione configurati.
 
 Nel secondo scenario viene invece richiesto un token OAuth.
 

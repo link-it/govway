@@ -133,16 +133,20 @@ public class ModIUtils {
 	// COSTANTI API PDND
 	public static final String API_PDND_EVENTS_KEYS_PATH = "api-pdnd-eventsKeys-path";
 	public static final String API_PDND_EVENTS_KEYS_PARAMETER_LASTEVENTID = "api-pdnd-eventsKeys-parameterLastEventId";
+	public static final String API_PDND_EVENTS_KEYS_PARAMETER_LASTEVENTID_FIRST_VALUE = "api-pdnd-eventsKeys-parameterLastEventIdFirstValue";
 	public static final String API_PDND_EVENTS_KEYS_PARAMETER_LIMIT = "api-pdnd-eventsKeys-parameterLimit";
 	public static final String API_PDND_CLIENTS_PATH = "api-pdnd-clients-path";
 	public static final String API_PDND_CLIENTS_ORGANIZATION_JSON_PATH = "api-pdnd-clients-organizationJsonPath";
 	public static final String API_PDND_ORGANIZATIONS_PATH = "api-pdnd-organizations-path";
 	public static String extractInfoFromMetadati(Map<String, String> metadati, String key, String description) throws ProtocolException{
+		return extractInfoFromMetadati(metadati, key, description, false);
+	}
+	public static String extractInfoFromMetadati(Map<String, String> metadati, String key, String description, boolean emptyAllow) throws ProtocolException{
 		if(metadati==null || metadati.isEmpty() || !metadati.containsKey(key)) {
 			throw new ProtocolException(description+" not found"); 
 		}
 		String v = metadati.get(key);
-		if(v==null || StringUtils.isEmpty(v.trim())) {
+		if(v==null || (StringUtils.isEmpty(v.trim()) && !emptyAllow)) {
 			throw new ProtocolException(description+" undefined"); 
 		}
 		return v;

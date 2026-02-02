@@ -62,7 +62,7 @@ Di seguito il frammento del file `mvn/dependencies/pom.xml <https://github.com/l
 
 Esaminando nel dettaglio i file che definiscono i falsi positivi:
 
-- swagger-codegen-linkit.xml: esclude i jar inclusi nel file `mvn/dependencies/swagger-codegen/pom.xml <https://github.com/link-it/govway/blob/master/mvn/dependencies/swagger-codegen/pom.xml>`_ poichè vengono utilizzati solamente durante lo sviluppo per generare alcune classi e non a runtime dal Gateway.
+- swagger-codegen-linkit.xml: esclude i jar inclusi nel file `mvn/dependencies/swagger-codegen/pom.xml <https://github.com/link-it/govway/blob/master/mvn/dependencies/swagger-codegen/pom.xml>`_ poiché vengono utilizzati solamente durante lo sviluppo per generare alcune classi e non a runtime dal Gateway.
 
 - commons-discovery.xml: :ref:`vulnerabilityManagement_skip_registry_CVE-2022-0869`
 
@@ -74,7 +74,7 @@ Esaminando nel dettaglio i file che definiscono i falsi positivi:
 
 - xercesImpl.xml: :ref:`vulnerabilityManagement_skip_registry_CVE-2017-10355`
 
-- console-back-office.xml: esclude i jar inclusi nel file `mvn/dependencies/faces/pom.xml <https://github.com/link-it/govway/blob/master/mvn/dependencies/faces/pom.xml>`_ poichè utilizzati dalle console di gestione e monitoraggio adibite a funzioni di backoffice che non devono essere esposte al pubblico.
+- console-back-office.xml: esclude i jar inclusi nel file `mvn/dependencies/faces/pom.xml <https://github.com/link-it/govway/blob/master/mvn/dependencies/faces/pom.xml>`_ poiché utilizzati dalle console di gestione e monitoraggio adibite a funzioni di backoffice che non devono essere esposte al pubblico.
 
   .. note::
 

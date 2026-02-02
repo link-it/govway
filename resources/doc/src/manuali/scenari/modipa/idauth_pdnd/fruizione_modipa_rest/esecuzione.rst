@@ -82,7 +82,7 @@ Dopo aver eseguito la "Send" e verificato il corretto esito dell'operazione è p
 
 .. note::
 
-  Il token ritornato dall'authorization server demo che simula la PDND contiene ulteriori claims che possono essere ignorati poichè non utili alla descrizione dello scenario e non presenti in un token PDND reale.
+  Il token ritornato dall'authorization server demo che simula la PDND contiene ulteriori claims che possono essere ignorati poiché non utili alla descrizione dello scenario e non presenti in un token PDND reale.
 
 4. Tramite la console govwayMonitor si può visualizzare il messaggio di richiesta in uscita che è il medesimo di quello in entrata con la differenza che è stato aggiunto l'access token ottenuto dalla PDND tra gli header HTTP all'interno dell'header "Authorization" (:numref:`modipa_fruizione_messaggio_richiesta_pdnd_fig`).
 

@@ -33,7 +33,7 @@ La configurazione di default di GovWay effettua la traduzione solamente delle UR
 
 Poichè la funzionalità di proxy pass reverse è completamente disabilitata per default su API di tipo SOAP, per attivarla è necessario attuare la registrazione delle :ref:`configProprieta` 'connettori.proxyPassReverse.enabled' e/o 'connettori.proxyPassReverse.setCookie.enabled' (o proprietà specifiche per path/domain) con il valore 'true'.
 
-La sola registrazione delle proprietà non è sufficiente su API SOAP poichè per default gli unici header HTTP della risposta che vengono inoltrati dal backend verso il client sono quelli relativi alle funzionalità CORS (Access-Control-\*). È possibile configurare GovWay per far inoltrare gli header 'Location', 'Content-Location' o 'Set-Cookie' al client in una delle seguenti due modalità:
+La sola registrazione delle proprietà non è sufficiente su API SOAP poiché per default gli unici header HTTP della risposta che vengono inoltrati dal backend verso il client sono quelli relativi alle funzionalità CORS (Access-Control-\*). È possibile configurare GovWay per far inoltrare gli header 'Location', 'Content-Location' o 'Set-Cookie' al client in una delle seguenti due modalità:
 
 - *puntuale sull'erogazione/fruizione di API*: creare una regola di trasformazione sugli header http di risposta che consenta l'inoltro verso il client degli header 'Location', 'Content-Location' o 'Set-Cookie' (per ulteriori dettagli sulle trasformazioni far riferimento alla sezione :ref:`trasformazioniRisposta`). Nella figura (:numref:`proxyPassReverse_APISoapSetCookie`) viene fornito un esempio di configurazione.
 

@@ -23,4 +23,22 @@ Infine cliccando sull'ora di registrazione si possono esaminare i dettagli sia r
     :align: center
     :name: cachePDNDDettagliEntry
   
-    GovWay Cache: dettagli di una chiave
+    GovWay Cache PDND: dettagli di una chiave
+    
+Espandendo la sezione dei filtri di ricerca è possibile impostare criteri di ricerca delle chiavi e visualizzare l'identificativo dell'ultimo evento scaricato (:numref:`cachePDNDFiltriRicerca`).
+
+.. figure:: ../_figure_console/govwayConsole_cachePDND_filtriRicerca.png
+    :scale: 80%
+    :align: center
+    :name: cachePDNDFiltriRicerca
+  
+    GovWay Cache PDND: filtri di ricerca
+
+Il pulsante 'Reset Last Event ID' consente di azzerare l'ultimo identificativo di evento scaricato, utile per agevolare il passaggio ad una nuova versione delle API di Interoperabilità (:numref:`cachePDNDResetLastEventiID`) come indicato nella sezione :ref:`modipa_sicurezza_avanzate_pdndConfAvanzata_api_verificaEventi`.
+
+.. figure:: ../_figure_console/govwayConsole_cachePDND_resetLastEventID.png
+    :scale: 80%
+    :align: center
+    :name: cachePDNDResetLastEventiID
+  
+    GovWay Cache PDND: reset 'Last Event ID'

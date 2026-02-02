@@ -249,6 +249,7 @@ public final class Filtri
 	public static final String FILTRO_REMOTE_STORE_KEY_KID = "filtroRemoteStoreKeyKid";
 	public static final String FILTRO_REMOTE_STORE_KEY_CLIENT_ID = "filtroRemoteStoreKeyClientId";
 	public static final String FILTRO_REMOTE_STORE_KEY_ORGANIZZAZIONE = "filtroRemoteStoreKeyOrganizzazione";
+	public static final String FILTRO_REMOTE_STORE_KEY_LAST_EVENT_ID = "filtroRemoteStoreLastEventId"; // no.edit
 	
 	public static List<String> convertToTipiSoggetti(String filterProtocollo, String filterProtocolli) throws CoreException {
 		List<String> tipoSoggettiProtocollo = null;
