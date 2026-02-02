@@ -119,6 +119,7 @@ public class TimerGestoreChiaviPDNDLib {
 	private String urlCheckEventi;
 	
 	private String parameterLastEventId;
+	private String parameterLastEventIdFirstValue;
 	private String parameterLimit;
 	private int limit;
 	
@@ -154,6 +155,8 @@ public class TimerGestoreChiaviPDNDLib {
 		
 		try {
 			this.parameterLastEventId = ModIUtils.extractInfoFromMetadati(this.remoteStore.getMetadati(), ModIUtils.API_PDND_EVENTS_KEYS_PARAMETER_LASTEVENTID, "Events keys last eventid parameter");
+			this.parameterLastEventIdFirstValue = ModIUtils.extractInfoFromMetadati(this.remoteStore.getMetadati(), ModIUtils.API_PDND_EVENTS_KEYS_PARAMETER_LASTEVENTID_FIRST_VALUE, 
+					"Events keys last eventid initial parameter value", true);
 			this.parameterLimit = ModIUtils.extractInfoFromMetadati(this.remoteStore.getMetadati(), ModIUtils.API_PDND_EVENTS_KEYS_PARAMETER_LIMIT, "Events keys limit parameter");
 			this.limit = this.op2Properties.getGestoreChiaviPDNDeventsKeysLimit();
 		}catch(Exception e) {
@@ -316,7 +319,7 @@ public class TimerGestoreChiaviPDNDLib {
 	}
 	
 	
-	private long lastEventId = 0;
+	private String lastEventId = this.parameterLastEventIdFirstValue;
 		
 	private void process(DriverConfigurazioneDB driverConfigurazioneDbGestoreConnection) throws KeystoreException {
 		
@@ -345,21 +348,21 @@ public class TimerGestoreChiaviPDNDLib {
 			}
 			
 			// leggo lastEventId
-			long lastEventIdDbImage = Long.parseLong(this.remoteStoreDbImage.getLastEvent());
+			String lastEventIdDbImage = this.remoteStoreDbImage.getLastEvent();
 			this.lastEventId = lastEventIdDbImage;
 			
 			int letti = 1;
-			long prec = 0; 
+			String prec = null; 
 			while(letti > 0) {
 				prec = this.lastEventId; 
 				letti = gestione(driverConfigurazioneDbGestoreConnection, pdndUtilities, true);
-				if(this.lastEventId<=prec) {
+				if(this.lastEventId!=null && this.lastEventId.equals(prec)) {
 					// l'ultima gestione non ha aggiornato lastEventId
 					break;
 				}
 			}
 			
-			if(this.lastEventId>lastEventIdDbImage) {
+			if(!lastEventIdDbImage.equals(this.lastEventId)) {
 				updateLasteEventId = true;
 			}
 
@@ -378,11 +381,11 @@ public class TimerGestoreChiaviPDNDLib {
 		emitDiagnosticLog("inizializzazione.inCorso");
 		try {
 			int letti = 1;
-			long prec = 0; 
+			String prec = null; 
 			while(letti > 0) {
 				prec = this.lastEventId; 
 				letti = gestione(driverConfigurazioneDbGestoreConnection, pdndUtilities, false);
-				if(this.lastEventId<=prec) {
+				if(this.lastEventId!=null && this.lastEventId.equals(prec)) {
 					// l'ultima gestione non ha aggiornato lastEventId
 					break;
 				}
@@ -400,6 +403,12 @@ public class TimerGestoreChiaviPDNDLib {
 		}catch(Exception e) {
 			this.msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, e.getMessage());
 			emitDiagnosticLog("inizializzazione.fallita");
+			if(this.logCore!=null) {
+				this.logCore.error("Inizializzazione timer chiavi PDND fallita: "+e.getMessage(),e);
+			}
+			if(this.logTimer!=null) {
+				this.logTimer.error("Inizializzazione timer chiavi PDND fallita: "+e.getMessage(),e);
+			}
 		}
 		
 		return updateLasteEventId;
@@ -478,14 +487,14 @@ public class TimerGestoreChiaviPDNDLib {
 			
 			if(letti>0) {
 				for (TimerGestoreChiaviPDNDEvent event : events.getEvents()) {					
-					if(event.getEventId()>this.lastEventId) {
+					if(!event.getEventId().equals(this.lastEventId)) {
 						this.lastEventId = event.getEventId();
 						if(gestioneEvento) {
 							gestioneEvento(driverConfigurazioneDbGestoreConnection, event);
 						}
 					}
 					else {
-						emitLog(getEventPrefix(event)+"con un identificativo precedente o uguale all'ultimo evento gestito '"+this.lastEventId+"' (tipo di operazione: '"+event.getObjectType()+"'; tipo di evento: '"+event.getEventType()+"')");
+						emitLog(getEventPrefix(event)+"con un identificativo uguale all'ultimo evento gestito '"+this.lastEventId+"' (tipo di operazione: '"+event.getObjectType()+"'; tipo di evento: '"+event.getEventType()+"')");
 					}
 				}
 			}
@@ -505,43 +514,67 @@ public class TimerGestoreChiaviPDNDLib {
 	}
 	
 	private void gestioneEvento(DriverConfigurazioneDB driverConfigurazioneDbGestoreConnection, TimerGestoreChiaviPDNDEvent event) throws KeystoreException, TimerException {
-		if(TimerGestoreChiaviPDNDEvent.OBJECT_TYPE_KEY.equals(event.getObjectType()) &&
-			(
-					TimerGestoreChiaviPDNDEvent.EVENT_TYPE_DELETED.equals(event.getEventType())
-					||
-					TimerGestoreChiaviPDNDEvent.EVENT_TYPE_UPDATED.equals(event.getEventType())
-			)
+		
+		boolean updateDeleteKeyV1 = TimerGestoreChiaviPDNDEvent.OBJECT_TYPE_KEY_V1.equals(event.getObjectType()) &&
+				(
+						TimerGestoreChiaviPDNDEvent.EVENT_TYPE_DELETED_V1.equals(event.getEventType())
+						||
+						TimerGestoreChiaviPDNDEvent.EVENT_TYPE_UPDATED_V1.equals(event.getEventType())
+				);
+		boolean deleteKeyV2 = TimerGestoreChiaviPDNDEvent.EVENT_TYPE_DELETED_V2.equals(event.getEventType());
+		
+		if(updateDeleteKeyV1 || deleteKeyV2
 		) {
 			
-			this.msgDiag.addKeyword(CostantiPdD.KEY_ID_EVENTO, event.getEventId()+"");
-			this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_EVENTO, event.getEventType());
-			
-			String kid = null;
-			if(event.getObjectId()!=null) {
-				String details = event.getObjectId().toString();
-				this.msgDiag.addKeyword(CostantiPdD.KEY_DETTAGLI_EVENTO, details);
-				
-				kid = event.getObjectId().get("kid");
-			}
-			else {
-				String details = "object id undefined";
-				this.msgDiag.addKeyword(CostantiPdD.KEY_DETTAGLI_EVENTO, details);
-			}
-						
-			if(kid!=null) {
-				gestioneEvento(driverConfigurazioneDbGestoreConnection, event, kid);
-			}
-			
-			emitDiagnosticLog("gestioneEventi.evento");
+			gestioneEventoProcess(driverConfigurazioneDbGestoreConnection, event);
 		}
 		else {
-			if(TimerGestoreChiaviPDNDEvent.OBJECT_TYPE_KEY.equals(event.getObjectType())){
+			if(TimerGestoreChiaviPDNDEvent.OBJECT_TYPE_KEY_V1.equals(event.getObjectType())
+					||
+					event.getKid()!=null // v2
+					){
 				emitLog(getEventPrefix(event)+"relativo ad una chiave; tipo di evento '"+event.getEventType()+"' ignorato");
 			}
 			else {
-				emitLog(getEventPrefix(event)+"relativo ad un tipo di operazione '"+event.getObjectType()+"' non gestita; (tipo di evento '"+event.getEventType()+"')");
+				if(event.getObjectType()==null) {
+					// v2
+					emitLog(getEventPrefix(event)+"relativo ad un tipo di evento '"+event.getEventType()+"' non gestito");
+				}
+				else {
+					emitLog(getEventPrefix(event)+"relativo ad un tipo di operazione '"+event.getObjectType()+"' non gestita; (tipo di evento '"+event.getEventType()+"')");
+				}
 			}
 		}
+	}
+	private void gestioneEventoProcess(DriverConfigurazioneDB driverConfigurazioneDbGestoreConnection, TimerGestoreChiaviPDNDEvent event) throws KeystoreException, TimerException {
+		this.msgDiag.addKeyword(CostantiPdD.KEY_ID_EVENTO, event.getEventId()+"");
+		this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_EVENTO, event.getEventType());
+		
+		String kid = null;
+		if(event.getKid()!=null) {
+			// api v2
+			kid = event.getKid();
+			/**System.out.println("V2 ["+kid+"]");*/
+			this.msgDiag.addKeyword(CostantiPdD.KEY_DETTAGLI_EVENTO, kid);
+		}
+		else if(event.getObjectId()!=null) {
+			// api v1
+			String details = event.getObjectId().toString();
+			this.msgDiag.addKeyword(CostantiPdD.KEY_DETTAGLI_EVENTO, details);
+			
+			kid = event.getObjectId().get("kid");
+			/**System.out.println("V1 ["+kid+"]");*/
+		}
+		else {
+			String details = "object id undefined";
+			this.msgDiag.addKeyword(CostantiPdD.KEY_DETTAGLI_EVENTO, details);
+		}
+					
+		if(kid!=null) {
+			gestioneEvento(driverConfigurazioneDbGestoreConnection, event, kid);
+		}
+		
+		emitDiagnosticLog("gestioneEventi.evento");
 	}
 	private void gestioneEvento(DriverConfigurazioneDB driverConfigurazioneDbGestoreConnection, TimerGestoreChiaviPDNDEvent event, String kid) throws KeystoreException, TimerException {
 		Connection conConfigurazione = null;
@@ -568,12 +601,15 @@ public class TimerGestoreChiaviPDNDLib {
 	}
 	private void gestioneEvento(Connection conConfigurazione, TimerGestoreChiaviPDNDEvent event, String kid) throws KeystoreException, TimerException {
 		Evento evento = null;
-		if(TimerGestoreChiaviPDNDEvent.EVENT_TYPE_DELETED.equals(event.getEventType())) {
+		if(TimerGestoreChiaviPDNDEvent.EVENT_TYPE_DELETED_V1.equals(event.getEventType()) 
+				||
+				TimerGestoreChiaviPDNDEvent.EVENT_TYPE_DELETED_V2.equals(event.getEventType())) {
 			int deleted = RemoteStoreProviderDriverUtils.deleteRemoteStoreKey(conConfigurazione, this.tipoDatabase, this.remoteStoreDbImage.getId(), kid);
 			if(deleted>0 && this.op2Properties.isGestoreChiaviPDNDEventiDelete()) {
 				// significa che la chiave era stata registrata sulla base dati
 				evento = buildEvento(event.getEventType(), kid, "La chiave è stata eliminata dal repository locale");
 			}
+			/**System.out.println("DELETE ["+kid+"]");*/
 		}
 		else {
 			int updated = RemoteStoreProviderDriverUtils.invalidRemoteStoreKey(conConfigurazione, this.tipoDatabase, this.remoteStoreDbImage.getId(), kid);
@@ -581,6 +617,7 @@ public class TimerGestoreChiaviPDNDLib {
 				// significa che la chiave era stata registrata sulla base dati
 				evento = buildEvento(event.getEventType(), kid, "La chiave è stata invalidata sul repository locale");
 			}
+			/**System.out.println("UPDATE ["+kid+"]");*/
 		}
 		if(evento!=null) {
 			try {
@@ -630,13 +667,20 @@ public class TimerGestoreChiaviPDNDLib {
 	public static Evento buildEvento(String eventType, String objectDetail, String descrizione) throws TimerException{
 		Evento evento = new Evento();
 		evento.setTipo("GestioneChiaviPDND");
-		if(TimerGestoreChiaviPDNDEvent.EVENT_TYPE_ADDED.equals(eventType)) {
+		if(TimerGestoreChiaviPDNDEvent.EVENT_TYPE_ADDED_V1.equals(eventType)
+				||
+				TimerGestoreChiaviPDNDEvent.EVENT_TYPE_ADDED_V2.equals(eventType)
+				||
+				TIPO_EVENTO_ADD.equals(eventType) // usato in remote store provider dove si è persa la versione
+				) {
 			evento.setCodice(TIPO_EVENTO_ADD);
 		}
-		else if(TimerGestoreChiaviPDNDEvent.EVENT_TYPE_UPDATED.equals(eventType)) {
+		else if(TimerGestoreChiaviPDNDEvent.EVENT_TYPE_UPDATED_V1.equals(eventType)) {
 			evento.setCodice(TIPO_EVENTO_UPDATED);
 		}
-		else if(TimerGestoreChiaviPDNDEvent.EVENT_TYPE_DELETED.equals(eventType)) {
+		else if(TimerGestoreChiaviPDNDEvent.EVENT_TYPE_DELETED_V1.equals(eventType)
+				||
+				TimerGestoreChiaviPDNDEvent.EVENT_TYPE_DELETED_V2.equals(eventType)) {
 			evento.setCodice(TIPO_EVENTO_DELETED);
 		}
 		else {
@@ -656,7 +700,7 @@ public class TimerGestoreChiaviPDNDLib {
 		return evento;
 	}
 	
-	private static final String TIPO_EVENTO_ADD = "Add";
+	public static final String TIPO_EVENTO_ADD = "Add";
 	private static final String TIPO_EVENTO_DELETED = "Delete";
 	private static final String TIPO_EVENTO_UPDATED = "Update";
 }

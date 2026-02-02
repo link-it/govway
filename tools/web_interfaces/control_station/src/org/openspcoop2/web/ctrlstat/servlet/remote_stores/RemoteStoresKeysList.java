@@ -77,7 +77,7 @@ public class RemoteStoresKeysList extends Action {
 			
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
-			
+						
 			// controllo che ci siano a disposizione dei remote stores
 			List<RemoteStore> remoteStoresList = remoteStoresCore.remoteStoresList();
 			
@@ -114,16 +114,32 @@ public class RemoteStoresKeysList extends Action {
 			} else {
 				remoteStoreId = Long.parseLong(filterRemoteStoreId);
 			}
-			
-			if(lista==null) {
+						
+			String resetLastEventId = remoteStoresHelper.getParameter(RemoteStoresCostanti.PARAMETRO_REMOTE_STORE_KEY_RESET_LAST_EVENT_ID);
+			boolean isResetLastEventId = resetLastEventId!=null && org.apache.commons.lang3.StringUtils.isNotEmpty(resetLastEventId);
+			if(lista==null && !isResetLastEventId) {
 				lista = remoteStoresCore.remoteStoreKeysList(ricerca, remoteStoreId);
 			}
+			
+			String lastEventiId = remoteStoresCore.getLastEventIdRemoteStore(remoteStoreId);
+			
+			// Controlo se richiesta azione di reset
+			if(isResetLastEventId) {
+				boolean resetEffettuato = resetLastEventId(remoteStoresCore, remoteStoreId);
+				if(resetEffettuato) {
+					lastEventiId = RemoteStoresCostanti.LABEL_RESET_LAST_EVENT_ID_RESET_OK;
+				}
+				else {
+					lastEventiId = RemoteStoresCostanti.LABEL_RESET_LAST_EVENT_ID_RESET_KO;
+				}
+			}
+			
 			
 			if(!remoteStoresHelper.isPostBackFilterElement()) {
 				ServletUtils.setRisultatiRicercaIntoSession(request, session, idLista, lista); // salvo poiche' esistono filtri che hanno necessita di postback
 			}
 			
-			remoteStoresHelper.prepareRemoteStoreKeysList(ricerca, lista, remoteStoreId);
+			remoteStoresHelper.prepareRemoteStoreKeysList(ricerca, lista, remoteStoreId, lastEventiId);
 			
 			// salvo l'oggetto ricerca nella sessione
 			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
@@ -136,6 +152,16 @@ public class RemoteStoresKeysList extends Action {
 		} catch (Exception e) {
 			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					RemoteStoresCostanti.OBJECT_NAME_REMOTE_STORES_KEYS, ForwardParams.LIST());
+		}
+	}
+	
+	private boolean resetLastEventId(RemoteStoresCore remoteStoresCore, long remoteStoreId) {
+		try {
+			remoteStoresCore.resetLastEventIdRemoteStore(remoteStoreId);
+			return true;
+		}catch(Exception e) {
+			ControlStationCore.getLog().error("Reset failed: "+e.getMessage(),e);
+			return false;
 		}
 	}
 }

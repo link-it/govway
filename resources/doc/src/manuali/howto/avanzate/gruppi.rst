@@ -164,7 +164,7 @@ utilizzando la console *govwayConsole*, procedere come segue:
 4. **Reset Cache delle Configurazioni di GovWay**
 
    Le configurazioni accedute da GovWay vengono mantenute in una cache
-   dopo il primo accesso per 2 ore. Siccome nei precendenti punti
+   dopo il primo accesso per 2 ore. Siccome nei precedenti punti
    abbiamo modificato una configurazione utilizzata nelle sezioni
    precedenti se non sono trascorse 2 ore dall'ultimo utilizzo è
    necessario forzare un reset della cache. Per farlo accedere alla

@@ -13,7 +13,7 @@ La configurazione di default di hazelcast prova automaticamente a rilevare nodi 
 
 La configurazione di rete definita nel file *<directory-lavoro>/govway_local.hazelcast.yaml* verrà applicata per tutte le istanze attivate relative agli algoritmi descritti nelle sezioni ':ref:`headerGWRateLimitingCluster_distribuita_hazelcast`' e ':ref:`headerGWRateLimitingCluster_distribuita_hazelcastOpzioniAvanzate`'. 
 
-Se nel file *<directory-lavoro>/govway_local.hazelcast.yaml* viene definito l'elemento 'port', la sua configurazione viene ignorata e non viene riportata sulle istanze attivate poichè, come descritto nella sezione ':ref:`headerGWRateLimitingCluster_distribuita_hazelcastConfig_port`', ad ogni algoritmo viene associata una porta dedicata. Per modificare la porta si deve agire sulla configurazione specifica dell'algoritmo.
+Se nel file *<directory-lavoro>/govway_local.hazelcast.yaml* viene definito l'elemento 'port', la sua configurazione viene ignorata e non viene riportata sulle istanze attivate poiché, come descritto nella sezione ':ref:`headerGWRateLimitingCluster_distribuita_hazelcastConfig_port`', ad ogni algoritmo viene associata una porta dedicata. Per modificare la porta si deve agire sulla configurazione specifica dell'algoritmo.
 
 Per lo stesso motivo i membri definiti nell'elemento 'tpc-ip.member-list' non dovrebbero contenere l'indicazione della porta. In alternativa è possibile utilizzare la keyword 'GOVWAY_INSTANCE_PORT' che verrà sostituita per ogni algoritmo con la porta corretta.
 

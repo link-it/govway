@@ -268,6 +268,7 @@ public class ModIProperties {
 				// events
 				getApiPDNDEventKeysPath(v);
 				getApiPDNDEventKeysParameterLastEventId(v);
+				getApiPDNDEventKeysParameterLastEventIdFirstValue(v);
 				getApiPDNDEventKeysParameterLimit(v);
 				// clients
 				getApiPDNDClientsPath(v);
@@ -1204,6 +1205,7 @@ public class ModIProperties {
 		}
 		remoteStore.getMetadati().put(ModIUtils.API_PDND_EVENTS_KEYS_PATH, urlEventi);
 		remoteStore.getMetadati().put(ModIUtils.API_PDND_EVENTS_KEYS_PARAMETER_LASTEVENTID, this.getApiPDNDEventKeysParameterLastEventId(apiVersion));
+		remoteStore.getMetadati().put(ModIUtils.API_PDND_EVENTS_KEYS_PARAMETER_LASTEVENTID_FIRST_VALUE, this.getApiPDNDEventKeysParameterLastEventIdFirstValue(apiVersion));
 		remoteStore.getMetadati().put(ModIUtils.API_PDND_EVENTS_KEYS_PARAMETER_LIMIT, this.getApiPDNDEventKeysParameterLimit(apiVersion));
 		
 		buildUrlCheckEventiMultitenant(remoteStore,  versionInBaseUrl, baseUrlMultitenantWithoutKeys, 
@@ -1228,6 +1230,7 @@ public class ModIProperties {
 				}
 				multiTenantValues.put(ModIUtils.API_PDND_EVENTS_KEYS_PATH, urlEventiTenant);
 				multiTenantValues.put(ModIUtils.API_PDND_EVENTS_KEYS_PARAMETER_LASTEVENTID, this.getApiPDNDEventKeysParameterLastEventId(apiVersion));
+				multiTenantValues.put(ModIUtils.API_PDND_EVENTS_KEYS_PARAMETER_LASTEVENTID_FIRST_VALUE, this.getApiPDNDEventKeysParameterLastEventIdFirstValue(apiVersion));
 				multiTenantValues.put(ModIUtils.API_PDND_EVENTS_KEYS_PARAMETER_LIMIT, this.getApiPDNDEventKeysParameterLimit(apiVersion));
 				multiTenantUpgraded.put(entry.getKey(), multiTenantValues);
 			}
@@ -1843,6 +1846,29 @@ public class ModIProperties {
 		}
 
 		return this.getApiPDNDEventKeysParameterLastEventId.get(key);
+	}
+	
+	private Map<String,String> getApiPDNDEventKeysParameterLastEventIdFirstValue = new HashMap<>();
+	public String getApiPDNDEventKeysParameterLastEventIdFirstValue(int version) throws ProtocolException {
+		String key = version+"";
+		if(!this.getApiPDNDEventKeysParameterLastEventIdFirstValue.containsKey(key)){
+			String pName = PREFIX_API_PDND_V+version+".events.keys.parameter.lastEventId.firstValue";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					/**throw new ProtocolException(PREFIX_PROPRIETA+pName+"'"+SUFFIX_NON_TROVATA);*/
+					name = "";
+				}
+				name = name.trim();
+				this.getApiPDNDEventKeysParameterLastEventIdFirstValue.put(key, name);
+			} catch(java.lang.Exception e) {
+				this.logDebug(getMessaggioErroreProprietaNonImpostata(pName, e));
+				throw new ProtocolException(e.getMessage(),e);
+			}    
+		}
+
+		return this.getApiPDNDEventKeysParameterLastEventIdFirstValue.get(key);
 	}
 	
 	private Map<String,String> getApiPDNDEventKeysParameterLimit = new HashMap<>();

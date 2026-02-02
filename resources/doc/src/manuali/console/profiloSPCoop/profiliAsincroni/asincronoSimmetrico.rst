@@ -46,7 +46,7 @@ Terminata la registrazione della fruizione, dovrà essere registrata un'erogazio
 
 	**Configurazione Servizio Ricezione della Risposta**
 
-	Durante la registrazione dell'erogazione del servizio di risposta,  al connettore richiesto dalla maschera di configurazione può essere fornito un endpoint qualsiasi. Tale endpoint non verrà effettivamente utilizzato poichè la risposta asincrona ricevuta verrà inoltrata al backend configurato come 'Risposta Asincrona' dell'applicativo client che ha effettuato la richiesta.
+	Durante la registrazione dell'erogazione del servizio di risposta,  al connettore richiesto dalla maschera di configurazione può essere fornito un endpoint qualsiasi. Tale endpoint non verrà effettivamente utilizzato poiché la risposta asincrona ricevuta verrà inoltrata al backend configurato come 'Risposta Asincrona' dell'applicativo client che ha effettuato la richiesta.
 
 
 Ruolo Erogatore

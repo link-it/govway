@@ -27,7 +27,7 @@ GovWay consente di configurare 2 tecniche di sincronizzazione:
 
 Nella sezione :ref:`headerGWRateLimitingCluster_distribuita_hazelcastConfig` vengono fornite informazioni sul tipo di configurazione utilizzata su Hazelcast, mentre nella sezione :ref:`headerGWRateLimitingCluster_distribuita_hazelcastLog` viene indicato dove è possibile reperire i log emessi da Hazelcast.
 
-Altre modalità di utilizzo di hazelcast, forniti nelle precedenti versioni di GovWay, vengono descritte nella sezione :ref:`headerGWRateLimitingCluster_distribuita_hazelcastOpzioniAvanzate` ma ne si sconsiglia l'utilizzo poichè meno performanti rispetto alle due soluzioni sopra indicate.
+Altre modalità di utilizzo di hazelcast, forniti nelle precedenti versioni di GovWay, vengono descritte nella sezione :ref:`headerGWRateLimitingCluster_distribuita_hazelcastOpzioniAvanzate` ma ne si sconsiglia l'utilizzo poiché meno performanti rispetto alle due soluzioni sopra indicate.
 
 .. toctree::
    :maxdepth: 2

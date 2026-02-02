@@ -81,6 +81,8 @@ public class RemoteStoresKeysDel extends Action {
 			String filterRemoteStoreId = remoteStoresHelper.getParameter(RemoteStoresCostanti.PARAMETRO_REMOTE_STORE_ID);
 			long remoteStoreId = Long.parseLong(filterRemoteStoreId);
 			
+			String lastEventiId = remoteStoresCore.getLastEventIdRemoteStore(remoteStoreId);
+			
 			boolean deleteAlmostOneEntry = false;
 			
 			for (int i = 0; i < idsToRemove.size(); i++) {
@@ -104,7 +106,7 @@ public class RemoteStoresKeysDel extends Action {
 
 			ServletUtils.setRisultatiRicercaIntoSession(request, session, idLista, lista); // salvo poiche' esistono filtri che hanno necessita di postback
 			
-			remoteStoresHelper.prepareRemoteStoreKeysList(ricerca, lista, remoteStoreId);
+			remoteStoresHelper.prepareRemoteStoreKeysList(ricerca, lista, remoteStoreId, lastEventiId);
 			
 			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			// Forward control to the specified success URI

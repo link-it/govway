@@ -563,3 +563,7 @@ function eliminaElementiHidden(theForm){
 	}	
 }
 
+function customAction(form,functionName) {
+	addHidden(form, functionName , 'true');
+	Search(form);
+}

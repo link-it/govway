@@ -71,7 +71,7 @@ In entrambi gli scenari raffigurati in :numref:`transazioniFasiCustomErrorFig` e
 
 Come descritto nella sezione :ref:`tracciamentoTransazioniFiltroEsiti` è possibile indicare quali transazioni tracciare rispetto all'esito rilevato in fase di elaborazione. Tale funzionalità non risulta più utilizzabile se vengono abilitate le seguenti fasi di tracciamento:
 
-- *Richiesta ricevuta*: l'opzione '*Filtra per Esiti*' non sarà attivabile poichè una transazione è già stata emessa prima di poter comprenderne l'esito.
+- *Richiesta ricevuta*: l'opzione '*Filtra per Esiti*' non sarà attivabile poiché una transazione è già stata emessa prima di poter comprenderne l'esito.
 
 - *Richiesta in consegna* e *Risposta in consegna*: l'opzione '*Filtra per Esiti*' sarà attivabile però non consentirà di filtrare esiti rispettivamente per errori di consegna o di processamento della risposta.
 

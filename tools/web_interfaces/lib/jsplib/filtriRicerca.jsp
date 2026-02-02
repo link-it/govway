@@ -73,6 +73,9 @@ boolean mostraComandiHeader = mostraFormHeader || (listaComandi != null && lista
 int colFormHeader = (mostraComandiHeader ? 2 : 1);
 String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRicercaNoForm";
 String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
+
+String classSpanNoEdit="spanNoEdit";
+String classDivNoEdit="divNoEdit";
 %>
 
 <tr>
@@ -461,7 +464,22 @@ $(document).ready(function () {
 																      		</div>
 									                    			</div>
 	                                            				<%
-	                                            			} else{ // else interval number			                                                			
+	                                            			} else{ // else interval number	
+	                                            				if (type.equals("text")){
+	                                            					String textId = "form-text_" + iPD ;
+	                                            					%>
+	                    			                    			<div class="prop">
+	                    			                    				<input type="hidden" name="<%= filtroName.getName() %>" value="<%= filtroName.getValue() %>"/>
+	                    			                    				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%= filterId  %>"><%=deLabel %></label>
+	                    			                    				<div id="<%= filterId  %>" class="<%=classDivNoEdit %>"> 
+		                													<span class="<%=classSpanNoEdit %>" id="<%=textId %>"><%= filtro.getValue() %></span>
+		                												</div>
+	                    			                    				<% if(!deNote.equals("")){ %>
+	                    										      		<p class="note-ricerca <%= labelStyleClass %>"><%=deNote %></p>
+	                    										      	<% } %>
+	                    			                    			</div>
+	                    		                    			    <% 
+	                                            				} // end text
 	                                            				//fineelementi
 	                                            			} // end else interval number
 	                                            		} // end else checkbox
@@ -522,6 +540,13 @@ $(document).ready(function () {
 									<div class="buttonrowricerca">
 										<input id="eseguiRicercaBtn" type="button" value='<%=pd.getLabelBottoneFiltra() %>' />
 										<input id="resetRicercaBtn" type="button" value='<%=pd.getLabelBottoneRipulsci() %>' />
+										<%
+										if (pd.getLabelBottoneCustom()!=null){
+										%>
+										<input id="customRicercaBtn" name="customRicercaBtn" type="button" value='<%=pd.getLabelBottoneCustom() %>' />
+										<%
+										}
+										%>
 										<script type="text/javascript" nonce="<%= randomNonce %>">
 											$(document).ready(function(){
 												$('#eseguiRicercaBtn').click(function() {
@@ -530,6 +555,15 @@ $(document).ready(function () {
 												$('#resetRicercaBtn').click(function() {
 													<%=visualizzaAjaxStatusRipulisci %>Reset(document.form);
 												});
+												<%
+												if (pd.getFunzioneBottoneCustom()!=null){
+												%>
+												$('#customRicercaBtn').click(function() {
+													<%=Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %><%=pd.getFunzioneBottoneCustom() %>
+												});
+												<%
+												}
+												%>
 											});
 										</script>
 									</div>								

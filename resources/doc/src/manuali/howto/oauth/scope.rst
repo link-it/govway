@@ -265,7 +265,7 @@ servizio *PetStore*.
    Accedendo al dettaglio di una transazione terminata in errore, e
    visualizzandone i diagnostici è possibile comprendere l'errore che
    come atteso risulta essere la mancanza dello scope
-   *https://www.googleapis.com/auth/drive* richiesto poichè nella
+   *https://www.googleapis.com/auth/drive* richiesto poiché nella
    sezione *'Autorizzazione'* è stato indicato che gli scope registrati
    devono essere tutti presente nell'access token.
 

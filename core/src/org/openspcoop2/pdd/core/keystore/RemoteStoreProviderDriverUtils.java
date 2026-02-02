@@ -244,6 +244,67 @@ public class RemoteStoreProviderDriverUtils {
 	}
 	
 	
+	
+	public static String getLastEventIdRemoteStore(Connection con, String tipoDatabase, long idRemoteStore) throws KeystoreException {
+		
+		PreparedStatement selectStmt = null;
+		ResultSet selectRS = null;
+		String lastEventiId = null;
+		try {
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
+			sqlQueryObject.addFromTable(CostantiDB.REMOTE_STORE);
+			sqlQueryObject.addSelectField(COLUMN_LAST_EVENT);
+			sqlQueryObject.addWhereCondition(COLUMN_ID+"=?");
+			sqlQueryObject.setANDLogicOperator(true);
+			String sqlQuery = sqlQueryObject.createSQLQuery();
+			selectStmt = con.prepareStatement(sqlQuery);
+			selectStmt.setLong(1, idRemoteStore);
+			selectRS = selectStmt.executeQuery();
+			if(selectRS.next()) {
+				lastEventiId = selectRS.getString(COLUMN_LAST_EVENT);
+			}
+		}
+		catch(Exception e) {
+			throw new KeystoreException(e.getMessage(),e);
+		}
+		finally {
+			
+			JDBCUtilities.closeResources(selectRS, selectStmt);
+		}
+		
+		return lastEventiId;
+	}
+	public static void resetLastEventIdRemoteStore(Connection con, String tipoDatabase, long idRemoteStore) throws KeystoreException {
+		
+		PreparedStatement selectStmt = null;
+		try {
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
+			sqlQueryObject.addUpdateTable(CostantiDB.REMOTE_STORE);
+			sqlQueryObject.addUpdateField(COLUMN_LAST_EVENT,"?");
+			sqlQueryObject.addWhereCondition(COLUMN_ID+"=?");
+			sqlQueryObject.setANDLogicOperator(true);
+			String sqlUpdate = sqlQueryObject.createSQLUpdate();
+			selectStmt = con.prepareStatement(sqlUpdate);
+			String resetNullValue = null;
+			selectStmt.setString(1, resetNullValue);
+			selectStmt.setLong(2, idRemoteStore);
+			int row = selectStmt.executeUpdate();
+			if(row<=0) {
+				throw new KeystoreException("Update failed");
+			}
+		}
+		catch(Exception e) {
+			throw new KeystoreException(e.getMessage(),e);
+		}
+		finally {
+			
+			JDBCUtilities.closeResources(selectStmt);
+		}
+
+	}
+	
+	
+	
 	public static int updateRemoteStore(DriverConfigurazioneDB driverConfigurazioneDB, long idStore, String lastEventId) throws KeystoreException {
 		Connection con = null;
 		try {
@@ -1069,6 +1130,9 @@ public class RemoteStoreProviderDriverUtils {
 	public static RemoteStoreKeyEntry getRemoteStoreKeyEntry(Logger log, DriverConfigurazioneDB driverConfigurazioneDB, long idRemoteStoreKey) throws KeystoreException, KeystoreNotFoundException {
 		Connection con = null;
 		try {
+			if(log!=null) {
+				// nop
+			}
 			con = driverConfigurazioneDB.getConnection("getRemoteStoreKeyEntry");
 			return getRemoteStoreKeyEntry(con, driverConfigurazioneDB.getTipoDB(), idRemoteStoreKey);
 		}

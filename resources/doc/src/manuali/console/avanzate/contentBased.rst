@@ -32,7 +32,7 @@ Per estrarre il valore del field 'prova' è possibile utilizzare le seguenti esp
 - xpath //prova/text()
 - xpath /json2xml/prova/text()
 
-La espressioni xpath sono utilizzabili poichè il messaggio JSON viene convertito nel seguente messaggio xml (inserito all'interno dell'elemento radice 'json2xml'):
+La espressioni xpath sono utilizzabili poiché il messaggio JSON viene convertito nel seguente messaggio xml (inserito all'interno dell'elemento radice 'json2xml'):
 
 .. code-block:: xml
 
