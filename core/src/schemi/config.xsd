@@ -481,7 +481,7 @@
 		<xsd:attribute name="envelope-body-conversione-tipo" type="xsd:string" />
 	</xsd:complexType>
 	<xsd:complexType name="trasformazione-rest">
-		<xsd:attribute name="metodo" type="xsd:string" use="required" />
+		<xsd:attribute name="metodo" type="xsd:string" use="optional" />
 		<xsd:attribute name="path" type="xsd:string" use="optional" />
 	</xsd:complexType>
 	<xsd:complexType name="trasformazione-regola-parametro">
