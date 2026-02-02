@@ -1,6 +1,15 @@
 2026-02-01  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
+	Risolto Bug #1710
+	L’esportazione di un’erogazione/fruizione che include una trasformazione REST, nella quale nella configurazione della richiesta non è specificato il metodo HTTP, 
+	genera un pacchetto che non risulta reimportabile tramite console.
+	In fase di importazione del pacchetto esportato, la console segnala il seguente errore di validazione/sintassi:
+	cvc-complex-type.4: Attribute 'metodo' must appear on element 'ns2:trasformazione-rest'.
+
+2026-02-01  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
 	Aggiunta funzionalità #1678
 	Aggiunto il supporto completo per l'integrazione con le API di Interoperabilità PDND versione 2, promossa come versione predefinita per le nuove installazioni.
 

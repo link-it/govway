@@ -75,7 +75,7 @@ public class TrasformazioneRest extends org.openspcoop2.utils.beans.BaseBeanWith
 
 
   @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
-  @XmlAttribute(name="metodo",required=true)
+  @XmlAttribute(name="metodo",required=false)
   protected java.lang.String metodo;
 
   @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
