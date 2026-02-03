@@ -40,30 +40,6 @@ passaggio.
 
    -  *Opaco*: un generico token di tipo non specificato.
 
--  *Discovery Document URL*: consente di abilitare la modalità dinamica `OpenID Connect Discovery <https://swagger.io/docs/specification/authentication/openid-connect-discovery/>`_ per recuperare gli endpoint di accesso ai servizi di Introspection, UserInfo e il recupero delle chiavi per una validazione Jwt da una "well-know-url". Se abilitato (:numref:`tokenPolicyDynamic1Fig`) le opzioni configurabili sono le seguenti:
-
-   -  *Tipo*: indica il formato atteso del payload contenuto nella risposta json:
-
-         - 'OpenID Connect Discovery': claims definiti in `OpenID Connect Discovery <https://swagger.io/docs/specification/authentication/openid-connect-discovery/>`_ ;
-
-         - 'Personalizzato': consente di definire un mapping puntuale tra il nome di un claim e l’informazione che GovWay cerca di estrarre dalla risposta (:numref:`tokenPolicyDynamicCustomFig`);
-
-         - 'Plugin': consente di selezionare un plugin che implementi una logica di parsing personalizzata (deve implementare l’interfaccia "org.openspcoop2.pdd.core.token.parser.IDynamicDiscoveryParser"). Per dettagli si rimanda alla sezione :ref:`configAvanzataPlugins`.
-
-  .. figure:: ../../_figure_console/TokenPolicyDynamic.png
-    :scale: 100%
-    :align: center
-    :name: tokenPolicyDynamic1Fig
-
-    Opzioni 'Dynamic Discovery' di una Token Policy 
-
-  .. figure:: ../../_figure_console/TokenPolicyDynamicCustom.png
-    :scale: 100%
-    :align: center
-    :name: tokenPolicyDynamicCustomFig
-
-    Opzioni 'Dynamic Discovery' personalizzata di una Token Policy 
-
 -  *Posizione*: indica la modalità di passaggio del token da parte
    dell'applicativo richiedente. I valori possibili sono:
 
@@ -113,6 +89,47 @@ passaggio.
       parametro deve essere fornito nel campo *Nome Parametro URL*, che
       appare di seguito.
 
+-  *DPoP*: opzione disponibile solo quando il tipo di token selezionato è *JWS*. Consente di abilitare la validazione di token DPoP (Demonstrating Proof-of-Possession) come descritto nel RFC 9449 (https://datatracker.ietf.org/doc/html/rfc9449). Se attivata (:numref:`tokenValidazioneDPoPEnabled1Fig`), il gateway verificherà che la richiesta contenga una DPoP proof valida e che l'access token sia correttamente vincolato alla chiave pubblica del client. Per la configurazione dettagliata si rimanda alla sezione ':ref:`tokenValidazionePolicy_dpop`'.
+
+-  *Posizione DPoP*: opzione disponibile solo quando DPoP è abilitato. Indica la modalità con cui il client trasmette la DPoP proof:
+
+   -  *RFC 9449 - DPoP Header*: la DPoP proof viene ricevuta nell'header HTTP 'DPoP' come definito nel RFC 9449.
+
+   -  *Header HTTP*: la DPoP proof viene ricevuta in un header HTTP personalizzato il cui nome deve essere specificato nel campo seguente.
+
+   -  *Parametro URL*: la DPoP proof viene ricevuta come parametro della Query String il cui nome deve essere specificato nel campo seguente.
+
+  .. figure:: ../../_figure_console/TokenPolicy-validazione-dpop-enabled.png
+    :scale: 80%
+    :align: center
+    :name: tokenValidazioneDPoPEnabled1Fig
+
+    Opzione 'DPoP' di una Token Policy 
+
+-  *Discovery Document URL*: consente di abilitare la modalità dinamica `OpenID Connect Discovery <https://swagger.io/docs/specification/authentication/openid-connect-discovery/>`_ per recuperare gli endpoint di accesso ai servizi di Introspection, UserInfo e il recupero delle chiavi per una validazione Jwt da una "well-know-url". Se abilitato (:numref:`tokenPolicyDynamic1Fig`) le opzioni configurabili sono le seguenti:
+
+   -  *Tipo*: indica il formato atteso del payload contenuto nella risposta json:
+
+         - 'OpenID Connect Discovery': claims definiti in `OpenID Connect Discovery <https://swagger.io/docs/specification/authentication/openid-connect-discovery/>`_ ;
+
+         - 'Personalizzato': consente di definire un mapping puntuale tra il nome di un claim e l’informazione che GovWay cerca di estrarre dalla risposta (:numref:`tokenPolicyDynamicCustomFig`);
+
+         - 'Plugin': consente di selezionare un plugin che implementi una logica di parsing personalizzata (deve implementare l’interfaccia "org.openspcoop2.pdd.core.token.parser.IDynamicDiscoveryParser"). Per dettagli si rimanda alla sezione :ref:`configAvanzataPlugins`.
+
+  .. figure:: ../../_figure_console/TokenPolicyDynamic.png
+    :scale: 100%
+    :align: center
+    :name: tokenPolicyDynamic1Fig
+
+    Opzioni 'Dynamic Discovery' di una Token Policy 
+
+  .. figure:: ../../_figure_console/TokenPolicyDynamicCustom.png
+    :scale: 100%
+    :align: center
+    :name: tokenPolicyDynamicCustomFig
+
+    Opzioni 'Dynamic Discovery' personalizzata di una Token Policy 
+
 
 Nella sezione *Endpoint Token* si specificano eventuali opzioni di accesso agli endpoint:
 
@@ -135,6 +152,8 @@ opzioni disponibili sono:
 
 -  OIDC - UserInfo
 
+-  Validazione DPoP
+
 -  Token Forward
 
 Le sezioni successive dettagliano questi elementi.
@@ -145,6 +164,7 @@ Le sezioni successive dettagliano questi elementi.
         validazioneJWT
 	introspection
 	userInfo
+	validazioneDPoP
 	tokenForward
         mappingToken
         validazioneOpzioniAvanzate

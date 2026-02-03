@@ -5,7 +5,12 @@ Token Forward
 
 Azione di elaborazione che consiste nell'inoltro del token ricevuto al
 destinatario. Una volta attivata questa opzione, devono essere indicate
-le seguenti informazioni:
+le seguenti informazioni.
+
+.. note::
+   Quando la validazione DPoP è abilitata, nella sezione 'Token Forward' compare anche un'opzione *DPoP* per configurare l'inoltro della DPoP proof al backend. Per i dettagli si rimanda alla sezione ':ref:`tokenValidazionePolicy_dpop`'.
+
+Le opzioni disponibili sono:
 
 -  *Originale*: opzione che consente di inoltrare il token originale al
    destinatario. Attivando questo flag è necessario specificare la

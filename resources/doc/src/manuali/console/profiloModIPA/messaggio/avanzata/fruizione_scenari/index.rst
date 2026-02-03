@@ -11,6 +11,9 @@ Il materiale crittografico utilizzato per una fruizione di API può essere assoc
 
 - Materiale associato ad una **token policy**: scenario descritto nella sezione :ref:`modipa_sicurezza_avanzate_fruizione_token_policy_keystore` che prevede la definizione di un keystore di firma all'interno di una token Policy. In questo scenario si assume l'esistenza di un unico materiale crittografico che verrà utilizzato per uscire verso il dominio esterno per qualsiasi fruizione di API da qualsiasi applicativo.
 
+.. note::
+   Le considerazioni sopra descritte si applicano anche al keystore utilizzato per la firma della DPoP proof quando il pattern REST_JWS_2021_POP (DPoP) è abilitato. Per i dettagli sulla configurazione del keystore DPoP si rimanda alla sezione ':ref:`modipa_dpop_fruizione`'.
+
 .. toctree::
         :maxdepth: 2
 
