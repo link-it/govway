@@ -155,8 +155,9 @@ public class TimerGestoreChiaviPDNDLib {
 		
 		try {
 			this.parameterLastEventId = ModIUtils.extractInfoFromMetadati(this.remoteStore.getMetadati(), ModIUtils.API_PDND_EVENTS_KEYS_PARAMETER_LASTEVENTID, "Events keys last eventid parameter");
-			this.parameterLastEventIdFirstValue = ModIUtils.extractInfoFromMetadati(this.remoteStore.getMetadati(), ModIUtils.API_PDND_EVENTS_KEYS_PARAMETER_LASTEVENTID_FIRST_VALUE, 
+			this.parameterLastEventIdFirstValue = ModIUtils.extractInfoFromMetadati(this.remoteStore.getMetadati(), ModIUtils.API_PDND_EVENTS_KEYS_PARAMETER_LASTEVENTID_FIRST_VALUE,
 					"Events keys last eventid initial parameter value", true);
+			this.lastEventId = this.parameterLastEventIdFirstValue;
 			this.parameterLimit = ModIUtils.extractInfoFromMetadati(this.remoteStore.getMetadati(), ModIUtils.API_PDND_EVENTS_KEYS_PARAMETER_LIMIT, "Events keys limit parameter");
 			this.limit = this.op2Properties.getGestoreChiaviPDNDeventsKeysLimit();
 		}catch(Exception e) {
@@ -319,7 +320,7 @@ public class TimerGestoreChiaviPDNDLib {
 	}
 	
 	
-	private String lastEventId = this.parameterLastEventIdFirstValue;
+	private String lastEventId = null;
 		
 	private void process(DriverConfigurazioneDB driverConfigurazioneDbGestoreConnection) throws KeystoreException {
 		
