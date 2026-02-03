@@ -1,5 +1,12 @@
 2026-02-03  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore]
+	Risolto Bug #1712
+	Invocando un’erogazione o una fruizione con azione non riconosciuta, a fronte di una configurazione che prevede per i diagnostici un livello di severità 'all', 
+	non si riscontra l’effettiva emissione dei diagnostici con severità debug.
+	
+2026-02-03  Andrea Poli <apoli@link.it>
+
 	* [ApiRsConfigurazione]
 	Risolto Bug #1711
 	(https://github.com/link-it/govway/issues/277)
