@@ -1901,7 +1901,6 @@ components:
     ErogazioneModIRestRichiestaSicurezzaMessaggio:
       type: object      
       required:
-        - riferimento_x509
         - truststore
       properties:
         riferimento_x509:
@@ -2257,8 +2256,6 @@ components:
            $ref: '#/components/schemas/BaseFruizioneModIOAuth'
     FruizioneModIRestRichiestaSicurezzaMessaggio:
       type: object      
-      required:
-        - riferimento_x509
       properties:
         algoritmo:
           $ref: '#/components/schemas/ModISicurezzaMessaggioRestAlgoritmoFirma'

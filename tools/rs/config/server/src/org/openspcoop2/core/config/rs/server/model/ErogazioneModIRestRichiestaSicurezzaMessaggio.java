@@ -29,7 +29,7 @@ import jakarta.validation.Valid;
 
 public class ErogazioneModIRestRichiestaSicurezzaMessaggio  {
   
-  @Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(description = "")
   private List<ModISicurezzaMessaggioRestRiferimentoX509> riferimentoX509 = new ArrayList<>();
   
   @Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED, description = "")
@@ -62,7 +62,6 @@ public class ErogazioneModIRestRichiestaSicurezzaMessaggio  {
    * @return riferimentoX509
   **/
   @JsonProperty("riferimento_x509")
-  @NotNull
   @Valid
  @Size(min=1,max=3)  public List<ModISicurezzaMessaggioRestRiferimentoX509> getRiferimentoX509() {
     return this.riferimentoX509;

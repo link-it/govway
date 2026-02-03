@@ -26,6 +26,10 @@ Background:
 * eval randomize(api_petstore_rest_audit, ["nome"])
 * eval api_petstore_rest_audit.referente = soggettoDefault
 
+* def api_petstore_rest_pdnd_integrity = read('api_modi_pdnd_intergrity.json')
+* eval randomize(api_petstore_rest_pdnd_integrity, ["nome"])
+* eval api_petstore_rest_pdnd_integrity.referente = soggettoDefault
+
 * def header_firmare_default = read('api_modi_header_firmare_default.json')
 
 * def getExpectedSOAP =
@@ -56,6 +60,20 @@ expected.risposta.sicurezza_messaggio.header_http_firmare = expected.risposta.si
 return expected;
 } 
 """
+
+* def getExpectedRestOAuth =
+"""
+function(modi, httpHeaderDefault) {
+var expected = modi;
+expected.risposta.sicurezza_messaggio.time_to_live = expected.risposta.sicurezza_messaggio.time_to_live != null ? expected.risposta.sicurezza_messaggio.time_to_live: 300
+expected.risposta.sicurezza_messaggio.algoritmo = expected.risposta.sicurezza_messaggio.algoritmo != null ? expected.risposta.sicurezza_messaggio.algoritmo: 'RS256'
+expected.risposta.sicurezza_messaggio.header_http_firmare = expected.risposta.sicurezza_messaggio.header_http_firmare !=null ? expected.risposta.sicurezza_messaggio.header_http_firmare : httpHeaderDefault.header_http_firmare
+
+return expected;
+} 
+"""
+
+
 
 @UpdatePetstore_modi_SOAP
 Scenario Outline: Erogazioni Aggiornamento Petstore SOAP <nome>
@@ -223,6 +241,40 @@ Examples:
 |erogazione_modi_rest_truststore_ridefinito_ocsp.json|
 |erogazione_modi_rest_ttl.json|
 |erogazione_modi_rest_claims.json|
+
+
+
+
+
+@UpdatePetstore_modi_REST_oauth
+Scenario Outline: Erogazioni Aggiornamento Petstore REST Oauth <nome>
+
+	* def erogazione_petstore = read('erogazione_modi_rest_apiOAuth.json')
+	* eval erogazione_petstore.erogazione_nome = api_petstore_rest_pdnd_integrity.nome
+	* eval erogazione_petstore.api_nome = api_petstore_rest_pdnd_integrity.nome
+	* eval erogazione_petstore.api_versione = api_petstore_rest_pdnd_integrity.versione
+		
+	* def petstore_key = erogazione_petstore.erogazione_nome + '/' + erogazione_petstore.api_versione
+	* def api_petstore_path = 'api/' + api_petstore_rest_pdnd_integrity.nome + '/' + api_petstore_rest_pdnd_integrity.versione
+
+	* def erogazione_petstore_update = read('<nome>')
+
+	* call create ({ resourcePath: 'api', body: api_petstore_rest_pdnd_integrity, query_params: query_param_profilo_modi })
+	* call create ( { resourcePath: 'erogazioni', body: erogazione_petstore,  key: petstore_key, query_params: query_param_profilo_modi } )
+	* call put ( { resourcePath: 'erogazioni/'+petstore_key+'/modi', body: {modi: erogazione_petstore_update.modi},  query_params: query_param_profilo_modi } )
+	* call get ( { resourcePath: 'erogazioni', key: petstore_key + '/modi', query_params: query_param_profilo_modi } )
+	* def expected = getExpectedRestOAuth(erogazione_petstore_update.modi, header_firmare_default)
+	* match response.modi == expected
+	* call delete ({ resourcePath: 'erogazioni/' + petstore_key, query_params: query_param_profilo_modi } )
+	* call delete ({ resourcePath: api_petstore_path, query_params: query_param_profilo_modi } )
+
+
+Examples:
+|nome|
+|erogazione_modi_rest_apiOAuth.json|
+
+
+
 
 
 @UpdatePetstore_modi_REST_contemporaneita

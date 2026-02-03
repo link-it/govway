@@ -1,0 +1,24 @@
+{
+  "referente": "ENTE",
+  "tipo_interfaccia": {
+    "protocollo": "rest",
+    "formato": "OpenApi3.0"
+  },
+  "interfaccia": "b3BlbmFwaTogMy4wLjMKaW5mbzoKICB0aXRsZTogQVBJIGRpIFRlc3QKICB2ZXJzaW9uOiAiMS4wLjAiCnBhdGhzOgogIC90ZXN0OgogICAgZ2V0OgogICAgICBzdW1tYXJ5OiBSZXN0aXR1aXNjZSBsbyBzdGVzc28gbWVzc2FnZ2lvIHJpY2V2dXRvIGNvbWUgcXVlcnkgcGFyYW1ldGVyCiAgICAgIHBhcmFtZXRlcnM6CiAgICAgICAgLSBuYW1lOiBtZXNzYWdnaW8KICAgICAgICAgIGluOiBxdWVyeQogICAgICAgICAgcmVxdWlyZWQ6IHRydWUKICAgICAgICAgIGRlc2NyaXB0aW9uOiBJbCBtZXNzYWdnaW8gZGEgcmVzdGl0dWlyZQogICAgICAgICAgc2NoZW1hOgogICAgICAgICAgICB0eXBlOiBzdHJpbmcKICAgICAgICAgICAgZXhhbXBsZTogIkNpYW8gbW9uZG8iCiAgICAgIHJlc3BvbnNlczoKICAgICAgICAnMjAwJzoKICAgICAgICAgIGRlc2NyaXB0aW9uOiBSZXN0aXR1aXNjZSBpbCBtZXNzYWdnaW8gcmljZXZ1dG8KICAgICAgICAgIGNvbnRlbnQ6CiAgICAgICAgICAgIGFwcGxpY2F0aW9uL2pzb246CiAgICAgICAgICAgICAgc2NoZW1hOgogICAgICAgICAgICAgICAgdHlwZTogb2JqZWN0CiAgICAgICAgICAgICAgICBwcm9wZXJ0aWVzOgogICAgICAgICAgICAgICAgICBtZXNzYWdnaW86CiAgICAgICAgICAgICAgICAgICAgdHlwZTogc3RyaW5nCiAgICAgICAgICAgICAgICAgICAgZXhhbXBsZTogIkNpYW8gbW9uZG8iCg==",
+  "nome": "PetStorePDNDRestAPI",
+  "descrizione": "API",
+  "versione": 1,
+  "modi": {
+    "sicurezza_canale": {
+        "pattern": "auth01"
+    },
+    "sicurezza_messaggio" : {
+      "pattern" : "integrity02-auth01",
+      "generazione_token" : "pdnd",
+      "digest_richiesta" : false,
+      "informazioni_utente" : false,
+      "rest_header" : "agid+bearer-request",
+      "applicabilita" : "qualsiasi"
+    }
+  }
+}
