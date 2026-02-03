@@ -17,7 +17,9 @@ Il pattern di sicurezza sul messaggio definisce le modalità di comunicazione de
 
 - *PROFILE_NON_REPUDIATION_01 - Profilo per la non ripudiabilità della trasmissione*: estende i pattern di integrità allo scopo di fornire una conferma al fruitore da parte dell’erogatore della ricezione del contenuto della richiesta. Descrive inoltre la necessità di definire un arco temporale di persistenza dei messaggi utile per soddisfare l opponibilità ai terzi.
 
-- *AUDIT_REST_01 o AUDIT_REST_02 - Inoltro dati tracciati nel dominio del Fruitore*: consente all'erogatore di identificare la specifica provenienza di ogni singola richiesta di accesso ai dati effettuta dal fruitore. 
+- *AUDIT_REST_01 o AUDIT_REST_02 - Inoltro dati tracciati nel dominio del Fruitore*: consente all'erogatore di identificare la specifica provenienza di ogni singola richiesta di accesso ai dati effettuta dal fruitore.
+
+- *REST_JWS_2021_POP (DPoP) - Demonstrating Proof-of-Possession*: pattern che estende i precedenti aggiungendo il supporto DPoP come descritto nel RFC 9449. Questo meccanismo vincola l'access token ad una specifica coppia di chiavi crittografiche del client, prevenendo l'utilizzo del token da parte di soggetti non autorizzati che potrebbero averlo intercettato. Il pattern è applicabile solamente con 'Generazione Token' di tipo 'Authorization OAuth' o 'Authorization PDND'.
 
 Le applicazioni di un dominio interno o esterno, descritte negli scenari del Modello di Interoperabilità, vengono rappresentate in GovWay tramite la registrazione di Applicativi come entità di configurazione. In accordo al modello di GovWay, ciascun applicativo è associato al soggetto di riferimento che, nell'ottica ModI, rappresenta il dominio di appartenenza. Un applicativo viene identificato attraverso il criterio di trust del pattern di sicurezza scelto:
 
@@ -87,4 +89,5 @@ Nella figura ':numref:`ErogazioneModIPA`' viene invece raffigurato lo scenario d
         messaggio/idar03/index
 	messaggio/requestDigest
 	messaggio/audit/index
+	messaggio/dpop/index
 	messaggio/avanzata/index

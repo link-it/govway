@@ -36,6 +36,8 @@ sezione *Token Endpoint* si specifica il tipo di negoziazione e i vari parametri
    -  *Signed JWT with Client Secret*: modalità di negoziazione identica alla precedente dove però l'asserzione JWT viene firmata tramite una chiave simmetrica;
    -  *Personalizzato*: consente di definire in ogni sua parte la richiesta http inoltrata all'endpoint di negoziazione token.
 
+-  *DPoP*: consente di abilitare il supporto 'Demonstrating Proof-of-Possession' (DPoP) come descritto nel RFC 9449 (https://datatracker.ietf.org/doc/html/rfc9449). Se attivato, durante la negoziazione del token verrà generata una DPoP proof che sarà inoltrata all'authorization server tramite l'header HTTP 'DPoP'. La configurazione della DPoP proof viene descritta nel dettaglio nella sezione ':ref:`tokenNegoziazionePolicy_dpop`'.
+
 -  *URL*: endpoint del servizio di negoziazione token.
 
 -  *Connection Timeout*: Tempo massimo in millisecondi di attesa per
@@ -63,6 +65,12 @@ Nella sezione 'Dati Richiesta' potranno invece essere definiti ulteriori criteri
 
 -  *Header HTTP*: consente di indicare per riga eventuali header HTTP (nome=valore) da inserire nella richiesta.
 
+Nella sezione 'Dati Risposta' possono essere forniti criteri che riguardano la risposta ottenuta dall'authorization server.
+
+-  *Tipo Token*: indica il valore atteso per il claim 'token_type' presente nella risposta dell'authorization server (es. 'Bearer' o 'DPoP'); se non impostato, la validazione è disabilitata.
+
+Quando la funzionalità DPoP è abilitata compare la sezione 'DPoP' dove è possibile configurare la generazione della DPoP proof come descritto nel dettaglio nella sezione ':ref:`tokenNegoziazionePolicy_dpop`'.
+
 Infine nella sezione 'Token Forward' si può configurare la modalità di inoltro del token verso l'endpoint del connettore a cui verrà associata la policy che stiamo definendo:
 
 -  *RFC 6750 - Bearer Token Usage (Authorization Request Header Field)*: Il token viene inoltrato al destinatario utilizzando l'header Authorization presente nella richiesta HTTP.
@@ -73,6 +81,7 @@ Infine nella sezione 'Token Forward' si può configurare la modalità di inoltro
 
 -  *Parametro URL*: Il token viene inoltrato al destinatario utilizzando un parametro della Query String il cui nome deve essere specificato nel campo seguente.
 
+Quando la funzionalità DPoP è abilitata, nella sezione 'Token Forward' compare anche una sottosezione 'DPoP' per configurare la modalità di inoltro della DPoP proof verso l'endpoint del connettore. Per maggiori dettagli si rimanda alla sezione ':ref:`tokenNegoziazionePolicy_dpop`'.
 
 Nelle sezioni successive vengono forniti i dettagli relativi alle modalità di negoziazione di un token nel caso sia previsto un jwt firmato o meno.
 
@@ -83,3 +92,4 @@ Nelle sezioni successive vengono forniti i dettagli relativi alle modalità di n
 	tokenNegoziazione_jwt
 	tokenNegoziazione_jwt_pdnd
 	tokenNegoziazione_custom
+	tokenNegoziazione_dpop

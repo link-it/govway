@@ -19,6 +19,7 @@ I sorgenti sono disponibili in `protocolli/modipa/testsuite/src <https://github.
 	- `Identificazione applicativo e autorizzazione tramite token PDND + token Integrity su API REST <https://github.com/link-it/govway/tree/master/protocolli/modipa/testsuite/src/test/rest/sicurezza-messaggio/autorizzazioneMessaggioToken.feature>`_
 	- `Negoziazione token PDND <https://github.com/link-it/govway/tree/master/protocolli/modipa/testsuite/src/test/rest/sicurezza-messaggio/negoziazioneToken.feature>`_
 	- `Validazione dei token tramite servizio OCSP su API REST <https://github.com/link-it/govway/tree/master/protocolli/modipa/testsuite/src/test/rest/sicurezza-messaggio/idar01-ocsp.feature>`_
+	- `DPoP (Demonstrating Proof-of-Possession) <https://github.com/link-it/govway/tree/master/protocolli/modipa/testsuite/src/test/rest/sicurezza-messaggio/dpop.feature>`_
 
 - `org.openspcoop2.core.protocolli.modipa.testsuite.soap.sicurezza_messaggio <https://github.com/link-it/govway/tree/master/protocolli/modipa/testsuite/src/org/openspcoop2/core/protocolli/modipa/testsuite/soap/sicurezza_messaggio>`_; vengono verificati tutti i pattern di sicurezza previsti su API SOAP:
 
