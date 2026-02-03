@@ -19,7 +19,6 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
-import java.util.ArrayList;
 import java.util.List;
 import javax.validation.constraints.*;
 
@@ -29,8 +28,8 @@ import javax.validation.Valid;
 
 public class ErogazioneModIRestRichiestaSicurezzaMessaggio  {
   
-  @Schema(required = true, description = "")
-  private List<ModISicurezzaMessaggioRestRiferimentoX509> riferimentoX509 = new ArrayList<>();
+  @Schema(description = "")
+  private List<ModISicurezzaMessaggioRestRiferimentoX509> riferimentoX509 = null;
   
   @Schema(required = true, description = "")
   @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXISTING_PROPERTY, property = "modalita", visible = true )
@@ -62,7 +61,6 @@ public class ErogazioneModIRestRichiestaSicurezzaMessaggio  {
    * @return riferimentoX509
   **/
   @JsonProperty("riferimento_x509")
-  @NotNull
   @Valid
  @Size(min=1,max=3)  public List<ModISicurezzaMessaggioRestRiferimentoX509> getRiferimentoX509() {
     return this.riferimentoX509;

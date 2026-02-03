@@ -10826,7 +10826,6 @@ components:
           $ref: "#/components/schemas/ErogazioneModIRestRichiestaSicurezzaMessaggio"
     ErogazioneModIRestRichiestaSicurezzaMessaggio:
       required:
-      - "riferimento_x509"
       - "truststore"
       type: "object"
       properties:
@@ -11175,8 +11174,6 @@ components:
         oauth:
           $ref: "#/components/schemas/BaseFruizioneModIOAuth"
     FruizioneModIRestRichiestaSicurezzaMessaggio:
-      required:
-      - "riferimento_x509"
       type: "object"
       properties:
         algoritmo:

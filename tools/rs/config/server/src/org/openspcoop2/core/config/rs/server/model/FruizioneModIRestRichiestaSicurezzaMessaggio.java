@@ -19,7 +19,6 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
-import java.util.ArrayList;
 import java.util.List;
 import javax.validation.constraints.*;
 
@@ -35,8 +34,8 @@ public class FruizioneModIRestRichiestaSicurezzaMessaggio  {
   @Schema(description = "")
   private List<String> headerHttpFirmare = null;
   
-  @Schema(required = true, description = "")
-  private List<ModISicurezzaMessaggioRestRiferimentoX509> riferimentoX509 = new ArrayList<>();
+  @Schema(description = "")
+  private List<ModISicurezzaMessaggioRestRiferimentoX509> riferimentoX509 = null;
   
   @Schema(description = "")
   private Boolean certificateChain = null;
@@ -125,7 +124,6 @@ public class FruizioneModIRestRichiestaSicurezzaMessaggio  {
    * @return riferimentoX509
   **/
   @JsonProperty("riferimento_x509")
-  @NotNull
   @Valid
  @Size(min=1,max=3)  public List<ModISicurezzaMessaggioRestRiferimentoX509> getRiferimentoX509() {
     return this.riferimentoX509;

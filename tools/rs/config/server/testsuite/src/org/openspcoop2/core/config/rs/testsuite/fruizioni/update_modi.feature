@@ -30,6 +30,10 @@ Background:
 * eval randomize(api_petstore_rest_audit, ["nome"])
 * eval api_petstore_rest_audit.referente = soggettoDefault
 
+* def api_petstore_rest_pdnd_integrity = read('api_modi_pdnd_intergrity.json')
+* eval randomize(api_petstore_rest_pdnd_integrity, ["nome"])
+* eval api_petstore_rest_pdnd_integrity.referente = soggettoDefault
+
 * def header_firmare_default = read('api_modi_header_firmare_default.json')
 
 * def getExpectedOAUTH =
@@ -85,6 +89,21 @@ expected.richiesta.sicurezza_messaggio.certificate_chain = expected.richiesta.si
 expected.richiesta.sicurezza_messaggio.header_http_firmare = expected.richiesta.sicurezza_messaggio.header_http_firmare !=null ? expected.richiesta.sicurezza_messaggio.header_http_firmare : httpHeaderDefault.header_http_firmare
 
 expected.risposta.sicurezza_messaggio.riferimento_x509 = expected.risposta.sicurezza_messaggio.riferimento_x509 != null ? expected.risposta.sicurezza_messaggio.riferimento_x509 : 'richiesta'
+expected.risposta.sicurezza_messaggio.verifica_audience = expected.risposta.sicurezza_messaggio.verifica_audience != null ? expected.risposta.sicurezza_messaggio.verifica_audience : true
+
+return expected;
+} 
+"""
+
+* def getExpectedRestOAuth =
+"""
+function(modi, httpHeaderDefault) {
+var expected = modi;
+
+expected.richiesta.sicurezza_messaggio.time_to_live = expected.richiesta.sicurezza_messaggio.time_to_live != null ? expected.richiesta.sicurezza_messaggio.time_to_live: 300
+expected.richiesta.sicurezza_messaggio.algoritmo = expected.richiesta.sicurezza_messaggio.algoritmo != null ? expected.richiesta.sicurezza_messaggio.algoritmo: 'RS256'
+expected.richiesta.sicurezza_messaggio.header_http_firmare = expected.richiesta.sicurezza_messaggio.header_http_firmare !=null ? expected.richiesta.sicurezza_messaggio.header_http_firmare : httpHeaderDefault.header_http_firmare
+
 expected.risposta.sicurezza_messaggio.verifica_audience = expected.risposta.sicurezza_messaggio.verifica_audience != null ? expected.risposta.sicurezza_messaggio.verifica_audience : true
 
 return expected;
@@ -429,6 +448,45 @@ Examples:
 |fruizione_modi_rest_keystore_fruizione_ridefinito_archivio.json|
 |fruizione_modi_rest_keystore_fruizione_ridefinito_hsm.json|
 |fruizione_modi_rest_keystore_fruizione_definito_token_policy.json|
+
+
+
+
+@UpdatePetstore_modi_REST_fruizioni_oauth
+Scenario Outline: Fruizioni Aggiornamento Petstore REST Oauth <nome>
+
+	* def erogatore = read('soggetto_erogatore.json')
+	* eval randomize (erogatore, ["nome", "credenziali.username"])
+		
+	* def fruizione_petstore = read('fruizione_modi_rest_apiOAuth.json')
+	* eval fruizione_petstore.api_nome = api_petstore_rest_pdnd_integrity.nome
+	* eval fruizione_petstore.fruizione_nome = api_petstore_rest_pdnd_integrity.nome
+	* eval fruizione_petstore.api_versione = api_petstore_rest_pdnd_integrity.versione
+	* eval fruizione_petstore.erogatore = erogatore.nome
+	* eval fruizione_petstore.api_referente = api_petstore_rest_pdnd_integrity.referente
+
+	* def petstore_key = fruizione_petstore.erogatore + '/' + fruizione_petstore.fruizione_nome + '/' + fruizione_petstore.api_versione
+	* def api_petstore_path = 'api/' + api_petstore_rest_pdnd_integrity.nome + '/' + api_petstore_rest_pdnd_integrity.versione
+
+	* def fruizione_petstore_update = read('<nome>')
+
+	* call create ({ resourcePath: 'api', body: api_petstore_rest_pdnd_integrity, query_params: query_param_profilo_modi })
+	* call create ({ resourcePath: 'soggetti', body: erogatore })
+	* call create ( { resourcePath: 'fruizioni', body: fruizione_petstore,  key: petstore_key, query_params: query_param_profilo_modi } )
+	* call put ( { resourcePath: 'fruizioni/'+petstore_key+'/modi', body: {modi: fruizione_petstore_update.modi}, query_params: query_param_profilo_modi } )
+	* call get ( { resourcePath: 'fruizioni', key: petstore_key + '/modi', query_params: query_param_profilo_modi } )
+	* def expected = getExpectedRestOAuth(fruizione_petstore_update.modi, header_firmare_default)
+	* match response.modi == expected
+	* call delete ({ resourcePath: 'fruizioni/' + petstore_key, query_params: query_param_profilo_modi } )
+	* call delete ({ resourcePath: 'soggetti/' + erogatore.nome })
+	* call delete ({ resourcePath: api_petstore_path, query_params: query_param_profilo_modi } )
+
+
+Examples:
+|nome|
+|fruizione_modi_rest_apiOAuth.json|
+
+
 
 
 @UpdatePetstore_modi_REST_fruizioni_datiOAUTH

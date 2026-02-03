@@ -164,7 +164,8 @@ public class ModiErogazioniApiHelper {
 				if(protocollo.equals(TipoApiEnum.SOAP)) {
 					fruizionemodi.setModi(ModiErogazioniApiHelper.getFruizioneModISoap(p, schemaAudit));
 				} else {
-					fruizionemodi.setModi(ModiErogazioniApiHelper.getFruizioneModIRest(p, schemaAudit));
+					boolean x509Required = ModISecurityUtils.isSicurezzaMessaggioRiferimentoX509Required(aspc, asps.getPortType());
+					fruizionemodi.setModi(ModiErogazioniApiHelper.getFruizioneModIRest(p, schemaAudit, x509Required));
 				}
 			}
 
@@ -635,15 +636,20 @@ public class ModiErogazioniApiHelper {
 		
 	}
 
-	private static ErogazioneModIRestRichiesta getErogazioneRestRichiesta(Map<String, AbstractProperty<?>> p) throws CoreException {
+	private static ErogazioneModIRestRichiesta getErogazioneRestRichiesta(Map<String, AbstractProperty<?>> p, boolean x509Required) throws CoreException {
 		// *** richiesta ***
 
 		ErogazioneModIRestRichiesta richiesta = new ErogazioneModIRestRichiesta();
 		ErogazioneModIRestRichiestaSicurezzaMessaggio sicurezzaMessaggioRichiesta = new ErogazioneModIRestRichiestaSicurezzaMessaggio();
 
-		sicurezzaMessaggioRichiesta.setRiferimentoX509(ModiErogazioniApiHelper.getX509(ProtocolPropertiesHelper.getStringProperty(p,
-				ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RICHIESTA_RIFERIMENTO_X509, true)));
-
+		if(x509Required) {
+			sicurezzaMessaggioRichiesta.setRiferimentoX509(ModiErogazioniApiHelper.getX509(ProtocolPropertiesHelper.getStringProperty(p,
+					ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RICHIESTA_RIFERIMENTO_X509, true)));
+		}
+		else {
+			sicurezzaMessaggioRichiesta.setRiferimentoX509(null); // per non serializzarla
+		}
+		
 		String truststoreMode = ProtocolPropertiesHelper.getStringProperty(p,
 				ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_MODE, true);
 		if (truststoreMode.equals(ModICostanti.MODIPA_PROFILO_DEFAULT)) {
@@ -791,7 +797,7 @@ public class ModiErogazioniApiHelper {
 					
 	}
 	
-	private static ErogazioneModIRestRisposta getErogazioneRestRisposta(Map<String, AbstractProperty<?>> p) throws CoreException {
+	private static ErogazioneModIRestRisposta getErogazioneRestRisposta(Map<String, AbstractProperty<?>> p, boolean x509Required) throws CoreException {
 		ErogazioneModIRestRisposta risposta = new ErogazioneModIRestRisposta();
 		ErogazioneModIRestRispostaSicurezzaMessaggio sicurezzaMessaggio = new ErogazioneModIRestRispostaSicurezzaMessaggio();
 		
@@ -822,16 +828,19 @@ public class ModiErogazioniApiHelper {
 			sicurezzaMessaggio.setHeaderHttpFirmare(headers);
 		}
 		
-		if(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509_AS_REQUEST, true).equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509_AS_REQUEST_VALUE_TRUE)){
-			sicurezzaMessaggio.setRiferimentoX509(ModISicurezzaMessaggioRestRiferimentoX509Risposta.RICHIESTA);
-		} else {
-			sicurezzaMessaggio.setRiferimentoX509(ModISicurezzaMessaggioRestRiferimentoX509Risposta.RIDEFINITO);
-			sicurezzaMessaggio.setRiferimentoX509Risposta(ModiErogazioniApiHelper.getX509(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509, true)));
+		if(x509Required) {
+			if(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509_AS_REQUEST, true).equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509_AS_REQUEST_VALUE_TRUE)){
+				sicurezzaMessaggio.setRiferimentoX509(ModISicurezzaMessaggioRestRiferimentoX509Risposta.RICHIESTA);
+			} else {
+				sicurezzaMessaggio.setRiferimentoX509(ModISicurezzaMessaggioRestRiferimentoX509Risposta.RIDEFINITO);
+				sicurezzaMessaggio.setRiferimentoX509Risposta(ModiErogazioniApiHelper.getX509(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509, true)));
+			}
+		
+		
+			sicurezzaMessaggio.setCertificateChain(ProtocolPropertiesHelper.getBooleanProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509_X5C_USE_CERTIFICATE_CHAIN, true));
+		
+			sicurezzaMessaggio.setUrl(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_X509_VALUE_X5URL, false));
 		}
-		
-		sicurezzaMessaggio.setCertificateChain(ProtocolPropertiesHelper.getBooleanProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509_X5C_USE_CERTIFICATE_CHAIN, true));
-		
-		sicurezzaMessaggio.setUrl(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_X509_VALUE_X5URL, false));
 		
 		sicurezzaMessaggio.setTimeToLive(ProtocolPropertiesHelper.getIntegerProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_EXPIRED, true));
 		
@@ -981,12 +990,14 @@ public class ModiErogazioniApiHelper {
 
 		ErogazioneModIRest modi = new ErogazioneModIRest();
 		modi.setProtocollo(TipoApiEnum.REST);
-		if (ModISecurityUtils.isSicurezzaMessaggioRequired(aspc, asps.getPortType())) {			
+		if (ModISecurityUtils.isSicurezzaMessaggioRequired(aspc, asps.getPortType())) {		
+			boolean x509Required = ModISecurityUtils.isSicurezzaMessaggioRiferimentoX509Required(aspc, asps.getPortType());
+			
 			// *** richiesta ***
-			modi.setRichiesta(ModiErogazioniApiHelper.getErogazioneRestRichiesta(p));
+			modi.setRichiesta(ModiErogazioniApiHelper.getErogazioneRestRichiesta(p, x509Required));
 			
 			// *** risposta ***
-			modi.setRisposta(ModiErogazioniApiHelper.getErogazioneRestRisposta(p));
+			modi.setRisposta(ModiErogazioniApiHelper.getErogazioneRestRisposta(p, x509Required));
 		}
 		
 		modi.setInformazioniGenerali(ModiErogazioniApiHelper.getErogazioneModIInfoGenerali(p));
@@ -1322,7 +1333,7 @@ public class ModiErogazioniApiHelper {
 		return modi;
 	}
 
-	private static FruizioneModIRest getFruizioneModIRest(Map<String, AbstractProperty<?>> p, String schemaAudit) throws CoreException {
+	private static FruizioneModIRest getFruizioneModIRest(Map<String, AbstractProperty<?>> p, String schemaAudit, boolean x509Required) throws CoreException {
 
 		FruizioneModIRest modi = new FruizioneModIRest();
 		modi.setProtocollo(TipoConfigurazioneFruizioneEnum.REST);
@@ -1359,9 +1370,14 @@ public class ModiErogazioniApiHelper {
 			sicurezzaMessaggioRichiesta.setHeaderHttpFirmare(headers);
 		}
 		
-		sicurezzaMessaggioRichiesta.setRiferimentoX509(ModiErogazioniApiHelper.getX509(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RICHIESTA_RIFERIMENTO_X509, true)));
-
-		sicurezzaMessaggioRichiesta.setCertificateChain(ProtocolPropertiesHelper.getBooleanProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RICHIESTA_RIFERIMENTO_X509_X5C_USE_CERTIFICATE_CHAIN, true));
+		if(x509Required) {
+			sicurezzaMessaggioRichiesta.setRiferimentoX509(ModiErogazioniApiHelper.getX509(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RICHIESTA_RIFERIMENTO_X509, true)));
+		
+			sicurezzaMessaggioRichiesta.setCertificateChain(ProtocolPropertiesHelper.getBooleanProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RICHIESTA_RIFERIMENTO_X509_X5C_USE_CERTIFICATE_CHAIN, true));
+		}
+		else {
+			sicurezzaMessaggioRichiesta.setRiferimentoX509(null); // per non serializzarla
+		}
 		
 		sicurezzaMessaggioRichiesta.setTimeToLive(ProtocolPropertiesHelper.getIntegerProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_EXPIRED, true));
 		
@@ -1509,11 +1525,13 @@ public class ModiErogazioniApiHelper {
 		FruizioneModIRestRisposta risposta = new FruizioneModIRestRisposta();
 		FruizioneModIRestRispostaSicurezzaMessaggio sicurezzaMessaggioRisposta = new FruizioneModIRestRispostaSicurezzaMessaggio();
 
-		if(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509_AS_REQUEST, true).equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509_AS_REQUEST_VALUE_TRUE)){
-			sicurezzaMessaggioRisposta.setRiferimentoX509(ModISicurezzaMessaggioRestRiferimentoX509Risposta.RICHIESTA);
-		} else {
-			sicurezzaMessaggioRisposta.setRiferimentoX509(ModISicurezzaMessaggioRestRiferimentoX509Risposta.RIDEFINITO);
-			sicurezzaMessaggioRisposta.setRiferimentoX509Risposta(ModiErogazioniApiHelper.getX509(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509, true)));
+		if(x509Required) {
+			if(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509_AS_REQUEST, true).equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509_AS_REQUEST_VALUE_TRUE)){
+				sicurezzaMessaggioRisposta.setRiferimentoX509(ModISicurezzaMessaggioRestRiferimentoX509Risposta.RICHIESTA);
+			} else {
+				sicurezzaMessaggioRisposta.setRiferimentoX509(ModISicurezzaMessaggioRestRiferimentoX509Risposta.RIDEFINITO);
+				sicurezzaMessaggioRisposta.setRiferimentoX509Risposta(ModiErogazioniApiHelper.getX509(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509, true)));
+			}
 		}
 		
 		String truststoreMode = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_MODE, true);
@@ -1832,15 +1850,16 @@ public class ModiErogazioniApiHelper {
 	}
 
 	private static List<ModISicurezzaMessaggioRestRiferimentoX509> getX509(String x509String) {
-		String[] split = x509String.split(",");
-		
-		List<ModISicurezzaMessaggioRestRiferimentoX509> lst = new ArrayList<>();
-		for(String x: split) {
-			lst.add(ModISicurezzaMessaggioRestRiferimentoX509.fromValue(x));
+		List<ModISicurezzaMessaggioRestRiferimentoX509> lst = null;
+		if(x509String!=null) {
+			String[] split = x509String.split(",");
+			
+			lst = new ArrayList<>();
+			for(String x: split) {
+				lst.add(ModISicurezzaMessaggioRestRiferimentoX509.fromValue(x));
+			}
 		}
-		
 		return lst;
-		
 	}
 
 	public static ProtocolProperties getProtocolProperties(Erogazione body, AccordoServizioParteComune aspc, AccordoServizioParteSpecifica asps, ErogazioniEnv env, boolean required) 
@@ -1850,7 +1869,10 @@ public class ModiErogazioniApiHelper {
 
 	public static ProtocolProperties getProtocolProperties(Fruizione body, AccordoServizioParteSpecifica asps, ErogazioniEnv env, boolean required)
 			throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
-		ProtocolProperties p = ModiErogazioniApiHelper.getModiProtocolProperties(body.getModi(), ModiErogazioniApiHelper.getFruizioneConf(asps, env), required);
+		
+		AccordoServizioParteComune aspc = env.apcCore.getAccordoServizioFull(env.idAccordoFactory.getIDAccordoFromUri(asps.getAccordoServizioParteComune()), false);
+		boolean x509Required = ModISecurityUtils.isSicurezzaMessaggioRiferimentoX509Required(aspc, asps.getPortType());
+		ProtocolProperties p = ModiErogazioniApiHelper.getModiProtocolProperties(body.getModi(), ModiErogazioniApiHelper.getFruizioneConf(asps, env), required, x509Required);
 
 		// DPoP è una configurazione opzionale aggiuntiva
 		if(body.getModiDpop()!=null) {
@@ -1886,7 +1908,11 @@ public class ModiErogazioniApiHelper {
 		}
 
 		FruizioneConf fruizioneConf = ModiErogazioniApiHelper.getFruizioneConf(asps, env);
-		ProtocolProperties p = ModiErogazioniApiHelper.getModiProtocolProperties(modi, fruizioneConf);
+		
+		AccordoServizioParteComune aspc = env.apcCore.getAccordoServizioFull(env.idAccordoFactory.getIDAccordoFromUri(asps.getAccordoServizioParteComune()), false);
+		boolean x509Required = ModISecurityUtils.isSicurezzaMessaggioRiferimentoX509Required(aspc, asps.getPortType());
+		
+		ProtocolProperties p = ModiErogazioniApiHelper.getModiProtocolProperties(modi, fruizioneConf, x509Required);
 
 		// DPoP è una configurazione opzionale aggiuntiva
 		if(modiDpop!=null) {
@@ -1914,7 +1940,7 @@ public class ModiErogazioniApiHelper {
 		return p;
 	}
 
-	private static ProtocolProperties getModiProtocolProperties(OneOfFruizioneModIModi modi, FruizioneConf fruizioneConf) {
+	private static ProtocolProperties getModiProtocolProperties(OneOfFruizioneModIModi modi, FruizioneConf fruizioneConf, boolean x509Required) {
 
 		if(modi == null) {
 			throw FaultCode.RICHIESTA_NON_VALIDA.toException(ModiErogazioniApiHelper.SPECIFICARE_CONFIGURAZIONE_MODI);
@@ -1928,7 +1954,7 @@ public class ModiErogazioniApiHelper {
 		else if(fruizioneConf.protocollo.equals(TipoApiEnum.SOAP)) {
 			ModiErogazioniApiHelper.getSOAPProperties((FruizioneModISoap)modi, p, fruizioneConf);
 		} else if(fruizioneConf.protocollo.equals(TipoApiEnum.REST)) {
-			ModiErogazioniApiHelper.getRESTProperties((FruizioneModIRest)modi, p, fruizioneConf);
+			ModiErogazioniApiHelper.getRESTProperties((FruizioneModIRest)modi, p, fruizioneConf, x509Required);
 		}
 
 
@@ -1936,7 +1962,7 @@ public class ModiErogazioniApiHelper {
 	}
 
 	private static ProtocolProperties getModiProtocolProperties(OneOfFruizioneModi modi, FruizioneConf fruizioneConf,
-			boolean modiRequired) {
+			boolean modiRequired, boolean x509Required) {
 
 		if(modi == null) {
 			if(modiRequired) {
@@ -1955,7 +1981,7 @@ public class ModiErogazioniApiHelper {
 		else if(fruizioneConf.protocollo.equals(TipoApiEnum.SOAP)) {
 			ModiErogazioniApiHelper.getSOAPProperties((FruizioneModISoap)modi, p, fruizioneConf);
 		} else if(fruizioneConf.protocollo.equals(TipoApiEnum.REST)) {
-			ModiErogazioniApiHelper.getRESTProperties((FruizioneModIRest)modi, p, fruizioneConf);
+			ModiErogazioniApiHelper.getRESTProperties((FruizioneModIRest)modi, p, fruizioneConf, x509Required);
 		}
 
 
@@ -1986,10 +2012,12 @@ public class ModiErogazioniApiHelper {
 		return p;
 	}
 
-	private static void fillErogazioneRESTRichiestaProperties(ErogazioneModIRest modi, ProtocolProperties p, ErogazioneConf erogazioneConf) {
+	private static void fillErogazioneRESTRichiestaProperties(ErogazioneModIRest modi, ProtocolProperties p, ErogazioneConf erogazioneConf, boolean x509Required) {
 		ErogazioneModIRestRichiestaSicurezzaMessaggio sicurezzaMessaggioRichiesta = modi.getRichiesta().getSicurezzaMessaggio();
 		
-		p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RICHIESTA_RIFERIMENTO_X509, ModiErogazioniApiHelper.getX509(sicurezzaMessaggioRichiesta.getRiferimentoX509()));
+		if(x509Required) {
+			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RICHIESTA_RIFERIMENTO_X509, ModiErogazioniApiHelper.getX509(sicurezzaMessaggioRichiesta.getRiferimentoX509()));
+		}
 		
 		if(sicurezzaMessaggioRichiesta.getTruststore().getModalita().equals(StatoDefaultRidefinitoEnum.DEFAULT)) {
 			
@@ -2172,7 +2200,7 @@ public class ModiErogazioniApiHelper {
 		}
 	}
 	
-	private static void fillErogazioneRESTRispostaProperties(ErogazioneModIRest modi, ProtocolProperties p, ErogazioneConf erogazioneConf) {
+	private static void fillErogazioneRESTRispostaProperties(ErogazioneModIRest modi, ProtocolProperties p, ErogazioneConf erogazioneConf, boolean x509Required) {
 
 		ErogazioneModIRestRispostaSicurezzaMessaggio sicurezzaMessaggioRisposta = modi.getRisposta().getSicurezzaMessaggio();
 		
@@ -2213,25 +2241,28 @@ public class ModiErogazioniApiHelper {
 			}
 		}
 		
-		if(sicurezzaMessaggioRisposta.getRiferimentoX509() == null || sicurezzaMessaggioRisposta.getRiferimentoX509().equals(ModISicurezzaMessaggioRestRiferimentoX509Risposta.RICHIESTA)) {
-			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509_AS_REQUEST, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509_AS_REQUEST_VALUE_TRUE);
-		} else {
-			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509_AS_REQUEST, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509_AS_REQUEST_VALUE_FALSE);
-			
-			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509, ModiErogazioniApiHelper.getX509(sicurezzaMessaggioRisposta.getRiferimentoX509Risposta())); 
-		}
-		
-		p.addProperty(ProtocolPropertiesFactory.newProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509_X5C_USE_CERTIFICATE_CHAIN, sicurezzaMessaggioRisposta.isCertificateChain() != null && sicurezzaMessaggioRisposta.isCertificateChain().booleanValue()));
-		
-		if(sicurezzaMessaggioRisposta.getUrl()!=null) {
-			
-			if(!modi.getRichiesta().getSicurezzaMessaggio().getRiferimentoX509().contains(ModISicurezzaMessaggioRestRiferimentoX509.X5U)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Impossibile settare URL X5U con riferimento x509 "+modi.getRichiesta().getSicurezzaMessaggio().getRiferimentoX509());
+		if(x509Required) {
+			if(sicurezzaMessaggioRisposta.getRiferimentoX509() == null || sicurezzaMessaggioRisposta.getRiferimentoX509().equals(ModISicurezzaMessaggioRestRiferimentoX509Risposta.RICHIESTA)) {
+				p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509_AS_REQUEST, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509_AS_REQUEST_VALUE_TRUE);
+			} else {
+				p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509_AS_REQUEST, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509_AS_REQUEST_VALUE_FALSE);
+				
+				p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509, ModiErogazioniApiHelper.getX509(sicurezzaMessaggioRisposta.getRiferimentoX509Risposta())); 
 			}
-			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_X509_VALUE_X5URL, sicurezzaMessaggioRisposta.getUrl());
-		} else {
-			if(modi.getRichiesta().getSicurezzaMessaggio().getRiferimentoX509().contains(ModISicurezzaMessaggioRestRiferimentoX509.X5U)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Specificare URL X5U con riferimento x509 "+modi.getRichiesta().getSicurezzaMessaggio().getRiferimentoX509());
+		
+		
+			p.addProperty(ProtocolPropertiesFactory.newProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509_X5C_USE_CERTIFICATE_CHAIN, sicurezzaMessaggioRisposta.isCertificateChain() != null && sicurezzaMessaggioRisposta.isCertificateChain().booleanValue()));
+		
+			if(sicurezzaMessaggioRisposta.getUrl()!=null) {
+				
+				if(!modi.getRichiesta().getSicurezzaMessaggio().getRiferimentoX509().contains(ModISicurezzaMessaggioRestRiferimentoX509.X5U)) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Impossibile settare URL X5U con riferimento x509 "+modi.getRichiesta().getSicurezzaMessaggio().getRiferimentoX509());
+				}
+				p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_X509_VALUE_X5URL, sicurezzaMessaggioRisposta.getUrl());
+			} else {
+				if(modi.getRichiesta().getSicurezzaMessaggio().getRiferimentoX509().contains(ModISicurezzaMessaggioRestRiferimentoX509.X5U)) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Specificare URL X5U con riferimento x509 "+modi.getRichiesta().getSicurezzaMessaggio().getRiferimentoX509());
+				}
 			}
 		}
 
@@ -2382,11 +2413,13 @@ public class ModiErogazioniApiHelper {
 			if (modi == null || modi.getRichiesta() == null || modi.getRisposta() == null)
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(ModiErogazioniApiHelper.SICUREZZA_MESSAGGIO_NON_PRESENTE);
 			
+			boolean x509Required = ModISecurityUtils.isSicurezzaMessaggioRiferimentoX509Required(aspc, asps.getPortType());
+			
 			// **** richiesta ****
-			ModiErogazioniApiHelper.fillErogazioneRESTRichiestaProperties(modi, p, erogazioneConf);
+			ModiErogazioniApiHelper.fillErogazioneRESTRichiestaProperties(modi, p, erogazioneConf, x509Required);
 			
 			// **** risposta ****
-			ModiErogazioniApiHelper.fillErogazioneRESTRispostaProperties(modi, p, erogazioneConf);
+			ModiErogazioniApiHelper.fillErogazioneRESTRispostaProperties(modi, p, erogazioneConf, x509Required);
 		} else {
 			if (modi != null && (modi.getRichiesta() != null || modi.getRisposta() != null))
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(ModiErogazioniApiHelper.SICUREZZA_MESSAGGIO_NON_NECESSARIA);
@@ -2397,7 +2430,7 @@ public class ModiErogazioniApiHelper {
 		}
 	}
 	
-	private static void getRESTProperties(FruizioneModIRest modi, ProtocolProperties p, FruizioneConf fruizioneConf) {
+	private static void getRESTProperties(FruizioneModIRest modi, ProtocolProperties p, FruizioneConf fruizioneConf, boolean x509Required) {
 
 		if(!fruizioneConf.sicurezzaMessaggioAPIAbilitata) {
 			throw FaultCode.RICHIESTA_NON_VALIDA.toException(ModiErogazioniApiHelper.IMPOSSIBILE_ABILITARE_SICUREZZA);
@@ -2444,9 +2477,11 @@ public class ModiErogazioniApiHelper {
 			}
 		}
 		
-		p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RICHIESTA_RIFERIMENTO_X509, ModiErogazioniApiHelper.getX509(sicurezzaMessaggioRichiesta.getRiferimentoX509())); 
+		if(x509Required) {
+			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RICHIESTA_RIFERIMENTO_X509, ModiErogazioniApiHelper.getX509(sicurezzaMessaggioRichiesta.getRiferimentoX509())); 
 
-		p.addProperty(ProtocolPropertiesFactory.newProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RICHIESTA_RIFERIMENTO_X509_X5C_USE_CERTIFICATE_CHAIN, sicurezzaMessaggioRichiesta.isCertificateChain() != null && sicurezzaMessaggioRichiesta.isCertificateChain().booleanValue()));
+			p.addProperty(ProtocolPropertiesFactory.newProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RICHIESTA_RIFERIMENTO_X509_X5C_USE_CERTIFICATE_CHAIN, sicurezzaMessaggioRichiesta.isCertificateChain() != null && sicurezzaMessaggioRichiesta.isCertificateChain().booleanValue()));
+		}
 	
 		if(sicurezzaMessaggioRichiesta.getTimeToLive()!=null) {
 			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_EXPIRED, sicurezzaMessaggioRichiesta.getTimeToLive());
@@ -2625,12 +2660,14 @@ public class ModiErogazioniApiHelper {
 		
 		FruizioneModIRestRispostaSicurezzaMessaggio sicurezzaMessaggioRisposta = modi.getRisposta().getSicurezzaMessaggio();
 		
-		if(sicurezzaMessaggioRisposta.getRiferimentoX509() == null || sicurezzaMessaggioRisposta.getRiferimentoX509().equals(ModISicurezzaMessaggioRestRiferimentoX509Risposta.RICHIESTA)) {
-			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509_AS_REQUEST, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509_AS_REQUEST_VALUE_TRUE);
-		} else {
-			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509_AS_REQUEST, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509_AS_REQUEST_VALUE_FALSE);
-			
-			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509, ModiErogazioniApiHelper.getX509(sicurezzaMessaggioRisposta.getRiferimentoX509Risposta())); 
+		if(x509Required) {
+			if(sicurezzaMessaggioRisposta.getRiferimentoX509() == null || sicurezzaMessaggioRisposta.getRiferimentoX509().equals(ModISicurezzaMessaggioRestRiferimentoX509Risposta.RICHIESTA)) {
+				p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509_AS_REQUEST, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509_AS_REQUEST_VALUE_TRUE);
+			} else {
+				p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509_AS_REQUEST, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509_AS_REQUEST_VALUE_FALSE);
+				
+				p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509, ModiErogazioniApiHelper.getX509(sicurezzaMessaggioRisposta.getRiferimentoX509Risposta())); 
+			}
 		}
 
 		if(sicurezzaMessaggioRisposta.getTruststore().getModalita().equals(StatoDefaultRidefinitoEnum.DEFAULT)) {

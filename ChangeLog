@@ -1,3 +1,11 @@
+2026-02-03  Andrea Poli <apoli@link.it>
+
+	* [ApiRsConfigurazione]
+	Risolto Bug #1711
+	(https://github.com/link-it/govway/issues/277)
+	Accedendo a erogazioni o fruizioni di API con sorgente token 'PDND' o 'OAuth' si otteneva il seguente errore:
+	"Property modipaSecurityMessageRestRequestX509Cert non trovata"
+
 2026-02-01  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
