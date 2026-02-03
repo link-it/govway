@@ -184,6 +184,8 @@ public class RicezioneContenutiApplicativiServiceUtils {
 			
 			// da ora in avanti, avendo localizzato una PD, se avviene un errore genero l'errore stesso
 			protocolContext.setInterfaceName(idPD.getNome());
+			msgDiag.addKeyword(CostantiPdD.KEY_PORTA_DELEGATA, idPD.getNome());
+			msgDiag.updatePorta(idPD.getNome(), requestInfo);
 			
 			// read IDServizio e IDSoggettoFruitore
 			IDSoggetto idSoggettoFruitore = null;

@@ -201,6 +201,9 @@ public class RicezioneBusteServiceUtils {
 			protocolContext.setFunctionParameters(idPA.getNome());
 		}
 		
+		msgDiag.addKeyword(CostantiPdD.KEY_PORTA_APPLICATIVA, idPA.getNome());
+		msgDiag.updatePorta(idPA.getNome(), requestInfo);
+		
 		if(requestInfo==null) {
 			throw new ConnectorException("Param requestInfo is null");
 		}
