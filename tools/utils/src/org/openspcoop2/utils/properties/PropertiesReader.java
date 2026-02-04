@@ -61,6 +61,9 @@ public class PropertiesReader extends MapReader<Object, Object> {
 		if(convertKeyEnvProperties){
 			label = "della chiave";
 		}
+		return convertValue(label, value);
+	}
+	public static String convertValue(String label, String value) throws UtilsException{
 		while (value.indexOf("${")!=-1){
 			int indexStart = value.indexOf("${");
 			int indexEnd = value.indexOf("}");
