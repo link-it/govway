@@ -23,5 +23,6 @@ package org.openspcoop2.core.config.rs.server.model;
 * OneOfFruizioneModIDPoPKeystore
 */
 public interface OneOfFruizioneModIDPoPKeystore {
+
     public StatoDefaultRidefinitoEnum getModalita();
 }

@@ -26,9 +26,12 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets ModIKeystoreFullEnum
  */
 public enum ModIKeystoreFullEnum {
-JKS("jks"),
+  JKS("jks"),
+  
   PKCS12("pkcs12"),
+  
   JWK("jwk"),
+  
   KEYS("keys");
 
   private String value;

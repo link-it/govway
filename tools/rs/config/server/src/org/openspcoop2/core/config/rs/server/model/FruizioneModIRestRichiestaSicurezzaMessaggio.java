@@ -19,7 +19,6 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
-import java.util.ArrayList;
 import java.util.List;
 import jakarta.validation.constraints.*;
 
@@ -36,7 +35,7 @@ public class FruizioneModIRestRichiestaSicurezzaMessaggio  {
   private List<String> headerHttpFirmare = null;
   
   @Schema(description = "")
-  private List<ModISicurezzaMessaggioRestRiferimentoX509> riferimentoX509 = new ArrayList<>();
+  private List<ModISicurezzaMessaggioRestRiferimentoX509> riferimentoX509 = null;
   
   @Schema(description = "")
   private Boolean certificateChain = null;

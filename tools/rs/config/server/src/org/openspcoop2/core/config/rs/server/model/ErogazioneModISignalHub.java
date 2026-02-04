@@ -19,9 +19,8 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import io.swagger.v3.oas.annotations.media.Schema;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.Valid;
 
 public class ErogazioneModISignalHub  {

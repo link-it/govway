@@ -19,7 +19,6 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
-import java.util.ArrayList;
 import java.util.List;
 import jakarta.validation.constraints.*;
 
@@ -30,7 +29,7 @@ import jakarta.validation.Valid;
 public class ErogazioneModIRestRichiestaSicurezzaMessaggio  {
   
   @Schema(description = "")
-  private List<ModISicurezzaMessaggioRestRiferimentoX509> riferimentoX509 = new ArrayList<>();
+  private List<ModISicurezzaMessaggioRestRiferimentoX509> riferimentoX509 = null;
   
   @Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED, description = "")
   @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXISTING_PROPERTY, property = "modalita", visible = true )
