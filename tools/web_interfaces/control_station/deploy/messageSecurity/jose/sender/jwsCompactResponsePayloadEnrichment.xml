@@ -1,5 +1,5 @@
 <config id="messageSecurity.jose.sender.jwsCompactResponsePayloadEnrichment" label="JWS Compact Payload Enrichment" xmlns="http://www.openspcoop2.org/core/mvc/properties"
-	provider="org.openspcoop2.security.message.jose.JwsCompactResponsePayloadEnrichmentProvider">
+	provider="org.openspcoop2.pdd.core.provider.JwsCompactResponsePayloadEnrichmentProvider">
 
 	 <compatibility not="false" and="false">
          <tags and="true">
