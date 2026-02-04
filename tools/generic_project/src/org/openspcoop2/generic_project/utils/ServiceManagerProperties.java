@@ -21,6 +21,7 @@ package org.openspcoop2.generic_project.utils;
 
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.utils.TipiDatabase;
+import org.openspcoop2.utils.properties.PropertiesReader;
 
 
 /**
@@ -39,14 +40,22 @@ public class ServiceManagerProperties {
 	private int secondsToRefreshConnection = -1;
 	
 	public String getDatabaseType() {
+		// Traduco una eventuale variabile
+		if(this.databaseType!=null && this.databaseType.contains("$")) {
+			try {
+				this.databaseType = PropertiesReader.convertValue("DatabaseType", this.databaseType);
+			}catch(Exception e) {
+				// ignore
+			}
+		}
 		return this.databaseType;
 	}
 	public TipiDatabase getDatabase() throws ServiceException {
-		TipiDatabase databaseType = TipiDatabase.toEnumConstant(this.databaseType);
-		if(TipiDatabase.DEFAULT.equals(databaseType)){
-			throw new ServiceException("Database ["+databaseType+"] not supported");
+		TipiDatabase databaseTypeCheck = TipiDatabase.toEnumConstant(this.databaseType);
+		if(TipiDatabase.DEFAULT.equals(databaseTypeCheck)){
+			throw new ServiceException("Database ["+databaseTypeCheck+"] not supported");
 		}
-		return databaseType;
+		return databaseTypeCheck;
 	}
 	public boolean isGenerateDdl() {
 		return this.generateDdl;
