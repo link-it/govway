@@ -2770,6 +2770,16 @@
 					<param name="as" value="BATCH"/>
 					<param name="archiveType" value="BATCH"/>
 				</antcall>
+
+				<!-- Gestione dinamica env.defaultEntityName.required negli script -->
+				<if>
+					<istrue value="${antinstaller_entity_env}"/>
+					<then>
+						<antcall target="_batch_statistiche_entity_required_scripts">
+							<param name="batch_dir" value="${tmp_batch}/generatoreStatistiche"/>
+						</antcall>
+					</then>
+				</if>
 			</then>
 		</if>
 	</target>
@@ -3064,16 +3074,6 @@
 					<param name="as" value="BATCH"/>
 					<param name="archiveType" value="BATCH"/>
 				</antcall>
-
-				<!-- Gestione dinamica env.defaultEntityName.required negli script -->
-				<if>
-					<istrue value="${antinstaller_entity_env}"/>
-					<then>
-						<antcall target="_batch_statistiche_entity_required_scripts">
-							<param name="batch_dir" value="${tmp_batch}/generatoreStatistiche"/>
-						</antcall>
-					</then>
-				</if>
 			</then>
 		</if>
 	</target>
