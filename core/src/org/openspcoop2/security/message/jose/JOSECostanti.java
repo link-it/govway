@@ -21,6 +21,7 @@
 package org.openspcoop2.security.message.jose;
 
 import org.openspcoop2.security.message.constants.SecurityConstants;
+import org.openspcoop2.utils.mime.MimeTypeConstants;
 
 /**     
  * JOSECostanti
@@ -38,6 +39,11 @@ public class JOSECostanti {
 	public static final String JOSE_ENGINE_VERIFIER_SIGNATURE_DESCRIPTION = "JOSE SignatureVerifier Engine";
 	public static final String JOSE_ENGINE_ENCRYPT_DESCRIPTION = "JOSE Encrypt Engine";
 	public static final String JOSE_ENGINE_DECRYPT_DESCRIPTION = "JOSE Decrypt Engine";
+
+	// Content-Type JOSE (RFC 7515, 7516, 7519)
+	public static final String MEDIA_TYPE_JWT = MimeTypeConstants.MEDIA_TYPE_JWT;
+	public static final String MEDIA_TYPE_JOSE = MimeTypeConstants.MEDIA_TYPE_JOSE;
+	public static final String MEDIA_TYPE_JOSE_JSON = MimeTypeConstants.MEDIA_TYPE_JOSE_JSON;
 	
 	// SELECT LIST ID
 	

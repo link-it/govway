@@ -70,6 +70,7 @@ import org.openspcoop2.utils.transport.http.HttpForwardProxyOptions;
 import org.openspcoop2.utils.transport.http.HttpOptions;
 import org.openspcoop2.utils.transport.http.HttpProxyOptions;
 import org.openspcoop2.utils.transport.http.HttpsOptions;
+import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
 import org.slf4j.Logger;
 
 /**     
@@ -82,7 +83,28 @@ import org.slf4j.Logger;
 public class JOSEUtils {
 
 	private JOSEUtils() {}
-	
+
+	public static boolean isJoseContentType(OpenSPCoop2Message message) {
+		if(message == null) {
+			return false;
+		}
+		try {
+			String contentType = message.getContentType();
+			if(contentType == null || contentType.isEmpty()) {
+				return false;
+			}
+			String baseType = ContentTypeUtilities.readBaseTypeFromContentType(contentType);
+			if(baseType == null) {
+				return false;
+			}
+			return JOSECostanti.MEDIA_TYPE_JWT.equalsIgnoreCase(baseType) ||
+				   JOSECostanti.MEDIA_TYPE_JOSE.equalsIgnoreCase(baseType) ||
+				   JOSECostanti.MEDIA_TYPE_JOSE_JSON.equalsIgnoreCase(baseType);
+		} catch(Exception e) {
+			return false;
+		}
+	}
+
 	public static JOSESerialization toJOSESerialization(String mode) throws SecurityException {
 		if(SecurityConstants.SIGNATURE_MODE_JSON.equals(mode)) {
 			return JOSESerialization.JSON;

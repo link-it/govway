@@ -87,6 +87,10 @@ seguente casistica:
    -  *JWT Signature*: il messaggio JSON di risposta viene firmato prima
       dell'invio.
 
+   -  *JWS Compact Payload Enrichment*: il payload JSON viene arricchito
+      con claims JWT standard (iss, aud, exp, jti) e firmato in formato
+      JWS Compact.
+
    -  *XML Encrypt*: il messaggio XML di risposta viene cifrato prima
       dell'invio.
 

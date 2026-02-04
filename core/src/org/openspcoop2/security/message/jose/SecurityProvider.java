@@ -102,11 +102,15 @@ public class SecurityProvider extends AbstractSecurityProvider {
 			}
 			return l;
 		}
-		else if(SecurityConstants.KEYSTORE_TYPE.equals(id) || 
+		else if(SecurityConstants.KEYSTORE_TYPE.equals(id) ||
 				SecurityConstants.SECRETKEYSTORE_TYPE.equals(id) ||
 				SecurityConstants.TRUSTSTORE_TYPE.equals(id)) {
 			List<String> l = super.getValues(id);
 			l.add(0, SecurityConstants.KEYSTORE_TYPE_JWK_VALUE);
+			// Add keypair type only for keystore (signature) not for truststore or secret keystore
+			if(SecurityConstants.KEYSTORE_TYPE.equals(id) && !this.isAsTruststore()) {
+				l.add(1, SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE);
+			}
 			if(SecurityConstants.TRUSTSTORE_TYPE.equals(id) ||
 					(SecurityConstants.KEYSTORE_TYPE.equals(id) && (this.isAsTruststore() || this.addSecretKey))) {
 				// aggiunto info mancanti come secret
@@ -160,11 +164,15 @@ public class SecurityProvider extends AbstractSecurityProvider {
 			}
 			return labels;
 		}
-		else if(SecurityConstants.KEYSTORE_TYPE.equals(id) || 
+		else if(SecurityConstants.KEYSTORE_TYPE.equals(id) ||
 				SecurityConstants.SECRETKEYSTORE_TYPE.equals(id) ||
 				SecurityConstants.TRUSTSTORE_TYPE.equals(id)) {
 			List<String> l = super.getLabels(id);
 			l.add(0, SecurityConstants.KEYSTORE_TYPE_JWK_LABEL);
+			// Add keypair label only for keystore (signature) not for truststore or secret keystore
+			if(SecurityConstants.KEYSTORE_TYPE.equals(id) && !this.isAsTruststore()) {
+				l.add(1, SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_LABEL);
+			}
 			if(SecurityConstants.TRUSTSTORE_TYPE.equals(id) ||
 					(SecurityConstants.KEYSTORE_TYPE.equals(id) && (this.isAsTruststore() || this.addSecretKey))) {
 				// aggiunto info mancanti come secret

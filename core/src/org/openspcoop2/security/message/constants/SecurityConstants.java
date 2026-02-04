@@ -345,7 +345,23 @@ public class SecurityConstants {
     public static final String JOSE_EXT_HEADER_PREFIX = "joseExtensionHeader.";
     public static final String JOSE_EXT_HEADER_SUFFIX_NAME = ".name";
     public static final String JOSE_EXT_HEADER_SUFFIX_VALUE = ".value";
-    
+
+    public static final String JWT_CLAIMS_AUDIENCE_MODE = "jwt.claims.aud.mode";
+    public static final String JWT_CLAIMS_AUDIENCE_MODE_VOUCHER = "voucher";
+    public static final String JWT_CLAIMS_AUDIENCE_MODE_MANUAL = "manual";
+    public static final String JWT_CLAIMS_AUDIENCE_VALUE = "jwt.claims.aud.value";
+    public static final String JWT_CLAIMS_ISSUER = "jwt.claims.iss";
+    public static final String JWT_CLAIMS_EXPIRED_TTL = "jwt.claims.exp.ttl";
+    public static final String JWT_CLAIMS_JTI_MODE = "jwt.claims.jti.mode";
+    public static final String JWT_CLAIMS_JTI_MODE_TRANSACTION_ID = "transactionId";
+    public static final String JWT_CLAIMS_JTI_MODE_MANUAL = "manual";
+    public static final String JWT_CLAIMS_JTI_VALUE = "jwt.claims.jti.value";
+
+    public static final String JWT_CLAIMS_EXISTING_POLICY = "jwt.claims.existing.policy";
+    public static final String JWT_CLAIMS_EXISTING_POLICY_PRESERVE = "preserve";
+    public static final String JWT_CLAIMS_EXISTING_POLICY_OVERRIDE = "override";
+    public static final String JWT_CLAIMS_EXISTING_POLICY_ERROR = "error";
+
     public static final String JOSE_USE_HEADERS = "joseUseHeaders";
     public static final String JOSE_USE_HEADERS_X5C = "joseUseHeaders.x5c";
     public static final String JOSE_USE_HEADERS_X5U = "joseUseHeaders.x5u";
@@ -382,9 +398,12 @@ public class SecurityConstants {
     public static final String JOSE_USE_HEADERS_KEYSTORE_MAP_ALIAS_PW = "joseUseHeaders.key.";
     public static final String JOSE_USE_HEADERS_KEYSTORE_MAP_ALIAS_PW_SUFFIX_ALIAS = ".alias";
     public static final String JOSE_USE_HEADERS_KEYSTORE_MAP_ALIAS_PW_SUFFIX_PW = ".password";
-        
-    
-    
+
+    public static final String MESSAGE_SECURITY_CONTENT_TYPE = "messageSecurity.contentType";
+    public static final String MESSAGE_SECURITY_APPLY_ON_BACKEND_RETURN_CODE = "messageSecurity.apply.onBackendReturnCode";
+
+
+
     public static final String TIMESTAMP_ACTION = ConfigurationConstants.TIMESTAMP;
     public static final String TIMESTAMP_TTL = ConfigurationConstants.TTL_TIMESTAMP;
     

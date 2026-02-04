@@ -247,11 +247,16 @@ public class ConfigManager {
 		List<String> listLabels = new ArrayList<>();
 		for (String id : idList) {
 			Config config = map.get(id);
-			String labelId = config.getLabel();
-			/**if(config.getSortLabel()!=null) {
-				labelId = config.getSortLabel();
-			}*/
-			listLabels.add(labelId);
+			if(config!=null) {
+				String labelId = config.getLabel();
+				/**if(config.getSortLabel()!=null) {
+					labelId = config.getSortLabel();
+				}*/
+				listLabels.add(labelId);
+			}
+			else {
+				listLabels.add("Label non presente (id:"+id+")");
+			}
 		}
 		return listLabels;
 	}
