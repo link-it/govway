@@ -18,28 +18,37 @@
  *
  */
 
-package org.openspcoop2.security.message.jose;
+package org.openspcoop2.pdd.core.provider;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.core.mvc.properties.provider.ProviderInfo;
 import org.openspcoop2.pdd.core.dynamic.DynamicHelperCostanti;
+import org.openspcoop2.security.message.jose.SignatureSenderProvider;
 
 /**
- * JwsCompactRequestPayloadEnrichmentProvider
+ * JwsCompactResponsePayloadEnrichmentProvider
  *
  * @author Poli Andrea (poli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class JwsCompactRequestPayloadEnrichmentProvider extends SignatureSenderProvider {
+public class JwsCompactResponsePayloadEnrichmentProvider extends SignatureSenderProvider {
 
 	private static final String ID_ISSUER = "issuer";
 	private static final String ID_AUDIENCE_MANUAL = "audienceManual";
 	private static final String ID_TTL = "ttl";
+	private static final String ID_HTTP_STATUS_CODES = "httpStatusCodes";
 
-	public JwsCompactRequestPayloadEnrichmentProvider() {
+	private static final String LABEL_INFO_HTTP_CODES_HEADER = "Codici HTTP di risposta del backend che attivano la firma.";
+	private static final String LABEL_INFO_HTTP_CODES_SINGLE = "<b>Singolo codice</b>: 200";
+	private static final String LABEL_INFO_HTTP_CODES_LIST = "<b>Lista</b>: 200,202,404";
+	private static final String LABEL_INFO_HTTP_CODES_RANGE = "<b>Range</b>: 200-299";
+	private static final String LABEL_INFO_HTTP_CODES_RANGE_OPEN = "<b>Range aperto</b>: -299 (fino a 299), 500- (da 500 in poi)";
+
+	public JwsCompactResponsePayloadEnrichmentProvider() {
 		super();
 	}
 
@@ -48,7 +57,18 @@ public class JwsCompactRequestPayloadEnrichmentProvider extends SignatureSenderP
 		if(ID_ISSUER.equals(id) || ID_AUDIENCE_MANUAL.equals(id) || ID_TTL.equals(id)) {
 			ProviderInfo pInfo = new ProviderInfo();
 			pInfo.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
-			List<String> listBody = DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI(false, false, false);
+			List<String> listBody = DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI_CON_RISPOSTE(false, false, false);
+			pInfo.setListBody(listBody);
+			return pInfo;
+		}
+		else if(ID_HTTP_STATUS_CODES.equals(id)) {
+			ProviderInfo pInfo = new ProviderInfo();
+			pInfo.setHeaderBody(LABEL_INFO_HTTP_CODES_HEADER);
+			List<String> listBody = new ArrayList<>();
+			listBody.add(LABEL_INFO_HTTP_CODES_SINGLE);
+			listBody.add(LABEL_INFO_HTTP_CODES_LIST);
+			listBody.add(LABEL_INFO_HTTP_CODES_RANGE);
+			listBody.add(LABEL_INFO_HTTP_CODES_RANGE_OPEN);
 			pInfo.setListBody(listBody);
 			return pInfo;
 		}
