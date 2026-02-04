@@ -1,0 +1,272 @@
+<config id="messageSecurity.jose.sender.jwsCompactRequestPayloadEnrichment" label="JWS Compact Payload Enrichment" xmlns="http://www.openspcoop2.org/core/mvc/properties"
+	provider="org.openspcoop2.security.message.jose.JwsCompactRequestPayloadEnrichmentProvider">
+
+	 <compatibility not="false" and="false">
+         <tags and="true">
+                 <tag>REST</tag>
+                 <tag>REQUEST</tag>
+                 <tag>OUT</tag>
+         </tags>
+	 </compatibility>
+
+	<properties>
+		<collection name="signaturePropRefId"/>
+	</properties>
+
+	<section label="Signature">
+
+		<item type="hidden" name="securityEngine" value="jose">
+			<property name="securityEngine" force="true"/>
+		</item>
+
+		<item type="hidden" name="signatureAction" value="Signature">
+			<property name="action" force="true"/>
+		</item>
+
+		<!-- Tipo nascosto con valore default compact -->
+		<item type="hidden" name="signatureMode" value="compact">
+			<property name="signatureMode" force="true"/>
+		</item>
+
+		<item type="select" name="signatureAlgorithm" label="Signature Algorithm" reloadOnChange="true">
+		      	<property name="rs.security.signature.algorithm" properties="signaturePropRefId" />
+		</item>
+
+		<!-- Detached: hidden, default false -->
+		<item type="hidden" name="signatureDetached" value="false">
+			<property name="signatureDetached" force="true"/>
+		</item>
+
+		<!-- Include Headers: hidden, default true -->
+		<item type="hidden" name="joseUseHeaders" value="true">
+			<property name="joseUseHeaders" force="true"/>
+		</item>
+
+		<!-- Key Id (kid): hidden, default true -->
+		<item type="hidden" name="includeKid" value="true">
+			<property name="rs.security.signature.include.key.id" properties="signaturePropRefId" force="true"/>
+		</item>
+
+		<!-- Type (typ): hidden, default JWT -->
+		<item type="hidden" name="includeType" value="JWT">
+			<property name="joseType" force="true"/>
+		</item>
+
+		<!-- Content Type (cty): hidden, default false -->
+		<item type="hidden" name="includeContentType" value="false">
+			<property name="joseContentType" force="true"/>
+		</item>
+
+		<!-- Critical Headers (crit): hidden, empty -->
+		<item type="hidden" name="includeCrit" value="">
+			<property name="joseCriticalHeaders" force="false"/>
+		</item>
+
+		<!-- Custom Headers: hidden, default false -->
+		<item type="hidden" name="includeExtendedHeader" value="false">
+			<property name="includeExtendedHeader" force="true"/>
+		</item>
+
+		<!-- Content-Type, default application/jwt -->
+		<item type="text" name="messageSecurityContentType" label="Content-Type" default="application/jwt" required="true">
+			<property name="messageSecurity.contentType"/>
+		</item>
+
+		<!-- JTI Mode: hidden, default transactionId -->
+		<item type="hidden" name="jtiMode" value="transactionId">
+			<property name="jwt.claims.jti.mode" force="true"/>
+		</item>
+
+		<!-- JTI Value: hidden -->
+		<item type="hidden" name="jtiValue" value="">
+			<property name="jwt.claims.jti.value" force="false"/>
+		</item>
+
+		<subsection label="KeyStore">
+
+			<conditions>
+				<condition not="true" and="false">
+					<equals name="signatureAlgorithm" value="NONE"/>
+					<startsWith name="signatureAlgorithm" value="HS"/>
+				</condition>
+			</conditions>
+
+			<item type="select" name="keystoreType" label="Tipo" default="jks" reloadOnChange="true">
+				<property name="rs.security.keystore.type" properties="signaturePropRefId" />
+			</item>
+			<!-- File: visibile quando NON e' keypair -->
+			<item type="textarea" name="keystoreFile" label="File" required="true">
+				<conditions and="true">
+					<condition not="true" and="false">
+						<equals name="keystoreType" value="keys"/>
+					</condition>
+				</conditions>
+			    <property name="rs.security.keystore.file" properties="signaturePropRefId" />
+			</item>
+			<!-- Chiave Privata: visibile solo per keypair -->
+			<item type="textarea" name="keystorePrivateKey" label="Chiave Privata" required="true">
+				<conditions and="true">
+					<condition and="false">
+						<equals name="keystoreType" value="keys"/>
+					</condition>
+				</conditions>
+				<property name="rs.security.keystore.file" properties="signaturePropRefId" />
+			</item>
+			<!-- Chiave Pubblica: visibile solo per keypair -->
+			<item type="textarea" name="keystorePublicKey" label="Chiave Pubblica" required="true">
+				<conditions and="true">
+					<condition and="false">
+						<equals name="keystoreType" value="keys"/>
+					</condition>
+				</conditions>
+				<property name="rs.security.keystore.file.public" properties="signaturePropRefId" />
+			</item>
+			<!-- Algoritmo KeyPair: hidden, solo per keypair -->
+			<item type="hidden" name="keystoreKeyPairAlgorithm" value="RSA">
+				<conditions and="true">
+					<condition and="false">
+						<equals name="keystoreType" value="keys"/>
+					</condition>
+				</conditions>
+				<property name="rs.security.keystore.file.algorithm" properties="signaturePropRefId" />
+			</item>
+			<item type="lock" name="keystorePassword" label="Password" required="true">
+				<conditions and="true">
+					<condition not="true" and="false">
+						<equals name="keystoreType" value="jwk"/>
+						<equals name="keystoreType" value="keys"/>
+					</condition>
+				</conditions>
+			    <property name="rs.security.keystore.password" properties="signaturePropRefId" />
+			</item>
+			<item type="text" name="keystorePrivateKeyAlias" label="Alias Chiave Privata" required="true">
+				<conditions and="true">
+					<condition not="true" and="false">
+						<equals name="keystoreType" value="jwk"/>
+						<equals name="keystoreType" value="keys"/>
+					</condition>
+				</conditions>
+			    <property name="rs.security.keystore.alias" properties="signaturePropRefId" />
+			</item>
+			<item type="text" name="keystoreKidAlias" label="Kid Chiave Privata" required="true">
+				<conditions and="true">
+					<condition and="true">
+						<equals name="keystoreType" value="jwk"/>
+					</condition>
+				</conditions>
+			    <property name="rs.security.keystore.alias" properties="signaturePropRefId" />
+			</item>
+			<item type="lock" name="keystorePrivateKeyPassword" label="Password Chiave Privata" required="true">
+				<conditions and="true">
+					<condition not="true" and="false">
+						<equals name="keystoreType" value="jwk"/>
+						<equals name="keystoreType" value="keys"/>
+					</condition>
+				</conditions>
+			    <property name="rs.security.key.password" properties="signaturePropRefId" />
+			</item>
+			<!-- Password Chiave Privata opzionale: solo per keypair -->
+			<item type="lock" name="keystorePrivateKeyPasswordOptional" label="Password Chiave Privata" required="false">
+				<conditions and="true">
+					<condition and="false">
+						<equals name="keystoreType" value="keys"/>
+					</condition>
+				</conditions>
+			    <property name="rs.security.key.password" properties="signaturePropRefId" />
+			</item>
+			<item type="select" name="keystoreByokPolicy" label="BYOK Policy" default="" reloadOnChange="true">
+				<property name="rs.security.keystore.file.byok" properties="signaturePropRefId" />
+			</item>
+
+		</subsection>
+
+		<subsection label="KeyStore">
+
+			<conditions>
+				<condition>
+					<startsWith name="signatureAlgorithm" value="HS"/>
+				</condition>
+			</conditions>
+
+			<item type="select" name="secretkeystoreType" label="Tipo" default="jceks" reloadOnChange="true">
+				<property name="rs.security.keystore.type" properties="signaturePropRefId" />
+			</item>
+			<item type="textarea" name="secretkeystoreFile" label="File" required="true">
+			    <property name="rs.security.keystore.file" properties="signaturePropRefId" />
+			</item>
+			<item type="lock" name="secretkeystorePassword" label="Password" required="true">
+				<conditions>
+					<condition not="true" and="true">
+						<equals name="secretkeystoreType" value="jwk"/>
+					</condition>
+				</conditions>
+			    <property name="rs.security.keystore.password" properties="signaturePropRefId" />
+			</item>
+			<item type="text" name="secretkeystoreKidAlias" label="Kid Chiave Privata" required="true">
+				<conditions>
+					<condition and="true">
+						<equals name="secretkeystoreType" value="jwk"/>
+					</condition>
+				</conditions>
+			    <property name="rs.security.keystore.alias" properties="signaturePropRefId" />
+			</item>
+			<item type="text" name="secretkeystoreSecretKeyAlias" label="Alias Chiave Segreta" required="true">
+				<conditions>
+					<condition not="true" and="true">
+						<equals name="secretkeystoreType" value="jwk"/>
+					</condition>
+				</conditions>
+			    <property name="rs.security.keystore.alias" properties="signaturePropRefId" />
+			</item>
+			<item type="lock" name="secretkeystorePrivateKeyPassword" label="Password Chiave Segreta" required="true">
+			    <property name="rs.security.key.password" properties="signaturePropRefId" />
+			</item>
+			<item type="select" name="secretkeystoreByokPolicy" label="BYOK Policy" default="" reloadOnChange="true">
+				<property name="rs.security.keystore.file.byok" properties="signaturePropRefId" />
+			</item>
+
+		</subsection>
+
+		<subsection label="JWT Claims">
+
+			<conditions>
+				<condition not="true">
+					<equals name="signatureAlgorithm" value="NONE"/>
+				</condition>
+			</conditions>
+
+			<!-- Comportamento Claims Esistenti -->
+			<item type="select" name="existingClaimsPolicy" label="Claims Esistenti" default="preserve" reloadOnChange="false">
+				<values>
+					<value value="preserve" label="Preserva"/>
+					<value value="override" label="Sovrascrivi"/>
+					<value value="error" label="Rifiuta con errore"/>
+				</values>
+				<property name="jwt.claims.existing.policy"/>
+			</item>
+
+			<!-- Audience: hidden, fisso a manual per la richiesta -->
+			<item type="hidden" name="audienceMode" value="manual">
+				<property name="jwt.claims.aud.mode"/>
+			</item>
+
+			<!-- Audience manuale -->
+			<item type="text" name="audienceManual" label="Audience" required="true">
+				<property name="jwt.claims.aud.value"/>
+			</item>
+
+			<!-- Issuer -->
+			<item type="text" name="issuer" label="Issuer" required="true">
+				<property name="jwt.claims.iss"/>
+			</item>
+
+			<!-- TTL (Time To Live) -->
+			<item type="text" name="ttl" label="TTL (secondi)" required="true">
+				<property name="jwt.claims.exp.ttl"/>
+			</item>
+
+		</subsection>
+
+	</section>
+
+</config>

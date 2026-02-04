@@ -32,10 +32,10 @@ import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.OpenSPCoop2RestJsonMessage;
 import org.openspcoop2.message.OpenSPCoop2RestMessage;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.RestMessageSecurityToken;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
@@ -61,11 +61,14 @@ import org.openspcoop2.utils.certificate.KeystoreType;
 import org.openspcoop2.utils.certificate.remote.IRemoteStoreProvider;
 import org.openspcoop2.utils.certificate.remote.RemoteKeyType;
 import org.openspcoop2.utils.certificate.remote.RemoteStoreConfig;
+import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.security.CertificateValidityCheck;
 import org.openspcoop2.utils.security.JOSESerialization;
 import org.openspcoop2.utils.security.JWTOptions;
 import org.openspcoop2.utils.security.JsonDecrypt;
 import org.openspcoop2.utils.security.JsonVerifySignature;
+import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.IOCSPValidator;
 
 
@@ -96,22 +99,24 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 		boolean signatureProcess = false;
 		boolean encryptProcess = false;
 		try{
-			
+
 			if(!ServiceBinding.REST.equals(messageParam.getServiceBinding())){
 				throw new SecurityException(JOSECostanti.JOSE_ENGINE_DESCRIPTION+" usable only with REST Binding");
 			}
-			if(!MessageType.JSON.equals(messageParam.getMessageType())) {
-				throw new SecurityException(JOSECostanti.JOSE_ENGINE_DESCRIPTION+" usable only with REST Binding and a json message, found: "+messageParam.getMessageType());
+			boolean isJsonMessage = MessageType.JSON.equals(messageParam.getMessageType());
+			boolean isBinaryWithJoseContentType = MessageType.BINARY.equals(messageParam.getMessageType()) && JOSEUtils.isJoseContentType(messageParam);
+			if(!isJsonMessage && !isBinaryWithJoseContentType) {
+				throw new SecurityException(JOSECostanti.JOSE_ENGINE_DESCRIPTION+" usable only with REST Binding and a json message or a binary message with JOSE Content-Type, found MessageType:"+messageParam.getMessageType()+" ContentType:"+messageParam.getContentType());
 			}
-			OpenSPCoop2RestJsonMessage restJsonMessage = messageParam.castAsRestJson();
-			
+			OpenSPCoop2RestMessage<?> restMessage = messageParam.castAsRest();
+
     		RequestInfo requestInfo = null;
     		if(ctx!=null && ctx.containsKey(Costanti.REQUEST_INFO)) {
     			requestInfo = (RequestInfo) ctx.get(Costanti.REQUEST_INFO);
     		}
-    		
-			
-			
+
+
+
 			// ********** Leggo operazioni ***************
 			boolean encrypt = false;
 			boolean signature = false;
@@ -128,15 +133,15 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 					throw new SecurityException(JOSECostanti.JOSE_ENGINE_DESCRIPTION+"; action '"+actions[i]+"' unsupported");
 				}
 			}
-			
+
 			if(encrypt && signature) {
 				throw new SecurityException(JOSECostanti.JOSE_ENGINE_DESCRIPTION+" usable only with one function beetwen encrypt or signature");
 			}
 			if(!encrypt && !signature) {
 				throw new SecurityException(JOSECostanti.JOSE_ENGINE_DESCRIPTION+" require one function beetwen encrypt or signature");
 			}
-			
-			String httpPayload = restJsonMessage.getContent(bufferMessageReadOnly, idTransazione);
+
+			String httpPayload = restMessage.getContentAsString(bufferMessageReadOnly, idTransazione);
 			
 			
 			
@@ -273,7 +278,7 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 				String detachedSignature = null;
 				if(this.detached) {
 					detachedSignature = this.readDetachedSignatureFromMessage(messageSecurityContext.getIncomingProperties(), 
-							restJsonMessage, JOSECostanti.JOSE_ENGINE_VERIFIER_SIGNATURE_DESCRIPTION);
+							restMessage, JOSECostanti.JOSE_ENGINE_VERIFIER_SIGNATURE_DESCRIPTION);
 				}
 				
 				String signatureValidityCheck = (String) messageSecurityContext.getIncomingProperties().get(SecurityConstants.SIGNATURE_VALIDITY_CHECK);
@@ -653,32 +658,61 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 	@Override
 	public void detachSecurity(MessageSecurityContext messageSecurityContext, OpenSPCoop2RestMessage<?> messageParam)
 			throws SecurityException {
-		
+
 		try {
-		
+
 			if(!ServiceBinding.REST.equals(messageParam.getServiceBinding())){
 				throw new SecurityException(JOSECostanti.JOSE_ENGINE_DESCRIPTION+" usable only with REST Binding");
 			}
-			if(!MessageType.JSON.equals(messageParam.getMessageType())) {
-				throw new SecurityException(JOSECostanti.JOSE_ENGINE_DESCRIPTION+" usable only with REST Binding and a json message, found: "+messageParam.getMessageType());
+			boolean isJsonMessage = MessageType.JSON.equals(messageParam.getMessageType());
+			boolean isBinaryWithJoseContentType = MessageType.BINARY.equals(messageParam.getMessageType()) && JOSEUtils.isJoseContentType(messageParam);
+			if(!isJsonMessage && !isBinaryWithJoseContentType) {
+				throw new SecurityException(JOSECostanti.JOSE_ENGINE_DESCRIPTION+" usable only with REST Binding and a json message or a binary message with JOSE Content-Type, found MessageType:"+messageParam.getMessageType()+" ContentType:"+messageParam.getContentType());
 			}
-			OpenSPCoop2RestJsonMessage restJsonMessage = messageParam.castAsRestJson();
-					
+
+			String decodedPayload = null;
 			if(this.jsonVerifierSignature!=null) {
 				if(this.detached) {
-					this.deleteDetachedSignatureFromMessage(restJsonMessage, JOSECostanti.JOSE_ENGINE_VERIFIER_SIGNATURE_DESCRIPTION);
-				}	
+					this.deleteDetachedSignatureFromMessage(messageParam, JOSECostanti.JOSE_ENGINE_VERIFIER_SIGNATURE_DESCRIPTION);
+					decodedPayload = null; // già gestito in deleteDetachedSignatureFromMessage
+				}
 				else {
-					restJsonMessage.updateContent(this.jsonVerifierSignature.getDecodedPayload());
+					decodedPayload = this.jsonVerifierSignature.getDecodedPayload();
 				}
 			}
 			else if(this.jsonDecrypt!=null) {
-				restJsonMessage.updateContent(this.jsonDecrypt.getDecodedPayload());
+				decodedPayload = this.jsonDecrypt.getDecodedPayload();
 			}
 			else {
 				throw new SecurityException(JOSECostanti.JOSE_ENGINE_DESCRIPTION+" (detach method) usable only after one function beetwen encrypt or signature");
 			}
-			
+
+			if(decodedPayload!=null) {
+				String contentType = messageParam.getContentType();
+				if(isJsonMessage) {
+					messageParam.castAsRestJson().updateContent(decodedPayload);
+					if(contentType!=null && JOSECostanti.MEDIA_TYPE_JOSE_JSON.equalsIgnoreCase(ContentTypeUtilities.readBaseTypeFromContentType(contentType))) {
+						messageParam.setContentType(HttpConstants.CONTENT_TYPE_JSON);
+					}
+				}
+				else {
+					byte[]decodedContent = decodedPayload.getBytes();
+					/** se si arriva qua lo è if(isBinaryWithJoseContentType) {*/
+					if(JSONUtils.getInstance().isJson(decodedContent)) {
+						contentType = HttpConstants.CONTENT_TYPE_JSON;
+						messageParam.setContentType(contentType);
+					}
+					else if(MessageXMLUtils.getInstance(messageParam.getFactory()).isElement(decodedContent)) {
+						contentType = HttpConstants.CONTENT_TYPE_XML;
+						messageParam.setContentType(contentType);
+					}
+					/**}*/
+					messageParam.castAsRestBinary().updateContent(new org.openspcoop2.message.rest.BinaryContent(
+							new java.io.ByteArrayInputStream(decodedContent),
+							contentType));
+				}
+			}
+
 		}catch(Exception e) {
 			throw new SecurityException(e.getMessage(), e);
 		}

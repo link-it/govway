@@ -1,3 +1,10 @@
+2026-02-04  Tommaso Burlon <tommaso.burlon@link.it>
+
+	* [GovWayCore]
+	Introdotta nuova modalità di sicurezza messaggio 'JWS Compact Payload Enrichment' che arricchisce il payload JSON con claims JWT standard (iss, aud, exp, iat, nbf, jti) 
+	e lo firma in formato JWS Compact.    
+	Supporta policy configurabili per gestire conflitti con claims esistenti (preserve/override/error) e filtro su codici HTTP per le risposte.
+
 2026-02-03  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

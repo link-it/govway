@@ -207,6 +207,9 @@ public class HttpConstants {
 	public static final String CONTENT_TYPE_XML_PROBLEM_DETAILS_RFC_7807 = MimeTypeConstants.MEDIA_TYPE_XML_PROBLEM_DETAILS_RFC_7807;
 	public static final String CONTENT_TYPE_OCSP_REQUEST = MimeTypeConstants.MEDIA_TYPE_OCSP_REQUEST;
 	public static final String CONTENT_TYPE_OCSP_RESPONSE = MimeTypeConstants.MEDIA_TYPE_OCSP_RESPONSE;
+	public static final String CONTENT_TYPE_JWT = MimeTypeConstants.MEDIA_TYPE_JWT;
+	public static final String CONTENT_TYPE_JOSE = MimeTypeConstants.MEDIA_TYPE_JOSE;
+	public static final String CONTENT_TYPE_JOSE_JSON = MimeTypeConstants.MEDIA_TYPE_JOSE_JSON;
 	
 	/** SOAP */
 	public static final String SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION = "SOAPAction";
