@@ -22,6 +22,8 @@ package org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.opzioni
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 
 import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
@@ -263,7 +265,28 @@ public class HttpProxyThread extends AbstractBaseThread {
 	
 	public static final int PORT_NO_AUTH = 59900;
 	public static final int PORT_AUTH = 59901;
-	
+
+	private static final int PORT_CHECK_INTERVAL_MS = 500;
+	private static final int PORT_CHECK_TIMEOUT_MS = 30000;
+
+	private static boolean waitForPortReady(int port, int maxWaitMs) {
+		long start = System.currentTimeMillis();
+		int attempt = 0;
+		while((System.currentTimeMillis() - start) < maxWaitMs) {
+			attempt++;
+			try(Socket socket = new Socket()) {
+				socket.connect(new InetSocketAddress("127.0.0.1", port), 1000);
+				System.out.println("Port " + port + " ready (attempt " + attempt + ", elapsed " + (System.currentTimeMillis() - start) + "ms)");
+				return true;
+			} catch(IOException e) {
+				// porta non ancora pronta
+			}
+			Utilities.sleep(PORT_CHECK_INTERVAL_MS);
+		}
+		System.out.println("Port " + port + " NOT ready after " + maxWaitMs + "ms (" + attempt + " attempts)");
+		return false;
+	}
+
 	public static HttpProxyThread newHttpProxyThreadNoAuth(String command, int waitStartupServer) throws Exception {
 		return newHttpProxyThreadNoAuth(command, waitStartupServer, PORT_NO_AUTH, null, null);
 	}
@@ -271,24 +294,24 @@ public class HttpProxyThread extends AbstractBaseThread {
 		return newHttpProxyThreadNoAuth(command, waitStartupServer, PORT_AUTH, username, password);
 	}
 	private static HttpProxyThread newHttpProxyThreadNoAuth(String command, int waitStartupServer, int port, String username, String password) throws Exception {
-		
+
 		 boolean started = false;
 		 int index = 0;
 		 HttpProxyThread httpProxyThread = null;
 		 int tentativi = 30; // quando succede l'errore di indirizzo già utilizzato è perchè impiega molto tempo a rilasciare la porta in ambiente jenkins
 		 while(!started && index<tentativi) {
-		 
+
 			 httpProxyThread = new HttpProxyThread(command, port, username, password);
 			 try {
 				 try {
 					 httpProxyThread.start();
 					 System.out.println("START, sleep ...");
-					
+
 					 Utilities.sleep(waitStartupServer);
 				 }catch(Throwable t) {
 					 // ignore
 				 }
-				 
+
 				 started = httpProxyThread.debugMsg(false);
 			 }finally {
 				 if(!started) {
@@ -300,11 +323,16 @@ public class HttpProxyThread extends AbstractBaseThread {
 					 httpProxyThread.close();
 				 }
 			 }
-			 			 
+
 		 }
-		
+
+		 // Processo avviato, attendo che la porta sia effettivamente in ascolto
+		 if(started && !waitForPortReady(port, PORT_CHECK_TIMEOUT_MS)) {
+			 throw new Exception("mitmdump process alive but port " + port + " not accepting connections after " + PORT_CHECK_TIMEOUT_MS + "ms");
+		 }
+
 		 System.out.println("STARTED");
-		 
+
 		 return httpProxyThread;
 	}
 	
