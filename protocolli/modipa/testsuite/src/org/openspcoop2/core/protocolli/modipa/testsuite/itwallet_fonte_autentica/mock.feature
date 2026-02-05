@@ -64,20 +64,21 @@ Background:
         };
 
         // Aggiungi claims JWT se richiesto dagli header
-        var addAud = karate.get("requestHeaders['GovWay-TestSuite-Mock-Add-Aud']");
-        var addIss = karate.get("requestHeaders['GovWay-TestSuite-Mock-Add-Iss']");
-        var addExp = karate.get("requestHeaders['GovWay-TestSuite-Mock-Add-Exp']");
+        var getHeaderFn = karate.get('getHeader');
+        var addAud = getHeaderFn('GovWay-TestSuite-Mock-Add-Aud');
+        var addIss = getHeaderFn('GovWay-TestSuite-Mock-Add-Iss');
+        var addExp = getHeaderFn('GovWay-TestSuite-Mock-Add-Exp');
 
         if (addAud != null) {
-            response.aud = addAud[0];
+            response.aud = addAud;
         }
         if (addIss != null) {
-            response.iss = addIss[0];
+            response.iss = addIss;
         }
         if (addExp != null) {
-            response.exp = parseInt(addExp[0]);
-            response.iat = parseInt(addExp[0]) - 300;
-            response.nbf = parseInt(addExp[0]) - 300;
+            response.exp = parseInt(addExp);
+            response.iat = parseInt(addExp) - 300;
+            response.nbf = parseInt(addExp) - 300;
         }
 
         return response;
