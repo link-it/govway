@@ -31,7 +31,6 @@ import java.util.Properties;
 import java.util.TimeZone;
 
 import javax.faces.context.FacesContext;
-import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.commons.Filtri;
@@ -57,7 +56,6 @@ import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.listener.AbstractConsoleStartupListener;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.utils.BrowserInfo;
-import org.openspcoop2.web.monitor.core.utils.BrowserInfo.BrowserFamily;
 import org.slf4j.Logger;
 
 /****

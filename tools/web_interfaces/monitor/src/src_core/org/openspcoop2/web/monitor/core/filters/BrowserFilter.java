@@ -23,15 +23,11 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.EnumMap;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.web.monitor.core.constants.Costanti;
-import org.openspcoop2.web.monitor.core.core.Utils;
 import org.openspcoop2.web.monitor.core.listener.IEFilter;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.utils.BrowserInfo;
