@@ -41,7 +41,12 @@ g.tick text,
 }
 
 .tooltip-table-style {
-	word-wrap: break-word !important; 
+	word-wrap: break-word !important;
+	max-width: 250px;
+}
+
+.heatmap-tooltip-table-style {
+	word-wrap: break-word !important;
 	max-width: 250px;
 }
 
@@ -265,4 +270,256 @@ g.tick text,
 
 .background-color-1f79a7 {
 	background-color: #1f79a7;
+}
+
+/* Classi per gradiente heatmap (50 step da #FFFFFF a #3B83B7) */
+
+.heatmap-background-color-FFFFFF {
+	background-color: #FFFFFF;
+	fill: #FFFFFF;
+}
+
+.heatmap-background-color-FBFCFD {
+	background-color: #FBFCFD;
+	fill: #FBFCFD;
+}
+
+.heatmap-background-color-F7F9FC {
+	background-color: #F7F9FC;
+	fill: #F7F9FC;
+}
+
+.heatmap-background-color-F3F7FA {
+	background-color: #F3F7FA;
+	fill: #F3F7FA;
+}
+
+.heatmap-background-color-EFF4F9 {
+	background-color: #EFF4F9;
+	fill: #EFF4F9;
+}
+
+.heatmap-background-color-EBF2F7 {
+	background-color: #EBF2F7;
+	fill: #EBF2F7;
+}
+
+.heatmap-background-color-E7EFF6 {
+	background-color: #E7EFF6;
+	fill: #E7EFF6;
+}
+
+.heatmap-background-color-E3EDF4 {
+	background-color: #E3EDF4;
+	fill: #E3EDF4;
+}
+
+.heatmap-background-color-DFEAF3 {
+	background-color: #DFEAF3;
+	fill: #DFEAF3;
+}
+
+.heatmap-background-color-DBE8F1 {
+	background-color: #DBE8F1;
+	fill: #DBE8F1;
+}
+
+.heatmap-background-color-D7E5F0 {
+	background-color: #D7E5F0;
+	fill: #D7E5F0;
+}
+
+.heatmap-background-color-D3E3EE {
+	background-color: #D3E3EE;
+	fill: #D3E3EE;
+}
+
+.heatmap-background-color-CFE0ED {
+	background-color: #CFE0ED;
+	fill: #CFE0ED;
+}
+
+.heatmap-background-color-CBDEEB {
+	background-color: #CBDEEB;
+	fill: #CBDEEB;
+}
+
+.heatmap-background-color-C7DBEA {
+	background-color: #C7DBEA;
+	fill: #C7DBEA;
+}
+
+.heatmap-background-color-C3D9E8 {
+	background-color: #C3D9E8;
+	fill: #C3D9E8;
+}
+
+.heatmap-background-color-BFD6E7 {
+	background-color: #BFD6E7;
+	fill: #BFD6E7;
+}
+
+.heatmap-background-color-BBD3E6 {
+	background-color: #BBD3E6;
+	fill: #BBD3E6;
+}
+
+.heatmap-background-color-B7D1E4 {
+	background-color: #B7D1E4;
+	fill: #B7D1E4;
+}
+
+.heatmap-background-color-B3CEE3 {
+	background-color: #B3CEE3;
+	fill: #B3CEE3;
+}
+
+.heatmap-background-color-AFCCE1 {
+	background-color: #AFCCE1;
+	fill: #AFCCE1;
+}
+
+.heatmap-background-color-ABC9E0 {
+	background-color: #ABC9E0;
+	fill: #ABC9E0;
+}
+
+.heatmap-background-color-A7C7DE {
+	background-color: #A7C7DE;
+	fill: #A7C7DE;
+}
+
+.heatmap-background-color-A3C4DD {
+	background-color: #A3C4DD;
+	fill: #A3C4DD;
+}
+
+.heatmap-background-color-9FC2DB {
+	background-color: #9FC2DB;
+	fill: #9FC2DB;
+}
+
+.heatmap-background-color-9BBFDA {
+	background-color: #9BBFDA;
+	fill: #9BBFDA;
+}
+
+.heatmap-background-color-97BDD8 {
+	background-color: #97BDD8;
+	fill: #97BDD8;
+}
+
+.heatmap-background-color-93BAD7 {
+	background-color: #93BAD7;
+	fill: #93BAD7;
+}
+
+.heatmap-background-color-8FB8D5 {
+	background-color: #8FB8D5;
+	fill: #8FB8D5;
+}
+
+.heatmap-background-color-8BB5D4 {
+	background-color: #8BB5D4;
+	fill: #8BB5D4;
+}
+
+.heatmap-background-color-87B3D2 {
+	background-color: #87B3D2;
+	fill: #87B3D2;
+}
+
+.heatmap-background-color-83B0D1 {
+	background-color: #83B0D1;
+	fill: #83B0D1;
+}
+
+.heatmap-background-color-7FAECF {
+	background-color: #7FAECF;
+	fill: #7FAECF;
+}
+
+.heatmap-background-color-7BABCE {
+	background-color: #7BABCE;
+	fill: #7BABCE;
+}
+
+.heatmap-background-color-77A8CD {
+	background-color: #77A8CD;
+	fill: #77A8CD;
+}
+
+.heatmap-background-color-73A6CB {
+	background-color: #73A6CB;
+	fill: #73A6CB;
+}
+
+.heatmap-background-color-6FA3CA {
+	background-color: #6FA3CA;
+	fill: #6FA3CA;
+}
+
+.heatmap-background-color-6BA1C8 {
+	background-color: #6BA1C8;
+	fill: #6BA1C8;
+}
+
+.heatmap-background-color-679EC7 {
+	background-color: #679EC7;
+	fill: #679EC7;
+}
+
+.heatmap-background-color-639CC5 {
+	background-color: #639CC5;
+	fill: #639CC5;
+}
+
+.heatmap-background-color-5F99C4 {
+	background-color: #5F99C4;
+	fill: #5F99C4;
+}
+
+.heatmap-background-color-5B97C2 {
+	background-color: #5B97C2;
+	fill: #5B97C2;
+}
+
+.heatmap-background-color-5794C1 {
+	background-color: #5794C1;
+	fill: #5794C1;
+}
+
+.heatmap-background-color-5392BF {
+	background-color: #5392BF;
+	fill: #5392BF;
+}
+
+.heatmap-background-color-4F8FBE {
+	background-color: #4F8FBE;
+	fill: #4F8FBE;
+}
+
+.heatmap-background-color-4B8DBC {
+	background-color: #4B8DBC;
+	fill: #4B8DBC;
+}
+
+.heatmap-background-color-478ABB {
+	background-color: #478ABB;
+	fill: #478ABB;
+}
+
+.heatmap-background-color-4388B9 {
+	background-color: #4388B9;
+	fill: #4388B9;
+}
+
+.heatmap-background-color-3F85B8 {
+	background-color: #3F85B8;
+	fill: #3F85B8;
+}
+
+.heatmap-background-color-3B83B7 {
+	background-color: #3B83B7;
+	fill: #3B83B7;
 }
