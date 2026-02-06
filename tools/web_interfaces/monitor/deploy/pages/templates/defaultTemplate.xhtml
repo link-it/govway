@@ -8,6 +8,7 @@
 	markupType="html5" contentType="text/html" sidebarPosition="left"
 	theme="simple" sidebarWidth="275">
 	<f:loadBundle var="msg" basename="messages" />
+	<a4j:loadScript src="/scripts/polyfill-ie11.min.js" rendered="#{_abilita_polyfill_ie_}"/>
 	<a4j:loadScript src="resource://jquery.js"/>
 	<a4j:loadScript src="resource://org/richfaces/renderkit/html/scripts/jquery.hotkeys.js"/>
 	<a4j:loadScript src="resource://scripts/utils.min.js"/>

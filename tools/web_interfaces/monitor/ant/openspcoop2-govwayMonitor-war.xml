@@ -111,6 +111,10 @@
 		<copy file="${properties_govwayMonitor}/govway.msgDiagnostici.properties" todir="${build_govwayMonitor}/tmpNative2ASCII_src" />
 		<native2ascii src="${build_govwayMonitor}/tmpNative2ASCII_src" dest="${build_govwayMonitor}/tmpNative2ASCII_dest" />
 
+		<!-- Polyfill IE11 dalla lib condivisa -->
+		<mkdir dir="${build_govwayMonitor}/tmp_scripts" />
+		<copy file="${jslib}/polyfill-ie11.min.js" todir="${build_govwayMonitor}/tmp_scripts" />
+
 		<war destfile="${dist_govwayMonitor}/govwayMonitor.war" webxml="${build_govwayMonitor_war}/WEB-INF/web.xml">
 
 			<!-- Informazioni sulla versione -->
@@ -131,6 +135,7 @@
 				<include name="**/*" />
 				<exclude name="properties/**" />
 			</fileset>
+			<zipfileset dir="${build_govwayMonitor}/tmp_scripts" prefix="scripts" />
 			<fileset dir="${deploy_govwayMonitor}/pages">
 				<include name="**/*" />
 				<exclude name="${monitoraggio_allarme_pages}" />
@@ -310,6 +315,7 @@
 			</fileset>
 		</war>
 		<delete dir="${build_govwayMonitor}/tmp" />
+		<delete dir="${build_govwayMonitor}/tmp_scripts" />
 		<delete file="${build_govwayMonitor}/tmpNative2ASCII_dest/govway.msgDiagnostici.properties" deleteonexit="true"/>
 		<delete dir="${build_govwayMonitor}/tmpNative2ASCII_dest" deleteonexit="true"/>
 		<delete file="${build_govwayMonitor}/tmpNative2ASCII_src/govway.msgDiagnostici.properties" deleteonexit="true"/>

@@ -139,6 +139,8 @@ public class BrowserFilter implements Filter {
 
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpServletResponse response = (HttpServletResponse) res;
+		
+		request.setAttribute(BrowserInfo.REQUEST_ATTRIBUTE_ABILITA_POLYFILL_IE, false);
 
 		// Analisi dello user agent
 		String userAgent = request.getHeader(Costanti.USER_AGENT_HEADER_NAME);
@@ -161,6 +163,11 @@ public class BrowserFilter implements Filter {
 				boolean usaSVG = usaSVG(request);
 				
 				if(browserInfo.getBrowserFamily().equals(BrowserFamily.IE)){
+					
+					if (browserversion == null || browserversion.doubleValue() <= 11D) {
+						log.debug("Imposto polyfill per browser IE legacy.");
+						request.setAttribute(BrowserInfo.REQUEST_ATTRIBUTE_ABILITA_POLYFILL_IE, true);
+					}
 
 					boolean abilitaModalitaIE8 = true;
 					if(usaSVG){

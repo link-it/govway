@@ -39,6 +39,8 @@ import org.apache.commons.lang.StringUtils;
 public class BrowserInfo implements Serializable{
 
 	public static final String USER_AGENT_HEADER_NAME = "User-Agent";
+	/* ABILITA POLYFILL IE <=11 */
+	public static final String REQUEST_ATTRIBUTE_ABILITA_POLYFILL_IE = "_abilita_polyfill_ie_";
 
 	/**
 	 * 

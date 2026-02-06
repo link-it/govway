@@ -1,14 +1,41 @@
 
-
 function createHeatMapChart(chartId, dataString, type, w, h, barwidth) {
-
-    if(dataString.length == 0 || !type) {
-        return;
-    }
 
     var chart = document.getElementById(chartId);
     while (chart.firstChild) {
         chart.removeChild(chart.firstChild);
+    }
+
+    // Check IE11 - browser non supportato
+    if (isIE11()) {
+        var msgContainer = document.createElement('div');
+        msgContainer.style.cssText = 'display:flex;align-items:center;justify-content:center;height:' + h + 'px;width:' + w + 'px;background-color:#f8f9fa;border:1px solid #dee2e6;border-radius:4px;';
+
+        var msgBox = document.createElement('div');
+        msgBox.style.cssText = 'text-align:center;padding:40px;max-width:500px;';
+
+        var iconDiv = document.createElement('div');
+        iconDiv.style.cssText = 'font-size:48px;color:#dc3545;margin-bottom:20px;';
+        iconDiv.innerHTML = '&#9888;'; // Warning symbol
+
+        var titleDiv = document.createElement('div');
+        titleDiv.style.cssText = 'font-size:18px;font-weight:bold;color:#343a40;margin-bottom:10px;';
+        titleDiv.innerText = 'Browser non supportato';
+
+        var textDiv = document.createElement('div');
+        textDiv.style.cssText = 'font-size:14px;color:#6c757d;line-height:1.5;';
+        textDiv.innerText = 'Internet Explorer 11 non \u00e8 pi\u00f9 supportato per la visualizzazione dei grafici. Si prega di utilizzare un browser moderno come Microsoft Edge, Google Chrome, Mozilla Firefox o Safari.';
+
+        msgBox.appendChild(iconDiv);
+        msgBox.appendChild(titleDiv);
+        msgBox.appendChild(textDiv);
+        msgContainer.appendChild(msgBox);
+        chart.appendChild(msgContainer);
+        return;
+    }
+
+    if(dataString.length == 0 || !type) {
+        return;
     }
 
     var dataJson = JSON.parse(dataString);

@@ -116,14 +116,15 @@ if(browsername != null){
 	// Microsoft IE (Trident e' il browsername che viene impostato da IE11)
 	// <meta http-equiv="X-UA-Compatible" content="IE=8">
 	if(browsername.equalsIgnoreCase("MSIE") ||  browsername.equalsIgnoreCase("Trident")){
-		// fix ie10
+		// fix ie10/ie11 - carica polyfill per funzioni ES6 non supportate
 		%>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<script type="text/javascript" src="js/polyfill-ie11.min.js" nonce="<%= randomNonce %>"></script>
 		<script type="text/javascript" nonce="<%= randomNonce %>">
 			window.location.hash="no-back-button";
 			window.location.hash="Again-No-back-button";//again because google chrome don't insert first hash into history
 			window.onhashchange=function(){window.location.hash="no-back-button";}
-		</script> 
+		</script>
 		<%
 	
 	} else if(browsername.equalsIgnoreCase("Firefox")){ // Firefox
