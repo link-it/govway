@@ -245,10 +245,7 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 	
 	@Override
 	public String getData(){
-		if(((StatsSearchForm)this.search).isUseGraficiSVG())
-			return this.getJsonEngine(this.ricalcoloVisualizzaComandiSelezioneNumeroLabel);
-		
-		return this.getXml();
+		return this.getJsonEngine(this.ricalcoloVisualizzaComandiSelezioneNumeroLabel);
 	}
 	
 

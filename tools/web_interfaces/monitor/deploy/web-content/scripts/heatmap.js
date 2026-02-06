@@ -235,10 +235,12 @@ function generateHeatMapChart(id, _dataJson, _type, _size, _barwidth) {
 			d3.select(svgIdSharp).attr('height', size_height);
 		}
 	  
-	  	// Build color scale
-		var myColor = d3.scaleLinear()
-	  		.range([dp.heatMapColorRange[0], dp.heatMapColorRange[1]])
-	  		.domain([dp.heatMapColorDomain[0],dp.heatMapColorDomain[1]]);
+	  	// Build color scale usando i 50 step discreti
+		var minDomain = dp.heatMapColorDomain[0];
+		var maxDomain = dp.heatMapColorDomain[1];
+		var myColor = function(value) {
+			return getHeatmapFillColor(value, minDomain, maxDomain);
+		};
 	
 		// create a tooltip
 	  	var tooltip = d3.select(cId)
@@ -554,6 +556,58 @@ function generateHeatMapChart(id, _dataJson, _type, _size, _barwidth) {
 		
 }
 
+// Array dei 50 colori del gradiente heatmap (da #FFFFFF a #3B83B7)
+var heatmapGradientColors = [
+    'FFFFFF', 'FBFCFD', 'F7F9FC', 'F3F7FA', 'EFF4F9', 'EBF2F7', 'E7EFF6', 'E3EDF4', 'DFEAF3', 'DBE8F1',
+    'D7E5F0', 'D3E3EE', 'CFE0ED', 'CBDEEB', 'C7DBEA', 'C3D9E8', 'BFD6E7', 'BBD3E6', 'B7D1E4', 'B3CEE3',
+    'AFCCE1', 'ABC9E0', 'A7C7DE', 'A3C4DD', '9FC2DB', '9BBFDA', '97BDD8', '93BAD7', '8FB8D5', '8BB5D4',
+    '87B3D2', '83B0D1', '7FAECF', '7BABCE', '77A8CD', '73A6CB', '6FA3CA', '6BA1C8', '679EC7', '639CC5',
+    '5F99C4', '5B97C2', '5794C1', '5392BF', '4F8FBE', '4B8DBC', '478ABB', '4388B9', '3F85B8', '3B83B7'
+];
+
+/**
+ * Calcola il colore hex del gradiente heatmap in base al valore
+ * @param value - il valore da mappare
+ * @param minDomain - valore minimo del dominio
+ * @param maxDomain - valore massimo del dominio
+ * @returns colore hex (es. '#FFFFFF')
+ */
+function getHeatmapFillColor(value, minDomain, maxDomain) {
+    // Calcola la posizione normalizzata (0-1) del valore nel dominio
+    var t = (maxDomain === minDomain) ? 0 : (value - minDomain) / (maxDomain - minDomain);
+    t = Math.max(0, Math.min(1, t)); // clamp tra 0 e 1
+
+    // Calcola l'indice dello step (0-49)
+    var stepIndex = Math.round(t * 49);
+
+    // Restituisce il colore hex corrispondente
+    return '#' + heatmapGradientColors[stepIndex];
+}
+
+/**
+ * Costruisce il nome della classe CSS dal colore (rgb o hex)
+ * @param fillColor - colore in formato 'rgb(r,g,b)' o '#XXXXXX'
+ * @returns nome della classe CSS (es. 'heatmap-background-color-FFFFFF')
+ */
+function getHeatmapColorClass(fillColor) {
+    var hex;
+
+    // Parse rgb(r, g, b)
+    var rgbMatch = fillColor.match(/rgb\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)/i);
+    if (rgbMatch) {
+        var r = parseInt(rgbMatch[1], 10);
+        var g = parseInt(rgbMatch[2], 10);
+        var b = parseInt(rgbMatch[3], 10);
+        // Converti in hex
+        hex = ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
+    } else {
+        // Già in formato hex
+        hex = fillColor.replace('#', '').toUpperCase();
+    }
+
+    return 'heatmap-background-color-' + hex;
+}
+
 function generaTooltip(d, currentCell, defaultTitleFormat, defaultValueFormat, color) {
     var nameFormat = function (name) {
                 return name;
@@ -564,15 +618,18 @@ function generaTooltip(d, currentCell, defaultTitleFormat, defaultValueFormat, c
 
         if (!text) {
             title = d.xLabel;
-            text = "<table class='" + tooltipClassName + "' style='word-wrap: break-word !important; max-width: 250px;'>" + (title || title === 0 ? "<tr><th colspan='2'>" + title + "</th></tr>" : "");
+            text = "<table class='" + tooltipClassName + " heatmap-tooltip-table-style'>" + (title || title === 0 ? "<tr><th colspan='2'>" + title + "</th></tr>" : "");
         }
 
         name = nameFormat(d.yLabel);
-        value =  d.totale_tooltip; 
+        value =  d.totale_tooltip;
         bgcolor = currentCell.style.fill;
 
+        // Converti il colore nella classe CSS più vicina
+        var bgcolorclass = getHeatmapColorClass(bgcolor);
+
         text += "<tr class='" + tooltipRowClassName  + "'>";
-        text += "<td class='name'><span style='background-color:" + bgcolor + "'></span>" + name + "</td>";
+        text += "<td class='name'><span class='" + bgcolorclass + "'></span>" + name + "</td>";
         text += "<td class='value'>" + value + "</td>";
         text += "</tr>";
     return text + "</table>";

@@ -61,34 +61,14 @@ public class BrowserFilter implements Filter {
 
 	/** Logger utilizzato per debug. * */
 	private static Logger log = LoggerManager.getPddMonitorCoreLogger();
-	
-	private static Map<BrowserFamily, Double> mappaAbilitazioneGraficiSVG;
+
 	private static Map<BrowserFamily, Double> mappaAbilitazioneVistaTransazioniCustom;
 
 	// configurazione filtro
 	@SuppressWarnings("unused")
 	private FilterConfig filterConfig = null;
-
-	public static final String PARAMETRO_SVG = "usaSVG";
-	private static final String PARAMETRO_SVG_FORM_STATS = "sf_usaSVG";
-	private static final String PARAMETRO_SVG_FORM_MENU = "tf_usaSVG";
-	private static final String PARAMETRO_SVG_POLL_STATO = "ps_usaSVG";
-	private static final String PARAMETRO_GENERA_REPORT = "generaReport";
-	private static final String PARAMETRO_ESITI_LIVE = "esiti_live";
-	private static final String PARAMETRO_TIPO_REPORT = "tipoReportCombo";
-	private static final String PARAMETRO_TIPO_REPORT_TABELLA = "Tabella";
-	private List<String> listaPagineNoIE8 = null;
 	
 	private static synchronized void loadMappaBrowser(){
-		if(mappaAbilitazioneGraficiSVG == null)
-			mappaAbilitazioneGraficiSVG = new EnumMap<>(BrowserInfo.BrowserFamily.class);
-
-		mappaAbilitazioneGraficiSVG.put(BrowserFamily.CHROME, 4D);
-		mappaAbilitazioneGraficiSVG.put(BrowserFamily.FIREFOX, 3D);
-		mappaAbilitazioneGraficiSVG.put(BrowserFamily.IE, 9D);
-		mappaAbilitazioneGraficiSVG.put(BrowserFamily.OPERA, 10.1D);
-		mappaAbilitazioneGraficiSVG.put(BrowserFamily.SAFARI, 3.2D);
-		
 		if(mappaAbilitazioneVistaTransazioniCustom == null)
 			mappaAbilitazioneVistaTransazioniCustom = new EnumMap<>(BrowserInfo.BrowserFamily.class);
 
@@ -99,22 +79,6 @@ public class BrowserFilter implements Filter {
 		mappaAbilitazioneVistaTransazioniCustom.put(BrowserFamily.SAFARI, 9D);
 	}
 
-	public static boolean disabilitaGraficiSVG(BrowserInfo browserInfo){
-		boolean disabilita = false;
-
-		if(mappaAbilitazioneGraficiSVG == null)
-			loadMappaBrowser();
-
-		if(browserInfo != null){
-			Double versione = mappaAbilitazioneGraficiSVG.get(browserInfo.getBrowserFamily());
-
-			if(versione != null && browserInfo.getVersion() != null && versione.doubleValue() >= browserInfo.getVersion().doubleValue())
-				disabilita = true;
-		}
-
-		return disabilita;
-	}
-	
 	public static boolean abilitaVisualizzazioneTransazioniCustom(BrowserInfo browserInfo){
 		boolean abilita = false;
 
@@ -154,18 +118,9 @@ public class BrowserFilter implements Filter {
 
 				log.debug("Browser Riconosciuto: Name [{}] Version [{}].", browsername, browserversion);
 
-				//controllo se e' presente il parametro usaSVG
-				boolean usaSVG = usaSVG(request);
-				
+
 				if(browserInfo.getBrowserFamily().equals(BrowserFamily.IE)){
 
-					boolean abilitaModalitaIE8 = true;
-					if(usaSVG){
-						log.debug("Richiesto Accesso per La risorsa protetta.");
-						abilitaModalitaIE8 = disabilitaGraficiSVG(browserInfo);
-					}
-
-					log.debug("La risorsa richiesta {}verra' visualizzata in modalita compatibilita IE8.", (abilitaModalitaIE8 ? "" : "non "));
 					//Imposto l'header http necessario per forzare la visualizzazione.
 					// per tutte le versioni
 					response.setHeader("X-UA-Compatible", "IE=edge");
@@ -231,93 +186,6 @@ public class BrowserFilter implements Filter {
 	@Override
 	public void init(FilterConfig config) throws ServletException {
 		this.filterConfig = config;
-		
-		try {
-			this.listaPagineNoIE8 = Arrays.asList(ContentAuthorizationManager.getInstance().getListaPagineNoIE8());
-		} catch (Exception e) {
-			throw new ServletException(e);
-		}
 	}
 	
-	
-	/**
-	 * Controlla che la pagina richiesta sia tra quelle che non necessitano di filtro sui contenuti,
-	 * sono "libere" le pagine di login e timeout, e i path delle risorse richiesta dinamicamente dal framework 
-	 *	
-	 */
-	public boolean usaSVG(HttpServletRequest httpServletRequest) {
-		int svgLength = 0;
-		String svg = null;
-		
-		
-		Enumeration<String> parameterNames = httpServletRequest.getParameterNames(); 
-		
-		while (parameterNames.hasMoreElements()) {
-			String parName = parameterNames.nextElement();
-			String parValue = httpServletRequest.getParameter(parName);
-			log.trace("Parametro [{}] con Valore [{}].", parName, parValue);
-			if(parName!= null && parName.endsWith(PARAMETRO_SVG)){
-				svg = parValue;
-				
-				log.trace("Parametro [{}] con Valore [{}] Utilizzato per pilotare il disegno dei grafici.", parName, parValue);
-				
-				// controllo solo nei form delle statistiche se sto nella schermata form non devo fare cambio di modalita' se navigo si.
-				if(parName.endsWith(PARAMETRO_SVG_FORM_STATS)){
-					 String paramGeneraReport = getParamValue(httpServletRequest, PARAMETRO_GENERA_REPORT);
-					 String paramTipoReport = getParamValue(httpServletRequest, PARAMETRO_TIPO_REPORT);
-					 log.trace("Caso speciale Form Statistiche: Parametro [{}] con Valore [{}] Utilizzato per pilotare il disegno dei grafici.", PARAMETRO_GENERA_REPORT, paramGeneraReport);
-					 if(StringUtils.isEmpty(paramGeneraReport))
-						 svg = null;
-					 else {
-						 if(StringUtils.isNotEmpty(paramTipoReport) && paramTipoReport.equals(PARAMETRO_TIPO_REPORT_TABELLA)){
-							 log.trace("Caso speciale Form Statistiche: Parametro [{}] con Valore [{}] Visualizzazione del report in forma di tabella.", PARAMETRO_TIPO_REPORT, paramTipoReport);
-							 svg = null;
-						 }
-					 }
-				}
-				
-				// attivo il controllo SVG solo se ho cliccato nel menu' esitiLive
-				if(parName.endsWith(PARAMETRO_SVG_FORM_MENU)){
-					 String paramEsitiLive =  getParamValue(httpServletRequest, PARAMETRO_ESITI_LIVE);
-					 log.trace("Caso speciale Menu': Parametro [{}] con Valore [{}] Utilizzato per pilotare il disegno dei grafici.", PARAMETRO_ESITI_LIVE, paramEsitiLive);
-					 if(StringUtils.isEmpty(paramEsitiLive))
-						 svg = null;
-				}
-				
-				// attivo il controllo SVG quando il polling dello stato si refresha 
-				if(parName.endsWith(PARAMETRO_SVG_POLL_STATO)){
-					boolean thisResource = !Utils.isContentAuthorizationRequiredForThisResource(httpServletRequest, this.listaPagineNoIE8);
-					
-					log.trace("Caso speciale Menu': Parametro [{}] con Valore [{}] Utilizzato per pilotare il disegno dei grafici.", PARAMETRO_SVG_POLL_STATO, thisResource);
-					if(!thisResource)
-						 svg = null;
-				}
-				
-				break;
-			}
-		}
-
-		if (svg != null) {
-			svgLength = svg.length();
-		} 
-		
-		log.trace("Attivo controllo SVG [{}]", (svgLength > 0 ? "SI" : "NO" ));
-		
-		return svgLength > 0;
-	}
-	
-	public static String getParamValue(HttpServletRequest httpServletRequest, String paramName){
-		Enumeration<String> parameterNames = httpServletRequest.getParameterNames(); 
-		
-		while (parameterNames.hasMoreElements()) {
-			String parName = parameterNames.nextElement();
-			if(parName!= null && parName.contains(paramName)){
-				String parameterValue = httpServletRequest.getParameter(parName);
-				log.debug("Trovato Parametro [{}] con Valore [{}].", parName, parameterValue);
-				return parameterValue;
-			}
-		}
-		return null;
-			
-	}
 }

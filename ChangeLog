@@ -1,3 +1,13 @@
+2026-02-06 Giuliano Pintori <pintori@link.it>
+
+	* [GovWayMonitor]
+	Risolto Bug #1658
+	- Rimosso FusionCharts (Flash): eliminata completamente la libreria FusionCharts e tutti i file .swf, 
+	  già di fatto inutilizzati poiché abilitati solo su browser obsoleti, 
+	  migrando i grafici statistiche esclusivamente su SVG (D3/C3) e rimuovendo ogni logica condizionale Flash/SVG. 
+	- Eliminato supporto IE11.                                                                                                                                  
+	- Refactoring console Monitor: rimossi controlli browser obsoleti e proprietà inutilizzate; aggiornati CSS/JS heatmap.
+
 2026-02-04  Tommaso Burlon <tommaso.burlon@link.it>
 
 	* [GovWayCore]

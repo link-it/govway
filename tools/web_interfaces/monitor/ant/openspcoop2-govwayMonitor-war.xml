@@ -161,7 +161,6 @@
 			<!-- <zipfileset dir="${jslib}" prefix="js" /> -->
 
 			<zipfileset dir="${deploy_govwayMonitor}/web-content/css" prefix="css" />
-			<zipfileset dir="${deploy_govwayMonitor}/web-content/FusionCharts" prefix="FusionCharts" />
 			<zipfileset dir="${deploy_govwayMonitor}/web-content/scripts" prefix="scripts" >
 				<include name="c3.min.js"/>
 				<include name="ChartMap.min.js"/>

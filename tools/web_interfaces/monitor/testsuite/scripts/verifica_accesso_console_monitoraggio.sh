@@ -60,7 +60,7 @@ do_logout() {
 		-H 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8' \
 		-H 'Referer: '"${BASEURL}"'/public/login.jsf' \
 		-H "Cookie: ${cookie}" \
-		-d "j_id10=j_id10&ps_usaSVG=true&_csrf=${csrf}&javax.faces.ViewState=j_id2&j_id33%3Ahidden=j_id33" \
+		-d "j_id10=j_id10&_csrf=${csrf}&javax.faces.ViewState=j_id2&j_id33%3Ahidden=j_id33" \
 		"${BASEURL}/public/transazioni.jsf" > "$output_file" 2>&1
 	
 	echo "$output_file"
@@ -69,7 +69,7 @@ do_logout() {
 # Funzione helper per verificare il successo del login
 check_login_success() {
 	local response="$1"
-	if echo "$response" | grep -q "/govwayMonitor/commons/pages/welcome.jsf?usaSVG=true" || \
+	if echo "$response" | grep -q "/govwayMonitor/commons/pages/welcome.jsf" || \
 	   echo "$response" | grep -q "/govwayMonitor/transazioni/pages/form/transazioni.jsf"; then
 		return 0
 	else
@@ -197,7 +197,7 @@ else
 fi
 
 # Verifica che il cookie2 funzioni
-RESPONSE_CHECK=$(curl -s -X GET -H "Cookie: ${COOKIE2}" "${BASEURL}/commons/pages/welcome.jsf?usaSVG=true")
+RESPONSE_CHECK=$(curl -s -X GET -H "Cookie: ${COOKIE2}" "${BASEURL}/commons/pages/welcome.jsf")
 if echo "$RESPONSE_CHECK" | grep -q "govwayMonitor" || echo "$RESPONSE_CHECK" | grep -q "welcome"; then
 	echo "     Verifica accesso dopo login: OK"
 else
@@ -235,7 +235,7 @@ else
 fi
 
 # Verifica che il cookie3 funzioni
-RESPONSE_CHECK=$(curl -s -X GET -H "Cookie: ${COOKIE3}" "${BASEURL}/commons/pages/welcome.jsf?usaSVG=true")
+RESPONSE_CHECK=$(curl -s -X GET -H "Cookie: ${COOKIE3}" "${BASEURL}/commons/pages/welcome.jsf")
 if echo "$RESPONSE_CHECK" | grep -q "govwayMonitor" || echo "$RESPONSE_CHECK" | grep -q "welcome"; then
 	echo "     Verifica accesso dopo login: OK"
 else

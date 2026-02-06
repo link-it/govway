@@ -128,7 +128,7 @@
 		<from-view-id>*</from-view-id>
 		<navigation-case>
 			<from-outcome>welcome</from-outcome>
-			<to-view-id>/commons/pages/welcome.xhtml?usaSVG=true</to-view-id>
+			<to-view-id>/commons/pages/welcome.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
 		<navigation-case>
@@ -169,7 +169,7 @@
 		<from-view-id>/public/login.xhtml</from-view-id>
 		<navigation-case>
 			<from-outcome>loginSuccess</from-outcome>
-			<to-view-id>/commons/pages/welcome.jsf?usaSVG=true</to-view-id>
+			<to-view-id>/commons/pages/welcome.jsf</to-view-id>
 			<redirect />
 		</navigation-case>
 		<navigation-case>
@@ -181,7 +181,7 @@
 		<from-view-id>/core/pages/form/userPasswordScaduta.xhtml</from-view-id>
 		<navigation-case>
 			<from-outcome>loginSuccess</from-outcome>
-			<to-view-id>/commons/pages/welcome.jsf?usaSVG=true</to-view-id>
+			<to-view-id>/commons/pages/welcome.jsf</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<navigation-rule>
