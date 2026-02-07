@@ -1,3 +1,11 @@
+2026-02-06 Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole, GovWayMonitor]
+	Risolto Bug #1713
+	È stato reintrodotto il supporto a Internet Explorer 11 per la console di gestione e 
+	per le funzionalità di ricerca delle transazioni nella console di monitoraggio.
+	I report statistici, invece, non risultano più utilizzabili con questa versione del browser.
+
 2026-02-04  Tommaso Burlon <tommaso.burlon@link.it>
 
 	* [GovWayCore]
