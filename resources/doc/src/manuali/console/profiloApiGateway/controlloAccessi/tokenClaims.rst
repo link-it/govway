@@ -63,7 +63,9 @@ Di seguito alcuni esempi:
 - client_id=${jsonPath:EXPR} : viene verificato che il claim 'client_id' possieda lo stesso valore estratto dalla richiesta json tramite l'espressione jsonPath EXPR.
 - client_id=${transportContext:credential.certificateChain.certificate.subject.info(CN)}: viene verificato che il claim 'client_id' possieda lo stesso valore estratto dal 'CN' del certificato TLS client.
 
-Per verificare un attributo indicarlo con il prefisso 'attribute.' nella forma 'attribute.nome=valore'. Di seguito alcuni esempi
+**Controllo di attributi ottenuti tramite Attribute Authority**
+
+Per verificare un attributo (:ref:`apiGwIdentificazioneAttributi`) indicarlo con il prefisso 'attribute.' nella forma 'attribute.nome=valore'. Di seguito alcuni esempi
 
 - attribute.sesso=m : viene verificato che l'attributo 'sesso' possieda il valore m
 - attribute.stato=3,5,6 : viene verificato che l'attributo 'stato' possieda il valore 3 o 5 o 6
@@ -72,3 +74,38 @@ Nel caso la configurazione relativa all':ref:`apiGwIdentificazioneAttributi` pre
 
 - aa.AA2.attribute.sesso=m : viene verificato che l'attributo 'sesso', prelevato tramite l'Attribute Authority 'AA2', possia il valore m
 - aa.AA2.attribute.stato=3,5,6 : viene verificato che l'attributo 'stato', prelevato tramite l'Attribute Authority 'AA2', possia il valore 3 o 5 o 6
+
+**Logica AND e OR per claim con valori multipli (array)**
+
+Quando il claim nel token contiene un array di valori, la logica di verifica dipende dalla sintassi utilizzata nella configurazione:
+
+- *Logica OR (virgola)*: indicando i valori separati da virgola su un'unica riga, viene verificato che almeno **uno** dei valori elencati sia presente tra i valori del claim nel token.
+
+  Esempio di configurazione::
+
+      location=livorno,pisa
+
+  Il controllo è soddisfatto se il claim 'location' contiene 'livorno' oppure 'pisa' (o entrambi).
+
+- *Logica AND (righe multiple)*: indicando lo stesso claim su righe diverse, **tutti** i valori configurati devono essere presenti tra i valori del claim nel token.
+
+  Esempio di configurazione::
+
+      location=livorno
+      location=pisa
+
+  Il controllo è soddisfatto solamente se il claim 'location' contiene sia 'livorno' che 'pisa'.
+
+  La seguente tabella illustra il comportamento della logica AND con la configurazione dell'esempio sopra indicato:
+
+  +----------------------------------------------+----------------------------------------------+
+  | Token                                        | Risultato                                    |
+  +==============================================+==============================================+
+  | ``"location": ["livorno", "pisa"]``          | Autorizzato (entrambi presenti)              |
+  +----------------------------------------------+----------------------------------------------+
+  | ``"location": ["livorno"]``                  | Non autorizzato (manca pisa)                 |
+  +----------------------------------------------+----------------------------------------------+
+  | ``"location": ["pisa"]``                     | Non autorizzato (manca livorno)              |
+  +----------------------------------------------+----------------------------------------------+
+  | ``"location": ["livorno", "pisa", "roma"]``  | Autorizzato (contiene almeno entrambi)       |
+  +----------------------------------------------+----------------------------------------------+
