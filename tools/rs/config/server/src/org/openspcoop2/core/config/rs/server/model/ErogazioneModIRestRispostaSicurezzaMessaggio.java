@@ -50,7 +50,7 @@ public class ErogazioneModIRestRispostaSicurezzaMessaggio  {
   @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXISTING_PROPERTY, property = "modalita", visible = true )
   @com.fasterxml.jackson.annotation.JsonSubTypes({
     @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ModIKeyStoreDefault.class, name = "default"),
-    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ModIKeyStoreRidefinito.class, name = "ridefinito")  })
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ErogazioneModIRestRispostaSicurezzaMessaggioModIKeyStoreRidefinito.class, name = "ridefinito")  })
   private OneOfErogazioneModIRestRispostaSicurezzaMessaggioKeystore keystore = null;
   
   @Schema(description = "")

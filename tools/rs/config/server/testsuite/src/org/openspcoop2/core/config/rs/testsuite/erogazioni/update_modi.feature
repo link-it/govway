@@ -272,6 +272,7 @@ Scenario Outline: Erogazioni Aggiornamento Petstore REST Oauth <nome>
 Examples:
 |nome|
 |erogazione_modi_rest_apiOAuth.json|
+|erogazione_modi_rest_oauth_keystore_ridefinito_kid.json|
 
 
 
@@ -336,6 +337,7 @@ Examples:
 |erogazione_modi_rest_no_x5u.json|api_modi_rest.json|Specificare URL X5U con riferimento x509 [x5u]|
 |erogazione_modi_rest_contemporaneita_default.json|api_modi_rest.json|L\'API implementata non risulta configurata per gestire la contemporaneità dei token AGID che servirebbe alle opzioni indicate per la richiesta|
 |erogazione_modi_rest_contemporaneita_soloRisposta.json|api_modi_rest.json|L\'API implementata non risulta configurata per gestire la contemporaneità dei token AGID che servirebbe alle opzioni indicate per la risposta|
+|erogazione_modi_rest_kid_non_compatibile.json|api_modi_rest.json|I campi \'kid\' e \'identificativo\' non sono compatibili con il profilo di sicurezza messaggio configurato nell\'API|
 
 
 

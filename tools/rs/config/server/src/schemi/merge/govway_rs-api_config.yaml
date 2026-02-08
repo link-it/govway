@@ -10916,10 +10916,10 @@ components:
             propertyName: "modalita"
             mapping:
               default: "#/components/schemas/ModIKeyStoreDefault"
-              ridefinito: "#/components/schemas/ModIKeyStoreRidefinito"
+              ridefinito: "#/components/schemas/ErogazioneModIRestRispostaSicurezzaMessaggioModIKeyStoreRidefinito"
           oneOf:
           - $ref: "#/components/schemas/ModIKeyStoreDefault"
-          - $ref: "#/components/schemas/ModIKeyStoreRidefinito"
+          - $ref: "#/components/schemas/ErogazioneModIRestRispostaSicurezzaMessaggioModIKeyStoreRidefinito"
         time_to_live:
           type: "integer"
           format: "int32"
@@ -10933,6 +10933,20 @@ components:
             type: "string"
         contemporaneita:
           $ref: "#/components/schemas/ErogazioneModIRestRispostaSicurezzaMessaggioContemporaneita"
+    ErogazioneModIRestRispostaSicurezzaMessaggioOAuth:
+      type: "object"
+      properties:
+        identificativo:
+          maxLength: 2800
+          type: "string"
+        kid:
+          maxLength: 4000
+          type: "string"
+    ErogazioneModIRestRispostaSicurezzaMessaggioModIKeyStoreRidefinito:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/ModIKeyStoreRidefinito"
+      - $ref: "#/components/schemas/ErogazioneModIRestRispostaSicurezzaMessaggioOAuth"
     ErogazioneModIRestRispostaSicurezzaMessaggioContemporaneita:
       required:
       - "identificativo"

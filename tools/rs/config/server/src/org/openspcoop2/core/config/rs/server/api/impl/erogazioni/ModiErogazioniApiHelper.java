@@ -42,6 +42,7 @@ import org.openspcoop2.core.config.rs.server.model.ErogazioneModIRestRichiestaSi
 import org.openspcoop2.core.config.rs.server.model.ErogazioneModIRestRisposta;
 import org.openspcoop2.core.config.rs.server.model.ErogazioneModIRestRispostaSicurezzaMessaggio;
 import org.openspcoop2.core.config.rs.server.model.ErogazioneModIRestRispostaSicurezzaMessaggioContemporaneita;
+import org.openspcoop2.core.config.rs.server.model.ErogazioneModIRestRispostaSicurezzaMessaggioModIKeyStoreRidefinito;
 import org.openspcoop2.core.config.rs.server.model.ErogazioneModISignalHub;
 import org.openspcoop2.core.config.rs.server.model.ErogazioneModISoap;
 import org.openspcoop2.core.config.rs.server.model.ErogazioneModISoapRichiesta;
@@ -202,6 +203,7 @@ public class ModiErogazioniApiHelper {
 		TipoApiEnum protocollo;
 		boolean sicurezzaMessaggioAPIAbilitata;
 		boolean sicurezzaMessaggioHeaderDuplicatiAbilitato;
+		boolean sicurezzaMessaggioKidMode;
 	}
 	
 	class FruizioneConf extends ErogazioneConf {
@@ -317,9 +319,10 @@ public class ModiErogazioniApiHelper {
 		AccordoServizioParteComune aspc = env.apcCore.getAccordoServizioFull(asps.getIdAccordo());
 		c.sicurezzaMessaggioAPIAbilitata = ModiErogazioniApiHelper.isSicurezzaMessaggioAbilitata(aspc, asps.getPortType());
 		c.sicurezzaMessaggioHeaderDuplicatiAbilitato = ModiErogazioniApiHelper.isSicurezzaMessaggioHeaderDuplicati(aspc, asps.getPortType());
-		
+		c.sicurezzaMessaggioKidMode = ModISecurityUtils.isSicurezzaMessaggioKidModeSupported(aspc, asps.getPortType());
+
 		c.protocollo = ModiErogazioniApiHelper.getTipoApi(aspc);
-		
+
 		return c;
 	}
 	
@@ -861,7 +864,8 @@ public class ModiErogazioniApiHelper {
 			sicurezzaMessaggio.setKeystore(ks);
 		} else {
 			
-			ModIKeyStoreRidefinito ks = new ModIKeyStoreRidefinito().modalita(StatoDefaultRidefinitoEnum.RIDEFINITO);
+			ErogazioneModIRestRispostaSicurezzaMessaggioModIKeyStoreRidefinito ks = new ErogazioneModIRestRispostaSicurezzaMessaggioModIKeyStoreRidefinito();
+			ks.setModalita(StatoDefaultRidefinitoEnum.RIDEFINITO);
 			
 			String keystoreModeString = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEYSTORE_MODE, true);
 
@@ -922,10 +926,13 @@ public class ModiErogazioniApiHelper {
 				ks.setDatiKeystore(datiKeystore);
 			}
 			
+			ks.setKid(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_OAUTH_KID, false));
+			ks.setIdentificativo(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_OAUTH_IDENTIFICATIVO, false));
+
 			sicurezzaMessaggio.setKeystore(ks);
 		}
-		
-		
+
+
 		// contemporaneita'
 		
 		String idJtiRisposta = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REST_DOPPI_HEADER_JTI, false);
@@ -2350,9 +2357,28 @@ public class ModiErogazioniApiHelper {
 				p.addProperty(ModICostanti.MODIPA_KEYSTORE_PASSWORD, archiveKeystore.getKeystorePassword());
 				p.addProperty(ModICostanti.MODIPA_KEYSTORE_ARCHIVE, archiveKeystore.getKeystoreArchivio(), filename, filename);
 			}
-			
+
+			// kid e identificativo oauth (solo keystore ridefinito)
+			if(sicurezzaMessaggioRisposta.getKeystore() instanceof ErogazioneModIRestRispostaSicurezzaMessaggioModIKeyStoreRidefinito) {
+				ErogazioneModIRestRispostaSicurezzaMessaggioModIKeyStoreRidefinito ksOAuth =
+						(ErogazioneModIRestRispostaSicurezzaMessaggioModIKeyStoreRidefinito) sicurezzaMessaggioRisposta.getKeystore();
+				boolean kidOrIdentificativoPresente = (ksOAuth.getKid()!=null && StringUtils.isNotEmpty(ksOAuth.getKid())) ||
+						(ksOAuth.getIdentificativo()!=null && StringUtils.isNotEmpty(ksOAuth.getIdentificativo()));
+				if(kidOrIdentificativoPresente) {
+					if(!erogazioneConf.sicurezzaMessaggioKidMode) {
+						throw FaultCode.RICHIESTA_NON_VALIDA.toException("I campi 'kid' e 'identificativo' non sono compatibili con il profilo di sicurezza messaggio configurato nell'API");
+					}
+					if(ksOAuth.getKid()!=null && StringUtils.isNotEmpty(ksOAuth.getKid())) {
+						p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_OAUTH_KID, ksOAuth.getKid());
+					}
+					if(ksOAuth.getIdentificativo()!=null && StringUtils.isNotEmpty(ksOAuth.getIdentificativo())) {
+						p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_OAUTH_IDENTIFICATIVO, ksOAuth.getIdentificativo());
+					}
+				}
+			}
+
 		}
-		
+
 		// contemporaneita'
 		
 		if(sicurezzaMessaggioRisposta.getContemporaneita()!=null) {
