@@ -21,6 +21,7 @@ package org.openspcoop2.core.eventi.dao.jdbc;
 
 import java.sql.Connection;
 
+import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 
 import org.slf4j.Logger;
@@ -53,10 +54,18 @@ import org.openspcoop2.core.eventi.Evento;
 public class JDBCEventoServiceImpl extends JDBCEventoServiceSearchImpl
 	implements IJDBCServiceCRUDWithoutId<Evento, JDBCServiceManager> {
 
+	private static void sanitizeTextColumns(TipiDatabase dbType, Evento evento) {
+		evento.setConfigurazione(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(dbType, evento.getConfigurazione()));
+	}
+
 	@Override
 	public void create(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, Evento evento, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotImplementedException,ServiceException,Exception {
 
-		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities jdbcUtilities = 
+		if(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.needsSanitization(jdbcProperties.getDatabase())){
+			sanitizeTextColumns(jdbcProperties.getDatabase(), evento);
+		}
+
+		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities jdbcUtilities =
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities(sqlQueryObject.getTipoDatabaseOpenSPCoop2(), log, connection);
 		
 		ISQLQueryObject sqlQueryObjectInsert = sqlQueryObject.newSQLQueryObject();
@@ -105,8 +114,12 @@ public class JDBCEventoServiceImpl extends JDBCEventoServiceSearchImpl
 	}
 	@Override
 	public void update(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, Evento evento, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotFoundException, NotImplementedException, ServiceException, Exception {
-	
-		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities jdbcUtilities = 
+
+		if(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.needsSanitization(jdbcProperties.getDatabase())){
+			sanitizeTextColumns(jdbcProperties.getDatabase(), evento);
+		}
+
+		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities jdbcUtilities =
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities(sqlQueryObject.getTipoDatabaseOpenSPCoop2(), log, connection);
 		
 		ISQLQueryObject sqlQueryObjectInsert = sqlQueryObject.newSQLQueryObject();

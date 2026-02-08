@@ -850,6 +850,40 @@ public class Utilities {
 	}
 
 
+	
+	
+	
+	
+	
+	// Null sequence
+	
+	public static final String NULL_BYTE_SEQUENCE = "\u0000";
+	public static boolean containsNullByteSequence(String s) {
+		return s!=null && s.contains(NULL_BYTE_SEQUENCE);
+	}
+	public static String removeNullByteSequence(String s) {
+		if(s==null) {
+			return s;
+		}
+		return s.replace(NULL_BYTE_SEQUENCE, "");
+	}
+	public static boolean isInvalid0x00error(Throwable t) {
+		return t.getMessage()!=null && t.getMessage().contains("invalid byte sequence for encoding \"UTF8\": 0x00");
+	}
+
+	public static String sanitizeAndTruncate(String msg, boolean sanitizeNullByte, boolean truncate, int firstChars, int lastChars) {
+		if(msg==null) {
+			return null;
+		}
+		if(sanitizeNullByte && containsNullByteSequence(msg)) {
+			msg = removeNullByteSequence(msg);
+		}
+		if(truncate && firstChars>0 && lastChars>0 && msg.length()>(firstChars+lastChars)) {
+			msg = msg.substring(0, firstChars) + " ... " + msg.substring(msg.length() - lastChars);
+		}
+		return msg;
+	}
+
 
 
 
@@ -874,7 +908,7 @@ public class Utilities {
 			}
 		}
 	}
-	
+
 	public static boolean isEmpytMessageException(Throwable e){
 		return e==null || e.getMessage()==null ||
 				"".equals(e.getMessage()) || 

@@ -21,6 +21,7 @@ package org.openspcoop2.core.allarmi.dao.jdbc;
 
 import java.sql.Connection;
 
+import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 
 import org.slf4j.Logger;
@@ -53,10 +54,18 @@ import org.openspcoop2.core.allarmi.AllarmeHistory;
 public class JDBCAllarmeHistoryServiceImpl extends JDBCAllarmeHistoryServiceSearchImpl
 	implements IJDBCServiceCRUDWithoutId<AllarmeHistory, JDBCServiceManager> {
 
+	private static void sanitizeTextColumns(TipiDatabase dbType, AllarmeHistory allarmeHistory) {
+		allarmeHistory.setDettaglioStato(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(dbType, allarmeHistory.getDettaglioStato()));
+	}
+
 	@Override
 	public void create(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, AllarmeHistory allarmeHistory, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotImplementedException,ServiceException,Exception {
 
-		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities jdbcUtilities = 
+		if(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.needsSanitization(jdbcProperties.getDatabase())){
+			sanitizeTextColumns(jdbcProperties.getDatabase(), allarmeHistory);
+		}
+
+		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities jdbcUtilities =
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities(sqlQueryObject.getTipoDatabaseOpenSPCoop2(), log, connection);
 		
 		ISQLQueryObject sqlQueryObjectInsert = sqlQueryObject.newSQLQueryObject();
@@ -120,8 +129,12 @@ public class JDBCAllarmeHistoryServiceImpl extends JDBCAllarmeHistoryServiceSear
 	}
 	@Override
 	public void update(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, AllarmeHistory allarmeHistory, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotFoundException, NotImplementedException, ServiceException, Exception {
-	
-		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities jdbcUtilities = 
+
+		if(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.needsSanitization(jdbcProperties.getDatabase())){
+			sanitizeTextColumns(jdbcProperties.getDatabase(), allarmeHistory);
+		}
+
+		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities jdbcUtilities =
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities(sqlQueryObject.getTipoDatabaseOpenSPCoop2(), log, connection);
 		
 		ISQLQueryObject sqlQueryObjectInsert = sqlQueryObject.newSQLQueryObject();

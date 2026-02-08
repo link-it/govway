@@ -326,17 +326,19 @@ public class ValidatoreMessaggiApplicativiRest {
 			validatoreBodyApplicativo.valida(content);
 			
 		}catch(Exception e){ 
-			ValidatoreMessaggiApplicativiException ex 
-				= new ValidatoreMessaggiApplicativiException(e.getMessage(),e);
 			
 			String messaggioErrore = e.getMessage();
 			boolean overwriteMessageError = false;
 			try {
 				messaggioErrore = ErroriProperties.getInstance(this.logger).getGenericDetails_noWrap(isRichiesta ? IntegrationFunctionError.INVALID_REQUEST_CONTENT : IntegrationFunctionError.INVALID_RESPONSE_CONTENT);
-				messaggioErrore = messaggioErrore+": "+e.getMessage();
+				messaggioErrore = messaggioErrore+": "+ValidatoreMessaggiApplicativi.processValidationErrorMessage(e.getMessage(), this.op2Properties);
 				overwriteMessageError = true;
-			}catch(Exception excp) {}
-			
+			}catch(Exception excp) {
+				// ignore
+			}
+
+			ValidatoreMessaggiApplicativiException ex 
+				= new ValidatoreMessaggiApplicativiException(messaggioErrore,e);
 			if(isRichiesta){
 				ex.setErrore(ErroriIntegrazione.ERRORE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA.getErrore418_ValidazioneRichiestaTramiteInterfacciaFallita(CostantiPdD.SCHEMA_XSD, messaggioErrore, overwriteMessageError));
 			}else{
@@ -641,17 +643,19 @@ public class ValidatoreMessaggiApplicativiRest {
 			}
 			
 		}catch(Throwable e ){ // WSDLValidatorException
-			ValidatoreMessaggiApplicativiException ex 
-				= new ValidatoreMessaggiApplicativiException(e.getMessage(),e);
 			
 			String messaggioErrore = e.getMessage();
 			boolean overwriteMessageError = false;
 			try {
 				messaggioErrore = ErroriProperties.getInstance(this.logger).getGenericDetails_noWrap(isRichiesta ? IntegrationFunctionError.INVALID_REQUEST_CONTENT : IntegrationFunctionError.INVALID_RESPONSE_CONTENT);
-				messaggioErrore = messaggioErrore+": "+e.getMessage();
+				messaggioErrore = messaggioErrore+": "+ValidatoreMessaggiApplicativi.processValidationErrorMessage(e.getMessage(), this.op2Properties);
 				overwriteMessageError = true;
-			}catch(Exception excp) {}
-			
+			}catch(Exception excp) {
+				// ignore
+			}
+
+			ValidatoreMessaggiApplicativiException ex 
+			= new ValidatoreMessaggiApplicativiException(messaggioErrore,e);
 			if(isRichiesta){
 				ex.setErrore(ErroriIntegrazione.ERRORE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA.getErrore418_ValidazioneRichiestaTramiteInterfacciaFallita(interfaceType,messaggioErrore, overwriteMessageError));
 			}else{

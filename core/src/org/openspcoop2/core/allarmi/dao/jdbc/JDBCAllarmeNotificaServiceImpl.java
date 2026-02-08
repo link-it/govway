@@ -36,6 +36,7 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.NotImplementedException;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.expression.IExpression;
+import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.slf4j.Logger;
 
@@ -49,10 +50,20 @@ import org.slf4j.Logger;
 public class JDBCAllarmeNotificaServiceImpl extends JDBCAllarmeNotificaServiceSearchImpl
 	implements IJDBCServiceCRUDWithoutId<AllarmeNotifica, JDBCServiceManager> {
 
+	private static void sanitizeTextColumns(TipiDatabase dbType, AllarmeNotifica allarmeNotifica) {
+		allarmeNotifica.setOldDettaglioStato(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(dbType, allarmeNotifica.getOldDettaglioStato()));
+		allarmeNotifica.setNuovoDettaglioStato(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(dbType, allarmeNotifica.getNuovoDettaglioStato()));
+		allarmeNotifica.setHistoryEntry(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(dbType, allarmeNotifica.getHistoryEntry()));
+	}
+
 	@Override
 	public void create(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, AllarmeNotifica allarmeNotifica, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotImplementedException,ServiceException,Exception {
 
-		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities jdbcUtilities = 
+		if(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.needsSanitization(jdbcProperties.getDatabase())){
+			sanitizeTextColumns(jdbcProperties.getDatabase(), allarmeNotifica);
+		}
+
+		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities jdbcUtilities =
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities(sqlQueryObject.getTipoDatabaseOpenSPCoop2(), log, connection);
 		
 		ISQLQueryObject sqlQueryObjectInsert = sqlQueryObject.newSQLQueryObject();
@@ -116,8 +127,12 @@ public class JDBCAllarmeNotificaServiceImpl extends JDBCAllarmeNotificaServiceSe
 	}
 	@Override
 	public void update(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, AllarmeNotifica allarmeNotifica, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotFoundException, NotImplementedException, ServiceException, Exception {
-	
-		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities jdbcUtilities = 
+
+		if(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.needsSanitization(jdbcProperties.getDatabase())){
+			sanitizeTextColumns(jdbcProperties.getDatabase(), allarmeNotifica);
+		}
+
+		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities jdbcUtilities =
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities(sqlQueryObject.getTipoDatabaseOpenSPCoop2(), log, connection);
 		
 		ISQLQueryObject sqlQueryObjectInsert = sqlQueryObject.newSQLQueryObject();

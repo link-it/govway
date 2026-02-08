@@ -161,13 +161,21 @@ public class TracciaProducer extends BasicProducer implements ITracciaProducer{
 			}else{
 				// ProtocolFactoryManager non utilizzabile in questo package
 				/*
-				headerProtocollo = 
+				headerProtocollo =
 						ProtocolFactoryManager.getInstance().
 							getProtocolFactoryByName(traccia.getProtocollo()).
 								createBustaBuilder().toString(busta, org.openspcoop2.protocol.sdk.constants.TipoTraccia.RICHIESTA.equals(traccia.getTipoMessaggio()));
 								*/
 			}
-			
+
+			String dettaglioEsitoElaborazione = traccia.getEsitoElaborazioneMessaggioTracciato().getDettaglio();
+
+			// sanitizzazione colonne text per database che non supportano byte nulli
+			if(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.needsSanitization(this.tipoDatabase)){
+				headerProtocollo = org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(this.tipoDatabase, headerProtocollo);
+				dettaglioEsitoElaborazione = org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(this.tipoDatabase, dettaglioEsitoElaborazione);
+			}
+
 			if(this.debug){
 				this.log.debug("@@ log["+busta.getID()+"] (prima inserimento traccia) ....");
 			}
@@ -180,7 +188,7 @@ public class TracciaProducer extends BasicProducer implements ITracciaProducer{
 			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_PDD_RUOLO, traccia.getTipoPdD().getTipo(), InsertAndGeneratedKeyJDBCType.STRING) );
 			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_TIPO_MESSAGGIO, tipoMessaggio, InsertAndGeneratedKeyJDBCType.STRING) );
 			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_ESITO_ELABORAZIONE, traccia.getEsitoElaborazioneMessaggioTracciato().getEsito().toString(), InsertAndGeneratedKeyJDBCType.STRING) );
-			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_DETTAGLIO_ESITO_ELABORAZIONE, traccia.getEsitoElaborazioneMessaggioTracciato().getDettaglio(), InsertAndGeneratedKeyJDBCType.STRING) );
+			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_DETTAGLIO_ESITO_ELABORAZIONE, dettaglioEsitoElaborazione, InsertAndGeneratedKeyJDBCType.STRING) );
 			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_MITTENTE_IDPORTA, busta.getIdentificativoPortaMittente(), InsertAndGeneratedKeyJDBCType.STRING) );
 			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_MITTENTE_NOME, busta.getMittente(), InsertAndGeneratedKeyJDBCType.STRING) );
 			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_MITTENTE_TIPO, busta.getTipoMittente(), InsertAndGeneratedKeyJDBCType.STRING) );
@@ -324,6 +332,11 @@ public class TracciaProducer extends BasicProducer implements ITracciaProducer{
 			for (int i = 0; i < busta.sizeListaEccezioni(); i++) {
 				Eccezione eccezione = busta.getEccezione(i);
 
+				String descrizioneEccezione = eccezione.getDescrizione(this.protocolFactory);
+				if(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.needsSanitization(this.tipoDatabase)){
+					descrizioneEccezione = org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(this.tipoDatabase, descrizioneEccezione);
+				}
+
 				//Inserimento nel DB
 				String subCodiceMeta = "";
 				String subCodiceMetaInsert = "";
@@ -354,7 +367,7 @@ public class TracciaProducer extends BasicProducer implements ITracciaProducer{
 					stmt.setInt(index++, eccezione.getSubCodiceEccezione().getSubCodice());
 				JDBCUtilities.setSQLStringValue(stmt,index++, eccezione.getRilevanzaValue(this.protocolFactory));
 				JDBCUtilities.setSQLStringValue(stmt,index++, eccezione.getRilevanza().getEngineValue());
-				JDBCUtilities.setSQLStringValue(stmt,index++, eccezione.getDescrizione(this.protocolFactory));
+				JDBCUtilities.setSQLStringValue(stmt,index++, descrizioneEccezione);
 				stmt.setTimestamp(index++, gdoT);
 				stmt.executeUpdate();
 				stmt.close();
@@ -401,7 +414,10 @@ public class TracciaProducer extends BasicProducer implements ITracciaProducer{
 				for (int i = 0; i < propertiesNames.length; i++) {
 	
 					String v = busta.getProperty(propertiesNames[i]);
-										
+					if(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.needsSanitization(this.tipoDatabase)){
+						v = org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(this.tipoDatabase, v);
+					}
+
 					int limit = 2800; // TRACCE_EXT_SEARCH ON tracce_ext_protocol_info (name,value) la somma di name e value deve essere minore di 3072 bytes per mysql
 					if(TipiDatabase.POSTGRESQL.equals(this.tipoDatabase)) {
 						// The maximum length for a value in a B-tree index, which includes primary keys, is one third of the size of a buffer page, by default floor(8192/3) = 2730 bytes

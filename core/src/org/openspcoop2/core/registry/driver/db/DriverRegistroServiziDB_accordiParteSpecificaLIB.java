@@ -116,7 +116,11 @@ public class DriverRegistroServiziDB_accordiParteSpecificaLIB {
 		
 		wsdlImplementativoErogatore = wsdlImplementativoErogatore!=null && !"".equals(wsdlImplementativoErogatore.trim().replace("\n", "")) ? wsdlImplementativoErogatore : null;
 		wsdlImplementativoFruitore = wsdlImplementativoFruitore!=null && !"".equals(wsdlImplementativoFruitore.trim().replace("\n", "")) ? wsdlImplementativoFruitore : null;
-				
+		if(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.needsSanitization(DriverRegistroServiziDB_LIB.tipoDB)){
+			wsdlImplementativoErogatore = org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(DriverRegistroServiziDB_LIB.tipoDB, wsdlImplementativoErogatore);
+			wsdlImplementativoFruitore = org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(DriverRegistroServiziDB_LIB.tipoDB, wsdlImplementativoFruitore);
+		}
+
 		String superUser = asps.getSuperUser();
 		StatoFunzionalita servizioCorrelato = (TipologiaServizio.CORRELATO.equals(asps.getTipologiaServizio()) ? CostantiRegistroServizi.ABILITATO : CostantiRegistroServizi.DISABILITATO);
 		String portType = (asps.getPortType()!=null ? asps.getPortType() : null );
@@ -777,7 +781,11 @@ public class DriverRegistroServiziDB_accordiParteSpecificaLIB {
 		wsdlImplementativoErogatore = wsdlImplementativoErogatore!=null && !"".equals(wsdlImplementativoErogatore.trim().replaceAll("\n", "")) ? wsdlImplementativoErogatore : null;
 		String wsdlImplementativoFruitore =  (fruitore.getByteWsdlImplementativoFruitore()!=null ? new String(fruitore.getByteWsdlImplementativoFruitore()) : null );
 		wsdlImplementativoFruitore = wsdlImplementativoFruitore!=null && !"".equals(wsdlImplementativoFruitore.trim().replaceAll("\n", "")) ? wsdlImplementativoFruitore : null;
-		
+		if(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.needsSanitization(DriverRegistroServiziDB_LIB.tipoDB)){
+			wsdlImplementativoErogatore = org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(DriverRegistroServiziDB_LIB.tipoDB, wsdlImplementativoErogatore);
+			wsdlImplementativoFruitore = org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(DriverRegistroServiziDB_LIB.tipoDB, wsdlImplementativoFruitore);
+		}
+
 		long idFruizione = 0;
 		if (CostantiDB.CREATE != type) {
 			idFruizione = DriverRegistroServiziDB_LIB.getIdFruizione(idServizio, nomeSoggetto, tipoSoggetto, con);

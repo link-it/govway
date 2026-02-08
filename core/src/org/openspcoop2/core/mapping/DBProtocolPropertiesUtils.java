@@ -159,24 +159,27 @@ public class DBProtocolPropertiesUtils {
 									plainContenutoString = byokValue.getWrappedPlainValue();
 								}
 							}
+							if(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.needsSanitization(tipoDatabase)){
+								plainContenutoString = org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(tipoDatabase, plainContenutoString);
+							}
 						}
-						
+
 						boolean numberValue = protocolProperty.getNumberValue()!=null;
 						Long contenutoNumber = null;
 						if(numberValue){
 							contenutiDefiniti++;
 							contenutoNumber = protocolProperty.getNumberValue();
 						}
-						
+
 						boolean booleanValue = protocolProperty.getBooleanValue()!=null;
 						Boolean contenutoBoolean = null;
 						if(booleanValue){
 							contenutiDefiniti++;
 							contenutoBoolean = protocolProperty.getBooleanValue();
 						}
-						
+
 						boolean binaryValue = protocolProperty.getByteFile()!=null && protocolProperty.getByteFile().length>0;
-						byte[] contenutoBinario = null; 
+						byte[] contenutoBinario = null;
 						String contenutoBinarioFileName = null;
 						if(binaryValue){
 							contenutiDefiniti++;
@@ -185,14 +188,14 @@ public class DBProtocolPropertiesUtils {
 								String test = new String(contenutoBinario);
 								if("".equals(test.trim().replace("\n", ""))){
 									// eliminare \n\n
-									contenutoBinario = null;	
+									contenutoBinario = null;
 									binaryValue = false;
 									contenutiDefiniti--;
 								}
 							}
 							if(binaryValue){
 								contenutoBinarioFileName = protocolProperty.getFile();
-							
+
 								if(driverBYOK!=null && isConfidentialProtocolProperty(protocolProperty.getName())) {
 									BYOKWrappedValue byokValue = driverBYOK.wrap(contenutoBinario);
 									if(byokValue!=null) {
@@ -201,7 +204,7 @@ public class DBProtocolPropertiesUtils {
 								}
 							}
 						}
-						
+
 						/**if(!stringValue && !numberValue && !binaryValue && !booleanValue){
 							throw new DriverRegistroServiziException("[DBProtocolProperties::CRUDProtocolProperty] Contenuto non definito per protocolProperty ["+protocolProperty.getName()+"]");
 						}*/
@@ -210,8 +213,8 @@ public class DBProtocolPropertiesUtils {
 							throw new CoreException("[DBProtocolProperties::CRUDProtocolProperty] Contenuto definito con più tipologie per protocolProperty ["+protocolProperty.getName()+
 									"] (string:"+stringValue+" number:"+numberValue+" binary:"+binaryValue+")");
 						}
-						
-						
+
+
 						// create
 						ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
 						sqlQueryObject.addInsertTable(CostantiDB.PROTOCOL_PROPERTIES);
@@ -327,7 +330,7 @@ public class DBProtocolPropertiesUtils {
 						boolean stringValue = protocolProperty.getValue()!=null && !"".equals(protocolProperty.getValue());
 						String plainContenutoString = null;
 						String encContenutoString = null;
-						if(stringValue){ 
+						if(stringValue){
 							contenutiDefiniti++;
 							plainContenutoString = protocolProperty.getValue();
 							if(driverBYOK!=null && isConfidentialProtocolProperty(protocolProperty.getName())) {
@@ -337,24 +340,27 @@ public class DBProtocolPropertiesUtils {
 									plainContenutoString = byokValue.getWrappedPlainValue();
 								}
 							}
+							if(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.needsSanitization(tipoDatabase)){
+								plainContenutoString = org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(tipoDatabase, plainContenutoString);
+							}
 						}
-						
+
 						boolean numberValue = protocolProperty.getNumberValue()!=null;
 						Long contenutoNumber = null;
 						if(numberValue){
 							contenutiDefiniti++;
 							contenutoNumber = protocolProperty.getNumberValue();
 						}
-						
+
 						boolean booleanValue = protocolProperty.getBooleanValue()!=null;
 						Boolean contenutoBoolean = null;
 						if(booleanValue){
 							contenutiDefiniti++;
 							contenutoBoolean = protocolProperty.getBooleanValue();
 						}
-						
+
 						boolean binaryValue = protocolProperty.getByteFile()!=null && protocolProperty.getByteFile().length>0;
-						byte[] contenutoBinario = null; 
+						byte[] contenutoBinario = null;
 						String contenutoBinarioFileName = null;
 						if(binaryValue){
 							contenutiDefiniti++;
@@ -363,14 +369,14 @@ public class DBProtocolPropertiesUtils {
 								String test = new String(contenutoBinario);
 								if("".equals(test.trim().replace("\n", ""))){
 									// eliminare \n\n
-									contenutoBinario = null;	
+									contenutoBinario = null;
 									binaryValue = false;
 									contenutiDefiniti--;
 								}
 							}
 							if(binaryValue){
 								contenutoBinarioFileName = protocolProperty.getFile();
-							
+
 								if(driverBYOK!=null && isConfidentialProtocolProperty(protocolProperty.getName())) {
 									BYOKWrappedValue byokValue = driverBYOK.wrap(contenutoBinario);
 									if(byokValue!=null) {
@@ -379,7 +385,7 @@ public class DBProtocolPropertiesUtils {
 								}
 							}
 						}
-						
+
 						/**if(!stringValue && !numberValue && !binaryValue && !booleanValue){
 							throw new DriverRegistroServiziException("[DBProtocolProperties::CRUDProtocolProperty] Contenuto non definito per protocolProperty ["+protocolProperty.getName()+"]");
 						}*/
@@ -388,8 +394,8 @@ public class DBProtocolPropertiesUtils {
 							throw new CoreException("[DBProtocolProperties::CRUDProtocolProperty] Contenuto definito con più tipologie per protocolProperty ["+protocolProperty.getName()+
 									"] (string:"+stringValue+" number:"+numberValue+" binary:"+binaryValue+")");
 						}
-						
-										
+
+
 						/**if(doc.getId()<=0){*/
 						// Rileggo sempre id, puo' essere diverso (es. importato tramite sincronizzazioni)
 						protocolProperty.setId(DBUtils.getIdProtocolProperty(protocolProperty.getTipoProprietario(), idProprietario,protocolProperty.getName(), 

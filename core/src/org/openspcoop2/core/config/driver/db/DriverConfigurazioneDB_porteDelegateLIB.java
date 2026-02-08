@@ -116,6 +116,9 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 		String autenticazione = aPD.getAutenticazione();
 		String autorizzazione = aPD.getAutorizzazione();
 		String autorizzazioneXacmlPolicy = aPD.getXacmlPolicy();
+		if(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.needsSanitization(DriverConfigurazioneDBLib.tipoDB)){
+			autorizzazioneXacmlPolicy = org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(DriverConfigurazioneDBLib.tipoDB, autorizzazioneXacmlPolicy);
+		}
 		String autorizzazioneContenuto = aPD.getAutorizzazioneContenuto();
 		String descrizione = aPD.getDescrizione();
 		GestioneToken gestioneToken = aPD.getGestioneToken();

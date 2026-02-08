@@ -64,24 +64,41 @@ import org.openspcoop2.core.transazioni.utils.TransazioneDaoExt;
 public class JDBCTransazioneServiceImpl extends JDBCTransazioneServiceSearchImpl
 	implements IJDBCServiceCRUDWithId<Transazione, String, JDBCServiceManager> {
 
+	private static void sanitizeTextColumns(TipiDatabase dbType, Transazione transazione) {
+		transazione.setFaultCooperazione(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(dbType, transazione.getFaultCooperazione()));
+		transazione.setFaultIntegrazione(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(dbType, transazione.getFaultIntegrazione()));
+		transazione.setCredenziali(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(dbType, transazione.getCredenziali()));
+		transazione.setHeaderProtocolloRichiesta(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(dbType, transazione.getHeaderProtocolloRichiesta()));
+		transazione.setDigestRichiesta(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(dbType, transazione.getDigestRichiesta()));
+		transazione.setProtocolloExtInfoRichiesta(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(dbType, transazione.getProtocolloExtInfoRichiesta()));
+		transazione.setHeaderProtocolloRisposta(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(dbType, transazione.getHeaderProtocolloRisposta()));
+		transazione.setDigestRisposta(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(dbType, transazione.getDigestRisposta()));
+		transazione.setProtocolloExtInfoRisposta(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(dbType, transazione.getProtocolloExtInfoRisposta()));
+		transazione.setTracciaRichiesta(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(dbType, transazione.getTracciaRichiesta()));
+		transazione.setTracciaRisposta(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(dbType, transazione.getTracciaRisposta()));
+		transazione.setDiagnostici(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(dbType, transazione.getDiagnostici()));
+		transazione.setDiagnosticiList1(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(dbType, transazione.getDiagnosticiList1()));
+		transazione.setDiagnosticiList2(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(dbType, transazione.getDiagnosticiList2()));
+		transazione.setDiagnosticiListExt(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(dbType, transazione.getDiagnosticiListExt()));
+		transazione.setDiagnosticiExt(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(dbType, transazione.getDiagnosticiExt()));
+		transazione.setErrorLog(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(dbType, transazione.getErrorLog()));
+		transazione.setWarningLog(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(dbType, transazione.getWarningLog()));
+		transazione.setLocationConnettore(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(dbType, transazione.getLocationConnettore()));
+		transazione.setUrlInvocazione(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(dbType, transazione.getUrlInvocazione()));
+		transazione.setTokenInfo(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(dbType, transazione.getTokenInfo()));
+		transazione.setEventiGestione(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(dbType, transazione.getEventiGestione()));
+	}
+
 	@Override
 	public void create(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, Transazione transazione, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotImplementedException,ServiceException,Exception {
 
-		if(TipiDatabase.POSTGRESQL.equals(jdbcProperties.getDatabase())){
-			if(transazione.getFaultCooperazione()!=null && org.openspcoop2.utils.jdbc.PostgreSQLUtilities.containsNullByteSequence(transazione.getFaultCooperazione())) {
-				transazione.setFaultCooperazione(org.openspcoop2.utils.jdbc.PostgreSQLUtilities.normalizeString(transazione.getFaultCooperazione()));
-			}
-			if(transazione.getFaultIntegrazione()!=null && org.openspcoop2.utils.jdbc.PostgreSQLUtilities.containsNullByteSequence(transazione.getFaultIntegrazione())) {
-				transazione.setFaultIntegrazione(org.openspcoop2.utils.jdbc.PostgreSQLUtilities.normalizeString(transazione.getFaultIntegrazione()));
-			}
-			if(transazione.getCredenziali()!=null && org.openspcoop2.utils.jdbc.PostgreSQLUtilities.containsNullByteSequence(transazione.getCredenziali())) {
-				transazione.setCredenziali(org.openspcoop2.utils.jdbc.PostgreSQLUtilities.normalizeString(transazione.getCredenziali()));
-			}
+		if(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.needsSanitization(jdbcProperties.getDatabase())){
+			sanitizeTextColumns(jdbcProperties.getDatabase(), transazione);
 		}
-			
-		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities jdbcUtilities = 
+
+		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities jdbcUtilities =
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities(sqlQueryObject.getTipoDatabaseOpenSPCoop2(), log, connection);
-		
+
 		ISQLQueryObject sqlQueryObjectInsert = sqlQueryObject.newSQLQueryObject();
 				
 
@@ -327,18 +344,10 @@ public class JDBCTransazioneServiceImpl extends JDBCTransazioneServiceSearchImpl
 			transazione = transazioneParam;
 		}
 		
-		if(TipiDatabase.POSTGRESQL.equals(jdbcProperties.getDatabase())){
-			if(transazione.getFaultCooperazione()!=null && org.openspcoop2.utils.jdbc.PostgreSQLUtilities.containsNullByteSequence(transazione.getFaultCooperazione())) {
-				transazione.setFaultCooperazione(org.openspcoop2.utils.jdbc.PostgreSQLUtilities.normalizeString(transazione.getFaultCooperazione()));
-			}
-			if(transazione.getFaultIntegrazione()!=null && org.openspcoop2.utils.jdbc.PostgreSQLUtilities.containsNullByteSequence(transazione.getFaultIntegrazione())) {
-				transazione.setFaultIntegrazione(org.openspcoop2.utils.jdbc.PostgreSQLUtilities.normalizeString(transazione.getFaultIntegrazione()));
-			}
-			if(transazione.getCredenziali()!=null && org.openspcoop2.utils.jdbc.PostgreSQLUtilities.containsNullByteSequence(transazione.getCredenziali())) {
-				transazione.setCredenziali(org.openspcoop2.utils.jdbc.PostgreSQLUtilities.normalizeString(transazione.getCredenziali()));
-			}
+		if(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.needsSanitization(jdbcProperties.getDatabase())){
+			sanitizeTextColumns(jdbcProperties.getDatabase(), transazione);
 		}
-			
+
 		ISQLQueryObject sqlQueryObjectUpdate = sqlQueryObject.newSQLQueryObject();
 		Object longIdByLogicId = this.findIdTransazione(jdbcProperties, log, connection, sqlQueryObjectUpdate.newSQLQueryObject(), oldId, true, false);
 		if(longIdByLogicId==null){

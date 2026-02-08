@@ -833,8 +833,14 @@ public class RemoteStoreProviderDriverUtils {
 			updateStmt = con.prepareStatement(updateQuery);
 			int index = 1;
 			updateStmt.setString(index++, clientDetails.getClientInfo().getClientId());
-			updateStmt.setString(index++, clientDetails.getClientInfo().getClientDetails());
-			updateStmt.setString(index++, clientDetails.getClientInfo().getOrganizationDetails());
+			String clientDetailsValue = clientDetails.getClientInfo().getClientDetails();
+			String organizationDetailsValue = clientDetails.getClientInfo().getOrganizationDetails();
+			if(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.needsSanitization(tipoDatabase)){
+				clientDetailsValue = org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(tipoDatabase, clientDetailsValue);
+				organizationDetailsValue = org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(tipoDatabase, organizationDetailsValue);
+			}
+			updateStmt.setString(index++, clientDetailsValue);
+			updateStmt.setString(index++, organizationDetailsValue);
 			updateStmt.setTimestamp(index++, clientDetails.getDataAggiornamento()!=null ? new Timestamp(clientDetails.getDataAggiornamento().getTime()) : DateManager.getTimestamp());
 			updateStmt.setLong(index++, idStore);
 			updateStmt.setString(index++, kid);

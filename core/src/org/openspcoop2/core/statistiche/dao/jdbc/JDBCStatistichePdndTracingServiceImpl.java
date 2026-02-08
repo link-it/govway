@@ -21,6 +21,7 @@ package org.openspcoop2.core.statistiche.dao.jdbc;
 
 import java.sql.Connection;
 
+import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.slf4j.Logger;
 
@@ -51,10 +52,18 @@ import org.openspcoop2.core.statistiche.StatistichePdndTracing;
 public class JDBCStatistichePdndTracingServiceImpl extends JDBCStatistichePdndTracingServiceSearchImpl
 	implements IJDBCServiceCRUDWithoutId<StatistichePdndTracing, JDBCServiceManager> {
 
+	private static void sanitizeTextColumns(TipiDatabase dbType, StatistichePdndTracing statistichePdndTracing) {
+		statistichePdndTracing.setErrorDetails(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(dbType, statistichePdndTracing.getErrorDetails()));
+	}
+
 	@Override
 	public void create(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, StatistichePdndTracing statistichePdndTracing, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws Exception {
 
-		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities jdbcUtilities = 
+		if(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.needsSanitization(jdbcProperties.getDatabase())){
+			sanitizeTextColumns(jdbcProperties.getDatabase(), statistichePdndTracing);
+		}
+
+		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities jdbcUtilities =
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities(sqlQueryObject.getTipoDatabaseOpenSPCoop2(), log, connection);
 		
 		ISQLQueryObject sqlQueryObjectInsert = sqlQueryObject.newSQLQueryObject();
@@ -111,8 +120,12 @@ public class JDBCStatistichePdndTracingServiceImpl extends JDBCStatistichePdndTr
 	}
 	@Override
 	public void update(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, StatistichePdndTracing statistichePdndTracing, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws Exception {
-	
-		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities jdbcUtilities = 
+
+		if(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.needsSanitization(jdbcProperties.getDatabase())){
+			sanitizeTextColumns(jdbcProperties.getDatabase(), statistichePdndTracing);
+		}
+
+		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities jdbcUtilities =
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities(sqlQueryObject.getTipoDatabaseOpenSPCoop2(), log, connection);
 		
 		ISQLQueryObject sqlQueryObjectInsert = sqlQueryObject.newSQLQueryObject();

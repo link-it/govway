@@ -21,6 +21,7 @@ package org.openspcoop2.core.transazioni.dao.jdbc;
 
 import java.sql.Connection;
 
+import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 
 import org.slf4j.Logger;
@@ -59,10 +60,50 @@ import org.openspcoop2.core.transazioni.DumpMultipartHeader;
 public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearchImpl
 	implements IJDBCServiceCRUDWithId<DumpMessaggio, IdDumpMessaggio, JDBCServiceManager> {
 
+	private static void sanitizeTextColumns(TipiDatabase dbType, DumpMessaggio d) {
+		d.setPostProcessHeader(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(dbType, d.getPostProcessHeader()));
+		d.setMultipartHeaderExt(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(dbType, d.getMultipartHeaderExt()));
+		d.setHeaderExt(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(dbType, d.getHeaderExt()));
+		if(d.getHeaderTrasportoList()!=null) {
+			for (int i = 0; i < d.getHeaderTrasportoList().size(); i++) {
+				DumpHeaderTrasporto h = d.getHeaderTrasporto(i);
+				h.setValore(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(dbType, h.getValore()));
+			}
+		}
+		if(d.getMultipartHeaderList()!=null) {
+			for (int i = 0; i < d.getMultipartHeaderList().size(); i++) {
+				DumpMultipartHeader h = d.getMultipartHeader(i);
+				h.setValore(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(dbType, h.getValore()));
+			}
+		}
+		if(d.getAllegatoList()!=null) {
+			for (int i = 0; i < d.getAllegatoList().size(); i++) {
+				DumpAllegato a = d.getAllegatoList().get(i);
+				a.setHeaderExt(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(dbType, a.getHeaderExt()));
+				if(a.getHeaderList()!=null) {
+					for (int j = 0; j < a.getHeaderList().size(); j++) {
+						DumpHeaderAllegato h = a.getHeaderList().get(j);
+						h.setValore(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(dbType, h.getValore()));
+					}
+				}
+			}
+		}
+		if(d.getContenutoList()!=null) {
+			for (int i = 0; i < d.getContenutoList().size(); i++) {
+				DumpContenuto c = d.getContenutoList().get(i);
+				c.setValore(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(dbType, c.getValore()));
+			}
+		}
+	}
+
 	@Override
 	public void create(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, DumpMessaggio dumpMessaggio, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotImplementedException,ServiceException,Exception {
 
-		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities jdbcUtilities = 
+		if(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.needsSanitization(jdbcProperties.getDatabase())){
+			sanitizeTextColumns(jdbcProperties.getDatabase(), dumpMessaggio);
+		}
+
+		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities jdbcUtilities =
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities(sqlQueryObject.getTipoDatabaseOpenSPCoop2(), log, connection);
 		
 		ISQLQueryObject sqlQueryObjectInsert = sqlQueryObject.newSQLQueryObject();
@@ -291,8 +332,12 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 	}
 	@Override
 	public void update(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, DumpMessaggio dumpMessaggio, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotFoundException, NotImplementedException, ServiceException, Exception {
-	
-		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities jdbcUtilities = 
+
+		if(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.needsSanitization(jdbcProperties.getDatabase())){
+			sanitizeTextColumns(jdbcProperties.getDatabase(), dumpMessaggio);
+		}
+
+		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities jdbcUtilities =
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities(sqlQueryObject.getTipoDatabaseOpenSPCoop2(), log, connection);
 		
 		ISQLQueryObject sqlQueryObjectInsert = sqlQueryObject.newSQLQueryObject();

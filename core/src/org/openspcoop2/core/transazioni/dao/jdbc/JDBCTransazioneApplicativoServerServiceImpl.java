@@ -55,13 +55,19 @@ import org.openspcoop2.core.transazioni.TransazioneApplicativoServer;
 public class JDBCTransazioneApplicativoServerServiceImpl extends JDBCTransazioneApplicativoServerServiceSearchImpl
 	implements IJDBCServiceCRUDWithId<TransazioneApplicativoServer, IdTransazioneApplicativoServer, JDBCServiceManager> {
 
+	private static void sanitizeTextColumns(TipiDatabase dbType, TransazioneApplicativoServer t) {
+		t.setFault(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(dbType, t.getFault()));
+		t.setLocationConnettore(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(dbType, t.getLocationConnettore()));
+		t.setUltimoErrore(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(dbType, t.getUltimoErrore()));
+		t.setLocationUltimoErrore(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(dbType, t.getLocationUltimoErrore()));
+		t.setFaultUltimoErrore(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(dbType, t.getFaultUltimoErrore()));
+	}
+
 	@Override
 	public void create(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, TransazioneApplicativoServer transazioneApplicativoServer, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotImplementedException,ServiceException,Exception {
 
-		if(TipiDatabase.POSTGRESQL.equals(jdbcProperties.getDatabase())){
-			if(transazioneApplicativoServer.getFault()!=null && org.openspcoop2.utils.jdbc.PostgreSQLUtilities.containsNullByteSequence(transazioneApplicativoServer.getFault())) {
-				transazioneApplicativoServer.setFault(org.openspcoop2.utils.jdbc.PostgreSQLUtilities.normalizeString(transazioneApplicativoServer.getFault()));
-			}
+		if(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.needsSanitization(jdbcProperties.getDatabase())){
+			sanitizeTextColumns(jdbcProperties.getDatabase(), transazioneApplicativoServer);
 		}
 			
 		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities jdbcUtilities = 
@@ -207,15 +213,13 @@ public class JDBCTransazioneApplicativoServerServiceImpl extends JDBCTransazione
 			long tableId, TransazioneApplicativoServer transazioneApplicativoServer, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour,
 			IdTransazioneApplicativoServer idLogico) throws NotFoundException, NotImplementedException, ServiceException, Exception {
 	
-		if(TipiDatabase.POSTGRESQL.equals(jdbcProperties.getDatabase())){
-			if(transazioneApplicativoServer.getFault()!=null && org.openspcoop2.utils.jdbc.PostgreSQLUtilities.containsNullByteSequence(transazioneApplicativoServer.getFault())) {
-				transazioneApplicativoServer.setFault(org.openspcoop2.utils.jdbc.PostgreSQLUtilities.normalizeString(transazioneApplicativoServer.getFault()));
-			}
+		if(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.needsSanitization(jdbcProperties.getDatabase())){
+			sanitizeTextColumns(jdbcProperties.getDatabase(), transazioneApplicativoServer);
 		}
-			
-		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities jdbcUtilities = 
+
+		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities jdbcUtilities =
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities(sqlQueryObject.getTipoDatabaseOpenSPCoop2(), log, connection);
-		
+
 		ISQLQueryObject sqlQueryObjectInsert = sqlQueryObject.newSQLQueryObject();
 		ISQLQueryObject sqlQueryObjectDelete = sqlQueryObjectInsert.newSQLQueryObject();
 		ISQLQueryObject sqlQueryObjectGet = sqlQueryObjectDelete.newSQLQueryObject();
