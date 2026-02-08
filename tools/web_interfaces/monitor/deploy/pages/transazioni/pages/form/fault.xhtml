@@ -83,7 +83,7 @@
 					<pre class="brush: #{dettagliBean.dettaglio.brushFaultIntegrazione}; toolbar: false;">#{dettagliBean.dettaglio.faultIntegrazionePretty}</pre>
 				</a4j:outputPanel>
 				<a4j:outputPanel layout="block" styleClass="buttonrow" rendered="#{not dettagliBean.dettaglio.visualizzaFaultIntegrazione}">
-					<h:outputText id="outErroreVisualizzaFaultIntegrazione" value="#{dettagliDump.erroreVisualizzaFaultIntegrazione}"/>
+					<h:outputText id="outErroreVisualizzaFaultIntegrazione" value="#{dettagliBean.dettaglio.erroreVisualizzaFaultIntegrazione}"/>
 				</a4j:outputPanel>
 			</rich:panel>
 		</a4j:outputPanel>
@@ -115,7 +115,7 @@
 							<pre class="brush: #{dettagliBean.dettaglio.brushFaultCooperazione}; toolbar: false;">#{dettagliBean.dettaglio.faultCooperazionePretty}</pre>
 						</a4j:outputPanel>
 						<a4j:outputPanel layout="block" styleClass="buttonrow" rendered="#{not dettagliBean.dettaglio.visualizzaFaultCooperazione}">
-							<h:outputText id="outErroreVisualizzaFaultCooperazione" value="#{dettagliDump.erroreVisualizzaFaultCooperazione}"/>
+							<h:outputText id="outErroreVisualizzaFaultCooperazione" value="#{dettagliBean.dettaglio.erroreVisualizzaFaultCooperazione}"/>
 						</a4j:outputPanel>
                 </rich:panel>
         </a4j:outputPanel>

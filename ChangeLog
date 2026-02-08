@@ -1,3 +1,13 @@
+2026-02-07  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug #1714
+	Risolto errore di persistenza delle transazioni su PostgreSQL/MySQL causato da null byte (0x00) presenti in risposte binarie che finivano nelle colonne TEXT del database. 
+	Introdotta sanitizzazione dei null byte sulle colonne TEXT che possono contenere dati provenienti da input esterni.
+	Aggiunta troncatura configurabile dei messaggi di errore dei validatori REST/SOAP per limitare la dimensione dell'errore ritornato 
+	quando il messaggio del validatore include il contenuto della richiesta/risposta. 
+	Corretta deserializzazione delle transazioni salvate su filesystem in presenza di null byte nel contenuto.
+
 2026-02-06 Giuliano Pintori <pintori@link.it>
 
 	* [GovWayMonitor]

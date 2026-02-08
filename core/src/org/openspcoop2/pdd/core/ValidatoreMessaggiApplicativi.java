@@ -112,6 +112,22 @@ public class ValidatoreMessaggiApplicativi {
 		return tipo;
 	}
 	
+	public static String processValidationErrorMessage(String errorMsg, OpenSPCoop2Properties op2Properties) {
+		boolean truncate = false;
+		int first = -1;
+		int last = -1;
+		try {
+			if(op2Properties!=null && op2Properties.isValidazioneContenutiApplicativiErroreTroncaturaEnabled()) {
+				first = op2Properties.getValidazioneContenutiApplicativiErroreTroncaturaCaratteriInizio();
+				last = op2Properties.getValidazioneContenutiApplicativiErroreTroncaturaCaratteriFine();
+				truncate = first>0 && last>0;
+			}
+		} catch(Exception e) {
+			// in caso di errore lettura proprietà, non troncare
+		}
+		return org.openspcoop2.utils.Utilities.sanitizeAndTruncate(errorMsg, true, truncate, first, last);
+	}
+
 	public boolean isServizioCorrelato(){
 		try{
 			return TipologiaServizio.CORRELATO.equals(this.accordoServizioWrapper.getTipologiaServizio());
@@ -311,17 +327,19 @@ public class ValidatoreMessaggiApplicativi {
 			ex.setErrore(ErroriIntegrazione.ERRORE_417_COSTRUZIONE_VALIDATORE_TRAMITE_INTERFACCIA_FALLITA.getErrore417_CostruzioneValidatoreTramiteInterfacciaFallita(CostantiPdD.SCHEMA_XSD));
 			throw ex;
 		}catch(Exception e){ // WSDLValidatorException
-			ValidatoreMessaggiApplicativiException ex 
-			= new ValidatoreMessaggiApplicativiException(e.getMessage(),e);
-			
+						
 			String messaggioErrore = e.getMessage();
 			boolean overwriteMessageError = false;
 			try {
 				messaggioErrore = ErroriProperties.getInstance(this.logger).getGenericDetails_noWrap(isRichiesta ? IntegrationFunctionError.INVALID_REQUEST_CONTENT : IntegrationFunctionError.INVALID_RESPONSE_CONTENT);
-				messaggioErrore = messaggioErrore+": "+e.getMessage();
+				messaggioErrore = messaggioErrore+": "+processValidationErrorMessage(e.getMessage(), OpenSPCoop2Properties.getInstance());
 				overwriteMessageError = true;
-			}catch(Exception excp) {}
-			
+			}catch(Exception excp) {
+				// ignore
+			}
+
+			ValidatoreMessaggiApplicativiException ex 
+				= new ValidatoreMessaggiApplicativiException(messaggioErrore,e);
 			if(isRichiesta){
 				ex.setErrore(ErroriIntegrazione.ERRORE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA.getErrore418_ValidazioneRichiestaTramiteInterfacciaFallita(CostantiPdD.SCHEMA_XSD, messaggioErrore, overwriteMessageError));
 			}else{
@@ -329,10 +347,10 @@ public class ValidatoreMessaggiApplicativi {
 			}
 			throw ex;
 		}
-		
+
 	}
 
-	
+
 	
 	
 	
@@ -354,22 +372,25 @@ public class ValidatoreMessaggiApplicativi {
 			this.wsdlValidator.wsdlConformanceCheck(isRichiesta, this.message.castAsSoap().getSoapAction(), this.idServizio.getAzione(),
 					this.validateSoapAction, false);
 		}catch(Exception e ){ // WSDLValidatorException
-			ValidatoreMessaggiApplicativiException ex 
-				= new ValidatoreMessaggiApplicativiException(e.getMessage(),e);
-			
+						
 			String messaggioErrore = e.getMessage();
 			boolean overwriteMessageError = false;
 			try {
 				messaggioErrore = ErroriProperties.getInstance(this.logger).getGenericDetails_noWrap(isRichiesta ? IntegrationFunctionError.INVALID_REQUEST_CONTENT : IntegrationFunctionError.INVALID_RESPONSE_CONTENT);
+				String processedErrorMsg = processValidationErrorMessage(e.getMessage(), OpenSPCoop2Properties.getInstance());
 				if(TipologiaServizio.CORRELATO.equals(this.accordoServizioWrapper.getTipologiaServizio())) {
-					messaggioErrore = messaggioErrore+" 'response service': "+e.getMessage();
+					messaggioErrore = messaggioErrore+" 'response service': "+processedErrorMsg;
 				}
 				else {
-					messaggioErrore = messaggioErrore+": "+e.getMessage();
+					messaggioErrore = messaggioErrore+": "+processedErrorMsg;
 				}
 				overwriteMessageError = true;
-			}catch(Exception excp) {}
-			
+			}catch(Exception excp) {
+				// ignore
+			}
+
+			ValidatoreMessaggiApplicativiException ex 
+				= new ValidatoreMessaggiApplicativiException(messaggioErrore,e);
 			if(isRichiesta){
 				if(TipologiaServizio.CORRELATO.equals(this.accordoServizioWrapper.getTipologiaServizio()))
 					ex.setErrore(ErroriIntegrazione.ERRORE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA.getErrore418_ValidazioneRichiestaTramiteInterfacciaFallita(CostantiPdD.WSDL_FRUITORE, messaggioErrore, overwriteMessageError));
@@ -383,30 +404,33 @@ public class ValidatoreMessaggiApplicativi {
 			}
 			throw ex;
 		}
-		
+
 	}
-	
+
 	public void restoreOriginalDocument(boolean isRichiesta) throws ValidatoreMessaggiApplicativiException {
 		
 		try{
 			this.wsdlValidator.wsdlConformanceCheck_restoreOriginalDocument();
 		}catch(Exception e ){ // WSDLValidatorException
-			ValidatoreMessaggiApplicativiException ex 
-				= new ValidatoreMessaggiApplicativiException(e.getMessage(),e);
-			
+						
 			String messaggioErrore = e.getMessage();
 			boolean overwriteMessageError = false;
 			try {
 				messaggioErrore = ErroriProperties.getInstance(this.logger).getGenericDetails_noWrap(isRichiesta ? IntegrationFunctionError.INVALID_REQUEST_CONTENT : IntegrationFunctionError.INVALID_RESPONSE_CONTENT);
+				String processedErrorMsg = processValidationErrorMessage(e.getMessage(), OpenSPCoop2Properties.getInstance());
 				if(TipologiaServizio.CORRELATO.equals(this.accordoServizioWrapper.getTipologiaServizio())) {
-					messaggioErrore = messaggioErrore+" 'response service': "+e.getMessage();
+					messaggioErrore = messaggioErrore+" 'response service': "+processedErrorMsg;
 				}
 				else {
-					messaggioErrore = messaggioErrore+": "+e.getMessage();
+					messaggioErrore = messaggioErrore+": "+processedErrorMsg;
 				}
 				overwriteMessageError = true;
-			}catch(Exception excp) {}
-			
+			}catch(Exception excp) {
+				// ignore
+			}
+
+			ValidatoreMessaggiApplicativiException ex 
+				= new ValidatoreMessaggiApplicativiException(messaggioErrore,e);
 			if(isRichiesta){
 				if(TipologiaServizio.CORRELATO.equals(this.accordoServizioWrapper.getTipologiaServizio()))
 					ex.setErrore(ErroriIntegrazione.ERRORE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA.getErrore418_ValidazioneRichiestaTramiteInterfacciaFallita(CostantiPdD.WSDL_FRUITORE, messaggioErrore, overwriteMessageError));
@@ -420,8 +444,8 @@ public class ValidatoreMessaggiApplicativi {
 			}
 			throw ex;
 		}
-		
+
 	}
-	
-	
+
+
 }

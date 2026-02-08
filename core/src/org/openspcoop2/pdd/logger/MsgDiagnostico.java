@@ -563,6 +563,21 @@ public class MsgDiagnostico {
 	}
 	public void addKeywordErroreProcessamento(Throwable t,String prefix) {
 		String eccezione = t!=null ? Utilities.readFirstErrorValidMessageFromException(t) : "Internal Error";
+		// Sanitizzazione e troncatura del messaggio di errore portato dall'eccezione
+		boolean truncate = false;
+		int first = -1;
+		int last = -1;
+		try {
+			OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
+			if(op2Properties!=null && op2Properties.isMsgDiagnosticiErroreTroncaturaEnabled()) {
+				first = op2Properties.getMsgDiagnosticiErroreTroncaturaCaratteriInizio();
+				last = op2Properties.getMsgDiagnosticiErroreTroncaturaCaratteriFine();
+				truncate = first>0 && last>0;
+			}
+		} catch(Exception e) {
+			// in caso di errore lettura proprietà, non troncare
+		}
+		eccezione = Utilities.sanitizeAndTruncate(eccezione, true, truncate, first, last);
 		if(prefix!=null) {
 			prefix = prefix.trim();
 			if(prefix.endsWith(":")==false) {

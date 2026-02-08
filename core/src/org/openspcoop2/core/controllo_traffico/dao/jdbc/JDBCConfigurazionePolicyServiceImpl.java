@@ -21,6 +21,7 @@ package org.openspcoop2.core.controllo_traffico.dao.jdbc;
 
 import java.sql.Connection;
 
+import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 
 import org.slf4j.Logger;
@@ -53,10 +54,18 @@ import org.openspcoop2.core.controllo_traffico.IdPolicy;
 public class JDBCConfigurazionePolicyServiceImpl extends JDBCConfigurazionePolicyServiceSearchImpl
 	implements IJDBCServiceCRUDWithId<ConfigurazionePolicy, IdPolicy, JDBCServiceManager> {
 
+	private static void sanitizeTextColumns(TipiDatabase dbType, ConfigurazionePolicy configurazionePolicy) {
+		configurazionePolicy.setDescrizione(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(dbType, configurazionePolicy.getDescrizione()));
+	}
+
 	@Override
 	public void create(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, ConfigurazionePolicy configurazionePolicy, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotImplementedException,ServiceException,Exception {
 
-		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities jdbcUtilities = 
+		if(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.needsSanitization(jdbcProperties.getDatabase())){
+			sanitizeTextColumns(jdbcProperties.getDatabase(), configurazionePolicy);
+		}
+
+		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities jdbcUtilities =
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities(sqlQueryObject.getTipoDatabaseOpenSPCoop2(), log, connection);
 		
 		ISQLQueryObject sqlQueryObjectInsert = sqlQueryObject.newSQLQueryObject();
@@ -150,8 +159,12 @@ public class JDBCConfigurazionePolicyServiceImpl extends JDBCConfigurazionePolic
 	}
 	@Override
 	public void update(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, ConfigurazionePolicy configurazionePolicy, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotFoundException, NotImplementedException, ServiceException, Exception {
-	
-		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities jdbcUtilities = 
+
+		if(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.needsSanitization(jdbcProperties.getDatabase())){
+			sanitizeTextColumns(jdbcProperties.getDatabase(), configurazionePolicy);
+		}
+
+		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities jdbcUtilities =
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities(sqlQueryObject.getTipoDatabaseOpenSPCoop2(), log, connection);
 		
 		ISQLQueryObject sqlQueryObjectInsert = sqlQueryObject.newSQLQueryObject();

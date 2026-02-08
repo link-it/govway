@@ -111,4 +111,128 @@ public class DBVerifier {
 		assertTrue("DataIngresso '"+dataIngresso+"', DataUscita '"+dataRisposta+"', latenza:"+latenza+"",latenza<millisecondiCheck);
 		
 	}
+	
+	
+	
+	
+	
+	
+	
+	public static void verifyEsito(String idTransazione, 
+			long esitoExpected, String msgErrore) throws Exception  {
+		
+		// La scrittura su database avviene dopo aver risposto al client
+		
+		Utilities.sleep(100); 
+		try {
+			DBVerifier._verifyEsito(idTransazione, 
+					esitoExpected, msgErrore);
+		}catch(Throwable t) {
+			Utilities.sleep(500);
+			try {
+				DBVerifier._verifyEsito(idTransazione, 
+						esitoExpected, msgErrore);
+			}catch(Throwable t2) {
+				Utilities.sleep(2000);
+				try {
+					DBVerifier._verifyEsito(idTransazione, 
+							esitoExpected, msgErrore);
+				}catch(Throwable t3) {
+					Utilities.sleep(5000);
+					DBVerifier._verifyEsito(idTransazione, 
+							esitoExpected, msgErrore);
+				}
+			}
+		}
+	}
+	
+	private static void _verifyEsito(String idTransazione, 
+			long esitoExpected, String msgErrore) throws Exception  {
+		
+		
+		String query = "select count(*) from transazioni where id = ?";
+		log().info(query);
+		
+		int count = dbUtils().readValue(query, Integer.class, idTransazione);
+		assertEquals("IdTransazione: "+idTransazione, 1, count);
+
+		
+		
+		query = "select esito from transazioni where id = ?";
+		log().info(query);
+		
+		String msg = "IdTransazione: "+idTransazione;
+		
+		List<Map<String, Object>> rows = dbUtils().readRows(query, idTransazione);
+		assertNotNull(msg, rows);
+		assertEquals(msg, 1, rows.size());
+					
+		Long esito = null;
+		Map<String, Object> row = rows.get(0);
+		for (String key : row.keySet()) {
+			log().debug("Row["+key+"]="+row.get(key));
+		}
+	
+		Object oEsito = row.get("esito");
+		assertNotNull(msg,oEsito);
+		assertTrue(msg+" oEsito classe '"+oEsito.getClass().getName()+"'", (oEsito instanceof Integer || oEsito instanceof Long));
+		if(oEsito instanceof Integer) {
+			esito = Long.valueOf( (Integer)oEsito );
+		}
+		else {
+			esito = (Long)oEsito;
+		}
+		assertEquals(msg,esitoExpected, esito.longValue());
+
+		
+		
+		// diagnostici
+		
+		if(msgErrore!=null) {
+			query = "select count(*) from msgdiagnostici where id_transazione = ? and messaggio LIKE '%"+msgErrore+"%'";
+			log().info(query);
+		
+			count = dbUtils().readValue(query, Integer.class, idTransazione);
+			assertTrue(msg+" Cerco dettaglio '"+msgErrore+"'; count trovati: "+count+"", (count>0));
+		}
+
+	}
+	
+	
+	
+	
+	
+	public static String existsDiagnostico(String idTransazione, String diagnostico) throws Exception  {
+		
+		// La scrittura su database avviene dopo aver risposto al client
+		
+		Utilities.sleep(100); 
+		try {
+			return DBVerifier.existsDiagnosticoEngine(idTransazione, diagnostico);
+		}catch(Throwable t) {
+			Utilities.sleep(500);
+			try {
+				return DBVerifier.existsDiagnosticoEngine(idTransazione, diagnostico);
+			}catch(Throwable t2) {
+				Utilities.sleep(2000);
+				try {
+					return DBVerifier.existsDiagnosticoEngine(idTransazione, diagnostico);
+				}catch(Throwable t3) {
+					Utilities.sleep(5000);
+					return DBVerifier.existsDiagnosticoEngine(idTransazione, diagnostico);
+				}
+			}
+		}
+	}
+	private static String existsDiagnosticoEngine(String idTransazione,  String diagnostico) throws Exception  {
+		
+		String query = "select messaggio from msgdiagnostici where id_transazione = ? and messaggio LIKE '%"+diagnostico+"%'";
+		log().info(query);
+		
+		String msgDiag = dbUtils().readValue(query, String.class, idTransazione);
+		String msg = "IdTransazione: "+idTransazione;
+		assertTrue(msg+" Cerco dettaglio '"+diagnostico+"'", (msgDiag!=null));
+
+		return msgDiag;
+	}
 }

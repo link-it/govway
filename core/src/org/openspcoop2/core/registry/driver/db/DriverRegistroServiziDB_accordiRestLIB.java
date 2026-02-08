@@ -510,7 +510,11 @@ public class DriverRegistroServiziDB_accordiRestLIB {
 					updateStmt.setString(index++, DriverRegistroServiziDB_LIB.getValue(rp.getParameterType()));
 					updateStmt.setBoolean(index++, rp.isRequired());
 					updateStmt.setString(index++, rp.getTipo());			
-					updateStmt.setString(index++, rp.getRestrizioni());
+					String restrizioniValue = rp.getRestrizioni();
+					if(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.needsSanitization(DriverRegistroServiziDB_LIB.tipoDB)){
+						restrizioniValue = org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(DriverRegistroServiziDB_LIB.tipoDB, restrizioniValue);
+					}
+					updateStmt.setString(index++, restrizioniValue);
 					DriverRegistroServiziDB_LIB.log.debug("_CRUDResourceRequestResponse (PARAMETER) CREATE :\n"+updateQuery);
 					n = updateStmt.executeUpdate();
 					DriverRegistroServiziDB_LIB.log.debug("_CRUDResourceRequestResponse (PARAMETER) type = " + type + " row affected =" + n);

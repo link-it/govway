@@ -1951,7 +1951,15 @@ public class OpenSPCoop2Properties {
 			this.isRegistrazioneDiagnosticaFile_intestazione_formatValues();
 			this.isRegistrazioneDiagnosticaFallita_BloccoServiziPdD();
 			this.isLoggerSaajDisabilitato();
-			
+			if(this.isMsgDiagnosticiErroreTroncaturaEnabled()){
+				if(this.getMsgDiagnosticiErroreTroncaturaCaratteriInizio()<=0){
+					return false;
+				}
+				if(this.getMsgDiagnosticiErroreTroncaturaCaratteriFine()<=0){
+					return false;
+				}
+			}
+
 			// Dump
 			this.getDumpBufferImpl();
 			this.isDumpAllAttachments();
@@ -2344,7 +2352,15 @@ public class OpenSPCoop2Properties {
 			this.isValidazioneContenutiApplicativiOpenApiOpenapi4jValidateUriReferenceAsUrl();
 			this.isValidazioneContenutiApplicativiOpenApiDateTimeAllowLowerCaseTZ();
 			this.isValidazioneContenutiApplicativiOpenApiDateTimeAllowSpaceSeparator();
-			
+			if(this.isValidazioneContenutiApplicativiErroreTroncaturaEnabled()){
+				if(this.getValidazioneContenutiApplicativiErroreTroncaturaCaratteriInizio()<=0){
+					return false;
+				}
+				if(this.getValidazioneContenutiApplicativiErroreTroncaturaCaratteriFine()<=0){
+					return false;
+				}
+			}
+
 			// XML
 			this.isXmlFactoryDTDsEnabled();
 			this.isXsltProcessAsDOMSource();
@@ -2678,6 +2694,13 @@ public class OpenSPCoop2Properties {
 						getControlloTrafficoGestorePolicyInMemoryHazelCastAtomicLongConfigPath();
 						getControlloTrafficoGestorePolicyInMemoryHazelCastAtomicLongAsyncConfigPath();
 						
+						if(isControlloTrafficoGestorePolicyInMemoryHazelcastOrphanedProxiesCleanupEnabled()) {
+							getControlloTrafficoGestorePolicyInMemoryHazelcastOrphanedProxiesCleanupInterval();
+							getControlloTrafficoGestorePolicyInMemoryHazelcastOrphanedProxyThresholdMs();
+							isControlloTrafficoGestorePolicyInMemoryHazelcastAtomicLongRegistryEnabled();
+							isControlloTrafficoGestorePolicyInMemoryHazelcastActivePoliciesCountLogEnabled();
+						}
+
 						isHazelcastSecurityRecommendationsEnabled();
 						if(isHazelcastDiagnosticsEnabled()) {
 							getHazelcastDiagnosticsDirectory();
@@ -2693,6 +2716,14 @@ public class OpenSPCoop2Properties {
 						getControlloTrafficoGestorePolicyInMemoryRedisConnectionUrl();
 						isControlloTrafficoGestorePolicyInMemoryRedisOneMapForeachPolicy();
 						isControlloTrafficoGestorePolicyInMemoryRedisThrowExceptionIfRedisNotReady();
+						if(isControlloTrafficoGestorePolicyInMemoryRedisTTLEnabled()) {
+							getControlloTrafficoGestorePolicyInMemoryRedisTTLDefaultSeconds();
+							getControlloTrafficoGestorePolicyInMemoryRedisTTLIntervalMultiplier();
+							getControlloTrafficoGestorePolicyInMemoryRedisTTLMinSeconds();
+							getControlloTrafficoGestorePolicyInMemoryRedisTTLMaxSeconds();
+							isControlloTrafficoGestorePolicyInMemoryRedisTTLRenewOnWriteIntervalBased();
+							isControlloTrafficoGestorePolicyInMemoryRedisTTLRenewOnWriteWithoutInterval();
+						}
 					}
 					
 					if(isHazelcastEngineEnabled() || isRedisEngineEnabled()) {
@@ -20678,14 +20709,83 @@ public class OpenSPCoop2Properties {
 
 		return this.isLoggerSaajDisabilitato;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
+
+	private Boolean isMsgDiagnosticiErroreTroncaturaEnabled = null;
+	public boolean isMsgDiagnosticiErroreTroncaturaEnabled(){
+
+		String pName = "org.openspcoop2.pdd.logger.msgDiagnostici.errore.troncatura.enabled";
+		if(this.isMsgDiagnosticiErroreTroncaturaEnabled==null){
+			try{
+				String value = this.reader.getValueConvertEnvProperties(pName);
+
+				if (value != null){
+					value = value.trim();
+					this.isMsgDiagnosticiErroreTroncaturaEnabled = Boolean.parseBoolean(value);
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
+					this.isMsgDiagnosticiErroreTroncaturaEnabled = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, false),e);
+				this.isMsgDiagnosticiErroreTroncaturaEnabled = false;
+			}
+		}
+
+		return this.isMsgDiagnosticiErroreTroncaturaEnabled;
+	}
+
+	private Integer msgDiagnosticiErroreTroncaturaCaratteriInizio = null;
+	public int getMsgDiagnosticiErroreTroncaturaCaratteriInizio(){
+
+		String pName = "org.openspcoop2.pdd.logger.msgDiagnostici.errore.troncatura.caratteriInizio";
+		if(this.msgDiagnosticiErroreTroncaturaCaratteriInizio==null){
+			try{
+				String value = this.reader.getValueConvertEnvProperties(pName);
+
+				if (value != null){
+					value = value.trim();
+					this.msgDiagnosticiErroreTroncaturaCaratteriInizio = Integer.parseInt(value);
+				}else{
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop, '"+pName+"': "+NON_DEFINITA);
+					this.msgDiagnosticiErroreTroncaturaCaratteriInizio = -1;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop, '"+pName+"': "+e.getMessage(),e);
+				this.msgDiagnosticiErroreTroncaturaCaratteriInizio = -1;
+			}
+		}
+
+		return this.msgDiagnosticiErroreTroncaturaCaratteriInizio;
+	}
+
+	private Integer msgDiagnosticiErroreTroncaturaCaratteriFine = null;
+	public int getMsgDiagnosticiErroreTroncaturaCaratteriFine(){
+
+		String pName = "org.openspcoop2.pdd.logger.msgDiagnostici.errore.troncatura.caratteriFine";
+		if(this.msgDiagnosticiErroreTroncaturaCaratteriFine==null){
+			try{
+				String value = this.reader.getValueConvertEnvProperties(pName);
+
+				if (value != null){
+					value = value.trim();
+					this.msgDiagnosticiErroreTroncaturaCaratteriFine = Integer.parseInt(value);
+				}else{
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop, '"+pName+"': "+NON_DEFINITA);
+					this.msgDiagnosticiErroreTroncaturaCaratteriFine = -1;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop, '"+pName+"': "+e.getMessage(),e);
+				this.msgDiagnosticiErroreTroncaturaCaratteriFine = -1;
+			}
+		}
+
+		return this.msgDiagnosticiErroreTroncaturaCaratteriFine;
+	}
+
+
 	/* ----------- Dump --------------------- */
 	
 	private String getDumpBufferImpl = null;
@@ -23900,6 +24000,81 @@ public class OpenSPCoop2Properties {
 		return this.isValidazioneContenutiApplicativiBufferContentRead;
 	}
 	
+	private Boolean isValidazioneContenutiApplicativiErroreTroncaturaEnabled = null;
+	public boolean isValidazioneContenutiApplicativiErroreTroncaturaEnabled(){
+
+		String pName = "org.openspcoop2.pdd.validazioneContenutiApplicativi.errore.troncatura.enabled";
+		if(this.isValidazioneContenutiApplicativiErroreTroncaturaEnabled==null){
+			try{
+				String value = this.reader.getValueConvertEnvProperties(pName);
+
+				if (value != null){
+					value = value.trim();
+					this.isValidazioneContenutiApplicativiErroreTroncaturaEnabled = Boolean.parseBoolean(value);
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
+					this.isValidazioneContenutiApplicativiErroreTroncaturaEnabled = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, false),e);
+				this.isValidazioneContenutiApplicativiErroreTroncaturaEnabled = false;
+			}
+		}
+
+		return this.isValidazioneContenutiApplicativiErroreTroncaturaEnabled;
+	}
+
+	private Integer validazioneContenutiApplicativiErroreTroncaturaCaratteriInizio = null;
+	public int getValidazioneContenutiApplicativiErroreTroncaturaCaratteriInizio(){
+
+		String pName = "org.openspcoop2.pdd.validazioneContenutiApplicativi.errore.troncatura.caratteriInizio";
+		if(this.validazioneContenutiApplicativiErroreTroncaturaCaratteriInizio==null){
+			try{
+				String value = this.reader.getValueConvertEnvProperties(pName);
+
+				if (value != null){
+					value = value.trim();
+					this.validazioneContenutiApplicativiErroreTroncaturaCaratteriInizio = Integer.parseInt(value);
+				}else{
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop, '"+pName+"': "+NON_DEFINITA);
+					this.validazioneContenutiApplicativiErroreTroncaturaCaratteriInizio = -1;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop, '"+pName+"': "+e.getMessage(),e);
+				this.validazioneContenutiApplicativiErroreTroncaturaCaratteriInizio = -1;
+			}
+		}
+
+		return this.validazioneContenutiApplicativiErroreTroncaturaCaratteriInizio;
+	}
+
+	private Integer validazioneContenutiApplicativiErroreTroncaturaCaratteriFine = null;
+	public int getValidazioneContenutiApplicativiErroreTroncaturaCaratteriFine(){
+
+		String pName = "org.openspcoop2.pdd.validazioneContenutiApplicativi.errore.troncatura.caratteriFine";
+		if(this.validazioneContenutiApplicativiErroreTroncaturaCaratteriFine==null){
+			try{
+				String value = this.reader.getValueConvertEnvProperties(pName);
+
+				if (value != null){
+					value = value.trim();
+					this.validazioneContenutiApplicativiErroreTroncaturaCaratteriFine = Integer.parseInt(value);
+				}else{
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop, '"+pName+"': "+NON_DEFINITA);
+					this.validazioneContenutiApplicativiErroreTroncaturaCaratteriFine = -1;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop, '"+pName+"': "+e.getMessage(),e);
+				this.validazioneContenutiApplicativiErroreTroncaturaCaratteriFine = -1;
+			}
+		}
+
+		return this.validazioneContenutiApplicativiErroreTroncaturaCaratteriFine;
+	}
+
 	private Boolean isValidazioneContenutiApplicativiXsdBuildSchemaSuccessSerializeXSDCollection = null;
 	public boolean isValidazioneContenutiApplicativiXsdBuildSchemaSuccessSerializeXSDCollection(){
 

@@ -134,6 +134,16 @@ public class DriverRegistroServiziDB_accordiLIB {
 		conversazioneErogatore = conversazioneErogatore!=null && !"".equals(conversazioneErogatore.trim().replace("\n", "")) ? conversazioneErogatore : null;
 		conversazioneFruitore = conversazioneFruitore!=null && !"".equals(conversazioneFruitore.trim().replace("\n", "")) ? conversazioneFruitore : null;
 
+		if(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.needsSanitization(DriverRegistroServiziDB_LIB.tipoDB)){
+			wsdlConcettuale = org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(DriverRegistroServiziDB_LIB.tipoDB, wsdlConcettuale);
+			wsdlDefinitorio = org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(DriverRegistroServiziDB_LIB.tipoDB, wsdlDefinitorio);
+			wsdlLogicoErogatore = org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(DriverRegistroServiziDB_LIB.tipoDB, wsdlLogicoErogatore);
+			wsdlLogicoFruitore = org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(DriverRegistroServiziDB_LIB.tipoDB, wsdlLogicoFruitore);
+			conversazioneConcettuale = org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(DriverRegistroServiziDB_LIB.tipoDB, conversazioneConcettuale);
+			conversazioneErogatore = org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(DriverRegistroServiziDB_LIB.tipoDB, conversazioneErogatore);
+			conversazioneFruitore = org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(DriverRegistroServiziDB_LIB.tipoDB, conversazioneFruitore);
+		}
+
 		String utenteRichiedente = null;
 		if(accordoServizio.getProprietaOggetto()!=null && accordoServizio.getProprietaOggetto().getUtenteRichiedente()!=null) {
 			utenteRichiedente = accordoServizio.getProprietaOggetto().getUtenteRichiedente();
@@ -413,6 +423,16 @@ public class DriverRegistroServiziDB_accordiLIB {
 		conversazioneConcettuale = conversazioneConcettuale!=null && !"".equals(conversazioneConcettuale.trim().replace("\n", "")) ? conversazioneConcettuale : null;
 		conversazioneErogatore = conversazioneErogatore!=null && !"".equals(conversazioneErogatore.trim().replace("\n", "")) ? conversazioneErogatore : null;
 		conversazioneFruitore = conversazioneFruitore!=null && !"".equals(conversazioneFruitore.trim().replace("\n", "")) ? conversazioneFruitore : null;
+
+		if(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.needsSanitization(DriverRegistroServiziDB_LIB.tipoDB)){
+			wsdlConcettuale = org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(DriverRegistroServiziDB_LIB.tipoDB, wsdlConcettuale);
+			wsdlDefinitorio = org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(DriverRegistroServiziDB_LIB.tipoDB, wsdlDefinitorio);
+			wsdlLogicoErogatore = org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(DriverRegistroServiziDB_LIB.tipoDB, wsdlLogicoErogatore);
+			wsdlLogicoFruitore = org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(DriverRegistroServiziDB_LIB.tipoDB, wsdlLogicoFruitore);
+			conversazioneConcettuale = org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(DriverRegistroServiziDB_LIB.tipoDB, conversazioneConcettuale);
+			conversazioneErogatore = org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(DriverRegistroServiziDB_LIB.tipoDB, conversazioneErogatore);
+			conversazioneFruitore = org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(DriverRegistroServiziDB_LIB.tipoDB, conversazioneFruitore);
+		}
 
 		try {
 

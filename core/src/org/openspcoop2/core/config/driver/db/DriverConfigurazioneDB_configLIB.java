@@ -1038,7 +1038,11 @@ public class DriverConfigurazioneDB_configLIB {
 			updateStmt.setString(indexP++, regola.getNome());
 			updateStmt.setInt(indexP++, regola.getPosizione());
 			updateStmt.setString(indexP++, DriverConfigurazioneDBLib.getValue(regola.getStato()));
-			updateStmt.setString(indexP++, regola.getDescrizione());
+			String descrizioneRegola = regola.getDescrizione();
+			if(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.needsSanitization(DriverConfigurazioneDBLib.tipoDB)){
+				descrizioneRegola = org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(DriverConfigurazioneDBLib.tipoDB, descrizioneRegola);
+			}
+			updateStmt.setString(indexP++, descrizioneRegola);
 			updateStmt.setInt(indexP++, regola.isRegexpr() ? CostantiDB.TRUE : CostantiDB.FALSE);
 			updateStmt.setString(indexP++, regola.getRegola());
 			// Fix stringa vuota in Oracle, impostato dalla console e non accettato da Oracle che lo traduce in null e fa schiantare per via del NOT NULL sul db
