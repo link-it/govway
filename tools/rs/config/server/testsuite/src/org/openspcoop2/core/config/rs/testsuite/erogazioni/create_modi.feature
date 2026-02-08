@@ -267,6 +267,7 @@ Scenario Outline: Erogazioni Creazione Petstore 204 REST Oauth <nome>
 Examples:
 |nome|
 |erogazione_modi_rest_apiOAuth.json|
+|erogazione_modi_rest_oauth_keystore_ridefinito_kid.json|
 
 
 
@@ -324,6 +325,7 @@ Examples:
 |erogazione_modi_soap.json|api_modi_soap_no_sicurezza.json|Impossibile abilitare la sicurezza messaggio, deve essere abilitata nella API implementata|
 |erogazione_modi_rest_contemporaneita_default.json|api_modi_rest.json|L\'API implementata non risulta configurata per gestire la contemporaneità dei token AGID che servirebbe alle opzioni indicate per la richiesta|
 |erogazione_modi_rest_contemporaneita_soloRisposta.json|api_modi_rest.json|L\'API implementata non risulta configurata per gestire la contemporaneità dei token AGID che servirebbe alle opzioni indicate per la risposta|
+|erogazione_modi_rest_kid_non_compatibile.json|api_modi_rest.json|I campi \'kid\' e \'identificativo\' non sono compatibili con il profilo di sicurezza messaggio configurato nell\'API|
 
 
 
