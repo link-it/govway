@@ -85,7 +85,7 @@ function generateHeatMapChart(id, _dataJson, _type, _size, _barwidth) {
 	        
 	        var _yAxisWidth = svgTmp.querySelector('text').getBBox().width;
 
-			console.log(_yAxisWidth);
+//			console.log(_yAxisWidth);
 
 	        if (_yAxisWidth > maxw) maxw = _yAxisWidth;
 	        
@@ -595,9 +595,9 @@ function getHeatmapColorClass(fillColor) {
     // Parse rgb(r, g, b)
     var rgbMatch = fillColor.match(/rgb\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)/i);
     if (rgbMatch) {
-        var r = parseInt(rgbMatch[1], 10);
-        var g = parseInt(rgbMatch[2], 10);
-        var b = parseInt(rgbMatch[3], 10);
+        var r = Number.parseInt(rgbMatch[1], 10);
+        var g = Number.parseInt(rgbMatch[2], 10);
+        var b = Number.parseInt(rgbMatch[3], 10);
         // Converti in hex
         hex = ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
     } else {
