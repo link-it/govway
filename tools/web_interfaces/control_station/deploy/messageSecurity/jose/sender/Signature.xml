@@ -121,7 +121,7 @@
 				<property name="rs.security.keystore.type" properties="signaturePropRefId" />
 			</item>
 			<!-- File: visibile quando NON è keypair -->
-			<item type="textarea" name="keystoreFile" label="File" required="true">
+			<item type="textarea" name="keystoreFile" label="Path" required="true">
 				<conditions and="true">
 					<condition not="true" and="false">
 						<equals name="keystoreType" value="keys"/>
@@ -217,7 +217,7 @@
 			<item type="select" name="secretkeystoreType" label="Tipo" default="jceks" reloadOnChange="true">
 				<property name="rs.security.keystore.type" properties="signaturePropRefId" />
 			</item>
-			<item type="textarea" name="secretkeystoreFile" label="File" required="true">
+			<item type="textarea" name="secretkeystoreFile" label="Path" required="true">
 			    <property name="rs.security.keystore.file" properties="signaturePropRefId" />
 			</item>
 			<item type="lock" name="secretkeystorePassword" label="Password" required="true">

@@ -52,7 +52,7 @@ public class EncryptSenderProvider extends TrustStoreSecurityProvider {
 		if(p!=null && p.size()>0) {
 			String file = p.getProperty("org.apache.ws.security.crypto.merlin.file");
 			if(file!=null && StringUtils.isNotEmpty(file)) {
-				InputValidationUtils.validateTextAreaInput(file, "Encryption - KeyStore - File");
+				InputValidationUtils.validateTextAreaInput(file, "Encryption - KeyStore - Path");
 			}
 		}
 		
@@ -60,7 +60,7 @@ public class EncryptSenderProvider extends TrustStoreSecurityProvider {
 		if(p!=null && p.size()>0) {
 			String file = p.getProperty("org.apache.ws.security.crypto.merlin.file");
 			if(file!=null && StringUtils.isNotEmpty(file)) {
-				InputValidationUtils.validateTextAreaInput(file, "Encryption - TrustStore - File");
+				InputValidationUtils.validateTextAreaInput(file, "Encryption - TrustStore - Path");
 			}
 		}
 		

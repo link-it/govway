@@ -56,7 +56,7 @@ public class EncryptSenderProvider extends TrustStoreSecurityProvider {
 			// altrimenti è stato fatto inject del keystore
 			String file = p.getProperty(SecurityConstants.JOSE_KEYSTORE_FILE);
 			if(file!=null && StringUtils.isNotEmpty(file)) {
-				InputValidationUtils.validateTextAreaInput(file, "Encryption - KeyStore - File");
+				InputValidationUtils.validateTextAreaInput(file, "Encryption - KeyStore - Path");
 			}
 		}
 		

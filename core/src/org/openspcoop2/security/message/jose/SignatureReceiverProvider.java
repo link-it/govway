@@ -56,13 +56,13 @@ public class SignatureReceiverProvider extends TrustStoreSecurityProvider {
 			// altrimenti è stato fatto inject del keystore
 			String file = p.getProperty(SecurityConstants.JOSE_KEYSTORE_FILE);
 			if(file!=null && StringUtils.isNotEmpty(file)) {
-				InputValidationUtils.validateTextAreaInput(file, "Verifier Signature - TrustStore - File");
+				InputValidationUtils.validateTextAreaInput(file, "Verifier Signature - TrustStore - Path");
 			}
 		}
 		
 		String file = defaultP.getProperty(SecurityConstants.JOSE_TRUSTSTORE_SSL_FILE);
 		if(file!=null && StringUtils.isNotEmpty(file)) {
-			InputValidationUtils.validateTextAreaInput(file, "Configurazione HTTPS (jku/x5u) - TrustStore - File");
+			InputValidationUtils.validateTextAreaInput(file, "Configurazione HTTPS (jku/x5u) - TrustStore - Path");
 		}
 		
 		file = defaultP.getProperty(SecurityConstants.JOSE_TRUSTSTORE_SSL_CRL);
@@ -72,7 +72,7 @@ public class SignatureReceiverProvider extends TrustStoreSecurityProvider {
 		
 		file = defaultP.getProperty("joseUseHeaders.truststore.file");
 		if(file!=null && StringUtils.isNotEmpty(file)) {
-			InputValidationUtils.validateTextAreaInput(file, "Validazione Certificati X.509 (x5c/x5u) - TrustStore - File");
+			InputValidationUtils.validateTextAreaInput(file, "Validazione Certificati X.509 (x5c/x5u) - TrustStore - Path");
 		}
 		
 		file = defaultP.getProperty("signatureCRL");

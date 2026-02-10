@@ -120,7 +120,7 @@
 			<item type="select" name="truststoreType" label="Tipo" default="jks" reloadOnChange="true">
 				<property name="rs.security.keystore.type" properties="signaturePropRefId" />
 			</item>
-			<item type="textarea" name="truststoreFile" label="File" required="true">
+			<item type="textarea" name="truststoreFile" label="Path" required="true">
 			    <property name="rs.security.keystore.file" properties="signaturePropRefId" />
 			</item>
 			<item type="lock" name="truststorePassword" label="Password" required="true">
@@ -247,7 +247,7 @@
 				</values>
 				<property name="rs.security.keystore.type.ssl" />
 			</item>
-			<item type="textarea" name="joseUseHeaders.ssl.file" label="File" required="false">
+			<item type="textarea" name="joseUseHeaders.ssl.file" label="Path" required="false">
 			    <property name="rs.security.keystore.file.ssl" />
 			</item>
 			<item type="lock" name="joseUseHeaders.ssl.password" label="Password" required="false">
@@ -308,7 +308,7 @@
 				</values>
 				<property name="joseUseHeaders.truststore.type" />
 			</item>
-			<item type="textarea" name="joseUseHeaders.truststore.file" label="File" required="false">
+			<item type="textarea" name="joseUseHeaders.truststore.file" label="Path" required="false">
 			    <property name="joseUseHeaders.truststore.file" />
 			</item>
 			<item type="lock" name="joseUseHeaders.truststore.password" label="Password" required="false">

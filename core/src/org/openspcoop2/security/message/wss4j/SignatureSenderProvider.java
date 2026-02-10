@@ -52,7 +52,7 @@ public class SignatureSenderProvider extends KeyStoreSecurityProvider {
 		if(p!=null && p.size()>0) {
 			String file = p.getProperty("org.apache.ws.security.crypto.merlin.file");
 			if(file!=null && StringUtils.isNotEmpty(file)) {
-				InputValidationUtils.validateTextAreaInput(file, "Signature - KeyStore - File");
+				InputValidationUtils.validateTextAreaInput(file, "Signature - KeyStore - Path");
 			}
 		}
 		

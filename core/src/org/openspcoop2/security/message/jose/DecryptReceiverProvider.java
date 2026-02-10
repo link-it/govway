@@ -56,13 +56,13 @@ public class DecryptReceiverProvider extends KeyStoreWithSecretKeySecurityProvid
 			// altrimenti è stato fatto inject del keystore
 			String file = p.getProperty(SecurityConstants.JOSE_KEYSTORE_FILE);
 			if(file!=null && StringUtils.isNotEmpty(file)) {
-				InputValidationUtils.validateTextAreaInput(file, "Decryption - KeyStore - File");
+				InputValidationUtils.validateTextAreaInput(file, "Decryption - KeyStore - Path");
 			}
 		}
 		
 		String file = defaultP.getProperty(SecurityConstants.JOSE_TRUSTSTORE_SSL_FILE);
 		if(file!=null && StringUtils.isNotEmpty(file)) {
-			InputValidationUtils.validateTextAreaInput(file, "Configurazione HTTPS (jku/x5u) - TrustStore - File");
+			InputValidationUtils.validateTextAreaInput(file, "Configurazione HTTPS (jku/x5u) - TrustStore - Path");
 		}
 		
 		file = defaultP.getProperty(SecurityConstants.JOSE_TRUSTSTORE_SSL_CRL);
@@ -72,22 +72,22 @@ public class DecryptReceiverProvider extends KeyStoreWithSecretKeySecurityProvid
 		
 		file = defaultP.getProperty("joseUseHeaders.keystore.file");
 		if(file!=null && StringUtils.isNotEmpty(file)) {
-			String fieldName = "Certificati X.509 (x5c/x5u) - KeyStore - File";
+			String fieldName = "Certificati X.509 (x5c/x5u) - KeyStore - Path";
 			if (MultiPropertiesUtilities.isEnabled(defaultP, "joseUseHeaders.jwk") ||
 					MultiPropertiesUtilities.isEnabled(defaultP, "joseUseHeaders.jku")) {
-				fieldName = "Certificati JWK (jwk/jku) - KeyStore - File"; 
+				fieldName = "Certificati JWK (jwk/jku) - KeyStore - Path"; 
 			}
 			InputValidationUtils.validateTextAreaInput(file, fieldName);
 		}
 		
 		file = defaultP.getProperty("joseUseHeaders.keystore.file");
 		if(file!=null && StringUtils.isNotEmpty(file)) {
-			InputValidationUtils.validateTextAreaInput(file, "Certificati JWK (jwk/jku) - KeyStore - File");
+			InputValidationUtils.validateTextAreaInput(file, "Certificati JWK (jwk/jku) - KeyStore - Path");
 		}
 		
 		file = defaultP.getProperty("joseUseHeaders.truststore.file");
 		if(file!=null && StringUtils.isNotEmpty(file)) {
-			InputValidationUtils.validateTextAreaInput(file, "Validazione Certificati X.509 (x5c/x5u) - TrustStore - File");
+			InputValidationUtils.validateTextAreaInput(file, "Validazione Certificati X.509 (x5c/x5u) - TrustStore - Path");
 		}
 		
 		file = defaultP.getProperty("joseUseHeaders.truststore.crl");

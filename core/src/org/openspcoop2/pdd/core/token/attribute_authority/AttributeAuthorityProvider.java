@@ -139,7 +139,7 @@ public class AttributeAuthorityProvider implements IProvider {
 		
 		String jwtKeystore = pDefault.getProperty(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.AA_REQUEST_JWT_SIGN_KEYSTORE_FILE);
 		if(jwtKeystore!=null && StringUtils.isNotEmpty(jwtKeystore)) {
-			InputValidationUtils.validateTextAreaInput(jwtKeystore, "Richiesta - JWS KeyStore - File");
+			InputValidationUtils.validateTextAreaInput(jwtKeystore, "Richiesta - JWS KeyStore - Path");
 		}
 		
 		String jwtKeystorePublicKey = pDefault.getProperty(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.AA_REQUEST_JWT_SIGN_KEYSTORE_FILE_PUBLIC);
@@ -176,7 +176,7 @@ public class AttributeAuthorityProvider implements IProvider {
 		
 		if(!trustAll) {
 			String location = p.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
-			InputValidationUtils.validateTextAreaInput(location, "Https - Autenticazione Server - File (TrustStore per l'autenticazione server)");
+			InputValidationUtils.validateTextAreaInput(location, "Https - Autenticazione Server - Path (TrustStore per l'autenticazione server)");
 			
 			String algo = p.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITHM);
 			if(algo==null || "".equals(algo)) {
@@ -216,7 +216,7 @@ public class AttributeAuthorityProvider implements IProvider {
 		
 		String location = p.getProperty(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_LOCATION);
 		if(location!=null && !"".equals(location)) {
-			InputValidationUtils.validateTextAreaInput(location, "Https - Autenticazione Client - File (KeyStore per l'autenticazione client)");
+			InputValidationUtils.validateTextAreaInput(location, "Https - Autenticazione Client - Path (KeyStore per l'autenticazione client)");
 		}
 		
 		String algo = p.getProperty(CostantiConnettori.CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITHM);
@@ -277,7 +277,7 @@ public class AttributeAuthorityProvider implements IProvider {
 		if(!p.containsKey(SecurityConstants.JOSE_KEYSTORE) && !p.containsKey(SecurityConstants.JOSE_KEYSTORE_JWKSET)) {
 			// altrimenti è stato fatto inject del keystore
 			String file = p.getProperty(SecurityConstants.JOSE_KEYSTORE_FILE);
-			InputValidationUtils.validateTextAreaInput(file, "Risposta - TrustStore - File");
+			InputValidationUtils.validateTextAreaInput(file, "Risposta - TrustStore - Path");
 		}
 		
 		String crl = pDefault.getProperty(SecurityConstants.SIGNATURE_CRL);
