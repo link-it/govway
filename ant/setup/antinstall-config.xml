@@ -157,7 +157,7 @@
         <large-select defaultValue="wildfly35" property="antinstaller_as" displayText="Application Server">
       
 		<!-- Uniformare i valori quando la compilazione e' identica -->
-		<option value="wildfly35" text="WildFly 35-38" />
+		<option value="wildfly35" text="WildFly 35-39" />
 		<option value="wildfly27" text="WildFly 27-28"/>                
 
 		<!-- Se si introduce un nuovo valore, occhio a sistemare la maschera preinstallazioneCheckCompatibilita --> 
@@ -199,7 +199,7 @@
         <large-select defaultValue="wildfly35" property="antinstaller_as" displayText="Application Server">
       
 		<!-- Uniformare i valori quando la compilazione e' identica -->
-		<option value="wildfly35" text="WildFly 35-38" />
+		<option value="wildfly35" text="WildFly 35-39" />
 		<option value="wildfly27" text="WildFly 27-28"/>
 
 		<!-- Se si introduce un nuovo valore, occhio a sistemare la maschera preinstallazioneCheckCompatibilita -->
