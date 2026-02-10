@@ -52,7 +52,7 @@ public class SAMLReceiverProvider extends TrustStoreSecurityProvider {
 		if(p!=null && p.size()>0) {
 			String file = p.getProperty("org.apache.ws.security.crypto.merlin.file");
 			if(file!=null && StringUtils.isNotEmpty(file)) {
-				InputValidationUtils.validateTextAreaInput(file, "Signature - TrustStore - File");
+				InputValidationUtils.validateTextAreaInput(file, "Signature - TrustStore - Path");
 			}
 			
 			file = p.getProperty("org.apache.ws.security.crypto.merlin.x509crl.file");

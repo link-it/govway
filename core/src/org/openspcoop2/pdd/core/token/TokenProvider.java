@@ -373,7 +373,7 @@ public class TokenProvider implements IProvider {
 		
 		if(!trustAll) {
 			String location = p.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
-			InputValidationUtils.validateTextAreaInput(location, "Https - Autenticazione Server - File (TrustStore per l'autenticazione server)");
+			InputValidationUtils.validateTextAreaInput(location, "Https - Autenticazione Server - Path (TrustStore per l'autenticazione server)");
 			
 			String algo = p.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITHM);
 			if(algo==null || "".equals(algo)) {
@@ -577,7 +577,7 @@ public class TokenProvider implements IProvider {
 		
 		String location = p.getProperty(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_LOCATION);
 		if(location!=null && !"".equals(location)) {
-			InputValidationUtils.validateTextAreaInput(location, "Https - Autenticazione Client - File (KeyStore per l'autenticazione client)");
+			InputValidationUtils.validateTextAreaInput(location, "Https - Autenticazione Client - Path (KeyStore per l'autenticazione client)");
 		}
 		
 		String algo = p.getProperty(CostantiConnettori.CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITHM);
@@ -777,7 +777,7 @@ public class TokenProvider implements IProvider {
 		
 		String location = p.getProperty(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_LOCATION);
 		if(location!=null && !"".equals(location)) {
-			InputValidationUtils.validateTextAreaInput(location, "Https - Autenticazione Client - File (KeyStore per l'autenticazione client)");
+			InputValidationUtils.validateTextAreaInput(location, "Https - Autenticazione Client - Path (KeyStore per l'autenticazione client)");
 		}
 		
 		String algo = p.getProperty(CostantiConnettori.CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITHM);
@@ -1029,7 +1029,7 @@ public class TokenProvider implements IProvider {
 		if(!p.containsKey(SecurityConstants.JOSE_KEYSTORE) && !p.containsKey(SecurityConstants.JOSE_KEYSTORE_JWKSET)) {
 			// altrimenti è stato fatto inject del keystore
 			String file = p.getProperty(SecurityConstants.JOSE_KEYSTORE_FILE);
-			InputValidationUtils.validateTextAreaInput(file, "Token Forward - JWS KeyStore - File");
+			InputValidationUtils.validateTextAreaInput(file, "Token Forward - JWS KeyStore - Path");
 			
 			String fileChiavePubblica = p.getProperty(SecurityConstants.JOSE_KEYSTORE_PUBLIC_KEY);
 			if(fileChiavePubblica!=null && StringUtils.isNotEmpty(fileChiavePubblica)) {
@@ -1046,7 +1046,7 @@ public class TokenProvider implements IProvider {
 		if(!p.containsKey(SecurityConstants.JOSE_KEYSTORE) && !p.containsKey(SecurityConstants.JOSE_KEYSTORE_JWKSET)) {
 			// altrimenti è stato fatto inject del keystore
 			String file = p.getProperty(SecurityConstants.JOSE_KEYSTORE_FILE);
-			InputValidationUtils.validateTextAreaInput(file, "Token Forward - JWE KeyStore - File");
+			InputValidationUtils.validateTextAreaInput(file, "Token Forward - JWE KeyStore - Path");
 		}
 	}
 	

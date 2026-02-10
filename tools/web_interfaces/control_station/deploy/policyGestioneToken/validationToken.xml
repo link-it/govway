@@ -1769,7 +1769,7 @@
 				</conditions>
 				<property name="trustStoreType" properties="sslConfig" />
 			</item>
-			<item type="textarea" name="endpointHttpsTruststoreFile" label="File" required="true">
+			<item type="textarea" name="endpointHttpsTruststoreFile" label="Path" required="true">
 				<conditions>
 					<condition and="false">
 						<selected name="endpointHttpsTrustAllCerts"/>
@@ -1836,7 +1836,7 @@
 				</conditions>
 				<property name="keyStoreType" properties="sslClientConfig" />
 			</item>
-			<item type="textarea" name="endpointHttpsClientKeystoreFile" label="File" required="true">
+			<item type="textarea" name="endpointHttpsClientKeystoreFile" label="Path" required="true">
 				<conditions>
 					<condition and="true">
 						<equals name="endpointHttpsClientMode" value="ridefinito"/>
@@ -2335,7 +2335,7 @@
 			<item type="select" name="tokenForwardInfoRaccolteModeJWSKeystoreType" label="Tipo" default="jks" reloadOnChange="true">
 				<property name="rs.security.keystore.type" properties="signaturePropRefId" />
 			</item>
-			<item type="textarea" name="tokenForwardInfoRaccolteModeJWSKeystoreFile" label="File" required="true">
+			<item type="textarea" name="tokenForwardInfoRaccolteModeJWSKeystoreFile" label="Path" required="true">
 				<conditions and="true">
 					<condition not="true" and="false">
 						<equals name="tokenForwardInfoRaccolteModeJWSKeystoreType" value="keys"/>
@@ -2418,7 +2418,7 @@
 			<item type="select" name="tokenForwardInfoRaccolteModeJWEContentKeystoreType" label="Tipo" default="jks" reloadOnChange="true">
 				<property name="rs.security.keystore.type" properties="encryptionPropRefId" />
 			</item>
-			<item type="textarea" name="tokenForwardInfoRaccolteModeJWEContentKeystoreFile" label="File" required="true">
+			<item type="textarea" name="tokenForwardInfoRaccolteModeJWEContentKeystoreFile" label="Path" required="true">
 			    <property name="rs.security.keystore.file" properties="encryptionPropRefId" />
 			</item>
 			<item type="lock" name="tokenForwardInfoRaccolteModeJWEContentKeystorePassword" label="Password" required="true">

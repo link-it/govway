@@ -46,7 +46,7 @@ Nella sottosezione 'KeyStore' si configurano i parametri di accesso al keystore 
 
 I tipi di keystore supportati sono:
 
--  *JKS* o *PKCS12*: viene richiesta l'indicazione del path assoluto del keystore nel campo *File*, la definizione della password per l'accesso al keystore nel campo *Password*, l'alias con cui è riferita la chiave privata nel keystore nel campo *Alias Chiave Privata* e la password della chiave privata nel campo *Password Chiave Privata*;
+-  *JKS* o *PKCS12*: viene richiesta l'indicazione del path assoluto del keystore nel campo *Path*, la definizione della password per l'accesso al keystore nel campo *Password*, l'alias con cui è riferita la chiave privata nel keystore nel campo *Alias Chiave Privata* e la password della chiave privata nel campo *Password Chiave Privata*;
 
 -  *JWK Set*: deve essere definito il path su filesystem dove risiede l'archivio json nel formato 'JWK Set' e l'identificativo 'kid' (alias) con cui è riferita la chiave privata nel campo *Alias Chiave Privata*;
 

@@ -52,7 +52,7 @@ public class SAMLSenderProvider extends KeyStoreSecurityProvider {
 		if(p!=null && p.size()>0) {
 			String file = p.getProperty("org.apache.ws.security.crypto.merlin.file");
 			if(file!=null && StringUtils.isNotEmpty(file)) {
-				InputValidationUtils.validateTextAreaInput(file, "KeyStore - File");
+				InputValidationUtils.validateTextAreaInput(file, "KeyStore - Path");
 			}
 		}
 		

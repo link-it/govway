@@ -154,7 +154,7 @@ public class NegoziazioneTokenProvider implements IProvider {
 		
 		if(!trustAll) {
 			String location = p.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
-			InputValidationUtils.validateTextAreaInput(location, "Https - Autenticazione Server - File (TrustStore per l'autenticazione server)");
+			InputValidationUtils.validateTextAreaInput(location, "Https - Autenticazione Server - Path (TrustStore per l'autenticazione server)");
 			
 			String algo = p.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITHM);
 			if(algo==null || "".equals(algo)) {
@@ -223,7 +223,7 @@ public class NegoziazioneTokenProvider implements IProvider {
 		
 		String location = p.getProperty(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_LOCATION);
 		if(location!=null && !"".equals(location)) {
-			InputValidationUtils.validateTextAreaInput(location, "Https - Autenticazione Client - File (KeyStore per l'autenticazione client)");
+			InputValidationUtils.validateTextAreaInput(location, "Https - Autenticazione Client - Path (KeyStore per l'autenticazione client)");
 		}
 		
 		String algo = p.getProperty(CostantiConnettori.CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITHM);
@@ -290,7 +290,7 @@ public class NegoziazioneTokenProvider implements IProvider {
 	}
 	private void validateJWTSignedx509Keystore(Properties pDefault) throws ProviderValidationException {
 		String file = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYSTORE_FILE);
-		InputValidationUtils.validateTextAreaInput(file, "Token Endpoint - JWT KeyStore - File");
+		InputValidationUtils.validateTextAreaInput(file, "Token Endpoint - JWT KeyStore - Path");
 		
 		String fileChiavePubblica = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYSTORE_FILE_PUBLIC_KEY);
 		if(fileChiavePubblica!=null && StringUtils.isNotEmpty(fileChiavePubblica)) {
@@ -337,7 +337,7 @@ public class NegoziazioneTokenProvider implements IProvider {
 	}
 	private void validateDPoPKeystore(Properties pDefault) throws ProviderValidationException {
 		String file = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_DPOP_SIGN_KEYSTORE_FILE);
-		InputValidationUtils.validateTextAreaInput(file, "DPoP KeyStore - File");
+		InputValidationUtils.validateTextAreaInput(file, "DPoP KeyStore - Path");
 
 		String fileChiavePubblica = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_DPOP_SIGN_KEYSTORE_FILE_PUBLIC_KEY);
 		if(fileChiavePubblica!=null && StringUtils.isNotEmpty(fileChiavePubblica)) {

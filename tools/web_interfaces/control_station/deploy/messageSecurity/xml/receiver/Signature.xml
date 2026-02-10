@@ -37,7 +37,7 @@
 			<item type="select" name="truststoreType" label="Tipo" default="jks" reloadOnChange="true" >
 				<property name="org.apache.ws.security.crypto.merlin.keystore.type" properties="signatureTrustStorePropRefId" />
 			</item>
-			<item type="textarea" name="truststoreFile" label="File" required="true">
+			<item type="textarea" name="truststoreFile" label="Path" required="true">
 			    <property name="org.apache.ws.security.crypto.merlin.file" properties="signatureTrustStorePropRefId" />
 			</item>
 			<item type="lock" name="truststorePassword" label="Password" required="true">

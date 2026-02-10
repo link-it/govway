@@ -119,7 +119,7 @@
 				</conditions>
 				<property name="trustStoreType" properties="sslConfig" />
 			</item>
-			<item type="textarea" name="endpointHttpsTruststoreFile" label="File" required="true">
+			<item type="textarea" name="endpointHttpsTruststoreFile" label="Path" required="true">
 				<conditions>
 					<condition and="false">
 						<selected name="endpointHttpsTrustAllCerts"/>
@@ -185,7 +185,7 @@
 				</conditions>
 				<property name="keyStoreType" properties="sslClientConfig" />
 			</item>
-			<item type="textarea" name="endpointHttpsClientKeystoreFile" label="File" required="true">
+			<item type="textarea" name="endpointHttpsClientKeystoreFile" label="Path" required="true">
 				<conditions>
 					<condition and="true">
 						<equals name="endpointHttpsClientMode" value="ridefinito"/>
@@ -372,7 +372,7 @@
 			<item type="select" name="aaJWSKeystoreType" label="Tipo" default="jks" reloadOnChange="true">
 				<property name="policy.attributeAuthority.request.jws.keystore.type" />
 			</item>
-			<item type="textarea" name="aaJWSKeystoreFile" label="File" required="true">
+			<item type="textarea" name="aaJWSKeystoreFile" label="Path" required="true">
 				<conditions and="true">
 					<condition not="true" and="false">
 						<equals name="aaJWSKeystoreType" value="keys"/>

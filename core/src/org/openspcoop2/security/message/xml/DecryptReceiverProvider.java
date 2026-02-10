@@ -52,7 +52,7 @@ public class DecryptReceiverProvider extends KeyStoreSecurityProvider {
 		if(p!=null && p.size()>0) {
 			String file = p.getProperty("org.apache.ws.security.crypto.merlin.file");
 			if(file!=null && StringUtils.isNotEmpty(file)) {
-				InputValidationUtils.validateTextAreaInput(file, "Decryption - KeyStore - File");
+				InputValidationUtils.validateTextAreaInput(file, "Decryption - KeyStore - Path");
 			}
 		}
 		

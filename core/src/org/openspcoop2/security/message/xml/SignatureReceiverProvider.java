@@ -52,7 +52,7 @@ public class SignatureReceiverProvider extends TrustStoreSecurityProvider {
 		if(p!=null && p.size()>0) {
 			String file = p.getProperty("org.apache.ws.security.crypto.merlin.file");
 			if(file!=null && StringUtils.isNotEmpty(file)) {
-				InputValidationUtils.validateTextAreaInput(file, "Verifier Signature - TrustStore - File");
+				InputValidationUtils.validateTextAreaInput(file, "Verifier Signature - TrustStore - Path");
 			}
 		}
 		

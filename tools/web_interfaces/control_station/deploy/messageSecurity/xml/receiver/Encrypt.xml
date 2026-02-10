@@ -56,7 +56,7 @@
 			<item type="select" name="secretkeystoreType" label="Tipo" default="jceks" reloadOnChange="true">
 				<property name="org.apache.ws.security.crypto.merlin.keystore.type" properties="decryptionPropRefId" />
 			</item>
-			<item type="textarea" name="secretkeystoreFile" label="File" required="true">
+			<item type="textarea" name="secretkeystoreFile" label="Path" required="true">
 			    <property name="org.apache.ws.security.crypto.merlin.file" properties="decryptionPropRefId" />
 			</item>
 			<item type="lock" name="secretkeystorePassword" label="Password" required="true">
@@ -85,7 +85,7 @@
 			<item type="select" name="keystoreType" label="Tipo" default="jks" reloadOnChange="true" >
 				<property name="org.apache.ws.security.crypto.merlin.keystore.type" properties="decryptionPropRefId" />
 			</item>
-			<item type="textarea" name="keystoreFile" label="File" required="true">
+			<item type="textarea" name="keystoreFile" label="Path" required="true">
 			    <property name="org.apache.ws.security.crypto.merlin.file" properties="decryptionPropRefId" />
 			</item>
 			<item type="lock" name="keystorePassword" label="Password" required="true">
