@@ -70,8 +70,7 @@ INSERT INTO generic_properties (nome, descrizione, tipologia, tipo) VALUES ('@ID
 				<replace file="${fileSqlProps}" token="@VALORE@" value="${antinstaller_architettura_avanzata_enabled}"/>
 			</else>
 		</if>
-
-
+		
 		<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '000-005:Modalità:antinstaller_modalita_installazione', '@VALORE@');
 </concat>
 		<replace file="${fileSqlProps}" token="@VALORE@" value="${antinstaller_modalita_installazione}"/>
@@ -79,6 +78,66 @@ INSERT INTO generic_properties (nome, descrizione, tipologia, tipo) VALUES ('@ID
 		<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '000-006:Tipo:antinstaller_tipo_installazione', '@VALORE@');
 </concat>
 		<replace file="${fileSqlProps}" token="@VALORE@" value="${antinstaller_tipo_installazione}"/>
+		
+		<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '000-007:Utilizzo della variabile GOVWAY_CONF:antinstaller_confDir_env', '@VALORE@');
+</concat>
+		<if>
+			<equals arg1="${antinstaller_confDir_env}" arg2=""/>
+			<then>
+				<replace file="${fileSqlProps}" token="@VALORE@" value="N.D."/>
+			</then>
+			<else>
+				<replace file="${fileSqlProps}" token="@VALORE@" value="${antinstaller_confDir_env}"/>
+			</else>
+		</if>
+		
+		<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '000-008:Utilizzo della variabile GOVWAY_LOG:antinstaller_logDir_env', '@VALORE@');
+</concat>
+		<if>
+			<equals arg1="${antinstaller_logDir_env}" arg2=""/>
+			<then>
+				<replace file="${fileSqlProps}" token="@VALORE@" value="N.D."/>
+			</then>
+			<else>
+				<replace file="${fileSqlProps}" token="@VALORE@" value="${antinstaller_logDir_env}"/>
+			</else>
+		</if>
+		
+		<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '000-009:Utilizzo della variabile GOVWAY_DEFAULT_ENTITY_NAME:antinstaller_entity_env', '@VALORE@');
+</concat>
+		<if>
+			<equals arg1="${antinstaller_entity_env}" arg2=""/>
+			<then>
+				<replace file="${fileSqlProps}" token="@VALORE@" value="N.D."/>
+			</then>
+			<else>
+				<replace file="${fileSqlProps}" token="@VALORE@" value="${antinstaller_entity_env}"/>
+			</else>
+		</if>
+		
+		<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '000-010:Utilizzo della variabile GOVWAY_DB_TYPE:antinstaller_dbType_env', '@VALORE@');
+</concat>
+		<if>
+			<equals arg1="${antinstaller_dbType_env}" arg2=""/>
+			<then>
+				<replace file="${fileSqlProps}" token="@VALORE@" value="N.D."/>
+			</then>
+			<else>
+				<replace file="${fileSqlProps}" token="@VALORE@" value="${antinstaller_dbType_env}"/>
+			</else>
+		</if>	
+		
+		<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '000-011:Generazione sql per tutti i database:antinstaller_allSql', '@VALORE@');
+</concat>
+		<if>
+			<equals arg1="${antinstaller_allSql}" arg2=""/>
+			<then>
+				<replace file="${fileSqlProps}" token="@VALORE@" value="N.D."/>
+			</then>
+			<else>
+				<replace file="${fileSqlProps}" token="@VALORE@" value="${antinstaller_allSql}"/>
+			</else>
+		</if>			
 
 		<!-- Informazioni Prodotto: 001 -->
 
