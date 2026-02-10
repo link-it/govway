@@ -379,6 +379,9 @@ public class JDBCUtilities {
 			if(checkIsClosed) {
 				checkIsClosed(log, connectionDB);
 			}
+			else {
+				connectionDB.close();
+			}
 		}
 	}
 	private static void checkAutocommit(Logger log, Connection connectionDB) throws SQLException {

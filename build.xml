@@ -209,6 +209,20 @@
 	</if>
 	<import file="${rs.monitor.dir}/build.xml" />
 
+	<!-- Tools - timer - statistiche -->
+	<property name="timer.statistiche.dir" location="${rootDir}/tools/timer/statistiche" />
+	<available file="${timer.statistiche.dir}/local_env.xml" property="timer_statistiche_localenv.present"/>
+	<if>
+		<not>
+			<equals arg1="${timer_statistiche_localenv.present}" arg2="true"/>
+		</not>
+		<then>
+			<copy file="${timer.statistiche.dir}/local_env.xml.template" tofile="${timer.statistiche.dir}/local_env.xml"/>
+			<replace file="${timer.statistiche.dir}/local_env.xml" token="wildfly/tomcat" value="${as}"/>
+		</then>
+	</if>
+	<import file="${timer.statistiche.dir}/build.xml" />
+
 	<!-- Tools - batch - statistiche -->
 	<property name="batch.statistiche.dir" location="${rootDir}/tools/batch/statistiche" />
 	<available file="${batch.statistiche.dir}/local_env.xml" property="batch_statistiche_localenv.present"/>
@@ -466,6 +480,15 @@
 			<param name="debug" value="${debug}"/>
 			<param name="buildAsRelease" value="true"/>
 			<param name="buildAPI" value="false"/>
+		</antcall>
+
+		<antcall target="compile_timerStatistiche">
+			<param name="as" value="${as}"/>
+			<param name="rootDir" value="${rootDir}"/>
+			<param name="src_timerStatistiche" value="${timer.statistiche.dir}/src"/>
+			<param name="debug" value="${debug}"/>
+			<param name="buildAsRelease" value="true"/>
+			<param name="buildAPI" value="false" />
 		</antcall>
 
 		<antcall target="compile_batchStatistiche">

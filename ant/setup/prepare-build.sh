@@ -23,6 +23,7 @@ AS4_PROTOCOL=${ROOT}/protocolli/as4
 SDI_PROTOCOL=${ROOT}/protocolli/sdi
 RS_CONFIG=${ROOT}/tools/rs/config/server
 RS_MONITOR=${ROOT}/tools/rs/monitor/server
+TIMER_STATISTICHE=${ROOT}/tools/timer/statistiche
 BATCH_STATISTICHE=${ROOT}/tools/batch/statistiche
 BATCH_RUNTIME_REPOSITORY=${ROOT}/tools/batch/runtime-repository
 
@@ -103,6 +104,12 @@ fi
 if [ ! -f ${RS_MONITOR}/local_env.xml  ]
 then
         cp ${RS_MONITOR}/local_env.xml.template ${RS_MONITOR}/local_env.xml
+fi
+
+# Timer Statistiche
+if [ ! -f ${TIMER_STATISTICHE}/local_env.xml  ]
+then
+        cp ${TIMER_STATISTICHE}/local_env.xml.template ${TIMER_STATISTICHE}/local_env.xml
 fi
 
 # Batch Statistiche

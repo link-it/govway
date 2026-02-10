@@ -263,6 +263,7 @@
         </large-select>
 	<large-select defaultValue="runtime" property="antinstaller_stats_env" displayText="Generazione delle Statistiche">
             <option value="runtime" text="Utilizza stesso ambiente del Runtime"/>
+            <option value="timer" text="Generazione tramite Applicazione Web"/>
 	    <option value="batch" text="Generazione tramite Applicazione Batch"/>
             <option value="runtime_batchPrepared" text="Utilizza Runtime, predispone Batch"/>
         </large-select>
@@ -313,6 +314,7 @@
         </large-select>
 	<large-select defaultValue="runtime" property="antinstaller_stats_env" displayText="Generazione delle Statistiche">
             <option value="runtime" text="Utilizza stesso ambiente del Runtime"/>
+            <option value="timer" text="Generazione tramite Applicazione Web"/>
 	    <option value="batch" text="Generazione tramite Applicazione Batch"/>
             <option value="runtime_batchPrepared" text="Utilizza Runtime, predispone Batch"/>
         </large-select>
@@ -742,6 +744,6 @@
     </page>
 
    <page name="Fine" displayText="Installazione" type="progress" showTargets="true"
-        target="setup,setup_datasource,setup_sql,setup_pdd,setup_govwayConsole,setup_govwayMonitor,setup_apiConfig,setup_apiMonitor,setup_batchStatistiche,setup_batchRuntimeRepository,setup_cliVault,setup_cliConfigLoader,setup_cliTemplateScan,setup_finished"/>
+        target="setup,setup_datasource,setup_sql,setup_pdd,setup_govwayConsole,setup_govwayMonitor,setup_apiConfig,setup_apiMonitor,setup_timerStatistiche,setup_batchStatistiche,setup_batchRuntimeRepository,setup_cliVault,setup_cliConfigLoader,setup_cliTemplateScan,setup_finished"/>
 
 </installer>

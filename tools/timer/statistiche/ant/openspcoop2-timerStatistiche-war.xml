@@ -1,0 +1,131 @@
+<project name="openspcoop2-war-statistiche-server">
+    <description>
+        Produzione del WAR per il servizio timer statistiche
+    </description>
+
+
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+          <classpath>
+              <pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+          </classpath>
+	</taskdef>
+
+	<target name="-war_timerStatistiche">
+
+		<if>
+			<matches string="${as}" pattern="wildfly.*"/>
+			<then>
+				<if>
+					<or>
+						<equals arg1="${as}" arg2="wildfly35" />
+						<equals arg1="${as}" arg2="wildfly36" />
+						<equals arg1="${as}" arg2="wildfly37" />
+						<equals arg1="${as}" arg2="wildfly38" />
+					</or>
+					<then>
+						<copy file="${src_timerStatistiche}/WEB-INF/${jboss_deployment_structure}.wildfly35"
+							tofile="${tmp_jboss_conf}/${jboss_deployment_structure}" />
+					</then>
+					<else>
+						<copy file="${src_timerStatistiche}/WEB-INF/${jboss_deployment_structure}.wildfly27"
+							tofile="${tmp_jboss_conf}/${jboss_deployment_structure}" />
+					</else>
+				</if>
+			</then>
+ 		</if>
+
+		<!-- Properties -->
+		<delete dir="${build_timerStatistiche}/properties" />
+		<mkdir dir="${build_timerStatistiche}/properties" />
+		<copy todir="${build_timerStatistiche}/properties">
+			<fileset dir="${properties_timerStatistiche}">
+				<include name="*.properties"/>
+			</fileset>
+		</copy>
+
+		<war destfile="${dist_timerStatistiche}/govwayStats.war" webxml="${src_timerStatistiche}/WEB-INF/web.xml">
+
+			<webinf dir="${tmp_jboss_conf}">
+				<include name="${jboss_classloading}" />
+			</webinf>
+			<webinf dir="${src_timerStatistiche}/WEB-INF">
+				<include name="${jboss_scanning}" />
+			</webinf>
+			<webinf dir="${tmp_jboss_conf}">
+				<include name="${jboss_deployment_structure}" />
+			</webinf>
+
+			<lib dir="${openspcoop2.dist}">
+				<include name="openspcoop2_*.jar"/>
+			</lib>
+			<!-- JAR compilato del progetto -->
+			<lib dir="${dist_timerStatistiche}">
+				<include name="openspcoop2_*.jar"/>
+			</lib>
+
+			<lib dir="${openspcoop2.lib}/shared">
+				<include name="joda-time-2.14.0.jar"/>
+				<include name="freemarker-2.3.34.jar" />
+				<include name="velocity-*.jar" />
+				<include name="${xerces_jar}"/>
+				<include name="${xml_apis_jar}"/>
+				<include name="${xalan_jar}"/>
+				<include name="${xalan_serializer_jar}"/>
+				
+			</lib>
+			<lib dir="${openspcoop2.lib}/angus">
+				<include name="*.jar"/>
+			</lib>
+			<lib dir="${openspcoop2.lib}/jackson">
+				<include name="*.jar"/>
+			</lib>			
+			<lib dir="${openspcoop2.lib}/commons">
+				<include name="commons-csv-1.14.0.jar"/>
+				<include name="commons-collections-*.jar"/>
+				<include name="commons-lang3-3.18.0.jar"/>
+				<include name="commons-text-1.14.0.jar"/>
+				<include name="commons-codec-1.18.0.jar"/>
+				<include name="commons-io-2.19.0.jar"/>
+			</lib>
+			<lib dir="${openspcoop2.lib}/jaxb">
+				<include name="*.jar"/>
+			</lib>	
+			<lib dir="${openspcoop2.lib}/jakarta">
+				<include name="jakarta.activation-api-2.1.3.jar"/>
+				<include name="jakarta.xml.bind-api-3.0.1.jar"/>
+			</lib>
+			<lib dir="${openspcoop2.lib}/log">
+				<include name="slf4j-api-*.jar"/>
+				<include name="log4j*.jar"/>
+			</lib>
+			<lib dir="${openspcoop2.lib}/saaj">
+				<include name="jakarta.xml.soap-api-3.0.2.jar"/>
+				<include name="saaj-impl-3.0.4-gov4j-1.jar"/>
+			</lib>
+			<lib dir="${openspcoop2.lib}/security">
+				<include name="bcpkix-jdk18on-1.81.jar"/>
+				<include name="bcprov-jdk18on-1.81.jar"/>
+				<include name="bcutil-jdk18on-1.81.jar"/>
+				<include name="xmlsec-4.0.4.jar"/>
+				<include name="neethi-3.2.1.jar"/>
+				<include name="jasypt-1.9.3.jar"/>
+				<include name="nimbus-jose-jwt-10.3.1.jar"/>
+			</lib>
+			<lib dir="${openspcoop2.lib}/swagger">
+				<include name="swagger-models-jakarta-2.2.33.jar"/>
+				<include name="swagger-core-jakarta-2.2.33.jar"/>
+			</lib>
+			<lib dir="${openspcoop2.lib}/httpcore">
+				<include name="*.jar"/>
+			</lib>
+
+			<classes dir="${build_timerStatistiche}/properties">
+				<include name="*.properties"/>
+			</classes>
+
+		</war>
+
+	</target>
+
+</project>

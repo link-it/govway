@@ -45,6 +45,7 @@
 	<classpathentry kind="src" path="tools/command_line_interfaces/template_scan/src"/>
 	<classpathentry kind="src" path="tools/batch/statistiche/src"/>
 	<classpathentry kind="src" path="tools/batch/runtime-repository/src"/>
+	<classpathentry excluding="*/jboss*|*/web.xml|*/applicationContext-*.xml|*/*.yaml|**/org.apache.cxf.Logger" kind="src" path="tools/timer/statistiche/src"/>
 	<classpathentry excluding="*/*.xml" kind="src" path="tools/connection_pool/src"/>
 	<classpathentry kind="src" path="tools/generic_project/src"/>
 	<classpathentry kind="src" path="tools/utils/src"/>

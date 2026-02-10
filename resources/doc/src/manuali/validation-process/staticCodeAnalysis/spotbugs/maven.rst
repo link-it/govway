@@ -29,6 +29,8 @@ Gli identificativi dei moduli sono classificati come segue:
 
 - batch: batch-statistiche, batch-runtime-repository;
 
+- timer applicativi: timer-statistiche;
+
 - cli: cli-config-loader, cli-govway-vault, cli-template-scan.
 
 I reports prodotti nella directory 'spotbugs-reports' sono analizzabili tramite la `SpotBugs GUI <https://spotbugs.readthedocs.io/en/stable/gui.html>`_ avviabile tramite lo script presente in `tools/spotbugs/startSpotBugsAnalysisConsole.sh <https://github.com/link-it/govway/blob/3.4.x/tools/spotbugs/startSpotBugsAnalysisConsole.sh>`_. La figura :numref:`SpotBugs_gui` mostra un esempio di report analizzato con la console di SpotBugs.
@@ -62,4 +64,4 @@ L'esempio seguente attiva l'analisi dei sorgenti solamente per le utilità di ba
     mvn verify -Dspotbugs=verify 
                -Dtestsuite=none -Dpackage=none -Dowasp=none 
                -Dspotbugs.home=/tmp/spotbugs-4.9.8
-               -Dspotbugs.skipPackages=protocol-as4,protocol-modipa,protocol-sdi,protocol-spcoop,protocol-trasparente,web-lib-audit,web-lib-mvc,web-lib-queue,web-lib-users,web-loader,web-govwayConsole,web-govwayMonitor,rs-config,rs-monitor,batch-statistiche,batch-runtime-repository,cli-config-loader,cli-govway-vault,cli-template-scan
+               -Dspotbugs.skipPackages=protocol-as4,protocol-modipa,protocol-sdi,protocol-spcoop,protocol-trasparente,web-lib-audit,web-lib-mvc,web-lib-queue,web-lib-users,web-loader,web-govwayConsole,web-govwayMonitor,rs-config,rs-monitor,batch-statistiche,batch-runtime-repository,timer-statistiche,cli-config-loader,cli-govway-vault,cli-template-scan

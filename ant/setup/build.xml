@@ -22,6 +22,7 @@
 	<import file="./ant/govwayMonitor-build.xml" />
 	<import file="./ant/govwayAPIConfig-build.xml" />
 	<import file="./ant/govwayAPIMonitor-build.xml" />
+	<import file="./ant/timerStatistiche-build.xml" />	
 	<import file="./ant/batchStatistiche-build.xml" />
 	<import file="./ant/batchRuntimeRepository-build.xml" />
 	<import file="./ant/cliVault-build.xml" />
@@ -2267,6 +2268,15 @@
 						<replace file="${tmp_ds}/govwayAPIMonitor.xml" token="grafica govwayMonitor" value="govwayAPIMonitor.war"/>
 					</then>
 				</if>
+				
+				<!-- govwayStats.war -->
+				<if>
+					<equals arg1="${antinstaller_stats_env}" arg2="timer"/>
+					<then>
+						<copy file="${tmp_ds}/govwayMonitor.xml" tofile="${tmp_ds}/govwayStats.xml"/>
+						<replace file="${tmp_ds}/govwayStats.xml" token="grafica govwayMonitor" value="govwayStats.war"/>
+					</then>
+				</if>
 
 				<if>
 					<istrue value="${antinstaller_protocollo_as4}" />
@@ -2676,6 +2686,98 @@
 		</if>
 	</target>
 
+	<target name="setup_timerStatistiche" depends="_setup_timerStatistiche"/>
+	<target name="_setup_timerStatistiche">
+		<if>
+			<or>
+				<equals arg1="${antinstaller_stats_env}" arg2="timer"/>
+			</or>
+			<then>
+
+				<unzip src="${deploy_sw}/${build_for_as}/govwayStats.war" dest="${tmp_archivi}/govwayStats.war"/>
+				<antcall target="timer_statistiche_properties_settings">
+				    <param name="file" value="${tmp_archivi}/govwayStats.war/WEB-INF/classes/timer-statistiche.properties"/>
+				</antcall>
+				<antcall target="timer_statistiche_dao_factory_properties_settings">
+				    <param name="file" value="${tmp_archivi}/govwayStats.war/WEB-INF/classes/daoFactory.properties"/>
+				</antcall>
+				<antcall target="timer_statistiche_log4j_properties_settings">
+				    <param name="file" value="${tmp_archivi}/govwayStats.war/WEB-INF/classes/timer-statistiche.log4j2.properties"/>
+				</antcall>
+				<antcall target="dos2unix">
+					<param name="dir" value="${tmp_archivi}/govwayStats.war/WEB-INF/classes"/>
+					<param name="file" value="*.properties"/>
+				</antcall>
+				<!-- trasparente -->
+				<if>
+					<istrue value="${antinstaller_protocollo_trasparente}" />
+					<then>
+						<copy todir="${tmp_archivi}/govwayStats.war/WEB-INF/lib">
+							<fileset dir="${tmp_protocol_jars}">
+								<include name="openspcoop2_trasparente-protocol_*.jar"/>
+							</fileset>
+							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
+						</copy>
+					</then>
+				</if>
+				<!-- modipa -->
+				<if>
+					<istrue value="${antinstaller_protocollo_modipa}"/>
+					<then>
+						<copy todir="${tmp_archivi}/govwayStats.war/WEB-INF/lib">
+							<fileset dir="${tmp_protocol_jars}">
+								<include name="openspcoop2_modipa-protocol_*.jar"/>
+							</fileset>
+							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
+						</copy>
+					</then>
+				</if>
+				<!-- spcoop -->
+				<if>
+					<istrue value="${antinstaller_protocollo_spcoop}"/>
+					<then>
+						<copy todir="${tmp_archivi}/govwayStats.war/WEB-INF/lib">
+							<fileset dir="${tmp_protocol_jars}">
+								<include name="openspcoop2_spcoop-protocol_*.jar"/>
+							</fileset>
+							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
+						</copy>
+					</then>
+				</if>
+				<!-- as4 -->
+				<if>
+					<istrue value="${antinstaller_protocollo_as4}" />
+					<then>
+						<copy todir="${tmp_archivi}/govwayStats.war/WEB-INF/lib">
+							<fileset dir="${tmp_protocol_jars}">
+								<include name="openspcoop2_as4-protocol_*.jar"/>
+								<exclude name="openspcoop2_as4-protocol_ecodexBackendStub_cxf.jar"/>
+							</fileset>
+							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
+						</copy>
+					</then>
+				</if>
+				<!-- sdi -->
+				<if>
+					<istrue value="${antinstaller_protocollo_sdi}"/>
+					<then>
+						<copy todir="${tmp_archivi}/govwayStats.war/WEB-INF/lib">
+							<fileset dir="${tmp_protocol_jars}">
+								<include name="openspcoop2_sdi-protocol_*.jar"/>
+							</fileset>
+							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
+						</copy>
+					</then>
+				</if>
+				<!-- Ripristino jar -->
+				<antcall target="ripristina_jar">
+				    <param name="archiveFile" value="${tmp_archivi}/govwayStats.war"/>
+					<param name="as" value="${build_for_as}"/>
+					<param name="archiveType" value="WAR"/>
+				</antcall>
+			</then>
+		</if>
+	</target>
 
 	<target name="setup_batchStatistiche" depends="_setup_batchStatistiche"/>
 	<target name="_setup_batchStatistiche">

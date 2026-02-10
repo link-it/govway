@@ -1,0 +1,66 @@
+<project name="openspcoop2-compile-timerStatistiche">
+    <description>
+        Produzione jar
+    </description>
+
+	<import file="${openspcoop2}/ant/commons/git-build.xml" />
+	<import file="${openspcoop2}/ant/commons/compile-build.xml" />
+	<import file="${openspcoop2}/ant/commons/api-build.xml" />
+
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+          <classpath>
+              <pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+          </classpath>
+	</taskdef>
+
+
+	<!-- Compilazione -->
+	<target name="compile_openspcoop2_timerStatistiche">
+
+		<if>
+			<istrue value="${buildTimerStatistiche}"/>
+			<then>
+
+				<!-- Info git -->
+				<runtarget target="checkgit" />
+
+				<!-- org.openspcoop2.pdd.timers.statistiche.server-->
+				<var name="packagesCompiled" value="org.openspcoop2.pdd.timers.statistiche.server" />
+
+				<antcall target="compile_src_openspcoop2">
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
+					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_timerStatistiche}/"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="timer-statistiche"/>
+					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
+					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
+					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
+					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.pdd.timers.statistiche.server"/>
+					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="."/>
+					<param name="dist" value="${dist_timerStatistiche}"/>
+					<param name="build" value="${build_timerStatistiche}"/>
+				</antcall>
+
+				<!-- API -->
+				<if>
+					<istrue value="${buildAPI}"/>
+					<then>
+						<mkdir dir="${doc_timerStatistiche}"/>
+						<antcall target="compile_api_openspcoop2">
+							<param name="compile_src_openspcoop2.PACKAGES" value="${packagesCompiled}"/>
+							<param name="compile_src_openspcoop2.API_NAME" value="timer-statistiche"/>
+							<param name="compile_src_openspcoop2.API_DIR" value="${doc_timerStatistiche}/api/core"/>
+							<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
+							<param name="src" value="${src_timerStatistiche}"/>
+							<param name="doc" value="${doc_timerStatistiche}"/>
+							<param name="dist" value="${dist_timerStatistiche}"/>
+						</antcall>
+					</then>
+				</if>
+
+			</then>
+		</if>
+
+	</target>
+
+</project>

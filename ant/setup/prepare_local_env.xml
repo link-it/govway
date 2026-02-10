@@ -76,6 +76,12 @@
 	<property name="required_lib_govwayMonitorApiRS" location="${required_lib}"/>
 	<property name="src_govwayMonitorApiRS" value="${govwayMonitorApiRS}/src" />
 	<import file="${govwayMonitorApiRS}/build.xml"/>
+
+	<!-- TimerStatistiche -->
+	<property name="timerStatistiche" value="${rootDir}/tools/timer/statistiche/" />
+	<property name="required_lib_timerStatistiche" location="${required_lib}"/>
+	<property name="src_timerStatistiche" value="${timerStatistiche}/src" />
+	<import file="${timerStatistiche}/build.xml"/>
 	
 	<!-- BatchCrond -->
 	<property name="batchCrond" value="${rootDir}/tools/batch/crond/" />	

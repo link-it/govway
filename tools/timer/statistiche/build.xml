@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project name="TimerStatistiche" basedir=".">
+	<description>
+        	File di Script per la compilazione del servizio timer statistiche
+    	</description>
+
+	<import file="./local_env.xml" />
+	<import file="./ant/openspcoop2-timerStatistiche-build.xml" />
+	<import file="./ant/openspcoop2-timerStatistiche-war.xml" />
+	<import file="${openspcoop2}/ant/commons/as-check.xml" />
+
+	<!-- directory root -->
+	<property name="gitrepo_root" location="${openspcoop2}" />
+
+	<!-- set properties for this build -->
+	<property name="timerStatistiche" location="${basedir}" />
+
+	<property name="src_timerStatistiche" value="${timerStatistiche}/src" />
+	<property name="src_webinf_timerStatistiche" value="${src_timerStatistiche}/WEB-INF" />
+	<property name="build_timerStatistiche" location="build/timerStatistiche" />
+	<property name="build_timerStatistiche_war" location="build/timerStatisticheWar" />
+	<property name="dist_timerStatistiche" location="dist" />
+	<property name="doc_timerStatistiche" location="doc" />
+	<property name="properties_timerStatistiche" value="deploy/properties" />
+	<property name="deploy_timerStatistiche" value="deploy" />
+	<property name="tmp_jboss_conf" location="tmp" />
+
+
+	<!-- Check AS Version -->
+	<if>
+		<not>
+			<istrue value="${_asVersionVerified}"/>
+		</not>
+		<then>
+			<runtarget target="check_as_version" />
+			<var name="_asVersionVerified" value="true"/>
+		</then>
+	</if>
+
+	<!-- Jar dipendenti dall'A.S. -->
+	<var name="xerces_jar" value=""/>
+	<var name="xml_apis_jar" value=""/>
+	<var name="xalan_jar" value="" />
+	<var name="xalan_serializer_jar" value="" />
+	<var name="commons_logging_jar" value="" />
+	<var name="jboss_classloading" value="" />
+	<var name="jboss_scanning" value="" />
+	<var name="jboss_deployment_structure" value="" />
+
+	<!-- commons_logging -->
+	<if>
+		<or>
+			<equals arg1="${as}" arg2="jboss7"/>
+			<matches string="${as}" pattern="wildfly.*"/>
+			<matches string="${as}" pattern="tomcat.*"/>
+		</or>
+		<then>
+			<var name="commons_logging_jar" value="commons-logging-1.2.jar" />
+		</then>
+	</if>
+	<!-- xalan -->
+	<if>
+		<or>
+			<matches string="${as}" pattern="tomcat.*"/>
+			<equals arg1="${as}" arg2="jboss4"/>
+			<equals arg1="${as}" arg2="jboss6"/>
+			<equals arg1="${as}" arg2="jboss7"/>
+			<matches string="${as}" pattern="wildfly.*"/>
+		</or>
+		<then>
+			<var name="xalan_jar" value="xalan-2.7.3.jar" />
+			<var name="xalan_serializer_jar" value="serializer-2.7.3.jar" />
+		</then>
+	</if>
+	<!-- xerces -->
+	<if>
+		<or>
+			<matches string="${as}" pattern="tomcat.*"/>
+			<equals arg1="${as}" arg2="jboss7"/>
+			<matches string="${as}" pattern="wildfly.*"/>
+		</or>
+		<then>
+			<var name="xerces_jar" value="xercesImpl-2.12.2.jar"/>
+			<var name="xml_apis_jar" value="xml-apis-1.4.01.jar"/>
+		</then>
+	</if>
+
+	<!-- jboss_classloading -->
+	<if>
+		<or>
+			<equals arg1="${as}" arg2="jboss6"/>
+			<equals arg1="${as}" arg2="jboss7"/>
+			<matches string="${as}" pattern="wildfly.*"/>
+		</or>
+		<then>
+			<var name="jboss_classloading" value="jboss-classloading.xml" />
+		</then>
+	</if>
+	<!-- jboss_scanning -->
+	<if>
+		<or>
+			<equals arg1="${as}" arg2="jboss6"/>
+			<equals arg1="${as}" arg2="jboss7"/>
+			<matches string="${as}" pattern="wildfly.*"/>
+		</or>
+		<then>
+			<var name="jboss_scanning" value="jboss-scanning.xml" />
+		</then>
+	</if>
+	<!-- jboss_deployment_structure -->
+	<if>
+		<or>
+			<equals arg1="${as}" arg2="jboss7"/>
+			<matches string="${as}" pattern="wildfly.*"/>
+		</or>
+		<then>
+			<var name="jboss_deployment_structure" value="jboss-deployment-structure.xml" />
+		</then>
+	</if>
+
+
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+		<classpath>
+			<pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+		</classpath>
+	</taskdef>
+
+	<!-- CLASSPATH -->
+	<path id="classpath_compile" >
+		<fileset dir="${required_lib}" >
+			<exclude name="**/axis14/*"/>
+			<exclude name="**/*README"/>
+			<exclude name="*.userlibraries"/>
+			<exclude name="axis14/*"/>
+			<exclude name="**/applicationServer/**"/>
+		</fileset>
+	</path>
+	<path id="classpath_dist" >
+		<fileset dir="${openspcoop2_jars}" >
+			<include name="*.jar"/>
+		</fileset>
+	</path>
+
+	<!-- Ripulisce la distribuzione -->
+	<target name="clean_timerStatistiche">
+		<delete dir="${build_timerStatistiche}" />
+		<delete dir="${build_timerStatistiche_war}" />
+		<delete dir="build" />
+		<delete dir="${dist_timerStatistiche}" />
+		<delete dir="${doc_timerStatistiche}" />
+		<delete dir="${tmp_jboss_conf}" />
+	</target>
+
+	<!-- Create the build directory structure used by compile -->
+	<target name="init_compile_timerStatistiche">
+		<mkdir dir="${build_timerStatistiche}" />
+		<mkdir dir="${build_timerStatistiche}/tmp" />
+		<mkdir dir="${build_timerStatistiche_war}" />
+		<mkdir dir="${dist_timerStatistiche}" />
+		<mkdir dir="${tmp_jboss_conf}" />
+	</target>
+
+	<!-- Compilazione del servizio-->
+	<target name="compile_timerStatistiche" depends="init_compile_timerStatistiche,compile_openspcoop2_timerStatistiche" description="compila timerStatistiche"/>
+
+	<!-- Creazione del modulo .WAR -->
+	<target name="build_timerStatistiche" depends="compile_timerStatistiche,-war_timerStatistiche" />
+
+
+	<!-- alias -->
+	<target name="build" depends="build_timerStatistiche"/>
+	<target name="clean" depends="clean_timerStatistiche"/>
+
+</project>

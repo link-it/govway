@@ -494,7 +494,10 @@
 			<param name="value" value="/govway/${antinstaller_nomesoggetto}/"/>
 		</antcall>
 		<if>
-			<equals arg1="${antinstaller_stats_env}" arg2="batch"/>
+			<or>
+				<equals arg1="${antinstaller_stats_env}" arg2="batch"/>
+				<equals arg1="${antinstaller_stats_env}" arg2="timer"/>
+			</or>		
 			<then>
 				<replaceregexp file="${dist}/cfg/${govway_local_properties_name}"
 					       match="([a-zA-Zèéàùìò0-9=&quot;\.:\/@;,?#'_&lt;>\s]*)# Generazione Report[a-zA-Zèéàùìò0-9=&quot;\.:\/@;,?#'_&lt;>\s]*org\.openspcoop2\.pdd\.statistiche\.generazione\.baseMensile\.gestioneUltimoMese=false([a-zA-Zèéàùìò0-9=&quot;\.:\/@;,?#'_&lt;>\s]*)"
@@ -504,7 +507,7 @@
 							<replacetoken>COMMENTOSTATISTICHE</replacetoken>
 							<replacevalue><![CDATA[# Generazione Report
 #
-# La generazione dei report statistici è disabilitata. Verrà gestita tramite l'applicazione batch.]]></replacevalue>
+# La generazione dei report statistici è disabilitata. Verrà gestita tramite l'applicazione dedicata.]]></replacevalue>
 				</replace>
 			</then>
 		</if>
@@ -2073,6 +2076,14 @@ IDENTIFICATIVOGRUPPO.remoteAccess.checkStatus.url=URLSERVIZIOCHECK]]></replaceva
 			</then>
 		</if>
 		
+		<!-- *** Aggiunta dell'applicazione govwayStats.war ***-->
+		<if>
+			<equals arg1="${antinstaller_stats_env}" arg2="timer"/>
+			<then>
+				<zip destfile="${dist}/archivi/govwayStats.war" basedir="${tmp_archivi}/govwayStats.war"/>
+			</then>
+		</if>	
+		
 		<!-- ** end ** -->
 		<zip destfile="${dist}/archivi/govway.ear" basedir="${dist}/archivi/OpenSPCoop2"/>
 		<delete dir="${dist}/archivi/OpenSPCoop2"/>
@@ -2296,6 +2307,14 @@ IDENTIFICATIVOGRUPPO.remoteAccess.checkStatus.url=URLSERVIZIOCHECK]]></replaceva
 				<zip destfile="${dist}/archivi/govwayAPIMonitor.war" basedir="${tmp_archivi}/govwayAPIMonitor.war"/>
 			</then>
 		</if>
+		
+		<!-- *** Aggiunta dell'applicazione govwayStats.war ***-->
+		<if>
+			<equals arg1="${antinstaller_stats_env}" arg2="timer"/>
+			<then>
+				<zip destfile="${dist}/archivi/govwayStats.war" basedir="${tmp_archivi}/govwayStats.war"/>
+			</then>
+		</if>		
 	</target>
 		
 </project>
