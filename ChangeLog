@@ -1,3 +1,13 @@
+2026-02-10  Tommaso Burlon <tommaso.burlon@link.it>
+
+	* [TimerStatistiche]
+	Aggiunta funzionalità #1623
+	Nuova modalità di generazione statistiche tramite applicazione web.
+	Introdotta una modalità alternativa per il calcolo delle statistiche, che si affianca al batch esistente lanciabile via cron. 
+	Il nuovo componente è un'applicazione web dispiegabile direttamente nell'application server, 
+	che elimina la necessità di schedulazioni esterne semplificando la gestione operativa 
+	in ambienti dove si preferisce mantenere tutti i servizi all'interno del medesimo application server.	
+
 2026-02-09  Andrea Poli <apoli@link.it>
 
 	* [ApiRsConfigurazione]

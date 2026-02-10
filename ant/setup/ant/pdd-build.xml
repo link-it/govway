@@ -106,7 +106,10 @@
 
 		<!-- STATISTICHE ENGINE -->
 		<if>
-			<equals arg1="${antinstaller_stats_env}" arg2="batch"/>
+			<or>
+				<equals arg1="${antinstaller_stats_env}" arg2="batch"/>
+				<equals arg1="${antinstaller_stats_env}" arg2="timer"/>
+			</or>
 			<then>
 				<antcall target="set_property">
 				    <param name="file" value="${file}"/>

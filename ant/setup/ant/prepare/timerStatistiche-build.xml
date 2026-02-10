@@ -1,0 +1,58 @@
+
+<project name="prepare-setup-timerStatistiche" basedir=".">
+	
+	<description>
+        	PREPARE SETUP TIMER STATISTICHE
+	</description>
+
+	<target name="prepare_timerStatistiche_setup">
+		
+		<if>
+			<not>
+				<available file="${timerStatistiche}/local_env.xml"/>
+			</not>
+			<then>
+				<copy file="${timerStatistiche}/local_env.xml.template" tofile="${timerStatistiche}/local_env.xml" />
+			</then>
+		</if>
+				
+		<foreach list="${application_server_version}" param="TIPO_AS" target="_buildGovwayStats" />
+		
+	</target>
+	
+	<target name="_buildGovwayStats">
+	
+		<antcall target="build_timerStatistiche">
+			<param name="rootDir" value="${rootDir}"/>
+			<param name="openspcoop2" value="${rootDir}"/>
+			<param name="required_lib" value="${required_lib_timerStatistiche}"/>
+			<param name="required_lib_timerStatistiche" value="${required_lib_timerStatistiche}"/>
+			<param name="openspcoop2.lib" value="${required_lib_timerStatistiche}"/>
+			<param name="openspcoop2.dist" value="${deploy_sw_openspcoop2_jars}"/> <!-- usato per prendere i jar di openspcoop2 -->
+			<param name="src_timerStatistiche" value="${src_timerStatistiche}"/>
+			<param name="build_timerStatistiche" location="build/timerStatistiche" />
+			<param name="buildAPI" value="false" />
+			<param name="properties_timerStatistiche" value="${timerStatistiche}/deploy/properties"/>
+			<param name="dist_timerStatistiche" value="${deploy_sw}/${TIPO_AS}/dist"/>
+		</antcall>
+
+		<move file="${deploy_sw}/${TIPO_AS}/dist/govwayStats.war" todir="${deploy_sw}/${TIPO_AS}"/>
+		
+		<delete includeEmptyDirs="true">
+		    <fileset dir="${deploy_sw}/${TIPO_AS}/dist" includes="*"/>
+		</delete>
+		<delete dir="${deploy_sw}/${TIPO_AS}/dist"/>
+		<delete dir="build" includeEmptyDirs="true"/>
+			
+		<var name="archiveFile" value="${deploy_sw}/${TIPO_AS}/govwayStats.war" />
+		
+		<antcall target="read_jar">
+		    <param name="archiveFile" value="${archiveFile}"/>
+			<param name="as" value="${TIPO_AS}"/>
+			<param name="archiveType" value="WAR"/>
+		</antcall>
+
+	</target>
+	
+	
+</project>

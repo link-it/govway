@@ -1,0 +1,131 @@
+<project name="openspcoop2-war-statistiche-server">
+    <description>
+        Produzione del WAR per il servizio timer statistiche
+    </description>
+
+
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+          <classpath>
+              <pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+          </classpath>
+	</taskdef>
+
+	<target name="-war_timerStatistiche">
+
+		<if>
+			<equals arg1="${as}" arg2="jboss7"/>
+			<then>
+				<copy file="${src_timerStatistiche}/WEB-INF/${jboss_deployment_structure}.${as}"
+						tofile="${tmp_jboss_conf}/${jboss_deployment_structure}" />
+			</then>
+ 		</if>
+		<if>
+			<matches string="${as}" pattern="wildfly.*"/>
+			<then>
+				<if>
+					<or>
+						<matches string="${as}" pattern="wildfly22"/>
+						<matches string="${as}" pattern="wildfly23"/>
+						<matches string="${as}" pattern="wildfly24"/>
+						<matches string="${as}" pattern="wildfly25"/>
+						<matches string="${as}" pattern="wildfly26"/>
+					</or>
+					<then>
+						<copy file="${src_timerStatistiche}/WEB-INF/${jboss_deployment_structure}.wildfly2"
+							tofile="${tmp_jboss_conf}/${jboss_deployment_structure}" />
+					</then>
+					<else>
+						<copy file="${src_timerStatistiche}/WEB-INF/${jboss_deployment_structure}.wildfly"
+							tofile="${tmp_jboss_conf}/${jboss_deployment_structure}" />
+					</else>
+				</if>
+			</then>
+ 		</if>
+
+		<!-- Properties -->
+		<delete dir="${build_timerStatistiche}/properties" />
+		<mkdir dir="${build_timerStatistiche}/properties" />
+		<copy todir="${build_timerStatistiche}/properties">
+			<fileset dir="${properties_timerStatistiche}">
+				<include name="*.properties"/>
+			</fileset>
+		</copy>
+
+		<war destfile="${dist_timerStatistiche}/govwayStats.war" webxml="${src_timerStatistiche}/WEB-INF/web.xml">
+
+			<webinf dir="${tmp_jboss_conf}">
+				<include name="${jboss_classloading}" />
+			</webinf>
+			<webinf dir="${src_timerStatistiche}/WEB-INF">
+				<include name="${jboss_scanning}" />
+			</webinf>
+			<webinf dir="${tmp_jboss_conf}">
+				<include name="${jboss_deployment_structure}" />
+			</webinf>
+
+			<lib dir="${openspcoop2.dist}">
+				<include name="openspcoop2_*.jar"/>
+			</lib>
+			<!-- JAR compilato del progetto -->
+			<lib dir="${dist_timerStatistiche}">
+				<include name="openspcoop2_*.jar"/>
+			</lib>
+
+			<lib dir="${openspcoop2.lib}/shared">
+				<include name="mailapi-1.6.7.jar" />
+				<include name="jakarta.activation-1.2.2.jar" />
+				<include name="joda-time-2.12.0.jar"/>
+				<include name="freemarker-2.3.31.jar" />
+				<include name="velocity-*.jar" />
+				<include name="${xerces_jar}"/>
+				<include name="${xml_apis_jar}"/>
+				<include name="${xalan_jar}"/>
+				<include name="${xalan_serializer_jar}"/>
+				
+			</lib>
+			<lib dir="${openspcoop2.lib}/jackson">
+				<include name="*.jar"/>
+			</lib>			
+			<lib dir="${openspcoop2.lib}/commons">
+				<include name="commons-csv-1.9.0.jar"/>
+				<include name="commons-collections-*.jar"/>
+				<include name="commons-lang-2.6.jar"/>
+				<include name="commons-lang3-3.18.0.jar"/>
+				<include name="commons-codec-1.15.jar"/>
+				<include name="commons-io-2.15.1.jar"/>
+			</lib>
+			<lib dir="${openspcoop2.lib}/jax">
+				<include name="*jaxb-*.jar"/>
+			</lib>	
+			<lib dir="${openspcoop2.lib}/log">
+				<include name="slf4j-api-*.jar"/>
+				<include name="log4j*.jar"/>
+			</lib>
+			<lib dir="${openspcoop2.lib}/saaj">
+				<include name="javax.xml.soap-api-1.4.0.jar"/>
+				<include name="saaj-impl-1.5.3-gov4j-1.jar"/>
+			</lib>
+			<lib dir="${openspcoop2.lib}/security">
+				<include name="bcpkix-jdk18on-1.81.jar"/>
+				<include name="bcprov-jdk18on-1.81.jar"/>
+				<include name="bcutil-jdk18on-1.81.jar"/>
+				<include name="xmlsec-2.3.4-gov4j-1.jar"/>
+				<include name="neethi-3.2.0.jar"/>
+				<include name="jasypt-1.9.3.jar"/>
+				<include name="nimbus-jose-jwt-10.3.1.jar"/>
+			</lib>
+			<lib dir="${openspcoop2.lib}/swagger">
+				<include name="swagger-models-2.2.4.jar"/>
+				<include name="swagger-core-2.2.4.jar"/>
+			</lib>
+
+			<classes dir="${build_timerStatistiche}/properties">
+				<include name="*.properties"/>
+			</classes>
+
+		</war>
+
+	</target>
+
+</project>

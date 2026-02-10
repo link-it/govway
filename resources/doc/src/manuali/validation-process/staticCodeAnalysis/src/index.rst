@@ -62,6 +62,10 @@ Nei `sorgenti del progetto GovWay <https://github.com/link-it/govway/>`_ sono pr
 	- batch di generazione delle statistiche; `tools/batch/statistiche <https://github.com/link-it/govway/tree/master/tools/batch/statistiche>`_ (archivio: openspcoop2_batch-statistiche-<version>.jar)
 	- batch per la gestione del repository di runtime; `tools/batch/runtime-repository <https://github.com/link-it/govway/tree/master/tools/batch/runtime-repository>`_ (archivio: openspcoop2_batch-runtime-repository-<version>.jar)
 
+- *timer*; le applicazioni web che rendono disponibili, tramite un’applicazione dedicata, le medesime funzionalità dei batch utilizzati a run-time in GovWay:
+
+	- applicazione web di generazione delle statistiche; `tools/timer/statistiche <https://github.com/link-it/govway/tree/master/tools/timer/statistiche>`_ (archivio: openspcoop2_timer-statistiche-<version>.jar)
+
 - *cli*; i tools a linea di comando:
 
 	- :ref:`byokInstallToolVaultCli`; `tools/command_line_interfaces/govway_vault <https://github.com/link-it/govway/tree/master/tools/command_line_interfaces/govway_vault>`_ (archivio: openspcoop2_cli-vault-<version>.jar)

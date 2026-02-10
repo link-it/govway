@@ -1,0 +1,319 @@
+
+<project name="setup-govwayAPIMonitor" basedir=".">
+	
+	<description>
+        	SETUP TIMER STATISTICHE
+	</description>
+
+	<import file="../../commons/utils.xml" />
+	
+	<!-- rs-api-monitor.properties -->
+	<target name="timer_statistiche_properties_settings">
+
+		<concat destfile="${file}" append="yes" >
+
+# ----- Personalizzazione Setup GovWay -------------
+		</concat>
+
+		<!-- WORKING DIR -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="confDirectory"/>
+			<param name="value" value="${work_dir}"/>
+		</antcall>
+
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="statistiche.generazione.forceIndex.repository"/>
+			<param name="value" value="${work_dir}/generazioneStatistiche.forceIndex.properties"/>
+		</antcall>
+		
+		<!-- LOG (sul timer li lascio attivi) -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="statistiche.generazione.debug"/>
+			<param name="value" value="true"/>
+		</antcall>
+		
+		<!-- 
+		  PROTOCOL DEFAULT
+		  se abilitati verrano scelto nell'ordine:
+		  - trasparente
+		  - modipa
+		  - spcoop
+		  - as4
+		  - sdi
+		-->
+		<if>
+			<istrue value="${antinstaller_protocollo_trasparente}"/>
+			<then>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="protocolloDefault"/>
+					<param name="value" value="trasparente"/>
+				</antcall>
+			</then>
+			<elseif>
+				<istrue value="${antinstaller_protocollo_modipa}"/>
+				<then>
+					<antcall target="set_property">
+					    <param name="file" value="${file}"/>
+						<param name="token" value="protocolloDefault"/>
+						<param name="value" value="modipa"/>
+					</antcall>
+				</then>
+			</elseif>
+			<elseif>
+				<istrue value="${antinstaller_protocollo_spcoop}"/>
+				<then>
+					<antcall target="set_property">
+					    <param name="file" value="${file}"/>
+						<param name="token" value="protocolloDefault"/>
+						<param name="value" value="spcoop"/>
+					</antcall>
+				</then>
+			</elseif>
+			<elseif>
+				<istrue value="${antinstaller_protocollo_as4}"/>
+				<then>
+					<antcall target="set_property">
+					    <param name="file" value="${file}"/>
+						<param name="token" value="protocolloDefault"/>
+						<param name="value" value="as4"/>
+					</antcall>
+				</then>
+			</elseif>
+			<elseif>
+				<istrue value="${antinstaller_protocollo_sdi}"/>
+				<then>
+					<antcall target="set_property">
+					    <param name="file" value="${file}"/>
+						<param name="token" value="protocolloDefault"/>
+						<param name="value" value="sdi"/>
+					</antcall>
+				</then>
+			</elseif>
+		</if>
+		
+		<!-- ENV REQUIRED -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="env.conf.required"/>
+			<param name="value" value="${antinstaller_confDir_env}"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="env.log.required"/>
+			<param name="value" value="${antinstaller_logDir_env}"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="env.dbType.required"/>
+			<param name="value" value="${antinstaller_dbType_env}"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="env.defaultEntityName.required"/>
+			<param name="value" value="${antinstaller_entity_env}"/>
+		</antcall>
+	
+		<!-- BouncyCastle -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="security.addBouncyCastleProvider"/>
+			<param name="value" value="true"/>
+		</antcall>
+		
+		<!-- MAP -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="env.map.config"/>
+			<param name="value" value="${work_dir}/govway.map.properties"/>
+		</antcall>
+	
+		<!-- HSM CONFIG DIR -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="hsm.config"/>
+			<param name="value" value="${work_dir}/hsm.properties"/>
+		</antcall>
+		
+		<!-- BYOK -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="byok.config"/>
+			<param name="value" value="${work_dir}/byok.properties"/>
+		</antcall>
+		
+		<!-- Secrets -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="byok.env.secrets.config"/>
+			<param name="value" value="${work_dir}/govway.secrets.properties"/>
+		</antcall>
+		
+		<!-- TracingPDND -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="statistiche.pdnd.tracciamento.baseUrl"/>
+			<param name="value" value="http://localhost:8080/govway/rest/out/${entity_name}/PDND/api-pdnd-tracing/v1"/>
+		</antcall>
+		
+	</target>
+	
+	<!-- daoFactory.properties -->
+	<target name="timer_statistiche_dao_factory_properties_settings">
+		
+		<concat destfile="${file}" append="yes" >
+
+# ----- Personalizzazione Setup GovWay -------------
+		</concat>
+				
+		<!-- WORKING DIR -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="confDirectory"/>
+			<param name="value" value="${work_dir}"/>
+		</antcall>
+			
+		<!-- TIPO CONNESSIONE -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="db.tipo"/>
+			<param name="value" value="datasource"/>
+		</antcall>
+	
+		<!-- TIPO DATABASE -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="db.tipoDatabase"/>
+			<param name="value" value="${db_type}"/>
+		</antcall>
+				
+		<!-- DATASOURCE -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="db.datasource.jndiName"/>
+			<param name="value" value="${datasource_console_name}"/>
+		</antcall>
+		<if>
+			<equals arg1="${antinstaller_log_db}" arg2="log"/>
+			<then>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="factory.transazioni.db.datasource.jndiName"/>
+					<param name="value" value="${datasource_pdd_name}.tracciamento"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="factory.eventi.db.datasource.jndiName"/>
+					<param name="value" value="${datasource_pdd_name}.tracciamento"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="factory.tracciamento.db.datasource.jndiName"/>
+					<param name="value" value="${datasource_pdd_name}.tracciamento"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="factory.diagnostica.db.datasource.jndiName"/>
+					<param name="value" value="${datasource_pdd_name}.tracciamento"/>
+				</antcall>				
+			</then>
+			<elseif>
+				<!-- se le tracce sono nel database di runtime e il database delle configurazioni e' a se, le applicazioni "console" dovranno usare un datasource differente -->
+				<equals arg1="${antinstaller_config_db}" arg2="config"/>
+				<then>
+					<antcall target="set_property">
+					    <param name="file" value="${file}"/>
+						<param name="token" value="factory.transazioni.db.datasource.jndiName"/>
+						<param name="value" value="${datasource_pdd_name}.tracciamento"/>
+					</antcall>
+					<antcall target="set_property">
+					    <param name="file" value="${file}"/>
+						<param name="token" value="factory.eventi.db.datasource.jndiName"/>
+						<param name="value" value="${datasource_pdd_name}.tracciamento"/>
+					</antcall>
+					<antcall target="set_property">
+					    <param name="file" value="${file}"/>
+						<param name="token" value="factory.tracciamento.db.datasource.jndiName"/>
+						<param name="value" value="${datasource_pdd_name}.tracciamento"/>
+					</antcall>
+					<antcall target="set_property">
+					    <param name="file" value="${file}"/>
+						<param name="token" value="factory.diagnostica.db.datasource.jndiName"/>
+						<param name="value" value="${datasource_pdd_name}.tracciamento"/>
+					</antcall>
+				</then>
+			</elseif>
+		</if>
+		<if>
+			<equals arg1="${antinstaller_stats_db}" arg2="log"/>
+			<then>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="factory.statistiche.db.datasource.jndiName"/>
+					<param name="value" value="${datasource_pdd_name}.tracciamento"/>
+				</antcall>
+			</then>
+		</if>
+		<if>
+			<equals arg1="${antinstaller_stats_db}" arg2="stats"/>
+			<then>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="factory.statistiche.db.datasource.jndiName"/>
+					<param name="value" value="${datasource_pdd_name}.statistiche"/>
+				</antcall>
+			</then>
+		</if>
+		<if>
+			<!-- se le statistiche sono nel database di runtime e 
+				il database delle configurazioni e' a se
+				 le applicazioni "console" dovranno usare un datasource differente -->
+			<and>
+				<equals arg1="${antinstaller_stats_db}" arg2="runtime"/>
+				<equals arg1="${antinstaller_config_db}" arg2="config"/>
+			</and>
+			<then>
+				<if>
+					<equals arg1="${antinstaller_log_db}" arg2="log"/>
+					<then>
+						<antcall target="set_property">
+						    <param name="file" value="${file}"/>
+							<param name="token" value="factory.statistiche.db.datasource.jndiName"/>
+							<param name="value" value="${datasource_pdd_name}.statistiche"/>
+						</antcall>
+					</then>
+					<else>
+						<antcall target="set_property">
+						    <param name="file" value="${file}"/>
+							<param name="token" value="factory.statistiche.db.datasource.jndiName"/>
+							<param name="value" value="${datasource_pdd_name}.tracciamento"/>
+						</antcall>
+					</else>
+				</if>
+			</then>
+		</if>
+				
+	</target>
+	
+	
+	<!-- timer-statistiche.log4j2.properties -->
+	<target name="timer_statistiche_log4j_properties_settings">
+	
+		<concat destfile="${file}" append="yes" >
+
+# ----- Personalizzazione Setup GovWay -------------
+		</concat>
+		
+		<!-- WORKING DIR -->
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="/var/govway/log"/>
+			<param name="value" value="${log_dir}"/>
+		</antcall>
+	
+	</target>
+		
+</project>

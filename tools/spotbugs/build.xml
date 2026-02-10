@@ -206,6 +206,13 @@
 			<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
 			<param name="analyzeJar" value="openspcoop2_rs-monitor-server*.jar"/>
 		</antcall>
+		<!-- Tmer Statistiche -->
+		<antcall target="_findBugs">
+			<param name="analyzeType" value="timer-statistiche"/>
+			<param name="analyzeSrc" value="${openspcoop2}/tools/timer/statistiche/src"/>
+			<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+			<param name="analyzeJar" value="openspcoop2_timer-statistiche*.jar"/>
+		</antcall>
 		<!-- Batch Statistiche -->
 		<antcall target="_findBugs">
 			<param name="analyzeType" value="batch-statistiche"/>
