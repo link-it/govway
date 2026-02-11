@@ -94,6 +94,7 @@
 				<include name="commons-lang3-3.18.0.jar"/>
 				<include name="commons-codec-1.15.jar"/>
 				<include name="commons-io-2.15.1.jar"/>
+				<include name="${commons_logging_jar}"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/jax">
 				<include name="*jaxb-*.jar"/>
