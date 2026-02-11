@@ -552,6 +552,7 @@
 						<equals arg1="${as}" arg2="wildfly36" />
 						<equals arg1="${as}" arg2="wildfly37" />
 						<equals arg1="${as}" arg2="wildfly38" />
+						<equals arg1="${as}" arg2="wildfly39" />
 					</or>
 					<then>
 						<copy file="${src}/META-INF/jboss-deployment-structure.xml.wildfly35" tofile="${build}/tmp/jboss-deployment-structure.xml" />

@@ -51,9 +51,13 @@ La sezione **Componenti Applicative** prevede le seguenti opzioni:
 
 - *Generazione delle Statistiche*: scelta del meccanismo da adottare per il periodico aggiornamento delle statistiche:
 
-	- *Utilizza stesso ambiente del Runtime*: il meccanismo di generazione delle statistiche è automatizzato con un sistema di integrazione al runtime di Govway
+	- *Utilizza stesso ambiente del Runtime*: il meccanismo di generazione delle statistiche è automatizzato con un sistema integrato al runtime di Govway;
 
-	- *Generazione tramite Applicazione Batch*: la generazione delle statistiche avviene tramite invocazione di un batch appositamente generato
+	- *Generazione tramite Applicazione Web*: la generazione delle statistiche è delegata ad un'applicazione dedicata alla funzionalità;
+
+	- *Generazione tramite Applicazione Batch*: la generazione delle statistiche avviene tramite invocazione di un batch appositamente generato;
+	
+	- *Utilizza Runtime; predisponi Batch*: il meccanismo di generazione è integrato al runtime, ma negli artefatti prodotti è disponibile anche il batch.
 
 - *Gestione dei Nodi*: Indica la modalità con cui si vuole gestire la configurazione dei diversi nodi di runtime:
 
