@@ -32,6 +32,7 @@ import java.util.Properties;
 import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.Proprieta;
+import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
 import org.openspcoop2.pdd.core.dynamic.InformazioniIntegrazioneCodifica;
 import org.openspcoop2.pdd.core.dynamic.InformazioniIntegrazioneSorgente;
 import org.openspcoop2.pdd.core.integrazione.peer.PeerHeaderDescriptor;
@@ -1337,8 +1338,22 @@ public class CostantiProprieta {
 		String valueS = readValue(props, p);
 		return Objects.requireNonNullElse(valueS, defaultValue);
 	}
-	
-	
+
+
+	// **** Indicizzazione Credenziali Mittente *****
+
+	private static final String TRACE_INDEX_PREFIX = "trace.index.";
+
+	public static boolean isTraceIndexEnabled(List<Proprieta> proprieta, TipoCredenzialeMittente tipo, boolean defaultValue) {
+		String p = TRACE_INDEX_PREFIX + tipo.getRawValue();
+		String valueS = readValue(proprieta, p);
+		if(valueS!=null && !StringUtils.isEmpty(valueS)) {
+			return valueS.equalsIgnoreCase(VALUE_ENABLED);
+		}
+		return defaultValue;
+	}
+
+
 	// METODI DI UTILITA GENERICI
 	
 	private static CoreException newCoreException(String valueS, String property, String supportedValues) {

@@ -19,11 +19,13 @@
  */
 package org.openspcoop2.pdd.services.core;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.config.GestioneTokenAutenticazione;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
@@ -720,14 +722,16 @@ public class RicezioneContenutiApplicativiGestioneAutenticazione {
 			try{
 
 				if(credenzialeTrasporto!=null) {
-					GestoreAutenticazione.updateCredenzialiTrasporto(this.identitaPdD, RicezioneContenutiApplicativi.ID_MODULO, this.idTransazione, tipoAutenticazione, credenzialeTrasporto, credenzialiMittente, 
-							this.openspcoopstate, "RicezioneContenutiApplicativi.credenzialiTrasporto", this.requestInfo);
+					GestoreAutenticazione.updateCredenzialiTrasporto(this.identitaPdD, RicezioneContenutiApplicativi.ID_MODULO, this.idTransazione, tipoAutenticazione, credenzialeTrasporto, credenzialiMittente,
+							this.openspcoopstate, "RicezioneContenutiApplicativi.credenzialiTrasporto", this.requestInfo,
+							getProprietaPorta());
 				}
-				
+
 				if(this.informazioniTokenNormalizzate!=null) {
-					GestoreAutenticazione.updateCredenzialiToken(this.identitaPdD, RicezioneContenutiApplicativi.ID_MODULO, this.idTransazione, this.informazioniTokenNormalizzate, this.idApplicativoToken, credenzialiMittente, 
+					GestoreAutenticazione.updateCredenzialiToken(this.identitaPdD, RicezioneContenutiApplicativi.ID_MODULO, this.idTransazione, this.informazioniTokenNormalizzate, this.idApplicativoToken, credenzialiMittente,
 							this.openspcoopstate, "RicezioneContenutiApplicativi.credenzialiToken", this.requestInfo,
-							this.pddContext);
+							this.pddContext,
+							getProprietaPorta());
 				}
 				
 				this.transaction.setCredenzialiMittente(credenzialiMittente);
@@ -1039,8 +1043,9 @@ public class RicezioneContenutiApplicativiGestioneAutenticazione {
 		if(OpenSPCoop2Properties.getInstance().isGestioneAutenticazioneSaveTokenAuthenticationInfoAuthenticationFailed() &&
 				tipoAutenticazione!=null && credenzialeTrasporto!=null) {
 			try {
-				GestoreAutenticazione.updateCredenzialiTrasporto(this.identitaPdD, RicezioneContenutiApplicativi.ID_MODULO, this.idTransazione, tipoAutenticazione, credenzialeTrasporto, credenzialiMittente, 
-					this.openspcoopstate, "RicezioneContenutiApplicativi.credenzialiTrasporto", this.requestInfo);
+				GestoreAutenticazione.updateCredenzialiTrasporto(this.identitaPdD, RicezioneContenutiApplicativi.ID_MODULO, this.idTransazione, tipoAutenticazione, credenzialeTrasporto, credenzialiMittente,
+					this.openspcoopstate, "RicezioneContenutiApplicativi.credenzialiTrasporto", this.requestInfo,
+					getProprietaPorta());
 			}catch(Exception e) {
 				this.logCore.error("updateCredenzialiTrasporto error: "+e.getMessage(),e);
 			}
@@ -1054,14 +1059,20 @@ public class RicezioneContenutiApplicativiGestioneAutenticazione {
 			}
 			if(info!=null) {
 				try {
-					GestoreAutenticazione.updateCredenzialiToken(this.identitaPdD, RicezioneContenutiApplicativi.ID_MODULO, this.idTransazione, info, this.idApplicativoToken, credenzialiMittente, 
+					GestoreAutenticazione.updateCredenzialiToken(this.identitaPdD, RicezioneContenutiApplicativi.ID_MODULO, this.idTransazione, info, this.idApplicativoToken, credenzialiMittente,
 						this.openspcoopstate, "RicezioneContenutiApplicativi.credenzialiToken", this.requestInfo,
-						this.pddContext);
+						this.pddContext,
+						getProprietaPorta());
 				}catch(Exception e) {
 					this.logCore.error("updateCredenzialiToken error: "+e.getMessage(),e);
 				}
 			}
 		}
+	}
+
+	private List<Proprieta> getProprietaPorta() {
+		if(this.portaDelegata!=null && this.portaDelegata.sizeProprieta()>0) { return this.portaDelegata.getProprieta(); }
+		return null;
 	}
 
 	private static final String ERRORE_LETTURA_SOGGETTO = "Errore durante la lettura del soggetto '";

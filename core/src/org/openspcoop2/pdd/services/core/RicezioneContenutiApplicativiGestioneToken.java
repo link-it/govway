@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.openspcoop2.core.config.GestioneTokenAutenticazione;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.transazioni.utils.CredenzialiMittente;
@@ -769,13 +770,19 @@ public class RicezioneContenutiApplicativiGestioneToken {
 				try {
 					GestoreAutenticazione.updateCredenzialiToken(
 							this.identitaPdD,
-							RicezioneContenutiApplicativi.ID_MODULO, this.idTransazione, informazioniTokenNormalizzate, null, credenzialiMittente, 
+							RicezioneContenutiApplicativi.ID_MODULO, this.idTransazione, informazioniTokenNormalizzate, null, credenzialiMittente,
 							this.openspcoopstate, "RicezioneContenutiApplicativi.credenzialiToken", this.requestInfo,
-							this.pddContext);
+							this.pddContext,
+							getProprietaPorta());
 				}catch(Exception e) {
 					this.logCore.error("updateCredenzialiToken error: "+e.getMessage(),e);
 				}
 			}
 		}
+	}
+
+	private List<Proprieta> getProprietaPorta() {
+		if(this.portaDelegata!=null && this.portaDelegata.sizeProprieta()>0) { return this.portaDelegata.getProprieta(); }
+		return null;
 	}
 }

@@ -1,5 +1,15 @@
 2026-02-11  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore, Documentazione]
+	Aggiunta funzionalità #1694
+	Aggiunta possibilità di disabilitare selettivamente l'indicizzazione delle credenziali mittente 
+	(credenziali di autenticazione, token, indirizzo IP client, eventi, tag, API) a livello globale o per singola erogazione/fruizione, 
+	consentendo di risparmiare risorse database per i tipi non utilizzati nelle ricerche dalla console di monitoraggio e dalle relative API. 
+	Abilitato di default il dettaglio delle singole fasi nello slow log delle transazioni su database e 
+	aggiunta la relativa documentazione nelle configurazioni avanzate del tracciamento.
+
+2026-02-11  Andrea Poli <apoli@link.it>
+
 	* [GovWayCore]
 	Aggiunta funzionalità #1694
 	Aggiunta sanitizzazione delle porte negli indirizzi IP presenti negli header di trasporto (X-Forwarded-For e header analoghi) 
