@@ -35,6 +35,7 @@ import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
 import org.openspcoop2.core.config.GestioneTokenAutenticazione;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.id.IDPortaApplicativa;
@@ -68,6 +69,7 @@ import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.utils.WWWAuthenticateErrorCode;
 import org.openspcoop2.message.utils.WWWAuthenticateGenerator;
+import org.openspcoop2.pdd.config.CostantiProprieta;
 import org.openspcoop2.pdd.config.DBTransazioniManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.Resource;
@@ -1062,25 +1064,40 @@ public class GestoreAutenticazione {
     }
     
     
-    public static void updateCredenzialiTrasporto(IDSoggetto dominio, String modulo, String idTransazione, 
+    private static boolean isCredenzialiMittenteEnabled(TipoCredenzialeMittente tipo, List<Proprieta> proprietaPorta) {
+    	boolean defaultValue = OpenSPCoop2Properties.getInstance().isTransazioniCredenzialiMittenteEnabled(tipo);
+    	if(proprietaPorta!=null && !proprietaPorta.isEmpty()) {
+    		return CostantiProprieta.isTraceIndexEnabled(proprietaPorta, tipo, defaultValue);
+    	}
+    	return defaultValue;
+    }
+
+    public static void updateCredenzialiTrasporto(IDSoggetto dominio, String modulo, String idTransazione,
     		String tipoAutenticazione, String credential, CredenzialiMittente credenzialiMittente,
-    		IOpenSPCoopState openspcoopState, String identitaChiamante, RequestInfo requestInfo) throws Exception{
-    	
+    		IOpenSPCoopState openspcoopState, String identitaChiamante, RequestInfo requestInfo,
+    		List<Proprieta> proprietaPorta) throws Exception{
+
+    	if(!isCredenzialiMittenteEnabled(TipoCredenzialeMittente.TRASPORTO, proprietaPorta)) {
+    		return;
+    	}
+
     	CredenzialeSearchTrasporto trasportoSearch = new CredenzialeSearchTrasporto(tipoAutenticazione);
     	trasportoSearch.disableConvertToDBValue();
 		CredenzialeTrasporto trasporto = new CredenzialeTrasporto(tipoAutenticazione, credential);
-    	credenzialiMittente.setTrasporto(getCredenzialeMittente(dominio, modulo, idTransazione, 
+    	credenzialiMittente.setTrasporto(getCredenzialeMittente(dominio, modulo, idTransazione,
     			trasportoSearch, trasporto, openspcoopState, identitaChiamante,
 				null, requestInfo));
-    	
+
     }
     
-    public static void updateCredenzialiToken(IDSoggetto dominio, String modulo, String idTransazione, 
-    		InformazioniToken informazioniTokenNormalizzate, IDServizioApplicativo idApplicativoToken, CredenzialiMittente credenzialiMittente, 
+    public static void updateCredenzialiToken(IDSoggetto dominio, String modulo, String idTransazione,
+    		InformazioniToken informazioniTokenNormalizzate, IDServizioApplicativo idApplicativoToken, CredenzialiMittente credenzialiMittente,
     		IOpenSPCoopState openspcoopState, String identitaChiamante, RequestInfo requestInfo,
-    		Context context) throws Exception{
-    	
-    	if(informazioniTokenNormalizzate.getIss()!=null) {
+    		Context context,
+    		List<Proprieta> proprietaPorta) throws Exception{
+
+    	if(informazioniTokenNormalizzate.getIss()!=null &&
+    			isCredenzialiMittenteEnabled(TipoCredenzialeMittente.TOKEN_ISSUER, proprietaPorta)) {
     		CredenzialeSearchToken tokenSearch = new CredenzialeSearchToken(TipoCredenzialeMittente.TOKEN_ISSUER);
     		tokenSearch.disableConvertToDBValue();
     		CredenzialeToken token = new CredenzialeToken(TipoCredenzialeMittente.TOKEN_ISSUER, informazioniTokenNormalizzate.getIss());
@@ -1088,7 +1105,8 @@ public class GestoreAutenticazione {
     				tokenSearch, token, openspcoopState, identitaChiamante,
     				null, requestInfo));
     	}
-    	if(informazioniTokenNormalizzate.getClientId()!=null) {
+    	if(informazioniTokenNormalizzate.getClientId()!=null &&
+    			isCredenzialiMittenteEnabled(TipoCredenzialeMittente.TOKEN_CLIENT_ID, proprietaPorta)) {
     		if(idApplicativoToken==null) {
 	    		CredenzialeSearchToken tokenSearch = new CredenzialeSearchToken(TipoCredenzialeMittente.TOKEN_CLIENT_ID);
 	    		tokenSearch.disableConvertToDBValue();
@@ -1107,7 +1125,8 @@ public class GestoreAutenticazione {
     		}
     	}
 
-    	if(informazioniTokenNormalizzate.getSub()!=null) {
+    	if(informazioniTokenNormalizzate.getSub()!=null &&
+    			isCredenzialiMittenteEnabled(TipoCredenzialeMittente.TOKEN_SUBJECT, proprietaPorta)) {
     		CredenzialeSearchToken tokenSearch = new CredenzialeSearchToken(TipoCredenzialeMittente.TOKEN_SUBJECT);
     		tokenSearch.disableConvertToDBValue();
     		CredenzialeToken token = new CredenzialeToken(TipoCredenzialeMittente.TOKEN_SUBJECT, informazioniTokenNormalizzate.getSub());
@@ -1115,7 +1134,8 @@ public class GestoreAutenticazione {
     				tokenSearch, token, openspcoopState, identitaChiamante,
     				null, requestInfo));
     	}
-    	if(informazioniTokenNormalizzate.getUsername()!=null) {
+    	if(informazioniTokenNormalizzate.getUsername()!=null &&
+    			isCredenzialiMittenteEnabled(TipoCredenzialeMittente.TOKEN_USERNAME, proprietaPorta)) {
     		CredenzialeSearchToken tokenSearch = new CredenzialeSearchToken(TipoCredenzialeMittente.TOKEN_USERNAME);
     		tokenSearch.disableConvertToDBValue();
     		CredenzialeToken token = new CredenzialeToken(TipoCredenzialeMittente.TOKEN_USERNAME, informazioniTokenNormalizzate.getUsername());
@@ -1123,7 +1143,8 @@ public class GestoreAutenticazione {
     				tokenSearch, token, openspcoopState, identitaChiamante,
     				null, requestInfo));
     	}
-    	if(informazioniTokenNormalizzate.getUserInfo()!=null && informazioniTokenNormalizzate.getUserInfo().getEMail()!=null) {
+    	if(informazioniTokenNormalizzate.getUserInfo()!=null && informazioniTokenNormalizzate.getUserInfo().getEMail()!=null &&
+    			isCredenzialiMittenteEnabled(TipoCredenzialeMittente.TOKEN_EMAIL, proprietaPorta)) {
     		CredenzialeSearchToken tokenSearch = new CredenzialeSearchToken(TipoCredenzialeMittente.TOKEN_EMAIL);
     		tokenSearch.disableConvertToDBValue();
     		CredenzialeToken token = new CredenzialeToken(TipoCredenzialeMittente.TOKEN_EMAIL, informazioniTokenNormalizzate.getUserInfo().getEMail());

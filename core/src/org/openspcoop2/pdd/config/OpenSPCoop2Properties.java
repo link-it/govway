@@ -49,6 +49,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.CoreException;
+import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.commons.IExtendedInfo;
 import org.openspcoop2.core.config.AccessoConfigurazionePdD;
@@ -2441,6 +2442,16 @@ public class OpenSPCoop2Properties {
 				
 				this.getTransazioniCredenzialiMittenteMaxLength();
 				this.getTransazioniCredenzialiMittenteLifeSeconds();
+				this.isTransazioniCredenzialiMittenteEnabled(TipoCredenzialeMittente.TRASPORTO);
+				this.isTransazioniCredenzialiMittenteEnabled(TipoCredenzialeMittente.TOKEN_ISSUER);
+				this.isTransazioniCredenzialiMittenteEnabled(TipoCredenzialeMittente.TOKEN_CLIENT_ID);
+				this.isTransazioniCredenzialiMittenteEnabled(TipoCredenzialeMittente.TOKEN_SUBJECT);
+				this.isTransazioniCredenzialiMittenteEnabled(TipoCredenzialeMittente.TOKEN_USERNAME);
+				this.isTransazioniCredenzialiMittenteEnabled(TipoCredenzialeMittente.TOKEN_EMAIL);
+				this.isTransazioniCredenzialiMittenteEnabled(TipoCredenzialeMittente.CLIENT_ADDRESS);
+				this.isTransazioniCredenzialiMittenteEnabled(TipoCredenzialeMittente.EVENTI);
+				this.isTransazioniCredenzialiMittenteEnabled(TipoCredenzialeMittente.GRUPPI);
+				this.isTransazioniCredenzialiMittenteEnabled(TipoCredenzialeMittente.API);
 				this.isTransazioniRegistrazioneTracceProtocolPropertiesEnabled();
 				this.isTransazioniRegistrazioneTracceHeaderRawEnabled();
 				this.isTransazioniRegistrazioneTracceDigestEnabled();
@@ -29553,7 +29564,30 @@ public class OpenSPCoop2Properties {
 
 		return this.getTransazioniCredenzialiMittenteLifeSeconds;
 	}
-	
+
+	private java.util.Map<TipoCredenzialeMittente, Boolean> isTransazioniCredenzialiMittenteEnabledMap = new java.util.EnumMap<>(TipoCredenzialeMittente.class);
+	public boolean isTransazioniCredenzialiMittenteEnabled(TipoCredenzialeMittente tipo) {
+		Boolean value = this.isTransazioniCredenzialiMittenteEnabledMap.get(tipo);
+		if(value==null){
+			String pName = "org.openspcoop2.pdd.transazioni.credenzialiMittente."+tipo.getRawValue()+".enabled";
+			try{
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
+					name="true";
+				}
+				name = name.trim();
+				value = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.logError(getMessaggioProprietaNonImpostata(pName,e,true));
+				value = true;
+			}
+			this.isTransazioniCredenzialiMittenteEnabledMap.put(tipo, value);
+		}
+		return value;
+	}
+
 	private Boolean isTransazioniRegistrazioneTracceProtocolPropertiesEnabled = null;
 	public boolean isTransazioniRegistrazioneTracceProtocolPropertiesEnabled() {	
 		if(this.isTransazioniRegistrazioneTracceProtocolPropertiesEnabled==null){

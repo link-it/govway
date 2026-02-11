@@ -29,6 +29,9 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.CoreException;
+import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.Transazioni;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.constants.Costanti;
@@ -36,6 +39,8 @@ import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.controllo_traffico.beans.MisurazioniTransazione;
 import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDPortaApplicativa;
+import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
@@ -52,6 +57,7 @@ import org.openspcoop2.core.transazioni.constants.TipoAPI;
 import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.core.transazioni.utils.PropertiesSerializator;
 import org.openspcoop2.core.transazioni.utils.TempiElaborazioneUtils;
+import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
 import org.openspcoop2.core.transazioni.utils.credenziali.AbstractCredenzialeList;
 import org.openspcoop2.message.OpenSPCoop2RestMessage;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
@@ -61,6 +67,7 @@ import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.monitor.engine.condition.EsitoUtils;
 import org.openspcoop2.monitor.sdk.transaction.FaseTracciamento;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
+import org.openspcoop2.pdd.config.CostantiProprieta;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.EJBUtils;
@@ -1246,7 +1253,7 @@ public class TransazioneUtilities {
 			if(times!=null) {
 				timeStart = DateManager.getTimeMillis();
 			}
-			
+
 			// ** eventi di gestione **
 			if(!FaseTracciamento.POST_OUT_RESPONSE.equals(fase)){ // altrimenti gestito prima come per l'esito
 				setEventi(transactionDTO, transaction,
@@ -1680,7 +1687,49 @@ public class TransazioneUtilities {
 		}
 	}
 		
-	private void setAccordoInfo(IDAccordo idAccordo, Transazione transactionDTO, 
+	private boolean isCredenzialiMittenteEnabled(TipoCredenzialeMittente tipo,
+			InformazioniTransazione info, RequestInfo requestInfo) {
+		boolean defaultValue = OpenSPCoop2Properties.getInstance().isTransazioniCredenzialiMittenteEnabled(tipo);
+		try {
+			List<Proprieta> proprietaPorta = getProprietaPorta(info, requestInfo);
+			if(proprietaPorta!=null && !proprietaPorta.isEmpty()) {
+				return CostantiProprieta.isTraceIndexEnabled(proprietaPorta, tipo, defaultValue);
+			}
+		} catch(Exception e) {
+			this.logger.error("isCredenzialiMittenteEnabled("+tipo.getRawValue()+"): "+e.getMessage(), e);
+		}
+		return defaultValue;
+	}
+
+	private List<Proprieta> getProprietaPorta(InformazioniTransazione info, RequestInfo requestInfo) {
+		try {
+			if(requestInfo!=null && requestInfo.getProtocolContext()!=null &&
+					requestInfo.getProtocolContext().getInterfaceName()!=null) {
+				String nomePorta = requestInfo.getProtocolContext().getInterfaceName();
+				ConfigurazionePdDManager config = ConfigurazionePdDManager.getInstance();
+				if(TipoPdD.APPLICATIVA.equals(info.getTipoPorta())) {
+					IDPortaApplicativa idPA = new IDPortaApplicativa();
+					idPA.setNome(nomePorta);
+					PortaApplicativa pa = config.getPortaApplicativaSafeMethod(idPA, requestInfo);
+					if(pa!=null && pa.sizeProprieta()>0) {
+						return pa.getProprieta();
+					}
+				} else if(TipoPdD.DELEGATA.equals(info.getTipoPorta())) {
+					IDPortaDelegata idPD = new IDPortaDelegata();
+					idPD.setNome(nomePorta);
+					PortaDelegata pd = config.getPortaDelegataSafeMethod(idPD, requestInfo);
+					if(pd!=null && pd.sizeProprieta()>0) {
+						return pd.getProprieta();
+					}
+				}
+			}
+		} catch(Exception e) {
+			this.logger.debug("getProprietaPorta: "+e.getMessage(), e);
+		}
+		return null;
+	}
+
+	private void setAccordoInfo(IDAccordo idAccordo, Transazione transactionDTO,
 			OpenSPCoop2Properties op2Properties, RegistroServiziManager registroServiziManager, RequestInfo requestInfo,
 			IDSoggetto idDominio, InformazioniTransazione info, String idTransazione,
 			TransazioniProcessTimes times, long timeStart, FaseTracciamento fase) {
@@ -1747,8 +1796,11 @@ public class TransazioneUtilities {
 			IDSoggetto idDominio, InformazioniTransazione info, String idTransazione,
 			TransazioniProcessTimes times, FaseTracciamento fase) throws CoreException {
 		String conflict = "0";
+		if(!isCredenzialiMittenteEnabled(TipoCredenzialeMittente.GRUPPI, info, requestInfo)) {
+			return conflict;
+		}
 		if(aspc.getGruppi()!=null && aspc.getGruppi().sizeGruppoList()>0) {
-			
+
 			String cred = getCredenzialiMittenteGruppi(info);
 			if(cred!=null && StringUtils.isNotEmpty(cred)) {
 				transactionDTO.setGruppi(cred);
@@ -1810,6 +1862,9 @@ public class TransazioneUtilities {
 			IDSoggetto idDominio, InformazioniTransazione info, String idTransazione,
 			TransazioniProcessTimes times, FaseTracciamento fase) {
 		String conflict = "0";
+		if(!isCredenzialiMittenteEnabled(TipoCredenzialeMittente.API, info, requestInfo)) {
+			return conflict;
+		}
 		try {
 			String cred = getCredenzialiMittenteUriAPC(info);
 			if(cred!=null && StringUtils.isNotEmpty(cred)) {
@@ -1934,6 +1989,9 @@ public class TransazioneUtilities {
 			RequestInfo requestInfo,
 			IDSoggetto idDominio, InformazioniTransazione info, String idTransazione,
 			TransazioniProcessTimes times, long timeStart, FaseTracciamento fase) {
+		if(!isCredenzialiMittenteEnabled(TipoCredenzialeMittente.CLIENT_ADDRESS, info, requestInfo)) {
+			return;
+		}
 		Object oIpAddressRemote = info.getContext().getObject(org.openspcoop2.core.constants.Costanti.CLIENT_IP_REMOTE_ADDRESS);
 		if(oIpAddressRemote instanceof String){
 			String ipAddress = (String)oIpAddressRemote;
@@ -2011,6 +2069,9 @@ public class TransazioneUtilities {
 			RequestInfo requestInfo,
 			IDSoggetto idDominio, InformazioniTransazione info, String idTransazione,
 			TransazioniProcessTimes times, long timeStart, FaseTracciamento fase) throws CoreException {
+		if(!isCredenzialiMittenteEnabled(TipoCredenzialeMittente.EVENTI, info, requestInfo)) {
+			return;
+		}
 		List<String> eventiGestione = new ArrayList<>();
 		int count = 0;
 		int maxLengthCredenziali = op2Properties.getTransazioniCredenzialiMittenteMaxLength()-AbstractCredenzialeList.PREFIX.length();

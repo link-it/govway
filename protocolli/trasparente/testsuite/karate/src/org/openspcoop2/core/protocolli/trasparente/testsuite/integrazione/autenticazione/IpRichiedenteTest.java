@@ -359,6 +359,82 @@ public class IpRichiedenteTest extends ConfigLoader {
 
 
 	// ====================================================================
+	// Ordine di priorità degli header
+	// ====================================================================
+
+	@Test
+	public void priorita_xForwardedFor_over_forwardedFor() throws UtilsException, ProtocolException {
+		Map<String, String> headers = new HashMap<>();
+		headers.put(HttpConstants.X_FORWARDED_FOR, "10.1.1.1");
+		headers.put(HttpConstants.FORWARDED_FOR, "10.1.1.2");
+		testEngine(MessageType.JSON, TipoServizio.EROGAZIONE, "secret",
+				headers, "10.1.1.1", "10.1.1.1");
+	}
+	@Test
+	public void priorita_forwardedFor_over_xForwarded() throws UtilsException, ProtocolException {
+		Map<String, String> headers = new HashMap<>();
+		headers.put(HttpConstants.FORWARDED_FOR, "10.2.1.1");
+		headers.put(HttpConstants.X_FORWARDED, "10.2.1.2");
+		testEngine(MessageType.JSON, TipoServizio.EROGAZIONE, "secret",
+				headers, "10.2.1.1", "10.2.1.1");
+	}
+	@Test
+	public void priorita_xForwarded_over_forwarded() throws UtilsException, ProtocolException {
+		Map<String, String> headers = new HashMap<>();
+		headers.put(HttpConstants.X_FORWARDED, "10.3.1.1");
+		headers.put(HttpConstants.FORWARDED, "for=10.3.1.2");
+		testEngine(MessageType.JSON, TipoServizio.EROGAZIONE, "secret",
+				headers, "10.3.1.1", "10.3.1.1");
+	}
+	@Test
+	public void priorita_forwarded_over_xClientIp() throws UtilsException, ProtocolException {
+		Map<String, String> headers = new HashMap<>();
+		headers.put(HttpConstants.FORWARDED, "for=10.4.1.1");
+		headers.put(HttpConstants.X_CLIENT_IP, "10.4.1.2");
+		testEngine(MessageType.JSON, TipoServizio.EROGAZIONE, "secret",
+				headers, "for=10.4.1.1", "10.4.1.1");
+	}
+	@Test
+	public void priorita_xClientIp_over_clientIp() throws UtilsException, ProtocolException {
+		Map<String, String> headers = new HashMap<>();
+		headers.put(HttpConstants.X_CLIENT_IP, "10.5.1.1");
+		headers.put(HttpConstants.CLIENT_IP, "10.5.1.2");
+		testEngine(MessageType.JSON, TipoServizio.EROGAZIONE, "secret",
+				headers, "10.5.1.1", "10.5.1.1");
+	}
+	@Test
+	public void priorita_clientIp_over_xClusterClientIp() throws UtilsException, ProtocolException {
+		Map<String, String> headers = new HashMap<>();
+		headers.put(HttpConstants.CLIENT_IP, "10.6.1.1");
+		headers.put(HttpConstants.X_CLUSTER_CLIENT_IP, "10.6.1.2");
+		testEngine(MessageType.JSON, TipoServizio.EROGAZIONE, "secret",
+				headers, "10.6.1.1", "10.6.1.1");
+	}
+	@Test
+	public void priorita_xClusterClientIp_over_clusterClientIp() throws UtilsException, ProtocolException {
+		Map<String, String> headers = new HashMap<>();
+		headers.put(HttpConstants.X_CLUSTER_CLIENT_IP, "10.7.1.1");
+		headers.put(HttpConstants.CLUSTER_CLIENT_IP, "10.7.1.2");
+		testEngine(MessageType.JSON, TipoServizio.EROGAZIONE, "secret",
+				headers, "10.7.1.1", "10.7.1.1");
+	}
+	@Test
+	public void priorita_xForwardedFor_over_all() throws UtilsException, ProtocolException {
+		Map<String, String> headers = new HashMap<>();
+		headers.put(HttpConstants.X_FORWARDED_FOR, "10.8.1.1");
+		headers.put(HttpConstants.FORWARDED_FOR, "10.8.1.2");
+		headers.put(HttpConstants.X_FORWARDED, "10.8.1.3");
+		headers.put(HttpConstants.FORWARDED, "for=10.8.1.4");
+		headers.put(HttpConstants.X_CLIENT_IP, "10.8.1.5");
+		headers.put(HttpConstants.CLIENT_IP, "10.8.1.6");
+		headers.put(HttpConstants.X_CLUSTER_CLIENT_IP, "10.8.1.7");
+		headers.put(HttpConstants.CLUSTER_CLIENT_IP, "10.8.1.8");
+		testEngine(MessageType.JSON, TipoServizio.EROGAZIONE, "secret",
+				headers, "10.8.1.1", "10.8.1.1");
+	}
+
+
+	// ====================================================================
 	// Test Engine
 	// ====================================================================
 
@@ -367,8 +443,19 @@ public class IpRichiedenteTest extends ConfigLoader {
 			String operazione,
 			String nomeHeader, String valoreHeader, String valoreAttesoIndicizzato) throws UtilsException, ProtocolException {
 
-		Map<String, String> headers = new HashMap<>();
-		headers.put(nomeHeader, valoreHeader);
+		Map<String, String> clientAddressHeaders = new HashMap<>();
+		clientAddressHeaders.put(nomeHeader, valoreHeader);
+		return testEngine(messageType, tipoServizio, operazione,
+				clientAddressHeaders, valoreHeader, valoreAttesoIndicizzato);
+	}
+
+	public static HttpResponse testEngine(MessageType messageType,
+			TipoServizio tipoServizio,
+			String operazione,
+			Map<String, String> clientAddressHeaders,
+			String valoreAttesoReale, String valoreAttesoIndicizzato) throws UtilsException, ProtocolException {
+
+		Map<String, String> headers = new HashMap<>(clientAddressHeaders);
 
 		String api = "TestAutenticazioneGateway";
 
@@ -426,8 +513,8 @@ public class IpRichiedenteTest extends ConfigLoader {
 
 		DBVerifier.verify(idTransazione, esitoExpected);
 
-		DBVerifier.verify(idTransazione,
-				valoreHeader, valoreAttesoIndicizzato);
+		DBVerifier.verifyCredenzialeIp(idTransazione,
+				valoreAttesoReale, valoreAttesoIndicizzato);
 
 		return response;
 	}

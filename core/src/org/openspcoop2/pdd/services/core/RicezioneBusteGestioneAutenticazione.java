@@ -19,12 +19,14 @@
  */
 package org.openspcoop2.pdd.services.core;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.GestioneTokenAutenticazione;
 import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
@@ -1031,14 +1033,16 @@ public class RicezioneBusteGestioneAutenticazione {
 				try{
 				
 					if(credenzialeTrasporto!=null) {
-						GestoreAutenticazione.updateCredenzialiTrasporto(this.identitaPdD, RicezioneBuste.ID_MODULO, this.idTransazione, tipoAutenticazione, credenzialeTrasporto, credenzialiMittente, 
-								this.openspcoopstate, "RicezioneBuste.credenzialiTrasporto", this.requestInfo);
+						GestoreAutenticazione.updateCredenzialiTrasporto(this.identitaPdD, RicezioneBuste.ID_MODULO, this.idTransazione, tipoAutenticazione, credenzialeTrasporto, credenzialiMittente,
+								this.openspcoopstate, "RicezioneBuste.credenzialiTrasporto", this.requestInfo,
+								getProprietaPorta());
 					}
-					
+
 					if(informazioniTokenNormalizzate!=null) {
-						GestoreAutenticazione.updateCredenzialiToken(this.identitaPdD, RicezioneBuste.ID_MODULO, this.idTransazione, informazioniTokenNormalizzate, this.idApplicativoToken, credenzialiMittente, 
+						GestoreAutenticazione.updateCredenzialiToken(this.identitaPdD, RicezioneBuste.ID_MODULO, this.idTransazione, informazioniTokenNormalizzate, this.idApplicativoToken, credenzialiMittente,
 								this.openspcoopstate, "RicezioneBuste.credenzialiToken", this.requestInfo,
-								this.pddContext);
+								this.pddContext,
+								getProprietaPorta());
 					}
 					
 					this.transaction.setCredenzialiMittente(credenzialiMittente);
@@ -1307,8 +1311,9 @@ public class RicezioneBusteGestioneAutenticazione {
 		if(OpenSPCoop2Properties.getInstance().isGestioneAutenticazioneSaveTokenAuthenticationInfoAuthenticationFailed() &&
 				tipoAutenticazione!=null && credenzialeTrasporto!=null) {
 			try {
-				GestoreAutenticazione.updateCredenzialiTrasporto(this.identitaPdD, RicezioneBuste.ID_MODULO, this.idTransazione, tipoAutenticazione, credenzialeTrasporto, credenzialiMittente, 
-						this.openspcoopstate, "RicezioneBuste.credenzialiTrasporto", this.requestInfo);
+				GestoreAutenticazione.updateCredenzialiTrasporto(this.identitaPdD, RicezioneBuste.ID_MODULO, this.idTransazione, tipoAutenticazione, credenzialeTrasporto, credenzialiMittente,
+						this.openspcoopstate, "RicezioneBuste.credenzialiTrasporto", this.requestInfo,
+						getProprietaPorta());
 			}catch(Exception e) {
 				this.logCore.error("updateCredenzialiTrasporto error: "+e.getMessage(),e);
 			}
@@ -1322,14 +1327,21 @@ public class RicezioneBusteGestioneAutenticazione {
 			}
 			if(info!=null) {
 				try {
-					GestoreAutenticazione.updateCredenzialiToken(this.identitaPdD, RicezioneBuste.ID_MODULO, this.idTransazione, info, this.idApplicativoToken, credenzialiMittente, 
+					GestoreAutenticazione.updateCredenzialiToken(this.identitaPdD, RicezioneBuste.ID_MODULO, this.idTransazione, info, this.idApplicativoToken, credenzialiMittente,
 							this.openspcoopstate, "RicezioneBuste.credenzialiToken", this.requestInfo,
-							this.pddContext);
+							this.pddContext,
+							getProprietaPorta());
 				}catch(Exception e) {
 					this.logCore.error("updateCredenzialiToken error: "+e.getMessage(),e);
 				}
 			}
 		}
+	}
+
+	private List<Proprieta> getProprietaPorta() {
+		if(this.pa!=null && this.pa.sizeProprieta()>0) { return this.pa.getProprieta(); }
+		if(this.pd!=null && this.pd.sizeProprieta()>0) { return this.pd.getProprieta(); }
+		return null;
 	}
 
 	private static final String IDENTIFICAZIONE_SOGGETTO_TRAMITE_PROFILO = "Identificato un soggetto (tramite profilo di interoperabilità) '";

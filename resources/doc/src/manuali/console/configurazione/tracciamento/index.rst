@@ -35,5 +35,5 @@ dei servizi erogati o fruiti, verranno registrate (:numref:`tracciamentoFig`):
     tracciamento
     filtroEsiti
     fasi
-    database
+    database/index
     fileTrace/index

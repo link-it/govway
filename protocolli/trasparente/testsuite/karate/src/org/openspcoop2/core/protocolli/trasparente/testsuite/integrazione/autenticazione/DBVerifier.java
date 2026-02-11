@@ -22,6 +22,7 @@ package org.openspcoop2.core.protocolli.trasparente.testsuite.integrazione.auten
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
@@ -31,6 +32,7 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.DbUtils;
 import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
 import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeClientAddress;
+import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeTokenClient;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.slf4j.Logger;
@@ -124,7 +126,7 @@ public class DBVerifier {
 	
 	
 	
-	public static void verify(String idTransazione, 
+	public static void verifyCredenzialeIp(String idTransazione, 
 			String valoreAttesoReale, String valoreAttesoIndicizzato) throws UtilsException  {
 		
 		// La scrittura su database avviene dopo aver risposto al client
@@ -192,11 +194,127 @@ public class DBVerifier {
 	
 		// Check credenziali mittente
 		checkCredenzialiMittente("client_address="+check, check, 
-				valoreAttesoIndicizzato);
+				valoreAttesoIndicizzato,
+				TipoCredenzialeMittente.CLIENT_ADDRESS);
 	}
 	
-	private static void checkCredenzialiMittente(String colonna, String oColumnValue, String expectedValue) throws UtilsException {
+	
+	
+	
+	
+	public static void verifyCredenziale(String idTransazione, 
+			TipoCredenzialeMittente credenzialeMittente, String valoreAttesoIndicizzato) throws UtilsException  {
+		
+		// La scrittura su database avviene dopo aver risposto al client
+		
+		Utilities.sleep(100); 
+		try {
+			DBVerifier._verifyCredenziale(idTransazione, 
+					credenzialeMittente, valoreAttesoIndicizzato);
+		}catch(Throwable t) {
+			Utilities.sleep(500);
+			try {
+				DBVerifier._verifyCredenziale(idTransazione, 
+						credenzialeMittente, valoreAttesoIndicizzato);
+			}catch(Throwable t2) {
+				Utilities.sleep(2000);
+				try {
+					DBVerifier._verifyCredenziale(idTransazione, 
+							credenzialeMittente, valoreAttesoIndicizzato);
+				}catch(Throwable t3) {
+					Utilities.sleep(5000);
+					DBVerifier._verifyCredenziale(idTransazione, 
+							credenzialeMittente, valoreAttesoIndicizzato);
+				}
+			}
+		}
+	}
+	
+	private static void _verifyCredenziale(String idTransazione, 
+			TipoCredenzialeMittente credenzialeMittente, String valoreAttesoIndicizzato) throws UtilsException  {
+		
+		String columnTransazione = "";
+		switch(credenzialeMittente) {
+		case CLIENT_ADDRESS: 
+			columnTransazione = "client_address";
+			break;
+		case API: 
+			columnTransazione = "uri_api";
+			break;
+		case EVENTI: 
+			columnTransazione = "eventi_gestione";
+			break;
+		case GRUPPI: 
+			columnTransazione = "gruppi";
+			break;
+		case TRASPORTO: 
+			columnTransazione = "trasporto_mittente";
+			break;
+		case TOKEN_CLIENT_ID: 
+			columnTransazione = "token_client_id";
+			break;
+		case TOKEN_ISSUER: 
+			columnTransazione = "token_issuer";
+			break;
+		case TOKEN_SUBJECT: 
+			columnTransazione = "token_subject";
+			break;
+		case TOKEN_USERNAME: 
+			columnTransazione = "token_username";
+			break;
+		case TOKEN_EMAIL: 
+			columnTransazione = "token_mail";
+			break;
+		default:
+			throw new UtilsException("Credenziale '"+credenzialeMittente+"' non gestita");
+		}
+		
+		String query = "select "+columnTransazione+" from transazioni where id = ?";
+		log().info(query);
+		
+		String msg = "IdTransazione: "+idTransazione;
+		
+		List<Map<String, Object>> rows = dbUtils().readRows(query, idTransazione);
+		assertNotNull(msg, rows);
+		assertEquals(msg, 1, rows.size());
+					
+		Map<String, Object> row = rows.get(0);
+		for (String key : row.keySet()) {
+			log().debug("Row["+key+"]="+row.get(key));
+		}
+	
+		Object oTransportCredenziali = row.get(columnTransazione);
+		if(valoreAttesoIndicizzato==null) {
+			assertNull(msg,oTransportCredenziali);
+		}
+		else {
+			assertNotNull(msg,oTransportCredenziali);
+			assertTrue(msg+" oEsito classe '"+oTransportCredenziali.getClass().getName()+"'", (oTransportCredenziali instanceof String));
+			String check = null;
+			if(oTransportCredenziali instanceof String) {
+				check = (String) oTransportCredenziali;
+			}
+			
+			// Check credenziali mittente
+			checkCredenzialiMittente(columnTransazione+"="+check, check, 
+					valoreAttesoIndicizzato,
+					credenzialeMittente);
+		}
+		
+	
+	}
+	
+	
+	
+	
+	
+	private static void checkCredenzialiMittente(String colonna, String oColumnValue, String expectedValue,
+			TipoCredenzialeMittente credenzialeMittente) throws UtilsException {
 
+		if(expectedValue==null) {
+			assertNull(colonna,oColumnValue);
+		}
+		else {
 			assertNotNull(colonna,oColumnValue);
 			assertTrue(colonna+" classe '"+oColumnValue.getClass().getName()+"'", (oColumnValue instanceof String));
 			String columnValue = null;
@@ -229,7 +347,14 @@ public class DBVerifier {
 				tipo = (String)oTipo;
 			}
 			assertNotNull(colonna+" (tipo credenziale string)",tipo);
-			String expectedTipo = TipoCredenzialeMittente.CLIENT_ADDRESS.getRawValue();
+			String expectedTipo = null;
+			if(TipoCredenzialeMittente.TRASPORTO.equals(credenzialeMittente)) {
+				expectedTipo = credenzialeMittente.getRawValue()+"_basic";
+			}
+			else {
+				expectedTipo = credenzialeMittente.getRawValue();
+			}
+			
 			assertTrue(colonna+" tipo credenziale 'found:"+tipo+"' == 'expected:"+expectedTipo+"'", (tipo.equals(expectedTipo)));
 			
 			if(!map.containsKey("credenziale")) {
@@ -243,13 +368,23 @@ public class DBVerifier {
 			}
 			assertNotNull(colonna+" (credenziale string)",credenziale);
 			
-			String valueFound = CredenzialeClientAddress.convertTransportDBValueToOriginal(credenziale);
+			String valueFound = null;
+			if(TipoCredenzialeMittente.TOKEN_CLIENT_ID.equals(credenzialeMittente)) {
+				valueFound = CredenzialeTokenClient.convertClientIdDBValueToOriginal(credenziale);
+			}
+			else if(TipoCredenzialeMittente.CLIENT_ADDRESS.equals(credenzialeMittente)) {
+				valueFound = CredenzialeClientAddress.convertTransportDBValueToOriginal(credenziale);
+			}
+			else {
+				valueFound = credenziale;
+			}
 			if(!expectedValue.equals(valueFound)) {
 				System.out.println("Credenziali '"+oColumnValue+"' sul database prima della conversione '"+credenziale+"' dopo la conversione '"+valueFound+"'");
 			}
 			
 			assertNotNull(colonna,valueFound);
 			assertTrue(colonna+" tradotto 'found:"+valueFound+"' == 'expected:"+expectedValue+"'", (valueFound.equals(expectedValue)));
+		}
 			
 	}
 	private static Map<String,Object> getCredenzialiMittenteById(String id) {
