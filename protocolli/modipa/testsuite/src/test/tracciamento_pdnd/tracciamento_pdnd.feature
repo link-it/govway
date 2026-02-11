@@ -17,6 +17,7 @@ Background:
 	* def mock_get_trace = read('classpath:test/tracciamento_pdnd/tracciamento_pdnd_utils.feature@mock_get_trace')
 	* def mock_state = read('classpath:test/tracciamento_pdnd/tracciamento_pdnd_utils.feature@mock_state')
 	* def mock_push = read('classpath:test/tracciamento_pdnd/tracciamento_pdnd_utils.feature@mock_push')
+	* def mock_fill = read('classpath:test/tracciamento_pdnd/tracciamento_pdnd_utils.feature@mock_fill')
 	* def mock_clear = read('classpath:test/tracciamento_pdnd/tracciamento_pdnd_utils.feature@mock_clear')
 	* def mock_disable = read('classpath:test/tracciamento_pdnd/tracciamento_pdnd_utils.feature@mock_disable')
 	* def mock_enable = read('classpath:test/tracciamento_pdnd/tracciamento_pdnd_utils.feature@mock_enable')
@@ -146,6 +147,40 @@ Scenario: scenario in cui il batch di generazione e pubblicazione invii corretta
 	# controllo che il server di mock non abbia errori
 	* call mock_check
 
+@exact_search
+Scenario: scenario in cui il batch di pubblicazione deve ricercare puntualmente un tracingId non presente sul db
+	* def purpose_id = 'purposeId'
+	
+	* def tracing_id1 = utils.uuidFromInteger(1)
+	* def tracing_id2 = utils.uuidFromInteger(1200)
+	
+	# pulisco il db e il server mock, imposto la data di pubblicazione fino a due giorni fa
+	* clear_pdnd_tracing(2)
+	* call mock_clear
+	
+	# Aggiungo vari tracing nel mock
+	* def past_date = utils.format(utils.addDays(utils.now(), -2), 'yyyy-MM-dd')
+	* def curr_date = utils.format(utils.addDays(utils.now(), -1), 'yyyy-MM-dd')
+	* call mock_fill ({ soggetto: 'DemoSoggettoErogatore', lastDay: 1, size: 200 })
+
+	# simulo delle richieste relative a due giorni prima
+	* call send_ok { soggetto: 'DemoSoggettoErogatore'}
+	* call send_error500 { soggetto: 'DemoSoggettoErogatore2'}
+	* wither_transactions('TestTracingPDND', 2)
+	
+	# avvio il batch di generazione e pubblicazione
+	* karate.exec(generate_tracing)
+	* karate.exec(pubblish_tracing)
+	
+	# controllo che sia stata effettuata la ricerca puntuale per ottenere il tracing id 
+	* def state = (get_state('DemoSoggettoErogatore', past_date))
+	* match state.stato == 'PUBLISHED'
+	* match state.stato_pdnd == 'OK'
+	* match state.tracing_id == (utils.uuidFromInteger(10199))
+	
+	# controllo che il server di mock non abbia errori
+	* call mock_check
+	
 @missing
 Scenario: Test in cui il batch di pubblicazione riceve la lista di missing dal mock della PDND e li aggiorna
 	* def purpose_id = 'purposeId'

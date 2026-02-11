@@ -25,6 +25,15 @@ Scenario:
 	And param id = tracing_id
 	When method get
 	Then status 200
+
+@ignore @mock_fill
+Scenario:
+	Given url url_mock + '/control/fill'
+	And param pdd = soggetto
+	And param lastDay = lastDay
+	And param size = size
+	When method get
+	Then status 200
 	
 @ignore @mock_clear
 Scenario:
