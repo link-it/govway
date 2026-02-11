@@ -37,8 +37,10 @@ import org.openspcoop2.utils.mime.MimeTypeConstants;
  */
 public class HttpConstants {
 	
-	public static byte[] CR_LF_BREAK_LINE = { 13, 10 };
-	public static String HTTP_HEADER_SEPARATOR = ": ";
+	private HttpConstants() {}
+	
+	public static final byte[] CR_LF_BREAK_LINE = { 13, 10 };
+	public static final String HTTP_HEADER_SEPARATOR = ": ";
 	
 	/** HTTP HEADERS */
 	public static final String CONTENT_TYPE = "Content-Type";
@@ -145,19 +147,22 @@ public class HttpConstants {
 	public static final long CACHE_STATUS_PROXY_EXPIRES_DISABLE_CACHE = 0;
 	public static final String CACHE_STATUS_VARY = "Vary";
 	public static final String CACHE_STATUS_VARY_UNCACHABLE = "*"; // Indicates that factors other than request headers influenced the generation of this response. Implies that the response is uncacheable.
-	public static final List<String> CACHE_STATUS_HEADERS = new ArrayList<>();
+	private static final List<String> CACHE_STATUS_HEADERS = new ArrayList<>();
 	static {
 		CACHE_STATUS_HEADERS.add(CACHE_STATUS_HTTP_1_1);
 		CACHE_STATUS_HEADERS.add(CACHE_STATUS_HTTP_1_0);
 		CACHE_STATUS_HEADERS.add(CACHE_STATUS_PROXY_EXPIRES);
 		CACHE_STATUS_HEADERS.add(CACHE_STATUS_VARY);
 	}
+	public static List<String> getCacheStatusHeaders(){
+		return CACHE_STATUS_HEADERS;
+	}
 	public static boolean isCacheStatusHeader(String hdr) {
 		if(hdr==null) {
 			return false;
 		}
 		for (String h : CACHE_STATUS_HEADERS) {
-			if(h.toLowerCase().equals(hdr.toLowerCase())) {
+			if(h.equalsIgnoreCase(hdr)) {
 				return true;
 			}
 		}
@@ -181,10 +186,23 @@ public class HttpConstants {
 	public static final String ACCESS_CONTROL_EXPOSE_HEADERS = "Access-Control-Expose-Headers";
 	public static final String ACCESS_CONTROL_MAX_AGE = "Access-Control-Max-Age";
 	public static final String ACCESS_CONTROL_MAX_AGE_DISABLE_CACHE = "-1";
-    public static final List<String> ACCESS_CONTROL_SIMPLE_REQUEST_CONTENT_TYPES = new ArrayList<>(Arrays.asList(
+    private static final List<String> ACCESS_CONTROL_SIMPLE_REQUEST_CONTENT_TYPES = new ArrayList<>(Arrays.asList(
     		HttpConstants.CONTENT_TYPE_X_WWW_FORM_URLENCODED, 
     		HttpConstants.CONTENT_TYPE_FORM_DATA,
     		HttpConstants.CONTENT_TYPE_PLAIN));
+    public static List<String> getAccessControlSimpleRequestContentTypes(){
+    	return ACCESS_CONTROL_SIMPLE_REQUEST_CONTENT_TYPES;
+    }
+
+	/** Client Address Headers */
+	public static final String X_FORWARDED_FOR = "X-Forwarded-For"; // de facto standard (https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/X-Forwarded-For)
+	public static final String FORWARDED_FOR = "Forwarded-For"; // variante senza il prefisso 'X-'
+	public static final String X_FORWARDED = "X-Forwarded"; // non standard, utilizzato da alcuni proxy
+	public static final String FORWARDED = "Forwarded"; // RFC 7239 (https://www.rfc-editor.org/rfc/rfc7239.html)
+	public static final String X_CLIENT_IP = "X-Client-IP"; // non standard, utilizzato da Amazon EC2, Heroku
+	public static final String CLIENT_IP = "Client-IP"; // non standard, utilizzato da alcuni proxy e load balancer
+	public static final String X_CLUSTER_CLIENT_IP = "X-Cluster-Client-IP"; // non standard, utilizzato da Rackspace LB, Zeus Web Server
+	public static final String CLUSTER_CLIENT_IP = "Cluster-Client-IP"; // variante senza il prefisso 'X-'
 
 	/** Agent */
 	public static final String USER_AGENT = "User-Agent";

@@ -103,9 +103,9 @@ public class TestCORS {
 	@DataProvider(name="simpleContentTypeProvider")
 	public Object[][] simpleContentTypeProvider(){
 		return new Object[][]{
-			{HttpConstants.ACCESS_CONTROL_SIMPLE_REQUEST_CONTENT_TYPES.get(0)},
-			{HttpConstants.ACCESS_CONTROL_SIMPLE_REQUEST_CONTENT_TYPES.get(1)},
-			{HttpConstants.ACCESS_CONTROL_SIMPLE_REQUEST_CONTENT_TYPES.get(2)},
+			{HttpConstants.getAccessControlSimpleRequestContentTypes().get(0)},
+			{HttpConstants.getAccessControlSimpleRequestContentTypes().get(1)},
+			{HttpConstants.getAccessControlSimpleRequestContentTypes().get(2)},
 		};
 	}	
 

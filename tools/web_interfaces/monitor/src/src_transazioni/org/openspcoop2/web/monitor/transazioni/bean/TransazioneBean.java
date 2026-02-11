@@ -1483,10 +1483,16 @@ public class TransazioneBean extends Transazione{
 	}
 	
 	public String getIpRichiedente() {
-		
+
 		DatiMittente datiMittente = this.convertToDatiMittente();
-		return InfoMittenteFormatUtils.getIpRichiedente(datiMittente);
-		
+		boolean sanitizePort = false;
+		try{
+			sanitizePort = PddMonitorProperties.getInstance(LoggerManager.getPddMonitorCoreLogger()).isTransazioniDettaglioIpRichiedenteSanitizePort();
+		}catch(Exception e){
+			// ignore
+		}
+		return InfoMittenteFormatUtils.getIpRichiedente(datiMittente, sanitizePort);
+
 	}
 	
 	public String getLabelRichiedenteConFruitore() throws Exception {
