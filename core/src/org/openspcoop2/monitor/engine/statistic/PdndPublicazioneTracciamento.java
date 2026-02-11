@@ -23,6 +23,9 @@ import java.io.ByteArrayOutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -30,6 +33,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
@@ -94,6 +98,7 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 	// Errore fornito dalla pdnd all'inivio del documento
 	private static final String PDND_PUBLISHING_ERROR = "PDND_PUBLISHING_ERROR";
 
+	private static final String PDND_TRACINGS_ENDPOINT = "/tracings";
 	
 	private IStatistichePdndTracingService pdndStatisticheSM;
 	private org.openspcoop2.core.statistiche.dao.IServiceManager statisticheSM;
@@ -172,16 +177,23 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 		return res;
 	}
 	
+	
 	private Iterator<Result<JsonNode, UtilsException>> iteratorHttpList(HttpRequest req) {
+		return iteratorHttpList(req, 0, Integer.MAX_VALUE);
+	}
+	
+	private Iterator<Result<JsonNode, UtilsException>> iteratorHttpList(HttpRequest req, int start, int maxPages) {
 		final int limit = 50;
 		
-		AtomicInteger offset = new AtomicInteger(-limit);
+		AtomicInteger offset = new AtomicInteger(Math.max(0, start) - limit);
+		AtomicInteger remainPages = new AtomicInteger(maxPages);
 		Queue<JsonNode> list = new LinkedList<>();
 		JSONUtils jsonUtils = JSONUtils.getInstance();
 		
 		return Stream.generate((Supplier<Result<JsonNode, UtilsException>>) () -> {
-			if (list.isEmpty()) {
+			if (list.isEmpty() && remainPages.get() > 0) {
 				offset.addAndGet(limit);
+				remainPages.decrementAndGet();
 				req.addParam("limit", Integer.toString(limit));
 				req.addParam("offset", Integer.toString(offset.get()));
 				
@@ -333,10 +345,10 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 					"Content-Type della risposta non di tipo json, content-type: " + res.getContentType()
 							+ ", content: " + new String(content)));
 			stat.setStato(PossibiliStatiRichieste.FAILED);
-		} else if (node == null || node.get(PDND_RESPONSE_ERRORS_CLAIM)==null) {
+		} else if (node == null || (code != HttpServletResponse.SC_OK && node.get(PDND_RESPONSE_ERRORS_CLAIM) == null)) {
 			// il json fornito dalla pdnd non è stato parsato correttamente
 			stat.setErrorDetails(getErrorDetails(PDND_PUBLISHING_ERROR,
-					"Non è stato possibile interpretare il contenuto: " + new String(content)));
+					"Non è stato possibile interpretare il contenuto dell'errore: " + new String(content)));
 			stat.setStato(PossibiliStatiRichieste.FAILED);
 		} else if (code != HttpServletResponse.SC_OK) {
 			// la pdnd ha ritornato un codice di errore
@@ -498,11 +510,6 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 	 */
 	private void fixPublishRecords(String nomeSoggetto, String pddCode) throws ServiceException, NotFoundException, NotImplementedException, StatisticsEngineException {
 		// itero su la lista di tutti gli stati fin quando ho record che vanno aggiornati (in teoria non ne dovrei quasi mai avere)
-		HttpRequest req = getBaseRequest(pddCode);
-		req.setMethod(HttpRequestMethod.GET);
-		req.setUrl(req.getBaseUrl() + "/tracings");
-		
-		Iterator<Result<JsonNode, UtilsException>> itr = iteratorHttpList(req);
 		
 		if (this.updateTracingIdStats.isEmpty()) {
 			this.logger.info("Non ci sono tracciati senza un tracingId valido per il soggetto {}", nomeSoggetto);
@@ -512,42 +519,132 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 					nomeSoggetto);
 		}
 		
-		while (!this.updateTracingIdStats.isEmpty() && itr.hasNext()) {
+		Map<String, Date> missingIds = getTracingIdStatus(pddCode, "MISSING,PENDING,ERROR");
+		
+		for (Map.Entry<String, Date> missingId : missingIds.entrySet()) {			
+			String tracingId = missingId.getKey();
+			StatistichePdndTracing stat = this.updateTracingIdStats.remove(missingId.getValue());
+			if (stat != null) {
+				String formatTracingDate = dataTracciamentoFormat(stat.getDataTracciamento());
+				stat.setTracingId(tracingId);
+				if (!PossibiliStatiRichieste.FAILED.equals(stat.getStato())
+						&& !PossibiliStatiPdnd.ERROR.equals(stat.getStatoPdnd())) {
+					this.logger.info("Individuato tracciato [{}] per il soggetto: {}, senza tracingId valido, tracingId: {} aggiornato, applico l'operazione {}",
+							formatTracingDate,
+							nomeSoggetto,
+							tracingId,
+							stat.getMethod());
+					
+					sendTrace(pddCode, stat);
+				}
+					
+				this.pdndStatisticheSM.update(stat);
+				
+				this.logPublishResults(stat, nomeSoggetto);
+			}
+		}
+		
+		if (this.updateTracingIdStats.isEmpty())
+			return;
+		
+		this.logger.info("Tracciati per il soggetto: {}, con tracing id non ancora individuato: {}", nomeSoggetto, this.updateTracingIdStats.size());
+		Optional<Date> startDate = getFirstTracingDate(nomeSoggetto, pddCode);
+		if (startDate.isEmpty()) {
+			return;
+		}
+		
+		for (Date missingDate : this.updateTracingIdStats.keySet()) {
+			fixSinglePublishRecord(nomeSoggetto, pddCode, startDate.get(), missingDate);
+		}
+			
+		
+		
+	}
+	
+	/**
+	 * Ritorna la data del primo tracciato inviato alla pdnd
+	 * @param nomeSoggetto: nome del soggetto multitenante a cui si riferiscono i tracciati
+	 * @param pddCode: codice pdd del soggetto multitenante a cui si riferiscono i tracciati
+	 * @return Optional<Date> valorizzato nel caso sia stata trovata la data di invio del primo tracciato
+	 */
+	private Optional<Date> getFirstTracingDate(String nomeSoggetto, String pddCode) {
+		try {
+			HttpRequest req = getBaseRequest(pddCode);
+			req.setMethod(HttpRequestMethod.GET);
+			req.setUrl(req.getBaseUrl() + PDND_TRACINGS_ENDPOINT);
+			
+			Iterator<Result<JsonNode, UtilsException>> itr = iteratorHttpList(req);
+			if (!itr.hasNext())
+				throw new ServiceException("nessun tracciato trovato sulla pdnd");
+			JsonNode node = itr.next().get();
+			String tracingDate = node.get("date").asText();
+				
+			final SimpleDateFormat pdndDateFormat = new SimpleDateFormat(PDND_DATE_FORMAT);
+			
+			return Optional.of(pdndDateFormat.parse(tracingDate));
+		} catch (Exception e) {
+			this.logger.warn("Impossibile ottenere data del primo tracciato per il soggetto: {}", nomeSoggetto, e);
+			return Optional.empty();
+		}
+	}
+
+	/**
+	 * Inizia la ricerca puntuale per uno specifico tracciato di cui non si ocnosce ancora il tracingId per sincronizzare i dati sul db
+	 * @param nomeSoggetto: nome del soggetto multitenante a cui si riferiscono i tracciati
+	 * @param pddCode: codice pdd del soggetto multitenante a cui si riferiscono i tracciati
+	 * @param firstDate: data del primo tracciato inviato dal soggetto
+	 * @param date: data del tracciato di cui si vuole sincronizzare i dati sul db
+	 */
+	private void fixSinglePublishRecord(String nomeSoggetto, String pddCode, Date firstDate, Date date) throws ServiceException, NotFoundException, NotImplementedException {
+		StatistichePdndTracing stat = this.updateTracingIdStats.remove(date);
+		if (stat == null)
+			return;
+		
+		 // l'unico caso in cui si debba effettuare la ricerca puntuale è per tracciati inviat con successo alla PDND
+		 stat.setStato(PossibiliStatiRichieste.PUBLISHED);
+		 stat.setStatoPdnd(PossibiliStatiPdnd.OK);
+		 stat.setTracingId("-");
+		 
+		 LocalDate d1 = firstDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		 LocalDate d2 = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		 
+		 int limit = 50;
+		 int offset = (int) ChronoUnit.DAYS.between(d1, d2) - limit / 2;
+		 
+		String firstDataTracciamentoFormat = dataTracciamentoFormat(firstDate);
+		String dataTracciamentoFormat = dataTracciamentoFormat(date);
+
+		 this.logger.debug("Offset calcolato per la ricerca punturale tra le date: {} -> {} uguale a: {} per il soggetto: {}", firstDataTracciamentoFormat, dataTracciamentoFormat, offset, nomeSoggetto);
+		 this.logger.info("Inizio ricerca puntuale per tracciato della data {} per il soggetto: {}", dataTracciamentoFormat, nomeSoggetto);
+
+		 
+		 HttpRequest req = getBaseRequest(pddCode);
+		 req.setMethod(HttpRequestMethod.GET);
+		 req.setUrl(req.getBaseUrl() + PDND_TRACINGS_ENDPOINT);
+		 
+		 Iterator<Result<JsonNode, UtilsException>> itr = iteratorHttpList(req, offset, 1);
+		 while(itr.hasNext()) {
+			 
 			try {
 				JsonNode node = itr.next().get();
 				String tracingId = node.get(TRACING_ID_FIELD).asText();
 				String tracingDate = node.get("date").asText();
 				
 				final SimpleDateFormat pdndDateFormat = new SimpleDateFormat(PDND_DATE_FORMAT);
-				Date date = pdndDateFormat.parse(tracingDate);
+				Date currDate = pdndDateFormat.parse(tracingDate);
 				
-				StatistichePdndTracing stat = this.updateTracingIdStats.remove(date);
-				if (stat != null) {
-					String formatTracingDate = dataTracciamentoFormat(stat.getDataTracciamento());
+				if (currDate.equals(date)) {
+					 this.logger.info("Individuato tracciato con tracing id: {} con data {} per il soggetto: {}", tracingId, date, nomeSoggetto);
 					stat.setTracingId(tracingId);
-					if (!PossibiliStatiRichieste.FAILED.equals(stat.getStato())
-							&& !PossibiliStatiPdnd.ERROR.equals(stat.getStatoPdnd())) {
-						this.logger.info("Individuato tracciato [{}] per il soggetto: {}, senza tracingId valido, tracingId: {} aggiornato, applico l'operazione {}",
-								formatTracingDate,
-								nomeSoggetto,
-								tracingId,
-								stat.getMethod());
-						
-						sendTrace(pddCode, stat);
-					}
-					
-					this.pdndStatisticheSM.update(stat);
-					
-					this.logPublishResults(stat, nomeSoggetto);
 				}
-			} catch (ParseException | UtilsException e) {
-				throw new StatisticsEngineException(e, "Errore nella lettura dei tracciati ricevuti dalla PDND");
+			} catch (UtilsException | ParseException e) {
+				// ignore
 			}
-		}
-		
-		
+			 
+		 }
+		 
+		 this.pdndStatisticheSM.update(stat);
 	}
-	
 	
 	/**
 	 * Aggiorna lo stato di un singolo tracciato che non si trova nello stato PENDING
@@ -710,7 +807,7 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 		HttpRequest req = getBaseRequest(pddCode);
 		req.setMethod(HttpRequestMethod.GET);
 		req.addParam("states", status);
-		req.setUrl(req.getBaseUrl() + "/tracings");
+		req.setUrl(req.getBaseUrl() + PDND_TRACINGS_ENDPOINT);
 		
 		Iterator<Result<JsonNode, UtilsException>> itr = iteratorHttpList(req);
 		Map<String, Date> ids = new HashMap<>();
