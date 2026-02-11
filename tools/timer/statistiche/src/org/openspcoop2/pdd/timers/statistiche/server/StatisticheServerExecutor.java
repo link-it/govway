@@ -500,7 +500,7 @@ public class StatisticheServerExecutor {
 			}
 			return false;
 		} catch(InterruptedException e) {
-			Thread.interrupted();
+			Thread.currentThread().interrupt();
 			this.logCore.error("Errore durante acquisizione lock: " + e.getMessage(), e);
 			return false;
 		} catch (UtilsException e) {
