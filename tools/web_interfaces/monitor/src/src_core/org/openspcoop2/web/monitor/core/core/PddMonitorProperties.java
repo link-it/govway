@@ -1048,6 +1048,10 @@ public class PddMonitorProperties {
 	public int getTransazioniDettaglioAnalisiMultipartThreshold() throws UtilsException{
 		return Integer.valueOf(this.appProperties.getProperty("transazioni.dettaglio.analisiMultipart.threshold", true, true));
 	}
+
+	public boolean isTransazioniDettaglioIpRichiedenteSanitizePort() throws UtilsException{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.dettaglio.ipRichiedente.sanitizePort", true, true));
+	}
 	
 	public boolean isDataUscitaRispostaUseDateAfterResponseSent() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.dataUscitaRisposta.useDateAfterResponseSent", true, true));

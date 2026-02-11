@@ -582,7 +582,7 @@ public abstract class AbstractCORSFilter implements javax.servlet.Filter {
 	                    String contentType = request.getContentType();
 	                    if (contentType != null) {
 	                        contentType = contentType.toLowerCase().trim();
-	                        if (HttpConstants.ACCESS_CONTROL_SIMPLE_REQUEST_CONTENT_TYPES.contains(contentType)) {
+	                        if (HttpConstants.getAccessControlSimpleRequestContentTypes().contains(contentType)) {
 	                            requestType = CORSRequestType.SIMPLE;
 	                        } else {
 	                            requestType = CORSRequestType.ACTUAL;

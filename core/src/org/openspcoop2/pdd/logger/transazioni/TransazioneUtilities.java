@@ -105,6 +105,7 @@ import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.transport.TransportUtils;
+import org.openspcoop2.utils.transport.http.HttpClientAddressSanitizer;
 import org.slf4j.Logger;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -1974,10 +1975,14 @@ public class TransazioneUtilities {
 					if(times!=null) {
 						sbConflict = new StringBuilder();
 					}
-					CredenzialeMittente credClientAddress =GestoreAutenticazione.convertClientCredentialToCredenzialiMittenti(idDominio, info.getIdModulo(), idTransazione, 
-							transactionDTO.getSocketClientAddress(), transactionDTO.getTransportClientAddress(), 
+					String transportAddressForCredential = transactionDTO.getTransportClientAddress();
+					if(transportAddressForCredential!=null && OpenSPCoop2Properties.getInstance().isTransazioniTracciamentoDBTransportClientAddressSanitizePort()) {
+						transportAddressForCredential = HttpClientAddressSanitizer.sanitizeTransportAddressPort(transportAddressForCredential);
+					}
+					CredenzialeMittente credClientAddress =GestoreAutenticazione.convertClientCredentialToCredenzialiMittenti(idDominio, info.getIdModulo(), idTransazione,
+							transactionDTO.getSocketClientAddress(), transportAddressForCredential,
 							null, fase.name()+".clientAddress",
-							sbConflict, requestInfo); 
+							sbConflict, requestInfo);
 					if(sbConflict!=null && sbConflict.length()>0) {
 						conflict = sbConflict.toString();
 					}
@@ -2000,7 +2005,7 @@ public class TransazioneUtilities {
 		}
 		
 	}
-	
+
 	private void setEventi(Transazione transactionDTO, Transaction transaction,
 			OpenSPCoop2Properties op2Properties,
 			RequestInfo requestInfo,

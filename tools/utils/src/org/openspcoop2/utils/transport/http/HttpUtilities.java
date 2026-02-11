@@ -100,17 +100,15 @@ public class HttpUtilities {
 
 	
 	public static List<String> getClientAddressHeaders() {
-		// X-Forwarded-For: A de facto standard for identifying the originating IP address of a client connecting to a web server through an HTTP proxy or load balancer
-		// Forwarded: Disclose original information of a client connecting to a web server through an HTTP proxy.'
 		List<String> possibiliHeaders = new ArrayList<>();
-		possibiliHeaders.add("X-Forwarded-For");
-		possibiliHeaders.add("Forwarded-For"); // senza la 'X-' nel caso l'header venga fatto rendere uno standard
-		possibiliHeaders.add("X-Forwarded");
-		possibiliHeaders.add("Forwarded");
-		possibiliHeaders.add("X-Client-IP");
-		possibiliHeaders.add("Client-IP");
-		possibiliHeaders.add("X-Cluster-Client-IP");
-		possibiliHeaders.add("Cluster-Client-IP");
+		possibiliHeaders.add(HttpConstants.X_FORWARDED_FOR);
+		possibiliHeaders.add(HttpConstants.FORWARDED_FOR);
+		possibiliHeaders.add(HttpConstants.X_FORWARDED);
+		possibiliHeaders.add(HttpConstants.FORWARDED);
+		possibiliHeaders.add(HttpConstants.X_CLIENT_IP);
+		possibiliHeaders.add(HttpConstants.CLIENT_IP);
+		possibiliHeaders.add(HttpConstants.X_CLUSTER_CLIENT_IP);
+		possibiliHeaders.add(HttpConstants.CLUSTER_CLIENT_IP);
 		return possibiliHeaders;
 	}
 	public static String getClientAddress(HttpServletRequest request) throws UtilsException{

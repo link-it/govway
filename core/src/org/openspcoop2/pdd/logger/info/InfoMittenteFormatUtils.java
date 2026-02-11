@@ -28,6 +28,7 @@ import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.pdd.core.autenticazione.ApiKeyUtilities;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
+import org.openspcoop2.utils.transport.http.HttpClientAddressSanitizer;
 import org.openspcoop2.utils.certificate.CertificateUtils;
 import org.openspcoop2.utils.certificate.PrincipalType;
 
@@ -168,20 +169,23 @@ public class InfoMittenteFormatUtils {
 		return cnList;
 	}
 	
-	public static String getIpRichiedente(DatiMittente infoDatiMittente) {
-		
+	public static String getIpRichiedente(DatiMittente infoDatiMittente, boolean sanitizePort) {
+
 		String t = infoDatiMittente.getTransportClientAddress();
 		if(StringUtils.isNotEmpty(t)) {
+			if(sanitizePort) {
+				return HttpClientAddressSanitizer.sanitizeTransportAddressPort(t);
+			}
 			return t;
 		}
-		
+
 		String s = infoDatiMittente.getSocketClientAddress();
 		if(StringUtils.isNotEmpty(s)) {
 			return s;
 		}
-		
+
 		return null;
-		
+
 	}
 	
 	public static String getLabelRichiedenteConFruitore(DatiMittente infoDatiMittente) {

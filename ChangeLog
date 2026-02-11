@@ -1,3 +1,12 @@
+2026-02-11  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità #1694
+	Aggiunta sanitizzazione delle porte negli indirizzi IP presenti negli header di trasporto (X-Forwarded-For e header analoghi) 
+	al fine di evitare la moltiplicazione delle entry nella tabella 'credenziale_mittente' 
+	dove viene salvato l'indirizzo per consentire la ricerca tramite indici. 
+	Nell'occasione è stato aggiunto il supporto al parsing dell'header Forwarded (RFC 7239) con estrazione corretta dell'indirizzo IP dal parametro 'for='.
+
 2026-02-10  Tommaso Burlon <tommaso.burlon@link.it>
 
 	* [TimerStatistiche]

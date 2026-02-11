@@ -2466,7 +2466,9 @@ public class OpenSPCoop2Properties {
 				this.isTransazioniTracciamentoDBOutResponseThrowRequestException();
 				this.isTransazioniTracciamentoDBPostOutResponseThrowRequestException();
 				this.isTransazioniTracciamentoDBPostOutResponseThrowResponseException();
-				
+
+				this.isTransazioniTracciamentoDBTransportClientAddressSanitizePort();
+
 				this.isTransazioniPolicyValidazioneSavePurposeIdAlways();
 				this.isTransazioniPolicyNegoziazioneSavePurposeIdAlways();
 
@@ -29278,12 +29280,37 @@ public class OpenSPCoop2Properties {
 
 		return this.isTransazioniTracciamentoDBPostOutResponseThrowResponseException;
 	}
-	
-	
+
+
+	// TransportClientAddress sanitize port
+
+	private Boolean isTransazioniTracciamentoDBTransportClientAddressSanitizePort = null;
+	public boolean isTransazioniTracciamentoDBTransportClientAddressSanitizePort() {
+		if(this.isTransazioniTracciamentoDBTransportClientAddressSanitizePort==null){
+			String pName = "org.openspcoop2.pdd.transazioni.tracciamentoDB.transportClientAddress.sanitizePort";
+			try{
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
+					name="false";
+				}
+				name = name.trim();
+				this.isTransazioniTracciamentoDBTransportClientAddressSanitizePort = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.logError(getMessaggioProprietaNonImpostata(pName,e,false));
+				this.isTransazioniTracciamentoDBTransportClientAddressSanitizePort = false;
+			}
+		}
+
+		return this.isTransazioniTracciamentoDBTransportClientAddressSanitizePort;
+	}
+
+
 	// Gestione PurposeId
-	
+
 	private Boolean isTransazioniPolicyValidazioneSavePurposeIdAlways = null;
-	public boolean isTransazioniPolicyValidazioneSavePurposeIdAlways() {	
+	public boolean isTransazioniPolicyValidazioneSavePurposeIdAlways() {
 		if(this.isTransazioniPolicyValidazioneSavePurposeIdAlways==null){
 			String pName = "org.openspcoop2.pdd.transazioni.policy.validazione.savePurposeId.always";
 			try{ 

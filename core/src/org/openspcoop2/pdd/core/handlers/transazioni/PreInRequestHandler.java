@@ -21,6 +21,7 @@ package org.openspcoop2.pdd.core.handlers.transazioni;
 
 import java.util.List;
 
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.PdDContext;
@@ -54,7 +55,7 @@ public class PreInRequestHandler extends FirstPositionHandler implements org.ope
 	public void invoke(PreInRequestContext context) throws HandlerException {
 		
 		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
-		if(op2Properties.isTransazioniEnabled()==false) {
+		if(!op2Properties.isTransazioniEnabled()) {
 			return;
 		}
 		
@@ -72,8 +73,8 @@ public class PreInRequestHandler extends FirstPositionHandler implements org.ope
 		if(op2Properties.isControlloTrafficoEnabled()){
 			tr.getTempiElaborazione().startControlloTraffico_maxRequests();
 			try {
-				PreInRequestHandlerGestioneControlloTraffico preInRequestHandler_gestioneControlloTraffico = new PreInRequestHandlerGestioneControlloTraffico();
-				preInRequestHandler_gestioneControlloTraffico.process(context);
+				PreInRequestHandlerGestioneControlloTraffico preInRequestHandlerGestioneControlloTraffico = new PreInRequestHandlerGestioneControlloTraffico();
+				preInRequestHandlerGestioneControlloTraffico.process(context);
 			}finally {
 				tr.getTempiElaborazione().endControlloTraffico_maxRequests();
 			}
@@ -133,7 +134,7 @@ public class PreInRequestHandler extends FirstPositionHandler implements org.ope
 		}
 	}
 	private static String getIPClientAddressFromHeader(List<String> headers, ConnectorInMessage req) throws ConnectorException{
-		if(headers.size()>0){
+		if(!headers.isEmpty()){
 			for (String header : headers) {
 				String transportAddr = TransportUtils.getFirstValue(req.getHeaderValues(header)); // gestisce nell'implementazione il case insensitive
 				if(transportAddr!=null){
@@ -143,10 +144,10 @@ public class PreInRequestHandler extends FirstPositionHandler implements org.ope
 		}
 		return null;
 	}
-	public static void setInfoInvocation(Transaction tr, RequestInfo requestInfo, ConnectorInMessage req) throws Exception {
+	public static void setInfoInvocation(Transaction tr, RequestInfo requestInfo, ConnectorInMessage req) throws CoreException, TransactionDeletedException, ConnectorException {
 		
 		if(tr==null) {
-			throw new Exception("Transaction is null");
+			throw new CoreException("Transaction is null");
 		}
 		
 		tr.setRequestInfo(requestInfo);
@@ -154,13 +155,11 @@ public class PreInRequestHandler extends FirstPositionHandler implements org.ope
 		if(req.getCredential()!=null) {
 			Credenziali credenziali = new Credenziali(req.getCredential());
 			String credenzialiFornite = "";
-			if(credenziali!=null){
-				credenzialiFornite = credenziali.toString(!Credenziali.SHOW_BASIC_PASSWORD,
-						Credenziali.SHOW_ISSUER,
-						!Credenziali.SHOW_DIGEST_CLIENT_CERT,
-						Credenziali.SHOW_SERIAL_NUMBER_CLIENT_CERT,
-						"","","\n"); // riporto anche l'issuer ed il serial number del cert e formatto differentemente
-			}
+			credenzialiFornite = credenziali.toString(!Credenziali.SHOW_BASIC_PASSWORD,
+					Credenziali.SHOW_ISSUER,
+					!Credenziali.SHOW_DIGEST_CLIENT_CERT,
+					Credenziali.SHOW_SERIAL_NUMBER_CLIENT_CERT,
+					"","","\n"); // riporto anche l'issuer ed il serial number del cert e formatto differentemente
 			tr.setCredenziali(credenzialiFornite);
 		}
 		
@@ -169,7 +168,7 @@ public class PreInRequestHandler extends FirstPositionHandler implements org.ope
 			if(req.getURLProtocolContext().getFunction()!=null){
 				urlInvocazione = "["+req.getURLProtocolContext().getFunction()+"] "+urlInvocazione;
 			}
-			//System.out.println("SET URL INVOCAZIONE ["+urlInvocazione+"]");
+			/**System.out.println("SET URL INVOCAZIONE ["+urlInvocazione+"]");*/
 			tr.setUrlInvocazione(urlInvocazione);
 		}
 	}

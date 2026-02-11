@@ -42,6 +42,7 @@ import org.openspcoop2.pdd.core.token.InformazioniNegoziazioneToken;
 import org.openspcoop2.pdd.core.token.InformazioniToken;
 import org.openspcoop2.pdd.core.token.TokenUtilities;
 import org.openspcoop2.pdd.core.token.attribute_authority.InformazioniAttributi;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.logger.LogLevels;
 import org.openspcoop2.pdd.logger.info.DatiEsitoTransazione;
 import org.openspcoop2.pdd.logger.info.DatiMittente;
@@ -2590,7 +2591,8 @@ public class Info {
 	}
 	public java.lang.String getIpRequester(String defaultValue) {
 		DatiMittente datiMittente = this.convertToDatiMittenteEngine();
-		return correctValue(InfoMittenteFormatUtils.getIpRichiedente(datiMittente), defaultValue);
+		return correctValue(InfoMittenteFormatUtils.getIpRichiedente(datiMittente,
+				OpenSPCoop2Properties.getInstance().isTransazioniTracciamentoDBTransportClientAddressSanitizePort()), defaultValue);
 	}
 	
 	
