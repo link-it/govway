@@ -1,3 +1,10 @@
+2026-02-11  Tommaso Burlon <tommaso.burlon@link.it>
+
+	* [ProtocolloModIPA]
+	Risolto Bug #1717
+	Migliorato recupero del tracingId.
+	Adeguata gestione del parsing della risposta PDND per l'operazione di recovery.
+
 2026-02-11  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, Documentazione]

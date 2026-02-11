@@ -18,7 +18,8 @@ Background:
     * def traces = {}
     * def disabled = {}
     * def push = function(obj, elem) { obj[obj.size + ""] = elem; obj.size++; }
-    * def filter = function(obj, state) { v = { size: 0 }; for (i = 0; i < obj.size; i++) { if (obj[i + ""].state == state) { push(v, obj[i + ""]) }}; return v; }
+    * def in_states = function(state, states) { ss = states.split(","); for (var j = 0; j < ss.length; j++) { karate.log(ss[j], state, ss[j] === state); if (ss[j] === state) { return true; }}; return false; }
+    * def filter = function(obj, states) { v = { size: 0 }; for (i = 0; i < obj.size; i++) { if ( in_states(obj[i + ""].state, states) == true ) { push(v, obj[i + ""]) }}; return v; }
     * def get = function(obj, id) { for (i = 0; i < obj.size; i++) { if (obj[i + ""].tracingId == id) { return obj[i + ""] }}; return null; }
     * def set = function(obj, id, val) { for (i = 0; i < obj.size; i++) { if (obj[i + ""].tracingId == id) { obj[i + ""] = val; }}; }
     * def slice = function(obj, i, j) { v  = { size: 0 }; for(;i<obj.size && i < j;i++){ push(v, obj[i + ""]); }; return v; }
@@ -107,7 +108,7 @@ Scenario: pathMatches('/tracings/{id}/recover') && methodIs('POST')
    			entry.content = trace
    			set(traces[soggetto], pathParams.id, entry)
    			
-   			res = ({ tracingId: pathParams.id, errors: false})
+   			res = ({ tracingId: pathParams.id })
    			status = 200
    		}
    	"""
@@ -192,6 +193,19 @@ Scenario: pathMatches('/status') && methodIs('GET')
 
 Scenario: pathMatches('/control/push')
  	* push(traces[paramValue('pdd')], { tracingId: paramValue('id') + "", state: paramValue('state'), date: paramValue('date'), content: paramValue('content') })
+ 	* def response = ''
+ 	* def responseStatus = 200
+ 
+Scenario: pathMatches('/control/fill')
+    * eval 
+    """
+    var lastDay = paramValue('lastDay')
+    var size = paramValue('size')
+    for (var i = 0; i< size; i++) {
+    	var date = utils.format(utils.addDays(utils.now(), -size+i-lastDay), 'yyyy-MM-dd')
+    	push(traces[paramValue('pdd')], { tracingId: utils.uuidFromInteger(10000 + 1 * i) + "", state: 'COMPLETED', date: date, content: '' })
+    }
+    """
  	* def response = ''
  	* def responseStatus = 200
 
