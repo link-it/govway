@@ -55,7 +55,10 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
 public class CredenzialeMittenteTest extends ConfigLoader {
 
 	
-	private static final String API = "gw/ENTE:TestCredenzialeMittente:1";
+	private static String API = "gw/SOGDEFAULT:TestCredenzialeMittente:1";
+	static {
+		API = API.replace("SOGDEFAULT", DBVerifier.getSoggettoDefault());
+	}
 	private static final String INDIRIZZO_IP = "124.2.3.2";
 	private static final String EVENTI = "##Out=200##";
 	private static final String GRUPPI = "##AltroTag##TestCredenzialeMittente##";

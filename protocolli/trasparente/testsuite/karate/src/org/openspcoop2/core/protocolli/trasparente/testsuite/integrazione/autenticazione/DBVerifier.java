@@ -392,4 +392,24 @@ public class DBVerifier {
 		log().info(query);
 		return dbUtils().readRow(query);
 	}
+	
+	
+	
+	
+	
+	public static String getSoggettoDefault() {
+		String query = "select nome_soggetto from soggetti where is_default=1 AND tipo_soggetto='gw'";
+		log().info(query);
+		Map<String,Object> map = dbUtils().readRow(query);
+		Object oSoggetto = map.get("nome_soggetto");
+		assertTrue("o soggetto classe '"+oSoggetto.getClass().getName()+"'", (oSoggetto instanceof String));
+		String soggetto = null;
+		if(oSoggetto instanceof String) {
+			soggetto = (String)oSoggetto;
+		}
+		assertNotNull("(soggettto string)",soggetto);
+		return soggetto;
+	}
+	
+	
 }
