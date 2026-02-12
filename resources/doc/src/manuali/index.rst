@@ -49,6 +49,11 @@ Dall’esperienza della Porta di Dominio italiana, l’API Gateway conforme alle
 .. toctree::
         :maxdepth: 1
 
+        Versioni di GovWay <versioni/index>
+
+.. toctree::
+        :maxdepth: 1
+
         Release Notes <releaseNotes/index>
 
 

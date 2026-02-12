@@ -317,6 +317,13 @@
 2025-11-17  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
+	Risolto Bug #1684
+	Risolta eccezione "UniqueIdentifierManager.newID() non riuscita" causata da InterruptedException dopo timeout di acquisizione semaforo. 
+	Introdotta eccezione dedicata 'SemaphoreTimeoutException' che preserva lo stato del thread, permettendo la corretta generazione di ID univoci in scenari di alta contesa delle risorse.
+
+2025-11-17  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
 	Risolto Bug #1683
 	Corrette segnalazioni vulnerabilità rilevate da SpotBugs 4.9.8
 

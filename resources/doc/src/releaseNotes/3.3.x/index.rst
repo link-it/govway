@@ -5,10 +5,17 @@ Questa sezione raccoglie le release notes della linea 3.3.x di GovWay.
 Ogni versione di manutenzione dispone di una pagina dedicata che riporta le nuove funzionalità, i problemi risolti e le modifiche introdotte.
 Per un elenco completo e dettagliato delle variazioni, consultare l'indice associato a ciascuna versione.
 
+.. warning:: **Avviso End of Life — GovWay 3.3.x**
+
+   A partire dal **31 dicembre 2026** la linea **3.3.x** raggiungerà lo stato di End of Life (EOL).
+   Dopo tale data non verranno rilasciati aggiornamenti di sicurezza, patch correttive né nuove funzionalità.
+   Si raccomanda di pianificare la migrazione alla versione **3.4.x** il prima possibile.
+
 .. toctree::
         :maxdepth: 2
 	:caption: Release Notes 3.3.x
 
+	3.3.19/index
 	3.3.18/index
 	3.3.17/index
 	3.3.16/index

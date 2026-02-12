@@ -9,5 +9,6 @@ Per un elenco completo e dettagliato delle variazioni, consultare l'indice assoc
         :maxdepth: 2
 	:caption: Release Notes 3.4.x
 
+	3.4.2/index
 	3.4.1/index
 	3.4.0/index

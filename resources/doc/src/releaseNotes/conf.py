@@ -24,9 +24,9 @@ copyright = u'Copyright (c) 2005-2026 Link.it srl (https://link.it).'
 author = u'Link.it'
 
 # The short X.Y version
-version = u'3.4.1.p1'
+version = u'3.4.2'
 # The full version, including alpha/beta/rc tags
-release = u'3.4.1.p1'
+release = u'3.4.2'
 
 
 # -- General configuration ---------------------------------------------------
