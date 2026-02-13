@@ -22,7 +22,7 @@ package org.openspcoop2.core.statistiche.dao.jdbc;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
-
+import java.io.InputStream;
 import java.sql.Connection;
 
 import org.slf4j.Logger;
@@ -106,25 +106,29 @@ public class JDBCStatistichePdndTracingServiceSearchImpl implements IJDBCService
 	@Override
 	public List<StatistichePdndTracing> findAll(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, JDBCPaginatedExpression expression, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotImplementedException, ServiceException,Exception {
 
-        List<StatistichePdndTracing> list = new ArrayList<StatistichePdndTracing>();
+        List<StatistichePdndTracing> list = new ArrayList<>();
         StatistichePdndTracingModel model = StatistichePdndTracing.model();
         
-        List<Map<String, Object>> maps = this.select(jdbcProperties, log, connection, sqlQueryObject, expression,
-        		new CustomField("id", Long.class, "id", this.getStatistichePdndTracingFieldConverter().toTable(model)),
-        		model.CSV,
-        		model.DATA_REGISTRAZIONE,
-        		model.DATA_TRACCIAMENTO,
-        		model.DATA_PUBBLICAZIONE,
-        		model.ERROR_DETAILS,
-        		model.HISTORY,
-        		model.METHOD,
-        		model.PDD_CODICE,
-        		model.STATO,
-        		model.STATO_PDND,
-        		model.TENTATIVI_PUBBLICAZIONE,
-        		model.FORCE_PUBLISH,
-        		model.TRACING_ID);
-        
+        List<Map<String, Object>> maps = null;
+        try {
+	        maps = this.select(jdbcProperties, log, connection, sqlQueryObject, expression,
+	        		new CustomField("id", Long.class, "id", this.getStatistichePdndTracingFieldConverter().toTable(model)),
+	        		/** Fix out of memory: #1720model.CSV,*/
+	        		model.DATA_REGISTRAZIONE,
+	        		model.DATA_TRACCIAMENTO,
+	        		model.DATA_PUBBLICAZIONE,
+	        		model.ERROR_DETAILS,
+	        		model.HISTORY,
+	        		model.METHOD,
+	        		model.PDD_CODICE,
+	        		model.STATO,
+	        		model.STATO_PDND,
+	        		model.TENTATIVI_PUBBLICAZIONE,
+	        		model.FORCE_PUBLISH,
+	        		model.TRACING_ID);
+        }catch(NotFoundException notFound) {
+        	maps = new ArrayList<>();
+        }
 
         for (Map<String, Object> map : maps) {
         	list.add((StatistichePdndTracing) this.getStatistichePdndTracingFetch().fetch(
@@ -414,7 +418,7 @@ public class JDBCStatistichePdndTracingServiceSearchImpl implements IJDBCService
 		sqlQueryObjectGet.addSelectField(this.getStatistichePdndTracingFieldConverter().toColumn(StatistichePdndTracing.model().DATA_REGISTRAZIONE,true));
 		sqlQueryObjectGet.addSelectField(this.getStatistichePdndTracingFieldConverter().toColumn(StatistichePdndTracing.model().DATA_PUBBLICAZIONE,true));
 		sqlQueryObjectGet.addSelectField(this.getStatistichePdndTracingFieldConverter().toColumn(StatistichePdndTracing.model().PDD_CODICE,true));
-		sqlQueryObjectGet.addSelectField(this.getStatistichePdndTracingFieldConverter().toColumn(StatistichePdndTracing.model().CSV,true));
+		/** Fix out of memory: #1720 sqlQueryObjectGet.addSelectField(this.getStatistichePdndTracingFieldConverter().toColumn(StatistichePdndTracing.model().CSV,true)); */
 		sqlQueryObjectGet.addSelectField(this.getStatistichePdndTracingFieldConverter().toColumn(StatistichePdndTracing.model().METHOD,true));
 		sqlQueryObjectGet.addSelectField(this.getStatistichePdndTracingFieldConverter().toColumn(StatistichePdndTracing.model().STATO_PDND,true));
 		sqlQueryObjectGet.addSelectField(this.getStatistichePdndTracingFieldConverter().toColumn(StatistichePdndTracing.model().TENTATIVI_PUBBLICAZIONE,true));
@@ -432,10 +436,55 @@ public class JDBCStatistichePdndTracingServiceSearchImpl implements IJDBCService
 
 
 		
-        return statistichePdndTracing;  
-	
-	} 
-	
+        return statistichePdndTracing;
+
+	}
+
+	public JDBCStream getCsvBytes(Logger log,
+			Connection connection, ISQLQueryObject sqlQueryObject, long tableId)
+			throws NotFoundException, ServiceException {
+
+		java.sql.PreparedStatement pstmt = null;
+		java.sql.ResultSet rs = null;
+		try {
+			org.openspcoop2.utils.jdbc.IJDBCAdapter jdbcAdapter =
+				org.openspcoop2.utils.jdbc.JDBCAdapterFactory.createJDBCAdapter(
+					this.getStatistichePdndTracingFieldConverter().getDatabaseType());
+
+			ISQLQueryObject sqlQueryObjectGet = sqlQueryObject.newSQLQueryObject();
+			sqlQueryObjectGet.setANDLogicOperator(true);
+			sqlQueryObjectGet.addFromTable(this.getStatistichePdndTracingFieldConverter()
+				.toTable(StatistichePdndTracing.model()));
+			sqlQueryObjectGet.addSelectAliasField(this.getStatistichePdndTracingFieldConverter()
+				.toColumn(StatistichePdndTracing.model().CSV, true), "csvContent");
+			sqlQueryObjectGet.addWhereCondition("id=?");
+
+			String query = sqlQueryObjectGet.createSQLQuery();
+			pstmt = connection.prepareStatement(query);
+			pstmt.setLong(1, tableId);
+			rs = pstmt.executeQuery();
+
+			if(rs.next()) {
+				InputStream is = jdbcAdapter.getBinaryStream(rs, "csvContent");
+				return new JDBCStream(is,
+          				rs,pstmt,
+          				connection,this.jdbcServiceManager);
+			}
+			throw new NotFoundException("Entry with id["+tableId+"] not found");
+
+		} catch(NotFoundException e) {
+			throw e;
+		} catch(Exception e) {
+			throw new ServiceException("getCsvBytes(tableId="+tableId+") failed: "+e.getMessage(), e);
+		} finally {
+			/**
+			 * close in JDBCStream
+			try { if(rs!=null) rs.close(); } catch(Exception eClose) {  }
+			try { if(pstmt!=null) pstmt.close(); } catch(Exception eClose) { }
+			*/
+		}
+	}
+
 	@Override
 	public boolean exists(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId) throws MultipleResultException, NotImplementedException, ServiceException, Exception {
 		return this._exists(jdbcProperties, log, connection, sqlQueryObject, Long.valueOf(tableId));

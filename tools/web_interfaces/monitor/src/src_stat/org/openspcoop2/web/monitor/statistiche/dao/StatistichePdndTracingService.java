@@ -39,6 +39,7 @@ import org.openspcoop2.core.statistiche.StatistichePdndTracing;
 import org.openspcoop2.core.statistiche.constants.TipoIntervalloStatistico;
 import org.openspcoop2.core.statistiche.dao.IDBStatistichePdndTracingServiceSearch;
 import org.openspcoop2.core.statistiche.dao.IStatistichePdndTracingServiceSearch;
+import org.openspcoop2.core.statistiche.dao.jdbc.JDBCStream;
 import org.openspcoop2.core.statistiche.model.StatistichePdndTracingModel;
 import org.openspcoop2.generic_project.beans.NonNegativeNumber;
 import org.openspcoop2.generic_project.beans.UpdateField;
@@ -248,6 +249,37 @@ public class StatistichePdndTracingService implements IStatistichePdndTracingSer
 		forcePublish(List.of(tracing.getId()));
 	}
 	
+	public JDBCStream getCsvInputStream(long id) {
+		IDBStatistichePdndTracingServiceSearch idSearch = (IDBStatistichePdndTracingServiceSearch) this.statistichePdndTracingServiceSearchDAO;
+		try {
+			return idSearch.getCsvInputStream(id);
+		} catch (NotFoundException e) {
+			StatistichePdndTracingService.logError("CSV non trovato per tracing PDND con id:" + id, e);
+			return null;
+		} catch (ServiceException e) {
+			StatistichePdndTracingService.logError("Errore durante il recupero del CSV per tracing PDND con id:" + id, e);
+			return null;
+		}
+	}
+	
+	public boolean existsCsv(long id) {
+		IDBStatistichePdndTracingServiceSearch idSearch = (IDBStatistichePdndTracingServiceSearch) this.statistichePdndTracingServiceSearchDAO;
+		try {
+			String sql = "SELECT id from statistiche_pdnd_tracing where csv is not null AND id=?";
+			List<Class<?>> returnClassTypes = new ArrayList<>();
+			returnClassTypes.add(Long.class);
+			Object[] parameters = new Object[] { id };
+			List<List<Object>> l = idSearch.nativeQuery(sql, returnClassTypes, parameters);
+			return l!=null && !l.isEmpty() && l.get(0)!=null;
+		} catch (NotFoundException e) {
+			StatistichePdndTracingService.logError("CSV non trovato per tracing PDND con id:" + id, e);
+			return false;
+		} catch (Exception e) {
+			StatistichePdndTracingService.logError("Errore durante il recupero del CSV per tracing PDND con id:" + id, e);
+			return false;
+		}
+	}
+
 	@Override
 	public StatistichePdndTracingBean findById(Long key) {
 		IDBStatistichePdndTracingServiceSearch idSearch = (IDBStatistichePdndTracingServiceSearch) this.statistichePdndTracingServiceSearchDAO;

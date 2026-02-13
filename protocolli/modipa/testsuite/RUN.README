@@ -341,6 +341,9 @@ Prerequisiti:
 	# Disabilitare il delay in modo che funzioni anche se il batch viene eseguito subito dopo mezzanotte
 	statistiche.pdnd.tracciamento.generazione.delayMinutes=0
 
+	# Test del batching delle richieste da db
+        statistiche.pdnd.tracciamento.pubblicazione.db.batchSize=1
+        statistiche.pdnd.tracciamento.generazione.db.batchSize=1
 + Impostare la proprieta `batch_path` nel file src/testsuite.properties con il path alla cartella dei batch
  
 + Se l'installer è stato fatto girare facendo produrre il batch delle statistiche allora è necessario per la testsuite forzare l'abilitazione dei timer statistici in GovWay con le seguenti proprieta nel file govway_local.properties:

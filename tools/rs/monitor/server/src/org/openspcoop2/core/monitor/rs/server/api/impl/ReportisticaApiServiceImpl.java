@@ -73,6 +73,7 @@ import org.openspcoop2.core.monitor.rs.server.model.TipoInformazioneReportEnum;
 import org.openspcoop2.core.monitor.rs.server.model.TipoReportEnum;
 import org.openspcoop2.core.monitor.rs.server.model.TokenClaimDistribuzioneStatisticaEnum;
 import org.openspcoop2.core.monitor.rs.server.model.UnitaTempoReportEnum;
+import org.openspcoop2.core.statistiche.dao.jdbc.JDBCStream;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.utils.service.BaseImpl;
 import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
@@ -1631,17 +1632,34 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 				ServiceManagerProperties smp = dbManager.getServiceManagerPropertiesConfig();
 				StatistichePdndTracingService pdndService = new StatistichePdndTracingService(connection, true, smp, LoggerProperties.getLoggerDAO());
 
-				byte[] csv = null;
-				
 				StatistichePdndTracingBean bean = pdndService.findById(id);
 				if(bean==null) {
 					FaultCode.NOT_FOUND.throwException("Traccia con id '"+id+"' non esistente");
 				}
-				else {
-					context.getLogger().info("Invocazione completata con successo");
-					csv = bean.getCsv();
+
+				JDBCStream jdbcStream = null;
+				byte[] csv = null;
+				try {
+					jdbcStream = pdndService.getCsvInputStream(id);
+					java.io.InputStream csvStream = jdbcStream.getIs();
+					if(csvStream == null) {
+						FaultCode.NOT_FOUND.throwException("CSV non disponibile per la traccia con id '"+id+"'");
+					}
+					else {
+						context.getLogger().info("Invocazione completata con successo");
+	
+						try {
+							csv = org.openspcoop2.utils.Utilities.getAsByteArray(csvStream);
+						} finally {
+							csvStream.close();
+						}
+					}
+				}finally {
+					if(jdbcStream!=null) {
+						jdbcStream.closeJdbcResources();
+					}
 				}
-				
+
 				return csv;
 				
 			} finally {

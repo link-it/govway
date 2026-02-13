@@ -19,7 +19,6 @@
  */
 package org.openspcoop2.web.monitor.statistiche.mbean;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -37,6 +36,7 @@ import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.core.statistiche.constants.PossibiliStatiPdnd;
 import org.openspcoop2.core.statistiche.constants.PossibiliStatiRichieste;
+import org.openspcoop2.core.statistiche.dao.jdbc.JDBCStream;
 import org.openspcoop2.utils.CopyStream;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
@@ -180,47 +180,52 @@ DynamicPdDBean<org.openspcoop2.web.monitor.statistiche.bean.StatistichePdndTraci
 		return null;
 	}
 
+	public boolean isExistsCsv() {
+		if(this.statisticaPdndTracing!=null && this.statisticaPdndTracing.getId()!=null &&
+				this.statisticaPdndTracing.getId().longValue()>0) {
+			StatistichePdndTracingService pdndService = (StatistichePdndTracingService) this.service;
+			return pdndService.existsCsv(this.statisticaPdndTracing.getId());
+		}
+		return false;
+	}
+	
 	public String downloadCsv(){
 		StatistichePdndTracingBean.log.debug("downloading csv: {}", this.statisticaPdndTracing.getId());
-		//recupero informazioni sul file
 
-
-		// We must get first our context
 		FacesContext context = FacesContext.getCurrentInstance();
-
-		// Then we have to get the Response where to write our file
 		HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
 
 		String contentType = "text/csv";
-		// Now set the content type for our response, be sure to use the best
-		// suitable content type depending on your file
-		// the content type presented here is ok for, lets say, text files and
-		// others (like CSVs, PDFs)
 		response.setContentType(contentType);
 
 		String fileName = StatistichePdndTracingExporter.getCsvFileName(this.statisticaPdndTracing);
 
-		try (ByteArrayInputStream bais = new ByteArrayInputStream(this.statisticaPdndTracing.getCsv())){
-			// Setto Proprietà Export File
-			HttpUtilities.setOutputFile(response, true, fileName, contentType);
-
-			// Streams we will use to read, write the file bytes to our response
-			OutputStream os = null;
-
-			os = response.getOutputStream();
-
-			CopyStream.copy(bais, os);
-
-			// Clean resources
-			os.flush();
-			os.close();
-
-			FacesContext.getCurrentInstance().responseComplete();
-
-			// End of the method
-		}catch (IOException | UtilsException e) {
-			StatistichePdndTracingBean.log.error(e.getMessage(), e);
-			MessageUtils.addErrorMsg("Si e' verificato un errore durante il download del csv.");
+		StatistichePdndTracingService pdndService = (StatistichePdndTracingService) this.service;
+		JDBCStream jdbcStream = null;
+		try {
+			jdbcStream = pdndService.getCsvInputStream(this.statisticaPdndTracing.getId());		
+			try (java.io.InputStream csvStream = jdbcStream.getIs()){
+				if(csvStream == null) {
+					MessageUtils.addErrorMsg("CSV non disponibile per il tracing selezionato.");
+					return null;
+				}
+	
+				HttpUtilities.setOutputFile(response, true, fileName, contentType);
+	
+				OutputStream os = response.getOutputStream();
+				CopyStream.copy(csvStream, os);
+				os.flush();
+				os.close();
+	
+				FacesContext.getCurrentInstance().responseComplete();
+			}catch (IOException | UtilsException e) {
+				StatistichePdndTracingBean.log.error(e.getMessage(), e);
+				MessageUtils.addErrorMsg("Si e' verificato un errore durante il download del csv.");
+			}
+		}finally {
+			if(jdbcStream!=null) {
+				jdbcStream.closeJdbcResources();
+			}
 		}
 		return null;
 	}

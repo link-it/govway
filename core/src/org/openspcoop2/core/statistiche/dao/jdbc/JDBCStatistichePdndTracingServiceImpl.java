@@ -20,9 +20,14 @@
 package org.openspcoop2.core.statistiche.dao.jdbc;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 
 import org.openspcoop2.utils.TipiDatabase;
+import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.jdbc.BinaryStreamNotSupportedException;
+import org.openspcoop2.utils.jdbc.JDBCAdapterException;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
+import org.openspcoop2.utils.sql.SQLQueryObjectException;
 import org.slf4j.Logger;
 
 import org.openspcoop2.generic_project.dao.jdbc.IJDBCServiceCRUDWithoutId;
@@ -32,6 +37,8 @@ import org.openspcoop2.generic_project.beans.UpdateModel;
 
 import org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities;
 import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject;
+import org.openspcoop2.generic_project.exception.ExpressionException;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.expression.IExpression;
 import org.openspcoop2.generic_project.dao.jdbc.JDBCExpression;
@@ -76,7 +83,7 @@ public class JDBCStatistichePdndTracingServiceImpl extends JDBCStatistichePdndTr
 		sqlQueryObjectInsert.addInsertField(this.getStatistichePdndTracingFieldConverter().toColumn(StatistichePdndTracing.model().DATA_REGISTRAZIONE,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatistichePdndTracingFieldConverter().toColumn(StatistichePdndTracing.model().DATA_PUBBLICAZIONE,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatistichePdndTracingFieldConverter().toColumn(StatistichePdndTracing.model().PDD_CODICE,false),"?");
-		sqlQueryObjectInsert.addInsertField(this.getStatistichePdndTracingFieldConverter().toColumn(StatistichePdndTracing.model().CSV,false),"?");
+		/** Fix out of memory: #1720 sqlQueryObjectInsert.addInsertField(this.getStatistichePdndTracingFieldConverter().toColumn(StatistichePdndTracing.model().CSV,false),"?");*/
 		sqlQueryObjectInsert.addInsertField(this.getStatistichePdndTracingFieldConverter().toColumn(StatistichePdndTracing.model().METHOD,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatistichePdndTracingFieldConverter().toColumn(StatistichePdndTracing.model().STATO_PDND,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatistichePdndTracingFieldConverter().toColumn(StatistichePdndTracing.model().TENTATIVI_PUBBLICAZIONE,false),"?");
@@ -93,7 +100,7 @@ public class JDBCStatistichePdndTracingServiceImpl extends JDBCStatistichePdndTr
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statistichePdndTracing.getDataRegistrazione(),StatistichePdndTracing.model().DATA_REGISTRAZIONE.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statistichePdndTracing.getDataPubblicazione(),StatistichePdndTracing.model().DATA_PUBBLICAZIONE.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statistichePdndTracing.getPddCodice(),StatistichePdndTracing.model().PDD_CODICE.getFieldType()),
-			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statistichePdndTracing.getCsv(),StatistichePdndTracing.model().CSV.getFieldType()),
+			/** Fix out of memory: #1720 new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statistichePdndTracing.getCsv(),StatistichePdndTracing.model().CSV.getFieldType()),*/
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statistichePdndTracing.getMethod(),StatistichePdndTracing.model().METHOD.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statistichePdndTracing.getStatoPdnd(),StatistichePdndTracing.model().STATO_PDND.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statistichePdndTracing.getTentativiPubblicazione(),StatistichePdndTracing.model().TENTATIVI_PUBBLICAZIONE.getFieldType()),
@@ -148,8 +155,10 @@ public class JDBCStatistichePdndTracingServiceImpl extends JDBCStatistichePdndTr
 		lstObjects.add(new JDBCObject(statistichePdndTracing.getDataPubblicazione(), StatistichePdndTracing.model().DATA_PUBBLICAZIONE.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getStatistichePdndTracingFieldConverter().toColumn(StatistichePdndTracing.model().PDD_CODICE,false), "?");
 		lstObjects.add(new JDBCObject(statistichePdndTracing.getPddCodice(), StatistichePdndTracing.model().PDD_CODICE.getFieldType()));
-		sqlQueryObjectUpdate.addUpdateField(this.getStatistichePdndTracingFieldConverter().toColumn(StatistichePdndTracing.model().CSV,false), "?");
+		/** Fix out of memory: #1720
+		sqlQueryObjectUpdate.addUpdateField(this.getStatistichePdndTracingFieldConverter().toColumn(StatistichePdndTracing.model().CSV,false), "?")
 		lstObjects.add(new JDBCObject(statistichePdndTracing.getCsv(), StatistichePdndTracing.model().CSV.getFieldType()));
+		 */
 		sqlQueryObjectUpdate.addUpdateField(this.getStatistichePdndTracingFieldConverter().toColumn(StatistichePdndTracing.model().METHOD,false), "?");
 		lstObjects.add(new JDBCObject(statistichePdndTracing.getMethod(), StatistichePdndTracing.model().METHOD.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getStatistichePdndTracingFieldConverter().toColumn(StatistichePdndTracing.model().STATO_PDND,false), "?");
@@ -343,6 +352,46 @@ public class JDBCStatistichePdndTracingServiceImpl extends JDBCStatistichePdndTr
 	
 	}
 	
+	public void setCsvStream(JDBCServiceManagerProperties jdbcProperties, Logger log,
+			Connection connection, ISQLQueryObject sqlQueryObject,
+			long tableId, java.io.InputStream csvStream) throws JDBCAdapterException, ExpressionException, SQLQueryObjectException, SQLException, UtilsException, BinaryStreamNotSupportedException, NotFoundException {
+
+		if(jdbcProperties!=null) {
+			// nop
+		}
+		
+		org.openspcoop2.utils.jdbc.IJDBCAdapter jdbcAdapter =
+			org.openspcoop2.utils.jdbc.JDBCAdapterFactory.createJDBCAdapter(
+				this.getStatistichePdndTracingFieldConverter().getDatabaseType());
+
+		ISQLQueryObject sqlQueryObjectUpdate = sqlQueryObject.newSQLQueryObject();
+		sqlQueryObjectUpdate.setANDLogicOperator(true);
+		sqlQueryObjectUpdate.addUpdateTable(this.getStatistichePdndTracingFieldConverter()
+			.toTable(StatistichePdndTracing.model()));
+		sqlQueryObjectUpdate.addUpdateField(this.getStatistichePdndTracingFieldConverter()
+			.toColumn(StatistichePdndTracing.model().CSV, false), "?");
+		sqlQueryObjectUpdate.addWhereCondition("id=?");
+
+		java.sql.PreparedStatement pstmt = null;
+		try {
+			String sql = sqlQueryObjectUpdate.createSQLUpdate();
+			log.debug("set csv stream: {}, id: {} ", sql, tableId);
+
+			pstmt = connection.prepareStatement(sql);
+			jdbcAdapter.setBinaryData(pstmt, 1, csvStream, true);
+			pstmt.setLong(2, tableId);
+
+			
+			int rows = pstmt.executeUpdate();
+			if(rows == 0) {
+				throw new org.openspcoop2.generic_project.exception.NotFoundException(
+					"Entry with id["+tableId+"] not found");
+			}
+		} finally {
+			try { if(pstmt!=null) pstmt.close(); } catch(Exception eClose) { /* ignore */ }
+		}
+	}
+
 	public void forcePublish(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, IExpression expr) throws Exception {
 		
 		UpdateField field = new UpdateField(StatistichePdndTracing.model().FORCE_PUBLISH, true);

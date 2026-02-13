@@ -35,11 +35,11 @@
 				<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS z" timeZone="#{applicationBean.timeZone}"/>
 			</h:outputText>
 
-			<h:outputLabel id="outLabelCsv" styleClass="outputFieldLabel icon-xml" value="Csv" rendered="#{not empty statistichePdndTracingBean.statisticaPdndTracing.csv}"/>
-			<h:panelGroup id="panelCsv" rendered="#{not empty statistichePdndTracingBean.statisticaPdndTracing.csv}">
+			<h:outputLabel id="outLabelCsv" styleClass="outputFieldLabel icon-xml" value="Csv" rendered="#{statistichePdndTracingBean.existsCsv}"/>
+			<h:panelGroup id="panelCsv" rendered="#{statistichePdndTracingBean.existsCsv}">
 				<h:form id="formCsv">
 					<input type="hidden" id="_csrfFormCsv" name="_csrf" value="#{loginBean.csrf}"/>
-                   	<h:commandLink id="exportCsv-iconLink" target="_blank" styleClass="icon-compress" action="#{statistichePdndTracingBean.downloadCsv}" rendered="#{not empty statistichePdndTracingBean.statisticaPdndTracing.csv}">
+                   	<h:commandLink id="exportCsv-iconLink" target="_blank" styleClass="icon-compress" action="#{statistichePdndTracingBean.downloadCsv}" rendered="#{statistichePdndTracingBean.existsCsv}">
 						<h:outputText id="outEsportaCsv" value="#{msg['statistichePdndTracing.dettaglio.csvExport.label']}" />
 					</h:commandLink>
 				</h:form>
