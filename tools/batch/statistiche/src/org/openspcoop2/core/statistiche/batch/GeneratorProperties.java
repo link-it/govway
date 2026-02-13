@@ -102,6 +102,8 @@ public class GeneratorProperties {
 	private volatile boolean pdndTracingFruizioniEnabled = true;
 	private List<Integer> pdndTracingPendingCheck = null;
 	private volatile int pdndTracingGenerazioneDelayMinutes = 0;
+	private volatile int pdndTracciamentoGenerazioneDbBatchSize = 200;
+	private volatile int pdndTracciamentoPubblicazioneDbBatchSize = 200;
 	
 	private PropertiesReader props;
 	
@@ -202,6 +204,16 @@ public class GeneratorProperties {
 		value = getProperty("statistiche.pdnd.tracciamento.generazione.delayMinutes", false);
 		if(value!=null && StringUtils.isNotEmpty(value.trim())) {
 			this.pdndTracingGenerazioneDelayMinutes = Integer.parseInt(value);
+		}
+		
+		value = getProperty("statistiche.pdnd.tracciamento.generazione.db.batchSize", false);
+		if(value!=null && StringUtils.isNotEmpty(value.trim())) {
+			this.pdndTracciamentoGenerazioneDbBatchSize = Integer.parseInt(value);
+		}
+		
+		value = getProperty("statistiche.pdnd.tracciamento.pubblicazione.db.batchSize", false);
+		if(value!=null && StringUtils.isNotEmpty(value.trim())) {
+			this.pdndTracciamentoPubblicazioneDbBatchSize = Integer.parseInt(value);
 		}
 
 	}
@@ -412,5 +424,19 @@ public class GeneratorProperties {
 	}
 	public void setPdndTracingGenerazioneDelayMinutes(int pdndTracingGenerazioneDelayMinutes) {
 		this.pdndTracingGenerazioneDelayMinutes = pdndTracingGenerazioneDelayMinutes;
+	}
+	
+	public int getPdndTracciamentoGenerazioneDbBatchSize() {
+		return this.pdndTracciamentoGenerazioneDbBatchSize;
+	}
+	public void setPdndTracciamentoGenerazioneDbBatchSize(int pdndTracciamentoGenerazioneDbBatchSize) {
+		this.pdndTracciamentoGenerazioneDbBatchSize = pdndTracciamentoGenerazioneDbBatchSize;
+	}
+	
+	public int getPdndTracciamentoPubblicazioneDbBatchSize() {
+		return this.pdndTracciamentoPubblicazioneDbBatchSize;
+	}
+	public void setPdndTracciamentoPubblicazioneDbBatchSize(int pdndTracciamentoPubblicazioneDbBatchSize) {
+		this.pdndTracciamentoPubblicazioneDbBatchSize = pdndTracciamentoPubblicazioneDbBatchSize;
 	}
 }

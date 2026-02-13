@@ -19,7 +19,6 @@
  */
 package org.openspcoop2.web.monitor.statistiche.servlet;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -35,6 +34,7 @@ import jakarta.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.commons.CoreException;
+import org.openspcoop2.core.statistiche.dao.jdbc.JDBCStream;
 import org.openspcoop2.utils.CopyStream;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateUtils;
@@ -46,6 +46,7 @@ import org.openspcoop2.web.monitor.statistiche.bean.StatistichePdndTracingBean;
 import org.openspcoop2.web.monitor.statistiche.bean.StatistichePdndTracingSearchForm;
 import org.openspcoop2.web.monitor.statistiche.constants.StatisticheCostanti;
 import org.openspcoop2.web.monitor.statistiche.dao.IStatistichePdndTracingService;
+import org.openspcoop2.web.monitor.statistiche.dao.StatistichePdndTracingService;
 import org.slf4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
@@ -169,7 +170,7 @@ public class StatistichePdndTracingExporter extends HttpServlet{
 			List<StatistichePdndTracingBean> lst = leggiCsvDaEsportare(isAll, service, ids);
 
 			if(!lst.isEmpty()) {
-				esportaRisultati(lst, response);
+				esportaRisultati(lst, response, service);
 			} else {
 				String fileName = "Errors.txt";
 
@@ -190,31 +191,46 @@ public class StatistichePdndTracingExporter extends HttpServlet{
 		}
 	}
 
-	private static void esportaRisultati(List<StatistichePdndTracingBean> lst, HttpServletResponse response) throws IOException, UtilsException {
+	private static void esportaRisultati(List<StatistichePdndTracingBean> lst, HttpServletResponse response, IStatistichePdndTracingService service) throws IOException, UtilsException {
 		String fileName = "StatisticheTracingPdnd.zip";
 		String contentType = "text/csv";
 		String rootDir = "StatisticheTracingPdnd"+File.separatorChar;
+		StatistichePdndTracingService pdndService = (StatistichePdndTracingService) service;
 		try {
 			// Setto Proprietà Export File
 			HttpUtilities.setOutputFile(response, true, fileName, contentType);
-			
-			ZipOutputStream zip = new  ZipOutputStream(response.getOutputStream());
-			
-			for (StatistichePdndTracingBean statistichePdndTracingBean : lst) {
-				String entryFileName = getCsvFileName(statistichePdndTracingBean);
-				String soggettoDirName = getNomeDirectorySoggetto(statistichePdndTracingBean);
-				
-				String nomeEntry = rootDir + soggettoDirName+ File.separatorChar + entryFileName;
-				zip.putNextEntry(new ZipEntry(nomeEntry));
-				
-				try (ByteArrayInputStream bais = new ByteArrayInputStream(statistichePdndTracingBean.getCsv())){
-					CopyStream.copy(bais, zip);
-				}
 
-				zip.flush();
-				zip.closeEntry();
+			ZipOutputStream zip = new  ZipOutputStream(response.getOutputStream());
+
+			for (StatistichePdndTracingBean statistichePdndTracingBean : lst) {
+				
+				JDBCStream jdbcStream = null;
+				try {
+					jdbcStream = pdndService.getCsvInputStream(statistichePdndTracingBean.getId());
+				
+					try (java.io.InputStream csvStream = jdbcStream.getIs()){
+						if(csvStream == null) {
+							continue;
+						}
+	
+						String entryFileName = getCsvFileName(statistichePdndTracingBean);
+						String soggettoDirName = getNomeDirectorySoggetto(statistichePdndTracingBean);
+	
+						String nomeEntry = rootDir + soggettoDirName+ File.separatorChar + entryFileName;
+						zip.putNextEntry(new ZipEntry(nomeEntry));
+	
+						CopyStream.copy(csvStream, zip);
+	
+						zip.flush();
+						zip.closeEntry();
+					}
+				}finally{
+					if(jdbcStream!=null) {
+						jdbcStream.closeJdbcResources();
+					}
+				}
 			}
-			
+
 			zip.flush();
 			zip.close();
 

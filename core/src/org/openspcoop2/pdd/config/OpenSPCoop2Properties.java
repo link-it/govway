@@ -2880,6 +2880,8 @@ public class OpenSPCoop2Properties {
 				this.getStatistichePdndTracciamentoPubblicazioneTimerIntervalSeconds();
 				this.getStatistichePdndTracciamentoGenerazioneDelayMinutes();
 				this.getStatistichePdndTracciamentoSoggettiEnabled();
+				this.getPdndTracciamentoGenerazioneDbBatchSize();
+				this.getPdndTracciamentoPubblicazioneDbBatchSize();
 				
 			}
 			
@@ -36059,6 +36061,51 @@ public class OpenSPCoop2Properties {
 		return this.statistichePdndTracciamentoHttpRequestConfig;
 	}
 	
+	private Integer pdndTracciamentoGenerazioneDbBatchSize = null;
+	public int getPdndTracciamentoGenerazioneDbBatchSize() throws CoreException {	
+		if(this.pdndTracciamentoGenerazioneDbBatchSize == null){
+			String key = "org.openspcoop2.pdd.statistiche.pdnd.tracciamento.generazione.db.batchSize";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(key);
+				if(name==null){
+					name="200";
+				}
+				else {
+					name = name.trim();
+				}
+				this.pdndTracciamentoGenerazioneDbBatchSize = Integer.valueOf(name);
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '" + key +"': "+e.getMessage(),e);
+				throw new CoreException(e.getMessage(),e);
+			}    
+		}
+
+		return this.pdndTracciamentoGenerazioneDbBatchSize;
+	}
+	
+	private Integer pdndTracciamentoPubblicazioneDbBatchSize = null;
+	public int getPdndTracciamentoPubblicazioneDbBatchSize() throws CoreException {	
+		if(this.pdndTracciamentoPubblicazioneDbBatchSize == null){
+			String key = "org.openspcoop2.pdd.statistiche.pdnd.tracciamento.pubblicazione.db.batchSize";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(key);
+				if(name==null){
+					name="200";
+				}
+				else {
+					name = name.trim();
+				}
+				this.pdndTracciamentoPubblicazioneDbBatchSize = Integer.valueOf(name);
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '" + key +"': "+e.getMessage(),e);
+				throw new CoreException(e.getMessage(),e);
+			}    
+		}
+
+		return this.pdndTracciamentoPubblicazioneDbBatchSize;
+	}
 	
 	
 	/* ------------- Gestore Chiavi PDND ---------------------*/

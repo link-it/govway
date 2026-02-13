@@ -26,6 +26,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -49,6 +50,7 @@ import org.openspcoop2.core.statistiche.constants.PossibiliStatiPdnd;
 import org.openspcoop2.core.statistiche.constants.PossibiliStatiRichieste;
 import org.openspcoop2.core.statistiche.constants.TipoIntervalloStatistico;
 import org.openspcoop2.core.statistiche.dao.IStatistichePdndTracingService;
+import org.openspcoop2.core.statistiche.dao.jdbc.JDBCStream;
 import org.openspcoop2.generic_project.exception.ExpressionException;
 import org.openspcoop2.generic_project.exception.ExpressionNotImplementedException;
 import org.openspcoop2.generic_project.exception.MultipleResultException;
@@ -214,7 +216,6 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 			}
 			return list.isEmpty() || list.peek() == null ? null : new Result<>(list.remove());
 		}).takeWhile(Objects::nonNull).sequential().iterator();
-		
 	}
 	
 	private String getUploadPath(StatistichePdndTracing stat) {
@@ -229,13 +230,13 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 		return null;
 	}
 	
-	private MimeMultipart getUploadBody(StatistichePdndTracing stat) throws UtilsException {
+	private MimeMultipart getUploadBody(StatistichePdndTracing stat, java.io.InputStream csvStream) throws UtilsException {
 		MimeMultipart multipart = new MimeMultipart(HttpConstants.CONTENT_TYPE_MULTIPART_FORM_DATA_SUBTYPE);
-		
+
 		InternetHeaders headers = new InternetHeaders();
 		headers.addHeader(HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_CSV);
-		headers.addHeader(HttpConstants.CONTENT_DISPOSITION, HttpConstants.CONTENT_DISPOSITION_FORM_DATA_NAME_PREFIX+"\"file\"; "+HttpConstants.CONTENT_DISPOSITION_FILENAME_PREFIX+"\"record.csv\"");		
-		BodyPart bp = multipart.createBodyPart(headers, stat.getCsv());
+		headers.addHeader(HttpConstants.CONTENT_DISPOSITION, HttpConstants.CONTENT_DISPOSITION_FORM_DATA_NAME_PREFIX+"\"file\"; "+HttpConstants.CONTENT_DISPOSITION_FILENAME_PREFIX+"\"record.csv\"");
+		BodyPart bp = multipart.createBodyPart(headers, Utilities.getAsByteArray(csvStream));
 	
 		multipart.addBodyPart(bp);
 		
@@ -403,23 +404,37 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 		String errMsg = null;
 		
 		try (ByteArrayOutputStream os = new ByteArrayOutputStream()){
-		
+
 			// aggiorno i tentativi
 			stat.setTentativiPubblicazione(stat.getTentativiPubblicazione() + 1);
 			stat.setDataPubblicazione(DateManager.getDate());
-			
+
 			// provo ad inviare il tracciato alla PDND
 			HttpRequest req = getBaseRequest(pddCode);
 			req.setMethod(HttpRequestMethod.POST);
 			req.setUrl(req.getBaseUrl() + getUploadPath(stat));
-		
-			MimeMultipart multipart = getUploadBody(stat);
-			multipart.writeTo(os);
-			req.setContentType(multipart.getContentType());
-			req.setContent(os.toByteArray());
-			res = HttpUtilities.httpInvoke(req);	
-			
+
+			// carico il csv on-demand dal database
+			org.openspcoop2.core.statistiche.dao.IDBStatistichePdndTracingServiceSearch dbSearchService =
+				(org.openspcoop2.core.statistiche.dao.IDBStatistichePdndTracingServiceSearch) this.pdndStatisticheSM;
+			JDBCStream jdbcStream = null;
+			try {
+				jdbcStream = dbSearchService.getCsvInputStream(stat.getId());
+				java.io.InputStream csvStream = jdbcStream.getIs();
+				
+				MimeMultipart multipart = getUploadBody(stat, csvStream);
+				multipart.writeTo(os);
+				req.setContentType(multipart.getContentType());
+				req.setContent(os.toByteArray());
+				res = HttpUtilities.httpInvoke(req);
+			}finally {
+				if(jdbcStream!=null) {
+					jdbcStream.closeJdbcResources();
+				}
+			}
+
 		} catch (Exception e) {
+			this.logger.error("Errore nell'invio del tracciato alla pdnd per soggetto ocn codice: {} per la data: {}, tracingId: {}", pddCode, stat.getDataPubblicazione(), stat.getTracingId(), e);
 			errMsg = e.getMessage();
 		}
 		
@@ -449,19 +464,8 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 		}
 	}
 	
-	/**
-	 * Pubblico i record dal db che risultano nello stato WAITING e con csv valorizzato
-	 * @param pddCode: codice pdd del soggetto multitenante a cui si riferiscono i tracciati
-	 * @throws ServiceException
-	 * @throws NotFoundException
-	 * @throws NotImplementedException
-	 * @throws ExpressionNotImplementedException
-	 * @throws ExpressionException
-	 * @throws StatisticsEngineException 
-	 */
-	private void publishRecords(String nomeSoggetto, String pddCode) throws ServiceException, NotFoundException, NotImplementedException, ExpressionNotImplementedException, ExpressionException, StatisticsEngineException {		
+	private IExpression buildWaitingTracingExpression(IExpression expr, String pddCode) throws ExpressionNotImplementedException, ExpressionException, ServiceException, NotImplementedException {
 		// ottengo la lista dei record in stato WAITING con csv valorizzzato
-		IPaginatedExpression expr = this.pdndStatisticheSM.newPaginatedExpression();
 		expr.isNotNull(StatistichePdndTracing.model().CSV);
 		expr.equals(StatistichePdndTracing.model().STATO_PDND, PossibiliStatiPdnd.WAITING);
 		expr.equals(StatistichePdndTracing.model().PDD_CODICE, pddCode);
@@ -474,29 +478,91 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 			attemptsExpr.or().equals(StatistichePdndTracing.model().FORCE_PUBLISH, true);
 			expr.and(attemptsExpr);
 		}
+				
+		return expr;
+	}
+	
+	private Iterator<Result<StatistichePdndTracing, ServiceException>> iterateWaitingTracing(String pddCode) {
+		int limit = this.config.getPdndTracciamentoPubblicazioneDbBatchSize();
+		AtomicInteger offset = new AtomicInteger(0);
+		Queue<StatistichePdndTracing> resultQueue = new LinkedList<>();
 		
-		expr.addOrder(StatistichePdndTracing.model().DATA_TRACCIAMENTO, SortOrder.ASC);
-		
-		List<StatistichePdndTracing> stats = null; 
-		
-		try {
-			stats = this.pdndStatisticheSM.findAll(expr);
-		} catch (Exception e) {
-			if (e.getCause() instanceof NotFoundException || e instanceof NotFoundException) {
-				this.logger.debug("Nessun record da pubblicare per il soggetto: {} trovato", nomeSoggetto);
-				return;
+		return Stream.generate((Supplier<Result<StatistichePdndTracing, ServiceException>>) () -> {
+			if (resultQueue.isEmpty()) {
+				// ottengo la lista dei record in stato WAITING con csv valorizzzato
+				try {
+					IPaginatedExpression expr = this.pdndStatisticheSM.newPaginatedExpression();
+					expr.limit(limit);
+					expr.offset(offset.get());
+					expr.addOrder(StatistichePdndTracing.model().DATA_TRACCIAMENTO, SortOrder.ASC);
+
+					buildWaitingTracingExpression(expr, pddCode);
+					 resultQueue.addAll(this.pdndStatisticheSM.findAll(expr));
+				} catch (Exception e) {
+					if ((e instanceof ServiceException && e.getCause() instanceof NotFoundException) || e instanceof NotFoundException)
+						return null;
+					resultQueue.clear();
+					return new Result<>(new ServiceException("Errore durante la ricerca dei tracciati in waiting", e));
+				}
+				offset.addAndGet(limit);
 			}
-			throw new StatisticsEngineException("Errore inaspettato nella ricerca delle transazioni", e);
+			
+			return new Result<>(resultQueue.isEmpty() ? null : resultQueue.remove());
+		}).sequential()
+				.takeWhile(Objects::nonNull)
+				.iterator();
+	}
+	
+	public long countWaitingTracing(String pddCode) throws ServiceException, NotImplementedException, ExpressionNotImplementedException, ExpressionException {
+		IExpression expr = this.pdndStatisticheSM.newExpression();
+		buildWaitingTracingExpression(expr, pddCode);
+		return this.pdndStatisticheSM.count(expr).longValue();
+	}
+	
+	/**
+	 * Pubblico i record dal db che risultano nello stato WAITING e con csv valorizzato
+	 * @param pddCode: codice pdd del soggetto multitenante a cui si riferiscono i tracciati
+	 * @throws ServiceException
+	 * @throws NotFoundException
+	 * @throws NotImplementedException
+	 * @throws ExpressionNotImplementedException
+	 * @throws ExpressionException
+	 * @throws StatisticsEngineException 
+	 */
+	private void publishRecords(String nomeSoggetto, String pddCode) throws ServiceException, NotFoundException, NotImplementedException, StatisticsEngineException, ExpressionNotImplementedException, ExpressionException {		
+		Iterator<Result<StatistichePdndTracing, ServiceException>> statsResults = iterateWaitingTracing(pddCode);
+		
+		if (this.logger.isDebugEnabled())
+			this.logger.debug("Trovati {} record da pubblicare per il soggetto: {}", countWaitingTracing(pddCode), nomeSoggetto);
+		
+		
+		List<StatistichePdndTracing> statToUpdate = new ArrayList<>();
+		Exception firstException = null;
+		
+		while (statsResults.hasNext()) {
+			Result<StatistichePdndTracing, ServiceException> statResult = statsResults.next();
+			StatistichePdndTracing stat = statResult.get();
+			
+			try {
+				sendTrace(pddCode, stat);
+				statToUpdate.add(stat);
+				this.logPublishResults(stat, nomeSoggetto);
+			} catch (Exception e) {
+				firstException = e;
+			}
 		}
 		
-		// per ogni record invio la traccia alla pdnd e poi aggiorno il db
-		this.logger.debug("Trovati {} record da pubblicare per il soggetto: {}", stats.size(), nomeSoggetto);
-		for (StatistichePdndTracing stat : stats) {
-			sendTrace(pddCode, stat);
-			this.pdndStatisticheSM.update(stat);
-					
-			this.logPublishResults(stat, nomeSoggetto);
+		for (StatistichePdndTracing stat : statToUpdate) {
+			try {
+				this.pdndStatisticheSM.update(stat);
+			} catch (Exception e) {
+				if (firstException == null)
+					firstException = e;
+			}
 		}
+		
+		if (firstException != null)
+			throw new ServiceException("Eccezione durante l'invio dei tracciat", firstException);
 		
 	}
 	
@@ -553,7 +619,7 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 			return;
 		}
 		
-		for (Date missingDate : this.updateTracingIdStats.keySet()) {
+		for (Date missingDate : new ArrayList<>(this.updateTracingIdStats.keySet())) {
 			fixSinglePublishRecord(nomeSoggetto, pddCode, startDate.get(), missingDate);
 		}
 			

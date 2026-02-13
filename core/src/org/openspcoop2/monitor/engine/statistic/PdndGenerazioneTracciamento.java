@@ -19,8 +19,9 @@
  */
 package org.openspcoop2.monitor.engine.statistic;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.math.BigDecimal;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,12 +29,15 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.csv.CSVFormat;
 import org.openspcoop2.core.constants.CostantiLabel;
@@ -53,8 +57,8 @@ import org.openspcoop2.generic_project.exception.ExpressionNotImplementedExcepti
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.NotImplementedException;
 import org.openspcoop2.generic_project.exception.ServiceException;
-import org.openspcoop2.generic_project.expression.IExpression;
 import org.openspcoop2.generic_project.expression.IPaginatedExpression;
+import org.openspcoop2.generic_project.expression.SortOrder;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.csv.Format;
 import org.openspcoop2.utils.csv.Printer;
@@ -153,7 +157,7 @@ public class PdndGenerazioneTracciamento implements IStatisticsEngine {
 	
 	
 	private static final String[] CSV_HEADERS = {"date", "purpose_id", "status", "token_id", "requests_count"};
-	public byte[] generateCsv(Date tracingDate, List<Map<String, Object>> data) throws UtilsException {
+	public byte[] generateCsv(Date tracingDate, Stream<Map<String, Object>> data) throws UtilsException {
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		
 		CSVFormat csvFormat = CSVFormat.DEFAULT.builder()
@@ -166,14 +170,13 @@ public class PdndGenerazioneTracciamento implements IStatisticsEngine {
 		
 		Printer printer = new Printer(format, os);
 		
-		for (Map<String, Object> row : data) {
+		for (Map<String, Object> row : data.collect(Collectors.toList())) {
 			String purposeId = row.get(Transazione.model().TOKEN_PURPOSE_ID.getFieldName()).toString();
 			String tokenId = row.get(Transazione.model().TOKEN_ID.getFieldName()).toString();
 			Integer status = convertEventToInteger(row.get(Transazione.model().EVENTI_GESTIONE.getFieldName()));
 			String requestsCount = row.get(REQUESTS_COUNT_ID).toString();
 			
 			printer.printRecord(dataTracciamentoFormat(tracingDate), purposeId, status, tokenId, requestsCount);
-			printer.printComment("commento");
 		}
 		
 		printer.close();
@@ -181,37 +184,23 @@ public class PdndGenerazioneTracciamento implements IStatisticsEngine {
 		return os.toByteArray();
 	}
 	
-	private boolean createRecord(Date tracingDate, PdndTracciamentoSoggetto soggettoEntry, List<Map<String, Object>> dataNonAggregati) {
-		
-		// Eventuali dati che contengono stesso tokenId, purposeId e status (magari provenienti da soggetti diversi), vengono aggregati
-		List<Map<String, Object>> data = null;
-		try {
-			data = aggregateData(dataNonAggregati);
-		} catch (UtilsException e) {
-			String dataTracciamento = dataTracciamentoFormat(tracingDate);
-			this.logger.error("Errore nell'aggregare il csv per il soggetto {} (idPorta: {}), data tracciamento: {}", soggettoEntry.getIdSoggetto().getNome(), soggettoEntry.getIdSoggetto().getCodicePorta(), dataTracciamento, e);
-			return false;
-		}
-		
-		// genero csv
-		byte[] csv = null;
-		try {	
-			csv = generateCsv(tracingDate, data);
-		} catch (UtilsException e) {
-			String dataTracciamento = dataTracciamentoFormat(tracingDate);
-			this.logger.error("Errore nel generare il csv per il soggetto {} (idPorta: {}), data tracciamento: {}", soggettoEntry.getIdSoggetto().getNome(), soggettoEntry.getIdSoggetto().getCodicePorta(), dataTracciamento, e);
-			return false;
-		}
-		
-		// scrivo csv su base dati
-		
-		Date endTraceDate = truncDate(incrementDate(tracingDate));
-		
+	private boolean createRecord(Date start, Date end, PdndTracciamentoSoggetto soggettoEntry) {
+		String pddCode = soggettoEntry.getIdSoggetto().getCodicePorta();
+		List<String> soggettiAggregati =  PdndTracciamentoUtils.getNomiSoggettiAggregati(soggettoEntry);
+
+		// Raggruppo tutti i dati calcolati dei pddCodici del soggetto aggregatore e dei soggetti aggregati
+		List<String> pddCodici = new ArrayList<>();
+		pddCodici.add(pddCode);
+		pddCodici.addAll(soggettiAggregati);
+
+		// scrivo record su base dati (senza csv)
+
+		Date endTraceDate = truncDate(incrementDate(start));
+
 		StatistichePdndTracing entry = new StatistichePdndTracing();
 		Date now = DateManager.getDate();
 		entry.setDataRegistrazione(now);
-		entry.setDataTracciamento(tracingDate);
-		entry.setCsv(csv);
+		entry.setDataTracciamento(start);
 		entry.setPddCodice(soggettoEntry.getIdSoggetto().getCodicePorta());
 		entry.setHistory(0);
 		entry.setMethod(endTraceDate.before(truncDate(now)) ? PdndMethods.RECOVER : PdndMethods.SUBMIT);
@@ -220,91 +209,37 @@ public class PdndGenerazioneTracciamento implements IStatisticsEngine {
 		try {
 			this.statisticheSM.getStatistichePdndTracingService().create(entry);
 		} catch (ServiceException | NotImplementedException e) {
-			String dataTracciamento = dataTracciamentoFormat(tracingDate);
-			this.logger.error("Errore nel inserire il csv sul database per il soggetto {} (idPorta: {}), data tracciamento: {}", soggettoEntry.getIdSoggetto().getNome(), soggettoEntry.getIdSoggetto().getCodicePorta(), dataTracciamento, e);
+			String dataTracciamento = dataTracciamentoFormat(start);
+			this.logger.error("Errore nel inserire il record sul database per il soggetto {} (idPorta: {}), data tracciamento: {}", soggettoEntry.getIdSoggetto().getNome(), soggettoEntry.getIdSoggetto().getCodicePorta(), dataTracciamento, e);
 			return false;
 		}
-		
+
+		// genero csv e lo scrivo in streaming sul record appena creato
+		try {
+			Stream<Map<String, Object>> groups = aggregateTransactions(start, end, pddCodici.toArray(new String[0]));
+			try (InputStream csv = new ByteArrayInputStream(generateCsv(start, groups))) {
+
+				org.openspcoop2.core.statistiche.dao.IDBStatistichePdndTracingService dbService =
+					(org.openspcoop2.core.statistiche.dao.IDBStatistichePdndTracingService) this.statisticheSM.getStatistichePdndTracingService();
+				dbService.setCsvStream(entry.getId(), csv);
+			}
+			
+		} catch (Exception e) {
+			String dataTracciamento = dataTracciamentoFormat(start);
+			this.logger.error("Errore nel generare/salvare il csv per il soggetto {} (idPorta: {}), data tracciamento: {}", soggettoEntry.getIdSoggetto().getNome(), soggettoEntry.getIdSoggetto().getCodicePorta(), dataTracciamento, e);
+			return false;
+		}
+
 		return true;
 
 	}
 	
-	public List<Map<String, Object>> aggregateData(List<Map<String, Object>> data) throws UtilsException {
-		final String PURPOSE_ID = Transazione.model().TOKEN_PURPOSE_ID.getFieldName();
-		final String TOKEN_ID   = Transazione.model().TOKEN_ID.getFieldName();
-        final String STATUS_ID  = Transazione.model().EVENTI_GESTIONE.getFieldName();
-
-        Map<GroupKey, Long> acc = new LinkedHashMap<>();
-
-        for (Map<String, Object> row : data) {
-        	String purposeId = row.get(PURPOSE_ID).toString();
-			String tokenId = row.get(TOKEN_ID).toString();
-			Integer status = convertEventToInteger(row.get(STATUS_ID));
-        	
-            long requestsCount = asLong(row.get(REQUESTS_COUNT_ID)); // tua costante esistente
-            GroupKey key = new GroupKey(purposeId, tokenId, status);
-
-            acc.merge(key, requestsCount, Long::sum);
-        }
-
-        List<Map<String, Object>> result = new ArrayList<>(acc.size());
-        for (Map.Entry<GroupKey, Long> e : acc.entrySet()) {
-            GroupKey k = e.getKey();
-            Map<String, Object> m = new LinkedHashMap<>();
-            m.put(PURPOSE_ID, k.purposeId);
-            m.put(TOKEN_ID,   k.tokenId);
-            m.put(STATUS_ID, k.status); // inserisco direttamente integer
-            m.put(REQUESTS_COUNT_ID, e.getValue());
-            result.add(m);
-        }
-
-        return result;
-    }
-	private static long asLong(Object o) {
-        if (o == null) return 0L;
-        if (o instanceof Number) return ((Number) o).longValue();
-        String s = String.valueOf(o).trim();
-        if (s.isEmpty()) return 0L;
-        try {
-            return Long.parseLong(s);
-        } catch (NumberFormatException nfe) {
-            try {
-                return new BigDecimal(s).longValue();
-            } catch (Exception ex) {
-                throw new IllegalArgumentException("Valore non numerico per " + REQUESTS_COUNT_ID + ": " + o);
-            }
-        }
-    }
-	private static final class GroupKey {
-        final String purposeId;
-        final String tokenId;
-        final Integer status;
-
-        GroupKey(String purposeId, String tokenId, Integer status) {
-            this.purposeId = purposeId;
-            this.tokenId = tokenId;
-            this.status = status;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (!(obj instanceof GroupKey)) return false;
-            GroupKey other = (GroupKey) obj;
-            return Objects.equals(this.purposeId, other.purposeId)
-                && Objects.equals(this.tokenId, other.tokenId)
-                && Objects.equals(this.status, other.status);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(this.purposeId, this.tokenId, this.status);
-        }
-    }
-		
-	private List<Map<String, Object>> aggregateTransactions(Date start, Date end, String ... pddCode) throws ExpressionNotImplementedException, ExpressionException, ServiceException, NotImplementedException {
-		IExpression expr = this.transazioniSM.getTransazioneService().newExpression();
-		expr.addGroupBy(Transazione.model().PDD_CODICE)
+	private IPaginatedExpression buildAggregateExpression(Date start, Date end, int offset, int limit, String ...pddCode) throws ExpressionNotImplementedException, ExpressionException, ServiceException, NotImplementedException {
+		IPaginatedExpression expr = this.transazioniSM.getTransazioneService().newPaginatedExpression();
+		expr.limit(limit)
+			.offset(offset)
+			.sortOrder(SortOrder.ASC)
+			.addOrder(Transazione.model().EVENTI_GESTIONE)
 			.addGroupBy(Transazione.model().TOKEN_PURPOSE_ID)
 			.addGroupBy(Transazione.model().TOKEN_ID)
 			.addGroupBy(Transazione.model().EVENTI_GESTIONE)
@@ -329,27 +264,43 @@ public class PdndGenerazioneTracciamento implements IStatisticsEngine {
 				expr.in(Transazione.model().PDD_CODICE, Arrays.asList(pddCode));
 			}
 		}
+		return expr;
+	}
 		
-		FunctionField countFunction = new FunctionField(Transazione.model().ID_TRANSAZIONE, Function.COUNT, REQUESTS_COUNT_ID);
+	private Stream<Map<String, Object>> aggregateTransactions(Date start, Date end, String ... pddCode) throws ExpressionNotImplementedException, ExpressionException, ServiceException, NotImplementedException {
+		int limit = this.config.getPdndTracciamentoGenerazioneDbBatchSize();
 		
-		try {
-			return this.transazioniSM
-				.getTransazioneService()
-				.groupBy(expr, countFunction);
-		} catch (NotFoundException e) {
-			return List.of();
-		}
+		AtomicInteger offset = new AtomicInteger(0);
+		Queue<Map<String, Object>> partialResult = new LinkedList<>();
+		
+		return Stream.generate(() -> {
+			
+			if (partialResult.isEmpty()) {
+				
+				try {
+					IPaginatedExpression expr = buildAggregateExpression(start, end, offset.get(), limit, pddCode);
+					FunctionField countFunction = new FunctionField(Transazione.model().ID_TRANSAZIONE, Function.COUNT, REQUESTS_COUNT_ID);
+					
+					partialResult.addAll(this.transazioniSM
+						.getTransazioneService()
+						.groupBy(expr, countFunction));
+					
+					offset.addAndGet(limit);
+				} catch (NotFoundException e) {
+					// ignore
+				} catch (Exception e) {
+					partialResult.clear();
+					this.logger.error("Errore durante il prelievo dal db delle transazioni aggregate", e);
+				}
+			}
+			
+			return partialResult.isEmpty() ? null : partialResult.remove();
+		}).sequential().takeWhile(Objects::nonNull);
 	}
 	
-	private boolean createRecords(Date start, Date end, Set<String> ignorePdd) throws ServiceException, NotImplementedException, ExpressionNotImplementedException, ExpressionException {
-		List<Map<String, Object>> groups = aggregateTransactions(start, end);
+	private boolean createRecords(Date start, Date end, Set<String> ignorePdd) {
 		String dataTracciamento = dataTracciamentoFormat(start);
 		boolean errors = false;
-				
-		// Acquisisco tutti i record raggruppati per pddCodice
-		Map<String, List<Map<String, Object>>> recordRaggruppatiPerPddCodice = groups
-				.stream()
-				.collect(Collectors.groupingBy(row -> (String)row.get(Transazione.model().PDD_CODICE.getFieldName())));
 				
 		// Dentro internalPddCodes ci sono solo i soggetti aggregatori
 		for (PdndTracciamentoSoggetto soggettoEntry : this.internalPddCodes.getSoggetti()) {
@@ -367,14 +318,7 @@ public class PdndGenerazioneTracciamento implements IStatisticsEngine {
 				continue;
 			}
 			
-			// Raggruppo tutti i dati calcolati dei pddCodici del soggetto aggregatore e dei soggetti aggregati
-			List<String> pddCodici = new ArrayList<>();
-			pddCodici.add(pddCode);
-			pddCodici.addAll(soggettiAggregati);
-			
-			List<Map<String, Object>> rowsAggregati = aggregaRecordPddCodiceDifferenti(pddCodici, recordRaggruppatiPerPddCodice);
-			
-			if(createRecord(start, soggettoEntry, rowsAggregati)) {
+			if(createRecord(start, end, soggettoEntry)) {
 				this.logger.info("Tracciato [{}] generato correttamente per il soggetto: {} aggregati: {}",
 						dataTracciamento,
 						nomeSoggetto,
@@ -391,19 +335,6 @@ public class PdndGenerazioneTracciamento implements IStatisticsEngine {
 		
 		
 		return !errors;
-	}
-	private List<Map<String, Object>> aggregaRecordPddCodiceDifferenti(List<String> pddCodici, Map<String, List<Map<String, Object>>> recordRaggruppatiPerPddCodice){
-		List<Map<String, Object>> rowsAggregati = new ArrayList<>();
-		for (String pddCodiceScan : pddCodici) {
-			List<Map<String, Object>> rows = Objects.requireNonNullElse(
-					recordRaggruppatiPerPddCodice.get(pddCodiceScan),
-					List.of()
-			);
-			if(!rows.isEmpty()) {
-				rowsAggregati.addAll(rows);
-			}
-		}
-		return rowsAggregati;
 	}
 	
 	public void scanNull() throws ServiceException, NotImplementedException, ExpressionNotImplementedException, ExpressionException {
@@ -448,18 +379,20 @@ public class PdndGenerazioneTracciamento implements IStatisticsEngine {
 					nomeSoggetto,
 					soggettiAggregati);
 			
-			List<Map<String, Object>> data;
 			try {
-				data = aggregateTransactions(startTracing, endTracing, pddCodici.toArray(new String[1]));
-				stat.setCsv(generateCsv(startTracing, data));
-				this.statisticheSM.getStatistichePdndTracingService().update(stat);
-				this.logger.info("Tracciato [{}] del soggetto: {} aggregati: {} valorizzato correttamente", 
-						dataTracciamento, 
+				Stream<Map<String, Object>> data = aggregateTransactions(startTracing, endTracing, pddCodici.toArray(new String[1]));
+				try (InputStream csv = new ByteArrayInputStream(generateCsv(startTracing, data))) {
+					org.openspcoop2.core.statistiche.dao.IDBStatistichePdndTracingService dbService =
+						(org.openspcoop2.core.statistiche.dao.IDBStatistichePdndTracingService) this.statisticheSM.getStatistichePdndTracingService();
+					dbService.setCsvStream(stat.getId(), csv);
+				}
+				this.logger.info("Tracciato [{}] del soggetto: {} aggregati: {} valorizzato correttamente",
+						dataTracciamento,
 						nomeSoggetto,
 						soggettiAggregati);
 			} catch (Exception e) {
-				this.logger.error("Errore nell'update della statistica con csv null, tracingDate: {}, codice pdd: {}", 
-						dataTracciamentoFormat(startTracing), 
+				this.logger.error("Errore nell'update della statistica con csv null, tracingDate: {}, codice pdd: {}",
+						dataTracciamentoFormat(startTracing),
 						stat.getPddCodice(), e);
 			}
 		}
@@ -552,21 +485,9 @@ public class PdndGenerazioneTracciamento implements IStatisticsEngine {
 		
 		for (; lastDate.before(currDate); lastDate = nextDate) {
 			nextDate = truncDate(incrementDate(lastDate));
-						
-			try {
-				if (!createRecords(lastDate, nextDate, ignorePddCodes.getOrDefault(lastDate, Set.of())) && lastNoErrorDate == null)
-					lastNoErrorDate = lastDate;
-			} catch (ServiceException 
-					| NotImplementedException 
-					| ExpressionNotImplementedException 
-					| ExpressionException e) {
-				this.logger.error("Errore nella generazione dei tracciamenti PDND per il range [{},{}(", 
-						dataTracciamentoFormat(lastDate), 
-						dataTracciamentoFormat(nextDate), 
-						e);
-				if (lastNoErrorDate == null)
-					lastNoErrorDate = lastDate;
-			}
+					
+			if (!createRecords(lastDate, nextDate, ignorePddCodes.getOrDefault(lastDate, Set.of())) && lastNoErrorDate == null)
+				lastNoErrorDate = lastDate;
 		}
 		
 		scanDatesUpdateDataUltimaGenerazione(lastNoErrorDate, currDate);
