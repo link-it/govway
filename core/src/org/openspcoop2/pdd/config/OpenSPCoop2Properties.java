@@ -2452,6 +2452,9 @@ public class OpenSPCoop2Properties {
 				this.isTransazioniCredenzialiMittenteEnabled(TipoCredenzialeMittente.EVENTI);
 				this.isTransazioniCredenzialiMittenteEnabled(TipoCredenzialeMittente.GRUPPI);
 				this.isTransazioniCredenzialiMittenteEnabled(TipoCredenzialeMittente.API);
+				this.isTransazioniCredenzialiMittenteModIAuthEnabled(TipoCredenzialeMittente.TOKEN_ISSUER);
+				this.isTransazioniCredenzialiMittenteModIAuthEnabled(TipoCredenzialeMittente.TOKEN_CLIENT_ID);
+				this.isTransazioniCredenzialiMittenteModIAuthEnabled(TipoCredenzialeMittente.TOKEN_SUBJECT);
 				this.isTransazioniRegistrazioneTracceProtocolPropertiesEnabled();
 				this.isTransazioniRegistrazioneTracceHeaderRawEnabled();
 				this.isTransazioniRegistrazioneTracceDigestEnabled();
@@ -29584,6 +29587,29 @@ public class OpenSPCoop2Properties {
 				value = true;
 			}
 			this.isTransazioniCredenzialiMittenteEnabledMap.put(tipo, value);
+		}
+		return value;
+	}
+
+	private java.util.Map<TipoCredenzialeMittente, Boolean> isTransazioniCredenzialiMittenteModIAuthEnabledMap = new java.util.EnumMap<>(TipoCredenzialeMittente.class);
+	public boolean isTransazioniCredenzialiMittenteModIAuthEnabled(TipoCredenzialeMittente tipo) {
+		Boolean value = this.isTransazioniCredenzialiMittenteModIAuthEnabledMap.get(tipo);
+		if(value==null){
+			String pName = "org.openspcoop2.pdd.transazioni.credenzialiMittente.modi."+tipo.getRawValue()+".enabled";
+			try{
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
+					name="true";
+				}
+				name = name.trim();
+				value = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.logError(getMessaggioProprietaNonImpostata(pName,e,true));
+				value = true;
+			}
+			this.isTransazioniCredenzialiMittenteModIAuthEnabledMap.put(tipo, value);
 		}
 		return value;
 	}

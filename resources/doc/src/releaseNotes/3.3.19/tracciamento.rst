@@ -7,4 +7,6 @@ Sono stati introdotti i seguenti miglioramenti al processo di tracciamento su da
 
 - Aggiunta possibilità di disabilitare selettivamente l'indicizzazione delle credenziali mittente (credenziali di autenticazione, token, indirizzo IP client, eventi, tag, API) a livello globale o per singola erogazione/fruizione, consentendo di risparmiare risorse database per i tipi non utilizzati nelle ricerche dalla console di monitoraggio e dalle relative API.
 
+- Aggiunta indicizzazione delle credenziali mittente (issuer, subject, client_id) dal token ModI Authorization generato dal fruitore.
+
 - Abilitata di default la registrazione, nel file di slow log, del dettaglio delle singole fasi di persistenza su database per le transazioni con tempo di salvataggio superiore a 1 secondo.

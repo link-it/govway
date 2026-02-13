@@ -8,6 +8,7 @@ Background:
     * def check_traccia_pa_error = read('check-tracce/check-traccia-pa-error.feature')
     * def decode_token = read('classpath:utils/decode-token.js')
     * def get_traccia = read('classpath:utils/get_traccia.js')
+    * def get_id_by_credenziale = read('classpath:utils/credenziale_mittente.js')    
     * def get_info_transazione = read('classpath:utils/get_info_transazione.js')
     
     * def result = callonce read('classpath:utils/jmx-enable-error-disclosure.feature')
@@ -74,7 +75,6 @@ And match header Authorization == '#notpresent'
 
 * def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
 * match tidMessaggio == client_token.payload.jti
-
 
 
 
@@ -1152,6 +1152,22 @@ And match header Agid-JWT-Signature == '#notpresent'
 
 * def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
 * match tidMessaggio == client_authorization_token.payload.jti
+
+* def extractFirstValue = function(row){ for(var k in row){ var v = row[k]; return v == null ? null : v+'' } }
+
+* def clientIdCred = get_id_by_credenziale('token_clientId','DemoSoggettoFruitore/ApplicativoBlockingIDA01')
+* def clientIdTran = get_info_transazione(tid, 'token_client_id')
+* match (clientIdCred+'') == extractFirstValue(clientIdTran[0])
+
+* def subjectCred = get_id_by_credenziale('token_subject','ApplicativoBlockingIDA01')
+* def subjectTran = get_info_transazione(tid, 'token_subject')
+* match (subjectCred+'') == extractFirstValue(subjectTran[0])
+
+* def issuerCred = get_id_by_credenziale('token_issuer','DemoSoggettoFruitore')
+* def issuerTran = get_info_transazione(tid, 'token_issuer')
+* match (issuerCred+'') == extractFirstValue(issuerTran[0])
+
+
 
 
 @doppi-header-manomissione-payload-richiesta
