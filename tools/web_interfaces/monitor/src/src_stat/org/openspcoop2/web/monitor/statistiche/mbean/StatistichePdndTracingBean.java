@@ -19,7 +19,6 @@
  */
 package org.openspcoop2.web.monitor.statistiche.mbean;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -182,42 +181,30 @@ DynamicPdDBean<org.openspcoop2.web.monitor.statistiche.bean.StatistichePdndTraci
 
 	public String downloadCsv(){
 		StatistichePdndTracingBean.log.debug("downloading csv: {}", this.statisticaPdndTracing.getId());
-		//recupero informazioni sul file
 
-
-		// We must get first our context
 		FacesContext context = FacesContext.getCurrentInstance();
-
-		// Then we have to get the Response where to write our file
 		HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
 
 		String contentType = "text/csv";
-		// Now set the content type for our response, be sure to use the best
-		// suitable content type depending on your file
-		// the content type presented here is ok for, lets say, text files and
-		// others (like CSVs, PDFs)
 		response.setContentType(contentType);
 
 		String fileName = StatistichePdndTracingExporter.getCsvFileName(this.statisticaPdndTracing);
 
-		try (ByteArrayInputStream bais = new ByteArrayInputStream(this.statisticaPdndTracing.getCsv())){
-			// Setto Proprietà Export File
+		StatistichePdndTracingService pdndService = (StatistichePdndTracingService) this.service;
+		try (java.io.InputStream csvStream = pdndService.getCsvInputStream(this.statisticaPdndTracing.getId())){
+			if(csvStream == null) {
+				MessageUtils.addErrorMsg("CSV non disponibile per il tracing selezionato.");
+				return null;
+			}
+
 			HttpUtilities.setOutputFile(response, true, fileName, contentType);
 
-			// Streams we will use to read, write the file bytes to our response
-			OutputStream os = null;
-
-			os = response.getOutputStream();
-
-			CopyStream.copy(bais, os);
-
-			// Clean resources
+			OutputStream os = response.getOutputStream();
+			CopyStream.copy(csvStream, os);
 			os.flush();
 			os.close();
 
 			FacesContext.getCurrentInstance().responseComplete();
-
-			// End of the method
 		}catch (IOException | UtilsException e) {
 			StatistichePdndTracingBean.log.error(e.getMessage(), e);
 			MessageUtils.addErrorMsg("Si e' verificato un errore durante il download del csv.");

@@ -93,6 +93,8 @@ public class StatisticsConfig {
 	private boolean pdndTracciamentoErogazioniEnabled = true;
 	private boolean pdndTracciamentoFruizioniEnabled = true;
 	private int pdndTracciamentoGenerazioneDelayMinutes = 0;
+	private int pdndTracciamentoGenerazioneDbBatchSize = 200;
+	private int pdndTracciamentoPubblicazioneDbBatchSize = 200;
 
 	/** Group By Configuration **/
 	private StatisticsGroupByConfig groupByConfig = new StatisticsGroupByConfig(); // default
@@ -168,6 +170,8 @@ public class StatisticsConfig {
 			    this.pdndTracciamentoGenerazioneDelayMinutes = parsePdndTracingGenerazioneDelayMinutes(props);
 			    this.pdndTracciamentoPendingCheck = parsePdndTracciamentoPendingCheck(props);
 			    this.pdndTracciamentoMaxAttempt = parsePdndTracciamentoMaxAttempts(props);
+			    this.pdndTracciamentoGenerazioneDbBatchSize = parsePdndTracciamentoDbBatchSize(props, CostantiConfigurazione.PDND_TRACCIAMENTO_GENERAZIONE_DB_BATCH_SIZE);
+			    this.pdndTracciamentoPubblicazioneDbBatchSize = parsePdndTracciamentoDbBatchSize(props, CostantiConfigurazione.PDND_TRACCIAMENTO_PUBBLICAZIONE_DB_BATCH_SIZE);
 			    
 				if ("true".equals(props.getProperty(CostantiConfigurazione.PDND_PUBBLICAZIONE_TRACCIAMENTO_ENABLED, "true", true))) {
 					this.pdndTracciamentoPubblicazione = true;
@@ -232,6 +236,11 @@ public class StatisticsConfig {
 	private static int parsePdndTracingGenerazioneDelayMinutes(MonitorProperties props) throws UtilsException {
 		String propId = CostantiConfigurazione.PDND_GENERAZIONE_TRACCIAMENTO_DELAY_MINUTES;
 		String provValue = props.getProperty(propId, "0", true);
+		return Integer.valueOf(provValue);
+	}
+	
+	private static int parsePdndTracciamentoDbBatchSize(MonitorProperties props, String propId) throws UtilsException {
+		String provValue = props.getProperty(propId, "200", true);
 		return Integer.valueOf(provValue);
 	}
 	
@@ -549,6 +558,22 @@ public class StatisticsConfig {
 		this.pdndTracciamentoGenerazioneDelayMinutes = pdndTracciamentoGenerazioneDelayMinutes;
 	}
 
+	public int getPdndTracciamentoGenerazioneDbBatchSize() {
+		return this.pdndTracciamentoGenerazioneDbBatchSize;
+	}
+
+	public void setPdndTracciamentoGenerazioneDbBatchSize(int pdndTracciamentoGenerazioneDbBatchSize) {
+		this.pdndTracciamentoGenerazioneDbBatchSize = pdndTracciamentoGenerazioneDbBatchSize;
+	}
+	
+	public int getPdndTracciamentoPubblicazioneDbBatchSize() {
+		return this.pdndTracciamentoPubblicazioneDbBatchSize;
+	}
+
+	public void setPdndTracciamentoPubblicazioneDbBatchSize(int pdndTracciamentoPubblicazioneDbBatchSize) {
+		this.pdndTracciamentoPubblicazioneDbBatchSize = pdndTracciamentoPubblicazioneDbBatchSize;
+	}
+	
 	public StatisticsGroupByConfig getGroupByConfig() {
 		return this.groupByConfig;
 	}
@@ -556,4 +581,5 @@ public class StatisticsConfig {
 	public void setGroupByConfig(StatisticsGroupByConfig groupByConfig) {
 		this.groupByConfig = groupByConfig;
 	}
+	
 }

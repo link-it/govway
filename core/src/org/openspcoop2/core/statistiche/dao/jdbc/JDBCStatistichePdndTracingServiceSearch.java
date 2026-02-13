@@ -961,6 +961,44 @@ public class JDBCStatistichePdndTracingServiceSearch implements IDBStatistichePd
 	
 	
 	@Override
+	public java.io.InputStream getCsvInputStream(long tableId) throws NotFoundException, ServiceException {
+
+		Connection connection = null;
+		try {
+
+			// check parameters
+			if(tableId<=0){
+				throw this.newServiceExceptionParameterTableIdLessEqualsZero();
+			}
+
+			// ISQLQueryObject
+			ISQLQueryObject sqlQueryObject = this.jdbcSqlObjectFactory.createSQLQueryObject(this.jdbcProperties.getDatabase());
+			sqlQueryObject.setANDLogicOperator(true);
+			// Connection sql
+			connection = this.jdbcServiceManager.getConnection();
+
+			byte[] csv = ((JDBCStatistichePdndTracingServiceSearchImpl) this.serviceSearch)
+				.getCsvBytes(this.jdbcProperties, this.log, connection, sqlQueryObject, tableId);
+			if(csv == null) {
+				throw new NotFoundException("CSV data is null for entry with id["+tableId+"]");
+			}
+			return new java.io.ByteArrayInputStream(csv);
+
+		}catch(ServiceException e){
+			this.logError(e); throw e;
+		}catch(NotFoundException e){
+			this.logDebug(e); throw e;
+		}catch(Exception e){
+			this.logError(e); throw new ServiceException("getCsvInputStream(tableId) not completed: "+e.getMessage(),e);
+		}finally{
+			if(connection!=null){
+				this.jdbcServiceManager.closeConnection(connection);
+			}
+		}
+
+	}
+
+	@Override
 	public void disableSelectForUpdate() throws ServiceException,NotImplementedException {
 		this.jdbcSqlObjectFactory.setSelectForUpdate(false);
 	}

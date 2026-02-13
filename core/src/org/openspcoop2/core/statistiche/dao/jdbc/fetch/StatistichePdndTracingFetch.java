@@ -63,8 +63,6 @@ public class StatistichePdndTracingFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "data_pubblicazione", StatistichePdndTracing.model().DATA_PUBBLICAZIONE.getFieldType()));
 				setParameter(object, "setPddCodice", StatistichePdndTracing.model().PDD_CODICE.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "pdd_codice", StatistichePdndTracing.model().PDD_CODICE.getFieldType()));
-				setParameter(object, "setCsv", StatistichePdndTracing.model().CSV.getFieldType(),
-					jdbcParameterUtilities.readParameter(rs, "csv", StatistichePdndTracing.model().CSV.getFieldType()));
 				setParameter(object, "setMethodRawEnumValue", String.class,
 					jdbcParameterUtilities.readParameter(rs, "method", StatistichePdndTracing.model().METHOD.getFieldType())+"");
 				setParameter(object, "setStatoPdndRawEnumValue", String.class,
@@ -111,8 +109,6 @@ public class StatistichePdndTracingFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"data-pubblicazione"));
 				setParameter(object, "setPddCodice", StatistichePdndTracing.model().PDD_CODICE.getFieldType(),
 					this.getObjectFromMap(map,"pdd-codice"));
-				setParameter(object, "setCsv", StatistichePdndTracing.model().CSV.getFieldType(),
-					this.getObjectFromMap(map,"csv"));
 				setParameter(object, "setMethodRawEnumValue", String.class,
 					this.getObjectFromMap(map,"method"));
 				setParameter(object, "setStatoPdndRawEnumValue", String.class,

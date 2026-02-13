@@ -248,6 +248,19 @@ public class StatistichePdndTracingService implements IStatistichePdndTracingSer
 		forcePublish(List.of(tracing.getId()));
 	}
 	
+	public java.io.InputStream getCsvInputStream(long id) {
+		IDBStatistichePdndTracingServiceSearch idSearch = (IDBStatistichePdndTracingServiceSearch) this.statistichePdndTracingServiceSearchDAO;
+		try {
+			return idSearch.getCsvInputStream(id);
+		} catch (NotFoundException e) {
+			StatistichePdndTracingService.logError("CSV non trovato per tracing PDND con id:" + id, e);
+			return null;
+		} catch (ServiceException e) {
+			StatistichePdndTracingService.logError("Errore durante il recupero del CSV per tracing PDND con id:" + id, e);
+			return null;
+		}
+	}
+
 	@Override
 	public StatistichePdndTracingBean findById(Long key) {
 		IDBStatistichePdndTracingServiceSearch idSearch = (IDBStatistichePdndTracingServiceSearch) this.statistichePdndTracingServiceSearchDAO;

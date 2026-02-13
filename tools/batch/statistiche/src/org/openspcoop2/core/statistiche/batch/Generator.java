@@ -259,6 +259,8 @@ public class Generator {
 			statisticsConfig.setPdndTracciamentoMaxAttempt(generatorProperties.getPdndTracingMaxAttempt());
 			statisticsConfig.setPdndTracciamentoPendingCheck(generatorProperties.getPdndTracingPendingCheck());
 			statisticsConfig.setPdndTracciamentoGenerazioneDelayMinutes(generatorProperties.getPdndTracingGenerazioneDelayMinutes());
+			statisticsConfig.setPdndTracciamentoGenerazioneDbBatchSize(generatorProperties.getPdndTracciamentoGenerazioneDbBatchSize());
+			statisticsConfig.setPdndTracciamentoPubblicazioneDbBatchSize(generatorProperties.getPdndTracciamentoPubblicazioneDbBatchSize());
 
 			switch (tipoStatistica) {
 			case STATISTICHE_ORARIE:

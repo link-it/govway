@@ -978,7 +978,7 @@ public class JDBCStatistichePdndTracingService extends JDBCStatistichePdndTracin
 			}
 
 			((JDBCStatistichePdndTracingServiceImpl)this.serviceCRUD).forcePublish(this.jdbcProperties,this.log,connection,sqlQueryObject, expr);
-			
+
 		}catch(ServiceException | NotImplementedException e){
 			rollback = true;
 			this.logError(e); throw e;
@@ -992,5 +992,45 @@ public class JDBCStatistichePdndTracingService extends JDBCStatistichePdndTracin
 			this.releaseResources(rollback, connection, oldValueAutoCommit);
 		}
 	}
-	
+
+	@Override
+	public void setCsvStream(long tableId, java.io.InputStream csvStream) throws NotFoundException, ServiceException {
+
+		Connection connection = null;
+		boolean oldValueAutoCommit = false;
+		boolean rollback = false;
+		try{
+
+			if(tableId<=0){
+				throw new ServiceException("Parameter 'tableId' is less equals 0");
+			}
+
+			// ISQLQueryObject
+			ISQLQueryObject sqlQueryObject = this.jdbcSqlObjectFactory.createSQLQueryObject(this.jdbcProperties.getDatabase());
+			sqlQueryObject.setANDLogicOperator(true);
+			// Connection sql
+			connection = this.jdbcServiceManager.getConnection();
+
+			// transaction
+			if(this.jdbcProperties.isAutomaticTransactionManagement()){
+				oldValueAutoCommit = connection.getAutoCommit();
+				connection.setAutoCommit(false);
+			}
+
+			((JDBCStatistichePdndTracingServiceImpl)this.serviceCRUD).setCsvStream(this.jdbcProperties,this.log,connection,sqlQueryObject,tableId,csvStream);
+
+		}catch(ServiceException e){
+			rollback = true;
+			this.logError(e); throw e;
+		}catch(NotFoundException e){
+			rollback = true;
+			this.logDebug(e); throw e;
+		}catch(Exception e){
+			rollback = true;
+			this.logError(e); throw new ServiceException("setCsvStream(tableId) not completed: "+e.getMessage(),e);
+		}finally{
+			this.releaseResources(rollback, connection, oldValueAutoCommit);
+		}
+	}
+
 }

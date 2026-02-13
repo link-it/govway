@@ -1631,17 +1631,24 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 				ServiceManagerProperties smp = dbManager.getServiceManagerPropertiesConfig();
 				StatistichePdndTracingService pdndService = new StatistichePdndTracingService(connection, true, smp, LoggerProperties.getLoggerDAO());
 
-				byte[] csv = null;
-				
 				StatistichePdndTracingBean bean = pdndService.findById(id);
 				if(bean==null) {
 					FaultCode.NOT_FOUND.throwException("Traccia con id '"+id+"' non esistente");
 				}
-				else {
-					context.getLogger().info("Invocazione completata con successo");
-					csv = bean.getCsv();
+
+				java.io.InputStream csvStream = pdndService.getCsvInputStream(id);
+				if(csvStream == null) {
+					FaultCode.NOT_FOUND.throwException("CSV non disponibile per la traccia con id '"+id+"'");
 				}
-				
+				context.getLogger().info("Invocazione completata con successo");
+
+				byte[] csv = null;
+				try {
+					csv = org.openspcoop2.utils.Utilities.getAsByteArray(csvStream);
+				} finally {
+					csvStream.close();
+				}
+
 				return csv;
 				
 			} finally {

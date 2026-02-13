@@ -534,6 +534,8 @@ public class StatisticheServerExecutor {
 		statisticsConfig.setPdndTracciamentoMaxAttempt(this.serverProperties.getPdndTracingMaxAttempt());
 		statisticsConfig.setPdndTracciamentoPendingCheck(this.serverProperties.getPdndTracingPendingCheck());
 		statisticsConfig.setPdndTracciamentoGenerazioneDelayMinutes(this.serverProperties.getPdndTracingGenerazioneDelayMinutes());
+		statisticsConfig.setPdndTracciamentoGenerazioneDbBatchSize(this.serverProperties.getPdndTracciamentoGenerazioneDbBatchSize());
+		statisticsConfig.setPdndTracciamentoPubblicazioneDbBatchSize(this.serverProperties.getPdndTracciamentoPubblicazioneDbBatchSize());
 
 		switch (tipoStatistica) {
 		case STATISTICHE_ORARIE:

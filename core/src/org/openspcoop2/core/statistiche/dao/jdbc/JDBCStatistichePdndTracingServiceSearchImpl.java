@@ -111,7 +111,6 @@ public class JDBCStatistichePdndTracingServiceSearchImpl implements IJDBCService
         
         List<Map<String, Object>> maps = this.select(jdbcProperties, log, connection, sqlQueryObject, expression,
         		new CustomField("id", Long.class, "id", this.getStatistichePdndTracingFieldConverter().toTable(model)),
-        		model.CSV,
         		model.DATA_REGISTRAZIONE,
         		model.DATA_TRACCIAMENTO,
         		model.DATA_PUBBLICAZIONE,
@@ -414,7 +413,6 @@ public class JDBCStatistichePdndTracingServiceSearchImpl implements IJDBCService
 		sqlQueryObjectGet.addSelectField(this.getStatistichePdndTracingFieldConverter().toColumn(StatistichePdndTracing.model().DATA_REGISTRAZIONE,true));
 		sqlQueryObjectGet.addSelectField(this.getStatistichePdndTracingFieldConverter().toColumn(StatistichePdndTracing.model().DATA_PUBBLICAZIONE,true));
 		sqlQueryObjectGet.addSelectField(this.getStatistichePdndTracingFieldConverter().toColumn(StatistichePdndTracing.model().PDD_CODICE,true));
-		sqlQueryObjectGet.addSelectField(this.getStatistichePdndTracingFieldConverter().toColumn(StatistichePdndTracing.model().CSV,true));
 		sqlQueryObjectGet.addSelectField(this.getStatistichePdndTracingFieldConverter().toColumn(StatistichePdndTracing.model().METHOD,true));
 		sqlQueryObjectGet.addSelectField(this.getStatistichePdndTracingFieldConverter().toColumn(StatistichePdndTracing.model().STATO_PDND,true));
 		sqlQueryObjectGet.addSelectField(this.getStatistichePdndTracingFieldConverter().toColumn(StatistichePdndTracing.model().TENTATIVI_PUBBLICAZIONE,true));
@@ -432,10 +430,49 @@ public class JDBCStatistichePdndTracingServiceSearchImpl implements IJDBCService
 
 
 		
-        return statistichePdndTracing;  
-	
-	} 
-	
+        return statistichePdndTracing;
+
+	}
+
+	public byte[] getCsvBytes(JDBCServiceManagerProperties jdbcProperties, Logger log,
+			Connection connection, ISQLQueryObject sqlQueryObject, long tableId)
+			throws NotFoundException, ServiceException {
+
+		java.sql.PreparedStatement pstmt = null;
+		java.sql.ResultSet rs = null;
+		try {
+			org.openspcoop2.utils.jdbc.IJDBCAdapter jdbcAdapter =
+				org.openspcoop2.utils.jdbc.JDBCAdapterFactory.createJDBCAdapter(
+					this.getStatistichePdndTracingFieldConverter().getDatabaseType());
+
+			ISQLQueryObject sqlQueryObjectGet = sqlQueryObject.newSQLQueryObject();
+			sqlQueryObjectGet.setANDLogicOperator(true);
+			sqlQueryObjectGet.addFromTable(this.getStatistichePdndTracingFieldConverter()
+				.toTable(StatistichePdndTracing.model()));
+			sqlQueryObjectGet.addSelectAliasField(this.getStatistichePdndTracingFieldConverter()
+				.toColumn(StatistichePdndTracing.model().CSV, true), "csvContent");
+			sqlQueryObjectGet.addWhereCondition("id=?");
+
+			String query = sqlQueryObjectGet.createSQLQuery();
+			pstmt = connection.prepareStatement(query);
+			pstmt.setLong(1, tableId);
+			rs = pstmt.executeQuery();
+
+			if(rs.next()) {
+				return jdbcAdapter.getBinaryData(rs, "csvContent");
+			}
+			throw new NotFoundException("Entry with id["+tableId+"] not found");
+
+		} catch(NotFoundException e) {
+			throw e;
+		} catch(Exception e) {
+			throw new ServiceException("getCsvBytes(tableId="+tableId+") failed: "+e.getMessage(), e);
+		} finally {
+			try { if(rs!=null) rs.close(); } catch(Exception eClose) { /* ignore */ }
+			try { if(pstmt!=null) pstmt.close(); } catch(Exception eClose) { /* ignore */ }
+		}
+	}
+
 	@Override
 	public boolean exists(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId) throws MultipleResultException, NotImplementedException, ServiceException, Exception {
 		return this._exists(jdbcProperties, log, connection, sqlQueryObject, Long.valueOf(tableId));

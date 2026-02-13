@@ -19,12 +19,16 @@
  */
 package org.openspcoop2.core.statistiche.dao;
 
+import java.io.InputStream;
+
 import org.openspcoop2.core.statistiche.StatistichePdndTracing;
 import org.openspcoop2.generic_project.dao.IDBServiceSearchWithoutId;
+import org.openspcoop2.generic_project.exception.NotFoundException;
+import org.openspcoop2.generic_project.exception.ServiceException;
 
 
-/** 
-* Service can be used for research objects on the backend of type org.openspcoop2.core.statistiche.StatistichePdndTracing  
+/**
+* Service can be used for research objects on the backend of type org.openspcoop2.core.statistiche.StatistichePdndTracing
  *
  * @author Poli Andrea (poli@link.it)
  * @author Tommaso Burlon (tommaso.burlon@link.it)
@@ -33,4 +37,6 @@ import org.openspcoop2.generic_project.dao.IDBServiceSearchWithoutId;
  */
 
 public interface IDBStatistichePdndTracingServiceSearch extends IStatistichePdndTracingServiceSearch,IDBServiceSearchWithoutId<StatistichePdndTracing> {
+
+	public InputStream getCsvInputStream(long id) throws NotFoundException, ServiceException;
 }

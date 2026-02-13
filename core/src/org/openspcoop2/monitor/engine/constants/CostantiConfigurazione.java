@@ -53,6 +53,9 @@ public class CostantiConfigurazione {
 	public static final String PDND_PUBBLICAZIONE_TRACCIAMENTO_EROGAZIONI_ENABLED = "org.openspcoop2.monitor.statistic.pdnd.tracciamento.fruizioni.enabled";
 	public static final String PDND_TRACCIAMENTO_PUBBLICAZIONE_MAX_ATTEMPTS = "org.openspcoop2.monitor.statistic.pdnd.tracciamento.pubblicazione.maxAttempts";
 	public static final String PDND_TRACCIAMENTO_PUBBLICAZIONE_PENDING_CHECK = "org.openspcoop2.monitor.statistic.pdnd.tracciamento.pubblicazione.pending.check";
+	public static final String PDND_TRACCIAMENTO_PUBBLICAZIONE_DB_BATCH_SIZE = "org.openspcoop2.monitor.statistic.pdnd.tracciamento.pubblicazione.db.batchSize";
+	public static final String PDND_TRACCIAMENTO_GENERAZIONE_DB_BATCH_SIZE = "org.openspcoop2.monitor.statistic.pdnd.tracciamento.generazione.db.batchSize";
+
 	
 	public static final String STAT_HOURLY_LASTINT = "org.openspcoop2.monitor.statistic.hourly.lastinterval.enabled";
 	public static final String STAT_DAILY_LASTINT = "org.openspcoop2.monitor.statistic.daily.lastinterval.enabled";
