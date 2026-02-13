@@ -12,6 +12,10 @@ Background:
     * configure afterFeature = function(){ karate.call('classpath:utils/jmx-disable-error-disclosure.feature'); }
     
     * def get_diagnostico = read('classpath:utils/get_diagnostico.js')
+    
+    * def get_id_by_credenziale = read('classpath:utils/credenziale_mittente.js')
+    
+    * def get_info_transazione = read('classpath:utils/get_info_transazione.js')
 
 
 
@@ -73,6 +77,20 @@ And match header Authorization == '#notpresent'
 * def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
 * match tidMessaggio == client_token.payload.jti
 
+* def extractFirstValue = function(row){ for(var k in row){ var v = row[k]; return v == null ? null : v+'' } }
+
+* def clientIdCred = get_id_by_credenziale('token_clientId','DemoSoggettoFruitore/ApplicativoBlockingIDA01')
+* def clientIdTran = get_info_transazione(tid, 'token_client_id')
+* match (clientIdCred+'') == extractFirstValue(clientIdTran[0])
+
+* def subjectCred = get_id_by_credenziale('token_subject','ApplicativoBlockingIDA01')
+* def subjectTran = get_info_transazione(tid, 'token_subject')
+* match (subjectCred+'') == extractFirstValue(subjectTran[0])
+
+* def issuerCred = get_id_by_credenziale('token_issuer','DemoSoggettoFruitore')
+* def issuerTran = get_info_transazione(tid, 'token_issuer')
+* match (issuerCred+'') == extractFirstValue(issuerTran[0])
+
 
 
 @connettivita-base-default-trustore
@@ -103,6 +121,17 @@ And match header Authorization == '#notpresent'
 
 * def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
 * match tidMessaggio == client_token.payload.jti
+
+* def extractFirstValue = function(row){ for(var k in row){ var v = row[k]; return v == null ? null : v+'' } }
+
+* def clientIdTran = get_info_transazione(tid, 'token_client_id')
+* match extractFirstValue(clientIdTran[0]) == null
+
+* def subjectTran = get_info_transazione(tid, 'token_subject')
+* match extractFirstValue(subjectTran[0]) == null
+
+* def issuerTran = get_info_transazione(tid, 'token_issuer')
+* match extractFirstValue(issuerTran[0]) == null
 
 
 

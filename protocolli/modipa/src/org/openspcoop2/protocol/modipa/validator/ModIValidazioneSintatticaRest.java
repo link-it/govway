@@ -30,19 +30,25 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Resource;
+import org.openspcoop2.core.transazioni.utils.CredenzialiMittente;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.pdd.core.autenticazione.GestoreAutenticazione;
 import org.openspcoop2.pdd.core.dynamic.DynamicMapBuilderUtils;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.keystore.RemoteStoreProvider;
 import org.openspcoop2.pdd.core.token.Costanti;
+import org.openspcoop2.pdd.core.transazioni.Transaction;
+import org.openspcoop2.pdd.core.transazioni.TransactionContext;
 import org.openspcoop2.pdd.core.token.parser.Claims;
 import org.openspcoop2.pdd.core.token.parser.TokenUtils;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
@@ -1130,31 +1136,37 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 				
 			}
 			
+			Object iss = null;
 			if(readIss &&
 				objectNode.has(Claims.JSON_WEB_TOKEN_RFC_7519_ISSUER)) {
-				Object iss = objectNode.get(Claims.JSON_WEB_TOKEN_RFC_7519_ISSUER);
+				iss = objectNode.get(Claims.JSON_WEB_TOKEN_RFC_7519_ISSUER);
 				if(iss!=null) {
-					busta.addProperty(tokenAudit ? ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_ISSUER : ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_ISSUER, 
+					busta.addProperty(tokenAudit ? ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_ISSUER : ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_ISSUER,
 							toString(iss));
 				}
 			}
+			Object sub = null;
 			if(readSub &&
 				objectNode.has(Claims.JSON_WEB_TOKEN_RFC_7519_SUBJECT)) {
-				Object sub = objectNode.get(Claims.JSON_WEB_TOKEN_RFC_7519_SUBJECT);
+				sub = objectNode.get(Claims.JSON_WEB_TOKEN_RFC_7519_SUBJECT);
 				if(sub!=null) {
-					busta.addProperty(tokenAudit ? ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_SUBJECT : ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_SUBJECT, 
+					busta.addProperty(tokenAudit ? ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_SUBJECT : ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_SUBJECT,
 							toString(sub));
 				}
 			}
-			
+
 			Object clientId = readObjectClientId(objectNode);
 			if(clientId!=null) {
 				String clientIdValue = toString(clientId);
 				busta.addProperty(tokenAudit ? ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_CLIENT_ID : ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_CLIENT_ID,clientIdValue);
 			}
-			
-			
-			if( (tokenAudit || integritaX509 || integritaKid) 
+
+			if(HttpConstants.AUTHORIZATION.equalsIgnoreCase(securityTokenHeader) && request && !tokenAudit) {
+				updateCredenzialiModIAuthorizationToken(iss, sub, clientId, idSoggetto);
+			}
+
+
+			if( (tokenAudit || integritaX509 || integritaKid)
 					&&
 				objectNode.has(Costanti.PDND_PURPOSE_ID)
 				) {
@@ -1659,5 +1671,53 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 			return text.asText();
 		}
 		return tmp.toString();
+	}
+
+	private void updateCredenzialiModIAuthorizationToken(Object iss, Object sub, Object clientId, IDSoggetto idSoggetto) {
+		try {
+			String idTransazione = null;
+			if(this.context!=null) {
+				idTransazione = (String) this.context.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
+			}
+			if(idTransazione==null) {
+				return;
+			}
+
+			Transaction transaction = TransactionContext.getTransaction(idTransazione);
+			CredenzialiMittente credenzialiMittente = transaction.getCredenzialiMittente();
+			if(credenzialiMittente==null) {
+				credenzialiMittente = new CredenzialiMittente();
+				transaction.setCredenzialiMittente(credenzialiMittente);
+			}
+
+			String issStr = (iss!=null) ? toString(iss) : null;
+			String subStr = (sub!=null) ? toString(sub) : null;
+			String clientIdStr = (clientId!=null) ? toString(clientId) : null;
+
+			List<Proprieta> proprietaPorta = getProprietaPorta();
+
+			GestoreAutenticazione.updateCredenzialiModIAuthorizationToken(idSoggetto, "ModIValidazioneSintatticaRest", idTransazione,
+					issStr, subStr, clientIdStr,
+					credenzialiMittente,
+					null, "ModIValidazioneSintatticaRest.credenzialiModIAuth", this.requestInfo,
+					proprietaPorta);
+
+		} catch(Exception e) {
+			this.log.error("Errore durante l'aggiornamento delle credenziali ModI Authorization token: "+e.getMessage(), e);
+		}
+	}
+
+	private List<Proprieta> getProprietaPorta() {
+		if(this.requestInfo!=null && this.requestInfo.getRequestConfig()!=null) {
+			PortaApplicativa pa = this.requestInfo.getRequestConfig().getPortaApplicativa();
+			if(pa!=null && pa.sizeProprietaList()>0) {
+				return pa.getProprietaList();
+			}
+			PortaDelegata pd = this.requestInfo.getRequestConfig().getPortaDelegata();
+			if(pd!=null && pd.sizeProprietaList()>0) {
+				return pd.getProprietaList();
+			}
+		}
+		return null;
 	}
 }

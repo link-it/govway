@@ -5,4 +5,4 @@ Aggiunto il supporto completo per l'integrazione con le API di Interoperabilità
 
 Introdotto miglioramento della funzionalità SignalHub con aggiunta del supporto per la configurazione senza pseudoanonimizzazione nelle erogazioni e relativi aggiornamenti a console, API REST e documentazione.
 
-È stata inoltre rivista la gestione dell'operazione di recovery per il servizio di Tracing.
+Sono infine stati apportati dei miglioramenti prestazionali alla funzionalità di Tracing PDND.

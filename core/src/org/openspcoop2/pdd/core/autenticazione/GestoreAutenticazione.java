@@ -1159,12 +1159,55 @@ public class GestoreAutenticazione {
         		context);
     	
     }
-    
-    public static void updateCredenzialiTokenPDND(IDSoggetto dominio, String modulo, String idTransazione, 
-    		InformazioniToken informazioniTokenNormalizzate, CredenzialiMittente credenzialiMittente, 
+
+    private static boolean isCredenzialiMittenteModIAuthEnabled(TipoCredenzialeMittente tipo, List<Proprieta> proprietaPorta) {
+    	boolean defaultValue = OpenSPCoop2Properties.getInstance().isTransazioniCredenzialiMittenteModIAuthEnabled(tipo);
+    	if(proprietaPorta!=null && !proprietaPorta.isEmpty()) {
+    		return CostantiProprieta.isTraceIndexModIAuthEnabled(proprietaPorta, tipo, defaultValue);
+    	}
+    	return defaultValue;
+    }
+
+    public static void updateCredenzialiModIAuthorizationToken(IDSoggetto dominio, String modulo, String idTransazione,
+    		String iss, String sub, String clientId,
+    		CredenzialiMittente credenzialiMittente,
+    		IOpenSPCoopState openspcoopState, String identitaChiamante, RequestInfo requestInfo,
+    		List<Proprieta> proprietaPorta) throws Exception{
+
+    	if(iss!=null &&
+    			isCredenzialiMittenteModIAuthEnabled(TipoCredenzialeMittente.TOKEN_ISSUER, proprietaPorta)) {
+    		CredenzialeSearchToken tokenSearch = new CredenzialeSearchToken(TipoCredenzialeMittente.TOKEN_ISSUER);
+    		tokenSearch.disableConvertToDBValue();
+    		CredenzialeToken token = new CredenzialeToken(TipoCredenzialeMittente.TOKEN_ISSUER, iss);
+    		credenzialiMittente.setTokenIssuer(getCredenzialeMittente(dominio, modulo, idTransazione,
+    				tokenSearch, token, openspcoopState, identitaChiamante,
+    				null, requestInfo));
+    	}
+    	if(clientId!=null &&
+    			isCredenzialiMittenteModIAuthEnabled(TipoCredenzialeMittente.TOKEN_CLIENT_ID, proprietaPorta)) {
+    		CredenzialeSearchToken tokenSearch = new CredenzialeSearchToken(TipoCredenzialeMittente.TOKEN_CLIENT_ID);
+    		tokenSearch.disableConvertToDBValue();
+    		CredenzialeToken token = new CredenzialeToken(TipoCredenzialeMittente.TOKEN_CLIENT_ID, clientId);
+    		credenzialiMittente.setTokenClientId(getCredenzialeMittente(dominio, modulo, idTransazione,
+    				tokenSearch, token, openspcoopState, identitaChiamante,
+    				null, requestInfo));
+    	}
+    	if(sub!=null &&
+    			isCredenzialiMittenteModIAuthEnabled(TipoCredenzialeMittente.TOKEN_SUBJECT, proprietaPorta)) {
+    		CredenzialeSearchToken tokenSearch = new CredenzialeSearchToken(TipoCredenzialeMittente.TOKEN_SUBJECT);
+    		tokenSearch.disableConvertToDBValue();
+    		CredenzialeToken token = new CredenzialeToken(TipoCredenzialeMittente.TOKEN_SUBJECT, sub);
+    		credenzialiMittente.setTokenSubject(getCredenzialeMittente(dominio, modulo, idTransazione,
+    				tokenSearch, token, openspcoopState, identitaChiamante,
+    				null, requestInfo));
+    	}
+    }
+
+    public static void updateCredenzialiTokenPDND(IDSoggetto dominio, String modulo, String idTransazione,
+    		InformazioniToken informazioniTokenNormalizzate, CredenzialiMittente credenzialiMittente,
     		IOpenSPCoopState openspcoopState, String identitaChiamante, RequestInfo requestInfo,
     		Context context) throws Exception{
-    	    	
+
     	SecurityToken securityTokenForContext = SecurityTokenUtilities.readSecurityToken(context);
     	
     	Long refClientIdCredenzialieMittente = null;

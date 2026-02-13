@@ -1353,6 +1353,17 @@ public class CostantiProprieta {
 		return defaultValue;
 	}
 
+	private static final String TRACE_INDEX_MODI_PREFIX = "trace.index.modi.";
+
+	public static boolean isTraceIndexModIAuthEnabled(List<Proprieta> proprieta, TipoCredenzialeMittente tipo, boolean defaultValue) {
+		String p = TRACE_INDEX_MODI_PREFIX + tipo.getRawValue();
+		String valueS = readValue(proprieta, p);
+		if(valueS!=null && !StringUtils.isEmpty(valueS)) {
+			return valueS.equalsIgnoreCase(VALUE_ENABLED);
+		}
+		return defaultValue;
+	}
+
 
 	// METODI DI UTILITA GENERICI
 	

@@ -6,6 +6,7 @@ Background:
     * def check_traccia_kid_solo_oauth = read('check-tracce/check-traccia-kid-solo-oauth.feature')
     * def decode_token = read('classpath:utils/decode-token.js')
     * def get_traccia = read('classpath:utils/get_traccia.js')
+    * def get_id_by_credenziale = read('classpath:utils/credenziale_mittente.js')
     * def get_info_transazione = read('classpath:utils/get_info_transazione.js')
 
     * def reset_cache_token = read('classpath:utils/reset-cache-token.feature')
@@ -107,17 +108,33 @@ And match header Authorization == '#notpresent'
 * def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
 * match tidMessaggio == client_token.payload.jti
 
+* def extractFirstValue = function(row){ for(var k in row){ var v = row[k]; return v == null ? null : v+'' } }
+
+* def clientIdCred = get_id_by_credenziale('token_clientId','<clienIdComposto>')
+* def clientIdTran = get_info_transazione(tid, 'token_client_id')
+* match (clientIdCred+'') == extractFirstValue(clientIdTran[0])
+
+* def subjectCred = get_id_by_credenziale('token_subject',subExpected)
+* def subjectTran = get_info_transazione(tid, 'token_subject')
+* match (subjectCred+'') == extractFirstValue(subjectTran[0])
+
+* def issuerCred = get_id_by_credenziale('token_issuer',issExpected)
+* def issuerTran = get_info_transazione(tid, 'token_issuer')
+* match (issuerCred+'') == extractFirstValue(issuerTran[0])
+
+
+
 Examples:
-| tipo-test | tipo-test-minuscolo | descrizione | tipo-keystore-client | username | password | purposeId | kid | clientId |
-| JWK | jwk | servizio che genera una risposta tramite jwk. Anche la validazione dei certificati token è tramite jwk | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 |
-| JWK | jwk | servizio che genera una risposta tramite jwk. Anche la validazione dei certificati token è tramite jwk | jwk | ApplicativoBlockingJWK | ApplicativoBlockingJWK | purposeId-ApplicativoBlockingJWK | KID-ApplicativoBlockingJWK | DemoSoggettoFruitore/KidOnly/ApplicativoBlockingJWK |
-| JWK | jwk | servizio che genera una risposta tramite jwk. Anche la validazione dei certificati token è tramite jwk | keyPair | ApplicativoBlockingKeyPair | ApplicativoBlockingKeyPair | purposeId-ApplicativoBlockingKeyPair | KID-ApplicativoBlockingKeyPair | DemoSoggettoFruitore/KeyPair/ApplicativoBlockingKeyPair |
-| KeyPair | keypair | servizio che genera una risposta tramite keyPair. La validazione dei certificati token è tramite jwk | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 |
-| KeyPair | keypair | servizio che genera una risposta tramite keyPair. Anche la validazione dei certificati token è tramite jwk | jwk | ApplicativoBlockingJWK | ApplicativoBlockingJWK | purposeId-ApplicativoBlockingJWK | KID-ApplicativoBlockingJWK | DemoSoggettoFruitore/KidOnly/ApplicativoBlockingJWK |
-| KeyPair | keypair | servizio che genera una risposta tramite keyPair. Anche la validazione dei certificati token è tramite jwk | keyPair | ApplicativoBlockingKeyPair | ApplicativoBlockingKeyPair | purposeId-ApplicativoBlockingKeyPair | KID-ApplicativoBlockingKeyPair | DemoSoggettoFruitore/KeyPair/ApplicativoBlockingKeyPair |
-| PDND | pdnd | servizio che genera una risposta tramite jwk. La validazione dei certificati token è basata su PDND | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 |
-| PDND | pdnd | servizio che genera una risposta tramite jwk. La validazione dei certificati token è basata su PDND | jwk | ApplicativoBlockingJWK | ApplicativoBlockingJWK | purposeId-ApplicativoBlockingJWK | KID-ApplicativoBlockingJWK | DemoSoggettoFruitore/KidOnly/ApplicativoBlockingJWK |
-| PDND | pdnd | servizio che genera una risposta tramite jwk. La validazione dei certificati token è basata su PDND | keyPair | ApplicativoBlockingKeyPair | ApplicativoBlockingKeyPair | purposeId-ApplicativoBlockingKeyPair | KID-ApplicativoBlockingKeyPair | DemoSoggettoFruitore/KeyPair/ApplicativoBlockingKeyPair |
+| tipo-test | tipo-test-minuscolo | descrizione | tipo-keystore-client | username | password | purposeId | kid | clientId | clienIdComposto |
+| JWK | jwk | servizio che genera una risposta tramite jwk. Anche la validazione dei certificati token è tramite jwk | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 | #C#DemoSoggettoFruitore/ApplicativoBlockingIDA01#C# #A#modipa/DemoSoggettoFruitoreEsterno/ApplicativoBlockingIDA01-SimulazionePDND-JWK#A# |
+| JWK | jwk | servizio che genera una risposta tramite jwk. Anche la validazione dei certificati token è tramite jwk | jwk | ApplicativoBlockingJWK | ApplicativoBlockingJWK | purposeId-ApplicativoBlockingJWK | KID-ApplicativoBlockingJWK | DemoSoggettoFruitore/KidOnly/ApplicativoBlockingJWK | #C#DemoSoggettoFruitore/KidOnly/ApplicativoBlockingJWK#C# #A#modipa/DemoSoggettoFruitore/ApplicativoBlockingJWK#A# |
+| JWK | jwk | servizio che genera una risposta tramite jwk. Anche la validazione dei certificati token è tramite jwk | keyPair | ApplicativoBlockingKeyPair | ApplicativoBlockingKeyPair | purposeId-ApplicativoBlockingKeyPair | KID-ApplicativoBlockingKeyPair | DemoSoggettoFruitore/KeyPair/ApplicativoBlockingKeyPair | #C#DemoSoggettoFruitore/KeyPair/ApplicativoBlockingKeyPair#C# #A#modipa/DemoSoggettoFruitore/ApplicativoBlockingKeyPair#A# |
+| KeyPair | keypair | servizio che genera una risposta tramite keyPair. La validazione dei certificati token è tramite jwk | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 | #C#DemoSoggettoFruitore/ApplicativoBlockingIDA01#C# #A#modipa/DemoSoggettoFruitoreEsterno/ApplicativoBlockingIDA01-SimulazionePDND-JWK#A# |
+| KeyPair | keypair | servizio che genera una risposta tramite keyPair. Anche la validazione dei certificati token è tramite jwk | jwk | ApplicativoBlockingJWK | ApplicativoBlockingJWK | purposeId-ApplicativoBlockingJWK | KID-ApplicativoBlockingJWK | DemoSoggettoFruitore/KidOnly/ApplicativoBlockingJWK | #C#DemoSoggettoFruitore/KidOnly/ApplicativoBlockingJWK#C# #A#modipa/DemoSoggettoFruitore/ApplicativoBlockingJWK#A# |
+| KeyPair | keypair | servizio che genera una risposta tramite keyPair. Anche la validazione dei certificati token è tramite jwk | keyPair | ApplicativoBlockingKeyPair | ApplicativoBlockingKeyPair | purposeId-ApplicativoBlockingKeyPair | KID-ApplicativoBlockingKeyPair | DemoSoggettoFruitore/KeyPair/ApplicativoBlockingKeyPair | #C#DemoSoggettoFruitore/KeyPair/ApplicativoBlockingKeyPair#C# #A#modipa/DemoSoggettoFruitore/ApplicativoBlockingKeyPair#A# |
+| PDND | pdnd | servizio che genera una risposta tramite jwk. La validazione dei certificati token è basata su PDND | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 | #C#DemoSoggettoFruitore/ApplicativoBlockingIDA01#C# #A#modipa/DemoSoggettoFruitoreEsterno/ApplicativoBlockingIDA01-SimulazionePDND-JWK#A# |
+| PDND | pdnd | servizio che genera una risposta tramite jwk. La validazione dei certificati token è basata su PDND | jwk | ApplicativoBlockingJWK | ApplicativoBlockingJWK | purposeId-ApplicativoBlockingJWK | KID-ApplicativoBlockingJWK | DemoSoggettoFruitore/KidOnly/ApplicativoBlockingJWK | #C#DemoSoggettoFruitore/KidOnly/ApplicativoBlockingJWK#C# #A#modipa/DemoSoggettoFruitore/ApplicativoBlockingJWK#A# |
+| PDND | pdnd | servizio che genera una risposta tramite jwk. La validazione dei certificati token è basata su PDND | keyPair | ApplicativoBlockingKeyPair | ApplicativoBlockingKeyPair | purposeId-ApplicativoBlockingKeyPair | KID-ApplicativoBlockingKeyPair | DemoSoggettoFruitore/KeyPair/ApplicativoBlockingKeyPair | #C#DemoSoggettoFruitore/KeyPair/ApplicativoBlockingKeyPair#C# #A#modipa/DemoSoggettoFruitore/ApplicativoBlockingKeyPair#A# |
 
 
 

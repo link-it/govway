@@ -93,6 +93,34 @@ Di seguito l'elenco completo delle proprietà configurabili sulla singola erogaz
 
 Se una proprietà non è definita sulla singola erogazione o fruizione, viene utilizzato il valore globale configurato in *govway_local.properties*.
 
+.. _tracciamentoTransazioniDBCredenzialiMittenteModI:
+
+Indicizzazione credenziali dal token ModI Authorization
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Per le API REST con profilo ModI e opzione "Generazione Token: Authorization ModI" (token generato dal fruitore anziché ottenuto dalla PDND), il gateway può indicizzare i claim *issuer*, *subject* e *client_id* estratti dal token JWT presente nell'header Authorization. Le informazioni vengono memorizzate nelle stesse colonne utilizzate per i token gestiti tramite token policy di validazione (*token_issuer*, *token_client_id*, *token_subject*).
+
+La configurazione globale avviene nel file '/etc/govway/govway_local.properties'. Di default l'indicizzazione è abilitata.
+
+   ::
+
+      # Token ModI Authorization: issuer
+      org.openspcoop2.pdd.transazioni.credenzialiMittente.modi.token_issuer.enabled=true
+
+      # Token ModI Authorization: client id
+      org.openspcoop2.pdd.transazioni.credenzialiMittente.modi.token_clientId.enabled=true
+
+      # Token ModI Authorization: subject
+      org.openspcoop2.pdd.transazioni.credenzialiMittente.modi.token_subject.enabled=true
+
+La configurazione globale può essere ridefinita sulla singola erogazione o fruizione utilizzando le :ref:`configProprieta`:
+
+   ::
+
+      trace.index.modi.token_issuer=true/false
+      trace.index.modi.token_clientId=true/false
+      trace.index.modi.token_subject=true/false
+
 .. _tracciamentoTransazioniDBCredenzialiMittenteUpdateAfterSeconds:
 
 Aggiornamento temporale delle credenziali

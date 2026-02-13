@@ -13,6 +13,6 @@ function get_info_transazione(id_transazione, nome_colonna) {
     DbUtils = Java.type('org.openspcoop2.core.protocolli.modipa.testsuite.DbUtils')
     db = new DbUtils(govwayDbConfig)
     dbquery = "select "+nome_colonna+" from transazioni where id='"+id_transazione+"'"
-    //karate.log("Query: " + dbquery)
+    karate.log("Query: " + dbquery)
     return db.readRows(dbquery);
 }
