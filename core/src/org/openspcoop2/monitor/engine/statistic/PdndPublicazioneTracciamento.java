@@ -507,7 +507,7 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 				offset.addAndGet(limit);
 			}
 			
-			return new Result<>(resultQueue.isEmpty() ? null : resultQueue.remove());
+			return resultQueue.isEmpty() ? null : new Result<>(resultQueue.remove());
 		}).sequential()
 				.takeWhile(Objects::nonNull)
 				.iterator();
