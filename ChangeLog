@@ -2,6 +2,13 @@
 
 	* Rilasciata versione 3.4.2
 
+2026-02-16 Giuliano Pintori <pintori@link.it>
+
+	* [GovWayMonitor]
+	Aggiunta funzionalità #1723
+	Nella sezione Statistiche PDND Tracing, aggiunta la possibilità di effettuare il download del dettaglio degli errori e 
+	migliorata la visualizzazione per errori di grandi dimensioni.
+
 2026-02-16  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, ProtocolloModIPA]

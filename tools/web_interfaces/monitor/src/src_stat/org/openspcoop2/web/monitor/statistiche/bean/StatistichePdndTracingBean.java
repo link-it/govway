@@ -136,6 +136,17 @@ public class StatistichePdndTracingBean extends StatistichePdndTracing {
 		return this.getMethod().toString();
 	}
 	
+	public String getErrorDetailsPrettyFailedMessage(){
+		String errorDetails = this.getErrorDetails();
+		if(errorDetails!=null) {
+			StringBuilder contenutoDocumentoStringBuilder = new StringBuilder();
+			String errore = Utils.getTestoVisualizzabile(errorDetails.getBytes(),contenutoDocumentoStringBuilder, true, DumpUtils.getThreshold_readInMemory());
+			if(errore!= null) {
+				return errore;
+			}
+		}
+		return "";
+	}
 	public String getErrorDetailsPretty(){
 		String toRet = null;
 		String errorDetails = this.getErrorDetails();

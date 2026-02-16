@@ -10,9 +10,20 @@
     
 	<a4j:outputPanel layout="block" id="errorsPnlEsterno" rendered="#{not empty statistichePdndTracingBean.statisticaPdndTracing.errorDetails}">	
 		<rich:panel id="errorsPnl" rendered="#{not empty statistichePdndTracingBean.statisticaPdndTracing.errorDetails}">
-			<a4j:outputPanel layout="block" styleClass="height-350 overflow-y-scroll" id="errorsPnl2" rendered="#{not empty statistichePdndTracingBean.statisticaPdndTracing.errorDetails}">
-				<pre class="brush: #{statistichePdndTracingBean.statisticaPdndTracing.brushErrorDetails}; toolbar: false;">#{statistichePdndTracingBean.statisticaPdndTracing.errorDetailsPretty}</pre>
-			</a4j:outputPanel>
+			<h:form id="formPdndErrors">
+					<input type="hidden" id="_csrfFormPdndErrors" name="_csrf" value="#{loginBean.csrf}"/>
+					<a4j:outputPanel layout="block" styleClass="buttonrow"  id="errorsPnl2Error" rendered="#{not empty statistichePdndTracingBean.statisticaPdndTracing.errorDetails and not empty statistichePdndTracingBean.statisticaPdndTracing.errorDetailsPrettyFailedMessage}">
+						<h:outputText id="outErroreVisualizza" value="#{statistichePdndTracingBean.statisticaPdndTracing.errorDetailsPrettyFailedMessage}"/>
+					</a4j:outputPanel>
+					<a4j:outputPanel layout="block" styleClass="height-350 overflow-y-scroll" id="errorsPnl2" rendered="#{not empty statistichePdndTracingBean.statisticaPdndTracing.errorDetails and empty statistichePdndTracingBean.statisticaPdndTracing.errorDetailsPrettyFailedMessage}">
+						<pre class="brush: #{statistichePdndTracingBean.statisticaPdndTracing.brushErrorDetails}; toolbar: false;">#{statistichePdndTracingBean.statisticaPdndTracing.errorDetailsPretty}</pre>
+					</a4j:outputPanel>
+					<a4j:outputPanel layout="block" styleClass="buttonrow" rendered="#{not empty statistichePdndTracingBean.statisticaPdndTracing.errorDetails}">
+			      		<a4j:outputPanel layout="block" styleClass="buttonrowlista">
+			      			 <a4j:htmlCommandLink id="body-iconLink" action="#{statistichePdndTracingBean.downloadErrors}" styleClass="icon-compress" target="_blank" value="Download" rendered="#{not empty statistichePdndTracingBean.statisticaPdndTracing.errorDetails}"/>
+			      		</a4j:outputPanel>
+			      	</a4j:outputPanel>
+			</h:form>					
 		</rich:panel>
 	</a4j:outputPanel>
     

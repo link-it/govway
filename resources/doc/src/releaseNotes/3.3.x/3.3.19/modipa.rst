@@ -7,4 +7,4 @@ Aggiunta opzione per le API REST che implementano il pattern [BULK_RESOURCE_REST
 
 Introdotto miglioramento della funzionalità SignalHub con aggiunta del supporto per la configurazione senza pseudoanonimizzazione nelle erogazioni e relativi aggiornamenti a console, API REST e documentazione.
 
-Sono infine stati apportati dei miglioramenti prestazionali alla funzionalità di Tracing PDND.
+Sono infine stati apportati dei miglioramenti prestazionali alla funzionalità di Tracing PDND. Inoltre nella sezione 'Statistiche PDND Tracing' della console di monitoraggio è stata aggiunta la possibilità di effettuare il download del dettaglio degli errori segnalati dalla PDND.
