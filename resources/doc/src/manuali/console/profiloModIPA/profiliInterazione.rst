@@ -30,6 +30,8 @@ La maschera di editing della singola operation/risorsa possiede la sezione ModI 
 
 Nelle sezioni seguenti vengono forniti maggiori dettagli su come siano gestiti i pattern non bloccanti.
 
+Infine, nella sezione :ref:`modipa_bulkREST` viene descritto il supporto al pattern *BULK_RESOURCE_REST* per la gestione di risorse massive tramite API REST.
+
 .. toctree::
         :maxdepth: 2
 
@@ -37,4 +39,5 @@ Nelle sezioni seguenti vengono forniti maggiori dettagli su come siano gestiti i
 	interazione/pushREST
 	interazione/pullSOAP
 	interazione/pullREST
+	interazione/bulkREST
 

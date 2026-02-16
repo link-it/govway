@@ -328,10 +328,18 @@ components:
         - sicurezza_canale
         - sicurezza_messaggio
       properties:
+        interazione:
+           $ref: '#/components/schemas/ApiModIPatternInterazioneAPIRest'      
         sicurezza_canale:
            $ref: '#/components/schemas/ApiModISicurezzaCanale'
         sicurezza_messaggio:
            $ref: '#/components/schemas/ApiModISicurezzaMessaggio'
+    ApiModIPatternInterazioneAPIRest:
+      type: object
+      properties:
+        bulk:
+          type: boolean
+          default: false                  
     ApiModISicurezzaCanale:
       type: object
       required:

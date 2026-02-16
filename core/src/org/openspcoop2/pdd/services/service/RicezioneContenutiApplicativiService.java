@@ -1343,7 +1343,7 @@ public class RicezioneContenutiApplicativiService implements IRicezioneService, 
 								
 				// transfer length
 				ServicesUtils.setTransferLength(this.openSPCoopProperties.getTransferLengthModes_ricezioneContenutiApplicativi(), 
-						this.req, this.res, this.responseMessage);
+						this.req, this.res, this.responseMessage, pddContext, false);
 				
 				// content type
 				// Alcune implementazioni richiedono di aggiornare il Content-Type
@@ -1584,7 +1584,7 @@ public class RicezioneContenutiApplicativiService implements IRicezioneService, 
 					
 					// transfer length
 					ServicesUtils.setTransferLength(this.openSPCoopProperties.getTransferLengthModes_ricezioneContenutiApplicativi(), 
-							this.req, this.res, responseMessageError);
+							this.req, this.res, responseMessageError, pddContext, true);
 					
 					// content type
 					ServicesUtils.setContentType(responseMessageError, this.res);

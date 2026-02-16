@@ -23,6 +23,7 @@ package org.openspcoop2.pdd.services;
 
 import java.io.ByteArrayOutputStream;
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +41,7 @@ import org.apache.commons.io.output.NullOutputStream;
 import org.openspcoop2.core.config.CorsConfigurazione;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.constants.RuoloContesto;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipoGestioneCORS;
@@ -73,6 +75,7 @@ import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.monitor.sdk.transaction.FaseTracciamento;
 import org.openspcoop2.pdd.config.CachedConfigIntegrationReader;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
+import org.openspcoop2.pdd.config.CostantiProprieta;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.UrlInvocazioneAPI;
 import org.openspcoop2.pdd.core.CORSFilter;
@@ -464,33 +467,136 @@ public class ServicesUtils {
 		
 	
 	
-	public static void setTransferLength(TransferLengthModes transferLengthMode,
-			ConnectorInMessage connectorInMessage, ConnectorOutMessage connectorOutMessage,
-			OpenSPCoop2Message message) throws ConnectorException, MessageException {
-		String requestProtocoll = connectorInMessage.getProtocol();
-		if(requestProtocoll!=null && requestProtocoll.endsWith("1.1")){
-			if(TransferLengthModes.TRANSFER_ENCODING_CHUNKED.equals(transferLengthMode)){
-				connectorOutMessage.setHeader(HttpConstants.TRANSFER_ENCODING,HttpConstants.TRANSFER_ENCODING_VALUE_CHUNCKED);
-			}
-			else if(TransferLengthModes.CONTENT_LENGTH.equals(transferLengthMode) &&
-				message!=null){
-				message.writeTo(NullOutputStream.INSTANCE, false);
-				connectorOutMessage.setContentLength((int)message.getOutgoingMessageContentLength());
+	private static long calculateContentLength(OpenSPCoop2Message message) throws MessageException {
+		message.writeTo(NullOutputStream.INSTANCE, false);
+		return message.getOutgoingMessageContentLength();
+	}
+
+	private static Long getBackendContentLength(OpenSPCoop2Message message) {
+		if (message.getTransportResponseContext() != null
+				&& message.getTransportResponseContext().getContentLength() > 0) {
+			return message.getTransportResponseContext().getContentLength();
+		}
+		return null;
+	}
+
+	private static long resolveContentLength(OpenSPCoop2Message message, boolean forceRecalculate)
+			throws MessageException {
+		if (!forceRecalculate && !message.isContentBuilded()) {
+			Long backendCL = getBackendContentLength(message);
+			if (backendCL != null) {
+				return backendCL;
 			}
 		}
+		return calculateContentLength(message);
 	}
+
+	public static void setTransferLength(TransferLengthModes transferLengthMode,
+			ConnectorInMessage connectorInMessage, ConnectorOutMessage connectorOutMessage,
+			OpenSPCoop2Message message, PdDContext pddContext,
+			boolean govwayGeneratedErrorMessage) throws ConnectorException, MessageException {
+
+		// 1. Controlla proprietà per-porta (Content-Length)
+		if(setTransferLengthByPorta(connectorOutMessage,
+				message, pddContext,
+				govwayGeneratedErrorMessage)) {
+			return;
+		}
+
+		// 2. Controlla flag BULK_RESOURCE_REST dal PdDContext (solo per risposte del backend, non per errori generati da GovWay)
+		if (!govwayGeneratedErrorMessage && pddContext != null && message != null) {
+			Object bulkFlag = pddContext.getObject(Costanti.MODIPA_BULK_RESOURCE_REST);
+			if (bulkFlag != null && "true".equals(bulkFlag.toString())) {
+				// Equivale a preserve (ricalcola se il contenuto è stato modificato)
+				Long backendCL = getBackendContentLength(message);
+				if (backendCL != null) {
+					connectorOutMessage.setContentLength((int) resolveContentLength(message, false));
+					return;
+				}
+			}
+		}
+
+		// 3. Logica originale
+		if(TransferLengthModes.TRANSFER_ENCODING_CHUNKED.equals(transferLengthMode)){
+			String requestProtocoll = connectorInMessage.getProtocol();
+			if(requestProtocoll!=null && requestProtocoll.endsWith("1.1")){
+				connectorOutMessage.setHeader(HttpConstants.TRANSFER_ENCODING,HttpConstants.TRANSFER_ENCODING_VALUE_CHUNCKED);
+			}
+		}
+		else if(TransferLengthModes.CONTENT_LENGTH.equals(transferLengthMode) &&
+			message!=null){
+			connectorOutMessage.setContentLength((int) calculateContentLength(message));
+		}
+	}
+	@SuppressWarnings("unchecked")
+	private static boolean setTransferLengthByPorta(ConnectorOutMessage connectorOutMessage,
+			OpenSPCoop2Message message, PdDContext pddContext,
+			boolean govwayGeneratedErrorMessage) throws ConnectorException, MessageException {
+		if (message != null && pddContext != null) {
+			Object o = pddContext.getObject(Costanti.PROPRIETA_CONFIGURAZIONE);
+			List<Proprieta> proprieta = null;
+			if (o instanceof Map) {
+				Map<String, String> map = (Map<String, String>) o;
+				if(!map.isEmpty()) {
+					proprieta = new ArrayList<>();
+					for (Map.Entry<String, String> entry : map.entrySet()) {
+						Proprieta p = new Proprieta();
+						p.setNome(entry.getKey());
+						p.setValore(entry.getValue());
+						proprieta.add(p);
+					}
+				}
+			}
+			if (proprieta != null && !proprieta.isEmpty() &&
+				setTransferLengthByPorta(proprieta,
+						connectorOutMessage,
+						message,
+						govwayGeneratedErrorMessage)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	private static boolean setTransferLengthByPorta(List<Proprieta> proprieta,
+			ConnectorOutMessage connectorOutMessage,
+			OpenSPCoop2Message message,
+			boolean govwayGeneratedErrorMessage) throws ConnectorException, MessageException {
+		if (CostantiProprieta.isConnettoriHttpContentLengthForceRecalculate(proprieta, false)) {
+			connectorOutMessage.setContentLength((int) resolveContentLength(message, true));
+			return true;
+		}
+		else if (CostantiProprieta.isConnettoriHttpContentLengthForce(proprieta, false)) {
+			connectorOutMessage.setContentLength((int) resolveContentLength(message, false));
+			return true;
+		}
+		else if (!govwayGeneratedErrorMessage) {
+			Long backendCL = getBackendContentLength(message);
+			if (backendCL != null) {
+				if (CostantiProprieta.isConnettoriHttpContentLengthPreserveRecalculate(proprieta, false)) {
+					connectorOutMessage.setContentLength((int) resolveContentLength(message, true));
+					return true;
+				}
+				else if (CostantiProprieta.isConnettoriHttpContentLengthPreserve(proprieta, false)) {
+					connectorOutMessage.setContentLength((int) resolveContentLength(message, false));
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+			
 	public static void setTransferLength(TransferLengthModes transferLengthMode,
 			ConnectorInMessage connectorInMessage, ConnectorOutMessage connectorOutMessage,
 			Long length) throws ConnectorException {
-		String requestProtocoll = connectorInMessage.getProtocol();
-		if(requestProtocoll!=null && requestProtocoll.endsWith("1.1")){
-			if(TransferLengthModes.TRANSFER_ENCODING_CHUNKED.equals(transferLengthMode)){
+		if(TransferLengthModes.TRANSFER_ENCODING_CHUNKED.equals(transferLengthMode)){
+			String requestProtocoll = connectorInMessage.getProtocol();
+			if(requestProtocoll!=null && requestProtocoll.endsWith("1.1")){
 				connectorOutMessage.setHeader(HttpConstants.TRANSFER_ENCODING,HttpConstants.TRANSFER_ENCODING_VALUE_CHUNCKED);
 			}
-			else if(TransferLengthModes.CONTENT_LENGTH.equals(transferLengthMode) &&
-				length!=null){
-				connectorOutMessage.setContentLength(length.intValue());
-			}
+		}
+		else if(TransferLengthModes.CONTENT_LENGTH.equals(transferLengthMode) &&
+			length!=null){
+			connectorOutMessage.setContentLength(length.intValue());
 		}
 	}
 	

@@ -46,6 +46,7 @@ import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.transport.TransportUtils;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.slf4j.Logger;
 
 /**
@@ -343,6 +344,16 @@ public class DumpRawConnectorOutMessage implements ConnectorOutMessage {
 		
 		// Prima lo registro
 		this.contentLenght = length;
+		String key = HttpConstants.CONTENT_LENGTH;
+		String value = length+"";
+		try{
+			TransportUtils.addHeader(this.trasporto, key, value);
+		}catch(Throwable t){
+			try{
+				this.bout = DumpByteArrayOutputStream.newInstance(("addHeader ["+key+"] error: "+t.getMessage()).getBytes());
+			}catch(Throwable tWrite){}
+			this.log.error("Set ContentLength Header ["+key+"]["+value+"] error: "+t.getMessage(),t);
+		}
 		
 		// wrapped method
 		this.connectorOutMessage.setContentLength(length);
@@ -353,6 +364,16 @@ public class DumpRawConnectorOutMessage implements ConnectorOutMessage {
 		
 		// Prima lo registro
 		this.contentType = type;
+		String key = HttpConstants.CONTENT_TYPE;
+		String value = type;
+		try{
+			TransportUtils.addHeader(this.trasporto, key, value);
+		}catch(Throwable t){
+			try{
+				this.bout = DumpByteArrayOutputStream.newInstance(("addHeader ["+key+"] error: "+t.getMessage()).getBytes());
+			}catch(Throwable tWrite){}
+			this.log.error("Set ContentType Header ["+key+"]["+value+"] error: "+t.getMessage(),t);
+		}
 		
 		// wrapped method
 		this.connectorOutMessage.setContentType(type);

@@ -847,6 +847,30 @@ public class CostantiProprieta {
 		}
 		return v;
 	}
+
+
+
+
+	// ****  CONNETTORI HTTP CONTENT-LENGTH *****
+
+	private static final String CONNETTORI_HTTP_CONTENT_LENGTH_FORCE = "connettori.http.contentLength.force";
+	private static final String CONNETTORI_HTTP_CONTENT_LENGTH_FORCE_RECALCULATE = "connettori.http.contentLength.force.recalculate";
+	private static final String CONNETTORI_HTTP_CONTENT_LENGTH_PRESERVE = "connettori.http.contentLength.preserve";
+	private static final String CONNETTORI_HTTP_CONTENT_LENGTH_PRESERVE_RECALCULATE = "connettori.http.contentLength.preserve.recalculate";
+
+	public static boolean isConnettoriHttpContentLengthForce(List<Proprieta> proprieta, boolean defaultValue) {
+		return readBooleanValueWithDefault(proprieta, CONNETTORI_HTTP_CONTENT_LENGTH_FORCE, defaultValue, VALUE_ENABLED, VALUE_DISABLED);
+	}
+	public static boolean isConnettoriHttpContentLengthForceRecalculate(List<Proprieta> proprieta, boolean defaultValue) {
+		return readBooleanValueWithDefault(proprieta, CONNETTORI_HTTP_CONTENT_LENGTH_FORCE_RECALCULATE, defaultValue, VALUE_ENABLED, VALUE_DISABLED);
+	}
+	public static boolean isConnettoriHttpContentLengthPreserve(List<Proprieta> proprieta, boolean defaultValue) {
+		return readBooleanValueWithDefault(proprieta, CONNETTORI_HTTP_CONTENT_LENGTH_PRESERVE, defaultValue, VALUE_ENABLED, VALUE_DISABLED);
+	}
+	public static boolean isConnettoriHttpContentLengthPreserveRecalculate(List<Proprieta> proprieta, boolean defaultValue) {
+		return readBooleanValueWithDefault(proprieta, CONNETTORI_HTTP_CONTENT_LENGTH_PRESERVE_RECALCULATE, defaultValue, VALUE_ENABLED, VALUE_DISABLED);
+	}
+
 	
 	
 	// ****  CONNETTORI LIBRERIA *****

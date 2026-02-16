@@ -27,11 +27,33 @@ import jakarta.validation.Valid;
 
 public class ApiModI  {
   
+  @Schema(description = "")
+  private ApiModIPatternInterazioneAPIRest interazione = null;
+
   @Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED, description = "")
   private ApiModISicurezzaCanale sicurezzaCanale = null;
   
   @Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED, description = "")
   private ApiModISicurezzaMessaggio sicurezzaMessaggio = null;
+ /**
+   * Get interazione
+   * @return interazione
+  **/
+  @JsonProperty("interazione")
+  @Valid
+  public ApiModIPatternInterazioneAPIRest getInterazione() {
+    return this.interazione;
+  }
+
+  public void setInterazione(ApiModIPatternInterazioneAPIRest interazione) {
+    this.interazione = interazione;
+  }
+
+  public ApiModI interazione(ApiModIPatternInterazioneAPIRest interazione) {
+    this.interazione = interazione;
+    return this;
+  }
+
  /**
    * Get sicurezzaCanale
    * @return sicurezzaCanale
@@ -78,6 +100,7 @@ public class ApiModI  {
     StringBuilder sb = new StringBuilder();
     sb.append("class ApiModI {\n");
     
+    sb.append("    interazione: ").append(ApiModI.toIndentedString(this.interazione)).append("\n");
     sb.append("    sicurezzaCanale: ").append(ApiModI.toIndentedString(this.sicurezzaCanale)).append("\n");
     sb.append("    sicurezzaMessaggio: ").append(ApiModI.toIndentedString(this.sicurezzaMessaggio)).append("\n");
     sb.append("}");

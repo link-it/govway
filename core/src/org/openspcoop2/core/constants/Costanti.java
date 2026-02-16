@@ -86,6 +86,7 @@ public class Costanti {
 	public static final MapKey<String> CLIENT_IP_TRANSPORT_ADDRESS = Map.newMapKey("CLIENT_IP_TRANSPORT_ADDRESS");	
 	public static final MapKey<String> IDENTIFICATIVO_AUTENTICATO = Map.newMapKey("IDENTIFICATIVO_AUTENTICATO");
 	public static final MapKey<String> PROPRIETA_CONFIGURAZIONE = Map.newMapKey("PROPRIETA_CONFIGURAZIONE");
+	public static final MapKey<String> MODIPA_BULK_RESOURCE_REST = Map.newMapKey("MODIPA_BULK_RESOURCE_REST");
 	public static final MapKey<String> PROPRIETA_SOGGETTO_EROGATORE = Map.newMapKey("PROPRIETA_SOGGETTO_EROGATORE");
 	public static final MapKey<String> PROPRIETA_SOGGETTO_FRUITORE = Map.newMapKey("PROPRIETA_SOGGETTO_FRUITORE");
 	public static final MapKey<String> PROPRIETA_APPLICATIVO = Map.newMapKey("PROPRIETA_APPLICATIVO");

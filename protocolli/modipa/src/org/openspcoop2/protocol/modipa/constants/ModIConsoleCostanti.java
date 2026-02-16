@@ -305,6 +305,13 @@ public class ModIConsoleCostanti {
 	public static final String MODIPA_API_LABEL = MODIPA_TITLE_LABEL;
 	public static final String MODIPA_API_ID = "modipaAPITitleId";
 		
+	public static final String MODIPA_API_PROFILO_INTERAZIONE_REST_LABEL = "Interazione";
+	public static final String MODIPA_API_PROFILO_INTERAZIONE_REST_ID = "modipaAPIProfiloInterazioneRestSubTitleId";
+
+	public static final String MODIPA_API_PROFILO_INTERAZIONE_BULK_RESOURCE_LABEL = "";
+	public static final String MODIPA_API_PROFILO_INTERAZIONE_BULK_RESOURCE_LABEL_RIGHT = "Risorse Massive (BULK_RESOURCE_REST)";
+	public static final String MODIPA_API_PROFILO_INTERAZIONE_BULK_RESOURCE_ID = ModICostanti.MODIPA_PROFILO_INTERAZIONE_BULK_RESOURCE;
+
 	public static final String MODIPA_API_PROFILO_CANALE_LABEL = CostantiLabel.MODIPA_API_PROFILO_CANALE_LABEL;
 	public static final String MODIPA_API_PROFILO_CANALE_ID = "modipaAPIProfiloSicurezzaSubTitleId";
         

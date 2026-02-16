@@ -1246,7 +1246,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService implements IRicezion
 					
 					// transfer length
 					ServicesUtils.setTransferLength(this.openSPCoopProperties.getTransferLengthModes_ricezioneContenutiApplicativi(), 
-							this.req, this.res, this.responseMessage);
+							this.req, this.res, this.responseMessage, pddContext, false);
 					
 					// content type
 					// Alcune implementazioni richiedono di aggiornare il Content-Type

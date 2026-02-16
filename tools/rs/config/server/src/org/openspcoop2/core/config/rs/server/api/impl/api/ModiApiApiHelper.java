@@ -33,6 +33,7 @@ import org.openspcoop2.core.config.rs.server.model.Api;
 import org.openspcoop2.core.config.rs.server.model.ApiAzione;
 import org.openspcoop2.core.config.rs.server.model.ApiModI;
 import org.openspcoop2.core.config.rs.server.model.ApiModIAzioneSoap;
+import org.openspcoop2.core.config.rs.server.model.ApiModIPatternInterazioneAPIRest;
 import org.openspcoop2.core.config.rs.server.model.ApiModIPatternInterazioneCorrelazioneRest;
 import org.openspcoop2.core.config.rs.server.model.ApiModIPatternInterazioneCorrelazioneSoap;
 import org.openspcoop2.core.config.rs.server.model.ApiModIPatternInterazioneRest;
@@ -341,7 +342,18 @@ public class ModiApiApiHelper {
 		sicurezzaCanale.setPattern(sicurezzaCanalePatternString.equals(CostantiDB.MODIPA_PROFILO_SICUREZZA_CANALE_VALUE_IDAC01) ? ModISicurezzaCanaleEnum.AUTH01:ModISicurezzaCanaleEnum.AUTH02);
 		apimodi.setSicurezzaCanale(sicurezzaCanale);
 
-		apimodi.setSicurezzaMessaggio(getSicurezzaMessaggio(p, as.getServiceBinding().equals(org.openspcoop2.core.registry.constants.ServiceBinding.SOAP)));
+		boolean isRest = as.getServiceBinding().equals(org.openspcoop2.core.registry.constants.ServiceBinding.REST);
+
+		if(isRest) {
+			Boolean bulkValue = ProtocolPropertiesHelper.getBooleanProperty(p, CostantiDB.MODIPA_PROFILO_INTERAZIONE_BULK_RESOURCE, false);
+			if(bulkValue != null && bulkValue.booleanValue()) {
+				ApiModIPatternInterazioneAPIRest interazione = new ApiModIPatternInterazioneAPIRest();
+				interazione.setBulk(true);
+				apimodi.setInterazione(interazione);
+			}
+		}
+
+		apimodi.setSicurezzaMessaggio(getSicurezzaMessaggio(p, !isRest));
 
 		return apimodi;
 	}
@@ -877,6 +889,8 @@ public class ModiApiApiHelper {
 		if(protocollo.equals(TipoApiEnum.SOAP)) {
 			getSOAPProperties(modi.getSicurezzaMessaggio(), p, modIProperties);
 		} else if(protocollo.equals(TipoApiEnum.REST)) {
+			boolean bulk = modi.getInterazione() != null && modi.getInterazione().isBulk() != null && modi.getInterazione().isBulk().booleanValue();
+			p.addProperty(ModICostanti.MODIPA_PROFILO_INTERAZIONE_BULK_RESOURCE, bulk);
 			getRESTProperties(modi.getSicurezzaMessaggio(), p, modIProperties);
 		}
 

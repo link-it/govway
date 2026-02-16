@@ -78,6 +78,7 @@ Examples:
 | api_modi_rest_i01a02_qualsiasi.json |
 | api_modi_rest_i01a02_richiesta_info.json |
 | api_modi_rest.json |
+| api_modi_rest_bulk.json |
 | api_modi_soap_a01_qualsiasi.json |
 | api_modi_soap_a01_richiesta.json |
 | api_modi_soap_a01_risposta.json |
