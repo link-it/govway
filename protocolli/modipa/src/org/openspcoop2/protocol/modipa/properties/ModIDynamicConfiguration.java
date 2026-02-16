@@ -37,6 +37,7 @@ import org.openspcoop2.protocol.sdk.constants.ConsoleItemType;
 import org.openspcoop2.protocol.sdk.constants.ConsoleItemValueType;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
 import org.openspcoop2.protocol.sdk.properties.BaseConsoleItem;
+import org.openspcoop2.protocol.sdk.properties.BooleanConsoleItem;
 import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
 import org.openspcoop2.protocol.sdk.properties.IConsoleHelper;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
@@ -177,15 +178,32 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 				ModIConsoleCostanti.MODIPA_API_ID, 
 				ModIConsoleCostanti.MODIPA_API_LABEL);
 		configuration.addConsoleItem(titolo );
-		
-		
-		configuration.addConsoleItem(ProtocolPropertiesFactory.newSubTitleItem(ModIConsoleCostanti.MODIPA_API_PROFILO_CANALE_ID, 
+
+		boolean rest = ModIDynamicConfigurationAccordiParteComuneUtilities.isApiRest(consoleOperationType, consoleHelper, registryReader, id);
+
+		// Sezione Interazione (solo per API REST)
+		if (rest) {
+			configuration.addConsoleItem(ProtocolPropertiesFactory.newSubTitleItem(
+					ModIConsoleCostanti.MODIPA_API_PROFILO_INTERAZIONE_REST_ID,
+					ModIConsoleCostanti.MODIPA_API_PROFILO_INTERAZIONE_REST_LABEL));
+
+			BooleanConsoleItem bulkResourceItem = (BooleanConsoleItem)
+					ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.BOOLEAN,
+							ConsoleItemType.CHECKBOX,
+							ModIConsoleCostanti.MODIPA_API_PROFILO_INTERAZIONE_BULK_RESOURCE_ID,
+							ModIConsoleCostanti.MODIPA_API_PROFILO_INTERAZIONE_BULK_RESOURCE_LABEL);
+			bulkResourceItem.setLabelRight(ModIConsoleCostanti.MODIPA_API_PROFILO_INTERAZIONE_BULK_RESOURCE_LABEL_RIGHT);
+			bulkResourceItem.setDefaultValue(false);
+			configuration.addConsoleItem(bulkResourceItem);
+		}
+
+		configuration.addConsoleItem(ProtocolPropertiesFactory.newSubTitleItem(ModIConsoleCostanti.MODIPA_API_PROFILO_CANALE_ID,
 				ModIConsoleCostanti.MODIPA_API_PROFILO_CANALE_LABEL));
-		
-		StringConsoleItem profiloSicurezzaCanaleItem = (StringConsoleItem) 
+
+		StringConsoleItem profiloSicurezzaCanaleItem = (StringConsoleItem)
 				ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
 				ConsoleItemType.SELECT,
-				ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_CANALE_ID, 
+				ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_CANALE_ID,
 				ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_CANALE_LABEL);
 		profiloSicurezzaCanaleItem.addLabelValue((this.modiProperties.isModIVersioneBozza()!=null && this.modiProperties.isModIVersioneBozza().booleanValue()) ? ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_CANALE_LABEL_IDAC01_OLD : ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_CANALE_LABEL_IDAC01_NEW,
 				ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_CANALE_VALUE_IDAC01);
@@ -200,8 +218,6 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 		}
 		profiloSicurezzaCanaleItem.setReloadOnChange(true);
 		configuration.addConsoleItem(profiloSicurezzaCanaleItem);
-		
-		boolean rest = ModIDynamicConfigurationAccordiParteComuneUtilities.isApiRest(consoleOperationType, consoleHelper, registryReader, id);
 		
 		ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.addProfiloSicurezzaMessaggio(this.modiProperties,
 				configuration, rest, false,

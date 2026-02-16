@@ -49,6 +49,7 @@ import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.utils.ModISecurityUtils;
 import org.openspcoop2.protocol.utils.ModIUtils;
+import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.slf4j.Logger;
@@ -65,6 +66,17 @@ public class ModIPropertiesUtils {
 	private ModIPropertiesUtils() {}
 
 	
+	public static boolean readPropertyBulkResource(AccordoServizioParteComune aspc) {
+		try {
+			BooleanNullable v = ProtocolPropertiesUtils.getOptionalBooleanValuePropertyRegistry(
+					aspc.getProtocolPropertyList(),
+					ModICostanti.MODIPA_PROFILO_INTERAZIONE_BULK_RESOURCE);
+			return v != null && v.getValue() != null && v.getValue().booleanValue();
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
 	public static String readPropertySecurityChannelProfile(AccordoServizioParteComune aspc, AccordoServizioParteSpecifica asps) throws ProtocolException {
 		try {
 			return ModIPropertiesUtils.readPropertySecurityChannelProfileEngine(aspc).toUpperCase();

@@ -1283,14 +1283,14 @@ public class RicezioneContenutiApplicativiService {
 				}
 								
 				// transfer length
-				ServicesUtils.setTransferLength(openSPCoopProperties.getTransferLengthModes_ricezioneContenutiApplicativi(), 
-						req, res, responseMessage);
-				
+				ServicesUtils.setTransferLength(openSPCoopProperties.getTransferLengthModes_ricezioneContenutiApplicativi(),
+						req, res, responseMessage, pddContext, false);
+
 				// content type
 				// Alcune implementazioni richiedono di aggiornare il Content-Type
 				responseMessage.updateContentType();
 				ServicesUtils.setContentType(responseMessage, res);
-				
+
 				// http status
 				boolean consume = true;
 				if(ServiceBinding.SOAP.equals(responseMessage.getServiceBinding()) ){
@@ -1536,8 +1536,8 @@ public class RicezioneContenutiApplicativiService {
 					}
 					
 					// transfer length
-					ServicesUtils.setTransferLength(openSPCoopProperties.getTransferLengthModes_ricezioneContenutiApplicativi(), 
-							req, res, responseMessageError);
+					ServicesUtils.setTransferLength(openSPCoopProperties.getTransferLengthModes_ricezioneContenutiApplicativi(),
+							req, res, responseMessageError, pddContext, true);
 					
 					// content type
 					ServicesUtils.setContentType(responseMessageError, res);

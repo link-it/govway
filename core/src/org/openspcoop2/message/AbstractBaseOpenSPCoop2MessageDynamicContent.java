@@ -452,7 +452,7 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 						if (debug != null) {
 							debug.append(Costanti.WRITE_MODE_SERIALIZE_BUFFER_WITH_HEADER);
 						}
-						this.soapStreamReader.writeOptimizedHeaderTo(this.contentBuffer.getInputStream(), cos, true);
+						this.soapStreamReader.writeOptimizedHeaderTo(this.contentBuffer.getInputStream(), cos, consume);
 					} else {
 						if (debug != null) {
 							debug.append(Costanti.WRITE_MODE_SERIALIZE_BUFFER);
@@ -469,7 +469,7 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 						if (debug != null) {
 							debug.append(Costanti.WRITE_MODE_SERIALIZE_STREAM_WITH_HEADER);
 						}
-						this.soapStreamReader.writeOptimizedHeaderTo(this._getInputStream(), cos, true);
+						this.soapStreamReader.writeOptimizedHeaderTo(this._getInputStream(), cos, consume);
 					} else {
 						if (debug != null) {
 							debug.append(Costanti.WRITE_MODE_SERIALIZE_STREAM);

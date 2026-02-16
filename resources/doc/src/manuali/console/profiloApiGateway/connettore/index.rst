@@ -17,7 +17,9 @@ La sezione :ref:`applicativoServerConnettore` descrive invece come censire un'ap
 
 Le sezioni successive descrivono le funzionalità inerenti l'utilizzo di endpoint multipli allo scopo di bilanciare il carico o differenziarlo rispetto a variabili presenti nella richiesta, sempre relativamente ad erogazioni di API.
 
-Infine la sezione :ref:`proxyPassReverse` descrive la funzionalità di riscrittura delle url negli header HTTP della risposta.
+La sezione :ref:`proxyPassReverse` descrive la funzionalità di riscrittura delle url negli header HTTP della risposta.
+
+Infine la sezione :ref:`contentLengthRisposta` descrive come configurare GovWay per preservare o forzare l'header *Content-Length* nella risposta inoltrata al client.
 
 .. note::
 	Le funzionalità relative ad un applicativo 'Server' (sezione :ref:`applicativoServerConnettore`) e ai connettori multipli (:ref:`loadBalancerConnettore` e :ref:`consegnaCondizionaleConnettore`) sono applicabili solamente per le erogazioni di API.
@@ -30,3 +32,4 @@ Infine la sezione :ref:`proxyPassReverse` descrive la funzionalità di riscrittu
    loadBalancer/index
    consegnaCondizionale/index
    proxyPassReverse
+   contentLength

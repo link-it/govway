@@ -222,7 +222,12 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 				
 				String interactionProfile = ModIPropertiesUtils.readPropertyInteractionProfile(aspc, nomePortType, azione);
 				bustaRitornata.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE, interactionProfile);
-				
+
+				boolean bulkResource = ModIPropertiesUtils.readPropertyBulkResource(aspc);
+				if (bulkResource && this.context != null) {
+					this.context.addObject(org.openspcoop2.core.constants.Costanti.MODIPA_BULK_RESOURCE_REST, "true");
+				}
+
 				if(ModICostanti.MODIPA_PROFILO_INTERAZIONE_VALUE_BLOCCANTE.equals(interactionProfile)) {
 					
 					if(!isFault &&

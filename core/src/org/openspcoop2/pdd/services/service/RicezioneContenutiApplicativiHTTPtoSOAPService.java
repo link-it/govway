@@ -1188,9 +1188,9 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 				else {
 					
 					// transfer length
-					ServicesUtils.setTransferLength(openSPCoopProperties.getTransferLengthModes_ricezioneContenutiApplicativi(), 
-							req, res, responseMessage);
-					
+					ServicesUtils.setTransferLength(openSPCoopProperties.getTransferLengthModes_ricezioneContenutiApplicativi(),
+							req, res, responseMessage, pddContext, false);
+
 					// content type
 					// Alcune implementazioni richiedono di aggiornare il Content-Type
 					responseMessage.updateContentType();

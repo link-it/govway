@@ -1303,8 +1303,8 @@ public class RicezioneBusteService  {
 					throw responseMessage.getParseException().getSourceException(); // viene gestito a modo dopo nel catch
 				
 				// transfer length
-				ServicesUtils.setTransferLength(openSPCoopProperties.getTransferLengthModes_ricezioneBuste(), 
-						req, res, responseMessage);
+				ServicesUtils.setTransferLength(openSPCoopProperties.getTransferLengthModes_ricezioneBuste(),
+						req, res, responseMessage, pddContext, false);
 				
 				//NOTA: Faccio la save per refreshare il ContentType. Necessario nel caso di attachment 
 				// (implementazione SAAJ della SUN)
@@ -1550,8 +1550,8 @@ public class RicezioneBusteService  {
 								ErroriIntegrazione.ERRORE_426_SERVLET_ERROR.getErrore426_ServletError(false, e));
 					}
 					// transfer length
-					ServicesUtils.setTransferLength(openSPCoopProperties.getTransferLengthModes_ricezioneBuste(), 
-							req, res, responseMessageError);
+					ServicesUtils.setTransferLength(openSPCoopProperties.getTransferLengthModes_ricezioneBuste(),
+							req, res, responseMessageError, pddContext, true);
 									
 					// content type
 	    			ServicesUtils.setContentType(responseMessageError, res);

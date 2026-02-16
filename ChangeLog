@@ -1,6 +1,14 @@
-2026-02-18  Andrea Poli <apoli@link.it>
+2026-02-19  Andrea Poli <apoli@link.it>
 
 	* Rilasciata versione 3.3.19
+
+2026-02-16  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, ProtocolloModIPA]
+	Aggiunta funzionalità #1722
+	Aggiunta opzione per le API REST che implementano il pattern 'BULK_RESOURCE_REST' 
+	che consente di preservare l'header Content-Length nelle risposte inoltrate al client, 
+	necessario per il corretto funzionamento delle Range Requests (RFC 9110, Section 14).
 
 2026-02-13  Tommaso Burlon <tommaso.burlon@link.it>
 
