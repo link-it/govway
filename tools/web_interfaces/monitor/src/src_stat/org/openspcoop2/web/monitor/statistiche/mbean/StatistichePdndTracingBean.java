@@ -19,7 +19,9 @@
  */
 package org.openspcoop2.web.monitor.statistiche.mbean;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -39,12 +41,14 @@ import org.openspcoop2.core.statistiche.constants.PossibiliStatiRichieste;
 import org.openspcoop2.core.statistiche.dao.jdbc.JDBCStream;
 import org.openspcoop2.utils.CopyStream;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.web.monitor.core.dao.IService;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.mbean.DynamicPdDBean;
 import org.openspcoop2.web.monitor.core.utils.MessageManager;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
+import org.openspcoop2.web.monitor.core.utils.MimeTypeUtils;
 import org.openspcoop2.web.monitor.statistiche.bean.GruppoRicercaStatistichePdnd;
 import org.openspcoop2.web.monitor.statistiche.bean.RicercaStatistichePdnd;
 import org.openspcoop2.web.monitor.statistiche.bean.StatistichePdndTracingSearchForm;
@@ -387,5 +391,74 @@ DynamicPdDBean<org.openspcoop2.web.monitor.statistiche.bean.StatistichePdndTraci
 	public StatistichePdndTracingBean(org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager, org.openspcoop2.core.plugins.dao.IServiceManager pluginsServiceManager,
 			DriverRegistroServiziDB driverRegistroServiziDB, DriverConfigurazioneDB driverConfigurazioneDB){
 		super(serviceManager, pluginsServiceManager, driverRegistroServiziDB, driverConfigurazioneDB);
+	}
+	
+	public String downloadErrors(){
+		String msg = "downloading errors: "+this.statisticaPdndTracing.getId();
+		log.debug(msg);
+		try{
+			//recupero informazioni sul file
+
+
+			// We must get first our context
+			FacesContext context = FacesContext.getCurrentInstance();
+
+			// Then we have to get the Response where to write our file
+			HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
+
+			// Now we create some variables we will use for writting the file to the
+			// response
+
+			// Now set the content type for our response, be sure to use the best
+			// suitable content type depending on your file
+			// the content type presented here is ok for, lets say, text files and
+			// others (like CSVs, PDFs)
+			response.setContentType(HttpConstants.CONTENT_TYPE_JSON);
+
+			// This is another important attribute for the header of the response
+			// Here fileName, is a String with the name that you will suggest as a
+			// name to save as
+			// I use the same name as it is stored in the file system of the server.
+			// NOTA: L'id potrebbe essere -1 nel caso di mascheramento logico.
+			String fileName = "errors";
+
+			String contentType = HttpConstants.CONTENT_TYPE_JSON;
+			String ext = getExt(contentType);
+			
+			fileName+="."+ext;
+
+			// Setto Proprietà Export File
+			HttpUtilities.setOutputFile(response, true, fileName, contentType);
+
+			// Streams we will use to read, write the file bytes to our response
+			OutputStream os = null;
+			byte[] contenutoBody = this.statisticaPdndTracing.getErrorDetails().getBytes();
+			try (InputStream is = new ByteArrayInputStream(contenutoBody);){
+				
+				os = response.getOutputStream();
+	
+				CopyStream.copy(is, os);
+	
+				// Clean resources
+				os.flush();
+				os.close();
+				
+			}
+
+			FacesContext.getCurrentInstance().responseComplete();
+
+			// End of the method
+		}catch (Exception e) {
+			log.error(e.getMessage(), e);
+			MessageUtils.addErrorMsg("Si e' verificato un errore durante il download degli errori pdnd.");
+		}
+		return null;
+	}
+	private String getExt(String contentType) {
+		try {
+			return MimeTypeUtils.fileExtensionForMIMEType(contentType);
+		}catch(Exception e) {
+			return "json";
+		}
 	}
 }
