@@ -29,6 +29,8 @@ import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.Bodies;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.utils.DBVerifier;
+import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.utils.HttpLibrary;
+import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.utils.HttpLibraryMode;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.TipoServizio;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
@@ -434,7 +436,8 @@ public class RispostaClientContentLengthTest extends ConfigLoader {
 			esito = 400;
 		}
 		verifyOk(response, esito, rispostaBackendVuota, msg); // il codice http e' gia' stato impostato
-		DBVerifier.verify(idTransazione, esitoExpected, null);
+		HttpLibraryMode lib = new HttpLibraryMode(HttpLibrary.HTTPCORE, false, false);
+		DBVerifier.verify(idTransazione, esitoExpected, lib);
 		
 		if(erroreGovWay) {
 			if(expectedContentLength) {

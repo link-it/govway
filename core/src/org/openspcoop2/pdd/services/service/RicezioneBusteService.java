@@ -1357,7 +1357,7 @@ public class RicezioneBusteService implements IRicezioneService, IAsyncResponseC
 				
 				// transfer length
 				ServicesUtils.setTransferLength(this.openSPCoopProperties.getTransferLengthModes_ricezioneBuste(), 
-						this.req, this.res, this.responseMessage, pddContext, false);
+						this.req, this.res, this.responseMessage, this.pddContext, false);
 				
 				//NOTA: Faccio la save per refreshare il ContentType. Necessario nel caso di attachment 
 				// (implementazione SAAJ della SUN)
@@ -1591,7 +1591,7 @@ public class RicezioneBusteService implements IRicezioneService, IAsyncResponseC
 					}
 					// transfer length
 					ServicesUtils.setTransferLength(this.openSPCoopProperties.getTransferLengthModes_ricezioneBuste(), 
-							this.req, this.res, responseMessageError, pddContext, true);
+							this.req, this.res, responseMessageError, this.pddContext, true);
 									
 					// content type
 	    			ServicesUtils.setContentType(responseMessageError, this.res);
