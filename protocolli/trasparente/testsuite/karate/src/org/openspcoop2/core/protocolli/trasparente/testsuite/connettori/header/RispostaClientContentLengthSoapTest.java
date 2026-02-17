@@ -29,7 +29,6 @@ import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.Bodies;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.utils.DBVerifier;
-import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.utils.HttpLibrary;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.utils.HttpLibraryMode;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.TipoServizio;
 import org.openspcoop2.protocol.engine.constants.Costanti;
@@ -737,7 +736,7 @@ public class RispostaClientContentLengthSoapTest extends ConfigLoader {
 			esito = 500;
 		}
 		verifyOk(soap11, response, esito, rispostaBackendVuota, msg); // il codice http e' gia' stato impostato
-		HttpLibraryMode lib = new HttpLibraryMode(HttpLibrary.HTTPCORE, false, false);
+		HttpLibraryMode lib = null;
 		DBVerifier.verify(idTransazione, esitoExpected, lib);
 		
 		if(erroreGovWay) {

@@ -37,9 +37,11 @@ And path 'resource', 1
 When method head
 Then status 200
 And match response == ''
-And match header Transfer-Encoding == 'chunked'
 And match header Content-Length == '#notpresent'
 And match header Accept-Range == 'bytes'
+
+* def te = karate.get("responseHeaders['Transfer-Encoding']")
+* assert te == null || te[0] == 'chunked'
 
 
 

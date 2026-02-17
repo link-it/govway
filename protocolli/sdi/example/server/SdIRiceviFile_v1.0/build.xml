@@ -74,6 +74,7 @@
 		<javac includeantruntime="false" destdir="${build_sdi_riceviFile_v10}" debug="${debug}">
 			<!--<compilerarg value="-Xlint:unchecked"/>
                         <compilerarg value="-Xlint:deprecation"/>-->
+                        <compilerarg value="-proc:full"/>
 			<src path="${src_sdi_riceviFile_v10}" />
 			<classpath refid="classpath_compile" />
 		</javac>
