@@ -187,9 +187,9 @@ public class DAOFactoryProperties {
 
 	private static final String PROP_TIPO_DATABASE = "db.tipoDatabase";
 	public String getTipoDatabase(IProjectInfo tipoDAO) throws Exception {
-		String v = this.getProperty(PREFIX_FACTORY+tipoDAO.getProjectName()+"."+PROP_TIPO_DATABASE, false, false);
+		String v = this.getProperty(PREFIX_FACTORY+tipoDAO.getProjectName()+"."+PROP_TIPO_DATABASE, false, true);
 		if(v==null){
-			v = this.getProperty(PROP_TIPO_DATABASE, true, false);
+			v = this.getProperty(PROP_TIPO_DATABASE, true, true);
 		}
 		return v;
 	}
