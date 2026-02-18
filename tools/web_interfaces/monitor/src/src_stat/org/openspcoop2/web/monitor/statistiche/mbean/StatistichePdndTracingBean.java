@@ -19,9 +19,7 @@
  */
 package org.openspcoop2.web.monitor.statistiche.mbean;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -41,14 +39,12 @@ import org.openspcoop2.core.statistiche.constants.PossibiliStatiRichieste;
 import org.openspcoop2.core.statistiche.dao.jdbc.JDBCStream;
 import org.openspcoop2.utils.CopyStream;
 import org.openspcoop2.utils.UtilsException;
-import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.web.monitor.core.dao.IService;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.mbean.DynamicPdDBean;
 import org.openspcoop2.web.monitor.core.utils.MessageManager;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
-import org.openspcoop2.web.monitor.core.utils.MimeTypeUtils;
 import org.openspcoop2.web.monitor.statistiche.bean.GruppoRicercaStatistichePdnd;
 import org.openspcoop2.web.monitor.statistiche.bean.RicercaStatistichePdnd;
 import org.openspcoop2.web.monitor.statistiche.bean.StatistichePdndTracingSearchForm;
