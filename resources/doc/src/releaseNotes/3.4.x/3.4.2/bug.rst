@@ -36,6 +36,8 @@ Per la console di gestione sono stati risolti i seguenti bug:
 
 - (https://github.com/link-it/govway/issues/272) Corretta anomalia che si presentava durante la modifica del nome di un soggetto quando il codice IPA generato dall'installer (senza /) differiva da quello calcolato di default (con /).
 
+- (https://github.com/link-it/govway/issues/280) Nella configurazione delle console per l'integrazione con un authorization server OIDC/OAuth è stato aggiunto il supporto per l'utilizzo di variabili d'ambiente nelle proprietà di login. Inoltre è stata introdotta la possibilità di validare claim con valori di tipo array.
+
 - Nella gestione delle policy di rate limiting sono state corrette le seguenti anomalie:
 
 	- corretto il filtro nella lista delle policy attivate per gestire anche la tipologia 'richieste simultanee' che non veniva correttamente visualizzata una volta creata;

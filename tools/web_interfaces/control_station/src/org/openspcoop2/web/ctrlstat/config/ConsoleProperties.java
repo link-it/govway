@@ -2027,7 +2027,7 @@ public class ConsoleProperties {
 	}
 
 	public Properties getLoginProperties() throws UtilsException{
-		return this.reader.readProperties("login.props.");
+		return this.reader.readPropertiesConvertEnvProperties("login.props.");
 	}
 	
 	public String getLoginUtenteNonAutorizzatoRedirectUrl() throws UtilsException{

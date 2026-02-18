@@ -456,6 +456,10 @@ public class OAuth2Utilities {
 
 		if (!claimResult.isValid()) {
 			logError(log, "Validazione token fallita: claim non validi - " + claimResult.getErrorsAsString());
+			if (log.isDebugEnabled()) {
+				String debug = "Access token: " + oAuth2Token.getAccessToken();
+				log.debug(debug);
+			}
 			return false;
 		}
 
