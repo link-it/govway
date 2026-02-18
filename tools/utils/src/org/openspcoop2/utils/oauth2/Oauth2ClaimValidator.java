@@ -71,8 +71,13 @@ import org.slf4j.Logger;
  */
 public class Oauth2ClaimValidator {
 
+	private static final String MATCH_MODE_PREFIX_OR_SHORT = "[]";
+	private static final String MATCH_MODE_PREFIX_OR = "[or]";
+	private static final String MATCH_MODE_PREFIX_AND = "[and]";
+
 	private Logger log;
 	private Map<String, List<String>> claimsToValidate;
+	private Map<String, ClaimMatchMode> claimsMatchMode;
 
 	/**
 	 * Costruttore che accetta Properties e costruisce automaticamente la mappa dei claim.
@@ -91,6 +96,7 @@ public class Oauth2ClaimValidator {
 	 */
 	public Oauth2ClaimValidator(Logger log, Properties loginProperties) {
 		this.log = log;
+		this.claimsMatchMode = new HashMap<>();
 		this.claimsToValidate = parseClaimsFromProperties(loginProperties);
 	}
 
@@ -140,8 +146,26 @@ public class Oauth2ClaimValidator {
 
 		String valuesStr = properties.getProperty(key);
 		if (StringUtils.isNotEmpty(valuesStr)) {
-			List<String> allowedValues = parseAllowedValues(valuesStr);
-	
+			// Rileva prefisso match mode
+			ClaimMatchMode matchMode = ClaimMatchMode.EXACT;
+			String valuesStrWithoutPrefix = valuesStr;
+			if (valuesStr.startsWith(MATCH_MODE_PREFIX_OR)) {
+				matchMode = ClaimMatchMode.OR;
+				valuesStrWithoutPrefix = valuesStr.substring(MATCH_MODE_PREFIX_OR.length());
+			} else if (valuesStr.startsWith(MATCH_MODE_PREFIX_AND)) {
+				matchMode = ClaimMatchMode.AND;
+				valuesStrWithoutPrefix = valuesStr.substring(MATCH_MODE_PREFIX_AND.length());
+			} else if (valuesStr.startsWith(MATCH_MODE_PREFIX_OR_SHORT)) {
+				matchMode = ClaimMatchMode.OR;
+				valuesStrWithoutPrefix = valuesStr.substring(MATCH_MODE_PREFIX_OR_SHORT.length());
+			}
+
+			List<String> allowedValues = parseAllowedValues(valuesStrWithoutPrefix);
+
+			if (matchMode != ClaimMatchMode.EXACT) {
+				this.claimsMatchMode.put(claimName, matchMode);
+			}
+
 			claims.put(claimName, allowedValues);
 			logClaimConfiguration(claimName, allowedValues);
 		}
@@ -296,26 +320,65 @@ public class Oauth2ClaimValidator {
 			return;
 		}
 
-		// Verifica che il valore sia nella lista dei valori ammessi
-		boolean found = false;
-		for (String allowedValue : allowedValues) {
-			if (claimValue.equals(allowedValue)) {
-				found = true;
-				break;
+		// Determina la modalità di confronto
+		ClaimMatchMode matchMode = this.claimsMatchMode.get(claimName);
+		if (matchMode == null) {
+			matchMode = ClaimMatchMode.EXACT;
+		}
+
+		boolean valid;
+		if (matchMode == ClaimMatchMode.EXACT) {
+			// Verifica che il valore sia nella lista dei valori ammessi
+			valid = false;
+			for (String allowedValue : allowedValues) {
+				if (claimValue.equals(allowedValue)) {
+					valid = true;
+					break;
+				}
+			}
+		} else {
+			// Modalità OR/AND: splitta il valore del claim per virgola
+			List<String> claimTokens = new ArrayList<>();
+			for (String t : claimValue.split(",")) {
+				String trimmed = t.trim();
+				if (!trimmed.isEmpty()) {
+					claimTokens.add(trimmed);
+				}
+			}
+
+			if (matchMode == ClaimMatchMode.OR) {
+				// Almeno uno dei valori configurati deve essere presente nel claim
+				valid = false;
+				for (String allowedValue : allowedValues) {
+					if (claimTokens.contains(allowedValue)) {
+						valid = true;
+						break;
+					}
+				}
+			} else {
+				// AND: tutti i valori configurati devono essere presenti nel claim
+				valid = true;
+				for (String allowedValue : allowedValues) {
+					if (!claimTokens.contains(allowedValue)) {
+						valid = false;
+						break;
+					}
+				}
 			}
 		}
 
-		if (!found) {
+		if (!valid) {
 			result.setValid(false);
+			String modeLabel = (matchMode == ClaimMatchMode.EXACT) ? "" : " (mode: " + matchMode.name().toLowerCase() + ")";
 			result.addError("Claim '" + claimName + "' ha valore '" + claimValue +
-					"' che non è tra i valori ammessi: " + allowedValues);
+					"' che non è tra i valori ammessi: " + allowedValues + modeLabel);
 			if (this.log != null) {
-				this.log.warn("Claim '{}' ha valore '{}' non ammesso. Valori ammessi: {}",
-						claimName, claimValue, allowedValues);
+				this.log.warn("Claim '{}' ha valore '{}' non ammesso. Valori ammessi: {} (mode: {})",
+						claimName, claimValue, allowedValues, matchMode);
 			}
 		} else {
 			if (this.log != null) {
-				this.log.debug("Claim '{}' validato con successo. Valore: {}", claimName, claimValue);
+				this.log.debug("Claim '{}' validato con successo. Valore: {} (mode: {})", claimName, claimValue, matchMode);
 			}
 		}
 	}
@@ -398,5 +461,17 @@ public class Oauth2ClaimValidator {
 			sb.append("]");
 			return sb.toString();
 		}
+	}
+
+	/**
+	 * Modalità di confronto per i valori dei claim
+	 */
+	public enum ClaimMatchMode {
+		/** Confronto esatto: il valore del claim deve corrispondere a uno dei valori ammessi */
+		EXACT,
+		/** OR: almeno uno dei valori configurati deve essere presente tra i valori del claim (separati da virgola) */
+		OR,
+		/** AND: tutti i valori configurati devono essere presenti tra i valori del claim (separati da virgola) */
+		AND
 	}
 }

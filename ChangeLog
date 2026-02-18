@@ -3,6 +3,14 @@
 	* Rilasciata versione 3.3.19
 	
 2026-02-18  Andrea Poli <apoli@link.it>	
+
+	* [GovWayConsole, GovWayMonitor]
+	(https://github.com/link-it/govway/issues/280)
+	Nella configurazione delle console per l'integrazione con un authorization server OIDC/OAuth 
+	è stato aggiunto il supporto per l'utilizzo di variabili d'ambiente nelle proprietà di login. 
+	Inoltre è stata introdotta la possibilità di validare claim con valori di tipo array.
+	
+2026-02-18  Andrea Poli <apoli@link.it>	
 	
 	* [ProtocolloModIPA]
 	Risolto Bug #1724

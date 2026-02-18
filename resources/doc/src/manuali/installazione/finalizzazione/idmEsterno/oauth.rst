@@ -90,14 +90,45 @@ Per abilitare l’autenticazione tramite Keycloak è necessario intervenire sui 
         login.props.oauth2.principalClaim=preferred_username
         
 6. Validazione opzionale dei claim nel token. È possibile abilitare controlli aggiuntivi sui claim presenti nel token:
-       
+
      ::
 
         # Validazione dei claim del token
         # Inserire una riga per ogni claim da validare nella forma: login.props.oauth2.claims.validation.claimName=claimValues (lista di valori separati da virgola)
         #login.props.oauth2.claims.validation.claimName=claimValue1,claimValue2,...
         login.props.oauth2.claims.validation.iss=https://localhost:8543/realms/GovWay
-	login.props.oauth2.claims.validation.aud=account
+        login.props.oauth2.claims.validation.aud=account
+
+   È possibile validare anche claim annidati all'interno di oggetti JSON, utilizzando la notazione con il punto per navigare la struttura. Ad esempio, dato un token contenente:
+
+     ::
+
+        {
+          ...
+          "realm_access": {
+            "roles": ["offline_access", "default-roles-govway", "uma_authorization"]
+          },
+          "resource_access": {
+            "account": {
+              "roles": ["manage-account", "manage-account-links", "view-profile"]
+            }
+          }
+        }
+
+   Per i claim il cui valore è un array, il confronto esatto potrebbe non essere sufficiente. È possibile utilizzare un prefisso speciale nel valore della proprietà per attivare una logica di confronto basata sugli elementi dell'array:
+
+   - **[or]** oppure **[]**: almeno uno dei valori indicati deve essere presente nell'array del claim (logica OR);
+   - **[and]**: tutti i valori indicati devono essere presenti nell'array del claim (logica AND).
+
+   Esempio:
+
+     ::
+
+        # Verifica che il claim 'realm_access.roles' contenga almeno uno tra i valori indicati (OR)
+        login.props.oauth2.claims.validation.realm_access.roles=[]offline_access,default-roles-govway
+
+        # Verifica che il claim 'resource_access.account.roles' contenga tutti i valori indicati (AND)
+        login.props.oauth2.claims.validation.resource_access.account.roles=[and]manage-account,manage-account-links
 
 7. Parametri di connessione verso Keycloak:
 
