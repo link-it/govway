@@ -29,7 +29,9 @@ import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicyMapId
 import org.openspcoop2.core.controllo_traffico.beans.IDatiCollezionatiDistributed;
 import org.openspcoop2.core.controllo_traffico.constants.TipoControlloPeriodo;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.ActiveRequestDistributedIntervalManager;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.BuilderDatiCollezionatiDistributed;
+import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.utils.SemaphoreLock;
 import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
@@ -58,9 +60,13 @@ public class DatiCollezionatiDistributedRedisAtomicLong extends DatiCollezionati
 
 	// TTL configuration per la pulizia automatica dei contatori
 	private final transient RedisTTLConfig ttlConfig;
-	// TTL config per contatori senza intervallo temporale (es. activeRequestCounter, policyDate)
+	// TTL config per contatori senza intervallo temporale (es. policyDate, updatePolicyDate)
 	// Questi contatori devono avere renewTTLOnWrite=true per rimanere attivi
 	private final transient RedisTTLConfig ttlConfigNoInterval;
+	// TTL config per activeRequestCounter quando intervalloSecondi > 0:
+	// il contatore viene rimpiazzato ogni intervallo, quindi il TTL iniziale e' sufficiente
+	// e non serve rinnovarlo ad ogni scrittura (renewTTLOnWrite=false)
+	private final transient RedisTTLConfig ttlConfigActiveRequestInterval;
 
 	// data di registrazione/aggiornamento policy
 	
@@ -86,7 +92,12 @@ public class DatiCollezionatiDistributedRedisAtomicLong extends DatiCollezionati
 	private final transient DatoRAtomicLong distributedActiveRequestCounterDate; // data intervallo corrente (solo se intervallo > 0)
 
 	private transient DatoRAtomicLong distributedPolicyDenyRequestCounter; // policy bloccate
-	
+
+	// Cache locale per evitare round-trip Redis nel hot path (intervallo cambia ~1 volta/ora)
+	private volatile long lastKnownActiveRequestIntervalDate = -1;
+	private volatile long lastCheckedIntervalStartForCheck = -1;
+	private volatile long lastCheckedIntervalStartForStats = -1;
+
 	// I contatori da eliminare 
 	// Se si effettua il drop di un contatore quando si rileva il cambio di intervallo, potrebbe succedere che in un altro nodo del cluster che sta effettuando la fase di 'end'
 	// non rilevi più il contatore e di fatto quindi lo riprende partenzo da 0. Poi a sua volta capisce il cambio di intervallo e lo rielimina.
@@ -97,6 +108,16 @@ public class DatiCollezionatiDistributedRedisAtomicLong extends DatiCollezionati
 
 	private boolean initialized = false;
 
+	private static Logger getLogControlloTraffico() {
+		boolean debug = false;
+		try {
+			debug = OpenSPCoop2Properties.getInstance().isControlloTrafficoDebug();
+		} catch(Exception e) {
+			// ignore
+		}
+		return OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(debug);
+	}
+
 	public DatiCollezionatiDistributedRedisAtomicLong(Logger log, Date updatePolicyDate, Date gestorePolicyConfigDate, RedissonClient redisson, IDUnivocoGroupByPolicyMapId groupByPolicyMapId, ActivePolicy activePolicy) {
 		super(updatePolicyDate, gestorePolicyConfigDate);
 
@@ -106,23 +127,27 @@ public class DatiCollezionatiDistributedRedisAtomicLong extends DatiCollezionati
 
 		// Inizializza configurazione TTL basata sulla policy
 		this.ttlConfig = RedisTTLConfig.fromPolicy(activePolicy);
-		// TTL config per contatori senza intervallo (activeRequestCounter, policyDate)
+		// TTL config per contatori senza intervallo (policyDate, updatePolicyDate)
 		this.ttlConfigNoInterval = RedisTTLConfig.forCountersWithoutInterval();
 
 		this.initDatiIniziali(activePolicy);
 		this.checkDate(log, activePolicy); // inizializza le date se ci sono
-		
+
 		this.distributedPolicyDate = this.initPolicyDate();
 		this.distributedUpdatePolicyDate = this.initUpdatePolicyDate();
-		
+
 		this.distributedPolicyDegradoPrestazionaleDate = this.initPolicyDegradoPrestazionaleDate();
-		
+
 		this.distribuitedActiveRequestCounterPolicyRichiesteSimultanee = activePolicy.getConfigurazionePolicy().isSimultanee() &&
 				TipoControlloPeriodo.REALTIME.equals(activePolicy.getConfigurazionePolicy().getModalitaControllo());
 
 		// Inizializza l'intervallo per le richieste (per tutte le policy, non solo richieste simultanee)
 		this.richiesteSimultaneeIntervalloSecondi = ActiveRequestDistributedIntervalManager.getIntervalloSecondi();
 		this.distributedActiveRequestCounterDate = initActiveRequestCounterDate();
+
+		// TTL config per activeRequestCounter con intervallo: il contatore viene rimpiazzato
+		// periodicamente, quindi basta il TTL iniziale senza rinnovo ad ogni scrittura
+		this.ttlConfigActiveRequestInterval = initTTLConfigActiveRequestInterval();
 
 		if(this.distribuitedActiveRequestCounterPolicyRichiesteSimultanee){
 			this.distributedActiveRequestCounterForCheck = this.initActiveRequestCounters(getActiveRequestCounterIntervalDate());
@@ -181,6 +206,10 @@ public class DatiCollezionatiDistributedRedisAtomicLong extends DatiCollezionati
 		// Inizializza l'intervallo per le richieste (per tutte le policy, non solo richieste simultanee)
 		this.richiesteSimultaneeIntervalloSecondi = ActiveRequestDistributedIntervalManager.getIntervalloSecondi();
 		this.distributedActiveRequestCounterDate = initActiveRequestCounterDate();
+
+		// TTL config per activeRequestCounter con intervallo: il contatore viene rimpiazzato
+		// periodicamente, quindi basta il TTL iniziale senza rinnovo ad ogni scrittura
+		this.ttlConfigActiveRequestInterval = initTTLConfigActiveRequestInterval();
 
 		if(this.distribuitedActiveRequestCounterPolicyRichiesteSimultanee){
 			this.distributedActiveRequestCounterForCheck = this.initActiveRequestCounters(getActiveRequestCounterIntervalDate());
@@ -338,27 +367,38 @@ public class DatiCollezionatiDistributedRedisAtomicLong extends DatiCollezionati
 			return null;
 		}
 
-		long intervalStart = ActiveRequestDistributedIntervalManager.calcolaIntervalloCorrente(this.richiesteSimultaneeIntervalloSecondi);
+		// Fast path locale: se il cached e' gia' nell'intervallo corrente, non serve andare su Redis
+		long currentIntervalStart = ActiveRequestDistributedIntervalManager.calcolaIntervalloCorrente(this.richiesteSimultaneeIntervalloSecondi);
+		long cached = this.lastKnownActiveRequestIntervalDate;
+		if(cached > 0 && cached >= currentIntervalStart) {
+			return cached;
+		}
 
-		// Se esiste il contatore distribuito della data, verifica/aggiorna
+		// Solo alla prima chiamata o al cambio intervallo si va su Redis
 		if(this.distributedActiveRequestCounterDate != null) {
 			long distributedDate = this.distributedActiveRequestCounterDate.get();
 			if(distributedDate == 0) {
 				// Prima inizializzazione
-				this.distributedActiveRequestCounterDate.compareAndSet(0, intervalStart);
-				return intervalStart;
-			} else if(distributedDate < intervalStart) {
+				this.distributedActiveRequestCounterDate.compareAndSet(0, currentIntervalStart);
+				this.lastKnownActiveRequestIntervalDate = currentIntervalStart;
+				return currentIntervalStart;
+			} else if(distributedDate < currentIntervalStart) {
 				// L'intervallo è cambiato, prova ad aggiornare
-				if(this.distributedActiveRequestCounterDate.compareAndSet(distributedDate, intervalStart)) {
-					return intervalStart;
+				if(this.distributedActiveRequestCounterDate.compareAndSet(distributedDate, currentIntervalStart)) {
+					this.lastKnownActiveRequestIntervalDate = currentIntervalStart;
+					return currentIntervalStart;
 				}
 				// Un altro nodo ha già aggiornato, leggi il nuovo valore
-				return this.distributedActiveRequestCounterDate.get();
+				long newDate = this.distributedActiveRequestCounterDate.get();
+				this.lastKnownActiveRequestIntervalDate = newDate;
+				return newDate;
 			}
+			this.lastKnownActiveRequestIntervalDate = distributedDate;
 			return distributedDate;
 		}
 
-		return intervalStart;
+		this.lastKnownActiveRequestIntervalDate = currentIntervalStart;
+		return currentIntervalStart;
 	}
 
 	@Override
@@ -366,17 +406,28 @@ public class DatiCollezionatiDistributedRedisAtomicLong extends DatiCollezionati
 		return String.valueOf(this.groupByPolicyMapIdHashCode);
 	}
 
+	private RedisTTLConfig initTTLConfigActiveRequestInterval() {
+		if(this.richiesteSimultaneeIntervalloSecondi > 0 && this.ttlConfigNoInterval != null && this.ttlConfigNoInterval.isEnabled()) {
+			// Con intervalloSecondi > 0, il contatore viene rimpiazzato ogni intervallo.
+			// Il TTL deve coprire almeno 2 intervalli (il corrente + il cestino), si usa ×3 per sicurezza.
+			// renewTTLOnWrite=false perché non serve rinnovare: il contatore ha vita limitata.
+			return new RedisTTLConfig(true, ((long)this.richiesteSimultaneeIntervalloSecondi) * 3L, false);
+		}
+		return this.ttlConfigNoInterval;
+	}
+
 	private DatoRAtomicLong initActiveRequestCounters(Long intervalDate) {
 		// Se intervalDate è valorizzato, crea un contatore con timestamp nel nome (gestione a intervalli)
 		// Altrimenti crea un contatore senza timestamp (comportamento legacy)
 		if(intervalDate != null && intervalDate > 0) {
+			// Usa ttlConfigActiveRequestInterval: TTL=intervalloSecondi×3, renewTTLOnWrite=false
 			return new DatoRAtomicLong(this.redisson,
 					this.groupByPolicyMapIdHashCode+
 					BuilderDatiCollezionatiDistributed.DISTRUBUITED_INTERVAL_ACTIVE_REQUEST_COUNTER+
 					intervalDate+
 					BuilderDatiCollezionatiDistributed.DISTRUBUITED_SUFFIX_CONFIG_DATE+
 					(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1),
-					this.ttlConfigNoInterval);
+					this.ttlConfigActiveRequestInterval);
 		} else {
 			// Usa ttlConfigNoInterval perché activeRequestCounter non ha un intervallo temporale:
 			// conta le richieste attive in quel momento e deve rimanere attivo finché il client fa richieste
@@ -439,56 +490,80 @@ public class DatiCollezionatiDistributedRedisAtomicLong extends DatiCollezionati
 	protected void resetPolicyCounterForDate(Date date) {
 
 		if(this.initialized) {
+
+			// Pre-check senza semaforo (fast path): se l'intervallo non è cambiato, non serve acquisire il lock
+			long policyDate = date.getTime();
+			long actualSuper = super.policyDate!=null ? super.policyDate.getTime() : -1;
+			if(actualSuper==policyDate) {
+				this.distributedPolicyDate.ensureTTLApplied();
+				return;
+			}
+
+			boolean needEnsureTTL = false;
+			List<DatoRAtomicLong> toDelete = null;
 			SemaphoreLock slock = this.lock.acquireThrowRuntime("resetPolicyCounterForDate");
 			try {
-				long policyDate = date.getTime();
-				long actual = this.distributedPolicyDate.get();
-				long actualSuper = super.policyDate!=null ? super.policyDate.getTime() : -1;
-				if(actualSuper!=policyDate && actual<policyDate && this.distributedPolicyDate.compareAndSet(actual, policyDate)) {					
-				
-					// Solo 1 nodo del cluster deve entrare in questo codice, altrimenti vengono fatti destroy più volte sullo stesso contatore
-					// Potrà capitare che il cestino di un nodo non venga svuotato se si entra sempre sull'altro, cmq sia rimarrà 1 cestino con dei contatori di 1 intervallo.
-					// Non appena ci entra poi li distruggerà.
-			
-					// effettuo il drop creati due intervalli indietro
-					if(!this.cestinoPolicyCounters.isEmpty()) {
-						for (DatoRAtomicLong iAtomicLong : this.cestinoPolicyCounters) {
-							iAtomicLong.delete();
-						}
-						this.cestinoPolicyCounters.clear();
-					}
-					
-					if(this.distributedPolicyRequestCounter!=null || this.distributedPolicyDenyRequestCounter!=null || this.distributedPolicyCounter!=null) {
-						// conservo precedenti contatori
-						if(this.distributedPolicyRequestCounter!=null) {
-							this.cestinoPolicyCounters.add(this.distributedPolicyRequestCounter);
-						}
-						if(this.distributedPolicyDenyRequestCounter!=null) {
-							this.cestinoPolicyCounters.add(this.distributedPolicyDenyRequestCounter);
-						}
-						if(this.distributedPolicyCounter!=null) {
-							this.cestinoPolicyCounters.add(this.distributedPolicyCounter);
-						}
-					}
-
-				}
-				else {
-					// Se compareAndSet fallisce, il contatore esiste già (creato da altro nodo).
-					// Assicuriamo che abbia il TTL applicato.
-					this.distributedPolicyDate.ensureTTLApplied();
-				}
-
+				// Rileggi dopo aver acquisito il lock (double-check)
+				actualSuper = super.policyDate!=null ? super.policyDate.getTime() : -1;
 				if(actualSuper!=policyDate) {
+
+					long actual = this.distributedPolicyDate.get();
+					if(actual<policyDate && this.distributedPolicyDate.compareAndSet(actual, policyDate)) {
+
+						// Solo 1 nodo del cluster deve entrare in questo codice, altrimenti vengono fatti destroy più volte sullo stesso contatore
+						// Potrà capitare che il cestino di un nodo non venga svuotato se si entra sempre sull'altro, cmq sia rimarrà 1 cestino con dei contatori di 1 intervallo.
+						// Non appena ci entra poi li distruggerà.
+
+						// Raccolgo i contatori da eliminare (verranno cancellati fuori dal semaforo)
+						if(!this.cestinoPolicyCounters.isEmpty()) {
+							toDelete = new ArrayList<>(this.cestinoPolicyCounters);
+							this.cestinoPolicyCounters.clear();
+						}
+
+						if(this.distributedPolicyRequestCounter!=null || this.distributedPolicyDenyRequestCounter!=null || this.distributedPolicyCounter!=null) {
+							// conservo precedenti contatori
+							if(this.distributedPolicyRequestCounter!=null) {
+								this.cestinoPolicyCounters.add(this.distributedPolicyRequestCounter);
+							}
+							if(this.distributedPolicyDenyRequestCounter!=null) {
+								this.cestinoPolicyCounters.add(this.distributedPolicyDenyRequestCounter);
+							}
+							if(this.distributedPolicyCounter!=null) {
+								this.cestinoPolicyCounters.add(this.distributedPolicyCounter);
+							}
+						}
+
+					}
+					else {
+						// Se compareAndSet fallisce, il contatore esiste già (creato da altro nodo).
+						// L'ensureTTLApplied viene eseguito fuori dal semaforo per ridurre la contesa:
+						// è idempotente e sicuro da eseguire in parallelo da più thread.
+						needEnsureTTL = true;
+					}
 
 					// Serve per inizializzare i nuovi riferimenti ai contatori
 					initPolicyCounters(date.getTime());
 
 					// Serve per aggiornare la copia in ram del nodo in cui non si e' entrati nell'if precedente
 					super.resetPolicyCounterForDate(date);
+
+				}
+				else {
+					needEnsureTTL = true;
 				}
 
 			}finally {
 				this.lock.release(slock, "resetPolicyCounterForDate");
+			}
+
+			// Operazioni fuori dal semaforo: delete idempotenti e ensureTTL
+			if(toDelete != null) {
+				for (DatoRAtomicLong iAtomicLong : toDelete) {
+					iAtomicLong.delete();
+				}
+			}
+			if(needEnsureTTL) {
+				this.distributedPolicyDate.ensureTTLApplied();
 			}
 		}
 		else {
@@ -499,56 +574,79 @@ public class DatiCollezionatiDistributedRedisAtomicLong extends DatiCollezionati
 	
 	@Override
 	protected void resetPolicyCounterForDateDegradoPrestazionale(Date date) {
-		
+
 		if(this.initialized) {
-			
+
+			// Pre-check senza semaforo (fast path): se l'intervallo non è cambiato, non serve acquisire il lock
+			long policyDate = date.getTime();
+			long actualSuper = super.policyDegradoPrestazionaleDate!=null ? super.policyDegradoPrestazionaleDate.getTime() : -1;
+			if(actualSuper==policyDate) {
+				this.distributedPolicyDegradoPrestazionaleDate.ensureTTLApplied();
+				return;
+			}
+
+			boolean needEnsureTTL = false;
+			List<DatoRAtomicLong> toDelete = null;
 			SemaphoreLock slock = this.lock.acquireThrowRuntime("resetPolicyCounterForDateDegradoPrestazionale");
 			try {
-				long policyDate = date.getTime();
-				long actual = this.distributedPolicyDate.get();
-				long actualSuper = super.policyDegradoPrestazionaleDate!=null ? super.policyDegradoPrestazionaleDate.getTime() : -1;
-				if(actualSuper!=policyDate && actual<policyDate && this.distributedPolicyDegradoPrestazionaleDate.compareAndSet(actual, policyDate)) {	
-				
-					// Solo 1 nodo del cluster deve entrare in questo codice, altrimenti vengono fatti destroy più volte sullo stesso contatore
-					// Potrà capitare che il cestino di un nodo non venga svuotato se si entra sempre sull'altro, cmq sia rimarrà 1 cestino con dei contatori di 1 intervallo.
-					// Non appena ci entra poi li distruggerà.
-					
-					// effettuo il drop creati due intervalli indietro
-					if(!this.cestinoPolicyCountersDegradoPrestazionale.isEmpty()) {
-						for (DatoRAtomicLong iAtomicLong : this.cestinoPolicyCountersDegradoPrestazionale) {
-							iAtomicLong.delete();
-						}
-						this.cestinoPolicyCountersDegradoPrestazionale.clear();
-					}
-					
-					if(this.distributedPolicyRequestCounter!=null || this.distributedPolicyDenyRequestCounter!=null || this.distributedPolicyCounter!=null) {
-						// conservo precedenti contatori
-						if(this.distributedPolicyDegradoPrestazionaleCounter!=null) {
-							this.cestinoPolicyCountersDegradoPrestazionale.add(this.distributedPolicyDegradoPrestazionaleCounter);
-						}
-						if(this.distributedPolicyDegradoPrestazionaleRequestCounter!=null) {
-							this.cestinoPolicyCountersDegradoPrestazionale.add(this.distributedPolicyDegradoPrestazionaleRequestCounter);
-						}
-					}
-
-				}
-				else {
-					// Se compareAndSet fallisce, il contatore esiste già (creato da altro nodo).
-					// Assicuriamo che abbia il TTL applicato.
-					this.distributedPolicyDegradoPrestazionaleDate.ensureTTLApplied();
-				}
-
+				// Rileggi dopo aver acquisito il lock (double-check)
+				actualSuper = super.policyDegradoPrestazionaleDate!=null ? super.policyDegradoPrestazionaleDate.getTime() : -1;
 				if(actualSuper!=policyDate) {
+
+					long actual = this.distributedPolicyDate.get();
+					if(actual<policyDate && this.distributedPolicyDegradoPrestazionaleDate.compareAndSet(actual, policyDate)) {
+
+						// Solo 1 nodo del cluster deve entrare in questo codice, altrimenti vengono fatti destroy più volte sullo stesso contatore
+						// Potrà capitare che il cestino di un nodo non venga svuotato se si entra sempre sull'altro, cmq sia rimarrà 1 cestino con dei contatori di 1 intervallo.
+						// Non appena ci entra poi li distruggerà.
+
+						// Raccolgo i contatori da eliminare (verranno cancellati fuori dal semaforo)
+						if(!this.cestinoPolicyCountersDegradoPrestazionale.isEmpty()) {
+							toDelete = new ArrayList<>(this.cestinoPolicyCountersDegradoPrestazionale);
+							this.cestinoPolicyCountersDegradoPrestazionale.clear();
+						}
+
+						if(this.distributedPolicyRequestCounter!=null || this.distributedPolicyDenyRequestCounter!=null || this.distributedPolicyCounter!=null) {
+							// conservo precedenti contatori
+							if(this.distributedPolicyDegradoPrestazionaleCounter!=null) {
+								this.cestinoPolicyCountersDegradoPrestazionale.add(this.distributedPolicyDegradoPrestazionaleCounter);
+							}
+							if(this.distributedPolicyDegradoPrestazionaleRequestCounter!=null) {
+								this.cestinoPolicyCountersDegradoPrestazionale.add(this.distributedPolicyDegradoPrestazionaleRequestCounter);
+							}
+						}
+
+					}
+					else {
+						// Se compareAndSet fallisce, il contatore esiste già (creato da altro nodo).
+						// L'ensureTTLApplied viene eseguito fuori dal semaforo per ridurre la contesa:
+						// è idempotente e sicuro da eseguire in parallelo da più thread.
+						needEnsureTTL = true;
+					}
 
 					// Serve per inizializzare i nuovi riferimenti ai contatori
 					initPolicyCountersDegradoPrestazionale(policyDate);
 
 					// Serve per aggiornare la copia in ram del nodo in cui non si e' entrati nell'if precedente
 					super.resetPolicyCounterForDateDegradoPrestazionale(date);
+
+				}
+				else {
+					needEnsureTTL = true;
 				}
 
 			}finally {
 				this.lock.release(slock, "resetPolicyCounterForDateDegradoPrestazionale");
+			}
+
+			// Operazioni fuori dal semaforo: delete idempotenti e ensureTTL
+			if(toDelete != null) {
+				for (DatoRAtomicLong iAtomicLong : toDelete) {
+					iAtomicLong.delete();
+				}
+			}
+			if(needEnsureTTL) {
+				this.distributedPolicyDegradoPrestazionaleDate.ensureTTLApplied();
 			}
 		}
 		else {
@@ -597,27 +695,23 @@ public class DatiCollezionatiDistributedRedisAtomicLong extends DatiCollezionati
 			return;
 		}
 
-		long distributedDate = this.distributedActiveRequestCounterDate.get();
-		if(!ActiveRequestDistributedIntervalManager.isIntervalloCambiato(this.richiesteSimultaneeIntervalloSecondi, distributedDate)) {
-			return;
+		// Pre-check locale: calcolaIntervalloCorrente() e' una funzione pura (solo CPU, nessun I/O)
+		long currentIntervalStart = ActiveRequestDistributedIntervalManager.calcolaIntervalloCorrente(this.richiesteSimultaneeIntervalloSecondi);
+		if(currentIntervalStart == this.lastCheckedIntervalStartForCheck) {
+			return; // Nessun round-trip a Redis
 		}
 
-		long currentIntervalStart = ActiveRequestDistributedIntervalManager.calcolaIntervalloCorrente(this.richiesteSimultaneeIntervalloSecondi);
-
-		// L'intervallo è cambiato
+		// L'intervallo potrebbe essere cambiato, procedi con verifica distribuita
+		List<DatoRAtomicLong> toDelete = null;
 		SemaphoreLock slock = this.lock.acquireThrowRuntime("checkActiveRequestCounterIntervalChangeForCheck");
 		try {
-			// Rileggi il valore dopo aver acquisito il lock
-			distributedDate = this.distributedActiveRequestCounterDate.get();
+			long distributedDate = this.distributedActiveRequestCounterDate.get();
 			if(ActiveRequestDistributedIntervalManager.isIntervalloCambiato(this.richiesteSimultaneeIntervalloSecondi, distributedDate)) {
 				// Prova ad aggiornare la data
 				if(this.distributedActiveRequestCounterDate.compareAndSet(distributedDate, currentIntervalStart)) {
-					// Svuota il cestino (contatori di 2 intervalli fa)
+					// Raccolgo i contatori da eliminare (verranno cancellati fuori dal semaforo)
 					if(!this.cestinoActiveRequestCounters.isEmpty()) {
-						for (DatoRAtomicLong counter : this.cestinoActiveRequestCounters) {
-							/**System.out.println("DESTROY ACTIVE ["+counter.getName()+"]");*/
-							counter.delete();
-						}
+						toDelete = new ArrayList<>(this.cestinoActiveRequestCounters);
 						this.cestinoActiveRequestCounters.clear();
 					}
 
@@ -626,14 +720,48 @@ public class DatiCollezionatiDistributedRedisAtomicLong extends DatiCollezionati
 
 					// Crea il nuovo contatore con il nuovo timestamp
 					this.distributedActiveRequestCounterForCheck = initActiveRequestCounters(currentIntervalStart);
+
+					// Aggiorna cache locale
+					this.lastKnownActiveRequestIntervalDate = currentIntervalStart;
+
+					getLogControlloTraffico().debug(
+						"[Redis] ForCheck CAS-WINNER policy={}: intervallo {} -> {} (old counter nel cestino, cestino.size={}, toDelete={})",
+						this.groupByPolicyMapIdHashCode, distributedDate, currentIntervalStart,
+						this.cestinoActiveRequestCounters.size(), (toDelete!=null ? toDelete.size() : 0));
 				} else {
 					// Un altro thread ha già aggiornato, leggi il nuovo valore e aggiorna il contatore
 					Long newDate = this.distributedActiveRequestCounterDate.get();
 					this.distributedActiveRequestCounterForCheck = initActiveRequestCounters(newDate);
+					this.lastKnownActiveRequestIntervalDate = newDate;
+
+					getLogControlloTraffico().debug(
+						"[Redis] ForCheck CAS-LOSER policy={}: aggiornato riferimento a intervallo {}",
+						this.groupByPolicyMapIdHashCode, newDate);
+				}
+			} else {
+				// L'intervallo distribuito è già stato aggiornato da un altro nodo (isIntervalloCambiato==false).
+				// Verifica se il riferimento locale è stale (punta ancora al vecchio intervallo).
+				if(distributedDate > 0 && distributedDate != this.lastKnownActiveRequestIntervalDate) {
+					this.distributedActiveRequestCounterForCheck = initActiveRequestCounters(distributedDate);
+					this.lastKnownActiveRequestIntervalDate = distributedDate;
+
+					getLogControlloTraffico().debug(
+						"[Redis] ForCheck STALE-FIX policy={}: aggiornato riferimento stale a intervallo {}",
+						this.groupByPolicyMapIdHashCode, distributedDate);
 				}
 			}
+			// Aggiorna il pre-check locale: l'intervallo e' stato verificato
+			this.lastCheckedIntervalStartForCheck = currentIntervalStart;
 		} finally {
 			this.lock.release(slock, "checkActiveRequestCounterIntervalChangeForCheck");
+		}
+
+		// Delete fuori dal semaforo: operazione idempotente, non impatta la correttezza
+		if(toDelete != null) {
+			for (DatoRAtomicLong counter : toDelete) {
+				/**System.out.println("DESTROY ACTIVE ["+counter.getName()+"]");*/
+				counter.delete();
+			}
 		}
 	}
 
@@ -646,27 +774,23 @@ public class DatiCollezionatiDistributedRedisAtomicLong extends DatiCollezionati
 			return;
 		}
 
-		long distributedDate = this.distributedActiveRequestCounterDate.get();
-		if(!ActiveRequestDistributedIntervalManager.isIntervalloCambiato(this.richiesteSimultaneeIntervalloSecondi, distributedDate)) {
-			return;
+		// Pre-check locale: calcolaIntervalloCorrente() e' una funzione pura (solo CPU, nessun I/O)
+		long currentIntervalStart = ActiveRequestDistributedIntervalManager.calcolaIntervalloCorrente(this.richiesteSimultaneeIntervalloSecondi);
+		if(currentIntervalStart == this.lastCheckedIntervalStartForStats) {
+			return; // Nessun round-trip a Redis
 		}
 
-		long currentIntervalStart = ActiveRequestDistributedIntervalManager.calcolaIntervalloCorrente(this.richiesteSimultaneeIntervalloSecondi);
-
-		// L'intervallo è cambiato
+		// L'intervallo potrebbe essere cambiato, procedi con verifica distribuita
+		List<DatoRAtomicLong> toDelete = null;
 		SemaphoreLock slock = this.lock.acquireThrowRuntime("checkActiveRequestCounterIntervalChangeForStats");
 		try {
-			// Rileggi il valore dopo aver acquisito il lock
-			distributedDate = this.distributedActiveRequestCounterDate.get();
+			long distributedDate = this.distributedActiveRequestCounterDate.get();
 			if(ActiveRequestDistributedIntervalManager.isIntervalloCambiato(this.richiesteSimultaneeIntervalloSecondi, distributedDate)) {
 				// Prova ad aggiornare la data
 				if(this.distributedActiveRequestCounterDate.compareAndSet(distributedDate, currentIntervalStart)) {
-					// Svuota il cestino (contatori di 2 intervalli fa)
+					// Raccolgo i contatori da eliminare (verranno cancellati fuori dal semaforo)
 					if(!this.cestinoActiveRequestCounters.isEmpty()) {
-						for (DatoRAtomicLong counter : this.cestinoActiveRequestCounters) {
-							/**System.out.println("DESTROY STAT ["+counter.getName()+"]");*/
-							counter.delete();
-						}
+						toDelete = new ArrayList<>(this.cestinoActiveRequestCounters);
 						this.cestinoActiveRequestCounters.clear();
 					}
 
@@ -675,14 +799,48 @@ public class DatiCollezionatiDistributedRedisAtomicLong extends DatiCollezionati
 
 					// Crea il nuovo contatore con il nuovo timestamp
 					this.distributedActiveRequestCounterForStats = initActiveRequestCounters(currentIntervalStart);
+
+					// Aggiorna cache locale
+					this.lastKnownActiveRequestIntervalDate = currentIntervalStart;
+
+					getLogControlloTraffico().debug(
+						"[Redis] ForStats CAS-WINNER policy={}: intervallo {} -> {} (old counter nel cestino, cestino.size={}, toDelete={})",
+						this.groupByPolicyMapIdHashCode, distributedDate, currentIntervalStart,
+						this.cestinoActiveRequestCounters.size(), (toDelete!=null ? toDelete.size() : 0));
 				} else {
 					// Un altro thread ha già aggiornato, leggi il nuovo valore e aggiorna il contatore
 					Long newDate = this.distributedActiveRequestCounterDate.get();
 					this.distributedActiveRequestCounterForStats = initActiveRequestCounters(newDate);
+					this.lastKnownActiveRequestIntervalDate = newDate;
+
+					getLogControlloTraffico().debug(
+						"[Redis] ForStats CAS-LOSER policy={}: aggiornato riferimento a intervallo {}",
+						this.groupByPolicyMapIdHashCode, newDate);
+				}
+			} else {
+				// L'intervallo distribuito è già stato aggiornato da un altro nodo (isIntervalloCambiato==false).
+				// Verifica se il riferimento locale è stale (punta ancora al vecchio intervallo).
+				if(distributedDate > 0 && distributedDate != this.lastKnownActiveRequestIntervalDate) {
+					this.distributedActiveRequestCounterForStats = initActiveRequestCounters(distributedDate);
+					this.lastKnownActiveRequestIntervalDate = distributedDate;
+
+					getLogControlloTraffico().debug(
+						"[Redis] ForStats STALE-FIX policy={}: aggiornato riferimento stale a intervallo {}",
+						this.groupByPolicyMapIdHashCode, distributedDate);
 				}
 			}
+			// Aggiorna il pre-check locale: l'intervallo e' stato verificato
+			this.lastCheckedIntervalStartForStats = currentIntervalStart;
 		} finally {
 			this.lock.release(slock, "checkActiveRequestCounterIntervalChangeForStats");
+		}
+
+		// Delete fuori dal semaforo: operazione idempotente, non impatta la correttezza
+		if(toDelete != null) {
+			for (DatoRAtomicLong counter : toDelete) {
+				/**System.out.println("DESTROY STAT ["+counter.getName()+"]");*/
+				counter.delete();
+			}
 		}
 	}
 
@@ -752,9 +910,12 @@ public class DatiCollezionatiDistributedRedisAtomicLong extends DatiCollezionati
 		}
 		else {
 			// Per le statistiche, decrementa solo se > 0
-			if(this.distributedActiveRequestCounterForStats.get() > 0) {
-				this.distributedActiveRequestCounterForStats.decrementAndGetAsync();
-			}
+			// Usa getAsync per evitare un round-trip sincrono verso Redis
+			this.distributedActiveRequestCounterForStats.getAsync().thenAccept(v -> {
+				if(v != null && v > 0) {
+					this.distributedActiveRequestCounterForStats.decrementAndGetAsync();
+				}
+			});
 		}
 	}
 	@Override
