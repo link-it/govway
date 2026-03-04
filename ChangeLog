@@ -1,3 +1,28 @@
+2026-03-04  Andrea Poli <apoli@link.it>	
+	
+	* [GovWayCore]
+	Risolto Bug #1729
+	Risolte diverse anomalie presenti nella gestione dei contatori distribuiti (Hazelcast e Redis):
+	- corretto  meccanismo di rotazione degli intervalli temporali: i nodi che non vincevano la competizione CAS al cambio di intervallo 
+	  non aggiornavano il riferimento locale al nuovo contatore, causando `DistributedObjectDestroyedException` permanente (Hazelcast) 
+	  o contatori stale (Redis) dopo il cleanup del contatore scaduto.
+	- Aggiunta protezione nell'END-PATH delle richieste in-flight (Hazelcast) per gestire contatori distrutti durante la transizione di intervallo, 
+	  evitando la propagazione dell'errore al chiamante.
+	- Introdotto fail-fast in `DatoAtomicLong` (Hazelcast) per contatori distrutti nel CP Subsystem: 
+	  il retry era inutile (name poisoning permanente) e causava ~4.5s di latenza e log massivi sul partition owner.
+	- Introdotta ottimizzazione sui contatori Redis (Redisson): 
+	  . introdotto fast-path locale con cache `lastKnownActiveRequestIntervalDate` per evitare round-trip Redis nel hot path; 
+	  . pre-check senza semaforo in `resetPolicyCounterForDate`; 
+	  . TTL asincrono (`forceApplyTTLAsync`, `applyTTLIfNeededAsync`) in `DatoRAtomicLong.compareAndSet` per non bloccare il thread dentro il semaforo; 
+	  . TTL specifico per activeRequestCounter con intervallo (`intervalloSecondi×3`, `renewTTLOnWrite=false`); operazione `getAsync` in `DatoRAtomicLong`.
+	- Il timer di cleanup dei contatori orfani Hazelcast non distrugge più i contatori di coordinamento (senza intervallo) 
+	  per policy temporaneamente inattive. Nel CP Subsystem un nome distrutto è permanentemente avvelenato e non può essere ricreato, 
+	  rendendo la policy inutilizzabile alla ripresa del traffico. 
+	- Rinominata la proprietà `orphanedProxy.thresholdHours` in `orphanedProxy.threshold` con supporto per suffisso `h` (ore) e `m` (minuti) 
+	  per una configurazione più flessibile.
+	- Aggiunto filtro RegexFilter a livello appender nel log4j2 per sopprimere i messaggi "is already destroyed" loggati internamente da Hazelcast 
+	  sul partition owner, già gestiti dal codice applicativo.
+
 2026-02-20  Andrea Poli <apoli@link.it>
 
 	* Rilasciata versione 3.3.19

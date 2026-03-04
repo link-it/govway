@@ -33,7 +33,9 @@ import org.openspcoop2.core.controllo_traffico.beans.IDatiCollezionatiDistribute
 import org.openspcoop2.core.controllo_traffico.constants.TipoControlloPeriodo;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreadsType;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.ActiveRequestDistributedIntervalManager;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.BuilderDatiCollezionatiDistributed;
+import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.utils.SemaphoreLock;
 import org.slf4j.Logger;
 
@@ -105,8 +107,23 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 	private transient List<DatoAtomicLong> cestinoPolicyCounters = new ArrayList<>();
 	private transient List<DatoAtomicLong> cestinoPolicyCountersDegradoPrestazionale = new ArrayList<>();
 	private transient List<DatoAtomicLong> cestinoActiveRequestCounters = new ArrayList<>();
-		
+
+	// Cache locale per evitare round-trip Hazelcast nel hot path (intervallo cambia ~1 volta/ora)
+	private volatile long lastKnownActiveRequestIntervalDate = -1;
+	private volatile long lastCheckedIntervalStartForCheck = -1;
+	private volatile long lastCheckedIntervalStartForStats = -1;
+
 	private boolean initialized = false;
+
+	private static Logger getLogControlloTraffico() {
+		boolean debug = false;
+		try {
+			debug = OpenSPCoop2Properties.getInstance().isControlloTrafficoDebug();
+		} catch(Exception e) {
+			// ignore
+		}
+		return OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(debug);
+	}
 
 	public DatiCollezionatiDistributedAtomicLong(Logger log, Date updatePolicyDate, Date gestorePolicyConfigDate, HazelcastInstance hazelcast, IDUnivocoGroupByPolicyMapId groupByPolicyMapId, ActivePolicy activePolicy,
 			PolicyGroupByActiveThreadsType policyType) {
@@ -326,32 +343,40 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 
 	@Override
 	protected Long getActiveRequestCounterIntervalDate() {
-		// Calcola la data dell'intervallo corrente per le richieste simultanee
 		if(this.richiesteSimultaneeIntervalloSecondi <= 0) {
 			return null;
 		}
 
-		long intervalStart = ActiveRequestDistributedIntervalManager.calcolaIntervalloCorrente(this.richiesteSimultaneeIntervalloSecondi);
+		// Calcolo locale: nessun round-trip a Hazelcast
+		long currentIntervalStart = ActiveRequestDistributedIntervalManager.calcolaIntervalloCorrente(this.richiesteSimultaneeIntervalloSecondi);
 
-		// Se esiste il contatore distribuito della data, verifica/aggiorna
+		long cached = this.lastKnownActiveRequestIntervalDate;
+		if(cached > 0 && cached >= currentIntervalStart) {
+			return cached;
+		}
+
+		// Solo alla prima chiamata o al cambio intervallo si va su Hazelcast
 		if(this.distributedActiveRequestCounterDate != null) {
 			long distributedDate = this.distributedActiveRequestCounterDate.get();
 			if(distributedDate == 0) {
-				// Prima inizializzazione
-				this.distributedActiveRequestCounterDate.compareAndSet(0, intervalStart);
-				return intervalStart;
-			} else if(distributedDate < intervalStart) {
-				// L'intervallo è cambiato, prova ad aggiornare
-				if(this.distributedActiveRequestCounterDate.compareAndSet(distributedDate, intervalStart)) {
-					return intervalStart;
+				this.distributedActiveRequestCounterDate.compareAndSet(0, currentIntervalStart);
+				this.lastKnownActiveRequestIntervalDate = currentIntervalStart;
+				return currentIntervalStart;
+			} else if(distributedDate < currentIntervalStart) {
+				if(this.distributedActiveRequestCounterDate.compareAndSet(distributedDate, currentIntervalStart)) {
+					this.lastKnownActiveRequestIntervalDate = currentIntervalStart;
+					return currentIntervalStart;
 				}
-				// Un altro nodo ha già aggiornato, leggi il nuovo valore
-				return this.distributedActiveRequestCounterDate.get();
+				long newDate = this.distributedActiveRequestCounterDate.get();
+				this.lastKnownActiveRequestIntervalDate = newDate;
+				return newDate;
 			}
+			this.lastKnownActiveRequestIntervalDate = distributedDate;
 			return distributedDate;
 		}
 
-		return intervalStart;
+		this.lastKnownActiveRequestIntervalDate = currentIntervalStart;
+		return currentIntervalStart;
 	}
 
 	@Override
@@ -448,30 +473,35 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 	protected void resetPolicyCounterForDate(Date date) {
 
 		if(this.initialized) {
-			
+
+			long policyDate = date.getTime();
+			long actualSuper = super.policyDate!=null ? super.policyDate.getTime() : -1;
+
+			// Pre-check: se la data locale e' gia' aggiornata, non serve acquisire il semaforo
+			if(actualSuper==policyDate) {
+				return;
+			}
+
+			List<DatoAtomicLong> toDelete = null;
 			SemaphoreLock slock = this.lock.acquireThrowRuntime("resetPolicyCounterForDate");
 			try {
 				/**System.out.println("RESET");*/
-				long policyDate = date.getTime();
 				long actual = this.distributedPolicyDate.get();
-				long actualSuper = super.policyDate!=null ? super.policyDate.getTime() : -1;
-				if(actualSuper!=policyDate && actual<policyDate && this.distributedPolicyDate.compareAndSet(actual, policyDate)) {					
-				
+				actualSuper = super.policyDate!=null ? super.policyDate.getTime() : -1;
+				if(actualSuper!=policyDate && actual<policyDate && this.distributedPolicyDate.compareAndSet(actual, policyDate)) {
+
 					// Solo 1 nodo del cluster deve entrare in questo codice, altrimenti vengono fatti destroy più volte sullo stesso contatore
 					// Potrà capitare che il cestino di un nodo non venga svuotato se si entra sempre sull'altro, cmq sia rimarrà 1 cestino con dei contatori di 1 intervallo.
 					// Non appena ci entra poi li distruggerà.
-					
+
 					/**System.out.println("RESET ENTRO!");*/
-					
-					// effettuo il drop creati due intervalli indietro
+
+					// Raccolgo i contatori da eliminare (verranno cancellati fuori dal semaforo)
 					if(!this.cestinoPolicyCounters.isEmpty()) {
-						for (DatoAtomicLong iAtomicLong : this.cestinoPolicyCounters) {
-							/**System.out.println("DATA["+org.openspcoop2.utils.date.DateManager.getDate()+"]["+org.openspcoop2.utils.date.DateManager.getTimeMillis()+"] destroy ["+iAtomicLong.getName()+"]");*/
-							iAtomicLong.destroy();
-						}
+						toDelete = new ArrayList<>(this.cestinoPolicyCounters);
 						this.cestinoPolicyCounters.clear();
 					}
-					
+
 					if(this.distributedPolicyRequestCounter!=null || this.distributedPolicyDenyRequestCounter!=null || this.distributedPolicyCounter!=null) {
 						// conservo precedenti contatori
 						if(this.distributedPolicyRequestCounter!=null) {
@@ -487,22 +517,29 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 							/**System.out.println("SALVO IN CESTINO DATA["+org.openspcoop2.utils.date.DateManager.getDate()+"]["+org.openspcoop2.utils.date.DateManager.getTimeMillis()+"] c ["+this.distributedPolicyCounter.getName()+"]");*/
 						}
 					}
-															
+
 				}
-				
+
 				if(actualSuper!=policyDate) {
-					
+
 					// Serve per inizializzare i nuovi riferimenti ai contatori
 					initPolicyCounters(policyDate);
-					
+
 					// Serve per aggiornare la copia in ram del nodo in cui non si e' entrati nell'if precedente
 					super.resetPolicyCounterForDate(date);
 				}
-				
+
 			}finally {
 				this.lock.release(slock, "resetPolicyCounterForDate");
 			}
-			
+
+			// Delete fuori dal semaforo: operazione idempotente, non impatta la correttezza
+			if(toDelete != null) {
+				for (DatoAtomicLong iAtomicLong : toDelete) {
+					/**System.out.println("DATA["+org.openspcoop2.utils.date.DateManager.getDate()+"]["+org.openspcoop2.utils.date.DateManager.getTimeMillis()+"] destroy ["+iAtomicLong.getName()+"]");*/
+					iAtomicLong.destroySafe();
+				}
+			}
 		}
 		else {
 			super.resetPolicyCounterForDate(date);
@@ -514,23 +551,29 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 	protected void resetPolicyCounterForDateDegradoPrestazionale(Date date) {
 		
 		if(this.initialized) {
-			
+
+			long policyDate = date.getTime();
+			long actualSuper = super.policyDegradoPrestazionaleDate!=null ? super.policyDegradoPrestazionaleDate.getTime() : -1;
+
+			// Pre-check: se la data locale e' gia' aggiornata, non serve acquisire il semaforo
+			if(actualSuper==policyDate) {
+				return;
+			}
+
+			List<DatoAtomicLong> toDelete = null;
 			SemaphoreLock slock = this.lock.acquireThrowRuntime("resetPolicyCounterForDateDegradoPrestazionale");
 			try {
-				long policyDate = date.getTime();
 				long actual = this.distributedPolicyDegradoPrestazionaleDate.get();
-				long actualSuper = super.policyDegradoPrestazionaleDate!=null ? super.policyDegradoPrestazionaleDate.getTime() : -1;
-				if(actualSuper!=policyDate && actual<policyDate && this.distributedPolicyDegradoPrestazionaleDate.compareAndSet(actual, policyDate)) {	
+				actualSuper = super.policyDegradoPrestazionaleDate!=null ? super.policyDegradoPrestazionaleDate.getTime() : -1;
+				if(actualSuper!=policyDate && actual<policyDate && this.distributedPolicyDegradoPrestazionaleDate.compareAndSet(actual, policyDate)) {
 				
 					// Solo 1 nodo del cluster deve entrare in questo codice, altrimenti vengono fatti destroy più volte sullo stesso contatore
 					// Potrà capitare che il cestino di un nodo non venga svuotato se si entra sempre sull'altro, cmq sia rimarrà 1 cestino con dei contatori di 1 intervallo.
 					// Non appena ci entra poi li distruggerà.
 					
-					// effettuo il drop creati due intervalli indietro
+					// Raccolgo i contatori da eliminare (verranno cancellati fuori dal semaforo)
 					if(!this.cestinoPolicyCountersDegradoPrestazionale.isEmpty()) {
-						for (DatoAtomicLong iAtomicLong : this.cestinoPolicyCountersDegradoPrestazionale) {
-							iAtomicLong.destroy();
-						}
+						toDelete = new ArrayList<>(this.cestinoPolicyCountersDegradoPrestazionale);
 						this.cestinoPolicyCountersDegradoPrestazionale.clear();
 					}
 					
@@ -543,7 +586,7 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 							this.cestinoPolicyCountersDegradoPrestazionale.add(this.distributedPolicyDegradoPrestazionaleRequestCounter);
 						}
 					}
-															
+																	
 				}
 				
 				if(actualSuper!=policyDate) {
@@ -557,14 +600,21 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 				
 			}finally {
 				this.lock.release(slock, "resetPolicyCounterForDateDegradoPrestazionale");
-			}	
+			}
+
+			// Delete fuori dal semaforo: operazione idempotente, non impatta la correttezza
+			if(toDelete != null) {
+				for (DatoAtomicLong iAtomicLong : toDelete) {
+					iAtomicLong.destroySafe();
+				}
+			}
 		}
 		else {
 			super.resetPolicyCounterForDateDegradoPrestazionale(date);
 		}
 	}
-	
-	
+
+
 	@Override
 	public void resetCounters(Date updatePolicyDate) {
 		super.resetCounters(updatePolicyDate);
@@ -649,27 +699,23 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 			return;
 		}
 
-		long distributedDate = this.distributedActiveRequestCounterDate.get();
-		if(!ActiveRequestDistributedIntervalManager.isIntervalloCambiato(this.richiesteSimultaneeIntervalloSecondi, distributedDate)) {
-			return;
+		// Pre-check locale: calcolaIntervalloCorrente() e' una funzione pura (solo CPU, nessun I/O)
+		long currentIntervalStart = ActiveRequestDistributedIntervalManager.calcolaIntervalloCorrente(this.richiesteSimultaneeIntervalloSecondi);
+		if(currentIntervalStart == this.lastCheckedIntervalStartForCheck) {
+			return; // Nessun round-trip a Hazelcast
 		}
 
-		long currentIntervalStart = ActiveRequestDistributedIntervalManager.calcolaIntervalloCorrente(this.richiesteSimultaneeIntervalloSecondi);
-
-		// L'intervallo è cambiato
+		// L'intervallo potrebbe essere cambiato, procedi con verifica distribuita
+		List<DatoAtomicLong> toDelete = null;
 		SemaphoreLock slock = this.lock.acquireThrowRuntime("checkActiveRequestCounterIntervalChangeForCheck");
 		try {
-			// Rileggi il valore dopo aver acquisito il lock
-			distributedDate = this.distributedActiveRequestCounterDate.get();
+			long distributedDate = this.distributedActiveRequestCounterDate.get();
 			if(ActiveRequestDistributedIntervalManager.isIntervalloCambiato(this.richiesteSimultaneeIntervalloSecondi, distributedDate)) {
 				// Prova ad aggiornare la data
 				if(this.distributedActiveRequestCounterDate.compareAndSet(distributedDate, currentIntervalStart)) {
-					// Svuota il cestino (contatori di 2 intervalli fa)
+					// Raccolgo i contatori da eliminare (verranno cancellati fuori dal semaforo)
 					if(!this.cestinoActiveRequestCounters.isEmpty()) {
-						for (DatoAtomicLong counter : this.cestinoActiveRequestCounters) {
-							/**System.out.println("DESTROY ACTIVE ["+counter.getName()+"]");*/
-							counter.destroy();
-						}
+						toDelete = new ArrayList<>(this.cestinoActiveRequestCounters);
 						this.cestinoActiveRequestCounters.clear();
 					}
 
@@ -678,14 +724,48 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 
 					// Crea il nuovo contatore con il nuovo timestamp
 					this.distributedActiveRequestCounterForCheck = initActiveRequestCounters(currentIntervalStart);
+
+					// Aggiorna cache locale
+					this.lastKnownActiveRequestIntervalDate = currentIntervalStart;
+
+					getLogControlloTraffico().debug(
+						"[AtomicLong] ForCheck CAS-WINNER policy={}: intervallo {} -> {} (old counter nel cestino, cestino.size={}, toDelete={})",
+						this.groupByPolicyMapIdHashCode, distributedDate, currentIntervalStart,
+						this.cestinoActiveRequestCounters.size(), (toDelete!=null ? toDelete.size() : 0));
 				} else {
 					// Un altro thread ha già aggiornato, leggi il nuovo valore e aggiorna il contatore
 					Long newDate = this.distributedActiveRequestCounterDate.get();
 					this.distributedActiveRequestCounterForCheck = initActiveRequestCounters(newDate);
+					this.lastKnownActiveRequestIntervalDate = newDate;
+
+					getLogControlloTraffico().debug(
+						"[AtomicLong] ForCheck CAS-LOSER policy={}: aggiornato riferimento a intervallo {}",
+						this.groupByPolicyMapIdHashCode, newDate);
+				}
+			} else {
+				// L'intervallo distribuito è già stato aggiornato da un altro nodo (isIntervalloCambiato==false).
+				// Verifica se il riferimento locale è stale (punta ancora al vecchio intervallo).
+				if(distributedDate > 0 && distributedDate != this.lastKnownActiveRequestIntervalDate) {
+					this.distributedActiveRequestCounterForCheck = initActiveRequestCounters(distributedDate);
+					this.lastKnownActiveRequestIntervalDate = distributedDate;
+
+					getLogControlloTraffico().debug(
+						"[AtomicLong] ForCheck STALE-FIX policy={}: aggiornato riferimento stale a intervallo {}",
+						this.groupByPolicyMapIdHashCode, distributedDate);
 				}
 			}
+			// Aggiorna il pre-check locale: l'intervallo e' stato verificato
+			this.lastCheckedIntervalStartForCheck = currentIntervalStart;
 		} finally {
 			this.lock.release(slock, "checkActiveRequestCounterIntervalChangeForCheck");
+		}
+
+		// Delete fuori dal semaforo: operazione idempotente, non impatta la correttezza
+		if(toDelete != null) {
+			for (DatoAtomicLong counter : toDelete) {
+				/**System.out.println("DESTROY ACTIVE ["+counter.getName()+"]");*/
+				counter.destroySafe();
+			}
 		}
 	}
 
@@ -698,27 +778,23 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 			return;
 		}
 
-		long distributedDate = this.distributedActiveRequestCounterDate.get();
-		if(!ActiveRequestDistributedIntervalManager.isIntervalloCambiato(this.richiesteSimultaneeIntervalloSecondi, distributedDate)) {
-			return;
+		// Pre-check locale: calcolaIntervalloCorrente() e' una funzione pura (solo CPU, nessun I/O)
+		long currentIntervalStart = ActiveRequestDistributedIntervalManager.calcolaIntervalloCorrente(this.richiesteSimultaneeIntervalloSecondi);
+		if(currentIntervalStart == this.lastCheckedIntervalStartForStats) {
+			return; // Nessun round-trip a Hazelcast
 		}
 
-		long currentIntervalStart = ActiveRequestDistributedIntervalManager.calcolaIntervalloCorrente(this.richiesteSimultaneeIntervalloSecondi);
-
-		// L'intervallo è cambiato
+		// L'intervallo potrebbe essere cambiato, procedi con verifica distribuita
+		List<DatoAtomicLong> toDelete = null;
 		SemaphoreLock slock = this.lock.acquireThrowRuntime("checkActiveRequestCounterIntervalChangeForStats");
 		try {
-			// Rileggi il valore dopo aver acquisito il lock
-			distributedDate = this.distributedActiveRequestCounterDate.get();
+			long distributedDate = this.distributedActiveRequestCounterDate.get();
 			if(ActiveRequestDistributedIntervalManager.isIntervalloCambiato(this.richiesteSimultaneeIntervalloSecondi, distributedDate)) {
 				// Prova ad aggiornare la data
 				if(this.distributedActiveRequestCounterDate.compareAndSet(distributedDate, currentIntervalStart)) {
-					// Svuota il cestino (contatori di 2 intervalli fa)
+					// Raccolgo i contatori da eliminare (verranno cancellati fuori dal semaforo)
 					if(!this.cestinoActiveRequestCounters.isEmpty()) {
-						for (DatoAtomicLong counter : this.cestinoActiveRequestCounters) {
-							/**System.out.println("DESTROY STAT ["+counter.getName()+"]");*/
-							counter.destroy();
-						}
+						toDelete = new ArrayList<>(this.cestinoActiveRequestCounters);
 						this.cestinoActiveRequestCounters.clear();
 					}
 
@@ -727,14 +803,48 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 
 					// Crea il nuovo contatore con il nuovo timestamp
 					this.distributedActiveRequestCounterForStats = initActiveRequestCounters(currentIntervalStart);
+
+					// Aggiorna cache locale
+					this.lastKnownActiveRequestIntervalDate = currentIntervalStart;
+
+					getLogControlloTraffico().debug(
+						"[AtomicLong] ForStats CAS-WINNER policy={}: intervallo {} -> {} (old counter nel cestino, cestino.size={}, toDelete={})",
+						this.groupByPolicyMapIdHashCode, distributedDate, currentIntervalStart,
+						this.cestinoActiveRequestCounters.size(), (toDelete!=null ? toDelete.size() : 0));
 				} else {
 					// Un altro thread ha già aggiornato, leggi il nuovo valore e aggiorna il contatore
 					Long newDate = this.distributedActiveRequestCounterDate.get();
 					this.distributedActiveRequestCounterForStats = initActiveRequestCounters(newDate);
+					this.lastKnownActiveRequestIntervalDate = newDate;
+
+					getLogControlloTraffico().debug(
+						"[AtomicLong] ForStats CAS-LOSER policy={}: aggiornato riferimento a intervallo {}",
+						this.groupByPolicyMapIdHashCode, newDate);
+				}
+			} else {
+				// L'intervallo distribuito è già stato aggiornato da un altro nodo (isIntervalloCambiato==false).
+				// Verifica se il riferimento locale è stale (punta ancora al vecchio intervallo).
+				if(distributedDate > 0 && distributedDate != this.lastKnownActiveRequestIntervalDate) {
+					this.distributedActiveRequestCounterForStats = initActiveRequestCounters(distributedDate);
+					this.lastKnownActiveRequestIntervalDate = distributedDate;
+
+					getLogControlloTraffico().debug(
+						"[AtomicLong] ForStats STALE-FIX policy={}: aggiornato riferimento stale a intervallo {}",
+						this.groupByPolicyMapIdHashCode, distributedDate);
 				}
 			}
+			// Aggiorna il pre-check locale: l'intervallo e' stato verificato
+			this.lastCheckedIntervalStartForStats = currentIntervalStart;
 		} finally {
 			this.lock.release(slock, "checkActiveRequestCounterIntervalChangeForStats");
+		}
+
+		// Delete fuori dal semaforo: operazione idempotente, non impatta la correttezza
+		if(toDelete != null) {
+			for (DatoAtomicLong counter : toDelete) {
+				/**System.out.println("DESTROY STAT ["+counter.getName()+"]");*/
+				counter.destroySafe();
+			}
 		}
 	}
 
@@ -752,16 +862,40 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 	
 	@Override
 	protected void internalRegisterEndRequestDecrementActiveRequestCounter() {
-		if(this.distribuitedActiveRequestCounterPolicyRichiesteSimultanee){
-			// Evita valori negativi: decrementa solo se > 0
-			if(this.distributedActiveRequestCounterForCheck.get() > 0) {
-				super.activeRequestCounter = this.distributedActiveRequestCounterForCheck.decrementAndGet();
+		try {
+			if(this.distribuitedActiveRequestCounterPolicyRichiesteSimultanee){
+				// Evita valori negativi: decrementa solo se > 0
+				if(this.distributedActiveRequestCounterForCheck.get() > 0) {
+					super.activeRequestCounter = this.distributedActiveRequestCounterForCheck.decrementAndGet();
+				}
 			}
-		}
-		else {
-			// Per le statistiche, decrementa solo se > 0
-			if(this.distributedActiveRequestCounterForStats.get() > 0) {
-				this.distributedActiveRequestCounterForStats.decrementAndGetAsync();
+			else {
+				// Per le statistiche, decrementa solo se > 0
+				if(this.distributedActiveRequestCounterForStats.get() > 0) {
+					this.distributedActiveRequestCounterForStats.decrementAndGetAsync();
+				}
+			}
+		} catch(Throwable e) {
+			// Il contatore è stato distrutto (cambio intervallo): il decremento non è più necessario
+			// poiché il contatore e il suo valore sono già stati abbandonati.
+			String counterName = null;
+			try {
+				if(this.distribuitedActiveRequestCounterPolicyRichiesteSimultanee) {
+					counterName = this.distributedActiveRequestCounterForCheck!=null ? this.distributedActiveRequestCounterForCheck.getName() : "null";
+				} else {
+					counterName = this.distributedActiveRequestCounterForStats!=null ? this.distributedActiveRequestCounterForStats.getName() : "null";
+				}
+			} catch(Throwable t) {
+				counterName = "error-getting-name";
+			}
+			if(e instanceof DistributedObjectDestroyedException) {
+				getLogControlloTraffico().debug(
+					"[AtomicLong] END-PATH destroyed-counter-caught policy={}: counter={} richiesteSimultanee={} msg={}",
+					this.groupByPolicyMapIdHashCode, counterName, this.distribuitedActiveRequestCounterPolicyRichiesteSimultanee, e.getMessage());
+			} else {
+				getLogControlloTraffico().error(
+					"[AtomicLong] END-PATH unexpected-error policy={}: counter={} richiesteSimultanee={} msg={}",
+					this.groupByPolicyMapIdHashCode, counterName, this.distribuitedActiveRequestCounterPolicyRichiesteSimultanee, e.getMessage(), e);
 			}
 		}
 	}
@@ -796,62 +930,62 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 	@Override
 	public void destroyDatiDistribuiti() {
 		if(this.distributedPolicyDate!=null) {
-			this.distributedPolicyDate.destroy();
+			this.distributedPolicyDate.destroySafe();
 		}
 		if(this.distributedUpdatePolicyDate!=null) {
-			this.distributedUpdatePolicyDate.destroy();
+			this.distributedUpdatePolicyDate.destroySafe();
 		}
 
 		if(this.distributedPolicyRequestCounter!=null) {
-			this.distributedPolicyRequestCounter.destroy();
+			this.distributedPolicyRequestCounter.destroySafe();
 		}
 		if(this.distributedPolicyCounter!=null) {
-			this.distributedPolicyCounter.destroy();
+			this.distributedPolicyCounter.destroySafe();
 		}
 
 		if(this.distributedPolicyDegradoPrestazionaleDate!=null) {
-			this.distributedPolicyDegradoPrestazionaleDate.destroy();
+			this.distributedPolicyDegradoPrestazionaleDate.destroySafe();
 		}
 		if(this.distributedPolicyDegradoPrestazionaleRequestCounter!=null) {
-			this.distributedPolicyDegradoPrestazionaleRequestCounter.destroy();
+			this.distributedPolicyDegradoPrestazionaleRequestCounter.destroySafe();
 		}
 		if(this.distributedPolicyDegradoPrestazionaleCounter!=null) {
-			this.distributedPolicyDegradoPrestazionaleCounter.destroy();
+			this.distributedPolicyDegradoPrestazionaleCounter.destroySafe();
 		}
 
 		if(this.distributedActiveRequestCounterForStats!=null) {
-			this.distributedActiveRequestCounterForStats.destroy();
+			this.distributedActiveRequestCounterForStats.destroySafe();
 		}
 		if(this.distributedActiveRequestCounterForCheck!=null) {
-			this.distributedActiveRequestCounterForCheck.destroy();
+			this.distributedActiveRequestCounterForCheck.destroySafe();
 		}
 		if(this.distributedActiveRequestCounterDate!=null) {
-			this.distributedActiveRequestCounterDate.destroy();
+			this.distributedActiveRequestCounterDate.destroySafe();
 		}
 		// Svuota il cestino dei contatori delle richieste simultanee
 		if(this.cestinoActiveRequestCounters!=null && !this.cestinoActiveRequestCounters.isEmpty()) {
 			for (DatoAtomicLong counter : this.cestinoActiveRequestCounters) {
-				counter.destroy();
+				counter.destroySafe();
 			}
 			this.cestinoActiveRequestCounters.clear();
 		}
 		// Svuota il cestino dei contatori delle policy (intervalli precedenti)
 		if(this.cestinoPolicyCounters!=null && !this.cestinoPolicyCounters.isEmpty()) {
 			for (DatoAtomicLong counter : this.cestinoPolicyCounters) {
-				counter.destroy();
+				counter.destroySafe();
 			}
 			this.cestinoPolicyCounters.clear();
 		}
 		// Svuota il cestino dei contatori del degrado prestazionale (intervalli precedenti)
 		if(this.cestinoPolicyCountersDegradoPrestazionale!=null && !this.cestinoPolicyCountersDegradoPrestazionale.isEmpty()) {
 			for (DatoAtomicLong counter : this.cestinoPolicyCountersDegradoPrestazionale) {
-				counter.destroy();
+				counter.destroySafe();
 			}
 			this.cestinoPolicyCountersDegradoPrestazionale.clear();
 		}
 
 		if(this.distributedPolicyDenyRequestCounter!=null) {
-			this.distributedPolicyDenyRequestCounter.destroy();
+			this.distributedPolicyDenyRequestCounter.destroySafe();
 		}
 	}
 	

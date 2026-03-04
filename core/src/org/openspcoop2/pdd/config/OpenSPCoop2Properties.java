@@ -31848,26 +31848,104 @@ public class OpenSPCoop2Properties {
 	private Long getControlloTrafficoGestorePolicyInMemoryHazelcastOrphanedProxyThresholdMs = null;
 	public Long getControlloTrafficoGestorePolicyInMemoryHazelcastOrphanedProxyThresholdMs() {
 		if(this.getControlloTrafficoGestorePolicyInMemoryHazelcastOrphanedProxyThresholdMs==null){
-			String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST.orphanedProxy.thresholdHours";
+			String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST.orphanedProxy.threshold";
 
 			try{
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties(pName);
 				if (name != null) {
 					name = name.trim();
-					long hours = Long.parseLong(name);
-					this.getControlloTrafficoGestorePolicyInMemoryHazelcastOrphanedProxyThresholdMs = hours * 60 * 60 * 1000;
+					this.getControlloTrafficoGestorePolicyInMemoryHazelcastOrphanedProxyThresholdMs = parseThresholdToMs(name);
 				} else {
-					this.logWarn(getMessaggioProprietaNonImpostata(pName,48));
-					this.getControlloTrafficoGestorePolicyInMemoryHazelcastOrphanedProxyThresholdMs = 48L * 60 * 60 * 1000;
+					this.logWarn(getMessaggioProprietaNonImpostata(pName,72));
+					this.getControlloTrafficoGestorePolicyInMemoryHazelcastOrphanedProxyThresholdMs = 72L * 60 * 60 * 1000;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn(getMessaggioProprietaNonImpostata(pName,e,48),e);
-				this.getControlloTrafficoGestorePolicyInMemoryHazelcastOrphanedProxyThresholdMs = 48L * 60 * 60 * 1000;
+				this.logWarn(getMessaggioProprietaNonImpostata(pName,e,72),e);
+				this.getControlloTrafficoGestorePolicyInMemoryHazelcastOrphanedProxyThresholdMs = 72L * 60 * 60 * 1000;
 			}
 		}
 
 		return this.getControlloTrafficoGestorePolicyInMemoryHazelcastOrphanedProxyThresholdMs;
+	}
+	private static long parseThresholdToMs(String value) {
+		if(value.endsWith("m") || value.endsWith("M")) {
+			long minutes = Long.parseLong(value.substring(0, value.length()-1).trim());
+			return minutes * 60 * 1000;
+		} else if(value.endsWith("h") || value.endsWith("H")) {
+			long hours = Long.parseLong(value.substring(0, value.length()-1).trim());
+			return hours * 60 * 60 * 1000;
+		} else {
+			// default: ore
+			long hours = Long.parseLong(value);
+			return hours * 60 * 60 * 1000;
+		}
+	}
+
+	// Cleanup contatori PNCounter (CRDT) senza intervallo per policy non più attive
+	private Boolean isControlloTrafficoGestorePolicyInMemoryHazelcastCleanupPNCounterWithoutInterval = null;
+	public boolean isControlloTrafficoGestorePolicyInMemoryHazelcastCleanupPNCounterWithoutInterval() {
+		if(this.isControlloTrafficoGestorePolicyInMemoryHazelcastCleanupPNCounterWithoutInterval==null){
+			String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST.orphanedProxy.cleanupPNCounterWithoutInterval";
+			try{
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name!=null){
+					name = name.trim();
+					this.isControlloTrafficoGestorePolicyInMemoryHazelcastCleanupPNCounterWithoutInterval = Boolean.parseBoolean(name);
+				}else{
+					this.isControlloTrafficoGestorePolicyInMemoryHazelcastCleanupPNCounterWithoutInterval = false;
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, false));
+				this.isControlloTrafficoGestorePolicyInMemoryHazelcastCleanupPNCounterWithoutInterval = false;
+			}
+		}
+		return this.isControlloTrafficoGestorePolicyInMemoryHazelcastCleanupPNCounterWithoutInterval;
+	}
+
+	// Cleanup contatori AtomicLong (CP Subsystem) senza intervallo per policy non più attive
+	private Boolean isControlloTrafficoGestorePolicyInMemoryHazelcastCleanupAtomicLongWithoutInterval = null;
+	public boolean isControlloTrafficoGestorePolicyInMemoryHazelcastCleanupAtomicLongWithoutInterval() {
+		if(this.isControlloTrafficoGestorePolicyInMemoryHazelcastCleanupAtomicLongWithoutInterval==null){
+			String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST.orphanedProxy.cleanupAtomicLongWithoutInterval";
+			try{
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name!=null){
+					name = name.trim();
+					this.isControlloTrafficoGestorePolicyInMemoryHazelcastCleanupAtomicLongWithoutInterval = Boolean.parseBoolean(name);
+				}else{
+					this.isControlloTrafficoGestorePolicyInMemoryHazelcastCleanupAtomicLongWithoutInterval = false;
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, false));
+				this.isControlloTrafficoGestorePolicyInMemoryHazelcastCleanupAtomicLongWithoutInterval = false;
+			}
+		}
+		return this.isControlloTrafficoGestorePolicyInMemoryHazelcastCleanupAtomicLongWithoutInterval;
+	}
+
+	// Cleanup contatori AtomicLong date (CP Subsystem) usati da PNCounter per policy non più attive
+	private Boolean isControlloTrafficoGestorePolicyInMemoryHazelcastCleanupPNCounterAtomicLongDatesWithoutInterval = null;
+	public boolean isControlloTrafficoGestorePolicyInMemoryHazelcastCleanupPNCounterAtomicLongDatesWithoutInterval() {
+		if(this.isControlloTrafficoGestorePolicyInMemoryHazelcastCleanupPNCounterAtomicLongDatesWithoutInterval==null){
+			String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST.orphanedProxy.cleanupPNCounterAtomicLongDatesWithoutInterval";
+			try{
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name!=null){
+					name = name.trim();
+					this.isControlloTrafficoGestorePolicyInMemoryHazelcastCleanupPNCounterAtomicLongDatesWithoutInterval = Boolean.parseBoolean(name);
+				}else{
+					this.isControlloTrafficoGestorePolicyInMemoryHazelcastCleanupPNCounterAtomicLongDatesWithoutInterval = false;
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, false));
+				this.isControlloTrafficoGestorePolicyInMemoryHazelcastCleanupPNCounterAtomicLongDatesWithoutInterval = false;
+			}
+		}
+		return this.isControlloTrafficoGestorePolicyInMemoryHazelcastCleanupPNCounterAtomicLongDatesWithoutInterval;
 	}
 
 	// Abilita il registry IMap per tracciare i contatori AtomicLong del CP Subsystem (per HAZELCAST_ATOMIC_LONG e HAZELCAST_ATOMIC_LONG_ASYNC)

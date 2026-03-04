@@ -945,12 +945,13 @@ public class DatiCollezionati implements Serializable {
 			Date now = DateManager.getDate();
 
 			boolean after = now.after(rightInterval);
-			if(activePolicy.getConfigurazioneControlloTraffico().isDebug()){
-				SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();
-				logDebug(log,"checkPolicyCounterForDate now["+dateformat.format(now)+"] after policyDate["+dateformat.format(rightInterval)+"]: "+after+"");
-			}
 			if(after){
-				
+
+				if(activePolicy.getConfigurazioneControlloTraffico().isDebug()){
+					SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();
+					logDebug(log,"checkPolicyCounterForDate intervalChange now["+dateformat.format(now)+"] policyDate["+dateformat.format(rightInterval)+"]");
+				}
+
 				if(TipoFinestra.PRECEDENTE.equals(this.getPolicyDateWindowInterval())){
 					// Salvo old
 					this.oldPolicyDate = this.policyDate;
@@ -971,10 +972,10 @@ public class DatiCollezionati implements Serializable {
 				dRight = DateUtils.convertToRightInterval(dRight, this.policyDateTypeInterval);*/
 				
 				boolean before = dRight.before(now);
-				if(activePolicy.getConfigurazioneControlloTraffico().isDebug()){
+				if(before && activePolicy.getConfigurazioneControlloTraffico().isDebug()){
 					SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();
-					logDebug(log,"checkPolicyCounterForDate Increment d["+dateformat.format(d)+"] dRight["+dateformat.format(dRight)+"] before now["+
-							dateformat.format(now)+"]: "+before);
+					logDebug(log,"checkPolicyCounterForDate multipleIntervalsSkip d["+dateformat.format(d)+"] dRight["+dateformat.format(dRight)+"] now["+
+							dateformat.format(now)+"]");
 				}
 				while(before){
 					
@@ -999,10 +1000,10 @@ public class DatiCollezionati implements Serializable {
 					dRight = DateUtils.convertToRightInterval(dRight, this.policyDateTypeInterval);*/
 					
 					before = dRight.before(now);
-					if(activePolicy.getConfigurazioneControlloTraffico().isDebug()){
+					if(before && activePolicy.getConfigurazioneControlloTraffico().isDebug()){
 						SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();
-						logDebug(log,"checkPolicyCounterForDate Increment d["+dateformat.format(d)+"] dRight["+dateformat.format(dRight)+"] before now["+
-								dateformat.format(now)+"]: "+before);
+						logDebug(log,"checkPolicyCounterForDate multipleIntervalsSkip d["+dateformat.format(d)+"] dRight["+dateformat.format(dRight)+"] now["+
+								dateformat.format(now)+"]");
 					}
 				}
 				
@@ -1036,12 +1037,13 @@ public class DatiCollezionati implements Serializable {
 			Date now = DateManager.getDate();
 
 			boolean after = now.after(rightInterval);
-			if(activePolicy.getConfigurazioneControlloTraffico().isDebug()){
-				SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();
-				logDebug(log,"checkPolicyCounterForDateDegradoPrestazionale now["+dateformat.format(now)+"] after policyDate["+dateformat.format(rightInterval)+"]: "+after+"");
-			}
 			if(after){
-				
+
+				if(activePolicy.getConfigurazioneControlloTraffico().isDebug()){
+					SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();
+					logDebug(log,"checkPolicyCounterForDateDegradoPrestazionale intervalChange now["+dateformat.format(now)+"] policyDate["+dateformat.format(rightInterval)+"]");
+				}
+
 				if(TipoFinestra.PRECEDENTE.equals(this.getPolicyDegradoPrestazionaleDateWindowInterval())){				
 					// Salvo old
 					this.oldPolicyDegradoPrestazionaleDate = this.policyDegradoPrestazionaleDate;
@@ -1056,10 +1058,10 @@ public class DatiCollezionati implements Serializable {
 				Date dRight = DateUtils.incrementDate(d, this.policyDegradoPrestazionaleDateTypeInterval, this.policyDegradoPrestazionaleDateInterval);
 				dRight = DateUtils.convertToRightInterval(dRight, this.policyDegradoPrestazionaleDateTypeInterval);
 				boolean before = dRight.before(now);
-				if(activePolicy.getConfigurazioneControlloTraffico().isDebug()){
+				if(before && activePolicy.getConfigurazioneControlloTraffico().isDebug()){
 					SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();
-					logDebug(log,"checkPolicyCounterForDateDegradoPrestazionale Increment d["+dateformat.format(d)+"] dRight["+dateformat.format(dRight)+"] before now["+
-							dateformat.format(now)+"]: "+before);
+					logDebug(log,"checkPolicyCounterForDateDegradoPrestazionale multipleIntervalsSkip d["+dateformat.format(d)+"] dRight["+dateformat.format(dRight)+"] now["+
+							dateformat.format(now)+"]");
 				}
 				while(before){
 					
@@ -1078,10 +1080,10 @@ public class DatiCollezionati implements Serializable {
 					dRight = DateUtils.incrementDate(d, this.policyDegradoPrestazionaleDateTypeInterval, this.policyDegradoPrestazionaleDateInterval);
 					dRight = DateUtils.convertToRightInterval(dRight, this.policyDegradoPrestazionaleDateTypeInterval);
 					before = dRight.before(now);
-					if(activePolicy.getConfigurazioneControlloTraffico().isDebug()){
+					if(before && activePolicy.getConfigurazioneControlloTraffico().isDebug()){
 						SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();
-						logDebug(log,"checkPolicyCounterForDateDegradoPrestazionale Increment d["+dateformat.format(d)+"] dRight["+dateformat.format(dRight)+"] before now["+
-								dateformat.format(now)+"]: "+before);
+						logDebug(log,"checkPolicyCounterForDateDegradoPrestazionale multipleIntervalsSkip d["+dateformat.format(d)+"] dRight["+dateformat.format(dRight)+"] now["+
+								dateformat.format(now)+"]");
 					}
 				}
 				resetPolicyCounterForDateDegradoPrestazionale(d);
@@ -2063,7 +2065,11 @@ public class DatiCollezionati implements Serializable {
 		
 		
 		// threads
-		Long getActiveRequestCounter = dati.getActiveRequestCounter(true);
+		// Viene usato 'false' (valori locali) invece di 'true' (valori distribuiti) poichè il metodo serialize viene
+		// invocato durante lo shutdown (contextDestroyed): i contatori distribuiti potrebbero essere già stati distrutti
+		// da un altro nodo del cluster, causando 'DistributedObjectDestroyedException' con N retry inutili prima del fallback.
+		// I valori locali sono allineati poichè ogni operazione distribuita aggiorna anche la copia locale (super.xxx).
+		Long getActiveRequestCounter = dati.getActiveRequestCounter(false);
 		if(getActiveRequestCounter != null)
 			bf.append(getActiveRequestCounter);
 		else
@@ -2113,19 +2119,19 @@ public class DatiCollezionati implements Serializable {
 		else
 			bf.append("-");
 		bf.append("\n");
-		Long getPolicyRequestCounter = dati.getPolicyRequestCounter(true);
+		Long getPolicyRequestCounter = dati.getPolicyRequestCounter(false);
 		if(getPolicyRequestCounter!=null)
 			bf.append(getPolicyRequestCounter);
 		else
 			bf.append("-");
 		bf.append("\n");
-		Long getPolicyCounter = dati.getPolicyCounter(true);
+		Long getPolicyCounter = dati.getPolicyCounter(false);
 		if(getPolicyCounter!=null)
 			bf.append(getPolicyCounter);
 		else
 			bf.append("-");
 		bf.append("\n");
-		Long getPolicyDenyRequestCounter = dati.getPolicyDenyRequestCounter(true);
+		Long getPolicyDenyRequestCounter = dati.getPolicyDenyRequestCounter(false);
 		if(getPolicyDenyRequestCounter!=null)
 			bf.append(getPolicyDenyRequestCounter);
 		else
@@ -2182,13 +2188,13 @@ public class DatiCollezionati implements Serializable {
 		else
 			bf.append("-");
 		bf.append("\n");
-		Long getPolicyDegradoPrestazionaleRequestCounter = dati.getPolicyDegradoPrestazionaleRequestCounter(true);
+		Long getPolicyDegradoPrestazionaleRequestCounter = dati.getPolicyDegradoPrestazionaleRequestCounter(false);
 		if(getPolicyDegradoPrestazionaleRequestCounter!=null)
 			bf.append(getPolicyDegradoPrestazionaleRequestCounter);
 		else
 			bf.append("-");
 		bf.append("\n");
-		Long getPolicyDegradoPrestazionaleCounter = dati.getPolicyDegradoPrestazionaleCounter(true);
+		Long getPolicyDegradoPrestazionaleCounter = dati.getPolicyDegradoPrestazionaleCounter(false);
 		if(getPolicyDegradoPrestazionaleCounter!=null)
 			bf.append(getPolicyDegradoPrestazionaleCounter);
 		else

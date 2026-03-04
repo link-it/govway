@@ -48,9 +48,11 @@ public class DatoPNCounter {
 	
 	private int failover = -1;
 	private int failoverCheckEveryMs = -1;
-	
+
 	private Logger logControlloTraffico;
-	
+
+	private boolean cleanupTimerEnabled = false;
+
 	public DatoPNCounter(HazelcastInstance hazelcast, String name) {
 		this.hazelcast = hazelcast;
 		this.name = name;
@@ -59,6 +61,7 @@ public class DatoPNCounter {
 		this.failover = op2Props.getHazelcastCPSubsystemDistributedObjectDestroyedExceptionFailover();
 		this.failoverCheckEveryMs = op2Props.getHazelcastCPSubsystemDistributedObjectDestroyedExceptionFailoverCheckEveryMs();
 		this.logControlloTraffico = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(op2Props.isControlloTrafficoDebug());
+		this.cleanupTimerEnabled = op2Props.isControlloTrafficoGestorePolicyInMemoryHazelcastOrphanedProxiesCleanupEnabled();
 	}
 	private void initCounter() {
 		this.counter = this.hazelcast.getPNCounter(this.name);
@@ -91,7 +94,34 @@ public class DatoPNCounter {
 	public void destroy() {
 		process(PNCounterOperation.DESTROY, -1, -1);
 	}
-	
+	/**
+	 * Rilascia il contatore in modo sicuro, evitando la 'DistributedObjectDestroyedException'.
+	 *
+	 * Nel CP Subsystem di Hazelcast, una volta chiamato destroy(), il nome dell'oggetto resta "avvelenato"
+	 * e non può essere ricreato: qualsiasi successiva getCPSubsystem().getAtomicLong(stessoNome)
+	 * restituisce un oggetto in stato "destroyed", causando:
+	 * 'com.hazelcast.spi.exception.DistributedObjectDestroyedException: AtomicValue[...] is already destroyed!'
+	 *
+	 * Questo si verifica quando un altro nodo del cluster sta ancora utilizzando il contatore
+	 * nel momento in cui viene distrutto, anche se il destroy avviene su contatori di 2 intervalli indietro (pattern "cestino").
+	 *
+	 * Se il timer di cleanup dei contatori orfani è abilitato (default), il destroy non viene eseguito
+	 * e la pulizia viene delegata al timer (HazelcastManager.cleanupOrphanedAtomicLongCounters).
+	 * Se il timer è disabilitato, il destroy viene eseguito direttamente;
+	 * eventuali errori vengono solo loggati senza propagare l'eccezione,
+	 * come avviene nel timer di cleanup (HazelcastManager.cleanupOrphanedProxies).
+	 */
+	public void destroySafe() {
+		if(this.cleanupTimerEnabled) {
+			return;
+		}
+		try {
+			destroy();
+		} catch(Throwable t) {
+			this.logControlloTraffico.error("[Hazelcast-PNCounter-"+this.name+"] destroySafe non riuscito: "+t.getMessage(),t);
+		}
+	}
+
 	private PNCounterResponse process(PNCounterOperation op, long arg1, long arg2) {
 		String prefix = "[Hazelcast-PNCounter-"+this.name+" operation:"+op+"] ";
 		if(this.failover>0) {

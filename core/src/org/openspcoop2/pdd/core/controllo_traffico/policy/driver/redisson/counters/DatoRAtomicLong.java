@@ -238,6 +238,11 @@ public class DatoRAtomicLong {
 		return r!=null ? r.valueL : -1; // else non dovrebbe succedere mai
 	}
 
+	public CompletionStage<Long> getAsync() {
+		RAtomicLongResponse r = process(RAtomicLongOperation.GET_ASYNC, -1, -1);
+		return r!=null ? r.valueAsync : null;
+	}
+
 	public long addAndGet(long value) {
 		RAtomicLongResponse r = process(RAtomicLongOperation.ADD_AND_GET, value, -1);
 		applyTTLIfNeeded();
@@ -304,11 +309,13 @@ public class DatoRAtomicLong {
 			// Dobbiamo applicare/rinnovare il TTL SEMPRE (ignora il flag ttlApplied),
 			// perché questo contatore (es. policyDate) può essere riutilizzato per più intervalli
 			// e il TTL deve essere esteso ad ogni scrittura per evitare scadenza prematura.
-			forceApplyTTL();
+			// Usa versione async per non bloccare il thread (e il semaforo) in attesa dell'EXPIRE
+			forceApplyTTLAsync();
 		} else {
 			// CAS fallito: la chiave esiste già con valore diverso.
 			// Applichiamo il TTL solo se non l'abbiamo già fatto (primo accesso da questo nodo).
-			applyTTLIfNeeded();
+			// Usa versione async per non bloccare il thread
+			applyTTLIfNeededAsync();
 		}
 		return casResult;
 	}
@@ -318,6 +325,7 @@ public class DatoRAtomicLong {
 	 * Usato dopo operazioni che modificano il valore (compareAndSet con successo)
 	 * per estendere la vita del contatore.
 	 */
+	@SuppressWarnings("unused")
 	private void forceApplyTTL() {
 		if (this.ttlConfig != null && this.ttlConfig.isEnabled()) {
 			try {
@@ -333,6 +341,28 @@ public class DatoRAtomicLong {
 				}
 			} catch (Exception e) {
 				/** System.out.println("[DEBUG-TTL] EXCEPTION in forceApplyTTL for: " + this.name +
+					" | " + e.getClass().getName() + ": " + e.getMessage()); */
+			}
+		}
+	}
+
+	/**
+	 * Versione asincrona di forceApplyTTL.
+	 * Non blocca il thread chiamante (utile quando invocato dentro un semaforo).
+	 */
+	private void forceApplyTTLAsync() {
+		if (this.ttlConfig != null && this.ttlConfig.isEnabled()) {
+			try {
+				long ttlSeconds = this.ttlConfig.getTtlSeconds();
+				if (ttlSeconds > 0) {
+					this.counter.expireAsync(Duration.ofSeconds(ttlSeconds)).thenAccept(applied -> {
+						if (applied != null && applied.booleanValue()) {
+							this.ttlApplied = true;
+						}
+					});
+				}
+			} catch (Exception e) {
+				/** System.out.println("[DEBUG-TTL] EXCEPTION in forceApplyTTLAsync for: " + this.name +
 					" | " + e.getClass().getName() + ": " + e.getMessage()); */
 			}
 		}
@@ -463,6 +493,8 @@ public class DatoRAtomicLong {
 			return null;
 		case GET:
 			return new RAtomicLongResponse(this.counter.get());
+		case GET_ASYNC:
+			return new RAtomicLongResponse(this.counter.getAsync());
 		case ADD_AND_GET:
 			return new RAtomicLongResponse(this.counter.addAndGet(arg1));
 		case INCREMENT_AND_GET:
@@ -492,7 +524,7 @@ public class DatoRAtomicLong {
 
 enum RAtomicLongOperation {
 	SET,
-	GET,
+	GET, GET_ASYNC,
 	ADD_AND_GET, INCREMENT_AND_GET, DECREMENT_AND_GET,
 	ADD_AND_GET_ASYNC, INCREMENT_AND_GET_ASYNC, DECREMENT_AND_GET_ASYNC,
 	COMPARE_AND_SET,

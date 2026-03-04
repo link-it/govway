@@ -59,6 +59,7 @@ public class DatoAtomicLong {
 	// Per il registry IMap (cleanup degli orfani)
 	private PolicyGroupByActiveThreadsType policyType;
 	private boolean registryEnabled = false;
+	private boolean cleanupTimerEnabled = false;
 
 	public DatoAtomicLong(HazelcastInstance hazelcast, String name) {
 		this(hazelcast, name, null);
@@ -79,6 +80,7 @@ public class DatoAtomicLong {
 			this.registryEnabled = true;
 			HazelcastManager.registerAtomicLongCounter(this.policyType, this.name);
 		}
+		this.cleanupTimerEnabled = op2Props.isControlloTrafficoGestorePolicyInMemoryHazelcastOrphanedProxiesCleanupEnabled();
 	}
 	private void initCounter() {
 		this.counter = this.hazelcast.getCPSubsystem().getAtomicLong(this.name);
@@ -119,6 +121,10 @@ public class DatoAtomicLong {
 		AtomicLongResponse r = process(AtomicLongOperation.DECREMENT_AND_GET_ASYNC, -1, -1);
 		return r!=null ? r.valueAsync : null; // else non dovrebbe succedere mai
 	}
+	public CompletionStage<Long> getAsync() {
+		AtomicLongResponse r = process(AtomicLongOperation.GET_ASYNC, -1, -1);
+		return r!=null ? r.valueAsync : null; // else non dovrebbe succedere mai
+	}
 	public boolean compareAndSet(long compare, long set) {
 		AtomicLongResponse r = process(AtomicLongOperation.COMPARE_AND_SET, compare, set);
 		return r!=null && r.valueB; // else non dovrebbe succedere mai
@@ -131,7 +137,34 @@ public class DatoAtomicLong {
 			HazelcastManager.unregisterAtomicLongCounter(this.policyType, this.name);
 		}
 	}
-	
+	/**
+	 * Rilascia il contatore in modo sicuro, evitando la 'DistributedObjectDestroyedException'.
+	 *
+	 * Nel CP Subsystem di Hazelcast, una volta chiamato destroy(), il nome dell'oggetto resta "avvelenato"
+	 * e non può essere ricreato: qualsiasi successiva getCPSubsystem().getAtomicLong(stessoNome)
+	 * restituisce un oggetto in stato "destroyed", causando:
+	 * 'com.hazelcast.spi.exception.DistributedObjectDestroyedException: AtomicValue[...] is already destroyed!'
+	 *
+	 * Questo si verifica quando un altro nodo del cluster sta ancora utilizzando il contatore
+	 * nel momento in cui viene distrutto, anche se il destroy avviene su contatori di 2 intervalli indietro (pattern "cestino").
+	 *
+	 * Se il timer di cleanup dei contatori orfani è abilitato (default), il destroy non viene eseguito
+	 * e la pulizia viene delegata al timer (HazelcastManager.cleanupOrphanedAtomicLongCounters).
+	 * Se il timer è disabilitato, il destroy viene eseguito direttamente;
+	 * eventuali errori vengono solo loggati senza propagare l'eccezione,
+	 * come avviene nel timer di cleanup (HazelcastManager.cleanupOrphanedAtomicLongCounters).
+	 */
+	public void destroySafe() {
+		if(this.cleanupTimerEnabled) {
+			return;
+		}
+		try {
+			destroy();
+		} catch(Throwable t) {
+			this.logControlloTraffico.error("[Hazelcast-IAtomicLong-"+this.name+"] destroySafe non riuscito: "+t.getMessage(),t);
+		}
+	}
+
 	private AtomicLongResponse process(AtomicLongOperation op, long arg1, long arg2) {
 		String prefix = "[Hazelcast-IAtomicLong-"+this.name+" operation:"+op+"] ";
 		if(this.failover>0) {
@@ -155,13 +188,11 @@ public class DatoAtomicLong {
 				success=true;
 				break;
 			} catch (DistributedObjectDestroyedException e) {
-				eFinal = e;
-				if(i==0) {
-					this.logControlloTraffico.error(prefix+"rilevato contatore distrutto (verrà riprovata la creazione): "+e.getMessage(),e);
-				}
-				else {
-					this.logControlloTraffico.error(prefix+"il tenativo i="+i+" di ricreare il contatore è fallito: "+e.getMessage(),e);
-				}
+				// Nel CP Subsystem, un nome distrutto è permanentemente avvelenato:
+				// initCounter() restituisce sempre un oggetto in stato "destroyed".
+				// Fail-fast: inutile riprovare, evita latenza (~4.5s) e log massivi.
+				this.logControlloTraffico.debug(prefix+"contatore distrutto (fail-fast, nessun retry): "+e.getMessage());
+				throw e;
 			} catch (RuntimeException e) {
 				// Controlla se è causata da MemberLeftException o TargetNotMemberException
 				Throwable cause = e.getCause();
@@ -230,6 +261,8 @@ public class DatoAtomicLong {
 			return null;
 		case GET:
 			return new AtomicLongResponse(this.counter.get());
+		case GET_ASYNC:
+			return new AtomicLongResponse(this.counter.getAsync());
 		case ADD_AND_GET:
 			return new AtomicLongResponse(this.counter.addAndGet(arg1));
 		case INCREMENT_AND_GET:
@@ -259,7 +292,7 @@ public class DatoAtomicLong {
 
 enum AtomicLongOperation {
 	SET,
-	GET,
+	GET, GET_ASYNC,
 	ADD_AND_GET, INCREMENT_AND_GET, DECREMENT_AND_GET,
 	ADD_AND_GET_ASYNC, INCREMENT_AND_GET_ASYNC, DECREMENT_AND_GET_ASYNC,
 	COMPARE_AND_SET,
