@@ -996,19 +996,25 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 	public Long getActiveRequestCounter(boolean readRemoteInfo) {
 		if(this.distribuitedActiveRequestCounterPolicyRichiesteSimultanee){
 			if(readRemoteInfo) {
+				if(this.richiesteSimultaneeIntervalloSecondi > 0) {
+					checkActiveRequestCounterIntervalChangeForCheck();
+				}
 				try {
 					return this.distributedActiveRequestCounterForCheck.get();
 				} catch (DistributedObjectDestroyedException e) {
 					// Durante lo shutdown o cambio intervallo, il contatore potrebbe essere stato distrutto
 					/**System.out.println("getActiveRequestCounter CATTURATA DistributedObjectDestroyedException: " + e.getClass().getName() + " - " + e.getMessage());*/
 					return super.activeRequestCounter;
-				} 
+				}
 			}
 			else {
 				return super.activeRequestCounter; // nelle operazioni di incremento/decremento l'ho aggiarnato via via e quindi il check utilizzerà questa informazione nel PolicyVerifier
 			}
 		}
 		else {
+			if(this.richiesteSimultaneeIntervalloSecondi > 0) {
+				checkActiveRequestCounterIntervalChangeForStats();
+			}
 			try {
 				return this.distributedActiveRequestCounterForStats.get();
 			} catch (DistributedObjectDestroyedException e) {

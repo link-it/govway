@@ -191,7 +191,7 @@ public class DatoAtomicLong {
 				// Nel CP Subsystem, un nome distrutto è permanentemente avvelenato:
 				// initCounter() restituisce sempre un oggetto in stato "destroyed".
 				// Fail-fast: inutile riprovare, evita latenza (~4.5s) e log massivi.
-				this.logControlloTraffico.debug(prefix+"contatore distrutto (fail-fast, nessun retry): "+e.getMessage());
+				this.logControlloTraffico.debug("{}contatore distrutto (fail-fast, nessun retry): {}", prefix, e.getMessage());
 				throw e;
 			} catch (RuntimeException e) {
 				// Controlla se è causata da MemberLeftException o TargetNotMemberException
@@ -202,10 +202,10 @@ public class DatoAtomicLong {
 				if (isMemberRelatedError(e, cause, exceptionName, causeName)) {
 					eFinal = e;
 					if(i==0) {
-						this.logControlloTraffico.error(prefix+"errore relativo a membro cluster ("+exceptionName+"/"+causeName+") durante operazione (verrà riprovata l'operazione): "+e.getMessage(),e);
+						this.logControlloTraffico.error("{}errore relativo a membro cluster ({}/{}) durante operazione (verrà riprovata l'operazione): {}", prefix, exceptionName, causeName, e.getMessage(),e);
 					}
 					else {
-						this.logControlloTraffico.error(prefix+"il tenativo i="+i+" è fallito per errore membro cluster ("+exceptionName+"/"+causeName+"): "+e.getMessage(),e);
+						this.logControlloTraffico.error("{}il tenativo i={} è fallito per errore membro cluster ({}/{}): {}", prefix, i, exceptionName, causeName, e.getMessage(),e);
 					}
 				} else {
 					// Se non è un errore relativo ai membri, rilancia immediatamente
@@ -281,7 +281,7 @@ public class DatoAtomicLong {
 			try {
 				this.counter.destroy();
 			}catch(Throwable e) {
-				this.logControlloTraffico.error(prefix+"destroy non riuscito: "+e.getMessage(),e);
+				this.logControlloTraffico.error("{}destroy non riuscito: {}", prefix, e.getMessage(),e);
 				throw e;
 			}
 			return null;		
