@@ -881,9 +881,9 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 			String counterName = null;
 			try {
 				if(this.distribuitedActiveRequestCounterPolicyRichiesteSimultanee) {
-					counterName = this.distributedActiveRequestCounterForCheck!=null ? this.distributedActiveRequestCounterForCheck.getName() : "null";
+					counterName = this.distributedActiveRequestCounterForCheck.getName();
 				} else {
-					counterName = this.distributedActiveRequestCounterForStats!=null ? this.distributedActiveRequestCounterForStats.getName() : "null";
+					counterName = this.distributedActiveRequestCounterForStats.getName();
 				}
 			} catch(Throwable t) {
 				counterName = "error-getting-name";

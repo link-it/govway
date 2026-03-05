@@ -208,6 +208,9 @@ public class DatoPNCounter {
 		}
 	}
 	private PNCounterResponse operationEngine(PNCounter pnCounter, String prefix, PNCounterOperation op, long arg1, long arg2){
+		if(arg2>0) {
+			// nop
+		}
 		switch (op) {
 		case GET:
 			return new PNCounterResponse(pnCounter.get());
