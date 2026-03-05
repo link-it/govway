@@ -43,15 +43,18 @@ public class DatoPNCounter {
 
 	private HazelcastInstance hazelcast;
 	private String name;
-	
+
 	private PNCounter counter;
-	
+
 	private int failover = -1;
 	private int failoverCheckEveryMs = -1;
 
 	private Logger logControlloTraffico;
 
 	private boolean cleanupTimerEnabled = false;
+
+	// Ultimo valore letto con successo, usato come fallback in caso di ConsistencyLostException persistente
+	private volatile long lastKnownValue = 0;
 
 	public DatoPNCounter(HazelcastInstance hazelcast, String name) {
 		this.hazelcast = hazelcast;
@@ -147,10 +150,10 @@ public class DatoPNCounter {
 			} catch (DistributedObjectDestroyedException e) {
 				eFinal = e;
 				if(i==0) {
-					this.logControlloTraffico.error(prefix+"rilevato contatore distrutto (verrà riprovata la creazione): "+e.getMessage(),e);
+					this.logControlloTraffico.error("{}rilevato contatore distrutto (verrà riprovata la creazione): {}", prefix, e.getMessage(),e);
 				}
 				else {
-					this.logControlloTraffico.error(prefix+"il tenativo i="+i+" di ricreare il contatore è fallito: "+e.getMessage(),e);
+					this.logControlloTraffico.error("{}il tenativo i={} di ricreare il contatore è fallito: {}", prefix, i, e.getMessage(),e);
 				}
 			}
 		}
@@ -171,25 +174,59 @@ public class DatoPNCounter {
 	}
 	
 	private PNCounterResponse operation(String prefix, PNCounterOperation op, long arg1, long arg2){
+		if(PNCounterOperation.DESTROY.equals(op)) {
+			return operationEngine(this.counter, prefix, op, arg1, arg2);
+		}
+		try {
+			PNCounterResponse r = operationEngine(this.counter, prefix, op, arg1, arg2);
+			if(r != null) {
+				this.lastKnownValue = r.valueL;
+			}
+			return r;
+		} catch (Exception e) {
+			// PNCounter è approssimativo (CRDT): gli errori transitori vengono gestiti con retry + fallback
+			// anziché propagati al client. Eccezioni note:
+			// - ConsistencyLostException: replica locale temporaneamente stale
+			// - IllegalStateException ("Attempt to reuse same operation"): bug interno PNCounterProxy sotto alta concorrenza
+			// - NoDataMemberInClusterException: nessun data member raggiungibile momentaneamente
+			// Crea un nuovo proxy PNCounter locale per il retry (non this.counter per evitare race condition).
+			/**System.out.println(prefix+"ConsistencyLostException, retry con nuova replica: "+e.getMessage());*/
+			this.logControlloTraffico.debug("{}{}, retry con nuova replica: {}", prefix, e.getClass().getSimpleName(), e.getMessage());
+			PNCounter retryCounter = this.hazelcast.getPNCounter(this.name);
+			try {
+				PNCounterResponse r = operationEngine(retryCounter, prefix, op, arg1, arg2);
+				if(r != null) {
+					this.lastKnownValue = r.valueL;
+				}
+				return r;
+			} catch (Exception e2) {
+				// Errore persistente: ritorna l'ultimo valore noto
+				/**System.out.println(prefix+"ConsistencyLostException persistente, fallback a lastKnownValue="+this.lastKnownValue);*/
+				this.logControlloTraffico.debug("{}eccezione persistente ({}), fallback a lastKnownValue={}", prefix, e2.getMessage(), this.lastKnownValue);
+				return new PNCounterResponse(this.lastKnownValue);
+			}
+		}
+	}
+	private PNCounterResponse operationEngine(PNCounter pnCounter, String prefix, PNCounterOperation op, long arg1, long arg2){
 		switch (op) {
 		case GET:
-			return new PNCounterResponse(this.counter.get());
+			return new PNCounterResponse(pnCounter.get());
 		case ADD_AND_GET:
-			return new PNCounterResponse(this.counter.addAndGet(arg1));
+			return new PNCounterResponse(pnCounter.addAndGet(arg1));
 		case INCREMENT_AND_GET:
-			return new PNCounterResponse(this.counter.incrementAndGet());
+			return new PNCounterResponse(pnCounter.incrementAndGet());
 		case DECREMENT_AND_GET:
-			return new PNCounterResponse(this.counter.decrementAndGet());
+			return new PNCounterResponse(pnCounter.decrementAndGet());
 		case SUBTRACT_AND_GET:
-			return new PNCounterResponse(this.counter.subtractAndGet(arg1));
+			return new PNCounterResponse(pnCounter.subtractAndGet(arg1));
 		case DESTROY:
 			try {
-				this.counter.destroy();
+				pnCounter.destroy();
 			}catch(Throwable e) {
-				this.logControlloTraffico.error(prefix+"destroy non riuscito: "+e.getMessage(),e);
+				this.logControlloTraffico.error("{}destroy non riuscito: {}", prefix, e.getMessage(),e);
 				throw e;
 			}
-			return null;		
+			return null;
 		}
 		return null;
 	}

@@ -1087,6 +1087,9 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 	public Long getActiveRequestCounter(boolean readRemoteInfo) {
 		if(this.distribuitedActiveRequestCounterPolicyRichiesteSimultanee){
 			if(readRemoteInfo) {
+				if(this.richiesteSimultaneeIntervalloSecondi > 0) {
+					checkActiveRequestCounterIntervalChangeForCheck();
+				}
 				return this.distributedActiveRequestCounterForCheck.sum();
 			}
 			else {
@@ -1094,6 +1097,9 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 			}
 		}
 		else {
+			if(this.richiesteSimultaneeIntervalloSecondi > 0) {
+				checkActiveRequestCounterIntervalChangeForStats();
+			}
 			return this.distributedActiveRequestCounterForStats.sum();
 		}
 	}

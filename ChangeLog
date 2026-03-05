@@ -1,3 +1,13 @@
+2026-03-05  Andrea Poli <apoli@link.it>	
+	
+	* [GovWayCore]
+	Risolto Bug #1729
+	Risolte anomalie nella gestione dei contatori distribuiti (Hazelcast e Redis):
+	- corretto riferimento stale al contatore 'activeRequests': aggiunta verifica cambio intervallo prima della lettura distribuita;
+	- aggiunta in PNCounter la gestione degli errori transitori Hazelcast (ConsistencyLostException, IllegalStateException, NoDataMemberInClusterException) 
+	  con retry su proxy locale e fallback a lastKnownValue. 
+	  Aggiornato RegexFilter log4j per filtrare anche i messaggi PNCounter gestiti dal codice applicativo.
+
 2026-03-04  Andrea Poli <apoli@link.it>	
 	
 	* [GovWayCore]

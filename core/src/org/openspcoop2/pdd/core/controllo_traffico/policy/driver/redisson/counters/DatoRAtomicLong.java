@@ -462,10 +462,10 @@ public class DatoRAtomicLong {
 			} catch (Exception e) {
 				eFinal = e;
 				if(i==0) {
-					this.logControlloTraffico.error(prefix+"rilevato contatore distrutto (verrà riprovata la creazione): "+e.getMessage(),e);
+					this.logControlloTraffico.error("{}rilevato contatore distrutto (verrà riprovata la creazione): {}", prefix, e.getMessage(),e);
 				}
 				else {
-					this.logControlloTraffico.error(prefix+"il tenativo i="+i+" di ricreare il contatore è fallito: "+e.getMessage(),e);
+					this.logControlloTraffico.error("{}il tenativo i={} di ricreare il contatore è fallito: {}", prefix, i, e.getMessage(),e);
 				}
 			}
 		}
@@ -513,7 +513,7 @@ public class DatoRAtomicLong {
 			try {
 				this.counter.delete();
 			}catch(Throwable e) {
-				this.logControlloTraffico.error(prefix+"delete non riuscito: "+e.getMessage(),e);
+				this.logControlloTraffico.error("{}delete non riuscito: {}", prefix, e.getMessage(),e);
 				throw e;
 			}
 			return null;

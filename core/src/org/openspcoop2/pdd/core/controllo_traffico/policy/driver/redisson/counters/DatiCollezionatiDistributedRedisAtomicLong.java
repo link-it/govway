@@ -1016,13 +1016,19 @@ public class DatiCollezionatiDistributedRedisAtomicLong extends DatiCollezionati
 	public Long getActiveRequestCounter(boolean readRemoteInfo) {
 		if(this.distribuitedActiveRequestCounterPolicyRichiesteSimultanee){
 			if(readRemoteInfo) {
-				return this.distributedActiveRequestCounterForCheck.get();	
+				if(this.richiesteSimultaneeIntervalloSecondi > 0) {
+					checkActiveRequestCounterIntervalChangeForCheck();
+				}
+				return this.distributedActiveRequestCounterForCheck.get();
 			}
 			else {
 				return super.activeRequestCounter; // nelle operazioni di incremento/decremento l'ho aggiarnato via via e quindi il check utilizzerà questa informazione nel PolicyVerifier
 			}
 		}
 		else {
+			if(this.richiesteSimultaneeIntervalloSecondi > 0) {
+				checkActiveRequestCounterIntervalChangeForStats();
+			}
 			return this.distributedActiveRequestCounterForStats.get();
 		}
 	}
