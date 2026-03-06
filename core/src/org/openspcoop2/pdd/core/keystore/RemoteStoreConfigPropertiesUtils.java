@@ -114,10 +114,7 @@ public class RemoteStoreConfigPropertiesUtils {
 			config.setStoreLabel(storeLabel);
 		}
 		
-		String tokenPolicy = getProperty(p, PROPERTY_STORE_TOKEN_POLICY, false);
-		if(tokenPolicy!=null && StringUtils.isNotEmpty(tokenPolicy)) {
-			config.setTokenPolicy(tokenPolicy);
-		}
+		readTokenPolicies(p, config);
 		
 		String storeUrl = getProperty(p, PROPERTY_STORE_URL, true);
 		config.setBaseUrl(storeUrl);
@@ -181,6 +178,23 @@ public class RemoteStoreConfigPropertiesUtils {
 		return config;
 	}
 	
+	private static void readTokenPolicies(Properties p, RemoteStoreConfig config) throws KeystoreException {
+		String tokenPolicy = getProperty(p, PROPERTY_STORE_TOKEN_POLICY, false);
+		if(tokenPolicy!=null && StringUtils.isNotEmpty(tokenPolicy)) {
+			if(tokenPolicy.contains(",")) {
+				String [] tokenPolicySplit = tokenPolicy.split(",");
+				for (String tp : tokenPolicySplit) {
+					if(tp!=null && StringUtils.isNotEmpty(tp.trim())) {
+						config.addTokenPolicy(tp.trim());
+					}
+				}
+			}
+			else {
+				config.addTokenPolicy(tokenPolicy);
+			}
+		}
+	}
+
 	private static Map<String, String> read(PropertiesReader pReader, String pName, Map<String, String> map) throws KeystoreException {
 		Properties properties = null;
 		try {

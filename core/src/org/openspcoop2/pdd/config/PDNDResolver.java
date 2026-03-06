@@ -108,7 +108,7 @@ public class PDNDResolver {
 	}
 	public static RemoteStoreConfig getRemoteStoreConfigByTokenPolicy(String name, IDSoggetto idDominio, List<RemoteStoreConfig> remoteStores) throws ProtocolException {
 		for (RemoteStoreConfig rsc : remoteStores) {
-			if(name.equals(rsc.getTokenPolicy())) {
+			if(rsc.getTokenPolicies()!=null && rsc.getTokenPolicies().contains(name)) {
 				if(rsc.isMultitenant() && idDominio!=null && idDominio.getNome()!=null) {
 					try {
 						return rsc.newInstanceMultitenant(idDominio.getNome());

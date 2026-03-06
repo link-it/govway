@@ -936,16 +936,23 @@ public class ControlStationCore {
 			if(listRSC!=null && !listRSC.isEmpty()) {
 				this.policyGestioneTokenPDND = new ArrayList<>();
 				for (RemoteStoreConfig r : listRSC) {
-					if(!this.policyGestioneTokenPDND.contains(r.getTokenPolicy())) {
-						this.policyGestioneTokenPDND.add(r.getTokenPolicy());
-					}
+					addTokenPolicies(r);
 				}
 			}
 		}catch(Exception e) {
 			ControlStationCore.logError("Errore di inizializzazione policy 'PDND': "+e.getMessage(), e);
 		}
 	}
-	
+	private void addTokenPolicies(RemoteStoreConfig r) {
+		if(r.getTokenPolicies()!=null) {
+			for (String tp : r.getTokenPolicies()) {
+				if(!this.policyGestioneTokenPDND.contains(tp)) {
+					this.policyGestioneTokenPDND.add(tp);
+				}
+			}
+		}
+	}
+
 	/** AttributeAuthority PropertiesSourceConfiguration */
 	private PropertiesSourceConfiguration attributeAuthorityPropertiesSourceConfiguration = null;
 	private boolean isAttributeAuthorityVerificaCertificati = false;

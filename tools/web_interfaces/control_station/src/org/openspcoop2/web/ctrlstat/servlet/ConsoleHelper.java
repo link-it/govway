@@ -21666,17 +21666,16 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 	}
 	private void readForceDPoP(List<ProtocolProperty> list, BooleanNullable forceDPoP) {
+		// se gia' determinato come false (una risorsa non richiede DPoP), non sovrascrivere con true
+		if(forceDPoP.getValue()!=null && !forceDPoP.getValue().booleanValue()) {
+			return;
+		}
 		String propertyName = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_DPOP;
 		if(list!=null && !list.isEmpty()) {
 			for (ProtocolProperty pp : list) {
 				if(pp.getName().equals(propertyName)) {
 					Boolean value = pp.getBooleanValue();
-					if(value != null && value.booleanValue()) {
-						forceDPoP.setValue(true);
-					}
-					else {
-						forceDPoP.setValue(false);
-					}
+					forceDPoP.setValue(value != null && value.booleanValue());
 					return;
 				}
 			}
@@ -21785,15 +21784,7 @@ public class ConsoleHelper implements IConsoleHelper {
 							leggiSorgente = true;
 						}
 						else {
-							if(forcePDNDApi!=null && forcePDNDApi.getValue()!=null) {
-								forcePDND.setValue(forcePDNDApi.getValue());
-							}
-							if(forceOAuthApi!=null && forceOAuthApi.getValue()!=null) {
-								forceOAuth.setValue(forceOAuthApi.getValue());
-							}
-							if(forceDPoPApi!=null && forceDPoPApi.getValue()!=null) {
-								forceDPoP.setValue(forceDPoPApi.getValue());
-							}
+							setForceTokenPolicyFromApi(forcePDND, forceOAuth, forceDPoP, forcePDNDApi, forceOAuthApi, forceDPoPApi);
 						}
 					}
 				}
@@ -21801,6 +21792,21 @@ public class ConsoleHelper implements IConsoleHelper {
 			if(leggiSorgente) {
 				readForceTokenPolicy(list, forcePDND, forceOAuth, forceDPoP);
 			}
+		}
+	}
+	private void setForceTokenPolicyFromApi(BooleanNullable forcePDND, BooleanNullable forceOAuth, BooleanNullable forceDPoP,
+			BooleanNullable forcePDNDApi, BooleanNullable forceOAuthApi, BooleanNullable forceDPoPApi) {
+		if(forcePDNDApi!=null && forcePDNDApi.getValue()!=null) {
+			forcePDND.setValue(forcePDNDApi.getValue());
+		}
+		if(forceOAuthApi!=null && forceOAuthApi.getValue()!=null) {
+			forceOAuth.setValue(forceOAuthApi.getValue());
+		}
+		if(forceDPoPApi!=null && forceDPoPApi.getValue()!=null &&
+			// se gia' determinato come false (una risorsa non richiede DPoP), non sovrascrivere con true
+			(forceDPoP.getValue()==null || !forceDPoPApi.getValue().booleanValue())
+			){
+				forceDPoP.setValue(forceDPoPApi.getValue());
 		}
 	}
 	private void readForceTokenPolicy(List<ProtocolProperty> list, BooleanNullable forcePDND, BooleanNullable forceOAuth, BooleanNullable forceDPoP) {
