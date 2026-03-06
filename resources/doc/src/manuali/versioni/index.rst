@@ -28,14 +28,14 @@ dell'Application Server, di Java e delle principali librerie di terze parti util
      - EOL
    * - ``3.4.x``
      - **Supportata**
-     - 21+
+     - 21
      - 11
      - 35 – 38 (JBoss EAP 8.1), 27 – 28 (JBoss EAP 8.0)
      - ``3.4.2``
      - —
    * - ``3.3.x``
      - **EOL imminente**
-     - 11+
+     - 11
      - 9
      - 26, 22 – 25 (JBoss EAP 7.4), 18 – 21 (JBoss EAP 7.3)
      - ``3.3.19``
@@ -59,7 +59,7 @@ Le seguenti versioni hanno raggiunto il termine del ciclo di vita. Si raccomanda
      - EOL
    * - ``3.2.x``
      - **EOL**
-     - 11+
+     - 11
      - 7 / 8 / 9
      - 18 (JBoss EAP 7.3), 14 – 17 (JBoss EAP 7.2), 11 (JBoss EAP 7.1), 10 (JBoss EAP 7.0)
      - ``3.2.2.p2``
