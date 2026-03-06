@@ -1,5 +1,14 @@
 2026-03-05  Andrea Poli <apoli@link.it>	
 	
+	* [ProtocolloModIPA, GovWayConsole]
+	Risolto Bug #1730
+	Aggiunta token policy built-in 'PDND-DPoP' per semplificare la configurazione della validazione DPoP (RFC 9449) 
+	nelle erogazioni con profilo ModI e generazione token di tipo 'Authorization PDND'. 
+	Corretta la selezione delle token policy proposte nel controllo degli accessi in presenza di risorse 
+	con configurazione DPoP mista (ereditata dall'API e ridefinita).
+
+2026-03-05  Andrea Poli <apoli@link.it>	
+	
 	* [GovWayCore]
 	Risolto Bug #1729
 	Risolte anomalie nella gestione dei contatori distribuiti (Hazelcast e Redis):

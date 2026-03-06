@@ -60,8 +60,10 @@ Per consentire a GovWay di utilizzare le risorse precedentemente descritte, veng
 
 - *Endpoint di esposizione delle API della PDND*: nella sezione 'connettore' deve essere indicata la corretta url di esposizione delle API PDND (figura :numref:`fruizioneAPIPDNDpassiPreliminariConnettore`):
 
+	- api-v1 ambiente di attestazione: https://api.att.interop.pagopa.it/1.0
 	- api-v1 ambiente di collaudo: https://api.uat.interop.pagopa.it/1.0
 	- api-v1 ambiente di produzione: https://api.interop.pagopa.it/1.0
+	- api-v2 ambiente di attestazione: https://api.att.interop.pagopa.it/v2	
 	- api-v2 ambiente di collaudo: https://api.uat.interop.pagopa.it/v2
 	- api-v2 ambiente di produzione: https://api.interop.pagopa.it/v2
 
@@ -79,6 +81,7 @@ Per consentire a GovWay di utilizzare le risorse precedentemente descritte, veng
 
 	- Url: deve essere indicato l'endpoint di negoziazione del voucher esposto dalla PDND:
 
+		- ambiente di attestazione: https://auth.att.interop.pagopa.it/token.oauth2
 		- ambiente di collaudo: https://auth.uat.interop.pagopa.it/token.oauth2
 		- ambiente di produzione: https://auth.interop.pagopa.it/token.oauth2
 
@@ -88,6 +91,7 @@ Per consentire a GovWay di utilizzare le risorse precedentemente descritte, veng
 
 	- Audience: deve essere indicato il corretto valore atteso dal servizio della PDND, valore che cambia in funzione dell'ambiente:
 
+		- ambiente di attestazione: auth.att.interop.pagopa.it/client-assertion
 		- ambiente di collaudo: auth.uat.interop.pagopa.it/client-assertion
 		- ambiente di produzione: auth.interop.pagopa.it/client-assertion
 

@@ -285,7 +285,7 @@ Prerequisiti:
 
 + Nel file /etc/govway/console_local.properties abilitare le seguenti proprietà (per retrocompatibilità nei test):
 
-	policyGestioneToken.pdnd=PDND,SimulazionePDND-KidInToken
+	policyGestioneToken.pdnd=PDND,PDND-DPoP,SimulazionePDND-KidInToken
 	policyGestioneToken.pdnd.useAllPDNDStores=false
 
 + Copiare nella cartella dell'application server che serve il contenuto statico, i ExampleClient1.crt, ExampleClient2.crt ed ExampleServer.crt, utilizzati

@@ -21,6 +21,7 @@ package org.openspcoop2.utils.certificate.remote;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.utils.UtilsException;
@@ -39,7 +40,7 @@ public class RemoteStoreConfig extends ExternalResourceConfig {
 	private String storeName;
 	private String storeLabel;
 	
-	private String tokenPolicy; 
+	private List<String> tokenPolicies; 
 	
 	private String baseUrl;
 	private String baseUrlFaultCheck; // url alternativa
@@ -75,7 +76,14 @@ public class RemoteStoreConfig extends ExternalResourceConfig {
 		RemoteStoreConfig cloned = new RemoteStoreConfig(this.storeName+"");
 		cloned.storeLabel = this.storeLabel!=null ? (this.storeLabel+"") : this.storeName;
 		
-		cloned.tokenPolicy = this.tokenPolicy!=null ? (this.tokenPolicy+"") : null;
+		if(this.tokenPolicies!=null) {
+			cloned.tokenPolicies = new ArrayList<>();
+			for (String tp : this.tokenPolicies) {
+				if(tp!=null) {
+					cloned.tokenPolicies.add(tp+"");
+				}
+			}
+		}
 		
 		cloned.baseUrl = this.baseUrl!=null ? (this.baseUrl+"") : null;
 		if(cloned.baseUrl!=null && this.baseUrlMultitenantDefaultString!=null && this.baseUrlMultitenantPlaceholder!=null && this.baseUrlMultitenantTenantString!=null) {
@@ -169,12 +177,19 @@ public class RemoteStoreConfig extends ExternalResourceConfig {
 		this.storeLabel = storeLabel;
 	}
 	
-	public String getTokenPolicy() {
-		return this.tokenPolicy;
+	public List<String> getTokenPolicies() {
+		return this.tokenPolicies;
 	}
 
-	public void setTokenPolicy(String tokenPolicy) {
-		this.tokenPolicy = tokenPolicy;
+	public void setTokenPolicies(List<String> tokenPolicies) {
+		this.tokenPolicies = tokenPolicies;
+	}
+
+	public void addTokenPolicy(String tokenPolicy) {
+		if(this.tokenPolicies==null) {
+			this.tokenPolicies = new ArrayList<>();
+		}
+		this.tokenPolicies.add(tokenPolicy);
 	}
 	
 	public String getKeyAlgorithm() {

@@ -2430,8 +2430,15 @@ public class GestoreTokenValidazioneUtilities {
 		List<RemoteStoreConfig> listRSC = ModIUtils.getRemoteStoreConfig();
 		if(listRSC!=null && !listRSC.isEmpty()) {
 			for (RemoteStoreConfig r : listRSC) {
-				if(!policyGestioneTokenPDND.contains(r.getTokenPolicy())) {
-					policyGestioneTokenPDND.add(r.getTokenPolicy());
+				addTokenPolicies(r);
+			}
+		}
+	}
+	private static void addTokenPolicies(RemoteStoreConfig r) {
+		if(r.getTokenPolicies()!=null) {
+			for (String tp : r.getTokenPolicies()) {
+				if(!policyGestioneTokenPDND.contains(tp)) {
+					policyGestioneTokenPDND.add(tp);
 				}
 			}
 		}
