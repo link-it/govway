@@ -796,80 +796,8 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 				
 			}
 			
-			// Keystore Path
-			AbstractConsoleItem<?> keystorePathItem = 	
-					ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(),
-							ModIConsoleCostanti.MODIPA_KEYSTORE_PATH_ID
-							);
-			if(keystorePathItem!=null) {
-				StringProperty keystorePathItemValue = 
-						(StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEYSTORE_PATH_ID);
-				if(keystorePathItemValue!=null && keystorePathItemValue.getValue()!=null && !"".equals(keystorePathItemValue.getValue())) {
-					try {
-						InputValidationUtils.validateTextAreaInput(keystorePathItemValue.getValue(), 
-								ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_LABEL +" - "+
-								ModIConsoleCostanti.MODIPA_KEYSTORE_PATH_LABEL);
-					}catch(Exception e) {
-						throw new ProtocolException(e.getMessage(),e);
-					}
-				}
-			}
-			
-			// Keystore password
-			AbstractConsoleItem<?> keystorePasswordItem = 	
-					ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(),
-							ModIConsoleCostanti.MODIPA_KEYSTORE_PASSWORD_ID
-							);
-			if(keystorePasswordItem!=null) {
-				StringProperty keystoreItemValue = 
-						(StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEYSTORE_PASSWORD_ID);
-				if(keystoreItemValue!=null && keystoreItemValue.getValue()!=null && !"".equals(keystoreItemValue.getValue())) {
-					try {
-						InputValidationUtils.validateTextInput(keystoreItemValue.getValue(), 
-								ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_LABEL +" - "+
-								ModIConsoleCostanti.MODIPA_KEYSTORE_PASSWORD_LABEL);
-					}catch(Exception e) {
-						throw new ProtocolException(e.getMessage(),e);
-					}
-				}
-			}
-			
-			// Key password
-			AbstractConsoleItem<?> keyPasswordItem = 	
-					ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(),
-							ModIConsoleCostanti.MODIPA_KEY_PASSWORD_ID
-							);
-			if(keyPasswordItem!=null) {
-				StringProperty keystoreItemValue = 
-						(StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEY_PASSWORD_ID);
-				if(keystoreItemValue!=null && keystoreItemValue.getValue()!=null && !"".equals(keystoreItemValue.getValue())) {
-					try {
-						InputValidationUtils.validateTextInput(keystoreItemValue.getValue(), 
-								ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_LABEL +" - "+
-								ModIConsoleCostanti.MODIPA_KEY_PASSWORD_LABEL);
-					}catch(Exception e) {
-						throw new ProtocolException(e.getMessage(),e);
-					}
-				}
-			}
-			// Key alias
-			AbstractConsoleItem<?> keyAliasItem = 	
-					ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(),
-							ModIConsoleCostanti.MODIPA_KEY_ALIAS_ID
-							);
-			if(keyAliasItem!=null) {
-				StringProperty keystoreItemValue = 
-						(StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEY_ALIAS_ID);
-				if(keystoreItemValue!=null && keystoreItemValue.getValue()!=null && !"".equals(keystoreItemValue.getValue())) {
-					try {
-						InputValidationUtils.validateTextInput(keystoreItemValue.getValue(), 
-								ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_LABEL +" - "+
-								ModIConsoleCostanti.MODIPA_KEY_ALIAS_LABEL);
-					}catch(Exception e) {
-						throw new ProtocolException(e.getMessage(),e);
-					}
-				}
-			}
+			validateKeystoreInput(consoleConfiguration, properties,
+					ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_LABEL);
 			
 			// TrustStore Path
 			AbstractConsoleItem<?> truststorePathItem = 	
@@ -990,6 +918,10 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 			}
 		}
 
+		// validazione keystore OAuth se presente (fuori dal blocco sicurezza messaggio)
+		validateKeystoreInput(consoleConfiguration, properties,
+				ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_LABEL);
+
 		// validazione DPoP se fruizioni e ridefinito
 		if(fruizioni) {
 			StringProperty dpopModeItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_DPOP_FRUIZIONE_KEYSTORE_MODE_ID);
@@ -1104,6 +1036,106 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 		return true;
 	}
 	
+	private static void validateKeystoreInput(ConsoleConfiguration consoleConfiguration, ProtocolProperties properties,
+			String keystoreLabel) throws ProtocolException {
+
+		// Keystore Path
+		AbstractConsoleItem<?> keystorePathItem =
+				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(),
+						ModIConsoleCostanti.MODIPA_KEYSTORE_PATH_ID);
+		if(keystorePathItem!=null) {
+			StringProperty keystorePathItemValue =
+					(StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEYSTORE_PATH_ID);
+			if(keystorePathItemValue!=null && keystorePathItemValue.getValue()!=null && !"".equals(keystorePathItemValue.getValue())) {
+				try {
+					String keystoreType = null;
+					StringProperty keystoreTypeItemValue =
+							(StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEYSTORE_TYPE_ID);
+					if(keystoreTypeItemValue!=null && keystoreTypeItemValue.getValue()!=null) {
+						keystoreType = keystoreTypeItemValue.getValue();
+					}
+					InputValidationUtils.validateTextAreaInput(keystorePathItemValue.getValue(),
+							keystoreLabel +" - "+
+							((ModIConsoleCostanti.MODIPA_KEYSTORE_TYPE_VALUE_KEY_PAIR.equals(keystoreType))? ModIConsoleCostanti.MODIPA_KEYSTORE_PATH_PRIVATE_KEY_LABEL : ModIConsoleCostanti.MODIPA_KEYSTORE_PATH_LABEL));
+				}catch(Exception e) {
+					throw new ProtocolException(e.getMessage(),e);
+				}
+			}
+		}
+
+		// Keystore Path Public Key
+		AbstractConsoleItem<?> keystorePathPublicKeyItem =
+				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(),
+						ModIConsoleCostanti.MODIPA_KEYSTORE_PATH_PUBLIC_KEY_ID);
+		if(keystorePathPublicKeyItem!=null) {
+			StringProperty keystorePathPublicKeyItemValue =
+					(StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEYSTORE_PATH_PUBLIC_KEY_ID);
+			if(keystorePathPublicKeyItemValue!=null && keystorePathPublicKeyItemValue.getValue()!=null && !"".equals(keystorePathPublicKeyItemValue.getValue())) {
+				try {
+					InputValidationUtils.validateTextAreaInput(keystorePathPublicKeyItemValue.getValue(),
+							keystoreLabel +" - "+
+							ModIConsoleCostanti.MODIPA_KEYSTORE_PATH_PUBLIC_KEY_LABEL);
+				}catch(Exception e) {
+					throw new ProtocolException(e.getMessage(),e);
+				}
+			}
+		}
+
+		// Keystore password
+		AbstractConsoleItem<?> keystorePasswordItem =
+				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(),
+						ModIConsoleCostanti.MODIPA_KEYSTORE_PASSWORD_ID);
+		if(keystorePasswordItem!=null) {
+			StringProperty keystoreItemValue =
+					(StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEYSTORE_PASSWORD_ID);
+			if(keystoreItemValue!=null && keystoreItemValue.getValue()!=null && !"".equals(keystoreItemValue.getValue())) {
+				try {
+					InputValidationUtils.validateTextInput(keystoreItemValue.getValue(),
+							keystoreLabel +" - "+
+							ModIConsoleCostanti.MODIPA_KEYSTORE_PASSWORD_LABEL);
+				}catch(Exception e) {
+					throw new ProtocolException(e.getMessage(),e);
+				}
+			}
+		}
+
+		// Key password
+		AbstractConsoleItem<?> keyPasswordItem =
+				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(),
+						ModIConsoleCostanti.MODIPA_KEY_PASSWORD_ID);
+		if(keyPasswordItem!=null) {
+			StringProperty keystoreItemValue =
+					(StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEY_PASSWORD_ID);
+			if(keystoreItemValue!=null && keystoreItemValue.getValue()!=null && !"".equals(keystoreItemValue.getValue())) {
+				try {
+					InputValidationUtils.validateTextInput(keystoreItemValue.getValue(),
+							keystoreLabel +" - "+
+							ModIConsoleCostanti.MODIPA_KEY_PASSWORD_LABEL);
+				}catch(Exception e) {
+					throw new ProtocolException(e.getMessage(),e);
+				}
+			}
+		}
+
+		// Key alias
+		AbstractConsoleItem<?> keyAliasItem =
+				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(),
+						ModIConsoleCostanti.MODIPA_KEY_ALIAS_ID);
+		if(keyAliasItem!=null) {
+			StringProperty keystoreItemValue =
+					(StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEY_ALIAS_ID);
+			if(keystoreItemValue!=null && keystoreItemValue.getValue()!=null && !"".equals(keystoreItemValue.getValue())) {
+				try {
+					InputValidationUtils.validateTextInput(keystoreItemValue.getValue(),
+							keystoreLabel +" - "+
+							ModIConsoleCostanti.MODIPA_KEY_ALIAS_LABEL);
+				}catch(Exception e) {
+					throw new ProtocolException(e.getMessage(),e);
+				}
+			}
+		}
+	}
+
 	private static void checkClaims(ModIProperties modiProperties,
 			Properties claims, String elemento, boolean request, boolean digest, boolean corniceSicurezzaLegacy) throws ProtocolException {
 		List<String> denyClaims = null;
