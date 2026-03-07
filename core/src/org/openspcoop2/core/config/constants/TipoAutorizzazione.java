@@ -157,7 +157,7 @@ public enum TipoAutorizzazione implements IEnumeration , Serializable , Cloneabl
 	
 	public static boolean isAuthenticationRequired(TipoAutorizzazione autorizzazione){
 		return TipoAutorizzazione.AUTHENTICATED.equals(autorizzazione) ||
-				isSignalHubPush(autorizzazione) ||
+				/**  isSignalHubPush(autorizzazione) ||*/ // per signalHub push l'autorizzazione avviene sull'eService dove vengono definiti gli applicativi (o i ruoli) autorizzati
 				TipoAutorizzazione.AUTHENTICATED_EXTERNAL_ROLES.equals(autorizzazione)  ||
 				TipoAutorizzazione.AUTHENTICATED_INTERNAL_ROLES.equals(autorizzazione)  ||
 				TipoAutorizzazione.AUTHENTICATED_ROLES.equals(autorizzazione);  

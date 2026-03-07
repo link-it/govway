@@ -985,12 +985,18 @@
 						<delete file="${tmp_archivi}/govway.ear/properties/apiPDNDv2.zip" />
 						<zip destfile="${tmp_archivi}/govway.ear/properties/apiPDNDv2.zip" basedir="${tmp_archivi}/apiPDNDv2ZIP"/>
 						<delete dir="${tmp_archivi}/apiPDNDv2ZIP"/>
-						<!-- Signal Hub -->
+						<!-- Signal Hub Push -->
 						<unzip src="${tmp_archivi}/govway.ear/properties/signalHubPDND.zip" dest="${tmp_archivi}/signalHubPDNDZIP"/>
 						<replace dir="${tmp_archivi}/signalHubPDNDZIP" token="SOGGETTO_LOCALE" value="${entity_name}"/>
 						<delete file="${tmp_archivi}/govway.ear/properties/signalHubPDND.zip" />
 						<zip destfile="${tmp_archivi}/govway.ear/properties/signalHubPDND.zip" basedir="${tmp_archivi}/signalHubPDNDZIP"/>
 						<delete dir="${tmp_archivi}/signalHubPDNDZIP"/>
+						<!-- Signal Hub Pull -->
+						<unzip src="${tmp_archivi}/govway.ear/properties/signalHubPullPDND.zip" dest="${tmp_archivi}/signalHubPullPDNDZIP"/>
+						<replace dir="${tmp_archivi}/signalHubPullPDNDZIP" token="SOGGETTO_LOCALE" value="${entity_name}"/>
+						<delete file="${tmp_archivi}/govway.ear/properties/signalHubPullPDND.zip" />
+						<zip destfile="${tmp_archivi}/govway.ear/properties/signalHubPullPDND.zip" basedir="${tmp_archivi}/signalHubPullPDNDZIP"/>
+						<delete dir="${tmp_archivi}/signalHubPullPDNDZIP"/>
 						<!-- TracingPDND -->
 						<unzip src="${tmp_archivi}/govway.ear/properties/tracingPDND.zip" dest="${tmp_archivi}/tracingPDNDZIP"/>
 						<replace dir="${tmp_archivi}/tracingPDNDZIP" token="SOGGETTO_LOCALE" value="${entity_name}"/>
@@ -1118,12 +1124,18 @@
 						<delete file="${tmp_archivi}/govway.war/WEB-INF/classes/apiPDNDv2.zip" />
 						<zip destfile="${tmp_archivi}/govway.war/WEB-INF/classes/apiPDNDv2.zip" basedir="${tmp_archivi}/apiPDNDv2ZIP"/>
 						<delete dir="${tmp_archivi}/apiPDNDv2ZIP"/>
-						<!-- Signal Hub -->
+						<!-- Signal Hub Push -->
 						<unzip src="${tmp_archivi}/govway.war/WEB-INF/classes/signalHubPDND.zip" dest="${tmp_archivi}/signalHubPDNDZIP"/>
 						<replace dir="${tmp_archivi}/signalHubPDNDZIP" token="SOGGETTO_LOCALE" value="${entity_name}"/>
 						<delete file="${tmp_archivi}/govway.war/WEB-INF/classes/signalHubPDND.zip" />
 						<zip destfile="${tmp_archivi}/govway.war/WEB-INF/classes/signalHubPDND.zip" basedir="${tmp_archivi}/signalHubPDNDZIP"/>
 						<delete dir="${tmp_archivi}/signalHubPDNDZIP"/>
+						<!-- Signal Hub Pull -->
+						<unzip src="${tmp_archivi}/govway.war/WEB-INF/classes/signalHubPullPDND.zip" dest="${tmp_archivi}/signalHubPullPDNDZIP"/>
+						<replace dir="${tmp_archivi}/signalHubPullPDNDZIP" token="SOGGETTO_LOCALE" value="${entity_name}"/>
+						<delete file="${tmp_archivi}/govway.war/WEB-INF/classes/signalHubPullPDND.zip" />
+						<zip destfile="${tmp_archivi}/govway.war/WEB-INF/classes/signalHubPullPDND.zip" basedir="${tmp_archivi}/signalHubPullPDNDZIP"/>
+						<delete dir="${tmp_archivi}/signalHubPullPDNDZIP"/>
 						<!-- Tracing PDND -->
 						<unzip src="${tmp_archivi}/govway.war/WEB-INF/classes/tracingPDND.zip" dest="${tmp_archivi}/tracingPDNDZIP"/>
 						<replace dir="${tmp_archivi}/tracingPDNDZIP" token="SOGGETTO_LOCALE" value="${entity_name}"/>

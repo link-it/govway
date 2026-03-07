@@ -6456,7 +6456,9 @@ public class ConsoleHelper implements IConsoleHelper {
 				}
 				
 							
-				if(AutorizzazioneUtilities.STATO_ABILITATO.equals(autorizzazione) || AutorizzazioneUtilities.STATO_SIGNAL_HUB_PUSH_SIGNALS.equals(autorizzazione)) {
+				/**if(AutorizzazioneUtilities.STATO_ABILITATO.equals(autorizzazione) || AutorizzazioneUtilities.STATO_SIGNAL_HUB_PUSH_SIGNALS.equals(autorizzazione)) {*/
+				// per signalHub push l'autorizzazione avviene sull'eService dove vengono definiti gli applicativi (o i ruoli) autorizzati
+				if(AutorizzazioneUtilities.STATO_ABILITATO.equals(autorizzazione)) {
 				
 					if(!allHidden) {
 						if( !isSupportatoAutenticazione 
@@ -7487,11 +7489,14 @@ public class ConsoleHelper implements IConsoleHelper {
 				
 				// autorizzazione abilitata
 				
-				if(ServletUtils.isCheckBoxEnabled(autorizzazioneAutenticati)==false && 
-						ServletUtils.isCheckBoxEnabled(autorizzazioneRuoli)==false && 
-						ServletUtils.isCheckBoxEnabled(autorizzazioneAutenticatiToken)==false && 
-						ServletUtils.isCheckBoxEnabled(autorizzazioneRuoliToken)==false && 
-						ServletUtils.isCheckBoxEnabled(autorizzazioneScope)==false &&
+				// per signalHub push l'autorizzazione avviene sull'eService dove vengono definiti gli applicativi (o i ruoli) autorizzati
+				boolean checkTrasporto = !(AutorizzazioneUtilities.STATO_SIGNAL_HUB_PUSH_SIGNALS.equals(autorizzazione));
+				
+				if( (checkTrasporto && !ServletUtils.isCheckBoxEnabled(autorizzazioneAutenticati)) && 
+						(checkTrasporto && !ServletUtils.isCheckBoxEnabled(autorizzazioneRuoli)) && 
+						!ServletUtils.isCheckBoxEnabled(autorizzazioneAutenticatiToken) && 
+						!ServletUtils.isCheckBoxEnabled(autorizzazioneRuoliToken) && 
+						!ServletUtils.isCheckBoxEnabled(autorizzazioneScope) &&
 						(autorizzazione_tokenOptions==null || "".equals(autorizzazione_tokenOptions))){
 					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_SELEZIONARE_ALMENO_UNA_MODALITÀ_DI_AUTORIZZAZIONE);
 					return false;
