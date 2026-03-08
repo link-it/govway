@@ -81,7 +81,7 @@ public class JsonJacksonSerializer implements ISerializer {
     	mapper.setDateFormat(config.getDf());		
 		
 		if(config.getIgnoreNullValues() == null || config.getIgnoreNullValues())
-			mapper.setSerializationInclusion(Include.NON_NULL);
+			mapper.setDefaultPropertyInclusion(Include.NON_NULL);
 		
 		SimpleFilterProvider filters = new SimpleFilterProvider();
 		if( (

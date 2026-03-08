@@ -95,7 +95,7 @@ public class JacksonJsonUtils extends AbstractUtils {
 	private static synchronized void initMapper()  {
 		if(mapper==null){
 			mapper = JacksonJsonProviderCustomized.getObjectMapper(false, timeZone);
-			mapper.setSerializationInclusion(Include.NON_NULL);
+			mapper.setDefaultPropertyInclusion(Include.NON_NULL);
 		}
 	}
 	public static ObjectMapper getObjectMapper() {

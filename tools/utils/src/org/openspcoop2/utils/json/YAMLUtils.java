@@ -100,7 +100,7 @@ public class YAMLUtils extends AbstractUtils {
 			if(internalMapper==null){
 				internalMapper = new YAMLMapper();
 				internalMapper.setTimeZone(TimeZone.getDefault());
-				internalMapper.setSerializationInclusion(Include.NON_NULL);
+				internalMapper.setDefaultPropertyInclusion(Include.NON_NULL);
 				internalMapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
 				internalMapper.configure(com.fasterxml.jackson.databind.SerializationFeature.
 					    WRITE_DATES_AS_TIMESTAMPS , false);

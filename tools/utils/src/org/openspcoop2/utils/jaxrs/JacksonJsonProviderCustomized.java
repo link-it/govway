@@ -51,7 +51,7 @@ public class JacksonJsonProviderCustomized extends com.fasterxml.jackson.jakarta
 		mapper.registerModule(new JodaModule());
 		mapper.configure(com.fasterxml.jackson.databind.SerializationFeature.
 			    WRITE_DATES_AS_TIMESTAMPS , false);
-		mapper.setSerializationInclusion(Include.NON_NULL);
+		mapper.setDefaultPropertyInclusion(Include.NON_NULL);
 		mapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
 		if(prettyPrint) {
 			mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
