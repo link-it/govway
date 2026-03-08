@@ -1,3 +1,10 @@
+2026-03-08  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug
+	Risolta la seguente vulnerabilità relative ai jar di terza parte:
+	- GHSA-72hv-8253-57qq: aggiornata libreria 'com.fasterxml.jackson.core:*' alla versione 2.18.6
+
 2026-03-05  Andrea Poli <apoli@link.it>	
 	
 	* [ProtocolloModIPA, GovWayConsole]
