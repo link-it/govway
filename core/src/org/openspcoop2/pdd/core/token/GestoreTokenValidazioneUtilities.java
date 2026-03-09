@@ -1224,7 +1224,7 @@ public class GestoreTokenValidazioneUtilities {
 		if(functionParameters.startsWith("/")) {
 			functionParameters = functionParameters.substring(1);
 		}
-		
+
 		String urlDefault = null;
 		if(protocolContext==null) {
 			urlDefault = Utilities.buildUrl(prefix, functionParameters);
@@ -1242,7 +1242,36 @@ public class GestoreTokenValidazioneUtilities {
 		}catch(Exception e) {
 			log.error("normalizeHtu ["+urlDefault+"] operation failed: "+e.getMessage(),e);
 		}
+
+		// Estrae il path della risorsa quando functionParameters inizia con interfaceName
+		// (utile quando una regola di proxy pass ha riscritto il contesto rimuovendo il soggetto)
+		String resourcePath = null;
+		if(interfaceName != null) {
+			String iName = nomrmalizeSlashUrl(interfaceName);
+			if(iName != null && functionParameters.startsWith(iName) && functionParameters.length() > iName.length()) {
+				resourcePath = functionParameters.substring(iName.length());
+			}
+		}
 		
+		// Se protocolContext non è stato estratto (es. una regola di proxy pass ha riscritto il contesto rimuovendo il soggetto),
+		// prova a costruire l'URL usando direttamente il contesto riscritto + il resourcePath
+		if(protocolContext == null && resourcePath != null && urlInvocazione.getContext() != null) {
+			String urlFromRewrittenContext = Utilities.buildUrl(prefix, urlInvocazione.getContext());
+			urlFromRewrittenContext = Utilities.buildUrl(urlFromRewrittenContext, resourcePath);
+			try {
+				String normalizedUrl = TokenUtilities.normalizeHtu(urlFromRewrittenContext);
+				if(sbNormalizedActualUri.length() > 0) {
+					sbNormalizedActualUri.append(",");
+				}
+				sbNormalizedActualUri.append(normalizedUrl);
+				if(htu.equals(normalizedUrl)) {
+					return true;
+				}
+			}catch(Exception e) {
+				log.error("normalizeHtu rewrittenContext ["+urlFromRewrittenContext+"] operation failed: "+e.getMessage(),e);
+			}
+		}
+
 		if(prefixAggiuntivi!=null && !prefixAggiuntivi.isEmpty()) {
 			if(matchUrlInvocataPrefix(prefixAggiuntivi, null, functionParameters, htu, sbNormalizedActualUri, log) ) {
 				return true;
@@ -1256,6 +1285,7 @@ public class GestoreTokenValidazioneUtilities {
 		if(baseUrlAggiuntive==null || baseUrlAggiuntive.isEmpty()) {
 			return false;
 		}
+
 		
 		if(urlDefault!=null && !urlDefault.isEmpty()) {
 			
@@ -1289,6 +1319,11 @@ public class GestoreTokenValidazioneUtilities {
 					if(newFunctionParameters.startsWith(nomeContesto) && newFunctionParameters.length()>nomeContesto.length()) {
 						contestoInvocato = newFunctionParameters.substring(nomeContesto.length());
 					}
+				}
+				// Fallback: se una regola di proxy pass ha riscritto il contesto rimuovendo il soggetto,
+				// il nomeContesto riscritto non corrisponde a functionParameters; usa interfaceName per estrarre il resource path
+				if(contestoInvocato.isEmpty() && resourcePath != null) {
+					contestoInvocato = resourcePath;
 				}
 			}
 			
