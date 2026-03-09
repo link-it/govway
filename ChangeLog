@@ -1,3 +1,10 @@
+2026-03-09  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug #1732
+	Corretta la validazione del claim 'htu' del token DPoP (RFC 9449) in presenza di regole di proxy pass che riscrivono il contesto dell'URL di invocazione rimuovendo il soggetto: 
+	l'URL ricostruita per il confronto ora utilizza correttamente il contesto riscritto dalla regola e il resource path della risorsa invocata.
+
 2026-03-08  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
