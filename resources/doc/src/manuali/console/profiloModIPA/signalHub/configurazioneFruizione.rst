@@ -20,18 +20,61 @@ Per fare ciò il prodotto rende disponibile una fruizione build-in ':numref:`Sig
 Per invocare la fruizione built-in è sufficiente utilizzare la base url di invocazione con il suffisso 'signals' tramite un http GET:
 - http://localhost:8080/govway/rest/out/<NOME_SOGGETTO>/PDND/api-pdnd-push-signals/v1/signals
 
-La pubblicazione di una variazione di dato richiede che siano fornite le seguenti informazioni tramite query parameter o http header:
+La pubblicazione di una variazione di dato richiede che siano fornite le seguenti informazioni tramite header HTTP, query parameter o campi di un payload JSON, come riportato nella tabella seguente.
 
-- govway_signal_object_id o GovWay-Signal-ObjectId : l'identificativo in chiaro che verrà pseudoanonimizzato da GovWay;
-- govway_signal_object_type o GovWay-Signal-ObjectType: campo libero per GovWay; rappresenta il tipo di oggetto a cui fa riferimento il segnale;
-- govway_signal_type o GovWay-Signal-Type: deve essere utilizzato un valore tra CREATE, UPDATE o DELETE;
-- govway_signal_service_id o GovWay-Signal-ServiceId: service id della PDND configurato nella maschera del servizio descritto nella sezione :ref:`modipa_signalhub_configurazione_erogazione`
-- govway_signal_descriptor_id o GovWay-Signal-DescriptorId (parametro obbligatorio solo in presenza di servizi con il medesimo serviceId): descriptor id della PDND configurato nella maschera del servizio descritto nella sezione :ref:`modipa_signalhub_configurazione_erogazione`
+.. list-table:: Parametri per la pubblicazione dei segnali
+   :widths: 15 15 25 30 15
+   :header-rows: 1
 
-Il servizio per cui si intende pubblicare una variazione di dato può essere riferito in una modalità alternativa al service id tramite i seguenti due parametri:
+   * - Parametro
+     - Obbligatorio
+     - Header HTTP
+     - Query Parameter
+     - Campo JSON
+   * - Object ID
+     - sì
+     - GovWay-Signal-ObjectId
+     - govway_signal_object_id
+     - objectId
+   * - Object Type
+     - sì
+     - GovWay-Signal-ObjectType
+     - govway_signal_object_type
+     - objectType
+   * - Signal Type
+     - sì
+     - GovWay-Signal-Type
+     - govway_signal_type
+     - signalType
+   * - Service ID
+     - \(1a\)
+     - GovWay-Signal-ServiceId
+     - govway_signal_service_id
+     - serviceId
+   * - Descriptor ID
+     - \(2\)
+     - GovWay-Signal-DescriptorId
+     - govway_signal_descriptor_id
+     - descriptorId
+   * - Service
+     - \(1b\)
+     - GovWay-Signal-Service
+     - govway_signal_service
+     - service
+   * - Service Version
+     - \(1b\)
+     - GovWay-Signal-Service-Version
+     - govway_signal_service_version
+     - serviceVersion
 
-- govway_signal_service o GovWay-Signal-Service: nome dell'erogazione su GovWay
-- govway_signal_service_version o GovWay-Signal-Service-Version: versione dell'erogazione su GovWay
+- \(1\) Il servizio per cui si intende pubblicare una variazione di dato deve essere identificato tramite il *Service ID* \(1a\) oppure, in alternativa, tramite la coppia *Service* e *Service Version* \(1b\). Il *Service ID* corrisponde al service id della PDND configurato nella maschera del servizio descritto nella sezione :ref:`modipa_signalhub_configurazione_erogazione`, mentre *Service* e *Service Version* corrispondono rispettivamente al nome e alla versione dell'erogazione su GovWay.
+- \(2\) Obbligatorio solo in presenza di servizi con il medesimo serviceId; corrisponde al descriptor id della PDND configurato nella maschera del servizio descritto nella sezione :ref:`modipa_signalhub_configurazione_erogazione`.
+
+Di seguito la descrizione degli altri parametri:
+
+- *Object ID*: l'identificativo in chiaro che verrà pseudoanonimizzato da GovWay;
+- *Object Type*: campo libero; rappresenta il tipo di oggetto a cui fa riferimento il segnale;
+- *Signal Type*: deve essere utilizzato un valore tra CREATE, UPDATE o DELETE.
 
 È anche possibile personalizzare la modalità di integrazione con la fruizione built-in attuando una personalizzazione nella scheda di modifica del profilo di interoperabilità relativa alla fruizione come mostrata in figura ':numref:`SignalHubFuizioneConfigurazione`'.
 

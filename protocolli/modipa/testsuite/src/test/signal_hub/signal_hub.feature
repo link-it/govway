@@ -432,9 +432,33 @@ Scenario: push del segnale (usando nome/versione servizio) con i parametri della
 	When method post
 	Then status 200
 	And match response == { signalId: '#number' }
-	
-	
-	
+
+@test-push
+@test-push-serviceId-default-payload
+Scenario: push del segnale (usando serviceId) con il payload json di default per il passaggio dei parametri
+
+	Given url push_signal_url_default
+	And header Authorization = call basic (auth_push_signal)
+	And header GovWay-TestSuite-Test-ID = 'push_signal'
+	And header GovWay-TestSuite-Plain-Object-ID = 'objectIdServiceIdDefPayload'
+	And request { objectType: 'objectType', objectId: 'objectIdServiceIdDefPayload', signalType: 'UPDATE', serviceId: 'eServiceTestID' }
+	When method post
+	Then status 200
+	And match response == { signalId: '#number' }
+
+@test-push
+@test-push-name-default-payload
+Scenario: push del segnale (usando nome/versione servizio) con il payload json di default per il passaggio dei parametri
+
+	Given url push_signal_url_default
+	And header Authorization = call basic (auth_push_signal)
+	And header GovWay-TestSuite-Test-ID = 'push_signal'
+	And header GovWay-TestSuite-Plain-Object-ID = 'objectIdNameDefPayload'
+	And request { objectType: 'objectType', objectId: 'objectIdNameDefPayload', signalType: 'UPDATE', service: 'SignalHubTest', serviceVersion: 1 }
+	When method post
+	Then status 200
+	And match response == { signalId: '#number' }
+
 @test-push
 @test-push-serviceId-default-header-get
 Scenario: push del segnale (usando serviceId) con gli header di default per il passaggio dei parametri
