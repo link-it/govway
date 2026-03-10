@@ -1786,6 +1786,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						
 						de.setType(DataElementType.HIDDEN);
 						de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
+						de.setValue(null); // non mando in pagina una password cifrata
 					}
 					
 					if( (!change) || (!passwordCifrata) || (ServletUtils.isCheckBoxEnabled(changepwd)) ){
@@ -1793,6 +1794,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 						if(change && passwordCifrata && ServletUtils.isCheckBoxEnabled(changepwd) ){
 							de.setValue(null); // non faccio vedere una password cifrata
 							de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_NUOVA_PASSWORD);
+						} else {
+							de.setValue(password); // non faccio l'escape per il tipo crypt, verra' gestito nella jsp
 						}
 						
 						// Nuova visualizzazione Password con bottone genera password

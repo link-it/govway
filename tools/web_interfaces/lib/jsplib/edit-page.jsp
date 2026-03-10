@@ -76,6 +76,10 @@ if(csrfTokenFromSession == null)
 String idsTextArea = ServletUtils.getIdentificativiTextArea(dati);
 if(idsTextArea == null)
 	idsTextArea = "";
+
+String idsPassword = ServletUtils.getIdentificativiPassword(dati);
+if(idsPassword == null)
+	idsPassword = "";
 %>
 
 
@@ -95,7 +99,14 @@ if(idsTextArea == null)
 		if(!idsTextArea.equals("")){
 			%>
 			<input type="hidden" name="<%=Costanti.PARAMETRO_IDENTIFICATIVI_TEXT_AREA%>" id="<%=Costanti.PARAMETRO_IDENTIFICATIVI_TEXT_AREA%>"  value="<%= idsTextArea %>"/>
-			<%			
+			<%
+		}
+		%>
+		<%
+		if(!idsPassword.equals("")){
+			%>
+			<input type="hidden" name="<%=Costanti.PARAMETRO_IDENTIFICATIVI_PASSWORD%>" id="<%=Costanti.PARAMETRO_IDENTIFICATIVI_PASSWORD%>"  value="<%= idsPassword %>"/>
+			<%
 		}
 		%>
 		<input type="hidden" name="__i_hidden_lockurl_" id="__i_hidden_lockurl_"  value=""/>
@@ -963,12 +974,13 @@ for (int i = 0; i < dati.size(); i++) {
 		                    		} else { // else number
 		                    			if (type.equals("crypt")){
 		                    				DataElementPassword dePwd = de.getPassword();
+		                    				String dePasswordValue = StringEscapeUtils.escapeHtml4(de.getValue());
 		                    				boolean visualizzaPasswordChiaro = dePwd.isVisualizzaPasswordChiaro();
 		                    				boolean bottoneGeneraPassword = dePwd.isVisualizzaBottoneGeneraPassword();
 		                    				boolean visualizzaIconaMostraPassword = dePwd.isVisualizzaIconaMostraPassword();
-		                    				
+
 		                    				String dePwdType = visualizzaPasswordChiaro ? "text" : "password";
-		                    				String dePwdNoEdit = visualizzaPasswordChiaro ? de.getValue() : Costanti.PARAMETER_LOCK_DEFAULT_VALUE;
+		                    				String dePwdNoEdit = visualizzaPasswordChiaro ? dePasswordValue : Costanti.PARAMETER_LOCK_DEFAULT_VALUE;
 		                    				if(bottoneGeneraPassword){
 		                    					classInput = Costanti.INPUT_PWD_CHIARO_CSS_CLASS;
 		                    				}
@@ -985,7 +997,7 @@ for (int i = 0; i < dati.size(); i++) {
 													%>
 													<div class="lock-container">
 														<div class="lock-input-container">
-															<input class="<%= classInput %>" type="<%=dePwdType %>" name="<%= deName  %>" id="<%=idPwd %>" value="<%= de.getValue()  %>">
+															<input class="<%= classInput %>" type="<%=dePwdType %>" name="<%= deName  %>" id="<%=idPwd %>" value="<%= dePasswordValue  %>">
 															<%
 									          				if (!bottoneGeneraPassword && visualizzaIconaMostraPassword) {
 										          				%>
@@ -1542,14 +1554,15 @@ for (int i = 0; i < dati.size(); i++) {
 			                        							   						boolean utilizzaInputPassword = dePwd.isLockUtilizzaInputPassword();
 			                        							   						boolean visualizzaIconLucchetto = dePwd.isLockVisualizzaIconaLucchetto();
 			                        							   						boolean lockValuePresent = !de.getValue().equals(""); // e' gia' presente un valore
+			                        							   						String deLockEscapedValue = StringEscapeUtils.escapeHtml4(de.getValue());
 			                        							   						boolean visualizzaInformazioniCifrate = lockValuePresent && dePwd.isLockVisualizzaInformazioniCifrate();
 			                        							   						
-			                        							   						String lockValue = lockValuePresent ? Costanti.PARAMETER_LOCK_DEFAULT_VALUE : de.getValue();
+			                        							   						String lockValue = lockValuePresent ? Costanti.PARAMETER_LOCK_DEFAULT_VALUE : deLockEscapedValue;
 			                        							   						String lockDisabled = lockValuePresent ? " disabled=\"disabled\"" : "";
 			                        							   						// 1. decido il valore da inserire nell'input e la visualizzazione readonly del campo
 			                        							   						// se devo visualizzare l'input come password o forzare l'input dell'utente  visualizzo gli asterischi
 			                        							   						if(forzaVisualizzazioneInputUtente || (utilizzaInputPassword && !dePwd.isLockVisualizzaInformazioniCifrate())){
-			                        							   							lockValue = de.getValue();
+			                        							   							lockValue = deLockEscapedValue;
 			                        							   						}
 			                        							   						
 			                        							   						// 2. Tipo del campo, text quando e' vuoto o password quando e' valorizzato
@@ -1600,7 +1613,7 @@ for (int i = 0; i < dati.size(); i++) {
 			                        														<div class="lock-input-container">
 			                        													<% } %>
 				                        													<input class="<%= classInput %>" type="<%=dePwdType %>" name="<%= deName  %>" id="<%=idPwd %>" value="<%= lockValue %>" <%=lockDisabled %> <%=autocompleteAttr %>>
-				                        													<input type="hidden" name="<%= hiddenLockName  %>" id="<%=hiddenLockId %>" value="<%= de.getValue()  %>">
+				                        													<input type="hidden" name="<%= hiddenLockName  %>" id="<%=hiddenLockId %>" value="<%= deLockEscapedValue  %>">
 			                        													<%
 			                        							          				if (visualizzaComandiInternoInput) {
 			                        								          				%>

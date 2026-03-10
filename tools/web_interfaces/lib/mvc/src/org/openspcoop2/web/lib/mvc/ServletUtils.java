@@ -1231,7 +1231,63 @@ public class ServletUtils {
 		
 		return false;
 	}
-	
+
+	public static boolean usaValidazionePassword(HttpServletRequest request, String parameterToCheck) {
+		String parametroIdentificativi = Validatore.getInstance().getParametroOriginale(request, Costanti.PARAMETRO_IDENTIFICATIVI_PASSWORD);
+
+		if(parametroIdentificativi != null) {
+			try {
+				Validatore.getInstance().validate("Il valore del parametro [" + Costanti.PARAMETRO_IDENTIFICATIVI_PASSWORD + "]:["+parametroIdentificativi+"]",
+						parametroIdentificativi, false, org.openspcoop2.web.lib.mvc.security.Costanti.PATTERN_ID_TEXT_AREA);
+			}catch(ValidationException e) {
+				return false;
+			}
+
+			String[] ids = parametroIdentificativi.split(Costanti.VALUE_PARAMETRO_IDENTIFICATIVI_TEXT_AREA_SEPARATORE);
+
+			if(ids != null && ids.length > 0) {
+				List<String> asList = Arrays.asList(ids);
+				// verifica diretta sul nome del parametro
+				if(asList.contains(parameterToCheck)) {
+					return true;
+				}
+				// verifica sul parametro hidden associato al lock (prefisso __lk__)
+				if(parameterToCheck.startsWith(Costanti.PARAMETER_LOCK_PREFIX)) {
+					String nomeOriginale = parameterToCheck.substring(Costanti.PARAMETER_LOCK_PREFIX.length());
+					return asList.contains(nomeOriginale);
+				}
+			}
+		} else {
+			// casi speciali per il monitor (form JSF senza __pw__)
+			if(Costanti.PARAMETRO_MONITOR_PASSWORD.equals(parameterToCheck)
+					|| Costanti.PARAMETRO_MONITOR_J_PASSWORD.equals(parameterToCheck)
+					|| Costanti.PARAMETRO_MONITOR_OLD_PWD_CHANGE.equals(parameterToCheck)
+					|| Costanti.PARAMETRO_MONITOR_PWD_CHANGE.equals(parameterToCheck)
+					|| Costanti.PARAMETRO_MONITOR_CONFIRM_PWD_CHANGE.equals(parameterToCheck)
+					) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public static String getIdentificativiPassword(List<?> dati) {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < dati.size(); i++) {
+			DataElement de = (DataElement) dati.get(i);
+			String deName = !de.getName().equals("") ? de.getName() : "de_name_"+i;
+			if (de.getType().equals("crypt") || de.getType().equals("lock")) {
+				if(sb.length() > 0) {
+					sb.append(Costanti.VALUE_PARAMETRO_IDENTIFICATIVI_TEXT_AREA_SEPARATORE);
+				}
+				sb.append(deName);
+			}
+		}
+
+		return sb.length() > 0 ? sb.toString() : null;
+	}
+
 	public static String getIdentificativiTextArea(List<?> dati) {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < dati.size(); i++) {

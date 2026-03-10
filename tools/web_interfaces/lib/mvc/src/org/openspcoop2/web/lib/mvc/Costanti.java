@@ -501,8 +501,16 @@ public class Costanti {
 	/** VALIDAZIONE INPUT */
 	
 	public static final String PARAMETRO_IDENTIFICATIVI_TEXT_AREA = "__ta__";
+	public static final String PARAMETRO_IDENTIFICATIVI_PASSWORD = "__pw__";
 	public static final String VALUE_PARAMETRO_IDENTIFICATIVI_TEXT_AREA_SEPARATORE = ",";
 	public static final String PARAMETRO_MONITOR_RICERCA_AZIONE = "azCombo";
 	public static final String PARAMETRO_MONITOR_RICERCA_UTENTE_DESCRIZIONE = "descrizioneRicerca";
-	
+
+	// Nomi parametri password nelle form JSF del Monitor (prependId="false")
+	public static final String PARAMETRO_MONITOR_PASSWORD = "password";
+	public static final String PARAMETRO_MONITOR_J_PASSWORD = "j_password";
+	public static final String PARAMETRO_MONITOR_OLD_PWD_CHANGE = "_oldPwdChange";
+	public static final String PARAMETRO_MONITOR_PWD_CHANGE = "_pwdChange";
+	public static final String PARAMETRO_MONITOR_CONFIRM_PWD_CHANGE = "conpwdChange";
+
 }

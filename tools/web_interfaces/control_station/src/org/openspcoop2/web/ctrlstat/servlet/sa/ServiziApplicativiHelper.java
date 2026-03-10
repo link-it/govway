@@ -3755,6 +3755,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 						//de.setType(DataElementType.TEXT_EDIT);
 						// Nuova visualizzazione Password con bottone genera password
 						de.setType(DataElementType.CRYPT);
+						de.setValue(passwordGetMsg);
 						de.getPassword().setVisualizzaPasswordChiaro(true);
 						de.getPassword().setVisualizzaBottoneGeneraPassword(true);
 						

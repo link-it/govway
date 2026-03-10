@@ -196,7 +196,9 @@ public class LockUtilities {
 		if(sb.length()>0) {
 			de.setNote(sb.toString());
 		}
-		de.setLock(escapeHtml ? StringEscapeUtils.escapeHtml4(wrapValue) : wrapValue, readOnly, this.visualizzaInformazioniCifrate, true, this.warningMessage, this.servletNameSecretDecoder);
+//		de.setLock(escapeHtml ? StringEscapeUtils.escapeHtml4(wrapValue) : wrapValue, readOnly, this.visualizzaInformazioniCifrate, true, this.warningMessage, this.servletNameSecretDecoder);
+		// #1731 escape spostato nella jsp per i lock
+		de.setLock(wrapValue, readOnly, this.visualizzaInformazioniCifrate, true, this.warningMessage, this.servletNameSecretDecoder);
 	}
 	private void lockEngineWithoutBIOK(DataElement de, String wrapValue, boolean escapeHtml, boolean hidden, boolean readOnly) {
 		if(hidden) {
