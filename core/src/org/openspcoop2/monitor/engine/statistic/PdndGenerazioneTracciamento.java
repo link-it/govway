@@ -159,29 +159,59 @@ public class PdndGenerazioneTracciamento implements IStatisticsEngine {
 	private static final String[] CSV_HEADERS = {"date", "purpose_id", "status", "token_id", "requests_count"};
 	public byte[] generateCsv(Date tracingDate, Stream<Map<String, Object>> data) throws UtilsException {
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
-		
+
 		CSVFormat csvFormat = CSVFormat.DEFAULT.builder()
 		        .setHeader(CSV_HEADERS)
 		        .get();
-		
+
 		Format format = new Format();
 		format.setSkipEmptyRecord(false);
 		format.setCsvFormat(csvFormat);
-		
+
 		Printer printer = new Printer(format, os);
-		
+
+		// I risultati sono ordinati per (token_purpose_id, token_id, eventi_gestione).
+		// Righe con lo stesso (purpose_id, token_id) sono contigue; più eventi_gestione
+		// distinti possono però risolvere allo stesso status HTTP.
+		// Per ogni gruppo contiguo (purpose_id, token_id) si accumula una micro-mappa
+		// status_risolto -> sum(requests_count), flushata al cambio di coppia.
+		String prevPurposeId = null;
+		String prevTokenId = null;
+		Map<Integer, Long> statusCounts = new HashMap<>();
+
+		String formattedDate = dataTracciamentoFormat(tracingDate);
+
 		for (Map<String, Object> row : data.collect(Collectors.toList())) {
 			String purposeId = row.get(Transazione.model().TOKEN_PURPOSE_ID.getFieldName()).toString();
 			String tokenId = row.get(Transazione.model().TOKEN_ID.getFieldName()).toString();
 			Integer status = convertEventToInteger(row.get(Transazione.model().EVENTI_GESTIONE.getFieldName()));
-			String requestsCount = row.get(REQUESTS_COUNT_ID).toString();
-			
-			printer.printRecord(dataTracciamentoFormat(tracingDate), purposeId, status, tokenId, requestsCount);
+			long requestsCount = Long.parseLong(row.get(REQUESTS_COUNT_ID).toString());
+
+			// Se cambia la coppia (purpose_id, token_id), flusho il gruppo precedente
+			if (prevPurposeId != null && (!prevPurposeId.equals(purposeId) || !prevTokenId.equals(tokenId))) {
+				flushGroup(printer, formattedDate, prevPurposeId, prevTokenId, statusCounts);
+				statusCounts.clear();
+			}
+
+			statusCounts.merge(status, requestsCount, Long::sum);
+			prevPurposeId = purposeId;
+			prevTokenId = tokenId;
 		}
-		
+
+		// Flusho l'ultimo gruppo
+		if (prevPurposeId != null) {
+			flushGroup(printer, formattedDate, prevPurposeId, prevTokenId, statusCounts);
+		}
+
 		printer.close();
-		
+
 		return os.toByteArray();
+	}
+
+	private void flushGroup(Printer printer, String formattedDate, String purposeId, String tokenId, Map<Integer, Long> statusCounts) throws UtilsException {
+		for (Map.Entry<Integer, Long> entry : statusCounts.entrySet()) {
+			printer.printRecord(formattedDate, purposeId, entry.getKey(), tokenId, entry.getValue());
+		}
 	}
 	
 	private boolean createRecord(Date start, Date end, PdndTracciamentoSoggetto soggettoEntry) {
@@ -239,6 +269,8 @@ public class PdndGenerazioneTracciamento implements IStatisticsEngine {
 		expr.limit(limit)
 			.offset(offset)
 			.sortOrder(SortOrder.ASC)
+			.addOrder(Transazione.model().TOKEN_PURPOSE_ID)
+			.addOrder(Transazione.model().TOKEN_ID)
 			.addOrder(Transazione.model().EVENTI_GESTIONE)
 			.addGroupBy(Transazione.model().TOKEN_PURPOSE_ID)
 			.addGroupBy(Transazione.model().TOKEN_ID)
