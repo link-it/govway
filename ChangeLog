@@ -1,6 +1,13 @@
 2026-03-10  Andrea Poli <apoli@link.it>
 
 	* [ProtocolloModIPA]
+	Risolto Bug #1728
+	Corretta la generazione del CSV di tracciamento PDND per aggregare correttamente le richieste con stesso (purpose_id, status, token_id) quando più riferimenti 'eventi_gestione' distinti 
+	risolvono allo stesso codice HTTP, eliminando le righe duplicate segnalate con errore 'PURPOSE_AND_STATUS_AND_TOKEN_NOT_UNIQUE'.                                                 
+
+2026-03-10  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloModIPA]
 	Aggiunta funzionalità #1726
 	Aggiunta la possibilità di fornire i parametri per la pubblicazione dei segnali SignalHub anche tramite payload JSON, 
 	oltre alle modalità già supportate tramite header HTTP e query parameter.
