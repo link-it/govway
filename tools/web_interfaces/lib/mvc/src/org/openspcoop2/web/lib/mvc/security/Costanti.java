@@ -39,6 +39,7 @@ public class Costanti {
 	public static final String PATTERN_REQUEST_HTTP_PARAMETER_NAME = "HTTPParameterName";
 	public static final String PATTERN_REQUEST_HTTP_PARAMETER_VALUE = "HTTPParameterValue";
 	public static final String PATTERN_REQUEST_HTTP_PARAMETER_VALUE_TEXT_AREA = "HTTPParameterValueTextArea";
+	public static final String PATTERN_REQUEST_HTTP_PARAMETER_VALUE_PASSWORD = "HTTPParameterValuePassword";
 	public static final String PATTERN_HTTP_COOKIE_NAME = "HTTPCookieName";
 	public static final String PATTERN_HTTP_COOKIE_VALUE = "HTTPCookieValue";
 	public static final String PATTERN_ID_TAB = "IDTab";

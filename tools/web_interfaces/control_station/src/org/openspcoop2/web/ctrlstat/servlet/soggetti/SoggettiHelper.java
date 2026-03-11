@@ -2664,8 +2664,15 @@ public class SoggettiHelper extends ConnettoriHelper {
 			
 			if( !this.core.getDriverBYOKUtilities().isEnabledBYOK() || !this.core.getDriverBYOKUtilities().isWrappedWithAnyPolicy(valore) ){
 				if (valore.indexOf(" ") != -1) {
-					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
-					return false;
+					if(this.core.isProprietaValidazioneConsentiSpazio()) {
+						if(valore.startsWith(" ") || valore.endsWith(" ")) {
+							this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INIZIARE_O_TERMINARE_CON_SPAZI_NEI_CAMPI_DI_TESTO);
+							return false;
+						}
+					} else {
+						this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
+						return false;
+					}
 				}
 				if(!this.checkLength4000(valore, SoggettiCostanti.LABEL_PARAMETRO_SOGGETTI_PROP_VALORE)) {
 					return false;

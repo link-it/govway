@@ -84,7 +84,9 @@ public class LockUtilities {
 			de.forceLockVisualizzazioneInputUtente(this.driverBYOKUtilities.isWrappedWithAnyPolicy(value),this.visualizzaInformazioniCifrate);
 		}
 		else {
-			de.setType(DataElementType.TEXT_EDIT);
+			/**de.setType(DataElementType.TEXT_EDIT);*/
+			// #1731 Tipo CRYPT reso visivamente come text edit: il campo eredita il pipeline di validazione delle password (pattern __pw__, no sanitize, no SQL injection check, escape centralizzato nella JSP)
+			de.setTypeCryptAsTextEdit();
 			de.setValue(value);
 		}
 	}
@@ -117,12 +119,14 @@ public class LockUtilities {
 		}
 	}
 	private void processByByokDisabled(DataElement de, String value, boolean escapeHtml, boolean hidden, boolean readOnly) {
+		boolean setValue = true;
 		if(isForceHidden(de, hidden)){
 			de.setType(DataElementType.HIDDEN);
 		}
 		else if(isForceReadOnly(de, readOnly)){
 			if(this.visualizzaCampiPasswordComeLock) {
 				this.lockEngineWithoutBIOK(de, value, escapeHtml, hidden, readOnly);
+				setValue = false;
 			} else {
 				de.setType(DataElementType.TEXT);
 			}
@@ -130,15 +134,18 @@ public class LockUtilities {
 		else if( de.getType()==null || StringUtils.isEmpty(de.getType()) || 
 				( (!DataElementType.TEXT_EDIT.toString().equals(de.getType())) && (!DataElementType.TEXT_AREA.toString().equals(de.getType())) )
 				){
-			processByByokDisabledDataElement(de, value, escapeHtml, hidden, readOnly);
+			setValue = processByByokDisabledDataElement(de, value, escapeHtml, hidden, readOnly);
 		} else {
-			processByByokDisabledDataElement(de, value, escapeHtml, hidden, readOnly);
+			setValue = processByByokDisabledDataElement(de, value, escapeHtml, hidden, readOnly);
 		}
-		de.setValue(escapeHtml ? StringEscapeUtils.escapeHtml4(value) : value);
+		if(setValue) {
+			de.setValue(escapeHtml ? StringEscapeUtils.escapeHtml4(value) : value);
+		}
 	}
-	private void processByByokDisabledDataElement(DataElement de, String value, boolean escapeHtml, boolean hidden, boolean readOnly) {
+	private boolean processByByokDisabledDataElement(DataElement de, String value, boolean escapeHtml, boolean hidden, boolean readOnly) {
 		if(this.visualizzaCampiPasswordComeLock) {
 			this.lockEngineWithoutBIOK(de, value, escapeHtml, hidden, readOnly);
+			return false;
 		} else {
 			if(hidden) {
 				de.setType(DataElementType.HIDDEN);
@@ -146,6 +153,7 @@ public class LockUtilities {
 			else {
 				de.setType(DataElementType.TEXT_EDIT);
 			}
+			return true;
 		}
 	}
 	private boolean isForceHidden(DataElement de, boolean hidden) {
@@ -193,10 +201,15 @@ public class LockUtilities {
 				sb.append(this.messaggioInformativoInformazioneNonCifrata);
 			}
 		}
-		if(sb.length()>0) {
+		if(!sb.isEmpty()) {
 			de.setNote(sb.toString());
 		}
-		de.setLock(escapeHtml ? StringEscapeUtils.escapeHtml4(wrapValue) : wrapValue, readOnly, this.visualizzaInformazioniCifrate, true, this.warningMessage, this.servletNameSecretDecoder);
+		if(escapeHtml) {
+			// nop
+		}
+		/**de.setLock(escapeHtml ? StringEscapeUtils.escapeHtml4(wrapValue) : wrapValue, readOnly, this.visualizzaInformazioniCifrate, true, this.warningMessage, this.servletNameSecretDecoder);*/
+		// #1731 escape spostato nella jsp per i lock
+		de.setLock(wrapValue, readOnly, this.visualizzaInformazioniCifrate, true, this.warningMessage, this.servletNameSecretDecoder);
 	}
 	private void lockEngineWithoutBIOK(DataElement de, String wrapValue, boolean escapeHtml, boolean hidden, boolean readOnly) {
 		if(hidden) {
@@ -206,7 +219,9 @@ public class LockUtilities {
 			de.setValue(escapeHtml ? StringEscapeUtils.escapeHtml4(wrapValue) : wrapValue);
 		}
 		else {
-			de.setLock(escapeHtml ? StringEscapeUtils.escapeHtml4(wrapValue) : wrapValue, readOnly, false, false, null, null);
+			/**de.setLock(escapeHtml ? StringEscapeUtils.escapeHtml4(wrapValue) : wrapValue, readOnly, false, false, null, null);*/
+			// #1731 escape spostato nella jsp per i lock
+			de.setLock(wrapValue, readOnly, false, false, null, null);
 		}
 	}
 	private void appendErrorMessageSecurityPolicyDifferente(StringBuilder sb, String wrapValue) {

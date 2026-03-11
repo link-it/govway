@@ -1239,7 +1239,13 @@ public class ControlStationCore {
 	public Boolean isRegistrazioneMessaggiMultipartPayloadParsingEnabled() {
 		return this.isRegistrazioneMessaggiMultipartPayloadParsingEnabled;
 	}
-	
+
+	/** Proprietà */
+	private boolean isProprietaValidazioneConsentiSpazio = true;
+	public boolean isProprietaValidazioneConsentiSpazio() {
+		return this.isProprietaValidazioneConsentiSpazio;
+	}
+
 	/** Cluster dinamico */
 	private boolean isClusterDinamicoEnabled = false;
 	public Boolean isClusterDinamicoEnabled() {
@@ -2752,7 +2758,10 @@ public class ControlStationCore {
 		
 		/** Registrazione Messaggi */
 		this.isRegistrazioneMessaggiMultipartPayloadParsingEnabled = core.isRegistrazioneMessaggiMultipartPayloadParsingEnabled;
-		
+
+		/** Proprietà */
+		this.isProprietaValidazioneConsentiSpazio = core.isProprietaValidazioneConsentiSpazio;
+
 		/** Cluster dinamico */
 		this.isClusterDinamicoEnabled = core.isClusterDinamicoEnabled;
 		
@@ -3212,6 +3221,7 @@ public class ControlStationCore {
 				this.showAllarmiElenchiStatiAllarmi = consoleProperties.isShowAllarmiElenchiStatiAllarmi();
 			}
 			this.isRegistrazioneMessaggiMultipartPayloadParsingEnabled = consoleProperties.isRegistrazioneMessaggiMultipartPayloadParsingEnabled();
+			this.isProprietaValidazioneConsentiSpazio = consoleProperties.isProprietaValidazioneConsentiSpazio();
 			this.isClusterDinamicoEnabled = consoleProperties.isClusterDinamicoEnabled();
 			this.visualizzaInformazioniCifrate = consoleProperties.isVisualizzaInformazioniCifrate();
 			this.byokWarningMessage = consoleProperties.getVisualizzaInformazioniCifrateWarningMessage();

@@ -1506,7 +1506,14 @@ public class UtentiHelper extends ConsoleHelper {
 			}
 
 			// Controllo che non ci siano spazi nei campi di testo
-			if ((nomesu.indexOf(" ") != -1) || ( ServletUtils.isCheckBoxEnabled(changepwd) &&  pwsu.indexOf(" ") != -1 )) {
+			if ((nomesu.indexOf(" ") != -1) 
+					|| 
+					( 
+							(TipoOperazione.ADD.equals(tipoOperazione) || ServletUtils.isCheckBoxEnabled(changepwd)) 
+							&&  
+							pwsu.indexOf(" ") != -1 
+					)
+				) {
 				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 				return false;
 			}

@@ -243,6 +243,12 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 				return null;
 			}
 
+			// Controllo che non ci siano spazi nei campi di testo
+			if ((this.user.getPassword().indexOf(" ") != -1) || (this.confermaPassword.indexOf(" ") != -1)) {
+				MessageUtils.addErrorMsg("Non inserire spazi nei campi di testo");
+				return null;
+			}
+			
 			if(this.isShowVecchiaPassword()) {
 				if(passwordObbligatoria && StringUtils.isEmpty(this.vecchiaPassword)){
 					MessageUtils.addErrorMsg("Il campo Vecchia non pu\u00F2 essere vuoto");

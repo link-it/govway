@@ -195,8 +195,8 @@ public class ContentAuthorizationFilter implements Filter {
 
 				String msgErrore = sb.toString();
 				
-				session.setAttribute(accLimKey, true);
 				if(utenteLoggato){
+					session.setAttribute(accLimKey, true);
 					// redirect verso una pagina alternativa
 					log.debug("Redirect: "	+ request.getContextPath() + jspErrore);
 					// setto gli attributi che riguardano il

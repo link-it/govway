@@ -211,8 +211,8 @@ public class NegoziazioneTokenProvider implements IProvider {
 		if(password==null || "".equals(password)) {
 			throw new ProviderValidationException("Nonostante sia richiesta una autenticazione 'HttpBasic', non è stato fornita un 'Client Secret' da utilizzare durante la connessione verso il servizio");
 		}
-		if(password.contains(" ")) {
-			throw new ProviderValidationException("Non indicare spazi nel 'Client Secret'");
+		if(password.startsWith(" ") || password.endsWith(" ")) {
+			throw new ProviderValidationException("Non indicare spazi all'inizio o alla fine del 'Client Secret'");
 		}
 	}
 	private void validateSslCredentials(Map<String, Properties> mapProperties) throws ProviderValidationException {
@@ -256,8 +256,8 @@ public class NegoziazioneTokenProvider implements IProvider {
 		
 		String password = p.getProperty(CostantiConnettori.CONNETTORE_HTTP_PROXY_PASSWORD);
 		if(password!=null && !"".equals(password) &&
-			password.contains(" ")) {
-			throw new ProviderValidationException("Non indicare spazi nella password del Proxy");
+			(password.startsWith(" ") || password.endsWith(" "))) {
+			throw new ProviderValidationException("Non indicare spazi all'inizio o alla fine della password del Proxy");
 		}
 	}
 	private void validateJWTSigned(Properties pDefault, String retMode, boolean pdnd) throws ProviderValidationException {

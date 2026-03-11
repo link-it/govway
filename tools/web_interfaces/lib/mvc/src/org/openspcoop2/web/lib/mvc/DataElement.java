@@ -238,6 +238,13 @@ public class DataElement implements Serializable {
 		return sb.toString();
 	}
 
+	public void setTypeCryptAsTextEdit() {
+		this.setType(DataElementType.CRYPT);
+		this.getPassword().setVisualizzaPasswordChiaro(true);
+		this.getPassword().setVisualizzaBottoneGeneraPassword(false);
+		this.getPassword().setVisualizzaIconaMostraPassword(false);
+	}
+	
 	public void setType(DataElementType s) {
 		this.setType(s.toString());
 	}

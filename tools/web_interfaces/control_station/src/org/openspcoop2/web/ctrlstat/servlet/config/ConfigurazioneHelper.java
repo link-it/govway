@@ -3505,34 +3505,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setSelected(tipo);
 		de.setPostBack(true);
 		dati.add(de);
-
-		/**if (tipo.equals(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_RICHIEDE_USERNAME_PASSWORD)) {
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_UTENTE);
-			de.setValue(utente);
-			de.setType(DataElementType.TEXT_EDIT);
-			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_UTENTE);
-			de.setSize( getSize());
-			dati.add(de);
-
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PW);
-			de.setValue(password);
-			de.setType(DataElementType.CRYPT);
-			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PW);
-			de.setSize( getSize());
-			dati.add(de);
-
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONFERMA_PW);
-			de.setValue(confpw);
-			de.setType(DataElementType.CRYPT);
-			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONFERMA_PW);
-			de.setSize( getSize());
-			dati.add(de);
-		}*/
-
-
+		
 		return dati;
 	}
 	

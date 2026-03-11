@@ -889,8 +889,15 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			
 			if( !this.core.getDriverBYOKUtilities().isEnabledBYOK() || !this.core.getDriverBYOKUtilities().isWrappedWithAnyPolicy(valore) ){
 				if (valore.indexOf(" ") != -1) {
-					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
-					return false;
+					if(this.core.isProprietaValidazioneConsentiSpazio()) {
+						if(valore.startsWith(" ") || valore.endsWith(" ")) {
+							this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INIZIARE_O_TERMINARE_CON_SPAZI_NEI_CAMPI_DI_TESTO);
+							return false;
+						}
+					} else {
+						this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
+						return false;
+					}
 				}
 				if(!this.checkLength255(valore, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_VALORE)) {
 					return false;

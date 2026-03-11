@@ -145,11 +145,11 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			}
 			String utente = this.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
 			String password = this.getLockedParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
-			// String confpw = this.getParameter("confpw");
+			/** String confpw = this.getParameter("confpw");*/
 			
 			String servizioApplicativoServerEnabledS = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ABILITA_USO_APPLICATIVO_SERVER);
 			boolean servizioApplicativoServerEnabled = ServletUtils.isCheckBoxEnabled(servizioApplicativoServerEnabledS);
-//			String servizioApplicativoServer = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ID_APPLICATIVO_SERVER);
+/**			String servizioApplicativoServer = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ID_APPLICATIVO_SERVER);*/
 			
 			if(!servizioApplicativoServerEnabled) {		
 			
@@ -158,7 +158,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare il Tipo");
 					return false;
 				}
-				if (tipoauth.equals(CostantiConfigurazione.CREDENZIALE_BASIC.toString()) && (utente.equals("") || password.equals("") /*
+				if (tipoauth.equals(CostantiConfigurazione.CREDENZIALE_BASIC.toString()) && (utente.equals("") || password.equals("") /**
 				 * ||
 				 * confpw
 				 * .
@@ -178,7 +178,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 							tmpElenco = tmpElenco + ", "+ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD;
 						}
 					}
-					/*
+					/**
 					 * if (confpw.equals("")) { if (tmpElenco.equals("")) { tmpElenco =
 					 * "Conferma password"; } else { tmpElenco = tmpElenco + ", Conferma
 					 * password"; } }
@@ -188,9 +188,20 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				}
 	
 				// Controllo che non ci siano spazi nei campi di testo
-				if (tipoauth.equals(CostantiConfigurazione.CREDENZIALE_BASIC.toString()) && ((utente.indexOf(" ") != -1) || (password.indexOf(" ") != -1))) {
-					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
-					return false;
+				if (tipoauth.equals(CostantiConfigurazione.CREDENZIALE_BASIC.toString())){
+					if (utente.indexOf(" ") != -1 
+							/**|| 
+							(password.indexOf(" ") != -1) vogliamo permettere la password fornita dall'utente (controllo inizio/fine aggiunnto dopo)*/ 
+						 ){
+						this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
+						return false;
+					}
+					if (
+							password.startsWith(" ") || password.endsWith(" ")
+						) {
+						this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INIZIARE_O_TERMINARE_CON_SPAZI_NEI_CAMPI_DI_TESTO);
+						return false;
+					}
 				}
 	
 				// Controllo che i campi DataElementType.SELECT abbiano uno dei valori ammessi
@@ -309,7 +320,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 	
 	
 				// Controllo che le password corrispondano
-				/*
+				/**
 				 * if (tipoauth.equals("basic") && !password.equals(confpw)) {
 				 * this.pd.setMessage("Le password non corrispondono"); return false; }
 				 */
@@ -3749,7 +3760,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 						de.setValue(null); // non faccio vedere una password cifrata
 					}
 					else{
-						de.setValue(StringEscapeUtils.escapeHtml4(passwordGetMsg));
+						de.setValue(passwordGetMsg); // non faccio l'escape per il tipo crypt, verra' gestito nella jsp
 					}
 					if(integrationManagerEnabled) {
 						//de.setType(DataElementType.TEXT_EDIT);
@@ -4957,8 +4968,15 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			
 			if( !this.core.getDriverBYOKUtilities().isEnabledBYOK() || !this.core.getDriverBYOKUtilities().isWrappedWithAnyPolicy(valore) ){
 				if (valore.indexOf(" ") != -1) {
-					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
-					return false;
+					if(this.core.isProprietaValidazioneConsentiSpazio()) {
+						if(valore.startsWith(" ") || valore.endsWith(" ")) {
+							this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INIZIARE_O_TERMINARE_CON_SPAZI_NEI_CAMPI_DI_TESTO);
+							return false;
+						}
+					} else {
+						this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
+						return false;
+					}
 				}
 				if(!this.checkLength4000(valore, ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROP_VALORE)) {
 					return false;

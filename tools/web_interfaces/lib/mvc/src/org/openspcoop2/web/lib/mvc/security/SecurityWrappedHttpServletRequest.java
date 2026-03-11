@@ -112,19 +112,32 @@ public class SecurityWrappedHttpServletRequest extends HttpServletRequestWrapper
 	
 	public String getOriginalParameter(String key) {
 		String value = this.getHttpServletRequest().getParameter(key);
-		boolean usaValidazioneTextArea = ServletUtils.usaValidazioneTextArea(getHttpServletRequest(), key);
-		return this.validator.getParametroSanificato(value, usaValidazioneTextArea);
+		boolean skipSanitize = ServletUtils.usaValidazioneTextArea(getHttpServletRequest(), key) || ServletUtils.usaValidazionePassword(getHttpServletRequest(), key);
+		return this.validator.getParametroSanificato(value, skipSanitize);
 	}
-	
+
 	@Override
 	public String getParameter(String key) {
 		String val = this.getHttpServletRequest().getParameter(key);
 		if(val != null) {
 			try {
 				boolean usaValidazioneTextArea = ServletUtils.usaValidazioneTextArea(getHttpServletRequest(), key);
-				val = this.validator.getParametroSanificato(val, usaValidazioneTextArea);
-				String pattern = usaValidazioneTextArea ? Costanti.PATTERN_REQUEST_HTTP_PARAMETER_VALUE_TEXT_AREA : Costanti.PATTERN_REQUEST_HTTP_PARAMETER_VALUE;
-				return this.validator.validate(PREFIX_ERROR_PARAMETER + key + "]:["+val+"]", val, null, true, !usaValidazioneTextArea, pattern);
+				boolean usaValidazionePassword = ServletUtils.usaValidazionePassword(getHttpServletRequest(), key);
+				boolean skipSanitize = usaValidazioneTextArea || usaValidazionePassword;
+				val = this.validator.getParametroSanificato(val, skipSanitize);
+				String pattern;
+				boolean checkSqlInjection;
+				if(usaValidazionePassword) {
+					pattern = Costanti.PATTERN_REQUEST_HTTP_PARAMETER_VALUE_PASSWORD;
+					checkSqlInjection = false;
+				} else if(usaValidazioneTextArea) {
+					pattern = Costanti.PATTERN_REQUEST_HTTP_PARAMETER_VALUE_TEXT_AREA;
+					checkSqlInjection = false;
+				} else {
+					pattern = Costanti.PATTERN_REQUEST_HTTP_PARAMETER_VALUE;
+					checkSqlInjection = true;
+				}
+				return this.validator.validate(PREFIX_ERROR_PARAMETER + key + "]:["+val+"]", val, null, true, checkSqlInjection, pattern);
 			} catch (ValidationException e) {
 				this.log.warn("Errore di validazione: {}", e.getMessage(),e);
 				return "";
@@ -142,15 +155,28 @@ public class SecurityWrappedHttpServletRequest extends HttpServletRequestWrapper
 				String name = entry.getKey();
 
 				boolean usaValidazioneTextArea = ServletUtils.usaValidazioneTextArea(getHttpServletRequest(), name);
-				String pattern = usaValidazioneTextArea ? Costanti.PATTERN_REQUEST_HTTP_PARAMETER_VALUE_TEXT_AREA : Costanti.PATTERN_REQUEST_HTTP_PARAMETER_VALUE;
-				
+				boolean usaValidazionePassword = ServletUtils.usaValidazionePassword(getHttpServletRequest(), name);
+				boolean skipSanitize = usaValidazioneTextArea || usaValidazionePassword;
+				String pattern;
+				boolean checkSqlInjection;
+				if(usaValidazionePassword) {
+					pattern = Costanti.PATTERN_REQUEST_HTTP_PARAMETER_VALUE_PASSWORD;
+					checkSqlInjection = false;
+				} else if(usaValidazioneTextArea) {
+					pattern = Costanti.PATTERN_REQUEST_HTTP_PARAMETER_VALUE_TEXT_AREA;
+					checkSqlInjection = false;
+				} else {
+					pattern = Costanti.PATTERN_REQUEST_HTTP_PARAMETER_VALUE;
+					checkSqlInjection = true;
+				}
+
 				String cleanName = this.validator.validate("Il nome del parametro [" + name + "]", name, this.queryParamNameMaxLength, true, Costanti.PATTERN_REQUEST_HTTP_PARAMETER_NAME);
-				
+
 				String[] value = entry.getValue();
 				String[] cleanValues = new String[value.length];
 				for (int j = 0; j < value.length; j++) {
-					String val = this.validator.getParametroSanificato(value[j], usaValidazioneTextArea);
-					String cleanValue = this.validator.validate(PREFIX_ERROR_PARAMETER + name + "]:["+val+"]", val, null, true, !usaValidazioneTextArea, pattern);
+					String val = this.validator.getParametroSanificato(value[j], skipSanitize);
+					String cleanValue = this.validator.validate(PREFIX_ERROR_PARAMETER + name + "]:["+val+"]", val, null, true, checkSqlInjection, pattern);
 					cleanValues[j] = cleanValue;
 				}
 				cleanMap.put(cleanName, cleanValues);
@@ -186,14 +212,27 @@ public class SecurityWrappedHttpServletRequest extends HttpServletRequestWrapper
 		if(values == null)
 			return values;
 		newValues = new ArrayList<>();
-		
+
 		boolean usaValidazioneTextArea = ServletUtils.usaValidazioneTextArea(getHttpServletRequest(), arg0);
-		String pattern = usaValidazioneTextArea ? Costanti.PATTERN_REQUEST_HTTP_PARAMETER_VALUE_TEXT_AREA : Costanti.PATTERN_REQUEST_HTTP_PARAMETER_VALUE;
+		boolean usaValidazionePassword = ServletUtils.usaValidazionePassword(getHttpServletRequest(), arg0);
+		boolean skipSanitize = usaValidazioneTextArea || usaValidazionePassword;
+		String pattern;
+		boolean checkSqlInjection;
+		if(usaValidazionePassword) {
+			pattern = Costanti.PATTERN_REQUEST_HTTP_PARAMETER_VALUE_PASSWORD;
+			checkSqlInjection = false;
+		} else if(usaValidazioneTextArea) {
+			pattern = Costanti.PATTERN_REQUEST_HTTP_PARAMETER_VALUE_TEXT_AREA;
+			checkSqlInjection = false;
+		} else {
+			pattern = Costanti.PATTERN_REQUEST_HTTP_PARAMETER_VALUE;
+			checkSqlInjection = true;
+		}
 
 		for (String value : values) {
 			try {
-				String val = this.validator.getParametroSanificato(value, usaValidazioneTextArea);
-				newValues.add(this.validator.validate(PREFIX_ERROR_PARAMETER + arg0 + "]:["+val+"]", val, null, true, !usaValidazioneTextArea, pattern));
+				String val = this.validator.getParametroSanificato(value, skipSanitize);
+				newValues.add(this.validator.validate(PREFIX_ERROR_PARAMETER + arg0 + "]:["+val+"]", val, null, true, checkSqlInjection, pattern));
 			} catch (ValidationException e) {
 				this.log.warn("Errore di validazione: {}", e.getMessage(),e);
 			}

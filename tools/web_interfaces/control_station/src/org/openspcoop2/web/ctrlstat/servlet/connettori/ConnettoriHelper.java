@@ -776,9 +776,20 @@ public class ConnettoriHelper extends ConsoleHelper {
 			}
 
 			// Controllo che non ci siano spazi nei campi di testo
-			if ((nome.indexOf(" ") != -1) || (valore.indexOf(" ") != -1)) {
+			if (nome.indexOf(" ") != -1) {
 				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 				return false;
+			}
+			if (valore.indexOf(" ") != -1) {
+				if(this.core.isProprietaValidazioneConsentiSpazio()) {
+					if(valore.startsWith(" ") || valore.endsWith(" ")) {
+						this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INIZIARE_O_TERMINARE_CON_SPAZI_NEI_CAMPI_DI_TESTO);
+						return false;
+					}
+				} else {
+					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
+					return false;
+				}
 			}
 			
 			// Lunghezza
@@ -1740,7 +1751,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				
 				de = new DataElement();
 				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
-				de.setValue(StringEscapeUtils.escapeHtml4(password));
+				de.setValue(StringEscapeUtils.escapeHtml4(password)); // il valore viene sempre sovrascritto nei rami successivi, si potrebbe eliminare. 
 				de.setType(DataElementType.TEXT_EDIT);
 				if(connettore){
 					de.setName(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
@@ -1786,6 +1797,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						
 						de.setType(DataElementType.HIDDEN);
 						de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
+						de.setValue(null); // non mando in pagina una password cifrata
 					}
 					
 					if( (!change) || (!passwordCifrata) || (ServletUtils.isCheckBoxEnabled(changepwd)) ){
@@ -1793,6 +1805,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 						if(change && passwordCifrata && ServletUtils.isCheckBoxEnabled(changepwd) ){
 							de.setValue(null); // non faccio vedere una password cifrata
 							de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_NUOVA_PASSWORD);
+						} else {
+							de.setValue(password); // non faccio l'escape per il tipo crypt, verra' gestito nella jsp
 						}
 						
 						// Nuova visualizzazione Password con bottone genera password
@@ -4286,7 +4300,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				if (
 						(nome.indexOf(" ") != -1) ||
 						(user.indexOf(" ") != -1) || 
-						(password.indexOf(" ") != -1) || 
+						/** (password.indexOf(" ") != -1) || vogliamo permettere la password fornita dall'utente (controllo inizio/fine aggiunnto dopo) */ 
 						(initcont.indexOf(" ") != -1) || 
 						(urlpgk.indexOf(" ") != -1) || 
 						(provurl.indexOf(" ") != -1) || 
@@ -4305,7 +4319,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						(proxyHostname.indexOf(" ") != -1) ||
 						(proxyPort.indexOf(" ") != -1) ||
 						(proxyUsername.indexOf(" ") != -1) ||
-						(proxyPassword.indexOf(" ") != -1) ||
+						/** (proxyPassword.indexOf(" ") != -1) || vogliamo permettere la password fornita dall'utente (controllo inizio/fine aggiunnto dopo)*/ 
 						(tempiRispostaConnectionTimeout.indexOf(" ") != -1) ||
 						(tempiRispostaReadTimeout.indexOf(" ") != -1) ||
 						(tempiRispostaTempoMedioRisposta.indexOf(" ") != -1) ||
@@ -4323,6 +4337,13 @@ public class ConnettoriHelper extends ConsoleHelper {
 						(responseInputWaitTime.indexOf(" ") != -1) 
 						) {
 					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
+					return false;
+				}
+				if (
+						password.startsWith(" ") || password.endsWith(" ") ||
+						proxyPassword.startsWith(" ") || proxyPassword.endsWith(" ")
+					) {
+					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INIZIARE_O_TERMINARE_CON_SPAZI_NEI_CAMPI_DI_TESTO);
 					return false;
 				}
 	

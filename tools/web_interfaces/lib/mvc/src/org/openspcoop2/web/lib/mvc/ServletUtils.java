@@ -1176,6 +1176,8 @@ public class ServletUtils {
 				|| Costanti.DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_END.equals(parameterValueFiltrato);
 	}
 	
+	private static final String PREFIX_VALORE_PARAMETRO = "Il valore del parametro [";
+	
 	/**
 	 * Validazione del parametro HttpMethod
 	 * 
@@ -1191,7 +1193,7 @@ public class ServletUtils {
 		}
 		
 		try {
-			Validatore.getInstance().validate("Il valore del parametro [" + parameterToCheck + "]:["+parameterValueOriginale+"]", parameterValueOriginale, null, true, false, org.openspcoop2.web.lib.mvc.security.Costanti.PATTERN_REQUEST_HTTP_PARAMETER_VALUE_TEXT_AREA);
+			Validatore.getInstance().validate(PREFIX_VALORE_PARAMETRO + parameterToCheck + "]:["+parameterValueOriginale+"]", parameterValueOriginale, null, true, false, org.openspcoop2.web.lib.mvc.security.Costanti.PATTERN_REQUEST_HTTP_PARAMETER_VALUE_TEXT_AREA);
 		}catch(ValidationException e) {
 			return false;
 		}
@@ -1204,7 +1206,7 @@ public class ServletUtils {
 		
 		if(parametroIdentificativi != null) {
 			try {
-				Validatore.getInstance().validate("Il valore del parametro [" + Costanti.PARAMETRO_IDENTIFICATIVI_TEXT_AREA + "]:["+parametroIdentificativi+"]",
+				Validatore.getInstance().validate(PREFIX_VALORE_PARAMETRO + Costanti.PARAMETRO_IDENTIFICATIVI_TEXT_AREA + "]:["+parametroIdentificativi+"]",
 						parametroIdentificativi, false, org.openspcoop2.web.lib.mvc.security.Costanti.PATTERN_ID_TEXT_AREA);
 			}catch(ValidationException e) {
 				// se il contenuto del parametro con gli id text area non rispetta il suo pattern allora non abilito la validazione custom
@@ -1231,21 +1233,83 @@ public class ServletUtils {
 		
 		return false;
 	}
-	
+
+	public static boolean usaValidazionePassword(HttpServletRequest request, String parameterToCheck) {
+		String parametroIdentificativi = Validatore.getInstance().getParametroOriginale(request, Costanti.PARAMETRO_IDENTIFICATIVI_PASSWORD);
+
+		if(parametroIdentificativi != null) {
+			return usaValidazionePassword(parametroIdentificativi, parameterToCheck);
+		} else {
+			// casi speciali per il monitor (form JSF senza __pw__)
+			if(Costanti.PARAMETRO_MONITOR_PASSWORD.equals(parameterToCheck)
+					|| Costanti.PARAMETRO_MONITOR_J_PASSWORD.equals(parameterToCheck)
+					|| Costanti.PARAMETRO_MONITOR_OLD_PWD_CHANGE.equals(parameterToCheck)
+					|| Costanti.PARAMETRO_MONITOR_PWD_CHANGE.equals(parameterToCheck)
+					|| Costanti.PARAMETRO_MONITOR_CONFIRM_PWD_CHANGE.equals(parameterToCheck)
+					) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+	public static boolean usaValidazionePassword(String parametroIdentificativi, String parameterToCheck) {
+		try {
+			Validatore.getInstance().validate(PREFIX_VALORE_PARAMETRO + Costanti.PARAMETRO_IDENTIFICATIVI_PASSWORD + "]:["+parametroIdentificativi+"]",
+					parametroIdentificativi, false, org.openspcoop2.web.lib.mvc.security.Costanti.PATTERN_ID_TEXT_AREA);
+		}catch(ValidationException e) {
+			// se il contenuto del parametro con gli id password non rispetta il suo pattern allora non abilito la validazione custom
+			return false;
+		}
+
+		String[] ids = parametroIdentificativi.split(Costanti.VALUE_PARAMETRO_IDENTIFICATIVI_PASSWORD_SEPARATORE);
+
+		if(ids != null && ids.length > 0) {
+			List<String> asList = Arrays.asList(ids);
+			// verifica diretta sul nome del parametro
+			if(asList.contains(parameterToCheck)) {
+				return true;
+			}
+			// verifica sul parametro hidden associato al lock (prefisso __lk__)
+			if(parameterToCheck.startsWith(Costanti.PARAMETER_LOCK_PREFIX)) {
+				String nomeOriginale = parameterToCheck.substring(Costanti.PARAMETER_LOCK_PREFIX.length());
+				return asList.contains(nomeOriginale);
+			}
+		}
+		
+		return false;
+	}
+
+	public static String getIdentificativiPassword(List<?> dati) {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < dati.size(); i++) {
+			DataElement de = (DataElement) dati.get(i);
+			String deName = !de.getName().equals("") ? de.getName() : "de_name_"+i;
+			if (de.getType().equals(DataElementType.CRYPT.toString()) || de.getType().equals(DataElementType.LOCK.toString())) {
+				if(!sb.isEmpty()) {
+					sb.append(Costanti.VALUE_PARAMETRO_IDENTIFICATIVI_PASSWORD_SEPARATORE);
+				}
+				sb.append(deName);
+			}
+		}
+
+		return !sb.isEmpty() ? sb.toString() : null;
+	}
+
 	public static String getIdentificativiTextArea(List<?> dati) {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < dati.size(); i++) {
 			DataElement de = (DataElement) dati.get(i);
 			String deName = !de.getName().equals("") ? de.getName() : "de_name_"+i;
-			if (de.getType().equals("textarea") || de.getType().equals("textarea-noedit")) {
-				if(sb.length() > 0) {
+			if (de.getType().equals(DataElementType.TEXT_AREA.toString()) || de.getType().equals(DataElementType.TEXT_AREA_NO_EDIT.toString())) {
+				if(!sb.isEmpty()) {
 					sb.append(Costanti.VALUE_PARAMETRO_IDENTIFICATIVI_TEXT_AREA_SEPARATORE);
 				}
 				sb.append(deName);
 			}
 		}
 		
-		return sb.length() > 0 ? sb.toString() : null;
+		return !sb.isEmpty() ? sb.toString() : null;
 	}
 	
 	public static String getIdentificativiTextAreaFiltriRicerca(List<DataElement> filterValues) {
@@ -1253,15 +1317,15 @@ public class ServletUtils {
 		for (int i = 0; i < filterValues.size(); i++) {
 			DataElement filtro = filterValues.get(i);
 			String filterName = filtro.getName();
-			if (filtro.getType().equals("textarea") || filtro.getType().equals("textarea-noedit")) {
-				if(sb.length() > 0) {
+			if (filtro.getType().equals(DataElementType.TEXT_AREA_NO_EDIT.toString()) || filtro.getType().equals(DataElementType.TEXT_AREA_NO_EDIT.toString())) {
+				if(!sb.isEmpty()) {
 					sb.append(Costanti.VALUE_PARAMETRO_IDENTIFICATIVI_TEXT_AREA_SEPARATORE);
 				}
 				sb.append(filterName);
 			}
 		}
 		
-		return sb.length() > 0 ? sb.toString() : null;
+		return !sb.isEmpty() ? sb.toString() : null;
 	}
 	
 	
@@ -1269,7 +1333,7 @@ public class ServletUtils {
 		StringBuilder sb = new StringBuilder();
 		sb.append(Costanti.CHAR_QUOTA_JSON).append(key).append(Costanti.CHAR_QUOTA_JSON).append(Costanti.CHAR_DUE_PUNTI_JSON);
 		if(val != null) {
-			sb.append(Costanti.CHAR_QUOTA_JSON).append(val).append(Costanti.CHAR_QUOTA_JSON);
+			sb.append(Costanti.CHAR_QUOTA_JSON).append(StringEscapeUtils.escapeJson(val)).append(Costanti.CHAR_QUOTA_JSON);
 		} else {
 			sb.append(Costanti.NULL_VALUE_JSON);
 		}

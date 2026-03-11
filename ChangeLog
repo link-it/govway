@@ -1,3 +1,14 @@
+2026-03-11 Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole, GovWayMonitor]
+	Risolto Bug #1731
+	È stata risolta un’anomalia che impediva l’utilizzo dei caratteri speciali |, < e altri nei campi password.
+	Nell’ambito dell’intervento, il meccanismo di escape HTML per i campi lock e crypt è stato riorganizzato e centralizzato a livello JSP, 
+	al momento della visualizzazione, rimuovendolo dai Java Helper.
+	È ora consentito l’utilizzo dello spazio nei valori delle proprietà e nella password impiegata per l’autenticazione Basic dei connettori e delle token policy.
+	Sono state inoltre riviste le label delle token policy, così da renderle coerenti con l’introduzione del DPoP.
+	Infine, è stata corretta un’anomalia nella console che non consentiva di copiare le credenziali generate tramite l’apposito pulsante.	
+
 2026-03-10  Andrea Poli <apoli@link.it>
 
 	* [ProtocolloModIPA]

@@ -134,7 +134,7 @@
 			      	<property name="policy.retrieveToken.endpoint.basic.password" />
 			</item>
 			<item type="checkbox" name="autenticazioneEndpointBasicAuthorizationHeader" 
-			      label="Authorization Bearer" defaultSelected="true"
+			      label="Authorization Basic" defaultSelected="true"
 			      note="Se disabilitato le credenziali vengono codificate nella richiesta 'x-www-form-urlencoded'">
 				<conditions>
 					<condition and="true">
@@ -1349,8 +1349,8 @@
 
 		<item type="select" name="tokenForwardTrasparenteMode" label="Modalità" default="RFC6750_header" reloadOnChange="true">
 			<values>
-				<value value="RFC6750_header" label="RFC 6750 - Bearer Token Usage (Authorization Request Header Field)"/>
-				<value value="RFC6750_url" label="RFC 6750 - Bearer Token Usage (URI Query Parameter)"/>
+				<value value="RFC6750_header" label="RFC 6750 - Authorization Request Header Field"/>
+				<value value="RFC6750_url" label="RFC 6750 - URI Query Parameter"/>
 				<value value="CUSTOM_header" label="Header HTTP"/>
 				<value value="CUSTOM_url" label="Parametro URL"/>
 			</values>

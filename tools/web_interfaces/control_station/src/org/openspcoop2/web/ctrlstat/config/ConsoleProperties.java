@@ -668,7 +668,11 @@ public class ConsoleProperties {
 	public Boolean isRegistrazioneMessaggiMultipartPayloadParsingEnabled() throws UtilsException{
 		return this.readBooleanRequiredProperty("registrazioneMessaggi.multipartPayloadParsing.enabled");
 	}
-	
+
+	public Boolean isProprietaValidazioneConsentiSpazio() throws UtilsException{
+		return this.readBooleanRequiredProperty("proprieta.validazione.consentiSpazio");
+	}
+
 	public Boolean isClusterDinamicoEnabled() throws UtilsException{
 		ConfigurazioneNodiRuntime config = getConfigurazioneNodiRuntime();
 		if(config!=null) {
