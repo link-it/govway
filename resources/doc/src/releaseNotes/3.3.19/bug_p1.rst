@@ -30,5 +30,6 @@ Sono stati risolti i seguenti bug:
 
 	- Corretta la selezione delle token policy proposte nel controllo degli accessi in presenza di risorse con configurazione DPoP mista (ereditata dall'API e ridefinita).
 	- Corretta la configurazione del controllo degli accessi nella fruizione built-in 'api-pdnd-push-signals': rimossa l'autorizzazione per richiedente, non applicabile in quanto la verifica viene delegata puntualmente all'eService che pubblica i segnali.
+	- Riviste etichette 'Authorization Bearer' utilizzate nelle token policy per renderle coerenti con l’introduzione del DPoP.
 
 - Nel batch di generazione delle statistiche è stata corretta la generazione del CSV di tracciamento PDND per aggregare correttamente le richieste con lo stesso (purpose_id, status, token_id) quando più riferimenti 'eventi_gestione' distinti risolvono allo stesso codice HTTP, eliminando le righe duplicate segnalate con errore 'PURPOSE_AND_STATUS_AND_TOKEN_NOT_UNIQUE'.
