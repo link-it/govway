@@ -31,14 +31,14 @@ dell'Application Server, di Java e delle principali librerie di terze parti util
      - 21
      - 11
      - 35 – 38 (JBoss EAP 8.1), 27 – 28 (JBoss EAP 8.0)
-     - ``3.4.2``
+     - ``3.4.2.p1``
      - —
    * - ``3.3.x``
      - **EOL imminente**
      - 11
      - 9
      - 26, 22 – 25 (JBoss EAP 7.4), 18 – 21 (JBoss EAP 7.3)
-     - ``3.3.19``
+     - ``3.3.19.p1``
      - **31/12/2026**
 
 
