@@ -869,11 +869,52 @@ public class ServletUtils {
 		StringBuilder sb = new StringBuilder();
 		sb.append(Costanti.CHAR_QUOTA_JSON).append(key).append(Costanti.CHAR_QUOTA_JSON).append(Costanti.CHAR_DUE_PUNTI_JSON);
 		if(val != null) {
-			sb.append(Costanti.CHAR_QUOTA_JSON).append(val).append(Costanti.CHAR_QUOTA_JSON);
+			sb.append(Costanti.CHAR_QUOTA_JSON).append(escapeJsonValue(val)).append(Costanti.CHAR_QUOTA_JSON);
 		} else {
 			sb.append(Costanti.NULL_VALUE_JSON);
 		}
 		return sb.toString();
+	}
+
+	private static String escapeJsonValue(String value) {
+		StringBuilder escaped = new StringBuilder();
+		for (int i = 0; i < value.length(); i++) {
+			char ch = value.charAt(i);
+			switch (ch) {
+			case '"':
+				escaped.append("\\\"");
+				break;
+			case '\\':
+				escaped.append("\\\\");
+				break;
+			case '/':
+				escaped.append("\\/");
+				break;
+			case '\b':
+				escaped.append("\\b");
+				break;
+			case '\f':
+				escaped.append("\\f");
+				break;
+			case '\n':
+				escaped.append("\\n");
+				break;
+			case '\r':
+				escaped.append("\\r");
+				break;
+			case '\t':
+				escaped.append("\\t");
+				break;
+			default:
+				if (ch < 0x20) {
+					escaped.append(String.format("\\u%04x", (int) ch));
+				} else {
+					escaped.append(ch);
+				}
+				break;
+			}
+		}
+		return escaped.toString();
 	}
 	
 	public static String getJson(String ... pairs) {

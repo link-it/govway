@@ -46,10 +46,10 @@
 		
 			<item type="select" name="tokenSource" label="Posizione" default="RFC6750" reloadOnChange="true">
 				<values>
-					<value value="RFC6750" label="RFC 6750 - Bearer Token Usage"/>
-					<value value="RFC6750_header" label="RFC 6750 - Bearer Token Usage (Authorization Request Header Field)"/>
-					<value value="RFC6750_form" label="RFC 6750 - Bearer Token Usage (Form-Encoded Body Parameter)"/>
-					<value value="RFC6750_url" label="RFC 6750 - Bearer Token Usage (URI Query Parameter)"/>
+					<value value="RFC6750" label="RFC 6750 - Token Usage"/>
+					<value value="RFC6750_header" label="RFC 6750 - Authorization Request Header Field"/>
+					<value value="RFC6750_form" label="RFC 6750 - Form-Encoded Body Parameter"/>
+					<value value="RFC6750_url" label="RFC 6750 - URI Query Parameter"/>
 					<value value="CUSTOM_header" label="Header HTTP"/>
 					<value value="CUSTOM_url" label="Parametro URL"/>
 				</values>
@@ -1985,8 +1985,8 @@
 				</conditions>
 				<values>
 					<value value="asReceived" label="Come è stato ricevuto"/>
-					<value value="RFC6750_header" label="RFC 6750 - Bearer Token Usage (Authorization Request Header Field)"/>
-					<value value="RFC6750_url" label="RFC 6750 - Bearer Token Usage (URI Query Parameter)"/>
+					<value value="RFC6750_header" label="RFC 6750 - Authorization Request Header Field"/>
+					<value value="RFC6750_url" label="RFC 6750 - URI Query Parameter"/>
 					<value value="CUSTOM_header" label="Header HTTP"/>
 					<value value="CUSTOM_url" label="Parametro URL"/>
 				</values>
