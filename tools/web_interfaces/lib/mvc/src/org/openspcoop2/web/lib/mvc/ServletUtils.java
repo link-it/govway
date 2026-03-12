@@ -1317,7 +1317,7 @@ public class ServletUtils {
 		for (int i = 0; i < filterValues.size(); i++) {
 			DataElement filtro = filterValues.get(i);
 			String filterName = filtro.getName();
-			if (filtro.getType().equals(DataElementType.TEXT_AREA_NO_EDIT.toString()) || filtro.getType().equals(DataElementType.TEXT_AREA_NO_EDIT.toString())) {
+			if (filtro.getType().equals(DataElementType.TEXT_AREA.toString()) || filtro.getType().equals(DataElementType.TEXT_AREA_NO_EDIT.toString())) {
 				if(!sb.isEmpty()) {
 					sb.append(Costanti.VALUE_PARAMETRO_IDENTIFICATIVI_TEXT_AREA_SEPARATORE);
 				}
