@@ -1235,7 +1235,7 @@ public class ServletUtils {
 	}
 
 	public static boolean usaValidazionePassword(HttpServletRequest request, String parameterToCheck) {
-		String parametroIdentificativi = Validatore.getInstance().getParametroOriginale(request, Costanti.PARAMETRO_IDENTIFICATIVI_PASSWORD);
+		String parametroIdentificativi = Validatore.getInstance().getParametroOriginale(request, Costanti.PARAMETRO_IDENTIFICATIVI_PS);
 
 		if(parametroIdentificativi != null) {
 			return usaValidazionePassword(parametroIdentificativi, parameterToCheck);
@@ -1255,14 +1255,14 @@ public class ServletUtils {
 	}
 	public static boolean usaValidazionePassword(String parametroIdentificativi, String parameterToCheck) {
 		try {
-			Validatore.getInstance().validate(PREFIX_VALORE_PARAMETRO + Costanti.PARAMETRO_IDENTIFICATIVI_PASSWORD + "]:["+parametroIdentificativi+"]",
+			Validatore.getInstance().validate(PREFIX_VALORE_PARAMETRO + Costanti.PARAMETRO_IDENTIFICATIVI_PS + "]:["+parametroIdentificativi+"]",
 					parametroIdentificativi, false, org.openspcoop2.web.lib.mvc.security.Costanti.PATTERN_ID_TEXT_AREA);
 		}catch(ValidationException e) {
 			// se il contenuto del parametro con gli id password non rispetta il suo pattern allora non abilito la validazione custom
 			return false;
 		}
 
-		String[] ids = parametroIdentificativi.split(Costanti.VALUE_PARAMETRO_IDENTIFICATIVI_PASSWORD_SEPARATORE);
+		String[] ids = parametroIdentificativi.split(Costanti.VALUE_PARAMETRO_IDENTIFICATIVI_PS_SEPARATORE);
 
 		if(ids != null && ids.length > 0) {
 			List<String> asList = Arrays.asList(ids);
@@ -1287,7 +1287,7 @@ public class ServletUtils {
 			String deName = !de.getName().equals("") ? de.getName() : "de_name_"+i;
 			if (de.getType().equals(DataElementType.CRYPT.toString()) || de.getType().equals(DataElementType.LOCK.toString())) {
 				if(!sb.isEmpty()) {
-					sb.append(Costanti.VALUE_PARAMETRO_IDENTIFICATIVI_PASSWORD_SEPARATORE);
+					sb.append(Costanti.VALUE_PARAMETRO_IDENTIFICATIVI_PS_SEPARATORE);
 				}
 				sb.append(deName);
 			}

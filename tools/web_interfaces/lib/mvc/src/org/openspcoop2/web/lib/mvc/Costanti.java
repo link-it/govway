@@ -502,8 +502,8 @@ public class Costanti {
 	
 	public static final String PARAMETRO_IDENTIFICATIVI_TEXT_AREA = "__ta__";
 	public static final String VALUE_PARAMETRO_IDENTIFICATIVI_TEXT_AREA_SEPARATORE = ",";
-	public static final String PARAMETRO_IDENTIFICATIVI_PASSWORD = "__pw__";
-	public static final String VALUE_PARAMETRO_IDENTIFICATIVI_PASSWORD_SEPARATORE = ",";
+	public static final String PARAMETRO_IDENTIFICATIVI_PS = "__pw__";
+	public static final String VALUE_PARAMETRO_IDENTIFICATIVI_PS_SEPARATORE = ",";
 	public static final String PARAMETRO_MONITOR_RICERCA_AZIONE = "azCombo";
 	public static final String PARAMETRO_MONITOR_RICERCA_UTENTE_DESCRIZIONE = "descrizioneRicerca";
 

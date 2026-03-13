@@ -105,7 +105,7 @@ if(idsPassword == null)
 		<%
 		if(!idsPassword.equals("")){
 			%>
-			<input type="hidden" name="<%=Costanti.PARAMETRO_IDENTIFICATIVI_PASSWORD%>" id="<%=Costanti.PARAMETRO_IDENTIFICATIVI_PASSWORD%>"  value="<%= idsPassword %>"/>
+			<input type="hidden" name="<%=Costanti.PARAMETRO_IDENTIFICATIVI_PS%>" id="<%=Costanti.PARAMETRO_IDENTIFICATIVI_PS%>"  value="<%= idsPassword %>"/>
 			<%
 		}
 		%>
