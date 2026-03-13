@@ -145,9 +145,9 @@ maintenance:
 name: GovWay
 platforms:
   - web
-releaseDate: '2026-02-20'
+releaseDate: '2026-03-13'
 softwareType: standalone/web
-softwareVersion: 3.3.19
+softwareVersion: 3.3.19.p1
 url: 'https://github.com/link-it/govway'
 usedBy:
   - MISE - Ministero dello Sviluppo Economico
