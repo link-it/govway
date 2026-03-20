@@ -1,5 +1,12 @@
 2026-03-20  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore]
+	Risolto Bug #1734
+	Risolta la seguente vulnerabilità relative ai jar di terza parte:
+	- CVE-2026-23907: aggiornata libreria 'org.apache.pdfbox:*' alla versione 2.0.36
+
+2026-03-20  Andrea Poli <apoli@link.it>
+
 	* [InstallerVersioneBinaria, TimerStatistiche]
 	Risolto Bug
 	Risolto un problema di packaging del WAR per WildFly che impediva la corretta inizializzazione del descrittore di deployment jboss-deployment-structure.xml.
