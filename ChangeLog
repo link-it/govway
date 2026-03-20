@@ -1,3 +1,9 @@
+2026-03-20  Andrea Poli <apoli@link.it>
+
+	* [InstallerVersioneBinaria, TimerStatistiche]
+	Risolto Bug
+	Risolto un problema di packaging del WAR per WildFly che impediva la corretta inizializzazione del descrittore di deployment jboss-deployment-structure.xml.
+
 2026-03-13  Andrea Poli <apoli@link.it>
 
 	* Rilasciata versione 3.4.2.p1

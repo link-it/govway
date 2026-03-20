@@ -23,6 +23,7 @@
 	<target name="_buildGovwayStats">
 	
 		<antcall target="build_timerStatistiche">
+			<param name="as" value="${TIPO_AS}" />
 			<param name="rootDir" value="${rootDir}"/>
 			<param name="openspcoop2" value="${rootDir}"/>
 			<param name="required_lib" value="${required_lib_timerStatistiche}"/>
@@ -34,7 +35,9 @@
 			<param name="buildAPI" value="false" />
 			<param name="properties_timerStatistiche" value="${timerStatistiche}/deploy/properties"/>
 			<param name="dist_timerStatistiche" value="${deploy_sw}/${TIPO_AS}/dist"/>
+			<param name="tmp_jboss_conf" value="tmp_govwayTimerStatistiche" />
 		</antcall>
+		<delete includeEmptyDirs="true" dir="tmp_govwayTimerStatistiche"/>
 
 		<move file="${deploy_sw}/${TIPO_AS}/dist/govwayStats.war" todir="${deploy_sw}/${TIPO_AS}"/>
 		
