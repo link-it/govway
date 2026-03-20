@@ -1489,17 +1489,64 @@ public class CostantiControlStation {
 	public static final String VALUE_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SU = "su";
 	public static final String VALUE_PARAMETRO_CONFIGURAZIONE_POSIZIONE_GIU = "giu";
 	
-	public static final String VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO_ADD = TrasformazioneRegolaParametroTipoAzione.ADD.getValue();
-	public static final String VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO_DELETE = TrasformazioneRegolaParametroTipoAzione.DELETE.getValue();
-	public static final String VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO_UPDATE = TrasformazioneRegolaParametroTipoAzione.UPDATE.getValue();
-	public static final String VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO_UPDATE_OR_ADD = TrasformazioneRegolaParametroTipoAzione.UPDATE_OR_ADD.getValue();
-	
+	// Valori safe per la UI (non matchano il pattern di validazione SQL Injection)
+	public static final String VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO_ADD = "opAdd";
+	public static final String VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO_DELETE = "opDelete";
+	public static final String VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO_UPDATE = "opUpdate";
+	public static final String VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO_UPDATE_OR_ADD = "opUpdateOrAdd";
+
 	public static final String[] SELECT_VALUES_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO = {
 			VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO_ADD,
 			VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO_DELETE,
 			VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO_UPDATE,
 			VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO_UPDATE_OR_ADD
 	};
+
+	public static final String[] SELECT_LABELS_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO = {
+			TrasformazioneRegolaParametroTipoAzione.ADD.getValue(),
+			TrasformazioneRegolaParametroTipoAzione.DELETE.getValue(),
+			TrasformazioneRegolaParametroTipoAzione.UPDATE.getValue(),
+			TrasformazioneRegolaParametroTipoAzione.UPDATE_OR_ADD.getValue()
+	};
+
+	public static TrasformazioneRegolaParametroTipoAzione toTrasformazioneRegolaParametroTipoAzione(String uiValue) {
+		if(VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO_ADD.equals(uiValue)) {
+			return TrasformazioneRegolaParametroTipoAzione.ADD;
+		} else if(VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO_DELETE.equals(uiValue)) {
+			return TrasformazioneRegolaParametroTipoAzione.DELETE;
+		} else if(VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO_UPDATE.equals(uiValue)) {
+			return TrasformazioneRegolaParametroTipoAzione.UPDATE;
+		} else if(VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO_UPDATE_OR_ADD.equals(uiValue)) {
+			return TrasformazioneRegolaParametroTipoAzione.UPDATE_OR_ADD;
+		}
+		return TrasformazioneRegolaParametroTipoAzione.toEnumConstant(uiValue);
+	}
+
+	public static String toTrasformazioneRegolaParametroTipoAzioneSafeValue(TrasformazioneRegolaParametroTipoAzione azione) {
+		if(azione == null) {
+			return null;
+		}
+		switch(azione) {
+			case ADD: return VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO_ADD;
+			case DELETE: return VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO_DELETE;
+			case UPDATE: return VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO_UPDATE;
+			case UPDATE_OR_ADD: return VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO_UPDATE_OR_ADD;
+			default: return azione.getValue();
+		}
+	}
+
+	// HTTP Methods: valori safe per la UI (evitano che "DELETE" matchi il pattern SQL Injection)
+	public static final String HTTP_METHOD_SAFE_VALUE_PREFIX = "http_";
+
+	public static String toHttpMethodSafeValue(String methodName) {
+		return HTTP_METHOD_SAFE_VALUE_PREFIX + methodName;
+	}
+	public static String fromHttpMethodSafeValue(String safeValue) {
+		if(safeValue != null && safeValue.startsWith(HTTP_METHOD_SAFE_VALUE_PREFIX)) {
+			return safeValue.substring(HTTP_METHOD_SAFE_VALUE_PREFIX.length());
+		}
+		return safeValue;
+	}
 	
 	public static final String VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO_IDENTIFICAZIONE_FALLITA_BLOCCA = TrasformazioneIdentificazioneRisorsaFallita.BLOCCA.getValue();
 	public static final String VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO_IDENTIFICAZIONE_FALLITA_IGNORA = TrasformazioneIdentificazioneRisorsaFallita.IGNORA.getValue();

@@ -2550,8 +2550,14 @@ public class ConsoleHelper implements IConsoleHelper {
 					paramFilterValue = org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_FILTER_UNDEFINED;
 				}
 				
+				// Converte valori safe della UI nei valori reali prima di salvarli nella ricerca,
+				// in modo che il layer core/DB riceva sempre i valori dell'enum originale.
+				if(Filtri.FILTRO_HTTP_METHOD.equals(paramFilterName)) {
+					paramFilterValue = CostantiControlStation.fromHttpMethodSafeValue(paramFilterValue);
+				}
+
 				ricerca.addFilter(idLista, paramFilterName, paramFilterValue);
-				
+
 				index++;
 				nameFilter = PageData.getParametroFilterName(index);
 			}
@@ -12151,20 +12157,20 @@ public class ConsoleHelper implements IConsoleHelper {
 	public void addFilterHttpMethod(String httpMethod, boolean postBack) throws DriverControlStationException{
 		try {
 			String [] metodi = org.openspcoop2.core.registry.constants.HttpMethod.toArray();
-			String [] metodiLabel = metodi;
 			String [] values = new String[metodi.length + 1];
 			String [] labels = new String[metodi.length + 1];
 			labels[0] = CostantiControlStation.LABEL_PARAMETRO_HTTP_METHOD_QUALSIASI;
 			values[0] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_HTTP_METHOD_QUALSIASI;
 			for (int i =0; i < metodi.length ; i ++) {
-				labels[i+1] = metodiLabel[i];
-				values[i+1] = metodi[i];
+				labels[i+1] = metodi[i];
+				values[i+1] = CostantiControlStation.toHttpMethodSafeValue(metodi[i]);
 			}
-			
-			String selectedValue = httpMethod != null ? httpMethod : CostantiControlStation.DEFAULT_VALUE_PARAMETRO_HTTP_METHOD_QUALSIASI;
-			
+
+			// Il valore in ricerca è il valore reale (es. "DELETE"), va convertito nel valore safe per la select
+			String selectedValue = (httpMethod != null && !httpMethod.isEmpty()) ? CostantiControlStation.toHttpMethodSafeValue(httpMethod) : CostantiControlStation.DEFAULT_VALUE_PARAMETRO_HTTP_METHOD_QUALSIASI;
+
 			String label = CostantiControlStation.LABEL_PARAMETRO_HTTP_METHOD;
-			
+
 			this.pd.addFilter(Filtri.FILTRO_HTTP_METHOD, label, selectedValue, values, labels, postBack, this.getSize());
 			
 		} catch (Exception e) {
@@ -20086,11 +20092,11 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER_TIPO);
 		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER_TIPO);
 		//if(tipoOP.equals(TipoOperazione.ADD)) {
-		de.setLabels(CostantiControlStation.SELECT_VALUES_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO);
+		de.setLabels(CostantiControlStation.SELECT_LABELS_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO);
 		de.setValues(CostantiControlStation.SELECT_VALUES_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO);
 		de.setType(DataElementType.SELECT);
 		de.setSelected(tipo);
-		de.setRequired(true); 
+		de.setRequired(true);
 		de.setPostBack(true);
 		//} else {
 		//	de.setType(DataElementType.TEXT);
@@ -20190,7 +20196,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_TIPO);
 		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_TIPO);
 		//if(tipoOP.equals(TipoOperazione.ADD)) {
-		de.setLabels(CostantiControlStation.SELECT_VALUES_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO);
+		de.setLabels(CostantiControlStation.SELECT_LABELS_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO);
 		de.setValues(CostantiControlStation.SELECT_VALUES_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO);
 		de.setType(DataElementType.SELECT);
 		de.setSelected(tipo);
@@ -20302,7 +20308,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER_TIPO);
 		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER_TIPO);
 		//if(tipoOP.equals(TipoOperazione.ADD)) {
-		de.setLabels(CostantiControlStation.SELECT_VALUES_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO);
+		de.setLabels(CostantiControlStation.SELECT_LABELS_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO);
 		de.setValues(CostantiControlStation.SELECT_VALUES_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO);
 		de.setType(DataElementType.SELECT);
 		de.setSelected(tipo);
@@ -21281,9 +21287,12 @@ public class ConsoleHelper implements IConsoleHelper {
 	
 	public DataElement getHttpMethodDataElement(TipoOperazione tipoOperazione, String httpMethod, String label, String name, boolean addQualsiasi, String labelQualsiasi, String valueQualsiasi) {
 		DataElement de = new DataElement();
-		
+
 		de.setLabel(label);
-		de.setSelected(httpMethod);
+		// Converte il valore reale della enum nel valore safe della UI per la selezione
+		String selectedSafeValue = (httpMethod != null && !httpMethod.isEmpty() && !(addQualsiasi && httpMethod.equals(valueQualsiasi)))
+			? CostantiControlStation.toHttpMethodSafeValue(httpMethod) : httpMethod;
+		de.setSelected(selectedSafeValue);
 		de.setType(DataElementType.SELECT);
 		de.setName(name);
 		de.setSize(this.getSize());
@@ -21303,7 +21312,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		for (int i = 0; i < httpMethods.length; i++) {
 			HttpMethod method = httpMethods[i];
 			labels[(addQualsiasi ? i+1 : i)] = method.name();
-			values[(addQualsiasi ? i+1 : i)] = method.name();
+			values[(addQualsiasi ? i+1 : i)] = CostantiControlStation.toHttpMethodSafeValue(method.name());
 		}
 		
 		de.setLabels(labels);
@@ -24546,27 +24555,29 @@ public class ConsoleHelper implements IConsoleHelper {
 		if(validate && !this.validaParametroHttpMethod(parameterName)) {
 			throw new ValidationException("Il parametro [" +parameterName + "] contiene un valore non valido.");
 		}
-		// in questo caso restituisco il valore originale che e' un valore della enum HTTPMethods
-		return Validatore.getInstance().getParametroOriginale(this.request, parameterName);
+		// restituisco il valore originale convertito dal valore safe della UI al valore reale della enum HTTPMethods
+		String value = Validatore.getInstance().getParametroOriginale(this.request, parameterName);
+		return CostantiControlStation.fromHttpMethodSafeValue(value);
 	}
-	
+
 	/**
 	 * Validazione del parametro HttpMethod
-	 * 
+	 *
 	 * @param parameterToCheck
 	 * @return
 	 */
 	private boolean validaParametroHttpMethod(String parameterToCheck) {
 		String parameterValueOriginale = Validatore.getInstance().getParametroOriginale(this.request, parameterToCheck);
-		
+
 		// parametro originale e' vuoto o null allora e' valido
 		if(StringUtils.isEmpty(parameterValueOriginale) || CostantiDB.API_RESOURCE_HTTP_METHOD_ALL_VALUE.equals(parameterValueOriginale)) {
 			return true;
 		}
-		
-		// parametro filtrato vuoto o null perche' e' stato filtrato dall'utility di sicurezza, vuol dire che contiene la parola chiave DELETE
-		HttpMethod httpMethod = HttpMethod.toEnumConstant(parameterValueOriginale);
-		
+
+		// converte il valore safe della UI nel valore reale della enum
+		String realValue = CostantiControlStation.fromHttpMethodSafeValue(parameterValueOriginale);
+		HttpMethod httpMethod = HttpMethod.toEnumConstant(realValue);
+
 		return httpMethod != null;
 	}
 	

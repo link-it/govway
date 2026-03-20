@@ -1,5 +1,13 @@
 2026-03-20  Andrea Poli <apoli@link.it>
 
+	* [GovWayConsole]
+	Risolto Bug #1737
+	Nella configurazione delle trasformazioni (HTTP Headers e Query Parameters), 
+	la selezione delle operazioni "update" e "delete" dal menù "Operazione" non veniva recepita correttamente. 
+	Il problema si presentava anche nel filtro per HTTP Method nelle liste risorse, dove la selezione del metodo "DELETE" non veniva applicata.
+   
+2026-03-20  Andrea Poli <apoli@link.it>
+
 	* [GovWayCore]
 	Risolto Bug #1734
 	Risolta la seguente vulnerabilità relative ai jar di terza parte:

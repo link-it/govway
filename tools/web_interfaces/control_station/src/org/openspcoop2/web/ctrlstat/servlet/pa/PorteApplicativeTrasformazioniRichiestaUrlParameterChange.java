@@ -206,7 +206,7 @@ public class PorteApplicativeTrasformazioniRichiestaUrlParameterChange extends A
 				// primo accesso
 				if(nome == null) {
 					nome = oldParametro.getNome();
-					tipo = oldParametro.getConversioneTipo().getValue();
+					tipo = CostantiControlStation.toTrasformazioneRegolaParametroTipoAzioneSafeValue(oldParametro.getConversioneTipo());
 					valore = oldParametro.getValore();
 					identificazione = oldParametro.getIdentificazioneFallita()!=null ? oldParametro.getIdentificazioneFallita().getValue() : CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO_IDENTIFICAZIONE_FALLITA;
 				}
@@ -275,7 +275,7 @@ public class PorteApplicativeTrasformazioniRichiestaUrlParameterChange extends A
 			
 			parametroDaAggiornare.setNome(nome);
 			parametroDaAggiornare.setValore(valore);
-			parametroDaAggiornare.setConversioneTipo(TrasformazioneRegolaParametroTipoAzione.toEnumConstant(tipo));
+			parametroDaAggiornare.setConversioneTipo(CostantiControlStation.toTrasformazioneRegolaParametroTipoAzione(tipo));
 			if(!TrasformazioneRegolaParametroTipoAzione.DELETE.equals(parametroDaAggiornare.getConversioneTipo())) {
 				parametroDaAggiornare.setIdentificazioneFallita(TrasformazioneIdentificazioneRisorsaFallita.toEnumConstant(identificazione));
 			}

@@ -260,7 +260,7 @@ public class PorteDelegateTrasformazioniRichiestaUrlParameterAdd extends Action 
 			TrasformazioneRegolaParametro parametro = new TrasformazioneRegolaParametro();
 			parametro.setNome(nome);
 			parametro.setValore(valore);
-			parametro.setConversioneTipo(TrasformazioneRegolaParametroTipoAzione.toEnumConstant(tipo));
+			parametro.setConversioneTipo(CostantiControlStation.toTrasformazioneRegolaParametroTipoAzione(tipo));
 			if(!TrasformazioneRegolaParametroTipoAzione.DELETE.equals(parametro.getConversioneTipo())) {
 				parametro.setIdentificazioneFallita(TrasformazioneIdentificazioneRisorsaFallita.toEnumConstant(identificazione));
 			}
