@@ -1,3 +1,12 @@
+2026-03-23 Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug #1739
+	Risolta la seguente vulnerabilità relative ai jar di terza parte:
+	- CVE-2026-22732: 
+	  aggiornata libreria 'org.springframework.security:*' alla versione 6.5.9
+          aggiornata libreria 'org.springframework:*' alla versione 6.2.17
+
 2026-03-20  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]
