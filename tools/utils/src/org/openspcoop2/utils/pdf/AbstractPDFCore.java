@@ -19,10 +19,10 @@
  */
 package org.openspcoop2.utils.pdf;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
 
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
@@ -51,22 +51,18 @@ public class AbstractPDFCore {
 			if(saveRawDocument) {
 				this.rawDocument = content;
 			}
-			this.document = PDDocument.load(content);
+			this.document = Loader.loadPDF(content);
 		}catch(Exception e) {
 			throw new UtilsException(e.getMessage(),e);
 		}
 	}
 	public AbstractPDFCore(InputStream is, boolean saveRawDocument) throws UtilsException {
 		try {
+			byte[] content = Utilities.getAsByteArray(is);
 			if(saveRawDocument) {
-				this.rawDocument = Utilities.getAsByteArray(is);
-				try(ByteArrayInputStream bin = new ByteArrayInputStream(this.rawDocument)){
-					this.document = PDDocument.load(bin);
-				}
+				this.rawDocument = content;
 			}
-			else {
-				this.document = PDDocument.load(is);
-			}
+			this.document = Loader.loadPDF(content);
 		}catch(Exception e) {
 			throw new UtilsException(e.getMessage(),e);
 		}
@@ -76,7 +72,7 @@ public class AbstractPDFCore {
 			if(saveRawDocument) {
 				this.rawDocument = FileSystemUtilities.readBytesFromFile(doc);
 			}
-			this.document = PDDocument.load(doc);
+			this.document = Loader.loadPDF(doc);
 		}catch(Exception e) {
 			throw new UtilsException(e.getMessage(),e);
 		}

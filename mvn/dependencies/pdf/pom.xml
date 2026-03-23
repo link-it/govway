@@ -17,8 +17,8 @@
 
 		<jar.group.name>pdf</jar.group.name>
 		
-		<pdfbox.version>2.0.36</pdfbox.version>
-		<boxable.version>1.7.0</boxable.version>
+		<pdfbox.version>3.0.7</pdfbox.version>
+		<boxable.version>1.8.2</boxable.version>
 
 	</properties>
 
@@ -46,7 +46,18 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
+		<dependency>
+			<groupId>org.apache.pdfbox</groupId>
+			<artifactId>pdfbox-io</artifactId>
+			<version>${pdfbox.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
 		<dependency>
 		    <groupId>com.github.dhorions</groupId>
 		    <artifactId>boxable</artifactId>
