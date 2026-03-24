@@ -1,24 +1,26 @@
 .. _configAvanzataSua:
 
-Adeguamento al formato di errori previsto dai servizi del SUAP
+Adeguamento al formato di errori previsto dai servizi SUAP e SUE
 --------------------------------------------------------------------------
+
+Il Sistema degli Sportelli Unici (SSU) comprende sia il SUAP (Sportello Unico per le Attività Produttive), disciplinato dal `DPR 160/2010 <https://github.com/AgID/specifiche-tecniche-DPR-160-2010>`_, sia il SUE (Sportello Unico per l’Edilizia), disciplinato dall’`Allegato Tecnico SUE <https://github.com/AgID/SUE-allegato-tecnico>`_. Entrambe le specifiche adottano la medesima architettura di interoperabilità basata su ModI, con gli stessi attori (BackOffice, FrontOffice, Ente Terzo, Registro Imprese) e lo stesso formato di errori.
 
 Le Linee Guida di Interoperabilità prevedono l’adozione del formato *Problem Details* , come definito nella specifica *RFC 7807* (https://tools.ietf.org/html/rfc7807), per la rappresentazione strutturata delle informazioni di errore.
 
 Tutti gli errori generati da GovWay (ad esempio, errori di autenticazione o indisponibilità del backend) rispettano tale specifica e risultano conformi alle Linee Guida, come descritto nella sezione :ref:`rfc7807`.
 
-Al contrario, il formato degli errori previsto dalla specifica SUAP non risulta conforme, in quanto prevede la trasmissione degli errori attraverso oggetti JSON con una struttura differente, di cui si riporta di seguito un esempio:
+Al contrario, il formato degli errori previsto dalle specifiche SUAP e SUE non risulta conforme, in quanto prevede la trasmissione degli errori attraverso oggetti JSON con una struttura differente, di cui si riporta di seguito un esempio:
 
    ::
 
       { "code": "ERROR_401_001", "message": "PDND token not found"}
 
-Utilizzando GovWay per la gestione dell’interoperabilità ModI, non è possibile delegare direttamente a livello di backend SUAP tutti i casi di errore previsti dalla `Specifica Tecnica DPR-160 <https://github.com/AgID/specifiche-tecniche-DPR-160-2010/blob/approved02/specifiche_navigabili/08_e-service%20del%20SSU/08_06/08_06.md/>`_.
+Utilizzando GovWay per la gestione dell’interoperabilità ModI, non è possibile delegare direttamente a livello di backend tutti i casi di errore previsti dalle specifiche tecniche (`SUAP - DPR-160 <https://github.com/AgID/specifiche-tecniche-DPR-160-2010/blob/approved02/specifiche_navigabili/08_e-service%20del%20SSU/08_06/08_06.md/>`_, `SUE - Allegato Tecnico <https://github.com/AgID/SUE-allegato-tecnico>`_).
 Ciò è dovuto al fatto che alcune comunicazioni vengono gestite direttamente da GovWay stesso, in presenza di errori di interoperabilità (ad esempio, token PDND non valido) o di problematiche di connettività verso il backend (ad esempio, connection refused o timeout).
 
-Per garantire la conformità con i formati di errore attesi è possibile attivare un plugin di tipo 'message handler' (:ref:`configOpzioniAvanzate`) all’interno dell’erogazione SUAP.
+Per garantire la conformità con i formati di errore attesi è possibile attivare un plugin di tipo ‘message handler’ (:ref:`configOpzioniAvanzate`) all’interno dell’erogazione dei servizi SUAP o SUE.
 
-Questo plugin consente di gestire i casi di errore e di trasformarli nella struttura JSON attesa, secondo quanto descritto nella `Specifica Tecnica DPR-160 <https://github.com/AgID/specifiche-tecniche-DPR-160-2010/blob/approved02/specifiche_navigabili/08_e-service%20del%20SSU/08_06/08_06.md/>`_. 
+Questo plugin consente di gestire i casi di errore e di trasformarli nella struttura JSON attesa dalle rispettive specifiche tecniche.
 
 Gli errori gestiti da GovWay sono i seguenti:
 
@@ -35,7 +37,7 @@ Gli errori gestiti da GovWay sono i seguenti:
     - backend torna una risposta 5xx senza content-type o con un un content-type differente da application/json. 
 
 .. note::
-    Rimangono a carico dell'implementazione del backend SUAP gli altri codici di errore.
+    Rimangono a carico dell'implementazione del backend gli altri codici di errore.
 
 Per attivare il plugin agire come segue:
 
@@ -48,14 +50,14 @@ Per attivare il plugin agire come segue:
 
     Sezione 'Opzioni Avanzate' di una erogazione o fruizione
 
-- Nella sezione  ‘Handlers’, sotto-sezione ‘Handlers per la Risposta’, cliccare sul link ‘Out (precedente all'inoltro dei dati)’ per poter registrare l’handler che realizza la personalizzazione dell’errore come atteso da SUAP.
+- Nella sezione  ‘Handlers’, sotto-sezione ‘Handlers per la Risposta’, cliccare sul link ‘Out (precedente all’inoltro dei dati)’ per poter registrare l’handler che realizza la personalizzazione dell’errore come atteso dalle specifiche SUAP/SUE.
 
 .. figure:: ../_figure_console/ErogazioneSuap2.jpg
-    :scale: 50%
+    :scale: 70%
     :align: center
     :name: erogazioneSuap2
 
-    Attivazione plugin per la personalizzazione degli errori SUAP.
+    Attivazione plugin per la personalizzazione degli errori SUAP/SUE.
 
 - Infine per gestire l'errore ‘ERROR_400_001’ deve essere abilitata la validazione dei contenuti agendo come segue nella sezione: 'Erogazione -> Dettaglio -> Configurazione -> Validazione'
 

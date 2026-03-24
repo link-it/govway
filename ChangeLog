@@ -1,3 +1,10 @@
+2026-03-24  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità #1740
+	(https://github.com/link-it/govway/issues/287)
+	Realizzate GovLet che facilitano la configurazione delle erogazioni previste dal SUE (https://github.com/AgID/SUE-allegato-tecnico).	
+
 2026-03-20  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
