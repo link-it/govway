@@ -1,0 +1,404 @@
+openapi: 3.0.3
+info:
+  title: GovWay - Push Signal Service API
+  description: >-
+    Interfaccia semplificata per la pubblicazione dei segnali tramite la fruizione built-in di GovWay.
+    I parametri possono essere forniti tramite header HTTP, query parameter o campi di un payload JSON (solo POST).
+  version: '1.0'
+  contact:
+    email: info@link.it
+  license:
+    name: GPL v3.0
+    url: https://www.gnu.org/licenses/gpl-3.0.txt
+  termsOfService: https://govway.org/documentazione/api/index.html
+  x-api-id: https://govway.org/apiPdndPushSignals
+  x-summary: Interfaccia per la pubblicazione dei segnali sulla PDND tramite GovWay
+servers:
+  - url: http://localhost:8080/govway/rest/out/ENTE/PDND/api-pdnd-push-signals/v1
+    description: URL di invocazione della fruizione built-in
+paths:
+  /status:
+    get:
+      description: Should return OK
+      summary: Health status endpoint
+      operationId: getStatus
+      responses:
+        '200':
+          description: '200'
+          content:
+            application/json:
+              schema:
+                type: string
+                enum:
+                  - OK
+  /signals:
+    get:
+      description: >-
+        Pubblica una variazione di dato fornendo i parametri tramite header HTTP e/o query parameter.
+        In caso di presenza simultanea dello stesso parametro in entrambe le posizioni,
+        la priorita' segue l'ordine: header HTTP, query parameter.
+      summary: Push Signal via header e query parameter
+      operationId: pushSignalGet
+      parameters:
+        - $ref: '#/components/parameters/HeaderObjectId'
+        - $ref: '#/components/parameters/HeaderObjectType'
+        - $ref: '#/components/parameters/HeaderSignalType'
+        - $ref: '#/components/parameters/HeaderServiceId'
+        - $ref: '#/components/parameters/HeaderDescriptorId'
+        - $ref: '#/components/parameters/HeaderService'
+        - $ref: '#/components/parameters/HeaderServiceVersion'
+        - $ref: '#/components/parameters/QueryObjectId'
+        - $ref: '#/components/parameters/QueryObjectType'
+        - $ref: '#/components/parameters/QuerySignalType'
+        - $ref: '#/components/parameters/QueryServiceId'
+        - $ref: '#/components/parameters/QueryDescriptorId'
+        - $ref: '#/components/parameters/QueryService'
+        - $ref: '#/components/parameters/QueryServiceVersion'
+      responses:
+        '200':
+          $ref: '#/components/responses/SignalPushOK'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      description: >-
+        Pubblica una variazione di dato. I parametri possono essere forniti tramite header HTTP,
+        query parameter o campi del payload JSON. In caso di presenza simultanea dello stesso
+        parametro in piu' posizioni, la priorita' segue l'ordine: header, query parameter, payload JSON.
+      summary: Push Signal via header, query parameter o payload JSON
+      operationId: pushSignalPost
+      parameters:
+        - $ref: '#/components/parameters/HeaderObjectId'
+        - $ref: '#/components/parameters/HeaderObjectType'
+        - $ref: '#/components/parameters/HeaderSignalType'
+        - $ref: '#/components/parameters/HeaderServiceId'
+        - $ref: '#/components/parameters/HeaderDescriptorId'
+        - $ref: '#/components/parameters/HeaderService'
+        - $ref: '#/components/parameters/HeaderServiceVersion'
+        - $ref: '#/components/parameters/QueryObjectId'
+        - $ref: '#/components/parameters/QueryObjectType'
+        - $ref: '#/components/parameters/QuerySignalType'
+        - $ref: '#/components/parameters/QueryServiceId'
+        - $ref: '#/components/parameters/QueryDescriptorId'
+        - $ref: '#/components/parameters/QueryService'
+        - $ref: '#/components/parameters/QueryServiceVersion'
+      requestBody:
+        description: >-
+          Payload JSON contenente i parametri per la pubblicazione del segnale.
+          Alternativo o complementare a header HTTP e query parameter.
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignalPayload'
+      responses:
+        '200':
+          $ref: '#/components/responses/SignalPushOK'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+components:
+  parameters:
+    HeaderObjectId:
+      name: GovWay-Signal-ObjectId
+      in: header
+      description: >-
+        Identificativo in chiaro dell'oggetto che verra' pseudoanonimizzato da GovWay.
+      required: false
+      schema:
+        type: string
+    HeaderObjectType:
+      name: GovWay-Signal-ObjectType
+      in: header
+      description: >-
+        Tipo di oggetto a cui fa riferimento il segnale.
+      required: false
+      schema:
+        type: string
+    HeaderSignalType:
+      name: GovWay-Signal-Type
+      in: header
+      description: >-
+        Tipo di segnale.
+      required: false
+      schema:
+        $ref: '#/components/schemas/signalType'
+    HeaderServiceId:
+      name: GovWay-Signal-ServiceId
+      in: header
+      description: >-
+        Service ID della PDND. Alternativo alla coppia Service + Service Version.
+      required: false
+      schema:
+        type: string
+    HeaderDescriptorId:
+      name: GovWay-Signal-DescriptorId
+      in: header
+      description: >-
+        Descriptor ID della PDND. Obbligatorio solo in presenza di servizi con il medesimo serviceId.
+      required: false
+      schema:
+        type: string
+    HeaderService:
+      name: GovWay-Signal-Service
+      in: header
+      description: >-
+        Nome dell'erogazione su GovWay. Alternativo al ServiceId (da utilizzare insieme a Service Version).
+      required: false
+      schema:
+        type: string
+    HeaderServiceVersion:
+      name: GovWay-Signal-Service-Version
+      in: header
+      description: >-
+        Versione dell'erogazione su GovWay. Alternativo al ServiceId (da utilizzare insieme a Service).
+      required: false
+      schema:
+        type: string
+    QueryObjectId:
+      name: govway_signal_object_id
+      in: query
+      description: >-
+        Identificativo in chiaro dell'oggetto che verra' pseudoanonimizzato da GovWay.
+      required: false
+      schema:
+        type: string
+    QueryObjectType:
+      name: govway_signal_object_type
+      in: query
+      description: >-
+        Tipo di oggetto a cui fa riferimento il segnale.
+      required: false
+      schema:
+        type: string
+    QuerySignalType:
+      name: govway_signal_type
+      in: query
+      description: >-
+        Tipo di segnale.
+      required: false
+      schema:
+        $ref: '#/components/schemas/signalType'
+    QueryServiceId:
+      name: govway_signal_service_id
+      in: query
+      description: >-
+        Service ID della PDND. Alternativo alla coppia service + service_version.
+      required: false
+      schema:
+        type: string
+    QueryDescriptorId:
+      name: govway_signal_descriptor_id
+      in: query
+      description: >-
+        Descriptor ID della PDND. Obbligatorio solo in presenza di servizi con il medesimo serviceId.
+      required: false
+      schema:
+        type: string
+    QueryService:
+      name: govway_signal_service
+      in: query
+      description: >-
+        Nome dell'erogazione su GovWay. Alternativo al service_id (da utilizzare insieme a service_version).
+      required: false
+      schema:
+        type: string
+    QueryServiceVersion:
+      name: govway_signal_service_version
+      in: query
+      description: >-
+        Versione dell'erogazione su GovWay. Alternativo al service_id (da utilizzare insieme a service).
+      required: false
+      schema:
+        type: string
+  schemas:
+    SignalPushResponse:
+      type: object
+      properties:
+        signalId:
+          type: number
+          description: Identificativo del segnale generato.
+      required:
+        - signalId
+    problem:
+      type: object
+      properties:
+        type:
+          type: string
+        status:
+          type: number
+        title:
+          type: string
+        correlationId:
+          type: string
+          nullable: true
+        detail:
+          type: string
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              code:
+                type: string
+              detail:
+                type: string
+            required:
+              - code
+              - detail
+      required:
+        - type
+        - status
+        - title
+        - detail
+        - errors
+    signalType:
+      type: string
+      enum:
+        - CREATE
+        - UPDATE
+        - DELETE
+        - SEEDUPDATE
+    SignalPayload:
+      type: object
+      description: >-
+        Payload JSON per la pubblicazione del segnale. Tutti i campi sono opzionali
+        poiche' possono essere forniti in alternativa tramite header HTTP o query parameter.
+      properties:
+        objectId:
+          type: string
+          description: >-
+            Identificativo in chiaro dell'oggetto che verra' pseudoanonimizzato da GovWay.
+        objectType:
+          type: string
+          description: >-
+            Tipo di oggetto a cui fa riferimento il segnale.
+        signalType:
+          $ref: '#/components/schemas/signalType'
+        serviceId:
+          type: string
+          description: >-
+            Service ID della PDND. Alternativo alla coppia service + serviceVersion.
+        descriptorId:
+          type: string
+          description: >-
+            Descriptor ID della PDND. Obbligatorio solo in presenza di servizi con il medesimo serviceId.
+        service:
+          type: string
+          description: >-
+            Nome dell'erogazione su GovWay. Alternativo al serviceId (da utilizzare insieme a serviceVersion).
+        serviceVersion:
+          type: string
+          description: >-
+            Versione dell'erogazione su GovWay. Alternativo al serviceId (da utilizzare insieme a service).
+  responses:
+    SignalPushOK:
+      description: Segnale depositato con successo.
+      headers:
+        X-Rate-Limit-Limit:
+          $ref: '#/components/headers/X-Rate-Limit-Limit'
+        X-Rate-Limit-Remaining:
+          $ref: '#/components/headers/X-Rate-Limit-Remaining'
+        X-Rate-Limit-Interval:
+          $ref: '#/components/headers/X-Rate-Limit-Interval'
+        X-RateLimit-Reset:
+          $ref: '#/components/headers/X-RateLimit-Reset'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SignalPushResponse'
+    BadRequest:
+      description: Richiesta non valida.
+      headers:
+        X-Rate-Limit-Limit:
+          $ref: '#/components/headers/X-Rate-Limit-Limit'
+        X-Rate-Limit-Remaining:
+          $ref: '#/components/headers/X-Rate-Limit-Remaining'
+        X-Rate-Limit-Interval:
+          $ref: '#/components/headers/X-Rate-Limit-Interval'
+        X-RateLimit-Reset:
+          $ref: '#/components/headers/X-RateLimit-Reset'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/problem'
+    Unauthorized:
+      description: Non autorizzato.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/problem'
+    Forbidden:
+      description: Accesso negato.
+      headers:
+        X-Rate-Limit-Limit:
+          $ref: '#/components/headers/X-Rate-Limit-Limit'
+        X-Rate-Limit-Remaining:
+          $ref: '#/components/headers/X-Rate-Limit-Remaining'
+        X-Rate-Limit-Interval:
+          $ref: '#/components/headers/X-Rate-Limit-Interval'
+        X-RateLimit-Reset:
+          $ref: '#/components/headers/X-RateLimit-Reset'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/problem'
+    TooManyRequests:
+      description: Troppe richieste.
+      headers:
+        X-Rate-Limit-Limit:
+          $ref: '#/components/headers/X-Rate-Limit-Limit'
+        X-Rate-Limit-Remaining:
+          $ref: '#/components/headers/X-Rate-Limit-Remaining'
+        X-Rate-Limit-Interval:
+          $ref: '#/components/headers/X-Rate-Limit-Interval'
+        X-RateLimit-Reset:
+          $ref: '#/components/headers/X-RateLimit-Reset'
+        Retry-After:
+          schema:
+            type: integer
+          description: How long time to wait before making a new request
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/problem'
+    InternalServerError:
+      description: Errore interno del server.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/problem'
+  headers:
+    X-Rate-Limit-Limit:
+      schema:
+        type: integer
+      description: Max allowed requests within time interval
+    X-Rate-Limit-Remaining:
+      schema:
+        type: integer
+      description: Remaining requests within time interval
+    X-Rate-Limit-Interval:
+      schema:
+        type: integer
+      description: >-
+        Time interval in milliseconds. Allowed requests will be
+        constantly replenished during the interval. At the end of the
+        interval the max allowed requests will be available
+    X-RateLimit-Reset:
+      schema:
+        type: integer
+      description: Time at which the rate limit resets, specified in UTC epoch time

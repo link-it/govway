@@ -17,10 +17,13 @@ Per fare ciò il prodotto rende disponibile una fruizione build-in ':numref:`Sig
 
 **Interfaccia di pubblicazione**
 
-Per invocare la fruizione built-in è sufficiente utilizzare la base url di invocazione con il suffisso 'signals' tramite un http GET:
+Per invocare la fruizione built-in è sufficiente utilizzare la base url di invocazione con il suffisso 'signals' tramite un metodo http GET o POST:
+
 - http://localhost:8080/govway/rest/out/<NOME_SOGGETTO>/PDND/api-pdnd-push-signals/v1/signals
 
-La pubblicazione di una variazione di dato richiede che siano fornite le seguenti informazioni tramite header HTTP, query parameter o campi di un payload JSON, come riportato nella tabella seguente.
+L'interfaccia OpenAPI, che descrive la configurazione di default dei parametri, è disponibile nel file `api-pdnd-push-signals.yaml <https://github.com/link-it/govway/blob/3.4.x/protocolli/modipa/example/openapi/api-pdnd-push-signals.yaml>`__.
+
+La pubblicazione di una variazione di dato richiede che siano fornite le seguenti informazioni tramite header HTTP, query parameter o campi di un payload JSON (solo per il metodo POST), come riportato nella tabella seguente.
 
 .. list-table:: Parametri per la pubblicazione dei segnali
    :widths: 15 15 25 30 15
@@ -75,6 +78,10 @@ Di seguito la descrizione degli altri parametri:
 - *Object ID*: l'identificativo in chiaro che verrà pseudoanonimizzato da GovWay;
 - *Object Type*: campo libero; rappresenta il tipo di oggetto a cui fa riferimento il segnale;
 - *Signal Type*: deve essere utilizzato un valore tra CREATE, UPDATE o DELETE.
+
+.. note::
+
+    Nel caso in cui lo stesso parametro venga fornito contemporaneamente in più posizioni, viene utilizzato il primo valore trovato secondo il seguente ordine di priorità: header HTTP, query parameter, payload JSON.
 
 È anche possibile personalizzare la modalità di integrazione con la fruizione built-in attuando una personalizzazione nella scheda di modifica del profilo di interoperabilità relativa alla fruizione come mostrata in figura ':numref:`SignalHubFuizioneConfigurazione`'.
 
