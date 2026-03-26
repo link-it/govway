@@ -1,3 +1,11 @@
+2026-03-26  Andrea Poli <apoli@link.it>
+
+	* [Utils]
+	Risolto Bug #1742
+	Risolto un problema nel parsing degli URL LDAP senza porta esplicita nei CRL Distribution Point, 
+	che causava il fallimento della validazione CRL con errore "Unsupported authority".             
+	Nell'intervento è stata risolta anche l'anomalia nel recupero delle CRL via LDAP in cui gli attributi restituiti con suffisso ;binary non venivano correttamente individuati.
+
 2026-03-24  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

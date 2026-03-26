@@ -178,6 +178,9 @@ public class ExternalResourceUtils {
 			}
 			Attribute a = attrs.get(parsedAttribute);
 			if(a==null) {
+				a = attrs.get(parsedAttribute+";binary");
+			}
+			if(a==null) {
 				throw new UtilsException("attribute '"+parsedAttribute+"' not found");
 			}
 			Object o = a.get();

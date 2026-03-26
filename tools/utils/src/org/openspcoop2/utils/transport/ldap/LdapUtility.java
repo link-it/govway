@@ -63,7 +63,8 @@ public class LdapUtility {
 	}
 	public static URI getBaseUrlFromURI(URI uri) throws URISyntaxException {
 		String scheme = Objects.requireNonNullElse(uri.getScheme(), "ldap");
-		int port = Objects.requireNonNullElse(uri.getPort(), scheme.equals("ldaps") ? 636 : 389);
+		int uriPort = uri.getPort();
+		int port = Objects.requireNonNullElse(uriPort > 0 ? uriPort : null, scheme.equals("ldaps") ? 636 : 389);
 		return new URI(scheme + "://" + uri.getHost() + ":" + port);
 	}
 	
