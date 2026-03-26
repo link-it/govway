@@ -1,4 +1,4 @@
-Attenzione ad allineare sempre anche la chiamata in
+Attenzione ad allineare sempre anche la chiamata in tools/zap/src/org/openspcoop2/testsuite/zap/GovWayConsole.java
         @Override
         protected String getLoginRequestData() {
                 return "login={%username%}&password={%password%}";

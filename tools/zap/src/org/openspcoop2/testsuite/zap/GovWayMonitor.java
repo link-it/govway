@@ -51,7 +51,7 @@ public class GovWayMonitor extends AbstractConsoleScan {
 	
 	@Override
 	protected String getLoginRequestData() {
-		return "AJAXREQUEST=_viewRoot&j_id46=j_id46&username={%username%}&password={%password%}&javax.faces.ViewState=j_id1&loginBtn=loginBtn&";
+		return "AJAXREQUEST=_viewRoot&j_id50=j_id50&username={%username%}&password={%password%}&javax.faces.ViewState=j_id1&loginBtn=loginBtn&";
 	}
 	
 	@Override
