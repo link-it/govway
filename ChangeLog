@@ -1,5 +1,11 @@
 2026-03-26  Andrea Poli <apoli@link.it>
 
+	* [ProtocolloModIPA]
+	Aggiornata documentazionne SignalHub per la pubblicazione di segnali.
+	Definita specifica OpenAPI.
+
+2026-03-26  Andrea Poli <apoli@link.it>
+
 	* [Utils]
 	Risolto Bug #1742
 	Risolto un problema nel parsing degli URL LDAP senza porta esplicita nei CRL Distribution Point, 
