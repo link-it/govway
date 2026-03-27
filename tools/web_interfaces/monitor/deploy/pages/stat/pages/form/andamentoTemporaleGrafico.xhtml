@@ -221,7 +221,7 @@
 								<script type="text/javascript" nonce="#{_csp_random_nonce}">
 					   				var chartId = 'andamentoTemporaleId';
 					   				var chartDivId = 'andamentoTemporaleDiv';
-					   				var chartWidth = jQuery('#chartPanel_body').width() -40;
+					   				var chartWidth = parseInt(jQuery('#chartPanel_body').width() -40);
 									var chartHeight = 650;
 									var chartType = 'line';
 					   				var data0 = '#{andamentoTemporaleBean.data}';
@@ -345,7 +345,7 @@
 					   			//<![CDATA[
 					   				var chartId = 'andamentoTemporaleBarsId';
 					   				var chartDivId = 'andamentoTemporaleBarsDiv';
-					   				var chartWidth = jQuery('#chartPanelBars_body').width() -40;
+					   				var chartWidth = parseInt(jQuery('#chartPanelBars_body').width() -40);
 									var chartHeight = 650;
 									var chartType = 'bar';
 					   				var data0 = '#{andamentoTemporaleBean.data}';

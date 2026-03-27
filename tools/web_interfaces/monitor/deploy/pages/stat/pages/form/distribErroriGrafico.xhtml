@@ -157,7 +157,7 @@
 									//<![CDATA[
 					   				var chartId = 'distribuzioneErroriId';
 					   				var chartDivId = 'distribuzioneErroriDiv';
-					   				var chartWidth = jQuery('#chartPanel_body').width();
+					   				var chartWidth = parseInt(jQuery('#chartPanel_body').width());
 									var chartHeight = 650;
 									var chartType = 'pie';
 					   				var data0 = '#{distribuzionePerErroriBean.data}';
@@ -250,7 +250,7 @@
 					   			//<![CDATA[
 					   				var chartId = 'distribuzioneErroriBarsId';
 					   				var chartDivId = 'distribuzioneErroriBarsDiv';
-					   				var chartWidth = jQuery('#chartPanelBars_body').width() -40;
+					   				var chartWidth = parseInt(jQuery('#chartPanelBars_body').width() -40);
 									var chartHeight = 650;
 									var chartType = 'bar';
 					   				var data0 = '#{distribuzionePerErroriBean.data}';
@@ -374,7 +374,7 @@
 					   			//<![CDATA[
 					   				var chartId = 'distribuzioneErroriHeatmapId';
 					   				var chartDivId = 'distribuzioneErroriHeatmapDiv';
-					   				var chartWidth = jQuery('#chartPanelHeatmap_body').width() -40;
+					   				var chartWidth = parseInt(jQuery('#chartPanelHeatmap_body').width() -40);
 									var chartHeight = 700;
 									var chartType = 'heatmap';
 					   				var data0 = '#{distribuzionePerErroriBean.data}';

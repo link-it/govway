@@ -1,5 +1,11 @@
 2026-03-27 Giuliano Pintori <pintori@link.it>
 
+	* [GovWayMonitor]
+	Risolto Bug #1743
+	Corretta la visualizzazione dei grafici line e barchart nella console GovWayMonitor, che causava un blocco dell'applicazione a seguito di un NumberFormatException.
+
+2026-03-27 Giuliano Pintori <pintori@link.it>
+
 	* [Utils, GovWayMonitor]
 	Aggiunta funzionalità #1735
 	Aggiornate librerie per la generazione dei pdf:
