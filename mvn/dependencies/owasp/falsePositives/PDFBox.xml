@@ -1,0 +1,22 @@
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
+   <suppress>
+      <notes><![CDATA[
+      file name: pdfbox-3.0.7.jar
+      La vulnerabilità rilevata viene descritta come:
+      "This issue affects the ExtractEmbeddedFiles example in Apache PDFBox: from 2.0.24 through 2.0.35, from 3.0.0 through 3.0.6. The ExtractEmbeddedFiles example contains a path traversal vulnerability (CWE-22) because the filename that is obtained from PDComplexFileSpecification.getFilename() is appended to the extraction path."
+      In GovWay la libreria Apache PDFBox viene utilizzata esclusivamente per caricare (Loader.loadPDF), generare (PDDocument, PDPageContentStream) e leggere il testo (PDFTextStripper) di documenti PDF. Non viene mai utilizzata la funzionalità di estrazione di file embedded (PDComplexFileSpecification, PDEmbeddedFile, ExtractEmbeddedFiles) e pertanto la vulnerabilità non è sfruttabile nel contesto di GovWay.
+      ]]></notes>
+      <packageUrl regex="true">^pkg:maven/org\.apache\.pdfbox/pdfbox@.*$</packageUrl>
+      <cve>CVE-2026-23907</cve>
+   </suppress>
+   <suppress>
+      <notes><![CDATA[
+      file name: pdfbox-io-3.0.7.jar
+      La vulnerabilità rilevata viene descritta come:
+      "This issue affects the ExtractEmbeddedFiles example in Apache PDFBox: from 2.0.24 through 2.0.35, from 3.0.0 through 3.0.6. The ExtractEmbeddedFiles example contains a path traversal vulnerability (CWE-22) because the filename that is obtained from PDComplexFileSpecification.getFilename() is appended to the extraction path."
+      In GovWay la libreria Apache PDFBox viene utilizzata esclusivamente per caricare (Loader.loadPDF), generare (PDDocument, PDPageContentStream) e leggere il testo (PDFTextStripper) di documenti PDF. Non viene mai utilizzata la funzionalità di estrazione di file embedded (PDComplexFileSpecification, PDEmbeddedFile, ExtractEmbeddedFiles) e pertanto la vulnerabilità non è sfruttabile nel contesto di GovWay.      
+      ]]></notes>
+      <packageUrl regex="true">^pkg:maven/org\.apache\.pdfbox/pdfbox-io@.*$</packageUrl>
+      <cve>CVE-2026-23907</cve>
+   </suppress>   
+</suppressions>

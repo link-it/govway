@@ -34,6 +34,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -113,21 +114,21 @@ public class Templates {
 
 		// Titolo Report BOLD 20
 		contentStream.beginText();
-		contentStream.setFont(PDType1Font.HELVETICA_BOLD, PDF_TITLE_FONT_SIZE);
+		contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), PDF_TITLE_FONT_SIZE);
 		contentStream.newLineAtOffset(MARGIN, height - 40);
 		contentStream.showText(titoloReport);
 		contentStream.endText();
 
 		// Periodo osservazione BOLD 16
 		contentStream.beginText();
-		contentStream.setFont(PDType1Font.HELVETICA_BOLD, PDF_SUBTITLE_FONT_SIZE);
+		contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), PDF_SUBTITLE_FONT_SIZE);
 		contentStream.newLineAtOffset(MARGIN, height - 60);
 		contentStream.showText(periodoOsservazione);
 		contentStream.endText();
 
 		// link
 		contentStream.beginText();
-		contentStream.setFont(PDType1Font.HELVETICA_OBLIQUE, PDF_TEXT_FONT_SIZE);
+		contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA_OBLIQUE), PDF_TEXT_FONT_SIZE);
 		contentStream.newLineAtOffset(MARGIN, height - 110);
 		contentStream.showText(PDF_LINKIT_URL);
 		contentStream.endText();
@@ -204,7 +205,7 @@ public class Templates {
 			dataTable.getHeader().getCells().get(jColonna).setAlign(colonna.getAlignment());
 			dataTable.getHeader().getCells().get(jColonna).setFontSize(PDF_TABLE_FONT_SIZE);
 			dataTable.getHeader().getCells().get(jColonna).setWidth(preferredColumWidth);
-			dataTable.getHeader().getCells().get(jColonna).setFont(PDType1Font.HELVETICA_BOLD);
+			dataTable.getHeader().getCells().get(jColonna).setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD));
 		}
 
 		for (int iRiga = 1; iRiga < dataTable.getRows().size(); iRiga++) {
@@ -224,7 +225,7 @@ public class Templates {
 				dataTable.getRows().get(iRiga).getCells().get(jColonna).setAlign(colonna.getAlignment());
 				dataTable.getRows().get(iRiga).getCells().get(jColonna).setFontSize(PDF_TABLE_FONT_SIZE);
 				dataTable.getRows().get(iRiga).getCells().get(jColonna).setWidth(preferredColumWidth);
-				dataTable.getRows().get(iRiga).getCells().get(jColonna).setFont(PDType1Font.HELVETICA);
+				dataTable.getRows().get(iRiga).getCells().get(jColonna).setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA));
 
 			}
 

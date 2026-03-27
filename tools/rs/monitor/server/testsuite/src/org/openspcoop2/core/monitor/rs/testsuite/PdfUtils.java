@@ -26,6 +26,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 
@@ -53,7 +54,7 @@ public class PdfUtils {
         }
     }
     public static boolean existsString(InputStream is, String searchString) throws IOException {
-    	try (PDDocument document = PDDocument.load(is)) {
+    	try (PDDocument document = Loader.loadPDF(is.readAllBytes())) {
             PDFTextStripper pdfStripper = new PDFTextStripper();
             String pdfText = pdfStripper.getText(document);
 
