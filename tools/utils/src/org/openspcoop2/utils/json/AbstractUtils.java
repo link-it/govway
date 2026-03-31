@@ -214,7 +214,23 @@ public abstract class AbstractUtils {
 			throw new UtilsException(e.getMessage(),e);
 		}
 	}
-	
+
+	public void writeTo(JsonNode doc, java.io.Writer writer) throws UtilsException {
+		try {
+			_getObjectWriter(this.prettyPrint).writeValue(writer, doc);
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
+
+	public void writeTo(Object object, java.io.Writer writer) throws UtilsException {
+		try {
+			_getObjectWriter(this.prettyPrint).writeValue(writer, object);
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
+
 	// IS
 	
 	protected boolean isValid(byte[]jsonBytes){

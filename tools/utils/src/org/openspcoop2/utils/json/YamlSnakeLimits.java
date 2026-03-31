@@ -41,7 +41,16 @@ public class YamlSnakeLimits {
 	public static void setDEBUG(boolean dEBUG) {
 		DEBUG = dEBUG;
 	}
-	
+
+	private static double resolvedAnchorSizeFactor = -1;
+	public static double getResolvedAnchorSizeFactor() {
+		return resolvedAnchorSizeFactor;
+	}
+
+	public static int getCodePointLimit() {
+		return org.yaml.snakeyaml.LoaderOptions.getDefaultValues().getCodePointLimit();
+	}
+
 	private static Logger log = LoggerWrapperFactory.getLogger(YamlSnakeLimits.class);
 	
 	private static boolean initialized = false;
@@ -208,9 +217,28 @@ public class YamlSnakeLimits {
     		}catch(Throwable t) {
     			logger.error("["+pName+"] Invalid limit value: "+t.getMessage(),t);
     		}
-    		
+
+    		pName = "resolvedAnchorSizeFactor";
+    		try {
+	    		String tmp = p.getProperty(pName);
+	    		if(tmp!=null) {
+	    			tmp = tmp.trim();
+	    			double v = Double.parseDouble(tmp);
+	    			if(v<1.0) {
+	    				throw new IllegalArgumentException("value must be >= 1.0");
+	    			}
+	    			resolvedAnchorSizeFactor = v;
+	    			logger.info("[YamlSnakeLimits] "+pName+"="+resolvedAnchorSizeFactor);
+	    			if(DEBUG) {
+	    				System.out.println("[YamlSnakeLimits] "+pName+"="+resolvedAnchorSizeFactor);
+	    			}
+	    		}
+    		}catch(Throwable t) {
+    			logger.error("["+pName+"] Invalid limit value: "+t.getMessage(),t);
+    		}
+
     		initialized = true; // devo indicare al costruttore di default di non attivarsi, poiche' e' stata effettuata una configurazione custom
-    		
+
     	}
 	}
 }

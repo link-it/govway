@@ -20,7 +20,11 @@
 
 package org.openspcoop2.utils.json;
 
+import java.io.FilterWriter;
+import java.io.IOException;
 import java.io.Serializable;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -268,12 +272,55 @@ public class YAMLUtils extends AbstractUtils {
 		// Come fix quindi nel caso siano presenti viene fatta una serializzazione tramite snake che le risolve.
 		boolean contains = resolveAllAnchor ? containsKeyAnchor(yaml) : containsMergeKeyAnchor(yaml);
 		if(contains) {
-			// Risoluzione merge key '<<: *'
+			// Risoluzione merge key '<<: *' e anchor/alias
 			Map<String, Object> obj = new org.yaml.snakeyaml.Yaml().load(yaml);
 			/**System.out.println("COSTRUITO ["+jsonUtils.toString(obj)+"]");*/
-			return jsonUtils.toString(obj); // jsonRepresentation
+			double factor = YamlSnakeLimits.getResolvedAnchorSizeFactor();
+			if(factor>0) {
+				// Protezione contro attacchi "billion laughs": alias annidati che producono espansione esponenziale in fase di serializzazione JSON.
+				// Il controllo si attiva solo se il JSON risolto supera il codePointLimit (dimensione massima dell'input YAML).
+				// Se lo supera, il limite effettivo è: max(codePointLimit, inputSize * factor).
+				long codePointLimit = YamlSnakeLimits.getCodePointLimit();
+				long maxSize = Math.max(codePointLimit, (long)(yaml.length() * factor));
+				StringWriter sw = new StringWriter();
+				jsonUtils.writeTo(obj, new LimitedWriter(sw, maxSize));
+				return sw.toString();
+			}
+			else {
+				return jsonUtils.toString(obj); // jsonRepresentation
+			}
 		}
 		return null;
+	}
+
+	static class LimitedWriter extends FilterWriter {
+		private final long limit;
+		private long count = 0;
+		LimitedWriter(Writer out, long limit) {
+			super(out);
+			this.limit = limit;
+		}
+		private void checkLimit(long len) throws IOException {
+			this.count += len;
+			if(this.count > this.limit) {
+				throw new IOException("Resolved YAML anchor/alias exceeds max size limit ("+ this.limit+" bytes)");
+			}
+		}
+		@Override
+		public void write(int c) throws IOException {
+			checkLimit(1);
+			super.write(c);
+		}
+		@Override
+		public void write(char[] cbuf, int off, int len) throws IOException {
+			checkLimit(len);
+			super.write(cbuf, off, len);
+		}
+		@Override
+		public void write(String str, int off, int len) throws IOException {
+			checkLimit(len);
+			super.write(str, off, len);
+		}
 	}
 	
 	
