@@ -58,12 +58,19 @@ public class ConsoleUtils {
 	
 	// ** SPIDER ** 
 	
+	private static final long SPIDER_TIMEOUT_MS = 5 * 60 * 1000; // 5 minuti
+
 	private static void waitSpiderScanInProgress(ClientApi api, String ... scanIds) throws NumberFormatException, ClientApiException {
-		
+
 		// Attende il completamento di tutti gli scan
 		boolean allScansCompleted = false;
+		long startTime = System.currentTimeMillis();
 		while (!allScansCompleted) {
 			Utilities.sleep(1000); // Attendere per un secondo
+			if (System.currentTimeMillis() - startTime > SPIDER_TIMEOUT_MS) {
+				LoggerManager.info("Spider timeout reached (" + (SPIDER_TIMEOUT_MS/1000) + "s), proceeding with partial results");
+				break;
+			}
 			allScansCompleted = true;
 			for (String scanId : scanIds) {
 
@@ -78,7 +85,7 @@ public class ConsoleUtils {
 
 			}
 		}
-		
+
 		LoggerManager.info("Spider complete");
 	}
 	
