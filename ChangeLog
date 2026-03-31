@@ -1,3 +1,11 @@
+2026-03-31  Andrea Poli <apoli@link.it>
+
+	* [Utils, GovWayCore, GovWayConsole]
+	Risolto Bug #1744
+	Corretta la risoluzione degli alias YAML nelle specifiche OpenAPI che falliva per il limite di default di SnakeYAML (maxAliasesForCollections=50),
+	aumentando il valore a 500 e migliorando il messaggio di errore in caso di fallimento.
+	Aggiunta protezione contro attacchi "billion laughs" tramite controllo sulla dimensione del JSON prodotto dalla risoluzione degli alias.
+
 2026-03-27 Giuliano Pintori <pintori@link.it>
 
 	* [GovWayMonitor]

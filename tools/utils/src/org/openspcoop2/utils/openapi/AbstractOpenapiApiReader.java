@@ -187,6 +187,7 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 			log.error("Init yaml utils failed: "+t.getMessage(),t);
 		}
 		
+		String resolveAnchorError = null;
 		try {
 			if(apiRawIsYaml &&
 				// Fix merge key '<<: *'
@@ -198,7 +199,8 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 				}
 			}
 		}catch(Throwable t) {
-			log.error("Find and resolve merge key failed: "+t.getMessage(),t);
+			resolveAnchorError = t.getMessage();
+			log.error("Find and resolve merge key failed: "+resolveAnchorError,t);
 		}
 		
 		if(resolveEmptySchema) {
@@ -228,6 +230,12 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 			}
 			StringBuilder sbParseWarningResult = new StringBuilder();
 			this.openApi = parseResult(log, pr, sbParseWarningResult);
+			if(resolveAnchorError!=null) {
+				if(sbParseWarningResult.length()>0) {
+					sbParseWarningResult.append("\n");
+				}
+				sbParseWarningResult.append("YAML anchor/alias resolution failed: ").append(resolveAnchorError);
+			}
 			if(sbParseWarningResult.length()>0) {
 				this.parseWarningResult = sbParseWarningResult.toString();
 			}
@@ -243,6 +251,9 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 			this.resolveExternalRef = config.isProcessInclude();
 			
 		} catch(Exception e) {
+			if(resolveAnchorError!=null) {
+				throw new ProcessingException("YAML anchor/alias resolution failed ("+resolveAnchorError+"); "+e.getMessage(), e);
+			}
 			throw new ProcessingException(e);
 		}
 
