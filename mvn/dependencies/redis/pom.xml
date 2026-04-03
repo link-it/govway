@@ -17,11 +17,11 @@
 
 		<jar.group.name>redis</jar.group.name>
 		
-		<redisson.version>3.23.5</redisson.version>
-		<netty.version>4.1.130.Final</netty.version>
+		<redisson.version>3.52.0</redisson.version>
+		<netty.version>4.1.132.Final</netty.version>
 		<jboss-marshalling.version>2.1.3.SP1</jboss-marshalling.version>
-		<objenesis.version>3.3</objenesis.version>
-		<esotericsoftware.kryo.version>5.5.0</esotericsoftware.kryo.version>
+		<esotericsoftware.kryo.version>5.6.2</esotericsoftware.kryo.version>
+		<objenesis.version>3.5</objenesis.version>
 		<minlog.version>1.3.1</minlog.version>
 
 	</properties>
@@ -97,6 +97,17 @@
 		</dependency>
 		<dependency>
 			<groupId>io.netty</groupId>
+			<artifactId>netty-transport-native-unix-common</artifactId>
+			<version>${netty.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>io.netty</groupId>
 			<artifactId>netty-codec</artifactId>
 			<version>${netty.version}</version>
 			<exclusions>
@@ -109,6 +120,17 @@
 		<dependency>
 			<groupId>io.netty</groupId>
 			<artifactId>netty-codec-dns</artifactId>
+			<version>${netty.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-handler</artifactId>
 			<version>${netty.version}</version>
 			<exclusions>
 				<exclusion>
