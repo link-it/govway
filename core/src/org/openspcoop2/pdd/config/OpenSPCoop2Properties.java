@@ -76,6 +76,8 @@ import org.openspcoop2.pdd.core.connettori.IConnettore;
 import org.openspcoop2.pdd.core.controllo_traffico.ConfigurazioneGatewayControlloTraffico;
 import org.openspcoop2.pdd.core.controllo_traffico.INotify;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.TipoGestorePolicy;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.redisson.RedissonConnectionMode;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.redisson.RedissonSSLConfig;
 import org.openspcoop2.pdd.core.credenziali.IGestoreCredenziali;
 import org.openspcoop2.pdd.core.credenziali.IGestoreCredenzialiIM;
 import org.openspcoop2.pdd.core.dynamic.InformazioniIntegrazioneCodifica;
@@ -2730,6 +2732,8 @@ public class OpenSPCoop2Properties {
 					// case REDIS
 					if(isRedisEngineEnabled()) {
 						getControlloTrafficoGestorePolicyInMemoryRedisConnectionUrl();
+						getControlloTrafficoGestorePolicyInMemoryRedisConnectionMode();
+						getControlloTrafficoGestorePolicyInMemoryRedisSSLConfig();
 						isControlloTrafficoGestorePolicyInMemoryRedisOneMapForeachPolicy();
 						isControlloTrafficoGestorePolicyInMemoryRedisThrowExceptionIfRedisNotReady();
 						if(isControlloTrafficoGestorePolicyInMemoryRedisTTLEnabled()) {
@@ -33435,7 +33439,102 @@ public class OpenSPCoop2Properties {
 
 		return this.getControlloTrafficoGestorePolicyInMemoryRedisConnectionUrl;
 	}
-	
+
+	private RedissonConnectionMode getControlloTrafficoGestorePolicyInMemoryRedisConnectionMode = null;
+	private boolean getControlloTrafficoGestorePolicyInMemoryRedisConnectionModeRead = false;
+	public RedissonConnectionMode getControlloTrafficoGestorePolicyInMemoryRedisConnectionMode() throws CoreException {
+		if(!this.getControlloTrafficoGestorePolicyInMemoryRedisConnectionModeRead){
+			String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.REDIS.connectionMode";
+			try{
+				String value = this.reader.getValueConvertEnvProperties(pName);
+				if(value!=null && !value.trim().isEmpty()){
+					this.getControlloTrafficoGestorePolicyInMemoryRedisConnectionMode = RedissonConnectionMode.toEnumConstant(value);
+					if(this.getControlloTrafficoGestorePolicyInMemoryRedisConnectionMode==null){
+						throw new CoreException("Valore '"+value.trim()+"' non supportato (valori ammessi: "+RedissonConnectionMode.valuesAsString()+")");
+					}
+				}
+				else {
+					this.getControlloTrafficoGestorePolicyInMemoryRedisConnectionMode = RedissonConnectionMode.CLUSTER;
+				}
+			}catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
+				throw new CoreException("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
+			}
+			this.getControlloTrafficoGestorePolicyInMemoryRedisConnectionModeRead = true;
+		}
+		return this.getControlloTrafficoGestorePolicyInMemoryRedisConnectionMode;
+	}
+
+	private static final String REDIS_SSL_PREFIX = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.REDIS.ssl.";
+
+	private RedissonSSLConfig getControlloTrafficoGestorePolicyInMemoryRedisSSLConfig = null;
+	private boolean getControlloTrafficoGestorePolicyInMemoryRedisSSLConfigRead = false;
+	public RedissonSSLConfig getControlloTrafficoGestorePolicyInMemoryRedisSSLConfig() throws CoreException {
+		if(!this.getControlloTrafficoGestorePolicyInMemoryRedisSSLConfigRead){
+			try{
+				RedissonSSLConfig config = new RedissonSSLConfig();
+				boolean configured = false;
+
+				// trustAll
+				String pName = REDIS_SSL_PREFIX + "trustAll";
+				String value = this.reader.getValueConvertEnvProperties(pName);
+				if(value!=null && !value.trim().isEmpty()){
+					config.setTrustAll("true".equalsIgnoreCase(value.trim()));
+					configured = true;
+				}
+
+				// hostnameVerifier
+				pName = REDIS_SSL_PREFIX + "hostnameVerifier";
+				value = this.reader.getValueConvertEnvProperties(pName);
+				if(value!=null && !value.trim().isEmpty()){
+					config.setHostnameVerifier("true".equalsIgnoreCase(value.trim()));
+					configured = true;
+				}
+
+				// truststore.path
+				pName = REDIS_SSL_PREFIX + "truststore.path";
+				value = this.reader.getValueConvertEnvProperties(pName);
+				if(value!=null && !value.trim().isEmpty()){
+					java.io.File f = new java.io.File(value.trim());
+					if(!f.exists()) {
+						throw new CoreException("Il file '"+value.trim()+"' non esiste");
+					}
+					if(!f.isFile()) {
+						throw new CoreException("Il path '"+value.trim()+"' non e' un file");
+					}
+					if(!f.canRead()) {
+						throw new CoreException("Il file '"+value.trim()+"' non e' leggibile");
+					}
+					config.setTruststorePath(value.trim());
+					configured = true;
+				}
+
+				// truststore.type
+				pName = REDIS_SSL_PREFIX + "truststore.type";
+				value = this.reader.getValueConvertEnvProperties(pName);
+				if(value!=null && !value.trim().isEmpty()){
+					config.setTruststoreType(value.trim());
+				}
+
+				// truststore.password
+				pName = REDIS_SSL_PREFIX + "truststore.password";
+				value = this.reader.getValueConvertEnvProperties(pName);
+				if(value!=null && !value.trim().isEmpty()){
+					config.setTruststorePassword(value.trim());
+				}
+
+				if(configured) {
+					this.getControlloTrafficoGestorePolicyInMemoryRedisSSLConfig = config;
+				}
+			}catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura delle proprietà SSL di Redis: "+e.getMessage(),e);
+				throw new CoreException("Riscontrato errore durante la lettura delle proprietà SSL di Redis: "+e.getMessage(),e);
+			}
+			this.getControlloTrafficoGestorePolicyInMemoryRedisSSLConfigRead = true;
+		}
+		return this.getControlloTrafficoGestorePolicyInMemoryRedisSSLConfig;
+	}
+
 	private Boolean isControlloTrafficoGestorePolicyInMemoryRedisOneMapForeachPolicy = null;
 	public Boolean isControlloTrafficoGestorePolicyInMemoryRedisOneMapForeachPolicy() {
 		String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.REDIS.oneMapForeachPolicy";

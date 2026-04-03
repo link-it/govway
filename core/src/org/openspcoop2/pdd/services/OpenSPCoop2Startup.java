@@ -2969,8 +2969,10 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			// RedisManager
 			if(propertiesReader.isRedisEngineEnabled()) {
 				try{
-					RedissonManager.initialize(log, logControlloTraffico, propertiesReader.getControlloTrafficoGestorePolicyInMemoryRedisConnectionUrl());
-					boolean throwInitializingException = 
+					RedissonManager.initialize(log, logControlloTraffico, propertiesReader.getControlloTrafficoGestorePolicyInMemoryRedisConnectionUrl(),
+							propertiesReader.getControlloTrafficoGestorePolicyInMemoryRedisConnectionMode(),
+							propertiesReader.getControlloTrafficoGestorePolicyInMemoryRedisSSLConfig());
+					boolean throwInitializingException =
 								OpenSPCoop2Properties.getInstance().isControlloTrafficoGestorePolicyInMemoryRedisThrowExceptionIfRedisNotReady();
 					RedissonManager.getRedissonClient(throwInitializingException);
 				}catch(Exception e){

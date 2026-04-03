@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <eclipse-userlibraries version="2">
-    <library name="openspcoop2_3.4.1_lib" systemlibrary="false">
+    <library name="openspcoop2_3.4.3_lib" systemlibrary="false">
 	<!-- ant -->
         <archive path="/op2_3.4.dev/lib/ant/ant-contrib-1.0b3.jar"/>
 	<!-- commons -->
@@ -157,17 +157,15 @@
 	<archive path="/op2_3.4.dev/lib/pdf/pdfbox-io-3.0.7.jar"/>
 	<archive path="/op2_3.4.dev/lib/pdf/boxable-1.8.2.jar"/>
 	<!-- redis -->
-	<archive path="/op2_3.4.dev/lib/redis/redisson-4.1.0.jar"/>
-	<archive path="/op2_3.4.dev/lib/redis/netty-resolver-4.2.9.Final.jar"/>
-	<archive path="/op2_3.4.dev/lib/redis/netty-resolver-dns-4.2.9.Final.jar"/>
-	<archive path="/op2_3.4.dev/lib/redis/netty-buffer-4.2.9.Final.jar"/>
-	<archive path="/op2_3.4.dev/lib/redis/netty-common-4.2.9.Final.jar"/>
-	<archive path="/op2_3.4.dev/lib/redis/netty-transport-4.2.9.Final.jar"/>
-	<archive path="/op2_3.4.dev/lib/redis/netty-codec-4.2.9.Final.jar"/>
-	<archive path="/op2_3.4.dev/lib/redis/netty-codec-dns-4.2.9.Final.jar"/>
-	<archive path="/op2_3.4.dev/lib/redis/netty-transport-native-unix-common-4.2.9.Final.jar"/>
-	<archive path="/op2_3.4.dev/lib/redis/jboss-marshalling-2.2.3.Final.jar"/>
-	<archive path="/op2_3.4.dev/lib/redis/jboss-marshalling-river-2.2.3.Final.jar"/>
+	<archive path="/op2_3.4.dev/lib/redis/redisson-4.3.0.jar"/>
+	<archive path="/op2_3.4.dev/lib/redis/netty-resolver-4.2.12.Final.jar"/>
+	<archive path="/op2_3.4.dev/lib/redis/netty-resolver-dns-4.2.12.Final.jar"/>
+	<archive path="/op2_3.4.dev/lib/redis/netty-buffer-4.2.12.Final.jar"/>
+	<archive path="/op2_3.4.dev/lib/redis/netty-common-4.2.12.Final.jar"/>
+	<archive path="/op2_3.4.dev/lib/redis/netty-transport-4.2.12.Final.jar"/>
+	<archive path="/op2_3.4.dev/lib/redis/netty-codec-4.2.12.Final.jar"/>
+	<archive path="/op2_3.4.dev/lib/redis/netty-codec-dns-4.2.12.Final.jar"/>
+	<archive path="/op2_3.4.dev/lib/redis/netty-transport-native-unix-common-4.2.12.Final.jar"/>
 	<!-- reports -->
 	<archive path="/op2_3.4.dev/lib/reports/poi-5.4.1.jar"/>
 	<archive path="/op2_3.4.dev/lib/reports/poi-ooxml-5.4.1.jar"/>
@@ -257,7 +255,7 @@
 	<archive path="/op2_3.4.dev/lib/wss4j/wss4j-ws-security-policy-stax-4.0.0.jar"/>
 	<archive path="/op2_3.4.dev/lib/wss4j/wss4j-ws-security-stax-4.0.0.jar"/>
     </library>
-    <library name="openspcoop2_3.4.1_lib_impl" systemlibrary="false">
+    <library name="openspcoop2_3.4.3_lib_impl" systemlibrary="false">
 	<!-- angus (implementazione mail) -->
         <archive path="/op2_3.4.dev/lib/angus/angus-activation-2.0.2.jar"/>
         <archive path="/op2_3.4.dev/lib/angus/angus-mail-2.0.4.jar"/>
@@ -273,7 +271,7 @@
         <archive path="/op2_3.4.dev/lib/jaxb/txw2-4.0.5.jar"/>
         <archive path="/op2_3.4.dev/lib/jaxb/xsom-4.0.5.jar"/>
     </library>
-    <library name="openspcoop2_3.4.1_lib_stub" systemlibrary="false">
+    <library name="openspcoop2_3.4.3_lib_stub" systemlibrary="false">
         <archive path="/op2_3.4.dev/lib/stub/cxf/openspcoop2_integrationManagerStub_cxf.jar"/>
 	<archive path="/op2_3.4.dev/lib/stub/cxf/openspcoop2_as4-protocol_ecodexBackendStub_cxf.jar"/>
 	<archive path="/op2_3.4.dev/lib/stub/cxf/openspcoop2_protocol-modipa-soap-blocking-stub-cxf.jar"/>

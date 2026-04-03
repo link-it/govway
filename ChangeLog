@@ -1,3 +1,13 @@
+2026-04-03  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug #1745
+	Aggiunto supporto per connessioni Redis in modalità single-endpoint (Redis Enterprise con HA interna) 
+	e per connessioni TLS con configurazione truststore e hostname verification. 
+	Aggiornate librerie Redisson e dipendeze.
+	Nell'intervento sono state risolte le seguenti vulnerabilità relative ai jar di terza parte:
+	- CVE-2026-33870, CVE-2026-33871: aggiornata libreria 'io.netty:*' alla versione 4.2.12.Final
+
 2026-03-31  Andrea Poli <apoli@link.it>
 
 	* [Utils, GovWayCore, GovWayConsole]
