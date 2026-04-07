@@ -1,5 +1,12 @@
 2026-04-07  Andrea Poli <apoli@link.it>
 
+	* [GovWayConsole]
+	Risolto Bug #1748
+	Corretto un problema nel Controllo Accessi di erogazioni ModI con profilo PDND/OAuth, 
+	dove il campo "Stato" dell'Autenticazione Token risultava erroneamente modificabile su API con risorse definite in versioni precedenti del prodotto.
+
+2026-04-07  Andrea Poli <apoli@link.it>
+
 	* [ProtocolloModIPA]
 	Risolto Bug #1747
 	Il campo 'client_id' è ora configurabile nei claims custom della richiesta ModI quando il keystore è definito nella fruizione o nella token policy.

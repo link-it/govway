@@ -21792,8 +21792,10 @@ public class ConsoleHelper implements IConsoleHelper {
 			boolean leggiSorgente = true;
 			if(propertyNameSicurezzaRidefinita!=null) {
 				leggiSorgente = false;
+				boolean trovataPropertyRidefinizione = false;
 				for (ProtocolProperty pp : list) {
 					if(pp.getName().equals(propertyNameSicurezzaRidefinita)) {
+						trovataPropertyRidefinizione = true;
 						if(CostantiDB.MODIPA_PROFILO_RIDEFINISCI.equals(pp.getValue())) {
 							leggiSorgente = true;
 						}
@@ -21802,10 +21804,18 @@ public class ConsoleHelper implements IConsoleHelper {
 						}
 					}
 				}
+				if(!trovataPropertyRidefinizione) {
+					// Retrocompatibilità: la property non è presente nella risorsa; si utilizza la configurazione definita a livello di API.
+					setForceTokenPolicyFromApi(forcePDND, forceOAuth, forceDPoP, forcePDNDApi, forceOAuthApi, forceDPoPApi);
+				}
 			}
 			if(leggiSorgente) {
 				readForceTokenPolicy(list, forcePDND, forceOAuth, forceDPoP);
 			}
+		}
+		else {
+			// Retrocompatibilità: in assenza di protocol properties sulla risorsa, si utilizza la configurazione definita a livello di API.
+			setForceTokenPolicyFromApi(forcePDND, forceOAuth, forceDPoP, forcePDNDApi, forceOAuthApi, forceDPoPApi);
 		}
 	}
 	private void setForceTokenPolicyFromApi(BooleanNullable forcePDND, BooleanNullable forceOAuth, BooleanNullable forceDPoP,
