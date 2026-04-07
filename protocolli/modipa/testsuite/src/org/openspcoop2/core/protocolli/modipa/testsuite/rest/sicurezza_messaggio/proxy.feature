@@ -7399,6 +7399,72 @@ Scenario: isTest('idar04-token-richiesta-jwk') ||
     })
     """
     * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+    
+    
+Scenario: isTest('idar04-token-richiesta-pdnd-fruizione')
+
+    * def tipoTest = 'N.D.'
+    * eval
+    """
+    if (isTest('idar04-token-richiesta-pdnd-fruizione')) {
+      tipoTest = 'PDND-Fruizione'
+    }
+    """
+
+    * def clientIdExpected = 'N.D.'
+    * def subExpected = 'N.D.'
+    * def kidExpected = 'N.D.'
+    * def audExpected = 'RestBlockingIDAR04-'+tipoTest+'/v1'
+
+    * eval
+    """
+    if (isTest('idar04-token-richiesta-pdnd-fruizione')) {
+      kidExpected = 'ExampleClient1'
+      clientIdExpected = 'CLIENT_ID_CUSTOM'
+      subExpected = 'SUB_CUSTOM'
+    }
+    """
+
+    * def client_token_match = 
+    """
+    ({
+        header: { kid: kidExpected },
+        payload: { 
+            aud: audExpected,
+            client_id: clientIdExpected,
+            iss: 'ISS_CUSTOM',
+            sub: subExpected,
+            signed_headers: [
+                { digest: '#string' },
+                { 'content-type': 'application\/json; charset=UTF-8' },
+                { idar04testheader: 'TestHeaderRequest' }
+            ]
+        }
+    })
+    """
+
+    * karate.log("Ret: ", requestHeaders)
+
+    * call checkTokenKid ({token: requestHeaders['Agid-JWT-Signature'][0], match_to: client_token_match, kind: "AGID" })
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04-'+tipoTest+'/v1')
+
+
+    * def request_token = decodeToken(requestHeaders['Agid-JWT-Signature'][0], "AGID")
+    * def request_digest = get request_token $.payload.signed_headers..digest
+
+    * match requestHeaders['Digest'][0] == request_digest[0]
+
+    * match responseHeaders['Agid-JWT-Signature'] == "#notpresent"
+    * match responseHeaders['Digest'] == "#notpresent"
+
+    * def newHeaders = 
+    """
+    ({
+        'GovWay-TestSuite-GovWay-Client-Token': requestHeaders['Agid-JWT-Signature'][0]
+    })
+    """
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)
 
 
 

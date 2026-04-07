@@ -766,8 +766,8 @@ And match header Authorization == '#notpresent'
 * def request_digest = get client_token $.payload.signed_headers..digest
 
 * def clientIdExpected = '<clientId>'
-* def subExpected = '<username>'
-* def issExpected = 'DemoSoggettoFruitore'
+* def subExpected = '<sub>'
+* def issExpected = '<iss>'
 
 * def other_checks_richiesta = 
 """
@@ -795,9 +795,10 @@ And match header Authorization == '#notpresent'
 * match tidMessaggio == client_token.payload.jti
 
 Examples:
-| tipo-test | tipo-test-minuscolo | descrizione | tipo-keystore-client | username | password | purposeId | kid | clientId |
-| JWK | jwk | servizio che genera una risposta tramite jwk. Anche la validazione dei certificati token è tramite jwk | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 |
-| PDND | pdnd | servizio che genera una risposta tramite jwk. La validazione dei certificati token è basata su PDND | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 |
+| tipo-test | tipo-test-minuscolo | descrizione | tipo-keystore-client | username | password | purposeId | kid | clientId | sub | iss |
+| JWK | jwk | servizio che genera una risposta tramite jwk. Anche la validazione dei certificati token è tramite jwk | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | DemoSoggettoFruitore |
+| PDND | pdnd | servizio che genera una risposta tramite jwk. La validazione dei certificati token è basata su PDND | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | DemoSoggettoFruitore |
+| PDND-Fruizione | pdnd-fruizione | servizio che genera una risposta tramite jwk. La validazione dei certificati token è basata su PDND solo nella risposta; il test serve a verificare la generazione dei claim sub,iss e client_id nella richiesta come custom claims | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | ExampleClient1 | CLIENT_ID_CUSTOM | SUB_CUSTOM | ISS_CUSTOM |
 
 
 

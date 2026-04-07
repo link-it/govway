@@ -1300,6 +1300,32 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 	private static boolean isEnabled(String v) {
 		return "true".equals(v) || "yes".equals(v);
 	}
+
+	private static void updateClaimsInfoClientIdConsentito(ConsoleConfiguration consoleConfiguration, String claimNameClientId) {
+		// Aggiorna tutti i possibili campi claims (singolo header e doppi header)
+		String[] claimsItemIds = {
+			ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_JWT_CLAIMS_RICHIESTA_ID,
+			ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_JWT_CLAIMS_AUTHORIZATION_RICHIESTA_ID,
+			ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_JWT_CLAIMS_MODI_RICHIESTA_ID
+		};
+		for (String itemId : claimsItemIds) {
+			AbstractConsoleItem<?> claimsItem = ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), itemId);
+			if(claimsItem!=null && claimsItem.getInfo()!=null) {
+				ConsoleItemInfo info = claimsItem.getInfo();
+				String headerBody = info.getHeaderBody();
+				if(headerBody!=null && headerBody.contains(claimNameClientId)) {
+					// Rimuovi client_id dalla deny list visualizzata
+					headerBody = headerBody.replace(", "+claimNameClientId, "");
+					headerBody = headerBody.replace(claimNameClientId+", ", "");
+					// Aggiorna il testo dei claims sovrascrivibili per includere client_id
+					headerBody = headerBody.replace(
+							DynamicHelperCostanti.LABEL_PARAMETRO_MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_JWT_CLAIMS_INFO_DEFAULT_CLAIMS_REQUEST,
+							DynamicHelperCostanti.LABEL_PARAMETRO_MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_JWT_CLAIMS_INFO_DEFAULT_CLAIMS_REQUEST_CON_CLIENT_ID);
+					info.setHeaderBody(headerBody);
+				}
+			}
+		}
+	}
 	
 	static ConsoleItemInfo buildConsoleItemInfoCorniceSicurezza(String intestazione, boolean rest) {
 		
@@ -1717,20 +1743,33 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 		}
 		
 		boolean keystoreDefinitoInFruizione = false;
+		boolean keystoreDefinitoInFruizioneOTokenPolicy = false;
 		if(fruizione && request) {
 			String idFruizioneKeystoreFruizioneMode = ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_FRUIZIONE_KEYSTORE_MODE_ID;
 			String idFruizioneKeystoreMode = ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_MODE_ID;
-			
+
 			StringProperty profiloSicurezzaKeystoreModeFruizioneItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, idFruizioneKeystoreFruizioneMode);
-			
-			AbstractConsoleItem<?> profiloSicurezzaKeystoreModeItem = 	
+
+			AbstractConsoleItem<?> profiloSicurezzaKeystoreModeItem =
 					ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), idFruizioneKeystoreMode);
-						
-			if(profiloSicurezzaKeystoreModeFruizioneItemValue!=null && profiloSicurezzaKeystoreModeFruizioneItemValue.getValue()!=null && 
+
+			if(profiloSicurezzaKeystoreModeFruizioneItemValue!=null && profiloSicurezzaKeystoreModeFruizioneItemValue.getValue()!=null &&
 					ModIConsoleCostanti.MODIPA_KEYSTORE_FRUIZIONE.equals(profiloSicurezzaKeystoreModeFruizioneItemValue.getValue())) {
 				if(profiloSicurezzaKeystoreModeItem!=null) {
 					profiloSicurezzaKeystoreModeItem.setType(ConsoleItemType.SELECT);
 					keystoreDefinitoInFruizione = true;
+				}
+				keystoreDefinitoInFruizioneOTokenPolicy = true;
+			}
+			else if(profiloSicurezzaKeystoreModeFruizioneItemValue!=null && profiloSicurezzaKeystoreModeFruizioneItemValue.getValue()!=null &&
+					ModIConsoleCostanti.MODIPA_KEYSTORE_FRUIZIONE_TOKEN_POLICY.equals(profiloSicurezzaKeystoreModeFruizioneItemValue.getValue())) {
+				keystoreDefinitoInFruizioneOTokenPolicy = true;
+				if(profiloSicurezzaKeystoreModeItem!=null) {
+					profiloSicurezzaKeystoreModeItem.setType(ConsoleItemType.HIDDEN);
+				}
+				StringProperty profiloSicurezzaKeystoreModeItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, idFruizioneKeystoreMode);
+				if(profiloSicurezzaKeystoreModeItemValue!=null) {
+					profiloSicurezzaKeystoreModeItemValue.setValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_MODE_DEFAULT_VALUE);
 				}
 			}
 			else {
@@ -1742,7 +1781,20 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 					profiloSicurezzaKeystoreModeItemValue.setValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_MODE_DEFAULT_VALUE);
 				}
 			}
-			
+
+			// Aggiorna info popup claims: quando il keystore è definito nella fruizione o nella token policy,
+			// il claim 'client_id' è configurabile nei claims custom
+			if(rest && keystoreDefinitoInFruizioneOTokenPolicy) {
+				try {
+					String claimNameClientId = modiProperties.getRestSecurityTokenClaimsClientIdHeader();
+					if(claimNameClientId!=null) {
+						updateClaimsInfoClientIdConsentito(consoleConfiguration, claimNameClientId);
+					}
+				}catch(Exception e) {
+					throw new ProtocolException(e.getMessage(),e);
+				}
+			}
+
 		}
 		
 		// Created Ttl Time
