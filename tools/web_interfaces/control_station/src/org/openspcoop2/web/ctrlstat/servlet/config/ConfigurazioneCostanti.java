@@ -317,6 +317,13 @@ public class ConfigurazioneCostanti {
 	
 	public static final String SERVLET_NAME_CONFIGURAZIONE_SISTEMA_ADD = OBJECT_NAME_CONFIGURAZIONE_SISTEMA+Costanti.STRUTS_ACTION_SUFFIX_ADD;
 	public static final String SERVLET_NAME_CONFIGURAZIONE_SISTEMA_EXPORTER = "exporterConfigurazione";
+	private static final List<String> SERVLET_CONFIGURAZIONE_EXPORTER = new ArrayList<>();
+	public static List<String> getServletConfigurazioneExporter() {
+		return SERVLET_CONFIGURAZIONE_EXPORTER;
+	}
+	static{
+		SERVLET_CONFIGURAZIONE_EXPORTER.add(SERVLET_NAME_CONFIGURAZIONE_SISTEMA_EXPORTER);
+	}
 	public static final List<String> SERVLET_CONFIGURAZIONE_SISTEMA = new ArrayList<>();
 	static{
 		SERVLET_CONFIGURAZIONE_SISTEMA.add(SERVLET_NAME_CONFIGURAZIONE_SISTEMA_ADD);

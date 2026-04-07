@@ -1012,29 +1012,32 @@ public final class AuthorizationFilter implements Filter {
 	
 	private boolean isGeneraNuovoTokenCSRF(HttpServletRequest request, LoginHelper loginHelper) {
 		// token attuale viene invalidato e ne viene generato uno nuovo
-		// tranne che per le richieste verso le servlet utils
+		// tranne che per le richieste verso le servlet utils e le servlet di download/export
+		// (le servlet di download restituiscono un file senza aggiornare la pagina,
+		//  quindi il token CSRF nel JavaScript della pagina resterebbe disallineato rispetto alla sessione)
 		String urlRichiesta = request.getRequestURI();
-		boolean containsServletName = UtilsCostanti.getServletUtils().stream().anyMatch(name -> urlRichiesta.contains("/" + name));
-		
+
+		List<String> servletsToExclude = new ArrayList<>();
+		servletsToExclude.addAll(UtilsCostanti.getServletUtils());
+		servletsToExclude.addAll(ArchiviCostanti.getServletArchiviExporter());
+		servletsToExclude.addAll(ConfigurazioneCostanti.getServletConfigurazioneExporter());
+
+		boolean containsServletName = servletsToExclude.stream().anyMatch(name -> urlRichiesta.contains("/" + name));
+
 		if (containsServletName)  {
 			ControlStationCore.logDebug("Richiesta Risorsa ["+urlRichiesta+"], Token CSRF non verra' aggiornato.");
 			return false;
 		}
-		
+
 		return true;
 	}
 
 	// controlla se deve essere fatto il redirect alla pagina di login con messaggio sessione scaduta
 	private boolean isRedirectToLoginAndSessioneScaduta(String urlRichiesta) {
 		List<String> servletsToExclude = new ArrayList<>();
-		
-		servletsToExclude.add(ArchiviCostanti.SERVLET_NAME_PACKAGE_EXPORT);
-		servletsToExclude.add(ArchiviCostanti.SERVLET_NAME_MESSAGGI_DIAGNOSTICI_EXPORT);
-		servletsToExclude.add(ArchiviCostanti.SERVLET_NAME_TRACCE_EXPORT);
-		servletsToExclude.add(ArchiviCostanti.SERVLET_NAME_DOCUMENTI_EXPORT);
-		servletsToExclude.add(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_EXPORTER);
-		servletsToExclude.add(ArchiviCostanti.SERVLET_NAME_RESOCONTO_EXPORT);
 		servletsToExclude.addAll(UtilsCostanti.getServletUtils());
+		servletsToExclude.addAll(ArchiviCostanti.getServletArchiviExporter());
+		servletsToExclude.addAll(ConfigurazioneCostanti.getServletConfigurazioneExporter());
 
 		boolean shouldProcessRequest = servletsToExclude.stream().noneMatch(servlet -> urlRichiesta.indexOf("/"+ servlet) == -1);
 
