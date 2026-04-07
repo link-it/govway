@@ -150,6 +150,7 @@
 							<!-- per gestire ritardi dovuti al NVD server -->
 							<nvdApiDelay>120000</nvdApiDelay><!-- 2 minuti -->
 							<nvdMaxRetryCount>3</nvdMaxRetryCount> <!-- 3 max tentativi visto il timeout alto -->
+							<ossindexAnalyzerEnabled>false</ossindexAnalyzerEnabled>
 						</configuration>
 						<goals>
 							<goal>aggregate</goal>
