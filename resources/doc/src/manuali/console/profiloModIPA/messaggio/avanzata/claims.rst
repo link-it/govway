@@ -16,7 +16,7 @@ Altri claims possono essere aggiunti al payload JWT definendoli nel campo 'Claim
     Claims aggiuntivi inseriti nel Payload JWT
 
 .. note::
-      Non è consentito indicare i claims 'iat, nbf, exp, jti'. In una richiesta non è inoltre consentito indicare ne il claim 'aud' ne il claim 'client_id' (quest'ultimo prevede un caso eccezionale con il valore ${notGenerate} descritto in seguito). In una risposta, invece, non è consentito indicare il claim 'request_digest'. 
+      Non è consentito indicare i claims 'iat, nbf, exp, jti'. In una richiesta non è inoltre consentito indicare il claim 'aud'. Il claim 'client_id' non è consentito nella richiesta quando il keystore è associato all'applicativo mittente (prevede un caso eccezionale con il valore ${notGenerate} descritto in seguito), mentre è configurabile quando il keystore è definito nella fruizione o nella token policy. In una risposta, invece, non è consentito indicare il claim 'request_digest'.
 
 Di seguito vengono forniti i valori di default inseriti da GovWay nel payload jwt per quanto concerne i claims che individuano gli attori, differenziando tra il token di richiesta generato da una fruizione e il token di risposta generato da una erogazione. Per ogni claim viene anche indicato come modificare il valore di default associato.
 
@@ -45,7 +45,7 @@ Di seguito vengono forniti i valori di default inseriti da GovWay nel payload jw
 	- in una fruzione l'identificativo varia a seconda della modalità di keystore:
 	
 		- nel caso di keystore di firma associato all'applicativo mittente viene utilizzato l'identificativo dell'applicativo;
-		- nel caso di keystore definito nella fruizione viene utilizzato l'identificativo e la versione dell'API fruita;
+		- nel caso di keystore definito nella fruizione o nella token policy viene utilizzato l'identificativo e la versione dell'API fruita;
 
 	- in una erogazione viene utilizzato l'identificativo e la versione dell'API implementata.
 
@@ -56,11 +56,12 @@ Di seguito vengono forniti i valori di default inseriti da GovWay nel payload jw
 		- valore configurato nel campo 'Identificativo Client' dell'applicativo mittente identificato;
 		- identificativo dell'applicativo mittente
 
-	- fruizione che richiede un keystore associato alla fruizione:
+	- fruizione che richiede un keystore associato alla fruizione o alla token policy:
 
+		- claim 'client_id' indicato nel campo 'Claims' tra i criteri di configurazione 'ModI' della richiesta;
 		- identificativo e versione dell'API fruita
 
-	- erogazione: 
+	- erogazione:
 
 		- claim 'client_id' indicato nel campo 'Claims' tra  i criteri di configurazione 'ModI' della risposta;
 		- identificativo e versione dell'API implementata

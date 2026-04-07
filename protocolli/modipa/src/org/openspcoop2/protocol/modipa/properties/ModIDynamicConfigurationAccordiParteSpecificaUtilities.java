@@ -568,33 +568,46 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 				headerDuplicati = ModISecurityUtils.isProfiloSicurezzaMessaggioConHeaderDuplicati(api, portType);
 			}
 			boolean requestCalcolatoSuInfoFruizioni = fruizioni;
-						
+
+			// Determina se il client_id è consentito come claim custom (keystore definito nella fruizione o nella token policy)
+			boolean clientIdCustomConsentito = false;
+			if(fruizioni && rest) {
+				StringProperty keystoreModeValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_FRUIZIONE_KEYSTORE_MODE_ID);
+				if(keystoreModeValue!=null && keystoreModeValue.getValue()!=null) {
+					clientIdCustomConsentito = ModIConsoleCostanti.MODIPA_KEYSTORE_FRUIZIONE.equals(keystoreModeValue.getValue()) ||
+							ModIConsoleCostanti.MODIPA_KEYSTORE_FRUIZIONE_TOKEN_POLICY.equals(keystoreModeValue.getValue());
+				}
+			}
+
 			// Claims
 			if(rest) {
 				String idProperty = (fruizioni ? ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_JWT_CLAIMS_RICHIESTA_ID : ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_JWT_CLAIMS_RISPOSTA_ID);
 				StringProperty profiloSicurezzaMessaggioRestJwtClaimsItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, idProperty);
 				if(profiloSicurezzaMessaggioRestJwtClaimsItemValue!=null && profiloSicurezzaMessaggioRestJwtClaimsItemValue.getValue()!=null) {
 					Properties claims = PropertiesUtilities.convertTextToProperties(profiloSicurezzaMessaggioRestJwtClaimsItemValue.getValue());
-					checkClaims(modiProperties, claims, ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_JWT_CLAIMS_LABEL, requestCalcolatoSuInfoFruizioni, digest, corniceSicurezzaLegacy);
+					checkClaims(modiProperties, claims, ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_JWT_CLAIMS_LABEL, requestCalcolatoSuInfoFruizioni, digest, corniceSicurezzaLegacy,
+							clientIdCustomConsentito);
 				}
 			}
-		
+
 			// Header Duplicati
 			if(rest && headerDuplicati) {
 				String idProperty = (fruizioni ? ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_JWT_CLAIMS_AUTHORIZATION_RICHIESTA_ID : ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_JWT_CLAIMS_AUTHORIZATION_RISPOSTA_ID);
 				StringProperty profiloSicurezzaMessaggioRestJwtAuthorizationClaimsItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, idProperty);
 				if(profiloSicurezzaMessaggioRestJwtAuthorizationClaimsItemValue!=null && profiloSicurezzaMessaggioRestJwtAuthorizationClaimsItemValue.getValue()!=null) {
 					Properties claims = PropertiesUtilities.convertTextToProperties(profiloSicurezzaMessaggioRestJwtAuthorizationClaimsItemValue.getValue());
-					checkClaims(modiProperties, claims, ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_JWT_CLAIMS_AUTHORIZATION_LABEL, requestCalcolatoSuInfoFruizioni, digest, corniceSicurezzaLegacy);
+					checkClaims(modiProperties, claims, ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_JWT_CLAIMS_AUTHORIZATION_LABEL, requestCalcolatoSuInfoFruizioni, digest, corniceSicurezzaLegacy,
+							clientIdCustomConsentito);
 				}
-				
+
 				idProperty = (fruizioni ? ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_JWT_CLAIMS_MODI_RICHIESTA_ID : ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_JWT_CLAIMS_MODI_RISPOSTA_ID);
 				StringProperty profiloSicurezzaMessaggioRestJwtModiClaimsItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, idProperty);
 				if(profiloSicurezzaMessaggioRestJwtModiClaimsItemValue!=null && profiloSicurezzaMessaggioRestJwtModiClaimsItemValue.getValue()!=null) {
 					Properties claims = PropertiesUtilities.convertTextToProperties(profiloSicurezzaMessaggioRestJwtModiClaimsItemValue.getValue());
 					checkClaims(modiProperties, claims, ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_JWT_CLAIMS_MODI_LABEL.
-							replace(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_SUBSECTION_TEMPLATE_HEADER_AGID, modiProperties.getRestSecurityTokenHeaderModI()), 
-							requestCalcolatoSuInfoFruizioni, digest, corniceSicurezzaLegacy);
+							replace(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_SUBSECTION_TEMPLATE_HEADER_AGID, modiProperties.getRestSecurityTokenHeaderModI()),
+							requestCalcolatoSuInfoFruizioni, digest, corniceSicurezzaLegacy,
+							clientIdCustomConsentito);
 				}
 			}
 			
@@ -1137,7 +1150,8 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 	}
 
 	private static void checkClaims(ModIProperties modiProperties,
-			Properties claims, String elemento, boolean request, boolean digest, boolean corniceSicurezzaLegacy) throws ProtocolException {
+			Properties claims, String elemento, boolean request, boolean digest, boolean corniceSicurezzaLegacy,
+			boolean clientIdCustomConsentito) throws ProtocolException {
 		List<String> denyClaims = null;
 		String claimNameClientId = null;
 		try {
@@ -1146,16 +1160,20 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 		}catch(Exception e) {
 			throw new ProtocolException(e.getMessage(),e);
 		}
+		// Se il client_id è consentito come claim custom (keystore definito nella fruizione o nella token policy), rimuovilo dalla deny list
+		if(clientIdCustomConsentito && claimNameClientId!=null) {
+			denyClaims.remove(claimNameClientId);
+		}
 		if(claims!=null && !claims.isEmpty()) {
 			for (Object oClaim : claims.keySet()) {
 				if(oClaim instanceof String) {
 					String claim = (String) oClaim;
 					String value = claims.getProperty(claim);
-					
+
 					String debugS = "'"+claim+"', indicato nel campo "+elemento;
-					
+
 					if(value!=null &&  DynamicHelperCostanti.NOT_GENERATE.equalsIgnoreCase(value.trim())) {
-						if(claim.equalsIgnoreCase(claimNameClientId) || 
+						if(claim.equalsIgnoreCase(claimNameClientId) ||
 								(claim.equalsIgnoreCase(Claims.INTROSPECTION_RESPONSE_RFC_7662_ISSUER) && !corniceSicurezzaLegacy) ||
 								(claim.equalsIgnoreCase(Claims.INTROSPECTION_RESPONSE_RFC_7662_SUBJECT) && !corniceSicurezzaLegacy)
 							) {

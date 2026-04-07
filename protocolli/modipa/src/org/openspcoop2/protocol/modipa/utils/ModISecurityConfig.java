@@ -306,20 +306,24 @@ public class ModISecurityConfig {
 				// 0. Vedo se definito in claims
 				if(this.multipleHeaderAuthorizationConfig!=null &&
 						ModIUtilities.exists(this.multipleHeaderClaims, Claims.INTROSPECTION_RESPONSE_RFC_7662_CLIENT_ID)) {
-					this.clientId = ModIUtilities.get(this.multipleHeaderClaims, Claims.INTROSPECTION_RESPONSE_RFC_7662_CLIENT_ID, 
+					this.clientId = ModIUtilities.get(this.multipleHeaderClaims, Claims.INTROSPECTION_RESPONSE_RFC_7662_CLIENT_ID,
 							ModIUtilities.REMOVE);
 					if(this.clientId!=null && !DynamicHelperCostanti.NOT_GENERATE.equalsIgnoreCase(this.clientId)) {
-						// non utilizzabile nella richiesta. Si imposta dall'applicativo
-						this.clientId = null;
+						if(!(keystoreDefinitoInFruizione || keystoreDefinitoInTokenPolicy)) {
+							// non utilizzabile nella richiesta con keystore definito nell'applicativo. Si imposta dall'applicativo
+							this.clientId = null;
+						}
 					}
 				}
 				if(this.clientId==null &&
 					ModIUtilities.exists(this.claims, Claims.INTROSPECTION_RESPONSE_RFC_7662_CLIENT_ID)) {
-					this.clientId = ModIUtilities.get(this.claims, Claims.INTROSPECTION_RESPONSE_RFC_7662_CLIENT_ID, 
+					this.clientId = ModIUtilities.get(this.claims, Claims.INTROSPECTION_RESPONSE_RFC_7662_CLIENT_ID,
 							ModIUtilities.REMOVE);
 					if(this.clientId!=null && !DynamicHelperCostanti.NOT_GENERATE.equalsIgnoreCase(this.clientId)) {
-						// non utilizzabile nella richiesta. Si imposta dall'applicativo
-						this.clientId = null;
+						if(!(keystoreDefinitoInFruizione || keystoreDefinitoInTokenPolicy)) {
+							// non utilizzabile nella richiesta con keystore definito nell'applicativo. Si imposta dall'applicativo
+							this.clientId = null;
+						}
 					}
 				}
 			}

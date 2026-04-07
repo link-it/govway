@@ -698,7 +698,8 @@ Scenario: isTest('response-without-payload-idar04-digest-richiesta-jwk') ||
     * def responseHeaders = ({ 'Content-Type': null })
 
 Scenario: isTest('idar04-token-richiesta-jwk') ||
-		isTest('idar04-token-richiesta-pdnd')
+		isTest('idar04-token-richiesta-pdnd') ||
+		isTest('idar04-token-richiesta-pdnd-fruizione')
 
     * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
     * def responseStatus = 200
