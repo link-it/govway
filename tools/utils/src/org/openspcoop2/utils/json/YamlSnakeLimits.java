@@ -42,7 +42,7 @@ public class YamlSnakeLimits {
 		DEBUG = dEBUG;
 	}
 
-	private static double resolvedAnchorSizeFactor = -1;
+	private static volatile double resolvedAnchorSizeFactor = -1;
 	public static double getResolvedAnchorSizeFactor() {
 		return resolvedAnchorSizeFactor;
 	}
