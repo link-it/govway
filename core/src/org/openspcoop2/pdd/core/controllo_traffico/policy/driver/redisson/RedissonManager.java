@@ -117,7 +117,7 @@ public class RedissonManager {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Inizializzazione RedissonClient (mode: ").append(RedissonManager.connectionMode.getValue()).append(")");
 
-		// URL (con password mascherata)
+		// URL (con pass mascherata)
 		sb.append(" url: ");
 		for(int i=0; i<RedissonManager.connectionUrl.size(); i++) {
 			if(i>0) {
@@ -162,7 +162,7 @@ public class RedissonManager {
 	}
 
 	private static String maskPassword(String url) {
-		// Maschera la password in url del tipo redis://user:password@host:port
+		// Maschera la pass in url del tipo redis://user:***@host:port
 		int schemeEnd = url.indexOf("://");
 		if(schemeEnd<0) {
 			return url;
