@@ -1,3 +1,11 @@
+2026-04-07 Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug #1741
+	Bug di sessione durante il download: risolto un problema che causava l'errore "Controllo validità CSRF non superato" 
+	quando si effettuava un'operazione dopo il download di un allegato o di un altro contenuto esportabile. 
+	La correzione riguarda tutte le servlet di download/export (allegati, archivi, tracce, diagnostica, resoconto, configurazione di sistema).
+
 2026-04-03  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

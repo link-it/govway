@@ -69,9 +69,21 @@ public class ArchiviCostanti {
 	public static final String SERVLET_NAME_MESSAGGI_DIAGNOSTICI_EXPORT = "exporterDiagnostica";
 	public static final String SERVLET_NAME_PACKAGE_EXPORT = "exporterArchivi";
 	public static final String SERVLET_NAME_RESOCONTO_EXPORT = "downloadResoconto";
-	
-	
-	
+
+	private static final List<String> SERVLET_ARCHIVI_EXPORTER = new ArrayList<>();
+	public static List<String> getServletArchiviExporter() {
+		return SERVLET_ARCHIVI_EXPORTER;
+	}
+	static{
+		SERVLET_ARCHIVI_EXPORTER.add(SERVLET_NAME_DOCUMENTI_EXPORT);
+		SERVLET_ARCHIVI_EXPORTER.add(SERVLET_NAME_TRACCE_EXPORT);
+		SERVLET_ARCHIVI_EXPORTER.add(SERVLET_NAME_MESSAGGI_DIAGNOSTICI_EXPORT);
+		SERVLET_ARCHIVI_EXPORTER.add(SERVLET_NAME_PACKAGE_EXPORT);
+		SERVLET_ARCHIVI_EXPORTER.add(SERVLET_NAME_RESOCONTO_EXPORT);
+	}
+
+
+
 	/* SERVLET NAME */
 	
 	public static final String SERVLET_NAME_ARCHIVI_IMPORT = OBJECT_NAME_ARCHIVI_IMPORT+".do";
