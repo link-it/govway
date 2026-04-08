@@ -15,7 +15,7 @@ index cb6e29e350..6a2c0027b0 100644
  # -- Redis --
  # Integrazione con database Redis
  org.openspcoop2.pdd.redis.enabled=true
-+ Modalita' di connessione: 'cluster' (Redis Cluster) o 'single' (Redis single-endpoint / Redis Enterprise con HA interna)
++# Modalita' di connessione: 'cluster' (Redis Cluster) o 'single' (Redis single-endpoint / Redis Enterprise con HA interna)
 +org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.REDIS.connectionMode=cluster
  # Connection Url (possono essere fornite più url separate da virgola)
  # usare rediss:// per TLS (con due s)
@@ -31,7 +31,7 @@ index cb6e29e350..6a2c0027b0 100644
 +# Truststore per la validazione del certificato server
 +#org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.REDIS.ssl.truststore.path=
 +#org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.REDIS.ssl.truststore.type=jks
-+#org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.REDIS.ssl.truststore.password=s
++#org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.REDIS.ssl.truststore.password=
  # ================================================
  
  # ================================================
