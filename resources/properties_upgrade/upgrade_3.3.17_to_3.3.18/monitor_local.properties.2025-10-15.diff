@@ -1,4 +1,4 @@
---- /opt/local/svn_interno/branches/products/openspcoop2/3.3/binary_releases/3.3.17/govway-src-3.3.17/ant/setup/deploy/resources/core/monitor_local.properties	2025-07-10 15:28:31.000000000 +0200
+--- ant/setup/deploy/resources/core/monitor_local.properties	2025-07-10 15:28:31.000000000 +0200
 +++ ant/setup/deploy/resources/core/monitor_local.properties	2025-10-25 21:17:18.524057852 +0200
 @@ -34,12 +34,71 @@
  #   Richiede un'autenticazione degli utenti configurata a livello di container delegandola all'application server che ospita la console.  

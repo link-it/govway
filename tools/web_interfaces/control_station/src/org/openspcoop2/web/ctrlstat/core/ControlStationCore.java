@@ -1284,11 +1284,15 @@ public class ControlStationCore {
 	/** Certificati */
 	private int verificaCertificatiWarningExpirationDays;
 	private boolean verificaCertificatiSceltaClusterId;
+	private boolean verificaCertificatiCheckConfigurazioneJvm;
 	public int getVerificaCertificatiWarningExpirationDays() {
 		return this.verificaCertificatiWarningExpirationDays;
 	}
 	public boolean isVerificaCertificatiSceltaClusterId() {
 		return this.verificaCertificatiSceltaClusterId;
+	}
+	public boolean isVerificaCertificatiCheckConfigurazioneJvm() {
+		return this.verificaCertificatiCheckConfigurazioneJvm;
 	}
 	
 	/** Cluster */
@@ -2804,8 +2808,9 @@ public class ControlStationCore {
 		
 		/** Certificati */
 		this.verificaCertificatiWarningExpirationDays = core.verificaCertificatiWarningExpirationDays;
-		this.verificaCertificatiSceltaClusterId = core.verificaCertificatiSceltaClusterId; 
-		
+		this.verificaCertificatiSceltaClusterId = core.verificaCertificatiSceltaClusterId;
+		this.verificaCertificatiCheckConfigurazioneJvm = core.verificaCertificatiCheckConfigurazioneJvm;
+
 		/** Cluster */
 		this.isClusterAsyncUpdate = core.isClusterAsyncUpdate;
 		this.clusterAsyncUpdateCheckInterval = core.clusterAsyncUpdateCheckInterval;
@@ -3269,6 +3274,7 @@ public class ControlStationCore {
 			this.isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata = consoleProperties.isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata();
 			this.verificaCertificatiWarningExpirationDays = consoleProperties.getVerificaCertificatiWarningExpirationDays();
 			this.verificaCertificatiSceltaClusterId = consoleProperties.isVerificaCertificatiSceltaClusterId();
+			this.verificaCertificatiCheckConfigurazioneJvm = consoleProperties.isVerificaCertificatiCheckConfigurazioneJvm();
 			this.isClusterAsyncUpdate = consoleProperties.isClusterAsyncUpdate();
 			this.clusterAsyncUpdateCheckInterval = consoleProperties.getClusterAsyncUpdateCheckInterval();
 			this.isTracciamentoDatabaseRispostaConsegnataSelectEnabled = consoleProperties.isTracciamentoDatabaseRispostaConsegnataSelectEnabled();

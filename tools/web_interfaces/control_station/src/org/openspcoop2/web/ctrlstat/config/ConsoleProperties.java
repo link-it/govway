@@ -763,7 +763,12 @@ public class ConsoleProperties {
 		BooleanNullable b = this.readBooleanProperty(false, "verificaCertificati.sceltaClusterId");
 		return parse(b, true);
 	}
-	
+
+	public boolean isVerificaCertificatiCheckConfigurazioneJvm() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "verificaCertificati.checkConfigurazioneJvm");
+		return parse(b, true);
+	}
+
 	public boolean isClusterAsyncUpdate() throws UtilsException{
 		BooleanNullable b = this.readBooleanProperty(false, "cluster.asyncUpdate");
 		return parse(b, true);
