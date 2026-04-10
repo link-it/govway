@@ -7490,8 +7490,15 @@ Scenario: isTest('idar04-token-risposta-jwk') ||
 
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04-'+tipoTest+'/v1')
 
-    #* def clientIdExpected = 'anonymous'
-    * def clientIdExpected = 'DemoSoggettoFruitore/ApplicativoBlockingIDA01'
+    * def clientIdExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('idar04-token-risposta-jwk') ||
+		isTest('idar04-token-risposta-pdnd')) {
+      clientIdExpected = 'DemoSoggettoFruitore/ApplicativoBlockingIDA01'
+    }
+    """
+    
     * def audExpected = 'RestBlockingIDAR04-'+tipoTest+'/v1'
 
     * def server_token_match =
