@@ -1,3 +1,10 @@
+2026-04-10  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug #1749
+	Aggiunta la possibilità di disabilitare la verifica dei certificati dei keystore e truststore della JVM, 
+	utile in ambienti dove le password sono cifrate con meccanismi proprietari dell'application server (es. JBoss Vault).
+
 2026-04-07  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]

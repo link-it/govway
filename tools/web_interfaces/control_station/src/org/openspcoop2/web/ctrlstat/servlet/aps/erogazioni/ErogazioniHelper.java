@@ -3613,16 +3613,16 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			throws ProtocolException, DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		boolean findConnettoreHttpConPrefissoHttps = false;
 		if(!soloModI) {
-			
+
 			if(gestioneFruitori) {
-				
+
 				boolean connettoreStatic = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(tipoProtocollo).createProtocolVersionManager(null).isStaticRoute();
-										
+
 				List<MappingFruizionePortaDelegata> listaMappingFruizionePortaDelegata = this.apsCore.serviziFruitoriMappingList(fruitore.getId(), idSoggettoFruitore, idServizio, null);
 				for(MappingFruizionePortaDelegata mappingFruizione : listaMappingFruizionePortaDelegata) {
 					PortaDelegata porta = this.porteDelegateCore.getPortaDelegata(mappingFruizione.getIdPortaDelegata());
-					
-					// solo le porte applicative abilitate 
+
+					// solo le porte applicative abilitate
 					if(StatoFunzionalita.DISABILITATO.equals(porta.getStato())) {
 						continue;
 					}
@@ -3672,26 +3672,26 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 								}
 							}
 						}
-						
+
 						if(connettore!=null) {
 							TipiConnettore tipo = TipiConnettore.toEnumFromName(connettore.getTipo());
-							if( (!findConnettoreHttpConPrefissoHttps && TipiConnettore.HTTP.equals(tipo)) 
-									|| 
+							if( (!findConnettoreHttpConPrefissoHttps && TipiConnettore.HTTP.equals(tipo))
+									||
 								TipiConnettore.HTTPS.equals(tipo) ) {
-								
+
 								String nomeConnettore = connettore.getNome();
 								if(listConnettoriRegistrati.contains(nomeConnettore)) {
 									continue;
 								}
-								
+
 								String tokenPolicy = ConnettoreUtils.getNegoziazioneTokenPolicyConnettore(connettore);
 								if(tokenPolicy!=null && StringUtils.isNotEmpty(tokenPolicy) && !listTokenPolicyNegoziazione.contains(tokenPolicy)) {
 									listTokenPolicyNegoziazione.add(tokenPolicy);
-									listPosizioneTokenPolicyNegoziazione.add(nomeFruizione + 
+									listPosizioneTokenPolicyNegoziazione.add(nomeFruizione +
 											org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE+
 											"Token Policy Negoziazione: "+tokenPolicy);
 								}
-								
+
 								if( TipiConnettore.HTTP.equals(tipo) ) {
 									String endpoint = ConnettoreUtils.getEndpointConnettore(connettore, false);
 									if(endpoint!=null) {
@@ -4201,10 +4201,10 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		}
 				
 		// verifica certificati jvm
-		StringBuilder sbDetailsWarningCertificatiJvm = new StringBuilder(); 
+		StringBuilder sbDetailsWarningCertificatiJvm = new StringBuilder();
 		String posizioneWarningCertificatiJvm = null;
 		String extraWarningCertificatiJvm = null;
-		if(sbDetailsError.length()<=0 && findConnettoreHttpConPrefissoHttps) {
+		if(sbDetailsError.length()<=0 && findConnettoreHttpConPrefissoHttps && this.apsCore.isVerificaCertificatiCheckConfigurazioneJvm()) {
 			certificateChecker.checkConfigurazioneJvm(sbDetailsError, sbDetailsWarningCertificatiJvm, sogliaWarningGiorni);
 			if(sbDetailsError.length()>0) {
 				posizioneErrore = nomeApiImpl;

@@ -1,4 +1,4 @@
---- /opt/local/svn_interno/branches/products/openspcoop2/3.3/binary_releases/3.3.17/govway-src-3.3.17/ant/setup/deploy/resources/core/console_local.properties	2025-07-10 15:28:31.000000000 +0200
+--- ant/setup/deploy/resources/core/console_local.properties	2025-07-10 15:28:31.000000000 +0200
 +++ ant/setup/deploy/resources/core/console_local.properties	2025-10-25 21:17:18.522674497 +0200
 @@ -19,7 +19,7 @@
  # Disabilitando la proprietà 'login.application' viene utilizzata la classe indicata nella proprietà 'login.tipo' per ottenere il principal dell'utente che sta effettuando l'accesso alla console.

@@ -601,10 +601,10 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 						}
 						
 						// verifica jvm
-						StringBuilder sbDetailsWarningCertificatiJvm = new StringBuilder(); 
+						StringBuilder sbDetailsWarningCertificatiJvm = new StringBuilder();
 						String posizioneWarningCertificatiJvm = null;
 						String extraWarningCertificatiJvm = null;
-						if(sbDetailsError.length()<=0 && findConnettoreHttpConPrefissoHttps) {
+						if(sbDetailsError.length()<=0 && findConnettoreHttpConPrefissoHttps && saCore.isVerificaCertificatiCheckConfigurazioneJvm()) {
 							certificateChecker.checkConfigurazioneJvm(sbDetailsError, sbDetailsWarningCertificatiJvm, sogliaWarningGiorni);
 							if(sbDetailsError.length()>0) {
 								posizioneErrore = labelApplicativo;

@@ -1,0 +1,14 @@
+diff --git ant/setup/deploy/resources/core/console_local.properties ant/setup/deploy/resources/core/console_local.properties
+index 2d46e11663..8184ce9bd4 100644
+--- ant/setup/deploy/resources/core/console_local.properties
++++ ant/setup/deploy/resources/core/console_local.properties
+@@ -6,6 +6,9 @@
+ # ================================================
+ # Soglia di warning per la scadenza dei certificati
+ verificaCertificati.warning.expirationDays=10
++# Verifica dei certificati dei keystore e truststore definiti nella JVM 
++# Disabilitare il controllo quando le password sono cifrate con meccanismi proprietari dell'application server (es. JBoss Vault)
++verificaCertificati.checkConfigurazioneJvm=true
+ # ================================================
+ 
+ # ================================================
