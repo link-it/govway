@@ -506,6 +506,8 @@ public class Costanti {
 	public static final String VALUE_PARAMETRO_IDENTIFICATIVI_PS_SEPARATORE = ",";
 	public static final String PARAMETRO_MONITOR_RICERCA_AZIONE = "azCombo";
 	public static final String PARAMETRO_MONITOR_RICERCA_UTENTE_DESCRIZIONE = "descrizioneRicerca";
+	public static final String PARAMETRO_MONITOR_ALLARME_MODIFICA_DETTAGLIO_STATO = "modificaDettaglioStato";
+	public static final String PARAMETRO_MONITOR_ALLARME_MODIFICA_CRITERI_ACK = "modificaCriteriAck";
 
 	// Nomi parametri password nelle form JSF del Monitor (prependId="false")
 	public static final String PARAMETRO_MONITOR_PASSWORD = "password";

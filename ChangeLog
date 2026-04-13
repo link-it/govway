@@ -1,3 +1,10 @@
+2026-04-13 Giuliano Pintori <pintori@link.it>
+
+	* [GovWayMonitor]
+	Risolto Bug #1752
+	Corretto errore "Autorizzazione negata" che si verificava durante la modifica dei criteri di acknowledgement degli allarmi, 
+	causato dall'invio al server del contenuto HTML del dialog informativo presente nel campo hidden del componente propertyWithInfo.
+
 2026-04-13  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

@@ -42,7 +42,7 @@
 					</link:prop>
 													
 					<link:prop label="Dettaglio">
-						<h:inputTextarea value="#{allarmiBean.modificaDettaglioStato}" styleClass="inputTextAreaLong" rows="7" cols="80"/>
+						<h:inputTextarea id="modificaDettaglioStato" value="#{allarmiBean.modificaDettaglioStato}" styleClass="inputTextAreaLong" rows="7" cols="80"/>
 					</link:prop>
 												
 					<a4j:outputPanel id="idAcknowledge" layout="block" rendered="#{allarmiBean.visualizzaAck}">
@@ -62,7 +62,7 @@
 				<link:fieldset legend="#{msg['allarmi.criteriAcknowledge.label']}" rendered="#{allarmiBean.ackMode}" collapsible="false" closed="false">
 								
 					<link:propWithInfo label="Criteri" id="txtA_criteri" dialogInfo="#{allarmiBean.criteriAckDialogInfo}">
-						<h:inputTextarea value="#{allarmiBean.modificaCriteriAck}" styleClass="inputTextAreaLong" rows="7" cols="80"/>
+						<h:inputTextarea id="modificaCriteriAck" value="#{allarmiBean.modificaCriteriAck}" styleClass="inputTextAreaLong" rows="7" cols="80"/>
 					</link:propWithInfo>
 												
 					<a4j:outputPanel id="idAcknowledge" layout="block" rendered="#{allarmiBean.visualizzaAck}">

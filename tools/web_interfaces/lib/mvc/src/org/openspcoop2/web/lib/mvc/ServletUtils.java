@@ -1226,6 +1226,8 @@ public class ServletUtils {
 			// textarea descrizione ricerca utente
 			if(parameterToCheck.startsWith(Costanti.PARAMETRO_MONITOR_RICERCA_AZIONE)
 					|| parameterToCheck.startsWith(Costanti.PARAMETRO_MONITOR_RICERCA_UTENTE_DESCRIZIONE)
+					|| parameterToCheck.startsWith(Costanti.PARAMETRO_MONITOR_ALLARME_MODIFICA_DETTAGLIO_STATO)
+					|| parameterToCheck.startsWith(Costanti.PARAMETRO_MONITOR_ALLARME_MODIFICA_CRITERI_ACK)
 					) {
 				return true;
 			}
