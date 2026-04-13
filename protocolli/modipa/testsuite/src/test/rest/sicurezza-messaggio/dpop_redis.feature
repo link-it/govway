@@ -60,7 +60,7 @@ And match header WWW-Authenticate == 'DPoP realm="<policy-name>", error="invalid
 
 # Attendo i tempi di cache e faccio un nuovo tentativo che dovrebbe riuscire
 
-* java.lang.Thread.sleep(5000)
+* java.lang.Thread.sleep(60000)
 
 Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/<tipo-test>/v1"
 And path '<azione>'
@@ -84,4 +84,4 @@ And match header Agid-JWT-Signature == '#notpresent'
 
 Examples:
 | tipo-test | azione | tipo-filtro | policy-name |
-| DemoNegoziazioneTokenDPoP-RS256-CacheEnabled | base | redis | ModI-NegoziazionePDND-Validazione-DPoP-RS256-Redis |
+| DemoNegoziazioneTokenDPoP-RS256-CacheEnabled-Redis | base | redis | ModI-NegoziazionePDND-Validazione-DPoP-RS256-Redis |
