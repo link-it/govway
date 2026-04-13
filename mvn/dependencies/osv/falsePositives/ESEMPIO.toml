@@ -1,0 +1,23 @@
+# OSV-Scanner - Registro dei falsi positivi
+#
+# Questo file elenca le vulnerabilita' da ignorare durante la scansione OSV-Scanner
+# perche' classificate come falsi positivi o non applicabili al contesto GovWay.
+#
+# Formato:
+#   [[IgnoredVulns]]
+#   id = "<GHSA-xxxx-xxxx-xxxx o CVE-xxxx-xxxxx>"
+#   reason = "Motivazione della soppressione"
+#
+# Il campo 'id' accetta sia identificativi GHSA (GitHub Security Advisory)
+# sia identificativi CVE. Se una vulnerabilita' ha entrambi, e' sufficiente
+# indicarne uno: OSV-Scanner filtra automaticamente anche gli alias.
+#
+# Esempio:
+#
+# [[IgnoredVulns]]
+# id = "GHSA-jfh8-c2jp-5v3q"
+# reason = "Falso positivo: la funzionalita' vulnerabile non e' utilizzata in GovWay"
+#
+# [[IgnoredVulns]]
+# id = "CVE-2017-10355"
+# reason = "Falso positivo: XPath configurato solo da amministratori console, mai da input utente. Accesso risorse esterne disabilitato (DTDs.enabled=false)"

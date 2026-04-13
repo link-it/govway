@@ -17,8 +17,8 @@
 
 		<jar.group.name>spring</jar.group.name>
 		
-		<spring.version>${module.spring.version}</spring.version>
-		<spring.gov4j.version>${module.spring.gov4j.version}</spring.gov4j.version>
+		<spring.version>5.3.39</spring.version>
+		<spring.gov4j.version>5.3.39-gov4j-2</spring.gov4j.version>
 
 	</properties>
 

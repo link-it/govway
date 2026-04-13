@@ -1,14 +1,17 @@
 .. _releaseProcessGovWay_thirdPartyDynamicAnalysis_skip:
 
-OWASP Dependency-Check Falsi Positivi
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Gestione dei Falsi Positivi
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 **Librerie utilizzate solo a scopo di test**
 
-Le librerie terza parte utilizzate solamente nelle testsuite interne del prodotto, che non insistono negli archivi binari rilasciati, non vengono considerate tra i check di vulnerabilità 'owasp'.
+Le librerie terza parte utilizzate solamente nelle testsuite interne del prodotto, che non insistono negli archivi binari rilasciati, non vengono considerate tra i check di vulnerabilità.
 Il motivo risiede nel fatto che alcune batterie di test richiedono versioni storiche di librerie, alcune delle quali possiedono anche vulnerabilità.
-Per evitare la verifica, le librerie utilizzate solamente dalle testsuite e non dai componenti runtime sono marcate con lo scope 'test' come mostrato nell'esempio seguente:
+
+In OWASP Dependency-Check, le librerie di test sono marcate con lo scope 'test' e vengono automaticamente escluse dalla verifica. In OSV-Scanner, le directory contenenti dipendenze di solo test sono escluse tramite il parametro ``osv.scanner.exclude`` (per default: ``testsuite``).
+
+Esempio di dipendenza di test:
 
 ::
 
@@ -26,7 +29,7 @@ Per evitare la verifica, le librerie utilizzate solamente dalle testsuite e non 
         </dependency>
 
 
-**Falsi Positivi**
+**Falsi Positivi in OWASP Dependency-Check**
 
 Nell'utilizzo del plugin vengono aggiunte le configurazioni che permettono di registrare dei falsi positivi rispetto al progetto, individuati nella :ref:`vulnerabilityManagement`.
 Di seguito il frammento del file `mvn/dependencies/pom.xml <https://github.com/link-it/govway/blob/master/mvn/dependencies/pom.xml>`_ che evidenza come venga utilizzato il plugin owasp configurato con i suppressionFiles:
@@ -79,3 +82,18 @@ Esaminando nel dettaglio i file che definiscono i falsi positivi:
   .. note::
 
      È in corso una attività di revisione dei jar utilizzati dalle console al fine di superare tutte le vulnerabilità note.
+
+
+**Falsi Positivi in OSV-Scanner**
+
+I falsi positivi per OSV-Scanner vengono registrati in file TOML nella directory `mvn/dependencies/osv/falsePositives/ <https://github.com/link-it/govway/tree/master/mvn/dependencies/osv/falsePositives>`_, con un file per ogni tema o libreria. Il formato è il seguente:
+
+::
+
+	# Motivazione dettagliata del falso positivo
+
+	[[IgnoredVulns]]
+	id = "CVE-XXXX-XXXXX"
+	reason = "Descrizione sintetica del motivo"
+
+Lo script di integrazione Maven effettua automaticamente il merge di tutti i file TOML presenti nella directory e li passa al parametro ``--config`` di OSV-Scanner. Il campo ``id`` accetta sia identificativi CVE che GHSA (GitHub Security Advisory); OSV-Scanner filtra automaticamente anche gli alias associati.

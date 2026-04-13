@@ -1,0 +1,32 @@
+# Console di gestione e monitoraggio (back-office)
+#
+# Le librerie struts-core-1.3.10.jar, facelets-taglib-jsf12-spring-4-gov4j-1.jar,
+# jsf-facelets-1.1.15.jar e richfaces-*.jar vengono utilizzate dalle console di gestione
+# e monitoraggio adibite a funzioni di backoffice che non devono essere esposte al pubblico.
+#
+# OWASP Suppression: mvn/dependencies/owasp/falsePositives/console-back-office.xml
+
+# CVE-2023-34396 - Apache Struts: DoS via multipart request
+[[IgnoredVulns]]
+id = "CVE-2023-34396"
+reason = "Falso positivo: struts-core usato solo nelle console di backoffice non esposte al pubblico"
+
+# CVE-2016-1182 - Apache Struts: ActionServlet multi-page validation bypass
+[[IgnoredVulns]]
+id = "CVE-2016-1182"
+reason = "Falso positivo: struts-core usato solo nelle console di backoffice non esposte al pubblico"
+
+# CVE-2016-1181 - Apache Struts: ActionForm override in multipage forms
+[[IgnoredVulns]]
+id = "CVE-2016-1181"
+reason = "Falso positivo: struts-core usato solo nelle console di backoffice non esposte al pubblico"
+
+# CVE-2012-1007 - Apache Struts: reflected XSS in error messages
+[[IgnoredVulns]]
+id = "CVE-2012-1007"
+reason = "Falso positivo: struts-core usato solo nelle console di backoffice non esposte al pubblico"
+
+# CVE-2015-0899 - Apache Struts: multi-page validation bypass
+[[IgnoredVulns]]
+id = "CVE-2015-0899"
+reason = "Falso positivo: struts-core usato solo nelle console di backoffice non esposte al pubblico"

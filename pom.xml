@@ -37,7 +37,17 @@
 		<owasp.plugin.version>12.2.0</owasp.plugin.version>
 		<owasp.plugin.autoUpdate>true</owasp.plugin.autoUpdate> <!-- Impostare a false quando ci sono problemi su repository NIST -->
 		<owasp.plugin.failBuildOnAnyVulnerability>false</owasp.plugin.failBuildOnAnyVulnerability>
-		<owasp.ossindex.prevents429.sleep>5</owasp.ossindex.prevents429.sleep> <!-- https://github.com/sonatype/ossindex-maven/issues/17 -->
+		<owasp.ossindex.enabled>false</owasp.ossindex.enabled> <!-- true = abilita Sonatype OSS Index analyzer (richiede credenziali, limite 500 crediti/mese) -->
+		<owasp.ossindex.prevents429.sleep>5</owasp.ossindex.prevents429.sleep> <!-- secondi di attesa tra moduli per evitare HTTP 429; azzerato automaticamente se ossindex disabilitato -->
+
+		<!-- osv-scanner config (complementare a owasp, copre gap NVD tramite database OSV) -->
+		<osv>verify</osv> <!-- osv-scanner phase, use 'none' for disable -->
+		<osv.scanner.home>osv-scanner</osv.scanner.home> <!-- path del binario, es. /opt/local/programmi/osv-scanner/osv-scanner -->
+		<osv.scanner.offline>false</osv.scanner.offline> <!-- true = usa DB locale cached, false = query API online -->
+		<osv.scanner.failBuildOnVulnerability>false</osv.scanner.failBuildOnVulnerability>
+		<osv.scanner.resolve>false</osv.scanner.resolve> <!-- true = risolvi dipendenze transitive, false = solo dipendenze dirette dichiarate nei pom.xml -->
+		<osv.scanner.exclude>testsuite,jetty</osv.scanner.exclude> <!-- directory da escludere dalla scansione (contengono solo dipendenze test/legacy) -->
+		<osv.scanner.format>table,vertical,json,html,markdown,sarif,gh-annotations</osv.scanner.format>
 
 		<!-- package config -->
 		<package>package</package> <!-- package phase, use 'none' for disable -->

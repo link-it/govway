@@ -1,0 +1,15 @@
+# spring-web-5.3.39-gov4j-2.jar
+#
+# La classe oggetto della vulnerabilita' (HttpInvokerServiceExporter) non viene utilizzata
+# nel progetto GovWay. La libreria, fino alla versione 6.x, ha solamente deprecato
+# l'utilizzo degli oggetti vulnerabili.
+# Riferimenti:
+# - https://github.com/jeremylong/DependencyCheck/issues/4849
+# - https://github.com/jeremylong/DependencyCheck/issues/4558
+# - https://docs.spring.io/spring-framework/docs/current/reference/html/integration.html#remoting-httpinvoker
+#
+# OWASP Suppression: mvn/dependencies/owasp/falsePositives/spring-web.xml
+
+[[IgnoredVulns]]
+id = "CVE-2016-1000027"
+reason = "Falso positivo: la classe HttpInvokerServiceExporter oggetto della vulnerabilita' non viene utilizzata nel progetto GovWay"
