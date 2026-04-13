@@ -1,3 +1,11 @@
+2026-04-13  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità #1750
+	Integrato OSV-Scanner (Google) come tool complementare a OWASP Dependency-Check per la scansione delle vulnerabilità delle dipendenze, 
+	coprendo il gap di copertura causato dalla disabilitazione di Sonatype OSS Index e dal backlog NVD. 
+	L'analyzer OSS Index è stato reso configurabile tramite la proprietà owasp.ossindex.enabled (default disabilitato).
+
 2026-04-10  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]

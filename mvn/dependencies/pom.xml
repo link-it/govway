@@ -20,6 +20,10 @@
 		<owasp.falsePositives.dir>mvn/dependencies/owasp/falsePositives</owasp.falsePositives.dir>
 		<owasp.output.dir>../../dependency-check-result</owasp.output.dir>
 
+		<!-- osv-scanner config -->
+		<osv.scanner.falsePositives.dir>${project.basedir}/osv/falsePositives</osv.scanner.falsePositives.dir>
+		<osv.scanner.output.dir>../../osv-scanner-result</osv.scanner.output.dir>
+
 	</properties>
 
 	<modules>
@@ -86,7 +90,21 @@
 				<owasp.plugin.failBuildOnCVSS>11</owasp.plugin.failBuildOnCVSS>
 			</properties>
 		</profile>
-		
+
+		<!-- OSS Index disabilitato -> azzera il sleep anti-429 (evita ~200s inutili nel build) -->
+		<profile>
+			<id>ossindex-disabled</id>
+			<activation>
+				<property>
+					<name>owasp.ossindex.enabled</name>
+					<value>false</value>
+				</property>
+			</activation>
+			<properties>
+				<owasp.ossindex.prevents429.sleep>0</owasp.ossindex.prevents429.sleep>
+			</properties>
+		</profile>
+
 	</profiles>
 
 	<build>
@@ -150,7 +168,7 @@
 							<!-- per gestire ritardi dovuti al NVD server -->
 							<nvdApiDelay>120000</nvdApiDelay><!-- 2 minuti -->
 							<nvdMaxRetryCount>3</nvdMaxRetryCount> <!-- 3 max tentativi visto il timeout alto -->
-							<ossindexAnalyzerEnabled>false</ossindexAnalyzerEnabled>
+							<ossindexAnalyzerEnabled>${owasp.ossindex.enabled}</ossindexAnalyzerEnabled>
 						</configuration>
 						<goals>
 							<goal>aggregate</goal>
@@ -158,9 +176,47 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!-- 
-				Il plugin seguente serve a risolvere il problema del plugin di owasp della versione in uso, 
-				che ignora la configurazione 'outputDirectory' 
+			<plugin>
+				<!--
+					OSV-Scanner: scansione vulnerabilità complementare a OWASP Dependency-Check.
+					Utilizza il database OSV (aggrega GitHub Advisory, Maven Advisory e altre fonti)
+					con matching per coordinate Maven, coprendo il gap delle CVE in stato
+					"Awaiting Analysis" su NVD che Dependency-Check non riesce a rilevare.
+					Configurazione: -Dosv=none per disabilitare, -Dosv.scanner.home=<path> per il binario.
+				-->
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>${exec-maven-plugin}</version>
+				<inherited>false</inherited>
+				<executions>
+					<execution>
+						<id>osv-scanner</id>
+						<phase>${osv}</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>bash</executable>
+							<arguments>
+								<argument>${project.basedir}/osv/osv-scanner.sh</argument>
+							</arguments>
+							<environmentVariables>
+								<OSV_SCANNER_HOME>${osv.scanner.home}</OSV_SCANNER_HOME>
+								<OSV_SCANNER_OFFLINE>${osv.scanner.offline}</OSV_SCANNER_OFFLINE>
+								<OSV_SCANNER_FORMAT>${osv.scanner.format}</OSV_SCANNER_FORMAT>
+								<OSV_SCANNER_OUTPUT>${osv.scanner.output.dir}</OSV_SCANNER_OUTPUT>
+								<OSV_SCANNER_FAIL>${osv.scanner.failBuildOnVulnerability}</OSV_SCANNER_FAIL>
+								<OSV_SCANNER_RESOLVE>${osv.scanner.resolve}</OSV_SCANNER_RESOLVE>
+								<OSV_SCANNER_CONFIG_DIR>${osv.scanner.falsePositives.dir}</OSV_SCANNER_CONFIG_DIR>
+								<OSV_SCANNER_EXCLUDE>${osv.scanner.exclude}</OSV_SCANNER_EXCLUDE>
+							</environmentVariables>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<!--
+				Il plugin seguente serve a risolvere il problema del plugin di owasp della versione in uso,
+				che ignora la configurazione 'outputDirectory'
 			-->
 			<!--
 			Non funzionava correttamente, lasciare anzi le directory inutili in ./mvn/dependencies/testsuite/dependency-check-result , ./mvn/dependencies/dependency-check-result e ./mvn/dependency-check-result

@@ -51,7 +51,33 @@ Scaricare i sorgenti del software, disponibili all'indirizzo:
     Verranno identificate tutte le dipendenze relative a jar 3parti e saranno verificate se esistono vulnerabilità conosciute.
     Un report viene prodotto nella directory 'dependency-check-result'
 
-2.5 Analisi statica dei sorgenti tramite SpotBugs
+2.5 Verifica tramite OSV-Scanner
+
+    OSV-Scanner (Google) è complementare a OWASP Dependency-Check: utilizza il database OSV
+    (che aggrega GitHub Advisory, Maven Advisory e altre fonti) con matching per coordinate Maven,
+    coprendo il gap delle CVE in stato "Awaiting Analysis" su NVD.
+
+    Prerequisito: osv-scanner deve essere installato (https://github.com/google/osv-scanner)
+
+    Usare il comando:
+	mvn verify -Dosv.scanner.home=/path/to/osv-scanner
+
+    Per evitare la compilazione, il packaging e la verifica OWASP, utilizzare il comando:
+	mvn verify -Dosv.scanner.home=/path/to/osv-scanner -Dcompile=none -Dtestsuite=none -Dpackage=none -Dowasp=none
+
+    Per eseguire entrambi gli scanner (OWASP + OSV) senza compilazione e packaging:
+	mvn verify -Dosv.scanner.home=/path/to/osv-scanner -Dcompile=none -Dtestsuite=none -Dpackage=none
+
+    Per utilizzare la modalità offline (DB locale, non richiede rete durante la scansione):
+	mvn verify -Dosv.scanner.home=/path/to/osv-scanner -Dosv.scanner.offline=true -Dcompile=none -Dtestsuite=none -Dpackage=none -Dowasp=none
+
+    Per disabilitare OSV-Scanner:
+	mvn verify -Dosv=none
+
+    Verranno identificate le vulnerabilità delle dipendenze consultando il database OSV.
+    I report vengono prodotti in formati multipli nella directory 'osv-scanner-result'
+
+2.6 Analisi statica dei sorgenti tramite SpotBugs
 
     Usare il comando:
 	mvn verify -Dspotbugs=verify -Dspotbugs.home=PATH_ASSOLUTO_TOOLS_SPOTBUGS
@@ -80,7 +106,7 @@ Scaricare i sorgenti del software, disponibili all'indirizzo:
                    -Dspotbugs.home=/tmp/spotbugs-4.9.8
                    -Dspotbugs.skipPackages=protocol-as4,protocol-modipa,protocol-sdi,protocol-spcoop,protocol-trasparente,web-lib-audit,web-lib-mvc,web-lib-users,web-loader,web-govwayConsole,web-govwayMonitor,rs-config,rs-monitor,batch-statistiche,batch-runtime-repository,timer-statistiche,cli-config-loader,cli-govway-vault, cli-template-scan
 
-2.6 Analisi statica dei sorgenti tramite SonarQube
+2.7 Analisi statica dei sorgenti tramite SonarQube
 
     Usare il comando:
 	mvn verify -Dsonarqube=verify -Dsonar.token=TOKEN -Dsonar.host.url=http://localhost:9000
@@ -111,7 +137,7 @@ Scaricare i sorgenti del software, disponibili all'indirizzo:
 
     NOTA: l'analisi dei js richiede una corretta installazione di 'nodejs.org' versione 16 o 18.
 
-2.7 Analisi dinamica tramite OWASP Zed Attack Proxy (ZAP)
+2.8 Analisi dinamica tramite OWASP Zed Attack Proxy (ZAP)
 
     Prequisito: 
 	- govway sia attivo 
@@ -144,7 +170,7 @@ Scaricare i sorgenti del software, disponibili all'indirizzo:
                    
     Per indicare la jvm (es. versione 17 per zap >= 2.16.0) è possibile utilizzare la variabile 'zaproxy.javahome'
 
-2.8 Librerie 3parti
+2.9 Librerie 3parti
 
     I precedenti comandi utilizzano tutti la fase maven 'initialize' per salvare le librerie 3parti nella directory lib.
     Tali librerie vengono poi utilizzati dagli script ant che implementano la compilazione ed il packaging dei tools.
