@@ -21,7 +21,7 @@
 		
 		<jgoodies.gov4j.version>1.2.2-gov4j-1</jgoodies.gov4j.version>
 
-		<ant.version>${lib.ant.version}</ant.version>
+		<ant.version>1.10.11</ant.version>
 		<jakarta.regexp.version>1.4</jakarta.regexp.version>
 
 	</properties>

@@ -44,21 +44,27 @@
 		<url>scm:none</url>
 	</scm>
   
+	<!-- ATTENZIONE: le versioni delle dipendenze seguenti devono essere allineate con quelle
+	     dichiarate nei rispettivi file sotto mvn/dependencies/:
+	     - log4j-core: mvn/dependencies/log/pom.xml (proprietà log4j.version)
+	     - ant: mvn/dependencies/antinstaller/pom.xml (proprietà ant.version)
+	     - org.eclipse.jgit: mvn/dependencies/git/pom.xml (proprietà org.eclipse.jgit.version)
+	-->
 	<dependencies>
 		<dependency>
 			<groupId>org.eclipse.jgit</groupId>
 			<artifactId>org.eclipse.jgit</artifactId>
-			<version>${lib.org.eclipse.jgit.version}</version>
+			<version>7.3.0.202506031305-r</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.ant</groupId>
 			<artifactId>ant</artifactId>
-			<version>${lib.ant.version}</version>
+			<version>1.10.11</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-core</artifactId>
-			<version>${lib.log4j.version}</version>
+			<version>2.25.3</version>
 		</dependency>
 	</dependencies>
   
