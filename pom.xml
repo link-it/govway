@@ -106,11 +106,6 @@
 		<!-- dependencies -->
 		<dependencies.soapbox>false</dependencies.soapbox>
 
-		<!-- libraries -->
-		<lib.ant.version>1.10.11</lib.ant.version>
-		<lib.org.eclipse.jgit.version>6.7.0.202309050840-r</lib.org.eclipse.jgit.version>
-		<lib.log4j.version>2.25.3</lib.log4j.version>
-
 	</properties>
 
 	<modules>
