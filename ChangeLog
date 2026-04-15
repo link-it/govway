@@ -1,8 +1,14 @@
 2026-04-15  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
+	Risolte le seguenti vulnerabilità relative ai jar di terza parte:
+	- GHSA-h8r8-wccr-v5f2, GHSA-cjmm-f4jc-qw8r, GHSA-cj63-jhhr-wcxv: aggiornata libreria 'org.webjars:swagger-ui' alla versione 5.32.2
+
+2026-04-15  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
 	Risolto Bug #1754
-        Nell'intervento sono state risolte le seguenti vulnerabilità relative ai jar di terza parte:
+        Risolte le seguenti vulnerabilità relative ai jar di terza parte:
         - CVE-2026-34478, CVE-2026-34480, CVE-2026-34479: aggiornata libreria 'org.apache.logging.log4j:log4j-core' alla versione 2.25.4
         - CVE-2026-34477: aggiornata libreria 'org.apache.logging.log4j:log4j-core' alla versione 2.25.4      
         - CVE-2026-34481: aggiornata libreria 'org.apache.logging.log4j:log4j-layout-template-json' alla versione 2.25.4
