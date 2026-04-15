@@ -23,6 +23,16 @@ Background:
 		  return DateUtils.getSimpleDateFormatMs().format(date);
 		} 
 		"""
+		
+    * def getResponseHeader =
+    """
+    function(name) {
+        var headerArray = (karate.get("responseHeaders['" + name + "']") ||
+               karate.get("responseHeaders['" + name.toLowerCase() + "']"));
+        if (headerArray == null) return null;
+        return headerArray[0];
+    }
+    """		
 
 
 @connettivita-base
@@ -2954,3 +2964,101 @@ Examples:
 | viene prodotto dal server nella risposta, ma il client non lo attende (client sempre nella richiesta; server sempre) | sempreRichiesta | sempre | requestResponse | 502 | digest-payload-risposta-vuota-non-atteso.json | InteroperabilityInvalidRequest |
 | viene prodotto dal server nella risposta, ma il client non lo attende (client solo con payload; server sempre nella risposta) | soloConPayload | sempreRisposta | response | 502 | digest-payload-risposta-vuota-non-atteso.json | InteroperabilityInvalidRequest |
 
+
+
+
+
+
+@test-rate-limiting
+Scenario Outline: Test rate limiting per plugin ModI
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR03-RateLimiting-<tipoTest>/v1"
+And path '<azione>'
+And request read('request.json')
+* def clientIdRandom = '<tipoTest>' + java.util.UUID.randomUUID().toString().replace('-','').substring(0,12)
+And header GovWay-TestSuite-ModI<tipoTest> = clientIdRandom
+When method post
+Then status 200
+And match getResponseHeader('X-RateLimit-Peer-Remaining') == '1'
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR03-RateLimiting-<tipoTest>/v1"
+And path '<azione>'
+And request read('request.json')
+And header GovWay-TestSuite-ModI<tipoTest> = clientIdRandom
+When method post
+Then status 200
+And match getResponseHeader('X-RateLimit-Peer-Remaining') == '0'
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR03-RateLimiting-<tipoTest>/v1"
+And path '<azione>'
+And request read('request.json')
+And header GovWay-TestSuite-ModI<tipoTest> = clientIdRandom
+When method post
+Then status 429
+And match response == read('error-bodies/rate-limiting-violato.json')
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR03-RateLimiting-<tipoTest>/v1"
+And path '<azione>'
+And request read('request.json')
+* def clientIdRandom2 = '<tipoTest>' + java.util.UUID.randomUUID().toString().replace('-','').substring(0,12)
+And header GovWay-TestSuite-ModI<tipoTest> = clientIdRandom2
+When method post
+Then status 200
+And match getResponseHeader('X-RateLimit-Peer-Remaining') == '1'
+
+
+Examples:
+| descrizione | tipoTest | azione |
+| controllo raggruppamento RateLimiting per client_id presente nel token authorization| ClientId | soloAuth |
+| controllo raggruppamento RateLimiting per client_id presente nel token authorization (presente anche integrity) | ClientId | integrityAuth |
+| controllo raggruppamento RateLimiting per client_id presente nel token integrity| ClientId | soloIntegrity |
+| controllo raggruppamento RateLimiting per sub presente nel token authorization| Sub | soloAuth |
+| controllo raggruppamento RateLimiting per sub presente nel token authorization (presente anche integrity) | Sub | integrityAuth |
+| controllo raggruppamento RateLimiting per sub presente nel token integrity| Sub | soloIntegrity |
+
+
+
+@test-rate-limiting-certificate
+Scenario Outline: Test rate limiting per plugin ModI, controllo del certificato di firma
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR03-RateLimiting-<tipoTest>/v1"
+And path '<azione>'
+And request read('request.json')
+And header Authorization = call basic ({ username: '<username1>', password: '<username1>' })
+When method post
+Then status 200
+And match getResponseHeader('X-RateLimit-Peer-Remaining') == '1'
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR03-RateLimiting-<tipoTest>/v1"
+And path '<azione>'
+And request read('request.json')
+And header Authorization = call basic ({ username: '<username1>', password: '<username1>' })
+When method post
+Then status 200
+And match getResponseHeader('X-RateLimit-Peer-Remaining') == '0'
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR03-RateLimiting-<tipoTest>/v1"
+And path '<azione>'
+And request read('request.json')
+And header Authorization = call basic ({ username: '<username1>', password: '<username1>' })
+When method post
+Then status 429
+And match response == read('error-bodies/rate-limiting-violato.json')
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR03-RateLimiting-<tipoTest>/v1"
+And path '<azione>'
+And request read('request.json')
+And header Authorization = call basic ({ username: '<username2>', password: '<username2>' })
+When method post
+Then status 200
+And match getResponseHeader('X-RateLimit-Peer-Remaining') == '1'
+
+
+Examples:
+| descrizione | tipoTest | username1 | username2 | azione |
+| controllo raggruppamento RateLimiting per CN presente nel certificato del token authorization| CN | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01ExampleClient2 | soloAuth |
+| controllo raggruppamento RateLimiting per CN presente nel certificato del token authorization (presente anche integrity) | CN | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01ExampleClient2 | integrityAuth |
+| controllo raggruppamento RateLimiting per CN presente nel certificato del token integrity| CN | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01ExampleClient2 | soloIntegrity |
+| controllo raggruppamento RateLimiting per subject presente nel certificato del token authorization| Subject | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01ExampleClient2 | soloAuth |
+| controllo raggruppamento RateLimiting per subject presente nel certificato del token authorization (presente anche integrity) | Subject | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01ExampleClient2 | integrityAuth |
+| controllo raggruppamento RateLimiting per subject presente nel certificato del token integrity| Subject | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01ExampleClient2 | soloIntegrity |

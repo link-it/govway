@@ -32,3 +32,6 @@ Una configurazione personalizzata richiede la realizzazione di un plugin che con
 
 	    Raggruppamento Personalizzato
 
+         .. note::
+             Per il profilo di interoperabilità ModI, GovWay fornisce plugin pronti all'uso che consentono di raggruppare o filtrare le richieste in base alle informazioni presenti nei token ModI (claim 'client_id', 'sub', CN o Subject del certificato) estratti dagli header Authorization o Agid-JWT-Signature. Per maggiori dettagli si rimanda alla sezione :ref:`modipa_sicurezza_avanzate_tokenRateLimiting`.
+

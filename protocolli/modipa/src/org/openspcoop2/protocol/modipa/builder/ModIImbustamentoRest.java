@@ -688,7 +688,7 @@ public class ModIImbustamentoRest {
 				clientIdKid = true;
 			}
 		}
-		if(RuoloMessaggio.RISPOSTA.equals(ruoloMessaggio) && clientId!=null && !clientIdKid) {
+		if(clientId!=null && !clientIdKid) {
 			try {
 				clientId = ModIUtilities.getDynamicValue(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_CLIENT_ID, 
 						clientId, dynamicMap, context);
