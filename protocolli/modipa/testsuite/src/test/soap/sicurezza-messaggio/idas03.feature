@@ -12,6 +12,16 @@ Background:
 
     * def x509sub_client1 = 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT'
     * def x509sub_server = 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT'
+    
+    * def getResponseHeader =
+    """
+    function(name) {
+        var headerArray = (karate.get("responseHeaders['" + name + "']") ||
+               karate.get("responseHeaders['" + name.toLowerCase() + "']"));
+        if (headerArray == null) return null;
+        return headerArray[0];
+    }
+    """	    
 
 
 @connettivita-base
@@ -865,3 +875,47 @@ Examples:
 | keystorePkcs12NoPassword-KeyNoPassword | ApplicativoBlockingIDA01ExampleClient1_keystorePkcs12NoPassword-KeyNoPassword | ApplicativoBlockingIDA01ExampleClient1_keystorePkcs12NoPassword-KeyNoPassword |
 | keystorePkcs12NoPassword-KeyWithPassword | ApplicativoBlockingIDA01ExampleClient1_keystorePkcs12NoPassword-KeyWithPassword | ApplicativoBlockingIDA01ExampleClient1_keystorePkcs12NoPassword-KeyWithPassword |
 
+
+
+@test-rate-limiting-certificate
+Scenario Outline: Test rate limiting per plugin ModI, controllo del certificato di firma
+
+Given url govway_base_path + "/soap/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAS03-RateLimiting-Soap-<tipoTest>/v1"
+And path '<azione>'
+And request read("request.xml")
+And header Content-Type = 'application/soap+xml'
+And header Authorization = call basic ({ username: '<username1>', password: '<username1>' })
+When method post
+Then status 200
+And match getResponseHeader('X-RateLimit-Peer-Remaining') == '1'
+
+Given url govway_base_path + "/soap/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAS03-RateLimiting-Soap-<tipoTest>/v1"
+And path '<azione>'
+And request read("request.xml")
+And header Content-Type = 'application/soap+xml'
+And header Authorization = call basic ({ username: '<username1>', password: '<username1>' })
+When method post
+Then status 200
+And match getResponseHeader('X-RateLimit-Peer-Remaining') == '0'
+
+Given url govway_base_path + "/soap/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAS03-RateLimiting-Soap-<tipoTest>/v1"
+And path '<azione>'
+And request read("request.xml")
+And header Content-Type = 'application/soap+xml'
+And header Authorization = call basic ({ username: '<username1>', password: '<username1>' })
+When method post
+Then status 500
+
+Given url govway_base_path + "/soap/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAS03-RateLimiting-Soap-<tipoTest>/v1"
+And path '<azione>'
+And request read("request.xml")
+And header Content-Type = 'application/soap+xml'
+And header Authorization = call basic ({ username: '<username2>', password: '<username2>' })
+When method post
+Then status 200
+And match getResponseHeader('X-RateLimit-Peer-Remaining') == '1'
+
+
+Examples:
+| descrizione | tipoTest | username1 | username2 | azione |
+| controllo raggruppamento RateLimiting per CN presente nel certificato del token authorization| CN | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01ExampleClient2 | test |
