@@ -1,5 +1,11 @@
 2026-04-15  Andrea Poli <apoli@link.it>
 
+	* [ProtocolloModIPA]
+	Aggiunta funzionalità #1736
+	Aggiunto supporto all'integrazione delle api di interoperabilità v3
+
+2026-04-15  Andrea Poli <apoli@link.it>
+
 	* [GovWayCore]
 	Risolte le seguenti vulnerabilità relative ai jar di terza parte:
 	- GHSA-h8r8-wccr-v5f2, GHSA-cjmm-f4jc-qw8r, GHSA-cj63-jhhr-wcxv: aggiornata libreria 'org.webjars:swagger-ui' alla versione 5.32.2

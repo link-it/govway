@@ -143,7 +143,7 @@ Prerequisiti:
 
 		# ----- Remote TrustStore 
 
-		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStores=pdnd,simulazione-pdnd,simulazione-pdnd-recupero-info-client,simulazione-pdnd-recupero-info-client2,simulazione-pdnd-recupero-info-client-error,simulazione-pdnd-recupero-info-organization-error,simulazione-pdnd-recupero-info-client-apiv2,simulazione-pdnd-recupero-info-client2-apiv2
+		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStores=pdnd,simulazione-pdnd,simulazione-pdnd-recupero-info-client,simulazione-pdnd-recupero-info-client2,simulazione-pdnd-recupero-info-client-error,simulazione-pdnd-recupero-info-organization-error,simulazione-pdnd-recupero-info-client-apiv2,simulazione-pdnd-recupero-info-client2-apiv2,simulazione-pdnd-recupero-info-client-apiv3,simulazione-pdnd-recupero-info-client2-apiv3
 
 		# Tipo di certificato recuperato
 		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd.keyType=jwk
@@ -253,7 +253,32 @@ Prerequisiti:
 		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd-recupero-info-client2-apiv2.baseUrl=http://localhost:8080/govway/rest/in/DemoSoggettoErogatore/simulazione-api-pdnd/v2
 		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd-recupero-info-client2-apiv2.keyId.mode=URL_SUFFIX
 		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd-recupero-info-client2-apiv2.readTimeout=15000
-		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd-recupero-info-client2-apiv2.connectTimeout=10000		
+		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd-recupero-info-client2-apiv2.connectTimeout=10000
+
+		# Tipo di certificato recuperato
+		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd-recupero-info-client-apiv3.keyType=jwk
+
+		# Configurazione utilizzata per invocare il servizio esposto sulla PDND per l'ottenimento delle chiavi pubbliche rispetto al kid, e anche per recuperare le informazioni sui client
+		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd-recupero-info-client-apiv3.name=PDNDSimulatoRecuperoInfoClientApiV3
+		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd-recupero-info-client-apiv3.label=PDND-Simulato-RecuperoInfoClientApiV3
+		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd-recupero-info-client-apiv3.tokenPolicy=SimulazionePDND-JWK-RecuperoInfoClient-apiV3
+		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd-recupero-info-client-apiv3.baseUrl=http://localhost:8080/govway/rest/in/DemoSoggettoErogatore/simulazione-api-pdnd/v3/keys
+		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd-recupero-info-client-apiv3.keyId.mode=URL_SUFFIX
+		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd-recupero-info-client-apiv3.readTimeout=15000
+		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd-recupero-info-client-apiv3.connectTimeout=10000
+
+		# Tipo di certificato recuperato
+		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd-recupero-info-client2-apiv3.keyType=jwk
+
+		# Configurazione utilizzata per invocare il servizio esposto sulla PDND per l'ottenimento delle chiavi pubbliche rispetto al kid, e anche per recuperare le informazioni sui client
+		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd-recupero-info-client2-apiv3.name=PDNDSimulatoRecuperoInfoClient2ApiV3
+		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd-recupero-info-client2-apiv3.label=PDND-Simulato-RecuperoInfoClient2ApiV3
+		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd-recupero-info-client2-apiv3.tokenPolicy=SimulazionePDND-JWK-RecuperoInfoClient2-apiV3
+		# Volutamente senza suffisso /keys per provare anche questo aspetto
+		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd-recupero-info-client2-apiv3.baseUrl=http://localhost:8080/govway/rest/in/DemoSoggettoErogatore/simulazione-api-pdnd/v3
+		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd-recupero-info-client2-apiv3.keyId.mode=URL_SUFFIX
+		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd-recupero-info-client2-apiv3.readTimeout=15000
+		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd-recupero-info-client2-apiv3.connectTimeout=10000
 
 		# ----- PDND Configuration
 

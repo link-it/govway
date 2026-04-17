@@ -997,6 +997,12 @@
 						<delete file="${tmp_archivi}/govway.ear/properties/apiPDNDv2.zip" />
 						<zip destfile="${tmp_archivi}/govway.ear/properties/apiPDNDv2.zip" basedir="${tmp_archivi}/apiPDNDv2ZIP"/>
 						<delete dir="${tmp_archivi}/apiPDNDv2ZIP"/>
+						<!-- API-PDNDv3-->
+						<unzip src="${tmp_archivi}/govway.ear/properties/apiPDNDv3.zip" dest="${tmp_archivi}/apiPDNDv3ZIP"/>
+						<replace dir="${tmp_archivi}/apiPDNDv3ZIP" token="SOGGETTO_LOCALE" value="${entity_name}"/>
+						<delete file="${tmp_archivi}/govway.ear/properties/apiPDNDv3.zip" />
+						<zip destfile="${tmp_archivi}/govway.ear/properties/apiPDNDv3.zip" basedir="${tmp_archivi}/apiPDNDv3ZIP"/>
+						<delete dir="${tmp_archivi}/apiPDNDv3ZIP"/>
 						<!-- Signal Hub Push -->
 						<unzip src="${tmp_archivi}/govway.ear/properties/signalHubPDND.zip" dest="${tmp_archivi}/signalHubPDNDZIP"/>
 						<replace dir="${tmp_archivi}/signalHubPDNDZIP" token="SOGGETTO_LOCALE" value="${entity_name}"/>
@@ -1136,6 +1142,12 @@
 						<delete file="${tmp_archivi}/govway.war/WEB-INF/classes/apiPDNDv2.zip" />
 						<zip destfile="${tmp_archivi}/govway.war/WEB-INF/classes/apiPDNDv2.zip" basedir="${tmp_archivi}/apiPDNDv2ZIP"/>
 						<delete dir="${tmp_archivi}/apiPDNDv2ZIP"/>
+						<!-- API-PDNDv3-->
+						<unzip src="${tmp_archivi}/govway.war/WEB-INF/classes/apiPDNDv3.zip" dest="${tmp_archivi}/apiPDNDv3ZIP"/>
+						<replace dir="${tmp_archivi}/apiPDNDv3ZIP" token="SOGGETTO_LOCALE" value="${entity_name}"/>
+						<delete file="${tmp_archivi}/govway.war/WEB-INF/classes/apiPDNDv3.zip" />
+						<zip destfile="${tmp_archivi}/govway.war/WEB-INF/classes/apiPDNDv3.zip" basedir="${tmp_archivi}/apiPDNDv3ZIP"/>
+						<delete dir="${tmp_archivi}/apiPDNDv3ZIP"/>
 						<!-- Signal Hub Push -->
 						<unzip src="${tmp_archivi}/govway.war/WEB-INF/classes/signalHubPDND.zip" dest="${tmp_archivi}/signalHubPDNDZIP"/>
 						<replace dir="${tmp_archivi}/signalHubPDNDZIP" token="SOGGETTO_LOCALE" value="${entity_name}"/>

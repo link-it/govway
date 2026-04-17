@@ -2817,6 +2817,7 @@ public class HttpUtilities {
 	public static void validateUri(String uri,boolean checkEsistenzaFile) throws UtilsException,java.net.MalformedURLException, URISyntaxException{
 		
 		if (uri.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX)
+				|| uri.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTPS_PREFIX)
 				|| uri.startsWith(TEST_FILE_ORIGIN)) {
 
 			if(checkEsistenzaFile)

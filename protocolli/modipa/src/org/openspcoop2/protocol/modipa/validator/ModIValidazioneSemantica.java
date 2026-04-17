@@ -50,6 +50,7 @@ import org.openspcoop2.pdd.config.ConfigurazionePdDReader;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.PDNDResolver;
 import org.openspcoop2.pdd.core.CostantiPdD;
+import org.openspcoop2.pdd.core.autorizzazione.CostantiAutorizzazione;
 import org.openspcoop2.pdd.core.token.InformazioniToken;
 import org.openspcoop2.pdd.core.token.TokenUtilities;
 import org.openspcoop2.pdd.core.token.parser.Claims;
@@ -787,12 +788,20 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 	private boolean isAudienceValid(String audienceAtteso, String audience, List<String> listAudience) {
 		boolean checkAudience = false;
 		if(audienceAtteso!=null) {
-			checkAudience = audienceAtteso.equals(audience);
-			if(!checkAudience && listAudience!=null && !listAudience.isEmpty()) {
-				for (String check : listAudience) {
-					if(audienceAtteso.equals(check)) {
-						checkAudience = true;
-						break;
+			if(CostantiAutorizzazione.AUTHZ_UNDEFINED.equalsIgnoreCase(audienceAtteso)) {
+				checkAudience = (audience==null || "".equals(audience));
+			}
+			else if(CostantiAutorizzazione.AUTHZ_ANY_VALUE.equalsIgnoreCase(audienceAtteso)) {
+				checkAudience = (audience!=null && !"".equals(audience));
+			}
+			else {
+				checkAudience = audienceAtteso.equals(audience);
+				if(!checkAudience && listAudience!=null && !listAudience.isEmpty()) {
+					for (String check : listAudience) {
+						if(audienceAtteso.equals(check)) {
+							checkAudience = true;
+							break;
+						}
 					}
 				}
 			}

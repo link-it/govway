@@ -255,7 +255,7 @@ public class ModIProperties {
 			this.getApiPDNDBaseUrlVersionPattern();
 			
 			// version
-			int [] apiPdndVersion = new int[] {1 , 2};
+			int [] apiPdndVersion = this.getApiPDNDSupportedVersions();
 			for (int v : apiPdndVersion) {
 				getApiPDNDClientsVersionPatttern(v);
 				getApiPDNDOrganizationsVersionPatttern(v);
@@ -1663,6 +1663,31 @@ public class ModIProperties {
 	
 	private static final String PREFIX_API_PDND = "org.openspcoop2.protocol.modipa.pdnd.api";
 	
+	private int[] apiPDNDSupportedVersions = null;
+	public int[] getApiPDNDSupportedVersions() throws ProtocolException {
+		if(this.apiPDNDSupportedVersions == null){
+			String pName = PREFIX_API_PDND+".baseUrl.versions";
+			try{
+				String value = this.reader.getValueConvertEnvProperties(pName);
+				if(value!=null){
+					value = value.trim();
+					String[] parts = value.split(",");
+					this.apiPDNDSupportedVersions = new int[parts.length];
+					for (int i = 0; i < parts.length; i++) {
+						this.apiPDNDSupportedVersions[i] = Integer.parseInt(parts[i].trim());
+					}
+				}
+				else {
+					this.apiPDNDSupportedVersions = new int[] {1, 2};
+				}
+			} catch(java.lang.Exception e) {
+				this.logDebug(getMessaggioErroreProprietaNonImpostata(pName, e));
+				throw new ProtocolException(e.getMessage(),e);
+			}
+		}
+		return this.apiPDNDSupportedVersions;
+	}
+
 	private String getApiPDNDBaseUrlVersionPattern = null;
 	public String getApiPDNDBaseUrlVersionPattern() throws ProtocolException {
 		if(this.getApiPDNDBaseUrlVersionPattern == null){
