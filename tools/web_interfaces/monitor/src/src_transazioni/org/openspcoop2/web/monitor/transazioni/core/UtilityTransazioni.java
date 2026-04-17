@@ -685,16 +685,40 @@ public class UtilityTransazioni {
 		}
 		
 		// location
-		if( 
-				(t.getLocationRichiesta()!=null && StringUtils.isNotEmpty(t.getLocationRichiesta())) 
+		if(
+				(t.getLocationRichiesta()!=null && StringUtils.isNotEmpty(t.getLocationRichiesta()))
 				||
-				(t.getLocationRisposta()!=null && StringUtils.isNotEmpty(t.getLocationRisposta())) 
+				(t.getLocationRisposta()!=null && StringUtils.isNotEmpty(t.getLocationRisposta()))
 				||
-				(t.getNomePorta()!=null && StringUtils.isNotEmpty(t.getNomePorta())) 
+				(t.getNomePorta()!=null && StringUtils.isNotEmpty(t.getNomePorta()))
 				||
-				(t.getCredenziali()!=null && StringUtils.isNotEmpty(t.getCredenziali())) 
+				(t.getCredenziali()!=null && StringUtils.isNotEmpty(t.getCredenziali()))
 				||
-				(t.getLocationConnettore()!=null && StringUtils.isNotEmpty(t.getLocationConnettore())) 
+				(t.getLocationConnettore()!=null && StringUtils.isNotEmpty(t.getLocationConnettore()))
+				||
+				(t.getUrlInvocazione()!=null && StringUtils.isNotEmpty(t.getUrlInvocazione()))
+				||
+				(t.getSocketClientAddress()!=null && StringUtils.isNotEmpty(t.getSocketClientAddress()))
+				||
+				(t.getTransportClientAddress()!=null && StringUtils.isNotEmpty(t.getTransportClientAddress()))
+				||
+				(t.getTipoRichiesta()!=null && StringUtils.isNotEmpty(t.getTipoRichiesta()))
+				||
+				(t.getCodiceRispostaIngresso()!=null && StringUtils.isNotEmpty(t.getCodiceRispostaIngresso()))
+				||
+				(t.getCodiceRispostaUscita()!=null && StringUtils.isNotEmpty(t.getCodiceRispostaUscita()))
+				||
+				StringUtils.isNotEmpty(t.getTrasportoMittenteLabel())
+				||
+				StringUtils.isNotEmpty(t.getTokenIssuerLabel())
+				||
+				StringUtils.isNotEmpty(t.getTokenClientIdLabel())
+				||
+				StringUtils.isNotEmpty(t.getTokenSubjectLabel())
+				||
+				StringUtils.isNotEmpty(t.getTokenUsernameLabel())
+				||
+				StringUtils.isNotEmpty(t.getTokenMailLabel())
 			){
 			DatiIntegrazione datiIntegrazione = new DatiIntegrazione();
 			if( 
