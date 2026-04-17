@@ -47,6 +47,7 @@ import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
+import org.openspcoop2.pdd.core.autorizzazione.CostantiAutorizzazione;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.protocol.basic.validator.ValidazioneSintattica;
@@ -658,9 +659,11 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 										(request || (securityConfig.isCheckAudience())) 
 									){
 										String audience = securityConfig.getAudience();
-										if(fruizione && !request) {
+										if(fruizione && !request &&
+												!CostantiAutorizzazione.AUTHZ_ANY_VALUE.equalsIgnoreCase(audience) &&
+												!CostantiAutorizzazione.AUTHZ_UNDEFINED.equalsIgnoreCase(audience)) {
 											try {
-												audience = ModIUtilities.getDynamicValue(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUDIENCE, 
+												audience = ModIUtilities.getDynamicValue(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUDIENCE,
 														audience, dynamicMap, this.context);
 											}catch(Exception e) {
 												this.logError(e.getMessage(),e);
@@ -669,7 +672,7 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 										}
 										msg.addContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_AUDIENCE_CHECK, audience);
 									}
-									
+
 									if(!request && securityConfig.isCheckAudience() && integritaKid && securityConfig.getTokenClientId()!=null) {
 										String audienceClientId = null;
 										try {
@@ -724,16 +727,18 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 										(request || (securityConfig.isCheckAudience()))
 										){
 										audAuthorization = securityConfig.getAudience();
-										if(fruizione && !request) {
+										if(fruizione && !request &&
+												!CostantiAutorizzazione.AUTHZ_ANY_VALUE.equalsIgnoreCase(audAuthorization) &&
+												!CostantiAutorizzazione.AUTHZ_UNDEFINED.equalsIgnoreCase(audAuthorization)) {
 											try {
-												audAuthorization = ModIUtilities.getDynamicValue(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUDIENCE, 
+												audAuthorization = ModIUtilities.getDynamicValue(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUDIENCE,
 														audAuthorization, dynamicMap, this.context);
 											}catch(Exception e) {
 												this.logError(e.getMessage(),e);
 												throw e;
 											}
 										}
-										msg.addContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_AUDIENCE_CHECK, audAuthorization);				
+										msg.addContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_AUDIENCE_CHECK, audAuthorization);
 									}
 									
 									if(erroriValidazione.isEmpty()) {
@@ -831,9 +836,11 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 									(request || (securityConfigIntegrity.isCheckAudience())) 
 									){
 									String audIntegrity = securityConfigIntegrity.getAudience();
-									if(fruizione && !request) {
+									if(fruizione && !request &&
+											!CostantiAutorizzazione.AUTHZ_ANY_VALUE.equalsIgnoreCase(audIntegrity) &&
+											!CostantiAutorizzazione.AUTHZ_UNDEFINED.equalsIgnoreCase(audIntegrity)) {
 										try {
-											audIntegrity = ModIUtilities.getDynamicValue(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUDIENCE, 
+											audIntegrity = ModIUtilities.getDynamicValue(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUDIENCE,
 													audIntegrity, dynamicMap, this.context);
 										}catch(Exception e) {
 											this.logError(e.getMessage(),e);

@@ -59,8 +59,19 @@ public class JWKSetStore implements Serializable {
 	public JWKSetStore(String path, BYOKRequestParams requestParams) throws SecurityException{
 
 		this.jwkSetPath = path;
-						
-		byte [] archive = StoreUtils.readContent("FilePath", this.jwkSetPath);
+
+		byte [] archive = null;
+		if(path.startsWith("http://") || path.startsWith("https://")) {
+			try {
+				HttpStore httpStore = new HttpStore(path);
+				archive = httpStore.getStoreBytes();
+			}catch(Exception e){
+				throw new SecurityException(e.getMessage(),e);
+			}
+		}
+		else {
+			archive = StoreUtils.readContent("FilePath", this.jwkSetPath);
+		}
 		try {
 			archive = readBytes(archive, requestParams);
 		}catch(Exception e){
@@ -71,7 +82,7 @@ public class JWKSetStore implements Serializable {
 		}catch(Exception e){
 			throw new SecurityException(e.getMessage(),e);
 		}
-		
+
 	}
 	
 	public JWKSetStore(byte[] archive) throws SecurityException{

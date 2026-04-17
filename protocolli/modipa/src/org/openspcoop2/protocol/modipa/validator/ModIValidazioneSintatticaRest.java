@@ -42,6 +42,7 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.pdd.core.autorizzazione.CostantiAutorizzazione;
 import org.openspcoop2.pdd.core.autenticazione.GestoreAutenticazione;
 import org.openspcoop2.pdd.core.dynamic.DynamicMapBuilderUtils;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
@@ -1040,10 +1041,15 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 			}
 			else {
 				if(request || buildSecurityTokenInRequest) {
-					erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(
-							request ? CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_EROGATORE_NON_PRESENTE :
-								CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_FRUITORE_NON_PRESENTE, 
-						prefix+getErroreTokenSenzaClaim(Claims.JSON_WEB_TOKEN_RFC_7519_AUDIENCE)));
+					boolean skipAudiencePresenceCheck = !request && securityConfig!=null &&
+							(!securityConfig.isCheckAudience() ||
+							CostantiAutorizzazione.AUTHZ_UNDEFINED.equalsIgnoreCase(securityConfig.getAudience()));
+					if(!skipAudiencePresenceCheck) {
+						erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(
+								request ? CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_EROGATORE_NON_PRESENTE :
+									CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_FRUITORE_NON_PRESENTE,
+							prefix+getErroreTokenSenzaClaim(Claims.JSON_WEB_TOKEN_RFC_7519_AUDIENCE)));
+					}
 				}
 			}
 			

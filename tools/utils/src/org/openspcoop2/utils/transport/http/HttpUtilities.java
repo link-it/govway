@@ -3002,6 +3002,7 @@ public class HttpUtilities {
 	public static void validateUri(String uri,boolean checkEsistenzaFile) throws UtilsException,java.net.MalformedURLException{
 		
 		if (uri.startsWith("http://")
+				|| uri.startsWith("https://")
 				|| uri.startsWith(TEST_FILE_ORIGIN)) {
 
 			if(checkEsistenzaFile)
