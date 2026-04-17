@@ -1,3 +1,10 @@
+2026-04-17  Andrea Poli <apoli@link.it>
+
+	* [GovWayMonitor] 
+	Risolto Bug
+	Nell'export delle transazioni le informazioni di integrazione (URL di invocazione, indirizzo client, dati del token, ecc.) 
+	non venivano riportate nel manifest se la transazione falliva prima dell'identificazione dell'erogazione o fruizione invocata. 
+
 2026-04-15  Andrea Poli <apoli@link.it>
 
 	* [ProtocolloModIPA]
