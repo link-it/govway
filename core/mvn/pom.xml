@@ -32,6 +32,13 @@
 						<configuration>
 							<target xmlns:jacoco="antlib:org.jacoco.ant">
 								<property name="rootDir" location="../../" />
+
+								<!-- Allure integration (attiva di default; disattivabile via -Dallure.enabled=false) -->
+								<condition property="allure.exclude.pattern" value="**/allure-*.jar" else="__ALLURE_ENABLED_NO_EXCLUDE__.jar">
+									<equals arg1="${allure.enabled}" arg2="false"/>
+								</condition>
+								<property name="allure.results.directory" location="${testsuite.output}/allure-results"/>
+
 								<path id="classpath_run" >
 									<pathelement path="../src"/>
 									<pathelement path="../deploy/properties"/>
@@ -40,8 +47,10 @@
 										<exclude name="**/swagger-codegen/*"/>
 										<exclude name="**/*README"/>
 										<exclude name="*.userlibraries"/>
+										<exclude name="**/testsuite/logback-*.jar"/> <!-- Non va aggiunto, poiche' entra in conflitto con log4j-slf4j2-impl creando il warning SLF4J(W) 'multiple providers' -->
 										<exclude name="**/shared/Saxon-HE-*.jar"/> <!-- Non va aggiunto Saxon-HE-*.jar poiche' la sua presenza imposta il suo Transformer sostituendosi a Xalan e fa fallire dei test con contenuto CData in SoapReader -->
 										<exclude name="**/applicationServer/**"/><!-- Non vanno aggiunti, poiche' la sua presenta fa fallire la serializzazione xml: java.lang.NoSuchMethodError: 'com.fasterxml.jackson.databind.cfg.MutableCoercionConfig com.fasterxml.jackson.dataformat.xml.XmlMapper.coercionConfigDefaults()' -->
+										<exclude name="${allure.exclude.pattern}"/>
 										<include name="**/*.jar"/>
 									</fileset>
 									<fileset dir="${rootDir}/dist" >
@@ -92,6 +101,7 @@
 												<classfileset dir="build_testunits" includes="**/*.class"/>
 												<jvmarg value="-Dtestng.show.stack.frames=${testsuite.showStackFrames}" />
 												<jvmarg value="-Djenkins=${testsuite.env.jenkins}" />
+												<jvmarg value="-Dallure.results.directory=${allure.results.directory}" />
 											</testng>
 										</jacoco:coverage>
 									</then>
@@ -102,6 +112,7 @@
 											<classfileset dir="build_testunits" includes="**/*.class"/>
 											<jvmarg value="-Dtestng.show.stack.frames=${testsuite.showStackFrames}" />
 											<jvmarg value="-Djenkins=${testsuite.env.jenkins}" />
+											<jvmarg value="-Dallure.results.directory=${allure.results.directory}" />
 										</testng>
 									</else>
 								</if>

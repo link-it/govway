@@ -31,6 +31,7 @@
 		<apacheds.gov4j.version>2.0.0.AM27-gov4j-1</apacheds.gov4j.version>
 		<logback.version>1.5.26</logback.version>
 		<slf4j-testng.version>2.0.0</slf4j-testng.version>
+		<allure.version>2.34.0</allure.version>
 
 	</properties>
 
@@ -243,6 +244,55 @@
 			<groupId>com.github.sbabcoc</groupId>
 			<artifactId>slf4j-testng</artifactId>
 			<version>${slf4j-testng.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>io.qameta.allure</groupId>
+			<artifactId>allure-testng</artifactId>
+			<version>${allure.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.qameta.allure</groupId>
+			<artifactId>allure-java-commons</artifactId>
+			<version>${allure.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.qameta.allure</groupId>
+			<artifactId>allure-model</artifactId>
+			<version>${allure.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.qameta.allure</groupId>
+			<artifactId>allure-test-filter</artifactId>
+			<version>${allure.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>

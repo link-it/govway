@@ -16,6 +16,15 @@
 
 	<property name="testngShowStackFrames" value="true"/>
 	<property name="testngXmx" value="-Xmx512m"/>
+
+	<!-- Allure integration (attiva di default; disattivabile con -Dallure.enabled=false).
+	     Quando attiva, i jar allure vengono inclusi in classpath_run dal build.xml
+	     del protocollo, e il listener io.qameta.allure.testng.AllureTestNg si auto-registra
+	     via META-INF/services/org.testng.ITestNGListener.
+	     Se disabilitata, il glob punta a un filename inesistente e nessun jar entra in classpath. -->
+	<condition property="allure.fileset.includes" value="__ALLURE_DISABLED__.jar" else="allure-*.jar">
+		<equals arg1="${allure.enabled}" arg2="false"/>
+	</condition>
 	
 	
 	<!--  ************* RUN TESTSUITE FUNZIONALITA PdD **************** -->
@@ -36,6 +45,7 @@
 
 		<!-- Chiamata per TestNG -->
 		<delete dir="${output}/default"/>
+		<delete dir="${output}/allure-results/default"/>
 		<echo message="Avvio testSuite OpenSPCoop (gruppo: ${group}) (haltOnFailure:${testHaltOnFailure})" />
 		<testng classpathref="classpath_run"
             outputdir="${output}/default"
@@ -43,8 +53,9 @@
             haltonfailure="${testHaltOnFailure}" groups="${group}">
 			<classfileset dir="${build_testunits}/NG_UNITS" includes="**/*.class"/>
 			<jvmarg value="-Dtestng.show.stack.frames=${testngShowStackFrames}" />
+			<jvmarg value="-Dallure.results.directory=${output}/allure-results/default" />
 			<jvmarg value="${testngXmx}" />
-			<!-- Per non far comparire il WARNING ad ogni invocazione ma solo la prima volta: Illegal reflective access by org.openspcoop2.utils.transport.http.HttpUtilities 
+			<!-- Per non far comparire il WARNING ad ogni invocazione ma solo la prima volta: Illegal reflective access by org.openspcoop2.utils.transport.http.HttpUtilities
 						(file:...openspcoop2_utils.jar) to field java.net.HttpURLConnection.method -->
 			<jvmarg value="-Djdk.module.illegalAccess=permit"/>
 			<jvmarg value="-Djenkins=${jenkins}" />
@@ -55,6 +66,7 @@
 			</not>
 			<then>
 				<delete dir="${output}/defaultRisorseUtilizzate"/>
+				<delete dir="${output}/allure-results/defaultRisorseUtilizzate"/>
 				<echo message="Check risorse utilizzate (gruppo: RisorseEsterne)" />
 				<testng classpathref="classpath_run"
 		            outputdir="${output}/defaultRisorseUtilizzate"
@@ -62,6 +74,7 @@
 		            haltonfailure="${testHaltOnFailure}" groups="RisorseEsterne">
 					<classfileset dir="${build_testunits}/NG_UNITS" includes="**/*.class"/>
 					<jvmarg value="-Dtestng.show.stack.frames=${testngShowStackFrames}" />
+					<jvmarg value="-Dallure.results.directory=${output}/allure-results/defaultRisorseUtilizzate" />
 					<jvmarg value="${testngXmx}" />
 					<jvmarg value="-Djenkins=${jenkins}" />
 				</testng>
@@ -91,6 +104,7 @@
 
 		<!-- Chiamata per TestNG -->
 		<delete dir="${output}/connectionNew"/>
+		<delete dir="${output}/allure-results/connectionNew"/>
 		<echo message="Avvio testSuite OpenSPCoop (gruppo: ${group})" />
 		<testng classpathref="classpath_run"
              outputdir="${output}/connectionNew"
@@ -98,8 +112,9 @@
              haltonfailure="${testHaltOnFailure}" groups="${group}">
 			<classfileset dir="${build_testunits}/NG_UNITS" includes="**/*.class"/>
 			<jvmarg value="-Dtestng.show.stack.frames=${testngShowStackFrames}" />
+			<jvmarg value="-Dallure.results.directory=${output}/allure-results/connectionNew" />
 			<jvmarg value="${testngXmx}" />
-			<!-- Per non far comparire il WARNING ad ogni invocazione ma solo la prima volta: Illegal reflective access by org.openspcoop2.utils.transport.http.HttpUtilities 
+			<!-- Per non far comparire il WARNING ad ogni invocazione ma solo la prima volta: Illegal reflective access by org.openspcoop2.utils.transport.http.HttpUtilities
 						(file:...openspcoop2_utils.jar) to field java.net.HttpURLConnection.method -->
 			<jvmarg value="-Djdk.module.illegalAccess=permit"/>
 			<jvmarg value="-Djenkins=${jenkins}" />
@@ -110,6 +125,7 @@
 			</not>
 			<then>
 				<delete dir="${output}/defaultRisorseUtilizzate"/>
+				<delete dir="${output}/allure-results/defaultRisorseUtilizzate"/>
 				<echo message="Check risorse utilizzate (gruppo: RisorseEsterne)" />
 				<testng classpathref="classpath_run"
 		            outputdir="${output}/defaultRisorseUtilizzate"
@@ -117,6 +133,7 @@
 		            haltonfailure="${testHaltOnFailure}" groups="RisorseEsterne">
 					<classfileset dir="${build_testunits}/NG_UNITS" includes="**/*.class"/>
 					<jvmarg value="-Dtestng.show.stack.frames=${testngShowStackFrames}" />
+					<jvmarg value="-Dallure.results.directory=${output}/allure-results/defaultRisorseUtilizzate" />
 					<jvmarg value="-Djenkins=${jenkins}" />
 				</testng>
 			</then>

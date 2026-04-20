@@ -111,6 +111,7 @@
 			<include name="testng-7.8.0.jar"/>
 			<include name="slf4j-testng-2.0.0.jar"/>
 			<include name="guice-5.1.0.jar"/>
+			<include name="${allure.fileset.includes}"/>
 		</fileset>
 		<fileset dir="${openspcoop2_lib}/axis14" >
 			<include name="*.jar"/>
