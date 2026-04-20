@@ -66,6 +66,13 @@
 						<configuration>
 							<target xmlns:jacoco="antlib:org.jacoco.ant">
 								<property name="rootDir" location="../../../" />
+
+								<!-- Allure integration (attiva di default; disattivabile via -Dallure.enabled=false) -->
+								<condition property="allure.exclude.pattern" value="**/testsuite/allure/**" else="__ALLURE_ENABLED_NO_EXCLUDE__">
+									<equals arg1="${allure.enabled}" arg2="false"/>
+								</condition>
+								<property name="allure.results.directory" location="${testsuite.output}/allure-results"/>
+
 								<path id="classpath_run" >
 									<pathelement path="../../src"/>
 									<pathelement path="../../deploy/properties"/>
@@ -76,6 +83,8 @@
 										<exclude name="*.userlibraries"/>
 										<exclude name="**/testsuite/karate*/**"/>
 										<exclude name="**/testsuite/junit*/**"/>
+										<exclude name="**/testsuite/logback/**"/> <!-- Non va aggiunto, poiche' entra in conflitto con log4j-slf4j2-impl creando il warning SLF4J(W) 'multiple providers' -->
+										<exclude name="${allure.exclude.pattern}"/>
 										<include name="**/*.jar"/>
 									</fileset>
 									<fileset dir="../../lib" >
@@ -134,6 +143,7 @@
 												<jvmarg value="-Dpassword=${testsuite.utils.sql.password}" />
 						       						<jvmarg value="-DdriverJdbc=${testsuite.utils.sql.driverJdbc}" />
 												<jvmarg value="-DtestIdle=${testsuite.utils.sql.testIdle}" />
+												<jvmarg value="-Dallure.results.directory=${allure.results.directory}" />
 											</testng>
 										</jacoco:coverage>
 									</then>
@@ -150,6 +160,7 @@
 				        						<jvmarg value="-Dpassword=${testsuite.utils.sql.password}" />
 					       						<jvmarg value="-DdriverJdbc=${testsuite.utils.sql.driverJdbc}" />
 											<jvmarg value="-DtestIdle=${testsuite.utils.sql.testIdle}" />
+											<jvmarg value="-Dallure.results.directory=${allure.results.directory}" />
 										</testng>
 									</else>
 								</if>

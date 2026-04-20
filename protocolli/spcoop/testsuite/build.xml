@@ -107,6 +107,9 @@
 		<fileset dir="${openspcoop2_lib}/testsuite/testng" >
 			<include name="*jar"/>
 		</fileset>
+		<fileset dir="${openspcoop2_lib}/testsuite/allure" erroronmissingdir="false" >
+			<include name="${allure.fileset.includes}"/>
+		</fileset>
 		<fileset dir="${openspcoop2_lib}/axis14" >
 			<include name="*.jar"/>
 			<exclude name="neethi-2.0.4.jar"/> <!-- Includendolo causa un errore "org.apache.cxf.bus.extension.ExtensionException  java.lang.IncompatibleClassChangeError: Implementing class" usando gli stub di cxf -->
