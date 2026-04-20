@@ -433,6 +433,9 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 		if(msg==null) {
 			throw new ProtocolException("Param msg is null");
 		}
+		if(securityConfig==null) {
+			throw new ProtocolException("Param securityConfig is null");
+		}
 				
 		boolean bufferMessageReadOnly = this.modiProperties.isReadByPathBufferEnabled();
 		String idTransazione = null;
@@ -1041,7 +1044,7 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 			}
 			else {
 				if(request || buildSecurityTokenInRequest) {
-					boolean skipAudiencePresenceCheck = !request && securityConfig!=null &&
+					boolean skipAudiencePresenceCheck = !request &&
 							(!securityConfig.isCheckAudience() ||
 							CostantiAutorizzazione.AUTHZ_UNDEFINED.equalsIgnoreCase(securityConfig.getAudience()));
 					if(!skipAudiencePresenceCheck) {
