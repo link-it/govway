@@ -5,6 +5,8 @@ bin
 target
 .ant-targets-build.xml
 dependency-check-result
+osv-scanner-result
+sbom
 testsuite-result
 # Except this file
 !.gitignore

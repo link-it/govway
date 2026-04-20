@@ -177,3 +177,36 @@ Scaricare i sorgenti del software, disponibili all'indirizzo:
 
     Per re-inizializzare solamente le librerie è possibile utilizzare il comando:
 	mvn initialize
+
+2.10 Generazione SBOM (Software Bill of Materials)
+
+    La generazione dell'SBOM avviene automaticamente durante la fase 'package'. Produce un inventario
+    delle dipendenze del progetto in due formati standard (CycloneDX e SPDX), ciascuno serializzato
+    sia in JSON che in XML / RDF/XML. Le dipendenze interne al progetto (groupId 'org.openspcoop2')
+    sono escluse dagli SBOM finali.
+
+    Generazione contestuale alla build:
+	mvn package
+
+    Per generare solo l'SBOM evitando compilazione, packaging e scansioni vulnerabilità:
+	mvn verify -Dcompile=none -Dtestsuite=none -Dpackage=none -Dowasp=none -Dosv=none -Dsbom=verify
+
+    I file prodotti:
+    - sbom/cyclonedx/bom.cdx.json, bom.cdx.xml (CycloneDX, formato più diffuso per supply chain security)
+    - sbom/spdx/bom.spdx.json, bom.spdx.rdf.xml (SPDX, ISO/IEC 5962:2021, più orientato al licensing)
+
+    Per disabilitare l'intera generazione SBOM:
+	mvn package -Dsbom=none
+
+    Per disabilitare solo uno dei due formati:
+	mvn package -Dsbom.cyclonedx=none   # disabilita solo CycloneDX
+	mvn package -Dsbom.spdx=none        # disabilita solo SPDX
+
+    Per selezionare un singolo sotto-formato:
+	mvn package -Dsbom.cyclonedx.format=json      # solo CycloneDX JSON
+	mvn package -Dsbom.cyclonedx.format=xml       # solo CycloneDX XML
+	mvn package -Dsbom.spdx.json=none             # solo SPDX RDF/XML
+	mvn package -Dsbom.spdx.rdfxml=none           # solo SPDX JSON
+
+    Per includere anche le dipendenze di test scope:
+	mvn package -Dsbom.includeTestScope=true

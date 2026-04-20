@@ -1,0 +1,210 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.openspcoop2</groupId>
+	<version>${revision}</version>
+	<artifactId>org.openspcoop2.sbom</artifactId>
+	<packaging>pom</packaging>
+	<name>sbom</name>
+
+	<parent>
+		<groupId>org.openspcoop2</groupId>
+		<artifactId>org.openspcoop2</artifactId>
+		<version>${revision}</version>
+		<relativePath>../../pom.xml</relativePath>
+	</parent>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.gmavenplus</groupId>
+				<artifactId>gmavenplus-plugin</artifactId>
+				<version>${gmavenplus-plugin}</version>
+				<dependencies>
+					<dependency>
+						<groupId>org.apache.groovy</groupId>
+						<artifactId>groovy-all</artifactId>
+						<version>4.0.22</version>
+						<type>pom</type>
+					</dependency>
+					<dependency>
+						<groupId>org.apache.jena</groupId>
+						<artifactId>jena-core</artifactId>
+						<version>5.2.0</version>
+					</dependency>
+				</dependencies>
+				<executions>
+					<execution>
+						<id>sbom-merge</id>
+						<phase>${sbom}</phase>
+						<goals>
+							<goal>execute</goal>
+						</goals>
+						<configuration>
+							<scripts>
+								<script><![CDATA[
+									import groovy.json.JsonSlurper
+									import groovy.json.JsonOutput
+									import groovy.xml.XmlParser
+									import groovy.xml.XmlNodePrinter
+									import org.apache.jena.rdf.model.ModelFactory
+
+									def ownGroupId = project.parent.groupId
+									def ownPurlPrefix = "pkg:maven/" + ownGroupId + "/" + ownGroupId
+									def spdxOutputDir = new File(session.topLevelProject.basedir, "sbom/spdx")
+									def cyclonedxOutputDir = new File(session.topLevelProject.basedir, "sbom/cyclonedx")
+									spdxOutputDir.mkdirs()
+
+									// ---- Raccolta file SPDX per-modulo ----
+									def jsonFiles = []
+									def rdfFiles = []
+									session.allProjects.each { p ->
+										def fj = new File(p.build.directory, "sbom/bom.spdx.json")
+										def fr = new File(p.build.directory, "sbom/bom.spdx.rdf.xml")
+										if (fj.exists()) jsonFiles << fj
+										if (fr.exists()) rdfFiles << fr
+									}
+									log.info("SBOM: trovati " + jsonFiles.size() + " SPDX JSON e " + rdfFiles.size() + " SPDX RDF/XML per-modulo")
+
+									// ---- Merge SPDX JSON ----
+									if (!jsonFiles.isEmpty()) {
+										def slurper = new JsonSlurper()
+										def merged = null
+										def seenPurls = new HashSet()
+										def purlOf = { pkg ->
+											pkg.externalRefs?.find { it.referenceType == "purl" }?.referenceLocator
+										}
+										def keep = { pkg ->
+											def purl = purlOf(pkg)
+											if (purl?.startsWith(ownPurlPrefix)) return false
+											if (purl && seenPurls.contains(purl)) return false
+											if (purl) seenPurls << purl
+											return true
+										}
+										jsonFiles.each { f ->
+											def doc = slurper.parse(f)
+											if (merged == null) {
+												merged = doc
+												merged.packages = merged.packages.findAll(keep)
+											} else {
+												doc.packages.each { pkg ->
+													if (keep(pkg)) merged.packages << pkg
+												}
+												merged.relationships.addAll(doc.relationships)
+											}
+										}
+										def outFile = new File(spdxOutputDir, "bom.spdx.json")
+										outFile.text = JsonOutput.prettyPrint(JsonOutput.toJson(merged))
+										log.info("SBOM: merge SPDX JSON (" + merged.packages.size() + " pacchetti) -> " + outFile.absolutePath)
+									}
+
+									// ---- Merge SPDX RDF/XML ----
+									if (!rdfFiles.isEmpty()) {
+										def model = ModelFactory.createDefaultModel()
+										rdfFiles.each { f ->
+											def m = ModelFactory.createDefaultModel()
+											m.read(f.toURI().toString())
+											model.add(m)
+										}
+										def SPDX_NS = "http://spdx.org/rdf/terms#"
+										def refLocator = model.createProperty(SPDX_NS + "referenceLocator")
+										def externalRef = model.createProperty(SPDX_NS + "externalRef")
+										def rdfType = org.apache.jena.vocabulary.RDF.type
+										def pkgType = model.createResource(SPDX_NS + "Package")
+										def toRemove = []
+										def pkgIter = model.listSubjectsWithProperty(rdfType, pkgType)
+										while (pkgIter.hasNext()) {
+											def pkg = pkgIter.next()
+											def refIter = model.listObjectsOfProperty(pkg, externalRef)
+											while (refIter.hasNext()) {
+												def eref = refIter.next()
+												if (eref.isResource()) {
+													def locIter = model.listObjectsOfProperty(eref.asResource(), refLocator)
+													while (locIter.hasNext()) {
+														def loc = locIter.next()
+														if (loc.isLiteral() && loc.asLiteral().string.startsWith(ownPurlPrefix)) {
+															toRemove << pkg
+														}
+													}
+												}
+											}
+										}
+										toRemove.each { pkg ->
+											def blankRefs = [] as Set
+											def stmtIter = pkg.listProperties()
+											while (stmtIter.hasNext()) {
+												def o = stmtIter.next().object
+												if (o.isResource() && o.asResource().isAnon()) blankRefs << o.asResource()
+											}
+											blankRefs.each { br -> model.removeAll(br, null, null) }
+											model.removeAll(pkg, null, null)
+											model.removeAll(null, null, pkg)
+										}
+										def outFile = new File(spdxOutputDir, "bom.spdx.rdf.xml")
+										outFile.withOutputStream { os -> model.write(os, "RDF/XML") }
+										log.info("SBOM: merge SPDX RDF/XML (" + toRemove.size() + " package interni rimossi) -> " + outFile.absolutePath)
+									}
+
+									// ---- Post-filter CycloneDX JSON ----
+									def cdxJson = new File(cyclonedxOutputDir, "bom.cdx.json")
+									if (cdxJson.exists()) {
+										def doc = new JsonSlurper().parse(cdxJson)
+										def before = doc.components?.size() ?: 0
+										def toKeep = doc.components.findAll { !(it.group == ownGroupId) }
+										def removedBomRefs = (doc.components - toKeep).collect { it['bom-ref'] } as Set
+										doc.components = toKeep
+										if (doc.dependencies) {
+											doc.dependencies = doc.dependencies.findAll { !removedBomRefs.contains(it.ref) }
+											doc.dependencies.each { dep ->
+												if (dep.dependsOn) dep.dependsOn = dep.dependsOn.findAll { !removedBomRefs.contains(it) }
+											}
+										}
+										cdxJson.text = JsonOutput.prettyPrint(JsonOutput.toJson(doc))
+										log.info("SBOM: post-filter CycloneDX JSON (" + (before - toKeep.size()) + " componenti interni rimossi, " + toKeep.size() + " rimasti) -> " + cdxJson.absolutePath)
+									}
+
+									// ---- Post-filter CycloneDX XML ----
+									def cdxXml = new File(cyclonedxOutputDir, "bom.cdx.xml")
+									if (cdxXml.exists()) {
+										def bom = new XmlParser(false, false).parse(cdxXml)
+										def localName = { node -> node.name().toString().replaceAll(/^.*[:}]/, "") }
+										def removedRefs = new HashSet()
+										def components = bom.children().find { localName(it) == "components" }
+										def removed = 0
+										if (components != null) {
+											def toRemoveComp = components.children().findAll { comp ->
+												def groupNode = comp.children().find { localName(it) == "group" }
+												groupNode?.text() == ownGroupId
+											}
+											toRemoveComp.each { comp ->
+												def ref = comp.attribute("bom-ref")
+												if (ref) removedRefs << ref
+												components.remove(comp)
+												removed++
+											}
+										}
+										def depsRoot = bom.children().find { localName(it) == "dependencies" }
+										if (depsRoot != null) {
+											def toRemoveDep = depsRoot.children().findAll { d -> removedRefs.contains(d.attribute("ref")) }
+											toRemoveDep.each { depsRoot.remove(it) }
+											depsRoot.children().each { d ->
+												def innerToRemove = d.children().findAll { inner -> removedRefs.contains(inner.attribute("ref")) }
+												innerToRemove.each { d.remove(it) }
+											}
+										}
+										cdxXml.withPrintWriter("UTF-8") { w ->
+											def printer = new XmlNodePrinter(w)
+											printer.setPreserveWhitespace(false)
+											printer.print(bom)
+										}
+										log.info("SBOM: post-filter CycloneDX XML (" + removed + " componenti interni rimossi) -> " + cdxXml.absolutePath)
+									}
+								]]></script>
+							</scripts>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

@@ -22,6 +22,9 @@
 		<maven-gpg-plugin>3.2.7</maven-gpg-plugin>
 		<central-publishing-maven-plugin>0.6.0</central-publishing-maven-plugin>
 		<exec-maven-plugin>3.5.0</exec-maven-plugin>
+		<cyclonedx-maven-plugin>2.9.1</cyclonedx-maven-plugin>
+		<spdx-maven-plugin>1.0.3</spdx-maven-plugin>
+		<gmavenplus-plugin>4.3.1</gmavenplus-plugin>
 		<ant.version>1.10.14</ant.version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -48,6 +51,22 @@
 		<osv.scanner.resolve>false</osv.scanner.resolve> <!-- true = risolvi dipendenze transitive, false = solo dipendenze dirette dichiarate nei pom.xml -->
 		<osv.scanner.exclude>testsuite</osv.scanner.exclude> <!-- directory da escludere dalla scansione (contengono dipendenze test/legacy) -->
 		<osv.scanner.format>table,vertical,json,html,markdown,sarif,gh-annotations</osv.scanner.format>
+
+		<!-- sbom config (Software Bill of Materials) -->
+		<sbom>package</sbom> <!-- sbom master phase, use 'none' per disabilitare la generazione di tutti i formati SBOM; con 'mvn verify' non viene eseguito a meno di passare -Dsbom=verify -->
+		<sbom.output.dir>${project.basedir}/sbom</sbom.output.dir>
+		<sbom.includeTestScope>false</sbom.includeTestScope> <!-- true = include anche le dipendenze di test nell'SBOM -->
+
+		<!-- sbom CycloneDX -->
+		<sbom.cyclonedx>${sbom}</sbom.cyclonedx> <!-- cyclonedx phase, eredita da sbom; 'none' per disabilitare solo CycloneDX -->
+		<sbom.cyclonedx.format>all</sbom.cyclonedx.format> <!-- formato CycloneDX: 'json', 'xml' oppure 'all' (entrambi) -->
+		<sbom.cyclonedx.output.dir>${sbom.output.dir}/cyclonedx</sbom.cyclonedx.output.dir>
+
+		<!-- sbom SPDX -->
+		<sbom.spdx>${sbom}</sbom.spdx> <!-- spdx master phase, eredita da sbom; 'none' per disabilitare solo SPDX -->
+		<sbom.spdx.json>${sbom.spdx}</sbom.spdx.json> <!-- 'none' per disabilitare solo il formato JSON -->
+		<sbom.spdx.rdfxml>${sbom.spdx}</sbom.spdx.rdfxml> <!-- 'none' per disabilitare solo il formato RDF/XML -->
+		<sbom.spdx.output.dir>${sbom.output.dir}/spdx</sbom.spdx.output.dir>
 
 		<!-- package config -->
 		<package>package</package> <!-- package phase, use 'none' for disable -->
@@ -117,6 +136,90 @@
                 <module>tools/sonarqube/mvn</module>
                 <module>tools/zap/mvn</module>
                 <module>tools/jacoco/mvn</module>
+		<module>mvn/sbom</module>
 	</modules>
+
+	<build>
+		<plugins>
+			<plugin>
+				<!--
+					CycloneDX: generazione SBOM (Software Bill of Materials) in formato CycloneDX.
+					Produce un inventario completo di tutte le dipendenze del progetto con PURL,
+					hash, licenze e relazioni transitive.
+					Configurazione: -Dsbom=none (o -Dsbom.cyclonedx=none) per disabilitare; si attiva automaticamente con 'mvn package'.
+					Il plugin è dichiarato nel root pom.xml affinché makeAggregateBom aggreghi
+					le dipendenze di tutti i moduli del reactor.
+				-->
+				<groupId>org.cyclonedx</groupId>
+				<artifactId>cyclonedx-maven-plugin</artifactId>
+				<version>${cyclonedx-maven-plugin}</version>
+				<inherited>false</inherited>
+				<executions>
+					<execution>
+						<id>sbom-cyclonedx</id>
+						<phase>${sbom.cyclonedx}</phase>
+						<goals>
+							<goal>makeAggregateBom</goal>
+						</goals>
+						<configuration>
+							<projectType>application</projectType>
+							<outputFormat>${sbom.cyclonedx.format}</outputFormat>
+							<outputName>bom.cdx</outputName>
+							<schemaVersion>1.6</schemaVersion>
+							<outputDirectory>${sbom.cyclonedx.output.dir}</outputDirectory>
+							<includeCompileScope>true</includeCompileScope>
+							<includeRuntimeScope>true</includeRuntimeScope>
+							<includeProvidedScope>true</includeProvidedScope>
+							<includeSystemScope>false</includeSystemScope>
+							<includeTestScope>${sbom.includeTestScope}</includeTestScope>
+							<excludeTestProject>true</excludeTestProject>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<!--
+					SPDX: generazione SBOM in formato SPDX (Linux Foundation / ISO/IEC 5962:2021).
+					Il plugin non aggrega il reactor: eseguito per-modulo (inherited=true),
+					produce un file per modulo in target/sbom/. Il modulo 'sbom/spdx/merge' li unisce in uno solo.
+				-->
+				<groupId>org.spdx</groupId>
+				<artifactId>spdx-maven-plugin</artifactId>
+				<version>${spdx-maven-plugin}</version>
+				<configuration>
+					<includeCompileScope>true</includeCompileScope>
+					<includeRuntimeScope>true</includeRuntimeScope>
+					<includeProvidedScope>true</includeProvidedScope>
+					<includeSystemScope>false</includeSystemScope>
+					<includeTestScope>${sbom.includeTestScope}</includeTestScope>
+					<includeTransitiveDependencies>true</includeTransitiveDependencies>
+				</configuration>
+				<executions>
+					<execution>
+						<id>sbom-spdx-json</id>
+						<phase>${sbom.spdx.json}</phase>
+						<goals>
+							<goal>createSPDX</goal>
+						</goals>
+						<configuration>
+							<spdxFile>${project.build.directory}/sbom/bom.spdx.json</spdxFile>
+							<outputFormat>JSON</outputFormat>
+						</configuration>
+					</execution>
+					<execution>
+						<id>sbom-spdx-rdfxml</id>
+						<phase>${sbom.spdx.rdfxml}</phase>
+						<goals>
+							<goal>createSPDX</goal>
+						</goals>
+						<configuration>
+							<spdxFile>${project.build.directory}/sbom/bom.spdx.rdf.xml</spdxFile>
+							<outputFormat>RDF/XML</outputFormat>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 
 </project>

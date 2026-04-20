@@ -32,6 +32,8 @@ Nel caso in cui il processo di verifica, descritto nella sezione :ref:`releasePr
 
 Altrimenti, se a valle dell'analisi della vulnerabilità rilevata, si riscontrasse un falso positivo (:ref:`vulnerabilityManagement_skip_registry`), questa verrebbe registrata come tale nella configurazione di entrambi i tool, in modo che successive verifiche non ne segnalino più la presenza. Maggiori dettagli sulla modalità di registrazione dei falsi positivi vengono forniti nella sezione :ref:`releaseProcessGovWay_thirdPartyDynamicAnalysis_skip`.
 
+Oltre alla verifica delle vulnerabilità, il processo di build produce un **SBOM** (Software Bill of Materials) in formati CycloneDX e SPDX, come descritto nella sezione :ref:`releaseProcessGovWay_thirdPartyDynamicAnalysis_sbom`. L'SBOM documenta formalmente tutte le dipendenze del progetto.
+
 .. note::
    Per evitare che il progetto erediti possibili vulnerabilità da software terze parti non utilizzati, tutte e sole le librerie terza parte utilizzate nel progetto govway sono definite puntualmente nei file `mvn/dependencies/*/pom.xml <https://github.com/link-it/govway/tree/3.4.x/mvn/dependencies>`_.
 
@@ -54,7 +56,8 @@ Altrimenti, se a valle dell'analisi della vulnerabilità rilevata, si riscontras
 
 .. toctree::
         :maxdepth: 2
-        
+
 	ci_jenkins
 	maven
 	skip
+	sbom
