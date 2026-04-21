@@ -4,7 +4,7 @@
       file name: swagger-codegen-cli-3.0.46-gov4j-1.jar 
       Viene utilizzato solamente durante lo sviluppo e non a runtime dal Gateway.
       ]]></notes>
-      <filePath regex="true">.*swagger-codegen-cli-3.0.46-gov4j-1.jar.*</filePath>
+      <filePath regex="true">.*swagger-codegen-cli-.*\.jar.*</filePath>
       <cvssBelow>10</cvssBelow>
    </suppress>
    <!-- Le configurazioni sottostanti sono state prese tramite il pulsante 'suppress' nell'output html, relativamente all'entry senza un id di vulnerabilità cpe:* -->
@@ -119,5 +119,18 @@ Upgrade to version 3.0.8, 4.5.2 or later.</vulnerabilityName>
    ]]></notes>
    <packageUrl regex="true">^pkg:javascript/jquery@.*$</packageUrl>
    <vulnerabilityName>jquery issue: 11974</vulnerabilityName>
-  </suppress>  
+  </suppress>
+  <suppress>
+     <notes><![CDATA[
+     file name: swagger-codegen-cli-3.0.46-gov4j-1.jar (tutti i file JavaScript contenuti: handlebars-v4.7.7.js, jquery-1.8.3.min.js, ecc.)
+     Regola catch-all scopata al jar swagger-codegen-cli per qualunque vulnerabilità RetireJS sui file JS in esso contenuti,
+     inclusi advisory senza CVE/unscored per i quali la regola globale con <cvssBelow>10</cvssBelow> non è sufficiente
+     e le regole specifiche con <vulnerabilityName> letterale non matchano i testi dei nuovi advisory.
+     Il jar swagger-codegen-cli è utilizzato solamente in fase di sviluppo per la generazione di classi e non a runtime dal Gateway.
+     La regola è volutamente scopata tramite filePath al solo jar in questione, per non sopprimere vulnerabilità
+     sulle stesse librerie (handlebars, jquery, ...) eventualmente presenti in altri jar (es. console runtime).
+     ]]></notes>
+     <filePath regex="true">.*swagger-codegen-cli-.*\.jar.*\.js$</filePath>
+     <vulnerabilityName regex="true">[\s\S]*</vulnerabilityName>
+  </suppress>
 </suppressions>
