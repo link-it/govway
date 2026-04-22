@@ -476,62 +476,62 @@ public class AutenticazionePortaApplicativa extends GestioneViaJmx {
 	@DataProvider(name="apiKeyProvider")
 	public Object[][] apiKeyProvider() throws Exception{
 		return new Object[][]{
-				{CredenzialiInvocazione.getAutenticazioneDisabilitata(), null,
+				{"none", CredenzialiInvocazione.getAutenticazioneDisabilitata(), null,
 					IntegrationFunctionError.AUTHENTICATION_CREDENTIALS_NOT_FOUND,
 					CostantiTestSuite.MESSAGGIO_AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_FORNITE,	CodiceErroreCooperazione.MITTENTE_NON_VALORIZZATO.getCodice(),true, 500},// nessuna credenziale
-				
+
 				// **  applicativi **
-				{CredenzialiInvocazione.getAutenticazioneApiKey("EsempioFruitoreTrasparenteApiKey@MinisteroFruitore.gw", "123456"), CostantiTestSuite.PROXY_SOGGETTO_FRUITORE,
+				{"app-ok-1", CredenzialiInvocazione.getAutenticazioneApiKey("EsempioFruitoreTrasparenteApiKey@MinisteroFruitore.gw", "123456"), CostantiTestSuite.PROXY_SOGGETTO_FRUITORE,
 						null,
 						null, -1,true, 200}, // crendeziali corrette
-				{CredenzialiInvocazione.getAutenticazioneApiKey("EsempioFruitoreTrasparenteApiKey2@MinisteroFruitore.gw", "123456"), CostantiTestSuite.PROXY_SOGGETTO_FRUITORE, 
+				{"app-ok-2", CredenzialiInvocazione.getAutenticazioneApiKey("EsempioFruitoreTrasparenteApiKey2@MinisteroFruitore.gw", "123456"), CostantiTestSuite.PROXY_SOGGETTO_FRUITORE,
 						null,
 						null, -1,true, 200}, // crendeziali corrette
-				{CredenzialiInvocazione.getAutenticazioneApiKey("EsempioFruitoreTrasparenteApiKey@MinisteroFruitore.gw", "123456Errata"), null,
+				{"app-pwd-errata", CredenzialiInvocazione.getAutenticazioneApiKey("EsempioFruitoreTrasparenteApiKey@MinisteroFruitore.gw", "123456Errata"), null,
 							IntegrationFunctionError.AUTHENTICATION_INVALID_CREDENTIALS,
 							CostantiTestSuite.MESSAGGIO_AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_CORRETTE,CodiceErroreCooperazione.MITTENTE_SCONOSCIUTO.getCodice(), true, 500}, // credenziali errate
-				{CredenzialiInvocazione.getAutenticazioneApiKey("EsempioFruitoreTrasparenteApiKeyErrato@MinisteroFruitore.gw", "123456"), null,
+				{"app-user-errato", CredenzialiInvocazione.getAutenticazioneApiKey("EsempioFruitoreTrasparenteApiKeyErrato@MinisteroFruitore.gw", "123456"), null,
 							IntegrationFunctionError.AUTHENTICATION_INVALID_CREDENTIALS,
 							CostantiTestSuite.MESSAGGIO_AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_CORRETTE,CodiceErroreCooperazione.MITTENTE_SCONOSCIUTO.getCodice(), true, 500}, // credenziali errate
-				{CredenzialiInvocazione.getAutenticazioneApiKey("credenzialeErrata", "credenzialeErrata"), null,
+				{"app-errata", CredenzialiInvocazione.getAutenticazioneApiKey("credenzialeErrata", "credenzialeErrata"), null,
 							IntegrationFunctionError.AUTHENTICATION_INVALID_CREDENTIALS,
 							CostantiTestSuite.MESSAGGIO_AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_CORRETTE,CodiceErroreCooperazione.MITTENTE_SCONOSCIUTO.getCodice(), true, 500}, // credenziali errate
-				
-				{CredenzialiInvocazione.getAutenticazioneMultipleApiKey("EsempioFruitoreTrasparenteApiKeyAppId@MinisteroFruitore.gw", "123456"), null,
+
+				{"app-multi-errata-1", CredenzialiInvocazione.getAutenticazioneMultipleApiKey("EsempioFruitoreTrasparenteApiKeyAppId@MinisteroFruitore.gw", "123456"), null,
 							IntegrationFunctionError.AUTHENTICATION_INVALID_CREDENTIALS,
 							CostantiTestSuite.MESSAGGIO_AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_CORRETTE,CodiceErroreCooperazione.MITTENTE_SCONOSCIUTO.getCodice(), true, 500}, // credenziali errate
-				{CredenzialiInvocazione.getAutenticazioneMultipleApiKey("credenzialeErrata@MinisteroFruitore.gw", "credenzialeErrata"), null,
+				{"app-multi-errata-2", CredenzialiInvocazione.getAutenticazioneMultipleApiKey("credenzialeErrata@MinisteroFruitore.gw", "credenzialeErrata"), null,
 							IntegrationFunctionError.AUTHENTICATION_INVALID_CREDENTIALS,
 							CostantiTestSuite.MESSAGGIO_AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_CORRETTE,CodiceErroreCooperazione.MITTENTE_SCONOSCIUTO.getCodice(), true, 500}, // credenziali errate
-				
+
 				// ** soggetti **
-				{CredenzialiInvocazione.getAutenticazioneApiKey("EsempioSoggettoTrasparenteApiKey.gw", "123456"), CostantiTestSuite.PROXY_SOGGETTO_TRASPARENTE_APIKEY,
+				{"sogg-ok-1", CredenzialiInvocazione.getAutenticazioneApiKey("EsempioSoggettoTrasparenteApiKey.gw", "123456"), CostantiTestSuite.PROXY_SOGGETTO_TRASPARENTE_APIKEY,
 						null,
 						null, -1,true, 200}, // crendeziali corrette
-				{CredenzialiInvocazione.getAutenticazioneApiKey("EsempioSoggettoTrasparenteApiKey2.gw", "123456"), CostantiTestSuite.PROXY_SOGGETTO_TRASPARENTE_APIKEY_2, 
+				{"sogg-ok-2", CredenzialiInvocazione.getAutenticazioneApiKey("EsempioSoggettoTrasparenteApiKey2.gw", "123456"), CostantiTestSuite.PROXY_SOGGETTO_TRASPARENTE_APIKEY_2,
 						null,
 						null, -1,true, 200}, // crendeziali corrette
-				{CredenzialiInvocazione.getAutenticazioneApiKey("EsempioSoggettoTrasparenteApiKey.gw", "123456Errata"), null,
+				{"sogg-pwd-errata", CredenzialiInvocazione.getAutenticazioneApiKey("EsempioSoggettoTrasparenteApiKey.gw", "123456Errata"), null,
 							IntegrationFunctionError.AUTHENTICATION_INVALID_CREDENTIALS,
 							CostantiTestSuite.MESSAGGIO_AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_CORRETTE,CodiceErroreCooperazione.MITTENTE_SCONOSCIUTO.getCodice(), true, 500}, // credenziali errate
-				{CredenzialiInvocazione.getAutenticazioneApiKey("EsempioSoggettoTrasparenteApiKeyErratos.gw", "123456"), null,
+				{"sogg-user-errato", CredenzialiInvocazione.getAutenticazioneApiKey("EsempioSoggettoTrasparenteApiKeyErratos.gw", "123456"), null,
 							IntegrationFunctionError.AUTHENTICATION_INVALID_CREDENTIALS,
 							CostantiTestSuite.MESSAGGIO_AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_CORRETTE,CodiceErroreCooperazione.MITTENTE_SCONOSCIUTO.getCodice(), true, 500}, // credenziali errate
-				{CredenzialiInvocazione.getAutenticazioneApiKey("credenzialeErrata", "credenzialeErrata"), null,
+				{"sogg-errata", CredenzialiInvocazione.getAutenticazioneApiKey("credenzialeErrata", "credenzialeErrata"), null,
 							IntegrationFunctionError.AUTHENTICATION_INVALID_CREDENTIALS,
 							CostantiTestSuite.MESSAGGIO_AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_CORRETTE,CodiceErroreCooperazione.MITTENTE_SCONOSCIUTO.getCodice(), true, 500}, // credenziali errate
-				
-				{CredenzialiInvocazione.getAutenticazioneMultipleApiKey("EsempioSoggettoTrasparenteApiKeyAppId.gw", "123456"), null,
+
+				{"sogg-multi-errata-1", CredenzialiInvocazione.getAutenticazioneMultipleApiKey("EsempioSoggettoTrasparenteApiKeyAppId.gw", "123456"), null,
 							IntegrationFunctionError.AUTHENTICATION_INVALID_CREDENTIALS,
 							CostantiTestSuite.MESSAGGIO_AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_CORRETTE,CodiceErroreCooperazione.MITTENTE_SCONOSCIUTO.getCodice(), true, 500}, // credenziali errate
-				{CredenzialiInvocazione.getAutenticazioneMultipleApiKey("credenzialeErrata", "credenzialeErrata"), null,
+				{"sogg-multi-errata-2", CredenzialiInvocazione.getAutenticazioneMultipleApiKey("credenzialeErrata", "credenzialeErrata"), null,
 							IntegrationFunctionError.AUTHENTICATION_INVALID_CREDENTIALS,
 							CostantiTestSuite.MESSAGGIO_AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_CORRETTE,CodiceErroreCooperazione.MITTENTE_SCONOSCIUTO.getCodice(), true, 500}, // credenziali errate
 
 		};
 	}
 	@Test(groups={AutenticazionePortaApplicativa.ID_GRUPPO,AutenticazionePortaApplicativa.ID_GRUPPO_NO_PRINCIPAL,AutenticazionePortaApplicativa.ID_GRUPPO+".APIKEY"},dataProvider="apiKeyProvider")
-	public void testApiKey_genericCode(CredenzialiInvocazione credenzialiInvocazione, IDSoggetto fruitore, IntegrationFunctionError integrationFunctionError, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws TestSuiteException, IOException, Exception{
+	public void testApiKey_genericCode(String scenarioId, CredenzialiInvocazione credenzialiInvocazione, IDSoggetto fruitore, IntegrationFunctionError integrationFunctionError, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws TestSuiteException, IOException, Exception{
 		boolean genericCode = true;
 		boolean unwrap = false;
 		try {
@@ -543,7 +543,7 @@ public class AutenticazionePortaApplicativa extends GestioneViaJmx {
 		}
 	}
 	@Test(groups={AutenticazionePortaApplicativa.ID_GRUPPO,AutenticazionePortaApplicativa.ID_GRUPPO_NO_PRINCIPAL,AutenticazionePortaApplicativa.ID_GRUPPO+".APIKEY"},dataProvider="apiKeyProvider")
-	public void testApiKey_specificCode(CredenzialiInvocazione credenzialiInvocazione, IDSoggetto fruitore, IntegrationFunctionError integrationFunctionError, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws TestSuiteException, IOException, Exception{
+	public void testApiKey_specificCode(String scenarioId, CredenzialiInvocazione credenzialiInvocazione, IDSoggetto fruitore, IntegrationFunctionError integrationFunctionError, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws TestSuiteException, IOException, Exception{
 		boolean genericCode = false;
 		boolean unwrap = false;
 		try {
@@ -586,7 +586,7 @@ public class AutenticazionePortaApplicativa extends GestioneViaJmx {
 	}
 	
 	@Test(groups={AutenticazionePortaApplicativa.ID_GRUPPO,AutenticazionePortaApplicativa.ID_GRUPPO_NO_PRINCIPAL,AutenticazionePortaApplicativa.ID_GRUPPO+".APIKEY_OPTIONAL"},dataProvider="apiKeyProvider")
-	public void testApiKeyOptional(CredenzialiInvocazione credenzialiInvocazione, IDSoggetto fruitore, IntegrationFunctionError integrationFunctionError, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
+	public void testApiKeyOptional(String scenarioId, CredenzialiInvocazione credenzialiInvocazione, IDSoggetto fruitore, IntegrationFunctionError integrationFunctionError, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
 		// Con autenticazione opzionale tutte le invocazioni avvengono con successo.
 		ricercaEsatta = false; // il diagnostico e' arricchito dell'informazione che l'autenticazione e' opzionale
 		boolean genericCode = false;

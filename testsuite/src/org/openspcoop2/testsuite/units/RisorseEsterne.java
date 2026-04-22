@@ -71,14 +71,18 @@ public class RisorseEsterne extends GestioneViaJmx {
 		try{
 			Thread.sleep(3000);
 		}catch(Exception e){}
+		String g = System.getProperty("govway.test.group", "default");
 		return new Object[][]{
-				{this.unitsDatabaseProperties.newInstanceDatabaseComponentFruitore()},
-				{this.unitsDatabaseProperties.newInstanceDatabaseComponentErogatore()}
+				{"fruitore",  g+"-fruitore"},
+				{"erogatore", g+"-erogatore"}
 		};
 	}
 	@Test(groups={RisorseEsterne.ID_GRUPPO,RisorseEsterne.ID_GRUPPO+".DB_OPENSPCOOP"},
 			dataProvider="testDatabaseOpenSPCoop")
-	public void testDatabaseOpenSPCoop(DatabaseComponent data) throws Exception{
+	public void testDatabaseOpenSPCoop(String role, String scenario) throws Exception{
+		DatabaseComponent data = "fruitore".equals(role)
+				? this.unitsDatabaseProperties.newInstanceDatabaseComponentFruitore()
+				: this.unitsDatabaseProperties.newInstanceDatabaseComponentErogatore();
 		try{
 			Reporter.log("Controllo database...");
 			List<String> anomalie = data.getVerificatoreMessaggi().getTabelleNonCorrettamenteSvuotate(TestSuiteProperties.getInstance().getTipoRepositoryBuste());
@@ -87,7 +91,7 @@ public class RisorseEsterne extends GestioneViaJmx {
 				Reporter.log(anomalie.get(i));
 			}
 			Assert.assertTrue(anomalie.size()==0);
-			
+
 		}catch(Exception e){
 			throw e;
 		}finally{
@@ -101,14 +105,18 @@ public class RisorseEsterne extends GestioneViaJmx {
 		try{
 			Thread.sleep(3000);
 		}catch(Exception e){}
+		String g = System.getProperty("govway.test.group", "default");
 		return new Object[][]{
-				{this.unitsDatabaseProperties.newInstanceDatabaseComponentDiagnosticaFruitore()},
-				{this.unitsDatabaseProperties.newInstanceDatabaseComponentDiagnosticaFruitore()}
+				{"fruitore",  g+"-fruitore"},
+				{"erogatore", g+"-erogatore"}
 		};
 	}
 	@Test(groups={RisorseEsterne.ID_GRUPPO,RisorseEsterne.ID_GRUPPO+".DB_MSG_DIAGNOSTICI"},
 			dataProvider="testDatabaseMsgDiagnostici")
-	public void testDatabaseMsgDiagnostici(DatabaseMsgDiagnosticiComponent data) throws Exception{
+	public void testDatabaseMsgDiagnostici(String role, String scenario) throws Exception{
+		DatabaseMsgDiagnosticiComponent data = "fruitore".equals(role)
+				? this.unitsDatabaseProperties.newInstanceDatabaseComponentDiagnosticaFruitore()
+				: this.unitsDatabaseProperties.newInstanceDatabaseComponentDiagnosticaErogatore();
 		try{
 			
 			Reporter.log("Controllo Keyword non trasformate (@KEYWORD@)...");
@@ -195,8 +203,15 @@ public class RisorseEsterne extends GestioneViaJmx {
 		return jmxconn;
 	}
 	
-	@Test(groups={RisorseEsterne.ID_GRUPPO,RisorseEsterne.ID_GRUPPO+".RISORSE_JMX"})
-	public void testRisorseJMX() throws Exception{
+	@DataProvider (name="testRisorseJMX")
+	public Object[][] testRisorseJMXDataProvider() {
+		return new Object[][]{
+				{ System.getProperty("govway.test.group", "default") }
+		};
+	}
+	@Test(groups={RisorseEsterne.ID_GRUPPO,RisorseEsterne.ID_GRUPPO+".RISORSE_JMX"},
+			dataProvider="testRisorseJMX")
+	public void testRisorseJMX(String scenario) throws Exception{
 		try{
 			
 			// Controllo JMX
