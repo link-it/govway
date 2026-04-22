@@ -54,6 +54,7 @@
 			<classfileset dir="${build_testunits}/NG_UNITS" includes="**/*.class"/>
 			<jvmarg value="-Dtestng.show.stack.frames=${testngShowStackFrames}" />
 			<jvmarg value="-Dallure.results.directory=${output}/allure-results/default" />
+			<jvmarg value="-Dgovway.test.group=${group}" />
 			<jvmarg value="${testngXmx}" />
 			<!-- Per non far comparire il WARNING ad ogni invocazione ma solo la prima volta: Illegal reflective access by org.openspcoop2.utils.transport.http.HttpUtilities
 						(file:...openspcoop2_utils.jar) to field java.net.HttpURLConnection.method -->
@@ -78,6 +79,7 @@
 					<classfileset dir="${build_testunits}/NG_UNITS" includes="**/*.class"/>
 					<jvmarg value="-Dtestng.show.stack.frames=${testngShowStackFrames}" />
 					<jvmarg value="-Dallure.results.directory=${output}/allure-results/defaultRisorseUtilizzate" />
+					<jvmarg value="-Dgovway.test.group=${group}" />
 					<jvmarg value="${testngXmx}" />
 					<jvmarg value="-Djenkins=${jenkins}" />
 				</testng>
@@ -116,6 +118,7 @@
 			<classfileset dir="${build_testunits}/NG_UNITS" includes="**/*.class"/>
 			<jvmarg value="-Dtestng.show.stack.frames=${testngShowStackFrames}" />
 			<jvmarg value="-Dallure.results.directory=${output}/allure-results/connectionNew" />
+			<jvmarg value="-Dgovway.test.group=${group}" />
 			<jvmarg value="${testngXmx}" />
 			<!-- Per non far comparire il WARNING ad ogni invocazione ma solo la prima volta: Illegal reflective access by org.openspcoop2.utils.transport.http.HttpUtilities
 						(file:...openspcoop2_utils.jar) to field java.net.HttpURLConnection.method -->
@@ -140,6 +143,7 @@
 					<classfileset dir="${build_testunits}/NG_UNITS" includes="**/*.class"/>
 					<jvmarg value="-Dtestng.show.stack.frames=${testngShowStackFrames}" />
 					<jvmarg value="-Dallure.results.directory=${output}/allure-results/defaultRisorseUtilizzate" />
+					<jvmarg value="-Dgovway.test.group=${group}" />
 					<jvmarg value="${testngXmx}" />
 					<jvmarg value="-Djenkins=${jenkins}" />
 				</testng>
