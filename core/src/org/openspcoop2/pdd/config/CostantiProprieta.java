@@ -33,6 +33,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
+import org.openspcoop2.pdd.core.connettori.httpcore5.nio.ConnettoreHTTPCOREVersionPolicy;
 import org.openspcoop2.pdd.core.dynamic.InformazioniIntegrazioneCodifica;
 import org.openspcoop2.pdd.core.dynamic.InformazioniIntegrazioneSorgente;
 import org.openspcoop2.pdd.core.integrazione.peer.PeerHeaderDescriptor;
@@ -702,7 +703,7 @@ public class CostantiProprieta {
 	public static final String CONNETTORE_POOL_CONNECTION_MAX_PER_ROUTE = "connettori.connection.pool.maxPerRoute";
 	public static final String CONNETTORE_POOL_CONNECTION_MAX_TOTAL = "connettori.connection.pool.maxTotal";
 	public static final String CONNETTORE_POOL_CONNECTION_VALIDATE_AFTER_INACTIVITY = "connettori.connection.pool.validateAfterInactivity";
-	
+
 	public static Integer getConnettoriConnectionPoolMaxPerRoute(List<Proprieta> proprieta, Integer defaultValue) {
 		return readIntegerValueWithDefault(proprieta, CONNETTORE_POOL_CONNECTION_MAX_PER_ROUTE, defaultValue);
 	}
@@ -711,6 +712,23 @@ public class CostantiProprieta {
 	}
 	public static Integer getConnettoriConnectionPoolValidateAfterInactivity(List<Proprieta> proprieta, Integer defaultValue) {
 		return readIntegerValueWithDefault(proprieta, CONNETTORE_POOL_CONNECTION_VALIDATE_AFTER_INACTIVITY, defaultValue);
+	}
+
+	// Policy di negoziazione della versione HTTP (via ALPN) usata dal connettore NIO. Valori ammessi: NEGOTIATE | FORCE_HTTP_1 | FORCE_HTTP_2
+	public static final String CONNETTORE_HTTP_VERSION_POLICY = "connettori.httpVersionPolicy";
+	public static ConnettoreHTTPCOREVersionPolicy getConnettoriHttpVersionPolicy(List<Proprieta> proprieta, ConnettoreHTTPCOREVersionPolicy defaultValue) {
+		String value = readValue(proprieta, CONNETTORE_HTTP_VERSION_POLICY);
+		if(value!=null && !"".equals(value)) {
+			try {
+				ConnettoreHTTPCOREVersionPolicy p = ConnettoreHTTPCOREVersionPolicy.valueOf(value.trim());
+				if(p!=null) {
+					return p;
+				}
+			}catch(Exception e) {
+				// ignore: ritorno il default
+			}
+		}
+		return defaultValue;
 	}
 	
 	

@@ -33,6 +33,7 @@ import javax.net.ssl.SSLContext;
 import org.apache.hc.client5.http.ConnectionKeepAliveStrategy;
 import org.apache.hc.client5.http.config.ConnectionConfig;
 import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.config.TlsConfig;
 import org.apache.hc.client5.http.impl.DefaultRedirectStrategy;
 import org.apache.hc.client5.http.impl.async.CloseableHttpAsyncClient;
 import org.apache.hc.client5.http.impl.async.HttpAsyncClientBuilder;
@@ -180,7 +181,15 @@ public class ConnettoreHTTPCOREConnectionManager {
 					
 					ConnectionConfig config = buildConnectionConfig(poolParams, connectionConfig.getConnectionTimeout());
 					poolingConnectionManagerBuilder.setDefaultConnectionConfig(config);
-					
+
+					// HTTP version policy (ALPN): determina se tentare la negoziazione HTTP/2 sulla TLS del pool
+					ConnettoreHTTPCOREVersionPolicy versionPolicy = connectionConfig.getHttpVersionPolicy();
+					if(versionPolicy!=null) {
+						poolingConnectionManagerBuilder.setDefaultTlsConfig(TlsConfig.custom()
+								.setVersionPolicy(versionPolicy.getHttpVersionPolicy())
+								.build());
+					}
+
 					PoolingAsyncClientConnectionManager poolingConnectionManager = poolingConnectionManagerBuilder.build();
 													
 					ConnettoreHTTPCOREConnectionManager.mapPoolingConnectionManager.put(key, poolingConnectionManager);
@@ -375,7 +384,7 @@ public class ConnettoreHTTPCOREConnectionManager {
 			}
 			PoolingAsyncClientConnectionManager cm = ConnettoreHTTPCOREConnectionManager.mapPoolingConnectionManager.get(keyPool);		
 			
-			HttpAsyncClientBuilder httpClientBuilder = 
+			HttpAsyncClientBuilder httpClientBuilder =
 					HttpAsyncClients.custom(); // Qua si gestisce il pipe (ci sono i metodi che gestiscono le richieste una dopo l'altra o prima tutte le richieste e poi le risposte ...)
 			httpClientBuilder.setConnectionManager( cm );
 			httpClientBuilder.setConnectionManagerShared(true); // senno' la close di una connessione fa si che venga chiuso il reactor

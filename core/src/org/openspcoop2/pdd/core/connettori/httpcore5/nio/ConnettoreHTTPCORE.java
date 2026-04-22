@@ -55,6 +55,7 @@ import org.openspcoop2.message.constants.Costanti;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.soap.AbstractOpenSPCoop2Message_soap_impl;
 import org.openspcoop2.message.soap.TunnelSoapUtils;
+import org.openspcoop2.pdd.config.CostantiProprieta;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.connettori.ConnettoreException;
 import org.openspcoop2.pdd.core.connettori.ConnettoreExtBaseHTTP;
@@ -189,6 +190,11 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 			// Lettura Parametri Pool
 			ConnettoreHttpPoolParams poolParams = ConnettoreHttpPoolParamsBuilder.newConnettoreHttpPoolParams(this.openspcoopProperties, this.url, this.proprietaPorta);
 			this.httpConnectionConfig.setHttpPoolParams(poolParams);
+
+			// HTTP version policy: default da govway.properties, override per-connettore via proprietà
+			ConnettoreHTTPCOREVersionPolicy httpVersionPolicy = this.openspcoopProperties.getNIOConfigAsyncClientHttpVersionPolicy();
+			httpVersionPolicy = CostantiProprieta.getConnettoriHttpVersionPolicy(this.proprietaPorta, httpVersionPolicy);
+			this.httpConnectionConfig.setHttpVersionPolicy(httpVersionPolicy);
 			
 			
 			// Creazione interceptor

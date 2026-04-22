@@ -1,3 +1,10 @@
+2026-04-22  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore] 
+	Aggiunta possibilità di forzare la HTTP version policy (NEGOTIATE/FORCE_HTTP_1/FORCE_HTTP_2) sul connettore NIO httpcore5,
+	configurabile globalmente e per singolo connettore,
+	utile in presenza di proxy/middlebox che interferiscono con la negoziazione ALPN/HTTP2. 
+
 2026-04-20  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

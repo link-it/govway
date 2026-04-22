@@ -73,6 +73,7 @@ import org.openspcoop2.pdd.core.autenticazione.WWWAuthenticateConfig;
 import org.openspcoop2.pdd.core.autorizzazione.container.IAutorizzazioneSecurityContainer;
 import org.openspcoop2.pdd.core.autorizzazione.pa.IAutorizzazionePortaApplicativa;
 import org.openspcoop2.pdd.core.connettori.IConnettore;
+import org.openspcoop2.pdd.core.connettori.httpcore5.nio.ConnettoreHTTPCOREVersionPolicy;
 import org.openspcoop2.pdd.core.controllo_traffico.ConfigurazioneGatewayControlloTraffico;
 import org.openspcoop2.pdd.core.controllo_traffico.INotify;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.TipoGestorePolicy;
@@ -1550,6 +1551,7 @@ public class OpenSPCoop2Properties {
 				this.getNIOConfigAsyncClientExpireUnusedAfterSeconds();
 				this.getNIOConfigAsyncClientCloseUnusedAfterSeconds();
 				this.isNIOConfigAsyncClientUseCustomMessageObjectEntity();
+				this.getNIOConfigAsyncClientHttpVersionPolicy();
 				this.getNIOConfigAsyncHttpclientIoReactorThread();
 				if(this.isNIOConfigAsyncRequestStreamEnabled()) {
 					this.getNIOConfigAsyncRequestPipedUnblockedStreamBuffer();
@@ -15471,10 +15473,10 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private Boolean isNIOConfigAsyncClientUseCustomMessageObjectEntity = null;
-	public boolean isNIOConfigAsyncClientUseCustomMessageObjectEntity() {	
+	public boolean isNIOConfigAsyncClientUseCustomMessageObjectEntity() {
 		if(this.isNIOConfigAsyncClientUseCustomMessageObjectEntity==null){
 			String pName = "org.openspcoop2.pdd.connettori.asyncClient.useCustomMessageObjectEntity";
-			try{ 
+			try{
 				String v = null;
 				v = this.reader.getValueConvertEnvProperties(pName);
 				if(v!=null){
@@ -15487,10 +15489,37 @@ public class OpenSPCoop2Properties {
 			}catch(java.lang.Exception e) {
 				this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+true+", errore:"+e.getMessage(),e);
 				this.isNIOConfigAsyncClientUseCustomMessageObjectEntity = true;
-			}  
+			}
 		}
 
 		return this.isNIOConfigAsyncClientUseCustomMessageObjectEntity;
+	}
+
+	private ConnettoreHTTPCOREVersionPolicy getNIOConfigAsyncClientHttpVersionPolicy = null;
+	public ConnettoreHTTPCOREVersionPolicy getNIOConfigAsyncClientHttpVersionPolicy() {
+		if(this.getNIOConfigAsyncClientHttpVersionPolicy==null){
+			String pName = "org.openspcoop2.pdd.connettori.asyncClient.httpVersionPolicy";
+			try{
+				String v = this.reader.getValueConvertEnvProperties(pName);
+				if(v!=null){
+					v = v.trim();
+					try {
+						this.getNIOConfigAsyncClientHttpVersionPolicy = ConnettoreHTTPCOREVersionPolicy.valueOf(v);
+					}catch(java.lang.IllegalArgumentException e) {
+						this.logWarn("proprietà di govway '"+pName+"' ha valore non valido ["+v+"], viene utilizzato il default="+CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_HTTP_VERSION_POLICY_DEFAULT+", errore:"+e.getMessage(),e);
+						this.getNIOConfigAsyncClientHttpVersionPolicy = CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_HTTP_VERSION_POLICY_DEFAULT;
+					}
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
+					this.getNIOConfigAsyncClientHttpVersionPolicy = CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_HTTP_VERSION_POLICY_DEFAULT;
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_HTTP_VERSION_POLICY_DEFAULT+", errore:"+e.getMessage(),e);
+				this.getNIOConfigAsyncClientHttpVersionPolicy = CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_HTTP_VERSION_POLICY_DEFAULT;
+			}
+		}
+
+		return this.getNIOConfigAsyncClientHttpVersionPolicy;
 	}
 	
 	private Integer getNIOConfigAsyncHttpclientIoReactorThread = null;

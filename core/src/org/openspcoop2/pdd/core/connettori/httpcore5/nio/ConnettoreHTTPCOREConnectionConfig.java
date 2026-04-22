@@ -1,9 +1,9 @@
 /*
- * GovWay - A customizable API Gateway 
+ * GovWay - A customizable API Gateway
  * https://govway.org
- * 
- * Copyright (c) 2005-2026 Link.it srl (https://link.it). 
- * 
+ *
+ * Copyright (c) 2005-2026 Link.it srl (https://link.it).
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
  * the Free Software Foundation.
@@ -32,8 +32,27 @@ import org.openspcoop2.pdd.core.connettori.AbstractConnettoreConnectionConfig;
  */
 public class ConnettoreHTTPCOREConnectionConfig extends AbstractConnettoreConnectionConfig {
 
+    private ConnettoreHTTPCOREVersionPolicy httpVersionPolicy;
+
     public ConnettoreHTTPCOREConnectionConfig() {
         super(ConnettoreHTTPCORE.ID_HTTPCORE);
+    }
+
+    public ConnettoreHTTPCOREVersionPolicy getHttpVersionPolicy() {
+        return this.httpVersionPolicy;
+    }
+    public void setHttpVersionPolicy(ConnettoreHTTPCOREVersionPolicy httpVersionPolicy) {
+        this.httpVersionPolicy = httpVersionPolicy;
+    }
+
+    @Override
+    public String toString(boolean onlyForConnectionManager) {
+        String base = super.toString(onlyForConnectionManager);
+        // policy presente nelle chiavi del pool: policy diverse verso lo stesso host non devono condividere client/pool
+        if(this.httpVersionPolicy!=null) {
+            return base + " httpVersionPolicy:" + this.httpVersionPolicy.name();
+        }
+        return base;
     }
 
 }
