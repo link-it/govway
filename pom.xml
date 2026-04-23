@@ -10,22 +10,22 @@
 		<revision>1.0</revision>
 
 		<!-- maven plugin -->
-		<maven-antrun-plugin>3.1.0</maven-antrun-plugin>
-		<maven-resources-plugin>3.3.1</maven-resources-plugin>
-		<maven-clean-plugin>3.4.0</maven-clean-plugin>
-		<maven-dependency-plugin>3.8.1</maven-dependency-plugin>
-		<maven-compiler-plugin>3.13.0</maven-compiler-plugin>
-		<maven-jar-plugin>3.4.2</maven-jar-plugin>
-		<maven-source-plugin>3.3.1</maven-source-plugin>
-		<maven-javadoc-plugin>3.11.2</maven-javadoc-plugin>
-		<flatten-maven-plugin>1.6.0</flatten-maven-plugin>
-		<maven-gpg-plugin>3.2.7</maven-gpg-plugin>
-		<central-publishing-maven-plugin>0.6.0</central-publishing-maven-plugin>
-		<exec-maven-plugin>3.5.0</exec-maven-plugin>
+		<maven-antrun-plugin>3.2.0</maven-antrun-plugin>
+		<maven-resources-plugin>3.5.0</maven-resources-plugin>
+		<maven-clean-plugin>3.5.0</maven-clean-plugin>
+		<maven-dependency-plugin>3.10.0</maven-dependency-plugin>
+		<maven-compiler-plugin>3.15.0</maven-compiler-plugin>
+		<maven-jar-plugin>3.5.0</maven-jar-plugin>
+		<maven-source-plugin>3.4.0</maven-source-plugin>
+		<maven-javadoc-plugin>3.12.0</maven-javadoc-plugin>
+		<flatten-maven-plugin>1.7.3</flatten-maven-plugin>
+		<maven-gpg-plugin>3.2.8</maven-gpg-plugin>
+		<central-publishing-maven-plugin>0.10.0</central-publishing-maven-plugin>
+		<exec-maven-plugin>3.6.3</exec-maven-plugin>
 		<cyclonedx-maven-plugin>2.9.1</cyclonedx-maven-plugin>
 		<spdx-maven-plugin>1.0.3</spdx-maven-plugin>
 		<gmavenplus-plugin>4.3.1</gmavenplus-plugin>
-		<ant.version>1.10.14</ant.version>
+		<ant.version>1.10.17</ant.version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
