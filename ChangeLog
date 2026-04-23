@@ -1,3 +1,10 @@
+2026-04-23  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug
+        Risolte le seguenti vulnerabilità relative ai jar di terza parte:
+        - CVE-2026-0636, CVE-2026-5588: aggiornata libreria 'org.bouncycastle:*' alla versione 1.84
+
 2026-04-22  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore] 

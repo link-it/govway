@@ -84,7 +84,25 @@ Questa implementazione utilizza un componente interno denominato IOReactor, resp
 Nella configurazione di default la proprietà non viene definita e il numero di thread è automaticamente impostato al numero di core CPU disponibili sulla macchina (valore restituito da Runtime.getRuntime().availableProcessors()). In ambienti ad alta concorrenza, dove molte connessioni simultanee vengono aperte verso i backend, può essere utile un tuning esplicito di questo parametro in base al carico osservato in modo da utilizzare un valore inferiore al numero dei processori disponibili.
 
 .. note::
-      Da documentazione della libreria `Apache HttpClient 5 <https://hc.apache.org/httpcomponents-client-5.5.x/index.html>`_ l’impostazione di un valore superiore al numero di core disponibili non sembra comportare vantaggi, e potrebbe introdurre overhead. 
+      Da documentazione della libreria `Apache HttpClient 5 <https://hc.apache.org/httpcomponents-client-5.5.x/index.html>`_ l’impostazione di un valore superiore al numero di core disponibili non sembra comportare vantaggi, e potrebbe introdurre overhead.
+
+**Policy di negoziazione della versione HTTP (ALPN) del Client NIO**
+
+Il client NIO basato su Apache HttpClient 5 utilizza, per impostazione predefinita, la negoziazione automatica della versione HTTP tramite il meccanismo ALPN (Application-Layer Protocol Negotiation): viene utilizzato HTTP/2 se supportato dal server, altrimenti viene effettuato il fallback su HTTP/1.1.
+
+In presenza di proxy o middlebox che interferiscono con l'handshake ALPN/HTTP2 può essere necessario forzare esplicitamente la versione del protocollo. Tramite la seguente proprietà del file <directory-lavoro>/govway_local.properties è possibile definire la policy applicata a livello globale:
+
+   ::
+
+      # Valori ammessi:
+      # - NEGOTIATE    : negoziazione automatica via ALPN, HTTP/2 se supportato, altrimenti HTTP/1.1 (default)
+      # - FORCE_HTTP_1 : forza HTTP/1.1 disabilitando la negoziazione HTTP/2
+      # - FORCE_HTTP_2 : forza HTTP/2
+      org.openspcoop2.pdd.connettori.asyncClient.httpVersionPolicy=NEGOTIATE
+
+Il valore definito nel file <directory-lavoro>/govway_local.properties rappresenta la configurazione di default. È possibile utilizzare un valore differente sulla singola erogazione o fruizione registrando la seguente :ref:`configProprieta`:
+
+- *connettori.httpVersionPolicy*
 
 **Configurazione Thread Pool per la gestione streaming di Richieste e Risposte**
 
