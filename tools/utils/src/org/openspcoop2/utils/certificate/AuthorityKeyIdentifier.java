@@ -133,7 +133,7 @@ public class AuthorityKeyIdentifier {
 				if(authorityKeyIdentifier.getAuthorityCertSerialNumber()!=null) {
 					aki.certSerialNumber = authorityKeyIdentifier.getAuthorityCertSerialNumber().longValue();
 				}
-				aki.keyIdentifier = authorityKeyIdentifier.getKeyIdentifier();
+				aki.keyIdentifier = authorityKeyIdentifier.getKeyIdentifierOctets();
 				if(authorityKeyIdentifier.getAuthorityCertIssuer()!=null && authorityKeyIdentifier.getAuthorityCertIssuer().getNames()!=null && authorityKeyIdentifier.getAuthorityCertIssuer().getNames().length>0) {
 					for (GeneralName gn : authorityKeyIdentifier.getAuthorityCertIssuer().getNames()) {
 						aki.certIssuers.add(gn);
