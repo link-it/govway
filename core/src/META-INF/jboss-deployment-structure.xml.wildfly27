@@ -48,6 +48,7 @@
 				</paths>
 			</system>
 			<module name="jdk.dynalink" export="true"/>
+			<module name="jdk.net" export="true"/>
 		</dependencies>
 		end export dependencies -->
 		<!-- Modulo 'jdk.dynalink' necessario per Rhino su Java 21 

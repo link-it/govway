@@ -150,6 +150,12 @@ public class WrappedHttpServletResponse implements HttpServletResponse {
 		return this.httpServletResponse.encodeRedirectURL(arg0);
 	}
 
+	// jakarta servlet api 6.1
+	@Override
+	public void sendRedirect(String location, int sc, boolean clearBuffer) throws IOException {
+		this.httpServletResponse.sendRedirect(location, sc, clearBuffer);
+	}
+
 	// jakarta api 5
 	public String encodeRedirectUrl(String arg0) {
 		return this.httpServletResponse.encodeRedirectURL(arg0);

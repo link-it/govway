@@ -18,14 +18,14 @@
 		<jar.group.name>swagger</jar.group.name>
 		
 		<swagger-ui.version>5.32.2</swagger-ui.version>
-		<classgraph.version>4.8.179</classgraph.version>
-		<swagger.v3.version>2.2.33</swagger.v3.version>
-		<swagger.parser.v3.version>2.1.29</swagger.parser.v3.version>
-		<swagger.parser.v3.gov4j.version>2.1.29-gov4j-1</swagger.parser.v3.gov4j.version>
+		<classgraph.version>4.8.184</classgraph.version>
+		<swagger.v3.version>2.2.48</swagger.v3.version>
+		<swagger.parser.v3.version>2.1.40</swagger.parser.v3.version>
+		<swagger.parser.v3.gov4j.version>2.1.40-gov4j-1</swagger.parser.v3.gov4j.version>
 		<swagger.version>1.6.16</swagger.version>
-		<swagger.parser.version>1.0.75</swagger.parser.version>
-		<swagger.request-validator.version>2.44.9</swagger.request-validator.version>
-		<swagger.request-validator.gov4j.version>2.44.9-gov4j-1</swagger.request-validator.gov4j.version>
+		<swagger.parser.version>1.0.76</swagger.parser.version>
+		<swagger.request-validator.version>2.46.1</swagger.request-validator.version>
+		<swagger.request-validator.gov4j.version>2.46.1-gov4j-1</swagger.request-validator.gov4j.version>
 	</properties>
 
 	<dependencies>

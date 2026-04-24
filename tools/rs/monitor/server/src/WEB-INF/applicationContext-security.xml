@@ -27,9 +27,7 @@
 	</b:bean>
 
 	<!-- Abilito gestione della sicurezza tramite annotazioni nel codice Java -->
-	<global-method-security
-		secured-annotations="enabled">
-	</global-method-security>
+	<method-security secured-enabled="true"/>
 
 	<!-- Definisco il sistema di autenticazione, nel nostro caso utilizziamo una sorgente degli utenti basata su file di proprietà -->
         <authentication-manager alias="authenticationManager">

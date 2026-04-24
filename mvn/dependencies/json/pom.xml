@@ -17,7 +17,7 @@
 
 		<jar.group.name>json</jar.group.name>
 		
-		<org.json.json.version>20250517</org.json.json.version>
+		<org.json.json.version>20251224</org.json.json.version>
 
 		<networknt_json-schema-validator.version>1.5.7</networknt_json-schema-validator.version>
 		<com-ethlo-time.version>1.10.3</com-ethlo-time.version>
@@ -38,7 +38,7 @@
 		<json-smart.version>2.5.2</json-smart.version>
 		<accessors-smart.version>2.5.2</accessors-smart.version>
 
-		<jettison.version>1.5.4</jettison.version>
+		<jettison.version>1.5.5</jettison.version>
 
 	</properties>
 

@@ -44,6 +44,7 @@ import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuil
 import org.apache.hc.client5.http.protocol.HttpClientContext;
 import org.apache.hc.client5.http.ssl.DefaultClientTlsStrategy;
 import org.apache.hc.client5.http.ssl.DefaultHostnameVerifier;
+import org.apache.hc.client5.http.ssl.HostnameVerificationPolicy;
 import org.apache.hc.client5.http.ssl.TlsSocketStrategy;
 import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.ContentType;
@@ -139,7 +140,17 @@ class HttpCoreConnection extends HttpLibraryConnection {
         		request.logInfo("HostName verifier disabilitato");
         	}
 
-        	TlsSocketStrategy tlsSocketStrategy = new DefaultClientTlsStrategy(sslContext, hostnameVerifier);
+        	/*
+        	 * HttpClient 5.6: HostnameVerificationPolicy controlla dove avviene la verifica hostname.
+        	 * Con BOTH (default) il JDK imposta endpointIdentificationAlgorithm="HTTPS" sull'SSLEngine,
+        	 * e la verifica fallisce PRIMA che il HostnameVerifier custom venga chiamato.
+        	 * Con CLIENT la verifica avviene solo via HostnameVerifier: usiamo questa policy quando il verifier
+        	 * e' disabilitato, cosi' SSLHostNameVerifierDisabled ha effetto (altrimenti il JDK blocca l'handshake).
+        	 */
+        	HostnameVerificationPolicy hostnameVerificationPolicy = request.isHostnameVerifier()
+        			? HostnameVerificationPolicy.BOTH
+        			: HostnameVerificationPolicy.CLIENT;
+        	TlsSocketStrategy tlsSocketStrategy = new DefaultClientTlsStrategy(sslContext, hostnameVerificationPolicy, hostnameVerifier);
         	if(request.isDebug()) {
 				String clientCertificateConfigurated = request.getKeyStorePath();
 				tlsSocketStrategy = new WrappedLogTlsSocketStrategy(tlsSocketStrategy,

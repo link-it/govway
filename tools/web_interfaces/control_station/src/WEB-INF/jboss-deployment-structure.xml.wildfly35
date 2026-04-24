@@ -12,5 +12,9 @@
 			<module name="org.eclipse.angus.mail"/>
 			<module name="org.eclipse.angus.activation"/>
 		</exclusions>
+		<dependencies>
+			<!-- Necessario per Apache HttpClient 5.6+: DefaultHttpClientConnectionOperator usa jdk.net.Sockets -->
+			<module name="jdk.net"/>
+		</dependencies>
 	</deployment>
 </jboss-deployment-structure>

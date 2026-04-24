@@ -139,7 +139,7 @@ public class WSSUtilities {
 			try{
 				InputStream ins = null;
 				if (encodeBase64) {
-					ins = new Base64InputStream(dh.getInputStream(), true);
+					ins = Base64InputStream.builder().setInputStream(dh.getInputStream()).setEncode(true).get();
 				} else {
 					ins = dh.getInputStream();
 				}

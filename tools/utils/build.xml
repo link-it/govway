@@ -157,13 +157,13 @@
 			<include name="*.jar"/>
 		</fileset>
 		<fileset dir="${required_lib}/commons">
-			<include name="commons-codec-1.18.0.jar"/>
+			<include name="commons-codec-1.21.0.jar"/>
 		</fileset>
 		<fileset dir="${required_lib}/log" >
 			<include name="*.jar"/>
 		</fileset>
 		<fileset dir="${required_lib}/shared" >
-			<include name="joda-time-2.14.0.jar"/>
+			<include name="joda-time-2.14.1.jar"/>
 		</fileset>
 	</path>
 	<path id="classpath_run_openapi_dist" >
@@ -177,11 +177,11 @@
 			<include name="*.jar"/>
 		</fileset>
 		<fileset dir="${required_lib}/shared">
-			<include name="snakeyaml-2.4-gov4j-1.jar"/>
+			<include name="snakeyaml-2.6-gov4j-1.jar"/>
 		</fileset>
 		<fileset dir="${required_lib}/commons">
-			<include name="commons-text-1.14.0.jar"/>
-			<include name="commons-lang3-3.18.0.jar"/>
+			<include name="commons-text-1.15.0.jar"/>
+			<include name="commons-lang3-3.20.0.jar"/>
 		</fileset>
 	</path>	
 		

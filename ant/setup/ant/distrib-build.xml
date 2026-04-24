@@ -574,9 +574,9 @@ org.openspcoop2.pdd.idGenerator=UUIDv1
 							<classpath>
 								<path id="classpath_run">
 									<fileset dir="${deploy_sw}" includes="**/openspcoop2_utils_*.jar"/>
-									<fileset dir="${deploy_sw}" includes="jars/commons-codec-1.18.0.jar"/>
-									<fileset dir="${deploy_sw}" includes="jars/commons-lang3-3.18.0.jar"/>
-									<fileset dir="${deploy_sw}" includes="jars/commons-text-1.14.0.jar"/>
+									<fileset dir="${deploy_sw}" includes="jars/commons-codec-1.21.0.jar"/>
+									<fileset dir="${deploy_sw}" includes="jars/commons-lang3-3.20.0.jar"/>
+									<fileset dir="${deploy_sw}" includes="jars/commons-text-1.15.0.jar"/>
 							   	</path>				
 							</classpath>
 						</java>
@@ -602,9 +602,9 @@ org.openspcoop2.pdd.idGenerator=UUIDv1
 							<classpath>
 								<path id="classpath_run">
 									<fileset dir="${deploy_sw}" includes="**/openspcoop2_utils_*.jar"/>
-									<fileset dir="${deploy_sw}" includes="jars/commons-codec-1.18.0.jar"/>
-									<fileset dir="${deploy_sw}" includes="jars/commons-lang3-3.18.0.jar"/>
-									<fileset dir="${deploy_sw}" includes="jars/commons-text-1.14.0.jar"/>
+									<fileset dir="${deploy_sw}" includes="jars/commons-codec-1.21.0.jar"/>
+									<fileset dir="${deploy_sw}" includes="jars/commons-lang3-3.20.0.jar"/>
+									<fileset dir="${deploy_sw}" includes="jars/commons-text-1.15.0.jar"/>
 							   	</path>				
 							</classpath>
 						</java>

@@ -44,10 +44,10 @@
 			<include name="swagger-core-2*.jar"/>
 		</fileset>
 		<fileset dir="${required_lib}/shared">
-			<include name="snakeyaml-2.4-gov4j-1.jar"/>
+			<include name="snakeyaml-2.6-gov4j-1.jar"/>
 			<include name="xercesImpl-*.jar"/>
 			<include name="xalan-*.jar"/>
-			<include name="joda-time-2.14.0.jar"/>
+			<include name="joda-time-2.14.1.jar"/>
 			<include name="serializer-2.7.3.jar"/>
 			<include name="wsdl4j-1.6.3.jar"/>
 		</fileset>
@@ -56,13 +56,13 @@
 			<include name="cxf-core-*.jar"/>
 			<include name="cxf-rt-rs-json-basic-*.jar"/>
 			<include name="cxf-rt-rs-security-jose-*.jar"/>
-			<include name="asm-9.8.jar"/>
+			<include name="asm-9.9.1.jar"/>
 			<include name="woodstox-core-7.1.1.jar"/>
-			<include name="xmlschema-core-2.3.1.jar"/>
+			<include name="xmlschema-core-2.3.2.jar"/>
 		</fileset>
 		<fileset dir="${required_lib}/security">
 			<include name="neethi-3.2.1.jar"/>
-			<include name="nimbus-jose-jwt-10.3.1.jar"/>
+			<include name="nimbus-jose-jwt-10.9.jar"/>
 			<include name="bcpkix-jdk18on-1.84.jar"/>
 			<include name="bcprov-jdk18on-1.84.jar"/>
 			<include name="bcutil-jdk18on-1.84.jar"/>
@@ -74,8 +74,8 @@
 			<include name="*.jar"/>
 		</fileset>
 		<fileset dir="${required_lib}/jakarta">
-			<include name="jakarta.annotation-api-2.1.1.jar"/>
-			<include name="jakarta.servlet-api-6.0.0.jar"/>
+			<include name="jakarta.annotation-api-3.0.0.jar"/>
+			<include name="jakarta.servlet-api-6.1.0.jar"/>
 		</fileset>
 		<fileset dir="${required_lib}/jaxb">
 			<include name="*.jar"/>

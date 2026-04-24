@@ -159,7 +159,7 @@ public class UploadServlet extends HttpServlet {
 		ObjectNode respBodyItem;
 		int dimensione = 0;
 		try {
-			byte[] contenuto = item.get();
+			byte[] contenuto = item.getInputStream().readAllBytes();
 			dimensione = contenuto != null ? contenuto.length : 0;
 			String contentType = item.getContentType();
 			UploadServlet.log.debug("Ricevuto File [{}], content-type [{}], dimensione [{}]", fileName, contentType, dimensione);

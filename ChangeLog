@@ -2,27 +2,105 @@
 
 	*  [GovWayCore]
 	Aggiunta funzionalità #1738
-	Aggiornate versioni dei plugin Maven nel pom.xml principale del progetto:                                                   
-	- maven-antrun-plugin: 3.1.0  → 3.2.0                                
-	- maven-resources-plugin: 3.3.1  → 3.5.0                                
+	Aggiornate le seguenti librerie di terze parti:    
+	Stack applicativo (major bump):  
+	 - aggiornata libreria 'org.apache.cxf:*' alla versione 4.2.0
+	 - aggiornata libreria 'org.springframework:*' alla versione 7.0.7    
+	 - aggiornata libreria 'org.springframework.security:*' alla versione 7.0.5   
+	 - aggiornata libreria 'org.springframework.ldap:*' alla versione 4.0.3   
+	 - aggiornata libreria 'org.hibernate' alla versione 7.3.2.Final    
+	 - aggiornata libreria 'org.hibernate.validator' alla versione 9.1.0.Final     
+	Jakarta EE API:
+	 - aggiornata libreria 'jakarta.servlet-api' alla versione 6.1.0   
+	 - aggiornata libreria 'jakarta.servlet.jsp.jstl-api' alla versione 3.0.2   
+	 - aggiornata libreria 'jakarta.mail-api' alla versione 2.1.5
+	 - aggiornata libreria 'jakarta.activation-api' alla versione 2.1.4    
+	 - aggiornata libreria 'jakarta.validation-api' alla versione 3.1.1
+	 - aggiornata libreria 'jakarta.ws.rs-api' alla versione 4.0.0    
+	 - aggiornata libreria 'jakarta.annotation-api' alla versione 3.0.0
+	 - aggiornata libreria 'jakarta.xml.ws-api' alla versione 4.0.3   
+	 - aggiornata libreria 'jakarta.xml.bind-api' alla versione 4.0.5 
+	HTTP client:
+	 - aggiornata libreria 'org.apache.httpcomponents.client5:httpclient5' alla versione 5.6.1
+	 - aggiornata libreria 'org.apache.httpcomponents.core5:httpcore5' alla versione 5.4.2
+	Security / Crypto:
+	 - aggiornata libreria 'org.apache.wss4j:*' alla versione 4.0.1
+	 - aggiornata libreria 'org.opensaml:*' alla versione 5.1.6   
+	 - aggiornata libreria 'net.shibboleth:shib-support' alla versione 9.1.6    
+	 - aggiornata libreria 'org.cryptacular' alla versione 1.3.0
+	 - aggiornata libreria 'com.nimbusds:nimbus-jose-jwt' alla versione 10.9 
+	XML / SOAP:    
+	 - aggiornata libreria 'org.glassfish.jaxb:*' alla versione 4.0.7
+	 - aggiornata libreria 'org.codehaus.woodstox:stax2-api' alla versione 4.3.0
+	 - aggiornata libreria 'org.apache.ws.xmlschema:xmlschema-core' alla versione 2.3.2
+	Jackson / JSON:
+	 - aggiornata libreria 'com.fasterxml.jackson:*' alla versione 2.21.2    
+	 - aggiornata libreria 'org.json:json' alla versione 20251224  
+	 - aggiornata libreria 'org.codehaus.jettison:jettison' alla versione 1.5.5
+	Apache Commons:   
+	 - aggiornata libreria 'commons-cli' alla versione 1.11.0
+	 - aggiornata libreria 'commons-codec' alla versione 1.21.0 
+	 - aggiornata libreria 'commons-compress' alla versione 1.28.0
+	 - aggiornata libreria 'commons-csv' alla versione 1.14.1
+	 - aggiornata libreria 'commons-dbcp2' alla versione 2.14.0
+	 - aggiornata libreria 'commons-fileupload2-core' alla versione 2.0.0-M5     
+	 - aggiornata libreria 'commons-io' alla versione 2.21.0
+	 - aggiornata libreria 'commons-lang3' alla versione 3.20.0 
+	 - aggiornata libreria 'commons-logging' alla versione 1.3.6
+	 - aggiornata libreria 'commons-net' alla versione 3.13.0   
+	 - aggiornata libreria 'commons-text' alla versione 1.15.0
+	 - aggiornata libreria 'commons-validator' alla versione 1.10.1
+	Mail (Eclipse Angus):   
+	 - aggiornata libreria 'org.eclipse.angus:angus-activation' alla versione 2.0.3
+	 - aggiornata libreria 'org.eclipse.angus:angus-mail' alla versione 2.0.5
+	Swagger / OpenAPI:   
+	 - aggiornata libreria 'io.swagger.core.v3:*' alla versione 2.2.48  
+	 - aggiornata libreria 'io.swagger.parser.v3:*' alla versione 2.1.40
+	 - aggiornata libreria 'io.swagger:swagger-parser' alla versione 1.0.76
+	 - aggiornata libreria 'com.atlassian.oai:swagger-request-validator' alla versione 2.46.1
+	 - aggiornata libreria 'io.github.classgraph:classgraph' alla versione 4.8.184
+	Cache / Datagrid / Observability:
+	 - aggiornata libreria 'org.ehcache' alla versione 3.12.0
+	 - aggiornata libreria 'org.redisson' alla versione 4.3.1    
+	 - aggiornata libreria 'io.micrometer:*' alla versione 1.16.5
+	Altri:   
+	 - aggiornata libreria 'org.ow2.asm:*' alla versione 9.9.1   
+	 - aggiornata libreria 'org.eclipse.jetty:*' alla versione 12.1.8     
+	 - aggiornata libreria 'net.sf.saxon:Saxon-HE' alla versione 12.9
+	 - aggiornata libreria 'org.snakeyaml' alla versione 2.6     
+	 - aggiornata libreria 'org.xmlunit:*' alla versione 2.11.0  
+	 - aggiornata libreria 'org.mozilla:rhino' alla versione 1.9.1  
+	 - aggiornata libreria 'com.google.guava:guava' alla versione 33.6.0-jre    
+	 - aggiornata libreria 'com.fasterxml.uuid:java-uuid-generator' alla versione 5.2.0
+	 - aggiornata libreria 'joda-time' alla versione 2.14.1
+	 - aggiornata libreria 'org.aspectj:*' alla versione 1.9.25.1
+	 - aggiornata libreria 'org.jboss.logging:jboss-logging' alla versione 3.6.3.Final   
+
+2026-04-23  Andrea Poli <apoli@link.it>
+
+	*  [GovWayCore]
+	Aggiunta funzionalità #1738
+	Aggiornate versioni dei plugin Maven nel pom.xml principale del progetto:
+	- maven-antrun-plugin: 3.1.0  → 3.2.0  
+	- maven-resources-plugin: 3.3.1  → 3.5.0  
 	- maven-clean-plugin: 3.4.0  → 3.5.0
-	- maven-dependency-plugin: 3.8.1  → 3.10.0                               
-	- maven-compiler-plugin: 3.13.0 → 3.15.0                               
+	- maven-dependency-plugin: 3.8.1  → 3.10.0 
+	- maven-compiler-plugin: 3.13.0 → 3.15.0 
 	- maven-jar-plugin: 3.4.2  → 3.5.0
-	- maven-source-plugin: 3.3.1  → 3.4.0                                
-	- maven-javadoc-plugin: 3.11.2 → 3.12.0                               
+	- maven-source-plugin: 3.3.1  → 3.4.0  
+	- maven-javadoc-plugin: 3.11.2 → 3.12.0 
 	- maven-gpg-plugin: 3.2.7  → 3.2.8 
-	- flatten-maven-plugin: 1.6.0 → 1.7.3                           
+	- flatten-maven-plugin: 1.6.0 → 1.7.3
 	- exec-maven-plugin: 3.5.0 → 3.6.3
-	- central-publishing-maven-plugin: 0.6.0 → 0.10.0                                                                                          
-	- org.apache.ant:ant: 1.10.14 → 1.10.17                             
+	- central-publishing-maven-plugin: 0.6.0 → 0.10.0
+	- org.apache.ant:ant: 1.10.14 → 1.10.17  
 
 2026-04-23  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
 	Risolto Bug
-        Risolte le seguenti vulnerabilità relative ai jar di terza parte:
-        - CVE-2026-0636, CVE-2026-5588: aggiornata libreria 'org.bouncycastle:*' alla versione 1.84
+	Risolte le seguenti vulnerabilità relative ai jar di terza parte:
+	- CVE-2026-0636, CVE-2026-5588: aggiornata libreria 'org.bouncycastle:*' alla versione 1.84
 
 2026-04-22  Andrea Poli <apoli@link.it>
 
@@ -60,10 +138,10 @@
 
 	* [GovWayCore]
 	Risolto Bug #1754
-        Risolte le seguenti vulnerabilità relative ai jar di terza parte:
-        - CVE-2026-34478, CVE-2026-34480, CVE-2026-34479: aggiornata libreria 'org.apache.logging.log4j:log4j-core' alla versione 2.25.4
-        - CVE-2026-34477: aggiornata libreria 'org.apache.logging.log4j:log4j-core' alla versione 2.25.4      
-        - CVE-2026-34481: aggiornata libreria 'org.apache.logging.log4j:log4j-layout-template-json' alla versione 2.25.4
+	 Risolte le seguenti vulnerabilità relative ai jar di terza parte:
+	 - CVE-2026-34478, CVE-2026-34480, CVE-2026-34479: aggiornata libreria 'org.apache.logging.log4j:log4j-core' alla versione 2.25.4
+	 - CVE-2026-34477: aggiornata libreria 'org.apache.logging.log4j:log4j-core' alla versione 2.25.4
+	 - CVE-2026-34481: aggiornata libreria 'org.apache.logging.log4j:log4j-layout-template-json' alla versione 2.25.4
 
 2026-04-15  Andrea Poli <apoli@link.it>
 
@@ -219,7 +297,7 @@
 	* [ProtocolloModIPA]
 	Risolto Bug #1728
 	Corretta la generazione del CSV di tracciamento PDND per aggregare correttamente le richieste con stesso (purpose_id, status, token_id) quando più riferimenti 'eventi_gestione' distinti 
-	risolvono allo stesso codice HTTP, eliminando le righe duplicate segnalate con errore 'PURPOSE_AND_STATUS_AND_TOKEN_NOT_UNIQUE'.                                                 
+	risolvono allo stesso codice HTTP, eliminando le righe duplicate segnalate con errore 'PURPOSE_AND_STATUS_AND_TOKEN_NOT_UNIQUE'.    
 
 2026-03-10  Andrea Poli <apoli@link.it>
 
@@ -333,7 +411,7 @@
 	* [ProtocolloModIPA]
 	Aggiunta funzionalità #1721
 	Aggiunta indicizzazione delle credenziali mittente (issuer, subject, client_id) estratte dal token ModI presente nell'header Authorization 
-	quando l'API viene cofigurata con l'opzione "Generazione Token: Authorization ModI".                
+	quando l'API viene cofigurata con l'opzione "Generazione Token: Authorization ModI". 
 	L'indicizzazione, attiva per default, è configurabile tramite proprietà globali e a livello di singola erogazione/fruizione.
 
 2026-02-11  Tommaso Burlon <tommaso.burlon@link.it>
@@ -401,7 +479,7 @@
 	- Rimosso FusionCharts (Flash): eliminata completamente la libreria FusionCharts e tutti i file .swf, 
 	  già di fatto inutilizzati poiché abilitati solo su browser obsoleti, 
 	  migrando i grafici statistiche esclusivamente su SVG (D3/C3) e rimuovendo ogni logica condizionale Flash/SVG. 
-	- Eliminato supporto IE11.                                                                                                                                  
+	- Eliminato supporto IE11.          
 	- Refactoring console Monitor: rimossi controlli browser obsoleti e proprietà inutilizzate; aggiornati CSS/JS heatmap.
 
 2026-02-04  Tommaso Burlon <tommaso.burlon@link.it>

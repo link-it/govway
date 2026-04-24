@@ -17,9 +17,9 @@
 
 		<jar.group.name>opensaml</jar.group.name>
 		
-		<opensaml.version>5.1.4</opensaml.version>
+		<opensaml.version>5.1.6</opensaml.version>
 		<java-support.version>8.4.2</java-support.version>
-		<shib-support.version>9.1.4</shib-support.version>
+		<shib-support.version>9.1.6</shib-support.version>
 
 	</properties>
 

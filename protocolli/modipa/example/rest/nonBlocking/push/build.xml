@@ -57,14 +57,14 @@
 			<include name="jackson/*.jar"/>
 			<include name="jax/jaxb-*.jar"/>
 			<include name="jax/jaxws-*.jar"/>
-			<include name="commons/commons-codec-1.18.0.jar"/>
+			<include name="commons/commons-codec-1.21.0.jar"/>
 			<include name="security/neethi-3.2.1.jar"/>
 			<include name="shared/wsdl4j-1.6.3.jar"/>
-			<include name="shared/joda-time-2.14.0.jar"/>
-			<include name="jakarta/jakarta.annotation-api-2.1.1.jar"/>
-			<include name="jakarta/jakarta.ws.rs-api-3.1.0.jar"/>
-			<include name="jakarta/jakarta.servlet-api-6.0.0.jar"/>
-			<include name="jakarta/jakarta.xml.bind-api-3.0.1.jar"/>
+			<include name="shared/joda-time-2.14.1.jar"/>
+			<include name="jakarta/jakarta.annotation-api-3.0.0.jar"/>
+			<include name="jakarta/jakarta.ws.rs-api-4.0.0.jar"/>
+			<include name="jakarta/jakarta.servlet-api-6.1.0.jar"/>
+			<include name="jakarta/jakarta.xml.bind-api-4.0.5.jar"/>
 			<include name="jaxb/*"/>
 		</fileset>
 	</path>

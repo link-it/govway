@@ -17,7 +17,7 @@
 
 		<jar.group.name>redis</jar.group.name>
 		
-		<redisson.version>4.3.0</redisson.version>
+		<redisson.version>4.3.1</redisson.version>
 		<netty.version>4.2.12.Final</netty.version>
 		<esotericsoftware.kryo.version>5.6.2</esotericsoftware.kryo.version>
 		<objenesis.version>3.5</objenesis.version>
