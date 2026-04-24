@@ -238,7 +238,7 @@
 					<filelist dir="${data_content_handler_dir}"
 				           files="mailcap"/>
 				</concat>
-				<jar jarfile="${build_govwayConsole}/tmp/jakarta.mail-api-2.1.2.gw.jar" manifest="${build_govwayConsole}/tmp/mailapi/META-INF/MANIFEST.MF">
+				<jar jarfile="${build_govwayConsole}/tmp/jakarta.mail-api-2.1.5.gw.jar" manifest="${build_govwayConsole}/tmp/mailapi/META-INF/MANIFEST.MF">
 					<zipfileset dir="${build_govwayConsole}/tmp/mailapi"/>
 				</jar>
 			</then>
@@ -520,7 +520,7 @@
 			</lib>
 			<!-- Mail api esteso con activation data handler openspcoop -->
 			<lib dir="${build_govwayConsole}/tmp">
-				<include name="jakarta.mail-api-2.1.2.gw.jar" />
+				<include name="jakarta.mail-api-2.1.5.gw.jar" />
 			</lib>
 			<!-- Plugins -->
 			<lib dir="${plugins_govwayConsole}">

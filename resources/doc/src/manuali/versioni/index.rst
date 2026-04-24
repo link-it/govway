@@ -82,11 +82,11 @@ Le versioni si riferiscono all'ultima release pubblicata per ogni linea.
      - 3.3.x
      - 3.2.x
    * - **Apache CXF**
-     - ``4.1.3``
+     - ``4.2.0``
      - ``3.6.8``
      - ``3.2.6``
    * - **HTTP Client**
-     - Apache HttpClient ``5.5``, HttpCore ``5.3.4``
+     - Apache HttpClient ``5.6.1``, HttpCore ``5.4.2``
      - HttpURLConnection JDK built-in, opz. Apache HttpClient ``4.5.13``
      - HttpURLConnection JDK built-in
    * - **Java EE / Jakarta EE**
@@ -98,27 +98,27 @@ Le versioni si riferiscono all'ultima release pubblicata per ogni linea.
      - soap-api ``1.4.0``, saaj-impl ``1.5.3``
      - JDK built-in, saaj-impl ``1.3.28``
    * - **Jackson** (JSON / YAML)
-     - ``2.19.1``
+     - ``2.21.2``
      - ``2.18.3``
      - ``2.9.10``
    * - **Swagger / OpenAPI**
-     - core ``2.2.33``, parser ``2.1.29``
+     - core ``2.2.48``, parser ``2.1.40``
      - core ``2.2.4``, parser ``2.1.6``
      - core ``2.0.3``, parser ``2.0.2``
    * - **Logging**
-     - Log4j ``2.25.3``
+     - Log4j ``2.25.4``
      - Log4j ``2.25.3``
      - Log4j ``2.11.1``
    * - **Spring Framework**
-     - ``6.2.11``
+     - ``7.0.7``
      - ``5.3.39``
      - ``5.1.6``
    * - **Spring Security**
-     - ``6.5.5``
+     - ``7.0.5``
      - ``5.8.16``
      - ``5.1.5``
    * - **Bouncy Castle**
-     - ``1.81``
+     - ``1.84``
      - ``1.81``
      - ``1.60``
    * - **Apache Santuario** (XML Security)
@@ -126,15 +126,15 @@ Le versioni si riferiscono all'ultima release pubblicata per ogni linea.
      - ``2.3.4``
      - ``2.1.1``
    * - **Apache WSS4J**
-     - ``4.0.0``
+     - ``4.0.1``
      - ``2.4.1``
      - ``2.2.2``
    * - **OpenSAML**
-     - ``5.1.4``
+     - ``5.1.6``
      - ``3.4.6``
      - ``3.3.1``
    * - **Nimbus JOSE+JWT**
-     - ``10.3.1``
+     - ``10.9``
      - ``10.3.1``
      - —
 
@@ -160,13 +160,14 @@ supportato dalla linea GovWay 3.4.x.
 **Spring Framework** — La linea Spring Framework 5.3.x (utilizzata da GovWay 3.3.x e precedenti) ha raggiunto
 la fine del supporto open source il **31 agosto 2024**: non vengono più rilasciate patch di sicurezza
 né correzioni pubbliche. Solo opzioni di supporto commerciale restano disponibili.
-La linea GovWay 3.4.x adotta **Spring Framework 6.2.x**, attualmente in supporto attivo.
+La linea GovWay 3.4.x adotta **Spring Framework 7.x**, attualmente in supporto attivo;
+le versioni fino alla ``3.4.2.p1`` adottavano Spring Framework 6.2.x.
 Per maggiori dettagli, consultare la pagina ufficiale
 `Spring Framework Versions <https://github.com/spring-projects/spring-framework/wiki/Spring-Framework-Versions>`_.
 
 **Migrazione Javax → Jakarta** — La linea 3.4.x adotta il namespace **Jakarta EE** (``jakarta.*``) in sostituzione
 del precedente ``javax.*``. Questo passaggio è necessario per la compatibilità con i moderni
-Application Server (Tomcat 10+, WildFly 27+) e le nuove versioni delle librerie (CXF 4.x, Spring 6.x, ecc.).
+Application Server (Tomcat 10+, WildFly 27+) e le nuove versioni delle librerie (CXF 4.x, Spring 6.x / 7.x, ecc.).
 
 **Connettore HTTP** — A partire dalla versione 3.4.x, il connettore HTTP di default utilizza
 **Apache HTTP Core 5** con supporto nativo HTTP/2, NIO e virtual thread.

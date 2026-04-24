@@ -67,10 +67,10 @@
 					<filelist dir="${data_content_handler_dir}"
 		                           files="mailcap"/>
 				</concat>
-				<jar jarfile="${build_govwayMonitorApiRS}/tmp/jakarta.mail-api-2.1.2.gw.jar" manifest="${build_govwayMonitorApiRS}/tmp/mailapi/META-INF/MANIFEST.MF">
+				<jar jarfile="${build_govwayMonitorApiRS}/tmp/jakarta.mail-api-2.1.5.gw.jar" manifest="${build_govwayMonitorApiRS}/tmp/mailapi/META-INF/MANIFEST.MF">
 					<zipfileset dir="${build_govwayMonitorApiRS}/tmp/mailapi"/>
 				</jar>
-				<var name="mailapi_jar" value="jakarta.mail-api-2.1.2.gw.jar" />
+				<var name="mailapi_jar" value="jakarta.mail-api-2.1.5.gw.jar" />
 			</then>
 		</if>
 
