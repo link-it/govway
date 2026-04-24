@@ -37,6 +37,12 @@
 	 - aggiornata libreria 'com.fasterxml.jackson:*' alla versione 2.21.2    
 	 - aggiornata libreria 'org.json:json' alla versione 20251224  
 	 - aggiornata libreria 'org.codehaus.jettison:jettison' alla versione 1.5.5
+	 - json-schema-validator 1.5.7 → 1.5.9
+ 	 - json-path 2.9.0 → 3.0.0
+	 - json-smart / accessors-smart 2.5.2 → 2.6.0
+	 - libphonenumber 8.13.44 → 9.0.28
+	 - ethlo-time 1.10.3 → 1.14.0
+	 - failureaccess 1.0.2 → 1.0.3
 	Apache Commons:   
 	 - aggiornata libreria 'commons-cli' alla versione 1.11.0
 	 - aggiornata libreria 'commons-codec' alla versione 1.21.0 

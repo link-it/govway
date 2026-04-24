@@ -100,8 +100,8 @@
 	<archive path="/op2_3.4.dev/lib/jakarta/jakarta.el-api-5.0.1.jar"/>
 	<!-- json -->
 	<archive path="/op2_3.4.dev/lib/json/json-20251224.jar"/>
-	<archive path="/op2_3.4.dev/lib/json/networknt_json-schema-validator-1.5.7.jar"/>
-	<archive path="/op2_3.4.dev/lib/json/itu-1.10.3.jar"/>
+	<archive path="/op2_3.4.dev/lib/json/networknt_json-schema-validator-1.5.9.jar"/>
+	<archive path="/op2_3.4.dev/lib/json/itu-1.14.0.jar"/>
 	<archive path="/op2_3.4.dev/lib/json/github_json-schema-validator-2.2.14-gov4j-1.jar"/>
 	<archive path="/op2_3.4.dev/lib/json/github_json-schema-core-1.2.14.jar"/>
 	<archive path="/op2_3.4.dev/lib/json/github_jackson-coreutils-2.0.jar"/>
@@ -109,11 +109,11 @@
 	<archive path="/op2_3.4.dev/lib/json/github_uri-template-0.10.jar"/>
 	<archive path="/op2_3.4.dev/lib/json/btf-1.2.jar"/>
 	<archive path="/op2_3.4.dev/lib/json/msg-simple-1.1.jar"/>
-	<archive path="/op2_3.4.dev/lib/json/failureaccess-1.0.2.jar"/>
-	<archive path="/op2_3.4.dev/lib/json/libphonenumber-8.13.44.jar"/>
-	<archive path="/op2_3.4.dev/lib/json/json-path-2.9.0-gov4j-1.jar"/>
-	<archive path="/op2_3.4.dev/lib/json/json-smart-2.5.2.jar"/>
-	<archive path="/op2_3.4.dev/lib/json/accessors-smart-2.5.2.jar"/>
+	<archive path="/op2_3.4.dev/lib/json/failureaccess-1.0.3.jar"/>
+	<archive path="/op2_3.4.dev/lib/json/libphonenumber-9.0.28.jar"/>
+	<archive path="/op2_3.4.dev/lib/json/json-path-3.0.0-gov4j-1.jar"/>
+	<archive path="/op2_3.4.dev/lib/json/json-smart-2.6.0.jar"/>
+	<archive path="/op2_3.4.dev/lib/json/accessors-smart-2.6.0.jar"/>
 	<archive path="/op2_3.4.dev/lib/json/jettison-1.5.5.jar"/>
 	<!-- log -->
         <archive path="/op2_3.4.dev/lib/log/slf4j-api-2.0.17-gov4j-1.jar"/>
