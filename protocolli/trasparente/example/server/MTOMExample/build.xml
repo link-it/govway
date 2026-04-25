@@ -74,6 +74,7 @@
 		<javac destdir="${build_mtom_example}" debug="${debug}">
 			<!--<compilerarg value="-Xlint:unchecked"/>
                         <compilerarg value="-Xlint:deprecation"/>-->
+			<compilerarg value="-proc:full"/>
 			<src path="${src_mtom_example}" />
 			<classpath refid="classpath_compile" />
 		</javac>

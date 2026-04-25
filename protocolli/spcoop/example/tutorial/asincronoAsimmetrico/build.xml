@@ -66,6 +66,7 @@
 		<javac includeantruntime="false" destdir="${build_spcoop_tutorial_asincronoAsimmetrico}" debug="${debug}">
 			<!--<compilerarg value="-Xlint:unchecked"/>
                         <compilerarg value="-Xlint:deprecation"/>-->
+			<compilerarg value="-proc:full"/>
 			<src path="${src_spcoop_tutorial_asincronoAsimmetrico}" />
 			<classpath refid="classpath_compile" />
 		</javac>
