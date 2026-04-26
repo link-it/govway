@@ -24,7 +24,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.openspcoop2.utils.certificate.byok.BYOKCostanti;
+import org.openspcoop2.utils.Costanti;
 
 /**	
  * OpenSSLEncryptionMode
@@ -43,12 +43,12 @@ public enum OpenSSLEncryptionMode implements Serializable {
 	
 	private static final Map<String, OpenSSLEncryptionMode> localPwdTypeToOpenSSLEncryptionModeMap = new HashMap<>();
 	static {
-		/**localPwdTypeToOpenSSLEncryptionModeMap.put(BYOKCostanti.PROPERTY_LOCAL_PWD_TYPE_OPENSSL_AES_128_CBC, OpenSSLEncryptionMode.AES_128_CBC);
-		localPwdTypeToOpenSSLEncryptionModeMap.put(BYOKCostanti.PROPERTY_LOCAL_PWD_TYPE_OPENSSL_AES_192_CBC, OpenSSLEncryptionMode.AES_192_CBC);*/
-		localPwdTypeToOpenSSLEncryptionModeMap.put(BYOKCostanti.PROPERTY_LOCAL_PW_TYPE_OPENSSL_AES_256_CBC, OpenSSLEncryptionMode.AES_256_CBC);
-		localPwdTypeToOpenSSLEncryptionModeMap.put(BYOKCostanti.PROPERTY_LOCAL_PW_TYPE_OPENSSL_PBKDF2_AES_128_CBC, OpenSSLEncryptionMode.AES_128_CBC);
-		localPwdTypeToOpenSSLEncryptionModeMap.put(BYOKCostanti.PROPERTY_LOCAL_PW_TYPE_OPENSSL_PBKDF2_AES_192_CBC, OpenSSLEncryptionMode.AES_192_CBC);
-		localPwdTypeToOpenSSLEncryptionModeMap.put(BYOKCostanti.PROPERTY_LOCAL_PW_TYPE_OPENSSL_PBKDF2_AES_256_CBC, OpenSSLEncryptionMode.AES_256_CBC);
+		/**localPwdTypeToOpenSSLEncryptionModeMap.put(Costanti.OPENSSL_AES_128_CBC, OpenSSLEncryptionMode.AES_128_CBC);
+		localPwdTypeToOpenSSLEncryptionModeMap.put(Costanti.OPENSSL_AES_192_CBC, OpenSSLEncryptionMode.AES_192_CBC);*/
+		localPwdTypeToOpenSSLEncryptionModeMap.put(Costanti.OPENSSL_AES_256_CBC, OpenSSLEncryptionMode.AES_256_CBC);
+		localPwdTypeToOpenSSLEncryptionModeMap.put(Costanti.OPENSSL_PBKDF2_AES_128_CBC, OpenSSLEncryptionMode.AES_128_CBC);
+		localPwdTypeToOpenSSLEncryptionModeMap.put(Costanti.OPENSSL_PBKDF2_AES_192_CBC, OpenSSLEncryptionMode.AES_192_CBC);
+		localPwdTypeToOpenSSLEncryptionModeMap.put(Costanti.OPENSSL_PBKDF2_AES_256_CBC, OpenSSLEncryptionMode.AES_256_CBC);
 	}
 	
 }

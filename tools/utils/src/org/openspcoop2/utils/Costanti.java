@@ -179,4 +179,12 @@ public class Costanti {
 	public static final String PROTOCOL_HTTP_PREFIX = "http://";
 	public static final String PROTOCOL_HTTPS_PREFIX = "https://";
 	public static final String PROTOCOL_FILE_PREFIX = "file://";
+	
+	
+	/**public static final String OPENSSL_AES_128_CBC = "openssl-aes-128-cbc";
+	public static final String OPENSSL_AES_192_CBC = "openssl-aes-192-cbc";*/
+	public static final String OPENSSL_AES_256_CBC = "openssl-aes-256-cbc";
+	public static final String OPENSSL_PBKDF2_AES_128_CBC = "openssl-pbkdf2-aes-128-cbc";
+	public static final String OPENSSL_PBKDF2_AES_192_CBC = "openssl-pbkdf2-aes-192-cbc";
+	public static final String OPENSSL_PBKDF2_AES_256_CBC = "openssl-pbkdf2-aes-256-cbc";
 }

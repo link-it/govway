@@ -392,7 +392,38 @@ public class ConnettoreHTTPCOREConnectionManager {
 			httpClientBuilder.setConnectionManagerShared(true); // senno' la close di una connessione fa si che venga chiuso il reactor
 			httpClientBuilder.setDefaultRequestConfig(requestConfig);
 			httpClientBuilder.disableAuthCaching();
-			
+			/*
+			 * GovWay agisce da gateway: deve essere trasparente verso le risposte del backend.
+			 * Header come 'Retry-After' e status code 429/503 vanno veicolati al client a monte
+			 * senza essere interpretati/consumati dal client HTTP. La decisione di ritentare
+			 * spetta al chiamante originale, non al gateway.
+			 * Nota: in HttpClient 5.6 la verifica responseTimeout vs retry-interval e' stata
+			 * spostata dentro DefaultHttpRequestRetryStrategy.retryRequest e confronta solo
+			 * 'defaultRetryInterval' (1s) anziche' il valore reale ricavato dall'header
+			 * 'Retry-After', causando pause di durata pari al valore dell'header anche quando
+			 * supera il responseTimeout (regressione rispetto a 5.5).
+			 */
+			httpClientBuilder.disableAutomaticRetries();
+			/*
+			 * Ulteriori automatismi del client HTTP disabilitati per garantire la trasparenza
+			 * del gateway:
+			 * - cookie management: i cookie vanno propagati come header opachi tra client a
+			 *   monte e backend; il CookieStore interno del client li intercetterebbe creando
+			 *   leak tra request distinte;
+			 * - connection state: senza disable il pool segrega le connessioni per principal
+			 *   auth (NTLM/Kerberos) frammentando il riuso; il gateway non usa auth automatica
+			 *   HttpClient quindi puo' riusare per host;
+			 * - content compression: il body deve transitare cosi' come ricevuto dal backend
+			 *   con il proprio Content-Encoding; la decompressione automatica altererebbe il
+			 *   payload veicolato.
+			 * Nota: HttpAsyncClientBuilder non espone disableDefaultUserAgent(); l'interceptor
+			 * RequestUserAgent comunque non sovrascrive lo User-Agent gia' presente in request,
+			 * quindi lo UA del client a monte viene preservato.
+			 */
+			httpClientBuilder.disableCookieManagement();
+			httpClientBuilder.disableConnectionState();
+			httpClientBuilder.disableContentCompression();
+
 			ConnectionReuseStrategy defaultClientConnectionReuseStrategy = new DefaultConnectionReuseStrategy();
 			httpClientBuilder.setConnectionReuseStrategy(defaultClientConnectionReuseStrategy);
 			
@@ -410,8 +441,16 @@ public class ConnettoreHTTPCOREConnectionManager {
 			
 			if(connectionConfig.isFollowRedirect()) {
 				httpClientBuilder.setRedirectStrategy(DefaultRedirectStrategy.INSTANCE);
+			} else {
+				/*
+				 * Default HttpClient 5.x: i redirect sono seguiti automaticamente. Senza
+				 * disable, configurare followRedirect=false a livello connettore non avrebbe
+				 * effetto e i 3xx verrebbero risolti internamente anziche' veicolati al
+				 * client a monte.
+				 */
+				httpClientBuilder.disableRedirectHandling();
 			}
-			
+
 			// ** Proxy **
 			setProxy(httpClientBuilder, connectionConfig);
 			

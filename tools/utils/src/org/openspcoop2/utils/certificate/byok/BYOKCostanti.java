@@ -23,6 +23,8 @@ package org.openspcoop2.utils.certificate.byok;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openspcoop2.utils.Costanti;
+
 /**
  * BYOKCostanti
  *
@@ -134,12 +136,12 @@ public class BYOKCostanti {
 	
 	public static final String PROPERTY_SUFFIX_LOCAL_PW = "local.password";
 	public static final String PROPERTY_SUFFIX_LOCAL_PW_TYPE = "local.password.type";
-	/**public static final String PROPERTY_LOCAL_PW_TYPE_OPENSSL_AES_128_CBC = "openssl-aes-128-cbc";
-	public static final String PROPERTY_LOCAL_PW_TYPE_OPENSSL_AES_192_CBC = "openssl-aes-192-cbc";*/
-	public static final String PROPERTY_LOCAL_PW_TYPE_OPENSSL_AES_256_CBC = "openssl-aes-256-cbc";
-	public static final String PROPERTY_LOCAL_PW_TYPE_OPENSSL_PBKDF2_AES_128_CBC = "openssl-pbkdf2-aes-128-cbc";
-	public static final String PROPERTY_LOCAL_PW_TYPE_OPENSSL_PBKDF2_AES_192_CBC = "openssl-pbkdf2-aes-192-cbc";
-	public static final String PROPERTY_LOCAL_PW_TYPE_OPENSSL_PBKDF2_AES_256_CBC = "openssl-pbkdf2-aes-256-cbc";
+	/**public static final String PROPERTY_LOCAL_PW_TYPE_OPENSSL_AES_128_CBC = Costanti.OPENSSL_AES_128_CBC;
+	public static final String PROPERTY_LOCAL_PW_TYPE_OPENSSL_AES_192_CBC = Costanti.OPENSSL_AES_192_CBC;*/
+	public static final String PROPERTY_LOCAL_PW_TYPE_OPENSSL_AES_256_CBC = Costanti.OPENSSL_AES_256_CBC;
+	public static final String PROPERTY_LOCAL_PW_TYPE_OPENSSL_PBKDF2_AES_128_CBC = Costanti.OPENSSL_PBKDF2_AES_128_CBC;
+	public static final String PROPERTY_LOCAL_PW_TYPE_OPENSSL_PBKDF2_AES_192_CBC = Costanti.OPENSSL_PBKDF2_AES_192_CBC;
+	public static final String PROPERTY_LOCAL_PW_TYPE_OPENSSL_PBKDF2_AES_256_CBC = Costanti.OPENSSL_PBKDF2_AES_256_CBC;
 	private static final List<String> localPwdTypes = new ArrayList<>();
 	static {
 		/**localPwdTypes.add(PROPERTY_LOCAL_PW_TYPE_OPENSSL_AES_128_CBC);

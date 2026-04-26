@@ -29,6 +29,9 @@
 		<fileset dir="${required_lib}/testsuite/spring5" >
 			<include name="*.jar"/>
 		</fileset>
+		<fileset dir="${required_lib}/testsuite/json-path2" >
+			<include name="*.jar"/>
+		</fileset>
 		<fileset dir="${dir_jdbc}" >
 			<include name="*.jar"/>
 		</fileset>
@@ -41,6 +44,7 @@
 		</fileset>
 		<fileset dir="${required_lib}/json" >
 			<include name="*.jar"/>
+			<exclude name="json-path-3.0.0-gov4j-1.jar"/>
 		</fileset>
                 <fileset dir="${required_lib}/shared" >
                         <include name="snakeyaml-2.6-gov4j-1.jar"/>

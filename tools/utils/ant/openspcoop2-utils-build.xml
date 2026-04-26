@@ -39,6 +39,21 @@
 				<var name="skipJavaIncompatiblePackageOpenapi" value=""/>
 				<var name="skipJavaIncompatiblePackageMail" value=""/>
 				<var name="skipJavaIncompatibleClassVirtualThreads" value=""/>
+				<var name="skipJavaIncompatibleClassJaxRs" value=""/>
+				<var name="skipJavaIncompatibleClassJsonPathExpressionEngine" value=""/>
+				<var name="skipJavaIncompatibleClassJacksonJsonUtils" value=""/>
+				<var name="skipJavaIncompatibleClassJacksonXmlUtils" value=""/>
+				<var name="skipJavaIncompatibleClassJsonPathTest" value=""/>
+				<var name="skipJavaIncompatibleClassJsonXmlPathExpressionEngine" value=""/>
+				<var name="skipJavaIncompatibleClassJsonXmlPathExpressionEngineTest" value=""/>
+				<var name="skipJavaIncompatibleClassRemoteStore" value=""/>
+				<var name="skipJavaIncompatibleClassByok" value=""/>
+				<var name="skipJavaIncompatibleClassCache" value=""/>
+				<var name="skipJavaIncompatibleClassSecuritySignatureTest" value=""/>
+				<var name="skipJavaIncompatibleClassSecurityVerifyGoogleJWTTest" value=""/>
+				<var name="skipJavaIncompatibleClassSecurityEncryptTest" value=""/>
+				<var name="skipJavaIncompatibleClassSecurityJsonVerifySignature" value=""/>
+				<var name="skipJavaIncompatibleClassOAuth2" value=""/>
 				<if>
 					<not>
 						<equals arg1="${javaSourceVersion}" arg2="$${javaSourceVersion}"/>
@@ -52,6 +67,21 @@
 						<var name="skipJavaIncompatiblePackageOpenapi" value="**/*.java"/>
 						<var name="skipJavaIncompatiblePackageMail" value="**/*.java"/>
 						<var name="skipJavaIncompatibleClassVirtualThreads" value="**/MonitoredVirtualThreadExecutor.java"/>
+						<var name="skipJavaIncompatibleClassJaxRs" value="**/*.java"/>
+						<var name="skipJavaIncompatibleClassJsonPathExpressionEngine" value="**/JsonPathExpressionEngine.java"/>
+						<var name="skipJavaIncompatibleClassJacksonJsonUtils" value="**/JacksonJsonUtils.java"/>
+						<var name="skipJavaIncompatibleClassJacksonXmlUtils" value="**/JacksonXmlUtils.java"/>
+						<var name="skipJavaIncompatibleClassJsonPathTest" value="**/JsonPathTest.java"/>
+						<var name="skipJavaIncompatibleClassJsonXmlPathExpressionEngine" value="**/JsonXmlPathExpressionEngine.java"/>
+						<var name="skipJavaIncompatibleClassJsonXmlPathExpressionEngineTest" value="**/JsonXmlPathExpressionEngineTest.java"/>
+						<var name="skipJavaIncompatibleClassRemoteStore" value="**/*.java"/>
+						<var name="skipJavaIncompatibleClassByok" value="**/*.java"/>
+						<var name="skipJavaIncompatibleClassCache" value="**/*.java"/>
+						<var name="skipJavaIncompatibleClassSecuritySignatureTest" value="**/SignatureTest.java"/>
+						<var name="skipJavaIncompatibleClassSecurityVerifyGoogleJWTTest" value="**/VerifyGoogleJWTTest.java"/>
+						<var name="skipJavaIncompatibleClassSecurityEncryptTest" value="**/EncryptTest.java"/>
+						<var name="skipJavaIncompatibleClassSecurityJsonVerifySignature" value="**/JsonVerifySignature.java"/>
+						<var name="skipJavaIncompatibleClassOAuth2" value="**/*.java"/>
 					</then>
 				</if>
 				
@@ -231,6 +261,7 @@
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/jaxrs"/>
 					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="utils-jaxrs"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
+					<param name="compile_src_openspcoop2.BUILD_EXCLUDES" value="${skipJavaIncompatibleClassJaxRs}"/>
 					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
 					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
 					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.utils.jaxrs"/>
@@ -266,6 +297,10 @@
 					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="utils-json"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
 					<param name="compile_src_openspcoop2.SRC_INCLUDES" value="*.properties"/>
+					<param name="compile_src_openspcoop2.BUILD_EXCLUDES" value="${skipJavaIncompatibleClassJsonPathExpressionEngine}"/>
+					<param name="compile_src_openspcoop2.BUILD_EXCLUDES_2" value="${skipJavaIncompatibleClassJacksonJsonUtils}"/>
+					<param name="compile_src_openspcoop2.BUILD_EXCLUDES_3" value="${skipJavaIncompatibleClassJacksonXmlUtils}"/>
+					<param name="compile_src_openspcoop2.BUILD_EXCLUDES_4" value="${skipJavaIncompatibleClassJsonPathTest}"/>
 					<param name="compile_src_openspcoop2.SRC_PREFIX" value="org/openspcoop2/utils/json/"/>
 					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.utils.json"/>
 					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="utils"/>
@@ -281,6 +316,8 @@
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/xml2json"/>
 					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="utils-xml2json"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
+					<param name="compile_src_openspcoop2.BUILD_EXCLUDES" value="${skipJavaIncompatibleClassJsonXmlPathExpressionEngine}"/>
+					<param name="compile_src_openspcoop2.BUILD_EXCLUDES_2" value="${skipJavaIncompatibleClassJsonXmlPathExpressionEngineTest}"/>
 					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
 					<param name="compile_src_openspcoop2.SRC_PREFIX" value="org/openspcoop2/utils/xml2json"/>
 					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.utils.xml2json"/>
@@ -387,6 +424,7 @@
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/certificate/remote"/>
 					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="utils-certificate-remote"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
+					<param name="compile_src_openspcoop2.BUILD_EXCLUDES" value="${skipJavaIncompatibleClassRemoteStore}"/>
 					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
 					<param name="compile_src_openspcoop2.SRC_PREFIX" value="org/openspcoop2/utils/certificate/remote/"/>
 					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.utils.certificate.remote"/>
@@ -403,6 +441,7 @@
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/certificate/byok"/>
 					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="utils-certificate-byok"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
+					<param name="compile_src_openspcoop2.BUILD_EXCLUDES" value="${skipJavaIncompatibleClassByok}"/>
 					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
 					<param name="compile_src_openspcoop2.SRC_PREFIX" value="org/openspcoop2/utils/byok/remote/"/>
 					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.utils.byok.remote"/>
@@ -433,6 +472,7 @@
 					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="utils-cache"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
 					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
+					<param name="compile_src_openspcoop2.BUILD_EXCLUDES" value="${skipJavaIncompatibleClassCache}"/>
 					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
 					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.utils.cache"/>
 					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="utils"/>
@@ -661,6 +701,10 @@
 					<param name="compile_src_openspcoop2.SRC_INCLUDES_3" value="**/*.jceks"/>
 					<param name="compile_src_openspcoop2.SRC_INCLUDES_4" value="**/*.jwks"/>
 					<param name="compile_src_openspcoop2.SRC_INCLUDES_5" value="**/*.jwk"/>
+					<param name="compile_src_openspcoop2.BUILD_EXCLUDES" value="${skipJavaIncompatibleClassSecuritySignatureTest}"/>
+					<param name="compile_src_openspcoop2.BUILD_EXCLUDES_2" value="${skipJavaIncompatibleClassSecurityJsonVerifySignature}"/>
+					<param name="compile_src_openspcoop2.BUILD_EXCLUDES_3" value="${skipJavaIncompatibleClassSecurityVerifyGoogleJWTTest}"/>
+					<param name="compile_src_openspcoop2.BUILD_EXCLUDES_4" value="${skipJavaIncompatibleClassSecurityEncryptTest}"/>
 					<param name="compile_src_openspcoop2.SRC_PREFIX" value="org/openspcoop2/utils/security"/>
 					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.utils.security"/>
 					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="utils"/>
@@ -847,6 +891,7 @@
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/oauth2"/>
 					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="utils-oauth2"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
+					<param name="compile_src_openspcoop2.BUILD_EXCLUDES" value="${skipJavaIncompatibleClassOAuth2}"/>
 					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
 					<param name="compile_src_openspcoop2.SRC_PREFIX" value="org/openspcoop2/utils/oauth2"/>
 					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.utils.oauth2"/>

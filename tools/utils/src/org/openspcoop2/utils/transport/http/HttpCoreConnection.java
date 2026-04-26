@@ -326,7 +326,35 @@ class HttpCoreConnection extends HttpLibraryConnection {
 	        // set impostazioni
 	        builder.evictExpiredConnections();
 	        builder.evictIdleConnections(TimeValue.ofSeconds(1));
+	        builder.disableAuthCaching();
+	        /*
+	         * Utility usata anche in contesti di gateway/proxy: deve essere trasparente
+	         * rispetto alle risposte del backend. Header come 'Retry-After' e status code
+	         * 429/503 devono essere veicolati al chiamante senza essere interpretati dal
+	         * client HTTP; la decisione di ritentare spetta al consumer, non a questa utility.
+	         * Nota: in HttpClient 5.6 la verifica responseTimeout vs retry-interval e' stata
+	         * spostata dentro DefaultHttpRequestRetryStrategy.retryRequest e confronta solo
+	         * 'defaultRetryInterval' (1s) anziche' il valore reale ricavato dall'header
+	         * 'Retry-After', causando pause di durata pari al valore dell'header anche quando
+	         * supera il responseTimeout (regressione rispetto a 5.5).
+	         */
 	        builder.disableAutomaticRetries();
+	        /*
+	         * Ulteriori automatismi del client HTTP disabilitati per coerenza con il ruolo
+	         * di gateway/proxy:
+	         * - cookie management: i cookie vanno propagati come header opachi; il CookieStore
+	         *   interno del client li intercetterebbe creando leak tra request distinte;
+	         * - connection state: senza disable il pool segrega le connessioni per principal
+	         *   auth (NTLM/Kerberos) frammentando il riuso; non si usa auth automatica HttpClient;
+	         * - content compression: il body deve transitare cosi' come ricevuto dal backend
+	         *   con il proprio Content-Encoding;
+	         * - default user agent: evita l'iniezione di uno User-Agent 'Apache-HttpClient/x.y'
+	         *   quando il chiamante non lo invia, mantenendo la trasparenza.
+	         */
+	        builder.disableCookieManagement();
+	        builder.disableConnectionState();
+	        builder.disableContentCompression();
+	        builder.disableDefaultUserAgent();
 	        httpRequest.setConfig(configBuilder.build());
 
 	        // gestione del body
