@@ -30,8 +30,11 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.regex.Pattern;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
+import org.openspcoop2.core.protocolli.trasparente.testsuite.Utils;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.utils.DBVerifier;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.TipoServizio;
 import org.openspcoop2.utils.sql.SQLQueryObjectException;
@@ -45,19 +48,70 @@ import org.openspcoop2.utils.transport.http.HttpConstants;
 * @version $Rev$, $Date$
 */
 public class SSETest extends ConfigLoader {
-		
+
 	private static final String API = "TestSSE";
 	private static final String OPERAZIONE_SSE_DEV = "sse.dev";
-	
+
 	private static final int EXPECTED_DURATION_SECONDS = 10;   // ascolta per 20 secondi (più un tempo di tolleranza)
-	private static final int EXPECTED_DURATION_SECONDS_TOLERANCE = 4; 
+	private static final int EXPECTED_DURATION_SECONDS_TOLERANCE = 4;
     private static final int EXPECTED_EVENTS = 5; // ci aspettiamo in media 2 eventi/sec
-	
+
+	/* Header letto dal connettore di GovWay (Endpoint: https://${header:test-sse-remote-endpoint})
+	 * per indirizzare la chiamata o all'endpoint pubblico sse.dev oppure al mock locale.
+	 * L'endpoint del connettore impone il prefisso 'https://', quindi nell'header viene
+	 * passato solo 'host[:port]/path'. */
+	private static final String HEADER_REMOTE_ENDPOINT = "test-sse-remote-endpoint";
+	private static final String SSE_DEV_REMOTE_ENDPOINT = "sse.dev/test";
+
+	/* Keystore self-signed gia' usato dagli altri test (HttpProxyThread, plugin/RestTest, ...). */
+	private static final String MOCK_KEYSTORE_FILE = "/erogatore.jks";
+	private static final String MOCK_KEYSTORE_PASSWORD = "openspcoop";
+
+	private static final String PROP_SERVER = "connettori.opzioni_avanzate.sse.server";
+	private static final String PROP_MOCK_PORT = "connettori.opzioni_avanzate.sse.mock.port";
+	private static final String SERVER_MOCK = "mock";
+
+	private static SSEDevMockServer sseMockServer;
+
+	private static boolean useMock() {
+		/* In jenkins viene sempre usato il mock; altrimenti decide la property
+		 * 'connettori.opzioni_avanzate.sse.server' (default 'mock'). */
+		if (Utils.isJenkins()) {
+			return true;
+		}
+		return SERVER_MOCK.equalsIgnoreCase(System.getProperty(PROP_SERVER, SERVER_MOCK));
+	}
+
+	@BeforeClass
+	public static void startSseMockIfNeeded() throws IOException, java.security.GeneralSecurityException {
+		if (useMock()) {
+			int port = Integer.parseInt(System.getProperty(PROP_MOCK_PORT, "8092"));
+			String keystorePath = ConfigLoader.getGovwayCfgKeys() + MOCK_KEYSTORE_FILE;
+			sseMockServer = new SSEDevMockServer(port, keystorePath, MOCK_KEYSTORE_PASSWORD);
+			sseMockServer.start();
+		}
+	}
+
+	@AfterClass
+	public static void stopSseMockIfNeeded() {
+		if (sseMockServer != null) {
+			sseMockServer.stop();
+			sseMockServer = null;
+		}
+	}
+
+	private static String getRemoteEndpoint() {
+		if (sseMockServer != null) {
+			return "127.0.0.1:" + sseMockServer.getPort() + "/test";
+		}
+		return SSE_DEV_REMOTE_ENDPOINT;
+	}
+
 	@Test
 	public void testErogazioneSSEdev() throws URISyntaxException, IOException, AssertionError, SQLQueryObjectException  {
 		test(TipoServizio.EROGAZIONE,OPERAZIONE_SSE_DEV);
 	}
-	
+
 	@Test
 	public void testFruizioneSSEdev() throws URISyntaxException, IOException, AssertionError, SQLQueryObjectException  {
 		test(TipoServizio.FRUIZIONE,OPERAZIONE_SSE_DEV);
@@ -75,6 +129,7 @@ public class SSETest extends ConfigLoader {
         // Per SSE la connessione deve restare aperta
         connection.setRequestMethod("GET");
         connection.setRequestProperty("Accept", HttpConstants.CONTENT_TYPE_EVENT_STREAM);
+        connection.setRequestProperty(HEADER_REMOTE_ENDPOINT, getRemoteEndpoint());
         connection.setReadTimeout(0); // NO timeout (connessione long-lived)
         connection.setConnectTimeout(5000);
 
