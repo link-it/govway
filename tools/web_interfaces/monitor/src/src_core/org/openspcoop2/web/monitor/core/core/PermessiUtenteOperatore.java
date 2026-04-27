@@ -20,9 +20,7 @@
 package org.openspcoop2.web.monitor.core.core;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.CoreException;
@@ -31,7 +29,6 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.generic_project.beans.IField;
 import org.openspcoop2.generic_project.dao.IExpressionConstructor;
 import org.openspcoop2.generic_project.expression.IExpression;
-
 import org.openspcoop2.monitor.engine.constants.Costanti;
 import org.openspcoop2.web.monitor.core.bean.UserDetailsBean;
 
@@ -154,19 +151,26 @@ public class PermessiUtenteOperatore {
 				expr.equals(fieldIdentificativoPorta,Costanti.INFORMAZIONE_NON_DISPONIBILE); // statistiche
 			}
 
-			if(this.listIDSoggetti.size()>0){
+			boolean exprFiltriId = false; 
+			IExpression exprIds = exprConstructor.newExpression();
+			if(!this.listIDSoggetti.isEmpty()){
+				IExpression exprIdSoggetti = exprConstructor.newExpression();
 				// I Soggetti rappresentano coloro che gestiscono la transazione, sia che siano fruizioni che erogazioni
 				List<String> identificativiPorta = new ArrayList<>();
 				for (IDSoggetto idSoggetto : this.listIDSoggetti) {
 					identificativiPorta.add(idSoggetto.getCodicePorta());
 				}
-				expr.in(fieldIdentificativoPorta, identificativiPorta);
+				exprIdSoggetti.in(fieldIdentificativoPorta, identificativiPorta);
+				exprIds.and(exprIdSoggetti);
+				exprFiltriId = true;
 			}	
 
-			if(this.listIDServizi.size()>0){
+			
+			if(!this.listIDServizi.isEmpty()){
+				IExpression exprIdServizi = exprConstructor.newExpression();
 				// I Servizi invece rappresentano proprio un servizio specifico (identificato dalla quadrupla tipo/nome servizio e tipo/nome soggetto)
 				// indipendentemente dal fatto se il soggetto erogatore è un soggetto operativo (che quindi ha emesso la transazione e ha l'identificativo porta) o meno
-				List<IExpression> servizi = new ArrayList<IExpression>();
+				List<IExpression> servizi = new ArrayList<>();
 				for (IDServizio idServizio : this.listIDServizi) {
 					IExpression exprServ = exprConstructor.newExpression();
 					exprServ.and();
@@ -182,7 +186,13 @@ public class PermessiUtenteOperatore {
 					exprServ.equals(fieldVersioneServizio, idServizio.getVersione());
 					servizi.add(exprServ);
 				}
-				expr.or(servizi.toArray(new IExpression[1]));
+				exprIdServizi.or(servizi.toArray(new IExpression[1]));
+				exprIds.and(exprIdServizi);
+				exprFiltriId = true;
+			}
+			
+			if(exprFiltriId) {
+				expr.or(exprIds);
 			}
 
 			return expr;
@@ -191,117 +201,18 @@ public class PermessiUtenteOperatore {
 		}
 	}
 
-	public IExpression toExpressionAllarmi(IExpressionConstructor exprConstructor,
-			IField fieldTipoMittente,IField fieldMittente,
-			IField fieldTipoDestinatario,IField fieldDestinatario,
-			IField fieldTipoServizio,IField fieldNomeServizio, IField fieldVersioneServizio ) throws CoreException{
-		try{
-
-			IExpression expr = exprConstructor.newExpression();
-			expr.or();
-
-			if(this.listIDSoggetti.size()>0){
-
-				// utility
-				IExpression mittenteQualsiasiExpr = exprConstructor.newExpression();
-				mittenteQualsiasiExpr.and();
-				mittenteQualsiasiExpr.isNull(fieldTipoMittente);
-				mittenteQualsiasiExpr.isNull(fieldMittente);
-
-				IExpression destinatarioQualsiasiExpr = exprConstructor.newExpression();
-				destinatarioQualsiasiExpr.and();
-				destinatarioQualsiasiExpr.isNull(fieldTipoDestinatario);
-				destinatarioQualsiasiExpr.isNull(fieldDestinatario);
-
-				
-
-				// gli allarmi che possono vedere sono:
-				// mittente '*' e destinatario uno dei soggetti associati all'utenza
-				// mittente uno dei soggetti associati all'utenza e destinatario '*'
-				// mittente e destinatario associati all'utenza
-
-				IExpression soggettiGestioneExpr = exprConstructor.newExpression();				
-				soggettiGestioneExpr.or();
-
-
-
-				// mittente '*' e destinatario uno dei soggetti associati all'utenza
-
-				IExpression destinatarioExpr = exprConstructor.newExpression();
-				destinatarioExpr.or();
-				for (IDSoggetto idSoggetto : this.listIDSoggetti) {
-					Map<IField, Object> destSoggetto = new HashMap<IField, Object>();
-					destSoggetto.put(fieldTipoDestinatario,idSoggetto.getTipo());
-					destSoggetto.put(fieldDestinatario,idSoggetto.getNome());
-					destinatarioExpr.allEquals(destSoggetto);
-				}
-				
-				soggettiGestioneExpr.and(mittenteQualsiasiExpr,destinatarioExpr);
-
-
-
-				// mittente uno dei soggetti associati all'utenza e destinatario '*'
-
-				IExpression mittenteExpr = exprConstructor.newExpression();
-				mittenteExpr.or();
-				for (IDSoggetto idSoggetto : this.listIDSoggetti) {
-					Map<IField, Object> mittSoggetto = new HashMap<IField, Object>();
-					mittSoggetto.put(fieldTipoMittente,idSoggetto.getTipo());
-					mittSoggetto.put(fieldMittente,idSoggetto.getNome());
-					mittenteExpr.allEquals(mittSoggetto);
-				}
-
-				soggettiGestioneExpr.and(destinatarioQualsiasiExpr,mittenteExpr);
-
-
-
-				// mittente e destinatario associati all'utenza
-
-				soggettiGestioneExpr.and(mittenteExpr,destinatarioExpr);
-
-
-				expr.or(soggettiGestioneExpr);
-			}
-
-			if(this.listIDServizi.size()>0){
-
-				// I Servizi invece rappresentano proprio un servizio specifico (identificato dalla quadrupla tipo/nome servizio e tipo/nome soggetto)
-
-				List<IExpression> servizi = new ArrayList<IExpression>();
-				for (IDServizio idServizio : this.listIDServizi) {
-					IExpression exprServ = exprConstructor.newExpression();
-					exprServ.and();
-					exprServ.isNotNull(fieldTipoDestinatario);
-					exprServ.equals(fieldTipoDestinatario, idServizio.getSoggettoErogatore().getTipo());
-					exprServ.isNotNull(fieldDestinatario);
-					exprServ.equals(fieldDestinatario, idServizio.getSoggettoErogatore().getNome());
-					exprServ.isNotNull(fieldTipoServizio);
-					exprServ.equals(fieldTipoServizio, idServizio.getTipo());
-					exprServ.isNotNull(fieldNomeServizio);
-					exprServ.equals(fieldNomeServizio, idServizio.getNome());
-					exprServ.isNotNull(fieldVersioneServizio);
-					exprServ.equals(fieldVersioneServizio, idServizio.getVersione());
-					servizi.add(exprServ);
-				}
-				expr.or(servizi.toArray(new IExpression[1]));
-			}
-
-			return expr;
-		}catch(Exception e){
-			throw new CoreException(e.getMessage(),e);
-		}
-	}
-
+	
 	public IExpression toExpressionConfigurazioneServizi(IExpressionConstructor exprConstructor,IField fieldTipoSoggetto,IField fieldNomeSoggetto,
 			IField fieldTipoSoggettoErogatore,IField fieldNomeSoggettoErogatore,IField fieldTipoServizio,IField fieldNomeServizio, IField fieldVersioneServizio,
 			boolean setNotNull) throws CoreException{
 		try{
 			IExpression expr = exprConstructor.newExpression();
-			expr.or();
+			expr.and();
 
-			if(this.listIDSoggetti.size()>0){
+			if(!this.listIDSoggetti.isEmpty()){
+				IExpression exprIdsSoggetti = exprConstructor.newExpression();
 				// I Soggetti rappresentano coloro che gestiscono la transazione, sia che siano fruizioni che erogazioni
-				List<IExpression> soggetti = new ArrayList<IExpression>();
+				List<IExpression> soggetti = new ArrayList<>();
 				for (IDSoggetto idSoggetto : this.listIDSoggetti) {
 					IExpression exprSogg = exprConstructor.newExpression();
 					exprSogg.and();
@@ -315,14 +226,17 @@ public class PermessiUtenteOperatore {
 					exprSogg.equals(fieldNomeSoggetto, idSoggetto.getNome());
 					soggetti.add(exprSogg);
 				}
-				if(soggetti.size()>0)
-					expr.or(soggetti.toArray(new IExpression[1]));
+				if(!soggetti.isEmpty()) {
+					exprIdsSoggetti.or(soggetti.toArray(new IExpression[1]));
+					expr.and(exprIdsSoggetti);
+				}
 			}	
 
-			if(this.listIDServizi.size()>0){
+			if(!this.listIDServizi.isEmpty()){
+				IExpression exprIdsServizi = exprConstructor.newExpression();
 				// I Servizi invece rappresentano proprio un servizio specifico (identificato dalla quadrupla tipo/nome servizio e tipo/nome soggetto)
 				// indipendentemente dal fatto se il soggetto erogatore è un soggetto operativo (che quindi ha emesso la transazione e ha l'identificativo porta) o meno
-				List<IExpression> servizi = new ArrayList<IExpression>();
+				List<IExpression> servizi = new ArrayList<>();
 				for (IDServizio idServizio : this.listIDServizi) {
 					IExpression exprServ = exprConstructor.newExpression();
 					exprServ.and();
@@ -348,8 +262,10 @@ public class PermessiUtenteOperatore {
 					exprServ.equals(fieldVersioneServizio, idServizio.getVersione());
 					servizi.add(exprServ);
 				}
-				if(servizi.size()>0)
-					expr.or(servizi.toArray(new IExpression[1]));
+				if(!servizi.isEmpty()) {
+					exprIdsServizi.or(servizi.toArray(new IExpression[1]));
+					expr.and(exprIdsServizi);
+				}
 			}
 
 			return expr;

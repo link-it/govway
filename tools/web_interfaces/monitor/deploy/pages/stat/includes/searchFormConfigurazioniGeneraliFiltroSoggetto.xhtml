@@ -15,7 +15,7 @@
 							directInputSuggestions="true"  converter="selectItemConverter" enableManualInput="true" listWidth="#{sf_mbean.soggettiAssociatiSelectItemsWidth}">
 						<f:selectItem itemValue="--" itemLabel="--"/>
 						<f:selectItems value="#{sf_mbean.tipiNomiSoggettiAssociati}"  />
-						<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.destinatarioSelected}" reRender="searchPnl,servizioComboCtr"/>
+						<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.destinatarioSelected}" reRender="searchPnl" limitToList="true"/>
 					</rich:comboBox>
 				</link:prop>
 				<rich:toolTip rendered="#{not empty sf_bean.tipoNomeSoggettoLocale}" direction="top-right" for="sogAssociatoSuggestion" showDelay="200" 
@@ -35,8 +35,8 @@
 						<h:column>
 							<h:outputText value="#{selectItem.label}" rendered="true" />
 						</h:column>
-						<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.destinatarioSelected}" reRender="searchPnl,servizioComboCtr" >
-							<f:setPropertyActionListener value="#{selectItem.value}" target="#{sf_bean.tipoNomeSoggettoLocale}" />  
+						<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.destinatarioSelected}" reRender="searchPnl" limitToList="true">
+							<f:setPropertyActionListener value="#{selectItem.value}" target="#{sf_bean.tipoNomeSoggettoLocale}" />
 						</a4j:support>
 					</rich:suggestionbox>
 				</link:prop>
@@ -53,7 +53,7 @@
 						width="416"   enableManualInput="true">
 						<f:selectItem itemValue="--" itemLabel="--"/>
 						<f:selectItems value="#{sf_mbean.soggetti}"  />
-						<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.destinatarioSelected}"	reRender="searchPnl,servizioComboCtr" />
+						<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.destinatarioSelected}" reRender="searchPnl" limitToList="true"/>
 					</rich:comboBox>
 					<rich:toolTip rendered="#{not empty sf_bean.tipoNomeSoggettoLocale}" direction="top-right" for="sogErogCombo" showDelay="200" 
 						styleClass="tooltip" layout="block" value="#{sf_bean.tipoNomeSoggettoLocale}"/>

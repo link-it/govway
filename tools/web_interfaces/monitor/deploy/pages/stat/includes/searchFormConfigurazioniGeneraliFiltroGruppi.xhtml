@@ -23,8 +23,8 @@
 					<h:column>
 						<h:outputText value="#{selectItem.label}" rendered="true" />
 					</h:column>
-					<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.gruppoSelected}" reRender="searchPnl">
-						<f:setPropertyActionListener value="#{selectItem.value}" target="#{sf_bean.gruppo}" />  
+					<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.gruppoSelected}" reRender="searchPnl" limitToList="true">
+						<f:setPropertyActionListener value="#{selectItem.value}" target="#{sf_bean.gruppo}" />
 					</a4j:support>
 				</rich:suggestionbox>
 				<h:inputHidden id="gruppoComboHidden" value="#{sf_bean.gruppo}" />
@@ -39,7 +39,7 @@
 					converter="selectItemConverter" width="416">
 					<f:selectItem itemValue="--" itemLabel="--"/>
 					<f:selectItems value="#{sf_mbean.gruppi}" />
-					<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.gruppoSelected}" reRender="searchPnl"/>
+					<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.gruppoSelected}" reRender="searchPnl" limitToList="true"/>
 				</rich:comboBox>
 				<rich:toolTip rendered="#{not empty sf_bean.gruppo}" direction="top-right" for="gruppoCombo2" showDelay="200" 
 					styleClass="tooltip" layout="block" value="#{sf_bean.gruppoTooltip}"/>

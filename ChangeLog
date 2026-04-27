@@ -1,3 +1,11 @@
+2026-04-27 Giuliano Pintori <pintori@link.it>
+
+	* [GovWayMonitor]
+	Risolto Bug #1755
+	I filtri su Soggetti e API associati ad un'utenza operatore venivano applicati in OR, 
+	consentendo all'operatore di vedere comunque tutte le API dei soggetti associati. 
+	I filtri vengono ora applicati in AND, limitando correttamente la visibilità su Transazioni, Configurazione Generale e Allarmi.                         
+
 2026-04-23  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
