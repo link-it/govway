@@ -1,5 +1,13 @@
 2026-04-27 Giuliano Pintori <pintori@link.it>
 
+	* [GovWayCore]
+	Aggiunta funzionalità #1738	
+	Aggiornate le seguenti librerie di terze parti:      
+	 - aggiornata libreria 'org.apache.lucene:*' alla versione 10.4.0
+	 - aggiornata libreria 'org.apache.poi:*' alla versione 5.5.1
+
+2026-04-27 Giuliano Pintori <pintori@link.it>
+
 	* [GovWayMonitor]
 	Risolto Bug #1755
 	I filtri su Soggetti e API associati ad un'utenza operatore venivano applicati in OR, 

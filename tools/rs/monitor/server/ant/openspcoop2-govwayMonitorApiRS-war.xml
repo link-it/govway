@@ -214,9 +214,9 @@
 				<include name="*.jar"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/reports">
-				<include name="poi-5.4.1.jar"/>
-				<include name="poi-ooxml-5.4.1.jar"/>
-				<include name="poi-ooxml-lite-5.4.1.jar"/>
+				<include name="poi-5.5.1.jar"/>
+				<include name="poi-ooxml-5.5.1.jar"/>
+				<include name="poi-ooxml-lite-5.5.1.jar"/>
 				<include name="xmlbeans-5.3.0.jar"/>
 			</lib>
 			<lib dir="${required_lib}/pdf">

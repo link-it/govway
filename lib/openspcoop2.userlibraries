@@ -124,11 +124,11 @@
 	<archive path="/op2_3.4.dev/lib/log/log4j-jcl-2.25.4.jar"/>
 	<archive path="/op2_3.4.dev/lib/log/log4j-layout-template-json-2.25.4.jar"/>
 	<!-- lucene -->
-        <archive path="/op2_3.4.dev/lib/lucene/lucene-core-10.2.2.jar"/>
-	<archive path="/op2_3.4.dev/lib/lucene/lucene-codecs-10.2.2.jar"/>
-	<archive path="/op2_3.4.dev/lib/lucene/lucene-misc-10.2.2.jar"/>
-	<archive path="/op2_3.4.dev/lib/lucene/lucene-queries-10.2.2.jar"/>
-	<archive path="/op2_3.4.dev/lib/lucene/lucene-suggest-10.2.2.jar"/>
+        <archive path="/op2_3.4.dev/lib/lucene/lucene-core-10.4.0.jar"/>
+	<archive path="/op2_3.4.dev/lib/lucene/lucene-codecs-10.4.0.jar"/>
+	<archive path="/op2_3.4.dev/lib/lucene/lucene-misc-10.4.0.jar"/>
+	<archive path="/op2_3.4.dev/lib/lucene/lucene-queries-10.4.0.jar"/>
+	<archive path="/op2_3.4.dev/lib/lucene/lucene-suggest-10.4.0.jar"/>
 	<!-- openapi4j -->
 	<archive path="/op2_3.4.dev/lib/openapi4j/openapi-core-1.0.7-gov4j-jk9.jar"/>
 	<archive path="/op2_3.4.dev/lib/openapi4j/openapi-parser-1.0.7-gov4j-jk9.jar"/>
@@ -167,9 +167,9 @@
 	<archive path="/op2_3.4.dev/lib/redis/netty-codec-dns-4.2.12.Final.jar"/>
 	<archive path="/op2_3.4.dev/lib/redis/netty-transport-native-unix-common-4.2.12.Final.jar"/>
 	<!-- reports -->
-	<archive path="/op2_3.4.dev/lib/reports/poi-5.4.1.jar"/>
-	<archive path="/op2_3.4.dev/lib/reports/poi-ooxml-5.4.1.jar"/>
-	<archive path="/op2_3.4.dev/lib/reports/poi-ooxml-lite-5.4.1.jar"/>
+	<archive path="/op2_3.4.dev/lib/reports/poi-5.5.1.jar"/>
+	<archive path="/op2_3.4.dev/lib/reports/poi-ooxml-5.5.1.jar"/>
+	<archive path="/op2_3.4.dev/lib/reports/poi-ooxml-lite-5.5.1.jar"/>
 	<archive path="/op2_3.4.dev/lib/reports/xmlbeans-5.3.0.jar"/>
 	<!-- saaj -->
 	<archive path="/op2_3.4.dev/lib/saaj/jakarta.xml.soap-api-3.0.2.jar"/>
