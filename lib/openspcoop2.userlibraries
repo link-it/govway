@@ -29,9 +29,9 @@
 	<archive path="/op2_3.4.dev/lib/console/govway-monitor-ui-jsf-20260424.jar"/>
 	<archive path="/op2_3.4.dev/lib/console/govway-monitor-ui-api-20260424.jar"/>
 	<archive path="/op2_3.4.dev/lib/console/govway-monitor-ui-components-20260424.jar"/>
-	<archive path="/op2_3.4.dev/lib/console/jquery-3.7.1.jar"/>
-	<archive path="/op2_3.4.dev/lib/console/jquery-ui-1.14.1.jar"/>
-	<archive path="/op2_3.4.dev/lib/console/jsoup-1.21.2.jar"/>
+	<archive path="/op2_3.4.dev/lib/console/jquery-4.0.0.jar"/>
+	<archive path="/op2_3.4.dev/lib/console/jquery-ui-1.14.2.jar"/>
+	<archive path="/op2_3.4.dev/lib/console/jsoup-1.22.2.jar"/>
 	<!-- cxf -->
         <archive path="/op2_3.4.dev/lib/cxf/cxf-core-4.2.0-gov4j-1.jar"/>
 	<archive path="/op2_3.4.dev/lib/cxf/cxf-rt-bindings-soap-4.2.0.jar"/>

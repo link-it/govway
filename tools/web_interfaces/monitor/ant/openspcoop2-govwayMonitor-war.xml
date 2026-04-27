@@ -234,8 +234,13 @@
 				<include name="commons-compress-1.28.0.jar" />
 			</lib>
 			<lib dir="${required_lib_govwayMonitor}/console">
+				<!--
+				Incluso sopra come risorse minimizzate
+				<include name="jquery-4.0.0.jar"/>
+				<include name="jquery-ui-1.14.2.jar"/>
+				-->
 				<include name="govway-monitor-ui-*.jar"/>
-				<include name="jsoup-1.21.2.jar"/>
+				<include name="jsoup-1.22.2.jar"/>
 			</lib>
 			<lib dir="${required_lib_govwayMonitor}/jakarta">
 				<include name="jakarta.activation-api-2.1.4.jar" />

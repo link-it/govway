@@ -1,3 +1,12 @@
+2026-04-27 Giuliano Pintori <pintori@link.it>
+
+	* [GovWayMonitor, GovWayConsole]
+	Aggiunta funzionalità #1756
+	Aggiornate le seguenti librerie di terze parti:
+	- aggiornata libreria 'org.webjars:jquery' alla versione 4.0.0
+	- aggiornata libreria 'org.webjars:jquery-ui' alla versione 1.14.2
+	- aggiornata libreria 'org.jsoup:jsoup' alla versione 1.22.2
+
 2026-04-23  Andrea Poli <apoli@link.it>
 
 	*  [GovWayCore]

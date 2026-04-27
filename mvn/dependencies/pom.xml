@@ -160,10 +160,10 @@
 							<!--
 								Per eliminare il warning
 								[WARNING] No lock file exists - this will result in false negatives; please run `npm install \-\-package-lock`
-								[WARNING] Analyzing `/tmp/dctempf0629e0d-f705-4679-abf5-ebc3ee3408e7/check13553886643871381811tmp/238/META-INF/resources/webjars/jquery-ui/1.14.1/package.json` - 			however, the node_modules directory does not exist. Please run `npm install` prior to running dependency-check
+								[WARNING] Analyzing `/tmp/dctempf0629e0d-f705-4679-abf5-ebc3ee3408e7/check13553886643871381811tmp/238/META-INF/resources/webjars/jquery-ui/1.14.2/package.json` - 			however, the node_modules directory does not exist. Please run `npm install` prior to running dependency-check
 								Il tool sta trattando i package.json nei WebJars come se fossero un progetto Node.js.
 								In un JAR non ci saranno mai node_modules, quindi questi warning sono normali e non indicano un problema reale.
-								Il jar 'jquery-ui-1.14.1.jar', essendo un archivio jar, è già sotto controllo su NVD.
+								Il jar 'jquery-ui-1.14.2.jar', essendo un archivio jar, è già sotto controllo su NVD.
 							-->
 							<nodeAnalyzerEnabled>false</nodeAnalyzerEnabled>
 							<!-- per gestire ritardi dovuti al NVD server -->
