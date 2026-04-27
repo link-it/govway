@@ -1653,7 +1653,7 @@ for (int i = 0; i < dati.size(); i++) {
 			                        																	$('#<%=idPwdEdit %>').click(function() {
 			                        																		
 			                        																		// Abilita l'input di tipo password
-			                        																        $('#<%=idPwd %>').attr('disabled', false);
+			                        																        $('#<%=idPwd %>').prop('disabled', false);
 			                        																		
 				                        																     // convertire l'elemento in un text
 			                        																        // toggle the type attribute

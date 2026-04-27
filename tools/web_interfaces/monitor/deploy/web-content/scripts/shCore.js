@@ -46,12 +46,12 @@ function checkWidth(xmlPnl,bodyWrapperPanel)
 {
 	
 
-	var offsetXmlPnl = xmlPnl.offset();
+	var offsetXmlPnl = xmlPnl.offset() || { top: 0, left: 0 };
 	var offsetLeftXmlPnl = offsetXmlPnl.left;
 	var widthXmlPnl = xmlPnl.width();
 
 	var bodyWidth = bodyWrapperPanel.width();
-	var offsetBody = bodyWrapperPanel.offset();
+	var offsetBody = bodyWrapperPanel.offset() || { top: 0, left: 0 };
 	var offsetLeftBody = offsetBody.left;
 	
 	if((offsetLeftXmlPnl + widthXmlPnl) > (offsetLeftBody +bodyWidth)){

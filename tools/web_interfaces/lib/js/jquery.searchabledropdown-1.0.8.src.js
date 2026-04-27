@@ -235,7 +235,7 @@
         		return true;
 
         	// set search text
-        	search = $.trim(input.val().toLowerCase());
+        	search = input.val().toLowerCase().trim();
 
         	// if a previous timer is running, stop it
         	clearSearchTimer();

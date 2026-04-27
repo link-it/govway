@@ -33,8 +33,8 @@
             isNumber: function(obj) {
                 return typeof obj === "number";
             },
-            isArray: $.isArray,
-            isFunction: $.isFunction,
+            isArray: Array.isArray,
+            isFunction: function(obj) { return typeof obj === "function"; },
             isObject: $.isPlainObject,
             isUndefined: function(obj) {
                 return typeof obj === "undefined";
@@ -327,7 +327,7 @@
             return JSON.stringify(_.isUndefined(val) ? null : val);
         }
         function decode(val) {
-            return $.parseJSON(val);
+            return JSON.parse(val);
         }
         function gatherMatchingKeys(keyMatcher) {
             var i, key, keys = [], len = LOCAL_STORAGE.length;
@@ -946,8 +946,8 @@
             isNumber: function(obj) {
                 return typeof obj === "number";
             },
-            isArray: $.isArray,
-            isFunction: $.isFunction,
+            isArray: Array.isArray,
+            isFunction: function(obj) { return typeof obj === "function"; },
             isObject: $.isPlainObject,
             isUndefined: function(obj) {
                 return typeof obj === "undefined";

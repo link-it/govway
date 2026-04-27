@@ -82,7 +82,7 @@
 
       // Trim value
       if (typeof item === "string" && self.options.trimValue) {
-        item = $.trim(item);
+        item = item.trim();
       }
 
       // Throw an error when trying to add an object while the itemValue option was not set
@@ -327,10 +327,10 @@
             var map = this.map,
                 data = typeahead.source(query);
 
-            if ($.isFunction(data.success)) {
+            if (typeof data.success === "function") {
               // support for Angular callbacks
               data.success(processItems);
-            } else if ($.isFunction(data.then)) {
+            } else if (typeof data.then === "function") {
               // support for Angular promises
               data.then(processItems);
             } else {
@@ -361,7 +361,7 @@
 
           // Determine if main configurations were passed or simply a dataset
           var typeaheadjs = self.options.typeaheadjs;
-          if (!$.isArray(typeaheadjs)) {
+          if (!Array.isArray(typeaheadjs)) {
               typeaheadjs = [null, typeaheadjs];
           }
           var valueKey = typeaheadjs[1].valueKey; // We should test typeaheadjs.size >= 1
