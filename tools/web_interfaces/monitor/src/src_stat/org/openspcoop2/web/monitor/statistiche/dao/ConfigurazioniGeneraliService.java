@@ -1808,7 +1808,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 			String input) throws Exception {
 		List<IDServizio> listIDServizio = null;
 		if(!apiImplSelected && ( (gruppo!=null && !"".equals(gruppo)) || idAccordo!=null ) ) {
-			listIDServizio = new ArrayList<IDServizio>();
+			listIDServizio = new ArrayList<>();
 			List<SelectItem> list = null;
 			boolean distinct = true;
 			if(PddRuolo.DELEGATA.equals(this.search.getTipologiaTransazioni())) {
@@ -1817,7 +1817,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 				// bisogna filtrare per soggetti operativi
 				list = this.dynamicUtils.getListaSelectItemsElencoConfigurazioneServiziErogazione(tipoProtocollo, gruppo, idAccordo, tipoSoggetto, nomeSoggetto,input, true, this.search.getPermessiUtenteOperatore(), distinct);
 			}
-			if(list!=null && list.size()>0) {
+			if(list!=null && !list.isEmpty()) {
 				for (SelectItem selectItem : list) {
 					String servizioString = (String) selectItem.getValue();
 					IDServizio idServizio = ParseUtility.parseServizioSoggetto(servizioString);

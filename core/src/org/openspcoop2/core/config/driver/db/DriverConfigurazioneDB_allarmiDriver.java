@@ -22,6 +22,7 @@ package org.openspcoop2.core.config.driver.db;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,13 +33,13 @@ import org.openspcoop2.core.allarmi.utils.AllarmiConverterUtils;
 import org.openspcoop2.core.allarmi.utils.AllarmiDriverUtils;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
-import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
+import org.openspcoop2.utils.sql.SQLQueryObjectException;
 
 /**
  * DriverConfigurazioneDB_allarmiDriver
@@ -60,7 +61,7 @@ public class DriverConfigurazioneDB_allarmiDriver {
 	protected long countAllarmi(String tipologiaRicerca, Boolean enabled, StatoAllarme stato, Boolean acknowledged, String nomeAllarme,
 			List<IDSoggetto> listSoggettiProprietariAbilitati, List<IDServizio> listIDServizioAbilitati,
 			List<String> tipoSoggettiByProtocollo, List<String> tipoServiziByProtocollo, 
-			IDSoggetto idSoggettoProprietario, List<IDServizio> listIDServizio) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+			IDSoggetto idSoggettoProprietario, List<IDServizio> listIDServizio) throws DriverConfigurazioneException {
 		
 		Connection con = null;
 		ResultSet rs = null;
@@ -85,7 +86,7 @@ public class DriverConfigurazioneDB_allarmiDriver {
 			sqlQueryObject.addSelectCountField(CostantiDB.ALLARMI + ".id", "numeroAllarmi");
 			sqlQueryObject.setANDLogicOperator(true);
 			
-			_setExpressionAllarmi(sqlQueryObject, tipologiaRicerca, enabled, stato, acknowledged, nomeAllarme,
+			setExpressionAllarmiEngine(sqlQueryObject, tipologiaRicerca, enabled, stato, acknowledged, nomeAllarme,
 					listSoggettiProprietariAbilitati, listIDServizioAbilitati,
 					tipoSoggettiByProtocollo, tipoServiziByProtocollo, 
 					idSoggettoProprietario, listIDServizio);
@@ -94,7 +95,7 @@ public class DriverConfigurazioneDB_allarmiDriver {
 
 			stm = con.prepareStatement(sqlQuery);
 			
-			sqlQuery = _setExpressionAllarmiValues(stm, sqlQuery,
+			sqlQuery = setExpressionAllarmiValuesEngine(stm, sqlQuery,
 					tipologiaRicerca, enabled, stato, acknowledged, nomeAllarme,
 					listSoggettiProprietariAbilitati, listIDServizioAbilitati,
 					tipoSoggettiByProtocollo, tipoServiziByProtocollo, 
@@ -126,7 +127,7 @@ public class DriverConfigurazioneDB_allarmiDriver {
 			List<IDSoggetto> listSoggettiProprietariAbilitati, List<IDServizio> listIDServizioAbilitati,
 			List<String> tipoSoggettiByProtocollo, List<String> tipoServiziByProtocollo, 
 			IDSoggetto idSoggettoProprietario, List<IDServizio> listIDServizio,
-			Integer offset, Integer limit) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+			Integer offset, Integer limit) throws DriverConfigurazioneException {
 		
 		Connection con = null;
 		ResultSet rs = null;
@@ -146,7 +147,7 @@ public class DriverConfigurazioneDB_allarmiDriver {
 
 		try {
 			
-			List<Allarme> list = new ArrayList<Allarme>();
+			List<Allarme> list = new ArrayList<>();
 			
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.ALLARMI);
@@ -154,7 +155,7 @@ public class DriverConfigurazioneDB_allarmiDriver {
 			sqlQueryObject.addSelectField(CostantiDB.ALLARMI + ".alias");
 			sqlQueryObject.setANDLogicOperator(true);
 			
-			_setExpressionAllarmi(sqlQueryObject, tipologiaRicerca, enabled, stato, acknowledged, nomeAllarme,
+			setExpressionAllarmiEngine(sqlQueryObject, tipologiaRicerca, enabled, stato, acknowledged, nomeAllarme,
 					listSoggettiProprietariAbilitati, listIDServizioAbilitati,
 					tipoSoggettiByProtocollo, tipoServiziByProtocollo, 
 					idSoggettoProprietario, listIDServizio);
@@ -172,7 +173,7 @@ public class DriverConfigurazioneDB_allarmiDriver {
 
 			stm = con.prepareStatement(sqlQuery);
 
-			sqlQuery = _setExpressionAllarmiValues(stm, sqlQuery,
+			sqlQuery = setExpressionAllarmiValuesEngine(stm, sqlQuery,
 					tipologiaRicerca, enabled, stato, acknowledged, nomeAllarme,
 					listSoggettiProprietariAbilitati, listIDServizioAbilitati,
 					tipoSoggettiByProtocollo, tipoServiziByProtocollo, 
@@ -201,10 +202,10 @@ public class DriverConfigurazioneDB_allarmiDriver {
 		
 	}
 	
-	private void _setExpressionAllarmi(ISQLQueryObject sqlQueryObject, String tipologiaRicerca, Boolean enabled, StatoAllarme stato, Boolean acknowledged, String nomeAllarme,
+	private void setExpressionAllarmiEngine(ISQLQueryObject sqlQueryObject, String tipologiaRicerca, Boolean enabled, StatoAllarme stato, Boolean acknowledged, String nomeAllarme,
 			List<IDSoggetto> listSoggettiProprietariAbilitati, List<IDServizio> listIDServizioAbilitati,
 			List<String> tipoSoggettiByProtocollo, List<String> tipoServiziByProtocollo, 
-			IDSoggetto idSoggettoProprietario, List<IDServizio> listIDServizio) throws Exception {
+			IDSoggetto idSoggettoProprietario, List<IDServizio> listIDServizio) throws SQLQueryObjectException {
 		if(enabled!=null){
 			sqlQueryObject.addWhereCondition("enabled=?");
 		}
@@ -228,17 +229,17 @@ public class DriverConfigurazioneDB_allarmiDriver {
 		
 		if(CostantiConfigurazione.ALLARMI_TIPOLOGIA_APPLICATIVA.equals(tipologiaRicerca) || CostantiConfigurazione.ALLARMI_TIPOLOGIA_SOLO_ASSOCIATE.equals(tipologiaRicerca)) {
 		
-			String alias_PA = "pa";
-			String alias_SOGGETTI = "sog";
+			String aliasPA = "pa";
+			String aliasSOGGETTI = "sog";
 			
 			sqlQueryObjectPorteApplicative = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
-			sqlQueryObjectPorteApplicative.addFromTable(CostantiDB.PORTE_APPLICATIVE,alias_PA);
+			sqlQueryObjectPorteApplicative.addFromTable(CostantiDB.PORTE_APPLICATIVE,aliasPA);
 			sqlQueryObjectPorteApplicative.setANDLogicOperator(true);
 			sqlQueryObjectPorteApplicative.addWhereCondition(CostantiDB.ALLARMI+".filtro_ruolo=?");
-			sqlQueryObjectPorteApplicative.addWhereCondition(CostantiDB.ALLARMI+".filtro_porta="+alias_PA+".nome_porta");
-			sqlQueryObjectPorteApplicative.addWhereIsNotNullCondition(alias_PA+".tipo_servizio");
-			sqlQueryObjectPorteApplicative.addWhereIsNotNullCondition(alias_PA+".servizio");
-			sqlQueryObjectPorteApplicative.addWhereIsNotNullCondition(alias_PA+".versione_servizio");
+			sqlQueryObjectPorteApplicative.addWhereCondition(CostantiDB.ALLARMI+".filtro_porta="+aliasPA+".nome_porta");
+			sqlQueryObjectPorteApplicative.addWhereIsNotNullCondition(aliasPA+".tipo_servizio");
+			sqlQueryObjectPorteApplicative.addWhereIsNotNullCondition(aliasPA+".servizio");
+			sqlQueryObjectPorteApplicative.addWhereIsNotNullCondition(aliasPA+".versione_servizio");
 			
 			if( (listSoggettiProprietariAbilitati!=null && !listSoggettiProprietariAbilitati.isEmpty())
 					||
@@ -250,16 +251,15 @@ public class DriverConfigurazioneDB_allarmiDriver {
 					||
 				listIDServizio!=null && !listIDServizio.isEmpty()
 					) {
-				sqlQueryObjectPorteApplicative.addFromTable(CostantiDB.SOGGETTI,alias_SOGGETTI);
-				sqlQueryObjectPorteApplicative.addWhereCondition(alias_PA+".id_soggetto = "+alias_SOGGETTI+".id");
+				sqlQueryObjectPorteApplicative.addFromTable(CostantiDB.SOGGETTI,aliasSOGGETTI);
+				sqlQueryObjectPorteApplicative.addWhereCondition(aliasPA+".id_soggetto = "+aliasSOGGETTI+".id");
 			}
 			
 			
 			
 			// Utenza permessi
 			
-			List<String> condizioniUtenza = new ArrayList<>();
-			
+			String condizioneUtenzaSoggetti = null;
 			if(listSoggettiProprietariAbilitati!=null && !listSoggettiProprietariAbilitati.isEmpty()) {
 				ISQLQueryObject sqlQueryObjectUtenzaSoggetto = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 				sqlQueryObjectUtenzaSoggetto.setANDLogicOperator(true);
@@ -267,14 +267,16 @@ public class DriverConfigurazioneDB_allarmiDriver {
 				for (@SuppressWarnings("unused") IDSoggetto idSoggetto : listSoggettiProprietariAbilitati) {
 					ISQLQueryObject sqlQueryObjectSoggetto = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 					sqlQueryObjectSoggetto.setANDLogicOperator(true);
-					sqlQueryObjectSoggetto.addWhereCondition(alias_SOGGETTI+".tipo_soggetto = ?");
-					sqlQueryObjectSoggetto.addWhereCondition(alias_SOGGETTI+".nome_soggetto = ?");
+					sqlQueryObjectSoggetto.addWhereCondition(aliasSOGGETTI+".tipo_soggetto = ?");
+					sqlQueryObjectSoggetto.addWhereCondition(aliasSOGGETTI+".nome_soggetto = ?");
 					condizioni.add(sqlQueryObjectSoggetto.createSQLConditions());
 				}
 				sqlQueryObjectUtenzaSoggetto.addWhereCondition(false, condizioni.toArray(new String[condizioni.size()]));
 				
-				condizioniUtenza.add(sqlQueryObjectUtenzaSoggetto.createSQLConditions());
+				condizioneUtenzaSoggetti = sqlQueryObjectUtenzaSoggetto.createSQLConditions();
 			}
+			
+			String condizioneUtenzaServizi = null;
 			if(listIDServizioAbilitati!=null && !listIDServizioAbilitati.isEmpty()) {
 				ISQLQueryObject sqlQueryObjectUtenzaServizio = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 				sqlQueryObjectUtenzaServizio.setANDLogicOperator(true);
@@ -282,56 +284,62 @@ public class DriverConfigurazioneDB_allarmiDriver {
 				for (@SuppressWarnings("unused") IDServizio idServizio : listIDServizioAbilitati) {
 					ISQLQueryObject sqlQueryObjectServizio = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 					sqlQueryObjectServizio.setANDLogicOperator(true);
-					sqlQueryObjectServizio.addWhereCondition(alias_SOGGETTI+".tipo_soggetto = ?");
-					sqlQueryObjectServizio.addWhereCondition(alias_SOGGETTI+".nome_soggetto = ?");
-					sqlQueryObjectServizio.addWhereCondition(alias_PA+".tipo_servizio = ?");
-					sqlQueryObjectServizio.addWhereCondition(alias_PA+".servizio = ?");
-					sqlQueryObjectServizio.addWhereCondition(alias_PA+".versione_servizio = ?");
+					sqlQueryObjectServizio.addWhereCondition(aliasSOGGETTI+".tipo_soggetto = ?");
+					sqlQueryObjectServizio.addWhereCondition(aliasSOGGETTI+".nome_soggetto = ?");
+					sqlQueryObjectServizio.addWhereCondition(aliasPA+".tipo_servizio = ?");
+					sqlQueryObjectServizio.addWhereCondition(aliasPA+".servizio = ?");
+					sqlQueryObjectServizio.addWhereCondition(aliasPA+".versione_servizio = ?");
 					condizioni.add(sqlQueryObjectServizio.createSQLConditions());
 				}
 				sqlQueryObjectUtenzaServizio.addWhereCondition(false, condizioni.toArray(new String[condizioni.size()]));
 				
-				condizioniUtenza.add(sqlQueryObjectUtenzaServizio.createSQLConditions());
+				condizioneUtenzaServizi = sqlQueryObjectUtenzaServizio.createSQLConditions();
 			}
 			
-			if(!condizioniUtenza.isEmpty()) {
-				sqlQueryObjectPorteApplicative.addWhereCondition(false, condizioniUtenza.toArray(new String[condizioniUtenza.size()]));
+			if(condizioneUtenzaSoggetti!=null && condizioneUtenzaServizi!=null) {
+				sqlQueryObjectPorteApplicative.addWhereCondition(true, condizioneUtenzaSoggetti, condizioneUtenzaServizi);
+			}
+			else if(condizioneUtenzaSoggetti!=null) {
+				sqlQueryObjectPorteApplicative.addWhereCondition(true, condizioneUtenzaSoggetti);
+			}
+			else if(condizioneUtenzaServizi!=null) {
+				sqlQueryObjectPorteApplicative.addWhereCondition(true, condizioneUtenzaServizi);
 			}
 		
 			// protocollo
 			if(tipoSoggettiByProtocollo!=null && !tipoSoggettiByProtocollo.isEmpty()) {
-				sqlQueryObjectPorteApplicative.addWhereINCondition(alias_SOGGETTI+".tipo_soggetto", true, tipoSoggettiByProtocollo.toArray(new String[tipoSoggettiByProtocollo.size()]));
+				sqlQueryObjectPorteApplicative.addWhereINCondition(aliasSOGGETTI+".tipo_soggetto", true, tipoSoggettiByProtocollo.toArray(new String[tipoSoggettiByProtocollo.size()]));
 			}
 			if(tipoServiziByProtocollo!=null && !tipoServiziByProtocollo.isEmpty()) {
-				sqlQueryObjectPorteApplicative.addWhereINCondition(alias_PA+".tipo_servizio", true, tipoServiziByProtocollo.toArray(new String[tipoServiziByProtocollo.size()]));
+				sqlQueryObjectPorteApplicative.addWhereINCondition(aliasPA+".tipo_servizio", true, tipoServiziByProtocollo.toArray(new String[tipoServiziByProtocollo.size()]));
 			}
 			
 			// soggetto proprietario
 			if(idSoggettoProprietario!=null) {
-				sqlQueryObjectPorteApplicative.addWhereCondition(alias_SOGGETTI+".tipo_soggetto = ?");
-				sqlQueryObjectPorteApplicative.addWhereCondition(alias_SOGGETTI+".nome_soggetto = ?");
+				sqlQueryObjectPorteApplicative.addWhereCondition(aliasSOGGETTI+".tipo_soggetto = ?");
+				sqlQueryObjectPorteApplicative.addWhereCondition(aliasSOGGETTI+".nome_soggetto = ?");
 			}
 			
 			// servizi
 			if(listIDServizio!=null && !listIDServizio.isEmpty()) {
 				
 				if(listIDServizio.size()==1) {
-					sqlQueryObjectPorteApplicative.addWhereCondition(alias_SOGGETTI+".tipo_soggetto = ?");
-					sqlQueryObjectPorteApplicative.addWhereCondition(alias_SOGGETTI+".nome_soggetto = ?");
-					sqlQueryObjectPorteApplicative.addWhereCondition(alias_PA+".tipo_servizio = ?");
-					sqlQueryObjectPorteApplicative.addWhereCondition(alias_PA+".servizio = ?");
-					sqlQueryObjectPorteApplicative.addWhereCondition(alias_PA+".versione_servizio = ?");
+					sqlQueryObjectPorteApplicative.addWhereCondition(aliasSOGGETTI+".tipo_soggetto = ?");
+					sqlQueryObjectPorteApplicative.addWhereCondition(aliasSOGGETTI+".nome_soggetto = ?");
+					sqlQueryObjectPorteApplicative.addWhereCondition(aliasPA+".tipo_servizio = ?");
+					sqlQueryObjectPorteApplicative.addWhereCondition(aliasPA+".servizio = ?");
+					sqlQueryObjectPorteApplicative.addWhereCondition(aliasPA+".versione_servizio = ?");
 				}
 				else {
 					List<String> condizioni = new ArrayList<>();
 					for (@SuppressWarnings("unused") IDServizio idServizio : listIDServizio) {
 						ISQLQueryObject sqlQueryObjectServizio = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 						sqlQueryObjectServizio.setANDLogicOperator(true);
-						sqlQueryObjectServizio.addWhereCondition(alias_SOGGETTI+".tipo_soggetto = ?");
-						sqlQueryObjectServizio.addWhereCondition(alias_SOGGETTI+".nome_soggetto = ?");
-						sqlQueryObjectServizio.addWhereCondition(alias_PA+".tipo_servizio = ?");
-						sqlQueryObjectServizio.addWhereCondition(alias_PA+".servizio = ?");
-						sqlQueryObjectServizio.addWhereCondition(alias_PA+".versione_servizio = ?");
+						sqlQueryObjectServizio.addWhereCondition(aliasSOGGETTI+".tipo_soggetto = ?");
+						sqlQueryObjectServizio.addWhereCondition(aliasSOGGETTI+".nome_soggetto = ?");
+						sqlQueryObjectServizio.addWhereCondition(aliasPA+".tipo_servizio = ?");
+						sqlQueryObjectServizio.addWhereCondition(aliasPA+".servizio = ?");
+						sqlQueryObjectServizio.addWhereCondition(aliasPA+".versione_servizio = ?");
 						condizioni.add(sqlQueryObjectServizio.createSQLConditions());
 					}
 					sqlQueryObjectPorteApplicative.addWhereCondition(false, condizioni.toArray(new String[condizioni.size()]));
@@ -343,19 +351,19 @@ public class DriverConfigurazioneDB_allarmiDriver {
 		
 		if(CostantiConfigurazione.ALLARMI_TIPOLOGIA_DELEGATA.equals(tipologiaRicerca) || CostantiConfigurazione.ALLARMI_TIPOLOGIA_SOLO_ASSOCIATE.equals(tipologiaRicerca)) {
 			
-			String alias_PD = "pd";
-			String alias_SOGGETTI = "sog";
+			String aliasPD = "pd";
+			String aliasSOGGETTI = "sog";
 			
 			sqlQueryObjectPorteDelegate = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
-			sqlQueryObjectPorteDelegate.addFromTable(CostantiDB.PORTE_DELEGATE,alias_PD);
+			sqlQueryObjectPorteDelegate.addFromTable(CostantiDB.PORTE_DELEGATE,aliasPD);
 			sqlQueryObjectPorteDelegate.setANDLogicOperator(true);
 			sqlQueryObjectPorteDelegate.addWhereCondition(CostantiDB.ALLARMI+".filtro_ruolo=?");
-			sqlQueryObjectPorteDelegate.addWhereCondition(CostantiDB.ALLARMI+".filtro_porta="+alias_PD+".nome_porta");
-			sqlQueryObjectPorteDelegate.addWhereIsNotNullCondition(alias_PD+".tipo_soggetto_erogatore");
-			sqlQueryObjectPorteDelegate.addWhereIsNotNullCondition(alias_PD+".nome_soggetto_erogatore");
-			sqlQueryObjectPorteDelegate.addWhereIsNotNullCondition(alias_PD+".tipo_servizio");
-			sqlQueryObjectPorteDelegate.addWhereIsNotNullCondition(alias_PD+".nome_servizio");
-			sqlQueryObjectPorteDelegate.addWhereIsNotNullCondition(alias_PD+".versione_servizio");
+			sqlQueryObjectPorteDelegate.addWhereCondition(CostantiDB.ALLARMI+".filtro_porta="+aliasPD+".nome_porta");
+			sqlQueryObjectPorteDelegate.addWhereIsNotNullCondition(aliasPD+".tipo_soggetto_erogatore");
+			sqlQueryObjectPorteDelegate.addWhereIsNotNullCondition(aliasPD+".nome_soggetto_erogatore");
+			sqlQueryObjectPorteDelegate.addWhereIsNotNullCondition(aliasPD+".tipo_servizio");
+			sqlQueryObjectPorteDelegate.addWhereIsNotNullCondition(aliasPD+".nome_servizio");
+			sqlQueryObjectPorteDelegate.addWhereIsNotNullCondition(aliasPD+".versione_servizio");
 			
 			if( (listSoggettiProprietariAbilitati!=null && !listSoggettiProprietariAbilitati.isEmpty())
 					||
@@ -365,16 +373,15 @@ public class DriverConfigurazioneDB_allarmiDriver {
 					||
 				idSoggettoProprietario!=null
 					) {
-				sqlQueryObjectPorteDelegate.addFromTable(CostantiDB.SOGGETTI,alias_SOGGETTI);
-				sqlQueryObjectPorteDelegate.addWhereCondition(alias_PD+".id_soggetto = "+alias_SOGGETTI+".id");
+				sqlQueryObjectPorteDelegate.addFromTable(CostantiDB.SOGGETTI,aliasSOGGETTI);
+				sqlQueryObjectPorteDelegate.addWhereCondition(aliasPD+".id_soggetto = "+aliasSOGGETTI+".id");
 			}
 			
 			
 			
 			// Utenza permessi
 			
-			List<String> condizioniUtenza = new ArrayList<>();
-			
+			String condizioneUtenzaSoggetti = null;
 			if(listSoggettiProprietariAbilitati!=null && !listSoggettiProprietariAbilitati.isEmpty()) {
 				ISQLQueryObject sqlQueryObjectUtenzaSoggetto = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 				sqlQueryObjectUtenzaSoggetto.setANDLogicOperator(true);
@@ -382,14 +389,16 @@ public class DriverConfigurazioneDB_allarmiDriver {
 				for (@SuppressWarnings("unused") IDSoggetto idSoggetto : listSoggettiProprietariAbilitati) {
 					ISQLQueryObject sqlQueryObjectSoggetto = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 					sqlQueryObjectSoggetto.setANDLogicOperator(true);
-					sqlQueryObjectSoggetto.addWhereCondition(alias_SOGGETTI+".tipo_soggetto = ?");
-					sqlQueryObjectSoggetto.addWhereCondition(alias_SOGGETTI+".nome_soggetto = ?");
+					sqlQueryObjectSoggetto.addWhereCondition(aliasSOGGETTI+".tipo_soggetto = ?");
+					sqlQueryObjectSoggetto.addWhereCondition(aliasSOGGETTI+".nome_soggetto = ?");
 					condizioni.add(sqlQueryObjectSoggetto.createSQLConditions());
 				}
 				sqlQueryObjectUtenzaSoggetto.addWhereCondition(false, condizioni.toArray(new String[condizioni.size()]));
 				
-				condizioniUtenza.add(sqlQueryObjectUtenzaSoggetto.createSQLConditions());
+				condizioneUtenzaSoggetti = sqlQueryObjectUtenzaSoggetto.createSQLConditions();
 			}
+			
+			String condizioneUtenzaServizi = null;
 			if(listIDServizioAbilitati!=null && !listIDServizioAbilitati.isEmpty()) {
 				ISQLQueryObject sqlQueryObjectUtenzaServizio = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 				sqlQueryObjectUtenzaServizio.setANDLogicOperator(true);
@@ -397,57 +406,63 @@ public class DriverConfigurazioneDB_allarmiDriver {
 				for (@SuppressWarnings("unused") IDServizio idServizio : listIDServizioAbilitati) {
 					ISQLQueryObject sqlQueryObjectServizio = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 					sqlQueryObjectServizio.setANDLogicOperator(true);
-					sqlQueryObjectServizio.addWhereCondition(alias_PD+".tipo_soggetto_erogatore = ?");
-					sqlQueryObjectServizio.addWhereCondition(alias_PD+".nome_soggetto_erogatore = ?");
-					sqlQueryObjectServizio.addWhereCondition(alias_PD+".tipo_servizio = ?");
-					sqlQueryObjectServizio.addWhereCondition(alias_PD+".nome_servizio = ?");
-					sqlQueryObjectServizio.addWhereCondition(alias_PD+".versione_servizio = ?");
+					sqlQueryObjectServizio.addWhereCondition(aliasPD+".tipo_soggetto_erogatore = ?");
+					sqlQueryObjectServizio.addWhereCondition(aliasPD+".nome_soggetto_erogatore = ?");
+					sqlQueryObjectServizio.addWhereCondition(aliasPD+".tipo_servizio = ?");
+					sqlQueryObjectServizio.addWhereCondition(aliasPD+".nome_servizio = ?");
+					sqlQueryObjectServizio.addWhereCondition(aliasPD+".versione_servizio = ?");
 					condizioni.add(sqlQueryObjectServizio.createSQLConditions());
 				}
 				sqlQueryObjectUtenzaServizio.addWhereCondition(false, condizioni.toArray(new String[condizioni.size()]));
 				
-				condizioniUtenza.add(sqlQueryObjectUtenzaServizio.createSQLConditions());
+				condizioneUtenzaServizi = sqlQueryObjectUtenzaServizio.createSQLConditions();
 			}
 			
-			if(!condizioniUtenza.isEmpty()) {
-				sqlQueryObjectPorteDelegate.addWhereCondition(false, condizioniUtenza.toArray(new String[condizioniUtenza.size()]));
+			if(condizioneUtenzaSoggetti!=null && condizioneUtenzaServizi!=null) {
+				sqlQueryObjectPorteDelegate.addWhereCondition(true, condizioneUtenzaSoggetti, condizioneUtenzaServizi);
+			}
+			else if(condizioneUtenzaSoggetti!=null) {
+				sqlQueryObjectPorteDelegate.addWhereCondition(true, condizioneUtenzaSoggetti);
+			}
+			else if(condizioneUtenzaServizi!=null) {
+				sqlQueryObjectPorteDelegate.addWhereCondition(true, condizioneUtenzaServizi);
 			}
 		
 			// protocollo
 			if(tipoSoggettiByProtocollo!=null && !tipoSoggettiByProtocollo.isEmpty()) {
-				sqlQueryObjectPorteDelegate.addWhereINCondition(alias_SOGGETTI+".tipo_soggetto", true, tipoSoggettiByProtocollo.toArray(new String[tipoSoggettiByProtocollo.size()]));
-				sqlQueryObjectPorteDelegate.addWhereINCondition(alias_PD+".tipo_soggetto_erogatore", true, tipoSoggettiByProtocollo.toArray(new String[tipoSoggettiByProtocollo.size()]));
+				sqlQueryObjectPorteDelegate.addWhereINCondition(aliasSOGGETTI+".tipo_soggetto", true, tipoSoggettiByProtocollo.toArray(new String[tipoSoggettiByProtocollo.size()]));
+				sqlQueryObjectPorteDelegate.addWhereINCondition(aliasPD+".tipo_soggetto_erogatore", true, tipoSoggettiByProtocollo.toArray(new String[tipoSoggettiByProtocollo.size()]));
 			}
 			if(tipoServiziByProtocollo!=null && !tipoServiziByProtocollo.isEmpty()) {
-				sqlQueryObjectPorteDelegate.addWhereINCondition(alias_PD+".tipo_servizio", true, tipoServiziByProtocollo.toArray(new String[tipoServiziByProtocollo.size()]));
+				sqlQueryObjectPorteDelegate.addWhereINCondition(aliasPD+".tipo_servizio", true, tipoServiziByProtocollo.toArray(new String[tipoServiziByProtocollo.size()]));
 			}
 			
 			// soggetto proprietario
 			if(idSoggettoProprietario!=null) {
-				sqlQueryObjectPorteDelegate.addWhereCondition(alias_SOGGETTI+".tipo_soggetto = ?");
-				sqlQueryObjectPorteDelegate.addWhereCondition(alias_SOGGETTI+".nome_soggetto = ?");
+				sqlQueryObjectPorteDelegate.addWhereCondition(aliasSOGGETTI+".tipo_soggetto = ?");
+				sqlQueryObjectPorteDelegate.addWhereCondition(aliasSOGGETTI+".nome_soggetto = ?");
 			}
 			
 			// servizi
 			if(listIDServizio!=null && !listIDServizio.isEmpty()) {
 				
 				if(listIDServizio.size()==1) {
-					sqlQueryObjectPorteDelegate.addWhereCondition(alias_PD+".tipo_soggetto_erogatore = ?");
-					sqlQueryObjectPorteDelegate.addWhereCondition(alias_PD+".nome_soggetto_erogatore = ?");
-					sqlQueryObjectPorteDelegate.addWhereCondition(alias_PD+".tipo_servizio = ?");
-					sqlQueryObjectPorteDelegate.addWhereCondition(alias_PD+".nome_servizio = ?");
-					sqlQueryObjectPorteDelegate.addWhereCondition(alias_PD+".versione_servizio = ?");
+					sqlQueryObjectPorteDelegate.addWhereCondition(aliasPD+".tipo_soggetto_erogatore = ?");
+					sqlQueryObjectPorteDelegate.addWhereCondition(aliasPD+".nome_soggetto_erogatore = ?");
+					sqlQueryObjectPorteDelegate.addWhereCondition(aliasPD+".tipo_servizio = ?");
+					sqlQueryObjectPorteDelegate.addWhereCondition(aliasPD+".nome_servizio = ?");
+					sqlQueryObjectPorteDelegate.addWhereCondition(aliasPD+".versione_servizio = ?");
 				}
 				else {
 					List<String> condizioni = new ArrayList<>();
 					for (@SuppressWarnings("unused") IDServizio idServizio : listIDServizio) {
 						ISQLQueryObject sqlQueryObjectServizio = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 						sqlQueryObjectServizio.setANDLogicOperator(true);
-						sqlQueryObjectServizio.addWhereCondition(alias_PD+".tipo_soggetto_erogatore = ?");
-						sqlQueryObjectServizio.addWhereCondition(alias_PD+".nome_soggetto_erogatore = ?");
-						sqlQueryObjectServizio.addWhereCondition(alias_PD+".tipo_servizio = ?");
-						sqlQueryObjectServizio.addWhereCondition(alias_PD+".nome_servizio = ?");
-						sqlQueryObjectServizio.addWhereCondition(alias_PD+".versione_servizio = ?");
+						sqlQueryObjectServizio.addWhereCondition(aliasPD+".tipo_soggetto_erogatore = ?");
+						sqlQueryObjectServizio.addWhereCondition(aliasPD+".nome_soggetto_erogatore = ?");
+						sqlQueryObjectServizio.addWhereCondition(aliasPD+".tipo_servizio = ?");
+						sqlQueryObjectServizio.addWhereCondition(aliasPD+".nome_servizio = ?");
+						sqlQueryObjectServizio.addWhereCondition(aliasPD+".versione_servizio = ?");
 						condizioni.add(sqlQueryObjectServizio.createSQLConditions());
 					}
 					sqlQueryObjectPorteDelegate.addWhereCondition(false, condizioni.toArray(new String[condizioni.size()]));
@@ -472,11 +487,16 @@ public class DriverConfigurazioneDB_allarmiDriver {
 		}
 		
 	}
-	private String _setExpressionAllarmiValues(PreparedStatement stm, String query, 
+	private String setExpressionAllarmiValuesEngine(PreparedStatement stm, String query, 
 			String tipologiaRicerca,Boolean enabled, StatoAllarme stato, Boolean acknowledged, String nomeAllarme,
 			List<IDSoggetto> listSoggettiProprietariAbilitati, List<IDServizio> listIDServizioAbilitati,
 			List<String> tipoSoggettiByProtocollo, List<String> tipoServiziByProtocollo, 
-			IDSoggetto idSoggettoProprietario, List<IDServizio> listIDServizio) throws Exception {
+			IDSoggetto idSoggettoProprietario, List<IDServizio> listIDServizio) throws SQLException {
+		
+		if(tipoSoggettiByProtocollo!=null && tipoServiziByProtocollo!=null) {
+			// nop
+		}
+		
 		int index = 1;
 		if(enabled!=null){
 			int v = enabled? CostantiDB.TRUE : CostantiDB.FALSE;
@@ -498,9 +518,9 @@ public class DriverConfigurazioneDB_allarmiDriver {
 			// nop
 		}
 		
-//		if(CostantiConfigurazione.ALLARMI_TIPOLOGIA_CONFIGURAZIONE.equals(tipologiaRicerca)) {
+/**		if(CostantiConfigurazione.ALLARMI_TIPOLOGIA_CONFIGURAZIONE.equals(tipologiaRicerca)) {
 //			// nop
-//		}
+//		}*/
 		
 		if(CostantiConfigurazione.ALLARMI_TIPOLOGIA_APPLICATIVA.equals(tipologiaRicerca) || CostantiConfigurazione.ALLARMI_TIPOLOGIA_SOLO_ASSOCIATE.equals(tipologiaRicerca)) {
 			
@@ -598,7 +618,7 @@ public class DriverConfigurazioneDB_allarmiDriver {
 					stm.setString(index++, idServizio.getSoggettoErogatore().getNome()); query = query.replaceFirst("\\?", "'"+idServizio.getSoggettoErogatore().getNome()+"'");
 					stm.setString(index++, idServizio.getTipo()); query = query.replaceFirst("\\?", "'"+idServizio.getTipo()+"'");
 					stm.setString(index++, idServizio.getNome()); query = query.replaceFirst("\\?", "'"+idServizio.getNome()+"'");
-					stm.setInt(index++, idServizio.getVersione()); query = query.replaceFirst("\\?", idServizio.getVersione()+"");
+					stm.setInt(index, idServizio.getVersione()); query = query.replaceFirst("\\?", idServizio.getVersione()+"");
 				}
 				else {
 					for (IDServizio idServizio : listIDServizio) {

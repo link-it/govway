@@ -12,9 +12,9 @@
 		 <link:prop label="#{msg['configurazioniGenerali.search.api']}">
      	 	<h:inputText id="apiCombo" value="#{sf_bean.labelApi}" styleClass="inputLinkLong"/>
 			<rich:suggestionbox
-						id="apiComboSuggestion" 
-						width="416" 
-						for="apiCombo" 
+						id="apiComboSuggestion"
+						width="416"
+						for="apiCombo"
 						suggestionAction="#{sf_mbean.apiAutoComplete}"
 						ajaxSingle="true" listWidth="#{sf_mbean.apiSelectItemsWidth}"
 						nothingLabel="--" var="selectItem" fetchValue="#{selectItem.label}"
@@ -22,15 +22,15 @@
 				<h:column>
 					<h:outputText value="#{selectItem.label}" rendered="true" />
 				</h:column>
-				<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.apiSelected}" reRender="searchPnl">
-					<f:setPropertyActionListener value="#{selectItem.value}" target="#{sf_bean.api}" />  
+				<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.apiSelected}" reRender="searchPnl" limitToList="true">
+					<f:setPropertyActionListener value="#{selectItem.value}" target="#{sf_bean.api}" />
 				</a4j:support>
 			</rich:suggestionbox>
 			<h:inputHidden id="apiComboHidden" value="#{sf_bean.api}" />
      		<rich:toolTip rendered="#{not empty sf_bean.api}" direction="top-right" for="apiCombo" showDelay="200" styleClass="tooltip" layout="block" value="#{sf_bean.apiTooltip}"/>
 		</link:prop>
     </c:if>
-    
+
    	<c:if test="#{sf_bean.visualizzaFiltroServiziSelectList}">
    		<link:prop label="#{msg['configurazioniGenerali.search.api']}">
 			<rich:comboBox value="#{sf_bean.api}" id="apiCombo2" enableManualInput="true"
@@ -38,20 +38,20 @@
 				converter="selectItemConverter" width="416">
 				<f:selectItem itemValue="--" itemLabel="--"/>
 				<f:selectItems value="#{sf_mbean.apiList}" />
-				<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.apiSelected}" reRender="searchPnl"/>
+				<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.apiSelected}" reRender="searchPnl" limitToList="true"/>
 			</rich:comboBox>
-			<rich:toolTip rendered="#{not empty sf_bean.api}" direction="top-right" for="apiCombo2" showDelay="200" 
+			<rich:toolTip rendered="#{not empty sf_bean.api}" direction="top-right" for="apiCombo2" showDelay="200"
 				styleClass="tooltip" layout="block" value="#{sf_bean.apiTooltip}"/>
 		</link:prop>
    	</c:if>
-    
+
     <c:if test="#{not sf_bean.visualizzaFiltroServiziSelectList}">
 		 <link:prop label="#{msg['configurazioniGenerali.search.servizio']}">
      	 	<h:inputText id="servizioCombo" value="#{sf_bean.labelNomeServizio}" styleClass="inputLinkLong"/>
 			<rich:suggestionbox
-						id="servizioComboSuggestion" 
-						width="416" 
-						for="servizioCombo" 
+						id="servizioComboSuggestion"
+						width="416"
+						for="servizioCombo"
 						suggestionAction="#{sf_mbean.serviziAutoComplete}"
 						ajaxSingle="true" listWidth="#{sf_mbean.serviziSelectItemsWidth}"
 						nothingLabel="--" var="selectItem" fetchValue="#{selectItem.label}"
@@ -59,15 +59,15 @@
 				<h:column>
 					<h:outputText value="#{selectItem.label}" rendered="true" />
 				</h:column>
-				<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.servizioSelected}" reRender="searchPnl">
-					<f:setPropertyActionListener value="#{selectItem.value}" target="#{sf_bean.nomeServizio}" />  
+				<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.servizioSelected}" reRender="searchPnl" limitToList="true">
+					<f:setPropertyActionListener value="#{selectItem.value}" target="#{sf_bean.nomeServizio}" />
 				</a4j:support>
 			</rich:suggestionbox>
 			<h:inputHidden id="servizioComboHidden" value="#{sf_bean.nomeServizio}" />
      		<rich:toolTip rendered="#{not empty sf_bean.nomeServizio}" direction="top-right" for="servizioCombo" showDelay="200" styleClass="tooltip" layout="block" value="#{sf_bean.nomeServizioTooltip}"/>
 		</link:prop>
     </c:if>
-    
+
    	<c:if test="#{sf_bean.visualizzaFiltroServiziSelectList}">
    		<link:prop label="#{msg['configurazioniGenerali.search.servizio']}">
 			<rich:comboBox value="#{sf_bean.nomeServizio}" id="servizioCombo2" enableManualInput="true"
@@ -75,11 +75,11 @@
 				converter="selectItemConverter" width="416">
 				<f:selectItem itemValue="--" itemLabel="--"/>
 				<f:selectItems value="#{sf_mbean.servizi}" />
-				<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.servizioSelected}" reRender="searchPnl"/>
+				<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.servizioSelected}" reRender="searchPnl" limitToList="true"/>
 			</rich:comboBox>
-			<rich:toolTip rendered="#{not empty sf_bean.nomeServizio}" direction="top-right" for="servizioCombo2" showDelay="200" 
+			<rich:toolTip rendered="#{not empty sf_bean.nomeServizio}" direction="top-right" for="servizioCombo2" showDelay="200"
 				styleClass="tooltip" layout="block" value="#{sf_bean.nomeServizioTooltip}"/>
 		</link:prop>
    	</c:if>
-   	
+
 </ui:composition>
