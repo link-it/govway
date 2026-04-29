@@ -177,13 +177,13 @@ public class DynamicPdDBeanUtils implements Serializable {
 		}
 
 		Map<String, String> mappaTipi = new HashMap<>();
-		if(tipiDisponibili1 != null && !tipiDisponibili1.isEmpty())
+		if(!tipiDisponibili1.isEmpty())
 			for (String tipo : tipiDisponibili1) {
 				if(!mappaTipi.containsKey(tipo))
 					mappaTipi.put(tipo, tipo);
 			}
 
-		if(tipiDisponibili2 != null && !tipiDisponibili2.isEmpty())
+		if(!tipiDisponibili2.isEmpty())
 			for (String tipo : tipiDisponibili2) {
 				if(!mappaTipi.containsKey(tipo))
 					mappaTipi.put(tipo, tipo);
@@ -244,7 +244,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 		if(!accordo.equals("*") ){
 			List<AccordoServizioParteSpecifica> servizi2 = this.dynamicUtilsService.getServizi(tipoProtocollo,accordo, tipoErogatore, nomeErogatore);
 
-			if(servizi2 != null && servizi2.size() > 0){
+			if(servizi2 != null && !servizi2.isEmpty()){
 				for (AccordoServizioParteSpecifica accordoServizioParteSpecifica : servizi2) {
 					String tipo = accordoServizioParteSpecifica.getIdErogatore() != null ? accordoServizioParteSpecifica.getIdErogatore().getTipo() : null;
 					if(tipo != null){
@@ -258,7 +258,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 		}
 
 		if(!tipoProtocollo.equals("*")){
-			if(tipiDisponibili1.size() > 0 && !tipiDisponibili1 .contains(tipoProtocollo))
+			if(!tipiDisponibili1.isEmpty() && !tipiDisponibili1 .contains(tipoProtocollo))
 				return false;
 		}
 
@@ -293,12 +293,12 @@ public class DynamicPdDBeanUtils implements Serializable {
 	}
 
 	public List<SelectItem> getListaSelectItemsServiziApplicativiFromSoggettoLocale(String tipoProtocollo,String tipoSoggetto,String nomeSoggetto, boolean trasporto, boolean token){
-		List<SelectItem> sa = new ArrayList<SelectItem>();
+		List<SelectItem> sa = new ArrayList<>();
 
 		List<Object> list = this.findElencoServiziApplicativiFromSoggettoLocale(tipoProtocollo,tipoSoggetto, nomeSoggetto, trasporto, token);
 
 		for (Object res : list) {
-			sa.add(new SelectItem((String) res));
+			sa.add(new SelectItem(res));
 		}
 
 		return sa;
@@ -307,7 +307,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 
 
 	public List<SelectItem> getSoggetti() {
-		List<SelectItem> soggetti = new ArrayList<SelectItem>();
+		List<SelectItem> soggetti = new ArrayList<>();
 		String tipoProtocollo = null;
 		String idPorta = null;
 		List<Soggetto> list = this.dynamicUtilsService.findElencoSoggetti(tipoProtocollo ,idPorta);
@@ -319,7 +319,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 	}
 
 	public List<SelectItem> getIdPorte() {
-		List<SelectItem> idPorte = new ArrayList<SelectItem>();
+		List<SelectItem> idPorte = new ArrayList<>();
 
 		String tipoProtocollo = null;
 		String idPorta = null;
@@ -327,7 +327,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 
 		List<String> checkContains = new ArrayList<>();
 		for (Soggetto soggetto : list) {
-			if(checkContains.contains(soggetto.getIdentificativoPorta())==false){
+			if(!checkContains.contains(soggetto.getIdentificativoPorta())){
 				idPorte.add(new SelectItem(soggetto.getIdentificativoPorta()));
 				checkContains.add(soggetto.getIdentificativoPorta());
 			}
@@ -346,7 +346,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 	}
 
 	public List<SelectItem> getSoggettiFromIdPorta(String idPorta) {
-		List<SelectItem> soggetti = new ArrayList<SelectItem>();
+		List<SelectItem> soggetti = new ArrayList<>();
 		String tipoProtocollo = null;
 		List<Soggetto> list = this.dynamicUtilsService.findElencoSoggetti(tipoProtocollo ,idPorta);
 
@@ -370,13 +370,19 @@ public class DynamicPdDBeanUtils implements Serializable {
 		return this.dynamicUtilsService.checkTipoPdd(nome, tipoPdD);
 	}
 
-	public List<SelectItem> getListaGruppi(String tipoProtocollo){
-		List<SelectItem> gruppi = new ArrayList<SelectItem>();
+	public List<SelectItem> getListaGruppi(String tipoProtocollo, String inputLabelContainsCaseInsensitive){
+		List<SelectItem> gruppi = new ArrayList<>();
 
 		try{
 			List<IDGruppo>  lista = this.dynamicUtilsService.getGruppi(tipoProtocollo);
 			if(lista!=null && !lista.isEmpty()) {
 				for (IDGruppo id : lista) {
+					
+					if(inputLabelContainsCaseInsensitive!=null && id.getNome()!=null && 
+							!(id.getNome().toLowerCase().contains(inputLabelContainsCaseInsensitive.toLowerCase()))) {
+						continue;
+					}
+					
 					SelectItem item = new SelectItem(id.getNome(),id.getNome());
 					gruppi.add(item);
 				}
@@ -437,7 +443,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 	public Map<String, String> findAzioniFromServizio(String tipoProtocollo,String tipoServizio,String nomeServizio,  String tipoErogatore, String nomeErogatore,Integer versioneServizio, String val){
 		Map<String, String>  map = new HashMap<>();
 
-		//		if(idAccordo != null && nomeServizio != null){
+		/**		if(idAccordo != null && nomeServizio != null){*/
 		this.logDebug("Get Lista Azioni from Servizio [nome: " + nomeServizio + "]");
 		try{
 			map = this.dynamicUtilsService.findAzioniFromServizio(tipoProtocollo,tipoServizio, nomeServizio,tipoErogatore,nomeErogatore,versioneServizio,val);
@@ -460,7 +466,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 	 * @return Lista delle SelectItems per le Azioni trovate
 	 */
 	public List<SelectItem> getListaSelectItemsAzioniFromServizio(String tipoProtocollo, String tipoServizio,String nomeServizio,  String tipoErogatore , String nomeErogatore,Integer versioneServizio, String val){
-		List<SelectItem> azioni = new ArrayList<SelectItem>();
+		List<SelectItem> azioni = new ArrayList<>();
 
 		try{
 			Map<String, String>  map = this.findAzioniFromServizio(tipoProtocollo,tipoServizio,nomeServizio,tipoErogatore,nomeErogatore,versioneServizio,val);
@@ -533,27 +539,25 @@ public class DynamicPdDBeanUtils implements Serializable {
 
 
 	public List<SelectItem> getListaSelectItemsElencoServiziSoggettoErogatore(String tipoProtocollo,Soggetto erogatore, boolean showTipoServizio, boolean showUriAccordo){
-		List<SelectItem> servizi = new ArrayList<SelectItem>();
+		List<SelectItem> servizi = new ArrayList<>();
 
 		try{
 			List<Map<String, Object>> mapServizi = this.findElencoServiziSoggettoErogatore(tipoProtocollo,erogatore);
 
-			if(mapServizi != null && mapServizi.size() > 0){
+			if(mapServizi != null && !mapServizi.isEmpty()){
 				for (Map<String, Object> res : mapServizi) {
 
 					String label= null;
-					// servizi.add(new
-					// SelectItem(servizio.getAccordo().getNome()+"@"+servizio.getNome()));
 					StringBuilder uri = new StringBuilder();
 
 					Object obj = res.get(GenericJDBCUtilities.getAlias(AccordoServizioParteSpecifica.model().NOME));
 
-					String nomeAsps = (obj instanceof String) ? (String) obj : null;
+					String nomeAsps = (obj instanceof String s) ? s : null;
 
 					String tipoAsps = null;
 					if(showTipoServizio){
 						obj = res.get(GenericJDBCUtilities.getAlias(AccordoServizioParteSpecifica.model().TIPO));
-						tipoAsps = (obj instanceof String) ? (String) obj : null;
+						tipoAsps = (obj instanceof String s) ? s : null;
 						if(tipoAsps != null)
 							uri.append(tipoAsps).append("/");
 					}
@@ -563,7 +567,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 					if(showUriAccordo){
 						obj = res.get("idAccordo");
 
-						AccordoServizioParteComune aspc = (obj instanceof AccordoServizioParteComune) ? (AccordoServizioParteComune) obj : null;
+						AccordoServizioParteComune aspc = (obj instanceof AccordoServizioParteComune a) ? a : null;
 
 						if(aspc != null){
 							String nomeAspc = aspc.getNome();
@@ -617,8 +621,10 @@ public class DynamicPdDBeanUtils implements Serializable {
 	 * Resistuisce l'elenco degli accordi di servizio
 	 * 
 	 */
-	public List<SelectItem> getListaSelectItemsAccordiServizio(String tipoProtocollo, String tipoSoggetto, String nomeSoggetto, boolean isReferente, boolean isErogatore, String tag){
-		List<SelectItem> servizi = new ArrayList<SelectItem>();
+	public List<SelectItem> getListaSelectItemsAccordiServizio(String tipoProtocollo, String tipoSoggetto, String nomeSoggetto, 
+			boolean isReferente, boolean isErogatore, String tag,
+			String inputLabelContainsCaseInsensitive){
+		List<SelectItem> servizi = new ArrayList<>();
 
 		try{
 			List<AccordoServizioParteComune> listaAccordi = this.dynamicUtilsService.getAccordiServizio(tipoProtocollo,tipoSoggetto, nomeSoggetto, isReferente, isErogatore, tag);
@@ -626,7 +632,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 			List<String> lstLabelOrdinate = new ArrayList<>();
 			Map<String, String> mapElementi = new HashMap<>();
 			
-			if(listaAccordi != null && listaAccordi.size() > 0){
+			if(listaAccordi != null && !listaAccordi.isEmpty()){
 				for (AccordoServizioParteComune aspc : listaAccordi) {
 
 					if(aspc != null){
@@ -646,9 +652,14 @@ public class DynamicPdDBeanUtils implements Serializable {
 							label = NamingUtils.getLabelAccordoServizioParteComune(idAccordo);
 						} catch (DriverRegistroServiziException e) {
 							// ignore
+							label = "build-error-name:"+nomeAspc;
 							uri = "";
 						}
 						
+						if(inputLabelContainsCaseInsensitive!=null && !label.toLowerCase().contains(inputLabelContainsCaseInsensitive.toLowerCase())) {
+							continue;
+						}
+												
 						lstLabelOrdinate.add(label);
 						mapElementi.put(label, uri);
 						
@@ -683,7 +694,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 
 	public List<SelectItem> getListaSelectItemsElencoServiziFromAccordoAndSoggettoErogatore(String tipoProtocollo,String gruppo, IDAccordo idAccordo,
 			String uriAccordoServizio, String tipoSoggetto , String nomeSoggetto, String input, boolean soloOperativi){
-		List<SelectItem> servizi = new ArrayList<SelectItem>();
+		List<SelectItem> servizi = new ArrayList<>();
 
 		try{
 
@@ -706,7 +717,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 				
 				List<IDServizio> listIdServiziFruizione = this.dynamicUtilsService.getServiziFruizione(tipoProtocollo, tipoSoggetto, nomeSoggetto, input, false, permessiUtenteOperatoreRecheck, true);
 				
-				List<IDServizio> listIdServizi = new ArrayList<IDServizio>();
+				List<IDServizio> listIdServizi = new ArrayList<>();
 				if(listIdServiziErogazione!=null && !listIdServiziErogazione.isEmpty()) {
 					for (IDServizio idServizio : listIdServiziErogazione) {
 						if(!listIdServizi.contains(idServizio)) {
@@ -767,8 +778,6 @@ public class DynamicPdDBeanUtils implements Serializable {
 						
 						boolean add= true;
 						String value= null;
-						// servizi.add(new
-						// SelectItem(servizio.getAccordo().getNome()+"@"+servizio.getNome()));
 						StringBuilder uri = new StringBuilder();
 
 						String nomeAsps = res.getNome();
@@ -781,9 +790,9 @@ public class DynamicPdDBeanUtils implements Serializable {
 						uri.append(nomeAsps).append(":").append(res.getVersione());
 						
 
-//							if(showErogatore ){
+/**							if(showErogatore ){*/
 						uri.append(" (").append(res.getSoggettoErogatore().getTipo()).append("/").append(res.getSoggettoErogatore().getNome()).append(")"); 
-//							}
+/**							}*/
 						
 						IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(tipoAsps, nomeAsps, res.getSoggettoErogatore().getTipo(), res.getSoggettoErogatore().getNome(), res.getVersione());
 						String label = NamingUtils.getLabelAccordoServizioParteSpecifica(tipoProtocollo,idServizio);
@@ -795,7 +804,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 							add = this.checkTipoPdd(nomePddFromSoggetto, TipoPdD.OPERATIVO);
 						}
 
-						// Controllo spostato nei metodi che ottengono la lista
+						/** Controllo spostato nei metodi che ottengono la lista
 //							if(add && !user.isAdmin()){
 	//
 //								// controllo sul soggetto
@@ -826,7 +835,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 //								}
 	//
 //								add = (existsPermessoSoggetto || existsPermessoServizio);
-//							}
+//							}*/
 
 						if(add) {
 							lstLabelOrdinate.add(label);
@@ -834,7 +843,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 						}
 					}
 
-					if(lstLabelOrdinate.size() > 0) {
+					if(!lstLabelOrdinate.isEmpty()) {
 						Collections.sort(lstLabelOrdinate);
 						
 						for (String string : lstLabelOrdinate) {
@@ -853,7 +862,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 					idAccordoFactory = IDAccordoFactory.getInstance();
 				}
 				
-				if(servizi2 != null && servizi2.size() > 0){
+				if(servizi2 != null && !servizi2.isEmpty()){
 					for (AccordoServizioParteSpecifica res : servizi2) {
 						
 						if( (gruppo!=null && !"".equals(gruppo)) || idAccordo!=null ) {

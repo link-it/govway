@@ -102,7 +102,7 @@
 			</a4j:outputPanel>
 			<a4j:outputPanel id="panelSoggettoLocaleNonAmministratore" layout="block" rendered="#{(not sf_bean.ricercaLiberaTuttiProfili) and (applicationBean.user and !applicationBean.amministratore and sf_bean.showFiltroSoggettoLocale) and (sf_bean.showRicercaPanel) }">
 				<link:prop label="#{msg['transazioni.search.soggettoLocale']}">
-					<rich:comboBox width="416" id="sogLocaleSuggestion"  converter="selectItemConverter"
+					<rich:comboBox width="416" id="sogLocaleSuggestionNonAmministratore"  converter="selectItemConverter"
 									value="#{sf_soggettoLocale}" listWidth="#{sf_mbean.soggettiAssociatiSelectItemsWidth}"
 									defaultLabel="#{msg['transazioni.search.soggettoLocale.defaultLabel']}" directInputSuggestions="true"
 									enableManualInput="true">
@@ -110,7 +110,7 @@
 								<f:selectItems value="#{sf_mbean.tipiNomiSoggettiAssociati}"  />
 								<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.soggettoLocaleSelected}" reRender="searchPnl,saComboCtr" limitToList="true"/>
 					</rich:comboBox>
-					<rich:toolTip rendered="#{not empty sf_soggettoLocale}" direction="top-right" for="sogLocaleSuggestion" showDelay="200" styleClass="tooltip" layout="block" value="#{sf_bean.tipoNomeSoggettoLocaleTooltip}"/>
+					<rich:toolTip rendered="#{not empty sf_soggettoLocale}" direction="top-right" for="sogLocaleSuggestionNonAmministratore" showDelay="200" styleClass="tooltip" layout="block" value="#{sf_bean.tipoNomeSoggettoLocaleTooltip}"/>
 				</link:prop>
 				<h:panelGroup>
 					<h:inputHidden value="#{sf_nomeMittente}" rendered="#{sf_tipologiaRicerca eq 'uscita'}" />

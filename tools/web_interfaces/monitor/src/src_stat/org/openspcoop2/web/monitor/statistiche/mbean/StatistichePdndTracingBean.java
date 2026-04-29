@@ -32,6 +32,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.core.statistiche.constants.PossibiliStatiPdnd;
@@ -86,13 +87,13 @@ DynamicPdDBean<org.openspcoop2.web.monitor.statistiche.bean.StatistichePdndTraci
 	}
 
 	@Override
-	public List<SelectItem> getSoggetti()  throws Exception{
+	public List<SelectItem> getSoggetti() throws CoreException{
 		if(this.search==null){
 			return new ArrayList<>();
 		}
 
 		// bug fix: devo usare sempre i soggetti operativi
-		return _getSoggetti(true,false,null);
+		return getSoggetti(true,false,null);
 	}
 
 	public List<org.openspcoop2.web.monitor.core.bean.SelectItem> soggettiErogatoreAutoComplete(Object val) throws Exception{
@@ -103,7 +104,7 @@ DynamicPdDBean<org.openspcoop2.web.monitor.statistiche.bean.StatistichePdndTraci
 		}else{
 			if(this.search!=null){
 				// bug fix: devo usare sempre i soggetti operativi
-				listaSoggettiTmp = _getSoggetti(true,false,(String)val);
+				listaSoggettiTmp = getSoggetti(true,false,(String)val);
 			}
 		}
 
@@ -121,8 +122,8 @@ DynamicPdDBean<org.openspcoop2.web.monitor.statistiche.bean.StatistichePdndTraci
 	}
 
 	@Override
-	public List<SelectItem> getTipiNomiSoggettiAssociati() throws Exception {
-		return _getTipiNomiSoggettiAssociati(true);
+	public List<SelectItem> getTipiNomiSoggettiAssociati() throws CoreException {
+		return getTipiNomiSoggettiAssociati(true);
 	}
 
 	private List<String> getIdSelected() {

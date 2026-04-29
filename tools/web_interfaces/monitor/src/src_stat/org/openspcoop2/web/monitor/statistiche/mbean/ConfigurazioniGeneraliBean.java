@@ -30,12 +30,14 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.transazioni.constants.PddRuolo;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
@@ -105,19 +107,19 @@ public class ConfigurazioniGeneraliBean extends DynamicPdDBean<ConfigurazioneGen
 		return true;
 	}
 	
-	@Override
+	/**@Override
 	public void setSelectedElement(ConfigurazioneGenerale selectedElement) {
 		super.setSelectedElement(selectedElement);
-	}
+	}*/
 
 	@Override
-	public List<SelectItem> getSoggetti()  throws Exception{
+	public List<SelectItem> getSoggetti()  throws CoreException{
 		if(this.search==null){
 			return new ArrayList<>();
 		}
 		
 		// bug fix: devo usare sempre i soggetti operativi
-		return _getSoggetti(true,false,null);
+		return getSoggetti(true,false,null);
 	}
 	
 	public List<org.openspcoop2.web.monitor.core.bean.SelectItem> soggettiErogatoreAutoComplete(Object val) throws Exception{
@@ -128,7 +130,7 @@ public class ConfigurazioniGeneraliBean extends DynamicPdDBean<ConfigurazioneGen
 		}else{
 			if(this.search!=null){
 				// bug fix: devo usare sempre i soggetti operativi
-				listaSoggettiTmp = _getSoggetti(true,false,(String)val);
+				listaSoggettiTmp = getSoggetti(true,false,(String)val);
 			}
 		}
 		
@@ -146,17 +148,17 @@ public class ConfigurazioniGeneraliBean extends DynamicPdDBean<ConfigurazioneGen
 	}
 	
 	@Override
-	public List<SelectItem> getTipiNomiSoggettiAssociati() throws Exception {
-		return _getTipiNomiSoggettiAssociati(true);
+	public List<SelectItem> getTipiNomiSoggettiAssociati() throws CoreException {
+		return getTipiNomiSoggettiAssociati(true);
 	}
 
 	@Override
-	protected List<SelectItem> _getServizi(String input) throws Exception {
+	protected List<SelectItem> getServiziEngine(String input) throws CoreException {
 		if(this.search==null){
 			return new ArrayList<>();
 		}
 		if(!this.serviziSelectItemsWidthCheck){
-			this.servizi = new ArrayList<SelectItem>();
+			this.setServizi(new ArrayList<>());
 			
 			String tipoSoggetto = this.search.getTipoSoggettoLocale();
 			String nomeSoggetto = this.search.getSoggettoLocale();
@@ -170,20 +172,28 @@ public class ConfigurazioniGeneraliBean extends DynamicPdDBean<ConfigurazioneGen
 			IDAccordo idAccordo = null;
 			String api = this.search.getApi();
 			if((api!=null && !"".equals(api)) ) {
-				idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(api);
+				try {
+					idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(api);
+				}catch(Exception e) {
+					throw new CoreException(e.getMessage(),e);
+				}
 			}
 			
 			boolean distinct = true;
-			if(ruoloReport == null || ruoloReport.equals(PddRuolo.DELEGATA)) {
-				this.servizi = this.dynamicUtils.getListaSelectItemsElencoConfigurazioneServiziFruizione(tipoProtocollo, gruppo, idAccordo, tipoSoggetto, nomeSoggetto,null,null,input, false, this.search.getPermessiUtenteOperatore(), distinct);
-			}else {
-				// bisogna filtrare per soggetti operativi
-				this.servizi = this.dynamicUtils.getListaSelectItemsElencoConfigurazioneServiziErogazione(tipoProtocollo, gruppo, idAccordo, tipoSoggetto, nomeSoggetto,input, true, this.search.getPermessiUtenteOperatore(), distinct);
+			try {
+				if(ruoloReport == null || ruoloReport.equals(PddRuolo.DELEGATA)) {
+					this.setServizi(this.dynamicUtils.getListaSelectItemsElencoConfigurazioneServiziFruizione(tipoProtocollo, gruppo, idAccordo, tipoSoggetto, nomeSoggetto,null,null,input, false, this.search.getPermessiUtenteOperatore(), distinct));
+				}else {
+					// bisogna filtrare per soggetti operativi
+					this.setServizi(this.dynamicUtils.getListaSelectItemsElencoConfigurazioneServiziErogazione(tipoProtocollo, gruppo, idAccordo, tipoSoggetto, nomeSoggetto,input, true, this.search.getPermessiUtenteOperatore(), distinct));
+				}
+			}catch(Exception e) {
+				throw new CoreException(e.getMessage(),e);
 			}
-			Integer lunghezzaSelectList = this.dynamicUtils.getLunghezzaSelectList(this.servizi);
+			Integer lunghezzaSelectList = this.dynamicUtils.getLunghezzaSelectList(this.getServiziRawField());
 			this.serviziSelectItemsWidth = Math.max(this.serviziSelectItemsWidth,  lunghezzaSelectList);
 		}
-		return this.servizi;
+		return this.getServiziRawField();
 	}
 
 	public List<ConfigurazioneGenerale> getListaConfigurazioniGenerali(){
@@ -214,7 +224,7 @@ public class ConfigurazioniGeneraliBean extends DynamicPdDBean<ConfigurazioneGen
 		this.labelInformazioniGenerali = labelInformazioniGenerali;
 	}
 
-	public String getLabelInformazioniServizi() throws Exception {
+	public String getLabelInformazioniServizi() throws CoreException, ProtocolException {
 		if(this.getSearch() != null){
 			String tipoProtocollo = this.getSearch().getProtocollo();
 			if (StringUtils.isNotBlank(this.getSearch().getNomeServizio())){
@@ -293,7 +303,7 @@ public class ConfigurazioniGeneraliBean extends DynamicPdDBean<ConfigurazioneGen
 //			}*/
 			
 			// se nn sono in select all allore prendo solo quelle selezionate
-			if (this.elencoID != null && this.elencoID.length() > 0) {
+			if (this.elencoID != null && !this.elencoID.isEmpty()) {
 				String [] split = this.elencoID.split(",");
 				
 				// NOTA: Al massimo sono selezionate 25 report

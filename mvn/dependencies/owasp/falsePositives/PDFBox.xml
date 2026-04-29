@@ -4,7 +4,7 @@
       file name: pdfbox-3.0.7.jar
       La vulnerabilità rilevata viene descritta come:
       "This issue affects the ExtractEmbeddedFiles example in Apache PDFBox: from 2.0.24 through 2.0.35, from 3.0.0 through 3.0.6. The ExtractEmbeddedFiles example contains a path traversal vulnerability (CWE-22) because the filename that is obtained from PDComplexFileSpecification.getFilename() is appended to the extraction path."
-      In GovWay la libreria Apache PDFBox viene utilizzata esclusivamente per caricare (Loader.loadPDF), generare (PDDocument, PDPageContentStream) e leggere il testo (PDFTextStripper) di documenti PDF. Non viene mai utilizzata la funzionalità di estrazione di file embedded (PDComplexFileSpecification, PDEmbeddedFile, ExtractEmbeddedFiles) e pertanto la vulnerabilità non è sfruttabile nel contesto di GovWay.
+      Il vettore di attacco descritto dall'advisory richiede di leggere PDComplexFileSpecification.getFilename() da un PDF non fidato e usarlo come path filesystem per scrivere il contenuto embedded. Tale schema non si verifica in alcun codepath di GovWay: la classe ExtractEmbeddedFiles non è presente nei jar pdfbox/pdfbox-io in uso (è in pdfbox-examples, non incluso) e non è stata copiata nel sorgente di GovWay. L'utility org.openspcoop2.utils.pdf.PDFWriter usa PDComplexFileSpecification/PDEmbeddedFile solo in scrittura (aggiunta di file embedded a PDF generati con filename forniti dal codice GovWay); l'utility org.openspcoop2.utils.pdf.PDFReader.getEmbeddedFiles restituisce i file embedded come Map<String,EmbeddedFile> con i contenuti come byte[] in memoria senza alcuna scrittura su filesystem ed è invocata solo dai test unitari (PDFReaderTest), non da codice di produzione del Gateway. In runtime PDFBox è quindi utilizzato solo per caricare (Loader.loadPDF), generare (PDDocument, PDPageContentStream), aggiungere file embedded a PDF generati internamente e leggere testo (PDFTextStripper) di documenti PDF: la vulnerabilità non è sfruttabile nel contesto di GovWay.
       ]]></notes>
       <packageUrl regex="true">^pkg:maven/org\.apache\.pdfbox/pdfbox@.*$</packageUrl>
       <cve>CVE-2026-23907</cve>
@@ -14,9 +14,29 @@
       file name: pdfbox-io-3.0.7.jar
       La vulnerabilità rilevata viene descritta come:
       "This issue affects the ExtractEmbeddedFiles example in Apache PDFBox: from 2.0.24 through 2.0.35, from 3.0.0 through 3.0.6. The ExtractEmbeddedFiles example contains a path traversal vulnerability (CWE-22) because the filename that is obtained from PDComplexFileSpecification.getFilename() is appended to the extraction path."
-      In GovWay la libreria Apache PDFBox viene utilizzata esclusivamente per caricare (Loader.loadPDF), generare (PDDocument, PDPageContentStream) e leggere il testo (PDFTextStripper) di documenti PDF. Non viene mai utilizzata la funzionalità di estrazione di file embedded (PDComplexFileSpecification, PDEmbeddedFile, ExtractEmbeddedFiles) e pertanto la vulnerabilità non è sfruttabile nel contesto di GovWay.      
+      Il vettore di attacco descritto dall'advisory richiede di leggere PDComplexFileSpecification.getFilename() da un PDF non fidato e usarlo come path filesystem per scrivere il contenuto embedded. Tale schema non si verifica in alcun codepath di GovWay: la classe ExtractEmbeddedFiles non è presente nei jar pdfbox/pdfbox-io in uso (è in pdfbox-examples, non incluso) e non è stata copiata nel sorgente di GovWay. L'utility org.openspcoop2.utils.pdf.PDFWriter usa PDComplexFileSpecification/PDEmbeddedFile solo in scrittura (aggiunta di file embedded a PDF generati con filename forniti dal codice GovWay); l'utility org.openspcoop2.utils.pdf.PDFReader.getEmbeddedFiles restituisce i file embedded come Map<String,EmbeddedFile> con i contenuti come byte[] in memoria senza alcuna scrittura su filesystem ed è invocata solo dai test unitari (PDFReaderTest), non da codice di produzione del Gateway. In runtime PDFBox è quindi utilizzato solo per caricare (Loader.loadPDF), generare (PDDocument, PDPageContentStream), aggiungere file embedded a PDF generati internamente e leggere testo (PDFTextStripper) di documenti PDF: la vulnerabilità non è sfruttabile nel contesto di GovWay.
       ]]></notes>
       <packageUrl regex="true">^pkg:maven/org\.apache\.pdfbox/pdfbox-io@.*$</packageUrl>
       <cve>CVE-2026-23907</cve>
-   </suppress>   
+   </suppress>
+   <suppress>
+      <notes><![CDATA[
+      file name: pdfbox-3.0.7.jar
+      La vulnerabilità rilevata viene descritta come:
+      "Path Traversal vulnerability in Apache PDFBox Examples. This issue affects the ExtractEmbeddedFiles example in Apache PDFBox: from 2.0.24 through 2.0.36, from 3.0.0 through 3.0.7. The change in the releases 2.0.36 and 3.0.7 (relativa al fix di CVE-2026-23907) è incompleta perché non considera il path separator."
+      Si tratta di un follow-up della CVE-2026-23907 sullo stesso identico codice di esempio 'ExtractEmbeddedFiles', non incluso nei jar 'pdfbox' / 'pdfbox-io' utilizzati da GovWay (la classe vulnerabile è distribuita nell'artifact separato 'pdfbox-examples', non incluso nel deploy) né copiato nel sorgente di GovWay. Il vettore di attacco descritto dall'advisory richiede di leggere PDComplexFileSpecification.getFilename() da un PDF non fidato e usarlo come path filesystem per scrivere il contenuto embedded; tale schema non si verifica in alcun codepath di GovWay. L'utility org.openspcoop2.utils.pdf.PDFWriter usa PDComplexFileSpecification/PDEmbeddedFile solo in scrittura (aggiunta di file embedded a PDF generati con filename forniti dal codice GovWay); l'utility org.openspcoop2.utils.pdf.PDFReader.getEmbeddedFiles restituisce i file embedded come Map<String,EmbeddedFile> con i contenuti come byte[] in memoria senza alcuna scrittura su filesystem ed è invocata solo dai test unitari (PDFReaderTest), non da codice di produzione del Gateway. La vulnerabilità non è quindi sfruttabile nel contesto di GovWay.
+      ]]></notes>
+      <packageUrl regex="true">^pkg:maven/org\.apache\.pdfbox/pdfbox@.*$</packageUrl>
+      <cve>CVE-2026-33929</cve>
+   </suppress>
+   <suppress>
+      <notes><![CDATA[
+      file name: pdfbox-io-3.0.7.jar
+      La vulnerabilità rilevata viene descritta come:
+      "Path Traversal vulnerability in Apache PDFBox Examples. This issue affects the ExtractEmbeddedFiles example in Apache PDFBox: from 2.0.24 through 2.0.36, from 3.0.0 through 3.0.7. The change in the releases 2.0.36 and 3.0.7 (relativa al fix di CVE-2026-23907) è incompleta perché non considera il path separator."
+      Si tratta di un follow-up della CVE-2026-23907 sullo stesso identico codice di esempio 'ExtractEmbeddedFiles', non incluso nei jar 'pdfbox' / 'pdfbox-io' utilizzati da GovWay (la classe vulnerabile è distribuita nell'artifact separato 'pdfbox-examples', non incluso nel deploy) né copiato nel sorgente di GovWay. Il vettore di attacco descritto dall'advisory richiede di leggere PDComplexFileSpecification.getFilename() da un PDF non fidato e usarlo come path filesystem per scrivere il contenuto embedded; tale schema non si verifica in alcun codepath di GovWay. L'utility org.openspcoop2.utils.pdf.PDFWriter usa PDComplexFileSpecification/PDEmbeddedFile solo in scrittura (aggiunta di file embedded a PDF generati con filename forniti dal codice GovWay); l'utility org.openspcoop2.utils.pdf.PDFReader.getEmbeddedFiles restituisce i file embedded come Map<String,EmbeddedFile> con i contenuti come byte[] in memoria senza alcuna scrittura su filesystem ed è invocata solo dai test unitari (PDFReaderTest), non da codice di produzione del Gateway. La vulnerabilità non è quindi sfruttabile nel contesto di GovWay.
+      ]]></notes>
+      <packageUrl regex="true">^pkg:maven/org\.apache\.pdfbox/pdfbox-io@.*$</packageUrl>
+      <cve>CVE-2026-33929</cve>
+   </suppress>
 </suppressions>

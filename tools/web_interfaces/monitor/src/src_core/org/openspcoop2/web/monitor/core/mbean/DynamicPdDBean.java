@@ -19,15 +19,13 @@
  */
 package org.openspcoop2.web.monitor.core.mbean;
 
-//import java.awt.Canvas;
-//import java.awt.Font;
-//import java.awt.FontMetrics;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang3.StringUtils;
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.search.Soggetto;
 import org.openspcoop2.core.commons.search.constants.TipoPdD;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
@@ -57,7 +55,7 @@ import org.slf4j.Logger;
  *
  */
 @SuppressWarnings("rawtypes")
-public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBean<T, K, ServiceType>{
+public class DynamicPdDBean<T,K,S extends IService> extends PdDBaseBean<T, K, S>{
 
 
 	/**
@@ -67,14 +65,15 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 
 	protected static Logger log =  LoggerManager.getPddMonitorCoreLogger();
 
-	protected List<SelectItem> soggettiAssociati = null;
-	protected List<SelectItem> soggettiLocale = null;
-	protected List<SelectItem> soggetti = null;
-	protected List<SelectItem> gruppi = null;
-	protected List<SelectItem> api = null;
-	protected List<SelectItem> servizi = null;
-	protected List<SelectItem> azioni = null;
-	protected List<SelectItem> serviziApplicativi = null;
+	private List<SelectItem> soggettiAssociati = null;
+	private List<SelectItem> soggettiLocale = null;
+	private List<SelectItem> soggetti = null;
+	private List<SelectItem> gruppi = null;
+	private List<SelectItem> api = null;
+	private List<SelectItem> servizi = null;
+
+	private List<SelectItem> azioni = null;
+	private List<SelectItem> serviziApplicativi = null;
 
 	protected Integer soggettiAssociatiSelectItemsWidth = 0;
 	protected Integer soggettiLocaleSelectItemsWidth = 0;
@@ -100,23 +99,7 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 
 	protected Integer defaultSelectItemsWidth = 412;
 
-	//	private static FontMetrics fm = null;
-
 	protected DynamicPdDBeanUtils dynamicUtils = null;
-
-//	protected boolean showAccordoOnServizioLabel = false;
-//	protected boolean showTipoServizioOnServizioLabel =true;
-//	protected boolean showErogatoreOnServizioLabel = true;
-
-	//	public static Integer getFontWidth(String label){
-	//		if(fm == null){
-	//			Canvas c = new Canvas();
-	//			Font verdanaFont = new Font("Verdana", Font.PLAIN , 11);
-	//			fm = c.getFontMetrics(verdanaFont);
-	//		}
-	//
-	//		return fm.stringWidth(label);
-	//	}
 
 	public DynamicPdDBean(){
 		super();
@@ -150,12 +133,11 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 	}
 	
 	
-	public List<org.openspcoop2.web.monitor.core.bean.SelectItem> gruppiAutoComplete(Object val) throws Exception{
-		List<org.openspcoop2.web.monitor.core.bean.SelectItem> listaGruppi = new ArrayList<org.openspcoop2.web.monitor.core.bean.SelectItem>();
+	public List<org.openspcoop2.web.monitor.core.bean.SelectItem> gruppiAutoComplete(Object val){
+		List<org.openspcoop2.web.monitor.core.bean.SelectItem> listaGruppi = new ArrayList<>();
 		List<SelectItem> listaGruppiTmp = new ArrayList<>();
-		if(val==null || StringUtils.isEmpty((String)val)) {
-		}else{
-			listaGruppiTmp = this._getGruppi((String)val);
+		if(val!=null && !StringUtils.isEmpty((String)val)) {
+			listaGruppiTmp = this.getGruppiEngine((String)val);
 		}
 		
 		listaGruppiTmp.add(0, new SelectItem("--", "--"));
@@ -171,20 +153,20 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 		return listaGruppi;
 	}
 
-	public List<SelectItem> getGruppi() throws Exception {
-		return _getGruppi(null);		
+	public List<SelectItem> getGruppi() {
+		return getGruppiEngine(null);		
 
 	}
 
-	protected List<SelectItem> _getGruppi(String input) throws Exception {
+	protected List<SelectItem> getGruppiEngine(String input) {
 		if(this.search==null){
-			return new ArrayList<SelectItem>();
+			return new ArrayList<>();
 		}
 		if(!this.gruppiSelectItemsWidthCheck){
-			this.gruppi = new ArrayList<SelectItem>();
+			this.gruppi = new ArrayList<>();
 			
 			String tipoProtocollo = this.search.getProtocollo();
-			this.gruppi = this.dynamicUtils.getListaGruppi(tipoProtocollo);
+			this.gruppi = this.dynamicUtils.getListaGruppi(tipoProtocollo, input);
 			
 			Integer lunghezzaSelectList = this.dynamicUtils.getLunghezzaSelectList(this.gruppi);
 			this.gruppiSelectItemsWidth = Math.max(this.gruppiSelectItemsWidth,  lunghezzaSelectList);
@@ -193,12 +175,11 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 	}
 	
 	
-	public List<org.openspcoop2.web.monitor.core.bean.SelectItem> azioniAutoComplete(Object val) throws Exception{
-		List<org.openspcoop2.web.monitor.core.bean.SelectItem> listaAzioni = new ArrayList<org.openspcoop2.web.monitor.core.bean.SelectItem>();
+	public List<org.openspcoop2.web.monitor.core.bean.SelectItem> azioniAutoComplete(Object val) {
+		List<org.openspcoop2.web.monitor.core.bean.SelectItem> listaAzioni = new ArrayList<>();
 		List<SelectItem> listaAzioniTmp = new ArrayList<>();
-		if(val==null || StringUtils.isEmpty((String)val)) {
-		}else{
-			listaAzioniTmp = this._getAzioni((String)val);
+		if(val!=null && !StringUtils.isEmpty((String)val)) {
+			listaAzioniTmp = this.getAzioniEngine((String)val);
 		}
 		
 		listaAzioniTmp.add(0, new SelectItem("--", "--"));
@@ -215,30 +196,29 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 	}
 
 	public List<SelectItem> getAzioni() {
-		return _getAzioni(null);
+		return getAzioniEngine(null);
 	}
 
-	protected List<SelectItem> _getAzioni(String input) {
+	protected List<SelectItem> getAzioniEngine(String input) {
 		if(this.search==null){
-			return new ArrayList<SelectItem>();
+			return new ArrayList<>();
 		}
 		if(this.search.getApi() == null && this.search.getNomeServizio()==null){
-			return new ArrayList<SelectItem>();
+			return new ArrayList<>();
 		}
-		if (this.search != null
-				&& StringUtils.isBlank(this.search.getNomeServizio()) && StringUtils.isBlank(this.search.getApi())) {
-			return new ArrayList<SelectItem>();
+		if (StringUtils.isBlank(this.search.getNomeServizio()) && StringUtils.isBlank(this.search.getApi())) {
+			return new ArrayList<>();
 		}
 
 		if(!this.azioniSelectItemsWidthCheck){
-			this.azioni = new ArrayList<SelectItem>();
+			this.azioni = new ArrayList<>();
 			try {
 				String tipoProtocollo = this.search.getProtocollo();
 
 				//ricerca per API
 				if(StringUtils.isNotBlank(this.search.getApi())) {
-					String api = this.search.getApi();
-					IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(api);
+					String apiSearch = this.search.getApi();
+					IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(apiSearch);
 					
 					String nome = idAccordo.getNome();
 					Integer versione = idAccordo.getVersione();
@@ -269,12 +249,11 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 		return this.azioni;
 	}
 	
-	public List<org.openspcoop2.web.monitor.core.bean.SelectItem> apiAutoComplete(Object val) throws Exception{
-		List<org.openspcoop2.web.monitor.core.bean.SelectItem> listaApi = new ArrayList<org.openspcoop2.web.monitor.core.bean.SelectItem>();
+	public List<org.openspcoop2.web.monitor.core.bean.SelectItem> apiAutoComplete(Object val) {
+		List<org.openspcoop2.web.monitor.core.bean.SelectItem> listaApi = new ArrayList<>();
 		List<SelectItem> listaApiTmp = new ArrayList<>();
-		if(val==null || StringUtils.isEmpty((String)val)) {
-		}else{
-			listaApiTmp = this._getApiList((String)val);
+		if(val!=null && !StringUtils.isEmpty((String)val)) {
+			listaApiTmp = this.getApiListEngine((String)val);
 		}
 		
 		listaApiTmp.add(0, new SelectItem("--", "--"));
@@ -290,17 +269,17 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 		return listaApi;
 	}
 	
-	public List<SelectItem> getApiList() throws Exception {
-		return _getApiList(null);		
+	public List<SelectItem> getApiList() {
+		return getApiListEngine(null);		
 
 	}
 
-	protected List<SelectItem> _getApiList(String input) throws Exception {
+	protected List<SelectItem> getApiListEngine(String input) {
 		if(this.search==null){
-			return new ArrayList<SelectItem>();
+			return new ArrayList<>();
 		}
 		if(!this.apiSelectItemsWidthCheck){
-			this.api = new ArrayList<SelectItem>();
+			this.api = new ArrayList<>();
 
 			// per adesso non lo aggancio
 			String tipoSoggettoReferente = null;
@@ -311,7 +290,9 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 			
 			String gruppo = this.search.getGruppo();
 			
-			this.api = this.dynamicUtils.getListaSelectItemsAccordiServizio(tipoProtocollo, tipoSoggettoReferente, nomeSoggettoReferente, isReferente, false, gruppo);
+			this.api = this.dynamicUtils.getListaSelectItemsAccordiServizio(tipoProtocollo, tipoSoggettoReferente, nomeSoggettoReferente, 
+					isReferente, false, gruppo,
+					input);
 			
 			Integer lunghezzaSelectList = this.dynamicUtils.getLunghezzaSelectList(this.api);
 			this.apiSelectItemsWidth = Math.max(this.apiSelectItemsWidth,  lunghezzaSelectList);
@@ -320,12 +301,11 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 	}
 	
 	
-	public List<org.openspcoop2.web.monitor.core.bean.SelectItem> serviziAutoComplete(Object val) throws Exception{
-		List<org.openspcoop2.web.monitor.core.bean.SelectItem> listaServizi = new ArrayList<org.openspcoop2.web.monitor.core.bean.SelectItem>();
+	public List<org.openspcoop2.web.monitor.core.bean.SelectItem> serviziAutoComplete(Object val) throws CoreException {
+		List<org.openspcoop2.web.monitor.core.bean.SelectItem> listaServizi = new ArrayList<>();
 		List<SelectItem> listaServiziTmp = new ArrayList<>();
-		if(val==null || StringUtils.isEmpty((String)val)) {
-		}else{
-			listaServiziTmp = this._getServizi((String)val);
+		if(val!=null && !StringUtils.isEmpty((String)val)) {
+			listaServiziTmp = this.getServiziEngine((String)val);
 		}
 		
 		listaServiziTmp.add(0, new SelectItem("--", "--"));
@@ -341,18 +321,23 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 		return listaServizi;
 	}
 
-	public List<SelectItem> getServizi() throws Exception {
-		return _getServizi(null);		
-
+	public void setServizi(List<SelectItem> servizi) {
+		this.servizi = servizi;
+	}
+	public List<SelectItem> getServiziRawField() {
+		return this.servizi;
+	}
+	public List<SelectItem> getServizi() throws CoreException {
+		return getServiziEngine(null);		
 	}
 
-	protected List<SelectItem> _getServizi(String input) throws Exception {
+	protected List<SelectItem> getServiziEngine(String input) throws CoreException {
 		if(this.search==null){
-			return new ArrayList<SelectItem>();
+			return new ArrayList<>();
 		}
 		if(!this.serviziSelectItemsWidthCheck){
-			this.servizi = new ArrayList<SelectItem>();
-			Soggetto erogatore = _getSoggettoErogatore( );
+			this.servizi = new ArrayList<>();
+			Soggetto erogatore = getSoggettoErogatoreEngine( );
 
 			String tipoSoggetto =  null;
 			String nomeSoggetto = null;
@@ -367,9 +352,13 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 			String gruppo = this.search.getGruppo();
 			
 			IDAccordo idAccordo = null;
-			String api = this.search.getApi();
-			if((api!=null && !"".equals(api)) ) {
-				idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(api);
+			String searchApi = this.search.getApi();
+			if((searchApi!=null && !"".equals(searchApi)) ) {
+				try {
+					idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(searchApi);
+				}catch(Exception e) {
+					throw new CoreException(e.getMessage(),e);
+				}
 			}
 			
 			if (TipologiaRicerca.uscita.equals(this.search.getTipologiaRicercaEnum())) {
@@ -387,16 +376,16 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 		return this.servizi;
 	}
 
-	public List<SelectItem> _getSoggetti(boolean includiOperativi,boolean includiEsterni, String input) throws Exception {
-		return this._getSoggetti(includiOperativi, includiEsterni, false, input);
+	public List<SelectItem> getSoggetti(boolean includiOperativi,boolean includiEsterni, String input) throws CoreException {
+		return this.getSoggetti(includiOperativi, includiEsterni, false, input);
 	}
-	public List<SelectItem> _getSoggetti(boolean includiOperativi,boolean includiEsterni, boolean escludiSoggettoSelezionato, String input) throws Exception {
+	public List<SelectItem> getSoggetti(boolean includiOperativi,boolean includiEsterni, boolean escludiSoggettoSelezionato, String input) throws CoreException {
 		if(this.search==null){
-			return new ArrayList<SelectItem>();
+			return new ArrayList<>();
 		}
 		
 		if(!this.soggettiSelectItemsWidthCheck){
-			this.soggetti = new ArrayList<SelectItem>();
+			this.soggetti = new ArrayList<>();
 
 			String tipoProtocollo = this.search.getProtocollo();
 			String idPorta = null;
@@ -415,18 +404,17 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 					}
 				}
 				
-				if(escludiSoggettoSelezionato) {
-					if(this.search!=null && this.search.getUser()!=null) {
-						String soggettoSelezionato = this.search.getUser().getSoggettoSelezionatoPddMonitor();
-						if(soggettoSelezionato==null || "".equals(soggettoSelezionato)) {
-							soggettoSelezionato = this.search.getTipoNomeSoggettoLocale();
-						}
-						if(soggettoSelezionato!=null && !"".equals(soggettoSelezionato) && soggettoSelezionato.contains("/")) {
-							String tipo = soggettoSelezionato.split("/")[0];
-							String nome = soggettoSelezionato.split("/")[1];
-							if(tipo.equals(soggetto.getTipoSoggetto()) && nome.equals(soggetto.getNomeSoggetto())) {
-								add = false;
-							}
+				if(escludiSoggettoSelezionato &&
+					this.search!=null && this.search.getUser()!=null) {
+					String soggettoSelezionato = this.search.getUser().getSoggettoSelezionatoPddMonitor();
+					if(soggettoSelezionato==null || "".equals(soggettoSelezionato)) {
+						soggettoSelezionato = this.search.getTipoNomeSoggettoLocale();
+					}
+					if(soggettoSelezionato!=null && !"".equals(soggettoSelezionato) && soggettoSelezionato.contains("/")) {
+						String tipo = soggettoSelezionato.split("/")[0];
+						String nome = soggettoSelezionato.split("/")[1];
+						if(tipo.equals(soggetto.getTipoSoggetto()) && nome.equals(soggetto.getNomeSoggetto())) {
+							add = false;
 						}
 					}
 				}
@@ -434,8 +422,12 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 				if(add) {				
 					String value = soggetto.getTipoSoggetto() + "/" + soggetto.getNomeSoggetto();
 					IDSoggetto idSoggetto = new IDSoggetto(soggetto.getTipoSoggetto(), soggetto.getNomeSoggetto());
-					String label = tipoProtocollo != null ? NamingUtils.getLabelSoggetto(tipoProtocollo,idSoggetto) : NamingUtils.getLabelSoggetto(idSoggetto);
-					this.soggetti.add(new SelectItem(value,label));
+					try {
+						String label = tipoProtocollo != null ? NamingUtils.getLabelSoggetto(tipoProtocollo,idSoggetto) : NamingUtils.getLabelSoggetto(idSoggetto);
+						this.soggetti.add(new SelectItem(value,label));
+					}catch(Exception e) {
+						throw new CoreException(e.getMessage(),e);
+					}
 				}
 			}
 			Integer lunghezzaSelectList = this.dynamicUtils.getLunghezzaSelectList(this.soggetti);
@@ -444,15 +436,14 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 		return this.soggetti;
 	}
 	
-	public List<org.openspcoop2.web.monitor.core.bean.SelectItem> soggettiLocaleAutoComplete(Object val) throws Exception{
-		List<SelectItem> listaSoggettiTmp = new ArrayList<SelectItem>();
-		if(val==null || StringUtils.isEmpty((String)val)) {
-		}else{
-			listaSoggettiTmp = this._getSoggettiLocale(true, false, (String)val);
+	public List<org.openspcoop2.web.monitor.core.bean.SelectItem> soggettiLocaleAutoComplete(Object val) throws CoreException {
+		List<SelectItem> listaSoggettiTmp = new ArrayList<>();
+		if(val!=null && !StringUtils.isEmpty((String)val)) {
+			listaSoggettiTmp = this.getSoggettiLocale(true, false, (String)val);
 		}
 		listaSoggettiTmp.add(0, new SelectItem("--", "--"));
 		
-		List<org.openspcoop2.web.monitor.core.bean.SelectItem> listaSoggetti = new ArrayList<org.openspcoop2.web.monitor.core.bean.SelectItem>();
+		List<org.openspcoop2.web.monitor.core.bean.SelectItem> listaSoggetti = new ArrayList<>();
 		
 		for (SelectItem selectItem : listaSoggettiTmp) {
 			String label = selectItem.getLabel();
@@ -465,17 +456,17 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 		return listaSoggetti;
 	}
 
-	public List<SelectItem> getSoggettiLocale() throws Exception{
-		return _getSoggettiLocale(true,false,null);
+	public List<SelectItem> getSoggettiLocale() throws CoreException {
+		return getSoggettiLocale(true,false,null);
 	}
 
-	public List<SelectItem> _getSoggettiLocale(boolean includiOperativi,boolean includiEsterni, String input) throws Exception {
+	public List<SelectItem> getSoggettiLocale(boolean includiOperativi,boolean includiEsterni, String input) throws CoreException {
 		if(this.search==null){
-			return new ArrayList<SelectItem>();
+			return new ArrayList<>();
 		}
 		
 		if(!this.soggettiLocaleSelectItemsWidthCheck){
-			this.soggettiLocale = new ArrayList<SelectItem>();
+			this.soggettiLocale = new ArrayList<>();
 
 			String tipoProtocollo = this.search.getProtocollo();
 			String idPorta = null;
@@ -497,8 +488,12 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 				if(add) {				
 					String value = soggetto.getTipoSoggetto() + "/" + soggetto.getNomeSoggetto();
 					IDSoggetto idSoggetto = new IDSoggetto(soggetto.getTipoSoggetto(), soggetto.getNomeSoggetto());
-					String label = tipoProtocollo != null ? NamingUtils.getLabelSoggetto(tipoProtocollo,idSoggetto) : NamingUtils.getLabelSoggetto(idSoggetto);
-					this.soggettiLocale.add(new SelectItem(value,label));
+					try {
+						String label = tipoProtocollo != null ? NamingUtils.getLabelSoggetto(tipoProtocollo,idSoggetto) : NamingUtils.getLabelSoggetto(idSoggetto);
+						this.soggettiLocale.add(new SelectItem(value,label));
+					}catch(Exception e) {
+						throw new CoreException(e.getMessage(),e);
+					}
 				}
 			}
 			Integer lunghezzaSelectList = this.dynamicUtils.getLunghezzaSelectList(this.soggettiLocale);
@@ -517,7 +512,7 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 	 * 
 	 * @return Soggetto erogatore
 	 */
-	protected Soggetto _getSoggettoErogatore() {
+	protected Soggetto getSoggettoErogatoreEngine() {
 		Soggetto erogatore = null;
 		// ingresso
 		if (TipologiaRicerca.ingresso.equals(this.search.getTipologiaRicercaEnum())) {
@@ -527,28 +522,23 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 						this.search.getTipoSoggettoLocale(),
 						this.search.getSoggettoLocale());
 			}
-		} else if (TipologiaRicerca.uscita.equals(this.search.getTipologiaRicercaEnum())) {
+		} else if (TipologiaRicerca.uscita.equals(this.search.getTipologiaRicercaEnum()) &&
 			// uscita
-			// String sq = "select DISTINCT s.nome, s.accordo from Servizio s ";
-			if (StringUtils.isNotBlank(this.search.getNomeDestinatario())) {
-				// recuper soggetto erogatore
-				erogatore = this.dynamicUtilsService.findSoggettoByTipoNome(
-						this.search.getTipoDestinatario(),
-						this.search.getNomeDestinatario());
-				//
-				// // aggiungo condizione alla query
-				// sq += "where s.erogatore.id = :id_erogatore";
-			}
+			StringUtils.isNotBlank(this.search.getNomeDestinatario())) {
+			// recuper soggetto erogatore
+			erogatore = this.dynamicUtilsService.findSoggettoByTipoNome(
+					this.search.getTipoDestinatario(),
+					this.search.getNomeDestinatario());
 		}
 		return erogatore;
 	}
 
-	public List<SelectItem> getServiziApplicativi() throws Exception {
+	public List<SelectItem> getServiziApplicativi() {
 		if(this.search==null){
-			return new ArrayList<SelectItem>();
+			return new ArrayList<>();
 		}
 		if(!this.serviziApplicativiSelectItemsWidthCheck){
-			this.serviziApplicativi = new ArrayList<SelectItem>();
+			this.serviziApplicativi = new ArrayList<>();
 			
 			String tipoProtocollo =   this.search.getProtocollo();
 			
@@ -595,20 +585,19 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 	}
 	
 	
-	public List<org.openspcoop2.web.monitor.core.bean.SelectItem> soggettiAutoComplete(Object val) throws Exception{
-		List<org.openspcoop2.web.monitor.core.bean.SelectItem> listaSoggetti = new ArrayList<org.openspcoop2.web.monitor.core.bean.SelectItem>();
+	public List<org.openspcoop2.web.monitor.core.bean.SelectItem> soggettiAutoComplete(Object val) throws CoreException {
+		List<org.openspcoop2.web.monitor.core.bean.SelectItem> listaSoggetti = new ArrayList<>();
 		List<SelectItem> listaSoggettiTmp = new ArrayList<>();
-		if(val==null || StringUtils.isEmpty((String)val)) {
-		}else{
+		if(val!=null && !StringUtils.isEmpty((String)val)) {
 			if(this.search!=null &&
 					TipologiaRicerca.ingresso.equals(this.search.getTipologiaRicercaEnum()) && 
 					StringUtils.isNotEmpty(this.search.getRiconoscimento()) && 
 					this.search.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
-					listaSoggettiTmp = _getSoggetti(true, false, false, (String)val);
+					listaSoggettiTmp = getSoggetti(true, false, false, (String)val);
 			}
 			else {
 				ConfigurazioneSoggettiVisualizzatiSearchForm config = Utility.getMultitenantAbilitatoSoggettiConfig(this.search!=null ? this.search.getTipologiaRicercaEnum() : null);
-				listaSoggettiTmp = this._getSoggetti(config.isIncludiSoloOperativi(), config.isIncludiSoloEsterni(), config.isEscludiSoggettoSelezionato(), (String)val);
+				listaSoggettiTmp = this.getSoggetti(config.isIncludiSoloOperativi(), config.isIncludiSoloEsterni(), config.isEscludiSoggettoSelezionato(), (String)val);
 			}
 		}
 		
@@ -625,36 +614,39 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 		return listaSoggetti;
 	}
 
-	public List<SelectItem> getSoggetti()  throws Exception{
+	public List<SelectItem> getSoggetti() throws CoreException{
 		if(this.search!=null &&
 				TipologiaRicerca.ingresso.equals(this.search.getTipologiaRicercaEnum()) && 
 				StringUtils.isNotEmpty(this.search.getRiconoscimento()) && 
 				this.search.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
 			
-			boolean isSupportataAutenticazioneApplicativiEsterni = this.dynamicUtils.isSupportataAutenticazioneApplicativiEsterniErogazione(this.search.getProtocollo());
-						
-			return _getSoggetti(true, isSupportataAutenticazioneApplicativiEsterni, false, null);
+			try {
+				boolean isSupportataAutenticazioneApplicativiEsterni = this.dynamicUtils.isSupportataAutenticazioneApplicativiEsterniErogazione(this.search.getProtocollo());
+				return getSoggetti(true, isSupportataAutenticazioneApplicativiEsterni, false, null);
+			}catch(Exception e) {
+				throw new CoreException(e.getMessage(),e);
+			}
 		}
 		
 		ConfigurazioneSoggettiVisualizzatiSearchForm config = Utility.getMultitenantAbilitatoSoggettiConfig(this.search!=null ? this.search.getTipologiaRicercaEnum() : null);
-		return _getSoggetti(config.isIncludiSoloOperativi(), config.isIncludiSoloEsterni(), config.isEscludiSoggettoSelezionato(),null);
+		return getSoggetti(config.isIncludiSoloOperativi(), config.isIncludiSoloEsterni(), config.isEscludiSoggettoSelezionato(),null);
 	}
 
-	public List<SelectItem> getTipiNomiSoggettiAssociati() throws Exception {
-		return _getTipiNomiSoggettiAssociati(false);
+	public List<SelectItem> getTipiNomiSoggettiAssociati() throws CoreException {
+		return getTipiNomiSoggettiAssociati(false);
 	}
 
-	public List<SelectItem> _getTipiNomiSoggettiAssociati(boolean soloOperativi) throws Exception {
+	public List<SelectItem> getTipiNomiSoggettiAssociati(boolean soloOperativi) throws CoreException {
 		if(this.search==null){
-			return new ArrayList<SelectItem>();
+			return new ArrayList<>();
 		}
 
 		if(!this.soggettiAssociatiSelectItemsWidthCheck){
-			this.soggettiAssociati = new ArrayList<SelectItem>();
+			this.soggettiAssociati = new ArrayList<>();
 
 			UserDetailsBean loggedUser = Utility.getLoggedUser();
 			if(loggedUser!=null){
-				List<IDSoggetto> lst = new ArrayList<IDSoggetto>();
+				List<IDSoggetto> lst = new ArrayList<>();
 				String tipoProtocollo = this.search.getProtocollo();
 				if(tipoProtocollo == null) {
 					lst = loggedUser.getUtenteSoggettoList();
@@ -662,7 +654,7 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 					// se ho selezionato un protocollo devo filtrare per protocollo
 					List<IDSoggetto> tipiNomiSoggettiAssociati = loggedUser.getUtenteSoggettoProtocolliMap().containsKey(tipoProtocollo) ? loggedUser.getUtenteSoggettoProtocolliMap().get(tipoProtocollo) : new ArrayList<>();
 					List<String> lstTmp = new ArrayList<>();
-					if(tipiNomiSoggettiAssociati !=null && tipiNomiSoggettiAssociati.size() > 0)
+					if(tipiNomiSoggettiAssociati !=null && !tipiNomiSoggettiAssociati.isEmpty())
 						for (IDSoggetto utenteSoggetto : tipiNomiSoggettiAssociati) {
 							String tipoNome = utenteSoggetto.getTipo() + "/" + utenteSoggetto.getNome();
 							boolean add = true;
@@ -670,7 +662,7 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 								String nomePddFromSoggetto = this.dynamicUtils.getServerFromSoggetto(utenteSoggetto.getTipo(), utenteSoggetto.getNome());
 								add = this.dynamicUtils.checkTipoPdd(nomePddFromSoggetto, TipoPdD.OPERATIVO);
 							}
-							if(lstTmp.contains(tipoNome)==false && add){
+							if(!lstTmp.contains(tipoNome) && add){
 								lstTmp.add(tipoNome);
 								lst.add(utenteSoggetto);
 							}
@@ -679,8 +671,12 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 
 				for (IDSoggetto idSoggetto : lst) {
 					String value = idSoggetto.getTipo() + "/" + idSoggetto.getNome();
-					String label = tipoProtocollo != null ? NamingUtils.getLabelSoggetto(tipoProtocollo,idSoggetto) : NamingUtils.getLabelSoggetto(idSoggetto);
-					this.soggettiAssociati.add(new SelectItem(value,label));
+					try {
+						String label = tipoProtocollo != null ? NamingUtils.getLabelSoggetto(tipoProtocollo,idSoggetto) : NamingUtils.getLabelSoggetto(idSoggetto);
+						this.soggettiAssociati.add(new SelectItem(value,label));
+					}catch(Exception e) {
+						throw new CoreException(e.getMessage(),e);
+					}
 				}
 			}
 		}
@@ -689,49 +685,49 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 	}
 
 
-	public String getSoggettiAssociatiSelectItemsWidth() throws Exception{
+	public String getSoggettiAssociatiSelectItemsWidth() throws CoreException {
 		this.soggettiAssociatiSelectItemsWidthCheck = false;
 		getTipiNomiSoggettiAssociati();
 		this.soggettiAssociatiSelectItemsWidthCheck = true;
 		return checkWidthLimits(this.soggettiAssociatiSelectItemsWidth).toString();
 	}
 
-	public String getSoggettiLocaleSelectItemsWidth() throws Exception{
+	public String getSoggettiLocaleSelectItemsWidth() throws CoreException{
 		this.soggettiLocaleSelectItemsWidthCheck = false;
 		getSoggettiLocale();
 		this.soggettiLocaleSelectItemsWidthCheck = true;
 		return checkWidthLimits(this.soggettiLocaleSelectItemsWidth).toString();
 	}
 
-	public String getSoggettiSelectItemsWidth() throws Exception{
+	public String getSoggettiSelectItemsWidth() throws CoreException {
 		this.soggettiSelectItemsWidthCheck = false;
 		getSoggetti();
 		this.soggettiSelectItemsWidthCheck = true;
 		return checkWidthLimits(this.soggettiSelectItemsWidth).toString();
 	}
 
-	public String getGruppiSelectItemsWidth() throws Exception{
+	public String getGruppiSelectItemsWidth() {
 		this.gruppiSelectItemsWidthCheck = false;
 		getGruppi();
 		this.gruppiSelectItemsWidthCheck = true;
 		return checkWidthLimits(this.gruppiSelectItemsWidth).toString();
 	}
 	
-	public String getApiSelectItemsWidth() throws Exception{
+	public String getApiSelectItemsWidth() {
 		this.apiSelectItemsWidthCheck = false;
 		getApiList();
 		this.apiSelectItemsWidthCheck = true;
 		return checkWidthLimits(this.apiSelectItemsWidth).toString();
 	}
 	
-	public String getServiziSelectItemsWidth() throws Exception{
+	public String getServiziSelectItemsWidth() throws CoreException {
 		this.serviziSelectItemsWidthCheck = false;
 		getServizi();
 		this.serviziSelectItemsWidthCheck = true;
 		return checkWidthLimits(this.serviziSelectItemsWidth).toString();
 	}
 
-	public String getServiziApplicativiSelectItemsWidth() throws Exception{
+	public String getServiziApplicativiSelectItemsWidth() {
 		this.serviziApplicativiSelectItemsWidthCheck = false;
 		getServiziApplicativi();
 		this.serviziApplicativiSelectItemsWidthCheck = true;
@@ -848,31 +844,31 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 		this.azioniSelectItemsWidth = azioniSelectItemsWidth;
 	}
 
-	public Integer getSoggettiLocaleSelectItemsWidthAsInteger() throws Exception{
+	public Integer getSoggettiLocaleSelectItemsWidthAsInteger() {
 		return checkWidthLimits(this.soggettiLocaleSelectItemsWidth);
 	}
 
-	public Integer getSoggettiAssociatiSelectItemsWidthAsInteger() throws Exception{
+	public Integer getSoggettiAssociatiSelectItemsWidthAsInteger() {
 		return checkWidthLimits(this.soggettiAssociatiSelectItemsWidth);
 	}
 
-	public Integer getSoggettiSelectItemsWidthAsInteger() throws Exception{
+	public Integer getSoggettiSelectItemsWidthAsInteger() {
 		return checkWidthLimits(this.soggettiSelectItemsWidth);
 	}
 
-	public Integer getGruppiSelectItemsWidthAsInteger() throws Exception{
+	public Integer getGruppiSelectItemsWidthAsInteger() {
 		return checkWidthLimits(this.gruppiSelectItemsWidth);
 	}
 	
-	public Integer getApiSelectItemsWidthAsInteger() throws Exception{
+	public Integer getApiSelectItemsWidthAsInteger() {
 		return checkWidthLimits(this.apiSelectItemsWidth);
 	}
 	
-	public Integer getServiziSelectItemsWidthAsInteger() throws Exception{
+	public Integer getServiziSelectItemsWidthAsInteger() {
 		return checkWidthLimits(this.serviziSelectItemsWidth);
 	}
 
-	public Integer getServiziApplicativiSelectItemsWidthAsInteger() throws Exception{
+	public Integer getServiziApplicativiSelectItemsWidthAsInteger() {
 		return checkWidthLimits(this.serviziApplicativiSelectItemsWidth);
 	}
 
