@@ -1,0 +1,12 @@
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
+   <suppress>
+      <notes><![CDATA[
+      file name: pdfbox-2.0.36.jar
+      La vulnerabilità rilevata viene descritta come:
+      "Path Traversal vulnerability in Apache PDFBox Examples. This issue affects the ExtractEmbeddedFiles example in Apache PDFBox: from 2.0.24 through 2.0.36, from 3.0.0 through 3.0.7. The change in the releases 2.0.36 and 3.0.7 (relativa al fix di CVE-2026-23907) è incompleta perché non considera il path separator."
+      Si tratta di un follow-up della CVE-2026-23907 sullo stesso identico codice di esempio 'ExtractEmbeddedFiles', non incluso nel jar 'pdfbox' utilizzato da GovWay (la classe vulnerabile è distribuita nell'artifact separato 'pdfbox-examples', non incluso nel deploy) né copiato nel sorgente di GovWay. Il vettore di attacco descritto dall'advisory richiede di leggere PDComplexFileSpecification.getFilename() da un PDF non fidato e usarlo come path filesystem per scrivere il contenuto embedded; tale schema non si verifica in alcun codepath di GovWay. L'utility org.openspcoop2.utils.pdf.PDFWriter usa PDComplexFileSpecification/PDEmbeddedFile solo in scrittura (aggiunta di file embedded a PDF generati con filename forniti dal codice GovWay); l'utility org.openspcoop2.utils.pdf.PDFReader.getEmbeddedFiles restituisce i file embedded come Map<String,EmbeddedFile> con i contenuti come byte[] in memoria senza alcuna scrittura su filesystem ed è invocata solo dai test unitari (PDFReaderTest), non da codice di produzione del Gateway. La vulnerabilità non è quindi sfruttabile nel contesto di GovWay.
+      ]]></notes>
+      <packageUrl regex="true">^pkg:maven/org\.apache\.pdfbox/pdfbox@.*$</packageUrl>
+      <cve>CVE-2026-33929</cve>
+   </suppress>
+</suppressions>

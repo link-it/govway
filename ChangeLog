@@ -116,14 +116,7 @@
 	* [GovWayCore]
 	Aggiunta funzionalità #1740
 	(https://github.com/link-it/govway/issues/287)
-	Realizzate GovLet che facilitano la configurazione delle erogazioni previste dal SUE (https://github.com/AgID/SUE-allegato-tecnico).	
-
-2026-03-20  Andrea Poli <apoli@link.it>
-
-	* [GovWayCore]
-	Risolto Bug #1734
-	Risolta la seguente vulnerabilità relative ai jar di terza parte:
-	- CVE-2026-23907: aggiornata libreria 'org.apache.pdfbox:*' alla versione 2.0.36
+	Realizzate GovLet che facilitano la configurazione delle erogazioni previste dal SUE (https://github.com/AgID/SUE-allegato-tecnico).
 
 2026-03-20  Andrea Poli <apoli@link.it>
 
