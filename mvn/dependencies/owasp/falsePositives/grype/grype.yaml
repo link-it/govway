@@ -1,5 +1,17 @@
 ignore:
   #- vulnerability: "CVE-??"
-  #- package: 
+  #- package:
   #    name: "??"
+
+  # GHSA-72hv-8253-57qq (jackson-core: Number Length Constraint Bypass in Async Parser, MEDIUM)
+  # Falso positivo: la vulnerabilita' viene rilevata su jackson-core 2.15.2 'shaded' all'interno
+  # di hazelcast-5.3.8.jar (com/hazelcast/shaded/com/fasterxml/jackson/...). La jackson-core di
+  # prima classe utilizzata da GovWay e' la 2.21.2 (gia' fixata). Le classi del parser asincrono
+  # vulnerabile sono presenti come bytecode 'morto' (effetto del maven-shade-plugin di Hazelcast)
+  # ma non sono referenziate da alcun codepath non-shaded di Hazelcast ne' di GovWay.
+  # Documentazione completa:
+  # resources/doc/src/manuali/vulnerability-management/falsePositive/34x/GHSA-72hv-8253-57qq.rst
+  - vulnerability: "GHSA-72hv-8253-57qq"
+    package:
+      name: "jackson-core"
 

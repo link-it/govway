@@ -1,1 +1,9 @@
 #CVE-??
+
+# GHSA-72hv-8253-57qq (jackson-core: Number Length Constraint Bypass in Async Parser, MEDIUM)
+# Falso positivo: Trivy rileva la vulnerabilita' all'interno di hazelcast-5.3.8.jar che
+# embedda jackson-core 2.15.2 'shaded' (com/hazelcast/shaded/com/fasterxml/jackson/...).
+# La CVE riguarda esclusivamente il parser asincrono di Jackson, mai utilizzato dal codice
+# GovWay tramite Hazelcast: la jackson-core di prima classe usata da GovWay e' la 2.21.2
+# (gia' fixata) e non transita dalle classi shaded di hazelcast.
+GHSA-72hv-8253-57qq
