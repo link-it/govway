@@ -84,17 +84,18 @@ And match header GovWay-TestSuite-Reply-GovWay-Token-PDND-ClientDescription == '
 # controlli tracce credenziali mittente
 
 * def clientIdID = get_id_by_credenziale('token_clientId','DemoSoggettoFruitore/ApplicativoBlockingIDA01ExampleClient3')
-* def pdndOrganizationName = get_credenziale_by_refid_greather_then_id('pdnd_org_name',clientIdID,credenziale_max_feature['max_id_credenziale'])
-* match pdndOrganizationName == 'Comune di Esempio '+formattedDate+' ApplicativoBlockingIDA01ExampleClient3'
+* def expectedOrgName = 'Comune di Esempio '+formattedDate+' ApplicativoBlockingIDA01ExampleClient3'
+* def pdndOrganizationName = get_credenziale_by_refid_and_value('pdnd_org_name',clientIdID,expectedOrgName)
+* match pdndOrganizationName == expectedOrgName
 
-* def pdndOrganizationJson = get_credenziale_by_refid_greather_then_id('pdnd_org_json',clientIdID,credenziale_max_feature['max_id_credenziale'])
+* def pdndOrganizationJson = get_credenziale_by_refid_and_value('pdnd_org_json',clientIdID,'"c_c000_'+formattedDate+'_0001"')
 * match pdndOrganizationJson contains '"kind":"PA"'
 * match pdndOrganizationJson contains '"subUnitType":"AOO"'
 * match pdndOrganizationJson contains '"externalId":'
 * match pdndOrganizationJson contains '"c_c000_'+formattedDate+'_0001"'
 * match pdndOrganizationJson contains '"name":"Comune di Esempio '+formattedDate+' ApplicativoBlockingIDA01ExampleClient3"'
 
-* def pdndClientJson = get_credenziale_by_refid_greather_then_id('pdnd_client_json',clientIdID,credenziale_max_feature['max_id_credenziale'])
+* def pdndClientJson = get_credenziale_by_refid_and_value('pdnd_client_json',clientIdID,'"id":"'+formattedDateYYYYMMDD+'-'+formattedDateHHmm+'-0001-bbbb-12345678f8dd"')
 * match pdndClientJson contains '"consumerId":"'+formattedDateYYYYMMDD+'-'+formattedDateHHmm+'-0001-aaaa-82e210e12345"'
 * match pdndClientJson contains '"id":"'+formattedDateYYYYMMDD+'-'+formattedDateHHmm+'-0001-bbbb-12345678f8dd"'
 * match pdndClientJson contains '"name":"'+'client-'+formattedDateClient+'"'
@@ -155,17 +156,18 @@ And match header GovWay-TestSuite-Reply-GovWay-Token-PDND-ClientDescription == '
 # controlli tracce credenziali mittente
 
 * def clientIdID = get_id_by_credenziale('token_clientId','DemoSoggettoFruitore/ApplicativoBlockingIDA01ExampleClient3')
-* def pdndOrganizationName = get_credenziale_by_refid_greather_then_id('pdnd_org_name',clientIdID,credenziale_max_feature['max_id_credenziale'])
-* match pdndOrganizationName == 'Comune di Esempio '+formattedDate+' ApplicativoBlockingIDA01ExampleClient3'
+* def expectedOrgName = 'Comune di Esempio '+formattedDate+' ApplicativoBlockingIDA01ExampleClient3'
+* def pdndOrganizationName = get_credenziale_by_refid_and_value('pdnd_org_name',clientIdID,expectedOrgName)
+* match pdndOrganizationName == expectedOrgName
 
-* def pdndOrganizationJson = get_credenziale_by_refid_greather_then_id('pdnd_org_json',clientIdID,credenziale_max_feature['max_id_credenziale'])
+* def pdndOrganizationJson = get_credenziale_by_refid_and_value('pdnd_org_json',clientIdID,'"c_c000_'+formattedDate+'_0001"')
 * match pdndOrganizationJson contains '"kind":"PA"'
 * match pdndOrganizationJson contains '"subUnitType":"AOO"'
 * match pdndOrganizationJson contains '"externalId":'
 * match pdndOrganizationJson contains '"c_c000_'+formattedDate+'_0001"'
 * match pdndOrganizationJson contains '"name":"Comune di Esempio '+formattedDate+' ApplicativoBlockingIDA01ExampleClient3"'
 
-* def pdndClientJson = get_credenziale_by_refid_greather_then_id('pdnd_client_json',clientIdID,credenziale_max_feature['max_id_credenziale'])
+* def pdndClientJson = get_credenziale_by_refid_and_value('pdnd_client_json',clientIdID,'"id":"'+formattedDateYYYYMMDD+'-'+formattedDateHHmm+'-0001-bbbb-12345678f8dd"')
 * match pdndClientJson contains '"consumerId":"'+formattedDateYYYYMMDD+'-'+formattedDateHHmm+'-0001-aaaa-82e210e12345"'
 * match pdndClientJson contains '"id":"'+formattedDateYYYYMMDD+'-'+formattedDateHHmm+'-0001-bbbb-12345678f8dd"'
 * match pdndClientJson contains '"name":"'+'client-'+formattedDateClient+'"'

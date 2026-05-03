@@ -17,8 +17,8 @@
 
 		<jar.group.name>jaxb</jar.group.name>
 		
-		<glassfish.jaxb.version>4.0.7</glassfish.jaxb.version>
-		<com.sun.xml.bind.external.version>4.0.7</com.sun.xml.bind.external.version>
+		<glassfish.jaxb.version>4.0.6</glassfish.jaxb.version>
+		<com.sun.xml.bind.external.version>4.0.6</com.sun.xml.bind.external.version>
 		<istack-commons.version>4.2.0</istack-commons.version>
 
 	</properties>
@@ -92,18 +92,10 @@
 			</exclusions>
 		</dependency>
 
-		<!--
-		  Le librerie 'rngom' e 'relaxng-datatype' sono richieste a compile-time da
-		  com.sun.tools.xjc.Driver durante l'inizializzazione (XJC le referenzia anche
-		  quando l'input e' uno schema XSD), ma non vengono incluse in alcun war/ear
-		  deployato: scope 'provided' per documentare il loro uso esclusivamente
-		  build-time (esecuzione XJC tramite ant/commons/jaxb-utils.xml).
-		-->
 		<dependency>
 			<groupId>com.sun.xml.bind.external</groupId>
 			<artifactId>rngom</artifactId>
 			<version>${com.sun.xml.bind.external.version}</version>
-			<scope>provided</scope>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>
@@ -115,7 +107,6 @@
 			<groupId>com.sun.xml.bind.external</groupId>
 			<artifactId>relaxng-datatype</artifactId>
 			<version>${com.sun.xml.bind.external.version}</version>
-			<scope>provided</scope>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>

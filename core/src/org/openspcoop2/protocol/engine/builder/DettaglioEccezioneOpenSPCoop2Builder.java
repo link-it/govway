@@ -47,6 +47,7 @@ import org.openspcoop2.protocol.sdk.constants.MessaggiFaultErroreCooperazione;
 import org.openspcoop2.protocol.utils.ErroriProperties;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.slf4j.Logger;
 
 /**
@@ -308,27 +309,27 @@ public class DettaglioEccezioneOpenSPCoop2Builder {
 				}
 				//System.out.println("MESSAGE ["+msg+"]");
 				// faccio viaggiare solo le informazioni che ritengo pubbliche
-				if("Connection refused".equals(msg)){
+				if(HttpUtilities.containsConnectionRefusedException(eProcessamento, msg)){
 					msg = "Connection refused";
 					detail.setBase(msg);
 					if(dettaglioEccezione.getDetails()==null){
 						dettaglioEccezione.setDetails(new Dettagli());
 					}
-					dettaglioEccezione.getDetails().addDetail(detail);			
-				}else if("Read timed out".equals(msg)){
+					dettaglioEccezione.getDetails().addDetail(detail);
+				}else if(HttpUtilities.containsReadTimeoutException(eProcessamento, msg)){
 					msg = "Read timed out";
 					detail.setBase(msg);
 					if(dettaglioEccezione.getDetails()==null){
 						dettaglioEccezione.setDetails(new Dettagli());
 					}
-					dettaglioEccezione.getDetails().addDetail(detail);	
-				}else if("connect timed out".equals(msg)){
+					dettaglioEccezione.getDetails().addDetail(detail);
+				}else if(HttpUtilities.containsConnectionTimeoutException(eProcessamento, msg)){
 					msg = "Connect timed out";
 					detail.setBase(msg);
 					if(dettaglioEccezione.getDetails()==null){
 						dettaglioEccezione.setDetails(new Dettagli());
 					}
-					dettaglioEccezione.getDetails().addDetail(detail);	
+					dettaglioEccezione.getDetails().addDetail(detail);
 				}
 
 			}else{

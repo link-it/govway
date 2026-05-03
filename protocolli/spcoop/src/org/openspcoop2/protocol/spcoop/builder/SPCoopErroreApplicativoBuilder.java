@@ -101,16 +101,20 @@ public class SPCoopErroreApplicativoBuilder extends ErroreApplicativoBuilder imp
 			EccezioneIntegrazioneBuilderParameters eccezioneIntegrazione)throws ProtocolException{
 	
 		MessaggioDiErroreApplicativo erroreApplicativo = this._buildErroreApplicativo_engine(codeDetailsErrorWrapper, eccezioneProtocollo, eccezioneIntegrazione);
-		
+
+		byte[] xmlErroreApplicativo = null;
 		try{
 			// il passaggio da XMLUtils forza anche la validazione dell'oggetto
-			byte[]xmlErroreApplicativo = XMLUtils.generateErroreApplicativo(erroreApplicativo);
+			xmlErroreApplicativo = XMLUtils.generateErroreApplicativo(erroreApplicativo);
 			Element elementErroreApplicativo = this.xmlUtils.newElement(xmlErroreApplicativo);
 			ErroreApplicativoMessageUtils.addPrefixToElement(elementErroreApplicativo,"cnipaErrAppl");
-			
+
 			return elementErroreApplicativo;
 		} catch(Exception e) {
-			this.log.error("XMLBuilder.buildElement_Eccezione error: "+e.getMessage(),e);
+			String dumpXml = (xmlErroreApplicativo != null)
+					? new String(xmlErroreApplicativo, java.nio.charset.StandardCharsets.UTF_8)
+					: "<not-generated>";
+			this.log.error("XMLBuilder.buildElement_Eccezione error: "+e.getMessage()+" [generated xml: "+dumpXml+"]",e);
 			throw new ProtocolException("buildErroreApplicativoElement failed: "+e.getMessage(),e);
 		}
 	}

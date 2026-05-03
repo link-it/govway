@@ -64,6 +64,7 @@ import org.openspcoop2.utils.transport.TransportResponseContext;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
+import org.openspcoop2.utils.transport.http.HttpUtilities;
 
 /**
  * ConnettoreBaseWithResponse
@@ -184,31 +185,12 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 				soglia, type, this.logger.getLogger(), saveInContext);
 	}
 	
-	public static boolean isReadTimeoutException(Exception e, String message){
-		return (e instanceof java.net.SocketTimeoutException)
-				&&
-				(
-						("Read timed out".equals(message))
-						||
-						(message.contains(" MILLISECONDS") && !(e instanceof org.apache.hc.client5.http.ConnectTimeoutException)) // httpclient5 nio usa una eccezione specifica solo per il connect timeout
-				);
-	}
-	public static boolean containsReadTimeoutException(Exception e, String message){
-		return (message!=null)
-				&&
-				(
-						(message.contains("Read timed out"))
-						||
-						(message.contains(" MILLISECONDS") && !(e instanceof org.apache.hc.client5.http.ConnectTimeoutException) && !(Utilities.existsInnerException(e, org.apache.hc.client5.http.ConnectTimeoutException.class))) // httpclient5 nio usa una eccezione specifica solo per il connect timeout
-				)
-				&&
-				(e instanceof java.net.SocketTimeoutException || Utilities.existsInnerException(e, java.net.SocketTimeoutException.class));		
-	}
+	
 	public boolean processReadTimeoutException(int timeout, boolean configurazioneGlobale, Exception e, String message) {
 		boolean isException = false;
     	try {
 	    	if(timeout>0) {
-	    		isException = isReadTimeoutException(e, message);
+	    		isException = HttpUtilities.isReadTimeoutException(e, message);
 	    		if(isException) {
 		      		TimeoutNotifier notifier = getTimeoutNotifier(timeout, configurazioneGlobale, TimeoutNotifierType.WAIT_RESPONSE);
 		    		notifier.notify(timeout);
@@ -222,48 +204,11 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
     	return isException;
     }
     
-    public static boolean isConnectionTimeoutException(Exception e, String message){
-    	/**return (
-    				"connect timed out".equals(message) // http url connection
-    				||
-    				(message!=null && message.contains("Connect timed out")) // httpcore5
-    				||
-    				(e instanceof org.apache.hc.client5.http.ConnectTimeoutException || Utilities.existsInnerException(e, org.apache.hc.client5.http.ConnectTimeoutException.class)) // httpclient5 nio, l'eccezione estende comunque java.net.SocketTimeoutException
-    			)
-    			&&
-    			(e instanceof java.net.SocketTimeoutException);*/
-    	// Allineo ad unico metodo
-    	return containsConnectionTimeoutException(e, message);
-	}
-    public static boolean containsConnectionTimeoutException(Exception e, String message){
-    	/**System.out.println("CONDIZIONE 1 ["+message.contains("connect timed out")+"]");
-    	System.out.println("CONDIZIONE 2 ["+message.contains("Connect timed out")+"]");
-    	System.out.println("CONDIZIONE 3 ["+(e instanceof org.apache.hc.client5.http.ConnectTimeoutException || Utilities.existsInnerException(e, org.apache.hc.client5.http.ConnectTimeoutException.class))+"]");
-    	System.out.println("CONDIZIONE 4 ["+(e instanceof java.net.SocketTimeoutException )+"]");
-    	System.out.println("CONDIZIONE 5 ["+(Utilities.existsInnerException(e, java.net.SocketTimeoutException.class))+"]");
-    	System.out.println("CONDIZIONE 6 ["+(Utilities.existsInnerInstanceException(e, java.net.SocketTimeoutException.class))+"]");*/
-		return message!=null && 
-				( 
-						message.contains("connect timed out") // http url connection
-						||
-						message.contains("Connect timed out") // httpcore5
-	    				||
-	    				(e instanceof org.apache.hc.client5.http.ConnectTimeoutException || Utilities.existsInnerException(e, org.apache.hc.client5.http.ConnectTimeoutException.class)) // httpclient5 nio, l'eccezione estende comunque java.net.SocketTimeoutException
-				)
-				&& 
-				(
-						e instanceof java.net.SocketTimeoutException 
-						|| 
-						Utilities.existsInnerException(e, java.net.SocketTimeoutException.class)
-						|| 
-						Utilities.existsInnerInstanceException(e, java.net.SocketTimeoutException.class) // per org.apache.hc.client5.http.ConnectTimeoutException
-				);
-	}
     public boolean processConnectionTimeoutException(int timeout, boolean configurazioneGlobale, Exception e, String message) {
     	boolean isException = false;
     	try {
     		if(timeout>0) {
-    			isException = isConnectionTimeoutException(e, message); 
+    			isException = HttpUtilities.isConnectionTimeoutException(e, message); 
     			if(isException) {
     				TimeoutNotifier notifier = getTimeoutNotifier(timeout, configurazioneGlobale, TimeoutNotifierType.CONNECTION);
     				notifier.notify(timeout);

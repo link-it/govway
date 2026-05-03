@@ -149,7 +149,6 @@
 							<outputDirectory>${owasp.output.dir}</outputDirectory>
 							<format>ALL</format>
 							<suppressionFiles>
-								<suppressionFile>${owasp.falsePositives.dir}/CVE-2024-9329.xml</suppressionFile>
 								<suppressionFile>${owasp.falsePositives.dir}/swagger-codegen-linkit.xml</suppressionFile>
 								<suppressionFile>${owasp.falsePositives.dir}/xercesImpl.xml</suppressionFile>
 								<suppressionFile>${owasp.falsePositives.dir}/CVE-2025-48976.xml</suppressionFile>

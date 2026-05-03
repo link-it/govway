@@ -50,6 +50,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.KeystoreType;
 import org.openspcoop2.utils.certificate.KeystoreUtils;
@@ -89,6 +90,82 @@ public class HttpUtilities {
 	/** TIMEOUT_READ (2 minuti) */
 	public static final int HTTP_READ_CONNECTION_TIMEOUT = 120000; 
 
+	public static boolean isConnectionTimeoutException(Throwable e, String message){
+    	/**return (
+    				"connect timed out".equals(message) // http url connection
+    				||
+    				(message!=null && message.contains("Connect timed out")) // httpcore5
+    				||
+    				(e instanceof org.apache.hc.client5.http.ConnectTimeoutException || Utilities.existsInnerException(e, org.apache.hc.client5.http.ConnectTimeoutException.class)) // httpclient5 nio, l'eccezione estende comunque java.net.SocketTimeoutException
+    			)
+    			&&
+    			(e instanceof java.net.SocketTimeoutException);*/
+    	// Allineo ad unico metodo
+    	return containsConnectionTimeoutException(e, message);
+	}
+    public static boolean containsConnectionTimeoutException(Throwable e, String message){
+    	/**System.out.println("CONDIZIONE 1 ["+message.contains("connect timed out")+"]");
+    	System.out.println("CONDIZIONE 2 ["+message.contains("Connect timed out")+"]");
+    	System.out.println("CONDIZIONE 3 ["+(e instanceof org.apache.hc.client5.http.ConnectTimeoutException || Utilities.existsInnerException(e, org.apache.hc.client5.http.ConnectTimeoutException.class))+"]");
+    	System.out.println("CONDIZIONE 4 ["+(e instanceof java.net.SocketTimeoutException )+"]");
+    	System.out.println("CONDIZIONE 5 ["+(Utilities.existsInnerException(e, java.net.SocketTimeoutException.class))+"]");
+    	System.out.println("CONDIZIONE 6 ["+(Utilities.existsInnerInstanceException(e, java.net.SocketTimeoutException.class))+"]");*/
+		return message!=null && 
+				( 
+						message.contains("connect timed out") // http url connection
+						||
+						message.contains("Connect timed out") // httpcore5
+	    				||
+	    				(e instanceof org.apache.hc.client5.http.ConnectTimeoutException || Utilities.existsInnerException(e, org.apache.hc.client5.http.ConnectTimeoutException.class)) // httpclient5 nio, l'eccezione estende comunque java.net.SocketTimeoutException
+				)
+				&& 
+				(
+						e instanceof java.net.SocketTimeoutException 
+						|| 
+						Utilities.existsInnerException(e, java.net.SocketTimeoutException.class)
+						|| 
+						Utilities.existsInnerInstanceException(e, java.net.SocketTimeoutException.class) // per org.apache.hc.client5.http.ConnectTimeoutException
+				);
+	}
+	
+    public static boolean isReadTimeoutException(Throwable e, String message){
+		return (e instanceof java.net.SocketTimeoutException)
+				&&
+				(
+						("Read timed out".equals(message))
+						||
+						(message.contains(" MILLISECONDS") && !(e instanceof org.apache.hc.client5.http.ConnectTimeoutException)) // httpclient5 nio usa una eccezione specifica solo per il connect timeout
+				);
+	}
+	public static boolean containsReadTimeoutException(Throwable e, String message){
+		return (message!=null)
+				&&
+				(
+						(message.contains("Read timed out"))
+						||
+						(message.contains(" MILLISECONDS") && !(e instanceof org.apache.hc.client5.http.ConnectTimeoutException) && !(Utilities.existsInnerException(e, org.apache.hc.client5.http.ConnectTimeoutException.class))) // httpclient5 nio usa una eccezione specifica solo per il connect timeout
+				)
+				&&
+				(e instanceof java.net.SocketTimeoutException || Utilities.existsInnerException(e, java.net.SocketTimeoutException.class));
+	}
+
+	public static boolean isConnectionRefusedException(Throwable e, String message){
+		// Allineo ad unico metodo
+		return containsConnectionRefusedException(e, message);
+	}
+	public static boolean containsConnectionRefusedException(Throwable e, String message){
+		return message!=null
+				&&
+				message.contains("Connection refused") // http url connection / httpcore5 (HttpHostConnectException usa "Connect to X failed: Connection refused")
+				&&
+				(
+						e instanceof java.net.ConnectException // copre anche org.apache.hc.client5.http.HttpHostConnectException che la estende
+						||
+						Utilities.existsInnerException(e, java.net.ConnectException.class)
+				);
+	}
+    
+	
 	public static final HttpLibrary DEFAULT_HTTP_LIBRARY = HttpLibraryConnection.getDefaultLibrary();
 			
 	
@@ -114,7 +191,7 @@ public class HttpUtilities {
 	public static String getClientAddressFirstValue(HttpServletRequest request) throws UtilsException{
 		return getClientAddress(request);
 	}
-	private static String getClientAddress(List<String> headers, HttpServletRequest request) throws UtilsException{
+	private static String getClientAddress(List<String> headers, HttpServletRequest request) {
 		if(!headers.isEmpty()){
 			for (String header : headers) {
 				List<String> l = TransportUtils.getHeaderValues(request,header);
@@ -127,10 +204,10 @@ public class HttpUtilities {
 	}
 	
 	@Deprecated
-	public static String getClientAddress(Map<String, String> transportProperties) throws UtilsException{
+	public static String getClientAddress(Map<String, String> transportProperties) {
 		return getClientAddress(getClientAddressHeaders(), TransportUtils.convertToMapListValues(transportProperties));
 	}
-	public static String getClientAddressFirstValue(Map<String, List<String>> headers) throws UtilsException{
+	public static String getClientAddressFirstValue(Map<String, List<String>> headers) {
 		return getClientAddress(getClientAddressHeaders(), headers);
 	}
 	private static String getClientAddress(List<String> headers, Map<String, List<String>> transportProperties) {
@@ -426,10 +503,10 @@ public class HttpUtilities {
 	
 	
 	@Deprecated
-	public static boolean isNoCache(Map<String, String> headers) throws UtilsException{
+	public static boolean isNoCache(Map<String, String> headers) {
 		return isDirectiveNoCache(TransportUtils.convertToMapListValues(headers));
 	}
-	public static boolean isDirectiveNoCache(Map<String, List<String>> headers) throws UtilsException{
+	public static boolean isDirectiveNoCache(Map<String, List<String>> headers) {
 		List<String> l = getCacheControlDirectives(headers);
 		if(l.isEmpty()) {
 			l = getPragmaDirectives(headers);
@@ -443,10 +520,10 @@ public class HttpUtilities {
 	}
 	
 	@Deprecated
-	public static boolean isNoStore(Map<String, String> headers) throws UtilsException{
+	public static boolean isNoStore(Map<String, String> headers) {
 		return isDirectiveNoStore(TransportUtils.convertToMapListValues(headers));
 	}
-	public static boolean isDirectiveNoStore(Map<String, List<String>> headers) throws UtilsException{
+	public static boolean isDirectiveNoStore(Map<String, List<String>> headers) {
 		List<String> l = getCacheControlDirectives(headers);
 		if(l.isEmpty()) {
 			l = getPragmaDirectives(headers);
@@ -625,7 +702,7 @@ public class HttpUtilities {
 			throw new UtilsException(e.getMessage(),e);
 		}
 	}
-	private static void setProtectedFieldValue(Class<?> clazz, String fieldName, Object object, Object newValue) throws Exception {
+	private static void setProtectedFieldValue(Class<?> clazz, String fieldName, Object object, Object newValue) throws UtilsException, IllegalArgumentException, IllegalAccessException {
 				
 		/**System.out.println("SET IN '"+object.getClass().getName()+"'");*/
 		

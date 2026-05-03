@@ -28,7 +28,6 @@ import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.pdd.core.connettori.ConnettoreBase;
-import org.openspcoop2.pdd.core.connettori.ConnettoreBaseWithResponse;
 import org.openspcoop2.pdd.core.controllo_traffico.PolicyTimeoutConfig;
 import org.openspcoop2.pdd.core.controllo_traffico.ReadTimeoutConfigurationUtils;
 import org.openspcoop2.pdd.core.controllo_traffico.ReadTimeoutContextParam;
@@ -135,7 +134,7 @@ public class TokenKeystoreInjectUtilities {
 	
     private void processReadTimeoutException(int timeout, boolean configurazioneGlobale, Exception e, String message) {
     	try {
-	    	if(timeout>0 && ConnettoreBaseWithResponse.containsReadTimeoutException(e, message)) {
+	    	if(timeout>0 && HttpUtilities.containsReadTimeoutException(e, message)) {
 	      		TimeoutNotifier notifier = getTimeoutNotifier(timeout, configurazioneGlobale, TimeoutNotifierType.WAIT_RESPONSE);
 	    		notifier.notify(timeout);
 	    	}
@@ -148,7 +147,7 @@ public class TokenKeystoreInjectUtilities {
     
     private void processConnectionTimeoutException(int timeout, boolean configurazioneGlobale, Exception e, String message) {
     	try {
-	    	if(timeout>0 && ConnettoreBaseWithResponse.containsConnectionTimeoutException(e, message)) {
+	    	if(timeout>0 && HttpUtilities.containsConnectionTimeoutException(e, message)) {
 	      		TimeoutNotifier notifier = getTimeoutNotifier(timeout, configurazioneGlobale, TimeoutNotifierType.CONNECTION);
 	    		notifier.notify(timeout);
 	    	}

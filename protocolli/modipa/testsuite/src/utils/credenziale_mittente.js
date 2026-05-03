@@ -179,3 +179,45 @@ function get_credenziale_by_refid_greather_then_id(tipo, idref, id) {
         }
     }
 }
+
+// Verifica direttamente la presenza in 'credenziale_mittente' di una riga associata alla
+// coppia (tipo, ref_credenziale) il cui valore contenga la sottostringa attesa, restituendo
+// l'ultima inserita. Da usare quando non si vuole vincolare il match all'inserimento di una
+// nuova riga rispetto al max_id catturato a inizio feature (es. perche' la pipeline di
+// tracciamento di GovWay puo' deduplicare valori identici a quelli gia' presenti).
+function get_credenziale_by_refid_and_value(tipo, idref, expectedValue) {
+
+    govwayDbConfig = {
+        username: karate.properties['db_username'],
+        password: karate.properties['db_password'],
+        url: karate.properties['db_url'],
+        driverClassName: karate.properties['db_driverClassName']
+     }
+
+    db_sleep_before_read = karate.properties['db_sleep_before_read']
+    db_retry_max_total_ms = parseInt(karate.properties['db_retry_max_total_ms'] || '5000')
+    db_retry_interval_ms = parseInt(karate.properties['db_retry_interval_ms'] || '500')
+
+    java.lang.Thread.sleep(db_sleep_before_read)
+    DbUtils = Java.type('org.openspcoop2.core.protocolli.modipa.testsuite.DbUtils')
+    db = new DbUtils(govwayDbConfig)
+    var escaped = (expectedValue + '').replace(/'/g, "''")
+    dbquery = "select credenziale from credenziale_mittente where tipo='"+tipo+"' AND ref_credenziale="+idref+" AND credenziale LIKE '%"+escaped+"%' ORDER BY id DESC LIMIT 1"
+    karate.log("Query 'get_credenziale_by_refid_and_value': " + dbquery)
+
+    var deadline = java.lang.System.currentTimeMillis() + db_retry_max_total_ms
+    var attempt = 0
+    while (true) {
+        attempt++
+        try {
+            return db.readValue(dbquery)
+        } catch (e) {
+            if (java.lang.System.currentTimeMillis() >= deadline) {
+                karate.log("Query 'get_credenziale_by_refid_and_value' giving up after " + attempt + " attempt(s) (budget " + db_retry_max_total_ms + "ms)")
+                throw e
+            }
+            karate.log("Query 'get_credenziale_by_refid_and_value' attempt " + attempt + " empty, retrying in " + db_retry_interval_ms + "ms")
+            java.lang.Thread.sleep(db_retry_interval_ms)
+        }
+    }
+}
