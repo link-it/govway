@@ -37,7 +37,7 @@
 		
 		<!-- owasp config -->
 		<owasp>verify</owasp> <!-- owasp phase, use 'none' for disable -->
-		<owasp.plugin.version>12.2.1</owasp.plugin.version>
+		<owasp.plugin.version>12.2.2</owasp.plugin.version>
 		<owasp.plugin.autoUpdate>true</owasp.plugin.autoUpdate> <!-- Impostare a false quando ci sono problemi su repository NIST -->
 		<owasp.plugin.failBuildOnAnyVulnerability>false</owasp.plugin.failBuildOnAnyVulnerability>
 		<owasp.ossindex.enabled>false</owasp.ossindex.enabled> <!-- true = abilita Sonatype OSS Index analyzer (richiede credenziali, limite 500 crediti/mese) -->
