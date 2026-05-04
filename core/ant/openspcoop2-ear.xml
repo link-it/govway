@@ -38,7 +38,7 @@
 		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxb-xjc-2.3.7.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxws-api-2.3.1.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-jcs3-core-3.1-gov4j-2.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/neethi-3.2.0.jar"/>	
+		<var name="tmp" value="${tmp} ${tmp_prefix}/neethi-3.2.2.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-core-3.4.6.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-messaging-api-3.4.6.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-messaging-impl-3.4.6.jar"/>
@@ -831,7 +831,7 @@
 				<include name="bcprov-jdk18on-1.84.jar"/>
 				<include name="bcpkix-jdk18on-1.84.jar"/>
 				<include name="bcutil-jdk18on-1.84.jar"/>
-				<include name="neethi-3.2.0.jar"/>
+				<include name="neethi-3.2.2.jar"/>
 				<include name="xmlsec-2.3.4-gov4j-1.jar"/>
 				<include name="cryptacular-1.2.5.jar"/>
 				<include name="jasypt-1.9.3.jar"/>

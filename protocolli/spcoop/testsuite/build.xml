@@ -129,7 +129,7 @@
 			<include name="bcpkix-jdk18on-1.84.jar"/>
 			<include name="bcprov-jdk18on-1.84.jar"/>
 			<include name="bcutil-jdk18on-1.84.jar"/>
-			<include name="neethi-3.2.0.jar"/>
+			<include name="neethi-3.2.2.jar"/>
 		</fileset>
 		<fileset dir="${openspcoop2_lib}/shared" >
 			<!-- Includendolo, i test con attachments falliscono poiche' axis14 genera dei messaggi non corretti (ContentLength non appropriato rispetto al messaggio) 

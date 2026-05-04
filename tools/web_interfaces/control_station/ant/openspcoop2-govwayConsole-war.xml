@@ -273,7 +273,7 @@
 				<isfalse value="${singlePdD.registroServizi.locale}" />
 			</or>
 			<then>
-				<var name="govwayConsoleRemota_security_neethi" value="neethi-3.2.0.jar" />
+				<var name="govwayConsoleRemota_security_neethi" value="neethi-3.2.2.jar" />
 				<var name="govwayConsoleRemota_httpcore" value="*.jar" />
 				<var name="govwayConsoleRemota_cxf_xmlschema-core" value="xmlschema-core-2.3.1.jar" />
 				<var name="govwayConsoleRemota_cxf_woodstox-core-asl" value="woodstox-core-6.6.2.jar" />

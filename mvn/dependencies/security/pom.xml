@@ -23,7 +23,7 @@
 		<cryptacular.version>1.2.5</cryptacular.version>
 		<herasaf-xacml-core.version>2.0.4</herasaf-xacml-core.version>
 		<jasypt.version>1.9.3</jasypt.version>
-		<neethi.version>3.2.0</neethi.version>
+		<neethi.version>3.2.2</neethi.version>
 		<xmlsec.version>2.3.4</xmlsec.version>
 		<xmlsec.gov4j.version>2.3.4-gov4j-1</xmlsec.gov4j.version>
 		<xml-security-impl.version>1.0</xml-security-impl.version>
