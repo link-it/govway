@@ -50,7 +50,10 @@ public class MailcapActivationReader {
 
 	private static Map<String, String> mimeTypes = new HashMap<>();
 
-	private static final String MAILCAP = "/META-INF/mailcap";
+	/** Da jakarta.activation-api 2.1.4 il path canonico per la pubblicazione delle entry mailcap nei jar è '/META-INF/jakarta.mailcap';
+	    angus-mail 2.0.5+ pubblica le proprie entry esclusivamente su questo path e il build GovWay vi appende la entry custom 'application/openspcoop2'.
+	    Il legacy '/META-INF/mailcap' resta letto in fallback dal MailcapCommandMap di JAF ma in pratica non riceve più la entry custom. */
+	private static final String MAILCAP = "/META-INF/jakarta.mailcap";
 	
 	private static void logInfo(Logger log, String msg) {
 		log.info(msg);
