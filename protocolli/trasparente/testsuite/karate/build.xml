@@ -74,7 +74,7 @@
 			<include name="xmlschema-core-2.3.2.jar"/>
 		</fileset>
 		<fileset dir="${required_lib}/security">
-			<include name="neethi-3.2.1.jar"/>
+			<include name="neethi-3.2.2.jar"/>
 			<include name="bcprov-jdk18on-1.84.jar"/>
 			<include name="bcpkix-jdk18on-1.84.jar"/>
 			<include name="bcutil-jdk18on-1.84.jar"/>

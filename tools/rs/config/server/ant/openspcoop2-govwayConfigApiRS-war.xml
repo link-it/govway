@@ -107,7 +107,7 @@
 				<include name="*.jar"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/security">
-				<include name="neethi-3.2.1.jar"/>
+				<include name="neethi-3.2.2.jar"/>
 				<include name="xmlsec-4.0.4.jar"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/swagger">

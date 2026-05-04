@@ -49,7 +49,7 @@
 			<fileset dir="${openspcoop2.lib}" includes="security/bcprov-jdk18on-1.84.jar"/>
 			<fileset dir="${openspcoop2.lib}" includes="security/bcutil-jdk18on-1.84.jar"/>
 			<fileset dir="${openspcoop2.lib}" includes="security/xmlsec-4.0.4.jar"/>
-			<fileset dir="${openspcoop2.lib}" includes="security/neethi-3.2.1.jar"/>
+			<fileset dir="${openspcoop2.lib}" includes="security/neethi-3.2.2.jar"/>
 			<fileset dir="${openspcoop2.lib}" includes="security/jasypt-1.9.3.jar"/>
 			<fileset dir="${openspcoop2.lib}" includes="security/nimbus-jose-jwt-10.9.jar"/>
 		</copy>

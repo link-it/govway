@@ -285,7 +285,7 @@
 				<include name="bcprov-jdk18on-1.84.jar"/>
 				<include name="bcpkix-jdk18on-1.84.jar"/>
 				<include name="bcutil-jdk18on-1.84.jar"/>
-				<include name="neethi-3.2.1.jar"/>
+				<include name="neethi-3.2.2.jar"/>
 				<include name="xmlsec-4.0.4.jar"/>
 				<include name="cryptacular-1.3.0.jar"/>
 				<include name="jasypt-1.9.3.jar"/>

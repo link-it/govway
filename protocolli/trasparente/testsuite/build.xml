@@ -123,7 +123,7 @@
 			<include name="bcpkix-jdk18on-1.84.jar"/>
 			<include name="bcprov-jdk18on-1.84.jar"/>
 			<include name="bcutil-jdk18on-1.84.jar"/>
-			<include name="neethi-3.2.1.jar"/>
+			<include name="neethi-3.2.2.jar"/>
 		</fileset>
 		<fileset dir="${openspcoop2_lib}/shared" >
 			<!-- Devono essere esclusi i jar di saxon, altrimenti non partono i server mtom:

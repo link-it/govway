@@ -23,7 +23,7 @@
 		<cryptacular.version>1.3.0</cryptacular.version>
 		<herasaf-xacml-core.version>3.0.2</herasaf-xacml-core.version>
 		<jasypt.version>1.9.3</jasypt.version>
-		<neethi.version>3.2.1</neethi.version>
+		<neethi.version>3.2.2</neethi.version>
 		<xmlsec.version>4.0.4</xmlsec.version>
 		<nimbus-jose.version>10.9</nimbus-jose.version>
 
