@@ -377,6 +377,9 @@
 			<lib dir="${required_lib}/openapi4j">
 				<include name="*.jar"/>
 			</lib>
+			<lib dir="${required_lib}/kappa">
+				<include name="*.jar"/>
+			</lib>
 			<lib dir="${required_lib}/pdf">
 				<include name="*.jar"/>
 			</lib>

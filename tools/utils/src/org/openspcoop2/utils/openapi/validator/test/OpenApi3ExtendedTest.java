@@ -47,6 +47,7 @@ import org.openspcoop2.utils.openapi.validator.OpenapiLibraryValidatorConfig;
 import org.openspcoop2.utils.rest.ApiFactory;
 import org.openspcoop2.utils.rest.ApiFormats;
 import org.openspcoop2.utils.rest.ApiReaderConfig;
+import org.openspcoop2.utils.rest.ApiValidatorConfig;
 import org.openspcoop2.utils.rest.IApiReader;
 import org.openspcoop2.utils.rest.IApiValidator;
 import org.openspcoop2.utils.rest.ParseWarningException;
@@ -138,6 +139,7 @@ public class OpenApi3ExtendedTest {
 			IApiReader apiReaderOpenApi = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
 			ApiReaderConfig configOpenApi = new ApiReaderConfig();
 			configOpenApi.setProcessInclude(false);
+			
 			apiReaderOpenApi.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), new File(url.toURI()), configOpenApi);
 			Api apiOpenApi = apiReaderOpenApi.read();
 			
@@ -151,14 +153,18 @@ public class OpenApi3ExtendedTest {
 				System.out.println("Documento contenente anomalie: "+warning.getMessage());
 			}
 			
-			IApiValidator apiValidatorOpenApi = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+			IApiValidator apiValidatorOpenApi = ApiFactory.newApiValidator(openAPILibrary.name());
 			OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
 			configO.setEmitLogError(logSystemOutError);
 			configO.setOpenApiValidatorConfig(new OpenapiLibraryValidatorConfig());
 			configO.getOpenApiValidatorConfig().setOpenApiLibrary(openAPILibrary);
 			configO.getOpenApiValidatorConfig().setValidateAPISpec(true);
 			configO.getOpenApiValidatorConfig().setMergeAPISpec(mergeSpec);
-			apiValidatorOpenApi.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi, configO);
+			
+			ApiValidatorConfig config = ApiFactory.newApiValidatorConfig(openAPILibrary.name());
+			config.readProperties(configO.getOpenApiValidatorConfig()::getProperty);
+			
+			apiValidatorOpenApi.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi, config);
 					
 			System.out.println("Test Schema#1 (openapi.yaml) [Elementi aggiuntivi come 'allowEmptyValue'] ok");
 			
@@ -215,9 +221,9 @@ public class OpenApi3ExtendedTest {
 					System.out.println("Documento contenente anomalie: "+warning.getMessage());
 				}
 				
-				apiValidatorOpenApi = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+				apiValidatorOpenApi = ApiFactory.newApiValidator(openAPILibrary.name());
 				try {
-					apiValidatorOpenApi.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi, configO);
+					apiValidatorOpenApi.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi, config);
 					throw new Exception("Atteso errore");
 				}catch(Exception e) {
 					String msgErrore1 = "components.schemas.Pet.discriminator: The discriminator 'pet_type' is not a property of this schema (code: 134)";
@@ -283,9 +289,9 @@ public class OpenApi3ExtendedTest {
 					System.out.println("Documento contenente anomalie: "+warning.getMessage());
 				}
 				
-				apiValidatorOpenApi = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+				apiValidatorOpenApi = ApiFactory.newApiValidator(openAPILibrary.name());
 				try {
-					apiValidatorOpenApi.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi, configO);
+					apiValidatorOpenApi.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi, config);
 					throw new Exception("Atteso errore");
 				}catch(Exception e) {
 					String msgErrore = "components.schemas.Pet4.properties.pet.discriminator: The discriminator 'pet_type' is required in this schema (code: 135)";
@@ -321,9 +327,9 @@ public class OpenApi3ExtendedTest {
 					System.out.println("Documento contenente anomalie: "+warning.getMessage());
 				}
 				
-				apiValidatorOpenApi = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+				apiValidatorOpenApi = ApiFactory.newApiValidator(openAPILibrary.name());
 				try {
-					apiValidatorOpenApi.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi, configO);
+					apiValidatorOpenApi.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi, config);
 				}catch(Exception e) {
 					throw new Exception("Errore non atteso (org.openapi4j.parser.validation.ValidationContext.convertDefaultStringValueInPrimitiveType="+org.openapi4j.parser.validation.ValidationContext.convertDefaultStringValueInPrimitiveType+"): "+e.getMessage(),e);
 				}
@@ -336,9 +342,9 @@ public class OpenApi3ExtendedTest {
 					apiReaderOpenApi.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), new File(url.toURI()), configOpenApi);
 					apiOpenApi = apiReaderOpenApi.read();
 					
-					apiValidatorOpenApi = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+					apiValidatorOpenApi = ApiFactory.newApiValidator(openAPILibrary.name());
 					try {
-						apiValidatorOpenApi.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi, configO);
+						apiValidatorOpenApi.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi, config);
 						throw new Exception("Atteso errore");
 					}catch(Exception e) {
 						
@@ -413,8 +419,8 @@ public class OpenApi3ExtendedTest {
 					System.out.println("Documento contenente anomalie: "+warning.getMessage());
 				}
 				
-				apiValidatorOpenApi = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
-				apiValidatorOpenApi.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi, configO);
+				apiValidatorOpenApi = ApiFactory.newApiValidator(openAPILibrary.name());
+				apiValidatorOpenApi.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi, config);
 				
 			}
 									
@@ -441,8 +447,8 @@ public class OpenApi3ExtendedTest {
 				System.out.println("Documento contenente anomalie: "+warning.getMessage());
 			}
 				
-			apiValidatorOpenApi = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
-			apiValidatorOpenApi.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi, configO);
+			apiValidatorOpenApi = ApiFactory.newApiValidator(openAPILibrary.name());
+			apiValidatorOpenApi.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi, config);
 					
 			List<HttpRequestMethod> metodiHttpd = new ArrayList<HttpRequestMethod>();
 			for (ApiOperation op : apiOpenApi.getOperations()) {
@@ -494,14 +500,18 @@ public class OpenApi3ExtendedTest {
 			System.out.println("Documento contenente anomalie: "+warning.getMessage());
 		}
 		
-		IApiValidator apiValidatorOpenApi = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+		IApiValidator apiValidatorOpenApi = ApiFactory.newApiValidator(openAPILibrary.name());
 		OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
 		configO.setEmitLogError(logSystemOutError);
 		configO.setOpenApiValidatorConfig(new OpenapiLibraryValidatorConfig());
 		configO.getOpenApiValidatorConfig().setOpenApiLibrary(openAPILibrary);
 		configO.getOpenApiValidatorConfig().setValidateAPISpec(true);
 		configO.getOpenApiValidatorConfig().setMergeAPISpec(mergeSpec);
-		apiValidatorOpenApi.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi, configO);
+		
+		ApiValidatorConfig config = ApiFactory.newApiValidatorConfig(openAPILibrary.name());
+		config.readProperties(configO.getOpenApiValidatorConfig()::getProperty);
+		
+		apiValidatorOpenApi.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi, config);
 				
 		
 		byte [] pdf = Utilities.getAsByteArray(OpenApi3ExtendedTest.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test/test.pdf"));
@@ -4314,7 +4324,7 @@ public class OpenApi3ExtendedTest {
 		apiReaderOpenApi4j.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), new File(url.toURI()), configOpenApi4j, apiSchemaYaml);
 		Api apiOpenApi4j = apiReaderOpenApi4j.read();
 								
-		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(openAPILibrary.name());
 		OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
 		configO.setEmitLogError(logSystemOutError);
 		configO.setOpenApiValidatorConfig(new OpenapiLibraryValidatorConfig());
@@ -4322,7 +4332,11 @@ public class OpenApi3ExtendedTest {
 		configO.getOpenApiValidatorConfig().setValidateAPISpec(true);
 		configO.getOpenApiValidatorConfig().setMergeAPISpec(mergeSpec);
 		configO.getOpenApiValidatorConfig().setValidateWildcardSubtypeAsJson(validateWildcard);
-		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi4j, configO);
+		
+		ApiValidatorConfig config = ApiFactory.newApiValidatorConfig(openAPILibrary.name());
+		config.readProperties(configO.getOpenApiValidatorConfig()::getProperty);
+		
+		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi4j, config);
 
 		System.out.println("Test Richiesta...");
 
@@ -4517,14 +4531,18 @@ public class OpenApi3ExtendedTest {
 			System.out.println("Documento contenente anomalie: "+warning.getMessage());
 		}
 		
-		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(openAPILibrary.name());
 		OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
 		configO.setEmitLogError(logSystemOutError);
 		configO.setOpenApiValidatorConfig(new OpenapiLibraryValidatorConfig());
 		configO.getOpenApiValidatorConfig().setOpenApiLibrary(openAPILibrary);
 		configO.getOpenApiValidatorConfig().setValidateAPISpec(true);
 		configO.getOpenApiValidatorConfig().setMergeAPISpec(mergeSpec);
-		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi4j, configO);
+		
+		ApiValidatorConfig config = ApiFactory.newApiValidatorConfig(openAPILibrary.name());
+		config.readProperties(configO.getOpenApiValidatorConfig()::getProperty);
+		
+		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi4j, config);
 
 		System.out.println("Test Richiesta...");
 
@@ -4643,14 +4661,18 @@ public class OpenApi3ExtendedTest {
 			System.out.println("Documento contenente anomalie: "+warning.getMessage());
 		}
 		
-		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(openAPILibrary.name());
 		OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
 		configO.setEmitLogError(logSystemOutError);
 		configO.setOpenApiValidatorConfig(new OpenapiLibraryValidatorConfig());
 		configO.getOpenApiValidatorConfig().setOpenApiLibrary(openAPILibrary);
 		configO.getOpenApiValidatorConfig().setValidateAPISpec(true);
 		configO.getOpenApiValidatorConfig().setMergeAPISpec(mergeSpec);
-		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi4j, configO);
+		
+		ApiValidatorConfig config = ApiFactory.newApiValidatorConfig(openAPILibrary.name());
+		config.readProperties(configO.getOpenApiValidatorConfig()::getProperty);
+		
+		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi4j, config);
 
 		List<String> operations = new ArrayList<>();
 		operations.add("/opDefinisceAnchor");
@@ -4764,7 +4786,7 @@ public class OpenApi3ExtendedTest {
 		
 		Api apiOpenApi4j = apiReaderOpenApi4j.read();
 								
-		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(openAPILibrary.name());
 		OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
 		configO.setEmitLogError(logSystemOutError);
 		configO.setOpenApiValidatorConfig(new OpenapiLibraryValidatorConfig());
@@ -4772,7 +4794,11 @@ public class OpenApi3ExtendedTest {
 		configO.getOpenApiValidatorConfig().setValidateAPISpec(true);
 		configO.getOpenApiValidatorConfig().setMergeAPISpec(mergeSpec);
 		configO.getOpenApiValidatorConfig().setValidateMultipartOptimization(multipartOptimization);
-		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi4j, configO);
+		
+		ApiValidatorConfig config = ApiFactory.newApiValidatorConfig(openAPILibrary.name());
+		config.readProperties(configO.getOpenApiValidatorConfig()::getProperty);
+		
+		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi4j, config);
 
 		String cat = "{\"pet_type\": \"Cat\",  \"age\": 3}";
 		String dog1 = "{\"pet_type\": \"Dog\",  \"bark\": false,  \"breed\": \"Dingo\" }";
@@ -5587,14 +5613,18 @@ public class OpenApi3ExtendedTest {
 		
 		Api apiOpenApi4j = apiReaderOpenApi4j.read();
 								
-		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(openAPILibrary.name());
 		OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
 		configO.setEmitLogError(logSystemOutError);
 		configO.setOpenApiValidatorConfig(new OpenapiLibraryValidatorConfig());
 		configO.getOpenApiValidatorConfig().setOpenApiLibrary(openAPILibrary);
 		configO.getOpenApiValidatorConfig().setValidateAPISpec(true);
 		configO.getOpenApiValidatorConfig().setMergeAPISpec(mergeSpec);
-		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi4j, configO);
+		
+		ApiValidatorConfig config = ApiFactory.newApiValidatorConfig(openAPILibrary.name());
+		config.readProperties(configO.getOpenApiValidatorConfig()::getProperty);
+		
+		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi4j, config);
 
 		String cat = "{\"pet_type\": \"Cat\",  \"age\": 3}";
 		String dog1 = "{\"pet_type\": \"Dog\",  \"bark\": false,  \"breed\": \"Dingo\" }";
@@ -5862,14 +5892,18 @@ public class OpenApi3ExtendedTest {
 		
 		Api apiOpenApi4j = apiReaderOpenApi4j.read();
 								
-		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(openAPILibrary.name());
 		OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
 		configO.setEmitLogError(logSystemOutError);
 		configO.setOpenApiValidatorConfig(new OpenapiLibraryValidatorConfig());
 		configO.getOpenApiValidatorConfig().setOpenApiLibrary(openAPILibrary);
 		configO.getOpenApiValidatorConfig().setValidateAPISpec(true);
 		configO.getOpenApiValidatorConfig().setMergeAPISpec(mergeSpec);
-		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi4j, configO);
+		
+		ApiValidatorConfig config = ApiFactory.newApiValidatorConfig(openAPILibrary.name());
+		config.readProperties(configO.getOpenApiValidatorConfig()::getProperty);
+		
+		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi4j, config);
 		
 		String emailCorrette = "\"info@govway.org\", \"Info@GovWay.org\", \"InfoTest@TEST.govway.org\"";
 		String uuidCorretti = "\"843bdd09-f3ad-11ec-8c78-5254003636a4\", \"000bdd09-f3ad-11ec-8c78-0004003636a4\"";
@@ -6192,14 +6226,18 @@ public class OpenApi3ExtendedTest {
 		
 		Api apiOpenApi4j = apiReaderOpenApi4j.read();
 								
-		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(openAPILibrary.name());
 		OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
 		configO.setEmitLogError(logSystemOutError);
 		configO.setOpenApiValidatorConfig(new OpenapiLibraryValidatorConfig());
 		configO.getOpenApiValidatorConfig().setOpenApiLibrary(openAPILibrary);
 		configO.getOpenApiValidatorConfig().setValidateAPISpec(true);
 		configO.getOpenApiValidatorConfig().setMergeAPISpec(mergeSpec);
-		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi4j, configO);
+		
+		ApiValidatorConfig config = ApiFactory.newApiValidatorConfig(openAPILibrary.name());
+		config.readProperties(configO.getOpenApiValidatorConfig()::getProperty);
+		
+		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi4j, config);
 		
 		String parameter1 = "080.253.61401A";
 		
@@ -6547,14 +6585,18 @@ public class OpenApi3ExtendedTest {
 		
 		Api apiOpenApi4j = apiReaderOpenApi4j.read();
 								
-		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(openAPILibrary.name());
 		OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
 		configO.setEmitLogError(logSystemOutError);
 		configO.setOpenApiValidatorConfig(new OpenapiLibraryValidatorConfig());
 		configO.getOpenApiValidatorConfig().setOpenApiLibrary(openAPILibrary);
 		configO.getOpenApiValidatorConfig().setValidateAPISpec(true);
 		configO.getOpenApiValidatorConfig().setMergeAPISpec(mergeSpec);
-		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi4j, configO);
+		
+		ApiValidatorConfig config = ApiFactory.newApiValidatorConfig(openAPILibrary.name());
+		config.readProperties(configO.getOpenApiValidatorConfig()::getProperty);
+		
+		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi4j, config);
 		
 
 	
@@ -8147,14 +8189,18 @@ public class OpenApi3ExtendedTest {
 		
 		Api apiOpenApi4j = apiReaderOpenApi4j.read();
 								
-		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(openAPILibrary.name());
 		OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
 		configO.setEmitLogError(logSystemOutError);
 		configO.setOpenApiValidatorConfig(new OpenapiLibraryValidatorConfig());
 		configO.getOpenApiValidatorConfig().setOpenApiLibrary(openAPILibrary);
 		configO.getOpenApiValidatorConfig().setValidateAPISpec(true);
 		configO.getOpenApiValidatorConfig().setMergeAPISpec(mergeSpec);
-		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi4j, configO);
+		
+		ApiValidatorConfig config = ApiFactory.newApiValidatorConfig(openAPILibrary.name());
+		config.readProperties(configO.getOpenApiValidatorConfig()::getProperty);
+		
+		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi4j, config);
 		
 
 		String path = "/documenti/eef036bf-48af-11ed-97b9-005056ae1884";
@@ -8282,14 +8328,18 @@ public class OpenApi3ExtendedTest {
 			throw new UtilsException("Operation not found");
 		}
 		
-		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(openAPILibrary.name());
 		OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
 		configO.setEmitLogError(logSystemOutError);
 		configO.setOpenApiValidatorConfig(new OpenapiLibraryValidatorConfig());
 		configO.getOpenApiValidatorConfig().setOpenApiLibrary(openAPILibrary);
 		configO.getOpenApiValidatorConfig().setValidateAPISpec(true);
 		configO.getOpenApiValidatorConfig().setMergeAPISpec(mergeSpec);
-		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi4j, configO);
+		
+		ApiValidatorConfig config = ApiFactory.newApiValidatorConfig(openAPILibrary.name());
+		config.readProperties(configO.getOpenApiValidatorConfig()::getProperty);
+		
+		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi4j, config);
 		
 		
 		String pathPrefix = "/test-tipo-vuto/";

@@ -100,6 +100,7 @@
 			<include name="stub/cxf/openspcoop2_as4-protocol_ecodexBackendStub_cxf.jar"/>
 			<include name="swagger/*"/>
 			<include name="openapi4j/*"/>
+			<include name="kappa/*"/>
 			<include name="reports/*"/>
 			<include name="httpcore/*"/>
 			<include name="testsuite/apacheds/*"/> <!-- richiesto dalle utility -->

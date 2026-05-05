@@ -65,23 +65,16 @@ import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.utils.ErroriProperties;
 import org.openspcoop2.protocol.utils.PorteNamingUtils;
 import org.openspcoop2.utils.UtilsException;
-import org.openspcoop2.utils.json.JSONUtils;
-import org.openspcoop2.utils.json.YAMLUtils;
+import org.openspcoop2.utils.json.JsonValidatorAPI.ApiName;
 import org.openspcoop2.utils.openapi.OpenapiApi;
-import org.openspcoop2.utils.openapi.UniqueInterfaceGenerator;
-import org.openspcoop2.utils.openapi.UniqueInterfaceGeneratorConfig;
 import org.openspcoop2.utils.openapi.validator.OpenAPILibrary;
-import org.openspcoop2.utils.openapi.validator.OpenapiApiValidatorConfig;
 import org.openspcoop2.utils.openapi.validator.OpenapiLibraryValidatorConfig;
 import org.openspcoop2.utils.rest.ApiFactory;
 import org.openspcoop2.utils.rest.ApiFormats;
-import org.openspcoop2.utils.rest.ApiReaderConfig;
 import org.openspcoop2.utils.rest.ApiValidatorConfig;
-import org.openspcoop2.utils.rest.IApiReader;
 import org.openspcoop2.utils.rest.IApiValidator;
+import org.openspcoop2.utils.rest.ProcessingException;
 import org.openspcoop2.utils.rest.api.Api;
-import org.openspcoop2.utils.rest.api.ApiSchema;
-import org.openspcoop2.utils.rest.api.ApiSchemaType;
 import org.openspcoop2.utils.rest.entity.BinaryHttpRequestEntity;
 import org.openspcoop2.utils.rest.entity.BinaryHttpResponseEntity;
 import org.openspcoop2.utils.rest.entity.Cookie;
@@ -131,8 +124,8 @@ public class ValidatoreMessaggiApplicativiRest {
 	private RequestInfo requestInfo;
 	/** UseInterface */
 	private boolean useInterface;
-	/** OpenApi4j config */
-	private OpenapiLibraryValidatorConfig configOpenApiValidator;
+	/** Proprieta di porta passate al costruttore (servono in validateWithInterface per buildValidatorConfigForCurrentApi). */
+	private List<Proprieta> proprieta;
 	/** OpenSPCoop2Properties */
 	private OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
 	/** Buffer */
@@ -177,33 +170,21 @@ public class ValidatoreMessaggiApplicativiRest {
 		
 		try{
 			this.useInterface = readInterfaceAccordoServizio;
-			
+			this.proprieta = proprieta;
+
+			// processIncludeForOpenApi: serve a parametrizzare getRestAccordoServizio.
+			// Quando l'engine selezionato risolve da sé i $ref esterni (openapi4j / swagger_request_validator / kappa)
+			// il flag deve essere false; vale true solo per json_schema (validatore basic, ha bisogno dello spec già appiattito).
+			// In costruttore non sappiamo ancora se la spec sarà 3.0 o 3.1 (l'Api viene letta dal wrapper subito dopo),
+			// quindi adottiamo una conservativa: se ALMENO una delle due librerie configurabili (3.0 / 3.1)
+			// risolve in un engine non-json_schema, mettiamo false.
 			boolean processIncludeForOpenApi = true;
-			this.configOpenApiValidator = new OpenapiLibraryValidatorConfig();
-			this.configOpenApiValidator.setOpenApiLibrary(this.op2Properties.getValidazioneContenutiApplicativiOpenApiLibrary());
-			if(OpenAPILibrary.openapi4j.equals(this.configOpenApiValidator.getOpenApiLibrary()) ||
-					OpenAPILibrary.swagger_request_validator.equals(this.configOpenApiValidator.getOpenApiLibrary())) {
-				this.configOpenApiValidator.setMergeAPISpec(this.op2Properties.isValidazioneContenutiApplicativiOpenApiMergeAPISpec());
-				this.configOpenApiValidator.setValidateAPISpec(this.op2Properties.isValidazioneContenutiApplicativiOpenApiValidateAPISpec());
-				this.configOpenApiValidator.setValidateRequestPath(this.op2Properties.isValidazioneContenutiApplicativiOpenApiValidateRequestPath());
-				this.configOpenApiValidator.setValidateRequestQuery(this.op2Properties.isValidazioneContenutiApplicativiOpenApiValidateRequestQuery());
-				this.configOpenApiValidator.setValidateRequestUnexpectedQueryParam(this.op2Properties.isValidazioneContenutiApplicativiOpenApiValidateRequestUnexpectedQueryParam());
-				this.configOpenApiValidator.setValidateRequestHeaders(this.op2Properties.isValidazioneContenutiApplicativiOpenApiValidateRequestHeaders());
-				this.configOpenApiValidator.setValidateRequestCookie(this.op2Properties.isValidazioneContenutiApplicativiOpenApiValidateRequestCookie());
-				this.configOpenApiValidator.setValidateRequestBody(this.op2Properties.isValidazioneContenutiApplicativiOpenApiValidateRequestBody());
-				this.configOpenApiValidator.setValidateResponseHeaders(this.op2Properties.isValidazioneContenutiApplicativiOpenApiValidateResponseHeaders());
-				this.configOpenApiValidator.setValidateResponseBody(this.op2Properties.isValidazioneContenutiApplicativiOpenApiValidateResponseBody());
-				this.configOpenApiValidator.setValidateWildcardSubtypeAsJson(this.op2Properties.isValidazioneContenutiApplicativiOpenApiValidateWildcardSubtypeAsJson());
-				this.configOpenApiValidator.setValidateMultipartOptimization(this.op2Properties.isValidazioneContenutiApplicativiOpenApiValidateMultipartOptimization());
-				this.configOpenApiValidator.setSwaggerRequestValidator_InjectingAdditionalPropertiesFalse(this.op2Properties.isValidazioneContenutiApplicativiOpenApiSwaggerRequestValidatorInjectingAdditionalPropertiesFalse());
-				this.configOpenApiValidator.setSwaggerRequestValidator_ResolveFullyApiSpec(this.op2Properties.isValidazioneContenutiApplicativiOpenApiSwaggerRequestValidatorResolveFullyApiSpec());
-			}
-			
-			updateOpenapiValidatorConfig(proprieta, this.configOpenApiValidator); // aggiorno anche se utilizzarlo o meno
-						
-			if(OpenAPILibrary.openapi4j.equals(this.configOpenApiValidator.getOpenApiLibrary()) ||
-					OpenAPILibrary.swagger_request_validator.equals(this.configOpenApiValidator.getOpenApiLibrary())) {
-				processIncludeForOpenApi = false;
+			if (readInterfaceAccordoServizio) {
+				OpenAPILibrary lib30 = resolveLibraryForCurrentApi(null, proprieta);
+				OpenAPILibrary lib31 = this.op2Properties.getOpenapi31Library();
+				if (!OpenAPILibrary.json_schema.equals(lib30) || !OpenAPILibrary.json_schema.equals(lib31)) {
+					processIncludeForOpenApi = false;
+				}
 			}
 			
 			this.bufferMessage_readOnly = OpenSPCoop2Properties.getInstance().isValidazioneContenutiApplicativiBufferContentRead();
@@ -363,69 +344,48 @@ public class ValidatoreMessaggiApplicativiRest {
 	}
 	private void validateWithInterface(boolean isRichiesta, boolean portaApplicativa, OpenSPCoop2Message requestMessage) throws ValidatoreMessaggiApplicativiException {
 		
-		if(ServiceBinding.SOAP.equals(this.message.getServiceBinding())){
+		if(ServiceBinding.SOAP.equals(this.message.getServiceBinding())) {
 			throw new ValidatoreMessaggiApplicativiException("Tipo di validazione non supportata con Service Binding SOAP");
 		}
 		
 		String interfaceType = null;
-		ApiFormats format = null;
 		ApiValidatorConfig validatorConfig = null;
-		OpenAPILibrary openApiLibrary = null; 
+		OpenAPILibrary openApiLibrary = null;
 		Api api = this.accordoServizioWrapper.getApi();
+
 		switch (this.accordoServizioWrapper.getAccordoServizio().getFormatoSpecifica()) {
 		case SWAGGER_2:
 			interfaceType = "Interfaccia Swagger 2";
-			format=ApiFormats.SWAGGER_2;
-			validatorConfig = new OpenapiApiValidatorConfig();
-			((OpenapiApiValidatorConfig)validatorConfig).setJsonValidatorAPI(this.op2Properties.getValidazioneContenutiApplicativiOpenApiJsonValidator());
-			if(this.useInterface && this.configOpenApiValidator!=null) {
-				openApiLibrary = this.configOpenApiValidator.getOpenApiLibrary();
-				if(OpenAPILibrary.swagger_request_validator.equals(openApiLibrary)) {
-					((OpenapiApiValidatorConfig)validatorConfig).setOpenApiValidatorConfig(this.configOpenApiValidator);
-					if(this.configOpenApiValidator.isMergeAPISpec()) {
-						// forzo a false, la funzionalità di merge non supporta swagger
-						this.configOpenApiValidator.setMergeAPISpec(false);
-					}
-					/*if(this.configOpenApiValidator.isMergeAPISpec() && api instanceof OpenapiApi) {
-						OpenapiApi openapi = (OpenapiApi) api;
-						if(openapi.getValidationStructure()==null) {
-							api = this.mergeApiSpec(openapi, this.accordoServizioWrapper);
-						}
-					}*/
-				}
-			}
 			break;
 		case OPEN_API_3:
 			interfaceType = "Interfaccia OpenAPI 3";
-			format=ApiFormats.OPEN_API_3;
-			validatorConfig = new OpenapiApiValidatorConfig();
-			((OpenapiApiValidatorConfig)validatorConfig).setJsonValidatorAPI(this.op2Properties.getValidazioneContenutiApplicativiOpenApiJsonValidator());
-			if(this.useInterface && this.configOpenApiValidator!=null) {
-				openApiLibrary = this.configOpenApiValidator.getOpenApiLibrary();
-				if(OpenAPILibrary.openapi4j.equals(openApiLibrary) || OpenAPILibrary.swagger_request_validator.equals(openApiLibrary)) {
-					((OpenapiApiValidatorConfig)validatorConfig).setOpenApiValidatorConfig(this.configOpenApiValidator);
-					if(this.configOpenApiValidator.isMergeAPISpec() && api instanceof OpenapiApi) {
-						OpenapiApi openapi = (OpenapiApi) api;
-						if(openapi.getValidationStructure()==null) {
-							api = this.mergeApiSpec(openapi, this.accordoServizioWrapper);
-						}
-					}
-				}
-			}
 			break;
 		default:
 			// altre interfacce non supportate per rest
 			throw new ValidatoreMessaggiApplicativiException("Tipo di interfaccia ["+this.accordoServizioWrapper.getAccordoServizio().getFormatoSpecifica()+"] non supportata");
 		}
-		
+
+		try {
+			openApiLibrary = this.useInterface
+					? resolveLibraryForCurrentApi(api, this.proprieta)
+					: OpenAPILibrary.json_schema;
+			validatorConfig = buildValidatorConfigForCurrentApi(api, this.proprieta, openApiLibrary);
+		} catch(Exception e) {
+			this.logger.error("validateWithInterface failed: "+e.getMessage(),e);
+			ValidatoreMessaggiApplicativiException ex
+				= new ValidatoreMessaggiApplicativiException(e.getMessage(),e);
+			ex.setErrore(ErroriIntegrazione.ERRORE_417_COSTRUZIONE_VALIDATORE_TRAMITE_INTERFACCIA_FALLITA.getErrore417_CostruzioneValidatoreTramiteInterfacciaFallita(interfaceType));
+			throw ex;
+		}
+
 		IApiValidator apiValidator = null;
 		try {
-			apiValidator = ApiFactory.newApiValidator(format);
+			apiValidator = ApiFactory.newApiValidator(openApiLibrary.name());
 			validatorConfig.setXmlUtils(MessageXMLUtils.getInstance(this.message.getFactory()));
 			validatorConfig.setVerbose(this.op2Properties.isValidazioneContenutiApplicativiDebug());
 			validatorConfig.setPolicyAdditionalProperties(this.op2Properties.getValidazioneContenutiApplicativiJsonPolicyAdditionalProperties());
 			apiValidator.init(this.logger, api, validatorConfig);
-		}catch(Exception e){
+		} catch(Exception e){
 			this.logger.error("validateWithInterface failed: "+e.getMessage(),e);
 			ValidatoreMessaggiApplicativiException ex 
 				= new ValidatoreMessaggiApplicativiException(e.getMessage(),e);
@@ -673,70 +633,141 @@ public class ValidatoreMessaggiApplicativiRest {
 		
 	}
 	
-	private Api mergeApiSpec(OpenapiApi api, org.openspcoop2.core.registry.rest.AccordoServizioWrapper accordoServizioWrapper) {
-		
-		YAMLUtils yamlUtils = YAMLUtils.getInstance();
-		JSONUtils jsonUtils = JSONUtils.getInstance();
-								
-		Map<String, String> attachments = new HashMap<>();
-		if(api.getSchemas()!=null && api.getSchemas().size()>0) {
-
-			for (ApiSchema apiSchema : api.getSchemas()) {
-			
-				if(!ApiSchemaType.JSON.equals(apiSchema.getType()) && !ApiSchemaType.YAML.equals(apiSchema.getType())) {
-					continue;
-				}
-				byte [] schema = apiSchema.getContent();
-				if(ApiSchemaType.JSON.equals(apiSchema.getType())) {
-					if(jsonUtils.isJson(schema)) {
-						attachments.put(apiSchema.getName(), new String(apiSchema.getContent()));
-					}
-				}
-				else {
-					if(yamlUtils.isYaml(schema)) {
-						attachments.put(apiSchema.getName(), new String(apiSchema.getContent()));
-					}
-				}
-				
+	/**
+	 * Risolve la libreria di validazione da usare per l'api corrente, considerando:
+	 * <ul>
+	 *   <li>la versione dello spec (3.0 vs 3.1) → default globale o {@link OpenSPCoop2Properties#getOpenapi31Library()};</li>
+	 *   <li>gli override a livello di porta:
+	 *     <ul>
+	 *       <li>3.1: property {@code validation.openApi.31.library};</li>
+	 *       <li>3.0: enabled-flag {@code validation.openApi4j.enabled} / {@code validation.swaggerRequestValidator.enabled},
+	 *           con la convenzione legacy che entrambi disabilitati ⇒ {@code json_schema}.</li>
+	 *     </ul>
+	 *   </li>
+	 * </ul>
+	 */
+	private OpenAPILibrary resolveLibraryForCurrentApi(Api api, List<Proprieta> proprieta) {
+		boolean is31 = isOpenApi31(api);
+		if (is31) {
+			String overrideLib = readValue(proprieta, "validation.openApi.31.library");
+			if (overrideLib != null && !overrideLib.trim().isEmpty()) {
+				try { return OpenAPILibrary.valueOf(overrideLib.trim()); }
+				catch (Exception e) { /* fallthrough */ }
 			}
-		}
-		
-		if(attachments.isEmpty()) {	
-			return api; // non vi sono attachments da aggiungere
-		}
-		
-		String apiRaw = api.getApiRaw();
-		boolean apiRawIsYaml = yamlUtils.isYaml(apiRaw);
-									
-		UniqueInterfaceGeneratorConfig configUniqueInterfaceGeneratorConfig = new UniqueInterfaceGeneratorConfig();
-		configUniqueInterfaceGeneratorConfig.setFormat(ApiFormats.OPEN_API_3);
-		configUniqueInterfaceGeneratorConfig.setYaml(apiRawIsYaml);
-		configUniqueInterfaceGeneratorConfig.setMaster(apiRaw);
-		configUniqueInterfaceGeneratorConfig.setAttachments(attachments);
-		try {
-			String apiMerged = UniqueInterfaceGenerator.generate(configUniqueInterfaceGeneratorConfig, null, null, true, this.logger);
-			if(apiMerged==null) {
-				throw new Exception("empty ApiSpec");
-			}
-			
-			IApiReader apiReader = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
-			ApiReaderConfig config = new ApiReaderConfig();
-			config.setProcessInclude(false);
-			config.setProcessInlineSchema(true);
-			apiReader.init(this.logger, apiMerged, config);
-			Api apiMergedObject = apiReader.read();
-			if(apiMergedObject==null) {
-				throw new Exception("empty ApiSpec after read");
-			}
-			accordoServizioWrapper.updateApi(apiMergedObject);
-			return apiMergedObject;
-		}catch(Throwable t) {
-			this.logger.error("Merge API Spec failed: "+t.getMessage(),t);
-			return api; // torno al metodo tradizionale utilizzando l'api non merged
+			return this.op2Properties.getOpenapi31Library();
 		}
 
+		// 3.0: default globale + applicazione degli enabled-flag legacy a livello porta
+		OpenAPILibrary lib = this.op2Properties.getValidazioneContenutiApplicativiOpenApiLibrary();
+		String useOpenApi4j = readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_ENABLED);
+		boolean openApi4jForceDisabled = false;
+		if (useOpenApi4j != null && !StringUtils.isEmpty(useOpenApi4j)) {
+			if (CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_OPENAPI4J_ENABLED.equals(useOpenApi4j.trim())) {
+				lib = OpenAPILibrary.openapi4j;
+			} else if (CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_OPENAPI4J_DISABLED.equals(useOpenApi4j.trim())) {
+				openApi4jForceDisabled = true;
+			}
+		}
+		String useSwagger = readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_SWAGGER_REQUEST_VALIDATOR_ENABLED);
+		boolean swaggerForceDisabled = false;
+		if (useSwagger != null && !StringUtils.isEmpty(useSwagger)) {
+			if (CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_SWAGGER_REQUEST_VALIDATOR_ENABLED.equals(useSwagger.trim())) {
+				lib = OpenAPILibrary.swagger_request_validator;
+			} else if (CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_SWAGGER_REQUEST_VALIDATOR_DISABLED.equals(useSwagger.trim())) {
+				swaggerForceDisabled = true;
+			}
+		}
+		if (openApi4jForceDisabled && swaggerForceDisabled) {
+			lib = OpenAPILibrary.json_schema;
+		}
+		return lib;
 	}
-	
+
+	/**
+	 * Costruisce per la singola porta un {@link ApiValidatorConfig} engine-specific:
+	 * <ol>
+	 *   <li>recupera la <em>config base</em> cached da {@link OpenSPCoop2Properties} per la libreria data
+	 *       e ne fa una <strong>copia</strong> (clone via {@link ApiValidatorConfig#mapProperties()});</li>
+	 *   <li>applica gli override property a livello di porta riusando {@link #updateOpenapiValidatorConfig}
+	 *       e quindi ricostruisce l'engine config finale.</li>
+	 * </ol>
+	 * I metodi legacy non sono toccati.
+	 */
+	private ApiValidatorConfig buildValidatorConfigForCurrentApi(Api api, List<Proprieta> proprieta, OpenAPILibrary library) throws ProcessingException {
+		boolean is31 = isOpenApi31(api);
+
+		// 1. recupero la base cached e ne creo una copia (transferendo solo le coppie chiave/valore)
+		ApiValidatorConfig base = is31
+				? this.op2Properties.getValidator31ConfigBase(library)
+				: this.op2Properties.getValidatorConfigBase(library);
+
+		OpenapiLibraryValidatorConfig src = new OpenapiLibraryValidatorConfig();
+		src.setOpenApiLibrary(library);
+		if (base != null) {
+			applyMapToLibConfig(src, base.mapProperties());
+		}
+
+		// 2. override a livello di porta
+		updateOpenapiValidatorConfig(proprieta, src);
+
+		// 3. costruisco la config engine-specific finale dal src risultante
+		ApiValidatorConfig engineConfig = ApiFactory.newApiValidatorConfig(library.name());
+		engineConfig.readProperties(src::getProperty);
+		return engineConfig;
+	}
+
+	private static boolean isOpenApi31(Api api) {
+		if (!(api instanceof OpenapiApi)) {
+			return false;
+		}
+		OpenapiApi openapiApi = (OpenapiApi) api;
+		if (!ApiFormats.OPEN_API_3.equals(openapiApi.getFormat())) {
+			return false;
+		}
+		// 1) preferiamo il modello parsed, se disponibile (transient: può essere null dopo ser/des)
+		try {
+			if (openapiApi.getApi() != null && openapiApi.getApi().getOpenapi() != null
+					&& openapiApi.getApi().getOpenapi().startsWith("3.1")) {
+				return true;
+			}
+		} catch (Exception e) { /* fallthrough */ }
+		// 2) fallback: scan dell'apiRaw per la dichiarazione di versione
+		String raw = openapiApi.getApiRaw();
+		if (raw == null) {
+			return false;
+		}
+		// pattern: openapi: "3.1...", openapi: 3.1..., "openapi": "3.1..."
+		return raw.matches("(?s).*[\"']?openapi[\"']?\\s*:\\s*[\"']?3\\.1.*");
+	}
+
+	private static void applyMapToLibConfig(OpenapiLibraryValidatorConfig dest, Map<String, String> props) {
+		String s = props.get(OpenapiLibraryValidatorConfig.PROPERTY_KEY_JSON_VALIDATOR_API);
+		if (s != null) {
+			try { dest.setJsonValidatorAPI(ApiName.valueOf(s)); } catch (Exception e) { /* ignore */ }
+		}
+		applyBool(props, OpenapiLibraryValidatorConfig.PROPERTY_KEY_MERGE_API_SPEC, dest::setMergeAPISpec);
+		applyBool(props, OpenapiLibraryValidatorConfig.PROPERTY_KEY_VALIDATE_API_SPEC, dest::setValidateAPISpec);
+		applyBool(props, OpenapiLibraryValidatorConfig.PROPERTY_KEY_VALIDATE_REQUEST_PATH, dest::setValidateRequestPath);
+		applyBool(props, OpenapiLibraryValidatorConfig.PROPERTY_KEY_VALIDATE_REQUEST_QUERY, dest::setValidateRequestQuery);
+		applyBool(props, OpenapiLibraryValidatorConfig.PROPERTY_KEY_VALIDATE_REQUEST_UNEXPECTED_QUERY_PARAM, dest::setValidateRequestUnexpectedQueryParam);
+		applyBool(props, OpenapiLibraryValidatorConfig.PROPERTY_KEY_VALIDATE_REQUEST_HEADERS, dest::setValidateRequestHeaders);
+		applyBool(props, OpenapiLibraryValidatorConfig.PROPERTY_KEY_VALIDATE_REQUEST_COOKIES, dest::setValidateRequestCookie);
+		applyBool(props, OpenapiLibraryValidatorConfig.PROPERTY_KEY_VALIDATE_REQUEST_BODY, dest::setValidateRequestBody);
+		applyBool(props, OpenapiLibraryValidatorConfig.PROPERTY_KEY_VALIDATE_RESPONSE_HEADERS, dest::setValidateResponseHeaders);
+		applyBool(props, OpenapiLibraryValidatorConfig.PROPERTY_KEY_VALIDATE_RESPONSE_BODY, dest::setValidateResponseBody);
+		applyBool(props, OpenapiLibraryValidatorConfig.PROPERTY_KEY_VALIDATE_WILDCARD_SUBTYPE_AS_JSON, dest::setValidateWildcardSubtypeAsJson);
+		applyBool(props, OpenapiLibraryValidatorConfig.PROPERTY_KEY_VALIDATE_MULTIPART_OPTIMIZATION, dest::setValidateMultipartOptimization);
+		applyBool(props, OpenapiLibraryValidatorConfig.PROPERTY_KEY_SWAGGER_INJECTING_ADDITIONAL_PROPERTIES_FALSE, dest::setSwaggerRequestValidator_InjectingAdditionalPropertiesFalse);
+		applyBool(props, OpenapiLibraryValidatorConfig.PROPERTY_KEY_SWAGGER_RESOLVE_FULLY_API_SPEC, dest::setSwaggerRequestValidator_ResolveFullyApiSpec);
+	}
+
+	private static void applyBool(Map<String, String> props, String key, java.util.function.Consumer<Boolean> setter) {
+		String v = props.get(key);
+		if (v != null) {
+			setter.accept(Boolean.parseBoolean(v));
+		}
+	}
+
 	private void updateOpenapiValidatorConfig(List<Proprieta> proprieta, OpenapiLibraryValidatorConfig configOpenApi4j) {
 		if(proprieta==null || proprieta.isEmpty()) {
 			return;

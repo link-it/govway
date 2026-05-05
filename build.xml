@@ -324,6 +324,7 @@
 			<include name="stub/cxf/*"/>
 			<include name="swagger/*"/>
 			<include name="openapi4j/*"/>
+			<include name="kappa/*"/>
 			<include name="reports/*"/>
 			<include name="httpcore/*"/>
 			<include name="testsuite/testng/*"/>

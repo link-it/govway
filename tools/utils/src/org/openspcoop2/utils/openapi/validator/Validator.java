@@ -42,7 +42,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.openapi4j.core.model.v3.OAI3Context;
-import org.openapi4j.core.model.v3.OAI3SchemaKeywords;
 import org.openapi4j.core.util.StringUtil;
 import org.openapi4j.core.util.TreeUtil;
 import org.openapi4j.core.validation.ValidationResults;
@@ -96,7 +95,6 @@ import org.openspcoop2.utils.rest.api.Api;
 import org.openspcoop2.utils.rest.api.ApiBodyParameter;
 import org.openspcoop2.utils.rest.api.ApiOperation;
 import org.openspcoop2.utils.rest.api.ApiReference;
-import org.openspcoop2.utils.rest.api.ApiResponse;
 import org.openspcoop2.utils.rest.api.ApiSchema;
 import org.openspcoop2.utils.rest.api.ApiSchemaType;
 import org.openspcoop2.utils.rest.api.ApiSchemaTypeRestriction;
@@ -151,13 +149,15 @@ import io.swagger.v3.oas.models.parameters.RequestBody;
  */
 public class Validator extends AbstractApiValidator implements IApiValidator {
 
-	private Api api;
+	// NOTA: i campi 'api' e 'log' sono stati promossi a protected in AbstractApiValidator;
+	// non vanno più dichiarati qui (lo shadowing ruberebbe la visibilità alla base).
+
 	// JSONSchema Validation
 	private Map<String, IJsonSchemaValidator> validatorMap;
 	private Map<String, File> fileSchema;
 	// OpenAPI4j Validation
 	private OpenApi3 openApi4j;
-	
+
 	// SwaggerRequestValidator
 	private SwaggerRequestValidator swaggerRequestValidator;
 	private SwaggerResponseValidator swaggerResponseValidator;
@@ -165,11 +165,9 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 
 	// Configuration
 	private OpenapiLibraryValidatorConfig openApi4jConfig;
-	
+
 	boolean onlySchemas = false;
-	
-	private Logger log;
-	
+
 	private static final String VALIDATION_STRUCTURE = "VALIDATION_STRUCTURE";
 	private static final String VALIDATION_SWAGGER_REQUEST_VALIDATOR_OPENAPI = "VALIDATION_SWAGGER_REQUEST_VALIDATOR_OPENAPI";
 	private org.openspcoop2.utils.Semaphore semaphore = new org.openspcoop2.utils.Semaphore("OpenAPIValidator");
@@ -907,54 +905,9 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 		return l;
 	}
 	
-	private String getRefPath(String ref) {
-		if(ref.trim().startsWith("#")) {
-			return null;
-		}
-		return ref.trim().substring(0, ref.indexOf("#"));
-	}
-	private static String getRefType(String ref) {
-		if(ref.trim().startsWith("#")) {
-			return ref;
-		}
-		return ref.trim().substring(ref.indexOf("#"), ref.length());
-	}
-	private String normalizePath(String path) throws ProcessingException {
-		if(path.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX) || path.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTPS_PREFIX) || path.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX)){	
-			try {
-				URL url = new URI(path).toURL();
-				File fileUrl = new File(url.getFile());
-				return fileUrl.getName();
-			}catch(Exception e) {
-				throw new ProcessingException(e.getMessage(),e);
-			}
-		}
-		else{
-			File f = new File(path);
-			return f.getName();
-		}
-	}
-	private void normalizeRefs(JsonNode node) throws ProcessingException {
-		List<JsonNode> listRef = node.findParents(OAI3SchemaKeywords.$REF);
-		if(listRef!=null) {
-			for (JsonNode jsonNodeRef : listRef) {
-				if(jsonNodeRef instanceof ObjectNode oNode) {
-					JsonNode valore = oNode.get(OAI3SchemaKeywords.$REF);
-					String ref = valore.asText();
-					String path = getRefPath(ref);
-					if(path!=null) {
-						String normalizePath = normalizePath(path);
-						String refType = getRefType(ref);
-						//System.out.println("REF ("+jsonNodeRef.getClass().getName()+") : "+jsonNodeRef);
-						//System.out.println("Tipo ("+refType+") VALORE:"+normalizePath);
-						oNode.remove(OAI3SchemaKeywords.$REF);
-						oNode.put(OAI3SchemaKeywords.$REF, normalizePath+refType);
-					}
-				}
-			}
-		}
-	}
-	
+	// getRefPath(String), getRefType(String), normalizePath(String), normalizeRefs(JsonNode)
+	// sono stati spostati in AbstractApiValidator.
+
 	@Override
 	public void close(Logger log, Api api, ApiValidatorConfig config) throws ProcessingException{
 		if(this.fileSchema!=null) {
@@ -969,50 +922,8 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 		}
 	}
 	
-	@Override
-	public void validate(HttpBaseEntity<?> httpEntity)
-			throws ProcessingException, ValidatorException {
-		List<Object> args = new ArrayList<>();
-		super.validate(this.api, httpEntity, args);
-	}
+	// validate(HttpBaseEntity) e getBodyParameters(...) sono stati spostati in AbstractApiValidator.
 
-	private List<ApiBodyParameter> getBodyParameters(HttpBaseEntity<?> httpEntity, ApiOperation operation){
-		List<ApiBodyParameter> bodyParameters = null;
-		if(httpEntity instanceof HttpBaseRequestEntity) {
-			if(operation.getRequest()!=null) {
-				bodyParameters = operation.getRequest().getBodyParameters();
-			}
-		}
-		else if(httpEntity instanceof HttpBaseResponseEntity<?>) {
-				
-			HttpBaseResponseEntity<?> response = (HttpBaseResponseEntity<?>) httpEntity;
-			ApiResponse apiResponseFound = null;
-			ApiResponse apiResponseDefault = null;
-			
-			if(operation.getResponses()!=null) {
-				for (ApiResponse apiResponse : operation.getResponses()) {
-					if(apiResponse.isDefaultHttpReturnCode()) {
-						apiResponseDefault = apiResponse;
-					}
-					if(response.getStatus() == apiResponse.getHttpReturnCode()){
-						apiResponseFound = apiResponse;
-						break;
-					}										
-				}
-			}
-			
-			if(apiResponseFound==null && apiResponseDefault!=null) {
-				apiResponseFound = apiResponseDefault;
-			}	
-			if(apiResponseFound!=null){
-				// eventuali errori di stato non trovato sono gestiti successivavemnte nella validazione
-				bodyParameters = apiResponseFound.getBodyParameters();
-			}
-					
-		}
-		return bodyParameters;
-	}
-	
 	@Override
 	public void validatePreConformanceCheck(HttpBaseEntity<?> httpEntity,
 			ApiOperation operation, Object... args) throws ProcessingException, ValidatorException {
@@ -1444,404 +1355,9 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 
 
 
-	@Override
-	public void validatePostConformanceCheck(HttpBaseEntity<?> httpEntity,
-			ApiOperation operation, Object... args) throws ProcessingException,
-	ValidatorException {
-		
-	}
+	// validatePostConformanceCheck, validateValueAsType, getArrayValues e
+	// PREFIXED_SEMICOLON_NAME_REGEX sono stati spostati in AbstractApiValidator.
 
-	@Override
-	public void validateValueAsType(ApiParameterType parameterType, String value, String type, ApiSchemaTypeRestriction typeRestriction)
-			throws ProcessingException, ValidatorException {
-
-		if(type!=null){
-			type = type.trim();
-
-			BigDecimal numberValue = null;
-			String stringValue = null;
-			
-			if("string".equalsIgnoreCase(type)){
-				stringValue = value;
-			}
-			else if("byte".equalsIgnoreCase(type) || "unsignedByte".equalsIgnoreCase(type)){
-				try{
-					byte v = Byte.parseByte(value);
-					numberValue = new BigDecimal(v);
-				}catch(Throwable e){
-					throw new ValidatorException(e.getMessage(),e);
-				}
-			}
-			else if("char".equalsIgnoreCase(type)){
-				if(value.length()>1){
-					throw new ValidatorException("More than one character");
-				}
-				stringValue = value;
-			}
-			else if("double".equalsIgnoreCase(type) || "decimal".equalsIgnoreCase(type)){
-				try{
-					double v = Double.parseDouble(value);
-					numberValue = BigDecimal.valueOf(v);
-				}catch(Throwable e){
-					throw new ValidatorException(e.getMessage(),e);
-				}
-			}
-			else if("float".equalsIgnoreCase(type)){
-				try{
-					float v = Float.parseFloat(value);
-					numberValue = BigDecimal.valueOf(v);
-				}catch(Throwable e){
-					throw new ValidatorException(e.getMessage(),e);
-				}
-			}
-			else if("int".equalsIgnoreCase(type) || "integer".equalsIgnoreCase(type) || 
-					"positiveInteger".equalsIgnoreCase(type) || "negativeInteger".equalsIgnoreCase(type) ||
-					"nonPositiveInteger".equalsIgnoreCase(type) || "nonNegativeInteger".equalsIgnoreCase(type) || 
-					"unsignedInt".equalsIgnoreCase(type) ||
-					"int32".equalsIgnoreCase(type)){
-				try{
-					int i = Integer.parseInt(value);
-					if("positiveInteger".equalsIgnoreCase(type)){
-						if(i<=0){
-							throw new ValidatorException("Expected a positive value");
-						}
-					}
-					else if("nonNegativeInteger".equalsIgnoreCase(type)){
-						if(i<0){
-							throw new ValidatorException("Expected a non negative value");
-						}
-					}
-					else if("negativeInteger".equalsIgnoreCase(type)){
-						if(i>=0){
-							throw new ValidatorException("Expected a negative value");
-						}
-					}
-					else if("nonPositiveInteger".equalsIgnoreCase(type)){
-						if(i>0){
-							throw new ValidatorException("Expected a non positive value");
-						}
-					}
-					else if("unsignedInt".equalsIgnoreCase(type)){
-						if(i<0){
-							throw new ValidatorException("Expected a unsigned value");
-						}
-					}
-					numberValue = BigDecimal.valueOf(i);
-				}catch(Throwable e){
-					throw new ValidatorException(e.getMessage(),e);
-				}
-			}
-			else if("long".equalsIgnoreCase(type) || "unsignedLong".equalsIgnoreCase(type)||
-					"int64".equalsIgnoreCase(type)){
-				try{
-					long l = Long.parseLong(value);
-					if("unsignedLong".equalsIgnoreCase(type)){
-						if(l<0){
-							throw new ValidatorException("Expected a unsigned value");
-						}
-					}
-					numberValue = new BigDecimal(l);
-				}catch(Throwable e){
-					throw new ValidatorException(e.getMessage(),e);
-				}
-			}
-			else if("number".equalsIgnoreCase(type)) {
-				try{
-					// Any numbers.
-					try{
-						double d = Double.parseDouble(value);
-						numberValue = BigDecimal.valueOf(d);
-					}catch(Exception e){
-						long l = Long.parseLong(value);
-						numberValue = new BigDecimal(l);
-					}
-				}catch(Throwable e){
-					throw new ValidatorException(e.getMessage(),e);
-				}
-			}
-			else if("short".equalsIgnoreCase(type) || "unsignedShort".equalsIgnoreCase(type)){
-				try{
-					short s = Short.parseShort(value);
-					if("unsignedShort".equalsIgnoreCase(type)){
-						if(s<0){
-							throw new ValidatorException("Expected a unsigned value");
-						}
-					}
-					numberValue = new BigDecimal(s);
-				}catch(Throwable e){
-					throw new ValidatorException(e.getMessage(),e);
-				}
-			}
-			else if("boolean".equalsIgnoreCase(type)){
-				try{
-					if(!"true".equals(value) && !"false".equals(value)) {
-						throw new Exception("Only true/false value expected (found: "+value+"); Note that truthy and falsy values such as \"true\", \"\", 0 or null are not considered boolean values.");
-					}
-				}catch(Throwable e){
-					throw new ValidatorException(e.getMessage(),e);
-				}
-			}
-			else if("anyURI".equalsIgnoreCase(type)){
-				try{
-					new URI(value);
-				}catch(Throwable e){
-					throw new ValidatorException(e.getMessage(),e);
-				}
-			}
-			else if("uuid".equalsIgnoreCase(type)){
-				try{
-					UUID.fromString(value);
-				}catch(Throwable e){
-					throw new ValidatorException(e.getMessage(),e);
-				}
-			}
-			else if("date-time".equalsIgnoreCase(type)){
-				try {
-					DateUtils.validateDateTimeAsRFC3339Sec56(value);
-				}catch(Throwable e){
-					throw new ValidatorException(e.getMessage(),e);
-				}
-			}
-			else if("date".equalsIgnoreCase(type)){
-				try {
-					DateUtils.validateDateAsRFC3339Sec56(value);
-				}catch(Throwable e){
-					throw new ValidatorException(e.getMessage(),e);
-				}
-			}
-			/**else if("time".equalsIgnoreCase(type)){
-				try {
-					DateUtils.validateTimeAsRFC3339Sec56(value);
-				}catch(Throwable e){
-					throw new ValidatorException(e.getMessage(),e);
-				}
-			}*/
-			
-			if(typeRestriction!=null) {
-				
-				if(numberValue!=null) {
-					
-					// max
-					if(typeRestriction.getMaximum()!=null) {
-						int compare = numberValue.compareTo(typeRestriction.getMaximum());
-						if(compare<0) {
-							// numberValue < maximum
-						}
-						else if(compare>0) {
-							// numberValue > maximum
-							throw new ValidatorException("Value higher than the maximum '"+typeRestriction.getMaximum()+"'");
-						}
-						else {
-							// numberValue == maximum
-							if(typeRestriction.getExclusiveMaximum()!=null && typeRestriction.getExclusiveMaximum()) {
-								throw new ValidatorException("Value equals to the maximum '"+typeRestriction.getMaximum()+"' and exclusive maximum is enabled");
-							}
-						}
-					}
-					
-					// min
-					if(typeRestriction.getMinimum()!=null) {
-						int compare = numberValue.compareTo(typeRestriction.getMinimum());
-						if(compare<0) {
-							// numberValue < minimum
-							throw new ValidatorException("Value lowest than the minimum '"+typeRestriction.getMinimum()+"'");
-						}
-						else if(compare>0) {
-							// numberValue > minimum
-						}
-						else {
-							// numberValue == minimum
-							if(typeRestriction.getExclusiveMinimum()!=null && typeRestriction.getExclusiveMinimum()) {
-								throw new ValidatorException("Value equals to the minimum '"+typeRestriction.getMinimum()+"' and exclusive minimum is enabled");
-							}
-						}
-					}
-					
-					// multipleOf
-					if(typeRestriction.getMultipleOf()!=null) {
-						if (numberValue.compareTo(typeRestriction.getMultipleOf()) != 0) {
-						   try{
-							   @SuppressWarnings("unused")
-							   BigDecimal bd = numberValue.divide(typeRestriction.getMultipleOf(), 0, RoundingMode.UNNECESSARY);
-						   }
-						   catch(ArithmeticException e) {
-							   throw new ValidatorException("Value is not multiple of '"+typeRestriction.getMultipleOf()+"'");
-						   }
-						}
-					}
-				}
-				
-				if(stringValue!=null) {
-					
-					// enum
-					if(typeRestriction.getEnumValues()!=null && !typeRestriction.getEnumValues().isEmpty()) {
-						
-						List<String> valoriPresenti = new ArrayList<>();
-						if(typeRestriction.isArrayParameter()) {
-							if(ApiParameterType.query.equals(parameterType) || ApiParameterType.form.equals(parameterType)) {
-								if(typeRestriction.isStyleQueryForm() || typeRestriction.getStyle()==null) { // form è il default
-									if(typeRestriction.isExplodeDisabled()) {
-										List<String> l = StringUtil.tokenize(stringValue, ",", false, false);
-										if(l!=null && !l.isEmpty()) {
-											valoriPresenti.addAll(l);
-										}
-									}
-								}
-								else if(typeRestriction.isStyleQuerySpaceDelimited()) {
-									if(typeRestriction.isExplodeDisabled()) {
-										List<String> l = StringUtil.tokenize(stringValue, Pattern.quote(" "), false, false);
-										if(l!=null && !l.isEmpty()) {
-											valoriPresenti.addAll(l);
-										}
-									}
-								}
-								else if(typeRestriction.isStyleQueryPipeDelimited()) {
-									if(typeRestriction.isExplodeDisabled()) {
-										List<String> l = StringUtil.tokenize(stringValue, Pattern.quote("|"), false, false);
-										if(l!=null && !l.isEmpty()) {
-											valoriPresenti.addAll(l);
-										}
-									}
-								}
-							}
-							else if(ApiParameterType.header.equals(parameterType)) {
-								if(typeRestriction.isStyleHeaderSimple() || typeRestriction.getStyle()==null) { // simple è il default
-									List<String> l = StringUtil.tokenize(stringValue, ",", false, false);
-									if(l!=null && !l.isEmpty()) {
-										valoriPresenti.addAll(l);
-									}
-								}
-							}
-							else if(ApiParameterType.path.equals(parameterType)) {
-								if(typeRestriction.isStylePathSimple() || typeRestriction.getStyle()==null) { // simple è il default
-									List<String> l = StringUtil.tokenize(stringValue, ",", false, false);
-									if(l!=null && !l.isEmpty()) {
-										valoriPresenti.addAll(l);
-									}
-								}
-								else if(typeRestriction.isStylePathLabel()) {
-									if(stringValue.length()>1) {
-										String splitPattern = typeRestriction.isExplodeEnabled() ?  "\\." : ",";
-										String [] v = stringValue.substring(1).split(splitPattern);
-										if(v!=null && v.length>0) {
-											for (String valore : v) {
-												valoriPresenti.add(valore);
-											}
-										}
-									}
-								}
-								else if(typeRestriction.isStylePathMatrix()) {
-									String splitPattern = typeRestriction.isExplodeEnabled() ?  ";" : ",";
-									List<String> l = getArrayValues(typeRestriction.isExplodeEnabled(), stringValue, splitPattern);
-									if(l!=null && !l.isEmpty()) {
-										valoriPresenti.addAll(l);
-									}
-								}
-							}
-						}
-						if(valoriPresenti.isEmpty()) {
-							valoriPresenti.add(stringValue);
-						}
-						
-						for (String valorePresente : valoriPresenti) {
-							boolean found = false;
-							StringBuilder sbList = new StringBuilder();
-							for (Object o : typeRestriction.getEnumValues()) {
-								if(o!=null) {
-									String check = o.toString();
-									if(sbList.length()>0) {
-										sbList.append(",");
-									}
-									sbList.append(check);
-									if(valorePresente.equals(check)) {
-										found = true;
-										break;
-									}
-								}
-							}
-							if(!found) {
-								throw new ValidatorException("Uncorrect enum value '"+valorePresente+"', expected: '"+sbList.toString()+"'");
-							}
-						}
-					}
-					
-					// min length
-					if(typeRestriction.getMinLength()!=null) {
-						if(stringValue.length()<typeRestriction.getMinLength().intValue()) {
-							throw new ValidatorException("Too short, expected min length '"+typeRestriction.getMinLength()+"'");
-						}
-					}
-					
-					// max length
-					if(typeRestriction.getMaxLength()!=null) {
-						if(stringValue.length()>typeRestriction.getMaxLength().intValue()) {
-							throw new ValidatorException("Too big, expected max length '"+typeRestriction.getMaxLength()+"'");
-						}
-					}
-					
-					/*
-					 * Note that the regular expression is enclosed in the ^…$ tokens, where ^ means the beginning of the string, and $ means the end of the string. 
-					 * Without ^…$, pattern works as a partial match, that is, matches any string that contains the specified regular expression. 
-					 * For example, pattern: pet matches pet, petstore and carpet. The ^…$ token forces an exact match.
-					 **/
-					if(typeRestriction.getPattern()!=null) {
-						String pattern = typeRestriction.getPattern().trim();
-						try {
-							if(pattern.startsWith("^") && pattern.endsWith("$")) {
-								if(!RegularExpressionEngine.isMatch(stringValue, pattern)) {
-									throw new ValidatorException("Pattern match failed ('"+pattern+"')");
-								}
-							}
-							else {
-								if(!RegularExpressionEngine.isFind(stringValue, pattern)) {
-									throw new ValidatorException("Pattern match failed ('"+pattern+"')");
-								}
-							}
-						}
-						catch(ValidatorException e) {
-							throw e;
-						}
-						catch(Throwable e) {
-							throw new ValidatorException("Pattern validation error '"+pattern+"': "+e.getMessage(),e);
-						}
-					}
-				}
-			}
-			
-		}
-
-		// altri tipi non li valido per ora
-
-
-	}
-
-	private static final Pattern PREFIXED_SEMICOLON_NAME_REGEX = Pattern.compile("(?:;)([^;]+)(?:=)([^;]*)");
-	private List<String> getArrayValues(boolean explode, String rawValue, String splitPattern) {
-		
-		try {
-			Matcher matcher = PREFIXED_SEMICOLON_NAME_REGEX.matcher(rawValue);
-	
-			if (explode) {
-				List<String> arrayValues = new ArrayList<>();
-				int index = 0;
-				int limit = 1000; // per gestire DOS
-				while (matcher.find() && index<limit) {
-					arrayValues.add(matcher.group(2));
-					index++;
-				}
-				return arrayValues;
-			} else {
-				return matcher.matches()
-						? Arrays.asList(matcher.group(2).split(splitPattern))
-								: null;
-			}
-		}catch(Throwable t) {
-			this.log.error(t.getMessage(), t);
-			return null;
-		}
-	}
-	
-	
 	// ================= SWAGGER REQUEST VALIDATOR GLUE CODE =====================
 
 	private static Method fromHttpMethod(HttpRequestMethod method) {

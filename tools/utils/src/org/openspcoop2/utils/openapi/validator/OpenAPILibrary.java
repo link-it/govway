@@ -31,7 +31,8 @@ import java.io.Serializable;
  * @version $Rev$, $Date$
  */
 public enum OpenAPILibrary implements Serializable {
-
-	json_schema, openapi4j, swagger_request_validator
-	
+	json_schema,
+	openapi4j,
+	swagger_request_validator,
+	kappa;
 }

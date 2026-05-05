@@ -46,6 +46,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -174,6 +176,10 @@ import org.openspcoop2.utils.jdbc.JDBCAdapterFactory;
 import org.openspcoop2.utils.json.JsonSchemaValidatorConfig.ADDITIONAL;
 import org.openspcoop2.utils.json.JsonValidatorAPI.ApiName;
 import org.openspcoop2.utils.openapi.validator.OpenAPILibrary;
+import org.openspcoop2.utils.openapi.validator.OpenapiLibraryValidatorConfig;
+import org.openspcoop2.utils.rest.ApiFactory;
+import org.openspcoop2.utils.rest.ApiValidatorConfig;
+import org.openspcoop2.utils.rest.ProcessingException;
 import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.resources.FileSystemMkdirConfig;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
@@ -2355,6 +2361,8 @@ public class OpenSPCoop2Properties {
 			this.isValidazioneContenutiApplicativiOpenApiOpenapi4jValidateUriReferenceAsUrl();
 			this.isValidazioneContenutiApplicativiOpenApiDateTimeAllowLowerCaseTZ();
 			this.isValidazioneContenutiApplicativiOpenApiDateTimeAllowSpaceSeparator();
+			this.getOpenapi31Library();
+			this.populateValidatorConfigBaseMaps();
 			if(this.isValidazioneContenutiApplicativiErroreTroncaturaEnabled()){
 				if(this.getValidazioneContenutiApplicativiErroreTroncaturaCaratteriInizio()<=0){
 					return false;
@@ -24425,10 +24433,10 @@ public class OpenSPCoop2Properties {
 
 		String pName = "org.openspcoop2.pdd.validazioneContenutiApplicativi.openApi.library";
 		OpenAPILibrary defaultValue = OpenAPILibrary.openapi4j;
-		
+
 		if(this.getValidazioneContenutiApplicativiOpenApiLibrary==null){
-			try{  
-				String value = this.reader.getValueConvertEnvProperties(pName); 
+			try{
+				String value = this.reader.getValueConvertEnvProperties(pName);
 
 				if (value != null){
 					value = value.trim();
@@ -24445,6 +24453,127 @@ public class OpenSPCoop2Properties {
 		}
 
 		return this.getValidazioneContenutiApplicativiOpenApiLibrary;
+	}
+
+	/**
+	 * Libreria di validazione da usare quando lo spec è OpenAPI 3.1.
+	 * Letta dalla property {@code ...openApi.31.library}; default {@link OpenAPILibrary#kappa}.
+	 */
+	private OpenAPILibrary openapi31Library = null;
+	public OpenAPILibrary getOpenapi31Library(){
+
+		String pName = "org.openspcoop2.pdd.validazioneContenutiApplicativi.openApi.31.library";
+		OpenAPILibrary defaultValue = OpenAPILibrary.kappa;
+
+		if(this.openapi31Library==null){
+			try{
+				String value = this.reader.getValueConvertEnvProperties(pName);
+
+				if (value != null){
+					value = value.trim();
+					this.openapi31Library = OpenAPILibrary.valueOf(value);
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName,defaultValue.toString()));
+					this.openapi31Library = defaultValue;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, defaultValue.toString()),e);
+				this.openapi31Library = defaultValue;
+			}
+		}
+
+		return this.openapi31Library;
+	}
+
+	/**
+	 * Costruisce un {@link ApiValidatorConfig} pre-configurato per OpenAPI 3.1
+	 * tramite il {@link ApiFactory} sull'engine ritornato da {@link #getOpenapi31Library()}.
+	 * I flag vengono letti tramite l'overlay {@code ...openApi.31.<flag>} con fallback
+	 * su {@code ...openApi.<flag>} (e infine sul default del config).
+	 */
+	public ApiValidatorConfig getOpenapi31Config() throws ProcessingException {
+		OpenAPILibrary library = getOpenapi31Library();
+		ApiValidatorConfig config = ApiFactory.newApiValidatorConfig(library.name());
+		config.readProperties(this::resolveOpenapi31Property);
+		return config;
+	}
+
+	private String resolveOpenapi31Property(String suffix) {
+		String overlayKey = "org.openspcoop2.pdd.validazioneContenutiApplicativi.openApi.31." + suffix;
+		String baseKey    = "org.openspcoop2.pdd.validazioneContenutiApplicativi.openApi." + suffix;
+		try {
+			String v = this.reader.getValueConvertEnvProperties(overlayKey);
+			if (v != null) return v.trim();
+			v = this.reader.getValueConvertEnvProperties(baseKey);
+			if (v != null) return v.trim();
+		} catch(Exception e) {
+			// fallthrough → null
+		}
+		return null;
+	}
+
+	// ============================================================
+	// Cache delle config base per ogni libreria, popolate eagerly
+	// in validaConfigurazione(...). Sono finali (riferimento) e
+	// thread-safe (ConcurrentHashMap). I valori cached vanno trattati
+	// come template read-only: per ottenere una copia mutabile, usare
+	// ApiFactory.newApiValidatorConfig(lib.name()) + readProperties(base.mapProperties()::get).
+	// ============================================================
+
+	private final ConcurrentMap<OpenAPILibrary, ApiValidatorConfig> validatorConfigBaseMap = new ConcurrentHashMap<>();
+	private final ConcurrentMap<OpenAPILibrary, ApiValidatorConfig> validator31ConfigBaseMap = new ConcurrentHashMap<>();
+
+	public ApiValidatorConfig getValidatorConfigBase(OpenAPILibrary lib) {
+		return this.validatorConfigBaseMap.get(lib);
+	}
+
+	public ApiValidatorConfig getValidator31ConfigBase(OpenAPILibrary lib) {
+		return this.validator31ConfigBaseMap.get(lib);
+	}
+
+	private void populateValidatorConfigBaseMaps() throws ProcessingException {
+		for (OpenAPILibrary lib : OpenAPILibrary.values()) {
+			this.validatorConfigBaseMap.put(lib, buildValidatorConfigBase(lib));
+			this.validator31ConfigBaseMap.put(lib, buildValidator31ConfigBase(lib));
+		}
+	}
+
+	private ApiValidatorConfig buildValidatorConfigBase(OpenAPILibrary lib) throws ProcessingException {
+		// Replica della logica di ValidatoreMessaggiApplicativiRest:182-200:
+		// si costruisce un OpenapiLibraryValidatorConfig dai default globali
+		// e si applica all'engine config tramite readProperties.
+		OpenapiLibraryValidatorConfig src = new OpenapiLibraryValidatorConfig();
+		src.setOpenApiLibrary(lib);
+		src.setJsonValidatorAPI(getValidazioneContenutiApplicativiOpenApiJsonValidator());
+		if (OpenAPILibrary.openapi4j.equals(lib) || OpenAPILibrary.swagger_request_validator.equals(lib)) {
+			src.setMergeAPISpec(isValidazioneContenutiApplicativiOpenApiMergeAPISpec());
+			src.setValidateAPISpec(isValidazioneContenutiApplicativiOpenApiValidateAPISpec());
+			src.setValidateRequestPath(isValidazioneContenutiApplicativiOpenApiValidateRequestPath());
+			src.setValidateRequestQuery(isValidazioneContenutiApplicativiOpenApiValidateRequestQuery());
+			src.setValidateRequestUnexpectedQueryParam(isValidazioneContenutiApplicativiOpenApiValidateRequestUnexpectedQueryParam());
+			src.setValidateRequestHeaders(isValidazioneContenutiApplicativiOpenApiValidateRequestHeaders());
+			src.setValidateRequestCookie(isValidazioneContenutiApplicativiOpenApiValidateRequestCookie());
+			src.setValidateRequestBody(isValidazioneContenutiApplicativiOpenApiValidateRequestBody());
+			src.setValidateResponseHeaders(isValidazioneContenutiApplicativiOpenApiValidateResponseHeaders());
+			src.setValidateResponseBody(isValidazioneContenutiApplicativiOpenApiValidateResponseBody());
+			src.setValidateWildcardSubtypeAsJson(isValidazioneContenutiApplicativiOpenApiValidateWildcardSubtypeAsJson());
+			src.setValidateMultipartOptimization(isValidazioneContenutiApplicativiOpenApiValidateMultipartOptimization());
+			src.setSwaggerRequestValidator_InjectingAdditionalPropertiesFalse(isValidazioneContenutiApplicativiOpenApiSwaggerRequestValidatorInjectingAdditionalPropertiesFalse());
+			src.setSwaggerRequestValidator_ResolveFullyApiSpec(isValidazioneContenutiApplicativiOpenApiSwaggerRequestValidatorResolveFullyApiSpec());
+		}
+
+		ApiValidatorConfig config = ApiFactory.newApiValidatorConfig(lib.name());
+		config.readProperties(src::getProperty);
+		return config;
+	}
+
+	private ApiValidatorConfig buildValidator31ConfigBase(OpenAPILibrary lib) throws ProcessingException {
+		// Per la 3.1 si attinge dall'overlay validation.openApi.31.<flag> con fallback su
+		// validation.openApi.<flag>; il provider è già implementato in resolveOpenapi31Property.
+		ApiValidatorConfig config = ApiFactory.newApiValidatorConfig(lib.name());
+		config.readProperties(this::resolveOpenapi31Property);
+		return config;
 	}
 
 	private Boolean isValidazioneContenutiApplicativiOpenApiMergeAPISpec = null;

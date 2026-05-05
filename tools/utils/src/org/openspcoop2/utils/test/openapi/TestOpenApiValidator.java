@@ -113,17 +113,36 @@ public class TestOpenApiValidator {
 	
 	@Test(groups={Costanti.GRUPPO_UTILS+"."+ID_TEST_BIG},dataProvider="openAPI3BigInterfaceValidatorProvider")
 	public void testOpenApi3BigInterfaceValidatorSingleTest(OpenAPILibrary openAPILibrary, boolean mergeSpec) throws Exception{
-		
+
 		// Serve per i tempi attesi
-		
+
 		boolean allTestExecution = false;
-		
+
 		TestLogger.info("Run test '"+ID_TEST+"' (openAPILibrary:"+openAPILibrary+" mergeSpec:"+mergeSpec+") ...");
 		org.openspcoop2.utils.openapi.validator.test.InterfaceBiggerTest.main(new String[] {openAPILibrary.toString(), mergeSpec+"", allTestExecution+""});
 		TestLogger.info("Run test '"+ID_TEST+"' (openAPILibrary:"+openAPILibrary+" mergeSpec:"+mergeSpec+") ok");
-		
+
 	}
-	
-	
-	
+
+
+	@DataProvider(name="openAPI31ValidatorProvider")
+	public Object[][] openAPI31Provider(){
+		return new Object[][]{
+				{"json", OpenAPILibrary.kappa, mergeSpec},
+				{"yaml", OpenAPILibrary.kappa, mergeSpec},
+				{"json", OpenAPILibrary.kappa, !mergeSpec},
+				{"yaml", OpenAPILibrary.kappa, !mergeSpec}
+		};
+	}
+
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST},dataProvider="openAPI31ValidatorProvider")
+	public void testOpenApi31Features(String tipoInterfaccia, OpenAPILibrary openAPILibrary, boolean mergeSpec) throws Exception{
+
+		TestLogger.info("Run test '"+ID_TEST+"' OpenAPI 3.1 features (interfaccia:"+tipoInterfaccia+" openAPILibrary:"+openAPILibrary+" mergeSpec:"+mergeSpec+") ...");
+		org.openspcoop2.utils.openapi.validator.test.OpenApi31FeaturesTest.main(new String[] {tipoInterfaccia, openAPILibrary.toString(), mergeSpec+""});
+		TestLogger.info("Run test '"+ID_TEST+"' OpenAPI 3.1 features (interfaccia:"+tipoInterfaccia+" openAPILibrary:"+openAPILibrary+" mergeSpec:"+mergeSpec+") ok");
+
+	}
+
+
 }

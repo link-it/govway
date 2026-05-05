@@ -36,6 +36,7 @@ import org.openspcoop2.utils.openapi.validator.OpenapiLibraryValidatorConfig;
 import org.openspcoop2.utils.rest.ApiFactory;
 import org.openspcoop2.utils.rest.ApiFormats;
 import org.openspcoop2.utils.rest.ApiReaderConfig;
+import org.openspcoop2.utils.rest.ApiValidatorConfig;
 import org.openspcoop2.utils.rest.IApiReader;
 import org.openspcoop2.utils.rest.IApiValidator;
 import org.openspcoop2.utils.rest.ValidatorException;
@@ -73,18 +74,25 @@ public class CoreTest {
 			
 			boolean bodyInDelete = ApiFormats.SWAGGER_2.equals(format); // openapi3 non lo permette
 			
+			ApiName jsonValidator = ApiName.NETWORK_NT;
+			
 			IApiReader apiReader = ApiFactory.newApiReader(format);
 			apiReader.init(LoggerWrapperFactory.getLogger(CoreTest.class), new File(uri), new ApiReaderConfig(), apiSchemas);
 			Api api = apiReader.read();
-			IApiValidator apiValidator = ApiFactory.newApiValidator(format);
-			OpenapiApiValidatorConfig config = new OpenapiApiValidatorConfig();
-			config.setJsonValidatorAPI(ApiName.NETWORK_NT);
-			config.setEmitLogError(logSystemOutError);
+			IApiValidator apiValidator = ApiFactory.newApiValidator(openAPILibrary.name());
+			ApiValidatorConfig config = ApiFactory.newApiValidatorConfig(openAPILibrary.name());
+			OpenapiApiValidatorConfig baseConfig = new OpenapiApiValidatorConfig();
+			baseConfig.setJsonValidatorAPI(jsonValidator);
+			baseConfig.setEmitLogError(logSystemOutError);
+			baseConfig.setOpenApiValidatorConfig(new OpenapiLibraryValidatorConfig());
+			baseConfig.getOpenApiValidatorConfig().setOpenApiLibrary(openAPILibrary);
+			baseConfig.getOpenApiValidatorConfig().setJsonValidatorAPI(jsonValidator);
 			if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
-				config.setOpenApiValidatorConfig(new OpenapiLibraryValidatorConfig());
-				config.getOpenApiValidatorConfig().setOpenApiLibrary(openAPILibrary);
-				config.getOpenApiValidatorConfig().setMergeAPISpec(mergeSpec);
+				baseConfig.getOpenApiValidatorConfig().setMergeAPISpec(mergeSpec);
 			}
+
+			config.readProperties(baseConfig.getOpenApiValidatorConfig()::getProperty);
+
 			apiValidator.init(LoggerWrapperFactory.getLogger(CoreTest.class), api, config);
 			try {
 			
@@ -160,7 +168,7 @@ public class CoreTest {
 							}
 						}
 						else {
-							if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
+							if(ApiName.NETWORK_NT.equals(jsonValidator)) {
 								String msgErroreAtteso = "Invalid value 'APIGatewayERRATO' in query parameter 'profiloRefInLineByStatus' (expected type 'string'): Uncorrect enum value 'APIGatewayERRATO', expected: 'APIGateway,SPCoop,FatturaPA,eDelivery'";
 								if(!e.getMessage().contains(msgErroreAtteso)) {
 									throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"', trovato: "+e.getMessage());
@@ -189,7 +197,7 @@ public class CoreTest {
 							}
 						}
 						else {
-							if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
+							if(ApiName.NETWORK_NT.equals(jsonValidator)) {
 								String msgErroreAtteso = "Invalid value 'PROVA_PROVA' in query parameter 'soggettoInLineByStatus' (expected type 'string'): Pattern match failed ('^[0-9A-Za-z]+$')";
 								if(!e.getMessage().contains(msgErroreAtteso)) {
 									throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"': "+e.getMessage());
@@ -218,7 +226,7 @@ public class CoreTest {
 							}
 						}
 						else {
-							if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
+							if(ApiName.NETWORK_NT.equals(jsonValidator)) {
 								String msgErroreAtteso = "Invalid value 'P' in query parameter 'soggettoInLineByStatus' (expected type 'string'): Too short, expected min length '2'";
 								if(!e.getMessage().contains(msgErroreAtteso)) {
 									throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
@@ -248,7 +256,7 @@ public class CoreTest {
 							}
 						}
 						else {
-							if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
+							if(ApiName.NETWORK_NT.equals(jsonValidator)) {
 								String msgErroreAtteso = "Invalid value '"+pLongValue+"' in query parameter 'soggettoRef' (expected type 'string'): Too big, expected max length '255'";
 								if(!e.getMessage().contains(msgErroreAtteso)) {
 									throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
@@ -277,7 +285,7 @@ public class CoreTest {
 							}
 						}
 						else {
-							if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
+							if(ApiName.NETWORK_NT.equals(jsonValidator)) {
 								String msgErroreAtteso = "Invalid value '23' in query parameter 'esempioNumerico' (expected type 'int32'): Value lowest than the minimum '100'"; 
 								if(!e.getMessage().contains(msgErroreAtteso)) {
 									throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
@@ -288,7 +296,7 @@ public class CoreTest {
 					}
 					httpEntity3.getParameters().remove("esempioNumerico");
 					TransportUtils.setParameter(httpEntity3.getParameters(),"esempioNumerico", "500");
-					
+
 					System.out.println("["+testName+"] Test #3-f (Richiesta GET con parametri query errati)");
 					httpEntity3.getParameters().remove("esempioNumerico");
 					TransportUtils.setParameter(parametersQuery,"esempioNumerico", "600");
@@ -300,14 +308,14 @@ public class CoreTest {
 						if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
 							String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
 									"esempioNumerico: Excluded maximum is '600', found '600'. (code: 1009)" :
-									"[ERROR][REQUEST][GET /pets/findByStatus @query.esempioNumerico] Numeric instance is not strictly lower than the required maximum 600"; 
+									"[ERROR][REQUEST][GET /pets/findByStatus @query.esempioNumerico] Numeric instance is not strictly lower than the required maximum 600";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 							}
 						}
 						else {
-							if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
-								String msgErroreAtteso = "Invalid value '600' in query parameter 'esempioNumerico' (expected type 'int32'): Value equals to the maximum '600' and exclusive maximum is enabled"; 
+							if(ApiName.NETWORK_NT.equals(jsonValidator)) {
+								String msgErroreAtteso = "Invalid value '600' in query parameter 'esempioNumerico' (expected type 'int32'): Value equals to the maximum '600' and exclusive maximum is enabled";
 								if(!e.getMessage().contains(msgErroreAtteso)) {
 									throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 								}
@@ -317,7 +325,7 @@ public class CoreTest {
 					}
 					httpEntity3.getParameters().remove("esempioNumerico");
 					TransportUtils.setParameter(httpEntity3.getParameters(),"esempioNumerico", "500");
-					
+
 					System.out.println("["+testName+"] Test #3-g (Richiesta GET con parametri query errati)");
 					httpEntity3.getParameters().remove("esempioNumerico");
 					TransportUtils.setParameter(parametersQuery,"esempioNumerico", "800");
@@ -334,7 +342,7 @@ public class CoreTest {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 							}
 						}
-						else if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
+						else if(ApiName.NETWORK_NT.equals(jsonValidator)) {
 							String msgErroreAtteso = "Invalid value '800' in query parameter 'esempioNumerico' (expected type 'int32'): Value higher than the maximum '600'"; 
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
@@ -362,7 +370,7 @@ public class CoreTest {
 							}
 						}
 						else {
-							if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
+							if(ApiName.NETWORK_NT.equals(jsonValidator)) {
 								String msgErroreAtteso = "Invalid value '55GG33' in query parameter 'esempioNumerico' (expected type 'int32'): For input string: \"55GG33\""; 
 								if(!e.getMessage().contains(msgErroreAtteso)) {
 									throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
@@ -462,7 +470,7 @@ public class CoreTest {
 							}
 						}
 						else {
-							if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
+							if(ApiName.NETWORK_NT.equals(jsonValidator)) {
 								String msgErroreAtteso = "$: property 'a' is not defined in the schema and the schema does not allow additional properties";
 								if(!e.getMessage().contains(msgErroreAtteso)) {
 									throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
@@ -493,7 +501,7 @@ public class CoreTest {
 						}
 					}
 					else {
-						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
+						if(ApiName.NETWORK_NT.equals(jsonValidator)) {
 							String msgErroreAtteso = "$: required property 'name' not found";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
@@ -673,7 +681,7 @@ public class CoreTest {
 							}
 						}
 						else {
-							if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
+							if(ApiName.NETWORK_NT.equals(jsonValidator)) {
 								String msgErroreAtteso = "$: property 'a' is not defined in the schema and the schema does not allow additional properties";
 								if(!e.getMessage().contains(msgErroreAtteso)) {
 									throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
@@ -705,7 +713,7 @@ public class CoreTest {
 						}
 					}
 					else {
-						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
+						if(ApiName.NETWORK_NT.equals(jsonValidator)) {
 							String msgErroreAtteso = "$: required property 'name' not found";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
@@ -737,7 +745,7 @@ public class CoreTest {
 							}
 						}
 						else {
-							if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
+							if(ApiName.NETWORK_NT.equals(jsonValidator)) {
 								String msgErroreAtteso = "$: property 'a' is not defined in the schema and the schema does not allow additional properties";
 								if(!e.getMessage().contains(msgErroreAtteso)) {
 									throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
@@ -769,7 +777,7 @@ public class CoreTest {
 						}
 					}
 					else {
-						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
+						if(ApiName.NETWORK_NT.equals(jsonValidator)) {
 							String msgErroreAtteso = "$: required property 'code' not found";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
@@ -811,7 +819,7 @@ public class CoreTest {
 						}
 					}
 					else {
-						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
+						if(ApiName.NETWORK_NT.equals(jsonValidator)) {
 							String msgErroreAtteso = "$: property 'a' is not defined in the schema and the schema does not allow additional properties";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
@@ -841,7 +849,7 @@ public class CoreTest {
 						}
 					}
 					else {
-						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
+						if(ApiName.NETWORK_NT.equals(jsonValidator)) {
 							String msgErroreAtteso = "$: required property 'name' not found";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
@@ -894,7 +902,7 @@ public class CoreTest {
 						}
 					}
 					else {
-						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
+						if(ApiName.NETWORK_NT.equals(jsonValidator)) {
 							String msgErroreAtteso = "$: property 'a' is not defined in the schema and the schema does not allow additional properties";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
@@ -925,7 +933,7 @@ public class CoreTest {
 						}
 					}
 					else {
-						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
+						if(ApiName.NETWORK_NT.equals(jsonValidator)) {
 							String msgErroreAtteso = "$: required property 'name' not found";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
@@ -956,7 +964,7 @@ public class CoreTest {
 						}
 					}
 					else {
-						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
+						if(ApiName.NETWORK_NT.equals(jsonValidator)) {
 							String msgErroreAtteso = "$: property 'a' is not defined in the schema and the schema does not allow additional properties";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
@@ -987,7 +995,7 @@ public class CoreTest {
 						}
 					}
 					else {
-						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
+						if(ApiName.NETWORK_NT.equals(jsonValidator)) {
 							String msgErroreAtteso = "$: required property 'code' not found";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
@@ -1025,7 +1033,7 @@ public class CoreTest {
 						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 					} catch(ValidatorException e) {
 						System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
+						if(ApiName.NETWORK_NT.equals(jsonValidator)) {
 							String msgErroreAtteso = OpenAPILibrary.json_schema.equals(openAPILibrary) ?									
 									"$: property 'a' is not defined in the schema and the schema does not allow additional properties" :
 									"[ERROR][REQUEST][DELETE /pets @body] Object instance has properties which are not allowed by the schema: [\"a\"]";
@@ -1047,7 +1055,7 @@ public class CoreTest {
 						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 					} catch(ValidatorException e) {
 						System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
+						if(ApiName.NETWORK_NT.equals(jsonValidator)) {
 							String msgErroreAtteso =  OpenAPILibrary.json_schema.equals(openAPILibrary) ?
 									"$: required property 'name' not found" :
 									"[ERROR][REQUEST][DELETE /pets @body] Object has missing required properties ([\"name\"])";
@@ -1102,7 +1110,7 @@ public class CoreTest {
 						}
 					}
 					else {
-						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
+						if(ApiName.NETWORK_NT.equals(jsonValidator)) {
 							String msgErroreAtteso = "$: property 'a' is not defined in the schema and the schema does not allow additional properties";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
@@ -1133,7 +1141,7 @@ public class CoreTest {
 						}
 					}
 					else {
-						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
+						if(ApiName.NETWORK_NT.equals(jsonValidator)) {
 							String msgErroreAtteso = "$: required property 'name' not found";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
@@ -1164,7 +1172,7 @@ public class CoreTest {
 						}
 					}
 					else {
-						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
+						if(ApiName.NETWORK_NT.equals(jsonValidator)) {
 							String msgErroreAtteso = "$: property 'a' is not defined in the schema and the schema does not allow additional properties";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
@@ -1195,7 +1203,7 @@ public class CoreTest {
 						}
 					}
 					else {
-						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
+						if(ApiName.NETWORK_NT.equals(jsonValidator)) {
 							String msgErroreAtteso = "$: required property 'code' not found";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
