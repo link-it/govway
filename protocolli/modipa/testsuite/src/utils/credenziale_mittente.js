@@ -202,7 +202,7 @@ function get_credenziale_by_refid_and_value(tipo, idref, expectedValue) {
     DbUtils = Java.type('org.openspcoop2.core.protocolli.modipa.testsuite.DbUtils')
     db = new DbUtils(govwayDbConfig)
     var escaped = (expectedValue + '').replace(/'/g, "''")
-    dbquery = "select credenziale from credenziale_mittente where tipo='"+tipo+"' AND ref_credenziale="+idref+" AND credenziale LIKE '%"+escaped+"%' ORDER BY id DESC LIMIT 1"
+    dbquery = "select credenziale from credenziale_mittente where id = (select max(id) from credenziale_mittente where tipo='"+tipo+"' AND ref_credenziale="+idref+" AND credenziale LIKE '%"+escaped+"%')"
     karate.log("Query 'get_credenziale_by_refid_and_value': " + dbquery)
 
     var deadline = java.lang.System.currentTimeMillis() + db_retry_max_total_ms
