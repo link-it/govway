@@ -1,3 +1,10 @@
+2026-05-05  Andrea Poli <apoli@link.it>
+
+	* [GovWayMonitor]
+	Risolto Bug
+	Risolto problema di rendering del grafico 'Andamento temporale' 
+	con visualizzazione per 'Occupazione Banda' o 'Tempo medio Risposta' con più tipi selezionati.
+	
 2026-05-04  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore] 

@@ -285,7 +285,7 @@ public class JsonStatsUtils {
 										categoria.put(CostantiGrafici.KEY_KEY , TipoBanda.COMPLESSIVA.getValue().toLowerCase().replace(" ", "_"));
 										categoria.put(CostantiGrafici.LABEL_KEY , TipoBanda.COMPLESSIVA.getValue());
 										categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_BANDA_COMPLESSIVA);
-										categorie.set(i,categoria);
+										categorie.add(categoria);
 									}
 								}
 								else if(tipoLat.equals("1")){
@@ -294,7 +294,7 @@ public class JsonStatsUtils {
 										categoria.put(CostantiGrafici.KEY_KEY , TipoBanda.INTERNA.getValue().toLowerCase().replace(" ", "_"));
 										categoria.put(CostantiGrafici.LABEL_KEY , TipoBanda.INTERNA.getValue());
 										categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_BANDA_INTERNA);
-										categorie.set(i,categoria);
+										categorie.add(categoria);
 									}
 								}
 								else if(tipoLat.equals("2")){
@@ -303,7 +303,7 @@ public class JsonStatsUtils {
 										categoria.put(CostantiGrafici.KEY_KEY , TipoBanda.ESTERNA.getValue().toLowerCase().replace(" ", "_"));
 										categoria.put(CostantiGrafici.LABEL_KEY , TipoBanda.ESTERNA.getValue());
 										categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_BANDA_ESTERNA);
-										categorie.set(i,categoria);
+										categorie.add(categoria);
 									}
 								}
 							}
@@ -324,7 +324,7 @@ public class JsonStatsUtils {
 										categoria.put(CostantiGrafici.KEY_KEY , TipoLatenza.LATENZA_TOTALE.getValue().toLowerCase().replace(" ", "_"));
 										categoria.put(CostantiGrafici.LABEL_KEY , TipoLatenza.LATENZA_TOTALE.getValue());
 										categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_LATENZA_TOTALE);
-										categorie.set(i,categoria);
+										categorie.add(categoria);
 									}
 								}
 								else if(tipoLat.equals("1")){
@@ -333,7 +333,7 @@ public class JsonStatsUtils {
 										categoria.put(CostantiGrafici.KEY_KEY , TipoLatenza.LATENZA_SERVIZIO.getValue().toLowerCase().replace(" ", "_"));
 										categoria.put(CostantiGrafici.LABEL_KEY , CostantiGrafici.LABEL_TIPO_LATENZA_LATENZA_SERVIZIO);
 										categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_LATENZA_SERVIZIO);
-										categorie.set(i,categoria);
+										categorie.add(categoria);
 									}
 								}
 								else if(tipoLat.equals("2")){
@@ -342,7 +342,7 @@ public class JsonStatsUtils {
 										categoria.put(CostantiGrafici.KEY_KEY , TipoLatenza.LATENZA_PORTA.getValue().toLowerCase().replace(" ", "_"));
 										categoria.put(CostantiGrafici.LABEL_KEY , TipoLatenza.LATENZA_PORTA.getValue());
 										categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_LATENZA_PORTA);
-										categorie.set(i,categoria);
+										categorie.add(categoria);
 									}
 								}
 							}
@@ -1205,7 +1205,7 @@ public class JsonStatsUtils {
 									categoria.put(CostantiGrafici.KEY_KEY , TipoBanda.COMPLESSIVA.getValue().toLowerCase().replace(" ", "_"));
 									categoria.put(CostantiGrafici.LABEL_KEY , TipoBanda.COMPLESSIVA.getValue());
 									categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_BANDA_COMPLESSIVA);
-									categorie.set(i,categoria);
+									categorie.add(categoria);
 								}
 							}
 							else if(tipoLat.equals("1")){
@@ -1214,7 +1214,7 @@ public class JsonStatsUtils {
 									categoria.put(CostantiGrafici.KEY_KEY , TipoBanda.INTERNA.getValue().toLowerCase().replace(" ", "_"));
 									categoria.put(CostantiGrafici.LABEL_KEY , TipoBanda.INTERNA.getValue());
 									categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_BANDA_INTERNA);
-									categorie.set(i,categoria);
+									categorie.add(categoria);
 								}
 							}
 							else if(tipoLat.equals("2")){
@@ -1223,7 +1223,7 @@ public class JsonStatsUtils {
 									categoria.put(CostantiGrafici.KEY_KEY , TipoBanda.ESTERNA.getValue().toLowerCase().replace(" ", "_"));
 									categoria.put(CostantiGrafici.LABEL_KEY , TipoBanda.ESTERNA.getValue());
 									categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_BANDA_ESTERNA);
-									categorie.set(i,categoria);
+									categorie.add(categoria);
 								}
 							}
 						}
@@ -1244,7 +1244,7 @@ public class JsonStatsUtils {
 									categoria.put(CostantiGrafici.KEY_KEY , TipoLatenza.LATENZA_TOTALE.getValue().toLowerCase().replace(" ", "_"));
 									categoria.put(CostantiGrafici.LABEL_KEY , TipoLatenza.LATENZA_TOTALE.getValue());
 									categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_LATENZA_TOTALE);
-									categorie.set(i,categoria);
+									categorie.add(categoria);
 								}
 							}
 							else if(tipoLat.equals("1")){
@@ -1253,7 +1253,7 @@ public class JsonStatsUtils {
 									categoria.put(CostantiGrafici.KEY_KEY , TipoLatenza.LATENZA_SERVIZIO.getValue().toLowerCase().replace(" ", "_"));
 									categoria.put(CostantiGrafici.LABEL_KEY , CostantiGrafici.LABEL_TIPO_LATENZA_LATENZA_SERVIZIO);
 									categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_LATENZA_SERVIZIO);
-									categorie.set(i,categoria);
+									categorie.add(categoria);
 								}
 							}
 							else if(tipoLat.equals("2")){
@@ -1262,7 +1262,7 @@ public class JsonStatsUtils {
 									categoria.put(CostantiGrafici.KEY_KEY , TipoLatenza.LATENZA_PORTA.getValue().toLowerCase().replace(" ", "_"));
 									categoria.put(CostantiGrafici.LABEL_KEY , TipoLatenza.LATENZA_PORTA.getValue());
 									categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_LATENZA_PORTA);
-									categorie.set(i,categoria);
+									categorie.add(categoria);
 								}
 							}
 						}
