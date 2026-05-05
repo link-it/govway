@@ -165,9 +165,10 @@
 								Il jar 'jquery-ui-1.14.2.jar', essendo un archivio jar, è già sotto controllo su NVD.
 							-->
 							<nodeAnalyzerEnabled>false</nodeAnalyzerEnabled>
-							<!-- per gestire ritardi dovuti al NVD server -->
-							<nvdApiDelay>120000</nvdApiDelay><!-- 2 minuti -->
-							<nvdMaxRetryCount>3</nvdMaxRetryCount> <!-- 3 max tentativi visto il timeout alto -->
+							<!-- Tuning con API Key -->
+							<nvdApiDelay>4000</nvdApiDelay>
+							<nvdMaxRetryCount>10</nvdMaxRetryCount>
+							<!-- OSSIndex -->
 							<ossindexAnalyzerEnabled>${owasp.ossindex.enabled}</ossindexAnalyzerEnabled>
 						</configuration>
 						<goals>
