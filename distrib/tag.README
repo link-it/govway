@@ -26,6 +26,7 @@ Per creare una tag version:
 6. Inserire la versione major e minor corretta in ant/commons/sql-build.xml
 
 7. Inserire la corretta versione (con suffisso rc o beta se serve) nei files doc resources/doc/src/manuali/conf.py e resources/doc/src/releaseNotes/conf.py
+7.1 Eseguire lo script ./verificaSezioniInterne.sh in resources/doc/src/manuali
 
 8. (PVersion) Eseguire i test di verifica JavaDoc, GPL, StringBuffer, Hashtable, Vector, NonShortCircuitLogic.
 8.1 Eseguire i controlli sui js: 

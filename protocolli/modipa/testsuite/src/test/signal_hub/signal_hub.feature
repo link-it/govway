@@ -150,7 +150,7 @@ Scenario: Controlla il corretto funzionamento della cache (rimuove un seed ma ri
 	When method get
 	Then status 200
 	* def seed = get_seed('DemoSoggettoErogatore','SignalHubTest')
-	And match response == {seed: '#(seed)', cryptoHashFunction: 'SHA256'}
+	And match response == {seed: '#(seed)', cryptoHashFunction: 'SHA-256'}
 	
 	* def deleted = remove_seeds();
 	* def seeds = count_seeds()
@@ -164,7 +164,7 @@ Scenario: Controlla il corretto funzionamento della cache (rimuove un seed ma ri
 	 
 	When method get
 	Then status 200
-	And match response == {seed: '#(seed)', cryptoHashFunction: 'SHA256'}
+	And match response == {seed: '#(seed)', cryptoHashFunction: 'SHA-256'}
 	
 	* call reset_cache { cache_name: 'ConfigurazionePdD' }
 	
@@ -178,7 +178,7 @@ Scenario: Controlla il corretto funzionamento della cache (rimuove un seed ma ri
 	Then status 200
 	# facendo get_seed verifico che vi sia un nuovo seme
 	* def seed = get_seed('DemoSoggettoErogatore','SignalHubTest')
-	And match response == {seed: '#(seed)', cryptoHashFunction: 'SHA256'}
+	And match response == {seed: '#(seed)', cryptoHashFunction: 'SHA-256'}
 	
 @test-pseudonymization
 @test-pseudonymization-create
@@ -197,7 +197,7 @@ Scenario: Informazioni crittografiche create alla prima richiesta di seme
 	Then status 200
 	
 	* def seed = get_seed('DemoSoggettoErogatore','SignalHubTest')
-	And match response == {seed: '#(seed)', cryptoHashFunction: 'SHA256'}
+	And match response == {seed: '#(seed)', cryptoHashFunction: 'SHA-256'}
 	
 
 @test-pseudonymization
@@ -248,7 +248,7 @@ Scenario: richiesta informazioni crittografiche tramite signalId corrispondente
 	And header GovWay-TestSuite-Test-ID = 'crypto_info_found'
 	When method get
 	Then status 200
-	And match response == { seed: '#(seed)', cryptoHashFunction: 'SHA256'}
+	And match response == { seed: '#(seed)', cryptoHashFunction: 'SHA-256'}
 
 @test-pseudonymization
 @test-pseudonymization-no-digest

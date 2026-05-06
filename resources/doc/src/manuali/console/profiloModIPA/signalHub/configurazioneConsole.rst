@@ -13,6 +13,8 @@ In particolare, l'integrazione trasparente si articola in due componenti:
 
 - :doc:`configurazioneFruizione`. GovWay espone una interfaccia semplificata di fruizione, che l'e-service può invocare per pubblicare una variazione di dato (segnale), senza doversi preoccupare della generazione dell'identificativo pseudoanonimizzato né di rispettare i vincoli complessi imposti dal protocollo Signal-Hub come l'identificativo incrementale relativo ad ogni variazione di dato.
 
+- :doc:`pseudoanonimizzazione/index`. Il `Manuale Operativo Signal Hub <https://developer.pagopa.it/pdnd-interoperabilita/guides/manuale-operativo-signal-hub>`__ demanda all'erogatore la documentazione del formato con cui vengono esposte le informazioni crittografiche (seme e identificativo pseudoanonimizzato) e dell'ordine con cui input e seed vengono concatenati. La sezione descrive in dettaglio le scelte adottate da GovWay e fornisce un esempio operativo, in pseudocodice Java, della procedura di verifica lato consumatore.
+
 È possibile abilitare il supporto a Signal-Hub su tutte le erogazioni di API erogate su PDND (:ref:`modipa_pdnd`) accedendo alla schermata dei dettagli del profilo di interoperabilità come mostrato nella figura ':numref:`SignalHubErogazioneBase`'.
 
 .. figure:: ../../_figure_console/SignalHubErogazioneBase.png
@@ -40,3 +42,4 @@ Come si può vedere dalla figura ':numref:`SignalHubErogazione`', in questa sche
 
     configurazioneErogazione
     configurazioneFruizione
+    pseudoanonimizzazione/index

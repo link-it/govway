@@ -57,38 +57,43 @@ Nome e versione dell’API della fruizione abilitata al deposito dei segnali:
 ``org.openspcoop2.protocol.modipa.signalHub.api.name=api-pdnd-push-signals``
 ``org.openspcoop2.protocol.modipa.signalHub.api.version=1``
 
-**Controllo di univocità eServiceId e descriptorId**
+.. _modipa_signalhub_exposedAlgorithmName:
 
-Le seguenti proprietà consentono di configurare i controlli di univocità effettuati dalla console durante la registrazione di erogazioni con lo stesso eServiceId e/o descriptorId.
+**Formato dell'identificativo dell'algoritmo esposto sul servizio di pseudoanonimizzazione**
 
-``org.openspcoop2.protocol.modipa.pdnd.eServiceId.console.checkUnique=false``
+L'endpoint di pseudoanonimizzazione (sia REST che SOAP) espone, nel campo ``cryptoHashFunction``, l'identificativo dell'algoritmo di hash configurato sull'erogazione. Per default GovWay restituisce l'identificativo standard JCA (es. ``SHA-256``, ``SHA-512/256``, ``SHA3-256``), direttamente utilizzabile dal consumatore come argomento di ``java.security.MessageDigest.getInstance(...)``. Nelle versioni precedenti veniva invece restituito il nome dell'enum interno ``org.openspcoop2.utils.digest.DigestType`` (es. ``SHA256``, ``SHA512_256``, ``SHA3_256``).
 
-Quando impostata a *true*, la console impedisce la registrazione di più erogazioni con lo stesso eServiceId. Il valore predefinito è *false*, che consente la registrazione di più erogazioni con lo stesso eServiceId.
+Per consentire la retrocompatibilità con consumatori già integrati contro la vecchia versione di GovWay, è possibile riabilitare il comportamento precedente tramite la seguente proprietà, da aggiungere nel file di configurazione locale ``/etc/govway/modipa_local.properties`` (assumendo sia ``/etc/govway`` la directory di configurazione indicata in fase di installazione):
 
-``org.openspcoop2.protocol.modipa.pdnd.descriptorId.console.checkUnique=true``
+``org.openspcoop2.protocol.modipa.signalHub.algorithms.exposedName.legacy=false``
 
-Quando impostata a *true*, la console consente la registrazione di più erogazioni con lo stesso eServiceId solo se sono associati descriptorId differenti. Il valore predefinito è *true*.
+Quando impostata a *true*, GovWay espone il nome dell'enum interno ``org.openspcoop2.utils.digest.DigestType`` invece dell'identificativo standard JCA. Il valore predefinito è *false*. La mappatura tra i due formati è la seguente:
 
-Qualora si desideri consentire la registrazione di più erogazioni con lo stesso eServiceId e lo stesso descriptorId, è necessario disabilitare questo controllo impostando la proprietà a *false*.
+.. list-table::
+   :widths: 50 50
+   :header-rows: 1
 
-.. note::
-   In caso di disabilitazione del controllo, la registrazione di più erogazioni con identico eServiceId e descriptorId sarà consentita esclusivamente se Signal-Hub non risulta abilitato sull'erogazione.
+   * - legacy=true (nome enum)
+     - legacy=false (identificativo JCA, default)
+   * - ``SHA256``
+     - ``SHA-256``
+   * - ``SHA512_256``
+     - ``SHA-512/256``
+   * - ``SHA384``
+     - ``SHA-384``
+   * - ``SHA512``
+     - ``SHA-512``
+   * - ``SHA3_256``
+     - ``SHA3-256``
+   * - ``SHA3_384``
+     - ``SHA3-384``
+   * - ``SHA3_512``
+     - ``SHA3-512``
+   * - ``SHAKE128``
+     - ``SHAKE128`` (invariato)
+   * - ``SHAKE256``
+     - ``SHAKE256`` (invariato)
 
-**Controllo di univocità producerId**
+Il flag globale può essere ridefinito puntualmente sulla singola erogazione attraverso la :ref:`configProprieta` ``modi.signalHub.algorithms.exposedName.legacy`` valorizzandola con ``true`` o ``false``. Tale override consente di mantenere il comportamento legacy soltanto per specifiche erogazioni i cui consumatori non siano ancora stati allineati al nuovo formato standard.
 
-La seguente proprietà consente di configurare il controllo di univocità del producerId (ID Ente) effettuato dalla console durante la registrazione di soggetti.
-
-``org.openspcoop2.protocol.modipa.pdnd.producerId.console.checkUnique=false``
-
-Quando impostata a *true*, la console impedisce la registrazione di più soggetti con lo stesso producerId (ID Ente). Il valore predefinito è *false*, che consente la registrazione di più soggetti con lo stesso producerId.
-
-**Verifica runtime dei valori nel token PDND**
-
-Le seguenti proprietà consentono di configurare se il runtime deve verificare che i valori di producerId, eServiceId e descriptorId presenti nel token PDND corrispondano a quelli configurati sul soggetto erogatore (ID Ente) e sull'erogazione. Per tutte le proprietà il valore predefinito è *true*.
-
-``org.openspcoop2.protocol.modipa.pdnd.producerId.check=true``
-
-``org.openspcoop2.protocol.modipa.pdnd.eServiceId.check=true``
-
-``org.openspcoop2.protocol.modipa.pdnd.descriptorId.check=true``
-
+Il razionale della scelta di esporre l'identificativo standard JCA, coerente con quanto demandato dal Manuale Operativo Signal Hub di PDND, è argomentato nella sezione :ref:`modipa_signalhub_pseudoanonimizzazione_conformitaPdnd`.

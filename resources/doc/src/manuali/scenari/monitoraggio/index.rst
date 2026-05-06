@@ -18,85 +18,14 @@ La console govwayMonitor, nella sezione Monitoraggio, prevede la consultazione d
 
 Le transazioni riportate nell'elenco riportano i dati per l'identificazione delle stesse, con evidenza dell'esito riportato.
 
+A titolo esemplificativo vengono riportati di seguito due tipici scenari di indagine sul dettaglio di una singola transazione:
 
-Transazione in errore
----------------------
+- :ref:`scenari_monitoraggio_transazione_errore`: descrive le informazioni mostrate nel dettaglio di una transazione con esito negativo, utili a identificare la causa dell'errore.
 
-Se apriamo il dettaglio della transazione con esito errore, relativa all'invocazione della "POST /pet" senza token, vediamo le informazioni di :numref:`monitor_token_non_presente_fig`.
+- :ref:`scenari_monitoraggio_transazione_corretta`: illustra le informazioni mostrate nel dettaglio di una transazione con esito positivo, comprese quelle relative al token presentato dal mittente.
 
-   .. figure:: ../_figure_scenari/Monitor_token_non_presente.png
-    :scale: 80%
-    :align: center
-    :name: monitor_token_non_presente_fig
+.. toctree::
+   :maxdepth: 2
 
-    Dettaglio della transazione in errore
-
-Il dettaglio della transazione:
-
-- Il riquadro "Informazioni Generali" riepiloga i principali dati identificativi della transazione. In questo riquadro è mostrato l'esito, in questo caso negativo. Tramite il link apposito si possono visualizzare i messaggi diagnosti, utili all'identificazione del problema occorso (:numref:`monitor_token_non_presente_diagnostici_fig`).
-
-   .. figure:: ../_figure_scenari/Monitor_token_non_presente_diagnostici.png
-    :scale: 80%
-    :align: center
-    :name: monitor_token_non_presente_diagnostici_fig
-
-    Messaggi diagnostici della transazione in errore
-
-
-- I riquadri "Dettagli Richiesta" e "Dettagli Risposta" forniscono informazioni specifiche relative al messaggio di richiesta e a quello di risposta. In questo caso, ad esempio, è possibile visualizzare il messaggio di fault inviato al client in risposta (:numref:`monitor_fault_uscita_fig`).
-
-   .. figure:: ../_figure_scenari/Monitor_fault_uscita.png
-    :scale: 80%
-    :align: center
-    :name: monitor_fault_uscita_fig
-
-    Fault in uscita
-
-- Il riquadro "Informazioni Mittente" fornisce dettagli sulla provenienza della richiesta.
-- Il riquadro "Informazioni Avanzate" fornisce dati aggiuntivi riguardo la transazione.
-
-
-Transazione con esito corretto
-------------------------------
-
-Se apriamo il dettaglio della transazione con esito positivo, relativa all'invocazione della "POST /pet", possiamo ad esempio:
-
-- Visualizzare le informazioni generali con l'esito dell'operazione (:numref:`monitor_token_generali_fig`).
-
-   .. figure:: ../_figure_scenari/Monitor_token_generali.png
-    :scale: 80%
-    :align: center
-    :name: monitor_token_generali_fig
-
-    Messaggi diagnostici della transazione con esito regolare
-
-- Nel contesto delle informazioni generali si possono visualizzare i messaggi diagnostici con il dettaglio dell'elaborazione regolarmente eseguita (:numref:`monitor_token_diagnostici_fig`).
-
-   .. figure:: ../_figure_scenari/Monitor_token_diagnostici.png
-    :scale: 80%
-    :align: center
-    :name: monitor_token_diagnostici_fig
-
-    Messaggi diagnostici della transazione con esito regolare
-
-- Nel contesto delle informazioni mittente in questo caso sarà presente la sezione "Token Info" che consente di visualizzare dati inerenti il token che è stato fornito con la richiesta del mittente. Risultano immediatamente visibili le informazioni principali (issuer, subject, ...), come mostrato in :numref:`monitor_token_mittente_fig`.
-
-   .. figure:: ../_figure_scenari/Monitor_token_mittente.png
-    :scale: 80%
-    :align: center
-    :name: monitor_token_mittente_fig
-
-    Informazioni mittente con presenza del token
-
-- Dalla sezione mittente è possibile aprire una finestra per visualizzare la versione in chiaro del token ricevuto con la richiesta (:numref:`monitor_token_info_fig`).
-
-   .. figure:: ../_figure_scenari/Monitor_token_info.png
-    :scale: 80%
-    :align: center
-    :name: monitor_token_info_fig
-
-    Visualizzazione del token
-
-
-
-
+   transazione_errore
+   transazione_corretta

@@ -143,6 +143,17 @@ public class ConnettoreSignalHubPseudonymization extends ConnettoreBaseWithRespo
 		return CostantiProprieta.getPdndSignalHubNamespace(
 				props, ModIProperties.getInstance().getSignalHubSoapNamespace());
 	}
+
+	private String resolveExposedAlgorithmName(DigestType digest) throws ProtocolException {
+		List<Proprieta> props = null;
+		if (this.pa != null)
+			props = this.pa.getProprieta();
+		if (this.pd != null)
+			props = this.pd.getProprieta();
+		boolean legacy = CostantiProprieta.isModISignalHubAlgorithmsExposedNameLegacy(
+				props, ModIProperties.getInstance().isSignalHubAlgorithmsExposedNameLegacy());
+		return legacy ? digest.toString() : digest.getAlgorithmName();
+	}
 	
 	private String getSoapNS() {
 		return this.messageTypeResponse == MessageType.SOAP_11 ?
@@ -161,7 +172,7 @@ public class ConnettoreSignalHubPseudonymization extends ConnettoreBaseWithRespo
 			seedElement.appendChild(doc.createTextNode(new String(seed)));
 			
 			Element digestElement = doc.createElementNS(signalHubNS, "cr:cryptoHashFunction");
-			digestElement.appendChild(doc.createTextNode(digest.toString()));
+			digestElement.appendChild(doc.createTextNode(resolveExposedAlgorithmName(digest)));
 			
 			response.appendChild(digestElement);
 			response.appendChild(seedElement);
@@ -182,7 +193,7 @@ public class ConnettoreSignalHubPseudonymization extends ConnettoreBaseWithRespo
 			JSONUtils jsonUtils = JSONUtils.getInstance();
 			ObjectNode node = jsonUtils.newObjectNode();
 			node.put("seed", new String(seed));
-			node.put("cryptoHashFunction",digest.toString());
+			node.put("cryptoHashFunction",resolveExposedAlgorithmName(digest));
 			
 			this.isResponse = new ByteArrayInputStream(jsonUtils.toByteArray(node));
 			this.tipoRisposta = HttpConstants.CONTENT_TYPE_JSON;

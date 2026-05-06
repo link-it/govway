@@ -491,6 +491,7 @@ public class ModIProperties {
 			/* **** Signal Hub **** */
 			if(isSignalHubEnabled()) {
 				this.isSignalHubPseudonymizationChoiceEnabled();
+				this.isSignalHubAlgorithmsExposedNameLegacy();
 				this.getSignalHubAlgorithms();
 				this.getSignalHubDefaultAlgorithm();
 				this.getSignalHubSeedSize();
@@ -6396,6 +6397,33 @@ public class ModIProperties {
 		}
 
 		return this.signalHubPseudonymizationChoiceEnabled;
+	}
+
+	private Boolean signalHubAlgorithmsExposedNameLegacy = null;
+	public boolean isSignalHubAlgorithmsExposedNameLegacy(){
+		if(this.signalHubAlgorithmsExposedNameLegacy==null){
+
+			Boolean defaultValue = false;
+			String propertyName = "org.openspcoop2.protocol.modipa.signalHub.algorithms.exposedName.legacy";
+
+			try{
+				String value = this.reader.getValueConvertEnvProperties(propertyName);
+
+				if (value != null){
+					value = value.trim();
+					this.signalHubAlgorithmsExposedNameLegacy = Boolean.parseBoolean(value);
+				}else{
+					this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue));
+					this.signalHubAlgorithmsExposedNameLegacy = defaultValue;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue)+getSuffixErrore(e));
+				this.signalHubAlgorithmsExposedNameLegacy = defaultValue;
+			}
+		}
+
+		return this.signalHubAlgorithmsExposedNameLegacy;
 	}
 
 	private List<String> signalHubAlgorithms= null;
