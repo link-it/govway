@@ -36,12 +36,16 @@ L’endpoint consente inoltre di richiedere, tramite un parametro opzionale dell
                    type: object
                    properties:
                      seed:
-                       example: 3b9942ce-1f07-4512-8f34-f31b1a7b0061
+                       example: Xzzh3pQqLp+VK7gG9NwR6w==
                        type: string
                      cryptoHashFunction:
-                       example: sha256
+                       example: SHA-256
                        type: string
                    required:
                      - seed
                      - cryptoHashFunction
                    description: Success
+
+Per il dettaglio sul formato dell'identificativo dell'algoritmo restituito nel campo ``cryptoHashFunction`` si rimanda alla sezione :ref:`Formato dell'identificativo dell'algoritmo esposto sul servizio di pseudoanonimizzazione <modipa_signalhub_exposedAlgorithmName>`.
+
+Il valore del campo ``seed`` deve essere utilizzato dal consumatore così come fornito, come stringa opaca e senza decodifica preventiva, secondo quanto descritto nella sezione :ref:`Pseudoanonimizzazione: generazione dell'identificativo e verifica lato consumatore <modipa_signalhub_pseudoanonimizzazione>`.

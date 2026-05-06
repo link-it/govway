@@ -1333,8 +1333,15 @@ public class CostantiProprieta {
 		}
 		return defaultValue;
 	}
-	
-	
+
+	private static final String MODI_SIGNAL_HUB_ALGORITHMS_EXPOSED_NAME_LEGACY = "modi.signalHub.algorithms.exposedName.legacy";
+
+	public static boolean isModISignalHubAlgorithmsExposedNameLegacy(List<Proprieta> proprieta, boolean defaultValue) {
+		String p = MODI_SIGNAL_HUB_ALGORITHMS_EXPOSED_NAME_LEGACY;
+		return readBooleanValueWithDefault(proprieta, p, defaultValue, MODI_VALUE_ENABLED, MODI_VALUE_DISABLED);
+	}
+
+
 	// ****  PDND *****
 	
 	

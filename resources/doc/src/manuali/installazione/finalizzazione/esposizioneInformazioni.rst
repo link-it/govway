@@ -6,8 +6,7 @@ Esposizione di Informazioni
 
 Per limitare l'esposizione di informazioni relative all'architettura e alle tecnologie utilizzate, è possibile adottare le seguenti misure di sicurezza:
 
-Application Server Tomcat
---------------------------
+**Application Server Tomcat**
 
 Se viene utilizzato Apache Tomcat come application server, è consigliabile modificare la configurazione per evitare che vengano esposte informazioni tecniche nei messaggi di errore.
 

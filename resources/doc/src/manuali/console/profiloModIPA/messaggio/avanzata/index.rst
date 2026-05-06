@@ -36,6 +36,8 @@ La gestione dei pattern di sicurezza messaggio possono essere personalizzati su 
 
 - :ref:`modipa_sicurezza_avanzate_pdndConfAvanzata`: fornisce aspetti avanzati di configurazione dell'integrazione con la PDND.
 
+- :ref:`modipa_sicurezza_avanzate_controlliPdnd`: descrive le proprietà che consentono di personalizzare i controlli effettuati da GovWay sugli identificativi PDND (producerId, eServiceId, descriptorId), sia in fase di registrazione tramite console (univocità) sia a runtime durante la validazione dei voucher.
+
 
 .. toctree::
         :maxdepth: 2
@@ -55,4 +57,5 @@ La gestione dei pattern di sicurezza messaggio possono essere personalizzati su 
 	pdndRateLimiting
 	tokenRateLimiting
 	pdndConfAvanzate/index
+	controlliPdnd
 
