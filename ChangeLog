@@ -1,5 +1,13 @@
 2026-05-06  Andrea Poli <apoli@link.it>
 
+	* [GovWayMonitor]                 
+	- Migliorata la gestione degli errori di validazione nelle ricerche (Transazioni, Eventi, Reportistica, Tracciamento PDND): 
+	in caso di campi obbligatori mancanti i risultati non vengono più mostrati, il pannello dei filtri resta aperto e 
+	la pagina si posiziona automaticamente sul messaggio di errore.
+	- Pagina "Informazioni": le azioni di svuotamento cache mostrano ora un messaggio di conferma "Cache svuotata correttamente".
+
+2026-05-06  Andrea Poli <apoli@link.it>
+
 	* [ProtocolloModIPA, Documentazione]
 	Risolto Bug 1760
 	Risolte le seguenti anomalie relative al supporto Signal-Hub di PDND:

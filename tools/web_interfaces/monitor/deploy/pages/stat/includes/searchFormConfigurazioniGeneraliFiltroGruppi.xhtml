@@ -11,7 +11,7 @@
     <c:if test="#{sf_bean.existsGruppi and sf_mbean.abilitaGestioneGruppiInConfigurazione}">
 	    <c:if test="#{not sf_bean.visualizzaFiltroGruppiSelectList}">
 			 <link:prop label="#{msg['stats.search.gruppo']}">
-	     	 	<h:inputText id="gruppoCombo" value="#{sf_bean.labelGruppo}" styleClass="inputLinkLong"/>
+	     	 	<h:inputText id="gruppoCombo" value="#{sf_bean.gruppo}" styleClass="inputLinkLong"/>
 				<rich:suggestionbox
 							id="gruppoComboSuggestion" 
 							width="416" 

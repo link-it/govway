@@ -71,7 +71,7 @@
 										rendered="#{statistichePdndTracingSearchForm.periodo eq 'Personalizzato' }">
 										<rich:calendar id="dataInizioCalendar" value="#{statistichePdndTracingSearchForm.dataInizio}" datePattern="yyyy-MM-dd HH:mm"
 											defaultTime="00:00" rendered="#{statistichePdndTracingSearchForm.periodo eq 'Personalizzato'}" buttonIcon="/images/tema_link/calendar.png"
-											required="true" requiredMessage="Selezionare Data Inizio" enableManualInput="false">
+											enableManualInput="false">
 											<a4j:support status="mainStatus" event="onchanged" reRender="searchPnl" />
 										</rich:calendar>
 									</link:prop>
@@ -80,7 +80,7 @@
 										rendered="#{statistichePdndTracingSearchForm.periodo eq 'Personalizzato'}">
 										<rich:calendar id="dataFineCalendar" value="#{statistichePdndTracingSearchForm.dataFine}" datePattern="yyyy-MM-dd HH:mm"
 											defaultTime="23:59" rendered="#{statistichePdndTracingSearchForm.periodo eq 'Personalizzato'}" buttonIcon="/images/tema_link/calendar.png"
-											required="true" requiredMessage="Selezionare Data Fine" enableManualInput="false">
+											enableManualInput="false">
 											<a4j:support status="mainStatus" event="onchanged" reRender="searchPnl" />
 										</rich:calendar>	
 									</link:prop>
@@ -185,13 +185,24 @@
 					   
 					   function completa(evt){   }
 					   
-					   function completaRicerca(evt){   
-						   collapseSearchPanel('panelFiltri1');
+					   function completaRicerca(evt){
+						   if (jQuery('.messages-errors #errorMessages').length > 0) {
+							   // Validazione fallita: scrolla in alto per mostrare il messaggio di errore
+							   scrollToErrorMessage();
+						   } else {
+							   collapseSearchPanel('panelFiltri1');
+						   }
 					   }
-					   
-					   function collapseSearchPanel(panelId) {  
-					    	 if (SimpleTogglePanelManager.panels.get(panelId).status == "true")  
-						       SimpleTogglePanelManager.toggleOnClient('onclick', panelId);  
+
+					   function scrollToErrorMessage() {
+						   var $target = jQuery('#errorsPlaceHolder');
+						   var top = ($target.length && $target.offset()) ? Math.max(0, $target.offset().top - 20) : 0;
+						   window.scrollTo(0, top);
+					   }
+
+					   function collapseSearchPanel(panelId) {
+					    	 if (SimpleTogglePanelManager.panels.get(panelId).status == "true")
+						       SimpleTogglePanelManager.toggleOnClient('onclick', panelId);
 					 	}
 					   
 					   function visualizzaTastoEsporta(containerId,exportButtonId){

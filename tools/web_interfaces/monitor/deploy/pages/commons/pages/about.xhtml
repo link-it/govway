@@ -19,7 +19,7 @@
 			<f:facet name="header">
 				<h:outputText id="outDettagliInformazioni" value="#{msg['about.title']}" />
 			</f:facet>
-			<h:form>
+			<a4j:form prependId="false">
 				<input type="hidden" id="_csrfAbout" name="_csrf" value="#{loginBean.csrf}"/>
 				<div class="">
 					<div class="form-container">
@@ -43,7 +43,7 @@
 								</div>
 							</link:prop>
 							<link:prop label="#{msg['about.prodotto.licenza']}" rendered="true">
-								<h:inputTextarea id="outLicenzaProdotto" value="#{applicationBean.licenza}" cols="60" rows="#{applicationBean.licenzaRows}" styleClass="inputLinkLong inputTextWidthAuto" readonly="true"/>	
+								<h:inputTextarea id="licenzaProdotto" value="#{applicationBean.licenza}" cols="60" rows="#{applicationBean.licenzaRows}" styleClass="inputLinkLong inputTextWidthAuto" readonly="true"/>	
 							</link:prop>
 						
 						</link:fieldset>
@@ -156,7 +156,7 @@
 						</a4j:outputPanel>
 					</div>
 				</div>
-			 </h:form>
+			 </a4j:form>
 		 </rich:panel>
 	</ui:define>
 

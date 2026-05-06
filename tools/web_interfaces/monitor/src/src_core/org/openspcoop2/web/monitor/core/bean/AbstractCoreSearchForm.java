@@ -21,6 +21,8 @@ package org.openspcoop2.web.monitor.core.bean;
 
 import java.util.List;
 
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
@@ -57,13 +59,41 @@ public abstract class AbstractCoreSearchForm {
 	public String aggiorna() {
 		this.initParametriPaginazione();
 		this.aggiornaStatoFiltroRicercaEseguiAggiorna();
-		return this.eseguiAggiorna();
+		String outcome = this.eseguiAggiorna();
+		// La validazione lato Java segnala fallimento via MessageUtils.addErrorMsg:
+		// in quel caso non eseguire la query (altrimenti i risultati verrebbero mostrati nonostante l'errore)
+		// e mantieni il pannello dei filtri aperto per consentire la correzione.
+		if (hasFacesErrorMessages()) {
+			this.executeQuery = false;
+			this.setVisualizzaFiltroAperto(true);
+		}
+		return outcome;
 	}
-	
+
 	public String filtra() {
 		this.initParametriPaginazione();
 		this.aggiornaStatoFiltroRicercaEseguiFiltra();
-		return this.eseguiFiltra();
+		String outcome = this.eseguiFiltra();
+		if (hasFacesErrorMessages()) {
+			this.executeQuery = false;
+			this.setVisualizzaFiltroAperto(true);
+		}
+		return outcome;
+	}
+
+	private static boolean hasFacesErrorMessages() {
+		FacesContext ctx = FacesContext.getCurrentInstance();
+		if (ctx == null) {
+			return false;
+		}
+		java.util.Iterator<FacesMessage> it = ctx.getMessages();
+		while (it.hasNext()) {
+			FacesMessage.Severity severity = it.next().getSeverity();
+			if (severity != null && severity.compareTo(FacesMessage.SEVERITY_ERROR) >= 0) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public String ripulisci(){

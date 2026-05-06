@@ -215,15 +215,26 @@ xmlns="http://www.w3.org/1999/xhtml"
 								   
 					   function completa(evt){   }
 					   
-					   function completaRicerca(evt){   
-						   collapseSearchPanel('panelTransazioni');
+					   function completaRicerca(evt){
+						   if (jQuery('.messages-errors #errorMessages').length > 0) {
+							   // Validazione fallita: scrolla in alto per mostrare il messaggio di errore
+							   scrollToErrorMessage();
+						   } else {
+							   collapseSearchPanel('panelTransazioni');
+						   }
 					   }
-					   
-					   function collapseSearchPanel(panelId) {  
-					    	 if (SimpleTogglePanelManager.panels.get(panelId).status == "true")  
-						       SimpleTogglePanelManager.toggleOnClient('onclick', panelId);  
-					 	} 
-						 //]]>	
+
+					   function scrollToErrorMessage() {
+						   var $target = jQuery('#errorsPlaceHolder');
+						   var top = ($target.length && $target.offset()) ? Math.max(0, $target.offset().top - 20) : 0;
+						   window.scrollTo(0, top);
+					   }
+
+					   function collapseSearchPanel(panelId) {
+					    	 if (SimpleTogglePanelManager.panels.get(panelId).status == "true")
+						       SimpleTogglePanelManager.toggleOnClient('onclick', panelId);
+					 	}
+						 //]]>
 					</script>
 				
 				</c:if>
@@ -280,14 +291,25 @@ xmlns="http://www.w3.org/1999/xhtml"
 
 					   function completa(evt){   }
 					   
-					   function completaRicerca(evt){   
-						   collapseSearchPanel('panelTransazioni');
+					   function completaRicerca(evt){
+						   if (jQuery('.messages-errors #errorMessages').length > 0) {
+							   // Validazione fallita: scrolla in alto per mostrare il messaggio di errore
+							   scrollToErrorMessage();
+						   } else {
+							   collapseSearchPanel('panelTransazioni');
+						   }
 					   }
-					   
-					   function collapseSearchPanel(panelId) {  
-					    	 if (SimpleTogglePanelManager.panels.get(panelId).status == "true")  
-						       SimpleTogglePanelManager.toggleOnClient('onclick', panelId);  
-					 	} 
+
+					   function scrollToErrorMessage() {
+						   var $target = jQuery('#errorsPlaceHolder');
+						   var top = ($target.length && $target.offset()) ? Math.max(0, $target.offset().top - 20) : 0;
+						   window.scrollTo(0, top);
+					   }
+
+					   function collapseSearchPanel(panelId) {
+					    	 if (SimpleTogglePanelManager.panels.get(panelId).status == "true")
+						       SimpleTogglePanelManager.toggleOnClient('onclick', panelId);
+					 	}
 					   
 						 //]]>	
 					</script>
@@ -666,14 +688,31 @@ xmlns="http://www.w3.org/1999/xhtml"
 						 		restartSessioneLive(true);	
 						 	}
 						 	
-						 	function completaRicerca(evt){   
-						 		restartSessioneLive(true);	
-								collapseSearchPanel('panelTransazioni');
+						 	function completaRicerca(evt){
+						 		restartSessioneLive(true);
+						 		if (jQuery('.messages-errors #errorMessages').length > 0) {
+									// Validazione fallita: scrolla in alto per mostrare il messaggio di errore
+									scrollToErrorMessage();
+						 		} else {
+									collapseSearchPanel('panelTransazioni');
+						 		}
 						   	}
-							   
-						    function collapseSearchPanel(panelId) {  
-						    	 if (SimpleTogglePanelManager.panels.get(panelId).status == "true")  
-							       SimpleTogglePanelManager.toggleOnClient('onclick', panelId);  
+
+						    function scrollToErrorMessage() {
+								var top = 0;
+								var $target = jQuery('#errorsPlaceHolder');
+								if ($target.length) {
+									var off = $target.offset();
+									if (off) {
+										top = Math.max(0, off.top - 20);
+									}
+								}
+								window.scrollTo(0, top);
+						 	}
+
+						    function collapseSearchPanel(panelId) {
+						    	 if (SimpleTogglePanelManager.panels.get(panelId).status == "true")
+							       SimpleTogglePanelManager.toggleOnClient('onclick', panelId);
 						 	}
 						
 							var cdifp = #{searchFormTransazioni.intervalloRefresh};

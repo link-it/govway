@@ -1228,6 +1228,7 @@ public class ServletUtils {
 					|| parameterToCheck.startsWith(Costanti.PARAMETRO_MONITOR_RICERCA_UTENTE_DESCRIZIONE)
 					|| parameterToCheck.startsWith(Costanti.PARAMETRO_MONITOR_ALLARME_MODIFICA_DETTAGLIO_STATO)
 					|| parameterToCheck.startsWith(Costanti.PARAMETRO_MONITOR_ALLARME_MODIFICA_CRITERI_ACK)
+					|| parameterToCheck.startsWith(Costanti.PARAMETRO_MONITOR_LICENZA_PRODOTTO)
 					) {
 				return true;
 			}

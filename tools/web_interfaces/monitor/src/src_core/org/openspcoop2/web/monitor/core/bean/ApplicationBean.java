@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.TimeZone;
 
+import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 
 import org.apache.commons.lang3.StringUtils;
@@ -1027,8 +1028,13 @@ public class ApplicationBean implements Serializable {
 	}
 
 	public String resetAllCache() {
-		this.resetCacheDatiConfigurazione();
-		this.resetCacheRicercheConfigurazione();
+		// Sopprimo i messaggi dei sub-metodi: ne accodo uno aggregato per evitare duplicati
+		boolean datiOk = resetCacheDatiConfigurazioneEngine(false);
+		boolean ricercheOk = resetCacheRicercheConfigurazioneEngine(false);
+		if (datiOk || ricercheOk) {
+			FacesContext.getCurrentInstance().addMessage(null,
+					new FacesMessage("Cache svuotata correttamente"));
+		}
 		return null; // DEVE ESSERE NULL PER NON NAVIGARE
 	}
 
@@ -1075,14 +1081,24 @@ public class ApplicationBean implements Serializable {
 		}
 	}
 	public String resetCacheDatiConfigurazione() {
+		resetCacheDatiConfigurazioneEngine(true);
+		return null; // DEVE ESSERE NULL PER NON NAVIGARE
+	}
+
+	private boolean resetCacheDatiConfigurazioneEngine(boolean addMessage) {
 		if(this.isCacheDatiConfigurazioneEnabled()) {
 			try {
 				AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione.resetCache();
+				if (addMessage) {
+					FacesContext.getCurrentInstance().addMessage(null,
+							new FacesMessage("Cache svuotata correttamente"));
+				}
+				return true;
 			}catch(Exception e) {
 				LoggerManager.getPddMonitorCoreLogger().error("ResetCache 'dati': "+e.getMessage(),e);
 			}
 		}
-		return null; // DEVE ESSERE NULL PER NON NAVIGARE
+		return false;
 	}
 
 	public boolean isCacheRicercheConfigurazioneEnabled() {
@@ -1128,14 +1144,24 @@ public class ApplicationBean implements Serializable {
 		}
 	}
 	public String resetCacheRicercheConfigurazione() {
+		resetCacheRicercheConfigurazioneEngine(true);
+		return null; // DEVE ESSERE NULL PER NON NAVIGARE
+	}
+
+	private boolean resetCacheRicercheConfigurazioneEngine(boolean addMessage) {
 		if(this.isCacheRicercheConfigurazioneEnabled()) {
 			try {
 				AbstractConsoleStartupListener.dynamicUtilsServiceCache_ricercheConfigurazione.resetCache();
+				if (addMessage) {
+					FacesContext.getCurrentInstance().addMessage(null,
+							new FacesMessage("Cache svuotata correttamente"));
+				}
+				return true;
 			}catch(Exception e) {
 				LoggerManager.getPddMonitorCoreLogger().error("ResetCache 'ricerche': "+e.getMessage(),e);
 			}
 		}
-		return null; // DEVE ESSERE NULL PER NON NAVIGARE
+		return false;
 	}
 
 	public String getTimeZone() {

@@ -130,7 +130,7 @@ public class StatistichePdndTracingSearchForm extends BaseSearchForm implements 
 			}
 
 			this.setBackRicerca(false);
-			
+
 			ModalitaRicercaStatistichePdnd ricerca = ModalitaRicercaStatistichePdnd.getFromString(this.getModalitaRicerca());
 			if(ricerca!=null){
 				switch (ricerca) {
