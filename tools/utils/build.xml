@@ -69,9 +69,9 @@
 			<exclude name="${excludeSpringJars}"/>
 			<exclude name="${excludeSpring5jars}"/>
 			<exclude name="${excludeSpringLdapJars}"/>
-			<exclude name="${excludeSpringLdap2jars}"/>			
+			<exclude name="${excludeSpringLdap2jars}"/>
 			<exclude name="${excludeCxfJars}"/>
-			<exclude name="${excludeCxf3jars}"/>			
+			<exclude name="${excludeCxf3jars}"/>
 			<exclude name="${excludeGitJars}"/>
 			<exclude name="**/axis14/*"/>
 			<exclude name="**/applicationServer/**/*.jar"/>
@@ -82,7 +82,7 @@
 		</fileset>
 	</path>
 	<path id="classpath_dist" >
-	</path>	
+	</path>
 
 	<!-- Ripulisce la distribuzione -->
 	<target name="clean_utils">

@@ -54,6 +54,7 @@ import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.manifest.constants.InterfaceType;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.validator.IValidazioneDocumenti;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneResult;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB;
@@ -197,7 +198,14 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 		String nomeMetodo = "validaInterfacciaWsdlParteComune";
 		try {
 			IProtocolFactory<?> protocol = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
-			return protocol.createValidazioneDocumenti().validaSpecificaInterfaccia(as);
+			IValidazioneDocumenti vd = protocol.createValidazioneDocumenti();
+			if (vd instanceof org.openspcoop2.protocol.basic.validator.ValidazioneDocumenti basicVd) {
+				// In modalità console gli snapshot sono popolati; in modalità API (initForApi=true)
+				// i getter ritornano null e il basic ricade sul BaseSpecValidator.
+				basicVd.setApiSpecValidatorConfig(this.getApiSpecValidatorConfig());
+				basicVd.setApiSpecValidator31Config(this.getApiSpecValidator31Config());
+			}
+			return vd.validaSpecificaInterfaccia(as);
 		}catch (Exception e) {
 			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
 			throw new DriverRegistroServiziException(getPrefixError(nomeMetodo,  e), e);

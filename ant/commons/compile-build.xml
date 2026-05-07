@@ -185,7 +185,7 @@
 			</then>
 		</if>
 		<echo message="compileSRC[${compile_src_openspcoop2.SRC_DIR}]" />
-		<javac includeantruntime="false" destdir="${build}/compile-jar-openspcoop2" debug="${debug}" 
+		<javac includeantruntime="false" destdir="${build}/compile-jar-openspcoop2" debug="${debug}"
 			source="${classSourceVersion}" target="${classTargetVersion}" encoding="UTF-8">
 			<compilerarg value="-Xlint:unchecked"/>
 			<compilerarg value="-Xlint:deprecation"/>
@@ -238,7 +238,7 @@
 			<exclude name="${compile_src_openspcoop2.BUILD_EXCLUDES_18}" />
 			<exclude name="${compile_src_openspcoop2.BUILD_EXCLUDES_19}" />
 			<exclude name="${compile_src_openspcoop2.BUILD_EXCLUDES_20}" />
-			
+
 			<!-- Non funziona da java 9
 			<bootclasspath>
 				<path refid="classpath_jre" />
@@ -254,7 +254,7 @@
 				</fileset>
 			</classpath>
 		</javac>
-	
+
 		<!-- Crezione informazioni git -->
 		<if>
 			<istrue value="${compile_src_openspcoop2.GITINFO}"/>

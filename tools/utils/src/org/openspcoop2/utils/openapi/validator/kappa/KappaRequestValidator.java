@@ -18,7 +18,7 @@
  *
  */
 
-package org.openspcoop2.utils.openapi.validator.openapi4j;
+package org.openspcoop2.utils.openapi.validator.kappa;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -29,20 +29,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.openapi4j.core.model.v3.OAI3Context;
-import org.openapi4j.core.util.TreeUtil;
-import org.openapi4j.core.validation.ValidationResults;
-import org.openapi4j.operation.validator.model.Request;
-import org.openapi4j.operation.validator.model.Response;
-import org.openapi4j.operation.validator.model.impl.Body;
-import org.openapi4j.operation.validator.model.impl.DefaultRequest;
-import org.openapi4j.operation.validator.model.impl.DefaultResponse;
-import org.openapi4j.operation.validator.validation.OperationValidator;
-import org.openapi4j.parser.model.v3.OpenApi3;
-import org.openapi4j.parser.model.v3.Operation;
-import org.openapi4j.parser.model.v3.Path;
-import org.openapi4j.parser.validation.v3.OpenApi3Validator;
-import org.openapi4j.schema.validator.ValidationData;
 import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.json.YAMLUtils;
@@ -73,36 +59,52 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.github.erosb.kappa.core.model.v3.OAI3Context;
+import com.github.erosb.kappa.core.util.TreeUtil;
+import com.github.erosb.kappa.core.validation.OpenApiValidationFailure;
+import com.github.erosb.kappa.operation.validator.model.Request;
+import com.github.erosb.kappa.operation.validator.model.Response;
+import com.github.erosb.kappa.operation.validator.model.impl.Body;
+import com.github.erosb.kappa.operation.validator.model.impl.DefaultRequest;
+import com.github.erosb.kappa.operation.validator.model.impl.DefaultResponse;
+import com.github.erosb.kappa.operation.validator.validation.OperationValidator;
+import com.github.erosb.kappa.parser.model.v3.OpenApi3;
+import com.github.erosb.kappa.parser.model.v3.Operation;
+import com.github.erosb.kappa.parser.model.v3.Path;
+import com.github.erosb.kappa.schema.validator.ValidationData;
 
 /**
- * Openapi4j api validator.
+ * Kappa (com.github.erosb) api validator — supporta OpenAPI 3.0 e 3.1.
+ *
+ * Specchio dell'engine openapi4j, basato sulla libreria kappa (fork mantenuto)
+ * con le patch GovWay applicate.
  *
  * @author Tommaso Burlon (tommaso.burlon@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class Validator extends AbstractApiValidator implements IApiValidator {
+public class KappaRequestValidator extends AbstractApiValidator implements IApiValidator {
 
-	private static class Openapi4jValidatorCache extends OpenapiApiValidatorStructure {
+	private static class KappaValidatorCache extends OpenapiApiValidatorStructure {
 		private static final long serialVersionUID = 1L;
-		private transient OpenApi3 openApi4j = null;
+		private transient OpenApi3 openApi = null;
 	}
 
-	private OpenApi3 openApi4j;
+	private OpenApi3 openApi;
 	private ValidatorConfig config;
-	private final org.openspcoop2.utils.Semaphore semaphore = new org.openspcoop2.utils.Semaphore("OpenAPIValidator");
+	private final org.openspcoop2.utils.Semaphore semaphore = new org.openspcoop2.utils.Semaphore("KappaValidator");
 
 	@Override
 	public void init(Logger log, Api api, ApiValidatorConfig rawConfig) throws ProcessingException {
 
 		if (!(rawConfig instanceof ValidatorConfig))
-			throw new ProcessingException("Config must be an openapi4j config class");
+			throw new ProcessingException("Config must be a kappa config class");
 		this.config = (ValidatorConfig) rawConfig;
 
 		if (api == null)
 			throw new ProcessingException("Api is null");
 		if (!(api instanceof OpenapiApi))
-			throw new ProcessingException("Openapi4j validator supports only OpenapiApi class");
+			throw new ProcessingException("Kappa validator supports only OpenapiApi class");
 		this.api = api;
 		this.log = log;
 
@@ -115,20 +117,18 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 			URL uriSchemaNodeRoot = null;
 			Map<URL, JsonNode> schemaMap = null;
 			String root = "file:/";
-			boolean validateSchema = true;
 
-			Openapi4jValidatorCache validationStructure;
+			KappaValidatorCache validationStructure;
 
 			if (openapiApi.getValidationStructure() != null
 					&& openapiApi.getValidationStructure().getNodeValidatorePrincipale() != null
 					&& !openapiApi.getValidationStructure().getNodeValidatorePrincipale().isEmpty()
-					&& openapiApi.getValidationStructure() instanceof Openapi4jValidatorCache validationCache) {
+					&& openapiApi.getValidationStructure() instanceof KappaValidatorCache validationCache) {
 
-				this.openApi4j = validationCache.openApi4j;
-				if (this.openApi4j != null)
+				this.openApi = validationCache.openApi;
+				if (this.openApi != null)
 					return;
 
-				validateSchema = false; // validazione dello schema effettuata quando viene costruito
 				for (String nome : validationCache.getNodeValidatorePrincipale().keySet()) {
 					if (root.equals(nome)) {
 						schemaNodeRoot = validationCache.getNodeValidatorePrincipale().get(nome);
@@ -249,7 +249,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 
 				}
 
-				validationStructure = new Openapi4jValidatorCache();
+				validationStructure = new KappaValidatorCache();
 				Map<String, JsonNode> nodeValidatorePrincipale = new HashMap<>();
 				nodeValidatorePrincipale.put(root, schemaNodeRoot);
 				if (schemaMap != null && !schemaMap.isEmpty()) {
@@ -261,33 +261,20 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 				openapiApi.setValidationStructure(validationStructure);
 			}
 
-			// Costruisco OpenAPI3
+			// Costruisco OpenAPI3 di kappa
 			OAI3Context context = new OAI3Context(uriSchemaNodeRoot, schemaNodeRoot, schemaMap);
 			context.setMultipartOptimization(this.config.isValidateMultipartOptimization());
-			this.openApi4j = TreeUtil.json.convertValue(context.getBaseDocument(), OpenApi3.class);
-			this.openApi4j.setContext(context);
+			this.openApi = TreeUtil.json.convertValue(context.getBaseDocument(), OpenApi3.class);
+			this.openApi.setContext(context);
 
-			// Explicit validation of the API spec
-			if (validateSchema && this.config.isValidateAPISpec()) {
-				try {
-					ValidationResults results = OpenApi3Validator.instance().validate(this.openApi4j);
-					if (!results.isValid()) {
-						throw new ProcessingException("OpenAPI3 not valid: " + results.toString());
-					}
-				} catch (org.openapi4j.core.validation.ValidationException valExc) {
-					if (valExc.results() != null) {
-						throw new ProcessingException("OpenAPI3 not valid: " + valExc.results().toString());
-					} else {
-						throw new ProcessingException("OpenAPI3 not valid: " + valExc.getMessage());
-					}
-				}
-			}
+			// La libreria kappa non espone un OpenApi3Validator standalone come openapi4j;
+			// la validazione strutturale avviene durante il parsing/conversione del documento.
 
-			validationStructure.openApi4j = this.openApi4j;
+			validationStructure.openApi = this.openApi;
 
 		} catch (Throwable e) {
 			try {
-				this.close(log, api, this.config); // per chiudere eventuali risorse parzialmente inizializzate
+				this.close(log, api, this.config);
 			} catch (Throwable t) {
 				// ignore
 			}
@@ -308,7 +295,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 
 		List<ApiBodyParameter> bodyParameters = this.getBodyParameters(httpEntity, operation);
 
-		validateWithOpenApi4j(httpEntity, operation);
+		validateWithKappa(httpEntity, operation);
 
 		// Controllo poi i campi required come controllo aggiuntivo
 		boolean required = false;
@@ -318,21 +305,19 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 					required = true;
 			}
 		}
-		if (required) {
-			if (httpEntity.getContent() == null) {
-				throw new ValidatorException("Required body undefined");
-			}
+		if (required && httpEntity.getContent() == null) {
+			throw new ValidatorException("Required body undefined");
 		}
 	}
 
-	private void validateWithOpenApi4j(HttpBaseEntity<?> httpEntity, ApiOperation apiOperation)
+	private void validateWithKappa(HttpBaseEntity<?> httpEntity, ApiOperation apiOperation)
 			throws ProcessingException, ValidatorException {
 
 		Operation operation = null;
 		Path path = null;
 		boolean found = false;
 
-		for (Map.Entry<String, Path> pathEntry : this.openApi4j.getPaths().entrySet()) {
+		for (Map.Entry<String, Path> pathEntry : this.openApi.getPaths().entrySet()) {
 			path = pathEntry.getValue();
 			for (String method : pathEntry.getValue().getOperations().keySet()) {
 				operation = pathEntry.getValue().getOperation(method);
@@ -347,52 +332,58 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 				break;
 		}
 		if (!found) {
-			throw new ProcessingException(
-					"Resource " + apiOperation.getHttpMethod() + " " + apiOperation.getPath() + " not found in OpenAPI 3");
+			throw new ProcessingException("Resource " + apiOperation.getHttpMethod() + " " + apiOperation.getPath()
+					+ " not found in OpenAPI 3");
 		}
 
 		try {
 
 			ValidationData<Void> vData = new ValidationData<>();
-			this.openApi4j.setServers(null); // se lascio la definizione dei server, il validatePath sottostante
-												// verifica che la url corrisponda anche con la parte del server
-			OperationValidator val = new OperationValidator(this.openApi4j, path, operation);
+			this.openApi.setServers(null); // se lascio i server, validatePath verifica anche la base url
+			OperationValidator val = new OperationValidator(this.openApi, path, operation);
 
 			if (httpEntity instanceof HttpBaseRequestEntity<?> httpRequest) {
 
-				Request requestOpenApi4j = buildRequestOpenApi4j(httpRequest);
+				Request requestKappa = buildRequestKappa(httpRequest);
 
 				if (this.config.isValidateRequestPath()) {
-					val.validatePath(requestOpenApi4j, vData); // LA url fornita deve corrispondere alla parte delle
-																// risorse SENZA la parte del server
+					val.validatePath(requestKappa, vData);
 				}
 				if (this.config.isValidateRequestQuery()) {
-					val.validateQuery(requestOpenApi4j, vData);
+					val.validateQuery(requestKappa, vData);
 				}
 				if (this.config.isValidateRequestHeaders()) {
-					val.validateHeaders(requestOpenApi4j, vData);
+					val.validateHeaders(requestKappa, vData);
 				}
 				if (this.config.isValidateRequestCookie()) {
-					val.validateCookies(requestOpenApi4j, vData);
+					val.validateCookies(requestKappa, vData);
 				}
 				if (this.config.isValidateRequestBody()) {
-					val.validateBody(requestOpenApi4j, vData);
+					val.validateBody(requestKappa, vData);
 				}
 			} else if (httpEntity instanceof HttpBaseResponseEntity<?> response) {
 
-				Response responseOpenApi4j = buildResponseOpenApi4j(response.getStatus(), response.getHeaders(),
+				Response responseKappa = buildResponseKappa(response.getStatus(), response.getHeaders(),
 						response.getContent());
 				if (this.config.isValidateResponseHeaders()) {
-					val.validateHeaders(responseOpenApi4j, vData);
+					val.validateHeaders(responseKappa, vData);
 				}
 				if (this.config.isValidateResponseBody()) {
-					val.validateBody(responseOpenApi4j, vData);
+					val.validateBody(responseKappa, vData);
 				}
 			}
 
 			if (!vData.isValid()) {
-				if (vData.results() != null) {
-					throw new ValidatorException(vData.results().toString());
+				List<OpenApiValidationFailure> failures = vData.results();
+				if (failures != null && !failures.isEmpty()) {
+					StringBuilder sb = new StringBuilder();
+					for (OpenApiValidationFailure f : failures) {
+						if (sb.length() > 0) {
+							sb.append('\n');
+						}
+						sb.append(f.getMessage());
+					}
+					throw new ValidatorException(sb.toString());
 				} else {
 					throw new ValidatorException("Validation failed");
 				}
@@ -405,11 +396,10 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 		}
 	}
 
-	private Request buildRequestOpenApi4j(HttpBaseRequestEntity<?> httpRequest) throws ProcessingException {
+	private Request buildRequestKappa(HttpBaseRequestEntity<?> httpRequest) throws ProcessingException {
 
 		try {
 
-			// Method e path
 			final DefaultRequest.Builder builder = new DefaultRequest.Builder(httpRequest.getUrl(),
 					Request.Method.getMethod(httpRequest.getMethod().name()));
 
@@ -421,7 +411,8 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 					String key = keys.next();
 					List<String> values = httpRequest.getParameters().get(key);
 					try {
-						key = TransportUtils.urlEncodeParam(key, org.openspcoop2.utils.resources.Charset.UTF_8.getValue());
+						key = TransportUtils.urlEncodeParam(key,
+								org.openspcoop2.utils.resources.Charset.UTF_8.getValue());
 					} catch (Exception e) {
 						if (this.log != null) {
 							this.log.error("URLEncode key[" + key + "] error: " + e.getMessage(), e);
@@ -435,7 +426,8 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 							sb.append("&");
 						}
 						try {
-							value = TransportUtils.urlEncodeParam(value, org.openspcoop2.utils.resources.Charset.UTF_8.getValue());
+							value = TransportUtils.urlEncodeParam(value,
+									org.openspcoop2.utils.resources.Charset.UTF_8.getValue());
 						} catch (Exception e) {
 							if (this.log != null) {
 								this.log.error("URLEncode value[" + value + "] error: " + e.getMessage(), e);
@@ -451,7 +443,6 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 				queryString = sb.toString();
 			}
 
-			// Query string or body
 			if (HttpRequestMethod.GET.toString().equalsIgnoreCase(httpRequest.getMethod().name())) {
 				builder.query(queryString);
 			} else {
@@ -468,24 +459,21 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 					} else if (httpRequest.getContent() instanceof InputStream is) {
 						builder.body(Body.from(is));
 					} else {
-						throw new ProcessingException("Type '" + httpRequest.getContent().getClass().getName() + "' unsupported");
+						throw new ProcessingException(
+								"Type '" + httpRequest.getContent().getClass().getName() + "' unsupported");
 					}
 				}
 			}
 
-			// Cookies
 			if (httpRequest.getCookies() != null) {
 				for (Cookie cookie : httpRequest.getCookies()) {
 					builder.cookie(cookie.getName(), cookie.getValue());
 				}
 			}
 
-			// Headers
 			if (httpRequest.getHeaders() != null) {
-				Iterator<String> headerNames = httpRequest.getHeaders().keySet().iterator();
-				while (headerNames.hasNext()) {
-					String headerName = headerNames.next();
-					builder.header(headerName, httpRequest.getHeaders().get(headerName));
+				for (Map.Entry<String, List<String>> e : httpRequest.getHeaders().entrySet()) {
+					builder.header(e.getKey(), e.getValue());
 				}
 			}
 
@@ -496,45 +484,41 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 		}
 	}
 
-	private Response buildResponseOpenApi4j(int status, Map<String, List<String>> headers, Object content)
+	private Response buildResponseKappa(int status, Map<String, List<String>> headers, Object content)
 			throws ProcessingException {
 
 		try {
 
-			// status
 			final DefaultResponse.Builder builder = new DefaultResponse.Builder(status);
 
-			// body
 			if (content != null) {
-				if (content instanceof String s) {
-					builder.body(Body.from(s));
-				} else if (content instanceof byte[] b) {
+				switch (content) {
+				case String s -> builder.body(Body.from(s));
+				case InputStream is -> builder.body(Body.from(is));
+				case byte[] b -> {
 					try (ByteArrayInputStream bin = new ByteArrayInputStream(b)) {
 						builder.body(Body.from(bin));
 					}
-				} else if (content instanceof InputStream is) {
-					builder.body(Body.from(is));
-				} else if (content instanceof Document d) {
+				}
+				case Document d -> {
 					byte[] b = XMLUtils.getInstance().toByteArray(d);
 					try (ByteArrayInputStream bin = new ByteArrayInputStream(b)) {
 						builder.body(Body.from(bin));
 					}
-				} else if (content instanceof Element e) {
+				}
+				case Element e -> {
 					byte[] b = XMLUtils.getInstance().toByteArray(e);
 					try (ByteArrayInputStream bin = new ByteArrayInputStream(b)) {
 						builder.body(Body.from(bin));
 					}
-				} else {
-					throw new ProcessingException("Type '" + content.getClass().getName() + "' unsupported");
+				}
+				default -> throw new ProcessingException("Type '" + content.getClass().getName() + "' unsupported");
 				}
 			}
 
-			// Headers
 			if (headers != null) {
-				Iterator<String> headerNames = headers.keySet().iterator();
-				while (headerNames.hasNext()) {
-					String headerName = headerNames.next();
-					builder.header(headerName, headers.get(headerName));
+				for (Map.Entry<String, List<String>> e : headers.entrySet()) {
+					builder.header(e.getKey(), e.getValue());
 				}
 			}
 

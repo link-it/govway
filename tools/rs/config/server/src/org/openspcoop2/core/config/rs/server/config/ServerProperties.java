@@ -225,6 +225,82 @@ public class ServerProperties  {
 	public boolean isValidazioneDocumenti() throws UtilsException {
 		return Boolean.parseBoolean(this.readProperty(true, "validazioneDocumenti"));
 	}
+
+	/* ----- Spec validator: libreria + config ------ */
+
+	public static final String SPEC_VALIDATOR_PREFIX = "api.openApi.specValidator.";
+	public static final String SPEC_VALIDATOR_PREFIX_31 = "api.openApi.31.specValidator.";
+
+	/** @return engine selezionato per le specifiche OpenAPI 3.0 (default {@code openapi4j}). */
+	public org.openspcoop2.utils.openapi.validator.OpenAPILibrary getApiSpecValidatorLibrary() throws UtilsException {
+		return parseLibrary(this.readProperty(false, SPEC_VALIDATOR_PREFIX + "library"),
+				org.openspcoop2.utils.openapi.validator.OpenAPILibrary.openapi4j);
+	}
+
+	/** @return engine selezionato per le specifiche OpenAPI 3.1 (default {@code kappa}). */
+	public org.openspcoop2.utils.openapi.validator.OpenAPILibrary getApiSpecValidator31Library() throws UtilsException {
+		return parseLibrary(this.readProperty(false, SPEC_VALIDATOR_PREFIX_31 + "library"),
+				org.openspcoop2.utils.openapi.validator.OpenAPILibrary.kappa);
+	}
+
+	/** @return config 3.0 (engine già selezionato + properties popolate). */
+	public org.openspcoop2.utils.rest.IApiSpecConfig getApiSpecValidatorConfig() throws UtilsException {
+		return buildSpecValidatorConfig(getApiSpecValidatorLibrary(), false);
+	}
+
+	/** @return config 3.1 con fallback sulle properties 3.0. */
+	public org.openspcoop2.utils.rest.IApiSpecConfig getApiSpecValidator31Config() throws UtilsException {
+		return buildSpecValidatorConfig(getApiSpecValidator31Library(), true);
+	}
+
+	private org.openspcoop2.utils.rest.IApiSpecConfig buildSpecValidatorConfig(
+			org.openspcoop2.utils.openapi.validator.OpenAPILibrary library, boolean openApi31) {
+		org.openspcoop2.utils.rest.IApiSpecConfig cfg = org.openspcoop2.utils.rest.ApiFactory
+				.newApiSpecValidatorConfig(library != null ? library.name() : null);
+		cfg.readProperties(suffix -> resolveSpecValidatorProperty(library, suffix, openApi31));
+		return cfg;
+	}
+
+	private String resolveSpecValidatorProperty(org.openspcoop2.utils.openapi.validator.OpenAPILibrary library,
+			String suffix, boolean openApi31) {
+		if (suffix == null) {
+			return null;
+		}
+		if (openApi31) {
+			String v = lookupSpecValidatorProperty(SPEC_VALIDATOR_PREFIX_31, library, suffix);
+			if (v != null) {
+				return v;
+			}
+		}
+		return lookupSpecValidatorProperty(SPEC_VALIDATOR_PREFIX, library, suffix);
+	}
+
+	private String lookupSpecValidatorProperty(String prefix,
+			org.openspcoop2.utils.openapi.validator.OpenAPILibrary library, String suffix) {
+		try {
+			if (library != null) {
+				String v = this.readProperty(false, prefix + library.name() + "." + suffix);
+				if (v != null) {
+					return v;
+				}
+			}
+			return this.readProperty(false, prefix + suffix);
+		} catch (UtilsException e) {
+			return null;
+		}
+	}
+
+	private static org.openspcoop2.utils.openapi.validator.OpenAPILibrary parseLibrary(String v,
+			org.openspcoop2.utils.openapi.validator.OpenAPILibrary defaultValue) {
+		if (v == null || v.isEmpty()) {
+			return defaultValue;
+		}
+		try {
+			return org.openspcoop2.utils.openapi.validator.OpenAPILibrary.valueOf(v.trim());
+		} catch (IllegalArgumentException e) {
+			return defaultValue;
+		}
+	}
 	
 	public boolean isUpdateInterfacciaApiUpdateIfExists() throws UtilsException {
 		return Boolean.parseBoolean(this.readProperty(true, "updateInterfacciaApi.updateIfExists"));

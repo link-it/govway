@@ -94,6 +94,41 @@ public class OpenapiApi extends Api {
 	public String getParseWarningResult() {
 		return this.parseWarningResult;
 	}
+
+	/**
+	 * Verifica se l'Api passato è un OpenAPI 3.1.x. La detection privilegia il
+	 * modello swagger-parser (transient: può essere {@code null} dopo
+	 * serializzazione/deserializzazione) e ricade sull'apiRaw via regex.
+	 *
+	 * @return {@code true} se l'api è OpenAPI 3.1, {@code false} altrimenti
+	 *         (incluso il caso in cui {@code api} non sia un {@code OpenapiApi}
+	 *         oppure il formato non sia {@code OPEN_API_3}).
+	 */
+	public static boolean isOpenApi31(Api api) {
+		if (!(api instanceof OpenapiApi)) {
+			return false;
+		}
+		OpenapiApi openapiApi = (OpenapiApi) api;
+		if (!ApiFormats.OPEN_API_3.equals(openapiApi.getFormat())) {
+			return false;
+		}
+		// 1) modello swagger-parser, se ancora disponibile
+		try {
+			if (openapiApi.getApi() != null && openapiApi.getApi().getOpenapi() != null
+					&& openapiApi.getApi().getOpenapi().startsWith("3.1")) {
+				return true;
+			}
+		} catch (Exception e) {
+			// fallthrough
+		}
+		// 2) fallback: scan dell'apiRaw per la dichiarazione di versione
+		String raw = openapiApi.getApiRaw();
+		if (raw == null) {
+			return false;
+		}
+		// pattern: openapi: "3.1...", openapi: 3.1..., "openapi": "3.1..."
+		return raw.matches("(?s).*[\"']?openapi[\"']?\\s*:\\s*[\"']?3\\.1.*");
+	}
 	
 	public Map<String, Schema<?>> getDefinitions() {
 		return this.definitions;

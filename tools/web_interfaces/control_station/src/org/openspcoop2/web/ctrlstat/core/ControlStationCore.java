@@ -576,8 +576,27 @@ public class ControlStationCore {
 		return this.showJ2eeOptions;
 	}
 
+	/* ---- Spec validator: campi statici impostati in modalità API
+	 *      (RS API server) tramite ServerProperties; in modalità console restano
+	 *      null e si attinge ai campi instance popolati da {@link #initCore()}. ---- */
+	private static org.openspcoop2.utils.rest.IApiSpecConfig apiSpecValidatorConfigApiMode = null;
+	private static org.openspcoop2.utils.rest.IApiSpecConfig apiSpecValidator31ConfigApiMode = null;
+	public static org.openspcoop2.utils.rest.IApiSpecConfig getApiSpecValidatorConfigApiMode() {
+		return apiSpecValidatorConfigApiMode;
+	}
+	public static void setApiSpecValidatorConfigApiMode(org.openspcoop2.utils.rest.IApiSpecConfig cfg) {
+		ControlStationCore.apiSpecValidatorConfigApiMode = cfg;
+	}
+	public static org.openspcoop2.utils.rest.IApiSpecConfig getApiSpecValidator31ConfigApiMode() {
+		return apiSpecValidator31ConfigApiMode;
+	}
+	public static void setApiSpecValidator31ConfigApiMode(org.openspcoop2.utils.rest.IApiSpecConfig cfg) {
+		ControlStationCore.apiSpecValidator31ConfigApiMode = cfg;
+	}
+
+
 	/** Utenze Console */
-	
+
 	private static CryptConfig utenzePasswordEncryptEngineApiMode = null;
 	public static CryptConfig getUtenzePasswordEncryptEngineApiMode() {
 		return utenzePasswordEncryptEngineApiMode;
@@ -1021,6 +1040,15 @@ public class ControlStationCore {
 	private boolean isApiRestResourceRepresentationMessageTypeOverride;
 	private boolean isApiDescriptionTruncate255;
 	private boolean isApiDescriptionTruncate4000;
+
+	/* ---- Snapshot della configurazione del validatore di specifica OpenAPI.
+	 *      Popolato in modalità console; in modalità API (initForApi=true) restano null
+	 *      e {@link #getApiSpecValidatorConfig()} attinge ai campi statici
+	 *      {@link #apiSpecValidatorConfigApiMode} valorizzati dal ServerProperties. ---- */
+	private org.openspcoop2.utils.openapi.validator.OpenAPILibrary apiSpecValidatorLibrary;
+	private org.openspcoop2.utils.openapi.validator.OpenAPILibrary apiSpecValidator31Library;
+	private Map<org.openspcoop2.utils.openapi.validator.OpenAPILibrary, org.openspcoop2.utils.rest.IApiSpecConfig> apiSpecValidatorConfigs;
+	private Map<org.openspcoop2.utils.openapi.validator.OpenAPILibrary, org.openspcoop2.utils.rest.IApiSpecConfig> apiSpecValidator31Configs;
 	public boolean isApiResourcePathValidatorEnabled() {
 		return this.isApiResourcePathValidatorEnabled;
 	}
@@ -1042,7 +1070,51 @@ public class ControlStationCore {
 	public boolean isApiDescriptionTruncate4000() {
 		return  this.isApiDescriptionTruncate4000;
 	}
-	
+
+	public org.openspcoop2.utils.openapi.validator.OpenAPILibrary getApiSpecValidatorLibrary() {
+		return this.apiSpecValidatorLibrary;
+	}
+	public org.openspcoop2.utils.openapi.validator.OpenAPILibrary getApiSpecValidator31Library() {
+		return this.apiSpecValidator31Library;
+	}
+	public Map<org.openspcoop2.utils.openapi.validator.OpenAPILibrary, org.openspcoop2.utils.rest.IApiSpecConfig> getApiSpecValidatorConfigs() {
+		return this.apiSpecValidatorConfigs;
+	}
+	public Map<org.openspcoop2.utils.openapi.validator.OpenAPILibrary, org.openspcoop2.utils.rest.IApiSpecConfig> getApiSpecValidator31Configs() {
+		return this.apiSpecValidator31Configs;
+	}
+
+	/**
+	 * @return il config dello spec validator (engine + properties) per le specifiche OpenAPI 3.0.
+	 *         In modalità console viene letto dallo snapshot popolato in {@link #initCore()};
+	 *         in modalità API ({@code initForApi=true}) viene letto dal campo statico
+	 *         {@link #apiSpecValidatorConfigApiMode} valorizzato dal {@code ServerProperties}
+	 *         dell'RS API server. {@code null} se non disponibile in entrambi i casi.
+	 */
+	public org.openspcoop2.utils.rest.IApiSpecConfig getApiSpecValidatorConfig() {
+		if (isAPIMode()) {
+			return apiSpecValidatorConfigApiMode;
+		}
+		if (this.apiSpecValidatorConfigs == null || this.apiSpecValidatorLibrary == null) {
+			return null;
+		}
+		return this.apiSpecValidatorConfigs.get(this.apiSpecValidatorLibrary);
+	}
+
+	/**
+	 * @return il config dello spec validator per le specifiche OpenAPI 3.1.
+	 *         Stesse regole di {@link #getApiSpecValidatorConfig()}.
+	 */
+	public org.openspcoop2.utils.rest.IApiSpecConfig getApiSpecValidator31Config() {
+		if (isAPIMode()) {
+			return apiSpecValidator31ConfigApiMode;
+		}
+		if (this.apiSpecValidator31Configs == null || this.apiSpecValidator31Library == null) {
+			return null;
+		}
+		return this.apiSpecValidator31Configs.get(this.apiSpecValidator31Library);
+	}
+
 	/** Accordi di Cooperazione */
 	private boolean isAccordiCooperazioneEnabled;
 	public boolean isAccordiCooperazioneEnabled() {
@@ -2696,6 +2768,10 @@ public class ControlStationCore {
 		this.isApiOpenAPIValidateUriReferenceAsUrl = core.isApiOpenAPIValidateUriReferenceAsUrl;
 		this.isApiRestResourceRepresentationMessageTypeOverride = core.isApiRestResourceRepresentationMessageTypeOverride;
 		this.isApiDescriptionTruncate255 = core.isApiDescriptionTruncate255;
+		this.apiSpecValidatorLibrary = core.apiSpecValidatorLibrary;
+		this.apiSpecValidator31Library = core.apiSpecValidator31Library;
+		this.apiSpecValidatorConfigs = core.apiSpecValidatorConfigs;
+		this.apiSpecValidator31Configs = core.apiSpecValidator31Configs;
 		this.isApiDescriptionTruncate4000 = core.isApiDescriptionTruncate4000;
 		
 		/** Accordi di Cooperazione */
@@ -3186,6 +3262,10 @@ public class ControlStationCore {
 			this.isApiRestResourceRepresentationMessageTypeOverride = consoleProperties.isApiRestResourceRepresentationMessageTypeOverride();
 			this.isApiDescriptionTruncate255 = consoleProperties.isApiDescriptionTruncate255();
 			this.isApiDescriptionTruncate4000 = consoleProperties.isApiDescriptionTruncate4000();
+			this.apiSpecValidatorLibrary = consoleProperties.getSpecValidatorLibrary();
+			this.apiSpecValidator31Library = consoleProperties.getSpecValidator31Library();
+			this.apiSpecValidatorConfigs = consoleProperties.mapSpecValidatorConfigs();
+			this.apiSpecValidator31Configs = consoleProperties.mapSpecValidator31Configs();
 			this.isAccordiCooperazioneEnabled = consoleProperties.isAccordiCooperazioneEnabled();
 			this.isErogazioniVerificaCertificati = consoleProperties.isErogazioniVerificaCertificati();
 			this.isFruizioniVerificaCertificati = consoleProperties.isFruizioniVerificaCertificati();

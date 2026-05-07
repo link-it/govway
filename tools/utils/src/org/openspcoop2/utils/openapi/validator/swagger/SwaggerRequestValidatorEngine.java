@@ -83,7 +83,7 @@ import io.swagger.v3.oas.models.PathItem.HttpMethod;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class Validator extends AbstractApiValidator implements IApiValidator {
+public class SwaggerRequestValidatorEngine extends AbstractApiValidator implements IApiValidator {
 
 	private static class SwaggerValidatorCache extends OpenapiApiValidatorStructure {
 		private static final long serialVersionUID = 1L;

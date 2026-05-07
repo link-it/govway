@@ -89,10 +89,10 @@ public class ApiFactory {
 		Loader loader = new Loader();
 		try{
 			return switch(engine) {
-			case "json_schema" -> (IApiValidator) loader.newInstance("org.openspcoop2.utils.openapi.validator.json_schema.Validator");
-			case "openapi4j" -> (IApiValidator) loader.newInstance("org.openspcoop2.utils.openapi.validator.openapi4j.Validator");
-			case "swagger_request_validator" -> (IApiValidator) loader.newInstance("org.openspcoop2.utils.openapi.validator.swagger.Validator");
-			case "kappa" -> (IApiValidator) loader.newInstance("org.openspcoop2.utils.openapi.validator.kappa.Validator");
+			case "json_schema" -> (IApiValidator) loader.newInstance("org.openspcoop2.utils.openapi.validator.json_schema.JsonSchemaRequestValidator");
+			case "openapi4j" -> (IApiValidator) loader.newInstance("org.openspcoop2.utils.openapi.validator.openapi4j.Openapi4jRequestValidator");
+			case "swagger_request_validator" -> (IApiValidator) loader.newInstance("org.openspcoop2.utils.openapi.validator.swagger.SwaggerRequestValidatorEngine");
+			case "kappa" -> (IApiValidator) loader.newInstance("org.openspcoop2.utils.openapi.validator.kappa.KappaRequestValidator");
 			default -> (IApiValidator) loader.newInstance("org.openspcoop2.utils.openapi.validator." + engine + ".Validator");
 			};
 		} catch(Exception t){
@@ -102,7 +102,7 @@ public class ApiFactory {
 	
 	public static ApiValidatorConfig newApiValidatorConfig(String engine) throws ProcessingException{
 		checkPackageName(engine);
-		
+
 		Loader loader = new Loader();
 		try{
 			return switch(engine) {
@@ -114,6 +114,50 @@ public class ApiFactory {
 			};
 		} catch(Exception t){
 			throw new ProcessingException(t.getMessage(),t);
+		}
+	}
+
+	public static IApiSpecValidator newApiSpecValidator(String engine) {
+		if (engine == null || BaseSpecConfig.ENGINE.equals(engine)) {
+			return new BaseSpecValidator();
+		}
+		try {
+			checkPackageName(engine);
+			Loader loader = new Loader();
+			return switch (engine) {
+			case "openapi4j" -> (IApiSpecValidator)
+					loader.newInstance("org.openspcoop2.utils.openapi.validator.openapi4j.Openapi4jSpecValidator");
+			case "kappa" -> (IApiSpecValidator)
+					loader.newInstance("org.openspcoop2.utils.openapi.validator.kappa.KappaSpecValidator");
+			case "swagger_request_validator" -> (IApiSpecValidator)
+					loader.newInstance("org.openspcoop2.utils.openapi.validator.swagger.SwaggerSpecValidator");
+			default -> (IApiSpecValidator)
+					loader.newInstance("org.openspcoop2.utils.openapi.validator." + engine + ".SpecValidator");
+			};
+		} catch (Exception t) {
+			return new BaseSpecValidator();
+		}
+	}
+
+	public static IApiSpecConfig newApiSpecValidatorConfig(String engine) {
+		if (engine == null || BaseSpecConfig.ENGINE.equals(engine)) {
+			return new BaseSpecConfig();
+		}
+		try {
+			checkPackageName(engine);
+			Loader loader = new Loader();
+			return switch (engine) {
+			case "openapi4j" -> (IApiSpecConfig)
+					loader.newInstance("org.openspcoop2.utils.openapi.validator.openapi4j.Openapi4jSpecConfig");
+			case "kappa" -> (IApiSpecConfig)
+					loader.newInstance("org.openspcoop2.utils.openapi.validator.kappa.KappaSpecConfig");
+			case "swagger_request_validator" -> (IApiSpecConfig)
+					loader.newInstance("org.openspcoop2.utils.openapi.validator.swagger.SwaggerSpecConfig");
+			default -> (IApiSpecConfig)
+					loader.newInstance("org.openspcoop2.utils.openapi.validator." + engine + ".SpecConfig");
+			};
+		} catch (Exception t) {
+			return new BaseSpecConfig();
 		}
 	}
 

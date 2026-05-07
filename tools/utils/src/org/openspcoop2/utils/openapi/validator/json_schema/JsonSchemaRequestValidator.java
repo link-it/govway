@@ -80,7 +80,7 @@ import io.swagger.v3.oas.models.media.Schema;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class Validator extends AbstractApiValidator implements IApiValidator {
+public class JsonSchemaRequestValidator extends AbstractApiValidator implements IApiValidator {
 
 	private static final String VALIDATION_STRUCTURE = "VALIDATION_STRUCTURE";
 
