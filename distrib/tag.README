@@ -56,8 +56,7 @@ Per creare una tag version:
     NOTA!!!!! Dentro il file publiccode.yml è presente anche una release date da aggiornare!!!!!!
     
 13.1 Validare il file publiccode.yml con il seguente comando:
-    NOTA: prima rimuovere l'ultima immagine per forzare l'aggiornamento della latest
-    docker run -i italia/publiccode-parser-go /dev/stdin < publiccode.yml
+     (docker run --rm --pull=always -i italia/publiccode-parser-go /dev/stdin < publiccode.yml; rc=$?; docker rmi italia/publiccode-parser-go >/dev/null; exit $rc)
 
 14. Verificare che con gli stresstest tramite benchmark si ottengano risultati simili o migliori della precedente versione.
     NOTA: farlo girare anche in locale per verificare che vi sia un tracciamento corretto (dati ricostruiti)
