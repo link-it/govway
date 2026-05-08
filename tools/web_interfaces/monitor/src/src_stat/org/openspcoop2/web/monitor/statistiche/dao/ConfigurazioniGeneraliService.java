@@ -67,6 +67,13 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.id.IdentificativiErogazione;
 import org.openspcoop2.core.id.IdentificativiFruizione;
 import org.openspcoop2.core.mapping.DBMappingUtils;
+import org.openspcoop2.pdd.config.ConfigurazioneNodiRuntime;
+import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
+import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
+import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
+import org.openspcoop2.web.monitor.statistiche.bean.GruppoStato;
+import org.openspcoop2.web.lib.audit.appender.IDOperazione;
+import org.openspcoop2.web.monitor.statistiche.utils.MonitorAuditUtils;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Property;
@@ -1649,9 +1656,9 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 			String tipoProtocollo = this.search.getProtocollo();
 			IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(tipoProtocollo);
 			PorteNamingUtils n = new PorteNamingUtils(protocolFactory);
-			configurazioneGenerale.setLabel(n.normalizePD(portaDelegata.getNome())); 
+			configurazioneGenerale.setLabel(n.normalizePD(portaDelegata.getNome()));
 
-			configurazioneGenerale.setProtocollo(tipoProtocollo); 
+			configurazioneGenerale.setProtocollo(tipoProtocollo);
 
 			if(portaDelegata.getNomeAzione()==null){
 				configurazioneGenerale.setAzione(CostantiConfigurazioni.LABEL_AZIONE_STAR);
@@ -1665,6 +1672,8 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 
 			String labelServizio = NamingUtils.getLabelAccordoServizioParteSpecificaSenzaErogatore(tipoProtocollo, portaDelegata.getTipoServizio(), portaDelegata.getNomeServizio(), portaDelegata.getVersioneServizio());
 			configurazioneGenerale.setServizio(labelServizio);
+
+			this.calcolaStatoComplessivoPD(configurazioneGenerale, portaDelegata);
 		}catch(Exception e){
 			log.error(e.getMessage(),e);
 		}
@@ -1676,12 +1685,12 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 		configurazioneGenerale.setStato(portaApplicativa.getStato());
 		try {
 			String tipoProtocollo = this.search.getProtocollo();
-			
+
 			configurazioneGenerale.setProtocollo(tipoProtocollo);
 
 			IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(tipoProtocollo);
 			PorteNamingUtils n = new PorteNamingUtils(protocolFactory);
-			configurazioneGenerale.setLabel(n.normalizePA(portaApplicativa.getNome())); 
+			configurazioneGenerale.setLabel(n.normalizePA(portaApplicativa.getNome()));
 
 			configurazioneGenerale.setErogatore(NamingUtils.getLabelSoggetto(tipoProtocollo, portaApplicativa.getIdSoggetto().getTipo(), portaApplicativa.getIdSoggetto().getNome()));
 			String labelServizio = NamingUtils.getLabelAccordoServizioParteSpecificaSenzaErogatore(tipoProtocollo, portaApplicativa.getTipoServizio(), portaApplicativa.getNomeServizio(), portaApplicativa.getVersioneServizio());
@@ -1690,12 +1699,228 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 				configurazioneGenerale.setAzione(CostantiConfigurazioni.LABEL_AZIONE_STAR);
 			}
 			else{
-				configurazioneGenerale.setAzione(portaApplicativa.getNomeAzione()); 
+				configurazioneGenerale.setAzione(portaApplicativa.getNomeAzione());
 			}
+
+			this.calcolaStatoComplessivoPA(configurazioneGenerale, portaApplicativa);
 		}catch(Exception e){
 			log.error(e.getMessage(),e);
 		}
 		return configurazioneGenerale;
+	}
+
+	@Override
+	public void toggleStatoPorta(String nomePorta, PddRuolo ruolo, boolean enable, String utente) throws ServiceException {
+		log.info("toggleStatoPorta: inizio - porta [{}] ruolo [{}] enable [{}] utente [{}]", nomePorta, ruolo, enable, utente);
+		IDOperazione idOperazioneAudit = null;
+		Object oggettoPortaAudit = null;
+		try {
+			org.openspcoop2.core.config.constants.StatoFunzionalita nuovoStato = enable ?
+					org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO :
+					org.openspcoop2.core.config.constants.StatoFunzionalita.DISABILITATO;
+
+			if(PddRuolo.APPLICATIVA.equals(ruolo)) {
+				IDPortaApplicativa idPA = new IDPortaApplicativa();
+				idPA.setNome(nomePorta);
+				org.openspcoop2.core.config.PortaApplicativa pa = this.driverConfigDB.getPortaApplicativa(idPA);
+				oggettoPortaAudit = pa;
+
+				boolean statoPrecedenteAbilitato = pa.getStato() == null ||
+						org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO.equals(pa.getStato());
+
+				// Idempotenza: non aggiornare se lo stato e' gia' quello richiesto
+				if(nuovoStato.equals(pa.getStato())) {
+					log.debug("toggleStatoPorta: stato gia' [{}] per PA [{}], skip", nuovoStato, nomePorta);
+					return;
+				}
+
+				log.info("toggleStatoPorta: aggiornamento PA [{}] da [{}] a [{}]", nomePorta,
+						statoPrecedenteAbilitato ? "abilitato" : "disabilitato",
+						enable ? "abilitato" : "disabilitato");
+
+				idOperazioneAudit = MonitorAuditUtils.registraOperazioneToggleStatoInElaborazione(utente, pa, enable);
+
+				pa.setStato(nuovoStato);
+				this.driverConfigDB.updatePortaApplicativa(pa);
+				log.debug("toggleStatoPorta: update DB completato per PA [{}]", nomePorta);
+
+				this.invokeJmxToggle(nomePorta, true, enable);
+
+				MonitorAuditUtils.registraOperazioneToggleStatoCompletata(idOperazioneAudit, utente, pa, enable);
+
+			} else {
+				IDPortaDelegata idPD = new IDPortaDelegata();
+				idPD.setNome(nomePorta);
+				org.openspcoop2.core.config.PortaDelegata pd = this.driverConfigDB.getPortaDelegata(idPD);
+				oggettoPortaAudit = pd;
+
+				boolean statoPrecedenteAbilitato = pd.getStato() == null ||
+						org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO.equals(pd.getStato());
+
+				if(nuovoStato.equals(pd.getStato())) {
+					log.debug("toggleStatoPorta: stato gia' [{}] per PD [{}], skip", nuovoStato, nomePorta);
+					return;
+				}
+
+				log.info("toggleStatoPorta: aggiornamento PD [{}] da [{}] a [{}]", nomePorta,
+						statoPrecedenteAbilitato ? "abilitato" : "disabilitato",
+						enable ? "abilitato" : "disabilitato");
+
+				idOperazioneAudit = MonitorAuditUtils.registraOperazioneToggleStatoInElaborazione(utente, pd, enable);
+
+				pd.setStato(nuovoStato);
+				this.driverConfigDB.updatePortaDelegata(pd);
+				log.debug("toggleStatoPorta: update DB completato per PD [{}]", nomePorta);
+
+				this.invokeJmxToggle(nomePorta, false, enable);
+
+				MonitorAuditUtils.registraOperazioneToggleStatoCompletata(idOperazioneAudit, utente, pd, enable);
+			}
+			log.info("toggleStatoPorta: completato con successo per porta [{}]", nomePorta);
+		} catch(Exception e) {
+			log.error("toggleStatoPorta: errore per porta [{}]: {}", nomePorta, e.getMessage(), e);
+			MonitorAuditUtils.registraOperazioneToggleStatoErrore(idOperazioneAudit, utente, oggettoPortaAudit, enable, e.getMessage());
+			throw new ServiceException("Errore durante il toggle dello stato della porta '" + nomePorta + "': " + e.getMessage(), e);
+		}
+	}
+
+	private void invokeJmxToggle(String nomePorta, boolean isPA, boolean enable) {
+		try {
+			PddMonitorProperties monitorProperties = PddMonitorProperties.getInstance(ConfigurazioniGeneraliService.log);
+			ConfigurazioneNodiRuntime config = monitorProperties.getConfigurazioneNodiRuntime();
+			if(config == null) return;
+
+			List<String> aliases = config.getAliases();
+			if(aliases == null || aliases.isEmpty()) return;
+
+			org.openspcoop2.web.monitor.core.utils.JmxUtils jmxUtils = new org.openspcoop2.web.monitor.core.utils.JmxUtils(ConfigurazioniGeneraliService.log);
+
+			for(String alias : aliases) {
+				String metodo;
+				if(isPA) {
+					metodo = enable ?
+							monitorProperties.getJmxPdD_configurazioneSistema_nomeMetodo_enablePortaApplicativa(alias) :
+							monitorProperties.getJmxPdD_configurazioneSistema_nomeMetodo_disablePortaApplicativa(alias);
+				} else {
+					metodo = enable ?
+							monitorProperties.getJmxPdD_configurazioneSistema_nomeMetodo_enablePortaDelegata(alias) :
+							monitorProperties.getJmxPdD_configurazioneSistema_nomeMetodo_disablePortaDelegata(alias);
+				}
+				try {
+					String stato = jmxUtils.getInvoker().invokeJMXMethod(alias,
+							monitorProperties.getJmxPdD_configurazioneSistema_tipo(alias),
+							monitorProperties.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias),
+							metodo,
+							nomePorta);
+					if(stato == null) {
+						throw new Exception("Aggiornamento fallito");
+					}
+					if(!("Operazione effettuata con successo".equals(stato)
+							|| stato.startsWith("Operazione effettuata con successo; "))) {
+						throw new Exception(stato);
+					}
+				} catch(Exception e) {
+					String msgErrore = "Errore durante l'aggiornamento dello stato della porta '" + nomePorta + "' via jmx (metodo '" + metodo + "') (nodo:" + alias + "): " + e.getMessage();
+					ConfigurazioniGeneraliService.log.error(msgErrore, e);
+				}
+			}
+		} catch(Exception e) {
+			ConfigurazioniGeneraliService.log.error("Errore durante l'invocazione JMX per la porta '" + nomePorta + "': " + e.getMessage(), e);
+		}
+	}
+
+	private void calcolaStatoComplessivoPA(ConfigurazioneGenerale config, PortaApplicativa portaApplicativa) {
+		Connection con = null;
+		try {
+			con = this.driverConfigDB.getConnection("calcolaStatoComplessivoPA");
+			IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(
+					portaApplicativa.getTipoServizio(), portaApplicativa.getNomeServizio(),
+					portaApplicativa.getIdSoggetto().getTipo(), portaApplicativa.getIdSoggetto().getNome(),
+					portaApplicativa.getVersioneServizio());
+			List<MappingErogazionePortaApplicativa> mappings =
+					DBMappingUtils.mappingErogazionePortaApplicativaList(con, this.driverConfigDB.getTipoDB(), idServizio, true);
+
+			if(mappings != null && !mappings.isEmpty()) {
+				int abilitati = 0;
+				List<GruppoStato> gruppi = new java.util.ArrayList<>();
+				for(MappingErogazionePortaApplicativa mapping : mappings) {
+					IDPortaApplicativa idPA = mapping.getIdPortaApplicativa();
+					org.openspcoop2.core.config.PortaApplicativa paConfig = this.driverConfigDB.getPortaApplicativa(idPA);
+					boolean abilitato = paConfig.getStato() == null ||
+							org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO.equals(paConfig.getStato());
+					if(abilitato) abilitati++;
+					gruppi.add(new GruppoStato(
+							mapping.getDescrizione() != null ? mapping.getDescrizione() : mapping.getNome(),
+							abilitato, paConfig.getId(), paConfig.getNome(), mapping.isDefault()));
+				}
+				config.setGruppiStati(gruppi);
+				config.setNumeroGruppi(mappings.size());
+				if(abilitati == mappings.size()) {
+					config.setStatoComplessivo("green");
+				} else if(abilitati == 0) {
+					config.setStatoComplessivo("red");
+				} else {
+					config.setStatoComplessivo("yellow");
+				}
+			} else {
+				// nessun mapping, uso lo stato diretto della porta
+				boolean abilitato = portaApplicativa.getStato() == null || "abilitato".equals(portaApplicativa.getStato());
+				config.setStatoComplessivo(abilitato ? "green" : "red");
+			}
+		} catch(Exception e) {
+			log.error("Errore nel calcolo stato complessivo PA: " + e.getMessage(), e);
+			boolean abilitato = portaApplicativa.getStato() == null || "abilitato".equals(portaApplicativa.getStato());
+			config.setStatoComplessivo(abilitato ? "green" : "red");
+		} finally {
+			this.driverConfigDB.releaseConnection(con);
+		}
+	}
+
+	private void calcolaStatoComplessivoPD(ConfigurazioneGenerale config, PortaDelegata portaDelegata) {
+		Connection con = null;
+		try {
+			con = this.driverConfigDB.getConnection("calcolaStatoComplessivoPD");
+			IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(
+					portaDelegata.getTipoServizio(), portaDelegata.getNomeServizio(),
+					portaDelegata.getTipoSoggettoErogatore(), portaDelegata.getNomeSoggettoErogatore(),
+					portaDelegata.getVersioneServizio());
+			IDSoggetto idFruitore = new IDSoggetto(portaDelegata.getIdSoggetto().getTipo(), portaDelegata.getIdSoggetto().getNome());
+			List<MappingFruizionePortaDelegata> mappings =
+					DBMappingUtils.mappingFruizionePortaDelegataList(con, this.driverConfigDB.getTipoDB(), idFruitore, idServizio, true);
+
+			if(mappings != null && !mappings.isEmpty()) {
+				int abilitati = 0;
+				List<GruppoStato> gruppi = new java.util.ArrayList<>();
+				for(MappingFruizionePortaDelegata mapping : mappings) {
+					IDPortaDelegata idPD = mapping.getIdPortaDelegata();
+					org.openspcoop2.core.config.PortaDelegata pdConfig = this.driverConfigDB.getPortaDelegata(idPD);
+					boolean abilitato = pdConfig.getStato() == null ||
+							org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO.equals(pdConfig.getStato());
+					if(abilitato) abilitati++;
+					gruppi.add(new GruppoStato(
+							mapping.getDescrizione() != null ? mapping.getDescrizione() : mapping.getNome(),
+							abilitato, pdConfig.getId(), pdConfig.getNome(), mapping.isDefault()));
+				}
+				config.setGruppiStati(gruppi);
+				config.setNumeroGruppi(mappings.size());
+				if(abilitati == mappings.size()) {
+					config.setStatoComplessivo("green");
+				} else if(abilitati == 0) {
+					config.setStatoComplessivo("red");
+				} else {
+					config.setStatoComplessivo("yellow");
+				}
+			} else {
+				boolean abilitato = portaDelegata.getStato() == null || "abilitato".equals(portaDelegata.getStato());
+				config.setStatoComplessivo(abilitato ? "green" : "red");
+			}
+		} catch(Exception e) {
+			log.error("Errore nel calcolo stato complessivo PD: " + e.getMessage(), e);
+			boolean abilitato = portaDelegata.getStato() == null || "abilitato".equals(portaDelegata.getStato());
+			config.setStatoComplessivo(abilitato ? "green" : "red");
+		} finally {
+			this.driverConfigDB.releaseConnection(con);
+		}
 	}
 
 	private void impostaTipiCompatibiliConProtocollo(IServiceSearchWithId<?, ?> dao, PortaDelegataModel model,	IExpression expr, String protocollo) throws ExpressionNotImplementedException, ExpressionException {

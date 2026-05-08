@@ -155,6 +155,7 @@
 				<include name="log4j2.properties" />
 				<include name="messages_it.properties" />
 				<include name="monitor.jcs.properties" />
+				<include name="monitor.audit.log4j2.properties" />
 			</classes>
 			<classes dir="${build_govwayMonitor}/tmp">
 				<include name="daoFactory.properties" />

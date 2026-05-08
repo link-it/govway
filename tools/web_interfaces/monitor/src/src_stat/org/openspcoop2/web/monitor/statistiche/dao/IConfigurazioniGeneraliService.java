@@ -46,4 +46,6 @@ ConfigurazioniGeneraliSearchForm> {
 	List<ConfigurazioneGenerale> findAllDettagli(int start, int limit);
 	
 	public List<ConfigurazioneGenerale> findConfigurazioniFiglie(String nomePorta, PddRuolo ruolo) throws ServiceException;
+
+	public void toggleStatoPorta(String nomePorta, PddRuolo ruolo, boolean enable, String utente) throws ServiceException;
 }

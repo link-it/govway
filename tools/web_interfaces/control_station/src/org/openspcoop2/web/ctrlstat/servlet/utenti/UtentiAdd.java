@@ -142,6 +142,7 @@ public final class UtentiAdd extends Action {
 			String isServizi = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_SERVIZI);
 			String isDiagnostica = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_DIAGNOSTICA);
 			String isReportistica = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_REPORTISTICA);
+			String isOperativitaApi = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_OPERATIVITA_API);
 			String isSistema = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_SISTEMA);
 			String isMessaggi = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_MESSAGGI);
 			String isUtenti = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_UTENTI);
@@ -217,7 +218,7 @@ public final class UtentiAdd extends Action {
 				
 				utentiHelper.addUtentiToDati(dati, TipoOperazione.ADD, singlePdD,
 						nomesu,pwsu,interfaceType,
-						isServizi,isDiagnostica,isReportistica,isSistema,isMessaggi,isUtenti,isAuditing,isAccordiCooperazione,
+						isServizi,isDiagnostica,isReportistica,isOperativitaApi,isSistema,isMessaggi,isUtenti,isAuditing,isAccordiCooperazione,
 						null,modalitaScelte, isSoggettiAll, isServiziAll, null, scadenza, null, false,
 						tipoModalitaConsoleGestione, idSoggettoConsoleGestione, tipoModalitaConsoleMonitoraggio, idSoggettoConsoleMonitoraggio,
 						homePageMonitoraggio, intervalloTemporaleHomePageConsoleMonitoraggio);
@@ -247,7 +248,7 @@ public final class UtentiAdd extends Action {
 	
 				utentiHelper.addUtentiToDati(dati, TipoOperazione.ADD, singlePdD,
 						nomesu,pwsu,interfaceType,
-						isServizi,isDiagnostica,isReportistica,isSistema,isMessaggi,isUtenti,isAuditing,isAccordiCooperazione,
+						isServizi,isDiagnostica,isReportistica,isOperativitaApi,isSistema,isMessaggi,isUtenti,isAuditing,isAccordiCooperazione,
 						null,modalitaScelte, isSoggettiAll, isServiziAll, null, scadenza, null, false,
 						tipoModalitaConsoleGestione, idSoggettoConsoleGestione, tipoModalitaConsoleMonitoraggio, idSoggettoConsoleMonitoraggio,
 						homePageMonitoraggio, intervalloTemporaleHomePageConsoleMonitoraggio);
@@ -297,6 +298,12 @@ public final class UtentiAdd extends Action {
 				else
 					puString = puString+","+Permessi.REPORTISTICA.toString();
 			}
+			if (ServletUtils.isCheckBoxEnabled(isOperativitaApi)) {
+				if (puString.equals(""))
+					puString = Permessi.OPERATIVITA_API.toString();
+				else
+					puString = puString+","+Permessi.OPERATIVITA_API.toString();
+			}
 			if (ServletUtils.isCheckBoxEnabled(isSistema)) {
 				if (puString.equals(""))
 					puString = Permessi.SISTEMA.toString();
@@ -338,7 +345,7 @@ public final class UtentiAdd extends Action {
 				} 
 			}
 			
-			if (ServletUtils.isCheckBoxEnabled(isDiagnostica) || ServletUtils.isCheckBoxEnabled(isReportistica)) {
+			if (ServletUtils.isCheckBoxEnabled(isDiagnostica) || ServletUtils.isCheckBoxEnabled(isReportistica) || ServletUtils.isCheckBoxEnabled(isOperativitaApi)) {
 				if(utentiCore.isMultitenant()) {
 					newU.setPermitAllSoggetti(ServletUtils.isCheckBoxEnabled(isSoggettiAll));
 				}

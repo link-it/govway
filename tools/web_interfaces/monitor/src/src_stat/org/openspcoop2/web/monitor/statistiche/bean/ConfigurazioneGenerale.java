@@ -20,6 +20,8 @@
 package org.openspcoop2.web.monitor.statistiche.bean;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.openspcoop2.core.transazioni.constants.PddRuolo;
 
@@ -57,6 +59,11 @@ public class ConfigurazioneGenerale implements Serializable {
 	
 	private DettaglioPA pa = null;
 	private DettaglioPD pd = null;
+
+	// Stato complessivo per colonna Stato (green/red/yellow)
+	private String statoComplessivo = null;
+	private List<GruppoStato> gruppiStati = new ArrayList<>();
+	private int numeroGruppi = 1;
 	
 	public ConfigurazioneGenerale(){
 		this.label = "";
@@ -190,6 +197,50 @@ public class ConfigurazioneGenerale implements Serializable {
 	public void setProtocollo(String protocollo) {
 		this.protocollo = protocollo;
 	}
-	
-	
+
+	public String getStatoComplessivo() {
+		return this.statoComplessivo;
+	}
+
+	public void setStatoComplessivo(String statoComplessivo) {
+		this.statoComplessivo = statoComplessivo;
+	}
+
+	public List<GruppoStato> getGruppiStati() {
+		return this.gruppiStati;
+	}
+
+	public void setGruppiStati(List<GruppoStato> gruppiStati) {
+		this.gruppiStati = gruppiStati;
+	}
+
+	public int getNumeroGruppi() {
+		return this.numeroGruppi;
+	}
+
+	public void setNumeroGruppi(int numeroGruppi) {
+		this.numeroGruppi = numeroGruppi;
+	}
+
+	public String getStatoImmagine() {
+		if("green".equals(this.statoComplessivo)) {
+			return "/images/tema_link/status_green.png";
+		} else if("red".equals(this.statoComplessivo)) {
+			return "/images/tema_link/status_red.png";
+		} else if("yellow".equals(this.statoComplessivo)) {
+			return "/images/tema_link/status_yellow.png";
+		}
+		return "/images/tema_link/status_grey.png";
+	}
+
+	public String getStatoTooltip() {
+		if("green".equals(this.statoComplessivo)) {
+			return "Abilitato";
+		} else if("red".equals(this.statoComplessivo)) {
+			return "Disabilitato";
+		} else if("yellow".equals(this.statoComplessivo)) {
+			return "Alcuni gruppi dell'API sono disabilitati";
+		}
+		return "";
+	}
 }

@@ -83,26 +83,30 @@ public class UtentiHelper extends ConsoleHelper {
 		super(core, request, pd, session);
 	}
 
-	private boolean hasOnlyPermessiUtenti(String isServizi,String isDiagnostica,String isReportistica,String isSistema,String isMessaggi,
+	private boolean hasOnlyPermessiUtenti(String isServizi,String isDiagnostica,String isReportistica,String isOperativitaApi,String isSistema,String isMessaggi,
 			String isUtenti,String isAuditing, String isAccordiCooperazione,boolean singlePdD) {
 		return (
 				(
-						(isServizi == null) 
-						|| 
+						(isServizi == null)
+						||
 						!ServletUtils.isCheckBoxEnabled(isServizi)
 				) &&
 				(
-						!singlePdD 
-						|| 
+						!singlePdD
+						||
 						(
-								//singlePdD 
-								//&& 
+								//singlePdD
+								//&&
 								(
 										(isDiagnostica == null) || !ServletUtils.isCheckBoxEnabled(isDiagnostica)
 								)
-								&& 
+								&&
 								(
 										(isReportistica == null) || !ServletUtils.isCheckBoxEnabled(isReportistica)
+								)
+								&&
+								(
+										(isOperativitaApi == null) || !ServletUtils.isCheckBoxEnabled(isOperativitaApi)
 								)
 						)
 				) &&
@@ -130,7 +134,7 @@ public class UtentiHelper extends ConsoleHelper {
 	
 	public List<DataElement> addUtentiToDati(List<DataElement> dati,TipoOperazione tipoOperazione,boolean singlePdD,
 			String nomesu,String pwsu, InterfaceType interfaceType,
-			String isServizi,String isDiagnostica,String isReportistica,String isSistema,String isMessaggi,String isUtenti,String isAuditing, String isAccordiCooperazione,
+			String isServizi,String isDiagnostica,String isReportistica,String isOperativitaApi,String isSistema,String isMessaggi,String isUtenti,String isAuditing, String isAccordiCooperazione,
 			String changepwd, String [] modalitaGateway,
 			String isSoggettiAll, String isServiziAll, User oldImgUser, String scadenza, Date dataUltimoAggiornamentoPassword , boolean oldScadenza, 
 			String profiloDefaultConsoleGestione, String soggettoDefaultConsoleGestione, 
@@ -143,6 +147,7 @@ public class UtentiHelper extends ConsoleHelper {
 				!ServletUtils.isCheckBoxEnabled(isAccordiCooperazione) &&
 				!ServletUtils.isCheckBoxEnabled(isDiagnostica) &&
 				!ServletUtils.isCheckBoxEnabled(isReportistica) &&
+				!ServletUtils.isCheckBoxEnabled(isOperativitaApi) &&
 				!ServletUtils.isCheckBoxEnabled(isSistema) &&
 				!ServletUtils.isCheckBoxEnabled(isMessaggi) &&
 				!ServletUtils.isCheckBoxEnabled(isAuditing);
@@ -231,7 +236,20 @@ public class UtentiHelper extends ConsoleHelper {
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_IS_REPORTISTICA);
 		de.setPostBack(true);
 		dati.add(de);
-		
+
+		de = new DataElement();
+		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_OPERATIVITA_API);
+		if (singlePdD) {
+			de.setType(DataElementType.CHECKBOX);
+			ServletUtils.setCheckBox(de, isOperativitaApi);
+		} else {
+			de.setType(DataElementType.HIDDEN);
+			de.setValue("");
+		}
+		de.setName(UtentiCostanti.PARAMETRO_UTENTI_IS_OPERATIVITA_API);
+		de.setPostBack(true);
+		dati.add(de);
+
 		de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_STRUMENTI_SUBSECTION);
 		de.setType(DataElementType.SUBTITLE);
@@ -307,8 +325,9 @@ public class UtentiHelper extends ConsoleHelper {
 
 		boolean isDiagnosticaEnabled = ServletUtils.isCheckBoxEnabled(isDiagnostica);
 		boolean isReportisticaEnabled = ServletUtils.isCheckBoxEnabled(isReportistica);
-		
-		if(isDiagnosticaEnabled || isReportisticaEnabled) {
+		boolean isOperativitaApiEnabled = ServletUtils.isCheckBoxEnabled(isOperativitaApi);
+
+		if(isDiagnosticaEnabled || isReportisticaEnabled || isOperativitaApiEnabled) {
 		
 			de = new DataElement();
 			de.setLabel(UtentiCostanti.LABEL_VISIBILITA_DATI_GOVWAY_MONITOR);
@@ -402,7 +421,7 @@ public class UtentiHelper extends ConsoleHelper {
 				ServletUtils.isCheckBoxEnabled(isUtenti) ||				
 				ServletUtils.isCheckBoxEnabled(isAccordiCooperazione);
 		
-		boolean utenteMonitorEnabled = isDiagnosticaEnabled || isReportisticaEnabled;
+		boolean utenteMonitorEnabled = isDiagnosticaEnabled || isReportisticaEnabled || isOperativitaApiEnabled;
 		
 		if(utenteConsoleEnabled || utenteMonitorEnabled) {
 		
@@ -764,16 +783,53 @@ public class UtentiHelper extends ConsoleHelper {
 				}
 				
 				// Home page console di monitoraggio
-				de = new DataElement();
-				de.setType(DataElementType.SELECT);
-				de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO);
-				String[] homePageLabels = { UtentiCostanti.LABEL_VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_TRANSAZIONI, UtentiCostanti.LABEL_VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_STATISTICHE };
-				de.setValues(UtentiCostanti.getValuesParametroUtentiHomePageMonitoraggio());
-				de.setLabels(homePageLabels);
-				de.setName(UtentiCostanti.PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO);
-				de.setPostBack(true);
-				de.setSelected(homePageMonitoraggio);
-				dati.add(de);
+				// Le opzioni dipendono dai diritti selezionati: D->transazioni, R->summary, O->configurazioniGenerali
+				List<String> homePageValues = new ArrayList<>();
+				List<String> homePageLabelList = new ArrayList<>();
+				if (isDiagnosticaEnabled) {
+					homePageValues.add(UtentiCostanti.VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_TRANSAZIONI);
+					homePageLabelList.add(UtentiCostanti.LABEL_VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_TRANSAZIONI);
+				}
+				if (isReportisticaEnabled) {
+					homePageValues.add(UtentiCostanti.VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_STATISTICHE);
+					homePageLabelList.add(UtentiCostanti.LABEL_VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_STATISTICHE);
+				}
+				if (isOperativitaApiEnabled) {
+					homePageValues.add(UtentiCostanti.VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_CONFIGURAZIONI_GENERALI);
+					homePageLabelList.add(UtentiCostanti.LABEL_VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_CONFIGURAZIONI_GENERALI);
+				}
+
+				// Se la selezione corrente non e' piu' tra le opzioni disponibili, fallback alla prima
+				if (!homePageValues.isEmpty() && !homePageValues.contains(homePageMonitoraggio)) {
+					homePageMonitoraggio = homePageValues.get(0);
+				}
+
+				if (homePageValues.size() == 1) {
+					// un solo diritto attivo: mostro la home come label e campo hidden per il submit
+					de = new DataElement();
+					de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO);
+					de.setType(DataElementType.HIDDEN);
+					de.setName(UtentiCostanti.PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO);
+					de.setValue(homePageMonitoraggio);
+					dati.add(de);
+
+					de = new DataElement();
+					de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO);
+					de.setType(DataElementType.TEXT);
+					de.setName(UtentiCostanti.PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO + "_txt");
+					de.setValue(homePageLabelList.get(0));
+					dati.add(de);
+				} else {
+					de = new DataElement();
+					de.setType(DataElementType.SELECT);
+					de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO);
+					de.setValues(homePageValues);
+					de.setLabels(homePageLabelList);
+					de.setName(UtentiCostanti.PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO);
+					de.setPostBack(true);
+					de.setSelected(homePageMonitoraggio);
+					dati.add(de);
+				}
 				
 				// select per la selezione dell'intervallo temporale del grafico della home
 				if(homePageMonitoraggio.equals(UtentiCostanti.VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_STATISTICHE)) {
@@ -957,7 +1013,7 @@ public class UtentiHelper extends ConsoleHelper {
 
 	public void addChangeUtenteInfoToDati(List<DataElement> dati,
 			String nomesu,String changepwd,String pwsu,InterfaceType interfaceType,
-			String isServizi,String isDiagnostica,String isReportistica, String isSistema,String isMessaggi,String isUtenti,String isAuditing, String isAccordiCooperazione,
+			String isServizi,String isDiagnostica,String isReportistica, String isOperativitaApi, String isSistema,String isMessaggi,String isUtenti,String isAuditing, String isAccordiCooperazione,
 			boolean scegliSuServizi,
 			String [] uws, boolean scegliSuAccordi,String [] uwp, String [] modalitaGateway, 
 			String profiloDefaultConsoleGestione, String soggettoDefaultConsoleGestione, 
@@ -1070,7 +1126,14 @@ public class UtentiHelper extends ConsoleHelper {
 		de.setType(DataElementType.HIDDEN);
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_IS_REPORTISTICA);
 		dati.add(de);
-		
+
+		de = new DataElement();
+		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_OPERATIVITA_API);
+		de.setValue(isOperativitaApi);
+		de.setType(DataElementType.HIDDEN);
+		de.setName(UtentiCostanti.PARAMETRO_UTENTI_IS_OPERATIVITA_API);
+		dati.add(de);
+
 		de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_UTENTI);
 		de.setValue(isUtenti);
@@ -1448,6 +1511,7 @@ public class UtentiHelper extends ConsoleHelper {
 			String isServizi = this.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_SERVIZI);
 			String isDiagnostica = this.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_DIAGNOSTICA);
 			String isReportistica = this.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_REPORTISTICA);
+			String isOperativitaApi = this.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_OPERATIVITA_API);
 			String isSistema = this.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_SISTEMA);
 			String isMessaggi = this.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_MESSAGGI);
 			String isUtenti = this.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_UTENTI);
@@ -1637,21 +1701,24 @@ public class UtentiHelper extends ConsoleHelper {
 				}
 				
 				// Controlli su soggetti/servizi associati
-				//1. l'utente aveva un permesso di tipo 'D' e' stato eliminato, devo controllare che non abbia soggetti/servizi associati
+				//1. l'utente aveva un permesso di tipo 'D'/'R'/'O' che e' stato eliminato, devo controllare che non abbia soggetti/servizi associati
 				if(
 						(isDiagnostica == null || !ServletUtils.isCheckBoxEnabled(isDiagnostica))
 						&&
 						(isReportistica == null || !ServletUtils.isCheckBoxEnabled(isReportistica))
+						&&
+						(isOperativitaApi == null || !ServletUtils.isCheckBoxEnabled(isOperativitaApi))
 						){
-					
+
 					boolean oldDiagnostica = user.getPermessi().isDiagnostica();
 					boolean oldReportistica = user.getPermessi().isReportistica();
-						
-					if( (oldDiagnostica || oldReportistica) && !user.getServizi().isEmpty()) {
+					boolean oldOperativitaApi = user.getPermessi().isOperativitaApi();
+
+					if( (oldDiagnostica || oldReportistica || oldOperativitaApi) && !user.getServizi().isEmpty()) {
 						this.pd.setMessage("L'utente " + nomesu + " non pu&ograve; essere modificato poich&egrave; sono stati rilevate delle API registrate tra le restrizioni dell'utente");
 						return false;
 					}
-					if( (oldDiagnostica || oldReportistica) && !user.getSoggetti().isEmpty()) {
+					if( (oldDiagnostica || oldReportistica || oldOperativitaApi) && !user.getSoggetti().isEmpty()) {
 						this.pd.setMessage("L'utente " + nomesu + " non pu&ograve; essere modificato poich&egrave; sono stati rilevati dei soggetti registrati tra le restrizioni dell'utente");
 						return false;
 					}
@@ -1716,17 +1783,21 @@ public class UtentiHelper extends ConsoleHelper {
 							(isServizi == null) || !ServletUtils.isCheckBoxEnabled(isServizi)
 					) &&
 					(
-							!singlePdD 
-							|| 
+							!singlePdD
+							||
 							(
-									//singlePdD 
-									//&& 
+									//singlePdD
+									//&&
 									(
 											(isDiagnostica == null) || !ServletUtils.isCheckBoxEnabled(isDiagnostica)
 									)
-									&& 
+									&&
 									(
 											(isReportistica == null) || !ServletUtils.isCheckBoxEnabled(isReportistica)
+									)
+									&&
+									(
+											(isOperativitaApi == null) || !ServletUtils.isCheckBoxEnabled(isOperativitaApi)
 									)
 							)
 					) &&
@@ -1749,7 +1820,7 @@ public class UtentiHelper extends ConsoleHelper {
 			}
 			
 			// se l'utenza che sto creando e' solo Utenti ignoro la modalita gateway
-			if(!hasOnlyPermessiUtenti(isServizi, isDiagnostica, isReportistica, isSistema, isMessaggi, isUtenti, isAuditing, isAccordiCooperazione, singlePdD)) {
+			if(!hasOnlyPermessiUtenti(isServizi, isDiagnostica, isReportistica, isOperativitaApi, isSistema, isMessaggi, isUtenti, isAuditing, isAccordiCooperazione, singlePdD)) {
 							
 				if(!modalitaPresenti) {
 					this.pd.setMessage("Selezionare almeno un "+org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO_DI_HTML_ESCAPE);

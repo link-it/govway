@@ -30,12 +30,15 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.transazioni.constants.PddRuolo;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
+import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.web.monitor.core.bean.UserDetailsBean;
 import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
@@ -44,6 +47,7 @@ import org.openspcoop2.web.monitor.core.utils.MessageUtils;
 import org.openspcoop2.web.monitor.statistiche.bean.ConfigurazioneGenerale;
 import org.openspcoop2.web.monitor.statistiche.bean.ConfigurazioneGeneralePK;
 import org.openspcoop2.web.monitor.statistiche.bean.ConfigurazioniGeneraliSearchForm;
+import org.openspcoop2.web.monitor.statistiche.bean.GruppoStato;
 import org.openspcoop2.web.monitor.statistiche.constants.CostantiConfigurazioni;
 import org.openspcoop2.web.monitor.statistiche.constants.CostantiExporter;
 import org.openspcoop2.web.monitor.statistiche.dao.IConfigurazioniGeneraliService;
@@ -60,6 +64,8 @@ import org.slf4j.Logger;
 public class ConfigurazioniGeneraliBean extends DynamicPdDBean<ConfigurazioneGenerale, ConfigurazioneGeneralePK,IConfigurazioniGeneraliService> { 
 
 
+	private static final String MSG_ERROR_NON_SI_DISPONE_DEI_PERMESSI_NECESSARI_PER_QUESTA_OPERAZIONE = "Non si dispone dei permessi necessari per questa operazione.";
+
 	/**
 	 * 
 	 */
@@ -74,6 +80,7 @@ public class ConfigurazioniGeneraliBean extends DynamicPdDBean<ConfigurazioneGen
 	private String exportCsvErrorMessage = null;
 	private List<SelectItem> exportDisponibili = null;
 	private String tipoExport = CostantiExporter.TIPO_FORMATO_CONFIGURAZIONE_CSV;
+	private String selectedKey = null;
 
 	public ConfigurazioniGeneraliBean(){
 		super();
@@ -214,7 +221,7 @@ public class ConfigurazioniGeneraliBean extends DynamicPdDBean<ConfigurazioneGen
 		this.labelInformazioniGenerali = labelInformazioniGenerali;
 	}
 
-	public String getLabelInformazioniServizi() throws Exception {
+	public String getLabelInformazioniServizi() throws CoreException, ProtocolException {
 		if(this.getSearch() != null){
 			String tipoProtocollo = this.getSearch().getProtocollo();
 			if (StringUtils.isNotBlank(this.getSearch().getNomeServizio())){
@@ -293,7 +300,7 @@ public class ConfigurazioniGeneraliBean extends DynamicPdDBean<ConfigurazioneGen
 //			}*/
 			
 			// se nn sono in select all allore prendo solo quelle selezionate
-			if (this.elencoID != null && this.elencoID.length() > 0) {
+			if (this.elencoID != null && !this.elencoID.isEmpty()) {
 				String [] split = this.elencoID.split(",");
 				
 				// NOTA: Al massimo sono selezionate 25 report
@@ -389,5 +396,267 @@ public class ConfigurazioniGeneraliBean extends DynamicPdDBean<ConfigurazioneGen
 
 	public void setTipoExport(String tipoExport) {
 		this.tipoExport = tipoExport;
+	}
+
+	// --- Operativita API: toggle stato ---
+
+	private ConfigurazioneGenerale elementoSelezionatoPerStato = null;
+	private List<GruppoStato> gruppiAbilitati = new ArrayList<>();
+	private List<GruppoStato> gruppiDisabilitati = new ArrayList<>();
+	// Liste SelectItem per il rich:listShuttle
+	private List<org.openspcoop2.web.monitor.core.bean.SelectItem> gruppiAbilitatiItems = new ArrayList<>();
+	private List<org.openspcoop2.web.monitor.core.bean.SelectItem> gruppiDisabilitatiItems = new ArrayList<>();
+
+	private boolean checkPermessoOperativitaApi() {
+		try {
+			FacesContext fc = FacesContext.getCurrentInstance();
+			HttpSession session = (HttpSession) fc.getExternalContext().getSession(false);
+			if(session != null) {
+				Object loginBeanObj = session.getAttribute(UserDetailsBean.class.getSimpleName().substring(0, 1).toLowerCase() + UserDetailsBean.class.getSimpleName().substring(1));
+				if(loginBeanObj == null) {
+					loginBeanObj = session.getAttribute("loginBean");
+				}
+				if(loginBeanObj instanceof org.openspcoop2.web.monitor.core.bean.AbstractLoginBean) {
+					org.openspcoop2.web.monitor.core.bean.AbstractLoginBean loginBean = (org.openspcoop2.web.monitor.core.bean.AbstractLoginBean) loginBeanObj;
+					if(loginBean.getLoggedUser() != null && loginBean.getLoggedUser().getUtente() != null) {
+						return loginBean.getLoggedUser().getUtente().getPermessi().isOperativitaApi();
+					}
+				}
+			}
+		} catch(Exception e) {
+			log.error("Errore nel controllo permesso operativita API: " + e.getMessage(), e);
+		}
+		return false;
+	}
+
+	private String getUtenteCorrente() {
+		try {
+			FacesContext fc = FacesContext.getCurrentInstance();
+			HttpSession session = (HttpSession) fc.getExternalContext().getSession(false);
+			if(session != null) {
+				Object loginBeanObj = session.getAttribute("loginBean");
+				if(loginBeanObj instanceof org.openspcoop2.web.monitor.core.bean.AbstractLoginBean) {
+					org.openspcoop2.web.monitor.core.bean.AbstractLoginBean loginBean = (org.openspcoop2.web.monitor.core.bean.AbstractLoginBean) loginBeanObj;
+					if(loginBean.getLoggedUser() != null && loginBean.getLoggedUser().getUtente() != null) {
+						return loginBean.getLoggedUser().getUtente().getLogin();
+					}
+				}
+			}
+		} catch(Exception e) {
+			log.error("Errore nel recupero utente corrente: " + e.getMessage(), e);
+		}
+		return "unknown";
+	}
+	
+	public void initToggleStato(ActionEvent ae) {
+		if(!checkPermessoOperativitaApi()) {
+			MessageUtils.addErrorMsg(MSG_ERROR_NON_SI_DISPONE_DEI_PERMESSI_NECESSARI_PER_QUESTA_OPERAZIONE);
+			return;
+		}
+		
+		// reset variabili
+		this.annullaCambioStato();
+	}
+
+	public void preparaToggleStato(ActionEvent ae) {
+		if(!checkPermessoOperativitaApi()) {
+			MessageUtils.addErrorMsg(MSG_ERROR_NON_SI_DISPONE_DEI_PERMESSI_NECESSARI_PER_QUESTA_OPERAZIONE);
+			return;
+		}
+
+		// Cerco l'elemento dalla lista usando toggleDbId e toggleRuolo (settati da a4j:actionparam)
+		this.elementoSelezionatoPerStato = null;
+		if(this.selectedKey != null) {
+			try {
+				ConfigurazioneGeneralePK pk = new ConfigurazioneGeneralePK(this.selectedKey);
+				this.elementoSelezionatoPerStato = this.service.findById(pk);
+			} catch(Exception e) {
+				log.error("preparaToggleStato: errore nel recupero elemento con key [{}]: {}",
+						this.selectedKey, e.getMessage(), e);
+			}
+		}
+
+		if(this.elementoSelezionatoPerStato != null) {
+			log.debug("preparaToggleStato: API [{}] ruolo [{}] gruppi [{}] statoComplessivo [{}]",
+					this.elementoSelezionatoPerStato.getServizio(),
+					this.elementoSelezionatoPerStato.getRuolo(),
+					this.elementoSelezionatoPerStato.getNumeroGruppi(),
+					this.elementoSelezionatoPerStato.getStatoComplessivo());
+		}
+
+		if(this.elementoSelezionatoPerStato != null) {
+			this.gruppiAbilitati = new ArrayList<>();
+			this.gruppiDisabilitati = new ArrayList<>();
+			this.gruppiAbilitatiItems = new ArrayList<>();
+			this.gruppiDisabilitatiItems = new ArrayList<>();
+			for(GruppoStato gs : this.elementoSelezionatoPerStato.getGruppiStati()) {
+				org.openspcoop2.web.monitor.core.bean.SelectItem si =
+						new org.openspcoop2.web.monitor.core.bean.SelectItem(gs.getNomePorta(), gs.getNomeGruppo());
+				if(gs.isAbilitato()) {
+					this.gruppiAbilitati.add(gs);
+					this.gruppiAbilitatiItems.add(si);
+				} else {
+					this.gruppiDisabilitati.add(gs);
+					this.gruppiDisabilitatiItems.add(si);
+				}
+			}
+		}
+	}
+
+	public void confermaCambioStato() {
+		if(!checkPermessoOperativitaApi()) {
+			MessageUtils.addErrorMsg(MSG_ERROR_NON_SI_DISPONE_DEI_PERMESSI_NECESSARI_PER_QUESTA_OPERAZIONE);
+			return;
+		}
+
+		if(this.elementoSelezionatoPerStato == null) return;
+
+		try {
+			// Single group: toggle the state
+			List<GruppoStato> gruppi = this.elementoSelezionatoPerStato.getGruppiStati();
+			if(!gruppi.isEmpty()) {
+				GruppoStato gs = gruppi.get(0);
+				boolean nuovoStato = !gs.isAbilitato();
+				log.info("confermaCambioStato: porta [{}] ruolo [{}] statoAttuale [{}] nuovoStato [{}] utente [{}]",
+						gs.getNomePorta(), this.elementoSelezionatoPerStato.getRuolo(),
+						gs.isAbilitato() ? "abilitato" : "disabilitato",
+						nuovoStato ? "abilitato" : "disabilitato",
+						getUtenteCorrente());
+				this.service.toggleStatoPorta(gs.getNomePorta(), this.elementoSelezionatoPerStato.getRuolo(), nuovoStato, getUtenteCorrente());
+				log.info("confermaCambioStato: operazione completata con successo per porta [{}]", gs.getNomePorta());
+				MessageUtils.addInfoMsg("Stato aggiornato con successo.");
+			}
+		} catch(Exception e) {
+			log.error("Errore durante il cambio stato: " + e.getMessage(), e);
+			MessageUtils.addErrorMsg("Errore durante il cambio stato: " + e.getMessage());
+		}
+	}
+
+	public String confermaCambioStatoAction() {
+		this.confermaCambioStato();
+		return null;
+	}
+
+	public String salvaStatoGruppiAction() {
+		this.salvaStatoGruppi();
+		return null;
+	}
+
+	public void salvaStatoGruppi() {
+		if(!checkPermessoOperativitaApi()) {
+			MessageUtils.addErrorMsg(MSG_ERROR_NON_SI_DISPONE_DEI_PERMESSI_NECESSARI_PER_QUESTA_OPERAZIONE);
+			return;
+		}
+
+		if(this.elementoSelezionatoPerStato == null) return;
+
+		try {
+			int modificati = 0;
+			String utente = getUtenteCorrente();
+			log.info("salvaStatoGruppi: inizio aggiornamento per API [{}] ruolo [{}] utente [{}]",
+					this.elementoSelezionatoPerStato.getServizio(),
+					this.elementoSelezionatoPerStato.getRuolo(), utente);
+			// Calcola diff: confronta stato iniziale con stato richiesto
+			// gruppiAbilitatiItems contiene i SelectItem nella lista target del listShuttle (value = nomePorta)
+			for(GruppoStato gsOriginale : this.elementoSelezionatoPerStato.getGruppiStati()) {
+				boolean nuovoStatoAbilitato = this.gruppiAbilitatiItems.stream()
+						.anyMatch(si -> si.getValue().equals(gsOriginale.getNomePorta()));
+				if(nuovoStatoAbilitato != gsOriginale.isAbilitato()) {
+					log.info("salvaStatoGruppi: gruppo [{}] porta [{}] cambio stato da [{}] a [{}]",
+							gsOriginale.getNomeGruppo(), gsOriginale.getNomePorta(),
+							gsOriginale.isAbilitato() ? "abilitato" : "disabilitato",
+							nuovoStatoAbilitato ? "abilitato" : "disabilitato");
+					this.service.toggleStatoPorta(gsOriginale.getNomePorta(),
+							this.elementoSelezionatoPerStato.getRuolo(), nuovoStatoAbilitato, utente);
+					modificati++;
+				} else {
+					log.debug("salvaStatoGruppi: gruppo [{}] porta [{}] stato invariato [{}]",
+							gsOriginale.getNomeGruppo(), gsOriginale.getNomePorta(),
+							gsOriginale.isAbilitato() ? "abilitato" : "disabilitato");
+				}
+			}
+
+			log.info("salvaStatoGruppi: completato, gruppi modificati [{}]", modificati);
+			if(modificati > 0) {
+				MessageUtils.addInfoMsg("Stato aggiornato con successo.");
+			} else {
+				MessageUtils.addInfoMsg("Nessuna modifica da applicare.");
+			}
+		} catch(Exception e) {
+			log.error("Errore durante l'aggiornamento stato gruppi: " + e.getMessage(), e);
+			MessageUtils.addErrorMsg("Errore durante l'aggiornamento: " + e.getMessage());
+		}
+	}
+
+	public void annullaCambioStato() {
+		this.elementoSelezionatoPerStato = null;
+		this.gruppiAbilitati = new ArrayList<>();
+		this.gruppiDisabilitati = new ArrayList<>();
+		this.gruppiAbilitatiItems = new ArrayList<>();
+		this.gruppiDisabilitatiItems = new ArrayList<>();
+	}
+	
+	public void setSelectedKey(String selectedKey) {
+		this.selectedKey = selectedKey;
+	}
+	
+	public String getSelectedKey() {
+		return this.selectedKey;
+	}
+
+	public ConfigurazioneGenerale getElementoSelezionatoPerStato() {
+		return this.elementoSelezionatoPerStato;
+	}
+
+	public void setElementoSelezionatoPerStato(ConfigurazioneGenerale elementoSelezionatoPerStato) {
+		this.elementoSelezionatoPerStato = elementoSelezionatoPerStato;
+	}
+
+	public List<GruppoStato> getGruppiAbilitati() {
+		return this.gruppiAbilitati;
+	}
+
+	public void setGruppiAbilitati(List<GruppoStato> gruppiAbilitati) {
+		this.gruppiAbilitati = gruppiAbilitati;
+	}
+
+	public List<GruppoStato> getGruppiDisabilitati() {
+		return this.gruppiDisabilitati;
+	}
+
+	public void setGruppiDisabilitati(List<GruppoStato> gruppiDisabilitati) {
+		this.gruppiDisabilitati = gruppiDisabilitati;
+	}
+
+	public List<org.openspcoop2.web.monitor.core.bean.SelectItem> getGruppiAbilitatiItems() {
+		return this.gruppiAbilitatiItems;
+	}
+
+	public void setGruppiAbilitatiItems(List<org.openspcoop2.web.monitor.core.bean.SelectItem> gruppiAbilitatiItems) {
+		this.gruppiAbilitatiItems = gruppiAbilitatiItems;
+	}
+
+	public List<org.openspcoop2.web.monitor.core.bean.SelectItem> getGruppiDisabilitatiItems() {
+		return this.gruppiDisabilitatiItems;
+	}
+
+	public void setGruppiDisabilitatiItems(List<org.openspcoop2.web.monitor.core.bean.SelectItem> gruppiDisabilitatiItems) {
+		this.gruppiDisabilitatiItems = gruppiDisabilitatiItems;
+	}
+
+	public boolean isSingoloGruppo() {
+		return this.elementoSelezionatoPerStato != null && this.elementoSelezionatoPerStato.getNumeroGruppi() <= 1;
+	}
+
+	public String getMessaggioConfermaToggle() {
+		if(this.elementoSelezionatoPerStato == null) return "";
+		List<GruppoStato> gruppi = this.elementoSelezionatoPerStato.getGruppiStati();
+		if(!gruppi.isEmpty()) {
+			boolean attualmenteAbilitato = gruppi.get(0).isAbilitato();
+			String articolo = attualmenteAbilitato ? "la disabilitazione" : "l'abilitazione";
+			String nomeApi = this.elementoSelezionatoPerStato.getServizio();
+			return "Procedere con " + articolo + " dell'API " + nomeApi + "?";
+		}
+		return "";
 	}
 }

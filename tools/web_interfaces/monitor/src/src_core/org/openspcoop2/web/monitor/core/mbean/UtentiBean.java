@@ -701,12 +701,30 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 	}
 	
 	public String getHomePageUtente() {
+		String homePageSalvata = null;
 		for (Stato stato : this.user.getStati()) {
 			if(stato.getOggetto().equals(Costanti.OGGETTO_STATO_UTENTE_HOME_PAGE)) {
-				return Utils.extractValoreStato(stato.getStato());
+				homePageSalvata = Utils.extractValoreStato(stato.getStato());
+				break;
 			}
 		}
-		
+
+		// Se la home page salvata non e' tra le opzioni disponibili (es. utente con permessi cambiati),
+		// fallback alla prima home page disponibile, in modo che intervallo temporale e UI restino coerenti.
+		List<SelectItem> pagine = this.getHomePagesDisponibili();
+		if(!pagine.isEmpty()) {
+			for (SelectItem item : pagine) {
+				if(item.getValue().equals(homePageSalvata)) {
+					return homePageSalvata;
+				}
+			}
+			return (String) pagine.get(0).getValue();
+		}
+
+		if(homePageSalvata != null) {
+			return homePageSalvata;
+		}
+
 		return Costanti.VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_TRANSAZIONI;
 	}
 
@@ -736,11 +754,39 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 	
 	public List<SelectItem> getHomePagesDisponibili() {
 		List<SelectItem> pagine = new ArrayList<>();
-		
-		pagine.add(new SelectItem(Costanti.VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_TRANSAZIONI, MessageManager.getInstance().getMessage(Costanti.LABEL_VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_TRANSAZIONI_KEY)));
-		pagine.add(new SelectItem(Costanti.VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_STATISTICHE, MessageManager.getInstance().getMessage(Costanti.LABEL_VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_STATISTICHE_KEY)));
-		
-		return pagine;   
+
+		// Le pagine disponibili dipendono dai diritti dell'utente: D->transazioni, R->summary, O->configurazioniGenerali
+		if(this.user != null && this.user.getPermessi() != null && this.user.getPermessi().isDiagnostica()) {
+			pagine.add(new SelectItem(Costanti.VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_TRANSAZIONI, MessageManager.getInstance().getMessage(Costanti.LABEL_VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_TRANSAZIONI_KEY)));
+		}
+		if(this.user != null && this.user.getPermessi() != null && this.user.getPermessi().isReportistica()) {
+			pagine.add(new SelectItem(Costanti.VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_STATISTICHE, MessageManager.getInstance().getMessage(Costanti.LABEL_VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_STATISTICHE_KEY)));
+		}
+		if(this.user != null && this.user.getPermessi() != null && this.user.getPermessi().isOperativitaApi()) {
+			pagine.add(new SelectItem(Costanti.VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_CONFIGURAZIONI_GENERALI, MessageManager.getInstance().getMessage(Costanti.LABEL_VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_CONFIGURAZIONI_GENERALI_KEY)));
+		}
+
+		return pagine;
+	}
+
+	public boolean isVisualizzaSezioneHomePage() {
+		return !this.getHomePagesDisponibili().isEmpty();
+	}
+
+	public void setVisualizzaSezioneHomePage(boolean visualizzaSezioneHomePage) { /* metodo vuoto creato per esigenze di framework */ }
+
+	public boolean isVisualizzaSelectHomePagesDisponibili() {
+		return this.getHomePagesDisponibili().size() > 1;
+	}
+
+	public void setVisualizzaSelectHomePagesDisponibili(boolean visualizzaSelectHomePagesDisponibili) { /* metodo vuoto creato per esigenze di framework */ }
+
+	public String getHomePageDefaultLabel() {
+		List<SelectItem> pagine = this.getHomePagesDisponibili();
+		if(pagine.isEmpty()) {
+			return "";
+		}
+		return pagine.get(0).getLabel();
 	}
 	
 	public List<SelectItem> getIntervalliTemporaliDisponibili() {
@@ -756,18 +802,8 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 	}
 	
 	public boolean isVisualizzaSelectIntervalloTemporale() {
-		boolean visualizzaSelectIntervalloTemporale = false;
-		
-		for (Stato stato : this.user.getStati()) {
-			if(stato.getOggetto().equals(Costanti.OGGETTO_STATO_UTENTE_HOME_PAGE)) {
-				if(Utils.extractValoreStato(stato.getStato()).equals(Costanti.VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_STATISTICHE)) {
-					visualizzaSelectIntervalloTemporale = true;
-				}
-				break;
-			}
-		}
-		
-		return visualizzaSelectIntervalloTemporale;
+		// L'intervallo temporale ha senso solo se la home page corrente e' "Report Statistico" (summary).
+		return Costanti.VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_STATISTICHE.equals(this.getHomePageUtente());
 	}
 
 	public void setVisualizzaSelectIntervalloTemporale(boolean visualizzaSelectIntervalloTemporale) { /* metodo vuoto creato per esigenze di framework */ }

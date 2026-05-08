@@ -373,6 +373,9 @@ public class LoginBean extends AbstractLoginBean {
 			else if(homePage.equals(Costanti.VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_TRANSAZIONI)) {
 				return Costanti.OUTCOME_TRANSAZIONI_START;
 			}
+			else if(homePage.equals(Costanti.VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_CONFIGURAZIONI_GENERALI)) {
+				return Costanti.OUTCOME_CONFIGURAZIONI_GENERALI;
+			}
 		}
 
 		return Costanti.OUTCOME_TRANSAZIONI_START;

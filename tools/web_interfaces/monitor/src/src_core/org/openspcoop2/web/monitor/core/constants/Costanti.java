@@ -119,6 +119,7 @@ public class Costanti {
 	public static final String OUTCOME_MODALITA = "modalita";
 	public static final String OUTCOME_TRANSAZIONI_START = "transazioniStart";
 	public static final String OUTCOME_LOGIN_SUCCESS = "loginSuccess";
+	public static final String OUTCOME_CONFIGURAZIONI_GENERALI = "configurazioniGenerali";
 	public static final String OUTCOME_LOGIN_USER_INVALID = "loginUserInvalid";
 	public static final String OUTCOME_LOGIN_ERROR = "loginError";
 	public static final String OUTCOME_LOGIN = "login";
@@ -202,6 +203,7 @@ public class Costanti {
 	
 	public static final String LABEL_VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_TRANSAZIONI_KEY = "utenti.profilo.homePage.transazioni";
 	public static final String LABEL_VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_STATISTICHE_KEY = "utenti.profilo.homePage.statistiche";
+	public static final String LABEL_VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_CONFIGURAZIONI_GENERALI_KEY = "utenti.profilo.homePage.configurazioniGenerali";
 	
 	public static final String LABEL_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_NO_GRAFICO_KEY = "utenti.profilo.intervalloTemporaleHomePage.noGrafico";
 	public static final String LABEL_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIME_24_ORE_KEY = "utenti.profilo.intervalloTemporaleHomePage.ultime24ore";
@@ -211,6 +213,7 @@ public class Costanti {
 	
 	public static final String VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_TRANSAZIONI = "transazioni";
 	public static final String VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_STATISTICHE = "summary";
+	public static final String VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_CONFIGURAZIONI_GENERALI = "configurazioniGenerali";
 	
 	public static final String VALUE_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_NO_GRAFICO = "--";
 	public static final String VALUE_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIME_24_ORE = "Ultime 24 ore";

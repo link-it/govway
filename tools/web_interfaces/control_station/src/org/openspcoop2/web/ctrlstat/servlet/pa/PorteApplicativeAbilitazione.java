@@ -162,16 +162,17 @@ public final class PorteApplicativeAbilitazione extends Action {
 				pa.setOldIDPortaApplicativaForUpdate(oldIDPortaApplicativaForUpdate);
 				
 				 // cambio solo la modalita'
-	            if(ServletUtils.isCheckBoxEnabled(changeAbilitato)) {
+	            boolean abilita = ServletUtils.isCheckBoxEnabled(changeAbilitato);
+	            if(abilita) {
 	                pa.setStato(StatoFunzionalita.ABILITATO);
 	            }
 	            else{
 	                pa.setStato(StatoFunzionalita.DISABILITATO);
 	            }
-				
+
 				String userLogin = ServletUtils.getUserLoginFromSession(session);
-	
-				porteApplicativeCore.performUpdateOperation(userLogin, porteApplicativeHelper.smista(), pa);
+
+				porteApplicativeCore.performUpdateOperationCambioStato(userLogin, porteApplicativeHelper.smista(), abilita, pa);
 				
 				List<String> aliasJmx = porteApplicativeCore.getJmxPdDAliases();
 				if(aliasJmx!=null && !aliasJmx.isEmpty()) {
