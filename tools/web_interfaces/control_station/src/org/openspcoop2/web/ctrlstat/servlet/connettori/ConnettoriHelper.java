@@ -1797,7 +1797,6 @@ public class ConnettoriHelper extends ConsoleHelper {
 						
 						de.setType(DataElementType.HIDDEN);
 						de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
-						de.setValue(null); // non mando in pagina una password cifrata
 					}
 					
 					if( (!change) || (!passwordCifrata) || (ServletUtils.isCheckBoxEnabled(changepwd)) ){

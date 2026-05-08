@@ -1,3 +1,10 @@
+2026-05-08 Giuliano Pintori <pintori@link.it>
+
+	* [GovWayMonitor]
+	Risolto Bug #1765
+	Risolta un'anomalia nella maschera di editing di applicativi e soggetti configurati con credenziali http-basic: 
+	il salvataggio della configurazione, in assenza di modifiche al campo password, causava la cancellazione della password precedentemente impostata.
+
 2026-05-06  Andrea Poli <apoli@link.it>
 
 	* [GovWayMonitor]                 
@@ -9,7 +16,7 @@
 2026-05-06  Andrea Poli <apoli@link.it>
 
 	* [ProtocolloModIPA, Documentazione]
-	Risolto Bug 1760
+	Risolto Bug #1760
 	Risolte le seguenti anomalie relative al supporto Signal-Hub di PDND:
 	1) Formato 'cryptoHashFunction' non allineato all'identificativo standard JCA
 	   La risorsa di pseudoanonimizzazione (REST e SOAP) restituiva nel campo 'cryptoHashFunction' il nome dell'enum interno 'DigestType' (ottenuto tramite Enum.toString())
