@@ -1,3 +1,9 @@
+2026-05-10  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolte le seguenti vulnerabilità relative ai jar di terza parte:
+	- CVE-2026-42579, CVE-2026-42583: aggiornata libreria 'io.netty:*' alla versione 4.1.133.Final
+
 2026-05-06  Andrea Poli <apoli@link.it>
 
 	* [ProtocolloModIPA, Documentazione]
