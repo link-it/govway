@@ -442,6 +442,11 @@
 				<matches string="${as}" pattern="wildfly27"/>
 				<matches string="${as}" pattern="wildfly28"/>
 				<matches string="${as}" pattern="wildfly29"/>
+				<matches string="${as}" pattern="wildfly35"/>
+				<matches string="${as}" pattern="wildfly36"/>
+				<matches string="${as}" pattern="wildfly37"/>
+				<matches string="${as}" pattern="wildfly38"/>
+				<matches string="${as}" pattern="wildfly39"/>
 			</or>
 			<then>
 				<!-- Creazione mailapi contenente il corretto mailcap per OpenSPCoopDataHandler -->

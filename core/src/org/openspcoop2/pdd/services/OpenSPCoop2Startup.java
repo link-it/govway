@@ -2857,7 +2857,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			try{
 				MailcapActivationReader.initDataContentHandler(OpenSPCoop2Startup.log,propertiesReader.isTunnelSOAP_loadMailcap());
 			}catch(Exception e){
-				msgDiag.logStartupError(e,"Inizializzazione DataContentHandler (MET-INF/mailcap)");
+				msgDiag.logStartupError(e,"Inizializzazione DataContentHandler (META-INF/jakarta.mailcap)");
 				return;
 			}
 		
