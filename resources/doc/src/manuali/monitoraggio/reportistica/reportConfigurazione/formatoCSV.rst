@@ -44,15 +44,21 @@ Di seguito il nome dell'header e il formato del valore inserito in ogni colonna.
 - 'AttributeAuthority (attributi)': per ogni AttributeAuthority configurato viene riportato il nome e la lista degli attributi da richiedere nel formato '<nomeAA>=<attributo1>,<attributo2>'.
 - 'Autorizzazione (Stato)': autorizzazione configurata nel Controllo degli Accessi.
 - 'Autorizzazione (proprieta)': eventuali proprietà aggiuntive attivate sull'autorizzazione configurata nel Controllo degli Accessi.
-- 'Autorizzazione (Richiedenti Autorizzati)': indicazione se risulta abilitata l'autorizzazione puntuale per richiedenti (valore 'abilitato') o meno (valore 'disabilitato').
-- 'Soggetti Autorizzati' [solo in una erogazione]: elenco dei soggetti autorizzati separati con un ritorno a capo.
-- 'Applicativi Autorizzati': elenco degli applicativi autorizzati separati con un ritorno a capo. Nel caso di erogazione per ogni applicativo viene fornito anche il suffisso ' soggetto:<tipoSoggettoProprietario>/<nomeSoggettoProprietario>'.
-- 'Autorizzazione (Ruoli)': indicazione se risulta abilitata l'autorizzazione per ruoli (valore 'abilitato') o meno (valore 'disabilitato').
-- 'Ruoli Richiesti': nel caso di autorizzazione per ruoli, viene riportata l'indicazione se i ruoli richiesti siano 'almeno uno' o 'tutti'.
-- 'Ruoli': nel caso di autorizzazione per ruoli viene riportato l'elenco dei ruoli configurati separati con un ritorno a capo. Il formato di ogni ruolo è il seguente '<identificativoRuolo> (fonte: <qualisiasi/interna/esterna>)'.
-- 'Autorizzazione (Scope)': indicazione se risulta abilitata l'autorizzazione per scope (valore 'abilitato') o meno (valore 'disabilitato').
+- 'Autorizzazione Trasporto (Richiedenti)': indicazione se risulta abilitata l'autorizzazione puntuale per richiedenti tramite autenticazione di trasporto (valore 'abilitato') o meno (valore 'disabilitato').
+- 'Autorizzazione Trasporto (Soggetti Autorizzati)' [solo in una erogazione]: nel caso di autorizzazione puntuale per richiedenti tramite autenticazione di trasporto, elenco dei soggetti autorizzati separati con un ritorno a capo.
+- 'Autorizzazione Trasporto (Applicativi Autorizzati)': nel caso di autorizzazione puntuale per richiedenti tramite autenticazione di trasporto, elenco degli applicativi autorizzati separati con un ritorno a capo. Nel caso di erogazione per ogni applicativo viene fornito anche il suffisso ' soggetto:<tipoSoggettoProprietario>/<nomeSoggettoProprietario>'.
+- 'Autorizzazione Trasporto (Ruoli)': indicazione se risulta abilitata l'autorizzazione per ruoli tramite autenticazione di trasporto (valore 'abilitato') o meno (valore 'disabilitato').
+- 'Autorizzazione Trasporto (Ruoli Richiesti)': nel caso di autorizzazione per ruoli tramite autenticazione di trasporto, viene riportata l'indicazione se i ruoli richiesti siano 'almeno uno' o 'tutti'.
+- 'Autorizzazione Trasporto (Ruoli Autorizzati)': nel caso di autorizzazione per ruoli tramite autenticazione di trasporto, viene riportato l'elenco dei ruoli configurati separati con un ritorno a capo. Il formato di ogni ruolo è il seguente '<identificativoRuolo> (fonte: <qualisiasi/interna/esterna>)'.
+- 'Autorizzazione Token (Richiedenti)': indicazione se risulta abilitata l'autorizzazione puntuale per richiedenti tramite token (valore 'abilitato') o meno (valore 'disabilitato').
+- 'Autorizzazione Token (Applicativi Autorizzati)': nel caso di autorizzazione puntuale per richiedenti tramite token, elenco degli applicativi autorizzati separati con un ritorno a capo. Nel caso di erogazione per ogni applicativo viene fornito anche il suffisso ' soggetto:<tipoSoggettoProprietario>/<nomeSoggettoProprietario>'.
+- 'Autorizzazione Token (Ruoli)': indicazione se risulta abilitata l'autorizzazione per ruoli tramite token (valore 'abilitato') o meno (valore 'disabilitato').
+- 'Autorizzazione Token (Ruoli Richiesti)': nel caso di autorizzazione per ruoli tramite token, viene riportata l'indicazione se i ruoli richiesti siano 'almeno uno' o 'tutti'.
+- 'Autorizzazione Token (Ruoli Autorizzati)': nel caso di autorizzazione per ruoli tramite token, viene riportato l'elenco dei ruoli configurati separati con un ritorno a capo. Il formato di ogni ruolo è il seguente '<identificativoRuolo> (fonte: <qualisiasi/interna/esterna>)'.
+- 'Autorizzazione Token (Claims)': eventuali controlli di autorizzazione basati sui claim del token.
+- 'Autorizzazione Token (Scope)': indicazione se risulta abilitata l'autorizzazione per scope (valore 'abilitato') o meno (valore 'disabilitato').
+- 'Scope Richiesti': nel caso di autorizzazione per scope, viene riportata l'indicazione se gli scope richiesti siano 'almeno uno' o 'tutti'.
 - 'Scope': nel caso di autorizzazione per scope viene riportato l'elenco degli scope configurati separati con un ritorno a capo.
-- 'Autorizzazione (Token Claims)': eventuali controlli di autorizzazione basati sui claim del token.
 - 'Autorizzazione Contenuti (Stato)': indicazione se risulta abilitata l'autorizzazione per contenuti (valore 'abilitato') o meno (valore 'disabilitato').
 - 'Autorizzazione Contenuti (proprieta)': vengono riportati i criteri di autorizzazione per contenuti impostati.
 - 'RateLimiting': elenco delle policy di rate limiting attive separate con un ritorno a capo. Ogni policy viene riportata con il seguente formato: '<Alias> <abilitato/disabilitato/warningOnly> <TipoRisorsa> <ValoreSoglia>[ <ValoreSogliaRisposta>]'. Il valore soglia di risposta è presente solo per policy di tipo 'DimensioneMassimaMessaggio'.
@@ -80,6 +86,9 @@ Di seguito il nome dell'header e il formato del valore inserito in ogni colonna.
 - 'Connettore (Endpoint)': indirizzo relativo all'implementazione dell'API di backend.
 - 'Connettore (Debug)': indicazione se è attivo il debug sul connettore (valore 'true') o meno (valore 'false');
 - 'Connettore (Username)': username configurato per una autenticazione http basic sul connettore.
+- 'Connettore (Token)': nel caso di autenticazione del connettore tramite token, viene riportato l'identificativo della token policy di negoziazione configurata.
+- 'Connettore (API Key)': nel caso di autenticazione del connettore tramite api key, viene riportata l'api key configurata.
+- 'Connettore (App Id)': nel caso di autenticazione del connettore tramite api key con app id, viene riportato l'app id configurato.
 - 'Connettore (Proxy Endpoint)': eventuale proxy http configurato sul connettore.
 - 'Connettore (Proxy Username)': eventuale username utilizzato per l'autenticazione http basic sul proxy attivato sul connettore.
 - 'Connettore (SSL Type)': versione TLS (es. TLSv1.2) utilizzata su connettore di tipo 'https'.

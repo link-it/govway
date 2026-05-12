@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
+import org.openspcoop2.core.commons.StatoWrapper;
 import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.MessageSecurityFlow;
 import org.openspcoop2.core.config.MessageSecurityFlowParameter;
@@ -169,12 +170,15 @@ public class AuditAppender {
 			operation.setInterfaceMsg(interfaceMsg);
 			
 			if(object!=null){
-				
+
 				operation.setTipoOggetto(AuditAppender.idBuilder.getSimpleName(object));
 				operation.setObjectId(AuditAppender.idBuilder.toID(object));
 				operation.setObjectOldId(AuditAppender.idBuilder.toOldID(object));
-				operation.setObjectClass(object.getClass().getName());
-				
+				Object objectForClass = (object instanceof StatoWrapper && ((StatoWrapper) object).getObj()!=null)
+						? ((StatoWrapper) object).getObj()
+						: object;
+				operation.setObjectClass(objectForClass.getClass().getName());
+
 			}else{
 				throw new AuditException("Object riguardante l'operazione non definito");
 			}
@@ -519,6 +523,14 @@ public class AuditAppender {
 	}
 	
 	private Object byok(DriverBYOKUtilities byok, Object object) throws UtilsException {
+		if (object instanceof StatoWrapper) {
+			StatoWrapper wrapper = (StatoWrapper) object;
+			if (wrapper.getObj() == null) {
+				return object;
+			}
+			// unwrap: la serializzazione dei details deve riguardare l'oggetto interno
+			return byok(byok, wrapper.getObj());
+		}
 		if (object instanceof org.openspcoop2.core.config.Soggetto) {
 			org.openspcoop2.core.config.Soggetto sCloned = (org.openspcoop2.core.config.Soggetto) ((org.openspcoop2.core.config.Soggetto) object).clone();
 			if(sCloned.getConnettore()!=null && !sCloned.getConnettore().isEmpty()) {

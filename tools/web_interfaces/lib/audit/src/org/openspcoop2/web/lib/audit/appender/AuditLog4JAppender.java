@@ -37,6 +37,7 @@ import org.openspcoop2.utils.properties.CollectionProperties;
 import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.openspcoop2.utils.xml.JaxbUtils;
 import org.openspcoop2.web.lib.audit.AuditException;
+import org.openspcoop2.web.lib.audit.costanti.Costanti;
 import org.openspcoop2.web.lib.audit.log.Operation;
 import org.openspcoop2.web.lib.audit.log.constants.Stato;
 import org.openspcoop2.web.lib.audit.log.utils.CleanerOpenSPCoop2Extensions;
@@ -66,18 +67,18 @@ public class AuditLog4JAppender implements IAuditAppender {
 		try{
 			this.nomeAppender = nomeAppender;
 		
-			String fileConfigurazione = properties.getProperty("fileConfigurazione");
+			String fileConfigurazione = properties.getProperty(Costanti.AUDIT_APPENDER_LOG4J_PROPERTY_FILE_CONFIGURAZIONE);
 			if(fileConfigurazione==null){
-				throw new Exception("Proprieta' 'fileConfigurazione' non definita");
+				throw new Exception("Proprieta' '"+Costanti.AUDIT_APPENDER_LOG4J_PROPERTY_FILE_CONFIGURAZIONE+"' non definita");
 			}
 			fileConfigurazione = fileConfigurazione.trim();
-			
-			String nomeFileLoaderInstance = properties.getProperty("nomeFileLoaderInstance");
+
+			String nomeFileLoaderInstance = properties.getProperty(Costanti.AUDIT_APPENDER_LOG4J_PROPERTY_NOME_FILE_LOADER_INSTANCE);
 			if(nomeFileLoaderInstance!=null){
 				nomeFileLoaderInstance = nomeFileLoaderInstance.trim();
 			}
-			
-			String nomeProprietaLoaderInstance = properties.getProperty("nomeProprietaLoaderInstance");
+
+			String nomeProprietaLoaderInstance = properties.getProperty(Costanti.AUDIT_APPENDER_LOG4J_PROPERTY_NOME_PROPRIETA_LOADER_INSTANCE);
 			if(nomeProprietaLoaderInstance!=null){
 				nomeProprietaLoaderInstance = nomeProprietaLoaderInstance.trim();
 			}
@@ -152,17 +153,17 @@ public class AuditLog4JAppender implements IAuditAppender {
 			LoggerWrapperFactory.setLogConfiguration(loggerProperties,true);
 			
 			// Logger
-			String category = properties.getProperty("category");
+			String category = properties.getProperty(Costanti.AUDIT_APPENDER_LOG4J_PROPERTY_CATEGORY);
 			if(category==null){
-				throw new Exception("Proprieta' 'category' non definita");
+				throw new Exception("Proprieta' '"+Costanti.AUDIT_APPENDER_LOG4J_PROPERTY_CATEGORY+"' non definita");
 			}
 			category = category.trim();
 			this.logger = LoggerWrapperFactory.getLogger(category);
-			
+
 			// xml format
-			String xml = properties.getProperty("xml");
+			String xml = properties.getProperty(Costanti.AUDIT_APPENDER_LOG4J_PROPERTY_XML);
 			if(xml==null){
-				throw new Exception("Proprieta' 'xml' non definita");
+				throw new Exception("Proprieta' '"+Costanti.AUDIT_APPENDER_LOG4J_PROPERTY_XML+"' non definita");
 			}
 			xml = xml.trim();
 			this.xml = Boolean.parseBoolean(xml);

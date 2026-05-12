@@ -33,6 +33,7 @@ import org.openspcoop2.utils.UtilsRuntimeException;
 import org.openspcoop2.web.lib.mvc.login.FailedAttempts;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.thread.ThreadExecutorManager;
+import org.openspcoop2.web.monitor.core.utils.MonitorCoreAuditManager;
 
 /**
  * ConsoleStartupListener
@@ -132,6 +133,14 @@ public class ConsoleStartupListener extends AbstractConsoleStartupListener{
 			FailedAttempts.createInstance(govwayMonitorProperties.getLoginRetryDelays());
 		}catch (UtilsException e) {
 			String msgErrore = "Errore durante l'inizializzazione del FailedAttempts: " + e.getMessage();
+			logError(msgErrore,e);
+		}
+
+		// Audit Manager
+		try{
+			MonitorCoreAuditManager.initializeAuditManager();
+		}catch (Exception e) {
+			String msgErrore = "Errore durante l'inizializzazione dell'AuditManager: " + e.getMessage();
 			logError(msgErrore,e);
 		}
 

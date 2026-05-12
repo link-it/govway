@@ -57,6 +57,8 @@ public class PermessiUtente implements Serializable {
 	private boolean utenti;
 	/** Permessi di visualizzazione degli accordi di cooperazione */
 	private boolean accordiCooperazione;
+	/** Permessi di operativita sulle API (enable/disable) */
+	private boolean operativitaApi;
 	
 	
 	@Override
@@ -78,6 +80,8 @@ public class PermessiUtente implements Serializable {
 			bf.append(Permessi.UTENTI.toString());
 		if(this.accordiCooperazione)
 			bf.append(Permessi.ACCORDI_COOPERAZIONE.toString());
+		if(this.operativitaApi)
+			bf.append(Permessi.OPERATIVITA_API.toString());
 		return bf.toString();
 	}
 	
@@ -91,6 +95,7 @@ public class PermessiUtente implements Serializable {
 		p.setSistema(true);
 		p.setUtenti(true);
 		p.setAccordiCooperazione(true);
+		p.setOperativitaApi(true);
 		return this.toString(separatore, p);
 	}
 	public String toString(String separatore,PermessiUtente maschera){
@@ -151,6 +156,13 @@ public class PermessiUtente implements Serializable {
 				bf.append(Permessi.ACCORDI_COOPERAZIONE.toString());
 			}
 		}
+		if(maschera.operativitaApi){
+			if(this.operativitaApi){
+				if(bf.length()>0)
+					bf.append(separatore);
+				bf.append(Permessi.OPERATIVITA_API.toString());
+			}
+		}
 		return bf.toString();
 	}
 	
@@ -179,6 +191,9 @@ public class PermessiUtente implements Serializable {
 		}
 		if(value.contains(Permessi.ACCORDI_COOPERAZIONE.toString())){
 			permUtenti.setAccordiCooperazione(true);
+		}
+		if(value.contains(Permessi.OPERATIVITA_API.toString())){
+			permUtenti.setOperativitaApi(true);
 		}
 		return permUtenti;
 	}
@@ -305,6 +320,11 @@ public class PermessiUtente implements Serializable {
 				ok = true;
 			}
 		}
+		if(this.isOperativitaApi()){
+			if(permessi.isOperativitaApi()){
+				ok = true;
+			}
+		}
 		return ok;
 	}
 	
@@ -349,6 +369,21 @@ public class PermessiUtente implements Serializable {
 				return false;
 			}
 		}
+		if(this.isOperativitaApi()){
+			if(permessi.isOperativitaApi()){
+				return false;
+			}
+		}
 		return true;
+	}
+
+
+	public boolean isOperativitaApi() {
+		return this.operativitaApi;
+	}
+
+
+	public void setOperativitaApi(boolean operativitaApi) {
+		this.operativitaApi = operativitaApi;
 	}
 }

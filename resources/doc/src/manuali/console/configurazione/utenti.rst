@@ -28,6 +28,11 @@ conseguentemente i permessi associabili a ciascun utente:
    -  *Reportistica [R]* - Accesso alle funzionalità di reportistica
       della console govwayMonitor.
 
+   -  *Operatività API [O]* - Accesso alle funzionalità di operatività
+      delle API della console govwayMonitor, che consentono di abilitare
+      o disabilitare le erogazioni e le fruizioni configurate (anche per
+      singolo gruppo, quando l'API è suddivisa in più gruppi).
+
 -  *Strumenti*
 
    -  *Auditing [A]* - Accesso alle funzionalità di consultazione delle
@@ -54,7 +59,7 @@ Gli utenti in possesso del permesso [U] possono creare dei nuovi utenti.
 La maschera di creazione di un nuovo utente è quella mostrata in :numref:`utenteNew`.
 
 .. figure:: ../_figure_console/AggiungiUtente.png
-    :scale: 40%
+    :scale: 60%
     :align: center
     :name: utenteNew
 
@@ -106,7 +111,7 @@ Le informazioni da inserire sono:
 
 	- Soggetto Operativo: voce presente solamente se è stato selezionato un profilo di interoperabilità, consente di associare un soggetto operativo di default all'utente;
 
-	- Home Page (solo per govwayMonitor): definisce la homepage visualizzata a login effettuato, consentendo di scegliere tra la pagina di ricerca delle transazioni o un report statistico;
+	- Home Page (solo per govwayMonitor): definisce la homepage visualizzata a login effettuato; le scelte disponibili dipendono dai permessi GovWay Monitor assegnati all'utente e possono includere la pagina di ricerca delle transazioni (Monitoraggio [D]), un report statistico (Reportistica [R]) e la pagina di operatività delle API "Configurazioni Generali" (Operatività API [O]);
 
 	- Intervallo Temporale (solo per govwayMonitor): voce presente solo se è stato selezionato un report statistico per l'homepage della console di monitoraggio, consentendone di indicare l'intervallo temporale.
 

@@ -195,7 +195,7 @@ public class User implements Serializable {
 	
 	public boolean hasOnlyPermessiUtenti() {
 		if(this.permessi != null)
-			return (this.permessi.isUtenti() && !this.permessi.isAccordiCooperazione() && !this.permessi.isAuditing() && !this.permessi.isCodeMessaggi() && !this.permessi.isDiagnostica() && !this.permessi.isServizi() && !this.permessi.isSistema());
+			return (this.permessi.isUtenti() && !this.permessi.isAccordiCooperazione() && !this.permessi.isAuditing() && !this.permessi.isCodeMessaggi() && !this.permessi.isDiagnostica() && !this.permessi.isReportistica() && !this.permessi.isOperativitaApi() && !this.permessi.isServizi() && !this.permessi.isSistema());
 		else
 			return false;
 	}
@@ -251,8 +251,8 @@ public class User implements Serializable {
 		return true;
 	}
 	public boolean isConfigurazioneValidaSoggettiAbilitati() {
-			
-		if( this.permessi.isDiagnostica() || this.permessi.isReportistica() ) {
+
+		if( this.permessi.isDiagnostica() || this.permessi.isReportistica() || this.permessi.isOperativitaApi() ) {
 			if(this.permitAllSoggetti==false) {
 				if(this.soggetti==null || this.soggetti.size()<=0) {
 					return false;
@@ -263,8 +263,8 @@ public class User implements Serializable {
 		return true;
 	}
 	public boolean isConfigurazioneValidaServiziAbilitati() {
-		
-		if( this.permessi.isDiagnostica() || this.permessi.isReportistica() ) {
+
+		if( this.permessi.isDiagnostica() || this.permessi.isReportistica() || this.permessi.isOperativitaApi() ) {
 			if(this.permitAllServizi==false) {
 				if(this.servizi==null || this.servizi.size()<=0) {
 					return false;

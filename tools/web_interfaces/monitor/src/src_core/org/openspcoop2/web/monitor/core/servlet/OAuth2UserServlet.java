@@ -44,6 +44,7 @@ import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.filters.PrincipalFilter;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
+import org.openspcoop2.web.monitor.core.utils.MonitorCoreAuditManager;
 import org.openspcoop2.web.monitor.core.utils.SessionUtils;
 import org.slf4j.Logger;
 
@@ -109,6 +110,10 @@ public class OAuth2UserServlet extends HttpServlet {
 
 				// Se l'username che mi arriva e' settato vuol dire che sono autorizzato dal Container
 				if(username != null){
+
+					// Annullo quanto letto sull'auditing
+					MonitorCoreAuditManager.clearAuditManager();
+
 					controllaEsistenzaUtente(httpServletRequest, httpServletResponse, loginUtenteNonAutorizzatoRedirectUrl,
 							oauth2LogoutUrl, sessione, lb,
 							username);

@@ -171,6 +171,7 @@ public class UtentiCostanti {
 	public static final String PARAMETRO_UTENTI_IS_UTENTI = "isUtenti";
 	public static final String PARAMETRO_UTENTI_IS_AUDITING = "isAuditing";
 	public static final String PARAMETRO_UTENTI_IS_ACCORDI_COOPERAZIONE = "isAccordiCooperazione";
+	public static final String PARAMETRO_UTENTI_IS_OPERATIVITA_API = "isOperativitaApi";
 	public static final String PARAMETRO_UTENTI_SINGLE_SU_SERVIZI = "singleSuS";
 	public static final String PARAMETRO_UTENTI_SINGLE_SU_ACCORDI_COOPERAZIONE = "singleSuAC";
 	public static final String PARAMETRO_UTENTI_SINGLE_SU_RICERCHE_UTENTE = "singleSuRU";
@@ -204,10 +205,12 @@ public class UtentiCostanti {
 	public static final String PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO = "hp_mon";
 	public static final String VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_TRANSAZIONI = "transazioni";
 	public static final String VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_STATISTICHE = "summary";
-	
-	private static final String [] VALUES_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO = { 
+	public static final String VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_CONFIGURAZIONI_GENERALI = "configurazioniGenerali";
+
+	private static final String [] VALUES_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO = {
 			UtentiCostanti.VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_TRANSAZIONI,
-			UtentiCostanti.VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_STATISTICHE
+			UtentiCostanti.VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_STATISTICHE,
+			UtentiCostanti.VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_CONFIGURAZIONI_GENERALI
 	};
 	public static String[] getValuesParametroUtentiHomePageMonitoraggio() {
 		return VALUES_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO;
@@ -249,6 +252,7 @@ public class UtentiCostanti {
 	public static final String LABEL_PARAMETRO_UTENTI_GOVWAY_MONITOR_SUBSECTION = "GovWay Monitor";
 	public static final String LABEL_PARAMETRO_UTENTI_IS_DIAGNOSTICA = "Monitoraggio [D]";
 	public static final String LABEL_PARAMETRO_UTENTI_IS_REPORTISTICA = "Reportistica [R]";
+	public static final String LABEL_PARAMETRO_UTENTI_IS_OPERATIVITA_API = "Operativit\u00e0 API [O]";
 	public static final String LABEL_PARAMETRO_UTENTI_SCADENZA = "Scadenza";
 	public static final String LABEL_NOTA_UTENTI_SCADENZA_ADD = "La password scade dopo {0} giorni";
 	public static final String LABEL_NOTA_UTENTI_SCADENZA_CHANGE = "La password scade fra {0} giorni";
@@ -256,6 +260,7 @@ public class UtentiCostanti {
 	public static final String LABEL_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO = "Home Page";
 	public static final String LABEL_VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_TRANSAZIONI = "Ricerca Transazioni";
 	public static final String LABEL_VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_STATISTICHE = "Report Statistico";
+	public static final String LABEL_VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_CONFIGURAZIONI_GENERALI = "Configurazioni Generali";
 	public static final String LABEL_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO = "Intervallo Temporale";
 	public static final String LABEL_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_NO_GRAFICO = "No Grafico";
 	public static final String LABEL_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIME_24_ORE = "Ultime 24 ore";

@@ -154,16 +154,32 @@ public final class PorteApplicativeAbilitazione extends Action {
 				pa.setOldIDPortaApplicativaForUpdate(oldIDPortaApplicativaForUpdate);
 				
 				 // cambio solo la modalita'
-	            if(ServletUtils.isCheckBoxEnabled(changeAbilitato)) {
+	            boolean abilita = ServletUtils.isCheckBoxEnabled(changeAbilitato);
+	            if(abilita) {
 	                pa.setStato(StatoFunzionalita.ABILITATO);
 	            }
 	            else{
 	                pa.setStato(StatoFunzionalita.DISABILITATO);
 	            }
-				
+
 				String userLogin = ServletUtils.getUserLoginFromSession(session);
-	
-				porteApplicativeCore.performUpdateOperation(userLogin, porteApplicativeHelper.smista(), pa);
+
+				String nomeGruppo = null;
+				String descrizioneGruppo = null;
+				boolean isDefaultGruppo = false;
+				try {
+					MappingErogazionePortaApplicativa mappingPA = porteApplicativeCore.getMappingErogazionePortaApplicativa(pa);
+					if(mappingPA != null) {
+						nomeGruppo = mappingPA.getNome();
+						descrizioneGruppo = mappingPA.getDescrizione();
+						isDefaultGruppo = mappingPA.isDefault();
+					}
+				} catch(Exception ignored) {
+					/* nessun mapping per questa PA: l'audit ID non riportera' il gruppo */
+				}
+
+				porteApplicativeCore.performUpdateOperationCambioStato(userLogin, porteApplicativeHelper.smista(), abilita,
+						nomeGruppo, descrizioneGruppo, isDefaultGruppo, pa);
 				
 				List<String> aliasJmx = porteApplicativeCore.getJmxPdDAliases();
 				if(aliasJmx!=null && !aliasJmx.isEmpty()) {
