@@ -45,6 +45,7 @@ import org.openspcoop2.core.byok.IDriverBYOKConfig;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.commons.Filtri;
+import org.openspcoop2.core.commons.StatoWrapper;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.AccessoConfigurazione;
@@ -5912,9 +5913,76 @@ public class ControlStationCore {
 	}
 
 	/**
+	 * Variante di performUpdateOperation utilizzata per le operazioni di abilitazione/disabilitazione
+	 * di stato (es. PortaApplicativa, PortaDelegata) effettuate tramite il "comando apposito".
+	 * L'audit registra l'operazione avvolgendo l'oggetto in {@link StatoWrapper} per produrre
+	 * un tipoOggetto custom (es. PortaApplicativaAbilitazioneStato), mentre l'update sul DB
+	 * resta sull'oggetto originale.
+	 * @throws UtilsException
+	 */
+	public void performUpdateOperationCambioStato(String superUser, boolean smista, boolean abilita,
+			String nomeGruppo, String descrizioneGruppo, boolean isDefaultGruppo,
+			Object oggetto) throws DriverConfigurazioneNotFound, DriverConfigurazioneException, DriverRegistroServiziNotFound, DriverControlStationException, DriverRegistroServiziException, ControlStationCoreException, UtilsException {
+		performUpdateOperationCambiStato(superUser, smista, abilita,
+				nomeGruppo, descrizioneGruppo, isDefaultGruppo,
+				oggetto);
+	}
+	private void performUpdateOperationCambiStato(String superUser, boolean smista, boolean abilita,
+			String nomeGruppo, String descrizioneGruppo, boolean isDefaultGruppo,
+			Object ... oggetti) throws DriverConfigurazioneNotFound, DriverConfigurazioneException, DriverRegistroServiziNotFound, DriverControlStationException, DriverRegistroServiziException, ControlStationCoreException, UtilsException {
+		String nomeMetodo = "performUpdateOperationCambioStato";
+		String operationType = "UPDATE";
+
+		ControlStationCore.logInfo(getPrefixMethod(nomeMetodo)+"performing operation type [" + operationType + "] on objects " + this.getClassNames(oggetti));
+		int[] operationTypes = new int[oggetti.length];
+		for (int i = 0; i < oggetti.length; i++) {
+			operationTypes[i] = CostantiControlStation.PERFORM_OPERATION_UPDATE;
+		}
+		Tipologia[] tipoOperazione = new Tipologia[oggetti.length];
+		for (int i = 0; i < oggetti.length; i++) {
+			tipoOperazione[i] = Tipologia.CHANGE;
+		}
+
+		this.cryptPassword(tipoOperazione, oggetti);
+
+		this.setProprietaOggetto(superUser, tipoOperazione, oggetti);
+
+		// Wrappo gli oggetti per il solo audit (DB lavora sugli oggetti originali)
+		Object[] oggettiAudit = new Object[oggetti.length];
+		for (int i = 0; i < oggetti.length; i++) {
+			StatoWrapper sw = new StatoWrapper(oggetti[i], abilita);
+			sw.setNomeGruppo(nomeGruppo);
+			sw.setDescrizioneGruppo(descrizioneGruppo);
+			sw.setDefaultGruppo(isDefaultGruppo);
+			oggettiAudit[i] = sw;
+		}
+
+		IDOperazione [] idOperazione = null;
+		boolean auditDisabiltato = false;
+		try{
+			idOperazione = this.performAuditRequest(tipoOperazione, superUser, oggettiAudit);
+		}catch(AuditDisabilitatoException disabilitato){
+			auditDisabiltato = true;
+		}
+		try{
+			this.performOperation(operationTypes, superUser, smista, oggetti);
+			if(!auditDisabiltato){
+				this.performAuditComplete(idOperazione, tipoOperazione, superUser, oggettiAudit);
+			}
+		}catch(Exception e){
+			if(!auditDisabiltato){
+				this.performAuditError(idOperazione, e.getMessage(), tipoOperazione, superUser, oggettiAudit);
+			}
+			throw e;
+		}
+
+		ControlStationCore.logInfo(getPrefixMethod(nomeMetodo)+"performed operation type [" + operationType + "] on objects " + this.getClassNames(oggetti));
+	}
+
+	/**
 	 * Cancella un oggetto nella govwayConsole e si occupa di inoltrare
 	 * l'operazione nella coda dello Smistatore
-	 * @throws UtilsException 
+	 * @throws UtilsException
 	 */
 	public void performDeleteOperation(String superUser, boolean smista, Object ... oggetti) throws DriverConfigurazioneNotFound, DriverConfigurazioneException, DriverRegistroServiziNotFound, DriverControlStationException, DriverRegistroServiziException, ControlStationCoreException, UtilsException {
 		String nomeMetodo = "performDeleteOperation";
@@ -6165,7 +6233,7 @@ public class ControlStationCore {
 			if(AuditDBAppender.class.getName().equals(appender.getClassName())){
 				boolean findDBKeyword = false;
 				for(int j=0; j<appender.sizeProperties(); j++){
-					if("@DB_INTERFACCIA@".equals(appender.getProperty(j).getValue())){
+					if(org.openspcoop2.web.lib.audit.costanti.Costanti.AUDIT_APPENDER_DB_KEYWORD_INTERFACCIA.equals(appender.getProperty(j).getValue())){
 						findDBKeyword = true;
 					}
 				}
@@ -6174,11 +6242,11 @@ public class ControlStationCore {
 						appender.removeProperty(0);
 					}
 					AppenderProperty apDS = new AppenderProperty();
-					apDS.setName("datasource");
+					apDS.setName(org.openspcoop2.web.lib.audit.costanti.Costanti.AUDIT_APPENDER_DB_PROPERTY_DATASOURCE);
 					apDS.setValue(ControlStationCore.dbM.getDataSourceName());
 					appender.addProperty(apDS);
 					AppenderProperty apTipoDatabase = new AppenderProperty();
-					apTipoDatabase.setName("tipoDatabase");
+					apTipoDatabase.setName(org.openspcoop2.web.lib.audit.costanti.Costanti.AUDIT_APPENDER_DB_PROPERTY_TIPO_DATABASE);
 					apTipoDatabase.setValue(tipoDatabase);
 					appender.addProperty(apTipoDatabase);
 					Properties contextDS = ControlStationCore.dbM.getDataSourceContext();

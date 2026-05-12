@@ -186,14 +186,31 @@ public final class PorteDelegateAbilitazione extends Action {
 				portaDelegata.setNome(nomePorta);
 				
 				// cambio solo la modalita'
-	            if(ServletUtils.isCheckBoxEnabled(changeAbilitato)) {
+	            boolean abilita = ServletUtils.isCheckBoxEnabled(changeAbilitato);
+	            if(abilita) {
 	            	portaDelegata.setStato(StatoFunzionalita.ABILITATO);
 	            }
 	            else{
 	                portaDelegata.setStato(StatoFunzionalita.DISABILITATO);
 	            }
 	            String userLogin = ServletUtils.getUserLoginFromSession(session);
-				porteDelegateCore.performUpdateOperation(userLogin, porteDelegateHelper.smista(), portaDelegata);
+
+				String nomeGruppo = null;
+				String descrizioneGruppo = null;
+				boolean isDefaultGruppo = false;
+				try {
+					MappingFruizionePortaDelegata mappingPD = porteDelegateCore.getMappingFruizionePortaDelegata(portaDelegata);
+					if(mappingPD != null) {
+						nomeGruppo = mappingPD.getNome();
+						descrizioneGruppo = mappingPD.getDescrizione();
+						isDefaultGruppo = mappingPD.isDefault();
+					}
+				} catch(Exception ignored) {
+					/* nessun mapping per questa PD: l'audit ID non riportera' il gruppo */
+				}
+
+				porteDelegateCore.performUpdateOperationCambioStato(userLogin, porteDelegateHelper.smista(), abilita,
+						nomeGruppo, descrizioneGruppo, isDefaultGruppo, portaDelegata);
 				
 				List<String> aliasJmx = porteDelegateCore.getJmxPdDAliases();
 				if(aliasJmx!=null && !aliasJmx.isEmpty()) {

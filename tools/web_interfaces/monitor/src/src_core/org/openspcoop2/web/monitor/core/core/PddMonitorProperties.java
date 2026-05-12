@@ -654,6 +654,26 @@ public class PddMonitorProperties {
 		return _getJmxPdD_value(true, alias, "configurazioni.risorseJmxPdd.cache.dump.nomeRisorsa");
 	}
 
+	// Configurazione Sistema - Operativita API
+	public String getJmxPdD_configurazioneSistema_tipo(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "configurazioni.risorseJmxPdd.configurazioneSistema.tipo");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "configurazioni.risorseJmxPdd.configurazioneSistema.nomeRisorsaConfigurazionePdD");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_enablePortaDelegata(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "configurazioni.risorseJmxPdd.configurazioneSistema.nomeMetodo.enablePortaDelegata");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_disablePortaDelegata(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "configurazioni.risorseJmxPdd.configurazioneSistema.nomeMetodo.disablePortaDelegata");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_enablePortaApplicativa(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "configurazioni.risorseJmxPdd.configurazioneSistema.nomeMetodo.enablePortaApplicativa");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_disablePortaApplicativa(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "configurazioni.risorseJmxPdd.configurazioneSistema.nomeMetodo.disablePortaApplicativa");
+	}
+
 
 	
 
@@ -1221,5 +1241,12 @@ public class PddMonitorProperties {
 	public Integer getIntervalloTimeoutRicercaEventi() throws UtilsException{
 		String timeoutS = this.appProperties.getProperty("eventi.lista.timeoutRicercaEventi", false, true);
 		return StringUtils.isNotBlank(timeoutS) ? Integer.parseInt(timeoutS) : null;
+	}
+
+
+	// Auditing
+
+	public boolean isAuditingRegistrazioneElementiBinari() throws UtilsException{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("auditing.registrazioneElementiBinari", true, true));
 	}
 }

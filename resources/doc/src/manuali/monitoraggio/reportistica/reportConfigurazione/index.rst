@@ -68,7 +68,7 @@ competenza del soggetto selezionato (:numref:`mon_reportConfigurazioniSoggetto_f
 Un'ulteriore tabella mostra l'elenco delle API erogate dal soggetto selezionato.
 
 .. figure:: ../../_figure_monitoraggio/ReportConfigurazioniSoggetto.png
-    :scale: 100%
+    :scale: 70%
     :align: center
     :name: mon_reportConfigurazioniSoggetto_fig
 
@@ -82,11 +82,54 @@ numero di azioni/risorse presenti. Un'ulteriore tabella mostra l'elenco dei sogg
 per la API selezionata.
 
 .. figure:: ../../_figure_monitoraggio/ReportConfigurazioniAPI.png
-    :scale: 100%
+    :scale: 70%
     :align: center
     :name: mon_reportConfigurazioniApi_fig
 
     Prospetto riepilogativo con API selezionata
+
+Nella tabella *Lista Configurazioni* è presente la colonna *Stato*, che
+riporta un'icona colorata riassuntiva dello stato di abilitazione di
+ciascuna configurazione (erogazione o fruizione):
+
+-  *Verde*: la configurazione è abilitata; quando le azioni
+   dell'erogazione/fruizione sono organizzate in più gruppi, tutti i
+   gruppi risultano abilitati;
+
+-  *Rosso*: la configurazione è disabilitata; quando le azioni
+   dell'erogazione/fruizione sono organizzate in più gruppi, tutti i
+   gruppi risultano disabilitati;
+
+-  *Giallo*: situazione possibile solo quando le azioni
+   dell'erogazione/fruizione sono organizzate in più gruppi, indica che
+   alcuni gruppi sono abilitati ed altri disabilitati.
+
+Se l'utente dispone del permesso *Operatività API [O]*, l'icona è
+cliccabile e consente di modificare lo stato della configurazione.
+
+Per le configurazioni le cui azioni non sono organizzate in più gruppi
+viene richiesta la conferma dell'operazione di abilitazione o
+disabilitazione
+(:numref:`mon_reportConfigurazioniStatoSingoloGruppo_fig`).
+
+.. figure:: ../../_figure_monitoraggio/ReportConfigurazioniStatoSingoloGruppo.png
+    :scale: 70%
+    :align: center
+    :name: mon_reportConfigurazioniStatoSingoloGruppo_fig
+
+    Conferma di abilitazione/disabilitazione di una configurazione
+
+Per le configurazioni con azioni organizzate in più gruppi viene
+invece proposta una finestra in cui selezionare puntualmente quali
+gruppi abilitare e quali disabilitare
+(:numref:`mon_reportConfigurazioniStatoGruppi_fig`).
+
+.. figure:: ../../_figure_monitoraggio/ReportConfigurazioniStatoGruppi.png
+    :scale: 70%
+    :align: center
+    :name: mon_reportConfigurazioniStatoGruppi_fig
+
+    Selezione dei gruppi da abilitare e disabilitare per una configurazione con azioni organizzate in più gruppi
 
 Gli elementi di configurazione mostrati in elenco possono essere
 selezionati ed esportati in formato CSV o XLS tramite il pulsante "Esporta". Le informazioni esportate con i dettagli sul formato utilizzato vengono fornite nella sezione :ref:`mon_reportistica_config_csv`.

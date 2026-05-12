@@ -73,6 +73,7 @@ import org.openspcoop2.web.monitor.core.filters.CsrfFilter;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.utils.DynamicPdDBeanUtils;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
+import org.openspcoop2.web.monitor.core.utils.MonitorCoreAuditManager;
 import org.slf4j.Logger;
 
 /****
@@ -242,9 +243,12 @@ public class LoginBean extends AbstractLoginBean {
 	public String loginApplicationEngine() {
 		this.userToUpdate = null;
 
-		if(null == this.getUsername() && this.getPwd() == null){		
+		if(null == this.getUsername() && this.getPwd() == null){
 			return Costanti.OUTCOME_LOGIN;
 		}
+
+		// Annullo quanto letto sull'auditing
+		MonitorCoreAuditManager.clearAuditManager();
 
 		try{
 			this.log.info("Verifico le credenziali per l'utente [{}]", this.getUsername());
@@ -372,6 +376,9 @@ public class LoginBean extends AbstractLoginBean {
 			}
 			else if(homePage.equals(Costanti.VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_TRANSAZIONI)) {
 				return Costanti.OUTCOME_TRANSAZIONI_START;
+			}
+			else if(homePage.equals(Costanti.VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_CONFIGURAZIONI_GENERALI)) {
+				return Costanti.OUTCOME_CONFIGURAZIONI_GENERALI;
 			}
 		}
 

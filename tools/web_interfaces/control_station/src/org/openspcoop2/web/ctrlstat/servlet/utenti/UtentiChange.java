@@ -100,6 +100,7 @@ public final class UtentiChange extends Action {
 			String isServizi = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_SERVIZI);
 			String isDiagnostica = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_DIAGNOSTICA);
 			String isReportistica = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_REPORTISTICA);
+			String isOperativitaApi = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_OPERATIVITA_API);
 			String isSistema = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_SISTEMA);
 			String isMessaggi = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_MESSAGGI);
 			String isUtenti = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_UTENTI);
@@ -284,6 +285,7 @@ public final class UtentiChange extends Action {
 				isServizi = (isServizi==null) ? (pu.isServizi() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED) : isServizi;
 				isDiagnostica = (isDiagnostica==null) ? (pu.isDiagnostica() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED) : isDiagnostica;
 				isReportistica = (isReportistica==null) ? (pu.isReportistica() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED) : isReportistica;
+				isOperativitaApi = (isOperativitaApi==null) ? (pu.isOperativitaApi() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED) : isOperativitaApi;
 				isSistema = (isSistema==null) ? (pu.isSistema() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED) : isSistema;
 				isMessaggi = (isMessaggi==null) ? (pu.isCodeMessaggi() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED) : isMessaggi;
 				isUtenti = (isUtenti==null) ? (pu.isUtenti() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED) : isUtenti;
@@ -313,7 +315,7 @@ public final class UtentiChange extends Action {
 
 				utentiHelper.addUtentiToDati(dati, TipoOperazione.CHANGE, singlePdD,
 						nomesu,pwsu,interfaceType,
-						isServizi,isDiagnostica,isReportistica,isSistema,isMessaggi,isUtenti,isAuditing,isAccordiCooperazione,
+						isServizi,isDiagnostica,isReportistica,isOperativitaApi,isSistema,isMessaggi,isUtenti,isAuditing,isAccordiCooperazione,
 						changepwd,modalitaScelte, isSoggettiAll, isServiziAll, user, scadenza, dataUltimoAggiornamentoPassword, oldScadenza, 
 						tipoModalitaConsoleGestione, idSoggettoConsoleGestione, tipoModalitaConsoleMonitoraggio, idSoggettoConsoleMonitoraggio,
 						homePageMonitoraggio, intervalloTemporaleHomePageConsoleMonitoraggio);
@@ -353,7 +355,7 @@ public final class UtentiChange extends Action {
 
 				utentiHelper.addUtentiToDati(dati, TipoOperazione.CHANGE, singlePdD,
 						nomesu,pwsu,interfaceType,
-						isServizi,isDiagnostica,isReportistica,isSistema,isMessaggi,isUtenti,isAuditing,isAccordiCooperazione,
+						isServizi,isDiagnostica,isReportistica,isOperativitaApi,isSistema,isMessaggi,isUtenti,isAuditing,isAccordiCooperazione,
 						changepwd,modalitaScelte, isSoggettiAll, isServiziAll, user, scadenza, dataUltimoAggiornamentoPassword, oldScadenza, 
 						tipoModalitaConsoleGestione, idSoggettoConsoleGestione, tipoModalitaConsoleMonitoraggio, idSoggettoConsoleMonitoraggio,
 						homePageMonitoraggio, intervalloTemporaleHomePageConsoleMonitoraggio);
@@ -498,7 +500,7 @@ public final class UtentiChange extends Action {
 				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				utentiHelper.addChangeUtenteInfoToDati(dati, nomesu, changepwd, pwsu, interfaceType, 
-						isServizi, isDiagnostica, isReportistica, isSistema, isMessaggi, isUtenti, isAuditing,isAccordiCooperazione,paginaSuServizi, 
+						isServizi, isDiagnostica, isReportistica, isOperativitaApi, isSistema, isMessaggi, isUtenti, isAuditing,isAccordiCooperazione,paginaSuServizi, 
 						uws, paginaSuAccordi, uwp,modalitaScelte, tipoModalitaConsoleGestione, idSoggettoConsoleGestione, tipoModalitaConsoleMonitoraggio, idSoggettoConsoleMonitoraggio,
 						homePageMonitoraggio, intervalloTemporaleHomePageConsoleMonitoraggio);
 
@@ -564,6 +566,13 @@ public final class UtentiChange extends Action {
 						puString = puString+","+Permessi.REPORTISTICA.toString();
 				}
 
+				if (isOperativitaApi != null && ServletUtils.isCheckBoxEnabled(isOperativitaApi)) {
+					if (puString.equals(""))
+						puString = Permessi.OPERATIVITA_API.toString();
+					else
+						puString = puString+","+Permessi.OPERATIVITA_API.toString();
+				}
+
 				if (isSistema != null && ServletUtils.isCheckBoxEnabled(isSistema)) {
 					if (puString.equals(""))
 						puString = Permessi.SISTEMA.toString();
@@ -619,7 +628,7 @@ public final class UtentiChange extends Action {
 					}
 				}
 				
-				if (ServletUtils.isCheckBoxEnabled(isDiagnostica) || ServletUtils.isCheckBoxEnabled(isReportistica)) {
+				if (ServletUtils.isCheckBoxEnabled(isDiagnostica) || ServletUtils.isCheckBoxEnabled(isReportistica) || ServletUtils.isCheckBoxEnabled(isOperativitaApi)) {
 					user.setPermitAllSoggetti(ServletUtils.isCheckBoxEnabled(isSoggettiAll));
 					// se seleziono il permitall devo cancellare i soggetti selezionati
 					if(user.isPermitAllSoggetti() &&

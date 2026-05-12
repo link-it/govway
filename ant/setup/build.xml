@@ -2578,6 +2578,9 @@
 		<antcall target="govwayMonitor_log4j_properties_settings">
 		    <param name="file" value="${tmp_archivi}/govwayMonitor.war/WEB-INF/classes/log4j2.properties"/>
 		</antcall>
+		<antcall target="govwayMonitor_monitor_audit_log4j_properties_settings">
+		    <param name="file" value="${tmp_archivi}/govwayMonitor.war/WEB-INF/classes/monitor.audit.log4j2.properties"/>
+		</antcall>
 		<antcall target="govwayMonitor_datasource_properties_settings">
 		    <param name="file" value="${tmp_archivi}/govwayMonitor.war/WEB-INF/classes/daoFactory.properties"/>
 		</antcall>

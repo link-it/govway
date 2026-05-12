@@ -128,40 +128,40 @@ public final class ConfigurazioneAuditing extends Action {
 				if (log4j.equals(AuditCostanti.DEFAULT_VALUE_ABILITATO)) {
 					boolean giaPresente = false;
 					for(int i=0; i<newConfigurazione.sizeAppender(); i++){
-						if(AuditCostanti.DEFAULT_VALUE_PARAMETRO_AUDIT_APPENDER_NOME.equals(newConfigurazione.getAppender(i).getNome())){
+						if(org.openspcoop2.web.lib.audit.costanti.Costanti.AUDIT_APPENDER_LOG4J_NAME.equals(newConfigurazione.getAppender(i).getNome())){
 							giaPresente=true;
 							break;
 						}
 					}
 					if (!giaPresente) {
 						Appender appender = new Appender();
-						appender.setNome(AuditCostanti.DEFAULT_VALUE_PARAMETRO_AUDIT_APPENDER_NOME);
-						appender.setClassName(AuditCostanti.DEFAULT_VALUE_PARAMETRO_AUDIT_APPENDER_CLASS_NAME);
+						appender.setNome(org.openspcoop2.web.lib.audit.costanti.Costanti.AUDIT_APPENDER_LOG4J_NAME);
+						appender.setClassName(org.openspcoop2.web.lib.audit.costanti.Costanti.AUDIT_APPENDER_LOG4J_CLASS);
 						AppenderProperty pr1 = new AppenderProperty();
-						pr1.setName(AuditCostanti.DEFAULT_VALUE_PARAMETRO_AUDIT_APPENDER_PROPERTY_FILE_CONFIGURAZIONE_NAME);
+						pr1.setName(org.openspcoop2.web.lib.audit.costanti.Costanti.AUDIT_APPENDER_LOG4J_PROPERTY_FILE_CONFIGURAZIONE);
 						pr1.setValue(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_AUDIT_APPENDER_PROPERTY_FILE_CONFIGURAZIONE_VALUE);
 						appender.addProperty(pr1);
 						AppenderProperty pr11 = new AppenderProperty();
-						pr11.setName(AuditCostanti.DEFAULT_VALUE_PARAMETRO_AUDIT_APPENDER_PROPERTY_FILE_CONFIGURAZIONE_NAME_LOADER_INSTANCE);
+						pr11.setName(org.openspcoop2.web.lib.audit.costanti.Costanti.AUDIT_APPENDER_LOG4J_PROPERTY_NOME_FILE_LOADER_INSTANCE);
 						pr11.setValue(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_AUDIT_APPENDER_PROPERTY_FILE_CONFIGURAZIONE_VALUE_LOADER_INSTANCE);
 						appender.addProperty(pr11);
 						AppenderProperty pr12 = new AppenderProperty();
-						pr12.setName(AuditCostanti.DEFAULT_VALUE_PARAMETRO_AUDIT_APPENDER_PROPERTY_FILE_CONFIGURAZIONE_NAME_LOG_PROPERTIES);
+						pr12.setName(org.openspcoop2.web.lib.audit.costanti.Costanti.AUDIT_APPENDER_LOG4J_PROPERTY_NOME_PROPRIETA_LOADER_INSTANCE);
 						pr12.setValue(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_AUDIT_APPENDER_PROPERTY_FILE_CONFIGURAZIONE_VALUE_LOG_PROPERTIES);
 						appender.addProperty(pr12);
 						AppenderProperty pr2 = new AppenderProperty();
-						pr2.setName(AuditCostanti.DEFAULT_VALUE_PARAMETRO_AUDIT_APPENDER_PROPERTY_CATEGORY_NAME);
+						pr2.setName(org.openspcoop2.web.lib.audit.costanti.Costanti.AUDIT_APPENDER_LOG4J_PROPERTY_CATEGORY);
 						pr2.setValue(AuditCostanti.DEFAULT_VALUE_PARAMETRO_AUDIT_APPENDER_PROPERTY_CATEGORY_VALUE);
 						appender.addProperty(pr2);
 						AppenderProperty pr3 = new AppenderProperty();
-						pr3.setName(AuditCostanti.DEFAULT_VALUE_PARAMETRO_AUDIT_APPENDER_PROPERTY_XML_NAME);
+						pr3.setName(org.openspcoop2.web.lib.audit.costanti.Costanti.AUDIT_APPENDER_LOG4J_PROPERTY_XML);
 						pr3.setValue(AuditCostanti.DEFAULT_VALUE_PARAMETRO_AUDIT_APPENDER_PROPERTY_XML_VALUE);
 						appender.addProperty(pr3);
 						newConfigurazione.addAppender(appender);
 					}
 				} else {
 					for(int i=0; i<newConfigurazione.sizeAppender(); i++){
-						if(AuditCostanti.DEFAULT_VALUE_PARAMETRO_AUDIT_APPENDER_NOME.equals(newConfigurazione.getAppender(i).getNome())){
+						if(org.openspcoop2.web.lib.audit.costanti.Costanti.AUDIT_APPENDER_LOG4J_NAME.equals(newConfigurazione.getAppender(i).getNome())){
 							newConfigurazione.removeAppender(i);
 							break;
 						}
@@ -198,7 +198,7 @@ public final class ConfigurazioneAuditing extends Action {
 			log4j = AuditCostanti.DEFAULT_VALUE_DISABILITATO;
 			if(c.sizeAppender()>0){
 				for(int i=0; i<c.sizeAppender(); i++){
-					if(AuditCostanti.DEFAULT_VALUE_PARAMETRO_AUDIT_APPENDER_NOME.equals(c.getAppender(i).getNome())){
+					if(org.openspcoop2.web.lib.audit.costanti.Costanti.AUDIT_APPENDER_LOG4J_NAME.equals(c.getAppender(i).getNome())){
 						log4j = ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO;
 						break;
 					}

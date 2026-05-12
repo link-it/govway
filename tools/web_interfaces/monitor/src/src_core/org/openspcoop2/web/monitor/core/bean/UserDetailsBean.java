@@ -95,7 +95,7 @@ public class UserDetailsBean implements Serializable {
 		
 		PermessiUtente permessi = u.getPermessi();
 		
-		if(permessi.isDiagnostica() || permessi.isReportistica()) {
+		if(permessi.isDiagnostica() || permessi.isReportistica() || permessi.isOperativitaApi()) {
 			this.authorities.add(new RuoloBean(UserDetailsBean.RUOLO_OPERATORE));
 
 			if(admin)

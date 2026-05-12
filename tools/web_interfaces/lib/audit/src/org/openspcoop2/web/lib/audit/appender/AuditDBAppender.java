@@ -31,6 +31,7 @@ import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.resources.GestoreJNDI;
 import org.openspcoop2.web.lib.audit.AuditException;
 import org.openspcoop2.web.lib.audit.DriverAuditDBAppender;
+import org.openspcoop2.web.lib.audit.costanti.Costanti;
 import org.openspcoop2.web.lib.audit.log.Operation;
 import org.openspcoop2.web.lib.audit.log.constants.Stato;
 
@@ -61,17 +62,17 @@ public class AuditDBAppender implements IAuditAppender {
 			this.nomeAppender = nomeAppender;
 		
 			// Datasource
-			this.dsName = properties.getProperty("datasource");
+			this.dsName = properties.getProperty(Costanti.AUDIT_APPENDER_DB_PROPERTY_DATASOURCE);
 			if(this.dsName==null){
-				throw new AuditException("Appender["+this.nomeAppender+"] Proprieta' 'datasource' non definita");
+				throw new AuditException("Appender["+this.nomeAppender+"] Proprieta' '"+Costanti.AUDIT_APPENDER_DB_PROPERTY_DATASOURCE+"' non definita");
 			}else{
 				this.dsName = this.dsName.trim();
 			}
-			
+
 			// TipoDatabase
-			this.tipoDatabase = properties.getProperty("tipoDatabase");
+			this.tipoDatabase = properties.getProperty(Costanti.AUDIT_APPENDER_DB_PROPERTY_TIPO_DATABASE);
 			if(this.tipoDatabase==null){
-				throw new AuditException("Appender["+this.nomeAppender+"] Proprieta' 'tipoDatabase' non definita");
+				throw new AuditException("Appender["+this.nomeAppender+"] Proprieta' '"+Costanti.AUDIT_APPENDER_DB_PROPERTY_TIPO_DATABASE+"' non definita");
 			}else{
 				this.tipoDatabase = this.tipoDatabase.trim();
 			}

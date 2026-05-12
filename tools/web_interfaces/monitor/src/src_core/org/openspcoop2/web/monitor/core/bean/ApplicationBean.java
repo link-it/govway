@@ -133,6 +133,7 @@ public class ApplicationBean implements Serializable {
 	
 	private volatile boolean permessoTransazioni = false;
 	private volatile boolean permessoStatistiche = false;
+	private volatile boolean permessoOperativitaApi = false;
 	
 	private boolean loginApplication = true;
 	
@@ -219,6 +220,7 @@ public class ApplicationBean implements Serializable {
 				this.roles = getRuoliUtente(u);
 				this.permessoStatistiche = u.getUtente().getPermessi().isReportistica();
 				this.permessoTransazioni = u.getUtente().getPermessi().isDiagnostica();
+				this.permessoOperativitaApi = u.getUtente().getPermessi().isOperativitaApi();
 			}
 		} catch (Exception e) {
 			ApplicationBean.log.error(e.getMessage(), e);
@@ -608,13 +610,18 @@ public class ApplicationBean implements Serializable {
 
 		if(this.roles.isEmpty())
 			return false;
-		
-		if(!this.permessoStatistiche)
+
+		if(!this.permessoStatistiche && !this.permessoOperativitaApi)
 			return false;
 
-		// le statistiche sono visualizzabili dall' amministratore
+		// le statistiche sono visualizzabili dall' amministratore o dall'operatore
 		return (this.isRuoloAbilitato(ApplicationBean.RUOLO_OPERATORE)
 				|| this.isRuoloAbilitato(ApplicationBean.RUOLO_AMMINISTRATORE));
+	}
+
+	public boolean isPermessoOperativitaApi() {
+		checkRoles();
+		return this.permessoOperativitaApi;
 	}
 	
 	public boolean getShowStatistichePdndTracing() {
@@ -830,6 +837,9 @@ public class ApplicationBean implements Serializable {
 			return false;
 
 		if(this.roles.isEmpty())
+			return false;
+
+		if(!this.permessoStatistiche)
 			return false;
 
 		// visualizzazione consentita solo all'amministratore

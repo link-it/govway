@@ -24,6 +24,7 @@ package org.openspcoop2.core.config.driver;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openspcoop2.core.commons.StatoWrapper;
 import org.openspcoop2.core.config.AccessoConfigurazione;
 import org.openspcoop2.core.config.AccessoDatiAttributeAuthority;
 import org.openspcoop2.core.config.AccessoDatiAutenticazione;
@@ -77,15 +78,24 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 	public static IDBuilder getIDBuilder(){
 		return new IDBuilder();
 	}
-	
+
 	@Override
 	public String toID(Object o) throws IOException {
-		
+
 		if(o==null)
 			throw new IOException("Oggetto is null");
-		
+
+		if(o instanceof StatoWrapper){
+			StatoWrapper sw = (StatoWrapper) o;
+			Object inner = sw.getObj();
+			if(inner==null){
+				throw new IOException("StatoWrapper senza oggetto interno");
+			}
+			return StatoWrapper.appendDescrizioneGruppo(this.toID(inner), sw);
+		}
+
 		try{
-		
+
 			if(o instanceof Soggetto){
 				Soggetto s = (Soggetto) o;
 				String id = s.getTipo()+"/"+s.getNome();
@@ -232,12 +242,20 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 	 */
 	@Override
 	public String toOldID(Object o) throws IOException{
-		
+
 		if(o==null)
 			throw new IOException("Oggetto is null");
-		
+
+		if(o instanceof StatoWrapper){
+			Object inner = ((StatoWrapper) o).getObj();
+			if(inner==null){
+				throw new IOException("StatoWrapper senza oggetto interno");
+			}
+			return this.toOldID(inner);
+		}
+
 		try{
-		
+
 			if(o instanceof Soggetto){
 				Soggetto s = (Soggetto) o;
 				if(s.getOldIDSoggettoForUpdate()==null){
@@ -449,14 +467,23 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 	 */
 	@Override
 	public String getSimpleName(Object o) throws IOException{
-		
+
+		if(o instanceof StatoWrapper){
+			StatoWrapper sw = (StatoWrapper) o;
+			Object inner = sw.getObj();
+			if(inner==null){
+				throw new IOException("StatoWrapper senza oggetto interno");
+			}
+			return inner.getClass().getSimpleName()
+					+ (sw.isEnable() ? "AbilitazioneStato" : "DisabilitazioneStato");
+		}
 		if(o instanceof AccessoRegistroRegistro){
 			return AccessoRegistro.class.getSimpleName();
 		}
 		else{
 			return o.getClass().getSimpleName();
 		}
-		
+
 	}
 
 }

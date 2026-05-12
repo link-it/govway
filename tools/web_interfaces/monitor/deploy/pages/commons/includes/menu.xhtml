@@ -56,8 +56,9 @@
 								actionListener="#{searchFormProcessi.initSearchListener}" />
 						</rich:panelMenuGroup>
 						<rich:panelMenuGroup iconCollapsed="triangle" label="#{msg['menu.reportistica.label']}" id="reportisticaMenuGroup"
-							expanded="true" rendered="#{applicationBean.showStatisticheBase}">
-							<rich:panelMenuItem label="#{msg['menu.reportistica.analisiStatistica']}" action="analisiStatisticaStart" />
+							expanded="true" rendered="#{applicationBean.showStatisticheBase or applicationBean.showStatisticheConfigurazioniGenerali}">
+							<rich:panelMenuItem label="#{msg['menu.reportistica.analisiStatistica']}" action="analisiStatisticaStart"
+								rendered="#{applicationBean.showStatisticheBase}" />
 							<rich:panelMenuItem
 								label="#{msg['menu.reportistica.analisiLog']}" rendered="#{applicationBean.showReport}"
 								action="#{reportBean.submit}"

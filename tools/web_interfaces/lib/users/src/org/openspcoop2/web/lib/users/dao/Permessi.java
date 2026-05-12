@@ -32,7 +32,7 @@ package org.openspcoop2.web.lib.users.dao;
  * 
  */
 public enum Permessi {
-	SERVIZI("S"),DIAGNOSTICA("D"),REPORTISTICA("R"),SISTEMA("C"),CODE_MESSAGGI("M"),AUDITING("A"),UTENTI("U"),ACCORDI_COOPERAZIONE("P");
+	SERVIZI("S"),DIAGNOSTICA("D"),REPORTISTICA("R"),SISTEMA("C"),CODE_MESSAGGI("M"),AUDITING("A"),UTENTI("U"),ACCORDI_COOPERAZIONE("P"),OPERATIVITA_API("O");
 	
 	private String value = null;
 	private Permessi(String s){
@@ -56,6 +56,8 @@ public enum Permessi {
 			return UTENTI;
 		else if("P".equals(value))
 			return ACCORDI_COOPERAZIONE;
+		else if("O".equals(value))
+			return OPERATIVITA_API;
 		else
 			return null;
 	}
@@ -90,6 +92,8 @@ public enum Permessi {
 			return "Utenti";
 		else if("P".equals(this.value))
 			return "Accordi Cooperazione";
+		else if("O".equals(this.value))
+			return "Operativita API";
 		else
 			return null;
 	}

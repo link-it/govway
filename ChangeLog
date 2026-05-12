@@ -1,3 +1,11 @@
+2026-05-12 Giuliano Pintori <pintori@link.it>
+
+	* [GovWayMonitor, GovWayConsole]
+	Aggiunta funzionalità #1757
+	Introdotto, in fase di gestione di un utente, un nuovo permesso 'Operatività API [O]' che consente all'utente di accedere alla console di Monitoraggio 
+	per abilitare o disabilitare le erogazioni e le fruizioni configurate, eventualmente anche solo su singoli gruppi (nei casi in cui le azioni siano organizzate in più gruppi). 
+	Le operazioni di abilitazione/disabilitazione effettuate dal Monitor vengono registrate dal servizio di audit della console essendo a tutti gli effetti modifiche delle configurazioni.
+
 2026-05-10  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

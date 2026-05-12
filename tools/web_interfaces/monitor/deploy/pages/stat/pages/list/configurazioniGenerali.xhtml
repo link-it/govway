@@ -12,7 +12,10 @@
 
 	<ui:define name="body">
 		<style type="text/css" nonce="#{_csp_random_nonce}">
-			#crumbs {display: none;	}					
+			#crumbs {display: none;	}
+			.col-stato { width: 40px; }
+			.stato-api-icon { width: 16px; height: 16px; }
+			.stato-api-icon-clickable { width: 16px; height: 16px; cursor: pointer; }
 		</style>
 		<a4j:outputPanel id="panelPaginaRicerca" layout="block">
 			<rich:simpleTogglePanel id="configurazioniGeneraliSearch" switchType="client"
@@ -169,6 +172,25 @@
 				   }
 				 //]]>	
 				</script>
+				<h:form id="formInitToggleStatoApi">
+					<input type="hidden" id="_csrfFormInitToggleStatoApi" name="_csrf" value="#{loginBean.csrf}"/>
+					<a4j:outputPanel layout="block" ajaxRendered="false">
+						<a4j:jsFunction name="initToggleStato" reRender="statoToggleModalPnlContent,statoGruppiModalPnlContent"
+							actionListener="#{configurazioniGeneraliBean.initToggleStato}" limitToList="true"
+							oncomplete="preparaToggleStato();">
+							<a4j:actionparam name="param1" assignTo="#{configurazioniGeneraliBean.selectedKey}" />
+						</a4j:jsFunction>
+					</a4j:outputPanel>
+				</h:form>
+				<h:form id="formToggleStatoApi">
+					<input type="hidden" id="_csrfFormToggleStatoApi" name="_csrf" value="#{loginBean.csrf}"/>
+					<a4j:outputPanel layout="block" ajaxRendered="false">
+						<a4j:jsFunction name="preparaToggleStato" reRender="statoToggleModalPnlContent,statoGruppiModalPnlContent"
+							actionListener="#{configurazioniGeneraliBean.preparaToggleStato}" limitToList="true"
+							oncomplete="if(#{configurazioniGeneraliBean.singoloGruppo}){Richfaces.showModalPanel('statoToggleModalPnl');}else{Richfaces.showModalPanel('statoGruppiModalPnl');}">
+						</a4j:jsFunction>
+					</a4j:outputPanel>
+				</h:form>
 				<h:form id="formExportListaConfigurazioni">
 					<input type="hidden" id="_csrfFormExportListaConfigurazioni" name="_csrf" value="#{loginBean.csrf}"/>
 					<a4j:outputPanel layout="block" ajaxRendered="false">
@@ -187,6 +209,24 @@
 						reRenderIds="configurazioniTbl" mostraComandiFooterSelezionePageSize="true"
 						useCount="#{configurazioniGeneraliSearchForm.useCount}">
 						
+						<rich:column styleClass="align-center" width="40px">
+							<f:facet name="header">
+								<h:outputText value="Stato" id="outStato"/>
+							</f:facet>
+							<a4j:outputPanel id="statoIconPnl_#{item.id}" layout="inline">
+								<h:commandLink id="toggleStato-iconLink" rendered="#{applicationBean.permessoOperativitaApi}"
+									onclick="initToggleStato('#{item.id}'); return false;">
+									<h:graphicImage value="#{item.statoImmagine}" styleClass="stato-api-icon-clickable"
+										alt="#{item.statoTooltip}"/>
+								</h:commandLink>
+								<h:graphicImage rendered="#{!applicationBean.permessoOperativitaApi}"
+									value="#{item.statoImmagine}" styleClass="stato-api-icon"
+									alt="#{item.statoTooltip}"/>
+								<rich:toolTip direction="top-right" showDelay="200" styleClass="tooltip" layout="block"
+									value="#{item.statoTooltip}"/>
+							</a4j:outputPanel>
+						</rich:column>
+
 						<rich:column rendered="#{configurazioniGeneraliSearchForm._value_tipologiaTransazioni == 'delegata' and configurazioniGeneraliSearchForm.multitenant}">
 							<f:facet name="header">
 								<h:outputText value="Fruitore"  id="outFruitore"/>
@@ -271,6 +311,265 @@
 						</a4j:outputPanel>
 					</h:form>
 				</rich:modalPanel>
+
+			<!-- Modal Panel: Conferma toggle stato singolo gruppo -->
+			<rich:modalPanel id="statoToggleModalPnl" showWhenRendered="false" width="500" autosized="true">
+				<f:facet name="header">
+					<h:outputText id="statoToggleModalPnlHeader" value="Conferma Operazione" />
+				</f:facet>
+				<f:facet name="controls">
+					<h:panelGroup id="panelChiudiStatoToggle">
+						<h:graphicImage value="/images/tema_link/clear_white.png" id="hideStatoToggle"/>
+						<rich:componentControl for="statoToggleModalPnl" attachTo="hideStatoToggle" operation="hide" event="onclick"/>
+					</h:panelGroup>
+				</f:facet>
+				<a4j:outputPanel id="statoToggleModalPnlContent" ajaxRendered="false" layout="block">
+					<h:form id="formToggleStato" prependId="false">
+						<input type="hidden" id="_csrfFormToggleStato" name="_csrf" value="#{loginBean.csrf}"/>
+						<div class="form-container noborder">
+							<p><h:outputText value="#{configurazioniGeneraliBean.messaggioConfermaToggle}" /></p>
+							<div class="buttonrowmodal">
+								<h:commandButton id="confermaToggleBtn" value="Conferma" styleClass="positive"
+									action="#{configurazioniGeneraliBean.confermaCambioStatoAction}" />
+								<a4j:commandButton id="annullaToggleBtn" value="Annulla"
+									action="#{configurazioniGeneraliBean.annullaCambioStato}"
+									onclick="#{rich:component('statoToggleModalPnl')}.hide(); return false;" />
+							</div>
+						</div>
+					</h:form>
+				</a4j:outputPanel>
+			</rich:modalPanel>
+
+			<!-- Modal Panel: Widget doppia cartella per multi-gruppo -->
+			<rich:modalPanel id="statoGruppiModalPnl" showWhenRendered="false" width="700" styleClass="overflow-auto" autosized="true">
+				<f:facet name="header">
+					<h:outputText id="statoGruppiModalPnlHeader" value="Conferma Operazione" />
+				</f:facet>
+				<f:facet name="controls">
+					<h:panelGroup id="panelChiudiStatoGruppi">
+						<h:graphicImage value="/images/tema_link/clear_white.png" id="hideStatoGruppi"/>
+						<rich:componentControl for="statoGruppiModalPnl" attachTo="hideStatoGruppi" operation="hide" event="onclick"/>
+					</h:panelGroup>
+				</f:facet>
+				<h:form id="formStatoGruppi" prependId="false">
+					<a4j:outputPanel layout="block" id="statoGruppiModalPnlContent" ajaxRendered="false">
+						<input type="hidden" id="_csrfFormStatoGruppi" name="_csrf" value="#{loginBean.csrf}"/>
+						<style type="text/css" nonce="#{_csp_random_nonce}">
+							.rich-shuttle-source-items { margin-left :0px;	}
+							.note-no-margin-left { margin-left: 0px !important; }
+							.label-descrizione-api-pnl { padding: 16px 0px; }
+							.label-descrizione-api { font-weight: bold; }
+							.stato-gruppi-shuttle-headers {
+								display: flex;
+								align-items: center;
+								padding-bottom: 6px;
+							}
+							.stato-gruppi-shuttle-headers .col-list {
+								width: 300px;
+								/* text-align: center; */
+								/* font-weight: bold; */
+								padding: 4px 0px;
+							}
+							.stato-gruppi-shuttle-headers .col-spacer {
+								flex: 0 0 40px;
+							}
+						</style>
+						<div class="form-container noborder">
+							
+							<a4j:outputPanel id="selezioneGruppiCtr" diplay="block" rendered="#{true}">
+								<a4j:outputPanel rendered="#{true}" layout="block">
+   									<div class="prop">
+   										<a4j:outputPanel rendered="#{true}" layout="block" styleClass="label-descrizione-api-pnl">
+   											<h:outputText id="descrizioneApiLabel" styleClass="label-descrizione-api" value="#{configurazioniGeneraliBean.elementoSelezionatoPerStato.servizio}">
+											</h:outputText>
+										</a4j:outputPanel>
+										<div class="stato-gruppi-shuttle-headers">
+											<div class="col-list">Gruppi Disabilitati</div>
+											<div class="col-spacer">&#160;</div>
+											<div class="col-list">Gruppi Abilitati</div>
+										</div>
+										<rich:listShuttle id="statoGruppiShuttle"
+											sourceValue="#{configurazioniGeneraliBean.gruppiDisabilitatiItems}"
+											targetValue="#{configurazioniGeneraliBean.gruppiAbilitatiItems}"
+											var="selectItem" listsHeight="200"
+											sourceListWidth="300" targetListWidth="300"
+											copyAllControlLabel="Abilita tutti" copyControlLabel="Abilita"
+											removeAllControlLabel="Disabilita tutti" removeControlLabel="Disabilita"
+											converter="multipleChoiceItemConverter"
+											orderControlsVisible="false">
+											<rich:column>
+												<h:outputText value="#{selectItem.label}"></h:outputText>
+											</rich:column>
+											<f:facet name="topControl">
+											   		<a4j:outputPanel styleClass="rich-list-shuttle-button" layout="block" onmouseover="this.className='rich-list-shuttle-button-light'" 
+									        			onmousedown="this.className='rich-list-shuttle-button-press'" 
+									        			onmouseup="this.className='rich-list-shuttle-button'" 
+									        			onmouseout="this.className='rich-list-shuttle-button'">
+									        			<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
+									        				<h:graphicImage value="/images/tema_link/move_top.png"/>
+									        			</a4j:outputPanel>
+									        	</a4j:outputPanel>
+									        </f:facet>
+									        
+									        <f:facet name="topControlDisabled">
+									        	<a4j:outputPanel styleClass="rich-list-shuttle-button-disabled" layout="block">
+									        		<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
+									        			 <h:graphicImage value="/images/tema_link/move_top_disabilitato.png"/>
+									        		</a4j:outputPanel>
+									        	</a4j:outputPanel>
+									        </f:facet>
+									        
+									        <f:facet name="bottomControl">
+									    	    <a4j:outputPanel styleClass="rich-list-shuttle-button" layout="block" onmouseover="this.className='rich-list-shuttle-button-light'" 
+									        			onmousedown="this.className='rich-list-shuttle-button-press'" 
+									        			onmouseup="this.className='rich-list-shuttle-button'" 
+									        			onmouseout="this.className='rich-list-shuttle-button'">
+									        			<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
+									        				<h:graphicImage value="/images/tema_link/move_bottom.png"/>
+									        			</a4j:outputPanel>
+									        	 </a4j:outputPanel>
+									        </f:facet>
+									        
+									        <f:facet name="bottomControlDisabled">
+									       		<a4j:outputPanel styleClass="rich-list-shuttle-button-disabled" layout="block">
+									        		<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
+									        			<h:graphicImage value="/images/tema_link/move_bottom_disabilitato.png"/>
+									        		</a4j:outputPanel>
+									        	</a4j:outputPanel>
+									        </f:facet>
+									        
+									        <f:facet name="upControl">
+									       		 <a4j:outputPanel styleClass="rich-list-shuttle-button" layout="block" onmouseover="this.className='rich-list-shuttle-button-light'" 
+									        			onmousedown="this.className='rich-list-shuttle-button-press'" 
+									        			onmouseup="this.className='rich-list-shuttle-button'" 
+									        			onmouseout="this.className='rich-list-shuttle-button'">
+									        			<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
+									        				<h:graphicImage value="/images/tema_link/move_up.png"/>
+									        			</a4j:outputPanel>
+									        	 </a4j:outputPanel>
+									        </f:facet>
+									        
+									        <f:facet name="upControlDisabled">
+									        <a4j:outputPanel styleClass="rich-list-shuttle-button-disabled" layout="block">
+									        		<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
+									        			<h:graphicImage value="/images/tema_link/move_up_disabilitato.png"/>
+									        		</a4j:outputPanel>
+									        	</a4j:outputPanel>
+									        </f:facet>
+									        
+									        <f:facet name="downControl">
+									     	   <a4j:outputPanel styleClass="rich-list-shuttle-button" layout="block" onmouseover="this.className='rich-list-shuttle-button-light'" 
+									        			onmousedown="this.className='rich-list-shuttle-button-press'" 
+									        			onmouseup="this.className='rich-list-shuttle-button'" 
+									        			onmouseout="this.className='rich-list-shuttle-button'">
+									        			<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
+									        				<h:graphicImage value="/images/tema_link/move_down.png"/>
+									        			</a4j:outputPanel>
+									        	 </a4j:outputPanel>
+									        </f:facet>
+									        
+									        <f:facet name="downControlDisabled">
+									        <a4j:outputPanel styleClass="rich-list-shuttle-button-disabled" layout="block">
+									        		<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
+									        			 <h:graphicImage value="/images/tema_link/move_down_disabilitato.png"/>
+									        		</a4j:outputPanel>
+									        	</a4j:outputPanel>
+									        </f:facet>
+									        
+									        <f:facet name="copyControl">
+									        	<a4j:outputPanel styleClass="rich-list-shuttle-button" layout="block" onmouseover="this.className='rich-list-shuttle-button-light'" 
+									        			onmousedown="this.className='rich-list-shuttle-button-press'" 
+									        			onmouseup="this.className='rich-list-shuttle-button'" 
+									        			onmouseout="this.className='rich-list-shuttle-button'">
+									        			<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
+									        				<h:graphicImage value="/images/tema_link/go_next.png"/>
+									        			</a4j:outputPanel>
+									        	 </a4j:outputPanel>
+									        </f:facet>
+									        
+									        <f:facet name="copyControlDisabled">
+									        <a4j:outputPanel styleClass="rich-list-shuttle-button-disabled" layout="block">
+									        		<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
+									        			<h:graphicImage value="/images/tema_link/go_next_disabilitato.png"/>
+									        		</a4j:outputPanel>
+									        	</a4j:outputPanel>
+									        </f:facet>
+									        
+									        <f:facet name="copyAllControl">
+									        		<a4j:outputPanel styleClass="rich-list-shuttle-button" layout="block" onmouseover="this.className='rich-list-shuttle-button-light'" 
+									        			onmousedown="this.className='rich-list-shuttle-button-press'" 
+									        			onmouseup="this.className='rich-list-shuttle-button'" 
+									        			onmouseout="this.className='rich-list-shuttle-button'">
+									        			<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
+									        				 <h:graphicImage value="/images/tema_link/go_end.png"/>
+									        			</a4j:outputPanel>
+									        	 </a4j:outputPanel>
+									        </f:facet>
+									        
+									        <f:facet name="copyAllControlDisabled">
+									        <a4j:outputPanel styleClass="rich-list-shuttle-button-disabled" layout="block">
+									        		<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
+									        			<h:graphicImage value="/images/tema_link/go_end_disabilitato.png"/>
+									        		</a4j:outputPanel>
+									        	</a4j:outputPanel>
+									        </f:facet>
+									        
+									        <f:facet name="removeControl">
+									        	<a4j:outputPanel styleClass="rich-list-shuttle-button" layout="block" onmouseover="this.className='rich-list-shuttle-button-light'" 
+									        			onmousedown="this.className='rich-list-shuttle-button-press'" 
+									        			onmouseup="this.className='rich-list-shuttle-button'" 
+									        			onmouseout="this.className='rich-list-shuttle-button'">
+									        			<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
+									        				<h:graphicImage value="/images/tema_link/go_prev.png"/>
+									        			</a4j:outputPanel>
+									        	 </a4j:outputPanel>
+									        </f:facet>
+									        
+									        <f:facet name="removeControlDisabled">
+									        <a4j:outputPanel styleClass="rich-list-shuttle-button-disabled" layout="block">
+									        		<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
+									        			<h:graphicImage value="/images/tema_link/go_prev_disabilitato.png"/>
+									        		</a4j:outputPanel>
+									        	</a4j:outputPanel>
+									        </f:facet>
+									        
+									        <f:facet name="removeAllControl">
+									        	<a4j:outputPanel layout="block" styleClass="rich-list-shuttle-button" onmouseover="this.className='rich-list-shuttle-button-light'" 
+									        			onmousedown="this.className='rich-list-shuttle-button-press'" 
+									        			onmouseup="this.className='rich-list-shuttle-button'" 
+									        			onmouseout="this.className='rich-list-shuttle-button'">
+									        			<a4j:outputPanel layout="block" styleClass="rich-list-shuttle-button-content">
+									        				<h:graphicImage value="/images/tema_link/go_start.png"/>
+									        			</a4j:outputPanel>
+									        	 </a4j:outputPanel>
+									        </f:facet>
+									        
+									        <f:facet name="removeAllControlDisabled">
+									        	<a4j:outputPanel styleClass="rich-list-shuttle-button-disabled" layout="block">
+									        		<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
+									        			<h:graphicImage value="/images/tema_link/go_start_disabilitato.png"/>
+									        		</a4j:outputPanel>
+									        	</a4j:outputPanel>
+									        </f:facet>
+										</rich:listShuttle>
+										<p class="note note-no-margin-left" >
+											<h:outputText value="Seleziona i gruppi da abilitare dalla lista di sinistra" escape="#{true}"/>
+										</p>
+									</div>
+								</a4j:outputPanel>
+							</a4j:outputPanel>
+							<div class="buttonrowmodal">
+								<h:commandButton id="aggiornaGruppiBtn" value="Aggiorna" styleClass="positive"
+									action="#{configurazioniGeneraliBean.salvaStatoGruppiAction}" />
+								<a4j:commandButton id="annullaGruppiBtn" value="Annulla"
+									action="#{configurazioniGeneraliBean.annullaCambioStato}"
+									onclick="#{rich:component('statoGruppiModalPnl')}.hide(); return false;" />
+							</div>
+						</div>
+					</a4j:outputPanel>
+				</h:form>
+			</rich:modalPanel>
+
 		</a4j:outputPanel>
 	</ui:define>
 </ui:composition>
