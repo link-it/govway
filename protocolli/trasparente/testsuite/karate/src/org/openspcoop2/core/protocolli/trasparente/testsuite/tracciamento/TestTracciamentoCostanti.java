@@ -54,6 +54,11 @@ public class TestTracciamentoCostanti {
 	public static final String RISORSA_DUMP_CLIENT_DISABLED = "dumpClientDisabled";
 	public static final String RISORSA_EXTERNAL_CONFIG_PROPERTIES = "externalConfigProperties";
 	public static final String RISORSA_RIDEFINITO_CONFIG_PROPERTIES = "ridefinitoConfigProperties";
+
+	public static final String RISORSA_PARZIALE_RICHIESTA_HEADER_ONLY  = "richiestaAbilitatoHeaderOnly";
+	public static final String RISORSA_PARZIALE_RICHIESTA_PAYLOAD_ONLY = "richiestaAbilitatoPayloadOnly";
+	public static final String RISORSA_PARZIALE_RISPOSTA_HEADER_ONLY   = "rispostaAbilitatoHeaderOnly";
+	public static final String RISORSA_PARZIALE_RISPOSTA_PAYLOAD_ONLY  = "rispostaAbilitatoPayloadOnly";
 	
 	public static final String ERRORE_DATABASE_FASE_IN_REQUEST = "Errore durante il tracciamento 'database' (fase: Richiesta ricevuta): Test Manually Exception generated in phase 'IN_REQUEST'";
 	public static final String ERRORE_DATABASE_FASE_OUT_REQUEST = "Errore durante il tracciamento 'database' (fase: Richiesta in consegna): Test Manually Exception generated in phase 'OUT_REQUEST'";

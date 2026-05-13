@@ -84,8 +84,26 @@ public class TracciamentoVerifica {
 	
 	public boolean client = true;
 	public boolean server = true;
-	
+
+	// Override granulari header/payload separati. Se null, viene utilizzato il valore di 'client' / 'server'.
+	// Servono per esprimere configurazioni asimmetriche di fileTrace (es. solo header su 'dump-in').
+	public Boolean clientHeader  = null;
+	public Boolean clientPayload = null;
+	public Boolean serverHeader  = null;
+	public Boolean serverPayload = null;
+
+	public boolean isClientHeaderExpected()  { return this.clientHeader  != null ? this.clientHeader.booleanValue()  : this.client; }
+	public boolean isClientPayloadExpected() { return this.clientPayload != null ? this.clientPayload.booleanValue() : this.client; }
+	public boolean isServerHeaderExpected()  { return this.serverHeader  != null ? this.serverHeader.booleanValue()  : this.server; }
+	public boolean isServerPayloadExpected() { return this.serverPayload != null ? this.serverPayload.booleanValue() : this.server; }
+
 	public Boolean verificaContenuti = null;
+
+	// Se true, oltre alla verifica su DB (innescata da verificaDB/forzaVerificaDB...) viene eseguita
+	// ANCHE la verifica del contenuto del file di fileTrace nelle stesse fasi.
+	// Serve per i test asimmetrici di fileTrace che vogliono coprire in un'unica esecuzione sia
+	// "dump_messaggi vuota" sia "file di fileTrace popolato in modo coerente alla config asimmetrica".
+	public boolean verificaFileTraceContent = false;
 	
 	public boolean check(FaseTracciamento fase, FaseTracciamento from) {
 		if(from==null) {

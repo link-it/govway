@@ -40,11 +40,27 @@ import org.openspcoop2.utils.resources.FileSystemUtilities;
 */
 public class FileTraceParser {
 
-	public static FileTraceParser parse( FaseTracciamento fase, boolean client, boolean server, 
-			String contentRequest, String contentResponse, 
+	public static FileTraceParser parse( FaseTracciamento fase, boolean client, boolean server,
+			String contentRequest, String contentResponse,
 			boolean expected, boolean tokenInfoExpected,
 			String logDiagnostico) throws FileNotFoundException, UtilsException {
-		
+		// wrapper retrocompatibile: il valore di 'client' viene applicato sia a header sia a payload (idem per 'server')
+		return parse(fase, client, client, server, server,
+				contentRequest, contentResponse, expected, tokenInfoExpected, logDiagnostico);
+	}
+
+	/**
+	 * Variante che consente di esprimere separatamente, per ciascun lato (client/server),
+	 * la presenza attesa di header e payload nel file di fileTrace.
+	 * Serve a verificare configurazioni asimmetriche di 'dump-in' / 'dump-out' (es. solo header).
+	 */
+	public static FileTraceParser parse( FaseTracciamento fase,
+			boolean clientHeader, boolean clientPayload,
+			boolean serverHeader, boolean serverPayload,
+			String contentRequest, String contentResponse,
+			boolean expected, boolean tokenInfoExpected,
+			String logDiagnostico) throws FileNotFoundException, UtilsException {
+
 		File file = null;
 		boolean token = false;
 		switch (fase) {
@@ -64,7 +80,7 @@ public class FileTraceParser {
 			token = tokenInfoExpected;
 			break;
 		}
-		
+
 		if(FaseTracciamento.POST_OUT_RESPONSE.equals(fase)) {
 			Utilities.sleep(100);
 			if(!file.exists() || file.length()<=0) {
@@ -77,13 +93,14 @@ public class FileTraceParser {
 				Utilities.sleep(5000);
 			}
 		}
-		
+
 		if(file.exists() && file.length()>0) {
 			if(!expected) {
 				throw new UtilsException("File '"+file.getAbsolutePath()+"' non atteso");
 			}
 			FileTraceParser f = new FileTraceParser(file);
-			f.check(fase, client, server, contentRequest, contentResponse, token,
+			f.check(fase, clientHeader, clientPayload, serverHeader, serverPayload,
+					contentRequest, contentResponse, token,
 					logDiagnostico);
 			return f;
 		}
@@ -98,7 +115,7 @@ public class FileTraceParser {
 			}
 			return null;
 		}
-		
+
 	}
 	
 	private Map<String, String> values = new HashMap<>();
@@ -142,8 +159,18 @@ public class FileTraceParser {
 		}
 	}
 	
-	public void check(FaseTracciamento fase, boolean client, boolean server, 
-			String contentRequest, String contentResponse, 
+	public void check(FaseTracciamento fase, boolean client, boolean server,
+			String contentRequest, String contentResponse,
+			boolean tokenInfoExpected,
+			String logDiagnostico) throws UtilsException {
+		// wrapper retrocompatibile
+		check(fase, client, client, server, server, contentRequest, contentResponse, tokenInfoExpected, logDiagnostico);
+	}
+
+	public void check(FaseTracciamento fase,
+			boolean clientHeader, boolean clientPayload,
+			boolean serverHeader, boolean serverPayload,
+			String contentRequest, String contentResponse,
 			boolean tokenInfoExpected,
 			String logDiagnostico) throws UtilsException {
 		try {
@@ -151,10 +178,11 @@ public class FileTraceParser {
 			if(!fase.name().equals(v)) {
 				throw new Exception("Attesa fase '"+fase+"' trovata '"+v+"'");
 			}
-			
-			checkContent(fase, client, server, contentRequest, contentResponse,
+
+			checkContent(fase, clientHeader, clientPayload, serverHeader, serverPayload,
+					contentRequest, contentResponse,
 					logDiagnostico);
-			
+
 			String tokenInfo = this.values.get("TokenInfo");
 			if(tokenInfo==null || StringUtils.isEmpty(tokenInfo.trim())) {
 				if(tokenInfoExpected) {
@@ -170,23 +198,35 @@ public class FileTraceParser {
 					throw new UtilsException("TokenInfo claim 'client_id' non trovato in: "+c);
 				}
 			}
-			
+
 		}catch(Exception e) {
 			throw new UtilsException("["+this.file.getAbsolutePath()+"] "+e.getMessage(),e);
 		}
 	}
-	
+
 	public void checkContent(FaseTracciamento fase, boolean client, boolean server, String contentRequest, String contentResponse,
 			String logDiagnostico) throws UtilsException {
-		
+		// wrapper retrocompatibile
+		checkContent(fase, client, client, server, server, contentRequest, contentResponse, logDiagnostico);
+	}
+
+	/**
+	 * Variante con flag header/payload separati per i due lati (client/server) — vedi {@link #parse}.
+	 */
+	public void checkContent(FaseTracciamento fase,
+			boolean clientHeader, boolean clientPayload,
+			boolean serverHeader, boolean serverPayload,
+			String contentRequest, String contentResponse,
+			String logDiagnostico) throws UtilsException {
+
 		boolean erroreInRequest = TestTracciamentoCostanti.ERRORE_FILETRACE_FASE_IN_REQUEST.equals(logDiagnostico);
 		boolean erroreOutRequest = TestTracciamentoCostanti.ERRORE_FILETRACE_FASE_OUT_REQUEST.equals(logDiagnostico);
 		boolean erroreOutResponse = TestTracciamentoCostanti.ERRORE_FILETRACE_FASE_OUT_RESPONSE.equals(logDiagnostico);
-		
+
 		// inRequest
 		String key = getPrefix(true, true);
-		check(key, client, client, contentRequest);
-		
+		check(key, clientHeader, clientPayload, contentRequest);
+
 		// outRequest
 		key = getPrefix(false, true);
 		switch (fase) {
@@ -198,13 +238,13 @@ public class FileTraceParser {
 			break;
 		case OUT_RESPONSE:
 		case POST_OUT_RESPONSE:
-			check(key, 
-					(erroreInRequest || erroreOutRequest) ? false : server, 
-					(erroreInRequest || erroreOutRequest) ? false : server, 
+			check(key,
+					(erroreInRequest || erroreOutRequest) ? false : serverHeader,
+					(erroreInRequest || erroreOutRequest) ? false : serverPayload,
 					contentRequest);
 			break;
 		}
-		
+
 		// inResponse
 		key = getPrefix(true, false);
 		switch (fase) {
@@ -213,19 +253,19 @@ public class FileTraceParser {
 			check(key, false, false, contentResponse);
 			break;
 		case OUT_RESPONSE:
-			check(key, 
-					(erroreInRequest || erroreOutRequest) ? false : server, 
-					(erroreInRequest || erroreOutRequest) ? false : server, 
+			check(key,
+					(erroreInRequest || erroreOutRequest) ? false : serverHeader,
+					(erroreInRequest || erroreOutRequest) ? false : serverPayload,
 					contentResponse);
 			break;
 		case POST_OUT_RESPONSE:
-			check(key, 
-					(erroreInRequest || erroreOutRequest) ? false : server, 
-					(erroreInRequest || erroreOutRequest) ? false : server, 
+			check(key,
+					(erroreInRequest || erroreOutRequest) ? false : serverHeader,
+					(erroreInRequest || erroreOutRequest) ? false : serverPayload,
 					contentResponse);
 			break;
 		}
-		
+
 		// outResponse
 		key = getPrefix(false, false);
 		switch (fase) {
@@ -237,7 +277,7 @@ public class FileTraceParser {
 			check(key, true, false, contentResponse);
 			break;
 		case POST_OUT_RESPONSE:
-			check(key, client, client, 
+			check(key, clientHeader, clientPayload,
 					(erroreInRequest || erroreOutRequest || erroreOutResponse) ? TestTracciamentoCostanti.ERRORE_503_PREFIX  :contentResponse);
 			break;
 		}

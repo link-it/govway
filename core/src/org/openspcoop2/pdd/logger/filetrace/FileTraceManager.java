@@ -192,7 +192,13 @@ public class FileTraceManager {
 				tipiDaEliminareBody.remove(tipoMessaggio);	
 			}
 			
-			if(onlyLogFileTraceHeaders && onlyLogFileTraceBody) {
+			// Un messaggio è interamente "file-trace-only" anche quando uno dei due lati
+			// (headers o body) è marcato onlyLogFileTrace e l'altro non è stato proprio
+			// catturato per il DB (body null / headers vuoti): in questi casi la riga
+			// finirebbe comunque su dump_messaggi pur non avendo contenuto utile.
+			boolean bodyAssente    = messaggio.getBody()==null;
+			boolean headersAssenti = messaggio.getHeaders()==null || messaggio.getHeaders().isEmpty();
+			if( (onlyLogFileTraceHeaders || headersAssenti) && (onlyLogFileTraceBody || bodyAssente) ) {
 				messaggiDaEliminare.add(tipoMessaggio);
 			}
 			else if(onlyLogFileTraceHeaders) {
