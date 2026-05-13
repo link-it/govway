@@ -35,4 +35,16 @@ public enum OpenAPILibrary implements Serializable {
 	openapi4j,
 	swagger_request_validator,
 	kappa;
+
+	/**
+	 * @return {@code true} se la libreria supporta le specifiche OpenAPI 3.1.
+	 *         Le librerie {@link #openapi4j} e {@link #swagger_request_validator}
+	 *         non supportano i costrutti introdotti in 3.1 (type-array, const,
+	 *         exclusiveMinimum/Maximum numerici, prefixItems, if/then/else,
+	 *         dependentRequired, unevaluatedProperties, $dynamicRef/$dynamicAnchor,
+	 *         webhooks, ...).
+	 */
+	public boolean supportsOpenApi31() {
+		return this == kappa || this == json_schema;
+	}
 }

@@ -31,6 +31,8 @@ import java.util.function.UnaryOperator;
  * cioè {@code usingFromSetProtocolInfo} e {@code validateBodyParameterElement}.
  *
  * @author Tommaso Burlon (tommaso.burlon@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class BaseSpecConfig extends AbstractApiSpecConfig {
 

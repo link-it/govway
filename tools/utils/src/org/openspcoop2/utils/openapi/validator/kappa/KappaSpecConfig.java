@@ -27,6 +27,8 @@ import org.openspcoop2.utils.rest.AbstractApiSpecConfig;
  * (com.github.erosb), che supporta sia OpenAPI 3.0 che 3.1.
  *
  * @author Tommaso Burlon (tommaso.burlon@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class KappaSpecConfig extends AbstractApiSpecConfig {
 

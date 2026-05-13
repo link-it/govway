@@ -107,6 +107,9 @@ public class SwaggerRequestValidatorEngine extends AbstractApiValidator implemen
 			throw new ProcessingException("Api is null");
 		if (!(api instanceof OpenapiApi))
 			throw new ProcessingException("Swagger-request-validator supports only OpenapiApi class");
+		if (OpenapiApi.isOpenApi31(api))
+			throw new ProcessingException("La libreria 'swagger_request_validator' non supporta OpenAPI 3.1: " +
+					"configurare una libreria compatibile (es. 'kappa') per le specifiche 3.1");
 		this.api = api;
 		this.log = log;
 

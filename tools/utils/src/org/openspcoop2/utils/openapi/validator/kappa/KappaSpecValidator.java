@@ -52,6 +52,8 @@ import com.github.erosb.kappa.parser.model.v3.OpenApi3;
  * l'eventuale warning di parsing già accumulato a monte).
  *
  * @author Tommaso Burlon (tommaso.burlon@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class KappaSpecValidator implements IApiSpecValidator {
 

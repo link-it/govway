@@ -154,6 +154,7 @@ import org.openspcoop2.security.message.engine.MessageSecurityFactory;
 import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.MapKey;
+import org.openspcoop2.utils.UtilsRuntimeException;
 import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.Semaphore;
 import org.openspcoop2.utils.SemaphoreType;
@@ -24481,22 +24482,16 @@ public class OpenSPCoop2Properties {
 				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, defaultValue.toString()),e);
 				this.openapi31Library = defaultValue;
 			}
+
+			// Per le specifiche 3.1 sono ammesse solo le librerie che supportano i costrutti 3.1
+			if (this.openapi31Library != null && !this.openapi31Library.supportsOpenApi31()) {
+				throw new UtilsRuntimeException("Property '" + pName + "' con valore '" + this.openapi31Library
+						+ "' non valido: la libreria non supporta i costrutti introdotti in OpenAPI 3.1. "
+						+ "Valori ammessi per 3.1: kappa, json_schema.");
+			}
 		}
 
 		return this.openapi31Library;
-	}
-
-	/**
-	 * Costruisce un {@link ApiValidatorConfig} pre-configurato per OpenAPI 3.1
-	 * tramite il {@link ApiFactory} sull'engine ritornato da {@link #getOpenapi31Library()}.
-	 * I flag vengono letti tramite l'overlay {@code ...openApi.31.<flag>} con fallback
-	 * su {@code ...openApi.<flag>} (e infine sul default del config).
-	 */
-	public ApiValidatorConfig getOpenapi31Config() throws ProcessingException {
-		OpenAPILibrary library = getOpenapi31Library();
-		ApiValidatorConfig config = ApiFactory.newApiValidatorConfig(library.name());
-		config.readProperties(this::resolveOpenapi31Property);
-		return config;
 	}
 
 	private String resolveOpenapi31Property(String suffix) {

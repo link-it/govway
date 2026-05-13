@@ -103,6 +103,9 @@ public class Openapi4jRequestValidator extends AbstractApiValidator implements I
 			throw new ProcessingException("Api is null");
 		if (!(api instanceof OpenapiApi))
 			throw new ProcessingException("Openapi4j validator supports only OpenapiApi class");
+		if (OpenapiApi.isOpenApi31(api))
+			throw new ProcessingException("La libreria 'openapi4j' non supporta OpenAPI 3.1: " +
+					"configurare una libreria compatibile (es. 'kappa') per le specifiche 3.1");
 		this.api = api;
 		this.log = log;
 

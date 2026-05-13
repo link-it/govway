@@ -23,7 +23,6 @@ package org.openspcoop2.utils.rest;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
 import org.openspcoop2.utils.beans.BaseBean;

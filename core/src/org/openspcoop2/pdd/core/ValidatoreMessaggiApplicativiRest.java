@@ -26,7 +26,6 @@ package org.openspcoop2.pdd.core;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -647,7 +646,7 @@ public class ValidatoreMessaggiApplicativiRest {
 	 * </ul>
 	 */
 	private OpenAPILibrary resolveLibraryForCurrentApi(Api api, List<Proprieta> proprieta) {
-		boolean is31 = isOpenApi31(api);
+		boolean is31 = OpenapiApi.isOpenApi31(api);
 		if (is31) {
 			String overrideLib = readValue(proprieta, "validation.openApi.31.library");
 			if (overrideLib != null && !overrideLib.trim().isEmpty()) {
@@ -694,7 +693,7 @@ public class ValidatoreMessaggiApplicativiRest {
 	 * I metodi legacy non sono toccati.
 	 */
 	private ApiValidatorConfig buildValidatorConfigForCurrentApi(Api api, List<Proprieta> proprieta, OpenAPILibrary library) throws ProcessingException {
-		boolean is31 = isOpenApi31(api);
+		boolean is31 = OpenapiApi.isOpenApi31(api);
 
 		// 1. recupero la base cached e ne creo una copia (transferendo solo le coppie chiave/valore)
 		ApiValidatorConfig base = is31
@@ -714,30 +713,6 @@ public class ValidatoreMessaggiApplicativiRest {
 		ApiValidatorConfig engineConfig = ApiFactory.newApiValidatorConfig(library.name());
 		engineConfig.readProperties(src::getProperty);
 		return engineConfig;
-	}
-
-	private static boolean isOpenApi31(Api api) {
-		if (!(api instanceof OpenapiApi)) {
-			return false;
-		}
-		OpenapiApi openapiApi = (OpenapiApi) api;
-		if (!ApiFormats.OPEN_API_3.equals(openapiApi.getFormat())) {
-			return false;
-		}
-		// 1) preferiamo il modello parsed, se disponibile (transient: può essere null dopo ser/des)
-		try {
-			if (openapiApi.getApi() != null && openapiApi.getApi().getOpenapi() != null
-					&& openapiApi.getApi().getOpenapi().startsWith("3.1")) {
-				return true;
-			}
-		} catch (Exception e) { /* fallthrough */ }
-		// 2) fallback: scan dell'apiRaw per la dichiarazione di versione
-		String raw = openapiApi.getApiRaw();
-		if (raw == null) {
-			return false;
-		}
-		// pattern: openapi: "3.1...", openapi: 3.1..., "openapi": "3.1..."
-		return raw.matches("(?s).*[\"']?openapi[\"']?\\s*:\\s*[\"']?3\\.1.*");
 	}
 
 	private static void applyMapToLibConfig(OpenapiLibraryValidatorConfig dest, Map<String, String> props) {

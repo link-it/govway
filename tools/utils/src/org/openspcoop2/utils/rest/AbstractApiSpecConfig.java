@@ -33,6 +33,8 @@ import java.util.function.UnaryOperator;
  * {@link #readProperties(UnaryOperator)}.
  *
  * @author Tommaso Burlon (tommaso.burlon@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public abstract class AbstractApiSpecConfig implements IApiSpecConfig {
 

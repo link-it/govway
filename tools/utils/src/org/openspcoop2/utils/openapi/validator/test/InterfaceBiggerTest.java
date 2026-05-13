@@ -119,6 +119,7 @@ public class InterfaceBiggerTest {
 			switch (openAPILibrary) {
 			case json_schema:
 			case openapi4j:
+			case kappa:
 				maxAtteso = ambienteTestNonPerformante ? 10000 : 3500; 
 				break;
 			case swagger_request_validator:
@@ -150,6 +151,7 @@ public class InterfaceBiggerTest {
 			maxAtteso = -1;
 			switch (openAPILibrary) {
 			case json_schema:
+			case kappa:
 			case openapi4j:
 				maxAtteso = Long.MAX_VALUE;
 				break;
@@ -165,6 +167,7 @@ public class InterfaceBiggerTest {
 			if(!ambienteTestNonPerformante) {
 				switch (openAPILibrary) {
 				case json_schema:
+				case kappa:
 				case openapi4j:
 					maxAtteso = 6000;
 					break;
@@ -353,6 +356,7 @@ public class InterfaceBiggerTest {
 					case json_schema:
 						msgErroreAtteso = "aaaaaaaaa";
 						break;
+					case kappa:
 					case openapi4j:
 						msgErroreAtteso = "Additional property 'resourceNonEsistente' is not allowed. (code: 1000)";
 						break;
@@ -522,6 +526,7 @@ public class InterfaceBiggerTest {
 					case json_schema:
 						msgErroreAtteso = "aaaaaaaaa";
 						break;
+					case kappa:
 					case openapi4j:
 						msgErroreAtteso = "Additional property 'resourceNonEsistente' is not allowed. (code: 1000)";
 						break;

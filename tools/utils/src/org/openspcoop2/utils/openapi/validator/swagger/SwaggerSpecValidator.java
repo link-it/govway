@@ -47,6 +47,8 @@ import io.swagger.v3.parser.core.models.SwaggerParseResult;
  * Supporta sia OpenAPI 3.x che Swagger 2 (a seconda del formato dell'Api).
  *
  * @author Tommaso Burlon (tommaso.burlon@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class SwaggerSpecValidator implements IApiSpecValidator {
 
@@ -74,6 +76,9 @@ public class SwaggerSpecValidator implements IApiSpecValidator {
 			throw new ProcessingException("Api is null");
 		if (!(api instanceof OpenapiApi))
 			throw new ProcessingException("Swagger spec validator supports only OpenapiApi class");
+		if (OpenapiApi.isOpenApi31(api))
+			throw new ProcessingException("La libreria 'swagger_request_validator' non supporta OpenAPI 3.1: " +
+					"configurare una libreria compatibile (es. 'kappa') per le specifiche 3.1");
 
 		OpenapiApi openapiApi = (OpenapiApi) api;
 		String apiRaw = openapiApi.getApiRaw();

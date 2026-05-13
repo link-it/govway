@@ -54,6 +54,8 @@ import com.fasterxml.jackson.databind.JsonNode;
  * emesso solo l'eventuale warning di parsing già accumulato a monte).
  *
  * @author Tommaso Burlon (tommaso.burlon@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class Openapi4jSpecValidator implements IApiSpecValidator {
 
@@ -81,6 +83,9 @@ public class Openapi4jSpecValidator implements IApiSpecValidator {
 			throw new ProcessingException("Api is null");
 		if (!(api instanceof OpenapiApi))
 			throw new ProcessingException("Openapi4j spec validator supports only OpenapiApi class");
+		if (OpenapiApi.isOpenApi31(api))
+			throw new ProcessingException("La libreria 'openapi4j' non supporta OpenAPI 3.1: " +
+					"configurare una libreria compatibile (es. 'kappa') per le specifiche 3.1");
 
 		OpenapiApi openapiApi = (OpenapiApi) api;
 		String apiRaw = openapiApi.getApiRaw();

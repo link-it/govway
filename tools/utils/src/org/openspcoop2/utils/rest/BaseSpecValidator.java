@@ -40,6 +40,8 @@ import org.slf4j.Logger;
  * quando l'engine richiesto è {@code null} o non è istanziabile.
  *
  * @author Tommaso Burlon (tommaso.burlon@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class BaseSpecValidator implements IApiSpecValidator {
 

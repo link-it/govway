@@ -167,6 +167,14 @@ public class ConsoleProperties {
 		this.specValidator31Library = parseLibrary(rawSpecProps.get(SPEC_VALIDATOR_PREFIX_31 + "library"),
 				OpenAPILibrary.kappa);
 
+		// Per le specifiche 3.1 sono ammesse solo le librerie che supportano i costrutti 3.1
+		if (this.specValidator31Library != null && !this.specValidator31Library.supportsOpenApi31()) {
+			throw new UtilsException("Property '" + SPEC_VALIDATOR_PREFIX_31 + "library' con valore '"
+					+ this.specValidator31Library
+					+ "' non valido: la libreria non supporta i costrutti introdotti in OpenAPI 3.1. "
+					+ "Valori ammessi per 3.1: kappa, json_schema.");
+		}
+
 		// Configs precostruiti per ogni libreria, separati per 3.0 e 3.1
 		Map<OpenAPILibrary, IApiSpecConfig> configs30 = new EnumMap<>(OpenAPILibrary.class);
 		Map<OpenAPILibrary, IApiSpecConfig> configs31 = new EnumMap<>(OpenAPILibrary.class);

@@ -35,13 +35,15 @@ import java.util.function.UnaryOperator;
  * istanza per ottenere un config equivalente.
  *
  * @author Tommaso Burlon (tommaso.burlon@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public interface IApiSpecConfig {
 
-	String getEngine();
+	public String getEngine();
 
-	Map<String, String> mapProperties();
+	public Map<String, String> mapProperties();
 
-	void readProperties(UnaryOperator<String> propertyProvider);
+	public void readProperties(UnaryOperator<String> propertyProvider);
 
 }

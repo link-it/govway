@@ -582,6 +582,7 @@ public class OpenApi3ExtendedTest {
 						+ "1028 $.allegati[0].documento: required property 'contenuto' not found\n"
 						+ "1028 $.allegati[0].documento: required property 'uri' not found";
 				break;
+			case kappa:
 			case openapi4j:
 				msgErroreAtteso = "body.allegati.0.documento: Field 'uri' is required.";
 				break;
@@ -624,6 +625,7 @@ public class OpenApi3ExtendedTest {
 						+ "1028 $.allegati[0].documento: required property 'contenuto' not found\n"
 						+ "1008 $.allegati[0].documento.tipoDocumento: does not have a value in the enumeration [\"inline\", \"riferimento-uri\"]";
 				break;
+			case kappa:
 			case openapi4j:
 				msgErroreAtteso = "body.allegati.0.documento: Schema selection can't be made for discriminator 'tipoDocumento' with value 'riferimento-uriERRATA'.";
 				break;
@@ -669,6 +671,7 @@ public class OpenApi3ExtendedTest {
 						+ "1028 $.allegati[1].documento: required property 'tipoDocumento' not found\n"
 						+ "1028 $.allegati[1].documento: required property 'uri' not found";
 				break;
+			case kappa:
 			case openapi4j:
 				msgErroreAtteso = "body.allegati.1.documento: Property name in content 'tipoDocumento' is not set.";
 				break;
@@ -688,6 +691,7 @@ public class OpenApi3ExtendedTest {
 						+ "1028 $.allegati[1].documento: required property 'tipoDocumento' not found\n"
 						+ "1028 $.allegati[1].documento: required property 'uri' not found"; // uso solito messaggio
 				break;
+			case kappa:
 			case openapi4j:
 				msgErroreAtteso = "From: body.<allOf>.allegati.1.<items>.<#/components/schemas/AllegatoRiferimentoMixed>.<allOf>.documento.<discriminator>";
 				break;
@@ -965,6 +969,7 @@ public class OpenApi3ExtendedTest {
 				case json_schema:
 					msgErroreAtteso = "1023 $.allegati[0].codiceOpzionaleNumerico: does not match the regex pattern ^\\d{6}$"; 
 					break;
+				case kappa:
 				case openapi4j:
 					msgErroreAtteso = "body.allegati.0.codiceOpzionaleNumerico: '"+valore+"' does not respect pattern '^\\d{6}$'.";
 					break;
@@ -982,6 +987,7 @@ public class OpenApi3ExtendedTest {
 				case json_schema:
 					msgErroreAtteso = "1023 $.allegati[0].codiceOpzionaleNumerico: does not match the regex pattern ^\\d{6}$"; // uso solito messaggio
 					break;
+				case kappa:
 				case openapi4j:
 					msgErroreAtteso = "From: body.<allOf>.allegati.0.<items>.<#/components/schemas/AllegatoRiferimentoMixed>.<allOf>.<#/components/schemas/Allegato>.codiceOpzionaleNumerico.<pattern>";
 					break;
@@ -1079,6 +1085,7 @@ public class OpenApi3ExtendedTest {
 				case json_schema:
 					msgErroreAtteso = "1023 $.allegati[0].codiceOpzionaleCodiceFiscaleOrCodiceEsterno: does not match the regex pattern ^[a-zA-Z]{6}[0-9]{2}[a-zA-Z0-9]{3}[a-zA-Z0-9]{5}$|^[A-Z0-9]{3}\\d{3}$";
 					break;
+				case kappa:
 				case openapi4j:
 					msgErroreAtteso = "body.allegati.0.codiceOpzionaleCodiceFiscaleOrCodiceEsterno: '"+valore+"' does not respect pattern '^[a-zA-Z]{6}[0-9]{2}[a-zA-Z0-9]{3}[a-zA-Z0-9]{5}$|^[A-Z0-9]{3}\\d{3}$'.";
 					break;
@@ -1096,6 +1103,7 @@ public class OpenApi3ExtendedTest {
 				case json_schema:
 					msgErroreAtteso = "1023 $.allegati[0].codiceOpzionaleCodiceFiscaleOrCodiceEsterno: does not match the regex pattern ^[a-zA-Z]{6}[0-9]{2}[a-zA-Z0-9]{3}[a-zA-Z0-9]{5}$|^[A-Z0-9]{3}\\d{3}$"; // uso solito messaggio
 					break;
+				case kappa:
 				case openapi4j:
 					msgErroreAtteso = "From: body.<allOf>.allegati.0.<items>.<#/components/schemas/AllegatoRiferimentoMixed>.<allOf>.<#/components/schemas/Allegato>.codiceOpzionaleCodiceFiscaleOrCodiceEsterno.<pattern>";
 					break;
@@ -1194,6 +1202,7 @@ public class OpenApi3ExtendedTest {
 					case json_schema:
 						atteso = "Content-Type '"+contentTypeTest10+"' (http response status '201') unsupported";
 						break;
+					case kappa:
 					case openapi4j:
 						atteso = "Content type '"+contentTypeTest10+"' is not allowed for body content. (code: 203)";
 						break;
@@ -1296,6 +1305,7 @@ public class OpenApi3ExtendedTest {
 					case json_schema:
 						atteso = "Content-Type '"+contentTypeTest11+"' unsupported";
 						break;
+					case kappa:
 					case openapi4j:
 						atteso = "Content-Type '"+contentTypeTest11+"' unsupported"; // openapi4j non si accorge dell'errore, check risolto da govway
 						break;
@@ -1371,6 +1381,7 @@ public class OpenApi3ExtendedTest {
 					case json_schema:
 						atteso = "Content-Type '"+contentTypeTest11+"' (http response status '201') unsupported";
 						break;
+					case kappa:
 					case openapi4j:
 						atteso = "Content type '"+contentTypeTest11+"' is not allowed for body content. (code: 203)";
 						break;
@@ -1502,6 +1513,7 @@ public class OpenApi3ExtendedTest {
 							}
 						}
 						break;
+					case kappa:
 					case openapi4j:
 						atteso = "Body is required but none provided. (code: 200)";
 						if(!required && contentTypeTest12!=null) {
@@ -1564,6 +1576,7 @@ public class OpenApi3ExtendedTest {
 				case json_schema:
 					atteso = "Required body undefined";
 					break;
+				case kappa:
 				case openapi4j:
 					atteso = "Content type 'null' is not allowed for body content. (code: 203)";
 					break;
@@ -1713,6 +1726,7 @@ public class OpenApi3ExtendedTest {
 				case json_schema:
 					msgErroreAtteso = "1009 $.data: does not match the date pattern must be a valid RFC 3339 full-date";
 					break;
+				case kappa:
 				case openapi4j:
 					msgErroreAtteso = "body.data: Value '"+valore+"' does not match format 'date'. (code: 1007)";
 					break;
@@ -1769,6 +1783,7 @@ public class OpenApi3ExtendedTest {
 				case json_schema:
 					msgErroreAtteso = "1009 $.data: does not match the date pattern must be a valid RFC 3339 full-date";
 					break;
+				case kappa:
 				case openapi4j:
 					msgErroreAtteso = "body.data: Value '"+valore+"' does not match format 'date'. (code: 1007)";
 					break;
@@ -1845,6 +1860,7 @@ public class OpenApi3ExtendedTest {
 				case json_schema:
 					msgErroreAtteso = "Invalid value '"+valore+"' in http header 'data_documento_header' (expected type 'date'): Found date '"+valore+"' has wrong format (see RFC 3339, section 5.6): Uncorrect format";
 					break;
+				case kappa:
 				case openapi4j:
 					msgErroreAtteso = "data_documento_header: Value '"+valore+"' does not match format 'date'. (code: 1007)";
 					break;
@@ -1902,6 +1918,7 @@ public class OpenApi3ExtendedTest {
 				case json_schema:
 					msgErroreAtteso = "Invalid value '"+valore+"' in http header 'data_documento_risposta_header' (expected type 'date'): Found date '"+valore+"' has wrong format (see RFC 3339, section 5.6): Uncorrect format";
 					break;
+				case kappa:
 				case openapi4j:
 					msgErroreAtteso = "data_documento_risposta_header: Value '"+valore+"' does not match format 'date'. (code: 1007)";
 					break;
@@ -1978,6 +1995,7 @@ public class OpenApi3ExtendedTest {
 				case json_schema:
 					msgErroreAtteso = "Invalid value '"+valore+"' in query parameter 'data_documento_query' (expected type 'date'): Found date '"+valore+"' has wrong format (see RFC 3339, section 5.6): Uncorrect format";
 					break;
+				case kappa:
 				case openapi4j:
 					msgErroreAtteso = "data_documento_query: Value '"+valore+"' does not match format 'date'. (code: 1007)";
 					break;
@@ -2061,6 +2079,7 @@ public class OpenApi3ExtendedTest {
 				case json_schema:
 					msgErroreAtteso = "Invalid value '"+valore+"' in dynamic path 'data_documento_path' (expected type 'date'): Found date '"+valore+"' has wrong format (see RFC 3339, section 5.6): Uncorrect format";
 					break;
+				case kappa:
 				case openapi4j:
 					msgErroreAtteso = "data_documento_path: Value '"+valore+"' does not match format 'date'. (code: 1007)\n"
 							+ "From: data_documento_path.<format>";
@@ -2267,6 +2286,7 @@ public class OpenApi3ExtendedTest {
 				case json_schema:
 					msgErroreAtteso = "$.data: does not match the date-time pattern must be a valid RFC 3339 date-time";
 					break;
+				case kappa:
 				case openapi4j:
 					msgErroreAtteso = "body.data: Value '"+valore+"' does not match format 'date-time'. (code: 1007)";
 					break;
@@ -2333,6 +2353,7 @@ public class OpenApi3ExtendedTest {
 				case json_schema:
 					msgErroreAtteso = "$.data: does not match the date-time pattern must be a valid RFC 3339 date-time";
 					break;
+				case kappa:
 				case openapi4j:
 					msgErroreAtteso = "body.data: Value '"+valore+"' does not match format 'date-time'. (code: 1007)";
 					break;
@@ -2451,6 +2472,7 @@ public class OpenApi3ExtendedTest {
 						msgErroreAtteso = msgErroreAtteso+ "Uncorrect format";
 					}
 					break;
+				case kappa:
 				case openapi4j:
 					msgErroreAtteso = "datetime_documento_header: Value '"+valore+"' does not match format 'date-time'. (code: 1007)";
 					break;
@@ -2557,6 +2579,7 @@ public class OpenApi3ExtendedTest {
 						msgErroreAtteso = msgErroreAtteso+ "Uncorrect format";
 					}
 					break;
+				case kappa:
 				case openapi4j:
 					msgErroreAtteso = "datetime_documento_risposta_header: Value '"+valore+"' does not match format 'date-time'. (code: 1007)";
 					break;
@@ -2687,6 +2710,7 @@ public class OpenApi3ExtendedTest {
 						msgErroreAtteso = msgErroreAtteso+ "Uncorrect format";
 					}
 					break;
+				case kappa:
 				case openapi4j:
 					msgErroreAtteso = "datetime_documento_query: Value '"+valore+"' does not match format 'date-time'. (code: 1007)";
 					break;
@@ -2824,6 +2848,7 @@ public class OpenApi3ExtendedTest {
 						msgErroreAtteso = msgErroreAtteso+ "Uncorrect format";
 					}
 					break;
+				case kappa:
 				case openapi4j:
 					msgErroreAtteso = "datetime_documento_path: Value '"+valore+"' does not match format 'date-time'. (code: 1007)\n"
 							+ "From: datetime_documento_path.<format>";
@@ -2985,6 +3010,7 @@ public class OpenApi3ExtendedTest {
 						}
 					}
 					break;
+				case kappa:
 				case openapi4j:
 					msgErroreAtteso = "Content type '"+ct+"' is not allowed for body content. (code: 203)";
 					msgErroreAtteso2 = "body: Field 'esito' is required. (code: 1026)";
@@ -3236,6 +3262,7 @@ public class OpenApi3ExtendedTest {
 					msgErroreAtteso2 = "$: required property 'title' not found";
 					msgErroreAtteso3 = "$: required property 'status' not found";
 					break;
+				case kappa:
 				case openapi4j:
 					msgErroreAtteso = "body: Field 'type' is required. (code: 1026)";
 					msgErroreAtteso2 = "body: Field 'title' is required. (code: 1026)";
@@ -3375,6 +3402,7 @@ public class OpenApi3ExtendedTest {
 						case json_schema:
 							// non non si passa qua
 							break;
+						case kappa:
 						case openapi4j:
 							erroreAtteso = "body: Type expected 'object', found 'string'. (code: 1027)";
 							break;
@@ -3520,6 +3548,7 @@ public class OpenApi3ExtendedTest {
 							msgErroreAtteso = "1029 $.stato2: "+tipoJava+" found, string expected";
 						}
 						break;
+					case kappa:
 					case openapi4j:
 						if(valore instanceof Integer) {
 							msgErroreAtteso = "Type expected 'string', found 'integer'. (code: 1027)"; 
@@ -3550,6 +3579,7 @@ public class OpenApi3ExtendedTest {
 							msgErroreAtteso = "$.stato1: "+tipoJava+" found, string expected";
 						}
 						break;
+					case kappa:
 					case openapi4j:
 						if(valore instanceof Integer) {
 							msgErroreAtteso = "Value '"+valore+"' is not defined in the schema. (code: 1006)";
@@ -3606,6 +3636,7 @@ public class OpenApi3ExtendedTest {
 							msgErroreAtteso = "1029 $.stato2: "+tipoJava+" found, string expected";
 						}
 						break;
+					case kappa:
 					case openapi4j:
 						if(valore instanceof Integer) {
 							msgErroreAtteso = "Type expected 'string', found 'integer'. (code: 1027)";									
@@ -3636,6 +3667,7 @@ public class OpenApi3ExtendedTest {
 							msgErroreAtteso = "1029 $.stato1: "+tipoJava+" found, string expected";
 						}
 						break;
+					case kappa:
 					case openapi4j:
 						if(valore instanceof Integer) {
 							msgErroreAtteso = "Value '"+valore+"' is not defined in the schema. (code: 1006)";
@@ -4241,6 +4273,7 @@ public class OpenApi3ExtendedTest {
 				}	
 			}
 			break;
+		case kappa:
 		case openapi4j:
 			if(arrayValuesNull) {
 				
@@ -4611,6 +4644,7 @@ public class OpenApi3ExtendedTest {
 			case json_schema:
 				erroreAttesoRisposta = "Content-Type 'application/json' (http response status '400') unsupported";
 				break;
+			case kappa:
 			case openapi4j:
 				erroreAttesoRisposta = "Content type 'application/json' is not allowed for body content. (code: 203)";
 				break;
@@ -4740,6 +4774,7 @@ public class OpenApi3ExtendedTest {
 				case json_schema:
 					erroreAttesoRisposta = "Content-Type 'application/json' (http response status '400') unsupported";
 					break;
+				case kappa:
 				case openapi4j:
 					erroreAttesoRisposta = "Parameter 'X-RateLimit-Remaining' is required. (code: 206)";
 					break;

@@ -26,6 +26,8 @@ import org.openspcoop2.utils.rest.AbstractApiSpecConfig;
  * Configurazione per il validatore di specifica basato su openapi4j.
  *
  * @author Tommaso Burlon (tommaso.burlon@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class Openapi4jSpecConfig extends AbstractApiSpecConfig {
 

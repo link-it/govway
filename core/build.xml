@@ -774,7 +774,7 @@
         <if>
             <equals arg1="${configDaoFactoryDir}" arg2="$${configDaoFactoryDir}"/>
             <then>
-                    <fail message="Parametro configDaoFactoryDir non fornito, la proprietï¿½ deve contenere una directory con il file daoFactory_local.properties, il driver JDBC e i plugins di protocollo" />
+                    <fail message="Parametro configDaoFactoryDir non fornito, la proprietà deve contenere una directory con il file daoFactory_local.properties, il driver JDBC e i plugins di protocollo" />
             </then>
         </if>
 		<java classname="org.openspcoop2.monitor.engine.condition.test.TestConditions" fork="true">
@@ -795,7 +795,7 @@
 		<if>
             <equals arg1="${configDaoFactoryDir}" arg2="$${configDaoFactoryDir}"/>
             <then>
-                    <fail message="Parametro configDaoFactoryDir non fornito, la proprietï¿½ deve contenere una directory con il file daoFactory_local.properties, il driver JDBC e i plugins di protocollo"/>
+                    <fail message="Parametro configDaoFactoryDir non fornito, la proprietà deve contenere una directory con il file daoFactory_local.properties, il driver JDBC e i plugins di protocollo"/>
             </then>
         </if>
 		<java classname="org.openspcoop2.monitor.engine.transaction.TransactionProcessor" fork="true"> 
@@ -817,7 +817,7 @@
 		<if>
             <equals arg1="${configDaoFactoryDir}" arg2="$${configDaoFactoryDir}"/>
             <then>
-                    <fail message="Parametro configDaoFactoryDir non fornito, la proprietï¿½ deve contenere una directory con il file daoFactory_local.properties, il driver JDBC e i plugins di protocollo"/>
+                    <fail message="Parametro configDaoFactoryDir non fornito, la proprietà deve contenere una directory con il file daoFactory_local.properties, il driver JDBC e i plugins di protocollo"/>
             </then>
         </if>
 		<java classname="org.openspcoop2.monitor.engine.statistic.StatisticProcessor" fork="true"> 
@@ -839,7 +839,7 @@
 		<if>
             <equals arg1="${configDaoFactoryDir}" arg2="$${configDaoFactoryDir}"/>
             <then>
-                    <fail message="Parametro configDaoFactoryDir non fornito, la proprietï¿½ deve contenere una directory con il file daoFactory_local.properties, il driver JDBC e i plugins di protocollo"/>
+                    <fail message="Parametro configDaoFactoryDir non fornito, la proprietà deve contenere una directory con il file daoFactory_local.properties, il driver JDBC e i plugins di protocollo"/>
             </then>
         </if>
 		<java classname="org.openspcoop2.monitor.engine.fs_recovery.FSRecoveryProcessor" fork="true"> 
@@ -861,19 +861,19 @@
 		<if>
                 <equals arg1="${sqlSourceDir}" arg2="$${sqlSourceDir}"/>
                 <then>
-                        <fail message="Parametro sqlSourceDir non fornito, la proprietï¿½ deve contenere una directory con i sql sorgenti"/>
+                        <fail message="Parametro sqlSourceDir non fornito, la proprietà deve contenere una directory con i sql sorgenti"/>
                 </then>
         </if>
 		<if>
                 <equals arg1="${sqlDestDir}" arg2="$${sqlDestDir}"/>
                 <then>
-                        <fail message="Parametro sqlDestDir non fornito, la proprietï¿½ deve contenere una directory dove vengono generati i files"/>
+                        <fail message="Parametro sqlDestDir non fornito, la proprietà deve contenere una directory dove vengono generati i files"/>
                 </then>
         </if>
 		<if>
                 <equals arg1="${modalitaInstallazione}" arg2="$${modalitaInstallazione}"/>
                 <then>
-                        <fail message="Parametro modalitaInstallazione non fornito, modalitï¿½ di installazione tra nuova e aggiornamento"/>
+                        <fail message="Parametro modalitaInstallazione non fornito, modalità di installazione tra nuova e aggiornamento"/>
                 </then>
         </if>
 		<if>
@@ -882,19 +882,19 @@
 				<if>
 			            <equals arg1="${versionePrecedente}" arg2="$${versionePrecedente}"/>
 			            <then>
-			                    <fail message="Parametro versionePrecedente non fornito, la proprietï¿½ deve indicare la versione precedente all'aggiornamento"/>
+			                    <fail message="Parametro versionePrecedente non fornito, la proprietà deve indicare la versione precedente all'aggiornamento"/>
 			            </then>
 			    </if>
 				<if>
 			            <equals arg1="${versioneAttuale}" arg2="$${versioneAttuale}"/>
 			            <then>
-			                    <fail message="Parametro versioneAttuale non fornito, la proprietï¿½ indica la versione attuale del prodotto"/>
+			                    <fail message="Parametro versioneAttuale non fornito, la proprietà indica la versione attuale del prodotto"/>
 			            </then>
 			    </if>
 				<if>
 			            <equals arg1="${tipoDatabase}" arg2="$${tipoDatabase}"/>
 			            <then>
-			                    <fail message="Parametro tipoDatabase non fornito, la proprietï¿½ indica la versione attuale del prodotto"/>
+			                    <fail message="Parametro tipoDatabase non fornito, la proprietà indica la versione attuale del prodotto"/>
 			            </then>
 			    </if>
 			</then>

@@ -27,6 +27,8 @@ import org.openspcoop2.utils.rest.AbstractApiSpecConfig;
  * (io.swagger.v3.parser).
  *
  * @author Tommaso Burlon (tommaso.burlon@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class SwaggerSpecConfig extends AbstractApiSpecConfig {
 

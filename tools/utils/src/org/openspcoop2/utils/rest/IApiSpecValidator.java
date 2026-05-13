@@ -35,13 +35,15 @@ import org.slf4j.Logger;
  * {@link ProcessingException}.
  *
  * @author Tommaso Burlon (tommaso.burlon@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public interface IApiSpecValidator {
 
-	void init(Logger log, IApiSpecConfig config) throws ProcessingException;
+	public void init(Logger log, IApiSpecConfig config) throws ProcessingException;
 
-	void validate(Logger log, Api api) throws ProcessingException, ParseWarningException;
+	public void validate(Logger log, Api api) throws ProcessingException, ParseWarningException;
 
-	void close(Logger log) throws ProcessingException;
+	public void close(Logger log) throws ProcessingException;
 
 }
