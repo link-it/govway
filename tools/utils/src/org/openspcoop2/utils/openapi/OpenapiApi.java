@@ -23,6 +23,7 @@ package org.openspcoop2.utils.openapi;
 
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -58,10 +59,31 @@ import io.swagger.v3.oas.models.media.Schema;
 public class OpenapiApi extends Api {
 	
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
+	/**
+	 * Flag statico che seleziona l'implementazione utilizzata per rilevare i riferimenti
+	 * '$ref' esterni nel documento OpenAPI durante la validazione.
+	 * <ul>
+	 *   <li>false (default): scansione diretta dell'albero JsonNode; considera solo i
+	 *       '$ref' con valore stringa (i veri JSON Reference) e ignora le proprieta'
+	 *       che hanno '$ref' come nome.</li>
+	 *   <li>true: vecchia (deprecata) implementazione basata sulla query JsonPath
+	 *       '$..$ref' invocata in modalita' lenient, che salta i match con valore non
+	 *       stringa (es. proprieta' '$ref' di uno schema). Funzionalmente equivalente
+	 *       ma indiretta e mantenuta solo per retro-compatibilita'.</li>
+	 * </ul>
+	 */
+	private static boolean useLegacyDollarRefValidation = false;
+	public static void setUseLegacyDollarRefValidation(boolean v) {
+		useLegacyDollarRefValidation = v;
+	}
+	public static boolean isUseLegacyDollarRefValidation() {
+		return useLegacyDollarRefValidation;
+	}
+
 	private transient OpenAPI api;
 	private transient Map<String, Schema<?>> definitions;
 	private String apiRaw;
@@ -76,7 +98,7 @@ public class OpenapiApi extends Api {
 		this.api = swagger;
 		this.apiRaw = apiRaw;
 		this.parseWarningResult = parseWarningResult;
-		this.definitions = new HashMap<String, Schema<?>>();
+		this.definitions = new HashMap<>();
 	}
 	
 	public ApiFormats getFormat() {
@@ -136,7 +158,7 @@ public class OpenapiApi extends Api {
 		if(!usingFromSetProtocolInfo) {
 			// Se valido poi non riesco a caricare OpenAPI che comunque non sono validi
 			if(ApiFormats.OPEN_API_3.equals(this.format)) {
-				this._validateOpenAPI3();
+				this.validateOpenAPI3Engine();
 			}
 		}
 				
@@ -149,7 +171,7 @@ public class OpenapiApi extends Api {
 		}
 	}
 	
-	private void _validateOpenAPI3() throws ProcessingException {
+	private void validateOpenAPI3Engine() throws ProcessingException {
 		
 		try {
 		
@@ -165,27 +187,12 @@ public class OpenapiApi extends Api {
 				schemaNodeRoot = jsonUtils.getAsNode(this.apiRaw);
 			}
 		
-			JsonPathExpressionEngine engine = new JsonPathExpressionEngine();
-			List<String> refPath = null;
-			try {
-				refPath = engine.getStringMatchPattern(schemaNodeRoot, "$..$ref");
-			}catch(JsonPathNotFoundException notFound){
-				//System.out.println("NOT FOUND: "+notFound.getMessage());
+			boolean refNonRisolvibili;
+			if(useLegacyDollarRefValidation) {
+				refNonRisolvibili = checkExternalRefLegacy(schemaNodeRoot);
 			}
-			boolean refNonRisolvibili = false;
-			if(refPath!=null && !refPath.isEmpty()) {
-				for (String refP : refPath) {
-					if(refP!=null) {
-						String ref = refP.trim(); 
-						if(ref.startsWith("#")) {
-							continue; // relativo verso il file stesso
-						}
-						else {
-							refNonRisolvibili = true; // ref verso altri file (emettero solo il warning se c'è)
-							break;
-						}
-					}
-				}
+			else {
+				refNonRisolvibili = hasExternalRef(schemaNodeRoot);
 			}
 			if(!refNonRisolvibili) {
 				// Costruisco OpenAPI3					
@@ -230,5 +237,86 @@ public class OpenapiApi extends Api {
 		catch(Exception e) {
 			throw new ProcessingException(e.getMessage(),e);
 		}
+	}
+
+	/**
+	 * Rileva la presenza di JSON Reference esterni (valore '$ref' che non inizia con '#')
+	 * scandendo l'albero JsonNode. Vengono considerati solo i '$ref' con valore stringa:
+	 * un eventuale '$ref' che compare come NOME di proprieta' di uno schema (con valore
+	 * oggetto) non e' un JSON Reference e viene ignorato.
+	 */
+	private boolean hasExternalRef(JsonNode node) {
+		if(node == null) {
+			return false;
+		}
+		if(node.isObject()) {
+			return objectHasExternalRef(node);
+		}
+		if(node.isArray()) {
+			return arrayHasExternalRef(node);
+		}
+		return false;
+	}
+	private boolean objectHasExternalRef(JsonNode node) {
+		if(isExternalRef(node.get("$ref"))) {
+			return true;
+		}
+		for(Iterator<JsonNode> it = node.elements(); it.hasNext(); ) {
+			if(hasExternalRef(it.next())) {
+				return true;
+			}
+		}
+		return false;
+	}
+	private boolean arrayHasExternalRef(JsonNode node) {
+		for(JsonNode el : node) {
+			if(hasExternalRef(el)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	private boolean isExternalRef(JsonNode refNode) {
+		if(refNode == null || !refNode.isTextual()) {
+			return false;
+		}
+		String ref = refNode.asText().trim();
+		return !ref.isEmpty() && !ref.startsWith("#");
+	}
+
+	/**
+	 * Vecchia implementazione di rilevamento dei '$ref' esterni basata sulla query
+	 * JsonPath '$..$ref' eseguita in modalita' lenient: i match con valore non stringa
+	 * (es. proprieta' di uno schema chiamata letteralmente '$ref') vengono saltati,
+	 * quindi il comportamento e' funzionalmente equivalente a {@link #hasExternalRef(JsonNode)}.
+	 *
+	 * Mantenuta per retro-compatibilita' ed attivabile globalmente tramite
+	 * {@link #setUseLegacyDollarRefValidation(boolean)}.
+	 *
+	 * Preferire {@link #hasExternalRef(JsonNode)}: scansione diretta
+	 *             dell'albero JsonNode, piu' efficiente e senza il passaggio per JsonPath.
+	 */
+	private boolean checkExternalRefLegacy(JsonNode schemaNodeRoot) throws Exception {
+		JsonPathExpressionEngine engine = new JsonPathExpressionEngine();
+		List<String> refPath = null;
+		try {
+			refPath = engine.getStringMatchPattern(schemaNodeRoot, "$..$ref", true);
+		}catch(JsonPathNotFoundException notFound){
+			/**System.out.println("NOT FOUND: "+notFound.getMessage());*/
+		}
+		if(refPath!=null && !refPath.isEmpty()) {
+			for (String refP : refPath) {
+				if(refP!=null) {
+					String ref = refP.trim();
+					if(ref.startsWith("#")) {
+						/**continue;*/ // relativo verso il file stesso
+					}
+					else {
+						return true; // ref verso altri file
+					}
+				}
+			}
+		}
+		return false;
 	}
 }

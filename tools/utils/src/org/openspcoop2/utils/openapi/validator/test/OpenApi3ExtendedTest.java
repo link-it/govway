@@ -40,6 +40,7 @@ import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.mime.MimeMultipart;
+import org.openspcoop2.utils.openapi.OpenapiApi;
 import org.openspcoop2.utils.openapi.validator.MultipartUtilities;
 import org.openspcoop2.utils.openapi.validator.OpenAPILibrary;
 import org.openspcoop2.utils.openapi.validator.OpenapiApiValidatorConfig;
@@ -4033,9 +4034,17 @@ public class OpenApi3ExtendedTest {
 		testAnchorRefKey(openAPILibrary, mergeSpec);
 		
 		System.out.println("Test #24.b openapi che usano achor ref key (*) completato\n\n");
-		
-		
-		
+
+		// ** Test per validazione con openapi che dichiarano '$ref' come NOME di proprieta' di uno schema ... **
+
+		System.out.println("Test #24.c openapi che dichiarano '$ref' come NOME di proprieta' di uno schema ...");
+
+		testDollarRefAsPropertyName(openAPILibrary, mergeSpec);
+
+		System.out.println("Test #24.c openapi che dichiarano '$ref' come NOME di proprieta' di uno schema completato\n\n");
+
+
+
 		// ** Test per validazione con openapi che usano multipart request ... **
 		
 		System.out.println("Test #25 openapi che usano multipart request ...");
@@ -4728,7 +4737,208 @@ public class OpenApi3ExtendedTest {
 		System.out.println("TEST OpenAPI YAML con anchorRefKey completato!");
 
 	}
-	
+
+	private static void testDollarRefAsPropertyName(OpenAPILibrary openAPILibrary, boolean mergeSpec)
+			throws UtilsException, ProcessingException, URISyntaxException, Exception {
+		System.out.println("#### Verifica OpenAPI YAML con '$ref' usato come NOME di proprieta' ####");
+
+		URL url = OpenApi3ExtendedTest.class.getResource("/org/openspcoop2/utils/openapi/test/dollarRefAsPropertyName.yaml");
+
+		boolean previousUseLegacy = OpenapiApi.isUseLegacyDollarRefValidation();
+		try {
+			// Itero sulle due implementazioni disponibili in OpenapiApi:
+			// - false: nuova scansione JsonNode (hasExternalRef)
+			// - true: vecchia (deprecata) query JsonPath '$..$ref' invocata in modalita' lenient (checkExternalRefLegacy)
+			for(boolean useLegacy : new boolean[] {false, true}) {
+
+				OpenapiApi.setUseLegacyDollarRefValidation(useLegacy);
+				System.out.println("---- Iterazione con useLegacyDollarRefValidation="+useLegacy+" ----");
+
+				testDollarRefAsPropertyNameRun(openAPILibrary, mergeSpec, url);
+			}
+		}
+		finally {
+			OpenapiApi.setUseLegacyDollarRefValidation(previousUseLegacy);
+		}
+
+		System.out.println("TEST OpenAPI YAML con '$ref' usato come NOME di proprieta' completato!");
+
+	}
+
+	private static void testDollarRefAsPropertyNameRun(OpenAPILibrary openAPILibrary, boolean mergeSpec, URL url)
+			throws UtilsException, ProcessingException, URISyntaxException, Exception {
+
+		IApiReader apiReaderOpenApi4j = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
+		ApiReaderConfig configOpenApi4j = new ApiReaderConfig();
+		configOpenApi4j.setProcessInclude(false);
+		apiReaderOpenApi4j.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), new File(url.toURI()), configOpenApi4j);
+		Api apiOpenApi4j = apiReaderOpenApi4j.read();
+
+		try {
+			apiOpenApi4j.validate();
+		}catch(ProcessingException pe) {
+			pe.printStackTrace(System.out);
+			throw new Exception(" Documento contenente errori: "+pe.getMessage(), pe);
+		}catch(ParseWarningException warning) {
+			System.out.println("Documento contenente anomalie: "+warning.getMessage());
+		}
+
+		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+		OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
+		configO.setEmitLogError(logSystemOutError);
+		configO.setOpenApiValidatorConfig(new OpenapiLibraryValidatorConfig());
+		configO.getOpenApiValidatorConfig().setOpenApiLibrary(openAPILibrary);
+		configO.getOpenApiValidatorConfig().setValidateAPISpec(true);
+		configO.getOpenApiValidatorConfig().setMergeAPISpec(mergeSpec);
+		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi4j, configO);
+
+		// Operazione 1: /opCreaDescrittore -> request: DescrittoreModello (contiene la property '$ref'), response: EsitoOperazione
+		{
+			System.out.println("Test Richiesta (/opCreaDescrittore)...");
+
+			TextHttpRequestEntity request = new TextHttpRequestEntity();
+			request.setMethod(HttpRequestMethod.POST);
+			request.setUrl("/opCreaDescrittore");
+			Map<String, List<String>> headers = new HashMap<>();
+			TransportUtils.setHeader(headers, HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+			request.setHeaders(headers);
+			request.setContentType(HttpConstants.CONTENT_TYPE_JSON);
+			// Nota: nel JSON la chiave '$ref' e' un NOME di proprieta' del DescrittoreModello, non un JSON Reference.
+			request.setContent("{ \"$id\": \"descr-001\", \"nome\": \"anagrafica\", \"$ref\": \"placeholder-applicativo\" }");
+
+			try {
+				apiValidatorOpenApi4j.validate(request);
+			} catch (ValidatorException e) {
+				System.out.println(e.getMessage());
+				throw new Exception("Errore non atteso");
+			}
+
+			System.out.println("Test Richiesta (/opCreaDescrittore) Superato!");
+
+			System.out.println("Test Risposta (/opCreaDescrittore)...");
+
+			TextHttpResponseEntity response = new TextHttpResponseEntity();
+			response.setStatus(200);
+			response.setMethod(HttpRequestMethod.POST);
+			response.setUrl("/opCreaDescrittore");
+			Map<String, List<String>> responseHeaders = new HashMap<>();
+			TransportUtils.addHeader(responseHeaders, HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+			response.setHeaders(responseHeaders);
+			response.setContentType(HttpConstants.CONTENT_TYPE_JSON);
+			response.setContent("{ \"idGenerato\": \"id-abc-123\", \"accettato\": true }");
+
+			try {
+				apiValidatorOpenApi4j.validate(response);
+			} catch (ValidatorException e) {
+				System.out.println(e.getMessage());
+				throw new Exception("Errore non atteso");
+			}
+
+			System.out.println("Test Risposta (/opCreaDescrittore) Superato!");
+		}
+
+		// Operazione 2: /opValidaDescrittore -> request e response sono entrambi DescrittoreModello (la response esercita anche '$ref' come nome di proprieta')
+		{
+			System.out.println("Test Richiesta (/opValidaDescrittore)...");
+
+			TextHttpRequestEntity request = new TextHttpRequestEntity();
+			request.setMethod(HttpRequestMethod.POST);
+			request.setUrl("/opValidaDescrittore");
+			Map<String, List<String>> headers = new HashMap<>();
+			TransportUtils.setHeader(headers, HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+			request.setHeaders(headers);
+			request.setContentType(HttpConstants.CONTENT_TYPE_JSON);
+			request.setContent("{ \"$id\": \"descr-002\", \"nome\": \"contratto\" }");
+
+			try {
+				apiValidatorOpenApi4j.validate(request);
+			} catch (ValidatorException e) {
+				System.out.println(e.getMessage());
+				throw new Exception("Errore non atteso");
+			}
+
+			System.out.println("Test Richiesta (/opValidaDescrittore) Superato!");
+
+			System.out.println("Test Risposta (/opValidaDescrittore)...");
+
+			TextHttpResponseEntity response = new TextHttpResponseEntity();
+			response.setStatus(200);
+			response.setMethod(HttpRequestMethod.POST);
+			response.setUrl("/opValidaDescrittore");
+			Map<String, List<String>> responseHeaders = new HashMap<>();
+			TransportUtils.addHeader(responseHeaders, HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+			response.setHeaders(responseHeaders);
+			response.setContentType(HttpConstants.CONTENT_TYPE_JSON);
+			// Nota: anche in risposta il payload contiene la chiave '$ref' come property name del DescrittoreModello.
+			response.setContent("{ \"$id\": \"descr-002\", \"nome\": \"contratto\", \"$ref\": \"placeholder-risposta\" }");
+
+			try {
+				apiValidatorOpenApi4j.validate(response);
+			} catch (ValidatorException e) {
+				System.out.println(e.getMessage());
+				throw new Exception("Errore non atteso");
+			}
+
+			System.out.println("Test Risposta (/opValidaDescrittore) Superato!");
+		}
+
+		// Casi negativi: verifico che la validazione stia davvero rifiutando i payload non conformi.
+		// (json_schema potrebbe non rilevare l'errore, allineato al pattern usato in testAnchorRefKey)
+		{
+			System.out.println("Test Richiesta NON conforme (/opCreaDescrittore)...");
+
+			TextHttpRequestEntity badRequest = new TextHttpRequestEntity();
+			badRequest.setMethod(HttpRequestMethod.POST);
+			badRequest.setUrl("/opCreaDescrittore");
+			Map<String, List<String>> headers = new HashMap<>();
+			TransportUtils.setHeader(headers, HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+			badRequest.setHeaders(headers);
+			badRequest.setContentType(HttpConstants.CONTENT_TYPE_JSON);
+			// Manca il campo obbligatorio 'nome' (definito come required in DescrittoreModello)
+			badRequest.setContent("{ \"$id\": \"descr-bad\", \"$ref\": \"placeholder\" }");
+
+			boolean erroreRilevatoRichiesta = false;
+			try {
+				apiValidatorOpenApi4j.validate(badRequest);
+			} catch (ValidatorException e) {
+				System.out.println("Errore di validazione rilevato (atteso): "+e.getMessage());
+				erroreRilevatoRichiesta = true;
+			}
+			if (!erroreRilevatoRichiesta && openAPILibrary != OpenAPILibrary.json_schema) {
+				throw new Exception("Errore di validazione atteso sulla richiesta non rilevato (campo 'nome' mancante)");
+			}
+
+			System.out.println("Test Richiesta NON conforme (/opCreaDescrittore) Superato!");
+
+			System.out.println("Test Risposta NON conforme (/opCreaDescrittore)...");
+
+			TextHttpResponseEntity badResponse = new TextHttpResponseEntity();
+			badResponse.setStatus(200);
+			badResponse.setMethod(HttpRequestMethod.POST);
+			badResponse.setUrl("/opCreaDescrittore");
+			Map<String, List<String>> responseHeaders = new HashMap<>();
+			TransportUtils.addHeader(responseHeaders, HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+			badResponse.setHeaders(responseHeaders);
+			badResponse.setContentType(HttpConstants.CONTENT_TYPE_JSON);
+			// Manca il campo obbligatorio 'accettato' e 'idGenerato' ha tipo errato (numero invece di stringa)
+			badResponse.setContent("{ \"idGenerato\": 123 }");
+
+			boolean erroreRilevatoRisposta = false;
+			try {
+				apiValidatorOpenApi4j.validate(badResponse);
+			} catch (ValidatorException e) {
+				System.out.println("Errore di validazione rilevato (atteso): "+e.getMessage());
+				erroreRilevatoRisposta = true;
+			}
+			if (!erroreRilevatoRisposta && openAPILibrary != OpenAPILibrary.json_schema) {
+				throw new Exception("Errore di validazione atteso sulla risposta non rilevato ('accettato' mancante e 'idGenerato' di tipo errato)");
+			}
+
+			System.out.println("Test Risposta NON conforme (/opCreaDescrittore) Superato!");
+		}
+
+	}
+
 	private static void testMultipartRequest(OpenAPILibrary openAPILibrary, boolean mergeSpec,
 			boolean stream, boolean multipartOptimization)
 			throws UtilsException, ProcessingException, URISyntaxException, Exception {

@@ -413,7 +413,9 @@ public class UniqueInterfaceGenerator {
 		}
 		
 		JsonPathExpressionEngine engine = new JsonPathExpressionEngine();
-		List<String> refPath = engine.getStringMatchPattern(jsonNode, "$..$ref");
+		// lenient=true: salta i '$ref' che compaiono come NOME di proprieta' di uno schema (valore non stringa).
+		// Sono dichiarazioni di properties (es. modellazione di JSON Schema/JSON Forms), non JSON Reference.
+		List<String> refPath = engine.getStringMatchPattern(jsonNode, "$..$ref", true);
 		String schemaRebuild = s;
 		
 		// Faccio due passate, prima con i caratteri " e ' in modo da risolvere le ref precisamente,

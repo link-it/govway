@@ -900,7 +900,9 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 	private List<String> getRefPath(JsonPathExpressionEngine engine, JsonNode schemaNode) throws JsonPathException, JsonPathNotValidException {
 		List<String> l = null;
 		try {
-			l = engine.getStringMatchPattern(schemaNode, "$..$ref");
+			// lenient=true: salta i '$ref' che compaiono come NOME di proprieta' di uno schema (valore non stringa).
+			// Sono dichiarazioni di properties (es. modellazione di JSON Schema/JSON Forms), non JSON Reference.
+			l = engine.getStringMatchPattern(schemaNode, "$..$ref", true);
 		}catch(JsonPathNotFoundException notFound) {
 			// ignore
 		}
@@ -942,6 +944,10 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 				if(jsonNodeRef instanceof ObjectNode) {
 					ObjectNode oNode = (ObjectNode) jsonNodeRef;
 					JsonNode valore = oNode.get(OAI3SchemaKeywords.$REF);
+					if(valore == null || !valore.isTextual()) {
+						// '$ref' usato come NOME di proprieta' di uno schema (valore non stringa): non e' un JSON Reference, salto
+						continue;
+					}
 					String ref = valore.asText();
 					//System.out.println("VALORE:"+v);
 					String path = getRefPath(ref);
