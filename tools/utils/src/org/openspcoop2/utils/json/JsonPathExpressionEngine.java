@@ -161,6 +161,9 @@ public class JsonPathExpressionEngine {
 	/* ---------- METODI RITORNANO STRINGHE -------------- */
 	
 	public List<String> getStringMatchPattern(JSONObject input, String pattern) throws JsonPathException, JsonPathNotFoundException, JsonPathNotValidException {
+		return getStringMatchPattern(input, pattern, false);
+	}
+	public List<String> getStringMatchPattern(JSONObject input, String pattern, boolean lenient) throws JsonPathException, JsonPathNotFoundException, JsonPathNotValidException {
 		if(input == null)
 			throw new JsonPathException("Document (JSONObject) is null");
 
@@ -168,11 +171,11 @@ public class JsonPathExpressionEngine {
 			throw new JsonPathException("Pattern is null");
 
 		this.validate(pattern);
-		
+
 		try {
 			List<String> l = new ArrayList<>();
 			Object o = JsonPath.read(input, pattern);
-			_parseStringMatchPatternResult(o, l);
+			_parseStringMatchPatternResult(o, l, lenient);
 			if(l==null || l.size()<=0) {
 				throw new com.jayway.jsonpath.PathNotFoundException("Nessun match trovato per l'espressione jsonPath ["+pattern+"]");
 			}
@@ -185,7 +188,10 @@ public class JsonPathExpressionEngine {
 	}
 
 	public List<String> getStringMatchPattern(JsonNode document, String pattern) throws JsonPathException, JsonPathNotFoundException, JsonPathNotValidException {
-		
+		return getStringMatchPattern(document, pattern, false);
+	}
+	public List<String> getStringMatchPattern(JsonNode document, String pattern, boolean lenient) throws JsonPathException, JsonPathNotFoundException, JsonPathNotValidException {
+
 		if(document == null)
 				throw new JsonPathException("Document (JsonNode) is null");
 
@@ -193,11 +199,11 @@ public class JsonPathExpressionEngine {
 			throw new JsonPathException("Pattern is null");
 
 		this.validate(pattern);
-		
+
 		try {
 			List<String> l = new ArrayList<>();
 			Object o = JsonPath.read(getAsString(document), pattern);
-			_parseStringMatchPatternResult(o, l);
+			_parseStringMatchPatternResult(o, l, lenient);
 			if(l==null || l.size()<=0) {
 				throw new com.jayway.jsonpath.PathNotFoundException("Nessun match trovato per l'espressione jsonPath ["+pattern+"]");
 			}
@@ -208,8 +214,11 @@ public class JsonPathExpressionEngine {
 			throw new JsonPathException(e.getMessage(), e);
 		}
 	}
-	
+
 	public List<String> getStringMatchPattern(InputStream is, String pattern) throws JsonPathException, JsonPathNotFoundException, JsonPathNotValidException {
+		return getStringMatchPattern(is, pattern, false);
+	}
+	public List<String> getStringMatchPattern(InputStream is, String pattern, boolean lenient) throws JsonPathException, JsonPathNotFoundException, JsonPathNotValidException {
 		if(is == null)
 			throw new JsonPathException("Document (InputStream) is null");
 
@@ -217,11 +226,11 @@ public class JsonPathExpressionEngine {
 			throw new JsonPathException("Pattern is null");
 
 		this.validate(pattern);
-		
+
 		try {
 			List<String> l = new ArrayList<>();
 			Object o = JsonPath.read(is, pattern);
-			_parseStringMatchPatternResult(o, l);
+			_parseStringMatchPatternResult(o, l, lenient);
 			if(l==null || l.size()<=0) {
 				throw new com.jayway.jsonpath.PathNotFoundException("Nessun match trovato per l'espressione jsonPath ["+pattern+"]");
 			}
@@ -232,8 +241,11 @@ public class JsonPathExpressionEngine {
 			throw new JsonPathException(e.getMessage(), e);
 		}
 	}
-	
+
 	public List<String> getStringMatchPattern(String contenuto, String pattern) throws JsonPathException, JsonPathNotFoundException, JsonPathNotValidException {
+		return getStringMatchPattern(contenuto, pattern, false);
+	}
+	public List<String> getStringMatchPattern(String contenuto, String pattern, boolean lenient) throws JsonPathException, JsonPathNotFoundException, JsonPathNotValidException {
 		if(contenuto == null)
 			throw new JsonPathException("Document (String) is null");
 
@@ -241,11 +253,11 @@ public class JsonPathExpressionEngine {
 			throw new JsonPathException("Pattern is null");
 
 		this.validate(pattern);
-		
+
 		try {
 			List<String> l = new ArrayList<>();
 			Object o = JsonPath.read(contenuto, pattern);
-			_parseStringMatchPatternResult(o, l);
+			_parseStringMatchPatternResult(o, l, lenient);
 			if(l==null || l.size()<=0) {
 				throw new com.jayway.jsonpath.PathNotFoundException("Nessun match trovato per l'espressione jsonPath ["+pattern+"]");
 			}
@@ -256,10 +268,13 @@ public class JsonPathExpressionEngine {
 			throw new JsonPathException(e.getMessage(), e);
 		}
 	}
-	private void _parseStringMatchPatternResult(Object o, List<String> l) throws Exception {
+	private void _parseStringMatchPatternResult(Object o, List<String> l, boolean lenient) throws Exception {
 		if(o!=null) {
 			if(o instanceof Map<?, ?>) {
 				// Lasciare questo if per formattare correttamente i nomi degli elementi tramite le utility (vedi test org.openspcoop2.pdd.core.trasformazioni.Test)
+				if(lenient) {
+					return;
+				}
 				throw new Exception("Unexpected type '"+o.getClass().getName()+"' (is instanceof Map)");
 			}
 			else if(o instanceof List) {
@@ -277,9 +292,10 @@ public class JsonPathExpressionEngine {
 							else if(object instanceof Boolean) {
 								l.add(object.toString());
 							}
-							else{
+							else if(!lenient){
 								throw new Exception("Unexpected type '"+object.getClass().getName()+"' at position "+position);
 							}
+							// se lenient: salta silenziosamente l'elemento non gestito
 						}
 						position++;
 					}
@@ -294,9 +310,10 @@ public class JsonPathExpressionEngine {
 			else if(o instanceof Boolean) {
 				l.add(o.toString());
 			}
-			else {
+			else if(!lenient) {
 				throw new Exception("Unexpected type '"+o.getClass().getName()+"'");
 			}
+			// se lenient: salta silenziosamente il risultato non gestito
 		}
 	}
 	
