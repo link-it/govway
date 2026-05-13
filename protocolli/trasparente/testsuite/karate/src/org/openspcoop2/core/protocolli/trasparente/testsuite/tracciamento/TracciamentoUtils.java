@@ -224,6 +224,15 @@ public class TracciamentoUtils {
 					if(tracciamentoVerifica.verificaContenuti!=null) {
 						DBVerifier.verifyDumpMessaggio(api, operazione, credenzialeUnivoca, FaseTracciamento.IN_REQUEST, tracciamentoVerifica.verificaContenuti.booleanValue());
 					}
+					if(tracciamentoVerifica.verificaFileTraceContent) {
+						FileTraceParser.parse(FaseTracciamento.IN_REQUEST,
+								tracciamentoVerifica.isClientHeaderExpected(), tracciamentoVerifica.isClientPayloadExpected(),
+								tracciamentoVerifica.isServerHeaderExpected(), tracciamentoVerifica.isServerPayloadExpected(),
+								contentVerificaFileTraceRequest, contentVerificaFileTraceResponse,
+								tracciamentoVerifica.verificaInRequest.getValue().booleanValue(),
+								tracciamentoVerifica.checkInfo && !tracciamentoVerifica.mapExpectedTokenInfo.isEmpty(),
+								expectedOk ? null : diagnosticoErrore);
+					}
 				}
 				else {
 					DBVerifier.verifyNotExpected(api, operazione, credenzialeUnivoca,
@@ -231,8 +240,10 @@ public class TracciamentoUtils {
 				}
 			}
 			else {
-				FileTraceParser.parse(FaseTracciamento.IN_REQUEST, tracciamentoVerifica.client, tracciamentoVerifica.server, 
-						contentVerificaFileTraceRequest, contentVerificaFileTraceResponse, 
+				FileTraceParser.parse(FaseTracciamento.IN_REQUEST,
+						tracciamentoVerifica.isClientHeaderExpected(), tracciamentoVerifica.isClientPayloadExpected(),
+						tracciamentoVerifica.isServerHeaderExpected(), tracciamentoVerifica.isServerPayloadExpected(),
+						contentVerificaFileTraceRequest, contentVerificaFileTraceResponse,
 						tracciamentoVerifica.verificaInRequest.getValue().booleanValue(),
 						tracciamentoVerifica.checkInfo && !tracciamentoVerifica.mapExpectedTokenInfo.isEmpty(),
 						expectedOk ? null : diagnosticoErrore);
@@ -278,6 +289,15 @@ public class TracciamentoUtils {
 						if(tracciamentoVerifica.verificaContenuti!=null) {
 							DBVerifier.verifyDumpMessaggio(api, operazione, credenzialeUnivoca, FaseTracciamento.OUT_REQUEST, tracciamentoVerifica.verificaContenuti.booleanValue());
 						}
+						if(tracciamentoVerifica.verificaFileTraceContent) {
+							FileTraceParser.parse(FaseTracciamento.OUT_REQUEST,
+									tracciamentoVerifica.isClientHeaderExpected(), tracciamentoVerifica.isClientPayloadExpected(),
+									tracciamentoVerifica.isServerHeaderExpected(), tracciamentoVerifica.isServerPayloadExpected(),
+									contentVerificaFileTraceRequest, contentVerificaFileTraceResponse,
+									tracciamentoVerifica.verificaOutRequest.getValue().booleanValue(),
+									tracciamentoVerifica.checkInfo && !tracciamentoVerifica.mapExpectedTokenInfo.isEmpty(),
+									expectedOk ? null : diagnosticoErrore);
+						}
 					}
 					else {
 						DBVerifier.verifyNotExpected(api, operazione, credenzialeUnivoca,
@@ -285,8 +305,10 @@ public class TracciamentoUtils {
 					}
 				}
 				else {
-					FileTraceParser.parse(FaseTracciamento.OUT_REQUEST, tracciamentoVerifica.client, tracciamentoVerifica.server, 
-							contentVerificaFileTraceRequest, contentVerificaFileTraceResponse, 
+					FileTraceParser.parse(FaseTracciamento.OUT_REQUEST,
+							tracciamentoVerifica.isClientHeaderExpected(), tracciamentoVerifica.isClientPayloadExpected(),
+							tracciamentoVerifica.isServerHeaderExpected(), tracciamentoVerifica.isServerPayloadExpected(),
+							contentVerificaFileTraceRequest, contentVerificaFileTraceResponse,
 							tracciamentoVerifica.verificaOutRequest.getValue().booleanValue(),
 							tracciamentoVerifica.checkInfo && !tracciamentoVerifica.mapExpectedTokenInfo.isEmpty(),
 							expectedOk ? null : diagnosticoErrore);
@@ -352,6 +374,15 @@ public class TracciamentoUtils {
 					if(tracciamentoVerifica.verificaContenuti!=null) {
 						DBVerifier.verifyDumpMessaggio(api, operazione, credenzialeUnivoca, FaseTracciamento.OUT_RESPONSE, tracciamentoVerifica.verificaContenuti.booleanValue());
 					}
+					if(tracciamentoVerifica.verificaFileTraceContent) {
+						FileTraceParser.parse(FaseTracciamento.OUT_RESPONSE,
+								tracciamentoVerifica.isClientHeaderExpected(), tracciamentoVerifica.isClientPayloadExpected(),
+								tracciamentoVerifica.isServerHeaderExpected(), tracciamentoVerifica.isServerPayloadExpected(),
+								contentVerificaFileTraceRequest, contentVerificaFileTraceResponse,
+								tracciamentoVerifica.verificaOutResponse.getValue().booleanValue(),
+								tracciamentoVerifica.checkInfo && !tracciamentoVerifica.mapExpectedTokenInfo.isEmpty(),
+								expectedOk ? null : diagnosticoErrore);
+					}
 				}
 				else {
 					DBVerifier.verifyNotExpected(api, operazione, credenzialeUnivoca,
@@ -359,8 +390,10 @@ public class TracciamentoUtils {
 				}
 			}
 			else {
-				FileTraceParser.parse(FaseTracciamento.OUT_RESPONSE, tracciamentoVerifica.client, tracciamentoVerifica.server, 
-						contentVerificaFileTraceRequest, contentVerificaFileTraceResponse, 
+				FileTraceParser.parse(FaseTracciamento.OUT_RESPONSE,
+						tracciamentoVerifica.isClientHeaderExpected(), tracciamentoVerifica.isClientPayloadExpected(),
+						tracciamentoVerifica.isServerHeaderExpected(), tracciamentoVerifica.isServerPayloadExpected(),
+						contentVerificaFileTraceRequest, contentVerificaFileTraceResponse,
 						tracciamentoVerifica.verificaOutResponse.getValue().booleanValue(),
 						tracciamentoVerifica.checkInfo && !tracciamentoVerifica.mapExpectedTokenInfo.isEmpty(),
 						expectedOk ? null : diagnosticoErrore);
@@ -423,6 +456,15 @@ public class TracciamentoUtils {
 					if(tracciamentoVerifica.verificaContenuti!=null) {
 						DBVerifier.verifyDumpMessaggio(idTransazione, FaseTracciamento.POST_OUT_RESPONSE, tracciamentoVerifica.verificaContenuti.booleanValue());
 					}
+					if(tracciamentoVerifica.verificaFileTraceContent) {
+						FileTraceParser.parse(FaseTracciamento.POST_OUT_RESPONSE,
+								tracciamentoVerifica.isClientHeaderExpected(), tracciamentoVerifica.isClientPayloadExpected(),
+								tracciamentoVerifica.isServerHeaderExpected(), tracciamentoVerifica.isServerPayloadExpected(),
+								contentVerificaFileTraceRequest, contentVerificaFileTraceResponse,
+								tracciamentoVerifica.verificaPostOutResponse.getValue().booleanValue(),
+								tracciamentoVerifica.checkInfo && !tracciamentoVerifica.mapExpectedTokenInfo.isEmpty(),
+								expectedOk ? null : diagnosticoErrore);
+					}
 				}
 				else {
 					DBVerifier.verifyNotExpected(idTransazione,
@@ -430,8 +472,10 @@ public class TracciamentoUtils {
 				}
 			}
 			else {
-				FileTraceParser.parse(FaseTracciamento.POST_OUT_RESPONSE, tracciamentoVerifica.client, tracciamentoVerifica.server, 
-						contentVerificaFileTraceRequest, contentVerificaFileTraceResponse, 
+				FileTraceParser.parse(FaseTracciamento.POST_OUT_RESPONSE,
+						tracciamentoVerifica.isClientHeaderExpected(), tracciamentoVerifica.isClientPayloadExpected(),
+						tracciamentoVerifica.isServerHeaderExpected(), tracciamentoVerifica.isServerPayloadExpected(),
+						contentVerificaFileTraceRequest, contentVerificaFileTraceResponse,
 						tracciamentoVerifica.verificaPostOutResponse.getValue().booleanValue(),
 						tracciamentoVerifica.checkInfo && !tracciamentoVerifica.mapExpectedTokenInfo.isEmpty(),
 						expectedOk ? null : diagnosticoErrore);

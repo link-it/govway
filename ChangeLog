@@ -1,5 +1,12 @@
 2026-05-13  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore]
+	Risolto Bug #1768
+	Risolta un'anomalia per cui, con tracciamento 'FileTrace' abilitato in modalità asimmetrica (solo header oppure solo payload)
+	e registrazione messaggi disabilitata, venivano comunque inserite righe prive di contenuto nella tabella 'dump_messaggi'.
+
+2026-05-13  Andrea Poli <apoli@link.it>
+
 	* [GovWayCore, GovWayConsole]
 	Risolto Bug #1767
 	Risolta un'anomalia che impediva di caricare interfacce OpenAPI 3 contenenti schemi con proprietà il cui nome inizia con $ (ad esempio $ref, $id, $schema), 
