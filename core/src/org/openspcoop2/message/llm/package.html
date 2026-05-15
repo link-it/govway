@@ -1,0 +1,25 @@
+<html>
+<body>
+Modello canonical interno per il gateway LLM (GovLLM).
+<p>
+Il canonical è il pivot tra dialetti front-door (OpenAI Chat Completions, Anthropic Messages)
+e formati back-door dei provider. È modellato sul dialetto più espressivo
+(Anthropic Messages, block-based) e include campi opzionali per le feature
+specifiche di OpenAI.
+</p>
+<p>
+Caratteristiche:
+<ul>
+<li>Block-based content: ogni messaggio porta una lista di blocchi tipizzati
+    (text, tool_use, tool_result). In futuro: image, document, thinking.</li>
+<li>Round-trip lossless sulla coppia stesso-dialetto:
+    OpenAI &rarr; canonical &rarr; OpenAI &equiv; OpenAI.</li>
+<li>Indipendente dal dialetto di ingresso: il campo sourceDialect di
+    CanonicalChatRequest è solo audit/debug e non guida la logica di trasformazione.</li>
+</ul>
+</p>
+<p>
+Vedi DOC/architettura-canonical-trasformatori.md per le motivazioni del design.
+</p>
+</body>
+</html>
