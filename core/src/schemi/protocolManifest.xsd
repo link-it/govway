@@ -562,6 +562,8 @@
                      <xsd:enumeration value="wsdl11"/>
                      <xsd:enumeration value="swagger2"/>
                      <xsd:enumeration value="openApi3"/>
+                     <xsd:enumeration value="openaiChatV1"/>
+                     <xsd:enumeration value="anthropicMessagesV1"/>
               </xsd:restriction>
        </xsd:simpleType>
        

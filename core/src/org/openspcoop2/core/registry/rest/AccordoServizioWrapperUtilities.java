@@ -122,6 +122,8 @@ public class AccordoServizioWrapperUtilities {
 			}
 			break;
 		case OPEN_API_3:
+		case OPENAI_CHAT_V1:
+		case ANTHROPIC_MESSAGES_V1:
 			try {
 				apiReader = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
 			}catch(Exception e) {

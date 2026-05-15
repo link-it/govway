@@ -334,8 +334,8 @@ public abstract class ConnettoreExtBaseHTTP extends ConnettoreBaseHTTP {
     	}
     	
 		if(this.redirectLocation==null) {
-			this.location = ConnettoreUtils.buildLocationWithURLBasedParameter(this.logger!=null ? this.logger.getLogger() : null, this.requestMsg, 
-					this.getTipoImplConnettore(), 
+			this.location = ConnettoreUtils.buildLocationWithURLBasedParameter(this.logger!=null ? this.logger.getLogger() : null, this.requestMsg,
+					this.getTipoImplConnettore(),
 					this.propertiesUrlBased, this.location,
 					this.getProtocolFactory(), this.idModulo);
 		}

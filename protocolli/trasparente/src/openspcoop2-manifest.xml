@@ -353,6 +353,8 @@
     		<interfaces>
     			<specification type="swagger2" />
     			<specification type="openApi3" />
+    			<specification type="openaiChatV1" />
+    			<specification type="anthropicMessagesV1" />
     		</interfaces>
     		<functionality conversationIdentifier="true" referenceToRequestIdentifier="true"/>
     	</rest>

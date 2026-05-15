@@ -10094,6 +10094,12 @@ public class ConsoleHelper implements IConsoleHelper {
 				case SWAGGER_2:
 					label=CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_SWAGGER_2;
 					break;
+				case OPENAI_CHAT_V1:
+					label=CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_OPENAI_CHAT_V1;
+					break;
+				case ANTHROPIC_MESSAGES_V1:
+					label=CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_ANTHROPIC_MESSAGES_V1;
+					break;
 				case WSDL_11:
 					label=CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_WSDL_11;
 					break;
@@ -11678,6 +11684,14 @@ public class ConsoleHelper implements IConsoleHelper {
 						case SWAGGER_2:
 							labels[i] = CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_SWAGGER_2;
 							values[i] = CostantiControlStation.VALUE_PARAMETRO_INTERFACE_TYPE_SWAGGER_2;
+							break;
+						case OPENAI_CHAT_V1:
+							labels[i] = CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_OPENAI_CHAT_V1;
+							values[i] = CostantiControlStation.VALUE_PARAMETRO_INTERFACE_TYPE_OPENAI_CHAT_V1;
+							break;
+						case ANTHROPIC_MESSAGES_V1:
+							labels[i] = CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_ANTHROPIC_MESSAGES_V1;
+							values[i] = CostantiControlStation.VALUE_PARAMETRO_INTERFACE_TYPE_ANTHROPIC_MESSAGES_V1;
 							break;
 						case WSDL_11:
 						default:

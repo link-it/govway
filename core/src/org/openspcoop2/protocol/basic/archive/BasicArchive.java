@@ -231,6 +231,8 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 						setProtocolInfoFromRestInterfaceEngine(wsdlConcettuale, accordoServizioParteComune, ApiFormats.SWAGGER_2, log);
 						break;
 					case OPEN_API_3:
+					case OPENAI_CHAT_V1:
+					case ANTHROPIC_MESSAGES_V1:
 						setProtocolInfoFromRestInterfaceEngine(wsdlConcettuale, accordoServizioParteComune, ApiFormats.OPEN_API_3, log);
 						break;
 					default:

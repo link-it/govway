@@ -7452,33 +7452,41 @@ public class ControlStationCore {
 	public InterfaceType formatoSpecifica2InterfaceType(org.openspcoop2.core.registry.constants.FormatoSpecifica formatoSpecifica) {
 		if(formatoSpecifica == null)
 			return null;
-		
+
 		switch (formatoSpecifica) {
 		case SWAGGER_2:
 			return InterfaceType.SWAGGER_2;
 		case OPEN_API_3:
 			return InterfaceType.OPEN_API_3;
-			
+		case OPENAI_CHAT_V1:
+			return InterfaceType.OPENAI_CHAT_V1;
+		case ANTHROPIC_MESSAGES_V1:
+			return InterfaceType.ANTHROPIC_MESSAGES_V1;
+
 		case WSDL_11:
 		default:
 			return InterfaceType.WSDL_11;
-		}			
+		}
 	}
 	
 	public org.openspcoop2.core.registry.constants.FormatoSpecifica interfaceType2FormatoSpecifica(InterfaceType formatoSpecifica) {
 		if(formatoSpecifica == null)
 			return null;
-		
+
 		switch (formatoSpecifica) {
 		case SWAGGER_2:
 			return org.openspcoop2.core.registry.constants.FormatoSpecifica.SWAGGER_2;
 		case OPEN_API_3:
 			return org.openspcoop2.core.registry.constants.FormatoSpecifica.OPEN_API_3;
-			
+		case OPENAI_CHAT_V1:
+			return org.openspcoop2.core.registry.constants.FormatoSpecifica.OPENAI_CHAT_V1;
+		case ANTHROPIC_MESSAGES_V1:
+			return org.openspcoop2.core.registry.constants.FormatoSpecifica.ANTHROPIC_MESSAGES_V1;
+
 		case WSDL_11:
 		default:
 			return org.openspcoop2.core.registry.constants.FormatoSpecifica.WSDL_11;
-		}			
+		}
 	}
 	
 	public List<IExtendedMenu> getExtendedMenu(){

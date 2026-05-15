@@ -237,6 +237,14 @@ public class ValidazioneDocumenti extends BasicComponentFactory implements IVali
 							objectInEsame = "[Interfaccia OpenAPI 3] ";
 							format=ApiFormats.OPEN_API_3;
 							break;
+						case OPENAI_CHAT_V1:
+							objectInEsame = "[Interfaccia OpenAI Chat Completions v1] ";
+							format=ApiFormats.OPEN_API_3;
+							break;
+						case ANTHROPIC_MESSAGES_V1:
+							objectInEsame = "[Interfaccia Anthropic Messages v1] ";
+							format=ApiFormats.OPEN_API_3;
+							break;
 						default:
 							// altre interfacce non supportate per rest
 							break;

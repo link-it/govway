@@ -41,7 +41,11 @@ public enum FormatoSpecifica implements IEnumeration , Serializable , Cloneable 
 	@jakarta.xml.bind.annotation.XmlEnumValue("swagger2")
 	SWAGGER_2 ("swagger2"),
 	@jakarta.xml.bind.annotation.XmlEnumValue("openApi3")
-	OPEN_API_3 ("openApi3");
+	OPEN_API_3 ("openApi3"),
+	@jakarta.xml.bind.annotation.XmlEnumValue("openaiChatV1")
+	OPENAI_CHAT_V1 ("openaiChatV1"),
+	@jakarta.xml.bind.annotation.XmlEnumValue("anthropicMessagesV1")
+	ANTHROPIC_MESSAGES_V1 ("anthropicMessagesV1");
 	
 	
 	/** Value */
@@ -50,6 +54,12 @@ public enum FormatoSpecifica implements IEnumeration , Serializable , Cloneable 
 	public String getValue()
 	{
 		return this.value;
+	}
+
+	/** Indica se l'enum identifica un dialetto LLM (es. OpenAI, Anthropic). */
+	public boolean isLLM()
+	{
+		return this == OPENAI_CHAT_V1 || this == ANTHROPIC_MESSAGES_V1;
 	}
 
 

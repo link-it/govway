@@ -313,6 +313,8 @@ public class CostantiControlStation {
 	public static final String LABEL_PARAMETRO_INTERFACE_TYPE_WSDL_11 = "Wsdl 1.1";
 	public static final String LABEL_PARAMETRO_INTERFACE_TYPE_SWAGGER_2 = "Swagger 2";
 	public static final String LABEL_PARAMETRO_INTERFACE_TYPE_OPEN_API_3 = "Open API 3";
+	public static final String LABEL_PARAMETRO_INTERFACE_TYPE_OPENAI_CHAT_V1 = "OpenAI Chat Completions v1";
+	public static final String LABEL_PARAMETRO_INTERFACE_TYPE_ANTHROPIC_MESSAGES_V1 = "Anthropic Messages v1";
 	public static final String LABEL_PARAMETRO_SCHEMI_XSD = "Schemi XSD";
 	public static final String LABEL_PARAMETRO_REGISTRO_OPENSPCOOP = "Registro API";
 	public static final String LABEL_PATTERN = "Pattern";
@@ -1406,6 +1408,8 @@ public class CostantiControlStation {
 	public static final String VALUE_PARAMETRO_INTERFACE_TYPE_WSDL_11 = FormatoSpecifica.WSDL_11.getValue();
 	public static final String VALUE_PARAMETRO_INTERFACE_TYPE_SWAGGER_2 = FormatoSpecifica.SWAGGER_2.getValue();
 	public static final String VALUE_PARAMETRO_INTERFACE_TYPE_OPEN_API_3 = FormatoSpecifica.OPEN_API_3.getValue();
+	public static final String VALUE_PARAMETRO_INTERFACE_TYPE_OPENAI_CHAT_V1 = FormatoSpecifica.OPENAI_CHAT_V1.getValue();
+	public static final String VALUE_PARAMETRO_INTERFACE_TYPE_ANTHROPIC_MESSAGES_V1 = FormatoSpecifica.ANTHROPIC_MESSAGES_V1.getValue();
 	public static final String DEFAULT_VALUE_PARAMETRO_INTERFACE_TYPE_REST = CostantiRegistroServizi.DEFAULT_VALUE_INTERFACE_TYPE_REST.getValue();
 	public static final String DEFAULT_VALUE_PARAMETRO_INTERFACE_TYPE_SOAP = CostantiRegistroServizi.DEFAULT_VALUE_INTERFACE_TYPE_SOAP.getValue();
 	

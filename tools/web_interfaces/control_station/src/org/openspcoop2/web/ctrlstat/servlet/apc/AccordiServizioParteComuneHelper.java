@@ -4521,6 +4521,10 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			return AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_INTERFACE_TYPE_SWAGGER_2;
 		case OPEN_API_3:
 			return AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_INTERFACE_TYPE_OPEN_API_3;
+		case OPENAI_CHAT_V1:
+			return AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_INTERFACE_TYPE_OPENAI_CHAT_V1;
+		case ANTHROPIC_MESSAGES_V1:
+			return AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_INTERFACE_TYPE_ANTHROPIC_MESSAGES_V1;
 		case WSDL_11:
 			return AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_INTERFACE_TYPE_WSDL_11;
 		default:

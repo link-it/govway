@@ -41,7 +41,11 @@ public enum InterfaceType implements IEnumeration , Serializable , Cloneable {
 	@jakarta.xml.bind.annotation.XmlEnumValue("swagger2")
 	SWAGGER_2 ("swagger2"),
 	@jakarta.xml.bind.annotation.XmlEnumValue("openApi3")
-	OPEN_API_3 ("openApi3");
+	OPEN_API_3 ("openApi3"),
+	@jakarta.xml.bind.annotation.XmlEnumValue("openaiChatV1")
+	OPENAI_CHAT_V1 ("openaiChatV1"),
+	@jakarta.xml.bind.annotation.XmlEnumValue("anthropicMessagesV1")
+	ANTHROPIC_MESSAGES_V1 ("anthropicMessagesV1");
 	
 	
 	/** Value */
