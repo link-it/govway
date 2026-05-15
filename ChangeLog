@@ -1,3 +1,11 @@
+2026-05-15  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug
+	Risolta un'anomalia per cui, con connettori HTTP/HTTPS in modalità asincrona NIO, 
+	il path della risorsa REST veniva omesso dalla URL invocata al backend.
+	Abilitato per default il contesto /sync descritto in documentazione.
+
 2026-05-13  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

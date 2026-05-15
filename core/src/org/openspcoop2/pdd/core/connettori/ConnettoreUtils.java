@@ -226,8 +226,14 @@ public class ConnettoreUtils {
 	public static String buildLocationWithURLBasedParameter(Logger log, OpenSPCoop2Message msg, String tipoConnettore, Map<String, List<String>> propertiesURLBased, String locationParam,
 			IProtocolFactory<?> protocolFactory, String idModulo) throws ConnettoreException{
 		
-		if(TipiConnettore.HTTP.toString().equals(tipoConnettore) || 
+		if(TipiConnettore.HTTP.toString().equals(tipoConnettore) ||
 				TipiConnettore.HTTPS.toString().equals(tipoConnettore)||
+				// In modalità NIO il tipoConnettore viene rinominato da formatTipoConnettore in
+				// 'http-nio'/'https-nio' (per i log): qui vanno riconosciuti come HTTP/HTTPS,
+				// altrimenti il branch REST viene saltato e la URL finale non viene composta con
+				// resourcePath/forwardParameters.
+				(TipiConnettore.HTTP.toString() + NIO_SUFFIX_TIPO_CONNETTORE).equals(tipoConnettore) ||
+				(TipiConnettore.HTTPS.toString() + NIO_SUFFIX_TIPO_CONNETTORE).equals(tipoConnettore) ||
 				ConnettoreHTTP.ENDPOINT_TYPE.equals(tipoConnettore) ||
 				ConnettoreHTTPS.ENDPOINT_TYPE.equals(tipoConnettore) ||
 				org.openspcoop2.pdd.core.connettori.httpcore5.ConnettoreHTTPCORE.ENDPOINT_TYPE.equals(tipoConnettore) ||

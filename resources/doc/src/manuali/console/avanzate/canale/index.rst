@@ -25,12 +25,12 @@ Ogni invocazione di un servizio (sia in modalità erogazione che fruizione) può
 
 Modalità bloccante: 
 
-- <prefix-erogazione>/\ <profilo>[/in]/**sync/**/\ <soggettoDominioInterno>/<nomeErogazione>/v<versioneErogazione>
+- <prefix-erogazione>/\ <profilo>[/in]/**sync**/\ <soggettoDominioInterno>/<nomeErogazione>/v<versioneErogazione>
 - <prefix-fruizione>/\ <profilo>/out/**sync**/\ <soggettoDominioInterno>/<soggettoErogatore>/<nomeFruizione>/v<versioneFruizione>
 
 Modalità non bloccante: 
 
-- <prefix-erogazione>/\ <profilo>[/in]/**async/**/\ <soggettoDominioInterno>/<nomeErogazione>/v<versioneErogazione>
+- <prefix-erogazione>/\ <profilo>[/in]/**async**/\ <soggettoDominioInterno>/<nomeErogazione>/v<versioneErogazione>
 - <prefix-fruizione>/\ <profilo>/out/**async**/\ <soggettoDominioInterno>/<soggettoErogatore>/<nomeFruizione>/v<versioneFruizione>
 
 La modalità predefinita è BIO: essa viene utilizzata in assenza dell'indicazione esplicita di 'sync' o 'async' all'interno dell'URL di invocazione. Tale comportamento è modificabile agendo sul file <directory-lavoro>/govway_local.properties aggiungendo le seguenti righe:
