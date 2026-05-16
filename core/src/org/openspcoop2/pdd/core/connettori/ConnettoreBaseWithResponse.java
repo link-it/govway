@@ -24,6 +24,7 @@ import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -94,6 +95,13 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 	public void setTipoRisposta(String tipoRisposta) {
 		this.tipoRisposta = tipoRisposta;
 	}
+
+	/**
+	 * Content-Type override utilizzato esclusivamente in fase di parsing, quando non si vuole
+	 * alterare {@link #tipoRisposta} né {@link ConnettoreBase#propertiesTrasportoRisposta}
+	 * (preservando il valore originale per dump, FileTrace e header inoltrati).
+	 */
+	protected String tipoRispostaForParser = null;
 
 	/** Check ContentType */
 	protected boolean checkContentType = true;
@@ -539,7 +547,7 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 				
 				if(msgErrore==null) {
 					try{
-					
+
 						if(this.tipoRisposta==null){
 							// obbligatorio in SOAP
 							msgErrore = "Header Content-Type non definito nell'http reply";
@@ -554,11 +562,18 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 							if(this.requestMsg==null) {
 								throw new ConnettoreException("RequestMsg is null");
 							}
-							this.messageTypeResponse = this.requestInfo.getBindingConfig().getResponseMessageType(this.requestMsg.getServiceBinding(), 
-									this.requestMsg.getTransportRequestContext(),
-									this.tipoRisposta, 
-									this.codice>0?this.codice:null);
-						}	
+
+							// Compensazione di Content-Type 'multipart/related' privo del parametro 'type' (RFC 2387 §3.1)
+							// Può popolare direttamente this.messageTypeResponse, bypassando la classificazione successiva.
+							new ConnettoreMultipartResponseCompensator(this).apply();
+
+							if(this.messageTypeResponse==null) {
+								this.messageTypeResponse = this.requestInfo.getBindingConfig().getResponseMessageType(this.requestMsg.getServiceBinding(),
+										this.requestMsg.getTransportRequestContext(),
+										this.tipoRisposta,
+										this.codice>0?this.codice:null);
+							}
+						}
 					
 						if(this.messageTypeResponse==null){
 							
@@ -646,8 +661,8 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 			}
 			responseContext.setCodiceTrasporto(this.codice+"");
 			responseContext.setContentLength(this.contentLength);
-			responseContext.setHeaders(this.propertiesTrasportoRisposta);
-			
+			responseContext.setHeaders(buildParserHeaders());
+
 			this.emitDiagnosticResponseRead(this.isResponse);
 			
 			try{
@@ -836,7 +851,23 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 			}
 
 		}
-		
+
 		return true;
+	}
+
+
+	/**
+	 * Ritorna la Map degli header da passare al parser. Se è valorizzato {@link #tipoRispostaForParser},
+	 * viene restituita una copia di {@link ConnettoreBase#propertiesTrasportoRisposta} con il Content-Type
+	 * sostituito; altrimenti viene restituita la Map originale.
+	 */
+	private Map<String, List<String>> buildParserHeaders() {
+		if(this.tipoRispostaForParser==null || this.propertiesTrasportoRisposta==null) {
+			return this.propertiesTrasportoRisposta;
+		}
+		Map<String, List<String>> patched = new HashMap<>(this.propertiesTrasportoRisposta);
+		TransportUtils.removeObject(patched, HttpConstants.CONTENT_TYPE);
+		TransportUtils.addHeader(patched, HttpConstants.CONTENT_TYPE, this.tipoRispostaForParser);
+		return patched;
 	}
 }

@@ -25,7 +25,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -94,6 +96,12 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 	protected String idModulo;
 	private IDService idModuloAsIDService;
 	private MessageType requestMessageType;
+	/**
+	 * Content-Type override utilizzato esclusivamente in fase di parsing, quando non si vuole
+	 * alterare l'header originale della richiesta nel {@link RequestInfo#getProtocolContext()}
+	 * (preservando il valore originale per dump, FileTrace e logging).
+	 */
+	protected String contentTypeForParser = null;
 	protected Date dataIngressoRichiesta;
 
 	private Context context;
@@ -367,6 +375,7 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 	
 	@Override
 	public OpenSPCoop2MessageParseResult getRequest(NotifierInputStreamParams notifierInputStreamParams) throws ConnectorException{
+		Map<String, List<String>> savedHeaders = applyContentTypeOverrideForParser();
 		try{
 			OpenSPCoop2MessageParseResult pr = org.openspcoop2.pdd.core.Utilities.getOpenspcoop2MessageFactory(this.log,this.requestInfo, MessageRole.REQUEST).createMessage(this.requestMessageType,
 					this.requestInfo.getProtocolContext(),
@@ -376,7 +385,9 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 			return pr;
 		}catch(Exception e){
 			throw new ConnectorException(e.getMessage(),e);
-		}	
+		}finally{
+			restoreContentTypeOverrideForParser(savedHeaders);
+		}
 	}
 
 	// Metodo utile per il dump
@@ -398,12 +409,17 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 				result.setParseException(ParseExceptionUtils.buildParseException(t,MessageRole.REQUEST));
 				return result;
 			}
-			OpenSPCoop2MessageParseResult pr = org.openspcoop2.pdd.core.Utilities.getOpenspcoop2MessageFactory(this.log,this.requestInfo, MessageRole.REQUEST).createMessage(this.requestMessageType,
+			Map<String, List<String>> savedHeaders = applyContentTypeOverrideForParser();
+			try{
+				OpenSPCoop2MessageParseResult pr = org.openspcoop2.pdd.core.Utilities.getOpenspcoop2MessageFactory(this.log,this.requestInfo, MessageRole.REQUEST).createMessage(this.requestMessageType,
 					this.requestInfo.getProtocolContext(),
 					in,notifierInputStreamParams,this.soapReader,
 					this.openspcoopProperties.getAttachmentsProcessingMode());
-			this.dataIngressoRichiesta = DateManager.getDate();
-			return pr;
+				this.dataIngressoRichiesta = DateManager.getDate();
+				return pr;
+			}finally{
+				restoreContentTypeOverrideForParser(savedHeaders);
+			}
 		}catch(Throwable t){
 			/**throw new ConnectorException(e.getMessage(),e);*/
 			OpenSPCoop2MessageParseResult result = new OpenSPCoop2MessageParseResult();
@@ -516,5 +532,38 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 	
 	public HttpServletRequest getHttpServletRequest(){
 		return this.req;
+	}
+
+
+	/**
+	 * Se è valorizzato {@link #contentTypeForParser}, sostituisce temporaneamente la Map degli header
+	 * del {@link RequestInfo#getProtocolContext()} con una copia che riporta il Content-Type override.
+	 *
+	 * @return riferimento alla Map originale, da passare a {@link #restoreContentTypeOverrideForParser(Map)}
+	 *         per il ripristino, oppure null se nessuna sostituzione è avvenuta.
+	 */
+	private Map<String, List<String>> applyContentTypeOverrideForParser() {
+		if(this.contentTypeForParser==null || this.requestInfo==null || this.requestInfo.getProtocolContext()==null) {
+			return null;
+		}
+		Map<String, List<String>> original = this.requestInfo.getProtocolContext().getHeaders();
+		if(original==null) {
+			return null;
+		}
+		Map<String, List<String>> patched = new HashMap<>(original);
+		TransportUtils.removeObject(patched, HttpConstants.CONTENT_TYPE);
+		TransportUtils.addHeader(patched, HttpConstants.CONTENT_TYPE, this.contentTypeForParser);
+		this.requestInfo.getProtocolContext().setHeaders(patched);
+		return original;
+	}
+
+	/**
+	 * Ripristina la Map degli header del {@link RequestInfo#getProtocolContext()} al valore precedente
+	 * la chiamata a {@link #applyContentTypeOverrideForParser()}.
+	 */
+	private void restoreContentTypeOverrideForParser(Map<String, List<String>> savedHeaders) {
+		if(savedHeaders!=null && this.requestInfo!=null && this.requestInfo.getProtocolContext()!=null) {
+			this.requestInfo.getProtocolContext().setHeaders(savedHeaders);
+		}
 	}
 }

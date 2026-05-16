@@ -1500,7 +1500,15 @@ public class ServletTestService extends HttpServlet {
 				
 				
 				String contentTypeRisposta = contentTypeRichiesta;
-				
+
+				// Override del Content-Type di risposta tramite header HTTP (convenzione 'GovWay-TestSuite-...').
+				// Utile per pilotare la risposta con valori contenenti caratteri non URL-friendly
+				// (es. ';', '"' in 'multipart/related; boundary="…"') che provocherebbero ambiguità se passati via query string.
+				String responseContentTypeFromHeader = TransportUtils.getHeaderFirstValue(req, "GovWay-TestSuite-Response-ContentType");
+				if(responseContentTypeFromHeader!=null && !responseContentTypeFromHeader.trim().isEmpty()) {
+					contentTypeRisposta = responseContentTypeFromHeader.trim();
+				}
+
 				String fileDestinazione = getParameterCheckWhiteList(req, this.whitePropertiesList, "destFile");
 				String fileResponse = getParameterCheckWhiteList(req, this.whitePropertiesList, "response");
 				if(fileResponse==null) {
@@ -1613,7 +1621,7 @@ public class ServletTestService extends HttpServlet {
 						contentTypeRisposta = responseContentType;
 					}
 					else{
-						
+
 						if(contentTypeRichiesta!=null && contentTypeRichiesta.contains("multipart/related")==false){
 							contentTypeRisposta = ContentTypeUtilities.readBaseTypeFromContentType(contentTypeRichiesta); // uso lo stesso contentType della richiesta.
 						}else

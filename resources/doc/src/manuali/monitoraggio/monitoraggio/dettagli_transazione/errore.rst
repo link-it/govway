@@ -46,7 +46,9 @@ I diagnostici emessi, rispettivamente su una fruizione ed una erogazione, per fu
 - 001108, 004131: validazione dei contenuti della richiesta;
 - 003060, 007059: validazione dei contenuti della risposta;
 - 001122, 004145: charset della richiesta non atteso;
-- 001123, 004146: charset della risposta non atteso.
+- 001123, 004146: charset della risposta non atteso;
+- 001162, 004190: Content-Type 'multipart/related' della richiesta privo del parametro 'type' (RFC 2387 - 3.1) compensato per consentire il processamento della richiesta;
+- 003070, 007079: Content-Type 'multipart/related' della risposta privo del parametro 'type' (RFC 2387 - 3.1) compensato per consentire il processamento della risposta.
 
 I diagnostici emessi, rispettivamente su una fruizione ed una erogazione, che riguardano errori generati sul connettore verso il backend possiedono i seguenti codici:
 

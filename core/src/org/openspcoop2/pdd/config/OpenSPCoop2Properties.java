@@ -184,6 +184,7 @@ import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpLibrary;
 import org.openspcoop2.utils.transport.http.HttpRequestConfig;
+import org.openspcoop2.utils.transport.http.MultipartMissingTypeBehavior;
 import org.openspcoop2.utils.transport.http.RFC2047Encoding;
 import org.slf4j.Logger;
 
@@ -918,6 +919,14 @@ public class OpenSPCoop2Properties {
 			
 			this.isControlloContentTypeAbilitatoRicezioneContenutiApplicativi();
 			this.isControlloContentTypeAbilitatoRicezioneBuste();
+			this.getMultipartRelatedMissingTypeBehaviorRicezioneContenutiApplicativi();
+			this.getMultipartRelatedMissingTypeBehaviorRicezioneBuste();
+			this.getMultipartRelatedMissingTypeBehaviorInoltroBuste();
+			this.getMultipartRelatedMissingTypeBehaviorConsegnaContenutiApplicativi();
+			this.getMultipartRelatedMissingTypePeekBytesRicezioneContenutiApplicativi();
+			this.getMultipartRelatedMissingTypePeekBytesRicezioneBuste();
+			this.getMultipartRelatedMissingTypePeekBytesInoltroBuste();
+			this.getMultipartRelatedMissingTypePeekBytesConsegnaContenutiApplicativi();
 			this.isControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiSoap();
 			this.isControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiRest();
 			this.isControlloCharsetContentTypeAbilitatoRicezioneBusteSoap();
@@ -10092,8 +10101,8 @@ public class OpenSPCoop2Properties {
 	private Boolean isControlloContentTypeAbilitatoRicezioneBuste= null;
 	public boolean isControlloContentTypeAbilitatoRicezioneBuste(){
 		if(this.isControlloContentTypeAbilitatoRicezioneBuste==null){
-			try{  
-				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.services.ricezioneBuste.contentType.checkEnabled"); 
+			try{
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.services.ricezioneBuste.contentType.checkEnabled");
 
 				if(value!=null){
 					value = value.trim();
@@ -10110,7 +10119,137 @@ public class OpenSPCoop2Properties {
 		}
 		return this.isControlloContentTypeAbilitatoRicezioneBuste;
 	}
-	
+
+	/* ----------- Multipart/related senza parametro 'type' (RFC 2387 §3.1) ----------- */
+
+	private static final int DEFAULT_MULTIPART_MISSING_TYPE_PEEK_BYTES = 4096;
+
+	private MultipartMissingTypeBehavior multipartRelatedMissingTypeBehaviorRicezioneContenutiApplicativi = null;
+	public MultipartMissingTypeBehavior getMultipartRelatedMissingTypeBehaviorRicezioneContenutiApplicativi(){
+		if(this.multipartRelatedMissingTypeBehaviorRicezioneContenutiApplicativi==null){
+			this.multipartRelatedMissingTypeBehaviorRicezioneContenutiApplicativi = readMultipartRelatedMissingTypeBehavior(
+					"org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.multipart.related.missingType.behavior",
+					MultipartMissingTypeBehavior.NONE, true);
+		}
+		return this.multipartRelatedMissingTypeBehaviorRicezioneContenutiApplicativi;
+	}
+
+	private MultipartMissingTypeBehavior multipartRelatedMissingTypeBehaviorRicezioneBuste = null;
+	public MultipartMissingTypeBehavior getMultipartRelatedMissingTypeBehaviorRicezioneBuste(){
+		if(this.multipartRelatedMissingTypeBehaviorRicezioneBuste==null){
+			this.multipartRelatedMissingTypeBehaviorRicezioneBuste = readMultipartRelatedMissingTypeBehavior(
+					"org.openspcoop2.pdd.services.ricezioneBuste.multipart.related.missingType.behavior",
+					MultipartMissingTypeBehavior.NONE, true);
+		}
+		return this.multipartRelatedMissingTypeBehaviorRicezioneBuste;
+	}
+
+	private MultipartMissingTypeBehavior multipartRelatedMissingTypeBehaviorInoltroBuste = null;
+	public MultipartMissingTypeBehavior getMultipartRelatedMissingTypeBehaviorInoltroBuste(){
+		if(this.multipartRelatedMissingTypeBehaviorInoltroBuste==null){
+			this.multipartRelatedMissingTypeBehaviorInoltroBuste = readMultipartRelatedMissingTypeBehavior(
+					"org.openspcoop2.pdd.services.inoltroBuste.multipart.related.missingType.behavior",
+					MultipartMissingTypeBehavior.INFER_FROM_REQUEST, false);
+		}
+		return this.multipartRelatedMissingTypeBehaviorInoltroBuste;
+	}
+
+	private MultipartMissingTypeBehavior multipartRelatedMissingTypeBehaviorConsegnaContenutiApplicativi = null;
+	public MultipartMissingTypeBehavior getMultipartRelatedMissingTypeBehaviorConsegnaContenutiApplicativi(){
+		if(this.multipartRelatedMissingTypeBehaviorConsegnaContenutiApplicativi==null){
+			this.multipartRelatedMissingTypeBehaviorConsegnaContenutiApplicativi = readMultipartRelatedMissingTypeBehavior(
+					"org.openspcoop2.pdd.services.consegnaContenutiApplicativi.multipart.related.missingType.behavior",
+					MultipartMissingTypeBehavior.INFER_FROM_REQUEST, false);
+		}
+		return this.multipartRelatedMissingTypeBehaviorConsegnaContenutiApplicativi;
+	}
+
+	private MultipartMissingTypeBehavior readMultipartRelatedMissingTypeBehavior(String pName, MultipartMissingTypeBehavior defaultValue, boolean requestSide){
+		String value;
+		try{
+			value = this.reader.getValueConvertEnvProperties(pName);
+		}catch(java.lang.Exception e){
+			this.logError("Proprieta' di openspcoop '"+pName+"' non leggibile, viene utilizzato il default="+defaultValue.name()+", errore:"+e.getMessage(),e);
+			return defaultValue;
+		}
+		if(value==null || "".equals(value.trim())){
+			this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+defaultValue.name());
+			return defaultValue;
+		}
+		MultipartMissingTypeBehavior parsed = MultipartMissingTypeBehavior.parse(value);
+		if(parsed==null){
+			throw new IllegalStateException("Configurazione non valida: la proprieta' '"+pName+"' contiene il valore '"+value+"' non riconosciuto fra quelli ammessi (none, inferFromRequest, inferFromBody, forceSoap11, forceSoap12)");
+		}
+		if(requestSide && MultipartMissingTypeBehavior.INFER_FROM_REQUEST.equals(parsed)){
+			// 'inferFromRequest' è applicabile solo lato risposta. Sul lato richiesta non c'è alcun
+			// messaggio precedente da cui dedurre la versione SOAP: degradiamo a 'none' invece di
+			// impedire il boot, così la configurazione errata non blocca il servizio ma viene
+			// segnalata nei log.
+			this.logWarn("Proprieta' di openspcoop '"+pName+"' contiene il valore 'inferFromRequest', applicabile solo lato risposta: viene applicata la strategia di fallback 'none'");
+			return MultipartMissingTypeBehavior.NONE;
+		}
+		return parsed;
+	}
+
+	private Integer multipartRelatedMissingTypePeekBytesRicezioneContenutiApplicativi = null;
+	public int getMultipartRelatedMissingTypePeekBytesRicezioneContenutiApplicativi(){
+		if(this.multipartRelatedMissingTypePeekBytesRicezioneContenutiApplicativi==null){
+			this.multipartRelatedMissingTypePeekBytesRicezioneContenutiApplicativi = readMultipartRelatedMissingTypePeekBytes(
+					"org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.multipart.related.missingType.peekBytes");
+		}
+		return this.multipartRelatedMissingTypePeekBytesRicezioneContenutiApplicativi;
+	}
+
+	private Integer multipartRelatedMissingTypePeekBytesRicezioneBuste = null;
+	public int getMultipartRelatedMissingTypePeekBytesRicezioneBuste(){
+		if(this.multipartRelatedMissingTypePeekBytesRicezioneBuste==null){
+			this.multipartRelatedMissingTypePeekBytesRicezioneBuste = readMultipartRelatedMissingTypePeekBytes(
+					"org.openspcoop2.pdd.services.ricezioneBuste.multipart.related.missingType.peekBytes");
+		}
+		return this.multipartRelatedMissingTypePeekBytesRicezioneBuste;
+	}
+
+	private Integer multipartRelatedMissingTypePeekBytesInoltroBuste = null;
+	public int getMultipartRelatedMissingTypePeekBytesInoltroBuste(){
+		if(this.multipartRelatedMissingTypePeekBytesInoltroBuste==null){
+			this.multipartRelatedMissingTypePeekBytesInoltroBuste = readMultipartRelatedMissingTypePeekBytes(
+					"org.openspcoop2.pdd.services.inoltroBuste.multipart.related.missingType.peekBytes");
+		}
+		return this.multipartRelatedMissingTypePeekBytesInoltroBuste;
+	}
+
+	private Integer multipartRelatedMissingTypePeekBytesConsegnaContenutiApplicativi = null;
+	public int getMultipartRelatedMissingTypePeekBytesConsegnaContenutiApplicativi(){
+		if(this.multipartRelatedMissingTypePeekBytesConsegnaContenutiApplicativi==null){
+			this.multipartRelatedMissingTypePeekBytesConsegnaContenutiApplicativi = readMultipartRelatedMissingTypePeekBytes(
+					"org.openspcoop2.pdd.services.consegnaContenutiApplicativi.multipart.related.missingType.peekBytes");
+		}
+		return this.multipartRelatedMissingTypePeekBytesConsegnaContenutiApplicativi;
+	}
+
+	private int readMultipartRelatedMissingTypePeekBytes(String pName){
+		try{
+			String value = this.reader.getValueConvertEnvProperties(pName);
+			if(value!=null && !"".equals(value.trim())){
+				try{
+					int v = Integer.parseInt(value.trim());
+					if(v>0){
+						return v;
+					}
+					this.logWarn("Proprieta' di openspcoop '"+pName+"' contiene un valore non positivo ['"+value+"'], viene utilizzato il default="+DEFAULT_MULTIPART_MISSING_TYPE_PEEK_BYTES);
+				}catch(NumberFormatException nfe){
+					this.logWarn("Proprieta' di openspcoop '"+pName+"' contiene un valore non numerico ['"+value+"'], viene utilizzato il default="+DEFAULT_MULTIPART_MISSING_TYPE_PEEK_BYTES);
+				}
+				return DEFAULT_MULTIPART_MISSING_TYPE_PEEK_BYTES;
+			}
+			this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+DEFAULT_MULTIPART_MISSING_TYPE_PEEK_BYTES);
+			return DEFAULT_MULTIPART_MISSING_TYPE_PEEK_BYTES;
+		}catch(java.lang.Exception e){
+			this.logError("Proprieta' di openspcoop '"+pName+"' non leggibile, viene utilizzato il default="+DEFAULT_MULTIPART_MISSING_TYPE_PEEK_BYTES+", errore:"+e.getMessage(),e);
+			return DEFAULT_MULTIPART_MISSING_TYPE_PEEK_BYTES;
+		}
+	}
+
 	private Boolean isControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiSoap= null;
 	private List<String> listControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiSoap = null;
 	public boolean isControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiSoap(){

@@ -92,6 +92,8 @@ import org.openspcoop2.pdd.services.connector.messages.DirectVMConnectorInMessag
 import org.openspcoop2.pdd.services.connector.messages.DirectVMConnectorOutMessage;
 import org.openspcoop2.pdd.services.connector.messages.DumpRawConnectorInMessage;
 import org.openspcoop2.pdd.services.connector.messages.DumpRawConnectorOutMessage;
+import org.openspcoop2.pdd.services.connector.messages.HttpServletConnectorInMessage;
+import org.openspcoop2.pdd.services.connector.messages.HttpServletConnectorMultipartRequestCompensator;
 import org.openspcoop2.pdd.services.core.RicezioneBuste;
 import org.openspcoop2.pdd.services.core.RicezioneBusteContext;
 import org.openspcoop2.pdd.services.error.RicezioneBusteExternalErrorGenerator;
@@ -415,7 +417,18 @@ public class RicezioneBusteService implements IRicezioneService, IAsyncResponseC
 				idPA.setNome(this.requestInfo.getProtocolContext().getInterfaceName());
 				pa = configPdDManager.getPortaApplicativaSafeMethod(idPA, this.requestInfo);
 			}
-			
+
+			// Compensazione di Content-Type 'multipart/related' privo del parametro 'type' (RFC 2387 §3.1) — solo SOAP
+			if(this.req instanceof HttpServletConnectorInMessage httpInMessage
+					&& this.requestInfo!=null
+					&& ServiceBinding.SOAP.equals(this.requestInfo.getProtocolServiceBinding())) {
+				new HttpServletConnectorMultipartRequestCompensator(
+						httpInMessage,
+						pa!=null ? pa.getProprietaList() : null,
+						this.generatoreErrore,
+						this.msgDiag).apply();
+			}
+
 			// Limited
 			try{
 				this.msgDiag.mediumDebug("Lettura configurazione dimensione massima della richiesta ...");

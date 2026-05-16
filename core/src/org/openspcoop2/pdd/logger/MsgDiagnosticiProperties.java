@@ -724,9 +724,11 @@ public class MsgDiagnosticiProperties {
 		MSG_DIAGNOSTICI_WARNING.add("001108"); // ricezioneContenutiApplicativi.validazioneContenutiApplicativiRichiestaNonRiuscita.warningOnly
 		MSG_DIAGNOSTICI_WARNING.add("001122"); // ricezioneContenutiApplicativi.richiesta.warningCharsetDifferenteDefault
 		MSG_DIAGNOSTICI_WARNING.add("001123"); // ricezioneContenutiApplicativi.risposta.warningCharsetDifferenteDefault
-		
+		MSG_DIAGNOSTICI_WARNING.add("001162"); // ricezioneContenutiApplicativi.contentType.multipart.related.missingType.compensated
+
 		MSG_DIAGNOSTICI_WARNING.add("003060"); // inoltroBuste.validazioneContenutiApplicativiRispostaNonRiuscita.warningOnly
-		
+		MSG_DIAGNOSTICI_WARNING.add("003070"); // inoltroBuste.contentType.multipart.related.missingType.compensated
+
 		MSG_DIAGNOSTICI_WARNING.add("004092"); // ricezioneBuste.controlloTraffico.policy.violataWarningOnly
 		MSG_DIAGNOSTICI_WARNING.add("004095"); // ricezioneBuste.controlloTraffico.maxRequestsViolatedWarningOnly
 		MSG_DIAGNOSTICI_WARNING.add("004107"); // ricezioneBuste.gestioneTokenInCorso.validazioneToken.warningOnly.fallita
@@ -736,8 +738,10 @@ public class MsgDiagnosticiProperties {
 		MSG_DIAGNOSTICI_WARNING.add("004145"); // ricezioneBuste.richiesta.warningCharsetDifferenteDefault
 		MSG_DIAGNOSTICI_WARNING.add("004146"); // ricezioneBuste.risposta.warningCharsetDifferenteDefault
 		MSG_DIAGNOSTICI_WARNING.add("004176"); // ricezioneBuste.protocolli.tipoSoggetto.fruitore.unsupported.warning
-		
+		MSG_DIAGNOSTICI_WARNING.add("004190"); // ricezioneBuste.contentType.multipart.related.missingType.compensated
+
 		MSG_DIAGNOSTICI_WARNING.add("007059"); // consegnaContenutiApplicativi.validazioneContenutiApplicativiRispostaNonRiuscita.warningOnly
+		MSG_DIAGNOSTICI_WARNING.add("007079"); // consegnaContenutiApplicativi.contentType.multipart.related.missingType.compensated
 	}
 	
 	/*---------- Codici Consegna Fallita -------------*/
@@ -840,6 +844,7 @@ public class MsgDiagnosticiProperties {
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI+"gestoreCredenziali.errore",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI+"gestoreCredenziali.nuoveCredenziali",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI+"contentType.notDefined",
+		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI+"contentType.multipart.related.missingType.compensated",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI+"integrationManager.consegnaRispostaApplicativaEffettuata",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI+"integrationManager.consegnaRispostaApplicativaVuota",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI+"integrationManager.consegnaRispostaApplicativaFallita",
@@ -1058,6 +1063,7 @@ public class MsgDiagnosticiProperties {
 		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+"consegnaRispostaSSE",
 		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+"dpopBackend.completato",
 		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+"dpopBackend.inCache",
+		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+"contentType.multipart.related.missingType.compensated",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"ricezioneMessaggio",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"ricezioneMessaggioErrore",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"autorizzazioneBusteInCorso",
@@ -1091,6 +1097,7 @@ public class MsgDiagnosticiProperties {
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"gestoreCredenziali.errore",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"gestoreCredenziali.nuoveCredenziali",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"contentType.notDefined",
+		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"contentType.multipart.related.missingType.compensated",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"identificazionePAErrore",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"protocolli.tipoSoggetto.fruitore.unsupported",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"protocolli.tipoSoggetto.erogatore.unsupported",
@@ -1367,6 +1374,7 @@ public class MsgDiagnosticiProperties {
 		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"consegnaRispostaSSE",
 		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"dpopBackend.completato",
 		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"dpopBackend.inCache",
+		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"contentType.multipart.related.missingType.compensated",
 		MsgDiagnosticiProperties.MSG_DIAG_INTEGRATION_MANAGER+"logInvocazioneOperazione",
 		MsgDiagnosticiProperties.MSG_DIAG_INTEGRATION_MANAGER+"autenticazioneNonImpostata",
 		MsgDiagnosticiProperties.MSG_DIAG_INTEGRATION_MANAGER+"servizioApplicativo.identificazioneTramiteCredenziali",
