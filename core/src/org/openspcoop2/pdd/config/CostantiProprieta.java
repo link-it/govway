@@ -844,6 +844,76 @@ public class CostantiProprieta {
 
 
 
+	// ****  CONNETTORI HTTP MULTIPART *****
+
+	private static final String CONNETTORI_HTTP_MULTIPART_RELATED_MISSING_TYPE_RICHIESTA_BEHAVIOR = "connettori.multipart.related.missingType.request.behavior";
+	private static final String CONNETTORI_HTTP_MULTIPART_RELATED_MISSING_TYPE_RISPOSTA_BEHAVIOR = "connettori.multipart.related.missingType.response.behavior";
+	private static final String CONNETTORI_HTTP_MULTIPART_RELATED_MISSING_TYPE_BEHAVIOR = "connettori.multipart.related.missingType.behavior";
+
+	private static final String CONNETTORI_HTTP_MULTIPART_RELATED_MISSING_TYPE_RICHIESTA_PEEKBYTES = "connettori.multipart.related.missingType.request.peekBytes";
+	private static final String CONNETTORI_HTTP_MULTIPART_RELATED_MISSING_TYPE_RISPOSTA_PEEKBYTES = "connettori.multipart.related.missingType.response.peekBytes";
+	private static final String CONNETTORI_HTTP_MULTIPART_RELATED_MISSING_TYPE_PEEKBYTES = "connettori.multipart.related.missingType.peekBytes";
+
+	public static org.openspcoop2.utils.transport.http.MultipartMissingTypeBehavior getConnettoriMultipartRelatedMissingTypeRequestBehavior(List<Proprieta> proprieta, org.openspcoop2.utils.transport.http.MultipartMissingTypeBehavior defaultValue) {
+		return readMultipartMissingTypeBehavior(proprieta, CONNETTORI_HTTP_MULTIPART_RELATED_MISSING_TYPE_RICHIESTA_BEHAVIOR, defaultValue, true);
+	}
+	public static org.openspcoop2.utils.transport.http.MultipartMissingTypeBehavior getConnettoriMultipartRelatedMissingTypeResponseBehavior(List<Proprieta> proprieta, org.openspcoop2.utils.transport.http.MultipartMissingTypeBehavior defaultValue) {
+		return readMultipartMissingTypeBehavior(proprieta, CONNETTORI_HTTP_MULTIPART_RELATED_MISSING_TYPE_RISPOSTA_BEHAVIOR, defaultValue, false);
+	}
+	private static org.openspcoop2.utils.transport.http.MultipartMissingTypeBehavior readMultipartMissingTypeBehavior(List<Proprieta> proprieta, String specificName, org.openspcoop2.utils.transport.http.MultipartMissingTypeBehavior defaultValue, boolean requestSide) {
+		String value = readValue(proprieta, specificName);
+		if(value!=null && !"".equals(value.trim())) {
+			org.openspcoop2.utils.transport.http.MultipartMissingTypeBehavior b = org.openspcoop2.utils.transport.http.MultipartMissingTypeBehavior.parse(value);
+			if(b!=null) {
+				return normalizeBehaviorForSide(b, requestSide);
+			}
+		}
+		value = readValue(proprieta, CONNETTORI_HTTP_MULTIPART_RELATED_MISSING_TYPE_BEHAVIOR);
+		if(value!=null && !"".equals(value.trim())) {
+			org.openspcoop2.utils.transport.http.MultipartMissingTypeBehavior b = org.openspcoop2.utils.transport.http.MultipartMissingTypeBehavior.parse(value);
+			if(b!=null) {
+				return normalizeBehaviorForSide(b, requestSide);
+			}
+		}
+		return defaultValue;
+	}
+	/**
+	 * 'inferFromRequest' è ammessa solo lato risposta (deduce dal MessageType della richiesta associata).
+	 * Sul lato richiesta non c'è un messaggio precedente da cui dedurre: la configurazione è considerata
+	 * non applicabile e viene degradata a 'none', delegando l'eventuale classificazione standard del
+	 * messaggio (e i suoi diagnostici di errore) al flusso ordinario.
+	 */
+	private static org.openspcoop2.utils.transport.http.MultipartMissingTypeBehavior normalizeBehaviorForSide(org.openspcoop2.utils.transport.http.MultipartMissingTypeBehavior b, boolean requestSide) {
+		if(requestSide && org.openspcoop2.utils.transport.http.MultipartMissingTypeBehavior.INFER_FROM_REQUEST.equals(b)) {
+			return org.openspcoop2.utils.transport.http.MultipartMissingTypeBehavior.NONE;
+		}
+		return b;
+	}
+
+	public static int getConnettoriMultipartRelatedMissingTypeRequestPeekBytes(List<Proprieta> proprieta, int defaultValue) {
+		return readMultipartMissingTypePeekBytes(proprieta, CONNETTORI_HTTP_MULTIPART_RELATED_MISSING_TYPE_RICHIESTA_PEEKBYTES, defaultValue);
+	}
+	public static int getConnettoriMultipartRelatedMissingTypeResponsePeekBytes(List<Proprieta> proprieta, int defaultValue) {
+		return readMultipartMissingTypePeekBytes(proprieta, CONNETTORI_HTTP_MULTIPART_RELATED_MISSING_TYPE_RISPOSTA_PEEKBYTES, defaultValue);
+	}
+	private static int readMultipartMissingTypePeekBytes(List<Proprieta> proprieta, String specificName, int defaultValue) {
+		String value = readValue(proprieta, specificName);
+		if(value!=null && !"".equals(value.trim())) {
+			try {
+				int v = Integer.parseInt(value.trim());
+				if(v>0) {
+					return v;
+				}
+			}catch(Exception e) {
+				// ignore
+			}
+		}
+		return readIntValueWithDefault(proprieta, CONNETTORI_HTTP_MULTIPART_RELATED_MISSING_TYPE_PEEKBYTES, defaultValue);
+	}
+
+
+
+
 	// ****  REGISTRAZIONE MESSAGGI *****
 		
 	private static final String REGISTRAZIONE_MESSAGGI_WHITE_LIST = "registrazioneMessaggi.whiteList";

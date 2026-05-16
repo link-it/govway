@@ -19,7 +19,9 @@ Le sezioni successive descrivono le funzionalità inerenti l'utilizzo di endpoin
 
 La sezione :ref:`proxyPassReverse` descrive la funzionalità di riscrittura delle url negli header HTTP della risposta.
 
-Infine la sezione :ref:`contentLengthRisposta` descrive come configurare GovWay per preservare o forzare l'header *Content-Length* nella risposta inoltrata al client.
+La sezione :ref:`contentLengthRisposta` descrive come configurare GovWay per preservare o forzare l'header *Content-Length* nella risposta inoltrata al client.
+
+Infine la sezione :ref:`multipartTypeMissing` descrive come configurare GovWay per gestire un *Content-Type* '*multipart/related*' privo del parametro *type* obbligatorio (`RFC 2387, Section 3.1 <https://datatracker.ietf.org/doc/html/rfc2387#section-3.1>`_) ricevuto da un backend o da un client non conforme.
 
 .. note::
 	Le funzionalità relative ad un applicativo 'Server' (sezione :ref:`applicativoServerConnettore`) e ai connettori multipli (:ref:`loadBalancerConnettore` e :ref:`consegnaCondizionaleConnettore`) sono applicabili solamente per le erogazioni di API.
@@ -33,3 +35,4 @@ Infine la sezione :ref:`contentLengthRisposta` descrive come configurare GovWay 
    consegnaCondizionale/index
    proxyPassReverse
    contentLength
+   multipartType

@@ -315,11 +315,7 @@ public class ContentTypeUtilities {
 			if(baseType!=null) {
 				baseType = baseType.toLowerCase();
 			}
-			if(baseType!=null && baseType.startsWith(HttpConstants.CONTENT_TYPE_MULTIPART_TYPE+"/")){
-				return true;
-			}
-			return false;
-			
+			return baseType!=null && baseType.startsWith(HttpConstants.CONTENT_TYPE_MULTIPART_TYPE+"/");
 		} catch (Exception e) {
 			throw new UtilsException(e.getMessage(),e);
 		}
@@ -362,11 +358,7 @@ public class ContentTypeUtilities {
 			if(baseType!=null) {
 				baseType = baseType.toLowerCase();
 			}
-			if(baseType!=null && baseType.startsWith( (HttpConstants.CONTENT_TYPE_MULTIPART_TYPE+"/")) ){
-				return true;
-			}
-			return false;
-			
+			return baseType!=null && baseType.startsWith( (HttpConstants.CONTENT_TYPE_MULTIPART_TYPE+"/"));
 		} catch (Exception e) {
 			throw new UtilsException(e.getMessage(),e);
 		}
@@ -544,9 +536,22 @@ public class ContentTypeUtilities {
 	public static String readMultipartBoundaryFromContentType(String cType) throws UtilsException {
 		try{
 			ContentType contentType = new ContentType(cType);
-			String boundaryParam = contentType.getParameter(HttpConstants.CONTENT_TYPE_MULTIPART_PARAMETER_BOUNDARY); 
+			String boundaryParam = contentType.getParameter(HttpConstants.CONTENT_TYPE_MULTIPART_PARAMETER_BOUNDARY);
 			if (boundaryParam != null) {
 				return boundaryParam.trim();
+			}
+			return null;
+		} catch (Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
+
+	public static String readMultipartTypeFromContentType(String cType) throws UtilsException {
+		try{
+			ContentType contentType = new ContentType(cType);
+			String typeParam = contentType.getParameter(HttpConstants.CONTENT_TYPE_MULTIPART_PARAMETER_TYPE);
+			if (typeParam != null) {
+				return typeParam.trim();
 			}
 			return null;
 		} catch (Exception e) {

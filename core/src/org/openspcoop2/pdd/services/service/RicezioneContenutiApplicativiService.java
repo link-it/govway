@@ -89,6 +89,8 @@ import org.openspcoop2.pdd.services.connector.messages.DirectVMConnectorInMessag
 import org.openspcoop2.pdd.services.connector.messages.DirectVMConnectorOutMessage;
 import org.openspcoop2.pdd.services.connector.messages.DumpRawConnectorInMessage;
 import org.openspcoop2.pdd.services.connector.messages.DumpRawConnectorOutMessage;
+import org.openspcoop2.pdd.services.connector.messages.HttpServletConnectorInMessage;
+import org.openspcoop2.pdd.services.connector.messages.HttpServletConnectorMultipartRequestCompensator;
 import org.openspcoop2.pdd.services.core.RicezioneContenutiApplicativi;
 import org.openspcoop2.pdd.services.core.RicezioneContenutiApplicativiContext;
 import org.openspcoop2.pdd.services.error.RicezioneContenutiApplicativiInternalErrorGenerator;
@@ -387,6 +389,17 @@ public class RicezioneContenutiApplicativiService {
 				IDPortaDelegata idPD = new IDPortaDelegata();
 				idPD.setNome(requestInfo.getProtocolContext().getInterfaceName());
 				pd = configPdDManager.getPortaDelegataSafeMethod(idPD,requestInfo);
+			}
+
+			// Compensazione di Content-Type 'multipart/related' privo del parametro 'type' (RFC 2387 §3.1) — solo SOAP
+			if(req instanceof HttpServletConnectorInMessage
+					&& requestInfo!=null
+					&& ServiceBinding.SOAP.equals(requestInfo.getProtocolServiceBinding())) {
+				new HttpServletConnectorMultipartRequestCompensator(
+						(HttpServletConnectorInMessage) req,
+						pd!=null ? pd.getProprietaList() : null,
+						this.generatoreErrore,
+						msgDiag).apply();
 			}
 
 			// Limited

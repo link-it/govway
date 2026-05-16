@@ -623,7 +623,13 @@ public class CostantiPdD {
     
     /** Costante che identifica i content types attesi per la versione soap */
     public static final String KEY_CONTENT_TYPES_ATTESI = "@CONTENT_TYPES_ATTESI@";
-    
+
+    /** Costante che identifica la strategia di compensazione applicata a un Content-Type 'multipart/related' privo del parametro 'type' (RFC 2387 §3.1) */
+    public static final String KEY_STRATEGIA = "@STRATEGIA@";
+
+    /** Costante che identifica il media type dedotto per il parametro 'type' assente in un Content-Type 'multipart/related' */
+    public static final String KEY_TYPE_INFERITO = "@TYPE_INFERITO@";
+
     /** Costante che identifica un tipo di messaggio Errore */
     public static final String KEY_TIPO_MESSAGGIO_BUSTA_ERRORE = "@TIPO_ERRORE_BUSTA@";
     public static final String TIPO_MESSAGGIO_BUSTA_ERRORE_PROCESSAMENTO = "Processamento";

@@ -170,14 +170,168 @@ public class DBVerifier {
 		}
 	}
 	private static void existsDiagnosticoEngine(String idTransazione,  String diagnostico) throws Exception  {
-		
-		String query = "select count(*) from msgdiagnostici where id_transazione = ? and messaggio LIKE '%"+diagnostico+"%'";
+
+		// Query parametrica: il valore atteso può contenere apostrofi (es. "nell'http reply") che
+		// romperebbero la sintassi se concatenati direttamente nella query.
+		String query = "select count(*) from msgdiagnostici where id_transazione = ? and messaggio LIKE ?";
 		log().info(query);
-		
-		int	count = dbUtils().readValue(query, Integer.class, idTransazione);
+
+		int	count = dbUtils().readValue(query, Integer.class, idTransazione, "%"+diagnostico+"%");
 		String msg = "IdTransazione: "+idTransazione;
 		assertTrue(msg+" Cerco dettaglio '"+diagnostico+"'; count trovati: "+count+"", (count>0));
 
+	}
+
+
+	public static void notExistsDiagnostico(String idTransazione, String diagnostico) throws Exception  {
+
+		// La scrittura su database avviene dopo aver risposto al client
+
+		Utilities.sleep(100);
+		try {
+			DBVerifier.notExistsDiagnosticoEngine(idTransazione, diagnostico);
+		}catch(Throwable t) {
+			Utilities.sleep(500);
+			try {
+				DBVerifier.notExistsDiagnosticoEngine(idTransazione, diagnostico);
+			}catch(Throwable t2) {
+				Utilities.sleep(2000);
+				try {
+					DBVerifier.notExistsDiagnosticoEngine(idTransazione, diagnostico);
+				}catch(Throwable t3) {
+					Utilities.sleep(5000);
+					DBVerifier.notExistsDiagnosticoEngine(idTransazione, diagnostico);
+				}
+			}
+		}
+	}
+	private static void notExistsDiagnosticoEngine(String idTransazione,  String diagnostico) throws Exception  {
+
+		// Query parametrica per gestire correttamente apostrofi nel valore atteso.
+		String query = "select count(*) from msgdiagnostici where id_transazione = ? and messaggio LIKE ?";
+		log().info(query);
+
+		int	count = dbUtils().readValue(query, Integer.class, idTransazione, "%"+diagnostico+"%");
+		String msg = "IdTransazione: "+idTransazione;
+		assertEquals(msg+" Atteso NESSUN diagnostico contenente '"+diagnostico+"', trovati: "+count, 0, count);
+	}
+
+
+	public static void notExistsDumpMessaggi(String idTransazione) throws Exception {
+		// La scrittura su database avviene dopo aver risposto al client
+		Utilities.sleep(100);
+		try {
+			notExistsDumpMessaggiEngine(idTransazione);
+		}catch(Throwable t) {
+			Utilities.sleep(500);
+			try {
+				notExistsDumpMessaggiEngine(idTransazione);
+			}catch(Throwable t2) {
+				Utilities.sleep(2000);
+				try {
+					notExistsDumpMessaggiEngine(idTransazione);
+				}catch(Throwable t3) {
+					Utilities.sleep(5000);
+					notExistsDumpMessaggiEngine(idTransazione);
+				}
+			}
+		}
+	}
+	private static void notExistsDumpMessaggiEngine(String idTransazione) throws Exception {
+		String query = "select count(*) from dump_messaggi where id_transazione = ?";
+		log().info(query);
+		int count = dbUtils().readValue(query, Integer.class, idTransazione);
+		String msg = "IdTransazione: "+idTransazione;
+		assertEquals(msg+" Attese 0 righe in dump_messaggi, trovate: "+count, 0, count);
+	}
+
+
+	public static void existsDumpMessaggio(String idTransazione, String tipoMessaggio) throws Exception {
+		Utilities.sleep(100);
+		try {
+			existsDumpMessaggioEngine(idTransazione, tipoMessaggio);
+		}catch(Throwable t) {
+			Utilities.sleep(500);
+			try {
+				existsDumpMessaggioEngine(idTransazione, tipoMessaggio);
+			}catch(Throwable t2) {
+				Utilities.sleep(2000);
+				try {
+					existsDumpMessaggioEngine(idTransazione, tipoMessaggio);
+				}catch(Throwable t3) {
+					Utilities.sleep(5000);
+					existsDumpMessaggioEngine(idTransazione, tipoMessaggio);
+				}
+			}
+		}
+	}
+	private static void existsDumpMessaggioEngine(String idTransazione, String tipoMessaggio) throws Exception {
+		String query = "select count(*) from dump_messaggi where id_transazione = ? and tipo_messaggio = ?";
+		log().info(query);
+		int count = dbUtils().readValue(query, Integer.class, idTransazione, tipoMessaggio);
+		String msg = "IdTransazione: "+idTransazione;
+		assertTrue(msg+" Atteso almeno 1 dump_messaggi per tipo_messaggio='"+tipoMessaggio+"', trovati: "+count, count>0);
+	}
+
+
+	public static void existsDumpMessaggioWithContentType(String idTransazione, String tipoMessaggio, String contentTypeAtteso) throws Exception {
+		Utilities.sleep(100);
+		try {
+			existsDumpMessaggioWithContentTypeEngine(idTransazione, tipoMessaggio, contentTypeAtteso);
+		}catch(Throwable t) {
+			Utilities.sleep(500);
+			try {
+				existsDumpMessaggioWithContentTypeEngine(idTransazione, tipoMessaggio, contentTypeAtteso);
+			}catch(Throwable t2) {
+				Utilities.sleep(2000);
+				try {
+					existsDumpMessaggioWithContentTypeEngine(idTransazione, tipoMessaggio, contentTypeAtteso);
+				}catch(Throwable t3) {
+					Utilities.sleep(5000);
+					existsDumpMessaggioWithContentTypeEngine(idTransazione, tipoMessaggio, contentTypeAtteso);
+				}
+			}
+		}
+	}
+	private static void existsDumpMessaggioWithContentTypeEngine(String idTransazione, String tipoMessaggio, String contentTypeAtteso) throws Exception {
+		String query = "select count(*) from dump_messaggi where id_transazione = ? and tipo_messaggio = ? and content_type = ?";
+		log().info(query);
+		int count = dbUtils().readValue(query, Integer.class, idTransazione, tipoMessaggio, contentTypeAtteso);
+		String msg = "IdTransazione: "+idTransazione;
+		assertTrue(msg+" Atteso almeno 1 dump_messaggi per tipo_messaggio='"+tipoMessaggio+"' con content_type='"+contentTypeAtteso+"', trovati: "+count, count>0);
+	}
+
+	/**
+	 * Variante di {@link #existsDumpMessaggioWithContentType(String, String, String)} che applica un
+	 * match LIKE sul content_type. Necessaria quando GovWay riserializza un messaggio multipart
+	 * (es. risposta verso il client) e rigenera il boundary: in quel caso il content_type completo
+	 * non è prevedibile, ma può essere verificato per pattern (es. presenza di 'type="text/xml"').
+	 */
+	public static void existsDumpMessaggioWithContentTypeLike(String idTransazione, String tipoMessaggio, String contentTypePattern) throws Exception {
+		Utilities.sleep(100);
+		try {
+			existsDumpMessaggioWithContentTypeLikeEngine(idTransazione, tipoMessaggio, contentTypePattern);
+		}catch(Throwable t) {
+			Utilities.sleep(500);
+			try {
+				existsDumpMessaggioWithContentTypeLikeEngine(idTransazione, tipoMessaggio, contentTypePattern);
+			}catch(Throwable t2) {
+				Utilities.sleep(2000);
+				try {
+					existsDumpMessaggioWithContentTypeLikeEngine(idTransazione, tipoMessaggio, contentTypePattern);
+				}catch(Throwable t3) {
+					Utilities.sleep(5000);
+					existsDumpMessaggioWithContentTypeLikeEngine(idTransazione, tipoMessaggio, contentTypePattern);
+				}
+			}
+		}
+	}
+	private static void existsDumpMessaggioWithContentTypeLikeEngine(String idTransazione, String tipoMessaggio, String contentTypePattern) throws Exception {
+		String query = "select count(*) from dump_messaggi where id_transazione = ? and tipo_messaggio = ? and content_type LIKE ?";
+		log().info(query);
+		int count = dbUtils().readValue(query, Integer.class, idTransazione, tipoMessaggio, contentTypePattern);
+		String msg = "IdTransazione: "+idTransazione;
+		assertTrue(msg+" Atteso almeno 1 dump_messaggi per tipo_messaggio='"+tipoMessaggio+"' con content_type LIKE '"+contentTypePattern+"', trovati: "+count, count>0);
 	}
 	
 	

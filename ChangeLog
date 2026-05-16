@@ -1,3 +1,12 @@
+2026-05-16  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità #1770
+	Aggiunta funzionalità di compensazione di un Content-Type multipart/related privo del parametro type (RFC 2387 - 3.1) 
+	ricevuto da un backend o da un client non conforme. 
+	La strategia è configurabile via property (reject, inferFromRequest, inferFromBody, forceSoap11, forceSoap12) sia globalmente sia per singola API. 
+	Default conservativo: reject lato richiesta, inferFromRequest lato risposta.
+
 2026-05-13  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
