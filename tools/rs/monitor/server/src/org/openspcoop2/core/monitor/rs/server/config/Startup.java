@@ -48,6 +48,7 @@ import org.openspcoop2.pdd.config.ConfigurazioneNodiRuntime;
 import org.openspcoop2.pdd.core.byok.BYOKMapProperties;
 import org.openspcoop2.pdd.core.dynamic.DynamicInfo;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
+import org.openspcoop2.pdd.logger.diagnostica.ConvertitoreCodiceDiagnostici;
 import org.openspcoop2.pdd.services.ServicesUtils;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
@@ -306,6 +307,15 @@ public class Startup implements ServletContextListener {
 				throw new UtilsRuntimeException(e.getMessage(),e);
 			}
 			Startup.log.info("Inizializzazione DBManager effettuata con successo");
+			
+			// inizializzo convertitore codici diagnostici
+			Startup.log.info("Inizializzazione ConvertitoreCodiceDiagnostici in corso...");
+			try {
+				ConvertitoreCodiceDiagnostici.initConfDir(serverProperties.getConfDirectory());
+			} catch (Exception e) {
+				throw new UtilsRuntimeException(e.getMessage(),e);
+			}
+			Startup.log.info("Inizializzazione ConvertitoreCodiceDiagnostici effettuata con successo");
 			
 			// Extended Manager
 			Startup.log.info("Inizializzazione ExtendedInfoManager in corso...");

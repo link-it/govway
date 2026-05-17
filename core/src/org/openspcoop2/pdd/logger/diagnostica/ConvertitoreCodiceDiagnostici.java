@@ -158,6 +158,14 @@ public class ConvertitoreCodiceDiagnostici {
 	public static final String CONSEGNA_CONTENUTI_APPLICATIVI_CODICE_MODULO = "007"; // codice modulo
 	public static final String CONSEGNA_CONTENUTI_APPLICATIVI_RICEZIONE_SOAP_FAULT_CODICE = "007014"; // consegnaContenutiApplicativi.ricezioneSoapFault
 	
+	private static String confDir = null;
+	public static String getConfDir() {
+		return confDir;
+	}
+
+	public static void initConfDir(String confDirPar) {
+		confDir = confDirPar;
+	}
 	
 	public ConvertitoreCodiceDiagnostici(Transazione transazioneDTO,
 			Traccia tracciaRichiesta, Traccia tracciaRisposta,
@@ -178,7 +186,6 @@ public class ConvertitoreCodiceDiagnostici {
 		
 		/**Logger log = protocolFactory.getLogger() != null ? protocolFactory.getLogger() : LoggerWrapperFactory.getLogger(ConvertitoreCodiceDiagnostici.class);*/
 		
-		String confDir = null;
 		if(!MsgDiagnosticiProperties.initialize(null,confDir)){
 			throw new ProtocolException("Inizializzazione MsgDiagnosticiProperties non riuscita");
 		}
