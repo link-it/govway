@@ -42,6 +42,7 @@ import org.openspcoop2.pdd.config.ConfigurazioneNodiRuntimeProperties;
 import org.openspcoop2.pdd.core.byok.BYOKMapProperties;
 import org.openspcoop2.pdd.core.dynamic.DynamicInfo;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
+import org.openspcoop2.pdd.logger.diagnostica.ConvertitoreCodiceDiagnostici;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
 import org.openspcoop2.pdd.services.ServicesUtils;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
@@ -623,6 +624,17 @@ public abstract class AbstractConsoleStartupListener implements ServletContextLi
 		}
 		
 		
+		
+		// inizializzo convertitore codici diagnostici
+		try {
+			
+			ConvertitoreCodiceDiagnostici.initConfDir(appProperties.getConfigurationDir());
+
+		} catch (Exception e) {
+			String msgErrore = "Errore durante l'inizializzazione del ConvertitoreCodiceDiagnostici: " + e.getMessage();
+			AbstractConsoleStartupListener.logError(msgErrore,e);
+			throw new UtilsRuntimeException(msgErrore,e);
+		}
 		
 		
 		// inizializza la ExtendedInfoManager

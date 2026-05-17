@@ -1,3 +1,10 @@
+2026-05-17  Andrea Poli <apoli@link.it>
+
+	* [ApiRsMonitoraggio, GovWayMonitor]
+	Risolto Bug
+	Risolta un'anomalia per cui i messaggi diagnostici personalizzati definiti in 'govway_local.msgDiagnostici.properties' 
+	non venivano caricati dalla console di monitoraggio e dalle API di monitoraggio.
+
 2026-05-16  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
