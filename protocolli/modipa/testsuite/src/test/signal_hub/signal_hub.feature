@@ -34,16 +34,25 @@ Background:
 	* def auth_push_signal2 = { username: 'DemoSignalHub2', password: '123456' }
 	* def auth_push_signal_role = { username: 'DemoSignalHub1', password: '123456' }
 	* def auth_push_signal_role2 = { username: 'DemoSignalHubRole2', password: '123456' }
-    * def getHeader = 
+    * def getHeader =
     """
     function(name) {
         headerArray = (karate.get("responseHeaders['" + name + "']") ||
-               karate.get("responseHeaders['" + name.toLowerCase() + "']"))   
+               karate.get("responseHeaders['" + name.toLowerCase() + "']"))
         if (headerArray == null)
         	return null;
         return headerArray[0];
     }
     """
+
+	# Cleanup runtime: rimuove la proprieta exposeSignalId se rimasta da un test precedente.
+	# Eseguita automaticamente prima di ogni scenario (Background).
+	Given url govway_config_api_path + '/erogazioni/SignalHubTest/1/configurazioni/proprieta/modi.signalHub.pseudonymization.exposeSignalId'
+	And header Authorization = call basic (auth_api_config)
+	And param profilo = 'ModIPA'
+	And param soggetto = 'DemoSoggettoErogatore'
+	When method delete
+	Then match responseStatus == "#? _ == 204 || _ == 404"
 
 #
 # TEST SULL'OTTENIMENTO DELLE INFORMAZIONI DI PSEUDOANONIMIZZAZIONE	
@@ -87,6 +96,7 @@ Scenario: Informazioni crittografiche create alla prima richiesta del seme con m
 	And match header Content-Type contains 'text/xml'
 	And match response/Envelope/Body/pseudonymizationResponse/cryptoHashFunction == 'SHAKE128'
 	And match response/Envelope/Body/pseudonymizationResponse/seed == seed
+	And match response/Envelope/Body/pseudonymizationResponse/signalId == '0'
 	
 @test-pseudonymization
 @test-pseudonymization-SOAP-12-custom-ns
@@ -111,6 +121,7 @@ Scenario: Informazioni crittografiche create alla prima richiesta del seme con m
 	And match header Content-Type contains 'application/soap+xml'
 	And match response/Envelope/Body/pseudonymizationResponse/cryptoHashFunction == 'SHA512_256'
 	And match response/Envelope/Body/pseudonymizationResponse/seed == seed
+	And match response/Envelope/Body/pseudonymizationResponse/signalId == '0'
 
 
 @test-pseudonymization
@@ -150,35 +161,35 @@ Scenario: Controlla il corretto funzionamento della cache (rimuove un seed ma ri
 	When method get
 	Then status 200
 	* def seed = get_seed('DemoSoggettoErogatore','SignalHubTest')
-	And match response == {seed: '#(seed)', cryptoHashFunction: 'SHA-256'}
-	
+	And match response == {seed: '#(seed)', cryptoHashFunction: 'SHA-256', signalId: 0}
+
 	* def deleted = remove_seeds();
 	* def seeds = count_seeds()
 	And match seeds == 0
-	
+
 	Given url crypto_info_url
 	And header simulazionepdnd-purposeId = 'purposeId'
 	And header simulazionepdnd-audience = 'audience'
 	And header simulazionepdnd-username = 'ApplicativoBlockingJWK'
 	And header GovWay-TestSuite-Test-ID = 'crypto_info_found'
-	 
+
 	When method get
 	Then status 200
-	And match response == {seed: '#(seed)', cryptoHashFunction: 'SHA-256'}
-	
+	And match response == {seed: '#(seed)', cryptoHashFunction: 'SHA-256', signalId: 0}
+
 	* call reset_cache { cache_name: 'ConfigurazionePdD' }
-	
+
 	Given url crypto_info_url
 	And header simulazionepdnd-purposeId = 'purposeId'
 	And header simulazionepdnd-audience = 'audience'
 	And header simulazionepdnd-username = 'ApplicativoBlockingJWK'
 	And header GovWay-TestSuite-Test-ID = 'crypto_info_not_found'
-	 
+
 	When method get
 	Then status 200
 	# facendo get_seed verifico che vi sia un nuovo seme
 	* def seed = get_seed('DemoSoggettoErogatore','SignalHubTest')
-	And match response == {seed: '#(seed)', cryptoHashFunction: 'SHA-256'}
+	And match response == {seed: '#(seed)', cryptoHashFunction: 'SHA-256', signalId: 0}
 	
 @test-pseudonymization
 @test-pseudonymization-create
@@ -197,8 +208,8 @@ Scenario: Informazioni crittografiche create alla prima richiesta di seme
 	Then status 200
 	
 	* def seed = get_seed('DemoSoggettoErogatore','SignalHubTest')
-	And match response == {seed: '#(seed)', cryptoHashFunction: 'SHA-256'}
-	
+	And match response == {seed: '#(seed)', cryptoHashFunction: 'SHA-256', signalId: 0}
+
 
 @test-pseudonymization
 @test-pseudonymization-id
@@ -239,7 +250,7 @@ Scenario: richiesta informazioni crittografiche tramite signalId corrispondente
 	* def seed = get_seed('DemoSoggettoErogatore','SignalHubTest')
 	* def signalId = parseInt(response.signalId - 1)
 	* call reset_cache { cache_name: 'ConfigurazionePdD' }
-	
+
 	Given url crypto_info_url
 	And param signalId = (signalId)
 	And header simulazionepdnd-purposeId = 'purposeId'
@@ -248,7 +259,38 @@ Scenario: richiesta informazioni crittografiche tramite signalId corrispondente
 	And header GovWay-TestSuite-Test-ID = 'crypto_info_found'
 	When method get
 	Then status 200
-	And match response == { seed: '#(seed)', cryptoHashFunction: 'SHA-256'}
+	And match response == { seed: '#(seed)', cryptoHashFunction: 'SHA-256', signalId: '#(signalId)'}
+
+@test-pseudonymization
+@test-pseudonymization-disabled
+Scenario: signalId non esposto quando la property exposeSignalId e' disabilitata sull'erogazione
+
+	* def deleted = remove_seeds();
+	* call reset_cache { cache_name: 'ConfigurazionePdD' }
+
+	# Imposto la property di disabilitazione sull'erogazione SignalHubTest.
+	# Il cleanup avviene automaticamente nel Background del test successivo.
+	Given url govway_config_api_path + '/erogazioni/SignalHubTest/1/configurazioni/proprieta'
+	And header Authorization = call basic (auth_api_config)
+	And param profilo = 'ModIPA'
+	And param soggetto = 'DemoSoggettoErogatore'
+	And request { nome: 'modi.signalHub.pseudonymization.exposeSignalId', valore: 'false' }
+	When method post
+	Then status 201
+
+	* call reset_cache { cache_name: 'DatiRichieste' }
+
+	# Verifico che la risposta NON contenga il campo signalId (il match e' strict)
+	Given url crypto_info_url
+	And header simulazionepdnd-purposeId = 'purposeId'
+	And header simulazionepdnd-audience = 'audience'
+	And header simulazionepdnd-username = 'ApplicativoBlockingJWK'
+	And header GovWay-TestSuite-Test-ID = 'crypto_info_found'
+	When method get
+	Then status 200
+	* def seed = get_seed('DemoSoggettoErogatore','SignalHubTest')
+	And match response == { seed: '#(seed)', cryptoHashFunction: 'SHA-256' }
+
 
 @test-pseudonymization
 @test-pseudonymization-no-digest
