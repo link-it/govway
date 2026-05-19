@@ -24,6 +24,7 @@ import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -350,12 +351,27 @@ public class DumpRaw {
 			this.bfRequest.append("Request.getURLProtocolContext error: "+t.getMessage()+"\n");
 			this.log.error("Request.getURLProtocolContext error: "+t.getMessage(),t);
 		}
-		
+
+		/*
+		 * Snapshot degli header originali della richiesta in ingresso PRIMA di triggerare la
+		 * lettura dello stream tramite req.getRequest(...). La lettura puo' attivare la
+		 * decompressione automatica del body (Content-Encoding gzip/deflate), che internamente
+		 * rimuove 'Content-Encoding' e 'Content-Length' dalla mappa header del protocol
+		 * context (essendo stale: il body e' decompresso e la length wire non e' piu'
+		 * significativa). Il dump in ingresso deve invece registrare gli header originali del
+		 * client, quindi salviamo qui una copia shallow della mappa e la ripristiniamo durante
+		 * la registrazione del dump binario.
+		 */
+		Map<String, List<String>> originalHeadersSnapshot = null;
+		if(this.urlProtocolContext!=null && this.urlProtocolContext.getHeaders()!=null) {
+			originalHeadersSnapshot = new HashMap<>(this.urlProtocolContext.getHeaders());
+		}
+
 		if(this.dump!=null && (this.isRegistrazioneDatabaseRichiesta() || this.onlyLogFileTraceRichiesta())) {
 			boolean onlyFileTrace = !isRegistrazioneDatabaseRichiesta();
 			this.dump.emitDiagnosticStartDumpBinarioRichiestaIngresso(onlyFileTrace);
 		}
-		
+
 		try{
 			// forzo la scrittura nel buffer dell'oggetto DumpRawConnectorInMessage
 			if(buildOpenSPCoopMessage){
@@ -368,29 +384,50 @@ public class DumpRaw {
 			this.bfRequest.append("Request.getURLProtocolContext error: "+t.getMessage()+"\n");
 			this.log.error("Request.getURLProtocolContext error: "+t.getMessage(),t);
 		}
-		
-		DumpByteArrayOutputStream dumpOUT = req.getDumpByteArrayOutputStream();  
+
+		DumpByteArrayOutputStream dumpOUT = req.getDumpByteArrayOutputStream();
 		try {
-		
-			if(this.dumpBinario) {
-				this.serializeRequest(contentType, contentLength, credential, this.urlProtocolContext, 
-						dumpOUT!=null ? dumpOUT.toString() : null,
-						req.getParsingRequestErrorAsString());
+
+			/*
+			 * Se la decompressione e' stata applicata, ripristino temporaneamente gli header
+			 * originali (snapshot) attorno al dump in ingresso, in modo da registrare nella
+			 * tabella dump_header_trasporto Content-Encoding/Content-Length wire originali.
+			 * Dopo il dump ripristino la mappa "cleaned" che i moduli a valle si aspettano.
+			 */
+			Map<String, List<String>> cleanedHeaders = null;
+			boolean restoreNeeded = req.isRequestContentEncodingDecompressionApplied()
+					&& originalHeadersSnapshot!=null
+					&& this.urlProtocolContext!=null
+					&& this.urlProtocolContext.getHeaders()!=null;
+			if(restoreNeeded) {
+				cleanedHeaders = this.urlProtocolContext.getHeaders();
+				this.urlProtocolContext.setHeaders(originalHeadersSnapshot);
 			}
-			
-			if(this.dump!=null && (this.isRegistrazioneDatabaseRichiesta() || this.onlyLogFileTraceRichiesta())) {
-				MessageType messageType = req.getRequestMessageType();
-				//if(rawMessage!=null){ // devono essere registrati anche solamente gli header
-				try {
-					this.dump.dumpBinarioRichiestaIngresso(this.isDumpBinarioRegistrazioneDatabase(), this.onlyLogFileTraceRichiestaIngressoHeaders, this.onlyLogFileTraceRichiestaIngressoPayload, 
-							dumpOUT, messageType,
-							this.urlProtocolContext);
-				}catch(Throwable t){
-					this.log.error("Log DumpBinarioRichiestaIngresso error: "+t.getMessage(),t);
+			try {
+				if(this.dumpBinario) {
+					this.serializeRequest(contentType, contentLength, credential, this.urlProtocolContext,
+							dumpOUT!=null ? dumpOUT.toString() : null,
+							req.getParsingRequestErrorAsString());
 				}
-				//}
+
+				if(this.dump!=null && (this.isRegistrazioneDatabaseRichiesta() || this.onlyLogFileTraceRichiesta())) {
+					MessageType messageType = req.getRequestMessageType();
+					//if(rawMessage!=null){ // devono essere registrati anche solamente gli header
+					try {
+						this.dump.dumpBinarioRichiestaIngresso(this.isDumpBinarioRegistrazioneDatabase(), this.onlyLogFileTraceRichiestaIngressoHeaders, this.onlyLogFileTraceRichiestaIngressoPayload,
+								dumpOUT, messageType,
+								this.urlProtocolContext);
+					}catch(Throwable t){
+						this.log.error("Log DumpBinarioRichiestaIngresso error: "+t.getMessage(),t);
+					}
+					//}
+				}
+			} finally {
+				if(restoreNeeded) {
+					this.urlProtocolContext.setHeaders(cleanedHeaders);
+				}
 			}
-			
+
 		}finally {
 			try {
 				if(dumpOUT!=null) {

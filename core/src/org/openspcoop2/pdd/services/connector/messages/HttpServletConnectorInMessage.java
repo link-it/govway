@@ -68,7 +68,9 @@ import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.transport.Credential;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.TransportUtils;
+import org.openspcoop2.utils.transport.http.ContentEncodingDecoder;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.slf4j.Logger;
 
@@ -115,7 +117,17 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 	
 	private boolean useDiagnosticInputStream;
 	private MsgDiagnostico msgDiagnostico;
-	
+
+	/**
+	 * Decompressione automatica del body della richiesta in ingresso. Inizializzato dal default
+	 * globale di {@link OpenSPCoop2Properties} (servizio ricezioneBuste o ricezioneContenutiApplicativi
+	 * a seconda di {@code idModuloAsIDService}) ed eventualmente sovrascritto per-API tramite
+	 * {@link #setDecompressRequestContentEncoding(boolean)} chiamato dal servizio di ricezione
+	 * dopo aver risolto la PA/PD (override property {@code connettori.contentEncoding.request.decompress}
+	 * con fallback {@code connettori.contentEncoding.decompress}).
+	 */
+	private boolean decompressRequestContentEncoding;
+
 	public HttpServletConnectorInMessage(RequestInfo requestInfo, HttpServletRequest req,
 			IDService idModuloAsIDService, String idModulo) throws ConnectorException{
 		try{
@@ -123,33 +135,45 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 			this.req = req;
 			this.openspcoopProperties = OpenSPCoop2Properties.getInstance();
 			this.is = this.req.getInputStream();
-			
+
 			this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 			if(this.log==null)
 				this.log = LoggerWrapperFactory.getLogger(HttpServletConnectorInMessage.class);
-			
+
 			this.idModuloAsIDService = idModuloAsIDService;
 			this.idModulo = idModulo;
-			
+
 			if(IDService.PORTA_APPLICATIVA.equals(idModuloAsIDService) || IDService.PORTA_APPLICATIVA_NIO.equals(idModuloAsIDService)){
 				this.requestMessageType = this.getRequestInfo().getProtocolRequestMessageType();
 			}
 			else{
 				this.requestMessageType = this.getRequestInfo().getIntegrationRequestMessageType();
 			}
-			
+
 			if(this.openspcoopProperties!=null) {
 				if(IDService.PORTA_APPLICATIVA.equals(idModuloAsIDService) || IDService.PORTA_APPLICATIVA_NIO.equals(idModuloAsIDService)){
 					this.useDiagnosticInputStream = this.openspcoopProperties.isConnettoriUseDiagnosticInputStreamRicezioneBuste();
+					this.decompressRequestContentEncoding = this.openspcoopProperties.isContentEncodingDecompressRicezioneBuste();
 				}
 				else {
 					this.useDiagnosticInputStream = this.openspcoopProperties.isConnettoriUseDiagnosticInputStreamRicezioneContenutiApplicativi();
+					this.decompressRequestContentEncoding = this.openspcoopProperties.isContentEncodingDecompressRicezioneContenutiApplicativi();
 				}
 			}
-			
+
 		}catch(Exception e){
 			throw new ConnectorException(e.getMessage(),e);
 		}
+	}
+
+	/**
+	 * Setter usato dal servizio di ricezione (RicezioneContenutiApplicativiService /
+	 * RicezioneBusteService) per applicare l'override per-API risolto da CostantiProprieta.
+	 * Va invocato <strong>prima</strong> di {@link #buildInputStream()} affinche' il flag valga
+	 * sul wrap di decompressione.
+	 */
+	public void setDecompressRequestContentEncoding(boolean decompressRequestContentEncoding) {
+		this.decompressRequestContentEncoding = decompressRequestContentEncoding;
 	}
 	
 	@Override
@@ -232,16 +256,28 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 		this.msgDiagnostico = msgDiag;
 	}
 	private InputStream buildInputStream() throws IOException {
-		
+
 		if(this.buffered &&
 			this.buffer!=null && this.buffer.size()>0) {
 			return new ByteArrayInputStream(this.buffer.toByteArray());
 		}
-		
+
 		if(this.is!=null && this.soapReader!=null) {
 			return this.is; // stream timeout gia' utilizzato per il soapReader
 		}
-		
+
+		/*
+		 * Decompressione automatica opt-in del body in ingresso. Wrap eseguito come PRIMO
+		 * decoratore (prima di LimitedInputStream/TimeoutInputStream/DiagnosticInputStream)
+		 * per due ragioni:
+		 *  1) protezione zip-bomb: il LimitedInputStream conta cosi' i byte decompressi e
+		 *     blocca espansioni eccessive (un body gzippato piccolo che si espande in
+		 *     centinaia di MB);
+		 *  2) il TimeoutInputStream misura il tempo di lettura del payload "logico" e non
+		 *     quello del wire raw.
+		 */
+		applyContentEncodingDecompressionRequest();
+
 		if(this.is!=null && this.requestLimitSize!=null && this.requestLimitSize.getSogliaKb()>0) {
 			LimitExceededNotifier notifier = new LimitExceededNotifier(this.context, this.requestLimitSize, this.log);
 			long limitBytes = this.requestLimitSize.getSogliaKb()*1024; // trasformo kb in bytes
@@ -261,15 +297,131 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 			this.is = this.internalTimeoutIS;
 		}
 		if(this.is!=null && this.useDiagnosticInputStream && this.msgDiagnostico!=null) {
-			String idModuloFunzionale = 
-					IDService.PORTA_APPLICATIVA.equals(this.idModuloAsIDService) ? 
+			String idModuloFunzionale =
+					IDService.PORTA_APPLICATIVA.equals(this.idModuloAsIDService) ?
 							MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE : MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI;
-			this.internalDiagnosticIS = new DiagnosticInputStream(this.is, idModuloFunzionale, "letturaPayloadRichiesta", true, this.msgDiagnostico, 
+			this.internalDiagnosticIS = new DiagnosticInputStream(this.is, idModuloFunzionale, "letturaPayloadRichiesta", true, this.msgDiagnostico,
 					(this.log!=null) ? this.log : OpenSPCoop2Logger.getLoggerOpenSPCoopCore(),
 					this.context);
 			this.is = this.internalDiagnosticIS;
 		}
 		return this.is;
+	}
+
+	/**
+	 * Flag impostato a true dopo che {@link #applyContentEncodingDecompressionRequest()} ha
+	 * effettivamente applicato la decompressione (cioe' l'header 'Content-Encoding' della
+	 * richiesta era supportato e lo stream e' stato wrappato). Usato da {@code DumpRaw.serializeRequest}
+	 * per decidere se eseguire il snapshot/restore degli header originali attorno al dump binario
+	 * della richiesta in ingresso.
+	 */
+	private boolean requestContentEncodingDecompressionApplied = false;
+
+	/**
+	 * @return true se la decompressione automatica del body della richiesta e' stata applicata
+	 *  durante la lettura dello stream (i.e. encoding gestito ricevuto dal client). Usato da
+	 *  {@code DumpRaw.serializeRequest} per attivare lo snapshot/restore degli header originali
+	 *  attorno al dump binario della richiesta in ingresso.
+	 */
+	public boolean isRequestContentEncodingDecompressionApplied() {
+		return this.requestContentEncodingDecompressionApplied;
+	}
+
+	/**
+	 * Se {@link #decompressRequestContentEncoding} e' attivo e l'header 'Content-Encoding'
+	 * presente in richiesta corrisponde a uno degli encoding gestiti (gzip, x-gzip, deflate),
+	 * wrappa {@link #is} con uno stream decomprimente, marca la transazione come "decompressa"
+	 * via {@link #requestContentEncodingDecompressionApplied} e rimuove subito 'Content-Encoding'
+	 * e 'Content-Length' dalla mappa header del protocol context: i moduli a valle (validazione,
+	 * trasformazione, connettore in uscita) devono vedere la mappa pulita perche' il body e' ora
+	 * decompresso e la length wire non e' piu' significativa.
+	 * <p>
+	 * La preservazione degli header originali nel dump in ingresso e' invece responsabilita' di
+	 * {@code DumpRaw.serializeRequest(...)}, che effettua uno snapshot della mappa prima di
+	 * triggerare la lettura dello stream e ripristina la mappa originale durante la registrazione
+	 * del dump binario.
+	 * <p>
+	 * Encoding non gestiti producono IOException con diagnostico contentEncoding.unsupported.
+	 */
+	private void applyContentEncodingDecompressionRequest() throws IOException {
+		if(!this.decompressRequestContentEncoding || this.is==null) {
+			return;
+		}
+		String contentEncoding = TransportUtils.getHeaderFirstValue(this.req, HttpConstants.CONTENT_ENCODING);
+		if(contentEncoding==null || contentEncoding.trim().isEmpty()) {
+			return;
+		}
+		String ce = contentEncoding.trim().toLowerCase();
+		if(HttpConstants.CONTENT_ENCODING_VALUE_IDENTITY.equals(ce)) {
+			return;
+		}
+		if(!ContentEncodingDecoder.isSupported(ce)) {
+			emitDecompressionUnsupportedDiagnostic(contentEncoding);
+			throw new IOException("Unsupported Content-Encoding: "+contentEncoding);
+		}
+		String contentLengthWire = TransportUtils.getHeaderFirstValue(this.req, HttpConstants.CONTENT_LENGTH);
+		try {
+			this.is = ContentEncodingDecoder.decode(this.is, contentEncoding);
+		} catch(UtilsException e) {
+			throw new IOException("Errore durante la decompressione del body della richiesta (Content-Encoding: "+contentEncoding+"): "+e.getMessage(), e);
+		}
+		this.requestContentEncodingDecompressionApplied = true;
+		cleanupRequestContentEncodingHeaders();
+		emitDecompressionDecompressedDiagnostic(contentEncoding, contentLengthWire);
+	}
+
+	/**
+	 * Rimuove 'Content-Encoding' e 'Content-Length' dalla mappa header del
+	 * {@link RequestInfo#getProtocolContext()}, una volta che il dump in ingresso li ha gia'
+	 * registrati. Invocazione idempotente: il chiamante puo' chiamarla incondizionatamente,
+	 * funziona come no-op se la decompressione non e' stata applicata.
+	 */
+	public void cleanupRequestContentEncodingHeaders() {
+		if(!this.requestContentEncodingDecompressionApplied) {
+			return;
+		}
+		if(this.requestInfo==null || this.requestInfo.getProtocolContext()==null) {
+			return;
+		}
+		Map<String, List<String>> headers = this.requestInfo.getProtocolContext().getHeaders();
+		if(headers==null) {
+			return;
+		}
+		TransportUtils.removeObject(headers, HttpConstants.CONTENT_ENCODING);
+		TransportUtils.removeObject(headers, HttpConstants.CONTENT_LENGTH);
+	}
+
+	private void emitDecompressionDecompressedDiagnostic(String contentEncoding, String contentLengthWire) {
+		if(this.msgDiagnostico==null) {
+			return;
+		}
+		String wireDesc = (contentLengthWire!=null && !contentLengthWire.trim().isEmpty())
+				? "size: "+contentLengthWire.trim()+" bytes"
+				: "transfer-encoding: chunked";
+		try {
+			this.msgDiagnostico.addKeyword(CostantiPdD.KEY_CONTENT_ENCODING, contentEncoding);
+			this.msgDiagnostico.addKeyword(CostantiPdD.KEY_CONTENT_LENGTH_WIRE, wireDesc);
+			this.msgDiagnostico.logPersonalizzato("contentEncoding.decompressed");
+		} catch(Exception diagEx) {
+			if(this.log!=null) {
+				this.log.warn("Emissione diagnostico 'contentEncoding.decompressed' fallita: "+diagEx.getMessage(),diagEx);
+			}
+		}
+	}
+
+	private void emitDecompressionUnsupportedDiagnostic(String contentEncoding) {
+		if(this.msgDiagnostico==null) {
+			return;
+		}
+		try {
+			this.msgDiagnostico.addKeyword(CostantiPdD.KEY_CONTENT_ENCODING, contentEncoding);
+			this.msgDiagnostico.addKeyword(CostantiPdD.KEY_SUPPORTED_ENCODINGS, ContentEncodingDecoder.SUPPORTED_DECOMPRESS_LIST);
+			this.msgDiagnostico.logPersonalizzato("contentEncoding.unsupported");
+		} catch(Exception diagEx) {
+			if(this.log!=null) {
+				this.log.warn("Emissione diagnostico 'contentEncoding.unsupported' fallita: "+diagEx.getMessage(),diagEx);
+			}
+		}
 	}
 	
 	@Override

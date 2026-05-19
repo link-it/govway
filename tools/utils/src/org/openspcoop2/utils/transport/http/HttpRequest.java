@@ -86,6 +86,39 @@ public class HttpRequest extends AbstractHttp {
 	private boolean hostnameVerifier = false; // nelle versioni precedenti era configurato disabilitato direttamente in HttpUtilities
 	
 	private boolean forceTransferEncodingChunked = false;
+
+	/**
+	 * Se true, il client HTTP decomprime automaticamente le response che arrivano
+	 * con header 'Content-Encoding' e dichiara al server gli encoding accettati
+	 * tramite 'Accept-Encoding: gzip, x-gzip, deflate' (iniettato solo se il
+	 * chiamante non ha gia' impostato l'header esplicitamente).
+	 * <p>
+	 * Encoding attualmente supportati (allineati al default di Apache HttpClient 5):
+	 * <ul>
+	 *   <li>gzip (RFC 1952)</li>
+	 *   <li>x-gzip (alias storico di gzip)</li>
+	 *   <li>deflate, autodetect tra:
+	 *     <ul>
+	 *       <li>RFC 1950 zlib-wrapped (default di java.util.zip.DeflaterOutputStream)</li>
+	 *       <li>RFC 1951 raw deflate (Deflater con nowrap=true)</li>
+	 *     </ul>
+	 *   </li>
+	 * </ul>
+	 * Encoding NON gestiti (richiederebbero dipendenze esterne, idem Apache HttpClient 5):
+	 * br (Brotli), zstd, compress.
+	 * <p>
+	 * Se il flag e' ON e la response arriva con un 'Content-Encoding' non gestito,
+	 * la chiamata <strong>fallisce</strong> con eccezione (allineato al comportamento
+	 * di Apache HttpClient 5, che lancia HttpException con messaggio
+	 * "Unsupported Content-Encoding: ..."). Questo per evitare che il chiamante riceva
+	 * silenziosamente un body raw con header stale, ingannando logiche a valle che si
+	 * fidano del flag opt-in.
+	 * <p>
+	 * Default false: la response transita raw preservando il 'Content-Encoding'
+	 * originale (modalita' gateway/proxy trasparente, comportamento storico
+	 * compatibile con HttpURLConnection del JDK).
+	 */
+	private boolean decompressResponseContentEncoding = false;
 	
 	// throttling send bytes every ms
 	private Integer throttlingSendMs;
@@ -507,5 +540,13 @@ public class HttpRequest extends AbstractHttp {
 
 	public void setForceTransferEncodingChunked(boolean forceTransferEncodingChunked) {
 		this.forceTransferEncodingChunked = forceTransferEncodingChunked;
+	}
+
+	public boolean isDecompressResponseContentEncoding() {
+		return this.decompressResponseContentEncoding;
+	}
+
+	public void setDecompressResponseContentEncoding(boolean decompressResponseContentEncoding) {
+		this.decompressResponseContentEncoding = decompressResponseContentEncoding;
 	}
 }

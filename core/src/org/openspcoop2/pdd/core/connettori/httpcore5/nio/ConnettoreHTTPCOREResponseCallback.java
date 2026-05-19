@@ -320,15 +320,24 @@ public class ConnettoreHTTPCOREResponseCallback implements FutureCallback<Connet
 	
 	
 			/* ------------  Gestione Risposta ------------- */
-	
+
 			this.connettore.normalizeInputStreamResponse(this.connettore.readConnectionTimeout, this.connettore.readConnectionTimeoutConfigurazioneGlobale);
-	
+
 			this.connettore.initCheckContentTypeConfiguration();
-	
+
+			// Decompressione opt-in PRIMA del dump cosi' il payload registrato e' in chiaro;
+			// gli header originali (CE+CL) restano in propertiesTrasportoRisposta fino a dopo il dump
+			boolean contentEncodingDecompressed = this.connettore.decodeResponseBodyContentEncoding();
+
 			if(this.connettore.isDumpBinarioRisposta() &&
 				!this.connettore.dumpResponse(connettorePropertiesTrasportoRisposta)) {
 				this.connettore.setAsyncInvocationSuccess(false);
 				return;
+			}
+
+			// Cleanup degli header stale dopo il dump (e prima della consegna a doRest/doSoap)
+			if(contentEncodingDecompressed) {
+				this.connettore.cleanupResponseContentEncodingHeaders();
 			}
 	
 			if(this.connettore.isRest()){

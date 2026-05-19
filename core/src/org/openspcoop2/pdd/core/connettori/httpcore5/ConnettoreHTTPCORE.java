@@ -814,14 +814,23 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 			
 			
 			/* ------------  Gestione Risposta ------------- */
-			
+
 			this.normalizeInputStreamResponse(readConnectionTimeout, readConnectionTimeoutConfigurazioneGlobale);
-			
+
 			this.initCheckContentTypeConfiguration();
-			
+
+			// Decompressione opt-in PRIMA del dump cosi' il payload registrato e' in chiaro;
+			// gli header originali (CE+CL) restano in propertiesTrasportoRisposta fino a dopo il dump
+			boolean contentEncodingDecompressed = this.decodeResponseBodyContentEncoding();
+
 			if(this.isDumpBinarioRisposta() &&
 				!this.dumpResponse(this.propertiesTrasportoRisposta)) {
 				return false;
+			}
+
+			// Cleanup degli header stale dopo il dump (e prima della consegna a doRest/doSoap)
+			if(contentEncodingDecompressed) {
+				this.cleanupResponseContentEncodingHeaders();
 			}
 					
 			if(this.isRest){

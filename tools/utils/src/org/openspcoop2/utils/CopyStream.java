@@ -27,7 +27,9 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
@@ -180,27 +182,60 @@ public class CopyStream {
 	}
 	
 	public static void copyServerSentEvents(InputStream is,OutputStream os) throws UtilsException{
+		copyServerSentEvents(is, os, null);
+	}
+
+	/**
+	 * Variante di {@link #copyServerSentEvents(InputStream, OutputStream)} che riceve esplicitamente
+	 * il Content-Encoding del body. Quando il body è veicolato in un encoding diverso da
+	 * {@code identity} (es. gzip, br, deflate, zstd, ...) la copia avviene byte-per-byte
+	 * preservando il payload originale (trasparenza GovWay) con flush dopo ogni read,
+	 * per non rompere lo streaming SSE quando il client decomprimerà.
+	 * <p>
+	 * Quando invece il body è {@code identity} (o l'encoding non è dichiarato) il body è
+	 * testuale e la copia è line-based con flush dopo ogni linea/evento.
+	 * </p>
+	 */
+	public static void copyServerSentEvents(InputStream is,OutputStream os, String contentEncoding) throws UtilsException{
 		/**
 		 * Quando usi SSE, il server mantiene la connessione aperta per inviare eventi in streaming. Non viene mai chiuso in modo normale, a meno che:
 			- Il client lo disconnetta.
-			- Il server decida di interrompere la connessione.	
+			- Il server decida di interrompere la connessione.
 		 */
-		try (InputStreamReader isr = new InputStreamReader(is);
-				BufferedReader reader = new BufferedReader(isr);
-				PrintWriter writer = new PrintWriter(os);     
-	        ) {
-			String line;
-      	     while ((line = reader.readLine()) != null) {
-      	    	 // Inoltra la linea così com’è
-      	    	 writer.println(line);
-      	    	 writer.flush(); // importantissimo per non bufferizzare troppo
+		boolean encoded = contentEncoding!=null
+				&& !contentEncoding.trim().isEmpty()
+				&& !"identity".equalsIgnoreCase(contentEncoding.trim());
+		try {
+			if (encoded) {
+				// Body in un encoding (gzip/br/deflate/zstd/...): copy raw byte-per-chunk
+				// con flush dopo ogni read così Apache HC5 lato GovWay inoltra al client
+				// i chunk man mano che li riceve dal provider.
+				byte[] buf = new byte[1024];
+				int n;
+				while ((n = is.read(buf)) != -1) {
+					os.write(buf, 0, n);
+					os.flush();
+				}
+			} else {
+				// Body testuale (identity): line-based con flush per riga, comportamento storico.
+				// Charset esplicito UTF-8 per non dipendere dal default JVM.
+				try (InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8);
+						BufferedReader reader = new BufferedReader(isr);
+						PrintWriter writer = new PrintWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8))) {
+					String line;
+					while ((line = reader.readLine()) != null) {
+						// Inoltra la linea così com’è
+						writer.println(line);
+						writer.flush(); // importantissimo per non bufferizzare troppo
 
-      	    	 // SSE invia eventi separati da una linea vuota, inoltriamola
-      	    	 if (line.isEmpty()) {
-      	    		 writer.println(); 
-      	    		 writer.flush();
-      	    	 }
-      	     }
+						// SSE invia eventi separati da una linea vuota, inoltriamola
+						if (line.isEmpty()) {
+							writer.println();
+							writer.flush();
+						}
+					}
+				}
+			}
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
 		}

@@ -80,6 +80,10 @@ public abstract class AbstractHttp {
 		l.addAll(values);
 		this.headers.put(key, l);
 	}
+
+	public void removeHeader(String key) {
+		TransportUtils.removeObject(this.headers, key);
+	}
 	
 	@Deprecated
 	public Map<String, String> getHeaders() {

@@ -52,6 +52,7 @@ import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.transport.TransportUtils;
+import org.openspcoop2.utils.transport.http.ContentEncodingDecoder;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
@@ -157,6 +158,119 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 			}
 		}
 	}
+
+	/**
+	 * Decompressione automatica del body della response lato connettore in uscita.
+	 * Valore risolto durante {@link #initialize}: parte dal default globale di
+	 * {@link org.openspcoop2.pdd.config.OpenSPCoop2Properties} a seconda del modulo
+	 * (consegnaContenutiApplicativi vs inoltroBuste) ed eventualmente sovrascritto dalla property per-API
+	 * {@code connettori.contentEncoding.response.decompress} (con fallback
+	 * {@code connettori.contentEncoding.decompress}).
+	 * <p>
+	 * Quando true, il connettore richiede la decompressione del body in arrivo dal
+	 * backend cosi' che le logiche a valle (validazione, trasformazione, dump,
+	 * tracciamento) vedano il payload in chiaro; gli header 'Content-Encoding' e
+	 * 'Content-Length' vengono rimossi dalla response post-decompressione.
+	 */
+	protected boolean decompressResponseContentEncoding = false;
+
+	/**
+	 * Wrap di {@link #isResponse} con uno stream decomprimente (gzip/x-gzip/deflate)
+	 * quando {@link #decompressResponseContentEncoding} e' true e il body arriva con
+	 * un Content-Encoding supportato. Da invocare nella sequenza response del
+	 * connettore <strong>prima</strong> di {@code dumpResponse(...)}: in questo modo
+	 * il dump del payload in ingresso registra il body gia' decompresso (in chiaro)
+	 * mentre la mappa {@link #propertiesTrasportoRisposta} conserva ancora gli header
+	 * originali (incluso 'Content-Encoding' e 'Content-Length'), cosi' il dump
+	 * trasporto mantiene la fedelta' rispetto a quanto arrivato sul wire.
+	 * <p>
+	 * Dopo il dump il chiamante deve invocare {@link #cleanupResponseContentEncodingHeaders}
+	 * per pulire gli header stale ed emettere il diagnostico di decompressione applicata.
+	 * <p>
+	 * Encoding non gestiti (br, zstd, compress, ...) provocano {@link ConnettoreException}
+	 * (allineato al comportamento di Apache HttpClient 5: "Unsupported Content-Encoding").
+	 * In questo caso il dump non viene effettuato; il diagnostico
+	 * {@code contentEncoding.unsupported} viene emesso prima del throw.
+	 *
+	 * @return true se la decompressione e' stata effettivamente applicata
+	 * @throws ConnettoreException se l'encoding non e' gestito o il wrap fallisce
+	 */
+	public boolean decodeResponseBodyContentEncoding() throws ConnettoreException {
+		if(!this.decompressResponseContentEncoding) {
+			return false;
+		}
+		if(this.isResponse==null) {
+			return false;
+		}
+		String contentEncoding = TransportUtils.getObjectAsString(this.propertiesTrasportoRisposta, HttpConstants.CONTENT_ENCODING);
+		if(contentEncoding==null || contentEncoding.trim().isEmpty()) {
+			return false;
+		}
+		String ce = contentEncoding.trim().toLowerCase();
+		if(HttpConstants.CONTENT_ENCODING_VALUE_IDENTITY.equals(ce)) {
+			return false;
+		}
+		if(ContentEncodingDecoder.isSupported(ce)) {
+			try {
+				this.isResponse = ContentEncodingDecoder.decode(this.isResponse, contentEncoding);
+			} catch(IOException | UtilsException e) {
+				throw new ConnettoreException("Errore durante la decompressione del body della response (Content-Encoding: "+contentEncoding+"): "+e.getMessage(), e);
+			}
+			return true;
+		}
+		// encoding non gestito (br/zstd/compress/non standard): emette diagnostico ed eccezione
+		emitDecompressionUnsupportedDiagnostic(contentEncoding);
+		throw new ConnettoreException("Unsupported Content-Encoding: "+contentEncoding);
+	}
+
+	/**
+	 * Pulizia degli header stale e diagnostico di decompressione applicata. Da invocare
+	 * <strong>dopo</strong> {@code dumpResponse(...)} e solo se
+	 * {@link #decodeResponseBodyContentEncoding} ha ritornato true. Rimuove
+	 * 'Content-Encoding' e 'Content-Length' da {@link #propertiesTrasportoRisposta}
+	 * cosi' che il consumer downstream (e il dump in uscita verso il chiamante) non
+	 * propagheranno header che non riflettono piu' il body in chiaro.
+	 */
+	public void cleanupResponseContentEncodingHeaders() {
+		String contentEncoding = TransportUtils.getObjectAsString(this.propertiesTrasportoRisposta, HttpConstants.CONTENT_ENCODING);
+		String contentLengthWire = TransportUtils.getObjectAsString(this.propertiesTrasportoRisposta, HttpConstants.CONTENT_LENGTH);
+		TransportUtils.removeObject(this.propertiesTrasportoRisposta, HttpConstants.CONTENT_ENCODING);
+		TransportUtils.removeObject(this.propertiesTrasportoRisposta, HttpConstants.CONTENT_LENGTH);
+		emitDecompressionDecompressedDiagnostic(contentEncoding, contentLengthWire);
+	}
+
+	private void emitDecompressionDecompressedDiagnostic(String contentEncoding, String contentLengthWire) {
+		if(this.msgDiagnostico==null) {
+			return;
+		}
+		String wireDesc = (contentLengthWire!=null && !contentLengthWire.trim().isEmpty())
+				? "size: "+contentLengthWire.trim()+" bytes"
+				: "transfer-encoding: chunked";
+		try {
+			this.msgDiagnostico.addKeyword(CostantiPdD.KEY_CONTENT_ENCODING, contentEncoding!=null ? contentEncoding : "");
+			this.msgDiagnostico.addKeyword(CostantiPdD.KEY_CONTENT_LENGTH_WIRE, wireDesc);
+			this.msgDiagnostico.logPersonalizzato("contentEncoding.decompressed");
+		} catch(Exception diagEx) {
+			if(this.logger!=null) {
+				this.logger.warn("Emissione diagnostico 'contentEncoding.decompressed' fallita: "+diagEx.getMessage(),diagEx);
+			}
+		}
+	}
+
+	private void emitDecompressionUnsupportedDiagnostic(String contentEncoding) {
+		if(this.msgDiagnostico==null) {
+			return;
+		}
+		try {
+			this.msgDiagnostico.addKeyword(CostantiPdD.KEY_CONTENT_ENCODING, contentEncoding);
+			this.msgDiagnostico.addKeyword(CostantiPdD.KEY_SUPPORTED_ENCODINGS, ContentEncodingDecoder.SUPPORTED_DECOMPRESS_LIST);
+			this.msgDiagnostico.logPersonalizzato("contentEncoding.unsupported");
+		} catch(Exception diagEx) {
+			if(this.logger!=null) {
+				this.logger.warn("Emissione diagnostico 'contentEncoding.unsupported' fallita: "+diagEx.getMessage(),diagEx);
+			}
+		}
+	}
 	
     /* Costruttori */
     protected ConnettoreBaseHTTP(){
@@ -187,19 +301,22 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 				this.encodingAlgorithmRFC2047 = this.openspcoopProperties.getEncodingRFC2047HeaderValueConsegnaContenutiApplicativi();
 				this.validazioneHeaderRFC2047 = this.openspcoopProperties.isEnabledValidazioneRFC2047HeaderNameValueConsegnaContenutiApplicativi();
 				this.supportSSE = this.openspcoopProperties.isEnabledSupportServerSentEventsConsegnaContenutiApplicativi();
+				this.decompressResponseContentEncoding = this.openspcoopProperties.isContentEncodingDecompressConsegnaContenutiApplicativi();
 			}else{
 				this.encodingRFC2047 = this.openspcoopProperties.isEnabledEncodingRFC2047HeaderValueInoltroBuste();
 				this.charsetRFC2047 = this.openspcoopProperties.getCharsetEncodingRFC2047HeaderValueInoltroBuste();
 				this.encodingAlgorithmRFC2047 = this.openspcoopProperties.getEncodingRFC2047HeaderValueInoltroBuste();
 				this.validazioneHeaderRFC2047 = this.openspcoopProperties.isEnabledValidazioneRFC2047HeaderNameValueInoltroBuste();
 				this.supportSSE = this.openspcoopProperties.isEnabledSupportServerSentEventsInoltroBuste();
+				this.decompressResponseContentEncoding = this.openspcoopProperties.isContentEncodingDecompressInoltroBuste();
 			}
-			
+
 			this.encodingRFC2047 = CostantiProprieta.isConnettoriHeaderValueEncodingRFC2047RequestEnabled(this.proprietaPorta, this.encodingRFC2047);
 			this.charsetRFC2047 = CostantiProprieta.getConnettoriHeaderValueEncodingRFC2047RequestCharset(this.proprietaPorta, this.charsetRFC2047);
 			this.encodingAlgorithmRFC2047 = CostantiProprieta.getConnettoriHeaderValueEncodingRFC2047RequestType(this.proprietaPorta, this.encodingAlgorithmRFC2047);
 			this.validazioneHeaderRFC2047 = CostantiProprieta.isConnettoriHeaderValidationRequestEnabled(this.proprietaPorta, this.validazioneHeaderRFC2047);
 			this.supportSSE = CostantiProprieta.isConnettoriSupportServerSentEventsEnabled(this.proprietaPorta, this.supportSSE);
+			this.decompressResponseContentEncoding = CostantiProprieta.isConnettoriHttpContentEncodingResponseDecompress(this.proprietaPorta, this.decompressResponseContentEncoding);
 		}
 		
 		if(!this.forceDisableProxyPassReverse) {

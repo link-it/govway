@@ -484,9 +484,13 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 						if (debug != null) {
 							debug.append(Costanti.WRITE_MODE_SERIALIZE_STREAM);
 						}
-						if(this.supportSSE && MessageRole.RESPONSE.equals(this.messageRole) && 
+						if(this.supportSSE && MessageRole.RESPONSE.equals(this.messageRole) &&
 								this.contentType!=null && HttpConstants.CONTENT_TYPE_EVENT_STREAM.equals(ContentTypeUtilities.readBaseTypeFromContentType(this.contentType))) {
-							Utilities.copyServerSentEvents(this._getInputStream(), cos);
+							String contentEncoding = null;
+							if(this.transportResponseContext!=null) {
+								contentEncoding = this.transportResponseContext.getHeaderFirstValue(HttpConstants.CONTENT_ENCODING);
+							}
+							Utilities.copyServerSentEvents(this._getInputStream(), cos, contentEncoding);
 						}
 						else {
 							Utilities.copy(this._getInputStream(), cos);

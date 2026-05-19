@@ -41,6 +41,8 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.transport.TransportUtils;
+import org.openspcoop2.utils.transport.http.ContentEncodingDecoder;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.WrappedHttpServletRequest;
 
 
@@ -120,6 +122,20 @@ public class FormUrlEncodedHttpServletRequest extends WrappedHttpServletRequest 
 		try {
 			InputStream is = httpServletRequest.getInputStream();
 			if(is!=null) {
+				/*
+				 * Se il body arriva con 'Content-Encoding: gzip|x-gzip|deflate', lo
+				 * decomprimiamo sempre in questo wrapper: il contratto del wrapper e' di
+				 * esporre form-urlencoded e i 10+ consumer downstream (ConfigurazionePdDManager,
+				 * GestoreCorrelazioneApplicativa, dynamic map, trasformazioni, sticky, token,
+				 * ...) accedono al body via getContent()/getParameter* attesi gia' decodificati.
+				 * Questa decompressione avviene a prescindere dal flag globale GovWay (questo
+				 * wrapper viene costruito prima della risoluzione PA/PD, quindi senza accesso
+				 * al flag per-API). Encoding non gestiti propagano UtilsException.
+				 */
+				String contentEncoding = httpServletRequest.getHeader(HttpConstants.CONTENT_ENCODING);
+				if(ContentEncodingDecoder.isSupported(contentEncoding)) {
+					is = ContentEncodingDecoder.decode(is, contentEncoding);
+				}
 				this.content = Utilities.getAsByteArray(is);
 			}
 		}catch(Exception e) {

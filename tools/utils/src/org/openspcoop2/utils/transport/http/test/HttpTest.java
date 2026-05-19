@@ -123,7 +123,26 @@ public class HttpTest {
 			test.testThrottling(HttpLibrary.HTTP_URL_CONNECTION, 100, 100);
 			test.testThrottling(HttpLibrary.HTTP_CORE5, 100, 100);
 
-		} finally {
+			params = test.contentEncodingDataProvider();
+			for (Object[] param : params) {
+				test.testContentEncodingDecompress((HttpLibrary) param[0], (String) param[1]);
+			}
+			test.testContentEncodingDisabled(HttpLibrary.HTTP_URL_CONNECTION);
+			test.testContentEncodingDisabled(HttpLibrary.HTTP_CORE5);
+
+			params = test.contentEncodingUnsupportedDataProvider();
+			for (Object[] param : params) {
+				test.testContentEncodingUnsupported((HttpLibrary) param[0], (String) param[1]);
+			}
+
+			System.out.println("Testsuite completata con successo");
+			
+		}
+		catch(Exception e) {
+			System.out.println("Testsuite fallita");
+			throw e;
+		}
+		finally {
 			stopServers();
 		}
 	}
@@ -475,6 +494,186 @@ public class HttpTest {
 			throw new UtilsException();
 	}
 	
+	/**
+	 * Data provider per la decompressione automatica della response.
+	 * Coppie (libreria x modalita' di codifica) verificate dall'endpoint
+	 * '/contentEncoding/*' del fake server.
+	 */
+	public Object[][] contentEncodingDataProvider() {
+		HttpLibrary[] libs = {HttpLibrary.HTTP_CORE5, HttpLibrary.HTTP_URL_CONNECTION};
+		String[] modes = {
+				HttpConstants.CONTENT_ENCODING_VALUE_GZIP,
+				HttpConstants.CONTENT_ENCODING_VALUE_X_GZIP,
+				HttpServerTest.CONTENT_ENCODING_TEST_MODE_DEFLATE_ZLIB,
+				HttpServerTest.CONTENT_ENCODING_TEST_MODE_DEFLATE_RAW
+		};
+		Object[][] data = new Object[libs.length * modes.length][];
+		int i = 0;
+		for (HttpLibrary lib : libs) {
+			for (String mode : modes) {
+				data[i++] = new Object[] { lib, mode };
+			}
+		}
+		return data;
+	}
+
+	/**
+	 * Verifica che, abilitando decompressResponseContentEncoding=true, il body venga
+	 * ricevuto in chiaro per ciascun encoding supportato (gzip, x-gzip, deflate zlib,
+	 * deflate raw) e che il client abbia iniettato l'header 'Accept-Encoding' con il
+	 * valore di default; verifica inoltre che gli header 'Content-Encoding' e
+	 * 'Content-Length' vengano rimossi dalla response post-decompressione.
+	 */
+	public void testContentEncodingDecompress(HttpLibrary lib, String mode) throws UtilsException {
+		HttpRequest req = createBaseRequest(lib);
+		req.setUrl(createServerEndpoint("/contentEncoding/" + mode));
+		req.setMethod(HttpRequestMethod.GET);
+		req.removeHeader("Accept-Encoding"); // azzero quello aggiunto da createBaseRequest, lo deve iniettare il client
+		req.setDecompressResponseContentEncoding(true);
+
+		HttpResponse actual = HttpUtilities.httpInvoke(req);
+
+		if (actual.getResultHTTPOperation() != HttpServletResponse.SC_OK) {
+			throw new UtilsException("Atteso status 200 per mode["+mode+"], ottenuto: " + actual.getResultHTTPOperation());
+		}
+
+		String body = actual.getContent() != null ? new String(actual.getContent(), java.nio.charset.StandardCharsets.UTF_8) : "";
+		if (!HttpServerTest.PLAIN_BODY_CONTENT_ENCODING_TEST.equals(body)) {
+			throw new UtilsException("Body decompresso non atteso per mode["+mode+"], lib["+lib+"]; ricevuto: " + body);
+		}
+
+		// Accept-Encoding iniettato dal client deve essere arrivato al server.
+		// Non si puo' fare un confronto esatto sulla stringa: Apache HttpClient 5
+		// genera dinamicamente il valore in base ai decoder presenti sul classpath
+		// (gzip/deflate/x-gzip sono sempre presenti, ma brotli/zstd/lz4/bzip2/
+		// deflate64/pack200 vengono aggiunti se le relative dipendenze sono
+		// visibili - es. lanciando i test da Eclipse). Verifichiamo quindi la
+		// presenza dei tre encoding cardine (gli unici gestiti anche dal path JDK)
+		// in qualunque ordine, ignorando eventuali extra.
+		String echoedAccept = actual.getHeaderFirstValue(HttpServerTest.ECHO_ACCEPT_ENCODING_HEADER);
+		String[] requiredEncodings = {
+				HttpConstants.CONTENT_ENCODING_VALUE_GZIP,
+				HttpConstants.CONTENT_ENCODING_VALUE_X_GZIP,
+				HttpConstants.CONTENT_ENCODING_VALUE_DEFLATE
+		};
+		for (String enc : requiredEncodings) {
+			if (!containsEncoding(echoedAccept, enc)) {
+				throw new UtilsException("Accept-Encoding iniettato non contiene '"+enc+"' per mode["+mode+"], lib["+lib+"]; ricevuto dal server: " + echoedAccept);
+			}
+		}
+
+		// post-decompressione gli header Content-Encoding / Content-Length devono essere stati rimossi
+		if (actual.getHeaderFirstValue(HttpConstants.CONTENT_ENCODING) != null) {
+			throw new UtilsException("Header Content-Encoding non rimosso post-decompressione per mode["+mode+"], lib["+lib+"]");
+		}
+		if (actual.getHeaderFirstValue(HttpConstants.CONTENT_LENGTH) != null) {
+			throw new UtilsException("Header Content-Length non rimosso post-decompressione per mode["+mode+"], lib["+lib+"]");
+		}
+	}
+
+	/**
+	 * Data provider per gli encoding non gestiti: combinazioni (libreria x encoding).
+	 * Encoding scelti: brotli, zstd, compress (i tre 'non gestiti' documentati in
+	 * HttpRequest) + un valore arbitrario non-standard per coprire il caso wildcard.
+	 */
+	public Object[][] contentEncodingUnsupportedDataProvider() {
+		HttpLibrary[] libs = {HttpLibrary.HTTP_CORE5, HttpLibrary.HTTP_URL_CONNECTION};
+		String[] encodings = {
+				HttpConstants.CONTENT_ENCODING_VALUE_BROTLI,
+				HttpConstants.CONTENT_ENCODING_VALUE_ZSTD,
+				HttpConstants.CONTENT_ENCODING_VALUE_COMPRESS,
+				"unknown-foobar"
+		};
+		Object[][] data = new Object[libs.length * encodings.length][];
+		int i = 0;
+		for (HttpLibrary lib : libs) {
+			for (String enc : encodings) {
+				data[i++] = new Object[] { lib, enc };
+			}
+		}
+		return data;
+	}
+
+	/**
+	 * Verifica che con decompressResponseContentEncoding=true e Content-Encoding non
+	 * gestito (br/zstd/compress o valori arbitrari) la chiamata fallisca con
+	 * UtilsException. Comportamento allineato tra HTTP_CORE5 (Apache HC5 lancia
+	 * HttpException intercettato dall'utility) e HTTP_URL_CONNECTION (UrlConnectionConnection
+	 * lancia esplicitamente per coerenza).
+	 */
+	public void testContentEncodingUnsupported(HttpLibrary lib, String unsupportedEncoding) throws UtilsException {
+		HttpRequest req = createBaseRequest(lib);
+		req.setUrl(createServerEndpoint("/contentEncoding/" + unsupportedEncoding));
+		req.setMethod(HttpRequestMethod.GET);
+		req.removeHeader("Accept-Encoding");
+		req.setDecompressResponseContentEncoding(true);
+
+		boolean failed = false;
+		try {
+			HttpUtilities.httpInvoke(req);
+		} catch (UtilsException e) {
+			failed = true;
+		}
+		if (!failed) {
+			throw new UtilsException("Atteso fallimento per encoding non gestito["+unsupportedEncoding+"] lib["+lib+"]; la chiamata e' invece riuscita");
+		}
+	}
+
+	/**
+	 * Verifica il comportamento di default (decompressResponseContentEncoding=false):
+	 * il client NON inietta 'Accept-Encoding', e se il server risponde comunque gzip
+	 * il body arriva raw (magic byte 1f 8b) preservando 'Content-Encoding'.
+	 */
+	public void testContentEncodingDisabled(HttpLibrary lib) throws UtilsException {
+		HttpRequest req = createBaseRequest(lib);
+		req.setUrl(createServerEndpoint("/contentEncoding/" + HttpConstants.CONTENT_ENCODING_VALUE_GZIP));
+		req.setMethod(HttpRequestMethod.GET);
+		req.removeHeader("Accept-Encoding"); // non deve esserci alcun Accept-Encoding sulla request
+		// flag NON impostato -> default false
+
+		HttpResponse actual = HttpUtilities.httpInvoke(req);
+
+		if (actual.getResultHTTPOperation() != HttpServletResponse.SC_OK) {
+			throw new UtilsException("Atteso status 200, ottenuto: " + actual.getResultHTTPOperation());
+		}
+
+		byte[] body = actual.getContent();
+		if (body == null || body.length < 2 || (body[0] & 0xff) != 0x1f || (body[1] & 0xff) != 0x8b) {
+			throw new UtilsException("Atteso body raw gzip (magic 1f 8b) per lib["+lib+"], ricevuto: " + (body == null ? "null" : body.length + " bytes"));
+		}
+
+		String echoedAccept = actual.getHeaderFirstValue(HttpServerTest.ECHO_ACCEPT_ENCODING_HEADER);
+		if (echoedAccept != null && !echoedAccept.isEmpty()) {
+			throw new UtilsException("Atteso nessun Accept-Encoding inviato al server per lib["+lib+"], ricevuto: " + echoedAccept);
+		}
+
+		String contentEncoding = actual.getHeaderFirstValue(HttpConstants.CONTENT_ENCODING);
+		if (!HttpConstants.CONTENT_ENCODING_VALUE_GZIP.equalsIgnoreCase(contentEncoding)) {
+			throw new UtilsException("Atteso Content-Encoding preservato (gzip), ricevuto: " + contentEncoding);
+		}
+	}
+
+	/**
+	 * Verifica che l'header Accept-Encoding (CSV) contenga un dato encoding come token
+	 * indipendente. Match case-insensitive, ignora i parametri q-value (es. "gzip;q=0.5").
+	 */
+	private static boolean containsEncoding(String acceptEncodingHeader, String encoding) {
+		if (acceptEncodingHeader == null || encoding == null) {
+			return false;
+		}
+		for (String token : acceptEncodingHeader.split(",")) {
+			String name = token.trim();
+			int semi = name.indexOf(';');
+			if (semi >= 0) {
+				name = name.substring(0, semi).trim();
+			}
+			if (encoding.equalsIgnoreCase(name)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	private void checkUri(String expected, String actual) throws UtilsException {
 		try {
 			URIBuilder expectedUri = new URIBuilder(expected);

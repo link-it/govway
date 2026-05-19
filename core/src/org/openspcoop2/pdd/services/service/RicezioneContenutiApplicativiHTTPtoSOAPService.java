@@ -53,6 +53,7 @@ import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.soap.TunnelSoapUtils;
 import org.openspcoop2.monitor.sdk.transaction.FaseTracciamento;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
+import org.openspcoop2.pdd.config.CostantiProprieta;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.GestoreRichieste;
@@ -84,6 +85,7 @@ import org.openspcoop2.pdd.services.connector.ConnectorDispatcherErrorInfo;
 import org.openspcoop2.pdd.services.connector.ConnectorDispatcherInfo;
 import org.openspcoop2.pdd.services.connector.ConnectorDispatcherUtils;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
+import org.openspcoop2.pdd.services.connector.messages.HttpServletConnectorInMessage;
 import org.openspcoop2.pdd.services.connector.IAsyncResponseCallback;
 import org.openspcoop2.pdd.services.connector.RicezioneContenutiApplicativiHTTPtoSOAPConnector;
 import org.openspcoop2.pdd.services.connector.messages.ConnectorInMessage;
@@ -423,6 +425,15 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService implements IRicezion
 				IDPortaDelegata idPD = new IDPortaDelegata();
 				idPD.setNome(this.requestInfo.getProtocolContext().getInterfaceName());
 				pd = configPdDManager.getPortaDelegataSafeMethod(idPD, this.requestInfo);
+			}
+
+			// Decompressione automatica del body richiesta: override per-API sul default globale
+			if(this.req instanceof HttpServletConnectorInMessage httpInMessage) {
+				boolean decompressRequest = this.openSPCoopProperties.isContentEncodingDecompressRicezioneContenutiApplicativi();
+				if(pd!=null) {
+					decompressRequest = CostantiProprieta.isConnettoriHttpContentEncodingRequestDecompress(pd.getProprietaList(), decompressRequest);
+				}
+				httpInMessage.setDecompressRequestContentEncoding(decompressRequest);
 			}
 
 			// Limited

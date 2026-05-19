@@ -21,6 +21,8 @@ La sezione :ref:`proxyPassReverse` descrive la funzionalità di riscrittura dell
 
 La sezione :ref:`contentLengthRisposta` descrive come configurare GovWay per preservare o forzare l'header *Content-Length* nella risposta inoltrata al client.
 
+La sezione :ref:`contentEncodingDecompress` descrive come configurare GovWay per decomprimere automaticamente i body veicolati con header *Content-Encoding* (gzip, deflate) in modo che le funzionalità di validazione, trasformazione e tracciamento operino sul payload in chiaro.
+
 Infine la sezione :ref:`multipartTypeMissing` descrive come configurare GovWay per gestire un *Content-Type* '*multipart/related*' privo del parametro *type* obbligatorio (`RFC 2387, Section 3.1 <https://datatracker.ietf.org/doc/html/rfc2387#section-3.1>`_) ricevuto da un backend o da un client non conforme.
 
 .. note::
@@ -35,4 +37,5 @@ Infine la sezione :ref:`multipartTypeMissing` descrive come configurare GovWay p
    consegnaCondizionale/index
    proxyPassReverse
    contentLength
+   contentEncoding
    multipartType

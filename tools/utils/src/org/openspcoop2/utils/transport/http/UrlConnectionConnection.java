@@ -44,6 +44,7 @@ import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.io.Base64Utilities;
+import org.openspcoop2.utils.transport.TransportUtils;
 
 /**
  * UrlConnectionConnection
@@ -226,12 +227,27 @@ class UrlConnectionConnection extends HttpLibraryConnection {
 							if(request.isDebug()) {
 				        		request.logInfo("Aggiungo header ["+key+"]=["+value+"]");
 				        	}
-							httpConn.addRequestProperty(key, value);		
+							httpConn.addRequestProperty(key, value);
 						}
 					}
 				}
 			}
-			
+
+			/*
+			 * Opt-in alla decompressione automatica della response: emula gli interceptor
+			 * RequestAcceptEncoding/ResponseContentEncoding di Apache HttpClient 5 che il
+			 * JDK HttpURLConnection non possiede. L'header 'Accept-Encoding' viene iniettato
+			 * solo se il chiamante non l'ha gia' impostato esplicitamente, per non perdere
+			 * eventuali liste piu' restrittive o customizzate.
+			 */
+			if(request.isDecompressResponseContentEncoding() &&
+					TransportUtils.getRawObject(requestHeaders, HttpConstants.ACCEPT_ENCODING) == null) {
+				if(request.isDebug()) {
+					request.logInfo("Aggiungo header ["+HttpConstants.ACCEPT_ENCODING+"]=["+HttpConstants.ACCEPT_ENCODING_VALUE_DECOMPRESS_DEFAULT+"]");
+				}
+				httpConn.addRequestProperty(HttpConstants.ACCEPT_ENCODING, HttpConstants.ACCEPT_ENCODING_VALUE_DECOMPRESS_DEFAULT);
+			}
+
 			// Verifica solo della connessione
 			if(request.isCheckConnection()) {
 				try {
@@ -327,11 +343,40 @@ class UrlConnectionConnection extends HttpLibraryConnection {
 						is = httpConn.getErrorStream();
 					}
 				}
-				CopyStream.copy(is, outResponse);
-				is.close();
+
+				/*
+				 * Decompressione opt-in (vedi HttpRequest#setDecompressResponseContentEncoding):
+				 * emula ResponseContentEncoding di Apache HttpClient 5 (che il JDK
+				 * HttpURLConnection non possiede) delegando alla utility centralizzata
+				 * {@link ContentEncodingDecoder}. Encoding gestiti: gzip, x-gzip, deflate;
+				 * encoding non gestiti sollevano eccezione (allineato a HC5).
+				 * <p>
+				 * Post-decompressione gli header 'Content-Encoding' e 'Content-Length' vengono
+				 * rimossi perche' riferiti al payload codificato che il chiamante non vede piu'.
+				 * Cascade close: il successivo is.close() propaga la close fino al socket stream
+				 * sorgente (vedi javadoc di ContentEncodingDecoder).
+				 */
+				boolean decompressEnabled = request.isDecompressResponseContentEncoding();
+				String contentEncoding = (is != null && decompressEnabled)
+						? response.getHeaderFirstValue(HttpConstants.CONTENT_ENCODING)
+						: null;
+				boolean decompressed = ContentEncodingDecoder.isDecompressionApplicable(decompressEnabled, contentEncoding);
+				if(is != null && decompressEnabled) {
+					is = ContentEncodingDecoder.decode(is, contentEncoding);
+				}
+
+				if(is != null) {
+					CopyStream.copy(is, outResponse);
+					is.close();
+				}
 				outResponse.flush();
 				outResponse.close();
 				response.setContent(outResponse.toByteArray());
+
+				if(decompressed) {
+					response.removeHeader(HttpConstants.CONTENT_ENCODING);
+					response.removeHeader(HttpConstants.CONTENT_LENGTH);
+				}
 			}
 				
 			// fine HTTP.

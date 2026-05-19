@@ -29,6 +29,7 @@ import java.security.KeyStore;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.zip.GZIPOutputStream;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
@@ -58,6 +59,15 @@ public class SSEDevMockServer {
 	private static final String PATH = "/test";
 	private static final long EVENT_INTERVAL_MS = 2_000L;
 	private static final long MAX_CONNECTION_DURATION_MS = 60_000L;
+
+	/**
+	 * Header propagato dal client (attraverso GovWay) che istruisce il mock a comprimere
+	 * la response SSE. Valore atteso 'gzip'. Se assente o valore diverso, il mock
+	 * risponde in chiaro come da default storico. Non si usa Accept-Encoding per evitare
+	 * dipendenza dal passthrough automatico dell'header da parte di GovWay.
+	 */
+	public static final String HEADER_TEST_SSE_COMPRESS = "test-sse-compress";
+	public static final String HEADER_TEST_SSE_COMPRESS_VALUE_GZIP = "gzip";
 
 	private final int port;
 	private final String keystorePath;
@@ -126,14 +136,27 @@ public class SSEDevMockServer {
 					exchange.sendResponseHeaders(405, -1);
 					return;
 				}
+
+				/* Modalita' compressa opt-in via header propagato dal client di test
+				 * (passa attraverso GovWay opaco): se valorizzato a 'gzip', wrappo
+				 * l'OutputStream con GZIPOutputStream(syncFlush=true) cosi' che ogni
+				 * flush dal lato server produca un blocco gzip immediatamente leggibile
+				 * dal GZIPInputStream lato client (no buffering rotto su SSE). */
+				String compress = exchange.getRequestHeaders().getFirst(HEADER_TEST_SSE_COMPRESS);
+				boolean useGzip = HEADER_TEST_SSE_COMPRESS_VALUE_GZIP.equalsIgnoreCase(compress);
+
 				Headers h = exchange.getResponseHeaders();
 				h.set("Content-Type", "text/event-stream;charset=UTF-8");
 				h.set("Cache-Control", "no-cache");
 				h.set("Connection", "keep-alive");
+				if (useGzip) {
+					h.set("Content-Encoding", "gzip");
+				}
 				/* 0 = chunked, response aperta finche' il client resta connesso */
 				exchange.sendResponseHeaders(200, 0);
 
-				try (OutputStream os = exchange.getResponseBody()) {
+				OutputStream rawOs = exchange.getResponseBody();
+				try (OutputStream os = useGzip ? new GZIPOutputStream(rawOs, true) : rawOs) {
 					int counter = 0;
 					long start = System.currentTimeMillis();
 					while (!Thread.currentThread().isInterrupted()) {

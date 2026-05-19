@@ -346,14 +346,18 @@ class HttpCoreConnection extends HttpLibraryConnection {
 	         *   interno del client li intercetterebbe creando leak tra request distinte;
 	         * - connection state: senza disable il pool segrega le connessioni per principal
 	         *   auth (NTLM/Kerberos) frammentando il riuso; non si usa auth automatica HttpClient;
-	         * - content compression: il body deve transitare cosi' come ricevuto dal backend
-	         *   con il proprio Content-Encoding;
+	         * - content compression: di default il body deve transitare cosi' come ricevuto dal
+	         *   backend con il proprio Content-Encoding; se il chiamante opt-in con
+	         *   request.isDecompressResponseContentEncoding()=true non viene disabilitato cosi'
+	         *   l'HttpClient inietta 'Accept-Encoding' in richiesta e decomprime la response;
 	         * - default user agent: evita l'iniezione di uno User-Agent 'Apache-HttpClient/x.y'
 	         *   quando il chiamante non lo invia, mantenendo la trasparenza.
 	         */
 	        builder.disableCookieManagement();
 	        builder.disableConnectionState();
-	        builder.disableContentCompression();
+	        if(!request.isDecompressResponseContentEncoding()) {
+	        	builder.disableContentCompression();
+	        }
 	        builder.disableDefaultUserAgent();
 	        httpRequest.setConfig(configBuilder.build());
 
@@ -398,8 +402,22 @@ class HttpCoreConnection extends HttpLibraryConnection {
 	 			if(request.isCheckConnection()) {
 	 				return checkConnection(request) ;
 	 			}
-	 			else {		
-	 				return processResponse(httpResp, response, ocspTrustManager);
+	 			else {
+	 				HttpResponse result = processResponse(httpResp, response, ocspTrustManager);
+	 				/*
+	 				 * Apache HttpClient 5 decomprime trasparentemente l'entity ma lascia
+	 				 * sul HttpResponse gli header 'Content-Encoding' e 'Content-Length'
+	 				 * cosi' come arrivati sul wire, dove 'Content-Length' riflette la
+	 				 * dimensione del payload compresso (non del body in chiaro che il
+	 				 * chiamante leggera'). Entrambi diventano stale. Per coerenza con
+	 				 * UrlConnectionConnection e per evitare propagazioni errate a valle
+	 				 * li rimuoviamo quando la decompressione e' attiva.
+	 				 */
+	 				if(request.isDecompressResponseContentEncoding()) {
+	 					result.removeHeader(HttpConstants.CONTENT_ENCODING);
+	 					result.removeHeader(HttpConstants.CONTENT_LENGTH);
+	 				}
+	 				return result;
 	 			}
 	        }finally {
 	        	safeClose(httpResp);

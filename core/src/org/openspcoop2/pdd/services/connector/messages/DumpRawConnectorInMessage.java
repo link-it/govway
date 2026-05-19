@@ -123,6 +123,32 @@ public class DumpRawConnectorInMessage implements ConnectorInMessage {
 	public ConnectorInMessage getWrappedConnectorInMessage() {
 		return this.connectorInMessage;
 	}
+
+	/**
+	 * Delega a {@link HttpServletConnectorInMessage#cleanupRequestContentEncodingHeaders()}
+	 * quando il connettore in ingresso wrappato e' di tipo HTTP servlet; no-op altrimenti.
+	 * Idempotente: gia' chiamata internamente da {@link HttpServletConnectorInMessage} subito
+	 * dopo il wrap dello stream. Esposta come utility per chiamanti esterni che vogliano
+	 * forzare la pulizia in scenari particolari.
+	 */
+	public void cleanupRequestContentEncodingHeaders() {
+		if(this.connectorInMessage instanceof HttpServletConnectorInMessage http) {
+			http.cleanupRequestContentEncodingHeaders();
+		}
+	}
+
+	/**
+	 * Delega a {@link HttpServletConnectorInMessage#isRequestContentEncodingDecompressionApplied()}
+	 * quando il connettore wrappato e' di tipo HTTP servlet; ritorna false altrimenti.
+	 * Usato da {@code DumpRaw.serializeRequest(...)} per decidere se applicare il pattern
+	 * snapshot/restore degli header CE/CL attorno al dump binario in ingresso.
+	 */
+	public boolean isRequestContentEncodingDecompressionApplied() {
+		if(this.connectorInMessage instanceof HttpServletConnectorInMessage http) {
+			return http.isRequestContentEncodingDecompressionApplied();
+		}
+		return false;
+	}
 	
 	public DumpByteArrayOutputStream getDumpByteArrayOutputStream() {
 		if(this.bout!=null && this.bout.size()>0){

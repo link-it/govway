@@ -670,6 +670,15 @@ public class CostantiPdD {
     /** Costante che identifica il media type dedotto per il parametro 'type' assente in un Content-Type 'multipart/related' */
     public static final String KEY_TYPE_INFERITO = "@TYPE_INFERITO@";
 
+    /** Costante che identifica il valore dell'header 'Content-Encoding' ricevuto nel body (diagnostici di decompressione) */
+    public static final String KEY_CONTENT_ENCODING = "@CONTENT_ENCODING@";
+
+    /** Costante che descrive la dimensione del body sul wire ('size: N bytes' oppure 'transfer-encoding: chunked') usata nei diagnostici di decompressione */
+    public static final String KEY_CONTENT_LENGTH_WIRE = "@CONTENT_LENGTH_WIRE@";
+
+    /** Costante che identifica la lista degli encoding gestiti dalla decompressione automatica (diagnostici di Content-Encoding non gestito) */
+    public static final String KEY_SUPPORTED_ENCODINGS = "@SUPPORTED_ENCODINGS@";
+
     /** Costante che identifica un tipo di messaggio Errore */
     public static final String KEY_TIPO_MESSAGGIO_BUSTA_ERRORE = "@TIPO_ERRORE_BUSTA@";
     public static final String TIPO_MESSAGGIO_BUSTA_ERRORE_PROCESSAMENTO = "Processamento";

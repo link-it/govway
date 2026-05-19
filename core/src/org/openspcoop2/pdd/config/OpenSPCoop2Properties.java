@@ -919,6 +919,10 @@ public class OpenSPCoop2Properties {
 			
 			this.isControlloContentTypeAbilitatoRicezioneContenutiApplicativi();
 			this.isControlloContentTypeAbilitatoRicezioneBuste();
+			this.isContentEncodingDecompressRicezioneContenutiApplicativi();
+			this.isContentEncodingDecompressRicezioneBuste();
+			this.isContentEncodingDecompressInoltroBuste();
+			this.isContentEncodingDecompressConsegnaContenutiApplicativi();
 			this.getMultipartRelatedMissingTypeBehaviorRicezioneContenutiApplicativi();
 			this.getMultipartRelatedMissingTypeBehaviorRicezioneBuste();
 			this.getMultipartRelatedMissingTypeBehaviorInoltroBuste();
@@ -10119,6 +10123,66 @@ public class OpenSPCoop2Properties {
 		}
 		return this.isControlloContentTypeAbilitatoRicezioneBuste;
 	}
+
+	/* ----------- Decompressione automatica Content-Encoding ----------- */
+
+	/**
+	 * Default storico: false. Mantiene il pass-through trasparente (body raw con
+	 * 'Content-Encoding' originale preservato) finche' la decompressione non viene
+	 * esplicitamente attivata dalla configurazione globale o per-API.
+	 */
+	private static final boolean DEFAULT_CONTENT_ENCODING_DECOMPRESS = false;
+
+	private Boolean contentEncodingDecompressRicezioneContenutiApplicativi = null;
+	public boolean isContentEncodingDecompressRicezioneContenutiApplicativi(){
+		if(this.contentEncodingDecompressRicezioneContenutiApplicativi==null){
+			this.contentEncodingDecompressRicezioneContenutiApplicativi = readContentEncodingDecompress(
+					"org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.contentEncoding.decompress");
+		}
+		return this.contentEncodingDecompressRicezioneContenutiApplicativi;
+	}
+
+	private Boolean contentEncodingDecompressRicezioneBuste = null;
+	public boolean isContentEncodingDecompressRicezioneBuste(){
+		if(this.contentEncodingDecompressRicezioneBuste==null){
+			this.contentEncodingDecompressRicezioneBuste = readContentEncodingDecompress(
+					"org.openspcoop2.pdd.services.ricezioneBuste.contentEncoding.decompress");
+		}
+		return this.contentEncodingDecompressRicezioneBuste;
+	}
+
+	private Boolean contentEncodingDecompressInoltroBuste = null;
+	public boolean isContentEncodingDecompressInoltroBuste(){
+		if(this.contentEncodingDecompressInoltroBuste==null){
+			this.contentEncodingDecompressInoltroBuste = readContentEncodingDecompress(
+					"org.openspcoop2.pdd.services.inoltroBuste.contentEncoding.decompress");
+		}
+		return this.contentEncodingDecompressInoltroBuste;
+	}
+
+	private Boolean contentEncodingDecompressConsegnaContenutiApplicativi = null;
+	public boolean isContentEncodingDecompressConsegnaContenutiApplicativi(){
+		if(this.contentEncodingDecompressConsegnaContenutiApplicativi==null){
+			this.contentEncodingDecompressConsegnaContenutiApplicativi = readContentEncodingDecompress(
+					"org.openspcoop2.pdd.services.consegnaContenutiApplicativi.contentEncoding.decompress");
+		}
+		return this.contentEncodingDecompressConsegnaContenutiApplicativi;
+	}
+
+	private boolean readContentEncodingDecompress(String pName){
+		try{
+			String value = this.reader.getValueConvertEnvProperties(pName);
+			if(value!=null && !"".equals(value.trim())){
+				return Boolean.parseBoolean(value.trim());
+			}
+			this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+DEFAULT_CONTENT_ENCODING_DECOMPRESS);
+			return DEFAULT_CONTENT_ENCODING_DECOMPRESS;
+		}catch(java.lang.Exception e){
+			this.logError("Proprieta' di openspcoop '"+pName+"' non leggibile, viene utilizzato il default="+DEFAULT_CONTENT_ENCODING_DECOMPRESS+", errore:"+e.getMessage(),e);
+			return DEFAULT_CONTENT_ENCODING_DECOMPRESS;
+		}
+	}
+
 
 	/* ----------- Multipart/related senza parametro 'type' (RFC 2387 §3.1) ----------- */
 

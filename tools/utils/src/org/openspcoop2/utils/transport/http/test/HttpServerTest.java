@@ -20,14 +20,19 @@
 
 package org.openspcoop2.utils.transport.http.test;
 
+import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 import java.util.stream.Collectors;
+import java.util.zip.Deflater;
+import java.util.zip.DeflaterOutputStream;
+import java.util.zip.GZIPOutputStream;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLPeerUnverifiedException;
@@ -43,6 +48,7 @@ import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.apache.hc.core5.http.io.HttpFilterChain;
 import org.apache.hc.core5.http.io.SocketConfig;
 import org.apache.hc.core5.http.io.HttpFilterChain.ResponseTrigger;
+import org.apache.hc.core5.http.io.entity.ByteArrayEntity;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.apache.hc.core5.http.message.BasicClassicHttpResponse;
 import org.apache.hc.core5.http.message.BasicHeader;
@@ -66,8 +72,38 @@ import jakarta.servlet.http.HttpServletResponse;
  * @version $Rev$, $Date$
  */
 public class HttpServerTest implements Closeable {
-	
+
 	private static final String LOCALHOST = "localhost";
+
+	/**
+	 * Plaintext che gli endpoint '/contentEncoding/*' restituiscono dopo aver applicato
+	 * l'encoding richiesto. I test asseriscono su questa stringa una volta decompressa.
+	 */
+	public static final String PLAIN_BODY_CONTENT_ENCODING_TEST = "GovWay content-encoding round-trip OK";
+
+	/**
+	 * Nome dell'header di response che echeggia l'Accept-Encoding ricevuto in richiesta,
+	 * usato dai test per verificare l'iniezione lato client.
+	 */
+	public static final String ECHO_ACCEPT_ENCODING_HEADER = "x-received-accept-encoding";
+
+	/**
+	 * Test-only mode: il path '/contentEncoding/deflate-zlib' codifica il body in deflate
+	 * con header zlib RFC 1950 (default di java.util.zip.DeflaterOutputStream). Il
+	 * Content-Encoding sul wire e' comunque 'deflate' (RFC standard); il suffisso '-zlib'
+	 * serve solo a selezionare la modalita' di encoding lato server in fase di test.
+	 */
+	public static final String CONTENT_ENCODING_TEST_MODE_DEFLATE_ZLIB =
+			HttpConstants.CONTENT_ENCODING_VALUE_DEFLATE + "-zlib";
+
+	/**
+	 * Test-only mode: il path '/contentEncoding/deflate-raw' codifica il body in deflate
+	 * raw RFC 1951 (Deflater con nowrap=true). Sul wire arriva sempre come
+	 * 'Content-Encoding: deflate'; il suffisso '-raw' seleziona la variante lato server.
+	 */
+	public static final String CONTENT_ENCODING_TEST_MODE_DEFLATE_RAW =
+			HttpConstants.CONTENT_ENCODING_VALUE_DEFLATE + "-raw";
+
 	private final HttpServer server;
 	private final String username;
 	private final String password;
@@ -106,6 +142,7 @@ public class HttpServerTest implements Closeable {
 				.register(LOCALHOST, "/methods/*", this::handleTestMethods)
 				.register(LOCALHOST, "/proxy", this::handleTestProxy)
 				.register(LOCALHOST, "/throttling", this::handleTestThrottling)
+				.register(LOCALHOST, "/contentEncoding/*", this::handleTestContentEncoding)
 				.register(LOCALHOST, "/print", this::printRequest);
 		
 		if (ctx != null) {
@@ -297,6 +334,89 @@ public class HttpServerTest implements Closeable {
 		}
 	}
 	
+	/**
+	 * Endpoint per il test della decompressione automatica. Il path finale ('gzip',
+	 * 'x-gzip', 'deflate-zlib', 'deflate-raw') decide la modalita' di codifica del body.
+	 * Il body in chiaro e' sempre {@link #PLAIN_BODY_CONTENT_ENCODING_TEST}. Il valore
+	 * 'Accept-Encoding' ricevuto in richiesta viene echeggiato come header di response
+	 * {@link #ECHO_ACCEPT_ENCODING_HEADER} per consentire ai test di asserire che il
+	 * client abbia iniettato l'header come previsto.
+	 */
+	public void handleTestContentEncoding(ClassicHttpRequest req, ClassicHttpResponse res, HttpContext ctx) throws IOException {
+
+		String[] segments = req.getRequestUri().split("/");
+		String mode = segments[segments.length - 1].toLowerCase();
+
+		byte[] payload;
+		String contentEncodingHeader;
+		if (HttpConstants.CONTENT_ENCODING_VALUE_GZIP.equals(mode)) {
+			payload = gzipEncode(PLAIN_BODY_CONTENT_ENCODING_TEST);
+			contentEncodingHeader = HttpConstants.CONTENT_ENCODING_VALUE_GZIP;
+		} else if (HttpConstants.CONTENT_ENCODING_VALUE_X_GZIP.equals(mode)) {
+			payload = gzipEncode(PLAIN_BODY_CONTENT_ENCODING_TEST);
+			contentEncodingHeader = HttpConstants.CONTENT_ENCODING_VALUE_X_GZIP;
+		} else if (CONTENT_ENCODING_TEST_MODE_DEFLATE_ZLIB.equals(mode)) {
+			payload = deflateEncodeZlib(PLAIN_BODY_CONTENT_ENCODING_TEST);
+			contentEncodingHeader = HttpConstants.CONTENT_ENCODING_VALUE_DEFLATE;
+		} else if (CONTENT_ENCODING_TEST_MODE_DEFLATE_RAW.equals(mode)) {
+			payload = deflateEncodeRaw(PLAIN_BODY_CONTENT_ENCODING_TEST);
+			contentEncodingHeader = HttpConstants.CONTENT_ENCODING_VALUE_DEFLATE;
+		} else {
+			/*
+			 * Wildcard mode: claim un Content-Encoding qualunque (br, zstd, compress,
+			 * o valori non standard) inviando il body in chiaro. Usato dai test per
+			 * verificare che il client opt-in lanci un'eccezione 'Unsupported
+			 * Content-Encoding' quando l'encoding non e' gestito.
+			 */
+			payload = PLAIN_BODY_CONTENT_ENCODING_TEST.getBytes(StandardCharsets.UTF_8);
+			contentEncodingHeader = mode;
+		}
+
+		// echo dell'Accept-Encoding ricevuto per asserzioni lato client
+		Header receivedAcceptEncoding;
+		try {
+			receivedAcceptEncoding = req.getHeader(HttpConstants.ACCEPT_ENCODING);
+		} catch (ProtocolException e) {
+			receivedAcceptEncoding = null;
+		}
+		res.setHeader(new BasicHeader(ECHO_ACCEPT_ENCODING_HEADER,
+				receivedAcceptEncoding != null ? receivedAcceptEncoding.getValue() : ""));
+
+		res.setHeader(new BasicHeader(HttpConstants.CONTENT_ENCODING, contentEncodingHeader));
+		res.setEntity(new ByteArrayEntity(payload, null));
+		res.setCode(HttpServletResponse.SC_OK);
+		res.close();
+	}
+
+	private static byte[] gzipEncode(String plain) throws IOException {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		try (GZIPOutputStream gz = new GZIPOutputStream(baos)) {
+			gz.write(plain.getBytes(StandardCharsets.UTF_8));
+		}
+		return baos.toByteArray();
+	}
+
+	private static byte[] deflateEncodeZlib(String plain) throws IOException {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		// DeflaterOutputStream con Deflater di default => header zlib RFC 1950 (CMF=0x78)
+		try (DeflaterOutputStream def = new DeflaterOutputStream(baos)) {
+			def.write(plain.getBytes(StandardCharsets.UTF_8));
+		}
+		return baos.toByteArray();
+	}
+
+	private static byte[] deflateEncodeRaw(String plain) throws IOException {
+		// nowrap=true => raw deflate RFC 1951 (nessun header zlib)
+		Deflater deflater = new Deflater(Deflater.DEFAULT_COMPRESSION, true);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		try (DeflaterOutputStream def = new DeflaterOutputStream(baos, deflater)) {
+			def.write(plain.getBytes(StandardCharsets.UTF_8));
+		} finally {
+			deflater.end();
+		}
+		return baos.toByteArray();
+	}
+
 	public void printRequest(ClassicHttpRequest req, ClassicHttpResponse res, HttpContext ctx)
 			throws IOException {
 		

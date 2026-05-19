@@ -482,6 +482,80 @@ public class DBVerifier {
 		String msg = "IdTransazione: "+idTransazione;
 		assertTrue(msg+" Atteso almeno 1 dump_messaggi per tipo_messaggio='"+tipoMessaggio+"' con content_type LIKE '"+contentTypePattern+"', trovati: "+count, count>0);
 	}
+
+
+	/**
+	 * Verifica che nella tabella {@code dump_header_trasporto} esista almeno una riga collegata a
+	 * un {@code dump_messaggi} della transazione, del tipo specificato, con il nome header
+	 * (case-insensitive: Tomcat normalizza i nomi a lowercase) e valore esatti indicati.
+	 */
+	public static void existsDumpHeaderTrasporto(String idTransazione, String tipoMessaggio, String headerName, String headerValue) throws Exception  {
+		Utilities.sleep(100);
+		try {
+			existsDumpHeaderTrasportoEngine(idTransazione, tipoMessaggio, headerName, headerValue);
+		}catch(Throwable t) {
+			Utilities.sleep(500);
+			try {
+				existsDumpHeaderTrasportoEngine(idTransazione, tipoMessaggio, headerName, headerValue);
+			}catch(Throwable t2) {
+				Utilities.sleep(2000);
+				try {
+					existsDumpHeaderTrasportoEngine(idTransazione, tipoMessaggio, headerName, headerValue);
+				}catch(Throwable t3) {
+					Utilities.sleep(5000);
+					existsDumpHeaderTrasportoEngine(idTransazione, tipoMessaggio, headerName, headerValue);
+				}
+			}
+		}
+	}
+	private static void existsDumpHeaderTrasportoEngine(String idTransazione, String tipoMessaggio, String headerName, String headerValue) throws Exception {
+		/* LIKE invece di '=': la colonna 'valore' e' CLOB/TEXT e Oracle non supporta '=' sui CLOB
+		 * (ORA-00932: inconsistent datatypes), mentre LIKE funziona sia su Oracle sia su Postgres
+		 * (TEXT). Il pattern non contiene wildcard, quindi e' equivalente a match esatto. */
+		String query = "select count(*) from dump_header_trasporto h " +
+				"join dump_messaggi m on h.id_messaggio = m.id " +
+				"where m.id_transazione = ? and m.tipo_messaggio = ? and lower(h.nome) = ? and h.valore LIKE ?";
+		log().info(query);
+		int count = dbUtils().readValue(query, Integer.class, idTransazione, tipoMessaggio, headerName.toLowerCase(), headerValue);
+		String msg = "IdTransazione: "+idTransazione;
+		assertTrue(msg+" Atteso almeno 1 dump_header_trasporto per tipo_messaggio='"+tipoMessaggio+"' con header '"+headerName+"'='"+headerValue+"', trovati: "+count, count>0);
+	}
+
+
+	/**
+	 * Verifica che nella tabella {@code dump_header_trasporto} NON esista alcuna riga collegata
+	 * a un {@code dump_messaggi} della transazione del tipo specificato con il nome header
+	 * indicato (case-insensitive). Utile per asserire che GovWay abbia rimosso uno specifico
+	 * header (es. Content-Encoding) dal dump in uscita post-decompressione.
+	 */
+	public static void notExistsDumpHeaderTrasporto(String idTransazione, String tipoMessaggio, String headerName) throws Exception  {
+		Utilities.sleep(100);
+		try {
+			notExistsDumpHeaderTrasportoEngine(idTransazione, tipoMessaggio, headerName);
+		}catch(Throwable t) {
+			Utilities.sleep(500);
+			try {
+				notExistsDumpHeaderTrasportoEngine(idTransazione, tipoMessaggio, headerName);
+			}catch(Throwable t2) {
+				Utilities.sleep(2000);
+				try {
+					notExistsDumpHeaderTrasportoEngine(idTransazione, tipoMessaggio, headerName);
+				}catch(Throwable t3) {
+					Utilities.sleep(5000);
+					notExistsDumpHeaderTrasportoEngine(idTransazione, tipoMessaggio, headerName);
+				}
+			}
+		}
+	}
+	private static void notExistsDumpHeaderTrasportoEngine(String idTransazione, String tipoMessaggio, String headerName) throws Exception {
+		String query = "select count(*) from dump_header_trasporto h " +
+				"join dump_messaggi m on h.id_messaggio = m.id " +
+				"where m.id_transazione = ? and m.tipo_messaggio = ? and lower(h.nome) = ?";
+		log().info(query);
+		int count = dbUtils().readValue(query, Integer.class, idTransazione, tipoMessaggio, headerName.toLowerCase());
+		String msg = "IdTransazione: "+idTransazione;
+		assertEquals(msg+" Atteso 0 righe dump_header_trasporto per tipo_messaggio='"+tipoMessaggio+"' con header '"+headerName+"', trovate: "+count, 0, count);
+	}
 	
 	
 	

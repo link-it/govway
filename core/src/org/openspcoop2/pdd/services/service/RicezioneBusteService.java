@@ -52,6 +52,7 @@ import org.openspcoop2.message.exception.ParseExceptionUtils;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.monitor.sdk.transaction.FaseTracciamento;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
+import org.openspcoop2.pdd.config.CostantiProprieta;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.GestoreRichieste;
@@ -429,6 +430,15 @@ public class RicezioneBusteService implements IRicezioneService, IAsyncResponseC
 						this.msgDiag).apply();
 			}
 
+			// Decompressione automatica del body richiesta: override per-API sul default globale
+			if(this.req instanceof HttpServletConnectorInMessage httpInMessage) {
+				boolean decompressRequest = this.openSPCoopProperties.isContentEncodingDecompressRicezioneBuste();
+				if(pa!=null) {
+					decompressRequest = CostantiProprieta.isConnettoriHttpContentEncodingRequestDecompress(pa.getProprietaList(), decompressRequest);
+				}
+				httpInMessage.setDecompressRequestContentEncoding(decompressRequest);
+			}
+
 			// Limited
 			try{
 				this.msgDiag.mediumDebug("Lettura configurazione dimensione massima della richiesta ...");
@@ -706,8 +716,7 @@ public class RicezioneBusteService implements IRicezioneService, IAsyncResponseC
 				this.dataIngressoRichiesta = this.req.getDataIngressoRichiesta();
 				this.context.setDataIngressoRichiesta(this.dataIngressoRichiesta);
 			}
-			
-			
+
 
 			
 			

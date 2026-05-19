@@ -414,8 +414,17 @@ public class Utilities {
 		}
 	}
 	public static void copyServerSentEvents(InputStream is,OutputStream os) throws UtilsException{
+		copyServerSentEvents(is, os, null);
+	}
+	/**
+	 * Variante di {@link #copyServerSentEvents(InputStream, OutputStream)} che riceve esplicitamente
+	 * il Content-Encoding del body: se valorizzato e diverso da {@code identity} la copia è raw
+	 * byte-per-chunk (trasparenza GovWay), altrimenti line-based testuale. Vedi
+	 * {@link CopyStream#copyServerSentEvents(InputStream, OutputStream, String)}.
+	 */
+	public static void copyServerSentEvents(InputStream is,OutputStream os, String contentEncoding) throws UtilsException{
 		try{
-			CopyStream.copy(CopyStreamMethod.SERVER_SENT_EVENTS, is, os);
+			CopyStream.copyServerSentEvents(is, os, contentEncoding);
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
 		}

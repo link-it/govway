@@ -1,5 +1,14 @@
 2026-05-19  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore]
+	Aggiunta funzionalità #1771
+	Aggiunta funzionalità opzionale di decompressione automatica del body (gzip, x-gzip, deflate) lato richiesta e/o risposta, 
+	configurabile sia globalmente (per modulo di ingresso/uscita) sia per singola API. Default conservativo: feature disabilitata.
+	Aggiornata inoltre la gestione dello streaming SSE (Server-Sent Events) per consegnare correttamente al client gli eventi 
+	anche quando la risposta del backend e' compressa.
+
+2026-05-19  Andrea Poli <apoli@link.it>
+
 	* [InstallerVersioneBinaria]
 	Risolto Bug
 	Risolta un'anomalia nel sistema di patching per cui le librerie di terze parti elencate nelle directory lib/remove/ 

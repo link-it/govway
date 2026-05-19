@@ -92,8 +92,18 @@ public class TestHttp {
 	}
 	
 	@DataProvider(name="paramDP")
-	public Object[][] paramDP(){	
+	public Object[][] paramDP(){
 		return test.paramsHttpDataProvider();
+	}
+
+	@DataProvider(name="contentEncodingDP")
+	public Object[][] contentEncodingDP() {
+		return test.contentEncodingDataProvider();
+	}
+
+	@DataProvider(name="contentEncodingUnsupportedDP")
+	public Object[][] contentEncodingUnsupportedDP() {
+		return test.contentEncodingUnsupportedDataProvider();
 	}
 	
 	@DataProvider(name="headerDP")
@@ -148,7 +158,23 @@ public class TestHttp {
 		System.out.println("Starting testParam");
 		test.check(req, res);
 	}
-	
-	
-	
+
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_GROUP,Costanti.GRUPPO_UTILS+"."+ID_GROUP+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_GROUP+"."+ID_TEST+".contentEncodingDecompress"},dataProvider="contentEncodingDP")
+	public void testContentEncodingDecompress(HttpLibrary lib, String mode) throws UtilsException {
+		System.out.println("Starting testContentEncodingDecompress lib["+lib+"] mode["+mode+"]");
+		test.testContentEncodingDecompress(lib, mode);
+	}
+
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_GROUP,Costanti.GRUPPO_UTILS+"."+ID_GROUP+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_GROUP+"."+ID_TEST+".contentEncodingDisabled"},dataProvider="libraryDP")
+	public void testContentEncodingDisabled(HttpLibrary lib) throws UtilsException {
+		System.out.println("Starting testContentEncodingDisabled lib["+lib+"]");
+		test.testContentEncodingDisabled(lib);
+	}
+
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_GROUP,Costanti.GRUPPO_UTILS+"."+ID_GROUP+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_GROUP+"."+ID_TEST+".contentEncodingUnsupported"},dataProvider="contentEncodingUnsupportedDP")
+	public void testContentEncodingUnsupported(HttpLibrary lib, String unsupportedEncoding) throws UtilsException {
+		System.out.println("Starting testContentEncodingUnsupported lib["+lib+"] encoding["+unsupportedEncoding+"]");
+		test.testContentEncodingUnsupported(lib, unsupportedEncoding);
+	}
+
 }

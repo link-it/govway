@@ -64,6 +64,25 @@ public class HttpConstants {
 	
 	/** Content Encoding */
 	public static final String CONTENT_ENCODING = "Content-Encoding";
+	public static final String CONTENT_ENCODING_VALUE_IDENTITY = "identity";
+	public static final String CONTENT_ENCODING_VALUE_GZIP = "gzip";
+	public static final String CONTENT_ENCODING_VALUE_X_GZIP = "x-gzip";
+	public static final String CONTENT_ENCODING_VALUE_DEFLATE = "deflate";
+	public static final String CONTENT_ENCODING_VALUE_BROTLI = "br";
+	public static final String CONTENT_ENCODING_VALUE_ZSTD = "zstd";
+	public static final String CONTENT_ENCODING_VALUE_COMPRESS = "compress";
+
+	/** Accept Encoding */
+	public static final String ACCEPT_ENCODING = "Accept-Encoding";
+	/**
+	 * Valore che il client HTTP dichiara come 'Accept-Encoding' quando viene
+	 * richiesta la decompressione automatica della response (cfr.
+	 * HttpRequest#setDecompressResponseContentEncoding). Allineato al valore
+	 * iniettato dall'interceptor RequestAcceptEncoding di Apache HttpClient 5
+	 * (cfr. 5.6.1), cosi' che il connettore JDK (UrlConnectionConnection) e
+	 * httpcore5 inviino al server esattamente lo stesso header.
+	 */
+	public static final String ACCEPT_ENCODING_VALUE_DECOMPRESS_DEFAULT = "gzip, deflate, x-gzip";
 	
 	/** Redirect */
 	public static final String REDIRECT_LOCATION = "Location";

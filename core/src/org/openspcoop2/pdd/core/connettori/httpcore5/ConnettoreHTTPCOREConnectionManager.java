@@ -398,7 +398,13 @@ public class ConnettoreHTTPCOREConnectionManager {
 			 *   HttpClient quindi puo' riusare per host;
 			 * - content compression: il body deve transitare cosi' come ricevuto dal backend
 			 *   con il proprio Content-Encoding; la decompressione automatica altererebbe il
-			 *   payload veicolato;
+			 *   payload veicolato. Per mantenere uniformita' fra connettore JDK e connettori
+			 *   HC5 sync/NIO, la decompressione opt-in (property
+			 *   'connettori.contentEncoding.response.decompress' / 'connettori.contentEncoding.decompress')
+			 *   e' centralizzata in
+			 *   ConnettoreBaseHTTP#decodeResponseBodyContentEncoding (invocato prima del dump
+			 *   cosi' che il payload registrato sia gia' in chiaro), evitando di delegarla ad
+			 *   Apache che non ha visibilita' del flag GovWay e degli header stale da rimuovere;
 			 * - default user agent: evita l'iniezione di uno User-Agent 'Apache-HttpClient/x.y'
 			 *   quando il client a monte non lo invia, mantenendo la trasparenza del proxy.
 			 */

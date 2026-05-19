@@ -892,6 +892,41 @@ public class CostantiProprieta {
 
 
 
+	// ****  CONNETTORI HTTP CONTENT ENCODING (DECOMPRESSIONE)  *****
+
+	/**
+	 * Decompressione automatica dei body con header 'Content-Encoding'. Quando abilitata,
+	 * il body viene reso disponibile in chiaro alle logiche a valle (validazione, trasformazione,
+	 * dump, tracciamento). Encoding gestiti: gzip, x-gzip, deflate (autodetect RFC 1950/1951).
+	 * Encoding non gestiti (br, zstd, compress) causano errore esplicito invece di transitare
+	 * opachi al chiamante che ha fatto opt-in.
+	 * <p>
+	 * Default storico: false (passa-carte trasparente, body raw con Content-Encoding preservato).
+	 * <p>
+	 * Gli override per-lato ('.request.' o '.response.') hanno priorita' sulla chiave generica
+	 * ('.contentEncoding.decompress'), allineato al pattern usato per multipart.related.missingType.
+	 */
+	private static final String CONNETTORI_HTTP_CONTENT_ENCODING_REQUEST_DECOMPRESS = "connettori.contentEncoding.request.decompress";
+	private static final String CONNETTORI_HTTP_CONTENT_ENCODING_RESPONSE_DECOMPRESS = "connettori.contentEncoding.response.decompress";
+	private static final String CONNETTORI_HTTP_CONTENT_ENCODING_DECOMPRESS = "connettori.contentEncoding.decompress";
+
+	public static boolean isConnettoriHttpContentEncodingRequestDecompress(List<Proprieta> proprieta, boolean defaultValue) {
+		return readContentEncodingDecompress(proprieta, CONNETTORI_HTTP_CONTENT_ENCODING_REQUEST_DECOMPRESS, defaultValue);
+	}
+	public static boolean isConnettoriHttpContentEncodingResponseDecompress(List<Proprieta> proprieta, boolean defaultValue) {
+		return readContentEncodingDecompress(proprieta, CONNETTORI_HTTP_CONTENT_ENCODING_RESPONSE_DECOMPRESS, defaultValue);
+	}
+	private static boolean readContentEncodingDecompress(List<Proprieta> proprieta, String specificName, boolean defaultValue) {
+		String v = readValue(proprieta, specificName);
+		if(v!=null && !"".equals(v.trim())) {
+			return Boolean.parseBoolean(v.trim());
+		}
+		return readBooleanValueWithDefault(proprieta, CONNETTORI_HTTP_CONTENT_ENCODING_DECOMPRESS, defaultValue, VALUE_ENABLED, VALUE_DISABLED);
+	}
+
+
+
+
 	// ****  CONNETTORI HTTP MULTIPART *****
 
 	private static final String CONNETTORI_HTTP_MULTIPART_RELATED_MISSING_TYPE_RICHIESTA_BEHAVIOR = "connettori.multipart.related.missingType.request.behavior";
