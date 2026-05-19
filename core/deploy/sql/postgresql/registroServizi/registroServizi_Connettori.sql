@@ -54,6 +54,8 @@ CREATE TABLE connettori
 	custom INT DEFAULT 0,
 	-- Gestione Token
 	token_policy VARCHAR(255),
+	-- LLM
+	llm_policy VARCHAR(255),
 	api_key TEXT,
 	api_key_header VARCHAR(255),
 	app_id TEXT,

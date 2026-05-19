@@ -214,6 +214,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			String autenticazioneTokenS = apsHelper.getParametroBoolean(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO);
 			boolean autenticazioneToken = ServletUtils.isCheckBoxEnabled(autenticazioneTokenS);
 			String tokenPolicy = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY);
+			String llmPolicy = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_LLM_PROVIDER);
 			boolean forcePDND = false;
 			boolean forceOAuth = false;
 			boolean forceDPoP = false;
@@ -408,10 +409,12 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			AccordoServizioParteComuneSintetico as = null;
 			ServiceBinding serviceBinding = null;
 			IDAccordo idAccordo = null;
+			boolean apiIsLLM = false;
 			if (asps != null) {
 				idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
 				as = apcCore.getAccordoServizioSintetico(idAccordo);
 				serviceBinding = apcCore.toMessageServiceBinding(as.getServiceBinding());
+				apiIsLLM = org.openspcoop2.protocol.manifest.utils.InterfaceTypeUtils.isLLM(apcCore.formatoSpecifica2InterfaceType(as.getFormatoSpecifica()));
 			}
 			
 			// Prendo le azioni  disponibili
@@ -747,7 +750,12 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 //					apsHelper.isModalitaCompleta()?null:(generaPACheckSoggetto?AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX : AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX)
 					
 					if(ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
-						dati = apsHelper.addEndPointToDati(dati, serviceBinding, connettoreDebug, endpointtype, autenticazioneHttp, 
+						String llmUrlOverride = apsHelper.addLLMProviderSectionAndResolveUrl(dati, apiIsLLM, llmPolicy, TipoOperazione.ADD, postBackViaPost);
+						if (llmUrlOverride != null) {
+							url = llmUrlOverride;
+							httpsurl = llmUrlOverride;
+						}
+						dati = apsHelper.addEndPointToDati(dati, serviceBinding, connettoreDebug, endpointtype, autenticazioneHttp,
 								null, //(apsHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX , 
 								url, nomeCodaJms,
 								tipoJms, user,
@@ -814,8 +822,11 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 						listExtendedConnettore,erogazioneServizioApplicativoServerEnabled,
 						erogazioneServizioApplicativoServer);
 			}
-			
-			
+			if (isOk && ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
+				isOk = apsHelper.checkLLMPolicyData(apiIsLLM, llmPolicy);
+			}
+
+
 			if (!isOk) {
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd,lstParm); 

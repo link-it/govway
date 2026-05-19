@@ -154,6 +154,9 @@ public class PorteApplicativeConnettoreDefault extends Action {
 			boolean forceOAuth = false;
 			boolean forceDPoP = false;
 
+			// llm provider policy
+			String llmPolicy = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_LLM_PROVIDER);
+
 			// proxy
 			String proxyEnabled = porteApplicativeHelper.getParametroBoolean(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
 			String proxyHostname = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
@@ -377,12 +380,15 @@ public class PorteApplicativeConnettoreDefault extends Action {
 			Parameter[] parametriServletConnettore =null;
 
 			ServiceBinding serviceBinding = null;
+			boolean apiIsLLM = false;
 			if (!idAsps.equals("")) {
 				long idAspsLong = Integer.parseInt(idAsps);
 				AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(porteApplicativeCore);
 				AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(idAspsLong);
 				AccordoServizioParteComuneSintetico aspc = apcCore.getAccordoServizioSintetico(IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune()));
 				serviceBinding = apcCore.toMessageServiceBinding(aspc.getServiceBinding());
+				org.openspcoop2.protocol.manifest.constants.InterfaceType formatoSpecifica = apcCore.formatoSpecifica2InterfaceType(aspc.getFormatoSpecifica());
+				apiIsLLM = org.openspcoop2.protocol.manifest.utils.InterfaceTypeUtils.isLLM(formatoSpecifica);
 			}
 			
 			if(	porteApplicativeHelper.isEditModeInProgress()){
@@ -487,8 +493,21 @@ public class PorteApplicativeConnettoreDefault extends Action {
 				dati = porteApplicativeHelper.addConnettoreDefaultRidefinitoToDati(dati,TipoOperazione.OTHER, modalita, modalitaValues,modalitaLabels,false,servletConnettore,parametriServletConnettore);
 
 				if(modalita.equals(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_MODALITA_CONNETTORE_RIDEFINITO)) {
-					dati = porteApplicativeHelper.addEndPointToDati(dati, serviceBinding, connettoreDebug, endpointtype, autenticazioneHttp, 
-							null, //(porteApplicativeHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX , 
+					// Auto-fill dell'Endpoint con la baseUrl della LLM Provider Policy se la policy cambia
+					if (apiIsLLM
+							&& ConnettoriCostanti.PARAMETRO_CONNETTORE_LLM_PROVIDER.equals(porteApplicativeHelper.getPostBackElementName())
+							&& llmPolicy != null && !"".equals(llmPolicy)) {
+						String policyBaseUrl = porteApplicativeHelper.getLLMProviderBaseUrl(llmPolicy);
+						if (policyBaseUrl != null && !policyBaseUrl.isEmpty()) {
+							url = policyBaseUrl;
+							httpsurl = policyBaseUrl;
+						}
+					}
+					if (apiIsLLM) {
+						dati = porteApplicativeHelper.addLLMProvider(dati, llmPolicy, TipoOperazione.OTHER, postBackViaPost);
+					}
+					dati = porteApplicativeHelper.addEndPointToDati(dati, serviceBinding, connettoreDebug, endpointtype, autenticazioneHttp,
+							null, //(porteApplicativeHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX ,
 							url, nomeCodaJms,
 							tipoJms, user,
 							password, initcont, urlpgk,
@@ -555,6 +574,9 @@ public class PorteApplicativeConnettoreDefault extends Action {
 						autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
 						listExtendedConnettore,erogazioneServizioApplicativoServerEnabled,
 						erogazioneServizioApplicativoServer);
+				if (isOk) {
+					isOk = porteApplicativeHelper.checkLLMPolicyData(apiIsLLM, llmPolicy);
+				}
 			}
 
 			if(!isOk) {
@@ -568,8 +590,11 @@ public class PorteApplicativeConnettoreDefault extends Action {
 				dati = porteApplicativeHelper.addConnettoreDefaultRidefinitoToDati(dati,TipoOperazione.OTHER, modalita, modalitaValues,modalitaLabels,false,servletConnettore,parametriServletConnettore);
 
 				if(modalita.equals(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_MODALITA_CONNETTORE_RIDEFINITO)) {
-					dati = porteApplicativeHelper.addEndPointToDati(dati, serviceBinding, connettoreDebug, endpointtype, autenticazioneHttp, 
-							null, // (porteApplicativeHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX , 
+					if (apiIsLLM) {
+						dati = porteApplicativeHelper.addLLMProvider(dati, llmPolicy, TipoOperazione.OTHER, postBackViaPost);
+					}
+					dati = porteApplicativeHelper.addEndPointToDati(dati, serviceBinding, connettoreDebug, endpointtype, autenticazioneHttp,
+							null, // (porteApplicativeHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX ,
 							url, nomeCodaJms,
 							tipoJms, user,
 							password, initcont, urlpgk,
@@ -638,6 +663,10 @@ public class PorteApplicativeConnettoreDefault extends Action {
 					apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
 					connettoreStatusParams,
 					listExtendedConnettore);
+
+			if (apiIsLLM) {
+				porteApplicativeHelper.addLLMPolicyPropertyToConnettore(connettore, llmPolicy);
+			}
 
 			List<Object> listaOggettiDaCreare = new ArrayList<>();
 			List<Object> listaOggettiDaModificare = new ArrayList<>();

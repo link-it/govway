@@ -1260,11 +1260,144 @@ public class ConnettoriHelper extends ConsoleHelper {
 			de.setPostBack(true);
 		}
 		dati.add(de);
-		
+
 		return dati;
 	}
-	
-	public List<DataElement> addApiKeyToDati(List<DataElement> dati, boolean useOAS3Names, boolean useAppId, 
+
+
+	public List<DataElement> addLLMProvider(List<DataElement> dati, String llmPolicy, TipoOperazione tipoOperazione,
+			boolean postBackViaPost) throws DriverConfigurazioneException{
+
+		List<String> policyConfiguredList = getLLMProviderList(true, llmPolicy, tipoOperazione);
+		if(!policyConfiguredList.contains(llmPolicy)) {
+			llmPolicy = null;
+		}
+
+		DataElement de = new DataElement();
+		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_LLM_PROVIDER_SECTION);
+		de.setType(DataElementType.TITLE);
+		dati.add(de);
+
+		de = new DataElement();
+		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_LLM_PROVIDER);
+		de.setType(DataElementType.SELECT);
+		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_LLM_PROVIDER);
+		de.setValues(policyConfiguredList);
+		de.setLabels(policyConfiguredList);
+		de.setSelected(llmPolicy);
+		de.setRequired(true);
+		if(postBackViaPost) {
+			de.setPostBack_viaPOST(true);
+		}
+		else {
+			de.setPostBack(true);
+		}
+		dati.add(de);
+
+		return dati;
+	}
+
+
+	/**
+	 * Legge la base URL configurata nella LLM Provider Policy.
+	 * Usata per popolare automaticamente il campo Endpoint del connettore quando
+	 * l'utente seleziona/cambia la policy nel form.
+	 */
+	public String getLLMProviderBaseUrl(String llmPolicyName) throws DriverConfigurazioneException {
+		if (llmPolicyName == null || llmPolicyName.isEmpty()
+				|| CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO.equals(llmPolicyName)) {
+			return null;
+		}
+		try {
+			org.openspcoop2.core.config.GenericProperties gp = this.confCore.getGenericProperties(
+					llmPolicyName,
+					org.openspcoop2.pdd.core.llm.provider.Costanti.TIPOLOGIA,
+					true);
+			if (gp == null || gp.getPropertyList() == null) {
+				return null;
+			}
+			for (org.openspcoop2.core.config.Property p : gp.getPropertyList()) {
+				if (org.openspcoop2.pdd.core.llm.provider.Costanti.LLM_PROVIDER_BASE_URL.equals(p.getNome())) {
+					return p.getValore();
+				}
+			}
+		} catch (DriverConfigurazioneNotFound e) {
+			return null;
+		}
+		return null;
+	}
+
+	/**
+	 * Renderizza nel form la sezione "LLM Provider" (sopra il connettore) e ritorna la
+	 * baseUrl associata alla policy nei casi in cui l'utente l'abbia appena cambiata,
+	 * così il chiamante può sovrascrivere il campo Endpoint del connettore.
+	 *
+	 * @return la baseUrl da applicare come override del campo Endpoint, oppure null
+	 *         (no-op) quando il flag non è LLM, la policy non è valorizzata o il
+	 *         postback non proviene dal select LLM Policy.
+	 */
+	/**
+	 * Verifica che, per un'API LLM, sia stata selezionata una LLM Provider Policy
+	 * nel form del connettore. Se manca, scrive il messaggio di errore in {@link PageData}
+	 * e ritorna false. Per API non-LLM è sempre OK (no-op).
+	 */
+	public boolean checkLLMPolicyData(boolean apiIsLLM, String llmPolicy) {
+		if (!apiIsLLM) {
+			return true;
+		}
+		if (llmPolicy == null || llmPolicy.isEmpty()
+				|| CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO.equals(llmPolicy)) {
+			this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_PREFISSO_DATI_INCOMPLETI_NECESSARIO_INDICARE
+					+ ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_LLM_PROVIDER);
+			return false;
+		}
+		return true;
+	}
+
+	public String addLLMProviderSectionAndResolveUrl(List<DataElement> dati, boolean apiIsLLM,
+			String llmPolicy, TipoOperazione tipoOperazione, boolean postBackViaPost) throws DriverConfigurazioneException, DriverControlStationException {
+		if (!apiIsLLM) {
+			return null;
+		}
+		addLLMProvider(dati, llmPolicy, tipoOperazione, postBackViaPost);
+		if (ConnettoriCostanti.PARAMETRO_CONNETTORE_LLM_PROVIDER.equals(this.getPostBackElementName())
+				&& llmPolicy != null && !llmPolicy.isEmpty()) {
+			return getLLMProviderBaseUrl(llmPolicy);
+		}
+		return null;
+	}
+
+	/**
+	 * Aggiunge la property {@code llmPolicy} al connettore (registry), così il runtime
+	 * LLM Outbound handler può risolverla via {@code generic_properties}.
+	 */
+	public void addLLMPolicyPropertyToConnettore(org.openspcoop2.core.registry.Connettore connettore, String llmPolicy) {
+		if (connettore == null || llmPolicy == null || llmPolicy.isEmpty()
+				|| CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO.equals(llmPolicy)) {
+			return;
+		}
+		org.openspcoop2.core.registry.Property prop = new org.openspcoop2.core.registry.Property();
+		prop.setNome(org.openspcoop2.core.constants.CostantiConnettori.CONNETTORE_LLM_POLICY);
+		prop.setValore(llmPolicy);
+		connettore.addProperty(prop);
+	}
+
+	/**
+	 * Aggiunge la property {@code llmPolicy} al connettore (config).
+	 */
+	public void addLLMPolicyPropertyToConnettore(org.openspcoop2.core.config.Connettore connettore, String llmPolicy) {
+		if (connettore == null || llmPolicy == null || llmPolicy.isEmpty()
+				|| CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO.equals(llmPolicy)) {
+			return;
+		}
+		org.openspcoop2.core.config.Property prop = new org.openspcoop2.core.config.Property();
+		prop.setNome(org.openspcoop2.core.constants.CostantiConnettori.CONNETTORE_LLM_POLICY);
+		prop.setValore(llmPolicy);
+		connettore.addProperty(prop);
+	}
+
+
+	public List<DataElement> addApiKeyToDati(List<DataElement> dati, boolean useOAS3Names, boolean useAppId,
 			String apiKeyHeader, String apiKeyValue,
 			String appIdHeader, String appIdValue,
 			boolean postBackViaPost) throws UtilsException {

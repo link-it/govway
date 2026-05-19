@@ -2397,6 +2397,9 @@ public class ConfigurazioneCore extends ControlStationCore {
 			if(idGP!=null && CostantiConfigurazione.GENERIC_PROPERTIES_ATTRIBUTE_AUTHORITY.equals(idGP.getTipologia())) {
 				inUsoMessage.append(ConfigurazioneCostanti.LABEL_ATTRIBUTE_AUTHORITY_IN_USO_BODY_HEADER_NESSUN_RISULTATO);
 			}
+			else if(idGP!=null && CostantiConfigurazione.GENERIC_PROPERTIES_LLM_PROVIDER.equals(idGP.getTipologia())) {
+				inUsoMessage.append(ConfigurazioneCostanti.LABEL_LLM_PROVIDER_IN_USO_BODY_HEADER_NESSUN_RISULTATO);
+			}
 			else {
 				inUsoMessage.append(ConfigurazioneCostanti.LABEL_TOKEN_POLICY_IN_USO_BODY_HEADER_NESSUN_RISULTATO);
 			}

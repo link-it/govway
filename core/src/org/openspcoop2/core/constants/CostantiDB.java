@@ -818,6 +818,7 @@ public final class CostantiDB {
     public static final String CONNETTORE_TEMPO_MEDIO_RISPOSTA = CostantiConnettori.CONNETTORE_TEMPO_MEDIO_RISPOSTA;
     
     public static final String CONNETTORE_TOKEN_POLICY = CostantiConnettori.CONNETTORE_TOKEN_POLICY;
+    public static final String CONNETTORE_LLM_POLICY = CostantiConnettori.CONNETTORE_LLM_POLICY;
     
     public static final String CONNETTORE_HTTP_LOCATION = CostantiConnettori.CONNETTORE_LOCATION;
     

@@ -279,6 +279,36 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 		return this._countingInputStream;
 	}
 
+	/**
+	 * Sostituisce lo stream sorgente del messaggio con un wrapper personalizzato.
+	 * Pensato per casi in cui un handler vuole interporre una trasformazione
+	 * incrementale sul body (es. decompressione gzip on-the-fly, chunk transformer
+	 * SSE per il flusso LLM streaming): il wrapper deve essere costruito sopra lo
+	 * stream attuale ottenuto via {@link #getInputStream()}.
+	 * <p>
+	 * Va invocato prima che il content venga materializzato (cioè prima di
+	 * {@link #getContent()}/{@link #getContentAsByteArray()}/{@link #writeTo}):
+	 * dopo che lo stream è stato letto in {@code content} il wrapping non avrebbe
+	 * più effetto.
+	 * </p>
+	 */
+	public void applyStreamWrapper(InputStream wrappedStream) throws MessageException {
+		if (wrappedStream == null) {
+			throw new MessageException("applyStreamWrapper: wrappedStream nullo");
+		}
+		if (this.content != null) {
+			throw new MessageException("applyStreamWrapper: content già materializzato, il wrap non avrebbe effetto");
+		}
+		// Stessa convenzione del costruttore: il campo è un BoundedInputStream per gestire
+		// in modo uniforme size-limit / counting. Wrappiamo il nuovo stream con la builder.
+		try {
+			this._countingInputStream = BoundedInputStream.builder().setInputStream(wrappedStream).get();
+		} catch (Exception e) {
+			throw new MessageException("applyStreamWrapper: errore nel wrap dello stream: " + e.getMessage(), e);
+		}
+		this.hasContent = true;
+	}
+
 	protected InputStream _getInputStream() throws MessageException {
 		if(this._countingInputStream instanceof OpenSPCoop2InputStreamDynamicContent) {
 			OpenSPCoop2InputStreamDynamicContent di = ((OpenSPCoop2InputStreamDynamicContent)this._countingInputStream); 
@@ -484,9 +514,13 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 						if (debug != null) {
 							debug.append(Costanti.WRITE_MODE_SERIALIZE_STREAM);
 						}
-						if(this.supportSSE && MessageRole.RESPONSE.equals(this.messageRole) && 
+						if(this.supportSSE && MessageRole.RESPONSE.equals(this.messageRole) &&
 								this.contentType!=null && HttpConstants.CONTENT_TYPE_EVENT_STREAM.equals(ContentTypeUtilities.readBaseTypeFromContentType(this.contentType))) {
-							Utilities.copyServerSentEvents(this._getInputStream(), cos);
+							String contentEncoding = null;
+							if(this.transportResponseContext!=null) {
+								contentEncoding = this.transportResponseContext.getHeaderFirstValue(HttpConstants.CONTENT_ENCODING);
+							}
+							Utilities.copyServerSentEvents(this._getInputStream(), cos, contentEncoding);
 						}
 						else {
 							Utilities.copy(this._getInputStream(), cos);

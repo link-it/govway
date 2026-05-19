@@ -256,6 +256,8 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				||
 				ArchiveType.CONFIGURAZIONE_ATTRIBUTE_AUTHORITY.equals(servletSourceExport)
 				||
+				ArchiveType.CONFIGURAZIONE_LLM_PROVIDER.equals(servletSourceExport)
+				||
 				ArchiveType.CONFIGURAZIONE_URL_INVOCAZIONE_REGOLA.equals(servletSourceExport)
 				||
 				ArchiveType.CONFIGURAZIONE_PLUGIN_CLASSE.equals(servletSourceExport)
@@ -296,6 +298,8 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				||
 				ArchiveType.CONFIGURAZIONE_ATTRIBUTE_AUTHORITY.equals(servletSourceExport)
 				||
+				ArchiveType.CONFIGURAZIONE_LLM_PROVIDER.equals(servletSourceExport)
+				||
 				ArchiveType.CONFIGURAZIONE_URL_INVOCAZIONE_REGOLA.equals(servletSourceExport)
 				||
 				ArchiveType.CONFIGURAZIONE_PLUGIN_CLASSE.equals(servletSourceExport)
@@ -330,6 +334,8 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				ArchiveType.CONFIGURAZIONE_TOKEN_POLICY.equals(servletSourceExport)
 				||
 				ArchiveType.CONFIGURAZIONE_ATTRIBUTE_AUTHORITY.equals(servletSourceExport)
+				||
+				ArchiveType.CONFIGURAZIONE_LLM_PROVIDER.equals(servletSourceExport)
 				||
 				ArchiveType.CONFIGURAZIONE_URL_INVOCAZIONE_REGOLA.equals(servletSourceExport)
 				||

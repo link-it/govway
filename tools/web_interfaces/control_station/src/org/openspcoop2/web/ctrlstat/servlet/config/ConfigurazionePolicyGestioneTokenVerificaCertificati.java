@@ -661,7 +661,7 @@ public class ConfigurazionePolicyGestioneTokenVerificaCertificati extends Action
 					dati.add(ServletUtils.getDataElementForEditModeFinished());
 					
 					dati = confHelper.addPolicyGestioneTokenToDati(tipoOperazione,dati,id,nome,descrizione,tipo,propConfigPolicyGestioneTokenLabelList,propConfigPolicyGestioneTokenList,
-							attributeAuthority, genericProperties);
+							attributeAuthority, false, genericProperties);
 							
 					dati = confHelper.addPropertiesConfigToDati(tipoOperazione,dati, tipo, configurazioneBean,false);
 					

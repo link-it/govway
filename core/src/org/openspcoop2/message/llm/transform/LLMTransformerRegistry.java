@@ -22,14 +22,37 @@ package org.openspcoop2.message.llm.transform;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
+
+import org.openspcoop2.message.llm.stream.LLMProviderStreamReader;
+import org.openspcoop2.message.llm.stream.LLMProviderStreamTransport;
+import org.openspcoop2.message.llm.stream.SseStreamReader;
+import org.openspcoop2.message.llm.transform.anthropic.AnthropicInboundProviderResponseTransformer;
+import org.openspcoop2.message.llm.transform.anthropic.AnthropicMessagesChunkDecoder;
+import org.openspcoop2.message.llm.transform.anthropic.AnthropicMessagesChunkEncoder;
+import org.openspcoop2.message.llm.transform.anthropic.AnthropicMessagesInboundRequestTransformer;
+import org.openspcoop2.message.llm.transform.anthropic.AnthropicMessagesOutboundFrontDoorResponseTransformer;
+import org.openspcoop2.message.llm.transform.anthropic.AnthropicOutboundProviderRequestTransformer;
+import org.openspcoop2.message.llm.transform.openai.OpenAIChatChunkDecoder;
+import org.openspcoop2.message.llm.transform.openai.OpenAIChatChunkEncoder;
+import org.openspcoop2.message.llm.transform.openai.OpenAIChatInboundProviderResponseTransformer;
+import org.openspcoop2.message.llm.transform.openai.OpenAIChatInboundRequestTransformer;
+import org.openspcoop2.message.llm.transform.openai.OpenAIChatOutboundFrontDoorResponseTransformer;
+import org.openspcoop2.message.llm.transform.openai.OpenAIChatOutboundProviderRequestTransformer;
 
 
 /**
- * Registry dei trasformatori LLM. Per il prototipo è una coppia di mappe
- * statiche: inbound request (front-door, indicizzati per LLMDialect) e
- * outbound provider request (back-door, indicizzati per providerId).
- * Sarà esteso con: inbound provider response, outbound front-door response,
- * varianti streaming.
+ * Registry dei trasformatori LLM. Per il prototipo è un insieme di mappe statiche
+ * indicizzate per LLMDialect o providerId. Copre:
+ * <ul>
+ *   <li>inbound request (front-door, per LLMDialect)</li>
+ *   <li>outbound provider request (back-door, per providerId)</li>
+ *   <li>inbound provider response (per providerId)</li>
+ *   <li>outbound front-door response (per LLMDialect)</li>
+ *   <li>provider stream reader (transport, factory: instance-per-stream)</li>
+ *   <li>inbound provider chunk decoder (per providerId)</li>
+ *   <li>outbound front-door chunk encoder (per LLMDialect, factory: instance-per-stream)</li>
+ * </ul>
  *
  * @author Andrea Poli (apoli@link.it)
  */
@@ -47,13 +70,40 @@ public final class LLMTransformerRegistry {
 	private static final Map<LLMDialect, LLMOutboundFrontDoorResponseTransformer> OUTBOUND_FRONTDOOR_RESPONSE =
 			new EnumMap<>(LLMDialect.class);
 
+	private static final Map<LLMProviderStreamTransport, Supplier<LLMProviderStreamReader>> PROVIDER_STREAM_READERS =
+			new EnumMap<>(LLMProviderStreamTransport.class);
+
+	private static final Map<String, Supplier<LLMInboundProviderChunkDecoder>> INBOUND_PROVIDER_CHUNK_DECODERS =
+			new HashMap<>();
+
+	private static final Map<LLMDialect, Supplier<LLMOutboundFrontDoorChunkEncoder>> OUTBOUND_FRONTDOOR_CHUNK_ENCODERS =
+			new EnumMap<>(LLMDialect.class);
+
 	static {
+		// Front-door request transformer (per LLMDialect)
 		registerInbound(new OpenAIChatInboundRequestTransformer());
 		registerInbound(new AnthropicMessagesInboundRequestTransformer());
-		registerOutboundProvider(new AnthropicOutboundProviderRequestTransformer());
-		registerInboundProviderResponse(new AnthropicInboundProviderResponseTransformer());
+
+		// Front-door response transformer (per LLMDialect)
 		registerOutboundFrontDoorResponse(new OpenAIChatOutboundFrontDoorResponseTransformer());
 		registerOutboundFrontDoorResponse(new AnthropicMessagesOutboundFrontDoorResponseTransformer());
+
+		// Provider request transformer (per providerId)
+		registerOutboundProvider(new AnthropicOutboundProviderRequestTransformer());
+		registerOutboundProvider(new OpenAIChatOutboundProviderRequestTransformer());
+
+		// Provider response transformer (per providerId)
+		registerInboundProviderResponse(new AnthropicInboundProviderResponseTransformer());
+		registerInboundProviderResponse(new OpenAIChatInboundProviderResponseTransformer());
+
+		// Streaming: transport reader per transport, chunk decoder per providerId, chunk encoder per LLMDialect (front-door è sempre SSE).
+		// I decoder vengono registrati come factory (nuova istanza per ogni stream) perché alcune implementazioni
+		// sono stateful — es. OpenAIChatChunkDecoder traccia message_start/content_block_start già emessi.
+		PROVIDER_STREAM_READERS.put(LLMProviderStreamTransport.SSE, SseStreamReader::new);
+		INBOUND_PROVIDER_CHUNK_DECODERS.put(LLMProviders.ANTHROPIC, AnthropicMessagesChunkDecoder::new);
+		INBOUND_PROVIDER_CHUNK_DECODERS.put(LLMProviders.OPENAI, OpenAIChatChunkDecoder::new);
+		OUTBOUND_FRONTDOOR_CHUNK_ENCODERS.put(LLMDialect.OPENAI_CHAT_V1, OpenAIChatChunkEncoder::new);
+		OUTBOUND_FRONTDOOR_CHUNK_ENCODERS.put(LLMDialect.ANTHROPIC_MESSAGES_V1, AnthropicMessagesChunkEncoder::new);
 	}
 
 	private LLMTransformerRegistry() {
@@ -146,5 +196,58 @@ public final class LLMTransformerRegistry {
 			throw new LLMTransformException("Nessun outbound front-door response transformer registrato per LLMDialect=" + format.getValue());
 		}
 		return t;
+	}
+
+	/**
+	 * Risolve un'istanza fresh del reader di transport per i chunk in arrivo dal provider.
+	 * Ogni invocazione ritorna una nuova istanza perché i reader sono stateful (bufferano
+	 * la lettura in corso).
+	 *
+	 * @param transport tipo di transport streaming dichiarato dal provider request transformer
+	 *                  (vedi {@link LLMOutboundProviderRequestTransformer#getProviderStreamTransport()})
+	 * @throws LLMTransformException se non esiste un reader per quel transport
+	 */
+	public static LLMProviderStreamReader newProviderStreamReader(LLMProviderStreamTransport transport) throws LLMTransformException {
+		if (transport == null) {
+			throw new LLMTransformException("LLMProviderStreamTransport nullo: impossibile risolvere il reader");
+		}
+		Supplier<LLMProviderStreamReader> f = PROVIDER_STREAM_READERS.get(transport);
+		if (f == null) {
+			throw new LLMTransformException("Nessun provider stream reader registrato per transport=" + transport.getValue());
+		}
+		return f.get();
+	}
+
+	/**
+	 * Risolve un'istanza fresh del decoder semantico dei chunk provider verso canonical
+	 * stream events. Decoder potenzialmente stateful (es. {@code OpenAIChatChunkDecoder}
+	 * traccia message_start/content_block_start già emessi nello stream corrente),
+	 * istanza per stream.
+	 */
+	public static LLMInboundProviderChunkDecoder newInboundProviderChunkDecoder(String providerId) throws LLMTransformException {
+		if (providerId == null || providerId.isEmpty()) {
+			throw new LLMTransformException("providerId nullo o vuoto: impossibile risolvere il chunk decoder");
+		}
+		Supplier<LLMInboundProviderChunkDecoder> supplier = INBOUND_PROVIDER_CHUNK_DECODERS.get(providerId);
+		if (supplier == null) {
+			throw new LLMTransformException("Nessun inbound provider chunk decoder registrato per providerId=" + providerId);
+		}
+		return supplier.get();
+	}
+
+	/**
+	 * Risolve un'istanza fresh dell'encoder front-door per i chunk verso il client.
+	 * Encoder potenzialmente stateful (es. OpenAI mantiene id/model dei chunk),
+	 * istanza per stream.
+	 */
+	public static LLMOutboundFrontDoorChunkEncoder newOutboundFrontDoorChunkEncoder(LLMDialect dialect) throws LLMTransformException {
+		if (dialect == null) {
+			throw new LLMTransformException("LLMDialect nullo: impossibile risolvere il chunk encoder");
+		}
+		Supplier<LLMOutboundFrontDoorChunkEncoder> f = OUTBOUND_FRONTDOOR_CHUNK_ENCODERS.get(dialect);
+		if (f == null) {
+			throw new LLMTransformException("Nessun outbound front-door chunk encoder registrato per LLMDialect=" + dialect.getValue());
+		}
+		return f.get();
 	}
 }

@@ -208,7 +208,8 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 			String autenticazioneTokenS = apsHelper.getParametroBoolean(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO);
 			boolean autenticazioneToken = ServletUtils.isCheckBoxEnabled(autenticazioneTokenS);
 			String tokenPolicy = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY);
-			
+			String llmPolicy = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_LLM_PROVIDER);
+
 			// proxy
 			String proxyEnabled = apsHelper.getParametroBoolean(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
 			String proxyHostname = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
@@ -389,12 +390,14 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 			IDAccordo idAccordo = null;
 			String protocollo = null;
 			String portType = null;
+			boolean apiIsLLM = false;
 			if (asps != null) {
 				idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
 				as = apcCore.getAccordoServizioSintetico(idAccordo);
 				serviceBinding = apcCore.toMessageServiceBinding(as.getServiceBinding());
 				protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(asps.getTipoSoggettoErogatore());
 				portType = asps.getPortType();
+				apiIsLLM = org.openspcoop2.protocol.manifest.utils.InterfaceTypeUtils.isLLM(apcCore.formatoSpecifica2InterfaceType(as.getFormatoSpecifica()));
 			}
 
 			boolean forceHttps = false;
@@ -718,7 +721,12 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 							autorizzazioneRuoliToken, autorizzazioneRuoliTipologiaToken, autorizzazioneRuoliMatchToken);
 					
 					if(ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
-						dati = apsHelper.addEndPointToDati(dati, serviceBinding, connettoreDebug, endpointtype, autenticazioneHttp, 
+						String llmUrlOverride = apsHelper.addLLMProviderSectionAndResolveUrl(dati, apiIsLLM, llmPolicy, TipoOperazione.ADD, postBackViaPost);
+						if (llmUrlOverride != null) {
+							url = llmUrlOverride;
+							httpsurl = llmUrlOverride;
+						}
+						dati = apsHelper.addEndPointToDati(dati, serviceBinding, connettoreDebug, endpointtype, autenticazioneHttp,
 								null, //(apsHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX , 
 								url, nomeCodaJms,
 								tipoJms, user,
@@ -784,10 +792,13 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 						autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
 						listExtendedConnettore,servizioApplicativoServerEnabled,servizioApplicativoServer);
 			}
-			
+			if (isOk && ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
+				isOk = apsHelper.checkLLMPolicyData(apiIsLLM, llmPolicy);
+			}
+
 			if (!isOk) {
 				// setto la barra del titolo
-				ServletUtils.setPageDataTitle(pd,lstParm); 
+				ServletUtils.setPageDataTitle(pd,lstParm);
 
 				// preparo i campi
 				List<DataElement> dati = new ArrayList<>();
@@ -815,8 +826,13 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 						autorizzazioneRuoliToken, autorizzazioneRuoliTipologiaToken, autorizzazioneRuoliMatchToken);
 				
 				if(ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
-					dati = apsHelper.addEndPointToDati(dati, serviceBinding, connettoreDebug, endpointtype, autenticazioneHttp, 
-							null, //(apsHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX , 
+					String llmUrlOverride = apsHelper.addLLMProviderSectionAndResolveUrl(dati, apiIsLLM, llmPolicy, TipoOperazione.ADD, postBackViaPost);
+					if (llmUrlOverride != null) {
+						url = llmUrlOverride;
+						httpsurl = llmUrlOverride;
+					}
+					dati = apsHelper.addEndPointToDati(dati, serviceBinding, connettoreDebug, endpointtype, autenticazioneHttp,
+							null, //(apsHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX ,
 							url, nomeCodaJms,
 							tipoJms, user,
 							password, initcont, urlpgk,

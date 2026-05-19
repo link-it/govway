@@ -35,7 +35,6 @@ import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.message.exception.MessageNotSupportedException;
 import org.openspcoop2.message.llm.transform.LLMDialect;
-import org.openspcoop2.message.llm.transform.LLMProviders;
 import org.openspcoop2.message.rest.OpenSPCoop2Message_json_impl;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.handlers.BaseContext;
@@ -75,7 +74,9 @@ public final class LLMHandlerSupport {
 	 * si attiveranno; le transazioni non-LLM restano del tutto trasparenti.
 	 * </p>
 	 * <p>
-	 * Per il prototipo il providerId è hardcoded ad {@link LLMProviders#ANTHROPIC}.
+	 * Imposta solo il dialetto front-door derivato dal FormatoSpecifica;
+	 * il providerId back-end viene risolto in {@code LLMOutboundRequestHandler}
+	 * leggendo la LLM Provider Policy associata al connettore.
 	 * </p>
 	 */
 	public static void populateLLMContext(PdDContext pddContext, AccordoServizioParteComune apc) {
@@ -91,7 +92,17 @@ public final class LLMHandlerSupport {
 			return;
 		}
 		pddContext.addObject(LLMHandlerConstants.PDD_CTX_LLM_FORMATO, dialect);
-		pddContext.addObject(LLMHandlerConstants.PDD_CTX_LLM_PROVIDER, LLMProviders.ANTHROPIC);
+	}
+
+	/**
+	 * Salva nel PdDContext il providerId back-end (es. {@code "anthropic"},
+	 * {@code "openai"}) risolto dal {@code LLMOutboundRequestHandler}.
+	 */
+	public static void setLLMProvider(PdDContext pddContext, String providerId) {
+		if (pddContext == null || providerId == null) {
+			return;
+		}
+		pddContext.addObject(LLMHandlerConstants.PDD_CTX_LLM_PROVIDER, providerId);
 	}
 
 	/**

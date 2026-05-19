@@ -31,6 +31,9 @@ public final class LLMProviders {
 	/** Anthropic API diretta (https://api.anthropic.com). */
 	public static final String ANTHROPIC = "anthropic";
 
+	/** OpenAI API diretta o endpoint OpenAI-compatible (es. Anthropic /v1/chat/completions, Mistral, Groq, vLLM, ...). */
+	public static final String OPENAI = "openai";
+
 	private LLMProviders() {
 		// utility class
 	}

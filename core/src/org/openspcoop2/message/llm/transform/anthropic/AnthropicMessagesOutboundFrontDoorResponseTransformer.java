@@ -17,9 +17,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.openspcoop2.message.llm.transform;
+package org.openspcoop2.message.llm.transform.anthropic;
 
 import org.openspcoop2.message.llm.CanonicalChatResponse;
+import org.openspcoop2.message.llm.transform.LLMDialect;
+import org.openspcoop2.message.llm.transform.LLMOutboundFrontDoorResponseTransformer;
+import org.openspcoop2.message.llm.transform.LLMTransformException;
 import org.openspcoop2.utils.json.JSONUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -59,11 +62,11 @@ public class AnthropicMessagesOutboundFrontDoorResponseTransformer implements LL
 	}
 
 	private void ensureEnvelopeFields(ObjectNode out) {
-		if (!out.hasNonNull("type")) {
-			out.put("type", "message");
+		if (!out.hasNonNull(AnthropicMessagesFields.FIELD_TYPE)) {
+			out.put(AnthropicMessagesFields.FIELD_TYPE, AnthropicMessagesFields.FIELD_MESSAGE);
 		}
-		if (!out.hasNonNull("role")) {
-			out.put("role", "assistant");
+		if (!out.hasNonNull(AnthropicMessagesFields.FIELD_ROLE)) {
+			out.put(AnthropicMessagesFields.FIELD_ROLE, AnthropicMessagesFields.ROLE_ASSISTANT);
 		}
 	}
 }

@@ -206,7 +206,8 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			String autenticazioneTokenS = apsHelper.getParametroBoolean(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO);
 			strutsBean.autenticazioneToken = ServletUtils.isCheckBoxEnabled(autenticazioneTokenS);
 			strutsBean.tokenPolicy = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY);
-			
+			strutsBean.llmPolicy = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_LLM_PROVIDER);
+
 			// proxy
 			strutsBean.proxyEnabled = apsHelper.getParametroBoolean(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
 			strutsBean.proxyHostname = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
@@ -542,7 +543,8 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			strutsBean.protocolProperties = apsHelper.estraiProtocolPropertiesDaRequest(strutsBean.consoleConfiguration, strutsBean.consoleOperationType);
 
 			AccordoServizioParteComuneSintetico as = apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
-			
+			strutsBean.apiIsLLM = org.openspcoop2.protocol.manifest.utils.InterfaceTypeUtils.isLLM(apcCore.formatoSpecifica2InterfaceType(as.getFormatoSpecifica()));
+
 			boolean forceHttps = false;
 			boolean forceHttpsClient = false;
 			boolean forcePDND = false;
@@ -789,7 +791,12 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 					String tipoSendas = ConnettoriCostanti.TIPO_SEND_AS[0];
 					String tipoJms = ConnettoriCostanti.TIPI_CODE_JMS[0];
 					if (apsHelper.isModalitaAvanzata()) {
-						dati = apsHelper.addEndPointToDati(dati, apcCore.toMessageServiceBinding(as.getServiceBinding()), strutsBean.connettoreDebug, strutsBean.endpointtype, strutsBean.autenticazioneHttp, null, 
+						String llmUrlOverride = apsHelper.addLLMProviderSectionAndResolveUrl(dati, strutsBean.apiIsLLM, strutsBean.llmPolicy, TipoOperazione.ADD, postBackViaPost);
+						if (llmUrlOverride != null) {
+							strutsBean.url = llmUrlOverride;
+							strutsBean.httpsurl = llmUrlOverride;
+						}
+						dati = apsHelper.addEndPointToDati(dati, apcCore.toMessageServiceBinding(as.getServiceBinding()), strutsBean.connettoreDebug, strutsBean.endpointtype, strutsBean.autenticazioneHttp, null,
 								strutsBean.url, strutsBean.nome,
 								tipoJms, strutsBean.user,
 								strutsBean.password, strutsBean.initcont, strutsBean.urlpgk,
@@ -883,7 +890,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			if(isOk){
 				try{
 					//validazione campi dinamici
-					strutsBean.consoleDynamicConfiguration.validateDynamicConfigFruizioneAccordoServizioParteSpecifica(strutsBean.consoleConfiguration, strutsBean.consoleOperationType, apsHelper, strutsBean.protocolProperties, 
+					strutsBean.consoleDynamicConfiguration.validateDynamicConfigFruizioneAccordoServizioParteSpecifica(strutsBean.consoleConfiguration, strutsBean.consoleOperationType, apsHelper, strutsBean.protocolProperties,
 							strutsBean.registryReader, strutsBean.configRegistryReader, idFruizione);
 				}catch(ProtocolException e){
 					ControlStationCore.getLog().error(e.getMessage(),e);
@@ -892,6 +899,9 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 				}
 			}
 
+			if (isOk) {
+				isOk = apsHelper.checkLLMPolicyData(strutsBean.apiIsLLM, strutsBean.llmPolicy);
+			}
 
 			if (!isOk) {
 				// setto la barra del titolo
@@ -941,6 +951,11 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 						,null,null,null,null,null,null,null,null,null);
 
 				if (apsHelper.isModalitaAvanzata()) {
+					String llmUrlOverride = apsHelper.addLLMProviderSectionAndResolveUrl(dati, strutsBean.apiIsLLM, strutsBean.llmPolicy, TipoOperazione.ADD, postBackViaPost);
+					if (llmUrlOverride != null) {
+						strutsBean.url = llmUrlOverride;
+						strutsBean.httpsurl = llmUrlOverride;
+					}
 					dati = apsHelper.addEndPointToDati(dati, apcCore.toMessageServiceBinding(as.getServiceBinding()), strutsBean.connettoreDebug, strutsBean.endpointtype, strutsBean.autenticazioneHttp, null,
 							strutsBean.url, strutsBean.nome, strutsBean.tipo, strutsBean.user,
 							strutsBean.password, strutsBean.initcont, strutsBean.urlpgk,
@@ -1022,6 +1037,9 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 						strutsBean.apiKeyHeader, strutsBean.apiKeyValue, strutsBean.appIdHeader, strutsBean.appIdValue,
 						connettoreStatusParams,
 						listExtendedConnettore);
+				if (strutsBean.apiIsLLM) {
+					apsHelper.addLLMPolicyPropertyToConnettore(connettore, strutsBean.llmPolicy);
+				}
 			}
 
 			Fruitore fruitore = new Fruitore();
@@ -1107,6 +1125,11 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 							,null,null,null,null,null,null,null,null,null);
 
 					if (apsHelper.isModalitaAvanzata()) {
+						String llmUrlOverride = apsHelper.addLLMProviderSectionAndResolveUrl(dati, strutsBean.apiIsLLM, strutsBean.llmPolicy, TipoOperazione.ADD, postBackViaPost);
+						if (llmUrlOverride != null) {
+							strutsBean.url = llmUrlOverride;
+							strutsBean.httpsurl = llmUrlOverride;
+						}
 						dati = apsHelper.addEndPointToDati(dati, apcCore.toMessageServiceBinding(as.getServiceBinding()), strutsBean.connettoreDebug, strutsBean.endpointtype, strutsBean.autenticazioneHttp, null,
 								strutsBean.url, strutsBean.nome, strutsBean.tipo, strutsBean.user,
 								strutsBean.password, strutsBean.initcont, strutsBean.urlpgk,

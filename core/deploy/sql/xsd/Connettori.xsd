@@ -400,6 +400,18 @@
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
+                <xsd:element name="llm_policy" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="llm_policy"/>
+                                <linkit:sql-ddl-column-comment>Identificativo della policy del provider LLM</linkit:sql-ddl-column-comment>
+                                <linkit:sql-column-comment><![CDATA[LLM]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
                 <xsd:element name="api_key" type="xsd:string" minOccurs="0">
                     <xsd:annotation>
                         <xsd:appinfo>

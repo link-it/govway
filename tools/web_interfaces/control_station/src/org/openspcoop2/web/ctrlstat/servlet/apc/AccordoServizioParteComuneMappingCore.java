@@ -810,15 +810,14 @@ public class AccordoServizioParteComuneMappingCore extends ControlStationCore {
 			FormatoSpecifica formato = as.getFormatoSpecifica();
 			String urlSuggerita = null;
 			switch (formato) {
-			case OPEN_API_3:
-			case SWAGGER_2:
+			case OPEN_API_3, SWAGGER_2, OPENAI_CHAT_V1, ANTHROPIC_MESSAGES_V1:
 				if(as.getByteWsdlConcettuale()!=null) {
 					IApiReader apiReader = null;
-					if(FormatoSpecifica.OPEN_API_3.equals(formato)) {
-						apiReader = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
+					if(FormatoSpecifica.SWAGGER_2.equals(formato)) {
+						apiReader = ApiFactory.newApiReader(ApiFormats.SWAGGER_2);
 					}
 					else {
-						apiReader = ApiFactory.newApiReader(ApiFormats.SWAGGER_2);
+						apiReader = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
 					}
 					ApiReaderConfig config = new ApiReaderConfig();
 					config.setProcessInclude(false);

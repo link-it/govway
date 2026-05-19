@@ -574,6 +574,8 @@ public class ConfigurazioneCostanti {
 	public static final String LABEL_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_VERIFICA_CONNETTIVITA_DI = CostantiControlStation.LABEL_VERIFICA_CONNETTIVITA_DI;
 	
 	public static final String LABEL_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY = "Attribute Authority";
+
+	public static final String LABEL_CONFIGURAZIONE_LLM_PROVIDER = "LLM Provider";
 	
 	public static final String VALUE_CONFIGURAZIONE_RATE_LIMITING_QUALSIASI = "-*-";
 	public static final String LABEL_CONFIGURAZIONE_RATE_LIMITING_QUALSIASI = CostantiControlStation.LABEL_QUALSIASI;
@@ -2169,6 +2171,7 @@ public class ConfigurazioneCostanti {
 	public static final String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN;
 	public static final String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_RETRIEVE_POLICY_TOKEN = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_RETRIEVE_POLICY_TOKEN;
 	public static final String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_ATTRIBUTE_AUTHORITY = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_ATTRIBUTE_AUTHORITY;
+	public static final String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_LLM_PROVIDER = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_LLM_PROVIDER;
 		
 	public static final String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_NUM_MASSIMO_RICHIESTE_SIMULTANEE_TIPOLOGIA_ERRORE = TipoErrore.FAULT.getValue();
 	
@@ -2493,8 +2496,12 @@ public class ConfigurazioneCostanti {
 	public static final String PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE = Costanti.SESSION_ATTRIBUTE_TAB_KEY_PREFIX + "infoType";
 	public static final String PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_TOKEN = "token";
 	public static final String PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_ATTRIBUTE_AUTHORITY = "aa";
+	public static final String PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_LLM_PROVIDER = "llm";
 	public static boolean isConfigurazioneAttributeAuthority(String v) {
 		return PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_ATTRIBUTE_AUTHORITY.equals(v);
+	}
+	public static boolean isConfigurazioneLLMProvider(String v) {
+		return PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_LLM_PROVIDER.equals(v);
 	}
 	
 		
@@ -2507,7 +2514,10 @@ public class ConfigurazioneCostanti {
 	
 	public static final String LABEL_ATTRIBUTE_AUTHORITY_ESPORTA_SELEZIONATI = "Esporta";
 	public static final String LABEL_ATTRIBUTE_AUTHORITY_ESPORTA_SELEZIONATI_ONCLICK = "Esporta('"+ArchiveType.CONFIGURAZIONE_ATTRIBUTE_AUTHORITY.name()+"')";
-	
+
+	public static final String LABEL_LLM_PROVIDER_ESPORTA_SELEZIONATI = "Esporta";
+	public static final String LABEL_LLM_PROVIDER_ESPORTA_SELEZIONATI_ONCLICK = "Esporta('"+ArchiveType.CONFIGURAZIONE_LLM_PROVIDER.name()+"')";
+
 	public static final String LABEL_PLUGIN_CLASSE_ESPORTA_SELEZIONATI = "Esporta";
 	public static final String LABEL_PLUGIN_CLASSE_ESPORTA_SELEZIONATI_ONCLICK = "Esporta('"+ArchiveType.CONFIGURAZIONE_PLUGIN_CLASSE.name()+"')";
 	public static final String LABEL_PLUGIN_ARCHIVIO_ESPORTA_SELEZIONATI = "Esporta";
@@ -2611,6 +2621,8 @@ public class ConfigurazioneCostanti {
 	public static final String LABEL_TOKEN_POLICY_IN_USO_BODY_HEADER_NESSUN_RISULTATO = "La policy non risulta utilizzata in alcuna configurazione";
 	
 	public static final String LABEL_ATTRIBUTE_AUTHORITY_IN_USO_BODY_HEADER_NESSUN_RISULTATO = "L'Attribute Authority non risulta utilizzata in alcuna configurazione";
+
+	public static final String LABEL_LLM_PROVIDER_IN_USO_BODY_HEADER_NESSUN_RISULTATO = "LLM Provider non risulta utilizzato in alcuna configurazione";
 	
 	public static final String LABEL_RATE_LIMITING_POLICY_IN_USO_BODY_HEADER_NESSUN_RISULTATO = "La policy non risulta utilizzata in alcuna configurazione";
 	

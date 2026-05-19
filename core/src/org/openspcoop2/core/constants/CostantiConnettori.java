@@ -51,6 +51,7 @@ public class CostantiConnettori {
     public static final String CONNETTORE_READ_CONNECTION_TIMEOUT_GLOBALE = "readConnectionTimeoutGlobale";
     public static final String CONNETTORE_TEMPO_MEDIO_RISPOSTA = "avgResponseTime";
     public static final String CONNETTORE_TOKEN_POLICY = "tokenPolicy";
+    public static final String CONNETTORE_LLM_POLICY = "llmPolicy";
 	
     
     /** EXTENDED PROPERTIES */

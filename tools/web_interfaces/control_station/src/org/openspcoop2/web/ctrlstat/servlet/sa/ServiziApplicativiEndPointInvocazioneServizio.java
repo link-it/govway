@@ -186,6 +186,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 			String autenticazioneTokenS = saHelper.getParametroBoolean(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO);
 			boolean autenticazioneToken = ServletUtils.isCheckBoxEnabled(autenticazioneTokenS);
 			String tokenPolicy = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY);
+			String llmPolicy = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_LLM_PROVIDER);
 			boolean forcePDND = false;
 			boolean forceOAuth = false;
 			boolean forceDPoP = false;
@@ -542,8 +543,9 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 			List<Parameter> lstParm = saHelper.getTitoloSA(parentSA, provider, idAsps, idPorta);
 
 			boolean integrationManagerEnabled = !saHelper.isModalitaStandard() && saCore.isIntegrationManagerEnabled();
-						
+
 			ServiceBinding serviceBinding = null;
+			boolean apiIsLLM = false;
 			String labelPerPorta = null;
 			if(parentSA!=null && (parentSA.intValue() == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_CONFIGURAZIONE)) {
 
@@ -572,8 +574,9 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 				}
 
 				AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(apsCore);
-				AccordoServizioParteComuneSintetico apc = apcCore.getAccordoServizioSintetico(asps.getIdAccordo()); 
+				AccordoServizioParteComuneSintetico apc = apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
 				serviceBinding = apcCore.toMessageServiceBinding(apc.getServiceBinding());
+				apiIsLLM = org.openspcoop2.protocol.manifest.utils.InterfaceTypeUtils.isLLM(apcCore.formatoSpecifica2InterfaceType(apc.getFormatoSpecifica()));
 				
 				boolean isSoapOneWay = false;
 				if(pa!=null) {
@@ -875,6 +878,13 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 					}
 				}
 
+				if(llmPolicy==null && props!=null){
+					String v = props.get(CostantiDB.CONNETTORE_LLM_POLICY);
+					if(v!=null && !"".equals(v)){
+						llmPolicy = v;
+					}
+				}
+
 				autenticazioneHttp = saHelper.getAutenticazioneHttp(autenticazioneHttp, endpointtype, user);
 
 				if(autenticazioneApiKey==null || StringUtils.isEmpty(autenticazioneApiKey)) {
@@ -1067,7 +1077,12 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 						TipoOperazione.CHANGE, tipoCredenzialiSSLVerificaTuttiICampi, changepwd,
 						postBackViaPost);
 
-				dati = saHelper.addEndPointToDati(dati, serviceBinding, connettoreDebug, endpointtype, autenticazioneHttp, null,
+				String llmUrlOverride = saHelper.addLLMProviderSectionAndResolveUrl(dati, apiIsLLM, llmPolicy, TipoOperazione.CHANGE, postBackViaPost);
+			if (llmUrlOverride != null) {
+				url = llmUrlOverride;
+				httpsurl = llmUrlOverride;
+			}
+			dati = saHelper.addEndPointToDati(dati, serviceBinding, connettoreDebug, endpointtype, autenticazioneHttp, null,
 						url, nome,
 						tipo, user, password, initcont, urlpgk, provurl,
 						connfact, sendas, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, TipoOperazione.CHANGE, 
@@ -1110,6 +1125,9 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 
 			// Controlli sui campi immessi
 			boolean isOk = saHelper.servizioApplicativoEndPointCheckData(protocollo, listExtendedConnettore, sa);
+			if (isOk) {
+				isOk = saHelper.checkLLMPolicyData(apiIsLLM, llmPolicy);
+			}
 			if (!isOk) {
 
 				// setto la barra del titolo
@@ -1129,7 +1147,12 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 						TipoOperazione.CHANGE, tipoCredenzialiSSLVerificaTuttiICampi, changepwd,
 						postBackViaPost);
 
-				dati = saHelper.addEndPointToDati(dati, serviceBinding, connettoreDebug, endpointtype, autenticazioneHttp, null,
+				String llmUrlOverride = saHelper.addLLMProviderSectionAndResolveUrl(dati, apiIsLLM, llmPolicy, TipoOperazione.CHANGE, postBackViaPost);
+			if (llmUrlOverride != null) {
+				url = llmUrlOverride;
+				httpsurl = llmUrlOverride;
+			}
+			dati = saHelper.addEndPointToDati(dati, serviceBinding, connettoreDebug, endpointtype, autenticazioneHttp, null,
 						url, nome,
 						tipo, user, password, initcont, urlpgk, provurl,
 						connfact, sendas, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, TipoOperazione.CHANGE, 
@@ -1335,6 +1358,9 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 						apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
 						connettoreStatusParams,
 						listExtendedConnettore);
+				if (apiIsLLM) {
+					saHelper.addLLMPolicyPropertyToConnettore(connis, llmPolicy);
+				}
 				is.setConnettore(connis);
 				sa.setInvocazioneServizio(is);
 

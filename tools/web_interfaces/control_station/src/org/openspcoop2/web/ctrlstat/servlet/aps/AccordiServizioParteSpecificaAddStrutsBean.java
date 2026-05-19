@@ -107,6 +107,8 @@ public class AccordiServizioParteSpecificaAddStrutsBean {
 
 	protected boolean autenticazioneToken = false;
 	protected String tokenPolicy = null;
+	protected String llmPolicy = null;
+	protected boolean apiIsLLM = false;
 	
 	protected String autenticazioneApiKey = null;
 	protected boolean useOAS3Names=true;

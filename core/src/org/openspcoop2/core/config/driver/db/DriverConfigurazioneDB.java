@@ -817,7 +817,11 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 	public boolean isPolicyNegoziazioneTokenUsedInConnettore(String nome) throws DriverConfigurazioneException{
 		return this.connettoriDriver.isPolicyNegoziazioneTokenUsedInConnettore(nome);
 	}
-	
+
+	public boolean isLLMPolicyUsedInConnettore(String nome) throws DriverConfigurazioneException{
+		return this.connettoriDriver.isLLMPolicyUsedInConnettore(nome);
+	}
+
 	public Connettore getConnettore(long idConnettore) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		return this.connettoriDriver.getConnettore(idConnettore);
 	}

@@ -188,7 +188,8 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			String autenticazioneTokenS = apsHelper.getParametroBoolean(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO);
 			boolean autenticazioneToken = ServletUtils.isCheckBoxEnabled(autenticazioneTokenS);
 			String tokenPolicy = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY);
-			
+			String llmPolicy = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_LLM_PROVIDER);
+
 			// proxy
 			String proxyEnabled = apsHelper.getParametroBoolean(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
 			String proxyHostname = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
@@ -569,7 +570,8 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			String postBackElementName = apsHelper.getPostBackElementName();
 			
 			AccordoServizioParteComuneSintetico as = apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
-			
+			boolean apiIsLLM = org.openspcoop2.protocol.manifest.utils.InterfaceTypeUtils.isLLM(apcCore.formatoSpecifica2InterfaceType(as.getFormatoSpecifica()));
+
 			boolean forceHttps = false;
 			boolean forceHttpsClient = false;
 			boolean forcePDND = false;
@@ -843,6 +845,13 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 						autenticazioneToken = true;
 					}
 				}
+
+				if(llmPolicy==null && props!=null){
+					String v = props.get(CostantiDB.CONNETTORE_LLM_POLICY);
+					if(v!=null && !"".equals(v)){
+						llmPolicy = v;
+					}
+				}
 				
 				if (url == null) {
 					url = props.get(CostantiDB.CONNETTORE_HTTP_LOCATION);
@@ -1064,6 +1073,11 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 								connettoreStatusParams);
 					}
 					else {
+						String llmUrlOverride = apsHelper.addLLMProviderSectionAndResolveUrl(dati, apiIsLLM, llmPolicy, tipoOp, postBackViaPost);
+						if (llmUrlOverride != null) {
+							url = llmUrlOverride;
+							httpsurl = llmUrlOverride;
+						}
 						dati = apsHelper.addEndPointToDati(dati, apcCore.toMessageServiceBinding(as.getServiceBinding()), connettoreDebug, endpointtype, autenticazioneHttp,
 								null, //(apsHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
 								url, nome,
@@ -1159,13 +1173,17 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			if(isOk){
 				try{
 					//validazione campi dinamici
-					strutsBean.consoleDynamicConfiguration.validateDynamicConfigFruizioneAccordoServizioParteSpecifica(strutsBean.consoleConfiguration, strutsBean.consoleOperationType, apsHelper, strutsBean.protocolProperties, 
+					strutsBean.consoleDynamicConfiguration.validateDynamicConfigFruizioneAccordoServizioParteSpecifica(strutsBean.consoleConfiguration, strutsBean.consoleOperationType, apsHelper, strutsBean.protocolProperties,
 							strutsBean.registryReader, strutsBean.configRegistryReader, idFruizione);
 				}catch(ProtocolException e){
 					ControlStationCore.getLog().error(e.getMessage(),e);
 					pd.setMessage(e.getMessage());
 					isOk = false;
 				}
+			}
+
+			if (isOk) {
+				isOk = apsHelper.checkLLMPolicyData(apiIsLLM, llmPolicy);
 			}
 
 			if (!isOk) {
@@ -1228,7 +1246,12 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 							);
 				}
 				else {
-					dati = apsHelper.addEndPointToDati(dati, apcCore.toMessageServiceBinding(as.getServiceBinding()), connettoreDebug, endpointtype, autenticazioneHttp, 
+					String llmUrlOverride = apsHelper.addLLMProviderSectionAndResolveUrl(dati, apiIsLLM, llmPolicy, tipoOp, postBackViaPost);
+					if (llmUrlOverride != null) {
+						url = llmUrlOverride;
+						httpsurl = llmUrlOverride;
+					}
+					dati = apsHelper.addEndPointToDati(dati, apcCore.toMessageServiceBinding(as.getServiceBinding()), connettoreDebug, endpointtype, autenticazioneHttp,
 							null, //(apsHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
 							url, nome,
 							tipo, user, password, initcont, urlpgk, provurl,
@@ -1303,11 +1326,16 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 						null,
 						null,null,null);
 
-				dati = apsHelper.addFruitoreToDati(tipoOp, versioniLabel, versioniValues, dati, 
+				dati = apsHelper.addFruitoreToDati(tipoOp, versioniLabel, versioniValues, dati,
 						oldStatoPackage, idServizio, idServizioFruitore, idSoggettoErogatoreDelServizio, nomeservizio, tiposervizio, versioneservizio, idSoggettoFruitore,
 						asps, servFru);
 
-				dati = apsHelper.addEndPointToDati(dati, apcCore.toMessageServiceBinding(as.getServiceBinding()), connettoreDebug, endpointtype, autenticazioneHttp, 
+				String llmUrlOverride = apsHelper.addLLMProviderSectionAndResolveUrl(dati, apiIsLLM, llmPolicy, tipoOp, postBackViaPost);
+				if (llmUrlOverride != null) {
+					url = llmUrlOverride;
+					httpsurl = llmUrlOverride;
+				}
+				dati = apsHelper.addEndPointToDati(dati, apcCore.toMessageServiceBinding(as.getServiceBinding()), connettoreDebug, endpointtype, autenticazioneHttp,
 						null, //(apsHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
 						url, nome,
 						tipo, user, password, initcont, urlpgk, provurl,
@@ -1456,6 +1484,10 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 					connettoreStatusParams,
 					listExtendedConnettore);
 
+			if (apiIsLLM) {
+				apsHelper.addLLMPolicyPropertyToConnettore(connettoreNew, llmPolicy);
+			}
+
 			Fruitore fruitore = new Fruitore();
 			
 			fruitore.setConfigurazioneAzioneList(servFru.getConfigurazioneAzioneList());
@@ -1563,7 +1595,12 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 								);
 					}
 					else {
-						dati = apsHelper.addEndPointToDati(dati, apcCore.toMessageServiceBinding(as.getServiceBinding()), connettoreDebug, endpointtype, autenticazioneHttp, 
+						String llmUrlOverride = apsHelper.addLLMProviderSectionAndResolveUrl(dati, apiIsLLM, llmPolicy, tipoOp, postBackViaPost);
+						if (llmUrlOverride != null) {
+							url = llmUrlOverride;
+							httpsurl = llmUrlOverride;
+						}
+						dati = apsHelper.addEndPointToDati(dati, apcCore.toMessageServiceBinding(as.getServiceBinding()), connettoreDebug, endpointtype, autenticazioneHttp,
 								null, //(apsHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
 								url,
 								nome, tipo, user, password, initcont, urlpgk,

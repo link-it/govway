@@ -214,6 +214,14 @@ public class ProprietaOggettoRegistro extends HttpServlet{
 					risultatiRicerca.add(this.getProprieta(gp.getProprietaOggetto(), gp.getDescrizione()));
 				}
 				break;
+			case LLM_PROVIDER:
+				identificativi = exporterUtils.getIdsLLMProvider(identificativoOggetto);
+				for (Object object : identificativi) {
+					IDGenericProperties idGP = (IDGenericProperties)object;
+					GenericProperties gp = confCore.getGenericProperties(idGP.getNome(), idGP.getTipologia(), false);
+					risultatiRicerca.add(this.getProprieta(gp.getProprietaOggetto(), gp.getDescrizione()));
+				}
+				break;
 
 			case EROGAZIONE:{
 				String uriAPSerogata = identificativoOggetto;

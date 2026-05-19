@@ -2183,7 +2183,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				int dimensioneEntries = 0;
 
 
-				dimensioneEntries = 7; // configurazione, controllo del traffico, tracciamento, registrazioneMessaggi, policy, aa e audit
+				dimensioneEntries = 8; // configurazione, controllo del traffico, tracciamento, registrazioneMessaggi, policy, aa, llmProvider e audit
 				
 				if(this.core.isVisualizzaConfigurazioneAllarmiEnabled()) { // configurazione allarmi (solo se sono stati caricati dei plugin di tipo allarme)
 					dimensioneEntries++; // configurazione allarmi
@@ -2267,6 +2267,10 @@ public class ConsoleHelper implements IConsoleHelper {
 				entries[index][0] = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY;
 				entries[index][1] = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_LIST+"?"+
 						ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE+"="+ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_ATTRIBUTE_AUTHORITY;
+				index++;
+				entries[index][0] = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_LLM_PROVIDER;
+				entries[index][1] = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_LIST+"?"+
+						ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE+"="+ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_LLM_PROVIDER;
 				index++;
 				
 				entries[index][0] = GruppiCostanti.LABEL_GRUPPI;
@@ -12811,6 +12815,37 @@ public class ConsoleHelper implements IConsoleHelper {
 				addElementNonSelezionatoSeMaggioreUno,
 				checkTokenPolicyConfigurataPresente, tipoOperazione);
 	}
+
+	/**
+	 * Ritorna la lista dei nomi delle LLM Provider Policy configurate. Quando in change
+	 * la policy correntemente selezionata non risulta nella lista (es. cancellata) viene
+	 * forzato il valore {@code DEFAULT_VALUE_NON_SELEZIONATO}.
+	 */
+	public List<String> getLLMProviderList(boolean addElementNonSelezionatoSeMaggioreUno,
+			String checkLlmProviderConfigurataPresente, TipoOperazione tipoOperazione) throws DriverConfigurazioneException{
+		List<GenericProperties> llmProviderList = this.confCore.gestorePolicyTokenList(null,
+				ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_LLM_PROVIDER, null);
+
+		List<String> l = new ArrayList<>();
+		if(llmProviderList!=null) {
+			for(GenericProperties gp : llmProviderList) {
+				l.add(gp.getNome());
+			}
+		}
+
+		List<String> returnList = new ArrayList<>();
+		if(!l.isEmpty()) {
+			boolean forceValueNonSelezionato = TipoOperazione.CHANGE.equals(tipoOperazione) &&
+					(checkLlmProviderConfigurataPresente==null
+							|| StringUtils.isEmpty(checkLlmProviderConfigurataPresente)
+							|| !l.contains(checkLlmProviderConfigurataPresente));
+			if((addElementNonSelezionatoSeMaggioreUno && l.size()>1) || forceValueNonSelezionato) {
+				returnList.add(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO);
+			}
+		}
+		returnList.addAll(l);
+		return returnList;
+	}
 	private List<String> getTokenPolicy(String tipologia, boolean forcePDND, boolean forceOAuth, boolean forceDPoP,
 			boolean addElementNonSelezionatoSeMaggioreUno,
 			String checkTokenPolicyConfigurataPresente, TipoOperazione tipoOperazione) throws DriverConfigurazioneException{
@@ -14814,6 +14849,12 @@ public class ConsoleHelper implements IConsoleHelper {
 				break;
 			case SWAGGER_2:
 				labelTipiValidazione.add(CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_SWAGGER_2);
+				break;
+			case OPENAI_CHAT_V1:
+				labelTipiValidazione.add(CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_OPENAI_CHAT_V1);
+				break;
+			case ANTHROPIC_MESSAGES_V1:
+				labelTipiValidazione.add(CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_ANTHROPIC_MESSAGES_V1);
 				break;
 			case WSDL_11:
 				labelTipiValidazione.add(CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_WSDL_11);
@@ -18203,13 +18244,14 @@ public class ConsoleHelper implements IConsoleHelper {
 			if(tipo.equals(TipiConnettore.FILE.getNome()))
 				propertyName = CostantiConnettori.CONNETTORE_FILE_REQUEST_OUTPUT_FILE;
 		
-			// Prefix token
+			// Prefix token / llm
 			String token = "";
+			String llm = "";
 			if(addExtInfo) {
 				if(tipo.equals(TipiConnettore.HTTP.getNome()) || tipo.equals(TipiConnettore.HTTPS.getNome())) {
 					for (int i = 0; i < connettore.sizePropertyList(); i++) {
 						org.openspcoop2.core.config.Property singlecp = cp.get(i);
-						if (singlecp.getNome().equals(CostantiConnettori.CONNETTORE_TOKEN_POLICY) && 
+						if (singlecp.getNome().equals(CostantiConnettori.CONNETTORE_TOKEN_POLICY) &&
 								singlecp.getValore()!=null && StringUtils.isNotEmpty(singlecp.getValore())) {
 							if(tooltip) {
 								token = "[token: "+singlecp.getValore()+"]\n";
@@ -18218,10 +18260,19 @@ public class ConsoleHelper implements IConsoleHelper {
 								token = "[token] ";
 							}
 						}
+						if (singlecp.getNome().equals(CostantiConnettori.CONNETTORE_LLM_POLICY) &&
+								singlecp.getValore()!=null && StringUtils.isNotEmpty(singlecp.getValore())) {
+							if(tooltip) {
+								llm = "[llm: "+singlecp.getValore()+"]\n";
+							}
+							else {
+								llm = "[llm] ";
+							}
+						}
 					}
 				}
 			}
-			
+
 			for (int i = 0; i < connettore.sizePropertyList(); i++) {
 				org.openspcoop2.core.config.Property singlecp = cp.get(i);
 				if (singlecp.getNome().equals(propertyName)) {
@@ -18229,9 +18280,9 @@ public class ConsoleHelper implements IConsoleHelper {
 						urlConnettore = tipoLabel + singlecp.getValore();
 					}
 					else {
-						urlConnettore = token + singlecp.getValore();
+						urlConnettore = token + llm + singlecp.getValore();
 					}
-					
+
 					break;
 				}
 			}

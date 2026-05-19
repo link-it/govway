@@ -54,6 +54,8 @@ CREATE TABLE connettori
 	custom NUMBER,
 	-- Gestione Token
 	token_policy VARCHAR2(255),
+	-- LLM
+	llm_policy VARCHAR2(255),
 	api_key CLOB,
 	api_key_header VARCHAR2(255),
 	app_id CLOB,

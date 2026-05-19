@@ -209,7 +209,7 @@ public class DocumentoExporter extends HttpServlet {
 							case WSDL_11:
 								fileName = Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_WSDL_CONCETTUALE_WSDL;
 								break;
-							case OPEN_API_3:
+							case OPEN_API_3, OPENAI_CHAT_V1, ANTHROPIC_MESSAGES_V1:
 								YAMLUtils yamlUtils = YAMLUtils.getInstance();
 								if(yamlUtils.isYaml(docBytes)) {
 									fileName = Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_OPENAPI_3_0_YAML;

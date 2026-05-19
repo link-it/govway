@@ -192,6 +192,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			String autenticazioneTokenS = apsHelper.getParametroBoolean(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO);
 			strutsBean.autenticazioneToken = ServletUtils.isCheckBoxEnabled(autenticazioneTokenS);
 			strutsBean.tokenPolicy = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY);
+			strutsBean.llmPolicy = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_LLM_PROVIDER);
 			
 			// proxy
 			strutsBean.proxyEnabled = apsHelper.getParametroBoolean(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
@@ -659,6 +660,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 				strutsBean.serviceBinding = apcCore.toMessageServiceBinding(as.getServiceBinding());
 				strutsBean.formatoSpecifica = apcCore.formatoSpecifica2InterfaceType(as.getFormatoSpecifica());
+				strutsBean.apiIsLLM = org.openspcoop2.protocol.manifest.utils.InterfaceTypeUtils.isLLM(strutsBean.formatoSpecifica);
 				
 
 				accordoPrivato = as.getPrivato()!=null && as.getPrivato();
@@ -1557,8 +1559,13 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					}
 					
 					if(!(strutsBean.accordo == null || strutsBean.accordo.equals(AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_PARAMETRO_ACCORDO_NON_SELEZIONATO))) {
-					
-						dati = apsHelper.addEndPointToDati(dati, strutsBean.serviceBinding, strutsBean.connettoreDebug, strutsBean.endpointtype, strutsBean.autenticazioneHttp, 
+
+						String llmUrlOverride = apsHelper.addLLMProviderSectionAndResolveUrl(dati, strutsBean.apiIsLLM, strutsBean.llmPolicy, TipoOperazione.ADD, postBackViaPost);
+						if (llmUrlOverride != null) {
+							strutsBean.url = llmUrlOverride;
+							strutsBean.httpsurl = llmUrlOverride;
+						}
+						dati = apsHelper.addEndPointToDati(dati, strutsBean.serviceBinding, strutsBean.connettoreDebug, strutsBean.endpointtype, strutsBean.autenticazioneHttp,
 								null,//(apsHelper.isModalitaCompleta() || !multitenant)?null:
 								//	(generaPortaApplicativa?AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX : AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX), 
 								strutsBean.url, strutsBean.nome,
@@ -1727,6 +1734,10 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				}
 			}
 
+			if (isOk) {
+				isOk = apsHelper.checkLLMPolicyData(strutsBean.apiIsLLM, strutsBean.llmPolicy);
+			}
+
 			if (!isOk) {
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitleServletAdd(pd, labelList, servletList);
@@ -1781,7 +1792,12 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					}
 					
 					if(!(strutsBean.accordo == null || strutsBean.accordo.equals(AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_PARAMETRO_ACCORDO_NON_SELEZIONATO))) {
-						dati = apsHelper.addEndPointToDati(dati, strutsBean.serviceBinding, strutsBean.connettoreDebug, strutsBean.endpointtype, strutsBean.autenticazioneHttp, 
+						String llmUrlOverride = apsHelper.addLLMProviderSectionAndResolveUrl(dati, strutsBean.apiIsLLM, strutsBean.llmPolicy, TipoOperazione.ADD, postBackViaPost);
+						if (llmUrlOverride != null) {
+							strutsBean.url = llmUrlOverride;
+							strutsBean.httpsurl = llmUrlOverride;
+						}
+						dati = apsHelper.addEndPointToDati(dati, strutsBean.serviceBinding, strutsBean.connettoreDebug, strutsBean.endpointtype, strutsBean.autenticazioneHttp,
 								null, //(apsHelper.isModalitaCompleta() || !multitenant)?null:
 								//	(generaPortaApplicativa?AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX : AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX), 
 								strutsBean.url, strutsBean.nome, strutsBean.tipo, strutsBean.user,
@@ -1951,6 +1967,9 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						strutsBean.apiKeyHeader, strutsBean.apiKeyValue, strutsBean.appIdHeader, strutsBean.appIdValue,
 						connettoreStatusParams,
 						listExtendedConnettore);
+				if (strutsBean.apiIsLLM) {
+					apsHelper.addLLMPolicyPropertyToConnettore(connettore, strutsBean.llmPolicy);
+				}
 			}
 
 			if(asps.getConfigurazioneServizio()==null)
@@ -2053,8 +2072,13 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						if( gestioneFruitori || generaPortaApplicativa ) {
 							forceEnableConnettore = true;
 						}
-						
-						dati = apsHelper.addEndPointToDati(dati, strutsBean.serviceBinding, strutsBean.connettoreDebug, strutsBean.endpointtype, strutsBean.autenticazioneHttp, 
+
+						String llmUrlOverride = apsHelper.addLLMProviderSectionAndResolveUrl(dati, strutsBean.apiIsLLM, strutsBean.llmPolicy, TipoOperazione.ADD, postBackViaPost);
+						if (llmUrlOverride != null) {
+							strutsBean.url = llmUrlOverride;
+							strutsBean.httpsurl = llmUrlOverride;
+						}
+						dati = apsHelper.addEndPointToDati(dati, strutsBean.serviceBinding, strutsBean.connettoreDebug, strutsBean.endpointtype, strutsBean.autenticazioneHttp,
 								null, //(apsHelper.isModalitaCompleta() || !multitenant)?null:
 								//	(generaPortaApplicativa?AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX : AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX), 
 								strutsBean.url, strutsBean.nome, strutsBean.tipo, strutsBean.user,

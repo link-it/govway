@@ -1840,6 +1840,12 @@ public class ErogazioniDetailsUtilities {
 					case SWAGGER_2:
 						value=CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_SWAGGER_2;
 						break;
+					case OPENAI_CHAT_V1:
+						value=CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_OPENAI_CHAT_V1;
+						break;
+					case ANTHROPIC_MESSAGES_V1:
+						value=CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_ANTHROPIC_MESSAGES_V1;
+						break;
 					case WSDL_11:
 						value=CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_WSDL_11;
 						break;

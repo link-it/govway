@@ -94,21 +94,32 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 				infoType = ServletUtils.getObjectFromSession(request, session, String.class, ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE);
 			}
 			boolean attributeAuthority = ConfigurazioneCostanti.isConfigurazioneAttributeAuthority(infoType);
-			
+			boolean llmProvider = ConfigurazioneCostanti.isConfigurazioneLLMProvider(infoType);
+
 			String resetElementoCacheS = confHelper.getParameter(CostantiControlStation.PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE);
 			boolean resetElementoCache = ServletUtils.isCheckBoxEnabled(resetElementoCacheS);
-			
+
 			ConfigurazioneCore confCore = new ConfigurazioneCore();
-			
-			Properties mapId = attributeAuthority ?
-					confCore.getAttributeAuthorityTipologia() :
-					confCore.getTokenPolicyTipologia();
-			
+
+			Properties mapId;
+			if (attributeAuthority) {
+				mapId = confCore.getAttributeAuthorityTipologia();
+			} else if (llmProvider) {
+				mapId = confCore.getLlmProviderTipologia();
+			} else {
+				mapId = confCore.getTokenPolicyTipologia();
+			}
+
 			GenericProperties genericProperties = confCore.getGenericProperties(Long.parseLong(id));
-			
-			PropertiesSourceConfiguration propertiesSourceConfiguration = attributeAuthority ? 
-					confCore.getAttributeAuthorityPropertiesSourceConfiguration() :
-					confCore.getPolicyGestioneTokenPropertiesSourceConfiguration();
+
+			PropertiesSourceConfiguration propertiesSourceConfiguration;
+			if (attributeAuthority) {
+				propertiesSourceConfiguration = confCore.getAttributeAuthorityPropertiesSourceConfiguration();
+			} else if (llmProvider) {
+				propertiesSourceConfiguration = confCore.getLlmProviderPropertiesSourceConfiguration();
+			} else {
+				propertiesSourceConfiguration = confCore.getPolicyGestioneTokenPropertiesSourceConfiguration();
+			}
 			
 			ConfigManager configManager = ConfigManager.getinstance(ControlStationCore.getLog());
 			configManager.leggiConfigurazioni(propertiesSourceConfiguration, true);
@@ -149,6 +160,11 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 				if(attributeAuthority) {
 					metodo = confCore.getJmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheAttributeAuthority(alias);
 				}
+				else if(llmProvider) {
+					// TODO LLM Provider: introdurre, quando la cache runtime sarà disponibile,
+					// un metodo JMX dedicato (getJmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheLLMProvider).
+					throw new Exception("Reset cache LLM Provider non ancora supportato");
+				}
 				else {
 					boolean validazione = ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN.equals(genericProperties.getTipologia());
 					boolean negoziazione = ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_RETRIEVE_POLICY_TOKEN.equals(genericProperties.getTipologia());
@@ -188,15 +204,24 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 						ServletUtils.setObjectIntoSession(request, session, infoTypeA, ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE);
 					}
 					attributeAuthority = ConfigurazioneCostanti.isConfigurazioneAttributeAuthority(infoTypeA);
-					
+					llmProvider = ConfigurazioneCostanti.isConfigurazioneLLMProvider(infoTypeA);
+
 					// reset di eventuali configurazioni salvate in sessione
-					mapId = attributeAuthority ?
-							confCore.getAttributeAuthorityTipologia() :
-							confCore.getTokenPolicyTipologia();
+					if (attributeAuthority) {
+						mapId = confCore.getAttributeAuthorityTipologia();
+					} else if (llmProvider) {
+						mapId = confCore.getLlmProviderTipologia();
+					} else {
+						mapId = confCore.getTokenPolicyTipologia();
+					}
 					if(mapId!=null && !mapId.isEmpty()) {
-						propertiesSourceConfiguration = attributeAuthority ? 
-								confCore.getAttributeAuthorityPropertiesSourceConfiguration() :
-								confCore.getPolicyGestioneTokenPropertiesSourceConfiguration();
+						if (attributeAuthority) {
+							propertiesSourceConfiguration = confCore.getAttributeAuthorityPropertiesSourceConfiguration();
+						} else if (llmProvider) {
+							propertiesSourceConfiguration = confCore.getLlmProviderPropertiesSourceConfiguration();
+						} else {
+							propertiesSourceConfiguration = confCore.getPolicyGestioneTokenPropertiesSourceConfiguration();
+						}
 						configManager.leggiConfigurazioni(propertiesSourceConfiguration, true);
 						for (Object oTipo : mapId.keySet()) {
 							if(oTipo instanceof String) {
@@ -206,14 +231,24 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 							}
 						}
 					}
-					
-					int idLista = attributeAuthority ? Liste.CONFIGURAZIONE_GESTIONE_ATTRIBUTE_AUTHORITY : Liste.CONFIGURAZIONE_GESTIONE_POLICY_TOKEN;
-					
+
+					int idLista;
+					if (attributeAuthority) {
+						idLista = Liste.CONFIGURAZIONE_GESTIONE_ATTRIBUTE_AUTHORITY;
+					} else if (llmProvider) {
+						idLista = Liste.CONFIGURAZIONE_GESTIONE_LLM_PROVIDER;
+					} else {
+						idLista = Liste.CONFIGURAZIONE_GESTIONE_POLICY_TOKEN;
+					}
+
 					ricerca = confHelper.checkSearchParameters(idLista, ricerca);
 
 					List<String> tipologie = new ArrayList<>();
 					if(attributeAuthority) {
 						tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_ATTRIBUTE_AUTHORITY);
+					}
+					else if(llmProvider) {
+						tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_LLM_PROVIDER);
 					}
 					else {
 						tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN);
@@ -238,9 +273,14 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 			// setto la barra del titolo
 			List<Parameter> lstParam = new ArrayList<>();
 
-			String label = attributeAuthority ?
-					ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY :
-					ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN;
+			String label;
+			if (attributeAuthority) {
+				label = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY;
+			} else if (llmProvider) {
+				label = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_LLM_PROVIDER;
+			} else {
+				label = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN;
+			}
 			
 			lstParam.add(new Parameter(label, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_LIST));
 			lstParam.add(new Parameter(genericProperties.getNome(),null));
@@ -261,7 +301,7 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = confHelper.addPolicyGestioneTokenToDati(tipoOperazione,dati,id,nome,descrizione,tipo,propConfigPolicyGestioneTokenLabelList,propConfigPolicyGestioneTokenList,
-						attributeAuthority, genericProperties);
+						attributeAuthority, llmProvider, genericProperties);
 				
 				dati = confHelper.addPropertiesConfigToDati(tipoOperazione,dati, tipo, configurazioneBean,false);
 				
@@ -288,7 +328,7 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = confHelper.addPolicyGestioneTokenToDati(tipoOperazione,dati,id,nome,descrizione,tipo,propConfigPolicyGestioneTokenLabelList,propConfigPolicyGestioneTokenList,
-						attributeAuthority, genericProperties);
+						attributeAuthority, llmProvider, genericProperties);
 						
 				dati = confHelper.addPropertiesConfigToDati(tipoOperazione,dati, tipo, configurazioneBean,false);
 				
@@ -325,23 +365,33 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 
-			int idLista = attributeAuthority ? Liste.CONFIGURAZIONE_GESTIONE_ATTRIBUTE_AUTHORITY : Liste.CONFIGURAZIONE_GESTIONE_POLICY_TOKEN;
-			
+			int idLista;
+			if (attributeAuthority) {
+				idLista = Liste.CONFIGURAZIONE_GESTIONE_ATTRIBUTE_AUTHORITY;
+			} else if (llmProvider) {
+				idLista = Liste.CONFIGURAZIONE_GESTIONE_LLM_PROVIDER;
+			} else {
+				idLista = Liste.CONFIGURAZIONE_GESTIONE_POLICY_TOKEN;
+			}
+
 			ricerca = confHelper.checkSearchParameters(idLista, ricerca);
 
 			List<String> tipologie = new ArrayList<>();
 			if(attributeAuthority) {
 				tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_ATTRIBUTE_AUTHORITY);
 			}
+			else if(llmProvider) {
+				tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_LLM_PROVIDER);
+			}
 			else {
 				tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN);
 				tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_RETRIEVE_POLICY_TOKEN);
 			}
-			
+
 			List<GenericProperties> lista = confCore.gestorePolicyTokenList(idLista, tipologie, ricerca);
-			
-			confHelper.prepareGestorePolicyTokenList(ricerca, lista, idLista); 
-			
+
+			confHelper.prepareGestorePolicyTokenList(ricerca, lista, idLista);
+
 			// reset di eventuali configurazioni salvate in sessione
 			ServletUtils.removeConfigurazioneBeanFromSession(request, session, configurazioneBean.getId());
 			

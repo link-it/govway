@@ -57,4 +57,21 @@ public enum CanonicalRole {
 		}
 		throw new IllegalArgumentException("CanonicalRole sconosciuto: " + value);
 	}
+
+	/**
+	 * Versione lenient di {@link #fromValue(String)}: ritorna null per valori
+	 * sconosciuti invece di lanciare. Utile per i decoder streaming/response, dove
+	 * un nuovo valore introdotto dal provider non deve far fallire la pipeline.
+	 */
+	public static CanonicalRole tryFromValue(String value) {
+		if (value == null) {
+			return null;
+		}
+		for (CanonicalRole r : values()) {
+			if (r.value.equals(value)) {
+				return r;
+			}
+		}
+		return null;
+	}
 }

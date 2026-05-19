@@ -23,7 +23,6 @@ import org.openspcoop2.message.llm.CanonicalChatResponse;
 import org.openspcoop2.message.llm.transform.LLMDialect;
 import org.openspcoop2.message.llm.transform.LLMOutboundFrontDoorResponseTransformer;
 import org.openspcoop2.message.llm.transform.LLMTransformerRegistry;
-import org.openspcoop2.message.rest.OpenSPCoop2Message_json_impl;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.handlers.OutResponseContext;
 import org.openspcoop2.pdd.core.handlers.OutResponseHandler;
@@ -56,12 +55,12 @@ public class LLMOutboundResponseHandler implements OutResponseHandler {
 			log.debug("LLMOutboundResponseHandler: invocato con dialetto={}", dialect.getValue());
 		}
 		if (LLMHandlerSupport.isLLMStream(context)) {
-			// Pendant del LLMInboundResponseHandler: in modalità stream il canonical
-			// non è popolato (skipped lì), e il body del messaggio è ancora la SSE provider.
-			// Niente da trasformare: pass-through del flusso. Quando i chunk transformer
-			// SSE saranno pronti, qui andrà invocato l'encoder front-door per dialect.
-			if (log != null) {
-				log.warn("LLMOutboundResponseHandler: stream:true, encoder canonical disabilitato (chunk transformer non implementato), pass-through SSE");
+			// In modalità stream la trasformazione canonical→dialect avviene chunk-by-chunk
+			// dentro il ChunkTransformInputStream applicato dal LLMInboundResponseHandler.
+			// Qui non c'è un body singolo da trasformare: lasciamo passare il messaggio
+			// che ha già lo stream wrapper agganciato.
+			if (log != null && log.isDebugEnabled()) {
+				log.debug("LLMOutboundResponseHandler: stream:true, encoding gestito chunk-by-chunk dall'InResponse wrapper");
 			}
 			return;
 		}

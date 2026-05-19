@@ -326,6 +326,11 @@ public class ArchiviExporter extends HttpServlet {
 				redirect = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_LIST+"?"+
 						ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE+"="+ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_ATTRIBUTE_AUTHORITY;
 				break;
+			case CONFIGURAZIONE_LLM_PROVIDER:
+				identificativi = exporterUtils.getIdsLLMProvider(objToExport);
+				redirect = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_LIST+"?"+
+						ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE+"="+ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_LLM_PROVIDER;
+				break;
 			case CONFIGURAZIONE_PLUGIN_CLASSE:
 				identificativi = exporterUtils.getIdsPluginClassi(objToExport);
 				redirect = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_PLUGINS_CLASSI_LIST;
@@ -619,6 +624,18 @@ public class ArchiviExporter extends HttpServlet {
 					IDGenericProperties idPolicy = ((IDGenericProperties)identificativi.get(0));
 					fileName = prefix+"AttributeAuthority_"+
 							//idPolicy.getTipologia()+"_"+
+							idPolicy.getNome()+"."+extSingleArchive;
+				}
+				break;
+			case CONFIGURAZIONE_LLM_PROVIDER:
+				if(identificativi==null || identificativi.isEmpty()) {
+					throw new Exception("Identificativi non forniti");
+				}
+				if(identificativi.size()>1){
+					fileName = prefix+"LLMProvider."+ext;
+				}else{
+					IDGenericProperties idPolicy = ((IDGenericProperties)identificativi.get(0));
+					fileName = prefix+"LLMProvider_"+
 							idPolicy.getNome()+"."+extSingleArchive;
 				}
 				break;

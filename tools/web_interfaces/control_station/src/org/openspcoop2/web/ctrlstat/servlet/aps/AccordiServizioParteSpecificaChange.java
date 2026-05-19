@@ -194,6 +194,9 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			boolean forceOAuth = false;
 			boolean forceDPoP = false;
 
+			// llm provider policy
+			String llmPolicy = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_LLM_PROVIDER);
+
 			// proxy
 			String proxyEnabled = apsHelper.getParametroBoolean(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
 			String proxyHostname = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
@@ -609,6 +612,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 		
 			ServiceBinding serviceBinding = apcCore.toMessageServiceBinding(as.getServiceBinding());
 			org.openspcoop2.protocol.manifest.constants.InterfaceType formatoSpecifica = apcCore.formatoSpecifica2InterfaceType(as.getFormatoSpecifica());
+			boolean apiIsLLM = org.openspcoop2.protocol.manifest.utils.InterfaceTypeUtils.isLLM(formatoSpecifica);
 
 			// Lista di Accordi Compatibili
 			List<AccordoServizioParteComune> asParteComuneCompatibili = null;
@@ -1173,6 +1177,25 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							autenticazioneToken = true;
 						}
 					}
+
+					if(llmPolicy==null && props!=null){
+						String v = props.get(CostantiDB.CONNETTORE_LLM_POLICY);
+						if(v!=null && !"".equals(v)){
+							llmPolicy = v;
+						}
+					}
+
+					// Auto-fill dell'Endpoint con la baseUrl della LLM Provider Policy quando l'utente
+					// cambia la policy nel select. Sovrascrive il campo URL prima del rendering.
+					if (apiIsLLM
+							&& ConnettoriCostanti.PARAMETRO_CONNETTORE_LLM_PROVIDER.equals(apsHelper.getPostBackElementName())
+							&& llmPolicy != null && !"".equals(llmPolicy)) {
+						String policyBaseUrl = apsHelper.getLLMProviderBaseUrl(llmPolicy);
+						if (policyBaseUrl != null && !policyBaseUrl.isEmpty()) {
+							url = policyBaseUrl;
+							httpsurl = policyBaseUrl;
+						}
+					}
 					
 					if (url == null) {
 						url = props.get(CostantiDB.CONNETTORE_HTTP_LOCATION);
@@ -1378,13 +1401,17 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							null,null,null);
 
 					if(apsHelper.isModalitaCompleta() || (!soggettoOperativo && !gestioneFruitori)) {
-					
+
 						boolean forceEnableConnettore = false;
 						/**if( apsHelper.isModalitaStandard() && !TipiConnettore.DISABILITATO.getNome().equals(endpointtype) ) {
 							forceEnableConnettore = true;
 						}*/
-						
-						dati = apsHelper.addEndPointToDati(dati, serviceBinding, connettoreDebug, endpointtype, autenticazioneHttp,  
+
+						if (apiIsLLM) {
+							dati = apsHelper.addLLMProvider(dati, llmPolicy, tipoOp, postBackViaPost);
+						}
+
+						dati = apsHelper.addEndPointToDati(dati, serviceBinding, connettoreDebug, endpointtype, autenticazioneHttp,
 								null, //(apsHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
 								url,nome, tipo, user, password, initcont, urlpgk,
 								provurl, connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp,
@@ -1539,7 +1566,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			if(isOk){
 				try{
 					//validazione campi dinamici
-					strutsBean.consoleDynamicConfiguration.validateDynamicConfigAccordoServizioParteSpecifica(strutsBean.consoleConfiguration, strutsBean.consoleOperationType, apsHelper, strutsBean.protocolProperties, 
+					strutsBean.consoleDynamicConfiguration.validateDynamicConfigAccordoServizioParteSpecifica(strutsBean.consoleConfiguration, strutsBean.consoleOperationType, apsHelper, strutsBean.protocolProperties,
 							strutsBean.registryReader, strutsBean.configRegistryReader, oldIdAps);
 				}catch(ProtocolException e){
 					ControlStationCore.getLog().error(e.getMessage(),e);
@@ -1547,7 +1574,11 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					isOk = false;
 				}
 			}
-			
+
+			if (isOk) {
+				isOk = apsHelper.checkLLMPolicyData(apiIsLLM, llmPolicy);
+			}
+
 			if (!isOk) {
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, lstParm );
@@ -1593,17 +1624,21 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 						null,null,null);
 
 				if(apsHelper.isModalitaCompleta() || (!soggettoOperativo && !gestioneFruitori)) {
-				
+
 					boolean forceEnableConnettore = false;
 					/**if( apsHelper.isModalitaStandard() && !TipiConnettore.DISABILITATO.getNome().equals(endpointtype) ) {
 						forceEnableConnettore = true;
 					}*/
-					
-					dati = apsHelper.addEndPointToDati(dati, serviceBinding, connettoreDebug,  endpointtype, autenticazioneHttp, 
+
+					if (apiIsLLM) {
+						dati = apsHelper.addLLMProvider(dati, llmPolicy, tipoOp, postBackViaPost);
+					}
+
+					dati = apsHelper.addEndPointToDati(dati, serviceBinding, connettoreDebug,  endpointtype, autenticazioneHttp,
 							null, //(apsHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
 							url, nome,
 							tipo, user, password, initcont, urlpgk, provurl,
-							connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp, 
+							connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp,
 							httpsurl, httpstipologia, httpshostverify, 
 							httpsTrustVerifyCert, httpspath, httpstipo, httpspwd,
 							httpsalgoritmo, httpsstato, httpskeystore,
@@ -1730,12 +1765,16 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					if( apsHelper.isModalitaStandard() && !TipiConnettore.DISABILITATO.getNome().equals(endpointtype) ) {
 						forceEnableConnettore = true;
 					}
-					
-					dati = apsHelper.addEndPointToDati(dati, serviceBinding, connettoreDebug,  endpointtype, autenticazioneHttp, 
+
+					if (apiIsLLM) {
+						dati = apsHelper.addLLMProvider(dati, llmPolicy, tipoOp, postBackViaPost);
+					}
+
+					dati = apsHelper.addEndPointToDati(dati, serviceBinding, connettoreDebug,  endpointtype, autenticazioneHttp,
 							null, //(apsHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
 							url, nome,
 							tipo, user, password, initcont, urlpgk, provurl,
-							connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp, 
+							connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp,
 							httpsurl, httpstipologia,httpshostverify, 
 							httpsTrustVerifyCert, httpspath, httpstipo, httpspwd,
 							httpsalgoritmo, httpsstato, httpskeystore,
@@ -2023,6 +2062,10 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					connettoreStatusParams,
 					listExtendedConnettore);
 
+			if (apiIsLLM) {
+				apsHelper.addLLMPolicyPropertyToConnettore(newConnettore, llmPolicy);
+			}
+
 			asps.getConfigurazioneServizio().setConnettore(newConnettore);
 
 			// Accordo
@@ -2117,17 +2160,21 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							null,null,null);
 
 					if(apsHelper.isModalitaCompleta() || (!soggettoOperativo && !gestioneFruitori)) {
-					
+
 						boolean forceEnableConnettore = false;
 						/**if( apsHelper.isModalitaStandard() && !TipiConnettore.DISABILITATO.getNome().equals(endpointtype) ) {
 							forceEnableConnettore = true;
 						}*/
-						
-						dati = apsHelper.addEndPointToDati(dati, serviceBinding, connettoreDebug, endpointtype, autenticazioneHttp, 
+
+						if (apiIsLLM) {
+							dati = apsHelper.addLLMProvider(dati, llmPolicy, tipoOp, postBackViaPost);
+						}
+
+						dati = apsHelper.addEndPointToDati(dati, serviceBinding, connettoreDebug, endpointtype, autenticazioneHttp,
 								null, //(apsHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
 								url,
 								nome, tipo, user, password, initcont, urlpgk,
-								provurl, connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp, 
+								provurl, connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp,
 								httpsurl, httpstipologia, httpshostverify, 
 								httpsTrustVerifyCert, httpspath, httpstipo, httpspwd, 
 								httpsalgoritmo, httpsstato,

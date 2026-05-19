@@ -271,8 +271,51 @@ public class DriverConfigurazioneDB_connettoriDriver {
 			this.driver.closeConnection(con);
 		}
 	}
-	
-	
+
+
+	protected boolean isLLMPolicyUsedInConnettore(String nome) throws DriverConfigurazioneException{
+		String nomeMetodo = "isLLMPolicyUsedInConnettore";
+
+		Connection con = null;
+		PreparedStatement stmt=null;
+		ResultSet risultato=null;
+
+		if (this.driver.atomica) {
+			try {
+				con = this.driver.getConnectionFromDatasource(nomeMetodo);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.driver.globalConnection;
+
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
+
+		try {
+
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.CONNETTORI);
+			sqlQueryObject.addSelectField("id");
+			sqlQueryObject.addWhereCondition("llm_policy=?");
+			String queryString = sqlQueryObject.createSQLQuery();
+			stmt = con.prepareStatement(queryString);
+			stmt.setString(1, nome);
+			risultato = stmt.executeQuery();
+
+			return risultato.next();
+
+		} catch (Exception qe) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+			//Chiudo statement and resultset
+			JDBCUtilities.closeResources(risultato, stmt);
+			this.driver.closeConnection(con);
+		}
+	}
+
+
 	protected Connettore getConnettore(long idConnettore) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		String nomeMetodo = "getConnettore(id)";
 		

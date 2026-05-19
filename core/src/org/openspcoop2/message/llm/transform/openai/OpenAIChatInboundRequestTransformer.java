@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.openspcoop2.message.llm.transform;
+package org.openspcoop2.message.llm.transform.openai;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +31,9 @@ import org.openspcoop2.message.llm.CanonicalTextBlock;
 import org.openspcoop2.message.llm.CanonicalTool;
 import org.openspcoop2.message.llm.CanonicalToolResultBlock;
 import org.openspcoop2.message.llm.CanonicalToolUseBlock;
+import org.openspcoop2.message.llm.transform.LLMDialect;
+import org.openspcoop2.message.llm.transform.LLMInboundRequestTransformer;
+import org.openspcoop2.message.llm.transform.LLMTransformException;
 import org.openspcoop2.utils.json.JSONUtils;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -91,35 +94,35 @@ public class OpenAIChatInboundRequestTransformer implements LLMInboundRequestTra
 	/* === sezioni della request === */
 
 	private void applyBasicSettings(JsonNode root, CanonicalChatRequest out) {
-		if (root.hasNonNull("model")) {
-			out.setModel(root.get("model").asText());
+		if (root.hasNonNull(OpenAIChatFields.FIELD_MODEL)) {
+			out.setModel(root.get(OpenAIChatFields.FIELD_MODEL).asText());
 		}
-		if (root.hasNonNull("temperature")) {
-			out.setTemperature(root.get("temperature").asDouble());
+		if (root.hasNonNull(OpenAIChatFields.FIELD_TEMPERATURE)) {
+			out.setTemperature(root.get(OpenAIChatFields.FIELD_TEMPERATURE).asDouble());
 		}
-		if (root.hasNonNull("top_p")) {
-			out.setTopP(root.get("top_p").asDouble());
+		if (root.hasNonNull(OpenAIChatFields.FIELD_TOP_P)) {
+			out.setTopP(root.get(OpenAIChatFields.FIELD_TOP_P).asDouble());
 		}
-		if (root.hasNonNull("stream")) {
-			out.setStream(root.get("stream").asBoolean());
+		if (root.hasNonNull(OpenAIChatFields.FIELD_STREAM)) {
+			out.setStream(root.get(OpenAIChatFields.FIELD_STREAM).asBoolean());
 		}
 		applyMaxTokens(root, out);
 	}
 
 	private void applyMaxTokens(JsonNode root, CanonicalChatRequest out) {
 		// OpenAI preferisce max_completion_tokens; max_tokens è legacy ma ancora diffuso
-		if (root.hasNonNull("max_completion_tokens")) {
-			out.setMaxTokens(root.get("max_completion_tokens").asInt());
-		} else if (root.hasNonNull("max_tokens")) {
-			out.setMaxTokens(root.get("max_tokens").asInt());
+		if (root.hasNonNull(OpenAIChatFields.FIELD_MAX_COMPLETION_TOKENS)) {
+			out.setMaxTokens(root.get(OpenAIChatFields.FIELD_MAX_COMPLETION_TOKENS).asInt());
+		} else if (root.hasNonNull(OpenAIChatFields.FIELD_MAX_TOKENS)) {
+			out.setMaxTokens(root.get(OpenAIChatFields.FIELD_MAX_TOKENS).asInt());
 		}
 	}
 
 	private void applyStopSequences(JsonNode root, CanonicalChatRequest out) {
-		if (!root.hasNonNull("stop")) {
+		if (!root.hasNonNull(OpenAIChatFields.FIELD_STOP)) {
 			return;
 		}
-		JsonNode stop = root.get("stop");
+		JsonNode stop = root.get(OpenAIChatFields.FIELD_STOP);
 		List<String> stops = new ArrayList<>();
 		if (stop.isTextual()) {
 			stops.add(stop.asText());
@@ -134,12 +137,12 @@ public class OpenAIChatInboundRequestTransformer implements LLMInboundRequestTra
 	}
 
 	private void applyMessages(JsonNode root, CanonicalChatRequest out) throws LLMTransformException {
-		if (!root.hasNonNull("messages") || !root.get("messages").isArray()) {
+		if (!root.hasNonNull(OpenAIChatFields.FIELD_MESSAGES) || !root.get(OpenAIChatFields.FIELD_MESSAGES).isArray()) {
 			return;
 		}
 		List<CanonicalMessage> canonical = new ArrayList<>();
 		StringBuilder system = new StringBuilder();
-		for (JsonNode m : root.get("messages")) {
+		for (JsonNode m : root.get(OpenAIChatFields.FIELD_MESSAGES)) {
 			handleMessage(m, canonical, system);
 		}
 		out.setMessages(canonical);
@@ -149,21 +152,21 @@ public class OpenAIChatInboundRequestTransformer implements LLMInboundRequestTra
 	}
 
 	private void handleMessage(JsonNode m, List<CanonicalMessage> canonical, StringBuilder system) throws LLMTransformException {
-		String role = m.hasNonNull("role") ? m.get("role").asText() : null;
+		String role = m.hasNonNull(OpenAIChatFields.FIELD_ROLE) ? m.get(OpenAIChatFields.FIELD_ROLE).asText() : null;
 		if (role == null) {
 			throw new LLMTransformException("Messaggio OpenAI privo di campo 'role'");
 		}
 		switch (role) {
-			case "system":
+			case OpenAIChatFields.ROLE_SYSTEM:
 				appendSystem(system, m);
 				break;
-			case "user":
+			case OpenAIChatFields.ROLE_USER:
 				canonical.add(buildUserMessage(m));
 				break;
-			case "assistant":
+			case OpenAIChatFields.ROLE_ASSISTANT:
 				canonical.add(buildAssistantMessage(m));
 				break;
-			case "tool":
+			case OpenAIChatFields.ROLE_TOOL:
 				canonical.add(buildToolResultMessage(m));
 				break;
 			default:
@@ -172,11 +175,11 @@ public class OpenAIChatInboundRequestTransformer implements LLMInboundRequestTra
 	}
 
 	private void applyTools(JsonNode root, CanonicalChatRequest out, ObjectMapper mapper) throws LLMTransformException {
-		if (!root.hasNonNull("tools") || !root.get("tools").isArray()) {
+		if (!root.hasNonNull(OpenAIChatFields.FIELD_TOOLS) || !root.get(OpenAIChatFields.FIELD_TOOLS).isArray()) {
 			return;
 		}
 		List<CanonicalTool> tools = new ArrayList<>();
-		for (JsonNode t : root.get("tools")) {
+		for (JsonNode t : root.get(OpenAIChatFields.FIELD_TOOLS)) {
 			tools.add(buildTool(t, mapper));
 		}
 		if (!tools.isEmpty()) {
@@ -188,10 +191,10 @@ public class OpenAIChatInboundRequestTransformer implements LLMInboundRequestTra
 	/* === costruzione messaggi per ruolo === */
 
 	private void appendSystem(StringBuilder buf, JsonNode m) {
-		if (!m.hasNonNull("content")) {
+		if (!m.hasNonNull(OpenAIChatFields.FIELD_CONTENT)) {
 			return;
 		}
-		JsonNode content = m.get("content");
+		JsonNode content = m.get(OpenAIChatFields.FIELD_CONTENT);
 		String text = content.isTextual() ? content.asText() : content.toString();
 		if (buf.length() > 0) {
 			buf.append("\n\n");
@@ -201,8 +204,8 @@ public class OpenAIChatInboundRequestTransformer implements LLMInboundRequestTra
 
 	private CanonicalMessage buildUserMessage(JsonNode m) throws LLMTransformException {
 		List<CanonicalContentBlock> blocks = new ArrayList<>();
-		if (m.hasNonNull("content")) {
-			populateUserContent(m.get("content"), blocks);
+		if (m.hasNonNull(OpenAIChatFields.FIELD_CONTENT)) {
+			populateUserContent(m.get(OpenAIChatFields.FIELD_CONTENT), blocks);
 		}
 		return new CanonicalMessage(CanonicalRole.USER, blocks);
 	}
@@ -221,9 +224,9 @@ public class OpenAIChatInboundRequestTransformer implements LLMInboundRequestTra
 	}
 
 	private void addUserContentBlock(JsonNode part, List<CanonicalContentBlock> blocks) throws LLMTransformException {
-		String type = part.hasNonNull("type") ? part.get("type").asText() : null;
-		if ("text".equals(type) && part.hasNonNull("text")) {
-			blocks.add(new CanonicalTextBlock(part.get("text").asText()));
+		String type = part.hasNonNull(OpenAIChatFields.FIELD_TYPE) ? part.get(OpenAIChatFields.FIELD_TYPE).asText() : null;
+		if (OpenAIChatFields.FIELD_TEXT.equals(type) && part.hasNonNull(OpenAIChatFields.FIELD_TEXT)) {
+			blocks.add(new CanonicalTextBlock(part.get(OpenAIChatFields.FIELD_TEXT).asText()));
 			return;
 		}
 		throw new LLMTransformException("Tipo di content OpenAI non supportato nel prototipo: " + type);
@@ -237,10 +240,10 @@ public class OpenAIChatInboundRequestTransformer implements LLMInboundRequestTra
 	}
 
 	private void appendAssistantText(JsonNode m, List<CanonicalContentBlock> blocks) {
-		if (!m.hasNonNull("content")) {
+		if (!m.hasNonNull(OpenAIChatFields.FIELD_CONTENT)) {
 			return;
 		}
-		JsonNode content = m.get("content");
+		JsonNode content = m.get(OpenAIChatFields.FIELD_CONTENT);
 		if (!content.isTextual()) {
 			return;
 		}
@@ -251,30 +254,30 @@ public class OpenAIChatInboundRequestTransformer implements LLMInboundRequestTra
 	}
 
 	private void appendAssistantToolCalls(JsonNode m, List<CanonicalContentBlock> blocks) throws LLMTransformException {
-		if (!m.hasNonNull("tool_calls") || !m.get("tool_calls").isArray()) {
+		if (!m.hasNonNull(OpenAIChatFields.FIELD_TOOL_CALLS) || !m.get(OpenAIChatFields.FIELD_TOOL_CALLS).isArray()) {
 			return;
 		}
-		for (JsonNode tc : m.get("tool_calls")) {
+		for (JsonNode tc : m.get(OpenAIChatFields.FIELD_TOOL_CALLS)) {
 			blocks.add(buildToolUseBlock(tc));
 		}
 	}
 
 	private CanonicalToolUseBlock buildToolUseBlock(JsonNode tc) throws LLMTransformException {
-		String id = tc.hasNonNull("id") ? tc.get("id").asText() : null;
-		JsonNode function = tc.get("function");
+		String id = tc.hasNonNull(OpenAIChatFields.FIELD_ID) ? tc.get(OpenAIChatFields.FIELD_ID).asText() : null;
+		JsonNode function = tc.get(OpenAIChatFields.FIELD_FUNCTION);
 		if (function == null) {
 			throw new LLMTransformException("tool_calls OpenAI senza campo 'function'");
 		}
-		String name = function.hasNonNull("name") ? function.get("name").asText() : null;
+		String name = function.hasNonNull(OpenAIChatFields.FIELD_NAME) ? function.get(OpenAIChatFields.FIELD_NAME).asText() : null;
 		Map<String, Object> input = parseFunctionArguments(function);
 		return new CanonicalToolUseBlock(id, name, input);
 	}
 
 	private Map<String, Object> parseFunctionArguments(JsonNode function) throws LLMTransformException {
-		if (!function.hasNonNull("arguments")) {
+		if (!function.hasNonNull(OpenAIChatFields.FIELD_ARGUMENTS)) {
 			return null;
 		}
-		String argsRaw = function.get("arguments").asText();
+		String argsRaw = function.get(OpenAIChatFields.FIELD_ARGUMENTS).asText();
 		if (argsRaw == null || argsRaw.isEmpty()) {
 			return null;
 		}
@@ -286,7 +289,7 @@ public class OpenAIChatInboundRequestTransformer implements LLMInboundRequestTra
 	}
 
 	private CanonicalMessage buildToolResultMessage(JsonNode m) throws LLMTransformException {
-		String toolCallId = m.hasNonNull("tool_call_id") ? m.get("tool_call_id").asText() : null;
+		String toolCallId = m.hasNonNull(OpenAIChatFields.FIELD_TOOL_CALL_ID) ? m.get(OpenAIChatFields.FIELD_TOOL_CALL_ID).asText() : null;
 		if (toolCallId == null) {
 			throw new LLMTransformException("Messaggio role=tool senza 'tool_call_id'");
 		}
@@ -297,10 +300,10 @@ public class OpenAIChatInboundRequestTransformer implements LLMInboundRequestTra
 	}
 
 	private String extractToolResultContent(JsonNode m) {
-		if (!m.hasNonNull("content")) {
+		if (!m.hasNonNull(OpenAIChatFields.FIELD_CONTENT)) {
 			return null;
 		}
-		JsonNode c = m.get("content");
+		JsonNode c = m.get(OpenAIChatFields.FIELD_CONTENT);
 		return c.isTextual() ? c.asText() : c.toString();
 	}
 
@@ -308,15 +311,15 @@ public class OpenAIChatInboundRequestTransformer implements LLMInboundRequestTra
 	/* === tools === */
 
 	private CanonicalTool buildTool(JsonNode t, ObjectMapper mapper) throws LLMTransformException {
-		JsonNode function = t.get("function");
+		JsonNode function = t.get(OpenAIChatFields.FIELD_FUNCTION);
 		if (function == null) {
 			throw new LLMTransformException("Tool OpenAI senza campo 'function'");
 		}
-		String name = function.hasNonNull("name") ? function.get("name").asText() : null;
-		String description = function.hasNonNull("description") ? function.get("description").asText() : null;
+		String name = function.hasNonNull(OpenAIChatFields.FIELD_NAME) ? function.get(OpenAIChatFields.FIELD_NAME).asText() : null;
+		String description = function.hasNonNull(OpenAIChatFields.FIELD_DESCRIPTION) ? function.get(OpenAIChatFields.FIELD_DESCRIPTION).asText() : null;
 		Map<String, Object> parameters = null;
-		if (function.hasNonNull("parameters")) {
-			parameters = mapper.convertValue(function.get("parameters"), MAP_TYPE);
+		if (function.hasNonNull(OpenAIChatFields.FIELD_PARAMETERS)) {
+			parameters = mapper.convertValue(function.get(OpenAIChatFields.FIELD_PARAMETERS), MAP_TYPE);
 		}
 		return new CanonicalTool(name, description, parameters);
 	}

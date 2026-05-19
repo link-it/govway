@@ -20,6 +20,7 @@
 package org.openspcoop2.message.llm.transform;
 
 import org.openspcoop2.message.llm.CanonicalChatRequest;
+import org.openspcoop2.message.llm.stream.LLMProviderStreamTransport;
 
 /**
  * Contratto per un trasformatore outbound back-door: CanonicalChatRequest →
@@ -64,4 +65,16 @@ public interface LLMOutboundProviderRequestTransformer {
 	 * diversi quando in futuro arriveranno più operazioni (chat, embeddings, ecc.).
 	 */
 	String getProviderResourcePath(CanonicalChatRequest request);
+
+	/**
+	 * Transport streaming che il provider userà nella response. Indica al
+	 * {@code LLMInboundResponseHandler} quale reader transport applicare per
+	 * estrarre i chunk dal wire framing (SSE/NDJSON/AWS event-stream).
+	 * <ul>
+	 *   <li>Anthropic /messages, OpenAI /chat/completions: {@link LLMProviderStreamTransport#SSE}</li>
+	 *   <li>Ollama /api/chat: {@link LLMProviderStreamTransport#NDJSON}</li>
+	 *   <li>Bedrock InvokeModelWithResponseStream: {@link LLMProviderStreamTransport#AWS_EVENT_STREAM}</li>
+	 * </ul>
+	 */
+	LLMProviderStreamTransport getProviderStreamTransport();
 }

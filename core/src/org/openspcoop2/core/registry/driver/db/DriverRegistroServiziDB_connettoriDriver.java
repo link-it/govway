@@ -217,14 +217,25 @@ public class DriverRegistroServiziDB_connettoriDriver {
 					// token policy
 					String tokenPolicy = rs.getString("token_policy");
 					if(tokenPolicy!=null && !"".equals(tokenPolicy)){
-						
+
 						prop = new Property();
 						prop.setNome(CostantiDB.CONNETTORE_TOKEN_POLICY);
 						prop.setValore(tokenPolicy.trim());
 						connettore.addProperty(prop);
-						
+
 					}
-					
+
+					// llm policy
+					String llmPolicy = rs.getString("llm_policy");
+					if(llmPolicy!=null && !"".equals(llmPolicy)){
+
+						prop = new Property();
+						prop.setNome(CostantiDB.CONNETTORE_LLM_POLICY);
+						prop.setValore(llmPolicy.trim());
+						connettore.addProperty(prop);
+
+					}
+
 					// api key
 					readAutenticazioneApiKey(rs, connettore, driverBYOK);
 					

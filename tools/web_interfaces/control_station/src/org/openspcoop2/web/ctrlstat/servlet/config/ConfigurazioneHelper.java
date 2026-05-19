@@ -16930,43 +16930,57 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			if(infoType==null) {
 				infoType = ServletUtils.getObjectFromSession(this.request, this.session, String.class, ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE);
 			}
-			Parameter pInfoType = new Parameter(ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE, infoType); 
+			Parameter pInfoType = new Parameter(ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE, infoType);
 			boolean attributeAuthority = ConfigurazioneCostanti.isConfigurazioneAttributeAuthority(infoType);
-			
+			boolean llmProvider = ConfigurazioneCostanti.isConfigurazioneLLMProvider(infoType);
+
 			// decido la vista custom da mostrare
 			if(attributeAuthority) {
+				this.pd.setCustomListViewName(ConfigurazioneCostanti.CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_NOME_VISTA_CUSTOM_LISTA_ATTRIBUTE_AUTHORITY);
+			} else if(llmProvider) {
+				// LLM Provider: per ora riusiamo la stessa vista custom di AA (lista singola per tipologia).
 				this.pd.setCustomListViewName(ConfigurazioneCostanti.CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_NOME_VISTA_CUSTOM_LISTA_ATTRIBUTE_AUTHORITY);
 			} else {
 				this.pd.setCustomListViewName(ConfigurazioneCostanti.CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_NOME_VISTA_CUSTOM_LISTA_TOKEN_POLICIY);
 			}
-			
+
 			int limit = ricerca.getPageSize(idLista);
 			int offset = ricerca.getIndexIniziale(idLista);
 			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
-			
-			PropertiesSourceConfiguration propertiesSourceConfiguration = attributeAuthority ?
-					this.confCore.getAttributeAuthorityPropertiesSourceConfiguration() :
-					this.confCore.getPolicyGestioneTokenPropertiesSourceConfiguration();
+
+			PropertiesSourceConfiguration propertiesSourceConfiguration;
+			if (attributeAuthority) {
+				propertiesSourceConfiguration = this.confCore.getAttributeAuthorityPropertiesSourceConfiguration();
+			} else if (llmProvider) {
+				propertiesSourceConfiguration = this.confCore.getLlmProviderPropertiesSourceConfiguration();
+			} else {
+				propertiesSourceConfiguration = this.confCore.getPolicyGestioneTokenPropertiesSourceConfiguration();
+			}
 			ConfigManager configManager = ConfigManager.getinstance(ControlStationCore.getLog());
 			configManager.leggiConfigurazioni(propertiesSourceConfiguration, true);
 			List<String> nomiConfigurazioniPolicyGestioneToken = configManager.getNomiConfigurazioni(propertiesSourceConfiguration);
 			List<String> labelConfigurazioniPolicyGestioneToken = configManager.convertToLabel(propertiesSourceConfiguration, nomiConfigurazioniPolicyGestioneToken);
-			
-			if(!attributeAuthority) {
+
+			if(!attributeAuthority && !llmProvider) {
 				String filterTipoTokenPolicy = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_TIPO_TOKEN_POLICY);
 				addFilterTipoTokenPolicy(filterTipoTokenPolicy, false, nomiConfigurazioniPolicyGestioneToken, labelConfigurazioniPolicyGestioneToken);
 			}
-			
+
 			this.pd.setIndex(offset);
 			this.pd.setPageSize(limit);
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
-			
+
 			// setto la barra del titolo
 			List<Parameter> lstParam = new ArrayList<>();
 
-			String label = attributeAuthority ?
-					ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY :
-					ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN;
+			String label;
+			if (attributeAuthority) {
+				label = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY;
+			} else if (llmProvider) {
+				label = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_LLM_PROVIDER;
+			} else {
+				label = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN;
+			}
 			
 			lstParam.add(new Parameter(label, null));
 			
@@ -16986,9 +17000,14 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			List<String> lstLabels = new ArrayList<>();
 			
-			boolean forceId = attributeAuthority ?
-					this.core.isAttributeAuthorityForceIdEnabled() :
-					this.core.isTokenPolicyForceIdEnabled();
+			boolean forceId;
+			if (attributeAuthority) {
+				forceId = this.core.isAttributeAuthorityForceIdEnabled();
+			} else if (llmProvider) {
+				forceId = this.core.isLlmProviderForceIdEnabled();
+			} else {
+				forceId = this.core.isTokenPolicyForceIdEnabled();
+			}
 			
 			lstLabels.add(label);
 			
@@ -17002,25 +17021,30 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 			if (lista != null) {
 				for (int i = 0; i < lista.size(); i++) {
-					List<DataElement> e = creaEntryTokenPolicyCustom(lista, pInfoType, attributeAuthority,
+					List<DataElement> e = creaEntryTokenPolicyCustom(lista, pInfoType, attributeAuthority, llmProvider,
 							nomiConfigurazioniPolicyGestioneToken, labelConfigurazioniPolicyGestioneToken, forceId, i);
-					
+
 					dati.add(e);
 				}
 			}
 
 			this.pd.setDati(dati);
 			this.pd.setAddButton(true);
-			
+
 			// preparo bottoni
 			if(lista!=null && !lista.isEmpty() &&
-				(this.core.isShowPulsantiImportExport()) 
+				(this.core.isShowPulsantiImportExport())
 				){
 
 				ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
-				org.openspcoop2.protocol.sdk.constants.ArchiveType archiveType = attributeAuthority ?
-						org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_ATTRIBUTE_AUTHORITY :
-						org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_TOKEN_POLICY;
+				org.openspcoop2.protocol.sdk.constants.ArchiveType archiveType;
+				if (attributeAuthority) {
+					archiveType = org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_ATTRIBUTE_AUTHORITY;
+				} else if (llmProvider) {
+					archiveType = org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_LLM_PROVIDER;
+				} else {
+					archiveType = org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_TOKEN_POLICY;
+				}
 				if(exporterUtils.existsAtLeastOneExportMode(archiveType, this.request, this.session)){
 
 					List<AreaBottoni> bottoni = new ArrayList<>();
@@ -17031,6 +17055,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					if(attributeAuthority) {
 						de.setValue(ConfigurazioneCostanti.LABEL_ATTRIBUTE_AUTHORITY_ESPORTA_SELEZIONATI);
 						de.setOnClick(ConfigurazioneCostanti.LABEL_ATTRIBUTE_AUTHORITY_ESPORTA_SELEZIONATI_ONCLICK);
+					}
+					else if(llmProvider) {
+						de.setValue(ConfigurazioneCostanti.LABEL_LLM_PROVIDER_ESPORTA_SELEZIONATI);
+						de.setOnClick(ConfigurazioneCostanti.LABEL_LLM_PROVIDER_ESPORTA_SELEZIONATI_ONCLICK);
 					}
 					else {
 						de.setValue(ConfigurazioneCostanti.LABEL_TOKEN_POLICY_ESPORTA_SELEZIONATI);
@@ -17054,7 +17082,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	}
 	
 	public List<DataElement> creaEntryTokenPolicy(List<GenericProperties> lista, Parameter pInfoType,
-			boolean attributeAuthority, List<String> nomiConfigurazioniPolicyGestioneToken,
+			boolean attributeAuthority, boolean llmProvider, List<String> nomiConfigurazioniPolicyGestioneToken,
 			List<String> labelConfigurazioniPolicyGestioneToken, boolean forceId, int i) {
 		List<DataElement> e = new ArrayList<>();
 		GenericProperties policy = lista.get(i);
@@ -17093,13 +17121,20 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			e.add(de);
 		}
 		
-		InUsoType inUsoType = attributeAuthority ? InUsoType.ATTRIBUTE_AUTHORITY : InUsoType.TOKEN_POLICY;
+		InUsoType inUsoType;
+		if (attributeAuthority) {
+			inUsoType = InUsoType.ATTRIBUTE_AUTHORITY;
+		} else if (llmProvider) {
+			inUsoType = InUsoType.LLM_PROVIDER;
+		} else {
+			inUsoType = InUsoType.TOKEN_POLICY;
+		}
 		this.addInUsoButtonVisualizzazioneClassica(e, policy.getNome(), policy.getId()+"", inUsoType);
 		return e;
 	}
-	
+
 	private List<DataElement> creaEntryTokenPolicyCustom(List<GenericProperties> lista, Parameter pInfoType,
-			boolean attributeAuthority, List<String> nomiConfigurazioniPolicyGestioneToken,
+			boolean attributeAuthority, boolean llmProvider, List<String> nomiConfigurazioniPolicyGestioneToken,
 			List<String> labelConfigurazioniPolicyGestioneToken, boolean forceId, int i) {
 		List<DataElement> e = new ArrayList<>();
 		GenericProperties policy = lista.get(i);
@@ -17120,7 +17155,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		e.add(de);
 		
 		// seconda riga
-		boolean visualizzaSecondaRiga = StringUtils.isNotBlank(policy.getDescrizione()) || !forceId || attributeAuthority;
+		boolean visualizzaSecondaRiga = StringUtils.isNotBlank(policy.getDescrizione()) || !forceId || attributeAuthority || llmProvider;
 		
 		boolean verificaConnettivita = true;
 		
@@ -17259,8 +17294,29 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						visualizzaSecondaRiga = false;
 					}
 				}
+				else if(llmProvider) {
+					// Mostra il tipo provider e (opzionalmente) la descrizione
+					String providerType = null;
+					for (Property p : policy.getPropertyList()) {
+						if(org.openspcoop2.pdd.core.llm.provider.Costanti.LLM_PROVIDER_TYPE.equals(p.getNome())){
+							providerType = p.getValore();
+						}
+					}
+					if(StringUtils.isNotBlank(policy.getDescrizione()) && StringUtils.isNotBlank(providerType)) {
+						de.setValue(providerType + " - " + policy.getDescrizione());
+					}
+					else if(StringUtils.isNotBlank(providerType)) {
+						de.setValue(providerType);
+					}
+					else if(StringUtils.isNotBlank(policy.getDescrizione())) {
+						de.setValue(MessageFormat.format(ConfigurazioneCostanti.MESSAGE_METADATI_DESCRIZIONE, policy.getDescrizione()));
+					}
+					else {
+						visualizzaSecondaRiga = false;
+					}
+				}
 			}
-			
+
 			if(visualizzaSecondaRiga) {
 				de.setType(DataElementType.SUBTITLE);
 				e.add(de);
@@ -17271,11 +17327,25 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		listaParametriChange.add(new Parameter(CostantiControlStation.PARAMETRO_RESET_CACHE_FROM_LISTA, "true"));
 		
 		// in uso
-		InUsoType inUsoType = attributeAuthority ? InUsoType.ATTRIBUTE_AUTHORITY : InUsoType.TOKEN_POLICY;
+		InUsoType inUsoType;
+		if (attributeAuthority) {
+			inUsoType = InUsoType.ATTRIBUTE_AUTHORITY;
+		} else if (llmProvider) {
+			inUsoType = InUsoType.LLM_PROVIDER;
+		} else {
+			inUsoType = InUsoType.TOKEN_POLICY;
+		}
 		this.addInUsoButton(e, policy.getNome(), policy.getId()+"", inUsoType);
 				
-		// validazione certificati
-		boolean visualizzaValidazioneCertificati = attributeAuthority ? this.core.isAttributeAuthorityVerificaCertificati() : this.core.isPolicyGestioneTokenVerificaCertificati();
+		// validazione certificati (non applicabile a LLM Provider)
+		boolean visualizzaValidazioneCertificati;
+		if (llmProvider) {
+			visualizzaValidazioneCertificati = false;
+		} else if (attributeAuthority) {
+			visualizzaValidazioneCertificati = this.core.isAttributeAuthorityVerificaCertificati();
+		} else {
+			visualizzaValidazioneCertificati = this.core.isPolicyGestioneTokenVerificaCertificati();
+		}
 		if(visualizzaValidazioneCertificati) {
 			this.addVerificaCertificatiButton(e, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_VERIFICA_CERTIFICATI, listaParametriChange);
 		}
@@ -17304,7 +17374,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	}
 
 	public List<DataElement> addPolicyGestioneTokenToDati(TipoOperazione tipoOperazione, List<DataElement> dati, String id, String nome, String descrizione, String tipo, String[] propConfigPolicyGestioneTokenLabelList, String[] propConfigPolicyGestioneTokenList,
-			boolean attributeAuthority, GenericProperties genericProperties) throws Exception {
+			boolean attributeAuthority, boolean llmProvider, GenericProperties genericProperties) throws Exception {
 		
 		if(TipoOperazione.CHANGE.equals(tipoOperazione)){
 			
@@ -17339,13 +17409,27 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			
 			// In Uso Button
-			InUsoType inUsoType = attributeAuthority ? InUsoType.ATTRIBUTE_AUTHORITY : InUsoType.TOKEN_POLICY;
+			InUsoType inUsoType;
+			if (attributeAuthority) {
+				inUsoType = InUsoType.ATTRIBUTE_AUTHORITY;
+			} else if (llmProvider) {
+				inUsoType = InUsoType.LLM_PROVIDER;
+			} else {
+				inUsoType = InUsoType.TOKEN_POLICY;
+			}
 			this.addComandoInUsoButton(nome,
 					id,
 					inUsoType);
 			
-			// Verifica Certificati
-			boolean visualizzaValidazioneCertificati = attributeAuthority ? this.core.isAttributeAuthorityVerificaCertificati() : this.core.isPolicyGestioneTokenVerificaCertificati();
+			// Verifica Certificati: non applicabile a LLM Provider
+			boolean visualizzaValidazioneCertificati;
+			if (llmProvider) {
+				visualizzaValidazioneCertificati = false;
+			} else if (attributeAuthority) {
+				visualizzaValidazioneCertificati = this.core.isAttributeAuthorityVerificaCertificati();
+			} else {
+				visualizzaValidazioneCertificati = this.core.isPolicyGestioneTokenVerificaCertificati();
+			}
 			if(visualizzaValidazioneCertificati) {
 				this.pd.addComandoVerificaCertificatiElementoButton(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_VERIFICA_CERTIFICATI, listaParametriChange);
 			}
@@ -17375,14 +17459,23 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 		
 		
-		boolean forceIdEnabled = attributeAuthority ? 
-				this.confCore.isAttributeAuthorityForceIdEnabled() :
-				this.confCore.isTokenPolicyForceIdEnabled() ;
-		
+		boolean forceIdEnabled;
+		if (attributeAuthority) {
+			forceIdEnabled = this.confCore.isAttributeAuthorityForceIdEnabled();
+		} else if (llmProvider) {
+			forceIdEnabled = this.confCore.isLlmProviderForceIdEnabled();
+		} else {
+			forceIdEnabled = this.confCore.isTokenPolicyForceIdEnabled();
+		}
+
 		DataElement de = new DataElement();
-		de.setLabel(attributeAuthority ?
-				ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY :
-				ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN);
+		if (attributeAuthority) {
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY);
+		} else if (llmProvider) {
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_LLM_PROVIDER);
+		} else {
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN);
+		}
 		de.setType(DataElementType.TITLE);
 		dati.add(de);
 		
@@ -24654,8 +24747,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		
 		// i valori accettati sono solo i seguenti
-		return  ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_TOKEN.equals(parameterValueFiltrato) 
+		return  ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_TOKEN.equals(parameterValueFiltrato)
 				|| ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_ATTRIBUTE_AUTHORITY.equals(parameterValueFiltrato)
+				|| ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_LLM_PROVIDER.equals(parameterValueFiltrato)
 				;
 	}
 	

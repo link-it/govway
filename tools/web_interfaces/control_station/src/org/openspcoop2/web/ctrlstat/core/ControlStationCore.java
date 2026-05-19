@@ -963,6 +963,12 @@ public class ControlStationCore {
 	public boolean isAttributeAuthorityVerificaCertificati() {
 		return this.isAttributeAuthorityVerificaCertificati;
 	}
+
+	/** LLM Provider PropertiesSourceConfiguration */
+	private PropertiesSourceConfiguration llmProviderPropertiesSourceConfiguration = null;
+	public PropertiesSourceConfiguration getLlmProviderPropertiesSourceConfiguration() {
+		return this.llmProviderPropertiesSourceConfiguration;
+	}
 	
 	/** ControlloTraffico */
 	private boolean isControlloTrafficoPolicyGlobaleGroupByApi;
@@ -1391,6 +1397,9 @@ public class ControlStationCore {
 	private String attributeAuthorityForceId = null;
 	private boolean attributeAuthorityForceIdEnabled = false;
 	private Properties attributeAuthorityTipologia = null;
+	private String llmProviderForceId = null;
+	private boolean llmProviderForceIdEnabled = false;
+	private Properties llmProviderTipologia = null;
 	private boolean showServiziVisualizzaModalitaElenco = false;
 	private Integer selectListSoggettiOperativiNumeroMassimoSoggetti = null;
 	private Integer selectListSoggettiOperativiDimensioneMassimaLabel = null;
@@ -1506,6 +1515,15 @@ public class ControlStationCore {
 	}
 	public Properties getAttributeAuthorityTipologia() {
 		return this.attributeAuthorityTipologia;
+	}
+	public String getLlmProviderForceId() {
+		return this.llmProviderForceId;
+	}
+	public boolean isLlmProviderForceIdEnabled() {
+		return this.llmProviderForceIdEnabled;
+	}
+	public Properties getLlmProviderTipologia() {
+		return this.llmProviderTipologia;
 	}
 	public boolean isShowServiziVisualizzaModalitaElenco() {
 		return this.showServiziVisualizzaModalitaElenco;
@@ -2668,8 +2686,11 @@ public class ControlStationCore {
 		
 		/** AttributeAuthority PropertiesSourceConfiguration */
 		this.attributeAuthorityPropertiesSourceConfiguration = core.attributeAuthorityPropertiesSourceConfiguration;
-		this.isAttributeAuthorityVerificaCertificati = core.isAttributeAuthorityVerificaCertificati; 
-		
+		this.isAttributeAuthorityVerificaCertificati = core.isAttributeAuthorityVerificaCertificati;
+
+		/** LLM Provider PropertiesSourceConfiguration */
+		this.llmProviderPropertiesSourceConfiguration = core.llmProviderPropertiesSourceConfiguration;
+
 		/** ControlloTraffico */
 		this.isControlloTrafficoPolicyGlobaleGroupByApi = core.isControlloTrafficoPolicyGlobaleGroupByApi;
 		this.isControlloTrafficoPolicyGlobaleFiltroApi = core.isControlloTrafficoPolicyGlobaleFiltroApi;
@@ -2837,6 +2858,9 @@ public class ControlStationCore {
 		this.attributeAuthorityForceId = core.attributeAuthorityForceId;
 		this.attributeAuthorityForceIdEnabled = core.attributeAuthorityForceIdEnabled;
 		this.attributeAuthorityTipologia = core.attributeAuthorityTipologia;
+		this.llmProviderForceId = core.llmProviderForceId;
+		this.llmProviderForceIdEnabled = core.llmProviderForceIdEnabled;
+		this.llmProviderTipologia = core.llmProviderTipologia;
 		this.showServiziVisualizzaModalitaElenco = core.showServiziVisualizzaModalitaElenco;
 		this.selectListSoggettiOperativiNumeroMassimoSoggetti = core.selectListSoggettiOperativiNumeroMassimoSoggetti;
 		this.selectListSoggettiOperativiDimensioneMassimaLabel = core.selectListSoggettiOperativiDimensioneMassimaLabel;
@@ -3169,7 +3193,8 @@ public class ControlStationCore {
 				initPolicyGestioneTokenPDND();
 			}
 			this.attributeAuthorityPropertiesSourceConfiguration = consoleProperties.getAttributeAuthorityPropertiesSourceConfiguration();
-			this.isAttributeAuthorityVerificaCertificati = consoleProperties.isAttributeAuthorityVerificaCertificati(); 
+			this.isAttributeAuthorityVerificaCertificati = consoleProperties.isAttributeAuthorityVerificaCertificati();
+			this.llmProviderPropertiesSourceConfiguration = consoleProperties.getLlmProviderPropertiesSourceConfiguration();
 			this.isControlloTrafficoPolicyGlobaleGroupByApi = consoleProperties.isControlloTrafficoPolicyGlobaleGroupByApi();
 			this.isControlloTrafficoPolicyGlobaleFiltroApi = consoleProperties.isControlloTrafficoPolicyGlobaleFiltroApi();
 			this.isControlloTrafficoPolicyGlobaleFiltroApiSoggettoErogatore = consoleProperties.isControlloTrafficoPolicyGlobaleFiltroApiSoggettoErogatore();
@@ -3317,6 +3342,9 @@ public class ControlStationCore {
 			this.attributeAuthorityForceId = consoleProperties.getAttributeAuthorityForceId();
 			this.attributeAuthorityForceIdEnabled = StringUtils.isNotEmpty(this.attributeAuthorityForceId);
 			this.attributeAuthorityTipologia = consoleProperties.getAttributeAuthorityTipologia();
+			this.llmProviderForceId = consoleProperties.getLlmProviderForceId();
+			this.llmProviderForceIdEnabled = StringUtils.isNotEmpty(this.llmProviderForceId);
+			this.llmProviderTipologia = consoleProperties.getLlmProviderTipologia();
 			this.showServiziVisualizzaModalitaElenco = consoleProperties.isEnableServiziVisualizzaModalitaElenco();
 			this.selectListSoggettiOperativiNumeroMassimoSoggetti = consoleProperties.getNumeroMassimoSoggettiOperativiMenuUtente();
 			this.selectListSoggettiOperativiDimensioneMassimaLabel = consoleProperties.getLunghezzaMassimaLabelSoggettiOperativiMenuUtente();

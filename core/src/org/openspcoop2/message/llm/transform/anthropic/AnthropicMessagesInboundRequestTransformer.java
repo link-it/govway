@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.openspcoop2.message.llm.transform;
+package org.openspcoop2.message.llm.transform.anthropic;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +31,9 @@ import org.openspcoop2.message.llm.CanonicalTextBlock;
 import org.openspcoop2.message.llm.CanonicalTool;
 import org.openspcoop2.message.llm.CanonicalToolResultBlock;
 import org.openspcoop2.message.llm.CanonicalToolUseBlock;
+import org.openspcoop2.message.llm.transform.LLMDialect;
+import org.openspcoop2.message.llm.transform.LLMInboundRequestTransformer;
+import org.openspcoop2.message.llm.transform.LLMTransformException;
 import org.openspcoop2.utils.json.JSONUtils;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -74,11 +77,11 @@ public class AnthropicMessagesInboundRequestTransformer implements LLMInboundReq
 	private CanonicalChatRequest parse(JsonNode root, ObjectMapper mapper) throws LLMTransformException {
 		CanonicalChatRequest out = new CanonicalChatRequest();
 		out.setSourceDialect(LLMDialect.ANTHROPIC_MESSAGES_V1.getValue());
-		if (root.hasNonNull("model")) {
-			out.setModel(root.get("model").asText());
+		if (root.hasNonNull(AnthropicMessagesFields.FIELD_MODEL)) {
+			out.setModel(root.get(AnthropicMessagesFields.FIELD_MODEL).asText());
 		}
-		if (root.hasNonNull("system")) {
-			out.setSystem(root.get("system").asText());
+		if (root.hasNonNull(AnthropicMessagesFields.FIELD_SYSTEM)) {
+			out.setSystem(extractSystemText(root.get(AnthropicMessagesFields.FIELD_SYSTEM)));
 		}
 		applyGenerationSettings(root, out);
 		applyMessages(root, out, mapper);
@@ -90,27 +93,27 @@ public class AnthropicMessagesInboundRequestTransformer implements LLMInboundReq
 	/* === sezioni della request === */
 
 	private void applyGenerationSettings(JsonNode root, CanonicalChatRequest out) {
-		if (root.hasNonNull("max_tokens")) {
-			out.setMaxTokens(root.get("max_tokens").asInt());
+		if (root.hasNonNull(AnthropicMessagesFields.FIELD_MAX_TOKENS)) {
+			out.setMaxTokens(root.get(AnthropicMessagesFields.FIELD_MAX_TOKENS).asInt());
 		}
-		if (root.hasNonNull("temperature")) {
-			out.setTemperature(root.get("temperature").asDouble());
+		if (root.hasNonNull(AnthropicMessagesFields.FIELD_TEMPERATURE)) {
+			out.setTemperature(root.get(AnthropicMessagesFields.FIELD_TEMPERATURE).asDouble());
 		}
-		if (root.hasNonNull("top_p")) {
-			out.setTopP(root.get("top_p").asDouble());
+		if (root.hasNonNull(AnthropicMessagesFields.FIELD_TOP_P)) {
+			out.setTopP(root.get(AnthropicMessagesFields.FIELD_TOP_P).asDouble());
 		}
-		if (root.hasNonNull("stream")) {
-			out.setStream(root.get("stream").asBoolean());
+		if (root.hasNonNull(AnthropicMessagesFields.FIELD_STREAM)) {
+			out.setStream(root.get(AnthropicMessagesFields.FIELD_STREAM).asBoolean());
 		}
 		applyStopSequences(root, out);
 	}
 
 	private void applyStopSequences(JsonNode root, CanonicalChatRequest out) {
-		if (!root.hasNonNull("stop_sequences") || !root.get("stop_sequences").isArray()) {
+		if (!root.hasNonNull(AnthropicMessagesFields.FIELD_STOP_SEQUENCES) || !root.get(AnthropicMessagesFields.FIELD_STOP_SEQUENCES).isArray()) {
 			return;
 		}
 		List<String> stops = new ArrayList<>();
-		for (JsonNode s : root.get("stop_sequences")) {
+		for (JsonNode s : root.get(AnthropicMessagesFields.FIELD_STOP_SEQUENCES)) {
 			stops.add(s.asText());
 		}
 		if (!stops.isEmpty()) {
@@ -119,25 +122,25 @@ public class AnthropicMessagesInboundRequestTransformer implements LLMInboundReq
 	}
 
 	private void applyMessages(JsonNode root, CanonicalChatRequest out, ObjectMapper mapper) throws LLMTransformException {
-		if (!root.hasNonNull("messages") || !root.get("messages").isArray()) {
+		if (!root.hasNonNull(AnthropicMessagesFields.FIELD_MESSAGES) || !root.get(AnthropicMessagesFields.FIELD_MESSAGES).isArray()) {
 			return;
 		}
 		List<CanonicalMessage> list = new ArrayList<>();
-		for (JsonNode m : root.get("messages")) {
+		for (JsonNode m : root.get(AnthropicMessagesFields.FIELD_MESSAGES)) {
 			list.add(buildMessage(m, mapper));
 		}
 		out.setMessages(list);
 	}
 
 	private CanonicalMessage buildMessage(JsonNode m, ObjectMapper mapper) throws LLMTransformException {
-		String role = m.hasNonNull("role") ? m.get("role").asText() : null;
+		String role = m.hasNonNull(AnthropicMessagesFields.FIELD_ROLE) ? m.get(AnthropicMessagesFields.FIELD_ROLE).asText() : null;
 		CanonicalRole canonicalRole = role != null ? CanonicalRole.fromValue(role) : null;
 		if (canonicalRole == null) {
 			throw new LLMTransformException("Ruolo Anthropic non valido o assente: " + role);
 		}
 		List<CanonicalContentBlock> blocks = new ArrayList<>();
-		if (m.hasNonNull("content")) {
-			populateContent(m.get("content"), blocks, mapper);
+		if (m.hasNonNull(AnthropicMessagesFields.FIELD_CONTENT)) {
+			populateContent(m.get(AnthropicMessagesFields.FIELD_CONTENT), blocks, mapper);
 		}
 		return new CanonicalMessage(canonicalRole, blocks);
 	}
@@ -156,16 +159,16 @@ public class AnthropicMessagesInboundRequestTransformer implements LLMInboundReq
 	}
 
 	private CanonicalContentBlock buildBlock(JsonNode part, ObjectMapper mapper) throws LLMTransformException {
-		String type = part.hasNonNull("type") ? part.get("type").asText() : null;
+		String type = part.hasNonNull(AnthropicMessagesFields.FIELD_TYPE) ? part.get(AnthropicMessagesFields.FIELD_TYPE).asText() : null;
 		if (type == null) {
 			throw new LLMTransformException("Blocco Anthropic senza 'type'");
 		}
 		switch (type) {
-			case "text":
-				return new CanonicalTextBlock(part.hasNonNull("text") ? part.get("text").asText() : "");
-			case "tool_use":
+			case AnthropicMessagesFields.BLOCK_TYPE_TEXT:
+				return new CanonicalTextBlock(part.hasNonNull(AnthropicMessagesFields.FIELD_TEXT) ? part.get(AnthropicMessagesFields.FIELD_TEXT).asText() : "");
+			case AnthropicMessagesFields.BLOCK_TYPE_TOOL_USE:
 				return buildToolUse(part, mapper);
-			case "tool_result":
+			case AnthropicMessagesFields.BLOCK_TYPE_TOOL_RESULT:
 				return buildToolResult(part);
 			default:
 				throw new LLMTransformException("Tipo blocco Anthropic non supportato nel prototipo: " + type);
@@ -173,12 +176,12 @@ public class AnthropicMessagesInboundRequestTransformer implements LLMInboundReq
 	}
 
 	private CanonicalToolUseBlock buildToolUse(JsonNode part, ObjectMapper mapper) throws LLMTransformException {
-		String id = part.hasNonNull("id") ? part.get("id").asText() : null;
-		String name = part.hasNonNull("name") ? part.get("name").asText() : null;
+		String id = part.hasNonNull(AnthropicMessagesFields.FIELD_ID) ? part.get(AnthropicMessagesFields.FIELD_ID).asText() : null;
+		String name = part.hasNonNull(AnthropicMessagesFields.FIELD_NAME) ? part.get(AnthropicMessagesFields.FIELD_NAME).asText() : null;
 		Map<String, Object> input = null;
-		if (part.hasNonNull("input")) {
+		if (part.hasNonNull(AnthropicMessagesFields.FIELD_INPUT)) {
 			try {
-				input = mapper.convertValue(part.get("input"), MAP_TYPE);
+				input = mapper.convertValue(part.get(AnthropicMessagesFields.FIELD_INPUT), MAP_TYPE);
 			} catch (Exception e) {
 				throw new LLMTransformException("input del tool_use non convertibile in Map: " + e.getMessage(), e);
 			}
@@ -187,17 +190,17 @@ public class AnthropicMessagesInboundRequestTransformer implements LLMInboundReq
 	}
 
 	private CanonicalToolResultBlock buildToolResult(JsonNode part) {
-		String toolUseId = part.hasNonNull("tool_use_id") ? part.get("tool_use_id").asText() : null;
+		String toolUseId = part.hasNonNull(AnthropicMessagesFields.FIELD_TOOL_USE_ID) ? part.get(AnthropicMessagesFields.FIELD_TOOL_USE_ID).asText() : null;
 		String content = extractContent(part);
-		Boolean isError = part.hasNonNull("is_error") ? part.get("is_error").asBoolean() : null;
+		Boolean isError = part.hasNonNull(AnthropicMessagesFields.FIELD_IS_ERROR) ? part.get(AnthropicMessagesFields.FIELD_IS_ERROR).asBoolean() : null;
 		return new CanonicalToolResultBlock(toolUseId, content, isError);
 	}
 
 	private String extractContent(JsonNode part) {
-		if (!part.hasNonNull("content")) {
+		if (!part.hasNonNull(AnthropicMessagesFields.FIELD_CONTENT)) {
 			return null;
 		}
-		JsonNode c = part.get("content");
+		JsonNode c = part.get(AnthropicMessagesFields.FIELD_CONTENT);
 		return c.isTextual() ? c.asText() : c.toString();
 	}
 
@@ -205,11 +208,11 @@ public class AnthropicMessagesInboundRequestTransformer implements LLMInboundReq
 	/* === tools === */
 
 	private void applyTools(JsonNode root, CanonicalChatRequest out, ObjectMapper mapper) {
-		if (!root.hasNonNull("tools") || !root.get("tools").isArray()) {
+		if (!root.hasNonNull(AnthropicMessagesFields.FIELD_TOOLS) || !root.get(AnthropicMessagesFields.FIELD_TOOLS).isArray()) {
 			return;
 		}
 		List<CanonicalTool> list = new ArrayList<>();
-		for (JsonNode t : root.get("tools")) {
+		for (JsonNode t : root.get(AnthropicMessagesFields.FIELD_TOOLS)) {
 			list.add(buildTool(t, mapper));
 		}
 		if (!list.isEmpty()) {
@@ -218,12 +221,41 @@ public class AnthropicMessagesInboundRequestTransformer implements LLMInboundReq
 	}
 
 	private CanonicalTool buildTool(JsonNode t, ObjectMapper mapper) {
-		String name = t.hasNonNull("name") ? t.get("name").asText() : null;
-		String description = t.hasNonNull("description") ? t.get("description").asText() : null;
+		String name = t.hasNonNull(AnthropicMessagesFields.FIELD_NAME) ? t.get(AnthropicMessagesFields.FIELD_NAME).asText() : null;
+		String description = t.hasNonNull(AnthropicMessagesFields.FIELD_DESCRIPTION) ? t.get(AnthropicMessagesFields.FIELD_DESCRIPTION).asText() : null;
 		Map<String, Object> schema = null;
-		if (t.hasNonNull("input_schema")) {
-			schema = mapper.convertValue(t.get("input_schema"), MAP_TYPE);
+		if (t.hasNonNull(AnthropicMessagesFields.FIELD_INPUT_SCHEMA)) {
+			schema = mapper.convertValue(t.get(AnthropicMessagesFields.FIELD_INPUT_SCHEMA), MAP_TYPE);
 		}
 		return new CanonicalTool(name, description, schema);
+	}
+
+	/**
+	 * Anthropic accetta {@code system} sia come stringa singola sia come array di
+	 * blocchi {@code {type:"text", text:"..."}}. Concatena il testo dei blocchi
+	 * di tipo {@code text} se l'input è un array, altrimenti tratta come stringa.
+	 */
+	private String extractSystemText(JsonNode system) {
+		if (system == null) {
+			return null;
+		}
+		if (system.isTextual()) {
+			return system.asText();
+		}
+		if (system.isArray()) {
+			StringBuilder sb = new StringBuilder();
+			for (JsonNode block : system) {
+				if (block.hasNonNull(AnthropicMessagesFields.FIELD_TYPE)
+						&& AnthropicMessagesFields.BLOCK_TYPE_TEXT.equals(block.get(AnthropicMessagesFields.FIELD_TYPE).asText())
+						&& block.hasNonNull(AnthropicMessagesFields.FIELD_TEXT)) {
+					if (sb.length() > 0) {
+						sb.append("\n\n");
+					}
+					sb.append(block.get(AnthropicMessagesFields.FIELD_TEXT).asText());
+				}
+			}
+			return sb.length() > 0 ? sb.toString() : null;
+		}
+		return null;
 	}
 }

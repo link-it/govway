@@ -17,12 +17,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.openspcoop2.message.llm.transform;
+package org.openspcoop2.message.llm.transform.anthropic;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.openspcoop2.message.llm.CanonicalChatRequest;
+import org.openspcoop2.message.llm.stream.LLMProviderStreamTransport;
+import org.openspcoop2.message.llm.transform.LLMOutboundProviderRequestTransformer;
+import org.openspcoop2.message.llm.transform.LLMProviderRequest;
+import org.openspcoop2.message.llm.transform.LLMProviders;
+import org.openspcoop2.message.llm.transform.LLMTransformException;
 import org.openspcoop2.utils.json.JSONUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -55,11 +60,7 @@ public class AnthropicOutboundProviderRequestTransformer implements LLMOutboundP
 	private static final int DEFAULT_MAX_TOKENS = 4096;
 
 	/** Versione dell'API Anthropic Messages stabile di riferimento per il prototipo. */
-	private static final String ANTHROPIC_VERSION_HEADER = "anthropic-version";
 	private static final String ANTHROPIC_VERSION_VALUE = "2023-06-01";
-
-	/** Path-risorsa dell'endpoint Anthropic per chat sincrona (native Messages API). */
-	private static final String RESOURCE_PATH_CHAT = "/messages";
 
 	@Override
 	public String getProviderId() {
@@ -71,7 +72,12 @@ public class AnthropicOutboundProviderRequestTransformer implements LLMOutboundP
 		// Per il prototipo c'è una sola operazione canonical (chat). In futuro,
 		// quando arriveranno embeddings/batch/ecc. si farà uno switch sulla
 		// natura del canonical.
-		return RESOURCE_PATH_CHAT;
+		return AnthropicMessagesFields.RESOURCE_PATH_MESSAGES;
+	}
+
+	@Override
+	public LLMProviderStreamTransport getProviderStreamTransport() {
+		return LLMProviderStreamTransport.SSE;
 	}
 
 	@Override
@@ -91,14 +97,14 @@ public class AnthropicOutboundProviderRequestTransformer implements LLMOutboundP
 	}
 
 	private void ensureMaxTokens(ObjectNode out) {
-		if (!out.hasNonNull("max_tokens")) {
-			out.put("max_tokens", DEFAULT_MAX_TOKENS);
+		if (!out.hasNonNull(AnthropicMessagesFields.FIELD_MAX_TOKENS)) {
+			out.put(AnthropicMessagesFields.FIELD_MAX_TOKENS, DEFAULT_MAX_TOKENS);
 		}
 	}
 
 	private Map<String, String> buildHeaders() {
 		Map<String, String> headers = new LinkedHashMap<>();
-		headers.put(ANTHROPIC_VERSION_HEADER, ANTHROPIC_VERSION_VALUE);
+		headers.put(AnthropicMessagesFields.HEADER_ANTHROPIC_VERSION, ANTHROPIC_VERSION_VALUE);
 		return headers;
 	}
 }

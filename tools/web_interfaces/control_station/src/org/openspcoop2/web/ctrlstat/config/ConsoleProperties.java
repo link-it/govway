@@ -362,7 +362,13 @@ public class ConsoleProperties {
 	public boolean isAttributeAuthorityVerificaCertificati() throws UtilsException{
 		return this.readBooleanRequiredProperty("attributeAuthority.verificaCertificati");
 	}
-	
+
+	public PropertiesSourceConfiguration getLlmProviderPropertiesSourceConfiguration() throws UtilsException {
+		return getSourceConfigurationEngine("llmProvider",
+				"llmProvider.dir", "llmProvider.dir.refresh",
+				"llmProvider.builtIn", "llmProvider.builtIn.refresh");
+	}
+
 	public boolean isControlloTrafficoPolicyGlobaleGroupByApi() throws UtilsException{
 		return this.readBooleanRequiredProperty("controlloTraffico.policyGlobale.groupBy.api");
 	}
@@ -1736,9 +1742,17 @@ public class ConsoleProperties {
 	public String getAttributeAuthorityForceId() throws UtilsException{
 		return this.readProperty(false, "console.attributeAuthority.forceId");
 	}
-	
+
 	public Properties getAttributeAuthorityTipologia() throws UtilsException{
 		return this.reader.readPropertiesConvertEnvProperties("console.attributeAuthority.mapping.");
+	}
+
+	public String getLlmProviderForceId() throws UtilsException{
+		return this.readProperty(false, "console.llmProvider.forceId");
+	}
+
+	public Properties getLlmProviderTipologia() throws UtilsException{
+		return this.reader.readPropertiesConvertEnvProperties("console.llmProvider.mapping.");
 	}
 	
 	public Boolean isEnableServiziVisualizzaModalitaElenco() throws UtilsException{

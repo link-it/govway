@@ -167,6 +167,7 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 			String autenticazioneTokenS = saHelper.getParametroBoolean(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO);
 			boolean autenticazioneToken = ServletUtils.isCheckBoxEnabled(autenticazioneTokenS);
 			String tokenPolicy = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY);
+			String llmPolicy = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_LLM_PROVIDER);
 			boolean forcePDND = false;
 			boolean forceOAuth = false;
 			boolean forceDPoP = false;
@@ -385,8 +386,9 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 			}
 			
 			boolean integrationManagerEnabled = !saHelper.isModalitaStandard() && saCore.isIntegrationManagerEnabled();
-			
+
 			ServiceBinding serviceBinding = null;
+			boolean apiIsLLM = false;
 			String labelPerPorta = null;
 			if(parentSA!=null && (parentSA.intValue() == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_CONFIGURAZIONE)) {
 				
@@ -407,8 +409,9 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 				AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(soggettiCore);
 				AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
 				AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(apsCore);
-				AccordoServizioParteComuneSintetico apc = apcCore.getAccordoServizioSintetico(asps.getIdAccordo()); 
+				AccordoServizioParteComuneSintetico apc = apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
 				serviceBinding = apcCore.toMessageServiceBinding(apc.getServiceBinding());
+				apiIsLLM = org.openspcoop2.protocol.manifest.utils.InterfaceTypeUtils.isLLM(apcCore.formatoSpecifica2InterfaceType(apc.getFormatoSpecifica()));
 				
 				boolean isSoapOneWay = false;
 				if(pa!=null) {
@@ -650,6 +653,13 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 				
 				opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(saHelper, transferMode, redirectMode, httpImpl);
 				
+				if(llmPolicy==null && props!=null){
+					String llmV = props.get(CostantiDB.CONNETTORE_LLM_POLICY);
+					if(llmV!=null && !"".equals(llmV)){
+						llmPolicy = llmV;
+					}
+				}
+
 				if(tokenPolicy==null && props!=null){
 					String v = props.get(CostantiDB.CONNETTORE_TOKEN_POLICY);
 					if(v!=null && !"".equals(v)){
@@ -847,7 +857,12 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 						TipoOperazione.CHANGE, null,null,
 						postBackViaPost);
 				
-				dati = saHelper.addEndPointToDati(dati, serviceBinding, connettoreDebug, endpointtype, autenticazioneHttp, null,
+				String llmUrlOverride = saHelper.addLLMProviderSectionAndResolveUrl(dati, apiIsLLM, llmPolicy, TipoOperazione.CHANGE, postBackViaPost);
+			if (llmUrlOverride != null) {
+				url = llmUrlOverride;
+				httpsurl = llmUrlOverride;
+			}
+			dati = saHelper.addEndPointToDati(dati, serviceBinding, connettoreDebug, endpointtype, autenticazioneHttp, null,
 						url, nome,
 						tipo, user, password, initcont, urlpgk, provurl,
 						connfact, sendas, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, TipoOperazione.CHANGE, 
@@ -891,6 +906,9 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 
 			// Controlli sui campi immessi
 			boolean isOk = saHelper.servizioApplicativoEndPointCheckData(protocollo, listExtendedConnettore, sa);
+			if (isOk) {
+				isOk = saHelper.checkLLMPolicyData(apiIsLLM, llmPolicy);
+			}
 			if (!isOk) {
 				
 				// setto la barra del titolo
@@ -910,7 +928,12 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 						TipoOperazione.CHANGE, null,null,
 						postBackViaPost);
 				
-				dati = saHelper.addEndPointToDati(dati, serviceBinding, connettoreDebug, endpointtype, autenticazioneHttp, null,
+				String llmUrlOverride = saHelper.addLLMProviderSectionAndResolveUrl(dati, apiIsLLM, llmPolicy, TipoOperazione.CHANGE, postBackViaPost);
+			if (llmUrlOverride != null) {
+				url = llmUrlOverride;
+				httpsurl = llmUrlOverride;
+			}
+			dati = saHelper.addEndPointToDati(dati, serviceBinding, connettoreDebug, endpointtype, autenticazioneHttp, null,
 						url, nome,
 						tipo, "", "", initcont, urlpgk, provurl, connfact,
 						sendas, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, TipoOperazione.CHANGE, 
@@ -1017,6 +1040,9 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 					apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
 					connettoreStatusParams,
 					listExtendedConnettore);
+			if (apiIsLLM) {
+				saHelper.addLLMPolicyPropertyToConnettore(connra, llmPolicy);
+			}
 			ra.setConnettore(connra);
 			sa.setRispostaAsincrona(ra);
 

@@ -1,0 +1,18 @@
+<config id="llmProvider"
+	label="LLM Provider"
+	xmlns="http://www.openspcoop2.org/core/mvc/properties"
+	provider="org.openspcoop2.pdd.core.llm.provider.LLMProviderConfigProvider">
+
+	<section label="Provider">
+
+		<item type="select" name="providerType" label="Tipo" required="true" reloadOnChange="true">
+			<property name="llmProvider.type" />
+		</item>
+
+		<item type="textarea" name="providerBaseUrl" label="Base URL" required="true" default="https://">
+			<property name="llmProvider.baseUrl" />
+		</item>
+
+	</section>
+
+</config>

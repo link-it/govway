@@ -114,7 +114,8 @@ public class DriverRegistroServiziDB_connettoriLIB {
 		String httpImpl = null; // in caso di tipo http e https
 		
 		String tokenPolicy = null;
-		
+		String llmPolicy = null;
+
 		String apiKey = null;
 		String apiKeyHeader = null;
 		String appId = null;
@@ -223,7 +224,13 @@ public class DriverRegistroServiziDB_connettoriLIB {
 				propertiesGestiteAttraversoColonneAdHoc.add(nomeProperty);
 				tokenPolicy = valoreProperty;
 			}
-			
+
+			// LLM Policy
+			if (nomeProperty.equals(CostantiDB.CONNETTORE_LLM_POLICY)){
+				propertiesGestiteAttraversoColonneAdHoc.add(nomeProperty);
+				llmPolicy = valoreProperty;
+			}
+
 			// ApiKey
 			if (nomeProperty.equals(CostantiDB.CONNETTORE_APIKEY)){
 				propertiesGestiteAttraversoColonneAdHoc.add(nomeProperty);
@@ -321,6 +328,7 @@ public class DriverRegistroServiziDB_connettoriLIB {
 				sqlQueryObject.addInsertField("avg_response_time", "?");
 				sqlQueryObject.addInsertField("custom", "?");
 				sqlQueryObject.addInsertField("token_policy", "?");
+				sqlQueryObject.addInsertField("llm_policy", "?");
 				sqlQueryObject.addInsertField("api_key", "?");
 				sqlQueryObject.addInsertField("api_key_header", "?");
 				sqlQueryObject.addInsertField("app_id", "?");
@@ -419,7 +427,8 @@ public class DriverRegistroServiziDB_connettoriLIB {
 					stm.setInt(index++, 0);
 				}
 				stm.setString(index++, tokenPolicy);
-				
+				stm.setString(index++, llmPolicy);
+
 				String apiKeyInsert = isAbilitato ? apiKey : null;
 				if(isAbilitato && apiKey!=null && StringUtils.isNotEmpty(apiKey) && driverBYOK!=null && CostantiConnettori.isConfidential(CostantiDB.CONNETTORE_APIKEY)) {
 					BYOKWrappedValue byokValue = driverBYOK.wrap(apiKey);
@@ -437,16 +446,17 @@ public class DriverRegistroServiziDB_connettoriLIB {
 				stm.setString(index++, isAbilitato ? apiKeyHeader : null);
 				stm.setString(index++, isAbilitato ? appId : null);
 				stm.setString(index++, isAbilitato ? appIdHeader : null);
-				
-				DriverRegistroServiziDB_LIB.logDebug("CRUDConnettore CREATE : \n" + 
-						DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, endpointtype, url, 
+
+				DriverRegistroServiziDB_LIB.logDebug("CRUDConnettore CREATE : \n" +
+						DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, endpointtype, url,
 								transferMode, transferModeChunkSize, redirectMode, redirectMaxHop, httpImpl,
-								nome, tipo, utente, plainPassword, encPassword, 
-								initcont, urlpkg, provurl, connectionfactory, sendas, nomeConnettore, debug, 
+								nome, tipo, utente, plainPassword, encPassword,
+								initcont, urlpkg, provurl, connectionfactory, sendas, nomeConnettore, debug,
 								proxy, proxyType, proxyHostname, proxyPort, proxyUsername, plainProxyPassword, encProxyPassword,
 								tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaAvgResponseTime,
 								(connettore.getCustom()!=null && connettore.getCustom()),
 								tokenPolicy,
+								llmPolicy,
 								apiKeyInsert, apiKeyHeader, appId, appIdHeader));
 				int n = stm.executeUpdate();
 				DriverRegistroServiziDB_LIB.logDebug("CRUDConnettore type = " + type + " row affected =" + n);
@@ -602,6 +612,7 @@ public class DriverRegistroServiziDB_connettoriLIB {
 				sqlQueryObject.addUpdateField("avg_response_time", "?");
 				sqlQueryObject.addUpdateField("custom", "?");
 				sqlQueryObject.addUpdateField("token_policy", "?");
+				sqlQueryObject.addUpdateField("llm_policy", "?");
 				sqlQueryObject.addUpdateField("api_key", "?");
 				sqlQueryObject.addUpdateField("api_key_header", "?");
 				sqlQueryObject.addUpdateField("app_id", "?");
@@ -701,7 +712,8 @@ public class DriverRegistroServiziDB_connettoriLIB {
 					stm.setInt(index++, 0);
 				}
 				stm.setString(index++, tokenPolicy);
-				
+				stm.setString(index++, llmPolicy);
+
 				apiKeyInsert = isAbilitato ? apiKey : null;
 				if(isAbilitato && apiKey!=null && StringUtils.isNotEmpty(apiKey) && driverBYOK!=null && CostantiConnettori.isConfidential(CostantiDB.CONNETTORE_APIKEY)) {
 					BYOKWrappedValue byokValue = driverBYOK.wrap(apiKey);
@@ -719,18 +731,19 @@ public class DriverRegistroServiziDB_connettoriLIB {
 				stm.setString(index++, isAbilitato ? apiKeyHeader : null);
 				stm.setString(index++, isAbilitato ? appId : null);
 				stm.setString(index++, isAbilitato ? appIdHeader : null);
-				
+
 				stm.setLong(index++, idConnettore);
 
-				DriverRegistroServiziDB_LIB.logDebug("CRUDConnettore UPDATE : \n" + 
-						DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, endpointtype, url, 
+				DriverRegistroServiziDB_LIB.logDebug("CRUDConnettore UPDATE : \n" +
+						DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, endpointtype, url,
 								transferMode, transferModeChunkSize, redirectMode, redirectMaxHop, httpImpl,
-								nome, tipo, utente, plainPassword, encPassword, 
+								nome, tipo, utente, plainPassword, encPassword,
 								initcont, urlpkg, provurl, connectionfactory, sendas, nomeConnettore, debug,
 								proxy, proxyType, proxyHostname, proxyPort, proxyUsername, plainProxyPassword, encProxyPassword,
 								tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaAvgResponseTime,
 								(connettore.getCustom()!=null && connettore.getCustom()),
 								tokenPolicy,
+								llmPolicy,
 								apiKeyInsert, apiKeyHeader, appId, appIdHeader,
 								idConnettore));
 				n = stm.executeUpdate();

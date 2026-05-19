@@ -64,6 +64,12 @@ public class HttpConstants {
 	
 	/** Content Encoding */
 	public static final String CONTENT_ENCODING = "Content-Encoding";
+	public static final String CONTENT_ENCODING_VALUE_IDENTITY = "identity";
+	public static final String CONTENT_ENCODING_VALUE_GZIP = "gzip";
+	public static final String CONTENT_ENCODING_VALUE_DEFLATE = "deflate";
+	public static final String CONTENT_ENCODING_VALUE_BROTLI = "br";
+	public static final String CONTENT_ENCODING_VALUE_ZSTD = "zstd";
+	public static final String CONTENT_ENCODING_VALUE_COMPRESS = "compress";
 	
 	/** Redirect */
 	public static final String REDIRECT_LOCATION = "Location";

@@ -85,6 +85,7 @@ public class ConfigurazionePolicyGestioneTokenDel extends Action {
 				infoType = ServletUtils.getObjectFromSession(request, session, String.class, ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE);
 			}
 			boolean attributeAuthority = ConfigurazioneCostanti.isConfigurazioneAttributeAuthority(infoType);
+			boolean llmProvider = ConfigurazioneCostanti.isConfigurazioneLLMProvider(infoType);
 			
 			String objToRemove =confHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE); 
 
@@ -133,13 +134,23 @@ public class ConfigurazionePolicyGestioneTokenDel extends Action {
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 
-			int idLista = attributeAuthority ? Liste.CONFIGURAZIONE_GESTIONE_ATTRIBUTE_AUTHORITY : Liste.CONFIGURAZIONE_GESTIONE_POLICY_TOKEN;
-			
+			int idLista;
+			if (attributeAuthority) {
+				idLista = Liste.CONFIGURAZIONE_GESTIONE_ATTRIBUTE_AUTHORITY;
+			} else if (llmProvider) {
+				idLista = Liste.CONFIGURAZIONE_GESTIONE_LLM_PROVIDER;
+			} else {
+				idLista = Liste.CONFIGURAZIONE_GESTIONE_POLICY_TOKEN;
+			}
+
 			ricerca = confHelper.checkSearchParameters(idLista, ricerca);
 
 			List<String> tipologie = new ArrayList<>();
 			if(attributeAuthority) {
 				tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_ATTRIBUTE_AUTHORITY);
+			}
+			else if(llmProvider) {
+				tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_LLM_PROVIDER);
 			}
 			else {
 				tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN);
