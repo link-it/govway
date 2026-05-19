@@ -644,17 +644,34 @@ Esempi:
 	<target name="-patch-lib-remove">
 		<basename property="patchLibRemoveJar" file="${patchLibRemove}"/>
 		<echo message="remove '${patchLibRemoveJar}'"/>
-		<propertyregex property="patchLibRemoveJarVersionato"
+
+		<if>
+			<matches string="${patchLibRemoveJar}" pattern="openspcoop2_.+_RELEASE.jar"/>
+			<then>
+				<propertyregex property="patchLibRemoveJarVersionato"
                                        input="${patchLibRemoveJar}"
                                        regexp="_RELEASE.jar"
                                        replace="-${antinstaller_versione_attuale_con_p_level}.jar" />
-		<if>
-			<equals arg1="${patchTmpArchiveType}" arg2="ear"/>
-			<then>
-				<delete file="${patchTmpArchive}/lib/${patchLibRemoveJarVersionato}"/>
+				<if>
+					<equals arg1="${patchTmpArchiveType}" arg2="ear"/>
+					<then>
+						<delete file="${patchTmpArchive}/lib/${patchLibRemoveJarVersionato}"/>
+					</then>
+					<else>
+						<delete file="${patchTmpArchive}/WEB-INF/lib/${patchLibRemoveJarVersionato}"/>
+					</else>
+				</if>
 			</then>
 			<else>
-				<delete file="${patchTmpArchive}/WEB-INF/lib/${patchLibRemoveJarVersionato}"/>
+				<if>
+					<equals arg1="${patchTmpArchiveType}" arg2="ear"/>
+					<then>
+						<delete file="${patchTmpArchive}/lib/${patchLibRemoveJar}"/>
+					</then>
+					<else>
+						<delete file="${patchTmpArchive}/WEB-INF/lib/${patchLibRemoveJar}"/>
+					</else>
+				</if>
 			</else>
 		</if>
 	</target>
