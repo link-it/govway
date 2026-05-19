@@ -1,3 +1,10 @@
+2026-05-19  Andrea Poli <apoli@link.it>
+
+	* [InstallerVersioneBinaria]
+	Risolto Bug
+	Risolta un'anomalia nel sistema di patching per cui le librerie di terze parti elencate nelle directory lib/remove/ 
+	non venivano effettivamente rimosse dagli archivi applicativi.
+
 2026-05-17  Andrea Poli <apoli@link.it>
 
 	* [ApiRsMonitoraggio, GovWayMonitor]
