@@ -1117,8 +1117,18 @@ public class FileTraceTest {
 			}
 		}
 		else if(onlyLogFileTraceHeaders || onlyLogFileTraceBody) {
-			if(sizeAfter!=4) {
-				throw new UtilsException("Attesi 4 messaggi");
+			// Quando un lato è marcato 'onlyLogFileTrace' e l'altro è di fatto
+			// assente nel messaggio (body null oppure headers vuoti), FileTraceManager
+			// rimuove l'intera riga per non scrivere record vuoti in 'dump_messaggi'.
+			int expected = 4;
+			if(onlyLogFileTraceHeaders && !onlyLogFileTraceBody && !requestWithPayload) {
+				// richiestaIngresso/richiestaUscita non hanno body (requestWithPayload=false):
+				// headers azzerati da onlyLogFileTraceHeaders + body null => messaggio rimosso.
+				// Restano solo rispostaIngresso e rispostaUscita.
+				expected = 2;
+			}
+			if(sizeAfter!=expected) {
+				throw new UtilsException("Attesi "+expected+" messaggi");
 			}
 			if(onlyLogFileTraceHeaders) {
 				for (Messaggio msg : transaction.getMessaggi()) {
@@ -1126,7 +1136,7 @@ public class FileTraceTest {
 						throw new UtilsException("Heaeders non attesi ("+msg.getTipoMessaggio()+")");
 					}
 				}
-			}	
+			}
 			else {
 				for (Messaggio msg : transaction.getMessaggi()) {
 					if(msg.getBody()!=null) {
