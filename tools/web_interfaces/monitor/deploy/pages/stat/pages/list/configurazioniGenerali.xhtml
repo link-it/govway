@@ -13,9 +13,19 @@
 	<ui:define name="body">
 		<style type="text/css" nonce="#{_csp_random_nonce}">
 			#crumbs {display: none;	}
-			.col-stato { width: 40px; }
-			.stato-api-icon { width: 16px; height: 16px; }
-			.stato-api-icon-clickable { width: 16px; height: 16px; cursor: pointer; }
+			.col-stato { width: 40px; vertical-align: middle; }
+			.stato-api-icon { width: 16px; height: 16px; vertical-align: middle !important; margin: 0 !important; position: relative; top: -1px; }
+			.stato-api-icon-clickable { width: 16px; height: 16px; cursor: pointer; vertical-align: middle !important; margin: 0 !important; position: relative; top: -1px; }
+			.stato-icon-pnl { vertical-align: middle; }
+			.stato-icon-pnl a { vertical-align: middle; display: inline-block; line-height: 0; }
+			/* Override del margin-top: 4px applicato dal tema (linkit-base.css) a tutte le input[type=checkbox],
+			   che sfasava la checkbox di selezione rispetto all'icona di stato (img 16x16).
+			   Margin negativo per riportare la checkbox al middle della cella, allineata all'icona. */
+			input[id$='tableConfigurazioni_column_ckb'],
+			input[id$='tableConfigurazioni_checkAll'] {
+				vertical-align: middle !important;
+				margin-top: -2px !important;
+			}
 		</style>
 		<a4j:outputPanel id="panelPaginaRicerca" layout="block">
 			<rich:simpleTogglePanel id="configurazioniGeneraliSearch" switchType="client"
@@ -209,11 +219,11 @@
 						reRenderIds="configurazioniTbl" mostraComandiFooterSelezionePageSize="true"
 						useCount="#{configurazioniGeneraliSearchForm.useCount}">
 						
-						<rich:column styleClass="align-center" width="40px">
+						<rich:column styleClass="align-center col-stato" width="40px">
 							<f:facet name="header">
 								<h:outputText value="Stato" id="outStato"/>
 							</f:facet>
-							<a4j:outputPanel id="statoIconPnl_#{item.id}" layout="inline">
+							<a4j:outputPanel id="statoIconPnl_#{item.id}" layout="inline" styleClass="stato-icon-pnl">
 								<h:commandLink id="toggleStato-iconLink" rendered="#{applicationBean.permessoOperativitaApi}"
 									onclick="initToggleStato('#{item.id}'); return false;">
 									<h:graphicImage value="#{item.statoImmagine}" styleClass="stato-api-icon-clickable"

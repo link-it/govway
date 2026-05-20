@@ -1726,19 +1726,17 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
     public void updateStatoConfigurazioneApiByFullSearch(StatoConfigurazioneApi body, ProfiloEnum profilo, String soggetto) {
 		IContext context = this.getContext();
 		try {
-			context.getLogger().info("Invocazione in corso ...");     
+			context.getLogger().info("Invocazione in corso ...");
 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
-			context.getLogger().debug("Autorizzazione completata con successo");     
-                        
-        // TODO: Implement...
-        
+			context.getLogger().debug("Autorizzazione completata con successo");
+
+			ToggleStatoApiHelper.executeByFullSearch(context, body, profilo, soggetto);
+
 			context.getLogger().info("Invocazione completata con successo");
-        
-     
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		}
 		catch(Throwable e) {
@@ -1757,19 +1755,18 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
     public void updateStatoConfigurazioneApiBySimpleSearch(TransazioneRuoloEnum tipo, Boolean abilitato, String nomeServizio, ProfiloEnum profilo, String soggetto, String soggettoRemoto, String tipoServizio, Integer versioneServizio) {
 		IContext context = this.getContext();
 		try {
-			context.getLogger().info("Invocazione in corso ...");     
+			context.getLogger().info("Invocazione in corso ...");
 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
-			context.getLogger().debug("Autorizzazione completata con successo");     
-                        
-        // TODO: Implement...
-        
+			context.getLogger().debug("Autorizzazione completata con successo");
+
+			ToggleStatoApiHelper.executeBySimpleSearch(context, tipo, abilitato, nomeServizio,
+					profilo, soggetto, soggettoRemoto, tipoServizio, versioneServizio);
+
 			context.getLogger().info("Invocazione completata con successo");
-        
-     
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		}
 		catch(Throwable e) {

@@ -44,12 +44,16 @@ public class AuthorizationManager {
 			
 		try {
 			
-			// 1. Cerco acl che ha un match con la richiesta in essere
+			// 1. Cerco acl che ha un match con la richiesta in essere.
+			// In caso di acl multiple matchanti, viene scelta quella con il path piu' specifico
+			// (lunghezza maggiore al netto del wildcard finale), in modo da garantire un
+			// comportamento deterministico indipendente dall'ordine di iterazione delle Properties.
 			String method = context.getServletRequest().getMethod();
 			String restPath = context.getRestPath(); // a differenza del context.getServletRequest().getRequestURI(), il path è normalizzato per i parametri dinamici {}
 			AuthorizationConfigACL acl = null;
+			int bestPathSpecificity = -1;
 			for (AuthorizationConfigACL check : config.getAclList()) {
-				
+
 				// method
 				String methodCheck = check.getMethod();
 				if(!AuthorizationConfigACL.WILDCARD.equals(methodCheck)) {
@@ -57,25 +61,33 @@ public class AuthorizationManager {
 						continue;
 					}
 				}
-				
+
 				// path
 				String pathCheck = check.getPath();
-				if(!AuthorizationConfigACL.WILDCARD.equals(pathCheck)) {
-					if(pathCheck.endsWith(AuthorizationConfigACL.WILDCARD)) {
-						String patchCheckWitoutStar = pathCheck.substring(0, (pathCheck.length()-AuthorizationConfigACL.WILDCARD.length()));
-						if(!normalizePath(restPath).startsWith(normalizePath(patchCheckWitoutStar))) {
-							continue;
-						}
+				int pathSpecificity;
+				if(AuthorizationConfigACL.WILDCARD.equals(pathCheck)) {
+					pathSpecificity = 0;
+				} else if(pathCheck.endsWith(AuthorizationConfigACL.WILDCARD)) {
+					String patchCheckWitoutStar = pathCheck.substring(0, (pathCheck.length()-AuthorizationConfigACL.WILDCARD.length()));
+					if(!normalizePath(restPath).startsWith(normalizePath(patchCheckWitoutStar))) {
+						continue;
 					}
-					else {
-						if(!normalizePath(restPath).equals(normalizePath(pathCheck))) {
-							continue;
-						}
+					pathSpecificity = patchCheckWitoutStar.length();
+				} else {
+					if(!normalizePath(restPath).equals(normalizePath(pathCheck))) {
+						continue;
 					}
+					pathSpecificity = pathCheck.length() + 1; // path esatto: piu' specifico di qualunque wildcard
 				}
-				
-				acl = check;
-				break;
+
+				// in presenza di parita' di specificita', a parita' di path, vince un method esatto vs wildcard
+				int methodBonus = AuthorizationConfigACL.WILDCARD.equals(methodCheck) ? 0 : 1;
+				int specificity = pathSpecificity * 2 + methodBonus;
+
+				if(specificity > bestPathSpecificity) {
+					acl = check;
+					bestPathSpecificity = specificity;
+				}
 			}
 			if(acl==null) {
 				throw new Exception("Acl rule match for request not found");

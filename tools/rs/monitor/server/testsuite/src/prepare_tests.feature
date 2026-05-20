@@ -377,18 +377,43 @@ Scenario: Preparazione Test
 
      * def wait_for_lock =
     """
-    function(db){ 
+    function(db){
         do {
             karate.log("CHECKO LA LOCK FROM op2_semaphore")
             var result = db.readRows("SELECT * from op2_semaphore WHERE applicative_id='GenerazioneStatisticheOrarie'");
             karate.log(result);
             try {
-                java.lang.Thread.sleep(100) 
+                java.lang.Thread.sleep(100)
             } catch (e) {
 
             }
         } while(result[0].node_id != null)
         db.update("UPDATE op2_semaphore set node_id='TESTSUITE', creation_time=CURRENT_TIMESTAMP, details='Lock testsuite monitoraggio' WHERE applicative_id='GenerazioneStatisticheOrarie'");
-        
+
     }
     """
+
+    # ---------------------------------------------------------------------------
+    # Seed utenti di test per la feature 'Operativita API' (toggle stato porte).
+    # Crea 7 utenti che riusano la password hashata di 'operatore' (password: 123456),
+    # ciascuno con una diversa combinazione di permessi:
+    #   operatoreO   -> O          (solo OperativitaApi)
+    #   operatoreR   -> R          (solo Reportistica)
+    #   operatoreD   -> D          (solo Diagnostica)
+    #   operatoreDR  -> DR         (Diagnostica + Reportistica, mappato anche al ruolo 'operatore')
+    #   operatoreRO  -> RO         (Reportistica + OperativitaApi)
+    #   operatoreDO  -> DO         (Diagnostica + OperativitaApi)
+    #   operatoreDRO -> DRO        (Diagnostica + Reportistica + OperativitaApi)
+    # Idempotente: elimina eventuali residui prima di inserire.
+    # I record vengono rimossi da cleanup_tests.feature al termine della feature.
+    # ---------------------------------------------------------------------------
+    * def utenti_operativita_api = [ 'operatoreO', 'operatoreR', 'operatoreD', 'operatoreDR', 'operatoreRO', 'operatoreDO', 'operatoreDRO' ]
+    * eval db.update("DELETE FROM users WHERE login IN ('operatoreO','operatoreR','operatoreD','operatoreDR','operatoreRO','operatoreDO','operatoreDRO')")
+
+    * eval db.update("INSERT INTO users (login, password, tipo_interfaccia, interfaccia_completa, permessi, soggetti_all, servizi_all) SELECT 'operatoreO',   password, tipo_interfaccia, interfaccia_completa, 'O',   soggetti_all, servizi_all FROM users WHERE login='operatore'")
+    * eval db.update("INSERT INTO users (login, password, tipo_interfaccia, interfaccia_completa, permessi, soggetti_all, servizi_all) SELECT 'operatoreR',   password, tipo_interfaccia, interfaccia_completa, 'R',   soggetti_all, servizi_all FROM users WHERE login='operatore'")
+    * eval db.update("INSERT INTO users (login, password, tipo_interfaccia, interfaccia_completa, permessi, soggetti_all, servizi_all) SELECT 'operatoreD',   password, tipo_interfaccia, interfaccia_completa, 'D',   soggetti_all, servizi_all FROM users WHERE login='operatore'")
+    * eval db.update("INSERT INTO users (login, password, tipo_interfaccia, interfaccia_completa, permessi, soggetti_all, servizi_all) SELECT 'operatoreDR',  password, tipo_interfaccia, interfaccia_completa, 'DR',  soggetti_all, servizi_all FROM users WHERE login='operatore'")
+    * eval db.update("INSERT INTO users (login, password, tipo_interfaccia, interfaccia_completa, permessi, soggetti_all, servizi_all) SELECT 'operatoreRO',  password, tipo_interfaccia, interfaccia_completa, 'RO',  soggetti_all, servizi_all FROM users WHERE login='operatore'")
+    * eval db.update("INSERT INTO users (login, password, tipo_interfaccia, interfaccia_completa, permessi, soggetti_all, servizi_all) SELECT 'operatoreDO',  password, tipo_interfaccia, interfaccia_completa, 'DO',  soggetti_all, servizi_all FROM users WHERE login='operatore'")
+    * eval db.update("INSERT INTO users (login, password, tipo_interfaccia, interfaccia_completa, permessi, soggetti_all, servizi_all) SELECT 'operatoreDRO', password, tipo_interfaccia, interfaccia_completa, 'DRO', soggetti_all, servizi_all FROM users WHERE login='operatore'")

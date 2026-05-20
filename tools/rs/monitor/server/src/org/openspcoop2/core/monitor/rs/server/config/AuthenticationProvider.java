@@ -53,9 +53,10 @@ public class AuthenticationProvider implements org.springframework.security.auth
 	@SuppressWarnings("unused")
 	private Logger log = org.slf4j.LoggerFactory.getLogger(this.getClass());
 
-	private String operatorRoleName = "operatore";	
-	private String diagnosticRoleName = "diagnostica";	
-	private String reportRoleName = "reportistica";	
+	private String operatorRoleName = "operatore";
+	private String diagnosticRoleName = "diagnostica";
+	private String reportRoleName = "reportistica";
+	private String operativitaApiRoleName = "operativitaApi";
 
 	private static String getS(String v) {
 		return "sec"+v+"ret";
@@ -114,18 +115,20 @@ public class AuthenticationProvider implements org.springframework.security.auth
 
 			List<GrantedAuthority> roles = new ArrayList<>();
 			if(u.getUtente()!=null && u.getUtente().getPermessi()!=null) {
-				if(u.getUtente().getPermessi().isDiagnostica()) {
-					GrantedAuthority grant = new SimpleGrantedAuthority(this.diagnosticRoleName);
-					roles.add(grant);
+				boolean diagnostica = u.getUtente().getPermessi().isDiagnostica();
+				boolean reportistica = u.getUtente().getPermessi().isReportistica();
+				if(diagnostica) {
+					roles.add(new SimpleGrantedAuthority(this.diagnosticRoleName));
 				}
-				if(u.getUtente().getPermessi().isReportistica()) {
-					GrantedAuthority grant = new SimpleGrantedAuthority(this.reportRoleName);
-					roles.add(grant);
+				if(reportistica) {
+					roles.add(new SimpleGrantedAuthority(this.reportRoleName));
 				}
-				if(roles.size()==2) {
+				if(diagnostica && reportistica) {
 					// operatore se li ha tutti e due
-					GrantedAuthority grant = new SimpleGrantedAuthority(this.operatorRoleName);
-					roles.add(grant);
+					roles.add(new SimpleGrantedAuthority(this.operatorRoleName));
+				}
+				if(u.getUtente().getPermessi().isOperativitaApi()) {
+					roles.add(new SimpleGrantedAuthority(this.operativitaApiRoleName));
 				}
 			}
 			// vi sono le acl per questo

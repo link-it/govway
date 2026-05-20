@@ -379,9 +379,18 @@ public class Startup implements ServletContextListener {
 			}catch (Exception e) {
 				doError("Errore durante l'inizializzazione del FailedAttempts",e);
 			}
-			
+
+			// Audit Manager
+			try{
+				ApiMonitorAuditManager.initializeAuditManager();
+				Startup.log.info("AuditManager inizializzato con successo.");
+			}catch (Exception e) {
+				// non sollevo l'eccezione: l'audit non e' un blocker per il funzionamento dell'API
+				Startup.log.error("Errore durante l'inizializzazione dell'AuditManager: "+e.getMessage(), e);
+			}
+
 			Startup.initializedResources = true;
-			
+
 			Startup.log.info("Inizializzazione rs api monitor effettuata con successo.");
 		}
 	}
