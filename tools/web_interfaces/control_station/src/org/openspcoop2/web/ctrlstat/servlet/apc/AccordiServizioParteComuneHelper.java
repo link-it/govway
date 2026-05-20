@@ -3462,7 +3462,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				de.setType(DataElementType.TEXT);
 			}
 			else {
-				de.setType(DataElementType.HIDDEN);
+				de.setHiddenType(DataElementType.TEXT_AREA);
 			}
 			if( !modificheAbilitate && StringUtils.isBlank(descr))
 				de.setValue("");
@@ -4593,7 +4593,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		de = new DataElement();
 		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_DESCRIZIONE);
 		de.setValue(descr);
-		de.setType(DataElementType.HIDDEN);
+		de.setHiddenType(DataElementType.TEXT_AREA);
 		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_DESCRIZIONE);
 		de.setSize(this.getSize());
 		dati.add(de);

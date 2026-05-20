@@ -19,7 +19,7 @@
 
 
 
-<%@ page session="true" import="java.util.*, org.openspcoop2.web.lib.mvc.*" %>
+<%@ page session="true" import="java.util.*, org.apache.commons.text.StringEscapeUtils, org.openspcoop2.web.lib.mvc.*" %>
 
 <%
 String iddati = "";
@@ -144,7 +144,7 @@ if(csrfTokenFromSession == null)
 						} else {
 							// Tipo hidden
 						  	if (de.getType().equals("hidden")) {
-							    %><input type="hidden" name="<%= de.getName() %>" value="<%= de.getValue() %>"><%
+							    %><input type="hidden" name="<%= de.getName() %>" value="<%= StringEscapeUtils.escapeHtml4(de.getValue()) %>"><%
 				    		//  fine de.gettype = 'hidden'	
 							} else {
 								// tipo radio

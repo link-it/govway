@@ -70,6 +70,7 @@ String jQueryUiVersion = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUT
 <script type="text/javascript" src="<%=MessageFormat.format(Costanti.LIB_JQUERY_UI_PATH, jQueryUiVersion) %>" nonce="<%= randomNonce %>"></script>
 <script type="text/javascript" src="js/ui.datepicker-it.js" nonce="<%= randomNonce %>"></script>
 <jsp:include page="/jsplib/browserUtils.jsp" flush="true" />
+<jsp:include page="/jsplib/utils.jsp" flush="true" />
 <script type="text/javascript" src="js/webapps.min.js" nonce="<%= randomNonce %>"></script>
 <!--Funzioni di utilita -->
 <script type="text/javascript" nonce="<%= randomNonce %>">
@@ -91,11 +92,23 @@ function CheckDati() {
     return false;
   }
 
+  var theForm = document.form;
+
+  // Validazione client-side dei caratteri ammessi nei campi (allineata al server, vedi utils.jsp).
+  // Se un campo contiene caratteri vietati per il proprio profilo (standard / textarea / password)
+  // il submit viene bloccato e il campo evidenziato in pagina. Funzione definita in utils.jsp.
+  // L'eventuale indicatore di ajax-status era stato gia' attivato dall'onclick del bottone Salva:
+  // se la validazione fallisce lo nascondiamo per non lasciare la UI in stato di "loading".
+  if (typeof gwValidateForm === "function" && !gwValidateForm(theForm)) {
+    if (typeof nascondiAjaxStatus === "function") {
+      nascondiAjaxStatus();
+    }
+    return false;
+  }
+
   //I controlli si fanno direttamente nei .java
   nr = 1;
 
-  var theForm = document.form;
-  
   //evito di mandare indietro al server il valore degli elementi hidden che si utilizzano per la creazione delle finestre DialogInfo.
   eliminaElementiHidden(theForm);
   

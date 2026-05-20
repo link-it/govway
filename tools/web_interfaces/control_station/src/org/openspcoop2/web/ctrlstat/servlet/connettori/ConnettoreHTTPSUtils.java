@@ -570,7 +570,7 @@ public class ConnettoreHTTPSUtils {
 			}
 		}
 		else {
-			de.setType(DataElementType.HIDDEN);
+			de.setHiddenType(DataElementType.TEXT_AREA);
 		}
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
 		dati.add(de);
@@ -670,7 +670,7 @@ public class ConnettoreHTTPSUtils {
 			de.setSize(pageSize);
 		}
 		else {
-			de.setType(DataElementType.HIDDEN);
+			de.setHiddenType(DataElementType.TEXT_AREA);
 		}
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL);
 		dati.add(de);
@@ -840,7 +840,7 @@ public class ConnettoreHTTPSUtils {
 				de.setRows(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_LOCATION_SIZE);
 			}
 		}else
-			de.setType(DataElementType.HIDDEN);
+			de.setHiddenType(DataElementType.TEXT_AREA);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_LOCATION);
 		de.setSize(pageSize);
 		dati.add(de);
@@ -1029,7 +1029,7 @@ public class ConnettoreHTTPSUtils {
 		DataElement de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_URL);
 		de.setValue(httpsurl);
-		de.setType(DataElementType.HIDDEN);
+		de.setHiddenType(DataElementType.TEXT_AREA);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL);
 		de.setSize(pageSize);
 		dati.add(de);
@@ -1060,7 +1060,7 @@ public class ConnettoreHTTPSUtils {
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
 		de.setValue(httpspath);
-		de.setType(DataElementType.HIDDEN);
+		de.setHiddenType(DataElementType.TEXT_AREA);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
 		de.setSize(pageSize);
 		dati.add(de);
@@ -1083,7 +1083,7 @@ public class ConnettoreHTTPSUtils {
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL);
 		de.setValue(httpsTrustStoreCRLs);
-		de.setType(DataElementType.HIDDEN);
+		de.setHiddenType(DataElementType.TEXT_AREA);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL);
 		de.setSize(pageSize);
 		dati.add(de);
@@ -1134,7 +1134,7 @@ public class ConnettoreHTTPSUtils {
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_LOCATION);
 		de.setValue(httpspathkey);
-		de.setType(DataElementType.HIDDEN);
+		de.setHiddenType(DataElementType.TEXT_AREA);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_LOCATION);
 		de.setSize(pageSize);
 		dati.add(de);

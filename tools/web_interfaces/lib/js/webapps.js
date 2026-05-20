@@ -459,6 +459,18 @@ function Search(theForm) {
   if (nr != 0) {
     return false;
   }
+
+  // Validazione client-side dei filtri di ricerca: blocca il submit e evidenzia
+  // i campi con caratteri non ammessi dal pattern server-side (vedi utils.jsp).
+  // L'ajax-status era gia' stato attivato dall'onclick del bottone, lo nascondiamo
+  // se la validazione blocca il submit.
+  if (typeof gwValidateForm === "function" && !gwValidateForm(theForm)) {
+    if (typeof nascondiAjaxStatus === "function") {
+      nascondiAjaxStatus();
+    }
+    return false;
+  }
+
   nr = 1;
 
   addHidden(theForm, 'index' , 0);

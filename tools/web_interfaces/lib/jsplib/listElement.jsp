@@ -80,6 +80,7 @@ String jQueryUiVersion = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUT
 <script type="text/javascript" src="<%=MessageFormat.format(Costanti.LIB_JQUERY_PATH, jQueryVersion) %>" nonce="<%= randomNonce %>"></script>
 <script type="text/javascript" src="<%=MessageFormat.format(Costanti.LIB_JQUERY_UI_PATH, jQueryUiVersion) %>" nonce="<%= randomNonce %>"></script>
 <jsp:include page="/jsplib/browserUtils.jsp" flush="true" />
+<jsp:include page="/jsplib/utils.jsp" flush="true" />
 <script type="text/javascript" src="js/webapps.min.js" nonce="<%= randomNonce %>"></script>
 <script type="text/javascript" nonce="<%= randomNonce %>">
 var nomeServletAdd_Custom = '<%= nomeServletAdd %>';

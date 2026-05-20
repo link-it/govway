@@ -334,7 +334,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			de.setValue(descr);
 		}
 		if(isConfigurazione && !modificaDescrizione) {
-			de.setType(DataElementType.HIDDEN);
+			de.setHiddenType(DataElementType.TEXT_AREA);
 		} else {
 			if(modificaDescrizione) {
 				de.setType(DataElementType.TEXT_AREA);
@@ -650,7 +650,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 							disableSaveButtonForDatiInvocazione = false;
 						}
 					}else
-						de.setType(DataElementType.HIDDEN);
+						de.setHiddenType(DataElementType.TEXT_AREA);
 					de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AZIONE);
 					de.setSize(alternativeSize);
 					dati.add(de);
@@ -758,7 +758,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			else {
 				de.setValue(azione);
 			}
-			de.setType(DataElementType.HIDDEN);
+			de.setHiddenType(DataElementType.TEXT_AREA);
 			de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AZIONE);
 			dati.add(de);
 			

@@ -1288,11 +1288,20 @@ public class ServletUtils {
 		for (int i = 0; i < dati.size(); i++) {
 			DataElement de = (DataElement) dati.get(i);
 			String deName = !de.getName().equals("") ? de.getName() : "de_name_"+i;
-			if (de.getType().equals(DataElementType.CRYPT.toString()) || de.getType().equals(DataElementType.LOCK.toString())) {
+			/** Usa getOriginalType() per includere anche i DataElement resi HIDDEN per state-preservation
+			 *  ma originariamente di tipo CRYPT/LOCK (vedi DataElement.setHiddenType). */
+			if (de.getOriginalType().equals(DataElementType.CRYPT.toString()) || de.getOriginalType().equals(DataElementType.LOCK.toString())) {
 				if(!sb.isEmpty()) {
 					sb.append(Costanti.VALUE_PARAMETRO_IDENTIFICATIVI_PS_SEPARATORE);
 				}
 				sb.append(deName);
+				/** Per i campi LOCK la JSP edit-page.jsp emette anche un input hidden "shadow"
+				 *  con prefisso PARAMETER_LOCK_PREFIX che trasporta il valore al submit. Va
+				 *  incluso negli identificativi password per essere validato col pattern corretto. */
+				if (de.getOriginalType().equals(DataElementType.LOCK.toString())) {
+					sb.append(Costanti.VALUE_PARAMETRO_IDENTIFICATIVI_PS_SEPARATORE);
+					sb.append(Costanti.PARAMETER_LOCK_PREFIX).append(deName);
+				}
 			}
 		}
 
@@ -1304,30 +1313,33 @@ public class ServletUtils {
 		for (int i = 0; i < dati.size(); i++) {
 			DataElement de = (DataElement) dati.get(i);
 			String deName = !de.getName().equals("") ? de.getName() : "de_name_"+i;
-			if (de.getType().equals(DataElementType.TEXT_AREA.toString()) || de.getType().equals(DataElementType.TEXT_AREA_NO_EDIT.toString())) {
+			/** Usa getOriginalType() per includere anche i DataElement resi HIDDEN per state-preservation
+			 *  ma originariamente di tipo TEXT_AREA/TEXT_AREA_NO_EDIT (vedi DataElement.setHiddenType). */
+			if (de.getOriginalType().equals(DataElementType.TEXT_AREA.toString()) || de.getOriginalType().equals(DataElementType.TEXT_AREA_NO_EDIT.toString())) {
 				if(!sb.isEmpty()) {
 					sb.append(Costanti.VALUE_PARAMETRO_IDENTIFICATIVI_TEXT_AREA_SEPARATORE);
 				}
 				sb.append(deName);
 			}
 		}
-		
+
 		return !sb.isEmpty() ? sb.toString() : null;
 	}
-	
+
 	public static String getIdentificativiTextAreaFiltriRicerca(List<DataElement> filterValues) {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < filterValues.size(); i++) {
 			DataElement filtro = filterValues.get(i);
 			String filterName = filtro.getName();
-			if (filtro.getType().equals(DataElementType.TEXT_AREA.toString()) || filtro.getType().equals(DataElementType.TEXT_AREA_NO_EDIT.toString())) {
+			/** Usa getOriginalType() per coerenza con getIdentificativiTextArea (vedi DataElement.setHiddenType). */
+			if (filtro.getOriginalType().equals(DataElementType.TEXT_AREA.toString()) || filtro.getOriginalType().equals(DataElementType.TEXT_AREA_NO_EDIT.toString())) {
 				if(!sb.isEmpty()) {
 					sb.append(Costanti.VALUE_PARAMETRO_IDENTIFICATIVI_TEXT_AREA_SEPARATORE);
 				}
 				sb.append(filterName);
 			}
 		}
-		
+
 		return !sb.isEmpty() ? sb.toString() : null;
 	}
 	
@@ -1443,6 +1455,24 @@ public class ServletUtils {
 		return false;
 	}
 	
+	/**
+	 * Sanifica un valore destinato ad un attributo HTML usato come "valore copiabile negli appunti"
+	 * (es. attributo {@code data-copy}). Diversamente da {@link #escapeHTMLAttribute(String)}, NON
+	 * applica trasformazioni "logiche" del contenuto (rimozione tag HTML, markdown, normalizzazione
+	 * whitespace, troncamento): preserva il valore originale fornito dal backend, applicando soltanto
+	 * l'escape HTML necessario per la sintassi attributo. Questo garantisce che il valore copiato
+	 * negli appunti dall'utente sia esattamente quello fornito da {@code setCopyToClipboard(...)}.
+	 *
+	 * @param value Il testo da inserire in un attributo HTML come valore copiabile
+	 * @return Il testo HTML-escaped, integro nel contenuto
+	 */
+	public static String escapeHTMLAttributeForCopy(String value) {
+		if (value == null || value.trim().isEmpty()) {
+			return "";
+		}
+		return StringEscapeUtils.escapeHtml4(value);
+	}
+
 	/**
 	 * Sanitizza una stringa per essere usata in un attributo HTML title (tooltip).
 	 * Rimuove tag HTML, markdown, normalizza gli spazi e limita la lunghezza.

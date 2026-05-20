@@ -121,7 +121,7 @@ public class LockUtilities {
 	private void processByByokDisabled(DataElement de, String value, boolean escapeHtml, boolean hidden, boolean readOnly) {
 		boolean setValue = true;
 		if(isForceHidden(de, hidden)){
-			de.setType(DataElementType.HIDDEN);
+			de.setHiddenType(DataElementType.LOCK);
 		}
 		else if(isForceReadOnly(de, readOnly)){
 			if(this.visualizzaCampiPasswordComeLock) {
@@ -148,7 +148,7 @@ public class LockUtilities {
 			return false;
 		} else {
 			if(hidden) {
-				de.setType(DataElementType.HIDDEN);
+				de.setHiddenType(DataElementType.LOCK);
 			}
 			else {
 				de.setType(DataElementType.TEXT_EDIT);
@@ -171,7 +171,7 @@ public class LockUtilities {
 	private void lockEngineWithBIOK(DataElement de, String value, boolean escapeHtml, boolean hidden, boolean readOnly, String wrapValue) {
 		if(hidden) {
 			if(de.getType()==null || StringUtils.isEmpty(de.getType()) || !DataElementType.HIDDEN.toString().equals(de.getType())) {
-				de.setType(DataElementType.HIDDEN);
+				de.setHiddenType(DataElementType.LOCK);
 			}
 			de.setValue(escapeHtml ? StringEscapeUtils.escapeHtml4(wrapValue) : wrapValue);
 		}
@@ -214,7 +214,7 @@ public class LockUtilities {
 	private void lockEngineWithoutBIOK(DataElement de, String wrapValue, boolean escapeHtml, boolean hidden, boolean readOnly) {
 		if(hidden) {
 			if(de.getType()==null || StringUtils.isEmpty(de.getType()) || !DataElementType.HIDDEN.toString().equals(de.getType())) {
-				de.setType(DataElementType.HIDDEN);
+				de.setHiddenType(DataElementType.LOCK);
 			}
 			de.setValue(escapeHtml ? StringEscapeUtils.escapeHtml4(wrapValue) : wrapValue);
 		}

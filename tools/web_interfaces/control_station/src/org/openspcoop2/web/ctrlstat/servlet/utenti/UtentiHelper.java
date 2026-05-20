@@ -1022,7 +1022,7 @@ public class UtentiHelper extends ConsoleHelper {
 				}
 				de.setRequired(!this.core.isMultiLoginEnabled());
 			} else {
-				de.setType(DataElementType.HIDDEN);
+				de.setHiddenType(DataElementType.CRYPT);
 				de.setValue(UtentiCostanti.VALORE_PARAMETRO_PW_MODALITA_NO_LOGIN_APPLICATION);
 			}
 			de.setName(UtentiCostanti.PARAMETRO_UTENTI_PW);
@@ -1056,7 +1056,7 @@ public class UtentiHelper extends ConsoleHelper {
 			de = new DataElement();
 			de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_PW);
 			de.setValue(pwsu);
-			de.setType(DataElementType.HIDDEN);
+			de.setHiddenType(DataElementType.CRYPT);
 			de.setName(UtentiCostanti.PARAMETRO_UTENTI_PW);
 			dati.add(de);
 

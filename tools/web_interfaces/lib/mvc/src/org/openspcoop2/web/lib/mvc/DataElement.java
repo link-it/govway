@@ -88,6 +88,14 @@ public class DataElement implements Serializable {
 	}
 
 	String label, labelRight, labelLink, value, type, name, onChange, selected;
+	/**
+	 * Tipo semantico "protetto" dietro un rendering HIDDEN. Valorizzato solo da
+	 * {@link #setType(DataElementType, DataElementType)} e da {@link #setHiddenType(DataElementType)}.
+	 * Le JSP usano {@link #getOriginalType()}, che ritorna questo valore se valorizzato altrimenti {@code type},
+	 * per costruire gli identificativi dei parametri da non sanificare in input
+	 * (PARAMETRO_IDENTIFICATIVI_TEXT_AREA / _PS).
+	 */
+	String hiddenType;
 	String [] values = null, names = null;
 	String [] labels = null;
 	int size, cols, rows, id;
@@ -248,6 +256,24 @@ public class DataElement implements Serializable {
 	public void setType(DataElementType s) {
 		this.setType(s.toString());
 	}
+	/**
+	 * Marca il DataElement con un tipo di rendering corrente ({@code type}) diverso dal tipo semantico
+	 * originario ({@code hiddenType}). Uso tipico: state-preservation di una TEXT_AREA / CRYPT / LOCK / PWD
+	 * trasportata come HIDDEN in una sub-form. Le JSP che costruiscono gli identificativi dei parametri da
+	 * non sanificare in input (PARAMETRO_IDENTIFICATIVI_TEXT_AREA / _PS) consultano {@link #getOriginalType()},
+	 * che ritorna questo valore quando valorizzato.
+	 */
+	public void setType(DataElementType type, DataElementType hiddenType) {
+		this.setType(type.toString());
+		this.hiddenType = hiddenType.toString();
+	}
+	/**
+	 * Shortcut per {@code setType(DataElementType.HIDDEN, hiddenType)}: marca il DataElement come hidden
+	 * conservando l'identità del tipo semantico originario (es. TEXT_AREA, CRYPT, ...).
+	 */
+	public void setHiddenType(DataElementType hiddenType) {
+		this.setType(DataElementType.HIDDEN, hiddenType);
+	}
 	private void setType(String s) {
 		this.type = s;
 		if(DataElementType.TEXT_AREA.toString().equals(s) || DataElementType.TEXT_AREA_NO_EDIT.toString().equals(s)){
@@ -288,6 +314,20 @@ public class DataElement implements Serializable {
 	}
 	public String getType() {
 		return DataElement.checkNull(this.type);
+	}
+	/**
+	 * Restituisce il tipo "semantico" originario del DataElement.
+	 * Per gli elementi nativamente di quel tipo (ad esempio una TEXT_AREA non hidden) coincide con {@link #getType()}.
+	 * Per gli elementi resi HIDDEN tramite {@link #setHiddenType(DataElementType)} o tramite
+	 * {@link #setType(DataElementType, DataElementType)}, restituisce il tipo originario passato a quei setter
+	 * (TEXT_AREA, CRYPT, ...). Utilizzato dalle JSP per dichiarare l'identificativo del parametro che, pur
+	 * trasportato come hidden di stato, va trattato in input come textarea/password (sanificazione disabilitata).
+	 */
+	public String getOriginalType() {
+		if (this.hiddenType == null || this.hiddenType.isEmpty()) {
+			return this.getType();
+		}
+		return DataElement.checkNull(this.hiddenType);
 	}
 	
 	public void setLock(String value, boolean readOnly, boolean visualizzaInformazioniCifrate, boolean visualizzaIconaLucchetto, String warningMessage, String decoderServletName,Parameter ... parameter) {

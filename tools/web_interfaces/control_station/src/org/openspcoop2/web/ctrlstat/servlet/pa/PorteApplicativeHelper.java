@@ -1284,7 +1284,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			de.setValue(descr);
 		}
 		if(isConfigurazione && !modificaDescrizione) {
-			de.setType(DataElementType.HIDDEN);
+			de.setHiddenType(DataElementType.TEXT_AREA);
 		} else {
 			if(modificaDescrizione) {
 				de.setType(DataElementType.TEXT_AREA);
@@ -1598,7 +1598,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 							disableSaveButtonForDatiInvocazione = false;
 						}
 					}else
-						de.setType(DataElementType.HIDDEN);
+						de.setHiddenType(DataElementType.TEXT_AREA);
 					de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_AZIONE);
 					dati.add(de);
 				}
@@ -1708,7 +1708,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			else {
 				de.setValue(azione);
 			}
-			de.setType(DataElementType.HIDDEN);
+			de.setHiddenType(DataElementType.TEXT_AREA);
 			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_AZIONE);
 			dati.add(de);
 			
@@ -9611,7 +9611,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			}
 			de.setValue(descrizione);
 		} else {
-			de.setType(DataElementType.HIDDEN);
+			de.setHiddenType(DataElementType.TEXT_AREA);
 			de.setValue(descrizione);
 		}
 		dati.add(de);

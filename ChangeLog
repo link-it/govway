@@ -1,5 +1,16 @@
 2026-05-19  Andrea Poli <apoli@link.it>
 
+	* [GovWayConsole]
+	Risolto Bug #1772
+	Risolta un'anomalia per cui la funzionalità "Copia" presente accanto al valore del Connettore (e ad altri campi delle viste di riepilogo) 
+	restituiva negli appunti un valore alterato rispetto a quello configurato 
+	(caratteri come _, *, [, ], (, ) rimossi, entità HTML decodificate, spazi normalizzati, contenuto troncato a 250 caratteri).
+	Introdotta inoltre una validazione client-side dei caratteri ammessi nei campi della console e del monitor, 
+	allineata al controllo già effettuato server-side: i campi non conformi vengono evidenziati in pagina con messaggio inline e 
+	il submit di salvataggio o di ricerca viene bloccato, posizionando automaticamente la pagina sul primo campo da correggere.
+
+2026-05-19  Andrea Poli <apoli@link.it>
+
 	* [GovWayCore]
 	Aggiunta funzionalità #1771
 	Aggiunta funzionalità opzionale di decompressione automatica del body (gzip, x-gzip, deflate) lato richiesta e/o risposta, 

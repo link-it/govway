@@ -414,7 +414,7 @@ for (int i = 0; i < dati.size(); i++) {
   	boolean refresh = de.isRefresh();
 	
     	if (type.equals("hidden")) {
-    		%><input type="hidden" name="<%= deName  %>" value="<%= de.getValue()  %>"/><%
+    		%><input type="hidden" name="<%= deName  %>" value="<%= StringEscapeUtils.escapeHtml4(de.getValue())  %>"/><%
     	} else { // else hidden
     		if (type.equals("title")){
     			// gestion apertura e chiusura.
@@ -742,7 +742,7 @@ for (int i = 0; i < dati.size(); i++) {
 	                				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%=textId %>"><%=deLabel %></label>
 	                				<div class="<%=classDivNoEdit %>"> 
 		                				<span class="<%=classSpanNoEdit %>" id="<%=textId %>"><%= textValNoEdit %></span>
-		                				<input type="hidden" name="<%= deName %>" value="<%= de.getValue() %>"/>
+		                				<input type="hidden" name="<%= deName %>" value="<%= StringEscapeUtils.escapeHtml4(de.getValue()) %>"/>
 		                				
 		                				<% 
 		                					// tasti azione sulla text

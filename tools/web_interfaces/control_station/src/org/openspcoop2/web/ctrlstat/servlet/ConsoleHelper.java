@@ -5152,7 +5152,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PARAMETRO_LIST+0);
 						de.setValue(autenticazioneParametro);
 						if(allHidden) {
-							de.setType(DataElementType.HIDDEN);
+							de.setHiddenType(DataElementType.TEXT_AREA);
 						}
 						else {
 							de.setType(DataElementType.TEXT_AREA);
@@ -6052,7 +6052,13 @@ public class ConsoleHelper implements IConsoleHelper {
 				}
 				de.setValue(attributeAuthorityAttributi);
 				if(allHidden || !StatoFunzionalita.ABILITATO.getValue().equals(identificazioneAttributiStato)) {
-					de.setType(DataElementType.HIDDEN);
+					/** Coerentemente con il ramo visibile: TEXT_AREA solo se sizeAA>1, altrimenti il campo originario è TEXT_EDIT
+					 *  (non sensitive) e non va incluso in idsTextArea -> resta HIDDEN puro. */
+					if(sizeAA>1) {
+						de.setHiddenType(DataElementType.TEXT_AREA);
+					} else {
+						de.setType(DataElementType.HIDDEN);
+					}
 				}
 				else if(sizeAA>1) {
 					de.setType(DataElementType.TEXT_AREA);
@@ -6796,7 +6802,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN_OPTIONS);
 						de.setValue(autorizzazione_tokenOptions);
 						if(allHidden) {
-							de.setType(DataElementType.HIDDEN);
+							de.setHiddenType(DataElementType.TEXT_AREA);
 						}
 						else {
 							de.setType(DataElementType.TEXT_AREA);
@@ -16947,7 +16953,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setRows(2);
 		}
 		else {
-			de.setType(DataElementType.HIDDEN);
+			de.setHiddenType(DataElementType.TEXT_AREA);
 		}
 		dati.add(de);	
 		
@@ -20138,7 +20144,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setInfo(dInfoPattern);
 		}
 		else {
-			de.setType(DataElementType.HIDDEN);
+			de.setHiddenType(DataElementType.TEXT_AREA);
 		}
 		de.setValue(valore);
 		dati.add(de);
@@ -20242,7 +20248,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setInfo(dInfoPattern);
 		}
 		else {
-			de.setType(DataElementType.HIDDEN);
+			de.setHiddenType(DataElementType.TEXT_AREA);
 		}
 		de.setValue(valore);
 		dati.add(de);
@@ -20353,7 +20359,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setInfo(dInfoPattern);
 		}
 		else {
-			de.setType(DataElementType.HIDDEN);
+			de.setHiddenType(DataElementType.TEXT_AREA);
 		}
 		de.setValue(valore);
 		dati.add(de);
@@ -22402,14 +22408,14 @@ public class ConsoleHelper implements IConsoleHelper {
 			if(utente!=null) {
 				utente.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME);
 				utente.setType(DataElementType.TEXT_EDIT);
-				utente.setValue(StringEscapeUtils.escapeHtml4(secret_user));
+				utente.setValue(secret_user);
 				utente.setTooltipCopyAction(MessageFormat.format(Costanti.TOOLTIP_ICONA_COPIA, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME));
 			}
 			
 			if(password!=null) {
 				password.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
 				password.setType(DataElementType.TEXT_EDIT);
-				password.setValue(StringEscapeUtils.escapeHtml4(secret_password));
+				password.setValue(secret_password);
 				password.setTooltipCopyAction(MessageFormat.format(Costanti.TOOLTIP_ICONA_COPIA, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD));
 			}
 			
@@ -22420,7 +22426,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				if(utente!=null) {
 					utente.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID);
 					utente.setType(DataElementType.TEXT_EDIT);
-					utente.setValue(StringEscapeUtils.escapeHtml4(secret_user));
+					utente.setValue(secret_user);
 					utente.setTooltipCopyAction(MessageFormat.format(Costanti.TOOLTIP_ICONA_COPIA, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID));
 				}
 			} else {
@@ -22430,7 +22436,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			if(password!=null) {
 				password.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY);
 				password.setType(DataElementType.TEXT_AREA);
-				password.setValue(StringEscapeUtils.escapeHtml4(secret_password));
+				password.setValue(secret_password);
 				password.setTooltipCopyAction(MessageFormat.format(Costanti.TOOLTIP_ICONA_COPIA, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY));
 				password.setCols(44);
 			}

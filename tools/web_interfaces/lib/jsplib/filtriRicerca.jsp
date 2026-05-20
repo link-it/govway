@@ -19,7 +19,7 @@
 
 
 
-<%@ page session="true" import="java.util.*, org.openspcoop2.web.lib.mvc.*" %>
+<%@ page session="true" import="java.util.*, org.apache.commons.text.StringEscapeUtils, org.openspcoop2.web.lib.mvc.*" %>
 
 <%
 String iddati = "";
@@ -99,7 +99,7 @@ $(document).ready(function () {
 
         var aperto = $(this).hasClass("subtitleOpen");
 
-        // Inizializza visibilità al load
+        // Inizializza visibilitï¿½ al load
         if (aperto) {
             $("#" + sectionId).show();
             $("#" + iconId).html(iconNascondiSezione);
@@ -159,7 +159,7 @@ $(document).ready(function () {
         const useAccordion = ($("#" + accordionId).val() === "true");
 
         if (useAccordion) {
-        	// Accordion: se è già aperta non fare nulla (non si chiude)
+        	// Accordion: se ï¿½ giï¿½ aperta non fare nulla (non si chiude)
             if (isOpen) {
                 return; // keep-open behavior
             }
@@ -167,7 +167,7 @@ $(document).ready(function () {
             chiudiTutteLeSezioni(baseId, iconVisualizzaSezione, tooltipVisualizzaSezione);
             apriSezione(baseId, iconNascondiSezione, tooltipNascondiSezione);
         } else {
-            // Modalità indipendente: toggle puro sulla singola sezione
+            // Modalitï¿½ indipendente: toggle puro sulla singola sezione
             if (isOpen) {
                 chiudiSezione(baseId, iconVisualizzaSezione, tooltipVisualizzaSezione);
             } else {
@@ -314,7 +314,7 @@ $(document).ready(function () {
 			                    			<div class="prop">
 			                    				<input type="hidden" name="<%= filtroName.getName() %>" value="<%= filtroName.getValue() %>"/>
 			                    				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%= filterId  %>"><%=deLabel %></label>
-			                    				<input id="<%= filterId  %>" type="text" name="<%= filterName %>" value="<%= filtro.getValue() %>" class="<%= classInput %>">
+			                    				<input id="<%= filterId  %>" type="text" name="<%= filterName %>" value="<%= StringEscapeUtils.escapeHtml4(filtro.getValue()) %>" class="<%= classInput %>">
 			                    				<% if(!deNote.equals("")){ %>
 										      		<p class="note-ricerca <%= labelStyleClass %>"><%=deNote %></p>
 										      	<% } %>
@@ -331,7 +331,7 @@ $(document).ready(function () {
 										    		String maxValue = filtro.getMaxValue() != null ? " max=\"" + filtro.getMaxValue() + "\"" : "";
 										    		String customJsFunction = filtro.getCustomJsFunction() != null && !filtro.getCustomJsFunction().equals("")  ? " gw-function=\"" + filtro.getCustomJsFunction() + "\"" : "";
 										    		
-										      		%><input id="<%= filterId  %>" type="number" name="<%= filterName %>" value="<%= filtro.getValue() %>" class="<%= classInput %>" <%=minvalue %> <%=maxValue %> <%=customJsFunction %> >
+										      		%><input id="<%= filterId  %>" type="number" name="<%= filterName %>" value="<%= StringEscapeUtils.escapeHtml4(filtro.getValue()) %>" class="<%= classInput %>" <%=minvalue %> <%=maxValue %> <%=customJsFunction %> >
 									      		</div>
 										      	<%
 						        			} else { 
@@ -341,7 +341,7 @@ $(document).ready(function () {
 			                            				<input type="hidden" name="<%= filtroName.getName() %>" value="<%= filtroName.getValue() %>"/>
 			                            				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%= filterId  %>"><%=deLabel %></label>
 							     						<div class="txtA_div">
-							     							<textarea id="<%=filterId %>" rows='<%= filtro.getRows() %>' cols='<%= filtro.getCols() %>' name="<%= filterName  %>" class="<%= classInput %>"><%= filtro.getValue() %></textarea>
+							     							<textarea id="<%=filterId %>" rows='<%= filtro.getRows() %>' cols='<%= filtro.getCols() %>' name="<%= filterName  %>" class="<%= classInput %>"><%= StringEscapeUtils.escapeHtml4(filtro.getValue()) %></textarea>
 						     							</div>
 			                            			</div>
 			                            			<%

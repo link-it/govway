@@ -13449,7 +13449,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setValue(infoPolicy.getDescrizione());
 			}
 			else{
-				de.setType(DataElementType.HIDDEN);
+				de.setHiddenType(DataElementType.TEXT_AREA_NO_EDIT);
 				de.setValue(null);
 			}
 			dati.add(de);
@@ -21188,7 +21188,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_DESCRIZIONE);
 		if(tipoOperazione.equals(TipoOperazione.ADD)){
 			if(first || allarme.getPlugin() == null) {
-				de.setType(DataElementType.HIDDEN);
+				de.setHiddenType(DataElementType.TEXT_AREA);
 			}
 			else {
 				de.setType(DataElementType.TEXT_AREA);
@@ -21602,7 +21602,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setType(DataElementType.TEXT_AREA);
 				}
 				else {
-					de.setType(DataElementType.HIDDEN);
+					de.setHiddenType(DataElementType.TEXT_AREA);
 				}
 				de.setValue(allarme.getMail().getBody());
 				dati.add(de);

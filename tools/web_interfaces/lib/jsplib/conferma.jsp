@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 <%@page import="org.openspcoop2.web.lib.mvc.Dialog.BodyElement"%>
-<%@page import="java.util.*,org.openspcoop2.web.lib.mvc.*" session="true"%>
+<%@page import="java.util.*,org.apache.commons.text.StringEscapeUtils,org.openspcoop2.web.lib.mvc.*" session="true"%>
 
 
 
@@ -242,7 +242,7 @@ if (!message.equals("") && messageType.equals(MessageType.DIALOG.toString())) {
                				<div class="<%=classDivNoEdit %>"> 
                					<input type="hidden" name="<%= deHiddenId %>" value="" id="<%= deHiddenId%>"/>
                 				<span class="<%=classSpanNoEdit %>"><%= textValNoEdit %></span>
-                				<input type="hidden" name="<%= deName %>" value="<%= de.getValue() %>"/>
+                				<input type="hidden" name="<%= deName %>" value="<%= StringEscapeUtils.escapeHtml4(de.getValue()) %>"/>
                 			</div>
                 			<% 
 					      		if(visualizzaIconCopia){
@@ -250,7 +250,7 @@ if (!message.equals("") && messageType.equals(MessageType.DIALOG.toString())) {
 					      			String idIconCopy = "iconCopy_"+i; 
 					      			String titleIconaCopia = "";
 					      	%> 	<div class="iconCopyBox" id="<%=idDivIconInfo %>">
-					      			<input type="hidden" name="__i_hidden_value_<%= idIconCopy %>" id="hidden_value_<%= idIconCopy %>"  value="<%= de.getValue() %>"/>
+					      			<input type="hidden" name="__i_hidden_value_<%= idIconCopy %>" id="hidden_value_<%= idIconCopy %>"  value="<%= StringEscapeUtils.escapeHtml4(de.getValue()) %>"/>
 							      	<span class="spanIconCopyBox" <%= iconaCtrlCTitle %> >
 										<i class="material-icons md-18" id="<%=idIconCopy %>"><%= iconaCtrlC %></i>
 									</span>
@@ -266,13 +266,13 @@ if (!message.equals("") && messageType.equals(MessageType.DIALOG.toString())) {
                    				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%=inputId %>"><%=deLabel %></label>
                    				<%
                    					String textNoEdit = " disabled ";
-						      		%><input id="<%=inputId %>" type="text" name="<%= deName %>" value="<%= de.getValue() %>" class="<%= classInput %>" <%=textNoEdit %> >
+						      		%><input id="<%=inputId %>" type="text" name="<%= deName %>" value="<%= StringEscapeUtils.escapeHtml4(de.getValue()) %>" class="<%= classInput %>" <%=textNoEdit %> >
 						      	<% 
 						      		if(visualizzaIconCopia){
 						      			String idDivIconInfo = "divIconInfo_"+i;
 						      			String idIconCopy = "iconCopy_"+i; 
 						      	%> 	<div class="iconCopyBox" id="<%=idDivIconInfo %>">
-						      			<input type="hidden" name="__i_hidden_value_<%= idIconCopy %>" id="hidden_value_<%= idIconCopy %>"  value="<%= de.getValue() %>"/>
+						      			<input type="hidden" name="__i_hidden_value_<%= idIconCopy %>" id="hidden_value_<%= idIconCopy %>"  value="<%= StringEscapeUtils.escapeHtml4(de.getValue()) %>"/>
 								      	<span class="spanIconCopyBox" <%= iconaCtrlCTitle %>>
 											<i class="material-icons md-18" id="<%=idIconCopy %>"><%= iconaCtrlC %></i>
 										</span>
@@ -293,13 +293,13 @@ if (!message.equals("") && messageType.equals(MessageType.DIALOG.toString())) {
                        				<%
 		     						String taNoEdit = " readonly ";
 		     						%><div class="txtA_div_propDialog">
-		     							<textarea id="<%=inputId %>" <%=taNoEdit %> rows='<%= de.getRows() %>' cols='' name="<%= deName  %>" class="<%= classInput %> textAreaNoResize"><%= de.getValue() %></textarea>
+		     							<textarea id="<%=inputId %>" <%=taNoEdit %> rows='<%= de.getRows() %>' cols='' name="<%= deName  %>" class="<%= classInput %> textAreaNoResize"><%= StringEscapeUtils.escapeHtml4(de.getValue()) %></textarea>
 		     							<% 
 								      		if(visualizzaIconCopia){
 								      			String idDivIconInfo = "divIconInfo_"+i;
 								      			String idIconCopy = "iconCopy_"+i; 
 								      	%> 	<div class="iconCopyBox" id="<%=idDivIconInfo %>">
-								      			<input type="hidden" name="__i_hidden_value_<%= idIconCopy %>" id="hidden_value_<%= idIconCopy %>"  value="<%= de.getValue() %>"/>
+								      			<input type="hidden" name="__i_hidden_value_<%= idIconCopy %>" id="hidden_value_<%= idIconCopy %>"  value="<%= StringEscapeUtils.escapeHtml4(de.getValue()) %>"/>
 										      	<span class="spanIconCopyBox" <%= iconaCtrlCTitle %>>
 													<i class="material-icons md-18" id="<%=idIconCopy %>"><%= iconaCtrlC %></i>
 												</span>

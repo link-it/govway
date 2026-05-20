@@ -20,7 +20,7 @@
 
 
 <%@page import="java.util.List"%>
-<%@ page session="true" import="org.openspcoop2.web.lib.mvc.*" %>
+<%@ page session="true" import="org.apache.commons.text.StringEscapeUtils, org.openspcoop2.web.lib.mvc.*" %>
 
 <%
 String iddati = "";
@@ -95,7 +95,7 @@ if(csrfTokenFromSession == null)
 												
 												// tutti gli elementi che rappresentano lo stato sono stati convertiti in elementi hidden
 												if(type.equals("hidden")){
-													%><input type="hidden" name="<%= de.getName()  %>" value="<%= de.getValue()  %>"/><%
+													%><input type="hidden" name="<%= de.getName()  %>" value="<%= StringEscapeUtils.escapeHtml4(de.getValue())  %>"/><%
 												}
 											}
 											

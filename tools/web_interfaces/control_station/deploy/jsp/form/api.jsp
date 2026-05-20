@@ -141,13 +141,13 @@
 								    stile = "even";
 							  	}
 							  	
-								String copyToClipboard = ServletUtils.escapeHTMLAttribute(de.getCopyToClipboard());
+								String copyToClipboard = ServletUtils.escapeHTMLAttributeForCopy(de.getCopyToClipboard());
 								
 							  	if (type.equals("hidden")) {
 						    		%>
 						    			<tr>
 											<td colspan="2">
-						    					<input type="hidden" name="<%= deName  %>" value="<%= de.getValue()  %>"/>
+						    					<input type="hidden" name="<%= deName  %>" value="<%= StringEscapeUtils.escapeHtml4(de.getValue())  %>"/>
 					    					</td>
 				    					</tr>
 			    					<%
@@ -200,7 +200,7 @@
 													<div class="<%=classDivNoEdit %>"> 
 														<input type="hidden" name="<%= deHiddenId %>" value="" id="<%= deHiddenId%>"/>
 						                				<span class="<%=classSpanNoEdit %>" <%= tooltipTextValNoEdit %>  <%= dataCopy %> id="<%= deTextId%>"><%= textValNoEdit %></span>
-						                				<input type="hidden" name="<%= deName %>" value="<%= de.getValue() %>" />
+						                				<input type="hidden" name="<%= deName %>" value="<%= StringEscapeUtils.escapeHtml4(de.getValue()) %>" />
 					                				
 					                				<% if(StringUtils.isNotEmpty(copyToClipboard)){ %>
 						                				<span class="copy-box" id="<%= deCopyId%>" title="<%=MessageFormat.format(Costanti.ICON_COPY_TOOLTIP_CON_PARAMETRO, deLabel) %>">
@@ -304,7 +304,7 @@
 																	</span>
 									                				<span class="<%=classSpanNoEdit %>" <%= statusTooltipTitleAttribute %> ><%= statusValueText %></span>
 									                				<% if(firstText){%>
-										                				<input type="hidden" name="<%= deName %>" id="<%= deName %>"  value="<%= de.getValue() %>"/>
+										                				<input type="hidden" name="<%= deName %>" id="<%= deName %>"  value="<%= StringEscapeUtils.escapeHtml4(de.getValue()) %>"/>
 								                					<% } %>
 																	 <% 
 																	if(!de.getImage().isEmpty()){

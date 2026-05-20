@@ -7090,7 +7090,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			
 			de = new DataElement();
 			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_DESCRIZIONE);
-			de.setType(DataElementType.HIDDEN);
+			de.setHiddenType(DataElementType.TEXT_AREA);
 			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_DESCRIZIONE);
 			de.setSize(getSize());
 			de.setValue(descrizione!=null ? StringEscapeUtils.escapeHtml4(descrizione) : "");
@@ -8085,7 +8085,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 		de = new DataElement();
 		de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_DESCRIZIONE);
-		de.setType(DataElementType.HIDDEN);
+		de.setHiddenType(DataElementType.TEXT_AREA);
 		de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_DESCRIZIONE);
 		de.setSize(getSize());
 		de.setValue(descrizione!=null ? descrizione : "");

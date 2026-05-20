@@ -2719,5 +2719,18 @@ li.protocolloItem {
     transition: visibility 0s linear 0.5s;
 }
 
-
+/* Validazione client-side dei caratteri ammessi nei campi (utils.jsp -> gwValidateForm).
+   Evidenzia in rosso i campi con valori non conformi al pattern del proprio profilo
+   (standard / textarea / password) e mostra un messaggio inline sotto il campo. */
+.gw-validation-error {
+    border-color: #d9534f !important;
+    outline: 1px solid #d9534f;
+}
+/* Il messaggio di errore di validazione e' un <p class="note gw-validation-error-message ...">
+   inserito come ultimo figlio del .prop, esattamente come la "nota" di un DataElement.
+   Eredita da p.note tutta la geometria (margin-left in base a labelMedium/labelLong),
+   qui sovrascriviamo solo il colore in rosso "errore". */
+p.note.gw-validation-error-message {
+    color: #d9534f;
+}
 

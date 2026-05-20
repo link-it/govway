@@ -278,7 +278,7 @@ public class ConnettoreFileUtils {
 			de.setInfo(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_PERMISSIONS, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_PERMISSIONS_INFO);
 		}
 		else {
-			de.setType(DataElementType.HIDDEN);
+			de.setHiddenType(DataElementType.TEXT_AREA);
 		}
 		de.setRequired(false);	
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_PERMISSIONS);
@@ -322,7 +322,7 @@ public class ConnettoreFileUtils {
 			de.setInfo(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS_PERMISSIONS, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_PERMISSIONS_INFO);
 		}
 		else {
-			de.setType(DataElementType.HIDDEN);
+			de.setHiddenType(DataElementType.TEXT_AREA);
 		}
 		de.setRequired(false);	
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS_PERMISSIONS);
@@ -383,7 +383,7 @@ public class ConnettoreFileUtils {
 			de.setInfo(dInfoPatternFileNameResponse);
 		}
 		else{
-			de.setType(DataElementType.HIDDEN);
+			de.setHiddenType(DataElementType.TEXT_AREA);
 		}
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME);
 		de.setSize(pageSize);
@@ -401,7 +401,7 @@ public class ConnettoreFileUtils {
 			de.setInfo(dInfoPatternFileNameResponseHdr);
 		}
 		else{
-			de.setType(DataElementType.HIDDEN);
+			de.setHiddenType(DataElementType.TEXT_AREA);
 		}
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_HEADERS);
 		de.setSize(pageSize);
@@ -444,28 +444,28 @@ public class ConnettoreFileUtils {
 		DataElement de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME);
 		de.setValue(requestOutputFileName);
-		de.setType(DataElementType.HIDDEN);	
+		de.setHiddenType(DataElementType.TEXT_AREA);	
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME);
 		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_PERMISSIONS);
 		de.setValue(requestOutputFileNamePermissions);
-		de.setType(DataElementType.HIDDEN);	
+		de.setHiddenType(DataElementType.TEXT_AREA);	
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_PERMISSIONS);
 		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS);
 		de.setValue(requestOutputFileNameHeaders);
-		de.setType(DataElementType.HIDDEN);	
+		de.setHiddenType(DataElementType.TEXT_AREA);	
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS);
 		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS_PERMISSIONS);
 		de.setValue(requestOutputFileNameHeadersPermissions);
-		de.setType(DataElementType.HIDDEN);	
+		de.setHiddenType(DataElementType.TEXT_AREA);	
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS_PERMISSIONS);
 		dati.add(de);
 		
@@ -494,14 +494,14 @@ public class ConnettoreFileUtils {
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME);
 		de.setValue(responseInputFileName);
-		de.setType(DataElementType.HIDDEN);	
+		de.setHiddenType(DataElementType.TEXT_AREA);	
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME);
 		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_HEADERS);
 		de.setValue(responseInputFileNameHeaders);
-		de.setType(DataElementType.HIDDEN);	
+		de.setHiddenType(DataElementType.TEXT_AREA);	
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_HEADERS);
 		dati.add(de);
 		

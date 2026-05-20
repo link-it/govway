@@ -85,6 +85,22 @@ public class SecurityProperties {
 		return this.properties.getProperty( property );
 	}
 
+	/** Restituisce la regex (raw, come stringa) del pattern di validazione standard
+	 *  per i parametri HTTP. Esposta per consentire la replica lato client-side. */
+	public String getPatternHTTPParameterValueAsString() {
+		return getProperty(Costanti.PATTERN_VALIDAZIONE_PREFIX + Costanti.PATTERN_REQUEST_HTTP_PARAMETER_VALUE);
+	}
+
+	/** Regex (raw) per il pattern dei campi textarea. */
+	public String getPatternHTTPParameterValueTextAreaAsString() {
+		return getProperty(Costanti.PATTERN_VALIDAZIONE_PREFIX + Costanti.PATTERN_REQUEST_HTTP_PARAMETER_VALUE_TEXT_AREA);
+	}
+
+	/** Regex (raw) per il pattern dei campi password / crypt / lock. */
+	public String getPatternHTTPParameterValuePasswordAsString() {
+		return getProperty(Costanti.PATTERN_VALIDAZIONE_PREFIX + Costanti.PATTERN_REQUEST_HTTP_PARAMETER_VALUE_PASSWORD);
+	}
+
 	public Integer getIntProp(String property) throws UtilsException {
 		String tmp = this.getProperty(property);
 		try {

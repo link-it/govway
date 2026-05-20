@@ -3783,7 +3783,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 						de.getPassword().getPasswordGenerator().setDefaultLength(lunghezzaPasswordGenerate);						
 					}
 					else {
-						de.setType(DataElementType.HIDDEN);
+						de.setHiddenType(DataElementType.CRYPT);
 					}
 					de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
 					de.setSize(this.getSize());
@@ -3794,9 +3794,9 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				else {
 					
 					de = new DataElement();
-					de.setType(DataElementType.HIDDEN);
+					de.setHiddenType(DataElementType.CRYPT);
 					de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
-					de.setValue(StringEscapeUtils.escapeHtml4(passwordGetMsg));
+					de.setValue(passwordGetMsg);
 					dati.add(de);
 					
 				}
@@ -4029,12 +4029,13 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 	
 				de = new DataElement();
 				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
-				de.setValue(StringEscapeUtils.escapeHtml4(passwordGetMsg));
 //				if(!this.isModalitaStandard()) {
 //					de.setType(DataElementType.TEXT_EDIT);
+//					de.setValue(StringEscapeUtils.escapeHtml4(passwordGetMsg));
 //				}
 //				else {
 					de.setType(DataElementType.HIDDEN);
+					de.setValue(passwordGetMsg);
 //				}
 				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
 				de.setSize(this.getSize());

@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 <%@page import="org.openspcoop2.web.lib.mvc.Dialog.BodyElement"%>
-<%@page import="java.util.*,org.openspcoop2.web.lib.mvc.*" session="true"%>
+<%@page import="java.util.*,org.apache.commons.text.StringEscapeUtils,org.openspcoop2.web.lib.mvc.*" session="true"%>
 
 
 
@@ -99,7 +99,7 @@ Dialog finestraDialog = (Dialog) request.getAttribute(idFinestraModale);
               				<div class="<%=classDivNoEdit %>"> 
 	              				<input type="hidden" name="<%= deHiddenId %>" value="" id="<%= deHiddenId%>"/>
 	               				<span class="<%=classSpanNoEdit %>"><%= textValNoEdit %></span>
-	               				<input type="hidden" name="<%= deName %>" value="<%= de.getValue() %>"/>
+	               				<input type="hidden" name="<%= deName %>" value="<%= StringEscapeUtils.escapeHtml4(de.getValue()) %>"/>
 	               			</div>
                			<% 
 				      		if(visualizzaIconCopia){
@@ -107,7 +107,7 @@ Dialog finestraDialog = (Dialog) request.getAttribute(idFinestraModale);
 				      			String idIconCopy = "iconCopy_"+i; 
 				      			String titleIconaCopia = "";
 				      	%> 	<div class="iconCopyBox" id="<%=idDivIconInfo %>">
-				      			<input type="hidden" name="__i_hidden_value_<%= idIconCopy %>" id="hidden_value_<%= idIconCopy %>"  value="<%= de.getValue() %>"/>
+				      			<input type="hidden" name="__i_hidden_value_<%= idIconCopy %>" id="hidden_value_<%= idIconCopy %>"  value="<%= StringEscapeUtils.escapeHtml4(de.getValue()) %>"/>
 						      	<span class="spanIconCopyBox" <%= iconaCtrlCTitle %> >
 									<i class="material-icons md-18" id="<%=idIconCopy %>"><%= iconaCtrlC %></i>
 								</span>
@@ -129,7 +129,7 @@ Dialog finestraDialog = (Dialog) request.getAttribute(idFinestraModale);
 					      			String idDivIconInfo = "divIconInfo_"+i;
 					      			String idIconCopy = "iconCopy_"+i; 
 					      	%> 	<div class="iconCopyBox" id="<%=idDivIconInfo %>">
-					      			<input type="hidden" name="__i_hidden_value_<%= idIconCopy %>" id="hidden_value_<%= idIconCopy %>"  value="<%= de.getValue() %>"/>
+					      			<input type="hidden" name="__i_hidden_value_<%= idIconCopy %>" id="hidden_value_<%= idIconCopy %>"  value="<%= StringEscapeUtils.escapeHtml4(de.getValue()) %>"/>
 							      	<span class="spanIconCopyBox" <%= iconaCtrlCTitle %>>
 										<i class="material-icons md-18" id="<%=idIconCopy %>"><%= iconaCtrlC %></i>
 									</span>
@@ -160,7 +160,7 @@ Dialog finestraDialog = (Dialog) request.getAttribute(idFinestraModale);
 							      			String idDivIconInfo = "divIconInfo_"+i;
 							      			String idIconCopy = "iconCopy_"+i; 
 							      	%> 	<div class="iconCopyBox" id="<%=idDivIconInfo %>">
-							      			<input type="hidden" name="__i_hidden_value_<%= idIconCopy %>" id="hidden_value_<%= idIconCopy %>"  value="<%= de.getValue() %>"/>
+							      			<input type="hidden" name="__i_hidden_value_<%= idIconCopy %>" id="hidden_value_<%= idIconCopy %>"  value="<%= StringEscapeUtils.escapeHtml4(de.getValue()) %>"/>
 									      	<span class="spanIconCopyBox" <%= iconaCtrlCTitle %>>
 												<i class="material-icons md-18" id="<%=idIconCopy %>"><%= iconaCtrlC %></i>
 											</span>

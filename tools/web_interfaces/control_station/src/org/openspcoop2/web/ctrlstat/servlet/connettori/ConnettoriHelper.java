@@ -1214,7 +1214,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 		dati.add(de);
 		
 		de = new DataElement();
-		de.setValue(StringEscapeUtils.escapeHtml4(proxyUsername));
+		de.setValue(proxyUsername);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_USERNAME);
 		dati.add(de);
@@ -1795,7 +1795,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						deModifica.setSize(this.getSize());
 						dati.add(deModifica);
 						
-						de.setType(DataElementType.HIDDEN);
+						de.setHiddenType(DataElementType.CRYPT);
 						de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
 					}
 					
@@ -2170,7 +2170,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						de.setType(DataElementType.TEXT_AREA_NO_EDIT);
 						de.setRows(CostantiControlStation.LABEL_PARAMETRO_TEXT_AREA_SIZE);
 					}else {
-						de.setType(DataElementType.HIDDEN);
+						de.setHiddenType(DataElementType.TEXT_AREA_NO_EDIT);
 					}
 					de.setSize(this.getSize());
 					dati.add(de);
@@ -2183,7 +2183,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						de.setType(DataElementType.TEXT_AREA_NO_EDIT);
 						de.setRows(CostantiControlStation.LABEL_PARAMETRO_TEXT_AREA_SIZE);
 					}else {
-						de.setType(DataElementType.HIDDEN);
+						de.setHiddenType(DataElementType.TEXT_AREA_NO_EDIT);
 					}
 					de.setSize(this.getSize());
 					dati.add(de);
@@ -2330,7 +2330,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						de.setRows(CostantiControlStation.LABEL_PARAMETRO_TEXT_AREA_SIZE);
 						de.setSize(this.getSize());
 					} else {
-						de.setType(DataElementType.HIDDEN);
+						de.setHiddenType(DataElementType.TEXT_AREA);
 						de.setValue("");
 					}
 					dati.add(de);
@@ -2499,7 +2499,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				
 				de = new DataElement();
 				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY);
-				de.setValue(StringEscapeUtils.escapeHtml4(apiKey));
+				de.setValue(apiKey);
 				de.setType(DataElementType.HIDDEN);
 				dati.add(de);
 				
@@ -2926,7 +2926,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					}
 					de.setRows(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL_SIZE);
 				}else{
-					de.setType(DataElementType.HIDDEN);
+					de.setHiddenType(DataElementType.TEXT_AREA);
 				}
 				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL);
 				de.setSize(this.getSize());
@@ -3288,7 +3288,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					de.setRows(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL_SIZE);
 				}
 				else{
-					de.setType(DataElementType.HIDDEN);
+					de.setHiddenType(DataElementType.TEXT_AREA);
 				}
 				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL);
 				de.setSize(this.getSize());
@@ -3893,7 +3893,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				defaultPrefixValue = org.openspcoop2.utils.Costanti.PROTOCOL_HTTPS_PREFIX;
 			}
 			de.setValue((url != null) && !"".equals(url) && !org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX.equals(url) && !org.openspcoop2.utils.Costanti.PROTOCOL_HTTPS_PREFIX.equals(url) ? url : defaultPrefixValue);
-			de.setType(DataElementType.HIDDEN);
+			de.setHiddenType(DataElementType.TEXT_AREA);
 			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL);
 			dati.add(de);
 
@@ -3929,7 +3929,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			de = new DataElement();
 			de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL);
 			de.setValue(url);
-			de.setType(DataElementType.HIDDEN);
+			de.setHiddenType(DataElementType.TEXT_AREA);
 			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL);
 			de.setSize(this.getSize());
 			dati.add(de);
@@ -4005,7 +4005,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				de = new DataElement();
 				de.setName(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
 				de.setType(DataElementType.HIDDEN);
-				de.setValue(StringEscapeUtils.escapeHtml4(user));
+				de.setValue(user);
 				dati.add(de);
 
 				de = new DataElement();
@@ -6374,7 +6374,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					de.setType(DataElementType.TEXT_AREA_NO_EDIT);
 					de.setRows(CostantiControlStation.LABEL_PARAMETRO_TEXT_AREA_SIZE);
 				}else {
-					de.setType(DataElementType.HIDDEN);
+					de.setHiddenType(DataElementType.TEXT_AREA_NO_EDIT);
 				}
 				de.setSize(this.getSize());
 				dati.add(de);
@@ -6387,7 +6387,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					de.setType(DataElementType.TEXT_AREA_NO_EDIT);
 					de.setRows(CostantiControlStation.LABEL_PARAMETRO_TEXT_AREA_SIZE);
 				}else {
-					de.setType(DataElementType.HIDDEN);
+					de.setHiddenType(DataElementType.TEXT_AREA_NO_EDIT);
 				}
 				de.setSize(this.getSize());
 				dati.add(de);
@@ -6543,7 +6543,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					de.setRows(CostantiControlStation.LABEL_PARAMETRO_TEXT_AREA_SIZE);
 					de.setSize(this.getSize());
 				} else {
-					de.setType(DataElementType.HIDDEN);
+					de.setHiddenType(DataElementType.TEXT_AREA);
 					de.setValue("");
 				}
 				dati.add(de);
@@ -6603,7 +6603,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				de = new DataElement();
 				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_PASSWORD);
 				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_PASSWORD);
-				de.setValue(StringEscapeUtils.escapeHtml4(tipoCredenzialiSSLFileCertificatoPassword));
+				de.setValue(tipoCredenzialiSSLFileCertificatoPassword);
 				de.setType(DataElementType.HIDDEN);
 				dati.add(de);
 				
@@ -6645,16 +6645,16 @@ public class ConnettoriHelper extends ConsoleHelper {
 				de = new DataElement();
 				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_SUBJECT);
 				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_SUBJECT);
-				de.setValue(StringEscapeUtils.escapeHtml4(tipoCredenzialiSSLAliasCertificatoSubject));
-				de.setType(DataElementType.HIDDEN);
+				de.setValue(tipoCredenzialiSSLAliasCertificatoSubject);
+				de.setHiddenType(DataElementType.TEXT_AREA_NO_EDIT);
 				de.setSize(this.getSize());
 				dati.add(de);
 //							Issuer:
 				de = new DataElement();
 				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_ISSUER);
 				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_ISSUER);
-				de.setValue(StringEscapeUtils.escapeHtml4(tipoCredenzialiSSLAliasCertificatoIssuer));
-				de.setType(DataElementType.HIDDEN);
+				de.setValue(tipoCredenzialiSSLAliasCertificatoIssuer);
+				de.setHiddenType(DataElementType.TEXT_AREA_NO_EDIT);
 				de.setSize(this.getSize());
 				dati.add(de);
 //							Type:
@@ -6730,8 +6730,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 				// 1b. TextArea Subject
 				de = new DataElement();
 				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_SUBJECT);
-				de.setValue(StringEscapeUtils.escapeHtml4(subject));
-				de.setType(DataElementType.HIDDEN);
+				de.setValue(subject);
+				de.setHiddenType(DataElementType.TEXT_AREA);
 				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_SUBJECT);
 				de.setRows(CostantiControlStation.LABEL_PARAMETRO_TEXT_AREA_SIZE);
 				de.setSize(this.getSize());
@@ -6742,8 +6742,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 				de = new DataElement();
 				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_ISSUER);
 				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_ISSUER);
-				de.setValue(StringEscapeUtils.escapeHtml4(issuer));
-				de.setType(DataElementType.HIDDEN);
+				de.setValue(issuer);
+				de.setHiddenType(DataElementType.TEXT_AREA);
 				dati.add(de);
 			}
 		}

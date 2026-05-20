@@ -21,7 +21,7 @@
 
 <%@page import="org.apache.commons.lang3.StringUtils"%>
 <%@page import="org.openspcoop2.web.lib.mvc.Dialog.BodyElement"%>
-<%@ page session="true" import="java.util.*, org.openspcoop2.web.lib.mvc.*" %>
+<%@ page session="true" import="java.util.*, org.apache.commons.text.StringEscapeUtils, org.openspcoop2.web.lib.mvc.*" %>
 
 <%
 String iddati = "";
@@ -265,7 +265,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 							    String classLink = "";
 							    String classSpan = de.getLabelStyleClass();
 							    String cssClassTdStyle = !de.getStyle().equals("") ? "tdStyle-"+i+"-"+j : "";
-							    String copyToClipboard = ServletUtils.escapeHTMLAttribute(de.getCopyToClipboard());
+							    String copyToClipboard = ServletUtils.escapeHTMLAttributeForCopy(de.getCopyToClipboard());
 								String dataCopy = "";
 								
 								// valore da copiare negli appunti
@@ -414,7 +414,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 								} else { 
 								      // Tipo hidden
 								      if (de.getType().equals("hidden")) {
-										%><input type="hidden" name="<%= deName %>" value="<%= de.getValue() %>" /><%
+										%><input type="hidden" name="<%= deName %>" value="<%= StringEscapeUtils.escapeHtml4(de.getValue()) %>" /><%
 								      } else {
 										// Tipo image
 										if (de.getType().equals("image")) {
