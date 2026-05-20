@@ -707,7 +707,7 @@ function inizializzaSelectFiltro(){
 														    stile = "even";
 													  	}
 													  	
-														String copyToClipboard = ServletUtils.escapeHTMLAttribute(de.getCopyToClipboard());
+														String copyToClipboard = ServletUtils.escapeHTMLAttributeForCopy(de.getCopyToClipboard());
 														
 													  	if (type.equals("hidden")) {
 												    		%>

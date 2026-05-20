@@ -245,7 +245,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 							    String classLink = "";
 							    String classSpan = de.getLabelStyleClass();
 							    String cssClassTdStyle = !de.getStyle().equals("") ? "tdStyle-"+i+"-"+j : "";
-							    String copyToClipboard = ServletUtils.escapeHTMLAttribute(de.getCopyToClipboard());
+							    String copyToClipboard = ServletUtils.escapeHTMLAttributeForCopy(de.getCopyToClipboard());
 								String dataCopy = "";
 								
 								// valore da copiare negli appunti

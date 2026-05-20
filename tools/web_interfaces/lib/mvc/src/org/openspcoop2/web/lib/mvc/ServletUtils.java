@@ -1006,6 +1006,24 @@ public class ServletUtils {
 	}
 	
 	/**
+	 * Sanifica un valore destinato ad un attributo HTML usato come "valore copiabile negli appunti"
+	 * (es. attributo {@code data-copy}). Diversamente da {@link #escapeHTMLAttribute(String)}, NON
+	 * applica trasformazioni "logiche" del contenuto (rimozione tag HTML, markdown, normalizzazione
+	 * whitespace, troncamento): preserva il valore originale fornito dal backend, applicando soltanto
+	 * l'escape HTML necessario per la sintassi attributo. Questo garantisce che il valore copiato
+	 * negli appunti dall'utente sia esattamente quello fornito da {@code setCopyToClipboard(...)}.
+	 *
+	 * @param value Il testo da inserire in un attributo HTML come valore copiabile
+	 * @return Il testo HTML-escaped, integro nel contenuto
+	 */
+	public static String escapeHTMLAttributeForCopy(String value) {
+		if (value == null || value.trim().isEmpty()) {
+			return "";
+		}
+		return StringEscapeUtils.escapeHtml(value);
+	}
+
+	/**
 	 * Sanitizza una stringa per essere usata in un attributo HTML title (tooltip).
 	 * Rimuove tag HTML, markdown, normalizza gli spazi e limita la lunghezza.
 	 *

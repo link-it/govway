@@ -3843,7 +3843,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			if (endpointtype.equals(TipiConnettore.HTTPS.toString())) {
 				defaultPrefixValue = "https://";
 			}
-			de.setValue((url != null) && !"".equals(url) && !"http://".equals(url) && !"https://".equals(url) ? url : defaultPrefixValue);
+			de.setValue(StringEscapeUtils.escapeHtml((url != null) && !"".equals(url) && !"http://".equals(url) && !"https://".equals(url) ? url : defaultPrefixValue));
 			de.setType(DataElementType.HIDDEN);
 			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL);
 			dati.add(de);
@@ -3879,7 +3879,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 
 			de = new DataElement();
 			de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL);
-			de.setValue(url);
+			de.setValue(StringEscapeUtils.escapeHtml(url));
 			de.setType(DataElementType.HIDDEN);
 			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL);
 			de.setSize(this.getSize());

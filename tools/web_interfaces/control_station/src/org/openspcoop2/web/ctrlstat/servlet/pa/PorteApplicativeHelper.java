@@ -8956,7 +8956,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				de.setType(DataElementType.TEXT);
 				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE);				
 				String urlConnettore = this.getLabelConnettore(sa,is,true);
-				de.setValue(urlConnettore);
+				de.setValue(StringEscapeUtils.escapeHtml(urlConnettore));
 				String tooltipConnettore = this.getTooltipConnettore(sa,is,true);
 				de.setToolTip(tooltipConnettore);
 				de.setCopyToClipboard(this.getClipBoardUrlConnettore(sa,is));

@@ -1,5 +1,13 @@
 2026-05-19  Andrea Poli <apoli@link.it>
 
+	* [GovWayConsole]
+	Risolto Bug #1772
+	Risolta un'anomalia per cui la funzionalità "Copia" presente accanto al valore del Connettore (e ad altri campi delle viste di riepilogo) 
+	restituiva negli appunti un valore alterato rispetto a quello configurato 
+	(caratteri come _, *, [, ], (, ) rimossi, entità HTML decodificate, spazi normalizzati, contenuto troncato a 250 caratteri).
+
+2026-05-19  Andrea Poli <apoli@link.it>
+
 	* [InstallerVersioneBinaria]
 	Risolto Bug
 	Risolta un'anomalia nel sistema di patching per cui le librerie di terze parti elencate nelle directory lib/remove/ 
