@@ -85,15 +85,24 @@
 		<!-- <if>
 			<matches string="${as}" pattern="tomcat.*"/>
 			<then> --> <!-- Aggiungo sempre, serve anche per allarmi -->
-				<unzip src="${required_lib}/jakarta/jakarta.mail-api-2.1.5.jar" dest="${build_govwayMonitor}/tmp/mailapi"/>
-				<concat destfile="${build_govwayMonitor}/tmp/mailapi/META-INF/mailcap" append="yes">
+				<!-- Risoluzione dinamica della versione di jakarta.mail-api presente in ${required_lib}/jakarta -->
+				<pathconvert property="jakarta_mail_api_jar">
+					<fileset dir="${required_lib}/jakarta" includes="jakarta.mail-api-*.jar" excludes="*.gw.jar"/>
+					<mapper type="flatten"/>
+				</pathconvert>
+				<propertyregex property="jakarta_mail_api_version"
+					input="${jakarta_mail_api_jar}"
+					regexp="^jakarta\.mail-api-(.*)\.jar$"
+					select="\1"/>
+				<unzip src="${required_lib}/jakarta/${jakarta_mail_api_jar}" dest="${build_govwayMonitor}/tmp/mailapi"/>
+				<concat destfile="${build_govwayMonitor}/tmp/mailapi/META-INF/jakarta.mailcap" append="yes">
 					<filelist dir="${data_content_handler_dir}"
 		                           files="mailcap"/>
 				</concat>
-				<jar jarfile="${build_govwayMonitor}/tmp/jakarta.mail-api-2.1.5.gw.jar" manifest="${build_govwayMonitor}/tmp/mailapi/META-INF/MANIFEST.MF">
+				<jar jarfile="${build_govwayMonitor}/tmp/jakarta.mail-api-${jakarta_mail_api_version}.gw.jar" manifest="${build_govwayMonitor}/tmp/mailapi/META-INF/MANIFEST.MF">
 					<zipfileset dir="${build_govwayMonitor}/tmp/mailapi"/>
 				</jar>
-				<var name="mailapi_jar" value="jakarta.mail-api-2.1.5.gw.jar" />
+				<var name="mailapi_jar" value="jakarta.mail-api-${jakarta_mail_api_version}.gw.jar" />
 		<!--	</then>
 		</if> -->
 
