@@ -28,7 +28,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -1005,12 +1004,9 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 		}
 	}
 	private void addInformazioniTimeZone(StringBuilder bf, boolean all){
-		String [] ids = java.util.TimeZone.getAvailableIDs();
-		if(ids!=null){
-			List<String> ll = new ArrayList<>();
-			if(ids.length>0) {
-				ll.addAll(Arrays.asList(ids));
-			}
+		Set<String> ids = java.time.ZoneId.getAvailableZoneIds();
+		if(ids!=null && !ids.isEmpty()){
+			List<String> ll = new ArrayList<>(ids);
 			Collections.sort(ll);
 			for (String id : ll) {
 				if(bf.length()>0){
