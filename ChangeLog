@@ -1,3 +1,10 @@
+2026-05-22  Tommaso Burlon <tommaso.burlon@link.it>
+
+	* [ApiRsConfigurazione]
+	Risolto Bug #1762
+	Risolta un'anomalia per cui gli endpoint di lista (es. GET /erogazioni, GET /api) restituivano profilo 'APIGateway'
+	invece del profilo effettivo (es. SPCoop) quando si utilizzavano le opzioni profilo_qualsiasi=true e soggetto_qualsiasi=true.
+
 2026-05-19  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]

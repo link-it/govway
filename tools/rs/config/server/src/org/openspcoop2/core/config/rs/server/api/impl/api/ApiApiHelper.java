@@ -80,6 +80,7 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.basic.archive.APIUtils;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.information_missing.constants.StatoType;
 import org.openspcoop2.protocol.manifest.constants.InterfaceType;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -766,7 +767,12 @@ public class ApiApiHelper {
 	public static final ApiItem apiToItem(Api api, AccordoServizioParteComuneSintetico as, ApiEnv env) {
 		ApiItem ret = new ApiItem();
 
-		ProfiloEnum profilo = toProfilo(as.getSoggettoReferente().getTipo());
+		ProfiloEnum profilo;
+		try {
+			profilo = toProfilo(ProtocolFactoryManager.getInstance().getProtocolByOrganizationType(as.getSoggettoReferente().getTipo()));
+		} catch (ProtocolException e) {
+			throw new RuntimeException(e);
+		}
 		ret.setDescrizione(api.getDescrizione());
 		ret.setTipoInterfaccia(api.getTipoInterfaccia());
 		ret.setNome(api.getNome());
