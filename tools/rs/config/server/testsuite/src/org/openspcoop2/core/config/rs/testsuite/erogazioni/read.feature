@@ -30,6 +30,20 @@ Background:
 * eval erogazione_petstore_descrizione4000.api_versione = api_petstore.versione
 * def petstore_key_descrizione4000 = erogazione_petstore_descrizione4000.api_nome + '/' + erogazione_petstore_descrizione4000.api_versione
 
+* def api_spcoop = read('api_spcoop.json')
+* eval randomize(api_spcoop, ["nome"])
+* eval api_spcoop.referente = soggettoDefault
+* eval api_spcoop.tags = (['testsuite-read-spcoop'])
+* eval randomize(api_spcoop, ["tags.0"])
+
+* def erogazione_spcoop = read('erogazione_spcoop.json')
+* eval erogazione_spcoop.api_nome = api_spcoop.nome
+* eval erogazione_spcoop.api_versione = api_spcoop.versione
+* eval erogazione_spcoop.api_referente = api_spcoop.referente
+* eval erogazione_spcoop.api_tags = ([api_spcoop.tags[0]])
+* def spcoop_key = erogazione_spcoop.api_soap_servizio + '/' + erogazione_spcoop.api_versione
+* def api_spcoop_path = 'api/' + api_spcoop.nome + '/' + api_spcoop.versione
+
 @FindAll200
 Scenario: Erogazioni FindAll 200 OK
 
@@ -202,3 +216,44 @@ Scenario: Erogazioni creazione e lettura descrizione
 
 * call delete ({ resourcePath: 'erogazioni/' + petstore_key_descrizione4000 })
 * call delete ({ resourcePath: api_petstore_path })
+
+
+@FindAllProfiloSPCoop
+Scenario: Erogazioni FindAll di un'erogazione SPCoop restituisce profilo SPCoop e soggetto corretto (non quello di default)
+
+    # Creo un Soggetto SPCoop interno randomizzato (diverso dal soggetto di default), da usare come referente API e soggetto erogatore
+    * def soggetto_spcoop_erogatore = read('classpath:bodies/soggetto-interno.json')
+    * eval randomize(soggetto_spcoop_erogatore, ["nome"])
+    * call create ( { resourcePath: 'soggetti', body: soggetto_spcoop_erogatore, query_params: { profilo: "SPCoop" } })
+
+    * eval api_spcoop.referente = soggetto_spcoop_erogatore.nome
+    * eval erogazione_spcoop.api_referente = soggetto_spcoop_erogatore.nome
+
+    * def query_params = ( { profilo: "SPCoop", soggetto: soggetto_spcoop_erogatore.nome, tipo_servizio: "ldap" })
+    * call create ({ resourcePath: 'api', body: api_spcoop })
+
+    # Creo il Soggetto con autenticazione https e il ruolo per l'autorizzazione
+    * def soggetto_autenticato = read('classpath:bodies/soggetto-esterno-https.json')
+    * eval randomize (soggetto_autenticato, ["nome", "credenziali.certificato.subject", "credenziali.certificato.issuer"])
+    * call create ( { resourcePath: 'soggetti', body: soggetto_autenticato })
+
+    * def ruolo_autenticato = read('classpath:bodies/ruolo.json');
+    * eval randomize ( ruolo_autenticato, ["nome"])
+    * call create ( { resourcePath: 'ruoli', body: ruolo_autenticato })
+
+    * eval erogazione_spcoop.autorizzazione.soggetto = soggetto_autenticato.nome
+    * eval erogazione_spcoop.autorizzazione.ruolo = ruolo_autenticato.nome
+
+    * call create ({ resourcePath: 'erogazioni', body: erogazione_spcoop, key: spcoop_key })
+
+    * def erogazioni_response = call read('classpath:findall_stub.feature') ({ resourcePath: 'erogazioni', query_params: { profilo_qualsiasi: true, soggetto_qualsiasi: true, tag: api_spcoop.tags[0] } })
+    * assert erogazioni_response.findall_response_body.items.length == 1
+    * assert erogazioni_response.findall_response_body.items[0].nome == erogazione_spcoop.api_soap_servizio
+    * assert erogazioni_response.findall_response_body.items[0].profilo == 'SPCoop'
+    * assert erogazioni_response.findall_response_body.items[0].soggetto == soggetto_spcoop_erogatore.nome
+
+    * call delete ({ resourcePath: 'erogazioni/' + spcoop_key })
+    * call delete ( { resourcePath: 'ruoli/' + ruolo_autenticato.nome })
+    * call delete ( { resourcePath: 'soggetti/' + soggetto_autenticato.nome })
+    * call delete ({ resourcePath: api_spcoop_path })
+    * call delete ( { resourcePath: 'soggetti/' + soggetto_spcoop_erogatore.nome, query_params: { profilo: "SPCoop" } })

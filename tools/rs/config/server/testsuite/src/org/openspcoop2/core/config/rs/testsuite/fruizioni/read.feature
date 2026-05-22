@@ -46,6 +46,17 @@ Background:
 
 * def fruizione_key_descrizione4000 = fruizione_petstore_descrizione4000.erogatore + '/' + fruizione_petstore_descrizione4000.api_nome + '/' + fruizione_petstore_descrizione4000.api_versione
 
+* def api_spcoop = read('api_spcoop.json')
+* eval randomize(api_spcoop, ["nome"])
+* eval api_spcoop.tags = (['testsuite-read-spcoop'])
+* eval randomize(api_spcoop, ["tags.0"])
+* def api_spcoop_path = 'api/' + api_spcoop.nome + '/' + api_spcoop.versione
+
+* def fruizione_spcoop = read('fruizione_spcoop.json')
+* eval fruizione_spcoop.api_nome = api_spcoop.nome
+* eval fruizione_spcoop.api_versione = api_spcoop.versione
+* eval fruizione_spcoop.api_tags = ([api_spcoop.tags[0]])
+
 @FindAll200
 Scenario: Fruizioni FindAll 200 OK
 
@@ -243,3 +254,55 @@ Scenario: Fruizione creazione e lettura descrizione
 * call delete ({ resourcePath: 'fruizioni/' + fruizione_key_descrizione4000 })
 * call delete ({ resourcePath: 'soggetti/' + erogatore.nome })
 * call delete ({ resourcePath: api_petstore_path })
+
+
+@FindAllProfiloSPCoop
+Scenario: Fruizioni FindAll di una fruizione SPCoop restituisce profilo SPCoop e soggetto corretto (non quello di default)
+
+    # Creo un soggetto SPCoop interno randomizzato come fruitore (diverso dal soggetto di default)
+    * def soggetto_fruitore_spcoop = read('classpath:bodies/soggetto-interno.json')
+    * eval randomize(soggetto_fruitore_spcoop, ["nome"])
+    * call create ( { resourcePath: 'soggetti', body: soggetto_fruitore_spcoop, query_params: { profilo: "SPCoop" } })
+
+    # Creo un soggetto SPCoop esterno randomizzato come erogatore (sarà anche referente dell'API SPCoop, di dominio esterno)
+    * def soggetto_erogatore_spcoop = read('classpath:bodies/soggetto-esterno.json')
+    * eval randomize(soggetto_erogatore_spcoop, ["nome", "credenziali.username"])
+    * call create ( { resourcePath: 'soggetti', body: soggetto_erogatore_spcoop, query_params: { profilo: "SPCoop" } })
+
+    * eval api_spcoop.referente = soggetto_erogatore_spcoop.nome
+    * eval fruizione_spcoop.api_referente = soggetto_erogatore_spcoop.nome
+    * eval fruizione_spcoop.erogatore = soggetto_erogatore_spcoop.nome
+
+    * def spcoop_key = soggetto_erogatore_spcoop.nome + '/' + fruizione_spcoop.api_soap_servizio + '/' + fruizione_spcoop.api_versione
+
+    * def query_params_erogatore = ( { profilo: "SPCoop", soggetto: soggetto_erogatore_spcoop.nome })
+    * def query_params_fruitore = ( { profilo: "SPCoop", soggetto: soggetto_fruitore_spcoop.nome, tipo_servizio: "ldap" })
+
+    * call create ({ resourcePath: 'api', body: api_spcoop, query_params: query_params_erogatore })
+
+    # Creo il Soggetto con autenticazione https e il ruolo per l'autorizzazione
+    * def soggetto_autenticato = read('classpath:bodies/soggetto-esterno-https.json')
+    * eval randomize (soggetto_autenticato, ["nome", "credenziali.certificato.subject", "credenziali.certificato.issuer"])
+    * call create ( { resourcePath: 'soggetti', body: soggetto_autenticato, query_params: { profilo: "SPCoop" } })
+
+    * def ruolo_autenticato = read('classpath:bodies/ruolo.json');
+    * eval randomize ( ruolo_autenticato, ["nome"])
+    * call create ( { resourcePath: 'ruoli', body: ruolo_autenticato, query_params: { profilo: "SPCoop" } })
+
+    * eval fruizione_spcoop.autorizzazione.soggetto = soggetto_autenticato.nome
+    * eval fruizione_spcoop.autorizzazione.ruolo = ruolo_autenticato.nome
+
+    * call create ({ resourcePath: 'fruizioni', body: fruizione_spcoop, query_params: query_params_fruitore })
+
+    * def fruizioni_response = call read('classpath:findall_stub.feature') ({ resourcePath: 'fruizioni', query_params: { profilo_qualsiasi: true, soggetto_qualsiasi: true, tag: api_spcoop.tags[0] } })
+    * assert fruizioni_response.findall_response_body.items.length == 1
+    * assert fruizioni_response.findall_response_body.items[0].nome == fruizione_spcoop.api_soap_servizio
+    * assert fruizioni_response.findall_response_body.items[0].profilo == 'SPCoop'
+    * assert fruizioni_response.findall_response_body.items[0].soggetto == soggetto_fruitore_spcoop.nome
+
+    * call delete ( { resourcePath: 'fruizioni/' + spcoop_key, query_params: query_params_fruitore })
+    * call delete ( { resourcePath: 'ruoli/' + ruolo_autenticato.nome, query_params: { profilo: "SPCoop" } })
+    * call delete ( { resourcePath: 'soggetti/' + soggetto_autenticato.nome, query_params: { profilo: "SPCoop" } })
+    * call delete ( { resourcePath: api_spcoop_path, query_params: query_params_erogatore })
+    * call delete ( { resourcePath: 'soggetti/' + soggetto_erogatore_spcoop.nome, query_params: { profilo: "SPCoop" } })
+    * call delete ( { resourcePath: 'soggetti/' + soggetto_fruitore_spcoop.nome, query_params: { profilo: "SPCoop" } })

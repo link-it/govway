@@ -155,6 +155,7 @@ import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazionePrincipal;
 import org.openspcoop2.pdd.core.autorizzazione.CostantiAutorizzazione;
 import org.openspcoop2.pdd.core.autorizzazione.canali.CanaliUtils;
 import org.openspcoop2.protocol.basic.Utilities;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.information_missing.constants.StatoType;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -2629,8 +2630,8 @@ public class ErogazioniApiHelper {
 		try {
 			final IDServizio idServizio = env.idServizioFactory.getIDServizioFromAccordo(asps);
 			final AccordoServizioParteComuneSintetico aspc = env.apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
-			ProfiloEnum profilo = toProfilo(asps.getTipo());
-
+			ProfiloEnum profilo = toProfilo(ProtocolFactoryManager.getInstance().getProtocolByServiceType(asps.getTipo()));
+			
 			toFill.setTipoServizio(idServizio.getTipo());
 			toFill.setNome(asps.getNome());
 			toFill.setVersione(asps.getVersione());

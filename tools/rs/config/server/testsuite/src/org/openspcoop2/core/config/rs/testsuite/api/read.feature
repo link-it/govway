@@ -4,9 +4,17 @@ Background:
 
 * call read('classpath:crud_commons.feature')
 
-* def api = read('api.json') 
-* def apiDescrizione4000 = read('api_descrizione4000.json') 
+* def api = read('api.json')
+* def apiDescrizione4000 = read('api_descrizione4000.json')
 * eval randomize(api, ["nome"])
+
+* def api_spcoop = read('api_spcoop.json')
+* eval randomize(api_spcoop, ["nome"])
+* def soggetto_spcoop = read('soggetto.json')
+* eval randomize(soggetto_spcoop, ["nome", "credenziali.username"])
+* eval api_spcoop.referente = soggetto_spcoop.nome
+* eval api_spcoop.tags = (['testsuite-read-spcoop'])
+* eval randomize(api_spcoop, ["tags.0"])
 
 @FindAll200
 Scenario: Api FindAll 200 OK
@@ -143,3 +151,19 @@ Scenario: Api Get Api Tags
 #
 #@GetRisorsa
 #Scenario: Get Api Risorsa
+
+@FindAllProfiloSPCoop
+Scenario: Api FindAll di un'API SPCoop restituisce profilo SPCoop
+
+    * def query_params = ( { profilo: "SPCoop", soggetto: soggetto_spcoop.nome })
+    * call create ( { resourcePath: 'soggetti', body: soggetto_spcoop, key: soggetto_spcoop.nome })
+    * call create ( { resourcePath: 'api', body: api_spcoop, key: api_spcoop.nome + '/' + api_spcoop.versione } )
+
+    * def api_response = call read('classpath:findall_stub.feature') ({ resourcePath: 'api', query_params: { profilo_qualsiasi: true, tag: api_spcoop.tags[0] } })
+    * assert api_response.findall_response_body.items.length == 1
+    * assert api_response.findall_response_body.items[0].nome == api_spcoop.nome
+    * assert api_response.findall_response_body.items[0].profilo == 'SPCoop'
+    * assert api_response.findall_response_body.items[0].referente == soggetto_spcoop.nome
+
+    * call delete ( { resourcePath: 'api/' + api_spcoop.nome + '/' + api_spcoop.versione })
+    * call delete ( { resourcePath: 'soggetti/' + soggetto_spcoop.nome })
