@@ -614,13 +614,19 @@ public class ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtiliti
 		boolean isSicurezza03or04 = isSicurezza03 || isSicurezza04;
 		
 		boolean sicurezzaSoloSullaRispostaPerIdar04 = false;
-		if(isSicurezza04) {
+		boolean sicurezzaSoloSullaRispostaPerIdar03 = false;
+		if(isSicurezza03or04) {
 			StringProperty profiloSicurezzaMessaggioConfigurazioneItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_API_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_ID);
 			if(profiloSicurezzaMessaggioConfigurazioneItemValue!=null) {
 				String secValue = profiloSicurezzaMessaggioConfigurazioneItemValue.getValue();
 				if(ModIConsoleCostanti.MODIPA_API_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_RISPOSTA.equals(secValue) ||
 						ModIConsoleCostanti.MODIPA_API_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_RISPOSTA_CON_ATTACHMENTS.equals(secValue)) {
-					sicurezzaSoloSullaRispostaPerIdar04 = true;
+					if(isSicurezza04) {
+						sicurezzaSoloSullaRispostaPerIdar04 = true;
+					}
+					else if(isSicurezza03) {
+						sicurezzaSoloSullaRispostaPerIdar03 = true;
+					}
 				}
 			}
 		}
@@ -691,7 +697,10 @@ public class ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtiliti
 			// Visibile solo se:
 			// 1. E' un profilo di sicurezza messaggio valido (01, 02, 03, 04)
 			// 2. La sorgente token e' PDND o OAuth (non locale)
-			boolean showDPoP = (isSicurezza01 || isSicurezza02 || isSicurezza03 || (isSicurezza04 && !sicurezzaSoloSullaRispostaPerIdar04))
+			// 3. L'applicabilita' non e' solo sulla risposta (DPoP riguarda il proof della richiesta)
+			boolean showDPoP = (isSicurezza01 || isSicurezza02
+					|| (isSicurezza03 && !sicurezzaSoloSullaRispostaPerIdar03)
+					|| (isSicurezza04 && !sicurezzaSoloSullaRispostaPerIdar04))
 					&& !sorgenteTokenLocale;
 			if(showDPoP) {
 				profiloSicurezzaMessaggioDPoPItem.setType(ConsoleItemType.CHECKBOX);
