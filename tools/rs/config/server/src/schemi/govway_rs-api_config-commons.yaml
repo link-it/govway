@@ -356,6 +356,9 @@ components:
            $ref: '#/components/schemas/ModISicurezzaMessaggioEnum'
         generazione_token:
            $ref: '#/components/schemas/ModISicurezzaMessaggioGenerazioneTokenEnum'
+        dpop:
+          type: boolean
+          default: false
         digest_richiesta:
           type: boolean
           default: false

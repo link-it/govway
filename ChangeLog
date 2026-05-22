@@ -1,3 +1,11 @@
+2026-05-22  Andrea Poli <apoli@link.it>
+
+	* [ApiRsConfigurazione, GovWayConsole]
+	Risolto Bug #1774
+	Esposto nelle API REST di configurazione il flag DPoP (Proof-of-Possession) sulle API ModI, finora disponibile solo da console. 
+	Risolta inoltre un'anomalia per cui il flag risultava attivabile anche per API ModI la cui sicurezza messaggio era applicata alla sola risposta, 
+	configurazione priva di senso poiché DPoP è un proof presente nella richiesta inviata dal fruitore.
+
 2026-05-22  Tommaso Burlon <tommaso.burlon@link.it>
 
 	* [ApiRsConfigurazione]

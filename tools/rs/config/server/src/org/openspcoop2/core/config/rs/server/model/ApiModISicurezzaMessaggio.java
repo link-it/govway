@@ -34,6 +34,9 @@ public class ApiModISicurezzaMessaggio  {
   private ModISicurezzaMessaggioGenerazioneTokenEnum generazioneToken = null;
   
   @Schema(description = "")
+  private Boolean dpop = false;
+  
+  @Schema(description = "")
   private Boolean digestRichiesta = false;
   
   @Schema(description = "")
@@ -95,6 +98,25 @@ public class ApiModISicurezzaMessaggio  {
 
   public ApiModISicurezzaMessaggio generazioneToken(ModISicurezzaMessaggioGenerazioneTokenEnum generazioneToken) {
     this.generazioneToken = generazioneToken;
+    return this;
+  }
+
+ /**
+   * Get dpop
+   * @return dpop
+  **/
+  @JsonProperty("dpop")
+  @Valid
+  public Boolean isDpop() {
+    return this.dpop;
+  }
+
+  public void setDpop(Boolean dpop) {
+    this.dpop = dpop;
+  }
+
+  public ApiModISicurezzaMessaggio dpop(Boolean dpop) {
+    this.dpop = dpop;
     return this;
   }
 
@@ -277,6 +299,7 @@ public class ApiModISicurezzaMessaggio  {
     
     sb.append("    pattern: ").append(ApiModISicurezzaMessaggio.toIndentedString(this.pattern)).append("\n");
     sb.append("    generazioneToken: ").append(ApiModISicurezzaMessaggio.toIndentedString(this.generazioneToken)).append("\n");
+    sb.append("    dpop: ").append(ApiModISicurezzaMessaggio.toIndentedString(this.dpop)).append("\n");
     sb.append("    digestRichiesta: ").append(ApiModISicurezzaMessaggio.toIndentedString(this.digestRichiesta)).append("\n");
     sb.append("    informazioniUtente: ").append(ApiModISicurezzaMessaggio.toIndentedString(this.informazioniUtente)).append("\n");
     sb.append("    patternAudit: ").append(ApiModISicurezzaMessaggio.toIndentedString(this.patternAudit)).append("\n");

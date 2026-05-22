@@ -50,3 +50,13 @@ Examples:
 | api_modi_soap_a01_audit01_schemaNonValido | sicurezza_messaggio.schema_audit specificato \'non-esistente\' con pattern di audit \'audit-rest01\' non valido: lo schema indicato non risultato configurato | soap |
 | api_modi_soap_a01_audit01_schemaNonApplicabile | sicurezza_messaggio.informazioni_utente specificato con applicabilità risposta | soap |
 | api_modi_soap_a01_audit02_tokenLocale | sicurezza_messaggio.informazioni_utente con audit-pattern \'audit-rest02\' richiede la generazione di un token oauth o pdnd | soap |
+| api_modi_error_rest_dpop_pattern_disabilitato | sicurezza_messaggio.dpop=true richiede un pattern di sicurezza messaggio attivo | rest |
+| api_modi_error_rest_dpop_token_locale | sicurezza_messaggio.dpop=true richiede sicurezza_messaggio.generazione_token non locale (PDND o OAUTH) | rest |
+| api_modi_error_rest_dpop_i01a01_risposta | sicurezza_messaggio.dpop=true non è utilizzabile con applicabilita \'risposta\' | rest |
+| api_modi_error_rest_dpop_i01a02_risposta | sicurezza_messaggio.dpop=true non è utilizzabile con applicabilita \'risposta\' | rest |
+| api_modi_error_rest_dpop_i02a01_risposta | sicurezza_messaggio.dpop=true non è utilizzabile con applicabilita \'risposta\' | rest |
+| api_modi_error_rest_dpop_i02a02_risposta | sicurezza_messaggio.dpop=true non è utilizzabile con applicabilita \'risposta\' | rest |
+| api_modi_error_soap_dpop_pattern_disabilitato | sicurezza_messaggio.dpop=true richiede un pattern di sicurezza messaggio attivo | soap |
+| api_modi_error_soap_dpop_token_locale | sicurezza_messaggio.dpop=true richiede sicurezza_messaggio.generazione_token non locale (PDND o OAUTH) | soap |
+| api_modi_error_soap_dpop_i01a01_risposta | sicurezza_messaggio.dpop=true non è utilizzabile con applicabilita \'risposta\' | soap |
+| api_modi_error_soap_dpop_i01a02_risposta | sicurezza_messaggio.dpop=true non è utilizzabile con applicabilita \'risposta\' | soap |

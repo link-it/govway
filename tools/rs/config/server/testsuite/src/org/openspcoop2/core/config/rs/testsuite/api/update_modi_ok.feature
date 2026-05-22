@@ -13,8 +13,9 @@ var expected = modi;
 expected.sicurezza_messaggio.informazioni_utente = expected.sicurezza_messaggio.informazioni_utente != null ? expected.sicurezza_messaggio.informazioni_utente : false
 expected.sicurezza_messaggio.soap_firma_allegati = expected.sicurezza_messaggio.soap_firma_allegati != null ? expected.sicurezza_messaggio.soap_firma_allegati : false
 expected.sicurezza_messaggio.digest_richiesta = expected.sicurezza_messaggio.digest_richiesta != null ? expected.sicurezza_messaggio.digest_richiesta : false
+expected.sicurezza_messaggio.dpop = expected.sicurezza_messaggio.dpop != null ? expected.sicurezza_messaggio.dpop : false
 return expected;
-} 
+}
 """
 
 @UpdateModi204
@@ -117,3 +118,18 @@ Examples:
 | api_modi_soap_a01_audit01.json | soap |
 | api_modi_soap_a01_audit02.json | soap |
 | api_modi_soap_a01_auditLegacy.json | soap |
+| api_modi_rest_dpop_a01_richiesta_pdnd.json | rest |
+| api_modi_rest_dpop_a01_richiesta_oauth.json | rest |
+| api_modi_rest_dpop_a02_richiesta_pdnd.json | rest |
+| api_modi_rest_dpop_i01a01_richiesta_pdnd.json | rest |
+| api_modi_rest_dpop_i01a01_qualsiasi_pdnd.json | rest |
+| api_modi_rest_dpop_i01a02_qualsiasi_oauth.json | rest |
+| api_modi_rest_dpop_i02a01_richiesta_pdnd.json | rest |
+| api_modi_rest_dpop_i02a01_qualsiasi_pdnd.json | rest |
+| api_modi_rest_dpop_i02a02_richiesta_oauth.json | rest |
+| api_modi_soap_dpop_a01_richiesta_pdnd.json | soap |
+| api_modi_soap_dpop_a01_richiesta_oauth.json | soap |
+| api_modi_soap_dpop_a02_richiesta_pdnd.json | soap |
+| api_modi_soap_dpop_i01a01_richiesta_pdnd.json | soap |
+| api_modi_soap_dpop_i01a01_qualsiasi_pdnd.json | soap |
+| api_modi_soap_dpop_i01a02_qualsiasi_oauth.json | soap |
