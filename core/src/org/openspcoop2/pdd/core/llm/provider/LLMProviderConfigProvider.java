@@ -48,11 +48,13 @@ public class LLMProviderConfigProvider implements IProvider {
 
 	private static final List<String> SUPPORTED_PROVIDER_TYPES = Arrays.asList(
 			Costanti.LLM_PROVIDER_TYPE_VALUE_ANTHROPIC,
-			Costanti.LLM_PROVIDER_TYPE_VALUE_OPENAI);
+			Costanti.LLM_PROVIDER_TYPE_VALUE_OPENAI,
+			Costanti.LLM_PROVIDER_TYPE_VALUE_AWS_BEDROCK);
 
 	private static final List<String> SUPPORTED_PROVIDER_LABELS = Arrays.asList(
 			"Anthropic",
-			"OpenAI");
+			"OpenAI",
+			"AWS Bedrock");
 
 	@Override
 	public void validateId(String name) throws ProviderException, ProviderValidationException {

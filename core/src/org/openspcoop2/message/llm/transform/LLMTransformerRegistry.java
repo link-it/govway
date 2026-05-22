@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.openspcoop2.message.llm.stream.AwsEventStreamReader;
 import org.openspcoop2.message.llm.stream.LLMProviderStreamReader;
 import org.openspcoop2.message.llm.stream.LLMProviderStreamTransport;
 import org.openspcoop2.message.llm.stream.SseStreamReader;
@@ -33,6 +34,9 @@ import org.openspcoop2.message.llm.transform.anthropic.AnthropicMessagesChunkEnc
 import org.openspcoop2.message.llm.transform.anthropic.AnthropicMessagesInboundRequestTransformer;
 import org.openspcoop2.message.llm.transform.anthropic.AnthropicMessagesOutboundFrontDoorResponseTransformer;
 import org.openspcoop2.message.llm.transform.anthropic.AnthropicOutboundProviderRequestTransformer;
+import org.openspcoop2.message.llm.transform.awsbedrock.AwsBedrockConverseChunkDecoder;
+import org.openspcoop2.message.llm.transform.awsbedrock.AwsBedrockConverseInboundProviderResponseTransformer;
+import org.openspcoop2.message.llm.transform.awsbedrock.AwsBedrockConverseOutboundProviderRequestTransformer;
 import org.openspcoop2.message.llm.transform.openai.OpenAIChatChunkDecoder;
 import org.openspcoop2.message.llm.transform.openai.OpenAIChatChunkEncoder;
 import org.openspcoop2.message.llm.transform.openai.OpenAIChatInboundProviderResponseTransformer;
@@ -91,17 +95,21 @@ public final class LLMTransformerRegistry {
 		// Provider request transformer (per providerId)
 		registerOutboundProvider(new AnthropicOutboundProviderRequestTransformer());
 		registerOutboundProvider(new OpenAIChatOutboundProviderRequestTransformer());
+		registerOutboundProvider(new AwsBedrockConverseOutboundProviderRequestTransformer());
 
 		// Provider response transformer (per providerId)
 		registerInboundProviderResponse(new AnthropicInboundProviderResponseTransformer());
 		registerInboundProviderResponse(new OpenAIChatInboundProviderResponseTransformer());
+		registerInboundProviderResponse(new AwsBedrockConverseInboundProviderResponseTransformer());
 
 		// Streaming: transport reader per transport, chunk decoder per providerId, chunk encoder per LLMDialect (front-door è sempre SSE).
 		// I decoder vengono registrati come factory (nuova istanza per ogni stream) perché alcune implementazioni
 		// sono stateful — es. OpenAIChatChunkDecoder traccia message_start/content_block_start già emessi.
 		PROVIDER_STREAM_READERS.put(LLMProviderStreamTransport.SSE, SseStreamReader::new);
+		PROVIDER_STREAM_READERS.put(LLMProviderStreamTransport.AWS_EVENT_STREAM, AwsEventStreamReader::new);
 		INBOUND_PROVIDER_CHUNK_DECODERS.put(LLMProviders.ANTHROPIC, AnthropicMessagesChunkDecoder::new);
 		INBOUND_PROVIDER_CHUNK_DECODERS.put(LLMProviders.OPENAI, OpenAIChatChunkDecoder::new);
+		INBOUND_PROVIDER_CHUNK_DECODERS.put(LLMProviders.AWS_BEDROCK, AwsBedrockConverseChunkDecoder::new);
 		OUTBOUND_FRONTDOOR_CHUNK_ENCODERS.put(LLMDialect.OPENAI_CHAT_V1, OpenAIChatChunkEncoder::new);
 		OUTBOUND_FRONTDOOR_CHUNK_ENCODERS.put(LLMDialect.ANTHROPIC_MESSAGES_V1, AnthropicMessagesChunkEncoder::new);
 	}

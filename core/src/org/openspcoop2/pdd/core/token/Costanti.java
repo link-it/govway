@@ -365,6 +365,29 @@ public class Costanti {
 	public static final String POLICY_RETRIEVE_TOKEN_JWT_CLAIMS = "policy.retrieveToken.jwt.claims";
 	public static final String POLICY_RETRIEVE_TOKEN_JWT_PURPOSE_ID = "policy.retrieveToken.jwt.purposeId";
 	public static final String POLICY_RETRIEVE_TOKEN_JWT_SESSION_INFO = "policy.retrieveToken.jwt.sessionInfo";
+
+	/* === AWS Signature V4 Token Policy === */
+	/** Modalità di acquisizione credenziali AWS: {@code static} oppure {@code assumeRole}. */
+	public static final String POLICY_RETRIEVE_TOKEN_AWS_MODE = "policy.retrieveToken.aws.mode";
+	public static final String POLICY_RETRIEVE_TOKEN_AWS_MODE_STATIC = "static";
+	public static final String POLICY_RETRIEVE_TOKEN_AWS_MODE_ASSUME_ROLE = "assumeRole";
+	public static final String POLICY_RETRIEVE_TOKEN_AWS_MODE_STATIC_LABEL = "Statica";
+	public static final String POLICY_RETRIEVE_TOKEN_AWS_MODE_ASSUME_ROLE_LABEL = "AssumeRole";
+	public static final String ID_RETRIEVE_TOKEN_AWS_MODE = "awsMode";
+
+	public static final String POLICY_RETRIEVE_TOKEN_AWS_ACCESS_KEY_ID = "policy.retrieveToken.aws.accessKeyId";
+	public static final String POLICY_RETRIEVE_TOKEN_AWS_SECRET_ACCESS_KEY = "policy.retrieveToken.aws.secretAccessKey";
+	public static final String POLICY_RETRIEVE_TOKEN_AWS_REGION = "policy.retrieveToken.aws.region";
+	public static final String POLICY_RETRIEVE_TOKEN_AWS_ROLE_ARN = "policy.retrieveToken.aws.roleArn";
+	public static final String POLICY_RETRIEVE_TOKEN_AWS_EXTERNAL_ID = "policy.retrieveToken.aws.externalId";
+	public static final String POLICY_RETRIEVE_TOKEN_AWS_SESSION_DURATION = "policy.retrieveToken.aws.sessionDurationSeconds";
+	public static final String POLICY_RETRIEVE_TOKEN_AWS_SESSION_NAME = "policy.retrieveToken.aws.sessionName";
+	public static final String POLICY_RETRIEVE_TOKEN_AWS_SESSION_DURATION_DEFAULT_VALUE = "3600";
+	public static final String POLICY_RETRIEVE_TOKEN_AWS_SERVICE = "policy.retrieveToken.aws.service";
+	public static final String POLICY_RETRIEVE_TOKEN_AWS_SERVICE_DEFAULT_VALUE = "bedrock";
+	public static final int POLICY_RETRIEVE_TOKEN_AWS_SESSION_DURATION_MIN_SECONDS = 900;
+	public static final int POLICY_RETRIEVE_TOKEN_AWS_SESSION_DURATION_MAX_SECONDS = 43200;
+	public static final String POLICY_RETRIEVE_TOKEN_AWS_IAM_ARN_PREFIX = "arn:aws:iam::";
 	
 	public static final String POLICY_RETRIEVE_TOKEN_JWT_SIGN_ALGORITHM= "policy.retrieveToken.jwt.signature.algorithm";
 	public static final String POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID = "policy.retrieveToken.jwt.signature.include.key.id";
@@ -511,11 +534,13 @@ public class Costanti {
 	public static final String ID_RETRIEVE_TOKEN_METHOD_RFC_7523_X509 = "rfc7523_x509";
 	public static final String ID_RETRIEVE_TOKEN_METHOD_RFC_7523_CLIENT_SECRET = "rfc7523_clientSecret";
 	public static final String ID_RETRIEVE_TOKEN_METHOD_CUSTOM = "custom";
+	public static final String ID_RETRIEVE_TOKEN_METHOD_AWS_V4 = "awsv4";
 	public static final String ID_RETRIEVE_TOKEN_METHOD_CLIENT_CREDENTIAL_LABEL = "Client Credentials";
 	public static final String ID_RETRIEVE_TOKEN_METHOD_USERNAME_PASSWORD_LABEL = "Resource Owner Password Credentials";
 	public static final String ID_RETRIEVE_TOKEN_METHOD_RFC_7523_X509_LABEL = "Signed JWT";
 	public static final String ID_RETRIEVE_TOKEN_METHOD_RFC_7523_CLIENT_SECRET_LABEL = "Signed JWT with Client Secret";
 	public static final String ID_RETRIEVE_TOKEN_METHOD_CUSTOM_LABEL = "Personalizzato";
+	public static final String ID_RETRIEVE_TOKEN_METHOD_AWS_V4_LABEL = "AWS Signature V4";
 	public static final String ID_RETRIEVE_TOKEN_JWT_EXPIRED_TTL_SECONDS= "jwtExpTtl";
 	public static final String ID_RETRIEVE_TOKEN_DPOP = "dpop";
 	public static final String ID_RETRIEVE_TOKEN_JWT_SYMMETRIC_SIGN_ALGORITHM = "jwtSymmetricSignatureAlgorithm";

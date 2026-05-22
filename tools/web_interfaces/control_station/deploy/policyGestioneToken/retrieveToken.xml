@@ -34,27 +34,86 @@
 		</item>
 		
 		<item type="checkbox" name="dpop" label="DPoP" defaultSelected="false" reloadOnChange="true">
+			<conditions>
+				<condition and="true">
+					<equals name="retrieveTokenMethod" value="awsv4" not="true"/>
+				</condition>
+			</conditions>
 			<property name="policy.retrieveToken.dpop" />
-		</item> 
+		</item>
+
+		<item type="select" name="awsMode" label="Modalità AWS" reloadOnChange="true">
+			<conditions>
+				<condition and="true">
+					<equals name="retrieveTokenMethod" value="awsv4"/>
+				</condition>
+			</conditions>
+			<property name="policy.retrieveToken.aws.mode" />
+		</item>
 
 		<item type="textarea" name="endpointURL" label="URL" required="true" default="http://">
+			<conditions and="false">
+				<condition and="true">
+					<equals name="retrieveTokenMethod" value="awsv4" not="true"/>
+				</condition>
+				<condition and="true">
+					<equals name="retrieveTokenMethod" value="awsv4"/>
+					<equals name="awsMode" value="assumeRole"/>
+				</condition>
+			</conditions>
 			<property name="policy.retrieveToken.endpoint.url" />
 		</item>
 
 		<item type="number" name="endpointConnectionTimeout" label="Connection Timeout" required="true" default="5000" min="1">
+			<conditions and="false">
+				<condition and="true">
+					<equals name="retrieveTokenMethod" value="awsv4" not="true"/>
+				</condition>
+				<condition and="true">
+					<equals name="retrieveTokenMethod" value="awsv4"/>
+					<equals name="awsMode" value="assumeRole"/>
+				</condition>
+			</conditions>
 			<property name="connectionTimeout" properties="endpointConfig" />
 		</item>
 		<item type="number" name="endpointReadTimeout" label="Read Timeout" required="true" default="10000" min="1">
+			<conditions and="false">
+				<condition and="true">
+					<equals name="retrieveTokenMethod" value="awsv4" not="true"/>
+				</condition>
+				<condition and="true">
+					<equals name="retrieveTokenMethod" value="awsv4"/>
+					<equals name="awsMode" value="assumeRole"/>
+				</condition>
+			</conditions>
 			<property name="readConnectionTimeout" properties="endpointConfig" />
 		</item>
-	
+
 		<item type="checkbox" name="endpointHttps" label="Https" defaultSelected="false" reloadOnChange="true">
+			<conditions and="false">
+				<condition and="true">
+					<equals name="retrieveTokenMethod" value="awsv4" not="true"/>
+				</condition>
+				<condition and="true">
+					<equals name="retrieveTokenMethod" value="awsv4"/>
+					<equals name="awsMode" value="assumeRole"/>
+				</condition>
+			</conditions>
 			<property name="policy.endpoint.https.stato" />
-		</item>	
-		
+		</item>
+
 		<item type="checkbox" name="endpointProxy" label="Proxy" defaultSelected="false" reloadOnChange="true">
+			<conditions and="false">
+				<condition and="true">
+					<equals name="retrieveTokenMethod" value="awsv4" not="true"/>
+				</condition>
+				<condition and="true">
+					<equals name="retrieveTokenMethod" value="awsv4"/>
+					<equals name="awsMode" value="assumeRole"/>
+				</condition>
+			</conditions>
 			<property name="policy.endpoint.proxy.stato" />
-		</item>	
+		</item>
 
 		<subsection label="Autenticazione Utente">
 			<conditions>
@@ -68,6 +127,68 @@
 			<item type="lock" name="autenticazionePassword" label="Password" required="true">
 			      	<property name="policy.retrieveToken.password" />
 			</item>
+		</subsection>
+
+		<subsection label="AWS Signature V4">
+			<conditions>
+				<condition and="true">
+					<equals name="retrieveTokenMethod" value="awsv4"/>
+				</condition>
+			</conditions>
+
+			<item type="text" name="awsAccessKeyId" label="Access Key ID" required="true">
+				<property name="policy.retrieveToken.aws.accessKeyId" />
+			</item>
+
+			<item type="lock" name="awsSecretAccessKey" label="Secret Access Key" required="true">
+				<property name="policy.retrieveToken.aws.secretAccessKey" />
+			</item>
+
+			<item type="text" name="awsRegion" label="Regione" required="true">
+				<property name="policy.retrieveToken.aws.region" />
+			</item>
+
+			<item type="text" name="awsService" label="Servizio AWS" required="true" default="bedrock"
+					note="Nome del servizio AWS target della firma (es. bedrock, sts, s3, lambda).">
+				<property name="policy.retrieveToken.aws.service" />
+			</item>
+
+			<item type="text" name="awsRoleArn" label="Role ARN" required="true">
+				<conditions>
+					<condition and="true">
+						<equals name="awsMode" value="assumeRole"/>
+					</condition>
+				</conditions>
+				<property name="policy.retrieveToken.aws.roleArn" />
+			</item>
+
+			<item type="text" name="awsExternalId" label="External ID">
+				<conditions>
+					<condition and="true">
+						<equals name="awsMode" value="assumeRole"/>
+					</condition>
+				</conditions>
+				<property name="policy.retrieveToken.aws.externalId" />
+			</item>
+
+			<item type="number" name="awsSessionDuration" label="Durata Sessione (secondi)" default="3600" min="900" max="43200">
+				<conditions>
+					<condition and="true">
+						<equals name="awsMode" value="assumeRole"/>
+					</condition>
+				</conditions>
+				<property name="policy.retrieveToken.aws.sessionDurationSeconds" />
+			</item>
+
+			<item type="text" name="awsSessionName" label="Nome Sessione">
+				<conditions>
+					<condition and="true">
+						<equals name="awsMode" value="assumeRole"/>
+					</condition>
+				</conditions>
+				<property name="policy.retrieveToken.aws.sessionName" />
+			</item>
+
 		</subsection>
 
 		<subsection label="Autenticazione Client">
@@ -699,18 +820,24 @@
 		<subsection label="Dati Richiesta">
 
 			<item type="text" name="scope" label="Scope" required="false" note="Elencare più scope separandoli con la virgola">
-				<conditions>
+				<conditions and="true">
 					<condition not="true">
 						<equals name="retrieveTokenMethod" value="custom"/>
+					</condition>
+					<condition not="true">
+						<equals name="retrieveTokenMethod" value="awsv4"/>
 					</condition>
 				</conditions>
 				<property name="policy.retrieveToken.scope" />
 			</item>
 
 			<item type="text" name="audience" label="Audience" required="false">
-				<conditions>
+				<conditions and="true">
 					<condition not="true">
 						<equals name="retrieveTokenMethod" value="custom"/>
+					</condition>
+					<condition not="true">
+						<equals name="retrieveTokenMethod" value="awsv4"/>
 					</condition>
 				</conditions>
 				<property name="policy.retrieveToken.audience" />
@@ -1346,6 +1473,11 @@
 	</section>
 
 	<section label="Token Forward">
+		<conditions>
+			<condition and="true">
+				<equals name="retrieveTokenMethod" value="awsv4" not="true"/>
+			</condition>
+		</conditions>
 
 		<item type="select" name="tokenForwardTrasparenteMode" label="Modalità" default="RFC6750_header" reloadOnChange="true">
 			<values>

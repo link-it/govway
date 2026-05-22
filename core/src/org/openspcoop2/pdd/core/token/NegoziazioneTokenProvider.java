@@ -80,18 +80,26 @@ public class NegoziazioneTokenProvider implements IProvider {
 	
 	@Override
 	public void validate(Map<String, Properties> mapProperties) throws ProviderException, ProviderValidationException {
-		
+
 		Properties pDefault = TokenUtilities.getDefaultProperties(mapProperties);
-			
+
 		boolean endpointSSL = TokenUtilities.isEnabled(pDefault, Costanti.POLICY_ENDPOINT_HTTPS_STATO);
 		boolean ssl = TokenUtilities.isEnabled(pDefault, Costanti.POLICY_RETRIEVE_TOKEN_AUTH_SSL_STATO);
-		
+
 		if(endpointSSL || ssl) {
 			validateEndpointSsl(mapProperties);
 		}
-		
-		validateUrl(pDefault);
-		
+
+		// AWS Signature V4 modalità statica: nessuna chiamata HTTP, URL del Token Endpoint non richiesta.
+		// In modalità AssumeRole l'URL è obbligatoria (sts.<region>.amazonaws.com).
+		String retModeRaw = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_MODE);
+		String awsModeRaw = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_AWS_MODE);
+		boolean awsV4Static = Costanti.ID_RETRIEVE_TOKEN_METHOD_AWS_V4.equals(retModeRaw)
+				&& !Costanti.POLICY_RETRIEVE_TOKEN_AWS_MODE_ASSUME_ROLE.equals(awsModeRaw);
+		if(!awsV4Static) {
+			validateUrl(pDefault);
+		}
+
 		String retMode = validateRetrieveMode(pDefault);
 		
 		boolean pdnd = TokenUtilities.isEnabled(pDefault, Costanti.POLICY_RETRIEVE_TOKEN_MODE_PDND);
@@ -136,9 +144,65 @@ public class NegoziazioneTokenProvider implements IProvider {
 		if(Costanti.ID_RETRIEVE_TOKEN_METHOD_CUSTOM.equals(retMode)) {
 			validateTokenParser(pDefault);
 		}
-		
-		validateForward(pDefault);
-		
+
+		if(Costanti.ID_RETRIEVE_TOKEN_METHOD_AWS_V4.equals(retMode)) {
+			validateAwsSignatureV4(pDefault);
+		}
+
+		// Token Forward non si applica ad AWS Signature V4: il connettore non inoltra un Bearer
+		// token, firma direttamente la request al backend via AWSCredentialBag.
+		if(!Costanti.ID_RETRIEVE_TOKEN_METHOD_AWS_V4.equals(retMode)) {
+			validateForward(pDefault);
+		}
+
+	}
+
+	private void validateAwsSignatureV4(Properties pDefault) throws ProviderValidationException {
+		String accessKeyId = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_AWS_ACCESS_KEY_ID);
+		if (accessKeyId == null || accessKeyId.trim().isEmpty()) {
+			throw new ProviderValidationException("Non è stato fornito l'Access Key ID AWS");
+		}
+		if (accessKeyId.contains(" ")) {
+			throw new ProviderValidationException("Non indicare spazi nell'Access Key ID AWS");
+		}
+		String secretAccessKey = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_AWS_SECRET_ACCESS_KEY);
+		if (secretAccessKey == null || secretAccessKey.trim().isEmpty()) {
+			throw new ProviderValidationException("Non è stato fornito il Secret Access Key AWS");
+		}
+		String region = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_AWS_REGION);
+		if (region == null || region.trim().isEmpty()) {
+			throw new ProviderValidationException("Non è stata fornita la Regione AWS (es. eu-central-1)");
+		}
+		if (region.contains(" ")) {
+			throw new ProviderValidationException("Non indicare spazi nella Regione AWS");
+		}
+		String mode = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_AWS_MODE);
+		if (Costanti.POLICY_RETRIEVE_TOKEN_AWS_MODE_ASSUME_ROLE.equals(mode)) {
+			String roleArn = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_AWS_ROLE_ARN);
+			if (roleArn == null || roleArn.trim().isEmpty()) {
+				throw new ProviderValidationException("Modalità AssumeRole: indicare l'ARN del Role assumibile (es. "
+						+ Costanti.POLICY_RETRIEVE_TOKEN_AWS_IAM_ARN_PREFIX + "123456789012:role/govway-bedrock-role)");
+			}
+			if (!roleArn.startsWith(Costanti.POLICY_RETRIEVE_TOKEN_AWS_IAM_ARN_PREFIX)) {
+				throw new ProviderValidationException("L'ARN del Role deve iniziare con '"
+						+ Costanti.POLICY_RETRIEVE_TOKEN_AWS_IAM_ARN_PREFIX + "'");
+			}
+			String duration = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_AWS_SESSION_DURATION);
+			if (duration != null && !duration.trim().isEmpty()) {
+				int sec;
+				try {
+					sec = Integer.parseInt(duration.trim());
+				} catch (NumberFormatException e) {
+					throw new ProviderValidationException("La durata sessione AWS dev'essere un intero (secondi)");
+				}
+				if (sec < Costanti.POLICY_RETRIEVE_TOKEN_AWS_SESSION_DURATION_MIN_SECONDS
+						|| sec > Costanti.POLICY_RETRIEVE_TOKEN_AWS_SESSION_DURATION_MAX_SECONDS) {
+					throw new ProviderValidationException("La durata sessione AWS deve essere compresa tra "
+							+ Costanti.POLICY_RETRIEVE_TOKEN_AWS_SESSION_DURATION_MIN_SECONDS + " (15 min) e "
+							+ Costanti.POLICY_RETRIEVE_TOKEN_AWS_SESSION_DURATION_MAX_SECONDS + " (12 ore) secondi");
+				}
+			}
+		}
 	}
 	private void validateEndpointSsl(Map<String, Properties> mapProperties) throws ProviderValidationException {
 		Properties p = mapProperties.get(Costanti.POLICY_ENDPOINT_SSL_CONFIG);
@@ -587,8 +651,15 @@ public class NegoziazioneTokenProvider implements IProvider {
 			methodsList.add(Costanti.ID_RETRIEVE_TOKEN_METHOD_USERNAME_PASSWORD);
 			methodsList.add(Costanti.ID_RETRIEVE_TOKEN_METHOD_RFC_7523_X509);
 			methodsList.add(Costanti.ID_RETRIEVE_TOKEN_METHOD_RFC_7523_CLIENT_SECRET);
+			methodsList.add(Costanti.ID_RETRIEVE_TOKEN_METHOD_AWS_V4);
 			methodsList.add(Costanti.ID_RETRIEVE_TOKEN_METHOD_CUSTOM);
 			return methodsList;
+		}
+		else if(Costanti.ID_RETRIEVE_TOKEN_AWS_MODE.equals(id)) {
+			List<String> modes = new ArrayList<>();
+			modes.add(Costanti.POLICY_RETRIEVE_TOKEN_AWS_MODE_STATIC);
+			modes.add(Costanti.POLICY_RETRIEVE_TOKEN_AWS_MODE_ASSUME_ROLE);
+			return modes;
 		}
 		else if(Costanti.ID_TIPOLOGIA_HTTPS.equals(id)) {
 			List<String> tipologie = null;
@@ -646,8 +717,15 @@ public class NegoziazioneTokenProvider implements IProvider {
 			methodsList.add(Costanti.ID_RETRIEVE_TOKEN_METHOD_USERNAME_PASSWORD_LABEL);
 			methodsList.add(Costanti.ID_RETRIEVE_TOKEN_METHOD_RFC_7523_X509_LABEL);
 			methodsList.add(Costanti.ID_RETRIEVE_TOKEN_METHOD_RFC_7523_CLIENT_SECRET_LABEL);
+			methodsList.add(Costanti.ID_RETRIEVE_TOKEN_METHOD_AWS_V4_LABEL);
 			methodsList.add(Costanti.ID_RETRIEVE_TOKEN_METHOD_CUSTOM_LABEL);
 			return methodsList;
+		}
+		else if(Costanti.ID_RETRIEVE_TOKEN_AWS_MODE.equals(id)) {
+			List<String> labels = new ArrayList<>();
+			labels.add(Costanti.POLICY_RETRIEVE_TOKEN_AWS_MODE_STATIC_LABEL);
+			labels.add(Costanti.POLICY_RETRIEVE_TOKEN_AWS_MODE_ASSUME_ROLE_LABEL);
+			return labels;
 		}
 		else if(Costanti.ID_RETRIEVE_TOKEN_JWT_SYMMETRIC_SIGN_ALGORITHM.equals(id) ||
 				Costanti.ID_RETRIEVE_TOKEN_JWT_ASYMMETRIC_SIGN_ALGORITHM.equals(id) ||

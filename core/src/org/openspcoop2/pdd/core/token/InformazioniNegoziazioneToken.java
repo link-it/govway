@@ -161,6 +161,12 @@ public class InformazioniNegoziazioneToken extends org.openspcoop2.utils.beans.B
 	// DPoP Backend (RFC 9449)
 	private InformazioniJWTDpop dpopBackend;
 
+	// Credenziali backend con header calcolati per-request (firma, timestamp, hash payload).
+	// Alternativa polimorfica al classico accessToken Bearer statico: se valorizzata, il
+	// connettore invoca bag.buildBackendHeaders(...) al momento del send. Implementazioni
+	// correnti: AWS Signature V4 (vedi org.openspcoop2.pdd.core.token.aws.AWSCredentialBag).
+	private IBackendCredentialBag backendCredentialBag;
+
 	// NOTA: l'ordine stabilisce come viene serializzato nell'oggetto json
 
 	// RawResponse
@@ -269,6 +275,13 @@ public class InformazioniNegoziazioneToken extends org.openspcoop2.utils.beans.B
 	}
 	public void setDpopBackend(InformazioniJWTDpop dpopBackend) {
 		this.dpopBackend = dpopBackend;
+	}
+
+	public IBackendCredentialBag getBackendCredentialBag() {
+		return this.backendCredentialBag;
+	}
+	public void setBackendCredentialBag(IBackendCredentialBag backendCredentialBag) {
+		this.backendCredentialBag = backendCredentialBag;
 	}
 
 	public String getRawResponse() {

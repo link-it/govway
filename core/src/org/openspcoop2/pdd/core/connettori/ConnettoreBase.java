@@ -690,6 +690,88 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 	protected NameValue getTokenHeader() throws ConnettoreException {
 		return this.getTokenParameter(true);
 	}
+
+	/** Vero se la Token Policy ha prodotto una {@link org.openspcoop2.pdd.core.token.IBackendCredentialBag}. */
+	protected boolean hasBackendCredentialBag() {
+		return this.cachedEsitoNegoziazioneToken != null
+				&& this.cachedEsitoNegoziazioneToken.getInformazioniNegoziazioneToken() != null
+				&& this.cachedEsitoNegoziazioneToken.getInformazioniNegoziazioneToken().getBackendCredentialBag() != null;
+	}
+
+	/**
+	 * Vero se la bag presente richiede di leggere il body della request (firme con
+	 * hash payload). Usato dai connettori per decidere se bufferizzare il body anche
+	 * in scenari in cui altrimenti scriverebbero direttamente in rete (es. {@code HttpURLConnection}).
+	 */
+	protected boolean backendCredentialBagRequiresBody() {
+		if (!hasBackendCredentialBag()) {
+			return false;
+		}
+		return this.cachedEsitoNegoziazioneToken.getInformazioniNegoziazioneToken()
+				.getBackendCredentialBag().requiresRequestBody();
+	}
+
+	/** URL → URI con eccezione normalizzata in {@link ConnettoreException}. */
+	protected static java.net.URI toRequestUri(java.net.URL url) throws ConnettoreException {
+		if (url == null) {
+			throw new ConnettoreException("URL della request nulla");
+		}
+		try {
+			return url.toURI();
+		} catch (java.net.URISyntaxException e) {
+			throw new ConnettoreException("URL non convertibile in URI [" + url + "]: " + e.getMessage(), e);
+		}
+	}
+
+	/**
+	 * Calcola gli header HTTP prodotti da {@link org.openspcoop2.pdd.core.token.IBackendCredentialBag}
+	 * e li applica al transport della request via {@link #setRequestHeader(String, String, java.util.Map)}.
+	 * <p>
+	 * Il connettore non conosce i protocolli specifici (AWS SigV4, Azure SAS, ecc.): chiama solo
+	 * questo helper passando l'URI completa, il metodo HTTP, il content-type e lo stream del body.
+	 * Le implementazioni che richiedono lo sha256 del payload (es. AWS SigV4) lo calcolano leggendo
+	 * lo stream in chunk — quindi anche body grandi (serializzati su filesystem dal connettore NIO)
+	 * sono supportati senza vincolo di averli in memoria.
+	 * </p>
+	 * <p>
+	 * No-op se la Token Policy associata al connettore non ha prodotto alcuna bag (caso classico
+	 * Bearer/OAuth o nessuna Token Policy).
+	 * </p>
+	 *
+	 * @param requestUri    URI completa della request (host + path + query) — partecipa al canonical request
+	 * @param httpMethod    metodo HTTP (es. {@code POST})
+	 * @param contentType   {@code Content-Type} della request (null se assente)
+	 * @param body          stream del payload della request (può essere null per body vuoto). Lo stream
+	 *                      viene consumato; il chiamante deve aprire uno stream separato per il send HTTP.
+	 * @param propertiesTrasportoDebug   mappa header già impostati (per debug/log del connettore)
+	 */
+	protected void applyBackendCredentialHeaders(java.net.URI requestUri, String httpMethod, String contentType,
+			java.io.InputStream body, java.util.Map<String, java.util.List<String>> propertiesTrasportoDebug) throws ConnettoreException {
+		if (this.cachedEsitoNegoziazioneToken == null
+				|| this.cachedEsitoNegoziazioneToken.getInformazioniNegoziazioneToken() == null) {
+			return;
+		}
+		org.openspcoop2.pdd.core.token.IBackendCredentialBag bag =
+				this.cachedEsitoNegoziazioneToken.getInformazioniNegoziazioneToken().getBackendCredentialBag();
+		if (bag == null) {
+			return;
+		}
+		java.util.Map<String, String> headers;
+		try {
+			headers = bag.buildBackendHeaders(requestUri, httpMethod, contentType, body);
+		} catch (org.openspcoop2.utils.UtilsException e) {
+			throw new ConnettoreException("Errore nel calcolo degli header di credenziali backend: " + e.getMessage(), e);
+		}
+		for (java.util.Map.Entry<String, String> h : headers.entrySet()) {
+			if (this.requestMsg != null && this.requestMsg.getTransportRequestContext() != null) {
+				this.requestMsg.getTransportRequestContext().removeHeader(h.getKey());
+			}
+			setRequestHeader(h.getKey(), h.getValue(), propertiesTrasportoDebug);
+			if (this.debug && this.logger != null) {
+				this.logger.info("Impostazione header credenziali backend '" + h.getKey() + "'", false);
+			}
+		}
+	}
 	protected NameValue getTokenQueryParameter() throws ConnettoreException {
 		return this.getTokenParameter(false);
 	}
@@ -848,6 +930,14 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 	}
 	private NameValue getTokenParameterEngine(boolean onlyName, boolean header) throws ConnettoreException {
 		if(this.policyNegoziazioneToken!=null) {
+			// Se la Token Policy ha prodotto una bag di credenziali backend (es. AWS SigV4),
+			// gli header non sono Bearer statici: vengono costruiti dal bag in
+			// getBackendCredentialHeaders(...) al momento del send. Qui ritorniamo null.
+			if (this.cachedEsitoNegoziazioneToken != null
+					&& this.cachedEsitoNegoziazioneToken.getInformazioniNegoziazioneToken() != null
+					&& this.cachedEsitoNegoziazioneToken.getInformazioniNegoziazioneToken().getBackendCredentialBag() != null) {
+				return null;
+			}
 			try {
 				String forwardMode = this.policyNegoziazioneToken.getForwardTokenMode();
 				NameValue n = null;

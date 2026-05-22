@@ -495,10 +495,16 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 						}
 						this.cloasebleDumpBout.flush();
 						this.cloasebleDumpBout.close();
+
+						// Credenziali backend (es. AWS SigV4): firma in streaming via getInputStream().
+						// Prima del dump, così gli header firmati finiscono in traccia.
+						applyBackendCredentialHeaders(toRequestUri(url), this.httpMethod.name(),
+								contentTypeRichiesta, this.cloasebleDumpBout.getInputStream(), propertiesTrasportoDebug);
+
 						if(this.isDumpBinarioRichiesta()) {
 							this.dumpBinarioRichiestaUscita(this.cloasebleDumpBout, requestMessageType, contentTypeRichiesta, this.location, propertiesTrasportoDebug);
 						}
-						
+
 						HttpEntity httpEntity = null;
 						String baseMimeType = ContentTypeUtilities.readBaseTypeFromContentType(contentTypeRichiesta);
 						org.apache.hc.core5.http.ContentType ct = org.apache.hc.core5.http.ContentType.create(baseMimeType);

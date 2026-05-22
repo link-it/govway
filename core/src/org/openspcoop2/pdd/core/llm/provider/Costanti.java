@@ -54,6 +54,7 @@ public final class Costanti {
 	/** Valori supportati di {@link #LLM_PROVIDER_TYPE} (MVP). */
 	public static final String LLM_PROVIDER_TYPE_VALUE_ANTHROPIC = "anthropic";
 	public static final String LLM_PROVIDER_TYPE_VALUE_OPENAI = "openai";
+	public static final String LLM_PROVIDER_TYPE_VALUE_AWS_BEDROCK = "awsBedrock";
 
 	private Costanti() {
 		// utility class

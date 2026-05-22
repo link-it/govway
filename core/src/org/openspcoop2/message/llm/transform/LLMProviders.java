@@ -34,6 +34,9 @@ public final class LLMProviders {
 	/** OpenAI API diretta o endpoint OpenAI-compatible (es. Anthropic /v1/chat/completions, Mistral, Groq, vLLM, ...). */
 	public static final String OPENAI = "openai";
 
+	/** AWS Bedrock Runtime con dialetto Converse (firma SigV4 via Token Policy). */
+	public static final String AWS_BEDROCK = "awsBedrock";
+
 	private LLMProviders() {
 		// utility class
 	}

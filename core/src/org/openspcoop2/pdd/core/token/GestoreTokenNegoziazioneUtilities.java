@@ -131,23 +131,23 @@ public class GestoreTokenNegoziazioneUtilities {
 			InformazioniNegoziazioneToken_DatiRichiesta datiRichiesta) {
 		
 		EsitoNegoziazioneToken esito = null;
-		
+
 		boolean refreshModeEnabled = false;
 		try {
 			if(policyNegoziazioneToken.isClientCredentialsGrant()) {
-				refreshModeEnabled = OpenSPCoop2Properties.getInstance().isGestioneRetrieveTokenRefreshTokenGrantTypeClientCredentials();	
+				refreshModeEnabled = OpenSPCoop2Properties.getInstance().isGestioneRetrieveTokenRefreshTokenGrantTypeClientCredentials();
 				if(datiRichiesta!=null) {
 					datiRichiesta.setGrantType(Costanti.ID_RETRIEVE_TOKEN_METHOD_CLIENT_CREDENTIAL);
 				}
 			}
 			else if(policyNegoziazioneToken.isUsernamePasswordGrant()) {
-				refreshModeEnabled = OpenSPCoop2Properties.getInstance().isGestioneRetrieveTokenRefreshTokenGrantTypeUsernamePassword();	
+				refreshModeEnabled = OpenSPCoop2Properties.getInstance().isGestioneRetrieveTokenRefreshTokenGrantTypeUsernamePassword();
 				if(datiRichiesta!=null) {
 					datiRichiesta.setGrantType(Costanti.ID_RETRIEVE_TOKEN_METHOD_USERNAME_PASSWORD);
 				}
 			}
 			else if(policyNegoziazioneToken.isRfc7523x509Grant()) {
-				refreshModeEnabled = OpenSPCoop2Properties.getInstance().isGestioneRetrieveTokenRefreshTokenGrantTypeRfc7523x509();	
+				refreshModeEnabled = OpenSPCoop2Properties.getInstance().isGestioneRetrieveTokenRefreshTokenGrantTypeRfc7523x509();
 				if(datiRichiesta!=null) {
 					datiRichiesta.setGrantType(Costanti.ID_RETRIEVE_TOKEN_METHOD_RFC_7523_X509);
 				}
@@ -158,8 +158,16 @@ public class GestoreTokenNegoziazioneUtilities {
 					datiRichiesta.setGrantType(Costanti.ID_RETRIEVE_TOKEN_METHOD_RFC_7523_CLIENT_SECRET);
 				}
 			}
+			else if(policyNegoziazioneToken.isAwsV4Grant()) {
+				// AWS STS non emette refresh_token: la rinegoziazione avviene tramite la cache
+				// standard quando expiresIn (= Expiration STS) viene raggiunto.
+				refreshModeEnabled = false;
+				if(datiRichiesta!=null) {
+					datiRichiesta.setGrantType(Costanti.ID_RETRIEVE_TOKEN_METHOD_AWS_V4);
+				}
+			}
 			else if(policyNegoziazioneToken.isCustomGrant()) {
-				refreshModeEnabled = OpenSPCoop2Properties.getInstance().isGestioneRetrieveTokenRefreshTokenGrantTypeCustom();	
+				refreshModeEnabled = OpenSPCoop2Properties.getInstance().isGestioneRetrieveTokenRefreshTokenGrantTypeCustom();
 				if(datiRichiesta!=null) {
 					datiRichiesta.setGrantType(Costanti.ID_RETRIEVE_TOKEN_METHOD_CUSTOM);
 				}
@@ -167,8 +175,30 @@ public class GestoreTokenNegoziazioneUtilities {
 		}catch(Exception t) {
 			log.error("Errore durante la comprensione della modalità di refresh: "+t.getMessage(),t);
 		}
-		
-		
+
+		// AWS Signature V4 - Modalità statica: niente HTTP. La bag viene costruita inline dai
+		// campi della policy. La modalità AssumeRole passa invece per il flow standard di
+		// invokeEndpointToken → http() (con piccoli if AWS-aware dentro http() per body/firma).
+		if(policyNegoziazioneToken.isAwsV4Grant() && !policyNegoziazioneToken.isAwsV4AssumeRoleMode()) {
+			EsitoNegoziazioneToken esitoStatic = new EsitoNegoziazioneToken();
+			try {
+				esitoStatic.setInformazioniNegoziazioneToken(
+						org.openspcoop2.pdd.core.token.aws.GestoreTokenNegoziazioneAwsV4Utilities
+								.negotiateStatic(policyNegoziazioneToken, datiRichiesta));
+				esitoStatic.setTokenValido();
+				esitoStatic.setToken(null);
+				esitoStatic.setNoCache(false);
+			} catch (Exception e) {
+				log.error("Errore nella negoziazione AWS Signature V4 (statica): " + e.getMessage(), e);
+				esitoStatic.setTokenValidazioneFallita();
+				esitoStatic.setEccezioneProcessamento(e);
+				esitoStatic.setDetails(e.getMessage());
+				esitoStatic.setNoCache(!policyNegoziazioneToken.isSaveErrorInCache());
+			}
+			return esitoStatic;
+		}
+
+
 		if(refreshModeEnabled && previousToken!=null && previousToken.getRefreshToken()!=null) {
 			try {
 				// Verico scadenza refresh
@@ -271,7 +301,14 @@ public class GestoreTokenNegoziazioneUtilities {
 					if(datiRichiesta!=null && datiRichiesta.getPrepareRequest()!=null) {
 						datiRichiesta.setParseResponse(DateManager.getDate());
 					}
-					informazioniToken = new InformazioniNegoziazioneToken(datiRichiesta, httpResponseCode, new String(risposta),tokenParser,previousToken);
+					if(policyNegoziazioneToken.isAwsV4Grant()) {
+						// Response STS XML: helper dedicato del package aws, niente tokenParser OAuth.
+						informazioniToken = org.openspcoop2.pdd.core.token.aws.GestoreTokenNegoziazioneAwsV4Utilities
+								.buildInformazioniFromStsResponse(datiRichiesta, httpResponseCode, risposta, policyNegoziazioneToken);
+					}
+					else {
+						informazioniToken = new InformazioniNegoziazioneToken(datiRichiesta, httpResponseCode, new String(risposta),tokenParser,previousToken);
+					}
 				}catch(Exception e) {
 					detailsError = "Risposta del servizio di negoziazione token non valida: "+e.getMessage();
 					eProcess = e;
@@ -420,10 +457,12 @@ public class GestoreTokenNegoziazioneUtilities {
 		}
 		
 		HttpRequestMethod httpMethod = dynamicParameters.getHttpMethod();
-		
+
 		// Nell'endpoint config ci finisce i timeout e la configurazione proxy
 		Properties endpointConfig = policyNegoziazioneToken.getProperties().get(Costanti.POLICY_ENDPOINT_CONFIG);
-		
+
+		boolean awsV4 = policyNegoziazioneToken.isAwsV4Grant();
+
 		boolean https = policyNegoziazioneToken.isEndpointHttps();
 		boolean httpsClient = false;
 		Properties sslConfig = null;
@@ -570,6 +609,10 @@ public class GestoreTokenNegoziazioneUtilities {
 		}
 		else if(policyNegoziazioneToken.isUsernamePasswordGrant()) {
 			TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_GRANT_TYPE, ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_GRANT_TYPE_RESOURCE_OWNER_PASSWORD_CREDENTIALS_GRANT);
+		}
+		else if(awsV4) {
+			org.openspcoop2.pdd.core.token.aws.GestoreTokenNegoziazioneAwsV4Utilities
+					.populateAssumeRoleFormParameters(policyNegoziazioneToken, pContent);
 		}
 		else if(policyNegoziazioneToken.isCustomGrant()) {
 			custom = true;
@@ -751,7 +794,18 @@ public class GestoreTokenNegoziazioneUtilities {
 			}
 			content = contentString.getBytes();
 		}
-			
+
+		// AWS Signature V4: la firma copre il body serializzato (sha256 del payload) e gli header
+		// firmati (host, x-amz-date, content-type). Va calcolata dopo aver prodotto il content e
+		// settato il Content-Type, prima della costruzione del messaggio OpenSPCoop2.
+		if(awsV4) {
+			Map<String, String> awsHeaders = org.openspcoop2.pdd.core.token.aws.GestoreTokenNegoziazioneAwsV4Utilities
+					.signAssumeRoleHeaders(policyNegoziazioneToken, endpoint, content, contentType);
+			for(Map.Entry<String, String> h : awsHeaders.entrySet()) {
+				TransportUtils.setHeader(transportRequestContext.getHeaders(), h.getKey(), h.getValue());
+			}
+		}
+
 		try {
 			OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getDefaultMessageFactory().createMessage(MessageType.BINARY, transportRequestContext, content);
 			OpenSPCoop2Message msg = pr.getMessage_throwParseException();

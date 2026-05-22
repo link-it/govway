@@ -77,10 +77,84 @@ public class LLMInboundResponseHandler implements InResponseHandler {
 			throw new HandlerException("LLMInboundResponseHandler: providerId mancante nel PdDContext");
 		}
 		if (LLMHandlerSupport.isLLMStream(context)) {
+			// Su HTTP non-2xx il body NON è streaming: provider risponde con JSON di errore.
+			// Bedrock event-stream lo wrappa comunque in un frame binario → estraiamo il payload
+			// e lo sostituiamo nel messaggio. Altri transport (SSE/NDJSON) rispondono con JSON puro
+			// per gli errori, lasciamo il body inalterato.
+			if (isHttpError(context.getMessaggio())) {
+				unwrapErrorBodyIfNeeded(context, providerId, log);
+				return;
+			}
 			handleStream(context, dialect, providerId, log);
 			return;
 		}
 		handleSync(context, providerId);
+	}
+
+	private void unwrapErrorBodyIfNeeded(InResponseContext context, String providerId, org.slf4j.Logger log) throws HandlerException {
+		LLMProviderStreamTransport transport;
+		try {
+			transport = resolveProviderStreamTransport(providerId);
+		} catch (Exception e) {
+			throw new HandlerException("LLMInboundResponseHandler: impossibile risolvere il transport del provider " + providerId + ": " + e.getMessage(), e);
+		}
+		if (transport != LLMProviderStreamTransport.AWS_EVENT_STREAM) {
+			// SSE/NDJSON: l'error body è già JSON puro, nessun unwrap necessario
+			return;
+		}
+		OpenSPCoop2Message msg = context.getMessaggio();
+		if (!(msg instanceof AbstractBaseOpenSPCoop2MessageDynamicContent)) {
+			return;
+		}
+		AbstractBaseOpenSPCoop2MessageDynamicContent<?> dyn = (AbstractBaseOpenSPCoop2MessageDynamicContent<?>) msg;
+		try {
+			InputStream src = dyn.getInputStream();
+			String ce = readContentEncoding(dyn);
+			if (ce != null && ce.toLowerCase().contains(HttpConstants.CONTENT_ENCODING_VALUE_GZIP)) {
+				src = new GZIPInputStream(src);
+			}
+			// Bufferizza interamente il body: AWS in caso di errore può rispondere in due modi
+			//   a) frame event-stream binario contenente JSON (es. 400 'Invalid model identifier')
+			//   b) JSON puro non wrappato (es. 403 signature mismatch)
+			// Tentiamo l'unwrap: se fallisce (body non è event-stream), passiamo il body originale.
+			byte[] body = org.openspcoop2.utils.Utilities.getAsByteArray(src);
+			byte[] result;
+			try {
+				String payload = org.openspcoop2.message.llm.stream.AwsEventStreamReader
+						.unwrapFirstFramePayload(new java.io.ByteArrayInputStream(body));
+				result = payload != null ? payload.getBytes(java.nio.charset.StandardCharsets.UTF_8) : body;
+				if (log != null && payload != null) {
+					log.info("LLMInboundResponseHandler: error frame AWS event-stream unwrapped → JSON puro (provider={})", providerId);
+				}
+			} catch (java.io.IOException unwrapEx) {
+				// Body non in formato event-stream → JSON puro, passiamo tale quale al client.
+				if (log != null && log.isDebugEnabled()) {
+					log.debug("LLMInboundResponseHandler: body di errore non in formato event-stream, passato tale quale (provider={}): {}",
+							providerId, unwrapEx.getMessage());
+				}
+				result = body;
+			}
+			stripContentEncoding(msg);
+			dyn.applyStreamWrapper(new java.io.ByteArrayInputStream(result));
+		} catch (Exception e) {
+			throw new HandlerException("LLMInboundResponseHandler: errore nella gestione del body di errore: " + e.getMessage(), e);
+		}
+	}
+
+	private static boolean isHttpError(OpenSPCoop2Message msg) {
+		if (msg == null) {
+			return false;
+		}
+		TransportResponseContext ctx = msg.getTransportResponseContext();
+		if (ctx == null || ctx.getCodiceTrasporto() == null) {
+			return false;
+		}
+		try {
+			int code = Integer.parseInt(ctx.getCodiceTrasporto());
+			return code < 200 || code >= 300;
+		} catch (NumberFormatException e) {
+			return false;
+		}
 	}
 
 

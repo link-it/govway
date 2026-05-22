@@ -1,3 +1,29 @@
+2026-05-22  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Introdotto mascheramento automatico delle credenziali AWS sensibili (SecretAccessKey, SessionToken)
+	nelle info transazione e nei log, mantenendo i primi/ultimi caratteri visibili per audit.
+
+2026-05-22  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Aggiunto supporto AWS Bedrock come provider back-door LLM con dialetto Converse, autenticazione
+	AWS Signature V4 (modalità statica e AssumeRole via STS) e streaming AWS event-stream binario.
+
+2026-05-19  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunto provider back-door OpenAI / OpenAI-compatible al catalogo Provider Binding con
+	trasformatori bidirezionali canonical ↔ Chat Completions, streaming SSE end-to-end e
+	compressione gzip negoziata verso il client.
+
+2026-05-15  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Introdotta architettura LLM front+back: modello canonical chat sincrona, dialetti front-door
+	OpenAI Chat V1 e Anthropic Messages V1, provider back-door Anthropic e pipeline di trasformatori
+	con handler atomici (InRequest/OutRequest/InResponse/OutResponse).
+
 2026-05-13  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

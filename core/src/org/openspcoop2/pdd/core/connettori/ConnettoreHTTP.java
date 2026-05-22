@@ -489,15 +489,21 @@ public class ConnettoreHTTP extends ConnettoreExtBaseHTTP {
 				}
 				if(this.debug)
 					this.logger.debug("Spedizione byte (consume-request-message:"+consumeRequestMessage+")...");
-				OutputStream out = this.httpConn.getOutputStream();
-				if(this.isDumpBinarioRichiesta()) {
-					DumpByteArrayOutputStream bout = new DumpByteArrayOutputStream(this.dumpBinarioSoglia, this.dumpBinarioRepositoryFile, this.idTransazione, 
+				// Body bufferizzato se: dump binario attivo OR la bag richiede di leggere il payload (es. AWS SigV4).
+				// Nel caso SigV4 gli header firmati vanno applicati PRIMA di httpConn.getOutputStream(): una volta
+				// aperto lo stream, HttpURLConnection congela gli header e i successivi setRequestProperty vengono ignorati.
+				boolean bufferRichiesto = this.isDumpBinarioRichiesta() || backendCredentialBagRequiresBody();
+				if(bufferRichiesto) {
+					DumpByteArrayOutputStream bout = new DumpByteArrayOutputStream(this.dumpBinarioSoglia, this.dumpBinarioRepositoryFile, this.idTransazione,
 							TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO.getValue());
 					try {
-						this.emitDiagnosticStartDumpBinarioRichiestaUscita();
-						
+						if(this.isDumpBinarioRichiesta()) {
+							this.emitDiagnosticStartDumpBinarioRichiestaUscita();
+						}
+
 						if(this.isSoap && this.sbustamentoSoap){
-							this.logger.debug("Sbustamento...");
+							if(this.debug)
+								this.logger.debug("Sbustamento...");
 							TunnelSoapUtils.sbustamentoMessaggio(soapMessageRequest,bout);
 						}else{
 							this.requestMsg.writeTo(bout, consumeRequestMessage);
@@ -505,6 +511,11 @@ public class ConnettoreHTTP extends ConnettoreExtBaseHTTP {
 						bout.flush();
 						bout.close();
 
+						// Credenziali backend (es. AWS SigV4): firma sul buffer prima di aprire l'OutputStream.
+						applyBackendCredentialHeaders(toRequestUri(url), this.httpMethod.name(),
+								contentTypeRichiesta, bout.getInputStream(), propertiesTrasportoDebug);
+
+						OutputStream out = this.httpConn.getOutputStream();
 						if(bout.isSerializedOnFileSystem()) {
 							try(FileInputStream fin = new FileInputStream(bout.getSerializedFile())) {
 								Utilities.copy(fin, out);
@@ -513,13 +524,15 @@ public class ConnettoreHTTP extends ConnettoreExtBaseHTTP {
 						else {
 							out.write(bout.toByteArray());
 						}
-						
+
 						out.flush();
 						out.close();
-						
+
 						this.dataRichiestaInoltrata = DateManager.getDate();
-						
-						this.dumpBinarioRichiestaUscita(bout, requestMessageType, contentTypeRichiesta, this.location, propertiesTrasportoDebug);
+
+						if(this.isDumpBinarioRichiesta()) {
+							this.dumpBinarioRichiestaUscita(bout, requestMessageType, contentTypeRichiesta, this.location, propertiesTrasportoDebug);
+						}
 					}finally {
 						try {
 							bout.clearResources();
@@ -528,6 +541,7 @@ public class ConnettoreHTTP extends ConnettoreExtBaseHTTP {
 						}
 					}
 				}else{
+					OutputStream out = this.httpConn.getOutputStream();
 					if(this.isSoap && this.sbustamentoSoap){
 						if(this.debug)
 							this.logger.debug("Sbustamento...");

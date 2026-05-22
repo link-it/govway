@@ -147,6 +147,42 @@ public class PolicyNegoziazioneToken extends AbstractPolicyToken implements Seri
 		String mode = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_MODE);
 		return Costanti.ID_RETRIEVE_TOKEN_METHOD_CUSTOM.equals(mode);
 	}
+	public boolean isAwsV4Grant() {
+		String mode = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_MODE);
+		return Costanti.ID_RETRIEVE_TOKEN_METHOD_AWS_V4.equals(mode);
+	}
+	public boolean isAwsV4AssumeRoleMode() {
+		if (!isAwsV4Grant()) {
+			return false;
+		}
+		String awsMode = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_AWS_MODE);
+		return Costanti.POLICY_RETRIEVE_TOKEN_AWS_MODE_ASSUME_ROLE.equals(awsMode);
+	}
+	public String getAwsAccessKeyId() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_AWS_ACCESS_KEY_ID);
+	}
+	public String getAwsSecretAccessKey() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_AWS_SECRET_ACCESS_KEY);
+	}
+	public String getAwsRegion() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_AWS_REGION);
+	}
+	public String getAwsRoleArn() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_AWS_ROLE_ARN);
+	}
+	public String getAwsExternalId() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_AWS_EXTERNAL_ID);
+	}
+	public String getAwsSessionDurationSeconds() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_AWS_SESSION_DURATION);
+	}
+	public String getAwsSessionName() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_AWS_SESSION_NAME);
+	}
+	public String getAwsService() {
+		String s = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_AWS_SERVICE);
+		return (s != null && !s.trim().isEmpty()) ? s.trim() : Costanti.POLICY_RETRIEVE_TOKEN_AWS_SERVICE_DEFAULT_VALUE;
+	}
 	public String getLabelGrant() {
 		if(this.isClientCredentialsGrant()) {
 			return Costanti.ID_RETRIEVE_TOKEN_METHOD_CLIENT_CREDENTIAL_LABEL;
@@ -163,8 +199,11 @@ public class PolicyNegoziazioneToken extends AbstractPolicyToken implements Seri
 		else if(this.isCustomGrant()) {
 			return Costanti.ID_RETRIEVE_TOKEN_METHOD_CUSTOM_LABEL;
 		}
+		else if(this.isAwsV4Grant()) {
+			return Costanti.ID_RETRIEVE_TOKEN_METHOD_AWS_V4_LABEL;
+		}
 		return "Non definita";
-	} 
+	}
 	public boolean isPDND() {
 		String mode = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_MODE_PDND);
 		return "true".equalsIgnoreCase(mode);

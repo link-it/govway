@@ -27057,7 +27057,32 @@ public class OpenSPCoop2Properties {
 
 		return this.isGestioneRetrieveTokenSaveAsTokenInfoExcludeJwtSignature;
 	}
-	
+
+	private Boolean isGestioneRetrieveTokenSaveAsTokenInfoAwsV4MaskSecrets = null;
+	public boolean isGestioneRetrieveTokenSaveAsTokenInfoAwsV4MaskSecrets(){
+
+		String pName = "org.openspcoop2.pdd.retrieveToken.saveAsTokenInfo.awsV4.maskSecrets";
+		if(this.isGestioneRetrieveTokenSaveAsTokenInfoAwsV4MaskSecrets==null){
+			try{
+				String value = this.reader.getValueConvertEnvProperties(pName);
+
+				if (value != null){
+					value = value.trim();
+					this.isGestioneRetrieveTokenSaveAsTokenInfoAwsV4MaskSecrets = Boolean.parseBoolean(value);
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
+					this.isGestioneRetrieveTokenSaveAsTokenInfoAwsV4MaskSecrets = true;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, true),e);
+				this.isGestioneRetrieveTokenSaveAsTokenInfoAwsV4MaskSecrets = true;
+			}
+		}
+
+		return this.isGestioneRetrieveTokenSaveAsTokenInfoAwsV4MaskSecrets;
+	}
+
 	private Boolean isGestioneRetrieveTokenSaveAsTokenInfoSaveSourceRequest = null;
 	public boolean isGestioneRetrieveTokenSaveAsTokenInfoSaveSourceRequest(){
 

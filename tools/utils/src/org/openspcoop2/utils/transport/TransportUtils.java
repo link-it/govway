@@ -644,6 +644,10 @@ public class TransportUtils {
 	public static String urlEncodePath(String value, String charset) {
 		return UriUtils.encode(value, charset);
 	}
+
+	public static String urlDecodePath(String value, String charset) {
+		return UriUtils.decode(value, charset);
+	}
 	
 	
 	/* ************** UTILITIES *************/
