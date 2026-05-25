@@ -1450,6 +1450,13 @@ public class CostantiProprieta {
 		return readBooleanValueWithDefault(proprieta, p, defaultValue, MODI_VALUE_ENABLED, MODI_VALUE_DISABLED);
 	}
 
+	private static final String MODI_SIGNAL_HUB_PSEUDONYMIZATION_EXPOSE_SIGNAL_ID = "modi.signalHub.pseudonymization.exposeSignalId";
+
+	public static boolean isModISignalHubPseudonymizationExposeSignalId(List<Proprieta> proprieta, boolean defaultValue) {
+		String p = MODI_SIGNAL_HUB_PSEUDONYMIZATION_EXPOSE_SIGNAL_ID;
+		return readBooleanValueWithDefault(proprieta, p, defaultValue, MODI_VALUE_ENABLED, MODI_VALUE_DISABLED);
+	}
+
 
 	// ****  PDND *****
 	
