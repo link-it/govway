@@ -22,6 +22,7 @@ Background:
 	* def get_seed = read('classpath:test/signal_hub/utils/get_seed.js')
 	* def count_seeds = read('classpath:test/signal_hub/utils/count_seeds.js')
 	* def wither_seeds = read('classpath:test/signal_hub/utils/wither_seeds.js')
+	* def reset_counter = read('classpath:test/signal_hub/utils/reset_counter.js')
 	* def get_diagnostico = read('classpath:utils/get_diagnostico.js')
 	* def reset_cache = read('classpath:utils/reset-cache.feature')
 	* def basic = read('classpath:utils/basic-auth.js')
@@ -46,13 +47,30 @@ Background:
     """
 
 	# Cleanup runtime: rimuove la proprieta exposeSignalId se rimasta da un test precedente.
-	# Eseguita automaticamente prima di ogni scenario (Background).
+	# Eseguita automaticamente prima di ogni scenario (Background) sia per l'erogazione REST
+	# che per quella SOAP12.
 	Given url govway_config_api_path + '/erogazioni/SignalHubTest/1/configurazioni/proprieta/modi.signalHub.pseudonymization.exposeSignalId'
 	And header Authorization = call basic (auth_api_config)
 	And param profilo = 'ModIPA'
 	And param soggetto = 'DemoSoggettoErogatore'
 	When method delete
 	Then match responseStatus == "#? _ == 204 || _ == 404"
+
+	Given url govway_config_api_path + '/erogazioni/SignalHubTestSOAP12/1/configurazioni/proprieta/modi.signalHub.pseudonymization.exposeSignalId'
+	And header Authorization = call basic (auth_api_config)
+	And param profilo = 'ModIPA'
+	And param soggetto = 'DemoSoggettoErogatore'
+	When method delete
+	Then match responseStatus == "#? _ == 204 || _ == 404"
+
+	# Reset del counter del serial generator e dei seed esistenti per garantire stato
+	# deterministico iniziale: ogni scenario parte da counter=0 e senza seed in DB.
+	# Il reset della cache ConfigurazionePdD e' necessario perche' DigestServiceParamsDriver
+	# memorizza i seed in cache: senza invalidazione, getLastEntry restituirebbe l'entry
+	# stale del test precedente nonostante remove_seeds abbia cancellato la riga in DB.
+	* def counter_reset = reset_counter()
+	* def seeds_reset = remove_seeds()
+	* call reset_cache { cache_name: 'ConfigurazionePdD' }
 
 #
 # TEST SULL'OTTENIMENTO DELLE INFORMAZIONI DI PSEUDOANONIMIZZAZIONE	
@@ -96,8 +114,9 @@ Scenario: Informazioni crittografiche create alla prima richiesta del seme con m
 	And match header Content-Type contains 'text/xml'
 	And match response/Envelope/Body/pseudonymizationResponse/cryptoHashFunction == 'SHAKE128'
 	And match response/Envelope/Body/pseudonymizationResponse/seed == seed
-	And match response/Envelope/Body/pseudonymizationResponse/signalId == '0'
-	
+	# Property exposeSignalId disabilitata (default): il campo signalId NON deve essere presente
+	And match response/Envelope/Body/pseudonymizationResponse/signalId == '#notpresent'
+
 @test-pseudonymization
 @test-pseudonymization-SOAP-12-custom-ns
 Scenario: Informazioni crittografiche create alla prima richiesta del seme con messaggio SOAP12 e custom namespace
@@ -121,7 +140,8 @@ Scenario: Informazioni crittografiche create alla prima richiesta del seme con m
 	And match header Content-Type contains 'application/soap+xml'
 	And match response/Envelope/Body/pseudonymizationResponse/cryptoHashFunction == 'SHA512_256'
 	And match response/Envelope/Body/pseudonymizationResponse/seed == seed
-	And match response/Envelope/Body/pseudonymizationResponse/signalId == '0'
+	# Property exposeSignalId disabilitata (default): il campo signalId NON deve essere presente
+	And match response/Envelope/Body/pseudonymizationResponse/signalId == '#notpresent'
 
 
 @test-pseudonymization
@@ -161,7 +181,9 @@ Scenario: Controlla il corretto funzionamento della cache (rimuove un seed ma ri
 	When method get
 	Then status 200
 	* def seed = get_seed('DemoSoggettoErogatore','SignalHubTest')
-	And match response == {seed: '#(seed)', cryptoHashFunction: 'SHA-256', signalId: 0}
+	And match response == {seed: '#(seed)', cryptoHashFunction: 'SHA-256'}
+	# Property exposeSignalId disabilitata (default): il campo signalId NON deve essere presente
+	And match response.signalId == '#notpresent'
 
 	* def deleted = remove_seeds();
 	* def seeds = count_seeds()
@@ -175,7 +197,8 @@ Scenario: Controlla il corretto funzionamento della cache (rimuove un seed ma ri
 
 	When method get
 	Then status 200
-	And match response == {seed: '#(seed)', cryptoHashFunction: 'SHA-256', signalId: 0}
+	And match response == {seed: '#(seed)', cryptoHashFunction: 'SHA-256'}
+	And match response.signalId == '#notpresent'
 
 	* call reset_cache { cache_name: 'ConfigurazionePdD' }
 
@@ -189,7 +212,8 @@ Scenario: Controlla il corretto funzionamento della cache (rimuove un seed ma ri
 	Then status 200
 	# facendo get_seed verifico che vi sia un nuovo seme
 	* def seed = get_seed('DemoSoggettoErogatore','SignalHubTest')
-	And match response == {seed: '#(seed)', cryptoHashFunction: 'SHA-256', signalId: 0}
+	And match response == {seed: '#(seed)', cryptoHashFunction: 'SHA-256'}
+	And match response.signalId == '#notpresent'
 	
 @test-pseudonymization
 @test-pseudonymization-create
@@ -206,9 +230,11 @@ Scenario: Informazioni crittografiche create alla prima richiesta di seme
 		 
 	When method get
 	Then status 200
-	
+
 	* def seed = get_seed('DemoSoggettoErogatore','SignalHubTest')
-	And match response == {seed: '#(seed)', cryptoHashFunction: 'SHA-256', signalId: 0}
+	And match response == {seed: '#(seed)', cryptoHashFunction: 'SHA-256'}
+	# Property exposeSignalId disabilitata (default): il campo signalId NON deve essere presente
+	And match response.signalId == '#notpresent'
 
 
 @test-pseudonymization
@@ -229,11 +255,12 @@ Scenario: richiesta informazioni crittografiche tramite signalId corrispondente
 	And request {data:[{signalType: "UPDATE"}]}
 	When method post
 	Then status 200
-	And match response == { signalId: '#number' }
-	
+	# primo push: counter 0 -> 1 per signalId (nessuna rotazione)
+	And match response == { signalId: 1 }
+
 	* def invalidates = wither_seeds(100)
 	* call reset_cache { cache_name: 'ConfigurazionePdD' }
-	
+
 	# il secondo seme ha un signalId associato
 	Given url push_signal_url
 	And param govway_testsuite_objectId = 'objectId'
@@ -245,8 +272,9 @@ Scenario: richiesta informazioni crittografiche tramite signalId corrispondente
 	And request {data:[{signalType: "UPDATE"}]}
 	When method post
 	Then status 200
-	And match response == { signalId: '#number' }
-	
+	# push con rotazione: counter 1 -> 2 per seed serial + counter 2 -> 3 per signalId
+	And match response == { signalId: 3 }
+
 	* def seed = get_seed('DemoSoggettoErogatore','SignalHubTest')
 	* def signalId = parseInt(response.signalId - 1)
 	* call reset_cache { cache_name: 'ConfigurazionePdD' }
@@ -259,28 +287,30 @@ Scenario: richiesta informazioni crittografiche tramite signalId corrispondente
 	And header GovWay-TestSuite-Test-ID = 'crypto_info_found'
 	When method get
 	Then status 200
-	And match response == { seed: '#(seed)', cryptoHashFunction: 'SHA-256', signalId: '#(signalId)'}
+	And match response == { seed: '#(seed)', cryptoHashFunction: 'SHA-256'}
+	# Property exposeSignalId disabilitata (default): il campo signalId NON deve essere presente
+	And match response.signalId == '#notpresent'
 
 @test-pseudonymization
-@test-pseudonymization-disabled
-Scenario: signalId non esposto quando la property exposeSignalId e' disabilitata sull'erogazione
+@test-pseudonymization-expose-signal-id
+Scenario: signalId esposto e numerico con rotazione del seed quando la property exposeSignalId e' abilitata sull'erogazione
 
 	* def deleted = remove_seeds();
 	* call reset_cache { cache_name: 'ConfigurazionePdD' }
 
-	# Imposto la property di disabilitazione sull'erogazione SignalHubTest.
+	# Imposto la property di abilitazione sull'erogazione SignalHubTest.
 	# Il cleanup avviene automaticamente nel Background del test successivo.
 	Given url govway_config_api_path + '/erogazioni/SignalHubTest/1/configurazioni/proprieta'
 	And header Authorization = call basic (auth_api_config)
 	And param profilo = 'ModIPA'
 	And param soggetto = 'DemoSoggettoErogatore'
-	And request { nome: 'modi.signalHub.pseudonymization.exposeSignalId', valore: 'false' }
+	And request { nome: 'modi.signalHub.pseudonymization.exposeSignalId', valore: 'true' }
 	When method post
 	Then status 201
 
 	* call reset_cache { cache_name: 'DatiRichieste' }
 
-	# Verifico che la risposta NON contenga il campo signalId (il match e' strict)
+	# Pseudonymization #1: crea il primo seed (serial null => signalId == 0)
 	Given url crypto_info_url
 	And header simulazionepdnd-purposeId = 'purposeId'
 	And header simulazionepdnd-audience = 'audience'
@@ -288,8 +318,149 @@ Scenario: signalId non esposto quando la property exposeSignalId e' disabilitata
 	And header GovWay-TestSuite-Test-ID = 'crypto_info_found'
 	When method get
 	Then status 200
-	* def seed = get_seed('DemoSoggettoErogatore','SignalHubTest')
-	And match response == { seed: '#(seed)', cryptoHashFunction: 'SHA-256' }
+	* def seed1 = get_seed('DemoSoggettoErogatore','SignalHubTest')
+	And match response == { seed: '#(seed1)', cryptoHashFunction: 'SHA-256', signalId: 0 }
+
+	# Push #1: il seed corrente e' valido, non viene inviata alcuna SEEDUPDATE
+	# counter 0 -> 1 per signalId
+	Given url push_signal_url
+	And param govway_testsuite_objectId = 'objectIdEnabled'
+	And header GovWay-TestSuite-Plain-Object-ID = 'objectIdEnabled'
+	And header Authorization = call basic (auth_push_signal)
+	And header GovWay-TestSuite-Test-ID = 'push_signal_no_seed'
+	And header GovWay-Testsuite-ObjectType = 'objectType'
+	And header GovWay-Testsuite-Service = 'SignalHubTest'
+	And header GovWay-Testsuite-Service-Version = 1
+	And request {data:[{signalType: "UPDATE"}]}
+	When method post
+	Then status 200
+	And match response == { signalId: 1 }
+
+	# Invalido il seed esistente per forzare la rotazione al prossimo push
+	* def invalidates = wither_seeds(100)
+	* call reset_cache { cache_name: 'ConfigurazionePdD' }
+
+	# Push #2: il seed precedente e' scaduto -> rotazione, nuovo seed con serial > 0 e SEEDUPDATE verso PDND
+	# counter 1 -> 2 per seed serial, counter 2 -> 3 per signalId del push
+	Given url push_signal_url
+	And param govway_testsuite_objectId = 'objectIdEnabled'
+	And header GovWay-TestSuite-Plain-Object-ID = 'objectIdEnabled'
+	And header Authorization = call basic (auth_push_signal)
+	And header GovWay-TestSuite-Test-ID = 'push_signal'
+	And header GovWay-Testsuite-ObjectType = 'objectType'
+	And header GovWay-Testsuite-Service = 'SignalHubTest'
+	And header GovWay-Testsuite-Service-Version = 1
+	And request {data:[{signalType: "UPDATE"}]}
+	When method post
+	Then status 200
+	And match response == { signalId: 3 }
+
+	* call reset_cache { cache_name: 'ConfigurazionePdD' }
+
+	# Pseudonymization #2: ritorna il nuovo seed corrente con signalId numerico > 0
+	Given url crypto_info_url
+	And header simulazionepdnd-purposeId = 'purposeId'
+	And header simulazionepdnd-audience = 'audience'
+	And header simulazionepdnd-username = 'ApplicativoBlockingJWK'
+	And header GovWay-TestSuite-Test-ID = 'crypto_info_found'
+	When method get
+	Then status 200
+	* def seed2 = get_seed('DemoSoggettoErogatore','SignalHubTest')
+	And match response == { seed: '#(seed2)', cryptoHashFunction: 'SHA-256', signalId: 2 }
+
+
+@test-pseudonymization
+@test-pseudonymization-expose-signal-id-soap
+Scenario: signalId esposto e numerico con rotazione del seed quando la property exposeSignalId e' abilitata sull'erogazione SOAP12
+
+	* def deleted = remove_seeds();
+	* call reset_cache { cache_name: 'ConfigurazionePdD' }
+
+	# Imposto la property di abilitazione sull'erogazione SignalHubTestSOAP12.
+	# Il cleanup avviene automaticamente nel Background del test successivo.
+	Given url govway_config_api_path + '/erogazioni/SignalHubTestSOAP12/1/configurazioni/proprieta'
+	And header Authorization = call basic (auth_api_config)
+	And param profilo = 'ModIPA'
+	And param soggetto = 'DemoSoggettoErogatore'
+	And request { nome: 'modi.signalHub.pseudonymization.exposeSignalId', valore: 'true' }
+	When method post
+	Then status 201
+
+	* call reset_cache { cache_name: 'DatiRichieste' }
+
+	# Pseudonymization #1 SOAP: crea il primo seed (serial null => signalId == 0)
+	Given url crypto_info_soap12_url
+	And request read('classpath:test/signal_hub/bodies/soap12.xml')
+	And header Content-Type = 'application/soap+xml'
+	And header SOAPAction = '"pseudonymization"'
+	And header simulazionepdnd-purposeId = 'purposeId'
+	And header simulazionepdnd-audience = 'audience'
+	And header simulazionepdnd-username = 'ApplicativoBlockingJWK'
+	And header GovWay-TestSuite-Test-ID = 'crypto_info_found'
+	When method post
+	Then status 200
+	* def seed1Soap = get_seed('DemoSoggettoErogatore','SignalHubTestSOAP12')
+	And match response/Envelope/Body/pseudonymizationResponse/cryptoHashFunction == 'SHA512_256'
+	And match response/Envelope/Body/pseudonymizationResponse/seed == seed1Soap
+	And match response/Envelope/Body/pseudonymizationResponse/signalId == '0'
+
+	# Push #1 SOAP: il seed corrente e' valido, non viene inviata alcuna SEEDUPDATE
+	# counter 0 -> 1 per signalId
+	Given url push_signal_url
+	And param govway_testsuite_objectId = 'objectIdEnabledSoap'
+	And header GovWay-TestSuite-Plain-Object-ID = 'objectIdEnabledSoap'
+	And header Authorization = call basic (auth_push_signal)
+	And header GovWay-TestSuite-Test-ID = 'push_signal_no_seed'
+	And header GovWay-TestSuite-EService-Id = 'SignalHubTestSOAP12'
+	And header GovWay-TestSuite-Algorithm = 'SHA-512/256'
+	And header GovWay-TestSuite-Service-Name-Seed = 'SignalHubTestSOAP12'
+	And header GovWay-Testsuite-ObjectType = 'objectType'
+	And header GovWay-Testsuite-Service = 'SignalHubTestSOAP12'
+	And header GovWay-Testsuite-Service-Version = 1
+	And request {data:[{signalType: "UPDATE"}]}
+	When method post
+	Then status 200
+	And match response == { signalId: 1 }
+
+	# Invalido il seed esistente per forzare la rotazione al prossimo push
+	* def invalidates = wither_seeds(100)
+	* call reset_cache { cache_name: 'ConfigurazionePdD' }
+
+	# Push #2 SOAP: il seed precedente e' scaduto -> rotazione, nuovo seed con serial == 2 e SEEDUPDATE verso PDND
+	# counter 1 -> 2 per seed serial, counter 2 -> 3 per signalId del push
+	Given url push_signal_url
+	And param govway_testsuite_objectId = 'objectIdEnabledSoap'
+	And header GovWay-TestSuite-Plain-Object-ID = 'objectIdEnabledSoap'
+	And header Authorization = call basic (auth_push_signal)
+	And header GovWay-TestSuite-Test-ID = 'push_signal'
+	And header GovWay-TestSuite-EService-Id = 'SignalHubTestSOAP12'
+	And header GovWay-TestSuite-Algorithm = 'SHA-512/256'
+	And header GovWay-TestSuite-Service-Name-Seed = 'SignalHubTestSOAP12'
+	And header GovWay-Testsuite-ObjectType = 'objectType'
+	And header GovWay-Testsuite-Service = 'SignalHubTestSOAP12'
+	And header GovWay-Testsuite-Service-Version = 1
+	And request {data:[{signalType: "UPDATE"}]}
+	When method post
+	Then status 200
+	And match response == { signalId: 3 }
+
+	* call reset_cache { cache_name: 'ConfigurazionePdD' }
+
+	# Pseudonymization #2 SOAP: ritorna il nuovo seed corrente con signalId == 2
+	Given url crypto_info_soap12_url
+	And request read('classpath:test/signal_hub/bodies/soap12.xml')
+	And header Content-Type = 'application/soap+xml'
+	And header SOAPAction = '"pseudonymization"'
+	And header simulazionepdnd-purposeId = 'purposeId'
+	And header simulazionepdnd-audience = 'audience'
+	And header simulazionepdnd-username = 'ApplicativoBlockingJWK'
+	And header GovWay-TestSuite-Test-ID = 'crypto_info_found'
+	When method post
+	Then status 200
+	* def seed2Soap = get_seed('DemoSoggettoErogatore','SignalHubTestSOAP12')
+	And match response/Envelope/Body/pseudonymizationResponse/cryptoHashFunction == 'SHA512_256'
+	And match response/Envelope/Body/pseudonymizationResponse/seed == seed2Soap
+	And match response/Envelope/Body/pseudonymizationResponse/signalId == '2'
 
 
 @test-pseudonymization
@@ -328,7 +499,7 @@ Scenario: push del segnale (usando serviceId) e parametri custom
 	And request {data:[{signalType: "UPDATE"}]}
 	When method post
 	Then status 200
-	And match response == { signalId: '#number' }
+	And match response == { signalId: 1 }
 
 @test-push
 @test-push-name
@@ -345,7 +516,7 @@ Scenario: push del segnale corretto (usando service/serviceVersion)
 	And request {data:[{signalType: "UPDATE"}]}
 	When method post
 	Then status 200
-	And match response == { signalId: '#number' }
+	And match response == { signalId: 1 }
 
 @test-push
 @test-push-multiple-descriptor-no-descriptor
@@ -385,7 +556,7 @@ Scenario: push del segnale di erogazione senza pseudoanonimizzazione (verifica s
 	And request {data:[{signalType: "UPDATE"}]}
 	When method post
 	Then status 200
-	And match response == { signalId: '#number' }
+	And match response == { signalId: 1 }
 
 @test-push
 @test-push-multiple-descriptor-yes-digest
@@ -403,7 +574,7 @@ Scenario: push del segnale di erogazione con pseudoanonimizzazione (verifica sul
 	And request {data:[{signalType: "UPDATE"}]}
 	When method post
 	Then status 200
-	And match response == { signalId: '#number' }
+	And match response == { signalId: 1 }
 
 @test-push
 @test-push-serviceId-default-header
@@ -420,7 +591,7 @@ Scenario: push del segnale (usando serviceId) con gli header di default per il p
 	And request ''
 	When method post
 	Then status 200
-	And match response == { signalId: '#number' }
+	And match response == { signalId: 1 }
 
 @test-push
 @test-push-name-default-header
@@ -438,7 +609,7 @@ Scenario: push del segnale (usando nome/versione servizio) con gli header di def
 	And request ''
 	When method post
 	Then status 200
-	And match response == { signalId: '#number' }
+	And match response == { signalId: 1 }
 	
 @test-push
 @test-push-serviceId-default-param
@@ -455,7 +626,7 @@ Scenario: push del segnale (usando serviceId) con i parametri della query di def
 	And request ''
 	When method post
 	Then status 200
-	And match response == { signalId: '#number' }
+	And match response == { signalId: 1 }
 
 @test-push
 @test-push-name-default-param
@@ -473,7 +644,7 @@ Scenario: push del segnale (usando nome/versione servizio) con i parametri della
 	And request ''
 	When method post
 	Then status 200
-	And match response == { signalId: '#number' }
+	And match response == { signalId: 1 }
 
 @test-push
 @test-push-serviceId-default-payload
@@ -486,7 +657,7 @@ Scenario: push del segnale (usando serviceId) con il payload json di default per
 	And request { objectType: 'objectType', objectId: 'objectIdServiceIdDefPayload', signalType: 'UPDATE', serviceId: 'eServiceTestID' }
 	When method post
 	Then status 200
-	And match response == { signalId: '#number' }
+	And match response == { signalId: 1 }
 
 @test-push
 @test-push-name-default-payload
@@ -499,7 +670,7 @@ Scenario: push del segnale (usando nome/versione servizio) con il payload json d
 	And request { objectType: 'objectType', objectId: 'objectIdNameDefPayload', signalType: 'UPDATE', service: 'SignalHubTest', serviceVersion: 1 }
 	When method post
 	Then status 200
-	And match response == { signalId: '#number' }
+	And match response == { signalId: 1 }
 
 @test-push
 @test-push-serviceId-default-header-get
@@ -515,7 +686,7 @@ Scenario: push del segnale (usando serviceId) con gli header di default per il p
 	And header GovWay-Signal-ServiceId = 'eServiceTestID'
 	When method get
 	Then status 200
-	And match response == { signalId: '#number' }
+	And match response == { signalId: 1 }
 
 @test-push
 @test-push-name-default-header-get
@@ -532,7 +703,7 @@ Scenario: push del segnale (usando nome/versione servizio) con gli header di def
 	And header GovWay-Signal-Service-Version = 1
 	When method get
 	Then status 200
-	And match response == { signalId: '#number' }
+	And match response == { signalId: 1 }
 	
 @test-push
 @test-push-serviceId-default-param-get
@@ -548,7 +719,7 @@ Scenario: push del segnale (usando serviceId) con i parametri della query di def
 	And param govway_signal_service_id = 'eServiceTestID'
 	When method get
 	Then status 200
-	And match response == { signalId: '#number' }
+	And match response == { signalId: 1 }
 
 @test-push
 @test-push-name-default-param-get
@@ -565,7 +736,7 @@ Scenario: push del segnale (usando nome/versione servizio) con i parametri della
 	And param govway_signal_service_version = 1
 	When method get
 	Then status 200
-	And match response == { signalId: '#number' }	
+	And match response == { signalId: 1 }
 	
 	
 @test-push
@@ -582,7 +753,7 @@ Scenario: autorizzazione tramite ruoli
 	And request {data:[{signalType: "UPDATE"}]}
 	When method post
 	Then status 200
-	And match response == { signalId: '#number' }	
+	And match response == { signalId: 1 }
 
 @test-push
 @test-push-wrong-erogatore
@@ -906,8 +1077,9 @@ Scenario: push del segnale usando serviceId differenti con stesse credenziali de
 	And request {data:[{signalType: "UPDATE"}]}
 	When method post
 	Then status 200
-	And match response == { signalId: '#number' }
-		
+	# primo push autorizzato su eServiceTestID: counter 0 -> 1
+	And match response == { signalId: 1 }
+
 	Given url push_signal_url
 	And param govway_testsuite_objectId = 'objectIdServiceId'
 	And header Authorization = call basic (auth_push_signal)
@@ -930,7 +1102,8 @@ Scenario: push del segnale usando serviceId differenti con stesse credenziali de
 	And request {data:[{signalType: "UPDATE"}]}
 	When method post
 	Then status 200
-	And match response == { signalId: '#number' }
+	# secondo push autorizzato su eServiceTestID (le push 403 non incrementano il counter): counter 1 -> 2
+	And match response == { signalId: 2 }
 	
 	Given url push_signal_url
 	And param govway_testsuite_objectId = 'objectIdServiceId'
@@ -962,7 +1135,7 @@ Scenario: push del segnale in cui genero anche il seme correttamnete
 	And request {data:[{signalType: "UPDATE"}]}
 	When method post
 	Then status 200
-	And match response == { signalId: '#number' }
+	And match response == { signalId: 1 }
 	* def seeds = count_seeds()
 	And match seeds == 1
 	
@@ -984,7 +1157,7 @@ Scenario: push del segnale in cui non riesco a generare il seed dunque non invio
 	And request {data:[{signalType: "UPDATE"}]}
 	When method post
 	Then status 200
-	And match response == { signalId: '#number' }
+	And match response == { signalId: 1 }
 	* def seeds = count_seeds()
 	And match seeds == 1
 	
@@ -1027,13 +1200,14 @@ Scenario: push del segnale in cui mi tengo lo storico dei semi precedenti e cont
 	And request {data:[{signalType: "UPDATE"}]}
 	When method post
 	Then status 200
-	And match response == { signalId: '#number' }
+	# primo push: counter 0 -> 1 per signalId
+	And match response == { signalId: 1 }
 	* def seeds = count_seeds()
 	And match seeds == 1
-	
+
 	* def invalidates = wither_seeds(100)
 	* call reset_cache { cache_name: 'ConfigurazionePdD' }
-	
+
 	Given url push_signal_url
 	And param govway_testsuite_objectId = 'objectIdReplace'
 	And header GovWay-TestSuite-Plain-Object-ID = 'objectIdReplace'
@@ -1044,13 +1218,14 @@ Scenario: push del segnale in cui mi tengo lo storico dei semi precedenti e cont
 	And request {data:[{signalType: "UPDATE"}]}
 	When method post
 	Then status 200
-	And match response == { signalId: '#number' }
+	# push con rotazione: counter 1->2 per seed, 2->3 per signalId
+	And match response == { signalId: 3 }
 	* def seeds = count_seeds()
 	And match seeds == 2
-	
+
 	* def invalidates = wither_seeds(100)
 	* call reset_cache { cache_name: 'ConfigurazionePdD' }
-	
+
 	Given url push_signal_url
 	And param govway_testsuite_objectId = 'objectIdReplace'
 	And header GovWay-TestSuite-Plain-Object-ID = 'objectIdReplace'
@@ -1061,13 +1236,14 @@ Scenario: push del segnale in cui mi tengo lo storico dei semi precedenti e cont
 	And request {data:[{signalType: "UPDATE"}]}
 	When method post
 	Then status 200
-	And match response == { signalId: '#number' }
+	# push con rotazione: counter 3->4 per seed, 4->5 per signalId
+	And match response == { signalId: 5 }
 	* def seeds = count_seeds()
 	And match seeds == 3
-	
+
 	* def invalidates = wither_seeds(100)
 	* call reset_cache { cache_name: 'ConfigurazionePdD' }
-	
+
 	Given url push_signal_url
 	And param govway_testsuite_objectId = 'objectIdReplace'
 	And header GovWay-TestSuite-Plain-Object-ID = 'objectIdReplace'
@@ -1078,7 +1254,8 @@ Scenario: push del segnale in cui mi tengo lo storico dei semi precedenti e cont
 	And request {data:[{signalType: "UPDATE"}]}
 	When method post
 	Then status 200
-	And match response == { signalId: '#number' }
+	# push con rotazione: counter 5->6 per seed, 6->7 per signalId
+	And match response == { signalId: 7 }
 	* def seeds = count_seeds()
 	And match seeds == 3
 	
@@ -1099,13 +1276,14 @@ Scenario: push del segnale in cui riutilizzo lo stesso seme fino alla scadenza
 	And request {data:[{signalType: "UPDATE"}]}
 	When method post
 	Then status 200
-	And match response == { signalId: '#number' }
+	# primo push: counter 0 -> 1 per signalId
+	And match response == { signalId: 1 }
 	* def seeds = count_seeds()
 	And match seeds == 1
-	
+
 	* def invalidates = wither_seeds(1)
 	* call reset_cache { cache_name: 'ConfigurazionePdD' }
-	
+
 	Given url push_signal_url
 	And param govway_testsuite_objectId = 'objectIdKeep'
 	And header GovWay-TestSuite-Plain-Object-ID = 'objectIdKeep'
@@ -1116,13 +1294,14 @@ Scenario: push del segnale in cui riutilizzo lo stesso seme fino alla scadenza
 	And request {data:[{signalType: "UPDATE"}]}
 	When method post
 	Then status 200
-	And match response == { signalId: '#number' }
+	# seed ancora valido: counter 1 -> 2 per signalId (nessuna rotazione)
+	And match response == { signalId: 2 }
 	* def seeds = count_seeds()
 	And match seeds == 1
-	
+
 	* def invalidates = wither_seeds(1)
 	* call reset_cache { cache_name: 'ConfigurazionePdD' }
-	
+
 	Given url push_signal_url
 	And param govway_testsuite_objectId = 'objectIdKeep'
 	And header GovWay-TestSuite-Plain-Object-ID = 'objectIdKeep'
@@ -1133,13 +1312,14 @@ Scenario: push del segnale in cui riutilizzo lo stesso seme fino alla scadenza
 	And request {data:[{signalType: "UPDATE"}]}
 	When method post
 	Then status 200
-	And match response == { signalId: '#number' }
+	# seed ancora valido: counter 2 -> 3 per signalId (nessuna rotazione)
+	And match response == { signalId: 3 }
 	* def seeds = count_seeds()
 	And match seeds == 1
-	
+
 	* def invalidates = wither_seeds(3)
 	* call reset_cache { cache_name: 'ConfigurazionePdD' }
-	
+
 	Given url push_signal_url
 	And param govway_testsuite_objectId = 'objectIdKeep'
 	And header GovWay-TestSuite-Plain-Object-ID = 'objectIdKeep'
@@ -1150,7 +1330,8 @@ Scenario: push del segnale in cui riutilizzo lo stesso seme fino alla scadenza
 	And request {data:[{signalType: "UPDATE"}]}
 	When method post
 	Then status 200
-	And match response == { signalId: '#number' }
+	# seed ora scaduto: counter 3->4 per seed, 4->5 per signalId
+	And match response == { signalId: 5 }
 	* def seeds = count_seeds()
 	And match seeds == 2
 	

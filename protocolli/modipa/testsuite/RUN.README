@@ -332,8 +332,6 @@ Prerequisiti:
 		org.openspcoop2.protocol.modipa.signalHub.enabled=true
 		org.openspcoop2.protocol.modipa.signalHub.seed.history=3
 		org.openspcoop2.protocol.modipa.signalHub.pseudonymization.choice.enabled=true
-		# espone il campo 'signalId' nel response della risorsa di pseudoanonimizzazione (richiesto dagli scenari @test-pseudonymization-*)
-		org.openspcoop2.protocol.modipa.signalHub.pseudonymization.exposeSignalId=true
 
 + Aggiungere in /etc/hosts la riga
 	127.0.0.1 Erogatore
