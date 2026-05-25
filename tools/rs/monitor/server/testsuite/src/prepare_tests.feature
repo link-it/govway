@@ -38,6 +38,26 @@ Scenario: Preparazione Test
     * call create ( { resourcePath: erogazione_petstore_path + '/gruppi', body: gruppo_authn_principal })
     * call create ( { resourcePath: fruizione_petstore_path + '/gruppi', body: gruppo_authn_principal })
 
+    # Recupera il nome del gruppo predefinito (creato automaticamente da GovWay alla creazione
+    # dell'erogazione/fruizione). Serve ai test che devono verificare il comportamento del filtro
+    # 'gruppi' rispetto al mapping predefinito (es. toggle-stato-api: il sotto-insieme nominato
+    # NON deve toccare il predefinito; il "tutti i gruppi" SI').
+    * def filterPredefinito = function(item){ return item.predefinito == true }
+
+    Given url configUrl
+    And path erogazione_petstore_path, 'gruppi'
+    And header Authorization = govwayConfAuth
+    When method get
+    Then status 200
+    * def gruppo_predefinito_erogazione_nome = karate.filter(response.items, filterPredefinito)[0].nome
+
+    Given url configUrl
+    And path fruizione_petstore_path, 'gruppi'
+    And header Authorization = govwayConfAuth
+    When method get
+    Then status 200
+    * def gruppo_predefinito_fruizione_nome = karate.filter(response.items, filterPredefinito)[0].nome
+
     # Configura la correlazione applicativa header based per il gruppo gruppo_authn_principal
     
     * def correlazione_richiesta = read('classpath:bodies/correlazione-applicativa-richiesta.json')
@@ -405,18 +425,47 @@ Scenario: Preparazione Test
 
      * def wait_for_lock =
     """
-    function(db){ 
+    function(db){
         do {
             karate.log("CHECKO LA LOCK FROM op2_semaphore")
             var result = db.readRows("SELECT * from op2_semaphore WHERE applicative_id='GenerazioneStatisticheOrarie'");
             karate.log(result);
             try {
-                java.lang.Thread.sleep(100) 
+                java.lang.Thread.sleep(100)
             } catch (e) {
 
             }
         } while(result[0].node_id != null)
         db.update("UPDATE op2_semaphore set node_id='TESTSUITE', creation_time=CURRENT_TIMESTAMP, details='Lock testsuite monitoraggio' WHERE applicative_id='GenerazioneStatisticheOrarie'");
-        
+
     }
     """
+
+    # ---------------------------------------------------------------------------
+    # Seed utenti di test per la feature 'Operativita API' (toggle stato porte).
+    # Crea 7 utenti che riusano la password hashata di 'operatore' (password: 123456),
+    # ciascuno con una diversa combinazione di permessi:
+    #   operatoreO   -> O          (solo OperativitaApi)
+    #   operatoreR   -> R          (solo Reportistica)
+    #   operatoreD   -> D          (solo Diagnostica)
+    #   operatoreDR  -> DR         (Diagnostica + Reportistica, mappato anche al ruolo 'operatore')
+    #   operatoreRO  -> RO         (Reportistica + OperativitaApi)
+    #   operatoreDO  -> DO         (Diagnostica + OperativitaApi)
+    #   operatoreDRO -> DRO        (Diagnostica + Reportistica + OperativitaApi)
+    # Idempotente: elimina eventuali residui prima di inserire.
+    # I record vengono rimossi da cleanup_tests.feature al termine della feature.
+    # ---------------------------------------------------------------------------
+    # operatoreS aggiunto come utenza "config-only" (permesso Servizi 'S' → ruolo configuratore):
+    # serve a verificare che TUTTI gli endpoint del monitor rispondano 403 ad un'utenza che
+    # non possiede alcun ruolo monitor (D/R/O/operatore).
+    * def utenti_operativita_api = [ 'operatoreO', 'operatoreR', 'operatoreD', 'operatoreDR', 'operatoreRO', 'operatoreDO', 'operatoreDRO', 'operatoreS' ]
+    * eval db.update("DELETE FROM users WHERE login IN ('operatoreO','operatoreR','operatoreD','operatoreDR','operatoreRO','operatoreDO','operatoreDRO','operatoreS')")
+
+    * eval db.update("INSERT INTO users (login, password, tipo_interfaccia, interfaccia_completa, permessi, soggetti_all, servizi_all) SELECT 'operatoreO',   password, tipo_interfaccia, interfaccia_completa, 'O',   soggetti_all, servizi_all FROM users WHERE login='operatore'")
+    * eval db.update("INSERT INTO users (login, password, tipo_interfaccia, interfaccia_completa, permessi, soggetti_all, servizi_all) SELECT 'operatoreR',   password, tipo_interfaccia, interfaccia_completa, 'R',   soggetti_all, servizi_all FROM users WHERE login='operatore'")
+    * eval db.update("INSERT INTO users (login, password, tipo_interfaccia, interfaccia_completa, permessi, soggetti_all, servizi_all) SELECT 'operatoreD',   password, tipo_interfaccia, interfaccia_completa, 'D',   soggetti_all, servizi_all FROM users WHERE login='operatore'")
+    * eval db.update("INSERT INTO users (login, password, tipo_interfaccia, interfaccia_completa, permessi, soggetti_all, servizi_all) SELECT 'operatoreDR',  password, tipo_interfaccia, interfaccia_completa, 'DR',  soggetti_all, servizi_all FROM users WHERE login='operatore'")
+    * eval db.update("INSERT INTO users (login, password, tipo_interfaccia, interfaccia_completa, permessi, soggetti_all, servizi_all) SELECT 'operatoreRO',  password, tipo_interfaccia, interfaccia_completa, 'RO',  soggetti_all, servizi_all FROM users WHERE login='operatore'")
+    * eval db.update("INSERT INTO users (login, password, tipo_interfaccia, interfaccia_completa, permessi, soggetti_all, servizi_all) SELECT 'operatoreDO',  password, tipo_interfaccia, interfaccia_completa, 'DO',  soggetti_all, servizi_all FROM users WHERE login='operatore'")
+    * eval db.update("INSERT INTO users (login, password, tipo_interfaccia, interfaccia_completa, permessi, soggetti_all, servizi_all) SELECT 'operatoreDRO', password, tipo_interfaccia, interfaccia_completa, 'DRO', soggetti_all, servizi_all FROM users WHERE login='operatore'")
+    * eval db.update("INSERT INTO users (login, password, tipo_interfaccia, interfaccia_completa, permessi, soggetti_all, servizi_all) SELECT 'operatoreS',   password, tipo_interfaccia, interfaccia_completa, 'S',   soggetti_all, servizi_all FROM users WHERE login='operatore'")

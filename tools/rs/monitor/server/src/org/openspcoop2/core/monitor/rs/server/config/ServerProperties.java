@@ -341,4 +341,39 @@ public class ServerProperties  {
 	public Properties getConsoleInputSanitizerConfiguration() throws UtilsException{
 		return this.reader.readPropertiesConvertEnvProperties("console.inputSanitizer.");
 	}
+
+
+	// Configurazione Sistema - Operativita API (toggle stato porte via JMX)
+
+	private String getJmxConfigurazioneSistemaValue(String alias, String property) throws UtilsException {
+		String tmp = this.readProperty(false, alias + "." + property);
+		if(tmp==null || tmp.isEmpty()) {
+			tmp = this.readProperty(true, property);
+		}
+		return tmp;
+	}
+
+	public String getJmxConfigurazioneSistemaTipo(String alias) throws UtilsException {
+		return getJmxConfigurazioneSistemaValue(alias, "configurazioni.risorseJmxPdd.configurazioneSistema.tipo");
+	}
+
+	public String getJmxConfigurazioneSistemaNomeRisorsa(String alias) throws UtilsException {
+		return getJmxConfigurazioneSistemaValue(alias, "configurazioni.risorseJmxPdd.configurazioneSistema.nomeRisorsaConfigurazionePdD");
+	}
+
+	public String getJmxConfigurazioneSistemaNomeMetodoEnablePortaApplicativa(String alias) throws UtilsException {
+		return getJmxConfigurazioneSistemaValue(alias, "configurazioni.risorseJmxPdd.configurazioneSistema.nomeMetodo.enablePortaApplicativa");
+	}
+
+	public String getJmxConfigurazioneSistemaNomeMetodoDisablePortaApplicativa(String alias) throws UtilsException {
+		return getJmxConfigurazioneSistemaValue(alias, "configurazioni.risorseJmxPdd.configurazioneSistema.nomeMetodo.disablePortaApplicativa");
+	}
+
+	public String getJmxConfigurazioneSistemaNomeMetodoEnablePortaDelegata(String alias) throws UtilsException {
+		return getJmxConfigurazioneSistemaValue(alias, "configurazioni.risorseJmxPdd.configurazioneSistema.nomeMetodo.enablePortaDelegata");
+	}
+
+	public String getJmxConfigurazioneSistemaNomeMetodoDisablePortaDelegata(String alias) throws UtilsException {
+		return getJmxConfigurazioneSistemaValue(alias, "configurazioni.risorseJmxPdd.configurazioneSistema.nomeMetodo.disablePortaDelegata");
+	}
 }

@@ -19,6 +19,10 @@ function fn() {
 
       monitorCred: { username: 'operatore', password: '123456' },
       monitorUrl: govwayUrl + '/govwayAPIMonitor',
+      // URL del backend rs-api-monitor diretto (senza passare dal gateway GovWay),
+      // necessaria per i test di permessi che devono autenticare l'utente fornito
+      // dal test invece di usare il service-account configurato nel gateway.
+      monitorDirectUrl: govwayUrl + '/govwayAPIMonitor',
       govwayDbConfig: { 
         username: 'govway',
         password: 'govway',

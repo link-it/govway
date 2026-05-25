@@ -32,6 +32,9 @@
 		<fileset dir="${required_lib}/testsuite/json-path2" >
 			<include name="*.jar"/>
 		</fileset>
+                <fileset dir="${dir_jdbc}" >
+                        <include name="*.jar"/>
+                </fileset>
 		<fileset dir="${required_lib}/commons" >
                         <include name="*.jar"/>
                 </fileset>

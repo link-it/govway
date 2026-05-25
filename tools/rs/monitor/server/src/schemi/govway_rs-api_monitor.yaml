@@ -1601,6 +1601,83 @@ paths:
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
 
+  /reportistica/configurazione-api/stato:
+    parameters:
+      - $ref: 'govway_core.yaml#/components/parameters/profilo'
+      - $ref: 'govway_core.yaml#/components/parameters/soggetto'
+
+    put:
+      tags:
+        - Reportistica
+      summary: Modifica lo stato di abilitazione di una erogazione o fruizione
+      operationId: updateStatoConfigurazioneApiBySimpleSearch
+      description: >-
+        Consente di abilitare o disabilitare una erogazione o fruizione individuata tramite
+        parametri di ricerca semplici. L'operazione si applica a tutti i gruppi in cui sono
+        organizzate le azioni o risorse dell'API.
+        Nel caso di fruizione il soggetto erogatore deve essere fornito tramite il parametro
+        'soggetto_remoto', mentre il soggetto fruitore viene desunto dal parametro 'soggetto'.
+        Nel caso di erogazione il soggetto erogatore viene desunto dal parametro 'soggetto'.
+      parameters:
+        - $ref: '#/components/parameters/tipo_transazione_config'
+        - $ref: '#/components/parameters/abilitato'
+        - $ref: '#/components/parameters/soggetto_remoto'
+        - $ref: 'govway_core.yaml#/components/parameters/nome_servizio_obbligatorio'
+        - $ref: 'govway_core.yaml#/components/parameters/tipo_servizio'
+        - $ref: 'govway_core.yaml#/components/parameters/versione_servizio'
+      responses:
+        "204":
+          description: Stato della configurazione aggiornato correttamente
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+    post:
+      tags:
+        - Reportistica
+      summary: Modifica lo stato di abilitazione di una erogazione o fruizione
+      operationId: updateStatoConfigurazioneApiByFullSearch
+      description: >-
+        Consente di abilitare o disabilitare una erogazione o fruizione, opzionalmente
+        anche solo su singoli gruppi (di azioni o risorse) tra quelli configurati per l'API.
+        Nel caso di fruizione il soggetto erogatore deve essere fornito tramite il campo
+        'erogatore' del filtro, mentre il soggetto fruitore viene desunto dal parametro 'soggetto'.
+        Nel caso di erogazione il soggetto erogatore viene desunto dal parametro 'soggetto'.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StatoConfigurazioneApi'
+      responses:
+        "204":
+          description: Stato della configurazione aggiornato correttamente
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
   /reportistica/tracing-pdnd:
     parameters:
       - $ref: 'govway_core.yaml#/components/parameters/soggetto'
@@ -1836,7 +1913,15 @@ components:
       required: true
       schema:
         $ref: 'govway_trace.yaml#/components/schemas/TransazioneRuoloEnum'
-        
+
+    abilitato:
+      in: query
+      name: abilitato
+      description: Indica se l'oggetto referenziato debba essere abilitato (true) o disabilitato (false)
+      required: true
+      schema:
+        type: boolean
+
     id_correlazione_applicativa:
       in: query
       name: id_applicativo
@@ -2934,6 +3019,29 @@ components:
         formato:
           $ref: '#/components/schemas/FormatoReportConfigEnum'
 
+    StatoConfigurazioneApi:
+      type: object
+      required:
+      - tipo
+      - abilitato
+      - api
+      properties:
+        tipo:
+          $ref: 'govway_trace.yaml#/components/schemas/TransazioneRuoloEnum'
+        abilitato:
+          type: boolean
+          description: Indica se l'erogazione o fruizione debba essere abilitata (true) o disabilitata (false)
+        api:
+          $ref: '#/components/schemas/FiltroApiStato'
+        gruppi:
+          type: array
+          description: >-
+            Lista dei nomi dei gruppi (di azioni o risorse) su cui applicare l'operazione.
+            Se non fornita, l'operazione si applica a tutti i gruppi configurati per l'API.
+          items:
+            type: string
+            maxLength: 255
+
     # Filtri
 
     FiltroTemporale:
@@ -2984,7 +3092,21 @@ components:
             $ref: 'govway_core.yaml#/components/schemas/SimpleName'
           api_implementata:
             $ref: '#/components/schemas/FiltroApiImplementata'
-           
+
+    FiltroApiStato:
+      type: object
+      required:
+      - nome
+      properties:
+        tipo:
+          $ref: 'govway_core.yaml#/components/schemas/Tipo'
+        nome:
+          $ref: 'govway_core.yaml#/components/schemas/NCName'
+        versione:
+          $ref: 'govway_core.yaml#/components/schemas/Versione'
+        erogatore: # richiesto nel caso di tipologia transazioni 'fruizioni'
+          $ref: 'govway_core.yaml#/components/schemas/SimpleName'
+
     FiltroEsito:
       type: object
       required:

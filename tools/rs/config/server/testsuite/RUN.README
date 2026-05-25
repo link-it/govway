@@ -12,6 +12,15 @@ Prerequisito:
 Configurare l'ambiente di esecuzione dei test:
 	- Sostituire in ./src/karate-config.js il nome del soggettoDefault con quello scelto per mezzo dell'installer di GovWay.
 
+	- Sempre in ./src/karate-config.js verificare la proprieta' 'configDirectUrl', che deve puntare al backend rs-api-config in diretto (es. http://localhost:8080/govwayAPIConfig).
+	  Necessaria per i test di permessi/ACL (cartella org/openspcoop2/core/config/rs/testsuite/permessi/) che devono autenticare l'utente specifico del test invece di transitare dal gateway.
+
+	- Sempre in ./src/karate-config.js configurare l'oggetto 'govwayDbConfig' con le informazioni per la connessione al database.
+	  Necessario per i test di permessi/ACL che creano ed eliminano utenze di test direttamente sul DB.
+
+	- Copiare nella cartella "jdbc" il driver jdbc del database.
+	  Necessario per i test di permessi/ACL che accedono al DB via JDBC (vedi punto precedente).
+
 	- Importare tramite la funzione Importa della govwayConsole il file presente sotto deploy/connettori_custom/GovWayPlugin_CONNETTORE_custom.zip, avendo cura di impostare il flag 'Plugins'
           In alternativa utilizzare il comando sql:
 	  insert into plugins (tipo_plugin, class_name, tipo, label, stato) VALUES ('CONNETTORE','org.openspcoop2.pdd.core.connettori.IConnettore','custom','custom',1);

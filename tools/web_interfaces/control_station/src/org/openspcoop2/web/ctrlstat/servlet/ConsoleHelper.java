@@ -16094,6 +16094,12 @@ public class ConsoleHelper implements IConsoleHelper {
 		dati.add(de);
 	}
 	
+	/**
+	 * Ritorna true se l'utenza possiede esclusivamente permessi destinati al
+	 * Monitor (Diagnostica / Reportistica / OperativitaApi) e nessuno dei permessi
+	 * destinati alla Console di Gestione. In tal caso l'utenza NON e' abilitata
+	 * ad accedere alla Console di Gestione (il login viene rifiutato).
+	 */
 	public boolean hasOnlyPermessiDiagnosticaReportistica(User user) {
 		PermessiUtente pu = user.getPermessi();
 		Boolean singlePdD = ServletUtils.getObjectFromSession(this.request, this.session, Boolean.class, CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
@@ -16104,23 +16110,24 @@ public class ConsoleHelper implements IConsoleHelper {
 		String isServizi = (pu.isServizi() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED);
 		String isDiagnostica = (pu.isDiagnostica() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED);
 		String isReportistica = (pu.isReportistica() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED);
+		String isOperativitaApi = (pu.isOperativitaApi() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED);
 		String isSistema = (pu.isSistema() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED);
 		String isMessaggi = (pu.isCodeMessaggi() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED);
 		String isUtenti = (pu.isUtenti() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED);
 		String isAuditing = (pu.isAuditing() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED);
 		String isAccordiCooperazione = (pu.isAccordiCooperazione() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED);
-		
-		return this.hasOnlyPermessiDiagnosticaReportistica(isServizi, isDiagnostica, isReportistica, isSistema, isMessaggi, isUtenti, isAuditing, isAccordiCooperazione, singlePdD);
+
+		return this.hasOnlyPermessiDiagnosticaReportistica(isServizi, isDiagnostica, isReportistica, isOperativitaApi, isSistema, isMessaggi, isUtenti, isAuditing, isAccordiCooperazione, singlePdD);
 
 	}
-	
-	public boolean hasOnlyPermessiDiagnosticaReportistica(String isServizi,String isDiagnostica,String isReportistica,String isSistema,String isMessaggi,
+
+	public boolean hasOnlyPermessiDiagnosticaReportistica(String isServizi,String isDiagnostica,String isReportistica, String isOperativitaApi, String isSistema,String isMessaggi,
 			String isUtenti,String isAuditing, String isAccordiCooperazione,boolean singlePdD) {
 		return (((isServizi == null) || !ServletUtils.isCheckBoxEnabled(isServizi)) &&
 				(
-						!singlePdD 
-						|| 
-						checkPermessiDiagnosticaReportistica(isDiagnostica, isReportistica, singlePdD)
+						!singlePdD
+						||
+						checkPermessiDiagnosticaReportistica(isDiagnostica, isReportistica, isOperativitaApi, singlePdD)
 				) &&
 				((isSistema == null) || !ServletUtils.isCheckBoxEnabled(isSistema)) &&
 				((isMessaggi == null) || !ServletUtils.isCheckBoxEnabled(isMessaggi)) &&
@@ -16129,15 +16136,19 @@ public class ConsoleHelper implements IConsoleHelper {
 				((isAccordiCooperazione == null) || !ServletUtils.isCheckBoxEnabled(isAccordiCooperazione)));
 	}
 
-	private boolean checkPermessiDiagnosticaReportistica(String isDiagnostica, String isReportistica, boolean singlePdD) {
-		return singlePdD 
-		&& 
+	private boolean checkPermessiDiagnosticaReportistica(String isDiagnostica, String isReportistica, String isOperativitaApi, boolean singlePdD) {
+		return singlePdD
+		&&
 		(
 				(isDiagnostica == null) || ServletUtils.isCheckBoxEnabled(isDiagnostica)
 		)
 		||
 		(
 				(isReportistica == null) || ServletUtils.isCheckBoxEnabled(isReportistica)
+		)
+		||
+		(
+				(isOperativitaApi == null) || ServletUtils.isCheckBoxEnabled(isOperativitaApi)
 		);
 	}
 	

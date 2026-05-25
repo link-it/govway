@@ -251,6 +251,7 @@
 				<include name="messages_it.properties"/>
 				<include name="log4j2.properties"/>
 				<include name="daoFactory.properties"/>
+				<include name="monitor.audit.log4j2.properties"/>
 			</classes>
 			
 			<classes dir="${build_govwayMonitorApiRS}/config" />

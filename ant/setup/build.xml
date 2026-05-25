@@ -2635,6 +2635,9 @@
 				<antcall target="api_monitor_log4j_properties_settings">
 				    <param name="file" value="${tmp_archivi}/govwayAPIMonitor.war/WEB-INF/classes/rs-api-monitor.log4j2.properties"/>
 				</antcall>
+				<antcall target="api_monitor_audit_log4j_properties_settings">
+				    <param name="file" value="${tmp_archivi}/govwayAPIMonitor.war/WEB-INF/classes/monitor.audit.log4j2.properties"/>
+				</antcall>
 				<antcall target="api_monitor_default_log4j_properties_settings">
 				    <param name="file" value="${tmp_archivi}/govwayAPIMonitor.war/WEB-INF/classes/log4j2.properties"/>
 				</antcall>
