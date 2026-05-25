@@ -14,6 +14,7 @@ var expected = modi;
 expected.sicurezza_messaggio.configurazione.informazioni_utente = expected.sicurezza_messaggio.configurazione.informazioni_utente != null ? expected.sicurezza_messaggio.configurazione.informazioni_utente : false
 expected.sicurezza_messaggio.configurazione.soap_firma_allegati = expected.sicurezza_messaggio.configurazione.soap_firma_allegati != null ? expected.sicurezza_messaggio.configurazione.soap_firma_allegati : false
 expected.sicurezza_messaggio.configurazione.digest_richiesta = expected.sicurezza_messaggio.configurazione.digest_richiesta != null ? expected.sicurezza_messaggio.configurazione.digest_richiesta : false
+expected.sicurezza_messaggio.configurazione.dpop = expected.sicurezza_messaggio.configurazione.dpop != null ? expected.sicurezza_messaggio.configurazione.dpop : false
 return expected;
 } 
 """
