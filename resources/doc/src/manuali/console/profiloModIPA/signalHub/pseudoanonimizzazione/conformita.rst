@@ -7,7 +7,7 @@ Le scelte implementative adottate da GovWay sono allineate al `Manuale Operativo
 
 1. **Schema del segnale**: i campi ``signalId``, ``objectType``, ``objectId``, ``eserviceId``, ``signalType`` (con valori ``CREATE``, ``UPDATE``, ``DELETE`` e ``SEEDUPDATE``) sono prodotti secondo lo schema OpenAPI ufficiale di PDND.
 
-2. **Endpoint informazioni crittografiche**: la risposta espone i due campi ``seed`` e ``cryptoHashFunction`` previsti dal manuale.
+2. **Endpoint informazioni crittografiche**: la risposta espone i due campi ``seed`` e ``cryptoHashFunction`` previsti dal manuale. È inoltre presente, come estensione opzionale (disattivabile in configurazione), il campo ``signalId`` valorizzato con il signalId del segnale ``SEEDUPDATE`` che ha introdotto il seme corrente: il manuale PDND non lo prescrive ma neppure lo vieta e l'informazione facilita la sincronizzazione del consumatore al primo accesso e dopo una perdita di sync (cfr. :ref:`Esposizione del signalId sul servizio di pseudoanonimizzazione <modipa_signalhub_exposeSignalId>`).
 
 3. **Funzioni di hash**: gli algoritmi supportati (SHA-256, SHA-512/256, SHA-384, SHA-512, SHA3-256, SHA3-384, SHA3-512, SHAKE128, SHAKE256) coincidono con la lista raccomandata dal manuale per le diverse tipologie di dato (identificazione diretta, dati sensibili, dati giudiziari).
 

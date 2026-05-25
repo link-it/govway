@@ -97,3 +97,17 @@ Quando impostata a *true*, GovWay espone il nome dell'enum interno ``org.openspc
 Il flag globale può essere ridefinito puntualmente sulla singola erogazione attraverso la :ref:`configProprieta` ``modi.signalHub.algorithms.exposedName.legacy`` valorizzandola con ``true`` o ``false``. Tale override consente di mantenere il comportamento legacy soltanto per specifiche erogazioni i cui consumatori non siano ancora stati allineati al nuovo formato standard.
 
 Il razionale della scelta di esporre l'identificativo standard JCA, coerente con quanto demandato dal Manuale Operativo Signal Hub di PDND, è argomentato nella sezione :ref:`modipa_signalhub_pseudoanonimizzazione_conformitaPdnd`.
+
+.. _modipa_signalhub_exposeSignalId:
+
+**Esposizione del signalId sul servizio di pseudoanonimizzazione**
+
+L'endpoint di pseudoanonimizzazione (sia REST che SOAP) può includere nel response un campo ``signalId`` che identifica il segnale di tipo ``SEEDUPDATE`` che ha introdotto il seme corrente. L'informazione consente al consumatore di sincronizzarsi correttamente dopo un primo accesso al servizio o dopo una perdita di sincronizzazione, sapendo da quale signalId in poi il seme restituito è applicabile. Per il primo seme storico (mai sostituito da un ``SEEDUPDATE``) il valore esposto è ``0``.
+
+L'esposizione del campo è controllata dalla seguente proprietà, da aggiungere nel file di configurazione locale ``/etc/govway/modipa_local.properties`` (assumendo sia ``/etc/govway`` la directory di configurazione indicata in fase di installazione):
+
+``org.openspcoop2.protocol.modipa.signalHub.pseudonymization.exposeSignalId=true``
+
+Il valore predefinito è *false* (campo non esposto), per garantire la retrocompatibilità con consumatori già integrati contro la vecchia versione di GovWay che validano in modo strict lo schema della risorsa di pseudoanonimizzazione. Impostando il valore a *true* il campo viene incluso nella risposta.
+
+Il flag globale può essere ridefinito puntualmente sulla singola erogazione attraverso la :ref:`configProprieta` ``modi.signalHub.pseudonymization.exposeSignalId`` valorizzandola con ``true`` o ``false``. Tale override consente di attivare l'esposizione del ``signalId`` soltanto per specifiche erogazioni i cui consumatori sono in grado di gestire il nuovo campo.

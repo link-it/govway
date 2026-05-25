@@ -154,29 +154,47 @@ public class ConnettoreSignalHubPseudonymization extends ConnettoreBaseWithRespo
 				props, ModIProperties.getInstance().isSignalHubAlgorithmsExposedNameLegacy());
 		return legacy ? digest.toString() : digest.getAlgorithmName();
 	}
+
+	private boolean isExposeSignalId() throws ProtocolException {
+		List<Proprieta> props = null;
+		if (this.pa != null)
+			props = this.pa.getProprieta();
+		if (this.pd != null)
+			props = this.pd.getProprieta();
+		return CostantiProprieta.isModISignalHubPseudonymizationExposeSignalId(
+				props, ModIProperties.getInstance().isSignalHubPseudonymizationExposeSignalId());
+	}
 	
 	private String getSoapNS() {
 		return this.messageTypeResponse == MessageType.SOAP_11 ?
 				Costanti.SOAP_ENVELOPE_NAMESPACE : Costanti.SOAP12_ENVELOPE_NAMESPACE;
 	}
 	
-	private void setResponseOk(boolean isSoap, DigestType digest, byte[] seed) throws UtilsException, IOException, SAXException, ParserConfigurationException, XMLException, TransformerException, ProtocolException {
+	private void setResponseOk(boolean isSoap, DigestType digest, byte[] seed, Long signalId) throws UtilsException, IOException, SAXException, ParserConfigurationException, XMLException, TransformerException, ProtocolException {
+		boolean exposeSignalId = isExposeSignalId();
+		long signalIdValue = signalId != null ? signalId : 0L;
 		if (isSoap) {
 			//serializzo il messsaggio SOAP
 			XMLUtils xmlUtils = XMLUtils.getInstance();
-			
+
 			String signalHubNS = getSignalHubNS();
 			Document doc = xmlUtils.newDocument();
 			Element response = doc.createElementNS(signalHubNS, "cr:pseudonymizationResponse");
 			Element seedElement = doc.createElementNS(signalHubNS, "cr:seed");
 			seedElement.appendChild(doc.createTextNode(new String(seed)));
-			
+
 			Element digestElement = doc.createElementNS(signalHubNS, "cr:cryptoHashFunction");
 			digestElement.appendChild(doc.createTextNode(resolveExposedAlgorithmName(digest)));
-			
+
 			response.appendChild(digestElement);
 			response.appendChild(seedElement);
-			
+
+			if (exposeSignalId) {
+				Element signalIdElement = doc.createElementNS(signalHubNS, "cr:signalId");
+				signalIdElement.appendChild(doc.createTextNode(Long.toString(signalIdValue)));
+				response.appendChild(signalIdElement);
+			}
+
 			String envNS = getSoapNS();
 			this.isResponse = new ByteArrayInputStream(("<?xml version='1.0' encoding='UTF-8'?>"
 				+ "<soapenv:Envelope xmlns:soapenv=\""+envNS+"\">"
@@ -184,17 +202,20 @@ public class ConnettoreSignalHubPseudonymization extends ConnettoreBaseWithRespo
 				+ xmlUtils.toString(response, true)
 				+ "</soapenv:Body>"
 				+ "</soapenv:Envelope>").getBytes());
-			
+
 			this.tipoRisposta = this.messageTypeResponse == MessageType.SOAP_11 ?
 				HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2;
-			this.codice = 200;			
+			this.codice = 200;
 		} else {
 			// serializzo il messsaggio JSON
 			JSONUtils jsonUtils = JSONUtils.getInstance();
 			ObjectNode node = jsonUtils.newObjectNode();
 			node.put("seed", new String(seed));
 			node.put("cryptoHashFunction",resolveExposedAlgorithmName(digest));
-			
+			if (exposeSignalId) {
+				node.put("signalId", signalIdValue);
+			}
+
 			this.isResponse = new ByteArrayInputStream(jsonUtils.toByteArray(node));
 			this.tipoRisposta = HttpConstants.CONTENT_TYPE_JSON;
 			this.codice = 200;
@@ -293,7 +314,7 @@ public class ConnettoreSignalHubPseudonymization extends ConnettoreBaseWithRespo
 			return;
 		}
 		
-		this.setResponseOk(isSoap, param.getDigestAlgorithm(), param.getSeed());
+		this.setResponseOk(isSoap, param.getDigestAlgorithm(), param.getSeed(), param.getSerialNumber());
 	}
 	
 	/* ********  METODI  ******** */

@@ -1,3 +1,11 @@
+2026-05-25  Tommaso Burlon <tommaso.burlon@link.it>
+
+	* [ProtocolloModIPA]
+	Aggiunta funzionalità #1751
+	La risorsa di pseudoanonimizzazione può ora esporre il 'signalId' del segnale SEEDUPDATE che ha introdotto il seme corrente (valorizzato a '0' per il seme iniziale),
+	consentendo al consumer di individuare il primo segnale utile da cui iniziare la lettura. 
+	La funzionalità è disabilitata per default per retrocompatibilità ed è attivabile globalmente o per singola erogazione/fruizione tramite apposita proprietà.
+
 2026-05-25 Giuliano Pintori <pintori@link.it>
 
 	* [ApiRsMonitoraggio]
