@@ -14,3 +14,7 @@ Scenario: Cleanup
 * call delete ({ resourcePath: setup.fruizione_petstore_path })
 * call delete ({ resourcePath: 'soggetti/' + setup.erogatore.nome })
 * call delete ({ resourcePath: setup.api_petstore_path })
+
+# Cleanup utenti di test per le feature 'Operativita API' / 'Permessi config-only'.
+# Rimuove dal DB users gli 8 utenti creati da prepare_tests.feature.
+* eval setup.db.update("DELETE FROM users WHERE login IN ('operatoreO','operatoreR','operatoreD','operatoreDR','operatoreRO','operatoreDO','operatoreDRO','operatoreS')")

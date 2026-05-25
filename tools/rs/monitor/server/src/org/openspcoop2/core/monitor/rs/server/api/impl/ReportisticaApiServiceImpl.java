@@ -66,6 +66,7 @@ import org.openspcoop2.core.monitor.rs.server.model.RicercaStatisticaDistribuzio
 import org.openspcoop2.core.monitor.rs.server.model.RicercaStatisticaDistribuzioneSoggettoRemoto;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaStatisticaDistribuzioneTokenInfo;
 import org.openspcoop2.core.monitor.rs.server.model.Riepilogo;
+import org.openspcoop2.core.monitor.rs.server.model.StatoConfigurazioneApi;
 import org.openspcoop2.core.monitor.rs.server.model.StatoTracing;
 import org.openspcoop2.core.monitor.rs.server.model.StatoTracingPDND;
 import org.openspcoop2.core.monitor.rs.server.model.TipoIdentificazioneApplicativoEnum;
@@ -1714,4 +1715,63 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 		}
 	}
 
+    
+    /**
+     * Modifica lo stato di abilitazione di una erogazione o fruizione
+     *
+     * Consente di abilitare o disabilitare una erogazione o fruizione, opzionalmente anche solo su singoli gruppi (di azioni o risorse) tra quelli configurati per l&#x27;API. Nel caso di fruizione il soggetto erogatore deve essere fornito tramite il campo &#x27;erogatore&#x27; del filtro, mentre il soggetto fruitore viene desunto dal parametro &#x27;soggetto&#x27;. Nel caso di erogazione il soggetto erogatore viene desunto dal parametro &#x27;soggetto&#x27;.
+     *
+     */
+	@Override
+    public void updateStatoConfigurazioneApiByFullSearch(StatoConfigurazioneApi body, ProfiloEnum profilo, String soggetto) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");
+
+			ToggleStatoApiHelper.executeByFullSearch(context, body, profilo, soggetto);
+
+			context.getLogger().info("Invocazione completata con successo");
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+    
+    /**
+     * Modifica lo stato di abilitazione di una erogazione o fruizione
+     *
+     * Consente di abilitare o disabilitare una erogazione o fruizione individuata tramite parametri di ricerca semplici. L&#x27;operazione si applica a tutti i gruppi in cui sono organizzate le azioni o risorse dell&#x27;API. Nel caso di fruizione il soggetto erogatore deve essere fornito tramite il parametro &#x27;soggetto_remoto&#x27;, mentre il soggetto fruitore viene desunto dal parametro &#x27;soggetto&#x27;. Nel caso di erogazione il soggetto erogatore viene desunto dal parametro &#x27;soggetto&#x27;.
+     *
+     */
+	@Override
+    public void updateStatoConfigurazioneApiBySimpleSearch(TransazioneRuoloEnum tipo, Boolean abilitato, String nomeServizio, ProfiloEnum profilo, String soggetto, String soggettoRemoto, String tipoServizio, Integer versioneServizio) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");
+
+			ToggleStatoApiHelper.executeBySimpleSearch(context, tipo, abilitato, nomeServizio,
+					profilo, soggetto, soggettoRemoto, tipoServizio, versioneServizio);
+
+			context.getLogger().info("Invocazione completata con successo");
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
 }

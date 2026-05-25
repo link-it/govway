@@ -420,6 +420,23 @@
 		</antcall>
 	
 	</target>
+
+	<!-- monitor.audit.log4j2.properties -->
+	<target name="govwayMonitor_monitor_audit_log4j_properties_settings">
+
+		<concat destfile="${file}" append="yes" >
+
+# ----- Personalizzazione Setup GovWay -------------
+		</concat>
+
+		<!-- WORKING DIR -->
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="/var/govway/log"/>
+			<param name="value" value="${log_dir}"/>
+		</antcall>
+
+	</target>
 	
 	<!-- log4j2.properties -->
 	<target name="govwayMonitor_log4j_properties_settings">
@@ -441,23 +458,6 @@
 				</antcall>
 			</then>
 		</if>
-
-	</target>
-
-	<!-- monitor.audit.log4j2.properties -->
-	<target name="govwayMonitor_monitor_audit_log4j_properties_settings">
-
-		<concat destfile="${file}" append="yes" >
-
-# ----- Personalizzazione Setup GovWay -------------
-		</concat>
-
-		<!-- WORKING DIR -->
-		<antcall target="replace_token">
-		    <param name="file" value="${file}"/>
-			<param name="token" value="/var/govway/log"/>
-			<param name="value" value="${log_dir}"/>
-		</antcall>
 
 	</target>
 

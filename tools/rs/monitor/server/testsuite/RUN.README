@@ -13,9 +13,12 @@ Configurare l'ambiente di esecuzione dei test:
         - Sostituire in ./src/karate-config.js nella proprietà 'batchPath' con il path alla cartella dei batch
 
 	- Sostituire in ./src/karate-config.js il nome del soggettoDefault con quello scelto per mezzo dell'installer di GovWay.
-	
-	- Sempre in ./src/karate-config.js Configurare l'oggetto 'govwayDbConfig' con le informazioni per la connessione al database 
-	
+
+	- Sempre in ./src/karate-config.js verificare la proprieta' 'monitorDirectUrl', che deve puntare al backend rs-api-monitor in diretto (es. http://localhost:8080/govwayAPIMonitor).
+	  Necessaria per i test di permessi/ACL (file permessi-*.feature) che devono autenticare l'utente specifico del test invece di transitare dal gateway (che consumerebbe le credenziali e autenticherebbe come service-account).
+
+	- Sempre in ./src/karate-config.js Configurare l'oggetto 'govwayDbConfig' con le informazioni per la connessione al database
+
 	- Copiare nella cartella "jdbc" il driver jdbc del database
 
         - Aggiungere in govway_local.properties nella directory di configurazione esterna indicata in fase di setup (es. /etc/govway) la seguente proprietà

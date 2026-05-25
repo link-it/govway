@@ -1,3 +1,12 @@
+2026-05-25 Giuliano Pintori <pintori@link.it>
+
+	* [ApiRsMonitoraggio]
+	Aggiunta funzionalità #1757
+	Esposte nelle API REST di monitoraggio le operazioni per abilitare o disabilitare una erogazione o fruizione, 
+	eventualmente anche solo su singoli gruppi (nei casi in cui le azioni siano organizzate in più gruppi). 
+	L'invocazione richiede il permesso 'Operatività API'. 
+	Le operazioni vengono registrate dal servizio di audit della console essendo a tutti gli effetti modifiche delle configurazioni.
+
 2026-05-22  Andrea Poli <apoli@link.it>
 
 	* [ApiRsConfigurazione, GovWayConsole]

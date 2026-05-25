@@ -48,6 +48,7 @@ import org.openspcoop2.core.monitor.rs.server.model.RicercaStatisticaDistribuzio
 import org.openspcoop2.core.monitor.rs.server.model.RicercaStatisticaDistribuzioneSoggettoRemoto;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaStatisticaDistribuzioneTokenInfo;
 import org.openspcoop2.core.monitor.rs.server.model.Riepilogo;
+import org.openspcoop2.core.monitor.rs.server.model.StatoConfigurazioneApi;
 import org.openspcoop2.core.monitor.rs.server.model.StatoTracing;
 import org.openspcoop2.core.monitor.rs.server.model.StatoTracingPDND;
 import org.openspcoop2.core.monitor.rs.server.model.TipoIdentificazioneApplicativoEnum;
@@ -739,4 +740,47 @@ public interface ReportisticaApi  {
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
     public OperationStatus tracingPdndForcePubblish(@PathParam("id") Long id, @Valid ForcePublishBodyTracingPDND body);
+
+    /**
+     * Modifica lo stato di abilitazione di una erogazione o fruizione
+     *
+     * Consente di abilitare o disabilitare una erogazione o fruizione, opzionalmente anche solo su singoli gruppi (di azioni o risorse) tra quelli configurati per l'API. Nel caso di fruizione il soggetto erogatore deve essere fornito tramite il campo 'erogatore' del filtro, mentre il soggetto fruitore viene desunto dal parametro 'soggetto'. Nel caso di erogazione il soggetto erogatore viene desunto dal parametro 'soggetto'.
+     *
+     */
+    @POST
+    @Path("/reportistica/configurazione-api/stato")
+    @Consumes({ "application/json" })
+    @Produces({ "application/problem+json" })
+    @Operation(summary = "Modifica lo stato di abilitazione di una erogazione o fruizione", tags={ "Reportistica" })
+    @ApiResponses(value = { 
+        @ApiResponse(responseCode = "204", description = "Stato della configurazione aggiornato correttamente"),
+        @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+    public void updateStatoConfigurazioneApiByFullSearch(@Valid StatoConfigurazioneApi body, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z][\\-A-Za-z0-9]*$") @Size(max=255) String soggetto);
+
+    /**
+     * Modifica lo stato di abilitazione di una erogazione o fruizione
+     *
+     * Consente di abilitare o disabilitare una erogazione o fruizione individuata tramite parametri di ricerca semplici. L'operazione si applica a tutti i gruppi in cui sono organizzate le azioni o risorse dell'API. Nel caso di fruizione il soggetto erogatore deve essere fornito tramite il parametro 'soggetto_remoto', mentre il soggetto fruitore viene desunto dal parametro 'soggetto'. Nel caso di erogazione il soggetto erogatore viene desunto dal parametro 'soggetto'.
+     *
+     */
+    @PUT
+    @Path("/reportistica/configurazione-api/stato")
+    @Produces({ "application/problem+json" })
+    @Operation(summary = "Modifica lo stato di abilitazione di una erogazione o fruizione", tags={ "Reportistica" })
+    @ApiResponses(value = { 
+        @ApiResponse(responseCode = "204", description = "Stato della configurazione aggiornato correttamente"),
+        @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+    public void updateStatoConfigurazioneApiBySimpleSearch(@QueryParam("tipo") @NotNull TransazioneRuoloEnum tipo, @QueryParam("abilitato") @NotNull Boolean abilitato, @QueryParam("nome_servizio") @NotNull @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nomeServizio, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z][\\-A-Za-z0-9]*$") @Size(max=255) String soggetto, @QueryParam("soggetto_remoto") @Pattern(regexp="^[0-9A-Za-z][\\-A-Za-z0-9]*$") @Size(max=255) String soggettoRemoto, @QueryParam("tipo_servizio") @Pattern(regexp="^[a-z]{2,20}$") @Size(max=20) String tipoServizio, @QueryParam("versione_servizio") @Min(1) @DefaultValue("1") Integer versioneServizio);
 }
