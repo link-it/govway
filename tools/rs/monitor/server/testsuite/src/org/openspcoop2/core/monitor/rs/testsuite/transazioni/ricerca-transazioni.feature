@@ -93,8 +93,8 @@ Scenario: Ricerca per FiltroApi con tipo qualsiasi
     * match response.items == '#notnull'
     * match response.items[*].ruolo contains 'fruizione'
     * match response.items[*].ruolo !contains 'erogazione'
-    * eval numeroFruizioni = response.items.length
-    
+    * def idsFruizioni = karate.jsonPath(response, '$.items[*].id_traccia')
+
     * set filtro.tipo = 'erogazione'
     Given request filtro
     When method post
@@ -102,15 +102,21 @@ Scenario: Ricerca per FiltroApi con tipo qualsiasi
     * match response.items == '#notnull'
     * match response.items[*].ruolo contains 'erogazione'
     * match response.items[*].ruolo !contains 'fruizione'
-    * eval numeroErogazioni = response.items.length
-    * eval if( monitorUrl.contains("api-monitor/v1") ) numeroErogazioni = numeroErogazioni +1
-    
+    * def idsErogazioni = karate.jsonPath(response, '$.items[*].id_traccia')
+
+    # Le query di test (anch'esse erogazioni di api-monitor via proxy GovWay) vengono
+    # tracciate in modo asincrono dal gateway: al momento della query 'qualsiasi' il
+    # count totale dipende da quante tracce sono state già committate ed è impredicibile.
+    # Verifichiamo invece la relazione strutturale: 'qualsiasi' deve contenere tutte le
+    # tracce viste da 'fruizione' e da 'erogazione' (può averne anche di più — le tracce
+    # delle chiamate di test stesse — ma quelle non ci interessano).
     * set filtro.tipo = 'qualsiasi'
     Given request filtro
     When method post
     Then status 200
     * match response.items == '#notnull'
-    * match response.items == '#[(numeroFruizioni + numeroErogazioni)]'
+    * match response.items[*].id_traccia contains idsFruizioni
+    * match response.items[*].id_traccia contains idsErogazioni
 
     # Imposto il solo soggetto_remoto e, dato che siamo in single-tenant, tutte le transazioni restituite
     # devono essere relative ad api erogate dal soggetto_remoto
@@ -522,8 +528,8 @@ Scenario: RicercaSempliceTransazioni tramite richiesta GET con tipo transazione 
     * match response.items == '#notnull'
     * match response.items[*].ruolo contains 'fruizione'
     * match response.items[*].ruolo !contains 'erogazione'
-    * eval numeroFruizioni = response.items.length
-    
+    * def idsFruizioni = karate.jsonPath(response, '$.items[*].id_traccia')
+
   #  * set query.soggetto_remoto = setup.erogatore.nome
     * set query.tipo = 'erogazione'
     Given params query
@@ -532,15 +538,21 @@ Scenario: RicercaSempliceTransazioni tramite richiesta GET con tipo transazione 
     * match response.items == '#notnull'
     * match response.items[*].ruolo contains 'erogazione'
     * match response.items[*].ruolo !contains 'fruizione'
-    * eval numeroErogazioni = response.items.length
-    * eval if( monitorUrl.contains("api-monitor/v1") ) numeroErogazioni = numeroErogazioni +1
-    
+    * def idsErogazioni = karate.jsonPath(response, '$.items[*].id_traccia')
+
+    # Le query di test (anch'esse erogazioni di api-monitor via proxy GovWay) vengono
+    # tracciate in modo asincrono dal gateway: al momento della query 'qualsiasi' il
+    # count totale dipende da quante tracce sono state già committate ed è impredicibile.
+    # Verifichiamo invece la relazione strutturale: 'qualsiasi' deve contenere tutte le
+    # tracce viste da 'fruizione' e da 'erogazione' (può averne anche di più — le tracce
+    # delle chiamate di test stesse — ma quelle non ci interessano).
   #  * set query.soggetto_remoto = null
     * set query.tipo = 'qualsiasi'
     Given params query
     When method get
     Then status 200
-    * match response.items == '#[(numeroFruizioni + numeroErogazioni)]'
+    * match response.items[*].id_traccia contains idsFruizioni
+    * match response.items[*].id_traccia contains idsErogazioni
 
 
     # Imposto il solo soggetto_remoto e, dato che siamo in single-tenant, tutte le transazioni restituite

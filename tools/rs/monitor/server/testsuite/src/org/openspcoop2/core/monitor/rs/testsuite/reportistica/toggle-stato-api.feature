@@ -25,7 +25,10 @@ Background:
 
     * def verifyStato = read('classpath:verify_stato_stub.feature')
 
-    * def operatoreCred = call basic ({ username: 'operatore', password: '123456' })
+    # L'ACL auth.aclReportisticaStatoApi su /reportistica/configurazione-api/stato* richiede
+    # il ruolo 'operativitaApi'. L'utente 'operatoreO' (seedato da prepare_tests.feature)
+    # ha solo quel permesso, sufficiente per le operazioni di toggle stato API.
+    * def operatoreCred = call basic ({ username: 'operatoreO', password: '123456' })
 
     * configure headers = ({ "Authorization": operatoreCred })
 
