@@ -33,6 +33,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.commons.ScopedListeRegistry;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
@@ -114,9 +115,15 @@ public final class AccordiServizioParteSpecificaPorteApplicativeList extends Act
 	
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
-	
+
+			// Reset delle ricerche scoped per APS (incluse CONFIGURAZIONE_EROGAZIONE e tutte le PORTE_*)
+			// se cambia l'erogazione corrente. Deve avvenire PRIMA di checkSearchParameters per evitare
+			// che la stringa di ricerca del precedente APS venga riapplicata.
+			String apsScopeKey = id + "||";
+			apsHelper.enforceParentScope(ScopedListeRegistry.SCOPE_APS, apsScopeKey, ricerca);
+
 			int idLista = Liste.CONFIGURAZIONE_EROGAZIONE;
-	
+
 			ricerca = apsHelper.checkSearchParameters(idLista, ricerca);
 	
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(idServizio);

@@ -1872,7 +1872,7 @@ public class DriverRegistroServiziDB_accordiSoapDriver {
 					sqlQueryObject.addWhereCondition("input_message = 1");
 				else
 					sqlQueryObject.addWhereCondition("input_message != 1");
-				sqlQueryObject.addWhereLikeCondition("nome", search, true, true);
+				sqlQueryObject.addWhereLikeCondition("name", search, true, true);
 				sqlQueryObject.setANDLogicOperator(true);
 				sqlQueryObject.addOrderBy("name");
 				sqlQueryObject.setSortType(true);

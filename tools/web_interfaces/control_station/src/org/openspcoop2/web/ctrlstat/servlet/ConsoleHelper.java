@@ -42,6 +42,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -62,6 +63,7 @@ import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.commons.ModalitaIdentificazione;
+import org.openspcoop2.core.commons.ScopedListeRegistry;
 import org.openspcoop2.core.commons.SearchUtils;
 import org.openspcoop2.core.config.AttributeAuthority;
 import org.openspcoop2.core.config.AutorizzazioneScope;
@@ -2707,9 +2709,90 @@ public class ConsoleHelper implements IConsoleHelper {
 		this.setFilterRuoloServizioApplicativo(ricerca, idLista);
 	}
 	
+	/**
+	 * Verifica se il padre corrente per lo scope indicato e' cambiato rispetto a quello
+	 * memorizzato in {@link ConsoleSearch}. Se diverso, azzera le ricerche delle liste
+	 * figlie registrate in {@link ScopedListeRegistry} (searchString, indexIniziale e
+	 * filtri), quindi aggiorna lo scope corrente.
+	 *
+	 * Il reset rispetta il flag globale {@code isConservaRisultatiRicerca}: se attivo,
+	 * la ricerca esistente viene mantenuta.
+	 *
+	 * @param scopeName nome simbolico dello scope padre (vedi costanti SCOPE_* in
+	 *                  {@link ScopedListeRegistry})
+	 * @param currentParentId identificativo dell'istanza padre corrente (es. idPA o
+	 *                        idPA+"::"+nomeGruppo). Se {@code null} il metodo non
+	 *                        effettua alcuna operazione.
+	 * @param ricerca oggetto search di sessione
+	 */
+	public void enforceParentScope(String scopeName, String currentParentId, ConsoleSearch ricerca) {
+		if (scopeName == null || currentParentId == null || ricerca == null) {
+			if (this.log != null && this.log.isDebugEnabled()) {
+				this.log.debug("enforceParentScope skipped (null arg): scope=" + scopeName + ", parent=" + currentParentId);
+			}
+			return;
+		}
+		// Il flag isConservaRisultatiRicerca regola la conservazione delle ricerche TRA PAGINE
+		// della stessa lista (paginazione/refresh), non il cambio di scope (utente che esce dal
+		// dettaglio di un'entita' ed entra in quello di un'altra): il reset al cambio scope
+		// avviene sempre.
+		String previous = ricerca.getCurrentParentScope(scopeName);
+		if (previous != null && !previous.equals(currentParentId)) {
+			Set<Integer> children = ScopedListeRegistry.getChildrenOf(scopeName);
+			if (this.log != null && this.log.isDebugEnabled()) {
+				this.log.debug("enforceParentScope RESET: scope=" + scopeName + " previous=" + previous + " current=" + currentParentId + " children=" + children.size());
+			}
+			for (Integer idLista : children) {
+				ricerca.clearFilters(idLista);
+				ricerca.setSearchString(idLista, org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED);
+				ricerca.setIndexIniziale(idLista, Costanti.INDEX_DEFAULT);
+			}
+			// Invalida gli scope correlati che fanno riferimento a istanze figlie del padre appena cambiato.
+			for (String stale : ScopedListeRegistry.getInvalidatedScopesOnChange(scopeName)) {
+				ricerca.setCurrentParentScope(stale, null);
+			}
+		}
+		else if (this.log != null && this.log.isDebugEnabled()) {
+			this.log.debug("enforceParentScope no-op: scope=" + scopeName + " previous=" + previous + " current=" + currentParentId);
+		}
+		ricerca.setCurrentParentScope(scopeName, currentParentId);
+	}
+
+	/**
+	 * Safety net: se l'idLista corrente e' figlia di uno scope registrato in
+	 * {@link ScopedListeRegistry} e la request porta {@link CostantiControlStation#PARAMETRO_ID},
+	 * applica {@link #enforceParentScope(String, String, ConsoleSearch)} automaticamente.
+	 * Copre i percorsi di ingresso che non passano dalle servlet *Change di primo livello.
+	 */
+	private void autoEnforceParentScope(int idLista, ConsoleSearch ricerca) throws DriverControlStationException {
+		String paramId = this.getParameter(CostantiControlStation.PARAMETRO_ID);
+		if (paramId == null) {
+			return;
+		}
+		// Scope a chiave semplice (idLista non condivisa fra scope diversi): si itera nell'ordine
+		// dei piu' specifici prima. Lo scope APS ha chiave composta e va agganciato esplicitamente
+		// nelle servlet APS-specifiche, non automaticamente da qui.
+		String[] simpleScopes = new String[] {
+				ScopedListeRegistry.SCOPE_PORTA_APPLICATIVA,
+				ScopedListeRegistry.SCOPE_PORTA_DELEGATA,
+				ScopedListeRegistry.SCOPE_SOGGETTO,
+				ScopedListeRegistry.SCOPE_APPLICATIVO,
+				ScopedListeRegistry.SCOPE_APC,
+				ScopedListeRegistry.SCOPE_AC
+		};
+		for (String scopeName : simpleScopes) {
+			if (ScopedListeRegistry.getChildrenOf(scopeName).contains(idLista)) {
+				this.enforceParentScope(scopeName, paramId, ricerca);
+				return;
+			}
+		}
+	}
+
 	public ConsoleSearch checkSearchParameters(int idLista, ConsoleSearch ricerca)
 			throws DriverControlStationException {
 		try {
+			this.autoEnforceParentScope(idLista, ricerca);
+
 			int limit = ricerca.getPageSize(idLista);
 			int offset = ricerca.getIndexIniziale(idLista);
 

@@ -43,6 +43,7 @@ import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.commons.ScopedListeRegistry;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.Credenziali;
 import org.openspcoop2.core.config.InvocazioneCredenziali;
@@ -172,6 +173,13 @@ public final class ServiziApplicativiChange extends Action {
 			
 			String id = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID);
 			long idServizioApplicativoLong = Long.parseLong(id);
+
+			// Reset delle ricerche scoped per Servizio Applicativo se cambia l'applicativo corrente.
+			{
+				ConsoleSearch ricercaScope = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
+				saHelper.enforceParentScope(ScopedListeRegistry.SCOPE_APPLICATIVO, id, ricercaScope);
+			}
+
 			
 			String ruoloFruitore = null; 
 			String ruoloErogatore = null; 
