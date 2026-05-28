@@ -5,7 +5,15 @@ Background:
 
     * call read('classpath:crud_commons.feature')
     * def setup = callonce read('classpath:prepare_tests.feature')
-    * configure afterFeature = function(){ karate.call('classpath:cleanup_tests.feature'); }
+
+    # Setup specifico: configura sull'erogazione api-monitor un gruppo dedicato per le
+    # azioni di toggle, con connettore che inietta le credenziali di un utente con ruolo
+    # 'operativitaApi'. Senza questo, il proxy GovWay sostituirebbe l'auth client con il
+    # service-account 'operatore' (privo di quel ruolo) e l'ACL aclReportisticaStatoApi
+    # del backend rifiuterebbe le chiamate con 403.
+    * callonce read('classpath:org/openspcoop2/core/monitor/rs/testsuite/reportistica/toggle-stato-api-setup.feature')
+
+    * configure afterFeature = function(){ karate.call('classpath:org/openspcoop2/core/monitor/rs/testsuite/reportistica/toggle-stato-api-teardown.feature'); karate.call('classpath:cleanup_tests.feature'); }
 
     * def statoApiUrl = monitorUrl + '/reportistica/configurazione-api/stato'
 
@@ -25,7 +33,11 @@ Background:
 
     * def verifyStato = read('classpath:verify_stato_stub.feature')
 
-    * def operatoreCred = call basic ({ username: 'operatore', password: '123456' })
+    # Per gli scenari "simple search" (PUT su monitorDirectUrl, backend in diretto) serve
+    # comunque autenticarsi: usiamo 'operatoreO' che ha il ruolo 'operativitaApi'.
+    # Per gli scenari via proxy GovWay (monitorUrl) l'auth client viene scartata dal proxy
+    # ma l'header viene mantenuto come "best effort" / coerenza.
+    * def operatoreCred = call basic ({ username: 'operatoreO', password: '123456' })
 
     * configure headers = ({ "Authorization": operatoreCred })
 

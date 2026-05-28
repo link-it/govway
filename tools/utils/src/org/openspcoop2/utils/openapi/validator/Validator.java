@@ -24,26 +24,18 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.function.Function;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.openapi4j.core.model.v3.OAI3Context;
-import org.openapi4j.core.model.v3.OAI3SchemaKeywords;
-import org.openapi4j.core.util.StringUtil;
 import org.openapi4j.core.util.TreeUtil;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.operation.validator.model.Request;
@@ -58,7 +50,6 @@ import org.openapi4j.parser.model.v3.Path;
 import org.openapi4j.parser.validation.v3.OpenApi3Validator;
 import org.openapi4j.schema.validator.ValidationData;
 import org.openspcoop2.utils.SemaphoreLock;
-import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.json.AbstractUtils;
 import org.openspcoop2.utils.json.IJsonSchemaValidator;
 import org.openspcoop2.utils.json.JSONUtils;
@@ -82,12 +73,10 @@ import org.openspcoop2.utils.openapi.UniqueInterfaceGeneratorConfig;
 import org.openspcoop2.utils.openapi.validator.swagger.SwaggerOpenApiValidator;
 import org.openspcoop2.utils.openapi.validator.swagger.SwaggerRequestValidator;
 import org.openspcoop2.utils.openapi.validator.swagger.SwaggerResponseValidator;
-import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.rest.AbstractApiValidator;
 import org.openspcoop2.utils.rest.ApiFormats;
-import org.openspcoop2.utils.rest.ApiParameterType;
 import org.openspcoop2.utils.rest.ApiValidatorConfig;
 import org.openspcoop2.utils.rest.IApiValidator;
 import org.openspcoop2.utils.rest.ProcessingException;
@@ -96,10 +85,8 @@ import org.openspcoop2.utils.rest.api.Api;
 import org.openspcoop2.utils.rest.api.ApiBodyParameter;
 import org.openspcoop2.utils.rest.api.ApiOperation;
 import org.openspcoop2.utils.rest.api.ApiReference;
-import org.openspcoop2.utils.rest.api.ApiResponse;
 import org.openspcoop2.utils.rest.api.ApiSchema;
 import org.openspcoop2.utils.rest.api.ApiSchemaType;
-import org.openspcoop2.utils.rest.api.ApiSchemaTypeRestriction;
 import org.openspcoop2.utils.rest.entity.Cookie;
 import org.openspcoop2.utils.rest.entity.HttpBaseEntity;
 import org.openspcoop2.utils.rest.entity.HttpBaseRequestEntity;
@@ -151,13 +138,15 @@ import io.swagger.v3.oas.models.parameters.RequestBody;
  */
 public class Validator extends AbstractApiValidator implements IApiValidator {
 
-	private Api api;
+	// NOTA: i campi 'api' e 'log' sono stati promossi a protected in AbstractApiValidator;
+	// non vanno più dichiarati qui (lo shadowing ruberebbe la visibilità alla base).
+
 	// JSONSchema Validation
 	private Map<String, IJsonSchemaValidator> validatorMap;
 	private Map<String, File> fileSchema;
 	// OpenAPI4j Validation
 	private OpenApi3 openApi4j;
-	
+
 	// SwaggerRequestValidator
 	private SwaggerRequestValidator swaggerRequestValidator;
 	private SwaggerResponseValidator swaggerResponseValidator;
@@ -165,10 +154,11 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 
 	// Configuration
 	private OpenapiLibraryValidatorConfig openApi4jConfig;
-	
+
 	boolean onlySchemas = false;
-	
-	private Logger log;
+
+	private static final String COMPONENTS_SCHEMAS = "#/components/schemas";
+	private static final String DEFINITIONS = "#/definitions";
 	
 	private static final String VALIDATION_STRUCTURE = "VALIDATION_STRUCTURE";
 	private static final String VALIDATION_SWAGGER_REQUEST_VALIDATOR_OPENAPI = "VALIDATION_SWAGGER_REQUEST_VALIDATOR_OPENAPI";
@@ -183,7 +173,6 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 			throw new ProcessingException("Api cannot be null");
 
 		// la sincronizzazione sull'API serve per evitare che venga inizializzati più volte in maniera concorrente l'API
-		//synchronized (api) {
 		SemaphoreLock lock = this.semaphore.acquireThrowRuntime("init");
 		try {
 					
@@ -192,10 +181,32 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 			OpenapiApi openapiApi = null;
 			OpenapiApiValidatorStructure apiValidatorStructure = null;
 			SwaggerRequestValidatorOpenAPI swaggerRequestValidatorOpenAPI = null;
+
+			// Estraggo subito jsonValidatorAPI / openApiLibrary / openApi4jConfig dal config: servono
+			// sia per cacheKey() (sotto, sul lookup della struttura cached) sia per le decisioni di
+			// init successive. Senza questo blocco anticipato, cacheKey() verrebbe invocato con
+			// openApi4jConfig=null e il lookup userebbe la chiave 'default' anche per
+			// openapi4j/swagger_request_validator, perdendo la cache hit nei successivi init.
+			ApiName jsonValidatorAPI = null;
+			OpenAPILibrary openApiLibrary = null; // ottimizzazione per OpenAPI
+			ADDITIONAL policyAdditionalProperties = config.getPolicyAdditionalProperties();
+			if(config instanceof OpenapiApiValidatorConfig) {
+				jsonValidatorAPI = ((OpenapiApiValidatorConfig)config).getJsonValidatorAPI();
+				if(api instanceof OpenapiApi) {
+					OpenapiApiValidatorConfig c = (OpenapiApiValidatorConfig) config;
+					if(c.getOpenApiValidatorConfig()!=null) {
+						openApiLibrary = c.getOpenApiValidatorConfig().getOpenApiLibrary();
+						if(OpenAPILibrary.openapi4j.equals(openApiLibrary) || OpenAPILibrary.swagger_request_validator.equals(openApiLibrary)) {
+							this.openApi4jConfig = c.getOpenApiValidatorConfig();
+						}
+					}
+				}
+			}
+
 			if((api instanceof OpenapiApi)) {
 				openapiApi = (OpenapiApi) this.api;
 				apiRest = this.api;
-				apiValidatorStructure = openapiApi.getValidationStructure();
+				apiValidatorStructure = openapiApi.getValidationStructure(cacheKey());
 				if(apiRest.containsKey(VALIDATION_SWAGGER_REQUEST_VALIDATOR_OPENAPI)) {
 					swaggerRequestValidatorOpenAPI = (SwaggerRequestValidatorOpenAPI) apiRest.getVendorImpl(VALIDATION_SWAGGER_REQUEST_VALIDATOR_OPENAPI);
 				}
@@ -207,22 +218,6 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 				}
 				this.onlySchemas = true;
 			}
-			
-			ApiName jsonValidatorAPI = null;
-			OpenAPILibrary openApiLibrary = null; // ottimizzazione per OpenAPI
-			ADDITIONAL policyAdditionalProperties = config.getPolicyAdditionalProperties();
-			if(config instanceof OpenapiApiValidatorConfig) {
-				jsonValidatorAPI = ((OpenapiApiValidatorConfig)config).getJsonValidatorAPI();
-				if(openapiApi!=null) {
-					OpenapiApiValidatorConfig c = (OpenapiApiValidatorConfig) config;
-					if(c.getOpenApiValidatorConfig()!=null) {
-						openApiLibrary = c.getOpenApiValidatorConfig().getOpenApiLibrary();
-						if(OpenAPILibrary.openapi4j.equals(openApiLibrary) || OpenAPILibrary.swagger_request_validator.equals(openApiLibrary)) {
-							this.openApi4jConfig = c.getOpenApiValidatorConfig();
-						}
-					}
-				}
-			} 
 			if(jsonValidatorAPI==null) {
 				jsonValidatorAPI = ApiName.NETWORK_NT;
 			}
@@ -428,7 +423,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 					// Salvo informazioni ricostruite
 					if(apiValidatorStructure==null) {
 						OpenapiApiValidatorStructure validationStructure = new OpenapiApiValidatorStructure();
-						Map<String, JsonNode> nodeValidatorePrincipale = new HashMap<String, JsonNode>();
+						Map<String, JsonNode> nodeValidatorePrincipale = new HashMap<>();
 						nodeValidatorePrincipale.put(root, schemaNodeRoot);
 						if(schemaMap!=null && !schemaMap.isEmpty()) {
 							for (URL url : schemaMap.keySet()) {
@@ -436,7 +431,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 							}
 						}
 						validationStructure.setNodeValidatorePrincipale(nodeValidatorePrincipale);
-						openapiApi.setValidationStructure(validationStructure);
+						openapiApi.setValidationStructure(cacheKey(), validationStructure);
 					}
 
 					return; // finish
@@ -470,14 +465,14 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 
 						Map<String, Schema<?>> definitions = openapiApi.getAllDefinitions();
 						String definitionString = Json.mapper().writeValueAsString(definitions);
-						definitionString = definitionString.replaceAll("#/components/schemas", "#/definitions");
+						definitionString = definitionString.replace(COMPONENTS_SCHEMAS, DEFINITIONS);
 						for(String schemaName: definitions.keySet()) {
 							
 							ByteArrayOutputStream bout = new ByteArrayOutputStream();
 							bout.write("{".getBytes());
 							String defOggetto = Json.mapper().writeValueAsString(definitions.get(schemaName));
 							defOggetto = defOggetto.trim();
-							defOggetto = defOggetto.replaceAll("#/components/schemas", "#/definitions");
+							defOggetto = defOggetto.replace(COMPONENTS_SCHEMAS, DEFINITIONS);
 							if(defOggetto.startsWith("{")) {
 								defOggetto = defOggetto.substring(1);
 							}
@@ -487,7 +482,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 							defOggetto = defOggetto.trim();
 							bout.write(defOggetto.getBytes());
 							// DEVE ESSERE DEFINITO NEL JSON SCHEMA, NON POSSO DEFINIRLO STATICAMENTE
-							/*
+							/**
 								bout.write(",\"additionalProperties\": ".getBytes());
 								if(defOggetto.startsWith("\"allOf\"") || defOggetto.startsWith("\"anyOf\"")){
 									// INDICARE ARTICOLO CHE SPIEGA
@@ -570,7 +565,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 							}
 							
 							
-							/* ** Potenziale import from swagger/openapi che utilizza uno standard components/schema invece di definition, ed inoltre non inizia con { } **/
+							/** Potenziale import from swagger/openapi che utilizza uno standard components/schema invece di definition, ed inoltre non inizia con { } **/
 							if(schemaNode instanceof TextNode) {
 								ByteArrayOutputStream bout = new ByteArrayOutputStream();
 								bout.write("{".getBytes());
@@ -585,7 +580,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 								
 								boolean foundDefinitions = false;
 								JsonNode nodeDefinitions = objectNode.get("definitions");
-								if(nodeDefinitions!=null && nodeDefinitions instanceof ObjectNode) {
+								if(nodeDefinitions instanceof ObjectNode) {
 									foundDefinitions = true;
 								}
 								
@@ -594,9 +589,9 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 									if(nodeComponents instanceof ObjectNode) {
 										ObjectNode objectNodeComponents = (ObjectNode) nodeComponents;
 										JsonNode nodeSchemas = objectNodeComponents.get("schemas");
-										if(nodeSchemas!=null && nodeSchemas instanceof ObjectNode) {
+										if(nodeSchemas instanceof ObjectNode) {
 											
-											ObjectNode objectNodeDefinitions = (ObjectNode) utils.newObjectNode();
+											ObjectNode objectNodeDefinitions = utils.newObjectNode();
 											objectNodeDefinitions.set("definitions", nodeSchemas);
 											String schemaAsString = null;
 											if(ApiSchemaType.YAML.equals(apiSchema.getType())) {
@@ -606,10 +601,10 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 											else {
 												schemaAsString = utils.toString(objectNodeDefinitions);
 											}
-											schemaAsString = schemaAsString.replaceAll("#/components/schemas", "#/definitions");
+											schemaAsString = schemaAsString.replaceAll(COMPONENTS_SCHEMAS, DEFINITIONS);
 											schema = schemaAsString.getBytes();
 											schemaNode = objectNodeDefinitions;
-											//System.out.println("SCHEMA ["+new String(schema)+"]");
+											/**System.out.println("SCHEMA ["+new String(schema)+"]");*/
 											
 										}
 										else {
@@ -632,7 +627,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 									schemaValidationConfig.setPoliticaInclusioneTipi(POLITICA_INCLUSIONE_TIPI.DEFAULT);
 									schemaValidationConfig.setEmitLogError(config.isEmitLogError());
 									schemaValidationConfig.setJsonSchemaVersion(VersionFlag.V4); // https://github.com/OAI/OpenAPI-Specification/blob/main/schemas/v3.0/schema.json
-									//System.out.println("ADD SCHEMA PER ["+apiSchemaName+"#"+nameInternal+"] ["+new String(bout.toByteArray())+"]");
+									/**System.out.println("ADD SCHEMA PER ["+apiSchemaName+"#"+nameInternal+"] ["+new String(bout.toByteArray())+"]");*/
 									validator.setSchema(schema, schemaValidationConfig, log);
 									
 									this.validatorMap.put(apiSchema.getName(), validator);
@@ -696,10 +691,9 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 													if(schemaRebuild==null) {
 														schemaRebuild = new String(schemaContent);
 													}
-													if(schemaRebuild.contains(path)==false) {
-														if(path.startsWith("./")) {
-															path = path.substring(2);
-														}
+													if(!schemaRebuild.contains(path) &&
+														path.startsWith("./")) {
+														path = path.substring(2);
 													}
 													File file = this.fileSchema.get(normalizePath);
 													while(schemaRebuild.contains(path)) {
@@ -733,28 +727,28 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 								if(!tmpByteArraySchema.isEmpty()) {
 									itSchemas = tmpByteArraySchema.keySet().iterator();
 									while (itSchemas.hasNext()) {
-										String apiSchemaName = (String) itSchemas.next();
+										String apiSchemaName = itSchemas.next();
 										JsonNode schemaNode = tmpNode.get(apiSchemaName);
 										if(schemaNode instanceof ObjectNode) {
 											ObjectNode objectNode = (ObjectNode) schemaNode;
 											Iterator<String> it = objectNode.fieldNames();
 											String name = null;
 											while (it.hasNext()) {
-												name = (String) it.next();
+												name = it.next();
 												if("definitions".equalsIgnoreCase(name)) {
 													JsonNode internalNode = objectNode.get(name);
 													if(internalNode instanceof ObjectNode) {
 														ObjectNode internalObjectNode = (ObjectNode) internalNode;
 														Iterator<String> itInternal = internalObjectNode.fieldNames();
 														while (itInternal.hasNext()) {
-															String nameInternal = (String) itInternal.next();
+															String nameInternal = itInternal.next();
 															JsonNode typeDefinition = internalObjectNode.get(nameInternal);
 															
 															ByteArrayOutputStream bout = new ByteArrayOutputStream();
 															bout.write("{".getBytes());
 															String defOggetto = JSONUtils.getInstance().toString(typeDefinition);
 															defOggetto = defOggetto.trim();
-															defOggetto = defOggetto.replaceAll("#/components/schemas", "#/definitions");
+															defOggetto = defOggetto.replace(COMPONENTS_SCHEMAS, DEFINITIONS);
 															if(defOggetto.startsWith("{")) {
 																defOggetto = defOggetto.substring(1);
 															}
@@ -764,7 +758,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 															defOggetto = defOggetto.trim();
 															bout.write(defOggetto.getBytes());
 															// DEVE ESSERE DEFINITO NEL JSON SCHEMA, NON POSSO DEFINIRLO STATICAMENTE
-															/*
+															/**
 															bout.write(",\"additionalProperties\": ".getBytes());
 															if(defOggetto.startsWith("\"allOf\"") || defOggetto.startsWith("\"anyOf\"")){
 																// INDICARE ARTICOLO CHE SPIEGA
@@ -776,7 +770,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 															bout.write(",".getBytes());
 															bout.write("\"definitions\" : ".getBytes());
 															String definitionStringSchema = JSONUtils.getInstance().toString(internalNode);
-															definitionStringSchema = definitionStringSchema.replaceAll("#/components/schemas", "#/definitions");
+															definitionStringSchema = definitionStringSchema.replace(COMPONENTS_SCHEMAS, DEFINITIONS);
 															bout.write(definitionStringSchema.getBytes());
 															bout.write("}".getBytes());
 																									
@@ -787,7 +781,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 															schemaValidationConfig.setPoliticaInclusioneTipi(POLITICA_INCLUSIONE_TIPI.DEFAULT);
 															schemaValidationConfig.setEmitLogError(config.isEmitLogError());
 															schemaValidationConfig.setJsonSchemaVersion(VersionFlag.V4); // https://github.com/OAI/OpenAPI-Specification/blob/main/schemas/v3.0/schema.json
-															//System.out.println("ADD SCHEMA PER ["+apiSchemaName+"#"+nameInternal+"] ["+new String(bout.toByteArray())+"]");
+															/**System.out.println("ADD SCHEMA PER ["+apiSchemaName+"#"+nameInternal+"] ["+new String(bout.toByteArray())+"]");*/
 															validator.setSchema(bout.toByteArray(), schemaValidationConfig, log);
 															
 															this.validatorMap.put(apiSchemaName+"#"+nameInternal, validator);
@@ -817,7 +811,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 					if(schemiValidatorePrincipale!=null && schemiValidatorePrincipale.size()>0) {
 						Iterator<String> it = schemiValidatorePrincipale.keySet().iterator();
 						while (it.hasNext()) {
-							String schemaName = (String) it.next();
+							String schemaName = it.next();
 							byte [] schema = schemiValidatorePrincipale.get(schemaName);
 							JsonNode schemaNode = nodeValidatorePrincipale.get(schemaName);
 						
@@ -833,10 +827,9 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 											if(schemaRebuild==null) {
 												schemaRebuild = new String(schema);
 											}
-											if(schemaRebuild.contains(path)==false) {
-												if(path.startsWith("./")) {
-													path = path.substring(2);
-												}
+											if(!schemaRebuild.contains(path) &&
+												path.startsWith("./")) {
+												path = path.substring(2);
 											}
 											File file = this.fileSchema.get(normalizePath);
 											while(schemaRebuild.contains(path)) {
@@ -858,7 +851,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 							schemaValidationConfig.setPoliticaInclusioneTipi(POLITICA_INCLUSIONE_TIPI.DEFAULT);
 							schemaValidationConfig.setEmitLogError(config.isEmitLogError());
 							schemaValidationConfig.setJsonSchemaVersion(VersionFlag.V4); // https://github.com/OAI/OpenAPI-Specification/blob/main/schemas/v3.0/schema.json
-							//System.out.println("ADD SCHEMA PER ["+schemaName+"] ["+new String(schema)+"]");
+							/**System.out.println("ADD SCHEMA PER ["+schemaName+"] ["+new String(schema)+"]");*/
 							validator.setSchema(schema, schemaValidationConfig, log);
 							
 							this.validatorMap.put(schemaName, validator);
@@ -876,7 +869,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 					validationStructure.setFileSchema(this.fileSchema);
 					validationStructure.setValidatorMap(this.validatorMap);
 					if(openapiApi!=null) {
-						openapiApi.setValidationStructure(validationStructure);
+						openapiApi.setValidationStructure(cacheKey(), validationStructure);
 					}
 					else if(apiRest!=null) {
 						apiRest.addVendorImpl(VALIDATION_STRUCTURE, validationStructure);
@@ -909,116 +902,23 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 		return l;
 	}
 	
-	private String getRefPath(String ref) {
-		if(ref.trim().startsWith("#")) {
-			return null;
-		}
-		return ref.trim().substring(0, ref.indexOf("#"));
-	}
-	private static String getRefType(String ref) {
-		if(ref.trim().startsWith("#")) {
-			return ref;
-		}
-		return ref.trim().substring(ref.indexOf("#"), ref.length());
-	}
-	private String normalizePath(String path) throws ProcessingException {
-		if(path.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX) || path.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTPS_PREFIX) || path.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX)){	
-			try {
-				URL url = new URI(path).toURL();
-				File fileUrl = new File(url.getFile());
-				return fileUrl.getName();
-			}catch(Exception e) {
-				throw new ProcessingException(e.getMessage(),e);
-			}
-		}
-		else{
-			File f = new File(path);
-			return f.getName();
-		}
-	}
-	private void normalizeRefs(JsonNode node) throws ProcessingException {
-		List<JsonNode> listRef = node.findParents(OAI3SchemaKeywords.$REF);
-		if(listRef!=null) {
-			for (JsonNode jsonNodeRef : listRef) {
-				if(jsonNodeRef instanceof ObjectNode oNode) {
-					JsonNode valore = oNode.get(OAI3SchemaKeywords.$REF);
-					if(valore == null || !valore.isTextual()) {
-						// '$ref' usato come NOME di proprieta' di uno schema (valore non stringa): non e' un JSON Reference, salto
-						continue;
-					}
-					String ref = valore.asText();
-					String path = getRefPath(ref);
-					if(path!=null) {
-						String normalizePath = normalizePath(path);
-						String refType = getRefType(ref);
-						//System.out.println("REF ("+jsonNodeRef.getClass().getName()+") : "+jsonNodeRef);
-						//System.out.println("Tipo ("+refType+") VALORE:"+normalizePath);
-						oNode.remove(OAI3SchemaKeywords.$REF);
-						oNode.put(OAI3SchemaKeywords.$REF, normalizePath+refType);
-					}
-				}
-			}
-		}
-	}
-	
 	@Override
 	public void close(Logger log, Api api, ApiValidatorConfig config) throws ProcessingException{
 		if(this.fileSchema!=null) {
 			Iterator<String> itFiles = this.fileSchema.keySet().iterator();
 			while (itFiles.hasNext()) {
-				String key = (String) itFiles.next();
+				String key = itFiles.next();
 				File file = this.fileSchema.get(key);
-				if(file.delete()==false) {
-					log.error("Eliminazione file temporaneo ["+file.getAbsolutePath()+"] associato allo schema ["+key+"] non riuscita");
+				if(!file.delete()) {
+					String error = "Eliminazione file temporaneo ["+file.getAbsolutePath()+"] associato allo schema ["+key+"] non riuscita";
+					log.error(error);
 				}
 			}
 		}
 	}
 	
-	@Override
-	public void validate(HttpBaseEntity<?> httpEntity)
-			throws ProcessingException, ValidatorException {
-		List<Object> args = new ArrayList<>();
-		super.validate(this.api, httpEntity, args);
-	}
+	// validate(HttpBaseEntity) e getBodyParameters(...) sono stati spostati in AbstractApiValidator.
 
-	private List<ApiBodyParameter> getBodyParameters(HttpBaseEntity<?> httpEntity, ApiOperation operation){
-		List<ApiBodyParameter> bodyParameters = null;
-		if(httpEntity instanceof HttpBaseRequestEntity) {
-			if(operation.getRequest()!=null) {
-				bodyParameters = operation.getRequest().getBodyParameters();
-			}
-		}
-		else if(httpEntity instanceof HttpBaseResponseEntity<?>) {
-				
-			HttpBaseResponseEntity<?> response = (HttpBaseResponseEntity<?>) httpEntity;
-			ApiResponse apiResponseFound = null;
-			ApiResponse apiResponseDefault = null;
-			
-			if(operation.getResponses()!=null) {
-				for (ApiResponse apiResponse : operation.getResponses()) {
-					if(apiResponse.isDefaultHttpReturnCode()) {
-						apiResponseDefault = apiResponse;
-					}
-					if(response.getStatus() == apiResponse.getHttpReturnCode()){
-						apiResponseFound = apiResponse;
-						break;
-					}										
-				}
-			}
-			
-			if(apiResponseFound==null && apiResponseDefault!=null) {
-				apiResponseFound = apiResponseDefault;
-			}	
-			if(apiResponseFound!=null){
-				// eventuali errori di stato non trovato sono gestiti successivavemnte nella validazione
-				bodyParameters = apiResponseFound.getBodyParameters();
-			}
-					
-		}
-		return bodyParameters;
-	}
-	
 	@Override
 	public void validatePreConformanceCheck(HttpBaseEntity<?> httpEntity,
 			ApiOperation operation, Object... args) throws ProcessingException, ValidatorException {
@@ -1049,43 +949,42 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 		}
 		
 		// infine se non e' attivo openApi4j effettuo la validazione alternativa
-		if(this.openApi4j==null && this.swaggerRequestValidator==null) {
-			if(bodyParameters!=null && !bodyParameters.isEmpty()) {
+		if(this.openApi4j==null && this.swaggerRequestValidator==null &&
+			bodyParameters!=null && !bodyParameters.isEmpty()) {
 			
-				try {
-					
-					boolean isJson =  httpEntity.getContentType()!=null && httpEntity.getContentType().toLowerCase().contains("json"); // supporta per adesso solo json, la validazione xml non è funzionante
-					if(isJson) {
-					
-						//System.out.println("==================== ("+httpEntity.getClass().getName()+") ====================");
-						List<IJsonSchemaValidator> validatorLst = getValidatorList(operation, httpEntity);
-						//System.out.println("SIZE: "+validatorLst.size());
-						boolean valid = false;
-						Exception exc = null;
-						if(httpEntity.getContent()!=null) {
-							byte[] bytes = httpEntity.getContent().toString().getBytes();
-							for(IJsonSchemaValidator validator: validatorLst) {
-								ValidationResponse response = validator.validate(bytes);
-								if(!ESITO.OK.equals(response.getEsito())) {
-									exc = response.getException();
-								} else {
-									valid = true;
-								}
+			try {
+				
+				boolean isJson =  httpEntity.getContentType()!=null && httpEntity.getContentType().toLowerCase().contains("json"); // supporta per adesso solo json, la validazione xml non è funzionante
+				if(isJson) {
+				
+					/**System.out.println("==================== ("+httpEntity.getClass().getName()+") ====================");*/
+					List<IJsonSchemaValidator> validatorLst = getValidatorList(operation, httpEntity);
+					/**System.out.println("SIZE: "+validatorLst.size());*/
+					boolean valid = false;
+					Exception exc = null;
+					if(httpEntity.getContent()!=null) {
+						byte[] bytes = httpEntity.getContent().toString().getBytes();
+						for(IJsonSchemaValidator validator: validatorLst) {
+							ValidationResponse response = validator.validate(bytes);
+							if(!ESITO.OK.equals(response.getEsito())) {
+								exc = response.getException();
+							} else {
+								valid = true;
 							}
 						}
-						else {
-							throw new ValidatorException("Content undefined");
-						}
-						
-						if(!valid) {
-							throw new ValidatorException(exc);
-						}
-						
+					}
+					else {
+						throw new ValidatorException("Content undefined");
 					}
 					
-				} catch (ValidationException e) {
-					throw new ValidatorException(e);
+					if(!valid) {
+						throw new ValidatorException(exc);
+					}
+					
 				}
+				
+			} catch (ValidationException e) {
+				throw new ValidatorException(e);
 			}
 		}
 
@@ -1113,17 +1012,17 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 					String key = null;
 					if(body.getElement() instanceof ApiReference) {
 						ApiReference apiRef = (ApiReference) body.getElement();
-						//System.out.println("API REF ref["+apiRef.getSchemaRef()+"] ["+apiRef.getType()+"]");
+						/**System.out.println("API REF ref["+apiRef.getSchemaRef()+"] ["+apiRef.getType()+"]");*/
 						key = apiRef.getSchemaRef()+"#"+apiRef.getType();
 					}
 					else {
 						key = body.getElement().toString();
 					}
 					
-					//System.out.println("SEARCH ["+body.getElement().getClass().getName()+"] ["+body.getElement()+"] key["+key+"] ...");
+					/**System.out.println("SEARCH ["+body.getElement().getClass().getName()+"] ["+body.getElement()+"] key["+key+"] ...");*/
 					
 					if(this.validatorMap!=null && this.validatorMap.containsKey(key)) {
-						//System.out.println("ADD VALIDATORE ["+key+"]: ["+this.validatorMap.get(key)+"]");
+						/**System.out.println("ADD VALIDATORE ["+key+"]: ["+this.validatorMap.get(key)+"]");*/
 						lst.add(this.validatorMap.get(key));
 					}
 				}
@@ -1145,7 +1044,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 			Path pathO = this.openApi4j.getPaths().get(path);
 			for (String method : pathO.getOperations().keySet()) {
 				Operation op = pathO.getOperation(method);
-				//System.out.println("CHECK: ["+method+"] "+path);
+				/**System.out.println("CHECK: ["+method+"] "+path);*/
 				String normalizePath = ApiOperation.normalizePath(path);
 				if(operation.getHttpMethod().toString().equalsIgnoreCase(method) && operation.getPath().equals(normalizePath)) {
 					operationOpenApi4j = op;
@@ -1199,7 +1098,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 				}
 			}
 			
-			if(vData.isValid()==false) {
+			if(!vData.isValid()) {
 				if(vData.results()!=null) {
 					throw new ValidatorException(vData.results().toString());
 				}
@@ -1230,7 +1129,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 				StringBuilder sb = new StringBuilder();
 				Iterator<String> keys = queryParams.keySet().iterator();
 				while (keys.hasNext()) {
-					String key = (String) keys.next();
+					String key = keys.next();
 					List<String> values = queryParams.get(key);
 					try{
 						key = TransportUtils.urlEncodeParam(key,Charset.UTF_8.getValue());
@@ -1450,404 +1349,9 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 
 
 
-	@Override
-	public void validatePostConformanceCheck(HttpBaseEntity<?> httpEntity,
-			ApiOperation operation, Object... args) throws ProcessingException,
-	ValidatorException {
-		
-	}
+	// validatePostConformanceCheck, validateValueAsType, getArrayValues e
+	// PREFIXED_SEMICOLON_NAME_REGEX sono stati spostati in AbstractApiValidator.
 
-	@Override
-	public void validateValueAsType(ApiParameterType parameterType, String value, String type, ApiSchemaTypeRestriction typeRestriction)
-			throws ProcessingException, ValidatorException {
-
-		if(type!=null){
-			type = type.trim();
-
-			BigDecimal numberValue = null;
-			String stringValue = null;
-			
-			if("string".equalsIgnoreCase(type)){
-				stringValue = value;
-			}
-			else if("byte".equalsIgnoreCase(type) || "unsignedByte".equalsIgnoreCase(type)){
-				try{
-					byte v = Byte.parseByte(value);
-					numberValue = new BigDecimal(v);
-				}catch(Throwable e){
-					throw new ValidatorException(e.getMessage(),e);
-				}
-			}
-			else if("char".equalsIgnoreCase(type)){
-				if(value.length()>1){
-					throw new ValidatorException("More than one character");
-				}
-				stringValue = value;
-			}
-			else if("double".equalsIgnoreCase(type) || "decimal".equalsIgnoreCase(type)){
-				try{
-					double v = Double.parseDouble(value);
-					numberValue = BigDecimal.valueOf(v);
-				}catch(Throwable e){
-					throw new ValidatorException(e.getMessage(),e);
-				}
-			}
-			else if("float".equalsIgnoreCase(type)){
-				try{
-					float v = Float.parseFloat(value);
-					numberValue = BigDecimal.valueOf(v);
-				}catch(Throwable e){
-					throw new ValidatorException(e.getMessage(),e);
-				}
-			}
-			else if("int".equalsIgnoreCase(type) || "integer".equalsIgnoreCase(type) || 
-					"positiveInteger".equalsIgnoreCase(type) || "negativeInteger".equalsIgnoreCase(type) ||
-					"nonPositiveInteger".equalsIgnoreCase(type) || "nonNegativeInteger".equalsIgnoreCase(type) || 
-					"unsignedInt".equalsIgnoreCase(type) ||
-					"int32".equalsIgnoreCase(type)){
-				try{
-					int i = Integer.parseInt(value);
-					if("positiveInteger".equalsIgnoreCase(type)){
-						if(i<=0){
-							throw new ValidatorException("Expected a positive value");
-						}
-					}
-					else if("nonNegativeInteger".equalsIgnoreCase(type)){
-						if(i<0){
-							throw new ValidatorException("Expected a non negative value");
-						}
-					}
-					else if("negativeInteger".equalsIgnoreCase(type)){
-						if(i>=0){
-							throw new ValidatorException("Expected a negative value");
-						}
-					}
-					else if("nonPositiveInteger".equalsIgnoreCase(type)){
-						if(i>0){
-							throw new ValidatorException("Expected a non positive value");
-						}
-					}
-					else if("unsignedInt".equalsIgnoreCase(type)){
-						if(i<0){
-							throw new ValidatorException("Expected a unsigned value");
-						}
-					}
-					numberValue = BigDecimal.valueOf(i);
-				}catch(Throwable e){
-					throw new ValidatorException(e.getMessage(),e);
-				}
-			}
-			else if("long".equalsIgnoreCase(type) || "unsignedLong".equalsIgnoreCase(type)||
-					"int64".equalsIgnoreCase(type)){
-				try{
-					long l = Long.parseLong(value);
-					if("unsignedLong".equalsIgnoreCase(type)){
-						if(l<0){
-							throw new ValidatorException("Expected a unsigned value");
-						}
-					}
-					numberValue = new BigDecimal(l);
-				}catch(Throwable e){
-					throw new ValidatorException(e.getMessage(),e);
-				}
-			}
-			else if("number".equalsIgnoreCase(type)) {
-				try{
-					// Any numbers.
-					try{
-						double d = Double.parseDouble(value);
-						numberValue = BigDecimal.valueOf(d);
-					}catch(Exception e){
-						long l = Long.parseLong(value);
-						numberValue = new BigDecimal(l);
-					}
-				}catch(Throwable e){
-					throw new ValidatorException(e.getMessage(),e);
-				}
-			}
-			else if("short".equalsIgnoreCase(type) || "unsignedShort".equalsIgnoreCase(type)){
-				try{
-					short s = Short.parseShort(value);
-					if("unsignedShort".equalsIgnoreCase(type)){
-						if(s<0){
-							throw new ValidatorException("Expected a unsigned value");
-						}
-					}
-					numberValue = new BigDecimal(s);
-				}catch(Throwable e){
-					throw new ValidatorException(e.getMessage(),e);
-				}
-			}
-			else if("boolean".equalsIgnoreCase(type)){
-				try{
-					if(!"true".equals(value) && !"false".equals(value)) {
-						throw new Exception("Only true/false value expected (found: "+value+"); Note that truthy and falsy values such as \"true\", \"\", 0 or null are not considered boolean values.");
-					}
-				}catch(Throwable e){
-					throw new ValidatorException(e.getMessage(),e);
-				}
-			}
-			else if("anyURI".equalsIgnoreCase(type)){
-				try{
-					new URI(value);
-				}catch(Throwable e){
-					throw new ValidatorException(e.getMessage(),e);
-				}
-			}
-			else if("uuid".equalsIgnoreCase(type)){
-				try{
-					UUID.fromString(value);
-				}catch(Throwable e){
-					throw new ValidatorException(e.getMessage(),e);
-				}
-			}
-			else if("date-time".equalsIgnoreCase(type)){
-				try {
-					DateUtils.validateDateTimeAsRFC3339Sec56(value);
-				}catch(Throwable e){
-					throw new ValidatorException(e.getMessage(),e);
-				}
-			}
-			else if("date".equalsIgnoreCase(type)){
-				try {
-					DateUtils.validateDateAsRFC3339Sec56(value);
-				}catch(Throwable e){
-					throw new ValidatorException(e.getMessage(),e);
-				}
-			}
-			/**else if("time".equalsIgnoreCase(type)){
-				try {
-					DateUtils.validateTimeAsRFC3339Sec56(value);
-				}catch(Throwable e){
-					throw new ValidatorException(e.getMessage(),e);
-				}
-			}*/
-			
-			if(typeRestriction!=null) {
-				
-				if(numberValue!=null) {
-					
-					// max
-					if(typeRestriction.getMaximum()!=null) {
-						int compare = numberValue.compareTo(typeRestriction.getMaximum());
-						if(compare<0) {
-							// numberValue < maximum
-						}
-						else if(compare>0) {
-							// numberValue > maximum
-							throw new ValidatorException("Value higher than the maximum '"+typeRestriction.getMaximum()+"'");
-						}
-						else {
-							// numberValue == maximum
-							if(typeRestriction.getExclusiveMaximum()!=null && typeRestriction.getExclusiveMaximum()) {
-								throw new ValidatorException("Value equals to the maximum '"+typeRestriction.getMaximum()+"' and exclusive maximum is enabled");
-							}
-						}
-					}
-					
-					// min
-					if(typeRestriction.getMinimum()!=null) {
-						int compare = numberValue.compareTo(typeRestriction.getMinimum());
-						if(compare<0) {
-							// numberValue < minimum
-							throw new ValidatorException("Value lowest than the minimum '"+typeRestriction.getMinimum()+"'");
-						}
-						else if(compare>0) {
-							// numberValue > minimum
-						}
-						else {
-							// numberValue == minimum
-							if(typeRestriction.getExclusiveMinimum()!=null && typeRestriction.getExclusiveMinimum()) {
-								throw new ValidatorException("Value equals to the minimum '"+typeRestriction.getMinimum()+"' and exclusive minimum is enabled");
-							}
-						}
-					}
-					
-					// multipleOf
-					if(typeRestriction.getMultipleOf()!=null) {
-						if (numberValue.compareTo(typeRestriction.getMultipleOf()) != 0) {
-						   try{
-							   @SuppressWarnings("unused")
-							   BigDecimal bd = numberValue.divide(typeRestriction.getMultipleOf(), 0, RoundingMode.UNNECESSARY);
-						   }
-						   catch(ArithmeticException e) {
-							   throw new ValidatorException("Value is not multiple of '"+typeRestriction.getMultipleOf()+"'");
-						   }
-						}
-					}
-				}
-				
-				if(stringValue!=null) {
-					
-					// enum
-					if(typeRestriction.getEnumValues()!=null && !typeRestriction.getEnumValues().isEmpty()) {
-						
-						List<String> valoriPresenti = new ArrayList<>();
-						if(typeRestriction.isArrayParameter()) {
-							if(ApiParameterType.query.equals(parameterType) || ApiParameterType.form.equals(parameterType)) {
-								if(typeRestriction.isStyleQueryForm() || typeRestriction.getStyle()==null) { // form è il default
-									if(typeRestriction.isExplodeDisabled()) {
-										List<String> l = StringUtil.tokenize(stringValue, ",", false, false);
-										if(l!=null && !l.isEmpty()) {
-											valoriPresenti.addAll(l);
-										}
-									}
-								}
-								else if(typeRestriction.isStyleQuerySpaceDelimited()) {
-									if(typeRestriction.isExplodeDisabled()) {
-										List<String> l = StringUtil.tokenize(stringValue, Pattern.quote(" "), false, false);
-										if(l!=null && !l.isEmpty()) {
-											valoriPresenti.addAll(l);
-										}
-									}
-								}
-								else if(typeRestriction.isStyleQueryPipeDelimited()) {
-									if(typeRestriction.isExplodeDisabled()) {
-										List<String> l = StringUtil.tokenize(stringValue, Pattern.quote("|"), false, false);
-										if(l!=null && !l.isEmpty()) {
-											valoriPresenti.addAll(l);
-										}
-									}
-								}
-							}
-							else if(ApiParameterType.header.equals(parameterType)) {
-								if(typeRestriction.isStyleHeaderSimple() || typeRestriction.getStyle()==null) { // simple è il default
-									List<String> l = StringUtil.tokenize(stringValue, ",", false, false);
-									if(l!=null && !l.isEmpty()) {
-										valoriPresenti.addAll(l);
-									}
-								}
-							}
-							else if(ApiParameterType.path.equals(parameterType)) {
-								if(typeRestriction.isStylePathSimple() || typeRestriction.getStyle()==null) { // simple è il default
-									List<String> l = StringUtil.tokenize(stringValue, ",", false, false);
-									if(l!=null && !l.isEmpty()) {
-										valoriPresenti.addAll(l);
-									}
-								}
-								else if(typeRestriction.isStylePathLabel()) {
-									if(stringValue.length()>1) {
-										String splitPattern = typeRestriction.isExplodeEnabled() ?  "\\." : ",";
-										String [] v = stringValue.substring(1).split(splitPattern);
-										if(v!=null && v.length>0) {
-											for (String valore : v) {
-												valoriPresenti.add(valore);
-											}
-										}
-									}
-								}
-								else if(typeRestriction.isStylePathMatrix()) {
-									String splitPattern = typeRestriction.isExplodeEnabled() ?  ";" : ",";
-									List<String> l = getArrayValues(typeRestriction.isExplodeEnabled(), stringValue, splitPattern);
-									if(l!=null && !l.isEmpty()) {
-										valoriPresenti.addAll(l);
-									}
-								}
-							}
-						}
-						if(valoriPresenti.isEmpty()) {
-							valoriPresenti.add(stringValue);
-						}
-						
-						for (String valorePresente : valoriPresenti) {
-							boolean found = false;
-							StringBuilder sbList = new StringBuilder();
-							for (Object o : typeRestriction.getEnumValues()) {
-								if(o!=null) {
-									String check = o.toString();
-									if(sbList.length()>0) {
-										sbList.append(",");
-									}
-									sbList.append(check);
-									if(valorePresente.equals(check)) {
-										found = true;
-										break;
-									}
-								}
-							}
-							if(!found) {
-								throw new ValidatorException("Uncorrect enum value '"+valorePresente+"', expected: '"+sbList.toString()+"'");
-							}
-						}
-					}
-					
-					// min length
-					if(typeRestriction.getMinLength()!=null) {
-						if(stringValue.length()<typeRestriction.getMinLength().intValue()) {
-							throw new ValidatorException("Too short, expected min length '"+typeRestriction.getMinLength()+"'");
-						}
-					}
-					
-					// max length
-					if(typeRestriction.getMaxLength()!=null) {
-						if(stringValue.length()>typeRestriction.getMaxLength().intValue()) {
-							throw new ValidatorException("Too big, expected max length '"+typeRestriction.getMaxLength()+"'");
-						}
-					}
-					
-					/*
-					 * Note that the regular expression is enclosed in the ^…$ tokens, where ^ means the beginning of the string, and $ means the end of the string. 
-					 * Without ^…$, pattern works as a partial match, that is, matches any string that contains the specified regular expression. 
-					 * For example, pattern: pet matches pet, petstore and carpet. The ^…$ token forces an exact match.
-					 **/
-					if(typeRestriction.getPattern()!=null) {
-						String pattern = typeRestriction.getPattern().trim();
-						try {
-							if(pattern.startsWith("^") && pattern.endsWith("$")) {
-								if(!RegularExpressionEngine.isMatch(stringValue, pattern)) {
-									throw new ValidatorException("Pattern match failed ('"+pattern+"')");
-								}
-							}
-							else {
-								if(!RegularExpressionEngine.isFind(stringValue, pattern)) {
-									throw new ValidatorException("Pattern match failed ('"+pattern+"')");
-								}
-							}
-						}
-						catch(ValidatorException e) {
-							throw e;
-						}
-						catch(Throwable e) {
-							throw new ValidatorException("Pattern validation error '"+pattern+"': "+e.getMessage(),e);
-						}
-					}
-				}
-			}
-			
-		}
-
-		// altri tipi non li valido per ora
-
-
-	}
-
-	private static final Pattern PREFIXED_SEMICOLON_NAME_REGEX = Pattern.compile("(?:;)([^;]+)(?:=)([^;]*)");
-	private List<String> getArrayValues(boolean explode, String rawValue, String splitPattern) {
-		
-		try {
-			Matcher matcher = PREFIXED_SEMICOLON_NAME_REGEX.matcher(rawValue);
-	
-			if (explode) {
-				List<String> arrayValues = new ArrayList<>();
-				int index = 0;
-				int limit = 1000; // per gestire DOS
-				while (matcher.find() && index<limit) {
-					arrayValues.add(matcher.group(2));
-					index++;
-				}
-				return arrayValues;
-			} else {
-				return matcher.matches()
-						? Arrays.asList(matcher.group(2).split(splitPattern))
-								: null;
-			}
-		}catch(Throwable t) {
-			this.log.error(t.getMessage(), t);
-			return null;
-		}
-	}
-	
-	
 	// ================= SWAGGER REQUEST VALIDATOR GLUE CODE =====================
 
 	private static Method fromHttpMethod(HttpRequestMethod method) {
@@ -1938,7 +1442,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 //										sbNewList.append(", ");
 //									}
 //									String v = media.trim();
-//									if(v.equals("*")) {
+//									if(v.equals("*")) {*/
 //										v = "*/*";
 //									}
 //									sbNewList.append(v);
@@ -1971,10 +1475,10 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 				hdr.forEach(builder::withHeader);
 			}
 			
-			//if(newList!=null) {
+			/**if(newList!=null) {*/
 			if(originalValues!=null) {
 				// ripristino
-				//TransportUtils.removeRawObject(hdr, HttpConstants.ACCEPT);
+				/**TransportUtils.removeRawObject(hdr, HttpConstants.ACCEPT);*/
 				hdr.put(HttpConstants.ACCEPT, originalValues);
 			}
 		}
@@ -2101,5 +1605,31 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
             }
         }
     }
-	
+
+	/**
+	 * Chiave per indicizzare la {@code OpenapiApiValidatorStructure} cached sull'{@code Api}: include
+	 * libreria + flag di config che impattano la fase di init del validator. Vedi
+	 * {@link OpenapiApi#getValidationStructure(String)}.
+	 * <p>
+	 * Può essere invocata prima che {@code openApi4jConfig} sia stato assegnato (il setter si trova
+	 * più avanti in {@link #init(org.slf4j.Logger, org.openspcoop2.utils.rest.api.Api, org.openspcoop2.utils.rest.ApiValidatorConfig)});
+	 * in quel caso, e nei flow che non valorizzano mai questa configurazione (es. validator
+	 * {@code json_schema} che non passa per il ramo openapi4j/swagger_request_validator), si torna
+	 * una chiave neutra: la cache resta coerente perché tutti i lookup successivi usano la stessa.
+	 */
+	private String cacheKey() {
+		if (this.openApi4jConfig == null) {
+			return "default";
+		}
+		StringBuilder sb = new StringBuilder();
+		sb.append(this.openApi4jConfig.getOpenApiLibrary().name())
+		  .append(":merge=").append(this.openApi4jConfig.isMergeAPISpec())
+		  .append(":valSpec=").append(this.openApi4jConfig.isValidateAPISpec());
+		if (OpenAPILibrary.swagger_request_validator.equals(this.openApi4jConfig.getOpenApiLibrary())) {
+			sb.append(":resolveFully=").append(this.openApi4jConfig.isSwaggerRequestValidator_ResolveFullyApiSpec())
+			  .append(":injectAdd=").append(this.openApi4jConfig.isSwaggerRequestValidator_InjectingAdditionalPropertiesFalse());
+		}
+		return sb.toString();
+	}
+
 }

@@ -247,16 +247,33 @@ public class ToggleStatoApiHelper {
 		if(body == null) {
 			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Body assente");
 		}
-		if(body.getTipo() == null) {
+		
+		TransazioneRuoloEnum tipo = body.getTipo();
+		Boolean abilitato = body.isAbilitato();
+		check(tipo, abilitato);
+		
+		FiltroApiStato filtroApi = body.getApi();
+		check(filtroApi);
+		
+		String nome = body.getApi().getNome();
+		checkNome(nome);
+		
+	}
+	private static void check(TransazioneRuoloEnum tipo, Boolean abilitato) {
+		if(tipo == null) {
 			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il campo 'tipo' e' obbligatorio");
 		}
-		if(body.isAbilitato() == null) {
+		if(abilitato == null) {
 			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il campo 'abilitato' e' obbligatorio");
 		}
-		if(body.getApi() == null) {
+	}
+	private static void check(FiltroApiStato filtroApi) {
+		if(filtroApi == null) {
 			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il campo 'api' e' obbligatorio");
 		}
-		if(body.getApi().getNome() == null || body.getApi().getNome().isEmpty()) {
+	}
+	private static void checkNome(String nome) {
+		if(nome == null || nome.isEmpty()) {
 			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il campo 'api.nome' e' obbligatorio");
 		}
 	}

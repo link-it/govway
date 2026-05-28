@@ -35,7 +35,7 @@ public class OpenapiApiValidatorConfig extends ApiValidatorConfig {
 	private static final long serialVersionUID = 1L;
 	
 	private ApiName jsonValidatorAPI;
-	private OpenapiLibraryValidatorConfig openApiValidatorConfig;
+	private OpenapiLibraryValidatorConfig openApiValidatorConfig = new OpenapiLibraryValidatorConfig();
 
 	public OpenapiLibraryValidatorConfig getOpenApiValidatorConfig() {
 		return this.openApiValidatorConfig;

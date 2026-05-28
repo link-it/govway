@@ -401,6 +401,9 @@ public class Startup implements ServletContextListener {
 			ControlStationCore.setIsSoggettiApplicativiCredenzialiSslPermitSameCredentialsApiMode(serverProperties.isSoggettiApplicativiCredenzialiSslPermitSameCredentials());
 			ControlStationCore.setIsSoggettiApplicativiCredenzialiPrincipalPermitSameCredentialsApiMode(serverProperties.isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials());
 
+			ControlStationCore.setApiSpecValidatorConfigApiMode(serverProperties.getApiSpecValidatorConfig());
+			ControlStationCore.setApiSpecValidator31ConfigApiMode(serverProperties.getApiSpecValidator31Config());
+
 			DBUtils.setKeystoreJksPasswordRequired(serverProperties.isKeystoreJksPasswordRequired());
 			DBUtils.setKeystoreJksKeyPasswordRequired(serverProperties.isKeystoreJksKeyPasswordRequired());
 			DBUtils.setKeystorePkcs12PasswordRequired(serverProperties.isKeystorePkcs12PasswordRequired());

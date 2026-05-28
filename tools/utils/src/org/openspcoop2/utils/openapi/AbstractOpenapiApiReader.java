@@ -394,6 +394,22 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 			if(this.openApi.getPaths() != null){
 				for (String pathK : this.openApi.getPaths().keySet()) {
 					PathItem path = this.openApi.getPaths().get(pathK);
+					// OAS 3.1: un path puo' essere definito come $ref a components.pathItems
+					if(path.get$ref() != null
+							&& path.getGet() == null && path.getPost() == null && path.getPut() == null
+							&& path.getDelete() == null && path.getHead() == null && path.getOptions() == null
+							&& path.getTrace() == null && path.getPatch() == null) {
+						String ref = path.get$ref();
+						String prefix = "#/components/pathItems/";
+						if(ref.startsWith(prefix) && this.openApi.getComponents() != null
+								&& this.openApi.getComponents().getPathItems() != null) {
+							String name = ref.substring(prefix.length());
+							PathItem resolved = this.openApi.getComponents().getPathItems().get(name);
+							if(resolved != null) {
+								path = resolved;
+							}
+						}
+					}
 					if(path.getGet() != null) {
 						ApiOperation operation = getOperation(path.getGet(), path.getParameters(), HttpRequestMethod.GET, pathK, api);
 						api.addOperation(operation);

@@ -27,7 +27,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumMap;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -46,7 +49,10 @@ import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.io.ZipUtilities;
+import org.openspcoop2.utils.openapi.validator.OpenAPILibrary;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
+import org.openspcoop2.utils.rest.ApiFactory;
+import org.openspcoop2.utils.rest.IApiSpecConfig;
 import org.openspcoop2.utils.transport.http.HttpLibrary;
 import org.openspcoop2.utils.transport.http.credential.PrincipalReaderType;
 import org.slf4j.Logger;
@@ -77,6 +83,32 @@ public class ConsoleProperties {
 	/** Copia Statica */
 	private static ConsoleProperties consoleProperties = null;
 
+	/** Prefisso comune (3.0) delle proprietà del validatore di specifica. */
+	public static final String SPEC_VALIDATOR_PREFIX_30 = "api.openApi.30.specValidator.";
+
+	/** Prefisso overlay (3.1) delle proprietà del validatore di specifica. */
+	public static final String SPEC_VALIDATOR_PREFIX_31 = "api.openApi.31.specValidator.";
+
+	/** Engine selezionato per le specifiche 3.0. {@code null} se non valorizzato. */
+	private OpenAPILibrary specValidatorLibrary;
+
+	/** Engine selezionato per le specifiche 3.1. {@code null} se non valorizzato. */
+	private OpenAPILibrary specValidator31Library;
+
+	/**
+	 * Mappa immutabile {@code OpenAPILibrary -> IApiSpecConfig} per le specifiche 3.0.
+	 * Pre-costruita una volta sola alla costruzione di {@link ConsoleProperties}
+	 * leggendo le properties con prefisso {@link #SPEC_VALIDATOR_PREFIX_30}.
+	 */
+	private Map<OpenAPILibrary, IApiSpecConfig> specValidatorConfigs;
+
+	/**
+	 * Mappa immutabile {@code OpenAPILibrary -> IApiSpecConfig} per le specifiche 3.1.
+	 * Per ciascuna chiave la lookup parte dal prefisso {@link #SPEC_VALIDATOR_PREFIX_31}
+	 * con fallback su {@link #SPEC_VALIDATOR_PREFIX_30}.
+	 */
+	private Map<OpenAPILibrary, IApiSpecConfig> specValidator31Configs;
+
 
 	/* ********  C O S T R U T T O R E  ******** */
 
@@ -106,6 +138,81 @@ public class ConsoleProperties {
 		}
 
 		this.reader = new ConsoleInstanceProperties(propertiesReader, this.log, confDir, confPropertyName, confLocalPathPrefix);
+
+		/* ---- Snapshot delle proprietà del validatore di specifica ---- */
+		Map<String, String> rawSpecProps = new HashMap<>();
+		Enumeration<String> specKeys = this.reader.propertyNames();
+		while (specKeys.hasMoreElements()) {
+			String key = specKeys.nextElement();
+			if (key == null) {
+				continue;
+			}
+			if (key.startsWith(SPEC_VALIDATOR_PREFIX_30) || key.startsWith(SPEC_VALIDATOR_PREFIX_31)) {
+				try {
+					String value = this.reader.getValueConvertEnvProperties(key);
+					if (value != null) {
+						rawSpecProps.put(key, value.trim());
+					}
+				} catch (Exception e) {
+					this.log.warn("Lettura property '" + key + "' fallita: " + e.getMessage());
+				}
+			}
+		}
+
+		// Engine selezionati. Se la property manca / è vuota / non è un valore valido di
+		// OpenAPILibrary, si applica il default: openapi4j per le specifiche 3.0,
+		// kappa per le specifiche 3.1 (openapi4j non supporta i costrutti 3.1).
+		this.specValidatorLibrary = parseLibrary(rawSpecProps.get(SPEC_VALIDATOR_PREFIX_30 + "library"),
+				OpenAPILibrary.openapi4j);
+		this.specValidator31Library = parseLibrary(rawSpecProps.get(SPEC_VALIDATOR_PREFIX_31 + "library"),
+				OpenAPILibrary.kappa);
+
+		// Per le specifiche 3.1 sono ammesse solo le librerie che supportano i costrutti 3.1
+		if (this.specValidator31Library != null && !this.specValidator31Library.supportsOpenApi31()) {
+			throw new UtilsException("Property '" + SPEC_VALIDATOR_PREFIX_31 + "library' con valore '"
+					+ this.specValidator31Library
+					+ "' non valido: la libreria non supporta i costrutti introdotti in OpenAPI 3.1. "
+					+ "Valori ammessi per 3.1: kappa, json_schema.");
+		}
+
+		// Configs precostruiti per ogni libreria, separati per 3.0 e 3.1
+		Map<OpenAPILibrary, IApiSpecConfig> configs30 = new EnumMap<>(OpenAPILibrary.class);
+		Map<OpenAPILibrary, IApiSpecConfig> configs31 = new EnumMap<>(OpenAPILibrary.class);
+		for (OpenAPILibrary lib : OpenAPILibrary.values()) {
+			configs30.put(lib, buildSpecValidatorConfig(rawSpecProps, lib, false));
+			configs31.put(lib, buildSpecValidatorConfig(rawSpecProps, lib, true));
+		}
+		this.specValidatorConfigs = Collections.unmodifiableMap(configs30);
+		this.specValidator31Configs = Collections.unmodifiableMap(configs31);
+	}
+
+	private static IApiSpecConfig buildSpecValidatorConfig(Map<String, String> rawProps, OpenAPILibrary library, boolean openApi31) {
+		IApiSpecConfig cfg = ApiFactory.newApiSpecValidatorConfig(library != null ? library.name() : null);
+		cfg.readProperties(suffix -> resolveSpecValidatorProperty(rawProps, library, suffix, openApi31));
+		return cfg;
+	}
+
+	private static String resolveSpecValidatorProperty(Map<String, String> rawProps, OpenAPILibrary library, String suffix, boolean openApi31) {
+		if (suffix == null) {
+			return null;
+		}
+		if (openApi31) {
+			String v = lookupSpecValidatorProperty(rawProps, SPEC_VALIDATOR_PREFIX_31, library, suffix);
+			if (v != null) {
+				return v;
+			}
+		}
+		return lookupSpecValidatorProperty(rawProps, SPEC_VALIDATOR_PREFIX_30, library, suffix);
+	}
+
+	private static String lookupSpecValidatorProperty(Map<String, String> rawProps, String prefix, OpenAPILibrary library, String suffix) {
+		if (library != null) {
+			String v = rawProps.get(prefix + library.name() + "." + suffix);
+			if (v != null) {
+				return v;
+			}
+		}
+		return rawProps.get(prefix + suffix);
 	}
 
 	private boolean parse(BooleanNullable b, boolean defaultValue) {
@@ -445,6 +552,68 @@ public class ConsoleProperties {
 	
 	public boolean isApiOpenAPIValidateUriReferenceAsUrl() throws UtilsException{
 		return this.readBooleanRequiredProperty("api.openApi.openapi4j.validateUriReferenceAsUrl");
+	}
+
+	/* ----- Spec validator: libreria + config ------ */
+
+	/**
+	 * @return l'engine selezionato per la validazione delle specifiche OpenAPI 3.0,
+	 *         oppure {@code null} se non valorizzato (cade sul default di {@link ApiFactory}).
+	 */
+	public OpenAPILibrary getSpecValidatorLibrary() {
+		return this.specValidatorLibrary;
+	}
+
+	/**
+	 * @return l'engine selezionato per la validazione delle specifiche OpenAPI 3.1,
+	 *         oppure {@code null} se non valorizzato (cade sul default di {@link ApiFactory}).
+	 */
+	public OpenAPILibrary getSpecValidator31Library() {
+		return this.specValidator31Library;
+	}
+
+	/**
+	 * @return il config 3.0 precostruito per la libreria indicata.
+	 *         I valori provengono dalle properties {@code api.openApi.30.specValidator.*}
+	 *         con lookup engine-specific ({@code …<library>.<suffix>}) e fallback sul
+	 *         flat ({@code …<suffix>}).
+	 */
+	public IApiSpecConfig getSpecValidatorConfig(OpenAPILibrary library) {
+		return library != null ? this.specValidatorConfigs.get(library) : null;
+	}
+
+	/**
+	 * @return il config 3.1 precostruito per la libreria indicata.
+	 *         I valori provengono dalle properties {@code api.openApi.31.specValidator.*}
+	 *         con fallback sulle properties 3.0 ({@code api.openApi.30.specValidator.*}).
+	 */
+	public IApiSpecConfig getSpecValidator31Config(OpenAPILibrary library) {
+		return library != null ? this.specValidator31Configs.get(library) : null;
+	}
+
+	/**
+	 * @return mappa immutabile {@code OpenAPILibrary -> IApiSpecConfig} per le specifiche 3.0.
+	 */
+	public Map<OpenAPILibrary, IApiSpecConfig> mapSpecValidatorConfigs() {
+		return this.specValidatorConfigs;
+	}
+
+	/**
+	 * @return mappa immutabile {@code OpenAPILibrary -> IApiSpecConfig} per le specifiche 3.1.
+	 */
+	public Map<OpenAPILibrary, IApiSpecConfig> mapSpecValidator31Configs() {
+		return this.specValidator31Configs;
+	}
+
+	private static OpenAPILibrary parseLibrary(String v, OpenAPILibrary defaultValue) {
+		if (v == null || v.isEmpty()) {
+			return defaultValue;
+		}
+		try {
+			return OpenAPILibrary.valueOf(v.trim());
+		} catch (IllegalArgumentException e) {
+			return defaultValue;
+		}
 	}
 	
 	public boolean isApiRestResourceRepresentationMessageTypeOverride() throws UtilsException{

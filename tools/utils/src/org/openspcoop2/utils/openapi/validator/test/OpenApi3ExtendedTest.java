@@ -48,6 +48,7 @@ import org.openspcoop2.utils.openapi.validator.OpenapiLibraryValidatorConfig;
 import org.openspcoop2.utils.rest.ApiFactory;
 import org.openspcoop2.utils.rest.ApiFormats;
 import org.openspcoop2.utils.rest.ApiReaderConfig;
+import org.openspcoop2.utils.rest.ApiValidatorConfig;
 import org.openspcoop2.utils.rest.IApiReader;
 import org.openspcoop2.utils.rest.IApiValidator;
 import org.openspcoop2.utils.rest.ParseWarningException;
@@ -89,7 +90,8 @@ public class OpenApi3ExtendedTest {
 
 	private static boolean defaultDateTimeAllowLowerCaseTZ = false;
 	private static boolean defaultDateTimeAllowSpaceSeparator = false;
-	
+
+
 	public static void main(String[] args) throws Exception {
 		
 		
@@ -115,30 +117,21 @@ public class OpenApi3ExtendedTest {
 			setDateTimeOptions(openAPILibrary, defaultDateTimeAllowLowerCaseTZ, defaultDateTimeAllowSpaceSeparator);
 		}
 	}
-	private static void setDateTimeOptions(OpenAPILibrary openAPILibrary, boolean allowLowerCaseTZ, boolean allowSpaceSeparator) {
-		DateUtils.setDateTimeAllowLowerCaseTZ(allowLowerCaseTZ);
-		DateUtils.setDateTimeAllowSpaceSeparator(allowSpaceSeparator);
-		if(openAPILibrary == OpenAPILibrary.openapi4j) {
-			FormatValidator.setDateTimeAllowLowerCaseTZ(allowLowerCaseTZ);
-			FormatValidator.setDateTimeAllowSpaceSeparator(allowSpaceSeparator);
-		}
-		System.out.println("========== (case:"+allowLowerCaseTZ+" space:"+allowSpaceSeparator+") "+
-				"DateUtils(case:"+DateUtils.isDateTimeAllowLowerCaseTZ()+" space:"+DateUtils.isDateTimeAllowSpaceSeparator()+")"+
-				" FormatValidator(case:"+FormatValidator.isDateTimeAllowLowerCaseTZ()+" space:"+FormatValidator.isDateTimeAllowSpaceSeparator()+")");
-	}
 	private static void test(OpenAPILibrary openAPILibrary, boolean mergeSpec) throws Exception {
 
 		
 		// *** TEST per il Parser e validazione dello schema *** //
 		
 		{
-			System.out.println("Test Schema#1 (openapi.yaml) [Elementi aggiuntivi come 'allowEmptyValue'] ...");
-			
-			URL url = OpenApi3ExtendedTest.class.getResource("/org/openspcoop2/utils/openapi/test/openapi.yaml");
+			String schema1Resource = openapiSchemaResourcePath(openAPILibrary);
+			System.out.println("Test Schema#1 ("+schema1Resource.substring(schema1Resource.lastIndexOf('/')+1)+") [Elementi aggiuntivi come 'allowEmptyValue'] ...");
+
+			URL url = OpenApi3ExtendedTest.class.getResource(schema1Resource);
 			
 			IApiReader apiReaderOpenApi = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
 			ApiReaderConfig configOpenApi = new ApiReaderConfig();
 			configOpenApi.setProcessInclude(false);
+			
 			apiReaderOpenApi.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), new File(url.toURI()), configOpenApi);
 			Api apiOpenApi = apiReaderOpenApi.read();
 			
@@ -152,14 +145,18 @@ public class OpenApi3ExtendedTest {
 				System.out.println("Documento contenente anomalie: "+warning.getMessage());
 			}
 			
-			IApiValidator apiValidatorOpenApi = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+			IApiValidator apiValidatorOpenApi = ApiFactory.newApiValidator(openAPILibrary.name());
 			OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
 			configO.setEmitLogError(logSystemOutError);
 			configO.setOpenApiValidatorConfig(new OpenapiLibraryValidatorConfig());
 			configO.getOpenApiValidatorConfig().setOpenApiLibrary(openAPILibrary);
 			configO.getOpenApiValidatorConfig().setValidateAPISpec(true);
 			configO.getOpenApiValidatorConfig().setMergeAPISpec(mergeSpec);
-			apiValidatorOpenApi.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi, configO);
+			
+			ApiValidatorConfig config = ApiFactory.newApiValidatorConfig(openAPILibrary.name());
+			config.readProperties(configO.getOpenApiValidatorConfig()::getProperty);
+			
+			apiValidatorOpenApi.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi, config);
 					
 			System.out.println("Test Schema#1 (openapi.yaml) [Elementi aggiuntivi come 'allowEmptyValue'] ok");
 			
@@ -216,9 +213,9 @@ public class OpenApi3ExtendedTest {
 					System.out.println("Documento contenente anomalie: "+warning.getMessage());
 				}
 				
-				apiValidatorOpenApi = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+				apiValidatorOpenApi = ApiFactory.newApiValidator(openAPILibrary.name());
 				try {
-					apiValidatorOpenApi.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi, configO);
+					apiValidatorOpenApi.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi, config);
 					throw new Exception("Atteso errore");
 				}catch(Exception e) {
 					String msgErrore1 = "components.schemas.Pet.discriminator: The discriminator 'pet_type' is not a property of this schema (code: 134)";
@@ -284,9 +281,9 @@ public class OpenApi3ExtendedTest {
 					System.out.println("Documento contenente anomalie: "+warning.getMessage());
 				}
 				
-				apiValidatorOpenApi = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+				apiValidatorOpenApi = ApiFactory.newApiValidator(openAPILibrary.name());
 				try {
-					apiValidatorOpenApi.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi, configO);
+					apiValidatorOpenApi.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi, config);
 					throw new Exception("Atteso errore");
 				}catch(Exception e) {
 					String msgErrore = "components.schemas.Pet4.properties.pet.discriminator: The discriminator 'pet_type' is required in this schema (code: 135)";
@@ -322,9 +319,9 @@ public class OpenApi3ExtendedTest {
 					System.out.println("Documento contenente anomalie: "+warning.getMessage());
 				}
 				
-				apiValidatorOpenApi = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+				apiValidatorOpenApi = ApiFactory.newApiValidator(openAPILibrary.name());
 				try {
-					apiValidatorOpenApi.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi, configO);
+					apiValidatorOpenApi.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi, config);
 				}catch(Exception e) {
 					throw new Exception("Errore non atteso (org.openapi4j.parser.validation.ValidationContext.convertDefaultStringValueInPrimitiveType="+org.openapi4j.parser.validation.ValidationContext.convertDefaultStringValueInPrimitiveType+"): "+e.getMessage(),e);
 				}
@@ -337,9 +334,9 @@ public class OpenApi3ExtendedTest {
 					apiReaderOpenApi.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), new File(url.toURI()), configOpenApi);
 					apiOpenApi = apiReaderOpenApi.read();
 					
-					apiValidatorOpenApi = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+					apiValidatorOpenApi = ApiFactory.newApiValidator(openAPILibrary.name());
 					try {
-						apiValidatorOpenApi.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi, configO);
+						apiValidatorOpenApi.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi, config);
 						throw new Exception("Atteso errore");
 					}catch(Exception e) {
 						
@@ -414,17 +411,18 @@ public class OpenApi3ExtendedTest {
 					System.out.println("Documento contenente anomalie: "+warning.getMessage());
 				}
 				
-				apiValidatorOpenApi = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
-				apiValidatorOpenApi.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi, configO);
+				apiValidatorOpenApi = ApiFactory.newApiValidator(openAPILibrary.name());
+				apiValidatorOpenApi.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi, config);
 				
 			}
 									
 			System.out.println("Test Schema#5 (info.yaml) [Elementi Info] ok");
 			
 			
-			System.out.println("Test Schema#6 (openapi_all_methods.yaml) [Verifica che tutti i metodi HTTP siano caricati] ...");
-			
-			url = OpenApi3ExtendedTest.class.getResource("/org/openspcoop2/utils/openapi/test/openapi_all_methods.yaml");
+			String schema6Resource = openapiAllMethodsResourcePath(openAPILibrary);
+			System.out.println("Test Schema#6 ("+schema6Resource.substring(schema6Resource.lastIndexOf('/')+1)+") [Verifica che tutti i metodi HTTP siano caricati] ...");
+
+			url = OpenApi3ExtendedTest.class.getResource(schema6Resource);
 				
 			apiReaderOpenApi = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
 			configOpenApi = new ApiReaderConfig();
@@ -442,8 +440,8 @@ public class OpenApi3ExtendedTest {
 				System.out.println("Documento contenente anomalie: "+warning.getMessage());
 			}
 				
-			apiValidatorOpenApi = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
-			apiValidatorOpenApi.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi, configO);
+			apiValidatorOpenApi = ApiFactory.newApiValidator(openAPILibrary.name());
+			apiValidatorOpenApi.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi, config);
 					
 			List<HttpRequestMethod> metodiHttpd = new ArrayList<HttpRequestMethod>();
 			for (ApiOperation op : apiOpenApi.getOperations()) {
@@ -471,10 +469,10 @@ public class OpenApi3ExtendedTest {
 		
 		// *** TEST per la validazione delle richieste *** //
 		
-		URL url = OpenApi3ExtendedTest.class.getResource("/org/openspcoop2/utils/openapi/test/allegati.yaml");
+		URL url = OpenApi3ExtendedTest.class.getResource(allegatiResourcePath(openAPILibrary));
 		
 		ApiSchema apiSchemaYaml = new ApiSchema("teamdigitale-openapi_definitions.yaml", 
-				Utilities.getAsByteArray(OpenApi3ExtendedTest.class.getResourceAsStream("/org/openspcoop2/utils/service/schemi/standard/teamdigitale-openapi_definitions.yaml")), ApiSchemaType.YAML);
+				Utilities.getAsByteArray(OpenApi3ExtendedTest.class.getResourceAsStream(teamDigitaleDefinitionsResourcePath(openAPILibrary))), ApiSchemaType.YAML);
 		
 		//String baseUri = "http://petstore.swagger.io/api";
 		String baseUri = ""; // non va definita
@@ -495,14 +493,18 @@ public class OpenApi3ExtendedTest {
 			System.out.println("Documento contenente anomalie: "+warning.getMessage());
 		}
 		
-		IApiValidator apiValidatorOpenApi = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+		IApiValidator apiValidatorOpenApi = ApiFactory.newApiValidator(openAPILibrary.name());
 		OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
 		configO.setEmitLogError(logSystemOutError);
 		configO.setOpenApiValidatorConfig(new OpenapiLibraryValidatorConfig());
 		configO.getOpenApiValidatorConfig().setOpenApiLibrary(openAPILibrary);
 		configO.getOpenApiValidatorConfig().setValidateAPISpec(true);
 		configO.getOpenApiValidatorConfig().setMergeAPISpec(mergeSpec);
-		apiValidatorOpenApi.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi, configO);
+		
+		ApiValidatorConfig config = ApiFactory.newApiValidatorConfig(openAPILibrary.name());
+		config.readProperties(configO.getOpenApiValidatorConfig()::getProperty);
+		
+		apiValidatorOpenApi.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi, config);
 				
 		
 		byte [] pdf = Utilities.getAsByteArray(OpenApi3ExtendedTest.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test/test.pdf"));
@@ -573,6 +575,9 @@ public class OpenApi3ExtendedTest {
 						+ "1028 $.allegati[0].documento: required property 'contenuto' not found\n"
 						+ "1028 $.allegati[0].documento: required property 'uri' not found";
 				break;
+			case kappa:
+				msgErroreAtteso = "body.allegati.0.documento: required properties are missing: uri";
+				break;
 			case openapi4j:
 				msgErroreAtteso = "body.allegati.0.documento: Field 'uri' is required.";
 				break;
@@ -614,6 +619,11 @@ public class OpenApi3ExtendedTest {
 						+ "1008 $.allegati[0].documento.tipoDocumento: does not have a value in the enumeration [\"inline\", \"riferimento-uri\"]\n"
 						+ "1028 $.allegati[0].documento: required property 'contenuto' not found\n"
 						+ "1008 $.allegati[0].documento.tipoDocumento: does not have a value in the enumeration [\"inline\", \"riferimento-uri\"]";
+				break;
+			case kappa:
+				// Post-patch dispatchDiscriminator (top-level + nested + fail loud): kappa emette
+				// lo stesso wording di openapi4j quando il valore del discriminator non è mappato.
+				msgErroreAtteso = "body.allegati.0.documento: Schema selection can't be made for discriminator 'tipoDocumento' with value 'riferimento-uriERRATA'.";
 				break;
 			case openapi4j:
 				msgErroreAtteso = "body.allegati.0.documento: Schema selection can't be made for discriminator 'tipoDocumento' with value 'riferimento-uriERRATA'.";
@@ -660,17 +670,20 @@ public class OpenApi3ExtendedTest {
 						+ "1028 $.allegati[1].documento: required property 'tipoDocumento' not found\n"
 						+ "1028 $.allegati[1].documento: required property 'uri' not found";
 				break;
+			case kappa:
+				msgErroreAtteso = "body.allegati.1.documento: required properties are missing: tipoDocumento";
+				break;
 			case openapi4j:
 				msgErroreAtteso = "body.allegati.1.documento: Property name in content 'tipoDocumento' is not set.";
 				break;
 			case swagger_request_validator:
 				msgErroreAtteso = "[ERROR][] [Path '/allegati/1/documento'] Object has missing required properties ([\"tipoDocumento\"])";
 				break;
-			}		
+			}
 			if(msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) {
 				throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 			}
-			
+
 			switch (openAPILibrary) {
 			case json_schema:
 				msgErroreAtteso = "allegati[1].documento: must be valid to one and only one schema, but 0 are valid\n"
@@ -679,15 +692,31 @@ public class OpenApi3ExtendedTest {
 						+ "1028 $.allegati[1].documento: required property 'tipoDocumento' not found\n"
 						+ "1028 $.allegati[1].documento: required property 'uri' not found"; // uso solito messaggio
 				break;
+			case kappa:
+				// L'ordine dei property names emessi da json-sKema dopo 'required properties are missing:'
+				// segue l'ordine yaml originale del 'required:' array (alfabetico con mergeSpec=true via
+				// swagger-parser merge, yaml-order con mergeSpec=false). Verifichiamo il prefisso e la presenza
+				// dei tre nomi indipendentemente dall'ordine (check addizionale appena sotto).
+				msgErroreAtteso = "body.allegati.1.documento: required properties are missing:";
+				break;
 			case openapi4j:
 				msgErroreAtteso = "From: body.<allOf>.allegati.1.<items>.<#/components/schemas/AllegatoRiferimentoMixed>.<allOf>.documento.<discriminator>";
 				break;
 			case swagger_request_validator:
 				msgErroreAtteso = "* /allOf/1/properties/allegati/items/allOf/1: Discriminator field 'tipoDocumento' is required";
 				break;
-			}	
+			}
 			if(msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) {
 				throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+			}
+			// kappa: il messaggio elenca i property required mancanti in ordine variabile (yaml/alfabetico)
+			// quindi controlliamo che siano TUTTI presenti, indipendentemente dall'ordine.
+			if(openAPILibrary == OpenAPILibrary.kappa) {
+				for (String required : new String[]{"impronta", "tipoDocumento", "uri"}) {
+					if(!e.getMessage().contains(required)) {
+						throw new Exception("Errore: atteso che il messaggio contenga il property name '"+required+"': "+e.getMessage());
+					}
+				}
 			}
 			System.out.println("Test #4 completato\n\n");
 		}
@@ -826,7 +855,10 @@ public class OpenApi3ExtendedTest {
 				if(ct.contains("Uncorrect")) {
 					String erroreAtteso = null;
 					if(ct.contains("json")) {
-						erroreAtteso = "Unexpected character ('a' (code 97))";
+						// kappa usa il parser json-sKema con messaggi propri
+						erroreAtteso = (openAPILibrary == OpenAPILibrary.kappa)
+								? "Unexpected character found: a"
+								: "Unexpected character ('a' (code 97))";
 					}
 					else {
 						erroreAtteso = "Unclosed tag prova at 16 [character 17 line 1]";
@@ -954,7 +986,10 @@ public class OpenApi3ExtendedTest {
 				String msgErroreAtteso = null;
 				switch (openAPILibrary) {
 				case json_schema:
-					msgErroreAtteso = "1023 $.allegati[0].codiceOpzionaleNumerico: does not match the regex pattern ^\\d{6}$"; 
+					msgErroreAtteso = "1023 $.allegati[0].codiceOpzionaleNumerico: does not match the regex pattern ^\\d{6}$";
+					break;
+				case kappa:
+					msgErroreAtteso = "body.allegati.0.codiceOpzionaleNumerico: instance value did not match pattern ^\\d{6}$";
 					break;
 				case openapi4j:
 					msgErroreAtteso = "body.allegati.0.codiceOpzionaleNumerico: '"+valore+"' does not respect pattern '^\\d{6}$'.";
@@ -962,7 +997,7 @@ public class OpenApi3ExtendedTest {
 				case swagger_request_validator:
 					msgErroreAtteso = "- [ERROR][] [Path '/allegati/0/codiceOpzionaleNumerico'] ECMA 262 regex \"^\\d{6}$\" does not match input string \""+StringEscapeUtils.unescapeJava(valore)+"";
 					break;
-				}				
+				}
 				if(msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) {
 					System.out.println("\t (Valore:"+valore+") ERRORE!");
 					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'" +"\nTrovato invece: '"+e.getMessage()+"'");
@@ -973,13 +1008,16 @@ public class OpenApi3ExtendedTest {
 				case json_schema:
 					msgErroreAtteso = "1023 $.allegati[0].codiceOpzionaleNumerico: does not match the regex pattern ^\\d{6}$"; // uso solito messaggio
 					break;
+				case kappa:
+					msgErroreAtteso = "body.allegati.0.codiceOpzionaleNumerico: instance value did not match pattern ^\\d{6}$";
+					break;
 				case openapi4j:
 					msgErroreAtteso = "From: body.<allOf>.allegati.0.<items>.<#/components/schemas/AllegatoRiferimentoMixed>.<allOf>.<#/components/schemas/Allegato>.codiceOpzionaleNumerico.<pattern>";
 					break;
 				case swagger_request_validator:
 					msgErroreAtteso = "* /allOf/1/properties/allegati/items/allOf/0";
 					break;
-				}	
+				}
 				if(msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) {
 					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 				}
@@ -1070,22 +1108,28 @@ public class OpenApi3ExtendedTest {
 				case json_schema:
 					msgErroreAtteso = "1023 $.allegati[0].codiceOpzionaleCodiceFiscaleOrCodiceEsterno: does not match the regex pattern ^[a-zA-Z]{6}[0-9]{2}[a-zA-Z0-9]{3}[a-zA-Z0-9]{5}$|^[A-Z0-9]{3}\\d{3}$";
 					break;
+				case kappa:
+					msgErroreAtteso = "body.allegati.0.codiceOpzionaleCodiceFiscaleOrCodiceEsterno: instance value did not match pattern ^[a-zA-Z]{6}[0-9]{2}[a-zA-Z0-9]{3}[a-zA-Z0-9]{5}$|^[A-Z0-9]{3}\\d{3}$";
+					break;
 				case openapi4j:
 					msgErroreAtteso = "body.allegati.0.codiceOpzionaleCodiceFiscaleOrCodiceEsterno: '"+valore+"' does not respect pattern '^[a-zA-Z]{6}[0-9]{2}[a-zA-Z0-9]{3}[a-zA-Z0-9]{5}$|^[A-Z0-9]{3}\\d{3}$'.";
 					break;
 				case swagger_request_validator:
 					msgErroreAtteso = "- [ERROR][] [Path '/allegati/0/codiceOpzionaleCodiceFiscaleOrCodiceEsterno'] ECMA 262 regex \"^[a-zA-Z]{6}[0-9]{2}[a-zA-Z0-9]{3}[a-zA-Z0-9]{5}$|^[A-Z0-9]{3}\\d{3}$\" does not match input string \""+StringEscapeUtils.unescapeJava(valore);
 					break;
-				}	
+				}
 				if(msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) {
 					System.out.println("\t (Valore:"+valore+") ERRORE!");
 					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 				}
-				
+
 				msgErroreAtteso = null;
 				switch (openAPILibrary) {
 				case json_schema:
 					msgErroreAtteso = "1023 $.allegati[0].codiceOpzionaleCodiceFiscaleOrCodiceEsterno: does not match the regex pattern ^[a-zA-Z]{6}[0-9]{2}[a-zA-Z0-9]{3}[a-zA-Z0-9]{5}$|^[A-Z0-9]{3}\\d{3}$"; // uso solito messaggio
+					break;
+				case kappa:
+					msgErroreAtteso = "body.allegati.0.codiceOpzionaleCodiceFiscaleOrCodiceEsterno: instance value did not match pattern ^[a-zA-Z]{6}[0-9]{2}[a-zA-Z0-9]{3}[a-zA-Z0-9]{5}$|^[A-Z0-9]{3}\\d{3}$";
 					break;
 				case openapi4j:
 					msgErroreAtteso = "From: body.<allOf>.allegati.0.<items>.<#/components/schemas/AllegatoRiferimentoMixed>.<allOf>.<#/components/schemas/Allegato>.codiceOpzionaleCodiceFiscaleOrCodiceEsterno.<pattern>";
@@ -1093,7 +1137,7 @@ public class OpenApi3ExtendedTest {
 				case swagger_request_validator:
 					msgErroreAtteso = "* /allOf/1/properties/allegati/items/allOf/0:";
 					break;
-				}	
+				}
 				if(msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) {
 					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 				}
@@ -1184,6 +1228,9 @@ public class OpenApi3ExtendedTest {
 					switch (openAPILibrary) {
 					case json_schema:
 						atteso = "Content-Type '"+contentTypeTest10+"' (http response status '201') unsupported";
+						break;
+					case kappa:
+						atteso = "response.body: Content type '"+contentTypeTest10+"' is not allowed for body content.";
 						break;
 					case openapi4j:
 						atteso = "Content type '"+contentTypeTest10+"' is not allowed for body content. (code: 203)";
@@ -1287,6 +1334,7 @@ public class OpenApi3ExtendedTest {
 					case json_schema:
 						atteso = "Content-Type '"+contentTypeTest11+"' unsupported";
 						break;
+					case kappa:
 					case openapi4j:
 						atteso = "Content-Type '"+contentTypeTest11+"' unsupported"; // openapi4j non si accorge dell'errore, check risolto da govway
 						break;
@@ -1361,6 +1409,9 @@ public class OpenApi3ExtendedTest {
 					switch (openAPILibrary) {
 					case json_schema:
 						atteso = "Content-Type '"+contentTypeTest11+"' (http response status '201') unsupported";
+						break;
+					case kappa:
+						atteso = "response.body: Content type '"+contentTypeTest11+"' is not allowed for body content.";
 						break;
 					case openapi4j:
 						atteso = "Content type '"+contentTypeTest11+"' is not allowed for body content. (code: 203)";
@@ -1493,6 +1544,19 @@ public class OpenApi3ExtendedTest {
 							}
 						}
 						break;
+					case kappa:
+						// kappa segnala prima il missing Content-Type sul required, poi il missing body
+						if (required && httpEntity12.getContentType() == null) {
+							atteso = "body: Body content type cannot be determined. No 'Content-Type' header available.";
+						} else {
+							atteso = "body: Body is required but none provided.";
+						}
+						if(!required && contentTypeTest12!=null) {
+							// Il check sul content-type avviene a monte dell'engine in
+							// AbstractApiValidator.validateConformanceCheck (govway), allineato a openapi4j.
+							atteso = "Content-Type '"+contentTypeTest12+"' unsupported";
+						}
+						break;
 					case openapi4j:
 						atteso = "Body is required but none provided. (code: 200)";
 						if(!required && contentTypeTest12!=null) {
@@ -1555,13 +1619,16 @@ public class OpenApi3ExtendedTest {
 				case json_schema:
 					atteso = "Required body undefined";
 					break;
+				case kappa:
+					atteso = "response.body: Content type 'null' is not allowed for body content.";
+					break;
 				case openapi4j:
 					atteso = "Content type 'null' is not allowed for body content. (code: 203)";
 					break;
 				case swagger_request_validator:
 					atteso = "Required Content-Type is missing";
 					break;
-				}			
+				}
 				if(atteso!=null && !msg.contains(atteso)) {
 					String checkErrore = "Validazione "+tipoTest+" senza contenuto terminato con un errore diverso da quello atteso: '"+msg+"'";
 					System.out.println("\t "+checkErrore);
@@ -1704,13 +1771,16 @@ public class OpenApi3ExtendedTest {
 				case json_schema:
 					msgErroreAtteso = "1009 $.data: does not match the date pattern must be a valid RFC 3339 full-date";
 					break;
+				case kappa:
+					msgErroreAtteso = "body.data: instance does not match format 'date'";
+					break;
 				case openapi4j:
 					msgErroreAtteso = "body.data: Value '"+valore+"' does not match format 'date'. (code: 1007)";
 					break;
 				case swagger_request_validator:
 					msgErroreAtteso = "[ERROR][REQUEST][POST /documenti/datetest/2020-07-21 @body] [Path '/data'] String \""+valore+"\" is invalid against requested date format(s) yyyy-MM-dd";
 					break;
-				}	
+				}
 				if(msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) {
 					System.out.println("\t "+tipoTest+" ERRORE!");
 					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
@@ -1760,13 +1830,16 @@ public class OpenApi3ExtendedTest {
 				case json_schema:
 					msgErroreAtteso = "1009 $.data: does not match the date pattern must be a valid RFC 3339 full-date";
 					break;
+				case kappa:
+					msgErroreAtteso = "response.body.data: instance does not match format 'date'";
+					break;
 				case openapi4j:
 					msgErroreAtteso = "body.data: Value '"+valore+"' does not match format 'date'. (code: 1007)";
 					break;
 				case swagger_request_validator:
 					msgErroreAtteso = "[ERROR][RESPONSE][] [Path '/data'] String \""+valore+"\" is invalid against requested date format(s) yyyy-MM-dd";
 					break;
-				}	
+				}
 				if(msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) {
 					System.out.println("\t "+tipoTest+" ERRORE!");
 					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
@@ -1836,6 +1909,9 @@ public class OpenApi3ExtendedTest {
 				case json_schema:
 					msgErroreAtteso = "Invalid value '"+valore+"' in http header 'data_documento_header' (expected type 'date'): Found date '"+valore+"' has wrong format (see RFC 3339, section 5.6): Uncorrect format";
 					break;
+				case kappa:
+					msgErroreAtteso = "header.data_documento_header: instance does not match format 'date'";
+					break;
 				case openapi4j:
 					msgErroreAtteso = "data_documento_header: Value '"+valore+"' does not match format 'date'. (code: 1007)";
 					break;
@@ -1892,6 +1968,9 @@ public class OpenApi3ExtendedTest {
 				switch (openAPILibrary) {
 				case json_schema:
 					msgErroreAtteso = "Invalid value '"+valore+"' in http header 'data_documento_risposta_header' (expected type 'date'): Found date '"+valore+"' has wrong format (see RFC 3339, section 5.6): Uncorrect format";
+					break;
+				case kappa:
+					msgErroreAtteso = "response.header.data_documento_risposta_header: instance does not match format 'date'";
 					break;
 				case openapi4j:
 					msgErroreAtteso = "data_documento_risposta_header: Value '"+valore+"' does not match format 'date'. (code: 1007)";
@@ -1968,6 +2047,9 @@ public class OpenApi3ExtendedTest {
 				switch (openAPILibrary) {
 				case json_schema:
 					msgErroreAtteso = "Invalid value '"+valore+"' in query parameter 'data_documento_query' (expected type 'date'): Found date '"+valore+"' has wrong format (see RFC 3339, section 5.6): Uncorrect format";
+					break;
+				case kappa:
+					msgErroreAtteso = "query.data_documento_query: instance does not match format 'date'";
 					break;
 				case openapi4j:
 					msgErroreAtteso = "data_documento_query: Value '"+valore+"' does not match format 'date'. (code: 1007)";
@@ -2051,6 +2133,9 @@ public class OpenApi3ExtendedTest {
 				switch (openAPILibrary) {
 				case json_schema:
 					msgErroreAtteso = "Invalid value '"+valore+"' in dynamic path 'data_documento_path' (expected type 'date'): Found date '"+valore+"' has wrong format (see RFC 3339, section 5.6): Uncorrect format";
+					break;
+				case kappa:
+					msgErroreAtteso = "path.data_documento_path: instance does not match format 'date'";
 					break;
 				case openapi4j:
 					msgErroreAtteso = "data_documento_path: Value '"+valore+"' does not match format 'date'. (code: 1007)\n"
@@ -2258,6 +2343,9 @@ public class OpenApi3ExtendedTest {
 				case json_schema:
 					msgErroreAtteso = "$.data: does not match the date-time pattern must be a valid RFC 3339 date-time";
 					break;
+				case kappa:
+					msgErroreAtteso = "body.data: instance does not match format 'date-time'";
+					break;
 				case openapi4j:
 					msgErroreAtteso = "body.data: Value '"+valore+"' does not match format 'date-time'. (code: 1007)";
 					break;
@@ -2323,6 +2411,9 @@ public class OpenApi3ExtendedTest {
 				switch (openAPILibrary) {
 				case json_schema:
 					msgErroreAtteso = "$.data: does not match the date-time pattern must be a valid RFC 3339 date-time";
+					break;
+				case kappa:
+					msgErroreAtteso = "response.body.data: instance does not match format 'date-time'";
 					break;
 				case openapi4j:
 					msgErroreAtteso = "body.data: Value '"+valore+"' does not match format 'date-time'. (code: 1007)";
@@ -2442,6 +2533,9 @@ public class OpenApi3ExtendedTest {
 						msgErroreAtteso = msgErroreAtteso+ "Uncorrect format";
 					}
 					break;
+				case kappa:
+					msgErroreAtteso = "header.datetime_documento_header: instance does not match format 'date-time'";
+					break;
 				case openapi4j:
 					msgErroreAtteso = "datetime_documento_header: Value '"+valore+"' does not match format 'date-time'. (code: 1007)";
 					break;
@@ -2547,6 +2641,9 @@ public class OpenApi3ExtendedTest {
 					else {
 						msgErroreAtteso = msgErroreAtteso+ "Uncorrect format";
 					}
+					break;
+				case kappa:
+					msgErroreAtteso = "response.header.datetime_documento_risposta_header: instance does not match format 'date-time'";
 					break;
 				case openapi4j:
 					msgErroreAtteso = "datetime_documento_risposta_header: Value '"+valore+"' does not match format 'date-time'. (code: 1007)";
@@ -2677,6 +2774,9 @@ public class OpenApi3ExtendedTest {
 					else {
 						msgErroreAtteso = msgErroreAtteso+ "Uncorrect format";
 					}
+					break;
+				case kappa:
+					msgErroreAtteso = "query.datetime_documento_query: instance does not match format 'date-time'";
 					break;
 				case openapi4j:
 					msgErroreAtteso = "datetime_documento_query: Value '"+valore+"' does not match format 'date-time'. (code: 1007)";
@@ -2814,6 +2914,9 @@ public class OpenApi3ExtendedTest {
 					else {
 						msgErroreAtteso = msgErroreAtteso+ "Uncorrect format";
 					}
+					break;
+				case kappa:
+					msgErroreAtteso = "path.datetime_documento_path: instance does not match format 'date-time'";
 					break;
 				case openapi4j:
 					msgErroreAtteso = "datetime_documento_path: Value '"+valore+"' does not match format 'date-time'. (code: 1007)\n"
@@ -2974,6 +3077,13 @@ public class OpenApi3ExtendedTest {
 						if(code.intValue() != 200) {
 							msgErroreAtteso2 = "$: required property 'type' not found";
 						}
+					}
+					break;
+				case kappa:
+					msgErroreAtteso = "response.body: Content type '"+ct+"' is not allowed for body content.";
+					msgErroreAtteso2 = "response.body: required properties are missing: esito";
+					if(HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807.equals(ct) && code.intValue() != 200) {
+						msgErroreAtteso2 = "response.body: required properties are missing: type";
 					}
 					break;
 				case openapi4j:
@@ -3227,6 +3337,11 @@ public class OpenApi3ExtendedTest {
 					msgErroreAtteso2 = "$: required property 'title' not found";
 					msgErroreAtteso3 = "$: required property 'status' not found";
 					break;
+				case kappa:
+					msgErroreAtteso = "response.body: required properties are missing: type";
+					msgErroreAtteso2 = "response.body: required properties are missing: title";
+					msgErroreAtteso3 = "response.body: required properties are missing: status";
+					break;
 				case openapi4j:
 					msgErroreAtteso = "body: Field 'type' is required. (code: 1026)";
 					msgErroreAtteso2 = "body: Field 'title' is required. (code: 1026)";
@@ -3357,14 +3472,20 @@ public class OpenApi3ExtendedTest {
 					}
 					String erroreAtteso = null;
 					if(ct.contains("Uncorrect")) {
-						erroreAtteso = "Unexpected character ('a' (code 97))";
+						// kappa usa il parser json-sKema con messaggi propri
+						erroreAtteso = (openAPILibrary == OpenAPILibrary.kappa)
+								? "Unexpected character found: a"
+								: "Unexpected character ('a' (code 97))";
 					}
 					else if(!ct.contains("json")) {
-						
+
 						erroreAtteso = null;
 						switch (openAPILibrary) {
 						case json_schema:
 							// non non si passa qua
+							break;
+						case kappa:
+							erroreAtteso = "response.body: expected type: object, actual: string";
 							break;
 						case openapi4j:
 							erroreAtteso = "body: Type expected 'object', found 'string'. (code: 1027)";
@@ -3424,7 +3545,8 @@ public class OpenApi3ExtendedTest {
 		valori_test19.add(true); esito_test19.add(false);
 		
 		int TEST_NUMERO = 1;
-		// TODO: impostare a 2 per verificare ISSUE 'OP-1136' e risolvere problematica enum non quotata con i valori previsti in yaml1
+		// TODO: ISSUE 'OP-1136' non risolta né da openapi4j né da kappa (entrambi usano snakeyaml 1.1 che converte NO/YES/ON/OFF non quotati in boolean).
+		//       Impostare a 2 per verifica futura se le dipendenze yaml passeranno a 1.2.
 		//TEST_NUMERO = 2;
 		
 		for (int k = 0; k < TEST_NUMERO; k++) {
@@ -3511,20 +3633,28 @@ public class OpenApi3ExtendedTest {
 							msgErroreAtteso = "1029 $.stato2: "+tipoJava+" found, string expected";
 						}
 						break;
-					case openapi4j:
+					case kappa:
 						if(valore instanceof Integer) {
-							msgErroreAtteso = "Type expected 'string', found 'integer'. (code: 1027)"; 
+							msgErroreAtteso = "body.stato1: expected type: string, actual: integer";
 						}
 						else {
-							msgErroreAtteso = "body.stato1: Value '"+valore.toString().toUpperCase()+"' is not defined in the schema. (code: 1006)"; 
+							msgErroreAtteso = "body.stato1: the instance is not equal to any enum values";
+						}
+						break;
+					case openapi4j:
+						if(valore instanceof Integer) {
+							msgErroreAtteso = "Type expected 'string', found 'integer'. (code: 1027)";
+						}
+						else {
+							msgErroreAtteso = "body.stato1: Value '"+valore.toString().toUpperCase()+"' is not defined in the schema. (code: 1006)";
 						}
 						break;
 					case swagger_request_validator:
 						if(valore instanceof Integer) {
-							msgErroreAtteso = "[ERROR][REQUEST][POST /test-enum-no-yes @body] [Path '/stato1'] Instance value ("+valore+") not found in enum (possible values: [\"SI\",\"NO\""; 
+							msgErroreAtteso = "[ERROR][REQUEST][POST /test-enum-no-yes @body] [Path '/stato1'] Instance value ("+valore+") not found in enum (possible values: [\"SI\",\"NO\"";
 						}
 						else {
-							msgErroreAtteso = "[ERROR][REQUEST][POST /test-enum-no-yes @body] [Path '/stato1'] Instance value (\""+valore.toString().toUpperCase()+"\") not found in enum (possible values: [\"SI\",\"NO\",\"YES\",\"S\",\"N\""; 
+							msgErroreAtteso = "[ERROR][REQUEST][POST /test-enum-no-yes @body] [Path '/stato1'] Instance value (\""+valore.toString().toUpperCase()+"\") not found in enum (possible values: [\"SI\",\"NO\",\"YES\",\"S\",\"N\"";
 						}
 						break;
 					}
@@ -3541,12 +3671,20 @@ public class OpenApi3ExtendedTest {
 							msgErroreAtteso = "$.stato1: "+tipoJava+" found, string expected";
 						}
 						break;
+					case kappa:
+						if(valore instanceof Integer) {
+							msgErroreAtteso = "body.stato2: expected type: string, actual: integer";
+						}
+						else {
+							msgErroreAtteso = "body.stato2: the instance is not equal to any enum values";
+						}
+						break;
 					case openapi4j:
 						if(valore instanceof Integer) {
 							msgErroreAtteso = "Value '"+valore+"' is not defined in the schema. (code: 1006)";
 						}
 						else {
-							msgErroreAtteso = "body.stato2: Value '"+valore.toString().toLowerCase()+"' is not defined in the schema. (code: 1006)"; 
+							msgErroreAtteso = "body.stato2: Value '"+valore.toString().toLowerCase()+"' is not defined in the schema. (code: 1006)";
 						}
 						break;
 					case swagger_request_validator:
@@ -3597,9 +3735,17 @@ public class OpenApi3ExtendedTest {
 							msgErroreAtteso = "1029 $.stato2: "+tipoJava+" found, string expected";
 						}
 						break;
+					case kappa:
+						if(valore instanceof Integer) {
+							msgErroreAtteso = "response.body.stato1: expected type: string, actual: integer";
+						}
+						else {
+							msgErroreAtteso = "response.body.stato1: the instance is not equal to any enum values";
+						}
+						break;
 					case openapi4j:
 						if(valore instanceof Integer) {
-							msgErroreAtteso = "Type expected 'string', found 'integer'. (code: 1027)";									
+							msgErroreAtteso = "Type expected 'string', found 'integer'. (code: 1027)";
 						}
 						else {
 							msgErroreAtteso = "body.stato1: Value '"+valore.toString().toUpperCase()+"' is not defined in the schema. (code: 1006)";
@@ -3625,6 +3771,14 @@ public class OpenApi3ExtendedTest {
 						if(valore instanceof Integer) {
 							String tipoJava = valore instanceof Integer ? "integer" : "boolean";
 							msgErroreAtteso = "1029 $.stato1: "+tipoJava+" found, string expected";
+						}
+						break;
+					case kappa:
+						if(valore instanceof Integer) {
+							msgErroreAtteso = "response.body.stato2: expected type: string, actual: integer";
+						}
+						else {
+							msgErroreAtteso = "response.body.stato2: the instance is not equal to any enum values";
 						}
 						break;
 					case openapi4j:
@@ -3987,13 +4141,88 @@ public class OpenApi3ExtendedTest {
 		}
 		
 		System.out.println("Test #21 Discriminator completato\n\n");
-		
-		
-		
-		
-		
+
+
+		// ** Test #21bis: discriminator violato (pet_type non in mapping) ... **
+		// Esercita lo stesso set di risorse pets1..pets5 ma con un valore di pet_type non riconosciuto:
+		// le librerie che applicano il discriminator (openapi4j, swagger_request_validator e kappa,
+		// quest'ultima sia top-level sia nested grazie alla patch dedicata) devono respingere la
+		// richiesta con messaggio specifico. json_schema non gestisce il discriminator: lascia
+		// passare il body come oneOf normale.
+
+		System.out.println("Test #21bis Discriminator violato (pet_type=CatErrato) ...");
+		String catErrato = "{\"pet_type\": \"CatErrato\",  \"age\": 3}";
+		// Sotto-stringhe specifiche della libreria attesa nel messaggio di errore.
+		String discriminatorErrorFragmentOpenapi4j = "Schema selection can't be made for discriminator 'pet_type' with value 'CatErrato'";
+		String discriminatorErrorFragmentSwagger = "Discriminator field 'pet_type' value 'CatErrato' is not the name of a valid definition";
+		// kappa (post-patch dispatchDiscriminator nested): l'allineamento al wording di openapi4j
+		// avviene nello stesso BodyValidator.dispatchDiscriminator (riuso del flow).
+		String discriminatorErrorFragmentKappa = discriminatorErrorFragmentOpenapi4j;
+
+		for (int k = 0; k < NUMERO_RISORSE_PET; k++) {
+
+			int numeroPet = (k+1);
+			String testPet = "[test pets"+numeroPet+" CatErrato] ";
+			String testUrl21bis = testUrl21Base+numeroPet;
+
+			String contenuto = catErrato;
+			if(k==1 || k==2 || k==4) {
+				contenuto = "{\"altro\":\"descrizione generica\", \"pet\":"+catErrato+"}";
+			}
+
+			TextHttpRequestEntity httpEntity21bis = new TextHttpRequestEntity();
+			httpEntity21bis.setMethod(HttpRequestMethod.PATCH);
+			httpEntity21bis.setUrl(testUrl21bis);
+			Map<String, List<String>> headersBis = new HashMap<>();
+			TransportUtils.setHeader(headersBis, HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+			httpEntity21bis.setHeaders(headersBis);
+			httpEntity21bis.setContentType(HttpConstants.CONTENT_TYPE_JSON);
+			httpEntity21bis.setContent(contenuto);
+
+			String tipoTest = testPet+" ["+openAPILibrary+"] (url:"+testUrl21bis+") contenuto("+contenuto+")";
+
+			if (openAPILibrary == OpenAPILibrary.json_schema) {
+				// json_schema non implementa il discriminator: l'esito dipende dalla forma dello schema
+				// (oneOf=2 valid su pets1/4, oneOf=1 valid su pets2/3/5). Non oggetto di questa
+				// regressione, già skippato nel Test #21.
+				System.out.println("\t "+tipoTest+" skip (discriminator non gestito da "+openAPILibrary+")");
+				continue;
+			}
+
+			if (openAPILibrary == OpenAPILibrary.swagger_request_validator && swagger_validator_fallimenti_allof.contains(k)) {
+				// Stessa limitazione strutturale della libreria già documentata in Test #21:
+				// allOf+discriminator non gestito correttamente. Skip.
+				System.out.println("\t "+tipoTest+" skip (limitazione swagger_request_validator su allOf+discriminator)");
+				continue;
+			}
+
+			try {
+				apiValidatorOpenApi.validate(httpEntity21bis);
+				throw new Exception(tipoTest+" la validazione doveva fallire (discriminator violato)");
+			} catch(ValidatorException e) {
+				String error = e.getMessage();
+				String expectedFragment;
+				if (openAPILibrary == OpenAPILibrary.swagger_request_validator) {
+					expectedFragment = discriminatorErrorFragmentSwagger;
+				} else if (openAPILibrary == OpenAPILibrary.kappa) {
+					expectedFragment = discriminatorErrorFragmentKappa;
+				} else {
+					expectedFragment = discriminatorErrorFragmentOpenapi4j;
+				}
+				if (error == null || !error.contains(expectedFragment)) {
+					throw new Exception(tipoTest+" messaggio di errore inatteso (atteso contenesse '"+expectedFragment+"'): "+error, e);
+				}
+				System.out.println("\t "+tipoTest+" validate ko atteso ok");
+			}
+		}
+
+		System.out.println("Test #21bis Discriminator violato completato\n\n");
+
+
+
+
 		// ** Test per validazione json con wildcard nel subtype ... **
-		
+
 		System.out.println("Test #22 validazione json con wildcard nel subtype ...");
 		
 		// *** TEST per validazione json con wildcard nel subtype *** //
@@ -4164,6 +4393,169 @@ public class OpenApi3ExtendedTest {
 		System.out.println("Testsuite completata");
 	}
 
+	/**
+	 * Risolve la risorsa allegati.yaml: per kappa carica la variante 3.1 (con
+	 * exclusiveMaximum numerico e type-array al posto di nullable), per le altre
+	 * librerie carica l'originale 3.0.
+	 * @see <a href="../../../../validator/OpenAPILibrary.html#supportsOpenApi30()">OpenAPILibrary.supportsOpenApi30()</a>
+	 */
+	private static String allegatiResourcePath(OpenAPILibrary openAPILibrary) {
+		return OpenAPILibrary.kappa.equals(openAPILibrary)
+				? "/org/openspcoop2/utils/openapi/test/allegati_3_1.yaml"
+				: "/org/openspcoop2/utils/openapi/test/allegati.yaml";
+	}
+
+	/** Stessa logica di {@link #allegatiResourcePath} ma per la variante JSON dello stesso documento. */
+	private static String allegatiJsonResourcePath(OpenAPILibrary openAPILibrary) {
+		return OpenAPILibrary.kappa.equals(openAPILibrary)
+				? "/org/openspcoop2/utils/openapi/test/allegati_3_1.json"
+				: "/org/openspcoop2/utils/openapi/test/allegati.json";
+	}
+
+	/**
+	 * Risolve la risorsa openapi.yaml usata dal test "Schema#1": per kappa (che supporta solo
+	 * OpenAPI 3.1) carica la variante 3.1, per le altre librerie carica l'originale 3.0.
+	 */
+	private static String openapiSchemaResourcePath(OpenAPILibrary openAPILibrary) {
+		return OpenAPILibrary.kappa.equals(openAPILibrary)
+				? "/org/openspcoop2/utils/openapi/test/openapi_3_1.yaml"
+				: "/org/openspcoop2/utils/openapi/test/openapi.yaml";
+	}
+
+	/**
+	 * Risolve la risorsa openapi_all_methods.yaml usata dal test "Schema#6": per kappa la
+	 * variante 3.1, per le altre librerie l'originale 3.0.
+	 */
+	private static String openapiAllMethodsResourcePath(OpenAPILibrary openAPILibrary) {
+		return OpenAPILibrary.kappa.equals(openAPILibrary)
+				? "/org/openspcoop2/utils/openapi/test/openapi_all_methods_3_1.yaml"
+				: "/org/openspcoop2/utils/openapi/test/openapi_all_methods.yaml";
+	}
+
+	/**
+	 * Risolve la risorsa dollarRefAsPropertyName.yaml: per kappa la variante 3.1, per le altre
+	 * librerie l'originale 3.0.
+	 */
+	private static String dollarRefAsPropertyNameResourcePath(OpenAPILibrary openAPILibrary) {
+		return OpenAPILibrary.kappa.equals(openAPILibrary)
+				? "/org/openspcoop2/utils/openapi/test/dollarRefAsPropertyName_3_1.yaml"
+				: "/org/openspcoop2/utils/openapi/test/dollarRefAsPropertyName.yaml";
+	}
+
+	/** Stessa logica di {@link #allegatiResourcePath} ma per il file di definitions di TeamDigitale. */
+	private static String teamDigitaleDefinitionsResourcePath(OpenAPILibrary openAPILibrary) {
+		return OpenAPILibrary.kappa.equals(openAPILibrary)
+				? "/org/openspcoop2/utils/openapi/test/teamdigitale-openapi_definitions_3_1.yaml"
+				: "/org/openspcoop2/utils/service/schemi/standard/teamdigitale-openapi_definitions.yaml";
+	}
+
+	/**
+	 * Mappa un messaggio di errore openapi4j del test dynamic-path (Test #27) al formato emesso da kappa.
+	 * "Resource <METHOD> <path> not found in OpenAPI 3" è prodotto dal wrapper govway (KappaRequestValidator
+	 * e Openapi4jRequestValidator) in modo identico per entrambe le librerie -> passthrough.
+	 * "dynamic_id: '<X>' does not respect pattern '<P>'. (code: 1025)..." -> "path.dynamic_id: instance does not match pattern"
+	 * (formato json-sKema). Null/altri valori passthrough.
+	 */
+	private static String convertOpenapi4jDynamicPathToKappa(String op4jMsg) {
+		if (op4jMsg == null) {
+			return null;
+		}
+		// <param>: Type expected '<X>', found '<Y>'. (code: 1027) -> <prefix>.<param>: expected type: <X>, actual: <Y>
+		// (priorità sulla regex 'pattern' perché un messaggio multilinea openapi4j può contenere entrambi)
+		java.util.regex.Matcher mType = java.util.regex.Pattern.compile(
+				"(?m)^([A-Za-z_][A-Za-z0-9_]*): Type expected '([^']+)', found '([^']+)'\\.").matcher(op4jMsg);
+		if (mType.find()) {
+			return kappaParamPrefix(mType.group(1)) + mType.group(1) + ": expected type: " + mType.group(2) + ", actual: " + mType.group(3);
+		}
+		// <param>: Maximum is '<X>', found '<Y>'. (code: 1010) -> <prefix>.<param>: <Y> is greater than maximum <X>
+		java.util.regex.Matcher mMax = java.util.regex.Pattern.compile(
+				"(?m)^([A-Za-z_][A-Za-z0-9_]*): Maximum is '([^']+)', found '([^']+)'\\.").matcher(op4jMsg);
+		if (mMax.find()) {
+			return kappaParamPrefix(mMax.group(1)) + mMax.group(1) + ": " + mMax.group(3) + " is greater than maximum " + mMax.group(2);
+		}
+		// <param>: Minimum is '<X>', found '<Y>'. (code: 1015) -> <prefix>.<param>: <Y> is lower than minimum <X>
+		java.util.regex.Matcher mMin = java.util.regex.Pattern.compile(
+				"(?m)^([A-Za-z_][A-Za-z0-9_]*): Minimum is '([^']+)', found '([^']+)'\\.").matcher(op4jMsg);
+		if (mMin.find()) {
+			return kappaParamPrefix(mMin.group(1)) + mMin.group(1) + ": " + mMin.group(3) + " is lower than minimum " + mMin.group(2);
+		}
+		// <param>: Min length is '<X>', found '<Y>'. (code: 1017) -> <prefix>.<param>: actual string length <Y> is lower than minLength <X>
+		java.util.regex.Matcher mMinL = java.util.regex.Pattern.compile(
+				"(?m)^([A-Za-z_][A-Za-z0-9_]*): Min length is '([^']+)', found '([^']+)'\\.").matcher(op4jMsg);
+		if (mMinL.find()) {
+			return kappaParamPrefix(mMinL.group(1)) + mMinL.group(1) + ": actual string length " + mMinL.group(3) + " is lower than minLength " + mMinL.group(2);
+		}
+		// <param>: Max length is '<X>', found '<Y>'. (code: 1018) -> <prefix>.<param>: actual string length <Y> is greater than maxLength <X>
+		java.util.regex.Matcher mMaxL = java.util.regex.Pattern.compile(
+				"(?m)^([A-Za-z_][A-Za-z0-9_]*): Max length is '([^']+)', found '([^']+)'\\.").matcher(op4jMsg);
+		if (mMaxL.find()) {
+			return kappaParamPrefix(mMaxL.group(1)) + mMaxL.group(1) + ": actual string length " + mMaxL.group(3) + " is greater than maxLength " + mMaxL.group(2);
+		}
+		// <param>: More than 1 schema is valid. (code: 1023) -> <prefix>.<param>: expected 1 subschema to match out of N, M matched
+		java.util.regex.Matcher mOne = java.util.regex.Pattern.compile(
+				"(?m)^([A-Za-z_][A-Za-z0-9_]*): More than 1 schema is valid\\.").matcher(op4jMsg);
+		if (mOne.find()) {
+			return kappaParamPrefix(mOne.group(1)) + mOne.group(1) + ": expected 1 subschema to match";
+		}
+		// <param>: '<val>' does not respect pattern '<P>'. (code: 1025) -> <prefix>.<param>: instance value did not match pattern
+		java.util.regex.Matcher mPat = java.util.regex.Pattern.compile(
+				"(?m)^([A-Za-z_][A-Za-z0-9_]*): '[^']*' does not respect pattern").matcher(op4jMsg);
+		if (mPat.find()) {
+			return kappaParamPrefix(mPat.group(1)) + mPat.group(1) + ": instance value did not match pattern";
+		}
+		return op4jMsg;
+	}
+
+	/** openapi4j non distingue path/query/header/cookie nel nome del messaggio; kappa sì.
+	 *  Deduce il prefisso da convenzioni di naming usate nei test (es. nome contiene 'query'/'header'/'cookie').
+	 *  Fallback: 'path.' (caso più comune nei test di govway). */
+	private static String kappaParamPrefix(String paramName) {
+		String n = paramName.toLowerCase();
+		if (n.contains("query")) {
+			return "query.";
+		}
+		if (n.contains("header")) {
+			return "header.";
+		}
+		if (n.contains("cookie")) {
+			return "cookie.";
+		}
+		return "path.";
+	}
+
+	/**
+	 * Mappa un messaggio di errore openapi4j su format-string al formato emesso da kappa (json-sKema).
+	 * openapi4j: "body.email.0: Value 'info.it' does not match format 'email'. (code: 1007)"
+	 * kappa:     "body.email.0: instance does not match format 'email'"
+	 * Per la response kappa antepone "response." al "body."; SKIP/null sono passthrough.
+	 */
+	private static String convertOpenapi4jFormatStringToKappa(String op4jMsg, boolean isResponse) {
+		if (op4jMsg == null || "SKIP".equals(op4jMsg)) {
+			return op4jMsg;
+		}
+		String s = op4jMsg
+				.replaceAll("Value '[^']*' does not match format", "instance does not match format")
+				.replaceAll("\\. \\(code: 1007\\)$", "");
+		if (isResponse) {
+			s = s.replaceFirst("^body\\.", "response.body.");
+		}
+		return s;
+	}
+	private static void setDateTimeOptions(OpenAPILibrary openAPILibrary, boolean allowLowerCaseTZ, boolean allowSpaceSeparator) {
+		DateUtils.setDateTimeAllowLowerCaseTZ(allowLowerCaseTZ);
+		DateUtils.setDateTimeAllowSpaceSeparator(allowSpaceSeparator);
+		if(openAPILibrary == OpenAPILibrary.openapi4j) {
+			FormatValidator.setDateTimeAllowLowerCaseTZ(allowLowerCaseTZ);
+			FormatValidator.setDateTimeAllowSpaceSeparator(allowSpaceSeparator);
+		}
+		if(openAPILibrary == OpenAPILibrary.kappa) {
+			com.github.erosb.kappa.schema.validator.SKemaBackedJsonValidator.setDateTimeAllowLowerCaseTZ(allowLowerCaseTZ);
+			com.github.erosb.kappa.schema.validator.SKemaBackedJsonValidator.setDateTimeAllowSpaceSeparator(allowSpaceSeparator);
+		}
+		System.out.println("========== (case:"+allowLowerCaseTZ+" space:"+allowSpaceSeparator+") "+
+				"DateUtils(case:"+DateUtils.isDateTimeAllowLowerCaseTZ()+" space:"+DateUtils.isDateTimeAllowSpaceSeparator()+")"+
+				" FormatValidator(case:"+FormatValidator.isDateTimeAllowLowerCaseTZ()+" space:"+FormatValidator.isDateTimeAllowSpaceSeparator()+")");
+	}
 	
 	private static void checkErrorTest20(boolean esito, String tipoTest, Exception e, String tipologia, OpenAPILibrary openAPILibrary) throws Exception {
 		
@@ -4240,21 +4632,48 @@ public class OpenApi3ExtendedTest {
 				}	
 			}
 			break;
+		case kappa:
+			if(arrayValuesNull) {
+				// json-sKema (engine kappa) deduplica le failure omogenee sugli items di un array:
+				// emette UNA sola failure con instance al primo indice (.0). Quindi atteso solo .0.
+				String msgErroreAtteso = "body.array_nullable_values_optional.0: expected type: string, actual: null";
+				if(msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) {
+					System.out.println("\t "+tipoTest+" ERRORE!");
+					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+				}
+
+				msgErroreAtteso = "body.array_nullable_values_required.0: expected type: string, actual: null";
+				if(msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) {
+					System.out.println("\t "+tipoTest+" ERRORE!");
+					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+				}
+			}
+			else {
+				for (int k = 0; k < 2; k++) {
+					String suffix = (k==0 ? "required" : "optional");
+					String msgErroreAtteso = "body."+element+suffix+": expected type: "+type+", actual: null";
+					if(msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) {
+						System.out.println("\t "+tipoTest+" ERRORE!");
+						throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+					}
+				}
+			}
+			break;
 		case openapi4j:
 			if(arrayValuesNull) {
-				
+
 				String msgErroreAtteso = "body.array_nullable_values_optional.0: Null value is not allowed. (code: 1021)";
 				if(msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) {
 					System.out.println("\t "+tipoTest+" ERRORE!");
 					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 				}
-				
-				msgErroreAtteso = "body.array_nullable_values_optional.1: Null value is not allowed. (code: 1021)";				
+
+				msgErroreAtteso = "body.array_nullable_values_optional.1: Null value is not allowed. (code: 1021)";
 				if(msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) {
 					System.out.println("\t "+tipoTest+" ERRORE!");
 					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 				}
-				
+
 				msgErroreAtteso = "body.array_nullable_values_required.0: Null value is not allowed. (code: 1021)";
 				if(msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) {
 					System.out.println("\t "+tipoTest+" ERRORE!");
@@ -4270,7 +4689,7 @@ public class OpenApi3ExtendedTest {
 						throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 					}
 				}
-			}	
+			}
 			break;
 		case swagger_request_validator:
 			if(arrayValuesNull) {
@@ -4312,10 +4731,10 @@ public class OpenApi3ExtendedTest {
 			throws UtilsException, ProcessingException, URISyntaxException, Exception {
 		System.out.println("#### Verifica per validazione json con wildcard ("+validateWildcard+") nel subtype ####");
 		
-		URL url = OpenApi3ExtendedTest.class.getResource("/org/openspcoop2/utils/openapi/test/allegati.yaml");
+		URL url = OpenApi3ExtendedTest.class.getResource(allegatiResourcePath(openAPILibrary));
 		
 		ApiSchema apiSchemaYaml = new ApiSchema("teamdigitale-openapi_definitions.yaml", 
-				Utilities.getAsByteArray(OpenApi3ExtendedTest.class.getResourceAsStream("/org/openspcoop2/utils/service/schemi/standard/teamdigitale-openapi_definitions.yaml")), ApiSchemaType.YAML);
+				Utilities.getAsByteArray(OpenApi3ExtendedTest.class.getResourceAsStream(teamDigitaleDefinitionsResourcePath(openAPILibrary))), ApiSchemaType.YAML);
 					
 		IApiReader apiReaderOpenApi4j = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
 		ApiReaderConfig configOpenApi4j = new ApiReaderConfig();
@@ -4323,7 +4742,7 @@ public class OpenApi3ExtendedTest {
 		apiReaderOpenApi4j.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), new File(url.toURI()), configOpenApi4j, apiSchemaYaml);
 		Api apiOpenApi4j = apiReaderOpenApi4j.read();
 								
-		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(openAPILibrary.name());
 		OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
 		configO.setEmitLogError(logSystemOutError);
 		configO.setOpenApiValidatorConfig(new OpenapiLibraryValidatorConfig());
@@ -4331,7 +4750,11 @@ public class OpenApi3ExtendedTest {
 		configO.getOpenApiValidatorConfig().setValidateAPISpec(true);
 		configO.getOpenApiValidatorConfig().setMergeAPISpec(mergeSpec);
 		configO.getOpenApiValidatorConfig().setValidateWildcardSubtypeAsJson(validateWildcard);
-		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi4j, configO);
+		
+		ApiValidatorConfig config = ApiFactory.newApiValidatorConfig(openAPILibrary.name());
+		config.readProperties(configO.getOpenApiValidatorConfig()::getProperty);
+		
+		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi4j, config);
 
 		System.out.println("Test Richiesta...");
 
@@ -4346,9 +4769,18 @@ public class OpenApi3ExtendedTest {
 			requestS1.setHeaders(headersS1);
 			requestS1.setContent("{ a }");
 					
-			String erroreAttesoRichiesta = openAPILibrary == OpenAPILibrary.openapi4j ?
-					"body: Type expected 'object', found 'string'. (code: 1027)" : 
-					"[ERROR] Unable to parse JSON - Unexpected character ('a' (code 97)): was expecting double-quote to start field name";
+			String erroreAttesoRichiesta;
+			switch (openAPILibrary) {
+			case openapi4j:
+				erroreAttesoRichiesta = "body: Type expected 'object', found 'string'. (code: 1027)";
+				break;
+			case kappa:
+				erroreAttesoRichiesta = "body: expected type: object, actual: string";
+				break;
+			default:
+				erroreAttesoRichiesta = "[ERROR] Unable to parse JSON - Unexpected character ('a' (code 97)): was expecting double-quote to start field name";
+				break;
+			}
 			try {				
 				apiValidatorOpenApi4j.validate(requestS1);
 				
@@ -4379,9 +4811,18 @@ public class OpenApi3ExtendedTest {
 			httpResponseTestS1.setContentType(HttpConstants.CONTENT_TYPE_PLAIN);
 			httpResponseTestS1.setContent("{ a }");
 		
-			String erroreAttesoRisposta = openAPILibrary == OpenAPILibrary.openapi4j ?
-					"body: Type expected 'object', found 'string'. (code: 1027)" : 
-					"[ERROR] Unable to parse JSON - Unexpected character ('a' (code 97)): was expecting double-quote to start field name";
+			String erroreAttesoRisposta;
+			switch (openAPILibrary) {
+			case openapi4j:
+				erroreAttesoRisposta = "body: Type expected 'object', found 'string'. (code: 1027)";
+				break;
+			case kappa:
+				erroreAttesoRisposta = "response.body: expected type: object, actual: string";
+				break;
+			default:
+				erroreAttesoRisposta = "[ERROR] Unable to parse JSON - Unexpected character ('a' (code 97)): was expecting double-quote to start field name";
+				break;
+			}
 			try {				
 				apiValidatorOpenApi4j.validate(httpResponseTestS1);
 				
@@ -4508,7 +4949,10 @@ public class OpenApi3ExtendedTest {
 			throws UtilsException, ProcessingException, URISyntaxException, Exception {
 		System.out.println("#### Verifica OpenAPI YAML con mergeKey ####");
 		
-		URL url = OpenApi3ExtendedTest.class.getResource("/org/openspcoop2/utils/openapi/test/mergeKey.yaml");
+		String mergeKeyResource = (openAPILibrary == OpenAPILibrary.kappa)
+				? "/org/openspcoop2/utils/openapi/test/mergeKey_3_1.yaml"
+				: "/org/openspcoop2/utils/openapi/test/mergeKey.yaml";
+		URL url = OpenApi3ExtendedTest.class.getResource(mergeKeyResource);
 					
 		IApiReader apiReaderOpenApi4j = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
 		ApiReaderConfig configOpenApi4j = new ApiReaderConfig();
@@ -4526,14 +4970,18 @@ public class OpenApi3ExtendedTest {
 			System.out.println("Documento contenente anomalie: "+warning.getMessage());
 		}
 		
-		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(openAPILibrary.name());
 		OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
 		configO.setEmitLogError(logSystemOutError);
 		configO.setOpenApiValidatorConfig(new OpenapiLibraryValidatorConfig());
 		configO.getOpenApiValidatorConfig().setOpenApiLibrary(openAPILibrary);
 		configO.getOpenApiValidatorConfig().setValidateAPISpec(true);
 		configO.getOpenApiValidatorConfig().setMergeAPISpec(mergeSpec);
-		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi4j, configO);
+		
+		ApiValidatorConfig config = ApiFactory.newApiValidatorConfig(openAPILibrary.name());
+		config.readProperties(configO.getOpenApiValidatorConfig()::getProperty);
+		
+		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi4j, config);
 
 		System.out.println("Test Richiesta...");
 
@@ -4602,6 +5050,9 @@ public class OpenApi3ExtendedTest {
 			case json_schema:
 				erroreAttesoRisposta = "Content-Type 'application/json' (http response status '400') unsupported";
 				break;
+			case kappa:
+				erroreAttesoRisposta = "response.body: Content type 'application/json' is not allowed for body content.";
+				break;
 			case openapi4j:
 				erroreAttesoRisposta = "Content type 'application/json' is not allowed for body content. (code: 203)";
 				break;
@@ -4634,7 +5085,10 @@ public class OpenApi3ExtendedTest {
 			throws UtilsException, ProcessingException, URISyntaxException, Exception {
 		System.out.println("#### Verifica OpenAPI YAML con anchorRefKey ####");
 		
-		URL url = OpenApi3ExtendedTest.class.getResource("/org/openspcoop2/utils/openapi/test/anchorRefKey.yaml");
+		String anchorResource = (openAPILibrary == OpenAPILibrary.kappa)
+				? "/org/openspcoop2/utils/openapi/test/anchorRefKey_3_1.yaml"
+				: "/org/openspcoop2/utils/openapi/test/anchorRefKey.yaml";
+		URL url = OpenApi3ExtendedTest.class.getResource(anchorResource);
 					
 		IApiReader apiReaderOpenApi4j = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
 		ApiReaderConfig configOpenApi4j = new ApiReaderConfig();
@@ -4652,14 +5106,18 @@ public class OpenApi3ExtendedTest {
 			System.out.println("Documento contenente anomalie: "+warning.getMessage());
 		}
 		
-		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(openAPILibrary.name());
 		OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
 		configO.setEmitLogError(logSystemOutError);
 		configO.setOpenApiValidatorConfig(new OpenapiLibraryValidatorConfig());
 		configO.getOpenApiValidatorConfig().setOpenApiLibrary(openAPILibrary);
 		configO.getOpenApiValidatorConfig().setValidateAPISpec(true);
 		configO.getOpenApiValidatorConfig().setMergeAPISpec(mergeSpec);
-		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi4j, configO);
+		
+		ApiValidatorConfig config = ApiFactory.newApiValidatorConfig(openAPILibrary.name());
+		config.readProperties(configO.getOpenApiValidatorConfig()::getProperty);
+		
+		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi4j, config);
 
 		List<String> operations = new ArrayList<>();
 		operations.add("/opDefinisceAnchor");
@@ -4727,6 +5185,9 @@ public class OpenApi3ExtendedTest {
 				case json_schema:
 					erroreAttesoRisposta = "Content-Type 'application/json' (http response status '400') unsupported";
 					break;
+				case kappa:
+					erroreAttesoRisposta = "response.header.parameters: Missing required parameter 'X-RateLimit-Remaining'.";
+					break;
 				case openapi4j:
 					erroreAttesoRisposta = "Parameter 'X-RateLimit-Remaining' is required. (code: 206)";
 					break;
@@ -4760,7 +5221,7 @@ public class OpenApi3ExtendedTest {
 			throws UtilsException, ProcessingException, URISyntaxException, Exception {
 		System.out.println("#### Verifica OpenAPI YAML con '$ref' usato come NOME di proprieta' ####");
 
-		URL url = OpenApi3ExtendedTest.class.getResource("/org/openspcoop2/utils/openapi/test/dollarRefAsPropertyName.yaml");
+		URL url = OpenApi3ExtendedTest.class.getResource(dollarRefAsPropertyNameResourcePath(openAPILibrary));
 
 		boolean previousUseLegacy = OpenapiApi.isUseLegacyDollarRefValidation();
 		try {
@@ -4962,10 +5423,10 @@ public class OpenApi3ExtendedTest {
 			throws UtilsException, ProcessingException, URISyntaxException, Exception {
 		System.out.println("#### Verifica Multipart Request (stream:"+stream+" multipartOptimization:"+multipartOptimization+") ####");
 		
-		URL url = OpenApi3ExtendedTest.class.getResource("/org/openspcoop2/utils/openapi/test/allegati.yaml");
+		URL url = OpenApi3ExtendedTest.class.getResource(allegatiResourcePath(openAPILibrary));
 					
 		ApiSchema apiSchemaYaml = new ApiSchema("teamdigitale-openapi_definitions.yaml", 
-				Utilities.getAsByteArray(OpenApi3ExtendedTest.class.getResourceAsStream("/org/openspcoop2/utils/service/schemi/standard/teamdigitale-openapi_definitions.yaml")), ApiSchemaType.YAML);
+				Utilities.getAsByteArray(OpenApi3ExtendedTest.class.getResourceAsStream(teamDigitaleDefinitionsResourcePath(openAPILibrary))), ApiSchemaType.YAML);
 					
 		IApiReader apiReaderOpenApi4j = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
 		ApiReaderConfig configOpenApi4j = new ApiReaderConfig();
@@ -4974,7 +5435,7 @@ public class OpenApi3ExtendedTest {
 		
 		Api apiOpenApi4j = apiReaderOpenApi4j.read();
 								
-		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(openAPILibrary.name());
 		OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
 		configO.setEmitLogError(logSystemOutError);
 		configO.setOpenApiValidatorConfig(new OpenapiLibraryValidatorConfig());
@@ -4982,7 +5443,11 @@ public class OpenApi3ExtendedTest {
 		configO.getOpenApiValidatorConfig().setValidateAPISpec(true);
 		configO.getOpenApiValidatorConfig().setMergeAPISpec(mergeSpec);
 		configO.getOpenApiValidatorConfig().setValidateMultipartOptimization(multipartOptimization);
-		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi4j, configO);
+		
+		ApiValidatorConfig config = ApiFactory.newApiValidatorConfig(openAPILibrary.name());
+		config.readProperties(configO.getOpenApiValidatorConfig()::getProperty);
+		
+		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi4j, config);
 
 		String cat = "{\"pet_type\": \"Cat\",  \"age\": 3}";
 		String dog1 = "{\"pet_type\": \"Dog\",  \"bark\": false,  \"breed\": \"Dingo\" }";
@@ -5785,10 +6250,10 @@ public class OpenApi3ExtendedTest {
 			throws UtilsException, ProcessingException, URISyntaxException, Exception {
 		System.out.println("#### Verifica Multipart Request as array (stream:"+stream+" multipartOptimization:"+multipartOptimization+") ####");
 		
-		URL url = OpenApi3ExtendedTest.class.getResource("/org/openspcoop2/utils/openapi/test/allegati.yaml");
+		URL url = OpenApi3ExtendedTest.class.getResource(allegatiResourcePath(openAPILibrary));
 					
 		ApiSchema apiSchemaYaml = new ApiSchema("teamdigitale-openapi_definitions.yaml", 
-				Utilities.getAsByteArray(OpenApi3ExtendedTest.class.getResourceAsStream("/org/openspcoop2/utils/service/schemi/standard/teamdigitale-openapi_definitions.yaml")), ApiSchemaType.YAML);
+				Utilities.getAsByteArray(OpenApi3ExtendedTest.class.getResourceAsStream(teamDigitaleDefinitionsResourcePath(openAPILibrary))), ApiSchemaType.YAML);
 					
 		IApiReader apiReaderOpenApi4j = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
 		ApiReaderConfig configOpenApi4j = new ApiReaderConfig();
@@ -5797,14 +6262,18 @@ public class OpenApi3ExtendedTest {
 		
 		Api apiOpenApi4j = apiReaderOpenApi4j.read();
 								
-		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(openAPILibrary.name());
 		OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
 		configO.setEmitLogError(logSystemOutError);
 		configO.setOpenApiValidatorConfig(new OpenapiLibraryValidatorConfig());
 		configO.getOpenApiValidatorConfig().setOpenApiLibrary(openAPILibrary);
 		configO.getOpenApiValidatorConfig().setValidateAPISpec(true);
 		configO.getOpenApiValidatorConfig().setMergeAPISpec(mergeSpec);
-		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi4j, configO);
+		
+		ApiValidatorConfig config = ApiFactory.newApiValidatorConfig(openAPILibrary.name());
+		config.readProperties(configO.getOpenApiValidatorConfig()::getProperty);
+		
+		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi4j, config);
 
 		String cat = "{\"pet_type\": \"Cat\",  \"age\": 3}";
 		String dog1 = "{\"pet_type\": \"Dog\",  \"bark\": false,  \"breed\": \"Dingo\" }";
@@ -6060,10 +6529,10 @@ public class OpenApi3ExtendedTest {
 			throws UtilsException, ProcessingException, URISyntaxException, Exception {
 		System.out.println("#### Verifica Format String ####");
 		
-		URL url = OpenApi3ExtendedTest.class.getResource("/org/openspcoop2/utils/openapi/test/allegati.yaml");
+		URL url = OpenApi3ExtendedTest.class.getResource(allegatiResourcePath(openAPILibrary));
 					
 		ApiSchema apiSchemaYaml = new ApiSchema("teamdigitale-openapi_definitions.yaml", 
-				Utilities.getAsByteArray(OpenApi3ExtendedTest.class.getResourceAsStream("/org/openspcoop2/utils/service/schemi/standard/teamdigitale-openapi_definitions.yaml")), ApiSchemaType.YAML);
+				Utilities.getAsByteArray(OpenApi3ExtendedTest.class.getResourceAsStream(teamDigitaleDefinitionsResourcePath(openAPILibrary))), ApiSchemaType.YAML);
 					
 		IApiReader apiReaderOpenApi4j = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
 		ApiReaderConfig configOpenApi4j = new ApiReaderConfig();
@@ -6072,14 +6541,18 @@ public class OpenApi3ExtendedTest {
 		
 		Api apiOpenApi4j = apiReaderOpenApi4j.read();
 								
-		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(openAPILibrary.name());
 		OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
 		configO.setEmitLogError(logSystemOutError);
 		configO.setOpenApiValidatorConfig(new OpenapiLibraryValidatorConfig());
 		configO.getOpenApiValidatorConfig().setOpenApiLibrary(openAPILibrary);
 		configO.getOpenApiValidatorConfig().setValidateAPISpec(true);
 		configO.getOpenApiValidatorConfig().setMergeAPISpec(mergeSpec);
-		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi4j, configO);
+		
+		ApiValidatorConfig config = ApiFactory.newApiValidatorConfig(openAPILibrary.name());
+		config.readProperties(configO.getOpenApiValidatorConfig()::getProperty);
+		
+		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi4j, config);
 		
 		String emailCorrette = "\"info@govway.org\", \"Info@GovWay.org\", \"InfoTest@TEST.govway.org\"";
 		String uuidCorretti = "\"843bdd09-f3ad-11ec-8c78-5254003636a4\", \"000bdd09-f3ad-11ec-8c78-0004003636a4\"";
@@ -6302,6 +6775,10 @@ public class OpenApi3ExtendedTest {
 				msgErroreAttesoRichiesta = msgErroreAttesoTest_request_json_schema.get(i);
 				msgErroreAttesoRisposta =msgErroreAttesoTest_response_json_schema.get(i);
 				break;
+			case kappa:
+				msgErroreAttesoRichiesta = convertOpenapi4jFormatStringToKappa(msgErroreAttesoTest_request_openapi4j.get(i), false);
+				msgErroreAttesoRisposta = convertOpenapi4jFormatStringToKappa(msgErroreAttesoTest_response_openapi4j.get(i), true);
+				break;
 			default:
 				break;
 			}
@@ -6390,10 +6867,10 @@ public class OpenApi3ExtendedTest {
 			throws UtilsException, ProcessingException, URISyntaxException, Exception {
 		System.out.println("#### Verifica Dynamic Path ####");
 		
-		URL url = OpenApi3ExtendedTest.class.getResource("/org/openspcoop2/utils/openapi/test/allegati.yaml");
+		URL url = OpenApi3ExtendedTest.class.getResource(allegatiResourcePath(openAPILibrary));
 					
 		ApiSchema apiSchemaYaml = new ApiSchema("teamdigitale-openapi_definitions.yaml", 
-				Utilities.getAsByteArray(OpenApi3ExtendedTest.class.getResourceAsStream("/org/openspcoop2/utils/service/schemi/standard/teamdigitale-openapi_definitions.yaml")), ApiSchemaType.YAML);
+				Utilities.getAsByteArray(OpenApi3ExtendedTest.class.getResourceAsStream(teamDigitaleDefinitionsResourcePath(openAPILibrary))), ApiSchemaType.YAML);
 					
 		IApiReader apiReaderOpenApi4j = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
 		ApiReaderConfig configOpenApi4j = new ApiReaderConfig();
@@ -6402,14 +6879,18 @@ public class OpenApi3ExtendedTest {
 		
 		Api apiOpenApi4j = apiReaderOpenApi4j.read();
 								
-		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(openAPILibrary.name());
 		OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
 		configO.setEmitLogError(logSystemOutError);
 		configO.setOpenApiValidatorConfig(new OpenapiLibraryValidatorConfig());
 		configO.getOpenApiValidatorConfig().setOpenApiLibrary(openAPILibrary);
 		configO.getOpenApiValidatorConfig().setValidateAPISpec(true);
 		configO.getOpenApiValidatorConfig().setMergeAPISpec(mergeSpec);
-		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi4j, configO);
+		
+		ApiValidatorConfig config = ApiFactory.newApiValidatorConfig(openAPILibrary.name());
+		config.readProperties(configO.getOpenApiValidatorConfig()::getProperty);
+		
+		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi4j, config);
 		
 		String parameter1 = "080.253.61401A";
 		
@@ -6669,6 +7150,9 @@ public class OpenApi3ExtendedTest {
 			case json_schema:
 				msgErroreAttesoRichiesta = erroreAtteso_json_schema.get(i);
 				break;
+			case kappa:
+				msgErroreAttesoRichiesta = convertOpenapi4jDynamicPathToKappa(erroreAtteso_openapi4j.get(i));
+				break;
 			default:
 				break;
 			}
@@ -6745,10 +7229,10 @@ public class OpenApi3ExtendedTest {
 			throws UtilsException, ProcessingException, URISyntaxException, Exception {
 		System.out.println("#### Verifica ComposedSchemaParameters ####");
 		
-		URL url = OpenApi3ExtendedTest.class.getResource("/org/openspcoop2/utils/openapi/test/allegati.yaml");
+		URL url = OpenApi3ExtendedTest.class.getResource(allegatiResourcePath(openAPILibrary));
 					
 		ApiSchema apiSchemaYaml = new ApiSchema("teamdigitale-openapi_definitions.yaml", 
-				Utilities.getAsByteArray(OpenApi3ExtendedTest.class.getResourceAsStream("/org/openspcoop2/utils/service/schemi/standard/teamdigitale-openapi_definitions.yaml")), ApiSchemaType.YAML);
+				Utilities.getAsByteArray(OpenApi3ExtendedTest.class.getResourceAsStream(teamDigitaleDefinitionsResourcePath(openAPILibrary))), ApiSchemaType.YAML);
 					
 		IApiReader apiReaderOpenApi4j = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
 		ApiReaderConfig configOpenApi4j = new ApiReaderConfig();
@@ -6757,14 +7241,18 @@ public class OpenApi3ExtendedTest {
 		
 		Api apiOpenApi4j = apiReaderOpenApi4j.read();
 								
-		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(openAPILibrary.name());
 		OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
 		configO.setEmitLogError(logSystemOutError);
 		configO.setOpenApiValidatorConfig(new OpenapiLibraryValidatorConfig());
 		configO.getOpenApiValidatorConfig().setOpenApiLibrary(openAPILibrary);
 		configO.getOpenApiValidatorConfig().setValidateAPISpec(true);
 		configO.getOpenApiValidatorConfig().setMergeAPISpec(mergeSpec);
-		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi4j, configO);
+		
+		ApiValidatorConfig config = ApiFactory.newApiValidatorConfig(openAPILibrary.name());
+		config.readProperties(configO.getOpenApiValidatorConfig()::getProperty);
+		
+		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi4j, config);
 		
 
 	
@@ -8230,6 +8718,9 @@ public class OpenApi3ExtendedTest {
 			case json_schema:
 				msgErroreAtteso = msgErroreAttesoTest_json_schema.get(i);
 				break;
+			case kappa:
+				msgErroreAtteso = convertOpenapi4jDynamicPathToKappa(msgErroreAttesoTest_openapi4j.get(i));
+				break;
 			default:
 				break;
 			}
@@ -8345,10 +8836,10 @@ public class OpenApi3ExtendedTest {
 			throws UtilsException, ProcessingException, URISyntaxException, Exception {
 		System.out.println("#### Verifica Format Accept ####");
 		
-		URL url = OpenApi3ExtendedTest.class.getResource("/org/openspcoop2/utils/openapi/test/allegati.yaml");
+		URL url = OpenApi3ExtendedTest.class.getResource(allegatiResourcePath(openAPILibrary));
 					
 		ApiSchema apiSchemaYaml = new ApiSchema("teamdigitale-openapi_definitions.yaml", 
-				Utilities.getAsByteArray(OpenApi3ExtendedTest.class.getResourceAsStream("/org/openspcoop2/utils/service/schemi/standard/teamdigitale-openapi_definitions.yaml")), ApiSchemaType.YAML);
+				Utilities.getAsByteArray(OpenApi3ExtendedTest.class.getResourceAsStream(teamDigitaleDefinitionsResourcePath(openAPILibrary))), ApiSchemaType.YAML);
 					
 		IApiReader apiReaderOpenApi4j = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
 		ApiReaderConfig configOpenApi4j = new ApiReaderConfig();
@@ -8357,14 +8848,18 @@ public class OpenApi3ExtendedTest {
 		
 		Api apiOpenApi4j = apiReaderOpenApi4j.read();
 								
-		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(openAPILibrary.name());
 		OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
 		configO.setEmitLogError(logSystemOutError);
 		configO.setOpenApiValidatorConfig(new OpenapiLibraryValidatorConfig());
 		configO.getOpenApiValidatorConfig().setOpenApiLibrary(openAPILibrary);
 		configO.getOpenApiValidatorConfig().setValidateAPISpec(true);
 		configO.getOpenApiValidatorConfig().setMergeAPISpec(mergeSpec);
-		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi4j, configO);
+		
+		ApiValidatorConfig config = ApiFactory.newApiValidatorConfig(openAPILibrary.name());
+		config.readProperties(configO.getOpenApiValidatorConfig()::getProperty);
+		
+		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi4j, config);
 		
 
 		String path = "/documenti/eef036bf-48af-11ed-97b9-005056ae1884";
@@ -8461,13 +8956,13 @@ public class OpenApi3ExtendedTest {
 		URL url = null;
 		ApiSchema apiSchema = null;
 		if(yamlTest) {
-			url = OpenApi3ExtendedTest.class.getResource("/org/openspcoop2/utils/openapi/test/allegati.yaml");
+			url = OpenApi3ExtendedTest.class.getResource(allegatiResourcePath(openAPILibrary));
 						
 			apiSchema = new ApiSchema("teamdigitale-openapi_definitions.yaml", 
-					Utilities.getAsByteArray(OpenApi3ExtendedTest.class.getResourceAsStream("/org/openspcoop2/utils/service/schemi/standard/teamdigitale-openapi_definitions.yaml")), ApiSchemaType.YAML);
+					Utilities.getAsByteArray(OpenApi3ExtendedTest.class.getResourceAsStream(teamDigitaleDefinitionsResourcePath(openAPILibrary))), ApiSchemaType.YAML);
 		}
 		else {
-			url = OpenApi3ExtendedTest.class.getResource("/org/openspcoop2/utils/openapi/test/allegati.json");
+			url = OpenApi3ExtendedTest.class.getResource(allegatiJsonResourcePath(openAPILibrary));
 		}
 					
 		IApiReader apiReaderOpenApi4j = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
@@ -8492,14 +8987,18 @@ public class OpenApi3ExtendedTest {
 			throw new UtilsException("Operation not found");
 		}
 		
-		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(openAPILibrary.name());
 		OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
 		configO.setEmitLogError(logSystemOutError);
 		configO.setOpenApiValidatorConfig(new OpenapiLibraryValidatorConfig());
 		configO.getOpenApiValidatorConfig().setOpenApiLibrary(openAPILibrary);
 		configO.getOpenApiValidatorConfig().setValidateAPISpec(true);
 		configO.getOpenApiValidatorConfig().setMergeAPISpec(mergeSpec);
-		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi4j, configO);
+		
+		ApiValidatorConfig config = ApiFactory.newApiValidatorConfig(openAPILibrary.name());
+		config.readProperties(configO.getOpenApiValidatorConfig()::getProperty);
+		
+		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi4j, config);
 		
 		
 		String pathPrefix = "/test-tipo-vuto/";

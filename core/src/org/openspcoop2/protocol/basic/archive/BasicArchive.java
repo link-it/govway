@@ -72,6 +72,8 @@ import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.utils.rest.ApiFactory;
+import org.openspcoop2.utils.rest.BaseSpecConfig;
+import org.openspcoop2.utils.rest.BaseSpecValidator;
 import org.openspcoop2.utils.rest.ApiFormats;
 import org.openspcoop2.utils.rest.ApiReaderConfig;
 import org.openspcoop2.utils.rest.IApiReader;
@@ -428,8 +430,14 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 			
 	         Api api = apiReader.read();
 	         try {
-	        	 boolean usingFromSetProtocolInfo = true;
-	        	 api.validate(usingFromSetProtocolInfo, false);
+	        	 // import archivio: serve solo la validazione strutturale base
+	        	 // (lo storico usingFromSetProtocolInfo=true saltava il meta-schema openapi4j)
+	        	 BaseSpecConfig specConfig = new BaseSpecConfig();
+	        	 specConfig.setUsingFromSetProtocolInfo(true);
+	        	 specConfig.setValidateBodyParameterElement(false);
+	        	 BaseSpecValidator specValidator = new BaseSpecValidator();
+	        	 specValidator.init(log, specConfig);
+	        	 specValidator.validate(log, api);
 	         }catch(ParseWarningException warning) {
 	        	 // ignore
 	         }

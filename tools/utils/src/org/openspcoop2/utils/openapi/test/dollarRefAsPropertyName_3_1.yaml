@@ -1,0 +1,116 @@
+openapi: 3.1.0
+info:
+  version: "1.0.0"
+  title: |-
+    Test '$ref' usato come NOME di proprieta'
+  x-summary: >-
+    Test '$ref' usato come NOME di proprieta'
+  description: |-
+    Documento che modella un sottoinsieme di JSON-like dove la chiave '$ref'
+    compare come NOME di una proprieta' di uno schema (e dunque NON e' un
+    JSON Reference da risolvere). La validazione del documento OpenAPI deve
+    considerare solo i veri JSON Reference (valore stringa) ed ignorare le
+    proprieta' che hanno '$ref' come nome.
+
+tags:
+  - name: catalogo
+    description: |-
+      Operazioni del catalogo
+
+servers:
+  - description: ambiente di test
+    url: https://example.invalid
+
+paths:
+
+  /opCreaDescrittore:
+    post:
+      tags:
+        - catalogo
+      summary: Crea un nuovo descrittore di modello
+      description: |
+        Il descrittore puo' includere la proprieta' '$ref' (NOME di proprieta',
+        non JSON Reference) come placeholder applicativo.
+      operationId: creaDescrittore
+      requestBody:
+        description: descrittore da creare
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DescrittoreModello'
+      responses:
+        '200':
+          description: descrittore creato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EsitoOperazione'
+
+  /opValidaDescrittore:
+    post:
+      tags:
+        - catalogo
+      summary: Valida un descrittore di modello
+      description: |
+        Il descrittore inviato puo' contenere la proprieta' '$ref' (NOME di
+        proprieta'); la risposta restituisce il descrittore canonicalizzato.
+      operationId: validaDescrittore
+      requestBody:
+        description: descrittore da validare
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DescrittoreModello'
+      responses:
+        '200':
+          description: descrittore validato e canonicalizzato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DescrittoreModello'
+
+components:
+  schemas:
+
+    DescrittoreModello:
+      type: object
+      description: |-
+        Descrittore di un modello dati. La proprieta' '$ref' contiene una
+        stringa che, all'interno del dominio applicativo, rappresenta un
+        identificativo di sostituzione (NON un JSON Reference).
+      properties:
+        $id:
+          type: string
+          description: identificativo del descrittore
+        $ref:
+          type: string
+          description: placeholder applicativo (NON e' un JSON Reference)
+        $schema:
+          type: string
+          description: versione dello schema del descrittore
+        nome:
+          type: string
+          description: nome leggibile del modello
+        attributi:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/DescrittoreModello'
+      required:
+        - $id
+        - nome
+
+    EsitoOperazione:
+      type: object
+      description: esito sintetico dell'operazione
+      properties:
+        idGenerato:
+          type: string
+          description: identificativo assegnato al descrittore creato
+        accettato:
+          type: boolean
+          description: indica se il descrittore e' stato accettato
+      required:
+        - idGenerato
+        - accettato

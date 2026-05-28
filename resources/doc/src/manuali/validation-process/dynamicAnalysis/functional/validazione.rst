@@ -11,6 +11,7 @@ I sorgenti sono disponibili in `protocolli/trasparente/testsuite/karate/src <htt
 - `validazione.multipart <https://github.com/link-it/govway/tree/3.4.x/protocolli/trasparente/testsuite/karate/src/org/openspcoop2/core/protocolli/trasparente/testsuite/validazione/multipart>`_; vengono verificati i messaggi multipart descritti in `Swagger.io - Multipart Requests <https://swagger.io/docs/specification/describing-request-body/multipart-requests/>`_ e `Swagger.io - File Upload <https://swagger.io/docs/specification/describing-request-body/file-upload/>`_.
 - `validazione.swagger_request_validator <https://github.com/link-it/govway/tree/3.4.x/protocolli/trasparente/testsuite/karate/src/org/openspcoop2/core/protocolli/trasparente/testsuite/validazione/swagger_request_validator>`_; viene verificata la funzionalità di validazione dei contenuti attuata tramite la libreria `swagger-request-validator <https://bitbucket.org/atlassian/swagger-request-validator>`_. Tra i vari test è presente anche la validazione tramite API complesse di dimensioni notevoli.
 - `validazione.rpc <https://github.com/link-it/govway/tree/3.4.x/protocolli/trasparente/testsuite/karate/src/org/openspcoop2/core/protocolli/trasparente/testsuite/validazione/rpc>`_; verifica il funzionamento con messaggi definiti in interfacce WSDL con 'style RPC' e 'use literal' o 'encoded'. I test oltre alla validazione verificano anche il riconoscimento dell'operazione tramite l'ottimizzazione 'soap reader'.
+- `validazione.rest <https://github.com/link-it/govway/tree/3.4.x/protocolli/trasparente/testsuite/karate/src/org/openspcoop2/core/protocolli/trasparente/testsuite/validazione/rest>`_; verifica la validazione dei messaggi REST con le librerie 'json_schema', 'openapi4j', 'swagger-request-validator' e 'kappa' sui formati Swagger 2.0, OpenAPI 3.0 e OpenAPI 3.1.
 - `other.api_grandi <https://github.com/link-it/govway/tree/3.4.x/protocolli/trasparente/testsuite/karate/src/org/openspcoop2/core/protocolli/trasparente/testsuite/other/api_grandi>`_; verifica l'utilizzo di API REST con un numero elevato di risorse.
 
 Evidenze disponibili in:
@@ -18,8 +19,9 @@ Evidenze disponibili in:
 - `risultati dei test del gruppo 'validazione.parametri' <https://jenkins.link.it/govway4-testsuite/trasparente_karate/ValidazioneParametri/html/>`_
 - `risultati dei test del gruppo 'validazione.multipart' <https://jenkins.link.it/govway4-testsuite/trasparente_karate/ValidazioneMultipart/html/>`_
 - `risultati dei test del gruppo 'validazione.swagger_request_validator' <https://jenkins.link.it/govway4-testsuite/trasparente_karate/ValidazioneSwaggerRequestValidator/html/>`_
-- `risultati dei test del gruppo 'validazione.rpc' <https://jenkins.link.it/govway4-testsuite/trasparente_karate/ValidazioneRPC/html/>`_ 
-- `risultati dei test del gruppo 'other.api_grandi' <https://jenkins.link.it/govway4-testsuite/trasparente_karate/OtherApiGrandi/html/>`_ 
+- `risultati dei test del gruppo 'validazione.rpc' <https://jenkins.link.it/govway4-testsuite/trasparente_karate/ValidazioneRPC/html/>`_
+- `risultati dei test del gruppo 'validazione.rest' <https://jenkins.link.it/govway4-testsuite/trasparente_karate/ValidazioneRest/html/>`_
+- `risultati dei test del gruppo 'other.api_grandi' <https://jenkins.link.it/govway4-testsuite/trasparente_karate/OtherApiGrandi/html/>`_
 
 Sono inoltre disponibili ulteriori test realizzati tramite il tool `TestNG <https://testng.org/doc/>`_ che verificano la validazione effettuata tramite interfaccia WSDL e schemi XSD di un servizio dummy definito tramite molteplici port-types, operations e stili/usi differenti (wrapped document literal, rpc literal, encoded ...) che consentono di validare la conformità dei messaggi sui vari stili.
 

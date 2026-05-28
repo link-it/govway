@@ -15,7 +15,7 @@ La govwayConsole, all'atto della registrazione di Soggetti (Enti/Organizzazioni)
 Il profilo ModI prevede che i servizi siano basati su SOAP o REST fornendo sempre un descrittore formale delle interfacce basato su uno specifico IDL (Interface Description Language):
 
 - WSDL 1.1 e successivi, per la descrizione delle interfacce SOAP
-- OpenAPI 3.0 e successivi, per la descrizione delle interfacce REST
+- OpenAPI 3.0.x, per la descrizione delle interfacce REST
 
 Nel processo di configurazione, tramite la govwayConsole, sono inoltre tenuti in considerazione tutti gli aspetti previsti dalle Linee Guida:
 

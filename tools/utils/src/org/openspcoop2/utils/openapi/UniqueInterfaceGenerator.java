@@ -39,8 +39,11 @@ import org.slf4j.Logger;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import io.swagger.v3.core.util.Json31;
+import io.swagger.v3.core.util.Yaml31;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.SpecVersion;
 import io.swagger.v3.oas.models.callbacks.Callback;
 import io.swagger.v3.oas.models.examples.Example;
 import io.swagger.v3.oas.models.headers.Header;
@@ -403,12 +406,20 @@ public class UniqueInterfaceGenerator {
 		
 		JsonNode jsonNode = null;
 		String s = null;
+		// Per OpenAPI 3.1 il modello Java di swagger-models usa il campo 'types' (Set) invece di 'type' (String);
+		// i MixIn di swagger-core registrati in YAMLUtils/JSONUtils non gestiscono correttamente la serializzazione
+		// di tale campo e producono 'schema: {}' per schemi con 'type: object'. Usiamo i mapper 3.1-aware di swagger-core.
+		boolean is31 = api.getSpecVersion() == SpecVersion.V31;
 		if(config.yaml) {
-			s = YAMLUtils.getObjectWriter().writeValueAsString(api);
+			s = is31
+					? Yaml31.mapper().writer().writeValueAsString(api)
+					: YAMLUtils.getObjectWriter().writeValueAsString(api);
 			jsonNode = YAMLUtils.getInstance().getAsNode(s);
 		}
 		else {
-			s = JSONUtils.getObjectWriter().writeValueAsString(api);
+			s = is31
+					? Json31.mapper().writer().writeValueAsString(api)
+					: JSONUtils.getObjectWriter().writeValueAsString(api);
 			jsonNode = JSONUtils.getInstance().getAsNode(s);
 		}
 		
@@ -417,7 +428,20 @@ public class UniqueInterfaceGenerator {
 		// Sono dichiarazioni di properties (es. modellazione di JSON Schema/JSON Forms), non JSON Reference.
 		List<String> refPath = engine.getStringMatchPattern(jsonNode, "$..$ref", true);
 		String schemaRebuild = s;
-		
+
+		// Ordino i ref per lunghezza decrescente: nella passata 'false' (replace senza virgolette)
+		// la sostituzione di un ref "corto" che e' sottostringa di uno "lungo" rovinerebbe il lungo.
+		// Caso reale (OAS 3.1, Yaml31.mapper serializza i $ref senza virgolette):
+		//   $ref: http://host/test/test_import.yaml#/components/schemas/X
+		//   $ref: ./test_import.yaml#/components/schemas/X
+		// Senza ordinamento, il secondo (caso speciale './' → 'test_import.yaml#/...') verrebbe
+		// processato prima e sostituirebbe la sottostringa anche dentro l'URL HTTP, producendo
+		// 'http://host/test/#/components/schemas/X' che a sua volta rompe il resolver kappa.
+		if (refPath != null && refPath.size() > 1) {
+			refPath = new java.util.ArrayList<>(refPath);
+			refPath.sort((a, b) -> Integer.compare(b.length(), a.length()));
+		}
+
 		// Faccio due passate, prima con i caratteri " e ' in modo da risolvere le ref precisamente,
 		// poiche' l'algoritmo e' soggetto a problemi quando ci sono nomi inclusi in altri ref. Es.:
 		// test.yaml#...
@@ -474,23 +498,30 @@ public class UniqueInterfaceGenerator {
 	private static String replace(List<String> refPath, String schemaRebuild, boolean usePrefixChar) {
 		if(refPath!=null && !refPath.isEmpty()) {
 			for (String ref : refPath) {
-				
+
 				//System.out.println("...............ANALIZZO REF ["+ref+"]");
-				
+
 				if(schemaRebuild.contains(ref)) {
-					
+
 					//System.out.println(" PROCESS ["+ref+"]");
-					
+
 					if(ref.startsWith("#")==false) {
-						
+
 						//System.out.println(" PROCESS INTERNAL ["+ref+"]");
-						
+
 						String destra = ref.substring(ref.indexOf("#"));
+						// Yaml31.mapper (OAS 3.1) serializza $ref senza virgolette: la passata 'false'
+						// del replace deve quotare il replacement quando inizia con '#', altrimenti il
+						// yaml '$ref: #/components/...' viene letto come '$ref:' (null) + commento yaml,
+						// rompendo la spec lato kappa (errore "expected string, found null").
+						// Per OAS 3.0 (YAMLUtils.getObjectWriter già quota i $ref) la passata 'false'
+						// non matcha nulla, quindi il quoting aggiuntivo è inerte e retrocompatibile.
+						String destraForReplace = destra.startsWith("#") ? ("\""+destra+"\"") : destra;
 						String refForReplace = ref;
-						
+
 						//System.out.println("destra ["+destra+"]");
 						//System.out.println("destra ["+refForReplace+"]");
-						
+
 						if(usePrefixChar) {
 							String rep = "\""+refForReplace+"\"";
 							String destraRep = "\""+destra+"\"";
@@ -505,16 +536,16 @@ public class UniqueInterfaceGenerator {
 						}
 						else {
 							while(schemaRebuild.contains(refForReplace)) {
-								schemaRebuild = schemaRebuild.replace(refForReplace, destra);
+								schemaRebuild = schemaRebuild.replace(refForReplace, destraForReplace);
 							}
 						}
-						
+
 						if(refForReplace.startsWith("./") && refForReplace.length()>2) {
-							
+
 							//System.out.println("CASO SPECIALE!");
-							
+
 							refForReplace = refForReplace.substring(2);
-							
+
 							if(usePrefixChar) {
 								String rep = "\""+refForReplace+"\"";
 								String destraRep = "\""+destra+"\"";
@@ -529,11 +560,11 @@ public class UniqueInterfaceGenerator {
 							}
 							else {
 								while(schemaRebuild.contains(refForReplace)) {
-									schemaRebuild = schemaRebuild.replace(refForReplace, destra);
+									schemaRebuild = schemaRebuild.replace(refForReplace, destraForReplace);
 								}
 							}
 						}
-						
+
 					}
 				}
 			}

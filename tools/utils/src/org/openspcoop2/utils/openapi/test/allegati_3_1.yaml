@@ -1,0 +1,3662 @@
+openapi: 3.1.0
+servers:
+  - url: http://petstore.swagger.io/api
+    description: esempio
+
+info:
+  x-api-id: https://esempioId
+  title: Document Retrieve
+  x-summary: Servizio demo che consente di comprendere le varie modalità di scambio degli allegati
+  description: Servizio demo che consente di comprendere le varie modalità di scambio degli allegati
+  version: "0.1"
+  contact:
+    email: info@link.it
+  license:
+    name: GPL v3.0
+    url: 'https://www.gnu.org/licenses/gpl-3.0.txt'
+
+tags:
+  - name: in-line
+    description: Consente di inviare o ricevere documenti in-line
+  - name: by-riferimento-id
+    description: Consente di inviare o ricevere documenti per riferimento tramite un id
+  - name: by-riferimento-uri
+    description: Consente di inviare o ricevere documenti per riferimento tramite una uri relativa o assolutata
+  - name: mixed
+    description: Consente di inviare o ricevere documenti sia in-line che per riferimento tramite un id o tramite una uri relativa o assolutata
+  - name: document-retrieve
+    description: Consente di recuperare un documento, per il quale si è ricevuto un riferimento
+  - name: empty
+    description: Test su body vuoti
+  - name: date
+    description: Test su date
+  - name: enum
+    description: test su enumeration
+  - name: nullable
+    description: test su nullable serialization 
+  - name: discriminator
+    description: test su discriminator 
+  - name: multipart
+    description: test su multipart  
+  - name: format-string
+    description: test su vari format string
+  - name: dynamic-path
+    description: test su path dinamico
+  - name: composed-schema-parameters
+    description: test con parametri con composed schema
+  - name: tipo-vuoto
+    description: test con schema vuoti
+    
+paths:
+          
+  /documenti/in-line/receive:
+    post:
+      tags:
+        - in-line
+      description: Esempio di ricezione dei documenti (in-line) nella risposta
+      operationId: ReceiveDocumentInLine
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RichiestaEsempio'
+      responses:
+        "200":
+          description: |-
+            Risposta contenente documenti
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatiInLine'
+        "400":
+          $ref: '/tmp/teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: './teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'file:/teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'file://home/teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'http://prova.org/teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'https://example.org/altroPath/teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'file:/prova/teamdigitale-openapi_definitions.yaml#/components/responses/default'
+                   
+  /documenti/in-line/send:
+    post:
+      tags:
+        - in-line
+      description: Esempio di invio dei documenti (in-line) nella richiesta
+      operationId: SendDocumentInLine
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DatiInLine'
+      responses:
+        "200":
+          description: |-
+            Risposta di esempio
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RispostaEsempio'
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+  /documenti/in-line/sendOptional:
+    post:
+      tags:
+        - in-line
+      description: Esempio di invio dei documenti (in-line) nella richiesta
+      operationId: SendDocumentInLineOptional
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DatiInLine'
+      responses:
+        "200":
+          description: |-
+            Risposta di esempio
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RispostaEsempio'
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+  /documenti/in-line/sendRequired:
+    post:
+      tags:
+        - in-line
+      description: Esempio di invio dei documenti (in-line) nella richiesta
+      operationId: SendDocumentInLineRequired
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DatiInLine'
+      responses:
+        "200":
+          description: |-
+            Risposta di esempio
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RispostaEsempio'
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+  /documenti/by-riferimento-id/receive:
+    post:
+      tags:
+        - by-riferimento-id
+      description: Esempio di ricezione dei documenti (by-riferimento-id) nella risposta
+      operationId: ReceiveDocumentByRiferimentoId
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RichiestaEsempio'
+      responses:
+        "200":
+          description: |-
+            Risposta contenente documenti
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatiRiferimentoId'
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+                   
+  /documenti/by-riferimento-id/send:
+    post:
+      tags:
+        - by-riferimento-id
+      description: Esempio di invio dei documenti (by-riferimento-id) nella richiesta
+      operationId: SendDocumentByRiferimentoId
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DatiRiferimentoId'
+      responses:
+        "200":
+          description: |-
+            Esempio di Risposta
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RispostaEsempio'
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+   
+   
+  /documenti/by-riferimento-uri/receive:
+    post:
+      tags:
+        - by-riferimento-uri
+      description: Esempio di ricezione dei documenti (by-riferimento-uri) nella risposta
+      operationId: ReceiveDocumentByRiferimentoUri
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RichiestaEsempio'
+      responses:
+        "200":
+          description: |-
+            Risposta contenente documenti
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatiRiferimentoUri'
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+                   
+  /documenti/by-riferimento-uri/send:
+    post:
+      tags:
+        - by-riferimento-uri
+      description: Esempio di invio dei documenti (by-riferimento-uri) nella richiesta
+      operationId: SendDocumentByRiferimentoUri
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DatiRiferimentoUri'
+      responses:
+        "200":
+          description: |-
+            Esempio di Risposta
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RispostaEsempio'
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'  
+
+
+  /documenti/mixed/receive:
+    post:
+      tags:
+        - mixed
+      description: Esempio di ricezione dei documenti nella risposta
+      operationId: ReceiveDocumentMixed
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RichiestaEsempio'
+      responses:
+        "200":
+          description: |-
+            Risposta contenente documenti
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatiRiferimentoMixed'
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+                   
+  /documenti/mixed/send:
+    post:
+      tags:
+        - mixed
+      description: Esempio di invio dei documenti nella richiesta
+      operationId: SendDocumentByRiferimentoMixed
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DatiRiferimentoMixed'
+      responses:
+        "200":
+          description: |-
+            Esempio di Risposta
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RispostaEsempio'
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+  /documenti/testbase64/{id_documento}:
+    parameters:
+    - $ref: '#/components/parameters/id_documento'
+    post:
+      tags:
+        - document-retrieve
+      description: Esempio di invio dei documenti nella richiesta
+      operationId: SendDocumentDynamicPathBase64
+      requestBody:
+        content:
+          application/octet-stream:
+            schema:
+                type: string
+                format: base64
+      responses:
+        "200":
+          description: |-
+            Esempio di Risposta
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: base64
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'     
+
+  /documenti/test/{id_documento}:
+    parameters:
+    - $ref: '#/components/parameters/id_documento'
+    post:
+      tags:
+        - document-retrieve
+      description: Esempio di invio dei documenti nella richiesta
+      operationId: SendDocumentDynamicPath
+      requestBody:
+        content:
+          application/json:
+            schema:
+                type: string
+                format: binary
+      responses:
+        "200":
+          description: |-
+            Esempio di Risposta
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RispostaEsempio'
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'     
+     
+       
+  /documenti/{id_documento}:
+    parameters:
+    - $ref: '#/components/parameters/id_documento'
+    get:
+      tags:
+        - document-retrieve
+      description: Consente di recuperare un documento, per il quale si è ricevuto un riferimento
+      operationId: DownloadDocument
+      parameters:
+      - $ref: 'teamdigitale-openapi_definitions.yaml#/components/parameters/limit'
+      - $ref: 'teamdigitale-openapi_definitions.yaml#/components/parameters/offset'
+      responses:
+        "200":
+          description: |-
+            Il documento richiesto
+          content:
+            application/*:
+              schema:
+                type: string
+                format: binary
+            text/*:
+              schema:
+                type: string
+                format: binary
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+  /documenti/list:
+    get:
+      tags:
+        - document-retrieve
+      parameters:
+        - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/q"
+        - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/limit"
+        - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/offset"
+      summary: Elenco allegati di una API
+      operationId: findAllApiAllegati
+      description: Questa operazione consente di ottenere gli allegati di una API identificata dal nome e dalla versione
+      responses: 
+        "200":
+          description: Ricerca eseguita correttamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListaApiAllegati"
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+  /documenti/noresponse/send:
+    post:
+      tags:
+        - empty
+      description: Esempio di invio dei documenti nella richiesta
+      operationId: noresponse
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DatiRiferimentoMixed'
+      responses:
+        "201":
+          description: |-
+            Esempio di Risposta
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+          
+  /documenti/norequestresponse/send:
+    post:
+      tags:
+        - empty
+      description: Esempio di invio dei documenti nella richiesta
+      operationId: norequestresponse
+      responses:
+        "201":
+          description: |-
+            Esempio di Risposta
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+  /documenti/datetest/{data_documento_path}:
+    post:
+      tags:
+        - date
+      description: Esempio
+      operationId: datetest
+      parameters:
+      - $ref: '#/components/parameters/data_documento_path'
+      - $ref: '#/components/parameters/data_documento_query'
+      - $ref: '#/components/parameters/data_documento_header'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OggettoConData'
+      responses:
+        "200":
+          description: |-
+            Esempio di Risposta
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OggettoConData'
+          headers:
+             data_documento_risposta_header:
+               schema:
+                 type: string
+                 format: date  
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'    
+          
+  /documenti/datetimetest/{datetime_documento_path}:
+    post:
+      tags:
+        - date
+      description: Esempio
+      operationId: datetimetest
+      parameters:
+      - $ref: '#/components/parameters/datetime_documento_path'
+      - $ref: '#/components/parameters/datetime_documento_query'
+      - $ref: '#/components/parameters/datetime_documento_header'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OggettoConDatetime'
+      responses:
+        "200":
+          description: |-
+            Esempio di Risposta
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OggettoConDatetime'
+          headers:
+             datetime_documento_risposta_header:
+               schema:
+                 type: string
+                 format: date-time  
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'    
+
+  /oggetti/{id_documento}:
+    parameters:
+    - $ref: '#/components/parameters/id_documento'
+    get:
+      tags:
+        - document-retrieve
+      description: Consente di recuperare un oggetto, per il quale si è ricevuto un riferimento
+      operationId: oggetti_id
+      parameters:
+      - $ref: 'teamdigitale-openapi_definitions.yaml#/components/parameters/limit'
+      - $ref: 'teamdigitale-openapi_definitions.yaml#/components/parameters/offset'
+      responses:
+        "200":
+          description: |-
+            L'oggetto richiesto
+          content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/MResponseType'
+        # Uso versione InLine solamente perche' senno il test non mi carica gli oggetti correttamente essendoci dei riferimenti non validi
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemInLineOriginaleTeamDigitale' # non essendoci nessun elemento obbligatorio e non definendo additionalProperties puo' essere scambiato per qualsiasi altro problem detail
+          description: Bad Request
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemInLineModificatoConElementoRequired'
+          description: Other
+
+  /problem/{id_documento}:
+    parameters:
+    - $ref: '#/components/parameters/id_documento'
+    get:
+      tags:
+        - document-retrieve
+      description: Consente di recuperare un oggetto, per il quale si è ricevuto un riferimento
+      operationId: problem_id
+      responses:
+        "204":
+          description: |-
+            L'oggetto richiesto
+        # Uso versione InLine solamente perche' senno il test non mi carica gli oggetti correttamente essendoci dei riferimenti non validi
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemExt' # definizione con almeno un elemento identificativo obbligatorio
+          description: Bad Request
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemInLineOriginaleTeamDigitale'
+          description: Other
+
+  /oggettislashfinale/:
+    get:
+      tags:
+        - document-retrieve
+      description: Consente di recuperare un oggetto, per il quale si è ricevuto un riferimento
+      operationId: oggettislashfinale
+      responses:
+        "200":
+          description: |-
+            L'oggetto richiesto
+          content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/MResponseType'
+
+  /:
+    get:
+      tags:
+        - document-retrieve
+      description: Consente di recuperare un oggetto, per il quale si è ricevuto un riferimento
+      operationId: slash
+      responses:
+        "200":
+          description: |-
+            L'oggetto richiesto
+          content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/MResponseType'
+
+  /documenti/qualsiasi/{id_documento}:
+    parameters:
+    - $ref: '#/components/parameters/id_documento'
+    post:
+      tags:
+        - document-retrieve
+      description: Esempio di postare un documento, per il quale si è ricevuto un riferimento
+      operationId: qualsiasi_doc_id_richiesta
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: object
+      responses:
+        "200":
+          description: |-
+            Risposta contenente documenti
+          content:
+            '*/*':
+              schema:
+                type: object
+    get:
+      tags:
+        - document-retrieve
+      description: Consente di recuperare un documento, per il quale si è ricevuto un riferimento
+      operationId: qualsiasi_doc_id
+      parameters:
+      - $ref: 'teamdigitale-openapi_definitions.yaml#/components/parameters/limit'
+      - $ref: 'teamdigitale-openapi_definitions.yaml#/components/parameters/offset'
+      responses:
+        "200":
+          description: |-
+            Il documento richiesto
+          content:
+            '*/*':
+              schema:
+                type: object
+        "201":
+          description: |-
+            Il documento richiesto
+          content:
+            '*/*':
+              schema:
+                type: object
+        "204":
+          description: |-
+            Il documento richiesto
+          content:
+            '*/*':
+              schema:
+                type: object
+        '400':
+          description: default response
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: default response
+          content:
+            '*/*':
+              schema:
+                type: object
+        default:
+          description: default response
+          content:
+            '*/*':
+              schema:
+                type: object
+  
+  /test-enum-no-yes:
+    post:
+      tags:
+        - enum
+      description: Esempio di scambio di messaggi che contengono enumeration con valori no e yes
+      operationId: testOggettoConEnumNoYes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OggettoConEnumNoYes'
+      responses:
+        "200":
+          description: |-
+            Risposta contenente documenti
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OggettoConEnumNoYes'
+        "400":
+          $ref: '/tmp/teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: './teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'file:/teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'file://home/teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'http://prova.org/teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'https://example.org/altroPath/teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'file:/prova/teamdigitale-openapi_definitions.yaml#/components/responses/default'  
+          
+  /test-enum-no-yes-yaml1:
+    post:
+      tags:
+        - enum
+      description: Esempio di scambio di messaggi che contengono enumeration con valori no e yes
+      operationId: testOggettoConEnumNoYesYaml1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OggettoConEnumNoYesNonQuotatiBugEreditatoYaml1'
+      responses:
+        "200":
+          description: |-
+            Risposta contenente documenti
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OggettoConEnumNoYesNonQuotatiBugEreditatoYaml1'
+        "400":
+          $ref: '/tmp/teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: './teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'file:/teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'file://home/teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'http://prova.org/teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'https://example.org/altroPath/teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'file:/prova/teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+  /test-enum-no-yes-yaml1-onOff:
+    post:
+      tags:
+        - enum
+      description: Esempio di scambio di messaggi che contengono enumeration con valori no e yes
+      operationId: testOggettoConEnumNoYesYaml1_onOff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OggettoConEnumNoYesNonQuotatiBugEreditatoYaml1OnOff'
+      responses:
+        "200":
+          description: |-
+            Risposta contenente documenti
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OggettoConEnumNoYesNonQuotatiBugEreditatoYaml1OnOff'
+        "400":
+          $ref: '/tmp/teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: './teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'file:/teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'file://home/teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'http://prova.org/teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'https://example.org/altroPath/teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'file:/prova/teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+  /test-nullable:
+    post:
+      tags:
+        - nullable
+      description: Esempio di scambio di messaggi che contengono nullable object
+      operationId: testNullable
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MessaggioClaimNullable'
+      responses:
+        "200":
+          description: |-
+            Risposta contenente documenti
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessaggioClaimNullable'
+        "400":
+          $ref: '/tmp/teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: './teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'file:/teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'file://home/teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'http://prova.org/teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'https://example.org/altroPath/teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'file:/prova/teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+  /test-not-nullable:
+    post:
+      tags:
+        - nullable
+      description: Esempio di scambio di messaggi che contengono nullable object
+      operationId: testNotNullable
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MessaggioClaimNotNullable'
+      responses:
+        "200":
+          description: |-
+            Risposta contenente documenti
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessaggioClaimNotNullable'
+        "400":
+          $ref: '/tmp/teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: './teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'file:/teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'file://home/teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'http://prova.org/teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'https://example.org/altroPath/teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'file:/prova/teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+  /test-not-nullable-default:
+    post:
+      tags:
+        - nullable
+      description: Esempio di scambio di messaggi che contengono nullable object
+      operationId: testNotNullableDefault
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MessaggioClaimNotNullableDefault'
+      responses:
+        "200":
+          description: |-
+            Risposta contenente documenti
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessaggioClaimNotNullableDefault'
+        "400":
+          $ref: '/tmp/teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: './teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'file:/teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'file://home/teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'http://prova.org/teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'https://example.org/altroPath/teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'file:/prova/teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+  /pets1:
+    patch:
+      tags:
+       - discriminator
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/Cat'
+                - $ref: '#/components/schemas/Dog'
+              discriminator:
+                propertyName: pet_type
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/Cat'
+                  - $ref: '#/components/schemas/Dog'
+                discriminator:
+                  propertyName: pet_type
+  /pets2:
+    patch:
+      tags:
+       - discriminator
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pet2'
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet2'
+
+  /pets3:
+    patch:
+      tags:
+       - discriminator
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pet3'
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet3'
+                
+  /pets4:
+    patch:
+      tags:
+       - discriminator
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pet4'
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet4'
+
+  /pets5:
+    patch:
+      tags:
+       - discriminator
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pet5'
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet5'
+               
+  /documenti/multipart/form-data/strict:
+    post:
+      tags:
+        - multipart
+      description: Esempio di invio documenti (multipart) con content-type multipart/form-data
+      operationId: SendDocumentMultipartFormDataStrict
+      requestBody:
+        content:
+          multipart/form-data: # Media type
+            schema:            # Request payload
+              type: object
+              required:
+                  - id
+                  - metadati
+                  - docPdf
+              properties:      # Request parts
+                id:            # Part 1 (int value)
+                  type: integer
+                  format: int32
+                metadati:       # Part2 (object)
+                  $ref: '#/components/schemas/Pet2'
+                docPdf:  # Part 3 (an pdf)
+                  type: string
+                  format: binary
+                docPdf2:  # Part 4 (an pdf codificato in base64)
+                  type: string
+                  format: base64
+              additionalProperties: false
+            encoding: # The same level as schema
+              id: 
+                contentType: text/plain
+                headers: # Custom headers
+                  X-Custom-Header:
+                    description: This is a custom header
+                    schema:
+                      type: integer
+                      format: int32
+              metadati: 
+                contentType: application/json
+              docPdf: 
+                contentType: application/pdf
+              docPdf2: 
+                contentType: aapplication/zip, application/pdf
+      responses:
+        "200":
+          description: |-
+            Risposta contenente documenti
+          content:
+           multipart/form-data: # Media type
+            schema:            # Response payload
+              type: object
+              required:
+                  - id
+                  - metadati
+                  - docPdf
+              properties:      # Request parts
+                id:            # Part 1 (int value)
+                  type: integer
+                  format: int32
+                metadati:       # Part2 (object)
+                  $ref: '#/components/schemas/Pet2'
+                docPdf:  # Part 3 (an pdf)
+                  type: string
+                  format: binary
+                docPdf2:  # Part 4 (an pdf codificato in base64)
+                  type: string
+                  format: base64
+              additionalProperties: false
+            encoding: # The same level as schema
+              id: 
+                contentType: text/plain
+                headers: # Custom headers
+                  X-Custom-Header:
+                    description: This is a custom header
+                    schema:
+                      type: integer
+                      format: int32
+              metadati: 
+                contentType: application/json
+              docPdf: 
+                contentType: application/pdf
+              docPdf2: 
+                contentType: application/zip, application/pdf
+        "400":
+          $ref: '/tmp/teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: './teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'file:/teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'file://home/teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'http://prova.org/teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'https://example.org/altroPath/teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'file:/prova/teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+  /documenti/multipart/mixed/strict:
+    post:
+      tags:
+        - multipart
+      description: Esempio di invio documenti (multipart) con content-type multipart/mixed
+      operationId: SendDocumentMultipartMixedStrict
+      requestBody:
+        content:
+          multipart/mixed: # Media type
+            schema:            # Request payload
+              type: object
+              required:
+                  - id
+                  - metadati
+                  - docPdf
+              properties:      # Request parts
+                id:            # Part 1 (int value)
+                  type: integer
+                  format: int32
+                metadati:       # Part2 (object)
+                  type: object
+                  required:
+                     - altro
+                     - pet
+                  properties:
+                    altro:
+                      type: string
+                    pet:
+                      type: object
+                      oneOf:
+                                    - $ref: '#/components/schemas/Dog2'
+                                    - $ref: '#/components/schemas/Cat2'
+                      discriminator:
+                                    propertyName: pet_type
+                                    mapping:
+                                      'Dog': '#/components/schemas/Dog2'
+                                      'Cat': '#/components/schemas/Cat2'
+                docPdf:  # Part 3 (an pdf)
+                  type: string
+                  format: binary
+                docPdf2:  # Part 4 (an pdf codificato in base64)
+                  type: string
+                  format: base64
+              additionalProperties: false
+            encoding: # The same level as schema
+              id: 
+                contentType: text/plain
+                headers: # Custom headers
+                  X-Custom-Header:
+                    description: This is a custom header
+                    schema:
+                      type: integer
+                      format: int32
+              metadati: 
+                contentType: application/json
+              docPdf: 
+                contentType: application/pdf
+              docPdf2: 
+                contentType: application/zip, application/pdf
+      responses:
+        "200":
+          description: |-
+            Risposta contenente documenti
+          content:
+           multipart/mixed: # Media type
+            schema:            # Response payload
+              type: object
+              required:
+                  - id
+                  - metadati
+                  - docPdf
+              properties:      # Request parts
+                id:            # Part 1 (int value)
+                  type: integer
+                  format: int32
+                metadati:       # Part2 (object)
+                  type: object
+                  required:
+                     - altro
+                     - pet
+                  properties:
+                    altro:
+                      type: string
+                    pet:
+                      type: object
+                      oneOf:
+                                    - $ref: '#/components/schemas/Dog2'
+                                    - $ref: '#/components/schemas/Cat2'
+                      discriminator:
+                                    propertyName: pet_type
+                                    mapping:
+                                      'Dog': '#/components/schemas/Dog2'
+                                      'Cat': '#/components/schemas/Cat2'
+                docPdf:  # Part 3 (an pdf)
+                  type: string
+                  format: binary
+                docPdf2:  # Part 4 (an pdf codificato in base64)
+                  type: string
+                  format: base64
+              additionalProperties: false
+            encoding: # The same level as schema
+              id: 
+                contentType: text/plain
+                headers: # Custom headers
+                  X-Custom-Header:
+                    description: This is a custom header
+                    schema:
+                      type: integer
+                      format: int32
+              metadati: 
+                contentType: application/json
+              docPdf: 
+                contentType: application/pdf
+              docPdf2: 
+                contentType: application/zip, application/pdf
+        "400":
+          $ref: '/tmp/teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: './teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'file:/teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'file://home/teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'http://prova.org/teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'https://example.org/altroPath/teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'file:/prova/teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+  /documenti/multipart/form-data-and-mixed/strict:
+    post:
+      tags:
+        - multipart
+      description: Esempio di invio documenti (multipart) con content-type multipart/form-data
+      operationId: SendDocumentMultipartFormDataMixedStrict
+      requestBody:
+        content:
+          multipart/form-data: # Media type
+            schema:            # Request payload
+              type: object
+              required:
+                  - id
+                  - metadati
+                  - docPdf
+              properties:      # Request parts
+                id:            # Part 1 (int value)
+                  type: integer
+                  format: int32
+                metadati:       # Part2 (object)
+                  $ref: '#/components/schemas/Pet2'
+                docPdf:  # Part 3 (an pdf)
+                  type: string
+                  format: binary
+                docPdf2:  # Part 4 (an pdf codificato in base64)
+                  type: string
+                  format: base64
+              additionalProperties: false
+            encoding: # The same level as schema
+              id: 
+                contentType: text/plain
+                headers: # Custom headers
+                  X-Custom-Header:
+                    description: This is a custom header
+                    schema:
+                      type: integer
+                      format: int32
+              metadati: 
+                contentType: application/json
+              docPdf: 
+                contentType: application/pdf
+              docPdf2: 
+                contentType: aapplication/zip, application/pdf
+          multipart/mixed: # Media type
+            schema:            # Request payload
+              type: object
+              required:
+                  - id
+                  - metadati
+                  - docPdf
+              properties:      # Request parts
+                id:            # Part 1 (int value)
+                  type: integer
+                  format: int32
+                metadati:       # Part2 (object)
+                  $ref: '#/components/schemas/Pet2'
+                docPdf:  # Part 3 (an pdf)
+                  type: string
+                  format: binary
+                docPdf2:  # Part 4 (an pdf codificato in base64)
+                  type: string
+                  format: base64
+              additionalProperties: false
+      responses:
+        "200":
+          description: |-
+            Risposta contenente documenti
+          content:
+           multipart/form-data: # Media type
+            schema:            # Response payload
+              type: object
+              required:
+                  - id
+                  - metadati
+                  - docPdf
+              properties:      # Request parts
+                id:            # Part 1 (int value)
+                  type: integer
+                  format: int32
+                metadati:       # Part2 (object)
+                  $ref: '#/components/schemas/Pet2'
+                docPdf:  # Part 3 (an pdf)
+                  type: string
+                  format: binary
+                docPdf2:  # Part 4 (an pdf codificato in base64)
+                  type: string
+                  format: base64
+              additionalProperties: false
+            encoding: # The same level as schema
+              id: 
+                contentType: text/plain
+                headers: # Custom headers
+                  X-Custom-Header:
+                    description: This is a custom header
+                    schema:
+                      type: integer
+                      format: int32
+              metadati: 
+                contentType: application/json
+              docPdf: 
+                contentType: application/pdf
+              docPdf2: 
+                contentType: application/zip, application/pdf
+           multipart/mixed: # Media type
+            schema:            # Response payload
+              type: object
+              required:
+                  - id
+                  - metadati
+                  - docPdf
+              properties:      # Request parts
+                id:            # Part 1 (int value)
+                  type: integer
+                  format: int32
+                metadati:       # Part2 (object)
+                  $ref: '#/components/schemas/Pet2'
+                docPdf:  # Part 3 (an pdf)
+                  type: string
+                  format: binary
+                docPdf2:  # Part 4 (an pdf codificato in base64)
+                  type: string
+                  format: base64
+              additionalProperties: false
+        "400":
+          $ref: '/tmp/teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: './teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'file:/teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'file://home/teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'http://prova.org/teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'https://example.org/altroPath/teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'file:/prova/teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+  /documenti/multipart/form-data/optionalWithoutEncoding:
+    post:
+      tags:
+        - multipart
+      description: Esempio di invio documenti (multipart) con content-type multipart/form-data (non sono definiti required gli elementi), non è presente additionalProperties=false, e non è definito l'encoding
+      operationId: SendDocumentMultipartFormDataOptional
+      requestBody:
+        content:
+          multipart/form-data: # Media type
+            schema:            # Request payload
+              type: object
+              properties:      # Request parts
+                id:            # Part 1 (int value)
+                  type: integer
+                  format: int32
+                metadati:       # Part2 (object)
+                  $ref: '#/components/schemas/Pet2'
+                docPdf:  # Part 3 (an pdf)
+                  type: string
+                  format: binary
+                docPdf2:  # Part 4 (an pdf codificato in base64)
+                  type: string
+                  format: base64
+      responses:
+        "200":
+          description: |-
+            Risposta contenente documenti
+          content:
+           multipart/form-data: # Media type
+            schema:            # Response payload
+              type: object
+              properties:      # Request parts
+                id:            # Part 1 (int value)
+                  type: integer
+                  format: int32
+                metadati:       # Part2 (object)
+                  $ref: '#/components/schemas/Pet2'
+                docPdf:  # Part 3 (an pdf)
+                  type: string
+                  format: binary
+                docPdf2:  # Part 4 (an pdf codificato in base64)
+                  type: string
+                  format: base64
+        "400":
+          $ref: '/tmp/teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: './teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'file:/teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'file://home/teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'http://prova.org/teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'https://example.org/altroPath/teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'file:/prova/teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+  /documenti/multipart/mixed/optionalWithoutEncoding:
+    post:
+      tags:
+        - multipart
+      description: Esempio di invio documenti (multipart) con content-type multipart/mixed (non sono definiti required gli elementi), non è presente additionalProperties=false, e non è definito l'encoding
+      operationId: SendDocumentMultipartMixedOptional
+      requestBody:
+        content:
+          multipart/mixed: # Media type
+            schema:            # Request payload
+              type: object
+              properties:      # Request parts
+                id:            # Part 1 (int value)
+                  type: integer
+                  format: int32
+                metadati:       # Part2 (object)
+                  type: object
+                  required:
+                     - altro
+                     - pet
+                  properties:
+                    altro:
+                      type: string
+                    pet:
+                      type: object
+                      oneOf:
+                                    - $ref: '#/components/schemas/Dog2'
+                                    - $ref: '#/components/schemas/Cat2'
+                      discriminator:
+                                    propertyName: pet_type
+                                    mapping:
+                                      'Dog': '#/components/schemas/Dog2'
+                                      'Cat': '#/components/schemas/Cat2'
+                docPdf:  # Part 3 (an pdf)
+                  type: string
+                  format: binary
+                docPdf2:  # Part 4 (an pdf codificato in base64)
+                  type: string
+                  format: base64
+      responses:
+        "200":
+          description: |-
+            Risposta contenente documenti
+          content:
+           multipart/mixed: # Media type
+            schema:            # Response payload
+              type: object
+              properties:      # Request parts
+                id:            # Part 1 (int value)
+                  type: integer
+                  format: int32
+                metadati:       # Part2 (object)
+                  type: object
+                  required:
+                     - altro
+                     - pet
+                  properties:
+                    altro:
+                      type: string
+                    pet:
+                      type: object
+                      oneOf:
+                                    - $ref: '#/components/schemas/Dog2'
+                                    - $ref: '#/components/schemas/Cat2'
+                      discriminator:
+                                    propertyName: pet_type
+                                    mapping:
+                                      'Dog': '#/components/schemas/Dog2'
+                                      'Cat': '#/components/schemas/Cat2'
+                docPdf:  # Part 3 (an pdf)
+                  type: string
+                  format: binary
+                docPdf2:  # Part 4 (an pdf codificato in base64)
+                  type: string
+                  format: base64
+        "400":
+          $ref: '/tmp/teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: './teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'file:/teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'file://home/teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'http://prova.org/teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'https://example.org/altroPath/teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'file:/prova/teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+              
+  /documenti/multipart/form-data/array-binary:
+    post:
+      tags:
+        - multipart
+      description: Esempio di invio documenti (multipart) con content-type multipart/form-data un array di elementi
+      operationId: SendDocumentMultipartFormDataArrayBinary
+      requestBody:
+        content:
+          multipart/form-data: # Media type
+            schema:            # Request payload
+              type: object
+              properties:
+                archivi:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+            encoding: # The same level as schema
+              archivi: 
+                contentType: application/pdf
+      responses:
+        "200":
+          description: |-
+            Risposta contenente documenti
+          content:
+           multipart/form-data: # Media type
+            schema:            # Response payload
+              type: object
+              properties:
+                archivi:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/DocBinary'
+            encoding: # The same level as schema
+              archivi: 
+                contentType: application/pdf
+        "400":
+          $ref: '/tmp/teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: './teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'file:/teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'file://home/teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'http://prova.org/teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'https://example.org/altroPath/teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'file:/prova/teamdigitale-openapi_definitions.yaml#/components/responses/default'             
+        
+
+  /documenti/multipart/mixed/array-binary:
+    post:
+      tags:
+        - multipart
+      description: Esempio di invio documenti (multipart) con content-type multipart/midex e un array di elementi
+      operationId: SendDocumentMultipartMixedArrayBinary
+      requestBody:
+        content:
+          multipart/mixed: # Media type
+            schema:            # Request payload
+              $ref: '#/components/schemas/ArrayBinaryRequest'
+      responses:
+        "200":
+          description: |-
+            Risposta contenente documenti
+          content:
+           multipart/mixed: # Media type
+            schema:            # Response payload
+              type: object
+              properties:
+                archivi:
+                  $ref: '#/components/schemas/ArrayDocBinary'
+        "400":
+          $ref: '/tmp/teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: './teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'file:/teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'file://home/teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'http://prova.org/teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'https://example.org/altroPath/teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'file:/prova/teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+  /documenti/multipart/form-data/array-json:
+    post:
+      tags:
+        - multipart
+      description: Esempio di invio documenti (multipart) con content-type multipart/form-data un array di elementi json
+      operationId: SendDocumentMultipartFormDataArrayJson
+      requestBody:
+        content:
+          multipart/form-data: # Media type
+            schema:            # Request payload
+              type: object
+              properties:
+                archivi:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Pet2'
+            encoding: # The same level as schema
+              archivi: 
+                contentType: application/json
+      responses:
+        "200":
+          description: |-
+            Risposta contenente documenti
+          content:
+           multipart/form-data: # Media type
+            schema:            # Response payload
+              type: object
+              properties:
+                archivi:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/DocJson'
+            encoding: # The same level as schema
+              archivi: 
+                contentType: application/json
+        "400":
+          $ref: '/tmp/teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: './teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'file:/teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'file://home/teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'http://prova.org/teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'https://example.org/altroPath/teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'file:/prova/teamdigitale-openapi_definitions.yaml#/components/responses/default'             
+        
+
+  /documenti/multipart/mixed/array-json:
+    post:
+      tags:
+        - multipart
+      description: Esempio di invio documenti (multipart) con content-type multipart/midex e un array di elementi json
+      operationId: SendDocumentMultipartMixedArrayJson
+      requestBody:
+        content:
+          multipart/mixed: # Media type
+            schema:            # Request payload
+              $ref: '#/components/schemas/ArrayJsonRequest'
+      responses:
+        "200":
+          description: |-
+            Risposta contenente documenti
+          content:
+           multipart/mixed: # Media type
+            schema:            # Response payload
+              type: object
+              properties:
+                archivi:
+                  $ref: '#/components/schemas/ArrayDocJson'
+        "400":
+          $ref: '/tmp/teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: './teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'file:/teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'file://home/teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'http://prova.org/teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'https://example.org/altroPath/teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'file:/prova/teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+
+  /documenti/format-string:
+    post:
+      tags:
+        - format-string
+      description: Esempio di invio e ricezione di oggetti con format-string
+      operationId: TestFormatString
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RichiestaVariFormatString'
+      responses:
+        "200":
+          description: Risposta contenente format-string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RichiestaVariFormatString'
+
+  /documenti/dynamic-path/{dynamic_id}:
+
+    get:
+      tags:
+        - dynamic-path
+      description: Esempio di path dinamico
+      operationId: GetDynamicPath
+      parameters:
+      - $ref: '#/components/parameters/dynamic_id'
+      responses:
+        "200":
+          description: test
+          content:
+            text/plain:
+              schema:
+                type: string
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+    post:
+      tags:
+        - dynamic-path
+      description: Esempio di path dinamico
+      operationId: PostDynamicPath
+      parameters:
+      - $ref: '#/components/parameters/dynamic_id'
+      requestBody:
+        content:
+          text/plain:
+            schema:
+              type: string
+      responses:
+        "200":
+          description: |-
+            Risposta contenente documenti
+          content:
+            text/plain:
+              schema:
+                type: string
+        "400":
+          $ref: '/tmp/teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: './teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'file:/teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'file://home/teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'http://prova.org/teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'https://example.org/altroPath/teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'file:/prova/teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+    put:
+      tags:
+        - dynamic-path
+      description: Esempio di path dinamico
+      operationId: PutDynamicPath
+      parameters:
+      - $ref: '#/components/parameters/dynamic_id'
+      requestBody:
+        content:
+          text/plain:
+            schema:
+              type: string
+      responses:
+        "200":
+          description: |-
+            Risposta contenente documenti
+          content:
+            text/plain:
+              schema:
+                type: string
+        "400":
+          $ref: '/tmp/teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: './teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'file:/teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'file://home/teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'http://prova.org/teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'https://example.org/altroPath/teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'file:/prova/teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+  /documenti/composed-schema-parameters/any_of/{composed_schema_any_of_path}/{composed_schema_any_of_path_inline}:
+
+    post:
+      tags:
+        - composed-schema-parameters
+      description: Esempio di parametri composed schema any_of
+      operationId: ComposedSchemaAnyOf
+      parameters:
+      - $ref: '#/components/parameters/composed_schema_any_of_path'
+      - $ref: '#/components/parameters/composed_schema_any_of_header'
+      - $ref: '#/components/parameters/composed_schema_any_of_query'
+      - $ref: '#/components/parameters/composed_schema_any_of_cookie'
+      - name: composed_schema_any_of_path_inline
+        in: path
+        description: Test
+        required: true
+        schema:
+         anyOf:
+           - type: integer
+             format: int32
+             maximum: 20
+           - type: integer
+             format: int32
+             minimum: 50
+             maximum: 55
+      - name: composed_schema_any_of_query_inline
+        in: query
+        description: Test
+        required: true
+        schema:
+         anyOf:
+           - type: integer
+             format: int32
+             maximum: 20
+           - type: integer
+             format: int32
+             minimum: 50
+             maximum: 55
+      - name: composed_schema_any_of_header_inline
+        in: header
+        description: Test
+        required: true
+        schema:
+         anyOf:
+           - type: integer
+             format: int32
+             maximum: 20
+           - type: integer
+             format: int32
+             minimum: 50
+             maximum: 55
+      - name: composed_schema_any_of_cookie_inline
+        in: cookie
+        description: Test
+        required: true
+        schema:
+         anyOf:
+           - type: integer
+             format: int32
+             maximum: 20
+           - type: integer
+             format: int32
+             minimum: 50
+             maximum: 55
+      requestBody:
+        content:
+          text/plain:
+            schema:
+              type: string
+      responses:
+        "200":
+          description: |-
+            Esempio di Risposta
+          content:
+            text/plain:
+              schema:
+                type: string
+          headers:
+             composed_schema_any_of_header:
+               required: true
+               schema:
+                anyOf:
+                - type: string
+                  pattern: '^[A-Z]{11}$'
+                - type: string
+                  pattern: '^[0-9]{3,5}$'
+                  minLength: 3
+             composed_schema_any_of_header_inline:
+               required: true
+               schema:
+                anyOf:
+                - type: integer
+                  format: int32
+                  maximum: 20
+                - type: integer
+                  format: int32
+                  minimum: 50
+                  maximum: 55
+        "400":
+          $ref: '/tmp/teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: './teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'file:/teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'file://home/teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'http://prova.org/teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'https://example.org/altroPath/teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'file:/prova/teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+  /documenti/composed-schema-parameters/all_of/{composed_schema_all_of_path}/{composed_schema_all_of_path_inline}:
+
+    post:
+      tags:
+        - composed-schema-parameters
+      description: Esempio di parametri composed schema all_of
+      operationId: ComposedSchemaAllOf
+      parameters:
+      - $ref: '#/components/parameters/composed_schema_all_of_path'
+      - $ref: '#/components/parameters/composed_schema_all_of_header'
+      - $ref: '#/components/parameters/composed_schema_all_of_query'
+      - $ref: '#/components/parameters/composed_schema_all_of_cookie'
+      - name: composed_schema_all_of_path_inline
+        in: path
+        description: Test
+        required: true
+        schema:
+         allOf:
+           - type: integer
+             format: int32
+             maximum: 100
+           - type: integer
+             format: int32
+             minimum: 50
+             maximum: 55
+      - name: composed_schema_all_of_query_inline
+        in: query
+        description: Test
+        required: true
+        schema:
+         allOf:
+           - type: integer
+             format: int32
+             maximum: 100
+           - type: integer
+             format: int32
+             minimum: 50
+             maximum: 55
+      - name: composed_schema_all_of_header_inline
+        in: header
+        description: Test
+        required: true
+        schema:
+         allOf:
+           - type: integer
+             format: int32
+             maximum: 100
+           - type: integer
+             format: int32
+             minimum: 50
+             maximum: 55
+      - name: composed_schema_all_of_cookie_inline
+        in: cookie
+        description: Test
+        required: true
+        schema:
+         allOf:
+           - type: integer
+             format: int32
+             maximum: 100
+           - type: integer
+             format: int32
+             minimum: 50
+             maximum: 55
+      requestBody:
+        content:
+          text/plain:
+            schema:
+              type: string
+      responses:
+        "200":
+          description: |-
+            Esempio di Risposta
+          content:
+            text/plain:
+              schema:
+                type: string
+          headers:
+             composed_schema_all_of_header:
+               required: true
+               schema:
+                allOf:
+                - type: string
+                  pattern: '^[A-Z]{5,11}$'
+                - type: string
+                  minLength: 7
+             composed_schema_all_of_header_inline:
+               required: true
+               schema:
+                allOf:
+                - type: integer
+                  format: int32
+                  maximum: 100
+                - type: integer
+                  format: int32
+                  minimum: 50
+                  maximum: 55
+        "400":
+          $ref: '/tmp/teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: './teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'file:/teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'file://home/teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'http://prova.org/teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'https://example.org/altroPath/teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'file:/prova/teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+  /documenti/composed-schema-parameters/one_of/{composed_schema_one_of_path}/{composed_schema_one_of_path_inline}:
+
+    post:
+      tags:
+        - composed-schema-parameters
+      description: Esempio di parametri composed schema one_of
+      operationId: ComposedSchemaOneOf
+      parameters:
+      - $ref: '#/components/parameters/composed_schema_one_of_path'
+      - $ref: '#/components/parameters/composed_schema_one_of_header'
+      - $ref: '#/components/parameters/composed_schema_one_of_query'
+      - $ref: '#/components/parameters/composed_schema_one_of_cookie'
+      - name: composed_schema_one_of_path_inline
+        in: path
+        description: Test
+        required: true
+        schema:
+         oneOf:
+           - type: integer
+             format: int32
+             maximum: 100
+           - type: integer
+             format: int32
+             minimum: 50
+             maximum: 55
+      - name: composed_schema_one_of_query_inline
+        in: query
+        description: Test
+        required: true
+        schema:
+         oneOf:
+           - type: integer
+             format: int32
+             maximum: 100
+           - type: integer
+             format: int32
+             minimum: 50
+             maximum: 55
+      - name: composed_schema_one_of_header_inline
+        in: header
+        description: Test
+        required: true
+        schema:
+         oneOf:
+           - type: integer
+             format: int32
+             maximum: 100
+           - type: integer
+             format: int32
+             minimum: 50
+             maximum: 55
+      - name: composed_schema_one_of_cookie_inline
+        in: cookie
+        description: Test
+        required: true
+        schema:
+         oneOf:
+           - type: integer
+             format: int32
+             maximum: 100
+           - type: integer
+             format: int32
+             minimum: 50
+             maximum: 55
+      requestBody:
+        content:
+          text/plain:
+            schema:
+              type: string
+      responses:
+        "200":
+          description: |-
+            Esempio di Risposta
+          content:
+            text/plain:
+              schema:
+                type: string
+          headers:
+             composed_schema_one_of_header:
+               required: true
+               schema:
+                oneOf:
+                - type: string
+                  pattern: '^[A-Z]{5,11}$'
+                - type: string
+                  minLength: 7
+             composed_schema_one_of_header_inline:
+               required: true
+               schema:
+                oneOf:
+                - type: integer
+                  format: int32
+                  maximum: 100
+                - type: integer
+                  format: int32
+                  minimum: 50
+                  maximum: 55
+        "400":
+          $ref: '/tmp/teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: './teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'file:/teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'file://home/teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'http://prova.org/teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'https://example.org/altroPath/teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'file:/prova/teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+  /test-tipo-vuto/{esempio_path}:
+    get:
+      tags:
+        - tipo-vuoto
+      summary: getUserByName
+      description: Get user by user name
+      operationId: getUserByName
+      parameters:
+        - name: esempio_path
+          in: path
+          required: true
+          schema: {}
+        - name: esempio_header
+          in: header
+          required: true
+          schema:  {}   
+        - name: esempio_query
+          in: query
+          required: true
+          schema: { } 
+        - name: esempio_cookie
+          in: cookie
+          required: true
+          schema: {} 
+      requestBody:
+        content:
+          text/plain:
+            schema: {}         
+      responses:
+        "200":     
+          description: |-
+            Esempio di Risposta         
+          content:
+            text/plain:
+              schema: {}
+          headers:
+            esempio_header_risposta:
+               required: true
+               schema: {}
+        '400':
+          description: Invalid username supplied
+        '404':
+          description: User not found
+
+components:
+
+  parameters:
+    id_documento:
+      name: id_documento
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    id_oggetto:
+      name: id_oggetto
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+        
+    data_documento_path:
+      name: data_documento_path
+      in: path
+      required: true
+      schema:
+        type: string
+        format: date
+    data_documento_query:
+      name: data_documento_query
+      in: query
+      required: true
+      schema:
+        type: string
+        format: date
+    data_documento_header:
+      name: data_documento_header
+      in: header
+      required: true
+      schema:
+        type: string
+        format: date
+        
+    datetime_documento_path:
+      name: datetime_documento_path
+      in: path
+      required: true
+      schema:
+        type: string
+        format: date-time
+    datetime_documento_query:
+      name: datetime_documento_query
+      in: query
+      required: true
+      schema:
+        type: string
+        format: date-time
+    datetime_documento_header:
+      name: datetime_documento_header
+      in: header
+      required: true
+      schema:
+        type: string
+        format: date-time
+
+    dynamic_id:
+      name: dynamic_id
+      in: path
+      description: Identificativo usato in path
+      required: true
+      schema:
+        $ref: '#/components/schemas/dynamic_id'
+
+    composed_schema_any_of_path:
+      name: composed_schema_any_of_path
+      in: path
+      description: Test
+      required: true
+      schema:
+         anyOf:
+           - type: string
+             pattern: '^[A-Z]{11}$'
+           - type: string
+             pattern: '^[0-9]{3,5}$'
+             minLength: 3
+    composed_schema_any_of_query:
+      name: composed_schema_any_of_query
+      in: query
+      description: Test
+      required: true
+      schema:
+         anyOf:
+           - type: string
+             pattern: '^[A-Z]{11}$'
+           - type: string
+             pattern: '^[0-9]{3,5}$'
+             minLength: 3
+    composed_schema_any_of_header:
+      name: composed_schema_any_of_header
+      in: header
+      description: Test
+      required: true
+      schema:
+         anyOf:
+           - type: string
+             pattern: '^[A-Z]{11}$'
+           - type: string
+             pattern: '^[0-9]{3,5}$'
+             minLength: 3
+    composed_schema_any_of_cookie:
+      name: composed_schema_any_of_cookie
+      in: cookie
+      description: Test
+      required: true
+      schema:
+         anyOf:
+           - type: string
+             pattern: '^[A-Z]{11}$'
+           - type: string
+             pattern: '^[0-9]{3,5}$'
+             minLength: 3
+
+    composed_schema_all_of_path:
+      name: composed_schema_all_of_path
+      in: path
+      description: Test
+      required: true
+      schema:
+         allOf:
+           - type: string
+             pattern: '^[A-Z]{5,11}$'
+           - type: string
+             minLength: 7
+    composed_schema_all_of_query:
+      name: composed_schema_all_of_query
+      in: query
+      description: Test
+      required: true
+      schema:
+         allOf:
+           - type: string
+             pattern: '^[A-Z]{5,11}$'
+           - type: string
+             minLength: 7
+    composed_schema_all_of_header:
+      name: composed_schema_all_of_header
+      in: header
+      description: Test
+      required: true
+      schema:
+         allOf:
+           - type: string
+             pattern: '^[A-Z]{5,11}$'
+           - type: string
+             minLength: 7
+    composed_schema_all_of_cookie:
+      name: composed_schema_all_of_cookie
+      in: cookie
+      description: Test
+      required: true
+      schema:
+         allOf:
+           - type: string
+             pattern: '^[A-Z]{5,11}$'
+           - type: string
+             minLength: 7
+
+
+    composed_schema_one_of_path:
+      name: composed_schema_one_of_path
+      in: path
+      description: Test
+      required: true
+      schema:
+         oneOf:
+           - type: string
+             pattern: '^[A-Z]{5,11}$'
+           - type: string
+             minLength: 7
+    composed_schema_one_of_query:
+      name: composed_schema_one_of_query
+      in: query
+      description: Test
+      required: true
+      schema:
+         oneOf:
+           - type: string
+             pattern: '^[A-Z]{5,11}$'
+           - type: string
+             minLength: 7
+    composed_schema_one_of_header:
+      name: composed_schema_one_of_header
+      in: header
+      description: Test
+      required: true
+      schema:
+         oneOf:
+           - type: string
+             pattern: '^[A-Z]{5,11}$'
+           - type: string
+             minLength: 7
+    composed_schema_one_of_cookie:
+      name: composed_schema_one_of_cookie
+      in: cookie
+      description: Test
+      required: true
+      schema:
+         oneOf:
+           - type: string
+             pattern: '^[A-Z]{5,11}$'
+           - type: string
+             minLength: 7
+        
+  schemas:
+
+    MResponseType:
+      type: object
+      required:
+      - esito
+      properties:
+        esito:
+          type: string
+      additionalProperties: true
+
+    RichiestaEsempio:
+      type: object
+      required:
+        - datiRichiesta
+      properties:
+        datiRichiesta:
+          type: string
+
+    RispostaEsempio:
+      type: object
+      required:
+        - datiRisposta
+      properties:
+        datiRisposta:
+          type: string
+ 
+    Dati:
+      type: object
+      required:
+        - mittente
+        - destinatario
+        - procedimento
+      properties:
+        mittente:
+          type: string
+        destinatario:
+          type: string
+        procedimento:
+          type: string
+        string_nullable:
+          type: ["string", "null"]
+        number_nullable:
+          type: ["integer", "null"]
+          format: int64
+        enum_nullable:
+          type: ["string", "null"]
+          enum:
+            - "Diverso dall'intestatario"
+            - "Coincide con l'intestatario"
+            - "Soggetto di una pa"
+            - null
+ 
+    Allegato:
+      type: object
+      required:
+        - nome
+        - tipoMIME
+        - dataDocumento
+      properties:
+          nome:
+             type: string
+          descrizione:
+             type: string     
+          tipoMIME:
+             type: string
+          dataDocumento:
+             type: string
+             format: date-time
+          codiceOpzionaleNumerico:
+             type: string
+             pattern: '^\d{6}$'
+          codiceOpzionaleCodiceFiscaleOrCodiceEsterno:
+             type: string
+             pattern: '^[a-zA-Z]{6}[0-9]{2}[a-zA-Z0-9]{3}[a-zA-Z0-9]{5}$|^[A-Z0-9]{3}\d{3}$'
+ 
+    DatiInLine:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/Dati'
+        - type: object      
+          required:
+            - allegati
+          properties:
+             allegati:
+               type: array
+               items:
+                  $ref: '#/components/schemas/AllegatoInLine' 
+  
+    AllegatoInLine:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/Allegato'
+        - type: object      
+          required:
+            - documento
+          properties:
+             documento:
+                type: string
+                format: byte
+                
+    DatiRiferimentoId:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/Dati'
+        - type: object      
+          required:
+            - allegati
+          properties:
+             allegati:
+               type: array
+               items:
+                  $ref: '#/components/schemas/AllegatoRiferimentoId' 
+  
+    AllegatoRiferimentoId:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/Allegato'
+        - type: object      
+          required:
+            - id
+            - impronta
+          properties:
+             id:
+                type: string
+                format: uuid
+             impronta:
+                type: string                
+                                
+    DatiRiferimentoUri:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/Dati'
+        - type: object      
+          required:
+            - allegati
+          properties:
+             allegati:
+               type: array
+               items:
+                  $ref: '#/components/schemas/AllegatoRiferimentoUri' 
+  
+    AllegatoRiferimentoUri:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/Allegato'
+        - type: object      
+          required:
+            - uri
+            - impronta
+          properties:
+             uri:
+                type: string
+                format: uri
+             impronta:
+                type: string
+ 
+    DatiRiferimentoMixed:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/Dati'
+        - type: object      
+          required:
+            - allegati
+          properties:
+             allegati:
+               type: array
+               items:
+                  $ref: '#/components/schemas/AllegatoRiferimentoMixed' 
+  
+    AllegatoRiferimentoMixed:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/Allegato'
+        - type: object      
+          required:
+            - documento
+          properties:
+             documento:
+                type: object
+                oneOf:
+                  - $ref: '#/components/schemas/ContenutoAllegatoInLine'
+                  - $ref: '#/components/schemas/ContenutoAllegatoRiferimentoUri'
+                discriminator:
+                  propertyName: tipoDocumento
+                  mapping:
+                    'inline': '#/components/schemas/ContenutoAllegatoInLine'
+                    'riferimento-uri': '#/components/schemas/ContenutoAllegatoRiferimentoUri'
+
+    TipoAllegatoEnum:
+      type: string
+      enum: ['inline', 'riferimento-uri']
+
+    ContenutoAllegatoInLine:
+      type: object
+      required:
+        - tipoDocumento
+        - contenuto
+      properties:
+          tipoDocumento:
+                $ref: '#/components/schemas/TipoAllegatoEnum'
+          contenuto:
+             type: string
+             format: byte
+                        
+    ContenutoAllegatoRiferimentoUri:
+      type: object
+      required:
+        - tipoDocumento
+        - uri
+        - impronta
+      properties:
+          tipoDocumento:
+                $ref: '#/components/schemas/TipoAllegatoEnum'
+          uri:
+             type: string
+             format: uri
+          impronta:
+             type: string
+             
+    ApiAllegatoItem:
+      type: object
+      required:
+        - allegato
+      properties:
+        allegato:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/ApiAllegatoItemGenerico'
+            - $ref: '#/components/schemas/ApiAllegatoItemSpecificaSemiformale'
+          discriminator:
+            propertyName: ruolo
+            mapping:
+              'allegato': '#/components/schemas/ApiAllegatoItemGenerico'
+              'specificaSemiFormale': '#/components/schemas/ApiAllegatoItemSpecificaSemiformale'
+    AllegatoItem:
+      type: object
+      required:
+        - nome
+        - ruolo
+      properties:
+        nome:
+          $ref: '#/components/schemas/NCName'
+        ruolo:
+          $ref: '#/components/schemas/RuoloAllegatoAPI'
+    ApiAllegatoItemGenerico:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/AllegatoItem'
+    ApiAllegatoItemSpecificaSemiformale:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/AllegatoItem'
+        - type: object
+          required:
+            - tipo_specifica
+          properties:
+           tipo_specifica:
+             $ref: '#/components/schemas/TipoSpecificaSemiformaleEnum' 
+    ListaApiAllegati:
+       type: object
+       allOf:
+          - $ref: '#/components/schemas/Lista'
+          - type: object
+            required:
+              - items
+            properties:
+              items:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiAllegatoItem'
+
+    TipoSpecificaSemiformaleEnum:
+      type: string
+      enum: ['UML', 'HTML', 'XSD', 'XML', 'JSON', 'YAML', 'Linguaggio Naturale']
+      example: 'XML'
+                        
+    RuoloAllegatoAPI:
+      type: string
+      enum: ['allegato', 'specificaSemiFormale']
+      default: allegato
+      example: 'specificaSemiFormale'
+      
+    NCName:
+      type: string
+      pattern: ^[_A-Za-z][\-\._A-Za-z0-9]*$
+      maxLength: 255
+      description: Può iniziare solo con un carattere [A-Za-z] o il simbolo '_' e dev'essere formato solo da caratteri, cifre, '_' , '-' e '.'
+      
+    Lista:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/ListaSenzaTotale'
+        - type: object
+          required:
+            - total
+          properties:
+            total:
+              description: Number of items matching the filter criteria
+              type: integer
+              format: int64
+              minimum: 0
+            last:
+              description: Link to last result page. Null if you are already on last page.
+              type: string   
+ 
+    ListaSenzaTotale:
+      type: object
+      required:
+        - limit
+        - offset
+      properties:
+        offset:
+          description: The zero-ary offset index into the results
+          type: integer
+          format: int64
+        limit:
+          description: How many items to return at one time
+          type: integer
+          format: int32
+        first:
+          description: Link to first result page. Null if you are already on first page.
+          type: string     
+        next:
+          description: Link to next result page. Null if you are on last page.
+          type: string 
+        prev:
+          description: Link to previous result page. Null if you are on first page.
+          type: string 
+          
+    OggettoConData:
+      type: object
+      required:
+        - data
+      properties:
+          data:
+             type: string
+             format: date
+      additionalProperties: false
+    OggettoConDatetime:
+      type: object
+      required:
+        - data
+      properties:
+          data:
+             type: string
+             format: date-time
+
+    OggettoConEnumNoYes:
+      type: object
+      required:
+        - stato1
+        - stato2
+      properties:
+        stato1:
+          type: string
+          enum:
+            - "SI"
+            - "NO"
+            - "YES"
+            - 'S'
+            - 'N'
+            - 'Y'
+            - '0'
+            - '1'
+            - "ON"
+            - "OFF"
+        stato2:
+          type: string
+          enum:
+            - "si"
+            - "no"
+            - "yes"
+            - 's'
+            - 'n'
+            - 'y'
+            - '0'
+            - '1'
+            - "on"
+            - "off"
+
+    OggettoConEnumNoYesNonQuotatiBugEreditatoYaml1:
+      type: object
+      required:
+        - stato1
+        - stato2
+      properties:
+        stato1:
+          type: string
+          enum:
+            - SI
+            - NO
+            - YES
+            - S
+            - N
+            - Y
+            - 0
+            - 1
+        stato2:
+          type: string
+          enum:
+            - si
+            - no
+            - yes
+            - s
+            - n
+            - y
+            - 0
+            - 1
+            
+    OggettoConEnumNoYesNonQuotatiBugEreditatoYaml1OnOff:
+      type: object
+      required:
+        - stato1
+        - stato2
+      properties:
+        stato1:
+          type: string
+          enum:
+            - ON
+            - OFF
+        stato2:
+          type: string
+          enum:
+            - on
+            - off
+
+    MessaggioClaimNullable:
+      type: object
+      required:
+        - string_required
+        - enum_required
+        - integer_required
+        - boolean_required
+        - array_required
+        - array_nullable_values_required
+        - object_required
+      properties:
+        string_required:
+          type: ["string", "null"]
+        string_optional:
+          type: ["string", "null"]
+        enum_required:
+          type: ["string", "null"]
+          enum:
+            - 'ON'
+            - 'OFF'
+            - null
+        enum_optional:
+          type: ["string", "null"]
+          enum:
+            - 'ON'
+            - 'OFF'
+            - null
+        integer_required:
+          type: ["integer", "null"]
+          format: int32
+        integer_optional:
+          type: ["integer", "null"]
+          format: int32
+        boolean_required:
+          type: ["boolean", "null"]
+        boolean_optional:
+          type: ["boolean", "null"]
+        array_required:
+          type: ["array", "null"]
+          items:
+            type: string
+        array_optional:
+          type: ["array", "null"]
+          items:
+            type: string
+        array_nullable_values_required:
+          type: ["array", "null"]
+          items:
+            type: ["string", "null"]
+        array_nullable_values_optional:
+          type: ["array", "null"]
+          items:
+            type: ["string", "null"]
+        object_required:
+          $ref: '#/components/schemas/ObjectNullable'
+        object_optional:
+          $ref: '#/components/schemas/ObjectNullable'
+
+    ObjectNullable:
+      type: ["object", "null"]
+      required:
+        - identificativo
+        - stato
+        - valoreintero
+      properties:
+        identificativo:
+          type: string
+        stato:
+          type: string
+          enum:
+            - 'ON'
+            - 'OFF'
+        valoreintero:
+          type: integer
+          format: int32 
+        descrizione:
+          type: string
+
+    MessaggioClaimNotNullable:
+      type: object
+      required:
+        - string_required
+        - enum_required
+        - integer_required
+        - boolean_required
+        - array_required
+        - array_nullable_values_required
+        - object_required
+      properties:
+        string_required:
+          type: string
+        string_optional:
+          type: string
+        enum_required:
+          type: string
+          enum:
+            - 'ON'
+            - 'OFF'
+            - null
+        enum_optional:
+          type: string
+          enum:
+            - 'ON'
+            - 'OFF'
+            - null
+        integer_required:
+          type: integer
+          format: int32
+        integer_optional:
+          type: integer
+          format: int32
+        boolean_required:
+          type: boolean
+        boolean_optional:
+          type: boolean
+        array_required:
+          type: array
+          items:
+            type: string
+        array_optional:
+          type: array
+          items:
+            type: string
+        array_nullable_values_required:
+          type: array
+          items:
+            type: string
+        array_nullable_values_optional:
+          type: array
+          items:
+            type: string
+        object_required:
+          $ref: '#/components/schemas/ObjectNotNullable'
+        object_optional:
+          $ref: '#/components/schemas/ObjectNotNullable'
+
+    ObjectNotNullable:
+      type: object
+      required:
+        - identificativo
+        - stato
+        - valoreintero
+      properties:
+        identificativo:
+          type: string
+        stato:
+          type: string
+          enum:
+            - 'ON'
+            - 'OFF'
+        valoreintero:
+          type: integer
+          format: int32 
+        descrizione:
+          type: string
+
+    MessaggioClaimNotNullableDefault:
+      type: object
+      required:
+        - string_required
+        - enum_required
+        - integer_required
+        - boolean_required
+        - array_required
+        - array_nullable_values_required
+        - object_required
+      properties:
+        string_required:
+          type: string
+        string_optional:
+          type: string
+        enum_required:
+          type: string
+          enum:
+            - 'ON'
+            - 'OFF'
+            - null
+        enum_optional:
+          type: string
+          enum:
+            - 'ON'
+            - 'OFF'
+            - null
+        integer_required:
+          type: integer
+          format: int32
+        integer_optional:
+          type: integer
+          format: int32
+        boolean_required:
+          type: boolean
+        boolean_optional:
+          type: boolean
+        array_required:
+          type: array
+          items:
+            type: string
+        array_optional:
+          type: array
+          items:
+            type: string
+        array_nullable_values_required:
+          type: array
+          items:
+            type: string
+        array_nullable_values_optional:
+          type: array
+          items:
+            type: string     
+        object_required:
+          $ref: '#/components/schemas/ObjectNotNullableDefault'
+        object_optional:
+          $ref: '#/components/schemas/ObjectNotNullableDefault'
+
+    ObjectNotNullableDefault:
+      type: object
+      required:
+        - identificativo
+        - stato
+        - valoreintero
+      properties:
+        identificativo:
+          type: string
+        stato:
+          type: string
+          enum:
+            - 'ON'
+            - 'OFF'
+        valoreintero:
+          type: integer
+          format: int32 
+        descrizione:
+          type: string
+
+    Pet:
+      type: object
+      required:
+        - pet_type
+      properties:
+        pet_type:
+          type: string
+      discriminator:
+        propertyName: pet_type
+    Dog:     # "Dog" is a value for the pet_type property (the discriminator value)
+      allOf: # Combines the main `Pet` schema with `Dog`-specific properties 
+        - $ref: '#/components/schemas/Pet'
+        - type: object
+          # all other properties specific to a `Dog`
+          properties:
+            bark:
+              type: boolean
+            breed:
+              type: string
+              enum: [Dingo, Husky, Retriever, Shepherd]
+    Cat:     # "Cat" is a value for the pet_type property (the discriminator value)
+      allOf: # Combines the main `Pet` schema with `Cat`-specific properties 
+        - $ref: '#/components/schemas/Pet'
+        - type: object
+          # all other properties specific to a `Cat`
+          properties:
+            hunts:
+              type: boolean
+            age:
+              type: integer
+
+    Pet4:
+      type: object
+      oneOf:
+      - $ref: '#/components/schemas/Cat'
+      - $ref: '#/components/schemas/Dog'
+      discriminator:
+        propertyName: pet_type
+
+    Pet2:
+      type: object
+      required:
+         - altro
+         - pet
+      properties:
+        altro:
+          type: string
+        pet:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/Dog2'
+            - $ref: '#/components/schemas/Cat2'
+          discriminator:
+            propertyName: pet_type
+            mapping:
+              'Dog': '#/components/schemas/Dog2'
+              'Cat': '#/components/schemas/Cat2'
+    Dog2Base:
+      type: object
+      required:
+        - bark
+      properties: 
+        bark:
+          type: boolean
+        breed:
+          type: string
+          enum: [Dingo, Husky, Retriever, Shepherd]
+
+    Dog2:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/Dog2Base'
+        - type: object
+          required:
+            - pet_type
+          properties:
+            pet_type: 
+              type: string
+
+    Cat2:
+      type: object
+      required:
+        - pet_type
+        - age
+      properties:
+        pet_type: 
+          type: string
+        hunts:
+          type: boolean
+        age:
+          type: integer
+      additionalProperties: false
+      
+    Pet3:
+      type: object
+      required:
+         - altro
+         - pet
+      properties:
+        altro:
+          type: string
+        pet:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/Dog3'
+            - $ref: '#/components/schemas/Cat3'
+          discriminator:
+            propertyName: pet_type
+            mapping:
+              'Dog': '#/components/schemas/Dog3'
+              'Cat': '#/components/schemas/Cat3'
+    Dog3BaseA:
+      type: object
+      required:
+        - bark
+      properties: 
+        bark:
+          type: boolean
+        breed:
+          type: string
+          enum: [Dingo, Husky, Retriever, Shepherd]
+    Dog3BaseB:
+      type: object
+      required:
+        - pet_type
+      properties: 
+        pet_type: 
+           type: string
+    Dog3:
+      allOf:
+        - $ref: '#/components/schemas/Dog3BaseA'
+        - $ref: '#/components/schemas/Dog3BaseB'
+    Cat3:
+      type: object
+      required:
+        - pet_type
+        - age
+      properties:
+        pet_type: 
+          type: string
+        hunts:
+          type: boolean
+        age:
+          type: integer
+      additionalProperties: false
+
+
+    Pet5:
+      type: object
+      required:
+         - altro
+         - pet
+      properties:
+        altro:
+          type: string
+        pet:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/Dog5'
+            - $ref: '#/components/schemas/Cat5'
+          discriminator:
+            propertyName: pet_type
+            mapping:
+              'Dog': '#/components/schemas/Dog5'
+              'Cat': '#/components/schemas/Cat5'     
+    Dog5:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/Dog5BaseA"
+      - type: "object"
+        properties:
+          altraProprieta:
+            type: string
+    Dog5BaseA:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/Dog5BaseB"
+      - type: "object"
+        required:
+        - pet_type
+        properties:
+          pet_type: 
+            type: string
+    Dog5BaseB:
+      type: object
+      required:
+        - bark
+      properties: 
+        bark:
+          type: boolean
+        breed:
+          type: string
+          enum: [Dingo, Husky, Retriever, Shepherd]
+    Cat5:
+      type: object
+      required:
+        - pet_type
+        - age
+      properties:
+        pet_type: 
+          type: string
+        hunts:
+          type: boolean
+        age:
+          type: integer
+      additionalProperties: false
+
+    ArrayBinaryRequest:
+       type: object
+       properties:
+          archivi:
+             type: array
+             items:
+               type: string
+               format: binary
+
+    ArrayDocBinary:
+       type: array
+       items:
+          type: string
+          format: binary
+
+    DocBinary:
+       type: string
+       format: binary
+
+
+    ArrayJsonRequest:
+       type: object
+       properties:
+          archivi:
+             type: array
+             items:
+               $ref: '#/components/schemas/Pet2'
+
+    ArrayDocJson:
+       type: array
+       items:
+          $ref: '#/components/schemas/Pet2'
+
+    DocJson:
+       $ref: '#/components/schemas/Pet2'
+
+
+    # https://swagger.io/docs/specification/data-models/data-types/
+    # However, format is an open value, so you can use any formats, even not those defined by the OpenAPI Specification, such as:
+    # email
+    # uuid
+    # uri
+    # hostname
+    # ipv4
+    # ipv6
+    # and others
+    # Tools can use the format to validate the input or to map the value to a specific type in the chosen programming language. Tools that do not support a specific format may default back to the type alone, as if the format is not specified.
+    RichiestaVariFormatString:
+      type: object
+      required:
+        - email
+        - uuid
+        - uri
+        - hostname
+        - ipv4
+        - ipv6
+      properties:
+        email:
+          type: array
+          items:
+            type: string
+            format: email
+        uuid:
+          type: array
+          items:
+            type: string
+            format: uuid
+        uri:
+          type: array
+          items:
+            type: string
+            format: uri
+        hostname:
+          type: array
+          items:
+            type: string
+            format: hostname
+        ipv4:
+          type: array
+          items:
+            type: string
+            format: ipv4
+        ipv6:
+          type: array
+          items:
+            type: string
+            format: ipv6
+
+    dynamic_id:
+      pattern: ^[A-Za-z0-9\-\.\+_:\/\\]{1,73}$
+      type: string
+      description: Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.
+
+    ProblemInLineOriginaleTeamDigitale:
+      type: object
+      properties:
+        type:
+          type: string
+          format: uri
+          description: |
+            An absolute URI that identifies the problem type.  When dereferenced,
+            it SHOULD provide human-readable documentation for the problem type
+            (e.g., using HTML).
+          default: 'about:blank'
+          example: 'https://tools.ietf.org/html/rfc7231#section-6.6.4'
+        title:
+          type: string
+          description: |
+            A short, summary of the problem type. Written in english and readable
+            for engineers (usually not suited for non technical stakeholders and
+            not localized); example: Service Unavailable
+        status:
+          type: integer
+          format: int32
+          description: |
+            The HTTP status code generated by the origin server for this occurrence
+            of the problem.
+          minimum: 100
+          exclusiveMaximum: 600
+          example: 503
+        detail:
+          type: string
+          description: |
+            A human readable explanation specific to this occurrence of the
+            problem. You MUST NOT expose internal informations, personal
+            data or implementation details through this field.
+          example: Request took too long to complete.
+        instance:
+          type: string
+          format: uri
+          description: |
+            An absolute URI that identifies the specific occurrence of the problem.
+            It may or may not yield further information if dereferenced.
+             
+    ProblemInLineModificatoConElementoRequired:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+          format: uri
+          description: |
+            An absolute URI that identifies the problem type.  When dereferenced,
+            it SHOULD provide human-readable documentation for the problem type
+            (e.g., using HTML).
+          default: 'about:blank'
+          example: 'https://tools.ietf.org/html/rfc7231#section-6.6.4'
+        title:
+          type: string
+          description: |
+            A short, summary of the problem type. Written in english and readable
+            for engineers (usually not suited for non technical stakeholders and
+            not localized); example: Service Unavailable
+        status:
+          type: integer
+          format: int32
+          description: |
+            The HTTP status code generated by the origin server for this occurrence
+            of the problem.
+          minimum: 100
+          exclusiveMaximum: 600
+          example: 503
+        detail:
+          type: string
+          description: |
+            A human readable explanation specific to this occurrence of the
+            problem. You MUST NOT expose internal informations, personal
+            data or implementation details through this field.
+          example: Request took too long to complete.
+        instance:
+          type: string
+          format: uri
+          description: |
+            An absolute URI that identifies the specific occurrence of the problem.
+            It may or may not yield further information if dereferenced.
+            
+    ProblemType:
+      type: object
+      required:
+      - type
+      properties:
+        type:
+          type: string
+          format: uri
+          description: |
+            An absolute URI that identifies the problem type.  When dereferenced,
+            it SHOULD provide human-readable documentation for the problem type
+            (e.g., using HTML).
+          default: 'about:blank'
+          example: 'https://tools.ietf.org/html/rfc7231#section-6.6.4'
+
+    ProblemTitle:
+      type: object
+      required:
+      - title
+      properties:
+        title:
+          type: string
+          description: |
+            A short, summary of the problem type. Written in english and readable
+            for engineers (usually not suited for non technical stakeholders and
+            not localized); example: Service Unavailable
+
+    ProblemStatus:
+      type: object
+      required:
+      - status
+      properties:
+        status:
+          type: integer
+          format: int32
+          description: |
+            The HTTP status code generated by the origin server for this occurrence
+            of the problem.
+          minimum: 100
+          exclusiveMaximum: 600
+          example: 503
+
+    ProblemId:
+      type: object
+      anyOf:
+        - $ref: '#/components/schemas/ProblemType'
+        - $ref: '#/components/schemas/ProblemTitle'
+        - $ref: '#/components/schemas/ProblemStatus'
+        
+    ProblemDetails:
+      type: object
+      properties:
+        detail:
+          type: string
+          description: |
+            A human readable explanation specific to this occurrence of the
+            problem. You MUST NOT expose internal informations, personal
+            data or implementation details through this field.
+          example: Request took too long to complete.
+        instance:
+          type: string
+          format: uri
+          description: |
+            An absolute URI that identifies the specific occurrence of the problem.
+            It may or may not yield further information if dereferenced.
+
+    ProblemExt:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/ProblemId'
+        - $ref: '#/components/schemas/ProblemDetails'
+
+security:
+  - {}

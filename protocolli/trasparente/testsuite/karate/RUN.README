@@ -469,7 +469,10 @@ Di seguito vengono descritti i test del package 'validazione':
   ant run_test -Ddelete=false -Dload=false -Dpackage=validazione.swagger_request_validator   
 
 - 'rpc', verifica il funzionamento con messaggi definiti in WSDL con stile RPC e use literal o encoded. I test oltre alla validazione verificano anche il riconoscimento dell'operazione tramite l'ottimizzazione soap reader.
-  ant run_test -Ddelete=false -Dload=false -Dpackage=validazione.rpc 
+  ant run_test -Ddelete=false -Dload=false -Dpackage=validazione.rpc
+
+- 'rest', verifica la validazione dei messaggi REST con specifiche Swagger 2.0, OpenAPI 3.0 e OpenAPI 3.1 per le librerie di validazione 'json_schema', 'openapi4j', 'swagger_request_validator' e 'kappa'. Sono coperti: l'esito positivo, il fallimento in richiesta (pattern violato), il fallimento in risposta (alterata via ?replace=AB123:xx sul backend echo), il rifiuto di librerie incompatibili con il formato della spec, e il caso di spec con $ref cross-file (allegato) sia in modalità mergeAPISpec=true sia mergeAPISpec=false.
+  ant run_test -Ddelete=false -Dload=false -Dpackage=validazione.rest
 
 Di seguito vengono descritti i test del package 'trasformazione':
 

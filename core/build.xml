@@ -82,6 +82,7 @@
 			<include name="stub/*"/>
 			<include name="swagger/*"/>
 			<include name="openapi4j/*"/>
+			<include name="kappa/*"/>
 			<include name="httpcore/*"/>
 			<include name="testsuite/*"/>
 			<include name="testsuite/apacheds/*"/>

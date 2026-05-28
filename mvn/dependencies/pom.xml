@@ -42,6 +42,7 @@
 		<module>jetty</module>
 		<module>jmx</module>
 		<module>json</module>
+		<module>kappa</module>
 		<module>log</module>
 		<module>lucene</module>
 		<module>openapi4j</module>

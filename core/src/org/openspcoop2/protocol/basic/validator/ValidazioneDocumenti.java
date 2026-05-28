@@ -53,8 +53,13 @@ import org.openspcoop2.utils.json.YAMLUtils;
 import org.openspcoop2.utils.rest.ApiFactory;
 import org.openspcoop2.utils.rest.ApiFormats;
 import org.openspcoop2.utils.rest.ApiReaderConfig;
+import org.openspcoop2.utils.rest.BaseSpecConfig;
+import org.openspcoop2.utils.rest.BaseSpecValidator;
 import org.openspcoop2.utils.rest.IApiReader;
+import org.openspcoop2.utils.rest.IApiSpecConfig;
+import org.openspcoop2.utils.rest.IApiSpecValidator;
 import org.openspcoop2.utils.rest.ParseWarningException;
+import org.openspcoop2.utils.rest.ProcessingException;
 import org.openspcoop2.utils.rest.api.Api;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.utils.wsdl.DefinitionWrapper;
@@ -79,7 +84,23 @@ public class ValidazioneDocumenti extends BasicComponentFactory implements IVali
 	protected WSDLUtilities wsdlUtilities = null;
 	protected JSONUtils jsonUtils = null;
 	protected YAMLUtils yamlUtils = null;
-	
+
+	/**
+	 * Config dello spec validator per le specifiche OpenAPI 3.0, iniettato dal
+	 * chiamante (console, PdD, CLI). L'engine effettivo viene istanziato in
+	 * {@link #runSpecValidator(Api)} a partire da {@link IApiSpecConfig#getEngine()}.
+	 */
+	private IApiSpecConfig apiSpecValidatorConfig;
+
+	/**
+	 * Config dello spec validator per le specifiche OpenAPI 3.1. Selezionato
+	 * automaticamente in {@link #runSpecValidator(Api)} quando
+	 * {@link org.openspcoop2.utils.openapi.OpenapiApi#isOpenApi31(Api)} ritorna {@code true}.
+	 * Se {@code null} si ricade sul config 3.0 e in mancanza anche di quello sul
+	 * {@link BaseSpecValidator}.
+	 */
+	private IApiSpecConfig apiSpecValidator31Config;
+
 	public ValidazioneDocumenti(IProtocolFactory<?> factory) throws ProtocolException{
 		super(factory);
 		this.xmlUtils = XMLUtils.getInstance();
@@ -87,6 +108,48 @@ public class ValidazioneDocumenti extends BasicComponentFactory implements IVali
 		this.wsdlUtilities = WSDLUtilities.getInstance(this.xmlUtils);
 		this.jsonUtils = JSONUtils.getInstance();
 		this.yamlUtils = YAMLUtils.getInstance();
+	}
+
+	public void setApiSpecValidatorConfig(IApiSpecConfig config) {
+		this.apiSpecValidatorConfig = config;
+	}
+
+	public void setApiSpecValidator31Config(IApiSpecConfig config) {
+		this.apiSpecValidator31Config = config;
+	}
+
+	/**
+	 * Esegue la validazione strutturale dell'Api. Lo spec validator engine-specific
+	 * (openapi4j/kappa/swagger/json_schema) viene attivato SOLO per il formato
+	 * OpenAPI 3.x (con dispatch 3.0/3.1 in base alla dichiarazione {@code openapi:}
+	 * nello spec); per gli altri formati (Swagger 2.0, ecc.) si usa il
+	 * {@link BaseSpecValidator}, dato che il parsing/validazione di contenuto è
+	 * già stato eseguito da swagger-parser in fase di {@code apiReader.read()}.
+	 *
+	 * <p>Allineato al comportamento storico di {@code OpenapiApi._validateOpenAPI3()}
+	 * che era guarded da {@code ApiFormats.OPEN_API_3.equals(format)}.
+	 */
+	private void runSpecValidator(Api api) throws ProcessingException, ParseWarningException {
+		IApiSpecConfig cfg = null;
+		if (api instanceof org.openspcoop2.utils.openapi.OpenapiApi openapi
+				&& ApiFormats.OPEN_API_3.equals((openapi).getFormat())) {
+			if (org.openspcoop2.utils.openapi.OpenapiApi.isOpenApi31(api)) {
+				cfg = this.apiSpecValidator31Config;
+			}
+			if (cfg == null) {
+				cfg = this.apiSpecValidatorConfig;
+			}
+		}
+		IApiSpecValidator sv;
+		if (cfg != null) {
+			sv = ApiFactory.newApiSpecValidator(cfg.getEngine());
+			sv.init(this.log, cfg);
+		} else {
+			BaseSpecValidator base = new BaseSpecValidator();
+			base.init(this.log, new BaseSpecConfig());
+			sv = base;
+		}
+		sv.validate(this.log, api);
 	}
 
 	@Override
@@ -248,7 +311,7 @@ public class ValidazioneDocumenti extends BasicComponentFactory implements IVali
 						apiReader.init(this.log, wsdlConcettuale, config);
 						Api api = apiReader.read();
 						try {
-							api.validate();
+							runSpecValidator(api);
 						}catch(ParseWarningException warning) {
 							result.setEsito(true);
 							result.setMessaggioWarning(objectInEsame+" Documento contenente anomalie: "+warning.getMessage());

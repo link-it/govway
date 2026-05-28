@@ -31,6 +31,7 @@ import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.rest.ApiFactory;
 import org.openspcoop2.utils.rest.ApiFormats;
 import org.openspcoop2.utils.rest.ApiReaderConfig;
+import org.openspcoop2.utils.rest.ApiValidatorConfig;
 import org.openspcoop2.utils.rest.IApiReader;
 import org.openspcoop2.utils.rest.IApiValidator;
 import org.openspcoop2.utils.rest.api.Api;
@@ -136,12 +137,15 @@ public class MainValidatorOpenAPI4 {
 			config.setProcessInclude(false);
 			apiReader.init(LoggerWrapperFactory.getLogger(MainValidatorOpenAPI4.class), new File(url.toURI()), config, schemas);
 			Api api = apiReader.read();
-			IApiValidator apiValidator = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
-			OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
-			configO.setOpenApiValidatorConfig(new OpenapiLibraryValidatorConfig());
-			configO.getOpenApiValidatorConfig().setOpenApiLibrary(openApiLibrary);
-			
-			apiValidator.init(LoggerWrapperFactory.getLogger(MainValidatorOpenAPI4.class), api, configO);
+			IApiValidator apiValidator = ApiFactory.newApiValidator(openApiLibrary.name());
+			OpenapiApiValidatorConfig baseConfig = new OpenapiApiValidatorConfig();
+			baseConfig.setOpenApiValidatorConfig(new OpenapiLibraryValidatorConfig());
+			baseConfig.getOpenApiValidatorConfig().setOpenApiLibrary(openApiLibrary);
+
+			ApiValidatorConfig validatorConfig = ApiFactory.newApiValidatorConfig(openApiLibrary.name());
+			validatorConfig.readProperties(baseConfig.getOpenApiValidatorConfig()::getProperty);
+
+			apiValidator.init(LoggerWrapperFactory.getLogger(MainValidatorOpenAPI4.class), api, validatorConfig);
 			
 			System.err.println("Validazione effettuata con successo");
 			

@@ -2726,8 +2726,17 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				msgDiag.logStartupError(e,"Configurazione libreria di validazione openapi4j");
 				return;
 			}
-			
-			// Libreria di validazione generica delle dae
+
+			// Libreria di validazione kappa (OpenAPI 3.1 via json-sKema)
+			try {
+				com.github.erosb.kappa.schema.validator.SKemaBackedJsonValidator.setDateTimeAllowLowerCaseTZ(propertiesReader.isValidazioneContenutiApplicativiOpenApiDateTimeAllowLowerCaseTZ());
+				com.github.erosb.kappa.schema.validator.SKemaBackedJsonValidator.setDateTimeAllowSpaceSeparator(propertiesReader.isValidazioneContenutiApplicativiOpenApiDateTimeAllowSpaceSeparator());
+			}catch(Exception e){
+				msgDiag.logStartupError(e,"Configurazione libreria di validazione kappa");
+				return;
+			}
+
+			// Libreria di validazione generica delle date
 			try {
 				DateUtils.setDateTimeAllowLowerCaseTZ(propertiesReader.isValidazioneContenutiApplicativiOpenApiDateTimeAllowLowerCaseTZ());
 				DateUtils.setDateTimeAllowSpaceSeparator(propertiesReader.isValidazioneContenutiApplicativiOpenApiDateTimeAllowSpaceSeparator());

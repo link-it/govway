@@ -36,6 +36,7 @@ import org.openspcoop2.utils.openapi.validator.OpenapiLibraryValidatorConfig;
 import org.openspcoop2.utils.rest.ApiFactory;
 import org.openspcoop2.utils.rest.ApiFormats;
 import org.openspcoop2.utils.rest.ApiReaderConfig;
+import org.openspcoop2.utils.rest.ApiValidatorConfig;
 import org.openspcoop2.utils.rest.IApiReader;
 import org.openspcoop2.utils.rest.IApiValidator;
 import org.openspcoop2.utils.rest.api.Api;
@@ -118,6 +119,7 @@ public class InterfaceBiggerTest {
 			switch (openAPILibrary) {
 			case json_schema:
 			case openapi4j:
+			case kappa:
 				maxAtteso = ambienteTestNonPerformante ? 10000 : 3500; 
 				break;
 			case swagger_request_validator:
@@ -130,7 +132,7 @@ public class InterfaceBiggerTest {
 			}
 			
 			initT = DateManager.getTimeMillis();
-			IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+			IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(openAPILibrary.name());
 			OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
 			configO.setEmitLogError(logSystemOutError);
 			configO.setOpenApiValidatorConfig(new OpenapiLibraryValidatorConfig());
@@ -138,13 +140,18 @@ public class InterfaceBiggerTest {
 			configO.getOpenApiValidatorConfig().setValidateAPISpec(true);
 			configO.getOpenApiValidatorConfig().setMergeAPISpec(mergeSpec);
 			configO.getOpenApiValidatorConfig().setSwaggerRequestValidator_ResolveFullyApiSpec(true); // !!!!!!!!!!!! con opzione disabilitata va in out of memory
-			apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi4j, configO);
+
+			ApiValidatorConfig validatorConfig = ApiFactory.newApiValidatorConfig(openAPILibrary.name());
+			validatorConfig.readProperties(configO.getOpenApiValidatorConfig()::getProperty);
+
+			apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi4j, validatorConfig);
 			endT = DateManager.getTimeMillis();
 			time = endT - initT;
 			
 			maxAtteso = -1;
 			switch (openAPILibrary) {
 			case json_schema:
+			case kappa:
 			case openapi4j:
 				maxAtteso = Long.MAX_VALUE;
 				break;
@@ -160,6 +167,7 @@ public class InterfaceBiggerTest {
 			if(!ambienteTestNonPerformante) {
 				switch (openAPILibrary) {
 				case json_schema:
+				case kappa:
 				case openapi4j:
 					maxAtteso = 6000;
 					break;
@@ -170,8 +178,8 @@ public class InterfaceBiggerTest {
 			}
 			
 			initT = DateManager.getTimeMillis();
-			apiValidatorOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
-			apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi4j, configO);
+			apiValidatorOpenApi4j = ApiFactory.newApiValidator(openAPILibrary.name());
+			apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi4j, validatorConfig);
 			endT = DateManager.getTimeMillis();
 			time = endT - initT;
 			System.out.println("\tInit second validator time:"+Utilities.convertSystemTimeIntoStringMillisecondi(time, true));
@@ -348,6 +356,7 @@ public class InterfaceBiggerTest {
 					case json_schema:
 						msgErroreAtteso = "aaaaaaaaa";
 						break;
+					case kappa:
 					case openapi4j:
 						msgErroreAtteso = "Additional property 'resourceNonEsistente' is not allowed. (code: 1000)";
 						break;
@@ -517,6 +526,7 @@ public class InterfaceBiggerTest {
 					case json_schema:
 						msgErroreAtteso = "aaaaaaaaa";
 						break;
+					case kappa:
 					case openapi4j:
 						msgErroreAtteso = "Additional property 'resourceNonEsistente' is not allowed. (code: 1000)";
 						break;

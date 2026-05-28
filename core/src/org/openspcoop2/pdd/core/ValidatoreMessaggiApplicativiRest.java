@@ -26,7 +26,6 @@ package org.openspcoop2.pdd.core;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -65,23 +64,15 @@ import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.utils.ErroriProperties;
 import org.openspcoop2.protocol.utils.PorteNamingUtils;
 import org.openspcoop2.utils.UtilsException;
-import org.openspcoop2.utils.json.JSONUtils;
-import org.openspcoop2.utils.json.YAMLUtils;
+import org.openspcoop2.utils.json.JsonValidatorAPI.ApiName;
 import org.openspcoop2.utils.openapi.OpenapiApi;
-import org.openspcoop2.utils.openapi.UniqueInterfaceGenerator;
-import org.openspcoop2.utils.openapi.UniqueInterfaceGeneratorConfig;
 import org.openspcoop2.utils.openapi.validator.OpenAPILibrary;
-import org.openspcoop2.utils.openapi.validator.OpenapiApiValidatorConfig;
 import org.openspcoop2.utils.openapi.validator.OpenapiLibraryValidatorConfig;
 import org.openspcoop2.utils.rest.ApiFactory;
-import org.openspcoop2.utils.rest.ApiFormats;
-import org.openspcoop2.utils.rest.ApiReaderConfig;
 import org.openspcoop2.utils.rest.ApiValidatorConfig;
-import org.openspcoop2.utils.rest.IApiReader;
 import org.openspcoop2.utils.rest.IApiValidator;
+import org.openspcoop2.utils.rest.ProcessingException;
 import org.openspcoop2.utils.rest.api.Api;
-import org.openspcoop2.utils.rest.api.ApiSchema;
-import org.openspcoop2.utils.rest.api.ApiSchemaType;
 import org.openspcoop2.utils.rest.entity.BinaryHttpRequestEntity;
 import org.openspcoop2.utils.rest.entity.BinaryHttpResponseEntity;
 import org.openspcoop2.utils.rest.entity.Cookie;
@@ -131,8 +122,8 @@ public class ValidatoreMessaggiApplicativiRest {
 	private RequestInfo requestInfo;
 	/** UseInterface */
 	private boolean useInterface;
-	/** OpenApi4j config */
-	private OpenapiLibraryValidatorConfig configOpenApiValidator;
+	/** Proprieta di porta passate al costruttore (servono in validateWithInterface per buildValidatorConfigForCurrentApi). */
+	private List<Proprieta> proprieta;
 	/** OpenSPCoop2Properties */
 	private OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
 	/** Buffer */
@@ -177,33 +168,25 @@ public class ValidatoreMessaggiApplicativiRest {
 		
 		try{
 			this.useInterface = readInterfaceAccordoServizio;
-			
+			this.proprieta = proprieta;
+
+			// processIncludeForOpenApi: serve a parametrizzare getRestAccordoServizio.
+			// Quando l'engine selezionato risolve da sé i $ref esterni (openapi4j / swagger_request_validator / kappa)
+			// il flag deve essere false; vale true solo per json_schema (validatore basic, ha bisogno dello spec già appiattito).
+			// In costruttore non sappiamo ancora se la spec sarà swagger 2 / 3.0 / 3.1 (l'Api viene letta dal wrapper
+			// subito dopo), quindi adottiamo una valutazione conservativa: se ALMENO uno dei 3 default globali
+			// (swagger.2.library / openApi.30.library / openApi.31.library) risolve a un engine non-json_schema,
+			// mettiamo false.
 			boolean processIncludeForOpenApi = true;
-			this.configOpenApiValidator = new OpenapiLibraryValidatorConfig();
-			this.configOpenApiValidator.setOpenApiLibrary(this.op2Properties.getValidazioneContenutiApplicativiOpenApiLibrary());
-			if(OpenAPILibrary.openapi4j.equals(this.configOpenApiValidator.getOpenApiLibrary()) ||
-					OpenAPILibrary.swagger_request_validator.equals(this.configOpenApiValidator.getOpenApiLibrary())) {
-				this.configOpenApiValidator.setMergeAPISpec(this.op2Properties.isValidazioneContenutiApplicativiOpenApiMergeAPISpec());
-				this.configOpenApiValidator.setValidateAPISpec(this.op2Properties.isValidazioneContenutiApplicativiOpenApiValidateAPISpec());
-				this.configOpenApiValidator.setValidateRequestPath(this.op2Properties.isValidazioneContenutiApplicativiOpenApiValidateRequestPath());
-				this.configOpenApiValidator.setValidateRequestQuery(this.op2Properties.isValidazioneContenutiApplicativiOpenApiValidateRequestQuery());
-				this.configOpenApiValidator.setValidateRequestUnexpectedQueryParam(this.op2Properties.isValidazioneContenutiApplicativiOpenApiValidateRequestUnexpectedQueryParam());
-				this.configOpenApiValidator.setValidateRequestHeaders(this.op2Properties.isValidazioneContenutiApplicativiOpenApiValidateRequestHeaders());
-				this.configOpenApiValidator.setValidateRequestCookie(this.op2Properties.isValidazioneContenutiApplicativiOpenApiValidateRequestCookie());
-				this.configOpenApiValidator.setValidateRequestBody(this.op2Properties.isValidazioneContenutiApplicativiOpenApiValidateRequestBody());
-				this.configOpenApiValidator.setValidateResponseHeaders(this.op2Properties.isValidazioneContenutiApplicativiOpenApiValidateResponseHeaders());
-				this.configOpenApiValidator.setValidateResponseBody(this.op2Properties.isValidazioneContenutiApplicativiOpenApiValidateResponseBody());
-				this.configOpenApiValidator.setValidateWildcardSubtypeAsJson(this.op2Properties.isValidazioneContenutiApplicativiOpenApiValidateWildcardSubtypeAsJson());
-				this.configOpenApiValidator.setValidateMultipartOptimization(this.op2Properties.isValidazioneContenutiApplicativiOpenApiValidateMultipartOptimization());
-				this.configOpenApiValidator.setSwaggerRequestValidator_InjectingAdditionalPropertiesFalse(this.op2Properties.isValidazioneContenutiApplicativiOpenApiSwaggerRequestValidatorInjectingAdditionalPropertiesFalse());
-				this.configOpenApiValidator.setSwaggerRequestValidator_ResolveFullyApiSpec(this.op2Properties.isValidazioneContenutiApplicativiOpenApiSwaggerRequestValidatorResolveFullyApiSpec());
-			}
-			
-			updateOpenapiValidatorConfig(proprieta, this.configOpenApiValidator); // aggiorno anche se utilizzarlo o meno
-						
-			if(OpenAPILibrary.openapi4j.equals(this.configOpenApiValidator.getOpenApiLibrary()) ||
-					OpenAPILibrary.swagger_request_validator.equals(this.configOpenApiValidator.getOpenApiLibrary())) {
-				processIncludeForOpenApi = false;
+			if (readInterfaceAccordoServizio) {
+				OpenAPILibrary lib30 = this.op2Properties.getValidazioneContenutiApplicativiOpenApi30Library();
+				OpenAPILibrary lib31 = this.op2Properties.getValidazioneContenutiApplicativiOpenApi31Library();
+				OpenAPILibrary libSwagger2 = this.op2Properties.getValidazioneContenutiApplicativiSwagger2Library();
+				if (!OpenAPILibrary.json_schema.equals(lib30)
+						|| !OpenAPILibrary.json_schema.equals(lib31)
+						|| !OpenAPILibrary.json_schema.equals(libSwagger2)) {
+					processIncludeForOpenApi = false;
+				}
 			}
 			
 			this.bufferMessage_readOnly = OpenSPCoop2Properties.getInstance().isValidazioneContenutiApplicativiBufferContentRead();
@@ -363,69 +346,48 @@ public class ValidatoreMessaggiApplicativiRest {
 	}
 	private void validateWithInterface(boolean isRichiesta, boolean portaApplicativa, OpenSPCoop2Message requestMessage) throws ValidatoreMessaggiApplicativiException {
 		
-		if(ServiceBinding.SOAP.equals(this.message.getServiceBinding())){
+		if(ServiceBinding.SOAP.equals(this.message.getServiceBinding())) {
 			throw new ValidatoreMessaggiApplicativiException("Tipo di validazione non supportata con Service Binding SOAP");
 		}
 		
 		String interfaceType = null;
-		ApiFormats format = null;
 		ApiValidatorConfig validatorConfig = null;
-		OpenAPILibrary openApiLibrary = null; 
+		OpenAPILibrary openApiLibrary = null;
 		Api api = this.accordoServizioWrapper.getApi();
+
 		switch (this.accordoServizioWrapper.getAccordoServizio().getFormatoSpecifica()) {
 		case SWAGGER_2:
 			interfaceType = "Interfaccia Swagger 2";
-			format=ApiFormats.SWAGGER_2;
-			validatorConfig = new OpenapiApiValidatorConfig();
-			((OpenapiApiValidatorConfig)validatorConfig).setJsonValidatorAPI(this.op2Properties.getValidazioneContenutiApplicativiOpenApiJsonValidator());
-			if(this.useInterface && this.configOpenApiValidator!=null) {
-				openApiLibrary = this.configOpenApiValidator.getOpenApiLibrary();
-				if(OpenAPILibrary.swagger_request_validator.equals(openApiLibrary)) {
-					((OpenapiApiValidatorConfig)validatorConfig).setOpenApiValidatorConfig(this.configOpenApiValidator);
-					if(this.configOpenApiValidator.isMergeAPISpec()) {
-						// forzo a false, la funzionalità di merge non supporta swagger
-						this.configOpenApiValidator.setMergeAPISpec(false);
-					}
-					/*if(this.configOpenApiValidator.isMergeAPISpec() && api instanceof OpenapiApi) {
-						OpenapiApi openapi = (OpenapiApi) api;
-						if(openapi.getValidationStructure()==null) {
-							api = this.mergeApiSpec(openapi, this.accordoServizioWrapper);
-						}
-					}*/
-				}
-			}
 			break;
 		case OPEN_API_3:
 			interfaceType = "Interfaccia OpenAPI 3";
-			format=ApiFormats.OPEN_API_3;
-			validatorConfig = new OpenapiApiValidatorConfig();
-			((OpenapiApiValidatorConfig)validatorConfig).setJsonValidatorAPI(this.op2Properties.getValidazioneContenutiApplicativiOpenApiJsonValidator());
-			if(this.useInterface && this.configOpenApiValidator!=null) {
-				openApiLibrary = this.configOpenApiValidator.getOpenApiLibrary();
-				if(OpenAPILibrary.openapi4j.equals(openApiLibrary) || OpenAPILibrary.swagger_request_validator.equals(openApiLibrary)) {
-					((OpenapiApiValidatorConfig)validatorConfig).setOpenApiValidatorConfig(this.configOpenApiValidator);
-					if(this.configOpenApiValidator.isMergeAPISpec() && api instanceof OpenapiApi) {
-						OpenapiApi openapi = (OpenapiApi) api;
-						if(openapi.getValidationStructure()==null) {
-							api = this.mergeApiSpec(openapi, this.accordoServizioWrapper);
-						}
-					}
-				}
-			}
 			break;
 		default:
 			// altre interfacce non supportate per rest
 			throw new ValidatoreMessaggiApplicativiException("Tipo di interfaccia ["+this.accordoServizioWrapper.getAccordoServizio().getFormatoSpecifica()+"] non supportata");
 		}
-		
+
+		try {
+			openApiLibrary = this.useInterface
+					? resolveLibraryForCurrentApi(api, this.proprieta)
+					: OpenAPILibrary.json_schema;
+			validatorConfig = buildValidatorConfigForCurrentApi(api, this.proprieta, openApiLibrary);
+		} catch(Exception e) {
+			this.logger.error("validateWithInterface failed: "+e.getMessage(),e);
+			ValidatoreMessaggiApplicativiException ex
+				= new ValidatoreMessaggiApplicativiException(e.getMessage(),e);
+			ex.setErrore(ErroriIntegrazione.ERRORE_417_COSTRUZIONE_VALIDATORE_TRAMITE_INTERFACCIA_FALLITA.getErrore417_CostruzioneValidatoreTramiteInterfacciaFallita(interfaceType));
+			throw ex;
+		}
+
 		IApiValidator apiValidator = null;
 		try {
-			apiValidator = ApiFactory.newApiValidator(format);
+			apiValidator = ApiFactory.newApiValidator(openApiLibrary.name());
 			validatorConfig.setXmlUtils(MessageXMLUtils.getInstance(this.message.getFactory()));
 			validatorConfig.setVerbose(this.op2Properties.isValidazioneContenutiApplicativiDebug());
 			validatorConfig.setPolicyAdditionalProperties(this.op2Properties.getValidazioneContenutiApplicativiJsonPolicyAdditionalProperties());
 			apiValidator.init(this.logger, api, validatorConfig);
-		}catch(Exception e){
+		} catch(Exception e){
 			this.logger.error("validateWithInterface failed: "+e.getMessage(),e);
 			ValidatoreMessaggiApplicativiException ex 
 				= new ValidatoreMessaggiApplicativiException(e.getMessage(),e);
@@ -673,109 +635,248 @@ public class ValidatoreMessaggiApplicativiRest {
 		
 	}
 	
-	private Api mergeApiSpec(OpenapiApi api, org.openspcoop2.core.registry.rest.AccordoServizioWrapper accordoServizioWrapper) {
-		
-		YAMLUtils yamlUtils = YAMLUtils.getInstance();
-		JSONUtils jsonUtils = JSONUtils.getInstance();
-								
-		Map<String, String> attachments = new HashMap<>();
-		if(api.getSchemas()!=null && api.getSchemas().size()>0) {
+	/**
+	 * Risolve la libreria di validazione da usare per l'api corrente in base a 3 branche
+	 * disgiunte sul formato dello spec:
+	 * <ul>
+	 *   <li><b>Swagger 2.0</b>: default da {@link OpenSPCoop2Properties#getValidazioneContenutiApplicativiSwagger2Library()},
+	 *       override a livello porta tramite {@code validation.swagger.2.library};</li>
+	 *   <li><b>OpenAPI 3.0</b>: priorità (decrescente):
+	 *     <ol>
+	 *       <li>override esplicito port-level {@code validation.openApi.30.library};</li>
+	 *       <li>flag legacy port-level (deprecati): {@code validation.openApi4j.enabled} /
+	 *           {@code validation.swaggerRequestValidator.enabled}, con la convenzione legacy
+	 *           che entrambi disabilitati ⇒ {@code json_schema};</li>
+	 *       <li>default globale {@link OpenSPCoop2Properties#getValidazioneContenutiApplicativiOpenApi30Library()}
+	 *           (che legge {@code ...openApi.30.library} con fallback retrocompat su {@code ...openApi.library}).</li>
+	 *     </ol>
+	 *   </li>
+	 *   <li><b>OpenAPI 3.1</b>: default da {@link OpenSPCoop2Properties#getValidazioneContenutiApplicativiOpenApi31Library()},
+	 *       override port via {@code validation.openApi.31.library}.</li>
+	 * </ul>
+	 * Gli override port-level con libreria non compatibile col formato dell'api (vedi
+	 * {@link OpenAPILibrary#supportsSwagger2()}, {@link OpenAPILibrary#supportsOpenApi30()},
+	 * {@link OpenAPILibrary#supportsOpenApi31()}) provocano una {@link ValidatoreMessaggiApplicativiException}
+	 * fail-fast al caricamento della porta.
+	 */
+	private OpenAPILibrary resolveLibraryForCurrentApi(Api api, List<Proprieta> proprieta) throws ValidatoreMessaggiApplicativiException {
 
-			for (ApiSchema apiSchema : api.getSchemas()) {
-			
-				if(!ApiSchemaType.JSON.equals(apiSchema.getType()) && !ApiSchemaType.YAML.equals(apiSchema.getType())) {
-					continue;
+		FormatoSpecifica formato = this.accordoServizioWrapper.getAccordoServizio().getFormatoSpecifica();
+
+		// === Swagger 2.0 ===
+		if (FormatoSpecifica.SWAGGER_2.equals(formato)) {
+			OpenAPILibrary override = readLibraryOverride(proprieta,
+					CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_SWAGGER_2_LIBRARY);
+			if (override != null) {
+				if (!override.supportsSwagger2()) {
+					throw libraryNotCompatible(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_SWAGGER_2_LIBRARY, override, "Swagger 2.0");
 				}
-				byte [] schema = apiSchema.getContent();
-				if(ApiSchemaType.JSON.equals(apiSchema.getType())) {
-					if(jsonUtils.isJson(schema)) {
-						attachments.put(apiSchema.getName(), new String(apiSchema.getContent()));
-					}
-				}
-				else {
-					if(yamlUtils.isYaml(schema)) {
-						attachments.put(apiSchema.getName(), new String(apiSchema.getContent()));
-					}
-				}
-				
+				return override;
 			}
-		}
-		
-		if(attachments.isEmpty()) {	
-			return api; // non vi sono attachments da aggiungere
-		}
-		
-		String apiRaw = api.getApiRaw();
-		boolean apiRawIsYaml = yamlUtils.isYaml(apiRaw);
-									
-		UniqueInterfaceGeneratorConfig configUniqueInterfaceGeneratorConfig = new UniqueInterfaceGeneratorConfig();
-		configUniqueInterfaceGeneratorConfig.setFormat(ApiFormats.OPEN_API_3);
-		configUniqueInterfaceGeneratorConfig.setYaml(apiRawIsYaml);
-		configUniqueInterfaceGeneratorConfig.setMaster(apiRaw);
-		configUniqueInterfaceGeneratorConfig.setAttachments(attachments);
-		try {
-			String apiMerged = UniqueInterfaceGenerator.generate(configUniqueInterfaceGeneratorConfig, null, null, true, this.logger);
-			if(apiMerged==null) {
-				throw new Exception("empty ApiSpec");
-			}
-			
-			IApiReader apiReader = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
-			ApiReaderConfig config = new ApiReaderConfig();
-			config.setProcessInclude(false);
-			config.setProcessInlineSchema(true);
-			apiReader.init(this.logger, apiMerged, config);
-			Api apiMergedObject = apiReader.read();
-			if(apiMergedObject==null) {
-				throw new Exception("empty ApiSpec after read");
-			}
-			accordoServizioWrapper.updateApi(apiMergedObject);
-			return apiMergedObject;
-		}catch(Throwable t) {
-			this.logger.error("Merge API Spec failed: "+t.getMessage(),t);
-			return api; // torno al metodo tradizionale utilizzando l'api non merged
+			return this.op2Properties.getValidazioneContenutiApplicativiSwagger2Library();
 		}
 
+		// === OpenAPI 3.1 ===
+		if (OpenapiApi.isOpenApi31(api)) {
+			OpenAPILibrary override = readLibraryOverride(proprieta,
+					CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_COMMONS_31_LIBRARY);
+			if (override != null) {
+				if (!override.supportsOpenApi31()) {
+					throw libraryNotCompatible(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_COMMONS_31_LIBRARY, override, "OpenAPI 3.1");
+				}
+				return override;
+			}
+			return this.op2Properties.getValidazioneContenutiApplicativiOpenApi31Library();
+		}
+
+		// === OpenAPI 3.0 ===
+		// 1. override esplicito port-level
+		OpenAPILibrary override30 = readLibraryOverride(proprieta,
+				CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_COMMONS_30_LIBRARY);
+		if (override30 != null) {
+			if (!override30.supportsOpenApi30()) {
+				throw libraryNotCompatible(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_COMMONS_30_LIBRARY, override30, "OpenAPI 3.0");
+			}
+			return override30;
+		}
+		// 2. flag legacy port-level (deprecati)
+		OpenAPILibrary legacyOverride = applyLegacyEnabledFlags30(proprieta);
+		if (legacyOverride != null) {
+			return legacyOverride;
+		}
+		// 3. default globale (govway.properties)
+		return this.op2Properties.getValidazioneContenutiApplicativiOpenApi30Library();
 	}
-	
+
+	/**
+	 * Override port-level via flag legacy (deprecati):
+	 * <pre>
+	 *   validation.openApi4j.enabled = enabled               → openapi4j
+	 *   validation.swaggerRequestValidator.enabled = enabled → swagger_request_validator
+	 *   entrambi = disabled                                  → json_schema
+	 * </pre>
+	 * Ritorna {@code null} se nessun flag è impostato (il chiamante usa il default globale).
+	 * I flag in oggetto sono in via di dismissione: i nuovi setup usano
+	 * {@code validation.openApi.30.library}.
+	 */
+	@SuppressWarnings("deprecation")
+	private OpenAPILibrary applyLegacyEnabledFlags30(List<Proprieta> proprieta) {
+		String useOpenApi4j = readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_ENABLED);
+		String useSwagger = readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_SWAGGER_REQUEST_VALIDATOR_ENABLED);
+
+		OpenAPILibrary lib = null;
+		boolean openApi4jForceDisabled = false;
+		boolean swaggerForceDisabled = false;
+
+		if (useOpenApi4j != null && !StringUtils.isEmpty(useOpenApi4j)) {
+			if (CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_OPENAPI4J_ENABLED.equals(useOpenApi4j.trim())) {
+				lib = OpenAPILibrary.openapi4j;
+			} else if (CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_OPENAPI4J_DISABLED.equals(useOpenApi4j.trim())) {
+				openApi4jForceDisabled = true;
+			}
+		}
+		if (useSwagger != null && !StringUtils.isEmpty(useSwagger)) {
+			if (CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_SWAGGER_REQUEST_VALIDATOR_ENABLED.equals(useSwagger.trim())) {
+				lib = OpenAPILibrary.swagger_request_validator;
+			} else if (CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_SWAGGER_REQUEST_VALIDATOR_DISABLED.equals(useSwagger.trim())) {
+				swaggerForceDisabled = true;
+			}
+		}
+		if (openApi4jForceDisabled && swaggerForceDisabled) {
+			lib = OpenAPILibrary.json_schema;
+		}
+		return lib;
+	}
+
+	/**
+	 * Legge un override port-level del tipo {@code validation.openApi.30.library = openapi4j}.
+	 * Restituisce {@code null} se la property non è impostata o è vuota.
+	 * Lancia {@link ValidatoreMessaggiApplicativiException} se il valore non corrisponde
+	 * ad alcun engine noto.
+	 */
+	private OpenAPILibrary readLibraryOverride(List<Proprieta> proprieta, String propertyName) throws ValidatoreMessaggiApplicativiException {
+		String raw = readValue(proprieta, propertyName);
+		if (raw == null || raw.trim().isEmpty()) {
+			return null;
+		}
+		try {
+			return OpenAPILibrary.valueOf(raw.trim());
+		} catch (Exception e) {
+			throw new ValidatoreMessaggiApplicativiException("Property di porta '" + propertyName
+					+ "' con valore '" + raw + "' non valido: nessuna libreria di validazione con tale nome");
+		}
+	}
+
+	private static ValidatoreMessaggiApplicativiException libraryNotCompatible(String propertyName, OpenAPILibrary library, String formato) {
+		return new ValidatoreMessaggiApplicativiException("Property di porta '" + propertyName
+				+ "' con valore '" + library + "' non valido: la libreria non supporta " + formato);
+	}
+
+	/**
+	 * Costruisce per la singola porta un {@link ApiValidatorConfig} engine-specific:
+	 * <ol>
+	 *   <li>recupera la <em>config base</em> cached da {@link OpenSPCoop2Properties} per la libreria data
+	 *       e ne fa una <strong>copia</strong> (clone via {@link ApiValidatorConfig#mapProperties()});</li>
+	 *   <li>applica gli override property a livello di porta riusando {@link #updateOpenapiValidatorConfig}
+	 *       e quindi ricostruisce l'engine config finale.</li>
+	 * </ol>
+	 * I metodi legacy non sono toccati.
+	 */
+	private ApiValidatorConfig buildValidatorConfigForCurrentApi(Api api, List<Proprieta> proprieta, OpenAPILibrary library) throws ProcessingException {
+		boolean is31 = OpenapiApi.isOpenApi31(api);
+
+		// 1. recupero la base cached e ne creo una copia (transferendo solo le coppie chiave/valore)
+		ApiValidatorConfig base = is31
+				? this.op2Properties.getValidator31ConfigBase(library)
+				: this.op2Properties.getValidatorConfigBase(library);
+
+		OpenapiLibraryValidatorConfig src = new OpenapiLibraryValidatorConfig();
+		src.setOpenApiLibrary(library);
+		if (base != null) {
+			applyMapToLibConfig(src, base.mapProperties());
+		}
+
+		// 2. override a livello di porta
+		updateOpenapiValidatorConfig(proprieta, src);
+
+		// 3. costruisco la config engine-specific finale dal src risultante
+		ApiValidatorConfig engineConfig = ApiFactory.newApiValidatorConfig(library.name());
+		engineConfig.readProperties(src::getProperty);
+		return engineConfig;
+	}
+
+	private static void applyMapToLibConfig(OpenapiLibraryValidatorConfig dest, Map<String, String> props) {
+		String s = props.get(OpenapiLibraryValidatorConfig.PROPERTY_KEY_JSON_VALIDATOR_API);
+		if (s != null) {
+			try { dest.setJsonValidatorAPI(ApiName.valueOf(s)); } catch (Exception e) { /* ignore */ }
+		}
+		applyBool(props, OpenapiLibraryValidatorConfig.PROPERTY_KEY_MERGE_API_SPEC, dest::setMergeAPISpec);
+		applyBool(props, OpenapiLibraryValidatorConfig.PROPERTY_KEY_VALIDATE_API_SPEC, dest::setValidateAPISpec);
+		applyBool(props, OpenapiLibraryValidatorConfig.PROPERTY_KEY_VALIDATE_REQUEST_PATH, dest::setValidateRequestPath);
+		applyBool(props, OpenapiLibraryValidatorConfig.PROPERTY_KEY_VALIDATE_REQUEST_QUERY, dest::setValidateRequestQuery);
+		applyBool(props, OpenapiLibraryValidatorConfig.PROPERTY_KEY_VALIDATE_REQUEST_UNEXPECTED_QUERY_PARAM, dest::setValidateRequestUnexpectedQueryParam);
+		applyBool(props, OpenapiLibraryValidatorConfig.PROPERTY_KEY_VALIDATE_REQUEST_HEADERS, dest::setValidateRequestHeaders);
+		applyBool(props, OpenapiLibraryValidatorConfig.PROPERTY_KEY_VALIDATE_REQUEST_COOKIES, dest::setValidateRequestCookie);
+		applyBool(props, OpenapiLibraryValidatorConfig.PROPERTY_KEY_VALIDATE_REQUEST_BODY, dest::setValidateRequestBody);
+		applyBool(props, OpenapiLibraryValidatorConfig.PROPERTY_KEY_VALIDATE_RESPONSE_HEADERS, dest::setValidateResponseHeaders);
+		applyBool(props, OpenapiLibraryValidatorConfig.PROPERTY_KEY_VALIDATE_RESPONSE_BODY, dest::setValidateResponseBody);
+		applyBool(props, OpenapiLibraryValidatorConfig.PROPERTY_KEY_VALIDATE_WILDCARD_SUBTYPE_AS_JSON, dest::setValidateWildcardSubtypeAsJson);
+		applyBool(props, OpenapiLibraryValidatorConfig.PROPERTY_KEY_VALIDATE_MULTIPART_OPTIMIZATION, dest::setValidateMultipartOptimization);
+		applyBool(props, OpenapiLibraryValidatorConfig.PROPERTY_KEY_SWAGGER_INJECTING_ADDITIONAL_PROPERTIES_FALSE, dest::setSwaggerRequestValidator_InjectingAdditionalPropertiesFalse);
+		applyBool(props, OpenapiLibraryValidatorConfig.PROPERTY_KEY_SWAGGER_RESOLVE_FULLY_API_SPEC, dest::setSwaggerRequestValidator_ResolveFullyApiSpec);
+	}
+
+	private static void applyBool(Map<String, String> props, String key, java.util.function.Consumer<Boolean> setter) {
+		String v = props.get(key);
+		if (v != null) {
+			setter.accept(Boolean.parseBoolean(v));
+		}
+	}
+
 	private void updateOpenapiValidatorConfig(List<Proprieta> proprieta, OpenapiLibraryValidatorConfig configOpenApi4j) {
 		if(proprieta==null || proprieta.isEmpty()) {
 			return;
 		}
-		
-		String useOpenApi4j = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_ENABLED);
-		boolean openApi4jForceDisabled = false;
-		if(useOpenApi4j!=null && !StringUtils.isEmpty(useOpenApi4j)) {
-			if(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_OPENAPI4J_ENABLED.equals(useOpenApi4j.trim())) {
-				configOpenApi4j.setOpenApiLibrary(OpenAPILibrary.openapi4j);
-			}
-			else if(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_OPENAPI4J_DISABLED.equals(useOpenApi4j.trim())) {
-				openApi4jForceDisabled = true;
-			}
-		}
-		String useSwaggerRequestValidator = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_SWAGGER_REQUEST_VALIDATOR_ENABLED);
-		boolean swaggerRequestValidatorForceDisabled = false;
-		if(useSwaggerRequestValidator!=null && !StringUtils.isEmpty(useSwaggerRequestValidator)) {
-			if(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_SWAGGER_REQUEST_VALIDATOR_ENABLED.equals(useSwaggerRequestValidator.trim())) {
-				configOpenApi4j.setOpenApiLibrary(OpenAPILibrary.swagger_request_validator);
-			}
-			else if(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_SWAGGER_REQUEST_VALIDATOR_DISABLED.equals(useSwaggerRequestValidator.trim())) {
-				swaggerRequestValidatorForceDisabled = true;
-			}
-		}
-		
-		if(openApi4jForceDisabled && swaggerRequestValidatorForceDisabled) {
-			configOpenApi4j.setOpenApiLibrary(OpenAPILibrary.json_schema);
-		}
-		
-		if(!OpenAPILibrary.openapi4j.equals(configOpenApi4j.getOpenApiLibrary()) && !OpenAPILibrary.swagger_request_validator.equals(configOpenApi4j.getOpenApiLibrary())) {
+
+		// La scelta della libreria (resolveLibraryForCurrentApi) è già stata effettuata dal chiamante:
+		// qui applichiamo gli override port-level sulle property booleane (mergeAPISpec, validateAPISpec, ecc.)
+		// in base alla libreria già impostata in configOpenApi4j.
+		//
+		// Razionale property engine-specific vs commons:
+		//   - Le property engine-specific (validation.openApi4j.<flag>, validation.swaggerRequestValidator.<flag>)
+		//     sono LEGACY: nel vecchio modello affiancavano i flag '<engine>.enabled=true' (oggi deprecati)
+		//     come pacchetto di configurazione con lo stesso prefisso. Vengono lette qui solo per
+		//     back-compat di configurazioni esistenti e non sono più documentate.
+		//   - Le property commons (validation.openApi.<flag>) sono engine-agnostic e sono la modalità
+		//     raccomandata (l'unica documentata). Hanno lo stesso significato per openapi4j,
+		//     swagger_request_validator e kappa.
+		//   - kappa non ha property legacy dedicate: ricade direttamente sulla commons. Non si aggiungono
+		//     prefissi 'validation.kappa.<flag>', che perpetuerebbero il pattern legacy senza beneficio.
+		//   - json_schema non legge dal config alcun flag di validazione/merge (il validator usa solo
+		//     verbose / policyAdditionalProperties / emitLogError): esce subito.
+		//
+		// Gli engine ignorano i flag che non supportano senza danni (es. kappa non legge
+		// validateRequestUnexpectedQueryParam / validateWildcardSubtypeAsJson; swagger_request_validator
+		// non legge validateMultipartOptimization). Il cacheKey dei validator esposti
+		// (ApiValidatorConfig.cacheKey + override swagger) include solo i flag che effettivamente
+		// influenzano la struttura caricata.
+		if(OpenAPILibrary.json_schema.equals(configOpenApi4j.getOpenApiLibrary())) {
 			return;
 		}
 		boolean openapi4j = OpenAPILibrary.openapi4j.equals(configOpenApi4j.getOpenApiLibrary());
-		String enabled = openapi4j ? CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_OPENAPI4J_ENABLED : CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_SWAGGER_REQUEST_VALIDATOR_ENABLED;
-		String disabled = openapi4j ? CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_OPENAPI4J_DISABLED : CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_SWAGGER_REQUEST_VALIDATOR_DISABLED;
-		
-		String mergeAPISpec = ValidatoreMessaggiApplicativiRest.readValue(proprieta, 
-				openapi4j ? CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_MERGE_API_SPEC : CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_SWAGGER_REQUEST_VALIDATOR_MERGE_API_SPEC);
+		boolean swaggerRV = OpenAPILibrary.swagger_request_validator.equals(configOpenApi4j.getOpenApiLibrary());
+		// I valori 'enabled'/'disabled' sono comuni a tutte le property port-level (engine-agnostic),
+		// usiamo le costanti generiche non deprecate.
+		String enabled = CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_ENABLED;
+		String disabled = CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_DISABLED;
+
+		String mergeAPISpec = null;
+		if(openapi4j) {
+			mergeAPISpec = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_MERGE_API_SPEC);
+		}
+		else if(swaggerRV) {
+			mergeAPISpec = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_SWAGGER_REQUEST_VALIDATOR_MERGE_API_SPEC);
+		}
 		if(mergeAPISpec==null || StringUtils.isEmpty(mergeAPISpec)) {
 			mergeAPISpec = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_COMMONS_MERGE_API_SPEC);
 		}
@@ -787,9 +888,14 @@ public class ValidatoreMessaggiApplicativiRest {
 				configOpenApi4j.setMergeAPISpec(false);
 			}
 		}
-		
-		String validateAPISpec = ValidatoreMessaggiApplicativiRest.readValue(proprieta, 
-				openapi4j ? CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_VALIDATE_API_SPEC : CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_SWAGGER_REQUEST_VALIDATOR_VALIDATE_API_SPEC);
+
+		String validateAPISpec = null;
+		if(openapi4j) {
+			validateAPISpec = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_VALIDATE_API_SPEC);
+		}
+		else if(swaggerRV) {
+			validateAPISpec = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_SWAGGER_REQUEST_VALIDATOR_VALIDATE_API_SPEC);
+		}
 		if(validateAPISpec==null || StringUtils.isEmpty(validateAPISpec)) {
 			validateAPISpec = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_COMMONS_VALIDATE_API_SPEC);
 		}
@@ -801,9 +907,14 @@ public class ValidatoreMessaggiApplicativiRest {
 				configOpenApi4j.setValidateAPISpec(false);
 			}
 		}
-		
-		String validateRequestPath = ValidatoreMessaggiApplicativiRest.readValue(proprieta, 
-				openapi4j ? CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_VALIDATE_REQUEST_PATH : CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_SWAGGER_REQUEST_VALIDATOR_VALIDATE_REQUEST_PATH);
+
+		String validateRequestPath = null;
+		if(openapi4j) {
+			validateRequestPath = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_VALIDATE_REQUEST_PATH);
+		}
+		else if(swaggerRV) {
+			validateRequestPath = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_SWAGGER_REQUEST_VALIDATOR_VALIDATE_REQUEST_PATH);
+		}
 		if(validateRequestPath==null || StringUtils.isEmpty(validateRequestPath)) {
 			validateRequestPath = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_COMMONS_VALIDATE_REQUEST_PATH);
 		}
@@ -815,9 +926,14 @@ public class ValidatoreMessaggiApplicativiRest {
 				configOpenApi4j.setValidateRequestPath(false);
 			}
 		}
-		
-		String validateRequestQuery = ValidatoreMessaggiApplicativiRest.readValue(proprieta, 
-				openapi4j ? CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_VALIDATE_REQUEST_QUERY : CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_SWAGGER_REQUEST_VALIDATOR_VALIDATE_REQUEST_QUERY);
+
+		String validateRequestQuery = null;
+		if(openapi4j) {
+			validateRequestQuery = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_VALIDATE_REQUEST_QUERY);
+		}
+		else if(swaggerRV) {
+			validateRequestQuery = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_SWAGGER_REQUEST_VALIDATOR_VALIDATE_REQUEST_QUERY);
+		}
 		if(validateRequestQuery==null || StringUtils.isEmpty(validateRequestQuery)) {
 			validateRequestQuery = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_COMMONS_VALIDATE_REQUEST_QUERY);
 		}
@@ -829,9 +945,14 @@ public class ValidatoreMessaggiApplicativiRest {
 				configOpenApi4j.setValidateRequestQuery(false);
 			}
 		}
-		
-		String validateRequestQueryUnexpectedQueryParam = ValidatoreMessaggiApplicativiRest.readValue(proprieta, 
-				openapi4j ? CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_VALIDATE_REQUEST_UNEXPECTED_QUERY_PARAM : CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_SWAGGER_REQUEST_VALIDATOR_VALIDATE_REQUEST_UNEXPECTED_QUERY_PARAM);
+
+		String validateRequestQueryUnexpectedQueryParam = null;
+		if(openapi4j) {
+			validateRequestQueryUnexpectedQueryParam = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_VALIDATE_REQUEST_UNEXPECTED_QUERY_PARAM);
+		}
+		else if(swaggerRV) {
+			validateRequestQueryUnexpectedQueryParam = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_SWAGGER_REQUEST_VALIDATOR_VALIDATE_REQUEST_UNEXPECTED_QUERY_PARAM);
+		}
 		if(validateRequestQueryUnexpectedQueryParam==null || StringUtils.isEmpty(validateRequestQueryUnexpectedQueryParam)) {
 			validateRequestQueryUnexpectedQueryParam = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_COMMONS_VALIDATE_REQUEST_UNEXPECTED_QUERY_PARAM);
 		}
@@ -843,9 +964,14 @@ public class ValidatoreMessaggiApplicativiRest {
 				configOpenApi4j.setValidateRequestUnexpectedQueryParam(false);
 			}
 		}
-		
-		String validateRequestHeaders = ValidatoreMessaggiApplicativiRest.readValue(proprieta, 
-				openapi4j ? CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_VALIDATE_REQUEST_HEADERS : CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_SWAGGER_REQUEST_VALIDATOR_VALIDATE_REQUEST_HEADERS);
+
+		String validateRequestHeaders = null;
+		if(openapi4j) {
+			validateRequestHeaders = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_VALIDATE_REQUEST_HEADERS);
+		}
+		else if(swaggerRV) {
+			validateRequestHeaders = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_SWAGGER_REQUEST_VALIDATOR_VALIDATE_REQUEST_HEADERS);
+		}
 		if(validateRequestHeaders==null || StringUtils.isEmpty(validateRequestHeaders)) {
 			validateRequestHeaders = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_COMMONS_VALIDATE_REQUEST_HEADERS);
 		}
@@ -857,9 +983,14 @@ public class ValidatoreMessaggiApplicativiRest {
 				configOpenApi4j.setValidateRequestHeaders(false);
 			}
 		}
-		
-		String validateRequestCookie = ValidatoreMessaggiApplicativiRest.readValue(proprieta, 
-				openapi4j ? CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_VALIDATE_REQUEST_COOKIES : CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_SWAGGER_REQUEST_VALIDATOR_VALIDATE_REQUEST_COOKIES);
+
+		String validateRequestCookie = null;
+		if(openapi4j) {
+			validateRequestCookie = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_VALIDATE_REQUEST_COOKIES);
+		}
+		else if(swaggerRV) {
+			validateRequestCookie = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_SWAGGER_REQUEST_VALIDATOR_VALIDATE_REQUEST_COOKIES);
+		}
 		if(validateRequestCookie==null || StringUtils.isEmpty(validateRequestCookie)) {
 			validateRequestCookie = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_COMMONS_VALIDATE_REQUEST_COOKIES);
 		}
@@ -871,9 +1002,14 @@ public class ValidatoreMessaggiApplicativiRest {
 				configOpenApi4j.setValidateRequestCookie(false);
 			}
 		}
-		
-		String validateRequestBody = ValidatoreMessaggiApplicativiRest.readValue(proprieta, 
-				openapi4j ? CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_VALIDATE_REQUEST_BODY : CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_SWAGGER_REQUEST_VALIDATOR_VALIDATE_REQUEST_BODY);
+
+		String validateRequestBody = null;
+		if(openapi4j) {
+			validateRequestBody = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_VALIDATE_REQUEST_BODY);
+		}
+		else if(swaggerRV) {
+			validateRequestBody = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_SWAGGER_REQUEST_VALIDATOR_VALIDATE_REQUEST_BODY);
+		}
 		if(validateRequestBody==null || StringUtils.isEmpty(validateRequestBody)) {
 			validateRequestBody = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_COMMONS_VALIDATE_REQUEST_BODY);
 		}
@@ -885,9 +1021,14 @@ public class ValidatoreMessaggiApplicativiRest {
 				configOpenApi4j.setValidateRequestBody(false);
 			}
 		}
-		
-		String validateResponseHeaders = ValidatoreMessaggiApplicativiRest.readValue(proprieta, 
-				openapi4j ? CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_VALIDATE_RESPONSE_HEADERS : CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_SWAGGER_REQUEST_VALIDATOR_VALIDATE_RESPONSE_HEADERS);
+
+		String validateResponseHeaders = null;
+		if(openapi4j) {
+			validateResponseHeaders = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_VALIDATE_RESPONSE_HEADERS);
+		}
+		else if(swaggerRV) {
+			validateResponseHeaders = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_SWAGGER_REQUEST_VALIDATOR_VALIDATE_RESPONSE_HEADERS);
+		}
 		if(validateResponseHeaders==null || StringUtils.isEmpty(validateResponseHeaders)) {
 			validateResponseHeaders = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_COMMONS_VALIDATE_RESPONSE_HEADERS);
 		}
@@ -899,9 +1040,14 @@ public class ValidatoreMessaggiApplicativiRest {
 				configOpenApi4j.setValidateResponseHeaders(false);
 			}
 		}
-		
-		String validateResponseBody = ValidatoreMessaggiApplicativiRest.readValue(proprieta, 
-				openapi4j ? CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_VALIDATE_RESPONSE_BODY : CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_SWAGGER_REQUEST_VALIDATOR_VALIDATE_RESPONSE_BODY);
+
+		String validateResponseBody = null;
+		if(openapi4j) {
+			validateResponseBody = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_VALIDATE_RESPONSE_BODY);
+		}
+		else if(swaggerRV) {
+			validateResponseBody = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_SWAGGER_REQUEST_VALIDATOR_VALIDATE_RESPONSE_BODY);
+		}
 		if(validateResponseBody==null || StringUtils.isEmpty(validateResponseBody)) {
 			validateResponseBody = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_COMMONS_VALIDATE_RESPONSE_BODY);
 		}
@@ -913,9 +1059,14 @@ public class ValidatoreMessaggiApplicativiRest {
 				configOpenApi4j.setValidateResponseBody(false);
 			}
 		}
-		
-		String validateWildcardSubtypeAsJson = ValidatoreMessaggiApplicativiRest.readValue(proprieta, 
-				openapi4j ? CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_VALIDATE_WILDCARD_SUBTYPE_AS_JSON : CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_SWAGGER_REQUEST_VALIDATOR_VALIDATE_WILDCARD_SUBTYPE_AS_JSON);
+
+		String validateWildcardSubtypeAsJson = null;
+		if(openapi4j) {
+			validateWildcardSubtypeAsJson = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_VALIDATE_WILDCARD_SUBTYPE_AS_JSON);
+		}
+		else if(swaggerRV) {
+			validateWildcardSubtypeAsJson = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_SWAGGER_REQUEST_VALIDATOR_VALIDATE_WILDCARD_SUBTYPE_AS_JSON);
+		}
 		if(validateWildcardSubtypeAsJson==null || StringUtils.isEmpty(validateWildcardSubtypeAsJson)) {
 			validateWildcardSubtypeAsJson = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_COMMONS_VALIDATE_WILDCARD_SUBTYPE_AS_JSON);
 		}
@@ -927,11 +1078,15 @@ public class ValidatoreMessaggiApplicativiRest {
 				configOpenApi4j.setValidateWildcardSubtypeAsJson(false);
 			}
 		}
-		
-		if(openapi4j) {
-			String validateMultipartOptimization = ValidatoreMessaggiApplicativiRest.readValue(proprieta, 
-					//openapi4j ? CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_VALIDATE_MULTIPART_OPTIMIZATION : CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_SWAGGER_REQUEST_VALIDATOR_VALIDATE_MULTIPART_OPTIMIZATION);
-					CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_VALIDATE_MULTIPART_OPTIMIZATION);
+
+		// validateMultipartOptimization è letto da openapi4j e kappa (swaggerRV non lo usa).
+		// La property legacy 'validation.openApi4j.validateMultipartOptimization' è disponibile
+		// solo per openapi4j (back-compat); per kappa si usa direttamente la commons.
+		if(!swaggerRV) {
+			String validateMultipartOptimization = null;
+			if(openapi4j) {
+				validateMultipartOptimization = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_VALIDATE_MULTIPART_OPTIMIZATION);
+			}
 			if(validateMultipartOptimization==null || StringUtils.isEmpty(validateMultipartOptimization)) {
 				validateMultipartOptimization = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_COMMONS_VALIDATE_MULTIPART_OPTIMIZATION);
 			}
@@ -944,8 +1099,9 @@ public class ValidatoreMessaggiApplicativiRest {
 				}
 			}
 		}
-		
-		if(!openapi4j) {
+
+		// Flag esclusivi di swagger_request_validator (specifici della libreria, niente commons).
+		if(swaggerRV) {
 			String injectingAdditionalPropertiesFalse = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_SWAGGER_REQUEST_VALIDATOR_INJECTING_ADDITIONAL_PROPERTIES_FALSE);
 			if(injectingAdditionalPropertiesFalse!=null && !StringUtils.isEmpty(injectingAdditionalPropertiesFalse)) {
 				if(enabled.equals(injectingAdditionalPropertiesFalse.trim())) {
@@ -955,7 +1111,7 @@ public class ValidatoreMessaggiApplicativiRest {
 					configOpenApi4j.setSwaggerRequestValidator_InjectingAdditionalPropertiesFalse(false);
 				}
 			}
-			
+
 			String resolveFullyApiSpec = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_SWAGGER_REQUEST_VALIDATOR_RESOLVE_FULLY_API_SPEC);
 			if(resolveFullyApiSpec!=null && !StringUtils.isEmpty(resolveFullyApiSpec)) {
 				if(enabled.equals(resolveFullyApiSpec.trim())) {
@@ -966,7 +1122,7 @@ public class ValidatoreMessaggiApplicativiRest {
 				}
 			}
 		}
-		
+
 	}
 	protected static String readValue(List<Proprieta> proprieta, String nome) {
 		if(proprieta==null || proprieta.isEmpty()) {

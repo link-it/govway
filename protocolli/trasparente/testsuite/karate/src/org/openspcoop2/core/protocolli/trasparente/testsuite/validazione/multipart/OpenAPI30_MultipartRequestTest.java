@@ -62,8 +62,37 @@ import org.slf4j.Logger;
 * @version $Rev$, $Date$
 */
 public class OpenAPI30_MultipartRequestTest extends ConfigLoader {
-	
+
 	// https://swagger.io/docs/specification/describing-request-body/multipart-requests/
+
+	/**
+	 * Nome dell'API multipart esercitata dai test. Le sottoclassi (es. varianti con
+	 * {@code validateMultipartOptimization=enabled} o profilo OpenAPI 3.1) override solo questo
+	 * metodo per puntare a un'API equivalente ma configurata diversamente.
+	 */
+	protected String getApiName() {
+		return "OpenAPIValidazioneMultipartRequest";
+	}
+
+	// ---- Messaggi di errore attesi dalla libreria di validazione ----
+	// Default = openapi4j (utilizzato da OAS 3.0 default + variante Optimized).
+	// Le sottoclassi OAS 3.1 override questi metodi per i messaggi prodotti da kappa.
+
+	protected String errAdditionalProperty() {
+		return "body: Additional property ''docOther'' is not allowed. (code: 1000)";
+	}
+	protected String errMissingFieldAltro() {
+		return "body.metadati: Field ''altro'' is required. (code: 1026)";
+	}
+	protected String errDiscriminator() {
+		return "body.metadati.pet: Schema selection can''t be made for discriminator ''pet_type'' with value ''CatErrato''. (code: 1003)";
+	}
+	protected String errMissingFieldDocPdf() {
+		return "body: Field ''docPdf'' is required. (code: 1026)";
+	}
+	protected String errContentTypeNotAllowed(String subtypeWrong) {
+		return "Content type ''multipart/"+subtypeWrong+"%is not allowed for body content. (code: 203)";
+	}
 		
 	@Test
 	public void erogazione_form_data_ok() throws Exception {
@@ -95,7 +124,7 @@ public class OpenAPI30_MultipartRequestTest extends ConfigLoader {
 				pdfEncodedBase64, HttpConstants.CONTENT_TYPE_PDF, "\"docPdf2\"", "\"attachment2.pdf\"",
 				null, null, null, null);
 		
-		test(logCore, tipo, subtype, mm,
+		test(logCore, getApiName(), tipo, subtype, mm,
 				null, 
 				false,
 				null);
@@ -132,8 +161,8 @@ public class OpenAPI30_MultipartRequestTest extends ConfigLoader {
 				pdfEncodedBase64, HttpConstants.CONTENT_TYPE_PDF, "\"docPdf2\"", "\"attachment2.pdf\"",
 				pdf, HttpConstants.CONTENT_TYPE_ZIP, "\"docOther\"", "\"attachment.bin\"");
 		
-		test(logCore, tipo, subtype, mm,
-				"body: Additional property ''docOther'' is not allowed. (code: 1000)", 
+		test(logCore, getApiName(), tipo, subtype, mm,
+				errAdditionalProperty(),
 				false,
 				null);
 	}
@@ -172,8 +201,8 @@ public class OpenAPI30_MultipartRequestTest extends ConfigLoader {
 				pdfEncodedBase64, HttpConstants.CONTENT_TYPE_PDF, "\"docPdf2\"", "\"attachment2.pdf\"",
 				pdf, HttpConstants.CONTENT_TYPE_ZIP, "\"docOther\"", "\"attachment.bin\"");
 		
-		test(logCore, tipo, subtype, mm,
-				"body.metadati: Field ''altro'' is required. (code: 1026)", 
+		test(logCore, getApiName(), tipo, subtype, mm,
+				errMissingFieldAltro(),
 				false,
 				null);
 	}
@@ -211,8 +240,8 @@ public class OpenAPI30_MultipartRequestTest extends ConfigLoader {
 				pdfEncodedBase64, HttpConstants.CONTENT_TYPE_PDF, "\"docPdf2\"", "\"attachment2.pdf\"",
 				pdf, HttpConstants.CONTENT_TYPE_ZIP, "\"docOther\"", "\"attachment.bin\"");
 		
-		test(logCore, tipo, subtype, mm,
-				"body.metadati.pet: Schema selection can''t be made for discriminator ''pet_type'' with value ''CatErrato''. (code: 1003)", 
+		test(logCore, getApiName(), tipo, subtype, mm,
+				errDiscriminator(),
 				false,
 				null);
 	}
@@ -249,8 +278,8 @@ public class OpenAPI30_MultipartRequestTest extends ConfigLoader {
 				pdfEncodedBase64, HttpConstants.CONTENT_TYPE_PDF, "\"docPdf2\"", "\"attachment2.pdf\"",
 				null, null, null, null);
 		
-		test(logCore, tipo, subtype, mm,
-				"body: Field ''docPdf'' is required. (code: 1026)", 
+		test(logCore, getApiName(), tipo, subtype, mm,
+				errMissingFieldDocPdf(),
 				false,
 				null);
 	}
@@ -290,8 +319,8 @@ public class OpenAPI30_MultipartRequestTest extends ConfigLoader {
 				pdfEncodedBase64, HttpConstants.CONTENT_TYPE_PDF, "\"docPdf2\"", "\"attachment2.pdf\"",
 				null, null, null, null);
 		
-		test(logCore, tipo, subtypeParam, mm,
-				"Content type ''multipart/"+subtypeWrong+"%is not allowed for body content. (code: 203)", 
+		test(logCore, getApiName(), tipo, subtypeParam, mm,
+				errContentTypeNotAllowed(subtypeWrong),
 				false,
 				null);
 	}
@@ -329,7 +358,7 @@ public class OpenAPI30_MultipartRequestTest extends ConfigLoader {
 				pdfEncodedBase64, HttpConstants.CONTENT_TYPE_PDF, "\"docPdf2\"", "\"attachment2.pdf\"",
 				null, null, null, null);
 		
-		test(logCore, tipo, "test-dump", mm,
+		test(logCore, getApiName(), tipo, "test-dump", mm,
 				null, 
 				true,
 				null);
@@ -370,7 +399,7 @@ public class OpenAPI30_MultipartRequestTest extends ConfigLoader {
 				pdfEncodedBase64, HttpConstants.CONTENT_TYPE_PDF, "\"docPdf2\"", "\"attachment2.pdf\"",
 				null, null, null, null);
 		
-		test(logCore, tipo, "test-correlazione", mm,
+		test(logCore, getApiName(), tipo, "test-correlazione", mm,
 				null, 
 				false,
 				id);
@@ -413,7 +442,7 @@ public class OpenAPI30_MultipartRequestTest extends ConfigLoader {
 				pdfEncodedBase64, HttpConstants.CONTENT_TYPE_PDF, "\"docPdf2\"", "\"attachment2.pdf\"",
 				null, null, null, null);
 		
-		test(logCore, tipo, "test-trasformazione", mm,
+		test(logCore, getApiName(), tipo, "test-trasformazione", mm,
 				null, 
 				false,
 				id);
@@ -424,13 +453,21 @@ public class OpenAPI30_MultipartRequestTest extends ConfigLoader {
 	
 	
 	
-	static void test(Logger logCore, TipoServizio tipoServizio, String resource, MimeMultipart mm, 
+	/**
+	 * Variante non parametrizzata per back-compat con i chiamanti pre-esistenti: usa il nome API
+	 * di default ({@code OpenAPIValidazioneMultipartRequest}).
+	 */
+	static void test(Logger logCore, TipoServizio tipoServizio, String resource, MimeMultipart mm,
 			String errore, boolean checkDump, String idCorrelazioneAttesa) throws Exception {
-		
+		test(logCore, "OpenAPIValidazioneMultipartRequest", tipoServizio, resource, mm, errore, checkDump, idCorrelazioneAttesa);
+	}
+
+	static void test(Logger logCore, String apiName, TipoServizio tipoServizio, String resource, MimeMultipart mm,
+			String errore, boolean checkDump, String idCorrelazioneAttesa) throws Exception {
 
 		final String url = tipoServizio == TipoServizio.EROGAZIONE
-				? System.getProperty("govway_base_path") + "/SoggettoInternoTest/OpenAPIValidazioneMultipartRequest/v1/multipart/"+resource
-				: System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/OpenAPIValidazioneMultipartRequest/v1/multipart/"+resource;
+				? System.getProperty("govway_base_path") + "/SoggettoInternoTest/"+apiName+"/v1/multipart/"+resource
+				: System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/"+apiName+"/v1/multipart/"+resource;
 		
 		HttpRequest request = new HttpRequest();
 		request.setMethod(HttpRequestMethod.POST);

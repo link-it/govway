@@ -1,0 +1,50 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "TestOpenAPI 3.1 ExternalRef",
+    "description": "Caso di regressione per il merge di una spec OAS 3.1 che usa un $ref cross-file come VALORE DI PROPRIETA' di uno schema oggetto.",
+    "version": "1.0"
+  },
+  "paths": {
+    "/echo": {
+      "post": {
+        "operationId": "echo",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/EchoExternal" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/EchoExternal" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "EchoExternal": {
+        "type": "object",
+        "required": ["code", "details"],
+        "properties": {
+          "code": {
+            "type": "string",
+            "pattern": "^[A-Z]{2}\\d{3}$"
+          },
+          "details": {
+            "$ref": "test_externalRef_import.json#/components/schemas/Details"
+          }
+        }
+      }
+    }
+  }
+}

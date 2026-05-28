@@ -20,6 +20,11 @@
 
 package org.openspcoop2.utils.rest;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.UnaryOperator;
+
 import org.openspcoop2.utils.beans.BaseBean;
 import org.openspcoop2.utils.json.JsonSchemaValidatorConfig.ADDITIONAL;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
@@ -41,6 +46,42 @@ public class ApiValidatorConfig extends BaseBean {
 	private transient AbstractXMLUtils xmlUtils = XMLUtils.getInstance();
 	private ADDITIONAL policyAdditionalProperties = ADDITIONAL.DEFAULT;
 	private boolean emitLogError = true;
+
+	/**
+	 * Mappa interna popolata dalle sottoclassi tramite {@link #setProperty(String, String)}.
+	 * Permette di esportare lo stato del config come coppie chiave/valore e di ricostruire
+	 * un config equivalente passando la mappa come provider a {@link #readProperties(UnaryOperator)}.
+	 */
+	private final Map<String, String> properties = new HashMap<>();
+
+	protected void setProperty(String name, String value) {
+		this.properties.put(name, value);
+	}
+
+	/**
+	 * @return la mappa delle proprietà raccolte (read-only).
+	 *         La mappa può essere passata come provider a {@link #readProperties(UnaryOperator)}
+	 *         su una nuova istanza per ottenere un config equivalente.
+	 */
+	public Map<String, String> mapProperties() {
+		return Collections.unmodifiableMap(this.properties);
+	}
+
+	/**
+	 * Chiave usata dagli engine per indicizzare la {@code OpenapiApiValidatorStructure} cached
+	 * sull'{@code Api} (vedi {@code OpenapiApi.getValidationStructure(String)}). La chiave è
+	 * composta dal prefisso engine + i flag che impattano la fase di inizializzazione del validator
+	 * ({@code mergeAPISpec}, {@code validateAPISpec}): due porte sullo stesso accordo con
+	 * configurazioni diverse generano chiavi diverse e quindi cache distinte, evitando che la
+	 * cache popolata dalla prima venga (mis)riusata dalla seconda.
+	 *
+	 * @param enginePrefix tipicamente {@code OpenAPILibrary.<engine>.name()} (es. {@code kappa}).
+	 */
+	public String cacheKey(String enginePrefix) {
+		return enginePrefix
+				+ ":merge=" + this.properties.getOrDefault("mergeAPISpec", "")
+				+ ":valSpec=" + this.properties.getOrDefault("validateAPISpec", "");
+	}
 	
 	public AbstractXMLUtils getXmlUtils() {
 		return this.xmlUtils;
@@ -67,5 +108,9 @@ public class ApiValidatorConfig extends BaseBean {
 	}
 	public void setEmitLogError(boolean emitLogError) {
 		this.emitLogError = emitLogError;
+	}
+	
+	public void readProperties(UnaryOperator<String> propertyProvider) {
+		
 	}
 }

@@ -90,8 +90,14 @@ public class OpenapiApi extends Api {
 	private String parseWarningResult; 
 	private ApiFormats format;
 
-	// struttura una volta che l'api è stata inizializzata per la validazione (e' serializzabile e cachabile)
-	private OpenapiApiValidatorStructure validationStructure;
+	/**
+	 * Cache delle strutture di validazione costruite da {@code init()} degli engine, indicizzata per
+	 * una chiave derivata dalla libreria + flag di config che impattano l'inizializzazione (es.
+	 * {@code mergeAPISpec}, {@code validateAPISpec}). Più porte sullo stesso accordo possono
+	 * configurare engine/parametri diversi: tenendo entry distinte qui evitiamo che la cache popolata
+	 * da una porta venga (mis)riusata da un'altra che si attende un tipo/payload differente.
+	 */
+	private final java.util.concurrent.ConcurrentMap<String, OpenapiApiValidatorStructure> validationStructures = new java.util.concurrent.ConcurrentHashMap<>();
 
 	public OpenapiApi(ApiFormats format, OpenAPI swagger, String apiRaw, String parseWarningResult) {
 		this.format = format;
@@ -116,6 +122,41 @@ public class OpenapiApi extends Api {
 	public String getParseWarningResult() {
 		return this.parseWarningResult;
 	}
+
+	/**
+	 * Verifica se l'Api passato è un OpenAPI 3.1.x. La detection privilegia il
+	 * modello swagger-parser (transient: può essere {@code null} dopo
+	 * serializzazione/deserializzazione) e ricade sull'apiRaw via regex.
+	 *
+	 * @return {@code true} se l'api è OpenAPI 3.1, {@code false} altrimenti
+	 *         (incluso il caso in cui {@code api} non sia un {@code OpenapiApi}
+	 *         oppure il formato non sia {@code OPEN_API_3}).
+	 */
+	public static boolean isOpenApi31(Api api) {
+		if (!(api instanceof OpenapiApi)) {
+			return false;
+		}
+		OpenapiApi openapiApi = (OpenapiApi) api;
+		if (!ApiFormats.OPEN_API_3.equals(openapiApi.getFormat())) {
+			return false;
+		}
+		// 1) modello swagger-parser, se ancora disponibile
+		try {
+			if (openapiApi.getApi() != null && openapiApi.getApi().getOpenapi() != null
+					&& openapiApi.getApi().getOpenapi().startsWith("3.1")) {
+				return true;
+			}
+		} catch (Exception e) {
+			// fallthrough
+		}
+		// 2) fallback: scan dell'apiRaw per la dichiarazione di versione
+		String raw = openapiApi.getApiRaw();
+		if (raw == null) {
+			return false;
+		}
+		// pattern: openapi: "3.1...", openapi: 3.1..., "openapi": "3.1..."
+		return raw.matches("(?s).*[\"']?openapi[\"']?\\s*:\\s*[\"']?3\\.1.*");
+	}
 	
 	public Map<String, Schema<?>> getDefinitions() {
 		return this.definitions;
@@ -135,12 +176,19 @@ public class OpenapiApi extends Api {
 		this.definitions = definitions;
 	}
 
-	public OpenapiApiValidatorStructure getValidationStructure() {
-		return this.validationStructure;
+	/**
+	 * Recupera la validation structure sotto la chiave indicata. La chiave deve essere costruita
+	 * dall'engine dalle property di config che impattano la cache (libreria + mergeAPISpec +
+	 * validateAPISpec + ...), in modo che porte diverse con configurazioni diverse mantengano cache
+	 * separate.
+	 */
+	public OpenapiApiValidatorStructure getValidationStructure(String cacheKey) {
+		return this.validationStructures.get(cacheKey);
 	}
 
-	public void setValidationStructure(OpenapiApiValidatorStructure validationStructure) {
-		this.validationStructure = validationStructure;
+	/** Memorizza la validation structure sotto la chiave indicata (vedi {@link #getValidationStructure(String)}). */
+	public void setValidationStructure(String cacheKey, OpenapiApiValidatorStructure validationStructure) {
+		this.validationStructures.put(cacheKey, validationStructure);
 	}
 	
 	@Override

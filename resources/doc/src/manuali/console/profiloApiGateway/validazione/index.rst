@@ -37,7 +37,7 @@ I tipi di validazione previsti sono:
    transito verificando che sia idoneo al PortType e Operation in uso.
    Questo tipo di validazione è applicabile solo al caso Soap.
 
--  *Swagger 2.0 o OpenAPI 3.0*, nei casi in cui si è fornito un
+-  *Swagger 2.0 o OpenAPI 3.0/3.1*, nei casi in cui si è fornito un
    descrittore formale per una API Rest, la validazione sarà effettuata
    utilizzando gli strumenti associati allo specifico formato.
 

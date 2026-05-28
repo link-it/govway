@@ -42,6 +42,31 @@ import org.openspcoop2.utils.transport.http.HttpConstants;
 public class OpenAPI30_MultipartRequestArrayTest extends ConfigLoader {
 
 	// https://swagger.io/docs/specification/describing-request-body/file-upload/
+
+	/**
+	 * Nome dell'API multipart array esercitata dai test. Le sottoclassi (varianti con
+	 * {@code validateMultipartOptimization=enabled} o profilo OpenAPI 3.1) override solo questo
+	 * metodo per puntare a un'API equivalente ma configurata diversamente.
+	 */
+	protected String getApiName() {
+		return "OpenAPIValidazioneMultipartRequest";
+	}
+
+	/** Messaggio di errore atteso (libreria openapi4j, default OAS 3.0). Override per kappa/3.1. */
+	protected String errArrayMissingFieldAltro() {
+		return "body.archivi.0: Field ''altro'' is required. (code: 1026)";
+	}
+
+	/**
+	 * Esito atteso per {@code request_ok_array_binary}: {@code null} = successo (validazione passa).
+	 * Le varianti "Optimized" override perché lo schema delle risorse {@code form-data-array-binary}
+	 * / {@code mixed-array-binary} dichiara solo proprietà di formato binary; con
+	 * {@code validateMultipartOptimization=true} il loop di lettura del motore openapi4j non parte
+	 * (notBinaries vuoto) e la richiesta viene respinta come non conforme.
+	 */
+	protected String errArrayBinaryOnlySchemaOptimization() {
+		return null;
+	}
 		
 	@Test
 	public void erogazione_form_data_ok_array_binary() throws Exception {
@@ -70,8 +95,8 @@ public class OpenAPI30_MultipartRequestArrayTest extends ConfigLoader {
 		MimeMultipart mm = MultipartUtilities.buildMimeMultipart(subtype,
 				l, HttpConstants.CONTENT_TYPE_PDF, "\"archivi\"", "\"attachment"+MultipartUtilities.templateNumero+".pdf\"");
 		
-		OpenAPI30_MultipartRequestTest.test(logCore, tipo, subtype+"-array-binary", mm,
-				null, 
+		OpenAPI30_MultipartRequestTest.test(logCore, getApiName(), tipo, subtype+"-array-binary", mm,
+				errArrayBinaryOnlySchemaOptimization(),
 				false,
 				null);
 	}
@@ -108,7 +133,7 @@ public class OpenAPI30_MultipartRequestArrayTest extends ConfigLoader {
 		MimeMultipart mm = MultipartUtilities.buildMimeMultipart(subtype,
 				l, HttpConstants.CONTENT_TYPE_JSON, "\"archivi\"", "\"attachment"+MultipartUtilities.templateNumero+".json\"");
 		
-		OpenAPI30_MultipartRequestTest.test(logCore, tipo, subtype+"-array-json", mm,
+		OpenAPI30_MultipartRequestTest.test(logCore, getApiName(), tipo, subtype+"-array-json", mm,
 				null, 
 				false,
 				null);
@@ -145,8 +170,8 @@ public class OpenAPI30_MultipartRequestArrayTest extends ConfigLoader {
 		MimeMultipart mm = MultipartUtilities.buildMimeMultipart(subtype,
 				l, HttpConstants.CONTENT_TYPE_JSON, "\"archivi\"", "\"attachment"+MultipartUtilities.templateNumero+".json\"");
 		
-		OpenAPI30_MultipartRequestTest.test(logCore, tipo, subtype+"-array-json", mm,
-				"body.archivi.0: Field ''altro'' is required. (code: 1026)", 
+		OpenAPI30_MultipartRequestTest.test(logCore, getApiName(), tipo, subtype+"-array-json", mm,
+				errArrayMissingFieldAltro(),
 				false,
 				null);
 	}
@@ -186,7 +211,7 @@ public class OpenAPI30_MultipartRequestArrayTest extends ConfigLoader {
 		MimeMultipart mm = MultipartUtilities.buildMimeMultipart(subtype,
 				l, HttpConstants.CONTENT_TYPE_JSON, "\"archivi\"", "\"attachment"+MultipartUtilities.templateNumero+".json\"");
 		
-		OpenAPI30_MultipartRequestTest.test(logCore, tipo, "test-correlazione-array-json", mm,
+		OpenAPI30_MultipartRequestTest.test(logCore, getApiName(), tipo, "test-correlazione-array-json", mm,
 				null, 
 				false,
 				id);
@@ -226,7 +251,7 @@ public class OpenAPI30_MultipartRequestArrayTest extends ConfigLoader {
 		MimeMultipart mm = MultipartUtilities.buildMimeMultipart(subtype,
 				l, HttpConstants.CONTENT_TYPE_JSON, "\"archivi\"", "\"attachment"+MultipartUtilities.templateNumero+".json\"");
 		
-		OpenAPI30_MultipartRequestTest.test(logCore, tipo, "test-correlazione-array-json", mm,
+		OpenAPI30_MultipartRequestTest.test(logCore, getApiName(), tipo, "test-correlazione-array-json", mm,
 				null, 
 				false,
 				"descrizione generica");
@@ -271,7 +296,7 @@ public class OpenAPI30_MultipartRequestArrayTest extends ConfigLoader {
 		MimeMultipart mm = MultipartUtilities.buildMimeMultipart(subtype,
 				l, HttpConstants.CONTENT_TYPE_JSON, "\"archivi\"", "\"attachment"+MultipartUtilities.templateNumero+".json\"");
 		
-		OpenAPI30_MultipartRequestTest.test(logCore, tipo, "test-trasformazione-array-json", mm,
+		OpenAPI30_MultipartRequestTest.test(logCore, getApiName(), tipo, "test-trasformazione-array-json", mm,
 				null, 
 				false,
 				id);

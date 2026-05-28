@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.utils.beans.BaseBean;
+import org.openspcoop2.utils.rest.BaseSpecConfig;
+import org.openspcoop2.utils.rest.BaseSpecValidator;
 import org.openspcoop2.utils.rest.ParseWarningException;
 import org.openspcoop2.utils.rest.ProcessingException;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
@@ -54,7 +56,7 @@ public abstract class Api extends BaseBean implements Serializable {
 	private List<ApiSchema> schemas = new ArrayList<>();
 
 	
-	private Map<String, Serializable> mapSerializableVendorImpl = new HashMap<String, Serializable>();
+	private Map<String, Serializable> mapSerializableVendorImpl = new HashMap<>();
 	
 	public Serializable getVendorImpl(String key) {
 		return this.mapSerializableVendorImpl.get(key);
@@ -155,153 +157,23 @@ public abstract class Api extends BaseBean implements Serializable {
 		this.validate(false);
 	}
 	public void validate(boolean validateBodyParameterElement) throws ProcessingException, ParseWarningException {
+		if(validateBodyParameterElement) {
+			// nop
+		}
 		this.validate(false, false);
 	}
 	public void validate(boolean usingFromSetProtocolInfo, boolean validateBodyParameterElement) throws ProcessingException, ParseWarningException {
+		BaseSpecConfig config = new BaseSpecConfig();
+		config.setUsingFromSetProtocolInfo(usingFromSetProtocolInfo);
+		config.setValidateBodyParameterElement(validateBodyParameterElement);
 		
-		if(this.operations.size()<=0) {
-			throw new ProcessingException("Paths and Operations undefined");
-		}
-		
-		for (int i = 0; i < this.operations.size(); i++) {
-			
-			ApiOperation op = this.operations.get(i);
-			
-			String prefix = "Operation["+i+"] ";
-			
-			if(op.getHttpMethod()==null) {
-				throw new ProcessingException("HttpMethod is null");
-			}
-			if(op.getPath()==null) {
-				throw new ProcessingException("Path is null");
-			}
-			prefix = "Operation["+op.getHttpMethod().name()+" "+op.getPath()+"] ";
-			
-			if(op.getRequest()!=null) {
-				String pRequest = prefix +"[request] ";
-				
-				for (int j = 0; j < op.getRequest().sizeBodyParameters(); j++) {
-					ApiBodyParameter bodyParm = op.getRequest().getBodyParameter(j);
-					if(bodyParm.getMediaType()==null) {
-						throw new ProcessingException(pRequest+"MediaType undefined in body parameter (position '"+j+"')");
-					}
-					if(validateBodyParameterElement) {
-						if(bodyParm.getElement()==null) {
-							throw new ProcessingException(pRequest+"Element undefined in body parameter '"+bodyParm.getMediaType()+"'");
-						}
-					}
-				}
-				
-				for (int j = 0; j < op.getRequest().sizeCookieParameters(); j++) {
-					ApiCookieParameter par = op.getRequest().getCookieParameter(j);
-					if(par.getName()==null) {
-						throw new ProcessingException(pRequest+"Name undefined in cookie parameter (position '"+j+"')");
-					}
-					if(par.getApiParameterSchema()==null || !par.getApiParameterSchema().isDefined()) {
-						throw new ProcessingException(pRequest+"Type undefined in cookie parameter '"+par.getName()+"'");
-					}
-				}
-				
-				for (int j = 0; j < op.getRequest().sizeDynamicPathParameters(); j++) {
-					ApiRequestDynamicPathParameter par = op.getRequest().getDynamicPathParameter(j);
-					if(par.getName()==null) {
-						throw new ProcessingException(pRequest+"Name undefined in dynamic path parameter (position '"+j+"')");
-					}
-					if(par.getApiParameterSchema()==null || !par.getApiParameterSchema().isDefined()) {
-						throw new ProcessingException(pRequest+"Type undefined in dynamic path parameter '"+par.getName()+"'");
-					}
-				}
-				
-				for (int j = 0; j < op.getRequest().sizeFormParameters(); j++) {
-					ApiRequestFormParameter par = op.getRequest().getFormParameter(j);
-					if(par.getName()==null) {
-						throw new ProcessingException(pRequest+"Name undefined in form parameter (position '"+j+"')");
-					}
-					if(par.getApiParameterSchema()==null || !par.getApiParameterSchema().isDefined()) {
-						throw new ProcessingException(pRequest+"Type undefined in form parameter '"+par.getName()+"'");
-					}
-				}
-				
-				for (int j = 0; j < op.getRequest().sizeHeaderParameters(); j++) {
-					ApiHeaderParameter par = op.getRequest().getHeaderParameter(j);
-					if(par.getName()==null) {
-						throw new ProcessingException(pRequest+"Name undefined in header parameter (position '"+j+"')");
-					}
-					if(par.getApiParameterSchema()==null || !par.getApiParameterSchema().isDefined()) {
-						throw new ProcessingException(pRequest+"Type undefined in header parameter '"+par.getName()+"'");
-					}
-				}
-				
-				for (int j = 0; j < op.getRequest().sizeQueryParameters(); j++) {
-					ApiRequestQueryParameter par = op.getRequest().getQueryParameter(j);
-					if(par.getName()==null) {
-						throw new ProcessingException(pRequest+"Name undefined in query parameter (position '"+j+"')");
-					}
-					if(par.getApiParameterSchema()==null || !par.getApiParameterSchema().isDefined()) {
-						throw new ProcessingException(pRequest+"Type undefined in query parameter '"+par.getName()+"'");
-					}
-				}
-			}
-			
-			boolean defaultResponse = false;
-			
-			for (int k = 0; k < op.sizeResponses(); k++) {
-		
-				String pResponse = prefix +"[response '"+k+"'] ";
-				
-				ApiResponse response = op.getResponse(k);
-				
-				if(response.isDefaultHttpReturnCode()) {
-					if(defaultResponse) {
-						throw new ProcessingException(pResponse+"Http Return Code Default already defined");
-					}
-					else {
-						defaultResponse = true;
-					}
-				}
-				if(response.getHttpReturnCode()<=0 && !response.isDefaultHttpReturnCode()) {
-					throw new ProcessingException(pResponse+"Http Return Code undefined");
-				}
-		
-				if(response.isDefaultHttpReturnCode()) {
-					pResponse = prefix +"[response status 'default'] ";
-				}
-				else {
-					pResponse = prefix +"[response status '"+response.getHttpReturnCode()+"'] ";
-				}
-				
-				for (int j = 0; j < response.sizeBodyParameters(); j++) {
-					ApiBodyParameter bodyParm = response.getBodyParameter(j);
-					if(bodyParm.getMediaType()==null) {
-						throw new ProcessingException(pResponse+"MediaType undefined in body parameter (position '"+j+"')");
-					}
-					if(validateBodyParameterElement) {
-						if(bodyParm.getElement()==null) {
-							throw new ProcessingException(pResponse+"Element undefined in body parameter '"+bodyParm.getMediaType()+"'");
-						}
-					}
-				}
-				
-				for (int j = 0; j < response.sizeCookieParameters(); j++) {
-					ApiCookieParameter par = response.getCookieParameter(j);
-					if(par.getName()==null) {
-						throw new ProcessingException(pResponse+"Name undefined in cookie parameter (position '"+j+"')");
-					}
-					if(par.getApiParameterSchema()==null || !par.getApiParameterSchema().isDefined()) {
-						throw new ProcessingException(pResponse+"Type undefined in cookie parameter '"+par.getName()+"'");
-					}
-				}
-				
-				for (int j = 0; j < response.sizeHeaderParameters(); j++) {
-					ApiHeaderParameter par = response.getHeaderParameter(j);
-					if(par.getName()==null) {
-						throw new ProcessingException(pResponse+"Name undefined in header parameter (position '"+j+"')");
-					}
-					if(par.getApiParameterSchema()==null || !par.getApiParameterSchema().isDefined()) {
-						throw new ProcessingException(pResponse+"Type undefined in header parameter '"+par.getName()+"'");
-					}
-				}
-			}
+		BaseSpecValidator validator = new BaseSpecValidator();
+		validator.init(null, config);
+		try {
+			validator.validate(null, this);
+		} catch (Exception e) {
+			validator.close(null);
+			throw e;
 		}
 	}
 }

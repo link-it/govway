@@ -31,6 +31,8 @@ import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.crypt.CryptConfig;
 import org.openspcoop2.utils.crypt.PasswordVerifier;
+import org.openspcoop2.utils.openapi.validator.OpenAPILibrary;
+import org.openspcoop2.utils.rest.IApiSpecConfig;
 import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
 import org.openspcoop2.utils.transport.http.HttpLibrary;
 import org.slf4j.Logger;
@@ -224,6 +226,88 @@ public class ServerProperties  {
 	
 	public boolean isValidazioneDocumenti() throws UtilsException {
 		return Boolean.parseBoolean(this.readProperty(true, "validazioneDocumenti"));
+	}
+
+	/* ----- Spec validator: libreria + config ------ */
+
+	public static final String SPEC_VALIDATOR_PREFIX_30 = "api.openApi.30.specValidator.";
+	public static final String SPEC_VALIDATOR_PREFIX_31 = "api.openApi.31.specValidator.";
+
+	/** @return engine selezionato per le specifiche OpenAPI 3.0 (default {@code openapi4j}). */
+	public OpenAPILibrary getApiSpecValidatorLibrary() throws UtilsException {
+		return parseLibrary(this.readProperty(false, SPEC_VALIDATOR_PREFIX_30 + "library"),
+				OpenAPILibrary.openapi4j);
+	}
+
+	/** @return engine selezionato per le specifiche OpenAPI 3.1 (default {@code kappa}). */
+	public OpenAPILibrary getApiSpecValidator31Library() throws UtilsException {
+		OpenAPILibrary lib = parseLibrary(this.readProperty(false, SPEC_VALIDATOR_PREFIX_31 + "library"),
+				OpenAPILibrary.kappa);
+		if (lib != null && !lib.supportsOpenApi31()) {
+			throw new UtilsException("Property '" + SPEC_VALIDATOR_PREFIX_31 + "library' con valore '"
+					+ lib + "' non valido: la libreria non supporta i costrutti introdotti in OpenAPI 3.1. "
+					+ "Valori ammessi per 3.1: kappa, json_schema.");
+		}
+		return lib;
+	}
+
+	/** @return config 3.0 (engine già selezionato + properties popolate). */
+	public IApiSpecConfig getApiSpecValidatorConfig() throws UtilsException {
+		return buildSpecValidatorConfig(getApiSpecValidatorLibrary(), false);
+	}
+
+	/** @return config 3.1 con fallback sulle properties 3.0. */
+	public IApiSpecConfig getApiSpecValidator31Config() throws UtilsException {
+		return buildSpecValidatorConfig(getApiSpecValidator31Library(), true);
+	}
+
+	private IApiSpecConfig buildSpecValidatorConfig(
+			org.openspcoop2.utils.openapi.validator.OpenAPILibrary library, boolean openApi31) {
+		IApiSpecConfig cfg = org.openspcoop2.utils.rest.ApiFactory
+				.newApiSpecValidatorConfig(library != null ? library.name() : null);
+		cfg.readProperties(suffix -> resolveSpecValidatorProperty(library, suffix, openApi31));
+		return cfg;
+	}
+
+	private String resolveSpecValidatorProperty(OpenAPILibrary library,
+			String suffix, boolean openApi31) {
+		if (suffix == null) {
+			return null;
+		}
+		if (openApi31) {
+			String v = lookupSpecValidatorProperty(SPEC_VALIDATOR_PREFIX_31, library, suffix);
+			if (v != null) {
+				return v;
+			}
+		}
+		return lookupSpecValidatorProperty(SPEC_VALIDATOR_PREFIX_30, library, suffix);
+	}
+
+	private String lookupSpecValidatorProperty(String prefix,
+			OpenAPILibrary library, String suffix) {
+		try {
+			if (library != null) {
+				String v = this.readProperty(false, prefix + library.name() + "." + suffix);
+				if (v != null) {
+					return v;
+				}
+			}
+			return this.readProperty(false, prefix + suffix);
+		} catch (UtilsException e) {
+			return null;
+		}
+	}
+
+	private static OpenAPILibrary parseLibrary(String v,
+			OpenAPILibrary defaultValue) {
+		if (v == null || v.isEmpty()) {
+			return defaultValue;
+		}
+		try {
+			return OpenAPILibrary.valueOf(v.trim());
+		} catch (IllegalArgumentException e) {
+			return defaultValue;
+		}
 	}
 	
 	public boolean isUpdateInterfacciaApiUpdateIfExists() throws UtilsException {

@@ -1,0 +1,39 @@
+openapi: 3.1.0
+info:
+  title: TestOpenAPI 3.1 ExternalRef
+  description: Caso di regressione per il merge di una spec OAS 3.1 che usa un $ref cross-file
+    come VALORE DI PROPRIETÀ di uno schema oggetto (non come schema top-level).
+    Riproduce il bug "$ref expected string, found null" emesso da kappa quando
+    UniqueInterfaceGenerator serializzava il $ref senza virgolette dopo il replace.
+  version: "1.0"
+paths:
+  /echo:
+    post:
+      operationId: echo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EchoExternal'
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoExternal'
+components:
+  schemas:
+    EchoExternal:
+      type: object
+      required:
+        - code
+        - details
+      properties:
+        code:
+          type: string
+          pattern: "^[A-Z]{2}\\d{3}$"
+        details:
+          # $ref cross-file annidato dentro properties: caso scoperto dal bug del merge OAS 3.1.
+          $ref: 'test_externalRef_import.yaml#/components/schemas/Details'

@@ -1,3 +1,10 @@
+2026-05-28  Tommaso Burlon <tommaso.burlon@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità #1537
+	Aggiunto supporto per la validazione dei contenuti applicativi tramite OpenAPI 3.1,
+	attraverso l'introduzione della libreria 'kappa' (https://github.com/erosb/kappa).
+
 2026-05-25  Tommaso Burlon <tommaso.burlon@link.it>
 
 	* [ProtocolloModIPA]

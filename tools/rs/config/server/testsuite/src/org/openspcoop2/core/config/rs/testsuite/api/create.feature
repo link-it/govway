@@ -10,6 +10,9 @@ Background:
 * def api_openapi3 = read('api_openapi3.json')
 * eval randomize(api_openapi3 , ["nome"])
 
+* def api_openapi3_1 = read('api_openapi3_1.json')
+* eval randomize(api_openapi3_1, ["nome"])
+
 * def api_spcoop = read('api_spcoop.json')
 * eval randomize(api_spcoop, ["nome"])
 
@@ -28,6 +31,10 @@ Scenario: Api Create 409
 @CreateOpenAPI3_204
 Scenario: Api OpenAPI 3 Create 204
     * call create_201 ( { resourcePath: 'api', body: api_openapi3, key: api_openapi3.nome + '/' + api_openapi3.versione } )
+
+@CreateOpenAPI3_1_201
+Scenario: Api OpenAPI 3.1 Create 201
+    * call create_201 ( { resourcePath: 'api', body: api_openapi3_1, key: api_openapi3_1.nome + '/' + api_openapi3_1.versione } )
 
 @CreateSPCoop204
 Scenario: Api Create SPCoop 204
