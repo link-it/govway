@@ -36,6 +36,7 @@ import org.govway.struts.action.Action;
 import org.govway.struts.action.ActionForm;
 import org.govway.struts.action.ActionForward;
 import org.govway.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.ScopedListeRegistry;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -125,6 +126,13 @@ public final class AccordiCooperazioneChange extends Action {
 
 			String id = acHelper.getParametroLong(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID);
 			int idAcc = Integer.parseInt(id);
+
+			// Reset delle ricerche scoped per AC se cambia l'accordo di cooperazione corrente.
+			{
+				ConsoleSearch ricercaScope = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
+				acHelper.enforceParentScope(ScopedListeRegistry.SCOPE_AC, id, ricercaScope);
+			}
+
 			String descr = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_DESCRIZIONE);
 			String referente = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_REFERENTE);
 			String versione = acHelper.getParametroInteger(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_VERSIONE);

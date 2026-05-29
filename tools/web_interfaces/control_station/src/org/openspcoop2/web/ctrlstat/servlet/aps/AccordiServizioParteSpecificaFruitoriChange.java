@@ -41,6 +41,7 @@ import org.govway.struts.action.ActionForward;
 import org.govway.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.commons.ScopedListeRegistry;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.utils.UpdateProprietaOggetto;
@@ -175,6 +176,14 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			if(myTipo == null) myTipo = "";
 			String myNome = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MY_NOME);
 			if(myNome == null) myNome = "";
+
+			// Reset delle ricerche scoped per APS se cambia la fruizione corrente.
+			// Deve avvenire prima di qualunque uso di ConsoleSearch nelle servlet figlie.
+			if(idServizio != null) {
+				String apsScopeKey = idServizio + "|" + myTipo + "|" + myNome;
+				ConsoleSearch ricercaScope = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
+				apsHelper.enforceParentScope(ScopedListeRegistry.SCOPE_APS, apsScopeKey, ricercaScope);
+			}
 
 			String endpointtype = apsHelper.readEndPointType();
 			String tipoconn = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO);

@@ -39,6 +39,7 @@ import org.govway.struts.action.ActionForward;
 import org.govway.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.commons.ScopedListeRegistry;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaAzione;
@@ -140,6 +141,14 @@ public final class PorteApplicativeChange extends Action {
 			
 			String nomePorta = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME_PORTA);
 			String idPorta = porteApplicativeHelper.getParametroLong(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
+
+			// Reset delle ricerche delle liste figlie se cambia la porta applicativa corrente
+			// (gestisce il cambio di gruppo all'interno della stessa erogazione).
+			if(idPorta != null) {
+				ConsoleSearch ricercaScope = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
+				porteApplicativeHelper.enforceParentScope(ScopedListeRegistry.SCOPE_PORTA_APPLICATIVA, idPorta, ricercaScope);
+			}
+
 			String idsogg = porteApplicativeHelper.getParametroLong(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO);
 			String idAsps = porteApplicativeHelper.getParametroLong(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS);
 			if(idAsps == null) 

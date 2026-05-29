@@ -42,6 +42,7 @@ import org.govway.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.commons.ScopedListeRegistry;
 import org.openspcoop2.core.config.CanaleConfigurazione;
 import org.openspcoop2.core.config.CanaliConfigurazione;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
@@ -184,6 +185,17 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			if(tipoSoggettoFruitore!=null && !"".equals(tipoSoggettoFruitore) &&
 					nomeSoggettoFruitore!=null && !"".equals(nomeSoggettoFruitore)) {
 				idSoggettoFruitore = new IDSoggetto(tipoSoggettoFruitore, nomeSoggettoFruitore);
+			}
+
+			// Reset delle ricerche delle liste figlie (porte applicative/delegate) se cambia
+			// l'APS/fruizione corrente. Copre il caso in cui il cambio fruizione avviene in
+			// modalita' tab senza passare dalle servlet PorteApplicative/PorteDelegateChange.
+			if(id != null) {
+				String apsScopeKey = id
+						+ "|" + (tipoSoggettoFruitore != null ? tipoSoggettoFruitore : "")
+						+ "|" + (nomeSoggettoFruitore != null ? nomeSoggettoFruitore : "");
+				ConsoleSearch ricercaScope = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
+				apsHelper.enforceParentScope(ScopedListeRegistry.SCOPE_APS, apsScopeKey, ricercaScope);
 			}
 			
 			// token policy

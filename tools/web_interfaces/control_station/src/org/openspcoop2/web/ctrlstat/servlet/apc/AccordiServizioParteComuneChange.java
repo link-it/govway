@@ -41,6 +41,7 @@ import org.govway.struts.action.ActionForm;
 import org.govway.struts.action.ActionForward;
 import org.govway.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.commons.ScopedListeRegistry;
 import org.openspcoop2.core.config.CanaleConfigurazione;
 import org.openspcoop2.core.config.CanaliConfigurazione;
 import org.openspcoop2.core.config.PortaApplicativa;
@@ -145,7 +146,13 @@ public final class AccordiServizioParteComuneChange extends Action {
 		apcHelper.makeMenu();
 		
 		strutsBean.id = apcHelper.getParametroLong(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
-		
+
+		// Reset delle ricerche scoped per APC se cambia l'accordo parte comune corrente.
+		if (strutsBean.id != null) {
+			ConsoleSearch ricercaScope = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
+			apcHelper.enforceParentScope(ScopedListeRegistry.SCOPE_APC, strutsBean.id, ricercaScope);
+		}
+
 		strutsBean.editMode = apcHelper.getParametroEditMode(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 		strutsBean.protocolPropertiesSet = apcHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_SET);
 		strutsBean.descr = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_DESCRIZIONE);
