@@ -2556,12 +2556,31 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 
 	public void setLabelNomeAzione(String labelNomeAzione) {
 		this.labelNomeAzione = labelNomeAzione;
-		
+
 		if (StringUtils.isEmpty(this.labelNomeAzione) || Costanti.NON_SELEZIONATO.equals(this.labelNomeAzione)) {
 			this.labelNomeAzione = null;
 		}
 	}
-	
+
+	@Override
+	protected void ripristinaEtichetteFiltri() {
+		// Le etichette dei filtri di tipo autocomplete (soggetto/servizio/api/azione) non sono persistite nella
+		// Ricerca Utente: vengono qui ricostruite dai valori appena ripristinati, riusando la stessa logica
+		// NamingUtils impiegata per i tooltip, in modo da mostrare nelle caselle il testo corretto (il valore
+		// effettivo del filtro risiede in campi hidden separati).
+		// La ricostruzione viene effettuata solo per i filtri effettivamente valorizzati; gli altri restano con
+		// l'etichetta gia' azzerata da ripulisci() (casella vuota). Il controllo e' eseguito sul campo valore e
+		// non delegato ai soli getter, per rendere esplicita la condizione ed evitare effetti collaterali
+		// (es. getTipoNomeSoggettoLocale() che, se non guardato, allineerebbe il soggetto a quello del menu').
+		if(StringUtils.isNotEmpty(this.tipoNomeMittente))            this.labelTipoNomeMittente = this.getTipoNomeMittenteTooltip();
+		if(StringUtils.isNotEmpty(this.tipoNomeDestinatario))        this.labelTipoNomeDestinatario = this.getTipoNomeDestinatarioTooltip();
+		if(StringUtils.isNotEmpty(this.tipoNomeTrafficoPerSoggetto)) this.labelTipoNomeTrafficoPerSoggetto = this.getTipoNomeTrafficoPerSoggettoTooltip();
+		if(StringUtils.isNotEmpty(this.tipoNomeSoggettoLocale))      this.labelTipoNomeSoggettoLocale = this.getTipoNomeSoggettoLocaleTooltip();
+		if(StringUtils.isNotEmpty(this.api))                         this.labelApi = this.getApiTooltip();
+		if(StringUtils.isNotEmpty(this.nomeServizio))                this.labelNomeServizio = this.getNomeServizioTooltip();
+		if(StringUtils.isNotEmpty(this.nomeAzione))                  this.labelNomeAzione = this.getNomeAzioneTooltip();
+	}
+
 	public List<SelectItem> getTipologieRicerca() {
 		List<SelectItem> listaTipologie = new ArrayList<>();
 		

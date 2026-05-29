@@ -406,6 +406,14 @@ public class Costanti {
 			"_tipologiaRicercaEntrambiEnabled",
 			"escludiRichiesteScartate",
 			"attivoIntegrationManagerMessageBox",
+			// I campi "label*" seguenti sono volutamente esclusi dal salvataggio (NON e' un bug):
+			// contengono solo il testo visualizzato nelle caselle di tipo autocomplete dei filtri
+			// soggetto/servizio/api/azione (attive quando console.filtri.*.selectList.enabled=false), mentre il
+			// valore effettivo del filtro (api, nomeServizio, nomeAzione, tipoNome*) e' gia' persistito a parte.
+			// Al caricamento di una Ricerca Utente queste etichette vengono ricostruite dai valori ripristinati
+			// (cfr. BaseSearchForm.ripristinaEtichetteFiltri(), stessa logica NamingUtils dei tooltip): in questo
+			// modo restano sempre allineate alla denominazione corrente dell'entita' e funzionano anche per le
+			// ricerche salvate in passato. Per questo NON vanno persistite qui.
 			"labelTipoNomeMittente",
 			"labelTipoNomeDestinatario",
 			"labelTipoNomeTrafficoPerSoggetto",

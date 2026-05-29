@@ -1375,16 +1375,26 @@ public class LoginBean extends AbstractLoginBean {
 
 				// soggetto selezionato
 				if(ricercaUtenteBean.getSoggetto() != null) {
-					String tipoSoggettoOperativoSelezionato = Utility.parseTipoSoggetto(ricercaUtenteBean.getSoggetto());
-					String nomeSoggettoOperativoSelezionato = Utility.parseNomeSoggetto(ricercaUtenteBean.getSoggetto());
-					
-					List<Soggetto> soggettiOperativiAssociatiAlProfilo = Utility.getSoggettiOperativiAssociatiAlProfilo(Utility.getLoggedUser(), ricercaUtenteBean.getProtocollo());
-					
-					soggettoOk = false;
-					for (Soggetto soggettoObj : soggettiOperativiAssociatiAlProfilo) {
-						if(soggettoObj.getTipoSoggetto().equals(tipoSoggettoOperativoSelezionato) && soggettoObj.getNomeSoggetto().equals(nomeSoggettoOperativoSelezionato)) {
-							soggettoOk = true;
-							break;
+
+					// Il filtro per soggetto si applica solo agli utenti con restrizioni esplicite sui soggetti.
+					// Un utente senza soggetti associati (es. amministratore / accesso globale) ha visibilita' su
+					// tutti i soggetti: in tal caso non va filtrato, altrimenti verrebbero nascoste anche le sue
+					// ricerche salvate che contengono un soggetto (cfr. UserDetailsBean: admin = (foundServizi + foundSoggetti) == 0).
+					boolean utenteRistrettoSuiSoggetti = Utility.getLoggedUser().getUtenteSoggettoList() != null
+							&& !Utility.getLoggedUser().getUtenteSoggettoList().isEmpty();
+
+					if(utenteRistrettoSuiSoggetti) {
+						String tipoSoggettoOperativoSelezionato = Utility.parseTipoSoggetto(ricercaUtenteBean.getSoggetto());
+						String nomeSoggettoOperativoSelezionato = Utility.parseNomeSoggetto(ricercaUtenteBean.getSoggetto());
+
+						List<Soggetto> soggettiOperativiAssociatiAlProfilo = Utility.getSoggettiOperativiAssociatiAlProfilo(Utility.getLoggedUser(), ricercaUtenteBean.getProtocollo());
+
+						soggettoOk = false;
+						for (Soggetto soggettoObj : soggettiOperativiAssociatiAlProfilo) {
+							if(soggettoObj.getTipoSoggetto().equals(tipoSoggettoOperativoSelezionato) && soggettoObj.getNomeSoggetto().equals(nomeSoggettoOperativoSelezionato)) {
+								soggettoOk = true;
+								break;
+							}
 						}
 					}
 				}

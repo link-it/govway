@@ -1,3 +1,13 @@
+2026-05-29  Andrea Poli <apoli@link.it>
+
+	* [GovWayMonitor]
+	Risolto Bug #1777
+	Corretto il ripristino delle "Ricerche Utente" salvate: 
+	l'intervallo temporale viene ora ricalcolato in base al periodo memorizzato (ultima ora, ultimw 24 ore ...) 
+	e le etichette dei filtri autocomplete (soggetto/servizio/API/azione) vengono nuovamente mostrate al caricamento.
+	Risolta inoltre la mancata visualizzazione del selettore delle ricerche salvate per gli utenti ad accesso globale (senza soggetti associati) 
+	quando la ricerca contiene un soggetto, su tutti i moduli(transazioni, statistiche, eventi, allarmi).
+
 2026-05-29 Giuliano Pintori <pintori@link.it>
 
 	* [GovWayConsole]

@@ -457,9 +457,19 @@ public abstract class AbstractDateSearchForm extends AbstractCoreSearchForm{
 				filtriRicercaPersonalizzata = jsonUtils.getAsObject(ricercaPersonalizzata.getRicerca(), FiltriRicercaPersonalizzata.class);
 				
 				this.ripulisci();
-				
+
 				RicercheUtils.applyFieldsToBean(this, filtriRicercaPersonalizzata.getFiltri());
-				
+
+				// Le etichette di visualizzazione dei filtri autocomplete non vengono persistite
+				// (cfr. Costanti.SEARCH_FORM_FIELDS_DA_NON_SALVARE): vanno ricostruite dai valori appena ripristinati.
+				this.ripristinaEtichetteFiltri();
+
+				// Il periodo ripristinato viene impostato direttamente sul campo (field.set) da applyFieldsToBean,
+				// senza passare dal setter/listener: e' quindi necessario ricalcolare esplicitamente l'intervallo
+				// temporale (dataInizio/dataFine) in funzione del periodo appena ripristinato, altrimenti le date
+				// rimarrebbero quelle del periodo di default impostato da ripulisci().
+				this.periodoListener(null);
+
 				this.ricercaUtente = ricercaUtenteTmp;
 			} catch (UtilsException e) {
 				LoggerManager.getPddMonitorCoreLogger().error("Errore durante il caricamento della ricerca selezionata: "+e.getMessage(),e);
@@ -471,6 +481,15 @@ public abstract class AbstractDateSearchForm extends AbstractCoreSearchForm{
 		}
 	}
 	
+	/**
+	 * Ricostruisce, a partire dai valori dei filtri appena ripristinati da una Ricerca Utente, le etichette
+	 * di visualizzazione delle caselle di tipo autocomplete (il cui testo non viene persistito).
+	 * Implementazione di default vuota: ridefinita dai form che utilizzano tali filtri.
+	 */
+	protected void ripristinaEtichetteFiltri() {
+		// nessuna etichetta da ricostruire di default
+	}
+
 	public abstract void ripulisciRicercaUtente();
 	
 	public abstract ModuloRicerca getModulo();
