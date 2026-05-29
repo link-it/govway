@@ -39,6 +39,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.commons.ScopedListeRegistry;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.CredenzialiSoggetto;
 import org.openspcoop2.core.registry.ProtocolProperty;
@@ -126,6 +127,13 @@ public final class SoggettiChange extends Action {
 				throw new ControlStationCoreException("Identificativo soggetto non fornito");
 			}
 			long idSogg = Long.parseLong(strutsBean.id);
+
+			// Reset delle ricerche scoped per Soggetto se cambia il soggetto corrente.
+			{
+				ConsoleSearch ricercaScope = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
+				soggettiHelper.enforceParentScope(ScopedListeRegistry.SCOPE_SOGGETTO, strutsBean.id, ricercaScope);
+			}
+
 			strutsBean.nomeprov = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME);
 			strutsBean.tipoprov = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO);
 			strutsBean.portadom = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_CODICE_PORTA);

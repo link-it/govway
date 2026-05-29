@@ -1,3 +1,13 @@
+2026-05-29 Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug #1761
+	Corretto il mantenimento errato dei criteri di ricerca impostati sulle liste di dettaglio (es. ruoli, proprietà, azioni, gruppi, porte)
+	quando si passa da un'entità all'altra (soggetto, applicativo, API, erogazione/fruizione): 
+	le ricerche delle liste figlie vengono ora azzerate al cambio dell'entità padre. 
+	Corretta inoltre la ricerca per nome nell'elenco dei messaggi (input/output) di un'operazione di un port-type, nel dettaglio di un'API SOAP, 
+	che non forniva risultati.
+
 2026-05-29  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

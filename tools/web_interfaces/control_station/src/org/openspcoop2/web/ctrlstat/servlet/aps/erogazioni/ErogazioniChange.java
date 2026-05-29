@@ -30,6 +30,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.commons.ScopedListeRegistry;
 import org.openspcoop2.core.commons.SearchUtils;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
@@ -91,6 +92,15 @@ public final class ErogazioniChange extends Action {
 			// Rimuovo eventuali salvataggi fatti accedendo in precedenza
 			ServletUtils.removeRisultatiRicercaFromSession(request, session, Liste.PORTE_APPLICATIVE_CONNETTORI_MULTIPLI);
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
+
+			// Reset delle ricerche scoped per APS se cambia l'erogazione corrente.
+			if(id != null) {
+				String apsScopeKey = id
+						+ "|" + (tipoSoggettoFruitore != null ? tipoSoggettoFruitore : "")
+						+ "|" + (nomeSoggettoFruitore != null ? nomeSoggettoFruitore : "");
+				apsHelper.enforceParentScope(ScopedListeRegistry.SCOPE_APS, apsScopeKey, ricerca);
+			}
+
 			ricerca.setSearchString(Liste.PORTE_APPLICATIVE_CONNETTORI_MULTIPLI, "");
 			ricerca.clearFilter(Liste.PORTE_APPLICATIVE_CONNETTORI_MULTIPLI, Filtri.FILTRO_CONNETTORE_TIPO);
 			ricerca.clearFilter(Liste.PORTE_APPLICATIVE_CONNETTORI_MULTIPLI, Filtri.FILTRO_CONNETTORE_TIPO_PLUGIN);

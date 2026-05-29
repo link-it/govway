@@ -22,21 +22,25 @@
 package org.openspcoop2.web.ctrlstat.core;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Oggetto che si occupa di memorizzare i valori di ricerca per le liste
- * 
- * 
+ *
+ *
  * @author Andrea Poli (apoli@link.it)
  * @author Stefano Corallo (corallo@link.it)
  * @author Sandra Giangrandi (sandra@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
- * 
+ *
  */
 public class ConsoleSearch extends org.openspcoop2.core.commons.Search implements Serializable {
 
 	private static final long serialVersionUID = 1L;
+
+	private Map<String, String> currentParentScope = null;
 
 	public ConsoleSearch() {
 		super();
@@ -47,5 +51,28 @@ public class ConsoleSearch extends org.openspcoop2.core.commons.Search implement
 	public ConsoleSearch(boolean showAllResult) {
 		super(showAllResult);
 	}
-	
+
+	public String getCurrentParentScope(String scopeName) {
+		if (this.currentParentScope == null) {
+			return null;
+		}
+		return this.currentParentScope.get(scopeName);
+	}
+
+	public void setCurrentParentScope(String scopeName, String parentId) {
+		if (this.currentParentScope == null) {
+			this.currentParentScope = new HashMap<>();
+		}
+		if (parentId == null) {
+			this.currentParentScope.remove(scopeName);
+		} else {
+			this.currentParentScope.put(scopeName, parentId);
+		}
+	}
+
+	public void clearCurrentParentScope() {
+		if (this.currentParentScope != null) {
+			this.currentParentScope.clear();
+		}
+	}
 }
