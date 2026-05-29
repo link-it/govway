@@ -41,6 +41,14 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
 * @version $Rev$, $Date$
 */
 public class OpenAPI30_CookieEnumParameterSerializationTest extends ConfigLoader {
+
+	/**
+	 * Nome dell'API esercitata dai test. Le sottoclassi (variante OpenAPI 3.1 + kappa)
+	 * override solo questo metodo per puntare a un'API equivalente con spec OAS 3.1.
+	 */
+	protected String getApiName() {
+		return "EnumParameterSerialization";
+	}
 	
 	// https://swagger.io/docs/specification/serialization/
 	
@@ -64,12 +72,12 @@ public class OpenAPI30_CookieEnumParameterSerializationTest extends ConfigLoader
 		testCookie(tipo, "array_form_explode_false", "Valore1,Valore2,Valore33");
 	}
 
-	static void testCookie(TipoServizio tipoServizio, String path, String requestValue) throws Exception {
+	void testCookie(TipoServizio tipoServizio, String path, String requestValue) throws Exception {
 		
 
 		final String url = tipoServizio == TipoServizio.EROGAZIONE
-				? System.getProperty("govway_base_path") + "/SoggettoInternoTest/EnumParameterSerialization/v1/cookie/"+path
-				: System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/EnumParameterSerialization/v1/cookie/"+path;
+				? System.getProperty("govway_base_path") + "/SoggettoInternoTest/"+getApiName()+"/v1/cookie/"+path
+				: System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/"+getApiName()+"/v1/cookie/"+path;
 		
 		HttpRequest request = new HttpRequest();
 		request.addHeader(HttpConstants.COOKIE, "param="+requestValue);

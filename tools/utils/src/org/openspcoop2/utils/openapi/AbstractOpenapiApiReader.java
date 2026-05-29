@@ -1345,7 +1345,16 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 	private ApiSchemaTypeRestriction convertTo(Schema<?> schema, Boolean arrayParameter, String style, Boolean explode) {
 		ApiSchemaTypeRestriction schemaTypeRestriction = new ApiSchemaTypeRestriction();
 		schemaTypeRestriction.setSchema(schema);
-		schemaTypeRestriction.setType(schema.getType());
+		// OpenAPI 3.1: il parser puo' popolare 'types' (List) invece di 'type' (String) anche per
+		// dichiarazioni single-type come 'type: object'. Senza questo fallback ApiSchemaTypeRestriction.type
+		// resterebbe null e la stringa restrizioni serializzata via toString() ometterebbe 'type=...',
+		// rendendo isTypeObject()==false al runtime e generando "Required query parameter X not found"
+		// su parametri 'object' con 'style: form, explode: true' o 'style: deepObject'.
+		String resolvedType = schema.getType();
+		if (resolvedType == null && schema.getTypes() != null && !schema.getTypes().isEmpty()) {
+			resolvedType = schema.getTypes().iterator().next();
+		}
+		schemaTypeRestriction.setType(resolvedType);
 		schemaTypeRestriction.setFormat(schema.getFormat());
 		
 		schemaTypeRestriction.setMinimum(schema.getMinimum());

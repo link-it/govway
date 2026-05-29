@@ -45,6 +45,14 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
 * @version $Rev$, $Date$
 */
 public class OpenAPI30_HeaderQueryValoriMultipliTest extends ConfigLoader {
+
+	/**
+	 * Nome dell'API esercitata dai test. Le sottoclassi (variante OpenAPI 3.1 + kappa)
+	 * override solo questo metodo per puntare a un'API equivalente con spec OAS 3.1.
+	 */
+	protected String getApiName() {
+		return "ParameterSerialization";
+	}
 	
 	@Test
 	public void erogazione_query() throws Exception {
@@ -63,12 +71,12 @@ public class OpenAPI30_HeaderQueryValoriMultipliTest extends ConfigLoader {
 		assertEquals(true, l.contains("cc5uguale"));
 	}
 	
-	static List<String> testParametro(TipoServizio tipoServizio, String path, String value) throws Exception {
+	List<String> testParametro(TipoServizio tipoServizio, String path, String value) throws Exception {
 		
 
 		final String url = tipoServizio == TipoServizio.EROGAZIONE
-				? System.getProperty("govway_base_path") + "/SoggettoInternoTest/ParameterSerialization/v1/query/"+path
-				: System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/ParameterSerialization/v1/query/"+path;
+				? System.getProperty("govway_base_path") + "/SoggettoInternoTest/"+getApiName()+"/v1/query/"+path
+				: System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/"+getApiName()+"/v1/query/"+path;
 		
 		
 		HttpRequest request = new HttpRequest();
@@ -131,12 +139,12 @@ public class OpenAPI30_HeaderQueryValoriMultipliTest extends ConfigLoader {
 				responseValues);
 	}
 	
-	static void testHeader(TipoServizio tipoServizio, String path, List<String> requestValues, String responseHttpHeaderName, List<String> responseValues) throws Exception {
+	void testHeader(TipoServizio tipoServizio, String path, List<String> requestValues, String responseHttpHeaderName, List<String> responseValues) throws Exception {
 		
 
 		final String url = tipoServizio == TipoServizio.EROGAZIONE
-				? System.getProperty("govway_base_path") + "/SoggettoInternoTest/ParameterSerialization/v1/header/"+path
-				: System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/ParameterSerialization/v1/header/"+path;
+				? System.getProperty("govway_base_path") + "/SoggettoInternoTest/"+getApiName()+"/v1/header/"+path
+				: System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/"+getApiName()+"/v1/header/"+path;
 		
 		
 		HttpRequest request = new HttpRequest();
