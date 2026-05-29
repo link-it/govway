@@ -1,3 +1,9 @@
+2026-05-29  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolte le seguenti vulnerabilità relative ai jar di terza parte:
+	- CVE-2026-44417, CVE-2026-44618, CVE-2026-44930: aggiornata libreria 'org.apache.cxf:*' alla versione 4.2.1
+
 2026-05-28  Tommaso Burlon <tommaso.burlon@link.it>
 
 	* [GovWayCore]

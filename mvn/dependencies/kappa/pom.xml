@@ -19,8 +19,8 @@
 
 		<kappa.version>2.0.5</kappa.version>
 		<kappa.gov4j.version>2.0.5-gov4j-2</kappa.gov4j.version>
-		<json-sKema.version>0.29.0</json-sKema.version>
-		<kotlin-stdlib.version>2.3.10</kotlin-stdlib.version>
+		<json-sKema.version>0.30.0</json-sKema.version>
+		<kotlin-stdlib.version>2.3.21</kotlin-stdlib.version>
 		<jmail.version>2.1.0</jmail.version>
 
 	</properties>
