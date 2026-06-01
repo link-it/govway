@@ -56,6 +56,8 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
  * (multipart/related → SOAP_12), l'esito è OK ma senza compensazione applicata.
  *
  * @author Poli Andrea (apoli@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class MultipartTypeMissingSoapEngine extends ConfigLoader {
 

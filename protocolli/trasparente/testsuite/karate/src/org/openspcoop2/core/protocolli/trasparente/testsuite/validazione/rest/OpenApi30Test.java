@@ -42,6 +42,8 @@ import org.openspcoop2.utils.transport.http.HttpResponse;
  * verificati i tre esiti: ok, ko richiesta, ko risposta.
  *
  * @author Poli Andrea (apoli@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class OpenApi30Test extends ConfigLoader {
 

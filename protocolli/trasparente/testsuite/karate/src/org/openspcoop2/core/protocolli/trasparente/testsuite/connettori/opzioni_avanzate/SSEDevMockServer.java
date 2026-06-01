@@ -52,6 +52,8 @@ import com.sun.net.httpserver.HttpsServer;
  * accettarlo, oppure essere configurato in modalita' trust-all).
  *
  * @author Poli Andrea (apoli@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  *
  */
 public class SSEDevMockServer {

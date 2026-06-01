@@ -421,7 +421,7 @@ public class CostantiPdD {
     public static final int CONNETTORE_NIO_ASYNC_CLIENT_EXPIRE_UNUSED_AFTER_SECONDS = 300;
     /** Close asyncClient that have been unused longer than X sec */
     public static final int CONNETTORE_NIO_ASYNC_CLIENT_CLOSE_UNUSED_AFTER_SECONDS = 900;
-    /** Default HTTP version policy (ALPN) del connettore NIO async; valori ammessi: NEGOTIATE | FORCE_HTTP_1 | FORCE_HTTP_2 */
+    /** Default HTTP version policy (ALPN) del connettore NIO async; valori ammessi: NEGOTIATE , FORCE_HTTP_1 , FORCE_HTTP_2 */
     public static final ConnettoreHTTPCOREVersionPolicy CONNETTORE_NIO_ASYNC_CLIENT_HTTP_VERSION_POLICY_DEFAULT = ConnettoreHTTPCOREVersionPolicy.NEGOTIATE;
     
     public static final String CONNETTORE_FASE_GESTIIONE_RICHIESTA = "Request";

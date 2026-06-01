@@ -23,6 +23,8 @@ package org.openspcoop2.core.monitor.rs.server.config;
  * ApiMonitorAuditException
  *
  * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  *
  */
 public class ApiMonitorAuditException extends Exception {

@@ -28,9 +28,9 @@ dell'Application Server, di Java e delle principali librerie di terze parti util
      - EOL
    * - ``3.4.x``
      - **Supportata**
-     - 21
+     - 21 \*
      - 11
-     - 35 – 38 (JBoss EAP 8.1), 27 – 28 (JBoss EAP 8.0)
+     - 35 – 39 (JBoss EAP 8.1), 27 – 28 (JBoss EAP 8.0)
      - ``3.4.2.p1``
      - —
    * - ``3.3.x``
@@ -40,6 +40,8 @@ dell'Application Server, di Java e delle principali librerie di terze parti util
      - 26, 22 – 25 (JBoss EAP 7.4), 18 – 21 (JBoss EAP 7.3)
      - ``3.3.19.p1``
      - **31/12/2026**
+
+\* Esecuzione possibile anche su **Java 25** a partire da GovWay 3.4.3: vedi la :ref:`nota sulle dipendenze esterne <java25>`.
 
 
 .. rubric:: Versioni non più supportate
@@ -99,7 +101,7 @@ Le versioni si riferiscono all'ultima release pubblicata per ogni linea.
      - JDK built-in, saaj-impl ``1.3.28``
    * - **Jackson** (JSON / YAML)
      - ``2.21.2``
-     - ``2.18.3``
+     - ``2.18.6``
      - ``2.9.10``
    * - **Swagger / OpenAPI**
      - core ``2.2.48``, parser ``2.1.40``
@@ -107,7 +109,7 @@ Le versioni si riferiscono all'ultima release pubblicata per ogni linea.
      - core ``2.0.3``, parser ``2.0.2``
    * - **Logging**
      - Log4j ``2.25.4``
-     - Log4j ``2.25.3``
+     - Log4j ``2.25.4``
      - Log4j ``2.11.1``
    * - **Spring Framework**
      - ``7.0.7``
@@ -119,7 +121,7 @@ Le versioni si riferiscono all'ultima release pubblicata per ogni linea.
      - ``5.1.5``
    * - **Bouncy Castle**
      - ``1.84``
-     - ``1.81``
+     - ``1.84``
      - ``1.60``
    * - **Apache Santuario** (XML Security)
      - ``4.0.4``
@@ -149,8 +151,12 @@ Le versioni si riferiscono all'ultima release pubblicata per ogni linea.
 
 .. rubric:: Note sulle dipendenze esterne
 
+.. _java25:
+
 **Java** — Java 11 ha raggiunto la fine del supporto pubblico da parte di Oracle.
 La versione LTS raccomandata è **Java 21**, supportata dalla linea GovWay 3.4.x.
+A partire da GovWay **3.4.3** è inoltre possibile l'esecuzione su **Java 25** (la successiva release LTS dopo Java 21),
+limitatamente agli Application Server avviabili con tale versione (**WildFly ≥ 36** e **Apache Tomcat 11**).
 
 **Apache Tomcat** — Apache Tomcat 9 (utilizzato dalla linea 3.3.x): il termine del supporto per Tomcat 9.0.x è previsto
 `non prima del 31 marzo 2027 <https://tomcat.apache.org/whichversion.html>`_.

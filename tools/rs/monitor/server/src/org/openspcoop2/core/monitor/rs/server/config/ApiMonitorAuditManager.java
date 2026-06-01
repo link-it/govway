@@ -48,6 +48,8 @@ import org.slf4j.Logger;
  * {@code monitor.audit.log4j2.properties} incluso nel WAR.
  *
  * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  *
  */
 public class ApiMonitorAuditManager {

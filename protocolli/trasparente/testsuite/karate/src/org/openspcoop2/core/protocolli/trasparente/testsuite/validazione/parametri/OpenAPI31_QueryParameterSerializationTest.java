@@ -24,6 +24,8 @@ package org.openspcoop2.core.protocolli.trasparente.testsuite.validazione.parame
  * {@code OpenAPI31ParameterSerialization} (libreria di validazione kappa).
  *
  * @author Poli Andrea (apoli@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class OpenAPI31_QueryParameterSerializationTest extends OpenAPI30_QueryParameterSerializationTest {
 

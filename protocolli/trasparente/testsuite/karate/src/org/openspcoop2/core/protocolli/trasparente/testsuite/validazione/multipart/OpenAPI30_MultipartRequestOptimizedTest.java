@@ -28,6 +28,8 @@ package org.openspcoop2.core.protocolli.trasparente.testsuite.validazione.multip
  * funzionale resti identico al caso standard (a parte la performance del parsing multipart).
  *
  * @author Poli Andrea (apoli@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class OpenAPI30_MultipartRequestOptimizedTest extends OpenAPI30_MultipartRequestTest {
 

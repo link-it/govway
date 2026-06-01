@@ -24,6 +24,8 @@ package org.openspcoop2.core.protocolli.trasparente.testsuite.validazione.parame
  * {@code OpenAPI31EnumParameterSerialization} (libreria di validazione kappa).
  *
  * @author Poli Andrea (apoli@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class OpenAPI31_CookieEnumParameterSerializationTest extends OpenAPI30_CookieEnumParameterSerializationTest {
 

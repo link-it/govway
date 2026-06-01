@@ -61,6 +61,8 @@ import org.slf4j.Logger;
  * delegate al chiamante via {@link JmxToggleStrategy} e {@code sorgenteAudit}.
  *
  * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  *
  */
 public class ToggleStatoPortaService {

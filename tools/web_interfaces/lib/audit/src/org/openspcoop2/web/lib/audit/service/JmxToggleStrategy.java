@@ -31,6 +31,8 @@ import org.openspcoop2.web.lib.audit.AuditException;
  * (web console oppure web api).
  *
  * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  *
  */
 public interface JmxToggleStrategy {

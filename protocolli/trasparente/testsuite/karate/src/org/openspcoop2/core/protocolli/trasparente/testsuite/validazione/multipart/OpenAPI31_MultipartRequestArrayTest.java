@@ -24,6 +24,8 @@ package org.openspcoop2.core.protocolli.trasparente.testsuite.validazione.multip
  * {@code OpenAPI31ValidazioneMultipartRequest}: profilo OpenAPI 3.1 (libreria kappa).
  *
  * @author Poli Andrea (apoli@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class OpenAPI31_MultipartRequestArrayTest extends OpenAPI30_MultipartRequestArrayTest {
 

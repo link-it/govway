@@ -28,6 +28,8 @@ package org.openspcoop2.core.protocolli.trasparente.testsuite.validazione.multip
  * sono overridati una volta scoperti i pattern reali dai log della testsuite.
  *
  * @author Poli Andrea (apoli@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class OpenAPI31_MultipartRequestTest extends OpenAPI30_MultipartRequestTest {
 

@@ -27,6 +27,8 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.utils.Ht
  * la libreria HttpURLConnection del JDK (BIO).
  *
  * @author Poli Andrea (apoli@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class UrlConnBIOContentEncodingTest extends ContentEncodingEngine {
 	public UrlConnBIOContentEncodingTest() {

@@ -76,6 +76,8 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
  * </ul>
  *
  * @author Poli Andrea (apoli@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class ContentEncodingEngine extends ConfigLoader {
 

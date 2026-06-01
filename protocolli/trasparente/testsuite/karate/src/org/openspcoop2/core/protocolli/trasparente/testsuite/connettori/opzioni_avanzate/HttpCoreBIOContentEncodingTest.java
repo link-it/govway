@@ -27,6 +27,10 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.utils.Ht
  * Apache HttpClient 5 sincrono (BIO).
  *
  * @author Poli Andrea (apoli@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class HttpCoreBIOContentEncodingTest extends ContentEncodingEngine {
 	public HttpCoreBIOContentEncodingTest() {

@@ -43,6 +43,8 @@ import org.openspcoop2.utils.transport.http.HttpResponse;
  * backend viene alterata via {@code ?replace=AB123:xx} (validazione risposta).
  *
  * @author Poli Andrea (apoli@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class Swagger2ExternalTest extends ConfigLoader {
 

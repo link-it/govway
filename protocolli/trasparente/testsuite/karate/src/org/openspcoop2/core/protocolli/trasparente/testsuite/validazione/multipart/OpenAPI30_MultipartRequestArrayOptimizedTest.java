@@ -25,6 +25,8 @@ package org.openspcoop2.core.protocolli.trasparente.testsuite.validazione.multip
  * {@code validation.openApi.validateMultipartOptimization=true} configurato sulle porte.
  *
  * @author Poli Andrea (apoli@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class OpenAPI30_MultipartRequestArrayOptimizedTest extends OpenAPI30_MultipartRequestArrayTest {
 

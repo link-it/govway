@@ -45,6 +45,8 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
  * validazione lato risposta.
  *
  * @author Poli Andrea (apoli@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class ValidazioneRestUtils {
 
@@ -104,17 +106,25 @@ public class ValidazioneRestUtils {
 	 * messaggio dipende solo dalla libreria, non dal formato dello spec.
 	 */
 
+	/*
+	 * NB: i frammenti si fermano volutamente a '^[A-Z]{2}', omettendo il '\d{3}$' del pattern
+	 * '^[A-Z]{2}\d{3}$'. Vengono cercati su DB con 'messaggio LIKE ?' e il backslash di '\d' e'
+	 * carattere di escape di default nel LIKE di PostgreSQL/MySQL (mentre e' letterale su Oracle):
+	 * includerlo farebbe fallire il match a seconda del database. '^[A-Z]{2}' e' gia' specifico per
+	 * il campo 'code' e non contiene backslash.
+	 */
+
 	/** Dettaglio json_schema su pattern violato (uguale per request e response, comune a Swagger 2.0 / OpenAPI 3.0 / OpenAPI 3.1). */
-	public static final String DETAIL_JSON_SCHEMA = "$.code: does not match the regex pattern ^[A-Z]{2}\\d{3}$";
+	public static final String DETAIL_JSON_SCHEMA = "$.code: does not match the regex pattern ^[A-Z]{2}";
 
 	/** Dettaglio swagger_request_validator su pattern violato (parte comune a request e response, comune a Swagger 2.0 / OpenAPI 3.0). */
-	public static final String DETAIL_SWAGGER_REQUEST_VALIDATOR = "[Path '/code'] ECMA 262 regex \"^[A-Z]{2}\\d{3}$\" does not match input string \"xx\"";
+	public static final String DETAIL_SWAGGER_REQUEST_VALIDATOR = "[Path '/code'] ECMA 262 regex \"^[A-Z]{2}";
 
 	/** Dettaglio openapi4j su pattern violato (usato per OpenAPI 3.0: /default e /legacy-openapi4j). */
-	public static final String DETAIL_OPENAPI4J = "body.code: 'xx' does not respect pattern '^[A-Z]{2}\\d{3}$'";
+	public static final String DETAIL_OPENAPI4J = "body.code: 'xx' does not respect pattern '^[A-Z]{2}";
 
 	/** Dettaglio kappa su pattern violato (usato per OpenAPI 3.1: /default). */
-	public static final String DETAIL_KAPPA = "body.code: instance value did not match pattern ^[A-Z]{2}\\d{3}$";
+	public static final String DETAIL_KAPPA = "body.code: instance value did not match pattern ^[A-Z]{2}";
 
 	/**
 	 * Verifica esito OK: HTTP 200 + esito {@code OK} sul DB + i 4 diagnostici di apertura/chiusura

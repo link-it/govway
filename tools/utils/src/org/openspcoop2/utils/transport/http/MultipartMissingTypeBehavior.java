@@ -24,6 +24,8 @@ package org.openspcoop2.utils.transport.http;
  * obbligatorio per RFC 2387 §3.1, W3C SOAP-with-Attachments §3 e WS-I AP 1.0 R2904.
  *
  * @author Poli Andrea (apoli@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public enum MultipartMissingTypeBehavior {
 

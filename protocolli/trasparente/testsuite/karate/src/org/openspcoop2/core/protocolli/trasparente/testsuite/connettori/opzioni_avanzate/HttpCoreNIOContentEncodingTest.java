@@ -27,6 +27,8 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.utils.Ht
  * Apache HttpClient 5 NIO.
  *
  * @author Poli Andrea (apoli@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class HttpCoreNIOContentEncodingTest extends ContentEncodingEngine {
 	public HttpCoreNIOContentEncodingTest() {

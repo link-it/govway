@@ -59,6 +59,8 @@ import com.sun.net.httpserver.HttpServer;
  * essere robusti ai container che normalizzano gli header (es. Tomcat).
  *
  * @author Poli Andrea (apoli@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class ContentEncodingMockServer implements Closeable {
 

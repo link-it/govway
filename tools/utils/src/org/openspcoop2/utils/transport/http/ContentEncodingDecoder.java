@@ -57,6 +57,8 @@ import org.openspcoop2.utils.UtilsException;
  * gli stream sorgente (ByteArrayInputStream del byte peekato e socket stream originale).
  *
  * @author Poli Andrea (apoli@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  *
  */
 public class ContentEncodingDecoder {

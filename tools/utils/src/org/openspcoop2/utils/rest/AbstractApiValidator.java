@@ -76,7 +76,9 @@ public abstract class AbstractApiValidator   {
 	// inlineato qui per mantenere utils/rest/ disaccoppiato da openapi4j.
 	private static final String REF_KEYWORD = "$ref";
 
-	private static final Pattern PREFIXED_SEMICOLON_NAME_REGEX = Pattern.compile("(?:;)([^;]+)(?:=)([^;]*)");
+	// Il nome (gruppo 1) esclude sia ';' che '=': cosi' '[^;=]+' e il separatore '=' sono disgiunti,
+	// eliminando ogni backtracking (evita la segnalazione ReDoS "polynomial runtime").
+	private static final Pattern PREFIXED_SEMICOLON_NAME_REGEX = Pattern.compile("(?:;)([^;=]+)(?:=)([^;]*)");
 
 	/** Api corrente. Valorizzata dalle sottoclassi nel loro init. */
 	protected Api api;

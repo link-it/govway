@@ -24,6 +24,8 @@ package org.openspcoop2.core.protocolli.trasparente.testsuite.validazione.multip
  * Esercita l'API {@code OpenAPI31ValidazioneMultipartRequestOpt}.
  *
  * @author Poli Andrea (apoli@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class OpenAPI31_MultipartRequestArrayOptimizedTest extends OpenAPI31_MultipartRequestArrayTest {
 

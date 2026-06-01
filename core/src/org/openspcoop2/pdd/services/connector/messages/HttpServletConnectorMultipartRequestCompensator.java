@@ -56,6 +56,8 @@ import org.openspcoop2.utils.transport.http.MultipartRelatedHeuristics;
  * di invocarla solo quando il service binding è SOAP.
  *
  * @author Poli Andrea (apoli@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class HttpServletConnectorMultipartRequestCompensator {
 

@@ -67,6 +67,8 @@ import org.slf4j.Logger;
  * (vedi {@code AuthorizationManager.authorize(context, getAuthorizationConfig())}).
  *
  * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  *
  */
 public class ToggleStatoApiHelper {

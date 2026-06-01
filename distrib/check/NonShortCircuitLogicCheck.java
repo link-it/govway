@@ -124,8 +124,15 @@ public class NonShortCircuitLogicCheck {
 
 				else if( f.getAbsolutePath().indexOf("tools/utils/src/org/openspcoop2/utils/sql/test/ClientTest.java")!= -1 )
 					jumpCheck = true;
-
-
+					
+				else if( f.getAbsolutePath().indexOf("protocolli/trasparente/testsuite/karate/src/org/openspcoop2/core/protocolli/trasparente/testsuite/connettori/opzioni_avanzate/ContentEncodingMockServer.java")!= -1 )
+					jumpCheck = true;
+					
+				else if( f.getAbsolutePath().indexOf("protocolli/trasparente/testsuite/karate/src/org/openspcoop2/core/protocolli/trasparente/testsuite/connettori/opzioni_avanzate/SSETest.java")!= -1 )
+					jumpCheck = true;
+					
+				else if( f.getAbsolutePath().indexOf("tools/utils/src/org/openspcoop2/utils/transport/http/test/HttpTest.java")!= -1 )
+					jumpCheck = true;
 
 
 				String TODO = "METTERE QUA EVENTUALE NUOVO PATH";
