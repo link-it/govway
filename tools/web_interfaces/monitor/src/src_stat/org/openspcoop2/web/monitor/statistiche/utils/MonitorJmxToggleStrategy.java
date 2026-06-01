@@ -31,6 +31,8 @@ import org.slf4j.Logger;
  * invoca tramite {@link JmxUtils}.
  *
  * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  *
  */
 public class MonitorJmxToggleStrategy implements JmxToggleStrategy {

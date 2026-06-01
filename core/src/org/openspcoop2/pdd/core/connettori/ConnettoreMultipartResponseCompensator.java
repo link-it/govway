@@ -51,6 +51,8 @@ import org.openspcoop2.utils.transport.http.MultipartRelatedHeuristics;
  * Content-Type originale del backend.
  *
  * @author Poli Andrea (apoli@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 class ConnettoreMultipartResponseCompensator {
 

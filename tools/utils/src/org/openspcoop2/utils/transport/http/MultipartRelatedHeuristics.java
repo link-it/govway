@@ -37,6 +37,8 @@ import java.nio.charset.StandardCharsets;
  * cosicché i consumer a valle (parser, notifier, dump) vedano gli stessi byte nello stesso ordine.
  *
  * @author Poli Andrea (apoli@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public final class MultipartRelatedHeuristics {
 

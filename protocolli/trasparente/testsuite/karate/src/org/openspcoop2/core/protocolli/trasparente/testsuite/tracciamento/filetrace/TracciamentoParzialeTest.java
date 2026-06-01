@@ -44,6 +44,8 @@ import org.openspcoop2.utils.BooleanNullable;
  *  - "Scambiati con il server" governa outRequest + inResponse  (serverHeader/serverPayload)
  *
  * @author Poli Andrea (poli@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class TracciamentoParzialeTest extends ConfigLoader {
 
@@ -82,7 +84,8 @@ public class TracciamentoParzialeTest extends ConfigLoader {
 
 
 	// ----------------------------------------------------------------------
-	// dump-in: header=abilitato, payload=disabilitato   |   dump-out: disabilitato
+	// Flusso richiesta (dump-in): registra SOLO l'header, non il payload.
+	// Flusso risposta (dump-out): non registra nulla.
 	// ----------------------------------------------------------------------
 
 	private TracciamentoVerifica getRichiestaHeaderOnly() {
@@ -110,7 +113,8 @@ public class TracciamentoParzialeTest extends ConfigLoader {
 
 
 	// ----------------------------------------------------------------------
-	// dump-in: header=disabilitato, payload=abilitato   |   dump-out: disabilitato
+	// Flusso richiesta (dump-in): registra SOLO il payload, non l'header.
+	// Flusso risposta (dump-out): non registra nulla.
 	// ----------------------------------------------------------------------
 
 	private TracciamentoVerifica getRichiestaPayloadOnly() {
@@ -138,7 +142,8 @@ public class TracciamentoParzialeTest extends ConfigLoader {
 
 
 	// ----------------------------------------------------------------------
-	// dump-in: disabilitato   |   dump-out: header=abilitato, payload=disabilitato
+	// Flusso richiesta (dump-in): non registra nulla.
+	// Flusso risposta (dump-out): registra SOLO l'header, non il payload.
 	// ----------------------------------------------------------------------
 
 	private TracciamentoVerifica getRispostaHeaderOnly() {
@@ -166,7 +171,8 @@ public class TracciamentoParzialeTest extends ConfigLoader {
 
 
 	// ----------------------------------------------------------------------
-	// dump-in: disabilitato   |   dump-out: header=disabilitato, payload=abilitato
+	// Flusso richiesta (dump-in): non registra nulla.
+	// Flusso risposta (dump-out): registra SOLO il payload, non l'header.
 	// ----------------------------------------------------------------------
 
 	private TracciamentoVerifica getRispostaPayloadOnly() {

@@ -25,6 +25,8 @@ package org.openspcoop2.core.commons;
  * PortaDelegata) senza alterare la classe dell'oggetto trasportato.
  *
  * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  *
  */
 public class StatoWrapper {

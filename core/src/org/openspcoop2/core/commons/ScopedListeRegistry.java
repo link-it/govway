@@ -34,6 +34,8 @@ import java.util.Set;
  * Le costanti referenziate sono definite in {@link Liste}.
  *
  * @author Giuliano Pintori (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public final class ScopedListeRegistry {
 

@@ -13,9 +13,9 @@ author = 'Link.it'
 numfig = True
 
 # The short X.Y version
-version = '3.3.19.p1'
+version = '3.3.20'
 # The full version, including alpha/beta/rc tags
-release = '3.3.19.p1'
+release = '3.3.20'
 
 
 # -- General configuration ---------------------------------------------------

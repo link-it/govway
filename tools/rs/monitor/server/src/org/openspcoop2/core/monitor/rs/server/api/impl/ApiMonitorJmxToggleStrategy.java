@@ -32,6 +32,8 @@ import org.slf4j.Logger;
  * tramite {@link InvokerNodiRuntime}.
  *
  * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  *
  */
 public class ApiMonitorJmxToggleStrategy implements JmxToggleStrategy {
