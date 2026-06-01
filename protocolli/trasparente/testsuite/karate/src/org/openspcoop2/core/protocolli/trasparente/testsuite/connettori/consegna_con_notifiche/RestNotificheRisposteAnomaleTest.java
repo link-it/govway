@@ -338,7 +338,7 @@ public class RestNotificheRisposteAnomaleTest extends ConfigLoader{
 				assertEquals(200, r.getResultHTTPOperation());
 			}
 			
-			CommonConsegnaMultipla.withBackoff( () -> CommonConsegnaMultipla.checkPresaInConsegna(r, 1));
+			CommonConsegnaMultipla.withBackoffPositive( () -> CommonConsegnaMultipla.checkPresaInConsegna(r, 1));
 			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(r, connettori);	
 		}
 

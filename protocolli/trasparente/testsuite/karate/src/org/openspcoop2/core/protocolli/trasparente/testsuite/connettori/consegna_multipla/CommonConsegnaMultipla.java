@@ -275,14 +275,35 @@ public class CommonConsegnaMultipla {
 	}
 	
 	
+	/**
+	 * Backoff "storico" per assert negativi o che richiedono un piccolo settle iniziale (es.
+	 * checkNessunaNotifica): primo tentativo dopo 100ms. NON modificare: questi check ritornano al
+	 * primo successo, quindi anticipare il primo poll li farebbe passare prima, indebolendoli.
+	 */
 	public static void withBackoff(Runnable r) {
-		int[] delays =  {100, 500, 2000, 5000};
+		withBackoff(r, new int[] {100, 500, 2000, 5000});
+	}
+
+	/**
+	 * Backoff per assert positivi (eventualmente veri e poi stabili) e soprattutto per stati
+	 * transitori, come esito=38 'presa in consegna' che lo scheduler asincrono fa avanzare rapidamente
+	 * a 48/39: parte subito (delay 0) e polla fitto nel primo secondo, con finestra totale >= a quella
+	 * storica. Sui check positivi non introduce regressioni: puo' solo far passare prima, mai far
+	 * fallire un assert che prima passava.
+	 */
+	public static void withBackoffPositive(Runnable r) {
+		withBackoff(r, new int[] {0, 50, 100, 250, 500, 1000, 2000, 5000});
+	}
+
+	private static void withBackoff(Runnable r, int[] delays) {
 		for (int i = 0; i < delays.length; i++) {
 			int delay = delays[i];
 			if(i>0) {
 				ConfigLoader.getLoggerCore().debug("Attivo delay a '"+delay+"'");
 			}
-			Utilities.sleep(delay);
+			if(delay>0) {
+				Utilities.sleep(delay);
+			}
 			try {
 				r.run(); return;
 			} catch (Throwable t) {

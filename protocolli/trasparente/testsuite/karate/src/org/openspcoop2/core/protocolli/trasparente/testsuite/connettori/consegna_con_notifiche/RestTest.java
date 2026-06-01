@@ -183,7 +183,7 @@ public class RestTest extends ConfigLoader{
 			var responses = responsesByKind.get(requestExpectation);
 			
 			if (requestExpectation.principaleSuperata) {
-				CommonConsegnaMultipla.withBackoff( () -> checkPresaInConsegna(responses, Common.setConnettoriAbilitati.size()) );
+				CommonConsegnaMultipla.withBackoffPositive( () -> checkPresaInConsegna(responses, Common.setConnettoriAbilitati.size()) );
 				checkSchedulingConnettoreIniziato(responses, Common.setConnettoriAbilitati);
 			} else {
 				for (var response : responses) {
@@ -480,7 +480,7 @@ public class RestTest extends ConfigLoader{
 		
 		// Devono essere state create le tracce sul db ma non ancora fatta nessuna consegna
 		for (var r : responses) {
-			CommonConsegnaMultipla.withBackoff( () ->checkPresaInConsegna(r, Common.setConnettoriAbilitati.size()));
+			CommonConsegnaMultipla.withBackoffPositive( () ->checkPresaInConsegna(r, Common.setConnettoriAbilitati.size()));
 			checkSchedulingConnettoreIniziato(r, Common.setConnettoriAbilitati);
 		}
 		
@@ -535,7 +535,7 @@ public class RestTest extends ConfigLoader{
 		for (var r : responses) {
 			assertEquals(200, r.getResultHTTPOperation());
 			
-			CommonConsegnaMultipla.withBackoff( () -> checkPresaInConsegna(r, Common.setConnettoriAbilitati.size()));
+			CommonConsegnaMultipla.withBackoffPositive( () -> checkPresaInConsegna(r, Common.setConnettoriAbilitati.size()));
 			checkSchedulingConnettoreIniziato(r, Common.setConnettoriAbilitati);	
 		}
 
@@ -579,7 +579,7 @@ public class RestTest extends ConfigLoader{
 
 		for (var r : responsesOk) {
 			assertEquals(200, r.getResultHTTPOperation());
-			CommonConsegnaMultipla.withBackoff( () -> checkPresaInConsegna(r, Common.setConnettoriAbilitati.size()));
+			CommonConsegnaMultipla.withBackoffPositive( () -> checkPresaInConsegna(r, Common.setConnettoriAbilitati.size()));
 			checkSchedulingConnettoreIniziato(r, Common.setConnettoriAbilitati);	
 		}
 		
@@ -634,7 +634,7 @@ public class RestTest extends ConfigLoader{
 		// Devono essere state create le tracce sul db ma non ancora fatta nessuna consegna
 		for (var r : responses) {
 			assertEquals(200, r.getResultHTTPOperation());
-			CommonConsegnaMultipla.withBackoff( () -> checkPresaInConsegna(r, Common.setConnettoriAbilitati.size()));
+			CommonConsegnaMultipla.withBackoffPositive( () -> checkPresaInConsegna(r, Common.setConnettoriAbilitati.size()));
 			checkSchedulingConnettoreIniziato(r, Common.setConnettoriAbilitati);	
 		}
 		
@@ -699,7 +699,7 @@ public class RestTest extends ConfigLoader{
 		
 		// Tutte le richieste indipendentemente dal tipo devono essere state prese in consegna e lo scheduling inizia su tutti i connettori abilitati
 		for (var responses : responsesByKind.values()) {
-			CommonConsegnaMultipla.withBackoff( () -> checkPresaInConsegna(responses, Common.setConnettoriAbilitati.size()));
+			CommonConsegnaMultipla.withBackoffPositive( () -> checkPresaInConsegna(responses, Common.setConnettoriAbilitati.size()));
 			checkSchedulingConnettoreIniziato(responses, Common.setConnettoriAbilitati);
 		}
 		
@@ -771,7 +771,7 @@ public class RestTest extends ConfigLoader{
 			var responses = responsesByKind.get(requestExpectation);
 			
 			if (requestExpectation.principaleSuperata) {
-				CommonConsegnaMultipla.withBackoff( () -> checkPresaInConsegna(responses, Common.setConnettoriAbilitati.size()));
+				CommonConsegnaMultipla.withBackoffPositive( () -> checkPresaInConsegna(responses, Common.setConnettoriAbilitati.size()));
 				checkSchedulingConnettoreIniziato(responses, Common.setConnettoriAbilitati);
 			} else {
 				for (var response : responses) {
@@ -871,7 +871,7 @@ public class RestTest extends ConfigLoader{
 			var responses = responsesByKind.get(requestExpectation);
 			
 			if (requestExpectation.principaleSuperata) {
-				CommonConsegnaMultipla.withBackoff( () -> checkPresaInConsegna(responses, Common.setConnettoriAbilitati.size()));
+				CommonConsegnaMultipla.withBackoffPositive( () -> checkPresaInConsegna(responses, Common.setConnettoriAbilitati.size()));
 				checkSchedulingConnettoreIniziato(responses, Common.setConnettoriAbilitati);
 			} else {
 				for (var response : responses) {
@@ -967,7 +967,7 @@ public class RestTest extends ConfigLoader{
 				var responses = responsesByKind.get(requestExpectation);
 				
 				if (requestExpectation.principaleSuperata) {
-					CommonConsegnaMultipla.withBackoff( () -> checkPresaInConsegna(responses, Common.setConnettoriAbilitati.size()));
+					CommonConsegnaMultipla.withBackoffPositive( () -> checkPresaInConsegna(responses, Common.setConnettoriAbilitati.size()));
 					checkSchedulingConnettoreIniziato(responses, Common.setConnettoriAbilitati);
 				} else {
 					for (var response : responses) {
@@ -1058,7 +1058,7 @@ public class RestTest extends ConfigLoader{
 		// Devono essere state create le tracce sul db ma non ancora fatta nessuna consegna
 		for (var r : responses) {
 			assertEquals(200, r.getResultHTTPOperation());
-			CommonConsegnaMultipla.withBackoff( () -> checkPresaInConsegna(r, connettoriSchedulati.size()));
+			CommonConsegnaMultipla.withBackoffPositive( () -> checkPresaInConsegna(r, connettoriSchedulati.size()));
 			checkSchedulingConnettoreIniziato(r, connettoriSchedulati);	
 		}
 	

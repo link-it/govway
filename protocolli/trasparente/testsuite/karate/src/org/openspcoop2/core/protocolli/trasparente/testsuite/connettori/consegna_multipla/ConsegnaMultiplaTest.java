@@ -143,7 +143,7 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 		
 		// Devono essere state create le tracce sul db ma non ancora fatta nessuna consegna
 		for (var r : responses) {
-			CommonConsegnaMultipla.withBackoff( () -> checkPresaInConsegna(r,4));
+			CommonConsegnaMultipla.withBackoffPositive( () -> checkPresaInConsegna(r,4));
 			checkSchedulingConnettoreIniziato(r, Common.setConnettoriAbilitati);
 		}
 		
@@ -220,7 +220,7 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 		
 		// Devono essere state create le tracce sul db ma non ancora fatta nessuna consegna
 		for (var r : responses) {
-			CommonConsegnaMultipla.withBackoff( () -> checkPresaInConsegna(r,4));
+			CommonConsegnaMultipla.withBackoffPositive( () -> checkPresaInConsegna(r,4));
 			checkSchedulingConnettoreIniziato(r, Common.setConnettoriAbilitati);
 		}
 		
@@ -315,7 +315,7 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 		// Tutte le richieste indipendentemente dal tipo devono essere state prese in consegna e lo scheduling inizia su tutti i connettori abilitati
 		for (var responses : responsesByKind.values()) {
 			Common.checkAll200(responses);
-			CommonConsegnaMultipla.withBackoff( () -> checkPresaInConsegna(responses,4));
+			CommonConsegnaMultipla.withBackoffPositive( () -> checkPresaInConsegna(responses,4));
 			checkSchedulingConnettoreIniziato(responses, Common.setConnettoriAbilitati);
 		}
 		
@@ -379,7 +379,7 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 		// Tutte le richieste indipendentemente dal tipo devono essere state prese in consegna e lo scheduling inizia su tutti i connettori abilitati
 		for (var responses : responsesByKind.values()) {
 		   	Common.checkAll200(responses);
-		   	CommonConsegnaMultipla.withBackoff( () -> checkPresaInConsegna(responses,4));
+		   	CommonConsegnaMultipla.withBackoffPositive( () -> checkPresaInConsegna(responses,4));
 			checkSchedulingConnettoreIniziato(responses, Common.setConnettoriAbilitati);
 		}
 		
@@ -537,7 +537,7 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 		// Tutte le richieste indipendentemente dal tipo devono essere state prese in consegna e lo scheduling inizia su tutti i connettori abilitati
 		for (var responses : responsesByKind.values()) {
 			Common.checkAll200(responses);
-			CommonConsegnaMultipla.withBackoff( () -> checkPresaInConsegna(responses,4));
+			CommonConsegnaMultipla.withBackoffPositive( () -> checkPresaInConsegna(responses,4));
 			checkSchedulingConnettoreIniziato(responses, Common.setConnettoriAbilitati);
 		}
 		
@@ -618,7 +618,7 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 		// Tutte le richieste indipendentemente dal tipo devono essere state prese in consegna e lo scheduling inizia su tutti i connettori abilitati
 		for (var responses : responsesByKind.values()) {
 		   	Common.checkAll200(responses);
-		   	CommonConsegnaMultipla.withBackoff( () -> checkPresaInConsegna(responses,4));
+		   	CommonConsegnaMultipla.withBackoffPositive( () -> checkPresaInConsegna(responses,4));
 			checkSchedulingConnettoreIniziato(responses, Common.setConnettoriAbilitati);
 		}
 		
@@ -696,7 +696,7 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
    	   	connettoriSchedulati.add(CONNETTORE_ROTTO);
    	   	
 		for (var r : responses) {
-			CommonConsegnaMultipla.withBackoff( () -> checkPresaInConsegna(r,connettoriSchedulati.size()));
+			CommonConsegnaMultipla.withBackoffPositive( () -> checkPresaInConsegna(r,connettoriSchedulati.size()));
 			checkSchedulingConnettoreIniziato(r, connettoriSchedulati);
 		}
 		
@@ -758,7 +758,7 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 		// Devono essere state create le tracce sul db ma non ancora fatta nessuna consegna
 		for (var response : responsesSoap1) {
 			assertEquals(200, response.getResultHTTPOperation());
-			CommonConsegnaMultipla.withBackoff( () -> checkPresaInConsegna(response, Common.setConnettoriAbilitati.size()));
+			CommonConsegnaMultipla.withBackoffPositive( () -> checkPresaInConsegna(response, Common.setConnettoriAbilitati.size()));
 			checkSchedulingConnettoreIniziato(response, Common.setConnettoriAbilitati);
 			
 			// check consegna_im

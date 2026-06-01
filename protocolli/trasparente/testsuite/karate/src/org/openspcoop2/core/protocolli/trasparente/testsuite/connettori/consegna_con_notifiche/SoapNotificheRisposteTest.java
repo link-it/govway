@@ -255,7 +255,7 @@ public class SoapNotificheRisposteTest extends ConfigLoader{
 		for (var r : responses) {
 			assertEquals(200, r.getResultHTTPOperation());
 			
-			CommonConsegnaMultipla.withBackoff( () -> CommonConsegnaMultipla.checkPresaInConsegna(r, 1));
+			CommonConsegnaMultipla.withBackoffPositive( () -> CommonConsegnaMultipla.checkPresaInConsegna(r, 1));
 			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(r, connettori);	
 		}
 
@@ -319,7 +319,7 @@ public class SoapNotificheRisposteTest extends ConfigLoader{
 		for (var r : responses) {
 			assertEquals(200, r.getResultHTTPOperation());
 			
-			CommonConsegnaMultipla.withBackoff( () -> CommonConsegnaMultipla.checkPresaInConsegna(r, connettori.size()));
+			CommonConsegnaMultipla.withBackoffPositive( () -> CommonConsegnaMultipla.checkPresaInConsegna(r, connettori.size()));
 			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(r, connettori);	
 		}
 
@@ -391,7 +391,7 @@ public class SoapNotificheRisposteTest extends ConfigLoader{
 		for (var r : responses) {
 			assertEquals(200, r.getResultHTTPOperation());
 			
-			CommonConsegnaMultipla.withBackoff( () -> CommonConsegnaMultipla.checkPresaInConsegna(r, 1));
+			CommonConsegnaMultipla.withBackoffPositive( () -> CommonConsegnaMultipla.checkPresaInConsegna(r, 1));
 			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(r, connettori);	
 		}
 
@@ -455,7 +455,7 @@ public class SoapNotificheRisposteTest extends ConfigLoader{
 		for (var r : responses) {
 			assertEquals(200, r.getResultHTTPOperation());
 			
-			CommonConsegnaMultipla.withBackoff( () -> CommonConsegnaMultipla.checkPresaInConsegna(r, connettori.size()));
+			CommonConsegnaMultipla.withBackoffPositive( () -> CommonConsegnaMultipla.checkPresaInConsegna(r, connettori.size()));
 			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(r, connettori);	
 		}
 
@@ -523,7 +523,7 @@ public class SoapNotificheRisposteTest extends ConfigLoader{
 		for (var r : responses) {
 			assertEquals(200, r.getResultHTTPOperation());
 			
-			CommonConsegnaMultipla.withBackoff( () -> CommonConsegnaMultipla.checkPresaInConsegna(r, 1));
+			CommonConsegnaMultipla.withBackoffPositive( () -> CommonConsegnaMultipla.checkPresaInConsegna(r, 1));
 			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(r, connettori);	
 		}
 
@@ -603,7 +603,7 @@ public class SoapNotificheRisposteTest extends ConfigLoader{
 		for (var r : responses) {
 			assertEquals(200, r.getResultHTTPOperation());
 			
-			CommonConsegnaMultipla.withBackoff( () -> CommonConsegnaMultipla.checkPresaInConsegna(r, 1));
+			CommonConsegnaMultipla.withBackoffPositive( () -> CommonConsegnaMultipla.checkPresaInConsegna(r, 1));
 			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(r, connettori);	
 		}
 
@@ -662,7 +662,7 @@ public class SoapNotificheRisposteTest extends ConfigLoader{
 		for (var r : responses) {
 			assertEquals(200, r.getResultHTTPOperation());
 			
-			CommonConsegnaMultipla.withBackoff( () -> CommonConsegnaMultipla.checkPresaInConsegna(r, connettori.size()));
+			CommonConsegnaMultipla.withBackoffPositive( () -> CommonConsegnaMultipla.checkPresaInConsegna(r, connettori.size()));
 			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(r, connettori);	
 		}
 
@@ -736,7 +736,7 @@ public class SoapNotificheRisposteTest extends ConfigLoader{
 		for (var r : responses) {
 			assertEquals(200, r.getResultHTTPOperation());
 			
-			CommonConsegnaMultipla.withBackoff( () -> CommonConsegnaMultipla.checkPresaInConsegna(r, connettori.size()));
+			CommonConsegnaMultipla.withBackoffPositive( () -> CommonConsegnaMultipla.checkPresaInConsegna(r, connettori.size()));
 			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(r, connettori);	
 		}
 
