@@ -40,6 +40,7 @@
 		<delete dir="${build_govwayMonitorApiRS}/properties" />
 		<mkdir dir="${build_govwayMonitorApiRS}/properties" />
 		<copy file="${properties_govwayMonitorApiRS}/rs-api-monitor.datasource.properties" todir="${build_govwayMonitorApiRS}/properties" />
+		<copy file="${properties_govwayMonitorApiRS}/rs-api-monitor.properties" todir="${build_govwayMonitorApiRS}/properties" />
 		<if>
 			<matches string="${as}" pattern="tomcat.*"/>
 			<then>
@@ -51,6 +52,12 @@
 				    <param name="file" value="${build_govwayMonitorApiRS}/properties/rs-api-monitor.datasource.properties"/>
 					<param name="token" value="db.dataSource"/>
 					<param name="value" value="java:/comp/env/org.govway.datasource"/>
+				</antcall>
+				<!-- normalizzazione prefisso contesto JNDI datasource risolti da DB: atteso su Tomcat -->
+				<antcall target="set_property">
+				    <param name="file" value="${build_govwayMonitorApiRS}/properties/rs-api-monitor.properties"/>
+					<param name="token" value="jdbc.datasource.jndi.contextPrefix.expected"/>
+					<param name="value" value="true"/>
 				</antcall>
 			</then>
 		</if>
@@ -240,12 +247,12 @@
 			</lib>
 			<classes dir="${build_govwayMonitorApiRS}/properties">
 				<include name="rs-api-monitor.datasource.properties"/>
+				<include name="rs-api-monitor.properties"/>
 			</classes>
 			<classes dir="${build_govwayMonitorApiRS}/tmpNative2ASCII_dest">
 				<include name="govway.msgDiagnostici.properties" />
-			</classes>			
+			</classes>
 			<classes dir="${properties_govwayMonitorApiRS}">
-				<include name="rs-api-monitor.properties"/>
 				<!-- integrato utenti della console <include name="rs-api-monitor.users.properties"/> -->
 				<include name="rs-api-monitor.log4j2.properties"/>
 				<include name="messages_it.properties"/>

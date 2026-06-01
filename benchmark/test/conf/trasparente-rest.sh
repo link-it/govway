@@ -1,5 +1,6 @@
 elencoTestTrasparenteRest="rest_proxy_no-trace rest_proxy_db-trace rest_proxy_file-trace rest_proxy_file-db-trace 
 			rest_proxy_no-trace_validation rest_proxy_db-trace_validation
+			rest_proxy_no-trace_validation-openapi31 rest_proxy_db-trace_validation-openapi31
 			rest_proxy_no-trace_rate-limiting rest_proxy_db-trace_rate-limiting
 			rest_proxy_no-trace_rate-limiting_groupby-requester rest_proxy_db-trace_rate-limiting_groupby-requester
 			rest_proxy_no-trace_rate-limiting_too-many-requests rest_proxy_db-trace_rate-limiting_too-many-requests rest_proxy_db-partial-trace_rate-limiting_too-many-requests
@@ -7,6 +8,7 @@ elencoTestTrasparenteRest="rest_proxy_no-trace rest_proxy_db-trace rest_proxy_fi
 			rest_proxy_db-trace_rate-limiting_hazelcast-atomic-long rest_proxy_db-trace_rate-limiting_hazelcast-pn-counters
 			rest_proxy_db-trace_rate-limiting_hazelcast-map rest_proxy_db-trace_rate-limiting_hazelcast-near-cache rest_proxy_db-trace_rate-limiting_hazelcast-local-cache
 			rest_proxy_no-trace_multipart rest_proxy_db-trace_multipart rest_proxy_no-trace_multipart_validation rest_proxy_db-trace_multipart_validation
+			rest_proxy_no-trace_multipart-openapi31 rest_proxy_db-trace_multipart-openapi31 rest_proxy_no-trace_multipart_validation-openapi31 rest_proxy_db-trace_multipart_validation-openapi31
 			rest_proxy_db-trace_trasformazioni_freemarker rest_proxy_db-trace_trasformazioni_velocity"
 
 tests["rest_proxy_db-trace"]="rest_proxy_DBTrace"
@@ -15,6 +17,8 @@ tests["rest_proxy_file-trace"]="rest_proxy_FileTrace"
 tests["rest_proxy_file-db-trace"]="rest_proxy_FileDBTrace"
 tests["rest_proxy_db-trace_validation"]="rest_proxy_DBTrace_Validazione"
 tests["rest_proxy_no-trace_validation"]="rest_proxy_NoTrace_Validazione"
+tests["rest_proxy_db-trace_validation-openapi31"]="rest_proxy_DBTrace_ValidazioneOpenAPI31"
+tests["rest_proxy_no-trace_validation-openapi31"]="rest_proxy_NoTrace_ValidazioneOpenAPI31"
 tests["rest_proxy_db-trace_rate-limiting"]="rest_proxy_DBTrace_RateLimiting"
 tests["rest_proxy_no-trace_rate-limiting"]="rest_proxy_NoTrace_RateLimiting"
 tests["rest_proxy_db-trace_rate-limiting_groupby-requester"]="rest_proxy_DBTrace_RateLimiting_GroupByRequester"
@@ -33,6 +37,10 @@ tests["rest_proxy_db-trace_multipart"]="rest_proxy_DBTrace_Multipart"
 tests["rest_proxy_no-trace_multipart"]="rest_proxy_NoTrace_Multipart"
 tests["rest_proxy_db-trace_multipart_validation"]="rest_proxy_DBTrace_Multipart_Validazione"
 tests["rest_proxy_no-trace_multipart_validation"]="rest_proxy_NoTrace_Multipart_Validazione"
+tests["rest_proxy_db-trace_multipart-openapi31"]="rest_proxy_DBTrace_MultipartOpenAPI31"
+tests["rest_proxy_no-trace_multipart-openapi31"]="rest_proxy_NoTrace_MultipartOpenAPI31"
+tests["rest_proxy_db-trace_multipart_validation-openapi31"]="rest_proxy_DBTrace_Multipart_ValidazioneOpenAPI31"
+tests["rest_proxy_no-trace_multipart_validation-openapi31"]="rest_proxy_NoTrace_Multipart_ValidazioneOpenAPI31"
 tests["rest_proxy_db-trace_trasformazioni_freemarker"]="rest_proxy_DBTrace_Trasformazioni_Freemarker"
 tests["rest_proxy_db-trace_trasformazioni_velocity"]="rest_proxy_DBTrace_Trasformazioni_Velocity"
 
@@ -109,6 +117,31 @@ function rest_proxy_NoTrace_Validazione() {
 	profiloMessaggi=none
 	protocollo=api
 	tipiTest=Validazione
+	azione=test2
+	contentType=application/json
+	outputDir=${resultDir}/${FUNCNAME[0]}
+	description="Non vengono registrate le transazioni"
+}
+
+function rest_proxy_DBTrace_ValidazioneOpenAPI31() {
+	jmeterTestFile=${jmeterRestTestFile}
+	profiloSicurezza=none
+	profiloMessaggi=none
+	protocollo=api
+	tipiTest=OpenAPI31Validazione
+	azione=test
+	contentType=application/json
+	outputDir=${resultDir}/${FUNCNAME[0]}
+	description="Vengono registrate le transazioni"
+}
+
+
+function rest_proxy_NoTrace_ValidazioneOpenAPI31() {
+	jmeterTestFile=${jmeterRestTestFile}
+	profiloSicurezza=none
+	profiloMessaggi=none
+	protocollo=api
+	tipiTest=OpenAPI31Validazione
 	azione=test2
 	contentType=application/json
 	outputDir=${resultDir}/${FUNCNAME[0]}
@@ -342,6 +375,59 @@ function rest_proxy_NoTrace_Multipart_Validazione() {
 	outputDir=${resultDir}/${FUNCNAME[0]}
 	description="Non vengono registrate le transazioni; viene attuata la validazione dei contenuti"
 }
+
+
+function rest_proxy_DBTrace_MultipartOpenAPI31() {
+	jmeterTestFile=${jmeterRestTestFile}
+	profiloSicurezza=none
+	profiloMessaggi=multipart
+	protocollo=api
+	tipiTest=RequestMultipartOpenAPI31
+	azione=test
+	contentType='multipart/form-data; boundary=\"----=_Part_0_1037475674.1651780088034\"'
+	outputDir=${resultDir}/${FUNCNAME[0]}
+	description="Vengono registrate le transazioni"
+}
+
+
+function rest_proxy_NoTrace_MultipartOpenAPI31() {
+	jmeterTestFile=${jmeterRestTestFile}
+	profiloSicurezza=none
+	profiloMessaggi=multipart
+	protocollo=api
+	tipiTest=RequestMultipartOpenAPI31
+	azione=test2
+	contentType='multipart/form-data; boundary=\"----=_Part_0_1037475674.1651780088034\"'
+	outputDir=${resultDir}/${FUNCNAME[0]}
+	description="Non vengono registrate le transazioni"
+}
+
+
+function rest_proxy_DBTrace_Multipart_ValidazioneOpenAPI31() {
+	jmeterTestFile=${jmeterRestTestFile}
+	profiloSicurezza=none
+	profiloMessaggi=multipart
+	protocollo=api
+	tipiTest=RequestMultipartOpenAPI31
+	azione=test3
+	contentType='multipart/form-data; boundary=\"----=_Part_0_1037475674.1651780088034\"'
+	outputDir=${resultDir}/${FUNCNAME[0]}
+	description="Vengono registrate le transazioni; viene attuata la validazione dei contenuti"
+}
+
+
+function rest_proxy_NoTrace_Multipart_ValidazioneOpenAPI31() {
+	jmeterTestFile=${jmeterRestTestFile}
+	profiloSicurezza=none
+	profiloMessaggi=multipart
+	protocollo=api
+	tipiTest=RequestMultipartOpenAPI31
+	azione=test4
+	contentType='multipart/form-data; boundary=\"----=_Part_0_1037475674.1651780088034\"'
+	outputDir=${resultDir}/${FUNCNAME[0]}
+	description="Non vengono registrate le transazioni; viene attuata la validazione dei contenuti"
+}
+
 
 function rest_proxy_DBTrace_Trasformazioni_Freemarker() {
 	jmeterTestFile=${jmeterRestTestFile}

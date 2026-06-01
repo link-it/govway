@@ -57,6 +57,11 @@
 					<param name="token" value="singlePdD.msgDiagnostici.dataSource"/>
 					<param name="value" value="java:/comp/env/org.govway.datasource.tracciamento"/>
 				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${build_govwayConsole}/tmp/console.properties"/>
+					<param name="token" value="jdbc.datasource.jndi.contextPrefix.expected"/>
+					<param name="value" value="true"/>
+				</antcall>
 				<antcall target="dos2unix">
 					<param name="dir" value="${build_govwayConsole}/tmp"/>
 				    <param name="file" value="console.datasource.properties"/>

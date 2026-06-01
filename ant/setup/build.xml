@@ -223,11 +223,13 @@
 			<var name="datasource_pdd_name" value="org.govway.datasource"/>
 			<var name="datasource_console_name" value="org.govway.datasource.console"/>
 			<var name="datasource_domibus_name" value="org.govway.datasource.domibus"/>
+			<var name="datasource_jndi_contextPrefix_expected" value="false"/>
 		</then>
 		<else>
 			<var name="datasource_pdd_name" value="java:/comp/env/org.govway.datasource"/>
 			<var name="datasource_console_name" value="java:/comp/env/org.govway.datasource.console"/>
 			<var name="datasource_domibus_name" value="java:/comp/env/org.govway.datasource.domibus"/>
+			<var name="datasource_jndi_contextPrefix_expected" value="true"/>
 		</else>
 	</if>
 	<if>

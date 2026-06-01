@@ -40,6 +40,7 @@
 		<delete dir="${build_govwayConfigApiRS}/properties" />
 		<mkdir dir="${build_govwayConfigApiRS}/properties" />
 		<copy file="${properties_govwayConfigApiRS}/rs-api-config.datasource.properties" todir="${build_govwayConfigApiRS}/properties" />
+		<copy file="${properties_govwayConfigApiRS}/rs-api-config.properties" todir="${build_govwayConfigApiRS}/properties" />
 		<if>
 			<matches string="${as}" pattern="tomcat.*"/>
 			<then>
@@ -51,6 +52,12 @@
 				    <param name="file" value="${build_govwayConfigApiRS}/properties/rs-api-config.datasource.properties"/>
 					<param name="token" value="db.dataSource"/>
 					<param name="value" value="java:/comp/env/org.govway.datasource"/>
+				</antcall>
+				<!-- normalizzazione prefisso contesto JNDI datasource risolti da DB: atteso su Tomcat -->
+				<antcall target="set_property">
+				    <param name="file" value="${build_govwayConfigApiRS}/properties/rs-api-config.properties"/>
+					<param name="token" value="jdbc.datasource.jndi.contextPrefix.expected"/>
+					<param name="value" value="true"/>
 				</antcall>
 			</then>
 		</if>
@@ -200,9 +207,9 @@
 
 			<classes dir="${build_govwayConfigApiRS}/properties">
 				<include name="rs-api-config.datasource.properties"/>
-			</classes>			
-			<classes dir="${properties_govwayConfigApiRS}">
 				<include name="rs-api-config.properties"/>
+			</classes>
+			<classes dir="${properties_govwayConfigApiRS}">
 				<!-- integrato utenti della console <include name="rs-api-config.users.properties"/> -->
 				<include name="rs-api-config.log4j2.properties"/>
 				<include name="log4j2.properties"/>
