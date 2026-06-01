@@ -519,12 +519,20 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				return;
 			}
 			OpenSPCoop2Properties propertiesReader = OpenSPCoop2Properties.getInstance();
+
 			try{
 				PropertiesEnvUtils.checkRequiredEnvProperties(propertiesReader.getEnvProperties(), log, "govway");
 			}catch(CoreException e){
 				this.logError(e.getMessage(),e);
 				return;
 			}
+			
+			// Normalizzazione del prefisso del contesto JNDI dei DataSource il cui nome viene risolto da DB
+			org.openspcoop2.utils.resources.JndiDatasourceNameNormalizer.configure(
+					propertiesReader.isDSJndiContextPrefixNormalizeEnabled(),
+					propertiesReader.getDSJndiContextPrefix(),
+					propertiesReader.isDSJndiContextPrefixExpected());
+			
 			// Di seguito vengono attivati gli engine che richiedono di essere caricati prima della validazione del file di proprietà
 			
 			

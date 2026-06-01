@@ -441,7 +441,8 @@ public class RegistroServizi  {
 
 				// inizializzazione DB
 				else if(CostantiConfigurazione.REGISTRO_DB.equals(registro.getTipo())){
-					driver = new DriverRegistroServiziDB(path,null,this.log,registro.getTipoDatabase(),
+					// il nome del datasource (location) e' un valore risolto da DB: normalizzo il prefisso del contesto JNDI rispetto all'AS in esecuzione
+					driver = new DriverRegistroServiziDB(org.openspcoop2.utils.resources.JndiDatasourceNameNormalizer.normalize(path),null,this.log,registro.getTipoDatabase(),
 							useOp2UtilsDatasource,bindJMX);
 					this.mappingNomeRegistroToTipiDatabase.put(nomeRegistro, registro.getTipoDatabase());
 					this.mappingNomeRegistroToUseConnectionPdD.put(nomeRegistro, path.equals(jndiNameDatasourcePdD));

@@ -211,6 +211,21 @@ public class ApplicationProperties {
 	public String getProtocolloDefault() throws UtilsException{
 		return this.getProperty("protocolloDefault", false, true);
 	}
+
+	/* ----- Normalizzazione prefisso contesto JNDI dei DataSource risolti da DB ----- */
+
+	public boolean isDSJndiContextPrefixNormalizeEnabled() throws UtilsException{
+		String tmp = this.getProperty("jdbc.datasource.jndi.contextPrefix.normalize", false, true);
+		return "true".equalsIgnoreCase(tmp);
+	}
+	public String getDSJndiContextPrefix() throws UtilsException{
+		String tmp = this.getProperty("jdbc.datasource.jndi.contextPrefix", false, true);
+		return (tmp!=null) ? tmp : org.openspcoop2.utils.resources.JndiDatasourceNameNormalizer.DEFAULT_CONTEXT_PREFIX;
+	}
+	public boolean isDSJndiContextPrefixExpected() throws UtilsException{
+		String tmp = this.getProperty("jdbc.datasource.jndi.contextPrefix.expected", false, true);
+		return "true".equalsIgnoreCase(tmp);
+	}
 	public File getRepositoryJars() throws UtilsException{
 		String tmp = this.getProperty("repositoryJars", false, true);
 		if(tmp!=null){

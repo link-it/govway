@@ -233,7 +233,22 @@ public class ConsoleProperties {
 	public String getProtocolloDefault() throws UtilsException{
 		return this.readProperty(false, "protocolloDefault");
 	}
-	
+
+	/* ----- Normalizzazione prefisso contesto JNDI dei DataSource risolti da DB ----- */
+
+	public boolean isDSJndiContextPrefixNormalizeEnabled() throws UtilsException {
+		BooleanNullable b = this.readBooleanProperty(false, "jdbc.datasource.jndi.contextPrefix.normalize");
+		return (b.getValue()!=null) ? b.getValue().booleanValue() : false;
+	}
+	public String getDSJndiContextPrefix() throws UtilsException {
+		String v = this.readProperty(false, "jdbc.datasource.jndi.contextPrefix");
+		return (v!=null) ? v : org.openspcoop2.utils.resources.JndiDatasourceNameNormalizer.DEFAULT_CONTEXT_PREFIX;
+	}
+	public boolean isDSJndiContextPrefixExpected() throws UtilsException {
+		BooleanNullable b = this.readBooleanProperty(false, "jdbc.datasource.jndi.contextPrefix.expected");
+		return (b.getValue()!=null) ? b.getValue().booleanValue() : false;
+	}
+
 	public long getGestioneSerializableDBattesaAttiva() throws UtilsException {	
 		Long l = this.readLongProperty(false, "jdbc.serializable.attesaAttiva");
 		return l!=null ? l.longValue() : -1;

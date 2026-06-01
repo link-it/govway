@@ -294,6 +294,12 @@ public abstract class AbstractConsoleStartupListener implements ServletContextLi
 			ApplicationProperties.initialize(AbstractConsoleStartupListener.log, getApplicationProperties(), getLocalApplicationPropertyName(), getLocalApplicationProperties());
 			appProperties = ApplicationProperties.getInstance(AbstractConsoleStartupListener.log);
 			PropertiesEnvUtils.checkRequiredEnvProperties(appProperties.getEnvProperties(), AbstractConsoleStartupListener.log, "govwayMonitor");
+
+			// Normalizzazione del prefisso del contesto JNDI dei DataSource il cui nome viene risolto da DB
+			org.openspcoop2.utils.resources.JndiDatasourceNameNormalizer.configure(
+					appProperties.isDSJndiContextPrefixNormalizeEnabled(),
+					appProperties.getDSJndiContextPrefix(),
+					appProperties.isDSJndiContextPrefixExpected());
 		}catch (Exception e) {
 			String msgErrore = "Errore durante l'inizializzazione del ApplicationProperties: "
 					+ e.getMessage();

@@ -192,7 +192,22 @@ public class ServerProperties  {
 	public String getProtocolloDefault() throws UtilsException {
 		return this.readProperty(true, "protocolloDefault");
 	}
-	
+
+	/* ----- Normalizzazione prefisso contesto JNDI dei DataSource risolti da DB ----- */
+
+	public boolean isDSJndiContextPrefixNormalizeEnabled() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "jdbc.datasource.jndi.contextPrefix.normalize");
+		return this.parse(b, false);
+	}
+	public String getDSJndiContextPrefix() throws UtilsException{
+		String v = this.readProperty(false, "jdbc.datasource.jndi.contextPrefix");
+		return (v!=null) ? v : org.openspcoop2.utils.resources.JndiDatasourceNameNormalizer.DEFAULT_CONTEXT_PREFIX;
+	}
+	public boolean isDSJndiContextPrefixExpected() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "jdbc.datasource.jndi.contextPrefix.expected");
+		return this.parse(b, false);
+	}
+
 	public boolean isJdbcCloseConnectionCheckIsClosed() throws UtilsException{
 		BooleanNullable b = this.readBooleanProperty(true, "jdbc.closeConnection.checkIsClosed");
 		return this.parse(b, true);
