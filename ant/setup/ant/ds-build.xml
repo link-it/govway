@@ -91,12 +91,12 @@
 			<param name="token" value="@PORT@"/>
 			<param name="value" value="${antinstaller_dbport}"/>
 		</antcall>
-		<antcall target="replace_token">
+		<antcall target="replace_token_xmlescape">
 		    <param name="file" value="${file}"/>
 			<param name="token" value="@USERNAME@"/>
 			<param name="value" value="${antinstaller_dbusername}"/>
 		</antcall>
-		<antcall target="replace_token">
+		<antcall target="replace_token_xmlescape">
 		    <param name="file" value="${file}"/>
 			<param name="token" value="@PASSWORD@"/>
 			<param name="value" value="${antinstaller_dbpassword}"/>
@@ -147,12 +147,12 @@
 			<param name="token" value="@PORT@"/>
 			<param name="value" value="${antinstaller_dbport_config}"/>
 		</antcall>
-		<antcall target="replace_token">
+		<antcall target="replace_token_xmlescape">
 		    <param name="file" value="${file}"/>
 			<param name="token" value="@USERNAME@"/>
 			<param name="value" value="${antinstaller_dbusername_config}"/>
 		</antcall>
-		<antcall target="replace_token">
+		<antcall target="replace_token_xmlescape">
 		    <param name="file" value="${file}"/>
 			<param name="token" value="@PASSWORD@"/>
 			<param name="value" value="${antinstaller_dbpassword_config}"/>
@@ -203,12 +203,12 @@
 			<param name="token" value="@PORT@"/>
 			<param name="value" value="${antinstaller_dbport_log}"/>
 		</antcall>
-		<antcall target="replace_token">
+		<antcall target="replace_token_xmlescape">
 		    <param name="file" value="${file}"/>
 			<param name="token" value="@USERNAME@"/>
 			<param name="value" value="${antinstaller_dbusername_log}"/>
 		</antcall>
-		<antcall target="replace_token">
+		<antcall target="replace_token_xmlescape">
 		    <param name="file" value="${file}"/>
 			<param name="token" value="@PASSWORD@"/>
 			<param name="value" value="${antinstaller_dbpassword_log}"/>
@@ -265,12 +265,12 @@
 			<param name="token" value="@PORT@"/>
 			<param name="value" value="${antinstaller_dbport_stats}"/>
 		</antcall>
-		<antcall target="replace_token">
+		<antcall target="replace_token_xmlescape">
 		    <param name="file" value="${file}"/>
 			<param name="token" value="@USERNAME@"/>
 			<param name="value" value="${antinstaller_dbusername_stats}"/>
 		</antcall>
-		<antcall target="replace_token">
+		<antcall target="replace_token_xmlescape">
 		    <param name="file" value="${file}"/>
 			<param name="token" value="@PASSWORD@"/>
 			<param name="value" value="${antinstaller_dbpassword_stats}"/>
@@ -372,12 +372,12 @@
 			<param name="token" value="@PORT@"/>
 			<param name="value" value="${antinstaller_as4_dbport}"/>
 		</antcall>
-		<antcall target="replace_token">
+		<antcall target="replace_token_xmlescape">
 		    <param name="file" value="${file}"/>
 			<param name="token" value="@USERNAME@"/>
 			<param name="value" value="${antinstaller_as4_dbusername}"/>
 		</antcall>
-		<antcall target="replace_token">
+		<antcall target="replace_token_xmlescape">
 		    <param name="file" value="${file}"/>
 			<param name="token" value="@PASSWORD@"/>
 			<param name="value" value="${antinstaller_as4_dbpassword}"/>
@@ -551,23 +551,32 @@
 			regexp="([a-zA-Z0-9=&quot;\.:\/@;?_&lt;\s]*):@PORT@([a-zA-Z0-9=&quot;\.:\/@;?_&gt;\s]*)"
 			select="\1:${templateDbPort}\2"/>
 
-		<propertyregex property="propTemplateDatasourceIstanziato" 
-			override="true"
-			input="${propTemplateDatasourceIstanziato}"
-			regexp="([a-zA-Z0-9=&quot;\.:\/@;?_&lt;\s]*)&quot;@USERNAME@([a-zA-Z0-9=&quot;\.:\/@;?_&gt;\s]*)"
-			select="\1&quot;${templateDbUsername}\2"/>
-
-		<propertyregex property="propTemplateDatasourceIstanziato" 
-			override="true"
-			input="${propTemplateDatasourceIstanziato}"
-			regexp="([a-zA-Z0-9=&quot;\.:\/@;?_&lt;\s]*)&quot;@PASSWORD@([a-zA-Z0-9=&quot;\.:\/@;?_&gt;\s]*)"
-			select="\1&quot;${templateDbPassword}\2"/>
+		<!-- username/password vengono lasciati come token @USERNAME@/@PASSWORD@ e sostituiti piu' sotto,
+		     dopo l'eventuale rename del datasource, tramite replace literal con XML-escape (replace_token_xmlescape)
+		     isolando il blocco in un file temporaneo. Questo evita che caratteri come " & < rompano l'attributo XML
+		     e che un eventuale '\' nel valore venga interpretato come backreference dal select della propertyregex. -->
 
 		<!-- <echo message="FINE PARAMETRI DATABASE [${propTemplateDatasourceIstanziato}]"/> -->
 
 		<if>
 			<equals arg1="${dataSourceNameSrc}" arg2="${dataSourceNameDest}"/>
 			<then>
+				<!-- sostituzione credenziali: replace literal + XML-escape sul blocco isolato in file temporaneo -->
+				<echo file="${templateDataSourceFile}.credtmp" message="${propTemplateDatasourceIstanziato}"/>
+				<antcall target="replace_token_xmlescape">
+				    <param name="file" value="${templateDataSourceFile}.credtmp"/>
+					<param name="token" value="@USERNAME@"/>
+					<param name="value" value="${templateDbUsername}"/>
+				</antcall>
+				<antcall target="replace_token_xmlescape">
+				    <param name="file" value="${templateDataSourceFile}.credtmp"/>
+					<param name="token" value="@PASSWORD@"/>
+					<param name="value" value="${templateDbPassword}"/>
+				</antcall>
+				<var name="propTemplateDatasourceIstanziato" unset="true"/>
+				<loadfile property="propTemplateDatasourceIstanziato" srcFile="${templateDataSourceFile}.credtmp"/>
+				<delete file="${templateDataSourceFile}.credtmp"/>
+
 				<antcall target="replace_token">
 				    <param name="file" value="${templateDataSourceFile}"/>
 					<param name="token" value="${propTemplateDatasource}"/>
@@ -576,11 +585,27 @@
 			</then>
 			<else>
 
-				<propertyregex property="propTemplateDatasourceIstanziato" 
+				<propertyregex property="propTemplateDatasourceIstanziato"
 					override="true"
 					input="${propTemplateDatasourceIstanziato}"
 					regexp="([a-zA-Z0-9=&quot;\.:\/@;?_&lt;\s]*)${dataSourceNameSrc}([a-zA-Z0-9=&quot;\.:\/@;?_&gt;\s]*)"
 					select="\1${dataSourceNameDest}\2"/>
+
+				<!-- sostituzione credenziali (dopo il rename): replace literal + XML-escape sul blocco isolato in file temporaneo -->
+				<echo file="${templateDataSourceFile}.credtmp" message="${propTemplateDatasourceIstanziato}"/>
+				<antcall target="replace_token_xmlescape">
+				    <param name="file" value="${templateDataSourceFile}.credtmp"/>
+					<param name="token" value="@USERNAME@"/>
+					<param name="value" value="${templateDbUsername}"/>
+				</antcall>
+				<antcall target="replace_token_xmlescape">
+				    <param name="file" value="${templateDataSourceFile}.credtmp"/>
+					<param name="token" value="@PASSWORD@"/>
+					<param name="value" value="${templateDbPassword}"/>
+				</antcall>
+				<var name="propTemplateDatasourceIstanziato" unset="true"/>
+				<loadfile property="propTemplateDatasourceIstanziato" srcFile="${templateDataSourceFile}.credtmp"/>
+				<delete file="${templateDataSourceFile}.credtmp"/>
 
 				<antcall target="replace_token">
 				    <param name="file" value="${templateDataSourceFile}"/>

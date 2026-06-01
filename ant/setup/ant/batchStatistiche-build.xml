@@ -189,12 +189,12 @@
 					<param name="jdbc_dbname" value="${antinstaller_dbname_config}"/>
 					<param name="jdbc_oracle_mode" value="${antinstaller_oracle_mode_config}"/>
 				</antcall>
-				<antcall target="set_property">
+				<antcall target="set_property_propescape">
 				    <param name="file" value="${file}"/>
 					<param name="token" value="db.connection.user"/>
 					<param name="value" value="${antinstaller_dbusername_config}"/>
 				</antcall>
-				<antcall target="set_property">
+				<antcall target="set_property_propescape">
 				    <param name="file" value="${file}"/>
 					<param name="token" value="db.connection.password"/>
 					<param name="value" value="${antinstaller_dbpassword_config}"/>
@@ -212,12 +212,12 @@
 							<param name="jdbc_dbname" value="${antinstaller_dbname}"/>
 							<param name="jdbc_oracle_mode" value="${antinstaller_oracle_mode}"/>
 						</antcall>
-						<antcall target="set_property">
+						<antcall target="set_property_propescape">
 						    <param name="file" value="${file}"/>
 							<param name="token" value="factory.transazioni.db.connection.user"/>
 							<param name="value" value="${antinstaller_dbusername}"/>
 						</antcall>
-						<antcall target="set_property">
+						<antcall target="set_property_propescape">
 						    <param name="file" value="${file}"/>
 							<param name="token" value="factory.transazioni.db.connection.password"/>
 							<param name="value" value="${antinstaller_dbpassword}"/>
@@ -236,12 +236,12 @@
 							<param name="jdbc_dbname" value="${antinstaller_dbname}"/>
 							<param name="jdbc_oracle_mode" value="${antinstaller_oracle_mode}"/>
 						</antcall>
-						<antcall target="set_property">
+						<antcall target="set_property_propescape">
 						    <param name="file" value="${file}"/>
 							<param name="token" value="factory.statistiche.db.connection.user"/>
 							<param name="value" value="${antinstaller_dbusername}"/>
 						</antcall>
-						<antcall target="set_property">
+						<antcall target="set_property_propescape">
 						    <param name="file" value="${file}"/>
 							<param name="token" value="factory.statistiche.db.connection.password"/>
 							<param name="value" value="${antinstaller_dbpassword}"/>
@@ -259,12 +259,12 @@
 					<param name="jdbc_dbname" value="${antinstaller_dbname}"/>
 					<param name="jdbc_oracle_mode" value="${antinstaller_oracle_mode}"/>
 				</antcall>
-				<antcall target="set_property">
+				<antcall target="set_property_propescape">
 				    <param name="file" value="${file}"/>
 					<param name="token" value="db.connection.user"/>
 					<param name="value" value="${antinstaller_dbusername}"/>
 				</antcall>
-				<antcall target="set_property">
+				<antcall target="set_property_propescape">
 				    <param name="file" value="${file}"/>
 					<param name="token" value="db.connection.password"/>
 					<param name="value" value="${antinstaller_dbpassword}"/>
@@ -283,12 +283,12 @@
 					<param name="jdbc_dbname" value="${antinstaller_dbname_log}"/>
 					<param name="jdbc_oracle_mode" value="${antinstaller_oracle_mode_log}"/>
 				</antcall>
-				<antcall target="set_property">
+				<antcall target="set_property_propescape">
 				    <param name="file" value="${file}"/>
 					<param name="token" value="factory.transazioni.db.connection.user"/>
 					<param name="value" value="${antinstaller_dbusername_log}"/>
 				</antcall>
-				<antcall target="set_property">
+				<antcall target="set_property_propescape">
 				    <param name="file" value="${file}"/>
 					<param name="token" value="factory.transazioni.db.connection.password"/>
 					<param name="value" value="${antinstaller_dbpassword_log}"/>
@@ -307,12 +307,12 @@
 					<param name="jdbc_dbname" value="${antinstaller_dbname_log}"/>
 					<param name="jdbc_oracle_mode" value="${antinstaller_oracle_mode_log}"/>
 				</antcall>
-				<antcall target="set_property">
+				<antcall target="set_property_propescape">
 				    <param name="file" value="${file}"/>
 					<param name="token" value="factory.statistiche.db.connection.user"/>
 					<param name="value" value="${antinstaller_dbusername_log}"/>
 				</antcall>
-				<antcall target="set_property">
+				<antcall target="set_property_propescape">
 				    <param name="file" value="${file}"/>
 					<param name="token" value="factory.statistiche.db.connection.password"/>
 					<param name="value" value="${antinstaller_dbpassword_log}"/>
@@ -331,12 +331,12 @@
 					<param name="jdbc_dbname" value="${antinstaller_dbname_stats}"/>
 					<param name="jdbc_oracle_mode" value="${antinstaller_oracle_mode_stats}"/>
 				</antcall>
-				<antcall target="set_property">
+				<antcall target="set_property_propescape">
 				    <param name="file" value="${file}"/>
 					<param name="token" value="factory.statistiche.db.connection.user"/>
 					<param name="value" value="${antinstaller_dbusername_stats}"/>
 				</antcall>
-				<antcall target="set_property">
+				<antcall target="set_property_propescape">
 				    <param name="file" value="${file}"/>
 					<param name="token" value="factory.statistiche.db.connection.password"/>
 					<param name="value" value="${antinstaller_dbpassword_stats}"/>

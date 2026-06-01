@@ -192,12 +192,12 @@
 			<param name="jdbc_dbname" value="${antinstaller_dbname}"/>
 			<param name="jdbc_oracle_mode" value="${antinstaller_oracle_mode}"/>
 		</antcall>
-		<antcall target="set_property">
+		<antcall target="set_property_propescape">
 		    <param name="file" value="${file}"/>
 			<param name="token" value="db.connection.user"/>
 			<param name="value" value="${antinstaller_dbusername}"/>
 		</antcall>
-		<antcall target="set_property">
+		<antcall target="set_property_propescape">
 		    <param name="file" value="${file}"/>
 			<param name="token" value="db.connection.password"/>
 			<param name="value" value="${antinstaller_dbpassword}"/>

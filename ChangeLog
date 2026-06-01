@@ -1,3 +1,12 @@
+2026-06-01  Andrea Poli <apoli@link.it>
+
+	* [InstallerVersioneBinaria]
+	Corretto l'escape dei caratteri speciali XML (& < > " ') nei valori di username e password dei datasource generati,
+	che in precedenza potevano produrre file datasource malformati/troncati (sia per WildFly/JBoss che per Tomcat).
+	Corretto inoltre l'escape stile properties (backslash) di username e password nei file daoFactory.properties dei batch
+	a connessione JDBC diretta (generatoreStatistiche, gestoreRuntimeRepository), dove un '\' nella password veniva altrimenti
+	consumato in lettura.
+
 2026-05-29 Giuliano Pintori <pintori@link.it>
 
 	* [GovWayConsole]
