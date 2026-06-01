@@ -33,6 +33,11 @@
 		</antcall>
 		<antcall target="set_property">
 		    <param name="file" value="${build}/tmp/govway.properties"/>
+			<param name="token" value="org.openspcoop2.pdd.datasource.jndi.contextPrefix.expected"/>
+			<param name="value" value="true"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${build}/tmp/govway.properties"/>
 			<param name="token" value="org.openspcoop2.pdd.logger.dump.allAttachments"/>
 			<param name="value" value="false"/>
 		</antcall>

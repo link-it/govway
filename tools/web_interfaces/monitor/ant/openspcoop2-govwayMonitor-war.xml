@@ -31,6 +31,11 @@
 					<param name="token" value="db.datasource.jndiName"/>
 					<param name="value" value="java:/comp/env/org.govway.datasource.console"/>
 				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${build_govwayMonitor}/tmp/monitor.properties"/>
+					<param name="token" value="jdbc.datasource.jndi.contextPrefix.expected"/>
+					<param name="value" value="true"/>
+				</antcall>
 				<antcall target="dos2unix">
 					<param name="dir" value="${build_govwayMonitor}/tmp"/>
 				    <param name="file" value="monitor.datasource.properties"/>
