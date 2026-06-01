@@ -87,8 +87,21 @@ public class OpenapiApi extends Api {
 	private transient OpenAPI api;
 	private transient Map<String, Schema<?>> definitions;
 	private String apiRaw;
-	private String parseWarningResult; 
+	private String parseWarningResult;
 	private ApiFormats format;
+
+	/** Pattern precompilato per la detection 3.1 sull'apiRaw (evita di ricompilare la regex ad ogni chiamata). */
+	private static final java.util.regex.Pattern OPENAPI_31_PATTERN =
+			java.util.regex.Pattern.compile("(?s).*[\"']?openapi[\"']?\\s*:\\s*[\"']?3\\.1.*");
+
+	/**
+	 * Esito memoizzato della detection OpenAPI 3.0 vs 3.1. La detection è deterministica
+	 * (dipende da {@code format} e {@code apiRaw}, entrambi immutabili dopo la costruzione),
+	 * quindi viene calcolata una sola volta. Il campo è volutamente NON {@code transient}:
+	 * sopravvive a eventuale serializzazione/deserializzazione (a differenza del modello
+	 * swagger-parser {@code api}), evitando di rieseguire la regex sull'intero spec.
+	 */
+	private volatile Boolean openApi31;
 
 	/**
 	 * Cache delle strutture di validazione costruite da {@code init()} degli engine, indicizzata per
@@ -136,26 +149,48 @@ public class OpenapiApi extends Api {
 		if (!(api instanceof OpenapiApi)) {
 			return false;
 		}
-		OpenapiApi openapiApi = (OpenapiApi) api;
-		if (!ApiFormats.OPEN_API_3.equals(openapiApi.getFormat())) {
+		return ((OpenapiApi) api).isOpenApi31();
+	}
+
+	/**
+	 * Variante d'istanza con memoizzazione dell'esito: la regex sull'apiRaw viene eseguita
+	 * al massimo una volta per {@link OpenapiApi}, evitando di scandire l'intero spec ad ogni
+	 * richiesta (il chiamante {@code ValidatoreMessaggiApplicativiRest} la invoca per ogni messaggio).
+	 *
+	 * @return {@code true} se l'api è OpenAPI 3.1, {@code false} altrimenti (incluso il caso
+	 *         in cui il formato non sia {@code OPEN_API_3}).
+	 */
+	public boolean isOpenApi31() {
+		Boolean cached = this.openApi31;
+		if (cached != null) {
+			return cached.booleanValue();
+		}
+		// Race benigna: la detection è deterministica, eventuali calcoli concorrenti danno lo stesso esito.
+		boolean result = computeOpenApi31();
+		this.openApi31 = result;
+		return result;
+	}
+
+	private boolean computeOpenApi31() {
+		if (!ApiFormats.OPEN_API_3.equals(this.format)) {
 			return false;
 		}
 		// 1) modello swagger-parser, se ancora disponibile
 		try {
-			if (openapiApi.getApi() != null && openapiApi.getApi().getOpenapi() != null
-					&& openapiApi.getApi().getOpenapi().startsWith("3.1")) {
+			if (this.api != null && this.api.getOpenapi() != null
+					&& this.api.getOpenapi().startsWith("3.1")) {
 				return true;
 			}
 		} catch (Exception e) {
 			// fallthrough
 		}
 		// 2) fallback: scan dell'apiRaw per la dichiarazione di versione
-		String raw = openapiApi.getApiRaw();
+		// pattern: openapi: "3.1...", openapi: 3.1..., "openapi": "3.1..."
+		String raw = this.apiRaw;
 		if (raw == null) {
 			return false;
 		}
-		// pattern: openapi: "3.1...", openapi: 3.1..., "openapi": "3.1..."
-		return raw.matches("(?s).*[\"']?openapi[\"']?\\s*:\\s*[\"']?3\\.1.*");
+		return OPENAPI_31_PATTERN.matcher(raw).matches();
 	}
 	
 	public Map<String, Schema<?>> getDefinitions() {

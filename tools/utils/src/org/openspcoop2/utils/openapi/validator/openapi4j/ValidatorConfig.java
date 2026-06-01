@@ -204,6 +204,19 @@ public class ValidatorConfig extends ApiValidatorConfig {
 		this.validateWildcardSubtypeAsJson = validateWildcardSubtypeAsJson;
 	}
 
+	/**
+	 * {@code validateMultipartOptimization} impatta la costruzione della struttura cachata
+	 * (viene applicato all'{@code OAI3Context} in {@code init()}), quindi va distinto nella chiave
+	 * di cache: due porte sulla stessa API che differiscono solo per questo flag devono avere
+	 * {@code OpenApi3}/{@code OperationValidator} separati. Flag specifico di openapi4j/kappa,
+	 * per questo l'override sta qui e non nella {@code ApiValidatorConfig} base.
+	 */
+	@Override
+	public String cacheKey(String enginePrefix) {
+		return super.cacheKey(enginePrefix)
+				+ ":multipartOpt=" + this.validateMultipartOptimization;
+	}
+
 	public boolean isValidateMultipartOptimization() {
 		return this.validateMultipartOptimization;
 	}

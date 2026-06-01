@@ -23,7 +23,6 @@ package org.openspcoop2.utils.resources;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
 
 /**
  * Loader
@@ -262,22 +261,27 @@ public class Loader {
 		}	
 		return c;
 	}
-	private static HashMap<String, Class<?>> mapClass = new HashMap<String, Class<?>>();
+	private static final java.util.concurrent.ConcurrentHashMap<String, Class<?>> mapClass = new java.util.concurrent.ConcurrentHashMap<>();
 	private static Class<?> getClass(String className,java.lang.ClassLoader classLoader) throws ClassNotFoundException, InstantiationException, IllegalAccessException{
-		if(mapClass.containsKey(className)==false){
-			initClass(className,classLoader);
+		// Hot-path lock-free: a regime la classe è già caricata e si fa una sola get sulla ConcurrentHashMap.
+		Class<?> c = mapClass.get(className);
+		if(c==null){
+			c = initClass(className,classLoader);
 		}
-		return mapClass.get(className);
+		return c;
 	}
-	private static synchronized void initClass(String className,java.lang.ClassLoader classLoader) throws ClassNotFoundException, InstantiationException, IllegalAccessException{
-		if(mapClass.containsKey(className)==false){
-			Class<?> c = null;
+	private static Class<?> initClass(String className,java.lang.ClassLoader classLoader) throws ClassNotFoundException, InstantiationException, IllegalAccessException{
+		// Niente synchronized: la put è atomica e il class-loading è idempotente, quindi eventuali
+		// miss concorrenti sulla stessa classe ricaricano lo stesso Class object in modo innocuo.
+		Class<?> c = mapClass.get(className);
+		if(c==null){
 			if(classLoader!=null){
 				c = classLoader.loadClass(className);
 			}else{
 				c = Class.forName(className);
-			}	
+			}
 			mapClass.put(className, c);
 		}
+		return c;
 	}
 }

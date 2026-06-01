@@ -93,9 +93,38 @@ public class KappaRequestValidator extends AbstractApiValidator implements IApiV
 	private static class KappaValidatorCache extends OpenapiApiValidatorStructure {
 		private static final long serialVersionUID = 1L;
 		private transient OpenApi3 openApi = null;
+
+		/**
+		 * Cache degli {@link OperationValidator} per risorsa (chiave {@code "<METHOD> <path>"}), condivisa
+		 * tra tutte le richieste sullo stesso {@code OpenApi3}. Costruire un OperationValidator per kappa è
+		 * molto costoso (ricompila lo Schema json-sKema: convertValue + merge components + toPrettyString +
+		 * re-parse + SchemaLoader.load): farlo una sola volta per risorsa, al primo utilizzo, anziché ad ogni
+		 * messaggio, è il principale guadagno prestazionale. Il riuso concorrente è sicuro: OperationValidator
+		 * espone solo campi {@code final}, i {@code validate*} ricevono un {@code ValidationData} per-chiamata e
+		 * {@code SKemaBackedJsonValidator} crea un {@code Validator} json-sKema fresco per ogni validazione sullo
+		 * {@code Schema} immutabile.
+		 * <p>{@code transient} (gli OperationValidator non sono serializzabili) e inizializzata in modo lazy
+		 * thread-safe, così da ricostruirsi correttamente anche dopo una eventuale deserializzazione.
+		 */
+		private transient volatile java.util.concurrent.ConcurrentMap<String, OperationValidator> operationValidators;
+
+		java.util.concurrent.ConcurrentMap<String, OperationValidator> operationValidators() {
+			java.util.concurrent.ConcurrentMap<String, OperationValidator> m = this.operationValidators;
+			if (m == null) {
+				synchronized (this) {
+					m = this.operationValidators;
+					if (m == null) {
+						m = new java.util.concurrent.ConcurrentHashMap<>();
+						this.operationValidators = m;
+					}
+				}
+			}
+			return m;
+		}
 	}
 
 	private OpenApi3 openApi;
+	private KappaValidatorCache validatorCache;
 	private ValidatorConfig config;
 	private final org.openspcoop2.utils.Semaphore semaphore = new org.openspcoop2.utils.Semaphore("KappaValidator");
 
@@ -137,6 +166,7 @@ public class KappaRequestValidator extends AbstractApiValidator implements IApiV
 
 				this.openApi = validationCache.openApi;
 				if (this.openApi != null) {
+					this.validatorCache = validationCache;
 					return;
 				}
 
@@ -281,6 +311,7 @@ public class KappaRequestValidator extends AbstractApiValidator implements IApiV
 			this.openApi.setContext(context);
 
 			validationStructure.openApi = this.openApi;
+			this.validatorCache = validationStructure;
 
 		} catch (Throwable e) {
 			try {
@@ -369,6 +400,11 @@ public class KappaRequestValidator extends AbstractApiValidator implements IApiV
 		Operation operation = null;
 		Path path = null;
 		boolean found = false;
+		// Coordinate risolte nella spec (chiavi di mappa dell'OpenApi3: sempre concrete e non-null).
+		// Usate come chiave della cache degli OperationValidator, così da non dipendere da come arriva
+		// apiOperation (metodo/path "qualsiasi", eventuali wildcard, ecc.).
+		String foundMethod = null;
+		String foundPathKey = null;
 
 		for (Map.Entry<String, Path> pathEntry : this.openApi.getPaths().entrySet()) {
 			path = pathEntry.getValue();
@@ -378,6 +414,8 @@ public class KappaRequestValidator extends AbstractApiValidator implements IApiV
 				if (apiOperation.getHttpMethod().toString().equalsIgnoreCase(method)
 						&& apiOperation.getPath().equals(normalizePath)) {
 					found = true;
+					foundMethod = method;
+					foundPathKey = pathEntry.getKey();
 					break;
 				}
 			}
@@ -401,8 +439,27 @@ public class KappaRequestValidator extends AbstractApiValidator implements IApiV
 			ValidationData<Void> vHeader = new ValidationData<>();
 			ValidationData<Void> vCookie = new ValidationData<>();
 			ValidationData<Void> vBody = new ValidationData<>();
-			this.openApi.setServers(null); // se lascio i server, validatePath verifica anche la base url
-			OperationValidator val = new OperationValidator(this.openApi, path, operation);
+
+			// OperationValidator cachato per risorsa (vedi KappaValidatorCache.operationValidators): costruito
+			// una sola volta al primo utilizzo dell'operazione e poi riusato. La chiave usa le coordinate
+			// concrete risolte nella spec (foundMethod + foundPathKey), non i valori di apiOperation.
+			// computeIfAbsent garantisce che, anche con più thread concorrenti sulla stessa operazione "a freddo",
+			// la costruzione (costosa) avvenga una sola volta per chiave senza doppie compilazioni.
+			final Path opPath = path;
+			final Operation opOperation = operation;
+			String opKey = foundMethod + " " + foundPathKey;
+			OperationValidator val;
+			if (this.validatorCache != null) {
+				val = this.validatorCache.operationValidators().computeIfAbsent(opKey, k -> {
+					this.openApi.setServers(null); // se lascio i server, validatePath verifica anche la base url
+					return new OperationValidator(this.openApi, opPath, opOperation);
+				});
+			} else {
+				// fallback difensivo: init() valorizza sempre validatorCache, ma in sua assenza si ricade sul
+				// comportamento legacy (costruzione per richiesta).
+				this.openApi.setServers(null);
+				val = new OperationValidator(this.openApi, opPath, opOperation);
+			}
 
 			boolean isResponse = false;
 			if (httpEntity instanceof HttpBaseRequestEntity<?> httpRequest) {
