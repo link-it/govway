@@ -1309,7 +1309,7 @@ public class CondizionaleByFiltroSoapTest extends ConfigLoader {
 					esitoSincrono = esitoConsegnaFromStatusCode(requestExpectation.statusCodePrincipale);
 				}
 				
-				CommonConsegnaMultipla.withBackoff( () -> checkPresaInConsegnaNotifica(responses, connettoriCoinvolti.size(), esitoSincrono));	
+				CommonConsegnaMultipla.withBackoffPositive( () -> checkPresaInConsegnaNotifica(responses, connettoriCoinvolti.size(), esitoSincrono));	
 				checkSchedulingConnettoreIniziato(responses, connettoriCoinvolti);
 			} else {
 				for (var response : responses) {

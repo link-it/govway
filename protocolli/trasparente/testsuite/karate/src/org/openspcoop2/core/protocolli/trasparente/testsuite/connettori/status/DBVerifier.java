@@ -54,7 +54,7 @@ public class DBVerifier {
 		query.setANDLogicOperator(true);
 		
 		List<Map<String, Object>> msgs = null;
-		int[] timeouts = {100, 250, 500, 2000, 5000};
+		int[] timeouts = {100, 250, 500, 2000, 5000, 5000};
 		int index = 0;
 		
 		// se non trovo nessun messaggio aspetto che magari govway non ha ancora scritto il messaggio sul db

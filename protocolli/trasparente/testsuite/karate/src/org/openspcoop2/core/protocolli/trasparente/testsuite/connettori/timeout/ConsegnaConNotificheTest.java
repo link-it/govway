@@ -114,7 +114,7 @@ public class ConsegnaConNotificheTest extends ConfigLoader {
 		// Devono essere state create le tracce sul db ma non ancora fatta nessuna consegna
 		for (var r : responses) {
 			assertEquals(200, r.getResultHTTPOperation());
-			CommonConsegnaMultipla.withBackoff( () -> checkPresaInConsegna(r, connettoriSchedulati.size()));
+			CommonConsegnaMultipla.withBackoffPositive( () -> checkPresaInConsegna(r, connettoriSchedulati.size()));
 			checkSchedulingConnettoreIniziato(r, connettoriSchedulati);	
 		}
 	
