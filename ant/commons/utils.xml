@@ -8,7 +8,20 @@
 	<target name="replace_token">
 		<replace file="${file}" token="${token}" value="${value}"/>
 	</target>
-	
+
+	<!-- Come replace_token, ma esegue l'XML-escape del valore prima della sostituzione.
+	     Da usare quando il token viene sostituito all'interno di un file XML (es. datasource),
+	     per evitare che caratteri speciali nel valore (tipicamente username/password) rendano
+	     l'XML malformato/troncato. L'ordine delle sostituzioni e' importante: '&' va escapato per primo. -->
+	<target name="replace_token_xmlescape">
+		<propertyregex property="xmlesc" override="true" input="${value}"  regexp="&amp;" replace="&amp;amp;"  global="true" defaultValue="${value}"/>
+		<propertyregex property="xmlesc" override="true" input="${xmlesc}" regexp="&lt;"  replace="&amp;lt;"   global="true" defaultValue="${xmlesc}"/>
+		<propertyregex property="xmlesc" override="true" input="${xmlesc}" regexp="&gt;"  replace="&amp;gt;"   global="true" defaultValue="${xmlesc}"/>
+		<propertyregex property="xmlesc" override="true" input="${xmlesc}" regexp="&quot;" replace="&amp;quot;" global="true" defaultValue="${xmlesc}"/>
+		<propertyregex property="xmlesc" override="true" input="${xmlesc}" regexp="'"      replace="&amp;apos;" global="true" defaultValue="${xmlesc}"/>
+		<replace file="${file}" token="${token}" value="${xmlesc}"/>
+	</target>
+
 	<target name="set_property">
 		<replace file="${file}" token="${token}=" value="#${token}="/>
 		<replace file="${file}" token="${token} =" value="#${token} ="/>
@@ -23,7 +36,30 @@ ${token}=${value}
 			</then>
 		</if>
 	</target>
-	
+
+	<!-- Come set_property, ma esegue l'escape stile Java properties del valore prima di scriverlo.
+	     Da usare quando il valore (tipicamente username/password) finisce in un file .properties letto
+	     via java.util.Properties (es. daoFactory.properties dei batch con connessione JDBC diretta):
+	     un '\' nel valore verrebbe altrimenti consumato in lettura (\1 -> 1). L'ordine conta: il backslash
+	     va raddoppiato per primo. I caratteri & < > " ' ! # = : nel VALORE di un properties sono letterali
+	     e non vanno toccati (a differenza dell'XML). -->
+	<target name="set_property_propescape">
+		<replace file="${file}" token="${token}=" value="#${token}="/>
+		<replace file="${file}" token="${token} =" value="#${token} ="/>
+		<if>
+			<not>
+				<equals arg1="${value}" arg2="@unset@" />
+			</not>
+			<then>
+				<propertyregex property="propesc" override="true" input="${value}"  regexp="\\" replace="\\\\\\\\" global="true" defaultValue="${value}"/>
+				<propertyregex property="propesc" override="true" input="${propesc}" regexp="^ "  replace="\\\\ "       global="true" defaultValue="${propesc}"/>
+				<concat destfile="${file}" append="yes" >
+${token}=${propesc}
+				</concat>
+			</then>
+		</if>
+	</target>
+
 	<target name="dos2unix">
 		<fixcrlf srcdir="${dir}" includes="${file}" eol="lf" eof="remove" />
 	</target>
