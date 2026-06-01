@@ -173,6 +173,12 @@ public class Startup implements ServletContextListener {
 			try {
 				serverProperties = ServerProperties.getInstance();
 				PropertiesEnvUtils.checkRequiredEnvProperties(serverProperties.getEnvProperties(), Startup.log, "govwayAPIMonitor");
+
+				// Normalizzazione del prefisso del contesto JNDI dei DataSource il cui nome viene risolto da DB
+				org.openspcoop2.utils.resources.JndiDatasourceNameNormalizer.configure(
+						serverProperties.isDSJndiContextPrefixNormalizeEnabled(),
+						serverProperties.getDSJndiContextPrefix(),
+						serverProperties.isDSJndiContextPrefixExpected());
 			} catch (Exception e) {
 				doError("Errore durante l'inizializzazione del serverProperties",e);
 			}

@@ -254,6 +254,12 @@ public class InitListener implements ServletContextListener {
 				consoleProperties = ConsoleProperties.getInstance();
 				PropertiesEnvUtils.checkRequiredEnvProperties(consoleProperties.getEnvProperties(), InitListener.log, "govwayConsole");
 
+				// Normalizzazione del prefisso del contesto JNDI dei DataSource il cui nome viene risolto da DB
+				org.openspcoop2.utils.resources.JndiDatasourceNameNormalizer.configure(
+						consoleProperties.isDSJndiContextPrefixNormalizeEnabled(),
+						consoleProperties.getDSJndiContextPrefix(),
+						consoleProperties.isDSJndiContextPrefixExpected());
+
 				if(!DatasourceProperties.initialize(confDir, confPropertyName, confLocalPathPrefix,InitListener.log)){
 					throw new UtilsException("DatasourceProperties not initialized");
 				}

@@ -2206,7 +2206,13 @@ public class OpenSPCoop2Properties {
 						
 			// Datasource Wrapped
 			this.isDSOp2UtilsEnabled();
-			
+
+			// Datasource - normalizzazione prefisso contesto JNDI dei nomi risolti da DB
+			if(this.isDSJndiContextPrefixNormalizeEnabled()) {
+				this.getDSJndiContextPrefix();
+				this.isDSJndiContextPrefixExpected();
+			}
+
 			// Datasource getConnection
 			this.isDataSourceGetConnectionCheckAutoCommitDisabled();
 			if(this.isDataSourceGetConnectionCheckTransactionIsolationLevel()) {
@@ -23309,9 +23315,71 @@ public class OpenSPCoop2Properties {
 
 		return this.isDSOp2UtilsEnabled;
 	}
-	
-	
-	
+
+
+	/* ------------- Normalizzazione prefisso contesto JNDI dei DataSource risolti da DB --------------------- */
+
+	private Boolean dsJndiContextPrefixNormalizeEnabled = null;
+	public boolean isDSJndiContextPrefixNormalizeEnabled() {
+		if(this.dsJndiContextPrefixNormalizeEnabled==null){
+			String pName = "org.openspcoop2.pdd.datasource.jndi.contextPrefix.normalize";
+			try{
+				String name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
+					name="false";
+				}
+				name = name.trim();
+				this.dsJndiContextPrefixNormalizeEnabled = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.dsJndiContextPrefixNormalizeEnabled = false;
+			}
+		}
+		return this.dsJndiContextPrefixNormalizeEnabled;
+	}
+
+	private String dsJndiContextPrefix = null;
+	public String getDSJndiContextPrefix() {
+		if(this.dsJndiContextPrefix==null){
+			String pName = "org.openspcoop2.pdd.datasource.jndi.contextPrefix";
+			try{
+				String name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+org.openspcoop2.utils.resources.JndiDatasourceNameNormalizer.DEFAULT_CONTEXT_PREFIX);
+					name=org.openspcoop2.utils.resources.JndiDatasourceNameNormalizer.DEFAULT_CONTEXT_PREFIX;
+				}
+				this.dsJndiContextPrefix = name.trim();
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.dsJndiContextPrefix = org.openspcoop2.utils.resources.JndiDatasourceNameNormalizer.DEFAULT_CONTEXT_PREFIX;
+			}
+		}
+		return this.dsJndiContextPrefix;
+	}
+
+	private Boolean dsJndiContextPrefixExpected = null;
+	public boolean isDSJndiContextPrefixExpected() {
+		if(this.dsJndiContextPrefixExpected==null){
+			String pName = "org.openspcoop2.pdd.datasource.jndi.contextPrefix.expected";
+			try{
+				String name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
+					name="false";
+				}
+				name = name.trim();
+				this.dsJndiContextPrefixExpected = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.dsJndiContextPrefixExpected = false;
+			}
+		}
+		return this.dsJndiContextPrefixExpected;
+	}
+
+
+
 	/* ------------- Datasource check in getConnection event  ---------------------*/
 	
 	private Boolean isDataSourceGetConnectionCheckAutoCommitDisabled = null;

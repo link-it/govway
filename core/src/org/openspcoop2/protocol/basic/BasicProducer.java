@@ -240,6 +240,8 @@ public class BasicProducer extends BasicComponentFactory implements IMonitoraggi
 				}
 				
 				this.datasource = this.appenderProperties.getProperty("datasource");
+				// il nome del datasource e' un valore risolto da DB: normalizzo il prefisso del contesto JNDI rispetto all'AS in esecuzione
+				this.datasource = org.openspcoop2.utils.resources.JndiDatasourceNameNormalizer.normalize(this.datasource);
 				if(this.datasource==null){
 					this.connectionViaJDBCUrl = this.appenderProperties.getProperty("connectionUrl");
 					if(this.connectionViaJDBCUrl==null){

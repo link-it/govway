@@ -68,6 +68,8 @@ public class AuditDBAppender implements IAuditAppender {
 			}else{
 				this.dsName = this.dsName.trim();
 			}
+			// il nome del datasource e' un valore risolto da DB: normalizzo il prefisso del contesto JNDI rispetto all'AS in esecuzione (idempotente nel caso datasource locale)
+			this.dsName = org.openspcoop2.utils.resources.JndiDatasourceNameNormalizer.normalize(this.dsName);
 
 			// TipoDatabase
 			this.tipoDatabase = properties.getProperty(Costanti.AUDIT_APPENDER_DB_PROPERTY_TIPO_DATABASE);
