@@ -8176,6 +8176,21 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						r.setSomma(0);
 					}
 
+					// Per la media pesata nel collasso delle celle duplicate
+					// (vedi JsonStatsUtils.collassaCelleDuplicatePerPosizione): trasporto il peso
+					// (numero transazioni) quando disponibile. Per il tempo medio la union espone
+					// il conteggio nell'alias "dato_richieste".
+					// NB: DOPO setSomma() perche' ResBase.setSomma() azzera la mappa objects.
+					if(TipoVisualizzazione.TEMPO_MEDIO_RISPOSTA.equals(this.distribSaSearch.getTipoVisualizzazione())) {
+						Object pesoRaw = row.get("dato_richieste");
+						if(pesoRaw!=null) {
+							Number pesoMediaPesata = StatsUtils.converToNumber(pesoRaw);
+							if(pesoMediaPesata!=null) {
+								r.getObjectsMap().put(org.openspcoop2.web.monitor.statistiche.utils.JsonStatsUtils.CHIAVE_PESO_MEDIA_PESATA, pesoMediaPesata);
+							}
+						}
+					}
+
 					/**System.out.println("============");
 					System.out.println("actual-size:"+res.size()+" elementi:"+elementi+" start:"+start+" limit:"+limit+"");*/
 					if(countApplicativo) {

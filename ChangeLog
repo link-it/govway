@@ -1,3 +1,10 @@
+2026-06-03  Andrea Poli <apoli@link.it>
+
+      * [GovWayMonitor, ApiRsMonitoraggio]
+     Risolto un errore nella generazione del grafico heatmap dell'Analisi Statistica, 
+     che si verificava quando una distribuzione presentava più valori sulla stessa cella (es. distribuzione per token info / client id): 
+     tali valori vengono ora aggregati correttamente.
+
 2026-06-01  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

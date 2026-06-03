@@ -10,6 +10,11 @@ Feature: Setup gruppo+connettore api-monitor per autenticare le chiamate di togg
 # dal predefinito) limitato alle sole azioni di toggle, con un connettore che inietta
 # le credenziali di un utente operativitaApi-ready ('operatoreO'). Tutte le altre
 # azioni dell'erogazione restano sul connettore principale (non vengono toccate).
+#
+# NB: il setup è IDEMPOTENTE (vedi step 0). Nel suite completo l'ordine di esecuzione
+# delle feature e il leak di 'configure afterFeature' (Karate 0.9.6) possono lasciare
+# il gruppo orfano da un'esecuzione precedente; senza la cancellazione preventiva la
+# POST di creazione fallirebbe con 409 "L'azione scelta è già presente".
 
 Background:
 * def basic = read('classpath:basic-auth.js')
@@ -19,6 +24,17 @@ Scenario: Crea gruppo dedicato e connettore con credenziali operativitaApi
 
     * def apiMonitorErogazionePath = 'erogazioni/api-monitor/1'
     * def filterPredefinito = function(item){ return item.predefinito == true }
+
+    # 0. Pulizia idempotente: rimuove un eventuale gruppo 'ToggleStatoAuthGruppo' residuo
+    #    (run precedente / teardown non eseguito per il leak di afterFeature). La DELETE
+    #    fa cascade sul connettore e restituisce le azioni al gruppo predefinito.
+    #    Tollera 404 (gruppo assente => nulla da pulire).
+    Given url configUrl
+    And path apiMonitorErogazionePath, 'gruppi', 'ToggleStatoAuthGruppo'
+    And params ({ soggetto: soggettoDefault })
+    And header Authorization = govwayConfAuth
+    When method delete
+    Then assert responseStatus == 204 || responseStatus == 404
 
     # 1. Recupera il nome del gruppo predefinito dell'erogazione api-monitor
     Given url configUrl

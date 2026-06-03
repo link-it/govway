@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -630,7 +631,12 @@ public class JsonStatsUtils {
 			int slice = sliceParam;
 			int maxLenghtLabel = 0;
 			
-			// 1. Valorizzare tutti dati mancanti, genero eventuali 0 cosi tutti i calcoli successivi si faranno su un numero di elementi dell'asse y uguale 
+			// 0. Collasso celle duplicate (stessa categoria X + stessa posizione Y): vedi
+			//    collassaCelleDuplicatePerPosizione. Va eseguito PRIMA di generaElementiMancanti
+			//    cosi' il riempimento dei buchi e i calcoli a valle lavorano su una sola cella per (X,Y).
+			list = collassaCelleDuplicatePerPosizione(list, search);
+
+			// 1. Valorizzare tutti dati mancanti, genero eventuali 0 cosi tutti i calcoli successivi si faranno su un numero di elementi dell'asse y uguale
 			list = generaElementiMancanti(list, log);
 
 			// 2. Ordinare i risultati per categoria con somma valori piu' alti 
@@ -1049,6 +1055,134 @@ public class JsonStatsUtils {
 		// aggiungo colonna altri
 		destList.addAll(colonnaAltri);
 
+		return destList;
+	}
+
+
+	// ============================================================================
+	// Collasso celle duplicate (stessa categoria X + stessa posizione Y)
+	// ----------------------------------------------------------------------------
+	// Possono arrivare piu' ResDistribuzione con la stessa coppia (etichetta X, posizione Y)
+	// quando piu' righe sorgenti risolvono alla stessa etichetta. Caso noto: distribuzione
+	// token-info per client-id PDND, dove lo stesso client_id e' presente nel DB in piu' forme
+	// codificate (#C#..#C# / #C#..#C##A#app#A# / semplice) che 'convertClientIdDBValueToOriginal'
+	// riporta allo stesso client_id, risolte poi alla stessa organizzazione.
+	// Senza collasso la stessa cella (X,Y) compare piu' volte: doppio rettangolo nel rendering
+	// e, nell'accorpamento "Altri" basato sull'indice, liste di lunghezza disallineata ->
+	// IndexOutOfBoundsException.
+	//
+	// Le righe collassate appartengono alla STESSA entita' logica, quindi la fusione e':
+	//  - metriche additive (numero transazioni, occupazione banda/byte) -> somma;
+	//  - tempo medio risposta -> media PESATA per numero transazioni (peso valorizzato dal DAO),
+	//    con fallback a media aritmetica se il peso non e' disponibile.
+	// NB: questo NON tocca la convenzione della colonna "Altri" (che resta media non pesata,
+	// coerente con pie/bar chart): qui si fondono celle della stessa entita', non categorie diverse.
+
+	// Chiave (in ResBase.objects) con cui il DAO trasporta il peso (numero transazioni) usato
+	// per la media pesata della latenza nel collasso celle. Vedi StatisticheGiornaliereService.
+	public static final String CHIAVE_PESO_MEDIA_PESATA = "pesoMediaPesata";
+
+	private static boolean isVisualizzazioneTempoMedio(StatsSearchForm search) {
+		return search!=null && TipoVisualizzazione.TEMPO_MEDIO_RISPOSTA.equals(search.getTipoVisualizzazione());
+	}
+
+	private static Number getPesoMediaPesata(ResDistribuzione res) {
+		if(res!=null && res.getObjectsMap()!=null) {
+			return res.getObjectsMap().get(CHIAVE_PESO_MEDIA_PESATA);
+		}
+		return null;
+	}
+
+	private static void setPesoMediaPesata(ResDistribuzione res, Number peso) {
+		// NB: ResBase.setSomma() azzera la mappa objects, quindi va invocato DOPO setSomma()
+		if(peso!=null && res.getObjectsMap()!=null) {
+			res.getObjectsMap().put(CHIAVE_PESO_MEDIA_PESATA, peso);
+		}
+	}
+
+	private static String buildKeyAsseYJsonHeatmapChartDistribuzione(ResDistribuzione res) {
+		if(res instanceof ResDistribuzione3D) {
+			Date data = ((ResDistribuzione3D)res).getData();
+			return data!=null ? Long.toString(data.getTime()) : "";
+		}
+		else if(res instanceof ResDistribuzione3DCustom) {
+			String datoCustom = ((ResDistribuzione3DCustom)res).getDatoCustom();
+			return datoCustom!=null ? datoCustom : "";
+		}
+		// tipo non atteso nella heatmap (sempre 3D/3DCustom): non fondere -> chiave univoca per istanza
+		return "__noY__:" + System.identityHashCode(res);
+	}
+
+	private static List<ResDistribuzione> collassaCelleDuplicatePerPosizione(List<ResDistribuzione> list, StatsSearchForm search) {
+		if(list==null || list.isEmpty()) {
+			return list;
+		}
+		// raggruppo per categoria X (stessa chiave usata a valle in buildKeyJsonHeatmapChartDistribuzione)
+		Map<String, List<ResDistribuzione>> perCategoria = new LinkedHashMap<>();
+		for (ResDistribuzione res : list) {
+			perCategoria.computeIfAbsent(buildKeyJsonHeatmapChartDistribuzione(res), k -> new ArrayList<>()).add(res);
+		}
+		List<ResDistribuzione> destList = new ArrayList<>();
+		for (List<ResDistribuzione> elementiCategoria : perCategoria.values()) {
+			destList.addAll(fondiCellePerPosizioneStessaCategoria(elementiCategoria, search));
+		}
+		return destList;
+	}
+
+	private static List<ResDistribuzione> fondiCellePerPosizioneStessaCategoria(List<ResDistribuzione> elementiCategoria, StatsSearchForm search) {
+		// raggruppo per posizione Y preservando l'ordine di apparizione
+		Map<String, List<ResDistribuzione>> perPosizione = new LinkedHashMap<>();
+		for (ResDistribuzione res : elementiCategoria) {
+			perPosizione.computeIfAbsent(buildKeyAsseYJsonHeatmapChartDistribuzione(res), k -> new ArrayList<>()).add(res);
+		}
+		boolean tempoMedio = isVisualizzazioneTempoMedio(search);
+		List<ResDistribuzione> destList = new ArrayList<>();
+		for (List<ResDistribuzione> gruppo : perPosizione.values()) {
+			ResDistribuzione base = gruppo.get(0);
+			if(gruppo.size()==1) {
+				destList.add(base);
+				continue;
+			}
+			if(tempoMedio) {
+				// media pesata se TUTTE le celle hanno il peso, altrimenti media aritmetica (fallback)
+				boolean tuttiConPeso = true;
+				for (ResDistribuzione res : gruppo) {
+					if(getPesoMediaPesata(res)==null) {
+						tuttiConPeso = false;
+						break;
+					}
+				}
+				if(tuttiConPeso) {
+					double numeratore = 0d;
+					double denominatore = 0d;
+					for (ResDistribuzione res : gruppo) {
+						Number pesoN = getPesoMediaPesata(res);
+						double peso = pesoN!=null ? pesoN.doubleValue() : 0d;
+						double valore = res.getSomma()!=null ? res.getSomma().doubleValue() : 0d;
+						numeratore += valore * peso;
+						denominatore += peso;
+					}
+					base.setSomma(Long.valueOf(denominatore!=0d ? Math.round(numeratore/denominatore) : 0L));
+					setPesoMediaPesata(base, Long.valueOf((long)denominatore));
+				}
+				else {
+					double somma = 0d;
+					for (ResDistribuzione res : gruppo) {
+						somma += res.getSomma()!=null ? res.getSomma().doubleValue() : 0d;
+					}
+					base.setSomma(Long.valueOf(Math.round(somma/gruppo.size())));
+				}
+			}
+			else {
+				// metriche additive (numero transazioni, occupazione banda): somma
+				Number sommaTot = null;
+				for (ResDistribuzione res : gruppo) {
+					sommaTot = (sommaTot==null) ? res.getSomma() : StatsUtils.sum(search, res.getSomma(), sommaTot);
+				}
+				base.setSomma(sommaTot);
+			}
+			destList.add(base);
+		}
 		return destList;
 	}
 
