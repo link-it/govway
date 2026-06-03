@@ -12,4 +12,6 @@ Scenario: Rimuove il gruppo ToggleStatoAuthGruppo (cascade sul connettore associ
     And params ({ soggetto: soggettoDefault })
     And header Authorization = govwayConfAuth
     When method delete
-    Then status 204
+    # Tollera 404: nel suite completo il gruppo può essere già stato rimosso
+    # (setup idempotente / altra esecuzione), e un teardown best-effort non deve fallire.
+    Then assert responseStatus == 204 || responseStatus == 404
