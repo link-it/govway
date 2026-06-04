@@ -114,6 +114,7 @@ public class ConfigLoader {
 		dbConfig.put("password", System.getProperty("db_password"));
 		dbConfig.put("url", System.getProperty("db_url"));
 		dbConfig.put("driverClassName", System.getProperty("db_driverClassName"));
+		dbConfig.put("connectionPool", System.getProperty("db_connectionPool"));
 		String type = System.getProperty("db_type");
 		if(type!=null) {
 			dbConfig.put("dbType", type);
