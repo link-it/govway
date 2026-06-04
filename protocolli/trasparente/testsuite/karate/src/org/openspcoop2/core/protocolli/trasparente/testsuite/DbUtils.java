@@ -38,6 +38,9 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import javax.sql.DataSource;
+
+import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
@@ -53,7 +56,7 @@ public class DbUtils {
     private static final Logger logger = LoggerFactory.getLogger(DbUtils.class);
 
     private JdbcTemplate jdbc = null;
-    private DriverManagerDataSource dataSource = null;
+    private DataSource dataSource = null;
     
     public final TipiDatabase tipoDatabase;
 
@@ -69,13 +72,35 @@ public class DbUtils {
         else {
         	this.tipoDatabase = TipiDatabase.DEFAULT;
         }
-        this.dataSource = new DriverManagerDataSource();
-        this.dataSource.setDriverClassName(driver);
-        this.dataSource.setUrl(url);
-        this. dataSource.setUsername(username);
-        this.dataSource.setPassword(password);
+        boolean connectionPool = Boolean.parseBoolean(config.get("connectionPool"));
+        if(connectionPool) {
+        	// Pool di connessioni (Apache Commons DBCP2): le connessioni vengono riusate,
+        	// evitando di aprirne una nuova ad ogni query (e quindi la saturazione del listener DB).
+        	BasicDataSource bds = new BasicDataSource();
+        	bds.setDriverClassName(driver);
+        	bds.setUrl(url);
+        	bds.setUsername(username);
+        	bds.setPassword(password);
+        	bds.setInitialSize(1);
+        	bds.setMaxTotal(5);
+        	bds.setMaxIdle(2);
+        	bds.setMinIdle(0);
+        	bds.setMaxWaitMillis(30*1000);
+        	bds.setTestOnBorrow(true); // valida la connessione via Connection.isValid(), indipendente dal tipo di DB
+        	this.dataSource = bds;
+        	logger.info("init jdbc template (connection pool DBCP2, maxTotal=5): {}", url);
+        }
+        else {
+        	// Comportamento di default: nessun pool, una nuova connessione fisica ad ogni query.
+        	DriverManagerDataSource dmds = new DriverManagerDataSource();
+        	dmds.setDriverClassName(driver);
+        	dmds.setUrl(url);
+        	dmds.setUsername(username);
+        	dmds.setPassword(password);
+        	this.dataSource = dmds;
+        	logger.info("init jdbc template: {}", url);
+        }
         this.jdbc = new JdbcTemplate(this.dataSource);
-        logger.info("init jdbc template: {}", url);
     }
     private JdbcTemplate getJdbcTemplate() {
     	//return new JdbcTemplate(this.dataSource);
