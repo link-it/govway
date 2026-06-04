@@ -55,7 +55,7 @@
 							<linkit:sql-table-index-field name="severita"/>
 							<linkit:sql-table-index-field name="tipo"/>
 							<linkit:sql-table-index-field name="codice"/>
-							<linkit:sql-table-index-field name="id-configurazione"/>
+							<!-- <linkit:sql-table-index-field name="id-configurazione"/> Eliminato da #1779 -->
 							<linkit:sql-table-index-field name="cluster-id"/>
 						</linkit:sql-table-index>
 					</linkit:sql-table-mapping>
@@ -135,7 +135,7 @@
 						<xsd:appinfo>
 							<linkit:generator
 								xmlns:linkit="http://www.link.it/project_generator">
-								<linkit:sql-column-mapping name="id_configurazione"/>
+								<linkit:sql-column-mapping name="id_configurazione" varchar="4000"/> <!-- Portato a 4000 da #1779 ed eliminato dall'indice -->
 								<linkit:sql-ddl-column-comment><![CDATA[Id della configurazione che ha causato la generazione dell'evento]]></linkit:sql-ddl-column-comment>
 							</linkit:generator>
 						</xsd:appinfo>

@@ -2671,6 +2671,7 @@ public class OpenSPCoop2Properties {
 			if(this.isEventiEnabled()) {
 				this.isEventiDebug();
 				this.isEventiRegistrazioneStatoPorta();
+				this.getMaxLengthEventiIdConfigurazione();
 				if(this.isEventiTimerEnabled()) {
 					this.getEventiTimerIntervalSeconds();
 					this.getEventiTimerIntervalConnectionTimeoutEveryXTimes();
@@ -7911,6 +7912,28 @@ public class OpenSPCoop2Properties {
 		}
 		
 		return this.maxLengthCorrelazioneApplicativa;
+	}
+
+	private Integer maxLengthEventiIdConfigurazione = null;
+	public int getMaxLengthEventiIdConfigurazione() {
+		if(this.maxLengthEventiIdConfigurazione==null){
+			String pName = "org.openspcoop2.pdd.eventi.idConfigurazione.maxLength";
+			try{
+				String value = this.reader.getValueConvertEnvProperties(pName);
+				if(value!=null){
+					value = value.trim();
+					this.maxLengthEventiIdConfigurazione = Integer.parseInt(value);
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, 3900));
+					this.maxLengthEventiIdConfigurazione = 3900;
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, 3900),e);
+				this.maxLengthEventiIdConfigurazione = 3900;
+			}
+		}
+
+		return this.maxLengthEventiIdConfigurazione;
 	}
 	
 	private Boolean maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaBloccaTruncateActive = null;

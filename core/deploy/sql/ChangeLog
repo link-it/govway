@@ -1,3 +1,7 @@
+2026-06-04  Andrea Poli <apoli@link.it>
+
+	Aumentata la dimensione della colonna id_configurazione a 4000 caratteri nella tabella notifiche_eventi
+
 2025-10-21  Andrea Poli <apoli@link.it>
 
 	Aggiunto semaforo per il recupero delle tracce da filesystem

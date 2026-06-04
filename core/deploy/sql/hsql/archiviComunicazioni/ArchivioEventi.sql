@@ -10,7 +10,7 @@ CREATE TABLE notifiche_eventi
 	ora_registrazione TIMESTAMP NOT NULL,
 	descrizione VARCHAR(255),
 	id_transazione VARCHAR(255),
-	id_configurazione VARCHAR(255),
+	id_configurazione VARCHAR(4000),
 	configurazione LONGVARCHAR,
 	cluster_id VARCHAR(100),
 	-- fk/pk columns
@@ -20,7 +20,7 @@ CREATE TABLE notifiche_eventi
 );
 
 -- index
-CREATE INDEX INDEX_EVENTI ON notifiche_eventi (ora_registrazione DESC,severita,tipo,codice,id_configurazione,cluster_id);
+CREATE INDEX INDEX_EVENTI ON notifiche_eventi (ora_registrazione DESC,severita,tipo,codice,cluster_id);
 CREATE TABLE notifiche_eventi_init_seq (id BIGINT);
 INSERT INTO notifiche_eventi_init_seq VALUES (NEXT VALUE FOR seq_notifiche_eventi);
 
