@@ -30,7 +30,7 @@ dell'Application Server, di Java e delle principali librerie di terze parti util
      - **Supportata**
      - 21 \*
      - 11
-     - 35 – 39 (JBoss EAP 8.1), 27 – 28 (JBoss EAP 8.0)
+     - 35 – 40 (JBoss EAP 8.1), 27 – 28 (JBoss EAP 8.0)
      - ``3.4.2.p1``
      - —
    * - ``3.3.x``

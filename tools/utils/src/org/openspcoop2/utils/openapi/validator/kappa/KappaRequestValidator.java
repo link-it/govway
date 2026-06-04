@@ -103,23 +103,19 @@ public class KappaRequestValidator extends AbstractApiValidator implements IApiV
 		 * espone solo campi {@code final}, i {@code validate*} ricevono un {@code ValidationData} per-chiamata e
 		 * {@code SKemaBackedJsonValidator} crea un {@code Validator} json-sKema fresco per ogni validazione sullo
 		 * {@code Schema} immutabile.
-		 * <p>{@code transient} (gli OperationValidator non sono serializzabili) e inizializzata in modo lazy
-		 * thread-safe, così da ricostruirsi correttamente anche dopo una eventuale deserializzazione.
+		 * <p>{@code transient} (gli OperationValidator non sono serializzabili): la mappa, essendo essa stessa
+		 * thread-safe, viene inizializzata subito alla costruzione e ricreata in {@link #readObject} dopo una
+		 * eventuale deserializzazione, così da essere sempre disponibile senza necessità di lazy-init.
 		 */
-		private transient volatile java.util.concurrent.ConcurrentMap<String, OperationValidator> operationValidators;
+		private transient java.util.concurrent.ConcurrentMap<String, OperationValidator> operationValidators = new java.util.concurrent.ConcurrentHashMap<>();
 
 		java.util.concurrent.ConcurrentMap<String, OperationValidator> operationValidators() {
-			java.util.concurrent.ConcurrentMap<String, OperationValidator> m = this.operationValidators;
-			if (m == null) {
-				synchronized (this) {
-					m = this.operationValidators;
-					if (m == null) {
-						m = new java.util.concurrent.ConcurrentHashMap<>();
-						this.operationValidators = m;
-					}
-				}
-			}
-			return m;
+			return this.operationValidators;
+		}
+
+		private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+			in.defaultReadObject();
+			this.operationValidators = new java.util.concurrent.ConcurrentHashMap<>();
 		}
 	}
 

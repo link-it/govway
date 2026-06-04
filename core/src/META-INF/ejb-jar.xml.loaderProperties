@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Modulo EJB volutamente privo di bean.
+
+	Serve esclusivamente a dichiarare OpenSPCoop2PropertiesLoader.jar come modulo <ejb> nell'EAR
+	(variante stateless / forceDisableJ2eeMode), cosi' che WildFly processi il suo Class-Path di
+	manifest ('properties/') e renda visibile l'intera cartella delle properties di configurazione
+	di GovWay al modulo top-level dell'EAR, dove vengono caricate le classi che leggono tali file
+	dal classpath.
+
+	Motivazione: a partire da WildFly 40 (WildFly Core 32) il Class-Path di un modulo
+	application-client '<java>' non viene piu' cablato lato server; un modulo '<ejb>' invece si',
+	come gia' avviene per govway.jar nella variante stateful. Comportamento compatibile con le
+	versioni precedenti di WildFly.
+
+	Lo schema (javax, 3.1) e' allineato a ejb-jar.xml.ejb3 gia' usato dalla variante stateful.
+-->
+<ejb-jar  xmlns="http://java.sun.com/xml/ns/javaee"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/ejb-jar_3_1.xsd"
+          version="3.1"
+          metadata-complete="true">
+</ejb-jar>

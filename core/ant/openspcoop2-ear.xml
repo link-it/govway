@@ -160,16 +160,46 @@
 				<var name="mailcap_info" value="mailcap"/>
 			</then>
 		</if>
-		
+
+		<!--
+			ejb-jar.xml vuoto (solo linea WildFly 35+): da WildFly 40 (WildFly Core 32) il Class-Path
+			di manifest di un modulo application-client '<java>' non viene piu' cablato lato server,
+			quindi 'properties/' non risulta visibile al modulo top-level dell'EAR. Dichiarando il
+			loader come modulo '<ejb>' (vedi application.xml.loaderProperties.wildfly35) il Class-Path
+			torna ad essere processato. La linea wildfly27/28/29 mantiene la struttura '<java>' attuale.
+		-->
+		<delete dir="${build}/tmpLoader" />
+		<mkdir dir="${build}/tmpLoader/META-INF" />
+		<var name="ejb_jar_loader" value=""/>
+		<if>
+			<or>
+				<equals arg1="${as}" arg2="wildfly35" />
+				<equals arg1="${as}" arg2="wildfly36" />
+				<equals arg1="${as}" arg2="wildfly37" />
+				<equals arg1="${as}" arg2="wildfly38" />
+				<equals arg1="${as}" arg2="wildfly39" />
+				<equals arg1="${as}" arg2="wildfly40" />
+			</or>
+			<then>
+				<copy file="${src}/META-INF/ejb-jar.xml.loaderProperties" tofile="${build}/tmpLoader/META-INF/ejb-jar.xml" />
+				<var name="ejb_jar_loader" value="ejb-jar.xml"/>
+			</then>
+		</if>
+
 		<jar jarfile="${dist}/OpenSPCoop2PropertiesLoader.jar">
 			<manifest>
 				<attribute name="Class-Path" value="properties/" />
 			</manifest>
+			<!-- modulo EJB vuoto (linea WildFly 35+): rende processabile il Class-Path 'properties/' -->
+			<zipfileset dir="${build}/tmpLoader/META-INF" prefix="META-INF">
+				<include name="${ejb_jar_loader}" />
+			</zipfileset>
 			<!-- DataContentHandler per application/openspcoop2 -->
 			<zipfileset dir="${data_content_handler_dir}" prefix="META-INF">
 				<include name="${mailcap_info}" />
 			</zipfileset>
 		</jar>
+		<delete dir="${build}/tmpLoader" />
 	</target>
 	
 
@@ -299,10 +329,30 @@
 				</concat>
 			</then>
 			<else>
-				<concat destfile="${build}/application.xml" append="yes">
-					<filelist dir="${src}/META-INF"
-		                                files="application.xml.loaderProperties"/>
-				</concat>
+				<!-- linea WildFly 35+: loader dichiarato come modulo <ejb> (vedi make_govway_loaderProperties); -->
+				<!-- tomcat e linea wildfly27/28/29 mantengono il modulo <java> attuale -->
+				<if>
+					<or>
+						<equals arg1="${as}" arg2="wildfly35" />
+						<equals arg1="${as}" arg2="wildfly36" />
+						<equals arg1="${as}" arg2="wildfly37" />
+						<equals arg1="${as}" arg2="wildfly38" />
+						<equals arg1="${as}" arg2="wildfly39" />
+						<equals arg1="${as}" arg2="wildfly40" />
+					</or>
+					<then>
+						<concat destfile="${build}/application.xml" append="yes">
+							<filelist dir="${src}/META-INF"
+				                                files="application.xml.loaderProperties.wildfly35"/>
+						</concat>
+					</then>
+					<else>
+						<concat destfile="${build}/application.xml" append="yes">
+							<filelist dir="${src}/META-INF"
+				                                files="application.xml.loaderProperties"/>
+						</concat>
+					</else>
+				</if>
 			</else>
 		</if>	
 		<concat destfile="${build}/application.xml" append="yes">
@@ -452,6 +502,7 @@
 				<matches string="${as}" pattern="wildfly37"/>
 				<matches string="${as}" pattern="wildfly38"/>
 				<matches string="${as}" pattern="wildfly39"/>
+				<matches string="${as}" pattern="wildfly40"/>
 			</or>
 			<then>
 				<!-- Creazione mailapi contenente il corretto mailcap per OpenSPCoopDataHandler -->
@@ -580,6 +631,7 @@
 						<equals arg1="${as}" arg2="wildfly37" />
 						<equals arg1="${as}" arg2="wildfly38" />
 						<equals arg1="${as}" arg2="wildfly39" />
+						<equals arg1="${as}" arg2="wildfly40" />
 					</or>
 					<then>
 						<copy file="${src}/META-INF/jboss-deployment-structure.xml.wildfly35" tofile="${build}/tmp/jboss-deployment-structure.xml" />

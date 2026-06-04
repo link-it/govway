@@ -251,6 +251,7 @@
 						<equals arg1="${as}" arg2="wildfly28"/>
 						<equals arg1="${as}" arg2="wildfly29"/>
 						<matches string="${as}" pattern="wildfly3.*"/>
+						<matches string="${as}" pattern="wildfly4.*"/>
 					</or>
 					<then>
 						<antcall target="set_property">

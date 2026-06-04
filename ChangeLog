@@ -1,6 +1,12 @@
 2026-06-04  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
+	Aggiunta funzionalità #1738
+	Aggiunto supporto per wildfly 40 e verifica operatività con java 25.
+
+2026-06-04  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
 	Risolto Bug #1779
 	Corretta la mancata registrazione degli eventi del Controllo del Traffico con identificativo di configurazione superiore a 255 caratteri: 
 	ampliata la colonna 'notifiche_eventi.id_configurazione', rimossa dall'indice 'INDEX_EVENTI' e aggiunto un troncamento di sicurezza.
