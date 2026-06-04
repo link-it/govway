@@ -1,19 +1,29 @@
+2026-06-04  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug #1779
+	Corretta la mancata registrazione degli eventi del Controllo del Traffico con identificativo di configurazione superiore a 255 caratteri: 
+	ampliata la colonna 'notifiche_eventi.id_configurazione', rimossa dall'indice 'INDEX_EVENTI' e aggiunto un troncamento di sicurezza.
+
 2026-06-03  Andrea Poli <apoli@link.it>
 
-      * [GovWayMonitor, ApiRsMonitoraggio]
-     Risolto un errore nella generazione del grafico heatmap dell'Analisi Statistica, 
-     che si verificava quando una distribuzione presentava più valori sulla stessa cella (es. distribuzione per token info / client id): 
-     tali valori vengono ora aggregati correttamente.
+	* [GovWayMonitor, ApiRsMonitoraggio]
+	Risolto Bug
+	Risolto un errore nella generazione del grafico heatmap dell'Analisi Statistica, 
+	che si verificava quando una distribuzione presentava più valori sulla stessa cella (es. distribuzione per token info / client id): 
+	tali valori vengono ora aggregati correttamente.
 
 2026-06-01  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
+	Aggiunta funzionalità
 	Introdotta la normalizzazione del prefisso del contesto JNDI ('java:/comp/env/') dei datasource il cui nome viene risolto dal database, 
 	così da consentire l'utilizzo della medesima base dati su Application Server differenti, adattando automaticamente il nome JNDI all'ambiente di esecuzione.
 
 2026-06-01  Andrea Poli <apoli@link.it>
 
 	* [InstallerVersioneBinaria]
+	Risolto Bug
 	Corretto l'escape dei caratteri speciali XML (& < > " ') nei valori di username e password dei datasource generati,
 	che in precedenza potevano produrre file datasource malformati/troncati (sia per WildFly/JBoss che per Tomcat).
 	Corretto inoltre l'escape stile properties (backslash) di username e password nei file daoFactory.properties dei batch

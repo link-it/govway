@@ -10,7 +10,7 @@ CREATE TABLE notifiche_eventi
 	ora_registrazione TIMESTAMP NOT NULL,
 	descrizione VARCHAR2(255),
 	id_transazione VARCHAR2(255),
-	id_configurazione VARCHAR2(255),
+	id_configurazione VARCHAR2(4000),
 	configurazione CLOB,
 	cluster_id VARCHAR2(100),
 	-- fk/pk columns
@@ -20,7 +20,7 @@ CREATE TABLE notifiche_eventi
 );
 
 -- index
-CREATE INDEX INDEX_EVENTI ON notifiche_eventi (ora_registrazione DESC,severita,tipo,codice,id_configurazione,cluster_id);
+CREATE INDEX INDEX_EVENTI ON notifiche_eventi (ora_registrazione DESC,severita,tipo,codice,cluster_id);
 CREATE TRIGGER trg_notifiche_eventi
 BEFORE
 insert on notifiche_eventi

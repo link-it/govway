@@ -945,6 +945,13 @@ public class NotificatoreEventi {
 		evento.setTipo(tipoEvento.getValue());
 		evento.setCodice(codice.getValue());
 		if(idPolicy!=null){
+			// Cap di sicurezza: l'id_configurazione (nome policy + API + raggruppamento) puo' eccedere la dimensione
+			// della colonna 'notifiche_eventi.id_configurazione'; viene troncato in modo deterministico
+			// (stesso input -> stesso output, per preservare la correlazione violazione/risoluzione).
+			int maxLengthIdConfigurazione = OpenSPCoop2Properties.getInstance().getMaxLengthEventiIdConfigurazione();
+			if(idPolicy.length() > maxLengthIdConfigurazione){
+				idPolicy = idPolicy.substring(0, maxLengthIdConfigurazione);
+			}
 			evento.setIdConfigurazione(idPolicy);
 		}		
 		evento.setDescrizione(descrizione);
