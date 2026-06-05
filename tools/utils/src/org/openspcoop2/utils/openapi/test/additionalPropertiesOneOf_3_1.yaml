@@ -1,0 +1,56 @@
+openapi: 3.1.0
+info:
+  version: "1.0.0"
+  title: |-
+    Test additionalProperties oneOf
+  description: |-
+    Verifica della validazione di una mappa con 'additionalProperties' definito come
+    'oneOf' tra i tipi primitivi string, number e boolean, sia in richiesta che in risposta.
+tags:
+  - name: test
+    description: |-
+      test
+servers:
+  - description: server
+    url: https://test
+
+paths:
+  /opAdditionalPropertiesOneOf:
+    post:
+      summary: test
+      description: |
+        test
+      operationId: testAdditionalPropertiesOneOf
+      tags:
+        - test
+      requestBody:
+        description: test
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Mappa'
+      responses:
+        '200':
+          description: |
+            test
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Mappa'
+
+components:
+  schemas:
+    Mappa:
+      type: object
+      properties:
+        id:
+          description: identificativo univoco
+          type: string
+      required:
+        - id
+      additionalProperties:
+        oneOf:
+          - type: string
+          - type: number
+          - type: boolean
