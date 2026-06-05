@@ -83,7 +83,7 @@ Scaricare i sorgenti del software, disponibili all'indirizzo:
 	mvn verify -Dspotbugs=verify -Dspotbugs.home=PATH_ASSOLUTO_TOOLS_SPOTBUGS
 
     Per evitare la compilazione, il packaging e la verifica owasp descritte nelle precedenti sezioni, utilizzare il comando:
-	mvn verify -Dspotbugs=verify -Dspotbugs.home=PATH_ASSOLUTO_TOOLS_SPOTBUGS -Dcompile=none -Dtestsuite=none -Dpackage=none -Dowasp=none
+	mvn verify -Dspotbugs=verify -Dspotbugs.home=PATH_ASSOLUTO_TOOLS_SPOTBUGS -Dcompile=none -Dtestsuite=none -Dpackage=none -Dowasp=none -Dosv=none
 
     Verranno analizzati i sorgenti di tutti gli archivi jar prodotti con la compilazione descritta al punto 2.2.
     Un report viene prodotto nella directory 'spotbugs-reports'
@@ -102,9 +102,9 @@ Scaricare i sorgenti del software, disponibili all'indirizzo:
 
     L'esempio seguente attiva l'analisi dei sorgenti solamente per le utilità di base e i componenti di runtime di GovWay:
         mvn verify -Dspotbugs=verify 
-                   -Dcompile=none -Dtestsuite=none -Dpackage=none -Dowasp=none 
+                   -Dcompile=none -Dtestsuite=none -Dpackage=none -Dowasp=none -Dosv=none
                    -Dspotbugs.home=/tmp/spotbugs-4.9.8
-                   -Dspotbugs.skipPackages=protocol-as4,protocol-modipa,protocol-sdi,protocol-spcoop,protocol-trasparente,web-lib-audit,web-lib-mvc,web-lib-users,web-loader,web-govwayConsole,web-govwayMonitor,rs-config,rs-monitor,batch-statistiche,batch-runtime-repository,timer-statistiche,cli-config-loader,cli-govway-vault, cli-template-scan
+                   -Dspotbugs.skipPackages=protocol-as4,protocol-modipa,protocol-sdi,protocol-spcoop,protocol-trasparente,web-lib-audit,web-lib-mvc,web-lib-users,web-loader,web-govwayConsole,web-govwayMonitor,rs-config,rs-monitor,batch-statistiche,batch-runtime-repository,timer-statistiche,cli-config-loader,cli-govway-vault,cli-template-scan
 
 2.7 Analisi statica dei sorgenti tramite SonarQube
 
@@ -112,7 +112,7 @@ Scaricare i sorgenti del software, disponibili all'indirizzo:
 	mvn verify -Dsonarqube=verify -Dsonar.token=TOKEN -Dsonar.host.url=http://localhost:9000
 
     Per evitare la compilazione, il packaging e la verifica owasp descritte nelle precedenti sezioni, utilizzare il comando:
-	mvn verify -Dsonarqube=verify -Dsonar.token=TOKEN -Dsonar.host.url=http://localhost:9000 -Dcompile=none -Dtestsuite=none -Dpackage=none -Dowasp=none
+	mvn verify -Dsonarqube=verify -Dsonar.token=TOKEN -Dsonar.host.url=http://localhost:9000 -Dcompile=none -Dtestsuite=none -Dpackage=none -Dowasp=none -Dosv=none
 
     Verranno analizzati i sorgenti di tutti gli archivi jar prodotti con la compilazione descritta al punto 2.2.
     Il risultato dell'analisi viene pubblicato su SonarQube sul progetto 'govway', consultabile all'indirizzo indicato nella proprietà 'sonar.host.url'.
@@ -131,7 +131,7 @@ Scaricare i sorgenti del software, disponibili all'indirizzo:
 
     L'esempio seguente attiva l'analisi dei sorgenti solamente per il profilo di interoperabilità 'ModI':
         mvn verify -Dsonarqube=verify 
-                   -Dcompile=none -Dtestsuite=none -Dpackage=none -Dowasp=none 
+                   -Dcompile=none -Dtestsuite=none -Dpackage=none -Dowasp=none -Dosv=none
                    -Dsonar.token=TOKEN -Dsonar.host.url=http://localhost:9000
                    -Dsonar.govway.project=protocol-modipa
 
@@ -147,7 +147,7 @@ Scaricare i sorgenti del software, disponibili all'indirizzo:
 	mvn verify -Dzaproxy=verify -Dzaproxy.home=PATH_ASSOLUTO_TOOLS_ZAP -Dgovway.endpoint=http://127.0.0.1:8080 -Dgovway.ente=<SoggettoIndicatoInstaller>
 
     Per evitare la compilazione, il packaging e la verifica owasp descritte nelle precedenti sezioni, utilizzare il comando:
-	mvn verify -Dzaproxy=verify -Dzaproxy.home=PATH_ASSOLUTO_TOOLS_ZAP -Dgovway.endpoint=http://127.0.0.1:8080 -Dgovway.ente=<SoggettoIndicatoInstaller> -Dcompile=none -Dtestsuite=none -Dpackage=none -Dowasp=none
+	mvn verify -Dzaproxy=verify -Dzaproxy.home=PATH_ASSOLUTO_TOOLS_ZAP -Dgovway.endpoint=http://127.0.0.1:8080 -Dgovway.ente=<SoggettoIndicatoInstaller> -Dcompile=none -Dtestsuite=none -Dpackage=none -Dowasp=none -Dosv=none
 
     Un report viene prodotto nella directory 'zaproxy-reports'
 
@@ -163,7 +163,7 @@ Scaricare i sorgenti del software, disponibili all'indirizzo:
 
     L'esempio seguente attiva l'analisi solamente del componente runtime di GovWay per API REST e SOAP, escludendo gli altri test:
         mvn verify -Dzaproxy=verify
-                   -Dcompile=none -Dtestsuite=none -Dpackage=none -Dowasp=none 
+                   -Dcompile=none -Dtestsuite=none -Dpackage=none -Dowasp=none -Dosv=none
                    -Dzaproxy.home=/tmp/ZAP_2.12.0
 	           -Dgovway.endpoint=http://127.0.0.1:8080 -Dgovway.ente=Ente
                    -Dzaproxy.skipTests=api-config,api-monitor

@@ -7,7 +7,7 @@ Effettuato il checkout dei `dei sorgenti del progetto GovWay <https://github.com
 
 ::
 
-    mvn verify -Dsonarqube=verify -Dsonar.token=TOKEN -Dsonar.host.url=http://localhost:9000 -Dcompile=none -Dtestsuite=none -Dpackage=none -Dowasp=none
+    mvn verify -Dsonarqube=verify -Dsonar.token=TOKEN -Dsonar.host.url=http://localhost:9000 -Dcompile=none -Dtestsuite=none -Dpackage=none -Dowasp=none -Dosv=none
 
 Al comando devono essere forniti i parametri per l'accesso all'ambiente SonarQube che si possiede:
 
@@ -40,8 +40,8 @@ L'esempio seguente attiva l'analisi dei sorgenti solamente per il profilo di int
 
 ::
 
-    mvn verify -Dsonarqube=verify 
-               -Dtestsuite=none -Dpackage=none -Dowasp=none 
+    mvn verify -Dsonarqube=verify
+               -Dtestsuite=none -Dpackage=none -Dowasp=none -Dosv=none
                -Dsonar.token=TOKEN -Dsonar.host.url=http://localhost:9000
                -Dsonar.govway.project=protocol-modipa
 

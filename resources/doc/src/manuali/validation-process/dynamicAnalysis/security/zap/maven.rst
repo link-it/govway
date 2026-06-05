@@ -7,7 +7,7 @@ Effettuato il checkout dei `dei sorgenti del progetto GovWay <https://github.com
 
 ::
 
-    mvn verify -Dzaproxy=verify -Dzaproxy.home=PATH_ASSOLUTO_TOOLS_ZAP -Dgovway.endpoint=http://127.0.0.1:8080 -Dgovway.ente=<SoggettoIndicatoInstaller> -Dcompile=none -Dtestsuite=none -Dpackage=none -Dowasp=none
+    mvn verify -Dzaproxy=verify -Dzaproxy.home=PATH_ASSOLUTO_TOOLS_ZAP -Dgovway.endpoint=http://127.0.0.1:8080 -Dgovway.ente=<SoggettoIndicatoInstaller> -Dcompile=none -Dtestsuite=none -Dpackage=none -Dowasp=none -Dosv=none
 
 Come prerequisito all'esecuzione deve essere effettuato il download dell'ultima release del tool `OWASP ZAP Proxy <https://www.zaproxy.org/>`_.
 
@@ -30,7 +30,7 @@ L'esempio seguente attiva l'analisi solamente del componente runtime di GovWay p
 ::
 
     mvn verify -Dzaproxy=verify
-               -Dcompile=none -Dtestsuite=none -Dpackage=none -Dowasp=none 
+               -Dcompile=none -Dtestsuite=none -Dpackage=none -Dowasp=none -Dosv=none
                -Dzaproxy.home=/tmp/ZAP_2.12.0
 	       -Dgovway.endpoint=http://127.0.0.1:8080 -Dgovway.ente=Ente
                -Dzaproxy.skipTests=api-config,api-monitor
