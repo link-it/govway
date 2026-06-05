@@ -80,6 +80,8 @@ attuando le seguenti modifiche:
         login.props.oauth2.scope=
         # Nome del claim da dove leggere il principal
         login.props.oauth2.principalClaim=
+        # Sorgente da cui leggere il principal: userinfo (default), id_token, access_token
+        #login.props.oauth2.userInfo.source=userinfo
 
         # Parametri timeout connessione verso il server OAuth2
         #login.props.oauth2.readTimeout=15000
@@ -103,6 +105,10 @@ attuando le seguenti modifiche:
         #login.props.oauth2.https.keyStore.type=jks
         #login.props.oauth2.https.key.alias=mykey
         #login.props.oauth2.https.key.password=changeme
+
+        # Log di debug della libreria OAuth2/OIDC (default: false). Non abilitare in produzione:
+        # il log puo' contenere token di sessione e claim con informazioni personali sensibili.
+        #login.props.oauth2.debug=false
 
    - È infine possibile configurare una modalità custom indicando una classe che implementi l'interfaccia 'org.openspcoop2.utils.credential.IPrincipalReader'.
      Eventuali proprietà di configurazione da fornire alla classe possono essere indicate nella forma 'login.props.<NOME_PROP>=<VALORE_PROP>'.

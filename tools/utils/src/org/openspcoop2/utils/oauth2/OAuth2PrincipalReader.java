@@ -113,7 +113,7 @@ public class OAuth2PrincipalReader implements IPrincipalReader {
 				return null;
 			}
 
-			Oauth2UserInfo oauth2UserInfo = OAuth2Utilities.getUserInfo(this.log, this.properties, oAuth2Token);
+			Oauth2UserInfo oauth2UserInfo = OAuth2Utilities.retrieveUserInfo(this.log, this.properties, oAuth2Token);
 
 			// Verifica errori nella risposta
 			if (oauth2UserInfo.getReturnCode() != 200) {

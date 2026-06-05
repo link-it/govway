@@ -52,6 +52,26 @@ public class OAuth2Costanti {
 	public static final String PROP_OAUTH2_PKCE_ENABLED = PROP_OAUTH2_PREFIX + "pkce.enabled";
 	public static final String PROP_OAUTH2_PKCE_METHOD = PROP_OAUTH2_PREFIX + "pkce.method";
 
+	/**
+	 * Sorgente da cui ricavare i claim di identita' dell'amministratore loggato.
+	 * Valori ammessi: "userinfo" (default), "id_token", "access_token".
+	 * Quando il valore e' "id_token" o "access_token" la chiamata HTTP all'endpoint /userinfo
+	 * viene saltata e l'Oauth2UserInfo viene popolato dai claim del JWT indicato.
+	 */
+	public static final String PROP_OAUTH2_USERINFO_SOURCE = PROP_OAUTH2_PREFIX + "userInfo.source";
+	public static final String PROP_OAUTH2_USERINFO_SOURCE_USERINFO = "userinfo";
+	public static final String PROP_OAUTH2_USERINFO_SOURCE_ID_TOKEN = "id_token";
+	public static final String PROP_OAUTH2_USERINFO_SOURCE_ACCESS_TOKEN = "access_token";
+
+	/**
+	 * Se {@code true}, la libreria OAuth2/OIDC produce log di debug aggiuntivi nei vari
+	 * punti del flusso (token ricevuto, informazioni utente prelevate dalla sorgente
+	 * configurata, ecc.). Utile per diagnosticare la configurazione in fase di set-up.
+	 * Default: {@code false}. Non abilitare in produzione: il log puo' contenere token
+	 * di sessione e claim con informazioni personali sensibili.
+	 */
+	public static final String PROP_OAUTH2_DEBUG = PROP_OAUTH2_PREFIX + "debug";
+
 	public static final String PROP_OAUTH2_READ_TIMEOUT = PROP_OAUTH2_PREFIX + "readTimeout";
 	public static final String PROP_OAUTH2_CONNECT_TIMEOUT = PROP_OAUTH2_PREFIX + "connectTimeout";
 
