@@ -7,7 +7,7 @@ Effettuato il checkout dei `dei sorgenti del progetto GovWay <https://github.com
 
 ::
 
-    mvn verify -Dspotbugs=verify -Dspotbugs.home=PATH_ASSOLUTO_TOOLS_SPOTBUGS -Dtestsuite=none -Dpackage=none -Dowasp=none
+    mvn verify -Dspotbugs=verify -Dspotbugs.home=PATH_ASSOLUTO_TOOLS_SPOTBUGS -Dtestsuite=none -Dpackage=none -Dowasp=none -Dosv=none
 
 Come prerequisito all'esecuzione deve essere effettuato il download dell'ultima release del tool `SpotBugs <https://github.com/spotbugs/spotbugs/releases>`_.
 
@@ -45,7 +45,7 @@ Per produrre un report in un formato direttamente fruibile senza dove utilizzare
 
 ::
 
-    mvn verify -Dspotbugs=verify -Dspotbugs.outputType=html -Dspotbugs.home=PATH_ASSOLUTO_TOOLS_SPOTBUGS -Dtestsuite=none -Dpackage=none -Dowasp=none
+    mvn verify -Dspotbugs=verify -Dspotbugs.outputType=html -Dspotbugs.home=PATH_ASSOLUTO_TOOLS_SPOTBUGS -Dtestsuite=none -Dpackage=none -Dowasp=none -Dosv=none
 
 I formati supportati sono i seguenti:
 
@@ -61,7 +61,7 @@ L'esempio seguente attiva l'analisi dei sorgenti solamente per le utilità di ba
 
 ::
 
-    mvn verify -Dspotbugs=verify 
-               -Dtestsuite=none -Dpackage=none -Dowasp=none 
+    mvn verify -Dspotbugs=verify
+               -Dtestsuite=none -Dpackage=none -Dowasp=none -Dosv=none
                -Dspotbugs.home=/tmp/spotbugs-4.9.8
                -Dspotbugs.skipPackages=protocol-as4,protocol-modipa,protocol-sdi,protocol-spcoop,protocol-trasparente,web-lib-audit,web-lib-mvc,web-lib-queue,web-lib-users,web-loader,web-govwayConsole,web-govwayMonitor,rs-config,rs-monitor,batch-statistiche,batch-runtime-repository,timer-statistiche,cli-config-loader,cli-govway-vault
