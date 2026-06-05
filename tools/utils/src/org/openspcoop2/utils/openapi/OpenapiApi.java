@@ -76,7 +76,7 @@ public class OpenapiApi extends Api {
 	 *       ma indiretta e mantenuta solo per retro-compatibilita'.</li>
 	 * </ul>
 	 */
-	private static boolean useLegacyDollarRefValidation = false;
+	private static volatile boolean useLegacyDollarRefValidation = false;
 	public static void setUseLegacyDollarRefValidation(boolean v) {
 		useLegacyDollarRefValidation = v;
 	}

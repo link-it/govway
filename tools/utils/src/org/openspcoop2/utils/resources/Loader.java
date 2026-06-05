@@ -270,18 +270,16 @@ public class Loader {
 		}
 		return c;
 	}
-	private static Class<?> initClass(String className,java.lang.ClassLoader classLoader) throws ClassNotFoundException, InstantiationException, IllegalAccessException{
-		// Niente synchronized: la put è atomica e il class-loading è idempotente, quindi eventuali
-		// miss concorrenti sulla stessa classe ricaricano lo stesso Class object in modo innocuo.
-		Class<?> c = mapClass.get(className);
-		if(c==null){
-			if(classLoader!=null){
-				c = classLoader.loadClass(className);
-			}else{
-				c = Class.forName(className);
-			}
-			mapClass.put(className, c);
-		}
-		return c;
+	private static Class<?> initClass(String className,java.lang.ClassLoader classLoader) throws ClassNotFoundException{
+		// Niente synchronized e niente sequenza get/put separata: lo short-circuit "non caricare se
+		// la classe c'è già" è fatto a monte da getClass(); qui (solo sul miss) si carica la classe e
+		// si registra con putIfAbsent, atomica. In caso di gara concorrente putIfAbsent restituisce il
+		// valore già presente, che diventa quello canonico (reload innocuo perché il loading è idempotente).
+		Class<?> c = caricaClasse(className, classLoader);
+		Class<?> existing = mapClass.putIfAbsent(className, c);
+		return existing!=null ? existing : c;
+	}
+	private static Class<?> caricaClasse(String className,java.lang.ClassLoader classLoader) throws ClassNotFoundException{
+		return classLoader!=null ? classLoader.loadClass(className) : Class.forName(className);
 	}
 }
