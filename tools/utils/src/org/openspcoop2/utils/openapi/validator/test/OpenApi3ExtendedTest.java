@@ -4043,6 +4043,14 @@ public class OpenApi3ExtendedTest {
 
 		System.out.println("Test #24.c openapi che dichiarano '$ref' come NOME di proprieta' di uno schema completato\n\n");
 
+		// ** Test per validazione con openapi che usano 'additionalProperties' come oneOf di tipi primitivi (string/number/boolean) ... **
+
+		System.out.println("Test #24.d openapi che usano 'additionalProperties' come oneOf di tipi primitivi ...");
+
+		testAdditionalPropertiesOneOf(openAPILibrary, mergeSpec);
+
+		System.out.println("Test #24.d openapi che usano 'additionalProperties' come oneOf di tipi primitivi completato\n\n");
+
 
 
 		// ** Test per validazione con openapi che usano multipart request ... **
@@ -4937,6 +4945,184 @@ public class OpenApi3ExtendedTest {
 			System.out.println("Test Risposta NON conforme (/opCreaDescrittore) Superato!");
 		}
 
+	}
+
+	private static void testAdditionalPropertiesOneOf(OpenAPILibrary openAPILibrary, boolean mergeSpec)
+			throws UtilsException, ProcessingException, URISyntaxException, Exception {
+		System.out.println("#### Verifica OpenAPI con 'additionalProperties' definito come oneOf di tipi primitivi (string/number/boolean) ####");
+
+		URL url = OpenApi3ExtendedTest.class.getResource("/org/openspcoop2/utils/openapi/test/additionalPropertiesOneOf.yaml");
+
+		IApiReader apiReaderOpenApi4j = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
+		ApiReaderConfig configOpenApi4j = new ApiReaderConfig();
+		configOpenApi4j.setProcessInclude(false);
+		apiReaderOpenApi4j.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), new File(url.toURI()), configOpenApi4j);
+		Api apiOpenApi4j = apiReaderOpenApi4j.read();
+
+		try {
+			apiOpenApi4j.validate();
+		}catch(ProcessingException pe) {
+			pe.printStackTrace(System.out);
+			throw new Exception(" Documento contenente errori: "+pe.getMessage(), pe);
+		}catch(ParseWarningException warning) {
+			//warning.printStackTrace(System.out);
+			System.out.println("Documento contenente anomalie: "+warning.getMessage());
+		}
+
+		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+		OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
+		configO.setEmitLogError(logSystemOutError);
+		configO.setOpenApiValidatorConfig(new OpenapiLibraryValidatorConfig());
+		configO.getOpenApiValidatorConfig().setOpenApiLibrary(openAPILibrary);
+		configO.getOpenApiValidatorConfig().setValidateAPISpec(true);
+		configO.getOpenApiValidatorConfig().setMergeAPISpec(mergeSpec);
+		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi4j, configO);
+
+		String operazione = "/opAdditionalPropertiesOneOf";
+
+		// Tutti i casi di validazione OK: il valore di ogni additionalProperty deve corrispondere
+		// esattamente ad uno tra string, number e boolean (e la mappa puo' anche non avere additionalProperties).
+		String[][] casiOk = {
+			{"solo property required (nessuna additionalProperty)", "{ \"id\": \"abc\" }"},
+			{"additionalProperty string",                           "{ \"id\": \"abc\", \"p\": \"stringa\" }"},
+			{"additionalProperty string vuota",                     "{ \"id\": \"abc\", \"p\": \"\" }"},
+			{"additionalProperty number intero",                    "{ \"id\": \"abc\", \"p\": 42 }"},
+			{"additionalProperty number negativo",                  "{ \"id\": \"abc\", \"p\": -7 }"},
+			{"additionalProperty number zero",                      "{ \"id\": \"abc\", \"p\": 0 }"},
+			{"additionalProperty number decimale",                  "{ \"id\": \"abc\", \"p\": 3.14 }"},
+			{"additionalProperty boolean true",                     "{ \"id\": \"abc\", \"p\": true }"},
+			{"additionalProperty boolean false",                    "{ \"id\": \"abc\", \"p\": false }"},
+			{"additionalProperty di tutti i tipi ammessi",          "{ \"id\": \"abc\", \"p1\": \"stringa\", \"p2\": 42, \"p3\": 3.14, \"p4\": true, \"p5\": false }"},
+		};
+
+		// Tutti i casi di errore: il valore di una additionalProperty non corrisponde a nessuno dei tipi
+		// primitivi ammessi (object, array, null), quindi l'oneOf non viene soddisfatto da nessuno schema.
+		// Il terzo elemento e' il tipo JSON come riportato nel messaggio di errore delle librerie.
+		String[][] casiKo = {
+			{"additionalProperty object",                  "{ \"id\": \"abc\", \"bad\": { \"x\": 1 } }", "object"},
+			{"additionalProperty array",                   "{ \"id\": \"abc\", \"bad\": [1,2,3] }",       "array"},
+			{"additionalProperty null",                    "{ \"id\": \"abc\", \"bad\": null }",          "null"},
+			{"additionalProperty valida + una non valida", "{ \"id\": \"abc\", \"ok\": \"stringa\", \"bad\": { \"x\": 1 } }", "object"},
+		};
+
+		// ---- Casi OK ----
+		for (String[] caso : casiOk) {
+
+			System.out.println("Test Richiesta OK ("+caso[0]+")...");
+
+			TextHttpRequestEntity request = new TextHttpRequestEntity();
+			request.setMethod(HttpRequestMethod.POST);
+			request.setUrl(operazione);
+			Map<String, List<String>> headers = new HashMap<>();
+			TransportUtils.setHeader(headers, HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+			request.setHeaders(headers);
+			request.setContentType(HttpConstants.CONTENT_TYPE_JSON);
+			request.setContent(caso[1]);
+			try {
+				apiValidatorOpenApi4j.validate(request);
+			} catch (ValidatorException e) {
+				System.out.println(e.getMessage());
+				throw new Exception("Errore non atteso sulla richiesta ("+caso[0]+")");
+			}
+
+			System.out.println("Test Richiesta OK ("+caso[0]+") Superato!");
+
+			System.out.println("Test Risposta OK ("+caso[0]+")...");
+
+			TextHttpResponseEntity response = new TextHttpResponseEntity();
+			response.setStatus(200);
+			response.setMethod(HttpRequestMethod.POST);
+			response.setUrl(operazione);
+			Map<String, List<String>> responseHeaders = new HashMap<>();
+			TransportUtils.addHeader(responseHeaders, HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+			response.setHeaders(responseHeaders);
+			response.setContentType(HttpConstants.CONTENT_TYPE_JSON);
+			response.setContent(caso[1]);
+			try {
+				apiValidatorOpenApi4j.validate(response);
+			} catch (ValidatorException e) {
+				System.out.println(e.getMessage());
+				throw new Exception("Errore non atteso sulla risposta ("+caso[0]+")");
+			}
+
+			System.out.println("Test Risposta OK ("+caso[0]+") Superato!");
+		}
+
+		// ---- Casi di errore ----
+		for (String[] caso : casiKo) {
+
+			String tipoJson = caso[2];
+
+			String erroreAttesoRichiesta = erroreAttesoAdditionalPropertiesOneOf(openAPILibrary, false, tipoJson);
+
+			System.out.println("Test Richiesta NON conforme ("+caso[0]+")...");
+
+			TextHttpRequestEntity request = new TextHttpRequestEntity();
+			request.setMethod(HttpRequestMethod.POST);
+			request.setUrl(operazione);
+			Map<String, List<String>> headers = new HashMap<>();
+			TransportUtils.setHeader(headers, HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+			request.setHeaders(headers);
+			request.setContentType(HttpConstants.CONTENT_TYPE_JSON);
+			request.setContent(caso[1]);
+			try {
+				apiValidatorOpenApi4j.validate(request);
+				throw new Exception("Errore atteso '"+erroreAttesoRichiesta+"' non rilevato sulla richiesta ("+caso[0]+")");
+			} catch (ValidatorException e) {
+				System.out.println("Errore di validazione rilevato (atteso): "+e.getMessage());
+				if (!e.getMessage().contains(erroreAttesoRichiesta)) {
+					throw new Exception("Errore atteso '"+erroreAttesoRichiesta+"' non rilevato sulla richiesta ("+caso[0]+")");
+				}
+			}
+
+			System.out.println("Test Richiesta NON conforme ("+caso[0]+") Superato!");
+
+			String erroreAttesoRisposta = erroreAttesoAdditionalPropertiesOneOf(openAPILibrary, true, tipoJson);
+
+			System.out.println("Test Risposta NON conforme ("+caso[0]+")...");
+
+			TextHttpResponseEntity response = new TextHttpResponseEntity();
+			response.setStatus(200);
+			response.setMethod(HttpRequestMethod.POST);
+			response.setUrl(operazione);
+			Map<String, List<String>> responseHeaders = new HashMap<>();
+			TransportUtils.addHeader(responseHeaders, HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+			response.setHeaders(responseHeaders);
+			response.setContentType(HttpConstants.CONTENT_TYPE_JSON);
+			response.setContent(caso[1]);
+			try {
+				apiValidatorOpenApi4j.validate(response);
+				throw new Exception("Errore atteso '"+erroreAttesoRisposta+"' non rilevato sulla risposta ("+caso[0]+")");
+			} catch (ValidatorException e) {
+				System.out.println("Errore di validazione rilevato (atteso): "+e.getMessage());
+				if (!e.getMessage().contains(erroreAttesoRisposta)) {
+					throw new Exception("Errore atteso '"+erroreAttesoRisposta+"' non rilevato sulla risposta ("+caso[0]+")");
+				}
+			}
+
+			System.out.println("Test Risposta NON conforme ("+caso[0]+") Superato!");
+		}
+
+		System.out.println("TEST OpenAPI con 'additionalProperties' come oneOf di tipi primitivi completato!");
+
+	}
+
+	private static String erroreAttesoAdditionalPropertiesOneOf(OpenAPILibrary openAPILibrary, boolean response, String tipoJson) throws Exception {
+		switch (openAPILibrary) {
+		case json_schema:
+			// es: "object found, string expected" (preceduto da "must be valid to one and only one schema, but 0 are valid")
+			return tipoJson + " found, string expected";
+		case openapi4j:
+			// il null viene intercettato dal controllo sul nullable, non dal type
+			if ("null".equals(tipoJson)) {
+				return "Null value is not allowed. (code: 1021)";
+			}
+			return "Type expected 'string', found '" + tipoJson + "'. (code: 1027)";
+		case swagger_request_validator:
+			return "Instance type (" + tipoJson + ") does not match any allowed primitive type (allowed: [\"string\"])";
+		default:
+			throw new Exception("Libreria non gestita: "+openAPILibrary);
+		}
 	}
 
 	private static void testMultipartRequest(OpenAPILibrary openAPILibrary, boolean mergeSpec,
