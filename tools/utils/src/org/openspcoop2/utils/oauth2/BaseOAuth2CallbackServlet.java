@@ -58,12 +58,7 @@ public abstract class BaseOAuth2CallbackServlet extends HttpServlet {
 			String code = validaParametriRichiesta(request, session);
 
 			// Recupera code_verifier dalla sessione se PKCE è abilitato
-			String codeVerifier = null;
-			if (session != null && OAuth2Utilities.isPkceEnabled(loginProperties)) {
-				codeVerifier = (String) session.getAttribute(OAuth2Costanti.ATTRIBUTE_NAME_CODE_VERIFIER);
-				// Rimuovi code_verifier dalla sessione dopo l'uso (one-time use)
-				session.removeAttribute(OAuth2Costanti.ATTRIBUTE_NAME_CODE_VERIFIER);
-			}
+			String codeVerifier = readCodeVerifier(session, loginProperties);
 
 			OAuth2Token oAuth2Token = OAuth2Utilities.getToken(log, loginProperties, code, codeVerifier);
 
@@ -91,7 +86,7 @@ public abstract class BaseOAuth2CallbackServlet extends HttpServlet {
 			}
 
 
-			Oauth2UserInfo oauth2UserInfo = OAuth2Utilities.getUserInfo(log, loginProperties, oAuth2Token);
+			Oauth2UserInfo oauth2UserInfo = OAuth2Utilities.retrieveUserInfo(log, loginProperties, oAuth2Token);
 
 			// Verifica errori nella risposta
 			if (oauth2UserInfo.getReturnCode() != 200) {
@@ -144,6 +139,16 @@ public abstract class BaseOAuth2CallbackServlet extends HttpServlet {
 				log.error("Errore durante esecuzione redirect: " + e1.getMessage(), e1);
 			}
 		}
+	}
+	
+	private String readCodeVerifier(HttpSession session, Properties loginProperties) {
+		String codeVerifier = null;
+		if (session != null && OAuth2Utilities.isPkceEnabled(loginProperties)) {
+			codeVerifier = (String) session.getAttribute(OAuth2Costanti.ATTRIBUTE_NAME_CODE_VERIFIER);
+			// Rimuovi code_verifier dalla sessione dopo l'uso (one-time use)
+			session.removeAttribute(OAuth2Costanti.ATTRIBUTE_NAME_CODE_VERIFIER);
+		}
+		return codeVerifier;
 	}
 
 	private String validaParametriRichiesta(HttpServletRequest request, HttpSession session) throws Oauth2Exception {

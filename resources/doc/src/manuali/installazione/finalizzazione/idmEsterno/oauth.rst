@@ -62,6 +62,9 @@ Per abilitare l’autenticazione tramite Keycloak è necessario intervenire sui 
         # URL del servizio logout federato
         login.props.oauth2.logout.endpoint=https://localhost:8543/realms/GovWay/protocol/openid-connect/logout
 
+   .. note::
+      L'endpoint 'login.props.oauth2.userInfo.endpoint' è richiesto solo se il principal viene letto dall'endpoint */userinfo* (impostazione di default 'login.props.oauth2.userInfo.source=userinfo'). Qualora il principal venga invece estratto direttamente dal token JWT (modalità 'id_token' o 'access_token', vedi punto 6), tale endpoint non viene utilizzato e può essere omesso.
+
 4. Impostazione del Client ID e della Redirect URI (/oauth2/callback). Per la console di gestione (govway_console):
 
      ::
@@ -88,8 +91,23 @@ Per abilitare l’autenticazione tramite Keycloak è necessario intervenire sui 
         login.props.oauth2.scope=openid
         # Nome del claim da dove leggere il principal
         login.props.oauth2.principalClaim=preferred_username
-        
-6. Validazione opzionale dei claim nel token. È possibile abilitare controlli aggiuntivi sui claim presenti nel token:
+
+6. Sorgente da cui leggere il principal (opzionale). Per default il claim contenente il principal (definito in 'login.props.oauth2.principalClaim') viene ricercato nella risposta dell'endpoint */userinfo* dell'authorization server (proprietà 'login.props.oauth2.userInfo.endpoint'). È possibile modificare tale comportamento tramite la proprietà 'login.props.oauth2.userInfo.source', che accetta i seguenti valori:
+
+   - **userinfo** (default): il principal viene ricercato nella risposta dell'endpoint */userinfo*, recuperata tramite chiamata HTTP;
+   - **id_token**: il principal viene ricercato nel payload del JWT 'id_token' restituito dall'authorization server, senza alcuna chiamata HTTP aggiuntiva;
+   - **access_token**: il principal viene ricercato nel payload del JWT 'access_token', senza alcuna chiamata HTTP aggiuntiva.
+
+     ::
+
+        # Sorgente da cui leggere il principal dell'utente loggato.
+        # Valori ammessi: userinfo (default), id_token, access_token
+        login.props.oauth2.userInfo.source=userinfo
+
+   .. note::
+      Le modalità **id_token** e **access_token** sono utili nei casi in cui l'endpoint */userinfo* non sia disponibile oppure non restituisca il claim da utilizzare come principal dell'utente.
+
+7. Validazione opzionale dei claim nel token. È possibile abilitare controlli aggiuntivi sui claim presenti nel token:
 
      ::
 
@@ -130,7 +148,7 @@ Per abilitare l’autenticazione tramite Keycloak è necessario intervenire sui 
         # Verifica che il claim 'resource_access.account.roles' contenga tutti i valori indicati (AND)
         login.props.oauth2.claims.validation.resource_access.account.roles=[and]manage-account,manage-account-links
 
-7. Parametri di connessione verso Keycloak:
+8. Parametri di connessione verso Keycloak:
 
      ::
 
@@ -153,7 +171,7 @@ Per abilitare l’autenticazione tramite Keycloak è necessario intervenire sui 
         #login.props.oauth2.https.key.alias=mykey
         #login.props.oauth2.https.key.password=changeme
 
-8. Abilitazione di PKCE (Proof Key for Code Exchange) per maggiore sicurezza. PKCE è un'estensione di OAuth 2.0 (RFC 7636) che migliora la sicurezza del flusso Authorization Code, particolarmente raccomandata per client pubblici e applicazioni web:
+9. Abilitazione di PKCE (Proof Key for Code Exchange) per maggiore sicurezza. PKCE è un'estensione di OAuth 2.0 (RFC 7636) che migliora la sicurezza del flusso Authorization Code, particolarmente raccomandata per client pubblici e applicazioni web:
 
      ::
 
@@ -167,3 +185,13 @@ Per abilitare l’autenticazione tramite Keycloak è necessario intervenire sui 
 
    .. note::
       **PKCE** protegge contro attacchi di intercettazione del codice di autorizzazione. Il metodo **S256** (default) è raccomandato in quanto più sicuro. Il metodo **plain** dovrebbe essere usato solo se l'authorization server non supporta SHA-256.
+
+10. Abilitazione del log di debug (opzionale). Per facilitare la diagnosi della configurazione in fase di set-up è possibile abilitare la produzione di log di debug aggiuntivi nei vari punti del flusso OAuth2/OIDC (token ricevuto dall'authorization server, informazioni utente prelevate dalla sorgente configurata, ecc.):
+
+     ::
+
+        # Abilita i log di debug della libreria OAuth2/OIDC (default: false)
+        login.props.oauth2.debug=true
+
+    .. warning::
+       Il log di debug può contenere token di sessione e claim con informazioni personali sensibili. Si raccomanda di non abilitarlo in ambienti di produzione.

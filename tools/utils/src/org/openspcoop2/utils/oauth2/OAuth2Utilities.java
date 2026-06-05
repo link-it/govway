@@ -302,6 +302,12 @@ public class OAuth2Utilities {
 			response.setDescription(e.getMessage());
 		}
 
+		if(log != null && isDebugEnabled(loginProperties)) {
+			log.debug("[OAuth2 DEBUG] token ricevuto: \nreturnCode={} \ntokenType={} \nscope={} \nexpiresIn={} \naccess_token={} \nid_token={} \nrefresh_token={}",   
+					response.getReturnCode(), response.getTokenType(), response.getScope(), 
+					response.getExpiresIn(), response.getAccessToken(), response.getIdToken(), response.getRefreshToken());
+		}
+
 		return response;
 	}
 
@@ -350,7 +356,48 @@ public class OAuth2Utilities {
 		return response;
 	}
 
-	public static Oauth2UserInfo getUserInfo(Logger log, Properties loginProperties, OAuth2Token oAuth2Token) {
+	/**
+	 * Recupera l'{@link Oauth2UserInfo} dalla sorgente configurata nella property
+	 * {@link OAuth2Costanti#PROP_OAUTH2_USERINFO_SOURCE}:
+	 * <ul>
+	 *   <li>'userinfo' (default): chiamata HTTP all'endpoint /userinfo (comportamento storico);</li>
+	 *   <li>'id_token': claim estratti dal payload del JWT 'id_token' (nessuna chiamata HTTP);</li>
+	 *   <li>'access_token': claim estratti dal payload del JWT 'access_token' (nessuna chiamata HTTP).</li>
+	 * </ul>
+	 * Utile per Identity Provider che sull'endpoint /userinfo restituiscono il solo claim 'sub'
+	 * e veicolano gli altri claim nell'id_token.
+	 */
+	public static Oauth2UserInfo retrieveUserInfo(Logger log, Properties loginProperties, OAuth2Token oAuth2Token) {
+		String source = loginProperties.getProperty(OAuth2Costanti.PROP_OAUTH2_USERINFO_SOURCE);
+		if(source == null || source.isEmpty()) {
+			source = OAuth2Costanti.PROP_OAUTH2_USERINFO_SOURCE_USERINFO;
+		}
+		source = source.trim();
+		Oauth2UserInfo userInfo;
+		if(OAuth2Costanti.PROP_OAUTH2_USERINFO_SOURCE_ID_TOKEN.equalsIgnoreCase(source)) {
+			if(log != null) {
+				log.debug("Lettura informazioni utente dal claim 'id_token' (oauth2.userInfo.source=id_token)");
+			}
+			userInfo = getUserInfoFromJWT(log, oAuth2Token.getIdToken());
+		}
+		else if(OAuth2Costanti.PROP_OAUTH2_USERINFO_SOURCE_ACCESS_TOKEN.equalsIgnoreCase(source)) {
+			if(log != null) {
+				log.debug("Lettura informazioni utente dal claim 'access_token' (oauth2.userInfo.source=access_token)");
+			}
+			userInfo = getUserInfoFromJWT(log, oAuth2Token.getAccessToken());
+		}
+		else {
+			// default: chiamata HTTP all'endpoint /userinfo (comportamento storico)
+			userInfo = getUserInfo(log, loginProperties, oAuth2Token);
+		}
+		if(log != null && isDebugEnabled(loginProperties) && userInfo instanceof Oauth2UserInfo) {
+			log.debug("[OAuth2 DEBUG] userInfo: \nsorgente={} \nreturnCode={} \nraw={} \nclaims={}" , 
+					source , userInfo.getReturnCode(), userInfo.getRaw(),	 userInfo.getMap());
+		}
+		return userInfo;
+	}
+	
+	private static Oauth2UserInfo getUserInfo(Logger log, Properties loginProperties, OAuth2Token oAuth2Token) {
 		HttpRequest userInfoHttpRequest = new HttpRequest();
 
 		String userInfoEndpoint = loginProperties.getProperty(OAuth2Costanti.PROP_OAUTH2_USER_INFO_ENDPOINT);
@@ -396,6 +443,56 @@ public class OAuth2Utilities {
 			response.setDescription(e.getMessage());
 		}
 
+		return response;
+	}
+
+	/**
+	 * Indica se e' abilitato il log di debug generico della libreria OAuth2/OIDC
+	 * (vedi {@link OAuth2Costanti#PROP_OAUTH2_DEBUG}).
+	 */
+	public static boolean isDebugEnabled(Properties loginProperties) {
+		String enabled = loginProperties.getProperty(OAuth2Costanti.PROP_OAUTH2_DEBUG);
+		return enabled != null && Boolean.parseBoolean(enabled.trim());
+	}
+
+	/**
+	 * Popola un {@link Oauth2UserInfo} a partire dai claim contenuti nel payload di un JWT
+	 * (id_token o access_token JWT). Utilizzato quando la sorgente dei claim di identita'
+	 * configurata e' "id_token" o "access_token" (vedi
+	 * {@link OAuth2Costanti#PROP_OAUTH2_USERINFO_SOURCE}).
+	 *
+	 * @param log Logger
+	 * @param jwt token JWT da cui estrarre i claim
+	 * @return un {@link Oauth2UserInfo} con map/raw popolati dai claim del JWT, o un
+	 *         oggetto con error/description valorizzati in caso di errore di parsing.
+	 */
+	private static Oauth2UserInfo getUserInfoFromJWT(Logger log, String jwt) {
+		Oauth2UserInfo response = new Oauth2UserInfo();
+		if(jwt == null || jwt.isEmpty()) {
+			response.setReturnCode(500);
+			response.setError(OAuth2Costanti.ERRORE_INVALID_TOKEN);
+			response.setDescription("Token JWT non disponibile per l'estrazione delle informazioni utente");
+			return response;
+		}
+		try {
+			JWTParser jwtParser = new JWTParser(jwt);
+			String decodedPayload = jwtParser.getDecodedPayload();
+			if(decodedPayload == null) {
+				response.setReturnCode(500);
+				response.setError(OAuth2Costanti.ERRORE_INVALID_TOKEN);
+				response.setDescription("Payload JWT non disponibile per l'estrazione delle informazioni utente");
+				return response;
+			}
+			Map<String,Serializable> claims = JSONUtils.getInstance().convertToMap(log, decodedPayload, decodedPayload);
+			response.setReturnCode(200);
+			response.setMap(claims);
+			response.setRaw(decodedPayload);
+		} catch (Exception e) {
+			logError(log, "Errore durante l'estrazione delle informazioni utente dal JWT: " + e.getMessage(), e);
+			response.setReturnCode(500);
+			response.setError(OAuth2Costanti.ERRORE_INVALID_TOKEN);
+			response.setDescription("Errore durante l'estrazione delle informazioni utente dal JWT: " + e.getMessage());
+		}
 		return response;
 	}
 
@@ -543,6 +640,12 @@ public class OAuth2Utilities {
 			response.setReturnCode(500);
 			response.setError("Errore durante il refresh del token");
 			response.setDescription(e.getMessage());
+		}
+
+		if(log != null && isDebugEnabled(loginProperties)) {
+			log.debug("[OAuth2 DEBUG] token refreshato: \nreturnCode={} \ntokenType={} \nscope={} \nexpiresIn={} \naccess_token={} \nid_token={} \nrefresh_token={}",   
+					response.getReturnCode(), response.getTokenType(), response.getScope(), 
+					response.getExpiresIn(), response.getAccessToken(), response.getIdToken(), response.getRefreshToken());
 		}
 
 		return response;

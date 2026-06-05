@@ -1,3 +1,10 @@
+2026-06-04 Giuliano Pintori <pintori@link.it>
+
+	* [GovWayMonitor, GovWayConsole]
+	Risolto Bug #1778
+	Aggiunta la possibilità di leggere il principal dell'utente autenticato via OIDC/OAuth2 direttamente dal token JWT (id_token o access_token), 
+	in alternativa all'endpoint /userinfo, utile con Authorization Server che non lo espongono o non vi restituiscono il principal.
+
 2026-06-04  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
