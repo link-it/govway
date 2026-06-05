@@ -70,7 +70,10 @@ public class DatabaseComponent {
 	/** ******************* Costruttore********************************* */
 	public DatabaseComponent(String dataSourceTracciamento, Properties contextJNDITracciamento,String protocolloSdk) {
 		this.setConnection(dataSourceTracciamento,contextJNDITracciamento,true);
-		this.setConnection(dataSourceTracciamento,contextJNDITracciamento,false);
+		// Tracciamento e PdD insistono sullo stesso datasource: riuso la stessa connessione
+		// invece di aprirne una seconda identica (riduce le connessioni verso il DB).
+		/* this.setConnection(dataSourceTracciamento,contextJNDITracciamento,false); */
+		this.connectionPdD = this.connectionTracciamento;
 		this.dataSourceTracciamento = dataSourceTracciamento;
 		this.dataSourcePdD = dataSourceTracciamento;
 		initVerificatori(protocolloSdk);
@@ -85,7 +88,10 @@ public class DatabaseComponent {
 	}
 	public DatabaseComponent(String driverJDBC,String connectionUrlTracciamento,String usernameTracciamento,String passwordTracciamento,String protocolloSdk) {
 		this.setConnection(driverJDBC,connectionUrlTracciamento,usernameTracciamento,passwordTracciamento,true);
-		this.setConnection(driverJDBC,connectionUrlTracciamento,usernameTracciamento,passwordTracciamento,false);
+		// Tracciamento e PdD insistono sullo stesso DB: riuso la stessa connessione
+		// invece di aprirne una seconda identica (riduce le connessioni verso il DB).
+		/* this.setConnection(driverJDBC,connectionUrlTracciamento,usernameTracciamento,passwordTracciamento,false); */
+		this.connectionPdD = this.connectionTracciamento;
 		initVerificatori(protocolloSdk);
 	}
 	public DatabaseComponent(String driverJDBC,String connectionUrlTracciamento,String usernameTracciamento,String passwordTracciamento,
