@@ -2734,3 +2734,213 @@ p.note.gw-validation-error-message {
     color: #d9534f;
 }
 
+/* Icona opzionale accanto al titolo della console */
+.consoleTitleIcon {
+	vertical-align: middle;
+	margin-left: 6px;
+}
+
+/* Colore del suffisso dell'avviso nel titolo della console (specificita' alta per vincere su .consoleTitle) */
+.consoleTitle.title-suffix-warning {
+	color: ${version.notice.warning.color};
+}
+
+.consoleTitle.title-suffix-error {
+	color: ${version.notice.error.color};
+}
+
+/* Banner di avviso opzionale nell'header: layout generico (i colori derivano dalle classi messages-<severity>) */
+div.version-notice {
+	margin: 0 16px 20px 16px;
+}
+
+.version-notice-content {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	line-height: normal;
+}
+
+.version-notice-icon {
+	flex: 0 0 auto;
+	vertical-align: middle;
+}
+
+.version-notice-text {
+	flex: 1 1 auto;
+}
+
+.version-notice-action {
+	flex: 0 0 auto;
+	font-weight: bold;
+	text-decoration: underline;
+	white-space: nowrap;
+}
+
+/* la call-to-action segue l'hover standard dei link (sovrascrive l'hover dei link nei box messaggi) */
+.messages-warn .version-notice-action:hover,
+.messages-errors .version-notice-action:hover,
+.messages-info .version-notice-action:hover {
+	color: ${a.hover.color};
+}
+
+/* Colore dell'icona in base alla severita': giallo per avviso, rosso per errore */
+.messages-warn .version-notice-icon,
+.messages-info .version-notice-icon {
+	color: ${version.notice.warning.color};
+}
+
+.messages-errors .version-notice-icon {
+	color: ${version.notice.error.color};
+}
+
+/* Popup informativo (overlay self-contained, indipendente da jQuery UI) */
+.version-popup-overlay {
+	display: none;
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	/* backdrop chiaro come i modali standard (jQuery UI .ui-widget-overlay: #aaaaaa @ .3);
+	   uso un colore semi-trasparente invece di opacity per non sbiadire il dialog figlio */
+	background: rgba(170,170,170,0.3);
+	z-index: 10000;
+	align-items: center;
+	justify-content: center;
+}
+.version-popup-dialog {
+	background: #fff;
+	width: 560px;
+	max-width: 92%;
+	max-height: 90%;
+	overflow: auto;
+	border: 1px solid ${version.popup.dialog.border.color};
+	border-radius: 4px;
+	box-shadow: 0 4px 20px rgba(0,0,0,0.35);
+	/* tipografia esplicita: evita di ereditare font-size/line-height diversi dal tema della console */
+	font-family: 'Roboto', Arial, sans-serif;
+	font-size: 14px;
+	line-height: 1.5;
+}
+.version-popup-header {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 14px 16px;
+	background: ${version.popup.header.background.color};
+	color: ${version.popup.header.color};
+	font-weight: bold;
+}
+.version-popup-header-icon {
+	flex: 0 0 auto;
+}
+.version-popup-header-warning .version-popup-header-icon {
+	color: ${version.notice.warning.color};
+}
+.version-popup-header-error .version-popup-header-icon {
+	color: ${version.notice.error.color};
+}
+.version-popup-title {
+	flex: 1 1 auto;
+	font-size: 16px;
+}
+.version-popup-close {
+	flex: 0 0 auto;
+	cursor: pointer;
+	font-size: 22px;
+	line-height: 1;
+	color: ${version.popup.close.color};
+	font-weight: normal;
+}
+.version-popup-close:hover {
+	color: ${version.popup.close.hover.color};
+}
+.version-popup-body {
+	padding: 16px;
+}
+.version-popup-paragraph {
+	margin: 0 0 12px 0;
+}
+.version-popup-listhead {
+	margin: 0 0 8px 0;
+}
+.version-popup-list {
+	margin: 0 0 12px 0;
+	padding-left: 22px;
+	list-style: disc outside;
+	line-height: 1.5;
+}
+.version-popup-list li {
+	list-style-type: disc;
+	display: list-item;
+	margin: 0 0 4px 0;
+	padding: 0;
+	line-height: 1.5;
+}
+.version-popup-note {
+	margin-top: 12px;
+	padding: 10px 12px;
+	border-radius: 4px;
+	font-size: 14px;
+}
+.version-popup-note-warning {
+	background: ${version.popup.note.warning.background.color};
+	border: 1px solid ${version.popup.note.warning.border.color};
+	color: ${version.popup.note.warning.color};
+}
+.version-popup-note-info {
+	background: ${version.popup.note.info.background.color};
+	border: 1px solid ${version.popup.note.info.border.color};
+	color: ${version.popup.note.info.color};
+}
+.version-popup-footer {
+	padding: 12px 16px;
+	border-top: 1px solid ${version.popup.footer.border.color};
+	text-align: right;
+}
+.version-popup-footer .version-popup-button {
+	background: ${version.popup.button.background.color};
+	color: ${version.popup.button.color};
+	border: 1px solid ${version.popup.button.background.color};
+	box-sizing: border-box;
+	padding: 10px 22px;
+	border-radius: 3px;
+	cursor: pointer;
+	font-weight: bold;
+	font-size: 14px;
+	text-transform: uppercase;
+	line-height: 1.2;
+}
+/* geometria stabile su hover/focus (override dello stile bottone globale del tema, che cambierebbe colore/bordo/dimensione) */
+.version-popup-footer .version-popup-button:hover,
+.version-popup-footer .version-popup-button:focus,
+.version-popup-footer .version-popup-button:active {
+	background: ${version.popup.button.hover.background.color};
+	border: 1px solid ${version.popup.button.hover.background.color};
+	color: ${version.popup.button.color};
+	opacity: 1;
+	outline: none;
+}
+
+/* Menu di navigazione disabilitato: visibile ma non cliccabile */
+.menu-disabled .voceMenuRC,
+.menu-disabled .voceMenuRC a {
+	pointer-events: none;
+	opacity: 0.5;
+	cursor: default;
+}
+
+/* Avatar utente inline nei testi del popup (cerchio blu + faccia, come nell'header) */
+.version-popup-face {
+	display: inline-block;
+	vertical-align: middle;
+	width: 24px;
+	height: 24px;
+	border-radius: 50%;
+	background-color: ${version.popup.face.background.color};
+	background-image: url(../images/tema_link/face_20.png);
+	background-repeat: no-repeat;
+	background-position: center center;
+}
+

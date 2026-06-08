@@ -55,6 +55,8 @@ String jQueryVersion = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_
 	<meta charset="UTF-8">
 	<title><%= gd.getTitle() %></title>
 	<link href="css/roboto/roboto-fontface.css" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" href="css/materialIcons/material-icons-fontface.css" type="text/css">
+	<link rel="stylesheet" href="css/materialIcons.css" type="text/css">
 	<link rel="stylesheet" href="css/<%= gd.getCss() %>" type="text/css">
 	<!-- JQuery lib-->
 	<script type="text/javascript" src="<%=MessageFormat.format(Costanti.LIB_JQUERY_PATH, jQueryVersion) %>" nonce="<%= randomNonce %>"></script>
@@ -65,6 +67,7 @@ String jQueryVersion = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_
 	<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
 </head>
 <body marginwidth=0 marginheight=0>
+	<jsp:include page="/jsplib/versionPopup.jsp" flush="true" />
 	<table class="bodyWrapper">
 		<tbody>
 			<jsp:include page="/jsplib/templateHeader.jsp" flush="true" />

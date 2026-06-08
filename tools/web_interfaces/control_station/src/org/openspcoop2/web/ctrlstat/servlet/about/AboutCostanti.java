@@ -67,7 +67,8 @@ public class AboutCostanti {
 	public static final String LICENSE = CostantiPdD.OPENSPCOOP2_LICENSE;
 	
 	public static final String LABEL_PARAMETRO_ABOUT_INFO = "Licenza";
-	public static final String BUTTON = "Aggiorna Licenza";
+	// etichetta di fallback generica: il testo specifico e' fornito dall'implementazione via IVersionInfo.getUpdateInfoActionLabel
+	public static final String BUTTON = "Aggiorna";
 	public static final String PARAMETRO_ABOUT_INFO = "info";
 	public static final String PARAMETRO_ABOUT_INFO_FINISH = "infoFinish";
 }

@@ -47,6 +47,8 @@ String jQueryVersion = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_
 	<meta charset="UTF-8">
 	<title><%= gd.getTitle() %></title>
 	<link href="css/roboto/roboto-fontface.css" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" href="css/materialIcons/material-icons-fontface.css" type="text/css">
+	<link rel="stylesheet" href="css/materialIcons.css" type="text/css">
 	<link rel="stylesheet" href="css/<%= gd.getCss() %>" type="text/css">
 	<!-- JQuery lib-->
 	<script type="text/javascript" src="<%=MessageFormat.format(Costanti.LIB_JQUERY_PATH, jQueryVersion) %>" nonce="<%= randomNonce %>"></script>

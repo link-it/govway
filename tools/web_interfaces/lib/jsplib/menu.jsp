@@ -45,7 +45,7 @@ String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CS
 %>
 
 <td class="td1PageBody" valign='top'>
-	<div id="menuct">
+	<div id="menuct" class="<%= (gd!=null && gd.isMenuDisabled()) ? "menu-disabled" : "" %>">
 		<% 
 			List<?> v = pd.getMenu(); 
 			MenuEntry m = null;

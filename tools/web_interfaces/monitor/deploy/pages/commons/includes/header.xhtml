@@ -86,7 +86,8 @@
 									</c:if>
 					                <td class="#{(applicationBean.amministratore or applicationBean.operatore) ? 'tdTitoloNoPaddingLeft' : 'tdTitolo'}">
 				                		<a href="#{facesContext.externalContext.request.contextPath}/commons/pages/welcome.jsf" class="titleStatusIconLinkLeft">
-											<h:outputText value="#{loginBean.title}" id="licenseOutputText"  styleClass="appTitle"/>
+											<h:outputText value="#{loginBean.titleBase}" id="licenseOutputText"  styleClass="appTitle"/>
+											<h:outputText value=" #{loginBean.titleSuffix}" styleClass="appTitle #{loginBean.titleSeverityClass}" rendered="#{not empty loginBean.titleSuffix}"/>
 										</a>
 										<c:if test="#{!(applicationBean.amministratore or applicationBean.operatore)}">
 				            				<input type="hidden" id="_csrfHeader" name="_csrf" value="#{loginBean.csrf}"/>

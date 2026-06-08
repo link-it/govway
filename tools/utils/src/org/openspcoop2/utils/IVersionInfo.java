@@ -44,9 +44,59 @@ public interface IVersionInfo {
 	public String getWarningTitleSuffix(Object ... params);
 	
 	public String getWebSite(Object ... params);
-	
+
 	public String getCopyright(Object ... params);
-	
+
 	public void set(byte[] info, Logger log, Object ... objects) throws UtilsException;
-	
+
+	/**
+	 * Arricchimenti grafici opzionali dell'avviso (icona, call-to-action).
+	 * Sono metodi 'default' che ritornano null: una implementazione del plugin li valorizza
+	 * per attivare il rendering ricco lato console; se non valorizzati il comportamento resta invariato.
+	 */
+
+	/** Nome dell'icona (es. material icon: 'warning','error','schedule') da mostrare nel banner del messaggio. */
+	public default String getMessageIcon(Object ... params) {
+		return null;
+	}
+
+	/** Nome dell'icona (es. material icon) da mostrare accanto al suffisso del titolo della console. */
+	public default String getTitleIcon(Object ... params) {
+		return null;
+	}
+
+	/** Etichetta della call-to-action mostrata nel banner. */
+	public default String getActionLabel(Object ... params) {
+		return null;
+	}
+
+	/** URL della call-to-action mostrata nel banner. */
+	public default String getActionUrl(Object ... params) {
+		return null;
+	}
+
+	/**
+	 * Popup informativo opzionale da mostrare dopo il login (una sola volta).
+	 * Ritorna null se non c'e' nulla da mostrare. I testi del popup sono frammenti HTML fidati.
+	 */
+	public default VersionInfoPopup getPostLoginPopup(Object ... params) {
+		return null;
+	}
+
+	/**
+	 * Indica se le voci del menu di navigazione devono risultare disabilitate (visibili ma non cliccabili).
+	 * Interrogato ad ogni pagina; ritorna false per default.
+	 */
+	public default boolean isMenuDisabled(Object ... params) {
+		return false;
+	}
+
+	/**
+	 * Etichetta del pulsante di invio della sezione di aggiornamento delle informazioni di versione (pagina Informazioni).
+	 * Permette all'implementazione di adattare il testo allo stato corrente. Ritorna null per usare il default generico.
+	 */
+	public default String getUpdateInfoActionLabel(Object ... params) {
+		return null;
+	}
+
 }

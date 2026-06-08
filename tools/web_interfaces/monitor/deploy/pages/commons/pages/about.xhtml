@@ -6,6 +6,8 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:link="http://www.link.it" template="/templates/defaultTemplate.xhtml">
 	<ui:param value="Informazioni" name="title" />
+	<!-- pagina sempre accessibile anche quando la navigazione e' disabilitata (menuDisabled) -->
+	<ui:param name="alwaysShowBody" value="true" />
 	<ui:define name="navbar">
 		<ul>
 			<li><h:outputText value="#{msg['about.title']}" styleClass="ultimo-path" /></li>

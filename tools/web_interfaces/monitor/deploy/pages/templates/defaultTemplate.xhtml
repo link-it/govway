@@ -77,7 +77,9 @@
       
 	
 	<f:facet name="sidebar">
-		<ui:include src="/commons/includes/menu.xhtml" />
+		<h:panelGroup layout="block" styleClass="#{applicationBean.menuDisabled ? 'menu-disabled' : ''}">
+			<ui:include src="/commons/includes/menu.xhtml" />
+		</h:panelGroup>
 	</f:facet>
 	
 	<!-- Body -->
@@ -97,9 +99,11 @@
 					<rich:layoutPanel id="navbar" position="top">
 						<a4j:form prependId="false">
 							<input type="hidden" id="_csrfNavbar" name="_csrf" value="#{loginBean.csrf}"/>
-							<div id="breadcrumb-ct">
-								<div id="crumbs"><ui:insert name="navbar"></ui:insert></div>
-							</div>
+							<h:panelGroup layout="block" rendered="#{not applicationBean.menuDisabled}">
+								<div id="breadcrumb-ct">
+									<div id="crumbs"><ui:insert name="navbar"></ui:insert></div>
+								</div>
+							</h:panelGroup>
 						</a4j:form>
 					</rich:layoutPanel>
 
@@ -107,6 +111,17 @@
 					</rich:layoutPanel>
 
 					<rich:layoutPanel id="body" position="center" >
+						<a4j:outputPanel id="versionNoticePlaceHolder" layout="block">
+							<h:panelGroup layout="block" styleClass="messages-#{applicationBean.versionNoticeSeverity} version-notice#{applicationBean.menuDisabled ? ' version-notice-topgap' : ''}" rendered="#{applicationBean.versionNoticePresent}">
+								<a4j:outputPanel layout="block" styleClass="version-notice-content">
+									<h:panelGroup rendered="#{not empty applicationBean.versionNoticeIcon}"><i class="material-icons md-18 version-notice-icon">#{applicationBean.versionNoticeIcon}</i></h:panelGroup>
+									<h:outputText value="#{applicationBean.versionNoticeMessage}" styleClass="version-notice-text"/>
+									<h:outputLink value="#{applicationBean.versionNoticeActionUrl}" target="_blank" styleClass="version-notice-action" rendered="#{not empty applicationBean.versionNoticeActionUrl and not empty applicationBean.versionNoticeActionLabel}">
+										<h:outputText value="#{applicationBean.versionNoticeActionLabel}"/>
+									</h:outputLink>
+								</a4j:outputPanel>
+							</h:panelGroup>
+						</a4j:outputPanel>
 						<a4j:outputPanel id="errorsPlaceHolder" ajaxRendered="true" layout="block">
 							<h:panelGroup layout="block" styleClass="#{facesContext.maximumSeverity.ordinal>=2 ? 'messages-errors' : 'messages-info'}" rendered="#{not empty facesContext.maximumSeverity}">
 								<a4j:outputPanel layout="block" styleClass="messages-title">
@@ -141,9 +156,9 @@
 				  				</div>
 							</h:panelGroup>
 						</a4j:outputPanel>
-						<div>
+						<h:panelGroup layout="block" rendered="#{not applicationBean.menuDisabled or alwaysShowBody}">
 							<ui:insert name="body"/>
-						</div>
+						</h:panelGroup>
 					</rich:layoutPanel>
 
 					<rich:layoutPanel position="bottom" width="100%">
@@ -151,6 +166,63 @@
 				</rich:layout>
 		</h:panelGrid>
 	</rich:panel>
+
+	<!-- Popup informativo, mostrato una volta dopo il login (contenuto: frammenti HTML fidati dal plugin) -->
+	<a4j:outputPanel id="versionPopupCtr" layout="block" ajaxRendered="false" rendered="#{applicationBean.popupPresent and loginBean.showLicensePopup}">
+		<rich:modalPanel id="versionPopupModal" autosized="true" width="560" moveable="false">
+			<f:facet name="header">
+				<h:panelGroup styleClass="version-popup-header version-popup-header-#{applicationBean.popup.severity}">
+					<i class="material-icons md-24 version-popup-header-icon">#{applicationBean.popup.icon}</i>
+					<h:outputText value="#{applicationBean.popup.title}" escape="false" styleClass="version-popup-title"/>
+				</h:panelGroup>
+			</f:facet>
+			<f:facet name="controls">
+				<h:panelGroup layout="inline" styleClass="version-popup-close-ctrl" title="Chiudi" rendered="#{applicationBean.popup.closable}">
+					<i class="material-icons md-16">close</i>
+				</h:panelGroup>
+			</f:facet>
+			<div class="version-popup-body">
+				<ui:repeat value="#{applicationBean.popup.paragraphs}" var="vpPar">
+					<p class="version-popup-paragraph"><h:outputText value="#{vpPar}" escape="false"/></p>
+				</ui:repeat>
+				<h:panelGroup layout="block" styleClass="version-popup-listhead" rendered="#{not empty applicationBean.popup.listHead}">
+					<h:outputText value="#{applicationBean.popup.listHead}" escape="false"/>
+				</h:panelGroup>
+				<h:panelGroup rendered="#{not empty applicationBean.popup.listItems}">
+					<ul class="version-popup-list">
+						<ui:repeat value="#{applicationBean.popup.listItems}" var="vpVoce">
+							<li><h:outputText value="#{vpVoce}" escape="false"/></li>
+						</ui:repeat>
+					</ul>
+				</h:panelGroup>
+				<h:panelGroup layout="block" rendered="#{not empty applicationBean.popup.note}"
+					styleClass="version-popup-note version-popup-note-#{empty applicationBean.popup.noteStyle ? 'warning' : applicationBean.popup.noteStyle}">
+					<h:outputText value="#{applicationBean.popup.note}" escape="false"/>
+				</h:panelGroup>
+			</div>
+			<div class="version-popup-footer">
+				<input type="button" class="version-popup-button" value="#{applicationBean.popup.buttonLabel}"/>
+			</div>
+		</rich:modalPanel>
+		<h:form prependId="false">
+			<input type="hidden" id="_csrfVersionPopup" name="_csrf" value="#{loginBean.csrf}"/>
+			<a4j:jsFunction name="dismissVersionPopupFn" action="#{loginBean.dismissLicensePopup}"/>
+		</h:form>
+		<script type="text/javascript" nonce="#{_csp_random_nonce}">
+			Richfaces.showModalPanel('versionPopupModal');
+			// chiusura via addEventListener (niente onclick inline: bloccato dalla CSP strict-dynamic)
+			(function(){
+				function dismissVersionPopup(){
+					Richfaces.hideModalPanel('versionPopupModal');
+					dismissVersionPopupFn();
+				}
+				var vpBtn = document.querySelector('.version-popup-button');
+				if(vpBtn){ vpBtn.addEventListener('click', dismissVersionPopup); }
+				var vpClose = document.querySelector('.version-popup-close-ctrl');
+				if(vpClose){ vpClose.addEventListener('click', dismissVersionPopup); }
+			})();
+		</script>
+	</a4j:outputPanel>
 
 	<f:facet name="footer" align="center">
 		<h:outputLink value="https://www.link.it" target="_blank">
