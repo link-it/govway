@@ -374,6 +374,9 @@ public class ControlStationCore {
 	public String getConsoleNomeSintesi() {
 		return this.consoleNomeSintesi;
 	}
+	public String getConsoleNomeEstesoBase() {
+		return this.consoleNomeEsteso;
+	}
 	public String getConsoleNomeEsteso(HttpServletRequest request, HttpSession session) {
 		String titleSuffix = getTitleSuffix(request, session);
 		if(!StringUtils.isEmpty(titleSuffix)){
@@ -6953,7 +6956,7 @@ public class ControlStationCore {
 						try {
 							// prendo una connessione
 							con = ControlStationCore.dbM.getConnection();
-							vInfo.init(ControlStationLogger.getPddConsoleCoreLogger(), con, tipoDB);
+							vInfo.init(ControlStationLogger.getPddConsoleCoreLogger(), con, tipoDB, "gestione");
 							this.versionInfo = vInfo;
 						} 
 						catch(Exception e) {

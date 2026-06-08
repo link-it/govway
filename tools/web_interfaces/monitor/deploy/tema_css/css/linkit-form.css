@@ -774,3 +774,165 @@ input[type="submit"]:hover, input[type="button"]:hover, .buttonrow a:hover, .but
     vertical-align: bottom;
     color: ${p.note.color};
 }
+
+/* Icona opzionale accanto al titolo della console */
+.consoleTitleIcon {
+	vertical-align: middle;
+	margin-left: 6px;
+}
+
+/* Banner di avviso opzionale nell'header: layout generico (i colori derivano dalle classi messages-<severity>) */
+/* azzera il margine destro ereditato da messages-* per allineare il bordo destro al contenuto sottostante */
+div.version-notice {
+	margin-right: 0;
+}
+
+/* pagina a menu disabilitato: la breadcrumb e' soppressa, ripristino un minimo stacco del banner dall'header */
+div.version-notice-topgap {
+	margin-top: 16px;
+}
+
+.version-notice-content {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.version-notice-icon {
+	flex: 0 0 auto;
+	vertical-align: middle;
+}
+
+.version-notice-text {
+	flex: 1 1 auto;
+}
+
+.version-notice-action {
+	flex: 0 0 auto;
+	font-weight: bold;
+	text-decoration: underline;
+	white-space: nowrap;
+}
+
+/* Colore dell'icona in base alla severita': giallo per avviso, rosso per errore */
+.messages-warn .version-notice-icon,
+.messages-info .version-notice-icon {
+	color: ${version.notice.warning.color};
+}
+
+.messages-errors .version-notice-icon {
+	color: ${version.notice.error.color};
+}
+
+/* Colore del suffisso dell'avviso nel titolo della console (specificita' alta per vincere su .appTitle) */
+.appTitle.title-suffix-warning {
+	color: ${version.notice.warning.color};
+}
+
+.appTitle.title-suffix-error {
+	color: ${version.notice.error.color};
+}
+
+/* Popup informativo (stessi valori di linkit-base.css per resa identica tra le console; la barra header scura e' fornita dal rich:modalPanel) */
+.version-popup-header {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 6px 0;
+	font-weight: bold;
+}
+.version-popup-header-icon {
+	flex: 0 0 auto;
+}
+.version-popup-header-warning .version-popup-header-icon {
+	color: ${version.notice.warning.color};
+}
+.version-popup-header-error .version-popup-header-icon {
+	color: ${version.notice.error.color};
+}
+.version-popup-title {
+	flex: 1 1 auto;
+	font-size: 16px;
+}
+.version-popup-close-ctrl {
+	cursor: pointer;
+}
+.version-popup-body {
+	padding: 16px;
+	width: 528px;
+	max-width: 100%;
+	box-sizing: border-box;
+	/* tipografia esplicita: stessa resa della console di gestione, indipendente dal tema */
+	font-family: 'Roboto', Arial, sans-serif;
+	font-size: 14px;
+	line-height: 1.5;
+}
+.version-popup-paragraph {
+	margin: 0 0 12px 0;
+}
+.version-popup-listhead {
+	margin: 0 0 8px 0;
+}
+.version-popup-list {
+	margin: 0 0 12px 0;
+	padding-left: 22px;
+	list-style: disc outside;
+	line-height: 1.5;
+}
+.version-popup-list li {
+	list-style-type: disc;
+	display: list-item;
+	margin: 0 0 4px 0;
+	padding: 0;
+	line-height: 1.5;
+}
+.version-popup-note {
+	margin-top: 12px;
+	padding: 10px 12px;
+	border-radius: 4px;
+	font-size: 14px;
+}
+.version-popup-note-warning {
+	background: ${version.popup.note.warning.background.color};
+	border: 1px solid ${version.popup.note.warning.border.color};
+	color: ${version.popup.note.warning.color};
+}
+.version-popup-note-info {
+	background: ${version.popup.note.info.background.color};
+	border: 1px solid ${version.popup.note.info.border.color};
+	color: ${version.popup.note.info.color};
+}
+.version-popup-footer {
+	padding: 12px 16px;
+	border-top: 1px solid ${version.popup.footer.border.color};
+	text-align: right;
+}
+.version-popup-footer .version-popup-button {
+	background: ${version.popup.button.background.color};
+	color: ${version.popup.button.color};
+	border: 1px solid ${version.popup.button.background.color};
+	box-sizing: border-box;
+	padding: 10px 22px;
+	border-radius: 3px;
+	cursor: pointer;
+	font-weight: bold;
+	font-size: 14px;
+	text-transform: uppercase;
+	line-height: 1.2;
+}
+/* geometria stabile su hover/focus (override dello stile bottone globale del tema) */
+.version-popup-footer .version-popup-button:hover,
+.version-popup-footer .version-popup-button:focus,
+.version-popup-footer .version-popup-button:active {
+	background: ${version.popup.button.hover.background.color};
+	border: 1px solid ${version.popup.button.hover.background.color};
+	color: ${version.popup.button.color};
+	opacity: 1;
+	outline: none;
+}
+
+/* Menu di navigazione disabilitato: visibile ma non cliccabile */
+.menu-disabled {
+	pointer-events: none;
+	opacity: 0.6;
+}

@@ -53,6 +53,8 @@ if(setErrorCodeObj != null){
 	<title><%= gd.getTitle() %></title>
 	<jsp:include page="/jsplib/browserUtils.jsp" flush="true" />
 	<link href="css/roboto/roboto-fontface.css" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" href="css/materialIcons/material-icons-fontface.css" type="text/css">
+	<link rel="stylesheet" href="css/materialIcons.css" type="text/css">
 	<link rel="stylesheet" href="css/<%= gd.getCss() %>" type="text/css">
 	<script type="text/javascript" src="js/webapps.js" nonce="<%= randomNonce %>"></script>
 	<!-- JQuery lib-->
@@ -66,6 +68,7 @@ $(document).ready(function(){
 </script>
 </head>
 <body marginwidth=0 marginheight=0>
+	<jsp:include page="/jsplib/versionPopup.jsp" flush="true" />
 	<table class="bodyWrapper">
 		<tbody>
 			<jsp:include page="/jsplib/templateHeader.jsp" flush="true" />

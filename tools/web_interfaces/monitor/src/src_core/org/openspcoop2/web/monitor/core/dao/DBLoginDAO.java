@@ -312,7 +312,7 @@ public class DBLoginDAO implements ILoginDAO {
 				// prendo una connessione
 				con = this.driverConfigDB.getConnection("readVersionInfo");
 				String tipoDatabase = DAOFactoryProperties.getInstance(log).getTipoDatabase(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
-				vInfo.init(log, con, tipoDatabase);
+				vInfo.init(log, con, tipoDatabase, "monitoraggio");
 				return vInfo;
 			} 
 			catch(Exception e) {

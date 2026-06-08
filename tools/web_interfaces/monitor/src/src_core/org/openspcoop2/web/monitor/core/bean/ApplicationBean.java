@@ -999,7 +999,83 @@ public class ApplicationBean implements Serializable {
 			return CostantiPdD.OPENSPCOOP2_LICENSE;
 		}
 	}
-	
+
+	// Banner di avviso opzionale nell'header, valorizzato solo se fornito da una implementazione IVersionInfo
+	public boolean isVersionNoticePresent() {
+		String msg = getVersionNoticeMessage();
+		return msg!=null && !msg.trim().isEmpty();
+	}
+	public String getVersionNoticeSeverity() {
+		IVersionInfo versionInfo = this.loginBean!=null ? this.loginBean.getvInfo() : null;
+		if(versionInfo==null) {
+			return null;
+		}
+		String soggettoSelezionato = Utility.getSoggettoSelezionatoPerVersionInfo();
+		if(!StringUtils.isEmpty(versionInfo.getErrorMessage(soggettoSelezionato))) {
+			return "errors";
+		}
+		if(!StringUtils.isEmpty(versionInfo.getWarningMessage(soggettoSelezionato))) {
+			return "info";
+		}
+		return null;
+	}
+	public String getVersionNoticeMessage() {
+		IVersionInfo versionInfo = this.loginBean!=null ? this.loginBean.getvInfo() : null;
+		if(versionInfo==null) {
+			return null;
+		}
+		String soggettoSelezionato = Utility.getSoggettoSelezionatoPerVersionInfo();
+		String error = versionInfo.getErrorMessage(soggettoSelezionato);
+		if(!StringUtils.isEmpty(error)) {
+			return error;
+		}
+		String warning = versionInfo.getWarningMessage(soggettoSelezionato);
+		if(!StringUtils.isEmpty(warning)) {
+			return warning;
+		}
+		return null;
+	}
+	public String getVersionNoticeIcon() {
+		IVersionInfo versionInfo = this.loginBean!=null ? this.loginBean.getvInfo() : null;
+		if(versionInfo==null) {
+			return null;
+		}
+		return versionInfo.getMessageIcon(Utility.getSoggettoSelezionatoPerVersionInfo());
+	}
+	public String getVersionNoticeActionLabel() {
+		IVersionInfo versionInfo = this.loginBean!=null ? this.loginBean.getvInfo() : null;
+		if(versionInfo==null) {
+			return null;
+		}
+		return versionInfo.getActionLabel(Utility.getSoggettoSelezionatoPerVersionInfo());
+	}
+	public String getVersionNoticeActionUrl() {
+		IVersionInfo versionInfo = this.loginBean!=null ? this.loginBean.getvInfo() : null;
+		if(versionInfo==null) {
+			return null;
+		}
+		return versionInfo.getActionUrl(Utility.getSoggettoSelezionatoPerVersionInfo());
+	}
+
+	// Popup post-login (oggetto con frammenti HTML fidati) e stato di blocco menu
+	public org.openspcoop2.utils.VersionInfoPopup getPopup() {
+		IVersionInfo versionInfo = this.loginBean!=null ? this.loginBean.getvInfo() : null;
+		if(versionInfo==null) {
+			return null;
+		}
+		return versionInfo.getPostLoginPopup(Utility.getSoggettoSelezionatoPerVersionInfo());
+	}
+	public boolean isPopupPresent() {
+		return getPopup()!=null;
+	}
+	public boolean isMenuDisabled() {
+		IVersionInfo versionInfo = this.loginBean!=null ? this.loginBean.getvInfo() : null;
+		if(versionInfo==null) {
+			return false;
+		}
+		return versionInfo.isMenuDisabled(Utility.getSoggettoSelezionatoPerVersionInfo());
+	}
+
 	public int getLicenzaRows() {
 		String licenza = getLicenza();
 		String [] split = licenza.split("\n");

@@ -84,12 +84,13 @@ if(!tabSessionKey.equals("")){
 			<tbody>
 				 <tr>
 				  	<td class="td1PageHeader">
+				  		<% String titleSuffixHeader = gd.getTitleSuffix(); %>
 				  		<% if(visualizzaLinkHome){%>
 					  		<a href="<%=homeLink %>" class="titleIconLinkLeft">
-					    		<span class="consoleTitle"><%= gd.getTitle() %></span>
+					    		<span class="consoleTitle"><%= gd.getTitleBase() %></span><% if(titleSuffixHeader!=null && !titleSuffixHeader.isEmpty()){ %> <span class="consoleTitle <%= gd.getTitleSeverityClass() %>"><%= titleSuffixHeader %></span><% } %>
 				    		</a>
 			    		<% } else {%>
-				 			<span class="consoleTitle"><%= gd.getTitle() %></span>
+				 			<span class="consoleTitle"><%= gd.getTitleBase() %></span><% if(titleSuffixHeader!=null && !titleSuffixHeader.isEmpty()){ %> <span class="consoleTitle <%= gd.getTitleSeverityClass() %>"><%= titleSuffixHeader %></span><% } %>
 				 		<% } %>
 				    </td>
 				 	<td class="td2PageHeader" align="right">
@@ -504,7 +505,7 @@ if(!tabSessionKey.equals("")){
 				 			</tbody>
 				 		</table>
 					</td>
-				 </tr>		
+				 </tr>
 			</tbody>
 		</table>
 	</td>

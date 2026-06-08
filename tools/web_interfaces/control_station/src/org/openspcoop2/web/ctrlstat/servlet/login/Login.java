@@ -138,7 +138,12 @@ public final class Login extends Action {
 			// Inizializzo di nuovo GeneralData, dopo aver messo
 			// in sessione la login dell'utente
 			gd = generalHelper.initGeneralData(request);
-	
+
+			// Se e' presente un popup informativo sullo stato della subscription, lo si mostra una sola volta dopo il login
+			if(gd.getPopup()!=null) {
+				session.setAttribute("showVersionPopup", Boolean.TRUE);
+			}
+
 			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 	
 			// Forward control to the specified success URI

@@ -390,7 +390,7 @@ public class OAuth2Utilities {
 			// default: chiamata HTTP all'endpoint /userinfo (comportamento storico)
 			userInfo = getUserInfo(log, loginProperties, oAuth2Token);
 		}
-		if(log != null && isDebugEnabled(loginProperties) && userInfo instanceof Oauth2UserInfo) {
+		if(log != null && isDebugEnabled(loginProperties)) {
 			log.debug("[OAuth2 DEBUG] userInfo: \nsorgente={} \nreturnCode={} \nraw={} \nclaims={}" , 
 					source , userInfo.getReturnCode(), userInfo.getRaw(),	 userInfo.getMap());
 		}

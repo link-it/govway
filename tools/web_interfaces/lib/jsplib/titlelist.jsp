@@ -121,6 +121,30 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 			</td>
 		</tr>
 		<%
+		// banner di avviso opzionale (valori gia' escaped in GeneralData)
+		String noticeMessage = (gd!=null) ? gd.getNoticeMessage() : null;
+		if(noticeMessage!=null && !noticeMessage.trim().isEmpty()){
+			String noticeSeverity = gd.getNoticeSeverity();
+			if(noticeSeverity==null || noticeSeverity.trim().isEmpty()){ noticeSeverity = "info"; }
+			String noticeIcon = gd.getNoticeIcon();
+			String noticeActionLabel = gd.getNoticeActionLabel();
+			String noticeActionUrl = gd.getNoticeActionUrl();
+		%>
+		<tr>
+			<td colspan="2">
+				<div class="messages-<%= noticeSeverity %> version-notice">
+					<div class="version-notice-content">
+						<% if(noticeIcon!=null && !noticeIcon.trim().isEmpty()){ %><i class="material-icons md-18 version-notice-icon"><%= noticeIcon %></i><% } %>
+						<span class="version-notice-text"><%= noticeMessage %></span>
+						<% if(noticeActionUrl!=null && !noticeActionUrl.trim().isEmpty() && noticeActionLabel!=null && !noticeActionLabel.trim().isEmpty()){ %>
+						<a class="version-notice-action" href="<%= noticeActionUrl %>" target="_blank" rel="noopener"><%= noticeActionLabel %></a>
+						<% } %>
+					</div>
+				</div>
+			</td>
+		</tr>
+		<% } %>
+		<%
 		if (!pageDescription.equals("")) {
 		  %>
 			<tr>

@@ -45,6 +45,8 @@ String styleClassColonnaSX = ""; // "td1PageBodyNoMenu"
 	<title><%= gd.getTitle() %></title>
 	<jsp:include page="/jsplib/browserUtils.jsp" flush="true" />
 	<link href="css/roboto/roboto-fontface.css" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" href="css/materialIcons/material-icons-fontface.css" type="text/css">
+	<link rel="stylesheet" href="css/materialIcons.css" type="text/css">
 	<link rel="stylesheet" href="css/<%= gd.getCss() %>" type="text/css">
 	<script type="text/javascript" src="js/webapps.js" nonce="<%= randomNonce %>"></script>
 	<!-- JQuery lib-->

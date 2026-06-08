@@ -26,7 +26,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
@@ -97,7 +96,9 @@ public class About extends Action{
 					try {
 						aHelper.getCore().updateInfoVersion(request, session, infoP.getValue());
 						aggiornamentoEffettuato = "Aggiornamento completato con successo";
-						gd.setTitle(StringEscapeUtils.escapeHtml(aHelper.getCore().getConsoleNomeEsteso(request, session)));
+						// le nuove informazioni di versione possono cambiare titolo, banner e stato del menu: rigenero GeneralData e menu
+						gd = generalHelper.initGeneralData(request);
+						aHelper.makeMenu();
 					}catch(Exception e) {
 						aggiornamentoNonRiuscito = "Aggiornamento fallito: "+e.getMessage();
 					}

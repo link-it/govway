@@ -27,6 +27,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
 /**
  * GeneralData
  * 
@@ -57,6 +59,19 @@ public class GeneralData implements Serializable{
 	private String logoHeaderTitolo;
 	private String logoHeaderLink;
 	private boolean visualizzaLinkHome;
+	// Banner di avviso opzionale popolato da una implementazione IVersionInfo
+	// titolo scomposto per poter colorare il solo suffisso (avviso) nell'header
+	private String titleBase;
+	private String titleSuffix;
+	private String titleSeverityClass;
+	private String noticeSeverity; // suffisso classe css del banner: errors|warn|info
+	private String noticeMessage;
+	private String noticeIcon;
+	private String noticeActionLabel;
+	private String noticeActionUrl;
+	// Popup informativo opzionale (mostrato una volta dopo il login) e stato di blocco del menu
+	private org.openspcoop2.utils.VersionInfoPopup popup;
+	private boolean menuDisabled;
 
 	public GeneralData(String linkFoot) {
 		this.product = "";
@@ -171,5 +186,72 @@ public class GeneralData implements Serializable{
 	}
 	public void setVisualizzaLinkHome(boolean visualizzaLinkHome) {
 		this.visualizzaLinkHome = visualizzaLinkHome;
+	}
+	// I getter dell'avviso restituiscono il valore gia' HTML-escaped: l'escaping resta centralizzato qui (Java),
+	// cosi' il template puo' emetterli direttamente senza occuparsi della codifica.
+	public String getTitleBase() {
+		return (this.titleBase!=null) ? escapeHtml(this.titleBase) : this.title;
+	}
+	public void setTitleBase(String titleBase) {
+		this.titleBase = titleBase;
+	}
+	public String getTitleSuffix() {
+		return escapeHtml(this.titleSuffix);
+	}
+	public void setTitleSuffix(String titleSuffix) {
+		this.titleSuffix = titleSuffix;
+	}
+	public String getTitleSeverityClass() {
+		return (this.titleSeverityClass!=null) ? this.titleSeverityClass : "";
+	}
+	public void setTitleSeverityClass(String titleSeverityClass) {
+		this.titleSeverityClass = titleSeverityClass;
+	}
+	public String getNoticeSeverity() {
+		// valore controllato internamente (errors|warn|info), usato come suffisso di classe css: nessun escaping
+		return this.noticeSeverity;
+	}
+	public void setNoticeSeverity(String noticeSeverity) {
+		this.noticeSeverity = noticeSeverity;
+	}
+	public String getNoticeMessage() {
+		return escapeHtml(this.noticeMessage);
+	}
+	public void setNoticeMessage(String noticeMessage) {
+		this.noticeMessage = noticeMessage;
+	}
+	public String getNoticeIcon() {
+		return escapeHtml(this.noticeIcon);
+	}
+	public void setNoticeIcon(String noticeIcon) {
+		this.noticeIcon = noticeIcon;
+	}
+	public String getNoticeActionLabel() {
+		return escapeHtml(this.noticeActionLabel);
+	}
+	public void setNoticeActionLabel(String noticeActionLabel) {
+		this.noticeActionLabel = noticeActionLabel;
+	}
+	public String getNoticeActionUrl() {
+		return escapeHtml(this.noticeActionUrl);
+	}
+	public void setNoticeActionUrl(String noticeActionUrl) {
+		this.noticeActionUrl = noticeActionUrl;
+	}
+	private static String escapeHtml(String s) {
+		return (s!=null) ? StringEscapeUtils.escapeHtml(s) : null;
+	}
+	// Popup: oggetto con frammenti HTML fidati (resi raw dal template); non si applica escaping
+	public org.openspcoop2.utils.VersionInfoPopup getPopup() {
+		return this.popup;
+	}
+	public void setPopup(org.openspcoop2.utils.VersionInfoPopup popup) {
+		this.popup = popup;
+	}
+	public boolean isMenuDisabled() {
+		return this.menuDisabled;
+	}
+	public void setMenuDisabled(boolean menuDisabled) {
+		this.menuDisabled = menuDisabled;
 	}
 }

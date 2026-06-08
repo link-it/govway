@@ -8,7 +8,9 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	template="/templates/defaultTemplate.xhtml">
 	<f:loadBundle var="msg" basename="messages" />
-	
+	<!-- pagina sempre accessibile anche quando la navigazione e' disabilitata (menuDisabled) -->
+	<ui:param name="alwaysShowBody" value="true" />
+
 		<ui:define name="body">
 			<style type="text/css" nonce="#{_csp_random_nonce}">
 				#crumbs {display: none;	}		

@@ -34,7 +34,6 @@ import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
-import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TargetType;
@@ -85,14 +84,7 @@ public class AboutHelper extends ConsoleHelper {
 		// Ottieni il soggetto selezionato
 		String soggettoSelezionato = getSoggettoSelezionatoFromSession();
 
-		if(versionInfo!=null) {
-			if(!StringUtils.isEmpty(versionInfo.getErrorMessage(soggettoSelezionato))) {
-				this.pd.setMessage(versionInfo.getErrorMessage(soggettoSelezionato), MessageType.ERROR);
-			}
-			else if(!StringUtils.isEmpty(versionInfo.getWarningMessage(soggettoSelezionato))) {
-				this.pd.setMessage(versionInfo.getWarningMessage(soggettoSelezionato), MessageType.INFO);
-			}
-		}
+		// l'eventuale avviso (messaggio + icona + azione) e' reso globalmente come banner nell'header della console
 
 		// titolo sezione
 		DataElement de = new DataElement();
@@ -185,7 +177,9 @@ public class AboutHelper extends ConsoleHelper {
 			de.setValue(Costanti.CHECK_BOX_ENABLED);
 			dati.add(de);
 				
-			this.pd.setLabelBottoneInvia(AboutCostanti.BUTTON);
+			// etichetta del pulsante pilotata dall'implementazione (es. "Aggiorna/Carica" in base alla presenza); fallback generico
+			String updateLabel = versionInfo.getUpdateInfoActionLabel(soggettoSelezionato);
+			this.pd.setLabelBottoneInvia((updateLabel!=null && !updateLabel.trim().isEmpty()) ? updateLabel : AboutCostanti.BUTTON);
 
 
 		}

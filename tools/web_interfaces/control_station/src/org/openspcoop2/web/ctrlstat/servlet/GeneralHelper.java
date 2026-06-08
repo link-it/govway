@@ -37,6 +37,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.utils.ProtocolUtils;
+import org.openspcoop2.utils.IVersionInfo;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ControlStationLogger;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -136,6 +137,46 @@ public class GeneralHelper {
 		gd.setProduct(this.core.getConsoleNomeSintesi());
 		gd.setLanguage(this.core.getConsoleLanguage());
 		gd.setTitle(StringEscapeUtils.escapeHtml(this.core.getConsoleNomeEsteso(request, this.session)));
+		// avviso opzionale: icona nel titolo e banner nell'header
+		try {
+			IVersionInfo vInfo = this.core.getInfoVersion(request, this.session);
+			if(vInfo!=null) {
+				String soggetto = (u!=null) ? u.getSoggettoSelezionatoPddConsole() : null;
+				String errorMessage = vInfo.getErrorMessage(soggetto);
+				String warningMessage = vInfo.getWarningMessage(soggetto);
+				if(errorMessage!=null && !errorMessage.trim().isEmpty()) {
+					gd.setNoticeSeverity("errors");
+					gd.setNoticeMessage(errorMessage);
+				}
+				else if(warningMessage!=null && !warningMessage.trim().isEmpty()) {
+					gd.setNoticeSeverity("warn");
+					gd.setNoticeMessage(warningMessage);
+				}
+				if(gd.getNoticeMessage()!=null) {
+					gd.setNoticeIcon(vInfo.getMessageIcon(soggetto));
+					gd.setNoticeActionLabel(vInfo.getActionLabel(soggetto));
+					gd.setNoticeActionUrl(vInfo.getActionUrl(soggetto));
+				}
+				// suffisso del titolo colorato per severita'
+				String errorSuffix = vInfo.getErrorTitleSuffix(soggetto);
+				String warningSuffix = vInfo.getWarningTitleSuffix(soggetto);
+				if(errorSuffix!=null && !errorSuffix.trim().isEmpty()) {
+					gd.setTitleBase(this.core.getConsoleNomeEstesoBase());
+					gd.setTitleSuffix(errorSuffix.trim());
+					gd.setTitleSeverityClass("title-suffix-error");
+				}
+				else if(warningSuffix!=null && !warningSuffix.trim().isEmpty()) {
+					gd.setTitleBase(this.core.getConsoleNomeEstesoBase());
+					gd.setTitleSuffix(warningSuffix.trim());
+					gd.setTitleSeverityClass("title-suffix-warning");
+				}
+				// popup post-login e stato di blocco menu
+				gd.setPopup(vInfo.getPostLoginPopup(soggetto));
+				gd.setMenuDisabled(vInfo.isMenuDisabled(soggetto));
+			}
+		} catch(Exception e) {
+			this.log.error("Errore durante la lettura dell'avviso versione: "+e.getMessage(),e);
+		}
 		gd.setLogoHeaderImage(this.core.getLogoHeaderImage());
 		gd.setLogoHeaderLink(this.core.getLogoHeaderLink());
 		gd.setLogoHeaderTitolo(this.core.getLogoHeaderTitolo()); 

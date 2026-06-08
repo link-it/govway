@@ -129,6 +129,12 @@ public class LoginBean extends AbstractLoginBean {
 	private Configurazione configurazioneGenerale = null;
 
 	private IVersionInfo vInfo;
+	// titolo scomposto per poter colorare il solo suffisso (avviso) nell'header
+	private String titleBase;
+	private String titleSuffix;
+	private String titleSeverityClass;
+	// popup post-login: true quando c'e' un popup da mostrare e non ancora chiuso dall'utente
+	private boolean licensePopupPending;
 	private List<String> listaNomiGruppi = null;
 	private List<Soggetto> listaSoggettiDisponibiliUtente = null;
 	private Boolean showFiltroSoggettoLocale = null;
@@ -488,6 +494,15 @@ public class LoginBean extends AbstractLoginBean {
 	}
 	public void setTitle(String title) {
 		this.title = title;
+	}
+	public String getTitleBase(){
+		return (this.titleBase!=null) ? this.titleBase : this.title;
+	}
+	public String getTitleSuffix(){
+		return this.titleSuffix;
+	}
+	public String getTitleSeverityClass(){
+		return (this.titleSeverityClass!=null) ? this.titleSeverityClass : "";
 	}
 	public boolean isShowExtendedInfo() {
 		return this.showExtendedInfo;
@@ -1157,21 +1172,36 @@ public class LoginBean extends AbstractLoginBean {
 		this.vInfo = vInfo;
 		if(this.vInfo!=null) {
 			String soggettoSelezionato = Utility.getSoggettoSelezionatoPerVersionInfo();
-			String titolo = PddMonitorProperties.getInstance(this.log).getPddMonitorTitle();
-			if(!StringUtils.isEmpty(this.vInfo.getErrorTitleSuffix(soggettoSelezionato))) {
-				if(!this.vInfo.getErrorTitleSuffix(soggettoSelezionato).startsWith(" ")) {
-					titolo = titolo + " ";
-				}
-				titolo = titolo + this.vInfo.getErrorTitleSuffix(soggettoSelezionato);
+			String base = PddMonitorProperties.getInstance(this.log).getPddMonitorTitle();
+			this.titleBase = base;
+			this.titleSuffix = null;
+			this.titleSeverityClass = null;
+			String errorSuffix = this.vInfo.getErrorTitleSuffix(soggettoSelezionato);
+			String warningSuffix = this.vInfo.getWarningTitleSuffix(soggettoSelezionato);
+			if(!StringUtils.isEmpty(errorSuffix)) {
+				this.titleSuffix = errorSuffix.trim();
+				this.titleSeverityClass = "title-suffix-error";
 			}
-			else if(!StringUtils.isEmpty(this.vInfo.getWarningTitleSuffix(soggettoSelezionato))) {
-				if(!this.vInfo.getWarningTitleSuffix(soggettoSelezionato).startsWith(" ")) {
-					titolo = titolo + " ";
-				}
-				titolo = titolo + this.vInfo.getWarningTitleSuffix(soggettoSelezionato);
+			else if(!StringUtils.isEmpty(warningSuffix)) {
+				this.titleSuffix = warningSuffix.trim();
+				this.titleSeverityClass = "title-suffix-warning";
+			}
+			String titolo = base;
+			if(this.titleSuffix!=null) {
+				titolo = base + " " + this.titleSuffix;
 			}
 			this.setTitle(titolo);
+
+			// arma il popup post-login se il plugin lo fornisce (mostrato una volta, finche' non chiuso dall'utente)
+			this.licensePopupPending = (this.vInfo.getPostLoginPopup(soggettoSelezionato)!=null);
 		}
+	}
+	public boolean isShowLicensePopup() {
+		return this.licensePopupPending;
+	}
+	/** Invocato alla chiusura del popup (lato utente): evita che riappaia nelle navigazioni successive. */
+	public void dismissLicensePopup() {
+		this.licensePopupPending = false;
 	}
 	public List<String> getListaNomiGruppi(){
 		if(this.listaNomiGruppi == null) {
