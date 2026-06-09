@@ -93,3 +93,24 @@ html_static_path = ['_static']
 import sphinx_rtd_theme
 html_theme = 'sphinx_rtd_theme'
 #html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
+
+
+# -- Options for LaTeX/PDF output --------------------------------------------
+# Questa configurazione è utilizzata esclusivamente dal builder LaTeX/PDF e non
+# ha alcun effetto sull'output HTML (incluso ReadTheDocs).
+# inputenc/utf8 mappa solo un set base di caratteri Unicode: i simboli non
+# previsti generano l'errore "Unicode character ... not set up for use with
+# LaTeX". Qui dichiariamo i caratteri usati nella documentazione così da poterli
+# mantenere nel sorgente senza sostituzioni ASCII.
+latex_elements = {
+    'preamble': r'''
+\usepackage{pmboxdraw}   % caratteri box-drawing: ─ │ ├ └ ┐ ...
+\usepackage{pifont}      % simboli: ✓ ✗ ❌
+\DeclareUnicodeCharacter{2265}{$\geq$}        % ≥
+\DeclareUnicodeCharacter{2264}{$\leq$}        % ≤
+\DeclareUnicodeCharacter{2192}{$\rightarrow$} % →
+\DeclareUnicodeCharacter{2713}{\ding{51}}     % ✓
+\DeclareUnicodeCharacter{2717}{\ding{55}}     % ✗
+\DeclareUnicodeCharacter{274C}{\ding{56}}     % ❌
+''',
+}
