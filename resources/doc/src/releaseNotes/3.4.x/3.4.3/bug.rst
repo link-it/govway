@@ -20,7 +20,7 @@ Sono state risolte le seguenti vulnerabilità relative alle librerie di terze pa
   - aggiornata libreria 'org.springframework.security:\*' alla versione 7.0.5
   - aggiornata libreria 'org.springframework:\*' alla versione 7.0.7
 
-- CVE-2026-42579, CVE-2026-42583, CVE-2026-33870, CVE-2026-33871: aggiornata libreria 'io.netty:\*' alla versione 4.2.13.Final
+- CVE-2026-42579, CVE-2026-42583, CVE-2026-33870, CVE-2026-33871, CVE-2026-47691, CVE-2026-45674, CVE-2026-44249, CVE-2026-45416, CVE-2026-45673: aggiornata libreria 'io.netty:\*' alla versione 4.2.15.Final
 
 È stato inoltre integrato OSV-Scanner (Google) come strumento complementare a OWASP Dependency-Check per la scansione delle vulnerabilità nelle dipendenze, colmando la lacuna di copertura dovuta alla disabilitazione di Sonatype OSS Index e al backlog di arricchimento dell'NVD. È stata aggiunta anche la generazione dell'SBOM (Software Bill of Materials) nei formati CycloneDX e SPDX.
 
