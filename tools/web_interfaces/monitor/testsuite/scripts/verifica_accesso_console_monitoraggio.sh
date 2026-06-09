@@ -20,6 +20,26 @@ get_csrf_token() {
 	echo "$csrf"
 }
 
+# Funzione helper per estrarre l'id del form di login (JSF lo rinumera ad ogni
+# modifica della pagina, quindi non va mai hardcoded: si ricava il <form id="...">
+# che racchiude il campo username, sia con layout AJAX che con submit classico)
+get_login_form_id() {
+	local cookie="$1"
+	local output_file="/tmp/formid_extract_$$"
+
+	if [ -z "$cookie" ]; then
+		curl -s -X GET -H 'Referer: '"${BASEURL}"'/public/login.jsf' "${BASEURL}/public/login.jsf" > "$output_file"
+	else
+		curl -s -X GET -H 'Referer: '"${BASEURL}"'/public/login.jsf' -H "Cookie: $cookie" "${BASEURL}/public/login.jsf" > "$output_file"
+	fi
+
+	local formid=$(tr '<' '\n' < "$output_file" | awk '
+		/^form[^>]*id="/ { match($0, /id="[^"]+"/); fid=substr($0,RSTART+4,RLENGTH-5) }
+		/name="username"/ { print fid; exit }')
+	rm -f "$output_file"
+	echo "$formid"
+}
+
 # Funzione helper per estrarre il cookie
 get_cookie() {
 	local output_file="/tmp/cookie_extract_$$"
@@ -42,7 +62,7 @@ do_login() {
 		-H 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8' \
 		-H 'Referer: '"${BASEURL}"'/public/login.jsf' \
 		-H "Cookie: ${cookie}" \
-		-d "javax.faces.ViewState=j_id1&j_id49=j_id49&AJAXREQUEST=_viewRoot&username=${username}&password=${password}&loginBtn=loginBtn&_csrf=${csrf}" \
+		-d "javax.faces.ViewState=j_id1&${LOGIN_FORM_ID}=${LOGIN_FORM_ID}&AJAXREQUEST=_viewRoot&username=${username}&password=${password}&loginBtn=loginBtn&_csrf=${csrf}" \
 		"${BASEURL}/public/login.jsf" > "$output_file" 2>&1
 	
 	cat "$output_file"
@@ -100,6 +120,17 @@ if [ -z "${CSRF}" ]; then
 	echo "**********************************************"
 	exit 1
 fi
+
+# L'id del form di login viene rinumerato da JSF ad ogni modifica della pagina:
+# lo si ricava dinamicamente una sola volta e lo si usa in tutte le do_login.
+LOGIN_FORM_ID=$(get_login_form_id "$COOKIE")
+if [ -z "${LOGIN_FORM_ID}" ]; then
+	echo "Problema di connessione - id form di login non trovato"
+	echo ""
+	echo "**********************************************"
+	exit 1
+fi
+echo "     Login form id rilevato: ${LOGIN_FORM_ID}"
 
 RESPONSE=$(do_login "$USERNAME" "$PASSWORD" "$COOKIE" "$CSRF")
 ERROR=$(echo "$RESPONSE" | grep "error" | grep -v 'id="errorsPlaceHolder"')
@@ -179,7 +210,7 @@ curl -s -X POST \
 	-H 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8' \
 	-H 'Referer: '"${BASEURL}"'/public/login.jsf' \
 	-H "Cookie: ${COOKIE1}" \
-	-d "javax.faces.ViewState=j_id1&j_id49=j_id49&AJAXREQUEST=_viewRoot&username=${USERNAME}&password=${PASSWORD}&loginBtn=loginBtn&_csrf=${CSRF1}" \
+	-d "javax.faces.ViewState=j_id1&${LOGIN_FORM_ID}=${LOGIN_FORM_ID}&AJAXREQUEST=_viewRoot&username=${USERNAME}&password=${PASSWORD}&loginBtn=loginBtn&_csrf=${CSRF1}" \
 	"${BASEURL}/public/login.jsf" -D - > "$OUTPUT_FILE" 2>&1
 
 COOKIE2=$(grep -i "Set-Cookie" "$OUTPUT_FILE" | grep -oP 'JSESSIONID[^;]+' | head -1)
@@ -217,7 +248,7 @@ curl -s -X POST \
 	-H 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8' \
 	-H 'Referer: '"${BASEURL}"'/public/login.jsf' \
 	-H "Cookie: ${COOKIE_NEW}" \
-	-d "javax.faces.ViewState=j_id1&j_id49=j_id49&AJAXREQUEST=_viewRoot&username=${USERNAME}&password=${PASSWORD}&loginBtn=loginBtn&_csrf=${CSRF_NEW}" \
+	-d "javax.faces.ViewState=j_id1&${LOGIN_FORM_ID}=${LOGIN_FORM_ID}&AJAXREQUEST=_viewRoot&username=${USERNAME}&password=${PASSWORD}&loginBtn=loginBtn&_csrf=${CSRF_NEW}" \
 	"${BASEURL}/public/login.jsf" -D - > "$OUTPUT_FILE" 2>&1
 
 COOKIE3=$(grep -i "Set-Cookie" "$OUTPUT_FILE" | grep -oP 'JSESSIONID[^;]+' | head -1)
