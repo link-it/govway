@@ -134,7 +134,8 @@ public class LoginBean extends AbstractLoginBean {
 	private String titleSuffix;
 	private String titleSeverityClass;
 	// popup post-login: true quando c'e' un popup da mostrare e non ancora chiuso dall'utente
-	private boolean licensePopupPending;
+	// volatile: il bean e' di sessione e puo' essere letto/scritto da richieste concorrenti su thread diversi
+	private volatile boolean licensePopupPending;
 	private List<String> listaNomiGruppi = null;
 	private List<Soggetto> listaSoggettiDisponibiliUtente = null;
 	private Boolean showFiltroSoggettoLocale = null;
