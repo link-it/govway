@@ -22,6 +22,8 @@ package org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.overrid
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.util.regex.Pattern;
+
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.Bodies;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
@@ -227,8 +229,15 @@ public class RestTestEngine extends ConfigLoader {
 			assertEquals(contentType, response.getContentType());
 		}
 		
-		DBVerifier.verify(idTransazione, esitoExpected, msgErrore, this.mode);
-				
+		if(msgErrore!=null && msgErrore.contains("Received fatal alert: bad_certificate")) {
+			// Su JDK recenti la negoziazione TLS 1.3 restituisce l'alert 'certificate_required' anziché 'bad_certificate' (TLS 1.2): accettiamo entrambi in OR
+			Pattern tlsAlert = Pattern.compile(".*Received fatal alert: (bad_certificate|certificate_required).*", Pattern.DOTALL);
+			DBVerifier.verify(idTransazione, esitoExpected, tlsAlert, this.mode);
+		}
+		else {
+			DBVerifier.verify(idTransazione, esitoExpected, msgErrore, this.mode);
+		}
+
 		return response;
 		
 	}
