@@ -1,5 +1,13 @@
 2026-06-12  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore]
+	Risolto Bug
+	Corretto il claim 'htu' del DPoP proof (RFC 9449) generato verso il backend quando è attiva la funzionalità di forward proxy (govway-proxy):
+	veniva valorizzato con l'URL del proxy anziché con l'URL reale del backend, con conseguente possibile rifiuto del proof lato server
+	e collisioni nella cache dei proof tra backend differenti serviti dal medesimo proxy.
+
+2026-06-12  Andrea Poli <apoli@link.it>
+
 	* Rilasciata versione 3.4.3
 
 2026-06-09  Andrea Poli <apoli@link.it>

@@ -556,6 +556,10 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 				}
 			}
 			
+			// Conserva la location reale del backend (prima della riscrittura verso l'URL del proxy)
+			// per la costruzione del claim 'htu' del DPoP proof verso il backend (RFC 9449).
+			this.locationBeforeForwardProxy = location;
+
 			boolean encodeBaseLocation = true; // la base location può contenere dei parametri
 			this.location = TransportUtils.buildUrlWithParameters(queryParameters, newUrl, encodeBaseLocation, this.logger!=null ? this.logger.getLogger() : OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
 			
