@@ -26,6 +26,7 @@ import java.util.List;
 import org.openspcoop2.core.commons.CoreException;
 
 import org.openspcoop2.pdd.logger.record.AbstractDatoRicostruzione;
+import org.openspcoop2.pdd.logger.record.AllegatiDatoRicostruzione;
 import org.openspcoop2.pdd.logger.record.CharDatoRicostruzione;
 import org.openspcoop2.pdd.logger.record.StringDatoRicostruzione;
 import org.openspcoop2.pdd.logger.record.TimestampDatoRicostruzione;
@@ -46,8 +47,12 @@ public class InformazioniRecordTraccia {
 	protected List<AbstractDatoRicostruzione<?>> dati = new ArrayList<>();
 
 	protected String motivoRicostruzioneNonFattibile = null;
-	
+
 	protected String rawDBValue = null;
+
+	/** Record allegati: non e' un dato posizionale, viene serializzato come ultimo token e si
+	 *  auto-riconosce dal prefisso. Valorizzato solo se la traccia possiede allegati ottimizzati. */
+	protected AllegatiDatoRicostruzione datiAllegati = null;
 	
 	public String getRawDBValue() {
 		return this.rawDBValue;
@@ -95,6 +100,14 @@ public class InformazioniRecordTraccia {
 
 	public void setDati(List<AbstractDatoRicostruzione<?>> dati) {
 		this.dati = dati;
+	}
+
+	public AllegatiDatoRicostruzione getDatiAllegati() {
+		return this.datiAllegati;
+	}
+
+	public void setDatiAllegati(AllegatiDatoRicostruzione datiAllegati) {
+		this.datiAllegati = datiAllegati;
 	}
 	
 	@Override
@@ -153,6 +166,13 @@ public class InformazioniRecordTraccia {
 			info.setRicostruibile(true);
 			List<AbstractDatoRicostruzione<?>> listaDati = new ArrayList<>();
 			info.setDati(listaDati);
+
+			// Il record allegati (se presente) e' SEMPRE l'ultimo token e si auto-riconosce dal prefisso.
+			// Va staccato prima di applicare il versioning per conteggio dei dati scalari, cosi' eventuali
+			// nuovi dati posizionali futuri (inseriti prima del record allegati) continuano ad essere
+			// riconosciuti tramite le costanti LENGHT_*.
+			boolean recordAllegatiPresente = AllegatiDatoRicostruzione.isRecord(split[split.length-1]);
+			int effectiveLength = recordAllegatiPresente ? (split.length-1) : split.length;
 			
 			listaDati.add(new CharDatoRicostruzione(split[MappingRicostruzioneTraccia.TRACCIA_EMESSA.getPosition()],
 					CostantiMappingTracciamento.TRACCIA_EMESSA));
@@ -221,18 +241,24 @@ public class InformazioniRecordTraccia {
 			listaDati.add(new CharDatoRicostruzione(split[MappingRicostruzioneTraccia.TRACCIA_BUSTA_ESITO_TRACCIA.getPosition()],
 					CostantiMappingTracciamento.TRACCIA_BUSTA_ESITO_TRACCIA));
 						
-			if(split.length>(CostantiMappingTracciamento.LENGHT_DATI_SIMULATI_VERSIONE_ATTUALE_PRECEDENTE_INTRODOTTO_22)){
-			
+			if(effectiveLength>(CostantiMappingTracciamento.LENGHT_DATI_SIMULATI_VERSIONE_ATTUALE_PRECEDENTE_INTRODOTTO_22)){
+
 				listaDati.add(new CharDatoRicostruzione(split[MappingRicostruzioneTraccia.TRACCIA_BUSTA_SOGGETTO_APPLICATIVO_TOKEN.getPosition()],
 						CostantiMappingTracciamento.TRACCIA_BUSTA_SOGGETTO_APPLICATIVO_TOKEN));
-				
+
 			}
-			
-			if(split.length>CostantiMappingTracciamento.LENGHT_DATI_SIMULATI_VERSIONE_ATTUALE){
-				
+
+			if(effectiveLength>CostantiMappingTracciamento.LENGHT_DATI_SIMULATI_VERSIONE_ATTUALE){
+
 				// NOTA: successivi dati aggiunti
 				// GESTIRE QUANDO SI INTRODUCONO NUOVE INFO
-				
+				// I nuovi dati posizionali vanno letti qui (in coda ai precedenti, ma PRIMA del record allegati)
+
+			}
+
+			// Record allegati (sempre ultimo token): parsing dopo i dati scalari.
+			if(recordAllegatiPresente){
+				info.setDatiAllegati(new AllegatiDatoRicostruzione(split[split.length-1]));
 			}
 		}
 		
