@@ -64,6 +64,7 @@ import org.openspcoop2.generic_project.expression.IPaginatedExpression;
 import org.openspcoop2.generic_project.expression.SortOrder;
 import org.openspcoop2.pdd.core.transazioni.DateUtility;
 import org.openspcoop2.pdd.logger.record.AbstractDatoRicostruzione;
+import org.openspcoop2.pdd.logger.record.AllegatiDatoRicostruzione;
 import org.openspcoop2.pdd.logger.traccia.CostantiMappingTracciamento;
 import org.openspcoop2.pdd.logger.traccia.InformazioniRecordTraccia;
 import org.openspcoop2.pdd.logger.traccia.MappingRicostruzioneTraccia;
@@ -88,6 +89,7 @@ import org.openspcoop2.protocol.sdk.tracciamento.FiltroRicercaTracce;
 import org.openspcoop2.protocol.sdk.tracciamento.FiltroRicercaTracceConPaginazione;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaDriver;
 import org.openspcoop2.protocol.sdk.tracciamento.InformazioniProtocollo;
+import org.openspcoop2.protocol.sdk.Allegato;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.TipiDatabase;
@@ -1142,11 +1144,24 @@ public class TransactionDriverTracciamento implements ITracciaDriver {
 		}
 		
 		traccia.setEsitoElaborazioneMessaggioTracciato(esito);
-		
+
+		// Allegati (ricostruiti dal record finale auto-identificato, se presente)
+		AllegatiDatoRicostruzione datiAllegati = infoSalvataggioTraccia.getDatiAllegati();
+		if(datiAllegati!=null && datiAllegati.getDato()!=null){
+			for (AllegatiDatoRicostruzione.DatiAllegato datoAllegato : datiAllegati.getDato()) {
+				Allegato allegato = new Allegato();
+				allegato.setContentId(datoAllegato.getContentId());
+				allegato.setContentLocation(datoAllegato.getContentLocation());
+				allegato.setContentType(datoAllegato.getContentType());
+				allegato.setDigest(datoAllegato.getDigest());
+				traccia.addAllegato(allegato);
+			}
+		}
+
 		return traccia;
 	}
-	
-	private Busta buildBusta(RuoloMessaggio tipoTraccia, Transazione transazione, CredenzialeMittente credenzialeClientId, 
+
+	private Busta buildBusta(RuoloMessaggio tipoTraccia, Transazione transazione, CredenzialeMittente credenzialeClientId,
 			InformazioniRecordTraccia infoSalvataggioTraccia) throws CoreException {
 		
 		boolean richiesta = tipoTraccia.equals(RuoloMessaggio.RICHIESTA);
