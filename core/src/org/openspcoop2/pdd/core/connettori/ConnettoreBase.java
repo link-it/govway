@@ -178,6 +178,10 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 	protected long contentLength = -1;
 	/** File tmp */
 	protected String location = null;
+	/** Location reale del backend prima dell'eventuale riscrittura operata dalla funzionalità di forward proxy (govway-proxy).
+	 *  Utilizzata per costruire il claim 'htu' (e la relativa chiave di cache) del DPoP proof verso il backend (RFC 9449),
+	 *  che deve riferirsi all'endpoint reale e non all'URL del proxy. */
+	protected String locationBeforeForwardProxy = null;
 	/** Eccezione processamento */
 	protected Exception eccezioneProcessamento = null;
 	/** Proprieta' del trasporto della risposta */
@@ -898,10 +902,15 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 				String httpMethodStr = httpMethod != null ? httpMethod.name() : HttpRequestMethod.GET.name();
 				String accessToken = esitoNegoziazione.getToken();
 
+				// Il claim 'htu' (e la relativa chiave di cache) deve riferirsi all'endpoint reale del backend e non
+				// all'eventuale URL del proxy: in presenza di forward proxy (govway-proxy) la richiesta viene infatti
+				// inoltrata dal proxy al backend reale, che valida il DPoP proof rispetto al proprio URL (RFC 9449).
+				String httpUri = this.locationBeforeForwardProxy != null ? this.locationBeforeForwardProxy : this.location;
+
 				org.openspcoop2.pdd.core.token.dpop.DPoPParams dpopParams = new org.openspcoop2.pdd.core.token.dpop.DPoPParams();
 				dpopParams.setPolicyNegoziazioneToken(this.policyNegoziazioneToken);
 				dpopParams.setHttpMethod(httpMethodStr);
-				dpopParams.setHttpUri(this.location);
+				dpopParams.setHttpUri(httpUri);
 				dpopParams.setAccessToken(accessToken);
 				dpopParams.setBusta(this.busta);
 				dpopParams.setRequestInfo(this.requestInfo);

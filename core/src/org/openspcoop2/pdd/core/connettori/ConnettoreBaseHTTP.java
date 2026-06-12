@@ -355,7 +355,7 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 	protected boolean updateLocation_forwardProxy(String location) throws ConnettoreException {
 		
 		if(this.forwardProxy!=null && this.forwardProxy.isEnabled()) {
-					
+
 			ForwardProxyConfigurazione config = this.forwardProxy.getConfig();
 			
 			String base64Location = null;
@@ -370,9 +370,9 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 					this.forwardProxy_headerValue = location;
 					if(this.encodingRFC2047){
 						try {
-							if(RFC2047Utilities.isAllCharactersInCharset(this.forwardProxy_headerValue, this.charsetRFC2047)==false){
-								String encoded = RFC2047Utilities.encode(new String(this.forwardProxy_headerValue), this.charsetRFC2047, this.encodingAlgorithmRFC2047);
-								//System.out.println("@@@@ CODIFICA ["+value+"] in ["+encoded+"]");
+							if(!RFC2047Utilities.isAllCharactersInCharset(this.forwardProxy_headerValue, this.charsetRFC2047)){
+								String encoded = RFC2047Utilities.encode(this.forwardProxy_headerValue+"", this.charsetRFC2047, this.encodingAlgorithmRFC2047);
+								/**System.out.println("@@@@ CODIFICA ["+value+"] in ["+encoded+"]");*/
 								if(this.debug)
 									this.logger.info("RFC2047 Encoded value ["+this.forwardProxy_headerValue+"] in ["+encoded+"] (charset:"+this.charsetRFC2047+" encoding-algorithm:"+this.encodingAlgorithmRFC2047+")",false);
 								this.forwardProxy_headerValue = encoded;
@@ -405,6 +405,10 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 					this.logger.error("Errore durante la costruzione della url per la funzionalità di 'forwardProxy' (dynamic): "+e.getMessage(),e);
 				}
 			}
+			
+			// Conserva la location reale del backend (prima della riscrittura verso l'URL del proxy)
+			// per la costruzione del claim 'htu' del DPoP proof verso il backend (RFC 9449).
+			this.locationBeforeForwardProxy = location;
 			
 			boolean encodeBaseLocation = true; // la base location può contenere dei parametri
 			this.location = TransportUtils.buildUrlWithParameters(queryParameters, newUrl, encodeBaseLocation, this.logger!=null ? this.logger.getLogger() : OpenSPCoop2Logger.getLoggerOpenSPCoopCore());

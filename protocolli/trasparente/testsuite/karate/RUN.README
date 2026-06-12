@@ -360,6 +360,24 @@
   INSERT INTO pdd_sys_props (nome, valore) VALUES ('tag-TestForwardProxyConnettoriTokenValidazione-govway-proxy-attribute-authority-TestForwardProxyAA','true');
   INSERT INTO pdd_sys_props (nome, valore) VALUES ('tag-TestForwardProxyConnettoriTokenValidazione-govway-proxy-attribute-authority-response-jwt-validation-TestForwardProxyAARispostaJwt','true');
 
+  -- Forward proxy sul connettore backend di una API con negoziazione token DPoP (verifica claim 'htu' del DPoP backend, RFC 9449).
+  INSERT INTO pdd_sys_props (nome, valore) VALUES ('tag-TestForwardProxyConnettoriNegoziazioneDPoP-govway-erogazioni-proxy','http://127.0.0.1:8080/TestService/echo?existsHttpHeaders=DPoP&replyHttpHeader=DPoP&replyPrefixHttpHeader=govway-testsuite-');
+  INSERT INTO pdd_sys_props (nome, valore) VALUES ('tag-TestForwardProxyConnettoriNegoziazioneDPoP-govway-erogazioni-proxy-header','govway-api-address');
+  INSERT INTO pdd_sys_props (nome, valore) VALUES ('tag-TestForwardProxyConnettoriNegoziazioneDPoP-govway-erogazioni-proxy-header-base64','true');
+  INSERT INTO pdd_sys_props (nome, valore) VALUES ('tag-TestForwardProxyConnettoriNegoziazioneDPoP-govway-fruizioni-proxy','http://127.0.0.1:8080/TestService/echo?existsHttpHeaders=DPoP&replyHttpHeader=DPoP&replyPrefixHttpHeader=govway-testsuite-');
+  INSERT INTO pdd_sys_props (nome, valore) VALUES ('tag-TestForwardProxyConnettoriNegoziazioneDPoP-govway-fruizioni-proxy-query','govway_api_address');
+  INSERT INTO pdd_sys_props (nome, valore) VALUES ('tag-TestForwardProxyConnettoriNegoziazioneDPoP-govway-fruizioni-proxy-query-base64','true');
+
+  -- Forward proxy sulla FASE DI NEGOZIAZIONE (token retrieve) di una API con policy DPoP (verifica claim 'htu' del DPoP di negoziazione, RFC 9449).
+  -- Il proxy e' un echo che ritorna un token "canned" (destFile): NON valida il DPoP, cosi' l'endpoint FINTO della token policy
+  -- (http://authServerFinto:8080/signedJwt) e' accettato. Il test legge il proof di negoziazione dal token_info (request.dpop.token,
+  -- base64 sempre presente) e ne decodifica l'htu, verificando che sia l'endpoint configurato e non l'URL del proxy.
+  -- Il file /tmp/responseNegoziazioneDPoPRetrieve.json viene scritto dal test (come negli altri test forward_proxy).
+  INSERT INTO pdd_sys_props (nome, valore) VALUES ('tag-TestForwardProxyConnettoriNegoziazioneDPoPRetrieve-govway-proxy','http://127.0.0.1:8080/TestService/echo?destFile=/tmp/responseNegoziazioneDPoPRetrieve.json&destFileContentType=application/json');
+  INSERT INTO pdd_sys_props (nome, valore) VALUES ('tag-TestForwardProxyConnettoriNegoziazioneDPoPRetrieve-govway-proxy-header','govway-api-address');
+  INSERT INTO pdd_sys_props (nome, valore) VALUES ('tag-TestForwardProxyConnettoriNegoziazioneDPoPRetrieve-govway-proxy-header-base64','true');
+  INSERT INTO pdd_sys_props (nome, valore) VALUES ('tag-TestForwardProxyConnettoriNegoziazioneDPoPRetrieve-govway-proxy-token-retrieve','true');
+
 - Per i test via http proxy:
   
   Assicurarsi che funzioni il comando 'mitmdump' descritto nella directory httpproxy
