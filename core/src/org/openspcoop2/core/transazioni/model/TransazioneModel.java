@@ -144,6 +144,7 @@ public class TransazioneModel extends AbstractModel<Transazione> {
 		this.GRUPPI = new Field("gruppi",java.lang.String.class,"transazione",Transazione.class);
 		this.DUMP_MESSAGGIO = new org.openspcoop2.core.transazioni.model.DumpMessaggioModel(new Field("dump-messaggio",org.openspcoop2.core.transazioni.DumpMessaggio.class,"transazione",Transazione.class));
 		this.TRANSAZIONE_APPLICATIVO_SERVER = new org.openspcoop2.core.transazioni.model.TransazioneApplicativoServerModel(new Field("transazione-applicativo-server",org.openspcoop2.core.transazioni.TransazioneApplicativoServer.class,"transazione",Transazione.class));
+		this.TRANSAZIONE_LLM = new org.openspcoop2.core.transazioni.model.TransazioneLlmModel(new Field("transazione-llm",org.openspcoop2.core.transazioni.TransazioneLlm.class,"transazione",Transazione.class));
 		this.TRANSAZIONE_EXTENDED_INFO = new org.openspcoop2.core.transazioni.model.TransazioneExtendedInfoModel(new Field("transazione-extended-info",org.openspcoop2.core.transazioni.TransazioneExtendedInfo.class,"transazione",Transazione.class));
 	
 	}
@@ -256,6 +257,7 @@ public class TransazioneModel extends AbstractModel<Transazione> {
 		this.GRUPPI = new ComplexField(father,"gruppi",java.lang.String.class,"transazione",Transazione.class);
 		this.DUMP_MESSAGGIO = new org.openspcoop2.core.transazioni.model.DumpMessaggioModel(new ComplexField(father,"dump-messaggio",org.openspcoop2.core.transazioni.DumpMessaggio.class,"transazione",Transazione.class));
 		this.TRANSAZIONE_APPLICATIVO_SERVER = new org.openspcoop2.core.transazioni.model.TransazioneApplicativoServerModel(new ComplexField(father,"transazione-applicativo-server",org.openspcoop2.core.transazioni.TransazioneApplicativoServer.class,"transazione",Transazione.class));
+		this.TRANSAZIONE_LLM = new org.openspcoop2.core.transazioni.model.TransazioneLlmModel(new ComplexField(father,"transazione-llm",org.openspcoop2.core.transazioni.TransazioneLlm.class,"transazione",Transazione.class));
 		this.TRANSAZIONE_EXTENDED_INFO = new org.openspcoop2.core.transazioni.model.TransazioneExtendedInfoModel(new ComplexField(father,"transazione-extended-info",org.openspcoop2.core.transazioni.TransazioneExtendedInfo.class,"transazione",Transazione.class));
 	
 	}
@@ -469,6 +471,8 @@ public class TransazioneModel extends AbstractModel<Transazione> {
 	public org.openspcoop2.core.transazioni.model.DumpMessaggioModel DUMP_MESSAGGIO = null;
 	 
 	public org.openspcoop2.core.transazioni.model.TransazioneApplicativoServerModel TRANSAZIONE_APPLICATIVO_SERVER = null;
+	 
+	public org.openspcoop2.core.transazioni.model.TransazioneLlmModel TRANSAZIONE_LLM = null;
 	 
 	public org.openspcoop2.core.transazioni.model.TransazioneExtendedInfoModel TRANSAZIONE_EXTENDED_INFO = null;
 	 

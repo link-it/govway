@@ -64,6 +64,10 @@ public class LLMProviderConfigProvider implements IProvider {
 		if (name.contains(" ")) {
 			throw new ProviderValidationException("Il nome associato al LLM Provider non deve contenere spazi");
 		}
+		if (name.length() > Costanti.LLM_ENTITY_NAME_MAX_LENGTH) {
+			throw new ProviderValidationException("Il nome associato al LLM Provider non può superare "
+					+ Costanti.LLM_ENTITY_NAME_MAX_LENGTH + " caratteri");
+		}
 		boolean match;
 		try {
 			match = RegularExpressionEngine.isMatch(name, "^[_A-Za-z][\\-_A-Za-z0-9]*$");

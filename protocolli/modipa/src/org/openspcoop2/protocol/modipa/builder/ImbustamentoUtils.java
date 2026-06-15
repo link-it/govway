@@ -73,7 +73,7 @@ public class ImbustamentoUtils {
 			
 			ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(state);
 			boolean functionAsRouter = false;
-			Connettore connettore = configurazionePdDManager.getForwardRoute(soggettoFruitore,idServizio, functionAsRouter, requestInfo);
+			Connettore connettore = configurazionePdDManager.getForwardRoute(soggettoFruitore,idServizio, functionAsRouter, requestInfo, null);
 			if(connettore==null) {
 				throw new ProtocolException("Connettore non individuato");
 			}

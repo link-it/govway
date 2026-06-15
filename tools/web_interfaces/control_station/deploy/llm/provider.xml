@@ -3,7 +3,7 @@
 	xmlns="http://www.openspcoop2.org/core/mvc/properties"
 	provider="org.openspcoop2.pdd.core.llm.provider.LLMProviderConfigProvider">
 
-	<section label="Provider">
+	<section label="Provider" hidden="true">
 
 		<item type="select" name="providerType" label="Tipo" required="true" reloadOnChange="true">
 			<property name="llmProvider.type" />

@@ -964,10 +964,10 @@ public class ControlStationCore {
 		return this.isAttributeAuthorityVerificaCertificati;
 	}
 
-	/** LLM Provider PropertiesSourceConfiguration */
-	private PropertiesSourceConfiguration llmProviderPropertiesSourceConfiguration = null;
-	public PropertiesSourceConfiguration getLlmProviderPropertiesSourceConfiguration() {
-		return this.llmProviderPropertiesSourceConfiguration;
+	/** LLM (Provider, Model, Provider Binding) PropertiesSourceConfiguration (source unica per la dir llm/). */
+	private PropertiesSourceConfiguration llmPropertiesSourceConfiguration = null;
+	public PropertiesSourceConfiguration getLlmPropertiesSourceConfiguration() {
+		return this.llmPropertiesSourceConfiguration;
 	}
 	
 	/** ControlloTraffico */
@@ -1400,6 +1400,12 @@ public class ControlStationCore {
 	private String llmProviderForceId = null;
 	private boolean llmProviderForceIdEnabled = false;
 	private Properties llmProviderTipologia = null;
+	private String llmModelForceId = null;
+	private boolean llmModelForceIdEnabled = false;
+	private Properties llmModelTipologia = null;
+	private String llmProviderBindingForceId = null;
+	private boolean llmProviderBindingForceIdEnabled = false;
+	private Properties llmProviderBindingTipologia = null;
 	private boolean showServiziVisualizzaModalitaElenco = false;
 	private Integer selectListSoggettiOperativiNumeroMassimoSoggetti = null;
 	private Integer selectListSoggettiOperativiDimensioneMassimaLabel = null;
@@ -1524,6 +1530,24 @@ public class ControlStationCore {
 	}
 	public Properties getLlmProviderTipologia() {
 		return this.llmProviderTipologia;
+	}
+	public String getLlmModelForceId() {
+		return this.llmModelForceId;
+	}
+	public boolean isLlmModelForceIdEnabled() {
+		return this.llmModelForceIdEnabled;
+	}
+	public Properties getLlmModelTipologia() {
+		return this.llmModelTipologia;
+	}
+	public String getLlmProviderBindingForceId() {
+		return this.llmProviderBindingForceId;
+	}
+	public boolean isLlmProviderBindingForceIdEnabled() {
+		return this.llmProviderBindingForceIdEnabled;
+	}
+	public Properties getLlmProviderBindingTipologia() {
+		return this.llmProviderBindingTipologia;
 	}
 	public boolean isShowServiziVisualizzaModalitaElenco() {
 		return this.showServiziVisualizzaModalitaElenco;
@@ -2688,8 +2712,8 @@ public class ControlStationCore {
 		this.attributeAuthorityPropertiesSourceConfiguration = core.attributeAuthorityPropertiesSourceConfiguration;
 		this.isAttributeAuthorityVerificaCertificati = core.isAttributeAuthorityVerificaCertificati;
 
-		/** LLM Provider PropertiesSourceConfiguration */
-		this.llmProviderPropertiesSourceConfiguration = core.llmProviderPropertiesSourceConfiguration;
+		/** LLM (Provider, Model, Provider Binding) PropertiesSourceConfiguration */
+		this.llmPropertiesSourceConfiguration = core.llmPropertiesSourceConfiguration;
 
 		/** ControlloTraffico */
 		this.isControlloTrafficoPolicyGlobaleGroupByApi = core.isControlloTrafficoPolicyGlobaleGroupByApi;
@@ -2861,6 +2885,12 @@ public class ControlStationCore {
 		this.llmProviderForceId = core.llmProviderForceId;
 		this.llmProviderForceIdEnabled = core.llmProviderForceIdEnabled;
 		this.llmProviderTipologia = core.llmProviderTipologia;
+		this.llmModelForceId = core.llmModelForceId;
+		this.llmModelForceIdEnabled = core.llmModelForceIdEnabled;
+		this.llmModelTipologia = core.llmModelTipologia;
+		this.llmProviderBindingForceId = core.llmProviderBindingForceId;
+		this.llmProviderBindingForceIdEnabled = core.llmProviderBindingForceIdEnabled;
+		this.llmProviderBindingTipologia = core.llmProviderBindingTipologia;
 		this.showServiziVisualizzaModalitaElenco = core.showServiziVisualizzaModalitaElenco;
 		this.selectListSoggettiOperativiNumeroMassimoSoggetti = core.selectListSoggettiOperativiNumeroMassimoSoggetti;
 		this.selectListSoggettiOperativiDimensioneMassimaLabel = core.selectListSoggettiOperativiDimensioneMassimaLabel;
@@ -3194,7 +3224,7 @@ public class ControlStationCore {
 			}
 			this.attributeAuthorityPropertiesSourceConfiguration = consoleProperties.getAttributeAuthorityPropertiesSourceConfiguration();
 			this.isAttributeAuthorityVerificaCertificati = consoleProperties.isAttributeAuthorityVerificaCertificati();
-			this.llmProviderPropertiesSourceConfiguration = consoleProperties.getLlmProviderPropertiesSourceConfiguration();
+			this.llmPropertiesSourceConfiguration = consoleProperties.getLlmPropertiesSourceConfiguration();
 			this.isControlloTrafficoPolicyGlobaleGroupByApi = consoleProperties.isControlloTrafficoPolicyGlobaleGroupByApi();
 			this.isControlloTrafficoPolicyGlobaleFiltroApi = consoleProperties.isControlloTrafficoPolicyGlobaleFiltroApi();
 			this.isControlloTrafficoPolicyGlobaleFiltroApiSoggettoErogatore = consoleProperties.isControlloTrafficoPolicyGlobaleFiltroApiSoggettoErogatore();
@@ -3345,6 +3375,12 @@ public class ControlStationCore {
 			this.llmProviderForceId = consoleProperties.getLlmProviderForceId();
 			this.llmProviderForceIdEnabled = StringUtils.isNotEmpty(this.llmProviderForceId);
 			this.llmProviderTipologia = consoleProperties.getLlmProviderTipologia();
+			this.llmModelForceId = consoleProperties.getLlmModelForceId();
+			this.llmModelForceIdEnabled = StringUtils.isNotEmpty(this.llmModelForceId);
+			this.llmModelTipologia = consoleProperties.getLlmModelTipologia();
+			this.llmProviderBindingForceId = consoleProperties.getLlmProviderBindingForceId();
+			this.llmProviderBindingForceIdEnabled = StringUtils.isNotEmpty(this.llmProviderBindingForceId);
+			this.llmProviderBindingTipologia = consoleProperties.getLlmProviderBindingTipologia();
 			this.showServiziVisualizzaModalitaElenco = consoleProperties.isEnableServiziVisualizzaModalitaElenco();
 			this.selectListSoggettiOperativiNumeroMassimoSoggetti = consoleProperties.getNumeroMassimoSoggettiOperativiMenuUtente();
 			this.selectListSoggettiOperativiDimensioneMassimaLabel = consoleProperties.getLunghezzaMassimaLabelSoggettiOperativiMenuUtente();

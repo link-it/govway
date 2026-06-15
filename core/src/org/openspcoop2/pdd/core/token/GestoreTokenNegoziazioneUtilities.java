@@ -528,6 +528,9 @@ public class GestoreTokenNegoziazioneUtilities {
 		}
 		connettoreMsg.setIdModulo(idModulo);
 		connettoreMsg.setState(state);
+		// Propago la busta chiamante: serve a ConnettoreHTTPUrlHttpsKeystoreRepository per risolvere
+		// il config SSL gw<MITTENTE>.properties quando la fruizione ha l'override JVM attivo.
+		connettoreMsg.setBusta(busta);
 		PolicyTimeoutConfig policyConfig = new PolicyTimeoutConfig();
 		policyConfig.setPolicyNegoziazione(policyNegoziazioneToken.getName());
 		connettoreMsg.setPolicyTimeoutConfig(policyConfig);

@@ -154,8 +154,9 @@ public class PorteApplicativeConnettoreDefault extends Action {
 			boolean forceOAuth = false;
 			boolean forceDPoP = false;
 
-			// llm provider policy
+			// llm provider policy + binding (modelli)
 			String llmPolicy = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_LLM_PROVIDER);
+			String[] llmBindings = porteApplicativeHelper.getParameterValues(ConnettoriCostanti.PARAMETRO_CONNETTORE_LLM_BINDING);
 
 			// proxy
 			String proxyEnabled = porteApplicativeHelper.getParametroBoolean(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
@@ -504,7 +505,7 @@ public class PorteApplicativeConnettoreDefault extends Action {
 						}
 					}
 					if (apiIsLLM) {
-						dati = porteApplicativeHelper.addLLMProvider(dati, llmPolicy, TipoOperazione.OTHER, postBackViaPost);
+						dati = porteApplicativeHelper.addLLMProvider(dati, llmPolicy, llmBindings, TipoOperazione.OTHER, postBackViaPost);
 					}
 					dati = porteApplicativeHelper.addEndPointToDati(dati, serviceBinding, connettoreDebug, endpointtype, autenticazioneHttp,
 							null, //(porteApplicativeHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX ,
@@ -591,7 +592,7 @@ public class PorteApplicativeConnettoreDefault extends Action {
 
 				if(modalita.equals(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_MODALITA_CONNETTORE_RIDEFINITO)) {
 					if (apiIsLLM) {
-						dati = porteApplicativeHelper.addLLMProvider(dati, llmPolicy, TipoOperazione.OTHER, postBackViaPost);
+						dati = porteApplicativeHelper.addLLMProvider(dati, llmPolicy, llmBindings, TipoOperazione.OTHER, postBackViaPost);
 					}
 					dati = porteApplicativeHelper.addEndPointToDati(dati, serviceBinding, connettoreDebug, endpointtype, autenticazioneHttp,
 							null, // (porteApplicativeHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX ,
@@ -665,7 +666,7 @@ public class PorteApplicativeConnettoreDefault extends Action {
 					listExtendedConnettore);
 
 			if (apiIsLLM) {
-				porteApplicativeHelper.addLLMPolicyPropertyToConnettore(connettore, llmPolicy);
+				connettore = porteApplicativeHelper.wrapAsLlmContainer(connettore, llmPolicy, llmBindings, portaApplicativa.getNome());
 			}
 
 			List<Object> listaOggettiDaCreare = new ArrayList<>();

@@ -168,6 +168,7 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 			boolean autenticazioneToken = ServletUtils.isCheckBoxEnabled(autenticazioneTokenS);
 			String tokenPolicy = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY);
 			String llmPolicy = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_LLM_PROVIDER);
+			String[] llmBindings = saHelper.getParameterValues(ConnettoriCostanti.PARAMETRO_CONNETTORE_LLM_BINDING);
 			boolean forcePDND = false;
 			boolean forceOAuth = false;
 			boolean forceDPoP = false;
@@ -324,6 +325,11 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 			if(connra==null) {
 				throw new CoreException("ServizioApplicativo con id '"+idSilInt+"' senza connettore in RispostaAsincrona");
 			}
+
+			// Se il connettore caricato e' un container LLM, estraggo i binding del primo
+			// provider e poi faccio unwrap per esporre i campi tecnici del concreto.
+			String[] llmBindingsLoaded = saHelper.extractLlmBindings(connra);
+			connra = saHelper.unwrapLlmContainer(connra);
 			List<Property> cp = connra.getPropertyList();
 			
 			boolean forceEnabled = false;
@@ -658,6 +664,10 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 					if(llmV!=null && !"".equals(llmV)){
 						llmPolicy = llmV;
 					}
+				}
+
+				if((llmBindings==null || llmBindings.length==0) && llmBindingsLoaded!=null && llmBindingsLoaded.length>0){
+					llmBindings = llmBindingsLoaded;
 				}
 
 				if(tokenPolicy==null && props!=null){
@@ -1041,7 +1051,7 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 					connettoreStatusParams,
 					listExtendedConnettore);
 			if (apiIsLLM) {
-				saHelper.addLLMPolicyPropertyToConnettore(connra, llmPolicy);
+				connra = saHelper.wrapAsLlmContainer(connra, llmPolicy, llmBindings, connra.getNome());
 			}
 			ra.setConnettore(connra);
 			sa.setRispostaAsincrona(ra);

@@ -49,6 +49,8 @@ import org.openspcoop2.core.registry.Property;
 import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.AccordoCooperazionePartecipanti;
 import org.openspcoop2.core.registry.Proprieta;
+import org.openspcoop2.core.registry.ConnettoreLlmProviderRef;
+import org.openspcoop2.core.registry.ConnettoreLlm;
 import org.openspcoop2.core.registry.Azione;
 import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.ConfigurazioneServizioAzione;
@@ -60,6 +62,7 @@ import org.openspcoop2.core.registry.AccordoServizioParteComuneServizioComposto;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.IdAccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoCooperazione;
+import org.openspcoop2.core.registry.ConnettoreLlmBinding;
 import org.openspcoop2.core.registry.CredenzialiSoggetto;
 import org.openspcoop2.core.registry.RegistroServizi;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
@@ -3247,6 +3250,242 @@ public abstract class AbstractSerializer {
 	
 	/*
 	 =================================================================================
+	 Object: connettore-llm-provider-ref
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>connettoreLlmProviderRef</var> of type {@link org.openspcoop2.core.registry.ConnettoreLlmProviderRef}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>connettoreLlmProviderRef</var>
+	 * @param connettoreLlmProviderRef Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,ConnettoreLlmProviderRef connettoreLlmProviderRef) throws SerializerException {
+		this.objToXml(fileName, ConnettoreLlmProviderRef.class, connettoreLlmProviderRef, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>connettoreLlmProviderRef</var> of type {@link org.openspcoop2.core.registry.ConnettoreLlmProviderRef}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>connettoreLlmProviderRef</var>
+	 * @param connettoreLlmProviderRef Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,ConnettoreLlmProviderRef connettoreLlmProviderRef,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, ConnettoreLlmProviderRef.class, connettoreLlmProviderRef, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>connettoreLlmProviderRef</var> of type {@link org.openspcoop2.core.registry.ConnettoreLlmProviderRef}
+	 * 
+	 * @param file Xml file to serialize the object <var>connettoreLlmProviderRef</var>
+	 * @param connettoreLlmProviderRef Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,ConnettoreLlmProviderRef connettoreLlmProviderRef) throws SerializerException {
+		this.objToXml(file, ConnettoreLlmProviderRef.class, connettoreLlmProviderRef, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>connettoreLlmProviderRef</var> of type {@link org.openspcoop2.core.registry.ConnettoreLlmProviderRef}
+	 * 
+	 * @param file Xml file to serialize the object <var>connettoreLlmProviderRef</var>
+	 * @param connettoreLlmProviderRef Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,ConnettoreLlmProviderRef connettoreLlmProviderRef,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, ConnettoreLlmProviderRef.class, connettoreLlmProviderRef, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>connettoreLlmProviderRef</var> of type {@link org.openspcoop2.core.registry.ConnettoreLlmProviderRef}
+	 * 
+	 * @param out OutputStream to serialize the object <var>connettoreLlmProviderRef</var>
+	 * @param connettoreLlmProviderRef Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,ConnettoreLlmProviderRef connettoreLlmProviderRef) throws SerializerException {
+		this.objToXml(out, ConnettoreLlmProviderRef.class, connettoreLlmProviderRef, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>connettoreLlmProviderRef</var> of type {@link org.openspcoop2.core.registry.ConnettoreLlmProviderRef}
+	 * 
+	 * @param out OutputStream to serialize the object <var>connettoreLlmProviderRef</var>
+	 * @param connettoreLlmProviderRef Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,ConnettoreLlmProviderRef connettoreLlmProviderRef,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, ConnettoreLlmProviderRef.class, connettoreLlmProviderRef, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>connettoreLlmProviderRef</var> of type {@link org.openspcoop2.core.registry.ConnettoreLlmProviderRef}
+	 * 
+	 * @param connettoreLlmProviderRef Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(ConnettoreLlmProviderRef connettoreLlmProviderRef) throws SerializerException {
+		return this.objToXml(ConnettoreLlmProviderRef.class, connettoreLlmProviderRef, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>connettoreLlmProviderRef</var> of type {@link org.openspcoop2.core.registry.ConnettoreLlmProviderRef}
+	 * 
+	 * @param connettoreLlmProviderRef Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(ConnettoreLlmProviderRef connettoreLlmProviderRef,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(ConnettoreLlmProviderRef.class, connettoreLlmProviderRef, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>connettoreLlmProviderRef</var> of type {@link org.openspcoop2.core.registry.ConnettoreLlmProviderRef}
+	 * 
+	 * @param connettoreLlmProviderRef Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(ConnettoreLlmProviderRef connettoreLlmProviderRef) throws SerializerException {
+		return this.objToXml(ConnettoreLlmProviderRef.class, connettoreLlmProviderRef, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>connettoreLlmProviderRef</var> of type {@link org.openspcoop2.core.registry.ConnettoreLlmProviderRef}
+	 * 
+	 * @param connettoreLlmProviderRef Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(ConnettoreLlmProviderRef connettoreLlmProviderRef,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(ConnettoreLlmProviderRef.class, connettoreLlmProviderRef, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: connettore-llm
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>connettoreLlm</var> of type {@link org.openspcoop2.core.registry.ConnettoreLlm}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>connettoreLlm</var>
+	 * @param connettoreLlm Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,ConnettoreLlm connettoreLlm) throws SerializerException {
+		this.objToXml(fileName, ConnettoreLlm.class, connettoreLlm, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>connettoreLlm</var> of type {@link org.openspcoop2.core.registry.ConnettoreLlm}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>connettoreLlm</var>
+	 * @param connettoreLlm Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,ConnettoreLlm connettoreLlm,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, ConnettoreLlm.class, connettoreLlm, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>connettoreLlm</var> of type {@link org.openspcoop2.core.registry.ConnettoreLlm}
+	 * 
+	 * @param file Xml file to serialize the object <var>connettoreLlm</var>
+	 * @param connettoreLlm Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,ConnettoreLlm connettoreLlm) throws SerializerException {
+		this.objToXml(file, ConnettoreLlm.class, connettoreLlm, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>connettoreLlm</var> of type {@link org.openspcoop2.core.registry.ConnettoreLlm}
+	 * 
+	 * @param file Xml file to serialize the object <var>connettoreLlm</var>
+	 * @param connettoreLlm Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,ConnettoreLlm connettoreLlm,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, ConnettoreLlm.class, connettoreLlm, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>connettoreLlm</var> of type {@link org.openspcoop2.core.registry.ConnettoreLlm}
+	 * 
+	 * @param out OutputStream to serialize the object <var>connettoreLlm</var>
+	 * @param connettoreLlm Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,ConnettoreLlm connettoreLlm) throws SerializerException {
+		this.objToXml(out, ConnettoreLlm.class, connettoreLlm, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>connettoreLlm</var> of type {@link org.openspcoop2.core.registry.ConnettoreLlm}
+	 * 
+	 * @param out OutputStream to serialize the object <var>connettoreLlm</var>
+	 * @param connettoreLlm Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,ConnettoreLlm connettoreLlm,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, ConnettoreLlm.class, connettoreLlm, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>connettoreLlm</var> of type {@link org.openspcoop2.core.registry.ConnettoreLlm}
+	 * 
+	 * @param connettoreLlm Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(ConnettoreLlm connettoreLlm) throws SerializerException {
+		return this.objToXml(ConnettoreLlm.class, connettoreLlm, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>connettoreLlm</var> of type {@link org.openspcoop2.core.registry.ConnettoreLlm}
+	 * 
+	 * @param connettoreLlm Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(ConnettoreLlm connettoreLlm,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(ConnettoreLlm.class, connettoreLlm, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>connettoreLlm</var> of type {@link org.openspcoop2.core.registry.ConnettoreLlm}
+	 * 
+	 * @param connettoreLlm Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(ConnettoreLlm connettoreLlm) throws SerializerException {
+		return this.objToXml(ConnettoreLlm.class, connettoreLlm, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>connettoreLlm</var> of type {@link org.openspcoop2.core.registry.ConnettoreLlm}
+	 * 
+	 * @param connettoreLlm Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(ConnettoreLlm connettoreLlm,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(ConnettoreLlm.class, connettoreLlm, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
 	 Object: azione
 	 =================================================================================
 	*/
@@ -4539,6 +4778,124 @@ public abstract class AbstractSerializer {
 	 */
 	public String toString(AccordoCooperazione accordoCooperazione,boolean prettyPrint) throws SerializerException {
 		return this.objToXml(AccordoCooperazione.class, accordoCooperazione, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: connettore-llm-binding
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>connettoreLlmBinding</var> of type {@link org.openspcoop2.core.registry.ConnettoreLlmBinding}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>connettoreLlmBinding</var>
+	 * @param connettoreLlmBinding Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,ConnettoreLlmBinding connettoreLlmBinding) throws SerializerException {
+		this.objToXml(fileName, ConnettoreLlmBinding.class, connettoreLlmBinding, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>connettoreLlmBinding</var> of type {@link org.openspcoop2.core.registry.ConnettoreLlmBinding}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>connettoreLlmBinding</var>
+	 * @param connettoreLlmBinding Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,ConnettoreLlmBinding connettoreLlmBinding,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, ConnettoreLlmBinding.class, connettoreLlmBinding, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>connettoreLlmBinding</var> of type {@link org.openspcoop2.core.registry.ConnettoreLlmBinding}
+	 * 
+	 * @param file Xml file to serialize the object <var>connettoreLlmBinding</var>
+	 * @param connettoreLlmBinding Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,ConnettoreLlmBinding connettoreLlmBinding) throws SerializerException {
+		this.objToXml(file, ConnettoreLlmBinding.class, connettoreLlmBinding, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>connettoreLlmBinding</var> of type {@link org.openspcoop2.core.registry.ConnettoreLlmBinding}
+	 * 
+	 * @param file Xml file to serialize the object <var>connettoreLlmBinding</var>
+	 * @param connettoreLlmBinding Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,ConnettoreLlmBinding connettoreLlmBinding,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, ConnettoreLlmBinding.class, connettoreLlmBinding, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>connettoreLlmBinding</var> of type {@link org.openspcoop2.core.registry.ConnettoreLlmBinding}
+	 * 
+	 * @param out OutputStream to serialize the object <var>connettoreLlmBinding</var>
+	 * @param connettoreLlmBinding Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,ConnettoreLlmBinding connettoreLlmBinding) throws SerializerException {
+		this.objToXml(out, ConnettoreLlmBinding.class, connettoreLlmBinding, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>connettoreLlmBinding</var> of type {@link org.openspcoop2.core.registry.ConnettoreLlmBinding}
+	 * 
+	 * @param out OutputStream to serialize the object <var>connettoreLlmBinding</var>
+	 * @param connettoreLlmBinding Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,ConnettoreLlmBinding connettoreLlmBinding,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, ConnettoreLlmBinding.class, connettoreLlmBinding, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>connettoreLlmBinding</var> of type {@link org.openspcoop2.core.registry.ConnettoreLlmBinding}
+	 * 
+	 * @param connettoreLlmBinding Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(ConnettoreLlmBinding connettoreLlmBinding) throws SerializerException {
+		return this.objToXml(ConnettoreLlmBinding.class, connettoreLlmBinding, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>connettoreLlmBinding</var> of type {@link org.openspcoop2.core.registry.ConnettoreLlmBinding}
+	 * 
+	 * @param connettoreLlmBinding Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(ConnettoreLlmBinding connettoreLlmBinding,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(ConnettoreLlmBinding.class, connettoreLlmBinding, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>connettoreLlmBinding</var> of type {@link org.openspcoop2.core.registry.ConnettoreLlmBinding}
+	 * 
+	 * @param connettoreLlmBinding Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(ConnettoreLlmBinding connettoreLlmBinding) throws SerializerException {
+		return this.objToXml(ConnettoreLlmBinding.class, connettoreLlmBinding, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>connettoreLlmBinding</var> of type {@link org.openspcoop2.core.registry.ConnettoreLlmBinding}
+	 * 
+	 * @param connettoreLlmBinding Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(ConnettoreLlmBinding connettoreLlmBinding,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(ConnettoreLlmBinding.class, connettoreLlmBinding, prettyPrint).toString();
 	}
 	
 	

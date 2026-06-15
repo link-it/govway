@@ -172,6 +172,9 @@ public class RequestConfig implements java.io.Serializable {
 	private Map<String, Serializable> policyValidazioneToken = null;
 	private Map<String, Serializable> policyNegoziazioneToken = null;
 	private Map<String, Serializable> attributeAuthority = null;
+	private Map<String, Serializable> llmProvider = null;
+	private Map<String, Serializable> llmModel = null;
+	private Map<String, Serializable> llmProviderBinding = null;
 	
 	private transient org.openspcoop2.utils.Semaphore semaphoreStore = null; // possono essere alimentati da thread differenti
 	private Map<String, Serializable> merlinTruststore = null;
@@ -1194,8 +1197,92 @@ public class RequestConfig implements java.io.Serializable {
 		}
 		return l;
 	}
-	
-	
+
+	public void addLLMProvider(String key, Serializable fp, String idTransazione) {
+		if(this.semaphorePolicy==null) {
+			initSemaphorePolicy();
+		}
+		SemaphoreLock lock = this.semaphorePolicy.acquireThrowRuntime("addLLMProvider", idTransazione);
+		try {
+			if(this.llmProvider==null) {
+				this.llmProvider = new HashMap<>(3);
+			}
+			this.llmProvider.put(key, fp);
+		}finally {
+			this.semaphorePolicy.release(lock, "addLLMProvider", idTransazione);
+		}
+	}
+	public Serializable getLLMProvider(String key) {
+		if(this.llmProvider==null) {
+			return null;
+		}
+		return this.llmProvider.get(key);
+	}
+	public List<String> getLLMProviderKeys(){
+		List<String> l = new ArrayList<>();
+		if(this.llmProvider!=null && !this.llmProvider.isEmpty()) {
+			l.addAll(this.llmProvider.keySet());
+		}
+		return l;
+	}
+
+	public void addLLMModel(String key, Serializable fp, String idTransazione) {
+		if(this.semaphorePolicy==null) {
+			initSemaphorePolicy();
+		}
+		SemaphoreLock lock = this.semaphorePolicy.acquireThrowRuntime("addLLMModel", idTransazione);
+		try {
+			if(this.llmModel==null) {
+				this.llmModel = new HashMap<>(3);
+			}
+			this.llmModel.put(key, fp);
+		}finally {
+			this.semaphorePolicy.release(lock, "addLLMModel", idTransazione);
+		}
+	}
+	public Serializable getLLMModel(String key) {
+		if(this.llmModel==null) {
+			return null;
+		}
+		return this.llmModel.get(key);
+	}
+	public List<String> getLLMModelKeys(){
+		List<String> l = new ArrayList<>();
+		if(this.llmModel!=null && !this.llmModel.isEmpty()) {
+			l.addAll(this.llmModel.keySet());
+		}
+		return l;
+	}
+
+	public void addLLMProviderBinding(String key, Serializable fp, String idTransazione) {
+		if(this.semaphorePolicy==null) {
+			initSemaphorePolicy();
+		}
+		SemaphoreLock lock = this.semaphorePolicy.acquireThrowRuntime("addLLMProviderBinding", idTransazione);
+		try {
+			if(this.llmProviderBinding==null) {
+				this.llmProviderBinding = new HashMap<>(3);
+			}
+			this.llmProviderBinding.put(key, fp);
+		}finally {
+			this.semaphorePolicy.release(lock, "addLLMProviderBinding", idTransazione);
+		}
+	}
+	public Serializable getLLMProviderBinding(String key) {
+		if(this.llmProviderBinding==null) {
+			return null;
+		}
+		return this.llmProviderBinding.get(key);
+	}
+	public List<String> getLLMProviderBindingKeys(){
+		List<String> l = new ArrayList<>();
+		if(this.llmProviderBinding!=null && !this.llmProviderBinding.isEmpty()) {
+			l.addAll(this.llmProviderBinding.keySet());
+		}
+		return l;
+	}
+
+
 	private synchronized void initSemaphoreStore() {
 		if(this.semaphoreStore==null) {
 			this.semaphoreStore = new org.openspcoop2.utils.Semaphore("RequestConfigStore");

@@ -1,8 +1,14 @@
 -- Gli indici vengono eliminati automaticamente una volta eliminata la tabella
+-- DROP INDEX idx_conn_llm_1;
+-- DROP INDEX idx_conn_llm_bind_1;
 -- DROP INDEX idx_conn_custom_1;
+DROP TABLE connettori_llm;
+DROP TABLE connettori_llm_binding;
 DROP TABLE connettori_properties;
 DROP TABLE connettori_custom;
 DROP TABLE connettori;
+DROP SEQUENCE seq_connettori_llm;
+DROP SEQUENCE seq_connettori_llm_binding;
 DROP SEQUENCE seq_connettori_properties;
 DROP SEQUENCE seq_connettori_custom;
 DROP SEQUENCE seq_connettori;

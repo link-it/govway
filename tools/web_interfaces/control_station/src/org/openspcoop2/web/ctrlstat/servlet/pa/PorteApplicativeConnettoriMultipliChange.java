@@ -193,6 +193,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 			boolean autenticazioneToken = ServletUtils.isCheckBoxEnabled(autenticazioneTokenS);
 			String tokenPolicy = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY);
 			String llmPolicy = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_LLM_PROVIDER);
+			String[] llmBindings = porteApplicativeHelper.getParameterValues(ConnettoriCostanti.PARAMETRO_CONNETTORE_LLM_BINDING);
 			boolean forcePDND = false;
 			boolean forceOAuth = false;
 			boolean forceDPoP = false;
@@ -419,6 +420,8 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 			}
 			InvocazioneCredenziali oldCis = oldIS.getCredenziali();
 			Connettore oldConnis = oldIS.getConnettore();
+			String[] llmBindingsLoaded = porteApplicativeHelper.extractLlmBindings(oldConnis);
+			oldConnis = porteApplicativeHelper.unwrapLlmContainer(oldConnis);
 			isConnettoreCustomUltimaImmagineSalvata = oldConnis.getCustom();
 			List<Property> oldCP = oldConnis.getPropertyList();
 			String oldTipoSA = oldSA.getTipo();
@@ -463,6 +466,8 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 								oldIS = oldSA.getInvocazioneServizio();
 								oldCis = oldIS.getCredenziali();
 								oldConnis = oldIS.getConnettore();
+								llmBindingsLoaded = porteApplicativeHelper.extractLlmBindings(oldConnis);
+								oldConnis = porteApplicativeHelper.unwrapLlmContainer(oldConnis);
 								oldCP = oldConnis.getPropertyList();
 								oldTipoSA = oldSA.getTipo();
 								
@@ -918,8 +923,8 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 					}
 
 					Map<String, String> props = null;
-					if(oldIS!=null && oldIS.getConnettore()!=null)
-						props = oldIS.getConnettore().getProperties();
+					if(oldConnis!=null)
+						props = oldConnis.getProperties();
 
 					if(connettoreDebug==null && props!=null){
 						String v = props.get(CostantiDB.CONNETTORE_DEBUG);
@@ -1078,6 +1083,10 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 						if(v!=null && !"".equals(v)){
 							llmPolicy = v;
 						}
+					}
+
+					if((llmBindings==null || llmBindings.length==0) && llmBindingsLoaded!=null && llmBindingsLoaded.length>0){
+						llmBindings = llmBindingsLoaded;
 					}
 
 					autenticazioneHttp = porteApplicativeHelper.getAutenticazioneHttp(autenticazioneHttp, endpointtype, user);
@@ -1301,7 +1310,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 							TipoOperazione.CHANGE, tipoCredenzialiSSLVerificaTuttiICampi, changepwd,
 							postBackViaPost);
 
-					String llmUrlOverride = porteApplicativeHelper.addLLMProviderSectionAndResolveUrl(dati, apiIsLLM, llmPolicy, TipoOperazione.CHANGE, postBackViaPost);
+					String llmUrlOverride = porteApplicativeHelper.addLLMProviderSectionAndResolveUrl(dati, apiIsLLM, llmPolicy, llmBindings, TipoOperazione.CHANGE, postBackViaPost);
 					if (llmUrlOverride != null) {
 						url = llmUrlOverride;
 						httpsurl = llmUrlOverride;
@@ -1457,7 +1466,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 							TipoOperazione.CHANGE, tipoCredenzialiSSLVerificaTuttiICampi, changepwd,
 							postBackViaPost);
 
-					String llmUrlOverride = porteApplicativeHelper.addLLMProviderSectionAndResolveUrl(dati, apiIsLLM, llmPolicy, TipoOperazione.CHANGE, postBackViaPost);
+					String llmUrlOverride = porteApplicativeHelper.addLLMProviderSectionAndResolveUrl(dati, apiIsLLM, llmPolicy, llmBindings, TipoOperazione.CHANGE, postBackViaPost);
 					if (llmUrlOverride != null) {
 						url = llmUrlOverride;
 						httpsurl = llmUrlOverride;
@@ -1870,7 +1879,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 								connettoreStatusParams,
 								listExtendedConnettore);
 						if (apiIsLLM) {
-							porteApplicativeHelper.addLLMPolicyPropertyToConnettore(connis, llmPolicy);
+							connis = porteApplicativeHelper.wrapAsLlmContainer(connis, llmPolicy, llmBindings, sa.getNome());
 						}
 						is.setConnettore(connis);
 						sa.setInvocazioneServizio(is);
@@ -1997,13 +2006,13 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 								apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
 								connettoreStatusParams,
 								listExtendedConnettore);
-						if (apiIsLLM) {
-							porteApplicativeHelper.addLLMPolicyPropertyToConnettore(connettore, llmPolicy);
-						}
-
 						// creare un servizio applicativo
-						String nomeServizioApplicativoErogatore = pa.getNome() + PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SAX_PREFIX + 
+						String nomeServizioApplicativoErogatore = pa.getNome() + PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SAX_PREFIX +
 								porteApplicativeHelper.getIdxNuovoConnettoreMultiplo(pa);
+
+						if (apiIsLLM) {
+							connettore = porteApplicativeHelper.wrapAsLlmContainer(connettore, llmPolicy, llmBindings, nomeServizioApplicativoErogatore);
+						}
 
 						ServizioApplicativo nuovoSA = new ServizioApplicativo();
 						nuovoSA.setNome(nomeServizioApplicativoErogatore);

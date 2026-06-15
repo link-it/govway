@@ -32,6 +32,7 @@ import org.openspcoop2.utils.jdbc.IKeyGeneratorObject;
 
 import org.openspcoop2.core.statistiche.StatisticaContenuti;
 import org.openspcoop2.core.statistiche.StatisticaGiornaliera;
+import org.openspcoop2.core.statistiche.StatisticaGiornalieraLlm;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.statistiche.Statistica;
 
@@ -189,6 +190,26 @@ public class StatisticaGiornalieraFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "latenza_servizio", StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_CONTENUTI.LATENZA_SERVIZIO.getFieldType()));
 				return object;
 			}
+			if(model.equals(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM)){
+				StatisticaGiornalieraLlm object = new StatisticaGiornalieraLlm();
+				setParameter(object, "setId", Long.class,
+					jdbcParameterUtilities.readParameter(rs, "id", Long.class));
+				setParameter(object, "setData", StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.DATA.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "data", StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.DATA.getFieldType()));
+				setParameter(object, "setLlmProvider", StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LLM_PROVIDER.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "llm_provider", StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LLM_PROVIDER.getFieldType()));
+				setParameter(object, "setLlmModel", StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LLM_MODEL.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "llm_model", StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LLM_MODEL.getFieldType()));
+				setParameter(object, "setLlmProviderBinding", StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LLM_PROVIDER_BINDING.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "llm_provider_binding", StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LLM_PROVIDER_BINDING.getFieldType()));
+				setParameter(object, "setTokenInput", StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.TOKEN_INPUT.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "token_input", StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.TOKEN_INPUT.getFieldType()));
+				setParameter(object, "setTokenOutput", StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.TOKEN_OUTPUT.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "token_output", StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.TOKEN_OUTPUT.getFieldType()));
+				setParameter(object, "setCostEstimated", StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.COST_ESTIMATED.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "cost_estimated", StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.COST_ESTIMATED.getFieldType()));
+				return object;
+			}
 			
 			else{
 				throw new ServiceException("Model ["+model.toString()+"] not supported by fetch: "+this.getClass().getName());
@@ -342,6 +363,26 @@ public class StatisticaGiornalieraFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"statistica-giornaliera-contenuti.latenza-servizio"));
 				return object;
 			}
+			if(model.equals(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM)){
+				StatisticaGiornalieraLlm object = new StatisticaGiornalieraLlm();
+				setParameter(object, "setId", Long.class,
+					this.getObjectFromMap(map,"statistica-giornaliera-llm.id"));
+				setParameter(object, "setData", StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.DATA.getFieldType(),
+					this.getObjectFromMap(map,"statistica-giornaliera-llm.data"));
+				setParameter(object, "setLlmProvider", StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LLM_PROVIDER.getFieldType(),
+					this.getObjectFromMap(map,"statistica-giornaliera-llm.llm-provider"));
+				setParameter(object, "setLlmModel", StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LLM_MODEL.getFieldType(),
+					this.getObjectFromMap(map,"statistica-giornaliera-llm.llm-model"));
+				setParameter(object, "setLlmProviderBinding", StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LLM_PROVIDER_BINDING.getFieldType(),
+					this.getObjectFromMap(map,"statistica-giornaliera-llm.llm-provider-binding"));
+				setParameter(object, "setTokenInput", StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.TOKEN_INPUT.getFieldType(),
+					this.getObjectFromMap(map,"statistica-giornaliera-llm.token-input"));
+				setParameter(object, "setTokenOutput", StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.TOKEN_OUTPUT.getFieldType(),
+					this.getObjectFromMap(map,"statistica-giornaliera-llm.token-output"));
+				setParameter(object, "setCostEstimated", StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.COST_ESTIMATED.getFieldType(),
+					this.getObjectFromMap(map,"statistica-giornaliera-llm.cost-estimated"));
+				return object;
+			}
 			
 			else{
 				throw new ServiceException("Model ["+model.toString()+"] not supported by fetch: "+this.getClass().getName());
@@ -364,6 +405,9 @@ public class StatisticaGiornalieraFetch extends AbstractJDBCFetch {
 			}
 			if(model.equals(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_CONTENUTI)){
 				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject(CostantiDB.STATISTICHE_GIORNALIERE_CONTENUTI,"id","seq_"+CostantiDB.STATISTICHE_GIORNALIERE_CONTENUTI,CostantiDB.STATISTICHE_GIORNALIERE_CONTENUTI+"_init_seq");
+			}
+			if(model.equals(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM)){
+				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject(CostantiDB.STATISTICHE_GIORNALIERE_LLM,"id","seq_"+CostantiDB.STATISTICHE_GIORNALIERE_LLM,CostantiDB.STATISTICHE_GIORNALIERE_LLM+"_init_seq");
 			}
 			
 			else{

@@ -36,8 +36,12 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.byok.BYOKWrappedValue;
 import org.openspcoop2.core.byok.IDriverBYOK;
+import org.openspcoop2.core.commons.ConnettoreLlmDBUtils;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.config.Connettore;
+import org.openspcoop2.core.config.ConnettoreLlm;
+import org.openspcoop2.core.config.ConnettoreLlmBinding;
+import org.openspcoop2.core.config.ConnettoreLlmProviderRef;
 import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.config.driver.ConnettorePropertiesUtilities;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
@@ -48,6 +52,7 @@ import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
+import org.openspcoop2.utils.sql.SQLQueryObjectException;
 
 /**
  * DriverConfigurazioneDB_connettoriLIB
@@ -563,8 +568,10 @@ public class DriverConfigurazioneDB_connettoriLIB {
 						stm.setLong(4, connettore.getId());
 						stm.executeUpdate();
 						stm.close();
-					}				
+					}
 				}
+
+				writeConnettoreLlm(connettore, idConnettore, connection, driverBYOK);
 
 				break;
 
@@ -831,9 +838,11 @@ public class DriverConfigurazioneDB_connettoriLIB {
 						stm.setLong(4, idConnettore);
 						stm.executeUpdate();
 						stm.close();
-					}			
+					}
 				}
-				
+
+				writeConnettoreLlm(connettore, idConnettore, connection, driverBYOK);
+
 				break;
 
 			case DELETE:
@@ -842,6 +851,17 @@ public class DriverConfigurazioneDB_connettoriLIB {
 
 				if (idConnettore < 0)
 					throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDConnettore] L'id del connettore non puo essere 0 tentando di fare una operazione di delete.");
+
+				// Se il connettore e' un container LLM, cancello ricorsivamente i provider concreti
+				// appesi. Le righe in connettori_llm e connettori_llm_binding vengono cancellate da
+				// ConnettoreLlmDBUtils.deleteAllForConnettore subito sotto.
+				for (Long idProv : ConnettoreLlmDBUtils.listProviderIds(idConnettore, connection, DriverConfigurazioneDBLib.tipoDB)) {
+					Connettore provOrfano = new Connettore();
+					provOrfano.setId(idProv);
+					CRUDConnettore(CostantiDB.DELETE, provOrfano, connection, driverBYOK);
+				}
+
+				ConnettoreLlmDBUtils.deleteAllForConnettore(idConnettore, connection, DriverConfigurazioneDBLib.tipoDB);
 
 				// Delete eventuali vecchie properties
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
@@ -977,6 +997,12 @@ public class DriverConfigurazioneDB_connettoriLIB {
 							readPropertiesConnettoreCustom(idConnettore,connettore,connection,driverBYOK);
 							connettore.setCustom(true);
 						}
+						else if (endpoint.equals(TipiConnettore.HTTPS.getNome())) {
+							// HTTPS: il file properties non esiste per HTTPS standard; le property
+							// specifiche (truststore/keystore) sono salvate in connettori_custom
+							// indipendentemente dal flag custom (cfr. LlmConnettoriMultipliAdd/Change).
+							readPropertiesConnettoreCustom(idConnettore,connettore,connection,driverBYOK);
+						}
 						else{
 							// legge da file properties
 							connettore.setPropertyList(ConnettorePropertiesUtilities.getPropertiesConnettore(endpoint,connection,DriverConfigurazioneDBLib.tipoDB));
@@ -988,7 +1014,9 @@ public class DriverConfigurazioneDB_connettoriLIB {
 			
 			// Extended Info
 			readPropertiesConnettoreExtendedInfo(idConnettore,connettore,connection,driverBYOK);
-			
+
+			readConnettoreLlm(idConnettore, connettore, connection, driverBYOK);
+
 			return connettore;
 		} catch (SQLException sqle) {
 
@@ -1535,5 +1563,147 @@ public class DriverConfigurazioneDB_connettoriLIB {
 		}
 	}
 
-	
+
+	/**
+	 * Persiste la sezione LLM del container: per ogni {@code ConnettoreLlmProviderRef}
+	 * crea o aggiorna il connettore concreto referenziato per nome, ne aggiorna i
+	 * binding (tabella {@code connettori_llm_binding}) e ricrea i link nella tabella
+	 * {@code connettori_llm}. I provider concreti che non sono piu' presenti nel bean
+	 * (rispetto allo stato precedente in DB) vengono cancellati via CRUDConnettore
+	 * DELETE ricorsivo.
+	 */
+	private static void writeConnettoreLlm(Connettore container, long idContainer, Connection connection, IDriverBYOK driverBYOK) throws DriverConfigurazioneException {
+		String tipoDB = DriverConfigurazioneDBLib.tipoDB;
+		try {
+			List<Long> oldProviderIds = ConnettoreLlmDBUtils.listProviderIds(idContainer, connection, tipoDB);
+
+			java.util.Set<Long> newProviderIds = new java.util.LinkedHashSet<>();
+			ConnettoreLlm llm = container.getConnettoreLlm();
+			if (llm != null) {
+				String containerNome = container.getNome();
+				for (ConnettoreLlmProviderRef ref : llm.getProviderList()) {
+					// Riallinea il nome del provider concreto al container corrente:
+					// il bean potrebbe essere stato costruito quando il container non aveva
+					// ancora un nome definitivo (es. wrap a monte del rename driver-side).
+					String llmPolicy = null;
+					if (ref.getPropertyList() != null) {
+						for (Property p : ref.getPropertyList()) {
+							if (org.openspcoop2.core.constants.CostantiConnettori.CONNETTORE_LLM_POLICY.equals(p.getNome())) {
+								llmPolicy = p.getValore();
+								break;
+							}
+						}
+					}
+					if (containerNome != null && !containerNome.isEmpty() && llmPolicy != null && !llmPolicy.isEmpty()) {
+						ref.setNome(containerNome + "_" + llmPolicy);
+					}
+					long idConcreto = upsertConcretoFromRef(ref, connection, driverBYOK, tipoDB);
+					List<String> bindingNames = new ArrayList<>();
+					for (ConnettoreLlmBinding b : ref.getBindingList()) {
+						if (b.getNome() != null && !b.getNome().isEmpty()) {
+							bindingNames.add(b.getNome());
+						}
+					}
+					ConnettoreLlmDBUtils.writeBindings(idConcreto, bindingNames, connection, tipoDB);
+					newProviderIds.add(idConcreto);
+				}
+			}
+
+			// Rimuovo i vecchi link e ne creo di nuovi (delete+insert e' piu' semplice
+			// e tiene allineato l'ordine di inserimento dei provider).
+			ConnettoreLlmDBUtils.deleteLinksByContainer(idContainer, connection, tipoDB);
+			for (Long idNew : newProviderIds) {
+				ConnettoreLlmDBUtils.link(idContainer, idNew, connection, tipoDB);
+			}
+
+			// Cancellazione dei concreti orfani (esistevano prima e non sono piu' nel bean).
+			for (Long oldId : oldProviderIds) {
+				if (!newProviderIds.contains(oldId)) {
+					Connettore orfano = new Connettore();
+					orfano.setId(oldId);
+					CRUDConnettore(CostantiDB.DELETE, orfano, connection, driverBYOK);
+				}
+			}
+		} catch (DriverConfigurazioneException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::writeConnettoreLlm] " + e.getMessage(), e);
+		}
+	}
+
+	/**
+	 * Crea o aggiorna (per nome) il connettore concreto descritto dal ProviderRef e
+	 * ne ritorna l'id. Il bean intermedio del concreto NON espone una sezione LLM
+	 * propria (il concreto e' una foglia, non un container) e i suoi binding sono
+	 * gestiti separatamente dal chiamante.
+	 */
+	private static long upsertConcretoFromRef(ConnettoreLlmProviderRef ref,
+			Connection connection, IDriverBYOK driverBYOK, String tipoDB) throws DriverConfigurazioneException, SQLException, SQLQueryObjectException {
+		Connettore concreto = new Connettore();
+		concreto.setNome(ref.getNome());
+		concreto.setTipo(ref.getTipo());
+		concreto.setConnettoreLlm(null);
+		if (ref.getPropertyList() != null) {
+			for (Property p : ref.getPropertyList()) {
+				concreto.addProperty(p);
+			}
+		}
+		// Le property HTTPS (truststore/keystore/algoritmi) non hanno una colonna ad-hoc
+		// nella tabella 'connettori' e devono essere salvate in 'connettori_custom';
+		// il bean ProviderRef non trasporta il flag 'custom', lo rideriviamo qui dal tipo.
+		if (TipiConnettore.HTTPS.getNome().equals(concreto.getTipo())) {
+			concreto.setCustom(true);
+		}
+		long lookupId = ConnettoreLlmDBUtils.lookupConnettoreIdByNome(concreto.getNome(), connection, tipoDB);
+		if (lookupId > 0) {
+			concreto.setId(lookupId);
+			CRUDConnettore(CostantiDB.UPDATE, concreto, connection, driverBYOK);
+			return lookupId;
+		}
+		return CRUDConnettore(CostantiDB.CREATE, concreto, connection, driverBYOK);
+	}
+
+	/**
+	 * Ricostruisce la sezione LLM del container leggendo ogni provider concreto
+	 * referenziato via {@code connettori_llm}: per ognuno effettua un lookup
+	 * standalone del bean Connettore e legge separatamente i suoi binding.
+	 */
+	private static void readConnettoreLlm(long idContainer, Connettore container, Connection connection, IDriverBYOK driverBYOK) throws DriverConfigurazioneException {
+		String tipoDB = DriverConfigurazioneDBLib.tipoDB;
+		try {
+			List<Long> providerIds = ConnettoreLlmDBUtils.listProviderIds(idContainer, connection, tipoDB);
+			if (providerIds.isEmpty()) {
+				return;
+			}
+			ConnettoreLlm llm = new ConnettoreLlm();
+			for (Long idConcreto : providerIds) {
+				Connettore concreto = getConnettore(idConcreto, connection, driverBYOK);
+				if (concreto == null) {
+					continue;
+				}
+				ConnettoreLlmProviderRef ref = new ConnettoreLlmProviderRef();
+				ref.setNome(concreto.getNome());
+				ref.setTipo(concreto.getTipo());
+				if (concreto.getPropertyList() != null) {
+					for (Property p : concreto.getPropertyList()) {
+						ref.addProperty(p);
+					}
+				}
+				for (String nomeBinding : ConnettoreLlmDBUtils.readBindings(idConcreto, connection, tipoDB)) {
+					ConnettoreLlmBinding b = new ConnettoreLlmBinding();
+					b.setNome(nomeBinding);
+					ref.addBinding(b);
+				}
+				llm.addProvider(ref);
+			}
+			if (llm.sizeProviderList() > 0) {
+				container.setConnettoreLlm(llm);
+			}
+		} catch (DriverConfigurazioneException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::readConnettoreLlm] " + e.getMessage(), e);
+		}
+	}
+
 }

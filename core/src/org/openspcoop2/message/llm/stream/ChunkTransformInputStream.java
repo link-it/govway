@@ -49,6 +49,11 @@ public class ChunkTransformInputStream extends FilterInputStream {
 	private final LLMProviderStreamReader reader;
 	private final LLMInboundProviderChunkDecoder decoder;
 	private final LLMOutboundFrontDoorChunkEncoder encoder;
+	/** Observer opzionale invocato ogni volta che il decoder emette un evento con usage
+	 *  (es. message_start con input_tokens, message_delta con output_tokens). Permette al
+	 *  livello applicativo di accumulare il totale per la transazione (vedi
+	 *  {@code LLMHandlerSupport.accumulateLLMStreamUsage}). Puo' essere null. */
+	private final java.util.function.Consumer<org.openspcoop2.message.llm.CanonicalUsage> usageObserver;
 
 	/** Buffer di byte pronti per il consumer (output del transformer). */
 	private byte[] outBuffer;
@@ -61,10 +66,19 @@ public class ChunkTransformInputStream extends FilterInputStream {
 			LLMProviderStreamReader reader,
 			LLMInboundProviderChunkDecoder decoder,
 			LLMOutboundFrontDoorChunkEncoder encoder) {
+		this(source, reader, decoder, encoder, null);
+	}
+
+	public ChunkTransformInputStream(InputStream source,
+			LLMProviderStreamReader reader,
+			LLMInboundProviderChunkDecoder decoder,
+			LLMOutboundFrontDoorChunkEncoder encoder,
+			java.util.function.Consumer<org.openspcoop2.message.llm.CanonicalUsage> usageObserver) {
 		super(source);
 		this.reader = reader;
 		this.decoder = decoder;
 		this.encoder = encoder;
+		this.usageObserver = usageObserver;
 		this.reader.bind(source);
 	}
 
@@ -134,6 +148,7 @@ public class ChunkTransformInputStream extends FilterInputStream {
 			if (events == null || events.isEmpty()) {
 				return; // chunk semanticamente innocuo: salta
 			}
+			notifyUsage(events);
 			byte[] out = encodeAll(events);
 			if (out.length > 0) {
 				this.outBuffer = out;
@@ -141,6 +156,21 @@ public class ChunkTransformInputStream extends FilterInputStream {
 			}
 		} catch (LLMTransformException e) {
 			throw new IOException("Errore nella trasformazione chunk SSE LLM: " + e.getMessage(), e);
+		}
+	}
+
+	private void notifyUsage(List<CanonicalStreamEvent> events) {
+		if (this.usageObserver == null) return;
+		for (CanonicalStreamEvent ev : events) {
+			org.openspcoop2.message.llm.CanonicalUsage usage = null;
+			if (ev instanceof CanonicalStreamMessageStart) {
+				usage = ((CanonicalStreamMessageStart) ev).getUsage();
+			} else if (ev instanceof CanonicalStreamMessageDelta) {
+				usage = ((CanonicalStreamMessageDelta) ev).getUsage();
+			}
+			if (usage != null) {
+				this.usageObserver.accept(usage);
+			}
 		}
 	}
 

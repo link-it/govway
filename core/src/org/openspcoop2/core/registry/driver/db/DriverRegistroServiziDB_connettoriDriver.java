@@ -264,7 +264,11 @@ public class DriverRegistroServiziDB_connettoriDriver {
 			
 			// Extended Info
 			this.readPropertiesConnettoreExtendedInfo(idConnettore,connettore,connection,driverBYOK);
-			
+
+			if (connettore != null) {
+				DriverRegistroServiziDB_connettoriLIB.readConnettoreLlm(idConnettore, connettore, connection, this.driver.tipoDB, this);
+			}
+
 			return connettore;
 		} catch (SQLException sqle) {
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::getConnettore] SQLException : " + sqle.getMessage(),sqle);

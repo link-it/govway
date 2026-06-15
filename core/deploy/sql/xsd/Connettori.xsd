@@ -22,6 +22,8 @@
                                 <linkit:sql-table object-name="connettori" object-type="connettori"/>
                                 <linkit:sql-table object-name="connettori-custom" object-type="connettori-custom"/>
                                 <linkit:sql-table object-name="connettori-properties" object-type="connettori-properties"/>
+                                <linkit:sql-table object-name="connettori-llm-binding" object-type="connettori-llm-binding"/>
+                                <linkit:sql-table object-name="connettori-llm" object-type="connettori-llm"/>
                             </linkit:sql-table-list>
                         </linkit:sql-script>
                         <linkit:sql-mapping single-table-mapping="false"
@@ -590,6 +592,114 @@
         </xsd:complexType>
     </xsd:element>
 
-    
-    
+    <xsd:element name="connettori-llm-binding">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="connettori_llm_binding"
+                                              comment="Elenco dei LLM Provider Binding configurati su un connettore di tipo LLM">
+                        <linkit:sql-table-constraint unique="uniq_conn_llm_bind" index="idx_conn_llm_bind"/>
+                        <linkit:sql-table-foreign-key
+                           reference-object-name="connettori"
+                           reference-object-type="connettori"
+                           reference-primary-key="true">
+                                   <linkit:sql-table-fk-field name="id_connettore"/>
+                        </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-unique>
+                            <linkit:sql-table-unique-field name="id_connettore"/>
+                            <linkit:sql-table-unique-field name="nome_binding"/>
+                        </linkit:sql-table-unique>
+                        <linkit:sql-table-index>
+                            <linkit:sql-table-index-field name="id_connettore"/>
+                        </linkit:sql-table-index>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="nome_binding" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="nome_binding" varchar="64"/>
+                                <linkit:sql-ddl-column-comment>Nome del LLM Provider Binding configurato (riferimento logico verso generic_properties.nome con tipologia 'llmProviderBinding')</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="id_connettore" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_connettore"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del connettore [FK verso tabella connettori(id)]</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="connettori-llm">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="connettori_llm"
+                                              comment="Associa, a un connettore principale di tipo 'disabilitato' utilizzato come container per le API LLM, l'elenco dei connettori LLM reali (1:N) instradati a runtime in base al modello richiesto dal client">
+                        <linkit:sql-table-constraint unique="uniq_conn_llm" index="idx_conn_llm"/>
+                        <linkit:sql-table-foreign-key reference-table="connettori">
+                            <linkit:sql-table-fk-field name="id_connettore_principale"/>
+                            <linkit:sql-table-fk-reference-column name="id"/>
+                        </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-foreign-key reference-table="connettori">
+                            <linkit:sql-table-fk-field name="id_connettore"/>
+                            <linkit:sql-table-fk-reference-column name="id"/>
+                        </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-unique>
+                            <linkit:sql-table-unique-field name="id_connettore_principale"/>
+                            <linkit:sql-table-unique-field name="id_connettore"/>
+                        </linkit:sql-table-unique>
+                        <linkit:sql-table-index>
+                            <linkit:sql-table-index-field name="id_connettore_principale"/>
+                        </linkit:sql-table-index>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="id_connettore_principale" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_connettore_principale"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del connettore principale, di tipo 'disabilitato', che funge da container per i connettori LLM reali [FK verso tabella connettori(id)]</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="id_connettore" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_connettore"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del connettore LLM reale [FK verso tabella connettori(id)]</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+
+
 </xsd:schema>

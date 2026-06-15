@@ -57,38 +57,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link StatisticaOraria }
+     * Create an instance of {@link StatisticaGiornalieraLlm }
      */
-    public StatisticaOraria createStatisticaOraria() {
-        return new StatisticaOraria();
-    }
-
-    /**
-     * Create an instance of {@link StatisticaContenuti }
-     */
-    public StatisticaContenuti createStatisticaContenuti() {
-        return new StatisticaContenuti();
-    }
-
-    /**
-     * Create an instance of {@link StatisticaSettimanale }
-     */
-    public StatisticaSettimanale createStatisticaSettimanale() {
-        return new StatisticaSettimanale();
-    }
-
-    /**
-     * Create an instance of {@link StatisticaGiornaliera }
-     */
-    public StatisticaGiornaliera createStatisticaGiornaliera() {
-        return new StatisticaGiornaliera();
-    }
-
-    /**
-     * Create an instance of {@link StatistichePdndTracing }
-     */
-    public StatistichePdndTracing createStatistichePdndTracing() {
-        return new StatistichePdndTracing();
+    public StatisticaGiornalieraLlm createStatisticaGiornalieraLlm() {
+        return new StatisticaGiornalieraLlm();
     }
 
     /**
@@ -99,6 +71,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link StatisticaSettimanale }
+     */
+    public StatisticaSettimanale createStatisticaSettimanale() {
+        return new StatisticaSettimanale();
+    }
+
+    /**
      * Create an instance of {@link StatisticaInfo }
      */
     public StatisticaInfo createStatisticaInfo() {
@@ -106,10 +85,45 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link StatisticaOraria }
+     */
+    public StatisticaOraria createStatisticaOraria() {
+        return new StatisticaOraria();
+    }
+
+    /**
+     * Create an instance of {@link StatisticaGiornaliera }
+     */
+    public StatisticaGiornaliera createStatisticaGiornaliera() {
+        return new StatisticaGiornaliera();
+    }
+
+    /**
+     * Create an instance of {@link StatisticaContenuti }
+     */
+    public StatisticaContenuti createStatisticaContenuti() {
+        return new StatisticaContenuti();
+    }
+
+    /**
      * Create an instance of {@link Statistica }
      */
     public Statistica createStatistica() {
         return new Statistica();
+    }
+
+    /**
+     * Create an instance of {@link StatistichePdndTracing }
+     */
+    public StatistichePdndTracing createStatistichePdndTracing() {
+        return new StatistichePdndTracing();
+    }
+
+    /**
+     * Create an instance of {@link StatisticaOrariaLlm }
+     */
+    public StatisticaOrariaLlm createStatisticaOrariaLlm() {
+        return new StatisticaOrariaLlm();
     }
 
     private static final QName _StatisticaOrariaContenuti = new QName("http://www.openspcoop2.org/core/statistiche", "statistica-oraria-contenuti");
@@ -138,19 +152,6 @@ public class ObjectFactory {
         return new JAXBElement<StatisticaContenuti>(_StatisticaMensileContenuti, StatisticaContenuti.class, null, statisticaMensileContenuti);
     }
 
-    private static final QName _StatisticaGiornalieraContenuti = new QName("http://www.openspcoop2.org/core/statistiche", "statistica-giornaliera-contenuti");
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link StatisticaContenuti }{@code >}}
-     */
-    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/statistiche", name="statistica-giornaliera-contenuti")
-    public JAXBElement<StatisticaContenuti> createStatisticaGiornalieraContenuti() {
-        return new JAXBElement<StatisticaContenuti>(_StatisticaGiornalieraContenuti, StatisticaContenuti.class, null, this.createStatisticaContenuti());
-    }
-    public JAXBElement<StatisticaContenuti> createStatisticaGiornalieraContenuti(StatisticaContenuti statisticaGiornalieraContenuti) {
-        return new JAXBElement<StatisticaContenuti>(_StatisticaGiornalieraContenuti, StatisticaContenuti.class, null, statisticaGiornalieraContenuti);
-    }
-
     private static final QName _StatisticaSettimanaleContenuti = new QName("http://www.openspcoop2.org/core/statistiche", "statistica-settimanale-contenuti");
 
     /**
@@ -162,6 +163,19 @@ public class ObjectFactory {
     }
     public JAXBElement<StatisticaContenuti> createStatisticaSettimanaleContenuti(StatisticaContenuti statisticaSettimanaleContenuti) {
         return new JAXBElement<StatisticaContenuti>(_StatisticaSettimanaleContenuti, StatisticaContenuti.class, null, statisticaSettimanaleContenuti);
+    }
+
+    private static final QName _StatisticaGiornalieraContenuti = new QName("http://www.openspcoop2.org/core/statistiche", "statistica-giornaliera-contenuti");
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link StatisticaContenuti }{@code >}}
+     */
+    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/statistiche", name="statistica-giornaliera-contenuti")
+    public JAXBElement<StatisticaContenuti> createStatisticaGiornalieraContenuti() {
+        return new JAXBElement<StatisticaContenuti>(_StatisticaGiornalieraContenuti, StatisticaContenuti.class, null, this.createStatisticaContenuti());
+    }
+    public JAXBElement<StatisticaContenuti> createStatisticaGiornalieraContenuti(StatisticaContenuti statisticaGiornalieraContenuti) {
+        return new JAXBElement<StatisticaContenuti>(_StatisticaGiornalieraContenuti, StatisticaContenuti.class, null, statisticaGiornalieraContenuti);
     }
 
 

@@ -16,7 +16,7 @@
                 <zip destfile="${build_govwayConsole_resourceDIR}/messageSecurity.zip" basedir="${deploy.dir}" includes="messageSecurity/**/*.xml" />
                 <zip destfile="${build_govwayConsole_resourceDIR}/policyGestioneToken.zip" basedir="${deploy.dir}" includes="policyGestioneToken/**/*.xml" />
 		<zip destfile="${build_govwayConsole_resourceDIR}/attributeAuthority.zip" basedir="${deploy.dir}" includes="attributeAuthority/**/*.xml" />
-		<zip destfile="${build_govwayConsole_resourceDIR}/llmProvider.zip" basedir="${deploy.dir}" includes="llmProvider/**/*.xml" />
+		<zip destfile="${build_govwayConsole_resourceDIR}/llm.zip" basedir="${deploy.dir}" includes="llm/**/*.xml" />
 	</target>
 
 	<!-- Compilazione della libreria 'org.openspcoop.web.ctrlstat.*' -->
@@ -537,7 +537,7 @@
 				<include name="messageSecurity.zip" />
 				<include name="policyGestioneToken.zip" />
 				<include name="attributeAuthority.zip" />
-				<include name="llmProvider.zip" />
+				<include name="llm.zip" />
 			</classes>
 		</war>
 		<delete dir="${build_govwayConsole}/tmp" />

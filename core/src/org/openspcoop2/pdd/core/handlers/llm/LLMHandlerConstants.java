@@ -40,10 +40,77 @@ public final class LLMHandlerConstants {
 
 	/**
 	 * Chiave PdDContext che ospita l'identificativo del provider back-end (es. "anthropic").
-	 * Per il prototipo il valore è hardcoded ad {@code anthropic}; in futuro sarà
-	 * risolto dal catalogo Provider Binding.
+	 * Risolto dall'{@code LLMOutboundRequestHandler} via il LLM Provider Binding
+	 * configurato sul connettore.
 	 */
 	public static final MapKey<String> PDD_CTX_LLM_PROVIDER = Map.newMapKey("llm.providerId");
+
+	/**
+	 * Chiave PdDContext che ospita il nome (user-defined) del LLM Provider registrato
+	 * (es. "Claude-Anthropic"). Diverso da {@link #PDD_CTX_LLM_PROVIDER} che e' il
+	 * tipo tecnico del dialect ("anthropic"/"openai"/"awsBedrock"). Usato per il
+	 * salvataggio nella tabella {@code transazioni_llm.llm_provider}.
+	 */
+	public static final MapKey<String> PDD_CTX_LLM_PROVIDER_NAME = Map.newMapKey("llm.providerName");
+
+	/**
+	 * Chiave PdDContext che ospita il nome (user-defined) del LLM Model logico
+	 * referenziato dal binding (es. "claude-haiku-4-5"). Usato per il salvataggio
+	 * nella tabella {@code transazioni_llm.llm_model}.
+	 */
+	public static final MapKey<String> PDD_CTX_LLM_MODEL_NAME = Map.newMapKey("llm.modelName");
+
+	/**
+	 * Chiave PdDContext che ospita il nome (user-defined) del LLM Provider Binding
+	 * selezionato sul connettore (es. "Anthropic-Direct-Claude-Haiku-4-5"). Usato per
+	 * il salvataggio nella tabella {@code transazioni_llm.llm_provider_binding}.
+	 */
+	public static final MapKey<String> PDD_CTX_LLM_PROVIDER_BINDING_NAME = Map.newMapKey("llm.providerBindingName");
+
+	/**
+	 * Chiave PdDContext che ospita il Vendor Model Id richiesto dall'API del Provider
+	 * concreto (es. "claude-haiku-4-5-20251001" per Anthropic direct,
+	 * "anthropic.claude-haiku-4-5-20251001-v1:0" per Bedrock). I
+	 * {@code LLMOutboundProviderRequestTransformer} lo leggono e lo iniettano nel
+	 * payload provider-specific al posto del model logico canonico.
+	 */
+	public static final MapKey<String> PDD_CTX_LLM_VENDOR_MODEL_ID = Map.newMapKey("llm.vendorModelId");
+
+	/**
+	 * Chiave PdDContext che ospita il prezzo unitario di input (USD per 1M token)
+	 * del binding selezionato. Letto come {@link Double}, opzionale. Usato per
+	 * calcolare {@code cost_estimated} a fine transazione (input_tokens / 1_000_000 * price).
+	 */
+	public static final MapKey<String> PDD_CTX_LLM_PRICE_INPUT = Map.newMapKey("llm.priceInput");
+
+	/**
+	 * Chiave PdDContext che ospita il prezzo unitario di output (USD per 1M token).
+	 * Stessa semantica di {@link #PDD_CTX_LLM_PRICE_INPUT}.
+	 */
+	public static final MapKey<String> PDD_CTX_LLM_PRICE_OUTPUT = Map.newMapKey("llm.priceOutput");
+
+	/**
+	 * Chiave PdDContext che ospita il divisore applicato al conteggio token input nel
+	 * calcolo del costo: {@code cost_input = inputTokens / divisor * priceInput}. Default
+	 * {@code 1.000.000} (prezzo per 1M token).
+	 */
+	public static final MapKey<String> PDD_CTX_LLM_PRICE_INPUT_DIVISOR = Map.newMapKey("llm.priceInputDivisor");
+
+	/**
+	 * Chiave PdDContext che ospita il divisore applicato al conteggio token output.
+	 * Stessa semantica di {@link #PDD_CTX_LLM_PRICE_INPUT_DIVISOR}.
+	 */
+	public static final MapKey<String> PDD_CTX_LLM_PRICE_OUTPUT_DIVISOR = Map.newMapKey("llm.priceOutputDivisor");
+
+	/**
+	 * Chiave PdDContext che ospita la {@link org.openspcoop2.message.llm.CanonicalUsage} osservata
+	 * dal {@link org.openspcoop2.message.llm.stream.ChunkTransformInputStream} durante lo streaming
+	 * (eventi {@code message_start} / {@code message_delta} con campo usage). Aggiornata in modo
+	 * cumulativo: il valore finale al termine dello stream e' usato per popolare
+	 * {@code transazioni_llm.token_input/token_output}. In modalita' sync l'usage e' gia'
+	 * disponibile via {@link #PDD_CTX_LLM_CANONICAL_RESPONSE}, quindi questa chiave resta nulla.
+	 */
+	public static final MapKey<String> PDD_CTX_LLM_STREAM_USAGE = Map.newMapKey("llm.streamUsage");
 
 	/**
 	 * Chiave PdDContext che ospita il {@link org.openspcoop2.utils.transport.TransportResponseContext}

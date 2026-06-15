@@ -193,7 +193,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			strutsBean.autenticazioneToken = ServletUtils.isCheckBoxEnabled(autenticazioneTokenS);
 			strutsBean.tokenPolicy = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY);
 			strutsBean.llmPolicy = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_LLM_PROVIDER);
-			
+			strutsBean.llmBindings = apsHelper.getParameterValues(ConnettoriCostanti.PARAMETRO_CONNETTORE_LLM_BINDING);
+
 			// proxy
 			strutsBean.proxyEnabled = apsHelper.getParametroBoolean(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
 			strutsBean.proxyHostname = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
@@ -1968,7 +1969,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						connettoreStatusParams,
 						listExtendedConnettore);
 				if (strutsBean.apiIsLLM) {
-					apsHelper.addLLMPolicyPropertyToConnettore(connettore, strutsBean.llmPolicy);
+					connettore = apsHelper.wrapAsLlmContainer(connettore, strutsBean.llmPolicy, strutsBean.llmBindings, connettore.getNome());
 				}
 			}
 

@@ -1,0 +1,47 @@
+<config id="llmProviderBinding"
+	label="LLM Provider Binding"
+	xmlns="http://www.openspcoop2.org/core/mvc/properties"
+	provider="org.openspcoop2.pdd.core.llm.provider.LLMProviderBindingConfigProvider">
+
+	<section label="Binding" hidden="true">
+
+		<item type="select" name="bindingProvider" label="Provider" required="true">
+			<property name="llmProviderBinding.provider" />
+		</item>
+
+		<item type="select" name="bindingModel" label="Model" required="true">
+			<property name="llmProviderBinding.model" />
+		</item>
+
+		<item type="text" name="bindingVendorModelId" label="Vendor Model Id" required="true"
+			note="Identificativo del modello richiesto dall'API del Provider concreto">
+			<property name="llmProviderBinding.vendorModelId" />
+		</item>
+
+		<subsection label="Pricing">
+
+			<item type="text" name="bindingPriceInput" label="Prezzo Input"
+				note="Costo in USD per il numero di token indicato come divisore. Lasciare vuoto per non stimare il costo.">
+				<property name="llmProviderBinding.priceInput" />
+			</item>
+
+			<item type="text" name="bindingPriceInputDivisor" label="Token Input" default="1000000"
+				note="Numero di token a cui il prezzo Input si riferisce.">
+				<property name="llmProviderBinding.priceInputDivisor" />
+			</item>
+
+			<item type="text" name="bindingPriceOutput" label="Prezzo Output"
+				note="Costo in USD per il numero di token indicato come divisore. Lasciare vuoto per non stimare il costo.">
+				<property name="llmProviderBinding.priceOutput" />
+			</item>
+
+			<item type="text" name="bindingPriceOutputDivisor" label="Token Output" default="1000000"
+				note="Numero di token a cui il prezzo Output si riferisce.">
+				<property name="llmProviderBinding.priceOutputDivisor" />
+			</item>
+
+		</subsection>
+
+	</section>
+
+</config>

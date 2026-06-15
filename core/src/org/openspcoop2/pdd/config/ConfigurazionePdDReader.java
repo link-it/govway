@@ -166,9 +166,11 @@ import org.openspcoop2.pdd.core.autorizzazione.canali.CanaliUtils;
 import org.openspcoop2.pdd.core.byok.BYOKUnwrapPolicyUtilities;
 import org.openspcoop2.pdd.core.connettori.ConnettoreCheck;
 import org.openspcoop2.pdd.core.connettori.ConnettoreHTTPSProperties;
+import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.pdd.core.connettori.GestoreErroreConnettore;
 import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
+import org.openspcoop2.pdd.core.llm.routing.LLMConnectorResolver;
 import org.openspcoop2.pdd.core.controllo_traffico.DimensioneMessaggiConfigurationUtils;
 import org.openspcoop2.pdd.core.controllo_traffico.ReadTimeoutConfigurationUtils;
 import org.openspcoop2.pdd.core.controllo_traffico.ReadTimeoutContextParam;
@@ -1441,8 +1443,8 @@ public class ConfigurazionePdDReader {
 	 * @return Il connettore da utilizzare per la spedizione della busta.
 	 * 
 	 */
-	protected Connettore getForwardRoute(Connection connectionPdD, RegistroServiziManager registroServiziManager ,IDSoggetto idSoggettoDestinatario,boolean functionAsRouter, RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		return getForwardRoute(connectionPdD,registroServiziManager,null,this.buildIDServizioWithOnlySoggetto(idSoggettoDestinatario),functionAsRouter, requestInfo);
+	protected Connettore getForwardRoute(Connection connectionPdD, RegistroServiziManager registroServiziManager ,IDSoggetto idSoggettoDestinatario,boolean functionAsRouter, RequestInfo requestInfo, PdDContext pddContext) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return getForwardRoute(connectionPdD,registroServiziManager,null,this.buildIDServizioWithOnlySoggetto(idSoggettoDestinatario),functionAsRouter, requestInfo, pddContext);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -1469,7 +1471,7 @@ public class ConfigurazionePdDReader {
 	 * @return Il connettore da utilizzare per la spedizione della busta.
 	 * 
 	 */
-	protected Connettore getForwardRoute(Connection connectionPdD, RegistroServiziManager registroServiziManager , IDSoggetto idSoggettoMittente, IDServizio idServizio,boolean functionAsRouter, RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	protected Connettore getForwardRoute(Connection connectionPdD, RegistroServiziManager registroServiziManager , IDSoggetto idSoggettoMittente, IDServizio idServizio,boolean functionAsRouter, RequestInfo requestInfo, PdDContext pddContext) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 
 		if(idServizio == null)
@@ -1537,11 +1539,26 @@ public class ConfigurazionePdDReader {
 			catch(Exception e){
 				throw new DriverConfigurazioneException("getForwardRoute[RoutingTable Non Abilitata], errore durante la lettura dal Registro dei Servizi: "+e.getMessage(),e);
 			}
-			if(connettoreDominio!=null && !CostantiConfigurazione.NONE.equals(connettoreDominio.getTipo()) 
-					&& !CostantiConfigurazione.DISABILITATO.equals(connettoreDominio.getTipo()) )
-				return connettoreDominio;
-			else
-				throw new DriverConfigurazioneException("getForwardRoute[RoutingTable Non Abilitata], connettore per la busta non trovato.");
+			if(connettoreDominio!=null && !CostantiConfigurazione.NONE.equals(connettoreDominio.getTipo())
+					&& !CostantiConfigurazione.DISABILITATO.equals(connettoreDominio.getTipo()) ) {
+				try {
+					return LLMConnectorResolver.resolveForConfig(connettoreDominio, pddContext);
+				} catch (org.openspcoop2.utils.UtilsRuntimeException e) {
+					throw new DriverConfigurazioneException(e.getMessage(), e);
+				}
+			}
+			// Fruizione LLM: il container vive sul Fruitore con tipo=disabilitato come placeholder,
+			// ma la sezione ConnettoreLlm contiene i provider concreti consegnabili. Il
+			// LLMConnectorResolver seleziona il provider corretto in base a request.model.
+			if (connettoreDominio != null && connettoreDominio.getConnettoreLlm() != null
+					&& connettoreDominio.getConnettoreLlm().sizeProviderList() > 0) {
+				try {
+					return LLMConnectorResolver.resolveForConfig(connettoreDominio, pddContext);
+				} catch (org.openspcoop2.utils.UtilsRuntimeException e) {
+					throw new DriverConfigurazioneException(e.getMessage(), e);
+				}
+			}
+			throw new DriverConfigurazioneException("getForwardRoute[RoutingTable Non Abilitata], connettore per la busta non trovato.");
 		}
 
 		StringBuilder bf = new StringBuilder();
@@ -1611,7 +1628,7 @@ public class ConfigurazionePdDReader {
 					}
 					if(connettoreDominio!=null && !CostantiConfigurazione.NONE.equals(connettoreDominio.getTipo()) 
 							&& !CostantiConfigurazione.DISABILITATO.equals(connettoreDominio.getTipo()))
-						return connettoreDominio;
+						return LLMConnectorResolver.resolveForConfig(connettoreDominio, pddContext);
 					else{
 						if(!error){
 							bf.append(" non trovata: connettore non definito");
@@ -1675,7 +1692,7 @@ public class ConfigurazionePdDReader {
 				}
 				if(connettoreDominio!=null && !CostantiConfigurazione.NONE.equals(connettoreDominio.getTipo())
 						&& !CostantiConfigurazione.DISABILITATO.equals(connettoreDominio.getTipo()))
-					return connettoreDominio;
+					return LLMConnectorResolver.resolveForConfig(connettoreDominio, pddContext);
 				else{
 					if(!error){
 						bf.append(" non trovata: connettore non definito");
@@ -1700,7 +1717,7 @@ public class ConfigurazionePdDReader {
 	protected String getRegistroForImbustamento(Connection connectionPdD, RegistroServiziManager registroServiziManager , IDSoggetto idSoggettoMittente, IDServizio idServizio,boolean functionAsRouter, RequestInfo requestInfo)throws DriverConfigurazioneException{
 		Connettore conn = null;
 		try {
-			conn = getForwardRoute(connectionPdD,registroServiziManager,idSoggettoMittente,idServizio,functionAsRouter, requestInfo);
+			conn = getForwardRoute(connectionPdD,registroServiziManager,idSoggettoMittente,idServizio,functionAsRouter, requestInfo, null);
 		}catch(DriverConfigurazioneNotFound e){}
 		if(conn!=null)
 			return conn.getNomeRegistro();
@@ -4649,15 +4666,21 @@ public class ConfigurazionePdDReader {
 
 		InvocazioneServizio serv = sa.getInvocazioneServizio();
 		Connettore connettore = serv.getConnettore();
-		if(connettore!=null && 
+		if(connettore!=null &&
 				!CostantiConfigurazione.NONE.equals(connettore.getTipo()) &&
 				!CostantiConfigurazione.DISABILITATO.equals(connettore.getTipo()))
 			return true;
-		else
-			return false;
+		// LLM: il container ha tipo 'disabilitato' come placeholder, ma la consegna avviene
+		// verso uno dei provider concreti referenziati nella sezione ConnettoreLlm. Quindi
+		// se la sezione esiste con almeno un provider, il SA e' di fatto consegnabile.
+		if(connettore!=null && connettore.getConnettoreLlm()!=null
+				&& connettore.getConnettoreLlm().sizeProviderList()>0) {
+			return true;
+		}
+		return false;
 	}
 
-	protected ConnettoreMsg getInvocazioneServizio(Connection connectionPdD,ServizioApplicativo sa,RichiestaApplicativa richiestaApplicativa, RequestInfo requestInfo)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	protected ConnettoreMsg getInvocazioneServizio(Connection connectionPdD,ServizioApplicativo sa,RichiestaApplicativa richiestaApplicativa, RequestInfo requestInfo, PdDContext pddContext)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		// Servizio applicativo
 		if(sa.getInvocazioneServizio()==null)
@@ -4721,7 +4744,16 @@ public class ConfigurazionePdDReader {
 
 
 		// CONNETTORE
-		Connettore connettore = serv.getConnettore();
+		Connettore connettore;
+		try {
+			connettore = LLMConnectorResolver.resolveForConfig(serv.getConnettore(), pddContext);
+		} catch (org.openspcoop2.utils.UtilsRuntimeException e) {
+			// Misconfigurazione del routing LLM (modello richiesto non disponibile o ambiguo).
+			// La sollevo come DriverConfigurazioneException cosi' viene trattata dal runtime
+			// come errore di configurazione (e produce un log esplicito invece dell'errore
+			// generico "Errore non gestito dalla libreria" di GestioneStateless).
+			throw new DriverConfigurazioneException(e.getMessage(), e);
+		}
 		java.util.Map<String,String> properties = null;
 		if(connettore != null && CostantiConfigurazione.DISABILITATO.equals(connettore.getTipo())==false){
 			String nome = connettore.getNome();
@@ -4889,7 +4921,7 @@ public class ConfigurazionePdDReader {
 			return false;
 	}
 
-	protected ConnettoreMsg getConsegnaRispostaAsincrona(Connection connectionPdD,ServizioApplicativo sa,RichiestaDelegata idPD, RequestInfo requestInfo)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	protected ConnettoreMsg getConsegnaRispostaAsincrona(Connection connectionPdD,ServizioApplicativo sa,RichiestaDelegata idPD, RequestInfo requestInfo, PdDContext pddContext)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		// Servizio applicativo
 		if(sa.getRispostaAsincrona()==null)
@@ -4938,7 +4970,16 @@ public class ConfigurazionePdDReader {
 
 
 		// CONNETTORE
-		Connettore connettore = serv.getConnettore();
+		Connettore connettore;
+		try {
+			connettore = LLMConnectorResolver.resolveForConfig(serv.getConnettore(), pddContext);
+		} catch (org.openspcoop2.utils.UtilsRuntimeException e) {
+			// Misconfigurazione del routing LLM (modello richiesto non disponibile o ambiguo).
+			// La sollevo come DriverConfigurazioneException cosi' viene trattata dal runtime
+			// come errore di configurazione (e produce un log esplicito invece dell'errore
+			// generico "Errore non gestito dalla libreria" di GestioneStateless).
+			throw new DriverConfigurazioneException(e.getMessage(), e);
+		}
 		java.util.Map<String,String> properties = null;
 		if(connettore != null && CostantiConfigurazione.DISABILITATO.equals(connettore.getTipo())==false){
 			String nome = connettore.getNome();
@@ -4998,7 +5039,7 @@ public class ConfigurazionePdDReader {
 		return connettoreMsg;
 	}
 
-	protected ConnettoreMsg getConsegnaRispostaAsincrona(Connection connectionPdD,ServizioApplicativo sa,RichiestaApplicativa richiestaApplicativa, RequestInfo requestInfo)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	protected ConnettoreMsg getConsegnaRispostaAsincrona(Connection connectionPdD,ServizioApplicativo sa,RichiestaApplicativa richiestaApplicativa, RequestInfo requestInfo, PdDContext pddContext)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		//		 Servizio applicativo
 		if(sa.getRispostaAsincrona()==null)
@@ -5062,7 +5103,16 @@ public class ConfigurazionePdDReader {
 
 
 		// CONNETTORE
-		Connettore connettore = serv.getConnettore();
+		Connettore connettore;
+		try {
+			connettore = LLMConnectorResolver.resolveForConfig(serv.getConnettore(), pddContext);
+		} catch (org.openspcoop2.utils.UtilsRuntimeException e) {
+			// Misconfigurazione del routing LLM (modello richiesto non disponibile o ambiguo).
+			// La sollevo come DriverConfigurazioneException cosi' viene trattata dal runtime
+			// come errore di configurazione (e produce un log esplicito invece dell'errore
+			// generico "Errore non gestito dalla libreria" di GestioneStateless).
+			throw new DriverConfigurazioneException(e.getMessage(), e);
+		}
 		java.util.Map<String,String> properties = null;
 		if(connettore != null && CostantiConfigurazione.DISABILITATO.equals(connettore.getTipo())==false){
 			String nome = connettore.getNome();
@@ -8984,7 +9034,7 @@ public class ConfigurazionePdDReader {
 		return policy;
 	}
 	
-	protected PolicyAttributeAuthority getPolicyAttributeAuthority(Connection connectionPdD, boolean forceNoCache, String policyName) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+	protected PolicyAttributeAuthority getPolicyAttributeAuthority(Connection connectionPdD, boolean forceNoCache, String policyName) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		if(policyName==null){
 			throw new DriverConfigurazioneException("Policy non fornita");
@@ -9000,6 +9050,30 @@ public class ConfigurazionePdDReader {
 		}
 
 		return policy;
+	}
+
+	protected GenericProperties getPolicyLLMProvider(Connection connectionPdD, boolean forceNoCache, String policyName) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		if(policyName==null){
+			throw new DriverConfigurazioneException("Policy non fornita");
+		}
+		return this.configurazionePdD.getGenericProperties(connectionPdD, forceNoCache,
+				org.openspcoop2.pdd.core.llm.provider.Costanti.TIPOLOGIA, policyName);
+	}
+
+	protected GenericProperties getPolicyLLMModel(Connection connectionPdD, boolean forceNoCache, String policyName) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		if(policyName==null){
+			throw new DriverConfigurazioneException("Policy non fornita");
+		}
+		return this.configurazionePdD.getGenericProperties(connectionPdD, forceNoCache,
+				org.openspcoop2.pdd.core.llm.provider.Costanti.TIPOLOGIA_MODEL, policyName);
+	}
+
+	protected GenericProperties getPolicyLLMProviderBinding(Connection connectionPdD, boolean forceNoCache, String policyName) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		if(policyName==null){
+			throw new DriverConfigurazioneException("Policy non fornita");
+		}
+		return this.configurazionePdD.getGenericProperties(connectionPdD, forceNoCache,
+				org.openspcoop2.pdd.core.llm.provider.Costanti.TIPOLOGIA_PROVIDER_BINDING, policyName);
 	}
 
 	public GenericProperties getGenericProperties(Connection connectionPdD, String tipologia, String nome) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{

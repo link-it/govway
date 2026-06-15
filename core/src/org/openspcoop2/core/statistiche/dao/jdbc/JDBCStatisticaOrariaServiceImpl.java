@@ -43,6 +43,7 @@ import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
 
 import org.openspcoop2.core.statistiche.Statistica;
 import org.openspcoop2.core.statistiche.StatisticaContenuti;
+import org.openspcoop2.core.statistiche.StatisticaOrariaLlm;
 import org.openspcoop2.core.statistiche.StatisticaOraria;
 
 /**     
@@ -213,6 +214,37 @@ public class JDBCStatisticaOrariaServiceImpl extends JDBCStatisticaOrariaService
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(id),Long.class)
 			);
 			statisticaOraria.getStatisticaOrariaContenutiList().get(i).setId(id_statisticaOrariaContenuti);
+		} // fine for 
+
+		// for statisticaOraria
+		for (int i = 0; i < statisticaOraria.getStatisticaOrariaLlmList().size(); i++) {
+
+
+			// Object statisticaOraria.getStatisticaOrariaLlmList().get(i)
+			ISQLQueryObject sqlQueryObjectInsert_statisticaOrariaLlm = sqlQueryObjectInsert.newSQLQueryObject();
+			sqlQueryObjectInsert_statisticaOrariaLlm.addInsertTable(this.getStatisticaOrariaFieldConverter().toTable(StatisticaOraria.model().STATISTICA_ORARIA_LLM));
+			sqlQueryObjectInsert_statisticaOrariaLlm.addInsertField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.DATA,false),"?");
+			sqlQueryObjectInsert_statisticaOrariaLlm.addInsertField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.LLM_PROVIDER,false),"?");
+			sqlQueryObjectInsert_statisticaOrariaLlm.addInsertField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.LLM_MODEL,false),"?");
+			sqlQueryObjectInsert_statisticaOrariaLlm.addInsertField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.LLM_PROVIDER_BINDING,false),"?");
+			sqlQueryObjectInsert_statisticaOrariaLlm.addInsertField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.TOKEN_INPUT,false),"?");
+			sqlQueryObjectInsert_statisticaOrariaLlm.addInsertField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.TOKEN_OUTPUT,false),"?");
+			sqlQueryObjectInsert_statisticaOrariaLlm.addInsertField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.COST_ESTIMATED,false),"?");
+			sqlQueryObjectInsert_statisticaOrariaLlm.addInsertField("id_stat","?");
+
+			// Insert statisticaOraria.getStatisticaOrariaLlmList().get(i)
+			org.openspcoop2.utils.jdbc.IKeyGeneratorObject keyGenerator_statisticaOrariaLlm = this.getStatisticaOrariaFetch().getKeyGeneratorObject(StatisticaOraria.model().STATISTICA_ORARIA_LLM);
+			long id_statisticaOrariaLlm = jdbcUtilities.insertAndReturnGeneratedKey(sqlQueryObjectInsert_statisticaOrariaLlm, keyGenerator_statisticaOrariaLlm, jdbcProperties.isShowSql(),
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaOraria.getStatisticaOrariaLlmList().get(i).getData(),StatisticaOraria.model().STATISTICA_ORARIA_LLM.DATA.getFieldType()),
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaOraria.getStatisticaOrariaLlmList().get(i).getLlmProvider(),StatisticaOraria.model().STATISTICA_ORARIA_LLM.LLM_PROVIDER.getFieldType()),
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaOraria.getStatisticaOrariaLlmList().get(i).getLlmModel(),StatisticaOraria.model().STATISTICA_ORARIA_LLM.LLM_MODEL.getFieldType()),
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaOraria.getStatisticaOrariaLlmList().get(i).getLlmProviderBinding(),StatisticaOraria.model().STATISTICA_ORARIA_LLM.LLM_PROVIDER_BINDING.getFieldType()),
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaOraria.getStatisticaOrariaLlmList().get(i).getTokenInput(),StatisticaOraria.model().STATISTICA_ORARIA_LLM.TOKEN_INPUT.getFieldType()),
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaOraria.getStatisticaOrariaLlmList().get(i).getTokenOutput(),StatisticaOraria.model().STATISTICA_ORARIA_LLM.TOKEN_OUTPUT.getFieldType()),
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaOraria.getStatisticaOrariaLlmList().get(i).getCostEstimated(),StatisticaOraria.model().STATISTICA_ORARIA_LLM.COST_ESTIMATED.getFieldType()),
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(id),Long.class)
+			);
+			statisticaOraria.getStatisticaOrariaLlmList().get(i).setId(id_statisticaOrariaLlm);
 		} // fine for 
 
 		
@@ -507,6 +539,102 @@ public class JDBCStatisticaOrariaServiceImpl extends JDBCStatisticaOrariaService
 
 		jdbcUtilities.execute(sqlQueryObjectUpdate_statisticaOrariaContenutideleteEngineList.createSQLDelete(), jdbcProperties.isShowSql(), jdbcObjects_statisticaOrariaContenutideleteEngine.toArray(new JDBCObject[]{}));
 
+		// for statisticaOraria_statisticaOrariaLlm
+
+		java.util.List<Long> ids_statisticaOrariaLlm_da_non_eliminare = new java.util.ArrayList<Long>();
+		for (Object statisticaOraria_statisticaOrariaLlm_object : statisticaOraria.getStatisticaOrariaLlmList()) {
+			StatisticaOrariaLlm statisticaOraria_statisticaOrariaLlm = (StatisticaOrariaLlm) statisticaOraria_statisticaOrariaLlm_object;
+			if(statisticaOraria_statisticaOrariaLlm.getId() == null || statisticaOraria_statisticaOrariaLlm.getId().longValue() <= 0) {
+
+				long id = statisticaOraria.getId();			
+
+				// Object statisticaOraria_statisticaOrariaLlm
+				ISQLQueryObject sqlQueryObjectInsert_statisticaOrariaLlm = sqlQueryObjectInsert.newSQLQueryObject();
+				sqlQueryObjectInsert_statisticaOrariaLlm.addInsertTable(this.getStatisticaOrariaFieldConverter().toTable(StatisticaOraria.model().STATISTICA_ORARIA_LLM));
+				sqlQueryObjectInsert_statisticaOrariaLlm.addInsertField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.DATA,false),"?");
+				sqlQueryObjectInsert_statisticaOrariaLlm.addInsertField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.LLM_PROVIDER,false),"?");
+				sqlQueryObjectInsert_statisticaOrariaLlm.addInsertField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.LLM_MODEL,false),"?");
+				sqlQueryObjectInsert_statisticaOrariaLlm.addInsertField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.LLM_PROVIDER_BINDING,false),"?");
+				sqlQueryObjectInsert_statisticaOrariaLlm.addInsertField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.TOKEN_INPUT,false),"?");
+				sqlQueryObjectInsert_statisticaOrariaLlm.addInsertField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.TOKEN_OUTPUT,false),"?");
+				sqlQueryObjectInsert_statisticaOrariaLlm.addInsertField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.COST_ESTIMATED,false),"?");
+				sqlQueryObjectInsert_statisticaOrariaLlm.addInsertField("id_stat","?");
+
+				// Insert statisticaOraria_statisticaOrariaLlm
+				org.openspcoop2.utils.jdbc.IKeyGeneratorObject keyGenerator_statisticaOrariaLlm = this.getStatisticaOrariaFetch().getKeyGeneratorObject(StatisticaOraria.model().STATISTICA_ORARIA_LLM);
+				long id_statisticaOrariaLlm = jdbcUtilities.insertAndReturnGeneratedKey(sqlQueryObjectInsert_statisticaOrariaLlm, keyGenerator_statisticaOrariaLlm, jdbcProperties.isShowSql(),
+					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaOraria_statisticaOrariaLlm.getData(),StatisticaOraria.model().STATISTICA_ORARIA_LLM.DATA.getFieldType()),
+					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaOraria_statisticaOrariaLlm.getLlmProvider(),StatisticaOraria.model().STATISTICA_ORARIA_LLM.LLM_PROVIDER.getFieldType()),
+					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaOraria_statisticaOrariaLlm.getLlmModel(),StatisticaOraria.model().STATISTICA_ORARIA_LLM.LLM_MODEL.getFieldType()),
+					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaOraria_statisticaOrariaLlm.getLlmProviderBinding(),StatisticaOraria.model().STATISTICA_ORARIA_LLM.LLM_PROVIDER_BINDING.getFieldType()),
+					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaOraria_statisticaOrariaLlm.getTokenInput(),StatisticaOraria.model().STATISTICA_ORARIA_LLM.TOKEN_INPUT.getFieldType()),
+					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaOraria_statisticaOrariaLlm.getTokenOutput(),StatisticaOraria.model().STATISTICA_ORARIA_LLM.TOKEN_OUTPUT.getFieldType()),
+					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaOraria_statisticaOrariaLlm.getCostEstimated(),StatisticaOraria.model().STATISTICA_ORARIA_LLM.COST_ESTIMATED.getFieldType()),
+					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(id),Long.class)
+				);
+				statisticaOraria_statisticaOrariaLlm.setId(id_statisticaOrariaLlm);
+
+				ids_statisticaOrariaLlm_da_non_eliminare.add(statisticaOraria_statisticaOrariaLlm.getId());
+			} else {
+
+
+				// Object statisticaOraria_statisticaOrariaLlm
+				ISQLQueryObject sqlQueryObjectUpdate_statisticaOrariaLlm = sqlQueryObjectUpdate.newSQLQueryObject();
+				sqlQueryObjectUpdate_statisticaOrariaLlm.setANDLogicOperator(true);
+				sqlQueryObjectUpdate_statisticaOrariaLlm.addUpdateTable(this.getStatisticaOrariaFieldConverter().toTable(StatisticaOraria.model().STATISTICA_ORARIA_LLM));
+				boolean isUpdate_statisticaOrariaLlm = true;
+				java.util.List<JDBCObject> lstObjects_statisticaOrariaLlm = new java.util.ArrayList<>();
+				sqlQueryObjectUpdate_statisticaOrariaLlm.addUpdateField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.DATA,false), "?");
+				lstObjects_statisticaOrariaLlm.add(new JDBCObject(statisticaOraria_statisticaOrariaLlm.getData(), StatisticaOraria.model().STATISTICA_ORARIA_LLM.DATA.getFieldType()));
+				sqlQueryObjectUpdate_statisticaOrariaLlm.addUpdateField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.LLM_PROVIDER,false), "?");
+				lstObjects_statisticaOrariaLlm.add(new JDBCObject(statisticaOraria_statisticaOrariaLlm.getLlmProvider(), StatisticaOraria.model().STATISTICA_ORARIA_LLM.LLM_PROVIDER.getFieldType()));
+				sqlQueryObjectUpdate_statisticaOrariaLlm.addUpdateField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.LLM_MODEL,false), "?");
+				lstObjects_statisticaOrariaLlm.add(new JDBCObject(statisticaOraria_statisticaOrariaLlm.getLlmModel(), StatisticaOraria.model().STATISTICA_ORARIA_LLM.LLM_MODEL.getFieldType()));
+				sqlQueryObjectUpdate_statisticaOrariaLlm.addUpdateField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.LLM_PROVIDER_BINDING,false), "?");
+				lstObjects_statisticaOrariaLlm.add(new JDBCObject(statisticaOraria_statisticaOrariaLlm.getLlmProviderBinding(), StatisticaOraria.model().STATISTICA_ORARIA_LLM.LLM_PROVIDER_BINDING.getFieldType()));
+				sqlQueryObjectUpdate_statisticaOrariaLlm.addUpdateField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.TOKEN_INPUT,false), "?");
+				lstObjects_statisticaOrariaLlm.add(new JDBCObject(statisticaOraria_statisticaOrariaLlm.getTokenInput(), StatisticaOraria.model().STATISTICA_ORARIA_LLM.TOKEN_INPUT.getFieldType()));
+				sqlQueryObjectUpdate_statisticaOrariaLlm.addUpdateField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.TOKEN_OUTPUT,false), "?");
+				lstObjects_statisticaOrariaLlm.add(new JDBCObject(statisticaOraria_statisticaOrariaLlm.getTokenOutput(), StatisticaOraria.model().STATISTICA_ORARIA_LLM.TOKEN_OUTPUT.getFieldType()));
+				sqlQueryObjectUpdate_statisticaOrariaLlm.addUpdateField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.COST_ESTIMATED,false), "?");
+				lstObjects_statisticaOrariaLlm.add(new JDBCObject(statisticaOraria_statisticaOrariaLlm.getCostEstimated(), StatisticaOraria.model().STATISTICA_ORARIA_LLM.COST_ESTIMATED.getFieldType()));
+				sqlQueryObjectUpdate_statisticaOrariaLlm.addWhereCondition("id=?");
+				ids_statisticaOrariaLlm_da_non_eliminare.add(statisticaOraria_statisticaOrariaLlm.getId());
+				lstObjects_statisticaOrariaLlm.add(new JDBCObject(Long.valueOf(statisticaOraria_statisticaOrariaLlm.getId()),Long.class));
+
+				if(isUpdate_statisticaOrariaLlm) {
+					// Update statisticaOraria_statisticaOrariaLlm
+					jdbcUtilities.executeUpdate(sqlQueryObjectUpdate_statisticaOrariaLlm.createSQLUpdate(), jdbcProperties.isShowSql(), 
+						lstObjects_statisticaOrariaLlm.toArray(new JDBCObject[]{}));
+				}
+			}
+		} // fine for statisticaOraria_statisticaOrariaLlm
+
+		// elimino tutte le occorrenze di statisticaOraria_statisticaOrariaLlm non presenti nell'update
+
+		ISQLQueryObject sqlQueryObjectUpdate_statisticaOrariaLlmdeleteEngineList = sqlQueryObjectUpdate.newSQLQueryObject();
+		sqlQueryObjectUpdate_statisticaOrariaLlmdeleteEngineList.setANDLogicOperator(true);
+		sqlQueryObjectUpdate_statisticaOrariaLlmdeleteEngineList.addDeleteTable(this.getStatisticaOrariaFieldConverter().toTable(StatisticaOraria.model().STATISTICA_ORARIA_LLM));
+		java.util.List<JDBCObject> jdbcObjects_statisticaOrariaLlmdeleteEngine = new java.util.ArrayList<>();
+
+		sqlQueryObjectUpdate_statisticaOrariaLlmdeleteEngineList.addWhereCondition("id_stat=?");
+		jdbcObjects_statisticaOrariaLlmdeleteEngine.add(new JDBCObject(statisticaOraria.getId(), Long.class));
+
+		StringBuilder marks_statisticaOrariaLlm = new StringBuilder();
+		if(ids_statisticaOrariaLlm_da_non_eliminare.size() > 0) {
+			for(Long ids : ids_statisticaOrariaLlm_da_non_eliminare) {
+				if(marks_statisticaOrariaLlm.length() > 0) {
+					marks_statisticaOrariaLlm.append(",");
+				}
+				marks_statisticaOrariaLlm.append("?");
+				jdbcObjects_statisticaOrariaLlmdeleteEngine.add(new JDBCObject(ids, Long.class));
+
+			}
+			sqlQueryObjectUpdate_statisticaOrariaLlmdeleteEngineList.addWhereCondition("id NOT IN ("+marks_statisticaOrariaLlm.toString()+")");
+		}
+
+		jdbcUtilities.execute(sqlQueryObjectUpdate_statisticaOrariaLlmdeleteEngineList.createSQLDelete(), jdbcProperties.isShowSql(), jdbcObjects_statisticaOrariaLlmdeleteEngine.toArray(new JDBCObject[]{}));
+
 
 
 	}
@@ -651,6 +779,31 @@ public class JDBCStatisticaOrariaServiceImpl extends JDBCStatisticaOrariaService
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaOraria_statisticaOrariaContenuti.getId(),Long.class));
 			}
 		} // fine for statisticaOraria_statisticaOrariaContenuti
+
+		//Recupero oggetto _statisticaOrariaLlm
+		ISQLQueryObject sqlQueryObjectDelete_statisticaOrariaLlmgetEngineToDelete = sqlQueryObjectDelete.newSQLQueryObject();
+		sqlQueryObjectDelete_statisticaOrariaLlmgetEngineToDelete.setANDLogicOperator(true);
+		sqlQueryObjectDelete_statisticaOrariaLlmgetEngineToDelete.addFromTable(this.getStatisticaOrariaFieldConverter().toTable(StatisticaOraria.model().STATISTICA_ORARIA_LLM));
+		sqlQueryObjectDelete_statisticaOrariaLlmgetEngineToDelete.addWhereCondition("id_stat=?");
+		java.util.List<Object> statisticaOraria_statisticaOrariaLlm_toDelete_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectDelete_statisticaOrariaLlmgetEngineToDelete.createSQLQuery(), jdbcProperties.isShowSql(), StatisticaOraria.model().STATISTICA_ORARIA_LLM, this.getStatisticaOrariaFetch(),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(id),Long.class));
+
+		// for statisticaOraria_statisticaOrariaLlm
+		for (Object statisticaOraria_statisticaOrariaLlm_object : statisticaOraria_statisticaOrariaLlm_toDelete_list) {
+			StatisticaOrariaLlm statisticaOraria_statisticaOrariaLlm = (StatisticaOrariaLlm) statisticaOraria_statisticaOrariaLlm_object;
+
+			// Object statisticaOraria_statisticaOrariaLlm
+			ISQLQueryObject sqlQueryObjectDelete_statisticaOrariaLlm = sqlQueryObjectDelete.newSQLQueryObject();
+			sqlQueryObjectDelete_statisticaOrariaLlm.setANDLogicOperator(true);
+			sqlQueryObjectDelete_statisticaOrariaLlm.addDeleteTable(this.getStatisticaOrariaFieldConverter().toTable(StatisticaOraria.model().STATISTICA_ORARIA_LLM));
+			sqlQueryObjectDelete_statisticaOrariaLlm.addWhereCondition("id=?");
+
+			// Delete statisticaOraria_statisticaOrariaLlm
+			if(statisticaOraria_statisticaOrariaLlm != null){
+				jdbcUtilities.execute(sqlQueryObjectDelete_statisticaOrariaLlm.createSQLDelete(), jdbcProperties.isShowSql(), 
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(statisticaOraria_statisticaOrariaLlm.getId()),Long.class));
+			}
+		} // fine for statisticaOraria_statisticaOrariaLlm
 
 		// Object statisticaOraria_statisticaBase_toDelete
 		sqlQueryObjectDelete.setANDLogicOperator(true);

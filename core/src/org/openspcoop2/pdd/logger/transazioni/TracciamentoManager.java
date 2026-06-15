@@ -49,6 +49,9 @@ import org.openspcoop2.core.transazioni.Transazione;
 import org.openspcoop2.core.transazioni.constants.DiagnosticColumnType;
 import org.openspcoop2.core.transazioni.dao.IDumpMessaggioService;
 import org.openspcoop2.core.transazioni.dao.ITransazioneService;
+import org.openspcoop2.core.transazioni.dao.ITransazioneLlmService;
+import org.openspcoop2.core.transazioni.IdTransazioneLlm;
+import org.openspcoop2.core.transazioni.TransazioneLlm;
 import org.openspcoop2.core.transazioni.utils.TransazioneDaoExt;
 import org.openspcoop2.generic_project.beans.UpdateField;
 import org.openspcoop2.generic_project.exception.ExpressionException;
@@ -1207,6 +1210,19 @@ public class TracciamentoManager {
 				}
 				if(this.debug)
 					this.logDebug("["+idTransazione+"] inserita transazione");
+
+				// LLM: scrittura/aggiornamento riga collegata in 'transazioni_llm'.
+				// Replica la stessa semantica della transazione principale: la prima fase che
+				// inserisce la Transazione fa l'INSERT anche sulla TransazioneLlm; le fasi
+				// successive (OUT_REQUEST / OUT_RESPONSE / POST_OUT_RESPONSE) aggiornano i campi
+				// che possono essere nel frattempo arrivati (es. tokenInput/tokenOutput sulla risposta).
+				// Se PdDContext non e' marcato LLM, skip silenzioso.
+				try {
+					registraTransazioneLlm(transazioneDTO, info, jdbcServiceManager, insertTransazione);
+				} catch (Exception e) {
+					// Non far fallire il flusso principale per un'anomalia sul ramo LLM.
+					this.log.error("["+idTransazione+"] Errore registrazione TransazioneLlm: "+e.getMessage(), e);
+				}
 	
 
 	
@@ -1903,7 +1919,52 @@ public class TracciamentoManager {
 			return false;
 		}
 	}
-	
+
+	/**
+	 * Scrive (o aggiorna) la riga {@code transazioni_llm} associata alla transazione corrente.
+	 * <ul>
+	 *   <li>Skip silenzioso se il PdDContext non e' marcato LLM (transazione non-LLM).</li>
+	 *   <li>Se {@code insertTransazione=true} la transazione principale e' stata appena
+	 *       inserita: facciamo INSERT della TransazioneLlm con i dati LLM gia' disponibili
+	 *       sul context (provider/model/binding presenti dalla risoluzione del connettore,
+	 *       token assenti se siamo prima della risposta).</li>
+	 *   <li>Altrimenti (UPDATE della transazione principale) facciamo updateOrCreate sulla
+	 *       TransazioneLlm: se gia' esisteva la sovrascriviamo con i campi piu' recenti
+	 *       (in particolare i token, popolati da {@link org.openspcoop2.pdd.core.handlers.llm.LLMInboundResponseHandler}
+	 *       in IN_RESPONSE), se non esisteva ancora la inseriamo (capita quando le fasi IN_REQUEST
+	 *       e OUT_REQUEST sono entrambe disabilitate).</li>
+	 * </ul>
+	 */
+	private void registraTransazioneLlm(Transazione transazioneDTO, InformazioniTransazione info,
+			org.openspcoop2.core.transazioni.dao.jdbc.JDBCServiceManager jdbcServiceManager, boolean insertTransazione)
+			throws Exception {
+		if (transazioneDTO == null || info == null || info.getContext() == null) {
+			return;
+		}
+		org.openspcoop2.pdd.core.PdDContext pddContext;
+		if (info.getContext() instanceof org.openspcoop2.pdd.core.PdDContext) {
+			pddContext = (org.openspcoop2.pdd.core.PdDContext) info.getContext();
+		} else {
+			return; // contesto inatteso, no-op
+		}
+		TransazioneLlm bean = TransazioneLlmUtilities.fill(transazioneDTO.getIdTransazione(),
+				transazioneDTO.getDataIngressoRichiesta(), pddContext, this.log);
+		if (bean == null) {
+			return; // non LLM, skip silenzioso
+		}
+		ITransazioneLlmService svc = jdbcServiceManager.getTransazioneLlmService();
+		IdTransazioneLlm key = new IdTransazioneLlm();
+		key.setIdTransazione(transazioneDTO.getIdTransazione());
+		if (insertTransazione) {
+			// Primo persist coerente con la transazione principale: INSERT diretto.
+			svc.create(bean);
+		} else {
+			// UPDATE su fase successiva: se la riga non esisteva (es. IN_REQUEST/OUT_REQUEST disattivate)
+			// la creiamo, altrimenti la aggiorniamo coi campi piu' recenti del PdDContext.
+			svc.updateOrCreate(key, bean);
+		}
+	}
+
 	private void logRegistrazioneNonRiuscita(org.openspcoop2.pdd.logger.MsgDiagnostico msgdiagErrore, boolean fileTrace, Throwable e, String idTransazione,
 			Transaction transaction, BooleanNullable changeEsito, StringBuilder sbErrorLog) {
 		if(fileTrace || !FaseTracciamento.POST_OUT_RESPONSE.equals(this.fase)){

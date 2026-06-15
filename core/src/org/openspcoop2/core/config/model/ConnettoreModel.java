@@ -41,6 +41,7 @@ public class ConnettoreModel extends AbstractModel<Connettore> {
 		super();
 	
 		this.PROPERTY = new org.openspcoop2.core.config.model.PropertyModel(new Field("property",org.openspcoop2.core.config.Property.class,"connettore",Connettore.class));
+		this.CONNETTORE_LLM = new org.openspcoop2.core.config.model.ConnettoreLlmModel(new Field("connettore-llm",org.openspcoop2.core.config.ConnettoreLlm.class,"connettore",Connettore.class));
 		this.NOME_REGISTRO = new Field("nome-registro",java.lang.String.class,"connettore",Connettore.class);
 		this.TIPO_DESTINATARIO_TRASMISSIONE_BUSTA = new Field("tipo-destinatario-trasmissione-busta",java.lang.String.class,"connettore",Connettore.class);
 		this.NOME_DESTINATARIO_TRASMISSIONE_BUSTA = new Field("nome-destinatario-trasmissione-busta",java.lang.String.class,"connettore",Connettore.class);
@@ -55,6 +56,7 @@ public class ConnettoreModel extends AbstractModel<Connettore> {
 		super(father);
 	
 		this.PROPERTY = new org.openspcoop2.core.config.model.PropertyModel(new ComplexField(father,"property",org.openspcoop2.core.config.Property.class,"connettore",Connettore.class));
+		this.CONNETTORE_LLM = new org.openspcoop2.core.config.model.ConnettoreLlmModel(new ComplexField(father,"connettore-llm",org.openspcoop2.core.config.ConnettoreLlm.class,"connettore",Connettore.class));
 		this.NOME_REGISTRO = new ComplexField(father,"nome-registro",java.lang.String.class,"connettore",Connettore.class);
 		this.TIPO_DESTINATARIO_TRASMISSIONE_BUSTA = new ComplexField(father,"tipo-destinatario-trasmissione-busta",java.lang.String.class,"connettore",Connettore.class);
 		this.NOME_DESTINATARIO_TRASMISSIONE_BUSTA = new ComplexField(father,"nome-destinatario-trasmissione-busta",java.lang.String.class,"connettore",Connettore.class);
@@ -67,6 +69,8 @@ public class ConnettoreModel extends AbstractModel<Connettore> {
 	
 
 	public org.openspcoop2.core.config.model.PropertyModel PROPERTY = null;
+	 
+	public org.openspcoop2.core.config.model.ConnettoreLlmModel CONNETTORE_LLM = null;
 	 
 	public IField NOME_REGISTRO = null;
 	 

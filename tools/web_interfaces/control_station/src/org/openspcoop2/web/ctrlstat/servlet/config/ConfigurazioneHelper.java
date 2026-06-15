@@ -88,6 +88,7 @@ import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaCacheDigestQueryParameter;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.constants.TipoGestioneCORS;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDBLib;
 import org.openspcoop2.core.config.driver.db.IDServizioApplicativoDB;
@@ -7712,9 +7713,48 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK+" (" + sizeGlobalPolicy+ ")");
 		dati.add(de);
 //		}
-		
+
 	}
-	
+
+	public void addConfigurazioneLLMToDati(List<DataElement> dati, TipoOperazione tipoOperazione,
+			long sizeProvider, long sizeModel, long sizeProviderBinding) throws Exception {
+
+		DataElement de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_LLM);
+		de.setType(DataElementType.TITLE);
+		dati.add(de);
+
+		de = new DataElement();
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LLM_PROVIDER_LINK);
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LLM_PROVIDER_LINK);
+		de.setType(DataElementType.LINK);
+		de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_LIST+"?"+
+				ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE+"="+
+				ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_LLM_PROVIDER);
+		de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LLM_PROVIDER_LINK+" (" + sizeProvider + ")");
+		dati.add(de);
+
+		de = new DataElement();
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LLM_MODEL_LINK);
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LLM_MODEL_LINK);
+		de.setType(DataElementType.LINK);
+		de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_LIST+"?"+
+				ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE+"="+
+				ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_LLM_MODEL);
+		de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LLM_MODEL_LINK+" (" + sizeModel + ")");
+		dati.add(de);
+
+		de = new DataElement();
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LLM_PROVIDER_BINDING_LINK);
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LLM_PROVIDER_BINDING_LINK);
+		de.setType(DataElementType.LINK);
+		de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_LIST+"?"+
+				ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE+"="+
+				ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_LLM_PROVIDER_BINDING);
+		de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LLM_PROVIDER_BINDING_LINK+" (" + sizeProviderBinding + ")");
+		dati.add(de);
+	}
+
 	public void addConfigurazioneControlloTrafficoJmxStateToDati(List<DataElement> dati, TipoOperazione tipoOperazione) throws Exception {
 		// jmx
 		
@@ -16933,12 +16973,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			Parameter pInfoType = new Parameter(ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE, infoType);
 			boolean attributeAuthority = ConfigurazioneCostanti.isConfigurazioneAttributeAuthority(infoType);
 			boolean llmProvider = ConfigurazioneCostanti.isConfigurazioneLLMProvider(infoType);
+			boolean llmModel = ConfigurazioneCostanti.isConfigurazioneLLMModel(infoType);
+			boolean llmProviderBinding = ConfigurazioneCostanti.isConfigurazioneLLMProviderBinding(infoType);
+			boolean llmAny = llmProvider || llmModel || llmProviderBinding;
 
 			// decido la vista custom da mostrare
-			if(attributeAuthority) {
-				this.pd.setCustomListViewName(ConfigurazioneCostanti.CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_NOME_VISTA_CUSTOM_LISTA_ATTRIBUTE_AUTHORITY);
-			} else if(llmProvider) {
-				// LLM Provider: per ora riusiamo la stessa vista custom di AA (lista singola per tipologia).
+			if(attributeAuthority || llmAny) {
+				// AA + LLM: vista custom singola colonna per tipologia.
 				this.pd.setCustomListViewName(ConfigurazioneCostanti.CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_NOME_VISTA_CUSTOM_LISTA_ATTRIBUTE_AUTHORITY);
 			} else {
 				this.pd.setCustomListViewName(ConfigurazioneCostanti.CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_NOME_VISTA_CUSTOM_LISTA_TOKEN_POLICIY);
@@ -16951,8 +16992,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			PropertiesSourceConfiguration propertiesSourceConfiguration;
 			if (attributeAuthority) {
 				propertiesSourceConfiguration = this.confCore.getAttributeAuthorityPropertiesSourceConfiguration();
-			} else if (llmProvider) {
-				propertiesSourceConfiguration = this.confCore.getLlmProviderPropertiesSourceConfiguration();
+			} else if (llmAny) {
+				propertiesSourceConfiguration = this.confCore.getLlmPropertiesSourceConfiguration();
 			} else {
 				propertiesSourceConfiguration = this.confCore.getPolicyGestioneTokenPropertiesSourceConfiguration();
 			}
@@ -16961,9 +17002,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			List<String> nomiConfigurazioniPolicyGestioneToken = configManager.getNomiConfigurazioni(propertiesSourceConfiguration);
 			List<String> labelConfigurazioniPolicyGestioneToken = configManager.convertToLabel(propertiesSourceConfiguration, nomiConfigurazioniPolicyGestioneToken);
 
-			if(!attributeAuthority && !llmProvider) {
+			if(!attributeAuthority && !llmAny) {
 				String filterTipoTokenPolicy = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_TIPO_TOKEN_POLICY);
 				addFilterTipoTokenPolicy(filterTipoTokenPolicy, false, nomiConfigurazioniPolicyGestioneToken, labelConfigurazioniPolicyGestioneToken);
+			}
+			else if(llmAny) {
+				addFilterLLM(ricerca, idLista, llmProvider, llmModel, llmProviderBinding);
 			}
 
 			this.pd.setIndex(offset);
@@ -16976,14 +17020,21 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String label;
 			if (attributeAuthority) {
 				label = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY;
-			} else if (llmProvider) {
-				label = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_LLM_PROVIDER;
+			} else if (llmAny) {
+				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_LLM, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_LLM));
+				if (llmProvider) {
+					label = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LLM_PROVIDER_LINK;
+				} else if (llmModel) {
+					label = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LLM_MODEL_LINK;
+				} else {
+					label = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LLM_PROVIDER_BINDING_LINK;
+				}
 			} else {
 				label = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN;
 			}
-			
+
 			lstParam.add(new Parameter(label, null));
-			
+
 			this.pd.setSearchLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_NOME);
 			if(search.equals("")){
 				this.pd.setSearchDescription("");
@@ -16992,23 +17043,27 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam);
-			
+
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
 				ServletUtils.enabledPageDataSearch(this.pd, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_NOME, search);
 			}
-			
+
 			List<String> lstLabels = new ArrayList<>();
-			
+
 			boolean forceId;
 			if (attributeAuthority) {
 				forceId = this.core.isAttributeAuthorityForceIdEnabled();
 			} else if (llmProvider) {
 				forceId = this.core.isLlmProviderForceIdEnabled();
+			} else if (llmModel) {
+				forceId = this.core.isLlmModelForceIdEnabled();
+			} else if (llmProviderBinding) {
+				forceId = this.core.isLlmProviderBindingForceIdEnabled();
 			} else {
 				forceId = this.core.isTokenPolicyForceIdEnabled();
 			}
-			
+
 			lstLabels.add(label);
 			
 			// setto le label delle colonne
@@ -17021,7 +17076,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 			if (lista != null) {
 				for (int i = 0; i < lista.size(); i++) {
-					List<DataElement> e = creaEntryTokenPolicyCustom(lista, pInfoType, attributeAuthority, llmProvider,
+					List<DataElement> e = creaEntryTokenPolicyCustom(lista, pInfoType, attributeAuthority, llmAny,
 							nomiConfigurazioniPolicyGestioneToken, labelConfigurazioniPolicyGestioneToken, forceId, i);
 
 					dati.add(e);
@@ -17040,7 +17095,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				org.openspcoop2.protocol.sdk.constants.ArchiveType archiveType;
 				if (attributeAuthority) {
 					archiveType = org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_ATTRIBUTE_AUTHORITY;
-				} else if (llmProvider) {
+				} else if (llmAny) {
+					// Per MVP riusiamo l'ArchiveType del Provider anche per Model/Binding.
 					archiveType = org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_LLM_PROVIDER;
 				} else {
 					archiveType = org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_TOKEN_POLICY;
@@ -17056,7 +17112,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						de.setValue(ConfigurazioneCostanti.LABEL_ATTRIBUTE_AUTHORITY_ESPORTA_SELEZIONATI);
 						de.setOnClick(ConfigurazioneCostanti.LABEL_ATTRIBUTE_AUTHORITY_ESPORTA_SELEZIONATI_ONCLICK);
 					}
-					else if(llmProvider) {
+					else if(llmAny) {
 						de.setValue(ConfigurazioneCostanti.LABEL_LLM_PROVIDER_ESPORTA_SELEZIONATI);
 						de.setOnClick(ConfigurazioneCostanti.LABEL_LLM_PROVIDER_ESPORTA_SELEZIONATI_ONCLICK);
 					}
@@ -17295,21 +17351,18 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					}
 				}
 				else if(llmProvider) {
-					// Mostra il tipo provider e (opzionalmente) la descrizione
-					String providerType = null;
-					for (Property p : policy.getPropertyList()) {
-						if(org.openspcoop2.pdd.core.llm.provider.Costanti.LLM_PROVIDER_TYPE.equals(p.getNome())){
-							providerType = p.getValore();
-						}
+					// llmProvider qui è il flag aggregato 'llmAny': la metadata della seconda riga
+					// dipende dalla tipologia specifica (Provider / Model / Provider Binding).
+					String summary = buildLlmListSummary(policy);
+					String descrizione = policy.getDescrizione();
+					if(StringUtils.isNotBlank(descrizione) && StringUtils.isNotBlank(summary)) {
+						de.setValue(summary + " - " + descrizione);
 					}
-					if(StringUtils.isNotBlank(policy.getDescrizione()) && StringUtils.isNotBlank(providerType)) {
-						de.setValue(providerType + " - " + policy.getDescrizione());
+					else if(StringUtils.isNotBlank(summary)) {
+						de.setValue(summary);
 					}
-					else if(StringUtils.isNotBlank(providerType)) {
-						de.setValue(providerType);
-					}
-					else if(StringUtils.isNotBlank(policy.getDescrizione())) {
-						de.setValue(MessageFormat.format(ConfigurazioneCostanti.MESSAGE_METADATI_DESCRIZIONE, policy.getDescrizione()));
+					else if(StringUtils.isNotBlank(descrizione)) {
+						de.setValue(MessageFormat.format(ConfigurazioneCostanti.MESSAGE_METADATI_DESCRIZIONE, descrizione));
 					}
 					else {
 						visualizzaSecondaRiga = false;
@@ -17368,9 +17421,136 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		 * la lista non riporta le proprietà. Ma esistono e poi sarà la servlet a gestirlo
 		 */
 		this.addProprietaOggettoButton(e, policy.getNome(), policy.getId()+"", inUsoType);
-		
+
 		return e;
-		
+
+	}
+
+	/**
+	 * Compila la stringa-summary mostrata come seconda riga della lista LLM,
+	 * estraendo le property significative dalla tipologia specifica:
+	 * <ul>
+	 *   <li>llmProvider: "Tipo: anthropic"</li>
+	 *   <li>llmModel: "Family: balanced, Modality: chat"</li>
+	 *   <li>llmProviderBinding: "Provider: AWS-Bedrock, Model: claude-3-5-haiku"</li>
+	 * </ul>
+	 */
+	private String buildLlmListSummary(GenericProperties policy) {
+		if (policy == null || policy.getPropertyList() == null) {
+			return null;
+		}
+		String tipologia = policy.getTipologia();
+		java.util.Map<String, String> props = new java.util.HashMap<>();
+		for (Property p : policy.getPropertyList()) {
+			props.put(p.getNome(), p.getValore());
+		}
+		if (org.openspcoop2.pdd.core.llm.provider.Costanti.TIPOLOGIA.equals(tipologia)) {
+			String type = props.get(org.openspcoop2.pdd.core.llm.provider.Costanti.LLM_PROVIDER_TYPE);
+			return StringUtils.isNotBlank(type) ? "Tipo: " + type : null;
+		}
+		if (org.openspcoop2.pdd.core.llm.provider.Costanti.TIPOLOGIA_MODEL.equals(tipologia)) {
+			String family = props.get(org.openspcoop2.pdd.core.llm.provider.Costanti.LLM_MODEL_FAMILY);
+			String modality = props.get(org.openspcoop2.pdd.core.llm.provider.Costanti.LLM_MODEL_MODALITY);
+			StringBuilder sb = new StringBuilder();
+			if (StringUtils.isNotBlank(family)) {
+				sb.append("Family: ").append(family);
+			}
+			if (StringUtils.isNotBlank(modality)) {
+				if (sb.length() > 0) sb.append(", ");
+				sb.append("Modality: ").append(modality);
+			}
+			return sb.length() > 0 ? sb.toString() : null;
+		}
+		if (org.openspcoop2.pdd.core.llm.provider.Costanti.TIPOLOGIA_PROVIDER_BINDING.equals(tipologia)) {
+			String provider = props.get(org.openspcoop2.pdd.core.llm.provider.Costanti.LLM_PROVIDER_BINDING_PROVIDER);
+			String model = props.get(org.openspcoop2.pdd.core.llm.provider.Costanti.LLM_PROVIDER_BINDING_MODEL);
+			StringBuilder sb = new StringBuilder();
+			if (StringUtils.isNotBlank(provider)) {
+				sb.append("Provider: ").append(provider);
+			}
+			if (StringUtils.isNotBlank(model)) {
+				if (sb.length() > 0) sb.append(", ");
+				sb.append("Model: ").append(model);
+			}
+			return sb.length() > 0 ? sb.toString() : null;
+		}
+		return null;
+	}
+
+	/**
+	 * Aggiunge ai PageData i dropdown di filtro specifici per le 3 tipologie LLM:
+	 * <ul>
+	 *   <li>Provider: Tipo (anthropic/openai/awsBedrock) - valori statici</li>
+	 *   <li>Model: Family + Modality - valori statici</li>
+	 *   <li>Provider Binding: Provider + Model - valori dinamici da generic_properties</li>
+	 * </ul>
+	 */
+	public void addFilterLLM(ConsoleSearch ricerca, int idLista,
+			boolean llmProvider, boolean llmModel, boolean llmProviderBinding) throws Exception {
+		if(llmProvider) {
+			String current = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_LLM_PROVIDER_TYPE);
+			String[] values = {
+					org.openspcoop2.pdd.core.llm.provider.Costanti.LLM_PROVIDER_TYPE_VALUE_ANTHROPIC,
+					org.openspcoop2.pdd.core.llm.provider.Costanti.LLM_PROVIDER_TYPE_VALUE_OPENAI,
+					org.openspcoop2.pdd.core.llm.provider.Costanti.LLM_PROVIDER_TYPE_VALUE_AWS_BEDROCK };
+			String[] labels = { "Anthropic", "OpenAI", "AWS Bedrock" };
+			addLlmDropdownFilter(Filtri.FILTRO_LLM_PROVIDER_TYPE, "Tipo", current, values, labels);
+		}
+		else if(llmModel) {
+			String[] familyValues = {
+					org.openspcoop2.pdd.core.llm.provider.Costanti.LLM_MODEL_FAMILY_VALUE_LIGHT,
+					org.openspcoop2.pdd.core.llm.provider.Costanti.LLM_MODEL_FAMILY_VALUE_BALANCED,
+					org.openspcoop2.pdd.core.llm.provider.Costanti.LLM_MODEL_FAMILY_VALUE_TOP,
+					org.openspcoop2.pdd.core.llm.provider.Costanti.LLM_MODEL_FAMILY_VALUE_REASONING,
+					org.openspcoop2.pdd.core.llm.provider.Costanti.LLM_MODEL_FAMILY_VALUE_OTHER };
+			String[] familyLabels = { "Light", "Balanced", "Top", "Reasoning", "Other" };
+			addLlmDropdownFilter(Filtri.FILTRO_LLM_MODEL_FAMILY, "Family",
+					SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_LLM_MODEL_FAMILY), familyValues, familyLabels);
+			String[] modalityValues = {
+					org.openspcoop2.pdd.core.llm.provider.Costanti.LLM_MODEL_MODALITY_VALUE_CHAT,
+					org.openspcoop2.pdd.core.llm.provider.Costanti.LLM_MODEL_MODALITY_VALUE_COMPLETION,
+					org.openspcoop2.pdd.core.llm.provider.Costanti.LLM_MODEL_MODALITY_VALUE_EMBEDDING,
+					org.openspcoop2.pdd.core.llm.provider.Costanti.LLM_MODEL_MODALITY_VALUE_MULTIMODAL,
+					org.openspcoop2.pdd.core.llm.provider.Costanti.LLM_MODEL_MODALITY_VALUE_IMAGE,
+					org.openspcoop2.pdd.core.llm.provider.Costanti.LLM_MODEL_MODALITY_VALUE_AUDIO };
+			String[] modalityLabels = { "Chat", "Completion", "Embedding", "Multimodal", "Image", "Audio" };
+			addLlmDropdownFilter(Filtri.FILTRO_LLM_MODEL_MODALITY, "Modality",
+					SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_LLM_MODEL_MODALITY), modalityValues, modalityLabels);
+		}
+		else if(llmProviderBinding) {
+			List<String> providerNames = loadGenericPropertiesNames(org.openspcoop2.pdd.core.llm.provider.Costanti.TIPOLOGIA);
+			String[] providerArr = providerNames.toArray(new String[0]);
+			addLlmDropdownFilter(Filtri.FILTRO_LLM_PROVIDER_BINDING_PROVIDER, "Provider",
+					SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_LLM_PROVIDER_BINDING_PROVIDER),
+					providerArr, providerArr);
+			List<String> modelNames = loadGenericPropertiesNames(org.openspcoop2.pdd.core.llm.provider.Costanti.TIPOLOGIA_MODEL);
+			String[] modelArr = modelNames.toArray(new String[0]);
+			addLlmDropdownFilter(Filtri.FILTRO_LLM_PROVIDER_BINDING_MODEL, "Model",
+					SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_LLM_PROVIDER_BINDING_MODEL),
+					modelArr, modelArr);
+		}
+	}
+
+	private void addLlmDropdownFilter(String filterKey, String filterLabel, String currentValue, String[] values, String[] labels) throws org.openspcoop2.web.lib.mvc.PageDataException {
+		int len = values.length + 1;
+		String[] valuesPlusAny = new String[len];
+		String[] labelsPlusAny = new String[len];
+		valuesPlusAny[0] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_TIPO_TOKEN_POLICY_QUALSIASI;
+		labelsPlusAny[0] = CostantiControlStation.LABEL_PARAMETRO_TIPO_TOKEN_POLICY_QUALSIASI;
+		System.arraycopy(values, 0, valuesPlusAny, 1, values.length);
+		System.arraycopy(labels, 0, labelsPlusAny, 1, labels.length);
+		this.pd.addFilter(filterKey, filterLabel, currentValue, valuesPlusAny, labelsPlusAny, false, this.getSize());
+	}
+
+	private List<String> loadGenericPropertiesNames(String tipologia) throws DriverConfigurazioneException {
+		List<GenericProperties> list = this.confCore.gestorePolicyTokenList(null, tipologia, null);
+		List<String> nomi = new ArrayList<>();
+		if (list != null) {
+			for (GenericProperties gp : list) {
+				nomi.add(gp.getNome());
+			}
+		}
+		return nomi;
 	}
 
 	public List<DataElement> addPolicyGestioneTokenToDati(TipoOperazione tipoOperazione, List<DataElement> dati, String id, String nome, String descrizione, String tipo, String[] propConfigPolicyGestioneTokenLabelList, String[] propConfigPolicyGestioneTokenList,
@@ -17472,13 +17652,30 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		if (attributeAuthority) {
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY);
 		} else if (llmProvider) {
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_LLM_PROVIDER);
+			// llmProvider qui e' il flag aggregato 'llmAny': discrimino Provider/Modello/Binding via infoType.
+			// Fallback su sessione (post-postback il request param non c'e' piu').
+			String infoTypeLLM;
+			try {
+				infoTypeLLM = this.getParametroInfoType(ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE, false);
+			} catch (Exception ex) {
+				infoTypeLLM = null;
+			}
+			if (infoTypeLLM == null) {
+				infoTypeLLM = ServletUtils.getObjectFromSession(this.request, this.session, String.class, ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE);
+			}
+			if (ConfigurazioneCostanti.isConfigurazioneLLMModel(infoTypeLLM)) {
+				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LLM_MODEL_SINGULAR);
+			} else if (ConfigurazioneCostanti.isConfigurazioneLLMProviderBinding(infoTypeLLM)) {
+				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LLM_PROVIDER_BINDING_SINGULAR);
+			} else {
+				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LLM_PROVIDER_SINGULAR);
+			}
 		} else {
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN);
 		}
 		de.setType(DataElementType.TITLE);
 		dati.add(de);
-		
+
 		// id
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_ID);
@@ -24750,6 +24947,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		return  ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_TOKEN.equals(parameterValueFiltrato)
 				|| ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_ATTRIBUTE_AUTHORITY.equals(parameterValueFiltrato)
 				|| ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_LLM_PROVIDER.equals(parameterValueFiltrato)
+				|| ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_LLM_MODEL.equals(parameterValueFiltrato)
+				|| ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_LLM_PROVIDER_BINDING.equals(parameterValueFiltrato)
 				;
 	}
 	

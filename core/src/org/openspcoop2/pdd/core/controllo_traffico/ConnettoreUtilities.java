@@ -207,7 +207,7 @@ public class ConnettoreUtilities {
 	private static void setDatiTempiRispostaFruizione(ConfigurazionePdDManager configPdDManager, DatiTempiRisposta datiTempiRisposta,
 			InRequestProtocolContext context, DatiTransazione datiTransazione, RequestInfo requestInfo) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 		try{
-			Connettore connettore = configPdDManager.getForwardRoute(datiTransazione.getSoggettoFruitore(),datiTransazione.getIdServizio(),false, requestInfo);
+			Connettore connettore = configPdDManager.getForwardRoute(datiTransazione.getSoggettoFruitore(),datiTransazione.getIdServizio(),false, requestInfo, null);
 			mergeTempiRisposta(datiTempiRisposta, connettore.getProperties());
 		}catch(Exception e){
 			// registro solamente l'errore su log.

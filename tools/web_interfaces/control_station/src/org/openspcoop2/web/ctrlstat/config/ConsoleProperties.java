@@ -363,10 +363,10 @@ public class ConsoleProperties {
 		return this.readBooleanRequiredProperty("attributeAuthority.verificaCertificati");
 	}
 
-	public PropertiesSourceConfiguration getLlmProviderPropertiesSourceConfiguration() throws UtilsException {
-		return getSourceConfigurationEngine("llmProvider",
-				"llmProvider.dir", "llmProvider.dir.refresh",
-				"llmProvider.builtIn", "llmProvider.builtIn.refresh");
+	public PropertiesSourceConfiguration getLlmPropertiesSourceConfiguration() throws UtilsException {
+		return getSourceConfigurationEngine("llm",
+				"llm.dir", "llm.dir.refresh",
+				"llm.builtIn", "llm.builtIn.refresh");
 	}
 
 	public boolean isControlloTrafficoPolicyGlobaleGroupByApi() throws UtilsException{
@@ -1753,6 +1753,22 @@ public class ConsoleProperties {
 
 	public Properties getLlmProviderTipologia() throws UtilsException{
 		return this.reader.readPropertiesConvertEnvProperties("console.llmProvider.mapping.");
+	}
+
+	public String getLlmModelForceId() throws UtilsException{
+		return this.readProperty(false, "console.llmModel.forceId");
+	}
+
+	public Properties getLlmModelTipologia() throws UtilsException{
+		return this.reader.readPropertiesConvertEnvProperties("console.llmModel.mapping.");
+	}
+
+	public String getLlmProviderBindingForceId() throws UtilsException{
+		return this.readProperty(false, "console.llmProviderBinding.forceId");
+	}
+
+	public Properties getLlmProviderBindingTipologia() throws UtilsException{
+		return this.reader.readPropertiesConvertEnvProperties("console.llmProviderBinding.mapping.");
 	}
 	
 	public Boolean isEnableServiziVisualizzaModalitaElenco() throws UtilsException{

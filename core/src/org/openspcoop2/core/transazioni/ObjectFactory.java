@@ -165,10 +165,24 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link TransazioneLlm }
+     */
+    public TransazioneLlm createTransazioneLlm() {
+        return new TransazioneLlm();
+    }
+
+    /**
      * Create an instance of {@link IdDumpMessaggio }
      */
     public IdDumpMessaggio createIdDumpMessaggio() {
         return new IdDumpMessaggio();
+    }
+
+    /**
+     * Create an instance of {@link IdTransazioneLlm }
+     */
+    public IdTransazioneLlm createIdTransazioneLlm() {
+        return new IdTransazioneLlm();
     }
 
 

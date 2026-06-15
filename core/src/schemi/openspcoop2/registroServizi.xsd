@@ -1148,6 +1148,7 @@
 	<xsd:complexType name="connettore">
 		<xsd:sequence>
 			<xsd:element name="property" type="Property" maxOccurs="unbounded" minOccurs="0"/>
+			<xsd:element ref="connettore-llm" maxOccurs="1" minOccurs="0"/>
 		</xsd:sequence>
 		<!-- start-extensions -->
 		<xsd:attribute name="custom" use="optional" default="false">
@@ -1167,6 +1168,37 @@
 		</xsd:attribute>
 		<!-- end-extensions -->
 		<xsd:attribute name="tipo" type="xsd:string"/>
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+	</xsd:complexType>
+
+	<!--
+		Wrapper LLM associato a un connettore principale di tipo 'disabilitato'
+		utilizzato come container per le API LLM. Elenca i provider concreti
+		(connettori LLM reali) instradati a runtime in base al modello richiesto
+		dal client. Ogni 'provider' e' un riferimento per nome a un connettore
+		concreto definito autonomamente nel registro, completo dei propri
+		'property' (campi tecnici come endpoint, autenticazione, ...) e 'binding'
+		(modelli LLM esposti dal provider). Il nome composito
+		'<container>_<provider>' consente di mantenere l'univocita' globale
+		richiesta dalla tabella 'connettori'.
+	-->
+	<xsd:element name="connettore-llm" type="connettore-llm"/>
+	<xsd:complexType name="connettore-llm">
+		<xsd:sequence>
+			<xsd:element name="provider" type="connettore-llm-provider-ref" maxOccurs="unbounded" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="connettore-llm-provider-ref">
+		<xsd:sequence>
+			<xsd:element name="property" type="Property" maxOccurs="unbounded" minOccurs="0"/>
+			<xsd:element name="binding"  type="connettore-llm-binding" maxOccurs="unbounded" minOccurs="0"/>
+		</xsd:sequence>
+		<xsd:attribute name="tipo" type="xsd:string"/>
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+	</xsd:complexType>
+
+	<xsd:complexType name="connettore-llm-binding">
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 	</xsd:complexType>
 	

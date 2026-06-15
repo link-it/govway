@@ -74,6 +74,15 @@ public class LLMOutboundRequestHandler implements OutRequestHandler {
 		String providerId = resolveAndStoreProviderId(context, log);
 		try {
 			CanonicalChatRequest canonical = extractCanonical(context);
+			// Sostituiamo il binding name (esposto dall'API gateway) con il vendor model id richiesto dal
+			// backend. Il binding name resta visibile sul PdDContext per la transazione/audit, ma il body
+			// inviato al provider deve trasportare l'identificativo nativo (es. 'claude-haiku-4-5' per
+			// Anthropic). Se il binding non valorizza vendor.model.id lasciamo il valore canonical
+			// originale (back-compat con configurazioni dove il binding name coincide con l'id provider).
+			String vendorModelId = LLMHandlerSupport.getLLMVendorModelId(context);
+			if (vendorModelId != null && !vendorModelId.isEmpty()) {
+				canonical.setModel(vendorModelId);
+			}
 			LLMOutboundProviderRequestTransformer transformer = LLMTransformerRegistry.getOutboundProviderRequestTransformer(providerId);
 			LLMProviderRequest providerRequest = transformer.transform(canonical);
 			// Aggiorniamo il contenuto del messaggio esistente in-place: il ConnettoreMsg ha
@@ -94,43 +103,90 @@ public class LLMOutboundRequestHandler implements OutRequestHandler {
 	}
 
 	private String resolveAndStoreProviderId(OutRequestContext context, org.slf4j.Logger log) throws HandlerException {
-		String policyName = readLlmPolicyFromConnettore(context);
-		if (policyName == null || policyName.isEmpty()) {
-			throw new HandlerException("LLMOutboundRequestHandler: nessuna LLM Provider Policy associata al connettore (property "
-					+ CostantiConnettori.CONNETTORE_LLM_POLICY + " mancante o vuota)");
+		// I nomi del binding selezionato (= request.model) e del provider concreto sono gia'
+		// stati popolati nel PdDContext dal LLMConnectorResolver, eseguito al momento del load
+		// del connettore di uscita (vedi ConfigurazionePdDReader.getInvocazioneServizio/
+		// getForwardRoute). Qui ci limitiamo a leggerli e ad arricchire il PdDContext con i
+		// metadati (vendorModelId, pricing, dialect) richiesti dai transformer e dal salvataggio
+		// transazione, sfruttando la cache request-scoped di ConfigurazionePdDManager.
+		org.openspcoop2.pdd.core.PdDContext pdd = context.getPddContext();
+		String bindingName = LLMHandlerSupport.getLLMProviderBindingName(pdd);
+		if (bindingName == null || bindingName.isEmpty()) {
+			throw new HandlerException("LLMOutboundRequestHandler: nome del LLM Provider Binding non risolto dal LLMConnectorResolver (PdDContext senso del modello)");
 		}
-		String providerType = lookupProviderType(context, policyName);
+		String providerName = LLMHandlerSupport.getLLMProviderName(pdd);
+		if (providerName == null || providerName.isEmpty()) {
+			throw new HandlerException("LLMOutboundRequestHandler: nome del LLM Provider non risolto dal LLMConnectorResolver (PdDContext senso del provider)");
+		}
+
+		ConfigurazionePdDManager mgr = ConfigurazionePdDManager.getInstance(context.getStato());
+		org.openspcoop2.protocol.sdk.state.RequestInfo requestInfo = extractRequestInfo(context);
+
+		// 1) lookup del binding -> model name + vendor model id (+ pricing)
+		GenericProperties binding = lookupBinding(mgr, requestInfo, bindingName);
+		String modelName    = findPropertyValue(binding.getPropertyList(), org.openspcoop2.pdd.core.llm.provider.Costanti.LLM_PROVIDER_BINDING_MODEL);
+		String vendorModelId= findPropertyValue(binding.getPropertyList(), org.openspcoop2.pdd.core.llm.provider.Costanti.LLM_PROVIDER_BINDING_VENDOR_MODEL_ID);
+		String priceInput   = findPropertyValue(binding.getPropertyList(), org.openspcoop2.pdd.core.llm.provider.Costanti.LLM_PROVIDER_BINDING_PRICE_INPUT);
+		String priceOutput  = findPropertyValue(binding.getPropertyList(), org.openspcoop2.pdd.core.llm.provider.Costanti.LLM_PROVIDER_BINDING_PRICE_OUTPUT);
+		String priceInputDivisor  = findPropertyValue(binding.getPropertyList(), org.openspcoop2.pdd.core.llm.provider.Costanti.LLM_PROVIDER_BINDING_PRICE_INPUT_DIVISOR);
+		String priceOutputDivisor = findPropertyValue(binding.getPropertyList(), org.openspcoop2.pdd.core.llm.provider.Costanti.LLM_PROVIDER_BINDING_PRICE_OUTPUT_DIVISOR);
+
+		// 2) lookup del provider -> tipo (dialect: anthropic/openai/awsBedrock)
+		GenericProperties provider = lookupProvider(mgr, requestInfo, providerName);
+		String providerType = findPropertyValue(provider.getPropertyList(), org.openspcoop2.pdd.core.llm.provider.Costanti.LLM_PROVIDER_TYPE);
 		if (providerType == null || providerType.isEmpty()) {
-			throw new HandlerException("LLMOutboundRequestHandler: LLM Provider Policy '" + policyName
-					+ "' non valorizza la property " + org.openspcoop2.pdd.core.llm.provider.Costanti.LLM_PROVIDER_TYPE);
+			throw new HandlerException("LLMOutboundRequestHandler: LLM Provider '" + providerName
+					+ "' non valorizza la property "
+					+ org.openspcoop2.pdd.core.llm.provider.Costanti.LLM_PROVIDER_TYPE);
 		}
-		LLMHandlerSupport.setLLMProvider(context.getPddContext(), providerType);
+
+		// 3) propaga nel PdDContext i metadati per transformer e finalizzazione transazione
+		LLMHandlerSupport.setLLMProvider(pdd, providerType);
+		LLMHandlerSupport.setLLMModelName(pdd, modelName);
+		LLMHandlerSupport.setLLMVendorModelId(pdd, vendorModelId);
+		LLMHandlerSupport.setLLMPriceInput(pdd, priceInput);
+		LLMHandlerSupport.setLLMPriceOutput(pdd, priceOutput);
+		LLMHandlerSupport.setLLMPriceInputDivisor(pdd, priceInputDivisor);
+		LLMHandlerSupport.setLLMPriceOutputDivisor(pdd, priceOutputDivisor);
+
 		if (log != null && log.isDebugEnabled()) {
-			log.debug("LLMOutboundRequestHandler: provider risolto via LLM Provider Policy '{}' -> {}", policyName, providerType);
+			log.debug("LLMOutboundRequestHandler: binding '{}' -> provider '{}' ({}), model '{}', vendorModelId '{}'",
+					bindingName, providerName, providerType, modelName, vendorModelId);
 		}
 		return providerType;
 	}
 
-	private String readLlmPolicyFromConnettore(OutRequestContext context) {
-		InfoConnettoreUscita connettore = context.getConnettore();
-		if (connettore == null || connettore.getProperties() == null) {
-			return null;
-		}
-		return connettore.getProperties().get(CostantiConnettori.CONNETTORE_LLM_POLICY);
+	private org.openspcoop2.protocol.sdk.state.RequestInfo extractRequestInfo(OutRequestContext context) {
+		if (context.getPddContext() == null) return null;
+		Object o = context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+		return o instanceof org.openspcoop2.protocol.sdk.state.RequestInfo ? (org.openspcoop2.protocol.sdk.state.RequestInfo) o : null;
 	}
 
-	private String lookupProviderType(OutRequestContext context, String policyName) throws HandlerException {
+	private GenericProperties lookupBinding(ConfigurazionePdDManager mgr, org.openspcoop2.protocol.sdk.state.RequestInfo requestInfo, String bindingName) throws HandlerException {
 		try {
-			ConfigurazionePdDManager mgr = ConfigurazionePdDManager.getInstance(context.getStato());
-			GenericProperties gp = mgr.getGenericProperties(org.openspcoop2.pdd.core.llm.provider.Costanti.TIPOLOGIA, policyName);
+			GenericProperties gp = mgr.getPolicyLLMProviderBinding(false, bindingName, requestInfo);
 			if (gp == null) {
-				throw new HandlerException("LLMOutboundRequestHandler: LLM Provider Policy '" + policyName + "' non trovata");
+				throw new HandlerException("LLMOutboundRequestHandler: LLM Provider Binding '" + bindingName + "' non trovato");
 			}
-			return findPropertyValue(gp.getPropertyList(), org.openspcoop2.pdd.core.llm.provider.Costanti.LLM_PROVIDER_TYPE);
+			return gp;
 		} catch (HandlerException e) {
 			throw e;
 		} catch (Exception e) {
-			throw new HandlerException("LLMOutboundRequestHandler: errore nella lookup della LLM Provider Policy '" + policyName + "': " + e.getMessage(), e);
+			throw new HandlerException("LLMOutboundRequestHandler: errore nella lookup del LLM Provider Binding '" + bindingName + "': " + e.getMessage(), e);
+		}
+	}
+
+	private GenericProperties lookupProvider(ConfigurazionePdDManager mgr, org.openspcoop2.protocol.sdk.state.RequestInfo requestInfo, String providerName) throws HandlerException {
+		try {
+			GenericProperties gp = mgr.getPolicyLLMProvider(false, providerName, requestInfo);
+			if (gp == null) {
+				throw new HandlerException("LLMOutboundRequestHandler: LLM Provider '" + providerName + "' non trovato");
+			}
+			return gp;
+		} catch (HandlerException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new HandlerException("LLMOutboundRequestHandler: errore nella lookup del LLM Provider '" + providerName + "': " + e.getMessage(), e);
 		}
 	}
 

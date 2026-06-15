@@ -403,6 +403,14 @@ public class TransazioneUtilities {
 			else {
 				transactionDTO.setEsitoContesto(esitoContext);
 			}
+			// Transazioni LLM: marcatura del contesto con "llm" per facilitare il filtraggio e
+			// l'eventuale join con transazioni_llm / statistiche_*_llm senza richiedere lookup
+			// aggiuntivi. La marcatura sovrascrive un eventuale "standard" precedente.
+			if (info != null && info.getContext() instanceof org.openspcoop2.pdd.core.PdDContext
+					&& org.openspcoop2.pdd.core.handlers.llm.LLMHandlerSupport
+							.getLLMFormato((org.openspcoop2.pdd.core.PdDContext) info.getContext()) != null) {
+				transactionDTO.setEsitoContesto(org.openspcoop2.protocol.sdk.constants.CostantiProtocollo.ESITO_TRANSACTION_CONTEXT_LLM);
+			}
 			// aggiungo fase all'esito
 			transactionDTO.setEsitoContesto(EsitoUtils.buildEsitoContext(transactionDTO.getEsitoContesto(), fase));
 						

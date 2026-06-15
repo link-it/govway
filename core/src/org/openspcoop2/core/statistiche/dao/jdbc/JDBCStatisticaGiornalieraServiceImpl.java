@@ -43,6 +43,7 @@ import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
 
 import org.openspcoop2.core.statistiche.Statistica;
 import org.openspcoop2.core.statistiche.StatisticaContenuti;
+import org.openspcoop2.core.statistiche.StatisticaGiornalieraLlm;
 import org.openspcoop2.core.statistiche.StatisticaGiornaliera;
 
 /**     
@@ -213,6 +214,37 @@ public class JDBCStatisticaGiornalieraServiceImpl extends JDBCStatisticaGiornali
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(id),Long.class)
 			);
 			statisticaGiornaliera.getStatisticaGiornalieraContenutiList().get(i).setId(id_statisticaGiornalieraContenuti);
+		} // fine for 
+
+		// for statisticaGiornaliera
+		for (int i = 0; i < statisticaGiornaliera.getStatisticaGiornalieraLlmList().size(); i++) {
+
+
+			// Object statisticaGiornaliera.getStatisticaGiornalieraLlmList().get(i)
+			ISQLQueryObject sqlQueryObjectInsert_statisticaGiornalieraLlm = sqlQueryObjectInsert.newSQLQueryObject();
+			sqlQueryObjectInsert_statisticaGiornalieraLlm.addInsertTable(this.getStatisticaGiornalieraFieldConverter().toTable(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM));
+			sqlQueryObjectInsert_statisticaGiornalieraLlm.addInsertField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.DATA,false),"?");
+			sqlQueryObjectInsert_statisticaGiornalieraLlm.addInsertField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LLM_PROVIDER,false),"?");
+			sqlQueryObjectInsert_statisticaGiornalieraLlm.addInsertField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LLM_MODEL,false),"?");
+			sqlQueryObjectInsert_statisticaGiornalieraLlm.addInsertField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LLM_PROVIDER_BINDING,false),"?");
+			sqlQueryObjectInsert_statisticaGiornalieraLlm.addInsertField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.TOKEN_INPUT,false),"?");
+			sqlQueryObjectInsert_statisticaGiornalieraLlm.addInsertField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.TOKEN_OUTPUT,false),"?");
+			sqlQueryObjectInsert_statisticaGiornalieraLlm.addInsertField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.COST_ESTIMATED,false),"?");
+			sqlQueryObjectInsert_statisticaGiornalieraLlm.addInsertField("id_stat","?");
+
+			// Insert statisticaGiornaliera.getStatisticaGiornalieraLlmList().get(i)
+			org.openspcoop2.utils.jdbc.IKeyGeneratorObject keyGenerator_statisticaGiornalieraLlm = this.getStatisticaGiornalieraFetch().getKeyGeneratorObject(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM);
+			long id_statisticaGiornalieraLlm = jdbcUtilities.insertAndReturnGeneratedKey(sqlQueryObjectInsert_statisticaGiornalieraLlm, keyGenerator_statisticaGiornalieraLlm, jdbcProperties.isShowSql(),
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaGiornaliera.getStatisticaGiornalieraLlmList().get(i).getData(),StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.DATA.getFieldType()),
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaGiornaliera.getStatisticaGiornalieraLlmList().get(i).getLlmProvider(),StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LLM_PROVIDER.getFieldType()),
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaGiornaliera.getStatisticaGiornalieraLlmList().get(i).getLlmModel(),StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LLM_MODEL.getFieldType()),
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaGiornaliera.getStatisticaGiornalieraLlmList().get(i).getLlmProviderBinding(),StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LLM_PROVIDER_BINDING.getFieldType()),
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaGiornaliera.getStatisticaGiornalieraLlmList().get(i).getTokenInput(),StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.TOKEN_INPUT.getFieldType()),
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaGiornaliera.getStatisticaGiornalieraLlmList().get(i).getTokenOutput(),StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.TOKEN_OUTPUT.getFieldType()),
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaGiornaliera.getStatisticaGiornalieraLlmList().get(i).getCostEstimated(),StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.COST_ESTIMATED.getFieldType()),
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(id),Long.class)
+			);
+			statisticaGiornaliera.getStatisticaGiornalieraLlmList().get(i).setId(id_statisticaGiornalieraLlm);
 		} // fine for 
 
 		
@@ -507,6 +539,102 @@ public class JDBCStatisticaGiornalieraServiceImpl extends JDBCStatisticaGiornali
 
 		jdbcUtilities.execute(sqlQueryObjectUpdate_statisticaGiornalieraContenutideleteEngineList.createSQLDelete(), jdbcProperties.isShowSql(), jdbcObjects_statisticaGiornalieraContenutideleteEngine.toArray(new JDBCObject[]{}));
 
+		// for statisticaGiornaliera_statisticaGiornalieraLlm
+
+		java.util.List<Long> ids_statisticaGiornalieraLlm_da_non_eliminare = new java.util.ArrayList<Long>();
+		for (Object statisticaGiornaliera_statisticaGiornalieraLlm_object : statisticaGiornaliera.getStatisticaGiornalieraLlmList()) {
+			StatisticaGiornalieraLlm statisticaGiornaliera_statisticaGiornalieraLlm = (StatisticaGiornalieraLlm) statisticaGiornaliera_statisticaGiornalieraLlm_object;
+			if(statisticaGiornaliera_statisticaGiornalieraLlm.getId() == null || statisticaGiornaliera_statisticaGiornalieraLlm.getId().longValue() <= 0) {
+
+				long id = statisticaGiornaliera.getId();			
+
+				// Object statisticaGiornaliera_statisticaGiornalieraLlm
+				ISQLQueryObject sqlQueryObjectInsert_statisticaGiornalieraLlm = sqlQueryObjectInsert.newSQLQueryObject();
+				sqlQueryObjectInsert_statisticaGiornalieraLlm.addInsertTable(this.getStatisticaGiornalieraFieldConverter().toTable(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM));
+				sqlQueryObjectInsert_statisticaGiornalieraLlm.addInsertField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.DATA,false),"?");
+				sqlQueryObjectInsert_statisticaGiornalieraLlm.addInsertField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LLM_PROVIDER,false),"?");
+				sqlQueryObjectInsert_statisticaGiornalieraLlm.addInsertField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LLM_MODEL,false),"?");
+				sqlQueryObjectInsert_statisticaGiornalieraLlm.addInsertField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LLM_PROVIDER_BINDING,false),"?");
+				sqlQueryObjectInsert_statisticaGiornalieraLlm.addInsertField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.TOKEN_INPUT,false),"?");
+				sqlQueryObjectInsert_statisticaGiornalieraLlm.addInsertField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.TOKEN_OUTPUT,false),"?");
+				sqlQueryObjectInsert_statisticaGiornalieraLlm.addInsertField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.COST_ESTIMATED,false),"?");
+				sqlQueryObjectInsert_statisticaGiornalieraLlm.addInsertField("id_stat","?");
+
+				// Insert statisticaGiornaliera_statisticaGiornalieraLlm
+				org.openspcoop2.utils.jdbc.IKeyGeneratorObject keyGenerator_statisticaGiornalieraLlm = this.getStatisticaGiornalieraFetch().getKeyGeneratorObject(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM);
+				long id_statisticaGiornalieraLlm = jdbcUtilities.insertAndReturnGeneratedKey(sqlQueryObjectInsert_statisticaGiornalieraLlm, keyGenerator_statisticaGiornalieraLlm, jdbcProperties.isShowSql(),
+					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaGiornaliera_statisticaGiornalieraLlm.getData(),StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.DATA.getFieldType()),
+					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaGiornaliera_statisticaGiornalieraLlm.getLlmProvider(),StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LLM_PROVIDER.getFieldType()),
+					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaGiornaliera_statisticaGiornalieraLlm.getLlmModel(),StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LLM_MODEL.getFieldType()),
+					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaGiornaliera_statisticaGiornalieraLlm.getLlmProviderBinding(),StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LLM_PROVIDER_BINDING.getFieldType()),
+					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaGiornaliera_statisticaGiornalieraLlm.getTokenInput(),StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.TOKEN_INPUT.getFieldType()),
+					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaGiornaliera_statisticaGiornalieraLlm.getTokenOutput(),StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.TOKEN_OUTPUT.getFieldType()),
+					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaGiornaliera_statisticaGiornalieraLlm.getCostEstimated(),StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.COST_ESTIMATED.getFieldType()),
+					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(id),Long.class)
+				);
+				statisticaGiornaliera_statisticaGiornalieraLlm.setId(id_statisticaGiornalieraLlm);
+
+				ids_statisticaGiornalieraLlm_da_non_eliminare.add(statisticaGiornaliera_statisticaGiornalieraLlm.getId());
+			} else {
+
+
+				// Object statisticaGiornaliera_statisticaGiornalieraLlm
+				ISQLQueryObject sqlQueryObjectUpdate_statisticaGiornalieraLlm = sqlQueryObjectUpdate.newSQLQueryObject();
+				sqlQueryObjectUpdate_statisticaGiornalieraLlm.setANDLogicOperator(true);
+				sqlQueryObjectUpdate_statisticaGiornalieraLlm.addUpdateTable(this.getStatisticaGiornalieraFieldConverter().toTable(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM));
+				boolean isUpdate_statisticaGiornalieraLlm = true;
+				java.util.List<JDBCObject> lstObjects_statisticaGiornalieraLlm = new java.util.ArrayList<>();
+				sqlQueryObjectUpdate_statisticaGiornalieraLlm.addUpdateField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.DATA,false), "?");
+				lstObjects_statisticaGiornalieraLlm.add(new JDBCObject(statisticaGiornaliera_statisticaGiornalieraLlm.getData(), StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.DATA.getFieldType()));
+				sqlQueryObjectUpdate_statisticaGiornalieraLlm.addUpdateField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LLM_PROVIDER,false), "?");
+				lstObjects_statisticaGiornalieraLlm.add(new JDBCObject(statisticaGiornaliera_statisticaGiornalieraLlm.getLlmProvider(), StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LLM_PROVIDER.getFieldType()));
+				sqlQueryObjectUpdate_statisticaGiornalieraLlm.addUpdateField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LLM_MODEL,false), "?");
+				lstObjects_statisticaGiornalieraLlm.add(new JDBCObject(statisticaGiornaliera_statisticaGiornalieraLlm.getLlmModel(), StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LLM_MODEL.getFieldType()));
+				sqlQueryObjectUpdate_statisticaGiornalieraLlm.addUpdateField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LLM_PROVIDER_BINDING,false), "?");
+				lstObjects_statisticaGiornalieraLlm.add(new JDBCObject(statisticaGiornaliera_statisticaGiornalieraLlm.getLlmProviderBinding(), StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LLM_PROVIDER_BINDING.getFieldType()));
+				sqlQueryObjectUpdate_statisticaGiornalieraLlm.addUpdateField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.TOKEN_INPUT,false), "?");
+				lstObjects_statisticaGiornalieraLlm.add(new JDBCObject(statisticaGiornaliera_statisticaGiornalieraLlm.getTokenInput(), StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.TOKEN_INPUT.getFieldType()));
+				sqlQueryObjectUpdate_statisticaGiornalieraLlm.addUpdateField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.TOKEN_OUTPUT,false), "?");
+				lstObjects_statisticaGiornalieraLlm.add(new JDBCObject(statisticaGiornaliera_statisticaGiornalieraLlm.getTokenOutput(), StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.TOKEN_OUTPUT.getFieldType()));
+				sqlQueryObjectUpdate_statisticaGiornalieraLlm.addUpdateField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.COST_ESTIMATED,false), "?");
+				lstObjects_statisticaGiornalieraLlm.add(new JDBCObject(statisticaGiornaliera_statisticaGiornalieraLlm.getCostEstimated(), StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.COST_ESTIMATED.getFieldType()));
+				sqlQueryObjectUpdate_statisticaGiornalieraLlm.addWhereCondition("id=?");
+				ids_statisticaGiornalieraLlm_da_non_eliminare.add(statisticaGiornaliera_statisticaGiornalieraLlm.getId());
+				lstObjects_statisticaGiornalieraLlm.add(new JDBCObject(Long.valueOf(statisticaGiornaliera_statisticaGiornalieraLlm.getId()),Long.class));
+
+				if(isUpdate_statisticaGiornalieraLlm) {
+					// Update statisticaGiornaliera_statisticaGiornalieraLlm
+					jdbcUtilities.executeUpdate(sqlQueryObjectUpdate_statisticaGiornalieraLlm.createSQLUpdate(), jdbcProperties.isShowSql(), 
+						lstObjects_statisticaGiornalieraLlm.toArray(new JDBCObject[]{}));
+				}
+			}
+		} // fine for statisticaGiornaliera_statisticaGiornalieraLlm
+
+		// elimino tutte le occorrenze di statisticaGiornaliera_statisticaGiornalieraLlm non presenti nell'update
+
+		ISQLQueryObject sqlQueryObjectUpdate_statisticaGiornalieraLlmdeleteEngineList = sqlQueryObjectUpdate.newSQLQueryObject();
+		sqlQueryObjectUpdate_statisticaGiornalieraLlmdeleteEngineList.setANDLogicOperator(true);
+		sqlQueryObjectUpdate_statisticaGiornalieraLlmdeleteEngineList.addDeleteTable(this.getStatisticaGiornalieraFieldConverter().toTable(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM));
+		java.util.List<JDBCObject> jdbcObjects_statisticaGiornalieraLlmdeleteEngine = new java.util.ArrayList<>();
+
+		sqlQueryObjectUpdate_statisticaGiornalieraLlmdeleteEngineList.addWhereCondition("id_stat=?");
+		jdbcObjects_statisticaGiornalieraLlmdeleteEngine.add(new JDBCObject(statisticaGiornaliera.getId(), Long.class));
+
+		StringBuilder marks_statisticaGiornalieraLlm = new StringBuilder();
+		if(ids_statisticaGiornalieraLlm_da_non_eliminare.size() > 0) {
+			for(Long ids : ids_statisticaGiornalieraLlm_da_non_eliminare) {
+				if(marks_statisticaGiornalieraLlm.length() > 0) {
+					marks_statisticaGiornalieraLlm.append(",");
+				}
+				marks_statisticaGiornalieraLlm.append("?");
+				jdbcObjects_statisticaGiornalieraLlmdeleteEngine.add(new JDBCObject(ids, Long.class));
+
+			}
+			sqlQueryObjectUpdate_statisticaGiornalieraLlmdeleteEngineList.addWhereCondition("id NOT IN ("+marks_statisticaGiornalieraLlm.toString()+")");
+		}
+
+		jdbcUtilities.execute(sqlQueryObjectUpdate_statisticaGiornalieraLlmdeleteEngineList.createSQLDelete(), jdbcProperties.isShowSql(), jdbcObjects_statisticaGiornalieraLlmdeleteEngine.toArray(new JDBCObject[]{}));
+
 
 
 	}
@@ -651,6 +779,31 @@ public class JDBCStatisticaGiornalieraServiceImpl extends JDBCStatisticaGiornali
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaGiornaliera_statisticaGiornalieraContenuti.getId(),Long.class));
 			}
 		} // fine for statisticaGiornaliera_statisticaGiornalieraContenuti
+
+		//Recupero oggetto _statisticaGiornalieraLlm
+		ISQLQueryObject sqlQueryObjectDelete_statisticaGiornalieraLlmgetEngineToDelete = sqlQueryObjectDelete.newSQLQueryObject();
+		sqlQueryObjectDelete_statisticaGiornalieraLlmgetEngineToDelete.setANDLogicOperator(true);
+		sqlQueryObjectDelete_statisticaGiornalieraLlmgetEngineToDelete.addFromTable(this.getStatisticaGiornalieraFieldConverter().toTable(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM));
+		sqlQueryObjectDelete_statisticaGiornalieraLlmgetEngineToDelete.addWhereCondition("id_stat=?");
+		java.util.List<Object> statisticaGiornaliera_statisticaGiornalieraLlm_toDelete_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectDelete_statisticaGiornalieraLlmgetEngineToDelete.createSQLQuery(), jdbcProperties.isShowSql(), StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM, this.getStatisticaGiornalieraFetch(),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(id),Long.class));
+
+		// for statisticaGiornaliera_statisticaGiornalieraLlm
+		for (Object statisticaGiornaliera_statisticaGiornalieraLlm_object : statisticaGiornaliera_statisticaGiornalieraLlm_toDelete_list) {
+			StatisticaGiornalieraLlm statisticaGiornaliera_statisticaGiornalieraLlm = (StatisticaGiornalieraLlm) statisticaGiornaliera_statisticaGiornalieraLlm_object;
+
+			// Object statisticaGiornaliera_statisticaGiornalieraLlm
+			ISQLQueryObject sqlQueryObjectDelete_statisticaGiornalieraLlm = sqlQueryObjectDelete.newSQLQueryObject();
+			sqlQueryObjectDelete_statisticaGiornalieraLlm.setANDLogicOperator(true);
+			sqlQueryObjectDelete_statisticaGiornalieraLlm.addDeleteTable(this.getStatisticaGiornalieraFieldConverter().toTable(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM));
+			sqlQueryObjectDelete_statisticaGiornalieraLlm.addWhereCondition("id=?");
+
+			// Delete statisticaGiornaliera_statisticaGiornalieraLlm
+			if(statisticaGiornaliera_statisticaGiornalieraLlm != null){
+				jdbcUtilities.execute(sqlQueryObjectDelete_statisticaGiornalieraLlm.createSQLDelete(), jdbcProperties.isShowSql(), 
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(statisticaGiornaliera_statisticaGiornalieraLlm.getId()),Long.class));
+			}
+		} // fine for statisticaGiornaliera_statisticaGiornalieraLlm
 
 		// Object statisticaGiornaliera_statisticaBase_toDelete
 		sqlQueryObjectDelete.setANDLogicOperator(true);

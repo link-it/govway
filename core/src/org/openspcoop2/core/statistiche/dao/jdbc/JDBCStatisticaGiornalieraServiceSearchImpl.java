@@ -26,6 +26,7 @@ import java.util.Map;
 
 import org.openspcoop2.core.statistiche.StatisticaContenuti;
 import org.openspcoop2.core.statistiche.StatisticaGiornaliera;
+import org.openspcoop2.core.statistiche.StatisticaGiornalieraLlm;
 import org.openspcoop2.core.statistiche.dao.jdbc.converter.StatisticaGiornalieraFieldConverter;
 import org.openspcoop2.core.statistiche.dao.jdbc.fetch.StatisticaGiornalieraFetch;
 import org.openspcoop2.core.statistiche.utils.AliasTableRicerchePersonalizzate;
@@ -541,6 +542,33 @@ public class JDBCStatisticaGiornalieraServiceSearchImpl implements IJDBCServiceS
 			}
 		}
 
+		// Object statisticaGiornaliera_statisticaGiornalieraLlm
+		ISQLQueryObject sqlQueryObjectGet_statisticaGiornalieraLlm = sqlQueryObjectGet.newSQLQueryObject();
+		sqlQueryObjectGet_statisticaGiornalieraLlm.setANDLogicOperator(true);
+		sqlQueryObjectGet_statisticaGiornalieraLlm.addFromTable(this.getStatisticaGiornalieraFieldConverter().toTable(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM));
+		sqlQueryObjectGet_statisticaGiornalieraLlm.addSelectField("id");
+		sqlQueryObjectGet_statisticaGiornalieraLlm.addSelectField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.DATA,true));
+		sqlQueryObjectGet_statisticaGiornalieraLlm.addSelectField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LLM_PROVIDER,true));
+		sqlQueryObjectGet_statisticaGiornalieraLlm.addSelectField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LLM_MODEL,true));
+		sqlQueryObjectGet_statisticaGiornalieraLlm.addSelectField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LLM_PROVIDER_BINDING,true));
+		sqlQueryObjectGet_statisticaGiornalieraLlm.addSelectField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.TOKEN_INPUT,true));
+		sqlQueryObjectGet_statisticaGiornalieraLlm.addSelectField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.TOKEN_OUTPUT,true));
+		sqlQueryObjectGet_statisticaGiornalieraLlm.addSelectField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.COST_ESTIMATED,true));
+		sqlQueryObjectGet_statisticaGiornalieraLlm.addWhereCondition("id_stat=?");
+
+		// Get statisticaGiornaliera_statisticaGiornalieraLlm
+		java.util.List<Object> statisticaGiornaliera_statisticaGiornalieraLlm_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectGet_statisticaGiornalieraLlm.createSQLQuery(), jdbcProperties.isShowSql(), StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM, this.getStatisticaGiornalieraFetch(),
+			new JDBCObject(statisticaGiornaliera.getId(),Long.class));
+
+		if(statisticaGiornaliera_statisticaGiornalieraLlm_list != null) {
+			for (Object statisticaGiornaliera_statisticaGiornalieraLlm_object: statisticaGiornaliera_statisticaGiornalieraLlm_list) {
+				StatisticaGiornalieraLlm statisticaGiornaliera_statisticaGiornalieraLlm = (StatisticaGiornalieraLlm) statisticaGiornaliera_statisticaGiornalieraLlm_object;
+
+
+				statisticaGiornaliera.addStatisticaGiornalieraLlm(statisticaGiornaliera_statisticaGiornalieraLlm);
+			}
+		}
+
 		
         return statisticaGiornaliera;  
 	
@@ -578,6 +606,12 @@ public class JDBCStatisticaGiornalieraServiceSearchImpl implements IJDBCServiceS
 		AliasTableRicerchePersonalizzate.join(expression, sqlQueryObject, StatisticaGiornaliera.model().STATISTICA_BASE, 
 				StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_CONTENUTI, this.getFieldConverter());
 		      
+		if(expression.inUseModel(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM,false)){
+			String tableName1 = this.getStatisticaGiornalieraFieldConverter().toAliasTable(StatisticaGiornaliera.model());
+			String tableName2 = this.getStatisticaGiornalieraFieldConverter().toAliasTable(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM);
+			sqlQueryObject.addWhereCondition(tableName1+".id="+tableName2+".id_stat");
+		}
+
 	}
 	
 	protected java.util.List<Object> getRootTablePrimaryKeyValuesEngine(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, StatisticaGiornaliera statisticaGiornaliera) throws NotFoundException, ServiceException, NotImplementedException, Exception{

@@ -187,6 +187,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 			boolean autenticazioneToken = ServletUtils.isCheckBoxEnabled(autenticazioneTokenS);
 			String tokenPolicy = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY);
 			String llmPolicy = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_LLM_PROVIDER);
+			String[] llmBindings = saHelper.getParameterValues(ConnettoriCostanti.PARAMETRO_CONNETTORE_LLM_BINDING);
 			boolean forcePDND = false;
 			boolean forceOAuth = false;
 			boolean forceDPoP = false;
@@ -365,6 +366,8 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 			if(connis==null) {
 				throw new CoreException("ServizioApplicativo con id '"+idSilInt+"' senza connettore in InvocazioneServizio");
 			}
+			String[] llmBindingsLoaded = saHelper.extractLlmBindings(connis);
+			connis = saHelper.unwrapLlmContainer(connis);
 			List<Property> cp = connis.getPropertyList();
 			String tipoSA = sa.getTipo();
 			
@@ -392,6 +395,8 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 					is = sa.getInvocazioneServizio();
 					cis = is.getCredenziali();
 					connis = is.getConnettore();
+					llmBindingsLoaded = saHelper.extractLlmBindings(connis);
+					connis = saHelper.unwrapLlmContainer(connis);
 					cp = connis.getPropertyList();
 					tipoSA = sa.getTipo();
 					
@@ -723,8 +728,8 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 				}
 
 				Map<String, String> props = null;
-				if(is!=null && is.getConnettore()!=null)
-					props = is.getConnettore().getProperties();
+				if(connis!=null)
+					props = connis.getProperties();
 
 				if(connettoreDebug==null && props!=null){
 					String v = props.get(CostantiDB.CONNETTORE_DEBUG);
@@ -883,6 +888,10 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 					if(v!=null && !"".equals(v)){
 						llmPolicy = v;
 					}
+				}
+
+				if((llmBindings==null || llmBindings.length==0) && llmBindingsLoaded!=null && llmBindingsLoaded.length>0){
+					llmBindings = llmBindingsLoaded;
 				}
 
 				autenticazioneHttp = saHelper.getAutenticazioneHttp(autenticazioneHttp, endpointtype, user);
@@ -1077,7 +1086,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 						TipoOperazione.CHANGE, tipoCredenzialiSSLVerificaTuttiICampi, changepwd,
 						postBackViaPost);
 
-				String llmUrlOverride = saHelper.addLLMProviderSectionAndResolveUrl(dati, apiIsLLM, llmPolicy, TipoOperazione.CHANGE, postBackViaPost);
+				String llmUrlOverride = saHelper.addLLMProviderSectionAndResolveUrl(dati, apiIsLLM, llmPolicy, llmBindings, TipoOperazione.CHANGE, postBackViaPost);
 			if (llmUrlOverride != null) {
 				url = llmUrlOverride;
 				httpsurl = llmUrlOverride;
@@ -1147,7 +1156,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 						TipoOperazione.CHANGE, tipoCredenzialiSSLVerificaTuttiICampi, changepwd,
 						postBackViaPost);
 
-				String llmUrlOverride = saHelper.addLLMProviderSectionAndResolveUrl(dati, apiIsLLM, llmPolicy, TipoOperazione.CHANGE, postBackViaPost);
+				String llmUrlOverride = saHelper.addLLMProviderSectionAndResolveUrl(dati, apiIsLLM, llmPolicy, llmBindings, TipoOperazione.CHANGE, postBackViaPost);
 			if (llmUrlOverride != null) {
 				url = llmUrlOverride;
 				httpsurl = llmUrlOverride;
@@ -1359,7 +1368,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 						connettoreStatusParams,
 						listExtendedConnettore);
 				if (apiIsLLM) {
-					saHelper.addLLMPolicyPropertyToConnettore(connis, llmPolicy);
+					connis = saHelper.wrapAsLlmContainer(connis, llmPolicy, llmBindings, connis.getNome());
 				}
 				is.setConnettore(connis);
 				sa.setInvocazioneServizio(is);

@@ -27,13 +27,26 @@
 			<xsd:sequence>
 				<xsd:element name="statistica-base" type="statistica"/>
 				<xsd:element ref="statistica-oraria-contenuti" minOccurs="0" maxOccurs="unbounded" />
+				<xsd:element ref="statistica-oraria-llm" minOccurs="0" maxOccurs="unbounded" />
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
 
 	<xsd:element name="statistica-oraria-contenuti" type="statistica-contenuti" />
-		
-	
+
+	<xsd:element name="statistica-oraria-llm">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="data" type="xsd:dateTime"/>
+				<xsd:element name="llm-provider" type="xsd:string"/>
+				<xsd:element name="llm-model" type="xsd:string"/>
+				<xsd:element name="llm-provider-binding" type="xsd:string" minOccurs="0"/>
+				<xsd:element name="token-input" type="xsd:unsignedLong"/>
+				<xsd:element name="token-output" type="xsd:unsignedLong"/>
+				<xsd:element name="cost-estimated" type="xsd:double" minOccurs="0"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
 
 
 	<!-- ********* STATISTICHE GIORNALIERE ************* -->
@@ -43,14 +56,26 @@
 			<xsd:sequence>
 				<xsd:element name="statistica-base" type="statistica"/>
 				<xsd:element ref="statistica-giornaliera-contenuti" minOccurs="0" maxOccurs="unbounded" />
+				<xsd:element ref="statistica-giornaliera-llm" minOccurs="0" maxOccurs="unbounded" />
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
 
 	<xsd:element name="statistica-giornaliera-contenuti" type="statistica-contenuti"/>
 
-
-
+	<xsd:element name="statistica-giornaliera-llm">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="data" type="xsd:dateTime"/>
+				<xsd:element name="llm-provider" type="xsd:string"/>
+				<xsd:element name="llm-model" type="xsd:string"/>
+				<xsd:element name="llm-provider-binding" type="xsd:string" minOccurs="0"/>
+				<xsd:element name="token-input" type="xsd:unsignedLong"/>
+				<xsd:element name="token-output" type="xsd:unsignedLong"/>
+				<xsd:element name="cost-estimated" type="xsd:double" minOccurs="0"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
 
 
 	<!-- ********* STATISTICHE SETTIMANALI ************* -->

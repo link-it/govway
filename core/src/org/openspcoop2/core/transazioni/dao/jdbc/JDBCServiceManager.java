@@ -30,6 +30,8 @@ import org.openspcoop2.core.transazioni.dao.ITransazioneServiceSearch;
 import org.openspcoop2.core.transazioni.dao.ITransazioneService;
 import org.openspcoop2.core.transazioni.dao.ITransazioneApplicativoServerServiceSearch;
 import org.openspcoop2.core.transazioni.dao.ITransazioneApplicativoServerService;
+import org.openspcoop2.core.transazioni.dao.ITransazioneLlmServiceSearch;
+import org.openspcoop2.core.transazioni.dao.ITransazioneLlmService;
 import org.openspcoop2.core.transazioni.dao.ITransazioneInfoServiceSearch;
 import org.openspcoop2.core.transazioni.dao.ITransazioneInfoService;
 import org.openspcoop2.core.transazioni.dao.ITransazioneExportServiceSearch;
@@ -256,6 +258,38 @@ public class JDBCServiceManager extends org.openspcoop2.generic_project.dao.jdbc
 	@Override
 	public ITransazioneApplicativoServerService getTransazioneApplicativoServerService() throws ServiceException,NotImplementedException{
 		return new JDBCTransazioneApplicativoServerService(this);
+	}
+	
+	
+	
+	/*
+	 =====================================================================================================================
+	 Services relating to the object with name:transazione-llm type:transazione-llm
+	 =====================================================================================================================
+	*/
+	
+	/**
+	 * Return a service used to research on the backend on objects of type {@link org.openspcoop2.core.transazioni.TransazioneLlm}
+	 *
+	 * @return Service used to research on the backend on objects of type {@link org.openspcoop2.core.transazioni.TransazioneLlm}	
+	 * @throws ServiceException Exception thrown when an error occurs during processing of the request
+	 * @throws NotImplementedException Exception thrown when the method is not implemented
+	 */
+	@Override
+	public ITransazioneLlmServiceSearch getTransazioneLlmServiceSearch() throws ServiceException,NotImplementedException{
+		return new JDBCTransazioneLlmServiceSearch(this);
+	}
+	
+	/**
+	 * Return a service used to research and manage on the backend on objects of type {@link org.openspcoop2.core.transazioni.TransazioneLlm}
+	 *
+	 * @return Service used to research and manage on the backend on objects of type {@link org.openspcoop2.core.transazioni.TransazioneLlm}	
+	 * @throws ServiceException Exception thrown when an error occurs during processing of the request
+	 * @throws NotImplementedException Exception thrown when the method is not implemented
+	 */
+	@Override
+	public ITransazioneLlmService getTransazioneLlmService() throws ServiceException,NotImplementedException{
+		return new JDBCTransazioneLlmService(this);
 	}
 	
 	

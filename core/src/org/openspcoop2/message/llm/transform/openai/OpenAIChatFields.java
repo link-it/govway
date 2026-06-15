@@ -89,6 +89,10 @@ final class OpenAIChatFields {
 	static final String FIELD_TEMPERATURE = "temperature";
 	static final String FIELD_TOP_P = "top_p";
 	static final String FIELD_STREAM = "stream";
+	/** Oggetto opzionale {@code stream_options} sulla request, accompagna {@code stream:true}. */
+	static final String FIELD_STREAM_OPTIONS = "stream_options";
+	/** Flag dentro {@code stream_options} che richiede l'invio del chunk con {@code usage} a fine stream. */
+	static final String FIELD_INCLUDE_USAGE = "include_usage";
 	static final String FIELD_STOP = "stop";
 	static final String FIELD_SYSTEM = "system";
 	static final String FIELD_DESCRIPTION = "description";

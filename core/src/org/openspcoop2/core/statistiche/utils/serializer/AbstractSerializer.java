@@ -23,14 +23,16 @@ import org.openspcoop2.generic_project.exception.SerializerException;
 import org.openspcoop2.utils.beans.WriteToSerializerType;
 import org.openspcoop2.utils.xml.JaxbUtils;
 
-import org.openspcoop2.core.statistiche.Statistica;
-import org.openspcoop2.core.statistiche.StatisticaMensile;
-import org.openspcoop2.core.statistiche.StatisticaContenuti;
-import org.openspcoop2.core.statistiche.StatisticaGiornaliera;
-import org.openspcoop2.core.statistiche.StatistichePdndTracing;
-import org.openspcoop2.core.statistiche.StatisticaSettimanale;
-import org.openspcoop2.core.statistiche.StatisticaOraria;
+import org.openspcoop2.core.statistiche.StatisticaOrariaLlm;
 import org.openspcoop2.core.statistiche.StatisticaInfo;
+import org.openspcoop2.core.statistiche.Statistica;
+import org.openspcoop2.core.statistiche.StatisticaSettimanale;
+import org.openspcoop2.core.statistiche.StatisticaContenuti;
+import org.openspcoop2.core.statistiche.StatisticaOraria;
+import org.openspcoop2.core.statistiche.StatistichePdndTracing;
+import org.openspcoop2.core.statistiche.StatisticaGiornaliera;
+import org.openspcoop2.core.statistiche.StatisticaGiornalieraLlm;
+import org.openspcoop2.core.statistiche.StatisticaMensile;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
@@ -140,6 +142,242 @@ public abstract class AbstractSerializer {
 
 
 
+	/*
+	 =================================================================================
+	 Object: statistica-oraria-llm
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>statisticaOrariaLlm</var> of type {@link org.openspcoop2.core.statistiche.StatisticaOrariaLlm}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>statisticaOrariaLlm</var>
+	 * @param statisticaOrariaLlm Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,StatisticaOrariaLlm statisticaOrariaLlm) throws SerializerException {
+		this.objToXml(fileName, StatisticaOrariaLlm.class, statisticaOrariaLlm, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>statisticaOrariaLlm</var> of type {@link org.openspcoop2.core.statistiche.StatisticaOrariaLlm}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>statisticaOrariaLlm</var>
+	 * @param statisticaOrariaLlm Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,StatisticaOrariaLlm statisticaOrariaLlm,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, StatisticaOrariaLlm.class, statisticaOrariaLlm, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>statisticaOrariaLlm</var> of type {@link org.openspcoop2.core.statistiche.StatisticaOrariaLlm}
+	 * 
+	 * @param file Xml file to serialize the object <var>statisticaOrariaLlm</var>
+	 * @param statisticaOrariaLlm Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,StatisticaOrariaLlm statisticaOrariaLlm) throws SerializerException {
+		this.objToXml(file, StatisticaOrariaLlm.class, statisticaOrariaLlm, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>statisticaOrariaLlm</var> of type {@link org.openspcoop2.core.statistiche.StatisticaOrariaLlm}
+	 * 
+	 * @param file Xml file to serialize the object <var>statisticaOrariaLlm</var>
+	 * @param statisticaOrariaLlm Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,StatisticaOrariaLlm statisticaOrariaLlm,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, StatisticaOrariaLlm.class, statisticaOrariaLlm, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>statisticaOrariaLlm</var> of type {@link org.openspcoop2.core.statistiche.StatisticaOrariaLlm}
+	 * 
+	 * @param out OutputStream to serialize the object <var>statisticaOrariaLlm</var>
+	 * @param statisticaOrariaLlm Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,StatisticaOrariaLlm statisticaOrariaLlm) throws SerializerException {
+		this.objToXml(out, StatisticaOrariaLlm.class, statisticaOrariaLlm, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>statisticaOrariaLlm</var> of type {@link org.openspcoop2.core.statistiche.StatisticaOrariaLlm}
+	 * 
+	 * @param out OutputStream to serialize the object <var>statisticaOrariaLlm</var>
+	 * @param statisticaOrariaLlm Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,StatisticaOrariaLlm statisticaOrariaLlm,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, StatisticaOrariaLlm.class, statisticaOrariaLlm, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>statisticaOrariaLlm</var> of type {@link org.openspcoop2.core.statistiche.StatisticaOrariaLlm}
+	 * 
+	 * @param statisticaOrariaLlm Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(StatisticaOrariaLlm statisticaOrariaLlm) throws SerializerException {
+		return this.objToXml(StatisticaOrariaLlm.class, statisticaOrariaLlm, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>statisticaOrariaLlm</var> of type {@link org.openspcoop2.core.statistiche.StatisticaOrariaLlm}
+	 * 
+	 * @param statisticaOrariaLlm Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(StatisticaOrariaLlm statisticaOrariaLlm,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(StatisticaOrariaLlm.class, statisticaOrariaLlm, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>statisticaOrariaLlm</var> of type {@link org.openspcoop2.core.statistiche.StatisticaOrariaLlm}
+	 * 
+	 * @param statisticaOrariaLlm Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(StatisticaOrariaLlm statisticaOrariaLlm) throws SerializerException {
+		return this.objToXml(StatisticaOrariaLlm.class, statisticaOrariaLlm, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>statisticaOrariaLlm</var> of type {@link org.openspcoop2.core.statistiche.StatisticaOrariaLlm}
+	 * 
+	 * @param statisticaOrariaLlm Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(StatisticaOrariaLlm statisticaOrariaLlm,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(StatisticaOrariaLlm.class, statisticaOrariaLlm, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: statistica-info
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>statisticaInfo</var> of type {@link org.openspcoop2.core.statistiche.StatisticaInfo}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>statisticaInfo</var>
+	 * @param statisticaInfo Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,StatisticaInfo statisticaInfo) throws SerializerException {
+		this.objToXml(fileName, StatisticaInfo.class, statisticaInfo, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>statisticaInfo</var> of type {@link org.openspcoop2.core.statistiche.StatisticaInfo}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>statisticaInfo</var>
+	 * @param statisticaInfo Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,StatisticaInfo statisticaInfo,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, StatisticaInfo.class, statisticaInfo, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>statisticaInfo</var> of type {@link org.openspcoop2.core.statistiche.StatisticaInfo}
+	 * 
+	 * @param file Xml file to serialize the object <var>statisticaInfo</var>
+	 * @param statisticaInfo Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,StatisticaInfo statisticaInfo) throws SerializerException {
+		this.objToXml(file, StatisticaInfo.class, statisticaInfo, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>statisticaInfo</var> of type {@link org.openspcoop2.core.statistiche.StatisticaInfo}
+	 * 
+	 * @param file Xml file to serialize the object <var>statisticaInfo</var>
+	 * @param statisticaInfo Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,StatisticaInfo statisticaInfo,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, StatisticaInfo.class, statisticaInfo, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>statisticaInfo</var> of type {@link org.openspcoop2.core.statistiche.StatisticaInfo}
+	 * 
+	 * @param out OutputStream to serialize the object <var>statisticaInfo</var>
+	 * @param statisticaInfo Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,StatisticaInfo statisticaInfo) throws SerializerException {
+		this.objToXml(out, StatisticaInfo.class, statisticaInfo, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>statisticaInfo</var> of type {@link org.openspcoop2.core.statistiche.StatisticaInfo}
+	 * 
+	 * @param out OutputStream to serialize the object <var>statisticaInfo</var>
+	 * @param statisticaInfo Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,StatisticaInfo statisticaInfo,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, StatisticaInfo.class, statisticaInfo, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>statisticaInfo</var> of type {@link org.openspcoop2.core.statistiche.StatisticaInfo}
+	 * 
+	 * @param statisticaInfo Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(StatisticaInfo statisticaInfo) throws SerializerException {
+		return this.objToXml(StatisticaInfo.class, statisticaInfo, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>statisticaInfo</var> of type {@link org.openspcoop2.core.statistiche.StatisticaInfo}
+	 * 
+	 * @param statisticaInfo Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(StatisticaInfo statisticaInfo,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(StatisticaInfo.class, statisticaInfo, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>statisticaInfo</var> of type {@link org.openspcoop2.core.statistiche.StatisticaInfo}
+	 * 
+	 * @param statisticaInfo Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(StatisticaInfo statisticaInfo) throws SerializerException {
+		return this.objToXml(StatisticaInfo.class, statisticaInfo, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>statisticaInfo</var> of type {@link org.openspcoop2.core.statistiche.StatisticaInfo}
+	 * 
+	 * @param statisticaInfo Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(StatisticaInfo statisticaInfo,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(StatisticaInfo.class, statisticaInfo, prettyPrint).toString();
+	}
+	
+	
+	
 	/*
 	 =================================================================================
 	 Object: statistica
@@ -254,478 +492,6 @@ public abstract class AbstractSerializer {
 	 */
 	public String toString(Statistica statistica,boolean prettyPrint) throws SerializerException {
 		return this.objToXml(Statistica.class, statistica, prettyPrint).toString();
-	}
-	
-	
-	
-	/*
-	 =================================================================================
-	 Object: statistica-mensile
-	 =================================================================================
-	*/
-	
-	/**
-	 * Serialize to file system in <var>fileName</var> the object <var>statisticaMensile</var> of type {@link org.openspcoop2.core.statistiche.StatisticaMensile}
-	 * 
-	 * @param fileName Xml file to serialize the object <var>statisticaMensile</var>
-	 * @param statisticaMensile Object to be serialized in xml file <var>fileName</var>
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(String fileName,StatisticaMensile statisticaMensile) throws SerializerException {
-		this.objToXml(fileName, StatisticaMensile.class, statisticaMensile, false);
-	}
-	/**
-	 * Serialize to file system in <var>fileName</var> the object <var>statisticaMensile</var> of type {@link org.openspcoop2.core.statistiche.StatisticaMensile}
-	 * 
-	 * @param fileName Xml file to serialize the object <var>statisticaMensile</var>
-	 * @param statisticaMensile Object to be serialized in xml file <var>fileName</var>
-	 * @param prettyPrint if true output the XML with indenting
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(String fileName,StatisticaMensile statisticaMensile,boolean prettyPrint) throws SerializerException {
-		this.objToXml(fileName, StatisticaMensile.class, statisticaMensile, prettyPrint);
-	}
-	
-	/**
-	 * Serialize to file system in <var>file</var> the object <var>statisticaMensile</var> of type {@link org.openspcoop2.core.statistiche.StatisticaMensile}
-	 * 
-	 * @param file Xml file to serialize the object <var>statisticaMensile</var>
-	 * @param statisticaMensile Object to be serialized in xml file <var>fileName</var>
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(File file,StatisticaMensile statisticaMensile) throws SerializerException {
-		this.objToXml(file, StatisticaMensile.class, statisticaMensile, false);
-	}
-	/**
-	 * Serialize to file system in <var>file</var> the object <var>statisticaMensile</var> of type {@link org.openspcoop2.core.statistiche.StatisticaMensile}
-	 * 
-	 * @param file Xml file to serialize the object <var>statisticaMensile</var>
-	 * @param statisticaMensile Object to be serialized in xml file <var>fileName</var>
-	 * @param prettyPrint if true output the XML with indenting
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(File file,StatisticaMensile statisticaMensile,boolean prettyPrint) throws SerializerException {
-		this.objToXml(file, StatisticaMensile.class, statisticaMensile, prettyPrint);
-	}
-	
-	/**
-	 * Serialize to output stream <var>out</var> the object <var>statisticaMensile</var> of type {@link org.openspcoop2.core.statistiche.StatisticaMensile}
-	 * 
-	 * @param out OutputStream to serialize the object <var>statisticaMensile</var>
-	 * @param statisticaMensile Object to be serialized in xml file <var>fileName</var>
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(OutputStream out,StatisticaMensile statisticaMensile) throws SerializerException {
-		this.objToXml(out, StatisticaMensile.class, statisticaMensile, false);
-	}
-	/**
-	 * Serialize to output stream <var>out</var> the object <var>statisticaMensile</var> of type {@link org.openspcoop2.core.statistiche.StatisticaMensile}
-	 * 
-	 * @param out OutputStream to serialize the object <var>statisticaMensile</var>
-	 * @param statisticaMensile Object to be serialized in xml file <var>fileName</var>
-	 * @param prettyPrint if true output the XML with indenting
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(OutputStream out,StatisticaMensile statisticaMensile,boolean prettyPrint) throws SerializerException {
-		this.objToXml(out, StatisticaMensile.class, statisticaMensile, prettyPrint);
-	}
-			
-	/**
-	 * Serialize to byte array the object <var>statisticaMensile</var> of type {@link org.openspcoop2.core.statistiche.StatisticaMensile}
-	 * 
-	 * @param statisticaMensile Object to be serialized
-	 * @return Object to be serialized in byte array
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public byte[] toByteArray(StatisticaMensile statisticaMensile) throws SerializerException {
-		return this.objToXml(StatisticaMensile.class, statisticaMensile, false).toByteArray();
-	}
-	/**
-	 * Serialize to byte array the object <var>statisticaMensile</var> of type {@link org.openspcoop2.core.statistiche.StatisticaMensile}
-	 * 
-	 * @param statisticaMensile Object to be serialized
-	 * @param prettyPrint if true output the XML with indenting
-	 * @return Object to be serialized in byte array
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public byte[] toByteArray(StatisticaMensile statisticaMensile,boolean prettyPrint) throws SerializerException {
-		return this.objToXml(StatisticaMensile.class, statisticaMensile, prettyPrint).toByteArray();
-	}
-	
-	/**
-	 * Serialize to String the object <var>statisticaMensile</var> of type {@link org.openspcoop2.core.statistiche.StatisticaMensile}
-	 * 
-	 * @param statisticaMensile Object to be serialized
-	 * @return Object to be serialized as String
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public String toString(StatisticaMensile statisticaMensile) throws SerializerException {
-		return this.objToXml(StatisticaMensile.class, statisticaMensile, false).toString();
-	}
-	/**
-	 * Serialize to String the object <var>statisticaMensile</var> of type {@link org.openspcoop2.core.statistiche.StatisticaMensile}
-	 * 
-	 * @param statisticaMensile Object to be serialized
-	 * @param prettyPrint if true output the XML with indenting
-	 * @return Object to be serialized as String
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public String toString(StatisticaMensile statisticaMensile,boolean prettyPrint) throws SerializerException {
-		return this.objToXml(StatisticaMensile.class, statisticaMensile, prettyPrint).toString();
-	}
-	
-	
-	
-	/*
-	 =================================================================================
-	 Object: statistica-contenuti
-	 =================================================================================
-	*/
-	
-	/**
-	 * Serialize to file system in <var>fileName</var> the object <var>statisticaContenuti</var> of type {@link org.openspcoop2.core.statistiche.StatisticaContenuti}
-	 * 
-	 * @param fileName Xml file to serialize the object <var>statisticaContenuti</var>
-	 * @param statisticaContenuti Object to be serialized in xml file <var>fileName</var>
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(String fileName,StatisticaContenuti statisticaContenuti) throws SerializerException {
-		this.objToXml(fileName, StatisticaContenuti.class, statisticaContenuti, false);
-	}
-	/**
-	 * Serialize to file system in <var>fileName</var> the object <var>statisticaContenuti</var> of type {@link org.openspcoop2.core.statistiche.StatisticaContenuti}
-	 * 
-	 * @param fileName Xml file to serialize the object <var>statisticaContenuti</var>
-	 * @param statisticaContenuti Object to be serialized in xml file <var>fileName</var>
-	 * @param prettyPrint if true output the XML with indenting
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(String fileName,StatisticaContenuti statisticaContenuti,boolean prettyPrint) throws SerializerException {
-		this.objToXml(fileName, StatisticaContenuti.class, statisticaContenuti, prettyPrint);
-	}
-	
-	/**
-	 * Serialize to file system in <var>file</var> the object <var>statisticaContenuti</var> of type {@link org.openspcoop2.core.statistiche.StatisticaContenuti}
-	 * 
-	 * @param file Xml file to serialize the object <var>statisticaContenuti</var>
-	 * @param statisticaContenuti Object to be serialized in xml file <var>fileName</var>
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(File file,StatisticaContenuti statisticaContenuti) throws SerializerException {
-		this.objToXml(file, StatisticaContenuti.class, statisticaContenuti, false);
-	}
-	/**
-	 * Serialize to file system in <var>file</var> the object <var>statisticaContenuti</var> of type {@link org.openspcoop2.core.statistiche.StatisticaContenuti}
-	 * 
-	 * @param file Xml file to serialize the object <var>statisticaContenuti</var>
-	 * @param statisticaContenuti Object to be serialized in xml file <var>fileName</var>
-	 * @param prettyPrint if true output the XML with indenting
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(File file,StatisticaContenuti statisticaContenuti,boolean prettyPrint) throws SerializerException {
-		this.objToXml(file, StatisticaContenuti.class, statisticaContenuti, prettyPrint);
-	}
-	
-	/**
-	 * Serialize to output stream <var>out</var> the object <var>statisticaContenuti</var> of type {@link org.openspcoop2.core.statistiche.StatisticaContenuti}
-	 * 
-	 * @param out OutputStream to serialize the object <var>statisticaContenuti</var>
-	 * @param statisticaContenuti Object to be serialized in xml file <var>fileName</var>
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(OutputStream out,StatisticaContenuti statisticaContenuti) throws SerializerException {
-		this.objToXml(out, StatisticaContenuti.class, statisticaContenuti, false);
-	}
-	/**
-	 * Serialize to output stream <var>out</var> the object <var>statisticaContenuti</var> of type {@link org.openspcoop2.core.statistiche.StatisticaContenuti}
-	 * 
-	 * @param out OutputStream to serialize the object <var>statisticaContenuti</var>
-	 * @param statisticaContenuti Object to be serialized in xml file <var>fileName</var>
-	 * @param prettyPrint if true output the XML with indenting
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(OutputStream out,StatisticaContenuti statisticaContenuti,boolean prettyPrint) throws SerializerException {
-		this.objToXml(out, StatisticaContenuti.class, statisticaContenuti, prettyPrint);
-	}
-			
-	/**
-	 * Serialize to byte array the object <var>statisticaContenuti</var> of type {@link org.openspcoop2.core.statistiche.StatisticaContenuti}
-	 * 
-	 * @param statisticaContenuti Object to be serialized
-	 * @return Object to be serialized in byte array
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public byte[] toByteArray(StatisticaContenuti statisticaContenuti) throws SerializerException {
-		return this.objToXml(StatisticaContenuti.class, statisticaContenuti, false).toByteArray();
-	}
-	/**
-	 * Serialize to byte array the object <var>statisticaContenuti</var> of type {@link org.openspcoop2.core.statistiche.StatisticaContenuti}
-	 * 
-	 * @param statisticaContenuti Object to be serialized
-	 * @param prettyPrint if true output the XML with indenting
-	 * @return Object to be serialized in byte array
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public byte[] toByteArray(StatisticaContenuti statisticaContenuti,boolean prettyPrint) throws SerializerException {
-		return this.objToXml(StatisticaContenuti.class, statisticaContenuti, prettyPrint).toByteArray();
-	}
-	
-	/**
-	 * Serialize to String the object <var>statisticaContenuti</var> of type {@link org.openspcoop2.core.statistiche.StatisticaContenuti}
-	 * 
-	 * @param statisticaContenuti Object to be serialized
-	 * @return Object to be serialized as String
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public String toString(StatisticaContenuti statisticaContenuti) throws SerializerException {
-		return this.objToXml(StatisticaContenuti.class, statisticaContenuti, false).toString();
-	}
-	/**
-	 * Serialize to String the object <var>statisticaContenuti</var> of type {@link org.openspcoop2.core.statistiche.StatisticaContenuti}
-	 * 
-	 * @param statisticaContenuti Object to be serialized
-	 * @param prettyPrint if true output the XML with indenting
-	 * @return Object to be serialized as String
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public String toString(StatisticaContenuti statisticaContenuti,boolean prettyPrint) throws SerializerException {
-		return this.objToXml(StatisticaContenuti.class, statisticaContenuti, prettyPrint).toString();
-	}
-	
-	
-	
-	/*
-	 =================================================================================
-	 Object: statistica-giornaliera
-	 =================================================================================
-	*/
-	
-	/**
-	 * Serialize to file system in <var>fileName</var> the object <var>statisticaGiornaliera</var> of type {@link org.openspcoop2.core.statistiche.StatisticaGiornaliera}
-	 * 
-	 * @param fileName Xml file to serialize the object <var>statisticaGiornaliera</var>
-	 * @param statisticaGiornaliera Object to be serialized in xml file <var>fileName</var>
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(String fileName,StatisticaGiornaliera statisticaGiornaliera) throws SerializerException {
-		this.objToXml(fileName, StatisticaGiornaliera.class, statisticaGiornaliera, false);
-	}
-	/**
-	 * Serialize to file system in <var>fileName</var> the object <var>statisticaGiornaliera</var> of type {@link org.openspcoop2.core.statistiche.StatisticaGiornaliera}
-	 * 
-	 * @param fileName Xml file to serialize the object <var>statisticaGiornaliera</var>
-	 * @param statisticaGiornaliera Object to be serialized in xml file <var>fileName</var>
-	 * @param prettyPrint if true output the XML with indenting
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(String fileName,StatisticaGiornaliera statisticaGiornaliera,boolean prettyPrint) throws SerializerException {
-		this.objToXml(fileName, StatisticaGiornaliera.class, statisticaGiornaliera, prettyPrint);
-	}
-	
-	/**
-	 * Serialize to file system in <var>file</var> the object <var>statisticaGiornaliera</var> of type {@link org.openspcoop2.core.statistiche.StatisticaGiornaliera}
-	 * 
-	 * @param file Xml file to serialize the object <var>statisticaGiornaliera</var>
-	 * @param statisticaGiornaliera Object to be serialized in xml file <var>fileName</var>
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(File file,StatisticaGiornaliera statisticaGiornaliera) throws SerializerException {
-		this.objToXml(file, StatisticaGiornaliera.class, statisticaGiornaliera, false);
-	}
-	/**
-	 * Serialize to file system in <var>file</var> the object <var>statisticaGiornaliera</var> of type {@link org.openspcoop2.core.statistiche.StatisticaGiornaliera}
-	 * 
-	 * @param file Xml file to serialize the object <var>statisticaGiornaliera</var>
-	 * @param statisticaGiornaliera Object to be serialized in xml file <var>fileName</var>
-	 * @param prettyPrint if true output the XML with indenting
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(File file,StatisticaGiornaliera statisticaGiornaliera,boolean prettyPrint) throws SerializerException {
-		this.objToXml(file, StatisticaGiornaliera.class, statisticaGiornaliera, prettyPrint);
-	}
-	
-	/**
-	 * Serialize to output stream <var>out</var> the object <var>statisticaGiornaliera</var> of type {@link org.openspcoop2.core.statistiche.StatisticaGiornaliera}
-	 * 
-	 * @param out OutputStream to serialize the object <var>statisticaGiornaliera</var>
-	 * @param statisticaGiornaliera Object to be serialized in xml file <var>fileName</var>
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(OutputStream out,StatisticaGiornaliera statisticaGiornaliera) throws SerializerException {
-		this.objToXml(out, StatisticaGiornaliera.class, statisticaGiornaliera, false);
-	}
-	/**
-	 * Serialize to output stream <var>out</var> the object <var>statisticaGiornaliera</var> of type {@link org.openspcoop2.core.statistiche.StatisticaGiornaliera}
-	 * 
-	 * @param out OutputStream to serialize the object <var>statisticaGiornaliera</var>
-	 * @param statisticaGiornaliera Object to be serialized in xml file <var>fileName</var>
-	 * @param prettyPrint if true output the XML with indenting
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(OutputStream out,StatisticaGiornaliera statisticaGiornaliera,boolean prettyPrint) throws SerializerException {
-		this.objToXml(out, StatisticaGiornaliera.class, statisticaGiornaliera, prettyPrint);
-	}
-			
-	/**
-	 * Serialize to byte array the object <var>statisticaGiornaliera</var> of type {@link org.openspcoop2.core.statistiche.StatisticaGiornaliera}
-	 * 
-	 * @param statisticaGiornaliera Object to be serialized
-	 * @return Object to be serialized in byte array
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public byte[] toByteArray(StatisticaGiornaliera statisticaGiornaliera) throws SerializerException {
-		return this.objToXml(StatisticaGiornaliera.class, statisticaGiornaliera, false).toByteArray();
-	}
-	/**
-	 * Serialize to byte array the object <var>statisticaGiornaliera</var> of type {@link org.openspcoop2.core.statistiche.StatisticaGiornaliera}
-	 * 
-	 * @param statisticaGiornaliera Object to be serialized
-	 * @param prettyPrint if true output the XML with indenting
-	 * @return Object to be serialized in byte array
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public byte[] toByteArray(StatisticaGiornaliera statisticaGiornaliera,boolean prettyPrint) throws SerializerException {
-		return this.objToXml(StatisticaGiornaliera.class, statisticaGiornaliera, prettyPrint).toByteArray();
-	}
-	
-	/**
-	 * Serialize to String the object <var>statisticaGiornaliera</var> of type {@link org.openspcoop2.core.statistiche.StatisticaGiornaliera}
-	 * 
-	 * @param statisticaGiornaliera Object to be serialized
-	 * @return Object to be serialized as String
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public String toString(StatisticaGiornaliera statisticaGiornaliera) throws SerializerException {
-		return this.objToXml(StatisticaGiornaliera.class, statisticaGiornaliera, false).toString();
-	}
-	/**
-	 * Serialize to String the object <var>statisticaGiornaliera</var> of type {@link org.openspcoop2.core.statistiche.StatisticaGiornaliera}
-	 * 
-	 * @param statisticaGiornaliera Object to be serialized
-	 * @param prettyPrint if true output the XML with indenting
-	 * @return Object to be serialized as String
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public String toString(StatisticaGiornaliera statisticaGiornaliera,boolean prettyPrint) throws SerializerException {
-		return this.objToXml(StatisticaGiornaliera.class, statisticaGiornaliera, prettyPrint).toString();
-	}
-	
-	
-	
-	/*
-	 =================================================================================
-	 Object: statistiche-pdnd-tracing
-	 =================================================================================
-	*/
-	
-	/**
-	 * Serialize to file system in <var>fileName</var> the object <var>statistichePdndTracing</var> of type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
-	 * 
-	 * @param fileName Xml file to serialize the object <var>statistichePdndTracing</var>
-	 * @param statistichePdndTracing Object to be serialized in xml file <var>fileName</var>
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(String fileName,StatistichePdndTracing statistichePdndTracing) throws SerializerException {
-		this.objToXml(fileName, StatistichePdndTracing.class, statistichePdndTracing, false);
-	}
-	/**
-	 * Serialize to file system in <var>fileName</var> the object <var>statistichePdndTracing</var> of type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
-	 * 
-	 * @param fileName Xml file to serialize the object <var>statistichePdndTracing</var>
-	 * @param statistichePdndTracing Object to be serialized in xml file <var>fileName</var>
-	 * @param prettyPrint if true output the XML with indenting
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(String fileName,StatistichePdndTracing statistichePdndTracing,boolean prettyPrint) throws SerializerException {
-		this.objToXml(fileName, StatistichePdndTracing.class, statistichePdndTracing, prettyPrint);
-	}
-	
-	/**
-	 * Serialize to file system in <var>file</var> the object <var>statistichePdndTracing</var> of type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
-	 * 
-	 * @param file Xml file to serialize the object <var>statistichePdndTracing</var>
-	 * @param statistichePdndTracing Object to be serialized in xml file <var>fileName</var>
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(File file,StatistichePdndTracing statistichePdndTracing) throws SerializerException {
-		this.objToXml(file, StatistichePdndTracing.class, statistichePdndTracing, false);
-	}
-	/**
-	 * Serialize to file system in <var>file</var> the object <var>statistichePdndTracing</var> of type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
-	 * 
-	 * @param file Xml file to serialize the object <var>statistichePdndTracing</var>
-	 * @param statistichePdndTracing Object to be serialized in xml file <var>fileName</var>
-	 * @param prettyPrint if true output the XML with indenting
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(File file,StatistichePdndTracing statistichePdndTracing,boolean prettyPrint) throws SerializerException {
-		this.objToXml(file, StatistichePdndTracing.class, statistichePdndTracing, prettyPrint);
-	}
-	
-	/**
-	 * Serialize to output stream <var>out</var> the object <var>statistichePdndTracing</var> of type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
-	 * 
-	 * @param out OutputStream to serialize the object <var>statistichePdndTracing</var>
-	 * @param statistichePdndTracing Object to be serialized in xml file <var>fileName</var>
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(OutputStream out,StatistichePdndTracing statistichePdndTracing) throws SerializerException {
-		this.objToXml(out, StatistichePdndTracing.class, statistichePdndTracing, false);
-	}
-	/**
-	 * Serialize to output stream <var>out</var> the object <var>statistichePdndTracing</var> of type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
-	 * 
-	 * @param out OutputStream to serialize the object <var>statistichePdndTracing</var>
-	 * @param statistichePdndTracing Object to be serialized in xml file <var>fileName</var>
-	 * @param prettyPrint if true output the XML with indenting
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(OutputStream out,StatistichePdndTracing statistichePdndTracing,boolean prettyPrint) throws SerializerException {
-		this.objToXml(out, StatistichePdndTracing.class, statistichePdndTracing, prettyPrint);
-	}
-			
-	/**
-	 * Serialize to byte array the object <var>statistichePdndTracing</var> of type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
-	 * 
-	 * @param statistichePdndTracing Object to be serialized
-	 * @return Object to be serialized in byte array
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public byte[] toByteArray(StatistichePdndTracing statistichePdndTracing) throws SerializerException {
-		return this.objToXml(StatistichePdndTracing.class, statistichePdndTracing, false).toByteArray();
-	}
-	/**
-	 * Serialize to byte array the object <var>statistichePdndTracing</var> of type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
-	 * 
-	 * @param statistichePdndTracing Object to be serialized
-	 * @param prettyPrint if true output the XML with indenting
-	 * @return Object to be serialized in byte array
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public byte[] toByteArray(StatistichePdndTracing statistichePdndTracing,boolean prettyPrint) throws SerializerException {
-		return this.objToXml(StatistichePdndTracing.class, statistichePdndTracing, prettyPrint).toByteArray();
-	}
-	
-	/**
-	 * Serialize to String the object <var>statistichePdndTracing</var> of type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
-	 * 
-	 * @param statistichePdndTracing Object to be serialized
-	 * @return Object to be serialized as String
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public String toString(StatistichePdndTracing statistichePdndTracing) throws SerializerException {
-		return this.objToXml(StatistichePdndTracing.class, statistichePdndTracing, false).toString();
-	}
-	/**
-	 * Serialize to String the object <var>statistichePdndTracing</var> of type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
-	 * 
-	 * @param statistichePdndTracing Object to be serialized
-	 * @param prettyPrint if true output the XML with indenting
-	 * @return Object to be serialized as String
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public String toString(StatistichePdndTracing statistichePdndTracing,boolean prettyPrint) throws SerializerException {
-		return this.objToXml(StatistichePdndTracing.class, statistichePdndTracing, prettyPrint).toString();
 	}
 	
 	
@@ -850,6 +616,124 @@ public abstract class AbstractSerializer {
 	
 	/*
 	 =================================================================================
+	 Object: statistica-contenuti
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>statisticaContenuti</var> of type {@link org.openspcoop2.core.statistiche.StatisticaContenuti}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>statisticaContenuti</var>
+	 * @param statisticaContenuti Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,StatisticaContenuti statisticaContenuti) throws SerializerException {
+		this.objToXml(fileName, StatisticaContenuti.class, statisticaContenuti, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>statisticaContenuti</var> of type {@link org.openspcoop2.core.statistiche.StatisticaContenuti}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>statisticaContenuti</var>
+	 * @param statisticaContenuti Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,StatisticaContenuti statisticaContenuti,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, StatisticaContenuti.class, statisticaContenuti, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>statisticaContenuti</var> of type {@link org.openspcoop2.core.statistiche.StatisticaContenuti}
+	 * 
+	 * @param file Xml file to serialize the object <var>statisticaContenuti</var>
+	 * @param statisticaContenuti Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,StatisticaContenuti statisticaContenuti) throws SerializerException {
+		this.objToXml(file, StatisticaContenuti.class, statisticaContenuti, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>statisticaContenuti</var> of type {@link org.openspcoop2.core.statistiche.StatisticaContenuti}
+	 * 
+	 * @param file Xml file to serialize the object <var>statisticaContenuti</var>
+	 * @param statisticaContenuti Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,StatisticaContenuti statisticaContenuti,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, StatisticaContenuti.class, statisticaContenuti, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>statisticaContenuti</var> of type {@link org.openspcoop2.core.statistiche.StatisticaContenuti}
+	 * 
+	 * @param out OutputStream to serialize the object <var>statisticaContenuti</var>
+	 * @param statisticaContenuti Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,StatisticaContenuti statisticaContenuti) throws SerializerException {
+		this.objToXml(out, StatisticaContenuti.class, statisticaContenuti, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>statisticaContenuti</var> of type {@link org.openspcoop2.core.statistiche.StatisticaContenuti}
+	 * 
+	 * @param out OutputStream to serialize the object <var>statisticaContenuti</var>
+	 * @param statisticaContenuti Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,StatisticaContenuti statisticaContenuti,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, StatisticaContenuti.class, statisticaContenuti, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>statisticaContenuti</var> of type {@link org.openspcoop2.core.statistiche.StatisticaContenuti}
+	 * 
+	 * @param statisticaContenuti Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(StatisticaContenuti statisticaContenuti) throws SerializerException {
+		return this.objToXml(StatisticaContenuti.class, statisticaContenuti, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>statisticaContenuti</var> of type {@link org.openspcoop2.core.statistiche.StatisticaContenuti}
+	 * 
+	 * @param statisticaContenuti Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(StatisticaContenuti statisticaContenuti,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(StatisticaContenuti.class, statisticaContenuti, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>statisticaContenuti</var> of type {@link org.openspcoop2.core.statistiche.StatisticaContenuti}
+	 * 
+	 * @param statisticaContenuti Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(StatisticaContenuti statisticaContenuti) throws SerializerException {
+		return this.objToXml(StatisticaContenuti.class, statisticaContenuti, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>statisticaContenuti</var> of type {@link org.openspcoop2.core.statistiche.StatisticaContenuti}
+	 * 
+	 * @param statisticaContenuti Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(StatisticaContenuti statisticaContenuti,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(StatisticaContenuti.class, statisticaContenuti, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
 	 Object: statistica-oraria
 	 =================================================================================
 	*/
@@ -968,118 +852,472 @@ public abstract class AbstractSerializer {
 	
 	/*
 	 =================================================================================
-	 Object: statistica-info
+	 Object: statistiche-pdnd-tracing
 	 =================================================================================
 	*/
 	
 	/**
-	 * Serialize to file system in <var>fileName</var> the object <var>statisticaInfo</var> of type {@link org.openspcoop2.core.statistiche.StatisticaInfo}
+	 * Serialize to file system in <var>fileName</var> the object <var>statistichePdndTracing</var> of type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
 	 * 
-	 * @param fileName Xml file to serialize the object <var>statisticaInfo</var>
-	 * @param statisticaInfo Object to be serialized in xml file <var>fileName</var>
+	 * @param fileName Xml file to serialize the object <var>statistichePdndTracing</var>
+	 * @param statistichePdndTracing Object to be serialized in xml file <var>fileName</var>
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(String fileName,StatisticaInfo statisticaInfo) throws SerializerException {
-		this.objToXml(fileName, StatisticaInfo.class, statisticaInfo, false);
+	public void write(String fileName,StatistichePdndTracing statistichePdndTracing) throws SerializerException {
+		this.objToXml(fileName, StatistichePdndTracing.class, statistichePdndTracing, false);
 	}
 	/**
-	 * Serialize to file system in <var>fileName</var> the object <var>statisticaInfo</var> of type {@link org.openspcoop2.core.statistiche.StatisticaInfo}
+	 * Serialize to file system in <var>fileName</var> the object <var>statistichePdndTracing</var> of type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
 	 * 
-	 * @param fileName Xml file to serialize the object <var>statisticaInfo</var>
-	 * @param statisticaInfo Object to be serialized in xml file <var>fileName</var>
+	 * @param fileName Xml file to serialize the object <var>statistichePdndTracing</var>
+	 * @param statistichePdndTracing Object to be serialized in xml file <var>fileName</var>
 	 * @param prettyPrint if true output the XML with indenting
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(String fileName,StatisticaInfo statisticaInfo,boolean prettyPrint) throws SerializerException {
-		this.objToXml(fileName, StatisticaInfo.class, statisticaInfo, prettyPrint);
+	public void write(String fileName,StatistichePdndTracing statistichePdndTracing,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, StatistichePdndTracing.class, statistichePdndTracing, prettyPrint);
 	}
 	
 	/**
-	 * Serialize to file system in <var>file</var> the object <var>statisticaInfo</var> of type {@link org.openspcoop2.core.statistiche.StatisticaInfo}
+	 * Serialize to file system in <var>file</var> the object <var>statistichePdndTracing</var> of type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
 	 * 
-	 * @param file Xml file to serialize the object <var>statisticaInfo</var>
-	 * @param statisticaInfo Object to be serialized in xml file <var>fileName</var>
+	 * @param file Xml file to serialize the object <var>statistichePdndTracing</var>
+	 * @param statistichePdndTracing Object to be serialized in xml file <var>fileName</var>
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(File file,StatisticaInfo statisticaInfo) throws SerializerException {
-		this.objToXml(file, StatisticaInfo.class, statisticaInfo, false);
+	public void write(File file,StatistichePdndTracing statistichePdndTracing) throws SerializerException {
+		this.objToXml(file, StatistichePdndTracing.class, statistichePdndTracing, false);
 	}
 	/**
-	 * Serialize to file system in <var>file</var> the object <var>statisticaInfo</var> of type {@link org.openspcoop2.core.statistiche.StatisticaInfo}
+	 * Serialize to file system in <var>file</var> the object <var>statistichePdndTracing</var> of type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
 	 * 
-	 * @param file Xml file to serialize the object <var>statisticaInfo</var>
-	 * @param statisticaInfo Object to be serialized in xml file <var>fileName</var>
+	 * @param file Xml file to serialize the object <var>statistichePdndTracing</var>
+	 * @param statistichePdndTracing Object to be serialized in xml file <var>fileName</var>
 	 * @param prettyPrint if true output the XML with indenting
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(File file,StatisticaInfo statisticaInfo,boolean prettyPrint) throws SerializerException {
-		this.objToXml(file, StatisticaInfo.class, statisticaInfo, prettyPrint);
+	public void write(File file,StatistichePdndTracing statistichePdndTracing,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, StatistichePdndTracing.class, statistichePdndTracing, prettyPrint);
 	}
 	
 	/**
-	 * Serialize to output stream <var>out</var> the object <var>statisticaInfo</var> of type {@link org.openspcoop2.core.statistiche.StatisticaInfo}
+	 * Serialize to output stream <var>out</var> the object <var>statistichePdndTracing</var> of type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
 	 * 
-	 * @param out OutputStream to serialize the object <var>statisticaInfo</var>
-	 * @param statisticaInfo Object to be serialized in xml file <var>fileName</var>
+	 * @param out OutputStream to serialize the object <var>statistichePdndTracing</var>
+	 * @param statistichePdndTracing Object to be serialized in xml file <var>fileName</var>
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(OutputStream out,StatisticaInfo statisticaInfo) throws SerializerException {
-		this.objToXml(out, StatisticaInfo.class, statisticaInfo, false);
+	public void write(OutputStream out,StatistichePdndTracing statistichePdndTracing) throws SerializerException {
+		this.objToXml(out, StatistichePdndTracing.class, statistichePdndTracing, false);
 	}
 	/**
-	 * Serialize to output stream <var>out</var> the object <var>statisticaInfo</var> of type {@link org.openspcoop2.core.statistiche.StatisticaInfo}
+	 * Serialize to output stream <var>out</var> the object <var>statistichePdndTracing</var> of type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
 	 * 
-	 * @param out OutputStream to serialize the object <var>statisticaInfo</var>
-	 * @param statisticaInfo Object to be serialized in xml file <var>fileName</var>
+	 * @param out OutputStream to serialize the object <var>statistichePdndTracing</var>
+	 * @param statistichePdndTracing Object to be serialized in xml file <var>fileName</var>
 	 * @param prettyPrint if true output the XML with indenting
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(OutputStream out,StatisticaInfo statisticaInfo,boolean prettyPrint) throws SerializerException {
-		this.objToXml(out, StatisticaInfo.class, statisticaInfo, prettyPrint);
+	public void write(OutputStream out,StatistichePdndTracing statistichePdndTracing,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, StatistichePdndTracing.class, statistichePdndTracing, prettyPrint);
 	}
 			
 	/**
-	 * Serialize to byte array the object <var>statisticaInfo</var> of type {@link org.openspcoop2.core.statistiche.StatisticaInfo}
+	 * Serialize to byte array the object <var>statistichePdndTracing</var> of type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
 	 * 
-	 * @param statisticaInfo Object to be serialized
+	 * @param statistichePdndTracing Object to be serialized
 	 * @return Object to be serialized in byte array
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public byte[] toByteArray(StatisticaInfo statisticaInfo) throws SerializerException {
-		return this.objToXml(StatisticaInfo.class, statisticaInfo, false).toByteArray();
+	public byte[] toByteArray(StatistichePdndTracing statistichePdndTracing) throws SerializerException {
+		return this.objToXml(StatistichePdndTracing.class, statistichePdndTracing, false).toByteArray();
 	}
 	/**
-	 * Serialize to byte array the object <var>statisticaInfo</var> of type {@link org.openspcoop2.core.statistiche.StatisticaInfo}
+	 * Serialize to byte array the object <var>statistichePdndTracing</var> of type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
 	 * 
-	 * @param statisticaInfo Object to be serialized
+	 * @param statistichePdndTracing Object to be serialized
 	 * @param prettyPrint if true output the XML with indenting
 	 * @return Object to be serialized in byte array
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public byte[] toByteArray(StatisticaInfo statisticaInfo,boolean prettyPrint) throws SerializerException {
-		return this.objToXml(StatisticaInfo.class, statisticaInfo, prettyPrint).toByteArray();
+	public byte[] toByteArray(StatistichePdndTracing statistichePdndTracing,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(StatistichePdndTracing.class, statistichePdndTracing, prettyPrint).toByteArray();
 	}
 	
 	/**
-	 * Serialize to String the object <var>statisticaInfo</var> of type {@link org.openspcoop2.core.statistiche.StatisticaInfo}
+	 * Serialize to String the object <var>statistichePdndTracing</var> of type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
 	 * 
-	 * @param statisticaInfo Object to be serialized
+	 * @param statistichePdndTracing Object to be serialized
 	 * @return Object to be serialized as String
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public String toString(StatisticaInfo statisticaInfo) throws SerializerException {
-		return this.objToXml(StatisticaInfo.class, statisticaInfo, false).toString();
+	public String toString(StatistichePdndTracing statistichePdndTracing) throws SerializerException {
+		return this.objToXml(StatistichePdndTracing.class, statistichePdndTracing, false).toString();
 	}
 	/**
-	 * Serialize to String the object <var>statisticaInfo</var> of type {@link org.openspcoop2.core.statistiche.StatisticaInfo}
+	 * Serialize to String the object <var>statistichePdndTracing</var> of type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
 	 * 
-	 * @param statisticaInfo Object to be serialized
+	 * @param statistichePdndTracing Object to be serialized
 	 * @param prettyPrint if true output the XML with indenting
 	 * @return Object to be serialized as String
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public String toString(StatisticaInfo statisticaInfo,boolean prettyPrint) throws SerializerException {
-		return this.objToXml(StatisticaInfo.class, statisticaInfo, prettyPrint).toString();
+	public String toString(StatistichePdndTracing statistichePdndTracing,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(StatistichePdndTracing.class, statistichePdndTracing, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: statistica-giornaliera
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>statisticaGiornaliera</var> of type {@link org.openspcoop2.core.statistiche.StatisticaGiornaliera}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>statisticaGiornaliera</var>
+	 * @param statisticaGiornaliera Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,StatisticaGiornaliera statisticaGiornaliera) throws SerializerException {
+		this.objToXml(fileName, StatisticaGiornaliera.class, statisticaGiornaliera, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>statisticaGiornaliera</var> of type {@link org.openspcoop2.core.statistiche.StatisticaGiornaliera}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>statisticaGiornaliera</var>
+	 * @param statisticaGiornaliera Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,StatisticaGiornaliera statisticaGiornaliera,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, StatisticaGiornaliera.class, statisticaGiornaliera, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>statisticaGiornaliera</var> of type {@link org.openspcoop2.core.statistiche.StatisticaGiornaliera}
+	 * 
+	 * @param file Xml file to serialize the object <var>statisticaGiornaliera</var>
+	 * @param statisticaGiornaliera Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,StatisticaGiornaliera statisticaGiornaliera) throws SerializerException {
+		this.objToXml(file, StatisticaGiornaliera.class, statisticaGiornaliera, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>statisticaGiornaliera</var> of type {@link org.openspcoop2.core.statistiche.StatisticaGiornaliera}
+	 * 
+	 * @param file Xml file to serialize the object <var>statisticaGiornaliera</var>
+	 * @param statisticaGiornaliera Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,StatisticaGiornaliera statisticaGiornaliera,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, StatisticaGiornaliera.class, statisticaGiornaliera, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>statisticaGiornaliera</var> of type {@link org.openspcoop2.core.statistiche.StatisticaGiornaliera}
+	 * 
+	 * @param out OutputStream to serialize the object <var>statisticaGiornaliera</var>
+	 * @param statisticaGiornaliera Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,StatisticaGiornaliera statisticaGiornaliera) throws SerializerException {
+		this.objToXml(out, StatisticaGiornaliera.class, statisticaGiornaliera, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>statisticaGiornaliera</var> of type {@link org.openspcoop2.core.statistiche.StatisticaGiornaliera}
+	 * 
+	 * @param out OutputStream to serialize the object <var>statisticaGiornaliera</var>
+	 * @param statisticaGiornaliera Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,StatisticaGiornaliera statisticaGiornaliera,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, StatisticaGiornaliera.class, statisticaGiornaliera, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>statisticaGiornaliera</var> of type {@link org.openspcoop2.core.statistiche.StatisticaGiornaliera}
+	 * 
+	 * @param statisticaGiornaliera Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(StatisticaGiornaliera statisticaGiornaliera) throws SerializerException {
+		return this.objToXml(StatisticaGiornaliera.class, statisticaGiornaliera, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>statisticaGiornaliera</var> of type {@link org.openspcoop2.core.statistiche.StatisticaGiornaliera}
+	 * 
+	 * @param statisticaGiornaliera Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(StatisticaGiornaliera statisticaGiornaliera,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(StatisticaGiornaliera.class, statisticaGiornaliera, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>statisticaGiornaliera</var> of type {@link org.openspcoop2.core.statistiche.StatisticaGiornaliera}
+	 * 
+	 * @param statisticaGiornaliera Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(StatisticaGiornaliera statisticaGiornaliera) throws SerializerException {
+		return this.objToXml(StatisticaGiornaliera.class, statisticaGiornaliera, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>statisticaGiornaliera</var> of type {@link org.openspcoop2.core.statistiche.StatisticaGiornaliera}
+	 * 
+	 * @param statisticaGiornaliera Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(StatisticaGiornaliera statisticaGiornaliera,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(StatisticaGiornaliera.class, statisticaGiornaliera, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: statistica-giornaliera-llm
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>statisticaGiornalieraLlm</var> of type {@link org.openspcoop2.core.statistiche.StatisticaGiornalieraLlm}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>statisticaGiornalieraLlm</var>
+	 * @param statisticaGiornalieraLlm Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,StatisticaGiornalieraLlm statisticaGiornalieraLlm) throws SerializerException {
+		this.objToXml(fileName, StatisticaGiornalieraLlm.class, statisticaGiornalieraLlm, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>statisticaGiornalieraLlm</var> of type {@link org.openspcoop2.core.statistiche.StatisticaGiornalieraLlm}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>statisticaGiornalieraLlm</var>
+	 * @param statisticaGiornalieraLlm Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,StatisticaGiornalieraLlm statisticaGiornalieraLlm,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, StatisticaGiornalieraLlm.class, statisticaGiornalieraLlm, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>statisticaGiornalieraLlm</var> of type {@link org.openspcoop2.core.statistiche.StatisticaGiornalieraLlm}
+	 * 
+	 * @param file Xml file to serialize the object <var>statisticaGiornalieraLlm</var>
+	 * @param statisticaGiornalieraLlm Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,StatisticaGiornalieraLlm statisticaGiornalieraLlm) throws SerializerException {
+		this.objToXml(file, StatisticaGiornalieraLlm.class, statisticaGiornalieraLlm, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>statisticaGiornalieraLlm</var> of type {@link org.openspcoop2.core.statistiche.StatisticaGiornalieraLlm}
+	 * 
+	 * @param file Xml file to serialize the object <var>statisticaGiornalieraLlm</var>
+	 * @param statisticaGiornalieraLlm Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,StatisticaGiornalieraLlm statisticaGiornalieraLlm,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, StatisticaGiornalieraLlm.class, statisticaGiornalieraLlm, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>statisticaGiornalieraLlm</var> of type {@link org.openspcoop2.core.statistiche.StatisticaGiornalieraLlm}
+	 * 
+	 * @param out OutputStream to serialize the object <var>statisticaGiornalieraLlm</var>
+	 * @param statisticaGiornalieraLlm Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,StatisticaGiornalieraLlm statisticaGiornalieraLlm) throws SerializerException {
+		this.objToXml(out, StatisticaGiornalieraLlm.class, statisticaGiornalieraLlm, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>statisticaGiornalieraLlm</var> of type {@link org.openspcoop2.core.statistiche.StatisticaGiornalieraLlm}
+	 * 
+	 * @param out OutputStream to serialize the object <var>statisticaGiornalieraLlm</var>
+	 * @param statisticaGiornalieraLlm Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,StatisticaGiornalieraLlm statisticaGiornalieraLlm,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, StatisticaGiornalieraLlm.class, statisticaGiornalieraLlm, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>statisticaGiornalieraLlm</var> of type {@link org.openspcoop2.core.statistiche.StatisticaGiornalieraLlm}
+	 * 
+	 * @param statisticaGiornalieraLlm Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(StatisticaGiornalieraLlm statisticaGiornalieraLlm) throws SerializerException {
+		return this.objToXml(StatisticaGiornalieraLlm.class, statisticaGiornalieraLlm, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>statisticaGiornalieraLlm</var> of type {@link org.openspcoop2.core.statistiche.StatisticaGiornalieraLlm}
+	 * 
+	 * @param statisticaGiornalieraLlm Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(StatisticaGiornalieraLlm statisticaGiornalieraLlm,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(StatisticaGiornalieraLlm.class, statisticaGiornalieraLlm, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>statisticaGiornalieraLlm</var> of type {@link org.openspcoop2.core.statistiche.StatisticaGiornalieraLlm}
+	 * 
+	 * @param statisticaGiornalieraLlm Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(StatisticaGiornalieraLlm statisticaGiornalieraLlm) throws SerializerException {
+		return this.objToXml(StatisticaGiornalieraLlm.class, statisticaGiornalieraLlm, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>statisticaGiornalieraLlm</var> of type {@link org.openspcoop2.core.statistiche.StatisticaGiornalieraLlm}
+	 * 
+	 * @param statisticaGiornalieraLlm Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(StatisticaGiornalieraLlm statisticaGiornalieraLlm,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(StatisticaGiornalieraLlm.class, statisticaGiornalieraLlm, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: statistica-mensile
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>statisticaMensile</var> of type {@link org.openspcoop2.core.statistiche.StatisticaMensile}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>statisticaMensile</var>
+	 * @param statisticaMensile Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,StatisticaMensile statisticaMensile) throws SerializerException {
+		this.objToXml(fileName, StatisticaMensile.class, statisticaMensile, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>statisticaMensile</var> of type {@link org.openspcoop2.core.statistiche.StatisticaMensile}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>statisticaMensile</var>
+	 * @param statisticaMensile Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,StatisticaMensile statisticaMensile,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, StatisticaMensile.class, statisticaMensile, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>statisticaMensile</var> of type {@link org.openspcoop2.core.statistiche.StatisticaMensile}
+	 * 
+	 * @param file Xml file to serialize the object <var>statisticaMensile</var>
+	 * @param statisticaMensile Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,StatisticaMensile statisticaMensile) throws SerializerException {
+		this.objToXml(file, StatisticaMensile.class, statisticaMensile, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>statisticaMensile</var> of type {@link org.openspcoop2.core.statistiche.StatisticaMensile}
+	 * 
+	 * @param file Xml file to serialize the object <var>statisticaMensile</var>
+	 * @param statisticaMensile Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,StatisticaMensile statisticaMensile,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, StatisticaMensile.class, statisticaMensile, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>statisticaMensile</var> of type {@link org.openspcoop2.core.statistiche.StatisticaMensile}
+	 * 
+	 * @param out OutputStream to serialize the object <var>statisticaMensile</var>
+	 * @param statisticaMensile Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,StatisticaMensile statisticaMensile) throws SerializerException {
+		this.objToXml(out, StatisticaMensile.class, statisticaMensile, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>statisticaMensile</var> of type {@link org.openspcoop2.core.statistiche.StatisticaMensile}
+	 * 
+	 * @param out OutputStream to serialize the object <var>statisticaMensile</var>
+	 * @param statisticaMensile Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,StatisticaMensile statisticaMensile,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, StatisticaMensile.class, statisticaMensile, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>statisticaMensile</var> of type {@link org.openspcoop2.core.statistiche.StatisticaMensile}
+	 * 
+	 * @param statisticaMensile Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(StatisticaMensile statisticaMensile) throws SerializerException {
+		return this.objToXml(StatisticaMensile.class, statisticaMensile, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>statisticaMensile</var> of type {@link org.openspcoop2.core.statistiche.StatisticaMensile}
+	 * 
+	 * @param statisticaMensile Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(StatisticaMensile statisticaMensile,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(StatisticaMensile.class, statisticaMensile, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>statisticaMensile</var> of type {@link org.openspcoop2.core.statistiche.StatisticaMensile}
+	 * 
+	 * @param statisticaMensile Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(StatisticaMensile statisticaMensile) throws SerializerException {
+		return this.objToXml(StatisticaMensile.class, statisticaMensile, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>statisticaMensile</var> of type {@link org.openspcoop2.core.statistiche.StatisticaMensile}
+	 * 
+	 * @param statisticaMensile Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(StatisticaMensile statisticaMensile,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(StatisticaMensile.class, statisticaMensile, prettyPrint).toString();
 	}
 	
 	

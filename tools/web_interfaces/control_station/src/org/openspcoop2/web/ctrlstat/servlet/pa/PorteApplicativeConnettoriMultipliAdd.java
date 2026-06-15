@@ -179,6 +179,7 @@ public final class PorteApplicativeConnettoriMultipliAdd extends Action {
 			boolean autenticazioneToken = ServletUtils.isCheckBoxEnabled(autenticazioneTokenS);
 			String tokenPolicy = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY);
 			String llmPolicy = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_LLM_PROVIDER);
+			String[] llmBindings = porteApplicativeHelper.getParameterValues(ConnettoriCostanti.PARAMETRO_CONNETTORE_LLM_BINDING);
 			boolean forcePDND = false;
 			boolean forceOAuth = false;
 			boolean forceDPoP = false;
@@ -812,13 +813,13 @@ public final class PorteApplicativeConnettoriMultipliAdd extends Action {
 						connettoreStatusParams,
 						listExtendedConnettore);
 
-				if (apiIsLLM) {
-					porteApplicativeHelper.addLLMPolicyPropertyToConnettore(connettore, llmPolicy);
-				}
-
 				// creare un servizio applicativo
-				String nomeServizioApplicativoErogatore = pa.getNome() + PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SAX_PREFIX + 
+				String nomeServizioApplicativoErogatore = pa.getNome() + PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SAX_PREFIX +
 						porteApplicativeHelper.getIdxNuovoConnettoreMultiplo(pa);
+
+				if (apiIsLLM) {
+					connettore = porteApplicativeHelper.wrapAsLlmContainer(connettore, llmPolicy, llmBindings, nomeServizioApplicativoErogatore);
+				}
 				
 				ServizioApplicativo sa = new ServizioApplicativo();
 				sa.setNome(nomeServizioApplicativoErogatore);

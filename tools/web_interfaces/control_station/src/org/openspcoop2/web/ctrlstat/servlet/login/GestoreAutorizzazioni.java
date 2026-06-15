@@ -309,6 +309,13 @@ public class GestoreAutorizzazioni {
 		this.servletPorteApplicative.addAll(PorteApplicativeCostanti.getServletPorteApplicativeConnettoriMultipli());
 		this.servletPorteApplicative.addAll(PorteApplicativeCostanti.getServletPorteApplicativeConnettoriMultipliConfigProperties());
 		this.servletPorteApplicative.addAll(PorteApplicativeCostanti.getServletPorteApplicativeExtended());
+
+		// servlet LLM (gestione ConnettoreLlmProviderRef del container LLM su erogazioni/fruizioni)
+		this.servletPorteApplicative.add(org.openspcoop2.web.ctrlstat.servlet.aps.llm.LlmConnettoriMultipliCostanti.SERVLET_NAME_LLM_CONNETTORI_MULTIPLI_LIST);
+		this.servletPorteApplicative.add(org.openspcoop2.web.ctrlstat.servlet.aps.llm.LlmConnettoriMultipliCostanti.SERVLET_NAME_LLM_CONNETTORI_MULTIPLI_ADD);
+		this.servletPorteApplicative.add(org.openspcoop2.web.ctrlstat.servlet.aps.llm.LlmConnettoriMultipliCostanti.SERVLET_NAME_LLM_CONNETTORI_MULTIPLI_CHANGE);
+		this.servletPorteApplicative.add(org.openspcoop2.web.ctrlstat.servlet.aps.llm.LlmConnettoriMultipliCostanti.SERVLET_NAME_LLM_CONNETTORI_MULTIPLI_DELETE);
+		this.servletPorteApplicative.add(org.openspcoop2.web.ctrlstat.servlet.aps.llm.LlmConnettoriMultipliCostanti.SERVLET_NAME_LLM_CONNETTORI_MULTIPLI_ABILITAZIONE);
 		
 		/** Permessi associati alla gestione delle porte applicative */
 		this.permessiPorteApplicative = new PermessiUtente();
@@ -372,6 +379,7 @@ public class GestoreAutorizzazioni {
 			this.servletConfigurazione.addAll(ConfigurazioneCostanti.SERVLET_CONFIGURAZIONE_DUMP_APPENDER);
 			this.servletConfigurazione.addAll(ConfigurazioneCostanti.SERVLET_CONFIGURAZIONE_DUMP_APPENDER_PROPERTIES);
 			this.servletConfigurazione.add(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_DUMP_CONFIGURAZIONE);
+			this.servletConfigurazione.addAll(ConfigurazioneCostanti.SERVLET_CONFIGURAZIONE_LLM);
 			this.servletConfigurazione.addAll(ConfigurazioneCostanti.SERVLET_CONFIGURAZIONE_CONTROLLO_TRAFFICO);
 			this.servletConfigurazione.addAll(ConfigurazioneCostanti.SERVLET_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN);
 			this.servletConfigurazione.add(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_VERIFICA_CERTIFICATI);

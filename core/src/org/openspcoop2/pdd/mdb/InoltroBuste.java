@@ -1203,7 +1203,7 @@ public class InoltroBuste extends GenericLib implements IAsyncResponseCallback{
 			}
 			if(connettore==null && eForwardRoute==null){ // in pratica se non e' stato trovato un connettore via protocol
 				try{
-					connettore = this.configurazionePdDManager.getForwardRoute(this.soggettoFruitore,this.idServizio,this.functionAsRouter, this.requestInfo);
+					connettore = this.configurazionePdDManager.getForwardRoute(this.soggettoFruitore,this.idServizio,this.functionAsRouter, this.requestInfo, this.pddContext);
 				}catch(Exception e){
 					eForwardRoute = e;
 					erroreRicercaConnettore = e.getMessage();
@@ -1211,7 +1211,7 @@ public class InoltroBuste extends GenericLib implements IAsyncResponseCallback{
 				if(this.functionAsRouter &&
 					connettore==null){
 					try{
-						connettore = this.configurazionePdDManager.getForwardRoute(this.idServizio.getSoggettoErogatore(),this.functionAsRouter, this.requestInfo);
+						connettore = this.configurazionePdDManager.getForwardRoute(this.idServizio.getSoggettoErogatore(),this.functionAsRouter, this.requestInfo, this.pddContext);
 					}catch(Exception e){
 						eForwardRoute = e;
 						erroreRicercaConnettore = erroreRicercaConnettore+ "\nRicerca in base al solo soggetto destinatario:\n"+ e.getMessage();

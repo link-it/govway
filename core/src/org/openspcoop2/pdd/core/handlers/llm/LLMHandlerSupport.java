@@ -111,7 +111,11 @@ public final class LLMHandlerSupport {
 	 * caso gli handler LLM devono restare no-op.
 	 */
 	public static LLMDialect getLLMFormato(BaseContext context) {
-		PdDContext pddContext = context != null ? context.getPddContext() : null;
+		return getLLMFormato(context != null ? context.getPddContext() : null);
+	}
+
+	/** Overload che accetta direttamente il PdDContext (usato da TransazioneUtilities). */
+	public static LLMDialect getLLMFormato(PdDContext pddContext) {
 		if (pddContext == null) {
 			return null;
 		}
@@ -152,12 +156,190 @@ public final class LLMHandlerSupport {
 	 * Recupera dal PdDContext l'identificativo del provider back-end (es. "anthropic").
 	 */
 	public static String getLLMProvider(BaseContext context) {
-		PdDContext pddContext = context != null ? context.getPddContext() : null;
+		return getLLMProvider(context != null ? context.getPddContext() : null);
+	}
+
+	/** Overload che accetta direttamente il PdDContext (usato da TransazioneLlmUtilities). */
+	public static String getLLMProvider(PdDContext pddContext) {
 		if (pddContext == null) {
 			return null;
 		}
 		Object o = pddContext.getObject(LLMHandlerConstants.PDD_CTX_LLM_PROVIDER);
 		return o instanceof String ? (String) o : null;
+	}
+
+	/** Salva il nome (user-defined) del Provider risolto dal binding nel PdDContext. */
+	public static void setLLMProviderName(PdDContext pddContext, String providerName) {
+		if (pddContext == null || providerName == null) return;
+		pddContext.addObject(LLMHandlerConstants.PDD_CTX_LLM_PROVIDER_NAME, providerName);
+	}
+
+	/** Recupera il nome del Provider risolto (popolato dal LLMConnectorResolver). */
+	public static String getLLMProviderName(PdDContext pddContext) {
+		if (pddContext == null) return null;
+		Object o = pddContext.getObject(LLMHandlerConstants.PDD_CTX_LLM_PROVIDER_NAME);
+		return o instanceof String ? (String) o : null;
+	}
+
+	/** Salva il nome (user-defined) del Model logico nel PdDContext. */
+	public static void setLLMModelName(PdDContext pddContext, String modelName) {
+		if (pddContext == null || modelName == null) return;
+		pddContext.addObject(LLMHandlerConstants.PDD_CTX_LLM_MODEL_NAME, modelName);
+	}
+
+	/** Recupera dal PdDContext il nome (user-defined) del Model logico risolto dal binding. */
+	public static String getLLMModelName(PdDContext pddContext) {
+		if (pddContext == null) return null;
+		Object o = pddContext.getObject(LLMHandlerConstants.PDD_CTX_LLM_MODEL_NAME);
+		return o instanceof String ? (String) o : null;
+	}
+
+	/** Salva il nome (user-defined) del Provider Binding selezionato sul connettore. */
+	public static void setLLMProviderBindingName(PdDContext pddContext, String bindingName) {
+		if (pddContext == null || bindingName == null) return;
+		pddContext.addObject(LLMHandlerConstants.PDD_CTX_LLM_PROVIDER_BINDING_NAME, bindingName);
+	}
+
+	/** Recupera il nome del Provider Binding risolto (popolato dal LLMConnectorResolver). */
+	public static String getLLMProviderBindingName(PdDContext pddContext) {
+		if (pddContext == null) return null;
+		Object o = pddContext.getObject(LLMHandlerConstants.PDD_CTX_LLM_PROVIDER_BINDING_NAME);
+		return o instanceof String ? (String) o : null;
+	}
+
+	/** Salva il vendor model id (id passato all'API del provider concreto). */
+	public static void setLLMVendorModelId(PdDContext pddContext, String vendorModelId) {
+		if (pddContext == null || vendorModelId == null) return;
+		pddContext.addObject(LLMHandlerConstants.PDD_CTX_LLM_VENDOR_MODEL_ID, vendorModelId);
+	}
+
+	/** Recupera dal PdDContext il vendor model id (usato dai transformer outbound). */
+	public static String getLLMVendorModelId(BaseContext context) {
+		PdDContext pddContext = context != null ? context.getPddContext() : null;
+		if (pddContext == null) return null;
+		Object o = pddContext.getObject(LLMHandlerConstants.PDD_CTX_LLM_VENDOR_MODEL_ID);
+		return o instanceof String ? (String) o : null;
+	}
+
+	/** Salva il prezzo input (USD/Mtok). Null o non parsabile -> no-op. */
+	public static void setLLMPriceInput(PdDContext pddContext, String priceRaw) {
+		setLLMPrice(pddContext, LLMHandlerConstants.PDD_CTX_LLM_PRICE_INPUT, priceRaw);
+	}
+
+	/** Salva il prezzo output (USD/Mtok). Null o non parsabile -> no-op. */
+	public static void setLLMPriceOutput(PdDContext pddContext, String priceRaw) {
+		setLLMPrice(pddContext, LLMHandlerConstants.PDD_CTX_LLM_PRICE_OUTPUT, priceRaw);
+	}
+
+	private static void setLLMPrice(PdDContext pddContext, org.openspcoop2.utils.MapKey<String> key, String priceRaw) {
+		if (pddContext == null || priceRaw == null || priceRaw.trim().isEmpty()) return;
+		try {
+			pddContext.addObject(key, Double.valueOf(priceRaw.trim()));
+		} catch (NumberFormatException nfe) {
+			// log silenzioso: il pricing in DB e' un text validato a save-time, ma se per
+			// qualche motivo non e' numerico evitiamo di rompere il flusso runtime.
+		}
+	}
+
+	/** Restituisce il prezzo input (USD per N token, dove N e' il divisor). Null se assente o non parsabile. */
+	public static Double getLLMPriceInput(PdDContext pddContext) {
+		return readDouble(pddContext, LLMHandlerConstants.PDD_CTX_LLM_PRICE_INPUT);
+	}
+
+	/** Restituisce il prezzo output (USD per N token, dove N e' il divisor). Null se assente o non parsabile. */
+	public static Double getLLMPriceOutput(PdDContext pddContext) {
+		return readDouble(pddContext, LLMHandlerConstants.PDD_CTX_LLM_PRICE_OUTPUT);
+	}
+
+	private static Double readDouble(PdDContext pddContext, org.openspcoop2.utils.MapKey<String> key) {
+		if (pddContext == null) return null;
+		Object o = pddContext.getObject(key);
+		return o instanceof Double ? (Double) o : null;
+	}
+
+	/** Recupera dal PdDContext la {@link CanonicalChatResponse} popolata dal {@link LLMInboundResponseHandler}
+	 *  (modalita' sync). Null se la transazione non e' LLM o in streaming. */
+	public static org.openspcoop2.message.llm.CanonicalChatResponse getLLMCanonicalResponse(PdDContext pddContext) {
+		if (pddContext == null) return null;
+		Object o = pddContext.getObject(LLMHandlerConstants.PDD_CTX_LLM_CANONICAL_RESPONSE);
+		return o instanceof org.openspcoop2.message.llm.CanonicalChatResponse
+				? (org.openspcoop2.message.llm.CanonicalChatResponse) o
+				: null;
+	}
+
+	/**
+	 * Accumula sul PdDContext l'usage osservato in uno stream LLM. I provider possono
+	 * pubblicare le due meta' di {@code input/output} in eventi distinti (es. Anthropic
+	 * pubblica input al {@code message_start} e output al {@code message_delta}); la merge
+	 * preserva il primo valore non-null per ciascun campo cosi' che il finalizzatore della
+	 * transazione abbia sempre i totali. Chiamato dal {@code ChunkTransformInputStream}
+	 * via observer.
+	 */
+	public static void accumulateLLMStreamUsage(PdDContext pddContext, org.openspcoop2.message.llm.CanonicalUsage delta) {
+		if (pddContext == null || delta == null) return;
+		Object existing = pddContext.getObject(LLMHandlerConstants.PDD_CTX_LLM_STREAM_USAGE);
+		org.openspcoop2.message.llm.CanonicalUsage cumulative = existing instanceof org.openspcoop2.message.llm.CanonicalUsage
+				? (org.openspcoop2.message.llm.CanonicalUsage) existing
+				: new org.openspcoop2.message.llm.CanonicalUsage();
+		if (cumulative.getInputTokens() == null && delta.getInputTokens() != null) {
+			cumulative.setInputTokens(delta.getInputTokens());
+		}
+		if (cumulative.getOutputTokens() == null && delta.getOutputTokens() != null) {
+			cumulative.setOutputTokens(delta.getOutputTokens());
+		}
+		pddContext.addObject(LLMHandlerConstants.PDD_CTX_LLM_STREAM_USAGE, cumulative);
+	}
+
+	/** Recupera il totale cumulativo dell'usage osservato in streaming, se presente. */
+	public static org.openspcoop2.message.llm.CanonicalUsage getLLMStreamUsage(PdDContext pddContext) {
+		if (pddContext == null) return null;
+		Object o = pddContext.getObject(LLMHandlerConstants.PDD_CTX_LLM_STREAM_USAGE);
+		return o instanceof org.openspcoop2.message.llm.CanonicalUsage
+				? (org.openspcoop2.message.llm.CanonicalUsage) o
+				: null;
+	}
+
+	/** Salva il divisore del prezzo input (default {@code 1_000_000} se assente o non parsabile). */
+	public static void setLLMPriceInputDivisor(PdDContext pddContext, String divisorRaw) {
+		setLLMPriceDivisor(pddContext, LLMHandlerConstants.PDD_CTX_LLM_PRICE_INPUT_DIVISOR, divisorRaw);
+	}
+
+	/** Salva il divisore del prezzo output (default {@code 1_000_000} se assente o non parsabile). */
+	public static void setLLMPriceOutputDivisor(PdDContext pddContext, String divisorRaw) {
+		setLLMPriceDivisor(pddContext, LLMHandlerConstants.PDD_CTX_LLM_PRICE_OUTPUT_DIVISOR, divisorRaw);
+	}
+
+	/** Restituisce il divisore del prezzo input (default {@code 1_000_000} se assente). */
+	public static long getLLMPriceInputDivisor(PdDContext pddContext) {
+		return readDivisor(pddContext, LLMHandlerConstants.PDD_CTX_LLM_PRICE_INPUT_DIVISOR);
+	}
+
+	/** Restituisce il divisore del prezzo output (default {@code 1_000_000} se assente). */
+	public static long getLLMPriceOutputDivisor(PdDContext pddContext) {
+		return readDivisor(pddContext, LLMHandlerConstants.PDD_CTX_LLM_PRICE_OUTPUT_DIVISOR);
+	}
+
+	private static void setLLMPriceDivisor(PdDContext pddContext, org.openspcoop2.utils.MapKey<String> key, String divisorRaw) {
+		if (pddContext == null) return;
+		long divisor = 1_000_000L;
+		if (divisorRaw != null && !divisorRaw.trim().isEmpty()) {
+			try {
+				long parsed = Long.parseLong(divisorRaw.trim());
+				if (parsed > 0) {
+					divisor = parsed;
+				}
+			} catch (NumberFormatException nfe) {
+				// Tengo il default 1M, validato a save-time
+			}
+		}
+		pddContext.addObject(key, Long.valueOf(divisor));
+	}
+
+	private static long readDivisor(PdDContext pddContext, org.openspcoop2.utils.MapKey<String> key) {
+		if (pddContext == null) return 1_000_000L;
+		Object o = pddContext.getObject(key);
+		if (o instanceof Long) return ((Long) o).longValue();
+		return 1_000_000L;
 	}
 
 	/**

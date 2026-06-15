@@ -73,6 +73,12 @@ public final class CostantiDB {
     public static final String CONNETTORI_CUSTOM_COLUMN_VALUE = "value";
     public static final String CONNETTORI_CUSTOM_COLUMN_ENC_VALUE = "enc_value";
     public static final String CONNETTORI_CUSTOM_COLUMN_ID_CONNETTORE = "id_connettore";
+    public static final String CONNETTORI_LLM_BINDING = "connettori_llm_binding";
+    public static final String CONNETTORI_LLM_BINDING_COLUMN_NOME_BINDING = "nome_binding";
+    public static final String CONNETTORI_LLM_BINDING_COLUMN_ID_CONNETTORE = "id_connettore";
+    public static final String CONNETTORI_LLM = "connettori_llm";
+    public static final String CONNETTORI_LLM_COLUMN_ID_CONNETTORE_PRINCIPALE = "id_connettore_principale";
+    public static final String CONNETTORI_LLM_COLUMN_ID_CONNETTORE = "id_connettore";
     public static final String SOGGETTI = "soggetti";
     public static final String SOGGETTI_PDD = "soggetti_pdd";
     public static final String SOGGETTI_COLUMN_TIPO_SOGGETTO = "tipo_soggetto";
@@ -492,8 +498,10 @@ public final class CostantiDB {
     public static final String STATISTICHE = "statistiche";
     public static final String STATISTICHE_ORARIE = "statistiche_orarie";
     public static final String STATISTICHE_ORARIE_CONTENUTI = "stat_orarie_contenuti";
+    public static final String STATISTICHE_ORARIE_LLM = "stat_orarie_llm";
     public static final String STATISTICHE_GIORNALIERE = "statistiche_giornaliere";
     public static final String STATISTICHE_GIORNALIERE_CONTENUTI = "stat_giorni_contenuti";
+    public static final String STATISTICHE_GIORNALIERE_LLM = "stat_giorni_llm";
     public static final String STATISTICHE_SETTIMANALI = "statistiche_settimanali";
     public static final String STATISTICHE_SETTIMANALI_CONTENUTI = "stat_settimane_contenuti";
     public static final String STATISTICHE_MENSILI = "statistiche_mensili";
@@ -514,6 +522,9 @@ public final class CostantiDB {
 	
 	 /*TRANSAZIONI_SERVER_APPLICATIVI*/
     public static final String TRANSAZIONI_APPLICATIVI_SERVER = "transazioni_sa";
+    
+    /*TRANSAZIONI_LLM*/
+    public static final String TRANSAZIONI_LLM = "transazioni_llm";
     
     /*EVENTI*/
     public static final String DUMP_EVENTI = "notifiche_eventi";

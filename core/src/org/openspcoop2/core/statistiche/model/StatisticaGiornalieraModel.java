@@ -43,6 +43,7 @@ public class StatisticaGiornalieraModel extends AbstractModel<StatisticaGiornali
 	
 		this.STATISTICA_BASE = new org.openspcoop2.core.statistiche.model.StatisticaModel(new Field("statistica-base",org.openspcoop2.core.statistiche.Statistica.class,"statistica-giornaliera",StatisticaGiornaliera.class));
 		this.STATISTICA_GIORNALIERA_CONTENUTI = new org.openspcoop2.core.statistiche.model.StatisticaContenutiModel(new Field("statistica-giornaliera-contenuti",org.openspcoop2.core.statistiche.StatisticaContenuti.class,"statistica-giornaliera",StatisticaGiornaliera.class));
+		this.STATISTICA_GIORNALIERA_LLM = new org.openspcoop2.core.statistiche.model.StatisticaGiornalieraLlmModel(new Field("statistica-giornaliera-llm",org.openspcoop2.core.statistiche.StatisticaGiornalieraLlm.class,"statistica-giornaliera",StatisticaGiornaliera.class));
 	
 	}
 	
@@ -52,6 +53,7 @@ public class StatisticaGiornalieraModel extends AbstractModel<StatisticaGiornali
 	
 		this.STATISTICA_BASE = new org.openspcoop2.core.statistiche.model.StatisticaModel(new ComplexField(father,"statistica-base",org.openspcoop2.core.statistiche.Statistica.class,"statistica-giornaliera",StatisticaGiornaliera.class));
 		this.STATISTICA_GIORNALIERA_CONTENUTI = new org.openspcoop2.core.statistiche.model.StatisticaContenutiModel(new ComplexField(father,"statistica-giornaliera-contenuti",org.openspcoop2.core.statistiche.StatisticaContenuti.class,"statistica-giornaliera",StatisticaGiornaliera.class));
+		this.STATISTICA_GIORNALIERA_LLM = new org.openspcoop2.core.statistiche.model.StatisticaGiornalieraLlmModel(new ComplexField(father,"statistica-giornaliera-llm",org.openspcoop2.core.statistiche.StatisticaGiornalieraLlm.class,"statistica-giornaliera",StatisticaGiornaliera.class));
 	
 	}
 	
@@ -60,6 +62,8 @@ public class StatisticaGiornalieraModel extends AbstractModel<StatisticaGiornali
 	public org.openspcoop2.core.statistiche.model.StatisticaModel STATISTICA_BASE = null;
 	 
 	public org.openspcoop2.core.statistiche.model.StatisticaContenutiModel STATISTICA_GIORNALIERA_CONTENUTI = null;
+	 
+	public org.openspcoop2.core.statistiche.model.StatisticaGiornalieraLlmModel STATISTICA_GIORNALIERA_LLM = null;
 	 
 
 	@Override

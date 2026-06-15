@@ -500,6 +500,55 @@ public class StatisticaGiornalieraFieldConverter extends AbstractSQLFieldConvert
 				return "latenza_servizio";
 			}
 		}
+		if(field.equals(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.DATA)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".data";
+			}else{
+				return "data";
+			}
+		}
+		if(field.equals(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LLM_PROVIDER)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".llm_provider";
+			}else{
+				return "llm_provider";
+			}
+		}
+		if(field.equals(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LLM_MODEL)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".llm_model";
+			}else{
+				return "llm_model";
+			}
+		}
+		if(field.equals(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LLM_PROVIDER_BINDING)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".llm_provider_binding";
+			}else{
+				return "llm_provider_binding";
+			}
+		}
+		if(field.equals(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.TOKEN_INPUT)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".token_input";
+			}else{
+				return "token_input";
+			}
+		}
+		if(field.equals(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.TOKEN_OUTPUT)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".token_output";
+			}else{
+				return "token_output";
+			}
+		}
+		if(field.equals(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.COST_ESTIMATED)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".cost_estimated";
+			}else{
+				return "cost_estimated";
+			}
+		}
 
 
 		return super.toColumn(field,returnAlias,appendTablePrefix);
@@ -699,6 +748,27 @@ public class StatisticaGiornalieraFieldConverter extends AbstractSQLFieldConvert
 		if(field.equals(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_CONTENUTI.LATENZA_SERVIZIO)){
 			return this.toTable(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_CONTENUTI, returnAlias);
 		}
+		if(field.equals(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.DATA)){
+			return this.toTable(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM, returnAlias);
+		}
+		if(field.equals(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LLM_PROVIDER)){
+			return this.toTable(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM, returnAlias);
+		}
+		if(field.equals(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LLM_MODEL)){
+			return this.toTable(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM, returnAlias);
+		}
+		if(field.equals(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LLM_PROVIDER_BINDING)){
+			return this.toTable(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM, returnAlias);
+		}
+		if(field.equals(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.TOKEN_INPUT)){
+			return this.toTable(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM, returnAlias);
+		}
+		if(field.equals(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.TOKEN_OUTPUT)){
+			return this.toTable(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM, returnAlias);
+		}
+		if(field.equals(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.COST_ESTIMATED)){
+			return this.toTable(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM, returnAlias);
+		}
 
 
 		return super.toTable(field,returnAlias);
@@ -720,6 +790,9 @@ public class StatisticaGiornalieraFieldConverter extends AbstractSQLFieldConvert
 		}
 		if(model.equals(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_CONTENUTI)){
 			return CostantiDB.STATISTICHE_GIORNALIERE_CONTENUTI;
+		}
+		if(model.equals(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM)){
+			return CostantiDB.STATISTICHE_GIORNALIERE_LLM;
 		}
 
 

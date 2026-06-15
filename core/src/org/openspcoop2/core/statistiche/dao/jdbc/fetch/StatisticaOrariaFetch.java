@@ -32,6 +32,7 @@ import org.openspcoop2.utils.jdbc.IKeyGeneratorObject;
 
 import org.openspcoop2.core.statistiche.StatisticaContenuti;
 import org.openspcoop2.core.statistiche.StatisticaOraria;
+import org.openspcoop2.core.statistiche.StatisticaOrariaLlm;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.statistiche.Statistica;
 
@@ -189,6 +190,26 @@ public class StatisticaOrariaFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "latenza_servizio", StatisticaOraria.model().STATISTICA_ORARIA_CONTENUTI.LATENZA_SERVIZIO.getFieldType()));
 				return object;
 			}
+			if(model.equals(StatisticaOraria.model().STATISTICA_ORARIA_LLM)){
+				StatisticaOrariaLlm object = new StatisticaOrariaLlm();
+				setParameter(object, "setId", Long.class,
+					jdbcParameterUtilities.readParameter(rs, "id", Long.class));
+				setParameter(object, "setData", StatisticaOraria.model().STATISTICA_ORARIA_LLM.DATA.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "data", StatisticaOraria.model().STATISTICA_ORARIA_LLM.DATA.getFieldType()));
+				setParameter(object, "setLlmProvider", StatisticaOraria.model().STATISTICA_ORARIA_LLM.LLM_PROVIDER.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "llm_provider", StatisticaOraria.model().STATISTICA_ORARIA_LLM.LLM_PROVIDER.getFieldType()));
+				setParameter(object, "setLlmModel", StatisticaOraria.model().STATISTICA_ORARIA_LLM.LLM_MODEL.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "llm_model", StatisticaOraria.model().STATISTICA_ORARIA_LLM.LLM_MODEL.getFieldType()));
+				setParameter(object, "setLlmProviderBinding", StatisticaOraria.model().STATISTICA_ORARIA_LLM.LLM_PROVIDER_BINDING.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "llm_provider_binding", StatisticaOraria.model().STATISTICA_ORARIA_LLM.LLM_PROVIDER_BINDING.getFieldType()));
+				setParameter(object, "setTokenInput", StatisticaOraria.model().STATISTICA_ORARIA_LLM.TOKEN_INPUT.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "token_input", StatisticaOraria.model().STATISTICA_ORARIA_LLM.TOKEN_INPUT.getFieldType()));
+				setParameter(object, "setTokenOutput", StatisticaOraria.model().STATISTICA_ORARIA_LLM.TOKEN_OUTPUT.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "token_output", StatisticaOraria.model().STATISTICA_ORARIA_LLM.TOKEN_OUTPUT.getFieldType()));
+				setParameter(object, "setCostEstimated", StatisticaOraria.model().STATISTICA_ORARIA_LLM.COST_ESTIMATED.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "cost_estimated", StatisticaOraria.model().STATISTICA_ORARIA_LLM.COST_ESTIMATED.getFieldType()));
+				return object;
+			}
 			
 			else{
 				throw new ServiceException("Model ["+model.toString()+"] not supported by fetch: "+this.getClass().getName());
@@ -342,6 +363,26 @@ public class StatisticaOrariaFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"statistica-oraria-contenuti.latenza-servizio"));
 				return object;
 			}
+			if(model.equals(StatisticaOraria.model().STATISTICA_ORARIA_LLM)){
+				StatisticaOrariaLlm object = new StatisticaOrariaLlm();
+				setParameter(object, "setId", Long.class,
+					this.getObjectFromMap(map,"statistica-oraria-llm.id"));
+				setParameter(object, "setData", StatisticaOraria.model().STATISTICA_ORARIA_LLM.DATA.getFieldType(),
+					this.getObjectFromMap(map,"statistica-oraria-llm.data"));
+				setParameter(object, "setLlmProvider", StatisticaOraria.model().STATISTICA_ORARIA_LLM.LLM_PROVIDER.getFieldType(),
+					this.getObjectFromMap(map,"statistica-oraria-llm.llm-provider"));
+				setParameter(object, "setLlmModel", StatisticaOraria.model().STATISTICA_ORARIA_LLM.LLM_MODEL.getFieldType(),
+					this.getObjectFromMap(map,"statistica-oraria-llm.llm-model"));
+				setParameter(object, "setLlmProviderBinding", StatisticaOraria.model().STATISTICA_ORARIA_LLM.LLM_PROVIDER_BINDING.getFieldType(),
+					this.getObjectFromMap(map,"statistica-oraria-llm.llm-provider-binding"));
+				setParameter(object, "setTokenInput", StatisticaOraria.model().STATISTICA_ORARIA_LLM.TOKEN_INPUT.getFieldType(),
+					this.getObjectFromMap(map,"statistica-oraria-llm.token-input"));
+				setParameter(object, "setTokenOutput", StatisticaOraria.model().STATISTICA_ORARIA_LLM.TOKEN_OUTPUT.getFieldType(),
+					this.getObjectFromMap(map,"statistica-oraria-llm.token-output"));
+				setParameter(object, "setCostEstimated", StatisticaOraria.model().STATISTICA_ORARIA_LLM.COST_ESTIMATED.getFieldType(),
+					this.getObjectFromMap(map,"statistica-oraria-llm.cost-estimated"));
+				return object;
+			}
 			
 			else{
 				throw new ServiceException("Model ["+model.toString()+"] not supported by fetch: "+this.getClass().getName());
@@ -364,6 +405,9 @@ public class StatisticaOrariaFetch extends AbstractJDBCFetch {
 			}
 			if(model.equals(StatisticaOraria.model().STATISTICA_ORARIA_CONTENUTI)){
 				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject(CostantiDB.STATISTICHE_ORARIE_CONTENUTI,"id","seq_"+CostantiDB.STATISTICHE_ORARIE_CONTENUTI,CostantiDB.STATISTICHE_ORARIE_CONTENUTI+"_init_seq");
+			}
+			if(model.equals(StatisticaOraria.model().STATISTICA_ORARIA_LLM)){
+				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject(CostantiDB.STATISTICHE_ORARIE_LLM,"id","seq_"+CostantiDB.STATISTICHE_ORARIE_LLM,CostantiDB.STATISTICHE_ORARIE_LLM+"_init_seq");
 			}
 			
 			else{

@@ -1,3 +1,21 @@
+2026-06-15  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Censimento LLM end-to-end: catalogo Provider / Model / Provider Binding
+	Associazione di N provider concreti al singolo connettore di un'erogazione o fruizione tramite la nuova maschera 'Connettori LLM'.
+	Gestito routing runtime in base a 'request.model' verso il provider concreto risolto, 
+	e registrazione automatica di ciascuna transazione LLM nella tabella 'transazioni_llm'
+	(provider, modello, binding, token input/output, costo stimato) 
+	con marcatura 'esito_contesto = llm' sulla riga 'transazioni' per filtraggio diretto da monitor e statistiche.
+
+2026-06-01  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Introdotte le tabelle satellite 'transazioni_llm', 'stat_orarie_llm' e 'stat_giorni_llm'
+	per il tracciamento delle metriche specifiche del traffico LLM (token input/output, costo stimato in USD,
+	provider, modello e provider binding), senza modifiche allo schema delle tabelle 'transazioni' e
+	'statistiche_*' esistenti. La discriminazione delle transazioni LLM avviene tramite 'esito_contesto'.
+
 2026-05-22  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
@@ -16,6 +34,13 @@
 	Aggiunto provider back-door OpenAI / OpenAI-compatible al catalogo Provider Binding con
 	trasformatori bidirezionali canonical ↔ Chat Completions, streaming SSE end-to-end e
 	compressione gzip negoziata verso il client.
+
+2026-05-18  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta colonna 'llm_policy' alla tabella 'connettori' per associare a un connettore
+	la LLM Provider policy (registrata in 'generic_properties') da utilizzare per la
+	risoluzione del provider back-door nella pipeline LLM.
 
 2026-05-15  Andrea Poli <apoli@link.it>
 

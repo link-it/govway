@@ -2268,9 +2268,8 @@ public class ConsoleHelper implements IConsoleHelper {
 				entries[index][1] = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_LIST+"?"+
 						ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE+"="+ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_ATTRIBUTE_AUTHORITY;
 				index++;
-				entries[index][0] = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_LLM_PROVIDER;
-				entries[index][1] = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_LIST+"?"+
-						ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE+"="+ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_LLM_PROVIDER;
+				entries[index][0] = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_LLM;
+				entries[index][1] = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_LLM;
 				index++;
 				
 				entries[index][0] = GruppiCostanti.LABEL_GRUPPI;
@@ -12823,6 +12822,9 @@ public class ConsoleHelper implements IConsoleHelper {
 	 */
 	public List<String> getLLMProviderList(boolean addElementNonSelezionatoSeMaggioreUno,
 			String checkLlmProviderConfigurataPresente, TipoOperazione tipoOperazione) throws DriverConfigurazioneException{
+		// Il connettore si aggancia direttamente al LLM Provider; i Binding (incrocio Provider × Model +
+		// pricing) configurabili per quel connettore vivono come righe di 'connettori_llm_binding' e
+		// vengono presentati separatamente in funzione del Provider scelto.
 		List<GenericProperties> llmProviderList = this.confCore.gestorePolicyTokenList(null,
 				ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_LLM_PROVIDER, null);
 
@@ -12846,6 +12848,32 @@ public class ConsoleHelper implements IConsoleHelper {
 		returnList.addAll(l);
 		return returnList;
 	}
+
+	/**
+	 * Restituisce i nomi dei LLM Provider Binding (tipologia {@code llmProviderBinding})
+	 * la cui property {@code llmProviderBinding.provider} corrisponde al provider passato.
+	 * Lista vuota se {@code providerName} e' null/vuoto o se non ci sono binding registrati
+	 * per quel provider.
+	 */
+	public List<String> getLLMBindingNamesByProvider(String providerName) throws DriverConfigurazioneException {
+		List<String> result = new ArrayList<>();
+		if (providerName == null || providerName.isEmpty()
+				|| CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO.equals(providerName)) {
+			return result;
+		}
+		java.util.Map<String,String> propertyFilters = new java.util.HashMap<>();
+		propertyFilters.put(org.openspcoop2.pdd.core.llm.provider.Costanti.LLM_PROVIDER_BINDING_PROVIDER, providerName);
+		List<String> tipologie = new ArrayList<>();
+		tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_LLM_PROVIDER_BINDING);
+		List<GenericProperties> bindings = this.confCore.gestorePolicyTokenList(null, tipologie, null, propertyFilters);
+		if (bindings != null) {
+			for (GenericProperties gp : bindings) {
+				result.add(gp.getNome());
+			}
+		}
+		return result;
+	}
+
 	private List<String> getTokenPolicy(String tipologia, boolean forcePDND, boolean forceOAuth, boolean forceDPoP,
 			boolean addElementNonSelezionatoSeMaggioreUno,
 			String checkTokenPolicyConfigurataPresente, TipoOperazione tipoOperazione) throws DriverConfigurazioneException{
@@ -18232,7 +18260,41 @@ public class ConsoleHelper implements IConsoleHelper {
 				urlConnettore = tipoLabel + ConnettoriCostanti.LABEL_CONNETTORE_CUSTOM;
 			}
 		} else	if(tipo.equals(TipiConnettore.DISABILITATO.getNome())) {
-			urlConnettore = CostantiControlStation.DEFAULT_VALUE_DISABILITATO;
+			// Container LLM: il connettore disabilitato che wrappa N provider concreti.
+			// - 1 provider: la vista mostra direttamente il concreto (tipo + url), il container e' trasparente.
+			// - N provider: la vista mostra l'elenco dei nomi LLM dei provider, separati da ", ".
+			if(connettore.getConnettoreLlm() != null && connettore.getConnettoreLlm().sizeProviderList() == 1) {
+				org.openspcoop2.core.config.ConnettoreLlmProviderRef ref = connettore.getConnettoreLlm().getProvider(0);
+				org.openspcoop2.core.config.Connettore concreto = new org.openspcoop2.core.config.Connettore();
+				concreto.setNome(ref.getNome());
+				concreto.setTipo(ref.getTipo());
+				if(ref.getPropertyList() != null) {
+					for(org.openspcoop2.core.config.Property p : ref.getPropertyList()) {
+						concreto.addProperty(p);
+					}
+				}
+				urlConnettore = this.getLabelConnettoreInternal(concreto, addExtInfo, tooltip, addPrefix);
+			} else if(connettore.getConnettoreLlm() != null && connettore.getConnettoreLlm().sizeProviderList() > 1) {
+				StringBuilder providers = new StringBuilder();
+				for(org.openspcoop2.core.config.ConnettoreLlmProviderRef ref : connettore.getConnettoreLlm().getProviderList()) {
+					String policyValue = null;
+					if(ref.getPropertyList() != null) {
+						for(org.openspcoop2.core.config.Property p : ref.getPropertyList()) {
+							if(CostantiConnettori.CONNETTORE_LLM_POLICY.equals(p.getNome())) {
+								policyValue = p.getValore();
+								break;
+							}
+						}
+					}
+					if(policyValue != null && !policyValue.isEmpty()) {
+						if(providers.length() > 0) providers.append(", ");
+						providers.append(policyValue);
+					}
+				}
+				urlConnettore = providers.length() > 0 ? providers.toString() : ConnettoriCostanti.LABEL_CONNETTORE_LLM_NO_PROVIDER;
+			} else {
+				urlConnettore = CostantiControlStation.DEFAULT_VALUE_DISABILITATO;
+			}
 		} else if(tipo.equals(TipiConnettore.NULL.getNome())) {
 			urlConnettore = tipoLabel + ConnettoreNULL.LOCATION;
 		} else if(tipo.equals(TipiConnettore.NULLECHO.getNome())) {

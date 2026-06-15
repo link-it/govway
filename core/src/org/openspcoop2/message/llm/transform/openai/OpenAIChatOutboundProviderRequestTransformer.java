@@ -125,6 +125,15 @@ public class OpenAIChatOutboundProviderRequestTransformer implements LLMOutbound
 		applyStopSequences(in, out);
 		if (in.getStream() != null) {
 			out.put(OpenAIChatFields.FIELD_STREAM, in.getStream());
+			// Per le request in streaming forziamo stream_options.include_usage=true: senza questo
+			// flag OpenAI (e i backend OpenAI-compatible) non emettono il chunk finale con il campo
+			// usage (prompt_tokens/completion_tokens), quindi non riusciremmo a popolare
+			// token_input/token_output in transazioni_llm. Backend che non riconoscono stream_options
+			// lo ignorano: nel peggiore dei casi i token restano null come prima.
+			if (Boolean.TRUE.equals(in.getStream())) {
+				ObjectNode streamOptions = out.putObject(OpenAIChatFields.FIELD_STREAM_OPTIONS);
+				streamOptions.put(OpenAIChatFields.FIELD_INCLUDE_USAGE, true);
+			}
 		}
 	}
 

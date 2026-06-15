@@ -198,7 +198,10 @@
 				
 				<!-- Dati Consegna Server Applicativo -->
 				<xsd:element ref="transazione-applicativo-server" minOccurs="0" maxOccurs="unbounded"/>
-				
+
+				<!-- Metriche LLM (token, costo) -->
+				<xsd:element ref="transazione-llm" minOccurs="0" maxOccurs="1"/>
+
 				<!-- Extended Info -->
 				<xsd:element ref="transazione-extended-info" minOccurs="0" maxOccurs="unbounded"/>
 					
@@ -276,7 +279,23 @@
 				<xsd:element name="data-eliminazione-im" type="xsd:dateTime" minOccurs="0" />
 				<xsd:element name="cluster-id-prelievo-im" type="xsd:string" minOccurs="0"/>
 				<xsd:element name="cluster-id-eliminazione-im" type="xsd:string" minOccurs="0"/>
-				
+
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+
+	<xsd:element name="transazione-llm">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="id-transazione" type="xsd:string"/>
+				<xsd:element name="data-ingresso-richiesta" type="xsd:dateTime"/>
+				<xsd:element name="llm-provider" type="xsd:string" minOccurs="0"/>
+				<xsd:element name="llm-model" type="xsd:string" minOccurs="0"/>
+				<xsd:element name="llm-provider-binding" type="xsd:string" minOccurs="0"/>
+				<xsd:element name="token-input" type="xsd:unsignedLong" minOccurs="0"/>
+				<xsd:element name="token-output" type="xsd:unsignedLong" minOccurs="0"/>
+				<xsd:element name="cost-estimated" type="xsd:double" minOccurs="0"/>
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
@@ -440,6 +459,12 @@
 			<xsd:element name="id-transazione" type="xsd:string"/>
 			<xsd:element name="servizio-applicativo-erogatore" type="xsd:string" />
 			<xsd:element name="connettore-nome" type="xsd:string" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="id-transazione-llm">
+		<xsd:sequence>
+			<xsd:element name="id-transazione" type="xsd:string"/>
 		</xsd:sequence>
 	</xsd:complexType>
 

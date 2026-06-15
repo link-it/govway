@@ -119,6 +119,17 @@ public final class Filtri
 	public static final String FILTRO_TIPO_RISORSA_POLICY = "filtroTipoRisorsaPolicy";
 	
 	public static final String FILTRO_TIPO_TOKEN_POLICY = "filtroTipoTokenPolicy";
+
+	/** Filtri lista LLM Provider (property values di tipologia=llmProvider). */
+	public static final String FILTRO_LLM_PROVIDER_TYPE = "filtroLlmProviderType";
+
+	/** Filtri lista LLM Model (property values di tipologia=llmModel). */
+	public static final String FILTRO_LLM_MODEL_FAMILY = "filtroLlmModelFamily";
+	public static final String FILTRO_LLM_MODEL_MODALITY = "filtroLlmModelModality";
+
+	/** Filtri lista LLM Provider Binding (property values di tipologia=llmProviderBinding). */
+	public static final String FILTRO_LLM_PROVIDER_BINDING_PROVIDER = "filtroLlmProviderBindingProvider";
+	public static final String FILTRO_LLM_PROVIDER_BINDING_MODEL = "filtroLlmProviderBindingModel";
 	
 	public static final String FILTRO_GRUPPO_SERVICE_BINDING = "filtroGruppoServiceBinding";
 	

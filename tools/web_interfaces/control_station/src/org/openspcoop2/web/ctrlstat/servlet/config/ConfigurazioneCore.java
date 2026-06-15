@@ -2112,6 +2112,9 @@ public class ConfigurazioneCore extends ControlStationCore {
 		return gestorePolicyTokenList(idLista, tipologiaList, ricerca);
 	}
 	public List<GenericProperties> gestorePolicyTokenList(Integer idLista, List<String> tipologia, ISearch ricerca) throws DriverConfigurazioneException {
+		return gestorePolicyTokenList(idLista, tipologia, ricerca, null);
+	}
+	public List<GenericProperties> gestorePolicyTokenList(Integer idLista, List<String> tipologia, ISearch ricerca, java.util.Map<String,String> propertyFilters) throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "gestorePolicyTokenList";
 		DriverControlStationDB driver = null;
@@ -2121,7 +2124,7 @@ public class ConfigurazioneCore extends ControlStationCore {
 			con = ControlStationCore.dbM.getConnection();
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
-			return driver.getDriverConfigurazioneDB().getGenericProperties(tipologia, idLista, ricerca,false);
+			return driver.getDriverConfigurazioneDB().getGenericProperties(tipologia, idLista, ricerca, false, propertyFilters);
 		} catch (Exception e) {
 			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
 			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo,  e),e);

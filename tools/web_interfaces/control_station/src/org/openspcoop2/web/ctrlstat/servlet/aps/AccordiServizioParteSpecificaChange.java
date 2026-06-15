@@ -194,8 +194,9 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			boolean forceOAuth = false;
 			boolean forceDPoP = false;
 
-			// llm provider policy
+			// llm provider policy + binding (modelli)
 			String llmPolicy = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_LLM_PROVIDER);
+			String[] llmBindings = apsHelper.getParameterValues(ConnettoriCostanti.PARAMETRO_CONNETTORE_LLM_BINDING);
 
 			// proxy
 			String proxyEnabled = apsHelper.getParametroBoolean(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
@@ -1012,6 +1013,13 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 
 				Connettore connettore = asps.getConfigurazioneServizio().getConnettore();
 
+				// Se il connettore caricato e' un container LLM, estraggo i binding del primo
+				// provider (per il preload del form) e poi faccio unwrap cosi' che il flusso
+				// successivo continui a lavorare sui campi tecnici del concreto come se fosse
+				// un connettore "normale".
+				String[] llmBindingsLoaded = apsHelper.extractLlmBindings(connettore);
+				connettore = apsHelper.unwrapLlmContainer(connettore);
+
 				if ((endpointtype == null) || (url == null) || (nome == null)) {
 					Map<String, String> props = connettore.getProperties();
 
@@ -1183,6 +1191,10 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 						if(v!=null && !"".equals(v)){
 							llmPolicy = v;
 						}
+					}
+
+					if((llmBindings==null || llmBindings.length==0) && llmBindingsLoaded!=null && llmBindingsLoaded.length>0){
+						llmBindings = llmBindingsLoaded;
 					}
 
 					// Auto-fill dell'Endpoint con la baseUrl della LLM Provider Policy quando l'utente
@@ -1408,7 +1420,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 						}*/
 
 						if (apiIsLLM) {
-							dati = apsHelper.addLLMProvider(dati, llmPolicy, tipoOp, postBackViaPost);
+							dati = apsHelper.addLLMProvider(dati, llmPolicy, llmBindings, tipoOp, postBackViaPost);
 						}
 
 						dati = apsHelper.addEndPointToDati(dati, serviceBinding, connettoreDebug, endpointtype, autenticazioneHttp,
@@ -1631,7 +1643,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					}*/
 
 					if (apiIsLLM) {
-						dati = apsHelper.addLLMProvider(dati, llmPolicy, tipoOp, postBackViaPost);
+						dati = apsHelper.addLLMProvider(dati, llmPolicy, llmBindings, tipoOp, postBackViaPost);
 					}
 
 					dati = apsHelper.addEndPointToDati(dati, serviceBinding, connettoreDebug,  endpointtype, autenticazioneHttp,
@@ -1767,7 +1779,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					}
 
 					if (apiIsLLM) {
-						dati = apsHelper.addLLMProvider(dati, llmPolicy, tipoOp, postBackViaPost);
+						dati = apsHelper.addLLMProvider(dati, llmPolicy, llmBindings, tipoOp, postBackViaPost);
 					}
 
 					dati = apsHelper.addEndPointToDati(dati, serviceBinding, connettoreDebug,  endpointtype, autenticazioneHttp,
@@ -2063,7 +2075,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					listExtendedConnettore);
 
 			if (apiIsLLM) {
-				apsHelper.addLLMPolicyPropertyToConnettore(newConnettore, llmPolicy);
+				newConnettore = apsHelper.wrapAsLlmContainer(newConnettore, llmPolicy, llmBindings, newConnettore.getNome());
 			}
 
 			asps.getConfigurazioneServizio().setConnettore(newConnettore);
@@ -2167,7 +2179,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 						}*/
 
 						if (apiIsLLM) {
-							dati = apsHelper.addLLMProvider(dati, llmPolicy, tipoOp, postBackViaPost);
+							dati = apsHelper.addLLMProvider(dati, llmPolicy, llmBindings, tipoOp, postBackViaPost);
 						}
 
 						dati = apsHelper.addEndPointToDati(dati, serviceBinding, connettoreDebug, endpointtype, autenticazioneHttp,

@@ -433,7 +433,7 @@ public class InoltroRisposte extends GenericLib{
 				// Un router puo' inoltrare solo verso il connettore del soggetto destinatario
 				msgDiag.logPersonalizzato_prefix("(Router) ","routingTable.esaminaInCorso");
 				try{
-					connettore = configurazionePdDManager.getForwardRoute(soggettoDestinatario,functionAsRouter, requestInfo);
+					connettore = configurazionePdDManager.getForwardRoute(soggettoDestinatario,functionAsRouter, requestInfo, pddContext);
 				}catch(Exception e){
 					erroreRicercaConnettore = e.getMessage();
 				}
@@ -453,21 +453,21 @@ public class InoltroRisposte extends GenericLib{
 						try{
 							// provo a cercare un connettore specializzato
 							//log.info("Cerco busta per Mittente["+soggettoMittente.toString()+"] Destinatario["+soggettoDestinatario.toString()+"] Servizio["+busta.getTipoServizio()+busta.getServizio()+"] Azione["+busta.getAzione()+"]");
-							connettore = configurazionePdDManager.getForwardRoute(soggettoMittente,idServizio,functionAsRouter, requestInfo);
+							connettore = configurazionePdDManager.getForwardRoute(soggettoMittente,idServizio,functionAsRouter, requestInfo, pddContext);
 						}catch(Exception e){
 							erroreRicercaConnettore = "RicercaConnettoreSpecializzato, "+e.getMessage();
 						}
 						// provo ad inviarlo solo al soggetto
 						if(connettore==null){
 							try{
-								connettore = configurazionePdDManager.getForwardRoute(soggettoDestinatario,functionAsRouter, requestInfo);
+								connettore = configurazionePdDManager.getForwardRoute(soggettoDestinatario,functionAsRouter, requestInfo, pddContext);
 							}catch(Exception e){
 								erroreRicercaConnettore = "\nRicercaConnettore, "+e.getMessage();
 							}
 						}
 					}else{
 						try{
-							connettore = configurazionePdDManager.getForwardRoute(soggettoDestinatario,functionAsRouter, requestInfo);
+							connettore = configurazionePdDManager.getForwardRoute(soggettoDestinatario,functionAsRouter, requestInfo, pddContext);
 						}catch(Exception e){
 							erroreRicercaConnettore = e.getMessage();
 						}

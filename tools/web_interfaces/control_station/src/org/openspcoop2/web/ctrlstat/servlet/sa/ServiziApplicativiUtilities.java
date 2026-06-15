@@ -279,7 +279,12 @@ public class ServiziApplicativiUtilities {
 	public static void checkStatoConnettore(ServiziApplicativiCore saCore, ServizioApplicativo sa, Connettore connis, StringBuilder inUsoMessage, String newLine) throws DriverConfigurazioneException {
 		InvocazioneServizio invServizio = sa.getInvocazioneServizio();
 		StatoFunzionalita getMessage = invServizio != null ? invServizio.getGetMessage() : null;
-		if (TipiConnettore.DISABILITATO.getNome().equals(connis.getTipo()) && CostantiConfigurazione.DISABILITATO.equals(getMessage)) {
+		// Caso speciale: container LLM (tipo 'disabilitato' che wrappa N provider concreti).
+		// Il connettore non e' realmente disabilitato, e' un container; il routing va al
+		// provider concreto risolto a runtime da LLMConnectorResolver.
+		boolean isLlmContainer = connis.getConnettoreLlm() != null && connis.getConnettoreLlm().sizeProviderList() > 0;
+		if (TipiConnettore.DISABILITATO.getNome().equals(connis.getTipo()) && CostantiConfigurazione.DISABILITATO.equals(getMessage)
+				&& !isLlmContainer) {
 			Map<ErrorsHandlerCostant, String> whereIsInUso = new HashMap<ErrorsHandlerCostant, String>();
 			if (saCore.isServizioApplicativoInUsoComeErogatore(sa, whereIsInUso)) {
 

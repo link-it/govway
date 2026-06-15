@@ -11,6 +11,8 @@
 -- DROP INDEX index_dump_messaggi_3;
 -- DROP INDEX index_dump_messaggi_2;
 -- DROP INDEX index_dump_messaggi_1;
+-- DROP INDEX INDEX_TR_LLM_BY_MODEL;
+-- DROP INDEX INDEX_TR_LLM;
 -- DROP INDEX INDEX_TRSA_SEND;
 -- DROP INDEX INDEX_TRSA_IN_QUEUE;
 -- DROP INDEX index_transazioni_sa_1;
@@ -42,6 +44,7 @@ DROP TABLE transazioni_classe_esiti;
 DROP TABLE transazioni_esiti;
 DROP TABLE transazioni_export;
 DROP TABLE transazioni_info;
+DROP TABLE transazioni_llm;
 DROP TABLE transazioni_sa;
 DROP TABLE transazioni;
 DROP TABLE credenziale_mittente;

@@ -42,6 +42,7 @@ import java.util.Set;
  * &lt;complexType name="connettore"&gt;
  * 		&lt;sequence&gt;
  * 			&lt;element name="property" type="{http://www.openspcoop2.org/core/registry}Property" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="connettore-llm" type="{http://www.openspcoop2.org/core/registry}connettore-llm" minOccurs="0" maxOccurs="1"/&gt;
  * 		&lt;/sequence&gt;
  * 		&lt;attribute name="custom" type="{http://www.w3.org/2001/XMLSchema}string" use="optional" default="false"/&gt;
  * 		&lt;attribute name="tipo" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
@@ -58,7 +59,8 @@ import java.util.Set;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "connettore", 
   propOrder = {
-  	"property"
+  	"property",
+  	"connettoreLlm"
   }
 )
 
@@ -91,6 +93,14 @@ public class Connettore extends org.openspcoop2.utils.beans.BaseBeanWithId imple
 
   public int sizePropertyList() {
     return this.property.size();
+  }
+
+  public ConnettoreLlm getConnettoreLlm() {
+    return this.connettoreLlm;
+  }
+
+  public void setConnettoreLlm(ConnettoreLlm connettoreLlm) {
+    this.connettoreLlm = connettoreLlm;
   }
 
   public Boolean getCustom() {
@@ -133,6 +143,31 @@ public class Connettore extends org.openspcoop2.utils.beans.BaseBeanWithId imple
   	connettoreConfig.setNome(this.nome);
   	connettoreConfig.setTipo(this.tipo);
   	connettoreConfig.setCustom(this.custom);
+  	if(this.connettoreLlm != null){
+  		org.openspcoop2.core.config.ConnettoreLlm llmConfig = new org.openspcoop2.core.config.ConnettoreLlm();
+  		for(ConnettoreLlmProviderRef refReg : this.connettoreLlm.getProviderList()){
+  			org.openspcoop2.core.config.ConnettoreLlmProviderRef refConfig = new org.openspcoop2.core.config.ConnettoreLlmProviderRef();
+  			refConfig.setNome(refReg.getNome());
+  			refConfig.setTipo(refReg.getTipo());
+  			if(refReg.getPropertyList() != null){
+  				for(Property pReg : refReg.getPropertyList()){
+  					org.openspcoop2.core.config.Property pConfig = new org.openspcoop2.core.config.Property();
+  					pConfig.setNome(pReg.getNome());
+  					pConfig.setValore(pReg.getValore());
+  					refConfig.addProperty(pConfig);
+  				}
+  			}
+  			if(refReg.getBindingList() != null){
+  				for(ConnettoreLlmBinding bReg : refReg.getBindingList()){
+  					org.openspcoop2.core.config.ConnettoreLlmBinding bConfig = new org.openspcoop2.core.config.ConnettoreLlmBinding();
+  					bConfig.setNome(bReg.getNome());
+  					refConfig.addBinding(bConfig);
+  				}
+  			}
+  			llmConfig.addProvider(refConfig);
+  		}
+  		connettoreConfig.setConnettoreLlm(llmConfig);
+  	}
   	return connettoreConfig;
   }
 
@@ -185,6 +220,9 @@ public class Connettore extends org.openspcoop2.utils.beans.BaseBeanWithId imple
   public int sizeProperty() {
   	return this.sizePropertyList();
   }
+
+  @XmlElement(name="connettore-llm",required=false,nillable=false)
+  protected ConnettoreLlm connettoreLlm;
 
   @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="custom",required=false)

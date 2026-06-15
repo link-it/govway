@@ -759,6 +759,10 @@ public class JDBCTransazioneServiceSearchImpl implements IJDBCServiceSearchWithI
 				}
 			}
 		}
+		if(obj.getTransazioneLlm()!=null && 
+				imgSaved.getTransazioneLlm()!=null){
+			obj.getTransazioneLlm().setId(imgSaved.getTransazioneLlm().getId());
+		}
 		if(obj.getTransazioneExtendedInfoList()!=null){
 			List<org.openspcoop2.core.transazioni.TransazioneExtendedInfo> listObj_ = obj.getTransazioneExtendedInfoList();
 			for(org.openspcoop2.core.transazioni.TransazioneExtendedInfo itemObj_ : listObj_){
@@ -962,6 +966,11 @@ public class JDBCTransazioneServiceSearchImpl implements IJDBCServiceSearchWithI
 			sqlQueryObject.addWhereCondition(tableName1+".id_transazione="+tableName2+".id");
 		}
 		
+		if(expression.inUseModel(Transazione.model().TRANSAZIONE_LLM,false)){
+			String tableName1 = this.getTransazioneFieldConverter().toTable(Transazione.model().TRANSAZIONE_LLM);
+			String tableName2 = this.getTransazioneFieldConverter().toTable(Transazione.model());
+			sqlQueryObject.addWhereCondition(tableName1+".id_transazione="+tableName2+".id");
+		}
 		
 		
 		boolean joinTransazioniRequired = false;

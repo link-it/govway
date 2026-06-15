@@ -312,6 +312,8 @@ public class CostantiConfigurazione {
 	public static final String GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_RETRIEVE = "retrievePolicyToken";
 	public static final String GENERIC_PROPERTIES_ATTRIBUTE_AUTHORITY = "attributeAuthority";
 	public static final String GENERIC_PROPERTIES_LLM_PROVIDER = "llmProvider";
+	public static final String GENERIC_PROPERTIES_LLM_MODEL = "llmModel";
+	public static final String GENERIC_PROPERTIES_LLM_PROVIDER_BINDING = "llmProviderBinding";
 	public static final String GENERIC_PROPERTIES_TIPOLOGIA_INSTALLER = "installer";
     
     /** Routing */

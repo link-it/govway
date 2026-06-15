@@ -27,6 +27,8 @@
 									object-type="transazione"/>
 								<linkit:sql-table object-name="transazione-applicativo-server"
 									object-type="transazione-applicativo-server"/>
+								<linkit:sql-table object-name="transazione-llm"
+									object-type="transazione-llm"/>
 								<linkit:sql-table object-name="transazione-info"
 									object-type="transazione-info"/>
 								<linkit:sql-table object-name="transazione-export"
@@ -1693,7 +1695,19 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 						</xsd:appinfo>
 					</xsd:annotation>
 				</xsd:element>
-				
+
+				<!-- Metriche LLM (token consumati, costo stimato): 1:1 con transazione quando l'invocazione è verso un provider LLM -->
+				<xsd:element ref="transazione-llm" minOccurs="0" maxOccurs="1">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-id-mapping object-name="transazione-llm" object-type="transazione-llm"
+									relationship="none"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+
 				<!-- Extended Info -->
 				<xsd:element ref="transazione-extended-info" minOccurs="0" maxOccurs="unbounded"/>
 					
@@ -2261,16 +2275,157 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 						</xsd:appinfo>
 					</xsd:annotation>			        
 				</xsd:element>
-				
+
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
-	
-	
-				   
-			    
-	
-	
+
+
+	<!-- ============================================================================ -->
+	<!-- Metriche LLM per transazione (token consumati, costo stimato).                -->
+	<!-- Relazione 1:1 con 'transazione' enforced via UNIQUE su id_transazione.        -->
+	<!-- Pattern aderente alle altre satellite (PK surrogata + FK named).              -->
+	<!-- ============================================================================ -->
+	<xsd:element name="transazione-llm">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:interface crud="true" id="id-transazione-llm">
+						<linkit:ws-interface search="true" crud="false" all="false" >
+							<linkit:ws-search-method-interface inUse="false" />
+							<linkit:ws-filter orCondition="false"/>
+						</linkit:ws-interface>
+					</linkit:interface>
+					<linkit:sql-table-mapping name="transazioni_llm" sequence-cycle="true"
+						comment="Metriche LLM (token consumati, costo stimato) per transazione: 1:1 con transazioni quando l'invocazione e' verso un provider LLM.">
+						<!-- 1:1 con transazione: UNIQUE su id-transazione. -->
+						<linkit:sql-table-unique>
+							<linkit:sql-table-unique-field name="id-transazione"/>
+						</linkit:sql-table-unique>
+						<!--
+							Use case 1 (LEFT JOIN dal monitor transazioni): coperto dall'indice
+							della UNIQUE su id-transazione.
+							Use case 2 (report time-driven): coperto dal wide qui sotto.
+						-->
+						<linkit:sql-table-index name="INDEX_TR_LLM">
+							<linkit:sql-table-index-field name="data-ingresso-richiesta" order="DESC" ignoreTypeCompatibility="true"/>
+							<linkit:sql-table-index-field name="llm-provider"/>
+							<linkit:sql-table-index-field name="llm-model"/>
+							<linkit:sql-table-index-field name="llm-provider-binding"/>
+							<linkit:sql-table-index-field name="token-input" ignoreTypeCompatibility="true"/>
+							<linkit:sql-table-index-field name="token-output" ignoreTypeCompatibility="true"/>
+							<linkit:sql-table-index-field name="cost-estimated" ignoreTypeCompatibility="true"/>
+						</linkit:sql-table-index>
+						<!--
+							Use case 1 con filtro composto WHERE provider=X AND model=Y [AND binding=Z]:
+							provider (cardinalita' bassa) first, poi model, poi binding (per ricerche
+							full-index quando il filtro include anche il binding), infine data per
+							range scan. La leftmost-prefix property garantisce che l'indice serve
+							anche le query con solo provider+model (binding ignorato).
+						-->
+						<linkit:sql-table-index name="INDEX_TR_LLM_BY_MODEL">
+							<linkit:sql-table-index-field name="llm-provider"/>
+							<linkit:sql-table-index-field name="llm-model"/>
+							<linkit:sql-table-index-field name="llm-provider-binding"/>
+							<linkit:sql-table-index-field name="data-ingresso-richiesta" order="DESC" ignoreTypeCompatibility="true"/>
+						</linkit:sql-table-index>
+					</linkit:sql-table-mapping>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="id-transazione" type="xsd:string">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Identificativo della transazione a cui appartiene la metrica LLM (1:1 con transazioni.id)]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+
+				<xsd:element name="data-ingresso-richiesta" type="xsd:dateTime">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Denormalizzata da transazioni.data_ingresso_richiesta: evita JOIN nelle query analitiche LLM per intervallo temporale]]></linkit:sql-ddl-column-comment>
+								<linkit:ws-field-mapping filter="false" filter-interval="true"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+
+				<xsd:element name="llm-provider" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping varchar="64"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Nome interno (user-defined) dell'istanza LLM Provider utilizzata (es. aws-bedrock-static)]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+
+				<xsd:element name="llm-model" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping varchar="64"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Nome interno (user-defined) del modello logico LLM (es. claude-3-5-haiku). Il provider-specific modelId vive nel binding.]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+
+				<xsd:element name="llm-provider-binding" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping varchar="64"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Nome interno (user-defined) del Provider Binding usato (incrocio model x provider x eventuale region/pricing)]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+
+				<xsd:element name="token-input" type="xsd:unsignedLong" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Token consumati dal prompt + context (canonical usage.inputTokens)]]></linkit:sql-ddl-column-comment>
+								<linkit:ws-field-mapping filter="false" filter-interval="true"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+
+				<xsd:element name="token-output" type="xsd:unsignedLong" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Token consumati dalla generazione di risposta (canonical usage.outputTokens)]]></linkit:sql-ddl-column-comment>
+								<linkit:ws-field-mapping filter="false" filter-interval="true"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+
+				<xsd:element name="cost-estimated" type="xsd:double" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Costo stimato in USD calcolato al momento della richiesta (snapshot del pricing del binding). Mai ricalcolato successivamente.]]></linkit:sql-ddl-column-comment>
+								<linkit:ws-field-mapping filter="false" filter-interval="true"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
 
 	<xsd:element name="transazione-info">
 		<xsd:annotation>
@@ -3296,6 +3451,12 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 			<xsd:element name="id-transazione" type="xsd:string"/>
 			<xsd:element name="servizio-applicativo-erogatore" type="xsd:string" />
 			<xsd:element name="connettore-nome" type="xsd:string" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="id-transazione-llm">
+		<xsd:sequence>
+			<xsd:element name="id-transazione" type="xsd:string"/>
 		</xsd:sequence>
 	</xsd:complexType>
 

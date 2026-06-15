@@ -2609,6 +2609,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 	public List<GenericProperties> getGenericProperties(List<String> tipologia, Integer idLista, ISearch ricerca, boolean throwNotFoundException) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		return this.genericPropertiesDriver.getGenericProperties(tipologia, idLista, ricerca, throwNotFoundException);
 	}
+	/**
+	 * Overload con filtri opzionali sui valori delle property associate al generic_properties.
+	 * La map {@code propertyFilters} mappa nome property -> valore (entrambi stringa); il driver
+	 * aggiunge una clausola EXISTS su {@code generic_property} per ogni entry.
+	 */
+	public List<GenericProperties> getGenericProperties(List<String> tipologia, Integer idLista, ISearch ricerca, boolean throwNotFoundException, java.util.Map<String,String> propertyFilters) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.genericPropertiesDriver.getGenericProperties(tipologia, idLista, ricerca, throwNotFoundException, propertyFilters);
+	}
 
 	public GenericProperties getGenericProperties(long idGenericProperties) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		return this.genericPropertiesDriver.getGenericProperties(idGenericProperties);

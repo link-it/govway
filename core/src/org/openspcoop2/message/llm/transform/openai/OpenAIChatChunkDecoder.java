@@ -110,7 +110,17 @@ public class OpenAIChatChunkDecoder implements LLMInboundProviderChunkDecoder {
 		List<CanonicalStreamEvent> events = new ArrayList<>();
 		JsonNode choice = firstChoice(root);
 		if (choice == null) {
-			// chunk solo-usage / heartbeat: nulla da emettere
+			// Chunk senza choices: in streaming OpenAI con stream_options.include_usage=true
+			// l'ultimo chunk e' un "usage-only" (choices vuoto, root.usage popolato). Lo emettiamo
+			// come CanonicalStreamMessageDelta cosi' che il ChunkTransformInputStream possa notificare
+			// l'observer (necessario per popolare transazioni_llm.token_*). Se anche usage e' assente
+			// e' un vero heartbeat: nulla da emettere.
+			CanonicalUsage usage = parseUsage(root.path(OpenAIChatFields.FIELD_USAGE));
+			if (usage != null) {
+				CanonicalStreamMessageDelta md = new CanonicalStreamMessageDelta();
+				md.setUsage(usage);
+				events.add(md);
+			}
 			return events;
 		}
 		maybeEmitMessageStart(root, choice, events);

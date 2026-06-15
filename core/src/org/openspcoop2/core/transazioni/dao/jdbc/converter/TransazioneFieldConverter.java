@@ -1340,6 +1340,62 @@ public class TransazioneFieldConverter extends AbstractSQLFieldConverter {
 				return "cluster_id_eliminazione_im";
 			}
 		}
+		if(field.equals(Transazione.model().TRANSAZIONE_LLM.ID_TRANSAZIONE)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".id_transazione";
+			}else{
+				return "id_transazione";
+			}
+		}
+		if(field.equals(Transazione.model().TRANSAZIONE_LLM.DATA_INGRESSO_RICHIESTA)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".data_ingresso_richiesta";
+			}else{
+				return "data_ingresso_richiesta";
+			}
+		}
+		if(field.equals(Transazione.model().TRANSAZIONE_LLM.LLM_PROVIDER)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".llm_provider";
+			}else{
+				return "llm_provider";
+			}
+		}
+		if(field.equals(Transazione.model().TRANSAZIONE_LLM.LLM_MODEL)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".llm_model";
+			}else{
+				return "llm_model";
+			}
+		}
+		if(field.equals(Transazione.model().TRANSAZIONE_LLM.LLM_PROVIDER_BINDING)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".llm_provider_binding";
+			}else{
+				return "llm_provider_binding";
+			}
+		}
+		if(field.equals(Transazione.model().TRANSAZIONE_LLM.TOKEN_INPUT)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".token_input";
+			}else{
+				return "token_input";
+			}
+		}
+		if(field.equals(Transazione.model().TRANSAZIONE_LLM.TOKEN_OUTPUT)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".token_output";
+			}else{
+				return "token_output";
+			}
+		}
+		if(field.equals(Transazione.model().TRANSAZIONE_LLM.COST_ESTIMATED)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".cost_estimated";
+			}else{
+				return "cost_estimated";
+			}
+		}
 		if(field.equals(Transazione.model().TRANSAZIONE_EXTENDED_INFO.NOME)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".nome";
@@ -1913,6 +1969,30 @@ public class TransazioneFieldConverter extends AbstractSQLFieldConverter {
 		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.CLUSTER_ID_ELIMINAZIONE_IM)){
 			return this.toTable(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER, returnAlias);
 		}
+		if(field.equals(Transazione.model().TRANSAZIONE_LLM.ID_TRANSAZIONE)){
+			return this.toTable(Transazione.model().TRANSAZIONE_LLM, returnAlias);
+		}
+		if(field.equals(Transazione.model().TRANSAZIONE_LLM.DATA_INGRESSO_RICHIESTA)){
+			return this.toTable(Transazione.model().TRANSAZIONE_LLM, returnAlias);
+		}
+		if(field.equals(Transazione.model().TRANSAZIONE_LLM.LLM_PROVIDER)){
+			return this.toTable(Transazione.model().TRANSAZIONE_LLM, returnAlias);
+		}
+		if(field.equals(Transazione.model().TRANSAZIONE_LLM.LLM_MODEL)){
+			return this.toTable(Transazione.model().TRANSAZIONE_LLM, returnAlias);
+		}
+		if(field.equals(Transazione.model().TRANSAZIONE_LLM.LLM_PROVIDER_BINDING)){
+			return this.toTable(Transazione.model().TRANSAZIONE_LLM, returnAlias);
+		}
+		if(field.equals(Transazione.model().TRANSAZIONE_LLM.TOKEN_INPUT)){
+			return this.toTable(Transazione.model().TRANSAZIONE_LLM, returnAlias);
+		}
+		if(field.equals(Transazione.model().TRANSAZIONE_LLM.TOKEN_OUTPUT)){
+			return this.toTable(Transazione.model().TRANSAZIONE_LLM, returnAlias);
+		}
+		if(field.equals(Transazione.model().TRANSAZIONE_LLM.COST_ESTIMATED)){
+			return this.toTable(Transazione.model().TRANSAZIONE_LLM, returnAlias);
+		}
 		if(field.equals(Transazione.model().TRANSAZIONE_EXTENDED_INFO.NOME)){
 			return this.toTable(Transazione.model().TRANSAZIONE_EXTENDED_INFO, returnAlias);
 		}
@@ -1955,6 +2035,9 @@ public class TransazioneFieldConverter extends AbstractSQLFieldConverter {
 		}
 		if(model.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER)){
 			return CostantiDB.TRANSAZIONI_APPLICATIVI_SERVER;
+		}
+		if(model.equals(Transazione.model().TRANSAZIONE_LLM)){
+			return CostantiDB.TRANSAZIONI_LLM;
 		}
 		if(model.equals(Transazione.model().TRANSAZIONE_EXTENDED_INFO)){
 			return CostantiDB.TRANSAZIONI_EXTENDED_INFO;

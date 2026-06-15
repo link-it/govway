@@ -95,6 +95,9 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 			}
 			boolean attributeAuthority = ConfigurazioneCostanti.isConfigurazioneAttributeAuthority(infoType);
 			boolean llmProvider = ConfigurazioneCostanti.isConfigurazioneLLMProvider(infoType);
+			boolean llmModel = ConfigurazioneCostanti.isConfigurazioneLLMModel(infoType);
+			boolean llmProviderBinding = ConfigurazioneCostanti.isConfigurazioneLLMProviderBinding(infoType);
+			boolean llmAny = llmProvider || llmModel || llmProviderBinding;
 
 			String resetElementoCacheS = confHelper.getParameter(CostantiControlStation.PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE);
 			boolean resetElementoCache = ServletUtils.isCheckBoxEnabled(resetElementoCacheS);
@@ -106,6 +109,10 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 				mapId = confCore.getAttributeAuthorityTipologia();
 			} else if (llmProvider) {
 				mapId = confCore.getLlmProviderTipologia();
+			} else if (llmModel) {
+				mapId = confCore.getLlmModelTipologia();
+			} else if (llmProviderBinding) {
+				mapId = confCore.getLlmProviderBindingTipologia();
 			} else {
 				mapId = confCore.getTokenPolicyTipologia();
 			}
@@ -115,8 +122,8 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 			PropertiesSourceConfiguration propertiesSourceConfiguration;
 			if (attributeAuthority) {
 				propertiesSourceConfiguration = confCore.getAttributeAuthorityPropertiesSourceConfiguration();
-			} else if (llmProvider) {
-				propertiesSourceConfiguration = confCore.getLlmProviderPropertiesSourceConfiguration();
+			} else if (llmAny) {
+				propertiesSourceConfiguration = confCore.getLlmPropertiesSourceConfiguration();
 			} else {
 				propertiesSourceConfiguration = confCore.getPolicyGestioneTokenPropertiesSourceConfiguration();
 			}
@@ -160,10 +167,10 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 				if(attributeAuthority) {
 					metodo = confCore.getJmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheAttributeAuthority(alias);
 				}
-				else if(llmProvider) {
-					// TODO LLM Provider: introdurre, quando la cache runtime sarà disponibile,
-					// un metodo JMX dedicato (getJmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheLLMProvider).
-					throw new Exception("Reset cache LLM Provider non ancora supportato");
+				else if(llmAny) {
+					// TODO LLM (Provider / Model / Provider Binding): introdurre, quando la cache
+					// runtime sarà disponibile, metodi JMX dedicati per ciascuna tipologia.
+					throw new Exception("Reset cache LLM non ancora supportato");
 				}
 				else {
 					boolean validazione = ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN.equals(genericProperties.getTipologia());
@@ -205,20 +212,27 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 					}
 					attributeAuthority = ConfigurazioneCostanti.isConfigurazioneAttributeAuthority(infoTypeA);
 					llmProvider = ConfigurazioneCostanti.isConfigurazioneLLMProvider(infoTypeA);
+					llmModel = ConfigurazioneCostanti.isConfigurazioneLLMModel(infoTypeA);
+					llmProviderBinding = ConfigurazioneCostanti.isConfigurazioneLLMProviderBinding(infoTypeA);
+					llmAny = llmProvider || llmModel || llmProviderBinding;
 
 					// reset di eventuali configurazioni salvate in sessione
 					if (attributeAuthority) {
 						mapId = confCore.getAttributeAuthorityTipologia();
 					} else if (llmProvider) {
 						mapId = confCore.getLlmProviderTipologia();
+					} else if (llmModel) {
+						mapId = confCore.getLlmModelTipologia();
+					} else if (llmProviderBinding) {
+						mapId = confCore.getLlmProviderBindingTipologia();
 					} else {
 						mapId = confCore.getTokenPolicyTipologia();
 					}
 					if(mapId!=null && !mapId.isEmpty()) {
 						if (attributeAuthority) {
 							propertiesSourceConfiguration = confCore.getAttributeAuthorityPropertiesSourceConfiguration();
-						} else if (llmProvider) {
-							propertiesSourceConfiguration = confCore.getLlmProviderPropertiesSourceConfiguration();
+						} else if (llmAny) {
+							propertiesSourceConfiguration = confCore.getLlmPropertiesSourceConfiguration();
 						} else {
 							propertiesSourceConfiguration = confCore.getPolicyGestioneTokenPropertiesSourceConfiguration();
 						}
@@ -237,6 +251,10 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 						idLista = Liste.CONFIGURAZIONE_GESTIONE_ATTRIBUTE_AUTHORITY;
 					} else if (llmProvider) {
 						idLista = Liste.CONFIGURAZIONE_GESTIONE_LLM_PROVIDER;
+					} else if (llmModel) {
+						idLista = Liste.CONFIGURAZIONE_GESTIONE_LLM_MODEL;
+					} else if (llmProviderBinding) {
+						idLista = Liste.CONFIGURAZIONE_GESTIONE_LLM_PROVIDER_BINDING;
 					} else {
 						idLista = Liste.CONFIGURAZIONE_GESTIONE_POLICY_TOKEN;
 					}
@@ -249,6 +267,12 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 					}
 					else if(llmProvider) {
 						tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_LLM_PROVIDER);
+					}
+					else if(llmModel) {
+						tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_LLM_MODEL);
+					}
+					else if(llmProviderBinding) {
+						tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_LLM_PROVIDER_BINDING);
 					}
 					else {
 						tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN);
@@ -274,15 +298,31 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 			List<Parameter> lstParam = new ArrayList<>();
 
 			String label;
+			String listUrl;
 			if (attributeAuthority) {
 				label = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY;
-			} else if (llmProvider) {
-				label = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_LLM_PROVIDER;
+				listUrl = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_LIST;
+			} else if (llmAny) {
+				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_LLM, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_LLM));
+				String tipologiaHttpValue;
+				if (llmProvider) {
+					label = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LLM_PROVIDER_LINK;
+					tipologiaHttpValue = ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_LLM_PROVIDER;
+				} else if (llmModel) {
+					label = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LLM_MODEL_LINK;
+					tipologiaHttpValue = ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_LLM_MODEL;
+				} else {
+					label = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LLM_PROVIDER_BINDING_LINK;
+					tipologiaHttpValue = ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_LLM_PROVIDER_BINDING;
+				}
+				listUrl = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_LIST+"?"+
+						ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE+"="+tipologiaHttpValue;
 			} else {
 				label = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN;
+				listUrl = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_LIST;
 			}
-			
-			lstParam.add(new Parameter(label, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_LIST));
+
+			lstParam.add(new Parameter(label, listUrl));
 			lstParam.add(new Parameter(genericProperties.getNome(),null));
 		
 			// Se tipo = null, devo visualizzare la pagina per l'inserimento
@@ -301,7 +341,7 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = confHelper.addPolicyGestioneTokenToDati(tipoOperazione,dati,id,nome,descrizione,tipo,propConfigPolicyGestioneTokenLabelList,propConfigPolicyGestioneTokenList,
-						attributeAuthority, llmProvider, genericProperties);
+						attributeAuthority, llmAny, genericProperties);
 				
 				dati = confHelper.addPropertiesConfigToDati(tipoOperazione,dati, tipo, configurazioneBean,false);
 				
@@ -328,7 +368,7 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = confHelper.addPolicyGestioneTokenToDati(tipoOperazione,dati,id,nome,descrizione,tipo,propConfigPolicyGestioneTokenLabelList,propConfigPolicyGestioneTokenList,
-						attributeAuthority, llmProvider, genericProperties);
+						attributeAuthority, llmAny, genericProperties);
 						
 				dati = confHelper.addPropertiesConfigToDati(tipoOperazione,dati, tipo, configurazioneBean,false);
 				
@@ -370,6 +410,10 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 				idLista = Liste.CONFIGURAZIONE_GESTIONE_ATTRIBUTE_AUTHORITY;
 			} else if (llmProvider) {
 				idLista = Liste.CONFIGURAZIONE_GESTIONE_LLM_PROVIDER;
+			} else if (llmModel) {
+				idLista = Liste.CONFIGURAZIONE_GESTIONE_LLM_MODEL;
+			} else if (llmProviderBinding) {
+				idLista = Liste.CONFIGURAZIONE_GESTIONE_LLM_PROVIDER_BINDING;
 			} else {
 				idLista = Liste.CONFIGURAZIONE_GESTIONE_POLICY_TOKEN;
 			}
@@ -382,6 +426,12 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 			}
 			else if(llmProvider) {
 				tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_LLM_PROVIDER);
+			}
+			else if(llmModel) {
+				tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_LLM_MODEL);
+			}
+			else if(llmProviderBinding) {
+				tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_LLM_PROVIDER_BINDING);
 			}
 			else {
 				tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN);

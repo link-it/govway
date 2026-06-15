@@ -652,12 +652,12 @@ public class ConfigurazionePdDManager {
 
 	/* ************* ROUTING **************** */
 
-	public Connettore getForwardRoute(IDSoggetto idSoggettoDestinatario,boolean functionAsRouter, RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		return this.configurazionePdDReader.getForwardRoute(this.getConnection(), this.registroServiziManager, idSoggettoDestinatario, functionAsRouter, requestInfo);
+	public Connettore getForwardRoute(IDSoggetto idSoggettoDestinatario,boolean functionAsRouter, RequestInfo requestInfo, org.openspcoop2.pdd.core.PdDContext pddContext) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getForwardRoute(this.getConnection(), this.registroServiziManager, idSoggettoDestinatario, functionAsRouter, requestInfo, pddContext);
 	}
 
-	public Connettore getForwardRoute(IDSoggetto idSoggettoMittente, IDServizio idServizio,boolean functionAsRouter, RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		return this.configurazionePdDReader.getForwardRoute(this.getConnection(), this.registroServiziManager, idSoggettoMittente, idServizio, functionAsRouter, requestInfo);
+	public Connettore getForwardRoute(IDSoggetto idSoggettoMittente, IDServizio idServizio,boolean functionAsRouter, RequestInfo requestInfo, org.openspcoop2.pdd.core.PdDContext pddContext) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getForwardRoute(this.getConnection(), this.registroServiziManager, idSoggettoMittente, idServizio, functionAsRouter, requestInfo, pddContext);
 	}
 
 	public String getRegistroForImbustamento(IDSoggetto idSoggettoMittente, IDServizio idServizio,boolean functionAsRouter, RequestInfo requestInfo)throws DriverConfigurazioneException{
@@ -1740,8 +1740,8 @@ public class ConfigurazionePdDManager {
 		return this.configurazionePdDReader.invocazioneServizioConConnettore(sa);
 	}
 
-	public ConnettoreMsg getInvocazioneServizio(ServizioApplicativo sa,RichiestaApplicativa idPA, RequestInfo requestInfo)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		return this.configurazionePdDReader.getInvocazioneServizio(this.getConnection(), sa, idPA, requestInfo);
+	public ConnettoreMsg getInvocazioneServizio(ServizioApplicativo sa,RichiestaApplicativa idPA, RequestInfo requestInfo, org.openspcoop2.pdd.core.PdDContext pddContext)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getInvocazioneServizio(this.getConnection(), sa, idPA, requestInfo, pddContext);
 	}
 
 	public GestioneErrore getGestioneErroreConnettoreInvocazioneServizio(IProtocolFactory<?> protocolFactory, ServiceBinding serviceBinding, ServizioApplicativo sa)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
@@ -1779,12 +1779,12 @@ public class ConfigurazionePdDManager {
 		return this.configurazionePdDReader.consegnaRispostaAsincronaConConnettore(sa);
 	}
 
-	public ConnettoreMsg getConsegnaRispostaAsincrona(ServizioApplicativo sa,RichiestaDelegata idPD, RequestInfo requestInfo)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		return this.configurazionePdDReader.getConsegnaRispostaAsincrona(this.getConnection(), sa, idPD, requestInfo);
+	public ConnettoreMsg getConsegnaRispostaAsincrona(ServizioApplicativo sa,RichiestaDelegata idPD, RequestInfo requestInfo, org.openspcoop2.pdd.core.PdDContext pddContext)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getConsegnaRispostaAsincrona(this.getConnection(), sa, idPD, requestInfo, pddContext);
 	}
 
-	public ConnettoreMsg getConsegnaRispostaAsincrona(ServizioApplicativo sa,RichiestaApplicativa idPA, RequestInfo requestInfo)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		return this.configurazionePdDReader.getConsegnaRispostaAsincrona(this.getConnection(), sa, idPA, requestInfo);
+	public ConnettoreMsg getConsegnaRispostaAsincrona(ServizioApplicativo sa,RichiestaApplicativa idPA, RequestInfo requestInfo, org.openspcoop2.pdd.core.PdDContext pddContext)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getConsegnaRispostaAsincrona(this.getConnection(), sa, idPA, requestInfo, pddContext);
 	}
 
 	public GestioneErrore getGestioneErroreConnettoreRispostaAsincrona(IProtocolFactory<?> protocolFactory, ServiceBinding serviceBinding, ServizioApplicativo sa)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
@@ -2127,7 +2127,55 @@ public class ConfigurazionePdDManager {
 		}
 		PolicyAttributeAuthority policy = this.configurazionePdDReader.getPolicyAttributeAuthority(this.getConnection(), forceNoCache, policyName);
 		if(useRequestInfo) {
-			requestInfo.getRequestConfig().addAttributeAuthority(policyName, policy, 
+			requestInfo.getRequestConfig().addAttributeAuthority(policyName, policy,
+					requestInfo.getIdTransazione());
+		}
+		return policy;
+	}
+
+	public GenericProperties getPolicyLLMProvider(boolean forceNoCache, String policyName, RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		boolean useRequestInfo = !forceNoCache && requestInfo!=null && requestInfo.getRequestConfig()!=null && policyName!=null;
+		if(useRequestInfo) {
+			Object o = requestInfo.getRequestConfig().getLLMProvider(policyName);
+			if(o instanceof GenericProperties) {
+				return (GenericProperties) o;
+			}
+		}
+		GenericProperties policy = this.configurazionePdDReader.getPolicyLLMProvider(this.getConnection(), forceNoCache, policyName);
+		if(useRequestInfo) {
+			requestInfo.getRequestConfig().addLLMProvider(policyName, policy,
+					requestInfo.getIdTransazione());
+		}
+		return policy;
+	}
+
+	public GenericProperties getPolicyLLMModel(boolean forceNoCache, String policyName, RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		boolean useRequestInfo = !forceNoCache && requestInfo!=null && requestInfo.getRequestConfig()!=null && policyName!=null;
+		if(useRequestInfo) {
+			Object o = requestInfo.getRequestConfig().getLLMModel(policyName);
+			if(o instanceof GenericProperties) {
+				return (GenericProperties) o;
+			}
+		}
+		GenericProperties policy = this.configurazionePdDReader.getPolicyLLMModel(this.getConnection(), forceNoCache, policyName);
+		if(useRequestInfo) {
+			requestInfo.getRequestConfig().addLLMModel(policyName, policy,
+					requestInfo.getIdTransazione());
+		}
+		return policy;
+	}
+
+	public GenericProperties getPolicyLLMProviderBinding(boolean forceNoCache, String policyName, RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		boolean useRequestInfo = !forceNoCache && requestInfo!=null && requestInfo.getRequestConfig()!=null && policyName!=null;
+		if(useRequestInfo) {
+			Object o = requestInfo.getRequestConfig().getLLMProviderBinding(policyName);
+			if(o instanceof GenericProperties) {
+				return (GenericProperties) o;
+			}
+		}
+		GenericProperties policy = this.configurazionePdDReader.getPolicyLLMProviderBinding(this.getConnection(), forceNoCache, policyName);
+		if(useRequestInfo) {
+			requestInfo.getRequestConfig().addLLMProviderBinding(policyName, policy,
 					requestInfo.getIdTransazione());
 		}
 		return policy;

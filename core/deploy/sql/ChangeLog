@@ -1,3 +1,27 @@
+2026-06-04  Andrea Poli <apoli@link.it>
+
+	Introdotto il supporto multi-connettore per le API LLM tramite due nuove tabelle:
+	- 'connettori_llm_binding': elenco dei LLM Provider Binding configurati su un
+	  connettore di tipo LLM
+	- 'connettori_llm': associa, a un connettore principale di tipo 'disabilitato'
+	  utilizzato come container per le API LLM, l'elenco dei connettori LLM reali
+	  (1:N) instradati a runtime in base al modello richiesto dal client
+
+2026-06-01  Andrea Poli <apoli@link.it>
+
+	Aggiunta tabella 'transazioni_llm' per il tracciamento dei dati specifici delle
+	transazioni verso provider LLM (provider, model, binding, token consumati,
+	costo stimato).
+
+	Aggiunte tabelle 'stat_orarie_llm' e 'stat_giorni_llm' per le statistiche
+	aggregate sui consumi LLM (orarie e giornaliere) legate rispettivamente a
+	'statistiche_orarie' e 'statistiche_giornaliere'.
+
+2026-05-18  Andrea Poli <apoli@link.it>
+
+	Aggiunta colonna 'llm_policy' nella tabella 'connettori' per indicare la policy
+	del provider LLM associata al connettore.
+
 2025-10-21  Andrea Poli <apoli@link.it>
 
 	Aggiunto semaforo per il recupero delle tracce da filesystem

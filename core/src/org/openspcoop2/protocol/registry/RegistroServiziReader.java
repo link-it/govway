@@ -2747,7 +2747,7 @@ public class RegistroServiziReader {
 		String tipoFruitore = idSoggetto.getTipo();
 
 		//Cerco il connettore nel soggetto fruitore (e nelle azioni)
-		if(connector == null || CostantiRegistroServizi.DISABILITATO.equals(connector.getTipo())){
+		if(isConnettoreMissing(connector)){
 			for(int i=0; i<servizio.sizeFruitoreList(); i++){
 				org.openspcoop2.core.registry.Fruitore f = servizio.getFruitore(i);
 				if( (f.getTipo() != null) && 
@@ -2777,7 +2777,7 @@ public class RegistroServiziReader {
 							}
 						}
 						
-						if(connector!=null && !CostantiRegistroServizi.DISABILITATO.equals(connector.getTipo()))
+						if(!isConnettoreMissing(connector))
 							break;
 						
 						if(f.getConnettore()!=null){
@@ -2793,7 +2793,7 @@ public class RegistroServiziReader {
 		}
 
 		//Cerco il connettore nell'azione del servizio
-		if(connector == null || CostantiRegistroServizi.DISABILITATO.equals(connector.getTipo())){
+		if(isConnettoreMissing(connector)){
 			if(azione != null){
 				if(servizio.getConfigurazioneServizio()!=null){
 					for(int i=0; i<servizio.getConfigurazioneServizio().sizeConfigurazioneAzioneList();i++){
@@ -2822,7 +2822,7 @@ public class RegistroServiziReader {
 		}
 		
 		//Cerco il connettore nel servizio
-		if (connector == null || CostantiRegistroServizi.DISABILITATO.equals(connector.getTipo())) {
+		if (isConnettoreMissing(connector)) {
 			if(servizio.getConfigurazioneServizio()!=null && servizio.getConfigurazioneServizio().getConnettore()!=null){
 				if (servizio.getConfigurazioneServizio().getConnettore().getTipo() != null)
 					connector = servizio.getConfigurazioneServizio().getConnettore().mappingIntoConnettoreConfigurazione();
@@ -2832,7 +2832,7 @@ public class RegistroServiziReader {
 		}
 
 		//Cerco il connettore nel soggetto erogatore
-		if (connector == null || CostantiRegistroServizi.DISABILITATO.equals(connector.getTipo())) {
+		if (isConnettoreMissing(connector)) {
 			org.openspcoop2.core.registry.Soggetto soggettoErogatore = this.registroServizi.getSoggetto(connectionPdD,nomeRegistro,idService.getSoggettoErogatore());
 			if(soggettoErogatore.getConnettore()!=null){
 				if(soggettoErogatore.getConnettore().getTipo()!=null)
@@ -2842,20 +2842,39 @@ public class RegistroServiziReader {
 			}
 		}
 
-		if (connector == null || CostantiRegistroServizi.DISABILITATO.equals(connector.getTipo()))
+		if (isConnettoreMissing(connector))
 			throw new DriverRegistroServiziNotFound("Connettore non trovato per il Servizio ["+idService.toString()+"]");
 
 		// imposto proprieta'
 		connector.setNomeDestinatarioTrasmissioneBusta(idService.getSoggettoErogatore().getNome());
 		connector.setTipoDestinatarioTrasmissioneBusta(idService.getSoggettoErogatore().getTipo());
-		
+
 		return connector;
+	}
+
+	/**
+	 * Restituisce {@code true} se il connettore va considerato "mancante" ai fini della
+	 * ricerca gerarchica del connettore di forward. Un connettore null o di tipo
+	 * {@code disabilitato} e' mancante, MA un container LLM (tipo=disabilitato come
+	 * placeholder con sezione {@code ConnettoreLlm} popolata) e' invece valido: il
+	 * {@code LLMConnectorResolver} a runtime selezionera' il provider concreto in base
+	 * al campo {@code model} della request canonica.
+	 */
+	private static boolean isConnettoreMissing(org.openspcoop2.core.config.Connettore c) {
+		if (c == null) {
+			return true;
+		}
+		if (!CostantiRegistroServizi.DISABILITATO.equals(c.getTipo())) {
+			return false;
+		}
+		// disabilitato con ConnettoreLlm valorizzato -> container LLM valido
+		return !(c.getConnettoreLlm() != null && c.getConnettoreLlm().sizeProviderList() > 0);
 	}
 
 
 	/**
 	 * Dato un oggetto di tipo {@link org.openspcoop2.core.id.IDSoggetto}, fornito con il parametro
-	 * <var>idSoggetto</var> cerca di trovare il connettore 
+	 * <var>idSoggetto</var> cerca di trovare il connettore
 	 * associato al soggetto.
 	 * Le informazioni sul connettore sono inserite in un oggetto di tipo {@link org.openspcoop2.core.config.Connettore}
 	 *

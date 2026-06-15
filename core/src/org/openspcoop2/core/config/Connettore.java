@@ -42,6 +42,7 @@ import java.util.Set;
  * &lt;complexType name="connettore"&gt;
  * 		&lt;sequence&gt;
  * 			&lt;element name="property" type="{http://www.openspcoop2.org/core/config}Property" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="connettore-llm" type="{http://www.openspcoop2.org/core/config}connettore-llm" minOccurs="0" maxOccurs="1"/&gt;
  * 		&lt;/sequence&gt;
  * 		&lt;attribute name="nome-registro" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
  * 		&lt;attribute name="tipo-destinatario-trasmissione-busta" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
@@ -61,7 +62,8 @@ import java.util.Set;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "connettore", 
   propOrder = {
-  	"property"
+  	"property",
+  	"connettoreLlm"
   }
 )
 
@@ -94,6 +96,14 @@ public class Connettore extends org.openspcoop2.utils.beans.BaseBeanWithId imple
 
   public int sizePropertyList() {
     return this.property.size();
+  }
+
+  public ConnettoreLlm getConnettoreLlm() {
+    return this.connettoreLlm;
+  }
+
+  public void setConnettoreLlm(ConnettoreLlm connettoreLlm) {
+    this.connettoreLlm = connettoreLlm;
   }
 
   public java.lang.String getNomeRegistro() {
@@ -197,6 +207,9 @@ public void setProperties(Map<String,String> newmap){
   public int sizeProperty() {
   	return this.sizePropertyList();
   }
+
+  @XmlElement(name="connettore-llm",required=false,nillable=false)
+  protected ConnettoreLlm connettoreLlm;
 
   @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="nome-registro",required=false)

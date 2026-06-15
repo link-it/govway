@@ -21,14 +21,16 @@ package org.openspcoop2.core.statistiche.utils.serializer;
 
 import org.openspcoop2.generic_project.exception.DeserializerException;
 
-import org.openspcoop2.core.statistiche.Statistica;
-import org.openspcoop2.core.statistiche.StatisticaMensile;
-import org.openspcoop2.core.statistiche.StatisticaContenuti;
-import org.openspcoop2.core.statistiche.StatisticaGiornaliera;
-import org.openspcoop2.core.statistiche.StatistichePdndTracing;
-import org.openspcoop2.core.statistiche.StatisticaSettimanale;
-import org.openspcoop2.core.statistiche.StatisticaOraria;
+import org.openspcoop2.core.statistiche.StatisticaOrariaLlm;
 import org.openspcoop2.core.statistiche.StatisticaInfo;
+import org.openspcoop2.core.statistiche.Statistica;
+import org.openspcoop2.core.statistiche.StatisticaSettimanale;
+import org.openspcoop2.core.statistiche.StatisticaContenuti;
+import org.openspcoop2.core.statistiche.StatisticaOraria;
+import org.openspcoop2.core.statistiche.StatistichePdndTracing;
+import org.openspcoop2.core.statistiche.StatisticaGiornaliera;
+import org.openspcoop2.core.statistiche.StatisticaGiornalieraLlm;
+import org.openspcoop2.core.statistiche.StatisticaMensile;
 
 import java.io.InputStream;
 import java.io.File;
@@ -46,6 +48,132 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 
 
 
+	/*
+	 =================================================================================
+	 Object: statistica-oraria-llm
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.statistiche.StatisticaOrariaLlm}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatisticaOrariaLlm}
+	 * @return Object type {@link org.openspcoop2.core.statistiche.StatisticaOrariaLlm}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public StatisticaOrariaLlm readStatisticaOrariaLlm(String fileName) throws DeserializerException {
+		return (StatisticaOrariaLlm) this.xmlToObj(fileName, StatisticaOrariaLlm.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.statistiche.StatisticaOrariaLlm}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatisticaOrariaLlm}
+	 * @return Object type {@link org.openspcoop2.core.statistiche.StatisticaOrariaLlm}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public StatisticaOrariaLlm readStatisticaOrariaLlm(File file) throws DeserializerException {
+		return (StatisticaOrariaLlm) this.xmlToObj(file, StatisticaOrariaLlm.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.statistiche.StatisticaOrariaLlm}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatisticaOrariaLlm}
+	 * @return Object type {@link org.openspcoop2.core.statistiche.StatisticaOrariaLlm}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public StatisticaOrariaLlm readStatisticaOrariaLlm(InputStream in) throws DeserializerException {
+		return (StatisticaOrariaLlm) this.xmlToObj(in, StatisticaOrariaLlm.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.statistiche.StatisticaOrariaLlm}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatisticaOrariaLlm}
+	 * @return Object type {@link org.openspcoop2.core.statistiche.StatisticaOrariaLlm}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public StatisticaOrariaLlm readStatisticaOrariaLlm(byte[] in) throws DeserializerException {
+		return (StatisticaOrariaLlm) this.xmlToObj(in, StatisticaOrariaLlm.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.statistiche.StatisticaOrariaLlm}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatisticaOrariaLlm}
+	 * @return Object type {@link org.openspcoop2.core.statistiche.StatisticaOrariaLlm}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public StatisticaOrariaLlm readStatisticaOrariaLlmFromString(String in) throws DeserializerException {
+		return (StatisticaOrariaLlm) this.xmlToObj(in.getBytes(), StatisticaOrariaLlm.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: statistica-info
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.statistiche.StatisticaInfo}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatisticaInfo}
+	 * @return Object type {@link org.openspcoop2.core.statistiche.StatisticaInfo}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public StatisticaInfo readStatisticaInfo(String fileName) throws DeserializerException {
+		return (StatisticaInfo) this.xmlToObj(fileName, StatisticaInfo.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.statistiche.StatisticaInfo}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatisticaInfo}
+	 * @return Object type {@link org.openspcoop2.core.statistiche.StatisticaInfo}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public StatisticaInfo readStatisticaInfo(File file) throws DeserializerException {
+		return (StatisticaInfo) this.xmlToObj(file, StatisticaInfo.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.statistiche.StatisticaInfo}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatisticaInfo}
+	 * @return Object type {@link org.openspcoop2.core.statistiche.StatisticaInfo}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public StatisticaInfo readStatisticaInfo(InputStream in) throws DeserializerException {
+		return (StatisticaInfo) this.xmlToObj(in, StatisticaInfo.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.statistiche.StatisticaInfo}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatisticaInfo}
+	 * @return Object type {@link org.openspcoop2.core.statistiche.StatisticaInfo}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public StatisticaInfo readStatisticaInfo(byte[] in) throws DeserializerException {
+		return (StatisticaInfo) this.xmlToObj(in, StatisticaInfo.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.statistiche.StatisticaInfo}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatisticaInfo}
+	 * @return Object type {@link org.openspcoop2.core.statistiche.StatisticaInfo}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public StatisticaInfo readStatisticaInfoFromString(String in) throws DeserializerException {
+		return (StatisticaInfo) this.xmlToObj(in.getBytes(), StatisticaInfo.class);
+	}	
+	
+	
+	
 	/*
 	 =================================================================================
 	 Object: statistica
@@ -105,258 +233,6 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	 */
 	public Statistica readStatisticaFromString(String in) throws DeserializerException {
 		return (Statistica) this.xmlToObj(in.getBytes(), Statistica.class);
-	}	
-	
-	
-	
-	/*
-	 =================================================================================
-	 Object: statistica-mensile
-	 =================================================================================
-	*/
-	
-	/**
-	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.statistiche.StatisticaMensile}
-	 * 
-	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatisticaMensile}
-	 * @return Object type {@link org.openspcoop2.core.statistiche.StatisticaMensile}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public StatisticaMensile readStatisticaMensile(String fileName) throws DeserializerException {
-		return (StatisticaMensile) this.xmlToObj(fileName, StatisticaMensile.class);
-	}
-	
-	/**
-	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.statistiche.StatisticaMensile}
-	 * 
-	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatisticaMensile}
-	 * @return Object type {@link org.openspcoop2.core.statistiche.StatisticaMensile}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public StatisticaMensile readStatisticaMensile(File file) throws DeserializerException {
-		return (StatisticaMensile) this.xmlToObj(file, StatisticaMensile.class);
-	}
-	
-	/**
-	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.statistiche.StatisticaMensile}
-	 * 
-	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatisticaMensile}
-	 * @return Object type {@link org.openspcoop2.core.statistiche.StatisticaMensile}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public StatisticaMensile readStatisticaMensile(InputStream in) throws DeserializerException {
-		return (StatisticaMensile) this.xmlToObj(in, StatisticaMensile.class);
-	}	
-	
-	/**
-	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.statistiche.StatisticaMensile}
-	 * 
-	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatisticaMensile}
-	 * @return Object type {@link org.openspcoop2.core.statistiche.StatisticaMensile}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public StatisticaMensile readStatisticaMensile(byte[] in) throws DeserializerException {
-		return (StatisticaMensile) this.xmlToObj(in, StatisticaMensile.class);
-	}	
-	
-	/**
-	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.statistiche.StatisticaMensile}
-	 * 
-	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatisticaMensile}
-	 * @return Object type {@link org.openspcoop2.core.statistiche.StatisticaMensile}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public StatisticaMensile readStatisticaMensileFromString(String in) throws DeserializerException {
-		return (StatisticaMensile) this.xmlToObj(in.getBytes(), StatisticaMensile.class);
-	}	
-	
-	
-	
-	/*
-	 =================================================================================
-	 Object: statistica-contenuti
-	 =================================================================================
-	*/
-	
-	/**
-	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.statistiche.StatisticaContenuti}
-	 * 
-	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatisticaContenuti}
-	 * @return Object type {@link org.openspcoop2.core.statistiche.StatisticaContenuti}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public StatisticaContenuti readStatisticaContenuti(String fileName) throws DeserializerException {
-		return (StatisticaContenuti) this.xmlToObj(fileName, StatisticaContenuti.class);
-	}
-	
-	/**
-	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.statistiche.StatisticaContenuti}
-	 * 
-	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatisticaContenuti}
-	 * @return Object type {@link org.openspcoop2.core.statistiche.StatisticaContenuti}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public StatisticaContenuti readStatisticaContenuti(File file) throws DeserializerException {
-		return (StatisticaContenuti) this.xmlToObj(file, StatisticaContenuti.class);
-	}
-	
-	/**
-	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.statistiche.StatisticaContenuti}
-	 * 
-	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatisticaContenuti}
-	 * @return Object type {@link org.openspcoop2.core.statistiche.StatisticaContenuti}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public StatisticaContenuti readStatisticaContenuti(InputStream in) throws DeserializerException {
-		return (StatisticaContenuti) this.xmlToObj(in, StatisticaContenuti.class);
-	}	
-	
-	/**
-	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.statistiche.StatisticaContenuti}
-	 * 
-	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatisticaContenuti}
-	 * @return Object type {@link org.openspcoop2.core.statistiche.StatisticaContenuti}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public StatisticaContenuti readStatisticaContenuti(byte[] in) throws DeserializerException {
-		return (StatisticaContenuti) this.xmlToObj(in, StatisticaContenuti.class);
-	}	
-	
-	/**
-	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.statistiche.StatisticaContenuti}
-	 * 
-	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatisticaContenuti}
-	 * @return Object type {@link org.openspcoop2.core.statistiche.StatisticaContenuti}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public StatisticaContenuti readStatisticaContenutiFromString(String in) throws DeserializerException {
-		return (StatisticaContenuti) this.xmlToObj(in.getBytes(), StatisticaContenuti.class);
-	}	
-	
-	
-	
-	/*
-	 =================================================================================
-	 Object: statistica-giornaliera
-	 =================================================================================
-	*/
-	
-	/**
-	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.statistiche.StatisticaGiornaliera}
-	 * 
-	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatisticaGiornaliera}
-	 * @return Object type {@link org.openspcoop2.core.statistiche.StatisticaGiornaliera}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public StatisticaGiornaliera readStatisticaGiornaliera(String fileName) throws DeserializerException {
-		return (StatisticaGiornaliera) this.xmlToObj(fileName, StatisticaGiornaliera.class);
-	}
-	
-	/**
-	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.statistiche.StatisticaGiornaliera}
-	 * 
-	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatisticaGiornaliera}
-	 * @return Object type {@link org.openspcoop2.core.statistiche.StatisticaGiornaliera}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public StatisticaGiornaliera readStatisticaGiornaliera(File file) throws DeserializerException {
-		return (StatisticaGiornaliera) this.xmlToObj(file, StatisticaGiornaliera.class);
-	}
-	
-	/**
-	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.statistiche.StatisticaGiornaliera}
-	 * 
-	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatisticaGiornaliera}
-	 * @return Object type {@link org.openspcoop2.core.statistiche.StatisticaGiornaliera}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public StatisticaGiornaliera readStatisticaGiornaliera(InputStream in) throws DeserializerException {
-		return (StatisticaGiornaliera) this.xmlToObj(in, StatisticaGiornaliera.class);
-	}	
-	
-	/**
-	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.statistiche.StatisticaGiornaliera}
-	 * 
-	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatisticaGiornaliera}
-	 * @return Object type {@link org.openspcoop2.core.statistiche.StatisticaGiornaliera}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public StatisticaGiornaliera readStatisticaGiornaliera(byte[] in) throws DeserializerException {
-		return (StatisticaGiornaliera) this.xmlToObj(in, StatisticaGiornaliera.class);
-	}	
-	
-	/**
-	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.statistiche.StatisticaGiornaliera}
-	 * 
-	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatisticaGiornaliera}
-	 * @return Object type {@link org.openspcoop2.core.statistiche.StatisticaGiornaliera}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public StatisticaGiornaliera readStatisticaGiornalieraFromString(String in) throws DeserializerException {
-		return (StatisticaGiornaliera) this.xmlToObj(in.getBytes(), StatisticaGiornaliera.class);
-	}	
-	
-	
-	
-	/*
-	 =================================================================================
-	 Object: statistiche-pdnd-tracing
-	 =================================================================================
-	*/
-	
-	/**
-	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
-	 * 
-	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
-	 * @return Object type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public StatistichePdndTracing readStatistichePdndTracing(String fileName) throws DeserializerException {
-		return (StatistichePdndTracing) this.xmlToObj(fileName, StatistichePdndTracing.class);
-	}
-	
-	/**
-	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
-	 * 
-	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
-	 * @return Object type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public StatistichePdndTracing readStatistichePdndTracing(File file) throws DeserializerException {
-		return (StatistichePdndTracing) this.xmlToObj(file, StatistichePdndTracing.class);
-	}
-	
-	/**
-	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
-	 * 
-	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
-	 * @return Object type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public StatistichePdndTracing readStatistichePdndTracing(InputStream in) throws DeserializerException {
-		return (StatistichePdndTracing) this.xmlToObj(in, StatistichePdndTracing.class);
-	}	
-	
-	/**
-	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
-	 * 
-	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
-	 * @return Object type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public StatistichePdndTracing readStatistichePdndTracing(byte[] in) throws DeserializerException {
-		return (StatistichePdndTracing) this.xmlToObj(in, StatistichePdndTracing.class);
-	}	
-	
-	/**
-	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
-	 * 
-	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
-	 * @return Object type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public StatistichePdndTracing readStatistichePdndTracingFromString(String in) throws DeserializerException {
-		return (StatistichePdndTracing) this.xmlToObj(in.getBytes(), StatistichePdndTracing.class);
 	}	
 	
 	
@@ -426,6 +302,69 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	
 	/*
 	 =================================================================================
+	 Object: statistica-contenuti
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.statistiche.StatisticaContenuti}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatisticaContenuti}
+	 * @return Object type {@link org.openspcoop2.core.statistiche.StatisticaContenuti}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public StatisticaContenuti readStatisticaContenuti(String fileName) throws DeserializerException {
+		return (StatisticaContenuti) this.xmlToObj(fileName, StatisticaContenuti.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.statistiche.StatisticaContenuti}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatisticaContenuti}
+	 * @return Object type {@link org.openspcoop2.core.statistiche.StatisticaContenuti}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public StatisticaContenuti readStatisticaContenuti(File file) throws DeserializerException {
+		return (StatisticaContenuti) this.xmlToObj(file, StatisticaContenuti.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.statistiche.StatisticaContenuti}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatisticaContenuti}
+	 * @return Object type {@link org.openspcoop2.core.statistiche.StatisticaContenuti}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public StatisticaContenuti readStatisticaContenuti(InputStream in) throws DeserializerException {
+		return (StatisticaContenuti) this.xmlToObj(in, StatisticaContenuti.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.statistiche.StatisticaContenuti}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatisticaContenuti}
+	 * @return Object type {@link org.openspcoop2.core.statistiche.StatisticaContenuti}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public StatisticaContenuti readStatisticaContenuti(byte[] in) throws DeserializerException {
+		return (StatisticaContenuti) this.xmlToObj(in, StatisticaContenuti.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.statistiche.StatisticaContenuti}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatisticaContenuti}
+	 * @return Object type {@link org.openspcoop2.core.statistiche.StatisticaContenuti}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public StatisticaContenuti readStatisticaContenutiFromString(String in) throws DeserializerException {
+		return (StatisticaContenuti) this.xmlToObj(in.getBytes(), StatisticaContenuti.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
 	 Object: statistica-oraria
 	 =================================================================================
 	*/
@@ -489,63 +428,252 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	
 	/*
 	 =================================================================================
-	 Object: statistica-info
+	 Object: statistiche-pdnd-tracing
 	 =================================================================================
 	*/
 	
 	/**
-	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.statistiche.StatisticaInfo}
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
 	 * 
-	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatisticaInfo}
-	 * @return Object type {@link org.openspcoop2.core.statistiche.StatisticaInfo}
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
+	 * @return Object type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
 	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
 	 */
-	public StatisticaInfo readStatisticaInfo(String fileName) throws DeserializerException {
-		return (StatisticaInfo) this.xmlToObj(fileName, StatisticaInfo.class);
+	public StatistichePdndTracing readStatistichePdndTracing(String fileName) throws DeserializerException {
+		return (StatistichePdndTracing) this.xmlToObj(fileName, StatistichePdndTracing.class);
 	}
 	
 	/**
-	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.statistiche.StatisticaInfo}
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
 	 * 
-	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatisticaInfo}
-	 * @return Object type {@link org.openspcoop2.core.statistiche.StatisticaInfo}
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
+	 * @return Object type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
 	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
 	 */
-	public StatisticaInfo readStatisticaInfo(File file) throws DeserializerException {
-		return (StatisticaInfo) this.xmlToObj(file, StatisticaInfo.class);
+	public StatistichePdndTracing readStatistichePdndTracing(File file) throws DeserializerException {
+		return (StatistichePdndTracing) this.xmlToObj(file, StatistichePdndTracing.class);
 	}
 	
 	/**
-	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.statistiche.StatisticaInfo}
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
 	 * 
-	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatisticaInfo}
-	 * @return Object type {@link org.openspcoop2.core.statistiche.StatisticaInfo}
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
+	 * @return Object type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
 	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
 	 */
-	public StatisticaInfo readStatisticaInfo(InputStream in) throws DeserializerException {
-		return (StatisticaInfo) this.xmlToObj(in, StatisticaInfo.class);
+	public StatistichePdndTracing readStatistichePdndTracing(InputStream in) throws DeserializerException {
+		return (StatistichePdndTracing) this.xmlToObj(in, StatistichePdndTracing.class);
 	}	
 	
 	/**
-	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.statistiche.StatisticaInfo}
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
 	 * 
-	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatisticaInfo}
-	 * @return Object type {@link org.openspcoop2.core.statistiche.StatisticaInfo}
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
+	 * @return Object type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
 	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
 	 */
-	public StatisticaInfo readStatisticaInfo(byte[] in) throws DeserializerException {
-		return (StatisticaInfo) this.xmlToObj(in, StatisticaInfo.class);
+	public StatistichePdndTracing readStatistichePdndTracing(byte[] in) throws DeserializerException {
+		return (StatistichePdndTracing) this.xmlToObj(in, StatistichePdndTracing.class);
 	}	
 	
 	/**
-	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.statistiche.StatisticaInfo}
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
 	 * 
-	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatisticaInfo}
-	 * @return Object type {@link org.openspcoop2.core.statistiche.StatisticaInfo}
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
+	 * @return Object type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
 	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
 	 */
-	public StatisticaInfo readStatisticaInfoFromString(String in) throws DeserializerException {
-		return (StatisticaInfo) this.xmlToObj(in.getBytes(), StatisticaInfo.class);
+	public StatistichePdndTracing readStatistichePdndTracingFromString(String in) throws DeserializerException {
+		return (StatistichePdndTracing) this.xmlToObj(in.getBytes(), StatistichePdndTracing.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: statistica-giornaliera
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.statistiche.StatisticaGiornaliera}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatisticaGiornaliera}
+	 * @return Object type {@link org.openspcoop2.core.statistiche.StatisticaGiornaliera}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public StatisticaGiornaliera readStatisticaGiornaliera(String fileName) throws DeserializerException {
+		return (StatisticaGiornaliera) this.xmlToObj(fileName, StatisticaGiornaliera.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.statistiche.StatisticaGiornaliera}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatisticaGiornaliera}
+	 * @return Object type {@link org.openspcoop2.core.statistiche.StatisticaGiornaliera}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public StatisticaGiornaliera readStatisticaGiornaliera(File file) throws DeserializerException {
+		return (StatisticaGiornaliera) this.xmlToObj(file, StatisticaGiornaliera.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.statistiche.StatisticaGiornaliera}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatisticaGiornaliera}
+	 * @return Object type {@link org.openspcoop2.core.statistiche.StatisticaGiornaliera}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public StatisticaGiornaliera readStatisticaGiornaliera(InputStream in) throws DeserializerException {
+		return (StatisticaGiornaliera) this.xmlToObj(in, StatisticaGiornaliera.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.statistiche.StatisticaGiornaliera}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatisticaGiornaliera}
+	 * @return Object type {@link org.openspcoop2.core.statistiche.StatisticaGiornaliera}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public StatisticaGiornaliera readStatisticaGiornaliera(byte[] in) throws DeserializerException {
+		return (StatisticaGiornaliera) this.xmlToObj(in, StatisticaGiornaliera.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.statistiche.StatisticaGiornaliera}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatisticaGiornaliera}
+	 * @return Object type {@link org.openspcoop2.core.statistiche.StatisticaGiornaliera}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public StatisticaGiornaliera readStatisticaGiornalieraFromString(String in) throws DeserializerException {
+		return (StatisticaGiornaliera) this.xmlToObj(in.getBytes(), StatisticaGiornaliera.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: statistica-giornaliera-llm
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.statistiche.StatisticaGiornalieraLlm}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatisticaGiornalieraLlm}
+	 * @return Object type {@link org.openspcoop2.core.statistiche.StatisticaGiornalieraLlm}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public StatisticaGiornalieraLlm readStatisticaGiornalieraLlm(String fileName) throws DeserializerException {
+		return (StatisticaGiornalieraLlm) this.xmlToObj(fileName, StatisticaGiornalieraLlm.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.statistiche.StatisticaGiornalieraLlm}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatisticaGiornalieraLlm}
+	 * @return Object type {@link org.openspcoop2.core.statistiche.StatisticaGiornalieraLlm}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public StatisticaGiornalieraLlm readStatisticaGiornalieraLlm(File file) throws DeserializerException {
+		return (StatisticaGiornalieraLlm) this.xmlToObj(file, StatisticaGiornalieraLlm.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.statistiche.StatisticaGiornalieraLlm}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatisticaGiornalieraLlm}
+	 * @return Object type {@link org.openspcoop2.core.statistiche.StatisticaGiornalieraLlm}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public StatisticaGiornalieraLlm readStatisticaGiornalieraLlm(InputStream in) throws DeserializerException {
+		return (StatisticaGiornalieraLlm) this.xmlToObj(in, StatisticaGiornalieraLlm.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.statistiche.StatisticaGiornalieraLlm}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatisticaGiornalieraLlm}
+	 * @return Object type {@link org.openspcoop2.core.statistiche.StatisticaGiornalieraLlm}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public StatisticaGiornalieraLlm readStatisticaGiornalieraLlm(byte[] in) throws DeserializerException {
+		return (StatisticaGiornalieraLlm) this.xmlToObj(in, StatisticaGiornalieraLlm.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.statistiche.StatisticaGiornalieraLlm}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatisticaGiornalieraLlm}
+	 * @return Object type {@link org.openspcoop2.core.statistiche.StatisticaGiornalieraLlm}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public StatisticaGiornalieraLlm readStatisticaGiornalieraLlmFromString(String in) throws DeserializerException {
+		return (StatisticaGiornalieraLlm) this.xmlToObj(in.getBytes(), StatisticaGiornalieraLlm.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: statistica-mensile
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.statistiche.StatisticaMensile}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatisticaMensile}
+	 * @return Object type {@link org.openspcoop2.core.statistiche.StatisticaMensile}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public StatisticaMensile readStatisticaMensile(String fileName) throws DeserializerException {
+		return (StatisticaMensile) this.xmlToObj(fileName, StatisticaMensile.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.statistiche.StatisticaMensile}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatisticaMensile}
+	 * @return Object type {@link org.openspcoop2.core.statistiche.StatisticaMensile}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public StatisticaMensile readStatisticaMensile(File file) throws DeserializerException {
+		return (StatisticaMensile) this.xmlToObj(file, StatisticaMensile.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.statistiche.StatisticaMensile}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatisticaMensile}
+	 * @return Object type {@link org.openspcoop2.core.statistiche.StatisticaMensile}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public StatisticaMensile readStatisticaMensile(InputStream in) throws DeserializerException {
+		return (StatisticaMensile) this.xmlToObj(in, StatisticaMensile.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.statistiche.StatisticaMensile}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatisticaMensile}
+	 * @return Object type {@link org.openspcoop2.core.statistiche.StatisticaMensile}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public StatisticaMensile readStatisticaMensile(byte[] in) throws DeserializerException {
+		return (StatisticaMensile) this.xmlToObj(in, StatisticaMensile.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.statistiche.StatisticaMensile}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatisticaMensile}
+	 * @return Object type {@link org.openspcoop2.core.statistiche.StatisticaMensile}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public StatisticaMensile readStatisticaMensileFromString(String in) throws DeserializerException {
+		return (StatisticaMensile) this.xmlToObj(in.getBytes(), StatisticaMensile.class);
 	}	
 	
 	

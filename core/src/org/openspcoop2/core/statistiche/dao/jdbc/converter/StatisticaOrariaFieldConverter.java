@@ -499,6 +499,55 @@ public class StatisticaOrariaFieldConverter extends AbstractSQLFieldConverter {
 				return "latenza_servizio";
 			}
 		}
+		if(field.equals(StatisticaOraria.model().STATISTICA_ORARIA_LLM.DATA)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".data";
+			}else{
+				return "data";
+			}
+		}
+		if(field.equals(StatisticaOraria.model().STATISTICA_ORARIA_LLM.LLM_PROVIDER)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".llm_provider";
+			}else{
+				return "llm_provider";
+			}
+		}
+		if(field.equals(StatisticaOraria.model().STATISTICA_ORARIA_LLM.LLM_MODEL)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".llm_model";
+			}else{
+				return "llm_model";
+			}
+		}
+		if(field.equals(StatisticaOraria.model().STATISTICA_ORARIA_LLM.LLM_PROVIDER_BINDING)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".llm_provider_binding";
+			}else{
+				return "llm_provider_binding";
+			}
+		}
+		if(field.equals(StatisticaOraria.model().STATISTICA_ORARIA_LLM.TOKEN_INPUT)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".token_input";
+			}else{
+				return "token_input";
+			}
+		}
+		if(field.equals(StatisticaOraria.model().STATISTICA_ORARIA_LLM.TOKEN_OUTPUT)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".token_output";
+			}else{
+				return "token_output";
+			}
+		}
+		if(field.equals(StatisticaOraria.model().STATISTICA_ORARIA_LLM.COST_ESTIMATED)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".cost_estimated";
+			}else{
+				return "cost_estimated";
+			}
+		}
 
 
 		return super.toColumn(field,returnAlias,appendTablePrefix);
@@ -698,6 +747,27 @@ public class StatisticaOrariaFieldConverter extends AbstractSQLFieldConverter {
 		if(field.equals(StatisticaOraria.model().STATISTICA_ORARIA_CONTENUTI.LATENZA_SERVIZIO)){
 			return this.toTable(StatisticaOraria.model().STATISTICA_ORARIA_CONTENUTI, returnAlias);
 		}
+		if(field.equals(StatisticaOraria.model().STATISTICA_ORARIA_LLM.DATA)){
+			return this.toTable(StatisticaOraria.model().STATISTICA_ORARIA_LLM, returnAlias);
+		}
+		if(field.equals(StatisticaOraria.model().STATISTICA_ORARIA_LLM.LLM_PROVIDER)){
+			return this.toTable(StatisticaOraria.model().STATISTICA_ORARIA_LLM, returnAlias);
+		}
+		if(field.equals(StatisticaOraria.model().STATISTICA_ORARIA_LLM.LLM_MODEL)){
+			return this.toTable(StatisticaOraria.model().STATISTICA_ORARIA_LLM, returnAlias);
+		}
+		if(field.equals(StatisticaOraria.model().STATISTICA_ORARIA_LLM.LLM_PROVIDER_BINDING)){
+			return this.toTable(StatisticaOraria.model().STATISTICA_ORARIA_LLM, returnAlias);
+		}
+		if(field.equals(StatisticaOraria.model().STATISTICA_ORARIA_LLM.TOKEN_INPUT)){
+			return this.toTable(StatisticaOraria.model().STATISTICA_ORARIA_LLM, returnAlias);
+		}
+		if(field.equals(StatisticaOraria.model().STATISTICA_ORARIA_LLM.TOKEN_OUTPUT)){
+			return this.toTable(StatisticaOraria.model().STATISTICA_ORARIA_LLM, returnAlias);
+		}
+		if(field.equals(StatisticaOraria.model().STATISTICA_ORARIA_LLM.COST_ESTIMATED)){
+			return this.toTable(StatisticaOraria.model().STATISTICA_ORARIA_LLM, returnAlias);
+		}
 
 
 		return super.toTable(field,returnAlias);
@@ -719,6 +789,9 @@ public class StatisticaOrariaFieldConverter extends AbstractSQLFieldConverter {
 		}
 		if(model.equals(StatisticaOraria.model().STATISTICA_ORARIA_CONTENUTI)){
 			return CostantiDB.STATISTICHE_ORARIE_CONTENUTI;
+		}
+		if(model.equals(StatisticaOraria.model().STATISTICA_ORARIA_LLM)){
+			return CostantiDB.STATISTICHE_ORARIE_LLM;
 		}
 
 

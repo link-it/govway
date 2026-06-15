@@ -2897,6 +2897,40 @@
             <forward name="porteApplicativeConnettoriMultipliConfigAzioniDel" path="/jsplib/listElement.jsp"/>
             <forward name="porteApplicativeConnettoriMultipliConfigAzioniError" path="/jsplib/info.jsp"/>
         </action>
+
+        <!--  LLM (Connettori Multipli) -->
+
+        <action path="/llmConnettoriMultipliList" type="org.openspcoop2.web.ctrlstat.servlet.aps.llm.LlmConnettoriMultipliList"
+            scope="request" validate="true">
+            <forward name="llmConnettoriMultipliList" path="/jsplib/listElement.jsp"/>
+            <forward name="llmConnettoriMultipliError" path="/jsplib/info.jsp"/>
+        </action>
+
+        <action path="/llmConnettoriMultipliAbilitazione" type="org.openspcoop2.web.ctrlstat.servlet.aps.llm.LlmConnettoriMultipliAbilitazione"
+            scope="request" validate="true">
+            <forward name="llmConnettoriMultipliAbilitazioneOk" path="/llmConnettoriMultipliList.do" redirect="true"/>
+            <forward name="llmConnettoriMultipliAbilitazioneError" path="/jsplib/info.jsp"/>
+        </action>
+
+        <action path="/llmConnettoriMultipliAdd" type="org.openspcoop2.web.ctrlstat.servlet.aps.llm.LlmConnettoriMultipliAdd"
+            scope="request" validate="true">
+            <forward name="llmConnettoriMultipliAdd" path="/jsplib/addElement.jsp"/>
+            <forward name="llmConnettoriMultipliOk" path="/llmConnettoriMultipliList.do" redirect="true"/>
+            <forward name="llmConnettoriMultipliError" path="/jsplib/info.jsp"/>
+        </action>
+
+        <action path="/llmConnettoriMultipliChange" type="org.openspcoop2.web.ctrlstat.servlet.aps.llm.LlmConnettoriMultipliChange"
+            scope="request" validate="true">
+            <forward name="llmConnettoriMultipliChange" path="/jsplib/addElement.jsp"/>
+            <forward name="llmConnettoriMultipliOk" path="/llmConnettoriMultipliList.do" redirect="true"/>
+            <forward name="llmConnettoriMultipliError" path="/jsplib/info.jsp"/>
+        </action>
+
+        <action path="/llmConnettoriMultipliDel" type="org.openspcoop2.web.ctrlstat.servlet.aps.llm.LlmConnettoriMultipliDel"
+            scope="request" validate="true">
+            <forward name="llmConnettoriMultipliOk" path="/llmConnettoriMultipliList.do" redirect="true"/>
+            <forward name="llmConnettoriMultipliError" path="/jsplib/info.jsp"/>
+        </action>
     
     	<!--  Configurazione (Generale) -->
     	
@@ -3405,8 +3439,16 @@
             <forward name="configurazioneDumpConfigurazioneError" path="/jsplib/info.jsp"/>
         </action>
         
+   		<!-- Configurazione LLM (Hub) -->
+
+    	<action path="/configurazioneLLM" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneLLM"
+            scope="request" validate="true">
+            <forward name="configurazioneLLMForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneLLMError" path="/jsplib/info.jsp"/>
+        </action>
+
    		<!-- Configurazione Controllo Traffico -->
-    
+
     	<action path="/configurazioneControlloTraffico" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneControlloTraffico"
             scope="request" validate="true">
             <forward name="configurazioneControlloTrafficoForm" path="/jsplib/addElement.jsp"/>

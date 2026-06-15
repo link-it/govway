@@ -1267,6 +1267,20 @@ public class ConnettoriHelper extends ConsoleHelper {
 
 	public List<DataElement> addLLMProvider(List<DataElement> dati, String llmPolicy, TipoOperazione tipoOperazione,
 			boolean postBackViaPost) throws DriverConfigurazioneException{
+		return addLLMProvider(dati, llmPolicy, null, tipoOperazione, postBackViaPost);
+	}
+
+	/**
+	 * Renderizza nel form la sezione "LLM" del connettore: select del Provider (single)
+	 * e multi-select dei binding ({@code Modelli}) disponibili per quel Provider.
+	 * Il Provider seleziona via postBack per ricaricare la lista dei binding compatibili.
+	 *
+	 * @param llmBindingsSelected nomi dei binding gia' configurati sul connettore
+	 *        (es. letti da {@code connettore.connettoreLlm.bindingList}); null o vuoto
+	 *        per primo render senza selezioni.
+	 */
+	public List<DataElement> addLLMProvider(List<DataElement> dati, String llmPolicy, String[] llmBindingsSelected,
+			TipoOperazione tipoOperazione, boolean postBackViaPost) throws DriverConfigurazioneException{
 
 		List<String> policyConfiguredList = getLLMProviderList(true, llmPolicy, tipoOperazione);
 		if(!policyConfiguredList.contains(llmPolicy)) {
@@ -1276,8 +1290,48 @@ public class ConnettoriHelper extends ConsoleHelper {
 		DataElement de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_LLM_PROVIDER_SECTION);
 		de.setType(DataElementType.TITLE);
+		// Su CHANGE rendo accessibile la pagina "Configurazione Connettori LLM" via rotella
+		// accanto al titolo della sezione: passa per LlmConnettoriMultipliAbilitazione che
+		// inoltra alla list dei provider del container.
+		if (tipoOperazione == TipoOperazione.CHANGE) {
+			String idAsps = null;
+			String idSoggettoFruitore = null;
+			String idPorta = null;
+			String idPortaDelegata = null;
+			try {
+				idAsps = this.getParameter(
+						org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
+				idSoggettoFruitore = this.getParameter(
+						org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PROVIDER_FRUITORE);
+				// Identificano il gruppo (PA per erogazione, PD per fruizione) se la maschera
+				// connettore arriva da un mapping/gruppo specifico con connettore ridefinito.
+				idPorta = this.getParameter(
+						org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
+				idPortaDelegata = this.getParameter(
+						org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
+			} catch (Exception e) {
+				// non bloccante: la rotella non viene resa
+			}
+			if (idAsps != null && !idAsps.isEmpty()) {
+				StringBuilder url = new StringBuilder();
+				url.append(org.openspcoop2.web.ctrlstat.servlet.aps.llm.LlmConnettoriMultipliCostanti.SERVLET_NAME_LLM_CONNETTORI_MULTIPLI_ABILITAZIONE);
+				url.append("?").append(org.openspcoop2.web.ctrlstat.servlet.aps.llm.LlmConnettoriMultipliCostanti.PARAMETRO_LLM_ID_ASPS).append("=").append(idAsps);
+				if (idSoggettoFruitore != null && !idSoggettoFruitore.isEmpty()) {
+					url.append("&").append(org.openspcoop2.web.ctrlstat.servlet.aps.llm.LlmConnettoriMultipliCostanti.PARAMETRO_LLM_ID_SOGGETTO_FRUITORE).append("=").append(idSoggettoFruitore);
+				}
+				if (idPorta != null && !idPorta.isEmpty()) {
+					url.append("&").append(org.openspcoop2.web.ctrlstat.servlet.aps.llm.LlmConnettoriMultipliCostanti.PARAMETRO_LLM_ID_PORTA).append("=").append(idPorta);
+				}
+				if (idPortaDelegata != null && !idPortaDelegata.isEmpty()) {
+					url.append("&").append(org.openspcoop2.web.ctrlstat.servlet.aps.llm.LlmConnettoriMultipliCostanti.PARAMETRO_LLM_ID_PORTA_DELEGATA).append("=").append(idPortaDelegata);
+				}
+				de.setIcon(org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation.ICONA_ELENCO_CONNETTORI_MULTIPLI,
+						org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation.ICONA_ELENCO_CONNETTORI_MULTIPLI_TOOLTIP, url.toString(), null);
+			}
+		}
 		dati.add(de);
 
+		// Provider (single)
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_LLM_PROVIDER);
 		de.setType(DataElementType.SELECT);
@@ -1294,14 +1348,50 @@ public class ConnettoriHelper extends ConsoleHelper {
 		}
 		dati.add(de);
 
+		// Modelli (multi) - dipendenti dal Provider scelto
+		List<String> bindingChoices = getLLMBindingNamesByProvider(llmPolicy);
+		String[] bindingSelected = filterValidBindings(llmBindingsSelected, bindingChoices);
+		de = new DataElement();
+		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_LLM_BINDING);
+		de.setType(DataElementType.MULTI_SELECT);
+		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_LLM_BINDING);
+		de.setValues(bindingChoices);
+		de.setLabels(bindingChoices);
+		de.setSelezionati(bindingSelected);
+		de.setRows(Math.max(3, Math.min(bindingChoices.size(), 8)));
+		// Required sempre: un container LLM senza modelli associati non e' utilizzabile.
+		// La validazione effettiva deve essere fatta lato server al save.
+		de.setRequired(true);
+		dati.add(de);
+
 		return dati;
+	}
+
+	/**
+	 * Filtra i binding selezionati conservando solo quelli che esistono ancora fra
+	 * le scelte valide (es. dopo cambio Provider, i binding di un altro Provider
+	 * non sono piu' applicabili).
+	 */
+	private static String[] filterValidBindings(String[] selected, List<String> validChoices) {
+		if (selected == null || selected.length == 0 || validChoices == null || validChoices.isEmpty()) {
+			return new String[0];
+		}
+		List<String> kept = new ArrayList<>();
+		for (String s : selected) {
+			if (s != null && validChoices.contains(s)) {
+				kept.add(s);
+			}
+		}
+		return kept.toArray(new String[0]);
 	}
 
 
 	/**
-	 * Legge la base URL configurata nella LLM Provider Policy.
-	 * Usata per popolare automaticamente il campo Endpoint del connettore quando
-	 * l'utente seleziona/cambia la policy nel form.
+	 * Legge la base URL associata al LLM Provider selezionato sul connettore
+	 * (tipologia {@code llmProvider}, property {@code llmProvider.baseUrl}).
+	 *
+	 * <p>Usata per popolare automaticamente il campo Endpoint del connettore quando l'utente
+	 * seleziona/cambia il Provider nel form.</p>
 	 */
 	public String getLLMProviderBaseUrl(String llmPolicyName) throws DriverConfigurazioneException {
 		if (llmPolicyName == null || llmPolicyName.isEmpty()
@@ -1309,14 +1399,14 @@ public class ConnettoriHelper extends ConsoleHelper {
 			return null;
 		}
 		try {
-			org.openspcoop2.core.config.GenericProperties gp = this.confCore.getGenericProperties(
+			org.openspcoop2.core.config.GenericProperties providerGp = this.confCore.getGenericProperties(
 					llmPolicyName,
 					org.openspcoop2.pdd.core.llm.provider.Costanti.TIPOLOGIA,
 					true);
-			if (gp == null || gp.getPropertyList() == null) {
+			if (providerGp == null || providerGp.getPropertyList() == null) {
 				return null;
 			}
-			for (org.openspcoop2.core.config.Property p : gp.getPropertyList()) {
+			for (org.openspcoop2.core.config.Property p : providerGp.getPropertyList()) {
 				if (org.openspcoop2.pdd.core.llm.provider.Costanti.LLM_PROVIDER_BASE_URL.equals(p.getNome())) {
 					return p.getValore();
 				}
@@ -1341,7 +1431,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 	 * nel form del connettore. Se manca, scrive il messaggio di errore in {@link PageData}
 	 * e ritorna false. Per API non-LLM è sempre OK (no-op).
 	 */
-	public boolean checkLLMPolicyData(boolean apiIsLLM, String llmPolicy) {
+	public boolean checkLLMPolicyData(boolean apiIsLLM, String llmPolicy) throws DriverControlStationException {
 		if (!apiIsLLM) {
 			return true;
 		}
@@ -1351,15 +1441,27 @@ public class ConnettoriHelper extends ConsoleHelper {
 					+ ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_LLM_PROVIDER);
 			return false;
 		}
+		String[] llmBindings = this.getParameterValues(ConnettoriCostanti.PARAMETRO_CONNETTORE_LLM_BINDING);
+		if (llmBindings == null || llmBindings.length == 0) {
+			this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_PREFISSO_DATI_INCOMPLETI_NECESSARIO_INDICARE
+					+ ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_LLM_BINDING);
+			return false;
+		}
 		return true;
 	}
 
 	public String addLLMProviderSectionAndResolveUrl(List<DataElement> dati, boolean apiIsLLM,
 			String llmPolicy, TipoOperazione tipoOperazione, boolean postBackViaPost) throws DriverConfigurazioneException, DriverControlStationException {
+		String[] llmBindings = this.getParameterValues(ConnettoriCostanti.PARAMETRO_CONNETTORE_LLM_BINDING);
+		return addLLMProviderSectionAndResolveUrl(dati, apiIsLLM, llmPolicy, llmBindings, tipoOperazione, postBackViaPost);
+	}
+
+	public String addLLMProviderSectionAndResolveUrl(List<DataElement> dati, boolean apiIsLLM,
+			String llmPolicy, String[] llmBindings, TipoOperazione tipoOperazione, boolean postBackViaPost) throws DriverConfigurazioneException, DriverControlStationException {
 		if (!apiIsLLM) {
 			return null;
 		}
-		addLLMProvider(dati, llmPolicy, tipoOperazione, postBackViaPost);
+		addLLMProvider(dati, llmPolicy, llmBindings, tipoOperazione, postBackViaPost);
 		if (ConnettoriCostanti.PARAMETRO_CONNETTORE_LLM_PROVIDER.equals(this.getPostBackElementName())
 				&& llmPolicy != null && !llmPolicy.isEmpty()) {
 			return getLLMProviderBaseUrl(llmPolicy);
@@ -1394,6 +1496,190 @@ public class ConnettoriHelper extends ConsoleHelper {
 		prop.setNome(org.openspcoop2.core.constants.CostantiConnettori.CONNETTORE_LLM_POLICY);
 		prop.setValore(llmPolicy);
 		connettore.addProperty(prop);
+	}
+
+	/**
+	 * Trasforma il connettore compilato dall'utente (concreto, con tipo+property+binding
+	 * scelti via form) in un container LLM di tipo {@code disabilitato} che lo wrappa
+	 * come unico {@code ConnettoreLlmProviderRef}. Il container viene usato per
+	 * referenziare il connettore principale dell'erogazione/fruizione: il driver del
+	 * container si occupera' poi di CREATE/UPDATE del concreto e dei suoi binding.
+	 *
+	 * <p>Il connettore concreto interno viene rinominato a {@code container.nome + '_' + llmPolicy}
+	 * per garantire l'univocita' globale richiesta dalla tabella {@code connettori}.</p>
+	 *
+	 * @return il container (di tipo disabilitato) da usare al posto del connettore originale.
+	 *         Se {@code llmPolicy} non e' valorizzato, ritorna il connettore originale senza wrap.
+	 */
+	public org.openspcoop2.core.registry.Connettore wrapAsLlmContainer(org.openspcoop2.core.registry.Connettore concreto,
+			String llmPolicy, String[] llmBindings, String containerName) {
+		if (concreto == null
+				|| llmPolicy == null || llmPolicy.isEmpty()
+				|| CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO.equals(llmPolicy)) {
+			return concreto;
+		}
+		String containerNome = (containerName != null && !containerName.isEmpty()) ? containerName : concreto.getNome();
+		org.openspcoop2.core.registry.ConnettoreLlmProviderRef ref = new org.openspcoop2.core.registry.ConnettoreLlmProviderRef();
+		ref.setNome(buildProviderName(containerNome, llmPolicy));
+		ref.setTipo(concreto.getTipo());
+		if (concreto.getPropertyList() != null) {
+			for (org.openspcoop2.core.registry.Property p : concreto.getPropertyList()) {
+				ref.addProperty(p);
+			}
+		}
+		// Aggiungo la property 'llm-policy' (nome del Provider LLM) sul concreto;
+		// verra' poi salvata dal driver nella colonna 'llm_policy' di connettori.
+		org.openspcoop2.core.registry.Property polProp = new org.openspcoop2.core.registry.Property();
+		polProp.setNome(org.openspcoop2.core.constants.CostantiConnettori.CONNETTORE_LLM_POLICY);
+		polProp.setValore(llmPolicy);
+		ref.addProperty(polProp);
+		if (llmBindings != null) {
+			for (String nome : llmBindings) {
+				if (nome == null || nome.isEmpty()) {
+					continue;
+				}
+				org.openspcoop2.core.registry.ConnettoreLlmBinding b = new org.openspcoop2.core.registry.ConnettoreLlmBinding();
+				b.setNome(nome);
+				ref.addBinding(b);
+			}
+		}
+		org.openspcoop2.core.registry.ConnettoreLlm llm = new org.openspcoop2.core.registry.ConnettoreLlm();
+		llm.addProvider(ref);
+
+		org.openspcoop2.core.registry.Connettore container = new org.openspcoop2.core.registry.Connettore();
+		container.setNome(containerNome);
+		container.setTipo(org.openspcoop2.core.constants.TipiConnettore.DISABILITATO.getNome());
+		container.setConnettoreLlm(llm);
+		return container;
+	}
+
+	/**
+	 * Variante {@code config} del wrap LLM. Vedi {@link #wrapAsLlmContainer(org.openspcoop2.core.registry.Connettore, String, String[], String)}.
+	 */
+	public org.openspcoop2.core.config.Connettore wrapAsLlmContainer(org.openspcoop2.core.config.Connettore concreto,
+			String llmPolicy, String[] llmBindings, String containerName) {
+		if (concreto == null
+				|| llmPolicy == null || llmPolicy.isEmpty()
+				|| CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO.equals(llmPolicy)) {
+			return concreto;
+		}
+		String containerNome = (containerName != null && !containerName.isEmpty()) ? containerName : concreto.getNome();
+		org.openspcoop2.core.config.ConnettoreLlmProviderRef ref = new org.openspcoop2.core.config.ConnettoreLlmProviderRef();
+		ref.setNome(buildProviderName(containerNome, llmPolicy));
+		ref.setTipo(concreto.getTipo());
+		if (concreto.getPropertyList() != null) {
+			for (org.openspcoop2.core.config.Property p : concreto.getPropertyList()) {
+				ref.addProperty(p);
+			}
+		}
+		org.openspcoop2.core.config.Property polProp = new org.openspcoop2.core.config.Property();
+		polProp.setNome(org.openspcoop2.core.constants.CostantiConnettori.CONNETTORE_LLM_POLICY);
+		polProp.setValore(llmPolicy);
+		ref.addProperty(polProp);
+		if (llmBindings != null) {
+			for (String nome : llmBindings) {
+				if (nome == null || nome.isEmpty()) {
+					continue;
+				}
+				org.openspcoop2.core.config.ConnettoreLlmBinding b = new org.openspcoop2.core.config.ConnettoreLlmBinding();
+				b.setNome(nome);
+				ref.addBinding(b);
+			}
+		}
+		org.openspcoop2.core.config.ConnettoreLlm llm = new org.openspcoop2.core.config.ConnettoreLlm();
+		llm.addProvider(ref);
+
+		org.openspcoop2.core.config.Connettore container = new org.openspcoop2.core.config.Connettore();
+		container.setNome(containerNome);
+		container.setTipo(org.openspcoop2.core.constants.TipiConnettore.DISABILITATO.getNome());
+		container.setConnettoreLlm(llm);
+		return container;
+	}
+
+	private static String buildProviderName(String containerNome, String llmPolicy) {
+		String safeContainer = (containerNome == null) ? "" : containerNome;
+		return safeContainer + "_" + llmPolicy;
+	}
+
+	/**
+	 * Inverso di {@link #wrapAsLlmContainer(org.openspcoop2.core.registry.Connettore, String, String[], String)}.
+	 * Se il connettore passato e' un container LLM (di tipo {@code disabilitato} con un
+	 * {@code ConnettoreLlmProviderRef}), ricostruisce il bean del concreto interno
+	 * (tipo + property) per popolare la maschera di edit. Il nome del container originale
+	 * viene preservato; i binding vanno letti dal {@code provider-ref} del container
+	 * (sono accessibili a parte tramite {@link #extractLlmBindings(org.openspcoop2.core.registry.Connettore)}).
+	 * Se il connettore non e' un container LLM, ritorna l'oggetto invariato.
+	 */
+	public org.openspcoop2.core.registry.Connettore unwrapLlmContainer(org.openspcoop2.core.registry.Connettore container) {
+		if (container == null || container.getConnettoreLlm() == null || container.getConnettoreLlm().sizeProviderList() == 0) {
+			return container;
+		}
+		org.openspcoop2.core.registry.ConnettoreLlmProviderRef ref = container.getConnettoreLlm().getProvider(0);
+		org.openspcoop2.core.registry.Connettore concreto = new org.openspcoop2.core.registry.Connettore();
+		concreto.setNome(container.getNome());
+		concreto.setTipo(ref.getTipo());
+		if (ref.getPropertyList() != null) {
+			for (org.openspcoop2.core.registry.Property p : ref.getPropertyList()) {
+				concreto.addProperty(p);
+			}
+		}
+		return concreto;
+	}
+
+	/**
+	 * Variante {@code config} dell'unwrap LLM.
+	 */
+	public org.openspcoop2.core.config.Connettore unwrapLlmContainer(org.openspcoop2.core.config.Connettore container) {
+		if (container == null || container.getConnettoreLlm() == null || container.getConnettoreLlm().sizeProviderList() == 0) {
+			return container;
+		}
+		org.openspcoop2.core.config.ConnettoreLlmProviderRef ref = container.getConnettoreLlm().getProvider(0);
+		org.openspcoop2.core.config.Connettore concreto = new org.openspcoop2.core.config.Connettore();
+		concreto.setNome(container.getNome());
+		concreto.setTipo(ref.getTipo());
+		if (ref.getPropertyList() != null) {
+			for (org.openspcoop2.core.config.Property p : ref.getPropertyList()) {
+				concreto.addProperty(p);
+			}
+		}
+		return concreto;
+	}
+
+	/**
+	 * Restituisce i nomi dei binding configurati sul primo provider del container LLM,
+	 * vuoto se il bean non e' un container o non ha provider.
+	 */
+	public String[] extractLlmBindings(org.openspcoop2.core.registry.Connettore container) {
+		if (container == null || container.getConnettoreLlm() == null || container.getConnettoreLlm().sizeProviderList() == 0) {
+			return new String[0];
+		}
+		org.openspcoop2.core.registry.ConnettoreLlmProviderRef ref = container.getConnettoreLlm().getProvider(0);
+		List<org.openspcoop2.core.registry.ConnettoreLlmBinding> bl = ref.getBindingList();
+		String[] res = new String[bl == null ? 0 : bl.size()];
+		if (bl != null) {
+			for (int i = 0; i < bl.size(); i++) {
+				res[i] = bl.get(i).getNome();
+			}
+		}
+		return res;
+	}
+
+	/**
+	 * Variante {@code config} dell'extract binding.
+	 */
+	public String[] extractLlmBindings(org.openspcoop2.core.config.Connettore container) {
+		if (container == null || container.getConnettoreLlm() == null || container.getConnettoreLlm().sizeProviderList() == 0) {
+			return new String[0];
+		}
+		org.openspcoop2.core.config.ConnettoreLlmProviderRef ref = container.getConnettoreLlm().getProvider(0);
+		List<org.openspcoop2.core.config.ConnettoreLlmBinding> bl = ref.getBindingList();
+		String[] res = new String[bl == null ? 0 : bl.size()];
+		if (bl != null) {
+			for (int i = 0; i < bl.size(); i++) {
+				res[i] = bl.get(i).getNome();
+			}
+		}
+		return res;
 	}
 
 

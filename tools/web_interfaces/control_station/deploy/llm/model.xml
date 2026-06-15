@@ -1,0 +1,22 @@
+<config id="llmModel"
+	label="LLM Model"
+	xmlns="http://www.openspcoop2.org/core/mvc/properties"
+	provider="org.openspcoop2.pdd.core.llm.provider.LLMModelConfigProvider">
+
+	<section label="Modello" hidden="true">
+
+		<subsection label="Caratteristiche">
+
+		<item type="select" name="modelFamily" label="Family" required="true">
+			<property name="llmModel.family" />
+		</item>
+
+		<item type="select" name="modelModality" label="Modality" required="true">
+			<property name="llmModel.modality" />
+		</item>
+
+		</subsection>
+
+	</section>
+
+</config>

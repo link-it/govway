@@ -47,6 +47,9 @@ public class CostantiProtocollo {
     /** Context */
     public static final String ESITO_TRANSACTION_CONTEXT_STANDARD = "standard";
     public static final String ESITO_TRANSACTION_CONTEXT_SISTEMA = "sistema";
+    /** Contesto applicato alle transazioni LLM: discrimina le righe collegate alla tabella
+     * {@code transazioni_llm} (e statistiche_*_llm) senza richiedere un join. */
+    public static final String ESITO_TRANSACTION_CONTEXT_LLM = "llm";
     
     /** Definisce un tipo di FaultCode (errore nell'intestazione) */
     public static final String FAULT_CODE_CLIENT = "Client";

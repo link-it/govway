@@ -60,11 +60,15 @@
 									object-type="statistica-oraria"/>
 								<linkit:sql-table object-name="statistica-oraria-contenuti"
 									object-type="statistica-contenuti"/>
+								<linkit:sql-table object-name="statistica-oraria-llm"
+									object-type="statistica-oraria-llm"/>
 								<linkit:sql-comment><![CDATA[STATISTICHE GIORNALIERE]]></linkit:sql-comment>
 								<linkit:sql-table object-name="statistica-giornaliera"
 									object-type="statistica-giornaliera"/>
 								<linkit:sql-table object-name="statistica-giornaliera-contenuti"
 									object-type="statistica-contenuti"/>
+								<linkit:sql-table object-name="statistica-giornaliera-llm"
+									object-type="statistica-giornaliera-llm"/>
 								<linkit:sql-comment><![CDATA[STATISTICHE SETTIMANALI]]></linkit:sql-comment>
 								<linkit:sql-table object-name="statistica-settimanale"
 									object-type="statistica-settimanale"/>
@@ -240,6 +244,17 @@
 						</xsd:appinfo>
 					</xsd:annotation>
 				</xsd:element>
+				<xsd:element ref="statistica-oraria-llm" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="id_stat" required="true"/>
+								<linkit:sql-ddl-column-comment>Identificativo della statistica (FK verso statistiche_orarie(id))</linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
@@ -269,6 +284,113 @@
 
 
 
+
+
+	<!-- ============================================================================ -->
+	<!-- Metriche LLM aggregate (token consumati, costo stimato) per statistica oraria.-->
+	<!-- Relazione 1:1 con 'statistica-oraria' filtrata su esito_contesto='llm'.       -->
+	<!-- ============================================================================ -->
+	<xsd:element name="statistica-oraria-llm">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:sql-table-mapping name="stat_orarie_llm"
+						comment="Metriche LLM aggregate (token, costo) per statistica oraria."
+						sequence-cycle="true">
+						<linkit:sql-table-index name="INDEX_STAT_HOUR_LLM_COVER">
+							<linkit:sql-table-index-column name="id_stat"/>
+							<linkit:sql-table-index-column name="llm_provider"/>
+							<linkit:sql-table-index-column name="llm_model"/>
+							<linkit:sql-table-index-column name="llm_provider_binding"/>
+						</linkit:sql-table-index>
+						<linkit:sql-table-index name="INDEX_STAT_HOUR_LLM">
+							<linkit:sql-table-index-column name="data" order="DESC" ignoreTypeCompatibility="true"/>
+							<linkit:sql-table-index-column name="llm_provider"/>
+							<linkit:sql-table-index-column name="llm_model"/>
+							<linkit:sql-table-index-column name="llm_provider_binding"/>
+							<linkit:sql-table-index-column name="token_input"/>
+							<linkit:sql-table-index-column name="token_output"/>
+							<linkit:sql-table-index-column name="cost_estimated"/>
+						</linkit:sql-table-index>
+					</linkit:sql-table-mapping>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="data" type="xsd:dateTime">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Inizio dell'intervallo orario aggregato (denormalizzata da statistiche_orarie.data)]]></linkit:sql-ddl-column-comment>
+								<linkit:ws-field-mapping filter="false" filter-interval="true"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="llm-provider" type="xsd:string">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping varchar="64"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Nome interno (user-defined) dell'istanza LLM Provider (es. aws-bedrock-static)]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="llm-model" type="xsd:string">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping varchar="64"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Nome interno (user-defined) del modello logico LLM (es. claude-3-5-haiku)]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="llm-provider-binding" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping varchar="64"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Nome interno (user-defined) del Provider Binding usato]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="token-input" type="xsd:unsignedLong">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Token input cumulati nell'intervallo]]></linkit:sql-ddl-column-comment>
+								<linkit:ws-field-mapping filter="false" filter-interval="true"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="token-output" type="xsd:unsignedLong">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Token output cumulati nell'intervallo]]></linkit:sql-ddl-column-comment>
+								<linkit:ws-field-mapping filter="false" filter-interval="true"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="cost-estimated" type="xsd:double" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Costo stimato in USD cumulato nell'intervallo (somma degli snapshot per transazione)]]></linkit:sql-ddl-column-comment>
+								<linkit:ws-field-mapping filter="false" filter-interval="true"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
 
 
 	<!-- ********* STATISTICHE GIORNALIERE ************* -->
@@ -379,6 +501,17 @@
 						</xsd:appinfo>
 					</xsd:annotation>
 				</xsd:element>
+				<xsd:element ref="statistica-giornaliera-llm" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="id_stat" required="true"/>
+								<linkit:sql-ddl-column-comment>Identificativo della statistica (FK verso statistiche_giornaliere(id))</linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
@@ -406,6 +539,113 @@
 
 
 
+
+
+	<!-- ============================================================================ -->
+	<!-- Metriche LLM aggregate (token consumati, costo stimato) per stat giornaliera. -->
+	<!-- Relazione 1:1 con 'statistica-giornaliera' filtrata su esito_contesto='llm'.  -->
+	<!-- ============================================================================ -->
+	<xsd:element name="statistica-giornaliera-llm">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:sql-table-mapping name="stat_giorni_llm"
+						comment="Metriche LLM aggregate (token, costo) per statistica giornaliera."
+						sequence-cycle="true">
+						<linkit:sql-table-index name="INDEX_STAT_DAY_LLM_COVER">
+							<linkit:sql-table-index-column name="id_stat"/>
+							<linkit:sql-table-index-column name="llm_provider"/>
+							<linkit:sql-table-index-column name="llm_model"/>
+							<linkit:sql-table-index-column name="llm_provider_binding"/>
+						</linkit:sql-table-index>
+						<linkit:sql-table-index name="INDEX_STAT_DAY_LLM">
+							<linkit:sql-table-index-column name="data" order="DESC" ignoreTypeCompatibility="true"/>
+							<linkit:sql-table-index-column name="llm_provider"/>
+							<linkit:sql-table-index-column name="llm_model"/>
+							<linkit:sql-table-index-column name="llm_provider_binding"/>
+							<linkit:sql-table-index-column name="token_input"/>
+							<linkit:sql-table-index-column name="token_output"/>
+							<linkit:sql-table-index-column name="cost_estimated"/>
+						</linkit:sql-table-index>
+					</linkit:sql-table-mapping>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="data" type="xsd:dateTime">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Inizio dell'intervallo giornaliero aggregato (denormalizzata da statistiche_giornaliere.data)]]></linkit:sql-ddl-column-comment>
+								<linkit:ws-field-mapping filter="false" filter-interval="true"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="llm-provider" type="xsd:string">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping varchar="64"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Nome interno (user-defined) dell'istanza LLM Provider (es. aws-bedrock-static)]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="llm-model" type="xsd:string">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping varchar="64"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Nome interno (user-defined) del modello logico LLM (es. claude-3-5-haiku)]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="llm-provider-binding" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping varchar="64"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Nome interno (user-defined) del Provider Binding usato]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="token-input" type="xsd:unsignedLong">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Token input cumulati nell'intervallo]]></linkit:sql-ddl-column-comment>
+								<linkit:ws-field-mapping filter="false" filter-interval="true"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="token-output" type="xsd:unsignedLong">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Token output cumulati nell'intervallo]]></linkit:sql-ddl-column-comment>
+								<linkit:ws-field-mapping filter="false" filter-interval="true"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="cost-estimated" type="xsd:double" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Costo stimato in USD cumulato nell'intervallo (somma degli snapshot per transazione)]]></linkit:sql-ddl-column-comment>
+								<linkit:ws-field-mapping filter="false" filter-interval="true"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
 
 
 	<!-- ********* STATISTICHE SETTIMANALI ************* -->

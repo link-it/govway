@@ -8,6 +8,7 @@ DELETE FROM transazioni_classe_esiti;
 DELETE FROM transazioni_esiti;
 DELETE FROM transazioni_export;
 DELETE FROM transazioni_info;
+DELETE FROM transazioni_llm;
 DELETE FROM transazioni_sa;
 DELETE FROM transazioni;
 DELETE FROM credenziale_mittente;

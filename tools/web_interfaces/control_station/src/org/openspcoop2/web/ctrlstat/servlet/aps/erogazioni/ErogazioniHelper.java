@@ -2261,10 +2261,15 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 					de.setToolTip(this.getToolTipConnettoriMultipliPortaApplicativa(paDefault));
 				}
 				
-				boolean visualizzaLinkConfigurazioneConnettore = 
-						(!this.core.isConnettoriMultipliEnabled()) 
-						|| 
-						(!connettoreMultiploEnabled );
+				// Container LLM con piu' di un provider concreto: la matita non punterebbe a un
+				// connettore univoco; in quel caso si usa solo la rotella "Elenco Connettori LLM".
+				boolean isLlmContainerMulti = connettore != null && connettore.getConnettoreLlm() != null
+						&& connettore.getConnettoreLlm().sizeProviderList() > 1;
+				boolean visualizzaLinkConfigurazioneConnettore =
+						((!this.core.isConnettoriMultipliEnabled())
+						||
+						(!connettoreMultiploEnabled ))
+						&& !isLlmContainerMulti;
 				if(visualizzaLinkConfigurazioneConnettore) {
 					List<Parameter> listParametersConnettore = new ArrayList<>();
 					listParametersConnettore.add(paIdProvider);
@@ -2310,30 +2315,46 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				
 				// link alla configurazione connettori multipli e alla lista dei connettori multipli
 				if(this.core.isConnettoriMultipliEnabled()) {
-					List<Parameter> listParametersConfigutazioneConnettoriMultipli = new ArrayList<>();
-					paIdSogg = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, asps.getIdSoggetto() + "");
-					listParametersConfigutazioneConnettoriMultipli.add(paIdSogg);
-					listParametersConfigutazioneConnettoriMultipli.add(paIdPorta);
-					listParametersConfigutazioneConnettoriMultipli.add(paIdAsps);
-					listParametersConfigutazioneConnettoriMultipli.add(paConnettoreDaListaAPS);
-					listParametersConfigutazioneConnettoriMultipli.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_GRUPPI, false+""));
-					listParametersConfigutazioneConnettoriMultipli.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_REGISTRO, false+""));
-					listParametersConfigutazioneConnettoriMultipli.add(new Parameter(CostantiControlStation.PARAMETRO_ID_CONN_TAB, "0"));
-					
-					image = new DataElementImage();
-					image.setToolTip(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_CONFIGURAZIONE_CONNETTORI_MULTIPLI_TOOLTIP);
-					image.setImage(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_CONFIGURAZIONE_CONNETTORI_MULTIPLI);
-					image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONFIGURAZIONE_CONNETTORI_MULTIPLI, 
-							listParametersConfigutazioneConnettoriMultipli.toArray(new Parameter[1]));
-					de.addImage(image);
-					
-					if(connettoreMultiploEnabled) {
+					// Per le erogazioni LLM la maschera behaviour-based non e' applicabile:
+					// si usa la lista dedicata dei ProviderRef del container LLM.
+					boolean apiIsLLM = org.openspcoop2.protocol.manifest.utils.InterfaceTypeUtils.isLLM(
+							this.apcCore.formatoSpecifica2InterfaceType(as.getFormatoSpecifica()));
+					if(apiIsLLM) {
+						// Per LLM la rotella "configurazione behaviour" non e' applicabile: il container
+						// LLM espone direttamente l'elenco dei provider concreti.
 						image = new DataElementImage();
 						image.setToolTip(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_ELENCO_CONNETTORI_MULTIPLI_TOOLTIP);
 						image.setImage(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_ELENCO_CONNETTORI_MULTIPLI);
-						image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_LIST, 
+						image.setUrl(org.openspcoop2.web.ctrlstat.servlet.aps.llm.LlmConnettoriMultipliCostanti.SERVLET_NAME_LLM_CONNETTORI_MULTIPLI_LIST,
+								new Parameter(org.openspcoop2.web.ctrlstat.servlet.aps.llm.LlmConnettoriMultipliCostanti.PARAMETRO_LLM_ID_ASPS, asps.getId() + ""));
+						de.addImage(image);
+					}
+					else {
+						List<Parameter> listParametersConfigutazioneConnettoriMultipli = new ArrayList<>();
+						paIdSogg = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, asps.getIdSoggetto() + "");
+						listParametersConfigutazioneConnettoriMultipli.add(paIdSogg);
+						listParametersConfigutazioneConnettoriMultipli.add(paIdPorta);
+						listParametersConfigutazioneConnettoriMultipli.add(paIdAsps);
+						listParametersConfigutazioneConnettoriMultipli.add(paConnettoreDaListaAPS);
+						listParametersConfigutazioneConnettoriMultipli.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_GRUPPI, false+""));
+						listParametersConfigutazioneConnettoriMultipli.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_REGISTRO, false+""));
+						listParametersConfigutazioneConnettoriMultipli.add(new Parameter(CostantiControlStation.PARAMETRO_ID_CONN_TAB, "0"));
+
+						image = new DataElementImage();
+						image.setToolTip(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_CONFIGURAZIONE_CONNETTORI_MULTIPLI_TOOLTIP);
+						image.setImage(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_CONFIGURAZIONE_CONNETTORI_MULTIPLI);
+						image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONFIGURAZIONE_CONNETTORI_MULTIPLI,
 								listParametersConfigutazioneConnettoriMultipli.toArray(new Parameter[1]));
 						de.addImage(image);
+
+						if(connettoreMultiploEnabled) {
+							image = new DataElementImage();
+							image.setToolTip(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_ELENCO_CONNETTORI_MULTIPLI_TOOLTIP);
+							image.setImage(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_ELENCO_CONNETTORI_MULTIPLI);
+							image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_LIST,
+									listParametersConfigutazioneConnettoriMultipli.toArray(new Parameter[1]));
+							de.addImage(image);
+						}
 					}
 				}
 				
@@ -2533,15 +2554,39 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 					listParametersConnettore.add(pConnettoreDaListaAPS);
 					listParametersConnettore.add(pTipoSoggettoFruitore);
 					listParametersConnettore.add(pNomeSoggettoFruitore);
-					image = new DataElementImage();
-					image.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE));
-					image.setImage(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE);
-					image.setUrl(
-							AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE,
-							listParametersConnettore.toArray(new Parameter[1])
-							);
-					de.addImage(image);
-					
+					// Per le fruizioni LLM la matita "modifica connettore" non e' applicabile quando ci sono
+					// piu' provider (non si sa quale modificare); inoltre mostro la rotella verso la lista dei
+					// ProviderRef del container LLM (analoga a quella usata sulle erogazioni LLM).
+					boolean apiIsLLM_fr = org.openspcoop2.protocol.manifest.utils.InterfaceTypeUtils.isLLM(
+							this.apcCore.formatoSpecifica2InterfaceType(as.getFormatoSpecifica()));
+					boolean isLlmContainerMulti = false;
+					if(apiIsLLM_fr && connettore != null && connettore.getConnettoreLlm() != null) {
+						isLlmContainerMulti = connettore.getConnettoreLlm().sizeProviderList() > 1;
+					}
+					if(!isLlmContainerMulti) {
+						image = new DataElementImage();
+						image.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE));
+						image.setImage(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE);
+						image.setUrl(
+								AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE,
+								listParametersConnettore.toArray(new Parameter[1])
+								);
+						de.addImage(image);
+					}
+					if(apiIsLLM_fr && this.core.isConnettoriMultipliEnabled()) {
+						List<Parameter> listParametersLlm = new ArrayList<>();
+						listParametersLlm.add(new Parameter(org.openspcoop2.web.ctrlstat.servlet.aps.llm.LlmConnettoriMultipliCostanti.PARAMETRO_LLM_ID_ASPS, asps.getId() + ""));
+						if(pIdFruitore != null) {
+							listParametersLlm.add(new Parameter(org.openspcoop2.web.ctrlstat.servlet.aps.llm.LlmConnettoriMultipliCostanti.PARAMETRO_LLM_ID_FRUITORE, pIdFruitore.getValue()));
+						}
+						image = new DataElementImage();
+						image.setToolTip(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_ELENCO_CONNETTORI_MULTIPLI_TOOLTIP);
+						image.setImage(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_ELENCO_CONNETTORI_MULTIPLI);
+						image.setUrl(org.openspcoop2.web.ctrlstat.servlet.aps.llm.LlmConnettoriMultipliCostanti.SERVLET_NAME_LLM_CONNETTORI_MULTIPLI_LIST,
+								listParametersLlm.toArray(new Parameter[1]));
+						de.addImage(image);
+					}
+
 					if(checkConnettore) {
 						List<Parameter> listParametersVerificaConnettore = new ArrayList<>();
 						listParametersVerificaConnettore.add(pIdPD);

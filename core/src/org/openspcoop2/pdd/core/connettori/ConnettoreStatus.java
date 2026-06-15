@@ -273,7 +273,7 @@ public class ConnettoreStatus extends ConnettoreBaseWithResponse {
 			for (String azione : azioni.getAzioneDelegataList()) {
 				if (idServizio != null)
 					idServizio.setAzione(azione);
-				Connettore connettore = configurazioneManager.getForwardRoute(idFruitore, idServizio, false, null);
+				Connettore connettore = configurazioneManager.getForwardRoute(idFruitore, idServizio, false, null, null);
 				testConnectivityFruizione(connettore, mapping, connettoriServizio);
 			}
 		}

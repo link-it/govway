@@ -43,6 +43,7 @@ public class StatisticaOrariaModel extends AbstractModel<StatisticaOraria> {
 	
 		this.STATISTICA_BASE = new org.openspcoop2.core.statistiche.model.StatisticaModel(new Field("statistica-base",org.openspcoop2.core.statistiche.Statistica.class,"statistica-oraria",StatisticaOraria.class));
 		this.STATISTICA_ORARIA_CONTENUTI = new org.openspcoop2.core.statistiche.model.StatisticaContenutiModel(new Field("statistica-oraria-contenuti",org.openspcoop2.core.statistiche.StatisticaContenuti.class,"statistica-oraria",StatisticaOraria.class));
+		this.STATISTICA_ORARIA_LLM = new org.openspcoop2.core.statistiche.model.StatisticaOrariaLlmModel(new Field("statistica-oraria-llm",org.openspcoop2.core.statistiche.StatisticaOrariaLlm.class,"statistica-oraria",StatisticaOraria.class));
 	
 	}
 	
@@ -52,6 +53,7 @@ public class StatisticaOrariaModel extends AbstractModel<StatisticaOraria> {
 	
 		this.STATISTICA_BASE = new org.openspcoop2.core.statistiche.model.StatisticaModel(new ComplexField(father,"statistica-base",org.openspcoop2.core.statistiche.Statistica.class,"statistica-oraria",StatisticaOraria.class));
 		this.STATISTICA_ORARIA_CONTENUTI = new org.openspcoop2.core.statistiche.model.StatisticaContenutiModel(new ComplexField(father,"statistica-oraria-contenuti",org.openspcoop2.core.statistiche.StatisticaContenuti.class,"statistica-oraria",StatisticaOraria.class));
+		this.STATISTICA_ORARIA_LLM = new org.openspcoop2.core.statistiche.model.StatisticaOrariaLlmModel(new ComplexField(father,"statistica-oraria-llm",org.openspcoop2.core.statistiche.StatisticaOrariaLlm.class,"statistica-oraria",StatisticaOraria.class));
 	
 	}
 	
@@ -60,6 +62,8 @@ public class StatisticaOrariaModel extends AbstractModel<StatisticaOraria> {
 	public org.openspcoop2.core.statistiche.model.StatisticaModel STATISTICA_BASE = null;
 	 
 	public org.openspcoop2.core.statistiche.model.StatisticaContenutiModel STATISTICA_ORARIA_CONTENUTI = null;
+	 
+	public org.openspcoop2.core.statistiche.model.StatisticaOrariaLlmModel STATISTICA_ORARIA_LLM = null;
 	 
 
 	@Override

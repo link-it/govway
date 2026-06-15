@@ -131,6 +131,8 @@ import org.openspcoop2.core.config.ResponseCachingConfigurazioneControl;
 import org.openspcoop2.core.config.Credenziali;
 import org.openspcoop2.core.config.InvocazionePorta;
 import org.openspcoop2.core.config.InvocazionePortaGestioneErrore;
+import org.openspcoop2.core.config.ConnettoreLlmProviderRef;
+import org.openspcoop2.core.config.ConnettoreLlm;
 import org.openspcoop2.core.config.AccessoDatiRichieste;
 import org.openspcoop2.core.config.Tracciamento;
 import org.openspcoop2.core.config.ConfigurazioneGestioneErrore;
@@ -157,6 +159,7 @@ import org.openspcoop2.core.config.MtomProcessorFlowParameter;
 import org.openspcoop2.core.config.RoutingTableDestinazione;
 import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.config.ProtocolProperty;
+import org.openspcoop2.core.config.ConnettoreLlmBinding;
 import org.openspcoop2.core.config.StatoServiziPddPortaDelegata;
 import org.openspcoop2.core.config.StatoServiziPddIntegrationManager;
 import org.openspcoop2.core.config.DumpConfigurazioneRegola;
@@ -7109,6 +7112,132 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	
 	/*
 	 =================================================================================
+	 Object: connettore-llm-provider-ref
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.config.ConnettoreLlmProviderRef}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConnettoreLlmProviderRef}
+	 * @return Object type {@link org.openspcoop2.core.config.ConnettoreLlmProviderRef}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConnettoreLlmProviderRef readConnettoreLlmProviderRef(String fileName) throws DeserializerException {
+		return (ConnettoreLlmProviderRef) this.xmlToObj(fileName, ConnettoreLlmProviderRef.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.config.ConnettoreLlmProviderRef}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConnettoreLlmProviderRef}
+	 * @return Object type {@link org.openspcoop2.core.config.ConnettoreLlmProviderRef}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConnettoreLlmProviderRef readConnettoreLlmProviderRef(File file) throws DeserializerException {
+		return (ConnettoreLlmProviderRef) this.xmlToObj(file, ConnettoreLlmProviderRef.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.config.ConnettoreLlmProviderRef}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConnettoreLlmProviderRef}
+	 * @return Object type {@link org.openspcoop2.core.config.ConnettoreLlmProviderRef}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConnettoreLlmProviderRef readConnettoreLlmProviderRef(InputStream in) throws DeserializerException {
+		return (ConnettoreLlmProviderRef) this.xmlToObj(in, ConnettoreLlmProviderRef.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.config.ConnettoreLlmProviderRef}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConnettoreLlmProviderRef}
+	 * @return Object type {@link org.openspcoop2.core.config.ConnettoreLlmProviderRef}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConnettoreLlmProviderRef readConnettoreLlmProviderRef(byte[] in) throws DeserializerException {
+		return (ConnettoreLlmProviderRef) this.xmlToObj(in, ConnettoreLlmProviderRef.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.config.ConnettoreLlmProviderRef}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConnettoreLlmProviderRef}
+	 * @return Object type {@link org.openspcoop2.core.config.ConnettoreLlmProviderRef}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConnettoreLlmProviderRef readConnettoreLlmProviderRefFromString(String in) throws DeserializerException {
+		return (ConnettoreLlmProviderRef) this.xmlToObj(in.getBytes(), ConnettoreLlmProviderRef.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: connettore-llm
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.config.ConnettoreLlm}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConnettoreLlm}
+	 * @return Object type {@link org.openspcoop2.core.config.ConnettoreLlm}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConnettoreLlm readConnettoreLlm(String fileName) throws DeserializerException {
+		return (ConnettoreLlm) this.xmlToObj(fileName, ConnettoreLlm.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.config.ConnettoreLlm}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConnettoreLlm}
+	 * @return Object type {@link org.openspcoop2.core.config.ConnettoreLlm}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConnettoreLlm readConnettoreLlm(File file) throws DeserializerException {
+		return (ConnettoreLlm) this.xmlToObj(file, ConnettoreLlm.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.config.ConnettoreLlm}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConnettoreLlm}
+	 * @return Object type {@link org.openspcoop2.core.config.ConnettoreLlm}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConnettoreLlm readConnettoreLlm(InputStream in) throws DeserializerException {
+		return (ConnettoreLlm) this.xmlToObj(in, ConnettoreLlm.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.config.ConnettoreLlm}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConnettoreLlm}
+	 * @return Object type {@link org.openspcoop2.core.config.ConnettoreLlm}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConnettoreLlm readConnettoreLlm(byte[] in) throws DeserializerException {
+		return (ConnettoreLlm) this.xmlToObj(in, ConnettoreLlm.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.config.ConnettoreLlm}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConnettoreLlm}
+	 * @return Object type {@link org.openspcoop2.core.config.ConnettoreLlm}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConnettoreLlm readConnettoreLlmFromString(String in) throws DeserializerException {
+		return (ConnettoreLlm) this.xmlToObj(in.getBytes(), ConnettoreLlm.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
 	 Object: accesso-dati-richieste
 	 =================================================================================
 	*/
@@ -8741,6 +8870,69 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	 */
 	public ProtocolProperty readProtocolPropertyFromString(String in) throws DeserializerException {
 		return (ProtocolProperty) this.xmlToObj(in.getBytes(), ProtocolProperty.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: connettore-llm-binding
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.config.ConnettoreLlmBinding}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConnettoreLlmBinding}
+	 * @return Object type {@link org.openspcoop2.core.config.ConnettoreLlmBinding}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConnettoreLlmBinding readConnettoreLlmBinding(String fileName) throws DeserializerException {
+		return (ConnettoreLlmBinding) this.xmlToObj(fileName, ConnettoreLlmBinding.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.config.ConnettoreLlmBinding}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConnettoreLlmBinding}
+	 * @return Object type {@link org.openspcoop2.core.config.ConnettoreLlmBinding}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConnettoreLlmBinding readConnettoreLlmBinding(File file) throws DeserializerException {
+		return (ConnettoreLlmBinding) this.xmlToObj(file, ConnettoreLlmBinding.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.config.ConnettoreLlmBinding}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConnettoreLlmBinding}
+	 * @return Object type {@link org.openspcoop2.core.config.ConnettoreLlmBinding}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConnettoreLlmBinding readConnettoreLlmBinding(InputStream in) throws DeserializerException {
+		return (ConnettoreLlmBinding) this.xmlToObj(in, ConnettoreLlmBinding.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.config.ConnettoreLlmBinding}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConnettoreLlmBinding}
+	 * @return Object type {@link org.openspcoop2.core.config.ConnettoreLlmBinding}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConnettoreLlmBinding readConnettoreLlmBinding(byte[] in) throws DeserializerException {
+		return (ConnettoreLlmBinding) this.xmlToObj(in, ConnettoreLlmBinding.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.config.ConnettoreLlmBinding}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConnettoreLlmBinding}
+	 * @return Object type {@link org.openspcoop2.core.config.ConnettoreLlmBinding}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConnettoreLlmBinding readConnettoreLlmBindingFromString(String in) throws DeserializerException {
+		return (ConnettoreLlmBinding) this.xmlToObj(in.getBytes(), ConnettoreLlmBinding.class);
 	}	
 	
 	

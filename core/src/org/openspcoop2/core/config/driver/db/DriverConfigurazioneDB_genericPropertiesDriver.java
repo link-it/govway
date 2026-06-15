@@ -153,15 +153,15 @@ public class DriverConfigurazioneDB_genericPropertiesDriver {
 		if(tipologia!=null) {
 			listTipologia.add(tipologia);
 		}
-		return getGenericProperties(listTipologia, null, null,true, null);
+		return getGenericProperties(listTipologia, null, null,true, null, null);
 	}
-	
+
 	protected GenericProperties getGenericProperties(String tipologia, String name) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		List<String> listTipologia = new ArrayList<>();
 		if(tipologia!=null) {
 			listTipologia.add(tipologia);
 		}
-		List<GenericProperties> l = getGenericProperties(listTipologia, null, null,true, name);
+		List<GenericProperties> l = getGenericProperties(listTipologia, null, null,true, name, null);
 		if(l==null || l.isEmpty()) {
 			throw new DriverConfigurazioneNotFound("[getGenericProperties] Configurazione Generic Properties non presenti con tipologia '"+tipologia+"' e nome '"+name+"'");
 		}
@@ -178,14 +178,24 @@ public class DriverConfigurazioneDB_genericPropertiesDriver {
 	 * 
 	 */
 	protected List<GenericProperties> getGenericProperties(List<String> tipologia, Integer idLista, ISearch ricerca, boolean throwNotFoundException) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		return getGenericProperties(tipologia, idLista, ricerca, throwNotFoundException, null);
+		return getGenericProperties(tipologia, idLista, ricerca, throwNotFoundException, null, null);
 	}
-	private List<GenericProperties> getGenericProperties(List<String> tipologia, Integer idLista, ISearch ricerca, boolean throwNotFoundException, String nomeEsatto) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	/**
+	 * Overload che accetta filtri opzionali sui valori delle property (tabella generic_property).
+	 * La map e' nella forma {propertyName -> propertyValue}: per ogni entry viene aggiunta una
+	 * clausola EXISTS che richiede la presenza di una riga in generic_property con quel nome/valore
+	 * associato al generic_properties corrente. Il driver e' agnostico rispetto ai nomi delle
+	 * property: la mappatura "filtroLogico -> nomePropertyConcreta" e' responsabilita' del chiamante.
+	 */
+	protected List<GenericProperties> getGenericProperties(List<String> tipologia, Integer idLista, ISearch ricerca, boolean throwNotFoundException, java.util.Map<String,String> propertyFilters) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return getGenericProperties(tipologia, idLista, ricerca, throwNotFoundException, null, propertyFilters);
+	}
+	private List<GenericProperties> getGenericProperties(List<String> tipologia, Integer idLista, ISearch ricerca, boolean throwNotFoundException, String nomeEsatto, java.util.Map<String,String> propertyFilters) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		Connection con = null;
 		PreparedStatement stm = null;
 		ResultSet rs = null;
-		
+
 		Integer offset = null;
 		Integer limit =null;
 		String search = "";
@@ -194,11 +204,15 @@ public class DriverConfigurazioneDB_genericPropertiesDriver {
 			limit = ricerca.getPageSize(idLista);
 			offset = ricerca.getIndexIniziale(idLista);
 			search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
-			
+
 			filterTipoTokenPolicy = SearchUtils.getFilter(ricerca, idLista,  Filtri.FILTRO_TIPO_TOKEN_POLICY);
-			
+
 			this.driver.logDebug("search : " + search);
 			this.driver.logDebug("filterTipoTokenPolicy : " + filterTipoTokenPolicy);
+		}
+		boolean hasPropertyFilters = propertyFilters!=null && !propertyFilters.isEmpty();
+		if(hasPropertyFilters) {
+			this.driver.logDebug("propertyFilters : " + propertyFilters);
 		}
 		
 		
@@ -235,10 +249,15 @@ public class DriverConfigurazioneDB_genericPropertiesDriver {
 			if (!search.equals("")) {
 				//query con search
 				sqlQueryObject.addWhereLikeCondition("nome", search, true, true);
-			} 
+			}
+			if(hasPropertyFilters) {
+				for(int i=0; i<propertyFilters.size(); i++) {
+					sqlQueryObject.addWhereCondition(buildExistsPropertyClause());
+				}
+			}
 			sqlQueryObject.setANDLogicOperator(true);
 			sqlQuery = sqlQueryObject.createSQLQuery();
-			 
+
 			stm = con.prepareStatement(sqlQuery);
 			int index = 1;
 			if(filterTipoTokenPolicy!=null && !"".equals(filterTipoTokenPolicy)) {
@@ -246,6 +265,12 @@ public class DriverConfigurazioneDB_genericPropertiesDriver {
 			}
 			if(nomeEsatto!=null) {
 				stm.setString(index++, nomeEsatto);
+			}
+			if(hasPropertyFilters) {
+				for(java.util.Map.Entry<String,String> e : propertyFilters.entrySet()) {
+					stm.setString(index++, e.getKey());
+					stm.setString(index++, e.getValue());
+				}
 			}
 			rs = stm.executeQuery();
 			if (rs.next() && ricerca != null)
@@ -273,7 +298,12 @@ public class DriverConfigurazioneDB_genericPropertiesDriver {
 			if (!search.equals("")) {
 				//query con search
 				sqlQueryObject.addWhereLikeCondition("nome", search, true, true);
-			} 
+			}
+			if(hasPropertyFilters) {
+				for(int i=0; i<propertyFilters.size(); i++) {
+					sqlQueryObject.addWhereCondition(buildExistsPropertyClause());
+				}
+			}
 			sqlQueryObject.setANDLogicOperator(true);
 			sqlQueryObject.addOrderBy("nome");
 			sqlQueryObject.setSortType(true);
@@ -281,7 +311,7 @@ public class DriverConfigurazioneDB_genericPropertiesDriver {
 				sqlQueryObject.setLimit(limit);
 			if(offset != null)
 				sqlQueryObject.setOffset(offset);
-			
+
 			sqlQuery = sqlQueryObject.createSQLQuery();
 			stm = con.prepareStatement(sqlQuery);
 			index = 1;
@@ -290,6 +320,12 @@ public class DriverConfigurazioneDB_genericPropertiesDriver {
 			}
 			if(nomeEsatto!=null) {
 				stm.setString(index++, nomeEsatto);
+			}
+			if(hasPropertyFilters) {
+				for(java.util.Map.Entry<String,String> e : propertyFilters.entrySet()) {
+					stm.setString(index++, e.getKey());
+					stm.setString(index++, e.getValue());
+				}
 			}
 			rs = stm.executeQuery();
 			
@@ -523,7 +559,7 @@ public class DriverConfigurazioneDB_genericPropertiesDriver {
 
 			if(genericProperties==null )
 				throw new DriverConfigurazioneNotFound("Generic Properties non presenti");
-			
+
 			return genericProperties;
 
 		} catch (SQLException se) {
@@ -538,5 +574,19 @@ public class DriverConfigurazioneDB_genericPropertiesDriver {
 			JDBCUtilities.closeResources(rs, stm);
 			this.driver.closeConnection(con);
 		}
+	}
+
+	/**
+	 * Clausola EXISTS che richiede la presenza di una riga in {@code generic_property} con
+	 * {@code id_props=generic_properties.id AND nome=? AND valore=?}. Il nome/valore della
+	 * property sono passati come parametri PreparedStatement (in coppia, nell'ordine
+	 * d'iterazione della map dei filtri).
+	 */
+	private static String buildExistsPropertyClause() {
+		return "EXISTS (SELECT 1 FROM " + CostantiDB.CONFIG_GENERIC_PROPERTY + " gpf"
+				+ " WHERE gpf." + CostantiDB.CONFIG_GENERIC_PROPERTY_COLUMN_ID_PROPS + "="
+				+ CostantiDB.CONFIG_GENERIC_PROPERTIES + ".id"
+				+ " AND gpf." + CostantiDB.CONFIG_GENERIC_PROPERTY_COLUMN_NOME + "=?"
+				+ " AND gpf." + CostantiDB.CONFIG_GENERIC_PROPERTY_COLUMN_VALORE + "=?)";
 	}
 }

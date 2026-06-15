@@ -53,300 +53,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link CanaliConfigurazione }
-     */
-    public CanaliConfigurazione createCanaliConfigurazione() {
-        return new CanaliConfigurazione();
-    }
-
-    /**
-     * Create an instance of {@link PortaDelegataAzione }
-     */
-    public PortaDelegataAzione createPortaDelegataAzione() {
-        return new PortaDelegataAzione();
-    }
-
-    /**
-     * Create an instance of {@link PortaDelegataAutorizzazioneToken }
-     */
-    public PortaDelegataAutorizzazioneToken createPortaDelegataAutorizzazioneToken() {
-        return new PortaDelegataAutorizzazioneToken();
-    }
-
-    /**
-     * Create an instance of {@link Route }
-     */
-    public Route createRoute() {
-        return new Route();
-    }
-
-    /**
-     * Create an instance of {@link PortaDelegata }
-     */
-    public PortaDelegata createPortaDelegata() {
-        return new PortaDelegata();
-    }
-
-    /**
-     * Create an instance of {@link Attachments }
-     */
-    public Attachments createAttachments() {
-        return new Attachments();
-    }
-
-    /**
-     * Create an instance of {@link ConfigurazioneUrlInvocazione }
-     */
-    public ConfigurazioneUrlInvocazione createConfigurazioneUrlInvocazione() {
-        return new ConfigurazioneUrlInvocazione();
-    }
-
-    /**
-     * Create an instance of {@link Connettore }
-     */
-    public Connettore createConnettore() {
-        return new Connettore();
-    }
-
-    /**
-     * Create an instance of {@link PortaApplicativaAutorizzazioneServiziApplicativi }
-     */
-    public PortaApplicativaAutorizzazioneServiziApplicativi createPortaApplicativaAutorizzazioneServiziApplicativi() {
-        return new PortaApplicativaAutorizzazioneServiziApplicativi();
-    }
-
-    /**
-     * Create an instance of {@link CorsConfigurazioneMethods }
-     */
-    public CorsConfigurazioneMethods createCorsConfigurazioneMethods() {
-        return new CorsConfigurazioneMethods();
-    }
-
-    /**
-     * Create an instance of {@link PortaApplicativaAutorizzazioneSoggetti }
-     */
-    public PortaApplicativaAutorizzazioneSoggetti createPortaApplicativaAutorizzazioneSoggetti() {
-        return new PortaApplicativaAutorizzazioneSoggetti();
-    }
-
-    /**
-     * Create an instance of {@link TrasformazioneSoapRisposta }
-     */
-    public TrasformazioneSoapRisposta createTrasformazioneSoapRisposta() {
-        return new TrasformazioneSoapRisposta();
-    }
-
-    /**
-     * Create an instance of {@link IndirizzoRisposta }
-     */
-    public IndirizzoRisposta createIndirizzoRisposta() {
-        return new IndirizzoRisposta();
-    }
-
-    /**
-     * Create an instance of {@link TrasformazioneRegolaParametro }
-     */
-    public TrasformazioneRegolaParametro createTrasformazioneRegolaParametro() {
-        return new TrasformazioneRegolaParametro();
-    }
-
-    /**
-     * Create an instance of {@link ConfigurazioneTracciamentoPorta }
-     */
-    public ConfigurazioneTracciamentoPorta createConfigurazioneTracciamentoPorta() {
-        return new ConfigurazioneTracciamentoPorta();
-    }
-
-    /**
-     * Create an instance of {@link GenericProperties }
-     */
-    public GenericProperties createGenericProperties() {
-        return new GenericProperties();
-    }
-
-    /**
-     * Create an instance of {@link TrasformazioneSoap }
-     */
-    public TrasformazioneSoap createTrasformazioneSoap() {
-        return new TrasformazioneSoap();
-    }
-
-    /**
-     * Create an instance of {@link Soggetto }
-     */
-    public Soggetto createSoggetto() {
-        return new Soggetto();
-    }
-
-    /**
-     * Create an instance of {@link ConfigurazioneGeneraleHandler }
-     */
-    public ConfigurazioneGeneraleHandler createConfigurazioneGeneraleHandler() {
-        return new ConfigurazioneGeneraleHandler();
-    }
-
-    /**
-     * Create an instance of {@link ConfigurazioneGestioneErrore }
-     */
-    public ConfigurazioneGestioneErrore createConfigurazioneGestioneErrore() {
-        return new ConfigurazioneGestioneErrore();
-    }
-
-    /**
-     * Create an instance of {@link AttributeAuthority }
-     */
-    public AttributeAuthority createAttributeAuthority() {
-        return new AttributeAuthority();
-    }
-
-    /**
-     * Create an instance of {@link ConfigurazioneHandler }
-     */
-    public ConfigurazioneHandler createConfigurazioneHandler() {
-        return new ConfigurazioneHandler();
-    }
-
-    /**
-     * Create an instance of {@link ResponseCachingConfigurazioneRegola }
-     */
-    public ResponseCachingConfigurazioneRegola createResponseCachingConfigurazioneRegola() {
-        return new ResponseCachingConfigurazioneRegola();
-    }
-
-    /**
-     * Create an instance of {@link Configurazione }
-     */
-    public Configurazione createConfigurazione() {
-        return new Configurazione();
-    }
-
-    /**
-     * Create an instance of {@link RegistroPlugins }
-     */
-    public RegistroPlugins createRegistroPlugins() {
-        return new RegistroPlugins();
-    }
-
-    /**
-     * Create an instance of {@link CanaleConfigurazioneNodo }
-     */
-    public CanaleConfigurazioneNodo createCanaleConfigurazioneNodo() {
-        return new CanaleConfigurazioneNodo();
-    }
-
-    /**
-     * Create an instance of {@link InvocazionePortaGestioneErrore }
-     */
-    public InvocazionePortaGestioneErrore createInvocazionePortaGestioneErrore() {
-        return new InvocazionePortaGestioneErrore();
-    }
-
-    /**
-     * Create an instance of {@link TracciamentoConfigurazioneFiletraceConnector }
-     */
-    public TracciamentoConfigurazioneFiletraceConnector createTracciamentoConfigurazioneFiletraceConnector() {
-        return new TracciamentoConfigurazioneFiletraceConnector();
-    }
-
-    /**
-     * Create an instance of {@link PortaDelegataServizioApplicativo }
-     */
-    public PortaDelegataServizioApplicativo createPortaDelegataServizioApplicativo() {
-        return new PortaDelegataServizioApplicativo();
-    }
-
-    /**
-     * Create an instance of {@link GestioneErrore }
-     */
-    public GestioneErrore createGestioneErrore() {
-        return new GestioneErrore();
-    }
-
-    /**
-     * Create an instance of {@link RoutingTableDefault }
-     */
-    public RoutingTableDefault createRoutingTableDefault() {
-        return new RoutingTableDefault();
-    }
-
-    /**
-     * Create an instance of {@link ServizioApplicativoRuoli }
-     */
-    public ServizioApplicativoRuoli createServizioApplicativoRuoli() {
-        return new ServizioApplicativoRuoli();
-    }
-
-    /**
-     * Create an instance of {@link Trasformazioni }
-     */
-    public Trasformazioni createTrasformazioni() {
-        return new Trasformazioni();
-    }
-
-    /**
-     * Create an instance of {@link PortaDelegataAutorizzazioneServiziApplicativi }
-     */
-    public PortaDelegataAutorizzazioneServiziApplicativi createPortaDelegataAutorizzazioneServiziApplicativi() {
-        return new PortaDelegataAutorizzazioneServiziApplicativi();
-    }
-
-    /**
-     * Create an instance of {@link IdSoggetto }
-     */
-    public IdSoggetto createIdSoggetto() {
-        return new IdSoggetto();
-    }
-
-    /**
-     * Create an instance of {@link PortaApplicativaAutorizzazioneSoggetto }
-     */
-    public PortaApplicativaAutorizzazioneSoggetto createPortaApplicativaAutorizzazioneSoggetto() {
-        return new PortaApplicativaAutorizzazioneSoggetto();
-    }
-
-    /**
-     * Create an instance of {@link AutorizzazioneScope }
-     */
-    public AutorizzazioneScope createAutorizzazioneScope() {
-        return new AutorizzazioneScope();
-    }
-
-    /**
-     * Create an instance of {@link PortaApplicativaSoggettoVirtuale }
-     */
-    public PortaApplicativaSoggettoVirtuale createPortaApplicativaSoggettoVirtuale() {
-        return new PortaApplicativaSoggettoVirtuale();
-    }
-
-    /**
-     * Create an instance of {@link Ruolo }
-     */
-    public Ruolo createRuolo() {
-        return new Ruolo();
-    }
-
-    /**
-     * Create an instance of {@link IdServizioApplicativo }
-     */
-    public IdServizioApplicativo createIdServizioApplicativo() {
-        return new IdServizioApplicativo();
-    }
-
-    /**
-     * Create an instance of {@link AccessoRegistro }
-     */
-    public AccessoRegistro createAccessoRegistro() {
-        return new AccessoRegistro();
-    }
-
-    /**
-     * Create an instance of {@link GestioneErroreSoapFault }
-     */
-    public GestioneErroreSoapFault createGestioneErroreSoapFault() {
-        return new GestioneErroreSoapFault();
-    }
-
-    /**
      * Create an instance of {@link AccessoDatiRichieste }
      */
     public AccessoDatiRichieste createAccessoDatiRichieste() {
@@ -354,150 +60,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link MtomProcessor }
+     * Create an instance of {@link AccessoRegistroRegistro }
      */
-    public MtomProcessor createMtomProcessor() {
-        return new MtomProcessor();
-    }
-
-    /**
-     * Create an instance of {@link CanaleConfigurazione }
-     */
-    public CanaleConfigurazione createCanaleConfigurazione() {
-        return new CanaleConfigurazione();
-    }
-
-    /**
-     * Create an instance of {@link Openspcoop2 }
-     */
-    public Openspcoop2 createOpenspcoop2() {
-        return new Openspcoop2();
-    }
-
-    /**
-     * Create an instance of {@link PortaApplicativaAutorizzazioneServizioApplicativo }
-     */
-    public PortaApplicativaAutorizzazioneServizioApplicativo createPortaApplicativaAutorizzazioneServizioApplicativo() {
-        return new PortaApplicativaAutorizzazioneServizioApplicativo();
-    }
-
-    /**
-     * Create an instance of {@link MtomProcessorFlow }
-     */
-    public MtomProcessorFlow createMtomProcessorFlow() {
-        return new MtomProcessorFlow();
-    }
-
-    /**
-     * Create an instance of {@link MessageSecurity }
-     */
-    public MessageSecurity createMessageSecurity() {
-        return new MessageSecurity();
-    }
-
-    /**
-     * Create an instance of {@link RegistroPlugin }
-     */
-    public RegistroPlugin createRegistroPlugin() {
-        return new RegistroPlugin();
-    }
-
-    /**
-     * Create an instance of {@link OpenspcoopAppender }
-     */
-    public OpenspcoopAppender createOpenspcoopAppender() {
-        return new OpenspcoopAppender();
-    }
-
-    /**
-     * Create an instance of {@link TrasformazioneRegolaApplicabilitaRisposta }
-     */
-    public TrasformazioneRegolaApplicabilitaRisposta createTrasformazioneRegolaApplicabilitaRisposta() {
-        return new TrasformazioneRegolaApplicabilitaRisposta();
-    }
-
-    /**
-     * Create an instance of {@link ConfigurazioneServiceHandlers }
-     */
-    public ConfigurazioneServiceHandlers createConfigurazioneServiceHandlers() {
-        return new ConfigurazioneServiceHandlers();
-    }
-
-    /**
-     * Create an instance of {@link RouteRegistro }
-     */
-    public RouteRegistro createRouteRegistro() {
-        return new RouteRegistro();
-    }
-
-    /**
-     * Create an instance of {@link ResponseCachingConfigurazioneControl }
-     */
-    public ResponseCachingConfigurazioneControl createResponseCachingConfigurazioneControl() {
-        return new ResponseCachingConfigurazioneControl();
-    }
-
-    /**
-     * Create an instance of {@link Proprieta }
-     */
-    public Proprieta createProprieta() {
-        return new Proprieta();
-    }
-
-    /**
-     * Create an instance of {@link Cache }
-     */
-    public Cache createCache() {
-        return new Cache();
-    }
-
-    /**
-     * Create an instance of {@link StatoServiziPddPortaApplicativa }
-     */
-    public StatoServiziPddPortaApplicativa createStatoServiziPddPortaApplicativa() {
-        return new StatoServiziPddPortaApplicativa();
-    }
-
-    /**
-     * Create an instance of {@link AccessoDatiAttributeAuthority }
-     */
-    public AccessoDatiAttributeAuthority createAccessoDatiAttributeAuthority() {
-        return new AccessoDatiAttributeAuthority();
-    }
-
-    /**
-     * Create an instance of {@link CorrelazioneApplicativaElemento }
-     */
-    public CorrelazioneApplicativaElemento createCorrelazioneApplicativaElemento() {
-        return new CorrelazioneApplicativaElemento();
-    }
-
-    /**
-     * Create an instance of {@link Transazioni }
-     */
-    public Transazioni createTransazioni() {
-        return new Transazioni();
-    }
-
-    /**
-     * Create an instance of {@link CorrelazioneApplicativaRispostaElemento }
-     */
-    public CorrelazioneApplicativaRispostaElemento createCorrelazioneApplicativaRispostaElemento() {
-        return new CorrelazioneApplicativaRispostaElemento();
-    }
-
-    /**
-     * Create an instance of {@link TracciamentoConfigurazioneFiletrace }
-     */
-    public TracciamentoConfigurazioneFiletrace createTracciamentoConfigurazioneFiletrace() {
-        return new TracciamentoConfigurazioneFiletrace();
-    }
-
-    /**
-     * Create an instance of {@link TrasformazioneRegolaApplicabilitaRichiesta }
-     */
-    public TrasformazioneRegolaApplicabilitaRichiesta createTrasformazioneRegolaApplicabilitaRichiesta() {
-        return new TrasformazioneRegolaApplicabilitaRichiesta();
+    public AccessoRegistroRegistro createAccessoRegistroRegistro() {
+        return new AccessoRegistroRegistro();
     }
 
     /**
@@ -508,213 +74,157 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link OpenspcoopSorgenteDati }
+     * Create an instance of {@link ResponseCachingConfigurazioneControl }
      */
-    public OpenspcoopSorgenteDati createOpenspcoopSorgenteDati() {
-        return new OpenspcoopSorgenteDati();
+    public ResponseCachingConfigurazioneControl createResponseCachingConfigurazioneControl() {
+        return new ResponseCachingConfigurazioneControl();
     }
 
     /**
-     * Create an instance of {@link MessageSecurityFlow }
+     * Create an instance of {@link Credenziali }
      */
-    public MessageSecurityFlow createMessageSecurityFlow() {
-        return new MessageSecurityFlow();
+    public Credenziali createCredenziali() {
+        return new Credenziali();
     }
 
     /**
-     * Create an instance of {@link ResponseCachingConfigurazione }
+     * Create an instance of {@link RispostaAsincrona }
      */
-    public ResponseCachingConfigurazione createResponseCachingConfigurazione() {
-        return new ResponseCachingConfigurazione();
+    public RispostaAsincrona createRispostaAsincrona() {
+        return new RispostaAsincrona();
     }
 
     /**
-     * Create an instance of {@link ConfigurazioneMultitenant }
+     * Create an instance of {@link CanaleConfigurazione }
      */
-    public ConfigurazioneMultitenant createConfigurazioneMultitenant() {
-        return new ConfigurazioneMultitenant();
+    public CanaleConfigurazione createCanaleConfigurazione() {
+        return new CanaleConfigurazione();
     }
 
     /**
-     * Create an instance of {@link StatoServiziPddIntegrationManager }
+     * Create an instance of {@link Transazioni }
      */
-    public StatoServiziPddIntegrationManager createStatoServiziPddIntegrationManager() {
-        return new StatoServiziPddIntegrationManager();
+    public Transazioni createTransazioni() {
+        return new Transazioni();
     }
 
     /**
-     * Create an instance of {@link CorsConfigurazione }
+     * Create an instance of {@link CorrelazioneApplicativaRisposta }
      */
-    public CorsConfigurazione createCorsConfigurazione() {
-        return new CorsConfigurazione();
+    public CorrelazioneApplicativaRisposta createCorrelazioneApplicativaRisposta() {
+        return new CorrelazioneApplicativaRisposta();
     }
 
     /**
-     * Create an instance of {@link TrasformazioneRegola }
+     * Create an instance of {@link GestioneErrore }
      */
-    public TrasformazioneRegola createTrasformazioneRegola() {
-        return new TrasformazioneRegola();
+    public GestioneErrore createGestioneErrore() {
+        return new GestioneErrore();
     }
 
     /**
-     * Create an instance of {@link PortaTracciamento }
+     * Create an instance of {@link AutorizzazioneRuoli }
      */
-    public PortaTracciamento createPortaTracciamento() {
-        return new PortaTracciamento();
+    public AutorizzazioneRuoli createAutorizzazioneRuoli() {
+        return new AutorizzazioneRuoli();
     }
 
     /**
-     * Create an instance of {@link ResponseCachingConfigurazioneGenerale }
+     * Create an instance of {@link CorrelazioneApplicativaRispostaElemento }
      */
-    public ResponseCachingConfigurazioneGenerale createResponseCachingConfigurazioneGenerale() {
-        return new ResponseCachingConfigurazioneGenerale();
+    public CorrelazioneApplicativaRispostaElemento createCorrelazioneApplicativaRispostaElemento() {
+        return new CorrelazioneApplicativaRispostaElemento();
     }
 
     /**
-     * Create an instance of {@link PortaApplicativa }
+     * Create an instance of {@link AccessoDatiAttributeAuthority }
      */
-    public PortaApplicativa createPortaApplicativa() {
-        return new PortaApplicativa();
+    public AccessoDatiAttributeAuthority createAccessoDatiAttributeAuthority() {
+        return new AccessoDatiAttributeAuthority();
     }
 
     /**
-     * Create an instance of {@link GestioneToken }
+     * Create an instance of {@link CorsConfigurazioneHeaders }
      */
-    public GestioneToken createGestioneToken() {
-        return new GestioneToken();
+    public CorsConfigurazioneHeaders createCorsConfigurazioneHeaders() {
+        return new CorsConfigurazioneHeaders();
     }
 
     /**
-     * Create an instance of {@link StatoServiziPdd }
+     * Create an instance of {@link Cache }
      */
-    public StatoServiziPdd createStatoServiziPdd() {
-        return new StatoServiziPdd();
+    public Cache createCache() {
+        return new Cache();
     }
 
     /**
-     * Create an instance of {@link TracciamentoConfigurazione }
+     * Create an instance of {@link TracciamentoConfigurazioneFiletrace }
      */
-    public TracciamentoConfigurazione createTracciamentoConfigurazione() {
-        return new TracciamentoConfigurazione();
+    public TracciamentoConfigurazioneFiletrace createTracciamentoConfigurazioneFiletrace() {
+        return new TracciamentoConfigurazioneFiletrace();
     }
 
     /**
-     * Create an instance of {@link ConfigurazioneMessageHandlers }
+     * Create an instance of {@link GenericProperties }
      */
-    public ConfigurazioneMessageHandlers createConfigurazioneMessageHandlers() {
-        return new ConfigurazioneMessageHandlers();
+    public GenericProperties createGenericProperties() {
+        return new GenericProperties();
     }
 
     /**
-     * Create an instance of {@link ResponseCachingConfigurazioneHashGenerator }
+     * Create an instance of {@link MessageSecurity }
      */
-    public ResponseCachingConfigurazioneHashGenerator createResponseCachingConfigurazioneHashGenerator() {
-        return new ResponseCachingConfigurazioneHashGenerator();
+    public MessageSecurity createMessageSecurity() {
+        return new MessageSecurity();
     }
 
     /**
-     * Create an instance of {@link TipoFiltroAbilitazioneServizi }
+     * Create an instance of {@link ConfigurazioneGestioneErrore }
      */
-    public TipoFiltroAbilitazioneServizi createTipoFiltroAbilitazioneServizi() {
-        return new TipoFiltroAbilitazioneServizi();
+    public ConfigurazioneGestioneErrore createConfigurazioneGestioneErrore() {
+        return new ConfigurazioneGestioneErrore();
     }
 
     /**
-     * Create an instance of {@link TrasformazioneRest }
+     * Create an instance of {@link MtomProcessor }
      */
-    public TrasformazioneRest createTrasformazioneRest() {
-        return new TrasformazioneRest();
+    public MtomProcessor createMtomProcessor() {
+        return new MtomProcessor();
     }
 
     /**
-     * Create an instance of {@link ValidazioneContenutiApplicativi }
+     * Create an instance of {@link CorsConfigurazioneOrigin }
      */
-    public ValidazioneContenutiApplicativi createValidazioneContenutiApplicativi() {
-        return new ValidazioneContenutiApplicativi();
+    public CorsConfigurazioneOrigin createCorsConfigurazioneOrigin() {
+        return new CorsConfigurazioneOrigin();
     }
 
     /**
-     * Create an instance of {@link ProprietaOggetto }
+     * Create an instance of {@link Openspcoop2 }
      */
-    public ProprietaOggetto createProprietaOggetto() {
-        return new ProprietaOggetto();
+    public Openspcoop2 createOpenspcoop2() {
+        return new Openspcoop2();
     }
 
     /**
-     * Create an instance of {@link TrasformazioneRegolaApplicabilitaSoggetto }
+     * Create an instance of {@link Proprieta }
      */
-    public TrasformazioneRegolaApplicabilitaSoggetto createTrasformazioneRegolaApplicabilitaSoggetto() {
-        return new TrasformazioneRegolaApplicabilitaSoggetto();
+    public Proprieta createProprieta() {
+        return new Proprieta();
     }
 
     /**
-     * Create an instance of {@link AccessoDatiGestioneToken }
+     * Create an instance of {@link RouteRegistro }
      */
-    public AccessoDatiGestioneToken createAccessoDatiGestioneToken() {
-        return new AccessoDatiGestioneToken();
+    public RouteRegistro createRouteRegistro() {
+        return new RouteRegistro();
     }
 
     /**
-     * Create an instance of {@link ProtocolProperty }
+     * Create an instance of {@link PortaApplicativaServizioApplicativo }
      */
-    public ProtocolProperty createProtocolProperty() {
-        return new ProtocolProperty();
-    }
-
-    /**
-     * Create an instance of {@link PortaApplicativaAzione }
-     */
-    public PortaApplicativaAzione createPortaApplicativaAzione() {
-        return new PortaApplicativaAzione();
-    }
-
-    /**
-     * Create an instance of {@link DumpConfigurazione }
-     */
-    public DumpConfigurazione createDumpConfigurazione() {
-        return new DumpConfigurazione();
-    }
-
-    /**
-     * Create an instance of {@link PortaApplicativaServizio }
-     */
-    public PortaApplicativaServizio createPortaApplicativaServizio() {
-        return new PortaApplicativaServizio();
-    }
-
-    /**
-     * Create an instance of {@link AccessoDatiAutenticazione }
-     */
-    public AccessoDatiAutenticazione createAccessoDatiAutenticazione() {
-        return new AccessoDatiAutenticazione();
-    }
-
-    /**
-     * Create an instance of {@link TrasformazioneRegolaRisposta }
-     */
-    public TrasformazioneRegolaRisposta createTrasformazioneRegolaRisposta() {
-        return new TrasformazioneRegolaRisposta();
-    }
-
-    /**
-     * Create an instance of {@link AccessoDatiKeystore }
-     */
-    public AccessoDatiKeystore createAccessoDatiKeystore() {
-        return new AccessoDatiKeystore();
-    }
-
-    /**
-     * Create an instance of {@link Risposte }
-     */
-    public Risposte createRisposte() {
-        return new Risposte();
-    }
-
-    /**
-     * Create an instance of {@link TrasformazioneRegolaApplicabilitaServizioApplicativo }
-     */
-    public TrasformazioneRegolaApplicabilitaServizioApplicativo createTrasformazioneRegolaApplicabilitaServizioApplicativo() {
-        return new TrasformazioneRegolaApplicabilitaServizioApplicativo();
+    public PortaApplicativaServizioApplicativo createPortaApplicativaServizioApplicativo() {
+        return new PortaApplicativaServizioApplicativo();
     }
 
     /**
@@ -725,10 +235,500 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link AccessoConfigurazione }
+     */
+    public AccessoConfigurazione createAccessoConfigurazione() {
+        return new AccessoConfigurazione();
+    }
+
+    /**
+     * Create an instance of {@link StatoServiziPddPortaDelegata }
+     */
+    public StatoServiziPddPortaDelegata createStatoServiziPddPortaDelegata() {
+        return new StatoServiziPddPortaDelegata();
+    }
+
+    /**
+     * Create an instance of {@link AutorizzazioneScope }
+     */
+    public AutorizzazioneScope createAutorizzazioneScope() {
+        return new AutorizzazioneScope();
+    }
+
+    /**
+     * Create an instance of {@link PortaDelegataAutorizzazioneToken }
+     */
+    public PortaDelegataAutorizzazioneToken createPortaDelegataAutorizzazioneToken() {
+        return new PortaDelegataAutorizzazioneToken();
+    }
+
+    /**
+     * Create an instance of {@link ConnettoreLlmBinding }
+     */
+    public ConnettoreLlmBinding createConnettoreLlmBinding() {
+        return new ConnettoreLlmBinding();
+    }
+
+    /**
+     * Create an instance of {@link InoltroBusteNonRiscontrate }
+     */
+    public InoltroBusteNonRiscontrate createInoltroBusteNonRiscontrate() {
+        return new InoltroBusteNonRiscontrate();
+    }
+
+    /**
+     * Create an instance of {@link ConnettoreLlmProviderRef }
+     */
+    public ConnettoreLlmProviderRef createConnettoreLlmProviderRef() {
+        return new ConnettoreLlmProviderRef();
+    }
+
+    /**
+     * Create an instance of {@link MtomProcessorFlowParameter }
+     */
+    public MtomProcessorFlowParameter createMtomProcessorFlowParameter() {
+        return new MtomProcessorFlowParameter();
+    }
+
+    /**
+     * Create an instance of {@link CorsConfigurazione }
+     */
+    public CorsConfigurazione createCorsConfigurazione() {
+        return new CorsConfigurazione();
+    }
+
+    /**
+     * Create an instance of {@link MessageSecurityFlow }
+     */
+    public MessageSecurityFlow createMessageSecurityFlow() {
+        return new MessageSecurityFlow();
+    }
+
+    /**
+     * Create an instance of {@link PortaApplicativaAutorizzazioneServiziApplicativi }
+     */
+    public PortaApplicativaAutorizzazioneServiziApplicativi createPortaApplicativaAutorizzazioneServiziApplicativi() {
+        return new PortaApplicativaAutorizzazioneServiziApplicativi();
+    }
+
+    /**
+     * Create an instance of {@link TrasformazioneSoap }
+     */
+    public TrasformazioneSoap createTrasformazioneSoap() {
+        return new TrasformazioneSoap();
+    }
+
+    /**
+     * Create an instance of {@link IdPortaApplicativa }
+     */
+    public IdPortaApplicativa createIdPortaApplicativa() {
+        return new IdPortaApplicativa();
+    }
+
+    /**
+     * Create an instance of {@link ServizioApplicativo }
+     */
+    public ServizioApplicativo createServizioApplicativo() {
+        return new ServizioApplicativo();
+    }
+
+    /**
+     * Create an instance of {@link ConfigurazionePortaHandler }
+     */
+    public ConfigurazionePortaHandler createConfigurazionePortaHandler() {
+        return new ConfigurazionePortaHandler();
+    }
+
+    /**
+     * Create an instance of {@link PortaApplicativaAutorizzazioneSoggetto }
+     */
+    public PortaApplicativaAutorizzazioneSoggetto createPortaApplicativaAutorizzazioneSoggetto() {
+        return new PortaApplicativaAutorizzazioneSoggetto();
+    }
+
+    /**
+     * Create an instance of {@link PortaApplicativaAutorizzazioneServizioApplicativo }
+     */
+    public PortaApplicativaAutorizzazioneServizioApplicativo createPortaApplicativaAutorizzazioneServizioApplicativo() {
+        return new PortaApplicativaAutorizzazioneServizioApplicativo();
+    }
+
+    /**
+     * Create an instance of {@link Ruolo }
+     */
+    public Ruolo createRuolo() {
+        return new Ruolo();
+    }
+
+    /**
+     * Create an instance of {@link PortaDelegataAutorizzazioneServiziApplicativi }
+     */
+    public PortaDelegataAutorizzazioneServiziApplicativi createPortaDelegataAutorizzazioneServiziApplicativi() {
+        return new PortaDelegataAutorizzazioneServiziApplicativi();
+    }
+
+    /**
+     * Create an instance of {@link DumpConfigurazione }
+     */
+    public DumpConfigurazione createDumpConfigurazione() {
+        return new DumpConfigurazione();
+    }
+
+    /**
+     * Create an instance of {@link PortaApplicativa }
+     */
+    public PortaApplicativa createPortaApplicativa() {
+        return new PortaApplicativa();
+    }
+
+    /**
+     * Create an instance of {@link PortaDelegataAzione }
+     */
+    public PortaDelegataAzione createPortaDelegataAzione() {
+        return new PortaDelegataAzione();
+    }
+
+    /**
+     * Create an instance of {@link TrasformazioneRegolaApplicabilitaRisposta }
+     */
+    public TrasformazioneRegolaApplicabilitaRisposta createTrasformazioneRegolaApplicabilitaRisposta() {
+        return new TrasformazioneRegolaApplicabilitaRisposta();
+    }
+
+    /**
+     * Create an instance of {@link ConfigurazioneMessageHandlers }
+     */
+    public ConfigurazioneMessageHandlers createConfigurazioneMessageHandlers() {
+        return new ConfigurazioneMessageHandlers();
+    }
+
+    /**
+     * Create an instance of {@link ConfigurazioneTracciamentoPorta }
+     */
+    public ConfigurazioneTracciamentoPorta createConfigurazioneTracciamentoPorta() {
+        return new ConfigurazioneTracciamentoPorta();
+    }
+
+    /**
+     * Create an instance of {@link TrasformazioneRegolaApplicabilitaServizioApplicativo }
+     */
+    public TrasformazioneRegolaApplicabilitaServizioApplicativo createTrasformazioneRegolaApplicabilitaServizioApplicativo() {
+        return new TrasformazioneRegolaApplicabilitaServizioApplicativo();
+    }
+
+    /**
      * Create an instance of {@link IdPortaDelegata }
      */
     public IdPortaDelegata createIdPortaDelegata() {
         return new IdPortaDelegata();
+    }
+
+    /**
+     * Create an instance of {@link PortaApplicativaSoggettoVirtuale }
+     */
+    public PortaApplicativaSoggettoVirtuale createPortaApplicativaSoggettoVirtuale() {
+        return new PortaApplicativaSoggettoVirtuale();
+    }
+
+    /**
+     * Create an instance of {@link MessageSecurityFlowParameter }
+     */
+    public MessageSecurityFlowParameter createMessageSecurityFlowParameter() {
+        return new MessageSecurityFlowParameter();
+    }
+
+    /**
+     * Create an instance of {@link TracciamentoConfigurazioneFiletraceConnector }
+     */
+    public TracciamentoConfigurazioneFiletraceConnector createTracciamentoConfigurazioneFiletraceConnector() {
+        return new TracciamentoConfigurazioneFiletraceConnector();
+    }
+
+    /**
+     * Create an instance of {@link RoutingTable }
+     */
+    public RoutingTable createRoutingTable() {
+        return new RoutingTable();
+    }
+
+    /**
+     * Create an instance of {@link ValidazioneContenutiApplicativi }
+     */
+    public ValidazioneContenutiApplicativi createValidazioneContenutiApplicativi() {
+        return new ValidazioneContenutiApplicativi();
+    }
+
+    /**
+     * Create an instance of {@link ProtocolProperty }
+     */
+    public ProtocolProperty createProtocolProperty() {
+        return new ProtocolProperty();
+    }
+
+    /**
+     * Create an instance of {@link TrasformazioneSoapRisposta }
+     */
+    public TrasformazioneSoapRisposta createTrasformazioneSoapRisposta() {
+        return new TrasformazioneSoapRisposta();
+    }
+
+    /**
+     * Create an instance of {@link ServizioApplicativoRuoli }
+     */
+    public ServizioApplicativoRuoli createServizioApplicativoRuoli() {
+        return new ServizioApplicativoRuoli();
+    }
+
+    /**
+     * Create an instance of {@link TrasformazioneRegolaRisposta }
+     */
+    public TrasformazioneRegolaRisposta createTrasformazioneRegolaRisposta() {
+        return new TrasformazioneRegolaRisposta();
+    }
+
+    /**
+     * Create an instance of {@link AccessoDatiAutenticazione }
+     */
+    public AccessoDatiAutenticazione createAccessoDatiAutenticazione() {
+        return new AccessoDatiAutenticazione();
+    }
+
+    /**
+     * Create an instance of {@link Soggetto }
+     */
+    public Soggetto createSoggetto() {
+        return new Soggetto();
+    }
+
+    /**
+     * Create an instance of {@link ConnettoreLlm }
+     */
+    public ConnettoreLlm createConnettoreLlm() {
+        return new ConnettoreLlm();
+    }
+
+    /**
+     * Create an instance of {@link ResponseCachingConfigurazioneRegola }
+     */
+    public ResponseCachingConfigurazioneRegola createResponseCachingConfigurazioneRegola() {
+        return new ResponseCachingConfigurazioneRegola();
+    }
+
+    /**
+     * Create an instance of {@link CanaleConfigurazioneNodo }
+     */
+    public CanaleConfigurazioneNodo createCanaleConfigurazioneNodo() {
+        return new CanaleConfigurazioneNodo();
+    }
+
+    /**
+     * Create an instance of {@link MtomProcessorFlow }
+     */
+    public MtomProcessorFlow createMtomProcessorFlow() {
+        return new MtomProcessorFlow();
+    }
+
+    /**
+     * Create an instance of {@link InvocazionePorta }
+     */
+    public InvocazionePorta createInvocazionePorta() {
+        return new InvocazionePorta();
+    }
+
+    /**
+     * Create an instance of {@link RoutingTableDestinazione }
+     */
+    public RoutingTableDestinazione createRoutingTableDestinazione() {
+        return new RoutingTableDestinazione();
+    }
+
+    /**
+     * Create an instance of {@link PortaApplicativaServizioApplicativoConnettore }
+     */
+    public PortaApplicativaServizioApplicativoConnettore createPortaApplicativaServizioApplicativoConnettore() {
+        return new PortaApplicativaServizioApplicativoConnettore();
+    }
+
+    /**
+     * Create an instance of {@link ConfigurazioneUrlInvocazioneRegola }
+     */
+    public ConfigurazioneUrlInvocazioneRegola createConfigurazioneUrlInvocazioneRegola() {
+        return new ConfigurazioneUrlInvocazioneRegola();
+    }
+
+    /**
+     * Create an instance of {@link InvocazionePortaGestioneErrore }
+     */
+    public InvocazionePortaGestioneErrore createInvocazionePortaGestioneErrore() {
+        return new InvocazionePortaGestioneErrore();
+    }
+
+    /**
+     * Create an instance of {@link IdServizioApplicativo }
+     */
+    public IdServizioApplicativo createIdServizioApplicativo() {
+        return new IdServizioApplicativo();
+    }
+
+    /**
+     * Create an instance of {@link PortaDelegataServizioApplicativo }
+     */
+    public PortaDelegataServizioApplicativo createPortaDelegataServizioApplicativo() {
+        return new PortaDelegataServizioApplicativo();
+    }
+
+    /**
+     * Create an instance of {@link Connettore }
+     */
+    public Connettore createConnettore() {
+        return new Connettore();
+    }
+
+    /**
+     * Create an instance of {@link AttributeAuthority }
+     */
+    public AttributeAuthority createAttributeAuthority() {
+        return new AttributeAuthority();
+    }
+
+    /**
+     * Create an instance of {@link InvocazioneServizio }
+     */
+    public InvocazioneServizio createInvocazioneServizio() {
+        return new InvocazioneServizio();
+    }
+
+    /**
+     * Create an instance of {@link AccessoDatiConsegnaApplicativi }
+     */
+    public AccessoDatiConsegnaApplicativi createAccessoDatiConsegnaApplicativi() {
+        return new AccessoDatiConsegnaApplicativi();
+    }
+
+    /**
+     * Create an instance of {@link IndirizzoRisposta }
+     */
+    public IndirizzoRisposta createIndirizzoRisposta() {
+        return new IndirizzoRisposta();
+    }
+
+    /**
+     * Create an instance of {@link GestioneTokenAutenticazione }
+     */
+    public GestioneTokenAutenticazione createGestioneTokenAutenticazione() {
+        return new GestioneTokenAutenticazione();
+    }
+
+    /**
+     * Create an instance of {@link PortaTracciamento }
+     */
+    public PortaTracciamento createPortaTracciamento() {
+        return new PortaTracciamento();
+    }
+
+    /**
+     * Create an instance of {@link RoutingTableDefault }
+     */
+    public RoutingTableDefault createRoutingTableDefault() {
+        return new RoutingTableDefault();
+    }
+
+    /**
+     * Create an instance of {@link ConfigurazioneHandler }
+     */
+    public ConfigurazioneHandler createConfigurazioneHandler() {
+        return new ConfigurazioneHandler();
+    }
+
+    /**
+     * Create an instance of {@link ResponseCachingConfigurazioneHashGenerator }
+     */
+    public ResponseCachingConfigurazioneHashGenerator createResponseCachingConfigurazioneHashGenerator() {
+        return new ResponseCachingConfigurazioneHashGenerator();
+    }
+
+    /**
+     * Create an instance of {@link CorrelazioneApplicativaElemento }
+     */
+    public CorrelazioneApplicativaElemento createCorrelazioneApplicativaElemento() {
+        return new CorrelazioneApplicativaElemento();
+    }
+
+    /**
+     * Create an instance of {@link AccessoDatiKeystore }
+     */
+    public AccessoDatiKeystore createAccessoDatiKeystore() {
+        return new AccessoDatiKeystore();
+    }
+
+    /**
+     * Create an instance of {@link AccessoDatiGestioneToken }
+     */
+    public AccessoDatiGestioneToken createAccessoDatiGestioneToken() {
+        return new AccessoDatiGestioneToken();
+    }
+
+    /**
+     * Create an instance of {@link ResponseCachingConfigurazione }
+     */
+    public ResponseCachingConfigurazione createResponseCachingConfigurazione() {
+        return new ResponseCachingConfigurazione();
+    }
+
+    /**
+     * Create an instance of {@link DumpConfigurazioneRegola }
+     */
+    public DumpConfigurazioneRegola createDumpConfigurazioneRegola() {
+        return new DumpConfigurazioneRegola();
+    }
+
+    /**
+     * Create an instance of {@link SystemProperties }
+     */
+    public SystemProperties createSystemProperties() {
+        return new SystemProperties();
+    }
+
+    /**
+     * Create an instance of {@link TrasformazioneRegola }
+     */
+    public TrasformazioneRegola createTrasformazioneRegola() {
+        return new TrasformazioneRegola();
+    }
+
+    /**
+     * Create an instance of {@link OpenspcoopAppender }
+     */
+    public OpenspcoopAppender createOpenspcoopAppender() {
+        return new OpenspcoopAppender();
+    }
+
+    /**
+     * Create an instance of {@link Risposte }
+     */
+    public Risposte createRisposte() {
+        return new Risposte();
+    }
+
+    /**
+     * Create an instance of {@link TipoFiltroAbilitazioneServizi }
+     */
+    public TipoFiltroAbilitazioneServizi createTipoFiltroAbilitazioneServizi() {
+        return new TipoFiltroAbilitazioneServizi();
+    }
+
+    /**
+     * Create an instance of {@link Configurazione }
+     */
+    public Configurazione createConfigurazione() {
+        return new Configurazione();
+    }
+
+    /**
+     * Create an instance of {@link MessaggiDiagnostici }
+     */
+    public MessaggiDiagnostici createMessaggiDiagnostici() {
+        return new MessaggiDiagnostici();
     }
 
     /**
@@ -746,227 +746,38 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ConfigurazioneUrlInvocazioneRegola }
+     * Create an instance of {@link StatoServiziPddIntegrationManager }
      */
-    public ConfigurazioneUrlInvocazioneRegola createConfigurazioneUrlInvocazioneRegola() {
-        return new ConfigurazioneUrlInvocazioneRegola();
+    public StatoServiziPddIntegrationManager createStatoServiziPddIntegrationManager() {
+        return new StatoServiziPddIntegrationManager();
     }
 
     /**
-     * Create an instance of {@link CorrelazioneApplicativaRisposta }
+     * Create an instance of {@link StatoServiziPdd }
      */
-    public CorrelazioneApplicativaRisposta createCorrelazioneApplicativaRisposta() {
-        return new CorrelazioneApplicativaRisposta();
+    public StatoServiziPdd createStatoServiziPdd() {
+        return new StatoServiziPdd();
     }
 
     /**
-     * Create an instance of {@link AutorizzazioneRuoli }
+     * Create an instance of {@link ConfigurazioneUrlInvocazione }
      */
-    public AutorizzazioneRuoli createAutorizzazioneRuoli() {
-        return new AutorizzazioneRuoli();
+    public ConfigurazioneUrlInvocazione createConfigurazioneUrlInvocazione() {
+        return new ConfigurazioneUrlInvocazione();
     }
 
     /**
-     * Create an instance of {@link ConfigurazionePortaHandler }
+     * Create an instance of {@link TrasformazioneRegolaApplicabilitaRichiesta }
      */
-    public ConfigurazionePortaHandler createConfigurazionePortaHandler() {
-        return new ConfigurazionePortaHandler();
+    public TrasformazioneRegolaApplicabilitaRichiesta createTrasformazioneRegolaApplicabilitaRichiesta() {
+        return new TrasformazioneRegolaApplicabilitaRichiesta();
     }
 
     /**
-     * Create an instance of {@link MessaggiDiagnostici }
+     * Create an instance of {@link OpenspcoopSorgenteDati }
      */
-    public MessaggiDiagnostici createMessaggiDiagnostici() {
-        return new MessaggiDiagnostici();
-    }
-
-    /**
-     * Create an instance of {@link StatoServiziPddPortaDelegata }
-     */
-    public StatoServiziPddPortaDelegata createStatoServiziPddPortaDelegata() {
-        return new StatoServiziPddPortaDelegata();
-    }
-
-    /**
-     * Create an instance of {@link RegistroPluginArchivio }
-     */
-    public RegistroPluginArchivio createRegistroPluginArchivio() {
-        return new RegistroPluginArchivio();
-    }
-
-    /**
-     * Create an instance of {@link DumpConfigurazioneRegola }
-     */
-    public DumpConfigurazioneRegola createDumpConfigurazioneRegola() {
-        return new DumpConfigurazioneRegola();
-    }
-
-    /**
-     * Create an instance of {@link RoutingTableDestinazione }
-     */
-    public RoutingTableDestinazione createRoutingTableDestinazione() {
-        return new RoutingTableDestinazione();
-    }
-
-    /**
-     * Create an instance of {@link AccessoRegistroRegistro }
-     */
-    public AccessoRegistroRegistro createAccessoRegistroRegistro() {
-        return new AccessoRegistroRegistro();
-    }
-
-    /**
-     * Create an instance of {@link PortaApplicativaServizioApplicativo }
-     */
-    public PortaApplicativaServizioApplicativo createPortaApplicativaServizioApplicativo() {
-        return new PortaApplicativaServizioApplicativo();
-    }
-
-    /**
-     * Create an instance of {@link MtomProcessorFlowParameter }
-     */
-    public MtomProcessorFlowParameter createMtomProcessorFlowParameter() {
-        return new MtomProcessorFlowParameter();
-    }
-
-    /**
-     * Create an instance of {@link PortaDelegataLocalForward }
-     */
-    public PortaDelegataLocalForward createPortaDelegataLocalForward() {
-        return new PortaDelegataLocalForward();
-    }
-
-    /**
-     * Create an instance of {@link InvocazioneCredenziali }
-     */
-    public InvocazioneCredenziali createInvocazioneCredenziali() {
-        return new InvocazioneCredenziali();
-    }
-
-    /**
-     * Create an instance of {@link RouteGateway }
-     */
-    public RouteGateway createRouteGateway() {
-        return new RouteGateway();
-    }
-
-    /**
-     * Create an instance of {@link SystemProperties }
-     */
-    public SystemProperties createSystemProperties() {
-        return new SystemProperties();
-    }
-
-    /**
-     * Create an instance of {@link PortaApplicativaAutorizzazioneToken }
-     */
-    public PortaApplicativaAutorizzazioneToken createPortaApplicativaAutorizzazioneToken() {
-        return new PortaApplicativaAutorizzazioneToken();
-    }
-
-    /**
-     * Create an instance of {@link PortaApplicativaServizioApplicativoConnettore }
-     */
-    public PortaApplicativaServizioApplicativoConnettore createPortaApplicativaServizioApplicativoConnettore() {
-        return new PortaApplicativaServizioApplicativoConnettore();
-    }
-
-    /**
-     * Create an instance of {@link ServizioApplicativo }
-     */
-    public ServizioApplicativo createServizioApplicativo() {
-        return new ServizioApplicativo();
-    }
-
-    /**
-     * Create an instance of {@link AccessoDatiConsegnaApplicativi }
-     */
-    public AccessoDatiConsegnaApplicativi createAccessoDatiConsegnaApplicativi() {
-        return new AccessoDatiConsegnaApplicativi();
-    }
-
-    /**
-     * Create an instance of {@link PortaDelegataSoggettoErogatore }
-     */
-    public PortaDelegataSoggettoErogatore createPortaDelegataSoggettoErogatore() {
-        return new PortaDelegataSoggettoErogatore();
-    }
-
-    /**
-     * Create an instance of {@link GestioneTokenAutenticazione }
-     */
-    public GestioneTokenAutenticazione createGestioneTokenAutenticazione() {
-        return new GestioneTokenAutenticazione();
-    }
-
-    /**
-     * Create an instance of {@link CorsConfigurazioneHeaders }
-     */
-    public CorsConfigurazioneHeaders createCorsConfigurazioneHeaders() {
-        return new CorsConfigurazioneHeaders();
-    }
-
-    /**
-     * Create an instance of {@link AccessoConfigurazione }
-     */
-    public AccessoConfigurazione createAccessoConfigurazione() {
-        return new AccessoConfigurazione();
-    }
-
-    /**
-     * Create an instance of {@link RispostaAsincrona }
-     */
-    public RispostaAsincrona createRispostaAsincrona() {
-        return new RispostaAsincrona();
-    }
-
-    /**
-     * Create an instance of {@link IdPortaApplicativa }
-     */
-    public IdPortaApplicativa createIdPortaApplicativa() {
-        return new IdPortaApplicativa();
-    }
-
-    /**
-     * Create an instance of {@link ValidazioneBuste }
-     */
-    public ValidazioneBuste createValidazioneBuste() {
-        return new ValidazioneBuste();
-    }
-
-    /**
-     * Create an instance of {@link PortaApplicativaBehaviour }
-     */
-    public PortaApplicativaBehaviour createPortaApplicativaBehaviour() {
-        return new PortaApplicativaBehaviour();
-    }
-
-    /**
-     * Create an instance of {@link IntegrationManager }
-     */
-    public IntegrationManager createIntegrationManager() {
-        return new IntegrationManager();
-    }
-
-    /**
-     * Create an instance of {@link MessageSecurityFlowParameter }
-     */
-    public MessageSecurityFlowParameter createMessageSecurityFlowParameter() {
-        return new MessageSecurityFlowParameter();
-    }
-
-    /**
-     * Create an instance of {@link Tracciamento }
-     */
-    public Tracciamento createTracciamento() {
-        return new Tracciamento();
-    }
-
-    /**
-     * Create an instance of {@link InvocazionePorta }
-     */
-    public InvocazionePorta createInvocazionePorta() {
-        return new InvocazionePorta();
+    public OpenspcoopSorgenteDati createOpenspcoopSorgenteDati() {
+        return new OpenspcoopSorgenteDati();
     }
 
     /**
@@ -977,10 +788,143 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link CorsConfigurazioneOrigin }
+     * Create an instance of {@link TrasformazioneRegolaParametro }
      */
-    public CorsConfigurazioneOrigin createCorsConfigurazioneOrigin() {
-        return new CorsConfigurazioneOrigin();
+    public TrasformazioneRegolaParametro createTrasformazioneRegolaParametro() {
+        return new TrasformazioneRegolaParametro();
+    }
+
+    /**
+     * Create an instance of {@link ConfigurazioneGeneraleHandler }
+     */
+    public ConfigurazioneGeneraleHandler createConfigurazioneGeneraleHandler() {
+        return new ConfigurazioneGeneraleHandler();
+    }
+
+    /**
+     * Create an instance of {@link ResponseCachingConfigurazioneGenerale }
+     */
+    public ResponseCachingConfigurazioneGenerale createResponseCachingConfigurazioneGenerale() {
+        return new ResponseCachingConfigurazioneGenerale();
+    }
+
+    /**
+     * Create an instance of {@link Tracciamento }
+     */
+    public Tracciamento createTracciamento() {
+        return new Tracciamento();
+    }
+
+    /**
+     * Create an instance of {@link IntegrationManager }
+     */
+    public IntegrationManager createIntegrationManager() {
+        return new IntegrationManager();
+    }
+
+    /**
+     * Create an instance of {@link PortaApplicativaAutorizzazioneSoggetti }
+     */
+    public PortaApplicativaAutorizzazioneSoggetti createPortaApplicativaAutorizzazioneSoggetti() {
+        return new PortaApplicativaAutorizzazioneSoggetti();
+    }
+
+    /**
+     * Create an instance of {@link RegistroPlugin }
+     */
+    public RegistroPlugin createRegistroPlugin() {
+        return new RegistroPlugin();
+    }
+
+    /**
+     * Create an instance of {@link ProprietaOggetto }
+     */
+    public ProprietaOggetto createProprietaOggetto() {
+        return new ProprietaOggetto();
+    }
+
+    /**
+     * Create an instance of {@link PortaDelegataLocalForward }
+     */
+    public PortaDelegataLocalForward createPortaDelegataLocalForward() {
+        return new PortaDelegataLocalForward();
+    }
+
+    /**
+     * Create an instance of {@link IdSoggetto }
+     */
+    public IdSoggetto createIdSoggetto() {
+        return new IdSoggetto();
+    }
+
+    /**
+     * Create an instance of {@link PortaDelegataSoggettoErogatore }
+     */
+    public PortaDelegataSoggettoErogatore createPortaDelegataSoggettoErogatore() {
+        return new PortaDelegataSoggettoErogatore();
+    }
+
+    /**
+     * Create an instance of {@link Attachments }
+     */
+    public Attachments createAttachments() {
+        return new Attachments();
+    }
+
+    /**
+     * Create an instance of {@link RouteGateway }
+     */
+    public RouteGateway createRouteGateway() {
+        return new RouteGateway();
+    }
+
+    /**
+     * Create an instance of {@link RegistroPlugins }
+     */
+    public RegistroPlugins createRegistroPlugins() {
+        return new RegistroPlugins();
+    }
+
+    /**
+     * Create an instance of {@link TrasformazioneRegolaApplicabilitaSoggetto }
+     */
+    public TrasformazioneRegolaApplicabilitaSoggetto createTrasformazioneRegolaApplicabilitaSoggetto() {
+        return new TrasformazioneRegolaApplicabilitaSoggetto();
+    }
+
+    /**
+     * Create an instance of {@link ValidazioneBuste }
+     */
+    public ValidazioneBuste createValidazioneBuste() {
+        return new ValidazioneBuste();
+    }
+
+    /**
+     * Create an instance of {@link ConfigurazioneServiceHandlers }
+     */
+    public ConfigurazioneServiceHandlers createConfigurazioneServiceHandlers() {
+        return new ConfigurazioneServiceHandlers();
+    }
+
+    /**
+     * Create an instance of {@link Trasformazioni }
+     */
+    public Trasformazioni createTrasformazioni() {
+        return new Trasformazioni();
+    }
+
+    /**
+     * Create an instance of {@link PortaApplicativaBehaviour }
+     */
+    public PortaApplicativaBehaviour createPortaApplicativaBehaviour() {
+        return new PortaApplicativaBehaviour();
+    }
+
+    /**
+     * Create an instance of {@link RegistroPluginArchivio }
+     */
+    public RegistroPluginArchivio createRegistroPluginArchivio() {
+        return new RegistroPluginArchivio();
     }
 
     /**
@@ -991,38 +935,38 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Dump }
+     * Create an instance of {@link TracciamentoConfigurazione }
      */
-    public Dump createDump() {
-        return new Dump();
+    public TracciamentoConfigurazione createTracciamentoConfigurazione() {
+        return new TracciamentoConfigurazione();
     }
 
     /**
-     * Create an instance of {@link RoutingTable }
+     * Create an instance of {@link ConfigurazioneMultitenant }
      */
-    public RoutingTable createRoutingTable() {
-        return new RoutingTable();
+    public ConfigurazioneMultitenant createConfigurazioneMultitenant() {
+        return new ConfigurazioneMultitenant();
     }
 
     /**
-     * Create an instance of {@link InvocazioneServizio }
+     * Create an instance of {@link InvocazioneCredenziali }
      */
-    public InvocazioneServizio createInvocazioneServizio() {
-        return new InvocazioneServizio();
+    public InvocazioneCredenziali createInvocazioneCredenziali() {
+        return new InvocazioneCredenziali();
     }
 
     /**
-     * Create an instance of {@link InoltroBusteNonRiscontrate }
+     * Create an instance of {@link PortaDelegata }
      */
-    public InoltroBusteNonRiscontrate createInoltroBusteNonRiscontrate() {
-        return new InoltroBusteNonRiscontrate();
+    public PortaDelegata createPortaDelegata() {
+        return new PortaDelegata();
     }
 
     /**
-     * Create an instance of {@link Credenziali }
+     * Create an instance of {@link GestioneErroreSoapFault }
      */
-    public Credenziali createCredenziali() {
-        return new Credenziali();
+    public GestioneErroreSoapFault createGestioneErroreSoapFault() {
+        return new GestioneErroreSoapFault();
     }
 
     /**
@@ -1030,6 +974,83 @@ public class ObjectFactory {
      */
     public Scope createScope() {
         return new Scope();
+    }
+
+    /**
+     * Create an instance of {@link TrasformazioneRest }
+     */
+    public TrasformazioneRest createTrasformazioneRest() {
+        return new TrasformazioneRest();
+    }
+
+    /**
+     * Create an instance of {@link GestioneToken }
+     */
+    public GestioneToken createGestioneToken() {
+        return new GestioneToken();
+    }
+
+    /**
+     * Create an instance of {@link PortaApplicativaAutorizzazioneToken }
+     */
+    public PortaApplicativaAutorizzazioneToken createPortaApplicativaAutorizzazioneToken() {
+        return new PortaApplicativaAutorizzazioneToken();
+    }
+
+    /**
+     * Create an instance of {@link Route }
+     */
+    public Route createRoute() {
+        return new Route();
+    }
+
+    /**
+     * Create an instance of {@link AccessoRegistro }
+     */
+    public AccessoRegistro createAccessoRegistro() {
+        return new AccessoRegistro();
+    }
+
+    /**
+     * Create an instance of {@link Dump }
+     */
+    public Dump createDump() {
+        return new Dump();
+    }
+
+    /**
+     * Create an instance of {@link PortaApplicativaServizio }
+     */
+    public PortaApplicativaServizio createPortaApplicativaServizio() {
+        return new PortaApplicativaServizio();
+    }
+
+    /**
+     * Create an instance of {@link CanaliConfigurazione }
+     */
+    public CanaliConfigurazione createCanaliConfigurazione() {
+        return new CanaliConfigurazione();
+    }
+
+    /**
+     * Create an instance of {@link PortaApplicativaAzione }
+     */
+    public PortaApplicativaAzione createPortaApplicativaAzione() {
+        return new PortaApplicativaAzione();
+    }
+
+    /**
+     * Create an instance of {@link StatoServiziPddPortaApplicativa }
+     */
+    public StatoServiziPddPortaApplicativa createStatoServiziPddPortaApplicativa() {
+        return new StatoServiziPddPortaApplicativa();
+    }
+
+    /**
+     * Create an instance of {@link CorsConfigurazioneMethods }
+     */
+    public CorsConfigurazioneMethods createCorsConfigurazioneMethods() {
+        return new CorsConfigurazioneMethods();
     }
 
 

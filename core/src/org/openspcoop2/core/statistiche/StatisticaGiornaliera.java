@@ -38,6 +38,7 @@ import java.util.List;
  * 		&lt;sequence&gt;
  * 			&lt;element name="statistica-base" type="{http://www.openspcoop2.org/core/statistiche}statistica" minOccurs="1" maxOccurs="1"/&gt;
  * 			&lt;element name="statistica-giornaliera-contenuti" type="{http://www.openspcoop2.org/core/statistiche}statistica-contenuti" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="statistica-giornaliera-llm" type="{http://www.openspcoop2.org/core/statistiche}statistica-giornaliera-llm" minOccurs="0" maxOccurs="unbounded"/&gt;
  * 		&lt;/sequence&gt;
  * &lt;/complexType&gt;
  * </pre>
@@ -53,7 +54,8 @@ import java.util.List;
 @XmlType(name = "statistica-giornaliera", 
   propOrder = {
   	"statisticaBase",
-  	"statisticaGiornalieraContenuti"
+  	"statisticaGiornalieraContenuti",
+  	"statisticaGiornalieraLlm"
   }
 )
 
@@ -94,6 +96,30 @@ public class StatisticaGiornaliera extends org.openspcoop2.utils.beans.BaseBeanW
 
   public int sizeStatisticaGiornalieraContenutiList() {
     return this.statisticaGiornalieraContenuti.size();
+  }
+
+  public void addStatisticaGiornalieraLlm(StatisticaGiornalieraLlm statisticaGiornalieraLlm) {
+    this.statisticaGiornalieraLlm.add(statisticaGiornalieraLlm);
+  }
+
+  public StatisticaGiornalieraLlm getStatisticaGiornalieraLlm(int index) {
+    return this.statisticaGiornalieraLlm.get( index );
+  }
+
+  public StatisticaGiornalieraLlm removeStatisticaGiornalieraLlm(int index) {
+    return this.statisticaGiornalieraLlm.remove( index );
+  }
+
+  public List<StatisticaGiornalieraLlm> getStatisticaGiornalieraLlmList() {
+    return this.statisticaGiornalieraLlm;
+  }
+
+  public void setStatisticaGiornalieraLlmList(List<StatisticaGiornalieraLlm> statisticaGiornalieraLlm) {
+    this.statisticaGiornalieraLlm=statisticaGiornalieraLlm;
+  }
+
+  public int sizeStatisticaGiornalieraLlmList() {
+    return this.statisticaGiornalieraLlm.size();
   }
 
   private static final long serialVersionUID = 1L;
@@ -140,6 +166,33 @@ public class StatisticaGiornaliera extends org.openspcoop2.utils.beans.BaseBeanW
   */
   public int sizeStatisticaGiornalieraContenuti() {
   	return this.sizeStatisticaGiornalieraContenutiList();
+  }
+
+  @XmlElement(name="statistica-giornaliera-llm",required=true,nillable=false)
+  private List<StatisticaGiornalieraLlm> statisticaGiornalieraLlm = new ArrayList<>();
+
+  /**
+   * Use method getStatisticaGiornalieraLlmList
+   * @return List&lt;StatisticaGiornalieraLlm&gt;
+  */
+  public List<StatisticaGiornalieraLlm> getStatisticaGiornalieraLlm() {
+  	return this.getStatisticaGiornalieraLlmList();
+  }
+
+  /**
+   * Use method setStatisticaGiornalieraLlmList
+   * @param statisticaGiornalieraLlm List&lt;StatisticaGiornalieraLlm&gt;
+  */
+  public void setStatisticaGiornalieraLlm(List<StatisticaGiornalieraLlm> statisticaGiornalieraLlm) {
+  	this.setStatisticaGiornalieraLlmList(statisticaGiornalieraLlm);
+  }
+
+  /**
+   * Use method sizeStatisticaGiornalieraLlmList
+   * @return lunghezza della lista
+  */
+  public int sizeStatisticaGiornalieraLlm() {
+  	return this.sizeStatisticaGiornalieraLlmList();
   }
 
 }

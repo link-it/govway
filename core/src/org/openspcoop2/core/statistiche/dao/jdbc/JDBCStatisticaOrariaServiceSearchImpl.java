@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.core.statistiche.StatisticaContenuti;
+import org.openspcoop2.core.statistiche.StatisticaOrariaLlm;
 import org.openspcoop2.core.statistiche.StatisticaOraria;
 import org.openspcoop2.core.statistiche.dao.jdbc.converter.StatisticaOrariaFieldConverter;
 import org.openspcoop2.core.statistiche.dao.jdbc.fetch.StatisticaOrariaFetch;
@@ -541,6 +542,33 @@ public class JDBCStatisticaOrariaServiceSearchImpl implements IJDBCServiceSearch
 			}
 		}
 
+		// Object statisticaOraria_statisticaOrariaLlm
+		ISQLQueryObject sqlQueryObjectGet_statisticaOrariaLlm = sqlQueryObjectGet.newSQLQueryObject();
+		sqlQueryObjectGet_statisticaOrariaLlm.setANDLogicOperator(true);
+		sqlQueryObjectGet_statisticaOrariaLlm.addFromTable(this.getStatisticaOrariaFieldConverter().toTable(StatisticaOraria.model().STATISTICA_ORARIA_LLM));
+		sqlQueryObjectGet_statisticaOrariaLlm.addSelectField("id");
+		sqlQueryObjectGet_statisticaOrariaLlm.addSelectField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.DATA,true));
+		sqlQueryObjectGet_statisticaOrariaLlm.addSelectField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.LLM_PROVIDER,true));
+		sqlQueryObjectGet_statisticaOrariaLlm.addSelectField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.LLM_MODEL,true));
+		sqlQueryObjectGet_statisticaOrariaLlm.addSelectField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.LLM_PROVIDER_BINDING,true));
+		sqlQueryObjectGet_statisticaOrariaLlm.addSelectField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.TOKEN_INPUT,true));
+		sqlQueryObjectGet_statisticaOrariaLlm.addSelectField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.TOKEN_OUTPUT,true));
+		sqlQueryObjectGet_statisticaOrariaLlm.addSelectField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.COST_ESTIMATED,true));
+		sqlQueryObjectGet_statisticaOrariaLlm.addWhereCondition("id_stat=?");
+
+		// Get statisticaOraria_statisticaOrariaLlm
+		java.util.List<Object> statisticaOraria_statisticaOrariaLlm_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectGet_statisticaOrariaLlm.createSQLQuery(), jdbcProperties.isShowSql(), StatisticaOraria.model().STATISTICA_ORARIA_LLM, this.getStatisticaOrariaFetch(),
+			new JDBCObject(statisticaOraria.getId(),Long.class));
+
+		if(statisticaOraria_statisticaOrariaLlm_list != null) {
+			for (Object statisticaOraria_statisticaOrariaLlm_object: statisticaOraria_statisticaOrariaLlm_list) {
+				StatisticaOrariaLlm statisticaOraria_statisticaOrariaLlm = (StatisticaOrariaLlm) statisticaOraria_statisticaOrariaLlm_object;
+
+
+				statisticaOraria.addStatisticaOrariaLlm(statisticaOraria_statisticaOrariaLlm);
+			}
+		}
+
 		
         return statisticaOraria;  
 	
@@ -578,6 +606,11 @@ public class JDBCStatisticaOrariaServiceSearchImpl implements IJDBCServiceSearch
 		AliasTableRicerchePersonalizzate.join(expression, sqlQueryObject, StatisticaOraria.model().STATISTICA_BASE, 
 				StatisticaOraria.model().STATISTICA_ORARIA_CONTENUTI, this.getFieldConverter());
 		
+		if(expression.inUseModel(StatisticaOraria.model().STATISTICA_ORARIA_LLM,false)){
+			String tableName1 = this.getStatisticaOrariaFieldConverter().toAliasTable(StatisticaOraria.model());
+			String tableName2 = this.getStatisticaOrariaFieldConverter().toAliasTable(StatisticaOraria.model().STATISTICA_ORARIA_LLM);
+			sqlQueryObject.addWhereCondition(tableName1+".id="+tableName2+".id_stat");
+		}
 	}
 	
 	protected java.util.List<Object> getRootTablePrimaryKeyValuesEngine(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, StatisticaOraria statisticaOraria) throws NotFoundException, ServiceException, NotImplementedException, Exception{

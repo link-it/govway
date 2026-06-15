@@ -141,6 +141,7 @@ import java.util.List;
  * 			&lt;element name="gruppi" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="dump-messaggio" type="{http://www.openspcoop2.org/core/transazioni}dump-messaggio" minOccurs="0" maxOccurs="unbounded"/&gt;
  * 			&lt;element name="transazione-applicativo-server" type="{http://www.openspcoop2.org/core/transazioni}transazione-applicativo-server" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="transazione-llm" type="{http://www.openspcoop2.org/core/transazioni}transazione-llm" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="transazione-extended-info" type="{http://www.openspcoop2.org/core/transazioni}transazione-extended-info" minOccurs="0" maxOccurs="unbounded"/&gt;
  * 		&lt;/sequence&gt;
  * &lt;/complexType&gt;
@@ -259,6 +260,7 @@ import java.util.List;
   	"gruppi",
   	"dumpMessaggio",
   	"transazioneApplicativoServer",
+  	"transazioneLlm",
   	"transazioneExtendedInfo"
   }
 )
@@ -1146,6 +1148,14 @@ public class Transazione extends org.openspcoop2.utils.beans.BaseBeanWithId impl
     return this.transazioneApplicativoServer.size();
   }
 
+  public TransazioneLlm getTransazioneLlm() {
+    return this.transazioneLlm;
+  }
+
+  public void setTransazioneLlm(TransazioneLlm transazioneLlm) {
+    this.transazioneLlm = transazioneLlm;
+  }
+
   public void addTransazioneExtendedInfo(TransazioneExtendedInfo transazioneExtendedInfo) {
     this.transazioneExtendedInfo.add(transazioneExtendedInfo);
   }
@@ -1661,6 +1671,9 @@ public class Transazione extends org.openspcoop2.utils.beans.BaseBeanWithId impl
   public int sizeTransazioneApplicativoServer() {
   	return this.sizeTransazioneApplicativoServerList();
   }
+
+  @XmlElement(name="transazione-llm",required=false,nillable=false)
+  protected TransazioneLlm transazioneLlm;
 
   @XmlElement(name="transazione-extended-info",required=true,nillable=false)
   private List<TransazioneExtendedInfo> transazioneExtendedInfo = new ArrayList<>();

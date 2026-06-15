@@ -1527,7 +1527,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 				Costanti.SCENARIO_ASINCRONO_SIMMETRICO_CONSEGNA_RISPOSTA.equals(this.scenarioCooperazione) ){
 			try{
 				this.msgDiag.mediumDebug("Inizializzo contesto per la gestione (getConsegnaRispostaAsincrona) [ConsegnaContenuti/AsincronoSimmetricoRisposta]...");
-				this.connettoreMsg = this.configurazionePdDManager.getConsegnaRispostaAsincrona(sa,this.richiestaDelegata, this.requestInfo);
+				this.connettoreMsg = this.configurazionePdDManager.getConsegnaRispostaAsincrona(sa,this.richiestaDelegata, this.requestInfo, this.pddContext);
 				if(Costanti.SCENARIO_CONSEGNA_CONTENUTI_APPLICATIVI.equals(this.scenarioCooperazione)){
 					this.connettoreMsg.setCheckPresenzaHeaderPrimaSbustamento(true);
 				}
@@ -1556,7 +1556,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 		else if(Costanti.SCENARIO_ASINCRONO_ASIMMETRICO_POLLING.equals(this.scenarioCooperazione)){
 			try{
 				this.msgDiag.mediumDebug("Inizializzo contesto per la gestione (getConsegnaRispostaAsincrona) [AsincronoAsimmetricoPolling]...");
-				this.connettoreMsg = this.configurazionePdDManager.getConsegnaRispostaAsincrona(sa,this.richiestaApplicativa, this.requestInfo);
+				this.connettoreMsg = this.configurazionePdDManager.getConsegnaRispostaAsincrona(sa,this.richiestaApplicativa, this.requestInfo, this.pddContext);
 				if(this.connettoreMsg!=null){
 					this.connettoreMsg.initPolicyGestioneToken(this.configurazionePdDManager, this.requestInfo);
 				}
@@ -1579,7 +1579,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 		}else{
 			try{
 				this.msgDiag.mediumDebug("Inizializzo contesto per la gestione (getInvocazioneServizio)...");
-				this.connettoreMsg = this.configurazionePdDManager.getInvocazioneServizio(sa,this.richiestaApplicativa, this.requestInfo);
+				this.connettoreMsg = this.configurazionePdDManager.getInvocazioneServizio(sa,this.richiestaApplicativa, this.requestInfo, this.pddContext);
 				if(this.connettoreMsg!=null){
 					this.connettoreMsg.initPolicyGestioneToken(this.configurazionePdDManager, this.requestInfo);
 				}

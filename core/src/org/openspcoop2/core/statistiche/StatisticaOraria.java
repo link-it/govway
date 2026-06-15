@@ -38,6 +38,7 @@ import java.util.List;
  * 		&lt;sequence&gt;
  * 			&lt;element name="statistica-base" type="{http://www.openspcoop2.org/core/statistiche}statistica" minOccurs="1" maxOccurs="1"/&gt;
  * 			&lt;element name="statistica-oraria-contenuti" type="{http://www.openspcoop2.org/core/statistiche}statistica-contenuti" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="statistica-oraria-llm" type="{http://www.openspcoop2.org/core/statistiche}statistica-oraria-llm" minOccurs="0" maxOccurs="unbounded"/&gt;
  * 		&lt;/sequence&gt;
  * &lt;/complexType&gt;
  * </pre>
@@ -53,7 +54,8 @@ import java.util.List;
 @XmlType(name = "statistica-oraria", 
   propOrder = {
   	"statisticaBase",
-  	"statisticaOrariaContenuti"
+  	"statisticaOrariaContenuti",
+  	"statisticaOrariaLlm"
   }
 )
 
@@ -94,6 +96,30 @@ public class StatisticaOraria extends org.openspcoop2.utils.beans.BaseBeanWithId
 
   public int sizeStatisticaOrariaContenutiList() {
     return this.statisticaOrariaContenuti.size();
+  }
+
+  public void addStatisticaOrariaLlm(StatisticaOrariaLlm statisticaOrariaLlm) {
+    this.statisticaOrariaLlm.add(statisticaOrariaLlm);
+  }
+
+  public StatisticaOrariaLlm getStatisticaOrariaLlm(int index) {
+    return this.statisticaOrariaLlm.get( index );
+  }
+
+  public StatisticaOrariaLlm removeStatisticaOrariaLlm(int index) {
+    return this.statisticaOrariaLlm.remove( index );
+  }
+
+  public List<StatisticaOrariaLlm> getStatisticaOrariaLlmList() {
+    return this.statisticaOrariaLlm;
+  }
+
+  public void setStatisticaOrariaLlmList(List<StatisticaOrariaLlm> statisticaOrariaLlm) {
+    this.statisticaOrariaLlm=statisticaOrariaLlm;
+  }
+
+  public int sizeStatisticaOrariaLlmList() {
+    return this.statisticaOrariaLlm.size();
   }
 
   private static final long serialVersionUID = 1L;
@@ -140,6 +166,33 @@ public class StatisticaOraria extends org.openspcoop2.utils.beans.BaseBeanWithId
   */
   public int sizeStatisticaOrariaContenuti() {
   	return this.sizeStatisticaOrariaContenutiList();
+  }
+
+  @XmlElement(name="statistica-oraria-llm",required=true,nillable=false)
+  private List<StatisticaOrariaLlm> statisticaOrariaLlm = new ArrayList<>();
+
+  /**
+   * Use method getStatisticaOrariaLlmList
+   * @return List&lt;StatisticaOrariaLlm&gt;
+  */
+  public List<StatisticaOrariaLlm> getStatisticaOrariaLlm() {
+  	return this.getStatisticaOrariaLlmList();
+  }
+
+  /**
+   * Use method setStatisticaOrariaLlmList
+   * @param statisticaOrariaLlm List&lt;StatisticaOrariaLlm&gt;
+  */
+  public void setStatisticaOrariaLlm(List<StatisticaOrariaLlm> statisticaOrariaLlm) {
+  	this.setStatisticaOrariaLlmList(statisticaOrariaLlm);
+  }
+
+  /**
+   * Use method sizeStatisticaOrariaLlmList
+   * @return lunghezza della lista
+  */
+  public int sizeStatisticaOrariaLlm() {
+  	return this.sizeStatisticaOrariaLlmList();
   }
 
 }

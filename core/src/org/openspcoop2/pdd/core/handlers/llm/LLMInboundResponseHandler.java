@@ -181,8 +181,9 @@ public class LLMInboundResponseHandler implements InResponseHandler {
 			throw new HandlerException("LLMInboundResponseHandler: messaggio response non è AbstractBaseOpenSPCoop2MessageDynamicContent (class=" + (msg != null ? msg.getClass().getName() : "null") + "): wrap streaming non applicabile");
 		}
 		AbstractBaseOpenSPCoop2MessageDynamicContent<?> dyn = (AbstractBaseOpenSPCoop2MessageDynamicContent<?>) msg;
+		final org.openspcoop2.pdd.core.PdDContext pddContext = context.getPddContext();
 		try {
-			InputStream wrapped = buildStreamingWrapper(dyn, dialect, providerId);
+			InputStream wrapped = buildStreamingWrapper(dyn, dialect, providerId, pddContext);
 			stripContentEncoding(msg);
 			dyn.applyStreamWrapper(wrapped);
 			if (log != null) {
@@ -195,7 +196,8 @@ public class LLMInboundResponseHandler implements InResponseHandler {
 		}
 	}
 
-	private InputStream buildStreamingWrapper(AbstractBaseOpenSPCoop2MessageDynamicContent<?> dyn, LLMDialect dialect, String providerId) throws Exception {
+	private InputStream buildStreamingWrapper(AbstractBaseOpenSPCoop2MessageDynamicContent<?> dyn, LLMDialect dialect, String providerId,
+			final org.openspcoop2.pdd.core.PdDContext pddContext) throws Exception {
 		InputStream src = dyn.getInputStream();
 		String ce = readContentEncoding(dyn);
 		if (ce != null && ce.toLowerCase().contains(HttpConstants.CONTENT_ENCODING_VALUE_GZIP)) {
@@ -205,7 +207,10 @@ public class LLMInboundResponseHandler implements InResponseHandler {
 		LLMProviderStreamReader reader = LLMTransformerRegistry.newProviderStreamReader(transport);
 		LLMInboundProviderChunkDecoder decoder = LLMTransformerRegistry.newInboundProviderChunkDecoder(providerId);
 		LLMOutboundFrontDoorChunkEncoder encoder = LLMTransformerRegistry.newOutboundFrontDoorChunkEncoder(dialect);
-		return new ChunkTransformInputStream(src, reader, decoder, encoder);
+		// Observer: accumula nel PdDContext l'usage emesso dai chunk per la riga transazioni_llm.
+		java.util.function.Consumer<org.openspcoop2.message.llm.CanonicalUsage> usageObserver =
+				pddContext != null ? (u -> LLMHandlerSupport.accumulateLLMStreamUsage(pddContext, u)) : null;
+		return new ChunkTransformInputStream(src, reader, decoder, encoder, usageObserver);
 	}
 
 	private LLMProviderStreamTransport resolveProviderStreamTransport(String providerId) throws Exception {

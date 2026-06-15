@@ -189,6 +189,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			boolean autenticazioneToken = ServletUtils.isCheckBoxEnabled(autenticazioneTokenS);
 			String tokenPolicy = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY);
 			String llmPolicy = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_LLM_PROVIDER);
+			String[] llmBindings = apsHelper.getParameterValues(ConnettoriCostanti.PARAMETRO_CONNETTORE_LLM_BINDING);
 
 			// proxy
 			String proxyEnabled = apsHelper.getParametroBoolean(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
@@ -533,6 +534,11 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 				}
 			}
 
+			// Se il connettore caricato e' un container LLM, estraggo i binding del primo
+			// provider e poi faccio unwrap per esporre i campi tecnici del concreto.
+			String[] llmBindingsLoaded = apsHelper.extractLlmBindings(connettore);
+			connettore = apsHelper.unwrapLlmContainer(connettore);
+
 			strutsBean.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
 			strutsBean.consoleDynamicConfiguration =  strutsBean.protocolFactory.createDynamicConfigurationConsole();
 			strutsBean.registryReader = soggettiCore.getRegistryReader(strutsBean.protocolFactory); 
@@ -852,7 +858,11 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 						llmPolicy = v;
 					}
 				}
-				
+
+				if((llmBindings==null || llmBindings.length==0) && llmBindingsLoaded!=null && llmBindingsLoaded.length>0){
+					llmBindings = llmBindingsLoaded;
+				}
+
 				if (url == null) {
 					url = props.get(CostantiDB.CONNETTORE_HTTP_LOCATION);
 				}
@@ -1485,7 +1495,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 					listExtendedConnettore);
 
 			if (apiIsLLM) {
-				apsHelper.addLLMPolicyPropertyToConnettore(connettoreNew, llmPolicy);
+				connettoreNew = apsHelper.wrapAsLlmContainer(connettoreNew, llmPolicy, llmBindings, connettoreNew.getNome());
 			}
 
 			Fruitore fruitore = new Fruitore();

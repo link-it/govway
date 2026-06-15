@@ -186,7 +186,8 @@ public class ConnettoriCostanti {
 	public static final String PARAMETRO_CONNETTORE_TOKEN_POLICY = org.openspcoop2.protocol.engine.constants.Costanti.CONSOLE_PARAMETRO_CONNETTORE_TOKEN_POLICY;
 
 	public static final String PARAMETRO_CONNETTORE_LLM_PROVIDER = "connettore_llm_provider";
-	
+	public static final String PARAMETRO_CONNETTORE_LLM_BINDING = "connettore_llm_binding";
+
 	public static final String PARAMETRO_CONNETTORE_API_KEY_NOMI_OAS = "connettore_apikey_nomi_oas";
 	public static final String PARAMETRO_CONNETTORE_API_KEY_VALUE = "connettore_apikey_value";
 	public static final String PARAMETRO_CONNETTORE_API_KEY_HEADER = "connettore_apikey_hdr";
@@ -374,8 +375,11 @@ public class ConnettoriCostanti {
 	
 	public static final String LABEL_PARAMETRO_CONNETTORE_TOKEN_POLICY = CostantiLabel.LABEL_CONNETTORE_TOKEN_POLICY;
 
-	public static final String LABEL_PARAMETRO_CONNETTORE_LLM_PROVIDER_SECTION = "LLM Provider";
+	public static final String LABEL_PARAMETRO_CONNETTORE_LLM_PROVIDER_SECTION = "LLM";
 	public static final String LABEL_PARAMETRO_CONNETTORE_LLM_PROVIDER = "Provider";
+	public static final String LABEL_PARAMETRO_CONNETTORE_LLM_BINDING = "Modelli";
+	/** Placeholder mostrato quando il container LLM non ha provider concreti configurati. */
+	public static final String LABEL_CONNETTORE_LLM_NO_PROVIDER = "—";
 	
 	public static final String LABEL_PARAMETRO_CONNETTORE_API_KEY_NOMI_OAS = CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_APIKEY_NOMI_STANDARD_OAS3;
 	public static final String LABEL_PARAMETRO_CONNETTORE_API_KEY_USE_APP_ID = "App ID";
