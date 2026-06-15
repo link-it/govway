@@ -17,7 +17,7 @@
 
 		<jar.group.name>spring</jar.group.name>
 		
-		<spring.version>7.0.7</spring.version>
+		<spring.version>7.0.8</spring.version>
 
 	</properties>
 

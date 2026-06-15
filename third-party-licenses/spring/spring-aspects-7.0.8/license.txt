@@ -203,9 +203,9 @@
 
 =======================================================================
 
-SPRING FRAMEWORK 7.0.7 SUBCOMPONENTS:
+SPRING FRAMEWORK 7.0.8 SUBCOMPONENTS:
 
-Spring Framework 7.0.7 includes a number of subcomponents
+Spring Framework 7.0.8 includes a number of subcomponents
 with separate copyright notices and license terms. The product that
 includes this file does not necessarily use all the open source
 subcomponents referred to below. Your use of the source

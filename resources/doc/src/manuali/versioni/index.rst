@@ -84,7 +84,7 @@ Le versioni si riferiscono all'ultima release pubblicata per ogni linea.
      - 3.3.x
      - 3.2.x
    * - **Apache CXF**
-     - ``4.2.1``
+     - ``4.2.2``
      - ``3.6.11``
      - ``3.2.6``
    * - **HTTP Client**
@@ -112,11 +112,11 @@ Le versioni si riferiscono all'ultima release pubblicata per ogni linea.
      - Log4j ``2.25.4``
      - Log4j ``2.11.1``
    * - **Spring Framework**
-     - ``7.0.7``
+     - ``7.0.8``
      - ``5.3.39``
      - ``5.1.6``
    * - **Spring Security**
-     - ``7.0.5``
+     - ``7.1.0``
      - ``5.8.16``
      - ``5.1.5``
    * - **Bouncy Castle**

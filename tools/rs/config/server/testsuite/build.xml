@@ -53,7 +53,7 @@
                         <include name="snakeyaml-2.6-gov4j-1.jar"/>
                 </fileset>
                 <fileset dir="${required_lib}/cxf" >
-                        <include name="asm-9.9.1.jar"/>
+                        <include name="asm-9.10.1.jar"/>
                 </fileset>
         </path> 
 
