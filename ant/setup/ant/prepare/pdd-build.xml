@@ -35,7 +35,7 @@
 				<mkdir dir="${deploy_jms}/${TIPO_AS}" />
 				<copy todir="${deploy_jms}/${TIPO_AS}" flatten="true">
 					<fileset dir="${code_jms_pdd}">
-						<include name="${TIPO_AS}*/*"/>
+						<include name="wildfly*/*"/>
 						<type type="file"/>
 					</fileset>
 				</copy>
