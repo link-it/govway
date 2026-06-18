@@ -148,32 +148,8 @@ public class ControlStationLogger {
 		 return LoggerWrapperFactory.getLogger("govwayConsole.core");
 	}
 	
-	public static Logger getSmistatoreLogger(){
-		 return LoggerWrapperFactory.getLogger("govwayConsole.gestori.smistatore");
-	}
-	
-	public static Logger getGestorePddLogger(){
-		 return LoggerWrapperFactory.getLogger("govwayConsole.gestori.config");
-	}
-	
-	public static Logger getGestoreGELogger(){
-		 return LoggerWrapperFactory.getLogger("govwayConsole.gestori.gestoreEventi");
-	}
-	
-	public static Logger getGestoreRegistroLogger(){
-		 return LoggerWrapperFactory.getLogger("govwayConsole.gestori.registry");
-	}
-	
-	public static Logger getGestoreAutorizzazioneLogger(){
-		 return LoggerWrapperFactory.getLogger("govwayConsole.gestori.auth");
-	}
-	
 	public static Logger getDriverDBPddConsoleLogger(){
 		return LoggerWrapperFactory.getLogger(CostantiControlStation.DRIVER_DB_PDD_CONSOLE_LOGGER);
 	}
-	
-	public static Logger getSincronizzatoreLogger(){
-		 return LoggerWrapperFactory.getLogger("govwayConsole.sincronizzatore");
-	}
-	
+
 }
