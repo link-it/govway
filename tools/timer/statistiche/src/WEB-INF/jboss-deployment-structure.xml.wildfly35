@@ -16,7 +16,7 @@
 				Dovuto al fatto che cxf richiede validator hibernate-validator 7, mentre su wildfly c'è a bordo la versione 8
 			-->
 			<module name="org.hibernate.validator" />
-			<module name="org.hibernate.validator.cdi" />
+			<!-- <module name="org.hibernate.validator.cdi" /> -->
 		</exclusions>
 		<dependencies>
 			<!-- Necessario per Apache HttpClient 5.6+: DefaultHttpClientConnectionOperator usa jdk.net.Sockets -->
