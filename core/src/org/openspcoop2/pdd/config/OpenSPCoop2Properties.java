@@ -1660,8 +1660,9 @@ public class OpenSPCoop2Properties {
 			
 			isConnettoriForceUseNioInAsyncChannelWithBIOOnlyLibrary();
 			getHeaderForceHttpLibrary();
+			this.isConnettoreHttpRegistryBasedHostEnabled();
 			getConnettoriRemoteAccessUtilityLibrary();
-			
+
 			// Connettore https
 			this.getConnettoreHttpsSecureRandomAlgo();
 			this.isConnettoreHttpsUseSecureRandom();
@@ -16215,6 +16216,28 @@ public class OpenSPCoop2Properties {
 
 		return this.isConnettoreHttpsUseSecureRandom;
 	}
+
+	private Boolean isConnettoreHttpRegistryBasedHostEnabled = null;
+	public boolean isConnettoreHttpRegistryBasedHostEnabled() {
+		if(this.isConnettoreHttpRegistryBasedHostEnabled==null){
+			String pName = "org.openspcoop2.pdd.connettori.http.registryBasedHost.enabled";
+			try{
+				String name = this.reader.getValueConvertEnvProperties(pName);
+				if(name!=null){
+					this.isConnettoreHttpRegistryBasedHostEnabled = Boolean.parseBoolean(name.trim());
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
+					this.isConnettoreHttpRegistryBasedHostEnabled = true;
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, true),e);
+				this.isConnettoreHttpRegistryBasedHostEnabled = true;
+			}
+		}
+
+		return this.isConnettoreHttpRegistryBasedHostEnabled;
+	}
+
 	private String getConnettoreHttpsSecureRandomAlgo = null;
 	private Boolean getConnettoreHttpsSecureRandomAlgoRead = null;
 	public String getConnettoreHttpsSecureRandomAlgo() {	

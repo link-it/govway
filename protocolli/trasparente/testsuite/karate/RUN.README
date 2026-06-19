@@ -176,7 +176,12 @@ Su tomcat 11, essendo i controlli più rigidi, è necessario aggiungere anche qu
       	'iptables -A INPUT -p tcp -d 127.0.2.2 --dport 7777 -j DROP'
   o su fedora più recenti:
 	'iptables -I INPUT 1 -p tcp -d 127.0.2.2 --destination-port 7777 -j DROP'
-	
+
+- I test sui connettori con host NON conforme a RFC 2396 (es. contenente underscore '_'), presenti nel package
+  'connettori.opzioni_avanzate' (classi HttpCoreBIO/HttpCoreNIO/UrlConnBIO RegistryBasedHostTest), richiedono che i
+  seguenti alias risolvano verso il loopback. Aggiungerli in '/etc/hosts':
+	127.0.0.1   govway_hostname
+	127.0.0.1   srv_test.govway_local
 - HSM per TLS Keystore. Seguire le indicazioni descritte in PKCS11.README
   Poi 'cp tools/utils/src/org/openspcoop2/utils/certificate/test/govway_test_hsm.properties  /etc/govway/hsm.properties'
 

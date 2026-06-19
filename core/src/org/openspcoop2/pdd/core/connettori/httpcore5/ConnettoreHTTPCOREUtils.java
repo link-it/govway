@@ -20,9 +20,12 @@
 
 package org.openspcoop2.pdd.core.connettori.httpcore5;
 
+import java.net.URI;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.hc.core5.http.HttpHost;
+import org.apache.hc.core5.net.URIAuthority;
 import org.apache.hc.client5.http.classic.methods.HttpDelete;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.classic.methods.HttpHead;
@@ -34,6 +37,7 @@ import org.apache.hc.client5.http.classic.methods.HttpTrace;
 import org.apache.hc.client5.http.classic.methods.HttpUriRequestBase;
 import org.apache.hc.client5.http.config.ConnectionConfig;
 import org.apache.hc.client5.http.config.RequestConfig;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.connettori.AbstractConnettoreConnectionConfig;
 import org.openspcoop2.pdd.core.connettori.ConnettoreException;
 import org.openspcoop2.pdd.core.connettori.ConnettoreHttpPoolParams;
@@ -138,5 +142,32 @@ public class ConnettoreHTTPCOREUtils {
 		}
 		return httpRequest;
 	}
-	
+
+	/**
+	 * Costruisce l'{@link HttpHost} di destinazione a partire da una request gia' valorizzata.
+	 *
+	 * La via standard {@code HttpHost.create(request.getUri())} si affida a {@link java.net.URI#getHost()},
+	 * che implementa RFC 2396 e restituisce {@code null} per host "registry-based" (es. contenenti underscore '_'):
+	 * in tal caso {@code HttpHost.create(URI)} solleva {@code NullPointerException: Host name}.
+	 * L'authority della request risulta invece correttamente popolata anche in questi casi (e' il dato usato
+	 * dal connettore NIO, che infatti non va in errore): quando l'host non e' riconosciuto da {@code java.net.URI}
+	 * si costruisce quindi l'{@link HttpHost} da scheme+authority. Per gli host normali il comportamento resta
+	 * invariato (percorso {@code HttpHost.create(URI)}).
+	 *
+	 * Il fallback e' disattivabile impostando in govway.properties la proprieta'
+	 * {@code org.openspcoop2.pdd.connettori.http.registryBasedHost.enabled=false}.
+	 *
+	 * @param httpRequest request HTTP da cui ricavare l'host di destinazione
+	 * @return l'host di destinazione
+	 */
+	public static HttpHost buildHttpHost(HttpUriRequestBase httpRequest) throws java.net.URISyntaxException {
+		URI uriRichiesta = httpRequest.getUri();
+		URIAuthority authorityRichiesta = httpRequest.getAuthority();
+		if(uriRichiesta.getHost()==null && authorityRichiesta!=null &&
+				OpenSPCoop2Properties.getInstance().isConnettoreHttpRegistryBasedHostEnabled()) {
+			return new HttpHost(httpRequest.getScheme(), authorityRichiesta.getHostName(), authorityRichiesta.getPort());
+		}
+		return HttpHost.create(uriRichiesta);
+	}
+
 }

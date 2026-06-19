@@ -599,7 +599,7 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 			if(this.debug)
 				this.logger.debug("Spedizione byte...");
 			// Eseguo la richiesta e prendo la risposta
-			HttpHost httpHost = HttpHost.create(this.httpRequest.getUri());
+			HttpHost httpHost = ConnettoreHTTPCOREUtils.buildHttpHost(this.httpRequest);
 			/** DEPRECATO: ClassicHttpResponse httpResponse = (ClassicHttpResponse) httpClient.execute(this.httpRequest); */
 			ClassicHttpResponse httpResponse = httpClient.executeOpen(httpHost, this.httpRequest, 
 					null); //new BasicHttpContext()); the context to use for the execution, or {@code null} to use the default context
