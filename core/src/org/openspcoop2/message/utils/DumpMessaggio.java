@@ -48,7 +48,18 @@ public class DumpMessaggio implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 4718160136521047108L;
-		
+
+	// Se abilitato, quando la ricostruzione di un allegato il cui content-type prevede una costruzione
+	// (oggi 'text/xml') fallisce perche' il contenuto non e' valido, l'allegato viene registrato come binario
+	// invece di far fallire la registrazione del messaggio.
+	private static boolean fallbackBinaryOnParseError = true;
+	public static boolean isFallbackBinaryOnParseError() {
+		return fallbackBinaryOnParseError;
+	}
+	public static void setFallbackBinaryOnParseError(boolean fallbackBinaryOnParseError) {
+		DumpMessaggio.fallbackBinaryOnParseError = fallbackBinaryOnParseError;
+	}
+
 	private MessageType messageType;
 	
 	private String contentType;

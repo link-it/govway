@@ -23,12 +23,14 @@ package org.openspcoop2.message.soap;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import jakarta.activation.DataHandler;
+import jakarta.mail.util.ByteArrayDataSource;
 import jakarta.xml.soap.AttachmentPart;
 import jakarta.xml.soap.SOAPPart;
 
@@ -41,6 +43,7 @@ import org.openspcoop2.message.utils.DumpMessaggioMultipartInfo;
 import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.utils.UtilsMultiException;
 import org.openspcoop2.utils.dch.MailcapActivationReader;
+import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 
 
@@ -53,6 +56,8 @@ import org.openspcoop2.utils.transport.http.HttpConstants;
  * @version $Rev$, $Date$
  */
 public class DumpSoapMessageUtils {
+	
+	private DumpSoapMessageUtils() {}
 
 	public static DumpMessaggio dumpMessage(OpenSPCoop2SoapMessage msg,boolean dumpAllAttachments) throws MessageException{
 		return dumpMessage(msg, new DumpMessaggioConfig(), dumpAllAttachments);
@@ -68,24 +73,22 @@ public class DumpSoapMessageUtils {
 			Map<String, List<String>> pTrasporto = null;
 			if(msg.getTransportRequestContext()!=null) {
 				if(msg.getTransportRequestContext().getHeaders()!=null && 
-						msg.getTransportRequestContext().getHeaders().size()>0){
-					if(config.isDumpHeaders()) {
-						pTrasporto = msg.getTransportRequestContext().getHeaders();
-					}
+						msg.getTransportRequestContext().getHeaders().size()>0 &&
+						config.isDumpHeaders()) {
+					pTrasporto = msg.getTransportRequestContext().getHeaders();
 				}
 			}
 			else if(msg.getTransportResponseContext()!=null) {
 				if(msg.getTransportResponseContext().getHeaders()!=null && 
-						msg.getTransportResponseContext().getHeaders().size()>0){
-					if(config.isDumpHeaders()) {
-						pTrasporto = msg.getTransportResponseContext().getHeaders();
-					}
+						msg.getTransportResponseContext().getHeaders().size()>0 &&
+					config.isDumpHeaders()) {
+					pTrasporto = msg.getTransportResponseContext().getHeaders();
 				}
 			}
 			if(config.isDumpHeaders() && pTrasporto!=null) {
 				Iterator<String> keys = pTrasporto.keySet().iterator();
 				while (keys.hasNext()) {
-					String key = (String) keys.next();
+					String key = keys.next();
 					if(key!=null){
 						List<String> values = pTrasporto.get(key);
 						dumpMessaggio.getHeadersValues().put(key, values);
@@ -106,8 +109,7 @@ public class DumpSoapMessageUtils {
 			    	if(itM!=null) {
 				    	while(itM.hasNext()) {
 				    		Object keyO = itM.next();
-				    		if(keyO instanceof jakarta.xml.soap.MimeHeader) {
-				    			jakarta.xml.soap.MimeHeader mh = (jakarta.xml.soap.MimeHeader) keyO;
+				    		if(keyO instanceof jakarta.xml.soap.MimeHeader mh) {
 				    			String key = mh.getName();
 				    			
 				    			if(!HttpConstants.CONTENT_ID.equalsIgnoreCase(key) &&
@@ -120,9 +122,7 @@ public class DumpSoapMessageUtils {
 				    			List<String> l = new ArrayList<>();
 				    			String [] values = soapPart.getMimeHeader(key);
 				    			if(values!=null && values.length>0) {
-				    				for (String value : values) {
-										l.add(value);
-									}
+				    				l.addAll(Arrays.asList(values));
 				    			}
 				    			else {
 				    				l.add(mh.getValue());
@@ -181,16 +181,13 @@ public class DumpSoapMessageUtils {
 				    	if(itM!=null) {
 					    	while(itM.hasNext()) {
 					    		Object keyO = itM.next();
-					    		if(keyO instanceof jakarta.xml.soap.MimeHeader) {
-					    			jakarta.xml.soap.MimeHeader mh = (jakarta.xml.soap.MimeHeader) keyO;
+					    		if(keyO instanceof jakarta.xml.soap.MimeHeader mh) {
 					    			String key = mh.getName();
 					    			
 					    			List<String> l = new ArrayList<>();
 					    			String [] values = ap.getMimeHeader(key);
 					    			if(values!=null && values.length>0) {
-					    				for (String value : values) {
-											l.add(value);
-										}
+					    				l.addAll(Arrays.asList(values));
 					    			}
 					    			else {
 					    				l.add(mh.getValue());
@@ -206,20 +203,20 @@ public class DumpSoapMessageUtils {
 			    	
 			    	ByteArrayOutputStream boutAttach = null;
 			    	if(dumpAllAttachments){
-			    		boutAttach = (ByteArrayOutputStream) _dumpAttachment(msg, ap, true); 
+			    		boutAttach = (ByteArrayOutputStream) dumpAttachmentEngine(msg, ap, true); 
 			    	}else{
-			    		Object o = _dumpAttachment(msg, ap, false);
+			    		Object o = dumpAttachmentEngine(msg, ap, false);
 			    		if(o == null){
 			    			dumpAttach.setErrorContentNotSerializable("Contenuto attachment non recuperato??");
 			    		}
-			    		else if(o instanceof String){
+			    		else if(o instanceof String s){
 			    			boutAttach = new ByteArrayOutputStream();
-			    			boutAttach.write(((String)o).getBytes());
+			    			boutAttach.write(s.getBytes());
 			    			boutAttach.flush();
 			    			boutAttach.close();
 			    		}
-			    		else if(o instanceof java.io.ByteArrayOutputStream){
-			    			boutAttach = (java.io.ByteArrayOutputStream) o;
+			    		else if(o instanceof java.io.ByteArrayOutputStream b){
+			    			boutAttach = b;
 			    		}
 			    		else{
 			    			dumpAttach.setErrorContentNotSerializable("Contenuto attachment non è visualizzabile, tipo: "+o.getClass().getName());
@@ -267,18 +264,16 @@ public class DumpSoapMessageUtils {
 			Map<String, List<String>> pTrasporto = null;
 			if(msg.getTransportRequestContext()!=null) {
 				if(msg.getTransportRequestContext().getHeaders()!=null && 
-						msg.getTransportRequestContext().getHeaders().size()>0){
-					if(config.isDumpHeaders()) {
-						pTrasporto = msg.getTransportRequestContext().getHeaders();
-					}
+						msg.getTransportRequestContext().getHeaders().size()>0 &&
+						config.isDumpHeaders()) {
+					pTrasporto = msg.getTransportRequestContext().getHeaders();
 				}
 			}
 			else if(msg.getTransportResponseContext()!=null) {
 				if(msg.getTransportResponseContext().getHeaders()!=null && 
-						msg.getTransportResponseContext().getHeaders().size()>0){
-					if(config.isDumpHeaders()) {
-						pTrasporto = msg.getTransportResponseContext().getHeaders();
-					}
+						msg.getTransportResponseContext().getHeaders().size()>0 &&
+						config.isDumpHeaders()) {
+					pTrasporto = msg.getTransportResponseContext().getHeaders();
 				}
 			}
 			if(config.isDumpHeaders()) {
@@ -286,12 +281,12 @@ public class DumpSoapMessageUtils {
 				if(pTrasporto!=null && pTrasporto.size()>0) {
 					Iterator<String> keys = pTrasporto.keySet().iterator();
 					while (keys.hasNext()) {
-						String key = (String) keys.next();
+						String key = keys.next();
 						if(key!=null){
 							List<String> values = pTrasporto.get(key);
 							if(values!=null && !values.isEmpty()) {
 								for (String value : values) {
-									out.append("- "+key+": "+value+"\n");	
+									out.append("- ").append(key).append(": ").append(value).append("\n");	
 								}
 							}
 						}
@@ -316,8 +311,7 @@ public class DumpSoapMessageUtils {
 			    	if(itM!=null) {
 				    	while(itM.hasNext()) {
 				    		Object keyO = itM.next();
-				    		if(keyO instanceof String) {
-				    			String key = (String) keyO;
+				    		if(keyO instanceof String key) {
 				    			
 				    			if(!HttpConstants.CONTENT_ID.equalsIgnoreCase(key) &&
 				    					!HttpConstants.CONTENT_LOCATION.equalsIgnoreCase(key) &&
@@ -329,24 +323,16 @@ public class DumpSoapMessageUtils {
 				    			List<String> l = new ArrayList<>();
 				    			String [] values = soapPart.getMimeHeader(key);
 				    			if(values!=null && values.length>0) {
-				    				for (String value : values) {
-										l.add(value);
-									}
+				    				l.addAll(Arrays.asList(values));
 				    			}
 				    			
-				    			if(!l.isEmpty()) {
-				    				if(HttpConstants.CONTENT_ID.equalsIgnoreCase(key)) {
-					    				mime.put(key, l);
-					    			}
-					    			else if(HttpConstants.CONTENT_LOCATION.equalsIgnoreCase(key)) {
-					    				mime.put(key, l);
-					    			}
-					    			else if(HttpConstants.CONTENT_TYPE.equalsIgnoreCase(key)) {
-					    				mime.put(key, l);
-					    			}
-					    			else if(config.isDumpMultipartHeaders()) {
-					    				mime.put(key, l);
-					    			}
+				    			if(!l.isEmpty() &&
+				    				(HttpConstants.CONTENT_ID.equalsIgnoreCase(key) ||
+				    						HttpConstants.CONTENT_LOCATION.equalsIgnoreCase(key) ||
+				    						HttpConstants.CONTENT_TYPE.equalsIgnoreCase(key) ||
+				    						config.isDumpMultipartHeaders()) 
+				    				){
+				    				mime.put(key, l);
 				    			}
 
 				    		}
@@ -357,11 +343,11 @@ public class DumpSoapMessageUtils {
 			    		out.append("\n*** MimePart Header ***\n");
 			    		Iterator<String> it = mime.keySet().iterator();
 			    		while (it.hasNext()) {
-							String key = (String) it.next();
+							String key = it.next();
 							List<String> l = mime.get(key);
 							if(l!=null && !l.isEmpty()) {
 								for (String v : l) {
-									out.append("- "+key+": "+v+"\n");			
+									out.append("- ").append(key).append(": ").append(v).append("\n");			
 								}
 							}
 						}
@@ -380,17 +366,17 @@ public class DumpSoapMessageUtils {
 			    while(it.hasNext()){
 			    	AttachmentPart ap = 
 			    		(AttachmentPart) it.next();
-			    	out.append("\n------ Attachment-"+index+" ------\n");
+			    	out.append("\n------ Attachment-").append(index).append(" ------\n");
 			    	
 			    	out.append("\n*** MimePart Header ***\n");
 			    	if(ap.getContentId()!=null) {
-						out.append("- "+HttpConstants.CONTENT_ID+": "+ap.getContentId()+"\n");
+						out.append("- ").append(HttpConstants.CONTENT_ID).append(": ").append(ap.getContentId()).append("\n");
 					}
 					if(ap.getContentLocation()!=null) {
-						out.append("- "+HttpConstants.CONTENT_LOCATION+": "+ap.getContentLocation()+"\n");
+						out.append("- ").append(HttpConstants.CONTENT_LOCATION).append(": ").append(ap.getContentLocation()).append("\n");
 					}
 					if(ap.getContentType()!=null) {
-						out.append("- "+HttpConstants.CONTENT_LOCATION+": "+ap.getContentType()+"\n");
+						out.append("- ").append(HttpConstants.CONTENT_TYPE).append(": ").append(ap.getContentType()).append("\n");
 					}
 
 					if(config.isDumpMultipartHeaders()) { 
@@ -398,8 +384,7 @@ public class DumpSoapMessageUtils {
 						if(itM!=null) {
 					    	while(itM.hasNext()) {
 					    		Object keyO = itM.next();
-					    		if(keyO instanceof String) {
-					    			String key = (String) keyO;
+					    		if(keyO instanceof String key) {
 					    			if(HttpConstants.CONTENT_ID.equalsIgnoreCase(key) ||
 					    					HttpConstants.CONTENT_LOCATION.equalsIgnoreCase(key) ||
 					    					HttpConstants.CONTENT_TYPE.equalsIgnoreCase(key)) {
@@ -408,7 +393,7 @@ public class DumpSoapMessageUtils {
 					    			String [] values = ap.getMimeHeader(key);
 					    			if(values!=null && values.length>0) {
 					    				for (String value : values) {
-					    					out.append("- "+key+": "+value+"\n");
+					    					out.append("- ").append(key).append(": ").append(value).append("\n");
 										}
 					    			}
 					    		}
@@ -422,16 +407,16 @@ public class DumpSoapMessageUtils {
 			    	}else{
 			    		//Object o = ap.getContent(); NON FUNZIONA CON TOMCAT
 			    		Object o = ap.getDataHandler().getContent();
-			    		//System.out.println("["+o.getClass().getName()+"])"+ap.getContentType()+"(");
+			    		/**System.out.println("["+o.getClass().getName()+"])"+ap.getContentType()+"(");*/
 			    		if(HttpConstants.CONTENT_TYPE_OPENSPCOOP2_TUNNEL_SOAP.equals(ap.getContentType())){
 			    			 // reimposto handler
 			    			 DumpSoapMessageUtils.rebuildAttachmentAsByteArray(msg, ap);
 			    		}
 			    		
-			    		if(o instanceof String){
-			    			out.append((String)o);
+			    		if(o instanceof String s){
+			    			out.append(s);
 			    		}else{
-			    			 out.append("Contenuto attachments non è visualizzabile, tipo: "+o.getClass().getName());
+			    			 out.append("Contenuto attachments non è visualizzabile, tipo: ").append(o.getClass().getName());
 			    		}
 			    	}
 			    	index++;
@@ -444,17 +429,17 @@ public class DumpSoapMessageUtils {
 	}
 	
 	public static String dumpAttachment(OpenSPCoop2SoapMessage msg,AttachmentPart ap) throws MessageException{
-		Object o = _dumpAttachment(msg, ap, false);
+		Object o = dumpAttachmentEngine(msg, ap, false);
 		// Metodo sopra non torna mai null, segnalato da sonarqube
-		/*if(o == null){
+		/**if(o == null){
 			throw new MessageException("Dump error (return null reference)");
 		}*/
-		if(o instanceof String){
-			return (String) o;
+		if(o instanceof String s){
+			return s;
 		}
-		else if(o instanceof java.io.ByteArrayOutputStream){
+		if(o instanceof java.io.ByteArrayOutputStream b){
 			String s = null;
-			try (java.io.ByteArrayOutputStream bout = (java.io.ByteArrayOutputStream) o;){
+			try (java.io.ByteArrayOutputStream bout = b;){
 				s = bout.toString();
 			}catch(Exception eClose){
 				// ignore exception close
@@ -466,17 +451,17 @@ public class DumpSoapMessageUtils {
 		}
 	}
 	public static byte[] dumpAttachmentAsByteArray(OpenSPCoop2SoapMessage msg,AttachmentPart ap) throws MessageException{
-		Object o = _dumpAttachment(msg, ap, false);
+		Object o = dumpAttachmentEngine(msg, ap, false);
 		// Metodo sopra non torna mai null, segnalato da sonarqube
-		/*if(o == null){
+		/**if(o == null){
 			throw new MessageException("Dump error (return null reference)");
 		}*/
 		if(o instanceof String str){
 			return str.getBytes();
 		}
-		else if(o instanceof java.io.ByteArrayOutputStream){
+		if(o instanceof java.io.ByteArrayOutputStream bo){
 			byte[] b = null;
-			try (java.io.ByteArrayOutputStream bout = (java.io.ByteArrayOutputStream) o;){
+			try (java.io.ByteArrayOutputStream bout = bo;){
 				b = bout.toByteArray();
 			}catch(Exception eClose){
 				// ignore exception close
@@ -488,7 +473,7 @@ public class DumpSoapMessageUtils {
 		}
 	}
 	
-	private static Object _dumpAttachment(OpenSPCoop2SoapMessage msg,AttachmentPart ap, boolean forceReturnAsByteArrayOutputStream) throws MessageException{
+	private static Object dumpAttachmentEngine(OpenSPCoop2SoapMessage msg,AttachmentPart ap, boolean forceReturnAsByteArrayOutputStream) throws MessageException{
 		try{		
 			java.io.ByteArrayOutputStream bout = null;
 			//Object o = ap.getContent(); NON FUNZIONA CON TOMCAT
@@ -497,15 +482,13 @@ public class DumpSoapMessageUtils {
 			String s = null;
 			boolean forceRebuildDataHandler = false;
 			if(o!=null){
-				if(o instanceof byte[]){
-					byte[] b = (byte[]) o;
+				if(o instanceof byte[] b){
 					bout = new ByteArrayOutputStream();
 					bout.write(b);
 					bout.flush();
 					bout.close();
 				}
-				else if(o instanceof InputStream){
-					InputStream is = (InputStream) o;
+				else if(o instanceof InputStream is){
 					bout = new java.io.ByteArrayOutputStream();
 			    	byte [] readB = new byte[8192];
 					int readByte = 0;
@@ -515,8 +498,8 @@ public class DumpSoapMessageUtils {
 					bout.flush();
 					bout.close();
 				}
-				else if(o instanceof String){
-					s = (String) o;
+				else if(o instanceof String st){
+					s = st;
 					bout = new ByteArrayOutputStream();
 					bout.write(s.getBytes());
 					bout.flush();
@@ -536,9 +519,8 @@ public class DumpSoapMessageUtils {
 						bout.flush();
 						bout.close();		
 					}catch(Exception e) {
-						if(o instanceof javax.xml.transform.dom.DOMSource) {
+						if(o instanceof javax.xml.transform.dom.DOMSource domSource) {
 							try {
-								javax.xml.transform.dom.DOMSource domSource = (javax.xml.transform.dom.DOMSource) o;	
 								bout = new ByteArrayOutputStream();
 								bout.write(MessageXMLUtils.getInstance(msg.getFactory()).toByteArray(domSource.getNode()));
 								bout.flush();
@@ -577,7 +559,7 @@ public class DumpSoapMessageUtils {
 				 DumpSoapMessageUtils.rebuildDataHandlerAttachment(msg, ap, bout);
 			}
 			else if(MailcapActivationReader.existsDataContentHandler(ap.getContentType())){
-				//ap.setDataHandler(new jakarta.activation.DataHandler(bout.toByteArray(),ap.getContentType()));
+				/**ap.setDataHandler(new jakarta.activation.DataHandler(bout.toByteArray(),ap.getContentType()));*/
 				// In axiom l'update del data handler non funziona
 				if(ap.getContentType()!=null && ap.getContentType().startsWith(HttpConstants.CONTENT_TYPE_PLAIN)){
 					if(s!=null){
@@ -587,7 +569,24 @@ public class DumpSoapMessageUtils {
 						msg.updateAttachmentPart(ap, bout.toString(),ap.getContentType());
 					}
 				}else{
-					msg.updateAttachmentPart(ap, bout.toByteArray(),ap.getContentType());
+					// Stessa guardia di updateAttachmentPart(byte[],contentType): solo per i content-type che attivano
+					// una costruzione con parsing (oggi 'text/xml') la ricostruzione puo' fallire se il contenuto non e'
+					// valido. In tal caso, se abilitato, l'allegato viene registrato come binario (byte + content-type)
+					// senza far fallire la registrazione del messaggio.
+					String baseType = ContentTypeUtilities.readBaseTypeFromContentType(ap.getContentType());
+					if(DumpMessaggio.isFallbackBinaryOnParseError() && HttpConstants.CONTENT_TYPE_TEXT_XML.equals(baseType)){
+						try{
+							msg.updateAttachmentPart(ap, bout.toByteArray(),ap.getContentType());
+						}catch(Exception parseError){
+							// Contenuto non valido per il content-type dichiarato (es. xml non well-formed): registra come binario.
+							// Si usa un DataHandler basato su DataSource (ByteArrayDataSource), non object-based: in serializzazione
+							// 'new DataHandler(byte[],contentType)' invocherebbe l'XmlDataContentHandler ('[B cannot be cast to Source'),
+							// mentre con una DataSource lo stream viene scritto grezzo, preservando byte e content-type senza ulteriore parsing.
+							msg.updateAttachmentPart(ap, new DataHandler(new ByteArrayDataSource(bout.toByteArray(), ap.getContentType())));
+						}
+					}else{
+						msg.updateAttachmentPart(ap, bout.toByteArray(),ap.getContentType());
+					}
 				}
 			}
 			if(s!=null){
@@ -617,7 +616,7 @@ public class DumpSoapMessageUtils {
 			inputDH.close();
 			bout.flush();
 			bout.close();
-			//ap.setDataHandler(new jakarta.activation.DataHandler(bout.toByteArray(),ap.getContentType()));
+			/**ap.setDataHandler(new jakarta.activation.DataHandler(bout.toByteArray(),ap.getContentType()));*/
 			// In axiom l'update del data handler non funziona
 			msg.updateAttachmentPart(ap, bout.toByteArray(),ap.getContentType());
 		}catch(Exception e){
@@ -627,7 +626,7 @@ public class DumpSoapMessageUtils {
 	
 	private static void rebuildDataHandlerAttachment(OpenSPCoop2SoapMessage msg,AttachmentPart ap, ByteArrayOutputStream boutAlreadyRead) throws MessageException{
 		try{
-			//ap.setDataHandler(new jakarta.activation.DataHandler(bout.toByteArray(),ap.getContentType()));
+			/**ap.setDataHandler(new jakarta.activation.DataHandler(bout.toByteArray(),ap.getContentType()));*/
 			// In axiom l'update del data handler non funziona
 			msg.updateAttachmentPart(ap, new DataHandler(boutAlreadyRead.toByteArray(),ap.getContentType()));
 		}catch(Exception e){

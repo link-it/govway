@@ -23,6 +23,7 @@ package org.openspcoop2.message.rest;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
@@ -53,6 +54,8 @@ import org.openspcoop2.utils.transport.http.HttpConstants;
  */
 public class DumpRestMessageUtils {
 
+	private DumpRestMessageUtils() {}
+	
 	public static DumpMessaggio dumpMessage(OpenSPCoop2RestMessage<?> msg, boolean dumpAllBodyParts) throws MessageException{
 		return dumpMessage(msg, new DumpMessaggioConfig(), dumpAllBodyParts);
 	}
@@ -66,24 +69,22 @@ public class DumpRestMessageUtils {
 			Map<String, List<String>> pTrasporto = null;
 			if(msg.getTransportRequestContext()!=null) {
 				if(msg.getTransportRequestContext().getHeaders()!=null && 
-						msg.getTransportRequestContext().getHeaders().size()>0){
-					if(config.isDumpHeaders()) {
-						pTrasporto = msg.getTransportRequestContext().getHeaders();
-					}
+						msg.getTransportRequestContext().getHeaders().size()>0 &&
+					config.isDumpHeaders()) {
+					pTrasporto = msg.getTransportRequestContext().getHeaders();
 				}
 			}
 			else if(msg.getTransportResponseContext()!=null) {
 				if(msg.getTransportResponseContext().getHeaders()!=null && 
-						msg.getTransportResponseContext().getHeaders().size()>0){
-					if(config.isDumpHeaders()) {
-						pTrasporto = msg.getTransportResponseContext().getHeaders();
-					}
+						msg.getTransportResponseContext().getHeaders().size()>0 &&
+					config.isDumpHeaders()) {
+					pTrasporto = msg.getTransportResponseContext().getHeaders();
 				}
 			}
 			if(config.isDumpHeaders() && pTrasporto!=null) {
 				Iterator<String> keys = pTrasporto.keySet().iterator();
 				while (keys.hasNext()) {
-					String key = (String) keys.next();
+					String key = keys.next();
 					if(key!=null){
 						List<String> values = pTrasporto.get(key);
 						dumpMessaggio.getHeadersValues().put(key, values);
@@ -160,14 +161,11 @@ public class DumpRestMessageUtils {
 					    	if(en!=null) {
 						    	while(en.hasMoreElements()) {
 						    		Object keyO = en.nextElement();
-						    		if(keyO instanceof String) {
-						    			String key = (String) keyO;
+						    		if(keyO instanceof String key) {
 						    			String [] values = bodyPart.getHeader(key);
 						    			List<String> lValues = new ArrayList<>();
 						    			if(values!=null && values.length>0) {
-						    				for (int j = 0; j < values.length; j++) {
-						    					lValues.add(values[j]);
-											}
+						    				lValues.addAll(Arrays.asList(values));
 						    			}
 						    			if(!lValues.isEmpty()) {
 							    			if(multipartInfoBody!=null) {
@@ -178,8 +176,7 @@ public class DumpRestMessageUtils {
 							    			}
 						    			}
 						    		}
-						    		else if(keyO instanceof jakarta.mail.Header) {
-						    			jakarta.mail.Header hdr = (jakarta.mail.Header) keyO;
+						    		else if(keyO instanceof jakarta.mail.Header hdr) {
 						    			if(hdr!=null && hdr.getName()!=null) {
 						    				if(multipartInfoBody!=null) {
 						    					List<String> lValues = null;
@@ -211,20 +208,20 @@ public class DumpRestMessageUtils {
 	
 				    	ByteArrayOutputStream boutAttach = null;
 				    	if(dumpAllBodyParts){
-				    		boutAttach = (ByteArrayOutputStream) DumpRestMessageUtils._dumpBodyPart(msg, bodyPart, true); 
+				    		boutAttach = (ByteArrayOutputStream) DumpRestMessageUtils.dumpBodyPartEngine(msg, bodyPart, true); 
 				    	}else{
-				    		Object o = _dumpBodyPart(msg, bodyPart, false);
+				    		Object o = dumpBodyPartEngine(msg, bodyPart, false);
 				    		if(o == null){
 				    			dumpAttach.setErrorContentNotSerializable("Contenuto attachment non recuperato??");
 				    		}
-				    		else if(o instanceof String){
+				    		else if(o instanceof String s){
 				    			boutAttach = new ByteArrayOutputStream();
-				    			boutAttach.write(((String)o).getBytes());
+				    			boutAttach.write(s.getBytes());
 				    			boutAttach.flush();
 				    			boutAttach.close();
 				    		}
-				    		else if(o instanceof java.io.ByteArrayOutputStream){
-				    			boutAttach = (java.io.ByteArrayOutputStream) o;
+				    		else if(o instanceof java.io.ByteArrayOutputStream bo){
+				    			boutAttach = bo;
 				    		}
 				    		else{
 				    			dumpAttach.setErrorContentNotSerializable("Contenuto attachment non è visualizzabile, tipo: "+o.getClass().getName());
@@ -279,18 +276,16 @@ public class DumpRestMessageUtils {
 			Map<String,List<String>> pTrasporto = null;
 			if(msg.getTransportRequestContext()!=null) {
 				if(msg.getTransportRequestContext().getHeaders()!=null && 
-						msg.getTransportRequestContext().getHeaders().size()>0){
-					if(config.isDumpHeaders()) {
-						pTrasporto = msg.getTransportRequestContext().getHeaders();
-					}
+						msg.getTransportRequestContext().getHeaders().size()>0 &&
+					config.isDumpHeaders()) {
+					pTrasporto = msg.getTransportRequestContext().getHeaders();
 				}
 			}
 			else if(msg.getTransportResponseContext()!=null) {
 				if(msg.getTransportResponseContext().getHeaders()!=null && 
-						msg.getTransportResponseContext().getHeaders().size()>0){
-					if(config.isDumpHeaders()) {
-						pTrasporto = msg.getTransportResponseContext().getHeaders();
-					}
+						msg.getTransportResponseContext().getHeaders().size()>0 &&
+					config.isDumpHeaders()) {
+					pTrasporto = msg.getTransportResponseContext().getHeaders();
 				}
 			}
 			if(config.isDumpHeaders()) {
@@ -298,12 +293,12 @@ public class DumpRestMessageUtils {
 				if(pTrasporto!=null && pTrasporto.size()>0) {
 					Iterator<String> keys = pTrasporto.keySet().iterator();
 					while (keys.hasNext()) {
-						String key = (String) keys.next();
+						String key = keys.next();
 						if(key!=null){
 							List<String> values = pTrasporto.get(key);
 							if(values!=null && !values.isEmpty()) {
 								for (String value : values) {
-									out.append("- "+key+": "+value+"\n");
+									out.append("- ").append(key).append(": ").append(value).append("\n");
 								}
 							}
 						}
@@ -320,10 +315,9 @@ public class DumpRestMessageUtils {
 			if(!hasContent){
 				contentString = "Empty Body";
 			}
-			if(hasContent) {
-				if(msg.getContentType()!=null) {
-					contentType = " (ContentType: "+msg.getContentType()+")";
-				}
+			if(hasContent &&
+				msg.getContentType()!=null) {
+				contentType = " (ContentType: "+msg.getContentType()+")";
 			}
 			if(config.isDumpBody()) {
 				out.append("------ "+contentString+contentType+" ("+msg.getMessageType()+") ------\n");
@@ -347,37 +341,35 @@ public class DumpRestMessageUtils {
 				if(mimeMultipart!=null) {
 					for (int i = 0; i < mimeMultipart.countBodyParts(); i++) {
 						
-						if(i>0) {
-							if(!config.isDumpAttachments()) {
-								break;
-							}
+						if(i>0 &&
+							!config.isDumpAttachments()) {
+							break;
 						}
 						
 						BodyPart bodyPart = mimeMultipart.getBodyPart(i);
 						
 						if(i>0 || !config.isDumpBody()) {
-							out.append("\n------ BodyPart-"+(i+1)+" ------\n");
+							out.append("\n------ BodyPart-").append((i+1)).append(" ------\n");
 						}
 						
 						out.append("\n*** MimePart Header ***\n");
 						String contentIdBodyPart = mimeMultipart.getContentID(bodyPart);
 				    	if(contentIdBodyPart!=null) {
-							out.append("- "+HttpConstants.CONTENT_ID+": "+contentIdBodyPart+"\n");
+							out.append("- ").append(HttpConstants.CONTENT_ID).append(": ").append(contentIdBodyPart).append("\n");
 						}
 						String contentLocationBodyPart = mimeMultipart.getContentDisposition(bodyPart); // Uso Disposition in REST, più opportuna
 						if(contentLocationBodyPart!=null) {
-							out.append("- "+HttpConstants.CONTENT_DISPOSITION+": "+contentLocationBodyPart+"\n");
+							out.append("- ").append(HttpConstants.CONTENT_DISPOSITION).append(": ").append(contentLocationBodyPart).append("\n");
 						}
 						if(bodyPart.getContentType()!=null) {
-							out.append("- "+HttpConstants.CONTENT_TYPE+": "+bodyPart.getContentType()+"\n");
+							out.append("- ").append(HttpConstants.CONTENT_TYPE).append(": ").append(bodyPart.getContentType()).append("\n");
 						}
 						if(config.isDumpMultipartHeaders()) {
 							Enumeration<?> en = bodyPart.getAllHeaders();
 							if(en!=null) {
 						    	while(en.hasMoreElements()) {
 						    		Object keyO = en.nextElement();
-						    		if(keyO instanceof String) {
-						    			String key = (String) keyO;
+						    		if(keyO instanceof String key) {
 						    			if(HttpConstants.CONTENT_ID.equalsIgnoreCase(key) ||
 						    					HttpConstants.CONTENT_DISPOSITION.equalsIgnoreCase(key) ||
 						    					HttpConstants.CONTENT_TYPE.equalsIgnoreCase(key)) {
@@ -386,7 +378,7 @@ public class DumpRestMessageUtils {
 						    			String [] values = bodyPart.getHeader(key);
 						    			if(values!=null && values.length>0) {
 						    				for (int j = 0; j < values.length; j++) {
-								    			out.append("- "+key+": "+values[j]+"\n");
+								    			out.append("- ").append(key).append(": ").append(values[j]).append("\n");
 											}
 						    			}
 						    		}
@@ -400,11 +392,11 @@ public class DumpRestMessageUtils {
 				    	}else{
 				    		//Object o = ap.getContent(); NON FUNZIONA CON TOMCAT
 				    		Object o = bodyPart.getDataHandler().getContent();
-				    		//System.out.println("["+o.getClass().getName()+"])"+ap.getContentType()+"(");			    		
-				    		if(o instanceof String){
-				    			out.append((String)o);
+				    		/**System.out.println("["+o.getClass().getName()+"])"+ap.getContentType()+"(");*/			    		
+				    		if(o instanceof String s){
+				    			out.append(s);
 				    		}else{
-				    			 out.append("Contenuto attachments non è visualizzabile, tipo: "+o.getClass().getName());
+				    			 out.append("Contenuto attachments non è visualizzabile, tipo: ").append(o.getClass().getName());
 				    		}
 				    	}
 					}
@@ -418,17 +410,17 @@ public class DumpRestMessageUtils {
 	}
 	
 	public static String dumpBodyPart(OpenSPCoop2RestMessage<?> msg,BodyPart bodyPart) throws MessageException{
-		Object o = _dumpBodyPart(msg, bodyPart, false);
+		Object o = dumpBodyPartEngine(msg, bodyPart, false);
 		// Metodo sopra non torna mai null, segnalato da sonarqube
-		/*if(o == null){
+		/**if(o == null){
 			throw new MessageException("Dump error (return null reference)");
 		}*/
-		if(o instanceof String){
-			return (String) o;
+		if(o instanceof String s){
+			return s;
 		}
-		else if(o instanceof java.io.ByteArrayOutputStream){
+		if(o instanceof java.io.ByteArrayOutputStream bo){
 			String s = null;
-			try (java.io.ByteArrayOutputStream bout = (java.io.ByteArrayOutputStream) o;){
+			try (java.io.ByteArrayOutputStream bout = bo;){
 				s = bout.toString();
 			}catch(Exception eClose){
 				// ignore exception close
@@ -440,17 +432,17 @@ public class DumpRestMessageUtils {
 		}
 	}
 	public static byte[] dumpBodyPartAsByteArray(OpenSPCoop2RestMessage<?> msg,BodyPart bodyPart) throws MessageException{
-		Object o = _dumpBodyPart(msg, bodyPart, false);
+		Object o = dumpBodyPartEngine(msg, bodyPart, false);
 		// Metodo sopra non torna mai null, segnalato da sonarqube
-		/*if(o == null){
+		/**if(o == null){
 			throw new MessageException("Dump error (return null reference)");
 		}*/
-		if(o instanceof String){
-			return ((String) o).getBytes();
+		if(o instanceof String s){
+			return s.getBytes();
 		}
-		else if(o instanceof java.io.ByteArrayOutputStream){
+		if(o instanceof java.io.ByteArrayOutputStream ba){
 			byte[] b = null;
-			try (java.io.ByteArrayOutputStream bout = (java.io.ByteArrayOutputStream) o;){
+			try (java.io.ByteArrayOutputStream bout = ba;){
 				b = bout.toByteArray();
 			}catch(Exception eClose){
 				// ignore exception close
@@ -466,23 +458,25 @@ public class DumpRestMessageUtils {
 	public static void setConvert(boolean convert) {
 		DumpRestMessageUtils.convert = convert;
 	}
-	private static Object _dumpBodyPart(OpenSPCoop2RestMessage<?> msg,BodyPart bodyPart, boolean forceReturnAsByteArrayOutputStream) throws MessageException{
+	private static Object dumpBodyPartEngine(OpenSPCoop2RestMessage<?> msg,BodyPart bodyPart, boolean forceReturnAsByteArrayOutputStream) throws MessageException{
 		try{		
+			if(msg!=null) {
+				// nop
+			}
+			
 			java.io.ByteArrayOutputStream bout = null;
 			//Object o = ap.getContent(); NON FUNZIONA CON TOMCAT
 			//java.io.InputStream inputDH = dh.getInputStream(); NON FUNZIONA CON JBOSS7 e JAVA7 e imbustamentoSOAP con GestioneManifest e rootElementMaggioreUno (tipo: application/octet-stream)
 			Object o = bodyPart.getDataHandler().getContent();
 			String s = null;
 			if(o!=null){
-				if(o instanceof byte[]){
-					byte[] b = (byte[]) o;
+				if(o instanceof byte[] b){
 					bout = new ByteArrayOutputStream();
 					bout.write(b);
 					bout.flush();
 					bout.close();
 				}
-				else if(o instanceof InputStream){
-					InputStream is = (InputStream) o;
+				else if(o instanceof InputStream is){
 					bout = new java.io.ByteArrayOutputStream();
 			    	byte [] readB = new byte[8192];
 					int readByte = 0;
@@ -492,8 +486,8 @@ public class DumpRestMessageUtils {
 					bout.flush();
 					bout.close();
 				}
-				else if(o instanceof String){
-					s = (String) o;
+				else if(o instanceof String st){
+					s = st;
 					bout = new ByteArrayOutputStream();
 					bout.write(s.getBytes());
 					bout.flush();
@@ -534,7 +528,7 @@ public class DumpRestMessageUtils {
 					processContentTypeTextPlain(s, bodyPart, bout);
 				}
 				else{
-					//bodyPart.setDataHandler(new jakarta.activation.DataHandler(bout.toByteArray(),bodyPart.getContentType()));
+					/**bodyPart.setDataHandler(new jakarta.activation.DataHandler(bout.toByteArray(),bodyPart.getContentType()));*/
 					// Nel caso sia xml si ottiene il seguente errore:
 					//Invalid Object type = class [B. XmlDCH can only convert DataSource or Source to XML.
 					// Si potrebbe vederlo di gestire come e' stato fatto per il rebuild dell'attachment su SOAP.
@@ -555,10 +549,13 @@ public class DumpRestMessageUtils {
 		}
 	}
 
-	private static void processContentTypeTextPlain(String s, BodyPart bodyPart, java.io.ByteArrayOutputStream bout) throws Exception {
+	private static void processContentTypeTextPlain(String s, BodyPart bodyPart, java.io.ByteArrayOutputStream bout) {
 		// Se siamo in text plain non devo fare nulla. Comunque non l'ho perso.
 		// Se uso il codice sotto, poi si perde il content-type, non viene serializzato
-		/*
+		if(s!=null || bodyPart!=null || bout!=null) {
+			// nop
+		}
+		/**
 		if(s!=null){
 			bodyPart.setDataHandler(new jakarta.activation.DataHandler(s,bodyPart.getContentType()));
 			//bodyPart.setContent(s,bodyPart.getContentType());

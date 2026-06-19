@@ -1989,6 +1989,7 @@ public class OpenSPCoop2Properties {
 			// Dump
 			this.getDumpBufferImpl();
 			this.isDumpAllAttachments();
+			this.isDumpAttachmentBinaryFallbackOnParseError();
 			this.isDumpFallitoBloccaCooperazioneInCorso();
 			this.isDumpFallitoBloccoServiziPdD();
 			
@@ -21156,6 +21157,34 @@ public class OpenSPCoop2Properties {
 		}
 
 		return this.isDumpAllAttachments;
+	}
+
+	/**
+	 * Indicazione se, durante il dump di un allegato il cui content-type prevede una costruzione con parsing
+	 * (es. 'text/xml'), in caso di contenuto non valido l'allegato debba essere registrato come binario
+	 * invece di far fallire la registrazione del messaggio.
+	 *
+	 * @return true se abilitato (default true)
+	 */
+	private Boolean isDumpAttachmentBinaryFallbackOnParseError = null;
+	public boolean isDumpAttachmentBinaryFallbackOnParseError(){
+		if(this.isDumpAttachmentBinaryFallbackOnParseError==null){
+			String pName = "org.openspcoop2.pdd.logger.dump.attachment.binaryFallbackOnParseError";
+			try{
+				String value = this.reader.getValueConvertEnvProperties(pName);
+				if(value!=null){
+					this.isDumpAttachmentBinaryFallbackOnParseError = Boolean.parseBoolean(value.trim());
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
+					this.isDumpAttachmentBinaryFallbackOnParseError = true;
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, true),e);
+				this.isDumpAttachmentBinaryFallbackOnParseError = true;
+			}
+		}
+
+		return this.isDumpAttachmentBinaryFallbackOnParseError;
 	}
 	
 	/**

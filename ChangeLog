@@ -1,6 +1,14 @@
 2026-06-19  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
+	Risolto Bug #1787
+	Corretto un errore nella registrazione dei messaggi SOAP con 'Multipart Parsing': 
+	un allegato con content-type 'text/xml' ma contenuto non valido faceva fallire la registrazione; 
+	ora l'allegato viene registrato come binario senza interromperla.
+
+2026-06-19  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
 	Risolto Bug #1785
 	Corretto l'errore 'NullPointerException: Host name' nel connettore HTTP 'httpcore5' BIO che impediva l'invocazione di endpoint
 	con host non conforme a RFC 2396 (es. contenente underscore '_'); allineato il comportamento a 'httpcore5' NIO e 'java.net.HttpURLConnection'.

@@ -95,6 +95,7 @@ import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.rest.AbstractLazyContent;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
+import org.openspcoop2.message.utils.DumpMessaggio;
 import org.openspcoop2.monitor.engine.dynamic.CorePluginLoader;
 import org.openspcoop2.pdd.config.ClassNameProperties;
 import org.openspcoop2.pdd.config.ConfigurazioneCoda;
@@ -1102,7 +1103,9 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				AbstractBaseOpenSPCoop2MessageDynamicContent.setSoglia(propertiesReader.getDumpBinarioInMemoryThreshold());
 				OpenSPCoop2Startup.logStartupInfo("DumpBinario set buffer repository: "+propertiesReader.getDumpBinarioRepository());
 				AbstractBaseOpenSPCoop2MessageDynamicContent.setRepositoryFile(propertiesReader.getDumpBinarioRepository());
-				
+				DumpMessaggio.setFallbackBinaryOnParseError(propertiesReader.isDumpAttachmentBinaryFallbackOnParseError());
+				OpenSPCoop2Startup.logStartupInfo("Dump allegati, fallback binario su contenuto non valido: "+DumpMessaggio.isFallbackBinaryOnParseError());
+
 				// SoapBuffer
 				boolean soapReader = propertiesReader.useSoapMessageReader();
 				OpenSPCoop2Startup.logStartupInfo("SOAPMessageReader enabled="+soapReader);
