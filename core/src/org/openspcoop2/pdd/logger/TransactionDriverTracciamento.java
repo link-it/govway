@@ -814,9 +814,13 @@ public class TransactionDriverTracciamento implements ITracciaDriver {
 		expression.sortOrder(filtro.isAsc() ? SortOrder.ASC : SortOrder.DESC);
 		expression.addOrder(Transazione.model().DATA_INGRESSO_RICHIESTA);
 		
-		expression.offset(filtro.getOffset());
-		if(filtro.getLimit()>0)
+		// La row-limiting clause va emessa solo quando e' richiesto un limite: in tal caso si impostano sia il limit
+		// sia l'offset (anche se 0). Con limit=0 (nessun limite) non si applica alcuna paginazione, evitando che un
+		// 'OFFSET 0' isolato generi una clausola non valida su alcuni database (Oracle: 'ORA-02000: missing ROWS keyword').
+		if(filtro.getLimit()>0){
+			expression.offset(filtro.getOffset());
 			expression.limit(filtro.getLimit());
+		}
 		
 		return expression;
 	}
