@@ -43,6 +43,10 @@ import org.openspcoop2.utils.date.DateUtils;
  */
 public class DateFormatTest {
 
+	/** Istante fisso (2020-03-14T15:09:26.535, zona di default) usato al posto dell'orologio di sistema in questo runner di benchmark/demo, per evitare il finding Sonar java:S6692 e rendere deterministico l'output.
+	 *  Tutti i campi sono distinti e non nulli (giorno 14 != mese 03, ore/min/sec/ms valorizzati) così il round-trip format/parse esercita tutti i campi dei pattern testati. */
+	static final ZonedDateTime FIXED_ZONED_DATE_TIME = ZonedDateTime.of(2020, 3, 14, 15, 9, 26, 535_000_000, ZoneId.systemDefault());
+
 	public static void main(String[] args) throws ParseException {
 		test();
 	}
@@ -60,11 +64,11 @@ public class DateFormatTest {
 
 		// inizializzo per costi
 		@SuppressWarnings("unused")
-		Date nowDate = DateManager.getDate();
+		Date nowDate = Date.from(FIXED_ZONED_DATE_TIME.toInstant());
 		@SuppressWarnings("unused")
-		ZonedDateTime nowDateTime = ZonedDateTime.now();		
+		ZonedDateTime nowDateTime = FIXED_ZONED_DATE_TIME;		
 		@SuppressWarnings("unused")
-		DateTime jodaDateTime = DateTime.now();
+		DateTime jodaDateTime = new DateTime(FIXED_ZONED_DATE_TIME.toInstant().toEpochMilli());
 		
 		boolean threads = false;
 		
@@ -130,6 +134,8 @@ public class DateFormatTest {
 				
 		formato =  "HH:mm:ss.SSS";
 		test(formato, N, !DATE_TIME, !DATE, TIME, threads);
+		
+		System.out.println("\n\nTestsuite completata");
 	}
 	
 	private static void test(String formato, int N, boolean dateTime, boolean date, boolean time, boolean threadsEnabled) throws ParseException {
@@ -143,9 +149,9 @@ public class DateFormatTest {
 		//org.joda.time.format.DateTimeFormatter jodaDateTimeFormatter = org.joda.time.format.DateTimeFormat.forPattern(formatoJoda);
 		org.joda.time.format.DateTimeFormatter jodaDateTimeFormatter = DateUtils.getJodaDateTimeFormatter(formato);
 		
-		Date nowDate = DateManager.getDate();
-		ZonedDateTime nowDateTime = ZonedDateTime.now();		
-		DateTime jodaDateTime = DateTime.now();
+		Date nowDate = Date.from(FIXED_ZONED_DATE_TIME.toInstant());
+		ZonedDateTime nowDateTime = FIXED_ZONED_DATE_TIME;		
+		DateTime jodaDateTime = new DateTime(FIXED_ZONED_DATE_TIME.toInstant().toEpochMilli());
 		
 		String sJava = new SimpleDateFormat (formato).format(nowDate);
 		System.out.println("SimpleDateFormat normale  :              "+sJava);
@@ -517,7 +523,7 @@ class TestDate extends Thread{
 			
 			DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(this.formato);
 			for (int i = 0; i < this.n; i++) {
-				dateTimeFormatter.format(ZonedDateTime.now());
+				dateTimeFormatter.format(DateFormatTest.FIXED_ZONED_DATE_TIME);
 			}	
 		}
 		else if(this.dateTime && this.convert) {
@@ -534,7 +540,7 @@ class TestDate extends Thread{
 			String formatoJoda = this.formato.endsWith("X")?(this.formato.substring(0, this.formato.length()-1)+"Z"):this.formato;
 			org.joda.time.format.DateTimeFormatter jodaDateTimeFormatter = org.joda.time.format.DateTimeFormat.forPattern(formatoJoda);
 			for (int i = 0; i < this.n; i++) {
-				DateTime.now().toString(jodaDateTimeFormatter);
+				new DateTime(DateFormatTest.FIXED_ZONED_DATE_TIME.toInstant().toEpochMilli()).toString(jodaDateTimeFormatter);
 			}	
 		}
 		else if(this.jodaTime && this.convert) {

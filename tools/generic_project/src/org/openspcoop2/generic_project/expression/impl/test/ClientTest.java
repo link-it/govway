@@ -24,6 +24,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -81,6 +82,15 @@ import org.openspcoop2.utils.sql.SQLQueryObjectException;
  * @version $Rev$, $Date$
  */
 public class ClientTest {
+
+	/** Istante fisso usato al posto dell'orologio di sistema per popolare i dati di esempio: rende l'output deterministico ed evita il finding Sonar java:S6692.
+	 *  Valore = 2020-03-14T15:09:26.535Z: tutti i campi distinti e non nulli (giorno 14 != mese 03, ore/min/sec/ms valorizzati) così i round-trip format/parse dei formatter (pattern 'yyyy-MM-dd HH:mm:ss.SSS') esercitano anche orario e millisecondi. */
+	private static final long FIXED_DATE_MILLIS = 1584198566535L;
+	private static Calendar fixedCalendar() {
+		GregorianCalendar c = new GregorianCalendar(2020, Calendar.MARCH, 14, 15, 9, 26);
+		c.set(Calendar.MILLISECOND, 535);
+		return c;
+	}
 
 	private static TipiDatabase databaseType = TipiDatabase.ORACLE; // uso oracle almeno ho la complessita' di limit/offse e anche forceIndex
 	
@@ -391,12 +401,12 @@ public class ClientTest {
 		
 		Version v = new Version();
 		v.setNumber("1.0");
-		v.setDate(new Date());
+		v.setDate(new Date(FIXED_DATE_MILLIS));
 		book.addVersion(v);
 		
 		Version r = new Version();
 		r.setNumber("1.2");
-		r.setDate(new Date());
+		r.setDate(new Date(FIXED_DATE_MILLIS));
 		book.addReissue(r);
 		
 		ClientTest.withSameTypes(book);
@@ -419,9 +429,9 @@ public class ClientTest {
 		author.setWeight(68);
 		author.setBankAccount(1000.00);
 		author.setSecondBankAccount(1000.00f);
-		author.setDateOfBirth(new Date());
-		author.setFirstBookReleaseDate(Calendar.getInstance());
-		author.setLastBookReleaseDate(new Timestamp(System.currentTimeMillis()));
+		author.setDateOfBirth(new Date(FIXED_DATE_MILLIS));
+		author.setFirstBookReleaseDate(fixedCalendar());
+		author.setLastBookReleaseDate(new Timestamp(FIXED_DATE_MILLIS));
 		
 		ClientTest.constructorExpression(author);
 		
@@ -488,7 +498,7 @@ public class ClientTest {
 	public static void testFruitore(TestType testType) throws Exception{
 		
 		Fruitore fruitore = new Fruitore();
-		fruitore.setOraRegistrazione(new Date());
+		fruitore.setOraRegistrazione(new Date(FIXED_DATE_MILLIS));
 		
 		IdSoggetto idFruitore = new IdSoggetto();
 		idFruitore.setTipo("TIPO_FR");
@@ -704,7 +714,7 @@ public class ClientTest {
 		
 		System.out.println("\n **************** CalendarTypeFormatter ************************* ");
 		
-		Calendar value = Calendar.getInstance();
+		Calendar value = fixedCalendar();
 		CalendarTypeFormatter formatter = new CalendarTypeFormatter();
 		String stringValue = formatter.toString(value);
 		String stringSqlValue = formatter.toSQLString(value);
@@ -729,7 +739,7 @@ public class ClientTest {
 		
 		System.out.println("\n **************** DateTypeFormatter ************************* ");
 		
-		Date value = new Date();
+		Date value = new Date(FIXED_DATE_MILLIS);
 		DateTypeFormatter formatter = new DateTypeFormatter();
 		String stringValue = formatter.toString(value);
 		String stringSqlValue = formatter.toSQLString(value);
@@ -754,7 +764,7 @@ public class ClientTest {
 		
 		System.out.println("\n **************** TimestampTypeFormatter ************************* ");
 		
-		Timestamp value = new Timestamp(new Date().getTime());
+		Timestamp value = new Timestamp(FIXED_DATE_MILLIS);
 		TimestampTypeFormatter formatter = new TimestampTypeFormatter();
 		String stringValue = formatter.toString(value);
 		String stringSqlValue = formatter.toSQLString(value);
@@ -859,14 +869,14 @@ public class ClientTest {
 		System.out.println("\n **************** withSameTypes ************************* ");
 		
 		IExpression expr = ClientTest.newExpressionImplForBook();
-		expr.equals(Book.model().VERSION.DATE, new Date());
+		expr.equals(Book.model().VERSION.DATE, new Date(FIXED_DATE_MILLIS));
 		System.out.println("- test 1: "+ClientTest.toString(expr));
 		
 		expr.equals(Book.model().VERSION.NUMBER, "3.0");
 		System.out.println("- test 2: "+ClientTest.toString(expr));
 		
 		Utilities.sleep(100);
-		expr.equals(Book.model().REISSUE.DATE, new Date());
+		expr.equals(Book.model().REISSUE.DATE, new Date(FIXED_DATE_MILLIS));
 		expr.equals(Book.model().REISSUE.NUMBER, "3.0");
 		System.out.println("- test 3: "+ClientTest.toString(expr));
 
@@ -894,7 +904,7 @@ public class ClientTest {
 		System.out.println("\n **************** InUse Field ************************* ");
 		
 		IExpression expr = ClientTest.newExpressionImplForBook();
-		expr.equals(Book.model().VERSION.DATE, new Date());
+		expr.equals(Book.model().VERSION.DATE, new Date(FIXED_DATE_MILLIS));
 		expr.equals(Book.model().TITLE,"Titolo");
 		
 		boolean value = expr.inUseField(Book.model().VERSION.DATE,true);
@@ -1153,7 +1163,7 @@ public class ClientTest {
 		System.out.println("\n **************** InUse Model ************************* ");
 		
 		IExpression expr = ClientTest.newExpressionImplForBook();
-		expr.equals(Book.model().VERSION.DATE, new Date());
+		expr.equals(Book.model().VERSION.DATE, new Date(FIXED_DATE_MILLIS));
 		expr.equals(Book.model().VERSION.NUMBER, "3.0");
 		expr.equals(Book.model().TITLE,"Titolo");
 		
@@ -1987,16 +1997,16 @@ public class ClientTest {
 		
 		System.out.println("\n **************** GreaterEquals ************************* ");
 		
-		IExpression expr = ClientTest.newExpressionImplForAuthor().greaterEquals(Author.model().DATE_OF_BIRTH, new Date());
+		IExpression expr = ClientTest.newExpressionImplForAuthor().greaterEquals(Author.model().DATE_OF_BIRTH, new Date(FIXED_DATE_MILLIS));
 		System.out.println("- test 1: "+ClientTest.toString(expr));
 		
-		expr = expr.greaterEquals(Author.model().FIRST_BOOK_RELEASE_DATE, Calendar.getInstance());
+		expr = expr.greaterEquals(Author.model().FIRST_BOOK_RELEASE_DATE, fixedCalendar());
 		System.out.println("- test 2: "+ClientTest.toString(expr));
 		
-		expr = expr.greaterEquals(Author.model().LAST_BOOK_RELEASE_DATE, new Timestamp(System.currentTimeMillis()));
+		expr = expr.greaterEquals(Author.model().LAST_BOOK_RELEASE_DATE, new Timestamp(FIXED_DATE_MILLIS));
 		System.out.println("- test 3: "+ClientTest.toString(expr));
 				
-		expr = ClientTest.newExpressionImplForAuthor().greaterEquals(Author.model().DATE_OF_BIRTH, new Date());
+		expr = ClientTest.newExpressionImplForAuthor().greaterEquals(Author.model().DATE_OF_BIRTH, new Date(FIXED_DATE_MILLIS));
 		expr = expr.not(expr);
 		System.out.println("- test 4: "+ClientTest.toString(expr));
 		
@@ -2006,16 +2016,16 @@ public class ClientTest {
 		
 		System.out.println("\n **************** greaterThan ************************* ");
 		
-		IExpression expr = ClientTest.newExpressionImplForAuthor().greaterThan(Author.model().DATE_OF_BIRTH, new Date());
+		IExpression expr = ClientTest.newExpressionImplForAuthor().greaterThan(Author.model().DATE_OF_BIRTH, new Date(FIXED_DATE_MILLIS));
 		System.out.println("- test 1: "+ClientTest.toString(expr));
 		
-		expr = expr.greaterThan(Author.model().FIRST_BOOK_RELEASE_DATE, Calendar.getInstance());
+		expr = expr.greaterThan(Author.model().FIRST_BOOK_RELEASE_DATE, fixedCalendar());
 		System.out.println("- test 2: "+ClientTest.toString(expr));
 		
-		expr = expr.greaterThan(Author.model().LAST_BOOK_RELEASE_DATE, new Timestamp(System.currentTimeMillis()));
+		expr = expr.greaterThan(Author.model().LAST_BOOK_RELEASE_DATE, new Timestamp(FIXED_DATE_MILLIS));
 		System.out.println("- test 3: "+ClientTest.toString(expr));
 				
-		expr = ClientTest.newExpressionImplForAuthor().greaterThan(Author.model().DATE_OF_BIRTH, new Date());
+		expr = ClientTest.newExpressionImplForAuthor().greaterThan(Author.model().DATE_OF_BIRTH, new Date(FIXED_DATE_MILLIS));
 		expr = expr.not(expr);
 		System.out.println("- test 4: "+ClientTest.toString(expr));
 		
@@ -2025,16 +2035,16 @@ public class ClientTest {
 		
 		System.out.println("\n **************** LessEquals ************************* ");
 		
-		IExpression expr = ClientTest.newExpressionImplForAuthor().lessEquals(Author.model().DATE_OF_BIRTH, new Date());
+		IExpression expr = ClientTest.newExpressionImplForAuthor().lessEquals(Author.model().DATE_OF_BIRTH, new Date(FIXED_DATE_MILLIS));
 		System.out.println("- test 1: "+ClientTest.toString(expr));
 		
-		expr = expr.lessEquals(Author.model().FIRST_BOOK_RELEASE_DATE, Calendar.getInstance());
+		expr = expr.lessEquals(Author.model().FIRST_BOOK_RELEASE_DATE, fixedCalendar());
 		System.out.println("- test 2: "+ClientTest.toString(expr));
 		
-		expr = expr.lessEquals(Author.model().LAST_BOOK_RELEASE_DATE, new Timestamp(System.currentTimeMillis()));
+		expr = expr.lessEquals(Author.model().LAST_BOOK_RELEASE_DATE, new Timestamp(FIXED_DATE_MILLIS));
 		System.out.println("- test 3: "+ClientTest.toString(expr));
 				
-		expr = ClientTest.newExpressionImplForAuthor().lessEquals(Author.model().DATE_OF_BIRTH, new Date());
+		expr = ClientTest.newExpressionImplForAuthor().lessEquals(Author.model().DATE_OF_BIRTH, new Date(FIXED_DATE_MILLIS));
 		expr = expr.not(expr);
 		System.out.println("- test 4: "+ClientTest.toString(expr));
 		
@@ -2044,16 +2054,16 @@ public class ClientTest {
 			
 		System.out.println("\n **************** LessThan ************************* ");
 		
-		IExpression expr = ClientTest.newExpressionImplForAuthor().lessThan(Author.model().DATE_OF_BIRTH, new Date());
+		IExpression expr = ClientTest.newExpressionImplForAuthor().lessThan(Author.model().DATE_OF_BIRTH, new Date(FIXED_DATE_MILLIS));
 		System.out.println("- test 1: "+ClientTest.toString(expr));
 		
-		expr = expr.lessThan(Author.model().FIRST_BOOK_RELEASE_DATE, Calendar.getInstance());
+		expr = expr.lessThan(Author.model().FIRST_BOOK_RELEASE_DATE, fixedCalendar());
 		System.out.println("- test 2: "+ClientTest.toString(expr));
 		
-		expr = expr.lessThan(Author.model().LAST_BOOK_RELEASE_DATE, new Timestamp(System.currentTimeMillis()));
+		expr = expr.lessThan(Author.model().LAST_BOOK_RELEASE_DATE, new Timestamp(FIXED_DATE_MILLIS));
 		System.out.println("- test 3: "+ClientTest.toString(expr));
 				
-		expr = ClientTest.newExpressionImplForAuthor().lessThan(Author.model().DATE_OF_BIRTH, new Date());
+		expr = ClientTest.newExpressionImplForAuthor().lessThan(Author.model().DATE_OF_BIRTH, new Date(FIXED_DATE_MILLIS));
 		expr = expr.not(expr);
 		System.out.println("- test 4: "+ClientTest.toString(expr));
 		

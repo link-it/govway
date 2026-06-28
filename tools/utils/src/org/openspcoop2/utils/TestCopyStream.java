@@ -26,7 +26,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.util.Date;
 
 /**
  * TestCopyStream
@@ -205,7 +204,7 @@ public class TestCopyStream {
 			int timeout, boolean expectedTimeout,
 			long limitBytes, boolean expectedLimitExceeded) throws Exception {
 		//System.out.println("["+src+"->Buffer]["+method+"] .... ");
-		Date startDate = new Date();
+		long startTime = System.nanoTime();
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
 		InputStream is = isParam;
 		if(timeout>0) {
@@ -222,13 +221,13 @@ public class TestCopyStream {
 				CopyStream.copy(method, is, bout);
 			}
 			if(expectedTimeout) {
-				Date endDate = new Date();
-				long time = endDate.getTime() - startDate.getTime(); 
+				long endTime = System.nanoTime();
+				long time = (endTime - startTime) / 1_000_000; 
 				throw new Exception("["+src+"->Buffer]["+method+"] Eccezione attesa di timeout non si è verificata dopo "+Utilities.convertSystemTimeIntoStringMillisecondi(time, true)+"; buffer expected: "+size+", found: "+bout.size()+"");
 			}
 			else if(expectedLimitExceeded) {
-				Date endDate = new Date();
-				long time = endDate.getTime() - startDate.getTime(); 
+				long endTime = System.nanoTime();
+				long time = (endTime - startTime) / 1_000_000; 
 				throw new Exception("["+src+"->Buffer]["+method+"] Eccezione attesa 'limit exceeded' non si è verificata dopo "+Utilities.convertSystemTimeIntoStringMillisecondi(time, true)+"; buffer expected: "+size+", found: "+bout.size()+"");
 			}
 		}catch(Exception e) {
@@ -248,8 +247,8 @@ public class TestCopyStream {
 		bout.flush();
 		bout.close();
 		if(!expectedTimeout && !expectedLimitExceeded) {
-			Date endDate = new Date();
-			long time = endDate.getTime() - startDate.getTime(); 
+			long endTime = System.nanoTime();
+			long time = (endTime - startTime) / 1_000_000; 
 			if(bout.size()!=size) {
 				throw new Exception("["+src+"->Buffer]["+method+"] Buffer destinazione con dimensione differente (expected: "+size+", found: "+bout.size()+")");
 			}
@@ -259,13 +258,13 @@ public class TestCopyStream {
 	
 	private static void testBuffer(String src, File is, int size) throws Exception {
 		//System.out.println("["+src+"->Buffer]["+method+"] .... ");
-		Date startDate = new Date();
+		long startTime = System.nanoTime();
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
 		CopyStream.copy(is, bout);
 		bout.flush();
 		bout.close();
-		Date endDate = new Date();
-		long time = endDate.getTime() - startDate.getTime(); 
+		long endTime = System.nanoTime();
+		long time = (endTime - startTime) / 1_000_000; 
 		if(bout.size()!=size) {
 			throw new Exception("["+src+"->Buffer][COPY-FILE] Buffer destinazione con dimensione differente (expected: "+size+", found: "+bout.size()+")");
 		}
@@ -276,7 +275,7 @@ public class TestCopyStream {
 			int timeout, boolean expectedTimeout,
 			long limitBytes, boolean expectedLimitExceeded) throws Exception {
 		//System.out.println("["+src+"->File]["+method+"] .... ");
-		Date startDate = new Date();
+		long startTime = System.nanoTime();
 		FileOutputStream fout = new FileOutputStream(f);
 		try {
 			if(timeout>0 && limitBytes>0) {
@@ -292,13 +291,13 @@ public class TestCopyStream {
 				CopyStream.copy(method, is, fout);
 			}
 			if(expectedTimeout) {
-				Date endDate = new Date();
-				long time = endDate.getTime() - startDate.getTime(); 
+				long endTime = System.nanoTime();
+				long time = (endTime - startTime) / 1_000_000; 
 				throw new Exception("["+src+"->File]["+method+"] Eccezione attesa di timeout non si è verificata dopo "+Utilities.convertSystemTimeIntoStringMillisecondi(time, true)+"; buffer expected: "+size+", found: "+f.length()+"");
 			}
 			if(expectedLimitExceeded) {
-				Date endDate = new Date();
-				long time = endDate.getTime() - startDate.getTime(); 
+				long endTime = System.nanoTime();
+				long time = (endTime - startTime) / 1_000_000; 
 				throw new Exception("["+src+"->File]["+method+"] Eccezione attesa 'limit exceeded' non si è verificata dopo "+Utilities.convertSystemTimeIntoStringMillisecondi(time, true)+"; buffer expected: "+size+", found: "+f.length()+"");
 			}
 		}catch(Exception e) {
@@ -318,8 +317,8 @@ public class TestCopyStream {
 		fout.flush();
 		fout.close();
 		if(!expectedTimeout && !expectedLimitExceeded) {
-			Date endDate = new Date();
-			long time = endDate.getTime() - startDate.getTime(); 
+			long endTime = System.nanoTime();
+			long time = (endTime - startTime) / 1_000_000; 
 			if(f.length()!=size) {
 				throw new Exception("["+src+"->File]["+method+"] File destinazione con dimensione differente (expected: "+size+", found: "+f.length()+")");
 			}
@@ -331,7 +330,7 @@ public class TestCopyStream {
 			int timeout, boolean expectedTimeout,
 			long limitBytes, boolean expectedLimitExceeded) throws Exception {
 		//System.out.println("["+src+"->File]["+method+"] .... ");
-		Date startDate = new Date();
+		long startTime = System.nanoTime();
 		try {
 			if(timeout>0 && limitBytes>0) {
 				CopyStream.copy(is, f, timeout, limitBytes);
@@ -346,13 +345,13 @@ public class TestCopyStream {
 				CopyStream.copy(is, f);
 			}
 			if(expectedTimeout) {
-				Date endDate = new Date();
-				long time = endDate.getTime() - startDate.getTime(); 
+				long endTime = System.nanoTime();
+				long time = (endTime - startTime) / 1_000_000; 
 				throw new Exception("["+src+"->File][COPY-FILE] Eccezione attesa di timeout non si è verificata dopo "+Utilities.convertSystemTimeIntoStringMillisecondi(time, true)+"; buffer expected: "+size+", found: "+f.length()+"");
 			}
 			if(expectedLimitExceeded) {
-				Date endDate = new Date();
-				long time = endDate.getTime() - startDate.getTime(); 
+				long endTime = System.nanoTime();
+				long time = (endTime - startTime) / 1_000_000; 
 				throw new Exception("["+src+"->File][COPY-FILE] Eccezione attesa 'limit exceeded' non si è verificata dopo "+Utilities.convertSystemTimeIntoStringMillisecondi(time, true)+"; buffer expected: "+size+", found: "+f.length()+"");
 			}
 		}catch(Exception e) {
@@ -370,8 +369,8 @@ public class TestCopyStream {
 			}
 		}
 		if(!expectedTimeout && !expectedLimitExceeded) {
-			Date endDate = new Date();
-			long time = endDate.getTime() - startDate.getTime(); 
+			long endTime = System.nanoTime();
+			long time = (endTime - startTime) / 1_000_000; 
 			if(f.length()!=size) {
 				throw new Exception("["+src+"->File][COPY-FILE] File destinazione con dimensione differente (expected: "+size+", found: "+f.length()+")");
 			}
@@ -381,10 +380,10 @@ public class TestCopyStream {
 	
 	private static void testFile(String src, File is, File f, int size) throws Exception {
 		//System.out.println("["+src+"->File]["+method+"] .... ");
-		Date startDate = new Date();
+		long startTime = System.nanoTime();
 		CopyStream.copy(is, f);
-		Date endDate = new Date();
-		long time = endDate.getTime() - startDate.getTime(); 
+		long endTime = System.nanoTime();
+		long time = (endTime - startTime) / 1_000_000; 
 		if(f.length()!=size) {
 			throw new Exception("["+src+"->File][COPY-FILE] File destinazione con dimensione differente (expected: "+size+", found: "+f.length()+")");
 		}

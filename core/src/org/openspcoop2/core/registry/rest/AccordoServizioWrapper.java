@@ -109,12 +109,12 @@ public class AccordoServizioWrapper implements java.io.Serializable, Cloneable{
 	}
 
 	/** Indicazione se il registro e' su DB */
-	private volatile boolean registroServiziDB = false;
+	private final java.util.concurrent.atomic.AtomicBoolean registroServiziDB = new java.util.concurrent.atomic.AtomicBoolean(false);
 	public boolean isRegistroServiziDB() {
-		return this.registroServiziDB;
+		return this.registroServiziDB.get();
 	}
 	public void setRegistroServiziDB(boolean registroServiziDB) {
-		this.registroServiziDB = registroServiziDB;
+		this.registroServiziDB.set(registroServiziDB);
 	}
 	
 	@Override
@@ -137,7 +137,7 @@ public class AccordoServizioWrapper implements java.io.Serializable, Cloneable{
 			as.api = this.api;
 		}
 		
-		as.registroServiziDB = this.registroServiziDB;
+		as.registroServiziDB.set(this.registroServiziDB.get());
 
 		return as;
 	}

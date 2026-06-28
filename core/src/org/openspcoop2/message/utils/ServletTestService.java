@@ -1264,7 +1264,7 @@ public class ServletTestService extends HttpServlet {
 			String contentTypeRichiesta = req.getContentType();
 			StringBuilder sb = new StringBuilder();
 			if(debug || logMessage || saveMessageDir!=null ) {
-				sb.append("--------  Messaggio ricevuto il : "+(new Date()).toString()+" [ct:"+contentTypeRichiesta+"] [httpVersion:"+req.getProtocol()+"] -------------\n\n");
+				sb.append("--------  Messaggio ricevuto il : "+(new Date()).toString()+" [ct:"+contentTypeRichiesta+"] [httpVersion:"+req.getProtocol()+"] -------------\n\n"); // NOSONAR clock di logging in servlet di produzione, non un test
 			}
 			if(logMessage){
 				if(contenutoRichiesta!=null && contenutoRichiesta.length>0) {

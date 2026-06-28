@@ -42,7 +42,10 @@ public class ClassToSerialize implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
+	/** Istante fisso (2020-03-14T15:09:26.535) usato al posto dell'orologio di sistema per popolare l'oggetto-campione: rende deterministico il test di serializzazione ed evita il finding Sonar java:S6692 */
+	private static final long FIXED_DATE_MILLIS = 1584198566535L;
+
 	private String str;
 	public String getStr() {
 		return this.str;
@@ -199,8 +202,10 @@ public class ClassToSerialize implements Serializable {
 		this.flt = 1.2f;
 		this.dbl = 2.4;
 		this.myEnum = MyEnum.ENUM_1;
-		this.date = new Date();
-		this.calendar = new GregorianCalendar();
+		this.date = new Date(FIXED_DATE_MILLIS);
+		GregorianCalendar fixedCalendar = new GregorianCalendar(2020, Calendar.MARCH, 14, 15, 9, 26);
+		fixedCalendar.set(Calendar.MILLISECOND, 535);
+		this.calendar = fixedCalendar;
 		this.simpleList = new ArrayList<Integer>();
 		this.bytea = new byte[NUM];
 		this.complexList = new ArrayList<InnerClass>();

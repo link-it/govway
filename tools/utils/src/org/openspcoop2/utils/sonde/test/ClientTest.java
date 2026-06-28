@@ -24,13 +24,13 @@ import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
-import java.util.Date;
 import java.util.Properties;
 
 import org.apache.logging.log4j.Level;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.jdbc.test.KeyGeneratorTest;
 import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 import org.openspcoop2.utils.sonde.Sonda;
@@ -289,7 +289,7 @@ public class ClientTest {
 		if(batch == null) throw new Exception("Sonda ["+sondaName+"] non trovata sul db");
 
 		{
-			StatoSonda stato = batch.aggiornaStatoSonda(true, null, new Date(), "OK", con, tipoDatabase); //<<-- Aggiornare con uno stato ok
+			StatoSonda stato = batch.aggiornaStatoSonda(true, null, DateManager.getDate(), "OK", con, tipoDatabase); //<<-- Aggiornare con uno stato ok
 			
 			checkStato(sondaName, 0, stato);
 			info(log,systemOut,"Test 1 batch ok. Descrizione: " + stato.getDescrizione());
@@ -311,19 +311,19 @@ public class ClientTest {
 		}
 
 		{
-			StatoSonda stato = batch.aggiornaStatoSonda(true, null, new Date(), null, con, tipoDatabase); //<<-- Aggiornare con uno stato ok
+			StatoSonda stato = batch.aggiornaStatoSonda(true, null, DateManager.getDate(), null, con, tipoDatabase); //<<-- Aggiornare con uno stato ok
 			checkStato(sondaName, 0, stato);
 			info(log,systemOut,"Test 4 batch ok. Descrizione: " + stato.getDescrizione());
 		}		
 
 		{
-			StatoSonda stato = batch.aggiornaStatoSonda(false, null, new Date(), "Errore durante l'esecuzione del batch\n\nin due righe", con, tipoDatabase); //<<-- Aggiornare con uno stato ko
+			StatoSonda stato = batch.aggiornaStatoSonda(false, null, DateManager.getDate(), "Errore durante l'esecuzione del batch\n\nin due righe", con, tipoDatabase); //<<-- Aggiornare con uno stato ko
 			checkStato(sondaName, 2, stato);
 			info(log,systemOut,"Test 5 batch ok. Descrizione: " + stato.getDescrizione());
 		}
 
 		{
-			StatoSonda stato = batch.aggiornaStatoSonda(true, null, new Date(), null, con, tipoDatabase); // <<-- Aggiornare con uno stato ok
+			StatoSonda stato = batch.aggiornaStatoSonda(true, null, DateManager.getDate(), null, con, tipoDatabase); // <<-- Aggiornare con uno stato ok
 			checkStato(sondaName, 0, stato);
 			info(log,systemOut,"Test 6 batch ok. Descrizione: " + stato.getDescrizione());
 		}

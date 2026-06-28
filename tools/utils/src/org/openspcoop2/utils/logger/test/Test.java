@@ -20,7 +20,6 @@
 package org.openspcoop2.utils.logger.test;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -164,6 +163,8 @@ public class Test {
 			test(LoggerFactory.newLogger(Log4JLoggerWithBatchContext.class), "BATCH");
 			
 		}
+		
+		System.out.println("Test completati");
 	}
 	
 	
@@ -214,7 +215,7 @@ public class Test {
 			
 			long httpRequestSize = 2345;
 			if(contextWithClient!=null) {
-				contextWithClient.getRequest().setDate(new Date());
+				contextWithClient.getRequest().setDate(DateManager.getDate());
 				contextWithClient.getRequest().setSize(httpRequestSize);
 			}
 		
@@ -444,7 +445,7 @@ public class Test {
 				
 				long httpRequestModifySize = 231232;
 				ConnectionMessage requestConnection = new ConnectionMessage();
-				requestConnection.setDate(new Date());
+				requestConnection.setDate(DateManager.getDate());
 				requestConnection.setSize(httpRequestModifySize);
 				requestConnection.setIdMessage("ID-SERVER-REQ");
 				server.setRequest(requestConnection);
@@ -478,7 +479,7 @@ public class Test {
 				}
 				
 				ConnectionMessage responseConnection = new ConnectionMessage();
-				responseConnection.setDate(new Date());
+				responseConnection.setDate(DateManager.getDate());
 				responseConnection.setSize(httpRequestSize);
 				responseConnection.setIdMessage("ID-SERVER-RESP");
 				server.setResponse(responseConnection);
@@ -621,7 +622,7 @@ public class Test {
 				else
 					logger.log("001003");
 				
-				contextWithClient.getResponse().setDate(new Date());
+				contextWithClient.getResponse().setDate(DateManager.getDate());
 				contextWithClient.getResponse().setSize(httpRequestSize);
 			}
 			

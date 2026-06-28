@@ -29,7 +29,6 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.Writer;
-import java.util.Date;
 
 /**
  * TestCopyString
@@ -168,7 +167,7 @@ public class TestCopyCharStream {
 	
 	private static void testBuffer(String src, CopyStreamMethod method, Reader reader, int size, boolean wrapping) throws Exception {
 		//System.out.println("["+src+"->Buffer]["+method+"] .... ");
-		Date startDate = new Date();
+		long startTime = System.nanoTime();
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
 		if(wrapping) {
 			Writer writer = new OutputStreamWriter(bout);
@@ -181,8 +180,8 @@ public class TestCopyCharStream {
 		}
 		bout.flush();
 		bout.close();
-		Date endDate = new Date();
-		long time = endDate.getTime() - startDate.getTime(); 
+		long endTime = System.nanoTime();
+		long time = (endTime - startTime) / 1_000_000; 
 		if(bout.size()!=size) {
 			throw new Exception("Buffer destinazione con dimensione differente (expected: "+size+", found: "+bout.size()+")");
 		}
@@ -191,15 +190,15 @@ public class TestCopyCharStream {
 	
 	private static void testBuffer(String src, File is, int size) throws Exception {
 		//System.out.println("["+src+"->Buffer]["+method+"] .... ");
-		Date startDate = new Date();
+		long startTime = System.nanoTime();
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
 		Writer writer = new OutputStreamWriter(bout);
 		CopyCharStream.copy(is, writer);
 		bout.flush();
 		writer.close();
 		bout.close();
-		Date endDate = new Date();
-		long time = endDate.getTime() - startDate.getTime(); 
+		long endTime = System.nanoTime();
+		long time = (endTime - startTime) / 1_000_000; 
 		if(bout.size()!=size) {
 			throw new Exception("Buffer destinazione con dimensione differente (expected: "+size+", found: "+bout.size()+")");
 		}
@@ -208,15 +207,15 @@ public class TestCopyCharStream {
 	
 	private static void testFile(String src, CopyStreamMethod method, Reader reader, File f, int size) throws Exception {
 		//System.out.println("["+src+"->File]["+method+"] .... ");
-		Date startDate = new Date();
+		long startTime = System.nanoTime();
 		FileOutputStream fout = new FileOutputStream(f);
 		Writer writer = new OutputStreamWriter(fout);
 		CopyCharStream.copy(method, reader, writer);
 		fout.flush();
 		writer.close();
 		fout.close();
-		Date endDate = new Date();
-		long time = endDate.getTime() - startDate.getTime(); 
+		long endTime = System.nanoTime();
+		long time = (endTime - startTime) / 1_000_000; 
 		if(f.length()!=size) {
 			throw new Exception("File destinazione con dimensione differente (expected: "+size+", found: "+f.length()+")");
 		}
@@ -225,10 +224,10 @@ public class TestCopyCharStream {
 	
 	private static void testFile(String src, Reader reader, File f, int size) throws Exception {
 		//System.out.println("["+src+"->File]["+method+"] .... ");
-		Date startDate = new Date();
+		long startTime = System.nanoTime();
 		CopyCharStream.copy(reader, f);
-		Date endDate = new Date();
-		long time = endDate.getTime() - startDate.getTime(); 
+		long endTime = System.nanoTime();
+		long time = (endTime - startTime) / 1_000_000; 
 		if(f.length()!=size) {
 			throw new Exception("File destinazione con dimensione differente (expected: "+size+", found: "+f.length()+")");
 		}
@@ -237,10 +236,10 @@ public class TestCopyCharStream {
 	
 	private static void testFile(String src, File is, File f, int size) throws Exception {
 		//System.out.println("["+src+"->File]["+method+"] .... ");
-		Date startDate = new Date();
+		long startTime = System.nanoTime();
 		CopyCharStream.copy(is, f);
-		Date endDate = new Date();
-		long time = endDate.getTime() - startDate.getTime(); 
+		long endTime = System.nanoTime();
+		long time = (endTime - startTime) / 1_000_000; 
 		if(f.length()!=size) {
 			throw new Exception("File destinazione con dimensione differente (expected: "+size+", found: "+f.length()+")");
 		}

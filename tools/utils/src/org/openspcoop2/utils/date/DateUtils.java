@@ -933,7 +933,7 @@ public class DateUtils {
 		return convertToDateViaInstant(dateToConvert, DateUtils.zoneId); 
 	}
 	public static Date convertToDateViaInstant(LocalTime dateToConvert, ZoneId zoneIdParam) {
-	    return java.util.Date.from(dateToConvert.atDate(LocalDate.now())
+	    return java.util.Date.from(dateToConvert.atDate(LocalDate.now(zoneIdParam))
 	      .atZone(zoneIdParam)
 	      .toInstant());
 	}

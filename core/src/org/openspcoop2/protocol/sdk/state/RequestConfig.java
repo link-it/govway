@@ -94,7 +94,7 @@ public class RequestConfig implements java.io.Serializable {
 	
 	private String key = null;
 	
-	private volatile boolean cached = false;
+	private final java.util.concurrent.atomic.AtomicBoolean cached = new java.util.concurrent.atomic.AtomicBoolean(false);
 
 	private transient org.openspcoop2.utils.Semaphore semaphore = null; // possono essere alimentati da thread differenti
 	
@@ -207,7 +207,7 @@ public class RequestConfig implements java.io.Serializable {
 			this.key = source.key;
 		}
 		
-		this.cached = source.cached;
+		this.cached.set(source.cached.get());
 		
 		if(source.dominioDefault!=null) {
 			this.dominioDefault = source.dominioDefault.clone();
@@ -483,10 +483,10 @@ public class RequestConfig implements java.io.Serializable {
 	}
 	
 	public boolean isCached() {
-		return this.cached;
+		return this.cached.get();
 	}
 	public void setCached(boolean cached) {
-		this.cached = cached;
+		this.cached.set(cached);
 	}
 	
 	private synchronized void initSemaphore() {
