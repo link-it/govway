@@ -1,3 +1,10 @@
+2026-06-28  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolte le seguenti vulnerabilità relative ai jar di terza parte:
+	- CVE-2026-54512, CVE-2026-54513, CVE-2026-54514, CVE-2026-54515: 
+	  aggiornata libreria 'com.fasterxml.jackson.core:jackson-databind' alla versione 2.18.8
+
 2026-06-12  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
