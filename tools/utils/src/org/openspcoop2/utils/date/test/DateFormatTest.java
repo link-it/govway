@@ -50,6 +50,13 @@ public class DateFormatTest {
 	public static void main(String[] args) throws ParseException {
 		test();
 	}
+
+	// Esegue le costruzioni "a vuoto" (senza assegnazione) per pre-caricare le classi e pagare i costi di inizializzazione (class-loading/JIT) prima delle misurazioni.
+	private static void inizializzaPerCosti() {
+		Date.from(FIXED_ZONED_DATE_TIME.toInstant());
+		new DateTime(FIXED_ZONED_DATE_TIME.toInstant().toEpochMilli());
+	}
+
 	public static void test() throws ParseException {
 
 
@@ -62,14 +69,9 @@ public class DateFormatTest {
 //		System.out.println("AAAAAAAAA2: "+DateUtils.getDefaultDateTimeFormatter("yyyyMMdd_HHmmssSSS").parse(test));
 //		
 
-		// inizializzo per costi
-		@SuppressWarnings("unused")
-		Date nowDate = Date.from(FIXED_ZONED_DATE_TIME.toInstant());
-		@SuppressWarnings("unused")
-		ZonedDateTime nowDateTime = FIXED_ZONED_DATE_TIME;		
-		@SuppressWarnings("unused")
-		DateTime jodaDateTime = new DateTime(FIXED_ZONED_DATE_TIME.toInstant().toEpochMilli());
-		
+		// warm-up: pre-carica le classi e paga i costi di inizializzazione prima delle misurazioni
+		inizializzaPerCosti();
+
 		boolean threads = false;
 		
 		boolean DATE_TIME = true;
