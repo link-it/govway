@@ -123,12 +123,16 @@ public class SecurityWrappedHttpServletRequest extends HttpServletRequestWrapper
 			try {
 				boolean usaValidazioneTextArea = ServletUtils.usaValidazioneTextArea(getHttpServletRequest(), key);
 				boolean usaValidazionePassword = ServletUtils.usaValidazionePassword(getHttpServletRequest(), key);
-				boolean skipSanitize = usaValidazioneTextArea || usaValidazionePassword;
+				boolean usaValidazioneTextAreaSingleLine = ServletUtils.usaValidazioneTextAreaSingleLine(getHttpServletRequest(), key);
+				boolean skipSanitize = usaValidazioneTextArea || usaValidazionePassword || usaValidazioneTextAreaSingleLine;
 				val = this.validator.getParametroSanificato(val, skipSanitize);
 				String pattern;
 				boolean checkSqlInjection;
 				if(usaValidazionePassword) {
 					pattern = Costanti.PATTERN_REQUEST_HTTP_PARAMETER_VALUE_PASSWORD;
+					checkSqlInjection = false;
+				} else if(usaValidazioneTextAreaSingleLine) {
+					pattern = Costanti.PATTERN_REQUEST_HTTP_PARAMETER_VALUE_TEXT_AREA_SINGLE_LINE;
 					checkSqlInjection = false;
 				} else if(usaValidazioneTextArea) {
 					pattern = Costanti.PATTERN_REQUEST_HTTP_PARAMETER_VALUE_TEXT_AREA;
@@ -156,11 +160,15 @@ public class SecurityWrappedHttpServletRequest extends HttpServletRequestWrapper
 
 				boolean usaValidazioneTextArea = ServletUtils.usaValidazioneTextArea(getHttpServletRequest(), name);
 				boolean usaValidazionePassword = ServletUtils.usaValidazionePassword(getHttpServletRequest(), name);
-				boolean skipSanitize = usaValidazioneTextArea || usaValidazionePassword;
+				boolean usaValidazioneTextAreaSingleLine = ServletUtils.usaValidazioneTextAreaSingleLine(getHttpServletRequest(), name);
+				boolean skipSanitize = usaValidazioneTextArea || usaValidazionePassword || usaValidazioneTextAreaSingleLine;
 				String pattern;
 				boolean checkSqlInjection;
 				if(usaValidazionePassword) {
 					pattern = Costanti.PATTERN_REQUEST_HTTP_PARAMETER_VALUE_PASSWORD;
+					checkSqlInjection = false;
+				} else if(usaValidazioneTextAreaSingleLine) {
+					pattern = Costanti.PATTERN_REQUEST_HTTP_PARAMETER_VALUE_TEXT_AREA_SINGLE_LINE;
 					checkSqlInjection = false;
 				} else if(usaValidazioneTextArea) {
 					pattern = Costanti.PATTERN_REQUEST_HTTP_PARAMETER_VALUE_TEXT_AREA;
@@ -215,11 +223,15 @@ public class SecurityWrappedHttpServletRequest extends HttpServletRequestWrapper
 
 		boolean usaValidazioneTextArea = ServletUtils.usaValidazioneTextArea(getHttpServletRequest(), arg0);
 		boolean usaValidazionePassword = ServletUtils.usaValidazionePassword(getHttpServletRequest(), arg0);
-		boolean skipSanitize = usaValidazioneTextArea || usaValidazionePassword;
+		boolean usaValidazioneTextAreaSingleLine = ServletUtils.usaValidazioneTextAreaSingleLine(getHttpServletRequest(), arg0);
+		boolean skipSanitize = usaValidazioneTextArea || usaValidazionePassword || usaValidazioneTextAreaSingleLine;
 		String pattern;
 		boolean checkSqlInjection;
 		if(usaValidazionePassword) {
 			pattern = Costanti.PATTERN_REQUEST_HTTP_PARAMETER_VALUE_PASSWORD;
+			checkSqlInjection = false;
+		} else if(usaValidazioneTextAreaSingleLine) {
+			pattern = Costanti.PATTERN_REQUEST_HTTP_PARAMETER_VALUE_TEXT_AREA_SINGLE_LINE;
 			checkSqlInjection = false;
 		} else if(usaValidazioneTextArea) {
 			pattern = Costanti.PATTERN_REQUEST_HTTP_PARAMETER_VALUE_TEXT_AREA;

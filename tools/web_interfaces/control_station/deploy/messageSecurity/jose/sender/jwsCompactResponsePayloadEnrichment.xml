@@ -264,7 +264,7 @@
 			</item>
 
 			<!-- Audience manuale: visibile solo se audienceMode=manual -->
-			<item type="text" name="audienceManual" label="" required="true">
+			<item type="textarea" name="audienceManual" singleLine="true" label="" required="true">
 				<conditions>
 					<condition>
 						<equals name="audienceMode" value="manual"/>
@@ -274,7 +274,7 @@
 			</item>
 
 			<!-- Issuer -->
-			<item type="text" name="issuer" label="Issuer" required="true">
+			<item type="textarea" name="issuer" singleLine="true" label="Issuer" required="true">
 				<property name="jwt.claims.iss"/>
 			</item>
 

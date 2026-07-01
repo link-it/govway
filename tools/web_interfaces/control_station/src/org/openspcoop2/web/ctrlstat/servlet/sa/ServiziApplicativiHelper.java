@@ -3689,15 +3689,17 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			if(gestioneCredenzialiGetMsg && CostantiConfigurazione.ABILITATO.toString().equals(getmsg)) {
 				de = new DataElement();
 				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME);
-				de.setValue(StringEscapeUtils.escapeHtml4(usernameGetMsg));
+				// Username IntegrationManager/MessageBox (credenziale): può contenere caratteri speciali.
+				// Textarea a riga singola (singleLine); l'escape lo fa la JSP, quindi valore grezzo.
+				de.setValue(usernameGetMsg);
+				de.setSingleLine(true);
 				if(integrationManagerEnabled) {
-					de.setType(DataElementType.TEXT_EDIT);
+					de.setType(DataElementType.TEXT_AREA);
 				}
 				else {
-					de.setType(DataElementType.HIDDEN);
+					de.setHiddenType(DataElementType.TEXT_AREA);
 				}
 				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME);
-				de.setSize(this.getSize());
 				de.setRequired(true);
 				dati.add(de);
 	
@@ -4015,13 +4017,11 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			if(gestioneCredenzialiGetMsg && CostantiConfigurazione.ABILITATO.toString().equals(getmsg)) {
 				de = new DataElement();
 				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME);
-				de.setValue(StringEscapeUtils.escapeHtml4(usernameGetMsg));
-//				if(!this.isModalitaStandard()) {
-//					de.setType(DataElementType.TEXT_EDIT);
-//				}
-//				else {
-					de.setType(DataElementType.HIDDEN);
-//				}
+				// Username IntegrationManager/MessageBox: hidden ma classificato single-line per la state-preservation
+				// (valore grezzo, escape lato JSP), così un valore con caratteri speciali non viene scartato al postback
+				de.setValue(usernameGetMsg);
+				de.setSingleLine(true);
+				de.setHiddenType(DataElementType.TEXT_AREA);
 				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME);
 				de.setSize(this.getSize());
 //				de.setRequired(true);

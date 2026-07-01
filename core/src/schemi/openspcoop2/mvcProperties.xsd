@@ -93,6 +93,9 @@
 		<xsd:attribute name="value" type="xsd:string" use="optional"/> <!-- hidden -->
 		<xsd:attribute name="min" type="xsd:integer" use="optional"/> <!-- number -->
 		<xsd:attribute name="max" type="xsd:integer" use="optional"/> <!-- number -->
+		<xsd:attribute name="rows" type="xsd:integer" use="optional"/> <!-- textarea: righe visualizzate inizialmente -->
+		<xsd:attribute name="columns" type="xsd:integer" use="optional"/> <!-- textarea: colonne (larghezza) visualizzate inizialmente -->
+		<xsd:attribute name="singleLine" type="xsd:boolean" default="false"/> <!-- textarea: campo a riga singola (equivalente a text), vieta i caratteri di controllo -->
 		<xsd:attribute name="validation" type="xsd:string" use="optional"/> <!-- RegularExpression for validation -->
 	</xsd:complexType>
 	

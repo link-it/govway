@@ -404,6 +404,8 @@ public class ConnettoriCostanti {
 	public static final String LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY = "OCSP Policy";
 	public static final String LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL_NOTE = "Elencare più file separandoli con la ','";
 	public static final int LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL_SIZE = 2;
+	// Il campo CRL è single-line (validazione), ma reso come textarea multi-riga di larghezza standard: elenca più file separati da ',' (CRLCertstore.readCrlPaths)
+	public static final int LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL_COLUMNS = CostantiLabel.TEXT_AREA_SINGLE_LINE_COLUMNS;
 	public static final String LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITM = "Algoritmo";
 	public static final String LABEL_PARAMETRO_CONNETTORE_HTTPS_STATO = "Abilitato";
 	public static final String LABEL_PARAMETRO_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE ="Dati Accesso al KeyStore";

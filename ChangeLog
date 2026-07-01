@@ -1,3 +1,22 @@
+2026-07-12  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug #1782 #1784
+	Corretta la gestione dei campi che contengono identificativi esterni o elenchi di valori separati da virgola:
+	ora accettano anche i caratteri speciali (es. '|', '[', ']', '"', ',') che in precedenza venivano erroneamente rifiutati, 
+	continuando a bloccare i soli ritorni a capo e caratteri di controllo non ammessi.
+	Campi/aree interessati:
+	- Token policy (negoziazione/validazione) e Attribute Authority: 
+	  Client ID, Issuer, Subject, Audience, Scope, Resource, Purpose ID, Username, Kid, ...
+	- Sicurezza messaggio (JOSE/WSS4J/SAML): actor, issuer, audience, username token, ...
+	- Credenziali e connettori: Username/App-ID, principal, utenze proxy, 
+	- Configurazione: regole di proxy-pass, rate-limiting (Valore filtro per chiave), 
+	  Scope/Ruolo (Identificativo Esterno), filtri Remote Stores.
+	- Profilo ModI: Applicativo (Client ID, Kid, Audience risposta, URL x5u), 
+	  Erogazione/Fruizione (Identificativo/Kid OAuth, URL x5u, Audience richiesta/risposta e Audience Integrity),
+	  Soggetto (ID Ente).
+	- Connettori HTTPS e TrustStore ModI: campo "CRL File(s)" (elenco file separati da virgola).
+
 2026-06-28  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

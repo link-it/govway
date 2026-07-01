@@ -475,12 +475,15 @@ public class Costanti {
 	public static final String ID_RETRIEVE_JWT_KID_VALUE = "jwtSignatureKidValue";
 	public static final String ID_RETRIEVE_JWT_X5U = "jwtSignatureIncludeCertModeX5U";
 	public static final String ID_RETRIEVE_JWT_CLIENT_ID_APPLICATIVO_MODI_CUSTOM = "jwtClientIdApplicativoModiChoiceInput";
+	public static final String ID_RETRIEVE_JWT_CLIENT_ID_FRUIZIONE_MODI_CUSTOM = "jwtClientIdFruizioneModiChoiceInput";
 	public static final String ID_RETRIEVE_JWT_CLIENT_ID = "jwtClientId";
 	public static final String ID_RETRIEVE_JWT_AUDIENCE = "jwtAudience";
 	public static final String ID_RETRIEVE_JWT_ISSUER = "jwtIssuer";
 	public static final String ID_RETRIEVE_JWT_ISSUER_APPLICATIVO_MODI_CUSTOM = "jwtIssuerApplicativoModiChoiceInput";
+	public static final String ID_RETRIEVE_JWT_ISSUER_FRUIZIONE_MODI_CUSTOM = "jwtIssuerFruizioneModiChoiceInput";
 	public static final String ID_RETRIEVE_JWT_SUBJECT = "jwtSubject";
 	public static final String ID_RETRIEVE_JWT_SUBJECT_APPLICATIVO_MODI_CUSTOM = "jwtSubjectApplicativoModiChoiceInput";
+	public static final String ID_RETRIEVE_JWT_SUBJECT_FRUIZIONE_MODI_CUSTOM = "jwtSubjectFruizioneModiChoiceInput";
 	public static final String ID_RETRIEVE_JWT_IDENTIFIER = "jwtIdentifier";
 	public static final String ID_RETRIEVE_JWT_CLAIMS = "jwtPayloadClaims";
 	public static final String ID_RETRIEVE_JWT_PURPOSE_ID = "jwtPurposeID";
@@ -489,6 +492,7 @@ public class Costanti {
 	public static final String ID_RETRIEVE_AUDIENCE = "audience";
 	public static final String ID_RETRIEVE_FORM_CLIENT_ID = "formClientId";
 	public static final String ID_RETRIEVE_FORM_CLIENT_ID_APPLICATIVO_MODI_CUSTOM = "formClientIdApplicativoModiChoiceInput";
+	public static final String ID_RETRIEVE_FORM_CLIENT_ID_FRUIZIONE_MODI_CUSTOM = "formClientIdFruizioneModiChoiceInput";
 	public static final String ID_RETRIEVE_FORM_RESOURCE = "formResource";
 	public static final String ID_RETRIEVE_FORM_PARAMETERS = "formParameters";
 	public static final String ID_RETRIEVE_HTTP_METHOD = "httpMethod";
@@ -499,7 +503,13 @@ public class Costanti {
 	public static final String ID_RETRIEVE_HTTP_TEMPLATE_PAYLOAD = "httpTemplatePayload";
 	public static final String ID_RETRIEVE_HTTP_FREEMARKER_PAYLOAD = "httpFreemarkerPayload";
 	public static final String ID_RETRIEVE_HTTP_VELOCITY_PAYLOAD = "httpVelocityPayload";
-	
+
+	// Label dei sotto-campi "Personalizzato" (item con label vuota): usate come titolo del box informativo
+	public static final String LABEL_RETRIEVE_JWT_KID = "Key Id (kid)";
+	public static final String LABEL_RETRIEVE_CLIENT_ID = "Client ID";
+	public static final String LABEL_RETRIEVE_JWT_ISSUER = "Issuer";
+	public static final String LABEL_RETRIEVE_JWT_SUBJECT = "Subject";
+
 	// PURPOSE ID
 	
 	public static final String VALORE_RETRIEVE_JWT_PURPOSE_ID_DEFAULT = "${dynamicConfig:apiSearchByClientApplication(purposeId)}";	

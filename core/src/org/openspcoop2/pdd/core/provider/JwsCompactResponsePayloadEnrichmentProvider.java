@@ -41,6 +41,8 @@ public class JwsCompactResponsePayloadEnrichmentProvider extends SignatureSender
 	private static final String ID_AUDIENCE_MANUAL = "audienceManual";
 	private static final String ID_TTL = "ttl";
 	private static final String ID_HTTP_STATUS_CODES = "httpStatusCodes";
+	// l'item 'audienceManual' ha label vuota (la label compare sulla select 'Audience'): titolo esplicito per il box informativo
+	private static final String LABEL_AUDIENCE = "Audience";
 
 	private static final String LABEL_INFO_HTTP_CODES_HEADER = "Codici HTTP di risposta del backend che attivano la firma.";
 	private static final String LABEL_INFO_HTTP_CODES_SINGLE = "<b>Singolo codice</b>: 200";
@@ -59,6 +61,9 @@ public class JwsCompactResponsePayloadEnrichmentProvider extends SignatureSender
 			pInfo.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
 			List<String> listBody = DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI_CON_RISPOSTE(false, false, false);
 			pInfo.setListBody(listBody);
+			if(ID_AUDIENCE_MANUAL.equals(id)) {
+				pInfo.setHeaderFinestraModale(LABEL_AUDIENCE);
+			}
 			return pInfo;
 		}
 		else if(ID_HTTP_STATUS_CODES.equals(id)) {

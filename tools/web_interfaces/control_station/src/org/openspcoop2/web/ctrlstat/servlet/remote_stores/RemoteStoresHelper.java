@@ -240,7 +240,7 @@ public class RemoteStoresHelper extends ConsoleHelper{
 	
 	private void addFilterRemoteStoreOrganizzazione(String filterRemoteStoreOrganizzazione) throws PageDataException {
 		String label = RemoteStoresCostanti.LABEL_PARAMETRO_REMOTE_STORE_KEY_ORGANIZATION_DETAILS;
-		this.pd.addTextFilter(Filtri.FILTRO_REMOTE_STORE_KEY_ORGANIZZAZIONE, label, filterRemoteStoreOrganizzazione, this.getSize());
+		this.pd.addTextSingleLineFilter(Filtri.FILTRO_REMOTE_STORE_KEY_ORGANIZZAZIONE, label, filterRemoteStoreOrganizzazione, this.getSize());
 	}
 	
 	private void addFilterRemoteStoreLastEventiId(String lastEventId) throws PageDataException {
@@ -251,12 +251,12 @@ public class RemoteStoresHelper extends ConsoleHelper{
 	
 	private void addFilterRemoteStoreClientId(String filterRemoteStoreClientId) throws PageDataException {
 		String label = RemoteStoresCostanti.LABEL_PARAMETRO_REMOTE_STORE_KEY_CLIENT_ID;
-		this.pd.addTextFilter(Filtri.FILTRO_REMOTE_STORE_KEY_CLIENT_ID, label, filterRemoteStoreClientId, this.getSize());
+		this.pd.addTextSingleLineFilter(Filtri.FILTRO_REMOTE_STORE_KEY_CLIENT_ID, label, filterRemoteStoreClientId, this.getSize());
 	}
 	
 	private void addFilterRemoteStoreKid(String filterRemoteStoreKid) throws PageDataException {
 		String label = RemoteStoresCostanti.LABEL_PARAMETRO_REMOTE_STORE_KEY_KID;
-		this.pd.addTextFilter(Filtri.FILTRO_REMOTE_STORE_KEY_KID, label, filterRemoteStoreKid, this.getSize());
+		this.pd.addTextSingleLineFilter(Filtri.FILTRO_REMOTE_STORE_KEY_KID, label, filterRemoteStoreKid, this.getSize());
 	}
 	private void addFilterRemoteStoreId(String filterRemoteStoreId, boolean postback) throws DriverControlStationException, PageDataException {
 		// se e' presente solo un remote store allora inserisco un campo hidden altriment una select list

@@ -20,7 +20,7 @@ provider="org.openspcoop2.security.message.wss4j.WSS4JSecurityProvider">
 			<property name="securityEngine" force="true"/>
 		</item>	
 		
-		<item type="text" name="actor" label="Actor" required="false" validation="(.+)">
+		<item type="textarea" name="actor" singleLine="true" label="Actor" required="false" validation="(.+)">
 			<property name="actor" />
 		</item>
 		<item type="checkbox" name="mustUnderstand" label="MustUnderstand" defaultSelected="false">
@@ -99,7 +99,7 @@ provider="org.openspcoop2.security.message.wss4j.WSS4JSecurityProvider">
 			</conditions>
 			<property name="usernameTokenPasswordMode" />
 		</item>
-		<item type="text" name="usernameTokenUser" label="User" required="true">
+		<item type="textarea" name="usernameTokenUser" singleLine="true" label="User" required="true">
 			<conditions>
 				<condition not="true">
 					<selected name="usernameTokenNoPassword" />

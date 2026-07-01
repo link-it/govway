@@ -437,6 +437,8 @@ public final class CostantiLabel {
 	public static final String MODIPA_STORE_PATH_PUBLIC_KEY_LABEL = "Chiave Pubblica";
 	public static final String MODIPA_STORE_ALGORITHM_ID_LABEL = "";
 	public static final String MODIPA_TRUSTSTORE_CRLS_LABEL = "CRL File(s)";
+	// Larghezza (colonne) di una textarea di larghezza standard, usata per i campi single-line resi come textarea multi-riga (es. audience, CRL File(s))
+	public static final int TEXT_AREA_SINGLE_LINE_COLUMNS = 56;
 	public static final String MODIPA_KEY_ALIAS_LABEL = "Alias Chiave Privata";
 	public static final String MODIPA_TRUSTSTORE_OCSP_LABEL = "OCSP Policy";
 }

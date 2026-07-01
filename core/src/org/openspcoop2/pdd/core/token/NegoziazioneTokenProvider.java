@@ -784,6 +784,41 @@ public class NegoziazioneTokenProvider implements IProvider {
 	}
 	@Override
 	public ProviderInfo getProviderInfo(String id) throws ProviderException{
+		ProviderInfo pInfo = buildProviderInfo(id);
+		if(pInfo!=null) {
+			// Per i sotto-campi "Personalizzato" la label dell'item è vuota (la label compare sulla select
+			// associata, es. 'Client ID', 'Issuer', ...): impostiamo esplicitamente il titolo del box informativo,
+			// altrimenti ItemBean ripiegherebbe sulla label vuota.
+			String headerFinestraModale = getHeaderFinestraModaleCampoCustom(id);
+			if(headerFinestraModale!=null) {
+				pInfo.setHeaderFinestraModale(headerFinestraModale);
+			}
+		}
+		return pInfo;
+	}
+	private String getHeaderFinestraModaleCampoCustom(String id) {
+		if(Costanti.ID_RETRIEVE_JWT_KID_VALUE.equals(id)) {
+			return Costanti.LABEL_RETRIEVE_JWT_KID;
+		}
+		else if(Costanti.ID_RETRIEVE_JWT_CLIENT_ID_APPLICATIVO_MODI_CUSTOM.equals(id) ||
+				Costanti.ID_RETRIEVE_JWT_CLIENT_ID_FRUIZIONE_MODI_CUSTOM.equals(id)) {
+			return Costanti.LABEL_RETRIEVE_CLIENT_ID;
+		}
+		else if(Costanti.ID_RETRIEVE_JWT_ISSUER_APPLICATIVO_MODI_CUSTOM.equals(id) ||
+				Costanti.ID_RETRIEVE_JWT_ISSUER_FRUIZIONE_MODI_CUSTOM.equals(id)) {
+			return Costanti.LABEL_RETRIEVE_JWT_ISSUER;
+		}
+		else if(Costanti.ID_RETRIEVE_JWT_SUBJECT_APPLICATIVO_MODI_CUSTOM.equals(id) ||
+				Costanti.ID_RETRIEVE_JWT_SUBJECT_FRUIZIONE_MODI_CUSTOM.equals(id)) {
+			return Costanti.LABEL_RETRIEVE_JWT_SUBJECT;
+		}
+		else if(Costanti.ID_RETRIEVE_FORM_CLIENT_ID_APPLICATIVO_MODI_CUSTOM.equals(id) ||
+				Costanti.ID_RETRIEVE_FORM_CLIENT_ID_FRUIZIONE_MODI_CUSTOM.equals(id)) {
+			return Costanti.LABEL_RETRIEVE_CLIENT_ID;
+		}
+		return null;
+	}
+	private ProviderInfo buildProviderInfo(String id) throws ProviderException{
 		if(isProviderInfoStandard(id)) {
 			ProviderInfo pInfo = new ProviderInfo();
 			pInfo.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
@@ -791,7 +826,8 @@ public class NegoziazioneTokenProvider implements IProvider {
 			return pInfo;
 		}
 		else if(Costanti.ID_RETRIEVE_JWT_ISSUER.equals(id) ||
-				Costanti.ID_RETRIEVE_JWT_ISSUER_APPLICATIVO_MODI_CUSTOM.equals(id)
+				Costanti.ID_RETRIEVE_JWT_ISSUER_APPLICATIVO_MODI_CUSTOM.equals(id) ||
+				Costanti.ID_RETRIEVE_JWT_ISSUER_FRUIZIONE_MODI_CUSTOM.equals(id)
 				) {
 			ProviderInfo pInfo = new ProviderInfo();
 			pInfo.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_NEGOZIAZIONE_ISSUER);
@@ -799,7 +835,8 @@ public class NegoziazioneTokenProvider implements IProvider {
 			return pInfo;
 		}
 		else if(Costanti.ID_RETRIEVE_JWT_SUBJECT.equals(id) ||
-				Costanti.ID_RETRIEVE_JWT_SUBJECT_APPLICATIVO_MODI_CUSTOM.equals(id)
+				Costanti.ID_RETRIEVE_JWT_SUBJECT_APPLICATIVO_MODI_CUSTOM.equals(id) ||
+				Costanti.ID_RETRIEVE_JWT_SUBJECT_FRUIZIONE_MODI_CUSTOM.equals(id)
 				) {
 			ProviderInfo pInfo = new ProviderInfo();
 			pInfo.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_NEGOZIAZIONE_SUBJECT);
@@ -815,6 +852,7 @@ public class NegoziazioneTokenProvider implements IProvider {
 		}
 		else if(Costanti.ID_RETRIEVE_JWT_CLIENT_ID.equals(id) ||
 				Costanti.ID_RETRIEVE_JWT_CLIENT_ID_APPLICATIVO_MODI_CUSTOM.equals(id) ||
+				Costanti.ID_RETRIEVE_JWT_CLIENT_ID_FRUIZIONE_MODI_CUSTOM.equals(id) ||
 				Costanti.ID_RETRIEVE_JWT_AUDIENCE.equals(id) ||
 				Costanti.ID_RETRIEVE_FORM_RESOURCE.equals(id)
 				) {
@@ -830,7 +868,8 @@ public class NegoziazioneTokenProvider implements IProvider {
 			return pInfo;
 		}
 		else if(Costanti.ID_RETRIEVE_FORM_CLIENT_ID.equals(id) ||
-				Costanti.ID_RETRIEVE_FORM_CLIENT_ID_APPLICATIVO_MODI_CUSTOM.equals(id)
+				Costanti.ID_RETRIEVE_FORM_CLIENT_ID_APPLICATIVO_MODI_CUSTOM.equals(id) ||
+				Costanti.ID_RETRIEVE_FORM_CLIENT_ID_FRUIZIONE_MODI_CUSTOM.equals(id)
 				) {
 			ProviderInfo pInfo = new ProviderInfo();
 			pInfo.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_NEGOZIAZIONE_FORM_PARAMETRO_CLIENT_ID);

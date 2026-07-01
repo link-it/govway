@@ -1237,6 +1237,29 @@ public class ServletUtils {
 		return false;
 	}
 
+	public static boolean usaValidazioneTextAreaSingleLine(HttpServletRequest request, String parameterToCheck) {
+		String parametroIdentificativi = Validatore.getInstance().getParametroOriginale(request, Costanti.PARAMETRO_IDENTIFICATIVI_TEXT_AREA_SINGLE_LINE);
+
+		if(parametroIdentificativi != null) {
+			try {
+				Validatore.getInstance().validate(PREFIX_VALORE_PARAMETRO + Costanti.PARAMETRO_IDENTIFICATIVI_TEXT_AREA_SINGLE_LINE + "]:["+parametroIdentificativi+"]",
+						parametroIdentificativi, false, org.openspcoop2.web.lib.mvc.security.Costanti.PATTERN_ID_TEXT_AREA);
+			}catch(ValidationException e) {
+				// se il contenuto del parametro con gli id non rispetta il suo pattern allora non abilito la validazione custom
+				return false;
+			}
+
+			String[] ids = parametroIdentificativi.split(Costanti.VALUE_PARAMETRO_IDENTIFICATIVI_TEXT_AREA_SEPARATORE);
+
+			if(ids != null && ids.length > 0) {
+				List<String> asList = Arrays.asList(ids);
+				return asList.contains(parameterToCheck);
+			}
+		}
+
+		return false;
+	}
+
 	public static boolean usaValidazionePassword(HttpServletRequest request, String parameterToCheck) {
 		String parametroIdentificativi = Validatore.getInstance().getParametroOriginale(request, Costanti.PARAMETRO_IDENTIFICATIVI_PS);
 
@@ -1314,8 +1337,28 @@ public class ServletUtils {
 			DataElement de = (DataElement) dati.get(i);
 			String deName = !de.getName().equals("") ? de.getName() : "de_name_"+i;
 			/** Usa getOriginalType() per includere anche i DataElement resi HIDDEN per state-preservation
-			 *  ma originariamente di tipo TEXT_AREA/TEXT_AREA_NO_EDIT (vedi DataElement.setHiddenType). */
-			if (de.getOriginalType().equals(DataElementType.TEXT_AREA.toString()) || de.getOriginalType().equals(DataElementType.TEXT_AREA_NO_EDIT.toString())) {
+			 *  ma originariamente di tipo TEXT_AREA/TEXT_AREA_NO_EDIT (vedi DataElement.setHiddenType).
+			 *  Le textarea dichiarate single-line sono escluse: hanno una lista/pattern dedicati
+			 *  (vedi getIdentificativiTextAreaSingleLine). */
+			if ((de.getOriginalType().equals(DataElementType.TEXT_AREA.toString()) || de.getOriginalType().equals(DataElementType.TEXT_AREA_NO_EDIT.toString())) && !de.isSingleLine()) {
+				if(!sb.isEmpty()) {
+					sb.append(Costanti.VALUE_PARAMETRO_IDENTIFICATIVI_TEXT_AREA_SEPARATORE);
+				}
+				sb.append(deName);
+			}
+		}
+
+		return !sb.isEmpty() ? sb.toString() : null;
+	}
+
+	public static String getIdentificativiTextAreaSingleLine(List<?> dati) {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < dati.size(); i++) {
+			DataElement de = (DataElement) dati.get(i);
+			String deName = !de.getName().equals("") ? de.getName() : "de_name_"+i;
+			/** Solo le textarea dichiarate single-line (vedi DataElement.setSingleLine): usano il pattern
+			 *  dedicato HTTPParameterValueTextAreaSingleLine che vieta i caratteri di controllo (CR/LF, tab, ...). */
+			if (de.isSingleLine() && (de.getOriginalType().equals(DataElementType.TEXT_AREA.toString()) || de.getOriginalType().equals(DataElementType.TEXT_AREA_NO_EDIT.toString()))) {
 				if(!sb.isEmpty()) {
 					sb.append(Costanti.VALUE_PARAMETRO_IDENTIFICATIVI_TEXT_AREA_SEPARATORE);
 				}
@@ -1331,8 +1374,9 @@ public class ServletUtils {
 		for (int i = 0; i < filterValues.size(); i++) {
 			DataElement filtro = filterValues.get(i);
 			String filterName = filtro.getName();
-			/** Usa getOriginalType() per coerenza con getIdentificativiTextArea (vedi DataElement.setHiddenType). */
-			if (filtro.getOriginalType().equals(DataElementType.TEXT_AREA.toString()) || filtro.getOriginalType().equals(DataElementType.TEXT_AREA_NO_EDIT.toString())) {
+			/** Usa getOriginalType() per coerenza con getIdentificativiTextArea (vedi DataElement.setHiddenType).
+			 *  I filtri dichiarati single-line sono esclusi: hanno lista/pattern dedicati (vedi getIdentificativiTextAreaSingleLineFiltriRicerca). */
+			if ((filtro.getOriginalType().equals(DataElementType.TEXT_AREA.toString()) || filtro.getOriginalType().equals(DataElementType.TEXT_AREA_NO_EDIT.toString())) && !filtro.isSingleLine()) {
 				if(!sb.isEmpty()) {
 					sb.append(Costanti.VALUE_PARAMETRO_IDENTIFICATIVI_TEXT_AREA_SEPARATORE);
 				}
@@ -1342,8 +1386,25 @@ public class ServletUtils {
 
 		return !sb.isEmpty() ? sb.toString() : null;
 	}
-	
-	
+
+	public static String getIdentificativiTextAreaSingleLineFiltriRicerca(List<DataElement> filterValues) {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < filterValues.size(); i++) {
+			DataElement filtro = filterValues.get(i);
+			String filterName = filtro.getName();
+			/** Filtri dichiarati single-line: usano il pattern dedicato HTTPParameterValueTextAreaSingleLine (no caratteri di controllo). */
+			if (filtro.isSingleLine() && (filtro.getOriginalType().equals(DataElementType.TEXT_AREA.toString()) || filtro.getOriginalType().equals(DataElementType.TEXT_AREA_NO_EDIT.toString()))) {
+				if(!sb.isEmpty()) {
+					sb.append(Costanti.VALUE_PARAMETRO_IDENTIFICATIVI_TEXT_AREA_SEPARATORE);
+				}
+				sb.append(filterName);
+			}
+		}
+
+		return !sb.isEmpty() ? sb.toString() : null;
+	}
+
+
 	public static String getJsonPair(String key, String val) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(Costanti.CHAR_QUOTA_JSON).append(key).append(Costanti.CHAR_QUOTA_JSON).append(Costanti.CHAR_DUE_PUNTI_JSON);

@@ -51,6 +51,9 @@ import java.io.Serializable;
  * 		&lt;attribute name="value" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
  * 		&lt;attribute name="min" type="{http://www.w3.org/2001/XMLSchema}integer" use="optional"/&gt;
  * 		&lt;attribute name="max" type="{http://www.w3.org/2001/XMLSchema}integer" use="optional"/&gt;
+ * 		&lt;attribute name="rows" type="{http://www.w3.org/2001/XMLSchema}integer" use="optional"/&gt;
+ * 		&lt;attribute name="columns" type="{http://www.w3.org/2001/XMLSchema}integer" use="optional"/&gt;
+ * 		&lt;attribute name="singleLine" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/&gt;
  * 		&lt;attribute name="validation" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
  * &lt;/complexType&gt;
  * </pre>
@@ -213,6 +216,34 @@ public class Item extends org.openspcoop2.utils.beans.BaseBean implements Serial
     this.max = max;
   }
 
+  public java.lang.Integer getRows() {
+    return this.rows;
+  }
+
+  public void setRows(java.lang.Integer rows) {
+    this.rows = rows;
+  }
+
+  public java.lang.Integer getColumns() {
+    return this.columns;
+  }
+
+  public void setColumns(java.lang.Integer columns) {
+    this.columns = columns;
+  }
+
+  public boolean isSingleLine() {
+    return this.singleLine;
+  }
+
+  public boolean getSingleLine() {
+    return this.singleLine;
+  }
+
+  public void setSingleLine(boolean singleLine) {
+    this.singleLine = singleLine;
+  }
+
   public java.lang.String getValidation() {
     return this.validation;
   }
@@ -279,6 +310,18 @@ public class Item extends org.openspcoop2.utils.beans.BaseBean implements Serial
   @jakarta.xml.bind.annotation.XmlSchemaType(name="integer")
   @XmlAttribute(name="max",required=false)
   protected java.lang.Integer max;
+
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="integer")
+  @XmlAttribute(name="rows",required=false)
+  protected java.lang.Integer rows;
+
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="integer")
+  @XmlAttribute(name="columns",required=false)
+  protected java.lang.Integer columns;
+
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @XmlAttribute(name="singleLine",required=false)
+  protected boolean singleLine = false;
 
   @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="validation",required=false)

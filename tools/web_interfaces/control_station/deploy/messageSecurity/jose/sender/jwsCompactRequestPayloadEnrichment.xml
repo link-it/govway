@@ -251,12 +251,12 @@
 			</item>
 
 			<!-- Audience manuale -->
-			<item type="text" name="audienceManual" label="Audience" required="true">
+			<item type="textarea" name="audienceManual" singleLine="true" label="Audience" required="true">
 				<property name="jwt.claims.aud.value"/>
 			</item>
 
 			<!-- Issuer -->
-			<item type="text" name="issuer" label="Issuer" required="true">
+			<item type="textarea" name="issuer" singleLine="true" label="Issuer" required="true">
 				<property name="jwt.claims.iss"/>
 			</item>
 

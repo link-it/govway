@@ -96,6 +96,12 @@ public class SecurityProperties {
 		return getProperty(Costanti.PATTERN_VALIDAZIONE_PREFIX + Costanti.PATTERN_REQUEST_HTTP_PARAMETER_VALUE_TEXT_AREA);
 	}
 
+	/** Regex (raw) per il pattern dei campi textarea dichiarati single-line (equivalenti a un
+	 *  campo di testo a riga singola): ammette qualsiasi carattere tranne quelli di controllo. */
+	public String getPatternHTTPParameterValueTextAreaSingleLineAsString() {
+		return getProperty(Costanti.PATTERN_VALIDAZIONE_PREFIX + Costanti.PATTERN_REQUEST_HTTP_PARAMETER_VALUE_TEXT_AREA_SINGLE_LINE);
+	}
+
 	/** Regex (raw) per il pattern dei campi password / crypt / lock. */
 	public String getPatternHTTPParameterValuePasswordAsString() {
 		return getProperty(Costanti.PATTERN_VALIDAZIONE_PREFIX + Costanti.PATTERN_REQUEST_HTTP_PARAMETER_VALUE_PASSWORD);

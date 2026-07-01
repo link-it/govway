@@ -667,10 +667,13 @@ public class ConnettoreHTTPSUtils {
 				de.setType(DataElementType.TEXT_AREA_NO_EDIT);
 			}
 			de.setRows(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL_SIZE);
+			de.setCols(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL_COLUMNS);
+			de.setSingleLine(true);
 			de.setSize(pageSize);
 		}
 		else {
 			de.setHiddenType(DataElementType.TEXT_AREA);
+			de.setSingleLine(true);
 		}
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL);
 		dati.add(de);
@@ -1084,6 +1087,7 @@ public class ConnettoreHTTPSUtils {
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL);
 		de.setValue(httpsTrustStoreCRLs);
 		de.setHiddenType(DataElementType.TEXT_AREA);
+		de.setSingleLine(true);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL);
 		de.setSize(pageSize);
 		dati.add(de);

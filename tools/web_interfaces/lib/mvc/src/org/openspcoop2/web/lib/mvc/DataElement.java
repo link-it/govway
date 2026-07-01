@@ -60,6 +60,9 @@ public class DataElement implements Serializable {
 	private static int DATA_ELEMENT_SIZE = 50;
 	private static int DATA_ELEMENT_COLS = 15;
 	private static int DATA_ELEMENT_ROWS = 5;
+	/** Default per le textarea dichiarate single-line (vedi setSingleLine): 1 riga e larghezza ~412px (43 colonne). */
+	private static final int SINGLE_LINE_DEFAULT_ROWS = 1;
+	private static final int SINGLE_LINE_DEFAULT_COLS = 43;
 	public static void initialize(DataElementParameter p){
 		if(p.getSize()!= null && p.getSize().intValue() > 0) {
 			DataElement.DATA_ELEMENT_SIZE = p.getSize();
@@ -101,6 +104,8 @@ public class DataElement implements Serializable {
 	int size, cols, rows, id;
 	boolean affiancato; // serve a gestire il successivo elemento se disegnarlo accanto o in verticale (default)
 	boolean labelAffiancata=true; // indica se la label e poi l'elemento sono disegnati uno accanto all'altro in orizzontale (default) oppure in verticale (default per le text-area)
+	boolean singleLine=false; // textarea dichiarata 'a riga singola' (equivalente ad un campo text): una sola riga e validazione che vieta i caratteri di controllo
+	boolean rowsImpostato=false, colsImpostato=false; // tracciano se rows/cols sono stati impostati esplicitamente (per applicare i default di singleLine solo se assenti)
 	String idToRemove;
 	boolean required=false;
 	boolean bold=false;
@@ -177,6 +182,7 @@ public class DataElement implements Serializable {
 		this.rows = DataElement.DATA_ELEMENT_ROWS;
 		this.affiancato = false;
 		this.labelAffiancata = true;
+		this.singleLine = false;
 		this.note = "";
 		this.styleClass = Costanti.INPUT_LONG_CSS_CLASS;
 		this.labelStyleClass = null;
@@ -466,6 +472,7 @@ public class DataElement implements Serializable {
 
 	public void setCols(int i) {
 		this.cols = i;
+		this.colsImpostato = true;
 	}
 	public int getCols() {
 		return this.cols;
@@ -473,6 +480,7 @@ public class DataElement implements Serializable {
 
 	public void setRows(int i) {
 		this.rows = i;
+		this.rowsImpostato = true;
 	}
 	public int getRows() {
 		return this.rows;
@@ -550,6 +558,24 @@ public class DataElement implements Serializable {
 
 	public void setLabelAffiancata(boolean labelAffiancata) {
 		this.labelAffiancata = labelAffiancata;
+	}
+
+	public boolean isSingleLine() {
+		return this.singleLine;
+	}
+
+	public void setSingleLine(boolean singleLine) {
+		this.singleLine = singleLine;
+		// Per un campo single-line imposta, come default, una sola riga e una larghezza standard, ma solo
+		// se rows/cols non sono già stati impostati esplicitamente (restano sovrascrivibili con setRows/setCols).
+		if(singleLine) {
+			if(!this.rowsImpostato) {
+				this.rows = SINGLE_LINE_DEFAULT_ROWS;
+			}
+			if(!this.colsImpostato) {
+				this.cols = SINGLE_LINE_DEFAULT_COLS;
+			}
+		}
 	}
 	
 	public boolean isPostBack() {

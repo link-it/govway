@@ -282,6 +282,12 @@ public class ProtocolPropertiesUtilities {
 		else {
 			de.setType(type);
 		}
+		// Item dichiarato single-line (SDK): reso come textarea a riga singola, con validazione che vieta i
+		// caratteri di controllo (la larghezza/righe di default le imposta DataElement.setSingleLine).
+		if(item.isSingleLine() && (DataElementType.TEXT_EDIT.equals(type) || DataElementType.TEXT_AREA.equals(type))) {
+			de.setType(DataElementType.TEXT_AREA);
+			de.setSingleLine(true);
+		}
 		de.setRequired(item.isRequired());
 		de.setLabel(item.getLabel());
 		de.setLabelRight(item.getLabelRight());
@@ -330,6 +336,9 @@ public class ProtocolPropertiesUtilities {
 			value = stringItem.getDefaultValue() != null ? stringItem.getDefaultValue() : "";
 			if(stringItem.getRows()!=null) {
 				de.setRows(stringItem.getRows());
+			}
+			if(stringItem.getColumns()!=null) {
+				de.setCols(stringItem.getColumns());
 			}
 			break;
 		case BINARY: // NOP

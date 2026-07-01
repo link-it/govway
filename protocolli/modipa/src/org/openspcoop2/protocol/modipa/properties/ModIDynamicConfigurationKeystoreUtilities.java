@@ -1541,7 +1541,9 @@ public class ModIDynamicConfigurationKeystoreUtilities {
 								:
 							  ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_CRLS_LABEL		);
 		crlsItem.setRequired(false);
-		crlsItem.setRows(2);
+		crlsItem.setRows(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_TRUSTSTORE_CRLS_ROWS);
+		crlsItem.setColumns(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_TRUSTSTORE_CRLS_COLUMNS);
+		crlsItem.setSingleLine(true);
 		crlsItem.setNote(ssl ? ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_CRLS_NOTE
 					:
 					ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_CRLS_NOTE);

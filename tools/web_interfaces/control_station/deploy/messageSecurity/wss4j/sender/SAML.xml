@@ -28,7 +28,7 @@
 			<property name="openspcoop2.keystoreCache" force="true" properties="samlPropRefId"/>
 		</item>
 		
-		<item type="text" name="actor" label="Actor" required="false" validation="(.+)">
+		<item type="textarea" name="actor" singleLine="true" label="Actor" required="false" validation="(.+)">
 			<property name="actor" />
 		</item>
 		<item type="checkbox" name="mustUnderstand" label="MustUnderstand" defaultSelected="false">
@@ -62,10 +62,10 @@
 		
 		<subsection label="Issuer">
 		
-			<item type="text" name="issuerValue" label="Value" required="true">
+			<item type="textarea" name="issuerValue" singleLine="true" label="Value" required="true">
 				<property name="openspcoop2.saml.issuer.value" properties="samlPropRefId" />
 			</item>
-			<item type="text" name="issuerNameQualifier" label="Name Qualifier" required="false">
+			<item type="textarea" name="issuerNameQualifier" singleLine="true" label="Name Qualifier" required="false">
 				<conditions>
 					<condition>
 						<equals name="samlVersion" value="2.0"/>
@@ -90,7 +90,7 @@
 				</conditions>
 				<property name="openspcoop2.saml.issuer.format" properties="samlPropRefId" />
 			</item>
-			<item type="text" name="issuerFormatCustom" label="Format" required="true">
+			<item type="textarea" name="issuerFormatCustom" singleLine="true" label="Format" required="true">
 				<conditions>
 					<condition and="true">
 						<selected name="issuerFormatCustomChoise"/>
@@ -113,7 +113,7 @@
 				<property name="openspcoop2.saml.conditions.notOnOrAfter.minutes" properties="samlPropRefId" />
 			</item>
 		
-			<item type="text" name="conditionsAudienceURI" label="AudienceURI" required="false">
+			<item type="textarea" name="conditionsAudienceURI" singleLine="true" label="AudienceURI" required="false">
 				<property name="openspcoop2.saml.conditions.audienceURI" properties="samlPropRefId" />
 			</item>	
 			
@@ -123,10 +123,10 @@
 
 	<section label="SAML Subject">
 		
-		<item type="text" name="subjectValue" label="Value" required="true">
+		<item type="textarea" name="subjectValue" singleLine="true" label="Value" required="true">
 			<property name="openspcoop2.saml.subject.nameID.value" properties="samlPropRefId" />
 		</item>
-		<item type="text" name="subjectNameQualifier" label="Name Qualifier" required="false">
+		<item type="textarea" name="subjectNameQualifier" singleLine="true" label="Name Qualifier" required="false">
 			<property name="openspcoop2.saml.subject.nameID.qualifier" properties="samlPropRefId" />
 		</item>
 		<item type="checkbox" name="subjectFormatCustomChoise" label="Custom Format" defaultSelected="false" reloadOnChange="true">
@@ -150,7 +150,7 @@
 			</conditions>
 			<property name="openspcoop2.saml.subject.nameID.format" properties="samlPropRefId" />
 		</item>
-		<item type="text" name="subjectFormatCustom" label="Format" required="true">
+		<item type="textarea" name="subjectFormatCustom" singleLine="true" label="Format" required="true">
 			<conditions>
 				<condition and="true">
 					<selected name="subjectFormatCustomChoise"/>
@@ -343,7 +343,7 @@
 				<property name="openspcoop2.saml.subject.confirmation.data.notOnOrAfter.minutes" properties="samlPropRefId" />
 			</item>
 		
-			<item type="text" name="subjectConfirmationDataAddress" label="Address" required="false">
+			<item type="textarea" name="subjectConfirmationDataAddress" singleLine="true" label="Address" required="false">
 				<conditions>
 					<condition and="true">
 						<equals name="samlVersion" value="2.0"/>
@@ -351,7 +351,7 @@
 				</conditions>
 				<property name="openspcoop2.saml.subject.confirmation.data.address" properties="samlPropRefId" />
 			</item>	
-			<item type="text" name="subjectConfirmationDataInResponseTo" label="InResponseTo" required="false">
+			<item type="textarea" name="subjectConfirmationDataInResponseTo" singleLine="true" label="InResponseTo" required="false">
 				<conditions>
 					<condition and="true">
 						<equals name="samlVersion" value="2.0"/>
@@ -359,7 +359,7 @@
 				</conditions>
 				<property name="openspcoop2.saml.subject.confirmation.data.inResponseTo" properties="samlPropRefId" />
 			</item>	
-			<item type="text" name="subjectConfirmationDataRecipient" label="Recipient" required="false">
+			<item type="textarea" name="subjectConfirmationDataRecipient" singleLine="true" label="Recipient" required="false">
 				<conditions>
 					<condition and="true">
 						<equals name="samlVersion" value="2.0"/>
@@ -472,7 +472,7 @@
 			<property name="openspcoop2.saml.authn" properties="samlPropRefId" />
 		</item>
 
-		<item type="text" name="authnContextDeclRef" label="Declaration Reference (URI)" required="false"
+		<item type="textarea" name="authnContextDeclRef" singleLine="true" label="Declaration Reference (URI)" required="false"
 			note="URI reference to a SAML 2.0 authentication context declaration">
 			<conditions>
 				<condition and="true">
@@ -484,10 +484,10 @@
 
 		<subsection label="Subject Locality">
 		
-			<item type="text" name="authnSubjectLocalityIPAddress" label="IP Address" required="false">
+			<item type="textarea" name="authnSubjectLocalityIPAddress" singleLine="true" label="IP Address" required="false">
 				<property name="openspcoop2.saml.authn.subjectLocality.ipAddress" properties="samlPropRefId" />
 			</item>
-			<item type="text" name="authnSubjectLocalityDNSAddress" label="DNS Address" required="false">
+			<item type="textarea" name="authnSubjectLocalityDNSAddress" singleLine="true" label="DNS Address" required="false">
 				<property name="openspcoop2.saml.authn.subjectLocality.dnsAddress" properties="samlPropRefId" />
 			</item>
 			
@@ -527,7 +527,7 @@
 				</condition>
 			</conditions>
 		
-			<item type="text" name="attributeStatementNameQualifiedForSAML11_1" label="Name Qualified" required="true">
+			<item type="textarea" name="attributeStatementNameQualifiedForSAML11_1" singleLine="true" label="Name Qualified" required="true">
 				<conditions>
 					<condition and="true">
 						<equals not="true" name="samlVersion" value="2.0"/>
@@ -535,7 +535,7 @@
 				</conditions>
 				<property name="openspcoop2.saml.attribute.statement.ATTR_1.name.qualified" properties="samlPropRefId" />
 			</item>
-			<item type="text" name="attributeStatementNameSimpleForSAML11_1" label="Name Simple" required="true">
+			<item type="textarea" name="attributeStatementNameSimpleForSAML11_1" singleLine="true" label="Name Simple" required="true">
 				<conditions>
 					<condition and="true">
 						<equals not="true" name="samlVersion" value="2.0"/>
@@ -543,7 +543,7 @@
 				</conditions>
 				<property name="openspcoop2.saml.attribute.statement.ATTR_1.name.simple" properties="samlPropRefId" />
 			</item>
-			<item type="text" name="attributeStatementNameQualifiedForSAML20_1" label="Name Qualified" required="false">
+			<item type="textarea" name="attributeStatementNameQualifiedForSAML20_1" singleLine="true" label="Name Qualified" required="false">
 				<conditions>
 					<condition and="true">
 						<equals name="samlVersion" value="2.0"/>
@@ -551,7 +551,7 @@
 				</conditions>
 				<property name="openspcoop2.saml.attribute.statement.ATTR_1.name.qualified" properties="samlPropRefId" />
 			</item>
-			<item type="text" name="attributeStatementNameSimpleForSAML20_1" label="Name Simple" required="false"
+			<item type="textarea" name="attributeStatementNameSimpleForSAML20_1" singleLine="true" label="Name Simple" required="false"
 				note="SAML 2.0 require almost one name between simple and qualified">
 				<conditions>
 					<condition and="true">
@@ -561,11 +561,11 @@
 				<property name="openspcoop2.saml.attribute.statement.ATTR_1.name.simple" properties="samlPropRefId" />
 			</item>
 			
-			<item type="text" name="attributeStatementValues_1" label="Value(s)" required="true"
+			<item type="textarea" name="attributeStatementValues_1" singleLine="true" label="Value(s)" required="true"
 				note="Use separator char for define more than one value">
 				<property name="openspcoop2.saml.attribute.statement.ATTR_1.values" properties="samlPropRefId" />
 			</item>
-			<item type="text" name="attributeStatementSeparator_1" label="Separator" required="true" default=",">
+			<item type="textarea" name="attributeStatementSeparator_1" singleLine="true" label="Separator" required="true" default=",">
 				<property name="openspcoop2.saml.attribute.statement.ATTR_1.values.separator" properties="samlPropRefId" />
 			</item>			
 			
@@ -586,7 +586,7 @@
 				</conditions>
 				<property name="openspcoop2.saml.attribute.statement.ATTR_1.name.format" properties="samlPropRefId" />
 			</item>
-			<item type="text" name="attributeStatementFormatCustom_1" label="Format" required="true">
+			<item type="textarea" name="attributeStatementFormatCustom_1" singleLine="true" label="Format" required="true">
 				<conditions>
 					<condition and="true">
 						<selected name="attributeStatementFormatCustomChoise_1"/>
@@ -607,7 +607,7 @@
 				</condition>
 			</conditions>
 					
-			<item type="text" name="attributeStatementNameQualifiedForSAML11_2" label="Name Qualified" required="true">
+			<item type="textarea" name="attributeStatementNameQualifiedForSAML11_2" singleLine="true" label="Name Qualified" required="true">
 				<conditions>
 					<condition and="true">
 						<equals not="true" name="samlVersion" value="2.0"/>
@@ -615,7 +615,7 @@
 				</conditions>
 				<property name="openspcoop2.saml.attribute.statement.ATTR_2.name.qualified" properties="samlPropRefId" />
 			</item>
-			<item type="text" name="attributeStatementNameSimpleForSAML11_2" label="Name Simple" required="true">
+			<item type="textarea" name="attributeStatementNameSimpleForSAML11_2" singleLine="true" label="Name Simple" required="true">
 				<conditions>
 					<condition and="true">
 						<equals not="true" name="samlVersion" value="2.0"/>
@@ -623,7 +623,7 @@
 				</conditions>
 				<property name="openspcoop2.saml.attribute.statement.ATTR_2.name.simple" properties="samlPropRefId" />
 			</item>
-			<item type="text" name="attributeStatementNameQualifiedForSAML20_2" label="Name Qualified" required="false">
+			<item type="textarea" name="attributeStatementNameQualifiedForSAML20_2" singleLine="true" label="Name Qualified" required="false">
 				<conditions>
 					<condition and="true">
 						<equals name="samlVersion" value="2.0"/>
@@ -631,7 +631,7 @@
 				</conditions>
 				<property name="openspcoop2.saml.attribute.statement.ATTR_2.name.qualified" properties="samlPropRefId" />
 			</item>
-			<item type="text" name="attributeStatementNameSimpleForSAML20_2" label="Name Simple" required="false"
+			<item type="textarea" name="attributeStatementNameSimpleForSAML20_2" singleLine="true" label="Name Simple" required="false"
 				note="SAML 2.0 require almost one name between simple and qualified">
 				<conditions>
 					<condition and="true">
@@ -641,11 +641,11 @@
 				<property name="openspcoop2.saml.attribute.statement.ATTR_2.name.simple" properties="samlPropRefId" />
 			</item>
 			
-			<item type="text" name="attributeStatementValues_2" label="Value(s)" required="true"
+			<item type="textarea" name="attributeStatementValues_2" singleLine="true" label="Value(s)" required="true"
 				note="Use separator char for define more than one value">
 				<property name="openspcoop2.saml.attribute.statement.ATTR_2.values" properties="samlPropRefId" />
 			</item>
-			<item type="text" name="attributeStatementSeparator_2" label="Separator" required="true" default=",">
+			<item type="textarea" name="attributeStatementSeparator_2" singleLine="true" label="Separator" required="true" default=",">
 				<property name="openspcoop2.saml.attribute.statement.ATTR_2.values.separator" properties="samlPropRefId" />
 			</item>
 			
@@ -666,7 +666,7 @@
 				</conditions>
 				<property name="openspcoop2.saml.attribute.statement.ATTR_2.name.format" properties="samlPropRefId" />
 			</item>
-			<item type="text" name="attributeStatementFormatCustom_2" label="Format" required="true">
+			<item type="textarea" name="attributeStatementFormatCustom_2" singleLine="true" label="Format" required="true">
 				<conditions>
 					<condition and="true">
 						<selected name="attributeStatementFormatCustomChoise_2"/>
@@ -686,7 +686,7 @@
 				</condition>
 			</conditions>
 					
-			<item type="text" name="attributeStatementNameQualifiedForSAML11_3" label="Name Qualified" required="true">
+			<item type="textarea" name="attributeStatementNameQualifiedForSAML11_3" singleLine="true" label="Name Qualified" required="true">
 				<conditions>
 					<condition and="true">
 						<equals not="true" name="samlVersion" value="2.0"/>
@@ -694,7 +694,7 @@
 				</conditions>
 				<property name="openspcoop2.saml.attribute.statement.ATTR_3.name.qualified" properties="samlPropRefId" />
 			</item>
-			<item type="text" name="attributeStatementNameSimpleForSAML11_3" label="Name Simple" required="true">
+			<item type="textarea" name="attributeStatementNameSimpleForSAML11_3" singleLine="true" label="Name Simple" required="true">
 				<conditions>
 					<condition and="true">
 						<equals not="true" name="samlVersion" value="2.0"/>
@@ -702,7 +702,7 @@
 				</conditions>
 				<property name="openspcoop2.saml.attribute.statement.ATTR_3.name.simple" properties="samlPropRefId" />
 			</item>
-			<item type="text" name="attributeStatementNameQualifiedForSAML20_3" label="Name Qualified" required="false">
+			<item type="textarea" name="attributeStatementNameQualifiedForSAML20_3" singleLine="true" label="Name Qualified" required="false">
 				<conditions>
 					<condition and="true">
 						<equals name="samlVersion" value="2.0"/>
@@ -710,7 +710,7 @@
 				</conditions>
 				<property name="openspcoop2.saml.attribute.statement.ATTR_3.name.qualified" properties="samlPropRefId" />
 			</item>
-			<item type="text" name="attributeStatementNameSimpleForSAML20_3" label="Name Simple" required="false"
+			<item type="textarea" name="attributeStatementNameSimpleForSAML20_3" singleLine="true" label="Name Simple" required="false"
 				note="SAML 2.0 require almost one name between simple and qualified">
 				<conditions>
 					<condition and="true">
@@ -720,11 +720,11 @@
 				<property name="openspcoop2.saml.attribute.statement.ATTR_3.name.simple" properties="samlPropRefId" />
 			</item>
 			
-			<item type="text" name="attributeStatementValues_3" label="Value(s)" required="true"
+			<item type="textarea" name="attributeStatementValues_3" singleLine="true" label="Value(s)" required="true"
 				note="Use separator char for define more than one value">
 				<property name="openspcoop2.saml.attribute.statement.ATTR_3.values" properties="samlPropRefId" />
 			</item>
-			<item type="text" name="attributeStatementSeparator_3" label="Separator" required="true" default=",">
+			<item type="textarea" name="attributeStatementSeparator_3" singleLine="true" label="Separator" required="true" default=",">
 				<property name="openspcoop2.saml.attribute.statement.ATTR_3.values.separator" properties="samlPropRefId" />
 			</item>
 			
@@ -745,7 +745,7 @@
 				</conditions>
 				<property name="openspcoop2.saml.attribute.statement.ATTR_3.name.format" properties="samlPropRefId" />
 			</item>
-			<item type="text" name="attributeStatementFormatCustom_3" label="Format" required="true">
+			<item type="textarea" name="attributeStatementFormatCustom_3" singleLine="true" label="Format" required="true">
 				<conditions>
 					<condition and="true">
 						<selected name="attributeStatementFormatCustomChoise_3"/>
@@ -765,7 +765,7 @@
 				</condition>
 			</conditions>
 					
-			<item type="text" name="attributeStatementNameQualifiedForSAML11_4" label="Name Qualified" required="true">
+			<item type="textarea" name="attributeStatementNameQualifiedForSAML11_4" singleLine="true" label="Name Qualified" required="true">
 				<conditions>
 					<condition and="true">
 						<equals not="true" name="samlVersion" value="2.0"/>
@@ -773,7 +773,7 @@
 				</conditions>
 				<property name="openspcoop2.saml.attribute.statement.ATTR_4.name.qualified" properties="samlPropRefId" />
 			</item>
-			<item type="text" name="attributeStatementNameSimpleForSAML11_4" label="Name Simple" required="true">
+			<item type="textarea" name="attributeStatementNameSimpleForSAML11_4" singleLine="true" label="Name Simple" required="true">
 				<conditions>
 					<condition and="true">
 						<equals not="true" name="samlVersion" value="2.0"/>
@@ -781,7 +781,7 @@
 				</conditions>
 				<property name="openspcoop2.saml.attribute.statement.ATTR_4.name.simple" properties="samlPropRefId" />
 			</item>
-			<item type="text" name="attributeStatementNameQualifiedForSAML20_4" label="Name Qualified" required="false">
+			<item type="textarea" name="attributeStatementNameQualifiedForSAML20_4" singleLine="true" label="Name Qualified" required="false">
 				<conditions>
 					<condition and="true">
 						<equals name="samlVersion" value="2.0"/>
@@ -789,7 +789,7 @@
 				</conditions>
 				<property name="openspcoop2.saml.attribute.statement.ATTR_4.name.qualified" properties="samlPropRefId" />
 			</item>
-			<item type="text" name="attributeStatementNameSimpleForSAML20_4" label="Name Simple" required="false"
+			<item type="textarea" name="attributeStatementNameSimpleForSAML20_4" singleLine="true" label="Name Simple" required="false"
 				note="SAML 2.0 require almost one name between simple and qualified">
 				<conditions>
 					<condition and="true">
@@ -799,11 +799,11 @@
 				<property name="openspcoop2.saml.attribute.statement.ATTR_4.name.simple" properties="samlPropRefId" />
 			</item>
 			
-			<item type="text" name="attributeStatementValues_4" label="Value(s)" required="true"
+			<item type="textarea" name="attributeStatementValues_4" singleLine="true" label="Value(s)" required="true"
 				note="Use separator char for define more than one value">
 				<property name="openspcoop2.saml.attribute.statement.ATTR_4.values" properties="samlPropRefId" />
 			</item>
-			<item type="text" name="attributeStatementSeparator_4" label="Separator" required="true" default=",">
+			<item type="textarea" name="attributeStatementSeparator_4" singleLine="true" label="Separator" required="true" default=",">
 				<property name="openspcoop2.saml.attribute.statement.ATTR_4.values.separator" properties="samlPropRefId" />
 			</item>
 			
@@ -824,7 +824,7 @@
 				</conditions>
 				<property name="openspcoop2.saml.attribute.statement.ATTR_4.name.format" properties="samlPropRefId" />
 			</item>
-			<item type="text" name="attributeStatementFormatCustom_4" label="Format" required="true">
+			<item type="textarea" name="attributeStatementFormatCustom_4" singleLine="true" label="Format" required="true">
 				<conditions>
 					<condition and="true">
 						<selected name="attributeStatementFormatCustomChoise_4"/>
@@ -844,7 +844,7 @@
 				</condition>
 			</conditions>
 					
-			<item type="text" name="attributeStatementNameQualifiedForSAML11_5" label="Name Qualified" required="true">
+			<item type="textarea" name="attributeStatementNameQualifiedForSAML11_5" singleLine="true" label="Name Qualified" required="true">
 				<conditions>
 					<condition and="true">
 						<equals not="true" name="samlVersion" value="2.0"/>
@@ -852,7 +852,7 @@
 				</conditions>
 				<property name="openspcoop2.saml.attribute.statement.ATTR_5.name.qualified" properties="samlPropRefId" />
 			</item>
-			<item type="text" name="attributeStatementNameSimpleForSAML11_5" label="Name Simple" required="true">
+			<item type="textarea" name="attributeStatementNameSimpleForSAML11_5" singleLine="true" label="Name Simple" required="true">
 				<conditions>
 					<condition and="true">
 						<equals not="true" name="samlVersion" value="2.0"/>
@@ -860,7 +860,7 @@
 				</conditions>
 				<property name="openspcoop2.saml.attribute.statement.ATTR_5.name.simple" properties="samlPropRefId" />
 			</item>
-			<item type="text" name="attributeStatementNameQualifiedForSAML20_5" label="Name Qualified" required="false">
+			<item type="textarea" name="attributeStatementNameQualifiedForSAML20_5" singleLine="true" label="Name Qualified" required="false">
 				<conditions>
 					<condition and="true">
 						<equals name="samlVersion" value="2.0"/>
@@ -868,7 +868,7 @@
 				</conditions>
 				<property name="openspcoop2.saml.attribute.statement.ATTR_5.name.qualified" properties="samlPropRefId" />
 			</item>
-			<item type="text" name="attributeStatementNameSimpleForSAML20_5" label="Name Simple" required="false"
+			<item type="textarea" name="attributeStatementNameSimpleForSAML20_5" singleLine="true" label="Name Simple" required="false"
 				note="SAML 2.0 require almost one name between simple and qualified">
 				<conditions>
 					<condition and="true">
@@ -878,11 +878,11 @@
 				<property name="openspcoop2.saml.attribute.statement.ATTR_5.name.simple" properties="samlPropRefId" />
 			</item>
 			
-			<item type="text" name="attributeStatementValues_5" label="Value(s)" required="true"
+			<item type="textarea" name="attributeStatementValues_5" singleLine="true" label="Value(s)" required="true"
 				note="Use separator char for define more than one value">
 				<property name="openspcoop2.saml.attribute.statement.ATTR_5.values" properties="samlPropRefId" />
 			</item>
-			<item type="text" name="attributeStatementSeparator_5" label="Separator" required="true" default=",">
+			<item type="textarea" name="attributeStatementSeparator_5" singleLine="true" label="Separator" required="true" default=",">
 				<property name="openspcoop2.saml.attribute.statement.ATTR_5.values.separator" properties="samlPropRefId" />
 			</item>
 			
@@ -903,7 +903,7 @@
 				</conditions>
 				<property name="openspcoop2.saml.attribute.statement.ATTR_5.name.format" properties="samlPropRefId" />
 			</item>
-			<item type="text" name="attributeStatementFormatCustom_5" label="Format" required="true">
+			<item type="textarea" name="attributeStatementFormatCustom_5" singleLine="true" label="Format" required="true">
 				<conditions>
 					<condition and="true">
 						<selected name="attributeStatementFormatCustomChoise_5"/>
@@ -923,7 +923,7 @@
 				</condition>
 			</conditions>
 					
-			<item type="text" name="attributeStatementNameQualifiedForSAML11_6" label="Name Qualified" required="true">
+			<item type="textarea" name="attributeStatementNameQualifiedForSAML11_6" singleLine="true" label="Name Qualified" required="true">
 				<conditions>
 					<condition and="true">
 						<equals not="true" name="samlVersion" value="2.0"/>
@@ -931,7 +931,7 @@
 				</conditions>
 				<property name="openspcoop2.saml.attribute.statement.ATTR_6.name.qualified" properties="samlPropRefId" />
 			</item>
-			<item type="text" name="attributeStatementNameSimpleForSAML11_6" label="Name Simple" required="true">
+			<item type="textarea" name="attributeStatementNameSimpleForSAML11_6" singleLine="true" label="Name Simple" required="true">
 				<conditions>
 					<condition and="true">
 						<equals not="true" name="samlVersion" value="2.0"/>
@@ -939,7 +939,7 @@
 				</conditions>
 				<property name="openspcoop2.saml.attribute.statement.ATTR_6.name.simple" properties="samlPropRefId" />
 			</item>
-			<item type="text" name="attributeStatementNameQualifiedForSAML20_6" label="Name Qualified" required="false">
+			<item type="textarea" name="attributeStatementNameQualifiedForSAML20_6" singleLine="true" label="Name Qualified" required="false">
 				<conditions>
 					<condition and="true">
 						<equals name="samlVersion" value="2.0"/>
@@ -947,7 +947,7 @@
 				</conditions>
 				<property name="openspcoop2.saml.attribute.statement.ATTR_6.name.qualified" properties="samlPropRefId" />
 			</item>
-			<item type="text" name="attributeStatementNameSimpleForSAML20_6" label="Name Simple" required="false"
+			<item type="textarea" name="attributeStatementNameSimpleForSAML20_6" singleLine="true" label="Name Simple" required="false"
 				note="SAML 2.0 require almost one name between simple and qualified">
 				<conditions>
 					<condition and="true">
@@ -957,11 +957,11 @@
 				<property name="openspcoop2.saml.attribute.statement.ATTR_6.name.simple" properties="samlPropRefId" />
 			</item>
 			
-			<item type="text" name="attributeStatementValues_6" label="Value(s)" required="true"
+			<item type="textarea" name="attributeStatementValues_6" singleLine="true" label="Value(s)" required="true"
 				note="Use separator char for define more than one value">
 				<property name="openspcoop2.saml.attribute.statement.ATTR_6.values" properties="samlPropRefId" />
 			</item>
-			<item type="text" name="attributeStatementSeparator_6" label="Separator" required="true" default=",">
+			<item type="textarea" name="attributeStatementSeparator_6" singleLine="true" label="Separator" required="true" default=",">
 				<property name="openspcoop2.saml.attribute.statement.ATTR_6.values.separator" properties="samlPropRefId" />
 			</item>
 			
@@ -982,7 +982,7 @@
 				</conditions>
 				<property name="openspcoop2.saml.attribute.statement.ATTR_6.name.format" properties="samlPropRefId" />
 			</item>
-			<item type="text" name="attributeStatementFormatCustom_6" label="Format" required="true">
+			<item type="textarea" name="attributeStatementFormatCustom_6" singleLine="true" label="Format" required="true">
 				<conditions>
 					<condition and="true">
 						<selected name="attributeStatementFormatCustomChoise_6"/>
@@ -1002,7 +1002,7 @@
 				</condition>
 			</conditions>
 					
-			<item type="text" name="attributeStatementNameQualifiedForSAML11_7" label="Name Qualified" required="true">
+			<item type="textarea" name="attributeStatementNameQualifiedForSAML11_7" singleLine="true" label="Name Qualified" required="true">
 				<conditions>
 					<condition and="true">
 						<equals not="true" name="samlVersion" value="2.0"/>
@@ -1010,7 +1010,7 @@
 				</conditions>
 				<property name="openspcoop2.saml.attribute.statement.ATTR_7.name.qualified" properties="samlPropRefId" />
 			</item>
-			<item type="text" name="attributeStatementNameSimpleForSAML11_7" label="Name Simple" required="true">
+			<item type="textarea" name="attributeStatementNameSimpleForSAML11_7" singleLine="true" label="Name Simple" required="true">
 				<conditions>
 					<condition and="true">
 						<equals not="true" name="samlVersion" value="2.0"/>
@@ -1018,7 +1018,7 @@
 				</conditions>
 				<property name="openspcoop2.saml.attribute.statement.ATTR_7.name.simple" properties="samlPropRefId" />
 			</item>
-			<item type="text" name="attributeStatementNameQualifiedForSAML20_7" label="Name Qualified" required="false">
+			<item type="textarea" name="attributeStatementNameQualifiedForSAML20_7" singleLine="true" label="Name Qualified" required="false">
 				<conditions>
 					<condition and="true">
 						<equals name="samlVersion" value="2.0"/>
@@ -1026,7 +1026,7 @@
 				</conditions>
 				<property name="openspcoop2.saml.attribute.statement.ATTR_7.name.qualified" properties="samlPropRefId" />
 			</item>
-			<item type="text" name="attributeStatementNameSimpleForSAML20_7" label="Name Simple" required="false"
+			<item type="textarea" name="attributeStatementNameSimpleForSAML20_7" singleLine="true" label="Name Simple" required="false"
 				note="SAML 2.0 require almost one name between simple and qualified">
 				<conditions>
 					<condition and="true">
@@ -1036,11 +1036,11 @@
 				<property name="openspcoop2.saml.attribute.statement.ATTR_7.name.simple" properties="samlPropRefId" />
 			</item>
 			
-			<item type="text" name="attributeStatementValues_7" label="Value(s)" required="true"
+			<item type="textarea" name="attributeStatementValues_7" singleLine="true" label="Value(s)" required="true"
 				note="Use separator char for define more than one value">
 				<property name="openspcoop2.saml.attribute.statement.ATTR_7.values" properties="samlPropRefId" />
 			</item>
-			<item type="text" name="attributeStatementSeparator_7" label="Separator" required="true" default=",">
+			<item type="textarea" name="attributeStatementSeparator_7" singleLine="true" label="Separator" required="true" default=",">
 				<property name="openspcoop2.saml.attribute.statement.ATTR_7.values.separator" properties="samlPropRefId" />
 			</item>
 			
@@ -1061,7 +1061,7 @@
 				</conditions>
 				<property name="openspcoop2.saml.attribute.statement.ATTR_7.name.format" properties="samlPropRefId" />
 			</item>
-			<item type="text" name="attributeStatementFormatCustom_7" label="Format" required="true">
+			<item type="textarea" name="attributeStatementFormatCustom_7" singleLine="true" label="Format" required="true">
 				<conditions>
 					<condition and="true">
 						<selected name="attributeStatementFormatCustomChoise_7"/>
@@ -1081,7 +1081,7 @@
 				</condition>
 			</conditions>
 					
-			<item type="text" name="attributeStatementNameQualifiedForSAML11_8" label="Name Qualified" required="true">
+			<item type="textarea" name="attributeStatementNameQualifiedForSAML11_8" singleLine="true" label="Name Qualified" required="true">
 				<conditions>
 					<condition and="true">
 						<equals not="true" name="samlVersion" value="2.0"/>
@@ -1089,7 +1089,7 @@
 				</conditions>
 				<property name="openspcoop2.saml.attribute.statement.ATTR_8.name.qualified" properties="samlPropRefId" />
 			</item>
-			<item type="text" name="attributeStatementNameSimpleForSAML11_8" label="Name Simple" required="true">
+			<item type="textarea" name="attributeStatementNameSimpleForSAML11_8" singleLine="true" label="Name Simple" required="true">
 				<conditions>
 					<condition and="true">
 						<equals not="true" name="samlVersion" value="2.0"/>
@@ -1097,7 +1097,7 @@
 				</conditions>
 				<property name="openspcoop2.saml.attribute.statement.ATTR_8.name.simple" properties="samlPropRefId" />
 			</item>
-			<item type="text" name="attributeStatementNameQualifiedForSAML20_8" label="Name Qualified" required="false">
+			<item type="textarea" name="attributeStatementNameQualifiedForSAML20_8" singleLine="true" label="Name Qualified" required="false">
 				<conditions>
 					<condition and="true">
 						<equals name="samlVersion" value="2.0"/>
@@ -1105,7 +1105,7 @@
 				</conditions>
 				<property name="openspcoop2.saml.attribute.statement.ATTR_8.name.qualified" properties="samlPropRefId" />
 			</item>
-			<item type="text" name="attributeStatementNameSimpleForSAML20_8" label="Name Simple" required="false"
+			<item type="textarea" name="attributeStatementNameSimpleForSAML20_8" singleLine="true" label="Name Simple" required="false"
 				note="SAML 2.0 require almost one name between simple and qualified">
 				<conditions>
 					<condition and="true">
@@ -1115,11 +1115,11 @@
 				<property name="openspcoop2.saml.attribute.statement.ATTR_8.name.simple" properties="samlPropRefId" />
 			</item>
 			
-			<item type="text" name="attributeStatementValues_8" label="Value(s)" required="true"
+			<item type="textarea" name="attributeStatementValues_8" singleLine="true" label="Value(s)" required="true"
 				note="Use separator char for define more than one value">
 				<property name="openspcoop2.saml.attribute.statement.ATTR_8.values" properties="samlPropRefId" />
 			</item>
-			<item type="text" name="attributeStatementSeparator_8" label="Separator" required="true" default=",">
+			<item type="textarea" name="attributeStatementSeparator_8" singleLine="true" label="Separator" required="true" default=",">
 				<property name="openspcoop2.saml.attribute.statement.ATTR_8.values.separator" properties="samlPropRefId" />
 			</item>
 			
@@ -1140,7 +1140,7 @@
 				</conditions>
 				<property name="openspcoop2.saml.attribute.statement.ATTR_8.name.format" properties="samlPropRefId" />
 			</item>
-			<item type="text" name="attributeStatementFormatCustom_8" label="Format" required="true">
+			<item type="textarea" name="attributeStatementFormatCustom_8" singleLine="true" label="Format" required="true">
 				<conditions>
 					<condition and="true">
 						<selected name="attributeStatementFormatCustomChoise_8"/>
@@ -1160,7 +1160,7 @@
 				</condition>
 			</conditions>
 					
-			<item type="text" name="attributeStatementNameQualifiedForSAML11_9" label="Name Qualified" required="true">
+			<item type="textarea" name="attributeStatementNameQualifiedForSAML11_9" singleLine="true" label="Name Qualified" required="true">
 				<conditions>
 					<condition and="true">
 						<equals not="true" name="samlVersion" value="2.0"/>
@@ -1168,7 +1168,7 @@
 				</conditions>
 				<property name="openspcoop2.saml.attribute.statement.ATTR_9.name.qualified" properties="samlPropRefId" />
 			</item>
-			<item type="text" name="attributeStatementNameSimpleForSAML11_9" label="Name Simple" required="true">
+			<item type="textarea" name="attributeStatementNameSimpleForSAML11_9" singleLine="true" label="Name Simple" required="true">
 				<conditions>
 					<condition and="true">
 						<equals not="true" name="samlVersion" value="2.0"/>
@@ -1176,7 +1176,7 @@
 				</conditions>
 				<property name="openspcoop2.saml.attribute.statement.ATTR_9.name.simple" properties="samlPropRefId" />
 			</item>
-			<item type="text" name="attributeStatementNameQualifiedForSAML20_9" label="Name Qualified" required="false">
+			<item type="textarea" name="attributeStatementNameQualifiedForSAML20_9" singleLine="true" label="Name Qualified" required="false">
 				<conditions>
 					<condition and="true">
 						<equals name="samlVersion" value="2.0"/>
@@ -1184,7 +1184,7 @@
 				</conditions>
 				<property name="openspcoop2.saml.attribute.statement.ATTR_9.name.qualified" properties="samlPropRefId" />
 			</item>
-			<item type="text" name="attributeStatementNameSimpleForSAML20_9" label="Name Simple" required="false"
+			<item type="textarea" name="attributeStatementNameSimpleForSAML20_9" singleLine="true" label="Name Simple" required="false"
 				note="SAML 2.0 require almost one name between simple and qualified">
 				<conditions>
 					<condition and="true">
@@ -1194,11 +1194,11 @@
 				<property name="openspcoop2.saml.attribute.statement.ATTR_9.name.simple" properties="samlPropRefId" />
 			</item>
 			
-			<item type="text" name="attributeStatementValues_9" label="Value(s)" required="true"
+			<item type="textarea" name="attributeStatementValues_9" singleLine="true" label="Value(s)" required="true"
 				note="Use separator char for define more than one value">
 				<property name="openspcoop2.saml.attribute.statement.ATTR_9.values" properties="samlPropRefId" />
 			</item>
-			<item type="text" name="attributeStatementSeparator_9" label="Separator" required="true" default=",">
+			<item type="textarea" name="attributeStatementSeparator_9" singleLine="true" label="Separator" required="true" default=",">
 				<property name="openspcoop2.saml.attribute.statement.ATTR_9.values.separator" properties="samlPropRefId" />
 			</item>
 			
@@ -1219,7 +1219,7 @@
 				</conditions>
 				<property name="openspcoop2.saml.attribute.statement.ATTR_9.name.format" properties="samlPropRefId" />
 			</item>
-			<item type="text" name="attributeStatementFormatCustom_9" label="Format" required="true">
+			<item type="textarea" name="attributeStatementFormatCustom_9" singleLine="true" label="Format" required="true">
 				<conditions>
 					<condition and="true">
 						<selected name="attributeStatementFormatCustomChoise_9"/>
@@ -1239,7 +1239,7 @@
 				</condition>
 			</conditions>
 					
-			<item type="text" name="attributeStatementNameQualifiedForSAML11_10" label="Name Qualified" required="true">
+			<item type="textarea" name="attributeStatementNameQualifiedForSAML11_10" singleLine="true" label="Name Qualified" required="true">
 				<conditions>
 					<condition and="true">
 						<equals not="true" name="samlVersion" value="2.0"/>
@@ -1247,7 +1247,7 @@
 				</conditions>
 				<property name="openspcoop2.saml.attribute.statement.ATTR_10.name.qualified" properties="samlPropRefId" />
 			</item>
-			<item type="text" name="attributeStatementNameSimpleForSAML11_10" label="Name Simple" required="true">
+			<item type="textarea" name="attributeStatementNameSimpleForSAML11_10" singleLine="true" label="Name Simple" required="true">
 				<conditions>
 					<condition and="true">
 						<equals not="true" name="samlVersion" value="2.0"/>
@@ -1255,7 +1255,7 @@
 				</conditions>
 				<property name="openspcoop2.saml.attribute.statement.ATTR_10.name.simple" properties="samlPropRefId" />
 			</item>
-			<item type="text" name="attributeStatementNameQualifiedForSAML20_10" label="Name Qualified" required="false">
+			<item type="textarea" name="attributeStatementNameQualifiedForSAML20_10" singleLine="true" label="Name Qualified" required="false">
 				<conditions>
 					<condition and="true">
 						<equals name="samlVersion" value="2.0"/>
@@ -1263,7 +1263,7 @@
 				</conditions>
 				<property name="openspcoop2.saml.attribute.statement.ATTR_10.name.qualified" properties="samlPropRefId" />
 			</item>
-			<item type="text" name="attributeStatementNameSimpleForSAML20_10" label="Name Simple" required="false"
+			<item type="textarea" name="attributeStatementNameSimpleForSAML20_10" singleLine="true" label="Name Simple" required="false"
 				note="SAML 2.0 require almost one name between simple and qualified">
 				<conditions>
 					<condition and="true">
@@ -1273,11 +1273,11 @@
 				<property name="openspcoop2.saml.attribute.statement.ATTR_10.name.simple" properties="samlPropRefId" />
 			</item>
 			
-			<item type="text" name="attributeStatementValues_10" label="Value(s)" required="true"
+			<item type="textarea" name="attributeStatementValues_10" singleLine="true" label="Value(s)" required="true"
 				note="Use separator char for define more than one value">
 				<property name="openspcoop2.saml.attribute.statement.ATTR_10.values" properties="samlPropRefId" />
 			</item>
-			<item type="text" name="attributeStatementSeparator_10" label="Separator" required="true" default=",">
+			<item type="textarea" name="attributeStatementSeparator_10" singleLine="true" label="Separator" required="true" default=",">
 				<property name="openspcoop2.saml.attribute.statement.ATTR_10.values.separator" properties="samlPropRefId" />
 			</item>
 			
@@ -1298,7 +1298,7 @@
 				</conditions>
 				<property name="openspcoop2.saml.attribute.statement.ATTR_10.name.format" properties="samlPropRefId" />
 			</item>
-			<item type="text" name="attributeStatementFormatCustom_10" label="Format" required="true">
+			<item type="textarea" name="attributeStatementFormatCustom_10" singleLine="true" label="Format" required="true">
 				<conditions>
 					<condition and="true">
 						<selected name="attributeStatementFormatCustomChoise_10"/>

@@ -494,6 +494,17 @@ public class AttributeAuthorityProvider implements IProvider {
 	
 	@Override
 	public ProviderInfo getProviderInfo(String id) throws ProviderException{
+		ProviderInfo pInfo = buildProviderInfo(id);
+		if(pInfo!=null) {
+			// Per il sotto-campo "Personalizzato" del kid la label dell'item è vuota (la label compare sulla
+			// select associata): impostiamo esplicitamente il titolo del box informativo.
+			if(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_SIGNATURE_KID_VALUE.equals(id)) {
+				pInfo.setHeaderFinestraModale(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.LABEL_AA_JWT_KID);
+			}
+		}
+		return pInfo;
+	}
+	private ProviderInfo buildProviderInfo(String id) throws ProviderException{
 		if(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_ENDPOINT_URL.equals(id) ||
 				org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_AUTENTICAZIONE_ENDPOINT_BASIC_USERNAME.equals(id) ||
 				org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_AUTENTICAZIONE_ENDPOINT_BASIC_PASSWORD.equals(id) ||
@@ -501,7 +512,8 @@ public class AttributeAuthorityProvider implements IProvider {
 				org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_RICHIESTA_JWS_PAYLOAD_ISSUER.equals(id) ||
 				org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_RICHIESTA_JWS_PAYLOAD_SUBJECT.equals(id) ||
 				org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_RICHIESTA_JWS_PAYLOAD_AUDIENCE.equals(id) ||
-				org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_RISPOSTA_JWS_PAYLOAD_AUDIENCE.equals(id)
+				org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_RISPOSTA_JWS_PAYLOAD_AUDIENCE.equals(id) ||
+				org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_SIGNATURE_KID_VALUE.equals(id)
 				) {
 			ProviderInfo pInfo = new ProviderInfo();
 			pInfo.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);

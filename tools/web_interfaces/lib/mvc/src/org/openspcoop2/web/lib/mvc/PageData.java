@@ -477,10 +477,39 @@ public class PageData implements Serializable {
 			deValue.setRows(rows.intValue());
 		if(cols != null)
 			deValue.setCols(cols.intValue());
-		
+
 		this.filterValues.add(deValue);
 	}
-	
+
+	/** Filtro testuale a riga singola (equivalente a text ma classificato single-line): ammette i caratteri
+	 *  speciali (es. '|' di un client id PDND) vietando solo i caratteri di controllo. */
+	public void addTextSingleLineFilter(String name, String label, String value, int size) throws PageDataException{
+		if(this.filterNames == null) {
+			this.filterNames = new ArrayList<>();
+			this.filterValues = new ArrayList<>();
+		}
+
+		DataElement deName = new DataElement();
+		deName.setType(DataElementType.HIDDEN);
+		deName.setName(getParametroFilterName(this.filterNames.size()));
+		if(name==null) {
+			throw new PageDataException("Name not found");
+		}
+		deName.setValue(name);
+		this.filterNames.add(deName);
+
+		DataElement deValue = new DataElement();
+		deValue.setType(DataElementType.TEXT_AREA);
+		deValue.setSingleLine(true);
+		deValue.setName(getParametroFilterValue(this.filterValues.size()));
+		if(label==null) {
+			throw new PageDataException("Label not found");
+		}
+		deValue.setLabel(label);
+		deValue.setValue(value);
+		this.filterValues.add(deValue);
+	}
+
 	public void addNumberFilter(String name, String label, String value, int size, Integer min, Integer max) throws PageDataException{
 		if(this.filterNames == null) {
 			this.filterNames = new ArrayList<>();

@@ -54,6 +54,9 @@ public class ItemModel extends AbstractModel<Item> {
 		this.VALUE = new Field("value",java.lang.String.class,"item",Item.class);
 		this.MIN = new Field("min",java.lang.Integer.class,"item",Item.class);
 		this.MAX = new Field("max",java.lang.Integer.class,"item",Item.class);
+		this.ROWS = new Field("rows",java.lang.Integer.class,"item",Item.class);
+		this.COLUMNS = new Field("columns",java.lang.Integer.class,"item",Item.class);
+		this.SINGLE_LINE = new Field("singleLine",boolean.class,"item",Item.class);
 		this.VALIDATION = new Field("validation",java.lang.String.class,"item",Item.class);
 	
 	}
@@ -76,6 +79,9 @@ public class ItemModel extends AbstractModel<Item> {
 		this.VALUE = new ComplexField(father,"value",java.lang.String.class,"item",Item.class);
 		this.MIN = new ComplexField(father,"min",java.lang.Integer.class,"item",Item.class);
 		this.MAX = new ComplexField(father,"max",java.lang.Integer.class,"item",Item.class);
+		this.ROWS = new ComplexField(father,"rows",java.lang.Integer.class,"item",Item.class);
+		this.COLUMNS = new ComplexField(father,"columns",java.lang.Integer.class,"item",Item.class);
+		this.SINGLE_LINE = new ComplexField(father,"singleLine",boolean.class,"item",Item.class);
 		this.VALIDATION = new ComplexField(father,"validation",java.lang.String.class,"item",Item.class);
 	
 	}
@@ -109,6 +115,12 @@ public class ItemModel extends AbstractModel<Item> {
 	public IField MIN = null;
 	 
 	public IField MAX = null;
+	 
+	public IField ROWS = null;
+	 
+	public IField COLUMNS = null;
+	 
+	public IField SINGLE_LINE = null;
 	 
 	public IField VALIDATION = null;
 	 

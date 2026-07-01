@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 
-<%@ page session="true" import="org.openspcoop2.web.lib.mvc.*, org.openspcoop2.web.lib.mvc.security.SecurityProperties" %>
+<%@ page session="true" pageEncoding="UTF-8" import="org.openspcoop2.web.lib.mvc.*, org.openspcoop2.web.lib.mvc.security.SecurityProperties" %>
 <%
 /* Stesso meccanismo CSP nonce di browserUtils.jsp: il nonce e' messo nella request da un Filter
    e va riportato in ogni tag <script> per essere accettato dalla Content-Security-Policy. */
@@ -29,10 +29,12 @@ String utilsRandomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBU
    immediato all'utente prima del submit (cfr. SecurityWrappedHttpServletRequest). */
 String patternHTTPParameterValue = SecurityProperties.getInstance().getPatternHTTPParameterValueAsString();
 String patternHTTPParameterValueTextArea = SecurityProperties.getInstance().getPatternHTTPParameterValueTextAreaAsString();
+String patternHTTPParameterValueTextAreaSingleLine = SecurityProperties.getInstance().getPatternHTTPParameterValueTextAreaSingleLineAsString();
 String patternHTTPParameterValuePassword = SecurityProperties.getInstance().getPatternHTTPParameterValuePasswordAsString();
 
 if(patternHTTPParameterValue == null) patternHTTPParameterValue = "";
 if(patternHTTPParameterValueTextArea == null) patternHTTPParameterValueTextArea = "";
+if(patternHTTPParameterValueTextAreaSingleLine == null) patternHTTPParameterValueTextAreaSingleLine = "";
 if(patternHTTPParameterValuePassword == null) patternHTTPParameterValuePassword = "";
 %>
 
@@ -41,12 +43,14 @@ if(patternHTTPParameterValuePassword == null) patternHTTPParameterValuePassword 
    Validatore.validate() per ognuno dei 3 profili (standard, textarea, password). */
 var GW_PATTERN_HTTP_PARAMETER_VALUE = "<%= patternHTTPParameterValue.replace("\\", "\\\\").replace("\"", "\\\"") %>";
 var GW_PATTERN_HTTP_PARAMETER_VALUE_TEXTAREA = "<%= patternHTTPParameterValueTextArea.replace("\\", "\\\\").replace("\"", "\\\"") %>";
+var GW_PATTERN_HTTP_PARAMETER_VALUE_TEXTAREA_SINGLELINE = "<%= patternHTTPParameterValueTextAreaSingleLine.replace("\\", "\\\\").replace("\"", "\\\"") %>";
 var GW_PATTERN_HTTP_PARAMETER_VALUE_PASSWORD = "<%= patternHTTPParameterValuePassword.replace("\\", "\\\\").replace("\"", "\\\"") %>";
 
 /* Nomi dei parametri hidden con cui la JSP edit-page.jsp espone gli identificativi dei campi
    "speciali" (textarea / password / lock / crypt) per cui la sanificazione di input lato server
    e' disabilitata. Le funzioni di validazione client-side li leggono in tempo reale dal DOM. */
 var GW_PARAM_IDS_TA = "<%= Costanti.PARAMETRO_IDENTIFICATIVI_TEXT_AREA %>";
+var GW_PARAM_IDS_TA_SINGLELINE = "<%= Costanti.PARAMETRO_IDENTIFICATIVI_TEXT_AREA_SINGLE_LINE %>";
 var GW_PARAM_IDS_PWD = "<%= Costanti.PARAMETRO_IDENTIFICATIVI_PS %>";
 
 /* Legge il valore di un hidden input identificato dal nome e lo split in lista CSV. */
@@ -58,18 +62,41 @@ function gwGetIdsList(hiddenName) {
 
 /* Validazione di un singolo valore di campo. Sceglie automaticamente il pattern in base alla
    classificazione del campo (textarea / password / standard) come fa il server. */
+/* Sceglie il pattern di validazione in base alla classificazione del campo (single-line / textarea /
+   password / standard) come fa il server. */
+function gwGetFieldPattern(fieldName) {
+	var idsTA = gwGetIdsList(GW_PARAM_IDS_TA);
+	var idsTASingleLine = gwGetIdsList(GW_PARAM_IDS_TA_SINGLELINE);
+	var idsPwd = gwGetIdsList(GW_PARAM_IDS_PWD);
+	if (idsTASingleLine.indexOf(fieldName) !== -1) {
+		return GW_PATTERN_HTTP_PARAMETER_VALUE_TEXTAREA_SINGLELINE;
+	} else if (idsTA.indexOf(fieldName) !== -1) {
+		return GW_PATTERN_HTTP_PARAMETER_VALUE_TEXTAREA;
+	} else if (idsPwd.indexOf(fieldName) !== -1) {
+		return GW_PATTERN_HTTP_PARAMETER_VALUE_PASSWORD;
+	}
+	return GW_PATTERN_HTTP_PARAMETER_VALUE;
+}
+
+/* Vero se il campo è classificato come textarea / single-line: per questi, come lato server in
+   ItemBean, valgono i vincoli aggiuntivi sugli spazi/tab iniziali e finali. */
+function gwIsTextAreaField(fieldName) {
+	return gwGetIdsList(GW_PARAM_IDS_TA).indexOf(fieldName) !== -1
+		|| gwGetIdsList(GW_PARAM_IDS_TA_SINGLELINE).indexOf(fieldName) !== -1;
+}
+
+/* 'leading' / 'trailing' se il valore inizia / finisce con spazio o tab, altrimenti null. */
+function gwLeadingTrailingSpace(value) {
+	var f = value.charAt(0), l = value.charAt(value.length - 1);
+	if (f === ' ' || f === '\t') return 'leading';
+	if (l === ' ' || l === '\t') return 'trailing';
+	return null;
+}
+
 function gwValidateField(value, fieldName) {
 	if (!value) return true;
-	var pattern;
-	var idsTA = gwGetIdsList(GW_PARAM_IDS_TA);
-	var idsPwd = gwGetIdsList(GW_PARAM_IDS_PWD);
-	if (idsTA.indexOf(fieldName) !== -1) {
-		pattern = GW_PATTERN_HTTP_PARAMETER_VALUE_TEXTAREA;
-	} else if (idsPwd.indexOf(fieldName) !== -1) {
-		pattern = GW_PATTERN_HTTP_PARAMETER_VALUE_PASSWORD;
-	} else {
-		pattern = GW_PATTERN_HTTP_PARAMETER_VALUE;
-	}
+	if (gwIsTextAreaField(fieldName) && gwLeadingTrailingSpace(value) !== null) return false;
+	var pattern = gwGetFieldPattern(fieldName);
 	if (!pattern) return true;
 	try {
 		return new RegExp(pattern, "u").test(value);
@@ -77,6 +104,60 @@ function gwValidateField(value, fieldName) {
 		// se la regex non compila lato client (es. browser troppo vecchio), non blocchiamo il submit
 		return true;
 	}
+}
+
+/* Descrizione "umana" di un carattere non ammesso, per il messaggio di errore. */
+function gwDescribeChar(ch) {
+	var code = ch.codePointAt(0);
+	switch (code) {
+		case 0x0A: return 'a capo (LF)';
+		case 0x0D: return 'ritorno a capo (CR)';
+		case 0x09: return 'tabulazione (TAB)';
+		case 0x00: return 'NUL';
+	}
+	if (code < 0x20 || (code >= 0x7F && code <= 0x9F)) {
+		return 'carattere di controllo U+' + ('0000' + code.toString(16).toUpperCase()).slice(-4);
+	}
+	return '«' + ch + '»';
+}
+
+/* Ritorna il primo carattere del valore non ammesso per il campo (o null se tutti validi).
+   Ogni carattere viene testato singolarmente contro il pattern del campo (i pattern sono nella
+   forma ^[classe]*$, quindi un singolo carattere ammesso matcha, uno vietato no). */
+function gwFirstInvalidChar(value, fieldName) {
+	if (!value) return null;
+	var pattern = gwGetFieldPattern(fieldName);
+	if (!pattern) return null;
+	var re;
+	try {
+		re = new RegExp(pattern, "u");
+	} catch (e) {
+		return null;
+	}
+	for (var ch of value) {
+		if (!re.test(ch)) return ch;
+	}
+	return null;
+}
+
+/* Messaggio di errore per un campo non valido (o null se valido): controlla, nell'ordine, spazi/tab
+   iniziali-finali (per textarea/single-line) e caratteri non ammessi dal pattern, indicando — se
+   individuabile — il carattere specifico. */
+function gwFieldError(el) {
+	var value = el.value;
+	if (!value) return null;
+	var fieldName = el.name;
+	var label = gwGetFieldLabel(el);
+	if (gwIsTextAreaField(fieldName)) {
+		var sp = gwLeadingTrailingSpace(value);
+		if (sp === 'leading') return 'Il campo "' + label + '" non può iniziare con uno spazio';
+		if (sp === 'trailing') return 'Il campo "' + label + '" non può terminare con uno spazio';
+	}
+	var bad = gwFirstInvalidChar(value, fieldName);
+	if (bad !== null) {
+		return 'Il campo "' + label + '" contiene un carattere non ammesso: ' + gwDescribeChar(bad);
+	}
+	return null;
 }
 
 /* Pulisce gli errori di validazione precedentemente segnalati. */
@@ -156,7 +237,7 @@ function gwGetFieldLabel(el) {
 /* Determina se un elemento del form va sottoposto a validazione client-side. */
 function gwIsValidatableElement(el) {
 	if (!el.name) return false;
-	if (el.name === GW_PARAM_IDS_TA || el.name === GW_PARAM_IDS_PWD) return false;
+	if (el.name === GW_PARAM_IDS_TA || el.name === GW_PARAM_IDS_TA_SINGLELINE || el.name === GW_PARAM_IDS_PWD) return false;
 	if (el.name === "_csrf") return false;
 	if (el.name.indexOf("__i_hidden_") === 0) return false;
 	if (el.name === "__tabKey__" || el.name === "__prevTabKey__") return false;
@@ -199,10 +280,11 @@ function gwInitLiveValidation(form) {
 				}
 			}
 			setTimeout(function() {
-				if (gwValidateField(target.value, target.name)) {
+				var err = gwFieldError(target);
+				if (!err) {
 					gwClearFieldError(target);
 				} else {
-					gwMarkFieldInvalid(target, 'Il campo "' + gwGetFieldLabel(target) + '" contiene caratteri non ammessi');
+					gwMarkFieldInvalid(target, err);
 				}
 			}, 0);
 		});
@@ -227,12 +309,13 @@ function gwValidateForm(form) {
 		var el = form.elements[k];
 		if (!el.name || !el.value) continue;
 		// salta i parametri tecnici (CSRF, identificativi, tab key, hidden info dialog ...)
-		if (el.name === GW_PARAM_IDS_TA || el.name === GW_PARAM_IDS_PWD) continue;
+		if (el.name === GW_PARAM_IDS_TA || el.name === GW_PARAM_IDS_TA_SINGLELINE || el.name === GW_PARAM_IDS_PWD) continue;
 		if (el.name === "_csrf") continue;
 		if (el.name.indexOf("__i_hidden_") === 0) continue;
 		if (el.name === "__tabKey__" || el.name === "__prevTabKey__") continue;
-		if (!gwValidateField(el.value, el.name)) {
-			gwMarkFieldInvalid(el, 'Il campo "' + gwGetFieldLabel(el) + '" contiene caratteri non ammessi');
+		var err = gwFieldError(el);
+		if (err) {
+			gwMarkFieldInvalid(el, err);
 			if (!firstInvalid) firstInvalid = el;
 		}
 	}

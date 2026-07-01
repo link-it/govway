@@ -22038,9 +22038,9 @@ public class ConsoleHelper implements IConsoleHelper {
 		de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_REGOLA_TEXT);
 		de.setValue(regolaText);
-		de.setType(DataElementType.TEXT_EDIT);
+		de.setType(DataElementType.TEXT_AREA);
+		de.setSingleLine(true);
 		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_REGOLA_TEXT);
-		de.setSize(this.getSize());
 		de.setRequired(true);
 		DataElementInfo deInfo = new DataElementInfo(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_REGOLA_TEXT);
 		if(regExpr) {
@@ -22150,9 +22150,9 @@ public class ConsoleHelper implements IConsoleHelper {
 		de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_BASE_URL);
 		de.setValue(baseUrl);
-		de.setType(DataElementType.TEXT_EDIT);
+		de.setType(DataElementType.TEXT_AREA);
+		de.setSingleLine(true);
 		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_BASE_URL);
-		de.setSize(this.getSize());
 		deInfo = new DataElementInfo(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_BASE_URL);
 		deInfo.setHeaderBody(CostantiControlStation.MESSAGGIO_INFO_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_BASE_URL);
 		deInfo.setHeaderBody(deInfo.getHeaderBody()+sb.toString());
@@ -22163,9 +22163,9 @@ public class ConsoleHelper implements IConsoleHelper {
 		de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_CONTESTO_ESTERNO);
 		de.setValue(contestoEsterno);
-		de.setType(DataElementType.TEXT_EDIT);
+		de.setType(DataElementType.TEXT_AREA);
+		de.setSingleLine(true);
 		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_CONTESTO_ESTERNO);
-		de.setSize(this.getSize());
 		de.setRequired(false);
 		deInfo = new DataElementInfo(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_CONTESTO_ESTERNO);
 		deInfo.setHeaderBody(CostantiControlStation.MESSAGGIO_INFO_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_CONTESTO_ESTERNO);

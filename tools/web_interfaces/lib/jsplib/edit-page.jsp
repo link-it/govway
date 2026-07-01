@@ -77,6 +77,10 @@ String idsTextArea = ServletUtils.getIdentificativiTextArea(dati);
 if(idsTextArea == null)
 	idsTextArea = "";
 
+String idsTextAreaSingleLine = ServletUtils.getIdentificativiTextAreaSingleLine(dati);
+if(idsTextAreaSingleLine == null)
+	idsTextAreaSingleLine = "";
+
 String idsPassword = ServletUtils.getIdentificativiPassword(dati);
 if(idsPassword == null)
 	idsPassword = "";
@@ -99,6 +103,13 @@ if(idsPassword == null)
 		if(!idsTextArea.equals("")){
 			%>
 			<input type="hidden" name="<%=Costanti.PARAMETRO_IDENTIFICATIVI_TEXT_AREA%>" id="<%=Costanti.PARAMETRO_IDENTIFICATIVI_TEXT_AREA%>"  value="<%= idsTextArea %>"/>
+			<%
+		}
+		%>
+		<%
+		if(!idsTextAreaSingleLine.equals("")){
+			%>
+			<input type="hidden" name="<%=Costanti.PARAMETRO_IDENTIFICATIVI_TEXT_AREA_SINGLE_LINE%>" id="<%=Costanti.PARAMETRO_IDENTIFICATIVI_TEXT_AREA_SINGLE_LINE%>"  value="<%= idsTextAreaSingleLine %>"/>
 			<%
 		}
 		%>

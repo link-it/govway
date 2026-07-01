@@ -41,6 +41,7 @@ public abstract class AbstractConsoleItem<T> extends BaseConsoleItem {
 	private boolean reloadOnChange;
 	private boolean reloadOnHttpPost;
 	private boolean required;
+	private boolean singleLine;
 	private String regexpr;
 	private SortedMap<T> mapLabelValues;
 	/**private TreeMap<String,T> mapLabelValues;*/
@@ -80,6 +81,15 @@ public abstract class AbstractConsoleItem<T> extends BaseConsoleItem {
 	}
 	public void setRequired(boolean required) {
 		this.required = required;
+	}
+
+	/** Campo a riga singola (equivalente ad un text): reso come textarea a 1 riga, con validazione che vieta
+	 *  i caratteri di controllo (CR/LF, tab, ...) ma ammette i caratteri speciali (es. '|' di un client id PDND). */
+	public boolean isSingleLine() {
+		return this.singleLine;
+	}
+	public void setSingleLine(boolean singleLine) {
+		this.singleLine = singleLine;
 	}
 
 	public String getRegexpr() {

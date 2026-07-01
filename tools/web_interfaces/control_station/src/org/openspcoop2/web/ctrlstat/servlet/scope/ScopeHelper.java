@@ -150,10 +150,12 @@ public class ScopeHelper extends ConsoleHelper{
 		
 		de = new DataElement();
 		de.setLabel(ScopeCostanti.LABEL_PARAMETRO_SCOPE_NOME_ESTERNO);
+		// Identificativo esterno: rispecchia il sistema esterno (IdP/PDND/ModI) e può contenere caratteri
+		// speciali non ammessi dal pattern standard. Textarea a riga singola (singleLine): vietati solo i caratteri di controllo.
 		de.setValue(nomeEsterno);
-		de.setType(DataElementType.TEXT_EDIT);
+		de.setType(DataElementType.TEXT_AREA);
+		de.setSingleLine(true);
 		de.setName(ScopeCostanti.PARAMETRO_SCOPE_NOME_ESTERNO);
-		de.setSize( getSize());
 		dati.add(de);
 
 		de = new DataElement();

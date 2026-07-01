@@ -172,9 +172,9 @@ public class ModIDynamicConfigurationApplicativiUtilities {
 			StringConsoleItem profiloSicurezzaMessaggioAudienceItem = (StringConsoleItem) 
 					ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
 					ConsoleItemType.TEXT_AREA,
-					ModIConsoleCostanti.MODIPA_APPLICATIVI_AUDIENCE_RISPOSTA_ID, 
+					ModIConsoleCostanti.MODIPA_APPLICATIVI_AUDIENCE_RISPOSTA_ID,
 					labelSicurezzaMessaggioAudienceItem);
-			profiloSicurezzaMessaggioAudienceItem.setRows(2);
+			profiloSicurezzaMessaggioAudienceItem.setSingleLine(true);
 			profiloSicurezzaMessaggioAudienceItem.setNote(esterno ? 
 					ModIConsoleCostanti.MODIPA_APPLICATIVI_AUDIENCE_RISPOSTA_INFO_DOMINIO_ESTERNO_NOTE:
 					ModIConsoleCostanti.MODIPA_APPLICATIVI_AUDIENCE_RISPOSTA_INFO_DOMINIO_INTERNO_NOTE);
@@ -195,7 +195,7 @@ public class ModIDynamicConfigurationApplicativiUtilities {
 					ConsoleItemType.TEXT_AREA,
 					ModIConsoleCostanti.MODIPA_APPLICATIVI_PROFILO_SICUREZZA_MESSAGGIO_REST_X5U_URL_ID, 
 					ModIConsoleCostanti.MODIPA_APPLICATIVI_PROFILO_SICUREZZA_MESSAGGIO_REST_X5U_URL_LABEL);
-				profiloSicurezzaMessaggioX5UItem.setRows(2);
+				profiloSicurezzaMessaggioX5UItem.setSingleLine(true);
 				profiloSicurezzaMessaggioX5UItem.setNote(ModIConsoleCostanti.MODIPA_APPLICATIVI_PROFILO_SICUREZZA_MESSAGGIO_REST_X5U_URL_NOTE);
 				ConsoleItemInfo infoX5U = new ConsoleItemInfo(ModIConsoleCostanti.MODIPA_APPLICATIVI_PROFILO_SICUREZZA_MESSAGGIO_REST_X5U_URL_LABEL);
 				infoX5U.setHeaderBody(ModIConsoleCostanti.MODIPA_APPLICATIVI_PROFILO_SICUREZZA_MESSAGGIO_REST_X5U_URL_INFO);
@@ -271,7 +271,7 @@ public class ModIDynamicConfigurationApplicativiUtilities {
 						ConsoleItemType.TEXT_AREA,
 						ModIConsoleCostanti.MODIPA_SICUREZZA_TOKEN_CLIENT_ID, 
 						ModIConsoleCostanti.MODIPA_SICUREZZA_TOKEN_CLIENT_LABEL);
-				tokenClientIdItem.setRows(ModIConsoleCostanti.MODIPA_SICUREZZA_TOKEN_CLIENT_ROWS);
+				tokenClientIdItem.setSingleLine(true);
 				tokenClientIdItem.setRequired(true);
 				configuration.addConsoleItem(tokenClientIdItem);
 				
@@ -280,7 +280,7 @@ public class ModIDynamicConfigurationApplicativiUtilities {
 						ConsoleItemType.TEXT_AREA,
 						ModIConsoleCostanti.MODIPA_SICUREZZA_TOKEN_KID_ID, 
 						ModIConsoleCostanti.MODIPA_SICUREZZA_TOKEN_KID_LABEL);
-				tokenKIDItem.setRows(ModIConsoleCostanti.MODIPA_SICUREZZA_TOKEN_KID_ROWS);
+				tokenKIDItem.setSingleLine(true);
 				tokenKIDItem.setRequired(false);
 				ConsoleItemInfo info = new ConsoleItemInfo(ModIConsoleCostanti.MODIPA_SICUREZZA_TOKEN_KID_LABEL);
 				info.setHeaderBody(DynamicHelperCostanti.LABEL_PARAMETRO_MODIPA_API_IMPL_PROFILO_SICUREZZA_OAUTH_INFO);

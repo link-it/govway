@@ -62,7 +62,7 @@
 					<equals name="retrieveTokenMethod" value="usernamePassword"/>
 				</condition>
 			</conditions>
-			<item type="text" name="autenticazioneUsername" label="Username" required="true">
+			<item type="textarea" name="autenticazioneUsername" label="Username" required="true" singleLine="true">
 			      	<property name="policy.retrieveToken.username" />
 			</item>
 			<item type="lock" name="autenticazionePassword" label="Password" required="true">
@@ -97,7 +97,7 @@
 				<property name="policy.retrieveToken.endpoint.bearer.stato" />
 			</item>
 
-			<item type="text" name="autenticazioneEndpointBasicUsername" label="Client ID" required="true">
+			<item type="textarea" name="autenticazioneEndpointBasicUsername" label="Client ID" required="true" singleLine="true">
 				<conditions>
 					<condition and="true">
 						<selected name="autenticazioneEndpointBasic"/>
@@ -106,7 +106,7 @@
 				</conditions>
 			      	<property name="policy.retrieveToken.endpoint.basic.username" />
 			</item>
-			<item type="text" name="autenticazioneEndpointBasicUsernameCustom" label="Username" required="true">
+			<item type="textarea" name="autenticazioneEndpointBasicUsernameCustom" label="Username" required="true" singleLine="true">
 				<conditions>
 					<condition and="true">
 						<selected name="autenticazioneEndpointBasic"/>
@@ -377,7 +377,7 @@
 				</values>
 			      	<property name="policy.retrieveToken.jwt.signature.include.key.id"/>
 			</item>
-			<item type="text" name="jwtSignatureKidValue" label="" required="true">
+			<item type="textarea" name="jwtSignatureKidValue" label="" required="true" singleLine="true">
 				<conditions and="false">
 					<condition and="true">
 						<equals name="retrieveTokenMethod" value="rfc7523_clientSecret"/>
@@ -514,7 +514,7 @@
 				</values>
 			      	<property name="policy.retrieveToken.jwt.clientId.mode"/>
 			</item>
-			<item type="text" name="jwtClientIdApplicativoModiChoiceInput" label="" required="true">
+			<item type="textarea" name="jwtClientIdApplicativoModiChoiceInput" label="" required="true" singleLine="true">
 			      	<conditions and="false">
 					<condition>
 						<defined name="jwtClientIdApplicativoModiChoice"/>
@@ -523,7 +523,7 @@
 				</conditions>
 			      	<property name="policy.retrieveToken.jwt.clientId" />
 			</item>
-			<item type="text" name="jwtClientIdFruizioneModiChoiceInput" label="" required="true">
+			<item type="textarea" name="jwtClientIdFruizioneModiChoiceInput" label="" required="true" singleLine="true">
 			      	<conditions and="false">
 					<condition>
 						<defined name="jwtClientIdFruizioneModiChoice"/>
@@ -532,7 +532,7 @@
 				</conditions>
 			      	<property name="policy.retrieveToken.jwt.clientId" />
 			</item>
-			<item type="text" name="jwtClientId" label="Client ID" required="true">
+			<item type="textarea" name="jwtClientId" label="Client ID" required="true" singleLine="true">
 			      	<conditions and="true">
 					<condition>
 						<defined name="jwtClientIdApplicativoModiChoice" not="true"/>
@@ -572,7 +572,7 @@
 				</values>
 			      	<property name="policy.retrieveToken.jwt.issuer.mode"/>
 			</item>
-			<item type="text" name="jwtIssuerApplicativoModiChoiceInput" label="" required="true">
+			<item type="textarea" name="jwtIssuerApplicativoModiChoiceInput" label="" required="true" singleLine="true">
 			      	<conditions and="false">
 					<condition>
 						<defined name="jwtIssuerApplicativoModiChoice"/>
@@ -581,7 +581,7 @@
 				</conditions>
 			      	<property name="policy.retrieveToken.jwt.issuer" />
 			</item>
-			<item type="text" name="jwtIssuerFruizioneModiChoiceInput" label="" required="true">
+			<item type="textarea" name="jwtIssuerFruizioneModiChoiceInput" label="" required="true" singleLine="true">
 			      	<conditions and="false">
 					<condition>
 						<defined name="jwtIssuerFruizioneModiChoice"/>
@@ -590,7 +590,7 @@
 				</conditions>
 			      	<property name="policy.retrieveToken.jwt.issuer" />
 			</item>
-			<item type="text" name="jwtIssuer" label="Issuer" required="false">
+			<item type="textarea" name="jwtIssuer" label="Issuer" required="false" singleLine="true">
 			      	<conditions and="true">
 					<condition>
 						<defined name="jwtIssuerApplicativoModiChoice" not="true"/>
@@ -630,7 +630,7 @@
 				</values>
 			      	<property name="policy.retrieveToken.jwt.subject.mode"/>
 			</item>
-			<item type="text" name="jwtSubjectApplicativoModiChoiceInput" label="" required="true">
+			<item type="textarea" name="jwtSubjectApplicativoModiChoiceInput" label="" required="true" singleLine="true">
 			      	<conditions and="false">
 					<condition>
 						<defined name="jwtSubjectApplicativoModiChoice"/>
@@ -639,7 +639,7 @@
 				</conditions>
 			      	<property name="policy.retrieveToken.jwt.subject" />
 			</item>
-			<item type="text" name="jwtSubjectFruizioneModiChoiceInput" label="" required="true">
+			<item type="textarea" name="jwtSubjectFruizioneModiChoiceInput" label="" required="true" singleLine="true">
 			      	<conditions and="false">
 					<condition>
 						<defined name="jwtSubjectFruizioneModiChoice"/>
@@ -648,7 +648,7 @@
 				</conditions>
 			      	<property name="policy.retrieveToken.jwt.subject" />
 			</item>
-			<item type="text" name="jwtSubject" label="Subject" required="false">
+			<item type="textarea" name="jwtSubject" label="Subject" required="false" singleLine="true">
 			      	<conditions and="true">
 					<condition>
 						<defined name="jwtSubjectApplicativoModiChoice" not="true"/>
@@ -658,11 +658,11 @@
 			      	<property name="policy.retrieveToken.jwt.subject" />
 			</item>
 
-			<item type="text" name="jwtAudience" label="Audience" required="true">
+			<item type="textarea" name="jwtAudience" label="Audience" required="true" singleLine="true">
 			    <property name="policy.retrieveToken.jwt.audience" />
 			</item>
 
-			<item type="text" name="jwtIdentifier" label="Identifier" required="false" default="${transaction:id}">
+			<item type="textarea" name="jwtIdentifier" label="Identifier" required="false" default="${transaction:id}" singleLine="true">
 			      	<property name="policy.retrieveToken.jwt.jti" />
 			</item>			
 
@@ -671,7 +671,7 @@
 				<property name="policy.retrieveToken.jwt.expired" />
 			</item>
 
-			<item type="text" name="jwtPurposeID" label="Purpose ID" required="true">
+			<item type="textarea" name="jwtPurposeID" label="Purpose ID" required="true" singleLine="true">
 				<conditions>
 					<condition and="false">
 						<selected name="jwtPDND"/>
@@ -698,7 +698,7 @@
 	
 		<subsection label="Dati Richiesta">
 
-			<item type="text" name="scope" label="Scope" required="false" note="Elencare più scope separandoli con la virgola">
+			<item type="textarea" name="scope" label="Scope" required="false" note="Elencare più scope separandoli con la virgola" singleLine="true">
 				<conditions>
 					<condition not="true">
 						<equals name="retrieveTokenMethod" value="custom"/>
@@ -707,7 +707,7 @@
 				<property name="policy.retrieveToken.scope" />
 			</item>
 
-			<item type="text" name="audience" label="Audience" required="false">
+			<item type="textarea" name="audience" label="Audience" required="false" singleLine="true">
 				<conditions>
 					<condition not="true">
 						<equals name="retrieveTokenMethod" value="custom"/>
@@ -752,7 +752,7 @@
 				</values>
 			      	<property name="policy.retrieveToken.formClientId.mode"/>
 			</item>
-			<item type="text" name="formClientIdApplicativoModiChoiceInput" label="" required="true">
+			<item type="textarea" name="formClientIdApplicativoModiChoiceInput" label="" required="true" singleLine="true">
 			      	<conditions and="true">
 					<condition and="false">
 						<selected name="jwtPDND"/>
@@ -764,7 +764,7 @@
 				</conditions>
 			      	<property name="policy.retrieveToken.formClientId" />
 			</item>
-			<item type="text" name="formClientIdFruizioneModiChoiceInput" label="" required="true">
+			<item type="textarea" name="formClientIdFruizioneModiChoiceInput" label="" required="true" singleLine="true">
 			      	<conditions and="true">
 					<condition and="false">
 						<selected name="jwtPDND"/>
@@ -776,7 +776,7 @@
 				</conditions>
 			      	<property name="policy.retrieveToken.formClientId" />
 			</item>
-			<item type="text" name="formClientId" label="Client ID" required="false">
+			<item type="textarea" name="formClientId" label="Client ID" required="false" singleLine="true">
 			      	<conditions and="true">
 					<condition and="false">
 						<selected name="jwtPDND"/>
@@ -789,7 +789,7 @@
 			      	<property name="policy.retrieveToken.formClientId" />
 			</item>
 
-			<item type="text" name="formResource" label="Resource" required="false">
+			<item type="textarea" name="formResource" label="Resource" required="false" singleLine="true">
 				<conditions>
 					<condition and="false">
 						<selected name="jwtPDND"/>
@@ -1050,7 +1050,7 @@
 
 		<subsection label="Dati Risposta">
 
-			<item type="text" name="expectedTokenType" label="Tipo Token" note="Valore atteso; se non impostato, la validazione è disabilitata.">
+			<item type="textarea" name="expectedTokenType" label="Tipo Token" note="Valore atteso; se non impostato, la validazione è disabilitata." singleLine="true">
 				<property name="policy.expectedTokenType" />
 			</item>
 
@@ -1206,7 +1206,7 @@
 		<item type="number" name="endpointProxyPort" label="Porta" required="true" min="1" max="65535">
 			<property name="proxyPort" properties="endpointConfig" />
 		</item>
-		<item type="text" name="endpointProxyUsername" label="Username" required="false">
+		<item type="textarea" name="endpointProxyUsername" label="Username" required="false" singleLine="true">
 			<property name="proxyUsername" properties="endpointConfig" />
 		</item>
 		<item type="lock" name="endpointProxyPassword" label="Password" required="false">

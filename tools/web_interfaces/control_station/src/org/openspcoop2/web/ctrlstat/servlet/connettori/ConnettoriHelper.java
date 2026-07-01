@@ -1173,10 +1173,12 @@ public class ConnettoriHelper extends ConsoleHelper {
 		
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_PROXY_USERNAME);
-		de.setValue(StringEscapeUtils.escapeHtml4(proxyUsername));
-		de.setType(DataElementType.TEXT_EDIT);
+		// Username proxy (credenziale): può contenere caratteri speciali non ammessi dal pattern standard.
+		// Textarea a riga singola (singleLine); l'escape lo fa la JSP, quindi qui valore grezzo.
+		de.setValue(proxyUsername);
+		de.setType(DataElementType.TEXT_AREA);
+		de.setSingleLine(true);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_USERNAME);
-		de.setSize(this.getSize());
 		de.setRequired(false);
 		dati.add(de);
 		
@@ -1735,15 +1737,17 @@ public class ConnettoriHelper extends ConsoleHelper {
 			if (ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC.equals(tipoauth)) {
 				de = new DataElement();
 				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME);
-				de.setValue(StringEscapeUtils.escapeHtml4(utente));
-				de.setType(DataElementType.TEXT_EDIT);
+				// Username (credenziale): può contenere caratteri speciali non ammessi dal pattern standard.
+				// Textarea a riga singola (singleLine) -> vietati solo i caratteri di controllo; l'escape lo fa la JSP.
+				de.setValue(utente);
+				de.setType(DataElementType.TEXT_AREA);
+				de.setSingleLine(true);
 				if(connettore){
 					de.setName(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
 				}
 				else{
 					de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME);
 				}
-				de.setSize(this.getSize());
 				de.setRequired(true);
 				dati.add(de);
 
@@ -2508,10 +2512,12 @@ public class ConnettoriHelper extends ConsoleHelper {
 			if (ConnettoriCostanti.AUTENTICAZIONE_TIPO_PRINCIPAL.equals(tipoauth)  && !connettore) {
 				de = new DataElement();
 				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PRINCIPAL);
-				de.setValue(StringEscapeUtils.escapeHtml4(principal));
-				de.setType(DataElementType.TEXT_EDIT);
+				// UserId (principal): può contenere caratteri speciali non ammessi dal pattern standard.
+				// Textarea a riga singola (singleLine) -> vietati solo i caratteri di controllo; l'escape lo fa la JSP.
+				de.setValue(principal);
+				de.setType(DataElementType.TEXT_AREA);
+				de.setSingleLine(true);
 				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PRINCIPAL);
-				de.setSize(this.getSize());
 				de.setRequired(true);
 				dati.add(de);
 			}
@@ -2621,10 +2627,13 @@ public class ConnettoriHelper extends ConsoleHelper {
 				
 				de = new DataElement();
 				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID);
-				de.setValue(StringEscapeUtils.escapeHtml4(tokenClientIdSA));
-				de.setType(DataElementType.TEXT_EDIT);
+				// Il Client ID (es. ModI/PDND) può contenere caratteri speciali (|, !, ...) non ammessi dal pattern
+				// standard: lo rendiamo una textarea a riga singola (singleLine), così sono vietati solo i caratteri di controllo.
+				// NB: per le textarea è la JSP (edit-page.jsp) a fare l'escape del valore, quindi qui NON pre-escapiamo.
+				de.setValue(tokenClientIdSA);
+				de.setType(DataElementType.TEXT_AREA);
+				de.setSingleLine(true);
 				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID);
-				de.setSize(this.getSize());
 				de.setRequired(true);
 				dati.add(de);
 				

@@ -933,7 +933,7 @@
 					<selected name="introspectionEndpointBasic"/>
 				</condition>
 			</conditions>
-			<item type="text" name="introspectionEndpointBasicUsername" label="Username" required="true">
+			<item type="textarea" name="introspectionEndpointBasicUsername" label="Username" required="true" singleLine="true">
 			      	<property name="policy.introspection.endpoint.basic.username" />
 			</item>
 			<item type="lock" name="introspectionEndpointPassword" label="Password" required="true">
@@ -1321,7 +1321,7 @@
 					<selected name="userInfoEndpointBasic"/>
 				</condition>
 			</conditions>
-			<item type="text" name="userInfoEndpointBasicUsername" label="Username" required="true">
+			<item type="textarea" name="userInfoEndpointBasicUsername" label="Username" required="true" singleLine="true">
 			      	<property name="policy.userInfo.endpoint.basic.username" />
 			</item>
 			<item type="lock" name="userInfoEndpointPassword" label="Password" required="true">
@@ -1929,7 +1929,7 @@
 		<item type="number" name="endpointProxyPort" label="Porta" required="true" min="1" max="65535">
 			<property name="proxyPort" properties="endpointConfig" />
 		</item>
-		<item type="text" name="endpointProxyUsername" label="Username" required="false">
+		<item type="textarea" name="endpointProxyUsername" label="Username" required="false" singleLine="true">
 			<property name="proxyUsername" properties="endpointConfig" />
 		</item>
 		<item type="lock" name="endpointProxyPassword" label="Password" required="false">

@@ -164,11 +164,26 @@ public class ItemBean extends BaseItemBean<Item>{
 		case TEXTAREA:
 			de.setValue(this.value);
 			de.setType(DataElementType.TEXT_AREA);
-			if(this.getItem().getMax()!=null && this.getItem().getMax().intValue()>0) {
+			// 'singleLine' è un concetto di validazione (vieta i caratteri di controllo, vedi validate e
+			// getIdentificativiTextAreaSingleLine); imposta inoltre, come default, riga singola e larghezza
+			// standard (1 riga, 43 colonne), sovrascrivibili da rows/columns.
+			if(this.getItem().isSingleLine()) {
+				de.setSingleLine(true);
+			}
+			// righe: 'rows' (retrocompatibilità: 'max') hanno precedenza; per le textarea NON single-line il default è 3
+			// (per le single-line, in assenza, vale il default di setSingleLine)
+			if(this.getItem().getRows()!=null && this.getItem().getRows().intValue()>0) {
+				de.setRows(this.getItem().getRows().intValue());
+			}
+			else if(this.getItem().getMax()!=null && this.getItem().getMax().intValue()>0) {
 				de.setRows(this.getItem().getMax().intValue());
 			}
-			else {
+			else if(!this.getItem().isSingleLine()) {
 				de.setRows(3);
+			}
+			// colonne (larghezza): 'columns' ha precedenza; per le single-line, in assenza, vale il default di setSingleLine
+			if(this.getItem().getColumns()!=null && this.getItem().getColumns().intValue()>0) {
+				de.setCols(this.getItem().getColumns().intValue());
 			}
 			break;
 		case LOCK_HIDDEN:
@@ -468,6 +483,17 @@ public class ItemBean extends BaseItemBean<Item>{
 				}
 				if(itemValue!=null && (itemValue.endsWith(" ") || itemValue.endsWith("\t"))) {
 					throw new UserInputValidationException("Il valore inserito nel Campo "+this.getLabel()+" non può terminare con uno spazio");
+				}
+				// Una textarea dichiarata single-line (attributo singleLine="true") è equivalente ad un campo text:
+				// non sono ammessi caratteri di controllo (CR/LF, tab, NUL, ...), poiché il valore finisce in un JWT
+				// o nell'header Authorization. Character.isISOControl è equivalente al pattern dedicato usato dal
+				// filtro di sicurezza e dalla validazione client-side (HTTPParameterValueTextAreaSingleLine).
+				if(itemValue!=null && ItemType.TEXTAREA.equals(this.getItem().getType()) && this.getItem().isSingleLine()) {
+					for(int i=0; i<itemValue.length(); i++) {
+						if(Character.isISOControl(itemValue.charAt(i))) {
+							throw new UserInputValidationException("Il valore inserito nel Campo "+this.getLabel()+" non può contenere caratteri di controllo (es. ritorni a capo)");
+						}
+					}
 				}
 				break;
 			case LOCK:

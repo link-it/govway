@@ -15792,20 +15792,23 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de = new DataElement();
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_VALORE);
 					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_VALORE);
-					de.setValue(StringEscapeUtils.escapeHtml4(policy.getFiltro().getInformazioneApplicativaValore())); // il valore può contenere ""
+					de.setValue(policy.getFiltro().getInformazioneApplicativaValore()); // valore grezzo: l'escape lo fa la JSP (textarea/hidden) // il valore può contenere ""
 					if(protocolloAssociatoFiltroNonSelezionatoUtente) {
-						de.setType(DataElementType.HIDDEN);
+						// hidden per state-preservation, ma classificato single-line (originalType TEXT_AREA): il valore con caratteri speciali non viene scartato al postback
+						de.setSingleLine(true);
+						de.setHiddenType(DataElementType.TEXT_AREA);
 						dati.add(de);
 						
 						de = new DataElement();
 						de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_VALORE+"___LABEL");
 						de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_VALORE);
-						de.setValue(StringEscapeUtils.escapeHtml4(policy.getFiltro().getInformazioneApplicativaValore())); // il valore può contenere ""
+						de.setValue(StringEscapeUtils.escapeHtml4(policy.getFiltro().getInformazioneApplicativaValore())); // read-only: la JSP non escapa il TEXT, escape qui // il valore può contenere ""
 						de.setType(DataElementType.TEXT);
 					}
 					else {
 						de.setRequired(true);
-						de.setType(DataElementType.TEXT_EDIT);
+						de.setType(DataElementType.TEXT_AREA);
+						de.setSingleLine(true);
 					}
 					dati.add(de);
 					
@@ -21585,11 +21588,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de = new DataElement();
 				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_INVIA_EMAIL_SUBJECT);
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_INVIA_EMAIL_SUBJECT);
+				de.setSingleLine(true);
 				if(tipoOperazione.equals(TipoOperazione.CHANGE) || (!first && allarme.getPlugin() != null) ){
-					de.setType(DataElementType.TEXT_EDIT);
+					de.setType(DataElementType.TEXT_AREA);
 				}
 				else {
-					de.setType(DataElementType.HIDDEN);
+					de.setHiddenType(DataElementType.TEXT_AREA);
 				}
 				de.setValue(allarme.getMail().getSubject());
 				dati.add(de);

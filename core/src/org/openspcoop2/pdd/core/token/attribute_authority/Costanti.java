@@ -136,7 +136,11 @@ public class Costanti {
 	public static final String ID_AA_RISPOSTA_JWS_PAYLOAD_AUDIENCE = "aaResponseAudience";
 	
 	public static final String ID_AA_SIGNATURE_ALGORITHM = "aaSignatureAlgorithm";
+	public static final String ID_AA_SIGNATURE_KID_VALUE = "aaSignatureKidValue";
 	public static final String ID_AA_TOKEN_JWT_EXPIRED_TTL_SECONDS= "aaRichiestaPayloadExpTtl";
+
+	// Label del sotto-campo "Personalizzato" (item con label vuota): usata come titolo del box informativo
+	public static final String LABEL_AA_JWT_KID = "Key Id (kid)";
 	
 	public static final String ID_AA_PARSER_TOKEN_CUSTOM_PLUGIN_CLASSNAME = "aaResponseParserCustom";
 	public static final String ID_AA_PARSER_TOKEN_CUSTOM_PLUGIN_CHOICE = "aaResponseParserCustomPluginChoice";

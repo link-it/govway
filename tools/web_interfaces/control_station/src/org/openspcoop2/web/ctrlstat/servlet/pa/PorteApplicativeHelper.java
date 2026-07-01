@@ -7787,10 +7787,11 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_IDENTIFICAZIONE_CONDIZIONALE_PREFISSO);
 				de.setSize(this.getSize());
 				de.setValue(identificazioneCondizionalePrefisso);
+				de.setSingleLine(true);
 				if(tipoSelettoreS!=null && tipoSelettoreS.isTemplate()) {
-					 de.setType(DataElementType.HIDDEN);
+					 de.setHiddenType(DataElementType.TEXT_AREA);
 				} else {
-					 de.setType(DataElementType.TEXT_EDIT);
+					 de.setType(DataElementType.TEXT_AREA);
 				}
 				dati.add(de);
 				
@@ -7800,10 +7801,11 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_IDENTIFICAZIONE_CONDIZIONALE_SUFFISSO);
 				de.setSize(this.getSize());
 				de.setValue(identificazioneCondizionaleSuffisso);
+				de.setSingleLine(true);
 				if(tipoSelettoreS!=null && tipoSelettoreS.isTemplate()) {
-					 de.setType(DataElementType.HIDDEN);
+					 de.setHiddenType(DataElementType.TEXT_AREA);
 				} else {
-					 de.setType(DataElementType.TEXT_EDIT);
+					 de.setType(DataElementType.TEXT_AREA);
 				}
 				dati.add(de);
 				
@@ -11015,13 +11017,14 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_IDENTIFICAZIONE_CONDIZIONALE_PREFISSO);
 		de.setSize(this.getSize());
 		de.setValue(identificazioneCondizionalePrefisso);
-		if( (tipoSelettoreS!=null && tipoSelettoreS.isTemplate()) 
+		de.setSingleLine(true);
+		if( (tipoSelettoreS!=null && tipoSelettoreS.isTemplate())
 				||
 				(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_IDENTIFICAZIONE_CONDIZIONALE_STATIC_INFO.equals(identificazioneCondizionale))
 				) {
-			 de.setType(DataElementType.HIDDEN);
+			 de.setHiddenType(DataElementType.TEXT_AREA);
 		} else {
-			 de.setType(DataElementType.TEXT_EDIT);
+			 de.setType(DataElementType.TEXT_AREA);
 		}
 		dati.add(de);
 		
@@ -11031,13 +11034,14 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_IDENTIFICAZIONE_CONDIZIONALE_SUFFISSO);
 		de.setSize(this.getSize());
 		de.setValue(identificazioneCondizionaleSuffisso);
-		if( (tipoSelettoreS!=null && tipoSelettoreS.isTemplate()) 
+		de.setSingleLine(true);
+		if( (tipoSelettoreS!=null && tipoSelettoreS.isTemplate())
 				||
 				(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_IDENTIFICAZIONE_CONDIZIONALE_STATIC_INFO.equals(identificazioneCondizionale))
 				) {
-			 de.setType(DataElementType.HIDDEN);
+			 de.setHiddenType(DataElementType.TEXT_AREA);
 		} else {
-			 de.setType(DataElementType.TEXT_EDIT);
+			 de.setType(DataElementType.TEXT_AREA);
 		}
 		dati.add(de);
 		

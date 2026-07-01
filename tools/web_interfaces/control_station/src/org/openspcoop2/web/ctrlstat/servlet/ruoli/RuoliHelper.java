@@ -155,15 +155,19 @@ public class RuoliHelper extends ConsoleHelper{
 		}
 		de = new DataElement();
 		de.setLabel(RuoliCostanti.LABEL_PARAMETRO_RUOLO_NOME_ESTERNO);
+		// Identificativo esterno: rispecchia il sistema esterno e può contenere caratteri speciali non ammessi
+		// dal pattern standard. Textarea a riga singola (singleLine): vietati solo i caratteri di controllo.
 		de.setValue(nomeEsterno);
+		de.setSingleLine(true);
 		if(ruoloTipologia!=null && (RuoloTipologia.QUALSIASI.equals(ruoloTipologia) || RuoloTipologia.ESTERNO.equals(ruoloTipologia))) {
-			de.setType(DataElementType.TEXT_EDIT);
+			de.setType(DataElementType.TEXT_AREA);
 		}
 		else{
-			de.setType(DataElementType.HIDDEN);
+			// hidden per state-preservation, ma classificato single-line (originalType TEXT_AREA) così il valore
+			// con caratteri speciali non viene scartato dal filtro al postback
+			de.setHiddenType(DataElementType.TEXT_AREA);
 		}
 		de.setName(RuoliCostanti.PARAMETRO_RUOLO_NOME_ESTERNO);
-		de.setSize( getSize());
 		dati.add(de);
 
 		de = new DataElement();

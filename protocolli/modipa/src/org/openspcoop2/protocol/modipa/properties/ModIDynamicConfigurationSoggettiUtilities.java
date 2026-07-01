@@ -88,7 +88,7 @@ public class ModIDynamicConfigurationSoggettiUtilities {
 				ConsoleItemType.TEXT_AREA,
 				ModIConsoleCostanti.MODIPA_SOGGETTI_ID_ENTE_ID, 
 				ModIConsoleCostanti.MODIPA_SOGGETTI_ID_ENTE_LABEL);
-		tokenClientIdItem.setRows(ModIConsoleCostanti.MODIPA_SOGGETTI_ID_ENTE_ROWS);
+		tokenClientIdItem.setSingleLine(true);
 		tokenClientIdItem.setRequired(false);
 		configuration.addConsoleItem(tokenClientIdItem);
 		
