@@ -62,6 +62,7 @@ import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.pdd.services.ServicesUtils;
 import org.openspcoop2.pdd.services.connector.ConnectorApplicativeThreadPool;
 import org.openspcoop2.utils.NameValue;
+import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.io.notifier.unblocked.IPipedUnblockedStream;
@@ -110,7 +111,16 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 	public ConnettoreHTTPCORE(boolean https){
 		super(https);
 	}
-		
+
+	/**
+	 * Valorizza <code>data_uscita_richiesta_stream</code> con l'istante corrente: invocato da
+	 * {@link ConnettoreHTTPCORERequestSentEntity} al termine della scrittura del body della richiesta
+	 * verso il backend.
+	 */
+	public void setDataRichiestaInoltrataNow() {
+		this.dataRichiestaInoltrata = DateManager.getDate();
+	}
+
 	@Override
 	protected boolean sendHTTP(ConnettoreMsg request) {
 		
@@ -598,6 +608,13 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 			// Spedizione byte
 			if(this.debug)
 				this.logger.debug("Spedizione byte...");
+			// data_uscita_richiesta_stream: timbro l'istante di completa spedizione del body verso il backend
+			// (equivalente al flush/close dello stream di uscita in ConnettoreHTTP/UrlConnection).
+			// Per le richieste senza body l'entity e' null e la data resta correttamente non valorizzata.
+			HttpEntity requestEntitySent = this.httpRequest.getEntity();
+			if(requestEntitySent != null) {
+				this.httpRequest.setEntity(new ConnettoreHTTPCORERequestSentEntity(requestEntitySent, this));
+			}
 			// Eseguo la richiesta e prendo la risposta
 			HttpHost httpHost = ConnettoreHTTPCOREUtils.buildHttpHost(this.httpRequest);
 			/** DEPRECATO: ClassicHttpResponse httpResponse = (ClassicHttpResponse) httpClient.execute(this.httpRequest); */

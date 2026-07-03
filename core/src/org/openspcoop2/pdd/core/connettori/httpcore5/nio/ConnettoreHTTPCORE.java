@@ -67,6 +67,7 @@ import org.openspcoop2.pdd.core.transazioni.TransactionContext;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.NameValue;
+import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.transport.TransportUtils;
@@ -706,6 +707,15 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 			}
 		}
 	}
+	/**
+	 * Valorizza <code>data_uscita_richiesta_stream</code> con l'istante corrente: invocato dal producer
+	 * (via {@link ConnettoreHTTPCORETransactionThreadContextSwitchEntityProducer}) al termine della
+	 * spedizione del body della richiesta verso il backend.
+	 */
+	public void setDataRichiestaInoltrataNow() {
+		this.dataRichiestaInoltrata = DateManager.getDate();
+	}
+
 	public void removeThreadLocalContext(String function, BooleanNullable switchThreadLocalContextDoneHolder) {
 		String tName = Thread.currentThread().getName();
 		if(tName!=null && function!=null) {

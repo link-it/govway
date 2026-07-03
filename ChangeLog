@@ -1,5 +1,15 @@
 2026-07-12  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore]
+	Risolto Bug #1795
+	Corretto il connettore HTTP 'httpcore5' (BIO e NIO) che non valorizzava il campo 'data_uscita_richiesta_stream'
+	delle transazioni per le richieste dotate di body (comportamento riscontrato con la libreria di default della 3.4);
+	allineato il comportamento a quello del connettore 'java.net.HttpURLConnection'.
+	L'anomalia non impattava l'elaborazione delle statistiche, ma solo l'informazione di dettaglio (tempi di
+	attraversamento della singola transazione) consultabile dalla console di monitoraggio.
+
+2026-07-12  Andrea Poli <apoli@link.it>
+
 	* [GovWayConsole]
 	Risolto Bug #1782 #1784
 	Corretta la gestione dei campi che contengono identificativi esterni o elenchi di valori separati da virgola:

@@ -22,11 +22,13 @@ package org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.utils;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -116,10 +118,186 @@ public class DBVerifier {
 		}
 	}
 	
-	public static void verify(String idTransazione, 
+	/* ============================ verifica delle 10 date di tracciamento ============================ */
+
+	/** Ordine temporale canonico delle 10 date di tracciamento della tabella <code>transazioni</code>. */
+	private static final String[] COLONNE_DATE_TRACCIAMENTO = {
+			"data_accettazione_richiesta",
+			"data_ingresso_richiesta",
+			"data_ingresso_richiesta_stream",
+			"data_uscita_richiesta",
+			"data_uscita_richiesta_stream",
+			"data_accettazione_risposta",
+			"data_ingresso_risposta",
+			"data_ingresso_risposta_stream",
+			"data_uscita_risposta",
+			"data_uscita_risposta_stream"
+	};
+
+	/**
+	 * Verifica la corretta valorizzazione delle 10 date di tracciamento in base alla presenza di body
+	 * in richiesta e in risposta.
+	 * <p>
+	 * Attese (comportamento corretto, indipendente dal canale HTTP in uscita):
+	 * <ul>
+	 *   <li>sempre valorizzate: data_accettazione_richiesta, data_ingresso_richiesta, data_uscita_richiesta,
+	 *       data_accettazione_risposta, data_ingresso_risposta, data_uscita_risposta, data_uscita_risposta_stream;</li>
+	 *   <li>data_ingresso_richiesta_stream e data_uscita_richiesta_stream: valorizzate se e solo se la
+	 *       richiesta ha un body;</li>
+	 *   <li>data_ingresso_risposta_stream: valorizzata se e solo se la risposta ha un body.</li>
+	 * </ul>
+	 * Inoltre le date effettivamente valorizzate devono risultare in ordine temporale crescente.
+	 */
+	public static void verifyDateTracciamento(String idTransazione, long esitoExpected,
+			boolean hasRequestBody, boolean hasResponseBody) throws AssertionError, SQLQueryObjectException {
+
+		int[] timeouts = {100, 250, 500, 2000, 5000};
+		int index = 0;
+		boolean err = true;
+		while (err && index < timeouts.length) {
+
+			Utilities.sleep(timeouts[index++]);
+
+			try {
+				engineVerifyDateTracciamento(idTransazione, esitoExpected, hasRequestBody, hasResponseBody);
+				err = false;
+			} catch (Throwable e) {
+				log().warn("verifyDateTracciamento tentativo fallito: {}", e.getMessage());
+				err = true;
+				if (index >= timeouts.length) {
+					if (e instanceof AssertionError ae)
+						throw ae;
+					if (e instanceof SQLQueryObjectException se)
+						throw se;
+					throw new RuntimeException(e);
+				}
+			}
+		}
+	}
+
+	private static void engineVerifyDateTracciamento(String idTransazione, long esitoExpected,
+			boolean hasRequestBody, boolean hasResponseBody) throws SQLQueryObjectException {
+
+		verifyIdTransazione(idTransazione);
+		verifyEsito(idTransazione, esitoExpected);
+
+		Map<String, Timestamp> date = new LinkedHashMap<>();
+		for (String colonna : COLONNE_DATE_TRACCIAMENTO) {
+			date.put(colonna, readDataTracciamento(idTransazione, colonna));
+		}
+		log().info("date tracciamento transazione [{}] (reqBody={}, respBody={}): {}",
+				idTransazione, hasRequestBody, hasResponseBody, date);
+
+		// 1) date sempre valorizzate (indipendenti da payload e da canale)
+		assertDataNotNull(idTransazione, date, "data_accettazione_richiesta");
+		assertDataNotNull(idTransazione, date, "data_ingresso_richiesta");
+		assertDataNotNull(idTransazione, date, "data_uscita_richiesta");
+		assertDataNotNull(idTransazione, date, "data_accettazione_risposta");
+		assertDataNotNull(idTransazione, date, "data_ingresso_risposta");
+		assertDataNotNull(idTransazione, date, "data_uscita_risposta");
+		assertDataNotNull(idTransazione, date, "data_uscita_risposta_stream");
+
+		// 2) stream di richiesta: valorizzate se e solo se la richiesta ha un body
+		if (hasRequestBody) {
+			assertDataNotNull(idTransazione, date, "data_ingresso_richiesta_stream");
+			// comportamento atteso su TUTTI i canali (UrlConnection, HttpCore BIO, HttpCore NIO):
+			// il momento di completa spedizione del body verso il backend deve essere tracciato
+			assertDataNotNull(idTransazione, date, "data_uscita_richiesta_stream");
+		} else {
+			assertDataNull(idTransazione, date, "data_ingresso_richiesta_stream");
+			assertDataNull(idTransazione, date, "data_uscita_richiesta_stream");
+		}
+
+		// 3) stream di risposta: valorizzata se e solo se la risposta ha un body
+		if (hasResponseBody) {
+			assertDataNotNull(idTransazione, date, "data_ingresso_risposta_stream");
+		} else {
+			assertDataNull(idTransazione, date, "data_ingresso_risposta_stream");
+		}
+
+		// 4) ordinamento temporale crescente tra le date effettivamente valorizzate
+		assertOrdinamentoDate(idTransazione, date);
+	}
+
+	private static Timestamp readDataTracciamento(String idTransazione, String colonna) throws SQLQueryObjectException {
+		ISQLQueryObject query = SQLObjectFactory.createSQLQueryObject(dbUtils().tipoDatabase);
+		query.addFromTable(CostantiDB.TRANSAZIONI);
+		query.addSelectField(colonna);
+		query.addWhereCondition(CostantiDB.COLUMN_ID + " = ?");
+		query.setANDLogicOperator(true);
+		return dbUtils().readValue(query.createSQLQuery(), Timestamp.class, idTransazione);
+	}
+
+	private static void assertDataNotNull(String idTransazione, Map<String, Timestamp> date, String colonna) {
+		assertNotNull("transazione [" + idTransazione + "] colonna [" + colonna + "] attesa valorizzata ma risulta null",
+				date.get(colonna));
+	}
+
+	private static void assertDataNull(String idTransazione, Map<String, Timestamp> date, String colonna) {
+		assertNull("transazione [" + idTransazione + "] colonna [" + colonna + "] attesa null ma valorizzata ["
+				+ date.get(colonna) + "]", date.get(colonna));
+	}
+
+	/**
+	 * Verifica che le 10 date siano incrementali (&ge;) secondo l'<b>ordine causale</b> del ciclo di
+	 * vita della transazione (verificato sui dati reali; NB: NON coincide con l'ordine delle colonne,
+	 * ad es. <code>data_uscita_richiesta</code> precede <code>data_ingresso_richiesta_stream</code> e
+	 * <code>data_uscita_risposta_stream</code> precede <code>data_ingresso_risposta_stream</code>).
+	 * <p>
+	 * Si asseriscono tutte le relazioni d'ordine <b>causalmente garantite</b>, ovvero indipendenti dal
+	 * fatto che il gateway operi in streaming o bufferizzando. Restano deliberatamente <b>non</b>
+	 * asserite le due sole coppie il cui ordine dipende da streaming/buffering:
+	 * <ul>
+	 *   <li><code>data_uscita_richiesta</code> vs <code>data_ingresso_richiesta_stream</code>
+	 *       (inoltro in streaming del body di richiesta: il body del client viene letto <em>mentre</em>
+	 *       lo si inoltra, quindi dopo l'apertura dell'invocazione);</li>
+	 *   <li><code>data_uscita_risposta_stream</code> vs <code>data_ingresso_risposta_stream</code>
+	 *       (invio in streaming del body di risposta: la prima spedizione al client puo' precedere la
+	 *       completa lettura del body dal backend).</li>
+	 * </ul>
+	 */
+	private static void assertOrdinamentoDate(String idTransazione, Map<String, Timestamp> date) {
+
+		// --- ricezione della richiesta dal client ---
+		assertOrdine(idTransazione, date, "data_accettazione_richiesta", "data_ingresso_richiesta");
+		assertOrdine(idTransazione, date, "data_ingresso_richiesta", "data_uscita_richiesta");
+		assertOrdine(idTransazione, date, "data_ingresso_richiesta", "data_ingresso_richiesta_stream");
+
+		// --- inoltro della richiesta verso il backend ---
+		assertOrdine(idTransazione, date, "data_uscita_richiesta", "data_uscita_richiesta_stream");
+		assertOrdine(idTransazione, date, "data_ingresso_richiesta_stream", "data_uscita_richiesta_stream");
+
+		// --- confine richiesta -> risposta (la risposta non puo' precedere l'invio della richiesta) ---
+		assertOrdine(idTransazione, date, "data_uscita_richiesta", "data_accettazione_risposta");
+		assertOrdine(idTransazione, date, "data_ingresso_richiesta_stream", "data_accettazione_risposta");
+		assertOrdine(idTransazione, date, "data_uscita_richiesta_stream", "data_accettazione_risposta");
+
+		// --- ricezione della risposta dal backend ---
+		assertOrdine(idTransazione, date, "data_accettazione_risposta", "data_ingresso_risposta");
+		assertOrdine(idTransazione, date, "data_accettazione_risposta", "data_ingresso_risposta_stream");
+
+		// --- spedizione della risposta al client ---
+		assertOrdine(idTransazione, date, "data_accettazione_risposta", "data_uscita_risposta_stream");
+		assertOrdine(idTransazione, date, "data_ingresso_risposta", "data_uscita_risposta_stream");
+		assertOrdine(idTransazione, date, "data_uscita_risposta_stream", "data_uscita_risposta");
+		assertOrdine(idTransazione, date, "data_ingresso_risposta", "data_uscita_risposta");
+		assertOrdine(idTransazione, date, "data_ingresso_risposta_stream", "data_uscita_risposta");
+	}
+
+	private static void assertOrdine(String idTransazione, Map<String, Timestamp> date, String prima, String dopo) {
+		Timestamp a = date.get(prima);
+		Timestamp b = date.get(dopo);
+		if (a == null || b == null) {
+			return; // l'esistenza e' verificata a parte; qui si valuta solo l'ordine tra date entrambe presenti
+		}
+		assertTrue("transazione [" + idTransazione + "] ordine violato: [" + prima + "=" + a
+				+ "] deve precedere [" + dopo + "=" + b + "]", a.getTime() <= b.getTime());
+	}
+
+	public static void verify(String idTransazione,
 			long esitoExpected, String msgErrore) throws Exception  {
-		
-		Utilities.sleep(100); 
+
+		Utilities.sleep(100);
 		try {
 			DBVerifier.engineVerify(idTransazione, 
 					esitoExpected, msgErrore,

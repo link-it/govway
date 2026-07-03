@@ -47,12 +47,12 @@ public class ConnettoreHTTPCORETransactionThreadContextSwitchEntityProducer<T ex
 	
 	protected ConnettoreHTTPCORETransactionThreadContextSwitchEntityProducer(ConnettoreHTTPCORE connettore, T wrapped) {
 		this.wrapped = wrapped;
-		
+		this.connettore = connettore; // sempre necessario per timbrare data_uscita_richiesta_stream a fine produzione body
+
 		// L'inizializzazione avviene nel worker thread del webserver o nel worker thread della richiesta a seconda della configurazione (vedi org.openspcoop2.pdd.services.connector.ConnectorApplicativeThreadPool)
 		// Se viene usato il thread local per gestire il contesto, gli oggetti devono essere riportati sul thread local del thread della libreria client nio che effettuerà la spedizione (metodi successivi)
 		if(TransactionContext.isUseThreadLocal()) {
 			this.switchThreadContext = true;
-			this.connettore = connettore;
 			this.function = "EntityProducer-"+this.wrapped.getClass().getName();
 		}
 	}
@@ -74,8 +74,12 @@ public class ConnettoreHTTPCORETransactionThreadContextSwitchEntityProducer<T ex
 		if(this.switchThreadContext) {
 			this.connettore.checkThreadLocalContext(this.function, this.switchThreadLocalContextDoneHolder);
 		}
-	
+
 		this.wrapped.produce(channel);
+
+		// data_uscita_richiesta_stream: il producer scrive l'intero body e invoca channel.endStream() entro
+		// questa singola produce(); al suo ritorno il body e' stato completamente inviato al backend.
+		this.connettore.setDataRichiestaInoltrataNow();
 	}
 	
 	private boolean released = false;
