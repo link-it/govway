@@ -107,6 +107,10 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteSpecifica
 import org.openspcoop2.protocol.sdk.archive.ArchiveActivePolicy;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAllarme;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAttributeAuthority;
+import org.openspcoop2.protocol.sdk.archive.ArchiveLLMModel;
+import org.openspcoop2.protocol.sdk.archive.ArchiveLLMPiiMasking;
+import org.openspcoop2.protocol.sdk.archive.ArchiveLLMProvider;
+import org.openspcoop2.protocol.sdk.archive.ArchiveLLMProviderBinding;
 import org.openspcoop2.protocol.sdk.archive.ArchiveCascadeConfiguration;
 import org.openspcoop2.protocol.sdk.archive.ArchiveConfigurationPolicy;
 import org.openspcoop2.protocol.sdk.archive.ArchiveFruitore;
@@ -288,6 +292,26 @@ public class ExporterArchiveUtils {
 				this.readAttributeAuthority(archive, (IDGenericProperties) object, cascadeConfig, exportSourceArchiveType);
 			}
 			break;
+		case CONFIGURAZIONE_LLM_PROVIDER:
+			for (Object object : listObject) {
+				this.readLLMProvider(archive, (IDGenericProperties) object, cascadeConfig, exportSourceArchiveType);
+			}
+			break;
+		case CONFIGURAZIONE_LLM_MODEL:
+			for (Object object : listObject) {
+				this.readLLMModel(archive, (IDGenericProperties) object, cascadeConfig, exportSourceArchiveType);
+			}
+			break;
+		case CONFIGURAZIONE_LLM_PII_MASKING:
+			for (Object object : listObject) {
+				this.readLLMPiiMasking(archive, (IDGenericProperties) object, cascadeConfig, exportSourceArchiveType);
+			}
+			break;
+		case CONFIGURAZIONE_LLM_PROVIDER_BINDING:
+			for (Object object : listObject) {
+				this.readLLMProviderBinding(archive, (IDGenericProperties) object, cascadeConfig, exportSourceArchiveType);
+			}
+			break;
 		case CONFIGURAZIONE_PLUGIN_CLASSE:
 			for (Object object : listObject) {
 				this.readPlugin_classe(archive, (IdPlugin) object, cascadeConfig, exportSourceArchiveType);
@@ -311,6 +335,7 @@ public class ExporterArchiveUtils {
 			readAllarmiConfigurazione(archive, true, false, exportSourceArchiveType);
 			readTokenPolicyConfigurazione(archive, exportSourceArchiveType);
 			readAttributeAuthorityConfigurazione(archive, exportSourceArchiveType);
+			readLLMConfigurazione(archive, exportSourceArchiveType);
 			readPluginConfigurazione(archive, exportSourceArchiveType);
 			
 			setConfigurazione(archive);
@@ -1019,8 +1044,169 @@ public class ExporterArchiveUtils {
 		
 	}
 	
+	// === Catalogo LLM: Provider / Model / Regola PII / Provider Binding ===
+	// (i nomi property vivono in org.openspcoop2.pdd.core.llm.provider.Costanti, jar 'pdd' non
+	//  visibile da questo layer: riportati come letterali)
+
+	private static String getPropertyValue(GenericProperties policy, String nome) {
+		if(policy==null || policy.getPropertyList()==null) {
+			return null;
+		}
+		for (Property p : policy.getPropertyList()) {
+			if(nome.equals(p.getNome())) {
+				return p.getValore();
+			}
+		}
+		return null;
+	}
+
+	private void readLLMProvider(Archive archive, IDGenericProperties idGP, ArchiveCascadeConfiguration cascadeConfig, ArchiveType provenienza) throws Exception {
+		if(CostantiConfigurazione.GENERIC_PROPERTIES_LLM_PROVIDER.equals(idGP.getTipologia())) {
+			readLLMProvider(archive, idGP.getNome(), cascadeConfig, provenienza);
+		}
+	}
+	private void readLLMProvider(Archive archive, String nome, ArchiveCascadeConfiguration cascadeConfig, ArchiveType provenienza) throws Exception {
+		if(cascadeConfig.isCascadePolicyConfigurazione() || ArchiveType.CONFIGURAZIONE_LLM_PROVIDER.equals(provenienza)) {
+			String key = ArchiveLLMProvider.buildKey(CostantiConfigurazione.GENERIC_PROPERTIES_LLM_PROVIDER, nome);
+			if(!archive.getLlmProviders().containsKey(key)) {
+				GenericProperties policy = this.archiveEngine.getGenericProperties(CostantiConfigurazione.GENERIC_PROPERTIES_LLM_PROVIDER, nome);
+				archive.getLlmProviders().add(new ArchiveLLMProvider(policy, this.idCorrelazione));
+			}
+		}
+	}
+
+	private void readLLMModel(Archive archive, IDGenericProperties idGP, ArchiveCascadeConfiguration cascadeConfig, ArchiveType provenienza) throws Exception {
+		if(CostantiConfigurazione.GENERIC_PROPERTIES_LLM_MODEL.equals(idGP.getTipologia())) {
+			readLLMModel(archive, idGP.getNome(), cascadeConfig, provenienza);
+		}
+	}
+	private void readLLMModel(Archive archive, String nome, ArchiveCascadeConfiguration cascadeConfig, ArchiveType provenienza) throws Exception {
+		if(cascadeConfig.isCascadePolicyConfigurazione() || ArchiveType.CONFIGURAZIONE_LLM_MODEL.equals(provenienza)) {
+			String key = ArchiveLLMModel.buildKey(CostantiConfigurazione.GENERIC_PROPERTIES_LLM_MODEL, nome);
+			if(!archive.getLlmModels().containsKey(key)) {
+				GenericProperties policy = this.archiveEngine.getGenericProperties(CostantiConfigurazione.GENERIC_PROPERTIES_LLM_MODEL, nome);
+				archive.getLlmModels().add(new ArchiveLLMModel(policy, this.idCorrelazione));
+			}
+		}
+	}
+
+	private void readLLMPiiMasking(Archive archive, IDGenericProperties idGP, ArchiveCascadeConfiguration cascadeConfig, ArchiveType provenienza) throws Exception {
+		if(CostantiConfigurazione.GENERIC_PROPERTIES_LLM_PII_MASKING.equals(idGP.getTipologia())) {
+			readLLMPiiMasking(archive, idGP.getNome(), cascadeConfig, provenienza);
+		}
+	}
+	private void readLLMPiiMasking(Archive archive, String nome, ArchiveCascadeConfiguration cascadeConfig, ArchiveType provenienza) throws Exception {
+		if(cascadeConfig.isCascadePolicyConfigurazione() || ArchiveType.CONFIGURAZIONE_LLM_PII_MASKING.equals(provenienza)) {
+			String key = ArchiveLLMPiiMasking.buildKey(CostantiConfigurazione.GENERIC_PROPERTIES_LLM_PII_MASKING, nome);
+			if(!archive.getLlmPiiMasking().containsKey(key)) {
+				GenericProperties policy = this.archiveEngine.getGenericProperties(CostantiConfigurazione.GENERIC_PROPERTIES_LLM_PII_MASKING, nome);
+				archive.getLlmPiiMasking().add(new ArchiveLLMPiiMasking(policy, this.idCorrelazione));
+			}
+		}
+	}
+
+	private void readLLMProviderBinding(Archive archive, IDGenericProperties idGP, ArchiveCascadeConfiguration cascadeConfig, ArchiveType provenienza) throws Exception {
+		if(CostantiConfigurazione.GENERIC_PROPERTIES_LLM_PROVIDER_BINDING.equals(idGP.getTipologia())) {
+			readLLMProviderBinding(archive, idGP.getNome(), cascadeConfig, provenienza);
+		}
+	}
+	private void readLLMProviderBinding(Archive archive, String nome, ArchiveCascadeConfiguration cascadeConfig, ArchiveType provenienza) throws Exception {
+		if(cascadeConfig.isCascadePolicyConfigurazione() || ArchiveType.CONFIGURAZIONE_LLM_PROVIDER_BINDING.equals(provenienza)) {
+			String key = ArchiveLLMProviderBinding.buildKey(CostantiConfigurazione.GENERIC_PROPERTIES_LLM_PROVIDER_BINDING, nome);
+			if(!archive.getLlmProviderBindings().containsKey(key)) {
+				GenericProperties policy = this.archiveEngine.getGenericProperties(CostantiConfigurazione.GENERIC_PROPERTIES_LLM_PROVIDER_BINDING, nome);
+				archive.getLlmProviderBindings().add(new ArchiveLLMProviderBinding(policy, this.idCorrelazione));
+
+				// cascade sui riferimenti del binding (provider, model, regole PII) SOLO se il cascade delle
+				// policy di configurazione è abilitato, esattamente come gli altri oggetti config->config
+				// (es. activePolicy -> configPolicy). NB: i plugin invece forzano il cascade: caso a sé.
+				if(cascadeConfig.isCascadePolicyConfigurazione()) {
+					String provider = getPropertyValue(policy, "llmProviderBinding.provider");
+					if(provider!=null && !provider.trim().isEmpty()) {
+						try { readLLMProvider(archive, provider.trim(), cascadeConfig, provenienza); }catch(DriverConfigurazioneNotFound notFound) {}
+					}
+					String model = getPropertyValue(policy, "llmProviderBinding.model");
+					if(model!=null && !model.trim().isEmpty()) {
+						try { readLLMModel(archive, model.trim(), cascadeConfig, provenienza); }catch(DriverConfigurazioneNotFound notFound) {}
+					}
+					String piiRefs = getPropertyValue(policy, "llmProviderBinding.piiRegexpRefs");
+					if(piiRefs!=null && !piiRefs.trim().isEmpty()) {
+						for (String r : piiRefs.split(",")) {
+							String rn = r.trim();
+							if(!rn.isEmpty()) {
+								try { readLLMPiiMasking(archive, rn, cascadeConfig, provenienza); }catch(DriverConfigurazioneNotFound notFound) {}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	/** Cascade dei Provider Binding LLM referenziati da un connettore (config), con relativo cascade su provider/model/pii. */
+	private void readLLMFromConnettore(Archive archive, org.openspcoop2.core.config.Connettore connettore, ArchiveCascadeConfiguration cascadeConfig, ArchiveType provenienza) throws Exception {
+		if(connettore==null || connettore.getConnettoreLlm()==null) {
+			return;
+		}
+		for (org.openspcoop2.core.config.ConnettoreLlmProviderRef ref : connettore.getConnettoreLlm().getProviderList()) {
+			if(ref.getBindingList()!=null) {
+				for (org.openspcoop2.core.config.ConnettoreLlmBinding b : ref.getBindingList()) {
+					if(b.getNome()!=null && !b.getNome().trim().isEmpty()) {
+						readLLMProviderBinding(archive, b.getNome().trim(), cascadeConfig, provenienza);
+					}
+				}
+			}
+		}
+	}
+	/** Come sopra, per un connettore del registro (fruizioni). */
+	private void readLLMFromConnettore(Archive archive, org.openspcoop2.core.registry.Connettore connettore, ArchiveCascadeConfiguration cascadeConfig, ArchiveType provenienza) throws Exception {
+		if(connettore==null || connettore.getConnettoreLlm()==null) {
+			return;
+		}
+		for (org.openspcoop2.core.registry.ConnettoreLlmProviderRef ref : connettore.getConnettoreLlm().getProviderList()) {
+			if(ref.getBindingList()!=null) {
+				for (org.openspcoop2.core.registry.ConnettoreLlmBinding b : ref.getBindingList()) {
+					if(b.getNome()!=null && !b.getNome().trim().isEmpty()) {
+						readLLMProviderBinding(archive, b.getNome().trim(), cascadeConfig, provenienza);
+					}
+				}
+			}
+		}
+	}
+
+	private void readLLMConfigurazione(Archive archive, ArchiveType provenienza) throws Exception {
+		ArchiveCascadeConfiguration cascadeConfigPolicy = new ArchiveCascadeConfiguration();
+		cascadeConfigPolicy.setCascadePolicyConfigurazione(true);
+		readLLMTipologia(archive, CostantiConfigurazione.GENERIC_PROPERTIES_LLM_PROVIDER, cascadeConfigPolicy, provenienza);
+		readLLMTipologia(archive, CostantiConfigurazione.GENERIC_PROPERTIES_LLM_MODEL, cascadeConfigPolicy, provenienza);
+		readLLMTipologia(archive, CostantiConfigurazione.GENERIC_PROPERTIES_LLM_PII_MASKING, cascadeConfigPolicy, provenienza);
+		readLLMTipologia(archive, CostantiConfigurazione.GENERIC_PROPERTIES_LLM_PROVIDER_BINDING, cascadeConfigPolicy, provenienza);
+	}
+	private void readLLMTipologia(Archive archive, String tipologia, ArchiveCascadeConfiguration cascadeConfig, ArchiveType provenienza) throws Exception {
+		List<IDGenericProperties> list = null;
+		try {
+			list = this.archiveEngine.getAllIdGenericProperties(tipologia);
+		}catch(DriverConfigurazioneNotFound notFound) {}
+		if(list!=null && !list.isEmpty()) {
+			for (IDGenericProperties idGP : list) {
+				if(CostantiConfigurazione.GENERIC_PROPERTIES_LLM_PROVIDER.equals(tipologia)) {
+					readLLMProvider(archive, idGP.getNome(), cascadeConfig, provenienza);
+				}
+				else if(CostantiConfigurazione.GENERIC_PROPERTIES_LLM_MODEL.equals(tipologia)) {
+					readLLMModel(archive, idGP.getNome(), cascadeConfig, provenienza);
+				}
+				else if(CostantiConfigurazione.GENERIC_PROPERTIES_LLM_PII_MASKING.equals(tipologia)) {
+					readLLMPiiMasking(archive, idGP.getNome(), cascadeConfig, provenienza);
+				}
+				else if(CostantiConfigurazione.GENERIC_PROPERTIES_LLM_PROVIDER_BINDING.equals(tipologia)) {
+					readLLMProviderBinding(archive, idGP.getNome(), cascadeConfig, provenienza);
+				}
+			}
+		}
+	}
+
 	private void readPluginConfigurazione(Archive archive, ArchiveType provenienza) throws Exception {
-		
+
 		ArchiveCascadeConfiguration cascadeConfigPlugin = new ArchiveCascadeConfiguration();
 		cascadeConfigPlugin.setCascadePluginConfigurazione(true);
 		
@@ -1667,6 +1853,13 @@ public class ExporterArchiveUtils {
 					
 					// token policy di negoziazione
 					if(cascadeConfig.isCascadePolicyConfigurazione()) {
+						// LLM: Provider Binding referenziati dal connettore (cascade su provider/model/regole PII)
+						if(sa!=null && sa.getInvocazioneServizio()!=null) {
+							readLLMFromConnettore(archive, sa.getInvocazioneServizio().getConnettore(), cascadeConfig, provenienza);
+						}
+						if(sa!=null && sa.getRispostaAsincrona()!=null) {
+							readLLMFromConnettore(archive, sa.getRispostaAsincrona().getConnettore(), cascadeConfig, provenienza);
+						}
 						if(sa!=null && sa.getInvocazioneServizio()!=null) {
 							if(sa.getInvocazioneServizio().getConnettore()!=null &&
 									sa.getInvocazioneServizio().getConnettore().getProperties()!=null && sa.getInvocazioneServizio().getConnettore().getProperties().containsKey(CostantiConnettori.CONNETTORE_TOKEN_POLICY)) {
@@ -2221,6 +2414,13 @@ public class ExporterArchiveUtils {
 					// token policy di negoziazione
 					if(cascadeConfig.isCascadePolicyConfigurazione()) {
 						if(fruitore!=null) {
+							// LLM: Provider Binding referenziati dal connettore (cascade su provider/model/regole PII)
+							readLLMFromConnettore(archive, fruitore.getConnettore(), cascadeConfig, provenienza);
+							if(fruitore.sizeConfigurazioneAzioneList()>0) {
+								for (ConfigurazioneServizioAzione confAzioneLlm : fruitore.getConfigurazioneAzioneList()) {
+									readLLMFromConnettore(archive, confAzioneLlm.getConnettore(), cascadeConfig, provenienza);
+								}
+							}
 							if(fruitore.getConnettore()!=null &&
 									fruitore.getConnettore().getProperties()!=null && fruitore.getConnettore().getProperties().containsKey(CostantiConnettori.CONNETTORE_TOKEN_POLICY)) {
 								this.readTokenPolicy_retrieve(archive, fruitore.getConnettore().getProperties().get(CostantiConnettori.CONNETTORE_TOKEN_POLICY),

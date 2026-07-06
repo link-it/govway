@@ -90,6 +90,7 @@ public class ConfigurazionePolicyGestioneTokenList extends Action {
 			boolean llmProvider = ConfigurazioneCostanti.isConfigurazioneLLMProvider(infoType);
 			boolean llmModel = ConfigurazioneCostanti.isConfigurazioneLLMModel(infoType);
 			boolean llmProviderBinding = ConfigurazioneCostanti.isConfigurazioneLLMProviderBinding(infoType);
+			boolean llmPiiMasking = ConfigurazioneCostanti.isConfigurazioneLLMPiiMasking(infoType);
 
 			// reset di eventuali configurazioni salvate in sessione
 			Properties mapId;
@@ -101,6 +102,8 @@ public class ConfigurazionePolicyGestioneTokenList extends Action {
 				mapId = confCore.getLlmModelTipologia();
 			} else if (llmProviderBinding) {
 				mapId = confCore.getLlmProviderBindingTipologia();
+			} else if (llmPiiMasking) {
+				mapId = confCore.getLlmPiiMaskingTipologia();
 			} else {
 				mapId = confCore.getTokenPolicyTipologia();
 			}
@@ -108,7 +111,7 @@ public class ConfigurazionePolicyGestioneTokenList extends Action {
 				PropertiesSourceConfiguration propertiesSourceConfiguration;
 				if (attributeAuthority) {
 					propertiesSourceConfiguration = confCore.getAttributeAuthorityPropertiesSourceConfiguration();
-				} else if (llmProvider || llmModel || llmProviderBinding) {
+				} else if (llmProvider || llmModel || llmProviderBinding || llmPiiMasking) {
 					propertiesSourceConfiguration = confCore.getLlmPropertiesSourceConfiguration();
 				} else {
 					propertiesSourceConfiguration = confCore.getPolicyGestioneTokenPropertiesSourceConfiguration();
@@ -133,6 +136,8 @@ public class ConfigurazionePolicyGestioneTokenList extends Action {
 				idLista = Liste.CONFIGURAZIONE_GESTIONE_LLM_MODEL;
 			} else if (llmProviderBinding) {
 				idLista = Liste.CONFIGURAZIONE_GESTIONE_LLM_PROVIDER_BINDING;
+			} else if (llmPiiMasking) {
+				idLista = Liste.CONFIGURAZIONE_GESTIONE_LLM_PII_MASKING;
 			} else {
 				idLista = Liste.CONFIGURAZIONE_GESTIONE_POLICY_TOKEN;
 			}
@@ -152,13 +157,16 @@ public class ConfigurazionePolicyGestioneTokenList extends Action {
 			else if(llmProviderBinding) {
 				tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_LLM_PROVIDER_BINDING);
 			}
+			else if(llmPiiMasking) {
+				tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_LLM_PII_MASKING);
+			}
 			else {
 				tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN);
 				tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_RETRIEVE_POLICY_TOKEN);
 			}
 			
 			// Mapping FILTRO_LLM_* logico -> property name concreto (lookup nel driver via EXISTS).
-			java.util.Map<String,String> propertyFilters = buildLlmPropertyFilters(ricerca, idLista, llmProvider, llmModel, llmProviderBinding);
+			java.util.Map<String,String> propertyFilters = buildLlmPropertyFilters(ricerca, idLista, llmProvider, llmModel, llmProviderBinding, llmPiiMasking);
 
 			List<GenericProperties> lista = confCore.gestorePolicyTokenList(idLista, tipologie, ricerca, propertyFilters);
 
@@ -185,9 +193,17 @@ public class ConfigurazionePolicyGestioneTokenList extends Action {
 	 * <p>Il valore "qualsiasi" viene scartato (nessun filtro).</p>
 	 */
 	private static java.util.Map<String,String> buildLlmPropertyFilters(ConsoleSearch ricerca, int idLista,
-			boolean llmProvider, boolean llmModel, boolean llmProviderBinding) {
+			boolean llmProvider, boolean llmModel, boolean llmProviderBinding, boolean llmPiiMasking) {
 		java.util.LinkedHashMap<String,String> propertyFilters = new java.util.LinkedHashMap<>();
-		if (llmProvider) {
+		if (llmPiiMasking) {
+			putIfSelected(propertyFilters, ricerca, idLista,
+					org.openspcoop2.core.commons.Filtri.FILTRO_LLM_PII_MASKING_TYPE,
+					org.openspcoop2.pdd.core.llm.pii.Costanti.LLM_PII_DETECTOR_TYPE);
+			putIfSelected(propertyFilters, ricerca, idLista,
+					org.openspcoop2.core.commons.Filtri.FILTRO_LLM_PII_MASKING_CATEGORY,
+					org.openspcoop2.pdd.core.llm.pii.Costanti.LLM_PII_CATEGORY);
+		}
+		else if (llmProvider) {
 			putIfSelected(propertyFilters, ricerca, idLista,
 					org.openspcoop2.core.commons.Filtri.FILTRO_LLM_PROVIDER_TYPE,
 					org.openspcoop2.pdd.core.llm.provider.Costanti.LLM_PROVIDER_TYPE);

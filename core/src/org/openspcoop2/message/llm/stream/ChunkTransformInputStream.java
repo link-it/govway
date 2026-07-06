@@ -54,6 +54,15 @@ public class ChunkTransformInputStream extends FilterInputStream {
 	 *  livello applicativo di accumulare il totale per la transazione (vedi
 	 *  {@code LLMHandlerSupport.accumulateLLMStreamUsage}). Puo' essere null. */
 	private final java.util.function.Consumer<org.openspcoop2.message.llm.CanonicalUsage> usageObserver;
+	/** Interceptor opzionale applicato agli eventi canonical dopo il decode e prima dell'encode
+	 *  (es. unmask PII dei text_delta). Può essere null. */
+	private final java.util.function.UnaryOperator<List<CanonicalStreamEvent>> eventInterceptor;
+	/** Stream sottostante (pre-decompressione) da drenare fino a EOF quando lo stream sorgente termina.
+	 *  Serve col Content-Encoding gzip: {@link java.util.zip.GZIPInputStream} si ferma al trailer del
+	 *  membro gzip senza leggere il sottostante fino a {@code read()==-1}, così l'istrumentazione EOF
+	 *  del connettore (es. DiagnosticInputStream) non scatterebbe. Può essere null. */
+	private java.io.InputStream drainUnderlyingOnEof;
+	private boolean drainedUnderlying = false;
 
 	/** Buffer di byte pronti per il consumer (output del transformer). */
 	private byte[] outBuffer;
@@ -74,11 +83,21 @@ public class ChunkTransformInputStream extends FilterInputStream {
 			LLMInboundProviderChunkDecoder decoder,
 			LLMOutboundFrontDoorChunkEncoder encoder,
 			java.util.function.Consumer<org.openspcoop2.message.llm.CanonicalUsage> usageObserver) {
+		this(source, reader, decoder, encoder, usageObserver, null);
+	}
+
+	public ChunkTransformInputStream(InputStream source,
+			LLMProviderStreamReader reader,
+			LLMInboundProviderChunkDecoder decoder,
+			LLMOutboundFrontDoorChunkEncoder encoder,
+			java.util.function.Consumer<org.openspcoop2.message.llm.CanonicalUsage> usageObserver,
+			java.util.function.UnaryOperator<List<CanonicalStreamEvent>> eventInterceptor) {
 		super(source);
 		this.reader = reader;
 		this.decoder = decoder;
 		this.encoder = encoder;
 		this.usageObserver = usageObserver;
+		this.eventInterceptor = eventInterceptor;
 		this.reader.bind(source);
 	}
 
@@ -125,6 +144,27 @@ public class ChunkTransformInputStream extends FilterInputStream {
 		return this.outBuffer != null && this.outOffset < this.outBuffer.length;
 	}
 
+	/** Imposta lo stream sottostante (pre-decompressione) da drenare a EOF a fine stream (vedi campo). */
+	public void setDrainUnderlyingOnEof(java.io.InputStream underlying) {
+		this.drainUnderlyingOnEof = underlying;
+	}
+
+	/** Drena il sottostante fino a EOF, così l'istrumentazione EOF del connettore scatta anche col gzip. */
+	private void drainUnderlyingOnEof() {
+		if (this.drainUnderlyingOnEof == null || this.drainedUnderlying) {
+			return;
+		}
+		this.drainedUnderlying = true;
+		try {
+			byte[] buf = new byte[1024];
+			while (this.drainUnderlyingOnEof.read(buf) != -1) {
+				// scarta: i contenuti utili sono già stati decodificati dal GZIPInputStream
+			}
+		} catch (java.io.IOException e) {
+			// best-effort: se il drain fallisce non compromettiamo la risposta già consegnata
+		}
+	}
+
 	private int drainTo(byte[] dst, int off, int len) {
 		int available = this.outBuffer.length - this.outOffset;
 		int toCopy = Math.min(available, len);
@@ -141,6 +181,7 @@ public class ChunkTransformInputStream extends FilterInputStream {
 		LLMProviderRawChunk raw = this.reader.readNextChunk();
 		if (raw == null) {
 			this.upstreamEof = true;
+			drainUnderlyingOnEof();
 			return;
 		}
 		try {
@@ -149,6 +190,12 @@ public class ChunkTransformInputStream extends FilterInputStream {
 				return; // chunk semanticamente innocuo: salta
 			}
 			notifyUsage(events);
+			if (this.eventInterceptor != null) {
+				events = this.eventInterceptor.apply(events);
+				if (events == null || events.isEmpty()) {
+					return;
+				}
+			}
 			byte[] out = encodeAll(events);
 			if (out.length > 0) {
 				this.outBuffer = out;

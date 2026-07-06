@@ -158,6 +158,7 @@ public class ValidationEngine {
 				validaNumber(item,metadata, externalResources);
 				break;
 			case SELECT:
+			case MULTI_SELECT:
 				validaSelect(item,metadata, externalResources);
 				break;
 			case TEXT:

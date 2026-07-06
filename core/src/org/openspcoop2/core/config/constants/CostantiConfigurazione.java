@@ -314,6 +314,7 @@ public class CostantiConfigurazione {
 	public static final String GENERIC_PROPERTIES_LLM_PROVIDER = "llmProvider";
 	public static final String GENERIC_PROPERTIES_LLM_MODEL = "llmModel";
 	public static final String GENERIC_PROPERTIES_LLM_PROVIDER_BINDING = "llmProviderBinding";
+	public static final String GENERIC_PROPERTIES_LLM_PII_MASKING = "llmPiiMasking";
 	public static final String GENERIC_PROPERTIES_TIPOLOGIA_INSTALLER = "installer";
     
     /** Routing */

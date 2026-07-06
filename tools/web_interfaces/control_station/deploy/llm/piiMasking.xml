@@ -1,0 +1,50 @@
+<config id="llmPiiMasking"
+	label="PII Masking"
+	xmlns="http://www.openspcoop2.org/core/mvc/properties"
+	provider="org.openspcoop2.pdd.core.llm.pii.LLMPiiMaskingConfigProvider">
+
+	<section label="Regola PII" hidden="true">
+
+		<item type="select" name="piiDetectorType" label="Tipo" required="true" reloadOnChange="true">
+			<property name="llmPiiMasking.detectorType" />
+		</item>
+
+		<item type="select" name="piiCategory" label="Categoria" required="true" reloadOnChange="true">
+			<property name="llmPiiMasking.category" />
+		</item>
+
+		<item type="textarea" name="piiPatterns" label="Espressioni Regolari" required="true"
+			note="Una espressione regolare per riga">
+			<conditions>
+				<condition><equals name="piiDetectorType" value="regexp" /></condition>
+			</conditions>
+			<property name="llmPiiMasking.patterns" />
+		</item>
+
+		<item type="text" name="piiPluginClassName" label="Classe Plugin" required="true"
+			note="Nome completo della classe Java che implementa il plugin di rilevamento/mascheramento">
+			<conditions>
+				<condition><equals name="piiDetectorType" value="plugin" /></condition>
+			</conditions>
+			<property name="llmPiiMasking.pluginClassName" />
+		</item>
+
+		<item type="checkbox" name="piiValidate" label="Validazione" defaultSelected="true"
+			note="Abilita la validazione specifica della categoria per ridurre i falsi positivi">
+			<conditions and="true">
+				<condition><equals name="piiDetectorType" value="regexp" /></condition>
+				<condition and="false">
+					<equals name="piiCategory" value="card" />
+					<equals name="piiCategory" value="iban" />
+					<equals name="piiCategory" value="cf" />
+					<equals name="piiCategory" value="piva" />
+					<equals name="piiCategory" value="phone" />
+					<equals name="piiCategory" value="ip" />
+				</condition>
+			</conditions>
+			<property name="llmPiiMasking.validate" />
+		</item>
+
+	</section>
+
+</config>

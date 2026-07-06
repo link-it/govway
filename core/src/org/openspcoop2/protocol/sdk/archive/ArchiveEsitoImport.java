@@ -70,6 +70,11 @@ public class ArchiveEsitoImport {
 	
 	private ArchiveSortedMap<ArchiveEsitoImportDetail> attributeAuthorities = new ArchiveSortedMap<ArchiveEsitoImportDetail>();
 
+	private ArchiveSortedMap<ArchiveEsitoImportDetail> llmProviders = new ArchiveSortedMap<ArchiveEsitoImportDetail>();
+	private ArchiveSortedMap<ArchiveEsitoImportDetail> llmModels = new ArchiveSortedMap<ArchiveEsitoImportDetail>();
+	private ArchiveSortedMap<ArchiveEsitoImportDetail> llmPiiMasking = new ArchiveSortedMap<ArchiveEsitoImportDetail>();
+	private ArchiveSortedMap<ArchiveEsitoImportDetail> llmProviderBindings = new ArchiveSortedMap<ArchiveEsitoImportDetail>();
+
 	private ArchiveSortedMap<ArchiveEsitoImportDetail> plugin_classi = new ArchiveSortedMap<ArchiveEsitoImportDetail>();
 	private ArchiveSortedMap<ArchiveEsitoImportDetail> plugin_archivi = new ArchiveSortedMap<ArchiveEsitoImportDetail>();
 	
@@ -181,6 +186,18 @@ public class ArchiveEsitoImport {
 		
 	public ArchiveSortedMap<ArchiveEsitoImportDetail> getAttributeAuthorities() {
 		return this.attributeAuthorities;
+	}
+	public ArchiveSortedMap<ArchiveEsitoImportDetail> getLlmProviders() {
+		return this.llmProviders;
+	}
+	public ArchiveSortedMap<ArchiveEsitoImportDetail> getLlmModels() {
+		return this.llmModels;
+	}
+	public ArchiveSortedMap<ArchiveEsitoImportDetail> getLlmPiiMasking() {
+		return this.llmPiiMasking;
+	}
+	public ArchiveSortedMap<ArchiveEsitoImportDetail> getLlmProviderBindings() {
+		return this.llmProviderBindings;
 	}
 
 	public ArchiveSortedMap<ArchiveEsitoImportDetail> getPlugin_classi() {

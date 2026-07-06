@@ -7717,7 +7717,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	}
 
 	public void addConfigurazioneLLMToDati(List<DataElement> dati, TipoOperazione tipoOperazione,
-			long sizeProvider, long sizeModel, long sizeProviderBinding) throws Exception {
+			long sizeProvider, long sizeModel, long sizeProviderBinding, long sizePiiMasking) throws Exception {
 
 		DataElement de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_LLM);
@@ -7752,6 +7752,16 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE+"="+
 				ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_LLM_PROVIDER_BINDING);
 		de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LLM_PROVIDER_BINDING_LINK+" (" + sizeProviderBinding + ")");
+		dati.add(de);
+
+		de = new DataElement();
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LLM_PII_MASKING_LINK);
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LLM_PII_MASKING_LINK);
+		de.setType(DataElementType.LINK);
+		de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_LIST+"?"+
+				ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE+"="+
+				ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_LLM_PII_MASKING);
+		de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LLM_PII_MASKING_LINK+" (" + sizePiiMasking + ")");
 		dati.add(de);
 	}
 
@@ -16975,7 +16985,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			boolean llmProvider = ConfigurazioneCostanti.isConfigurazioneLLMProvider(infoType);
 			boolean llmModel = ConfigurazioneCostanti.isConfigurazioneLLMModel(infoType);
 			boolean llmProviderBinding = ConfigurazioneCostanti.isConfigurazioneLLMProviderBinding(infoType);
-			boolean llmAny = llmProvider || llmModel || llmProviderBinding;
+			boolean llmPiiMasking = ConfigurazioneCostanti.isConfigurazioneLLMPiiMasking(infoType);
+			boolean llmAny = llmProvider || llmModel || llmProviderBinding || llmPiiMasking;
 
 			// decido la vista custom da mostrare
 			if(attributeAuthority || llmAny) {
@@ -17007,7 +17018,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				addFilterTipoTokenPolicy(filterTipoTokenPolicy, false, nomiConfigurazioniPolicyGestioneToken, labelConfigurazioniPolicyGestioneToken);
 			}
 			else if(llmAny) {
-				addFilterLLM(ricerca, idLista, llmProvider, llmModel, llmProviderBinding);
+				addFilterLLM(ricerca, idLista, llmProvider, llmModel, llmProviderBinding, llmPiiMasking);
 			}
 
 			this.pd.setIndex(offset);
@@ -17026,6 +17037,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					label = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LLM_PROVIDER_LINK;
 				} else if (llmModel) {
 					label = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LLM_MODEL_LINK;
+				} else if (llmPiiMasking) {
+					label = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LLM_PII_MASKING_LINK;
 				} else {
 					label = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LLM_PROVIDER_BINDING_LINK;
 				}
@@ -17060,6 +17073,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				forceId = this.core.isLlmModelForceIdEnabled();
 			} else if (llmProviderBinding) {
 				forceId = this.core.isLlmProviderBindingForceIdEnabled();
+			} else if (llmPiiMasking) {
+				forceId = this.core.isLlmPiiMaskingForceIdEnabled();
 			} else {
 				forceId = this.core.isTokenPolicyForceIdEnabled();
 			}
@@ -17095,8 +17110,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				org.openspcoop2.protocol.sdk.constants.ArchiveType archiveType;
 				if (attributeAuthority) {
 					archiveType = org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_ATTRIBUTE_AUTHORITY;
+				} else if (llmModel) {
+					archiveType = org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_LLM_MODEL;
+				} else if (llmProviderBinding) {
+					archiveType = org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_LLM_PROVIDER_BINDING;
+				} else if (llmPiiMasking) {
+					archiveType = org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_LLM_PII_MASKING;
 				} else if (llmAny) {
-					// Per MVP riusiamo l'ArchiveType del Provider anche per Model/Binding.
 					archiveType = org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_LLM_PROVIDER;
 				} else {
 					archiveType = org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_TOKEN_POLICY;
@@ -17114,7 +17134,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					}
 					else if(llmAny) {
 						de.setValue(ConfigurazioneCostanti.LABEL_LLM_PROVIDER_ESPORTA_SELEZIONATI);
-						de.setOnClick(ConfigurazioneCostanti.LABEL_LLM_PROVIDER_ESPORTA_SELEZIONATI_ONCLICK);
+						// onclick con l'ArchiveType specifico della lista corrente (provider/model/binding/pii)
+						de.setOnClick("Esporta('"+archiveType.name()+"')");
 					}
 					else {
 						de.setValue(ConfigurazioneCostanti.LABEL_TOKEN_POLICY_ESPORTA_SELEZIONATI);
@@ -17474,6 +17495,19 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			return sb.length() > 0 ? sb.toString() : null;
 		}
+		if (org.openspcoop2.pdd.core.llm.pii.Costanti.TIPOLOGIA.equals(tipologia)) {
+			String detectorType = props.get(org.openspcoop2.pdd.core.llm.pii.Costanti.LLM_PII_DETECTOR_TYPE);
+			String category = props.get(org.openspcoop2.pdd.core.llm.pii.Costanti.LLM_PII_CATEGORY);
+			StringBuilder sb = new StringBuilder();
+			if (StringUtils.isNotBlank(detectorType)) {
+				sb.append("Tipo: ").append(detectorType);
+			}
+			if (StringUtils.isNotBlank(category)) {
+				if (sb.length() > 0) sb.append(", ");
+				sb.append("Categoria: ").append(category);
+			}
+			return sb.length() > 0 ? sb.toString() : null;
+		}
 		return null;
 	}
 
@@ -17486,8 +17520,29 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	 * </ul>
 	 */
 	public void addFilterLLM(ConsoleSearch ricerca, int idLista,
-			boolean llmProvider, boolean llmModel, boolean llmProviderBinding) throws Exception {
-		if(llmProvider) {
+			boolean llmProvider, boolean llmModel, boolean llmProviderBinding, boolean llmPiiMasking) throws Exception {
+		if(llmPiiMasking) {
+			// Tipo detector (postback: la Categoria viene inizializzata in funzione del Tipo)
+			String currentType = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_LLM_PII_MASKING_TYPE);
+			List<String> typeValues = org.openspcoop2.pdd.core.llm.pii.LLMPiiMaskingConfigProvider.supportedDetectorTypes();
+			String[] typeArr = typeValues.toArray(new String[0]);
+			String[] typeLabels = new String[typeArr.length];
+			for(int i=0;i<typeArr.length;i++) {
+				typeLabels[i] = org.openspcoop2.pdd.core.llm.pii.LLMPiiMaskingConfigProvider.detectorTypeLabel(typeArr[i]);
+			}
+			addLlmDropdownFilter(Filtri.FILTRO_LLM_PII_MASKING_TYPE, "Tipo", currentType, typeArr, typeLabels);
+
+			// Categoria (dipende dal Tipo selezionato)
+			String currentCategory = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_LLM_PII_MASKING_CATEGORY);
+			List<String> catValues = org.openspcoop2.pdd.core.llm.pii.LLMPiiMaskingConfigProvider.supportedCategories(currentType);
+			String[] catArr = catValues.toArray(new String[0]);
+			String[] catLabels = new String[catArr.length];
+			for(int i=0;i<catArr.length;i++) {
+				catLabels[i] = org.openspcoop2.pdd.core.llm.pii.LLMPiiMaskingConfigProvider.categoryLabel(catArr[i]);
+			}
+			addLlmDropdownFilter(Filtri.FILTRO_LLM_PII_MASKING_CATEGORY, "Categoria", currentCategory, catArr, catLabels);
+		}
+		else if(llmProvider) {
 			String current = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_LLM_PROVIDER_TYPE);
 			String[] values = {
 					org.openspcoop2.pdd.core.llm.provider.Costanti.LLM_PROVIDER_TYPE_VALUE_ANTHROPIC,
@@ -17532,6 +17587,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	}
 
 	private void addLlmDropdownFilter(String filterKey, String filterLabel, String currentValue, String[] values, String[] labels) throws org.openspcoop2.web.lib.mvc.PageDataException {
+		addLlmDropdownFilter(filterKey, filterLabel, currentValue, values, labels, false);
+	}
+	private void addLlmDropdownFilter(String filterKey, String filterLabel, String currentValue, String[] values, String[] labels, boolean postBack) throws org.openspcoop2.web.lib.mvc.PageDataException {
 		int len = values.length + 1;
 		String[] valuesPlusAny = new String[len];
 		String[] labelsPlusAny = new String[len];
@@ -17539,7 +17597,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		labelsPlusAny[0] = CostantiControlStation.LABEL_PARAMETRO_TIPO_TOKEN_POLICY_QUALSIASI;
 		System.arraycopy(values, 0, valuesPlusAny, 1, values.length);
 		System.arraycopy(labels, 0, labelsPlusAny, 1, labels.length);
-		this.pd.addFilter(filterKey, filterLabel, currentValue, valuesPlusAny, labelsPlusAny, false, this.getSize());
+		this.pd.addFilter(filterKey, filterLabel, currentValue, valuesPlusAny, labelsPlusAny, postBack, this.getSize());
 	}
 
 	private List<String> loadGenericPropertiesNames(String tipologia) throws DriverConfigurazioneException {
@@ -17667,6 +17725,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LLM_MODEL_SINGULAR);
 			} else if (ConfigurazioneCostanti.isConfigurazioneLLMProviderBinding(infoTypeLLM)) {
 				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LLM_PROVIDER_BINDING_SINGULAR);
+			} else if (ConfigurazioneCostanti.isConfigurazioneLLMPiiMasking(infoTypeLLM)) {
+				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LLM_PII_MASKING_SINGULAR);
 			} else {
 				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LLM_PROVIDER_SINGULAR);
 			}
@@ -24949,6 +25009,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				|| ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_LLM_PROVIDER.equals(parameterValueFiltrato)
 				|| ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_LLM_MODEL.equals(parameterValueFiltrato)
 				|| ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_LLM_PROVIDER_BINDING.equals(parameterValueFiltrato)
+				|| ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_LLM_PII_MASKING.equals(parameterValueFiltrato)
 				;
 	}
 	

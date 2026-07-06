@@ -78,6 +78,8 @@ public class ConfigurazioneLLM extends Action {
 					org.openspcoop2.pdd.core.llm.provider.Costanti.TIPOLOGIA_MODEL, null).size();
 			long sizeProviderBinding = confCore.gestorePolicyTokenList(null,
 					org.openspcoop2.pdd.core.llm.provider.Costanti.TIPOLOGIA_PROVIDER_BINDING, null).size();
+			long sizePiiMasking = confCore.gestorePolicyTokenList(null,
+					org.openspcoop2.pdd.core.llm.pii.Costanti.TIPOLOGIA, null).size();
 
 			List<Parameter> lstParam = new ArrayList<>();
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_LLM, null));
@@ -87,7 +89,7 @@ public class ConfigurazioneLLM extends Action {
 			List<DataElement> dati = new ArrayList<>();
 			dati.add(ServletUtils.getDataElementForEditModeFinished());
 
-			confHelper.addConfigurazioneLLMToDati(dati, tipoOperazione, sizeProvider, sizeModel, sizeProviderBinding);
+			confHelper.addConfigurazioneLLMToDati(dati, tipoOperazione, sizeProvider, sizeModel, sizeProviderBinding, sizePiiMasking);
 
 			pd.setDati(dati);
 			pd.disableEditMode();

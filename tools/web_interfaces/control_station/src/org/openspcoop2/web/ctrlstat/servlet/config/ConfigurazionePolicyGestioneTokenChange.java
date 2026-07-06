@@ -97,7 +97,8 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 			boolean llmProvider = ConfigurazioneCostanti.isConfigurazioneLLMProvider(infoType);
 			boolean llmModel = ConfigurazioneCostanti.isConfigurazioneLLMModel(infoType);
 			boolean llmProviderBinding = ConfigurazioneCostanti.isConfigurazioneLLMProviderBinding(infoType);
-			boolean llmAny = llmProvider || llmModel || llmProviderBinding;
+			boolean llmPiiMasking = ConfigurazioneCostanti.isConfigurazioneLLMPiiMasking(infoType);
+			boolean llmAny = llmProvider || llmModel || llmProviderBinding || llmPiiMasking;
 
 			String resetElementoCacheS = confHelper.getParameter(CostantiControlStation.PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE);
 			boolean resetElementoCache = ServletUtils.isCheckBoxEnabled(resetElementoCacheS);
@@ -113,6 +114,8 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 				mapId = confCore.getLlmModelTipologia();
 			} else if (llmProviderBinding) {
 				mapId = confCore.getLlmProviderBindingTipologia();
+			} else if (llmPiiMasking) {
+				mapId = confCore.getLlmPiiMaskingTipologia();
 			} else {
 				mapId = confCore.getTokenPolicyTipologia();
 			}
@@ -214,7 +217,8 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 					llmProvider = ConfigurazioneCostanti.isConfigurazioneLLMProvider(infoTypeA);
 					llmModel = ConfigurazioneCostanti.isConfigurazioneLLMModel(infoTypeA);
 					llmProviderBinding = ConfigurazioneCostanti.isConfigurazioneLLMProviderBinding(infoTypeA);
-					llmAny = llmProvider || llmModel || llmProviderBinding;
+					llmPiiMasking = ConfigurazioneCostanti.isConfigurazioneLLMPiiMasking(infoTypeA);
+					llmAny = llmProvider || llmModel || llmProviderBinding || llmPiiMasking;
 
 					// reset di eventuali configurazioni salvate in sessione
 					if (attributeAuthority) {
@@ -225,6 +229,8 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 						mapId = confCore.getLlmModelTipologia();
 					} else if (llmProviderBinding) {
 						mapId = confCore.getLlmProviderBindingTipologia();
+					} else if (llmPiiMasking) {
+						mapId = confCore.getLlmPiiMaskingTipologia();
 					} else {
 						mapId = confCore.getTokenPolicyTipologia();
 					}
@@ -255,6 +261,8 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 						idLista = Liste.CONFIGURAZIONE_GESTIONE_LLM_MODEL;
 					} else if (llmProviderBinding) {
 						idLista = Liste.CONFIGURAZIONE_GESTIONE_LLM_PROVIDER_BINDING;
+					} else if (llmPiiMasking) {
+						idLista = Liste.CONFIGURAZIONE_GESTIONE_LLM_PII_MASKING;
 					} else {
 						idLista = Liste.CONFIGURAZIONE_GESTIONE_POLICY_TOKEN;
 					}
@@ -273,6 +281,9 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 					}
 					else if(llmProviderBinding) {
 						tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_LLM_PROVIDER_BINDING);
+					}
+					else if(llmPiiMasking) {
+						tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_LLM_PII_MASKING);
 					}
 					else {
 						tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN);
@@ -311,6 +322,9 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 				} else if (llmModel) {
 					label = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LLM_MODEL_LINK;
 					tipologiaHttpValue = ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_LLM_MODEL;
+				} else if (llmPiiMasking) {
+					label = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LLM_PII_MASKING_LINK;
+					tipologiaHttpValue = ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_LLM_PII_MASKING;
 				} else {
 					label = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LLM_PROVIDER_BINDING_LINK;
 					tipologiaHttpValue = ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_LLM_PROVIDER_BINDING;
@@ -414,6 +428,8 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 				idLista = Liste.CONFIGURAZIONE_GESTIONE_LLM_MODEL;
 			} else if (llmProviderBinding) {
 				idLista = Liste.CONFIGURAZIONE_GESTIONE_LLM_PROVIDER_BINDING;
+			} else if (llmPiiMasking) {
+				idLista = Liste.CONFIGURAZIONE_GESTIONE_LLM_PII_MASKING;
 			} else {
 				idLista = Liste.CONFIGURAZIONE_GESTIONE_POLICY_TOKEN;
 			}
@@ -432,6 +448,9 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 			}
 			else if(llmProviderBinding) {
 				tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_LLM_PROVIDER_BINDING);
+			}
+			else if(llmPiiMasking) {
+				tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_LLM_PII_MASKING);
 			}
 			else {
 				tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN);

@@ -1440,7 +1440,8 @@ public class CostantiControlStation {
 	public static final String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_LLM_PROVIDER = org.openspcoop2.pdd.core.llm.provider.Costanti.TIPOLOGIA;
 	public static final String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_LLM_MODEL = org.openspcoop2.pdd.core.llm.provider.Costanti.TIPOLOGIA_MODEL;
 	public static final String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_LLM_PROVIDER_BINDING = org.openspcoop2.pdd.core.llm.provider.Costanti.TIPOLOGIA_PROVIDER_BINDING;
-	
+	public static final String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_LLM_PII_MASKING = org.openspcoop2.pdd.core.llm.pii.Costanti.TIPOLOGIA;
+
 	public static final String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_OPZIONALE = StatoFunzionalita.DISABILITATO.getValue();
 	
 	public static final String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_VALIDAZIONE_INPUT = StatoFunzionalitaConWarning.ABILITATO.getValue();

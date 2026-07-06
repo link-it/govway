@@ -499,6 +499,27 @@ public class ZIPReadUtils  {
 							}
 						}
 						
+						// ********** LLM (provider/model/piiMasking/providerBinding) ****************
+						else if(entryName.startsWith((rootDir+Costanti.OPENSPCOOP2_ARCHIVE_LLM_DIR+File.separatorChar)) ){
+							byte[] xml = placeholder.replace(content);
+							bin = new ByteArrayInputStream(xml);
+							if(entryName.contains(File.separatorChar+Costanti.OPENSPCOOP2_ARCHIVE_LLM_PROVIDER_BINDING_DIR+File.separatorChar)){
+								this.readLLMProviderBinding(archivio, bin, xml, entryName, validationDocuments, idCorrelazione);
+							}
+							else if(entryName.contains(File.separatorChar+Costanti.OPENSPCOOP2_ARCHIVE_LLM_PROVIDER_DIR+File.separatorChar)){
+								this.readLLMProvider(archivio, bin, xml, entryName, validationDocuments, idCorrelazione);
+							}
+							else if(entryName.contains(File.separatorChar+Costanti.OPENSPCOOP2_ARCHIVE_LLM_MODEL_DIR+File.separatorChar)){
+								this.readLLMModel(archivio, bin, xml, entryName, validationDocuments, idCorrelazione);
+							}
+							else if(entryName.contains(File.separatorChar+Costanti.OPENSPCOOP2_ARCHIVE_LLM_PII_MASKING_DIR+File.separatorChar)){
+								this.readLLMPiiMasking(archivio, bin, xml, entryName, validationDocuments, idCorrelazione);
+							}
+							else {
+								throw new ProtocolException("Elemento ["+entryName+"] non atteso");
+							}
+						}
+
 						// ********** plugins ****************
 						else if(entryName.startsWith((rootDir+Costanti.OPENSPCOOP2_ARCHIVE_PLUGINS_DIR+File.separatorChar)) ){
 							byte[] xml = placeholder.replace(content);
@@ -1446,6 +1467,78 @@ public class ZIPReadUtils  {
 		}catch(Exception eDeserializer){
 			String xmlString = this.toStringXmlElementForErrorMessage(xml);
 			throw new ProtocolException(xmlString+"Elemento ["+entryName+"] contiene una struttura xml (attribute authority) non valida rispetto allo schema (ConfigurazionePdD): "
+					+eDeserializer.getMessage(),eDeserializer);
+		}
+	}
+
+	public void readLLMProvider(Archive archivio,InputStream bin,byte[]xml,String entryName,boolean validationDocuments, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
+		try{
+			if(validationDocuments){
+				org.openspcoop2.core.config.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
+			}
+			org.openspcoop2.core.config.GenericProperties policy = this.jaxbConfigDeserializer.readGenericProperties(xml);
+			String key = org.openspcoop2.protocol.sdk.archive.ArchiveLLMProvider.buildKey(policy.getTipo(), policy.getNome());
+			if(archivio.getLlmProviders().containsKey(key)){
+				throw new ProtocolException("Elemento ["+entryName+"] errato. Risulta esistere piu' di un LLM Provider con key ["+key+"]");
+			}
+			archivio.getLlmProviders().add(key,new org.openspcoop2.protocol.sdk.archive.ArchiveLLMProvider(policy,idCorrelazione));
+		}catch(Exception eDeserializer){
+			String xmlString = this.toStringXmlElementForErrorMessage(xml);
+			throw new ProtocolException(xmlString+"Elemento ["+entryName+"] contiene una struttura xml (LLM Provider) non valida rispetto allo schema (ConfigurazionePdD): "
+					+eDeserializer.getMessage(),eDeserializer);
+		}
+	}
+
+	public void readLLMModel(Archive archivio,InputStream bin,byte[]xml,String entryName,boolean validationDocuments, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
+		try{
+			if(validationDocuments){
+				org.openspcoop2.core.config.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
+			}
+			org.openspcoop2.core.config.GenericProperties policy = this.jaxbConfigDeserializer.readGenericProperties(xml);
+			String key = org.openspcoop2.protocol.sdk.archive.ArchiveLLMModel.buildKey(policy.getTipo(), policy.getNome());
+			if(archivio.getLlmModels().containsKey(key)){
+				throw new ProtocolException("Elemento ["+entryName+"] errato. Risulta esistere piu' di un LLM Model con key ["+key+"]");
+			}
+			archivio.getLlmModels().add(key,new org.openspcoop2.protocol.sdk.archive.ArchiveLLMModel(policy,idCorrelazione));
+		}catch(Exception eDeserializer){
+			String xmlString = this.toStringXmlElementForErrorMessage(xml);
+			throw new ProtocolException(xmlString+"Elemento ["+entryName+"] contiene una struttura xml (LLM Model) non valida rispetto allo schema (ConfigurazionePdD): "
+					+eDeserializer.getMessage(),eDeserializer);
+		}
+	}
+
+	public void readLLMPiiMasking(Archive archivio,InputStream bin,byte[]xml,String entryName,boolean validationDocuments, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
+		try{
+			if(validationDocuments){
+				org.openspcoop2.core.config.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
+			}
+			org.openspcoop2.core.config.GenericProperties policy = this.jaxbConfigDeserializer.readGenericProperties(xml);
+			String key = org.openspcoop2.protocol.sdk.archive.ArchiveLLMPiiMasking.buildKey(policy.getTipo(), policy.getNome());
+			if(archivio.getLlmPiiMasking().containsKey(key)){
+				throw new ProtocolException("Elemento ["+entryName+"] errato. Risulta esistere piu' di una Regola PII con key ["+key+"]");
+			}
+			archivio.getLlmPiiMasking().add(key,new org.openspcoop2.protocol.sdk.archive.ArchiveLLMPiiMasking(policy,idCorrelazione));
+		}catch(Exception eDeserializer){
+			String xmlString = this.toStringXmlElementForErrorMessage(xml);
+			throw new ProtocolException(xmlString+"Elemento ["+entryName+"] contiene una struttura xml (LLM Regola PII) non valida rispetto allo schema (ConfigurazionePdD): "
+					+eDeserializer.getMessage(),eDeserializer);
+		}
+	}
+
+	public void readLLMProviderBinding(Archive archivio,InputStream bin,byte[]xml,String entryName,boolean validationDocuments, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
+		try{
+			if(validationDocuments){
+				org.openspcoop2.core.config.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
+			}
+			org.openspcoop2.core.config.GenericProperties policy = this.jaxbConfigDeserializer.readGenericProperties(xml);
+			String key = org.openspcoop2.protocol.sdk.archive.ArchiveLLMProviderBinding.buildKey(policy.getTipo(), policy.getNome());
+			if(archivio.getLlmProviderBindings().containsKey(key)){
+				throw new ProtocolException("Elemento ["+entryName+"] errato. Risulta esistere piu' di un LLM Provider Binding con key ["+key+"]");
+			}
+			archivio.getLlmProviderBindings().add(key,new org.openspcoop2.protocol.sdk.archive.ArchiveLLMProviderBinding(policy,idCorrelazione));
+		}catch(Exception eDeserializer){
+			String xmlString = this.toStringXmlElementForErrorMessage(xml);
+			throw new ProtocolException(xmlString+"Elemento ["+entryName+"] contiene una struttura xml (LLM Provider Binding) non valida rispetto allo schema (ConfigurazionePdD): "
 					+eDeserializer.getMessage(),eDeserializer);
 		}
 	}

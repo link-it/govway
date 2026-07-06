@@ -157,6 +157,9 @@ public class ItemBean extends BaseItemBean<Item>{
 		case SELECT:
 			processSelectElement(de, externalResources);
 			break;
+		case MULTI_SELECT:
+			processMultiSelectElement(de, externalResources);
+			break;
 		case TEXT:
 			de.setValue(this.value);
 			de.setType(DataElementType.TEXT_EDIT);
@@ -209,6 +212,32 @@ public class ItemBean extends BaseItemBean<Item>{
 
 		List<String> valuesList = new ArrayList<>();
 		List<String> labelsList = new ArrayList<>();
+		populateValuesAndLabels(valuesList, labelsList, externalResources);
+		de.setValues(valuesList);
+		de.setLabels(labelsList);
+	}
+	private void processMultiSelectElement(DataElement de, ExternalResources externalResources) throws ProviderException {
+		de.setType(DataElementType.MULTI_SELECT);
+
+		List<String> valuesList = new ArrayList<>();
+		List<String> labelsList = new ArrayList<>();
+		populateValuesAndLabels(valuesList, labelsList, externalResources);
+		de.setValues(valuesList);
+		de.setLabels(labelsList);
+
+		// I valori selezionati sono memorizzati come singola property con i nomi separati da virgola.
+		if(StringUtils.isNotEmpty(this.value)) {
+			List<String> selezionati = new ArrayList<>();
+			for(String v : this.value.split(",")) {
+				String t = v.trim();
+				if(!t.isEmpty()) {
+					selezionati.add(t);
+				}
+			}
+			de.setSelezionati(selezionati);
+		}
+	}
+	private void populateValuesAndLabels(List<String> valuesList, List<String> labelsList, ExternalResources externalResources) throws ProviderException {
 		ItemValues values = this.getItem().getValues();
 		if(values!=null && values.sizeValueList()>0) {
 			for (ItemValue itemValue : values.getValueList()) {
@@ -226,8 +255,6 @@ public class ItemBean extends BaseItemBean<Item>{
 				labelsList.addAll(tmp);
 			}
 		}
-		de.setValues(valuesList);
-		de.setLabels(labelsList);
 	}
 
 	@Override
@@ -456,6 +483,33 @@ public class ItemBean extends BaseItemBean<Item>{
 
 					if(!found)
 						throw new UserInputValidationException(prefixIlCampo+" contiene un valore non previsto");
+				}
+				break;
+			case MULTI_SELECT:
+				if(StringUtils.isNotEmpty(itemValue)) {
+					List<String> allowed = new ArrayList<>();
+					ItemValues values = this.getItem().getValues();
+					if(values!=null && values.sizeValueList()>0) {
+						for (ItemValue selectItemValue : values.getValueList()) {
+							allowed.add(selectItemValue.getValue());
+						}
+					}
+					else if(this.provider!=null) {
+						try {
+							List<String> tmp = this.provider.getValues(this.name, externalResources);
+							if(tmp!=null) {
+								allowed.addAll(tmp);
+							}
+						}catch(Exception e) {
+							throw new UserInputValidationException("Errore durante la validazione del Campo "+this.getLabel()+": "+e.getMessage(),e);
+						}
+					}
+					for(String v : itemValue.split(",")) {
+						String t = v.trim();
+						if(!t.isEmpty() && !allowed.contains(t)) {
+							throw new UserInputValidationException(prefixIlCampo+" contiene un valore non previsto ("+t+")");
+						}
+					}
 				}
 				break;
 			case TEXT:

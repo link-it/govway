@@ -352,8 +352,60 @@ public class ImporterArchiveUtils {
 				}
 				esito.getAttributeAuthorities().add(detail);
 			}
-			
-			
+
+			// LLM Provider (prima dei binding che li referenziano)
+			for (int i = 0; i < archive.getLlmProviders().size(); i++) {
+				org.openspcoop2.protocol.sdk.archive.ArchiveLLMProvider a = archive.getLlmProviders().get(i);
+				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(a);
+				try{
+					this.importLLMProvider(a, detail);
+				}catch(Exception e){
+					detail.setState(ArchiveStatoImport.ERROR);
+					detail.setException(e);
+				}
+				esito.getLlmProviders().add(detail);
+			}
+
+			// LLM Model
+			for (int i = 0; i < archive.getLlmModels().size(); i++) {
+				org.openspcoop2.protocol.sdk.archive.ArchiveLLMModel a = archive.getLlmModels().get(i);
+				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(a);
+				try{
+					this.importLLMModel(a, detail);
+				}catch(Exception e){
+					detail.setState(ArchiveStatoImport.ERROR);
+					detail.setException(e);
+				}
+				esito.getLlmModels().add(detail);
+			}
+
+			// LLM Regola PII
+			for (int i = 0; i < archive.getLlmPiiMasking().size(); i++) {
+				org.openspcoop2.protocol.sdk.archive.ArchiveLLMPiiMasking a = archive.getLlmPiiMasking().get(i);
+				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(a);
+				try{
+					this.importLLMPiiMasking(a, detail);
+				}catch(Exception e){
+					detail.setState(ArchiveStatoImport.ERROR);
+					detail.setException(e);
+				}
+				esito.getLlmPiiMasking().add(detail);
+			}
+
+			// LLM Provider Binding (dopo provider/model/pii che referenzia)
+			for (int i = 0; i < archive.getLlmProviderBindings().size(); i++) {
+				org.openspcoop2.protocol.sdk.archive.ArchiveLLMProviderBinding a = archive.getLlmProviderBindings().get(i);
+				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(a);
+				try{
+					this.importLLMProviderBinding(a, detail);
+				}catch(Exception e){
+					detail.setState(ArchiveStatoImport.ERROR);
+					detail.setException(e);
+				}
+				esito.getLlmProviderBindings().add(detail);
+			}
+
+
 			// Gruppi
 			for (int i = 0; i < archive.getGruppi().size(); i++) {
 				ArchiveGruppo archiveGruppo = archive.getGruppi().get(i);
@@ -1721,7 +1773,16 @@ public class ImporterArchiveUtils {
 					}
 				}
 			}
-			
+
+			// LLM: i Provider Binding referenziati dal connettore devono esistere (o essere importati), altrimenti
+			// resterebbe un riferimento pendente. Come per la token policy, l'import fallisce se mancano.
+			if(archiveServizioApplicativo.getServizioApplicativo()!=null && archiveServizioApplicativo.getServizioApplicativo().getInvocazioneServizio()!=null) {
+				checkLLMBindingReferences(archiveServizioApplicativo.getServizioApplicativo().getInvocazioneServizio().getConnettore());
+			}
+			if(archiveServizioApplicativo.getServizioApplicativo()!=null && archiveServizioApplicativo.getServizioApplicativo().getRispostaAsincrona()!=null) {
+				checkLLMBindingReferences(archiveServizioApplicativo.getServizioApplicativo().getRispostaAsincrona().getConnettore());
+			}
+
 			// plugin
 			if(this.checkExistsPluginConfigurazione) {
 				if(archiveServizioApplicativo.getServizioApplicativo()!=null && archiveServizioApplicativo.getServizioApplicativo().getInvocazioneServizio()!=null) {
@@ -2735,7 +2796,17 @@ public class ImporterArchiveUtils {
 					}
 				}
 			}
-			
+
+			// LLM: Provider Binding referenziati dal connettore devono esistere (o essere importati)
+			if(archiveAccordoServizioParteSpecifica.getAccordoServizioParteSpecifica()!=null && archiveAccordoServizioParteSpecifica.getAccordoServizioParteSpecifica().getConfigurazioneServizio()!=null) {
+				checkLLMBindingReferences(archiveAccordoServizioParteSpecifica.getAccordoServizioParteSpecifica().getConfigurazioneServizio().getConnettore());
+				if(archiveAccordoServizioParteSpecifica.getAccordoServizioParteSpecifica().getConfigurazioneServizio().sizeConfigurazioneAzioneList()>0) {
+					for (ConfigurazioneServizioAzione confAzione : archiveAccordoServizioParteSpecifica.getAccordoServizioParteSpecifica().getConfigurazioneServizio().getConfigurazioneAzioneList()) {
+						checkLLMBindingReferences(confAzione.getConnettore());
+					}
+				}
+			}
+
 			// plugin
 			if(this.checkExistsPluginConfigurazione) {
 				if(archiveAccordoServizioParteSpecifica.getAccordoServizioParteSpecifica().getConfigurazioneServizio().getConnettore()!=null&&
@@ -3018,7 +3089,7 @@ public class ImporterArchiveUtils {
 			if(archiveFruitore.getFruitore().sizeConfigurazioneAzioneList()>0) {
 				for (ConfigurazioneServizioAzione confAzione : archiveFruitore.getFruitore().getConfigurazioneAzioneList()) {
 					if(confAzione.getConnettore()!=null &&
-							confAzione.getConnettore().getProperties()!=null && 
+							confAzione.getConnettore().getProperties()!=null &&
 							confAzione.getConnettore().getProperties().containsKey(CostantiConnettori.CONNETTORE_TOKEN_POLICY)) {
 						String policy = confAzione.getConnettore().getProperties().get(CostantiConnettori.CONNETTORE_TOKEN_POLICY);
 						if(this.importerEngine.existsGenericProperties_retrieve(policy) == false) {
@@ -3027,7 +3098,15 @@ public class ImporterArchiveUtils {
 					}
 				}
 			}
-			
+
+			// LLM: Provider Binding referenziati dal connettore devono esistere (o essere importati)
+			checkLLMBindingReferences(archiveFruitore.getFruitore().getConnettore());
+			if(archiveFruitore.getFruitore().sizeConfigurazioneAzioneList()>0) {
+				for (ConfigurazioneServizioAzione confAzione : archiveFruitore.getFruitore().getConfigurazioneAzioneList()) {
+					checkLLMBindingReferences(confAzione.getConnettore());
+				}
+			}
+
 			// plugin
 			if(this.checkExistsPluginConfigurazione) {
 				if(archiveFruitore.getFruitore().getConnettore()!=null &&
@@ -4079,6 +4158,93 @@ public class ImporterArchiveUtils {
 	}
 	public void importAttributeAuthority(ArchiveAttributeAuthority archiveAA,ArchiveEsitoImportDetail detail){
 		_importGenericProperties("Attribute Authority", archiveAA, detail);
+	}
+	// === Catalogo LLM ===
+	// (nomi property letterali: le costanti sono in org.openspcoop2.pdd.core.llm.provider.Costanti, jar 'pdd' non visibile qui)
+	public void importLLMProvider(org.openspcoop2.protocol.sdk.archive.ArchiveLLMProvider archive,ArchiveEsitoImportDetail detail){
+		_importGenericProperties("Provider LLM", archive, detail);
+	}
+	public void importLLMModel(org.openspcoop2.protocol.sdk.archive.ArchiveLLMModel archive,ArchiveEsitoImportDetail detail){
+		_importGenericProperties("Modello LLM", archive, detail);
+	}
+	public void importLLMPiiMasking(org.openspcoop2.protocol.sdk.archive.ArchiveLLMPiiMasking archive,ArchiveEsitoImportDetail detail){
+		_importGenericProperties("Regola PII", archive, detail);
+	}
+	public void importLLMProviderBinding(org.openspcoop2.protocol.sdk.archive.ArchiveLLMProviderBinding archive,ArchiveEsitoImportDetail detail){
+		// valida che i riferimenti (provider/model/regole PII) esistano, se il controllo è abilitato
+		if(this.checkExistsPluginConfigurazione && archive!=null && archive.getPolicy()!=null) {
+			try {
+				String provider = getLLMPropertyValue(archive.getPolicy(), "llmProviderBinding.provider");
+				if(provider!=null && !provider.trim().isEmpty()
+						&& !this.importerEngine.existsGenericProperties(CostantiConfigurazione.GENERIC_PROPERTIES_LLM_PROVIDER, provider.trim())) {
+					throw new Exception("Provider LLM ["+provider.trim()+"] riferito dal binding non esistente");
+				}
+				String model = getLLMPropertyValue(archive.getPolicy(), "llmProviderBinding.model");
+				if(model!=null && !model.trim().isEmpty()
+						&& !this.importerEngine.existsGenericProperties(CostantiConfigurazione.GENERIC_PROPERTIES_LLM_MODEL, model.trim())) {
+					throw new Exception("Modello LLM ["+model.trim()+"] riferito dal binding non esistente");
+				}
+				String piiRefs = getLLMPropertyValue(archive.getPolicy(), "llmProviderBinding.piiRegexpRefs");
+				if(piiRefs!=null && !piiRefs.trim().isEmpty()) {
+					for (String r : piiRefs.split(",")) {
+						String rn = r.trim();
+						if(!rn.isEmpty()
+								&& !this.importerEngine.existsGenericProperties(CostantiConfigurazione.GENERIC_PROPERTIES_LLM_PII_MASKING, rn)) {
+							throw new Exception("Regola PII ["+rn+"] riferita dal binding non esistente");
+						}
+					}
+				}
+			} catch(Exception e) {
+				this.log.error("Errore durante l'import del Provider Binding LLM: "+e.getMessage(),e);
+				detail.setState(ArchiveStatoImport.ERROR);
+				detail.setException(e);
+				return;
+			}
+		}
+		_importGenericProperties("Provider Binding", archive, detail);
+	}
+	private static String getLLMPropertyValue(GenericProperties policy, String nome) {
+		if(policy==null || policy.getPropertyList()==null) {
+			return null;
+		}
+		for (Property p : policy.getPropertyList()) {
+			if(nome.equals(p.getNome())) {
+				return p.getValore();
+			}
+		}
+		return null;
+	}
+	/** Verifica che i Provider Binding LLM referenziati da un connettore (config) esistano; altrimenti fallisce. */
+	private void checkLLMBindingReferences(org.openspcoop2.core.config.Connettore connettore) throws Exception {
+		if(connettore==null || connettore.getConnettoreLlm()==null) {
+			return;
+		}
+		for (org.openspcoop2.core.config.ConnettoreLlmProviderRef ref : connettore.getConnettoreLlm().getProviderList()) {
+			if(ref.getBindingList()!=null) {
+				for (org.openspcoop2.core.config.ConnettoreLlmBinding b : ref.getBindingList()) {
+					if(b.getNome()!=null && !b.getNome().trim().isEmpty()
+							&& !this.importerEngine.existsGenericProperties(CostantiConfigurazione.GENERIC_PROPERTIES_LLM_PROVIDER_BINDING, b.getNome().trim())) {
+						throw new Exception("Provider Binding LLM ["+b.getNome().trim()+"] indicato nel connettore non esistente");
+					}
+				}
+			}
+		}
+	}
+	/** Come sopra, per un connettore del registro (fruizioni). */
+	private void checkLLMBindingReferences(org.openspcoop2.core.registry.Connettore connettore) throws Exception {
+		if(connettore==null || connettore.getConnettoreLlm()==null) {
+			return;
+		}
+		for (org.openspcoop2.core.registry.ConnettoreLlmProviderRef ref : connettore.getConnettoreLlm().getProviderList()) {
+			if(ref.getBindingList()!=null) {
+				for (org.openspcoop2.core.registry.ConnettoreLlmBinding b : ref.getBindingList()) {
+					if(b.getNome()!=null && !b.getNome().trim().isEmpty()
+							&& !this.importerEngine.existsGenericProperties(CostantiConfigurazione.GENERIC_PROPERTIES_LLM_PROVIDER_BINDING, b.getNome().trim())) {
+						throw new Exception("Provider Binding LLM ["+b.getNome().trim()+"] indicato nel connettore non esistente");
+					}
+				}
+			}
+		}
 	}
 	public void _importGenericProperties(String oggetto, AbstractArchiveGenericProperties archiveGenericProperties,ArchiveEsitoImportDetail detail){
 		

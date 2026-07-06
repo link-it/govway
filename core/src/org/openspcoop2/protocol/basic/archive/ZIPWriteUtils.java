@@ -400,7 +400,63 @@ public class ZIPWriteUtils {
 					write(zipOut, "AttributeAuthority_Retrieve", archiveAA.getNomePolicy(), SerializationType.CONFIG, policy);
 				}
 			}
-			
+
+			// LLM Provider
+			if(archive.getLlmProviders()!=null && archive.getLlmProviders().size()>0){
+				for (int i = 0; i < archive.getLlmProviders().size(); i++) {
+					org.openspcoop2.protocol.sdk.archive.ArchiveLLMProvider a = archive.getLlmProviders().get(i);
+					nomeFile = Costanti.OPENSPCOOP2_ARCHIVE_LLM_DIR+File.separatorChar+
+							Costanti.OPENSPCOOP2_ARCHIVE_LLM_PROVIDER_DIR+File.separatorChar+
+							ZIPUtils.convertNameToSistemaOperativoCompatible(a.getNomePolicy())+".xml";
+					zipOut.putNextEntry(new ZipEntry(rootPackageDir+nomeFile));
+					org.openspcoop2.core.config.GenericProperties policy = a.getPolicy();
+					this.cleanerOpenSPCoop2ExtensionsConfig.clean(policy);
+					write(zipOut, "LLMProvider", a.getNomePolicy(), SerializationType.CONFIG, policy);
+				}
+			}
+
+			// LLM Model
+			if(archive.getLlmModels()!=null && archive.getLlmModels().size()>0){
+				for (int i = 0; i < archive.getLlmModels().size(); i++) {
+					org.openspcoop2.protocol.sdk.archive.ArchiveLLMModel a = archive.getLlmModels().get(i);
+					nomeFile = Costanti.OPENSPCOOP2_ARCHIVE_LLM_DIR+File.separatorChar+
+							Costanti.OPENSPCOOP2_ARCHIVE_LLM_MODEL_DIR+File.separatorChar+
+							ZIPUtils.convertNameToSistemaOperativoCompatible(a.getNomePolicy())+".xml";
+					zipOut.putNextEntry(new ZipEntry(rootPackageDir+nomeFile));
+					org.openspcoop2.core.config.GenericProperties policy = a.getPolicy();
+					this.cleanerOpenSPCoop2ExtensionsConfig.clean(policy);
+					write(zipOut, "LLMModel", a.getNomePolicy(), SerializationType.CONFIG, policy);
+				}
+			}
+
+			// LLM Regola PII
+			if(archive.getLlmPiiMasking()!=null && archive.getLlmPiiMasking().size()>0){
+				for (int i = 0; i < archive.getLlmPiiMasking().size(); i++) {
+					org.openspcoop2.protocol.sdk.archive.ArchiveLLMPiiMasking a = archive.getLlmPiiMasking().get(i);
+					nomeFile = Costanti.OPENSPCOOP2_ARCHIVE_LLM_DIR+File.separatorChar+
+							Costanti.OPENSPCOOP2_ARCHIVE_LLM_PII_MASKING_DIR+File.separatorChar+
+							ZIPUtils.convertNameToSistemaOperativoCompatible(a.getNomePolicy())+".xml";
+					zipOut.putNextEntry(new ZipEntry(rootPackageDir+nomeFile));
+					org.openspcoop2.core.config.GenericProperties policy = a.getPolicy();
+					this.cleanerOpenSPCoop2ExtensionsConfig.clean(policy);
+					write(zipOut, "LLMPiiMasking", a.getNomePolicy(), SerializationType.CONFIG, policy);
+				}
+			}
+
+			// LLM Provider Binding
+			if(archive.getLlmProviderBindings()!=null && archive.getLlmProviderBindings().size()>0){
+				for (int i = 0; i < archive.getLlmProviderBindings().size(); i++) {
+					org.openspcoop2.protocol.sdk.archive.ArchiveLLMProviderBinding a = archive.getLlmProviderBindings().get(i);
+					nomeFile = Costanti.OPENSPCOOP2_ARCHIVE_LLM_DIR+File.separatorChar+
+							Costanti.OPENSPCOOP2_ARCHIVE_LLM_PROVIDER_BINDING_DIR+File.separatorChar+
+							ZIPUtils.convertNameToSistemaOperativoCompatible(a.getNomePolicy())+".xml";
+					zipOut.putNextEntry(new ZipEntry(rootPackageDir+nomeFile));
+					org.openspcoop2.core.config.GenericProperties policy = a.getPolicy();
+					this.cleanerOpenSPCoop2ExtensionsConfig.clean(policy);
+					write(zipOut, "LLMProviderBinding", a.getNomePolicy(), SerializationType.CONFIG, policy);
+				}
+			}
+
 			// plugins (classi)
 			if(archive.getPlugin_classi()!=null && archive.getPlugin_classi().size()>0){
 				for (int i = 0; i < archive.getPlugin_classi().size(); i++) {

@@ -255,9 +255,9 @@ public class ArchiviCostanti {
 	public static final String LABEL_PARAMETRO_ARCHIVI_UPDATE_ENABLED_RIGHT = "Gli elementi già esistenti verranno aggiornati";
 	public static final String LABEL_PARAMETRO_ARCHIVI_IMPORT_POLICY_CONFIG_LEFT = EsitoUtils.LABEL_IMPORT_POLICY;
 	public static final String LABEL_PARAMETRO_ARCHIVI_DELETE_POLICY_CONFIG_LEFT = EsitoUtils.LABEL_DELETE_POLICY;
-	public static final String LABEL_PARAMETRO_ARCHIVI_IMPORT_POLICY_CONFIG_RIGHT = "Eventuali policy globali (Token, Rate Limiting) presenti nell'archivio verranno importate";
+	public static final String LABEL_PARAMETRO_ARCHIVI_IMPORT_POLICY_CONFIG_RIGHT = "Eventuali policy globali (Token, Rate Limiting, LLM) presenti nell'archivio verranno importate";
 	public static final String LABEL_PARAMETRO_ARCHIVI_DELETE_POLICY_CONFIG_RIGHT = "Eventuali policy globali (Token, Rate Limiting) presenti nell'archivio verranno eliminate";
-	public static final String LABEL_PARAMETRO_ARCHIVI_IMPORT_POLICY_CON_ALLARMI_CONFIG_RIGHT = "Eventuali policy globali (Token, Rate Limiting, Allarmi) presenti nell'archivio verranno importate";
+	public static final String LABEL_PARAMETRO_ARCHIVI_IMPORT_POLICY_CON_ALLARMI_CONFIG_RIGHT = "Eventuali policy globali (Token, Rate Limiting, LLM, Allarmi) presenti nell'archivio verranno importate";
 	public static final String LABEL_PARAMETRO_ARCHIVI_DELETE_POLICY_CON_ALLARMI_CONFIG_RIGHT = "Eventuali policy globali (Token, Rate Limiting, Allarmi) presenti nell'archivio verranno eliminate";
 	public static final String LABEL_PARAMETRO_ARCHIVI_IMPORT_PLUGIN_CONFIG_LEFT = EsitoUtils.LABEL_IMPORT_PLUGIN;
 	public static final String LABEL_PARAMETRO_ARCHIVI_DELETE_PLUGIN_CONFIG_LEFT = EsitoUtils.LABEL_DELETE_PLUGIN;
@@ -290,8 +290,8 @@ public class ArchiviCostanti {
 	public static final String LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_ACCORDO_COOPERAZIONE_INPUT = "AccordoCooperazione";
 	
 	public static final String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_POLICY_CONFIG_LEFT = EsitoUtils.LABEL_IMPORT_POLICY;
-	public static final String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_POLICY_CONFIG_CON_ALLARMI_RIGHT = "Vengono incluse le policy globali (Token, Rate Limiting, Allarmi)";
-	public static final String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_POLICY_CONFIG_RIGHT = "Vengono incluse le policy globali (Token, Rate Limiting)";
+	public static final String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_POLICY_CONFIG_CON_ALLARMI_RIGHT = "Vengono incluse le policy globali (Token, Rate Limiting, LLM, Allarmi)";
+	public static final String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_POLICY_CONFIG_RIGHT = "Vengono incluse le policy globali (Token, Rate Limiting, LLM)";
 	public static final String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_PLUGIN_CONFIG_LEFT = EsitoUtils.LABEL_IMPORT_PLUGIN;
 	public static final String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_PLUGIN_CONFIG_RIGHT = "Vengono inclusi i plugins (Classi, Archivi)";
 	public static final String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_LEFT = "Elementi di Registro";

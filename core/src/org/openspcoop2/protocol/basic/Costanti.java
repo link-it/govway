@@ -495,6 +495,12 @@ public class Costanti {
 	
 	public static final String OPENSPCOOP2_ARCHIVE_ATTRIBUTE_AUTHORITY_DIR = "attributeAuthority";
 	public static final String OPENSPCOOP2_ARCHIVE_ATTRIBUTE_AUTHORITY_RETRIEVE_DIR = "retrieve";
+
+	public static final String OPENSPCOOP2_ARCHIVE_LLM_DIR = "llm";
+	public static final String OPENSPCOOP2_ARCHIVE_LLM_PROVIDER_DIR = "provider";
+	public static final String OPENSPCOOP2_ARCHIVE_LLM_MODEL_DIR = "model";
+	public static final String OPENSPCOOP2_ARCHIVE_LLM_PII_MASKING_DIR = "piiMasking";
+	public static final String OPENSPCOOP2_ARCHIVE_LLM_PROVIDER_BINDING_DIR = "providerBinding";
 	
 	public static final String OPENSPCOOP2_ARCHIVE_PLUGINS_DIR = "plugins";
 	public static final String OPENSPCOOP2_ARCHIVE_PLUGINS_CLASSI_DIR = "classi";

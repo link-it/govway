@@ -205,7 +205,7 @@ public class ConnettoreHTTPCOREInputStreamEntityConsumer implements AsyncRespons
 	@Override
 	// Triggered to signal a failure in data processing
 	public void failed(Exception exception) {
-		
+
 		/*
 		 * Viene chiamato anche quando la connessione viene rilasciata al pool. 
 		 * Non deve essere sollevata l'eccezione se la risposta è stata correttamente gestita

@@ -290,6 +290,27 @@ public final class Exporter extends Action {
 				identificativi = exporterUtils.getIdsTokenPolicy(objToExport);
 				protocolli = archiviCore.getProtocolli(request, session);
 				break;
+			case CONFIGURAZIONE_LLM_MODEL:
+				provenienza = new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_LLM_MODEL,
+						ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_LIST+"?"+
+								ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE+"="+ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_LLM_MODEL);
+				identificativi = exporterUtils.getIdsTokenPolicy(objToExport);
+				protocolli = archiviCore.getProtocolli(request, session);
+				break;
+			case CONFIGURAZIONE_LLM_PROVIDER_BINDING:
+				provenienza = new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_LLM_PROVIDER_BINDING,
+						ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_LIST+"?"+
+								ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE+"="+ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_LLM_PROVIDER_BINDING);
+				identificativi = exporterUtils.getIdsTokenPolicy(objToExport);
+				protocolli = archiviCore.getProtocolli(request, session);
+				break;
+			case CONFIGURAZIONE_LLM_PII_MASKING:
+				provenienza = new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_LLM_PII_MASKING,
+						ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_LIST+"?"+
+								ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE+"="+ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_LLM_PII_MASKING);
+				identificativi = exporterUtils.getIdsTokenPolicy(objToExport);
+				protocolli = archiviCore.getProtocolli(request, session);
+				break;
 			case CONFIGURAZIONE_PLUGIN_CLASSE:
 				provenienza = new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRO_CLASSI, 
 						ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_PLUGINS_CLASSI_LIST);

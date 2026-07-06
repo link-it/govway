@@ -16065,6 +16065,12 @@ public class ConsoleHelper implements IConsoleHelper {
 					if(ItemType.LOCK.equals(o.getItemType()) || ItemType.LOCK_HIDDEN.equals(o.getItemType())) {
 						parameterValue = this.getLockedParameter(key);
 					}
+					else if(ItemType.MULTI_SELECT.equals(o.getItemType())) {
+						// I valori selezionati in una multiSelect vengono memorizzati in un'unica property
+						// con i nomi separati da virgola.
+						String[] multiValues = this.getParameterValues(key);
+						parameterValue = (multiValues != null) ? String.join(",", multiValues) : null;
+					}
 					else {
 						parameterValue = this.getParameter(key);
 					}

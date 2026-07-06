@@ -88,7 +88,8 @@ public class ConfigurazionePolicyGestioneTokenDel extends Action {
 			boolean llmProvider = ConfigurazioneCostanti.isConfigurazioneLLMProvider(infoType);
 			boolean llmModel = ConfigurazioneCostanti.isConfigurazioneLLMModel(infoType);
 			boolean llmProviderBinding = ConfigurazioneCostanti.isConfigurazioneLLMProviderBinding(infoType);
-			
+			boolean llmPiiMasking = ConfigurazioneCostanti.isConfigurazioneLLMPiiMasking(infoType);
+
 			String objToRemove =confHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE); 
 
 			// Elimino i filtri dal db
@@ -145,6 +146,8 @@ public class ConfigurazionePolicyGestioneTokenDel extends Action {
 				idLista = Liste.CONFIGURAZIONE_GESTIONE_LLM_MODEL;
 			} else if (llmProviderBinding) {
 				idLista = Liste.CONFIGURAZIONE_GESTIONE_LLM_PROVIDER_BINDING;
+			} else if (llmPiiMasking) {
+				idLista = Liste.CONFIGURAZIONE_GESTIONE_LLM_PII_MASKING;
 			} else {
 				idLista = Liste.CONFIGURAZIONE_GESTIONE_POLICY_TOKEN;
 			}
@@ -163,6 +166,9 @@ public class ConfigurazionePolicyGestioneTokenDel extends Action {
 			}
 			else if(llmProviderBinding) {
 				tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_LLM_PROVIDER_BINDING);
+			}
+			else if(llmPiiMasking) {
+				tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_LLM_PII_MASKING);
 			}
 			else {
 				tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN);

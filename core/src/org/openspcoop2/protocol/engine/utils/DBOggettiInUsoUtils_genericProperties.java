@@ -359,11 +359,60 @@ public class DBOggettiInUsoUtils_genericProperties {
 					isInUso = true;
 				}
 				risultato.close();
-				stmt.close();				
-				
+				stmt.close();
+
 			}
-			
-			
+
+			// === Integrità referenziale catalogo LLM ===
+			// Provider / Model / Regola PII: non eliminabili se referenziati da un Provider Binding.
+			// (i nomi property vivono in org.openspcoop2.pdd.core.llm.provider.Costanti, jar 'pdd' non
+			//  visibile da questo layer: riportati come letterali)
+			else if(CostantiConfigurazione.GENERIC_PROPERTIES_LLM_PROVIDER.equals(idGP.getTipologia())) {
+				if(isReferencedByBinding(con, tipoDB, "llmProviderBinding.provider", idGP.getNome(), false, whereIsInUso)) {
+					isInUso = true;
+				}
+			}
+			else if(CostantiConfigurazione.GENERIC_PROPERTIES_LLM_MODEL.equals(idGP.getTipologia())) {
+				if(isReferencedByBinding(con, tipoDB, "llmProviderBinding.model", idGP.getNome(), false, whereIsInUso)) {
+					isInUso = true;
+				}
+			}
+			else if(CostantiConfigurazione.GENERIC_PROPERTIES_LLM_PII_MASKING.equals(idGP.getTipologia())) {
+				// piiRegexpRefs è un CSV di nomi regola -> verifica di appartenenza lato Java
+				if(isReferencedByBinding(con, tipoDB, "llmProviderBinding.piiRegexpRefs", idGP.getNome(), true, whereIsInUso)) {
+					isInUso = true;
+				}
+			}
+			// Provider Binding: non eliminabile se referenziato da un Connettore.
+			// connettori_llm_binding.id_connettore è il SUB-connettore (uno per provider); la porta/servizio
+			// referenzia invece il connettore PRINCIPALE (connettori_llm.id_connettore_principale), che è
+			// quello risolto da formatConnettori -> risalgo al principale con la join.
+			else if(CostantiConfigurazione.GENERIC_PROPERTIES_LLM_PROVIDER_BINDING.equals(idGP.getTipologia())) {
+				List<Long> idConnettori = new ArrayList<>();
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.CONNETTORI_LLM_BINDING);
+				sqlQueryObject.addFromTable(CostantiDB.CONNETTORI_LLM);
+				sqlQueryObject.addSelectField(CostantiDB.CONNETTORI_LLM+"."+CostantiDB.CONNETTORI_LLM_COLUMN_ID_CONNETTORE_PRINCIPALE);
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQueryObject.setSelectDistinct(true);
+				sqlQueryObject.addWhereCondition(CostantiDB.CONNETTORI_LLM_BINDING+"."+CostantiDB.CONNETTORI_LLM_BINDING_COLUMN_NOME_BINDING+" = ?");
+				sqlQueryObject.addWhereCondition(CostantiDB.CONNETTORI_LLM+"."+CostantiDB.CONNETTORI_LLM_COLUMN_ID_CONNETTORE+" = "+CostantiDB.CONNETTORI_LLM_BINDING+"."+CostantiDB.CONNETTORI_LLM_BINDING_COLUMN_ID_CONNETTORE);
+				queryString = sqlQueryObject.createSQLQuery();
+				stmt = con.prepareStatement(queryString);
+				stmt.setString(1, idGP.getNome());
+				risultato = stmt.executeQuery();
+				while (risultato.next()) {
+					idConnettori.add(risultato.getLong(CostantiDB.CONNETTORI_LLM_COLUMN_ID_CONNETTORE_PRINCIPALE));
+				}
+				risultato.close();
+				stmt.close();
+				if(!idConnettori.isEmpty()) {
+					DBOggettiInUsoUtils.formatConnettori(idConnettori, whereIsInUso, con, normalizeObjectIds, tipoDB);
+					isInUso = true;
+				}
+			}
+
+
 			return isInUso;
 
 		} catch (Exception se) {
@@ -375,6 +424,67 @@ public class DBOggettiInUsoUtils_genericProperties {
 		}
 	}
 
+	/**
+	 * Verifica se un oggetto LLM (Provider/Model/Regola PII) è referenziato da un Provider Binding
+	 * tramite la property indicata (match esatto, oppure appartenenza al CSV se {@code csv}). I binding
+	 * trovati vengono aggiunti alla categoria {@link ErrorsHandlerCostant#LLM_PROVIDER_BINDING}.
+	 */
+	private static boolean isReferencedByBinding(Connection con, String tipoDB, String bindingPropertyName,
+			String refName, boolean csv, Map<ErrorsHandlerCostant, List<String>> whereIsInUso) throws Exception {
+		boolean inUso = false;
+		List<String> bindingList = whereIsInUso.get(ErrorsHandlerCostant.LLM_PROVIDER_BINDING);
+		if (bindingList == null) {
+			bindingList = new ArrayList<>();
+			whereIsInUso.put(ErrorsHandlerCostant.LLM_PROVIDER_BINDING, bindingList);
+		}
+		ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+		sqlQueryObject.addFromTable(CostantiDB.CONFIG_GENERIC_PROPERTIES);
+		sqlQueryObject.addFromTable(CostantiDB.CONFIG_GENERIC_PROPERTY);
+		sqlQueryObject.addSelectField(CostantiDB.CONFIG_GENERIC_PROPERTIES+"."+CostantiDB.CONFIG_GENERIC_PROPERTIES_COLUMN_NAME);
+		sqlQueryObject.addSelectField(CostantiDB.CONFIG_GENERIC_PROPERTY+"."+CostantiDB.CONFIG_GENERIC_PROPERTY_COLUMN_VALORE);
+		sqlQueryObject.setANDLogicOperator(true);
+		sqlQueryObject.setSelectDistinct(true);
+		sqlQueryObject.addWhereCondition(CostantiDB.CONFIG_GENERIC_PROPERTIES+"."+CostantiDB.CONFIG_GENERIC_PROPERTIES_COLUMN_TYPE+" = ?");
+		sqlQueryObject.addWhereCondition(CostantiDB.CONFIG_GENERIC_PROPERTY+"."+CostantiDB.CONFIG_GENERIC_PROPERTY_COLUMN_ID_PROPS+" = "+CostantiDB.CONFIG_GENERIC_PROPERTIES+"."+CostantiDB.CONFIG_GENERIC_PROPERTIES_COLUMN_ID);
+		sqlQueryObject.addWhereCondition(CostantiDB.CONFIG_GENERIC_PROPERTY+"."+CostantiDB.CONFIG_GENERIC_PROPERTY_COLUMN_NOME+" = ?");
+		if (!csv) {
+			sqlQueryObject.addWhereCondition(CostantiDB.CONFIG_GENERIC_PROPERTY+"."+CostantiDB.CONFIG_GENERIC_PROPERTY_COLUMN_VALORE+" = ?");
+		}
+		String queryString = sqlQueryObject.createSQLQuery();
+		try (PreparedStatement st = con.prepareStatement(queryString)) {
+			st.setString(1, CostantiConfigurazione.GENERIC_PROPERTIES_LLM_PROVIDER_BINDING);
+			st.setString(2, bindingPropertyName);
+			if (!csv) {
+				st.setString(3, refName);
+			}
+			try (ResultSet rs = st.executeQuery()) {
+				while (rs.next()) {
+					String bindingNome = rs.getString(CostantiDB.CONFIG_GENERIC_PROPERTIES_COLUMN_NAME);
+					if (csv && !csvContains(rs.getString(CostantiDB.CONFIG_GENERIC_PROPERTY_COLUMN_VALORE), refName)) {
+						continue;
+					}
+					if (!bindingList.contains(bindingNome)) {
+						bindingList.add(bindingNome);
+					}
+					inUso = true;
+				}
+			}
+		}
+		return inUso;
+	}
+
+	private static boolean csvContains(String csv, String name) {
+		if (csv == null || name == null) {
+			return false;
+		}
+		for (String part : csv.split(",")) {
+			if (name.equals(part.trim())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 
 	protected static String toString(IDGenericProperties idGP, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean prefix, String separator){
 		return toString(idGP, whereIsInUso, prefix, separator," non eliminabile perch&egrave; :");
@@ -382,8 +492,23 @@ public class DBOggettiInUsoUtils_genericProperties {
 	protected static String toString(IDGenericProperties idGP, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean prefix, String separator, String intestazione){
 		Set<ErrorsHandlerCostant> keys = whereIsInUso.keySet();
 		String object = "Token Policy";
-		if(idGP!=null && CostantiConfigurazione.GENERIC_PROPERTIES_ATTRIBUTE_AUTHORITY.equals(idGP.getTipologia())) {
-			object = "Attribute Authority";
+		if(idGP!=null) {
+			String tip = idGP.getTipologia();
+			if(CostantiConfigurazione.GENERIC_PROPERTIES_ATTRIBUTE_AUTHORITY.equals(tip)) {
+				object = "Attribute Authority";
+			}
+			else if(CostantiConfigurazione.GENERIC_PROPERTIES_LLM_PROVIDER.equals(tip)) {
+				object = "Provider LLM";
+			}
+			else if(CostantiConfigurazione.GENERIC_PROPERTIES_LLM_MODEL.equals(tip)) {
+				object = "Modello LLM";
+			}
+			else if(CostantiConfigurazione.GENERIC_PROPERTIES_LLM_PROVIDER_BINDING.equals(tip)) {
+				object = "Provider Binding";
+			}
+			else if(CostantiConfigurazione.GENERIC_PROPERTIES_LLM_PII_MASKING.equals(tip)) {
+				object = "Regola PII";
+			}
 		}
 		String msg = object+" '"+(idGP!=null ? idGP.getNome() : "?")+"'" + intestazione+separator;
 		if(prefix==false){
@@ -476,6 +601,11 @@ public class DBOggettiInUsoUtils_genericProperties {
 				}
 				break;
 				
+			case LLM_PROVIDER_BINDING:
+				if ( messages!=null && messages.size() > 0) {
+					msg += "utilizzato nei Provider Binding: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
+				}
+				break;
 			default:
 				msg += "utilizzato in oggetto non codificato ("+key+")"+separator;
 				break;

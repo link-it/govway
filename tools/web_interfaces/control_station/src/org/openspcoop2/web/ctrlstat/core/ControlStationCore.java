@@ -1406,6 +1406,9 @@ public class ControlStationCore {
 	private String llmProviderBindingForceId = null;
 	private boolean llmProviderBindingForceIdEnabled = false;
 	private Properties llmProviderBindingTipologia = null;
+	private String llmPiiMaskingForceId = null;
+	private boolean llmPiiMaskingForceIdEnabled = false;
+	private Properties llmPiiMaskingTipologia = null;
 	private boolean showServiziVisualizzaModalitaElenco = false;
 	private Integer selectListSoggettiOperativiNumeroMassimoSoggetti = null;
 	private Integer selectListSoggettiOperativiDimensioneMassimaLabel = null;
@@ -1548,6 +1551,15 @@ public class ControlStationCore {
 	}
 	public Properties getLlmProviderBindingTipologia() {
 		return this.llmProviderBindingTipologia;
+	}
+	public String getLlmPiiMaskingForceId() {
+		return this.llmPiiMaskingForceId;
+	}
+	public boolean isLlmPiiMaskingForceIdEnabled() {
+		return this.llmPiiMaskingForceIdEnabled;
+	}
+	public Properties getLlmPiiMaskingTipologia() {
+		return this.llmPiiMaskingTipologia;
 	}
 	public boolean isShowServiziVisualizzaModalitaElenco() {
 		return this.showServiziVisualizzaModalitaElenco;
@@ -2891,6 +2903,9 @@ public class ControlStationCore {
 		this.llmProviderBindingForceId = core.llmProviderBindingForceId;
 		this.llmProviderBindingForceIdEnabled = core.llmProviderBindingForceIdEnabled;
 		this.llmProviderBindingTipologia = core.llmProviderBindingTipologia;
+		this.llmPiiMaskingForceId = core.llmPiiMaskingForceId;
+		this.llmPiiMaskingForceIdEnabled = core.llmPiiMaskingForceIdEnabled;
+		this.llmPiiMaskingTipologia = core.llmPiiMaskingTipologia;
 		this.showServiziVisualizzaModalitaElenco = core.showServiziVisualizzaModalitaElenco;
 		this.selectListSoggettiOperativiNumeroMassimoSoggetti = core.selectListSoggettiOperativiNumeroMassimoSoggetti;
 		this.selectListSoggettiOperativiDimensioneMassimaLabel = core.selectListSoggettiOperativiDimensioneMassimaLabel;
@@ -3381,6 +3396,9 @@ public class ControlStationCore {
 			this.llmProviderBindingForceId = consoleProperties.getLlmProviderBindingForceId();
 			this.llmProviderBindingForceIdEnabled = StringUtils.isNotEmpty(this.llmProviderBindingForceId);
 			this.llmProviderBindingTipologia = consoleProperties.getLlmProviderBindingTipologia();
+			this.llmPiiMaskingForceId = consoleProperties.getLlmPiiMaskingForceId();
+			this.llmPiiMaskingForceIdEnabled = StringUtils.isNotEmpty(this.llmPiiMaskingForceId);
+			this.llmPiiMaskingTipologia = consoleProperties.getLlmPiiMaskingTipologia();
 			this.showServiziVisualizzaModalitaElenco = consoleProperties.isEnableServiziVisualizzaModalitaElenco();
 			this.selectListSoggettiOperativiNumeroMassimoSoggetti = consoleProperties.getNumeroMassimoSoggettiOperativiMenuUtente();
 			this.selectListSoggettiOperativiDimensioneMassimaLabel = consoleProperties.getLunghezzaMassimaLabelSoggettiOperativiMenuUtente();

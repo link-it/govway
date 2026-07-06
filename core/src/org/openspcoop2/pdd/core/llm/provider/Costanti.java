@@ -127,6 +127,44 @@ public final class Costanti {
 	/** Property name per la descrizione del binding. */
 	public static final String LLM_PROVIDER_BINDING_DESCRIPTION = "llmProviderBinding.description";
 
+	/* === PII Masking (subsection nel form binding) === */
+
+	/** Property name: abilitazione master del PII Masking sul binding. */
+	public static final String LLM_PROVIDER_BINDING_PII_ENABLED = "llmProviderBinding.piiMaskingEnabled";
+
+	/** Property name: tipi di detector PII applicati dal binding (multiSelect, valori separati da virgola). */
+	public static final String LLM_PROVIDER_BINDING_PII_TYPE = "llmProviderBinding.piiType";
+
+	/** Property name: applica tutte le Regole PII di tipo RegExp (se false, si usa la selezione esplicita). */
+	public static final String LLM_PROVIDER_BINDING_PII_REGEXP_REFS_ALL = "llmProviderBinding.piiRegexpRefsAll";
+
+	/** Property name: Regole PII RegExp selezionate (multiSelect, nomi separati da virgola). */
+	public static final String LLM_PROVIDER_BINDING_PII_REGEXP_REFS = "llmProviderBinding.piiRegexpRefs";
+
+	/** Property name: maschera anche il contenuto dei tool_result. */
+	public static final String LLM_PROVIDER_BINDING_PII_MASK_TOOL_RESULT = "llmProviderBinding.piiMaskToolResult";
+
+	/** Property name: maschera anche gli input dei tool_use (fase 2, richiede unmask input_json_delta). */
+	public static final String LLM_PROVIDER_BINDING_PII_MASK_TOOL_USE = "llmProviderBinding.piiMaskToolUse";
+
+	/** Property name: abilita la cache di sessione del vault. */
+	public static final String LLM_PROVIDER_BINDING_PII_SESSION_CACHE = "llmProviderBinding.piiSessionCache";
+
+	/** Property name: header (separati da virgola) che identificano la sessione per la cache del vault. */
+	public static final String LLM_PROVIDER_BINDING_PII_SESSION_KEY_HEADERS = "llmProviderBinding.piiSessionKeyHeaders";
+
+	/** Property name: TTL (secondi) per-elemento del vault in cache. */
+	public static final String LLM_PROVIDER_BINDING_PII_SESSION_TTL = "llmProviderBinding.piiSessionTtlSeconds";
+
+	/** Default per gli header di sessione del PII Masking. */
+	public static final String LLM_PROVIDER_BINDING_PII_SESSION_KEY_HEADERS_DEFAULT = "x-claude-code-session-id";
+
+	/** Id item form: select del tipo detector PII applicato dal binding. */
+	public static final String ID_BINDING_PII_TYPE = "bindingPiiType";
+
+	/** Id item form: multiSelect delle Regole PII RegExp. */
+	public static final String ID_BINDING_PII_REGEXP_REFS = "bindingPiiRegexpRefs";
+
 	/**
 	 * Lunghezza massima del nome di un LLM Provider / Model / Provider Binding.
 	 * Coerente con il vincolo VARCHAR(64) delle colonne audit

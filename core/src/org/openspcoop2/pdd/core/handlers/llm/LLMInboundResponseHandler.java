@@ -198,10 +198,12 @@ public class LLMInboundResponseHandler implements InResponseHandler {
 
 	private InputStream buildStreamingWrapper(AbstractBaseOpenSPCoop2MessageDynamicContent<?> dyn, LLMDialect dialect, String providerId,
 			final org.openspcoop2.pdd.core.PdDContext pddContext) throws Exception {
-		InputStream src = dyn.getInputStream();
+		InputStream rawSrc = dyn.getInputStream();
+		InputStream src = rawSrc;
 		String ce = readContentEncoding(dyn);
-		if (ce != null && ce.toLowerCase().contains(HttpConstants.CONTENT_ENCODING_VALUE_GZIP)) {
-			src = new GZIPInputStream(src);
+		boolean gzip = ce != null && ce.toLowerCase().contains(HttpConstants.CONTENT_ENCODING_VALUE_GZIP);
+		if (gzip) {
+			src = new GZIPInputStream(rawSrc);
 		}
 		LLMProviderStreamTransport transport = resolveProviderStreamTransport(providerId);
 		LLMProviderStreamReader reader = LLMTransformerRegistry.newProviderStreamReader(transport);
@@ -210,7 +212,26 @@ public class LLMInboundResponseHandler implements InResponseHandler {
 		// Observer: accumula nel PdDContext l'usage emesso dai chunk per la riga transazioni_llm.
 		java.util.function.Consumer<org.openspcoop2.message.llm.CanonicalUsage> usageObserver =
 				pddContext != null ? (u -> LLMHandlerSupport.accumulateLLMStreamUsage(pddContext, u)) : null;
-		return new ChunkTransformInputStream(src, reader, decoder, encoder, usageObserver);
+		// Interceptor PII: unmask dei text_delta se la richiesta è stata mascherata (vault presente).
+		java.util.function.UnaryOperator<java.util.List<org.openspcoop2.message.llm.stream.CanonicalStreamEvent>> piiInterceptor = null;
+		if (pddContext != null) {
+			Object v = pddContext.getObject(LLMHandlerConstants.PDD_CTX_LLM_PII_VAULT);
+			if (v instanceof org.openspcoop2.pdd.core.llm.pii.PiiVault
+					&& !((org.openspcoop2.pdd.core.llm.pii.PiiVault) v).isEmpty()) {
+				Object cfgObj = pddContext.getObject(LLMHandlerConstants.PDD_CTX_LLM_PII_BINDING_CONFIG);
+				boolean unmaskToolUse = (cfgObj instanceof org.openspcoop2.pdd.core.llm.pii.PiiBindingConfig)
+						&& ((org.openspcoop2.pdd.core.llm.pii.PiiBindingConfig) cfgObj).isMaskToolUse();
+				piiInterceptor = new org.openspcoop2.pdd.core.llm.pii.PiiStreamEventInterceptor((org.openspcoop2.pdd.core.llm.pii.PiiVault) v, unmaskToolUse);
+			}
+		}
+		ChunkTransformInputStream ct = new ChunkTransformInputStream(src, reader, decoder, encoder, usageObserver, piiInterceptor);
+		if (gzip) {
+			// GZIPInputStream si ferma al trailer senza drenare il sottostante: forziamo il drain a EOF
+			// così l'istrumentazione del connettore (letturaPayloadRisposta.completata, RESPONSE_COMPLETE_DATE,
+			// rilascio connessione al pool) scatta anche con Content-Encoding gzip.
+			ct.setDrainUnderlyingOnEof(rawSrc);
+		}
+		return ct;
 	}
 
 	private LLMProviderStreamTransport resolveProviderStreamTransport(String providerId) throws Exception {

@@ -82,7 +82,7 @@ public class DiagnosticInputStream extends FilterInputStream {
 		this.ctx = ctx;
 		
 		this.isWrapped = inputStream;
-		
+
 		registerStartDate();
 	}
 	
@@ -154,9 +154,9 @@ public class DiagnosticInputStream extends FilterInputStream {
 	}
 	
 	private void registerDate(Throwable t) {
-		if(this.ctx!=null && 
-				(this.readSomeBytes 
-						|| 
+		if(this.ctx!=null &&
+				(this.readSomeBytes
+						||
 				DiagnosticInputStream.setDateEmptyStream) // per far si che le due date siano le stesse
 			) {
 			Date d = DateManager.getDate();
@@ -188,7 +188,7 @@ public class DiagnosticInputStream extends FilterInputStream {
 		}
 	}
 	private void emitDiagnostic(Throwable t) {
-		if(this.msgDiagnostico!=null && 
+		if(this.msgDiagnostico!=null &&
 				this.idModuloFunzionale!=null && StringUtils.isNotEmpty(this.idModuloFunzionale) &&
 				this.identificativo!=null && StringUtils.isNotEmpty(this.identificativo)) {
 			try {

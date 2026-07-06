@@ -241,6 +241,11 @@ public class ArchiviExporter extends HttpServlet {
 			}
 			cascadeConfig.setCascadePolicyConfigurazione(ServletUtils.isCheckBoxEnabled(cascadePolicyConfig));
 			cascadeConfig.setCascadePluginConfigurazione(ServletUtils.isCheckBoxEnabled(cascadePluginConfig));
+			// Provider Binding LLM: il checkbox generale "Elementi riferiti" (cascade) include i config
+			// referenziati dal binding (provider/model/regole PII), veicolati via cascadePolicyConfigurazione.
+			if(ArchiveType.CONFIGURAZIONE_LLM_PROVIDER_BINDING.equals(archiveType) && ServletUtils.isCheckBoxEnabled(cascade)){
+				cascadeConfig.setCascadePolicyConfigurazione(true);
+			}
 						
 			
 			// Recuperi eventuali identificativi logici degli oggetti
@@ -330,6 +335,21 @@ public class ArchiviExporter extends HttpServlet {
 				identificativi = exporterUtils.getIdsLLMProvider(objToExport);
 				redirect = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_LIST+"?"+
 						ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE+"="+ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_LLM_PROVIDER;
+				break;
+			case CONFIGURAZIONE_LLM_MODEL:
+				identificativi = exporterUtils.getIdsLLMModel(objToExport);
+				redirect = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_LIST+"?"+
+						ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE+"="+ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_LLM_MODEL;
+				break;
+			case CONFIGURAZIONE_LLM_PROVIDER_BINDING:
+				identificativi = exporterUtils.getIdsLLMProviderBinding(objToExport);
+				redirect = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_LIST+"?"+
+						ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE+"="+ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_LLM_PROVIDER_BINDING;
+				break;
+			case CONFIGURAZIONE_LLM_PII_MASKING:
+				identificativi = exporterUtils.getIdsLLMPiiMasking(objToExport);
+				redirect = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_LIST+"?"+
+						ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE+"="+ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_LLM_PII_MASKING;
 				break;
 			case CONFIGURAZIONE_PLUGIN_CLASSE:
 				identificativi = exporterUtils.getIdsPluginClassi(objToExport);
@@ -637,6 +657,39 @@ public class ArchiviExporter extends HttpServlet {
 					IDGenericProperties idPolicy = ((IDGenericProperties)identificativi.get(0));
 					fileName = prefix+"LLMProvider_"+
 							idPolicy.getNome()+"."+extSingleArchive;
+				}
+				break;
+			case CONFIGURAZIONE_LLM_MODEL:
+				if(identificativi==null || identificativi.isEmpty()) {
+					throw new Exception("Identificativi non forniti");
+				}
+				if(identificativi.size()>1){
+					fileName = prefix+"LLMModel."+ext;
+				}else{
+					IDGenericProperties idPolicy = ((IDGenericProperties)identificativi.get(0));
+					fileName = prefix+"LLMModel_"+idPolicy.getNome()+"."+extSingleArchive;
+				}
+				break;
+			case CONFIGURAZIONE_LLM_PROVIDER_BINDING:
+				if(identificativi==null || identificativi.isEmpty()) {
+					throw new Exception("Identificativi non forniti");
+				}
+				if(identificativi.size()>1){
+					fileName = prefix+"LLMProviderBinding."+ext;
+				}else{
+					IDGenericProperties idPolicy = ((IDGenericProperties)identificativi.get(0));
+					fileName = prefix+"LLMProviderBinding_"+idPolicy.getNome()+"."+extSingleArchive;
+				}
+				break;
+			case CONFIGURAZIONE_LLM_PII_MASKING:
+				if(identificativi==null || identificativi.isEmpty()) {
+					throw new Exception("Identificativi non forniti");
+				}
+				if(identificativi.size()>1){
+					fileName = prefix+"LLMPiiMasking."+ext;
+				}else{
+					IDGenericProperties idPolicy = ((IDGenericProperties)identificativi.get(0));
+					fileName = prefix+"LLMPiiMasking_"+idPolicy.getNome()+"."+extSingleArchive;
 				}
 				break;
 			case CONFIGURAZIONE_PLUGIN_CLASSE:

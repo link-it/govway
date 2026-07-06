@@ -391,6 +391,15 @@ public class ExporterUtils {
 	public List<IDGenericProperties> getIdsLLMProvider(String ids) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 		return getIdsTokenPolicy(ids); // è uguale: passa per generic_properties via id
 	}
+	public List<IDGenericProperties> getIdsLLMModel(String ids) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return getIdsTokenPolicy(ids);
+	}
+	public List<IDGenericProperties> getIdsLLMProviderBinding(String ids) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return getIdsTokenPolicy(ids);
+	}
+	public List<IDGenericProperties> getIdsLLMPiiMasking(String ids) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return getIdsTokenPolicy(ids);
+	}
 	public List<IDGenericProperties> getIdsTokenPolicy(String ids) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 		List<IDGenericProperties> idsTokenPolicy = new ArrayList<>();
 		ArrayList<String> idsToExport = Utilities.parseIdsToRemove(ids);

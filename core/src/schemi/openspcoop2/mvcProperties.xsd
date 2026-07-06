@@ -102,6 +102,7 @@
 			<xsd:enumeration value="text"/>
 			<xsd:enumeration value="textarea"/>
 			<xsd:enumeration value="select"/>
+			<xsd:enumeration value="multiSelect"/>
 			<xsd:enumeration value="checkbox"/>
 			<xsd:enumeration value="number"/>
 			<xsd:enumeration value="lock"/>

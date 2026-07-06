@@ -149,6 +149,19 @@ public final class LLMHandlerConstants {
 	 */
 	public static final MapKey<String> PDD_CTX_LLM_STREAM = Map.newMapKey("llm.stream");
 
+	/**
+	 * Chiave PdDContext con la {@link org.openspcoop2.pdd.core.llm.pii.PiiBindingConfig}
+	 * risolta dal Provider Binding (popolata dall'{@code LLMOutboundRequestHandler}).
+	 */
+	public static final MapKey<String> PDD_CTX_LLM_PII_BINDING_CONFIG = Map.newMapKey("llm.piiBindingConfig");
+
+	/**
+	 * Chiave PdDContext con il {@link org.openspcoop2.pdd.core.llm.pii.PiiVault} della
+	 * transazione: popolato in fase di mask della richiesta, usato per l'unmask della
+	 * risposta (sync e streaming).
+	 */
+	public static final MapKey<String> PDD_CTX_LLM_PII_VAULT = Map.newMapKey("llm.piiVault");
+
 	private LLMHandlerConstants() {
 		// utility class
 	}

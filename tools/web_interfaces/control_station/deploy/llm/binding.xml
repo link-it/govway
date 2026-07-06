@@ -42,6 +42,93 @@
 
 		</subsection>
 
+		<subsection label="PII Masking">
+
+			<item type="checkbox" name="bindingPiiEnabled" label="Abilita" defaultSelected="false" reloadOnChange="true"
+				note="Maschera i dati personali nella conversazione inviata al provider e li ripristina nella risposta.">
+				<property name="llmProviderBinding.piiMaskingEnabled" />
+			</item>
+
+			<item type="checkbox" name="bindingPiiMaskToolResult" label="tool_result" defaultSelected="true"
+				note="Maschera anche il contenuto restituito dai tool (es. file/query) verso il modello.">
+				<conditions>
+					<condition><selected name="bindingPiiEnabled" /></condition>
+				</conditions>
+				<property name="llmProviderBinding.piiMaskToolResult" />
+			</item>
+
+			<item type="checkbox" name="bindingPiiMaskToolUse" label="tool_use" defaultSelected="false"
+				note="Maschera la PII negli argomenti delle chiamate a tool inviati al modello e ne ripristina i valori reali verso l'Agent, così i tool operano sui dati veri mantenendo l'LLM cieco.&lt;BR/>Per la coerenza degli pseudonimi tra i turni è consigliata la cache di sessione.">
+				<conditions>
+					<condition><selected name="bindingPiiEnabled" /></condition>
+				</conditions>
+				<property name="llmProviderBinding.piiMaskToolUse" />
+			</item>
+
+			<item type="multiSelect" name="bindingPiiType" label="Tipo" reloadOnChange="true"
+				note="Tipi di Regola PII da applicare (tra quelli censiti).">
+				<conditions>
+					<condition><selected name="bindingPiiEnabled" /></condition>
+				</conditions>
+				<property name="llmProviderBinding.piiType" />
+			</item>
+
+			<item type="checkbox" name="bindingPiiRegexpRefsAll" defaultSelected="true" reloadOnChange="true"
+				note="Applica tutte le Regole PII di tipo RegExp censite. Deselezionare per scegliere quali applicare.">
+				<conditions and="true">
+					<condition><selected name="bindingPiiEnabled" /></condition>
+					<!-- 'regexp' presente nel CSV del multiSelect (da solo o insieme ad altri tipi) -->
+					<condition and="false">
+						<equals name="bindingPiiType" value="regexp" />
+						<startsWith name="bindingPiiType" value="regexp," />
+						<endsWith name="bindingPiiType" value=",regexp" />
+					</condition>
+				</conditions>
+				<property name="llmProviderBinding.piiRegexpRefsAll" />
+			</item>
+
+			<item type="multiSelect" name="bindingPiiRegexpRefs" label="Regole RegExp">
+				<conditions and="true">
+					<condition><selected name="bindingPiiEnabled" /></condition>
+					<!-- 'regexp' presente nel CSV del multiSelect (da solo o insieme ad altri tipi) -->
+					<condition and="false">
+						<equals name="bindingPiiType" value="regexp" />
+						<startsWith name="bindingPiiType" value="regexp," />
+						<endsWith name="bindingPiiType" value=",regexp" />
+					</condition>
+					<condition not="true"><selected name="bindingPiiRegexpRefsAll" /></condition>
+				</conditions>
+				<property name="llmProviderBinding.piiRegexpRefs" />
+			</item>
+
+			<item type="checkbox" name="bindingPiiSessionCache" label="Cache di sessione" defaultSelected="false" reloadOnChange="true"
+				note="Mantiene la coerenza dei valori mascherati su pi&#249; richieste della stessa sessione.">
+				<conditions>
+					<condition><selected name="bindingPiiEnabled" /></condition>
+				</conditions>
+				<property name="llmProviderBinding.piiSessionCache" />
+			</item>
+
+			<item type="textarea" name="bindingPiiSessionKeyHeaders" label="Header di Sessione" default="x-claude-code-session-id"
+				note="Header (separati da virgola) che identificano la sessione. Se assenti nella richiesta si usa un vault per-transazione.">
+				<conditions and="true">
+					<condition><selected name="bindingPiiEnabled" /></condition>
+					<condition><selected name="bindingPiiSessionCache" /></condition>
+				</conditions>
+				<property name="llmProviderBinding.piiSessionKeyHeaders" />
+			</item>
+
+			<item type="number" name="bindingPiiSessionTtl" label="TTL Sessione (sec)" min="1" default="3600"
+				note="Validit&#224; (secondi) del singolo elemento nella cache di sessione.">
+				<conditions and="true">
+					<condition><selected name="bindingPiiEnabled" /></condition>
+					<condition><selected name="bindingPiiSessionCache" /></condition>
+				</conditions>
+				<property name="llmProviderBinding.piiSessionTtlSeconds" />
+			</item>
+
+		</subsection>
+
 	</section>
 
 </config>

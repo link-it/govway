@@ -1770,7 +1770,15 @@ public class ConsoleProperties {
 	public Properties getLlmProviderBindingTipologia() throws UtilsException{
 		return this.reader.readPropertiesConvertEnvProperties("console.llmProviderBinding.mapping.");
 	}
-	
+
+	public String getLlmPiiMaskingForceId() throws UtilsException{
+		return this.readProperty(false, "console.llmPiiMasking.forceId");
+	}
+
+	public Properties getLlmPiiMaskingTipologia() throws UtilsException{
+		return this.reader.readPropertiesConvertEnvProperties("console.llmPiiMasking.mapping.");
+	}
+
 	public Boolean isEnableServiziVisualizzaModalitaElenco() throws UtilsException{
 		return this.readBooleanRequiredProperty("console.servizi.visualizzaModalitaElenco");
 	}

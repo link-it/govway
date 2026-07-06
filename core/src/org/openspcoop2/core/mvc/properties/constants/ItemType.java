@@ -44,6 +44,8 @@ public enum ItemType implements IEnumeration , Serializable , Cloneable {
 	TEXTAREA ("textarea"),
 	@jakarta.xml.bind.annotation.XmlEnumValue("select")
 	SELECT ("select"),
+	@jakarta.xml.bind.annotation.XmlEnumValue("multiSelect")
+	MULTI_SELECT ("multiSelect"),
 	@jakarta.xml.bind.annotation.XmlEnumValue("checkbox")
 	CHECKBOX ("checkbox"),
 	@jakarta.xml.bind.annotation.XmlEnumValue("number")

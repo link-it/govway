@@ -682,6 +682,10 @@ public class CostantiPdD {
     public static final String KEY_CONDIZIONE_CONNETTORE =  "@CONDIZIONE_CONNETTORE@";
     /** Costante che identifica il nome di un connettore */
     public static final String KEY_NOME_CONNETTORE = "@NOME_CONNETTORE@";
+    /** Costante che identifica il tipo di PII Masking applicato (diagnostici) */
+    public static final String KEY_PII_MASKING_TIPO = "@PII_TIPO@";
+    /** Costante che identifica il dettaglio della PII individuata (diagnostici) */
+    public static final String KEY_PII_MASKING_DETTAGLIO = "@PII_DETTAGLIO@";
     /** Costante che identifica la condizione estratta per lo sticky */
     public static final String KEY_CONDIZIONE_STICKY =  "@CONDIZIONE_STICKY@";
     

@@ -66,6 +66,15 @@ public class LLMOutboundResponseHandler implements OutResponseHandler {
 		}
 		try {
 			CanonicalChatResponse canonical = extractCanonical(context);
+			// Unmask PII: ripristina i valori reali nei blocchi di testo della response usando il vault.
+			Object vault = context.getPddContext() != null
+					? context.getPddContext().getObject(LLMHandlerConstants.PDD_CTX_LLM_PII_VAULT) : null;
+			if (vault instanceof org.openspcoop2.pdd.core.llm.pii.PiiVault) {
+				Object cfgObj = context.getPddContext().getObject(LLMHandlerConstants.PDD_CTX_LLM_PII_BINDING_CONFIG);
+				boolean unmaskToolUse = (cfgObj instanceof org.openspcoop2.pdd.core.llm.pii.PiiBindingConfig)
+						&& ((org.openspcoop2.pdd.core.llm.pii.PiiBindingConfig) cfgObj).isMaskToolUse();
+				org.openspcoop2.pdd.core.llm.pii.PiiMaskerEngine.unmaskResponse(canonical, (org.openspcoop2.pdd.core.llm.pii.PiiVault) vault, unmaskToolUse);
+			}
 			LLMOutboundFrontDoorResponseTransformer transformer = LLMTransformerRegistry.getOutboundFrontDoorResponseTransformer(dialect);
 			byte[] body = transformer.transform(canonical);
 			// Aggiornamento in-place: stessa motivazione del LLMOutboundRequestHandler.

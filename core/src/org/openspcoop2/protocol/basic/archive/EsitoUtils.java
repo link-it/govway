@@ -703,9 +703,85 @@ public class EsitoUtils {
 			bfEsito.append("\n");
 		}
 		if(archive.getAttributeAuthorities().size()>0){
-			bfEsito.append("\n");	
+			bfEsito.append("\n");
 		}
-		
+
+		// LLM Provider
+		if(archive.getLlmProviders().size()>0){
+			bfEsito.append("LLM Provider (").append(archive.getLlmProviders().size()).append(")\n");
+		}
+		for (int i = 0; i < archive.getLlmProviders().size(); i++) {
+			try{
+				ArchiveEsitoImportDetail d = archive.getLlmProviders().get(i);
+				String nome = ((org.openspcoop2.protocol.sdk.archive.ArchiveLLMProvider)d.getArchiveObject()).getNomePolicy();
+				bfEsito.append("\t- [").append(nome).append("] ");
+				serializeStato(d, bfEsito, importOperation);
+			}catch(Throwable e){
+				bfEsito.append("\t- [").append((i+1)).append("] "+labelNonErrore+": ").append(e.getMessage());
+			}
+			bfEsito.append("\n");
+		}
+		if(archive.getLlmProviders().size()>0){
+			bfEsito.append("\n");
+		}
+
+		// LLM Model
+		if(archive.getLlmModels().size()>0){
+			bfEsito.append("LLM Model (").append(archive.getLlmModels().size()).append(")\n");
+		}
+		for (int i = 0; i < archive.getLlmModels().size(); i++) {
+			try{
+				ArchiveEsitoImportDetail d = archive.getLlmModels().get(i);
+				String nome = ((org.openspcoop2.protocol.sdk.archive.ArchiveLLMModel)d.getArchiveObject()).getNomePolicy();
+				bfEsito.append("\t- [").append(nome).append("] ");
+				serializeStato(d, bfEsito, importOperation);
+			}catch(Throwable e){
+				bfEsito.append("\t- [").append((i+1)).append("] "+labelNonErrore+": ").append(e.getMessage());
+			}
+			bfEsito.append("\n");
+		}
+		if(archive.getLlmModels().size()>0){
+			bfEsito.append("\n");
+		}
+
+		// LLM Regola PII
+		if(archive.getLlmPiiMasking().size()>0){
+			bfEsito.append("LLM Regola PII (").append(archive.getLlmPiiMasking().size()).append(")\n");
+		}
+		for (int i = 0; i < archive.getLlmPiiMasking().size(); i++) {
+			try{
+				ArchiveEsitoImportDetail d = archive.getLlmPiiMasking().get(i);
+				String nome = ((org.openspcoop2.protocol.sdk.archive.ArchiveLLMPiiMasking)d.getArchiveObject()).getNomePolicy();
+				bfEsito.append("\t- [").append(nome).append("] ");
+				serializeStato(d, bfEsito, importOperation);
+			}catch(Throwable e){
+				bfEsito.append("\t- [").append((i+1)).append("] "+labelNonErrore+": ").append(e.getMessage());
+			}
+			bfEsito.append("\n");
+		}
+		if(archive.getLlmPiiMasking().size()>0){
+			bfEsito.append("\n");
+		}
+
+		// LLM Provider Binding
+		if(archive.getLlmProviderBindings().size()>0){
+			bfEsito.append("LLM Provider Binding (").append(archive.getLlmProviderBindings().size()).append(")\n");
+		}
+		for (int i = 0; i < archive.getLlmProviderBindings().size(); i++) {
+			try{
+				ArchiveEsitoImportDetail d = archive.getLlmProviderBindings().get(i);
+				String nome = ((org.openspcoop2.protocol.sdk.archive.ArchiveLLMProviderBinding)d.getArchiveObject()).getNomePolicy();
+				bfEsito.append("\t- [").append(nome).append("] ");
+				serializeStato(d, bfEsito, importOperation);
+			}catch(Throwable e){
+				bfEsito.append("\t- [").append((i+1)).append("] "+labelNonErrore+": ").append(e.getMessage());
+			}
+			bfEsito.append("\n");
+		}
+		if(archive.getLlmProviderBindings().size()>0){
+			bfEsito.append("\n");
+		}
+
 		// Plugin Classi
 		if(archive.getPlugin_classi().size()>0){
 			bfEsito.append("Plugin - Classi (").append(archive.getPlugin_classi().size()).append(")\n");

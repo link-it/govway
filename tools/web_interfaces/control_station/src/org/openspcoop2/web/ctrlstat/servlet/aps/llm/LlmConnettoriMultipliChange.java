@@ -567,12 +567,4 @@ public final class LlmConnettoriMultipliChange extends Action {
 		return null;
 	}
 
-	private static String findProperty(org.openspcoop2.core.config.Connettore c, String name) {
-		if (c == null || c.getPropertyList() == null) return null;
-		for (org.openspcoop2.core.config.Property p : c.getPropertyList()) {
-			if (name.equals(p.getNome())) return p.getValore();
-		}
-		return null;
-	}
-
 }

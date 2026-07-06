@@ -130,6 +130,10 @@ public final class Filtri
 	/** Filtri lista LLM Provider Binding (property values di tipologia=llmProviderBinding). */
 	public static final String FILTRO_LLM_PROVIDER_BINDING_PROVIDER = "filtroLlmProviderBindingProvider";
 	public static final String FILTRO_LLM_PROVIDER_BINDING_MODEL = "filtroLlmProviderBindingModel";
+
+	/** Filtri lista PII Masking (property values di tipologia=llmPiiMasking). */
+	public static final String FILTRO_LLM_PII_MASKING_TYPE = "filtroLlmPiiMaskingType";
+	public static final String FILTRO_LLM_PII_MASKING_CATEGORY = "filtroLlmPiiMaskingCategory";
 	
 	public static final String FILTRO_GRUPPO_SERVICE_BINDING = "filtroGruppoServiceBinding";
 	

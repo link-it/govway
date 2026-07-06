@@ -1587,7 +1587,11 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				}
 			}
 
-			if (isOk) {
+			// checkLLMPolicyData valida la sezione connettore/LLM (single-provider): va eseguita SOLO se quella
+			// sezione è stata realmente inviata dal form (parametro provider presente). Le maschere che non la
+			// mostrano (es. "Informazioni Generali") non inviano il parametro → non deve scattare la validazione.
+			boolean llmSectionSubmitted = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_LLM_PROVIDER) != null;
+			if (isOk && llmSectionSubmitted) {
 				isOk = apsHelper.checkLLMPolicyData(apiIsLLM, llmPolicy);
 			}
 
@@ -2075,7 +2079,15 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					listExtendedConnettore);
 
 			if (apiIsLLM) {
-				newConnettore = apsHelper.wrapAsLlmContainer(newConnettore, llmPolicy, llmBindings, newConnettore.getNome());
+				Connettore existingConnLlm = asps.getConfigurazioneServizio().getConnettore();
+				if (existingConnLlm!=null && existingConnLlm.getConnettoreLlm()!=null
+						&& !existingConnLlm.getConnettoreLlm().getProviderList().isEmpty()) {
+					// container multi-provider (maschera "Connettori LLM"): preservo la struttura esistente,
+					// così il driver non cancella le associazioni connettori_llm_binding.
+					newConnettore.setConnettoreLlm(existingConnLlm.getConnettoreLlm());
+				} else {
+					newConnettore = apsHelper.wrapAsLlmContainer(newConnettore, llmPolicy, llmBindings, newConnettore.getNome());
+				}
 			}
 
 			asps.getConfigurazioneServizio().setConnettore(newConnettore);

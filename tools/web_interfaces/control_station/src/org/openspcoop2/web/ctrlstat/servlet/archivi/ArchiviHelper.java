@@ -258,6 +258,12 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				||
 				ArchiveType.CONFIGURAZIONE_LLM_PROVIDER.equals(servletSourceExport)
 				||
+				ArchiveType.CONFIGURAZIONE_LLM_MODEL.equals(servletSourceExport)
+				||
+				ArchiveType.CONFIGURAZIONE_LLM_PROVIDER_BINDING.equals(servletSourceExport)
+				||
+				ArchiveType.CONFIGURAZIONE_LLM_PII_MASKING.equals(servletSourceExport)
+				||
 				ArchiveType.CONFIGURAZIONE_URL_INVOCAZIONE_REGOLA.equals(servletSourceExport)
 				||
 				ArchiveType.CONFIGURAZIONE_PLUGIN_CLASSE.equals(servletSourceExport)
@@ -300,6 +306,12 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				||
 				ArchiveType.CONFIGURAZIONE_LLM_PROVIDER.equals(servletSourceExport)
 				||
+				ArchiveType.CONFIGURAZIONE_LLM_MODEL.equals(servletSourceExport)
+				||
+				ArchiveType.CONFIGURAZIONE_LLM_PROVIDER_BINDING.equals(servletSourceExport)
+				||
+				ArchiveType.CONFIGURAZIONE_LLM_PII_MASKING.equals(servletSourceExport)
+				||
 				ArchiveType.CONFIGURAZIONE_URL_INVOCAZIONE_REGOLA.equals(servletSourceExport)
 				||
 				ArchiveType.CONFIGURAZIONE_PLUGIN_CLASSE.equals(servletSourceExport)
@@ -337,11 +349,17 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				||
 				ArchiveType.CONFIGURAZIONE_LLM_PROVIDER.equals(servletSourceExport)
 				||
+				ArchiveType.CONFIGURAZIONE_LLM_MODEL.equals(servletSourceExport)
+				||
+				ArchiveType.CONFIGURAZIONE_LLM_PII_MASKING.equals(servletSourceExport)
+				||
 				ArchiveType.CONFIGURAZIONE_URL_INVOCAZIONE_REGOLA.equals(servletSourceExport)
 				||
 				ArchiveType.CONFIGURAZIONE_PLUGIN_CLASSE.equals(servletSourceExport)
 				||
 				ArchiveType.CONFIGURAZIONE_PLUGIN_ARCHVIO.equals(servletSourceExport)){
+			// NB: il Provider Binding NON è in questa lista → mostra "Elementi riferiti" per includere
+			// i config referenziati (provider/model/regole PII)
 			showIncludiElementiRiferitiOption = false;
 		}
 		de = new DataElement();

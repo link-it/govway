@@ -65,6 +65,11 @@ public class Archive {
 	private ArchiveSortedMap<ArchiveTokenPolicy> token_retrieve_policies = new ArchiveSortedMap<ArchiveTokenPolicy>();
 	
 	private ArchiveSortedMap<ArchiveAttributeAuthority> attributeAuthorities = new ArchiveSortedMap<ArchiveAttributeAuthority>();
+
+	private ArchiveSortedMap<ArchiveLLMProvider> llmProviders = new ArchiveSortedMap<ArchiveLLMProvider>();
+	private ArchiveSortedMap<ArchiveLLMModel> llmModels = new ArchiveSortedMap<ArchiveLLMModel>();
+	private ArchiveSortedMap<ArchiveLLMPiiMasking> llmPiiMasking = new ArchiveSortedMap<ArchiveLLMPiiMasking>();
+	private ArchiveSortedMap<ArchiveLLMProviderBinding> llmProviderBindings = new ArchiveSortedMap<ArchiveLLMProviderBinding>();
 	
 	private ArchiveSortedMap<ArchivePluginClasse> plugin_classi = new ArchiveSortedMap<ArchivePluginClasse>();
 	private ArchiveSortedMap<ArchivePluginArchivio> plugin_archivi = new ArchiveSortedMap<ArchivePluginArchivio>();
@@ -158,6 +163,18 @@ public class Archive {
 	}
 	public ArchiveSortedMap<ArchiveAttributeAuthority> getAttributeAuthorities() {
 		return this.attributeAuthorities;
+	}
+	public ArchiveSortedMap<ArchiveLLMProvider> getLlmProviders() {
+		return this.llmProviders;
+	}
+	public ArchiveSortedMap<ArchiveLLMModel> getLlmModels() {
+		return this.llmModels;
+	}
+	public ArchiveSortedMap<ArchiveLLMPiiMasking> getLlmPiiMasking() {
+		return this.llmPiiMasking;
+	}
+	public ArchiveSortedMap<ArchiveLLMProviderBinding> getLlmProviderBindings() {
+		return this.llmProviderBindings;
 	}
 	public ArchiveSortedMap<ArchivePluginClasse> getPlugin_classi() {
 		return this.plugin_classi;

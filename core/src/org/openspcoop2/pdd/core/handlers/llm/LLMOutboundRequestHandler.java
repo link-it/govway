@@ -23,7 +23,6 @@ import java.util.List;
 
 import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.Property;
-import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.llm.CanonicalChatRequest;
 import org.openspcoop2.message.llm.transform.LLMDialect;
@@ -31,7 +30,6 @@ import org.openspcoop2.message.llm.transform.LLMOutboundProviderRequestTransform
 import org.openspcoop2.message.llm.transform.LLMProviderRequest;
 import org.openspcoop2.message.llm.transform.LLMTransformerRegistry;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
-import org.openspcoop2.pdd.core.connettori.InfoConnettoreUscita;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.handlers.OutRequestContext;
 import org.openspcoop2.pdd.core.handlers.OutRequestHandler;
@@ -74,6 +72,8 @@ public class LLMOutboundRequestHandler implements OutRequestHandler {
 		String providerId = resolveAndStoreProviderId(context, log);
 		try {
 			CanonicalChatRequest canonical = extractCanonical(context);
+			// PII Masking: maschera la conversazione verso il provider (fail-closed).
+			applyPiiMaskingRequest(context, canonical, log);
 			// Sostituiamo il binding name (esposto dall'API gateway) con il vendor model id richiesto dal
 			// backend. Il binding name resta visibile sul PdDContext per la transazione/audit, ma il body
 			// inviato al provider deve trasportare l'identificativo nativo (es. 'claude-haiku-4-5' per
@@ -124,6 +124,9 @@ public class LLMOutboundRequestHandler implements OutRequestHandler {
 
 		// 1) lookup del binding -> model name + vendor model id (+ pricing)
 		GenericProperties binding = lookupBinding(mgr, requestInfo, bindingName);
+		// Config PII del binding: stash nel PdDContext per il mask della richiesta (invoke).
+		pdd.addObject(LLMHandlerConstants.PDD_CTX_LLM_PII_BINDING_CONFIG,
+				org.openspcoop2.pdd.core.llm.pii.PiiBindingConfig.fromProperties(binding.getPropertyList()));
 		String modelName    = findPropertyValue(binding.getPropertyList(), org.openspcoop2.pdd.core.llm.provider.Costanti.LLM_PROVIDER_BINDING_MODEL);
 		String vendorModelId= findPropertyValue(binding.getPropertyList(), org.openspcoop2.pdd.core.llm.provider.Costanti.LLM_PROVIDER_BINDING_VENDOR_MODEL_ID);
 		String priceInput   = findPropertyValue(binding.getPropertyList(), org.openspcoop2.pdd.core.llm.provider.Costanti.LLM_PROVIDER_BINDING_PRICE_INPUT);
@@ -228,5 +231,66 @@ public class LLMOutboundRequestHandler implements OutRequestHandler {
 			return (CanonicalChatRequest) o;
 		}
 		throw new HandlerException("LLMOutboundRequestHandler: CanonicalChatRequest assente nel PdDContext (l'InRequestProtocolHandler LLM non ha popolato il context?)");
+	}
+
+	/** Applica il PII Masking alla richiesta canonical (fail-closed) e stash del vault nel PdDContext. */
+	private void applyPiiMaskingRequest(OutRequestContext context, CanonicalChatRequest canonical, org.slf4j.Logger log) throws HandlerException {
+		org.openspcoop2.pdd.core.PdDContext pdd = context.getPddContext();
+		Object o = pdd != null ? pdd.getObject(LLMHandlerConstants.PDD_CTX_LLM_PII_BINDING_CONFIG) : null;
+		if (!(o instanceof org.openspcoop2.pdd.core.llm.pii.PiiBindingConfig)) {
+			return;
+		}
+		org.openspcoop2.pdd.core.llm.pii.PiiBindingConfig cfg = (org.openspcoop2.pdd.core.llm.pii.PiiBindingConfig) o;
+		if (!cfg.isEnabled()) {
+			return;
+		}
+		try {
+			ConfigurazionePdDManager mgr = ConfigurazionePdDManager.getInstance(context.getStato());
+			java.util.List<org.openspcoop2.pdd.core.llm.pii.PiiRuleConfig> rules =
+					org.openspcoop2.pdd.core.llm.pii.PiiConfigResolver.resolve(mgr, cfg);
+			org.openspcoop2.pdd.core.llm.pii.PiiMaskerEngine engine =
+					org.openspcoop2.pdd.core.llm.pii.PiiMaskerEngine.build(rules);
+			org.openspcoop2.pdd.core.llm.pii.PiiVault vault = new org.openspcoop2.pdd.core.llm.pii.PiiVault();
+			org.openspcoop2.pdd.core.llm.pii.PiiFindings findings = new org.openspcoop2.pdd.core.llm.pii.PiiFindings();
+			if (engine.hasMaskers()) {
+				engine.maskRequest(canonical, cfg, vault, findings);
+			}
+			pdd.addObject(LLMHandlerConstants.PDD_CTX_LLM_PII_VAULT, vault);
+			emitPiiDiagnostics(context, cfg, findings, log);
+		} catch (org.openspcoop2.pdd.core.llm.pii.PiiMaskingException e) {
+			throw new HandlerException("LLMOutboundRequestHandler: PII Masking fallito (fail-closed): " + e.getMessage(), e);
+		}
+	}
+
+	/** Emette un diagnostico per ciascun tipo detector applicato (con i nomi delle Regole PII individuate). */
+	private void emitPiiDiagnostics(OutRequestContext context, org.openspcoop2.pdd.core.llm.pii.PiiBindingConfig cfg,
+			org.openspcoop2.pdd.core.llm.pii.PiiFindings findings, org.slf4j.Logger log) {
+		try {
+			org.openspcoop2.core.constants.TipoPdD tipo = context.getTipoPorta();
+			boolean fruizione = org.openspcoop2.core.constants.TipoPdD.DELEGATA.equals(tipo);
+			String modulo = fruizione ? org.openspcoop2.pdd.mdb.InoltroBuste.ID_MODULO : org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi.ID_MODULO;
+			String moduloFunzionale = fruizione
+					? org.openspcoop2.pdd.logger.MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE
+					: org.openspcoop2.pdd.logger.MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI;
+			org.openspcoop2.protocol.sdk.state.RequestInfo requestInfo = extractRequestInfo(context);
+			org.openspcoop2.pdd.logger.MsgDiagnostico msgDiag =
+					org.openspcoop2.pdd.logger.MsgDiagnostico.newInstance(tipo, modulo, null, requestInfo);
+			// Associazione alla transazione corrente (altrimenti il diagnostico non compare nella transazione).
+			msgDiag.setPddContext(context.getPddContext(), context.getProtocolFactory());
+			for (String type : cfg.getTypes()) {
+				String typeLabel = org.openspcoop2.pdd.core.llm.pii.LLMPiiMaskingConfigProvider.detectorTypeLabel(type);
+				String detail = findings.describeType(type);
+				String dettaglio = (detail == null || detail.isEmpty())
+						? "nessuna informazione sensibile individuata"
+						: "individuati: " + detail;
+				msgDiag.addKeyword(org.openspcoop2.pdd.core.CostantiPdD.KEY_PII_MASKING_TIPO, typeLabel);
+				msgDiag.addKeyword(org.openspcoop2.pdd.core.CostantiPdD.KEY_PII_MASKING_DETTAGLIO, dettaglio);
+				msgDiag.logPersonalizzato(moduloFunzionale, "llmPiiMasking.applicato");
+			}
+		} catch (Exception e) {
+			if (log != null) {
+				log.warn("LLMOutboundRequestHandler: emissione diagnostici PII fallita: {}", e.getMessage());
+			}
+		}
 	}
 }

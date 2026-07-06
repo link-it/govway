@@ -103,6 +103,41 @@ public class LLMProviderBindingConfigProvider implements IProvider {
 		validatePrice(pDefault, Costanti.LLM_PROVIDER_BINDING_PRICE_OUTPUT, "Prezzo Output");
 		validateDivisor(pDefault, Costanti.LLM_PROVIDER_BINDING_PRICE_INPUT_DIVISOR, "Token Input / Divisore");
 		validateDivisor(pDefault, Costanti.LLM_PROVIDER_BINDING_PRICE_OUTPUT_DIVISOR, "Token Output / Divisore");
+		validatePiiMasking(pDefault);
+	}
+
+	private void validatePiiMasking(Properties pDefault) throws ProviderValidationException {
+		String enabled = pDefault.getProperty(Costanti.LLM_PROVIDER_BINDING_PII_ENABLED);
+		if (!"true".equalsIgnoreCase(enabled)) {
+			return; // PII Masking disabilitato: niente da validare
+		}
+		// Almeno un tipo di Regola PII deve essere selezionato.
+		String types = pDefault.getProperty(Costanti.LLM_PROVIDER_BINDING_PII_TYPE);
+		if (types == null || types.trim().isEmpty()) {
+			throw new ProviderValidationException("Selezionare almeno un Tipo di Regola PII da applicare");
+		}
+		// Se è selezionato il tipo RegExp e non si applicano tutte le Regole, occorre selezionarne almeno una.
+		if (csvContains(types, org.openspcoop2.pdd.core.llm.pii.Costanti.PII_DETECTOR_TYPE_VALUE_REGEXP)) {
+			String refsAll = pDefault.getProperty(Costanti.LLM_PROVIDER_BINDING_PII_REGEXP_REFS_ALL);
+			if (!"true".equalsIgnoreCase(refsAll)) {
+				String refs = pDefault.getProperty(Costanti.LLM_PROVIDER_BINDING_PII_REGEXP_REFS);
+				if (refs == null || refs.trim().isEmpty()) {
+					throw new ProviderValidationException("Selezionare almeno una Regola PII RegExp, oppure abilitare 'Tutte le Regole RegExp'");
+				}
+			}
+		}
+	}
+
+	private static boolean csvContains(String csv, String value) {
+		if (csv == null || value == null) {
+			return false;
+		}
+		for (String t : csv.split(",")) {
+			if (value.equals(t.trim())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private void validateRef(Properties pDefault, String propertyName, String labelForError) throws ProviderValidationException {
@@ -168,6 +203,14 @@ public class LLMProviderBindingConfigProvider implements IProvider {
 		if (Costanti.ID_BINDING_MODEL.equals(id)) {
 			return prependNonSelezionato(loadGenericPropertiesNames(externalResources, Costanti.TIPOLOGIA_MODEL));
 		}
+		if (Costanti.ID_BINDING_PII_TYPE.equals(id)) {
+			// multiSelect: distinct dei tipi detector effettivamente censiti tra le Regole PII.
+			return loadDistinctPiiDetectorTypes(externalResources);
+		}
+		if (Costanti.ID_BINDING_PII_REGEXP_REFS.equals(id)) {
+			// multiSelect: nomi delle Regole PII (oggi tutte di tipo RegExp; nessun valore "non selezionato").
+			return loadGenericPropertiesNames(externalResources, org.openspcoop2.pdd.core.llm.pii.Costanti.TIPOLOGIA);
+		}
 		return new ArrayList<>();
 	}
 
@@ -178,8 +221,20 @@ public class LLMProviderBindingConfigProvider implements IProvider {
 
 	@Override
 	public List<String> getLabels(String id, ExternalResources externalResources) throws ProviderException {
-		// La label coincide con il nome (id user-defined dell'entità).
+		if (Costanti.ID_BINDING_PII_TYPE.equals(id)) {
+			// Per i tipi detector mostriamo una label leggibile (es. regexp -> "Espressioni Regolari").
+			List<String> labels = new ArrayList<>();
+			for (String v : getValues(id, externalResources)) {
+				labels.add(piiDetectorTypeLabel(v));
+			}
+			return labels;
+		}
+		// Negli altri casi la label coincide con il valore (nome dell'entità).
 		return getValues(id, externalResources);
+	}
+
+	private static String piiDetectorTypeLabel(String detectorType) {
+		return org.openspcoop2.pdd.core.llm.pii.LLMPiiMaskingConfigProvider.detectorTypeLabel(detectorType);
 	}
 
 	@Override
@@ -239,5 +294,42 @@ public class LLMProviderBindingConfigProvider implements IProvider {
 			throw new ProviderException("Errore lettura nomi tipologia '" + tipologia + "': " + e.getMessage(), e);
 		}
 		return nomi;
+	}
+
+	/** Distinct dei valori della property {@code llmPiiMasking.detectorType} tra tutte le Regole PII censite. */
+	private List<String> loadDistinctPiiDetectorTypes(ExternalResources externalResources) throws ProviderException {
+		List<String> tipi = new ArrayList<>();
+		if (externalResources == null || externalResources.getConnection() == null) {
+			return tipi;
+		}
+		Connection con = externalResources.getConnection();
+		try {
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(externalResources.getTipoDB());
+			sqlQueryObject.addFromTable(CostantiDB.CONFIG_GENERIC_PROPERTIES);
+			sqlQueryObject.addFromTable(CostantiDB.CONFIG_GENERIC_PROPERTY);
+			sqlQueryObject.addSelectField(CostantiDB.CONFIG_GENERIC_PROPERTY, CostantiDB.CONFIG_GENERIC_PROPERTY_COLUMN_VALORE);
+			sqlQueryObject.setSelectDistinct(true);
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQueryObject.addWhereCondition(CostantiDB.CONFIG_GENERIC_PROPERTIES + ".tipologia = ?");
+			sqlQueryObject.addWhereCondition(CostantiDB.CONFIG_GENERIC_PROPERTY + "." + CostantiDB.CONFIG_GENERIC_PROPERTY_COLUMN_ID_PROPS
+					+ " = " + CostantiDB.CONFIG_GENERIC_PROPERTIES + "." + CostantiDB.CONFIG_GENERIC_PROPERTIES_COLUMN_ID);
+			sqlQueryObject.addWhereCondition(CostantiDB.CONFIG_GENERIC_PROPERTY + "." + CostantiDB.CONFIG_GENERIC_PROPERTY_COLUMN_NOME + " = ?");
+			String sql = sqlQueryObject.createSQLQuery();
+			try (PreparedStatement ps = con.prepareStatement(sql)) {
+				ps.setString(1, org.openspcoop2.pdd.core.llm.pii.Costanti.TIPOLOGIA);
+				ps.setString(2, org.openspcoop2.pdd.core.llm.pii.Costanti.LLM_PII_DETECTOR_TYPE);
+				try (ResultSet rs = ps.executeQuery()) {
+					while (rs.next()) {
+						String v = rs.getString(CostantiDB.CONFIG_GENERIC_PROPERTY_COLUMN_VALORE);
+						if (v != null && !v.isEmpty()) {
+							tipi.add(v);
+						}
+					}
+				}
+			}
+		} catch (Exception e) {
+			throw new ProviderException("Errore lettura dei tipi detector PII: " + e.getMessage(), e);
+		}
+		return tipi;
 	}
 }
