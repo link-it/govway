@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.TrasformazioneRegola;
+import org.openspcoop2.core.config.TrasformazioneRegolaParametro;
 import org.openspcoop2.core.config.TrasformazioneRegolaRichiesta;
 import org.openspcoop2.core.config.TrasformazioneRegolaRisposta;
 import org.openspcoop2.core.config.Trasformazioni;
@@ -42,6 +43,7 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.message.OpenSPCoop2RestJsonMessage;
 import org.openspcoop2.message.OpenSPCoop2RestMimeMultipartMessage;
 import org.openspcoop2.message.OpenSPCoop2RestXmlMessage;
@@ -810,7 +812,10 @@ public class GestoreTrasformazioni {
 			// trasformazione contenuto non richiesta
 			if(!trasformazioneContenuto) {
 				GestoreTrasformazioniUtilities.addTransportInfo(forceAddTrasporto, forceAddUrl, null, messageP);
-				
+
+				// riporta sul messaggio REST l'esito della trasformazione dell'header Content-Type (es. eliminazione)
+				allineaContentTypeMessaggioRest(messageP, richiesta.getHeaderList(), trasporto);
+
 				if(ServiceBinding.REST.equals(messageP.getServiceBinding()) &&
 					richiesta.getTrasformazioneRest()!=null &&
 					(StringUtils.isNotEmpty(richiesta.getTrasformazioneRest().getMetodo()) || StringUtils.isNotEmpty(richiesta.getTrasformazioneRest().getPath())) 
@@ -1196,9 +1201,12 @@ public class GestoreTrasformazioni {
 			// trasformazione contenuto non richiesta
 			if(!trasformazioneContenuto) {
 				GestoreTrasformazioniUtilities.addTransportInfo(forceAddTrasporto, null, forceResponseStatus, message);
-				
+
+				// riporta sul messaggio REST l'esito della trasformazione dell'header Content-Type (es. eliminazione)
+				allineaContentTypeMessaggioRest(message, trasformazioneRisposta.getHeaderList(), trasporto);
+
 				this.msgDiag.logPersonalizzato("trasformazione.processamentoRispostaEffettuato");
-				
+
 				return message;
 			}
 			
@@ -1273,6 +1281,39 @@ public class GestoreTrasformazioni {
 			throw new GestoreTrasformazioniException(msgErrore,er);
 		}
 	}
-	
+
+	/**
+	 * Riporta sul campo Content-Type del messaggio REST l'esito di una trasformazione applicata all'header di trasporto Content-Type.
+	 *
+	 * Per i messaggi REST il Content-Type risiede in un campo dedicato del messaggio ({@link OpenSPCoop2Message#updateContentType()}
+	 * è un nop) e non viene derivato dalla mappa degli header di trasporto; il connettore, in fase di spedizione, re-imposta l'header
+	 * a partire da tale campo. Di conseguenza, in assenza di trasformazione del contenuto, una regola 'delete'/'set' sull'header di
+	 * trasporto Content-Type non avrebbe alcun effetto. Se una regola ha operato sull'header Content-Type, si riporta quindi sul campo
+	 * del messaggio il valore risultante nella mappa degli header di trasporto (null se l'header è stato eliminato).
+	 *
+	 * La logica è limitata al binding REST: per SOAP il Content-Type è derivato dalla versione/envelope e viene già ricostruito da
+	 * {@link OpenSPCoop2Message#updateContentType()}.
+	 */
+	private void allineaContentTypeMessaggioRest(OpenSPCoop2Message msg, List<TrasformazioneRegolaParametro> headerList, Map<String, List<String>> trasporto) throws MessageException {
+		if(msg==null || !ServiceBinding.REST.equals(msg.getServiceBinding())) {
+			return;
+		}
+		if(!isContentTypeHeaderTransformation(headerList)) {
+			return;
+		}
+		msg.setContentType(TransportUtils.getFirstValue(trasporto, HttpConstants.CONTENT_TYPE));
+	}
+
+	private static boolean isContentTypeHeaderTransformation(List<TrasformazioneRegolaParametro> headerList) {
+		if(headerList!=null) {
+			for (TrasformazioneRegolaParametro parametro : headerList) {
+				if(parametro.getNome()!=null && HttpConstants.CONTENT_TYPE.equalsIgnoreCase(parametro.getNome().trim())) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 }
 

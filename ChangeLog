@@ -1,3 +1,11 @@
+2026-07-07  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug #1796
+	Corretta la trasformazione degli header HTTP delle API REST: le operazioni sull'header Content-Type (eliminazione, modifica, aggiunta),
+	sia in richiesta che in risposta, non venivano applicate in assenza di una conversione del contenuto, poiché in fase di inoltro il
+	Content-Type veniva reimpostato al valore originale del messaggio.
+
 2026-06-28  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
