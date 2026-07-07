@@ -90,6 +90,8 @@ if(csrfTokenFromSession == null)
 				<jsp:include page="/jsp/form/configurazione.jsp" flush="true"/>
 			<% }  else if(customListViewName.equals("connettoriMultipli")){ %>
 				<jsp:include page="/jsp/form/connettoriMultipli.jsp" flush="true"/>
+			<% }  else if(customListViewName.equals("configurazioneLLM")){ %>
+				<jsp:include page="/jsp/form/configurazioneLLM.jsp" flush="true"/>
 			<% }  %>
 		</table>
 	</form>

@@ -585,6 +585,15 @@ public class ConfigurazioneCostanti {
 	public static final String LABEL_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY = "Attribute Authority";
 
 	public static final String LABEL_CONFIGURAZIONE_LLM = "LLM";
+	// Hub LLM: vista custom a tile (jsp/form/configurazioneLLM.jsp), due sezioni Registro/Configurazione
+	public static final String CONFIGURAZIONE_LLM_NOME_VISTA_CUSTOM = "configurazioneLLM";
+	public static final String LABEL_CONFIGURAZIONE_LLM_SEZIONE_REGISTRO = "Registro";
+	public static final String LABEL_CONFIGURAZIONE_LLM_SEZIONE_CONFIGURAZIONE = "Configurazione";
+	// icone Material Symbols per le tile
+	public static final String ICONA_CONFIGURAZIONE_LLM_PROVIDER = "hub";
+	public static final String ICONA_CONFIGURAZIONE_LLM_MODEL = "psychology";
+	public static final String ICONA_CONFIGURAZIONE_LLM_PII_MASKING = "domino_mask";
+	public static final String ICONA_CONFIGURAZIONE_LLM_PROVIDER_BINDING = "link";
 	public static final String LABEL_CONFIGURAZIONE_LLM_PROVIDER = "LLM Provider";
 	public static final String LABEL_CONFIGURAZIONE_LLM_MODEL = "LLM Model";
 	public static final String LABEL_CONFIGURAZIONE_LLM_PROVIDER_BINDING = "LLM Provider Binding";

@@ -86,12 +86,16 @@ public class ConfigurazioneLLM extends Action {
 
 			ServletUtils.setPageDataTitle(pd, lstParam);
 
+			// La vista custom (edit-page-custom.jsp / configurazioneLLM.jsp) si aspetta i dati
+			// raggruppati (List<List<DataElement>>), come le altre form custom (es. erogazione).
+			List<List<DataElement>> datiPagina = new ArrayList<>();
 			List<DataElement> dati = new ArrayList<>();
+			datiPagina.add(dati);
 			dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 			confHelper.addConfigurazioneLLMToDati(dati, tipoOperazione, sizeProvider, sizeModel, sizeProviderBinding, sizePiiMasking);
 
-			pd.setDati(dati);
+			pd.setDati(datiPagina);
 			pd.disableEditMode();
 
 			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);

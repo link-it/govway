@@ -7719,8 +7719,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	public void addConfigurazioneLLMToDati(List<DataElement> dati, TipoOperazione tipoOperazione,
 			long sizeProvider, long sizeModel, long sizeProviderBinding, long sizePiiMasking) throws Exception {
 
+		// Hub LLM a tile (jsp/form/configurazioneLLM.jsp): sezioni Registro e Configurazione
+		this.pd.setCustomListViewName(ConfigurazioneCostanti.CONFIGURAZIONE_LLM_NOME_VISTA_CUSTOM);
+
+		// === Registro: Provider, Modelli, Regole PII ===
 		DataElement de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_LLM);
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_LLM_SEZIONE_REGISTRO);
 		de.setType(DataElementType.TITLE);
 		dati.add(de);
 
@@ -7728,6 +7732,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LLM_PROVIDER_LINK);
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LLM_PROVIDER_LINK);
 		de.setType(DataElementType.LINK);
+		de.setIcon(ConfigurazioneCostanti.ICONA_CONFIGURAZIONE_LLM_PROVIDER);
 		de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_LIST+"?"+
 				ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE+"="+
 				ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_LLM_PROVIDER);
@@ -7738,6 +7743,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LLM_MODEL_LINK);
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LLM_MODEL_LINK);
 		de.setType(DataElementType.LINK);
+		de.setIcon(ConfigurazioneCostanti.ICONA_CONFIGURAZIONE_LLM_MODEL);
 		de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_LIST+"?"+
 				ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE+"="+
 				ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_LLM_MODEL);
@@ -7745,23 +7751,31 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		dati.add(de);
 
 		de = new DataElement();
-		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LLM_PROVIDER_BINDING_LINK);
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LLM_PROVIDER_BINDING_LINK);
-		de.setType(DataElementType.LINK);
-		de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_LIST+"?"+
-				ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE+"="+
-				ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_LLM_PROVIDER_BINDING);
-		de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LLM_PROVIDER_BINDING_LINK+" (" + sizeProviderBinding + ")");
-		dati.add(de);
-
-		de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LLM_PII_MASKING_LINK);
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LLM_PII_MASKING_LINK);
 		de.setType(DataElementType.LINK);
+		de.setIcon(ConfigurazioneCostanti.ICONA_CONFIGURAZIONE_LLM_PII_MASKING);
 		de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_LIST+"?"+
 				ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE+"="+
 				ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_LLM_PII_MASKING);
 		de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LLM_PII_MASKING_LINK+" (" + sizePiiMasking + ")");
+		dati.add(de);
+
+		// === Configurazione: Provider Binding ===
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_LLM_SEZIONE_CONFIGURAZIONE);
+		de.setType(DataElementType.TITLE);
+		dati.add(de);
+
+		de = new DataElement();
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LLM_PROVIDER_BINDING_LINK);
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LLM_PROVIDER_BINDING_LINK);
+		de.setType(DataElementType.LINK);
+		de.setIcon(ConfigurazioneCostanti.ICONA_CONFIGURAZIONE_LLM_PROVIDER_BINDING);
+		de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_LIST+"?"+
+				ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE+"="+
+				ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_LLM_PROVIDER_BINDING);
+		de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LLM_PROVIDER_BINDING_LINK+" (" + sizeProviderBinding + ")");
 		dati.add(de);
 	}
 
