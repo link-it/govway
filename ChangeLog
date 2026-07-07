@@ -1,4 +1,12 @@
-2026-07-12  Andrea Poli <apoli@link.it>
+2026-07-07  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug #1796
+	Corretta la trasformazione degli header HTTP delle API REST: le operazioni sull'header Content-Type (eliminazione, modifica, aggiunta),
+	sia in richiesta che in risposta, non venivano applicate in assenza di una conversione del contenuto, poiché in fase di inoltro il
+	Content-Type veniva reimpostato al valore originale del messaggio.
+
+2026-07-03  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
 	Risolto Bug #1795
@@ -8,7 +16,7 @@
 	L'anomalia non impattava l'elaborazione delle statistiche, ma solo l'informazione di dettaglio (tempi di
 	attraversamento della singola transazione) consultabile dalla console di monitoraggio.
 
-2026-07-12  Andrea Poli <apoli@link.it>
+2026-07-01  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]
 	Risolto Bug #1782 #1784
