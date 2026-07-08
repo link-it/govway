@@ -122,13 +122,25 @@ public class JCS3CacheImpl extends AbstractCacheImpl {
 			}
 			
 			JCS.setConfigProperties(cacheProperties);
-			
+
 			return true;
-			
+
 		}catch(Exception e){
 			logCore.error("Riscontrato errore durante l'inizializzazione del sistema di cache: "
 					+e.getMessage(),e);
 			return false;
+		}
+	}
+
+	public static void shutdown() throws UtilsException {
+		try{
+			// Arresto esplicito del cache manager JCS mentre il classloader del web-context è ancora valido.
+			// Oltre a liberare le cache, questo rimuove lo shutdown hook JVM registrato da JCS, che altrimenti,
+			// scattando all'uscita della JVM (classloader del web-context già fermato), fallirebbe il caricamento
+			// di alcune classi con un NoClassDefFoundError.
+			org.apache.commons.jcs3.engine.control.CompositeCacheManager.getInstance().shutDown();
+		}catch(Exception e){
+			throw new UtilsException("Riscontrato errore durante lo shutdown del sistema di cache: "+e.getMessage(),e);
 		}
 	}
 	

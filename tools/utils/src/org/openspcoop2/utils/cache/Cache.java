@@ -54,10 +54,14 @@ public class Cache {
 			String cachePropertiesName,
 			String rootDirectory,Properties objectProperties,
 			String OPENSPCOOP2_LOCAL_HOME,String OPENSPCOOP2_CACHE_PROPERTIES,String OPENSPCOOP2_CACHE_LOCAL_PATH){
-		return JCS3CacheImpl.initialize(logConsole, logCore, 
-				cachePropertiesName, 
-				rootDirectory, objectProperties, 
+		return JCS3CacheImpl.initialize(logConsole, logCore,
+				cachePropertiesName,
+				rootDirectory, objectProperties,
 				OPENSPCOOP2_LOCAL_HOME, OPENSPCOOP2_CACHE_PROPERTIES, OPENSPCOOP2_CACHE_LOCAL_PATH);
+	}
+
+	public static void shutdown() throws UtilsException {
+		JCS3CacheImpl.shutdown();
 	}
 	
 	public static String printStatistics(String separatorStat, String separatorCache) throws UtilsException {

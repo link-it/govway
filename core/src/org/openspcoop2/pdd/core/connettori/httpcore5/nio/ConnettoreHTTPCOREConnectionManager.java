@@ -256,12 +256,14 @@ public class ConnettoreHTTPCOREConnectionManager {
 		
 	}
 	private static void throwExceptions(List<Throwable> listT) throws ConnettoreException {
-		if(listT.size()==1) {
-			throw new ConnettoreException(listT.get(0).getMessage(),listT.get(0));		
-		}
-		else {
-			UtilsMultiException multiExc = new UtilsMultiException(listT.toArray(new Throwable[1]));
-			throw new ConnettoreException(multiExc.getMessage(),multiExc);		
+		if(listT!=null && !listT.isEmpty()) {
+			if(listT.size()==1) {
+				throw new ConnettoreException(listT.get(0).getMessage(),listT.get(0));
+			}
+			else {
+				UtilsMultiException multiExc = new UtilsMultiException(listT.toArray(new Throwable[1]));
+				throw new ConnettoreException(multiExc.getMessage(),multiExc);
+			}
 		}
 	}
 	private static void stopClients(List<Throwable> listT) throws ConnettoreException {

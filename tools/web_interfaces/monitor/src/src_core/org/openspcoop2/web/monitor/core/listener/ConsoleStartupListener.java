@@ -172,6 +172,15 @@ public class ConsoleStartupListener extends AbstractConsoleStartupListener{
         if(this.initRuntimeConfigReader!=null) {
 			this.initRuntimeConfigReader.setStop(true);
 		}
+
+        // Arresto esplicito del sistema di cache JCS mentre il classloader del web-context è ancora valido:
+        // libera le cache e rimuove lo shutdown hook JVM registrato da JCS (che altrimenti, all'uscita della JVM,
+        // fallirebbe il caricamento di alcune classi con NoClassDefFoundError).
+        try {
+        	org.openspcoop2.utils.cache.Cache.shutdown();
+        } catch (Throwable e) {
+        	logWarn("Shutdown sistema di cache JCS fallito:" + e);
+        }
 	}
 
 }

@@ -27,7 +27,6 @@ import java.util.Map;
 import org.openspcoop2.pdd.core.byok.BYOKMapProperties;
 import org.openspcoop2.pdd.core.dynamic.DynamicInfo;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
-import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.threads.BaseThread;
 import org.slf4j.Logger;
 
@@ -66,9 +65,9 @@ public class ConfigurazioneNodiRuntimeInit extends BaseThread {
 		// provo ad iterare fino a che un nodo runtime non risulta disponibile
 		
 		boolean finish = false;
-		
-		while(!finish) {
-		
+
+		while(!finish && !this.isStop()) {
+
 			try{
 				finish = analyze();
 			} catch (Exception e) {
@@ -76,7 +75,7 @@ public class ConfigurazioneNodiRuntimeInit extends BaseThread {
 				this.log.error(msgErrore,e);
 				//throw new UtilsRuntimeException(msgErrore,e); non sollevo l'eccezione, e' solo una informazione informativa, non voglio mettere un vincolo che serve per forza un nodo acceso
 			}
-		
+
 			if(!finish) {
 				String msg = "Non è stato possibile ottenere informazioni sulla configurazione ("+getDescrizione()+") da nessun nodo runtime (prossimo controllo tra 30 secondi)";
 				if(this.first) {
@@ -86,7 +85,8 @@ public class ConfigurazioneNodiRuntimeInit extends BaseThread {
 				else {
 					this.log.error(msg);
 				}
-				Utilities.sleep(30000); // riprovo dopo 10 secondi
+				// attesa di 30 secondi frazionata in controlli da 1 secondo, così una richiesta di stop (setStop) interrompe subito l'attesa senza bloccare lo shutdown
+				this.sleepForNextCheck(30, 1000);
 			}
 			else {
 				String msg = "Configurazione ("+getDescrizione()+") completata con successo";
