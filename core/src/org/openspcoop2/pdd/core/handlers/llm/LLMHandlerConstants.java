@@ -162,6 +162,13 @@ public final class LLMHandlerConstants {
 	 */
 	public static final MapKey<String> PDD_CTX_LLM_PII_VAULT = Map.newMapKey("llm.piiVault");
 
+	/**
+	 * Chiave PdDContext con gli header HTTP del client, catturati in ingresso da
+	 * {@code LLMInboundRequestHandler}: usati in outbound per risolvere la session-key del
+	 * PII masking (a out-request il transport context del messaggio non ha piu' gli header client).
+	 */
+	public static final MapKey<String> PDD_CTX_LLM_REQUEST_HEADERS = Map.newMapKey("llm.requestHeaders");
+
 	private LLMHandlerConstants() {
 		// utility class
 	}

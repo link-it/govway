@@ -2228,8 +2228,12 @@ public class ConfigurazionePdDManager {
 		return this.configurazionePdDReader.getConfigurazioneResponseCaching(this.getConnection());
 	}
 
-	public Cache getConfigurazioneResponseCachingCache() throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+	public Cache getConfigurazioneResponseCachingCache() throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		return this.configurazionePdDReader.getConfigurazioneResponseCachingCache(this.getConnection());
+	}
+
+	public Cache getConfigurazioneLlmCache() throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getConfigurazioneLlmCache(this.getConnection());
 	}
 
 	public Cache getConfigurazioneConsegnaApplicativiCache() throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 

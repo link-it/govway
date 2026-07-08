@@ -39,9 +39,29 @@ public class PiiFindings {
 
 	// detectorType -> (ruleName -> insieme degli pseudonimi distinti coniati)
 	private final Map<String, Map<String, Set<String>>> byType = new LinkedHashMap<>();
+	// come byType, ma limitato ai valori RIUTILIZZATI dalla cache di sessione (gia' presenti prima della richiesta)
+	private final Map<String, Map<String, Set<String>>> byTypeReuse = new LinkedHashMap<>();
+	// pseudonimi gia' visti in QUESTA richiesta (per distinguere il riuso-da-cache dal duplicato intra-richiesta)
+	private final Set<String> seen = new LinkedHashSet<>();
 
 	/** Registra un valore mascherato da una regola (deduplicato per pseudonimo). */
 	public synchronized void record(String detectorType, String ruleName, String pseudonym) {
+		record(detectorType, ruleName, pseudonym, false);
+	}
+
+	/**
+	 * Registra un valore mascherato da una regola (deduplicato per pseudonimo). Se {@code preExistente}
+	 * è true (il valore era già nel vault prima del tokenize) e questa è la prima occorrenza nella
+	 * richiesta corrente, il valore viene contato anche come "riutilizzato dalla cache di sessione".
+	 */
+	public synchronized void record(String detectorType, String ruleName, String pseudonym, boolean preExistente) {
+		boolean firstOccurrence = this.seen.add(pseudonym);
+		if (preExistente && firstOccurrence) {
+			this.byTypeReuse
+				.computeIfAbsent(detectorType, k -> new LinkedHashMap<>())
+				.computeIfAbsent(ruleName, k -> new LinkedHashSet<>())
+				.add(pseudonym);
+		}
 		this.byType
 			.computeIfAbsent(detectorType, k -> new LinkedHashMap<>())
 			.computeIfAbsent(ruleName, k -> new LinkedHashSet<>())
@@ -67,5 +87,43 @@ public class PiiFindings {
 			sb.append(ruleEntry.getKey()).append(" (").append(ruleEntry.getValue().size()).append(')');
 		}
 		return sb.toString();
+	}
+
+	/** Come {@link #describeType} ma limitato ai valori riutilizzati dalla cache di sessione. */
+	public synchronized String describeReuseType(String detectorType) {
+		Map<String, Set<String>> rules = this.byTypeReuse.get(detectorType);
+		if (rules == null || rules.isEmpty()) {
+			return "";
+		}
+		StringBuilder sb = new StringBuilder();
+		for (Map.Entry<String, Set<String>> ruleEntry : rules.entrySet()) {
+			if (sb.length() > 0) {
+				sb.append(", ");
+			}
+			sb.append(ruleEntry.getKey()).append(" (").append(ruleEntry.getValue().size()).append(')');
+		}
+		return sb.toString();
+	}
+
+	/** Numero di valori distinti individuati per un tipo detector. */
+	public synchronized int count(String detectorType) {
+		return countIn(this.byType, detectorType);
+	}
+
+	/** Numero di valori distinti riutilizzati dalla cache di sessione per un tipo detector. */
+	public synchronized int reuseCount(String detectorType) {
+		return countIn(this.byTypeReuse, detectorType);
+	}
+
+	private static int countIn(Map<String, Map<String, Set<String>>> map, String detectorType) {
+		Map<String, Set<String>> rules = map.get(detectorType);
+		if (rules == null) {
+			return 0;
+		}
+		int tot = 0;
+		for (Set<String> s : rules.values()) {
+			tot += s.size();
+		}
+		return tot;
 	}
 }

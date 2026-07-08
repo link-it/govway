@@ -225,6 +225,11 @@ CREATE TABLE configurazione
 	response_cache_algoritmocache VARCHAR2(255),
 	response_cache_idlecache VARCHAR2(255),
 	response_cache_lifecache VARCHAR2(255),
+	-- Cache per i dati LLM
+	llm_cache_statocache VARCHAR2(255),
+	llm_cache_dimensionecache VARCHAR2(255),
+	llm_cache_algoritmocache VARCHAR2(255),
+	llm_cache_idlecache VARCHAR2(255),
 	-- Cache per la consegna agli applicativi
 	consegna_statocache VARCHAR2(255),
 	consegna_dimensionecache VARCHAR2(255),

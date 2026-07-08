@@ -216,6 +216,12 @@ public final class ConfigurazioneGenerale extends Action {
 			String idlecacheRisposte = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_RISPOSTE);
 			String lifecacheRisposte = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_RISPOSTE);
 
+			String statoCacheLlm = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_LLM);
+			String dimensionecacheLlm = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_LLM);
+			String algoritmocacheLlm = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_LLM);
+			String idlecacheLlm = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_LLM);
+			String lifecacheLlm = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_LLM);
+
 			String statoCacheConsegna = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_CONSEGNA);
 			String dimensionecacheConsegna = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_CONSEGNA);
 			String algoritmocacheConsegna = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_CONSEGNA);
@@ -500,6 +506,14 @@ public final class ConfigurazioneGenerale extends Action {
 							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_RISPOSTE,idlecacheRisposte,
 							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_RISPOSTE,lifecacheRisposte,
 							isAllHiddenCache);
+
+					confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_LLM,
+							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_LLM,statoCacheLlm,
+							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_LLM,dimensionecacheLlm,
+							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_LLM,algoritmocacheLlm,
+							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_LLM,idlecacheLlm,
+							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_LLM,lifecacheLlm,
+							isAllHiddenCache);
 					
 					confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_CONSEGNA_APPLICATIVI,
 							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_CONSEGNA,statoCacheConsegna,
@@ -754,7 +768,19 @@ public final class ConfigurazioneGenerale extends Action {
 				else{
 					newConfigurazione.getResponseCaching().setCache(null);
 				}
-				
+
+				// Cache LLM (es. vault PII di sessione): niente item-life globale (durata assoluta per-elemento dal binding)
+				if(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(statoCacheLlm)){
+					Cache cacheLlm = new Cache();
+					cacheLlm.setDimensione(dimensionecacheLlm);
+					cacheLlm.setAlgoritmo(AlgoritmoCache.toEnumConstant(algoritmocacheLlm));
+					cacheLlm.setItemIdleTime(idlecacheLlm);
+					newConfigurazione.setLlmCache(cacheLlm);
+				}
+				else{
+					newConfigurazione.setLlmCache(null);
+				}
+
 				if(newConfigurazione.getAccessoDatiConsegnaApplicativi()==null){
 					newConfigurazione.setAccessoDatiConsegnaApplicativi(new AccessoDatiConsegnaApplicativi());
 				}
@@ -1004,6 +1030,14 @@ public final class ConfigurazioneGenerale extends Action {
 						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_RISPOSTE,algoritmocacheRisposte,
 						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_RISPOSTE,idlecacheRisposte,
 						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_RISPOSTE,lifecacheRisposte,
+						isAllHiddenCache);
+
+				confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_LLM,
+						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_LLM,statoCacheLlm,
+						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_LLM,dimensionecacheLlm,
+						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_LLM,algoritmocacheLlm,
+						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_LLM,idlecacheLlm,
+						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_LLM,lifecacheLlm,
 						isAllHiddenCache);
 				
 				confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_CONSEGNA_APPLICATIVI,
@@ -1323,6 +1357,17 @@ public final class ConfigurazioneGenerale extends Action {
 				else{
 					statoCacheRisposte = ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO;
 				}
+				if(configurazione.getLlmCache()!=null) {
+					statoCacheLlm = ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO;
+					dimensionecacheLlm = configurazione.getLlmCache().getDimensione();
+					if(configurazione.getLlmCache().getAlgoritmo()!=null){
+						algoritmocacheLlm = configurazione.getLlmCache().getAlgoritmo().getValue();
+					}
+					idlecacheLlm = configurazione.getLlmCache().getItemIdleTime();
+				}
+				else{
+					statoCacheLlm = ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO;
+				}
 				if(configurazione.getAccessoDatiConsegnaApplicativi()!=null && configurazione.getAccessoDatiConsegnaApplicativi().getCache()!=null) {
 					statoCacheConsegna = ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO;
 					dimensionecacheConsegna = configurazione.getAccessoDatiConsegnaApplicativi().getCache().getDimensione();
@@ -1620,6 +1665,14 @@ public final class ConfigurazioneGenerale extends Action {
 					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_RISPOSTE,algoritmocacheRisposte,
 					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_RISPOSTE,idlecacheRisposte,
 					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_RISPOSTE,lifecacheRisposte,
+					isAllHiddenCache);
+
+			confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_LLM,
+					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_LLM,statoCacheLlm,
+					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_LLM,dimensionecacheLlm,
+					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_LLM,algoritmocacheLlm,
+					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_LLM,idlecacheLlm,
+					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_LLM,lifecacheLlm,
 					isAllHiddenCache);
 
 			confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_CONSEGNA_APPLICATIVI,

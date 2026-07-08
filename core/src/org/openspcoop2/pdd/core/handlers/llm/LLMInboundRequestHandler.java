@@ -94,6 +94,7 @@ public class LLMInboundRequestHandler implements InRequestProtocolHandler {
 		}
 		try {
 			LLMHandlerSupport.populateLLMContext(context.getPddContext(), apc);
+			captureRequestHeaders(context);
 			transformRequest(context, dialect);
 			if (log != null && log.isDebugEnabled()) {
 				log.debug("LLMInboundRequestHandler: trasformazione completata (dialetto={})", dialect.getValue());
@@ -144,6 +145,23 @@ public class LLMInboundRequestHandler implements InRequestProtocolHandler {
 			return null;
 		}
 		return IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
+	}
+
+	/**
+	 * Cattura gli header HTTP del client (disponibili solo in ingresso) e li stasha nel PdDContext,
+	 * cosi' l'outbound handler puo' risolvere la session-key del PII masking.
+	 */
+	private void captureRequestHeaders(InRequestProtocolContext context) {
+		try {
+			org.openspcoop2.utils.transport.TransportRequestContext trc =
+					context.getMessaggio() != null ? context.getMessaggio().getTransportRequestContext() : null;
+			if (trc != null && trc.getHeaders() != null) {
+				context.getPddContext().addObject(LLMHandlerConstants.PDD_CTX_LLM_REQUEST_HEADERS,
+						new java.util.HashMap<>(trc.getHeaders()));
+			}
+		} catch (Exception e) {
+			// best effort: nessun header catturato -> in outbound si usera' il vault per-transazione
+		}
 	}
 
 	private void transformRequest(InRequestProtocolContext context, LLMDialect dialect) throws Exception {

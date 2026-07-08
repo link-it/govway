@@ -83,16 +83,18 @@ public class RegexpPiiRuleMasker implements PiiRuleMasker {
 					if (this.validate && !PiiValidators.isValid(this.category, user)) {
 						return Matcher.quoteReplacement(mr.group());
 					}
+					boolean preEsistente = vault.containsOriginal(this.category, user);
 					String pseudo = vault.tokenize(this.category, user);
-					findings.record(getDetectorType(), this.ruleName, pseudo);
+					findings.record(getDetectorType(), this.ruleName, pseudo, preEsistente);
 					return Matcher.quoteReplacement(mr.group(1) + pseudo);
 				}
 				String matched = mr.group();
 				if (this.validate && !PiiValidators.isValid(this.category, matched)) {
 					return Matcher.quoteReplacement(matched); // falso positivo scartato
 				}
+				boolean preEsistente = vault.containsOriginal(this.category, matched);
 				String pseudo = vault.tokenize(this.category, matched);
-				findings.record(getDetectorType(), this.ruleName, pseudo);
+				findings.record(getDetectorType(), this.ruleName, pseudo, preEsistente);
 				return Matcher.quoteReplacement(pseudo);
 			});
 		}

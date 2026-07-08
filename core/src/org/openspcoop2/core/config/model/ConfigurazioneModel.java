@@ -69,6 +69,7 @@ public class ConfigurazioneModel extends AbstractModel<Configurazione> {
 		this.GENERIC_PROPERTIES = new org.openspcoop2.core.config.model.GenericPropertiesModel(new Field("generic-properties",org.openspcoop2.core.config.GenericProperties.class,"configurazione",Configurazione.class));
 		this.GESTIONE_CORS = new org.openspcoop2.core.config.model.CorsConfigurazioneModel(new Field("gestione-cors",org.openspcoop2.core.config.CorsConfigurazione.class,"configurazione",Configurazione.class));
 		this.RESPONSE_CACHING = new org.openspcoop2.core.config.model.ResponseCachingConfigurazioneGeneraleModel(new Field("response-caching",org.openspcoop2.core.config.ResponseCachingConfigurazioneGenerale.class,"configurazione",Configurazione.class));
+		this.LLM_CACHE = new org.openspcoop2.core.config.model.CacheModel(new Field("llm-cache",org.openspcoop2.core.config.Cache.class,"configurazione",Configurazione.class));
 		this.GESTIONE_CANALI = new org.openspcoop2.core.config.model.CanaliConfigurazioneModel(new Field("gestione-canali",org.openspcoop2.core.config.CanaliConfigurazione.class,"configurazione",Configurazione.class));
 		this.REGISTRO_PLUGINS = new org.openspcoop2.core.config.model.RegistroPluginsModel(new Field("registro-plugins",org.openspcoop2.core.config.RegistroPlugins.class,"configurazione",Configurazione.class));
 		this.CONFIGURAZIONE_HANDLER = new org.openspcoop2.core.config.model.ConfigurazioneGeneraleHandlerModel(new Field("configurazione-handler",org.openspcoop2.core.config.ConfigurazioneGeneraleHandler.class,"configurazione",Configurazione.class));
@@ -108,6 +109,7 @@ public class ConfigurazioneModel extends AbstractModel<Configurazione> {
 		this.GENERIC_PROPERTIES = new org.openspcoop2.core.config.model.GenericPropertiesModel(new ComplexField(father,"generic-properties",org.openspcoop2.core.config.GenericProperties.class,"configurazione",Configurazione.class));
 		this.GESTIONE_CORS = new org.openspcoop2.core.config.model.CorsConfigurazioneModel(new ComplexField(father,"gestione-cors",org.openspcoop2.core.config.CorsConfigurazione.class,"configurazione",Configurazione.class));
 		this.RESPONSE_CACHING = new org.openspcoop2.core.config.model.ResponseCachingConfigurazioneGeneraleModel(new ComplexField(father,"response-caching",org.openspcoop2.core.config.ResponseCachingConfigurazioneGenerale.class,"configurazione",Configurazione.class));
+		this.LLM_CACHE = new org.openspcoop2.core.config.model.CacheModel(new ComplexField(father,"llm-cache",org.openspcoop2.core.config.Cache.class,"configurazione",Configurazione.class));
 		this.GESTIONE_CANALI = new org.openspcoop2.core.config.model.CanaliConfigurazioneModel(new ComplexField(father,"gestione-canali",org.openspcoop2.core.config.CanaliConfigurazione.class,"configurazione",Configurazione.class));
 		this.REGISTRO_PLUGINS = new org.openspcoop2.core.config.model.RegistroPluginsModel(new ComplexField(father,"registro-plugins",org.openspcoop2.core.config.RegistroPlugins.class,"configurazione",Configurazione.class));
 		this.CONFIGURAZIONE_HANDLER = new org.openspcoop2.core.config.model.ConfigurazioneGeneraleHandlerModel(new ComplexField(father,"configurazione-handler",org.openspcoop2.core.config.ConfigurazioneGeneraleHandler.class,"configurazione",Configurazione.class));
@@ -173,6 +175,8 @@ public class ConfigurazioneModel extends AbstractModel<Configurazione> {
 	public org.openspcoop2.core.config.model.CorsConfigurazioneModel GESTIONE_CORS = null;
 	 
 	public org.openspcoop2.core.config.model.ResponseCachingConfigurazioneGeneraleModel RESPONSE_CACHING = null;
+	 
+	public org.openspcoop2.core.config.model.CacheModel LLM_CACHE = null;
 	 
 	public org.openspcoop2.core.config.model.CanaliConfigurazioneModel GESTIONE_CANALI = null;
 	 

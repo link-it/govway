@@ -452,6 +452,8 @@ public class CostantiPdD {
     public static final String JMX_ATTRIBUTE_AUTHORITY = "AttributeAuthority";
     /** MBean per il caching delle risposte */
     public static final String JMX_RESPONSE_CACHING = "ResponseCaching";
+    /** MBean per il caching dei dati LLM (es. vault PII di sessione) */
+    public static final String JMX_LLM_CACHE = "LlmCache";
     /** MBean per il caching dei keystore */
     public static final String JMX_KEYSTORE_CACHING = "Keystore";
     /** MBean per la gestione della consegna agli applicativi */
@@ -686,6 +688,8 @@ public class CostantiPdD {
     public static final String KEY_PII_MASKING_TIPO = "@PII_TIPO@";
     /** Costante che identifica il dettaglio della PII individuata (diagnostici) */
     public static final String KEY_PII_MASKING_DETTAGLIO = "@PII_DETTAGLIO@";
+    /** Costante che identifica il dettaglio dei valori PII riutilizzati dalla cache di sessione (diagnostici) */
+    public static final String KEY_PII_MASKING_RIUSO = "@PII_RIUSO@";
     /** Costante che identifica la condizione estratta per lo sticky */
     public static final String KEY_CONDIZIONE_STICKY =  "@CONDIZIONE_STICKY@";
     

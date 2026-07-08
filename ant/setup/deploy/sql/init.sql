@@ -100,6 +100,11 @@ UPDATE configurazione set response_cache_dimensionecache='10000';
 UPDATE configurazione set response_cache_algoritmocache='lru';
 UPDATE configurazione set response_cache_lifecache='-1';
 
+-- Configurazione Cache LLM (es. vault PII di sessione): sempre abilitata, uso demandato al binding
+UPDATE configurazione set llm_cache_statocache='abilitato';
+UPDATE configurazione set llm_cache_dimensionecache='10000';
+UPDATE configurazione set llm_cache_algoritmocache='lru';
+
 -- Configurazione Corrispondenza Profilo con Registro
 UPDATE configurazione set validazione_profilo='abilitato';
 -- Disabilito per default la validazione con schema xsd dei protocolli

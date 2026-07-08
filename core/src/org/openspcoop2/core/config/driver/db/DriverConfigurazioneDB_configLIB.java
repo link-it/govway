@@ -1161,6 +1161,7 @@ public class DriverConfigurazioneDB_configLIB {
 				(config.getGenericPropertiesList()==null || config.getGenericPropertiesList().isEmpty()) &&
 				config.getGestioneCors()==null && 
 				config.getResponseCaching()==null &&
+				config.getLlmCache()==null &&
 				config.getGestioneCanali()==null &&
 				config.getRegistroPlugins()==null &&
 				config.getConfigurazioneHandler()==null) {
@@ -1397,8 +1398,20 @@ public class DriverConfigurazioneDB_configLIB {
 			responseCachingIdleCache = responseCachingCache.getItemIdleTime();
 			responseCachingLifeCache = responseCachingCache.getItemLifeSecond();
 		}
-		
-		
+
+		// Cache LLM (es. vault PII di sessione): niente life-time globale (durata assoluta per-elemento dal binding)
+		Cache llmCache = config.getLlmCache();
+		String llmDimensioneCache = null;
+		String llmAlgoritmoCache = null;
+		String llmIdleCache = null;
+		String llmStatoCache = (llmCache != null ? CostantiConfigurazione.ABILITATO.toString() : CostantiConfigurazione.DISABILITATO.toString());
+		if (llmStatoCache.equals(CostantiConfigurazione.ABILITATO.toString())) {
+			llmDimensioneCache = llmCache.getDimensione();
+			llmAlgoritmoCache = DriverConfigurazioneDBLib.getValue(llmCache.getAlgoritmo());
+			llmIdleCache = llmCache.getItemIdleTime();
+		}
+
+
 		Cache consegnaCache = null;
 		String consegnaDimensioneCache = null;
 		String consegnaAlgoritmoCache = null;
@@ -1839,6 +1852,11 @@ public class DriverConfigurazioneDB_configLIB {
 				sqlQueryObject.addInsertField("response_cache_algoritmocache", "?");
 				sqlQueryObject.addInsertField("response_cache_idlecache", "?");
 				sqlQueryObject.addInsertField("response_cache_lifecache", "?");
+				// llm cache (es. vault PII di sessione)
+				sqlQueryObject.addInsertField("llm_cache_statocache", "?");
+				sqlQueryObject.addInsertField("llm_cache_dimensionecache", "?");
+				sqlQueryObject.addInsertField("llm_cache_algoritmocache", "?");
+				sqlQueryObject.addInsertField("llm_cache_idlecache", "?");
 				// consegna applicativi cache
 				sqlQueryObject.addInsertField("consegna_statocache", "?");
 				sqlQueryObject.addInsertField("consegna_dimensionecache", "?");
@@ -1981,6 +1999,11 @@ public class DriverConfigurazioneDB_configLIB {
 				updateStmt.setString(index++, responseCachingAlgoritmoCache);
 				updateStmt.setString(index++, responseCachingIdleCache);
 				updateStmt.setString(index++, responseCachingLifeCache);
+				// llm cache (es. vault PII di sessione)
+				updateStmt.setString(index++, llmStatoCache);
+				updateStmt.setString(index++, llmDimensioneCache);
+				updateStmt.setString(index++, llmAlgoritmoCache);
+				updateStmt.setString(index++, llmIdleCache);
 				// consegna applicativi cache
 				updateStmt.setString(index++, consegnaStatoCache);
 				updateStmt.setString(index++, consegnaDimensioneCache);
@@ -2548,6 +2571,11 @@ public class DriverConfigurazioneDB_configLIB {
 				sqlQueryObject.addUpdateField("response_cache_algoritmocache", "?");
 				sqlQueryObject.addUpdateField("response_cache_idlecache", "?");
 				sqlQueryObject.addUpdateField("response_cache_lifecache", "?");
+				// llm cache (es. vault PII di sessione)
+				sqlQueryObject.addUpdateField("llm_cache_statocache", "?");
+				sqlQueryObject.addUpdateField("llm_cache_dimensionecache", "?");
+				sqlQueryObject.addUpdateField("llm_cache_algoritmocache", "?");
+				sqlQueryObject.addUpdateField("llm_cache_idlecache", "?");
 				// consegna applicativi cache
 				sqlQueryObject.addUpdateField("consegna_statocache", "?");
 				sqlQueryObject.addUpdateField("consegna_dimensionecache", "?");
@@ -2690,6 +2718,11 @@ public class DriverConfigurazioneDB_configLIB {
 				updateStmt.setString(index++, responseCachingAlgoritmoCache);
 				updateStmt.setString(index++, responseCachingIdleCache);
 				updateStmt.setString(index++, responseCachingLifeCache);
+				// llm cache (es. vault PII di sessione)
+				updateStmt.setString(index++, llmStatoCache);
+				updateStmt.setString(index++, llmDimensioneCache);
+				updateStmt.setString(index++, llmAlgoritmoCache);
+				updateStmt.setString(index++, llmIdleCache);
 				// consegna applicativi cache
 				updateStmt.setString(index++, consegnaStatoCache);
 				updateStmt.setString(index++, consegnaDimensioneCache);

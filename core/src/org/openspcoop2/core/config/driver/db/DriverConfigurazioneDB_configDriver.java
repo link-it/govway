@@ -2514,7 +2514,29 @@ public class DriverConfigurazioneDB_configDriver {
 					config.getResponseCaching().setCache(cache);
 
 				}
-				
+
+				// Gestione Cache LLM (es. vault PII di sessione)
+				String tmpLlmCache = rs.getString("llm_cache_statocache");
+				if (CostantiConfigurazione.ABILITATO.equals(tmpLlmCache)) {
+					Cache cacheLlm = new Cache();
+
+					String tmpDimLlm = rs.getString("llm_cache_dimensionecache");
+					if (tmpDimLlm != null && !tmpDimLlm.equals(""))
+						cacheLlm.setDimensione(tmpDimLlm);
+
+					String tmpAlgLlm = rs.getString("llm_cache_algoritmocache");
+					if (tmpAlgLlm != null && tmpAlgLlm.equalsIgnoreCase("LRU"))
+						cacheLlm.setAlgoritmo(CostantiConfigurazione.CACHE_LRU);
+					else
+						cacheLlm.setAlgoritmo(CostantiConfigurazione.CACHE_MRU);
+
+					String tmpIdleLlm = rs.getString("llm_cache_idlecache");
+					if (tmpIdleLlm != null && !tmpIdleLlm.equals(""))
+						cacheLlm.setItemIdleTime(tmpIdleLlm);
+
+					config.setLlmCache(cacheLlm);
+				}
+
 				// Canali
 				String canali_stato = rs.getString("canali_stato");
 				config.setGestioneCanali(new CanaliConfigurazione());

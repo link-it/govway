@@ -65,6 +65,7 @@ import java.util.List;
  * 			&lt;element name="generic-properties" type="{http://www.openspcoop2.org/core/config}generic-properties" minOccurs="0" maxOccurs="unbounded"/&gt;
  * 			&lt;element name="gestione-cors" type="{http://www.openspcoop2.org/core/config}cors-configurazione" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="response-caching" type="{http://www.openspcoop2.org/core/config}response-caching-configurazione-generale" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="llm-cache" type="{http://www.openspcoop2.org/core/config}cache" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="gestione-canali" type="{http://www.openspcoop2.org/core/config}canali-configurazione" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="registro-plugins" type="{http://www.openspcoop2.org/core/config}registro-plugins" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="configurazione-handler" type="{http://www.openspcoop2.org/core/config}configurazione-generale-handler" minOccurs="0" maxOccurs="1"/&gt;
@@ -110,6 +111,7 @@ import java.util.List;
   	"genericProperties",
   	"gestioneCors",
   	"responseCaching",
+  	"llmCache",
   	"gestioneCanali",
   	"registroPlugins",
   	"configurazioneHandler"
@@ -395,6 +397,14 @@ public class Configurazione extends org.openspcoop2.utils.beans.BaseBeanWithId i
     this.responseCaching = responseCaching;
   }
 
+  public Cache getLlmCache() {
+    return this.llmCache;
+  }
+
+  public void setLlmCache(Cache llmCache) {
+    this.llmCache = llmCache;
+  }
+
   public CanaliConfigurazione getGestioneCanali() {
     return this.gestioneCanali;
   }
@@ -572,6 +582,9 @@ public class Configurazione extends org.openspcoop2.utils.beans.BaseBeanWithId i
 
   @XmlElement(name="response-caching",required=false,nillable=false)
   protected ResponseCachingConfigurazioneGenerale responseCaching;
+
+  @XmlElement(name="llm-cache",required=false,nillable=false)
+  protected Cache llmCache;
 
   @XmlElement(name="gestione-canali",required=false,nillable=false)
   protected CanaliConfigurazione gestioneCanali;

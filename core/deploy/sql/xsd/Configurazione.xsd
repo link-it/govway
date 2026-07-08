@@ -1441,6 +1441,51 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
+                <xsd:element name="llm-cache-statocache" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="llm_cache_statocache"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se i dati LLM (es. vault PII di sessione) vengono mantenuti in una cache (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
+                                <linkit:sql-column-comment><![CDATA[Cache per i dati LLM]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="llm-cache-dimensionecache" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="llm_cache_dimensionecache"/>
+                                <linkit:sql-ddl-column-comment>Numero massimo di elementi che risiedono nella cache dei dati LLM</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="llm-cache-algoritmocache" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="llm_cache_algoritmocache"/>
+                                <linkit:sql-ddl-column-comment>Algoritmo di svecchiamento degli elementi che risiedono nella cache dei dati LLM (LRU/MRU)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="llm-cache-idlecache" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="llm_cache_idlecache"/>
+                                <linkit:sql-ddl-column-comment>Massimo tempo di inutilizzo (in minuti) degli elementi che risiedono nella cache dei dati LLM</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
                 <xsd:element name="consegna-statocache" type="xsd:string" minOccurs="0">
                     <xsd:annotation>
                         <xsd:appinfo>

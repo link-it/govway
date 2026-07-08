@@ -1,3 +1,13 @@
+2026-07-08  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Introdotto il PII Masking per il gateway LLM: nuovo catalogo 'Regole PII' (detector Espressioni Regolari
+	o plugin; categorie email/iban/carta/CF/PIVA/telefono/IP/ecc. con validatori e pseudonimi format-preserving
+	reversibili) attivabile sul Provider Binding. Il masking e' applicato alla richiesta verso il provider
+	(fail-closed) e ripristinato nella risposta (sync e streaming), con cache di sessione DB-backed 'Cache (LLM)'
+	per la coerenza degli pseudonimi tra piu' richieste della stessa sessione, diagnostici dedicati (incluso il
+	riutilizzo dalla cache) e supporto delete-protection / export-import per le entita' del catalogo LLM.
+
 2026-06-15  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole]

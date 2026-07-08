@@ -250,16 +250,79 @@ public class LLMOutboundRequestHandler implements OutRequestHandler {
 					org.openspcoop2.pdd.core.llm.pii.PiiConfigResolver.resolve(mgr, cfg);
 			org.openspcoop2.pdd.core.llm.pii.PiiMaskerEngine engine =
 					org.openspcoop2.pdd.core.llm.pii.PiiMaskerEngine.build(rules);
-			org.openspcoop2.pdd.core.llm.pii.PiiVault vault = new org.openspcoop2.pdd.core.llm.pii.PiiVault();
 			org.openspcoop2.pdd.core.llm.pii.PiiFindings findings = new org.openspcoop2.pdd.core.llm.pii.PiiFindings();
+
+			// Vault: per-transazione (default) oppure di sessione (Fase 5) se abilitato sul binding,
+			// la cache LLM e' attiva e una session-key e' risolvibile dagli header del client. Con il
+			// vault di sessione gli pseudonimi restano stabili tra i turni della stessa conversazione.
+			// La get-or-create sulla cache usa il pattern GovWay (get fuori/dentro semaforo, poi add):
+			// il vault e' inserito una sola volta alla creazione con scadenza assoluta per-elemento
+			// (dal binding), poi mutato in-memory dal masking ad ogni turno.
+			org.openspcoop2.pdd.core.llm.pii.PiiVault vault = null;
+			if (cfg.isSessionCache() && org.openspcoop2.pdd.core.llm.cache.GestoreCacheLlm.isCacheAbilitata()) {
+				String sessionId = resolvePiiSessionKey(context, cfg);
+				if (sessionId != null && !sessionId.isEmpty()) {
+					String bindingName = LLMHandlerSupport.getLLMProviderBindingName(pdd);
+					String sessionCacheKey = "piiVault:" + (bindingName != null ? bindingName : "") + ":" + sessionId;
+					int ttl = (cfg.getSessionTtlSeconds() != null) ? cfg.getSessionTtlSeconds().intValue() : 3600;
+					try {
+						java.io.Serializable v = org.openspcoop2.pdd.core.llm.cache.GestoreCacheLlm.getOrCreate(
+								sessionCacheKey, ttl, org.openspcoop2.pdd.core.llm.pii.PiiVault::new);
+						if (v instanceof org.openspcoop2.pdd.core.llm.pii.PiiVault) {
+							vault = (org.openspcoop2.pdd.core.llm.pii.PiiVault) v;
+						}
+					} catch (Exception e) {
+						if (log != null) {
+							log.warn("LLMOutboundRequestHandler: accesso vault PII in cache di sessione fallito, fallback per-transazione: {}", e.getMessage());
+						}
+					}
+				}
+			}
+			if (vault == null) {
+				vault = new org.openspcoop2.pdd.core.llm.pii.PiiVault();
+			}
+
 			if (engine.hasMaskers()) {
 				engine.maskRequest(canonical, cfg, vault, findings);
 			}
 			pdd.addObject(LLMHandlerConstants.PDD_CTX_LLM_PII_VAULT, vault);
+
 			emitPiiDiagnostics(context, cfg, findings, log);
 		} catch (org.openspcoop2.pdd.core.llm.pii.PiiMaskingException e) {
 			throw new HandlerException("LLMOutboundRequestHandler: PII Masking fallito (fail-closed): " + e.getMessage(), e);
 		}
+	}
+
+	/**
+	 * Risolve la chiave di sessione per il vault PII dagli header del client: primo header (in ordine
+	 * di configurazione sul binding) presente e valorizzato vince. {@code null} se nessuno presente.
+	 */
+	private String resolvePiiSessionKey(OutRequestContext context, org.openspcoop2.pdd.core.llm.pii.PiiBindingConfig cfg) {
+		java.util.List<String> headers = cfg.getSessionKeyHeaders();
+		if (headers == null || headers.isEmpty()) {
+			return null;
+		}
+		try {
+			// Fonte affidabile: header del client catturati in ingresso da LLMInboundRequestHandler e
+			// stashati nel PdDContext (a out-request il transport context del messaggio non li ha piu').
+			Object o = context.getPddContext() != null ? context.getPddContext().getObject(LLMHandlerConstants.PDD_CTX_LLM_REQUEST_HEADERS) : null;
+			@SuppressWarnings("unchecked")
+			java.util.Map<String, java.util.List<String>> hdrMap = (o instanceof java.util.Map) ? (java.util.Map<String, java.util.List<String>>) o : null;
+			if (hdrMap != null && !hdrMap.isEmpty()) {
+				for (String h : headers) {
+					if (h == null || h.trim().isEmpty()) {
+						continue;
+					}
+					String v = org.openspcoop2.utils.transport.TransportUtils.getObjectAsString(hdrMap, h.trim());
+					if (v != null && !v.trim().isEmpty()) {
+						return v.trim();
+					}
+				}
+			}
+		} catch (Exception e) {
+			// best effort: nessuna session-key -> fallback vault per-transazione
+		}
+		return null;
 	}
 
 	/** Emette un diagnostico per ciascun tipo detector applicato (con i nomi delle Regole PII individuate). */
@@ -285,7 +348,24 @@ public class LLMOutboundRequestHandler implements OutRequestHandler {
 						: "individuati: " + detail;
 				msgDiag.addKeyword(org.openspcoop2.pdd.core.CostantiPdD.KEY_PII_MASKING_TIPO, typeLabel);
 				msgDiag.addKeyword(org.openspcoop2.pdd.core.CostantiPdD.KEY_PII_MASKING_DETTAGLIO, dettaglio);
-				msgDiag.logPersonalizzato(moduloFunzionale, "llmPiiMasking.applicato");
+
+				// Con cache di sessione: se sono stati riutilizzati valori gia' presenti (da un turno precedente),
+				// si usa una variante del messaggio (testo i18n nel .properties): totale se riutilizzati == individuati,
+				// altrimenti parziale con il breakdown nella keyword @PII_RIUSO@.
+				String msgKey = "llmPiiMasking.applicato";
+				if (cfg.isSessionCache()) {
+					int reused = findings.reuseCount(type);
+					if (reused > 0) {
+						if (reused >= findings.count(type)) {
+							msgKey = "llmPiiMasking.applicatoConCacheTotale";
+						}
+						else {
+							msgKey = "llmPiiMasking.applicatoConCacheParziale";
+							msgDiag.addKeyword(org.openspcoop2.pdd.core.CostantiPdD.KEY_PII_MASKING_RIUSO, findings.describeReuseType(type));
+						}
+					}
+				}
+				msgDiag.logPersonalizzato(moduloFunzionale, msgKey);
 			}
 		} catch (Exception e) {
 			if (log != null) {

@@ -200,8 +200,24 @@ public class GestoreRisorseJMXGovWay extends org.openspcoop2.utils.jmx.GestoreRi
 			String msg = "Riscontrato errore durante l'inizializzazione della risorsa JMX Response Caching: "+e.getMessage();
 			this.logError(msg,e);
 			throw new RisorseJMXException(msg,e);
-		}	
-		
+		}
+
+	}
+
+	/**
+	 * Registrazione del MBean per la cache dei dati LLM (es. vault PII di sessione)
+	 *
+	 * @throws RisorseJMXException
+	 */
+	public void registerMBeanLlmCache()throws RisorseJMXException{
+		try{
+			this.registerMBean(org.openspcoop2.pdd.core.jmx.EngineLlmCache.class, CostantiPdD.JMX_LLM_CACHE);
+		}catch(Exception e){
+			String msg = "Riscontrato errore durante l'inizializzazione della risorsa JMX Cache LLM: "+e.getMessage();
+			this.logError(msg,e);
+			throw new RisorseJMXException(msg,e);
+		}
+
 	}
 	
 	/**

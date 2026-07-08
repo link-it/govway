@@ -746,7 +746,9 @@ public class ConfigurazioneCostanti {
 	public static final String LABEL_CONFIGURAZIONE_CACHE_KEYSTORE = "Cache (Keystore)";
 	
 	public static final String LABEL_CONFIGURAZIONE_CACHE_RISPOSTE = "Cache (Risposte)";
-	
+
+	public static final String LABEL_CONFIGURAZIONE_CACHE_LLM = "Cache (LLM)";
+
 	public static final String LABEL_CONFIGURAZIONE_CACHE_CONSEGNA_APPLICATIVI = "Cache (Load Balancer)";
 	
 	public static final String LABEL_CONFIGURAZIONE_CACHE_CONTROLLO_TRAFFICO_NAME = "Controllo Traffico - Dati Statistici";
@@ -1068,6 +1070,12 @@ public class ConfigurazioneCostanti {
 	public static final String PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_RISPOSTE = "algoritmocacheRisposte";
 	public static final String PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_RISPOSTE = "idlecacheRisposte";
 	public static final String PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_RISPOSTE = "lifecacheRisposte";
+
+	public static final String PARAMETRO_CONFIGURAZIONE_STATO_CACHE_LLM = "statocacheLlm";
+	public static final String PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_LLM = "dimensionecacheLlm";
+	public static final String PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_LLM = "algoritmocacheLlm";
+	public static final String PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_LLM = "idlecacheLlm";
+	public static final String PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_LLM = "lifecacheLlm";
 	
 	public static final String PARAMETRO_CONFIGURAZIONE_STATO_CACHE_CONSEGNA = "statocacheConsegna";
 	public static final String PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_CONSEGNA = "dimensionecacheConsegna";

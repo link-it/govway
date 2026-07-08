@@ -2016,18 +2016,48 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				msgDiag.logStartupError(e,"Gestore Response Caching");
 				return;
 			}
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
+
+
+			/*----------- Inizializzazione Cache LLM (es. vault PII di sessione) --------------*/
+			try{
+				org.openspcoop2.core.config.Cache llmCacheConfig = configurazionePdDManager.getConfigurazioneLlmCache();
+				if(llmCacheConfig!=null){
+
+					int dimensioneCache = -1;
+					if(llmCacheConfig.getDimensione()!=null){
+						try{
+							dimensioneCache = Integer.parseInt(llmCacheConfig.getDimensione());
+						}catch(Exception e){
+							throw new CoreException("Parametro 'dimensioneCache' errato per la cache LLM");
+						}
+					}
+
+					String algoritmo = null;
+					if(llmCacheConfig.getAlgoritmo()!=null){
+						algoritmo = llmCacheConfig.getAlgoritmo().toString();
+					}
+
+					long idleTime = -1;
+					if(llmCacheConfig.getItemIdleTime()!=null){
+						try{
+							idleTime = Integer.parseInt(llmCacheConfig.getItemIdleTime());
+						}catch(Exception e){
+							throw new CoreException("Parametro 'idleTime' errato per la cache LLM");
+						}
+					}
+
+					org.openspcoop2.pdd.core.llm.cache.GestoreCacheLlm.initialize(org.openspcoop2.utils.cache.CacheType.JCS, dimensioneCache, algoritmo, idleTime, logCore);
+				}
+				else{
+					org.openspcoop2.pdd.core.llm.cache.GestoreCacheLlm.initialize(logCore);
+				}
+			}catch(Exception e){
+				msgDiag.logStartupError(e,"Gestore Cache LLM");
+				return;
+			}
+
+
+
 			/* ----------- Inizializzazione Keystore Security ------------ */
 			
 			try{
@@ -3229,6 +3259,12 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				}catch(Exception e){
 					msgDiag.logStartupError(e,"RisorsaJMX - risposte salvate in cache");
 				}
+				// MBean GestioneCacheLLM (es. vault PII di sessione)
+				try{
+					OpenSPCoop2Startup.this.gestoreRisorseJMX.registerMBeanLlmCache();
+				}catch(Exception e){
+					msgDiag.logStartupError(e,"RisorsaJMX - dati LLM salvati in cache");
+				}
 				// MBean GestioneKeystoreCaching
 				try{
 					OpenSPCoop2Startup.this.gestoreRisorseJMX.registerMBeanKeystoreCaching();
@@ -3347,7 +3383,14 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				informazioniStatoPortaCacheResponseCaching.setStatoCache(infoResponseCaching.printStatCache());
 			}
 			informazioniStatoPortaCache.add(informazioniStatoPortaCacheResponseCaching);
-			
+
+			org.openspcoop2.pdd.core.jmx.EngineLlmCache infoLlmCache = new org.openspcoop2.pdd.core.jmx.EngineLlmCache();
+			InformazioniStatoPortaCache informazioniStatoPortaCacheLlm = new InformazioniStatoPortaCache(CostantiPdD.JMX_LLM_CACHE, infoLlmCache.isCacheAbilitata());
+			if(infoLlmCache.isCacheAbilitata()){
+				informazioniStatoPortaCacheLlm.setStatoCache(infoLlmCache.printStatCache());
+			}
+			informazioniStatoPortaCache.add(informazioniStatoPortaCacheLlm);
+
 			org.openspcoop2.pdd.core.jmx.EngineKeystoreCaching infoKeystoreCaching = new org.openspcoop2.pdd.core.jmx.EngineKeystoreCaching();
 			InformazioniStatoPortaCache informazioniStatoPortaCacheKeystoreCaching = new InformazioniStatoPortaCache(CostantiPdD.JMX_KEYSTORE_CACHING, infoKeystoreCaching.isCacheAbilitata());
 			if(infoKeystoreCaching.isCacheAbilitata()){

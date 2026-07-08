@@ -784,6 +784,7 @@
 			<xsd:element ref="generic-properties" maxOccurs="unbounded" minOccurs="0" />
 			<xsd:element name="gestione-cors" type="cors-configurazione" maxOccurs="1" minOccurs="0" />
 			<xsd:element name="response-caching" type="response-caching-configurazione-generale" maxOccurs="1" minOccurs="0" />
+			<xsd:element name="llm-cache" type="cache" maxOccurs="1" minOccurs="0" />
 			<xsd:element name="gestione-canali" type="canali-configurazione" maxOccurs="1" minOccurs="0" />
 			<xsd:element name="registro-plugins" type="registro-plugins" maxOccurs="1" minOccurs="0" />
 			<xsd:element name="configurazione-handler" type="configurazione-generale-handler" maxOccurs="1" minOccurs="0" />

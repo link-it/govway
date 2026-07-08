@@ -9147,6 +9147,10 @@ public class ConfigurazionePdDReader {
 		return c.getCache();
 	}
 
+	public Cache getConfigurazioneLlmCache(Connection connectionPdD) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdD.getConfigurazioneGenerale(connectionPdD).getLlmCache();
+	}
+
 	public Cache getConfigurazioneConsegnaApplicativiCache(Connection connectionPdD) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
 		AccessoDatiConsegnaApplicativi c = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD).getAccessoDatiConsegnaApplicativi();
 		if(c==null) {
