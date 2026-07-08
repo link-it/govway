@@ -27,7 +27,6 @@ import java.util.Map;
 import org.openspcoop2.pdd.core.byok.BYOKMapProperties;
 import org.openspcoop2.pdd.core.dynamic.DynamicInfo;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
-import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.threads.BaseThread;
 import org.slf4j.Logger;
 
@@ -67,8 +66,8 @@ public class ConfigurazioneNodiRuntimeInit extends BaseThread {
 		
 		boolean finish = false;
 		
-		while(!finish) {
-		
+		while(!finish && !this.isStop()) {
+
 			try{
 				finish = analyze();
 			} catch (Exception e) {
@@ -86,7 +85,8 @@ public class ConfigurazioneNodiRuntimeInit extends BaseThread {
 				else {
 					this.log.error(msg);
 				}
-				Utilities.sleep(30000); // riprovo dopo 10 secondi
+				// attesa di 30 secondi frazionata in controlli da 1 secondo, così una richiesta di stop (setStop) interrompe subito l'attesa senza bloccare lo shutdown
+				this.sleepForNextCheck(30, 1000);
 			}
 			else {
 				String msg = "Configurazione ("+getDescrizione()+") completata con successo";

@@ -4944,7 +4944,17 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 		}catch(Exception e){
 			// ignore
 		}
-		
+
+		// ** Sistema di cache JCS **
+		// Arresto esplicito mentre il classloader del web-context è ancora valido: libera le cache e rimuove
+		// lo shutdown hook JVM registrato da JCS (che altrimenti, all'uscita della JVM, fallirebbe il caricamento
+		// di alcune classi con NoClassDefFoundError).
+		try{
+			Cache.shutdown();
+		}catch(Throwable e){
+			// ignore
+		}
+
 		// Attendo qualche secondo
 		Utilities.sleep(2000);
 	}

@@ -1,3 +1,10 @@
+2026-07-08  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug #1794
+	Migliorata la terminazione di GovWay su Apache Tomcat, eliminando errori segnalati durante l'arresto
+	tramite lo script 'shutdown.sh'.
+
 2026-07-07  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
