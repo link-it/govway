@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.core.transazioni.IdTransazioneLlm;
-import org.openspcoop2.core.transazioni.TransazioneApplicativoServer;
 import org.openspcoop2.core.transazioni.TransazioneLlm;
 import org.openspcoop2.core.transazioni.dao.jdbc.converter.TransazioneLlmFieldConverter;
 import org.openspcoop2.core.transazioni.dao.jdbc.fetch.TransazioneLlmFetch;
@@ -221,7 +220,7 @@ public class JDBCTransazioneLlmServiceSearchImpl implements IJDBCServiceSearchWi
 		    		returnMap = this.select(jdbcProperties, log, connection, sqlQueryObject, expression, distinct, fields.toArray(new IField[1]));
 		
 		    		for(Map<String, Object> map: returnMap) {
-		    			list.add((TransazioneLlm)this.getTransazioneLlmFetch().fetch(jdbcProperties.getDatabase(), TransazioneApplicativoServer.model(), map));
+		    			list.add((TransazioneLlm)this.getTransazioneLlmFetch().fetch(jdbcProperties.getDatabase(), TransazioneLlm.model(), map));
 		    		}
 		    		
     	        }

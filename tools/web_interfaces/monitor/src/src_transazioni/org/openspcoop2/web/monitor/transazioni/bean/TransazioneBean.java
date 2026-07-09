@@ -1191,7 +1191,14 @@ public class TransazioneBean extends Transazione{
 			return null;
 		}
 	}
-	
+
+	public TransazioneLlmBean getTransazioneLlmObject() {
+		if(this.getTransazioneLlm()!=null) {
+			return new TransazioneLlmBean(this.getTransazioneLlm());
+		}
+		return null;
+	}
+
 	public void normalizeTipoApiInfo(org.openspcoop2.core.commons.search.dao.IServiceManager service, Logger log) {
 		
 		if(TipoAPI.REST.getValoreAsInt() != this.getTipoApi() && TipoAPI.SOAP.getValoreAsInt() != this.getTipoApi()) {

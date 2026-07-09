@@ -709,6 +709,19 @@ public class Utilities {
 	private static final double KB = 1024;
 	private static final double MB = 1048576;
 	private static final double GB = 1073741824;
+
+	/** Formatta un numero intero con il separatore delle migliaia secondo il locale indicato, es. 12.345 . */
+	public static String formatNumber(long value, java.util.Locale locale) {
+		return java.text.NumberFormat.getIntegerInstance(locale).format(value);
+	}
+
+	/** Formatta un importo in dollari secondo il locale indicato, es. "$ 0,0123" (fino a 6 decimali, senza zeri finali superflui). */
+	public static String formatCurrencyUSD(double value, java.util.Locale locale) {
+		java.text.DecimalFormat df = new java.text.DecimalFormat("#,##0.######",
+				new java.text.DecimalFormatSymbols(locale));
+		return "$ " + df.format(value);
+	}
+
 	public static String convertBytesToFormatString(long value) {
 		return convertBytesToFormatString(value, false, "");
 	}

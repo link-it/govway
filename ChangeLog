@@ -1,3 +1,9 @@
+2026-07-09  Andrea Poli <apoli@link.it>
+
+	* [GovWayMonitor]
+	Aggiunta la sezione 'Informazioni LLM' nel dettaglio transazione (provider, modello, provider
+	binding, token input/output e costo stimato) per le transazioni LLM.
+
 2026-07-08  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole]

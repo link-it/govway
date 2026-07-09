@@ -1,0 +1,54 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:link="http://www.link.it"
+    xmlns:c="http://java.sun.com/jstl/core">
+    <f:loadBundle var="msg" basename="messages" />
+
+    <a4j:outputPanel layout="block" id="informazioniLlm">
+ 		<h:panelGrid id="panelLlm" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDxFixedWidth130,valueAllineataSx" >
+
+ 			<h:outputLabel styleClass="outputFieldLabel" value="&#160;&#160;" rendered="#{true}" />
+ 			<h:panelGroup layout="block"  class="subtitle-nopaddingleft-nomarginleft">
+				<h:outputText value="Informazioni LLM" styleClass="subtitle-nopaddingleft-nomarginleft"/>
+			</h:panelGroup>
+
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelLlmProvider" value="#{msg['transazioni.dettaglio.llm.provider']}"
+				rendered="#{not empty dettagliBean.dettaglio.transazioneLlmObject.llmProvider}" />
+			<h:outputText id="outLlmProvider" value="#{dettagliBean.dettaglio.transazioneLlmObject.llmProvider}"
+				rendered="#{not empty dettagliBean.dettaglio.transazioneLlmObject.llmProvider}" />
+
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelLlmModel" value="#{msg['transazioni.dettaglio.llm.model']}"
+				rendered="#{not empty dettagliBean.dettaglio.transazioneLlmObject.llmModel}" />
+			<h:outputText id="outLlmModel" value="#{dettagliBean.dettaglio.transazioneLlmObject.llmModel}"
+				rendered="#{not empty dettagliBean.dettaglio.transazioneLlmObject.llmModel}" />
+
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelLlmBinding" value="#{msg['transazioni.dettaglio.llm.binding']}"
+				rendered="#{not empty dettagliBean.dettaglio.transazioneLlmObject.llmProviderBinding}" />
+			<h:outputText id="outLlmBinding" value="#{dettagliBean.dettaglio.transazioneLlmObject.llmProviderBinding}"
+				rendered="#{not empty dettagliBean.dettaglio.transazioneLlmObject.llmProviderBinding}" />
+
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelLlmTokenInput" value="#{msg['transazioni.dettaglio.llm.tokenInput']}"
+				rendered="#{not empty dettagliBean.dettaglio.transazioneLlmObject.tokenInputFormattato}" />
+			<h:outputText id="outLlmTokenInput" value="#{dettagliBean.dettaglio.transazioneLlmObject.tokenInputFormattato}"
+				rendered="#{not empty dettagliBean.dettaglio.transazioneLlmObject.tokenInputFormattato}" />
+
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelLlmTokenOutput" value="#{msg['transazioni.dettaglio.llm.tokenOutput']}"
+				rendered="#{not empty dettagliBean.dettaglio.transazioneLlmObject.tokenOutputFormattato}" />
+			<h:outputText id="outLlmTokenOutput" value="#{dettagliBean.dettaglio.transazioneLlmObject.tokenOutputFormattato}"
+				rendered="#{not empty dettagliBean.dettaglio.transazioneLlmObject.tokenOutputFormattato}" />
+
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelLlmCost" value="#{msg['transazioni.dettaglio.llm.cost']}"
+				rendered="#{not empty dettagliBean.dettaglio.transazioneLlmObject.costoFormattato}" />
+			<h:outputText id="outLlmCost" value="#{dettagliBean.dettaglio.transazioneLlmObject.costoFormattato}"
+				rendered="#{not empty dettagliBean.dettaglio.transazioneLlmObject.costoFormattato}" />
+
+		</h:panelGrid>
+
+    </a4j:outputPanel>
+
+
+</ui:composition>

@@ -268,12 +268,15 @@ public final class LLMHandlerSupport {
 	}
 
 	/**
-	 * Accumula sul PdDContext l'usage osservato in uno stream LLM. I provider possono
-	 * pubblicare le due meta' di {@code input/output} in eventi distinti (es. Anthropic
-	 * pubblica input al {@code message_start} e output al {@code message_delta}); la merge
-	 * preserva il primo valore non-null per ciascun campo cosi' che il finalizzatore della
-	 * transazione abbia sempre i totali. Chiamato dal {@code ChunkTransformInputStream}
-	 * via observer.
+	 * Accumula sul PdDContext l'usage osservato in uno stream LLM. I provider pubblicano
+	 * i token in eventi distinti e per l'output riportano il totale CUMULATIVO crescente:
+	 * es. Anthropic pubblica {@code input_tokens} (+ un {@code output_tokens=1} iniziale) al
+	 * {@code message_start} e poi il totale cumulativo di {@code output_tokens} ad ogni
+	 * {@code message_delta}, fino al valore finale sull'ultimo evento. La merge prende quindi
+	 * il MASSIMO osservato per ciascun campo, cosi' che il finalizzatore della transazione
+	 * abbia i totali reali (e non il valore iniziale). Robusto anche per i provider che
+	 * pubblicano l'usage finale una sola volta (es. OpenAI). Chiamato dal
+	 * {@code ChunkTransformInputStream} via observer.
 	 */
 	public static void accumulateLLMStreamUsage(PdDContext pddContext, org.openspcoop2.message.llm.CanonicalUsage delta) {
 		if (pddContext == null || delta == null) return;
@@ -281,13 +284,19 @@ public final class LLMHandlerSupport {
 		org.openspcoop2.message.llm.CanonicalUsage cumulative = existing instanceof org.openspcoop2.message.llm.CanonicalUsage
 				? (org.openspcoop2.message.llm.CanonicalUsage) existing
 				: new org.openspcoop2.message.llm.CanonicalUsage();
-		if (cumulative.getInputTokens() == null && delta.getInputTokens() != null) {
-			cumulative.setInputTokens(delta.getInputTokens());
-		}
-		if (cumulative.getOutputTokens() == null && delta.getOutputTokens() != null) {
-			cumulative.setOutputTokens(delta.getOutputTokens());
-		}
+		cumulative.setInputTokens(maxToken(cumulative.getInputTokens(), delta.getInputTokens()));
+		cumulative.setOutputTokens(maxToken(cumulative.getOutputTokens(), delta.getOutputTokens()));
 		pddContext.addObject(LLMHandlerConstants.PDD_CTX_LLM_STREAM_USAGE, cumulative);
+	}
+
+	private static Integer maxToken(Integer existing, Integer incoming) {
+		if (incoming == null) {
+			return existing;
+		}
+		if (existing == null) {
+			return incoming;
+		}
+		return incoming.intValue() > existing.intValue() ? incoming : existing;
 	}
 
 	/** Recupera il totale cumulativo dell'usage osservato in streaming, se presente. */

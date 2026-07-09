@@ -82,6 +82,13 @@
 				    	<ui:param value="consegneMultiple" name="nomeTab" />
 				    </ui:include>
 			    </rich:tab>
+			    <rich:tab rendered="#{not empty dettagliBean.dettaglio.transazioneLlmObject}" name="llm">
+					<f:facet name="label">
+						<h:outputText id="outTitleLlm" value="#{msg['transazioni.dettaglio.tab.llm.titoloTab']}" />
+				    </f:facet>
+				    <ui:include src="/transazioni/includes/dettaglioMessaggioInformazioniLlm.xhtml" >
+				    </ui:include>
+			    </rich:tab>
 			    <rich:tab name="infoAvanzate">
 					<f:facet name="label">
 						<h:outputText id="outTitleInfoAvanz" value="#{msg['transazioni.dettaglio.tab.infoAvanzate.titoloTab']}" />

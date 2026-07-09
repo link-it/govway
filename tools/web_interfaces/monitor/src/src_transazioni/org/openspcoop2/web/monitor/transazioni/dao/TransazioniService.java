@@ -1249,8 +1249,11 @@ public class TransazioniService implements ITransazioniService {
 			this.normalizeInfoTransazioniFromCredenzialiMittenteUriApi(transazioneBean, t);
 			transazioneBean.normalizeTipoApiInfo(this.utilsServiceManager, this.log);
 			transazioneBean.normalizeOperazioneInfo(this.utilsServiceManager, this.log);
-						
-			return transazioneBean; 
+
+			// Integrazione dei dati LLM (solo per transazioni con esito_contesto 'llm')
+			this.normalizeInfoTransazioneLlm(transazioneBean, t);
+
+			return transazioneBean;
 		} catch (NotFoundException nre) {
 			// ignore
 		} catch (Exception e) {
@@ -1259,7 +1262,24 @@ public class TransazioniService implements ITransazioniService {
 		}
 		return null;
 	}
-	
+
+	private void normalizeInfoTransazioneLlm(TransazioneBean transazioneBean, Transazione t) {
+		try {
+			if(!org.openspcoop2.protocol.sdk.constants.CostantiProtocollo.ESITO_TRANSACTION_CONTEXT_LLM.equals(EsitoUtils.getRawEsitoContext(t.getEsitoContesto()))) {
+				return;
+			}
+			org.openspcoop2.core.transazioni.dao.ITransazioneLlmServiceSearch llmDAO = this.transazioniServiceManager.getTransazioneLlmServiceSearch();
+			IExpression expr = llmDAO.newExpression();
+			expr.equals(org.openspcoop2.core.transazioni.TransazioneLlm.model().ID_TRANSAZIONE, t.getIdTransazione());
+			org.openspcoop2.core.transazioni.TransazioneLlm llm = llmDAO.find(expr);
+			transazioneBean.setTransazioneLlm(llm);
+		} catch (NotFoundException nfe) {
+			// nessun dato LLM associato alla transazione
+		} catch (Exception e) {
+			this.log.error("Impossibile recuperare i dati LLM per la transazione con idTransazione: "+t.getIdTransazione(), e);
+		}
+	}
+
 	public void normalizeInfoTransazioniFromCredenzialiMittente(TransazioneBean transazioneBean, Transazione t) throws ServiceException, MultipleResultException, NotImplementedException, ExpressionNotImplementedException {
 		// Integrazione dei dati delle credenziali
 		
