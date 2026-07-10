@@ -328,5 +328,11 @@ public interface IDynamicUtilsService {
 	public boolean existsFaseTracciamentoDBRequestIn(boolean erogazioni, boolean fruizioni);
 	public boolean existsFaseTracciamentoDBRequestOut(boolean erogazioni, boolean fruizioni);
 	public boolean existsFaseTracciamentoDBResponseOut(boolean erogazioni, boolean fruizioni);
-	
+
+	// *** Catalogo LLM (per le ricerche transazioni LLM) ***
+
+	public List<org.openspcoop2.core.config.GenericProperties> getElencoLlmProvider();
+	public List<org.openspcoop2.core.config.GenericProperties> getElencoLlmModel();
+	public List<org.openspcoop2.core.config.GenericProperties> getElencoLlmProviderBinding();
+
 }

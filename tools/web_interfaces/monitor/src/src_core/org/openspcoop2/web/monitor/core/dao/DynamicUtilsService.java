@@ -1585,4 +1585,38 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 			return this.driver.existsFaseTracciamentoDBResponseOut(erogazioni,fruizioni);
 		}
 	}
+
+	@Override
+	public List<org.openspcoop2.core.config.GenericProperties> getElencoLlmProvider() {
+		return getElencoLlmGenericProperties("getElencoLlmProvider");
+	}
+	@Override
+	public List<org.openspcoop2.core.config.GenericProperties> getElencoLlmModel() {
+		return getElencoLlmGenericProperties("getElencoLlmModel");
+	}
+	@Override
+	public List<org.openspcoop2.core.config.GenericProperties> getElencoLlmProviderBinding() {
+		return getElencoLlmGenericProperties("getElencoLlmProviderBinding");
+	}
+	@SuppressWarnings("unchecked")
+	private List<org.openspcoop2.core.config.GenericProperties> getElencoLlmGenericProperties(String methodName) {
+		if(AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione!=null) {
+			String key = buildKey(methodName);
+			try {
+				return (List<org.openspcoop2.core.config.GenericProperties>) AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione.getObjectCache(this.driver, AbstractConsoleStartupListener.debugCache_datiConfigurazione, key, methodName,
+						new Class<?>[] {});
+			}catch(Throwable e) {
+				log.error("Cache Access Error (method:"+methodName+" key:"+key+"): "+e.getMessage(),e);
+				return new java.util.ArrayList<>();
+			}
+		} else {
+			if("getElencoLlmProvider".equals(methodName)) {
+				return this.driver.getElencoLlmProvider();
+			} else if("getElencoLlmModel".equals(methodName)) {
+				return this.driver.getElencoLlmModel();
+			} else {
+				return this.driver.getElencoLlmProviderBinding();
+			}
+		}
+	}
 }

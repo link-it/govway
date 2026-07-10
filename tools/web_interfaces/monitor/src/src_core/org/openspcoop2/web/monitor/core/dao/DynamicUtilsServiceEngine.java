@@ -3003,7 +3003,34 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 			return this.driverConfigDB.existsFaseTracciamentoDBResponseOut(erogazioni, fruizioni);
 		}catch (Exception e) {
 			log.error(e.getMessage(), e);
-		} 
+		}
 		return false;
+	}
+
+	@Override
+	public List<org.openspcoop2.core.config.GenericProperties> getElencoLlmProvider() {
+		return getElencoGenericProperties(CostantiConfigurazione.GENERIC_PROPERTIES_LLM_PROVIDER);
+	}
+	@Override
+	public List<org.openspcoop2.core.config.GenericProperties> getElencoLlmModel() {
+		return getElencoGenericProperties(CostantiConfigurazione.GENERIC_PROPERTIES_LLM_MODEL);
+	}
+	@Override
+	public List<org.openspcoop2.core.config.GenericProperties> getElencoLlmProviderBinding() {
+		return getElencoGenericProperties(CostantiConfigurazione.GENERIC_PROPERTIES_LLM_PROVIDER_BINDING);
+	}
+	private List<org.openspcoop2.core.config.GenericProperties> getElencoGenericProperties(String tipologia) {
+		log.debug("getElencoGenericProperties ["+tipologia+"]");
+		try {
+			List<org.openspcoop2.core.config.GenericProperties> l = this.driverConfigDB.getGenericProperties(tipologia);
+			if(l!=null) {
+				return l;
+			}
+		} catch (org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound e) {
+			// nessun elemento censito per questa tipologia
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+		}
+		return new ArrayList<>();
 	}
 }

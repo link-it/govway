@@ -216,7 +216,7 @@
 			
 			</a4j:outputPanel>
 			
-			<a4j:outputPanel id="filtriRicercaServizio" layout="block" 
+			<a4j:outputPanel id="filtriRicercaServizio" layout="block"
 				rendered="#{sf_bean.periodo == 'Live' or (sf_bean.showRicercaPanel and sf_bean.modalitaRicercaStorico != 'ricercaLibera')}">
 
 				<div class="subtitle">
@@ -361,7 +361,64 @@
 							
 			</a4j:outputPanel>
 			
-			<a4j:outputPanel id="filtriRicercaDatiMittente" layout="block" 
+			<a4j:outputPanel id="filtriRicercaLlmProviderModello" layout="block"
+				rendered="#{sf_bean.showRicercaPanel and sf_bean.modalitaRicercaStorico == 'llmProviderModello'}">
+
+				<div class="subtitle">
+					<h:outputText id="idFiltroLlmProviderModello" value="#{msg['transazioni.search.sezioneFiltroLlm.label']}" styleClass="subtitle"/>
+				</div>
+
+				<link:prop label="#{msg['transazioni.search.llm.provider']}">
+					<rich:comboBox id="llmProviderCombo" value="#{sf_bean.llmProvider}" defaultLabel="--" converter="selectItemConverter"
+						width="416" enableManualInput="false">
+						<f:selectItems value="#{sf_bean.llmProviderItems}"/>
+						<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.llmProviderModelSelected}" reRender="filtriRicercaLlmProviderModello" limitToList="true"/>
+					</rich:comboBox>
+				</link:prop>
+
+				<link:prop label="#{msg['transazioni.search.llm.model']}">
+					<rich:comboBox id="llmModelCombo" value="#{sf_bean.llmModel}" defaultLabel="--" converter="selectItemConverter"
+						width="416" enableManualInput="false">
+						<f:selectItems value="#{sf_bean.llmModelItems}"/>
+						<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.llmProviderModelSelected}" reRender="filtriRicercaLlmProviderModello" limitToList="true"/>
+					</rich:comboBox>
+				</link:prop>
+
+				<link:prop label="#{msg['transazioni.search.llm.binding']}">
+					<rich:comboBox id="llmBindingCombo" value="#{sf_bean.llmProviderBinding}" defaultLabel="--" converter="selectItemConverter"
+						width="416" enableManualInput="false">
+						<f:selectItems value="#{sf_bean.llmProviderBindingItems}"/>
+						<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.llmProviderBindingSelected}" reRender="filtriRicercaLlmProviderModello" limitToList="true"/>
+					</rich:comboBox>
+				</link:prop>
+
+			</a4j:outputPanel>
+
+			<a4j:outputPanel id="filtriRicercaLlmTokenCosto" layout="block"
+				rendered="#{sf_bean.showRicercaPanel and sf_bean.modalitaRicercaStorico == 'llmTokenCosto'}">
+
+				<div class="subtitle">
+					<h:outputText id="idFiltroLlmTokenCosto" value="#{msg['transazioni.search.sezioneFiltroLlm.label']}" styleClass="subtitle"/>
+				</div>
+
+				<link:prop label="#{msg['transazioni.search.llm.metrica']}">
+					<rich:comboBox id="llmMetricaCombo" value="#{sf_bean.llmMetrica}" converter="selectItemConverter"
+						width="416" enableManualInput="false">
+						<f:selectItems value="#{sf_bean.llmMetricaItems}"/>
+					</rich:comboBox>
+				</link:prop>
+
+				<link:prop label="#{msg['transazioni.search.llm.valoreDa']}">
+					<h:inputText id="llmValoreDa" value="#{sf_bean.llmValoreDa}" styleClass="inputLinkLong"/>
+				</link:prop>
+
+				<link:prop label="#{msg['transazioni.search.llm.valoreA']}">
+					<h:inputText id="llmValoreA" value="#{sf_bean.llmValoreA}" styleClass="inputLinkLong"/>
+				</link:prop>
+
+			</a4j:outputPanel>
+
+			<a4j:outputPanel id="filtriRicercaDatiMittente" layout="block"
 				rendered="#{sf_bean.periodo == 'Live' or (sf_bean.showMittentePanel)}">
 					
 				<div class="subtitle">

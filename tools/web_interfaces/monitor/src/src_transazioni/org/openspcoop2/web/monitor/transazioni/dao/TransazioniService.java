@@ -1280,6 +1280,87 @@ public class TransazioniService implements ITransazioniService {
 		}
 	}
 
+	private static boolean llmValorizzato(String v) {
+		return v!=null && !"".equals(v.trim()) && !"--".equals(v.trim());
+	}
+
+	private Object parseLlmValore(String raw, boolean costo) throws UtilsException {
+		if(raw==null || "".equals(raw.trim())) {
+			return null;
+		}
+		String v = raw.trim().replace(",", ".");
+		try {
+			if(costo) {
+				return Double.valueOf(v);
+			}
+			return Long.valueOf(v);
+		} catch(NumberFormatException e) {
+			throw new UtilsException("Valore non numerico per la ricerca LLM: "+raw);
+		}
+	}
+
+	private void setExpressionFilterLlm(IExpression filter, ModalitaRicercaTransazioni ricerca) throws ExpressionNotImplementedException, ExpressionException, UtilsException {
+
+		if(ModalitaRicercaTransazioni.LLM_PROVIDER_MODELLO.equals(ricerca)) {
+			boolean added = false;
+			if(llmValorizzato(this.searchForm.getLlmProvider())) {
+				filter.and().equals(Transazione.model().TRANSAZIONE_LLM.LLM_PROVIDER, this.searchForm.getLlmProvider().trim());
+				added = true;
+			}
+			if(llmValorizzato(this.searchForm.getLlmModel())) {
+				filter.and().equals(Transazione.model().TRANSAZIONE_LLM.LLM_MODEL, this.searchForm.getLlmModel().trim());
+				added = true;
+			}
+			if(llmValorizzato(this.searchForm.getLlmProviderBinding())) {
+				filter.and().equals(Transazione.model().TRANSAZIONE_LLM.LLM_PROVIDER_BINDING, this.searchForm.getLlmProviderBinding().trim());
+				added = true;
+			}
+			if(!added) {
+				// nessun filtro specifico: restringe comunque alle sole transazioni LLM (join inner)
+				filter.and().isNotNull(Transazione.model().TRANSAZIONE_LLM.ID_TRANSAZIONE);
+			}
+		}
+		else if(ModalitaRicercaTransazioni.LLM_TOKEN_COSTO.equals(ricerca)) {
+
+			String metrica = this.searchForm.getLlmMetrica();
+			boolean costo = TransazioniSearchForm.LLM_METRICA_COSTO.equals(metrica);
+
+			IField field;
+			boolean customField = false;
+			if(TransazioniSearchForm.LLM_METRICA_TOKEN_INPUT.equals(metrica)) {
+				field = Transazione.model().TRANSAZIONE_LLM.TOKEN_INPUT;
+			} else if(TransazioniSearchForm.LLM_METRICA_TOKEN_OUTPUT.equals(metrica)) {
+				field = Transazione.model().TRANSAZIONE_LLM.TOKEN_OUTPUT;
+			} else if(costo) {
+				field = Transazione.model().TRANSAZIONE_LLM.COST_ESTIMATED;
+			} else {
+				// token totale = input + output (colonna calcolata sulla tabella transazioni_llm)
+				field = new org.openspcoop2.generic_project.beans.CustomField("llmTokenTotale", Long.class,
+						"token_input + transazioni_llm.token_output", "transazioni_llm");
+				customField = true;
+			}
+
+			Object da = parseLlmValore(this.searchForm.getLlmValoreDa(), costo);
+			Object a = parseLlmValore(this.searchForm.getLlmValoreA(), costo);
+
+			// forza la join verso transazioni_llm anche quando si usa il CustomField (non rilevato da inUseModel)
+			if(customField) {
+				filter.and().isNotNull(Transazione.model().TRANSAZIONE_LLM.TOKEN_INPUT);
+			}
+
+			if(da!=null && a!=null) {
+				filter.and().between(field, da, a);
+			} else if(da!=null) {
+				filter.and().greaterEquals(field, da);
+			} else if(a!=null) {
+				filter.and().lessEquals(field, a);
+			} else if(!customField) {
+				// nessun intervallo indicato: restringe alle sole transazioni LLM
+				filter.and().isNotNull(field);
+			}
+		}
+	}
+
 	public void normalizeInfoTransazioniFromCredenzialiMittente(TransazioneBean transazioneBean, Transazione t) throws ServiceException, MultipleResultException, NotImplementedException, ExpressionNotImplementedException {
 		// Integrazione dei dati delle credenziali
 		
@@ -3443,6 +3524,11 @@ public class TransazioniService implements ITransazioniService {
 			}
 		}
 		
+		// filtri specifici ricerca LLM (non fanno return: si sommano al filtro temporale/esito)
+		if(ricerca!=null && (ModalitaRicercaTransazioni.LLM_PROVIDER_MODELLO.equals(ricerca) || ModalitaRicercaTransazioni.LLM_TOKEN_COSTO.equals(ricerca))) {
+			setExpressionFilterLlm(filter, ricerca);
+		}
+
 		// check ricerca libera
 		boolean ricercaLibera = isRicercaLibera();
 		boolean ricercaLiberaCaseSensitive = false;

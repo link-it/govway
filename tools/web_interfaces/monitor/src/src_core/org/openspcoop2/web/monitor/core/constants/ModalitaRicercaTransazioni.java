@@ -46,7 +46,9 @@ public enum ModalitaRicercaTransazioni {
 	ID_TRANSAZIONE ("idTransazione"),
 	ID_TOKEN ("idToken"),
 	LIVE ("Live"),
-	PURPOSE_ID ("purposeId");
+	PURPOSE_ID ("purposeId"),
+	LLM_PROVIDER_MODELLO ("llmProviderModello"),
+	LLM_TOKEN_COSTO ("llmTokenCosto");
 	
 	private String value;
 	ModalitaRicercaTransazioni(String ruolo) {
@@ -90,7 +92,9 @@ public enum ModalitaRicercaTransazioni {
 					LIVE,
 					ESAMINA_ARCHIVIO_ZIP,
 					ID_TOKEN,
-					PURPOSE_ID:
+					PURPOSE_ID,
+					LLM_PROVIDER_MODELLO,
+					LLM_TOKEN_COSTO:
 					return 1;
 				case ID_APPLICATIVO_AVANZATA,
 					ID_APPLICATIVO_BASE:

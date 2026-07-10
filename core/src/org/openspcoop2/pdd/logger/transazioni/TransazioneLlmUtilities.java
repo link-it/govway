@@ -53,11 +53,16 @@ public final class TransazioneLlmUtilities {
 		if (idTransazione == null || idTransazione.isEmpty() || pddContext == null) {
 			return null;
 		}
-		String providerType = LLMHandlerSupport.getLLMProvider(pddContext);
+		// Sul record deve finire sempre il nome della policy (istanza Provider, es. 'Claude'),
+		// coerente col catalogo e col binding; il tipo (anthropic/openai/awsBedrock) e' usato solo come fallback.
+		String providerName = LLMHandlerSupport.getLLMProviderName(pddContext);
+		if (providerName == null || providerName.isEmpty()) {
+			providerName = LLMHandlerSupport.getLLMProvider(pddContext);
+		}
 		String modelName    = LLMHandlerSupport.getLLMModelName(pddContext);
 		String bindingName  = LLMHandlerSupport.getLLMProviderBindingName(pddContext);
 		// Se nessuna delle tre identita' LLM e' nota, non e' una transazione LLM: skip.
-		if ((providerType == null || providerType.isEmpty())
+		if ((providerName == null || providerName.isEmpty())
 				&& (modelName == null || modelName.isEmpty())
 				&& (bindingName == null || bindingName.isEmpty())) {
 			return null;
@@ -66,7 +71,7 @@ public final class TransazioneLlmUtilities {
 		TransazioneLlm bean = new TransazioneLlm();
 		bean.setIdTransazione(idTransazione);
 		bean.setDataIngressoRichiesta(dataIngressoRichiesta);
-		bean.setLlmProvider(providerType);
+		bean.setLlmProvider(providerName);
 		bean.setLlmModel(modelName);
 		bean.setLlmProviderBinding(bindingName);
 
@@ -108,7 +113,7 @@ public final class TransazioneLlmUtilities {
 
 		if (log != null && log.isDebugEnabled()) {
 			log.debug("TransazioneLlm fill: idTransazione={} provider={} model={} binding={} tokenInput={} tokenOutput={} cost={}",
-					idTransazione, providerType, modelName, bindingName, inputTokens, outputTokens, cost);
+					idTransazione, providerName, modelName, bindingName, inputTokens, outputTokens, cost);
 		}
 		return bean;
 	}
