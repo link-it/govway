@@ -526,6 +526,7 @@ public class StatisticheServerExecutor {
 		statisticsConfig.setPdndTracciamentoSoggettiEnabled(this.serverProperties.getPdndTracingSoggettiEnabled());
 		statisticsConfig.setPdndTracciamentoSoggettiDisabled(this.serverProperties.isPdndTracingSoggettiDisabled());
 		statisticsConfig.setGenerazioneStatisticheCustom(this.serverProperties.isGenerazioneStatisticheCustom());
+		statisticsConfig.setGenerazioneStatisticheLlm(this.serverProperties.isGenerazioneStatisticheLlm());
 		statisticsConfig.setAnalisiTransazioniCustom(this.serverProperties.isAnalisiTransazioniCustom());
 		statisticsConfig.setDebug(this.serverProperties.isStatisticheGenerazioneDebug());
 		statisticsConfig.setUseUnionForLatency(this.serverProperties.isGenerazioneStatisticheUseUnionForLatency());

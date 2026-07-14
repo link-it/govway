@@ -63,6 +63,14 @@ public class StatisticheCostanti {
 	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TEMPORALE_LABEL_KEY = Costanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TEMPORALE_LABEL_KEY;
 	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_MITTENTE_LABEL_KEY = Costanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_MITTENTE_LABEL_KEY;
 	
+	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_LLM_LABEL_KEY = "stats.analisiStatistica.tipoDistribuzione.llm.label";
+	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_LLM_LABEL_SUFFIX_KEY = "stats.analisiStatistica.tipoDistribuzione.llm.label.suffix";
+	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_LLM_RAGGRUPPA_LABEL_KEY = "stats.analisiStatistica.tipoDistribuzione.llm.raggruppa.label";
+	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_LLM_RAGGRUPPA_PROVIDER_KEY = "stats.analisiStatistica.tipoDistribuzione.llm.raggruppa.provider";
+	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_LLM_RAGGRUPPA_MODEL_KEY = "stats.analisiStatistica.tipoDistribuzione.llm.raggruppa.model";
+	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_LLM_RAGGRUPPA_BINDING_KEY = "stats.analisiStatistica.tipoDistribuzione.llm.raggruppa.binding";
+	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_LLM_VISUALIZZA_LABEL_KEY = "stats.analisiStatistica.tipoDistribuzione.llm.visualizza.label";
+
 	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKEN_INFO_ISSUER_LABEL_KEY = "stats.analisiStatistica.tipoDistribuzione.tokenInfo.issuer.label";
 	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKEN_INFO_CLIENT_ID_LABEL_KEY = "stats.analisiStatistica.tipoDistribuzione.tokenInfo.clientID.label";
 	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKEN_INFO_SUBJECT_LABEL_KEY = "stats.analisiStatistica.tipoDistribuzione.tokenInfo.subject.label";

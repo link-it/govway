@@ -41,6 +41,13 @@ import java.io.Serializable;
  * 			&lt;element name="token-input" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" minOccurs="1" maxOccurs="1"/&gt;
  * 			&lt;element name="token-output" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" minOccurs="1" maxOccurs="1"/&gt;
  * 			&lt;element name="cost-estimated" type="{http://www.w3.org/2001/XMLSchema}double" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="numero-transazioni" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="dimensioni-bytes-banda-complessiva" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="dimensioni-bytes-banda-interna" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="dimensioni-bytes-banda-esterna" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="latenza-totale" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="latenza-porta" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="latenza-servizio" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" minOccurs="0" maxOccurs="1"/&gt;
  * 		&lt;/sequence&gt;
  * &lt;/complexType&gt;
  * </pre>
@@ -61,7 +68,14 @@ import java.io.Serializable;
   	"llmProviderBinding",
   	"tokenInput",
   	"tokenOutput",
-  	"costEstimated"
+  	"costEstimated",
+  	"numeroTransazioni",
+  	"dimensioniBytesBandaComplessiva",
+  	"dimensioniBytesBandaInterna",
+  	"dimensioniBytesBandaEsterna",
+  	"latenzaTotale",
+  	"latenzaPorta",
+  	"latenzaServizio"
   }
 )
 
@@ -128,6 +142,62 @@ public class StatisticaGiornalieraLlm extends org.openspcoop2.utils.beans.BaseBe
     this.costEstimated = costEstimated;
   }
 
+  public java.lang.Integer getNumeroTransazioni() {
+    return this.numeroTransazioni;
+  }
+
+  public void setNumeroTransazioni(java.lang.Integer numeroTransazioni) {
+    this.numeroTransazioni = numeroTransazioni;
+  }
+
+  public java.lang.Long getDimensioniBytesBandaComplessiva() {
+    return this.dimensioniBytesBandaComplessiva;
+  }
+
+  public void setDimensioniBytesBandaComplessiva(java.lang.Long dimensioniBytesBandaComplessiva) {
+    this.dimensioniBytesBandaComplessiva = dimensioniBytesBandaComplessiva;
+  }
+
+  public java.lang.Long getDimensioniBytesBandaInterna() {
+    return this.dimensioniBytesBandaInterna;
+  }
+
+  public void setDimensioniBytesBandaInterna(java.lang.Long dimensioniBytesBandaInterna) {
+    this.dimensioniBytesBandaInterna = dimensioniBytesBandaInterna;
+  }
+
+  public java.lang.Long getDimensioniBytesBandaEsterna() {
+    return this.dimensioniBytesBandaEsterna;
+  }
+
+  public void setDimensioniBytesBandaEsterna(java.lang.Long dimensioniBytesBandaEsterna) {
+    this.dimensioniBytesBandaEsterna = dimensioniBytesBandaEsterna;
+  }
+
+  public java.lang.Long getLatenzaTotale() {
+    return this.latenzaTotale;
+  }
+
+  public void setLatenzaTotale(java.lang.Long latenzaTotale) {
+    this.latenzaTotale = latenzaTotale;
+  }
+
+  public java.lang.Long getLatenzaPorta() {
+    return this.latenzaPorta;
+  }
+
+  public void setLatenzaPorta(java.lang.Long latenzaPorta) {
+    this.latenzaPorta = latenzaPorta;
+  }
+
+  public java.lang.Long getLatenzaServizio() {
+    return this.latenzaServizio;
+  }
+
+  public void setLatenzaServizio(java.lang.Long latenzaServizio) {
+    this.latenzaServizio = latenzaServizio;
+  }
+
   private static final long serialVersionUID = 1L;
 
 
@@ -160,5 +230,33 @@ public class StatisticaGiornalieraLlm extends org.openspcoop2.utils.beans.BaseBe
   @jakarta.xml.bind.annotation.XmlSchemaType(name="double")
   @XmlElement(name="cost-estimated",required=false,nillable=false)
   protected double costEstimated;
+
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="integer")
+  @XmlElement(name="numero-transazioni",required=true,nillable=false)
+  protected java.lang.Integer numeroTransazioni;
+
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="unsignedLong")
+  @XmlElement(name="dimensioni-bytes-banda-complessiva",required=false,nillable=false)
+  protected java.lang.Long dimensioniBytesBandaComplessiva;
+
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="unsignedLong")
+  @XmlElement(name="dimensioni-bytes-banda-interna",required=false,nillable=false)
+  protected java.lang.Long dimensioniBytesBandaInterna;
+
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="unsignedLong")
+  @XmlElement(name="dimensioni-bytes-banda-esterna",required=false,nillable=false)
+  protected java.lang.Long dimensioniBytesBandaEsterna;
+
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="unsignedLong")
+  @XmlElement(name="latenza-totale",required=false,nillable=false)
+  protected java.lang.Long latenzaTotale;
+
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="unsignedLong")
+  @XmlElement(name="latenza-porta",required=false,nillable=false)
+  protected java.lang.Long latenzaPorta;
+
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="unsignedLong")
+  @XmlElement(name="latenza-servizio",required=false,nillable=false)
+  protected java.lang.Long latenzaServizio;
 
 }

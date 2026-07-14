@@ -220,6 +220,16 @@ public class AnalisiStatisticaBean implements Serializable {
 		gruppoIndirizzoIP.setListaAnalisiStatistica(listaAnalisiGruppoIndirizzoIP);
 		this.tipiAnalisiStatistica.add(gruppoIndirizzoIP);
 
+		// La distribuzione per dati LLM viene mostrata subito prima delle statistiche personalizzate
+		GruppoAnalisiStatistica gruppoLlm = new GruppoAnalisiStatistica();
+		gruppoLlm.setLabel(MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_LLM_LABEL_KEY));
+		List<AnalisiStatistica> listaAnalisiGruppoLlm = new ArrayList<>();
+		listaAnalisiGruppoLlm.add(new AnalisiStatistica(CostantiGrafici.TIPO_DISTRIBUZIONE_LLM,CostantiGrafici.TIPO_REPORT_BAR_CHART,TipoReport.BAR_CHART));
+		listaAnalisiGruppoLlm.add(new AnalisiStatistica(CostantiGrafici.TIPO_DISTRIBUZIONE_LLM,CostantiGrafici.TIPO_REPORT_PIE_CHART,TipoReport.PIE_CHART));
+		listaAnalisiGruppoLlm.add(new AnalisiStatistica(CostantiGrafici.TIPO_DISTRIBUZIONE_LLM,CostantiGrafici.TIPO_REPORT_TABELLA,TipoReport.TABELLA));
+		gruppoLlm.setListaAnalisiStatistica(listaAnalisiGruppoLlm);
+		this.tipiAnalisiStatistica.add(gruppoLlm);
+
 		if(this.applicationBean.getShowStatistichePersonalizzate()) {
 			GruppoAnalisiStatistica gruppoPersonalizzate = new GruppoAnalisiStatistica();
 			gruppoPersonalizzate.setLabel(MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_PERSONALIZZATA_LABEL_KEY));
@@ -272,6 +282,8 @@ public class AnalisiStatisticaBean implements Serializable {
 			} else if(this.tipoDistribuzione.equals(CostantiGrafici.TIPO_DISTRIBUZIONE_SERVIZIO_APPLICATIVO)) {
 				((DistribuzionePerSABean<?>) this.mBean).getSearch().initSearchListener(ae);
 				//				this.search = getBean(CostantiGrafici.SEARCH_DISTRIBUZIONE_SERVIZIO_APPLICATIVO, StatsSearchForm.class);
+			} else if(this.tipoDistribuzione.equals(CostantiGrafici.TIPO_DISTRIBUZIONE_LLM)) {
+				((DistribuzionePerLlmBean<?>) this.mBean).getSearch().initSearchListener(ae);
 			} else if(this.applicationBean.getShowStatistichePersonalizzate() && this.tipoDistribuzione.equals(CostantiGrafici.TIPO_DISTRIBUZIONE_PERSONALIZZATA)) {
 				((StatsPersonalizzateBean) this.mBean).getSearch().initSearchListener(ae);
 				//				this.search = getBean(CostantiGrafici.SEARCH_DISTRIBUZIONE_PERSONALIZZATA, StatsSearchForm.class);
@@ -314,6 +326,8 @@ public class AnalisiStatisticaBean implements Serializable {
 			} else if(this.tipoDistribuzione.startsWith(CostantiGrafici.TIPO_DISTRIBUZIONE_SERVIZIO_APPLICATIVO)) {
 				this.mBean = getBean(CostantiGrafici.MBEAN_DISTRIBUZIONE_SERVIZIO_APPLICATIVO, DistribuzionePerSABean.class);
 				//				this.search = getBean(CostantiGrafici.SEARCH_DISTRIBUZIONE_SERVIZIO_APPLICATIVO, StatsSearchForm.class);
+			} else if(this.tipoDistribuzione.equals(CostantiGrafici.TIPO_DISTRIBUZIONE_LLM)) {
+				this.mBean = getBean(CostantiGrafici.MBEAN_DISTRIBUZIONE_LLM, DistribuzionePerLlmBean.class);
 			} else if(this.applicationBean.getShowStatistichePersonalizzate() && this.tipoDistribuzione.equals(CostantiGrafici.TIPO_DISTRIBUZIONE_PERSONALIZZATA)) {
 				this.mBean = getBean(CostantiGrafici.MBEAN_DISTRIBUZIONE_PERSONALIZZATA, StatsPersonalizzateBean.class);
 				//				this.search = getBean(CostantiGrafici.SEARCH_DISTRIBUZIONE_PERSONALIZZATA, StatsSearchForm.class);
@@ -354,6 +368,8 @@ public class AnalisiStatisticaBean implements Serializable {
 				String[] mittenteType = this.tipoDistribuzione.split("-");
 				this.mBean.getSearch().setRiconoscimento(mittenteType[1]); 
 				//				this.search = getBean(CostantiGrafici.SEARCH_DISTRIBUZIONE_SERVIZIO_APPLICATIVO, StatsSearchForm.class);
+			} else if(this.tipoDistribuzione.equals(CostantiGrafici.TIPO_DISTRIBUZIONE_LLM)) {
+				((DistribuzionePerLlmBean<?>) this.mBean).getSearch().initSearchListener(null);
 			} else if(this.applicationBean.getShowStatistichePersonalizzate() && this.tipoDistribuzione.equals(CostantiGrafici.TIPO_DISTRIBUZIONE_PERSONALIZZATA)) {
 				((StatsPersonalizzateBean) this.mBean).getSearch().initSearchListener(null);
 				//				this.search = getBean(CostantiGrafici.SEARCH_DISTRIBUZIONE_PERSONALIZZATA, StatsSearchForm.class);
@@ -486,9 +502,11 @@ public class AnalisiStatisticaBean implements Serializable {
 				} else {
 					return MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKEN_INFO_LABEL_KEY);
 				}
+			} else if(this.tipoDistribuzione.equals(CostantiGrafici.TIPO_DISTRIBUZIONE_LLM)) {
+				return MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_LLM_LABEL_KEY);
 			} else if(this.applicationBean.getShowStatistichePersonalizzate() && this.tipoDistribuzione.equals(CostantiGrafici.TIPO_DISTRIBUZIONE_PERSONALIZZATA)) {
 				return MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_PERSONALIZZATA_LABEL_KEY);
-			}  
+			}
 		}
 		return "Filtri Ricerca";
 	}

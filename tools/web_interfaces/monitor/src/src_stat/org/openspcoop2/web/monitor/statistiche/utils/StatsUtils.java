@@ -1202,6 +1202,16 @@ public class StatsUtils {
 		return getSubCaption(form, false);
 	}
 	public static String getSubCaption(StatsSearchForm form,boolean showUnitaMisura){
+
+		// Distribuzione per dati LLM: l'etichetta dipende dalla metrica LLM selezionata (Visualizza per)
+		if(TipoStatistica.DISTRIBUZIONE_LLM.equals(form.getTipoStatistica())) {
+			String labelLlm = form.getLlmVisualizzaPerLabel();
+			if(showUnitaMisura && form.isLlmVisualizzaCosto()) {
+				labelLlm = labelLlm + CostantiGrafici.WHITE_SPACE + "[$]";
+			}
+			return labelLlm + CostantiGrafici.WHITE_SPACE;
+		}
+
 		TipoVisualizzazione tipoVisualizzazione = form.getTipoVisualizzazione();
 
 		switch (tipoVisualizzazione) {
@@ -1287,6 +1297,20 @@ public class StatsUtils {
 		return tipoBandaLabel;
 	}
 	
+	// Distribuzione LLM per costo: il valore e' decimale, va formattato con i decimali (non come intero)
+	private static boolean isLlmCosto(StatsSearchForm form) {
+		return form!=null && TipoStatistica.DISTRIBUZIONE_LLM.equals(form.getTipoStatistica()) && StatsSearchForm.LLM_VISUALIZZA_COSTO.equals(form.getLlmVisualizzaPer());
+	}
+	private static String formatLlmCosto(Number value) {
+		if(value==null) {
+			return "0";
+		}
+		java.text.NumberFormat nf = java.text.NumberFormat.getNumberInstance(ApplicationBean.getInstance().getLocale());
+		nf.setMinimumFractionDigits(2);
+		nf.setMaximumFractionDigits(6);
+		return nf.format(value.doubleValue());
+	}
+
 	public static String getValue(StatsSearchForm form,Number value){
 		TipoVisualizzazione tipoVisualizzazione = null;
 		if(form!=null) {
@@ -1316,15 +1340,18 @@ public class StatsUtils {
 	}
 
 	public static String getToolText(StatsSearchForm form,Number value){
+		if(isLlmCosto(form) && value!=null) {
+			return formatLlmCosto(value) + " $";
+		}
 		TipoVisualizzazione tipoVisualizzazione = null;
 		if(form!=null) {
 			tipoVisualizzazione = form.getTipoVisualizzazione();
 		}
-		
+
 		if(tipoVisualizzazione!=null && value!=null) {
-			
+
 			switch (tipoVisualizzazione) {
-	
+
 			case NUMERO_TRANSAZIONI:
 				return Utility.numberConverter(value);
 			case TEMPO_MEDIO_RISPOSTA:

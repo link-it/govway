@@ -549,6 +549,55 @@ public class StatisticaGiornalieraFieldConverter extends AbstractSQLFieldConvert
 				return "cost_estimated";
 			}
 		}
+		if(field.equals(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.NUMERO_TRANSAZIONI)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".richieste";
+			}else{
+				return "richieste";
+			}
+		}
+		if(field.equals(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.DIMENSIONI_BYTES_BANDA_COMPLESSIVA)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".bytes_banda_complessiva";
+			}else{
+				return "bytes_banda_complessiva";
+			}
+		}
+		if(field.equals(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.DIMENSIONI_BYTES_BANDA_INTERNA)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".bytes_banda_interna";
+			}else{
+				return "bytes_banda_interna";
+			}
+		}
+		if(field.equals(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.DIMENSIONI_BYTES_BANDA_ESTERNA)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".bytes_banda_esterna";
+			}else{
+				return "bytes_banda_esterna";
+			}
+		}
+		if(field.equals(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LATENZA_TOTALE)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".latenza_totale";
+			}else{
+				return "latenza_totale";
+			}
+		}
+		if(field.equals(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LATENZA_PORTA)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".latenza_porta";
+			}else{
+				return "latenza_porta";
+			}
+		}
+		if(field.equals(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LATENZA_SERVIZIO)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".latenza_servizio";
+			}else{
+				return "latenza_servizio";
+			}
+		}
 
 
 		return super.toColumn(field,returnAlias,appendTablePrefix);
@@ -767,6 +816,27 @@ public class StatisticaGiornalieraFieldConverter extends AbstractSQLFieldConvert
 			return this.toTable(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM, returnAlias);
 		}
 		if(field.equals(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.COST_ESTIMATED)){
+			return this.toTable(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM, returnAlias);
+		}
+		if(field.equals(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.NUMERO_TRANSAZIONI)){
+			return this.toTable(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM, returnAlias);
+		}
+		if(field.equals(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.DIMENSIONI_BYTES_BANDA_COMPLESSIVA)){
+			return this.toTable(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM, returnAlias);
+		}
+		if(field.equals(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.DIMENSIONI_BYTES_BANDA_INTERNA)){
+			return this.toTable(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM, returnAlias);
+		}
+		if(field.equals(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.DIMENSIONI_BYTES_BANDA_ESTERNA)){
+			return this.toTable(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM, returnAlias);
+		}
+		if(field.equals(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LATENZA_TOTALE)){
+			return this.toTable(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM, returnAlias);
+		}
+		if(field.equals(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LATENZA_PORTA)){
+			return this.toTable(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM, returnAlias);
+		}
+		if(field.equals(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LATENZA_SERVIZIO)){
 			return this.toTable(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM, returnAlias);
 		}
 

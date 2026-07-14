@@ -309,6 +309,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 	public void initSearchListener(ActionEvent ae) {
 		try {
 			super.initSearchListener(ae);
+			this.resetFiltroLlm();
 			this.tipologiaRicerca = this.getDefaultTipologiaRicercaEnum();
 			this.esitoGruppo = EsitoUtils.ALL_VALUE;
 			this.esitoDettaglio = EsitoUtils.ALL_VALUE;
@@ -2786,5 +2787,222 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 	
 	public boolean isVisualizzaFiltroAzioni () {
 		return StringUtils.isNotBlank(this.getNomeServizio()) || StringUtils.isNotBlank(this.getApi());
+	}
+
+	// ======================= Filtro condiviso 'Dati LLM' =======================
+	// Usato sia dalla ricerca transazioni sia dalla maschera Analisi Statistica.
+
+	public static final String LLM_TIPO_PROVIDER_MODELLO = "providerModello";
+	public static final String LLM_TIPO_TOKEN_COSTO = "tokenCosto";
+	public static final String LLM_TIPO_QUALSIASI = "qualsiasi";
+
+	public static final String LLM_METRICA_TOKEN_INPUT = "tokenInput";
+	public static final String LLM_METRICA_TOKEN_OUTPUT = "tokenOutput";
+	public static final String LLM_METRICA_TOKEN_TOTALE = "tokenTotale";
+	public static final String LLM_METRICA_COSTO = "costo";
+
+	private String llmTipo;
+	private String llmProvider;
+	private String llmModel;
+	private String llmProviderBinding;
+	private String llmMetrica = LLM_METRICA_TOKEN_TOTALE;
+	private String llmValoreDa;
+	private String llmValoreA;
+
+	private transient org.openspcoop2.web.monitor.core.dao.DynamicUtilsService dynamicUtilsServiceLlm;
+	private org.openspcoop2.web.monitor.core.dao.DynamicUtilsService getDynamicUtilsServiceLlm() {
+		if (this.dynamicUtilsServiceLlm == null) {
+			this.dynamicUtilsServiceLlm = new org.openspcoop2.web.monitor.core.dao.DynamicUtilsService();
+		}
+		return this.dynamicUtilsServiceLlm;
+	}
+
+	protected static boolean llmValorizzato(String v) {
+		return v != null && !"".equals(v) && !"--".equals(v);
+	}
+
+	/** Reset dei campi del filtro LLM (invocato da initSearchListener). */
+	protected void resetFiltroLlm() {
+		this.llmTipo = null;
+		this.llmProvider = null;
+		this.llmModel = null;
+		this.llmProviderBinding = null;
+		this.llmMetrica = LLM_METRICA_TOKEN_TOTALE;
+		this.llmValoreDa = null;
+		this.llmValoreA = null;
+	}
+
+	public String getLlmTipo() {
+		return this.llmTipo;
+	}
+	public void setLlmTipo(String llmTipo) {
+		this.llmTipo = llmTipo;
+	}
+	public boolean isLlmTipoProviderModello() {
+		return LLM_TIPO_PROVIDER_MODELLO.equals(this.llmTipo);
+	}
+	public boolean isLlmTipoTokenCosto() {
+		return LLM_TIPO_TOKEN_COSTO.equals(this.llmTipo);
+	}
+	public List<SelectItem> getLlmTipoItems() {
+		List<SelectItem> items = new ArrayList<>();
+		items.add(new SelectItem("--", MessageManager.getInstance().getMessage("search.llm.tipo.seleziona")));
+		items.add(new SelectItem(LLM_TIPO_PROVIDER_MODELLO, MessageManager.getInstance().getMessage("search.llm.tipo.providerModello")));
+		items.add(new SelectItem(LLM_TIPO_TOKEN_COSTO, MessageManager.getInstance().getMessage("search.llm.tipo.tokenCosto")));
+		items.add(new SelectItem(LLM_TIPO_QUALSIASI, MessageManager.getInstance().getMessage("search.llm.tipo.qualsiasi")));
+		return items;
+	}
+
+	public String getLlmProvider() {
+		return this.llmProvider;
+	}
+	public void setLlmProvider(String llmProvider) {
+		this.llmProvider = llmProvider;
+	}
+	public String getLlmModel() {
+		return this.llmModel;
+	}
+	public void setLlmModel(String llmModel) {
+		this.llmModel = llmModel;
+	}
+	public String getLlmProviderBinding() {
+		return this.llmProviderBinding;
+	}
+	public void setLlmProviderBinding(String llmProviderBinding) {
+		this.llmProviderBinding = llmProviderBinding;
+	}
+
+	private static String getLlmBindingRef(org.openspcoop2.core.config.GenericProperties gp, String propName) {
+		if (gp != null && gp.getPropertyList() != null) {
+			for (org.openspcoop2.core.config.Property p : gp.getPropertyList()) {
+				if (propName.equals(p.getNome())) {
+					return p.getValore();
+				}
+			}
+		}
+		return null;
+	}
+	private static String getLlmBindingProvider(org.openspcoop2.core.config.GenericProperties gp) {
+		return getLlmBindingRef(gp, org.openspcoop2.pdd.core.llm.provider.Costanti.LLM_PROVIDER_BINDING_PROVIDER);
+	}
+	private static String getLlmBindingModel(org.openspcoop2.core.config.GenericProperties gp) {
+		return getLlmBindingRef(gp, org.openspcoop2.pdd.core.llm.provider.Costanti.LLM_PROVIDER_BINDING_MODEL);
+	}
+
+	public List<SelectItem> getLlmProviderItems() {
+		List<SelectItem> items = new ArrayList<>();
+		items.add(new SelectItem("--", "--"));
+		for (org.openspcoop2.core.config.GenericProperties gp : getDynamicUtilsServiceLlm().getElencoLlmProvider()) {
+			if (gp.getNome() != null) {
+				items.add(new SelectItem(gp.getNome(), gp.getNome()));
+			}
+		}
+		return items;
+	}
+
+	public List<SelectItem> getLlmModelItems() {
+		List<SelectItem> items = new ArrayList<>();
+		items.add(new SelectItem("--", "--"));
+		if (llmValorizzato(this.llmProvider)) {
+			java.util.LinkedHashSet<String> modelSet = new java.util.LinkedHashSet<>();
+			for (org.openspcoop2.core.config.GenericProperties b : getDynamicUtilsServiceLlm().getElencoLlmProviderBinding()) {
+				if (this.llmProvider.equals(getLlmBindingProvider(b))) {
+					String m = getLlmBindingModel(b);
+					if (m != null) {
+						modelSet.add(m);
+					}
+				}
+			}
+			for (String m : modelSet) {
+				items.add(new SelectItem(m, m));
+			}
+		} else {
+			for (org.openspcoop2.core.config.GenericProperties gp : getDynamicUtilsServiceLlm().getElencoLlmModel()) {
+				if (gp.getNome() != null) {
+					items.add(new SelectItem(gp.getNome(), gp.getNome()));
+				}
+			}
+		}
+		return items;
+	}
+
+	public List<SelectItem> getLlmProviderBindingItems() {
+		List<SelectItem> items = new ArrayList<>();
+		items.add(new SelectItem("--", "--"));
+		for (org.openspcoop2.core.config.GenericProperties b : getDynamicUtilsServiceLlm().getElencoLlmProviderBinding()) {
+			boolean provOk = !llmValorizzato(this.llmProvider) || this.llmProvider.equals(getLlmBindingProvider(b));
+			boolean modelOk = !llmValorizzato(this.llmModel) || this.llmModel.equals(getLlmBindingModel(b));
+			if (provOk && modelOk && b.getNome() != null) {
+				items.add(new SelectItem(b.getNome(), b.getNome()));
+			}
+		}
+		return items;
+	}
+
+	/** Al cambio di provider/model: azzera il binding se non piu' compatibile con la selezione. */
+	public void llmProviderModelSelected(ActionEvent ae) {
+		if (!llmValorizzato(this.llmProviderBinding)) {
+			return;
+		}
+		for (org.openspcoop2.core.config.GenericProperties b : getDynamicUtilsServiceLlm().getElencoLlmProviderBinding()) {
+			if (this.llmProviderBinding.equals(b.getNome())) {
+				boolean provOk = !llmValorizzato(this.llmProvider) || this.llmProvider.equals(getLlmBindingProvider(b));
+				boolean modelOk = !llmValorizzato(this.llmModel) || this.llmModel.equals(getLlmBindingModel(b));
+				if (!provOk || !modelOk) {
+					this.llmProviderBinding = null;
+				}
+				return;
+			}
+		}
+	}
+
+	/** Alla selezione di un binding: provider e model diventano impliciti. */
+	public void llmProviderBindingSelected(ActionEvent ae) {
+		if (!llmValorizzato(this.llmProviderBinding)) {
+			return;
+		}
+		for (org.openspcoop2.core.config.GenericProperties b : getDynamicUtilsServiceLlm().getElencoLlmProviderBinding()) {
+			if (this.llmProviderBinding.equals(b.getNome())) {
+				String prov = getLlmBindingProvider(b);
+				String mod = getLlmBindingModel(b);
+				if (prov != null) {
+					this.llmProvider = prov;
+				}
+				if (mod != null) {
+					this.llmModel = mod;
+				}
+				return;
+			}
+		}
+	}
+
+	public String getLlmMetrica() {
+		return this.llmMetrica;
+	}
+	public void setLlmMetrica(String llmMetrica) {
+		this.llmMetrica = llmMetrica;
+	}
+	public String getLlmValoreDa() {
+		return this.llmValoreDa;
+	}
+	public void setLlmValoreDa(String llmValoreDa) {
+		this.llmValoreDa = llmValoreDa;
+	}
+	public String getLlmValoreA() {
+		return this.llmValoreA;
+	}
+	public void setLlmValoreA(String llmValoreA) {
+		this.llmValoreA = llmValoreA;
+	}
+	public boolean isLlmMetricaCosto() {
+		return LLM_METRICA_COSTO.equals(this.llmMetrica);
+	}
+	public List<SelectItem> getLlmMetricaItems() {
+		List<SelectItem> items = new ArrayList<>();
+		items.add(new SelectItem(LLM_METRICA_TOKEN_TOTALE, MessageManager.getInstance().getMessage("transazioni.search.llm.metrica.tokenTotale")));
+		items.add(new SelectItem(LLM_METRICA_TOKEN_INPUT, MessageManager.getInstance().getMessage("transazioni.search.llm.metrica.tokenInput")));
+		items.add(new SelectItem(LLM_METRICA_TOKEN_OUTPUT, MessageManager.getInstance().getMessage("transazioni.search.llm.metrica.tokenOutput")));
+		items.add(new SelectItem(LLM_METRICA_COSTO, MessageManager.getInstance().getMessage("transazioni.search.llm.metrica.costo")));
+		return items;
 	}
 }

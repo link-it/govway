@@ -198,6 +198,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	private StatsSearchForm distribServizioSearch;
 	private StatsSearchForm distribAzioneSearch;
 	private StatsSearchForm distribSaSearch;
+	private StatsSearchForm distribLlmSearch;
 	private StatistichePersonalizzateSearchForm statistichePersonalizzateSearch;
 
 	private org.openspcoop2.core.commons.search.dao.IServiceManager utilsServiceManager;
@@ -437,6 +438,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	
 	public void setDistribSaSearch(StatsSearchForm distribSaSearch) {
 		this.distribSaSearch = distribSaSearch;
+	}
+	public void setDistribLlmSearch(StatsSearchForm distribLlmSearch) {
+		this.distribLlmSearch = distribLlmSearch;
 	}
 
 	public void setStatistichePersonalizzateSearch(
@@ -6806,6 +6810,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 		return expr;
 	}
 
+
+
 	private List<ResDistribuzione> executeDistribuzioneAzione(Integer start, Integer limit) throws ServiceException {
 		try {
 			StatisticType tipologia = checkStatisticType(this.distribAzioneSearch);
@@ -8574,6 +8580,614 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	
 	
 	
+	// ********** DISTRIBUZIONE PER DATI LLM ******************
+
+	private IExpression createDistribuzioneLlmExpression(IServiceSearchWithoutId<?> dao, StatisticaModel model, IField dimGroupBy, boolean isCount) throws ServiceException {
+		IExpression expr = null;
+
+		StatisticheGiornaliereService.logDebug("creo Expression per distribuzione LLM!");
+
+		List<Soggetto> listaSoggettiGestione = this.distribLlmSearch.getSoggettiGestione();
+
+		try {
+
+			EsitoUtils esitoUtils = new EsitoUtils(StatisticheGiornaliereService.log, this.distribLlmSearch.getProtocollo());
+
+			expr = dao.newExpression();
+			// Data
+			expr.between(model.DATA,
+					this.distribLlmSearch.getDataInizio(),
+					this.distribLlmSearch.getDataFine());
+			
+			// Record validi
+			StatisticheUtils.selezionaRecordValidi(expr, model);
+
+			// Protocollo
+			String protocollo = null;
+			// aggiungo la condizione sul protocollo se e' impostato e se e' presente piu' di un protocollo
+			// protocollo e' impostato anche scegliendo la modalita'
+//				if (StringUtils.isNotEmpty(this.distribLlmSearch.getProtocollo()) && this.distribLlmSearch.isShowListaProtocolli()) {
+			if (this.distribLlmSearch.isSetFiltroProtocollo()) {
+				//				expr.and().equals(model.PROTOCOLLO,	this.distribLlmSearch.getProtocollo());
+				protocollo = this.distribLlmSearch.getProtocollo();
+
+				impostaTipiCompatibiliConProtocollo(dao, model, expr, protocollo, this.distribLlmSearch.getTipologiaRicercaEnum());
+
+			}
+
+			// permessi utente operatore
+			if(this.distribLlmSearch.getPermessiUtenteOperatore()!=null){
+				IExpression permessi = this.distribLlmSearch.getPermessiUtenteOperatore().toExpression(dao, model.ID_PORTA, 
+						model.TIPO_DESTINATARIO,model.DESTINATARIO,
+						model.TIPO_SERVIZIO,model.SERVIZIO, model.VERSIONE_SERVIZIO);
+				expr.and(permessi);
+			}
+			
+			// soggetto locale
+			if(Utility.isFiltroDominioAbilitato() && this.distribLlmSearch.getSoggettoLocale()!=null && !StringUtils.isEmpty(this.distribLlmSearch.getSoggettoLocale()) && 
+					!"--".equals(this.distribLlmSearch.getSoggettoLocale())){
+				String tipoSoggettoLocale = this.distribLlmSearch.getTipoSoggettoLocale();
+				String nomeSoggettoLocale = this.distribLlmSearch.getSoggettoLocale();
+				String idPorta = Utility.getIdentificativoPorta(tipoSoggettoLocale, nomeSoggettoLocale);
+				expr.and().equals(model.ID_PORTA, idPorta);
+			}
+
+			// esito
+			esitoUtils.setExpression(expr, this.distribLlmSearch.getEsitoGruppo(), 
+					this.distribLlmSearch.getEsitoDettaglio(),
+					this.distribLlmSearch.getEsitoDettaglioPersonalizzato(),
+					this.distribLlmSearch.getEsitoContesto(),
+					this.distribLlmSearch.isEscludiRichiesteScartate(),
+					model.ESITO, model.ESITO_CONTESTO,
+					dao.newExpression());
+
+
+			// ho 3 diversi tipi di query in base alla tipologia di ricerca
+
+			// imposto il soggetto (loggato) come mittente o destinatario in
+			// base
+			// alla tipologia di ricerca selezionata
+			if (this.distribLlmSearch.getTipologiaRicercaEnum() == null || TipologiaRicerca.all.equals(this.distribLlmSearch.getTipologiaRicercaEnum())) {
+				// il soggetto loggato puo essere mittente o destinatario
+				// se e' selezionato "trafficoPerSoggetto" allora il nome
+				// del
+				// soggetto selezionato va messo come complementare
+
+				boolean trafficoSoggetto = StringUtils
+						.isNotBlank(this.distribLlmSearch
+								.getTrafficoPerSoggetto());
+				boolean soggetto = !listaSoggettiGestione.isEmpty();
+				String tipoTrafficoSoggetto = null;
+				String nomeTrafficoSoggetto = null;
+				if (trafficoSoggetto) {
+					tipoTrafficoSoggetto = this.distribLlmSearch
+							.getTipoTrafficoPerSoggetto();
+					nomeTrafficoSoggetto = this.distribLlmSearch
+							.getTrafficoPerSoggetto();
+				}
+
+				IExpression e1 = dao.newExpression();
+				IExpression e2 = dao.newExpression();
+
+				// se trafficoSoggetto e soggetto sono impostati allora devo
+				// fare la
+				// OR
+				if (trafficoSoggetto && soggetto) {
+					expr.and();
+
+					if (!listaSoggettiGestione.isEmpty()) {
+						IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
+						                                           .size()];
+						IExpression[] orSoggetti2 = new IExpression[listaSoggettiGestione
+						                                            .size()];
+
+						int i = 0;
+						for (Soggetto sog : listaSoggettiGestione) {
+							IExpression se = dao.newExpression();
+							IExpression se2 = dao.newExpression();
+							se.equals(model.TIPO_MITTENTE,
+									sog.getTipoSoggetto());
+							se.and().equals(model.MITTENTE,
+									sog.getNomeSoggetto());
+							orSoggetti[i] = se;
+
+							se2.equals(model.TIPO_DESTINATARIO,
+									sog.getTipoSoggetto());
+							se2.and().equals(
+									model.DESTINATARIO,
+									sog.getNomeSoggetto());
+							orSoggetti2[i] = se2;
+
+							i++;
+						}
+						e1.or(orSoggetti);
+						e2.or(orSoggetti2);
+					}
+
+					e1.and().equals(model.TIPO_DESTINATARIO,
+							tipoTrafficoSoggetto);
+					e1.and().equals(model.DESTINATARIO,
+							nomeTrafficoSoggetto);
+
+					e2.and().equals(model.TIPO_MITTENTE,
+							tipoTrafficoSoggetto);
+					e2.and().equals(model.MITTENTE,
+							nomeTrafficoSoggetto);
+
+					// OR
+					expr.or(e1, e2);
+				} else if (trafficoSoggetto && !soggetto) {
+					// il mio soggetto non e' stato impostato (soggetto in
+					// gestione,
+					// puo succedero solo in caso admin)
+					expr.and();
+
+					e1.equals(model.TIPO_DESTINATARIO,
+							tipoTrafficoSoggetto);
+					e1.and().equals(model.DESTINATARIO,
+							nomeTrafficoSoggetto);
+
+					e2.equals(model.TIPO_MITTENTE,
+							tipoTrafficoSoggetto);
+					e2.and().equals(model.MITTENTE,
+							nomeTrafficoSoggetto);
+					// OR
+					expr.or(e1, e2);
+				} else if (!trafficoSoggetto && soggetto) {
+					// e' impostato solo il soggetto in gestione
+					expr.and();
+
+					if (!listaSoggettiGestione.isEmpty()) {
+						IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
+						                                           .size()];
+						IExpression[] orSoggetti2 = new IExpression[listaSoggettiGestione
+						                                            .size()];
+
+						int i = 0;
+						for (Soggetto sog : listaSoggettiGestione) {
+							IExpression se = dao.newExpression();
+							IExpression se2 = dao.newExpression();
+							se.equals(model.TIPO_MITTENTE,
+									sog.getTipoSoggetto());
+							se.and().equals(model.MITTENTE,
+									sog.getNomeSoggetto());
+							orSoggetti[i] = se;
+
+							se2.equals(model.TIPO_DESTINATARIO,
+									sog.getTipoSoggetto());
+							se2.and().equals(
+									model.DESTINATARIO,
+									sog.getNomeSoggetto());
+							orSoggetti2[i] = se2;
+
+							i++;
+						}
+						e1.or(orSoggetti);
+						e2.or(orSoggetti2);
+					}
+
+					// OR
+					expr.or(e1, e2);
+				} else {
+					// nessun filtro da impostare
+				}
+
+			} else if (TipologiaRicerca.ingresso.equals(this.distribLlmSearch.getTipologiaRicercaEnum())) {
+				// EROGAZIONE
+				expr.and().notEquals(model.TIPO_PORTA,
+						"delegata");
+
+				// il mittente e' l'utente loggato (sempre presente se non
+				// sn admin)
+				if (!listaSoggettiGestione.isEmpty()) {
+					expr.and();
+
+					IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
+					                                           .size()];
+					int i = 0;
+					for (Soggetto soggetto : listaSoggettiGestione) {
+						IExpression se = dao.newExpression();
+						se.equals(model.TIPO_DESTINATARIO,
+								soggetto.getTipoSoggetto());
+						se.and().equals(model.DESTINATARIO,
+								soggetto.getNomeSoggetto());
+						orSoggetti[i] = se;
+						i++;
+					}
+					expr.or(orSoggetti);
+				}
+
+				// il destinatario puo nn essere specificato
+				boolean ignoreSetMittente = isIgnoreSetMittente(this.distribLlmSearch);
+				if (StringUtils.isNotBlank(this.distribLlmSearch.getNomeMittente()) && !ignoreSetMittente) {
+					expr.and().equals(model.TIPO_MITTENTE,
+							this.distribLlmSearch.getTipoMittente());
+					expr.and().equals(model.MITTENTE,
+							this.distribLlmSearch.getNomeMittente());
+				}
+
+			} else {
+				// FRUIZIONE
+				expr.and().notEquals(model.TIPO_PORTA,
+						"applicativa");
+
+				// il mittente e' l'utente loggato (sempre presente se non
+				// sn admin)
+				if (!listaSoggettiGestione.isEmpty()) {
+					expr.and();
+
+					IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
+					                                           .size()];
+					int i = 0;
+					for (Soggetto soggetto : listaSoggettiGestione) {
+						IExpression se = dao.newExpression();
+						se.equals(model.TIPO_MITTENTE,
+								soggetto.getTipoSoggetto());
+						se.and().equals(model.MITTENTE,
+								soggetto.getNomeSoggetto());
+						orSoggetti[i] = se;
+						i++;
+					}
+					expr.or(orSoggetti);
+				}
+
+				// il destinatario puo nn essere specificato
+				if (StringUtils.isNotBlank(this.distribLlmSearch
+						.getNomeDestinatario())) {
+					expr.and().equals(model.TIPO_DESTINATARIO,
+							this.distribLlmSearch.getTipoDestinatario());
+					expr.and().equals(model.DESTINATARIO,
+							this.distribLlmSearch.getNomeDestinatario());
+				}
+			}
+
+			// nome servizio  e tipo
+			if (StringUtils.isNotBlank(this.distribLlmSearch.getNomeServizio())){
+				
+				IDServizio idServizio = ParseUtility.parseServizioSoggetto(this.distribLlmSearch.getNomeServizio());
+				
+				expr.and().
+					equals(model.TIPO_DESTINATARIO,	idServizio.getSoggettoErogatore().getTipo()).
+					equals(model.DESTINATARIO,	idServizio.getSoggettoErogatore().getNome()).
+					equals(model.TIPO_SERVIZIO,	idServizio.getTipo()).
+					equals(model.SERVIZIO,	idServizio.getNome()).
+					equals(model.VERSIONE_SERVIZIO, idServizio.getVersione()); 
+
+			}
+			
+			this.impostaFiltroDatiMittente(expr, this.distribLlmSearch, model, isCount); 
+			
+			this.impostaFiltroGruppo(expr, this.distribLlmSearch, model, isCount);
+			
+			this.impostaFiltroApi(expr, this.distribLlmSearch, model, isCount);
+
+			this.impostaFiltroIdClusterOrCanale(expr, this.distribLlmSearch, model, isCount);
+
+			// raggruppamento per data (3 dimensioni con serie temporale) o per dimensione custom (3 dimensioni personalizzato)
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribLlmSearch.getNumeroDimensioni())) {
+				expr.addGroupBy(model.DATA);
+			} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribLlmSearch.getNumeroDimensioni())) {
+				impostaGroupByFiltro3dCustom(expr, model, this.distribLlmSearch, this.distribLlmSearch.getNumeroDimensioniCustom());
+			}
+
+			// group by sulla dimensione LLM scelta (provider|model|binding); attiva la join sul satellite
+			expr.addGroupBy(dimGroupBy);
+		} catch (ServiceException e) {
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
+			throw e;
+		} catch (NotImplementedException e) {
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
+			throw new ServiceException(e);
+		} catch (ExpressionNotImplementedException e) {
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
+			throw new ServiceException(e);
+		} catch (ExpressionException e) {
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
+			throw new ServiceException(e);
+		} catch (CoreException e) {
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
+		} catch (Exception e) {
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
+		}
+
+		return expr;
+	}
+
+	public List<ResDistribuzione> findAllDistribuzioneLlm() throws ServiceException {
+		return this.executeDistribuzioneLlm(null, null);
+	}
+
+	public List<ResDistribuzione> findAllDistribuzioneLlm(int start, int limit) throws ServiceException {
+		return this.executeDistribuzioneLlm(start, limit);
+	}
+
+	public int countAllDistribuzioneLlm() throws ServiceException {
+		List<ResDistribuzione> list = this.executeDistribuzioneLlm(null, null);
+		return list != null ? list.size() : 0;
+	}
+
+	private IField resolveLlmDimensioneField(IField provider, IField modello, IField binding, String raggruppa) {
+		if(StatsSearchForm.LLM_RAGGRUPPA_MODEL.equals(raggruppa)) {
+			return modello;
+		}
+		if(StatsSearchForm.LLM_RAGGRUPPA_BINDING.equals(raggruppa)) {
+			return binding;
+		}
+		return provider;
+	}
+
+	private List<ResDistribuzione> executeDistribuzioneLlm(Integer start, Integer limit) throws ServiceException {
+		try {
+			StatisticType tipologia = checkStatisticType(this.distribLlmSearch);
+
+			String raggruppa = this.distribLlmSearch.getLlmRaggruppaPer();
+			String visualizza = this.distribLlmSearch.getLlmVisualizzaPer();
+			org.openspcoop2.core.statistiche.constants.TipoBanda tipoBanda = this.distribLlmSearch.getTipoBanda();
+			org.openspcoop2.core.statistiche.constants.TipoLatenza tipoLatenza = this.distribLlmSearch.getTipoLatenza();
+			String tipoToken = this.distribLlmSearch.getLlmTipoToken();
+			NumeroDimensioni numeroDimensioni = this.distribLlmSearch.getNumeroDimensioni();
+
+			StatisticaModel model = null;
+			IField dimField = null;
+			IField mNumero = null;
+			IField mBandaComplessiva = null; IField mBandaInterna = null; IField mBandaEsterna = null;
+			IField mLatTotale = null; IField mLatPorta = null; IField mLatServizio = null;
+			IField mTokenInput = null; IField mTokenOutput = null; IField mCost = null;
+
+			// Il satellite LLM esiste solo per orario e giornaliero: per le altre unita' temporali si utilizza il giornaliero
+			if(StatisticType.ORARIA.equals(tipologia)) {
+				org.openspcoop2.core.statistiche.model.StatisticaOrariaLlmModel llm = org.openspcoop2.core.statistiche.StatisticaOraria.model().STATISTICA_ORARIA_LLM;
+				model = org.openspcoop2.core.statistiche.StatisticaOraria.model().STATISTICA_BASE;
+				this.dao = this.statOrariaSearchDAO;
+				dimField = this.resolveLlmDimensioneField(llm.LLM_PROVIDER, llm.LLM_MODEL, llm.LLM_PROVIDER_BINDING, raggruppa);
+				mNumero = llm.NUMERO_TRANSAZIONI;
+				mBandaComplessiva = llm.DIMENSIONI_BYTES_BANDA_COMPLESSIVA; mBandaInterna = llm.DIMENSIONI_BYTES_BANDA_INTERNA; mBandaEsterna = llm.DIMENSIONI_BYTES_BANDA_ESTERNA;
+				mLatTotale = llm.LATENZA_TOTALE; mLatPorta = llm.LATENZA_PORTA; mLatServizio = llm.LATENZA_SERVIZIO;
+				mTokenInput = llm.TOKEN_INPUT; mTokenOutput = llm.TOKEN_OUTPUT; mCost = llm.COST_ESTIMATED;
+			} else {
+				org.openspcoop2.core.statistiche.model.StatisticaGiornalieraLlmModel llm = org.openspcoop2.core.statistiche.StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM;
+				model = org.openspcoop2.core.statistiche.StatisticaGiornaliera.model().STATISTICA_BASE;
+				this.dao = this.statGiornaliereSearchDAO;
+				dimField = this.resolveLlmDimensioneField(llm.LLM_PROVIDER, llm.LLM_MODEL, llm.LLM_PROVIDER_BINDING, raggruppa);
+				mNumero = llm.NUMERO_TRANSAZIONI;
+				mBandaComplessiva = llm.DIMENSIONI_BYTES_BANDA_COMPLESSIVA; mBandaInterna = llm.DIMENSIONI_BYTES_BANDA_INTERNA; mBandaEsterna = llm.DIMENSIONI_BYTES_BANDA_ESTERNA;
+				mLatTotale = llm.LATENZA_TOTALE; mLatPorta = llm.LATENZA_PORTA; mLatServizio = llm.LATENZA_SERVIZIO;
+				mTokenInput = llm.TOKEN_INPUT; mTokenOutput = llm.TOKEN_OUTPUT; mCost = llm.COST_ESTIMATED;
+			}
+
+			ISQLFieldConverter fieldConverter = ((IDBServiceUtilities<?>)this.dao).getFieldConverter();
+
+			IExpression gByExpr = this.createDistribuzioneLlmExpression(this.dao, model, dimField, false);
+
+			// ordinamento
+			if(NumeroDimensioni.DIMENSIONI_3.equals(numeroDimensioni)) {
+				SortOrder s = this.distribLlmSearch.getSortOrder() != null ? this.distribLlmSearch.getSortOrder() : SortOrder.ASC;
+				gByExpr.sortOrder(s).addOrder(model.DATA);
+			} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(numeroDimensioni)) {
+				SortOrder s = this.distribLlmSearch.getSortOrder() != null ? this.distribLlmSearch.getSortOrder() : SortOrder.ASC;
+				impostaSortOrder3dCustom(gByExpr, model, this.distribLlmSearch, this.distribLlmSearch.getNumeroDimensioniCustom(), s);
+			}
+			gByExpr.sortOrder(SortOrder.ASC).addOrder(dimField);
+
+			UnionExpression unionExpr = new UnionExpression(gByExpr);
+
+			List<String> aliases3dCustom = new ArrayList<>();
+			String aliasFieldCategoria = "categoria";
+
+			if(NumeroDimensioni.DIMENSIONI_3.equals(numeroDimensioni)) {
+				unionExpr.addSelectField(model.DATA, ALIAS_FIELD_DATA_3D);
+			} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(numeroDimensioni)) {
+				impostaSelectField3dCustom(unionExpr, model, this.distribLlmSearch, this.distribLlmSearch.getNumeroDimensioniCustom(), aliases3dCustom);
+			}
+			unionExpr.addSelectField(dimField, aliasFieldCategoria);
+
+			// Espressione finta per usare l'ordinamento
+			IExpression fakeExpr = this.dao.newExpression();
+			UnionExpression unionExprFake = new UnionExpression(fakeExpr);
+
+			if(NumeroDimensioni.DIMENSIONI_3.equals(numeroDimensioni)) {
+				unionExprFake.addSelectField(new ConstantField(ALIAS_FIELD_DATA_3D, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE_TIMESTAMP,
+						model.DATA.getFieldType()), ALIAS_FIELD_DATA_3D);
+			} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(numeroDimensioni)) {
+				impostaSelectField3dCustomFake(unionExprFake, model, this.distribLlmSearch, this.distribLlmSearch.getNumeroDimensioniCustom(), aliases3dCustom);
+			}
+			unionExprFake.addSelectField(new ConstantField(aliasFieldCategoria, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,
+					dimField.getFieldType()), aliasFieldCategoria);
+
+			Union union = new Union();
+			union.setUnionAll(true);
+
+			if(NumeroDimensioni.DIMENSIONI_3.equals(numeroDimensioni)) {
+				union.addField(ALIAS_FIELD_DATA_3D);
+				union.addGroupBy(ALIAS_FIELD_DATA_3D);
+				SortOrder s = this.distribLlmSearch.getSortOrder() != null ? this.distribLlmSearch.getSortOrder() : SortOrder.ASC;
+				union.addOrderBy(ALIAS_FIELD_DATA_3D, s);
+			} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(numeroDimensioni)) {
+				for (String a3dCustom : aliases3dCustom) {
+					union.addField(a3dCustom);
+					union.addGroupBy(a3dCustom);
+					SortOrder s = this.distribLlmSearch.getSortOrder() != null ? this.distribLlmSearch.getSortOrder() : SortOrder.ASC;
+					union.addOrderBy(a3dCustom, s);
+				}
+			}
+			union.addField(aliasFieldCategoria);
+			union.addGroupBy(aliasFieldCategoria);
+
+			String sommaAliasName = "somma";
+			String datoParamAliasName = "dato";
+			String datoParamAliasName2 = "dato2";
+
+			// SELECT della metrica scelta (Visualizza per)
+			if(StatsSearchForm.LLM_VISUALIZZA_BANDA.equals(visualizza)) {
+				IField banda = mBandaComplessiva;
+				if(org.openspcoop2.core.statistiche.constants.TipoBanda.INTERNA.equals(tipoBanda)) { banda = mBandaInterna; }
+				else if(org.openspcoop2.core.statistiche.constants.TipoBanda.ESTERNA.equals(tipoBanda)) { banda = mBandaEsterna; }
+				union.addOrderBy(sommaAliasName, SortOrder.DESC);
+				union.addField(sommaAliasName, Function.SUM, datoParamAliasName);
+				unionExpr.addSelectFunctionField(new FunctionField(banda, Function.SUM, datoParamAliasName));
+				unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("banda", Integer.valueOf(0), banda.getFieldType()), Function.SUM, datoParamAliasName));
+			} else if(StatsSearchForm.LLM_VISUALIZZA_TEMPO_MEDIO.equals(visualizza)) {
+				IField latenza = mLatTotale;
+				if(org.openspcoop2.core.statistiche.constants.TipoLatenza.LATENZA_SERVIZIO.equals(tipoLatenza)) { latenza = mLatServizio; }
+				else if(org.openspcoop2.core.statistiche.constants.TipoLatenza.LATENZA_PORTA.equals(tipoLatenza)) { latenza = mLatPorta; }
+				gByExpr.and().isNotNull(latenza);
+				union.addOrderBy(sommaAliasName, SortOrder.DESC);
+				union.addField(sommaAliasName, Function.SUM, datoParamAliasName);
+				String colLatenzaLlm = fieldConverter.toColumn(latenza, true);
+				String colRichiesteLlm = fieldConverter.toColumn(mNumero, true);
+				String sqlMediaLlm = org.openspcoop2.core.statistiche.utils.StatisticheUtils.getSqlCalcolaMedia(colLatenzaLlm, colRichiesteLlm);
+				unionExpr.addSelectFunctionField(new FunctionField(sqlMediaLlm, Long.class, "", "", datoParamAliasName));
+				unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza", Integer.valueOf(0), latenza.getFieldType()), Function.SUM, datoParamAliasName));
+			} else if(StatsSearchForm.LLM_VISUALIZZA_TOKEN.equals(visualizza) && StatsSearchForm.LLM_TIPO_TOKEN_INPUT.equals(tipoToken)) {
+				union.addOrderBy(sommaAliasName, SortOrder.DESC);
+				union.addField(sommaAliasName, Function.SUM, datoParamAliasName);
+				unionExpr.addSelectFunctionField(new FunctionField(mTokenInput, Function.SUM, datoParamAliasName));
+				unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("token_input", Integer.valueOf(0), mTokenInput.getFieldType()), Function.SUM, datoParamAliasName));
+			} else if(StatsSearchForm.LLM_VISUALIZZA_TOKEN.equals(visualizza) && StatsSearchForm.LLM_TIPO_TOKEN_OUTPUT.equals(tipoToken)) {
+				union.addOrderBy(sommaAliasName, SortOrder.DESC);
+				union.addField(sommaAliasName, Function.SUM, datoParamAliasName);
+				unionExpr.addSelectFunctionField(new FunctionField(mTokenOutput, Function.SUM, datoParamAliasName));
+				unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("token_output", Integer.valueOf(0), mTokenOutput.getFieldType()), Function.SUM, datoParamAliasName));
+			} else if(StatsSearchForm.LLM_VISUALIZZA_TOKEN.equals(visualizza)) {
+				// token complessivi = input + output
+				union.addOrderBy(sommaAliasName, SortOrder.DESC);
+				// entrambe le colonne del sub-select (dato/dato2) devono essere dichiarate nell'union per avere lo stesso numero di colonne
+				union.addField("somma_token_output", Function.SUM, datoParamAliasName2);
+				union.addCustomField(sommaAliasName, "sum(" + datoParamAliasName + ") + sum(" + datoParamAliasName2 + ")");
+				unionExpr.addSelectFunctionField(new FunctionField(mTokenInput, Function.SUM, datoParamAliasName));
+				unionExpr.addSelectFunctionField(new FunctionField(mTokenOutput, Function.SUM, datoParamAliasName2));
+				unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("token_input", Integer.valueOf(0), mTokenInput.getFieldType()), Function.SUM, datoParamAliasName));
+				unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("token_output", Integer.valueOf(0), mTokenOutput.getFieldType()), Function.SUM, datoParamAliasName2));
+			} else if(StatsSearchForm.LLM_VISUALIZZA_COSTO.equals(visualizza)) {
+				union.addOrderBy(sommaAliasName, SortOrder.DESC);
+				union.addField(sommaAliasName, Function.SUM, datoParamAliasName);
+				unionExpr.addSelectFunctionField(new FunctionField(mCost, Function.SUM, datoParamAliasName));
+				unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("cost", Integer.valueOf(0), mCost.getFieldType()), Function.SUM, datoParamAliasName));
+			} else {
+				// richieste (numero transazioni)
+				union.addOrderBy(sommaAliasName, SortOrder.DESC);
+				union.addField(sommaAliasName, Function.SUM, datoParamAliasName);
+				unionExpr.addSelectFunctionField(new FunctionField(mNumero, Function.SUM, datoParamAliasName));
+				unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("numero_transazioni", Integer.valueOf(0), mNumero.getFieldType()), Function.SUM, datoParamAliasName));
+			}
+
+			boolean costo = StatsSearchForm.LLM_VISUALIZZA_COSTO.equals(visualizza);
+
+			ArrayList<ResDistribuzione> res = new ArrayList<>();
+
+			if(start != null) {
+				union.setOffset(start);
+			}
+			if(start != null) {
+				union.setLimit(limit);
+			}
+
+			this.timeoutEvent = false;
+
+			List<Map<String, Object>> list = null;
+			if(this.timeoutRicerche == null) {
+				list = this.dao.union(union, unionExpr, unionExprFake);
+			} else {
+				try {
+					list = ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> this.dao.union(union, unionExpr, unionExprFake)).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
+				} catch (InterruptedException e) {
+					StatisticheGiornaliereService.logError(e.getMessage(), e);
+					Thread.currentThread().interrupt();
+				} catch (ExecutionException e) {
+					if(e.getCause() instanceof NotFoundException) {
+						throw (NotFoundException) e.getCause();
+					}
+					if(e.getCause() instanceof ServiceException) {
+						throw (ServiceException) e.getCause();
+					}
+					if(e.getCause() instanceof NotImplementedException) {
+						throw (NotImplementedException) e.getCause();
+					}
+					StatisticheGiornaliereService.logError(e.getMessage(), e);
+				} catch (TimeoutException e) {
+					this.timeoutEvent = true;
+					StatisticheGiornaliereService.logError(e.getMessage(), e);
+				}
+			}
+			if (list != null) {
+				for (Map<String, Object> row : list) {
+					String risultato = ((String) row.get(aliasFieldCategoria));
+					if(risultato!=null && risultato.contains(StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE)) {
+						continue;
+					}
+					if(risultato==null || "".equals(risultato) || Costanti.INFORMAZIONE_NON_DISPONIBILE.equals(risultato)) {
+						continue;
+					}
+
+					Number somma = StatsUtils.converToNumber(row.get(sommaAliasName));
+					// escludo le categorie con valore nullo/zero per la metrica selezionata
+					if(somma == null || somma.doubleValue() == 0d) {
+						continue;
+					}
+
+					ResDistribuzione r = null;
+					if(NumeroDimensioni.DIMENSIONI_3.equals(numeroDimensioni)) {
+						r = new ResDistribuzione3D();
+						Date data = ((Date) row.get(ALIAS_FIELD_DATA_3D));
+						((ResDistribuzione3D)r).setData(data);
+						((ResDistribuzione3D)r).setDataFormattata(StatsUtils.formatDate(tipologia, data));
+					} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(numeroDimensioni)) {
+						r = new ResDistribuzione3DCustom();
+						StringBuilder resFailure = new StringBuilder();
+						try {
+							BooleanNullable bSkip = BooleanNullable.NULL();
+							String customData = getCustomData(row, this.distribLlmSearch.getNumeroDimensioniCustom(), this.distribLlmSearch, resFailure, bSkip);
+							if(bSkip!=null && bSkip.getValue()!=null && bSkip.getValue().booleanValue()) {
+								continue;
+							}
+							if(customData==null) {
+								if(resFailure.length()<=0) {
+									resFailure.append("-?-");
+								}
+								throw new CoreException("Informazione personalizzata non presente");
+							}
+							((ResDistribuzione3DCustom)r).setDatoCustom(customData);
+						}catch(Exception t) {
+							((ResDistribuzione3DCustom)r).setDatoCustom(risultato + " - " + resFailure.toString());
+							StatisticheGiornaliereService.logError("Traduzione informazione personalizzata non riuscita: "+t.getMessage(), t);
+						}
+					} else {
+						r = new ResDistribuzione();
+					}
+
+					r.setRisultato(risultato);
+					if(costo) {
+						r.setSomma(Double.valueOf(somma.doubleValue()));
+					} else {
+						r.setSomma(Long.valueOf(somma.longValue()));
+					}
+					res.add(r);
+				}
+			}
+
+			return res;
+
+		} catch (ServiceException e) {
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
+			throw e;
+		} catch (NotImplementedException e) {
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
+			throw new ServiceException(e);
+		} catch (ExpressionNotImplementedException e) {
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
+			throw new ServiceException(e);
+		} catch (ExpressionException e) {
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
+			throw new ServiceException(e);
+		} catch (NotFoundException e) {
+			StatisticheGiornaliereService.logDebug("Nessuna statistica LLM trovata per la ricerca corrente.");
+		} catch (Exception e) {
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
+		}
+		return new ArrayList<>();
+	}
+
+
 	// ********** DISTRIBUZIONE PERSONALIZZATA ******************
 	
 	@Override

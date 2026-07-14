@@ -40,6 +40,7 @@ public class CostantiConfigurazione {
 	public static final String STAT_DEBUG = "org.openspcoop2.monitor.statistic.debug";
 	public static final String STAT_USE_UNION_FOR_LATENCY = "org.openspcoop2.monitor.statistic.useUnionForLatency";
 	public static final String STAT_CUSTOM_STATISTICS = "org.openspcoop2.monitor.statistic.custom.enabled";
+	public static final String STAT_LLM_STATISTICS = "org.openspcoop2.monitor.statistic.llm.enabled";
 	public static final String STAT_CUSTOM_TRANSACTION_STATISTICS = "org.openspcoop2.monitor.statistic.custom.transaction.enabled";
 	public static final String STAT_HOURLY = "org.openspcoop2.monitor.statistic.hourly.enabled";
 	public static final String STAT_DAILY = "org.openspcoop2.monitor.statistic.daily.enabled";

@@ -90,6 +90,7 @@ public class StatisticheServerProperties {
 
 	private volatile boolean generazioneStatisticheCustom = false;
 	private volatile boolean analisiTransazioniCustom = false;
+	private volatile boolean generazioneStatisticheLlm = false;
 
 	private File pddMonitorFrameworkRepositoryJars = null;
 
@@ -212,6 +213,7 @@ public class StatisticheServerProperties {
 		this.generazioneStatisticheUseUnionForLatency = this.getBooleanProperty("statistiche.generazione.useUnionForLatency", true);
 
 		this.generazioneStatisticheCustom = this.getBooleanProperty("statistiche.generazione.custom.enabled", true);
+		this.generazioneStatisticheLlm = this.getBooleanProperty("statistiche.generazione.llm.enabled", false);
 		this.analisiTransazioniCustom = this.getBooleanProperty("statistiche.generazione.custom.transazioniSdk.enabled", true);
 
 		String tmp = this.getProperty("statistiche.pddmonitorframework.sdk.repositoryJars", false);
@@ -422,6 +424,9 @@ public class StatisticheServerProperties {
 
 	public boolean isGenerazioneStatisticheCustom() {
 		return this.generazioneStatisticheCustom;
+	}
+	public boolean isGenerazioneStatisticheLlm() {
+		return this.generazioneStatisticheLlm;
 	}
 	public boolean isAnalisiTransazioniCustom() {
 		return this.analisiTransazioniCustom;

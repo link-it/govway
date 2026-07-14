@@ -192,6 +192,7 @@ public class ContentAuthorizationCostanti {
 		"/stat/pages/form/distribAzioneGrafico.jsf",
 		"/stat/pages/form/distribErrori.jsf",
 		"/stat/pages/form/distribErroriGrafico.jsf",
+		"/stat/pages/form/distribLlmGrafico.jsf",
 		"/stat/pages/form/statsPersonalizzate.jsf",
 		"/stat/pages/form/statsPersonalizzateGrafico.jsf",
 		"/stat/pages/list/configurazioniGenerali.jsf",
@@ -285,6 +286,7 @@ public class ContentAuthorizationCostanti {
 		{"/stat/pages/form/distribAzioneGrafico.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_BASE},
 		{"/stat/pages/form/distribErrori.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_BASE},
 		{"/stat/pages/form/distribErroriGrafico.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_BASE},
+		{"/stat/pages/form/distribLlmGrafico.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_BASE},
 		// Statistiche personalizzate
 		{"/stat/pages/form/statsPersonalizzate.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_PERSONALIZZATE},
 		{"/stat/pages/form/statsPersonalizzateGrafico.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_PERSONALIZZATE},
@@ -314,6 +316,7 @@ public class ContentAuthorizationCostanti {
 			"/stat/pages/form/distribSoggettoGrafico.jsf",
 			"/stat/pages/form/distribAzioneGrafico.jsf",
 			"/stat/pages/form/distribErroriGrafico.jsf",
+			"/stat/pages/form/distribLlmGrafico.jsf",
 			"/stat/pages/form/statsPersonalizzateGrafico.jsf",
 			// Esiti Live
 			"/transazioni/pages/form/esitiLive.jsf",

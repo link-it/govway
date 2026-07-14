@@ -577,9 +577,14 @@ public class StatsSearchForm extends BaseSearchForm{
 		}
 		
 		this.setTipologiaRicerca("--"); // in modo da far comparire la lista con il suggerimento di selezione come per gli altri
-		
+
 		this.clusterId = null;
 		this.canale = null;
+
+		// Distribuzione per dati LLM: ripristino dei criteri specifici ai valori di default
+		this.llmRaggruppaPer = LLM_RAGGRUPPA_PROVIDER;
+		this.llmVisualizzaPer = LLM_VISUALIZZA_RICHIESTE;
+		this.llmTipoToken = LLM_TIPO_TOKEN_TOTALE;
 	}
 
 	@Override
@@ -621,7 +626,14 @@ public class StatsSearchForm extends BaseSearchForm{
 
 		// numero dimensioni
 		this.numeroDimensioniCustom = null;
-		
+
+	}
+
+	// Distribuzione LLM: al cambio metrica ripristino i sotto-criteri (banda/latenza/token) ai default
+	public void llmVisualizzaPerListener(ActionEvent ae){
+		this.tipoBanda = TipoBanda.COMPLESSIVA;
+		this.tipoLatenza = TipoLatenza.LATENZA_TOTALE;
+		this.llmTipoToken = LLM_TIPO_TOKEN_TOTALE;
 	}
 	
 	@Override
@@ -1368,5 +1380,169 @@ public class StatsSearchForm extends BaseSearchForm{
 	@Override
 	public List<String> getElencoFieldRicercaDaIgnorare() {
 		return elencoFieldsRicercaDaIgnorare;
+	}
+
+	// ***** Distribuzione per dati LLM *****
+
+	public static final String LLM_RAGGRUPPA_PROVIDER = "provider";
+	public static final String LLM_RAGGRUPPA_MODEL = "model";
+	public static final String LLM_RAGGRUPPA_BINDING = "binding";
+
+	// Macro-metriche (come le altre distribuzioni): richieste, banda(+TipoBanda), tempoMedio(+TipoLatenza), token(+TipoToken), costo
+	public static final String LLM_VISUALIZZA_RICHIESTE = "richieste";
+	public static final String LLM_VISUALIZZA_BANDA = "banda";
+	public static final String LLM_VISUALIZZA_TEMPO_MEDIO = "tempoMedio";
+	public static final String LLM_VISUALIZZA_TOKEN = "token";
+	public static final String LLM_VISUALIZZA_COSTO = "costo";
+
+	public static final String LLM_TIPO_TOKEN_TOTALE = "totale";
+	public static final String LLM_TIPO_TOKEN_INPUT = "input";
+	public static final String LLM_TIPO_TOKEN_OUTPUT = "output";
+
+	private String llmRaggruppaPer = LLM_RAGGRUPPA_PROVIDER;
+	private String llmVisualizzaPer = LLM_VISUALIZZA_RICHIESTE;
+	private String llmTipoToken = LLM_TIPO_TOKEN_TOTALE;
+
+	public String getLlmRaggruppaPer() {
+		return this.llmRaggruppaPer;
+	}
+	public void setLlmRaggruppaPer(String llmRaggruppaPer) {
+		this.llmRaggruppaPer = llmRaggruppaPer;
+	}
+	public String getLlmVisualizzaPer() {
+		return this.llmVisualizzaPer;
+	}
+	public void setLlmVisualizzaPer(String llmVisualizzaPer) {
+		this.llmVisualizzaPer = llmVisualizzaPer;
+	}
+	public String getLlmTipoToken() {
+		return this.llmTipoToken;
+	}
+	public void setLlmTipoToken(String llmTipoToken) {
+		this.llmTipoToken = llmTipoToken;
+	}
+
+	public boolean isLlmVisualizzaBanda() {
+		return LLM_VISUALIZZA_BANDA.equals(this.llmVisualizzaPer);
+	}
+	public boolean isLlmVisualizzaTempoMedio() {
+		return LLM_VISUALIZZA_TEMPO_MEDIO.equals(this.llmVisualizzaPer);
+	}
+	public boolean isLlmVisualizzaToken() {
+		return LLM_VISUALIZZA_TOKEN.equals(this.llmVisualizzaPer);
+	}
+	public boolean isLlmVisualizzaCosto() {
+		return LLM_VISUALIZZA_COSTO.equals(this.llmVisualizzaPer);
+	}
+
+	// Allinea tipoVisualizzazione/tipoBanda/tipoLatenza standard alla metrica LLM scelta,
+	// cosi' tutta la macchina esistente (formattazione grafico/heatmap/export) funziona come le altre distribuzioni.
+	public void syncTipoVisualizzazioneFromLlm() {
+		if(LLM_VISUALIZZA_BANDA.equals(this.llmVisualizzaPer)) {
+			this.tipoVisualizzazione = TipoVisualizzazione.DIMENSIONE_TRANSAZIONI;
+			String b = "0";
+			if(TipoBanda.INTERNA.equals(this.tipoBanda)) {
+				b = "1";
+			} else if(TipoBanda.ESTERNA.equals(this.tipoBanda)) {
+				b = "2";
+			}
+			this.tipiBanda = new String[]{ b };
+		} else if(LLM_VISUALIZZA_TEMPO_MEDIO.equals(this.llmVisualizzaPer)) {
+			this.tipoVisualizzazione = TipoVisualizzazione.TEMPO_MEDIO_RISPOSTA;
+			String l = "0";
+			if(TipoLatenza.LATENZA_SERVIZIO.equals(this.tipoLatenza)) {
+				l = "1";
+			} else if(TipoLatenza.LATENZA_PORTA.equals(this.tipoLatenza)) {
+				l = "2";
+			}
+			this.tipiLatenza = new String[]{ l };
+		} else {
+			this.tipoVisualizzazione = TipoVisualizzazione.NUMERO_TRANSAZIONI;
+		}
+	}
+
+	public String getLlmVisualizzaPerLabel() {
+		MessageManager mm = MessageManager.getInstance();
+		String v = this.llmVisualizzaPer != null ? this.llmVisualizzaPer : LLM_VISUALIZZA_RICHIESTE;
+		String base = mm.getMessage("stats.analisiStatistica.tipoDistribuzione.llm.visualizza."+v);
+		if(LLM_VISUALIZZA_BANDA.equals(v)) {
+			return base + CostantiGrafici.WHITE_SPACE + getLlmTipoBandaLabel();
+		}
+		if(LLM_VISUALIZZA_TEMPO_MEDIO.equals(v)) {
+			return base + CostantiGrafici.WHITE_SPACE + getLlmTipoLatenzaLabel();
+		}
+		if(LLM_VISUALIZZA_TOKEN.equals(v)) {
+			return base + CostantiGrafici.WHITE_SPACE + getLlmTipoTokenLabel();
+		}
+		return base;
+	}
+	private String getLlmTipoBandaLabel() {
+		MessageManager mm = MessageManager.getInstance();
+		if(TipoBanda.INTERNA.equals(this.tipoBanda)) {
+			return mm.getMessage("stats.analisiStatistica.tipoDistribuzione.llm.banda.interna");
+		}
+		if(TipoBanda.ESTERNA.equals(this.tipoBanda)) {
+			return mm.getMessage("stats.analisiStatistica.tipoDistribuzione.llm.banda.esterna");
+		}
+		return mm.getMessage("stats.analisiStatistica.tipoDistribuzione.llm.banda.complessiva");
+	}
+	private String getLlmTipoLatenzaLabel() {
+		MessageManager mm = MessageManager.getInstance();
+		if(TipoLatenza.LATENZA_SERVIZIO.equals(this.tipoLatenza)) {
+			return mm.getMessage("stats.analisiStatistica.tipoDistribuzione.llm.latenza.servizio");
+		}
+		if(TipoLatenza.LATENZA_PORTA.equals(this.tipoLatenza)) {
+			return mm.getMessage("stats.analisiStatistica.tipoDistribuzione.llm.latenza.gateway");
+		}
+		return mm.getMessage("stats.analisiStatistica.tipoDistribuzione.llm.latenza.totale");
+	}
+	private String getLlmTipoTokenLabel() {
+		MessageManager mm = MessageManager.getInstance();
+		if(LLM_TIPO_TOKEN_INPUT.equals(this.llmTipoToken)) {
+			return mm.getMessage("stats.analisiStatistica.tipoDistribuzione.llm.token.input");
+		}
+		if(LLM_TIPO_TOKEN_OUTPUT.equals(this.llmTipoToken)) {
+			return mm.getMessage("stats.analisiStatistica.tipoDistribuzione.llm.token.output");
+		}
+		return mm.getMessage("stats.analisiStatistica.tipoDistribuzione.llm.token.totale");
+	}
+
+	public List<SelectItem> getLlmRaggruppaPerItems() {
+		MessageManager mm = MessageManager.getInstance();
+		List<SelectItem> lst = new ArrayList<>();
+		lst.add(new SelectItem(LLM_RAGGRUPPA_PROVIDER, mm.getMessage("stats.analisiStatistica.tipoDistribuzione.llm.raggruppa.provider")));
+		lst.add(new SelectItem(LLM_RAGGRUPPA_MODEL, mm.getMessage("stats.analisiStatistica.tipoDistribuzione.llm.raggruppa.model")));
+		lst.add(new SelectItem(LLM_RAGGRUPPA_BINDING, mm.getMessage("stats.analisiStatistica.tipoDistribuzione.llm.raggruppa.binding")));
+		return lst;
+	}
+
+	public List<SelectItem> getLlmVisualizzaPerItems() {
+		MessageManager mm = MessageManager.getInstance();
+		List<SelectItem> lst = new ArrayList<>();
+		lst.add(new SelectItem(LLM_VISUALIZZA_RICHIESTE, mm.getMessage("stats.analisiStatistica.tipoDistribuzione.llm.visualizza.richieste")));
+		lst.add(new SelectItem(LLM_VISUALIZZA_BANDA, mm.getMessage("stats.analisiStatistica.tipoDistribuzione.llm.visualizza.banda")));
+		lst.add(new SelectItem(LLM_VISUALIZZA_TEMPO_MEDIO, mm.getMessage("stats.analisiStatistica.tipoDistribuzione.llm.visualizza.tempoMedio")));
+		lst.add(new SelectItem(LLM_VISUALIZZA_TOKEN, mm.getMessage("stats.analisiStatistica.tipoDistribuzione.llm.visualizza.token")));
+		lst.add(new SelectItem(LLM_VISUALIZZA_COSTO, mm.getMessage("stats.analisiStatistica.tipoDistribuzione.llm.visualizza.costo")));
+		return lst;
+	}
+
+	public List<SelectItem> getLlmTipoTokenItems() {
+		MessageManager mm = MessageManager.getInstance();
+		List<SelectItem> lst = new ArrayList<>();
+		lst.add(new SelectItem(LLM_TIPO_TOKEN_TOTALE, mm.getMessage("stats.analisiStatistica.tipoDistribuzione.llm.token.totale")));
+		lst.add(new SelectItem(LLM_TIPO_TOKEN_INPUT, mm.getMessage("stats.analisiStatistica.tipoDistribuzione.llm.token.input")));
+		lst.add(new SelectItem(LLM_TIPO_TOKEN_OUTPUT, mm.getMessage("stats.analisiStatistica.tipoDistribuzione.llm.token.output")));
+		return lst;
+	}
+
+	// Solo 2-dimensioni e 3-dimensioni (con data): la distribuzione LLM non prevede dimensioni custom
+	public List<SelectItem> getLlmDimensioniDisponibili() {
+		MessageManager mm = MessageManager.getInstance();
+		List<SelectItem> lst = new ArrayList<>();
+		lst.add(new SelectItem(NumeroDimensioni.DIMENSIONI_2.toString(), mm.getMessage(CostantiGrafici.SEARCH_NUMERO_DIMENSIONI_2D_LABEL_KEY)));
+		lst.add(new SelectItem(NumeroDimensioni.DIMENSIONI_3.toString(), mm.getMessage(CostantiGrafici.SEARCH_NUMERO_DIMENSIONI_3D_LABEL_KEY)));
+		lst.add(new SelectItem(NumeroDimensioni.DIMENSIONI_3_CUSTOM.toString(), mm.getMessage(CostantiGrafici.SEARCH_NUMERO_DIMENSIONI_3D_CUSTOM_LABEL_KEY)));
+		return lst;
 	}
 }

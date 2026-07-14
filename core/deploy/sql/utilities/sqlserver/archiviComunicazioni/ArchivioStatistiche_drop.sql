@@ -8,13 +8,13 @@
 -- DROP INDEX INDEX_STAT_WEEK ON statistiche_settimanali ;
 -- DROP INDEX INDEX_STAT_WEEK_FULL ON statistiche_settimanali ;
 -- DROP INDEX INDEX_STAT_WEEK_ENTRY ON statistiche_settimanali ;
--- DROP INDEX INDEX_STAT_DAY_LLM ON stat_giorni_llm ;
+-- DROP INDEX INDEX_STAT_DAY_LLM_FULL ON stat_giorni_llm ;
 -- DROP INDEX INDEX_STAT_DAY_LLM_COVER ON stat_giorni_llm ;
 -- DROP INDEX idx_stat_c_giornaliere_1 ON stat_giorni_contenuti ;
 -- DROP INDEX INDEX_STAT_DAY ON statistiche_giornaliere ;
 -- DROP INDEX INDEX_STAT_DAY_FULL ON statistiche_giornaliere ;
 -- DROP INDEX INDEX_STAT_DAY_ENTRY ON statistiche_giornaliere ;
--- DROP INDEX INDEX_STAT_HOUR_LLM ON stat_orarie_llm ;
+-- DROP INDEX INDEX_STAT_HOUR_LLM_FULL ON stat_orarie_llm ;
 -- DROP INDEX INDEX_STAT_HOUR_LLM_COVER ON stat_orarie_llm ;
 -- DROP INDEX idx_stat_c_orarie_1 ON stat_orarie_contenuti ;
 -- DROP INDEX INDEX_STAT_HOUR ON statistiche_orarie ;

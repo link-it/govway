@@ -44,6 +44,12 @@
 		<property name="_value_tipoStatistica" value="distribuzioneSA"/>
 		<property name="action" value="distribSAGrafico"/>
 	</bean>
+
+	<!-- Distribuzione Dati LLM Search Form -->
+	<bean id="distribuzioneLlmSearchForm" class="org.openspcoop2.web.monitor.statistiche.bean.StatsSearchForm" scope="session">
+		<property name="_value_tipoStatistica" value="distribuzioneLlm"/>
+		<property name="action" value="distribLlmGrafico"/>
+	</bean>
 	
 	<!-- Search Form Statistiche Personalizzate -->
 	<bean id="statistichePersonalizzateSearchForm" class="org.openspcoop2.web.monitor.statistiche.bean.StatistichePersonalizzateSearchForm" scope="session">
@@ -59,6 +65,7 @@
 		<property name="distribServizioSearch" ref="distribuzioneServizioSearchForm" />
 		<property name="distribAzioneSearch" ref="distribuzioneAzioneSearchForm" />
 		<property name="distribSaSearch" ref="distribuzioneSASearchForm" />
+		<property name="distribLlmSearch" ref="distribuzioneLlmSearchForm" />
 		<property name="statistichePersonalizzateSearch" ref="statistichePersonalizzateSearchForm"/>
 	</bean>
 	

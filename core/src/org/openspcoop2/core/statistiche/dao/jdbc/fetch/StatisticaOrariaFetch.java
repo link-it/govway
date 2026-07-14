@@ -208,6 +208,20 @@ public class StatisticaOrariaFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "token_output", StatisticaOraria.model().STATISTICA_ORARIA_LLM.TOKEN_OUTPUT.getFieldType()));
 				setParameter(object, "setCostEstimated", StatisticaOraria.model().STATISTICA_ORARIA_LLM.COST_ESTIMATED.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "cost_estimated", StatisticaOraria.model().STATISTICA_ORARIA_LLM.COST_ESTIMATED.getFieldType()));
+				setParameter(object, "setNumeroTransazioni", StatisticaOraria.model().STATISTICA_ORARIA_LLM.NUMERO_TRANSAZIONI.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "richieste", StatisticaOraria.model().STATISTICA_ORARIA_LLM.NUMERO_TRANSAZIONI.getFieldType()));
+				setParameter(object, "setDimensioniBytesBandaComplessiva", StatisticaOraria.model().STATISTICA_ORARIA_LLM.DIMENSIONI_BYTES_BANDA_COMPLESSIVA.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "bytes_banda_complessiva", StatisticaOraria.model().STATISTICA_ORARIA_LLM.DIMENSIONI_BYTES_BANDA_COMPLESSIVA.getFieldType()));
+				setParameter(object, "setDimensioniBytesBandaInterna", StatisticaOraria.model().STATISTICA_ORARIA_LLM.DIMENSIONI_BYTES_BANDA_INTERNA.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "bytes_banda_interna", StatisticaOraria.model().STATISTICA_ORARIA_LLM.DIMENSIONI_BYTES_BANDA_INTERNA.getFieldType()));
+				setParameter(object, "setDimensioniBytesBandaEsterna", StatisticaOraria.model().STATISTICA_ORARIA_LLM.DIMENSIONI_BYTES_BANDA_ESTERNA.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "bytes_banda_esterna", StatisticaOraria.model().STATISTICA_ORARIA_LLM.DIMENSIONI_BYTES_BANDA_ESTERNA.getFieldType()));
+				setParameter(object, "setLatenzaTotale", StatisticaOraria.model().STATISTICA_ORARIA_LLM.LATENZA_TOTALE.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "latenza_totale", StatisticaOraria.model().STATISTICA_ORARIA_LLM.LATENZA_TOTALE.getFieldType()));
+				setParameter(object, "setLatenzaPorta", StatisticaOraria.model().STATISTICA_ORARIA_LLM.LATENZA_PORTA.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "latenza_porta", StatisticaOraria.model().STATISTICA_ORARIA_LLM.LATENZA_PORTA.getFieldType()));
+				setParameter(object, "setLatenzaServizio", StatisticaOraria.model().STATISTICA_ORARIA_LLM.LATENZA_SERVIZIO.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "latenza_servizio", StatisticaOraria.model().STATISTICA_ORARIA_LLM.LATENZA_SERVIZIO.getFieldType()));
 				return object;
 			}
 			
@@ -381,6 +395,20 @@ public class StatisticaOrariaFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"statistica-oraria-llm.token-output"));
 				setParameter(object, "setCostEstimated", StatisticaOraria.model().STATISTICA_ORARIA_LLM.COST_ESTIMATED.getFieldType(),
 					this.getObjectFromMap(map,"statistica-oraria-llm.cost-estimated"));
+				setParameter(object, "setNumeroTransazioni", StatisticaOraria.model().STATISTICA_ORARIA_LLM.NUMERO_TRANSAZIONI.getFieldType(),
+					this.getObjectFromMap(map,"statistica-oraria-llm.numero-transazioni"));
+				setParameter(object, "setDimensioniBytesBandaComplessiva", StatisticaOraria.model().STATISTICA_ORARIA_LLM.DIMENSIONI_BYTES_BANDA_COMPLESSIVA.getFieldType(),
+					this.getObjectFromMap(map,"statistica-oraria-llm.dimensioni-bytes-banda-complessiva"));
+				setParameter(object, "setDimensioniBytesBandaInterna", StatisticaOraria.model().STATISTICA_ORARIA_LLM.DIMENSIONI_BYTES_BANDA_INTERNA.getFieldType(),
+					this.getObjectFromMap(map,"statistica-oraria-llm.dimensioni-bytes-banda-interna"));
+				setParameter(object, "setDimensioniBytesBandaEsterna", StatisticaOraria.model().STATISTICA_ORARIA_LLM.DIMENSIONI_BYTES_BANDA_ESTERNA.getFieldType(),
+					this.getObjectFromMap(map,"statistica-oraria-llm.dimensioni-bytes-banda-esterna"));
+				setParameter(object, "setLatenzaTotale", StatisticaOraria.model().STATISTICA_ORARIA_LLM.LATENZA_TOTALE.getFieldType(),
+					this.getObjectFromMap(map,"statistica-oraria-llm.latenza-totale"));
+				setParameter(object, "setLatenzaPorta", StatisticaOraria.model().STATISTICA_ORARIA_LLM.LATENZA_PORTA.getFieldType(),
+					this.getObjectFromMap(map,"statistica-oraria-llm.latenza-porta"));
+				setParameter(object, "setLatenzaServizio", StatisticaOraria.model().STATISTICA_ORARIA_LLM.LATENZA_SERVIZIO.getFieldType(),
+					this.getObjectFromMap(map,"statistica-oraria-llm.latenza-servizio"));
 				return object;
 			}
 			

@@ -303,7 +303,7 @@
 							<linkit:sql-table-index-column name="llm_model"/>
 							<linkit:sql-table-index-column name="llm_provider_binding"/>
 						</linkit:sql-table-index>
-						<linkit:sql-table-index name="INDEX_STAT_HOUR_LLM">
+						<linkit:sql-table-index name="INDEX_STAT_HOUR_LLM_FULL">
 							<linkit:sql-table-index-column name="data" order="DESC" ignoreTypeCompatibility="true"/>
 							<linkit:sql-table-index-column name="llm_provider"/>
 							<linkit:sql-table-index-column name="llm_model"/>
@@ -311,6 +311,13 @@
 							<linkit:sql-table-index-column name="token_input"/>
 							<linkit:sql-table-index-column name="token_output"/>
 							<linkit:sql-table-index-column name="cost_estimated"/>
+							<linkit:sql-table-index-column name="richieste"/>
+							<linkit:sql-table-index-column name="bytes_banda_complessiva"/>
+							<linkit:sql-table-index-column name="bytes_banda_interna"/>
+							<linkit:sql-table-index-column name="bytes_banda_esterna"/>
+							<linkit:sql-table-index-column name="latenza_totale"/>
+							<linkit:sql-table-index-column name="latenza_porta"/>
+							<linkit:sql-table-index-column name="latenza_servizio"/>
 						</linkit:sql-table-index>
 					</linkit:sql-table-mapping>
 				</linkit:generator>
@@ -384,6 +391,76 @@
 							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
 								<linkit:sql-ddl-column-comment><![CDATA[Costo stimato in USD cumulato nell'intervallo (somma degli snapshot per transazione)]]></linkit:sql-ddl-column-comment>
 								<linkit:ws-field-mapping filter="false" filter-interval="true"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="numero-transazioni" type="xsd:integer">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="richieste"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Numero di transazioni raccolte nel breakdown LLM (per provider/model/binding)]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="dimensioni-bytes-banda-complessiva" type="xsd:unsignedLong" minOccurs="0" maxOccurs="1">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="bytes_banda_complessiva"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Banda complessiva (bytes) del breakdown LLM]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="dimensioni-bytes-banda-interna" type="xsd:unsignedLong" minOccurs="0" maxOccurs="1">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="bytes_banda_interna"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Banda interna (bytes) del breakdown LLM]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="dimensioni-bytes-banda-esterna" type="xsd:unsignedLong" minOccurs="0" maxOccurs="1">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="bytes_banda_esterna"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Banda esterna (bytes) del breakdown LLM]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="latenza-totale" type="xsd:unsignedLong" minOccurs="0" maxOccurs="1">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="latenza_totale"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Latenza totale (ms) del breakdown LLM]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="latenza-porta" type="xsd:unsignedLong" minOccurs="0" maxOccurs="1">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="latenza_porta"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Latenza porta (ms) del breakdown LLM]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="latenza-servizio" type="xsd:unsignedLong" minOccurs="0" maxOccurs="1">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="latenza_servizio"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Latenza servizio (ms) del breakdown LLM]]></linkit:sql-ddl-column-comment>
 							</linkit:generator>
 						</xsd:appinfo>
 					</xsd:annotation>
@@ -558,7 +635,7 @@
 							<linkit:sql-table-index-column name="llm_model"/>
 							<linkit:sql-table-index-column name="llm_provider_binding"/>
 						</linkit:sql-table-index>
-						<linkit:sql-table-index name="INDEX_STAT_DAY_LLM">
+						<linkit:sql-table-index name="INDEX_STAT_DAY_LLM_FULL">
 							<linkit:sql-table-index-column name="data" order="DESC" ignoreTypeCompatibility="true"/>
 							<linkit:sql-table-index-column name="llm_provider"/>
 							<linkit:sql-table-index-column name="llm_model"/>
@@ -566,6 +643,13 @@
 							<linkit:sql-table-index-column name="token_input"/>
 							<linkit:sql-table-index-column name="token_output"/>
 							<linkit:sql-table-index-column name="cost_estimated"/>
+							<linkit:sql-table-index-column name="richieste"/>
+							<linkit:sql-table-index-column name="bytes_banda_complessiva"/>
+							<linkit:sql-table-index-column name="bytes_banda_interna"/>
+							<linkit:sql-table-index-column name="bytes_banda_esterna"/>
+							<linkit:sql-table-index-column name="latenza_totale"/>
+							<linkit:sql-table-index-column name="latenza_porta"/>
+							<linkit:sql-table-index-column name="latenza_servizio"/>
 						</linkit:sql-table-index>
 					</linkit:sql-table-mapping>
 				</linkit:generator>
@@ -639,6 +723,76 @@
 							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
 								<linkit:sql-ddl-column-comment><![CDATA[Costo stimato in USD cumulato nell'intervallo (somma degli snapshot per transazione)]]></linkit:sql-ddl-column-comment>
 								<linkit:ws-field-mapping filter="false" filter-interval="true"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="numero-transazioni" type="xsd:integer">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="richieste"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Numero di transazioni raccolte nel breakdown LLM (per provider/model/binding)]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="dimensioni-bytes-banda-complessiva" type="xsd:unsignedLong" minOccurs="0" maxOccurs="1">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="bytes_banda_complessiva"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Banda complessiva (bytes) del breakdown LLM]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="dimensioni-bytes-banda-interna" type="xsd:unsignedLong" minOccurs="0" maxOccurs="1">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="bytes_banda_interna"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Banda interna (bytes) del breakdown LLM]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="dimensioni-bytes-banda-esterna" type="xsd:unsignedLong" minOccurs="0" maxOccurs="1">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="bytes_banda_esterna"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Banda esterna (bytes) del breakdown LLM]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="latenza-totale" type="xsd:unsignedLong" minOccurs="0" maxOccurs="1">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="latenza_totale"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Latenza totale (ms) del breakdown LLM]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="latenza-porta" type="xsd:unsignedLong" minOccurs="0" maxOccurs="1">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="latenza_porta"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Latenza porta (ms) del breakdown LLM]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="latenza-servizio" type="xsd:unsignedLong" minOccurs="0" maxOccurs="1">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="latenza_servizio"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Latenza servizio (ms) del breakdown LLM]]></linkit:sql-ddl-column-comment>
 							</linkit:generator>
 						</xsd:appinfo>
 					</xsd:annotation>

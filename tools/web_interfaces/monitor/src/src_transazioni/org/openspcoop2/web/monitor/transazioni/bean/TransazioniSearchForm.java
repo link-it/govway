@@ -130,20 +130,7 @@ Context, Cloneable {
 	
 	private String ricercaLiberaIdApplicativo;
 
-	// Ricerca LLM: Provider / Model / Provider Binding
-	public static final String LLM_METRICA_TOKEN_INPUT = "tokenInput";
-	public static final String LLM_METRICA_TOKEN_OUTPUT = "tokenOutput";
-	public static final String LLM_METRICA_TOKEN_TOTALE = "tokenTotale";
-	public static final String LLM_METRICA_COSTO = "costo";
-
-	private String llmProvider;
-	private String llmModel;
-	private String llmProviderBinding;
-
-	// Ricerca LLM: Token / Costo
-	private String llmMetrica = LLM_METRICA_TOKEN_TOTALE;
-	private String llmValoreDa;
-	private String llmValoreA;
+	// Filtro 'Dati LLM' condiviso: campi/metodi in BaseSearchForm
 
 
 	private Map<String, Ricerche> tabellaRicerchePersonalizzate = new HashMap<String, Ricerche>();
@@ -409,13 +396,7 @@ Context, Cloneable {
 		
 		this.ricercaLiberaIdApplicativo = null;
 
-		this.llmProvider = null;
-		this.llmModel = null;
-		this.llmProviderBinding = null;
-		this.llmMetrica = LLM_METRICA_TOKEN_TOTALE;
-		this.llmValoreDa = null;
-		this.llmValoreA = null;
-
+		// reset filtro 'Dati LLM' effettuato da BaseSearchForm.initSearchListener (resetFiltroLlm)
 
 		this.executeQuery = false;
 		
@@ -444,178 +425,6 @@ Context, Cloneable {
 	
 	public boolean isRicercaLiberaTuttiProfili() {
 		return ModalitaRicercaTransazioni.RICERCA_LIBERA.getValue().equals(this.modalitaRicercaStorico) && this.isAllProtocol();
-	}
-
-	// ------------------- Ricerca LLM: Provider / Model / Provider Binding -------------------
-
-	public String getLlmProvider() {
-		return this.llmProvider;
-	}
-	public void setLlmProvider(String llmProvider) {
-		this.llmProvider = llmProvider;
-	}
-	public String getLlmModel() {
-		return this.llmModel;
-	}
-	public void setLlmModel(String llmModel) {
-		this.llmModel = llmModel;
-	}
-	public String getLlmProviderBinding() {
-		return this.llmProviderBinding;
-	}
-	public void setLlmProviderBinding(String llmProviderBinding) {
-		this.llmProviderBinding = llmProviderBinding;
-	}
-
-	private static boolean llmValorizzato(String v) {
-		return v != null && !"".equals(v) && !"--".equals(v);
-	}
-
-	private transient org.openspcoop2.web.monitor.core.dao.DynamicUtilsService dynamicUtilsServiceLlm;
-	private org.openspcoop2.web.monitor.core.dao.DynamicUtilsService getDynamicUtilsServiceLlm() {
-		if (this.dynamicUtilsServiceLlm == null) {
-			this.dynamicUtilsServiceLlm = new org.openspcoop2.web.monitor.core.dao.DynamicUtilsService();
-		}
-		return this.dynamicUtilsServiceLlm;
-	}
-
-	private static String getLlmBindingRef(org.openspcoop2.core.config.GenericProperties gp, String propName) {
-		if (gp != null && gp.getPropertyList() != null) {
-			for (org.openspcoop2.core.config.Property p : gp.getPropertyList()) {
-				if (propName.equals(p.getNome())) {
-					return p.getValore();
-				}
-			}
-		}
-		return null;
-	}
-	private static String getLlmBindingProvider(org.openspcoop2.core.config.GenericProperties gp) {
-		return getLlmBindingRef(gp, org.openspcoop2.pdd.core.llm.provider.Costanti.LLM_PROVIDER_BINDING_PROVIDER);
-	}
-	private static String getLlmBindingModel(org.openspcoop2.core.config.GenericProperties gp) {
-		return getLlmBindingRef(gp, org.openspcoop2.pdd.core.llm.provider.Costanti.LLM_PROVIDER_BINDING_MODEL);
-	}
-
-	public List<SelectItem> getLlmProviderItems() {
-		List<SelectItem> items = new ArrayList<>();
-		items.add(new SelectItem("--", "--"));
-		for (org.openspcoop2.core.config.GenericProperties gp : getDynamicUtilsServiceLlm().getElencoLlmProvider()) {
-			if (gp.getNome() != null) {
-				items.add(new SelectItem(gp.getNome(), gp.getNome()));
-			}
-		}
-		return items;
-	}
-
-	public List<SelectItem> getLlmModelItems() {
-		List<SelectItem> items = new ArrayList<>();
-		items.add(new SelectItem("--", "--"));
-		if (llmValorizzato(this.llmProvider)) {
-			// solo i model usati dai binding del provider selezionato
-			java.util.LinkedHashSet<String> modelSet = new java.util.LinkedHashSet<>();
-			for (org.openspcoop2.core.config.GenericProperties b : getDynamicUtilsServiceLlm().getElencoLlmProviderBinding()) {
-				if (this.llmProvider.equals(getLlmBindingProvider(b))) {
-					String m = getLlmBindingModel(b);
-					if (m != null) {
-						modelSet.add(m);
-					}
-				}
-			}
-			for (String m : modelSet) {
-				items.add(new SelectItem(m, m));
-			}
-		} else {
-			for (org.openspcoop2.core.config.GenericProperties gp : getDynamicUtilsServiceLlm().getElencoLlmModel()) {
-				if (gp.getNome() != null) {
-					items.add(new SelectItem(gp.getNome(), gp.getNome()));
-				}
-			}
-		}
-		return items;
-	}
-
-	public List<SelectItem> getLlmProviderBindingItems() {
-		List<SelectItem> items = new ArrayList<>();
-		items.add(new SelectItem("--", "--"));
-		for (org.openspcoop2.core.config.GenericProperties b : getDynamicUtilsServiceLlm().getElencoLlmProviderBinding()) {
-			boolean provOk = !llmValorizzato(this.llmProvider) || this.llmProvider.equals(getLlmBindingProvider(b));
-			boolean modelOk = !llmValorizzato(this.llmModel) || this.llmModel.equals(getLlmBindingModel(b));
-			if (provOk && modelOk && b.getNome() != null) {
-				items.add(new SelectItem(b.getNome(), b.getNome()));
-			}
-		}
-		return items;
-	}
-
-	/** Al cambio di provider/model: azzera il binding se non piu' compatibile con la selezione. */
-	public void llmProviderModelSelected(ActionEvent ae) {
-		if (!llmValorizzato(this.llmProviderBinding)) {
-			return;
-		}
-		for (org.openspcoop2.core.config.GenericProperties b : getDynamicUtilsServiceLlm().getElencoLlmProviderBinding()) {
-			if (this.llmProviderBinding.equals(b.getNome())) {
-				boolean provOk = !llmValorizzato(this.llmProvider) || this.llmProvider.equals(getLlmBindingProvider(b));
-				boolean modelOk = !llmValorizzato(this.llmModel) || this.llmModel.equals(getLlmBindingModel(b));
-				if (!provOk || !modelOk) {
-					this.llmProviderBinding = null;
-				}
-				return;
-			}
-		}
-	}
-
-	/** Alla selezione di un binding: provider e model diventano impliciti. */
-	public void llmProviderBindingSelected(ActionEvent ae) {
-		if (!llmValorizzato(this.llmProviderBinding)) {
-			return;
-		}
-		for (org.openspcoop2.core.config.GenericProperties b : getDynamicUtilsServiceLlm().getElencoLlmProviderBinding()) {
-			if (this.llmProviderBinding.equals(b.getNome())) {
-				String prov = getLlmBindingProvider(b);
-				String mod = getLlmBindingModel(b);
-				if (prov != null) {
-					this.llmProvider = prov;
-				}
-				if (mod != null) {
-					this.llmModel = mod;
-				}
-				return;
-			}
-		}
-	}
-
-	// ------------------- Ricerca LLM: Token / Costo -------------------
-
-	public String getLlmMetrica() {
-		return this.llmMetrica;
-	}
-	public void setLlmMetrica(String llmMetrica) {
-		this.llmMetrica = llmMetrica;
-	}
-	public String getLlmValoreDa() {
-		return this.llmValoreDa;
-	}
-	public void setLlmValoreDa(String llmValoreDa) {
-		this.llmValoreDa = llmValoreDa;
-	}
-	public String getLlmValoreA() {
-		return this.llmValoreA;
-	}
-	public void setLlmValoreA(String llmValoreA) {
-		this.llmValoreA = llmValoreA;
-	}
-
-	public boolean isLlmMetricaCosto() {
-		return LLM_METRICA_COSTO.equals(this.llmMetrica);
-	}
-
-	public List<SelectItem> getLlmMetricaItems() {
-		List<SelectItem> items = new ArrayList<>();
-		items.add(new SelectItem(LLM_METRICA_TOKEN_INPUT, MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_LLM_METRICA_TOKEN_INPUT_LABEL_KEY)));
-		items.add(new SelectItem(LLM_METRICA_TOKEN_OUTPUT, MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_LLM_METRICA_TOKEN_OUTPUT_LABEL_KEY)));
-		items.add(new SelectItem(LLM_METRICA_TOKEN_TOTALE, MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_LLM_METRICA_TOKEN_TOTALE_LABEL_KEY)));
-		items.add(new SelectItem(LLM_METRICA_COSTO, MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_LLM_METRICA_COSTO_LABEL_KEY)));
-		return items;
 	}
 
 	public String getTipoStoricoLabel() {

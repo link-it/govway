@@ -123,6 +123,8 @@ public class TimerStatisticheLib {
 	/** Indicazione se devono essere generate le statistiche custom */
 	private boolean generazioneStatisticheCustom = false;
 	private boolean analisiTransazioniCustom = false;
+	/** Indicazione se devono essere generate le statistiche LLM */
+	private boolean generazioneStatisticheLlm = false;
 	
 	/** Indicazione se deve essere effettuato il log delle query */
 	private boolean debug = false;	
@@ -191,6 +193,7 @@ public class TimerStatisticheLib {
 		this.useUnionForLatency = this.op2Properties.isStatisticheGenerazioneUseUnionForLatency();
 		this.generazioneStatisticheCustom = this.op2Properties.isStatisticheGenerazioneCustomEnabled();
 		this.analisiTransazioniCustom = this.op2Properties.isStatisticheGenerazioneCustomSdkEnabled();
+		this.generazioneStatisticheLlm = this.op2Properties.isStatisticheGenerazioneLlmEnabled();
 		
 		this.tipoStatistica = tipoStatistica;
 		
@@ -294,6 +297,7 @@ public class TimerStatisticheLib {
 			this.statisticsConfig.setLogCore(this.logCore);
 			this.statisticsConfig.setLogSql(this.logSql);
 			this.statisticsConfig.setGenerazioneStatisticheCustom(this.generazioneStatisticheCustom);
+			this.statisticsConfig.setGenerazioneStatisticheLlm(this.generazioneStatisticheLlm);
 			this.statisticsConfig.setAnalisiTransazioniCustom(this.analisiTransazioniCustom);
 			this.statisticsConfig.setDebug(this.debug);
 			this.statisticsConfig.setUseUnionForLatency(this.useUnionForLatency);

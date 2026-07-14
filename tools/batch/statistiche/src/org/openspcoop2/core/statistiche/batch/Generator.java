@@ -255,6 +255,7 @@ public class Generator {
 			statisticsConfig.setPdndTracciamentoSoggettiEnabled(generatorProperties.getPdndTracingSoggettiEnabled());
 			statisticsConfig.setPdndTracciamentoSoggettiDisabled(generatorProperties.isPdndTracingSoggettiDisabled());
 			statisticsConfig.setGenerazioneStatisticheCustom(generatorProperties.isGenerazioneStatisticheCustom());
+			statisticsConfig.setGenerazioneStatisticheLlm(generatorProperties.isGenerazioneStatisticheLlm());
 			statisticsConfig.setAnalisiTransazioniCustom(generatorProperties.isAnalisiTransazioniCustom());
 			statisticsConfig.setDebug(generatorProperties.isStatisticheGenerazioneDebug());
 			statisticsConfig.setUseUnionForLatency(generatorProperties.isGenerazioneStatisticheUseUnionForLatency());

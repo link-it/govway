@@ -191,13 +191,46 @@ public class StatisticheGiornaliere extends AbstractStatistiche {
 				stat.addStatisticaGiornalieraContenuti(statisticaContenuti[i]);
 			}
 			((IStatisticaGiornalieraService)this.statisticaServiceDAO).update(stat);
-			
+
 		}catch(Exception e){
 			throw new StatisticException(e.getMessage(),e);
 		}
 
 	}
-	
+
+	@Override
+	protected boolean isStatisticheLlmSupportata() {
+		return true;
+	}
+
+	@Override
+	protected void updateStatisticaLlm(long idStatistica, java.util.List<StatisticaLlmDato> datiLlm) throws StatisticException {
+		try{
+			StatisticaGiornaliera stat = ((IDBStatisticaGiornalieraService)this.statisticaServiceDAO).get(idStatistica);
+			for (StatisticaLlmDato dato : datiLlm) {
+				org.openspcoop2.core.statistiche.StatisticaGiornalieraLlm llm = new org.openspcoop2.core.statistiche.StatisticaGiornalieraLlm();
+				llm.setData(stat.getStatisticaBase().getData());
+				llm.setLlmProvider(dato.getLlmProvider());
+				llm.setLlmModel(dato.getLlmModel());
+				llm.setLlmProviderBinding(dato.getLlmProviderBinding());
+				llm.setTokenInput(dato.getTokenInput());
+				llm.setTokenOutput(dato.getTokenOutput());
+				llm.setCostEstimated(dato.getCostEstimated());
+				llm.setNumeroTransazioni(dato.getNumeroTransazioni());
+				llm.setDimensioniBytesBandaComplessiva(dato.getBandaComplessiva());
+				llm.setDimensioniBytesBandaInterna(dato.getBandaInterna());
+				llm.setDimensioniBytesBandaEsterna(dato.getBandaEsterna());
+				llm.setLatenzaTotale(dato.getLatenzaTotale());
+				llm.setLatenzaPorta(dato.getLatenzaPorta());
+				llm.setLatenzaServizio(dato.getLatenzaServizio());
+				stat.addStatisticaGiornalieraLlm(llm);
+			}
+			((IStatisticaGiornalieraService)this.statisticaServiceDAO).update(stat);
+		}catch(Exception e){
+			throw new StatisticException(e.getMessage(),e);
+		}
+	}
+
 	@Override
 	protected boolean isGestioneUltimoIntervallo(StatisticsConfig config) {
 		return config.isStatisticheGiornaliereGestioneUltimoIntervallo();

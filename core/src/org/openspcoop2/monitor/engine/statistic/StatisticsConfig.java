@@ -57,6 +57,7 @@ public class StatisticsConfig {
 	
 	/** Indicazione se devono essere generate le statistiche custom */
 	private boolean generazioneStatisticheCustom = false;
+	private boolean generazioneStatisticheLlm = false;
 	
 	/** Indicazione se devono analizzate le transazioni custom */
 	private boolean analisiTransazioniCustom = false;
@@ -128,6 +129,12 @@ public class StatisticsConfig {
 					this.generazioneStatisticheCustom = true;
 				} else {
 					this.generazioneStatisticheCustom = false;
+				}
+
+				if ("true".equals(props.getProperty(CostantiConfigurazione.STAT_LLM_STATISTICS, FALSE, true))) {
+					this.generazioneStatisticheLlm = true;
+				} else {
+					this.generazioneStatisticheLlm = false;
 				}
 				
 				if ("true".equals(props.getProperty(CostantiConfigurazione.STAT_CUSTOM_TRANSACTION_STATISTICS, FALSE, true))) {
@@ -375,6 +382,14 @@ public class StatisticsConfig {
 
 	public void setGenerazioneStatisticheCustom(boolean generazioneStatisticheCustom) {
 		this.generazioneStatisticheCustom = generazioneStatisticheCustom;
+	}
+
+	public boolean isGenerazioneStatisticheLlm() {
+		return this.generazioneStatisticheLlm;
+	}
+
+	public void setGenerazioneStatisticheLlm(boolean generazioneStatisticheLlm) {
+		this.generazioneStatisticheLlm = generazioneStatisticheLlm;
 	}
 
 	public boolean isStatisticheOrarie() {

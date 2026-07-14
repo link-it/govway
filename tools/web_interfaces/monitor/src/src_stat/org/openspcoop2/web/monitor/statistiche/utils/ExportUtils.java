@@ -98,7 +98,63 @@ public class ExportUtils {
 	
 	private static final String HEADER_VALUE_CATEGORY_NUMERO_RICHIESTE = "numeroRichieste";
 	private static final String HEADER_VALUE_LABEL_NUMERO_RICHIESTE = "Numero Transazioni";
-	
+
+	public static class FormatoValoreColonna {
+		private final String headerLabel;
+		private final int decimali;
+		private final String suffisso;
+		public FormatoValoreColonna(String headerLabel, int decimali, String suffisso) {
+			this.headerLabel = headerLabel;
+			this.decimali = decimali;
+			this.suffisso = suffisso;
+		}
+		public String getHeaderLabel() { return this.headerLabel; }
+		public int getDecimali() { return this.decimali; }
+		public String getSuffisso() { return this.suffisso; }
+	}
+
+	private static final ThreadLocal<FormatoValoreColonna> formatoValoreColonnaThreadLocal = new ThreadLocal<>();
+	public static void setFormatoValoreColonna(FormatoValoreColonna formato) {
+		formatoValoreColonnaThreadLocal.set(formato);
+	}
+	public static void clearFormatoValoreColonna() {
+		formatoValoreColonnaThreadLocal.remove();
+	}
+	private static String getHeaderValueLabelNumero() {
+		FormatoValoreColonna f = formatoValoreColonnaThreadLocal.get();
+		if(f!=null && f.getHeaderLabel()!=null) {
+			return f.getHeaderLabel();
+		}
+		return HEADER_VALUE_LABEL_NUMERO_RICHIESTE;
+	}
+	private static String getHeaderValueLabelNumeroConUnita() {
+		FormatoValoreColonna f = formatoValoreColonnaThreadLocal.get();
+		if(f!=null && f.getHeaderLabel()!=null) {
+			if(f.getSuffisso()!=null && !f.getSuffisso().trim().isEmpty()) {
+				return f.getHeaderLabel() + " [" + f.getSuffisso().trim() + "]";
+			}
+			return f.getHeaderLabel();
+		}
+		return HEADER_VALUE_LABEL_NUMERO_RICHIESTE;
+	}
+	private static String formatValoreNumero(Number value, boolean convertRawData) {
+		FormatoValoreColonna f = formatoValoreColonnaThreadLocal.get();
+		if(f!=null && f.getDecimali()>0 && value!=null) {
+			if(convertRawData) {
+				java.text.NumberFormat nf = java.text.NumberFormat.getNumberInstance(ApplicationBean.getInstance().getLocale());
+				nf.setMinimumFractionDigits(2);
+				nf.setMaximumFractionDigits(f.getDecimali());
+				String s = nf.format(value.doubleValue());
+				return f.getSuffisso()!=null ? s + f.getSuffisso() : s;
+			}
+			return value.doubleValue()+"";
+		}
+		if(convertRawData) {
+			return Utility.numberConverter(value);
+		}
+		return value+"";
+	}
+
 	private static final String FORMAT_ANNO_MESE_GIORNO = "yyyy/MM/dd";
 	private static final String FORMAT_MESE_ANNO = "MMM yyyy";
 	private static final String FORMAT_ANNO_MESE_GIORNO_ORA = "yyyy/MM/dd HH";
@@ -230,6 +286,7 @@ public class ExportUtils {
 			case DISTRIBUZIONE_SERVIZIO:
 			case DISTRIBUZIONE_SERVIZIO_APPLICATIVO:
 			case DISTRIBUZIONE_SOGGETTO:
+			case DISTRIBUZIONE_LLM:
 			case STATISTICA_PERSONALIZZATA:
 				headerValueCategory = HEADER_VALUE_CATEGORY_DATA_3D;
 				if(distribuzione3d) {
@@ -380,7 +437,7 @@ public class ExportUtils {
 
 			case NUMERO_TRANSAZIONI:
 				headerValueCategory = HEADER_VALUE_CATEGORY_NUMERO_RICHIESTE;
-				headerValueLabel = HEADER_VALUE_LABEL_NUMERO_RICHIESTE;
+				headerValueLabel = getHeaderValueLabelNumeroConUnita();
 				colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
 				break;
 
@@ -470,6 +527,7 @@ public class ExportUtils {
 			case DISTRIBUZIONE_SERVIZIO:
 			case DISTRIBUZIONE_SERVIZIO_APPLICATIVO:
 			case DISTRIBUZIONE_SOGGETTO:
+			case DISTRIBUZIONE_LLM:
 			case STATISTICA_PERSONALIZZATA:
 				headerValueCategory = HEADER_VALUE_CATEGORY_DATA_3D;
 				if(distribuzione3d) {
@@ -616,7 +674,7 @@ public class ExportUtils {
 
 			case NUMERO_TRANSAZIONI:
 				headerValueCategory = HEADER_VALUE_CATEGORY_NUMERO_RICHIESTE;
-				headerValueLabel = HEADER_VALUE_LABEL_NUMERO_RICHIESTE;
+				headerValueLabel = getHeaderValueLabelNumero();
 				colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
 				break;
 
@@ -715,6 +773,7 @@ public class ExportUtils {
 			case DISTRIBUZIONE_SERVIZIO:
 			case DISTRIBUZIONE_SERVIZIO_APPLICATIVO:
 			case DISTRIBUZIONE_SOGGETTO:
+			case DISTRIBUZIONE_LLM:
 			case STATISTICA_PERSONALIZZATA:
 				headerValueCategory = HEADER_VALUE_CATEGORY_DATA_3D;
 				if(distribuzione3d) {
@@ -865,7 +924,7 @@ public class ExportUtils {
 
 			case NUMERO_TRANSAZIONI:
 				headerValueCategory = HEADER_VALUE_CATEGORY_NUMERO_RICHIESTE;
-				headerValueLabel = HEADER_VALUE_LABEL_NUMERO_RICHIESTE;
+				headerValueLabel = getHeaderValueLabelNumeroConUnita();
 				colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
 				break;
 
@@ -1627,6 +1686,7 @@ public class ExportUtils {
 			case DISTRIBUZIONE_SERVIZIO:
 			case DISTRIBUZIONE_SERVIZIO_APPLICATIVO:
 			case DISTRIBUZIONE_SOGGETTO:
+			case DISTRIBUZIONE_LLM:
 			case STATISTICA_PERSONALIZZATA:
 				header.add(HEADER_VALUE_CATEGORY_DATA_3D);
 				break;
@@ -1753,6 +1813,7 @@ public class ExportUtils {
 				case DISTRIBUZIONE_SERVIZIO:
 				case DISTRIBUZIONE_SERVIZIO_APPLICATIVO:
 				case DISTRIBUZIONE_SOGGETTO:
+				case DISTRIBUZIONE_LLM:
 				case STATISTICA_PERSONALIZZATA:
 					if(distribuzione3d) {
 						risultato3D = (ResDistribuzione3D) risultato;
@@ -1787,12 +1848,7 @@ public class ExportUtils {
 			
 
 			if(isNumeroRichieste){
-				if(convertRawData){
-					oneLine.add(Utility.numberConverter( risultato.getSomma()) );
-				}
-				else{
-					oneLine.add(risultato.getSomma()+"");
-				}
+				oneLine.add(formatValoreNumero(risultato.getSomma(), convertRawData));
 			}
 
 			if(isDimensione){

@@ -9,6 +9,13 @@ CREATE TABLE stat_orarie_llm
 	token_input NUMBER NOT NULL,
 	token_output NUMBER NOT NULL,
 	cost_estimated BINARY_DOUBLE,
+	richieste NUMBER NOT NULL,
+	bytes_banda_complessiva NUMBER,
+	bytes_banda_interna NUMBER,
+	bytes_banda_esterna NUMBER,
+	latenza_totale NUMBER,
+	latenza_porta NUMBER,
+	latenza_servizio NUMBER,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	id_stat NUMBER NOT NULL,
@@ -19,7 +26,7 @@ CREATE TABLE stat_orarie_llm
 
 -- index
 CREATE INDEX INDEX_STAT_HOUR_LLM_COVER ON stat_orarie_llm (id_stat,llm_provider,llm_model,llm_provider_binding);
-CREATE INDEX INDEX_STAT_HOUR_LLM ON stat_orarie_llm (data DESC,llm_provider,llm_model,llm_provider_binding,token_input,token_output,cost_estimated);
+CREATE INDEX INDEX_STAT_HOUR_LLM_FULL ON stat_orarie_llm (data DESC,llm_provider,llm_model,llm_provider_binding,token_input,token_output,cost_estimated,richieste,bytes_banda_complessiva,bytes_banda_interna,bytes_banda_esterna,latenza_totale,latenza_porta,latenza_servizio);
 CREATE TRIGGER trg_stat_orarie_llm
 BEFORE
 insert on stat_orarie_llm
@@ -45,6 +52,13 @@ CREATE TABLE stat_giorni_llm
 	token_input NUMBER NOT NULL,
 	token_output NUMBER NOT NULL,
 	cost_estimated BINARY_DOUBLE,
+	richieste NUMBER NOT NULL,
+	bytes_banda_complessiva NUMBER,
+	bytes_banda_interna NUMBER,
+	bytes_banda_esterna NUMBER,
+	latenza_totale NUMBER,
+	latenza_porta NUMBER,
+	latenza_servizio NUMBER,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	id_stat NUMBER NOT NULL,
@@ -55,7 +69,7 @@ CREATE TABLE stat_giorni_llm
 
 -- index
 CREATE INDEX INDEX_STAT_DAY_LLM_COVER ON stat_giorni_llm (id_stat,llm_provider,llm_model,llm_provider_binding);
-CREATE INDEX INDEX_STAT_DAY_LLM ON stat_giorni_llm (data DESC,llm_provider,llm_model,llm_provider_binding,token_input,token_output,cost_estimated);
+CREATE INDEX INDEX_STAT_DAY_LLM_FULL ON stat_giorni_llm (data DESC,llm_provider,llm_model,llm_provider_binding,token_input,token_output,cost_estimated,richieste,bytes_banda_complessiva,bytes_banda_interna,bytes_banda_esterna,latenza_totale,latenza_porta,latenza_servizio);
 CREATE TRIGGER trg_stat_giorni_llm
 BEFORE
 insert on stat_giorni_llm

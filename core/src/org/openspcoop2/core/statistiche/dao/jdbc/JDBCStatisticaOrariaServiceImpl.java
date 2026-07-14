@@ -230,6 +230,13 @@ public class JDBCStatisticaOrariaServiceImpl extends JDBCStatisticaOrariaService
 			sqlQueryObjectInsert_statisticaOrariaLlm.addInsertField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.TOKEN_INPUT,false),"?");
 			sqlQueryObjectInsert_statisticaOrariaLlm.addInsertField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.TOKEN_OUTPUT,false),"?");
 			sqlQueryObjectInsert_statisticaOrariaLlm.addInsertField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.COST_ESTIMATED,false),"?");
+			sqlQueryObjectInsert_statisticaOrariaLlm.addInsertField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.NUMERO_TRANSAZIONI,false),"?");
+			sqlQueryObjectInsert_statisticaOrariaLlm.addInsertField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.DIMENSIONI_BYTES_BANDA_COMPLESSIVA,false),"?");
+			sqlQueryObjectInsert_statisticaOrariaLlm.addInsertField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.DIMENSIONI_BYTES_BANDA_INTERNA,false),"?");
+			sqlQueryObjectInsert_statisticaOrariaLlm.addInsertField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.DIMENSIONI_BYTES_BANDA_ESTERNA,false),"?");
+			sqlQueryObjectInsert_statisticaOrariaLlm.addInsertField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.LATENZA_TOTALE,false),"?");
+			sqlQueryObjectInsert_statisticaOrariaLlm.addInsertField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.LATENZA_PORTA,false),"?");
+			sqlQueryObjectInsert_statisticaOrariaLlm.addInsertField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.LATENZA_SERVIZIO,false),"?");
 			sqlQueryObjectInsert_statisticaOrariaLlm.addInsertField("id_stat","?");
 
 			// Insert statisticaOraria.getStatisticaOrariaLlmList().get(i)
@@ -242,6 +249,13 @@ public class JDBCStatisticaOrariaServiceImpl extends JDBCStatisticaOrariaService
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaOraria.getStatisticaOrariaLlmList().get(i).getTokenInput(),StatisticaOraria.model().STATISTICA_ORARIA_LLM.TOKEN_INPUT.getFieldType()),
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaOraria.getStatisticaOrariaLlmList().get(i).getTokenOutput(),StatisticaOraria.model().STATISTICA_ORARIA_LLM.TOKEN_OUTPUT.getFieldType()),
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaOraria.getStatisticaOrariaLlmList().get(i).getCostEstimated(),StatisticaOraria.model().STATISTICA_ORARIA_LLM.COST_ESTIMATED.getFieldType()),
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaOraria.getStatisticaOrariaLlmList().get(i).getNumeroTransazioni(),StatisticaOraria.model().STATISTICA_ORARIA_LLM.NUMERO_TRANSAZIONI.getFieldType()),
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaOraria.getStatisticaOrariaLlmList().get(i).getDimensioniBytesBandaComplessiva(),StatisticaOraria.model().STATISTICA_ORARIA_LLM.DIMENSIONI_BYTES_BANDA_COMPLESSIVA.getFieldType()),
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaOraria.getStatisticaOrariaLlmList().get(i).getDimensioniBytesBandaInterna(),StatisticaOraria.model().STATISTICA_ORARIA_LLM.DIMENSIONI_BYTES_BANDA_INTERNA.getFieldType()),
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaOraria.getStatisticaOrariaLlmList().get(i).getDimensioniBytesBandaEsterna(),StatisticaOraria.model().STATISTICA_ORARIA_LLM.DIMENSIONI_BYTES_BANDA_ESTERNA.getFieldType()),
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaOraria.getStatisticaOrariaLlmList().get(i).getLatenzaTotale(),StatisticaOraria.model().STATISTICA_ORARIA_LLM.LATENZA_TOTALE.getFieldType()),
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaOraria.getStatisticaOrariaLlmList().get(i).getLatenzaPorta(),StatisticaOraria.model().STATISTICA_ORARIA_LLM.LATENZA_PORTA.getFieldType()),
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaOraria.getStatisticaOrariaLlmList().get(i).getLatenzaServizio(),StatisticaOraria.model().STATISTICA_ORARIA_LLM.LATENZA_SERVIZIO.getFieldType()),
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(id),Long.class)
 			);
 			statisticaOraria.getStatisticaOrariaLlmList().get(i).setId(id_statisticaOrariaLlm);
@@ -558,6 +572,13 @@ public class JDBCStatisticaOrariaServiceImpl extends JDBCStatisticaOrariaService
 				sqlQueryObjectInsert_statisticaOrariaLlm.addInsertField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.TOKEN_INPUT,false),"?");
 				sqlQueryObjectInsert_statisticaOrariaLlm.addInsertField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.TOKEN_OUTPUT,false),"?");
 				sqlQueryObjectInsert_statisticaOrariaLlm.addInsertField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.COST_ESTIMATED,false),"?");
+				sqlQueryObjectInsert_statisticaOrariaLlm.addInsertField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.NUMERO_TRANSAZIONI,false),"?");
+				sqlQueryObjectInsert_statisticaOrariaLlm.addInsertField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.DIMENSIONI_BYTES_BANDA_COMPLESSIVA,false),"?");
+				sqlQueryObjectInsert_statisticaOrariaLlm.addInsertField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.DIMENSIONI_BYTES_BANDA_INTERNA,false),"?");
+				sqlQueryObjectInsert_statisticaOrariaLlm.addInsertField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.DIMENSIONI_BYTES_BANDA_ESTERNA,false),"?");
+				sqlQueryObjectInsert_statisticaOrariaLlm.addInsertField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.LATENZA_TOTALE,false),"?");
+				sqlQueryObjectInsert_statisticaOrariaLlm.addInsertField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.LATENZA_PORTA,false),"?");
+				sqlQueryObjectInsert_statisticaOrariaLlm.addInsertField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.LATENZA_SERVIZIO,false),"?");
 				sqlQueryObjectInsert_statisticaOrariaLlm.addInsertField("id_stat","?");
 
 				// Insert statisticaOraria_statisticaOrariaLlm
@@ -570,6 +591,13 @@ public class JDBCStatisticaOrariaServiceImpl extends JDBCStatisticaOrariaService
 					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaOraria_statisticaOrariaLlm.getTokenInput(),StatisticaOraria.model().STATISTICA_ORARIA_LLM.TOKEN_INPUT.getFieldType()),
 					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaOraria_statisticaOrariaLlm.getTokenOutput(),StatisticaOraria.model().STATISTICA_ORARIA_LLM.TOKEN_OUTPUT.getFieldType()),
 					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaOraria_statisticaOrariaLlm.getCostEstimated(),StatisticaOraria.model().STATISTICA_ORARIA_LLM.COST_ESTIMATED.getFieldType()),
+					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaOraria_statisticaOrariaLlm.getNumeroTransazioni(),StatisticaOraria.model().STATISTICA_ORARIA_LLM.NUMERO_TRANSAZIONI.getFieldType()),
+					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaOraria_statisticaOrariaLlm.getDimensioniBytesBandaComplessiva(),StatisticaOraria.model().STATISTICA_ORARIA_LLM.DIMENSIONI_BYTES_BANDA_COMPLESSIVA.getFieldType()),
+					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaOraria_statisticaOrariaLlm.getDimensioniBytesBandaInterna(),StatisticaOraria.model().STATISTICA_ORARIA_LLM.DIMENSIONI_BYTES_BANDA_INTERNA.getFieldType()),
+					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaOraria_statisticaOrariaLlm.getDimensioniBytesBandaEsterna(),StatisticaOraria.model().STATISTICA_ORARIA_LLM.DIMENSIONI_BYTES_BANDA_ESTERNA.getFieldType()),
+					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaOraria_statisticaOrariaLlm.getLatenzaTotale(),StatisticaOraria.model().STATISTICA_ORARIA_LLM.LATENZA_TOTALE.getFieldType()),
+					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaOraria_statisticaOrariaLlm.getLatenzaPorta(),StatisticaOraria.model().STATISTICA_ORARIA_LLM.LATENZA_PORTA.getFieldType()),
+					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaOraria_statisticaOrariaLlm.getLatenzaServizio(),StatisticaOraria.model().STATISTICA_ORARIA_LLM.LATENZA_SERVIZIO.getFieldType()),
 					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(id),Long.class)
 				);
 				statisticaOraria_statisticaOrariaLlm.setId(id_statisticaOrariaLlm);
@@ -598,6 +626,20 @@ public class JDBCStatisticaOrariaServiceImpl extends JDBCStatisticaOrariaService
 				lstObjects_statisticaOrariaLlm.add(new JDBCObject(statisticaOraria_statisticaOrariaLlm.getTokenOutput(), StatisticaOraria.model().STATISTICA_ORARIA_LLM.TOKEN_OUTPUT.getFieldType()));
 				sqlQueryObjectUpdate_statisticaOrariaLlm.addUpdateField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.COST_ESTIMATED,false), "?");
 				lstObjects_statisticaOrariaLlm.add(new JDBCObject(statisticaOraria_statisticaOrariaLlm.getCostEstimated(), StatisticaOraria.model().STATISTICA_ORARIA_LLM.COST_ESTIMATED.getFieldType()));
+				sqlQueryObjectUpdate_statisticaOrariaLlm.addUpdateField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.NUMERO_TRANSAZIONI,false), "?");
+				lstObjects_statisticaOrariaLlm.add(new JDBCObject(statisticaOraria_statisticaOrariaLlm.getNumeroTransazioni(), StatisticaOraria.model().STATISTICA_ORARIA_LLM.NUMERO_TRANSAZIONI.getFieldType()));
+				sqlQueryObjectUpdate_statisticaOrariaLlm.addUpdateField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.DIMENSIONI_BYTES_BANDA_COMPLESSIVA,false), "?");
+				lstObjects_statisticaOrariaLlm.add(new JDBCObject(statisticaOraria_statisticaOrariaLlm.getDimensioniBytesBandaComplessiva(), StatisticaOraria.model().STATISTICA_ORARIA_LLM.DIMENSIONI_BYTES_BANDA_COMPLESSIVA.getFieldType()));
+				sqlQueryObjectUpdate_statisticaOrariaLlm.addUpdateField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.DIMENSIONI_BYTES_BANDA_INTERNA,false), "?");
+				lstObjects_statisticaOrariaLlm.add(new JDBCObject(statisticaOraria_statisticaOrariaLlm.getDimensioniBytesBandaInterna(), StatisticaOraria.model().STATISTICA_ORARIA_LLM.DIMENSIONI_BYTES_BANDA_INTERNA.getFieldType()));
+				sqlQueryObjectUpdate_statisticaOrariaLlm.addUpdateField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.DIMENSIONI_BYTES_BANDA_ESTERNA,false), "?");
+				lstObjects_statisticaOrariaLlm.add(new JDBCObject(statisticaOraria_statisticaOrariaLlm.getDimensioniBytesBandaEsterna(), StatisticaOraria.model().STATISTICA_ORARIA_LLM.DIMENSIONI_BYTES_BANDA_ESTERNA.getFieldType()));
+				sqlQueryObjectUpdate_statisticaOrariaLlm.addUpdateField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.LATENZA_TOTALE,false), "?");
+				lstObjects_statisticaOrariaLlm.add(new JDBCObject(statisticaOraria_statisticaOrariaLlm.getLatenzaTotale(), StatisticaOraria.model().STATISTICA_ORARIA_LLM.LATENZA_TOTALE.getFieldType()));
+				sqlQueryObjectUpdate_statisticaOrariaLlm.addUpdateField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.LATENZA_PORTA,false), "?");
+				lstObjects_statisticaOrariaLlm.add(new JDBCObject(statisticaOraria_statisticaOrariaLlm.getLatenzaPorta(), StatisticaOraria.model().STATISTICA_ORARIA_LLM.LATENZA_PORTA.getFieldType()));
+				sqlQueryObjectUpdate_statisticaOrariaLlm.addUpdateField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.LATENZA_SERVIZIO,false), "?");
+				lstObjects_statisticaOrariaLlm.add(new JDBCObject(statisticaOraria_statisticaOrariaLlm.getLatenzaServizio(), StatisticaOraria.model().STATISTICA_ORARIA_LLM.LATENZA_SERVIZIO.getFieldType()));
 				sqlQueryObjectUpdate_statisticaOrariaLlm.addWhereCondition("id=?");
 				ids_statisticaOrariaLlm_da_non_eliminare.add(statisticaOraria_statisticaOrariaLlm.getId());
 				lstObjects_statisticaOrariaLlm.add(new JDBCObject(Long.valueOf(statisticaOraria_statisticaOrariaLlm.getId()),Long.class));

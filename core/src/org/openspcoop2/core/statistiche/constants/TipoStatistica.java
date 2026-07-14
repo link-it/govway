@@ -38,7 +38,8 @@ public enum TipoStatistica  implements IEnumeration , Serializable , Cloneable{
 	DISTRIBUZIONE_SOGGETTO ("distribuzioneSoggetto"),
 	DISTRIBUZIONE_SERVIZIO ("distribuzioneServizio"), 
 	DISTRIBUZIONE_AZIONE ("distribuzioneAzione"),
-	DISTRIBUZIONE_SERVIZIO_APPLICATIVO ("distribuzioneSA"), 
+	DISTRIBUZIONE_SERVIZIO_APPLICATIVO ("distribuzioneSA"),
+	DISTRIBUZIONE_LLM ("distribuzioneLlm"),
 	STATISTICA_PERSONALIZZATA ("statisticaPersonalizzata");
 
 	/** Value */
@@ -116,6 +117,8 @@ public enum TipoStatistica  implements IEnumeration , Serializable , Cloneable{
 			res = TipoStatistica.STATISTICA_PERSONALIZZATA;
 		}else if(TipoStatistica.DISTRIBUZIONE_AZIONE.getValue().equals(value)){
 			res = TipoStatistica.DISTRIBUZIONE_AZIONE;
+		}else if(TipoStatistica.DISTRIBUZIONE_LLM.getValue().equals(value)){
+			res = TipoStatistica.DISTRIBUZIONE_LLM;
 		}
 
 		return res;
@@ -137,7 +140,9 @@ public enum TipoStatistica  implements IEnumeration , Serializable , Cloneable{
 			res = TipoStatistica.STATISTICA_PERSONALIZZATA;
 		} else if(TipoStatistica.DISTRIBUZIONE_AZIONE.toString().equals(value)){
 			res = TipoStatistica.DISTRIBUZIONE_AZIONE;
-		}  
+		} else if(TipoStatistica.DISTRIBUZIONE_LLM.toString().equals(value)){
+			res = TipoStatistica.DISTRIBUZIONE_LLM;
+		}
 		return res;
 	}
 

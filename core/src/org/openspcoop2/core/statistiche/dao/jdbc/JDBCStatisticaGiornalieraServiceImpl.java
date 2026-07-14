@@ -230,6 +230,13 @@ public class JDBCStatisticaGiornalieraServiceImpl extends JDBCStatisticaGiornali
 			sqlQueryObjectInsert_statisticaGiornalieraLlm.addInsertField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.TOKEN_INPUT,false),"?");
 			sqlQueryObjectInsert_statisticaGiornalieraLlm.addInsertField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.TOKEN_OUTPUT,false),"?");
 			sqlQueryObjectInsert_statisticaGiornalieraLlm.addInsertField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.COST_ESTIMATED,false),"?");
+			sqlQueryObjectInsert_statisticaGiornalieraLlm.addInsertField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.NUMERO_TRANSAZIONI,false),"?");
+			sqlQueryObjectInsert_statisticaGiornalieraLlm.addInsertField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.DIMENSIONI_BYTES_BANDA_COMPLESSIVA,false),"?");
+			sqlQueryObjectInsert_statisticaGiornalieraLlm.addInsertField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.DIMENSIONI_BYTES_BANDA_INTERNA,false),"?");
+			sqlQueryObjectInsert_statisticaGiornalieraLlm.addInsertField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.DIMENSIONI_BYTES_BANDA_ESTERNA,false),"?");
+			sqlQueryObjectInsert_statisticaGiornalieraLlm.addInsertField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LATENZA_TOTALE,false),"?");
+			sqlQueryObjectInsert_statisticaGiornalieraLlm.addInsertField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LATENZA_PORTA,false),"?");
+			sqlQueryObjectInsert_statisticaGiornalieraLlm.addInsertField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LATENZA_SERVIZIO,false),"?");
 			sqlQueryObjectInsert_statisticaGiornalieraLlm.addInsertField("id_stat","?");
 
 			// Insert statisticaGiornaliera.getStatisticaGiornalieraLlmList().get(i)
@@ -242,6 +249,13 @@ public class JDBCStatisticaGiornalieraServiceImpl extends JDBCStatisticaGiornali
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaGiornaliera.getStatisticaGiornalieraLlmList().get(i).getTokenInput(),StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.TOKEN_INPUT.getFieldType()),
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaGiornaliera.getStatisticaGiornalieraLlmList().get(i).getTokenOutput(),StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.TOKEN_OUTPUT.getFieldType()),
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaGiornaliera.getStatisticaGiornalieraLlmList().get(i).getCostEstimated(),StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.COST_ESTIMATED.getFieldType()),
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaGiornaliera.getStatisticaGiornalieraLlmList().get(i).getNumeroTransazioni(),StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.NUMERO_TRANSAZIONI.getFieldType()),
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaGiornaliera.getStatisticaGiornalieraLlmList().get(i).getDimensioniBytesBandaComplessiva(),StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.DIMENSIONI_BYTES_BANDA_COMPLESSIVA.getFieldType()),
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaGiornaliera.getStatisticaGiornalieraLlmList().get(i).getDimensioniBytesBandaInterna(),StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.DIMENSIONI_BYTES_BANDA_INTERNA.getFieldType()),
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaGiornaliera.getStatisticaGiornalieraLlmList().get(i).getDimensioniBytesBandaEsterna(),StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.DIMENSIONI_BYTES_BANDA_ESTERNA.getFieldType()),
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaGiornaliera.getStatisticaGiornalieraLlmList().get(i).getLatenzaTotale(),StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LATENZA_TOTALE.getFieldType()),
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaGiornaliera.getStatisticaGiornalieraLlmList().get(i).getLatenzaPorta(),StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LATENZA_PORTA.getFieldType()),
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaGiornaliera.getStatisticaGiornalieraLlmList().get(i).getLatenzaServizio(),StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LATENZA_SERVIZIO.getFieldType()),
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(id),Long.class)
 			);
 			statisticaGiornaliera.getStatisticaGiornalieraLlmList().get(i).setId(id_statisticaGiornalieraLlm);
@@ -558,6 +572,13 @@ public class JDBCStatisticaGiornalieraServiceImpl extends JDBCStatisticaGiornali
 				sqlQueryObjectInsert_statisticaGiornalieraLlm.addInsertField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.TOKEN_INPUT,false),"?");
 				sqlQueryObjectInsert_statisticaGiornalieraLlm.addInsertField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.TOKEN_OUTPUT,false),"?");
 				sqlQueryObjectInsert_statisticaGiornalieraLlm.addInsertField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.COST_ESTIMATED,false),"?");
+				sqlQueryObjectInsert_statisticaGiornalieraLlm.addInsertField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.NUMERO_TRANSAZIONI,false),"?");
+				sqlQueryObjectInsert_statisticaGiornalieraLlm.addInsertField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.DIMENSIONI_BYTES_BANDA_COMPLESSIVA,false),"?");
+				sqlQueryObjectInsert_statisticaGiornalieraLlm.addInsertField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.DIMENSIONI_BYTES_BANDA_INTERNA,false),"?");
+				sqlQueryObjectInsert_statisticaGiornalieraLlm.addInsertField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.DIMENSIONI_BYTES_BANDA_ESTERNA,false),"?");
+				sqlQueryObjectInsert_statisticaGiornalieraLlm.addInsertField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LATENZA_TOTALE,false),"?");
+				sqlQueryObjectInsert_statisticaGiornalieraLlm.addInsertField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LATENZA_PORTA,false),"?");
+				sqlQueryObjectInsert_statisticaGiornalieraLlm.addInsertField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LATENZA_SERVIZIO,false),"?");
 				sqlQueryObjectInsert_statisticaGiornalieraLlm.addInsertField("id_stat","?");
 
 				// Insert statisticaGiornaliera_statisticaGiornalieraLlm
@@ -570,6 +591,13 @@ public class JDBCStatisticaGiornalieraServiceImpl extends JDBCStatisticaGiornali
 					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaGiornaliera_statisticaGiornalieraLlm.getTokenInput(),StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.TOKEN_INPUT.getFieldType()),
 					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaGiornaliera_statisticaGiornalieraLlm.getTokenOutput(),StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.TOKEN_OUTPUT.getFieldType()),
 					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaGiornaliera_statisticaGiornalieraLlm.getCostEstimated(),StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.COST_ESTIMATED.getFieldType()),
+					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaGiornaliera_statisticaGiornalieraLlm.getNumeroTransazioni(),StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.NUMERO_TRANSAZIONI.getFieldType()),
+					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaGiornaliera_statisticaGiornalieraLlm.getDimensioniBytesBandaComplessiva(),StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.DIMENSIONI_BYTES_BANDA_COMPLESSIVA.getFieldType()),
+					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaGiornaliera_statisticaGiornalieraLlm.getDimensioniBytesBandaInterna(),StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.DIMENSIONI_BYTES_BANDA_INTERNA.getFieldType()),
+					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaGiornaliera_statisticaGiornalieraLlm.getDimensioniBytesBandaEsterna(),StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.DIMENSIONI_BYTES_BANDA_ESTERNA.getFieldType()),
+					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaGiornaliera_statisticaGiornalieraLlm.getLatenzaTotale(),StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LATENZA_TOTALE.getFieldType()),
+					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaGiornaliera_statisticaGiornalieraLlm.getLatenzaPorta(),StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LATENZA_PORTA.getFieldType()),
+					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaGiornaliera_statisticaGiornalieraLlm.getLatenzaServizio(),StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LATENZA_SERVIZIO.getFieldType()),
 					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(id),Long.class)
 				);
 				statisticaGiornaliera_statisticaGiornalieraLlm.setId(id_statisticaGiornalieraLlm);
@@ -598,6 +626,20 @@ public class JDBCStatisticaGiornalieraServiceImpl extends JDBCStatisticaGiornali
 				lstObjects_statisticaGiornalieraLlm.add(new JDBCObject(statisticaGiornaliera_statisticaGiornalieraLlm.getTokenOutput(), StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.TOKEN_OUTPUT.getFieldType()));
 				sqlQueryObjectUpdate_statisticaGiornalieraLlm.addUpdateField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.COST_ESTIMATED,false), "?");
 				lstObjects_statisticaGiornalieraLlm.add(new JDBCObject(statisticaGiornaliera_statisticaGiornalieraLlm.getCostEstimated(), StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.COST_ESTIMATED.getFieldType()));
+				sqlQueryObjectUpdate_statisticaGiornalieraLlm.addUpdateField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.NUMERO_TRANSAZIONI,false), "?");
+				lstObjects_statisticaGiornalieraLlm.add(new JDBCObject(statisticaGiornaliera_statisticaGiornalieraLlm.getNumeroTransazioni(), StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.NUMERO_TRANSAZIONI.getFieldType()));
+				sqlQueryObjectUpdate_statisticaGiornalieraLlm.addUpdateField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.DIMENSIONI_BYTES_BANDA_COMPLESSIVA,false), "?");
+				lstObjects_statisticaGiornalieraLlm.add(new JDBCObject(statisticaGiornaliera_statisticaGiornalieraLlm.getDimensioniBytesBandaComplessiva(), StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.DIMENSIONI_BYTES_BANDA_COMPLESSIVA.getFieldType()));
+				sqlQueryObjectUpdate_statisticaGiornalieraLlm.addUpdateField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.DIMENSIONI_BYTES_BANDA_INTERNA,false), "?");
+				lstObjects_statisticaGiornalieraLlm.add(new JDBCObject(statisticaGiornaliera_statisticaGiornalieraLlm.getDimensioniBytesBandaInterna(), StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.DIMENSIONI_BYTES_BANDA_INTERNA.getFieldType()));
+				sqlQueryObjectUpdate_statisticaGiornalieraLlm.addUpdateField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.DIMENSIONI_BYTES_BANDA_ESTERNA,false), "?");
+				lstObjects_statisticaGiornalieraLlm.add(new JDBCObject(statisticaGiornaliera_statisticaGiornalieraLlm.getDimensioniBytesBandaEsterna(), StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.DIMENSIONI_BYTES_BANDA_ESTERNA.getFieldType()));
+				sqlQueryObjectUpdate_statisticaGiornalieraLlm.addUpdateField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LATENZA_TOTALE,false), "?");
+				lstObjects_statisticaGiornalieraLlm.add(new JDBCObject(statisticaGiornaliera_statisticaGiornalieraLlm.getLatenzaTotale(), StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LATENZA_TOTALE.getFieldType()));
+				sqlQueryObjectUpdate_statisticaGiornalieraLlm.addUpdateField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LATENZA_PORTA,false), "?");
+				lstObjects_statisticaGiornalieraLlm.add(new JDBCObject(statisticaGiornaliera_statisticaGiornalieraLlm.getLatenzaPorta(), StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LATENZA_PORTA.getFieldType()));
+				sqlQueryObjectUpdate_statisticaGiornalieraLlm.addUpdateField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LATENZA_SERVIZIO,false), "?");
+				lstObjects_statisticaGiornalieraLlm.add(new JDBCObject(statisticaGiornaliera_statisticaGiornalieraLlm.getLatenzaServizio(), StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LATENZA_SERVIZIO.getFieldType()));
 				sqlQueryObjectUpdate_statisticaGiornalieraLlm.addWhereCondition("id=?");
 				ids_statisticaGiornalieraLlm_da_non_eliminare.add(statisticaGiornaliera_statisticaGiornalieraLlm.getId());
 				lstObjects_statisticaGiornalieraLlm.add(new JDBCObject(Long.valueOf(statisticaGiornaliera_statisticaGiornalieraLlm.getId()),Long.class));

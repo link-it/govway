@@ -35539,7 +35539,28 @@ public class OpenSPCoop2Properties {
 
 		return this.isStatisticheGenerazioneCustomEnabled;
 	}
-	
+
+	private Boolean isStatisticheGenerazioneLlmEnabled = null;
+	public boolean isStatisticheGenerazioneLlmEnabled() {
+		if(this.isStatisticheGenerazioneLlmEnabled==null){
+			try{
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.llm.enabled");
+				if(name==null){
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.statistiche.generazione.llm.enabled' non impostata, viene utilizzato il default=false");
+					name="false";
+				}
+				name = name.trim();
+				this.isStatisticheGenerazioneLlmEnabled = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.statistiche.generazione.llm.enabled', viene utilizzato il default=false : "+e.getMessage(),e);
+				this.isStatisticheGenerazioneLlmEnabled = false;
+			}
+		}
+
+		return this.isStatisticheGenerazioneLlmEnabled;
+	}
+
 	private Boolean isStatisticheGenerazioneCustomSdkEnabled = null;
 	public boolean isStatisticheGenerazioneCustomSdkEnabled() {	
 		if(this.isStatisticheGenerazioneCustomSdkEnabled==null){

@@ -132,6 +132,13 @@ CREATE TABLE stat_orarie_llm
 	token_input BIGINT NOT NULL,
 	token_output BIGINT NOT NULL,
 	cost_estimated REAL,
+	richieste INT NOT NULL,
+	bytes_banda_complessiva BIGINT,
+	bytes_banda_interna BIGINT,
+	bytes_banda_esterna BIGINT,
+	latenza_totale BIGINT,
+	latenza_porta BIGINT,
+	latenza_servizio BIGINT,
 	-- fk/pk columns
 	id BIGINT IDENTITY,
 	id_stat BIGINT NOT NULL,
@@ -142,7 +149,7 @@ CREATE TABLE stat_orarie_llm
 
 -- index
 CREATE INDEX INDEX_STAT_HOUR_LLM_COVER ON stat_orarie_llm (id_stat,llm_provider,llm_model,llm_provider_binding);
-CREATE INDEX INDEX_STAT_HOUR_LLM ON stat_orarie_llm (data DESC,llm_provider,llm_model,llm_provider_binding,token_input,token_output,cost_estimated);
+-- CREATE INDEX INDEX_STAT_HOUR_LLM_FULL ON stat_orarie_llm (data DESC,llm_provider,llm_model,llm_provider_binding,token_input,token_output,cost_estimated,richieste,bytes_banda_complessiva,bytes_banda_interna,bytes_banda_esterna,latenza_totale,latenza_porta,latenza_servizio);
 
 
 
@@ -263,6 +270,13 @@ CREATE TABLE stat_giorni_llm
 	token_input BIGINT NOT NULL,
 	token_output BIGINT NOT NULL,
 	cost_estimated REAL,
+	richieste INT NOT NULL,
+	bytes_banda_complessiva BIGINT,
+	bytes_banda_interna BIGINT,
+	bytes_banda_esterna BIGINT,
+	latenza_totale BIGINT,
+	latenza_porta BIGINT,
+	latenza_servizio BIGINT,
 	-- fk/pk columns
 	id BIGINT IDENTITY,
 	id_stat BIGINT NOT NULL,
@@ -273,7 +287,7 @@ CREATE TABLE stat_giorni_llm
 
 -- index
 CREATE INDEX INDEX_STAT_DAY_LLM_COVER ON stat_giorni_llm (id_stat,llm_provider,llm_model,llm_provider_binding);
-CREATE INDEX INDEX_STAT_DAY_LLM ON stat_giorni_llm (data DESC,llm_provider,llm_model,llm_provider_binding,token_input,token_output,cost_estimated);
+-- CREATE INDEX INDEX_STAT_DAY_LLM_FULL ON stat_giorni_llm (data DESC,llm_provider,llm_model,llm_provider_binding,token_input,token_output,cost_estimated,richieste,bytes_banda_complessiva,bytes_banda_interna,bytes_banda_esterna,latenza_totale,latenza_porta,latenza_servizio);
 
 
 

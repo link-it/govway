@@ -554,6 +554,13 @@ public class JDBCStatisticaOrariaServiceSearchImpl implements IJDBCServiceSearch
 		sqlQueryObjectGet_statisticaOrariaLlm.addSelectField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.TOKEN_INPUT,true));
 		sqlQueryObjectGet_statisticaOrariaLlm.addSelectField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.TOKEN_OUTPUT,true));
 		sqlQueryObjectGet_statisticaOrariaLlm.addSelectField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.COST_ESTIMATED,true));
+		sqlQueryObjectGet_statisticaOrariaLlm.addSelectField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.NUMERO_TRANSAZIONI,true));
+		sqlQueryObjectGet_statisticaOrariaLlm.addSelectField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.DIMENSIONI_BYTES_BANDA_COMPLESSIVA,true));
+		sqlQueryObjectGet_statisticaOrariaLlm.addSelectField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.DIMENSIONI_BYTES_BANDA_INTERNA,true));
+		sqlQueryObjectGet_statisticaOrariaLlm.addSelectField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.DIMENSIONI_BYTES_BANDA_ESTERNA,true));
+		sqlQueryObjectGet_statisticaOrariaLlm.addSelectField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.LATENZA_TOTALE,true));
+		sqlQueryObjectGet_statisticaOrariaLlm.addSelectField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.LATENZA_PORTA,true));
+		sqlQueryObjectGet_statisticaOrariaLlm.addSelectField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_LLM.LATENZA_SERVIZIO,true));
 		sqlQueryObjectGet_statisticaOrariaLlm.addWhereCondition("id_stat=?");
 
 		// Get statisticaOraria_statisticaOrariaLlm

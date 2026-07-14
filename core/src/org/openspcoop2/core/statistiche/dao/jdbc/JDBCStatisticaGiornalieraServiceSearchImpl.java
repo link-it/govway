@@ -554,6 +554,13 @@ public class JDBCStatisticaGiornalieraServiceSearchImpl implements IJDBCServiceS
 		sqlQueryObjectGet_statisticaGiornalieraLlm.addSelectField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.TOKEN_INPUT,true));
 		sqlQueryObjectGet_statisticaGiornalieraLlm.addSelectField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.TOKEN_OUTPUT,true));
 		sqlQueryObjectGet_statisticaGiornalieraLlm.addSelectField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.COST_ESTIMATED,true));
+		sqlQueryObjectGet_statisticaGiornalieraLlm.addSelectField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.NUMERO_TRANSAZIONI,true));
+		sqlQueryObjectGet_statisticaGiornalieraLlm.addSelectField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.DIMENSIONI_BYTES_BANDA_COMPLESSIVA,true));
+		sqlQueryObjectGet_statisticaGiornalieraLlm.addSelectField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.DIMENSIONI_BYTES_BANDA_INTERNA,true));
+		sqlQueryObjectGet_statisticaGiornalieraLlm.addSelectField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.DIMENSIONI_BYTES_BANDA_ESTERNA,true));
+		sqlQueryObjectGet_statisticaGiornalieraLlm.addSelectField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LATENZA_TOTALE,true));
+		sqlQueryObjectGet_statisticaGiornalieraLlm.addSelectField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LATENZA_PORTA,true));
+		sqlQueryObjectGet_statisticaGiornalieraLlm.addSelectField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_LLM.LATENZA_SERVIZIO,true));
 		sqlQueryObjectGet_statisticaGiornalieraLlm.addWhereCondition("id_stat=?");
 
 		// Get statisticaGiornaliera_statisticaGiornalieraLlm

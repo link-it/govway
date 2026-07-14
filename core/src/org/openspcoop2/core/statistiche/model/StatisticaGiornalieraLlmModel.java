@@ -48,6 +48,13 @@ public class StatisticaGiornalieraLlmModel extends AbstractModel<StatisticaGiorn
 		this.TOKEN_INPUT = new Field("token-input",java.lang.Long.class,"statistica-giornaliera-llm",StatisticaGiornalieraLlm.class);
 		this.TOKEN_OUTPUT = new Field("token-output",java.lang.Long.class,"statistica-giornaliera-llm",StatisticaGiornalieraLlm.class);
 		this.COST_ESTIMATED = new Field("cost-estimated",double.class,"statistica-giornaliera-llm",StatisticaGiornalieraLlm.class);
+		this.NUMERO_TRANSAZIONI = new Field("numero-transazioni",java.lang.Integer.class,"statistica-giornaliera-llm",StatisticaGiornalieraLlm.class);
+		this.DIMENSIONI_BYTES_BANDA_COMPLESSIVA = new Field("dimensioni-bytes-banda-complessiva",java.lang.Long.class,"statistica-giornaliera-llm",StatisticaGiornalieraLlm.class);
+		this.DIMENSIONI_BYTES_BANDA_INTERNA = new Field("dimensioni-bytes-banda-interna",java.lang.Long.class,"statistica-giornaliera-llm",StatisticaGiornalieraLlm.class);
+		this.DIMENSIONI_BYTES_BANDA_ESTERNA = new Field("dimensioni-bytes-banda-esterna",java.lang.Long.class,"statistica-giornaliera-llm",StatisticaGiornalieraLlm.class);
+		this.LATENZA_TOTALE = new Field("latenza-totale",java.lang.Long.class,"statistica-giornaliera-llm",StatisticaGiornalieraLlm.class);
+		this.LATENZA_PORTA = new Field("latenza-porta",java.lang.Long.class,"statistica-giornaliera-llm",StatisticaGiornalieraLlm.class);
+		this.LATENZA_SERVIZIO = new Field("latenza-servizio",java.lang.Long.class,"statistica-giornaliera-llm",StatisticaGiornalieraLlm.class);
 	
 	}
 	
@@ -62,6 +69,13 @@ public class StatisticaGiornalieraLlmModel extends AbstractModel<StatisticaGiorn
 		this.TOKEN_INPUT = new ComplexField(father,"token-input",java.lang.Long.class,"statistica-giornaliera-llm",StatisticaGiornalieraLlm.class);
 		this.TOKEN_OUTPUT = new ComplexField(father,"token-output",java.lang.Long.class,"statistica-giornaliera-llm",StatisticaGiornalieraLlm.class);
 		this.COST_ESTIMATED = new ComplexField(father,"cost-estimated",double.class,"statistica-giornaliera-llm",StatisticaGiornalieraLlm.class);
+		this.NUMERO_TRANSAZIONI = new ComplexField(father,"numero-transazioni",java.lang.Integer.class,"statistica-giornaliera-llm",StatisticaGiornalieraLlm.class);
+		this.DIMENSIONI_BYTES_BANDA_COMPLESSIVA = new ComplexField(father,"dimensioni-bytes-banda-complessiva",java.lang.Long.class,"statistica-giornaliera-llm",StatisticaGiornalieraLlm.class);
+		this.DIMENSIONI_BYTES_BANDA_INTERNA = new ComplexField(father,"dimensioni-bytes-banda-interna",java.lang.Long.class,"statistica-giornaliera-llm",StatisticaGiornalieraLlm.class);
+		this.DIMENSIONI_BYTES_BANDA_ESTERNA = new ComplexField(father,"dimensioni-bytes-banda-esterna",java.lang.Long.class,"statistica-giornaliera-llm",StatisticaGiornalieraLlm.class);
+		this.LATENZA_TOTALE = new ComplexField(father,"latenza-totale",java.lang.Long.class,"statistica-giornaliera-llm",StatisticaGiornalieraLlm.class);
+		this.LATENZA_PORTA = new ComplexField(father,"latenza-porta",java.lang.Long.class,"statistica-giornaliera-llm",StatisticaGiornalieraLlm.class);
+		this.LATENZA_SERVIZIO = new ComplexField(father,"latenza-servizio",java.lang.Long.class,"statistica-giornaliera-llm",StatisticaGiornalieraLlm.class);
 	
 	}
 	
@@ -80,6 +94,20 @@ public class StatisticaGiornalieraLlmModel extends AbstractModel<StatisticaGiorn
 	public IField TOKEN_OUTPUT = null;
 	 
 	public IField COST_ESTIMATED = null;
+	 
+	public IField NUMERO_TRANSAZIONI = null;
+	 
+	public IField DIMENSIONI_BYTES_BANDA_COMPLESSIVA = null;
+	 
+	public IField DIMENSIONI_BYTES_BANDA_INTERNA = null;
+	 
+	public IField DIMENSIONI_BYTES_BANDA_ESTERNA = null;
+	 
+	public IField LATENZA_TOTALE = null;
+	 
+	public IField LATENZA_PORTA = null;
+	 
+	public IField LATENZA_SERVIZIO = null;
 	 
 
 	@Override

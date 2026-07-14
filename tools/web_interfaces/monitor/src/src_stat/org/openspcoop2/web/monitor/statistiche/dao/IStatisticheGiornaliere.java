@@ -69,7 +69,12 @@ public interface IStatisticheGiornaliere extends IService<ResBase, Integer>,ILiv
 	public List<ResDistribuzione> findAllDistribuzioneServizioApplicativo() throws ServiceException;
 	public List<ResDistribuzione> findAllDistribuzioneServizioApplicativo(int start, int limit) throws ServiceException;
 	public int countAllDistribuzioneServizioApplicativo() throws ServiceException;
-	
+
+	//Distribuzione per Dati LLM
+	public List<ResDistribuzione> findAllDistribuzioneLlm() throws ServiceException;
+	public List<ResDistribuzione> findAllDistribuzioneLlm(int start, int limit) throws ServiceException;
+	public int countAllDistribuzioneLlm() throws ServiceException;
+
 	//statistiche personalizzate
 	public int countAllDistribuzionePersonalizzata() throws ServiceException;
 	public List<ResDistribuzione> findAllDistribuzionePersonalizzata() throws ServiceException;

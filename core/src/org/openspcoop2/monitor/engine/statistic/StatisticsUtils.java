@@ -623,6 +623,93 @@ public class StatisticsUtils {
 		selectList.add(fSum3);
 		selectList.add(fSum4);
 	}
+
+	// ****** Statistiche LLM (satellite transazioni_llm) ******
+
+	private static final String LLM_TOKEN_INPUT_ALIAS = "llm_token_input";
+	private static final String LLM_TOKEN_OUTPUT_ALIAS = "llm_token_output";
+	private static final String LLM_COST_ESTIMATED_ALIAS = "llm_cost_estimated";
+
+	/** Aggiunge il group-by per il breakdown LLM (provider/model/binding). Il riferimento al
+	 *  sotto-modello TRANSAZIONE_LLM attiva automaticamente la join verso transazioni_llm. */
+	public static void addGroupByLlm(IExpression expr) throws ExpressionNotImplementedException, ExpressionException {
+		expr.addGroupBy(Transazione.model().TRANSAZIONE_LLM.LLM_PROVIDER);
+		expr.addGroupBy(Transazione.model().TRANSAZIONE_LLM.LLM_MODEL);
+		expr.addGroupBy(Transazione.model().TRANSAZIONE_LLM.LLM_PROVIDER_BINDING);
+	}
+
+	/** Aggiunge i SUM di token input/output e costo stimato sulla tabella transazioni_llm. */
+	public static void addSelectFieldLlmTokenCost(List<FunctionField> selectList) throws ExpressionException {
+		selectList.add(new FunctionField(Transazione.model().TRANSAZIONE_LLM.TOKEN_INPUT, Function.SUM, LLM_TOKEN_INPUT_ALIAS));
+		selectList.add(new FunctionField(Transazione.model().TRANSAZIONE_LLM.TOKEN_OUTPUT, Function.SUM, LLM_TOKEN_OUTPUT_ALIAS));
+		selectList.add(new FunctionField(Transazione.model().TRANSAZIONE_LLM.COST_ESTIMATED, Function.SUM, LLM_COST_ESTIMATED_ALIAS));
+	}
+
+	/** Legge da una riga di group-by il dato LLM (provider/model/binding + somme token/costo). */
+	public static StatisticaLlmDato readStatisticaLlmDato(Map<String, Object> row, ISQLFieldConverter fieldConverter) {
+		StatisticaLlmDato dato = new StatisticaLlmDato();
+		dato.setLlmProvider(readGroupByValueLlm(row, Transazione.model().TRANSAZIONE_LLM.LLM_PROVIDER, fieldConverter));
+		dato.setLlmModel(readGroupByValueLlm(row, Transazione.model().TRANSAZIONE_LLM.LLM_MODEL, fieldConverter));
+		dato.setLlmProviderBinding(readGroupByValueLlm(row, Transazione.model().TRANSAZIONE_LLM.LLM_PROVIDER_BINDING, fieldConverter));
+		Long tokenInput = readLongValue(row, LLM_TOKEN_INPUT_ALIAS);
+		Long tokenOutput = readLongValue(row, LLM_TOKEN_OUTPUT_ALIAS);
+		dato.setTokenInput(tokenInput!=null ? tokenInput.longValue() : 0L);
+		dato.setTokenOutput(tokenOutput!=null ? tokenOutput.longValue() : 0L);
+		Object cost = row.get(LLM_COST_ESTIMATED_ALIAS);
+		if(cost instanceof Number){
+			dato.setCostEstimated(((Number)cost).doubleValue());
+		}
+		return dato;
+	}
+
+	/** Chiave (provider/model/binding) per allineare le righe di diverse query di group-by LLM. */
+	public static String readLlmDimensionsKey(Map<String, Object> row, ISQLFieldConverter fieldConverter) {
+		String provider = readGroupByValueLlm(row, Transazione.model().TRANSAZIONE_LLM.LLM_PROVIDER, fieldConverter);
+		String model = readGroupByValueLlm(row, Transazione.model().TRANSAZIONE_LLM.LLM_MODEL, fieldConverter);
+		String binding = readGroupByValueLlm(row, Transazione.model().TRANSAZIONE_LLM.LLM_PROVIDER_BINDING, fieldConverter);
+		return buildLlmDimensionsKey(provider, model, binding);
+	}
+
+	/** Chiave (provider/model/binding) a partire dai valori. */
+	public static String buildLlmDimensionsKey(String provider, String model, String binding) {
+		return (provider!=null?provider:"") + " " + (model!=null?model:"") + " " + (binding!=null?binding:"");
+	}
+
+	private static String readGroupByValueLlm(Map<String, Object> row, IField field, ISQLFieldConverter fieldConverter) {
+		// La chiave nella map di group-by per un ComplexField e' il path col padre (es. "transazione-llm.llm-provider"),
+		// non il solo getFieldName(); cfr. GenericJDBCUtilities.buildAliasesPrefix.
+		Object o = row.get(buildComplexFieldKey(field));
+		if(o==null){
+			o = row.get(field.getFieldName());
+		}
+		if(o==null && fieldConverter!=null){
+			try {
+				o = row.get(fieldConverter.toColumn(field, false));
+			} catch(Exception e) {
+				// ignore: si prova solo la chiave alternativa
+			}
+		}
+		if(o==null || o instanceof org.apache.commons.lang3.ObjectUtils.Null){
+			return null;
+		}
+		String s = o.toString();
+		return "".equals(s) ? null : s;
+	}
+
+	private static String buildComplexFieldKey(IField field) {
+		StringBuilder prefix = new StringBuilder();
+		buildComplexFieldKeyPrefix(field, prefix);
+		return prefix.toString();
+	}
+	private static void buildComplexFieldKeyPrefix(IField field, StringBuilder prefix) {
+		if(field instanceof ComplexField){
+			buildComplexFieldKeyPrefix(((ComplexField)field).getFather(), prefix);
+		}
+		if(prefix.length()>0){
+			prefix.append(".");
+		}
+		prefix.append(field.getFieldName());
+	}
 	
 	public static void addSelectFunctionFieldLatencyTransaction(TipoPdD tipoPdD,ISQLFieldConverter fieldConverter,
 			List<FunctionField> selectFunctionList) throws ExpressionException, SQLQueryObjectException{

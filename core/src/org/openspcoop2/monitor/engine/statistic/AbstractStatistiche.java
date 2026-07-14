@@ -126,6 +126,7 @@ public abstract class AbstractStatistiche implements IStatisticsEngine {
 	protected boolean debug = false;
 	protected boolean useUnionForLatency = true;
 	protected boolean generazioneStatisticheCustom = false;
+	protected boolean generazioneStatisticheLlm = false;
 	protected boolean analisiTransazioniCustom = false;
 	protected long waitMsBeforeNextInterval = 0;
 	protected boolean waitStatiInConsegna = false;
@@ -170,6 +171,7 @@ public abstract class AbstractStatistiche implements IStatisticsEngine {
 		this.debug = config.isDebug();
 		this.useUnionForLatency = config.isUseUnionForLatency();
 		this.generazioneStatisticheCustom = config.isGenerazioneStatisticheCustom();
+		this.generazioneStatisticheLlm = config.isGenerazioneStatisticheLlm();
 		this.analisiTransazioniCustom = config.isAnalisiTransazioniCustom();
 		this.waitMsBeforeNextInterval = config.getWaitMsBeforeNextInterval();
 		this.waitStatiInConsegna = config.isWaitStatiInConsegna();
@@ -675,6 +677,10 @@ public abstract class AbstractStatistiche implements IStatisticsEngine {
 					if(this.generazioneStatisticheCustom){
 						createCustomStatistic(stat);
 					}
+
+					if(this.generazioneStatisticheLlm){
+						createLlmStatistic(tipoPdD, stat, fieldConverter);
+					}
 					
 				}catch(Throwable eSingoloRecord) {
 					String r = "";
@@ -781,6 +787,10 @@ public abstract class AbstractStatistiche implements IStatisticsEngine {
 					if(this.generazioneStatisticheCustom){
 						createCustomStatistic(stat);
 					}
+
+					if(this.generazioneStatisticheLlm){
+						createLlmStatistic(tipoPdD, stat, fieldConverter);
+					}
 					
 				}catch(Throwable eSingoloRecord) {
 					String r = "";
@@ -871,6 +881,105 @@ public abstract class AbstractStatistiche implements IStatisticsEngine {
 			stat.setLatenzaPorta(Costanti.INFORMAZIONE_LATENZA_NON_DISPONIBILE);
 			stat.setLatenzaServizio(Costanti.INFORMAZIONE_LATENZA_NON_DISPONIBILE);
 			stat.setLatenzaTotale(Costanti.INFORMAZIONE_LATENZA_NON_DISPONIBILE);
+		}
+	}
+
+	/** True nei soli livelli con tabella satellite LLM (orario/giornaliero). Override nei relativi engine. */
+	protected boolean isStatisticheLlmSupportata() {
+		return false;
+	}
+
+	/** Aggancia alla riga base 'idStatistica' i satelliti LLM. Default no-op (livelli senza tabella LLM). Override nei relativi engine. */
+	protected void updateStatisticaLlm(long idStatistica, List<StatisticaLlmDato> datiLlm) throws StatisticException {
+		// default: livelli senza tabella satellite LLM (settimanali/mensili) -> no-op
+		if(this.debug && datiLlm!=null){
+			this.logDebug("updateStatisticaLlm non supportato per ["+this.getTipoStatistiche()+"] (idStatistica:"+idStatistica+")");
+		}
+	}
+
+	/** Per il bucket base LLM appena inserito, calcola il breakdown per provider/model/binding
+	 *  (join transazioni_llm, GROUP BY provider/model/binding, SUM token/costo) e lo aggancia via id_stat. */
+	private void createLlmStatistic(TipoPdD tipoPdD, StatisticBean stat, ISQLFieldConverter fieldConverter) {
+
+		if(!this.isStatisticheLlmSupportata()){
+			return;
+		}
+		// solo per i bucket LLM
+		if(!org.openspcoop2.protocol.sdk.constants.CostantiProtocollo.ESITO_TRANSACTION_CONTEXT_LLM.equals(EsitoUtils.getRawEsitoContext(stat.getEsitoContesto()))){
+			return;
+		}
+
+		try {
+			Date data = stat.getDateIntervalLeft();
+			Date dateNext = stat.getDateIntervalRight();
+
+			// 1) Query principale: numero richieste + banda + token/costo, per provider/model/binding
+			IExpression expr = this.transazioneSearchDAO.newExpression();
+			// pin del bucket base (stesse dimensioni della riga statistica) + intervallo
+			StatisticsUtils.setExpression(this.transazioneSearchDAO, expr, data, dateNext, tipoPdD, false, stat, fieldConverter, this.groupByConfig);
+			// breakdown provider/model/binding (il riferimento a TRANSAZIONE_LLM attiva la join)
+			StatisticsUtils.addGroupByLlm(expr);
+			List<FunctionField> selectList = new ArrayList<>();
+			StatisticsUtils.addSelectFieldCountTransaction(selectList);
+			StatisticsUtils.addSelectFieldSizeTransaction(tipoPdD, selectList);
+			StatisticsUtils.addSelectFieldLlmTokenCost(selectList);
+
+			List<Map<String, Object>> list = this.transazioneSearchDAO.groupBy(expr, selectList.toArray(new FunctionField[1]));
+
+			Map<String, StatisticaLlmDato> datiMap = new java.util.LinkedHashMap<>();
+			for (Map<String, Object> row : list) {
+				StatisticaLlmDato dato = StatisticsUtils.readStatisticaLlmDato(row, fieldConverter);
+				// numero richieste + banda tramite StatisticBean (la banda dipende dal tipoPorta)
+				StatisticBean tmp = new StatisticBean();
+				tmp.setTipoPorta(stat.getTipoPorta());
+				StatisticsUtils.updateStatisticBeanCountTransactionInfo(tmp, row);
+				StatisticsUtils.updateStatisticBeanSizeTransactionInfo(tmp, row);
+				dato.setNumeroTransazioni((int) tmp.getRichieste());
+				dato.setBandaComplessiva(tmp.getBytesBandaTotale());
+				dato.setBandaInterna(tmp.getBytesBandaInterna());
+				dato.setBandaEsterna(tmp.getBytesBandaEsterna());
+				datiMap.put(StatisticsUtils.buildLlmDimensionsKey(dato.getLlmProvider(), dato.getLlmModel(), dato.getLlmProviderBinding()), dato);
+			}
+
+			if(!datiMap.isEmpty()){
+
+				// 2) Query latenza (solo transazioni con tutte le date valorizzate), per provider/model/binding
+				try {
+					IExpression exprLat = this.transazioneSearchDAO.newExpression();
+					StatisticsUtils.setExpression(this.transazioneSearchDAO, exprLat, data, dateNext, tipoPdD, true, stat, fieldConverter, this.groupByConfig);
+					StatisticsUtils.addGroupByLlm(exprLat);
+					List<FunctionField> selectLat = new ArrayList<>();
+					StatisticsUtils.addSelectFunctionFieldLatencyTransaction(tipoPdD, fieldConverter, selectLat);
+					List<Map<String, Object>> listLat = this.transazioneSearchDAO.groupBy(exprLat, selectLat.toArray(new FunctionField[1]));
+					for (Map<String, Object> row : listLat) {
+						StatisticaLlmDato dato = datiMap.get(StatisticsUtils.readLlmDimensionsKey(row, fieldConverter));
+						if(dato!=null){
+							StatisticBean tmp = new StatisticBean();
+							tmp.setTipoPorta(stat.getTipoPorta());
+							StatisticsUtils.updateStatisticsBeanLatencyTransactionInfo(tmp, row);
+							if(tmp.getLatenzaTotale()!=Costanti.INFORMAZIONE_LATENZA_NON_DISPONIBILE){
+								dato.setLatenzaTotale(tmp.getLatenzaTotale());
+							}
+							if(tmp.getLatenzaPorta()!=Costanti.INFORMAZIONE_LATENZA_NON_DISPONIBILE){
+								dato.setLatenzaPorta(tmp.getLatenzaPorta());
+							}
+							if(tmp.getLatenzaServizio()!=Costanti.INFORMAZIONE_LATENZA_NON_DISPONIBILE){
+								dato.setLatenzaServizio(tmp.getLatenzaServizio());
+							}
+						}
+					}
+				} catch(NotFoundException notFoundLat){
+					// nessuna transazione con date complete nell'intervallo: latenze non disponibili
+				}
+
+				updateStatisticaLlm(stat.getId(), new ArrayList<>(datiMap.values()));
+			}
+		} catch(NotFoundException notFound){
+			if(this.debug){
+				this.logDebug(notFound.getMessage(),notFound);
+			}
+		} catch(Throwable e){
+			this.logError("Rilevato errore durante la generazione delle statistiche LLM: "+e.getMessage(),e);
 		}
 	}
 	

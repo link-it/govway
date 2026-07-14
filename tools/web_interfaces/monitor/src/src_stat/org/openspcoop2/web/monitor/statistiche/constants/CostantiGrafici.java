@@ -272,8 +272,9 @@ public class CostantiGrafici {
 	public static final String TIPO_DISTRIBUZIONE_SERVIZIO = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.TIPO_DISTRIBUZIONE_SERVIZIO;
 	public static final String TIPO_DISTRIBUZIONE_SOGGETTO_REMOTO = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.TIPO_DISTRIBUZIONE_SOGGETTO_REMOTO;
 	public static final String TIPO_DISTRIBUZIONE_SOGGETTO_LOCALE = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.TIPO_DISTRIBUZIONE_SOGGETTO_LOCALE;
+	public static final String TIPO_DISTRIBUZIONE_LLM = "distribuzioneLlm";
 	public static final String TIPO_DISTRIBUZIONE_PERSONALIZZATA = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.TIPO_DISTRIBUZIONE_PERSONALIZZATA;
-	
+
 	public static final String MBEAN_DISTRIBUZIONE_TEMPORALE = "andamentoTemporaleBean";
 	public static final String MBEAN_DISTRIBUZIONE_ESITI = "andamentoTemporaleBean";
 	public static final String MBEAN_DISTRIBUZIONE_ERRORI = "distribuzionePerErroriBean";
@@ -282,6 +283,7 @@ public class CostantiGrafici {
 	public static final String MBEAN_DISTRIBUZIONE_SERVIZIO = "distribuzionePerServizioBean";
 	public static final String MBEAN_DISTRIBUZIONE_SOGGETTO_REMOTO = "distribuzionePerSoggettoBean";
 	public static final String MBEAN_DISTRIBUZIONE_SOGGETTO_LOCALE = "distribuzionePerSoggettoBean";
+	public static final String MBEAN_DISTRIBUZIONE_LLM = "distribuzionePerLlmBean";
 	public static final String MBEAN_DISTRIBUZIONE_PERSONALIZZATA = "statistichePersonalizzateBean";
 	
 	public static final String SEARCH_DISTRIBUZIONE_TEMPORALE = "andamentoTemporaleSearchForm";

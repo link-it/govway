@@ -199,13 +199,46 @@ public class StatisticheOrarie extends AbstractStatistiche {
 				stat.addStatisticaOrariaContenuti(statisticaContenuti[i]);
 			}
 			((IStatisticaOrariaService)this.statisticaServiceDAO).update(stat);
-			
+
 		}catch(Exception e){
 			throw new StatisticException(e.getMessage(),e);
 		}
 
 	}
-	
+
+	@Override
+	protected boolean isStatisticheLlmSupportata() {
+		return true;
+	}
+
+	@Override
+	protected void updateStatisticaLlm(long idStatistica, java.util.List<StatisticaLlmDato> datiLlm) throws StatisticException {
+		try{
+			StatisticaOraria stat = ((IDBStatisticaOrariaService)this.statisticaServiceDAO).get(idStatistica);
+			for (StatisticaLlmDato dato : datiLlm) {
+				org.openspcoop2.core.statistiche.StatisticaOrariaLlm llm = new org.openspcoop2.core.statistiche.StatisticaOrariaLlm();
+				llm.setData(stat.getStatisticaBase().getData());
+				llm.setLlmProvider(dato.getLlmProvider());
+				llm.setLlmModel(dato.getLlmModel());
+				llm.setLlmProviderBinding(dato.getLlmProviderBinding());
+				llm.setTokenInput(dato.getTokenInput());
+				llm.setTokenOutput(dato.getTokenOutput());
+				llm.setCostEstimated(dato.getCostEstimated());
+				llm.setNumeroTransazioni(dato.getNumeroTransazioni());
+				llm.setDimensioniBytesBandaComplessiva(dato.getBandaComplessiva());
+				llm.setDimensioniBytesBandaInterna(dato.getBandaInterna());
+				llm.setDimensioniBytesBandaEsterna(dato.getBandaEsterna());
+				llm.setLatenzaTotale(dato.getLatenzaTotale());
+				llm.setLatenzaPorta(dato.getLatenzaPorta());
+				llm.setLatenzaServizio(dato.getLatenzaServizio());
+				stat.addStatisticaOrariaLlm(llm);
+			}
+			((IStatisticaOrariaService)this.statisticaServiceDAO).update(stat);
+		}catch(Exception e){
+			throw new StatisticException(e.getMessage(),e);
+		}
+	}
+
 	@Override
 	protected boolean isGestioneUltimoIntervallo(StatisticsConfig config) {
 		return config.isStatisticheOrarieGestioneUltimoIntervallo();

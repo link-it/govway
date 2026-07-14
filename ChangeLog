@@ -1,3 +1,23 @@
+2026-07-14  Andrea Poli <apoli@link.it>
+
+	* [GovWayMonitor]
+	Aggiunta la distribuzione 'Distribuzione per Dati LLM' in Analisi Statistica: raggruppamento per
+	Provider / Modello / Provider Binding e metrica selezionabile (Numero Transazioni, Occupazione Banda
+	con relativo Tipo Banda, Tempo Medio Risposta con relativo Tipo Latenza, Token con relativo Tipo Token
+	Input/Output/Complessivi, Costo Stimato). Sono supportati i report Istogramma, Torta e Tabella e le
+	visualizzazioni a 2 dimensioni, 3 dimensioni (serie temporale con heatmap) e 3 dimensioni personalizzato
+	(incrocio con una seconda dimensione: Tag/API/Operazione/Esito/Soggetto/Applicativo/Token/Indirizzo IP).
+	Esportazione dei risultati in CSV, XLS, PDF, XML e JSON (costo formattato con simbolo di valuta).
+
+2026-07-14  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Introdotto il motore di generazione delle statistiche LLM: durante la generazione delle statistiche
+	orarie e giornaliere i dati di 'transazioni_llm' vengono aggregati nelle tabelle satellite
+	'stat_orarie_llm' e 'stat_giorni_llm', raggruppati per (data, provider, modello, provider binding)
+	con tutte le metriche (numero transazioni, occupazione banda complessiva/interna/esterna, latenze
+	totale/porta/servizio, token input/output e costo stimato).
+
 2026-07-10  Andrea Poli <apoli@link.it>
 
 	* [GovWayMonitor]

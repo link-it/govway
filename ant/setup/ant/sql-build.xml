@@ -361,6 +361,18 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 					<param name="value" value="CREATE INDEX INDEX_STAT_MONTH "/>
 				</antcall>
 
+				<!-- Indice covering completo LLM (il COVER, id_stat-leading, resta sempre attivo per la join) -->
+				<antcall target="replace_token">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="-- CREATE INDEX INDEX_STAT_HOUR_LLM_FULL "/>
+					<param name="value" value="CREATE INDEX INDEX_STAT_HOUR_LLM_FULL "/>
+				</antcall>
+				<antcall target="replace_token">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="-- CREATE INDEX INDEX_STAT_DAY_LLM_FULL "/>
+					<param name="value" value="CREATE INDEX INDEX_STAT_DAY_LLM_FULL "/>
+				</antcall>
+
 			</then>
 		</if>
 
@@ -415,6 +427,18 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 				    <param name="file" value="${file}"/>
 					<param name="token" value="-- CREATE INDEX INDEX_STAT_MONTH "/>
 					<param name="value" value="CREATE INDEX INDEX_STAT_MONTH "/>
+				</antcall>
+
+				<!-- Indice covering completo LLM (il COVER, id_stat-leading, resta sempre attivo per la join) -->
+				<antcall target="replace_token">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="-- CREATE INDEX INDEX_STAT_HOUR_LLM_FULL "/>
+					<param name="value" value="CREATE INDEX INDEX_STAT_HOUR_LLM_FULL "/>
+				</antcall>
+				<antcall target="replace_token">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="-- CREATE INDEX INDEX_STAT_DAY_LLM_FULL "/>
+					<param name="value" value="CREATE INDEX INDEX_STAT_DAY_LLM_FULL "/>
 				</antcall>
 
 				<antcall target="replace_token">

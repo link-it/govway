@@ -75,6 +75,13 @@
 				           	</ui:include>
 						</c:if>
 						
+						<c:if test="#{analisiStatisticaBean.tipoDistribuzione == 'distribuzioneLlm'}">
+							<ui:include src="/stat/includes/searchFormDistribLlm.xhtml">
+				               	<ui:param name="mBean" value="#{analisiStatisticaBean.mBean}" />
+				               	<ui:param name="search" value="#{mBean.search}" />
+				           	</ui:include>
+						</c:if>
+
 						<c:if test="#{applicationBean.showStatistichePersonalizzate and analisiStatisticaBean.tipoDistribuzione == 'personalizzata'}">
 							<ui:include src="/stat/includes/searchFormDistribPersonalizzata.xhtml">
 				               	<ui:param name="mBean" value="#{analisiStatisticaBean.mBean}" />
