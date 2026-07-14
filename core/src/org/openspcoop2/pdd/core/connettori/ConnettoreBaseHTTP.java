@@ -281,16 +281,34 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 				return;
 			}
 			
-			boolean urlHttpsOverrideJvmConfiguration = ConnettoreHTTPUrlHttpsKeystoreRepository.isEnabled(this.idModulo, this.proprietaPorta);
+			boolean urlHttpsOverrideJvmConfiguration = ConnettoreHTTPUrlHttpsKeystoreRepository.isEnabled(this.idModulo, this.proprietaPorta, this.policyTimeoutConfig);
 			if(!urlHttpsOverrideJvmConfiguration) {
 				if(this.debug){
 					this.logger.debug("Location https ["+location.trim()+"]; gestione personalizzata dei keystore disabilitata");
 				}
 				return;
 			}
-			
-			ConnettoreHTTPUrlHttpsKeystoreRepository utils = new ConnettoreHTTPUrlHttpsKeystoreRepository(this.debug, this.logger, this.idModulo);
-			utils.init(this.proprietaPorta, this.busta, this.dynamicMap, this.getPddContext());
+
+			// Contesto erogazione/fruizione per il naming di default del file di configurazione:
+			// - connettori applicativi: dedotto dall'idModulo (ConsegnaContenutiApplicativi=erogazione, altrimenti fruizione);
+			// - connettori interni (negoziazione/validazione token, attribute authority): l'idModulo e' Ricezione* (sempre "fruizione"),
+			//   quindi il contesto va determinato dalla porta (pa=erogazione -> destinatario, pd=fruizione -> mittente).
+			boolean fruizioniContext;
+			if(this.policyTimeoutConfig!=null) {
+				fruizioniContext = (this.pa==null);
+			}
+			else {
+				fruizioniContext = !ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo);
+			}
+			ConnettoreHTTPUrlHttpsKeystoreRepository utils = new ConnettoreHTTPUrlHttpsKeystoreRepository(this.debug, this.logger, fruizioniContext);
+			Map<String,Object> dynamicMapOverride = this.dynamicMap;
+			if(dynamicMapOverride==null) {
+				// La dynamicMap viene costruita lazy solo in presenza di una location dinamica; per garantire la risoluzione
+				// del nome del file di configurazione (default derivato dalla busta o valore dinamico) la costruiamo qui se assente.
+				dynamicMapOverride = DynamicMapBuilderUtils.buildDynamicMap(this.busta, this.requestInfo, this.getPddContext(),
+						this.logger!=null ? this.logger.getLogger() : null);
+			}
+			utils.init(this.proprietaPorta, this.busta, dynamicMapOverride, this.getPddContext());
 			this.sslContextProperties = utils.readSSLContext(this.requestInfo);
 		}
 		

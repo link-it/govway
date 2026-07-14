@@ -1532,14 +1532,20 @@ public class OpenSPCoop2Properties {
 			this.isConnettoreHttps_useSecureRandom();
 			
 			// Connettore http (url https)
-			if(this.isConnettoreHttp_urlHttps_overrideDefaultConfiguration_inoltroBuste()) {
+			// I connettori interni (negoziazione/validazione token, attribute authority) riusano i repository di inoltroBuste (fruizioni)
+			// e consegnaContenutiApplicativi (erogazioni), per cui la presenza di un default globale per-tipo ne richiede la validazione.
+			boolean overrideInternalConnector = this.isConnettoreHttp_urlHttps_overrideDefaultConfiguration_tokenNegoziazione() ||
+					this.isConnettoreHttp_urlHttps_overrideDefaultConfiguration_tokenValidazione() ||
+					this.isConnettoreHttp_urlHttps_overrideDefaultConfiguration_attributeAuthority();
+			if(this.isConnettoreHttp_urlHttps_overrideDefaultConfiguration_inoltroBuste() || overrideInternalConnector) {
 				this.getConnettoreHttp_urlHttps_repository_inoltroBuste();
 			}
-			if(this.isConnettoreHttp_urlHttps_overrideDefaultConfiguration_consegnaContenutiApplicativi()) {
+			if(this.isConnettoreHttp_urlHttps_overrideDefaultConfiguration_consegnaContenutiApplicativi() || overrideInternalConnector) {
 				this.getConnettoreHttp_urlHttps_repository_consegnaContenutiApplicativi();
 			}
 			if(this.isConnettoreHttp_urlHttps_overrideDefaultConfiguration_inoltroBuste() ||
-					this.isConnettoreHttp_urlHttps_overrideDefaultConfiguration_consegnaContenutiApplicativi()) {
+					this.isConnettoreHttp_urlHttps_overrideDefaultConfiguration_consegnaContenutiApplicativi() ||
+					overrideInternalConnector) {
 				if(this.isConnettoreHttp_urlHttps_cacheEnabled()) {
 					this.getConnettoreHttp_urlHttps_cacheSize();
 				}
@@ -15104,8 +15110,71 @@ public class OpenSPCoop2Properties {
 		return this.isConnettoreHttp_urlHttps_overrideDefaultConfiguration_consegnaContenutiApplicativi;
 	}
 	
+	private Boolean isConnettoreHttp_urlHttps_overrideDefaultConfiguration_tokenNegoziazione = null;
+	public boolean isConnettoreHttp_urlHttps_overrideDefaultConfiguration_tokenNegoziazione() {
+		if(this.isConnettoreHttp_urlHttps_overrideDefaultConfiguration_tokenNegoziazione==null){
+			try{
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.connettori.tokenNegoziazione.http.urlHttps.overrideDefaultConfiguration");
+				if(name!=null){
+					name = name.trim();
+					this.isConnettoreHttp_urlHttps_overrideDefaultConfiguration_tokenNegoziazione = Boolean.parseBoolean(name);
+				}else{
+					this.isConnettoreHttp_urlHttps_overrideDefaultConfiguration_tokenNegoziazione = false;
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.tokenNegoziazione.http.urlHttps.overrideDefaultConfiguration' non impostata, viene utilizzato il default="+false+", errore:"+e.getMessage(),e);
+				this.isConnettoreHttp_urlHttps_overrideDefaultConfiguration_tokenNegoziazione = false;
+			}
+		}
+
+		return this.isConnettoreHttp_urlHttps_overrideDefaultConfiguration_tokenNegoziazione;
+	}
+
+	private Boolean isConnettoreHttp_urlHttps_overrideDefaultConfiguration_tokenValidazione = null;
+	public boolean isConnettoreHttp_urlHttps_overrideDefaultConfiguration_tokenValidazione() {
+		if(this.isConnettoreHttp_urlHttps_overrideDefaultConfiguration_tokenValidazione==null){
+			try{
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.connettori.tokenValidazione.http.urlHttps.overrideDefaultConfiguration");
+				if(name!=null){
+					name = name.trim();
+					this.isConnettoreHttp_urlHttps_overrideDefaultConfiguration_tokenValidazione = Boolean.parseBoolean(name);
+				}else{
+					this.isConnettoreHttp_urlHttps_overrideDefaultConfiguration_tokenValidazione = false;
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.tokenValidazione.http.urlHttps.overrideDefaultConfiguration' non impostata, viene utilizzato il default="+false+", errore:"+e.getMessage(),e);
+				this.isConnettoreHttp_urlHttps_overrideDefaultConfiguration_tokenValidazione = false;
+			}
+		}
+
+		return this.isConnettoreHttp_urlHttps_overrideDefaultConfiguration_tokenValidazione;
+	}
+
+	private Boolean isConnettoreHttp_urlHttps_overrideDefaultConfiguration_attributeAuthority = null;
+	public boolean isConnettoreHttp_urlHttps_overrideDefaultConfiguration_attributeAuthority() {
+		if(this.isConnettoreHttp_urlHttps_overrideDefaultConfiguration_attributeAuthority==null){
+			try{
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.connettori.attributeAuthority.http.urlHttps.overrideDefaultConfiguration");
+				if(name!=null){
+					name = name.trim();
+					this.isConnettoreHttp_urlHttps_overrideDefaultConfiguration_attributeAuthority = Boolean.parseBoolean(name);
+				}else{
+					this.isConnettoreHttp_urlHttps_overrideDefaultConfiguration_attributeAuthority = false;
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.attributeAuthority.http.urlHttps.overrideDefaultConfiguration' non impostata, viene utilizzato il default="+false+", errore:"+e.getMessage(),e);
+				this.isConnettoreHttp_urlHttps_overrideDefaultConfiguration_attributeAuthority = false;
+			}
+		}
+
+		return this.isConnettoreHttp_urlHttps_overrideDefaultConfiguration_attributeAuthority;
+	}
+
 	private File getConnettoreHttp_urlHttps_repository_inoltroBuste = null;
-	public File getConnettoreHttp_urlHttps_repository_inoltroBuste() throws CoreException {	
+	public File getConnettoreHttp_urlHttps_repository_inoltroBuste() throws CoreException {
 		if(this.getConnettoreHttp_urlHttps_repository_inoltroBuste==null){
 			try{ 
 				String name = null;

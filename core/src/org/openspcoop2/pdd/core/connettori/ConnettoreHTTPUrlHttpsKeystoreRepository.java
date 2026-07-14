@@ -28,6 +28,7 @@ import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.pdd.config.CostantiProprieta;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.PdDContext;
+import org.openspcoop2.pdd.core.controllo_traffico.PolicyTimeoutConfig;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.protocol.sdk.Busta;
@@ -45,7 +46,15 @@ import org.openspcoop2.utils.transport.http.SSLConfig;
  */
 public class ConnettoreHTTPUrlHttpsKeystoreRepository {
 
-	protected static boolean isEnabled(String idModulo, List<Proprieta> proprietaPorta) {
+	protected static boolean isEnabled(String idModulo, List<Proprieta> proprietaPorta, PolicyTimeoutConfig policyTimeoutConfig) {
+
+		// Connettori interni (negoziazione/validazione token, attribute authority): identificati dalla presenza della PolicyTimeoutConfig.
+		// Per questi connettori l'override JVM-HTTPS non si applica per default (evita di ereditare la configurazione della porta,
+		// dove tra l'altro la busta di richiesta non e' disponibile), ma va abilitato esplicitamente tramite proprieta' dedicate (opt-in per tipo).
+		if(policyTimeoutConfig!=null) {
+			return isEnabledInternalConnector(proprietaPorta, policyTimeoutConfig);
+		}
+
 		boolean urlHttpsOverrideJvmConfiguration = false;
 		if(ConsegnaContenutiApplicativi.ID_MODULO.equals(idModulo)){
 			urlHttpsOverrideJvmConfiguration = OpenSPCoop2Properties.getInstance().isConnettoreHttp_urlHttps_overrideDefaultConfiguration_consegnaContenutiApplicativi();
@@ -54,12 +63,38 @@ public class ConnettoreHTTPUrlHttpsKeystoreRepository {
 			// InoltroBuste e InoltroRisposte
 			urlHttpsOverrideJvmConfiguration = OpenSPCoop2Properties.getInstance().isConnettoreHttp_urlHttps_overrideDefaultConfiguration_inoltroBuste();
 		}
-		
+
 		if(proprietaPorta!=null && !proprietaPorta.isEmpty()) {
 			urlHttpsOverrideJvmConfiguration = CostantiProprieta.isConnettoriHttpsEndpointJvmConfigOverrideEnabled(proprietaPorta, urlHttpsOverrideJvmConfiguration);
 		}
-		
+
 		return urlHttpsOverrideJvmConfiguration;
+	}
+
+	private static boolean isEnabledInternalConnector(List<Proprieta> proprietaPorta, PolicyTimeoutConfig policyTimeoutConfig) {
+		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
+		if(policyTimeoutConfig.getPolicyNegoziazione()!=null) {
+			boolean defaultValue = op2Properties.isConnettoreHttp_urlHttps_overrideDefaultConfiguration_tokenNegoziazione();
+			return (proprietaPorta!=null && !proprietaPorta.isEmpty()) ?
+					CostantiProprieta.isConnettoriHttpsEndpointJvmConfigOverrideTokenNegoziazioneEnabled(proprietaPorta, defaultValue) :
+					defaultValue;
+		}
+		if(policyTimeoutConfig.getAttributeAuthority()!=null) {
+			boolean defaultValue = op2Properties.isConnettoreHttp_urlHttps_overrideDefaultConfiguration_attributeAuthority();
+			return (proprietaPorta!=null && !proprietaPorta.isEmpty()) ?
+					CostantiProprieta.isConnettoriHttpsEndpointJvmConfigOverrideAttributeAuthorityEnabled(proprietaPorta, defaultValue) :
+					defaultValue;
+		}
+		if(policyTimeoutConfig.getPolicyValidazioneDynamicDiscovery()!=null ||
+				policyTimeoutConfig.getPolicyValidazioneIntrospection()!=null ||
+				policyTimeoutConfig.getPolicyValidazioneUserInfo()!=null ||
+				policyTimeoutConfig.getPolicyValidazioneJwt()!=null) {
+			boolean defaultValue = op2Properties.isConnettoreHttp_urlHttps_overrideDefaultConfiguration_tokenValidazione();
+			return (proprietaPorta!=null && !proprietaPorta.isEmpty()) ?
+					CostantiProprieta.isConnettoriHttpsEndpointJvmConfigOverrideTokenValidazioneEnabled(proprietaPorta, defaultValue) :
+					defaultValue;
+		}
+		return false;
 	}
 	
 	private boolean debug;
@@ -69,13 +104,13 @@ public class ConnettoreHTTPUrlHttpsKeystoreRepository {
 	
 	private File config;
 	
-	public ConnettoreHTTPUrlHttpsKeystoreRepository(boolean debug, ConnettoreLogger logger, String idModulo) throws ConnettoreException {
-		
+	public ConnettoreHTTPUrlHttpsKeystoreRepository(boolean debug, ConnettoreLogger logger, boolean fruizioni) throws ConnettoreException {
+
 		try {
-		
+
 			this.debug = debug;
 			this.logger = logger;
-			this.fruizioni = !ConsegnaContenutiApplicativi.ID_MODULO.equals(idModulo);
+			this.fruizioni = fruizioni;
 			this.op2Properties = OpenSPCoop2Properties.getInstance();
 						
 		}catch(Exception e) {

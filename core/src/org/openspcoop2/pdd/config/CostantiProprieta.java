@@ -797,9 +797,27 @@ public class CostantiProprieta {
 	private static final String CONNETTORE_HTTPS_ENDPOINT_JVM_CONFIG_OVERRIDE_ENABLED = "connettori.httpsEndpoint.jvmConfigOverride.enabled";
 	private static final String CONNETTORE_HTTPS_ENDPOINT_JVM_CONFIG_OVERRIDE_REPOSITORY = "connettori.httpsEndpoint.jvmConfigOverride.repository";
 	private static final String CONNETTORE_HTTPS_ENDPOINT_JVM_CONFIG_OVERRIDE_CONFIG = "connettori.httpsEndpoint.jvmConfigOverride.config";
-	
+
+	// Connettori interni (negoziazione/validazione token, attribute authority): l'override JVM-HTTPS non si applica per default,
+	// va abilitato esplicitamente tramite le seguenti proprieta' (opt-in per tipo).
+	private static final String CONNETTORE_HTTPS_ENDPOINT_JVM_CONFIG_OVERRIDE_TOKEN_NEGOZIAZIONE_ENABLED = "connettori.httpsEndpoint.jvmConfigOverride.tokenNegoziazione.enabled";
+	private static final String CONNETTORE_HTTPS_ENDPOINT_JVM_CONFIG_OVERRIDE_TOKEN_VALIDAZIONE_ENABLED = "connettori.httpsEndpoint.jvmConfigOverride.tokenValidazione.enabled";
+	private static final String CONNETTORE_HTTPS_ENDPOINT_JVM_CONFIG_OVERRIDE_ATTRIBUTE_AUTHORITY_ENABLED = "connettori.httpsEndpoint.jvmConfigOverride.attributeAuthority.enabled";
+
 	public static boolean isConnettoriHttpsEndpointJvmConfigOverrideEnabled(List<Proprieta> proprieta, boolean defaultValue) {
 		return readBooleanValueWithDefault(proprieta, CONNETTORE_HTTPS_ENDPOINT_JVM_CONFIG_OVERRIDE_ENABLED, defaultValue, CONNETTORE_HTTPS_ENDPOINT_JVM_CONFIG_OVERRIDE_VALUE_ENABLED, CONNETTORE_HTTPS_ENDPOINT_JVM_CONFIG_OVERRIDE_VALUE_DISABLED);
+	}
+
+	public static boolean isConnettoriHttpsEndpointJvmConfigOverrideTokenNegoziazioneEnabled(List<Proprieta> proprieta, boolean defaultValue) {
+		return readBooleanValueWithDefault(proprieta, CONNETTORE_HTTPS_ENDPOINT_JVM_CONFIG_OVERRIDE_TOKEN_NEGOZIAZIONE_ENABLED, defaultValue, CONNETTORE_HTTPS_ENDPOINT_JVM_CONFIG_OVERRIDE_VALUE_ENABLED, CONNETTORE_HTTPS_ENDPOINT_JVM_CONFIG_OVERRIDE_VALUE_DISABLED);
+	}
+
+	public static boolean isConnettoriHttpsEndpointJvmConfigOverrideTokenValidazioneEnabled(List<Proprieta> proprieta, boolean defaultValue) {
+		return readBooleanValueWithDefault(proprieta, CONNETTORE_HTTPS_ENDPOINT_JVM_CONFIG_OVERRIDE_TOKEN_VALIDAZIONE_ENABLED, defaultValue, CONNETTORE_HTTPS_ENDPOINT_JVM_CONFIG_OVERRIDE_VALUE_ENABLED, CONNETTORE_HTTPS_ENDPOINT_JVM_CONFIG_OVERRIDE_VALUE_DISABLED);
+	}
+
+	public static boolean isConnettoriHttpsEndpointJvmConfigOverrideAttributeAuthorityEnabled(List<Proprieta> proprieta, boolean defaultValue) {
+		return readBooleanValueWithDefault(proprieta, CONNETTORE_HTTPS_ENDPOINT_JVM_CONFIG_OVERRIDE_ATTRIBUTE_AUTHORITY_ENABLED, defaultValue, CONNETTORE_HTTPS_ENDPOINT_JVM_CONFIG_OVERRIDE_VALUE_ENABLED, CONNETTORE_HTTPS_ENDPOINT_JVM_CONFIG_OVERRIDE_VALUE_DISABLED);
 	}
 	
 	public static String getConnettoriHttpsEndpointJvmConfigOverrideRepository(List<Proprieta> proprieta, String defaultValue) {

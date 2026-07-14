@@ -825,6 +825,9 @@ public class GestoreTokenAttributeAuthorityUtilities {
 		PolicyTimeoutConfig policyConfig = new PolicyTimeoutConfig();
 		policyConfig.setAttributeAuthority(policyAttributeAuthority.getName());
 		connettoreMsg.setPolicyTimeoutConfig(policyConfig);
+		// Rende disponibile la busta al connettore: necessaria per la risoluzione del file di configurazione quando l'override JVM-HTTPS
+		// e' abilitato in opt-in su questo connettore interno (connettori.httpsEndpoint.jvmConfigOverride.attributeAuthority.enabled)
+		connettoreMsg.setBusta(busta);
 		
 		ForwardProxy forwardProxy = null;
 		ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(state);

@@ -471,6 +471,9 @@ public class GestoreTokenNegoziazioneUtilities {
 		PolicyTimeoutConfig policyConfig = new PolicyTimeoutConfig();
 		policyConfig.setPolicyNegoziazione(policyNegoziazioneToken.getName());
 		connettoreMsg.setPolicyTimeoutConfig(policyConfig);
+		// Rende disponibile la busta al connettore: necessaria per la risoluzione del file di configurazione quando l'override JVM-HTTPS
+		// e' abilitato in opt-in su questo connettore interno (connettori.httpsEndpoint.jvmConfigOverride.tokenNegoziazione.enabled)
+		connettoreMsg.setBusta(busta);
 		
 		ForwardProxy forwardProxy = null;
 		ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(state);

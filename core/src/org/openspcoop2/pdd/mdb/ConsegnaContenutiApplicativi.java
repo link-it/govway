@@ -700,6 +700,10 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		msgDiag.setIdCorrelazioneApplicativa(idCorrelazioneApplicativa);
 		msgDiag.addKeyword(CostantiPdD.KEY_SA_EROGATORE, servizioApplicativo);
 		if(servizioApplicativoFruitore!=null){
+			if(bustaRichiesta!=null && bustaRichiesta.getServizioApplicativoFruitore()==null) {
+				// rende disponibile ${busta:servizioApplicativoFruitore} anche ai connettori interni (es. negoziazione token)
+				bustaRichiesta.setServizioApplicativoFruitore(servizioApplicativoFruitore);
+			}
 			msgDiag.addKeyword(CostantiPdD.KEY_SA_FRUITORE, servizioApplicativoFruitore);
 		}
 		boolean soggettoVirtuale = false;

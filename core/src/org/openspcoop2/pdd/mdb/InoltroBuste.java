@@ -396,6 +396,10 @@ public class InoltroBuste extends GenericLib{
 		String servizioApplicativoFruitore = null;
 		if(CostantiPdD.SERVIZIO_APPLICATIVO_ANONIMO.equals(richiestaDelegata.getServizioApplicativo())==false){
 			servizioApplicativoFruitore = richiestaDelegata.getServizioApplicativo();
+			if(bustaRichiesta!=null && bustaRichiesta.getServizioApplicativoFruitore()==null) {
+				// rende disponibile ${busta:servizioApplicativoFruitore} anche ai connettori interni (es. negoziazione token)
+				bustaRichiesta.setServizioApplicativoFruitore(servizioApplicativoFruitore);
+			}
 			msgDiag.addKeyword(CostantiPdD.KEY_SA_FRUITORE, servizioApplicativoFruitore);
 		}else{
 			msgDiag.addKeyword(CostantiPdD.KEY_SA_FRUITORE, CostantiPdD.SERVIZIO_APPLICATIVO_ANONIMO);

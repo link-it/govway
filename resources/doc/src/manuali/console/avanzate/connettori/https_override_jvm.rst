@@ -15,6 +15,14 @@ Per abilitare l'utilizzo di un repository delle configurazioni https devono esse
 
 - *connettori.httpsEndpoint.jvmConfigOverride.config*: consente di indicare il nome del file di proprietà da utilizzare che deve esistere all'interno del repository riferito nella precedente proprietà (default: '<TIPO_EROGATORE><NOME_EROGATORE>.properties' per le erogazioni e '<TIPO_FRUITORE><NOME_FRUITORE>.properties' per le fruizioni). Il nome del file indicato può contenere delle macro, risolte a runtime dal gateway, per creare dei path dinamici (per ulteriori dettagli si rimanda alla sezione :ref:`valoriDinamici`).
 
+La configurazione https definita tramite le proprietà precedenti viene applicata al solo connettore verso il backend. Durante l'elaborazione di una richiesta GovWay può effettuare ulteriori connessioni https interne (verso il token endpoint per la negoziazione o la validazione del token e verso una attribute authority); per queste connessioni interne l'override **non** viene applicato per default, continuando quindi ad utilizzare la configurazione https della JVM. È possibile abilitare l'override anche per tali connessioni interne, in modo selettivo, registrando sull'erogazione o sulla fruizione le seguenti :ref:`configProprieta`:
+
+- *connettori.httpsEndpoint.jvmConfigOverride.tokenNegoziazione.enabled*: abilita l'override per la connessione di negoziazione del token; i valori associabili sono 'true' o 'false' (default: 'false').
+
+- *connettori.httpsEndpoint.jvmConfigOverride.tokenValidazione.enabled*: abilita l'override per la connessione di validazione del token (introspection / userinfo); i valori associabili sono 'true' o 'false' (default: 'false').
+
+- *connettori.httpsEndpoint.jvmConfigOverride.attributeAuthority.enabled*: abilita l'override per la connessione verso una attribute authority; i valori associabili sono 'true' o 'false' (default: 'false').
+
 I valori di default, per quanto concerne l'abilitazione della funzionalità e il repository delle configurazione, possono essere impostati anche a livello globale nel file 'govway_local.properties' tramite le proprietà descritte di seguito che variano per erogazioni e fruizioni.
 
 Proprietà a livello globale per le erogazioni:
@@ -30,6 +38,14 @@ Proprietà a livello globale per le fruizioni:
 
       org.openspcoop2.pdd.connettori.inoltroBuste.http.urlHttps.overrideDefaultConfiguration=false
       org.openspcoop2.pdd.connettori.inoltroBuste.http.urlHttps.repository=<directory-lavoro>/https/fruizioni
+
+Allo stesso modo è possibile impostare a livello globale il default di abilitazione dell'override per le connessioni interne (negoziazione e validazione del token, attribute authority):
+
+   ::
+
+      org.openspcoop2.pdd.connettori.tokenNegoziazione.http.urlHttps.overrideDefaultConfiguration=false
+      org.openspcoop2.pdd.connettori.tokenValidazione.http.urlHttps.overrideDefaultConfiguration=false
+      org.openspcoop2.pdd.connettori.attributeAuthority.http.urlHttps.overrideDefaultConfiguration=false
 
 
 **Proprietà per la personalizzazione della configurazione https**
