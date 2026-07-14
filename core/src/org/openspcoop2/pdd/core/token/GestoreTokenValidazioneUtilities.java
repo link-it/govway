@@ -3167,7 +3167,8 @@ public class GestoreTokenValidazioneUtilities {
 		if (pa != null)
 			portProperty = pa.getProprieta();
 		HttpLibrary lib = CostantiProprieta.getConnettoreHttpLibrary(
-				portProperty, CostantiProprieta.CONNETTORE_TOKEN_VALIDATE_LIBRARY);
+				portProperty, CostantiProprieta.CONNETTORE_TOKEN_VALIDATE_LIBRARY,
+				requestInfo!=null ? requestInfo.getProtocolContext() : null);
 		
 		if(https) {
 			connettoreMsg.setTipoConnettore(TipiConnettore.HTTPS.getNome());
@@ -3198,7 +3199,10 @@ public class GestoreTokenValidazioneUtilities {
 			break;
 		}
 		connettoreMsg.setPolicyTimeoutConfig(policyConfig);
-		
+		// Rende disponibile la busta al connettore: necessaria per la risoluzione del file di configurazione quando l'override JVM-HTTPS
+		// e' abilitato in opt-in su questo connettore interno (connettori.httpsEndpoint.jvmConfigOverride.tokenValidazione.enabled)
+		connettoreMsg.setBusta(busta);
+
 		ForwardProxy forwardProxy = TokenUtilities.getForwardProxy(policyGestioneToken,
 				requestInfo, state, delegata,
 				idDominio, idServizio);

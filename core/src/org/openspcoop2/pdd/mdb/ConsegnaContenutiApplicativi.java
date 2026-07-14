@@ -858,6 +858,10 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 		this.msgDiag.setIdCorrelazioneApplicativa(this.idCorrelazioneApplicativa);
 		this.msgDiag.addKeyword(CostantiPdD.KEY_SA_EROGATORE, this.servizioApplicativo);
 		if(this.servizioApplicativoFruitore!=null){
+			if(this.bustaRichiesta!=null && this.bustaRichiesta.getServizioApplicativoFruitore()==null) {
+				// rende disponibile ${busta:servizioApplicativoFruitore} anche ai connettori interni (es. negoziazione token)
+				this.bustaRichiesta.setServizioApplicativoFruitore(this.servizioApplicativoFruitore);
+			}
 			this.msgDiag.addKeyword(CostantiPdD.KEY_SA_FRUITORE, this.servizioApplicativoFruitore);
 		}
 		boolean soggettoVirtuale = false;

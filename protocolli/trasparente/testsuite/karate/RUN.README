@@ -127,6 +127,7 @@ Su tomcat 11, essendo i controlli più rigidi, è necessario aggiungere anche qu
 - Impostare in govway_local.properties 
 
 	org.openspcoop2.pdd.connettori.forceLibraryViaHeader=GovWay-TestSuite-HttpLibrary
+	org.openspcoop2.pdd.connettori.forceTokenLibraryViaHeader=GovWay-TestSuite-TokenHttpLibrary
 
 	org.openspcoop2.pdd.statistiche.generazione.baseOraria.timer.intervalloSecondi=8
 	org.openspcoop2.pdd.statistiche.generazione.baseGiornaliera.timer.intervalloSecondi=8
@@ -348,9 +349,22 @@ Su tomcat 11, essendo i controlli più rigidi, è necessario aggiungere anche qu
 
         cp -r https/override/ /etc/govway/keys/
 	mkdir -p /etc/govway/https/erogazioni/
-	cp https/override/erogazioni/erogazione_HttpsOverrideJvmConfigSoggetto1.properties  /etc/govway/https/erogazioni/
+	cp https/override/erogazioni/*.properties  /etc/govway/https/erogazioni/
 	mkdir -p /etc/govway/https/fruizioni/
-	cp https/override/fruizioni/fruizione_HttpsOverrideJvmConfigSoggetto1.properties  /etc/govway/https/fruizioni/
+	cp https/override/fruizioni/*.properties  /etc/govway/https/fruizioni/
+
+  Per i test di override sui CONNETTORI INTERNI (negoziazione/validazione token, attribute authority),
+  classi *NegoziazioneTokenTest / *ValidazioneTokenTest / *AttributeAuthorityTest (varianti HttpCoreBIO e UrlConnBIO):
+  impostare in govway_local.properties i default globali per-tipo a 'true' (lo scenario 'optInGlobale' vi si appoggia;
+  lo scenario 'defaultNoOverride' li disattiva a livello di porta):
+
+	org.openspcoop2.pdd.connettori.tokenNegoziazione.http.urlHttps.overrideDefaultConfiguration=true
+	org.openspcoop2.pdd.connettori.tokenValidazione.http.urlHttps.overrideDefaultConfiguration=true
+	org.openspcoop2.pdd.connettori.attributeAuthority.http.urlHttps.overrideDefaultConfiguration=true
+
+  La libreria http del connettore interno viene pilotata dall'header 'GovWay-TestSuite-TokenHttpLibrary'
+  (proprieta' org.openspcoop2.pdd.connettori.forceTokenLibraryViaHeader), consentendo di ripetere la stessa
+  batteria su HttpCore5 (BIO) e UrlConnection. Le risposte degli endpoint interni sono pre-scritte su /tmp dalle classi di test.
 
 - Per i test via proxy forward:
 

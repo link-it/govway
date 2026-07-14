@@ -1,3 +1,12 @@
+2026-07-14  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug #1801
+	Corretto un comportamento per cui l'override della configurazione HTTPS della JVM, se attivato su un connettore, veniva applicato
+	anche alle connessioni interne verso token endpoint (negoziazione e validazione del token) e attribute authority, provocandone il fallimento;
+	l'override viene ora applicato, per impostazione predefinita, al solo connettore verso il backend, con la possibilità di abilitarlo
+	esplicitamente e in modo selettivo anche per tali connessioni interne.
+
 2026-07-08  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

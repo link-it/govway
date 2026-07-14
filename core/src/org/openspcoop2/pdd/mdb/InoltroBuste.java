@@ -560,6 +560,10 @@ public class InoltroBuste extends GenericLib implements IAsyncResponseCallback{
 		this.servizioApplicativoFruitore = null;
 		if(!CostantiPdD.SERVIZIO_APPLICATIVO_ANONIMO.equals(this.richiestaDelegata.getServizioApplicativo())){
 			this.servizioApplicativoFruitore = this.richiestaDelegata.getServizioApplicativo();
+			if(this.bustaRichiesta!=null && this.bustaRichiesta.getServizioApplicativoFruitore()==null) {
+				// rende disponibile ${busta:servizioApplicativoFruitore} anche ai connettori interni (es. negoziazione token)
+				this.bustaRichiesta.setServizioApplicativoFruitore(this.servizioApplicativoFruitore);
+			}
 			this.msgDiag.addKeyword(CostantiPdD.KEY_SA_FRUITORE, this.servizioApplicativoFruitore);
 		}else{
 			this.msgDiag.addKeyword(CostantiPdD.KEY_SA_FRUITORE, CostantiPdD.SERVIZIO_APPLICATIVO_ANONIMO);

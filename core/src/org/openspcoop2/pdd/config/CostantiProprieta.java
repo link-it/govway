@@ -43,6 +43,7 @@ import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.certificate.KeystoreType;
 import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.security.CertificateValidityCheck;
+import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.openspcoop2.utils.transport.http.HttpLibrary;
 import org.openspcoop2.utils.transport.http.HttpLibraryConnection;
 import org.openspcoop2.utils.transport.http.RFC2047Encoding;
@@ -867,11 +868,29 @@ public class CostantiProprieta {
 	private static final String CONNETTORE_HTTPS_ENDPOINT_JVM_CONFIG_OVERRIDE_ENABLED = "connettori.httpsEndpoint.jvmConfigOverride.enabled";
 	private static final String CONNETTORE_HTTPS_ENDPOINT_JVM_CONFIG_OVERRIDE_REPOSITORY = "connettori.httpsEndpoint.jvmConfigOverride.repository";
 	private static final String CONNETTORE_HTTPS_ENDPOINT_JVM_CONFIG_OVERRIDE_CONFIG = "connettori.httpsEndpoint.jvmConfigOverride.config";
-	
+
+	// Connettori interni (negoziazione/validazione token, attribute authority): l'override JVM-HTTPS non si applica per default,
+	// va abilitato esplicitamente tramite le seguenti proprieta' (opt-in per tipo).
+	private static final String CONNETTORE_HTTPS_ENDPOINT_JVM_CONFIG_OVERRIDE_TOKEN_NEGOZIAZIONE_ENABLED = "connettori.httpsEndpoint.jvmConfigOverride.tokenNegoziazione.enabled";
+	private static final String CONNETTORE_HTTPS_ENDPOINT_JVM_CONFIG_OVERRIDE_TOKEN_VALIDAZIONE_ENABLED = "connettori.httpsEndpoint.jvmConfigOverride.tokenValidazione.enabled";
+	private static final String CONNETTORE_HTTPS_ENDPOINT_JVM_CONFIG_OVERRIDE_ATTRIBUTE_AUTHORITY_ENABLED = "connettori.httpsEndpoint.jvmConfigOverride.attributeAuthority.enabled";
+
 	public static boolean isConnettoriHttpsEndpointJvmConfigOverrideEnabled(List<Proprieta> proprieta, boolean defaultValue) {
 		return readBooleanValueWithDefault(proprieta, CONNETTORE_HTTPS_ENDPOINT_JVM_CONFIG_OVERRIDE_ENABLED, defaultValue, CONNETTORE_HTTPS_ENDPOINT_JVM_CONFIG_OVERRIDE_VALUE_ENABLED, CONNETTORE_HTTPS_ENDPOINT_JVM_CONFIG_OVERRIDE_VALUE_DISABLED);
 	}
-	
+
+	public static boolean isConnettoriHttpsEndpointJvmConfigOverrideTokenNegoziazioneEnabled(List<Proprieta> proprieta, boolean defaultValue) {
+		return readBooleanValueWithDefault(proprieta, CONNETTORE_HTTPS_ENDPOINT_JVM_CONFIG_OVERRIDE_TOKEN_NEGOZIAZIONE_ENABLED, defaultValue, CONNETTORE_HTTPS_ENDPOINT_JVM_CONFIG_OVERRIDE_VALUE_ENABLED, CONNETTORE_HTTPS_ENDPOINT_JVM_CONFIG_OVERRIDE_VALUE_DISABLED);
+	}
+
+	public static boolean isConnettoriHttpsEndpointJvmConfigOverrideTokenValidazioneEnabled(List<Proprieta> proprieta, boolean defaultValue) {
+		return readBooleanValueWithDefault(proprieta, CONNETTORE_HTTPS_ENDPOINT_JVM_CONFIG_OVERRIDE_TOKEN_VALIDAZIONE_ENABLED, defaultValue, CONNETTORE_HTTPS_ENDPOINT_JVM_CONFIG_OVERRIDE_VALUE_ENABLED, CONNETTORE_HTTPS_ENDPOINT_JVM_CONFIG_OVERRIDE_VALUE_DISABLED);
+	}
+
+	public static boolean isConnettoriHttpsEndpointJvmConfigOverrideAttributeAuthorityEnabled(List<Proprieta> proprieta, boolean defaultValue) {
+		return readBooleanValueWithDefault(proprieta, CONNETTORE_HTTPS_ENDPOINT_JVM_CONFIG_OVERRIDE_ATTRIBUTE_AUTHORITY_ENABLED, defaultValue, CONNETTORE_HTTPS_ENDPOINT_JVM_CONFIG_OVERRIDE_VALUE_ENABLED, CONNETTORE_HTTPS_ENDPOINT_JVM_CONFIG_OVERRIDE_VALUE_DISABLED);
+	}
+
 	public static String getConnettoriHttpsEndpointJvmConfigOverrideRepository(List<Proprieta> proprieta, String defaultValue) {
 		String v = readValue(proprieta, CONNETTORE_HTTPS_ENDPOINT_JVM_CONFIG_OVERRIDE_REPOSITORY);
 		if(v==null || StringUtils.isEmpty(v)) {
@@ -1034,6 +1053,29 @@ public class CostantiProprieta {
 			return HttpLibraryConnection.getDefaultLibrary();
 		}
 		return HttpLibrary.fromName(name);
+	}
+
+	/**
+	 * Come {@link #getConnettoreHttpLibrary(List, String)} ma, se configurato l'header di forzatura della libreria per i
+	 * connettori interni (proprieta' 'org.openspcoop2.pdd.connettori.forceTokenLibraryViaHeader') e tale header e' presente
+	 * e valorizzato nella richiesta, la libreria indicata nell'header prevale (utile per i test). In assenza dell'header si
+	 * ricade sul comportamento standard (proprieta' di porta, poi default globale). Analogo del meccanismo previsto per il
+	 * connettore di backend in ConnettoreUtils.
+	 */
+	public static HttpLibrary getConnettoreHttpLibrary(List<Proprieta> props, String type, TransportRequestContext transportRequestContext) {
+		if(transportRequestContext!=null) {
+			String forceHeader = OpenSPCoop2Properties.getInstance().getHeaderForceTokenHttpLibrary();
+			if(forceHeader!=null && !StringUtils.isEmpty(forceHeader)) {
+				String headerValue = transportRequestContext.getHeaderFirstValue(forceHeader);
+				if(headerValue!=null) {
+					HttpLibrary forced = HttpLibrary.getHttpLibrarySafe(headerValue.trim());
+					if(forced!=null) {
+						return forced;
+					}
+				}
+			}
+		}
+		return getConnettoreHttpLibrary(props, type);
 	}
 	
 

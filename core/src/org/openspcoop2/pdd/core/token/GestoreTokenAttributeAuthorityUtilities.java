@@ -822,7 +822,8 @@ public class GestoreTokenAttributeAuthorityUtilities {
 		if (pa != null)
 			portProperty = pa.getProprieta();
 		HttpLibrary lib = CostantiProprieta.getConnettoreHttpLibrary(
-				portProperty, CostantiProprieta.CONNETTORE_TOKEN_AUTHORITY_LIBRARY);
+				portProperty, CostantiProprieta.CONNETTORE_TOKEN_AUTHORITY_LIBRARY,
+				requestInfo!=null ? requestInfo.getProtocolContext() : null);
 		
 		if(https) {
 			connettoreMsg.setTipoConnettore(TipiConnettore.HTTPS.getNome());
@@ -843,7 +844,10 @@ public class GestoreTokenAttributeAuthorityUtilities {
 		PolicyTimeoutConfig policyConfig = new PolicyTimeoutConfig();
 		policyConfig.setAttributeAuthority(policyAttributeAuthority.getName());
 		connettoreMsg.setPolicyTimeoutConfig(policyConfig);
-		
+		// Rende disponibile la busta al connettore: necessaria per la risoluzione del file di configurazione quando l'override JVM-HTTPS
+		// e' abilitato in opt-in su questo connettore interno (connettori.httpsEndpoint.jvmConfigOverride.attributeAuthority.enabled)
+		connettoreMsg.setBusta(busta);
+
 		ForwardProxy forwardProxy = null;
 		ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(state);
 		if(configurazionePdDManager.isForwardProxyEnabled(requestInfo)) {

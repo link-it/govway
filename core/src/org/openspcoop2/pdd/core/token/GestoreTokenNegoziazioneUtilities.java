@@ -471,7 +471,8 @@ public class GestoreTokenNegoziazioneUtilities {
 		if (pa != null)
 			portProperty = pa.getProprieta();
 		HttpLibrary lib = CostantiProprieta.getConnettoreHttpLibrary(
-				portProperty, CostantiProprieta.CONNETTORE_TOKEN_RETRIEVE_LIBRARY);
+				portProperty, CostantiProprieta.CONNETTORE_TOKEN_RETRIEVE_LIBRARY,
+				requestInfo!=null ? requestInfo.getProtocolContext() : null);
 		
 		if(https) {
 			connettoreMsg.setTipoConnettore(TipiConnettore.HTTPS.getNome());
@@ -492,7 +493,10 @@ public class GestoreTokenNegoziazioneUtilities {
 		PolicyTimeoutConfig policyConfig = new PolicyTimeoutConfig();
 		policyConfig.setPolicyNegoziazione(policyNegoziazioneToken.getName());
 		connettoreMsg.setPolicyTimeoutConfig(policyConfig);
-		
+		// Rende disponibile la busta al connettore: necessaria per la risoluzione del file di configurazione quando l'override JVM-HTTPS
+		// e' abilitato in opt-in su questo connettore interno (connettori.httpsEndpoint.jvmConfigOverride.tokenNegoziazione.enabled)
+		connettoreMsg.setBusta(busta);
+
 		ForwardProxy forwardProxy = null;
 		ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(state);
 		if(configurazionePdDManager.isForwardProxyEnabled(requestInfo)) {
