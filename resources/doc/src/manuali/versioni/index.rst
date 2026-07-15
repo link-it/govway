@@ -88,7 +88,7 @@ Le versioni si riferiscono all'ultima release pubblicata per ogni linea.
      - ``3.6.11``
      - ``3.2.6``
    * - **HTTP Client**
-     - Apache HttpClient ``5.6.1``, HttpCore ``5.4.2``
+     - Apache HttpClient ``5.6.2``, HttpCore ``5.4.3``
      - HttpURLConnection JDK built-in, opz. Apache HttpClient ``4.5.13``
      - HttpURLConnection JDK built-in
    * - **Java EE / Jakarta EE**
@@ -100,8 +100,8 @@ Le versioni si riferiscono all'ultima release pubblicata per ogni linea.
      - soap-api ``1.4.0``, saaj-impl ``1.5.3``
      - JDK built-in, saaj-impl ``1.3.28``
    * - **Jackson** (JSON / YAML)
-     - ``2.21.2``
-     - ``2.18.6``
+     - ``2.22.1``
+     - ``2.18.9``
      - ``2.9.10``
    * - **Swagger / OpenAPI**
      - core ``2.2.48``, parser ``2.1.40``

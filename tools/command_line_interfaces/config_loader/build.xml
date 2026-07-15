@@ -167,7 +167,7 @@
 			<fileset dir="${openspcoop2.lib}/shared" includes="velocity-*.jar"/>
 			<fileset dir="${openspcoop2.lib}/wss4j" includes="wss4j-ws-security-common-4.0.1-gov4j-1.jar"/>
 			<fileset dir="${openspcoop2.lib}/applicationServer/tomcat10" includes="*.jar"/> <!-- Serve per il datasource env -->
-			<fileset dir="${openspcoop2.lib}/httpcore" includes="httpcore5-5.4.2.jar"/>
+			<fileset dir="${openspcoop2.lib}/httpcore" includes="httpcore5-5.4.3.jar"/>
 		</copy>
 		
 		<antcall target="-distrib_script_cliConfigLoader">
