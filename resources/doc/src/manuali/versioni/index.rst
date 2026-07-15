@@ -108,8 +108,8 @@ Le versioni si riferiscono all'ultima release pubblicata per ogni linea.
      - core ``2.2.4``, parser ``2.1.6``
      - core ``2.0.3``, parser ``2.0.2``
    * - **Logging**
-     - Log4j ``2.25.4``
-     - Log4j ``2.25.4``
+     - Log4j ``2.26.1``
+     - Log4j ``2.26.1``
      - Log4j ``2.11.1``
    * - **Spring Framework**
      - ``7.0.8``
