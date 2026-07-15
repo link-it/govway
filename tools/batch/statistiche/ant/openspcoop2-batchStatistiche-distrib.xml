@@ -32,10 +32,10 @@
 		</copy>
 		<copy todir="${distrib_batchStatistiche}/lib" flatten="true">
 			<fileset dir="${openspcoop2.lib}" includes="jackson/jackson-annotations-2.22.jar"/>
-			<fileset dir="${openspcoop2.lib}" includes="jackson/jackson-datatype-jsr310-2.22.0.jar"/>
-			<fileset dir="${openspcoop2.lib}" includes="jackson/jackson-datatype-joda-2.22.0.jar"/>
-			<fileset dir="${openspcoop2.lib}" includes="jackson/jackson-databind-2.22.0.jar"/>
-			<fileset dir="${openspcoop2.lib}" includes="jackson/jackson-core-2.22.0.jar"/>
+			<fileset dir="${openspcoop2.lib}" includes="jackson/jackson-datatype-jsr310-2.22.1.jar"/>
+			<fileset dir="${openspcoop2.lib}" includes="jackson/jackson-datatype-joda-2.22.1.jar"/>
+			<fileset dir="${openspcoop2.lib}" includes="jackson/jackson-databind-2.22.1.jar"/>
+			<fileset dir="${openspcoop2.lib}" includes="jackson/jackson-core-2.22.1.jar"/>
 			<fileset dir="${openspcoop2.lib}" includes="log/*"/>
 			<fileset dir="${openspcoop2.lib}" includes="commons/commons-csv-1.14.1.jar"/>
 			<fileset dir="${openspcoop2.lib}" includes="commons/commons-collections-*.jar"/>
