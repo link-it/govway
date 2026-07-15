@@ -1,3 +1,14 @@
+2026-07-15  Andrea Poli <apoli@link.it>
+
+	* [GovWayMonitor]
+	Aggiunto il filtro condiviso 'Dati LLM' nelle ricerche di Analisi Statistica: consente di restringere
+	i risultati per Provider / Modello / Provider Binding e/o per intervallo di Token (Input/Output/Complessivi)
+	o Costo. Il filtro e' disponibile su Andamento Temporale, Distribuzione per Esiti, per Errori, per Azione,
+	per Servizio, per Soggetto e per Servizio Applicativo. Quando un criterio LLM e' attivo la ricerca viene
+	messa in join con le tabelle satellite 'stat_orarie_llm' / 'stat_giorni_llm' e le metriche (numero
+	transazioni, occupazione banda, tempo medio) sono calcolate sui dati LLM, cosi' da riportare i valori
+	relativi alle sole transazioni che soddisfano i criteri (disponibile per le tipologie oraria e giornaliera).
+
 2026-07-14  Andrea Poli <apoli@link.it>
 
 	* [GovWayMonitor]

@@ -2794,6 +2794,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 
 	public static final String LLM_TIPO_PROVIDER_MODELLO = "providerModello";
 	public static final String LLM_TIPO_TOKEN_COSTO = "tokenCosto";
+	public static final String LLM_TIPO_ENTRAMBI = "entrambi";
 	public static final String LLM_TIPO_QUALSIASI = "qualsiasi";
 
 	public static final String LLM_METRICA_TOKEN_INPUT = "tokenInput";
@@ -2839,17 +2840,20 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 		this.llmTipo = llmTipo;
 	}
 	public boolean isLlmTipoProviderModello() {
-		return LLM_TIPO_PROVIDER_MODELLO.equals(this.llmTipo);
+		return LLM_TIPO_PROVIDER_MODELLO.equals(this.llmTipo) || LLM_TIPO_ENTRAMBI.equals(this.llmTipo);
 	}
 	public boolean isLlmTipoTokenCosto() {
-		return LLM_TIPO_TOKEN_COSTO.equals(this.llmTipo);
+		return LLM_TIPO_TOKEN_COSTO.equals(this.llmTipo) || LLM_TIPO_ENTRAMBI.equals(this.llmTipo);
+	}
+	public boolean isFiltroLlmAttivo() {
+		return llmValorizzato(this.llmTipo);
 	}
 	public List<SelectItem> getLlmTipoItems() {
 		List<SelectItem> items = new ArrayList<>();
-		items.add(new SelectItem("--", MessageManager.getInstance().getMessage("search.llm.tipo.seleziona")));
+		items.add(new SelectItem("--", "--"));
 		items.add(new SelectItem(LLM_TIPO_PROVIDER_MODELLO, MessageManager.getInstance().getMessage("search.llm.tipo.providerModello")));
 		items.add(new SelectItem(LLM_TIPO_TOKEN_COSTO, MessageManager.getInstance().getMessage("search.llm.tipo.tokenCosto")));
-		items.add(new SelectItem(LLM_TIPO_QUALSIASI, MessageManager.getInstance().getMessage("search.llm.tipo.qualsiasi")));
+		items.add(new SelectItem(LLM_TIPO_ENTRAMBI, MessageManager.getInstance().getMessage("search.llm.tipo.entrambi")));
 		return items;
 	}
 

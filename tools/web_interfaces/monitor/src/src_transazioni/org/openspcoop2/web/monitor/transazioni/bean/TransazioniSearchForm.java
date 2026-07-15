@@ -564,13 +564,15 @@ Context, Cloneable {
 				ID_TRANSAZIONE,
 				ID_TOKEN,
 				PURPOSE_ID,
+				LLM_PROVIDER_MODELLO,
+				LLM_TOKEN_COSTO,
 				LIVE:
 				return false;
 			}
 		}
 		return false;
 	}
-	
+
 	@Override
 	protected boolean isTipologiaRicercaEntrambiEnabled() {
 		if(this.isLive()) {
@@ -586,6 +588,8 @@ Context, Cloneable {
 					MITTENTE_IDENTIFICATIVO_AUTENTICATO,
 					MITTENTE_INDIRIZZO_IP,
 					ID_APPLICATIVO_AVANZATA,
+					LLM_PROVIDER_MODELLO,
+					LLM_TOKEN_COSTO,
 					LIVE:
 					return true; // non c'e' motivo per non farli vedere
 				

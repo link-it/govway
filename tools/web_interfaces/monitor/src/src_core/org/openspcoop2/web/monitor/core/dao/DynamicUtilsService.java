@@ -1604,7 +1604,7 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 			String key = buildKey(methodName);
 			try {
 				return (List<org.openspcoop2.core.config.GenericProperties>) AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione.getObjectCache(this.driver, AbstractConsoleStartupListener.debugCache_datiConfigurazione, key, methodName,
-						new Class<?>[] {});
+						(Object[]) new Class<?>[] {});
 			}catch(Throwable e) {
 				log.error("Cache Access Error (method:"+methodName+" key:"+key+"): "+e.getMessage(),e);
 				return new java.util.ArrayList<>();

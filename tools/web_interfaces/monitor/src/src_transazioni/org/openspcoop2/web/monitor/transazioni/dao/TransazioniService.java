@@ -314,6 +314,9 @@ public class TransazioniService implements ITransazioniService {
 			return this.forceIndexIdTransazioneFindAll;
 		case ESAMINA_ARCHIVIO_ZIP:
 			return lnull;
+		case LLM_PROVIDER_MODELLO:
+		case LLM_TOKEN_COSTO:
+			return lnull;
 		}
 		return lnull;
 	}
@@ -366,6 +369,9 @@ public class TransazioniService implements ITransazioniService {
 		case ID_TRANSAZIONE:
 			return this.forceIndexIdTransazioneCount;
 		case ESAMINA_ARCHIVIO_ZIP:
+			return lnull;
+		case LLM_PROVIDER_MODELLO:
+		case LLM_TOKEN_COSTO:
 			return lnull;
 		}
 		return lnull;
@@ -1323,13 +1329,13 @@ public class TransazioniService implements ITransazioniService {
 		else if(ModalitaRicercaTransazioni.LLM_TOKEN_COSTO.equals(ricerca)) {
 
 			String metrica = this.searchForm.getLlmMetrica();
-			boolean costo = TransazioniSearchForm.LLM_METRICA_COSTO.equals(metrica);
+			boolean costo = BaseSearchForm.LLM_METRICA_COSTO.equals(metrica);
 
 			IField field;
 			boolean customField = false;
-			if(TransazioniSearchForm.LLM_METRICA_TOKEN_INPUT.equals(metrica)) {
+			if(BaseSearchForm.LLM_METRICA_TOKEN_INPUT.equals(metrica)) {
 				field = Transazione.model().TRANSAZIONE_LLM.TOKEN_INPUT;
-			} else if(TransazioniSearchForm.LLM_METRICA_TOKEN_OUTPUT.equals(metrica)) {
+			} else if(BaseSearchForm.LLM_METRICA_TOKEN_OUTPUT.equals(metrica)) {
 				field = Transazione.model().TRANSAZIONE_LLM.TOKEN_OUTPUT;
 			} else if(costo) {
 				field = Transazione.model().TRANSAZIONE_LLM.COST_ESTIMATED;

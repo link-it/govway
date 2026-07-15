@@ -33,8 +33,10 @@ import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.web.monitor.core.datamodel.BaseDataModel;
 import org.openspcoop2.web.monitor.core.datamodel.ResDistribuzione;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
+import org.openspcoop2.web.monitor.statistiche.bean.NumeroDimensioni;
 import org.openspcoop2.web.monitor.statistiche.bean.StatsSearchForm;
 import org.openspcoop2.web.monitor.statistiche.dao.IStatisticheGiornaliere;
+import org.openspcoop2.generic_project.expression.SortOrder;
 
 /**
  * DistribuzioneLlmDM
@@ -83,6 +85,9 @@ public class DistribuzioneLlmDM extends BaseDataModel<String, ResDistribuzione, 
 
 				this.wrappedKeys = new ArrayList<>();
 
+				if(NumeroDimensioni.DIMENSIONI_3.equals(this.search.getNumeroDimensioni())) {
+					this.search.setSortOrder(SortOrder.DESC);
+				}
 				List<ResDistribuzione> list =  new ArrayList<>();
 				try {
 					list =  this.getDataProvider().findAllDistribuzioneLlm(start, limit);
