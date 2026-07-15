@@ -181,6 +181,7 @@
 								<suppressionFile>${owasp.falsePositives.dir}/CVE-2018-1258.xml</suppressionFile>
 								<suppressionFile>${owasp.falsePositives.dir}/CVE-2025-10492.xml</suppressionFile>
 								<suppressionFile>${owasp.falsePositives.dir}/PDFBox.xml</suppressionFile>
+								<suppressionFile>${owasp.falsePositives.dir}/CVE-2026-54399.xml</suppressionFile>
 							</suppressionFiles>
 							<!-- Tuning con API Key -->
 							<nvdApiDelay>4000</nvdApiDelay>
