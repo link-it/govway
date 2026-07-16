@@ -314,9 +314,6 @@ public class TransazioniService implements ITransazioniService {
 			return this.forceIndexIdTransazioneFindAll;
 		case ESAMINA_ARCHIVIO_ZIP:
 			return lnull;
-		case LLM_PROVIDER_MODELLO:
-		case LLM_TOKEN_COSTO:
-			return lnull;
 		}
 		return lnull;
 	}
@@ -369,9 +366,6 @@ public class TransazioniService implements ITransazioniService {
 		case ID_TRANSAZIONE:
 			return this.forceIndexIdTransazioneCount;
 		case ESAMINA_ARCHIVIO_ZIP:
-			return lnull;
-		case LLM_PROVIDER_MODELLO:
-		case LLM_TOKEN_COSTO:
 			return lnull;
 		}
 		return lnull;
@@ -1305,9 +1299,9 @@ public class TransazioniService implements ITransazioniService {
 		}
 	}
 
-	private void setExpressionFilterLlm(IExpression filter, ModalitaRicercaTransazioni ricerca) throws ExpressionNotImplementedException, ExpressionException, UtilsException {
+	private void setExpressionFilterLlm(IExpression filter) throws ExpressionNotImplementedException, ExpressionException, UtilsException {
 
-		if(ModalitaRicercaTransazioni.LLM_PROVIDER_MODELLO.equals(ricerca)) {
+		if(this.searchForm.isLlmTipoProviderModello()) {
 			boolean added = false;
 			if(llmValorizzato(this.searchForm.getLlmProvider())) {
 				filter.and().equals(Transazione.model().TRANSAZIONE_LLM.LLM_PROVIDER, this.searchForm.getLlmProvider().trim());
@@ -1326,7 +1320,7 @@ public class TransazioniService implements ITransazioniService {
 				filter.and().isNotNull(Transazione.model().TRANSAZIONE_LLM.ID_TRANSAZIONE);
 			}
 		}
-		else if(ModalitaRicercaTransazioni.LLM_TOKEN_COSTO.equals(ricerca)) {
+		if(this.searchForm.isLlmTipoTokenCosto()) {
 
 			String metrica = this.searchForm.getLlmMetrica();
 			boolean costo = BaseSearchForm.LLM_METRICA_COSTO.equals(metrica);
@@ -3530,9 +3524,9 @@ public class TransazioniService implements ITransazioniService {
 			}
 		}
 		
-		// filtri specifici ricerca LLM (non fanno return: si sommano al filtro temporale/esito)
-		if(ricerca!=null && (ModalitaRicercaTransazioni.LLM_PROVIDER_MODELLO.equals(ricerca) || ModalitaRicercaTransazioni.LLM_TOKEN_COSTO.equals(ricerca))) {
-			setExpressionFilterLlm(filter, ricerca);
+		// filtro LLM condiviso (non fa return: si somma al filtro temporale/esito)
+		if(this.searchForm.isFiltroLlmAttivo()) {
+			setExpressionFilterLlm(filter);
 		}
 
 		// check ricerca libera

@@ -32,9 +32,10 @@
 2026-07-10  Andrea Poli <apoli@link.it>
 
 	* [GovWayMonitor]
-	Aggiunte due ricerche dedicate alle transazioni LLM: per Provider / Modello / Provider Binding
-	(select a cascata popolate dal catalogo) e per Token / Costo (metrica Token Input/Output/Totale
-	o Costo con intervallo di valori).
+	Aggiunto il filtro 'Dati LLM' nelle ricerche transazioni (sezione dopo Esito): disponibile nelle
+	ricerche Base, Avanzata, per Mittente (Token/Soggetto/Applicativo/Principal/Indirizzo IP) e per
+	ID Applicativo avanzata. Consente di restringere per Provider / Modello / Provider Binding (select
+	a cascata popolate dal catalogo) e/o per intervallo di Token (Input/Output/Complessivi) o Costo.
 
 2026-07-09  Andrea Poli <apoli@link.it>
 

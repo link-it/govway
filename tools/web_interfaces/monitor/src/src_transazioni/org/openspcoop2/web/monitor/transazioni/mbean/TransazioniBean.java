@@ -1015,20 +1015,6 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 			
 			gruppoId.setListaStorico(listaGruppoId);
 			this.tipiStorico.add(gruppoId);
-
-			GruppoStorico gruppoLlm = new GruppoStorico();
-			gruppoLlm.setLabel(MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_LLM_LABEL_KEY));
-			List<Storico> listaGruppoLlm = new ArrayList<>();
-			listaGruppoLlm.add(new Storico(ModalitaRicercaTransazioni.LLM_PROVIDER_MODELLO.getValue(),
-					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_LLM_PROVIDER_MODELLO_LABEL_KEY),
-					ModalitaRicercaTransazioni.LLM_PROVIDER_MODELLO,
-					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_LLM_PROVIDER_MODELLO_ICON_KEY)));
-			listaGruppoLlm.add(new Storico(ModalitaRicercaTransazioni.LLM_TOKEN_COSTO.getValue(),
-					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_LLM_TOKEN_COSTO_LABEL_KEY),
-					ModalitaRicercaTransazioni.LLM_TOKEN_COSTO,
-					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_LLM_TOKEN_COSTO_ICON_KEY)));
-			gruppoLlm.setListaStorico(listaGruppoLlm);
-			this.tipiStorico.add(gruppoLlm);
 		}
 
 		return this.tipiStorico;

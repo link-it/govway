@@ -124,14 +124,6 @@ public class TransazioniCostanti {
 	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_TOKEN_BREADCUMP_KEY = "transazioni.search.tipoRicerca.id.ricercaIdentificativoToken.breadcrumb";
 
 	// Ricerca LLM
-	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_LLM_LABEL_KEY = "transazioni.search.tipoRicerca.llm.label";
-	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_LLM_PROVIDER_MODELLO_LABEL_KEY = "transazioni.search.tipoRicerca.llm.providerModello.label";
-	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_LLM_PROVIDER_MODELLO_ICON_KEY = "transazioni.search.tipoRicerca.llm.providerModello.icona";
-	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_LLM_PROVIDER_MODELLO_BREADCUMP_KEY = "transazioni.search.tipoRicerca.llm.providerModello.breadcrumb";
-	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_LLM_TOKEN_COSTO_LABEL_KEY = "transazioni.search.tipoRicerca.llm.tokenCosto.label";
-	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_LLM_TOKEN_COSTO_ICON_KEY = "transazioni.search.tipoRicerca.llm.tokenCosto.icona";
-	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_LLM_TOKEN_COSTO_BREADCUMP_KEY = "transazioni.search.tipoRicerca.llm.tokenCosto.breadcrumb";
-
 	public static final String TRANSAZIONI_SEARCH_LLM_METRICA_TOKEN_INPUT_LABEL_KEY = "transazioni.search.llm.metrica.tokenInput";
 	public static final String TRANSAZIONI_SEARCH_LLM_METRICA_TOKEN_OUTPUT_LABEL_KEY = "transazioni.search.llm.metrica.tokenOutput";
 	public static final String TRANSAZIONI_SEARCH_LLM_METRICA_TOKEN_TOTALE_LABEL_KEY = "transazioni.search.llm.metrica.tokenTotale";

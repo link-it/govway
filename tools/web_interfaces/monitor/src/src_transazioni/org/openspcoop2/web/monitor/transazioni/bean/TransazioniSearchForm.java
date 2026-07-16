@@ -458,10 +458,6 @@ Context, Cloneable {
 				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_TOKEN_BREADCUMP_KEY);	
 			case PURPOSE_ID:
 				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_PURPOSE_ID_BREADCUMP_KEY);
-			case LLM_PROVIDER_MODELLO:
-				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_LLM_PROVIDER_MODELLO_BREADCUMP_KEY);
-			case LLM_TOKEN_COSTO:
-				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_LLM_TOKEN_COSTO_BREADCUMP_KEY);
 			case ID_TRANSAZIONE:
 			default:
 				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_TRANSAZIONE_BREADCUMP_KEY);
@@ -497,9 +493,7 @@ Context, Cloneable {
 				MITTENTE_APPLICATIVO,
 				MITTENTE_IDENTIFICATIVO_AUTENTICATO,
 				MITTENTE_INDIRIZZO_IP,
-				ID_APPLICATIVO_AVANZATA,
-				LLM_PROVIDER_MODELLO,
-				LLM_TOKEN_COSTO:
+				ID_APPLICATIVO_AVANZATA:
 				return true;
 
 			case ID_APPLICATIVO_BASE,
@@ -528,8 +522,6 @@ Context, Cloneable {
 			case MITTENTE_IDENTIFICATIVO_AUTENTICATO:
 			case MITTENTE_INDIRIZZO_IP:
 			case ID_APPLICATIVO_AVANZATA:
-			case LLM_PROVIDER_MODELLO:
-			case LLM_TOKEN_COSTO:
 				return true;
 
 			case ID_APPLICATIVO_BASE:
@@ -564,8 +556,33 @@ Context, Cloneable {
 				ID_TRANSAZIONE,
 				ID_TOKEN,
 				PURPOSE_ID,
-				LLM_PROVIDER_MODELLO,
-				LLM_TOKEN_COSTO,
+				LIVE:
+				return false;
+			}
+		}
+		return false;
+	}
+
+	public boolean isShowDatiLlmPanel() {
+		if(this.getModalitaRicercaStorico() != null) {
+			ModalitaRicercaTransazioni t = ModalitaRicercaTransazioni.getFromString(this.getModalitaRicercaStorico());
+			switch (t) {
+			case ANDAMENTO_TEMPORALE,
+				RICERCA_LIBERA,
+				MITTENTE_TOKEN_INFO,
+				MITTENTE_SOGGETTO,
+				MITTENTE_APPLICATIVO,
+				MITTENTE_IDENTIFICATIVO_AUTENTICATO,
+				MITTENTE_INDIRIZZO_IP,
+				ID_APPLICATIVO_AVANZATA:
+				return true;
+
+			case ESAMINA_ARCHIVIO_ZIP,
+				ID_APPLICATIVO_BASE,
+				ID_MESSAGGIO,
+				ID_TRANSAZIONE,
+				ID_TOKEN,
+				PURPOSE_ID,
 				LIVE:
 				return false;
 			}
@@ -588,8 +605,6 @@ Context, Cloneable {
 					MITTENTE_IDENTIFICATIVO_AUTENTICATO,
 					MITTENTE_INDIRIZZO_IP,
 					ID_APPLICATIVO_AVANZATA,
-					LLM_PROVIDER_MODELLO,
-					LLM_TOKEN_COSTO,
 					LIVE:
 					return true; // non c'e' motivo per non farli vedere
 				
@@ -626,8 +641,6 @@ Context, Cloneable {
 			case MITTENTE_IDENTIFICATIVO_AUTENTICATO:
 			case MITTENTE_INDIRIZZO_IP:
 			case ID_APPLICATIVO_AVANZATA:
-			case LLM_PROVIDER_MODELLO:
-			case LLM_TOKEN_COSTO:
 				return true;
 
 			case ID_APPLICATIVO_BASE:
