@@ -214,7 +214,17 @@ public class TransazioneUtilities {
 		if(fillTransaction)
 			TransazioneUtilities.setRispostaUscitaBytes(transactionDTO, info, fase);
 		misurazioniTransazione.setRispostaUscitaBytes(transactionDTO.getRispostaUscitaBytes());
-		
+
+		if(info.getContext() instanceof PdDContext){
+			org.openspcoop2.core.transazioni.TransazioneLlm llm = TransazioneLlmUtilities.fill(transactionDTO.getIdTransazione(),
+					transactionDTO.getDataIngressoRichiesta(), (PdDContext) info.getContext(), null);
+			if(llm!=null){
+				misurazioniTransazione.setLlmTokenInput(llm.getTokenInput());
+				misurazioniTransazione.setLlmTokenOutput(llm.getTokenOutput());
+				misurazioniTransazione.setLlmCosto(llm.getCostEstimated());
+			}
+		}
+
 		return misurazioniTransazione;
 	}
 	

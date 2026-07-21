@@ -1806,6 +1806,12 @@ public class ConfigurazioneCostanti {
 	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_TEMPO_MEDIO_LABEL = "Tempo Medio di Risposta";
 	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_TEMPO_MEDIO_MS_LABEL = "Tempo Medio di Risposta (ms)";
 	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_TEMPO_MEDIO_NOTE = "Indicazione (in millisecondi) sul tempo medio di risposta che deve essere inferiore al valore fornito";
+	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_NUMERO_TOKEN_LABEL = "Numero Massimo Token";
+	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_NUMERO_TOKEN_INPUT_NOTE = "Vengono conteggiati solamente i token di input LLM";
+	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_NUMERO_TOKEN_OUTPUT_NOTE = "Vengono conteggiati solamente i token di output LLM";
+	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_NUMERO_TOKEN_COMPLESSIVI_NOTE = "Vengono conteggiati i token complessivi LLM (input piu' output)";
+	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_COSTO_LABEL = "Costo Massimo ($)";
+	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_COSTO_NOTE = "Indicazione (in dollari) sul costo massimo stimato per il consumo di token LLM";
 	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POSIZIONE = "Ordine";
 	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_RISORSA = "Metrica";
 	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_CONTINUE = "Elaborazione";
@@ -2022,6 +2028,8 @@ public class ConfigurazioneCostanti {
 	public static final String LABEL_POLICY_INFORMAZIONI_SOGLIA_BANDA = "Soglia (kb)";
 	public static final String LABEL_POLICY_INFORMAZIONI_SOGLIA_TEMPI_MS = "Soglia (ms)";
 	public static final String LABEL_POLICY_INFORMAZIONI_SOGLIA_TEMPI_SECONDI = "Soglia (secondi)";
+	public static final String LABEL_POLICY_INFORMAZIONI_SOGLIA_TOKEN = "Soglia (token)";
+	public static final String LABEL_POLICY_INFORMAZIONI_SOGLIA_COSTO = "Soglia ($)";
 	
 	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_CORS_STATO = "Stato";
 	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_CORS_TIPO = "Tipo";

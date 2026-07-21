@@ -393,6 +393,13 @@ public class PolicyVerifier {
 					case TEMPO_MEDIO_RISPOSTA:
 						gestioneClusterSupportata = false;
 						break;
+
+					case NUMERO_TOKEN_INPUT:
+					case NUMERO_TOKEN_OUTPUT:
+					case NUMERO_TOKEN_COMPLESSIVI:
+					case COSTO:
+						gestioneClusterSupportata = false;
+						break;
 				}
 				
 				if(!PolicyGroupByActiveThreadsType.LOCAL_DIVIDED_BY_NODES.equals(policyConfiguration.getType())) {
@@ -765,8 +772,152 @@ public class PolicyVerifier {
 				break;
 				
 				
+			case NUMERO_TOKEN_INPUT:
+			case NUMERO_TOKEN_OUTPUT:
+			case NUMERO_TOKEN_COMPLESSIVI:
+
+				leftDate = null;
+				rightDate = null;
+				if(TipoFinestra.CORRENTE.equals(activePolicy.getConfigurazionePolicy().getFinestraOsservazione())){
+					leftDate = datiCollezionatiReaded.getLeftDateWindowCurrentInterval();
+					rightDate = datiCollezionatiReaded.getRightDateWindowCurrentInterval();
+				}
+				else if(TipoFinestra.PRECEDENTE.equals(activePolicy.getConfigurazionePolicy().getFinestraOsservazione())){
+					leftDate = datiCollezionatiReaded.getLeftDateWindowPrecedentInterval();
+					rightDate = datiCollezionatiReaded.getRightDateWindowPrecedentInterval();
+				}
+				else if(TipoFinestra.SCORREVOLE.equals(activePolicy.getConfigurazionePolicy().getFinestraOsservazione())){
+					leftDate = datiCollezionatiReaded.getLeftDateWindowSlidingInterval(now);
+					rightDate = datiCollezionatiReaded.getRightDateWindowSlidingInterval(now);
+				}
+				checkDate = null;
+
+				valoreAttuale = 0;
+				if(TipoControlloPeriodo.REALTIME.equals(activePolicy.getConfigurazionePolicy().getModalitaControllo())){
+					checkDate = now;
+					if(TipoFinestra.CORRENTE.equals(activePolicy.getConfigurazionePolicy().getFinestraOsservazione())){
+						if(datiCollezionatiReaded.getPolicyCounter()!=null){
+							valoreAttuale = datiCollezionatiReaded.getPolicyCounter().longValue();
+						}
+					}
+					else{
+						if(datiCollezionatiReaded.getOldPolicyCounter()!=null){
+							valoreAttuale = datiCollezionatiReaded.getOldPolicyCounter().longValue();
+						}
+					}
+				}
+				else{
+					throw new CoreException("Risorsa non utilizzabile con campionamento statistico");
+				}
+
+				risultatoVerificaPolicy.setActualValue(valoreAttuale);
+				risultatoVerificaPolicy.setMaxValue(valoreSoglia);
+				if(TipoFinestra.CORRENTE.equals(activePolicy.getConfigurazionePolicy().getFinestraOsservazione()) ||
+						TipoFinestra.SCORREVOLE.equals(activePolicy.getConfigurazionePolicy().getFinestraOsservazione())){
+					if(rightDate!=null) {
+						risultatoVerificaPolicy.setMsBeforeResetCounters(rightDate.getTime()-DateManager.getTimeMillis());
+					}
+					if(leftDate!=null && rightDate!=null) {
+						risultatoVerificaPolicy.setMsWindow((rightDate.getTime()+1)-leftDate.getTime());
+					}
+				}
+
+				if(valoreAttuale>valoreSoglia){
+
+					rilevataViolazione = true;
+
+					msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_POLICY_VALORE_RILEVATO, valoreAttuale+"");
+
+					msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_POLICY_INTERVALLO_TEMPORALE,
+							PolicyDateUtils.toStringIntervalloTemporale(activePolicy.getConfigurazionePolicy().getFinestraOsservazione(),
+									leftDate, rightDate, checkDate, false));
+
+					String msgViolataToken;
+					if(TipoRisorsa.NUMERO_TOKEN_INPUT.equals(activePolicy.getTipoRisorsaPolicy())){
+						msgViolataToken = GeneratoreMessaggiErrore.MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_VIOLATA_NUMERO_TOKEN_INPUT;
+					}
+					else if(TipoRisorsa.NUMERO_TOKEN_OUTPUT.equals(activePolicy.getTipoRisorsaPolicy())){
+						msgViolataToken = GeneratoreMessaggiErrore.MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_VIOLATA_NUMERO_TOKEN_OUTPUT;
+					}
+					else{
+						msgViolataToken = GeneratoreMessaggiErrore.MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_VIOLATA_NUMERO_TOKEN_COMPLESSIVI;
+					}
+					risultatoVerificaPolicy.
+						setDescrizione(msgDiag.getMessaggio_replaceKeywords(MsgDiagnosticiProperties.MSG_DIAG_ALL, msgViolataToken));
+				}
+
+				break;
+
+			case COSTO:
+
+				leftDate = null;
+				rightDate = null;
+				if(TipoFinestra.CORRENTE.equals(activePolicy.getConfigurazionePolicy().getFinestraOsservazione())){
+					leftDate = datiCollezionatiReaded.getLeftDateWindowCurrentInterval();
+					rightDate = datiCollezionatiReaded.getRightDateWindowCurrentInterval();
+				}
+				else if(TipoFinestra.PRECEDENTE.equals(activePolicy.getConfigurazionePolicy().getFinestraOsservazione())){
+					leftDate = datiCollezionatiReaded.getLeftDateWindowPrecedentInterval();
+					rightDate = datiCollezionatiReaded.getRightDateWindowPrecedentInterval();
+				}
+				else if(TipoFinestra.SCORREVOLE.equals(activePolicy.getConfigurazionePolicy().getFinestraOsservazione())){
+					leftDate = datiCollezionatiReaded.getLeftDateWindowSlidingInterval(now);
+					rightDate = datiCollezionatiReaded.getRightDateWindowSlidingInterval(now);
+				}
+				checkDate = null;
+
+				valoreAttuale = 0;
+				if(TipoControlloPeriodo.REALTIME.equals(activePolicy.getConfigurazionePolicy().getModalitaControllo())){
+					checkDate = now;
+					if(TipoFinestra.CORRENTE.equals(activePolicy.getConfigurazionePolicy().getFinestraOsservazione())){
+						if(datiCollezionatiReaded.getPolicyCounter()!=null){
+							valoreAttuale = datiCollezionatiReaded.getPolicyCounter().longValue();
+						}
+					}
+					else{
+						if(datiCollezionatiReaded.getOldPolicyCounter()!=null){
+							valoreAttuale = datiCollezionatiReaded.getOldPolicyCounter().longValue();
+						}
+					}
+				}
+				else{
+					throw new CoreException("Risorsa non utilizzabile con campionamento statistico");
+				}
+
+				risultatoVerificaPolicy.setActualValue(valoreAttuale/DatiCollezionati.COSTO_SCALE_MICRO_USD);
+				risultatoVerificaPolicy.setMaxValue(valoreSoglia);
+				if(TipoFinestra.CORRENTE.equals(activePolicy.getConfigurazionePolicy().getFinestraOsservazione()) ||
+						TipoFinestra.SCORREVOLE.equals(activePolicy.getConfigurazionePolicy().getFinestraOsservazione())){
+					if(rightDate!=null) {
+						risultatoVerificaPolicy.setMsBeforeResetCounters(rightDate.getTime()-DateManager.getTimeMillis());
+					}
+					if(leftDate!=null && rightDate!=null) {
+						risultatoVerificaPolicy.setMsWindow((rightDate.getTime()+1)-leftDate.getTime());
+					}
+				}
+
+				if(valoreAttuale > valoreSoglia * DatiCollezionati.COSTO_SCALE_MICRO_USD){
+
+					rilevataViolazione = true;
+
+					msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_POLICY_VALORE_RILEVATO,
+							String.format(java.util.Locale.US, "%.6f", valoreAttuale/(double)DatiCollezionati.COSTO_SCALE_MICRO_USD));
+					msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_POLICY_VALORE_SOGLIA,
+							valoreSoglia+"");
+
+					msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_POLICY_INTERVALLO_TEMPORALE,
+							PolicyDateUtils.toStringIntervalloTemporale(activePolicy.getConfigurazionePolicy().getFinestraOsservazione(),
+									leftDate, rightDate, checkDate, false));
+
+					risultatoVerificaPolicy.
+						setDescrizione(msgDiag.getMessaggio_replaceKeywords(MsgDiagnosticiProperties.MSG_DIAG_ALL,
+								GeneratoreMessaggiErrore.MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_VIOLATA_COSTO));
+				}
+
+				break;
+
 			case TEMPO_MEDIO_RISPOSTA:
-				
+
 				leftDate = null;
 				rightDate = null;
 				if(TipoFinestra.CORRENTE.equals(activePolicy.getConfigurazionePolicy().getFinestraOsservazione())){

@@ -574,6 +574,15 @@ public class DatiCollezionati implements Serializable {
 					bf.append(getPolicyCounter);
 					bf.append(TEMPO_MEDIO_RISPOSTA_MILLISECONDI_INFO);
 					break;
+				case NUMERO_TOKEN_INPUT:
+				case NUMERO_TOKEN_OUTPUT:
+				case NUMERO_TOKEN_COMPLESSIVI:
+					bf.append(getPolicyCounter);
+					break;
+				case COSTO:
+					bf.append(String.format(java.util.Locale.US, "%.6f", getPolicyCounter/(double)COSTO_SCALE_MICRO_USD));
+					bf.append(" $");
+					break;
 				}
 			}
 			else{
@@ -608,13 +617,22 @@ public class DatiCollezionati implements Serializable {
 					bf.append(TEMPO_COMPLESSIVO_RISPOSTA_MILLISECONDI_INFO);
 					break;
 				case TEMPO_MEDIO_RISPOSTA:
-					bf.append(avg.longValue());	
+					bf.append(avg.longValue());
 					bf.append(TEMPO_MEDIO_RISPOSTA_MILLISECONDI_INFO);
+					break;
+				case NUMERO_TOKEN_INPUT:
+				case NUMERO_TOKEN_OUTPUT:
+				case NUMERO_TOKEN_COMPLESSIVI:
+					bf.append(avg.longValue());
+					break;
+				case COSTO:
+					bf.append(String.format(java.util.Locale.US, "%.6f", avg.longValue()/(double)COSTO_SCALE_MICRO_USD));
+					bf.append(" $");
 					break;
 				}
 			}
 			else{
-				bf.append(avg.longValue());	
+				bf.append(avg.longValue());
 			}
 		}
 		Long getPolicyDenyRequestCounter = this.getPolicyDenyRequestCounter(true);
@@ -671,6 +689,15 @@ public class DatiCollezionati implements Serializable {
 					bf.append(this.oldPolicyCounter);
 					bf.append(TEMPO_MEDIO_RISPOSTA_MILLISECONDI_INFO);
 					break;
+				case NUMERO_TOKEN_INPUT:
+				case NUMERO_TOKEN_OUTPUT:
+				case NUMERO_TOKEN_COMPLESSIVI:
+					bf.append(this.oldPolicyCounter);
+					break;
+				case COSTO:
+					bf.append(String.format(java.util.Locale.US, "%.6f", this.oldPolicyCounter/(double)COSTO_SCALE_MICRO_USD));
+					bf.append(" $");
+					break;
 				}
 			}
 			else{
@@ -706,13 +733,22 @@ public class DatiCollezionati implements Serializable {
 					bf.append(TEMPO_COMPLESSIVO_RISPOSTA_MILLISECONDI_INFO);
 					break;
 				case TEMPO_MEDIO_RISPOSTA:
-					bf.append(oldAvg.longValue());	
+					bf.append(oldAvg.longValue());
 					bf.append(TEMPO_MEDIO_RISPOSTA_MILLISECONDI_INFO);
+					break;
+				case NUMERO_TOKEN_INPUT:
+				case NUMERO_TOKEN_OUTPUT:
+				case NUMERO_TOKEN_COMPLESSIVI:
+					bf.append(oldAvg.longValue());
+					break;
+				case COSTO:
+					bf.append(String.format(java.util.Locale.US, "%.6f", oldAvg.longValue()/(double)COSTO_SCALE_MICRO_USD));
+					bf.append(" $");
 					break;
 				}
 			}
 			else{
-				bf.append(oldAvg.longValue());	
+				bf.append(oldAvg.longValue());
 			}
 		}
 		
@@ -871,13 +907,17 @@ public class DatiCollezionati implements Serializable {
 		case OCCUPAZIONE_BANDA:
 		case TEMPO_COMPLESSIVO_RISPOSTA:
 		case TEMPO_MEDIO_RISPOSTA:
+		case NUMERO_TOKEN_INPUT:
+		case NUMERO_TOKEN_OUTPUT:
+		case NUMERO_TOKEN_COMPLESSIVI:
+		case COSTO:
 		case DIMENSIONE_MASSIMA_MESSAGGIO: // non viene usata
 			return false;
 		}
 		return false;
 	}
-	
-	
+
+
 	protected boolean isRisorsaContaNumeroRichiesteDipendentiEsito(TipoRisorsa tipoRisorsa) {
 		switch (tipoRisorsa) {
 		case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO:
@@ -890,6 +930,10 @@ public class DatiCollezionati implements Serializable {
 		case OCCUPAZIONE_BANDA:
 		case TEMPO_COMPLESSIVO_RISPOSTA:
 		case TEMPO_MEDIO_RISPOSTA:
+		case NUMERO_TOKEN_INPUT:
+		case NUMERO_TOKEN_OUTPUT:
+		case NUMERO_TOKEN_COMPLESSIVI:
+		case COSTO:
 		case DIMENSIONE_MASSIMA_MESSAGGIO: // non viene usata
 			return false;
 		}
@@ -1542,9 +1586,25 @@ public class DatiCollezionati implements Serializable {
 				}
 			
 				if(found && TipoRisorsa.TEMPO_MEDIO_RISPOSTA.equals(activePolicy.getTipoRisorsaPolicy())){
-					internalUpdateDatiEndRequestApplicabileIncrementRequestCounter(); 
+					internalUpdateDatiEndRequestApplicabileIncrementRequestCounter();
 				}
-				
+
+				break;
+
+			case NUMERO_TOKEN_INPUT:
+			case NUMERO_TOKEN_OUTPUT:
+			case NUMERO_TOKEN_COMPLESSIVI:
+
+				long token = this.getToken(activePolicy.getTipoRisorsaPolicy(), dati);
+				internalUpdateDatiEndRequestApplicabileIncrementCounter(token);
+
+				break;
+
+			case COSTO:
+
+				long costo = this.getCosto(dati);
+				internalUpdateDatiEndRequestApplicabileIncrementCounter(costo);
+
 				break;
 			}
 		}
@@ -1619,6 +1679,27 @@ public class DatiCollezionati implements Serializable {
 			return bandaInterna;
 		case ESTERNA:
 			return bandaEsterna;
+		}
+		return 0;
+	}
+
+	public static final long COSTO_SCALE_MICRO_USD = 1000000L;
+
+	protected long getToken(TipoRisorsa tipoRisorsa, MisurazioniTransazione dati){
+		long input = (dati.getLlmTokenInput()!=null && dati.getLlmTokenInput()>0) ? dati.getLlmTokenInput().longValue() : 0;
+		long output = (dati.getLlmTokenOutput()!=null && dati.getLlmTokenOutput()>0) ? dati.getLlmTokenOutput().longValue() : 0;
+		if(TipoRisorsa.NUMERO_TOKEN_INPUT.equals(tipoRisorsa)){
+			return input;
+		}
+		else if(TipoRisorsa.NUMERO_TOKEN_OUTPUT.equals(tipoRisorsa)){
+			return output;
+		}
+		return input + output;
+	}
+
+	protected long getCosto(MisurazioniTransazione dati){
+		if(dati.getLlmCosto()!=null && dati.getLlmCosto()>0){
+			return Math.round(dati.getLlmCosto().doubleValue() * COSTO_SCALE_MICRO_USD);
 		}
 		return 0;
 	}

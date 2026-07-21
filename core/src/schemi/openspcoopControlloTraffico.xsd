@@ -330,6 +330,10 @@
 			<xsd:enumeration value="NumeroFaultApplicativi"/>
 			<xsd:enumeration value="NumeroRichiesteFalliteOFaultApplicativi"/>
 			<xsd:enumeration value="NumeroRichiesteCompletateConSuccessoOFaultApplicativi"/>
+			<xsd:enumeration value="NumeroTokenInput"/>
+			<xsd:enumeration value="NumeroTokenOutput"/>
+			<xsd:enumeration value="NumeroTokenComplessivi"/>
+			<xsd:enumeration value="Costo"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 

@@ -55,7 +55,15 @@ public enum TipoRisorsa implements IEnumeration , Serializable , Cloneable {
 	@jakarta.xml.bind.annotation.XmlEnumValue("NumeroRichiesteFalliteOFaultApplicativi")
 	NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI ("NumeroRichiesteFalliteOFaultApplicativi"),
 	@jakarta.xml.bind.annotation.XmlEnumValue("NumeroRichiesteCompletateConSuccessoOFaultApplicativi")
-	NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO_OFAULT_APPLICATIVI ("NumeroRichiesteCompletateConSuccessoOFaultApplicativi");
+	NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO_OFAULT_APPLICATIVI ("NumeroRichiesteCompletateConSuccessoOFaultApplicativi"),
+	@jakarta.xml.bind.annotation.XmlEnumValue("NumeroTokenInput")
+	NUMERO_TOKEN_INPUT ("NumeroTokenInput"),
+	@jakarta.xml.bind.annotation.XmlEnumValue("NumeroTokenOutput")
+	NUMERO_TOKEN_OUTPUT ("NumeroTokenOutput"),
+	@jakarta.xml.bind.annotation.XmlEnumValue("NumeroTokenComplessivi")
+	NUMERO_TOKEN_COMPLESSIVI ("NumeroTokenComplessivi"),
+	@jakarta.xml.bind.annotation.XmlEnumValue("Costo")
+	COSTO ("Costo");
 	
 	
 	/** Value */

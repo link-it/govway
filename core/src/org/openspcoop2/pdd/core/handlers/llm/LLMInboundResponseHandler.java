@@ -24,6 +24,7 @@ import java.util.zip.GZIPInputStream;
 
 import org.openspcoop2.message.AbstractBaseOpenSPCoop2MessageDynamicContent;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.message.llm.CanonicalChatResponse;
 import org.openspcoop2.message.llm.stream.ChunkTransformInputStream;
 import org.openspcoop2.message.llm.stream.LLMProviderStreamReader;
@@ -76,6 +77,7 @@ public class LLMInboundResponseHandler implements InResponseHandler {
 		if (providerId == null) {
 			throw new HandlerException("LLMInboundResponseHandler: providerId mancante nel PdDContext");
 		}
+		stripProviderHeaders(context.getMessaggio(), providerId, log);
 		if (LLMHandlerSupport.isLLMStream(context)) {
 			// Su HTTP non-2xx il body NON è streaming: provider risponde con JSON di errore.
 			// Bedrock event-stream lo wrappa comunque in un frame binario → estraiamo il payload
@@ -255,6 +257,47 @@ public class LLMInboundResponseHandler implements InResponseHandler {
 		TransportResponseContext ctx = msg.getTransportResponseContext();
 		if (ctx != null) {
 			ctx.removeHeader(HttpConstants.CONTENT_ENCODING);
+		}
+	}
+
+	private void stripProviderHeaders(OpenSPCoop2Message msg, String providerId, org.slf4j.Logger log) {
+		if (msg == null) {
+			return;
+		}
+		TransportResponseContext ctx = msg.getTransportResponseContext();
+		if (ctx == null || ctx.getHeaders() == null || ctx.getHeaders().isEmpty()) {
+			return;
+		}
+		String [] prefixes;
+		try {
+			prefixes = OpenSPCoop2Properties.getInstance().getLLMResponseStripProviderHeaders(providerId);
+		} catch (Exception e) {
+			if (log != null) {
+				log.error("LLMInboundResponseHandler: lettura header da rimuovere per provider {} fallita: {}", providerId, e.getMessage(), e);
+			}
+			return;
+		}
+		if (prefixes == null || prefixes.length == 0) {
+			return;
+		}
+		java.util.List<String> toRemove = new java.util.ArrayList<>();
+		for (String headerName : ctx.getHeaders().keySet()) {
+			if (headerName == null) {
+				continue;
+			}
+			String hn = headerName.toLowerCase();
+			for (String p : prefixes) {
+				if (p != null && !p.isEmpty() && hn.startsWith(p.toLowerCase())) {
+					toRemove.add(headerName);
+					break;
+				}
+			}
+		}
+		for (String h : toRemove) {
+			ctx.removeHeader(h);
+		}
+		if (log != null && log.isDebugEnabled() && !toRemove.isEmpty()) {
+			log.debug("LLMInboundResponseHandler: rimossi {} header specifici del provider {} dalla risposta verso il client: {}", toRemove.size(), providerId, toRemove);
 		}
 	}
 }

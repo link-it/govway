@@ -967,6 +967,22 @@ public class InRequestProtocolHandlerGestioneControlloTraffico {
 							headers = op2Properties.getControlloTrafficoNumeroRichiesteCompletateConSuccessoOFaultApplicativiHeaderLimit();
 							windows = op2Properties.getControlloTrafficoNumeroRichiesteCompletateConSuccessoOFaultApplicativiHeaderLimitWindows();
 							break;
+						case NUMERO_TOKEN_INPUT:
+							headers = op2Properties.getControlloTrafficoNumeroTokenInputHeaderLimit();
+							windows = false;
+							break;
+						case NUMERO_TOKEN_OUTPUT:
+							headers = op2Properties.getControlloTrafficoNumeroTokenOutputHeaderLimit();
+							windows = false;
+							break;
+						case NUMERO_TOKEN_COMPLESSIVI:
+							headers = op2Properties.getControlloTrafficoNumeroTokenComplessiviHeaderLimit();
+							windows = false;
+							break;
+						case COSTO:
+							headers = op2Properties.getControlloTrafficoCostoHeaderLimit();
+							windows = false;
+							break;
 						}
 						
 						if(policyConfigurationPorta.isForceHttpHeaders_limit_no_windows()) {
@@ -1062,6 +1078,18 @@ public class InRequestProtocolHandlerGestioneControlloTraffico {
 						case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO_OFAULT_APPLICATIVI:
 							headers = op2Properties.getControlloTrafficoNumeroRichiesteCompletateConSuccessoOFaultApplicativiHeaderRemaining();
 							break;
+						case NUMERO_TOKEN_INPUT:
+							headers = op2Properties.getControlloTrafficoNumeroTokenInputHeaderRemaining();
+							break;
+						case NUMERO_TOKEN_OUTPUT:
+							headers = op2Properties.getControlloTrafficoNumeroTokenOutputHeaderRemaining();
+							break;
+						case NUMERO_TOKEN_COMPLESSIVI:
+							headers = op2Properties.getControlloTrafficoNumeroTokenComplessiviHeaderRemaining();
+							break;
+						case COSTO:
+							headers = op2Properties.getControlloTrafficoCostoHeaderRemaining();
+							break;
 						}
 						if(headers!=null && headers.length>0) {
 							for (String header : headers) {
@@ -1119,6 +1147,18 @@ public class InRequestProtocolHandlerGestioneControlloTraffico {
 							break;
 						case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO_OFAULT_APPLICATIVI:
 							headers = op2Properties.getControlloTrafficoNumeroRichiesteCompletateConSuccessoOFaultApplicativiHeaderReset();
+							break;
+						case NUMERO_TOKEN_INPUT:
+							headers = op2Properties.getControlloTrafficoNumeroTokenInputHeaderReset();
+							break;
+						case NUMERO_TOKEN_OUTPUT:
+							headers = op2Properties.getControlloTrafficoNumeroTokenOutputHeaderReset();
+							break;
+						case NUMERO_TOKEN_COMPLESSIVI:
+							headers = op2Properties.getControlloTrafficoNumeroTokenComplessiviHeaderReset();
+							break;
+						case COSTO:
+							headers = op2Properties.getControlloTrafficoCostoHeaderReset();
 							break;
 						}
 						

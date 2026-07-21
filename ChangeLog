@@ -1,10 +1,22 @@
+2026-07-16  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Introdotte nuove metriche di Rate Limiting (Controllo del Traffico) dedicate al gateway LLM:
+	'Token Input', 'Token Output', 'Token Complessivi' e 'Costo'. Le metriche sono attivabili come
+	policy su erogazioni e fruizioni (con i relativi template built-in per intervallo minuti/orario/
+	giornaliero) e vengono conteggiate a consuntivo per finestra temporale, analogamente all'occupazione
+	di banda: raggiunta la soglia, le richieste successive vengono bloccate. Il valore di token e costo
+	è rilevato a fine risposta (anche in streaming) dai dati LLM della transazione; il costo stimato è
+	espresso in dollari (accumulo interno ad alta precisione). Aggiornati i nuovi diagnostici di
+	violazione policy (codici C18-C21).
+
 2026-07-15  Andrea Poli <apoli@link.it>
 
 	* [GovWayMonitor]
 	Aggiunto il filtro condiviso 'Dati LLM' nelle ricerche di Analisi Statistica: consente di restringere
 	i risultati per Provider / Modello / Provider Binding e/o per intervallo di Token (Input/Output/Complessivi)
-	o Costo. Il filtro e' disponibile su Andamento Temporale, Distribuzione per Esiti, per Errori, per Azione,
-	per Servizio, per Soggetto e per Servizio Applicativo. Quando un criterio LLM e' attivo la ricerca viene
+	o Costo. Il filtro è disponibile su Andamento Temporale, Distribuzione per Esiti, per Errori, per Azione,
+	per Servizio, per Soggetto e per Servizio Applicativo. Quando un criterio LLM è attivo la ricerca viene
 	messa in join con le tabelle satellite 'stat_orarie_llm' / 'stat_giorni_llm' e le metriche (numero
 	transazioni, occupazione banda, tempo medio) sono calcolate sui dati LLM, cosi' da riportare i valori
 	relativi alle sole transazioni che soddisfano i criteri (disponibile per le tipologie oraria e giornaliera).
@@ -48,7 +60,7 @@
 	* [GovWayCore, GovWayConsole]
 	Introdotto il PII Masking per il gateway LLM: nuovo catalogo 'Regole PII' (detector Espressioni Regolari
 	o plugin; categorie email/iban/carta/CF/PIVA/telefono/IP/ecc. con validatori e pseudonimi format-preserving
-	reversibili) attivabile sul Provider Binding. Il masking e' applicato alla richiesta verso il provider
+	reversibili) attivabile sul Provider Binding. Il masking è applicato alla richiesta verso il provider
 	(fail-closed) e ripristinato nella risposta (sync e streaming), con cache di sessione DB-backed 'Cache (LLM)'
 	per la coerenza degli pseudonimi tra piu' richieste della stessa sessione, diagnostici dedicati (incluso il
 	riutilizzo dalla cache) e supporto delete-protection / export-import per le entita' del catalogo LLM.

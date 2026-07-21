@@ -1557,7 +1557,11 @@ public class MsgDiagnosticiProperties {
 		MsgDiagnosticiProperties.MSG_DIAG_ALL+"controlloTraffico.pddCongestionata",
 		MsgDiagnosticiProperties.MSG_DIAG_ALL+"controlloTraffico.policy.violata.risorsaNumeroRichiesteCompletateConSuccesso",
 		MsgDiagnosticiProperties.MSG_DIAG_ALL+"controlloTraffico.policy.violata.risorsaNumeroRichiesteFallite",
-		MsgDiagnosticiProperties.MSG_DIAG_ALL+"controlloTraffico.policy.violata.risorsaNumeroFaultApplicativi"
+		MsgDiagnosticiProperties.MSG_DIAG_ALL+"controlloTraffico.policy.violata.risorsaNumeroFaultApplicativi",
+		MsgDiagnosticiProperties.MSG_DIAG_ALL+"controlloTraffico.policy.violata.risorsaNumeroTokenInput",
+		MsgDiagnosticiProperties.MSG_DIAG_ALL+"controlloTraffico.policy.violata.risorsaNumeroTokenOutput",
+		MsgDiagnosticiProperties.MSG_DIAG_ALL+"controlloTraffico.policy.violata.risorsaNumeroTokenComplessivi",
+		MsgDiagnosticiProperties.MSG_DIAG_ALL+"controlloTraffico.policy.violata.risorsaCosto"
 	};
 	
 	private static final String PREFIX_MSG_DIAGNOSTICO = "org.openspcoop2.pdd.msgdiagnostico.";

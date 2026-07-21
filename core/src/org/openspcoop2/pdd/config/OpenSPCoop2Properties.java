@@ -34880,7 +34880,314 @@ public class OpenSPCoop2Properties {
 
 		return this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoOFaultApplicativiHeaderReset;
 	}
+	private String [] getControlloTrafficoNumeroTokenInputHeaderLimit = null;
+	private Boolean getControlloTrafficoNumeroTokenInputHeaderLimitRead = null;
+	public String [] getControlloTrafficoNumeroTokenInputHeaderLimit() throws CoreException {	
+		if(this.getControlloTrafficoNumeroTokenInputHeaderLimitRead==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroTokenInput.header.limit");
+				if(name!=null){
+					name = name.trim();
+					this.getControlloTrafficoNumeroTokenInputHeaderLimit = name.split(",");
+					for (int i = 0; i < this.getControlloTrafficoNumeroTokenInputHeaderLimit.length; i++) {
+						this.getControlloTrafficoNumeroTokenInputHeaderLimit[i]=this.getControlloTrafficoNumeroTokenInputHeaderLimit[i].trim();
+					}
+				}
+				this.getControlloTrafficoNumeroTokenInputHeaderLimitRead = true;
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di govway 'org.openspcoop2.pdd.controlloTraffico.numeroTokenInput.header.limit': "+e.getMessage(),e);
+				throw new CoreException(e.getMessage(),e);
+			}    
+		}
+		return this.getControlloTrafficoNumeroTokenInputHeaderLimit;
+	}
 	
+	private String [] getControlloTrafficoNumeroTokenInputHeaderRemaining = null;
+	private Boolean getControlloTrafficoNumeroTokenInputHeaderRemainingRead = null;
+	public String [] getControlloTrafficoNumeroTokenInputHeaderRemaining() throws CoreException {	
+		if(this.getControlloTrafficoNumeroTokenInputHeaderRemainingRead==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroTokenInput.header.remaining");
+				if(name!=null){
+					name = name.trim();
+					this.getControlloTrafficoNumeroTokenInputHeaderRemaining = name.split(",");
+					for (int i = 0; i < this.getControlloTrafficoNumeroTokenInputHeaderRemaining.length; i++) {
+						this.getControlloTrafficoNumeroTokenInputHeaderRemaining[i]=this.getControlloTrafficoNumeroTokenInputHeaderRemaining[i].trim();
+					}
+				}
+				this.getControlloTrafficoNumeroTokenInputHeaderRemainingRead = true;
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di govway 'org.openspcoop2.pdd.controlloTraffico.numeroTokenInput.header.remaining': "+e.getMessage(),e);
+				throw new CoreException(e.getMessage(),e);
+			}    
+		}
+		return this.getControlloTrafficoNumeroTokenInputHeaderRemaining;
+	}
+	
+	private String [] getControlloTrafficoNumeroTokenInputHeaderReset = null;
+	private Boolean getControlloTrafficoNumeroTokenInputHeaderResetRead = null;
+	public String [] getControlloTrafficoNumeroTokenInputHeaderReset() throws CoreException {	
+		if(this.getControlloTrafficoNumeroTokenInputHeaderResetRead==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroTokenInput.header.reset");
+				if(name!=null){
+					name = name.trim();
+					this.getControlloTrafficoNumeroTokenInputHeaderReset = name.split(",");
+					for (int i = 0; i < this.getControlloTrafficoNumeroTokenInputHeaderReset.length; i++) {
+						this.getControlloTrafficoNumeroTokenInputHeaderReset[i]=this.getControlloTrafficoNumeroTokenInputHeaderReset[i].trim();
+					}
+				}
+				this.getControlloTrafficoNumeroTokenInputHeaderResetRead = true;
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di govway 'org.openspcoop2.pdd.controlloTraffico.numeroTokenInput.header.reset': "+e.getMessage(),e);
+				throw new CoreException(e.getMessage(),e);
+			}    
+		}
+		return this.getControlloTrafficoNumeroTokenInputHeaderReset;
+	}
+	
+	private String [] getControlloTrafficoNumeroTokenOutputHeaderLimit = null;
+	private Boolean getControlloTrafficoNumeroTokenOutputHeaderLimitRead = null;
+	public String [] getControlloTrafficoNumeroTokenOutputHeaderLimit() throws CoreException {	
+		if(this.getControlloTrafficoNumeroTokenOutputHeaderLimitRead==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroTokenOutput.header.limit");
+				if(name!=null){
+					name = name.trim();
+					this.getControlloTrafficoNumeroTokenOutputHeaderLimit = name.split(",");
+					for (int i = 0; i < this.getControlloTrafficoNumeroTokenOutputHeaderLimit.length; i++) {
+						this.getControlloTrafficoNumeroTokenOutputHeaderLimit[i]=this.getControlloTrafficoNumeroTokenOutputHeaderLimit[i].trim();
+					}
+				}
+				this.getControlloTrafficoNumeroTokenOutputHeaderLimitRead = true;
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di govway 'org.openspcoop2.pdd.controlloTraffico.numeroTokenOutput.header.limit': "+e.getMessage(),e);
+				throw new CoreException(e.getMessage(),e);
+			}    
+		}
+		return this.getControlloTrafficoNumeroTokenOutputHeaderLimit;
+	}
+	
+	private String [] getControlloTrafficoNumeroTokenOutputHeaderRemaining = null;
+	private Boolean getControlloTrafficoNumeroTokenOutputHeaderRemainingRead = null;
+	public String [] getControlloTrafficoNumeroTokenOutputHeaderRemaining() throws CoreException {	
+		if(this.getControlloTrafficoNumeroTokenOutputHeaderRemainingRead==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroTokenOutput.header.remaining");
+				if(name!=null){
+					name = name.trim();
+					this.getControlloTrafficoNumeroTokenOutputHeaderRemaining = name.split(",");
+					for (int i = 0; i < this.getControlloTrafficoNumeroTokenOutputHeaderRemaining.length; i++) {
+						this.getControlloTrafficoNumeroTokenOutputHeaderRemaining[i]=this.getControlloTrafficoNumeroTokenOutputHeaderRemaining[i].trim();
+					}
+				}
+				this.getControlloTrafficoNumeroTokenOutputHeaderRemainingRead = true;
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di govway 'org.openspcoop2.pdd.controlloTraffico.numeroTokenOutput.header.remaining': "+e.getMessage(),e);
+				throw new CoreException(e.getMessage(),e);
+			}    
+		}
+		return this.getControlloTrafficoNumeroTokenOutputHeaderRemaining;
+	}
+	
+	private String [] getControlloTrafficoNumeroTokenOutputHeaderReset = null;
+	private Boolean getControlloTrafficoNumeroTokenOutputHeaderResetRead = null;
+	public String [] getControlloTrafficoNumeroTokenOutputHeaderReset() throws CoreException {	
+		if(this.getControlloTrafficoNumeroTokenOutputHeaderResetRead==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroTokenOutput.header.reset");
+				if(name!=null){
+					name = name.trim();
+					this.getControlloTrafficoNumeroTokenOutputHeaderReset = name.split(",");
+					for (int i = 0; i < this.getControlloTrafficoNumeroTokenOutputHeaderReset.length; i++) {
+						this.getControlloTrafficoNumeroTokenOutputHeaderReset[i]=this.getControlloTrafficoNumeroTokenOutputHeaderReset[i].trim();
+					}
+				}
+				this.getControlloTrafficoNumeroTokenOutputHeaderResetRead = true;
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di govway 'org.openspcoop2.pdd.controlloTraffico.numeroTokenOutput.header.reset': "+e.getMessage(),e);
+				throw new CoreException(e.getMessage(),e);
+			}    
+		}
+		return this.getControlloTrafficoNumeroTokenOutputHeaderReset;
+	}
+	
+	private String [] getControlloTrafficoNumeroTokenComplessiviHeaderLimit = null;
+	private Boolean getControlloTrafficoNumeroTokenComplessiviHeaderLimitRead = null;
+	public String [] getControlloTrafficoNumeroTokenComplessiviHeaderLimit() throws CoreException {	
+		if(this.getControlloTrafficoNumeroTokenComplessiviHeaderLimitRead==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroTokenComplessivi.header.limit");
+				if(name!=null){
+					name = name.trim();
+					this.getControlloTrafficoNumeroTokenComplessiviHeaderLimit = name.split(",");
+					for (int i = 0; i < this.getControlloTrafficoNumeroTokenComplessiviHeaderLimit.length; i++) {
+						this.getControlloTrafficoNumeroTokenComplessiviHeaderLimit[i]=this.getControlloTrafficoNumeroTokenComplessiviHeaderLimit[i].trim();
+					}
+				}
+				this.getControlloTrafficoNumeroTokenComplessiviHeaderLimitRead = true;
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di govway 'org.openspcoop2.pdd.controlloTraffico.numeroTokenComplessivi.header.limit': "+e.getMessage(),e);
+				throw new CoreException(e.getMessage(),e);
+			}    
+		}
+		return this.getControlloTrafficoNumeroTokenComplessiviHeaderLimit;
+	}
+	
+	private String [] getControlloTrafficoNumeroTokenComplessiviHeaderRemaining = null;
+	private Boolean getControlloTrafficoNumeroTokenComplessiviHeaderRemainingRead = null;
+	public String [] getControlloTrafficoNumeroTokenComplessiviHeaderRemaining() throws CoreException {	
+		if(this.getControlloTrafficoNumeroTokenComplessiviHeaderRemainingRead==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroTokenComplessivi.header.remaining");
+				if(name!=null){
+					name = name.trim();
+					this.getControlloTrafficoNumeroTokenComplessiviHeaderRemaining = name.split(",");
+					for (int i = 0; i < this.getControlloTrafficoNumeroTokenComplessiviHeaderRemaining.length; i++) {
+						this.getControlloTrafficoNumeroTokenComplessiviHeaderRemaining[i]=this.getControlloTrafficoNumeroTokenComplessiviHeaderRemaining[i].trim();
+					}
+				}
+				this.getControlloTrafficoNumeroTokenComplessiviHeaderRemainingRead = true;
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di govway 'org.openspcoop2.pdd.controlloTraffico.numeroTokenComplessivi.header.remaining': "+e.getMessage(),e);
+				throw new CoreException(e.getMessage(),e);
+			}    
+		}
+		return this.getControlloTrafficoNumeroTokenComplessiviHeaderRemaining;
+	}
+	
+	private String [] getControlloTrafficoNumeroTokenComplessiviHeaderReset = null;
+	private Boolean getControlloTrafficoNumeroTokenComplessiviHeaderResetRead = null;
+	public String [] getControlloTrafficoNumeroTokenComplessiviHeaderReset() throws CoreException {	
+		if(this.getControlloTrafficoNumeroTokenComplessiviHeaderResetRead==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroTokenComplessivi.header.reset");
+				if(name!=null){
+					name = name.trim();
+					this.getControlloTrafficoNumeroTokenComplessiviHeaderReset = name.split(",");
+					for (int i = 0; i < this.getControlloTrafficoNumeroTokenComplessiviHeaderReset.length; i++) {
+						this.getControlloTrafficoNumeroTokenComplessiviHeaderReset[i]=this.getControlloTrafficoNumeroTokenComplessiviHeaderReset[i].trim();
+					}
+				}
+				this.getControlloTrafficoNumeroTokenComplessiviHeaderResetRead = true;
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di govway 'org.openspcoop2.pdd.controlloTraffico.numeroTokenComplessivi.header.reset': "+e.getMessage(),e);
+				throw new CoreException(e.getMessage(),e);
+			}    
+		}
+		return this.getControlloTrafficoNumeroTokenComplessiviHeaderReset;
+	}
+	
+	private String [] getControlloTrafficoCostoHeaderLimit = null;
+	private Boolean getControlloTrafficoCostoHeaderLimitRead = null;
+	public String [] getControlloTrafficoCostoHeaderLimit() throws CoreException {	
+		if(this.getControlloTrafficoCostoHeaderLimitRead==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.costo.header.limit");
+				if(name!=null){
+					name = name.trim();
+					this.getControlloTrafficoCostoHeaderLimit = name.split(",");
+					for (int i = 0; i < this.getControlloTrafficoCostoHeaderLimit.length; i++) {
+						this.getControlloTrafficoCostoHeaderLimit[i]=this.getControlloTrafficoCostoHeaderLimit[i].trim();
+					}
+				}
+				this.getControlloTrafficoCostoHeaderLimitRead = true;
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di govway 'org.openspcoop2.pdd.controlloTraffico.costo.header.limit': "+e.getMessage(),e);
+				throw new CoreException(e.getMessage(),e);
+			}    
+		}
+		return this.getControlloTrafficoCostoHeaderLimit;
+	}
+	
+	private String [] getControlloTrafficoCostoHeaderRemaining = null;
+	private Boolean getControlloTrafficoCostoHeaderRemainingRead = null;
+	public String [] getControlloTrafficoCostoHeaderRemaining() throws CoreException {	
+		if(this.getControlloTrafficoCostoHeaderRemainingRead==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.costo.header.remaining");
+				if(name!=null){
+					name = name.trim();
+					this.getControlloTrafficoCostoHeaderRemaining = name.split(",");
+					for (int i = 0; i < this.getControlloTrafficoCostoHeaderRemaining.length; i++) {
+						this.getControlloTrafficoCostoHeaderRemaining[i]=this.getControlloTrafficoCostoHeaderRemaining[i].trim();
+					}
+				}
+				this.getControlloTrafficoCostoHeaderRemainingRead = true;
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di govway 'org.openspcoop2.pdd.controlloTraffico.costo.header.remaining': "+e.getMessage(),e);
+				throw new CoreException(e.getMessage(),e);
+			}    
+		}
+		return this.getControlloTrafficoCostoHeaderRemaining;
+	}
+	
+	private String [] getControlloTrafficoCostoHeaderReset = null;
+	private Boolean getControlloTrafficoCostoHeaderResetRead = null;
+	public String [] getControlloTrafficoCostoHeaderReset() throws CoreException {	
+		if(this.getControlloTrafficoCostoHeaderResetRead==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.costo.header.reset");
+				if(name!=null){
+					name = name.trim();
+					this.getControlloTrafficoCostoHeaderReset = name.split(",");
+					for (int i = 0; i < this.getControlloTrafficoCostoHeaderReset.length; i++) {
+						this.getControlloTrafficoCostoHeaderReset[i]=this.getControlloTrafficoCostoHeaderReset[i].trim();
+					}
+				}
+				this.getControlloTrafficoCostoHeaderResetRead = true;
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di govway 'org.openspcoop2.pdd.controlloTraffico.costo.header.reset': "+e.getMessage(),e);
+				throw new CoreException(e.getMessage(),e);
+			}    
+		}
+		return this.getControlloTrafficoCostoHeaderReset;
+	}
+
+	private final java.util.Map<String,String[]> llmResponseStripProviderHeaders = new java.util.HashMap<>();
+	public String [] getLLMResponseStripProviderHeaders(String providerType) throws CoreException {
+		if(providerType==null){
+			return null;
+		}
+		synchronized(this.llmResponseStripProviderHeaders){
+			if(this.llmResponseStripProviderHeaders.containsKey(providerType)){
+				return this.llmResponseStripProviderHeaders.get(providerType);
+			}
+			String propertyName = "org.openspcoop2.pdd.llm.response.stripHeaders."+providerType;
+			try{
+				String [] value = null;
+				String name = this.reader.getValueConvertEnvProperties(propertyName);
+				if(name!=null){
+					name = name.trim();
+					if(!name.isEmpty()){
+						value = name.split(",");
+						for (int i = 0; i < value.length; i++) {
+							value[i]=value[i].trim();
+						}
+					}
+				}
+				this.llmResponseStripProviderHeaders.put(providerType, value);
+				return value;
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di govway '"+propertyName+"': "+e.getMessage(),e);
+				throw new CoreException(e.getMessage(),e);
+			}
+		}
+	}
+
+
 	
 	
 	// Header Retry After

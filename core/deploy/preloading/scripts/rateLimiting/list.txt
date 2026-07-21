@@ -134,4 +134,60 @@ NumeroRichiesteCompletateConSuccessoOFaultApplicativi|false|giornaliero|1000|fal
 NumeroRichiesteCompletateConSuccessoOFaultApplicativi|false|giornaliero|1000|true|false
 NumeroRichiesteCompletateConSuccessoOFaultApplicativi|false|giornaliero|1000|false|true
 NumeroRichiesteCompletateConSuccessoOFaultApplicativi|false|giornaliero|1000|true|true
+#
+# NumeroTokenInput (token LLM)
+NumeroTokenInput|false|minuti|10000|false|false
+NumeroTokenInput|false|minuti|10000|true|false
+NumeroTokenInput|false|minuti|10000|false|true
+NumeroTokenInput|false|minuti|10000|true|true
+NumeroTokenInput|false|orario|100000|false|false
+NumeroTokenInput|false|orario|100000|true|false
+NumeroTokenInput|false|orario|100000|false|true
+NumeroTokenInput|false|orario|100000|true|true
+NumeroTokenInput|false|giornaliero|1000000|false|false
+NumeroTokenInput|false|giornaliero|1000000|true|false
+NumeroTokenInput|false|giornaliero|1000000|false|true
+NumeroTokenInput|false|giornaliero|1000000|true|true
+#
+# NumeroTokenOutput (token LLM)
+NumeroTokenOutput|false|minuti|5000|false|false
+NumeroTokenOutput|false|minuti|5000|true|false
+NumeroTokenOutput|false|minuti|5000|false|true
+NumeroTokenOutput|false|minuti|5000|true|true
+NumeroTokenOutput|false|orario|50000|false|false
+NumeroTokenOutput|false|orario|50000|true|false
+NumeroTokenOutput|false|orario|50000|false|true
+NumeroTokenOutput|false|orario|50000|true|true
+NumeroTokenOutput|false|giornaliero|500000|false|false
+NumeroTokenOutput|false|giornaliero|500000|true|false
+NumeroTokenOutput|false|giornaliero|500000|false|true
+NumeroTokenOutput|false|giornaliero|500000|true|true
+#
+# NumeroTokenComplessivi (token LLM: input + output)
+NumeroTokenComplessivi|false|minuti|15000|false|false
+NumeroTokenComplessivi|false|minuti|15000|true|false
+NumeroTokenComplessivi|false|minuti|15000|false|true
+NumeroTokenComplessivi|false|minuti|15000|true|true
+NumeroTokenComplessivi|false|orario|150000|false|false
+NumeroTokenComplessivi|false|orario|150000|true|false
+NumeroTokenComplessivi|false|orario|150000|false|true
+NumeroTokenComplessivi|false|orario|150000|true|true
+NumeroTokenComplessivi|false|giornaliero|1500000|false|false
+NumeroTokenComplessivi|false|giornaliero|1500000|true|false
+NumeroTokenComplessivi|false|giornaliero|1500000|false|true
+NumeroTokenComplessivi|false|giornaliero|1500000|true|true
+#
+# Costo (stima consumo token LLM, valore in dollari interi)
+Costo|false|minuti|1|false|false
+Costo|false|minuti|1|true|false
+Costo|false|minuti|1|false|true
+Costo|false|minuti|1|true|true
+Costo|false|orario|10|false|false
+Costo|false|orario|10|true|false
+Costo|false|orario|10|false|true
+Costo|false|orario|10|true|true
+Costo|false|giornaliero|100|false|false
+Costo|false|giornaliero|100|true|false
+Costo|false|giornaliero|100|false|true
+Costo|false|giornaliero|100|true|true
 

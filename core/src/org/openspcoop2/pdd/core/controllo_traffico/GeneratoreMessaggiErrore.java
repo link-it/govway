@@ -60,6 +60,10 @@ public class GeneratoreMessaggiErrore {
 	public static final String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_VIOLATA_NUMERO_FAULT_APPLICATIVI = "controlloTraffico.policy.violata.risorsaNumeroFaultApplicativi";
 	public static final String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_VIOLATA_NUMERO_RICHIESTE_FALLITE_O_FAULT_APPLICATIVI= "controlloTraffico.policy.violata.risorsaNumeroRichiesteFalliteOFaultApplicativi";
 	public static final String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_VIOLATA_NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO_O_FAULT_APPLICATIVI = "controlloTraffico.policy.violata.risorsaNumeroRichiesteCompletateConSuccessoOFaultApplicativi";
+	public static final String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_VIOLATA_NUMERO_TOKEN_INPUT = "controlloTraffico.policy.violata.risorsaNumeroTokenInput";
+	public static final String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_VIOLATA_NUMERO_TOKEN_OUTPUT = "controlloTraffico.policy.violata.risorsaNumeroTokenOutput";
+	public static final String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_VIOLATA_NUMERO_TOKEN_COMPLESSIVI = "controlloTraffico.policy.violata.risorsaNumeroTokenComplessivi";
+	public static final String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_VIOLATA_COSTO = "controlloTraffico.policy.violata.risorsaCosto";
 	
 	// identificativi diagnostici parziali per applicabilità policy
 	public static final String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_APPLICABILITA_PDD_NON_CONGESTIONATA = "controlloTraffico.policy.applicabilita.nonCongestionato";
@@ -147,6 +151,10 @@ public class GeneratoreMessaggiErrore {
 	private static final String CONTROLLO_TRAFFICO_POLICY_VIOLATED_NUMERO_RICHIESTE_FALLITE_O_FAULT_APPLICATIVI_CODE = "CP09";
 	private static final String CONTROLLO_TRAFFICO_POLICY_VIOLATED_DIMENSIONE_MASSIMA_MESSAGGIO_CODE = "CP10";
 	private static final String CONTROLLO_TRAFFICO_POLICY_VIOLATED_NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO_O_FAULT_APPLICATIVI_CODE = "CP11";
+	private static final String CONTROLLO_TRAFFICO_POLICY_VIOLATED_NUMERO_TOKEN_INPUT_CODE = "CP12";
+	private static final String CONTROLLO_TRAFFICO_POLICY_VIOLATED_NUMERO_TOKEN_OUTPUT_CODE = "CP13";
+	private static final String CONTROLLO_TRAFFICO_POLICY_VIOLATED_NUMERO_TOKEN_COMPLESSIVI_CODE = "CP14";
+	private static final String CONTROLLO_TRAFFICO_POLICY_VIOLATED_COSTO_CODE = "CP15";
 	private static final String APPLICABILITA_CONGESTIONE_CODE = "-CC";
 	private static final String APPLICABILITA_DEGRADO_CODE = "-DP";
 	private static final String APPLICABILITA_STATO_ALLARME_CODE = "-SA";
@@ -489,6 +497,18 @@ public class GeneratoreMessaggiErrore {
 				break;
 			case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO_OFAULT_APPLICATIVI:
 				bf.append(CONTROLLO_TRAFFICO_POLICY_VIOLATED_NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO_O_FAULT_APPLICATIVI_CODE);
+				break;
+			case NUMERO_TOKEN_INPUT:
+				bf.append(CONTROLLO_TRAFFICO_POLICY_VIOLATED_NUMERO_TOKEN_INPUT_CODE);
+				break;
+			case NUMERO_TOKEN_OUTPUT:
+				bf.append(CONTROLLO_TRAFFICO_POLICY_VIOLATED_NUMERO_TOKEN_OUTPUT_CODE);
+				break;
+			case NUMERO_TOKEN_COMPLESSIVI:
+				bf.append(CONTROLLO_TRAFFICO_POLICY_VIOLATED_NUMERO_TOKEN_COMPLESSIVI_CODE);
+				break;
+			case COSTO:
+				bf.append(CONTROLLO_TRAFFICO_POLICY_VIOLATED_COSTO_CODE);
 				break;
 			}
 			

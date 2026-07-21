@@ -51,7 +51,11 @@ public class MisurazioniTransazione implements Serializable , Cloneable {
 	private java.lang.Long richiestaUscitaBytes;
 	private java.lang.Long rispostaIngressoBytes;
 	private java.lang.Long rispostaUscitaBytes;
-	
+
+	private java.lang.Long llmTokenInput;
+	private java.lang.Long llmTokenOutput;
+	private java.lang.Double llmCosto;
+
 	private int esitoTransazione;
 
 	public String getProtocollo() {
@@ -121,9 +125,27 @@ public class MisurazioniTransazione implements Serializable , Cloneable {
 	public void setRispostaUscitaBytes(java.lang.Long rispostaUscitaBytes) {
 		this.rispostaUscitaBytes = rispostaUscitaBytes;
 	}
-	
-	
-	
+	public java.lang.Long getLlmTokenInput() {
+		return this.llmTokenInput;
+	}
+	public void setLlmTokenInput(java.lang.Long llmTokenInput) {
+		this.llmTokenInput = llmTokenInput;
+	}
+	public java.lang.Long getLlmTokenOutput() {
+		return this.llmTokenOutput;
+	}
+	public void setLlmTokenOutput(java.lang.Long llmTokenOutput) {
+		this.llmTokenOutput = llmTokenOutput;
+	}
+	public java.lang.Double getLlmCosto() {
+		return this.llmCosto;
+	}
+	public void setLlmCosto(java.lang.Double llmCosto) {
+		this.llmCosto = llmCosto;
+	}
+
+
+
 	// **** UTILITIES ****
 	
 	public static String serialize(MisurazioniTransazione misurazione){
@@ -211,7 +233,31 @@ public class MisurazioniTransazione implements Serializable , Cloneable {
 		bf.append("\n");
 		
 		bf.append(misurazione.esitoTransazione);
-		
+		bf.append("\n");
+
+		if(misurazione.llmTokenInput!=null){
+			bf.append(misurazione.llmTokenInput);
+		}
+		else{
+			bf.append("-");
+		}
+		bf.append("\n");
+
+		if(misurazione.llmTokenOutput!=null){
+			bf.append(misurazione.llmTokenOutput);
+		}
+		else{
+			bf.append("-");
+		}
+		bf.append("\n");
+
+		if(misurazione.llmCosto!=null){
+			bf.append(misurazione.llmCosto);
+		}
+		else{
+			bf.append("-");
+		}
+
 		return bf.toString();
 	}
 	
@@ -221,7 +267,7 @@ public class MisurazioniTransazione implements Serializable , Cloneable {
 		if(tmp==null){
 			throw new Exception("Wrong Format");
 		}
-		if(tmp.length!=11){
+		if(tmp.length!=11 && tmp.length!=14){
 			throw new Exception("Wrong Format (size: "+tmp.length+")");
 		}
 		for (int i = 0; i < tmp.length; i++) {
@@ -291,8 +337,26 @@ public class MisurazioniTransazione implements Serializable , Cloneable {
 					misurazioni.esitoTransazione = Integer.parseInt(tmpValue);
 				}
 			}
+			else if(i==11){
+				String tmpValue = tmp[i].trim();
+				if(tmpValue!=null && !"-".equals(tmpValue)){
+					misurazioni.llmTokenInput = Long.parseLong(tmpValue);
+				}
+			}
+			else if(i==12){
+				String tmpValue = tmp[i].trim();
+				if(tmpValue!=null && !"-".equals(tmpValue)){
+					misurazioni.llmTokenOutput = Long.parseLong(tmpValue);
+				}
+			}
+			else if(i==13){
+				String tmpValue = tmp[i].trim();
+				if(tmpValue!=null && !"-".equals(tmpValue)){
+					misurazioni.llmCosto = Double.parseDouble(tmpValue);
+				}
+			}
 		}
-		
+
 		return misurazioni;
 	}
 }

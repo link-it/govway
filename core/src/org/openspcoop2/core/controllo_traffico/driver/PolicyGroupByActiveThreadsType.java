@@ -215,6 +215,10 @@ public enum PolicyGroupByActiveThreadsType {
 			list.remove(TipoRisorsaPolicyAttiva.OCCUPAZIONE_BANDA);
 			list.remove(TipoRisorsaPolicyAttiva.TEMPO_COMPLESSIVO_RISPOSTA);
 			list.remove(TipoRisorsaPolicyAttiva.TEMPO_MEDIO_RISPOSTA);
+			list.remove(TipoRisorsaPolicyAttiva.NUMERO_TOKEN_INPUT);
+			list.remove(TipoRisorsaPolicyAttiva.NUMERO_TOKEN_OUTPUT);
+			list.remove(TipoRisorsaPolicyAttiva.NUMERO_TOKEN_COMPLESSIVI);
+			list.remove(TipoRisorsaPolicyAttiva.COSTO);
 			return list;
 		case DATABASE:
 			return list;

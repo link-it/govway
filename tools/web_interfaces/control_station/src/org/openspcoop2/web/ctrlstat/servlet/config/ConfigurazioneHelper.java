@@ -9040,6 +9040,14 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					//labelSogliaColonna =ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_TEMPO_COMPLESSIVO_MS_LABEL;
 					labelSogliaColonna =ConfigurazioneCostanti.LABEL_POLICY_INFORMAZIONI_SOGLIA_TEMPI_SECONDI;
 					break;
+				case NUMERO_TOKEN_INPUT:
+				case NUMERO_TOKEN_OUTPUT:
+				case NUMERO_TOKEN_COMPLESSIVI:
+					labelSogliaColonna =ConfigurazioneCostanti.LABEL_POLICY_INFORMAZIONI_SOGLIA_TOKEN;
+					break;
+				case COSTO:
+					labelSogliaColonna =ConfigurazioneCostanti.LABEL_POLICY_INFORMAZIONI_SOGLIA_COSTO;
+					break;
 				}
 			}
 			
@@ -10595,6 +10603,18 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO_OFAULT_APPLICATIVI:
 				bfSuggerimentoDescrizione.append("La policy conteggia il numero di richieste completate con successo o che veicolano un fault applicativo; raggiunto il limite, ogni successiva richiesta viene bloccata");
 				break;
+			case NUMERO_TOKEN_INPUT:
+				bfSuggerimentoDescrizione.append("La policy limita il numero totale massimo di token di input LLM consentiti");
+				break;
+			case NUMERO_TOKEN_OUTPUT:
+				bfSuggerimentoDescrizione.append("La policy limita il numero totale massimo di token di output LLM consentiti");
+				break;
+			case NUMERO_TOKEN_COMPLESSIVI:
+				bfSuggerimentoDescrizione.append("La policy limita il numero totale massimo di token complessivi LLM (input piu' output) consentiti");
+				break;
+			case COSTO:
+				bfSuggerimentoDescrizione.append("La policy limita il costo massimo stimato, in dollari, per il consumo di token LLM");
+				break;
 			}
 		}
 		
@@ -11330,6 +11350,22 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO_OFAULT_APPLICATIVI:
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE);
 			de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO_O_FAULT_APPLICATIVI_NOTE);
+			break;
+		case NUMERO_TOKEN_INPUT:
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_NUMERO_TOKEN_LABEL);
+			de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_NUMERO_TOKEN_INPUT_NOTE);
+			break;
+		case NUMERO_TOKEN_OUTPUT:
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_NUMERO_TOKEN_LABEL);
+			de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_NUMERO_TOKEN_OUTPUT_NOTE);
+			break;
+		case NUMERO_TOKEN_COMPLESSIVI:
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_NUMERO_TOKEN_LABEL);
+			de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_NUMERO_TOKEN_COMPLESSIVI_NOTE);
+			break;
+		case COSTO:
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_COSTO_LABEL);
+			de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_COSTO_NOTE);
 			break;
 		}
 		if(editMode || editOnlyValueMode) {

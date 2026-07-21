@@ -57,6 +57,18 @@ do
 	elif [ "${risorsa}" == "NumeroRichiesteCompletateConSuccessoOFaultApplicativi" ]
 	then
 		descrizione="La policy conteggia il numero di richieste completate con successo o che veicolano un fault applicativo; raggiunto il limite, ogni successiva richiesta viene bloccata"
+	elif [ "${risorsa}" == "NumeroTokenInput" ]
+	then
+		descrizione="La policy limita il numero totale massimo di token di input LLM consentiti"
+	elif [ "${risorsa}" == "NumeroTokenOutput" ]
+	then
+		descrizione="La policy limita il numero totale massimo di token di output LLM consentiti"
+	elif [ "${risorsa}" == "NumeroTokenComplessivi" ]
+	then
+		descrizione="La policy limita il numero totale massimo di token complessivi LLM (input piu' output) consentiti"
+	elif [ "${risorsa}" == "Costo" ]
+	then
+		descrizione="La policy limita il costo massimo stimato, in dollari, per il consumo di token LLM"
 	fi
 
 	if [ "${richiesteSimultanee}" == "false" -a "${risorsa}" != "DimensioneMassimaMessaggio" ]
