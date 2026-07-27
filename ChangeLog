@@ -1,5 +1,11 @@
 2026-07-27  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore]
+	Risolte le seguenti vulnerabilità relative ai jar di terza parte:
+	- CVE-2026-44891, CVE-2026-55831, CVE-2026-55833: aggiornata libreria 'io.netty:*' alla versione 4.1.136.Final
+
+2026-07-27  Andrea Poli <apoli@link.it>
+
 	* [GovWayConsole]
 	Risolto Bug #1806
 	Corretta la visualizzazione dei caratteri speciali (es. doppi apici) nei template di identificazione della Correlazione Applicativa,
