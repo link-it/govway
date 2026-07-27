@@ -103,8 +103,6 @@ public final class PorteDelegateCorrelazioneApplicativaRequestChange extends Act
 			String mode = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE);
 			
 			String pattern = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_PATTERN);
-			if(pattern!=null)
-				pattern = StringEscapeUtils.escapeHtml4(pattern);
 			
 			String idcorrString = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_CORRELAZIONE);
 			int idcorr = Integer.parseInt(idcorrString);
@@ -186,7 +184,7 @@ public final class PorteDelegateCorrelazioneApplicativaRequestChange extends Act
 					mode = cae.getIdentificazione().toString();
 				}
 				if (pattern == null) {
-					pattern = StringEscapeUtils.escapeHtml4(cae.getPattern());
+					pattern = cae.getPattern();
 				}
 				if (gif == null &&
 					cae.getIdentificazioneFallita()!=null) {
@@ -273,7 +271,7 @@ public final class PorteDelegateCorrelazioneApplicativaRequestChange extends Act
 					mode.equals(PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_TEMPLATE) ||
 					mode.equals(PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_FREEMARKER_TEMPLATE) ||
 					mode.equals(PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_VELOCITY_TEMPLATE)) {
-				caeNew.setPattern(StringEscapeUtils.unescapeHtml4(pattern));
+				caeNew.setPattern(pattern);
 			}
 			if(!PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_DISABILITATO.equals(mode)){
 				caeNew.setIdentificazioneFallita(CorrelazioneApplicativaGestioneIdentificazioneFallita.toEnumConstant(gif));

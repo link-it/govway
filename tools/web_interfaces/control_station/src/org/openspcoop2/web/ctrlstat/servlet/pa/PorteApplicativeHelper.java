@@ -144,6 +144,7 @@ import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.CheckboxStatusType;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
+import org.apache.commons.text.StringEscapeUtils;
 import org.openspcoop2.web.lib.mvc.DataElementImage;
 import org.openspcoop2.web.lib.mvc.DataElementInfo;
 import org.openspcoop2.web.lib.mvc.DataElementType;
@@ -3977,8 +3978,10 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			}
 			if (pattern == null) {
 				de.setValue("");
-			} else {
+			} else if(DataElementType.TEXT_AREA.toString().equals(de.getType()) || DataElementType.TEXT_AREA_NO_EDIT.toString().equals(de.getType())) {
 				de.setValue(pattern);
+			} else {
+				de.setValue(StringEscapeUtils.escapeHtml4(pattern));
 			}
 			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_PATTERN);
 			de.setRequired(true);
@@ -4148,8 +4151,10 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			}
 			if (pattern == null) {
 				de.setValue("");
-			} else {
+			} else if(DataElementType.TEXT_AREA.toString().equals(de.getType()) || DataElementType.TEXT_AREA_NO_EDIT.toString().equals(de.getType())) {
 				de.setValue(pattern);
+			} else {
+				de.setValue(StringEscapeUtils.escapeHtml4(pattern));
 			}
 			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_PATTERN);
 			de.setRequired(true);
