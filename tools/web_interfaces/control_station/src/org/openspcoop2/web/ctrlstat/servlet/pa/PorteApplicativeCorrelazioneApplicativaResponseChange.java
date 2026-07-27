@@ -96,8 +96,6 @@ public final class PorteApplicativeCorrelazioneApplicativaResponseChange extends
 			String mode = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE);
 			
 			String pattern = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_PATTERN);
-			if(pattern!=null)
-				pattern = StringEscapeUtils.escapeHtml(pattern);
 			
 			String idcorrString = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_CORRELAZIONE_APPLICATIVA);
 			int idcorr = Integer.parseInt(idcorrString);
@@ -177,7 +175,7 @@ public final class PorteApplicativeCorrelazioneApplicativaResponseChange extends
 					mode = cae.getIdentificazione().toString();
 				}
 				if (pattern == null) {
-					pattern = StringEscapeUtils.escapeHtml(cae.getPattern());
+					pattern = cae.getPattern();
 				}
 				if (gif == null &&
 					cae.getIdentificazioneFallita()!=null) {
@@ -257,7 +255,7 @@ public final class PorteApplicativeCorrelazioneApplicativaResponseChange extends
 					mode.equals(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_TEMPLATE) ||
 					mode.equals(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_FREEMARKER_TEMPLATE) ||
 					mode.equals(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_VELOCITY_TEMPLATE)) {
-				caeNew.setPattern(StringEscapeUtils.unescapeHtml(pattern));
+				caeNew.setPattern(pattern);
 			}
 			if(!PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_DISABILITATO.equals(mode)){
 				caeNew.setIdentificazioneFallita(CorrelazioneApplicativaGestioneIdentificazioneFallita.toEnumConstant(gif));

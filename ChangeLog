@@ -1,3 +1,12 @@
+2026-07-27  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug #1806
+	Corretta la visualizzazione dei caratteri speciali (es. doppi apici) nei template di identificazione della Correlazione Applicativa,
+	nella sezione Tracciamento di erogazioni e fruizioni: tali caratteri, se presenti nel template configurato, venivano mostrati alla
+	riapertura della configurazione come codici HTML (es. &quot;) anziché nel loro formato originale. Un eventuale nuovo salvataggio della
+	maschera così visualizzata comportava inoltre la memorizzazione di un valore alterato rispetto a quello configurato in precedenza.
+
 2026-07-15  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

@@ -105,6 +105,7 @@ import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.CheckboxStatusType;
 import org.openspcoop2.web.lib.mvc.DataElement;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.openspcoop2.web.lib.mvc.DataElementImage;
 import org.openspcoop2.web.lib.mvc.DataElementInfo;
 import org.openspcoop2.web.lib.mvc.DataElementType;
@@ -1515,8 +1516,10 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			}
 			if (pattern == null) {
 				de.setValue("");
-			} else {
+			} else if(DataElementType.TEXT_AREA.toString().equals(de.getType()) || DataElementType.TEXT_AREA_NO_EDIT.toString().equals(de.getType())) {
 				de.setValue(pattern);
+			} else {
+				de.setValue(StringEscapeUtils.escapeHtml(pattern));
 			}
 			de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_PATTERN);
 			de.setRequired(true);
@@ -1705,8 +1708,10 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			}
 			if (pattern == null) {
 				de.setValue("");
-			} else {
+			} else if(DataElementType.TEXT_AREA.toString().equals(de.getType()) || DataElementType.TEXT_AREA_NO_EDIT.toString().equals(de.getType())) {
 				de.setValue(pattern);
+			} else {
+				de.setValue(StringEscapeUtils.escapeHtml(pattern));
 			}
 			de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_PATTERN);
 			de.setRequired(true);

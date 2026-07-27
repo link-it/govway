@@ -3979,8 +3979,10 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			}
 			if (pattern == null) {
 				de.setValue("");
-			} else {
+			} else if(DataElementType.TEXT_AREA.toString().equals(de.getType()) || DataElementType.TEXT_AREA_NO_EDIT.toString().equals(de.getType())) {
 				de.setValue(pattern);
+			} else {
+				de.setValue(StringEscapeUtils.escapeHtml(pattern));
 			}
 			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_PATTERN);
 			de.setRequired(true);
@@ -4150,8 +4152,10 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			}
 			if (pattern == null) {
 				de.setValue("");
-			} else {
+			} else if(DataElementType.TEXT_AREA.toString().equals(de.getType()) || DataElementType.TEXT_AREA_NO_EDIT.toString().equals(de.getType())) {
 				de.setValue(pattern);
+			} else {
+				de.setValue(StringEscapeUtils.escapeHtml(pattern));
 			}
 			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_PATTERN);
 			de.setRequired(true);
