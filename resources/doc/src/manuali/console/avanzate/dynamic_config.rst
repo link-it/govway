@@ -26,14 +26,14 @@ Di seguito viene fornita una descrizione dei principali metodi forniti e l'ordin
 - *dynamicConfig:clientApplicationSearch(pName)*: effettua una ricerca tra le proprietà di un'applicativo fruitore (clientApplicationConfig) attraverso i seguenti criteri:
 
 	- <nomeErogatore>.<nomeApiImpl>.v<versioneApiImpl>.<pName>
-	- <nomeApiImpl>.v<nomeApiImpl>.<pName>
+	- <nomeApiImpl>.v<versioneApiImpl>.<pName>
 	- <nomeErogatore>.<pName>
 	- <pName>
 
 - *dynamicConfig:clientOrganizationSearch(pName)*: effettua una ricerca tra le proprietà di un soggetto fruitore (clientOrganizationConfig) attraverso i seguenti criteri:
 
 	- <nomeErogatore>.<nomeApiImpl>.v<versioneApiImpl>.<pName>
-	- <nomeApiImpl>.v<nomeApiImpl>.<pName>
+	- <nomeApiImpl>.v<versioneApiImpl>.<pName>
 	- <nomeErogatore>.<pName>
 	- <pName>
 
@@ -47,20 +47,20 @@ Di seguito viene fornita una descrizione dei principali metodi forniti e l'ordin
 - *dynamicConfig:tokenClientApplicationSearch(pName)*: effettua una ricerca tra le proprietà di un'applicativo fruitore identificato tramite il clientId presente nel token (tokenClientApplicationConfig) attraverso i seguenti criteri:
 
 	- <nomeErogatore>.<nomeApiImpl>.v<versioneApiImpl>.<pName>
-	- <nomeApiImpl>.v<nomeApiImpl>.<pName>
+	- <nomeApiImpl>.v<versioneApiImpl>.<pName>
 	- <nomeErogatore>.<pName>
 	- <pName>
 
 - *dynamicConfig:tokenClientOrganizationSearch(pName)*: effettua una ricerca tra le proprietà di un soggetto proprietario dell'applicativo client identificato tramite il clientId presente nel token (tokenClientOrganizationConfig) attraverso i seguenti criteri:
 
 	- <nomeErogatore>.<nomeApiImpl>.v<versioneApiImpl>.<pName>
-	- <nomeApiImpl>.v<nomeApiImpl>.<pName>
+	- <nomeApiImpl>.v<versioneApiImpl>.<pName>
 	- <nomeErogatore>.<pName>
 	- <pName>
 
 - *dynamicConfig:providerSearch(pName)*: effettua una ricerca tra le proprietà di un soggetto erogatore (providerOrganizationConfig) attraverso i seguenti criteri:
 
-	- <nomeApiImpl>.v<nomeApiImpl>.<pName>
+	- <nomeApiImpl>.v<versioneApiImpl>.<pName>
 	- <pName>
 
 

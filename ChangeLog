@@ -1,3 +1,13 @@
+2026-07-30  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole, Documentazione]
+	Completata la descrizione delle modalità di configurazione del purposeId, sia nel box informativo del relativo campo presente nella token policy
+	di negoziazione PDND che nel manuale utente: sono state aggiunte le keyword riferite all'applicativo fruitore identificato tramite il clientId
+	presente nel token ottenuto dall'autenticazione token ('tokenClientApplicationConfig', 'apiSearchByTokenClientApplication',
+	'tokenClientApplicationSearch'), precedentemente non documentate, ed è stato chiarito come tali keyword non siano interscambiabili con le
+	corrispondenti riferite all'applicativo fruitore identificato tramite l'autenticazione trasporto ('clientApplicationConfig',
+	'apiSearchByClientApplication', 'clientApplicationSearch').
+
 2026-07-27  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
