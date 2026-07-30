@@ -340,7 +340,7 @@ public class DynamicConfig implements Serializable {
 		Map<String, String> mapClientApplicationConfigCheck = getMapClientApplicationConfig();
 		
 		// 1. Cerco nell'applicativo con nome '<nomeErogatore>.<nomeApiImpl>.v<versioneApiImpl>.<pName>'
-		// 2. Cerco nell'applicativo con nome '<nomeApiImpl>.v<nomeApiImpl>.<pName>'
+		// 2. Cerco nell'applicativo con nome '<nomeApiImpl>.v<versioneApiImpl>.<pName>'
 		// 3. Cerco nell'applicativo con nome '<nomeErogatore>.<pName>'
 		// 4. Proprietà di default <pName>
 		
@@ -352,7 +352,7 @@ public class DynamicConfig implements Serializable {
 		Map<String, String> mapClientOrganizationConfigCheck = getMapClientOrganizationConfig();
 		
 		// 1. Cerco nel soggetto dell'applicativo con nome '<nomeErogatore>.<nomeApiImpl>.v<versioneApiImpl>.<pName>'
-		// 2. Cerco nel soggetto dell'applicativo con nome '<nomeApiImpl>.v<nomeApiImpl>.<pName>'
+		// 2. Cerco nel soggetto dell'applicativo con nome '<nomeApiImpl>.v<versioneApiImpl>.<pName>'
 		// 3. Cerco nel soggetto dell'applicativo con nome '<nomeErogatore>.<pName>'
 		// 4. Proprietà di default <pName>
 		
@@ -380,7 +380,7 @@ public class DynamicConfig implements Serializable {
 		Map<String, String> mapTokenClientApplicationConfigCheck = getMapTokenClientApplicationConfig();
 		
 		// 1. Cerco nell'applicativo con nome '<nomeErogatore>.<nomeApiImpl>.v<versioneApiImpl>.<pName>'
-		// 2. Cerco nell'applicativo con nome '<nomeApiImpl>.v<nomeApiImpl>.<pName>'
+		// 2. Cerco nell'applicativo con nome '<nomeApiImpl>.v<versioneApiImpl>.<pName>'
 		// 3. Cerco nell'applicativo con nome '<nomeErogatore>.<pName>'
 		// 4. Proprietà di default <pName>
 		
@@ -392,7 +392,7 @@ public class DynamicConfig implements Serializable {
 		Map<String, String> mapTokenClientOrganizationConfigCheck = getMapTokenClientOrganizationConfig();
 		
 		// 1. Cerco nel soggetto dell'applicativo con nome '<nomeErogatore>.<nomeApiImpl>.v<versioneApiImpl>.<pName>'
-		// 2. Cerco nel soggetto dell'applicativo con nome '<nomeApiImpl>.v<nomeApiImpl>.<pName>'
+		// 2. Cerco nel soggetto dell'applicativo con nome '<nomeApiImpl>.v<versioneApiImpl>.<pName>'
 		// 3. Cerco nel soggetto dell'applicativo con nome '<nomeErogatore>.<pName>'
 		// 4. Proprietà di default <pName>
 		
@@ -407,7 +407,7 @@ public class DynamicConfig implements Serializable {
 		
 		Map<String, String> mapProviderOrganizationConfigCheck = getMapProviderOrganizationConfig();
 		
-		// 1. Cerco nel soggetto erogatore con nome '<nomeApiImpl>.v<nomeApiImpl>.<pName>'
+		// 1. Cerco nel soggetto erogatore con nome '<nomeApiImpl>.v<versioneApiImpl>.<pName>'
 		// 2. Proprietà di default <pName>
 		
 		return searchByAPIwithoutProvider(pNameParam, mapProviderOrganizationConfigCheck);
@@ -469,7 +469,7 @@ public class DynamicConfig implements Serializable {
 			}
 		}
 		
-		// 2. Cerco con nome '<nomeApiImpl>.v<nomeApiImpl>.<pName>'
+		// 2. Cerco con nome '<nomeApiImpl>.v<versioneApiImpl>.<pName>'
 		if(configIdCheck!=null && configIdCheck.getNome()!=null && configIdCheck.getVersione()!=null) {
 			String pName = configIdCheck.getNome() + ".v"+configIdCheck.getVersione()+"."+pNameParam;
 			String v = this.getValue(map, pName);
@@ -496,7 +496,7 @@ public class DynamicConfig implements Serializable {
 		
 		IDServizio configIdCheck = this.getConfigId();
 		
-		// 1. Cerco con nome '<nomeApiImpl>.v<nomeApiImpl>.<pName>'
+		// 1. Cerco con nome '<nomeApiImpl>.v<versioneApiImpl>.<pName>'
 		if(configIdCheck!=null && configIdCheck.getNome()!=null && configIdCheck.getVersione()!=null) {
 			String pName = configIdCheck.getNome() + ".v"+configIdCheck.getVersione()+"."+pNameParam;
 			String v = this.getValue(map, pName);
