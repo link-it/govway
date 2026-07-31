@@ -52,6 +52,7 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.message.MessageUtils;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
@@ -172,6 +173,11 @@ public class GestoreCorrelazioneApplicativa {
 	private boolean isRichiestaRegolaCorrelazioneNonTrovataBlocca = false;
 	private boolean isRispostaRegolaCorrelazioneNonTrovataBlocca = false;
 
+	/** Indicazione se l'assenza del messaggio deve essere gestita come una qualsiasi identificazione non riuscita,
+	 *  demandando alla configurazione 'identificazioneFallita' della regola la decisione se terminare o meno con errore */
+	private boolean isRichiestaMessaggioNonPresenteGestioneIdentificazioneFallita = false;
+	private boolean isRispostaMessaggioNonPresenteGestioneIdentificazioneFallita = false;
+
 	public boolean isRiusoIdentificativo() {
 		return this.riusoIdentificativo;
 	}
@@ -278,7 +284,10 @@ public class GestoreCorrelazioneApplicativa {
 		}catch(Exception e) {
 			this.log.error("[isCorrelazioneApplicativaRisposta_regolaNonTrovata_terminaTransazioneConErrore] failed: "+e.getMessage(),e);
 		}
-		
+
+		this.isRichiestaMessaggioNonPresenteGestioneIdentificazioneFallita = op2Properties.isRepositoryCorrelazioneApplicativaRichiestaMessaggioNonPresenteGestioneIdentificazioneFallita();
+		this.isRispostaMessaggioNonPresenteGestioneIdentificazioneFallita = op2Properties.isRepositoryCorrelazioneApplicativaRispostaMessaggioNonPresenteGestioneIdentificazioneFallita();
+
 	}
 
 	public void updateState(IState state){
@@ -348,27 +357,29 @@ public class GestoreCorrelazioneApplicativa {
 			throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory));
 		}
 
-		if(message==null) {
+		if(message==null && !this.isRichiestaMessaggioNonPresenteGestioneIdentificazioneFallita) {
 			this.errore = ErroriIntegrazione.ERRORE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE.
 					getErrore416_CorrelazioneApplicativaRichiesta("messaggio non presente");
 			throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory));
 		}
-		
+
 		Element element = null;
 		String elementJson = null;
-		try{
-			String idTransazione = null;
-			if(this.pddContext!=null) {
-				idTransazione = (String)this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
+		if(message!=null){
+			try{
+				String idTransazione = null;
+				if(this.pddContext!=null) {
+					idTransazione = (String)this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
+				}
+				boolean bufferMessageReadOnly =  OpenSPCoop2Properties.getInstance().isReadByPathBufferEnabled();
+				boolean checkSoapBodyEmpty = false; // devo poter fare xpath anche su soapBody empty
+				element = MessageUtils.getContentElement(message, checkSoapBodyEmpty, bufferMessageReadOnly, idTransazione);
+				elementJson = MessageUtils.getContentString(message, bufferMessageReadOnly, idTransazione);
+			}catch(Exception e){
+				throw new GestoreMessaggiException(e.getMessage(),e);
 			}
-			boolean bufferMessageReadOnly =  OpenSPCoop2Properties.getInstance().isReadByPathBufferEnabled();
-			boolean checkSoapBodyEmpty = false; // devo poter fare xpath anche su soapBody empty
-			element = MessageUtils.getContentElement(message, checkSoapBodyEmpty, bufferMessageReadOnly, idTransazione);
-			elementJson = MessageUtils.getContentString(message, bufferMessageReadOnly, idTransazione);
-		}catch(Exception e){
-			throw new GestoreMessaggiException(e.getMessage(),e);
 		}
-		
+
 		/** Fase di identificazione dell'id di correlazione */
 		
 		boolean checkElementoInTransito = false;
@@ -384,6 +395,11 @@ public class GestoreCorrelazioneApplicativa {
 			}
 		}
 		List<Node> nList = null;
+		if(checkElementoInTransito && message==null){
+			// messaggio non presente: non è possibile analizzare gli elementi in transito.
+			// L'identificazione verrà gestita, per ogni regola, come non riuscita
+			checkElementoInTransito = false;
+		}
 		if(checkElementoInTransito){
 			try{
 				if(ServiceBinding.SOAP.equals(message.getServiceBinding())){
@@ -432,8 +448,9 @@ public class GestoreCorrelazioneApplicativa {
 		}
 
 		// XPathExpressionEngine
-		AbstractXPathExpressionEngine xPathEngine = new org.openspcoop2.message.xml.XPathExpressionEngine(message.getFactory());
-		
+		AbstractXPathExpressionEngine xPathEngine = new org.openspcoop2.message.xml.XPathExpressionEngine(
+				message!=null ? message.getFactory() : OpenSPCoop2MessageFactory.getDefaultMessageFactory());
+
 		/** Gestioni correlazioni, in modo da avere lo '*' in fondo */
 		java.util.List<CorrelazioneApplicativaElemento> c = new java.util.ArrayList<>();
 		int posizioneElementoQualsiasi = -1;
@@ -555,7 +572,7 @@ public class GestoreCorrelazioneApplicativa {
 					
 					// se siamo in REST provo a cercare per metodo e path
 					boolean isResourceRest = false;
-					if(ServiceBinding.REST.equals(message.getServiceBinding())){
+					if(message!=null && ServiceBinding.REST.equals(message.getServiceBinding())){
 						isResourceRest = isMatchResourceRest(elemento.getNome());
 					}
 					if(isResourceRest) {
@@ -563,7 +580,7 @@ public class GestoreCorrelazioneApplicativa {
 						nomeElemento = elemento.getNome();
 					}
 					else {
-						
+
 						// Ricerco elemento con una espressione
 						try{
 							if(element==null && elementJson==null){
@@ -695,7 +712,7 @@ public class GestoreCorrelazioneApplicativa {
 							if(elemento.getPattern()==null || StringUtils.isEmpty(elemento.getPattern())) {
 								throw new CoreException ("Template non disponibile");
 							}
-							
+
 							Map<String, List<String>> pTrasporto = null;
 							String urlInvocazione = null;
 							Map<String, List<String>> pQuery = null;
@@ -718,15 +735,17 @@ public class GestoreCorrelazioneApplicativa {
 							}
 							MessageContent messageContent = null;
 							boolean bufferMessageReadOnly =  OpenSPCoop2Properties.getInstance().isReadByPathBufferEnabled();
-							if(ServiceBinding.SOAP.equals(message.getServiceBinding())){
-								messageContent = new MessageContent(message.castAsSoap(), bufferMessageReadOnly, this.pddContext);
-							}
-							else{
-								if(MessageType.XML.equals(message.getMessageType())){
-									messageContent = new MessageContent(message.castAsRestXml(), bufferMessageReadOnly, this.pddContext);
+							if(message!=null){
+								if(ServiceBinding.SOAP.equals(message.getServiceBinding())){
+									messageContent = new MessageContent(message.castAsSoap(), bufferMessageReadOnly, this.pddContext);
 								}
-								else if(MessageType.JSON.equals(message.getMessageType())){
-									messageContent = new MessageContent(message.castAsRestJson(), bufferMessageReadOnly, this.pddContext);
+								else{
+									if(MessageType.XML.equals(message.getMessageType())){
+										messageContent = new MessageContent(message.castAsRestXml(), bufferMessageReadOnly, this.pddContext);
+									}
+									else if(MessageType.JSON.equals(message.getMessageType())){
+										messageContent = new MessageContent(message.castAsRestJson(), bufferMessageReadOnly, this.pddContext);
+									}
 								}
 							}
 							
@@ -798,8 +817,8 @@ public class GestoreCorrelazioneApplicativa {
 					else{
 						// Content-Based
 						try{
-							if(ServiceBinding.REST.equals(message.getServiceBinding()) && 
-									!MessageType.XML.equals(message.getMessageType()) && 
+							if(message!=null && ServiceBinding.REST.equals(message.getServiceBinding()) &&
+									!MessageType.XML.equals(message.getMessageType()) &&
 									!MessageType.JSON.equals(message.getMessageType()) &&
 									!MessageType.MIME_MULTIPART.equals(message.getMessageType())){
 								throw new CoreException("MessageType ["+message.getMessageType()+"] non supportato con correlazione di tipo '"+
@@ -1005,7 +1024,7 @@ public class GestoreCorrelazioneApplicativa {
 			throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory));
 		}
 		
-		if(message==null) {
+		if(message==null && !this.isRispostaMessaggioNonPresenteGestioneIdentificazioneFallita) {
 			this.errore = ErroriIntegrazione.ERRORE_434_CORRELAZIONE_APPLICATIVA_RISPOSTA_ERRORE.
 					getErrore434_CorrelazioneApplicativaRisposta("messaggio non presente");
 			throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory));
@@ -1013,22 +1032,25 @@ public class GestoreCorrelazioneApplicativa {
 
 		Element element = null;
 		String elementJson = null;
-		try{
-			String idTransazione = null;
-			if(this.pddContext!=null) {
-				idTransazione = (String)this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
+		if(message!=null){
+			try{
+				String idTransazione = null;
+				if(this.pddContext!=null) {
+					idTransazione = (String)this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
+				}
+				boolean bufferMessageReadOnly =  OpenSPCoop2Properties.getInstance().isReadByPathBufferEnabled();
+				boolean checkSoapBodyEmpty = false; // devo poter fare xpath anche su soapBody empty
+				element = MessageUtils.getContentElement(message, checkSoapBodyEmpty, bufferMessageReadOnly, idTransazione);
+				elementJson = MessageUtils.getContentString(message, bufferMessageReadOnly, idTransazione);
+			}catch(Exception e){
+				throw new GestoreMessaggiException(e.getMessage(),e);
 			}
-			boolean bufferMessageReadOnly =  OpenSPCoop2Properties.getInstance().isReadByPathBufferEnabled();
-			boolean checkSoapBodyEmpty = false; // devo poter fare xpath anche su soapBody empty
-			element = MessageUtils.getContentElement(message, checkSoapBodyEmpty, bufferMessageReadOnly, idTransazione);
-			elementJson = MessageUtils.getContentString(message, bufferMessageReadOnly, idTransazione);
-		}catch(Exception e){
-			throw new GestoreMessaggiException(e.getMessage(),e);
 		}
-		
+
 		// XPathExpressionEngine
-		AbstractXPathExpressionEngine xPathEngine = new org.openspcoop2.message.xml.XPathExpressionEngine(message.getFactory());
-		
+		AbstractXPathExpressionEngine xPathEngine = new org.openspcoop2.message.xml.XPathExpressionEngine(
+				message!=null ? message.getFactory() : OpenSPCoop2MessageFactory.getDefaultMessageFactory());
+
 		/** Fase di identificazione dell'id di correlazione */
 		boolean checkElementiInTransito = false;
 		if(correlazioneApplicativa.sizeElementoList()>1){
@@ -1043,6 +1065,11 @@ public class GestoreCorrelazioneApplicativa {
 			}
 		}
 		List<Node> nList = null;
+		if(checkElementiInTransito && message==null){
+			// messaggio non presente: non è possibile analizzare gli elementi in transito.
+			// L'identificazione verrà gestita, per ogni regola, come non riuscita
+			checkElementiInTransito = false;
+		}
 		if(checkElementiInTransito){
 			try{
 				if(ServiceBinding.SOAP.equals(message.getServiceBinding())){
@@ -1212,7 +1239,7 @@ public class GestoreCorrelazioneApplicativa {
 					
 					// se siamo in REST provo a cercare per metodo e path
 					boolean isResourceRest = false;
-					if(ServiceBinding.REST.equals(message.getServiceBinding())){
+					if(message!=null && ServiceBinding.REST.equals(message.getServiceBinding())){
 						isResourceRest = isMatchResourceRest(elemento.getNome());
 					}
 					if(isResourceRest) {
@@ -1316,7 +1343,7 @@ public class GestoreCorrelazioneApplicativa {
 							if(elemento.getPattern()==null || StringUtils.isEmpty(elemento.getPattern())) {
 								throw new CoreException ("Template non disponibile");
 							}
-							
+
 							Map<String, List<String>> pTrasporto = null;
 							String urlInvocazione = null;
 							Map<String, List<String>> pQuery = null;
@@ -1339,7 +1366,7 @@ public class GestoreCorrelazioneApplicativa {
 							}
 							
 							Map<String, List<String>> parametriTrasporto = null;
-							if(message.getTransportResponseContext()!=null) {
+							if(message!=null && message.getTransportResponseContext()!=null) {
 								if(message.getTransportResponseContext().getHeaders()!=null &&
 									!message.getTransportResponseContext().getHeaders().isEmpty()) {
 									parametriTrasporto = message.getTransportResponseContext().getHeaders();
@@ -1352,15 +1379,17 @@ public class GestoreCorrelazioneApplicativa {
 
 							MessageContent messageContent = null;
 							boolean bufferMessageReadOnly =  OpenSPCoop2Properties.getInstance().isReadByPathBufferEnabled();
-							if(ServiceBinding.SOAP.equals(message.getServiceBinding())){
-								messageContent = new MessageContent(message.castAsSoap(), bufferMessageReadOnly, this.pddContext);
-							}
-							else{
-								if(MessageType.XML.equals(message.getMessageType())){
-									messageContent = new MessageContent(message.castAsRestXml(), bufferMessageReadOnly, this.pddContext);
+							if(message!=null){
+								if(ServiceBinding.SOAP.equals(message.getServiceBinding())){
+									messageContent = new MessageContent(message.castAsSoap(), bufferMessageReadOnly, this.pddContext);
 								}
-								else if(MessageType.JSON.equals(message.getMessageType())){
-									messageContent = new MessageContent(message.castAsRestJson(), bufferMessageReadOnly, this.pddContext);
+								else{
+									if(MessageType.XML.equals(message.getMessageType())){
+										messageContent = new MessageContent(message.castAsRestXml(), bufferMessageReadOnly, this.pddContext);
+									}
+									else if(MessageType.JSON.equals(message.getMessageType())){
+										messageContent = new MessageContent(message.castAsRestJson(), bufferMessageReadOnly, this.pddContext);
+									}
 								}
 							}
 							
@@ -1439,8 +1468,8 @@ public class GestoreCorrelazioneApplicativa {
 					else{
 						// Content-Based
 						try{
-							if(ServiceBinding.REST.equals(message.getServiceBinding()) && 
-									!MessageType.XML.equals(message.getMessageType()) && 
+							if(message!=null && ServiceBinding.REST.equals(message.getServiceBinding()) &&
+									!MessageType.XML.equals(message.getMessageType()) &&
 									!MessageType.JSON.equals(message.getMessageType()) &&
 									!MessageType.MIME_MULTIPART.equals(message.getMessageType())){
 								throw new CoreException("MessageType ["+message.getMessageType()+"] non supportato con correlazione di tipo '"+
