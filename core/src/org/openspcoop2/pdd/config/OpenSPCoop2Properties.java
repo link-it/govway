@@ -8124,7 +8124,59 @@ public class OpenSPCoop2Properties {
 		
 		return this.isRepositoryCorrelazioneApplicativaRispostaRegolaCorrelazioneNonTrovataBlocca;
 	}
-	
+
+	private Boolean isRepositoryCorrelazioneApplicativaRichiestaMessaggioNonPresenteGestioneIdentificazioneFallita = null;
+	public boolean isRepositoryCorrelazioneApplicativaRichiestaMessaggioNonPresenteGestioneIdentificazioneFallita() {
+
+		String pName = "org.openspcoop2.pdd.repository.correlazioneApplicativa.richiesta.messaggioNonPresente.gestioneIdentificazioneFallita";
+		if(this.isRepositoryCorrelazioneApplicativaRichiestaMessaggioNonPresenteGestioneIdentificazioneFallita==null){
+			try{
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+
+				if(name!=null){
+					name = name.trim();
+					this.isRepositoryCorrelazioneApplicativaRichiestaMessaggioNonPresenteGestioneIdentificazioneFallita = Boolean.parseBoolean(name);
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
+					this.isRepositoryCorrelazioneApplicativaRichiestaMessaggioNonPresenteGestioneIdentificazioneFallita = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, false));
+				this.isRepositoryCorrelazioneApplicativaRichiestaMessaggioNonPresenteGestioneIdentificazioneFallita = false;
+			}
+		}
+
+		return this.isRepositoryCorrelazioneApplicativaRichiestaMessaggioNonPresenteGestioneIdentificazioneFallita;
+	}
+
+	private Boolean isRepositoryCorrelazioneApplicativaRispostaMessaggioNonPresenteGestioneIdentificazioneFallita = null;
+	public boolean isRepositoryCorrelazioneApplicativaRispostaMessaggioNonPresenteGestioneIdentificazioneFallita() {
+
+		String pName = "org.openspcoop2.pdd.repository.correlazioneApplicativa.risposta.messaggioNonPresente.gestioneIdentificazioneFallita";
+		if(this.isRepositoryCorrelazioneApplicativaRispostaMessaggioNonPresenteGestioneIdentificazioneFallita==null){
+			try{
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+
+				if(name!=null){
+					name = name.trim();
+					this.isRepositoryCorrelazioneApplicativaRispostaMessaggioNonPresenteGestioneIdentificazioneFallita = Boolean.parseBoolean(name);
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
+					this.isRepositoryCorrelazioneApplicativaRispostaMessaggioNonPresenteGestioneIdentificazioneFallita = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, false));
+				this.isRepositoryCorrelazioneApplicativaRispostaMessaggioNonPresenteGestioneIdentificazioneFallita = false;
+			}
+		}
+
+		return this.isRepositoryCorrelazioneApplicativaRispostaMessaggioNonPresenteGestioneIdentificazioneFallita;
+	}
+
 
 	/**
 	 * Restituisce l'intervallo in millisecondi di attesa attiva per messaggi gia in processamento

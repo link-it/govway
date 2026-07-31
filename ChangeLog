@@ -1,3 +1,17 @@
+2026-07-31  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità #1809
+	La funzionalità di Correlazione Applicativa terminava con errore la transazione, indipendentemente dal comportamento indicato tramite
+	l'impostazione 'Identificazione fallita', nel caso in cui il messaggio su cui doveva essere applicata non presentasse alcun contenuto
+	(es. risposta con codice HTTP 204 o comunque con payload vuoto). L'errore riportato era il seguente:
+	"La gestione della funzionalità di correlazione applicativa, per il messaggio di risposta, ha generato un errore: messaggio non presente".
+	È ora possibile far rientrare l'assenza del messaggio nella normale gestione prevista per ogni altra causa di identificazione non riuscita:
+	la transazione termina con errore solamente se la regola di correlazione applicabile riporta l'impostazione 'Identificazione fallita'
+	con valore 'blocca', mentre con il valore 'accetta' prosegue con successo senza memorizzare alcun identificativo di correlazione.
+	La nuova gestione è disabilitata per default, per retrocompatibilità, ed è attivabile, separatamente per la richiesta e per la risposta,
+	agendo sulla configurazione globale del prodotto.
+
 2026-07-30  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole, Documentazione]
