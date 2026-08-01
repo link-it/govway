@@ -1,6 +1,16 @@
 2026-07-31  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
+	Risolto Bug #1810
+	Corretto un comportamento dei driver di lettura delle tracce e dei messaggi diagnostici ricostruiti dalle transazioni, per cui nella
+	generazione delle query non veniva utilizzato il tipo di database fornito al driver, bensì quello indicato nella configurazione della
+	DAO Factory ('postgresql' se non configurato): su un database differente ogni ricerca comportante paginazione terminava con un errore
+	di sintassi SQL (es. su Oracle "ORA-00905: parola chiave mancante").
+	Corretto inoltre, nella ricerca delle tracce, il troncamento dei risultati, fisso a 25 elementi anziché al limite indicato nel filtro.
+
+2026-07-31  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
 	Aggiunta funzionalità #1809
 	La funzionalità di Correlazione Applicativa terminava con errore la transazione, indipendentemente dal comportamento indicato tramite
 	l'impostazione 'Identificazione fallita', nel caso in cui il messaggio su cui doveva essere applicata non presentasse alcun contenuto
