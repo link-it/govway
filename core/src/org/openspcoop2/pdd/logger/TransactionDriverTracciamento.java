@@ -38,6 +38,7 @@ import javax.sql.DataSource;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.dao.DAOFactory;
+import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDServizioApplicativo;
@@ -62,6 +63,7 @@ import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.expression.IExpression;
 import org.openspcoop2.generic_project.expression.IPaginatedExpression;
 import org.openspcoop2.generic_project.expression.SortOrder;
+import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.pdd.core.transazioni.DateUtility;
 import org.openspcoop2.pdd.logger.record.AbstractDatoRicostruzione;
 import org.openspcoop2.pdd.logger.record.AllegatiDatoRicostruzione;
@@ -130,13 +132,29 @@ public class TransactionDriverTracciamento implements ITracciaDriver {
 
 	/** DAO Factory */
 	DAOFactory daoFactory = null;
-	
+
+	/** ServiceManagerProperties utilizzate per accedere al progetto 'transazioni' tramite la DAO Factory */
+	ServiceManagerProperties serviceManagerPropertiesTransazioni = null;
+
 	/** Logger utilizzato per info. */
 	private Logger log = null;
 	private void logDebug(String msg) {
 		if(this.log!=null) {
 			this.log.debug(msg);
 		}
+	}
+
+	/**
+	 * Inizializza la DAO Factory e le ServiceManagerProperties utilizzate per accedere alle transazioni.
+	 * Il tipo di database viene impostato esplicitamente a quello fornito dal chiamante: altrimenti verrebbe
+	 * utilizzato quello configurato nel 'daoFactory.properties' (o il default di 'daoFactory.internal.properties'),
+	 * generando SQL non compatibile con il database effettivamente utilizzato.
+	 */
+	private void initDaoFactory(Logger log) throws Exception {
+		this.daoFactory = DAOFactory.getInstance(log);
+		this.serviceManagerPropertiesTransazioni =
+				DAOFactoryProperties.getInstance(this.log).getServiceManagerProperties(new ProjectInfo());
+		this.serviceManagerPropertiesTransazioni.setDatabaseType(this.tipoDatabase);
 	}
 
 	public TransactionDriverTracciamento(String nomeDataSource, String tipoDatabase, Properties prop) throws DriverTracciamentoException {
@@ -186,7 +204,7 @@ public class TransactionDriverTracciamento implements ITracciaDriver {
 		
 		// DAO Factory
 		try{
-			this.daoFactory = DAOFactory.getInstance(log);
+			this.initDaoFactory(log);
 		}catch (Exception e) {
 			throw new DriverTracciamentoException("(ds jndiName) Errore durante l'inizializzazione del dao factory: "+e.getMessage(),e);
 		}
@@ -236,7 +254,7 @@ public class TransactionDriverTracciamento implements ITracciaDriver {
 		
 		// DAO Factory
 		try{
-			this.daoFactory = DAOFactory.getInstance(log);
+			this.initDaoFactory(log);
 		}catch (Exception e) {
 			throw new DriverTracciamentoException("(ds) Errore durante l'inizializzazione del dao factory: "+e.getMessage(),e);
 		}
@@ -281,7 +299,7 @@ public class TransactionDriverTracciamento implements ITracciaDriver {
 		
 		// DAO Factory
 		try{
-			this.daoFactory = DAOFactory.getInstance(log);
+			this.initDaoFactory(log);
 		}catch (Exception e) {
 			throw new DriverTracciamentoException("(connection) Errore durante l'inizializzazione del dao factory: "+e.getMessage(),e);
 		}
@@ -340,7 +358,7 @@ public class TransactionDriverTracciamento implements ITracciaDriver {
 		
 		// DAO Factory
 		try{
-			this.daoFactory = DAOFactory.getInstance(log);
+			this.initDaoFactory(log);
 		}catch (Exception e) {
 			throw new DriverTracciamentoException("(connection url) Errore durante l'inizializzazione del dao factory: "+e.getMessage(),e);
 		}
@@ -388,7 +406,8 @@ public class TransactionDriverTracciamento implements ITracciaDriver {
 			checkConnection(con);
 						
 			transazioniServiceManager = 
-					(JDBCServiceManager) this.daoFactory.getServiceManager(new ProjectInfo(), con, true);
+					(JDBCServiceManager) this.daoFactory.getServiceManager(new ProjectInfo(), con, true,
+							this.serviceManagerPropertiesTransazioni, this.log);
 			
 			ITransazioneServiceSearch transazioneServiceSearch = transazioniServiceManager.getTransazioneServiceSearch();
 						
@@ -443,7 +462,7 @@ public class TransactionDriverTracciamento implements ITracciaDriver {
 		List<Traccia> list = this.getTracceEngine(filtro);
 		if(filtro.getLimit()>0 && list.size()>filtro.getLimit()){
 			List<Traccia> listWithFilter = new ArrayList<>();
-			for (int i = 0; i < 25; i++) {
+			for (int i = 0; i < filtro.getLimit(); i++) {
 				listWithFilter.add(list.get(i));
 			}
 			return listWithFilter;
@@ -472,7 +491,8 @@ public class TransactionDriverTracciamento implements ITracciaDriver {
 			checkConnection(con);
 						
 			transazioniServiceManager = 
-					(JDBCServiceManager) this.daoFactory.getServiceManager(new ProjectInfo(), con, true);
+					(JDBCServiceManager) this.daoFactory.getServiceManager(new ProjectInfo(), con, true,
+							this.serviceManagerPropertiesTransazioni, this.log);
 			
 			ITransazioneServiceSearch transazioneServiceSearch = transazioniServiceManager.getTransazioneServiceSearch();
 						
@@ -968,7 +988,8 @@ public class TransactionDriverTracciamento implements ITracciaDriver {
 				throw new DriverTracciamentoException("Connection non ottenuta");
 			
 			transazioniServiceManager = 
-					(JDBCServiceManager) this.daoFactory.getServiceManager(new ProjectInfo(), con, true);
+					(JDBCServiceManager) this.daoFactory.getServiceManager(new ProjectInfo(), con, true,
+							this.serviceManagerPropertiesTransazioni, this.log);
 			
 			
 			// Informazioni salvataggio tracce

@@ -33,6 +33,7 @@ import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.dao.DAOFactory;
+import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.transazioni.CredenzialeMittente;
 import org.openspcoop2.core.transazioni.Transazione;
@@ -47,6 +48,7 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.NotImplementedException;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.expression.IPaginatedExpression;
+import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.pdd.logger.diagnostica.ConvertitoreCodiceDiagnostici;
 import org.openspcoop2.pdd.logger.diagnostica.InformazioniRecordDiagnostici;
 import org.openspcoop2.protocol.basic.BasicComponentFactory;
@@ -107,8 +109,24 @@ public class TransactionDriverMsgDiagnostici implements IDiagnosticDriver {
 	/** DAO Factory */
 	DAOFactory daoFactory = null;
 
+	/** ServiceManagerProperties utilizzate per accedere al progetto 'transazioni' tramite la DAO Factory */
+	ServiceManagerProperties serviceManagerPropertiesTransazioni = null;
+
 	/** Logger utilizzato per info. */
 	private Logger log = null;
+
+	/**
+	 * Inizializza la DAO Factory e le ServiceManagerProperties utilizzate per accedere alle transazioni.
+	 * Il tipo di database viene impostato esplicitamente a quello fornito dal chiamante: altrimenti verrebbe
+	 * utilizzato quello configurato nel 'daoFactory.properties' (o il default di 'daoFactory.internal.properties'),
+	 * generando SQL non compatibile con il database effettivamente utilizzato.
+	 */
+	private void initDaoFactory(Logger log) throws Exception {
+		this.daoFactory = DAOFactory.getInstance(log);
+		this.serviceManagerPropertiesTransazioni =
+				DAOFactoryProperties.getInstance(this.log).getServiceManagerProperties(new ProjectInfo());
+		this.serviceManagerPropertiesTransazioni.setDatabaseType(this.tipoDatabase);
+	}
 
 	public TransactionDriverMsgDiagnostici(String nomeDataSource, String tipoDatabase, Properties prop) throws DriverMsgDiagnosticiException {
 		this(nomeDataSource,tipoDatabase,prop,null);
@@ -157,7 +175,7 @@ public class TransactionDriverMsgDiagnostici implements IDiagnosticDriver {
 
 		// DAO Factory
 		try{
-			this.daoFactory = DAOFactory.getInstance(log);
+			this.initDaoFactory(log);
 		}catch (Exception e) {
 			throw new DriverMsgDiagnosticiException("(ds jndiName) Errore durante l'inizializzazione del dao factory: "+e.getMessage(),e);
 		}
@@ -208,7 +226,7 @@ public class TransactionDriverMsgDiagnostici implements IDiagnosticDriver {
 
 		// DAO Factory
 		try{
-			this.daoFactory = DAOFactory.getInstance(log);
+			this.initDaoFactory(log);
 		}catch (Exception e) {
 			throw new DriverMsgDiagnosticiException("(ds) Errore durante l'inizializzazione del dao factory: "+e.getMessage(),e);
 		}
@@ -252,7 +270,7 @@ public class TransactionDriverMsgDiagnostici implements IDiagnosticDriver {
 
 		// DAO Factory
 		try{
-			this.daoFactory = DAOFactory.getInstance(log);
+			this.initDaoFactory(log);
 		}catch (Exception e) {
 			throw new DriverMsgDiagnosticiException("(connection) Errore durante l'inizializzazione del dao factory: "+e.getMessage(),e);
 		}
@@ -311,7 +329,7 @@ public class TransactionDriverMsgDiagnostici implements IDiagnosticDriver {
 
 		// DAO Factory
 		try{
-			this.daoFactory = DAOFactory.getInstance(log);
+			this.initDaoFactory(log);
 		}catch (Exception e) {
 			throw new DriverMsgDiagnosticiException("(connection url) Errore durante l'inizializzazione del dao factory: "+e.getMessage(),e);
 		}
@@ -511,7 +529,8 @@ public class TransactionDriverMsgDiagnostici implements IDiagnosticDriver {
 				throw new DriverMsgDiagnosticiException("Connection non ottenuta");
 
 			transazioniServiceManager = 
-					(JDBCServiceManager) this.daoFactory.getServiceManager(new ProjectInfo(), con, true);
+					(JDBCServiceManager) this.daoFactory.getServiceManager(new ProjectInfo(), con, true,
+							this.serviceManagerPropertiesTransazioni, this.log);
 			if(transazioniServiceManager==null) {
 				throw new DriverMsgDiagnosticiException("transazioniServiceManager is null");
 			}
@@ -702,7 +721,8 @@ public class TransactionDriverMsgDiagnostici implements IDiagnosticDriver {
 				throw new DriverMsgDiagnosticiException("Connection non ottenuta");
 
 			transazioniServiceManager = 
-					(JDBCServiceManager) this.daoFactory.getServiceManager(new ProjectInfo(), con, true);
+					(JDBCServiceManager) this.daoFactory.getServiceManager(new ProjectInfo(), con, true,
+							this.serviceManagerPropertiesTransazioni, this.log);
 			if(transazioniServiceManager==null) {
 				throw new DriverMsgDiagnosticiException("transazioniServiceManager is null");
 			}
