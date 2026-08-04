@@ -38,7 +38,7 @@ dell'Application Server, di Java e delle principali librerie di terze parti util
      - 11
      - 9
      - 26, 22 – 25 (JBoss EAP 7.4), 18 – 21 (JBoss EAP 7.3)
-     - ``3.3.19.p1``
+     - ``3.3.20``
      - **31/12/2026**
 
 \* Esecuzione possibile anche su **Java 25** a partire da GovWay 3.4.3: vedi la :ref:`nota sulle dipendenze esterne <java25>`.
