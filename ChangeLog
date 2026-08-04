@@ -1,3 +1,9 @@
+2026-08-04  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolte le seguenti vulnerabilità relative ai jar di terza parte:
+	- CVE-2026-66142, CVE-2026-66143, CVE-2026-66144: aggiornata libreria 'org.apache.neethi:neethi' alla versione 3.2.3
+
 2026-08-03  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

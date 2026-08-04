@@ -103,7 +103,7 @@
 			<matches string="${as}" pattern="wildfly.*"/>
 		</or>
 		<then>
-			<var name="neethi_jar" value="neethi-3.2.2.jar"/>
+			<var name="neethi_jar" value="neethi-3.2.3.jar"/>
 		</then>
 	</if>
 	<!-- jakarta.activation -->
