@@ -313,16 +313,22 @@
 
 		<!-- *** [DELETE] creo govway_delete.sql *** -->
 
-		<delete file="${deploy_sql}/${TIPO_DB}/govway-monitoraggio_delete.sql"/>		
-		<concat destfile="${deploy_sql}/${TIPO_DB}/govway-monitoraggio_delete.sql" append="yes" >
-	      <header filtering="no" trimleading="yes">
+		<delete file="${deploy_sql}/${TIPO_DB}/govway-monitoraggio_delete.sql"/>
+		<!-- Lo script sorgente e' opzionale: se non presente si evita il warning 'does not exist' emesso dal task 'concat' -->
+		<if>
+			<available file="${deploy_sql}/${TIPO_DB}/GovWayMonitoraggio_delete.sql" type="file"/>
+			<then>
+				<concat destfile="${deploy_sql}/${TIPO_DB}/govway-monitoraggio_delete.sql" append="yes" >
+			      <header filtering="no" trimleading="yes">
 
 -- GovWay Monitoraggio
-	      	
-	      </header>
-			<filelist dir="${deploy_sql}/${TIPO_DB}"
-                           files="GovWayMonitoraggio_delete.sql"/>
-		</concat>
+
+			      </header>
+					<filelist dir="${deploy_sql}/${TIPO_DB}"
+		                           files="GovWayMonitoraggio_delete.sql"/>
+				</concat>
+			</then>
+		</if>
 				
 		<delete file="${deploy_sql}/${TIPO_DB}/govway-runtime_delete.sql"/>		
 		<concat destfile="${deploy_sql}/${TIPO_DB}/govway-runtime_delete.sql" append="yes" >

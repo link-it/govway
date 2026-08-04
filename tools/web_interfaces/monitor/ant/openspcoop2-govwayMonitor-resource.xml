@@ -10,6 +10,26 @@
           </classpath>
 	</taskdef>
 	
+	<!--
+		Concatena nel web.xml un frammento opzionale, solamente se il file esiste.
+		Evita il warning 'xxx does not exist' emesso dal task 'concat' quando il frammento non e' presente
+		(es. distribuzioni in cui non vengono inclusi gli 'eventi' o gli 'allarmi').
+	-->
+	<macrodef name="concat-web-xml-fragment-if-exists">
+		<attribute name="dir"/>
+		<attribute name="file"/>
+		<sequential>
+			<if>
+				<available file="@{dir}/@{file}" type="file"/>
+				<then>
+					<concat destfile="${build_govwayMonitor_war}/WEB-INF/web.xml" append="yes">
+						<filelist dir="@{dir}" files="@{file}"/>
+					</concat>
+				</then>
+			</if>
+		</sequential>
+	</macrodef>
+
 	<target name="-init_prepare">
 		<mkdir dir="${build_govwayMonitor_war}/WEB-INF" />
 	</target>
@@ -132,15 +152,11 @@
 		<concat destfile="${build_govwayMonitor_war}/WEB-INF/web.xml" append="yes">
 			<filelist dir="${src_webinf_govwayMonitor}/web" files="web.xml.servlet.statistiche"/>
 		</concat>
-		<concat destfile="${build_govwayMonitor_war}/WEB-INF/web.xml" append="yes">
-			<filelist dir="${src_webinf_govwayMonitor}/web" files="web.xml.servlet.eventi"/>
-		</concat>
+		<concat-web-xml-fragment-if-exists dir="${src_webinf_govwayMonitor}/web" file="web.xml.servlet.eventi"/>
 		<if>
 			<istrue value="${buildMonitoraggio}" />
 			<then>
-				<concat destfile="${build_govwayMonitor_war}/WEB-INF/web.xml" append="yes">
-					<filelist dir="${src_webinf_govwayMonitor}/web" files="web.xml.servlet.allarmi"/>
-				</concat>
+				<concat-web-xml-fragment-if-exists dir="${src_webinf_govwayMonitor}/web" file="web.xml.servlet.allarmi"/>
 			</then>
 		</if>
 		<if>
@@ -169,15 +185,11 @@
 		<concat destfile="${build_govwayMonitor_war}/WEB-INF/web.xml" append="yes">
 			<filelist dir="${src_webinf_govwayMonitor}/web" files="web.xml.servlet.mapping.statistiche"/>
 		</concat>
-		<concat destfile="${build_govwayMonitor_war}/WEB-INF/web.xml" append="yes">
-			<filelist dir="${src_webinf_govwayMonitor}/web" files="web.xml.servlet.mapping.eventi"/>
-		</concat>
+		<concat-web-xml-fragment-if-exists dir="${src_webinf_govwayMonitor}/web" file="web.xml.servlet.mapping.eventi"/>
 		<if>
 			<istrue value="${buildMonitoraggio}" />
 			<then>
-				<concat destfile="${build_govwayMonitor_war}/WEB-INF/web.xml" append="yes">
-					<filelist dir="${src_webinf_govwayMonitor}/web" files="web.xml.servlet.mapping.allarmi"/>
-				</concat>
+				<concat-web-xml-fragment-if-exists dir="${src_webinf_govwayMonitor}/web" file="web.xml.servlet.mapping.allarmi"/>
 			</then>
 		</if>
 		<if>
