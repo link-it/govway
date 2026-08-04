@@ -48,6 +48,7 @@ import org.apache.hc.core5.http.ConnectionReuseStrategy;
 import org.apache.hc.core5.http.HttpHost;
 import org.apache.hc.core5.http.impl.DefaultConnectionReuseStrategy;
 import org.apache.hc.core5.http.nio.ssl.TlsStrategy;
+import org.apache.hc.core5.http2.config.H2Config;
 import org.apache.hc.core5.io.CloseMode;
 import org.apache.hc.core5.pool.PoolConcurrencyPolicy;
 import org.apache.hc.core5.pool.PoolReusePolicy;
@@ -393,6 +394,15 @@ public class ConnettoreHTTPCOREConnectionManager {
 			httpClientBuilder.setConnectionManager( cm );
 			httpClientBuilder.setConnectionManagerShared(true); // senno' la close di una connessione fa si che venga chiuso il reactor
 			httpClientBuilder.setDefaultRequestConfig(requestConfig);
+			// Limiti sugli header della risposta ricevuta dal backend, applicati in base al protocollo utilizzato dalla connessione
+			// (dettagli in ConnettoreHTTPCOREUtils.buildHttp1Config e ConnettoreHTTPCOREUtils.buildH2Config)
+			httpClientBuilder.setHttp1Config(ConnettoreHTTPCOREUtils.buildHttp1Config(
+					op2.getNIOConfigAsyncClientMaxHeaderLineLength(),
+					op2.getNIOConfigAsyncClientMaxHeaderCount()));
+			H2Config h2Config = ConnettoreHTTPCOREUtils.buildH2Config(op2.getNIOConfigAsyncClientMaxHeaderListSizeHttp2());
+			if(h2Config!=null) {
+				httpClientBuilder.setH2Config(h2Config);
+			}
 			httpClientBuilder.disableAuthCaching();
 			/*
 			 * GovWay agisce da gateway: deve essere trasparente verso le risposte del backend.

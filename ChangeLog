@@ -1,3 +1,19 @@
+2026-08-03  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug #1811
+	Aggiunta la possibilità di configurare i limiti applicati dai connettori http/https, sia in modalità BIO che NIO, durante la lettura degli
+	header HTTP della risposta ricevuta dal backend.
+	Sulle connessioni HTTP/1.1 sono configurabili:
+	- la dimensione massima, in bytes, di un singolo header, nella forma 'Nome: valore' (non si tratta quindi della dimensione complessiva di
+	  tutti gli header, ma del limite applicato ad ogni singolo header);
+	- il numero massimo di header presenti nella risposta.
+	Sulle connessioni HTTP/2, utilizzabili dalla sola modalità NIO, è invece configurabile la dimensione massima complessiva, in bytes, della
+	lista di header ricevuti, poiché il protocollo non prevede un limite riferito al singolo header.
+	Tutti i limiti sono personalizzabili agendo sulla configurazione globale del prodotto.
+	I medesimi limiti, con i medesimi valori di default, vengono adesso applicati anche dal client http utilizzato internamente da GovWay per
+	gli accessi remoti (es. recupero di keystore, JWKS, informazioni OCSP e token), dove sono sovrascrivibili sulla singola richiesta.
+
 2026-07-31  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

@@ -1556,6 +1556,8 @@ public class OpenSPCoop2Properties {
 			this.isBIOConfigSyncClientCloseIdleConnectionsDebug();
 			this.getBIOConfigSyncClientExpireUnusedAfterSeconds();
 			this.getBIOConfigSyncClientCloseUnusedAfterSeconds();
+			this.getBIOConfigSyncClientMaxHeaderLineLength();
+			this.getBIOConfigSyncClientMaxHeaderCount();
 			if(!this.isBIOConfigSyncClientUseCustomMessageObjectEntity()) {
 				this.getBIOConfigSyncClientPipedUnblockedStreamBuffer();
 				this.getBIOConfigSyncClientApplicativeThreadPoolSize();
@@ -1570,6 +1572,9 @@ public class OpenSPCoop2Properties {
 				this.isNIOConfigAsyncClientCloseIdleConnectionsDebug();
 				this.getNIOConfigAsyncClientExpireUnusedAfterSeconds();
 				this.getNIOConfigAsyncClientCloseUnusedAfterSeconds();
+				this.getNIOConfigAsyncClientMaxHeaderLineLength();
+				this.getNIOConfigAsyncClientMaxHeaderCount();
+				this.getNIOConfigAsyncClientMaxHeaderListSizeHttp2();
 				this.isNIOConfigAsyncClientUseCustomMessageObjectEntity();
 				this.getNIOConfigAsyncClientHttpVersionPolicy();
 				this.getNIOConfigAsyncHttpclientIoReactorThread();
@@ -15416,7 +15421,42 @@ public class OpenSPCoop2Properties {
 
 		return this.getBIOConfigSyncClientCloseUnusedAfterSeconds;
 	}
-	
+
+	private int readConnettoreClientIntProperty(String pName, int defaultValue){
+		try{
+			String v = this.reader.getValueConvertEnvProperties(pName);
+			if(v!=null){
+				return java.lang.Integer.parseInt(v.trim());
+			}
+			this.logWarn(getMessaggioProprietaNonImpostata(pName, defaultValue));
+		}catch(java.lang.Exception e) {
+			this.logWarn(getMessaggioProprietaNonImpostata(pName, e, defaultValue),e);
+		}
+		return defaultValue;
+	}
+
+	private Integer getBIOConfigSyncClientMaxHeaderLineLength = null;
+	public int getBIOConfigSyncClientMaxHeaderLineLength() {
+		if(this.getBIOConfigSyncClientMaxHeaderLineLength==null){
+			this.getBIOConfigSyncClientMaxHeaderLineLength = readConnettoreClientIntProperty(
+					"org.openspcoop2.pdd.connettori.syncClient.http1.maxHeaderLineLength",
+					CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_MAX_HEADER_LINE_LENGTH);
+		}
+
+		return this.getBIOConfigSyncClientMaxHeaderLineLength;
+	}
+
+	private Integer getBIOConfigSyncClientMaxHeaderCount = null;
+	public int getBIOConfigSyncClientMaxHeaderCount() {
+		if(this.getBIOConfigSyncClientMaxHeaderCount==null){
+			this.getBIOConfigSyncClientMaxHeaderCount = readConnettoreClientIntProperty(
+					"org.openspcoop2.pdd.connettori.syncClient.http1.maxHeaderCount",
+					CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_MAX_HEADER_COUNT);
+		}
+
+		return this.getBIOConfigSyncClientMaxHeaderCount;
+	}
+
 	private Boolean isBIOConfigSyncClientCloseIdleConnectionsDebug = null;
 	public boolean isBIOConfigSyncClientCloseIdleConnectionsDebug() {	
 		if(this.isBIOConfigSyncClientCloseIdleConnectionsDebug==null){
@@ -15774,7 +15814,40 @@ public class OpenSPCoop2Properties {
 
 		return this.getNIOConfigAsyncClientCloseUnusedAfterSeconds;
 	}
-	
+
+	private Integer getNIOConfigAsyncClientMaxHeaderLineLength = null;
+	public int getNIOConfigAsyncClientMaxHeaderLineLength() {
+		if(this.getNIOConfigAsyncClientMaxHeaderLineLength==null){
+			this.getNIOConfigAsyncClientMaxHeaderLineLength = readConnettoreClientIntProperty(
+					"org.openspcoop2.pdd.connettori.asyncClient.http1.maxHeaderLineLength",
+					CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_MAX_HEADER_LINE_LENGTH);
+		}
+
+		return this.getNIOConfigAsyncClientMaxHeaderLineLength;
+	}
+
+	private Integer getNIOConfigAsyncClientMaxHeaderCount = null;
+	public int getNIOConfigAsyncClientMaxHeaderCount() {
+		if(this.getNIOConfigAsyncClientMaxHeaderCount==null){
+			this.getNIOConfigAsyncClientMaxHeaderCount = readConnettoreClientIntProperty(
+					"org.openspcoop2.pdd.connettori.asyncClient.http1.maxHeaderCount",
+					CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_MAX_HEADER_COUNT);
+		}
+
+		return this.getNIOConfigAsyncClientMaxHeaderCount;
+	}
+
+	private Integer getNIOConfigAsyncClientMaxHeaderListSizeHttp2 = null;
+	public int getNIOConfigAsyncClientMaxHeaderListSizeHttp2() {
+		if(this.getNIOConfigAsyncClientMaxHeaderListSizeHttp2==null){
+			this.getNIOConfigAsyncClientMaxHeaderListSizeHttp2 = readConnettoreClientIntProperty(
+					"org.openspcoop2.pdd.connettori.asyncClient.http2.maxHeaderListSize",
+					CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_MAX_HEADER_LIST_SIZE_HTTP2);
+		}
+
+		return this.getNIOConfigAsyncClientMaxHeaderListSizeHttp2;
+	}
+
 	private Boolean isNIOConfigAsyncClientUseCustomMessageObjectEntity = null;
 	public boolean isNIOConfigAsyncClientUseCustomMessageObjectEntity() {
 		if(this.isNIOConfigAsyncClientUseCustomMessageObjectEntity==null){

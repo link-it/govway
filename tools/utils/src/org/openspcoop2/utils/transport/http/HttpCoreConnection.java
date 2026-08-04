@@ -39,8 +39,10 @@ import org.apache.hc.client5.http.impl.DefaultRedirectStrategy;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.impl.io.ManagedHttpClientConnectionFactory;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
+import org.apache.hc.client5.http.io.ManagedHttpClientConnection;
 import org.apache.hc.client5.http.protocol.HttpClientContext;
 import org.apache.hc.client5.http.ssl.DefaultClientTlsStrategy;
 import org.apache.hc.client5.http.ssl.DefaultHostnameVerifier;
@@ -52,6 +54,8 @@ import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.HttpHeaders;
 import org.apache.hc.core5.http.HttpHost;
+import org.apache.hc.core5.http.config.Http1Config;
+import org.apache.hc.core5.http.io.HttpConnectionFactory;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.InputStreamEntity;
 import org.apache.hc.core5.io.CloseMode;
@@ -129,6 +133,22 @@ class HttpCoreConnection extends HttpLibraryConnection {
 
 		org.apache.hc.client5.http.config.ConnectionConfig connectionConfig = connectionConfigBuilder.build();
 
+		/*
+		 * Limiti applicati in lettura degli header HTTP/1.1 della risposta ricevuta.
+		 * A partire dalla versione 5.4.3 della libreria httpcore5 i default di 'Http1Config' sono
+		 * restrittivi (maxLineLength: 8192, maxHeaderCount: 100) e una risposta che li supera
+		 * termina con una 'MessageConstraintException'; vengono quindi impostati esplicitamente i
+		 * default di prodotto, sovrascrivibili dal chiamante sulla singola richiesta.
+		 */
+		if(request.isDebug())
+			request.logInfo("Impostazione limiti header risposta: maxHeaderLineLength["+request.getMaxHeaderLineLength()+"] maxHeaderCount["+request.getMaxHeaderCount()+"]");
+		HttpConnectionFactory<ManagedHttpClientConnection> connectionFactory = ManagedHttpClientConnectionFactory.builder()
+				.http1Config(Http1Config.custom()
+						.setMaxLineLength(request.getMaxHeaderLineLength())
+						.setMaxHeaderCount(request.getMaxHeaderCount())
+						.build())
+				.build();
+
 		// Set SSL context if provided
         if (sslContext != null) {
         	// 1. Create the socket factory
@@ -162,6 +182,7 @@ class HttpCoreConnection extends HttpLibraryConnection {
         	connManager = PoolingHttpClientConnectionManagerBuilder.create()
         	    .setTlsSocketStrategy(tlsSocketStrategy)
         	    .setDefaultConnectionConfig(connectionConfig)
+        	    .setConnectionFactory(connectionFactory)
         	    .build();
 
         	builder.setConnectionManager(connManager);
@@ -178,6 +199,7 @@ class HttpCoreConnection extends HttpLibraryConnection {
         	connManager = PoolingHttpClientConnectionManagerBuilder.create()
         			.useSystemProperties()
         			.setDefaultConnectionConfig(connectionConfig)
+        			.setConnectionFactory(connectionFactory)
         			.build();
         	builder.setConnectionManager(connManager);
         }

@@ -57,4 +57,29 @@ La chiusura di connessioni idle viene gestita tramite un thread dedicato che vie
       # The status of the connection pool is recorded in the 'govway_connettori.log' file.
       org.openspcoop2.pdd.connettori.syncClient.closeIdleConnections.debug=true
 
+**Limiti sugli header HTTP della risposta**
+
+Durante la lettura degli header HTTP della risposta ricevuta dal backend, il connettore applica due limiti:
+
+- *maxHeaderLineLength*: dimensione massima di un singolo header HTTP nella forma 'Nome: valore', indicata in bytes (valore predefinito: 65536 bytes, ovvero 64 KB). Non si tratta quindi della dimensione complessiva di tutti gli header, ma del limite applicato ad ogni singolo header; il medesimo limite viene applicato anche alla riga di stato della risposta, es. 'HTTP/1.1 200 OK';
+
+- *maxHeaderCount*: numero massimo di header HTTP presenti nella risposta (valore predefinito: 250).
+
+Al superamento di uno dei due limiti la risposta non viene elaborata e la transazione termina con un errore di connettore, veicolato al client con l'errore 'APIUnavailable'. Un caso tipico di header di dimensioni rilevanti è quello dei profili di sicurezza messaggio ModI, dove un singolo header può veicolare un token JWT contenente il certificato X.509 del firmatario.
+
+I limiti sono personalizzabili agendo sul file <directory-lavoro>/govway_local.properties e definendo le seguenti proprietà:
+
+   ::
+
+      # Dimensione massima, in bytes, di un singolo header HTTP nella forma 'Nome: valore'
+      # (il medesimo limite viene applicato anche alla riga di stato della risposta).
+      # Indicare il valore 0, o un valore negativo, per disabilitare il controllo.
+      org.openspcoop2.pdd.connettori.syncClient.http1.maxHeaderLineLength=65536
+      # Numero massimo di header HTTP ammessi nella risposta.
+      # Indicare il valore 0, o un valore negativo, per disabilitare il controllo.
+      org.openspcoop2.pdd.connettori.syncClient.http1.maxHeaderCount=250
+
+.. note::
+      I limiti riguardano il solo protocollo HTTP/1.1, l'unico utilizzato dal client sincrono (BIO): nella libreria Apache HttpClient 5 il supporto all'HTTP/2 è realizzato esclusivamente sul trasporto non bloccante, poiché la multiplazione di più stream sulla medesima connessione non è compatibile con il modello di I/O bloccante. Per i limiti applicati sulle connessioni HTTP/2 si rimanda quindi alla sezione :ref:`avanzate_canaleIO_confNIO`.
+
 

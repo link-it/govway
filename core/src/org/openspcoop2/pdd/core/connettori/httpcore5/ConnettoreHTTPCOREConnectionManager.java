@@ -37,6 +37,7 @@ import org.apache.hc.client5.http.impl.DefaultRedirectStrategy;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.impl.io.ManagedHttpClientConnectionFactory;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
 import org.apache.hc.client5.http.ssl.DefaultClientTlsStrategy;
@@ -166,7 +167,16 @@ public class ConnettoreHTTPCOREConnectionManager {
 					
 					ConnectionConfig config = buildConnectionConfig(poolParams, connectionConfig.getConnectionTimeout());
 					poolingConnectionManagerBuilder.setDefaultConnectionConfig(config);
-					
+
+					// Limiti sugli header HTTP/1.1 della risposta ricevuta dal backend (dettagli in ConnettoreHTTPCOREUtils.buildHttp1Config)
+					OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
+					poolingConnectionManagerBuilder.setConnectionFactory(
+							ManagedHttpClientConnectionFactory.builder()
+								.http1Config(ConnettoreHTTPCOREUtils.buildHttp1Config(
+										op2Properties.getBIOConfigSyncClientMaxHeaderLineLength(),
+										op2Properties.getBIOConfigSyncClientMaxHeaderCount()))
+								.build());
+
 					PoolingHttpClientConnectionManager poolingConnectionManager = poolingConnectionManagerBuilder.build();
 									
 					/** Gestito con 'setSSLSocketFactory' 

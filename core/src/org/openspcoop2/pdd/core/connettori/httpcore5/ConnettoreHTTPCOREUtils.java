@@ -37,6 +37,8 @@ import org.apache.hc.client5.http.classic.methods.HttpTrace;
 import org.apache.hc.client5.http.classic.methods.HttpUriRequestBase;
 import org.apache.hc.client5.http.config.ConnectionConfig;
 import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.core5.http.config.Http1Config;
+import org.apache.hc.core5.http2.config.H2Config;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.connettori.AbstractConnettoreConnectionConfig;
 import org.openspcoop2.pdd.core.connettori.ConnettoreException;
@@ -75,6 +77,50 @@ public class ConnettoreHTTPCOREUtils {
 		}
 		
 		return buider.build();
+	}
+
+	/**
+	 * Limiti applicati durante la lettura degli header HTTP/1.1 della risposta ricevuta dal backend.
+	 *
+	 * A partire dalla versione 5.4.3 della libreria httpcore5, i default di 'Http1Config' sono diventati restrittivi
+	 * (maxLineLength: 8192, maxHeaderCount: 100; precedentemente entrambi i controlli erano disabilitati).
+	 * Un singolo header più grande del limite (es. header di sicurezza ModI che veicolano un token JWT
+	 * con certificato x5c) provoca una 'MessageConstraintException' che viene rilevata come errore di connettore.
+	 * I limiti sono quindi configurabili tramite le proprietà 'connettori.syncClient.http1.maxHeaderLineLength',
+	 * 'connettori.syncClient.http1.maxHeaderCount' e le corrispondenti 'asyncClient.*'; un valore minore o uguale a 0
+	 * disabilita il controllo.
+	 *
+	 * Nota: 'maxLineLength' viene applicato, in bytes, ad ogni singolo header nella forma 'Nome: valore' e alla riga di stato
+	 * della risposta; non si tratta quindi della dimensione complessiva di tutti gli header.
+	 * I limiti sono utilizzati dai soli parser HTTP/1.1 (BIO e NIO); su una connessione negoziata in HTTP/2 non hanno effetto,
+	 * poiche' vige il limite complessivo 'H2Config.maxHeaderListSize' gestito dal metodo 'buildH2Config'.
+	 **/
+	public static Http1Config buildHttp1Config(int maxHeaderLineLength, int maxHeaderCount) {
+		return Http1Config.custom()
+				.setMaxLineLength(maxHeaderLineLength)
+				.setMaxHeaderCount(maxHeaderCount)
+				.build();
+	}
+
+	/**
+	 * Limite applicato durante la lettura degli header di una risposta ricevuta dal backend su una connessione HTTP/2.
+	 *
+	 * A differenza dei limiti HTTP/1.1, 'maxHeaderListSize' (SETTINGS_MAX_HEADER_LIST_SIZE) esprime, in bytes, la dimensione
+	 * massima complessiva della lista di header e non quella di ogni singolo header; il protocollo non prevede infatti un
+	 * limite per singolo header. Il valore viene annunciato al backend nel SETTINGS della connessione e utilizzato
+	 * localmente in fase di decodifica HPACK.
+	 *
+	 * Il protocollo non ammette un valore non positivo (il metodo 'setMaxHeaderListSize' della libreria genera un errore):
+	 * il controllo non e' quindi disabilitabile e, per un valore minore o uguale a 0, viene ritornato null in modo da
+	 * lasciare attivo il default della libreria.
+	 **/
+	public static H2Config buildH2Config(int maxHeaderListSize) {
+		if(maxHeaderListSize<=0) {
+			return null;
+		}
+		return H2Config.custom()
+				.setMaxHeaderListSize(maxHeaderListSize)
+				.build();
 	}
 
 	public static void setTimeout(RequestConfig.Builder requestConfigBuilder, AbstractConnettoreConnectionConfig connectionConfig) {

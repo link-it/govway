@@ -39,6 +39,9 @@ public class HttpRequest extends AbstractHttp {
 	
 	private int readTimeout = HttpUtilities.HTTP_READ_CONNECTION_TIMEOUT;
 	private int connectTimeout = HttpUtilities.HTTP_CONNECTION_TIMEOUT;
+
+	private int maxHeaderLineLength = HttpUtilities.HTTP_MAX_HEADER_LINE_LENGTH;
+	private int maxHeaderCount = HttpUtilities.HTTP_MAX_HEADER_COUNT;
 	
 	private boolean checkConnection = false;
 	
@@ -244,6 +247,38 @@ public class HttpRequest extends AbstractHttp {
 
 	public void setConnectTimeout(int connectTimeout) {
 		this.connectTimeout = connectTimeout;
+	}
+
+	/**
+	 * Dimensione massima, in bytes, di un singolo header HTTP nella forma 'Nome: valore' della
+	 * risposta ricevuta; il medesimo limite viene applicato anche alla riga di stato.
+	 * Non si tratta quindi della dimensione complessiva di tutti gli header, ma del limite applicato
+	 * ad ogni singolo header. Un valore minore o uguale a 0 disabilita il controllo.
+	 * Default: {@link HttpUtilities#HTTP_MAX_HEADER_LINE_LENGTH}.
+	 *
+	 * @return la dimensione massima di un singolo header della risposta
+	 */
+	public int getMaxHeaderLineLength() {
+		return this.maxHeaderLineLength;
+	}
+
+	public void setMaxHeaderLineLength(int maxHeaderLineLength) {
+		this.maxHeaderLineLength = maxHeaderLineLength;
+	}
+
+	/**
+	 * Numero massimo di header HTTP ammessi nella risposta ricevuta.
+	 * Un valore minore o uguale a 0 disabilita il controllo.
+	 * Default: {@link HttpUtilities#HTTP_MAX_HEADER_COUNT}.
+	 *
+	 * @return il numero massimo di header ammessi nella risposta
+	 */
+	public int getMaxHeaderCount() {
+		return this.maxHeaderCount;
+	}
+
+	public void setMaxHeaderCount(int maxHeaderCount) {
+		this.maxHeaderCount = maxHeaderCount;
 	}
 
 	public String getUsername() {

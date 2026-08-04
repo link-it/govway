@@ -86,9 +86,19 @@ public class HttpUtilities {
 	 * 
 	 */
 	/** TIMEOUT_CONNECTION (2 minuti) */
-	public static final int HTTP_CONNECTION_TIMEOUT = 10000; 
+	public static final int HTTP_CONNECTION_TIMEOUT = 10000;
 	/** TIMEOUT_READ (2 minuti) */
-	public static final int HTTP_READ_CONNECTION_TIMEOUT = 120000; 
+	public static final int HTTP_READ_CONNECTION_TIMEOUT = 120000;
+
+	/** Dimensione massima, in bytes, di un singolo header HTTP nella forma 'Nome: valore' della risposta ricevuta,
+	 *  applicata anche alla riga di stato: 65536 bytes, corrispondenti a 64 KB.
+	 *  Un valore minore o uguale a 0 disabilita il controllo.
+	 *  Il limite riguarda il solo protocollo HTTP/1.1 ed e' applicato dalle sole librerie che lo prevedono */
+	public static final int HTTP_MAX_HEADER_LINE_LENGTH = 65536;
+	/** Numero massimo di header HTTP ammessi nella risposta ricevuta.
+	 *  Un valore minore o uguale a 0 disabilita il controllo.
+	 *  Il limite riguarda il solo protocollo HTTP/1.1 ed e' applicato dalle sole librerie che lo prevedono */
+	public static final int HTTP_MAX_HEADER_COUNT = 250;
 
 	public static boolean isConnectionTimeoutException(Throwable e, String message){
     	/**return (

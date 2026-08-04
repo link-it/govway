@@ -71,6 +71,37 @@ La configurazione si basa su due parametri distinti:
       # Close client that have been unused longer than X sec
       org.openspcoop2.pdd.connettori.asyncClient.closeUnusedAfterSeconds=900
 
+**Limiti sugli header HTTP della risposta**
+
+Durante la lettura degli header HTTP della risposta ricevuta dal backend, il connettore applica due limiti:
+
+- *maxHeaderLineLength*: dimensione massima di un singolo header HTTP nella forma 'Nome: valore', indicata in bytes (valore predefinito: 65536 bytes, ovvero 64 KB). Non si tratta quindi della dimensione complessiva di tutti gli header, ma del limite applicato ad ogni singolo header; il medesimo limite viene applicato anche alla riga di stato della risposta, es. 'HTTP/1.1 200 OK';
+
+- *maxHeaderCount*: numero massimo di header HTTP presenti nella risposta (valore predefinito: 250).
+
+Al superamento di uno dei due limiti la risposta non viene elaborata e la transazione termina con un errore di connettore, veicolato al client con l'errore 'APIUnavailable'. Un caso tipico di header di dimensioni rilevanti è quello dei profili di sicurezza messaggio ModI, dove un singolo header può veicolare un token JWT contenente il certificato X.509 del firmatario.
+
+I limiti sono personalizzabili agendo sul file <directory-lavoro>/govway_local.properties e definendo le seguenti proprietà:
+
+   ::
+
+      # Dimensione massima, in bytes, di un singolo header HTTP nella forma 'Nome: valore'
+      # (il medesimo limite viene applicato anche alla riga di stato della risposta).
+      # Indicare il valore 0, o un valore negativo, per disabilitare il controllo.
+      org.openspcoop2.pdd.connettori.asyncClient.http1.maxHeaderLineLength=65536
+      # Numero massimo di header HTTP ammessi nella risposta.
+      # Indicare il valore 0, o un valore negativo, per disabilitare il controllo.
+      org.openspcoop2.pdd.connettori.asyncClient.http1.maxHeaderCount=250
+
+I due limiti sopra descritti vengono utilizzati sulle connessioni HTTP/1.1. Nel caso in cui la connessione verso il backend venga negoziata in HTTP/2, come descritto nella sezione relativa alla policy di negoziazione ALPN, viene invece applicato il limite previsto dal protocollo (SETTINGS_MAX_HEADER_LIST_SIZE), che riguarda la dimensione massima complessiva della lista di header ricevuti e non quella di ogni singolo header:
+
+   ::
+
+      # Dimensione massima complessiva, in bytes, della lista di header ricevuti (solo connessioni HTTP/2).
+      org.openspcoop2.pdd.connettori.asyncClient.http2.maxHeaderListSize=16777215
+
+Il valore predefinito è di 16777215 bytes, ovvero 16383 KB (circa 16 MB), e viene annunciato al backend nel SETTINGS della connessione HTTP/2. A differenza dei limiti relativi all'HTTP/1.1, questo controllo non è disabilitabile, poiché il protocollo non ammette un valore non positivo: indicando il valore 0, o un valore negativo, viene utilizzato il valore predefinito.
+
 **Configurazione dei Thread del Client NIO**
 
 l client HTTP asincrono utilizzato da GovWay nella modalità NIO è basato sulla libreria: org.apache.hc.client5.http.impl.async.CloseableHttpAsyncClient.

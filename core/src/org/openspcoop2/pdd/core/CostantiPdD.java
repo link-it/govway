@@ -32,6 +32,7 @@ import org.openspcoop2.utils.Costanti;
 import org.openspcoop2.utils.Map;
 import org.openspcoop2.utils.MapKey;
 import org.openspcoop2.utils.jmx.CostantiJMX;
+import org.openspcoop2.utils.transport.http.HttpUtilities;
 
 
 
@@ -405,7 +406,12 @@ public class CostantiPdD {
     public static final int CONNETTORE_BIO_SYNC_CLIENT_EXPIRE_UNUSED_AFTER_SECONDS = 300;
     /** Close asyncClient that have been unused longer than X sec */
     public static final int CONNETTORE_BIO_SYNC_CLIENT_CLOSE_UNUSED_AFTER_SECONDS = 900;
-    
+    /** Dimensione massima, in bytes, di un singolo header HTTP/1.1 della risposta ricevuta dal connettore, nella forma 'Nome: valore' (il medesimo limite viene applicato anche alla riga di stato):
+     *  65536 bytes, corrispondenti a 64 KB. Un valore minore o uguale a 0 disabilita il controllo */
+    public static final int CONNETTORE_BIO_SYNC_CLIENT_MAX_HEADER_LINE_LENGTH = HttpUtilities.HTTP_MAX_HEADER_LINE_LENGTH;
+    /** Numero massimo di header HTTP ammessi nella risposta ricevuta dal connettore; un valore minore o uguale a 0 disabilita il controllo */
+    public static final int CONNETTORE_BIO_SYNC_CLIENT_MAX_HEADER_COUNT = HttpUtilities.HTTP_MAX_HEADER_COUNT;
+
     public static final String CONNETTORE_NIO_ASYNC_CONFIG_AVAILABLE_PROCESSORS = "availableProcessors";
     public static int getAvailableProcessors() {
     	return Runtime.getRuntime().availableProcessors();
@@ -421,6 +427,15 @@ public class CostantiPdD {
     public static final int CONNETTORE_NIO_ASYNC_CLIENT_EXPIRE_UNUSED_AFTER_SECONDS = 300;
     /** Close asyncClient that have been unused longer than X sec */
     public static final int CONNETTORE_NIO_ASYNC_CLIENT_CLOSE_UNUSED_AFTER_SECONDS = 900;
+    /** Dimensione massima, in bytes, di un singolo header HTTP/1.1 della risposta ricevuta dal connettore, nella forma 'Nome: valore' (il medesimo limite viene applicato anche alla riga di stato):
+     *  65536 bytes, corrispondenti a 64 KB. Un valore minore o uguale a 0 disabilita il controllo */
+    public static final int CONNETTORE_NIO_ASYNC_CLIENT_MAX_HEADER_LINE_LENGTH = HttpUtilities.HTTP_MAX_HEADER_LINE_LENGTH;
+    /** Numero massimo di header HTTP ammessi nella risposta ricevuta dal connettore; un valore minore o uguale a 0 disabilita il controllo */
+    public static final int CONNETTORE_NIO_ASYNC_CLIENT_MAX_HEADER_COUNT = HttpUtilities.HTTP_MAX_HEADER_COUNT;
+    /** Dimensione massima complessiva, in bytes, della lista di header di una risposta ricevuta dal connettore su una connessione HTTP/2
+     *  (SETTINGS_MAX_HEADER_LIST_SIZE): 16777215 bytes, corrispondenti a 16383 KB (circa 16 MB).
+     *  Il protocollo non ammette un valore non positivo; un valore minore o uguale a 0 comporta l'utilizzo del default della libreria */
+    public static final int CONNETTORE_NIO_ASYNC_CLIENT_MAX_HEADER_LIST_SIZE_HTTP2 = 16777215;
     /** Default HTTP version policy (ALPN) del connettore NIO async; valori ammessi: NEGOTIATE , FORCE_HTTP_1 , FORCE_HTTP_2 */
     public static final ConnettoreHTTPCOREVersionPolicy CONNETTORE_NIO_ASYNC_CLIENT_HTTP_VERSION_POLICY_DEFAULT = ConnettoreHTTPCOREVersionPolicy.NEGOTIATE;
     
