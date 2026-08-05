@@ -882,13 +882,19 @@ public class GestoreTokenAttributeAuthorityUtilities {
 		TransportRequestContext transportRequestContext = new TransportRequestContext(log);
 		transportRequestContext.setRequestType(httpMethod.name());
 		transportRequestContext.setHeaders(new HashMap<>());
+
+		// I parametri e gli header http personalizzati vengono impostati per primi, in modo che i dati gestiti
+		// direttamente dalla policy (autenticazione, content-type, posizionamento della richiesta) prevalgano
+		setRequestParameters(transportRequestContext, dynamicParameters.getParameters());
+		setRequestHttpHeaders(transportRequestContext, dynamicParameters.getHttpHeaders());
+
 		if(bearer) {
 			String authorizationHeader = HttpConstants.AUTHORIZATION_PREFIX_BEARER+bearerToken;
 			TransportUtils.setHeader(transportRequestContext.getHeaders(),HttpConstants.AUTHORIZATION, authorizationHeader);
 		}
-		
-		
-		// *** request *** 
+
+
+		// *** request ***
 		String contentType = policyAttributeAuthority.getRequestContentType();
 		if(contentType!=null && !"".equals(contentType)) {
 			transportRequestContext.removeHeader(HttpConstants.CONTENT_TYPE);
@@ -897,7 +903,7 @@ public class GestoreTokenAttributeAuthorityUtilities {
 		
 		String requestPayload = request;
 		if(policyAttributeAuthority.isRequestJws()) {
-			requestPayload = signAAJwt(policyAttributeAuthority, request, contentType, 
+			requestPayload = signAAJwt(policyAttributeAuthority, request, contentType,
 					dynamicParameters,
 					busta, requestInfo, log);
 		}
@@ -995,6 +1001,51 @@ public class GestoreTokenAttributeAuthorityUtilities {
 		
 	}
 	
+	private static void setRequestParameters(TransportRequestContext transportRequestContext, String parameters) {
+		if(parameters==null || "".equals(parameters)) {
+			return;
+		}
+		Properties convertTextToProperties = PropertiesUtilities.convertTextToProperties(parameters);
+		if(convertTextToProperties==null || convertTextToProperties.isEmpty()) {
+			return;
+		}
+		if(transportRequestContext.getParameters()==null) {
+			transportRequestContext.setParameters(new HashMap<>());
+		}
+		Enumeration<Object> keys = convertTextToProperties.keys();
+		while (keys.hasMoreElements()) {
+			String nome = (String) keys.nextElement();
+			if(nome!=null && !"".equals(nome)) {
+				String valore = convertTextToProperties.getProperty(nome);
+				if(valore!=null) {
+					TransportUtils.setParameter(transportRequestContext.getParameters(), nome, valore);
+				}
+			}
+		}
+	}
+	private static void setRequestHttpHeaders(TransportRequestContext transportRequestContext, String httpHeaders) {
+		if(httpHeaders==null || "".equals(httpHeaders)) {
+			return;
+		}
+		Properties convertTextToProperties = PropertiesUtilities.convertTextToProperties(httpHeaders);
+		if(convertTextToProperties==null || convertTextToProperties.isEmpty()) {
+			return;
+		}
+		if(transportRequestContext.getHeaders()==null) {
+			transportRequestContext.setHeaders(new HashMap<>());
+		}
+		Enumeration<Object> keys = convertTextToProperties.keys();
+		while (keys.hasMoreElements()) {
+			String nome = (String) keys.nextElement();
+			if(nome!=null && !"".equals(nome)) {
+				String valore = convertTextToProperties.getProperty(nome);
+				if(valore!=null) {
+					TransportUtils.setHeader(transportRequestContext.getHeaders(), nome, valore);
+				}
+			}
+		}
+	}
+
 	private static String signAAJwt(PolicyAttributeAuthority policyAttributeAuthority, String payload, String contentType,
 			AttributeAuthorityDynamicParameters dynamicParameters,
 			Busta busta, RequestInfo requestInfo, Logger log) throws TokenException, SecurityException, UtilsException {

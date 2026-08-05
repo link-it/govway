@@ -19,12 +19,15 @@
  */
 package org.openspcoop2.pdd.core.token.attribute_authority;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.token.AbstractDynamicParameters;
+import org.openspcoop2.pdd.core.token.TokenUtilities;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 
 /**
@@ -45,14 +48,46 @@ public class AttributeAuthorityDynamicParameters extends AbstractDynamicParamete
 	private String bearerToken;
 	
 	private String requestDynamicPayloadTemplate;
-	
+
+	private String parameters;
+	private String httpHeaders;
+
 	private String issuer;
 	private String subject;
 	private String audience;
 	private String claims;
 	
 	private String responseAudience;
-	
+
+
+	// static config
+
+	private static boolean parametersCacheKey;
+	private static List<String> parametersCacheKeyBlackList;
+
+	private static boolean httpHeadersCacheKey;
+	private static List<String> httpHeadersCacheKeyBlackList;
+
+	private static Boolean initCacheKey = null;
+	private static synchronized void initCacheKey() {
+		if(initCacheKey==null) {
+			OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
+
+			parametersCacheKey = op2Properties.isGestioneAttributeAuthorityCacheKey(Costanti.AA_CACHE_KEY_TIPO_PARAMETERS);
+			parametersCacheKeyBlackList = op2Properties.getGestioneAttributeAuthorityCacheKeyBlackList(Costanti.AA_CACHE_KEY_TIPO_PARAMETERS);
+
+			httpHeadersCacheKey = op2Properties.isGestioneAttributeAuthorityCacheKey(Costanti.AA_CACHE_KEY_TIPO_HTTP_HEADERS);
+			httpHeadersCacheKeyBlackList = op2Properties.getGestioneAttributeAuthorityCacheKeyBlackList(Costanti.AA_CACHE_KEY_TIPO_HTTP_HEADERS);
+
+			initCacheKey = true;
+		}
+	}
+	private static void checkInitCacheKey() {
+		if(initCacheKey==null) {
+			initCacheKey();
+		}
+	}
+
 	public AttributeAuthorityDynamicParameters(Map<String, Object> dynamicMap, 
 			PdDContext pddContext, RequestInfo requestInfo,
 			PolicyAttributeAuthority policyAttributeAuthority) throws Exception {
@@ -86,6 +121,16 @@ public class AttributeAuthorityDynamicParameters extends AbstractDynamicParamete
 			}
 		}
 		
+		this.parameters = policyAttributeAuthority.getRequestParameters();
+		if(this.parameters!=null && !"".equals(this.parameters)) {
+			this.parameters = DynamicUtils.convertDynamicPropertyValue("parameters.gwt", this.parameters, dynamicMap, pddContext);
+		}
+
+		this.httpHeaders = policyAttributeAuthority.getRequestHttpHeaders();
+		if(this.httpHeaders!=null && !"".equals(this.httpHeaders)) {
+			this.httpHeaders = DynamicUtils.convertDynamicPropertyValue("httpHeaders.gwt", this.httpHeaders, dynamicMap, pddContext);
+		}
+
 		if(policyAttributeAuthority.isRequestDynamicPayloadTemplate() || policyAttributeAuthority.isRequestDynamicPayloadJwt()) {
 			if(policyAttributeAuthority.isRequestDynamicPayloadTemplate()) {
 				this.requestDynamicPayloadTemplate = DynamicUtils.convertDynamicPropertyValue("AADynamicRequest.gwt", policyAttributeAuthority.getRequestDynamicPayload(), dynamicMap, pddContext);
@@ -158,7 +203,15 @@ public class AttributeAuthorityDynamicParameters extends AbstractDynamicParamete
 			}
 			sb.append("token:").append(this.bearerToken);
 		}
-		
+
+		// I parametri e gli header http, differentemente dai dati che concorrono alla costruzione della richiesta,
+		// non sono deducibili dalla richiesta stessa (che viene aggiunta nella chiave della cache);
+		// concorrono quindi alla chiave, altrimenti due invocazioni che differiscono solamente per il valore
+		// dinamico di un parametro o di un header otterrebbero il medesimo elemento in cache.
+		// Il comportamento è personalizzabile, sia per campo che per nome del singolo parametro/header,
+		// tramite le opzioni 'org.openspcoop2.pdd.gestioneAttributeAuthority.cacheKey.*' e 'cacheKeyBlackList.*'
+		appendDatiRichiesta(sb, separator, cacheKey);
+
 		if(!cacheKey) {
 			// Altrimenti questi parametri concorrono alla realizzazione della richiesta che viene poi aggiunta in cache.
 			if(StringUtils.isNotEmpty(this.requestDynamicPayloadTemplate)) {
@@ -203,6 +256,28 @@ public class AttributeAuthorityDynamicParameters extends AbstractDynamicParamete
 		return sb.toString();
 	}
 	
+	private void appendDatiRichiesta(StringBuilder sb, String separator, boolean cacheKey) {
+		String parametersValue = this.parameters;
+		String httpHeadersValue = this.httpHeaders;
+		if(cacheKey) {
+			checkInitCacheKey();
+			parametersValue = parametersCacheKey ? TokenUtilities.buildCacheKeyValue(this.parameters, parametersCacheKeyBlackList) : null;
+			httpHeadersValue = httpHeadersCacheKey ? TokenUtilities.buildCacheKeyValue(this.httpHeaders, httpHeadersCacheKeyBlackList) : null;
+		}
+		if(StringUtils.isNotEmpty(parametersValue)) {
+			if(sb.length()>0) {
+				sb.append(separator);
+			}
+			sb.append("parameters:").append(parametersValue);
+		}
+		if(StringUtils.isNotEmpty(httpHeadersValue)) {
+			if(sb.length()>0) {
+				sb.append(separator);
+			}
+			sb.append("httpHeaders:").append(httpHeadersValue);
+		}
+	}
+
 	public String getEndpoint() {
 		return this.endpoint;
 	}
@@ -220,6 +295,13 @@ public class AttributeAuthorityDynamicParameters extends AbstractDynamicParamete
 	
 	public String getRequestDynamicPayloadTemplate() {
 		return this.requestDynamicPayloadTemplate;
+	}
+
+	public String getParameters() {
+		return this.parameters;
+	}
+	public String getHttpHeaders() {
+		return this.httpHeaders;
 	}
 	
 	public String getIssuer() {

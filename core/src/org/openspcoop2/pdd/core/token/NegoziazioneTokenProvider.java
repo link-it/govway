@@ -131,7 +131,7 @@ public class NegoziazioneTokenProvider implements IProvider {
 		
 		validateCustomFormParameters(pDefault, pdnd);
 		
-		validateHeaders(pDefault);
+		validateHeaders(pDefault, retMode);
 				
 		if(Costanti.ID_RETRIEVE_TOKEN_METHOD_CUSTOM.equals(retMode)) {
 			validateTokenParser(pDefault);
@@ -508,14 +508,46 @@ public class NegoziazioneTokenProvider implements IProvider {
 			TokenUtilities.checkClaims("parametro", convertTextToProperties, "Parametri", deny, false);
 		}	
 	}
-	private void validateHeaders(Properties pDefault) throws ProviderValidationException {
+	private void validateHeaders(Properties pDefault, String retMode) throws ProviderValidationException {
 		String headers = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_HTTP_HEADERS);
 		if(headers!=null && !"".equals(headers)) {
 			Properties convertTextToProperties = PropertiesUtilities.convertTextToProperties(headers);
 			List<String> deny = new ArrayList<>();
-			deny.add(HttpConstants.AUTHORIZATION);
-			deny.add(HttpConstants.CONTENT_TYPE);
+
+			// L'header 'Authorization' viene inibito solamente se già utilizzato dalla policy:
+			// autenticazione client bearer o basic veicolata come header http.
+			// Diversamente l'header può essere definito manualmente.
+			boolean basic = TokenUtilities.isEnabled(pDefault, Costanti.POLICY_RETRIEVE_TOKEN_AUTH_BASIC_STATO);
+			boolean basicAsAuthorizationHeader = TokenUtilities.isEnabled(pDefault, Costanti.POLICY_RETRIEVE_TOKEN_AUTH_BASIC_AS_AUTHORIZATION_HEADER);
+			boolean bearer = TokenUtilities.isEnabled(pDefault, Costanti.POLICY_RETRIEVE_TOKEN_AUTH_BEARER_STATO);
+			if(bearer || (basic && basicAsAuthorizationHeader)) {
+				addDeny(deny, HttpConstants.AUTHORIZATION);
+			}
+
+			// L'header 'DPoP' viene inibito solamente se la relativa funzionalità è abilitata
+			if(TokenUtilities.isEnabled(pDefault, Costanti.POLICY_RETRIEVE_TOKEN_DPOP)) {
+				addDeny(deny, HttpConstants.AUTHORIZATION_DPOP);
+			}
+
+			// Il 'Content-Type' viene inibito se definito dalla policy; nella sola modalità personalizzata,
+			// se non viene indicato un content-type, l'header può essere definito manualmente
+			boolean custom = Costanti.ID_RETRIEVE_TOKEN_METHOD_CUSTOM.equals(retMode);
+			String contentType = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_HTTP_CONTENT_TYPE);
+			if(!custom || (contentType!=null && StringUtils.isNotEmpty(contentType))) {
+				addDeny(deny, HttpConstants.CONTENT_TYPE);
+			}
+
 			TokenUtilities.checkClaims("header http", convertTextToProperties, "Header HTTP", deny, false);
+		}
+	}
+	private void addDeny(List<String> deny, String nome) {
+		if(nome!=null && StringUtils.isNotEmpty(nome)) {
+			deny.add(nome);
+			// il controllo effettuato in TokenUtilities.checkClaims confronta anche il nome fornito in minuscolo
+			String nomeLowerCase = nome.toLowerCase();
+			if(!deny.contains(nomeLowerCase)) {
+				deny.add(nomeLowerCase);
+			}
 		}
 	}
 	private void validateTokenParser(Properties pDefault) throws ProviderValidationException {

@@ -183,7 +183,14 @@ public class PolicyAttributeAuthority extends AbstractPolicyToken implements Ser
 	public String getRequestContentType() {
 		return this.defaultProperties.getProperty(Costanti.AA_REQUEST_CONTENT_TYPE);
 	}
-	
+
+	public String getRequestParameters() {
+		return this.defaultProperties.getProperty(Costanti.AA_REQUEST_PARAMETERS);
+	}
+	public String getRequestHttpHeaders() {
+		return this.defaultProperties.getProperty(Costanti.AA_REQUEST_HTTP_HEADERS);
+	}
+
 	public String getRequestDynamicPayloadType() {
 		return this.defaultProperties.getProperty(Costanti.AA_REQUEST_DYNAMIC_PAYLOAD_TYPE);
 	}

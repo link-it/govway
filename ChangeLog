@@ -1,3 +1,22 @@
+2026-08-05  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Aggiunta funzionalità #1804
+	(https://github.com/link-it/govway/issues/317)
+	Nella configurazione di una Attribute Authority è ora possibile personalizzare i dati della richiesta inoltrata al servizio, tramite la
+	nuova sottosezione 'Dati Richiesta', presente come ultima sottosezione della sezione 'Richiesta', dove sono indicabili ulteriori parametri
+	della url ed eventuali header HTTP, nella forma 'nome=valore', uno per riga.
+	I valori indicati possono essere definiti come costanti o contenere parti dinamiche risolte a runtime dal Gateway (es. '${header:NOME}'),
+	analogamente a quanto già previsto dalla sezione 'Dati Richiesta' delle token policy di negoziazione.
+	I parametri e gli header indicati concorrono alla creazione della chiave della cache degli attributi; il comportamento è personalizzabile,
+	agendo sulla configurazione globale del prodotto, sia per singolo campo che per nome del singolo parametro o header, tramite black list.
+	Per default, tra gli header non concorrono alla chiave 'Authorization' e 'DPoP', il cui valore può cambiare nel tempo pur individuando la
+	medesima richiesta; la medesima black list è stata introdotta anche per i parametri e gli header HTTP delle token policy di negoziazione.
+	Infine, nella validazione della configurazione, sia per le Attribute Authority che per le token policy di negoziazione, gli header
+	'Authorization' e 'Content-Type' vengono adesso inibiti solamente se effettivamente utilizzati dalla configurazione della policy
+	(autenticazione client basic o bearer, richiesta veicolata come bearer token, content-type definito), rendendo possibile la definizione
+	manuale dell'header 'Authorization' quando non è attiva alcuna autenticazione client.
+
 2026-08-04  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

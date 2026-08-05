@@ -2351,6 +2351,7 @@ public class OpenSPCoop2Properties {
 			this.isGestioneRetrieveTokenGrantTypeRfc7523SaveClientAssertionJWTInfoExcludeJwtSignature();
 			this.isGestioneRetrieveTokenSaveTokenInfoRetrieveFailed();
 			this.initGestioneRetrieveTokenCacheKey();
+			this.initGestioneRetrieveTokenCacheKeyBlackList();
 			// dovrebbe venire chiamato solo per ModI
 			// può essere usato con il profilo trasparente nella testsuite
 			this.getGestioneRetrieveTokenPdndUrlPatternMatch(Costanti.MODIPA_PROTOCOL_NAME);
@@ -2364,6 +2365,8 @@ public class OpenSPCoop2Properties {
 			this.isGestioneAttributeAuthoritySaveSourceAttributeResponseInfo();
 			this.isGestioneAttributeAuthorityTransazioniRegistrazioneAttributiInformazioniNormalizzate();
 			this.getGestioneAttributeAuthorityValidityCheck();
+			this.initGestioneAttributeAuthorityCacheKey();
+			this.initGestioneAttributeAuthorityCacheKeyBlackList();
 			
 			// Statistiche via jmx Console
 			this.isStatisticheViaJmx();
@@ -26391,25 +26394,30 @@ public class OpenSPCoop2Properties {
 
 	private Map<String, Boolean> gestioneRetrieveTokenCacheKey = null;
 	private void initGestioneRetrieveTokenCacheKey() throws CoreException {
+		this.gestioneRetrieveTokenCacheKey = readCacheKeyFlags("org.openspcoop2.pdd.retrieveToken.cacheKey.");
+	}
+	private Map<String, Boolean> readCacheKeyFlags(String prefix) throws CoreException {
 		Properties p = null;
 		try {
-			p = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.pdd.retrieveToken.cacheKey.");
+			p = this.reader.readPropertiesConvertEnvProperties(prefix);
 		}catch(Exception e) {
 			throw new CoreException(e.getMessage(),e);
 		}
+		Map<String, Boolean> mapFlags = null;
 		if(p!=null) {
-			this.gestioneRetrieveTokenCacheKey = new HashMap<>();
+			mapFlags = new HashMap<>();
 			for (Object oKey : p.keySet()) {
 				if(oKey instanceof String) {
 					String key = (String) oKey;
 					String v = p.getProperty(key);
 					if(v!=null) {
 						boolean b = Boolean.parseBoolean(v.trim());
-						this.gestioneRetrieveTokenCacheKey.put(key,b);
+						mapFlags.put(key,b);
 					}
 				}
 			}
 		}
+		return mapFlags;
 	}
 	public boolean isGestioneRetrieveTokenCacheKey(String tipo) {
 		if(this.gestioneRetrieveTokenCacheKey!=null && !this.gestioneRetrieveTokenCacheKey.isEmpty() && this.gestioneRetrieveTokenCacheKey.containsKey(tipo)) {
@@ -26419,11 +26427,63 @@ public class OpenSPCoop2Properties {
 		// logica di default
 		return !(
 				CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_IDENTIFIER.equals(tipo)
-				|| 
+				||
 				CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_SESSION_INFO.equals(tipo)
 				);
 	}
-	
+
+	private Map<String, List<String>> gestioneRetrieveTokenCacheKeyBlackList = null;
+	private void initGestioneRetrieveTokenCacheKeyBlackList() throws CoreException {
+		this.gestioneRetrieveTokenCacheKeyBlackList = readCacheKeyBlackList("org.openspcoop2.pdd.retrieveToken.cacheKeyBlackList.");
+	}
+	public List<String> getGestioneRetrieveTokenCacheKeyBlackList(String tipo) {
+		return getCacheKeyBlackList(this.gestioneRetrieveTokenCacheKeyBlackList, tipo);
+	}
+
+	/**
+	 * Legge le black list, definite per nome, dei parametri o degli header http che non devono concorrere
+	 * alla creazione della chiave della cache. Ogni proprietà contiene un elenco di nomi separati dalla virgola.
+	 */
+	private Map<String, List<String>> readCacheKeyBlackList(String prefix) throws CoreException {
+		Properties p = null;
+		try {
+			p = this.reader.readPropertiesConvertEnvProperties(prefix);
+		}catch(Exception e) {
+			throw new CoreException(e.getMessage(),e);
+		}
+		Map<String, List<String>> mapBlackList = new HashMap<>();
+		if(p!=null) {
+			for (Object oKey : p.keySet()) {
+				if(oKey instanceof String) {
+					String key = (String) oKey;
+					String v = p.getProperty(key);
+					if(v!=null) {
+						List<String> nomi = new ArrayList<>();
+						for (String nome : v.trim().split(",")) {
+							if(nome!=null && StringUtils.isNotEmpty(nome.trim())) {
+								nomi.add(nome.trim());
+							}
+						}
+						mapBlackList.put(key,nomi);
+					}
+				}
+			}
+		}
+		return mapBlackList;
+	}
+	private List<String> getCacheKeyBlackList(Map<String, List<String>> mapBlackList, String tipo) {
+		if(mapBlackList!=null && mapBlackList.containsKey(tipo)) {
+			return mapBlackList.get(tipo);
+		}
+
+		// logica di default: l'header che veicola una credenziale non concorre alla chiave della cache,
+		// poichè il suo valore può cambiare nel tempo pur individuando la medesima richiesta
+		if(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_HTTP_HEADERS.equals(tipo)) {
+			return List.of(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_DPOP);
+		}
+		return List.of();
+	}
+
 	private static final String PDND_PATTERN_MATCH_DEFAULT = "^https://auth.*\\.interop\\.pagopa\\.it/token\\.oauth2$";
 	private static final String PDD_RETRIEVE_TOKEN_PREFIX_PROPERTY = "org.openspcoop2.pdd.retrieveToken.";
 	private Map<String,String> getGestioneRetrieveTokenPdndUrlPatternMatch = new HashMap<>();
@@ -26778,12 +26838,31 @@ public class OpenSPCoop2Properties {
 
 		return this.getGestioneAttributeAuthorityValidityCheck;
 	}
-	
-	
-	
-	
-	
-	
+
+	private Map<String, Boolean> gestioneAttributeAuthorityCacheKey = null;
+	private void initGestioneAttributeAuthorityCacheKey() throws CoreException {
+		this.gestioneAttributeAuthorityCacheKey = readCacheKeyFlags("org.openspcoop2.pdd.gestioneAttributeAuthority.cacheKey.");
+	}
+	public boolean isGestioneAttributeAuthorityCacheKey(String tipo) {
+		if(this.gestioneAttributeAuthorityCacheKey!=null && this.gestioneAttributeAuthorityCacheKey.containsKey(tipo)) {
+			return this.gestioneAttributeAuthorityCacheKey.get(tipo);
+		}
+
+		// logica di default: i dati concorrono alla chiave della cache
+		return true;
+	}
+
+	private Map<String, List<String>> gestioneAttributeAuthorityCacheKeyBlackList = null;
+	private void initGestioneAttributeAuthorityCacheKeyBlackList() throws CoreException {
+		this.gestioneAttributeAuthorityCacheKeyBlackList = readCacheKeyBlackList("org.openspcoop2.pdd.gestioneAttributeAuthority.cacheKeyBlackList.");
+	}
+	public List<String> getGestioneAttributeAuthorityCacheKeyBlackList(String tipo) {
+		return getCacheKeyBlackList(this.gestioneAttributeAuthorityCacheKeyBlackList, tipo);
+	}
+
+
+
+
 	/* ------------- JMX Statistiche ---------------------*/
 	
 	private Boolean isStatisticheViaJmx = null;

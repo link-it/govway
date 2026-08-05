@@ -52,6 +52,7 @@ import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.certificate.ocsp.OCSPProvider;
 import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.SSLUtilities;
 
 /**     
@@ -136,7 +137,11 @@ public class AttributeAuthorityProvider implements IProvider {
 		}
 		
 		validateClaims(pDefault);
-		
+
+		validateRequestParameters(pDefault);
+
+		validateRequestHttpHeaders(pDefault);
+
 		String jwtKeystore = pDefault.getProperty(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.AA_REQUEST_JWT_SIGN_KEYSTORE_FILE);
 		if(jwtKeystore!=null && StringUtils.isNotEmpty(jwtKeystore)) {
 			InputValidationUtils.validateTextAreaInput(jwtKeystore, "Richiesta - JWS KeyStore - Path");
@@ -266,6 +271,61 @@ public class AttributeAuthorityProvider implements IProvider {
 			deny.add(Claims.JSON_WEB_TOKEN_RFC_7519_EXPIRED);
 			deny.add(Claims.JSON_WEB_TOKEN_RFC_7519_JWT_ID);
 			TokenUtilities.checkClaims("claim", convertTextToProperties, "Claims", deny, false);
+		}
+	}
+	private void validateRequestParameters(Properties pDefault) throws ProviderValidationException {
+		String parameters = pDefault.getProperty(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.AA_REQUEST_PARAMETERS);
+		if(parameters!=null && !"".equals(parameters)) {
+			Properties convertTextToProperties = PropertiesUtilities.convertTextToProperties(parameters);
+			List<String> deny = new ArrayList<>();
+			String position = pDefault.getProperty(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.AA_REQUEST_POSITION);
+			if(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.AA_REQUEST_POSITION_VALUE_QUERY.equals(position)) {
+				// il parametro che veicola la richiesta verso l'AA non può essere ridefinito
+				addDeny(deny, pDefault.getProperty(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.AA_REQUEST_POSITION_QUERY_PARAMETER_NAME));
+			}
+			TokenUtilities.checkClaims("parametro", convertTextToProperties, "Parametri", deny, false);
+		}
+	}
+	private void validateRequestHttpHeaders(Properties pDefault) throws ProviderValidationException {
+		String headers = pDefault.getProperty(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.AA_REQUEST_HTTP_HEADERS);
+		if(headers!=null && !"".equals(headers)) {
+			Properties convertTextToProperties = PropertiesUtilities.convertTextToProperties(headers);
+			List<String> deny = new ArrayList<>();
+
+			String position = pDefault.getProperty(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.AA_REQUEST_POSITION);
+
+			// L'header 'Authorization' viene inibito solamente se già utilizzato dalla policy:
+			// autenticazione client basic o bearer, o richiesta veicolata come bearer token.
+			// Diversamente l'header può essere definito manualmente.
+			boolean basic = TokenUtilities.isEnabled(pDefault, org.openspcoop2.pdd.core.token.attribute_authority.Costanti.AA_AUTH_BASIC_STATO);
+			boolean bearer = TokenUtilities.isEnabled(pDefault, org.openspcoop2.pdd.core.token.attribute_authority.Costanti.AA_AUTH_BEARER_STATO);
+			boolean richiestaBearer = org.openspcoop2.pdd.core.token.attribute_authority.Costanti.AA_REQUEST_POSITION_VALUE_BEARER.equals(position);
+			if(basic || bearer || richiestaBearer) {
+				addDeny(deny, HttpConstants.AUTHORIZATION);
+			}
+
+			// Il 'Content-Type' viene inibito solamente se già definito dalla policy
+			String contentType = pDefault.getProperty(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.AA_REQUEST_CONTENT_TYPE);
+			if(contentType!=null && StringUtils.isNotEmpty(contentType)) {
+				addDeny(deny, HttpConstants.CONTENT_TYPE);
+			}
+
+			if(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.AA_REQUEST_POSITION_VALUE_HEADER.equals(position)) {
+				// l'header che veicola la richiesta verso l'AA non può essere ridefinito
+				addDeny(deny, pDefault.getProperty(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.AA_REQUEST_POSITION_HEADER_NAME));
+			}
+
+			TokenUtilities.checkClaims("header http", convertTextToProperties, "Header HTTP", deny, false);
+		}
+	}
+	private void addDeny(List<String> deny, String nome) {
+		if(nome!=null && StringUtils.isNotEmpty(nome)) {
+			deny.add(nome);
+			// il controllo effettuato in TokenUtilities.checkClaims confronta anche il nome fornito in minuscolo
+			String nomeLowerCase = nome.toLowerCase();
+			if(!deny.contains(nomeLowerCase)) {
+				deny.add(nomeLowerCase);
+			}
 		}
 	}
 	private void validateResponseTypeJWS(Map<String, Properties> mapProperties, Properties pDefault) throws ProviderValidationException {
@@ -501,7 +561,9 @@ public class AttributeAuthorityProvider implements IProvider {
 				org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_RICHIESTA_JWS_PAYLOAD_ISSUER.equals(id) ||
 				org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_RICHIESTA_JWS_PAYLOAD_SUBJECT.equals(id) ||
 				org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_RICHIESTA_JWS_PAYLOAD_AUDIENCE.equals(id) ||
-				org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_RISPOSTA_JWS_PAYLOAD_AUDIENCE.equals(id)
+				org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_RISPOSTA_JWS_PAYLOAD_AUDIENCE.equals(id) ||
+				org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_RICHIESTA_PARAMETERS.equals(id) ||
+				org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_RICHIESTA_HTTP_HEADERS.equals(id)
 				) {
 			ProviderInfo pInfo = new ProviderInfo();
 			pInfo.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);

@@ -697,6 +697,20 @@
 
 		</subsection>
 
+		<subsection label="Dati Richiesta">
+
+			<item type="textarea" name="aaRichiestaParameters" label="Parametri" required="false"
+				note="Indicare per riga gli ulteriori parametri della url (nome=valore)">
+				<property name="policy.attributeAuthority.request.parameters" />
+			</item>
+
+			<item type="textarea" name="aaRichiestaHttpHeaders" label="Header HTTP" required="false"
+				note="Indicare per riga gli eventuali header (nome=valore)">
+				<property name="policy.attributeAuthority.request.httpHeaders" />
+			</item>
+
+		</subsection>
+
 	</section>
 
 	<section label="Risposta">
