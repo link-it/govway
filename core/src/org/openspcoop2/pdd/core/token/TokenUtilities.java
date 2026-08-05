@@ -27,6 +27,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.rt.security.rs.RSSecurityConstants;
@@ -66,6 +68,7 @@ import org.openspcoop2.security.message.jose.JOSECostanti;
 import org.openspcoop2.security.message.utils.AbstractSecurityProvider;
 import org.openspcoop2.utils.certificate.KeystoreParams;
 import org.openspcoop2.utils.certificate.KeystoreType;
+import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.slf4j.Logger;
 
 /**     
@@ -705,6 +708,57 @@ public class TokenUtilities {
 
 	}
 	
+	/**
+	 * Ritorna la rappresentazione, da utilizzare nella chiave della cache, di un elenco di parametri o header http
+	 * definiti per riga nella forma 'nome=valore'.
+	 * I nomi indicati nella black list vengono esclusi: servono per non far concorrere alla chiave della cache
+	 * i valori che, per loro natura, cambiano nel tempo pur individuando la medesima richiesta (es. l'header
+	 * 'Authorization' che veicola una credenziale soggetta a rinnovo).
+	 * Ritorna null se, al netto della black list, non residua alcun elemento.
+	 */
+	public static String buildCacheKeyValue(String text, List<String> blackList) {
+		if(text==null || StringUtils.isEmpty(text)) {
+			return null;
+		}
+		if(blackList==null || blackList.isEmpty()) {
+			return text;
+		}
+		Properties p = PropertiesUtilities.convertTextToProperties(text);
+		if(p==null || p.isEmpty()) {
+			// non è stato possibile individuare elementi nella forma 'nome=valore': viene ritornato il valore originale
+			return text;
+		}
+		// viene utilizzata una mappa ordinata per ottenere una chiave stabile tra invocazioni differenti
+		SortedMap<String, String> map = new TreeMap<>();
+		for (Object oKey : p.keySet()) {
+			if(oKey instanceof String) {
+				String nome = (String) oKey;
+				if(!isInBlackList(nome, blackList)) {
+					map.put(nome, p.getProperty(nome));
+				}
+			}
+		}
+		if(map.isEmpty()) {
+			return null;
+		}
+		StringBuilder bf = new StringBuilder();
+		for (Map.Entry<String, String> entry : map.entrySet()) {
+			if(bf.length()>0) {
+				bf.append(",");
+			}
+			bf.append(entry.getKey()).append("=").append(entry.getValue());
+		}
+		return bf.toString();
+	}
+	private static boolean isInBlackList(String nome, List<String> blackList) {
+		for (String escluso : blackList) {
+			if(escluso!=null && escluso.equalsIgnoreCase(nome)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public static void checkClaims(String oggetto, Properties claims, String elemento, List<String> denyClaims, boolean checkSpazi) throws ProviderValidationException {
 		if(claims!=null && !claims.isEmpty()) {
 			for (Object oClaim : claims.keySet()) {

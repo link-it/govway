@@ -62,7 +62,14 @@ public class Costanti {
 	public static final String AA_REQUEST_TYPE_VALUE_CUSTOM = "custom";
 	
 	public static final String AA_REQUEST_CONTENT_TYPE = "policy.attributeAuthority.request.contentType";
-	
+
+	public static final String AA_REQUEST_PARAMETERS = "policy.attributeAuthority.request.parameters";
+	public static final String AA_REQUEST_HTTP_HEADERS = "policy.attributeAuthority.request.httpHeaders";
+
+	// tipi utilizzati per le opzioni 'org.openspcoop2.pdd.gestioneAttributeAuthority.cacheKey.*' e 'cacheKeyBlackList.*'
+	public static final String AA_CACHE_KEY_TIPO_PARAMETERS = "parameters";
+	public static final String AA_CACHE_KEY_TIPO_HTTP_HEADERS = "http.headers";
+
 	public static final String AA_REQUEST_DYNAMIC_PAYLOAD_TYPE = "policy.attributeAuthority.request.templateType";
 	public static final String AA_REQUEST_DYNAMIC_PAYLOAD_TYPE_JWT = "jwt";
 	public static final String AA_REQUEST_DYNAMIC_PAYLOAD_TYPE_TEMPLATE = "template";
@@ -129,6 +136,8 @@ public class Costanti {
 	public static final String ID_AA_RICHIESTA_JWS_PAYLOAD_SUBJECT = "aaRichiestaPayloadSubject";
 	public static final String ID_AA_RICHIESTA_JWS_PAYLOAD_AUDIENCE = "aaRichiestaPayloadAudience";
 	public static final String ID_AA_RICHIESTA_JWS_PAYLOAD_CLAIMS = "aaRichiestaJwsPayloadClaims";
+	public static final String ID_AA_RICHIESTA_PARAMETERS = "aaRichiestaParameters";
+	public static final String ID_AA_RICHIESTA_HTTP_HEADERS = "aaRichiestaHttpHeaders";
 	public static final String ID_AA_RICHIESTA_PAYLOAD_TEMPLATE = "aaRichiestaPayloadTemplate";
 	public static final String ID_AA_RICHIESTA_PAYLOAD_TEMPLATE_FREEMARKER = "aaRichiestaPayloadTemplateFreemarker";
 	public static final String ID_AA_RICHIESTA_PAYLOAD_TEMPLATE_VELOCITY = "aaRichiestaPayloadTemplateVelocity";

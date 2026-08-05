@@ -141,12 +141,14 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 	private static boolean audienceCacheKey;
 	private static boolean formClientIdCacheKey;
 	private static boolean formResourceCacheKey;
-	private static boolean parametersCacheKey; 
-	
+	private static boolean parametersCacheKey;
+	private static List<String> parametersCacheKeyBlackList;
+
 	private static boolean httpMethodCacheKey; 
 	private static boolean httpContentTypeCacheKey; 
-	private static boolean httpHeadersCacheKey; 
-	private static boolean httpPayloadTemplateTypeCacheKey; 
+	private static boolean httpHeadersCacheKey;
+	private static List<String> httpHeadersCacheKeyBlackList;
+	private static boolean httpPayloadTemplateTypeCacheKey;
 	private static boolean httpPayloadCacheKey; 
 	
 	private static boolean applicativoRichiedenteCacheKey;
@@ -178,10 +180,12 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 			formClientIdCacheKey = op2Properties.isGestioneRetrieveTokenCacheKey(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_FORM_REQUEST_CLIENT_ID);
 			formResourceCacheKey = op2Properties.isGestioneRetrieveTokenCacheKey(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_FORM_REQUEST_RESOURCE);
 			parametersCacheKey = op2Properties.isGestioneRetrieveTokenCacheKey(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_FORM_REQUEST_PARAMETERS);
+			parametersCacheKeyBlackList = op2Properties.getGestioneRetrieveTokenCacheKeyBlackList(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_FORM_REQUEST_PARAMETERS);
 			
 			httpMethodCacheKey = op2Properties.isGestioneRetrieveTokenCacheKey(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_HTTP_METHOD); 
 			httpContentTypeCacheKey = op2Properties.isGestioneRetrieveTokenCacheKey(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_HTTP_CONTENT_TYPE); 
-			httpHeadersCacheKey = op2Properties.isGestioneRetrieveTokenCacheKey(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_HTTP_HEADERS); 
+			httpHeadersCacheKey = op2Properties.isGestioneRetrieveTokenCacheKey(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_HTTP_HEADERS);
+			httpHeadersCacheKeyBlackList = op2Properties.getGestioneRetrieveTokenCacheKeyBlackList(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_HTTP_HEADERS);
 			httpPayloadTemplateTypeCacheKey = op2Properties.isGestioneRetrieveTokenCacheKey(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_HTTP_PAYLOAD_TEMPLATE_TYPE); 
 			httpPayloadCacheKey = op2Properties.isGestioneRetrieveTokenCacheKey(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_HTTP_PAYLOAD); 
 
@@ -904,13 +908,15 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 			}
 			sb.append("formResource:").append(this.formResource);
 		}
-		if(StringUtils.isNotEmpty(this.parameters) && (!cacheKey || parametersCacheKey)) {
+		// nella chiave della cache i singoli parametri possono essere esclusi per nome tramite black list
+		String parametersValue = cacheKey ? TokenUtilities.buildCacheKeyValue(this.parameters, parametersCacheKeyBlackList) : this.parameters;
+		if(StringUtils.isNotEmpty(parametersValue) && (!cacheKey || parametersCacheKey)) {
 			if(sb.length()>0) {
 				sb.append(separator);
 			}
-			sb.append("parameters:").append(this.parameters);
+			sb.append("parameters:").append(parametersValue);
 		}
-		
+
 		if(this.httpMethod!=null && (!cacheKey || httpMethodCacheKey)) {
 			if(sb.length()>0) {
 				sb.append(separator);
@@ -923,11 +929,13 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 			}
 			sb.append("httpContentType:").append(this.httpContentType);
 		}
-		if(StringUtils.isNotEmpty(this.httpHeaders) && (!cacheKey || httpHeadersCacheKey)) {
+		// nella chiave della cache i singoli header possono essere esclusi per nome tramite black list
+		String httpHeadersValue = cacheKey ? TokenUtilities.buildCacheKeyValue(this.httpHeaders, httpHeadersCacheKeyBlackList) : this.httpHeaders;
+		if(StringUtils.isNotEmpty(httpHeadersValue) && (!cacheKey || httpHeadersCacheKey)) {
 			if(sb.length()>0) {
 				sb.append(separator);
 			}
-			sb.append("httpHeaders:").append(this.httpHeaders);
+			sb.append("httpHeaders:").append(httpHeadersValue);
 		}
 		if(StringUtils.isNotEmpty(this.httpPayloadTemplateType) && (!cacheKey || httpPayloadTemplateTypeCacheKey)) {
 			if(sb.length()>0) {
