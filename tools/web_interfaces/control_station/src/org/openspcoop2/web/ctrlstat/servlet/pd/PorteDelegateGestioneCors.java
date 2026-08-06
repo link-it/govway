@@ -126,7 +126,7 @@ public class PorteDelegateGestioneCors extends Action {
 			String corsExposeHeaders = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_EXPOSE_HEADERS);
 			String corsMaxAgeTmp = porteDelegateHelper.getParametroBoolean(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_MAX_AGE);
 			boolean corsMaxAge =  ServletUtils.isCheckBoxEnabled(corsMaxAgeTmp);
-			String corsMaxAgeSecondsTmp = porteDelegateHelper.getParametroBoolean(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_MAX_AGE_SECONDS);
+			String corsMaxAgeSecondsTmp = porteDelegateHelper.getParametroInteger(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_MAX_AGE_SECONDS);
 			int corsMaxAgeSeconds = -1;
 			if(corsMaxAgeSecondsTmp != null) {
 				try {

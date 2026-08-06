@@ -1,3 +1,12 @@
+2026-08-06  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug #1813
+	Corretto un errore nella configurazione della gestione CORS di una fruizione, per cui l'abilitazione dell'opzione 'Max Age' impediva il
+	salvataggio della configurazione: il valore indicato nel campo 'Max Age Seconds' veniva rifiutato, qualunque esso fosse (compreso '-1',
+	previsto per disabilitare il caching), e l'operazione terminava con un errore di sistema.
+	Le erogazioni e la configurazione globale del prodotto non erano interessate dal problema.
+
 2026-08-05  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole]
