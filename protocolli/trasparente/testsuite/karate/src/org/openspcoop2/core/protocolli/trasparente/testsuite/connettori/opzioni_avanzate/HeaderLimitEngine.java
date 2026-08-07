@@ -21,6 +21,7 @@ package org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.opzioni
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -62,6 +63,15 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
  *
  * <p>Il backend e' il mock {@link HeaderLimitMockServer}, che risponde con header di dimensione e
  * numero pilotati dal test e riporta il protocollo utilizzato.
+ *
+ * <p><strong>Nota sulla configurazione dell'API 'TestHeaderLimit'</strong>: sia le erogazioni che le
+ * fruizioni sono configurate con una trasformazione di risposta che elimina l'header
+ * {@link HeaderLimitMockServer#HEADER_BIG}. I limiti sotto test riguardano infatti la lettura della
+ * risposta del backend da parte del connettore, mentre il successivo inoltro al client e' vincolato
+ * dal 'maxHttpHeaderSize' dell'application server (65536 bytes negli ambienti di test): senza la
+ * trasformazione i casi che superano il limite del connettore, ma che devono comunque transitare
+ * (connettore JDK e connessioni HTTP/2), fallirebbero in scrittura sulla risposta verso il client.
+ * Le asserzioni vengono quindi effettuate sugli header di riepilogo restituiti dal mock.
  *
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$
@@ -195,6 +205,13 @@ public class HeaderLimitEngine extends ConfigLoader {
 
 		assertEquals(String.valueOf(headerBytes), response.getHeaderFirstValue(HeaderLimitMockServer.HEADER_RECEIVED_HEADER_BYTES));
 		assertEquals(String.valueOf(headerCount), response.getHeaderFirstValue(HeaderLimitMockServer.HEADER_RECEIVED_HEADER_COUNT));
+
+		/* L'header sovradimensionato deve essere stato eliminato dalla trasformazione di risposta
+		 * configurata sull'API: se cosi' non fosse, i casi che superano il 'maxHttpHeaderSize'
+		 * dell'application server fallirebbero in modo poco diagnosticabile (500 o attesa del client). */
+		assertNull("Header '" + HeaderLimitMockServer.HEADER_BIG + "' presente nella risposta: la trasformazione"
+				+ " di risposta configurata sull'API '" + API + "' non risulta attiva (configurazione non caricata?)",
+				response.getHeaderFirstValue(HeaderLimitMockServer.HEADER_BIG));
 
 		String protocolVersion = response.getHeaderFirstValue(HeaderLimitMockServer.HEADER_RECEIVED_PROTOCOL_VERSION);
 		assertNotNull(protocolVersion);

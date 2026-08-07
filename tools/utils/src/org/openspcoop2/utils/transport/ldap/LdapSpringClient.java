@@ -42,18 +42,16 @@ public class LdapSpringClient implements LdapClientInterface{
 
 	private LdapContextSource context;
 	private LdapTemplate template;
-	
+
 	public LdapSpringClient() {
 		this.context = new LdapContextSource();
-		this.template = new LdapTemplate();
-		
-		this.template.setContextSource(null);
 	}
-	
+
 	private LdapTemplate getTemplate() {
-		if (this.template.getContextSource() == null) {
+		// il template viene creato al primo utilizzo, dopo che il context source è stato completamente configurato
+		if (this.template == null) {
 			this.context.afterPropertiesSet();
-			this.template.setContextSource(this.context);
+			this.template = new LdapTemplate(this.context);
 		}
 		return this.template;
 	}

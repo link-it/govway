@@ -17,6 +17,9 @@
 	  <accesso-dati-gestione-token>
 		<cache dimensione="10000" algoritmo="lru" item-life-second="7200"/>
 	  </accesso-dati-gestione-token>
+	  <accesso-dati-attribute-authority>
+		<cache dimensione="5000" algoritmo="lru" item-life-second="7200"/>
+	  </accesso-dati-attribute-authority>
 	  <accesso-dati-richieste>
 		<cache dimensione="15000" algoritmo="lru" item-life-second="7200"/>
 	  </accesso-dati-richieste>
