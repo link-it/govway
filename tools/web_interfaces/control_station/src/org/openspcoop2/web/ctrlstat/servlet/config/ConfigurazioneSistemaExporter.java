@@ -858,14 +858,19 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 			for (String coda : code) {
 			
 				String stato = null;
-				try{
-					stato = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
-							confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConsegnaContenutiApplicativi(alias),
-							confCore.getJmxPdDConfigurazioneSistemaNomeMetodoGetThreadPoolStatus(alias),
-							coda);
-				}catch(Exception e){
-					ControlStationCore.logError("Errore durante la lettura dello stato del thread pool della coda '"+coda+"' per la consegna agli applicativi (jmxResourcePdD): "+e.getMessage(),e);
-					stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+				if(!confCore.isClusterAsyncUpdate()) {
+					try{
+						stato = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias),
+								confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConsegnaContenutiApplicativi(alias),
+								confCore.getJmxPdDConfigurazioneSistemaNomeMetodoGetThreadPoolStatus(alias),
+								coda);
+					}catch(Exception e){
+						ControlStationCore.logError("Errore durante la lettura dello stato del thread pool della coda '"+coda+"' per la consegna agli applicativi (jmxResourcePdD): "+e.getMessage(),e);
+						stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+					}
+				}
+				else {
+					stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE_CLUSTER_ASYNC_UPDATE;
 				}
 				
 				String configurazione = null;

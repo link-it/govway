@@ -1,6 +1,14 @@
 2026-08-07  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]
+	Risolto Bug #1788
+	Nella sezione 'Runtime', in modalità cluster dinamica, vengono adesso nascoste anche le sottosezioni 'HTTP Client - BIO' e
+	'HTTP Client - NIO' ed il campo 'Threads Pool' della 'Consegna Notifiche', riportando lo stato istantaneo di un singolo nodo
+	analogamente alle connessioni ed alle transazioni attive, già non visualizzate in tale modalità.
+
+2026-08-07  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
 	Aggiunta funzionalità #1802
 	All'interno delle erogazioni e delle fruizioni sono state introdotte nuove icone che consentono di aprire direttamente, 
 	in un nuovo tab	del browser, la configurazione della token policy o della Attribute Authority utilizzata, analogamente a quanto già avviene per l'API.
