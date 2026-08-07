@@ -2198,6 +2198,21 @@ td.riepilogo-spacer {
     position: absolute;
 }
 
+.spanIconLinksBox {
+	cursor: pointer;
+}
+
+ul.dataElementLinksList {
+	margin: 4px 0px 0px 0px;
+	padding-left: 20px;
+	list-style: disc;
+}
+
+ul.dataElementLinksList li {
+	padding: 2px 0px 2px 0px;
+	list-style: disc;
+}
+
 .image-link {
 	padding: 0px 2px 0px 2px;
 	text-decoration: none;

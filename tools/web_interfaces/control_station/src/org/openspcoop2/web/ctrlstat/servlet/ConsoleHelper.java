@@ -211,6 +211,7 @@ import org.openspcoop2.pdd.core.connettori.ConnettoreCheck;
 import org.openspcoop2.pdd.core.connettori.ConnettoreNULL;
 import org.openspcoop2.pdd.core.connettori.ConnettoreNULLEcho;
 import org.openspcoop2.pdd.core.connettori.ConnettoreStatus;
+import org.openspcoop2.pdd.core.connettori.ConnettoreUtils;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.config.PolicyConfiguration;
 import org.openspcoop2.pdd.core.dynamic.DynamicHelperCostanti;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
@@ -337,7 +338,10 @@ import org.openspcoop2.web.lib.mvc.CheckboxStatusType;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElement.STATO_APERTURA_SEZIONI;
+import org.openspcoop2.web.lib.mvc.DataElementImage;
 import org.openspcoop2.web.lib.mvc.DataElementInfo;
+import org.openspcoop2.web.lib.mvc.DataElementLink;
+import org.openspcoop2.web.lib.mvc.DataElementLinks;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.Dialog;
 import org.openspcoop2.web.lib.mvc.Dialog.BodyElement;
@@ -5845,6 +5849,11 @@ public class ConsoleHelper implements IConsoleHelper {
 					dePolicies.setValoreDefaultSelect(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO);
 				}
 				dePolicies.setPostBack(true);
+				// link alla token policy di validazione selezionata
+				DataElementLink linkTokenPolicy = this.getDataElementLinkVisualizzaTokenPolicyValidazione(gestioneTokenPolicy);
+				if(linkTokenPolicy!=null) {
+					dePolicies.addLink(linkTokenPolicy);
+				}
 				dati.add(dePolicies);
 				
 				if(gestioneTokenPolicy != null && !gestioneTokenPolicy.equals(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO)) {
@@ -6341,6 +6350,22 @@ public class ConsoleHelper implements IConsoleHelper {
 					de.setLabels(attributeAuthorityLabels);
 					de.setPostBack(true); // cambia la descrizione in autorizzazione per claims
 					de.setSelezionati(attributeAuthoritySelezionate);
+					// un link per ogni attribute authority selezionata; se selezionata una sola A.A. si atterra direttamente su di essa,
+					// altrimenti l'icona apre una finestra modale in cui scegliere quale visualizzare
+					if(attributeAuthoritySelezionate!=null) {
+						for (String attributeAuthoritySelezionata : attributeAuthoritySelezionate) {
+							DataElementLink linkAttributeAuthority = this.getDataElementLinkVisualizzaAttributeAuthority(attributeAuthoritySelezionata);
+							if(linkAttributeAuthority!=null) {
+								de.addLink(linkAttributeAuthority);
+							}
+						}
+					}
+					DataElementLinks linksAttributeAuthority = de.getLinks();
+					if(linksAttributeAuthority!=null) {
+						linksAttributeAuthority.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_VISUALIZZA_TOOLTIP_CON_PARAMETRO,
+								ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY));
+						linksAttributeAuthority.setHeaderFinestraModale(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY);
+					}
 				}
 				dati.add(de);
 				
@@ -22681,10 +22706,112 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setDisabilitaAjaxStatus();
 		// link apri nuovo tab
 		de.setVisualizzaLinkApriNuovaFinestra(true);
-			
+
 		return de;
 	}
-	
+
+	public DataElementImage getDataElementImageVisualizzaTokenPolicyNegoziazione(org.openspcoop2.core.registry.Connettore connettore) {
+		if(connettore==null) {
+			return null;
+		}
+		return this.getDataElementImageVisualizzaTokenPolicyNegoziazione(connettore.mappingIntoConnettoreConfigurazione());
+	}
+	public DataElementImage getDataElementImageVisualizzaTokenPolicyNegoziazione(org.openspcoop2.core.config.Connettore connettore) {
+		if(connettore==null) {
+			return null;
+		}
+		// la token policy e' utilizzabile solamente sui connettori http/https
+		String tipo = connettore.getTipo();
+		if(!TipiConnettore.HTTP.getNome().equals(tipo) && !TipiConnettore.HTTPS.getNome().equals(tipo)) {
+			return null;
+		}
+		return this.getDataElementImageVisualizzaTokenPolicyNegoziazione(ConnettoreUtils.getNegoziazioneTokenPolicyConnettore(connettore));
+	}
+	public DataElementImage getDataElementImageVisualizzaTokenPolicyNegoziazione(String nomeTokenPolicy) {
+		String url = this.getUrlVisualizzaTokenPolicyNegoziazione(nomeTokenPolicy);
+		if(url==null) {
+			return null;
+		}
+		DataElementImage image = new DataElementImage();
+		image.setUrl(url);
+		image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_VISUALIZZA_TOOLTIP_CON_PARAMETRO, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN));
+		image.setImage(CostantiControlStation.ICONA_VISUALIZZA);
+		image.setTarget(TargetType.BLANK);
+		image.setDisabilitaAjaxStatus();
+		return image;
+	}
+
+	public DataElementLink getDataElementLinkVisualizzaTokenPolicyNegoziazione(String nomeTokenPolicy) {
+		return this.newDataElementLink(nomeTokenPolicy, this.getUrlVisualizzaTokenPolicyNegoziazione(nomeTokenPolicy),
+				ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN);
+	}
+	public DataElementLink getDataElementLinkVisualizzaTokenPolicyValidazione(String nomeTokenPolicy) {
+		String url = this.getUrlVisualizzaGenericProperties(nomeTokenPolicy,
+				CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN,
+				ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_TOKEN);
+		return this.newDataElementLink(nomeTokenPolicy, url, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN);
+	}
+	public DataElementLink getDataElementLinkVisualizzaAttributeAuthority(String nomeAttributeAuthority) {
+		String url = this.getUrlVisualizzaGenericProperties(nomeAttributeAuthority,
+				CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_ATTRIBUTE_AUTHORITY,
+				ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_ATTRIBUTE_AUTHORITY);
+		return this.newDataElementLink(nomeAttributeAuthority, url,
+				ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY_ABBREVIATO+" "+nomeAttributeAuthority);
+	}
+
+	private DataElementLink newDataElementLink(String nome, String url, String labelTooltip) {
+		if(url==null) {
+			return null;
+		}
+		DataElementLink link = new DataElementLink(nome);
+		link.setUrl(url);
+		link.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_VISUALIZZA_TOOLTIP_CON_PARAMETRO, labelTooltip));
+		link.setTarget(TargetType.BLANK);
+		return link;
+	}
+
+	private String getUrlVisualizzaTokenPolicyNegoziazione(String nomeTokenPolicy) {
+		return this.getUrlVisualizzaGenericProperties(nomeTokenPolicy,
+				CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_RETRIEVE_POLICY_TOKEN,
+				ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_TOKEN);
+	}
+
+	/**
+	 * Url della maschera di visualizzazione della token policy o della attribute authority indicata.
+	 * Ritorna null se l'elemento non e' individuabile o se l'utente non possiede i permessi per accedere
+	 * alla sezione di configurazione in cui esso risiede.
+	 */
+	private String getUrlVisualizzaGenericProperties(String nome, String tipologia, String infoType) {
+
+		if(nome==null || StringUtils.isEmpty(nome) || CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO.equals(nome)) {
+			return null;
+		}
+
+		User user = ServletUtils.getUserFromSession(this.request, this.session);
+		if(user==null || user.getPermessi()==null || !user.getPermessi().isSistema()) {
+			return null;
+		}
+
+		GenericProperties policy = null;
+		try {
+			policy = this.confCore.getGenericProperties(nome, tipologia, false);
+		}catch(DriverConfigurazioneNotFound notFound) {
+			// configurazione non piu' esistente: non viene fornito alcun link
+			ControlStationCore.logDebug("Configurazione '"+nome+"' (tipologia '"+tipologia+"') non trovata: "+notFound.getMessage(),notFound);
+			return null;
+		}catch(Exception e) {
+			ControlStationCore.logDebug("Lettura della configurazione '"+nome+"' (tipologia '"+tipologia+"') non riuscita: "+e.getMessage(),e);
+			return null;
+		}
+		if(policy==null) {
+			return null;
+		}
+
+		return DataElement._getUrlValue(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_CHANGE,
+				new Parameter(ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE, infoType),
+				new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_ID, policy.getId()+""));
+	}
+
 	public void setSecretPleaseCopy(String secret_password, String secret_user, boolean appId, String tipoAuth, OggettoDialogEnum oggettoDialog, String nome) {
 
 		String nomeP = nome!=null ? " "+nome : "";

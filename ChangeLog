@@ -1,3 +1,23 @@
+2026-08-07  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Aggiunta funzionalità #1802
+	All'interno delle erogazioni e delle fruizioni sono state introdotte nuove icone che consentono di aprire direttamente, 
+	in un nuovo tab	del browser, la configurazione della token policy o della Attribute Authority utilizzata, analogamente a quanto già avviene per l'API.
+	Non è quindi più necessario aprire la configurazione, annotare il nome della policy e individuarla poi manualmente nella sezione di configurazione del prodotto, 
+	operazione che poteva condurre alla policy errata in presenza di più policy con nome simile.
+	Le nuove icone sono le seguenti:
+	- 'Visualizza Token Policy' per la policy di negoziazione associata al connettore: presente nel riepilogo di erogazioni e fruizioni,
+	  a fianco del connettore, nell'elenco dei connettori multipli e, nella maschera di gestione del connettore, 
+	  accanto al campo 'Policy' della sezione 'Autenticazione Token';
+	- 'Visualizza Token Policy' per la policy di validazione: presente nella maschera 'Controllo Accessi', 
+	  accanto al campo 'Policy' della sezione 'Autenticazione Token';
+	- 'Visualizza Attribute Authority' per le A.A. utilizzate: presente nella maschera 'Controllo Accessi', accanto al campo
+	  'Attribute Authority' della sezione 'Identificazione Attributi'. Se è stata selezionata una sola A.A. si atterra direttamente su di essa, 
+	  mentre in presenza di più A.A. l'icona apre una finestra modale in cui scegliere quale visualizzare.
+ 	Le icone vengono visualizzate solamente agli utenti abilitati alla sezione di configurazione del prodotto, 
+ 	dove risiedono le token policy e le Attribute Authority.
+
 2026-08-05  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole]

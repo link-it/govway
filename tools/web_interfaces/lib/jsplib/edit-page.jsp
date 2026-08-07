@@ -1245,17 +1245,63 @@ for (int i = 0; i < dati.size(); i++) {
 		                          									</script>
 		                          									<input type="hidden" id="<%= selId  %>_hidden_chk" value="<%= abilitaSearch  %>"/>
 		                          									<%
-														      		if(deInfo != null){
-														      			String idDivIconInfo = "divIconInfo_"+i;
-												      					String idIconInfo = "iconInfo_"+i; 
-														      	%> 	<div class="iconInfoBox" id="<%=idDivIconInfo %>">
-														      			<input type="hidden" name="__i_hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
-														      			<input type="hidden" name="__i_hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
-																      	<span class="spanIconInfoBox">
-																			<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
-																		</span>
-																	</div>
-														      	<% }
+		                          									// icona di info ed eventuali collegamenti verso elementi correlati, posizionati entrambi a fianco del campo
+		                          									DataElementLinks deLinks = de.getLinks();
+		                          									boolean deLinksPresenti = deLinks != null && !deLinks.isEmpty();
+		                          									if(deInfo != null || deLinksPresenti){
+		                          										String idDivIconInfo = "divIconInfo_"+i;
+		                          										String idIconInfo = "iconInfo_"+i;
+		                          									%> 	<div class="iconInfoBox" id="<%=idDivIconInfo %>">
+		                          										<%
+		                          										if(deInfo != null){
+		                          										%>
+		                          										<input type="hidden" name="__i_hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
+		                          										<input type="hidden" name="__i_hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
+		                          										<span class="spanIconInfoBox">
+		                          											<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
+		                          										</span>
+		                          										<%
+		                          										}
+		                          										if(deLinksPresenti){
+		                          											String idIconLinks = "iconLinks_"+i;
+		                          											if(deLinks.size()==1){
+		                          												// collegamento unico: si atterra direttamente sull'elemento correlato
+		                          												DataElementLink deLink = deLinks.getLink(0);
+		                          												String deLinkToolTip = ServletUtils.escapeHTMLAttribute(deLink.getToolTip());
+		                          												String deLinkTip = !deLinkToolTip.equals("") ? " title=\"" + deLinkToolTip + "\"" : "";
+		                          												String deLinkTarget = !deLink.getTarget().equals("") ? (" target=\""+ deLink.getTarget() +"\" rel=\"noopener\"") : "";
+		                          										%>
+		                          											<a id="<%=idIconLinks %>" class="image-link" <%= deLinkTip %> <%= deLinkTarget %> href="<%= deLink.getUrl() %>">
+		                          												<span class="icon-box">
+		                          													<i class="material-icons md-24"><%= deLinks.getButtonIcon() %></i>
+		                          												</span>
+		                          											</a>
+		                          										<%
+		                          											}
+		                          											else {
+		                          												// piu' collegamenti: si sceglie l'elemento correlato tramite finestra modale
+		                          												String deLinksToolTip = ServletUtils.escapeHTMLAttribute(deLinks.getToolTip());
+		                          												String deLinksTip = !deLinksToolTip.equals("") ? " title=\"" + deLinksToolTip + "\"" : "";
+		                          												String deLinksTitoloModale = !deLinks.getHeaderFinestraModale().equals("") ? deLinks.getHeaderFinestraModale() : DataElement.checkNull(de.getOriginalLabel());
+		                          										%>
+		                          											<input type="hidden" name="__i_hidden_title_<%= idIconLinks %>" id="hidden_title_<%= idIconLinks %>" value="<%= ServletUtils.escapeHTMLAttribute(deLinksTitoloModale) %>"/>
+		                          											<span id="hidden_body_<%= idIconLinks %>" class="hiddenBox"><%= deLinks.getBodyHtml() %></span>
+		                          											<span class="spanIconLinksBox" id="<%=idIconLinks %>" <%= deLinksTip %>>
+		                          												<i class="material-icons md-24"><%= deLinks.getButtonIcon() %></i>
+		                          											</span>
+		                          											<script type="text/javascript" nonce="<%= randomNonce %>">
+		                          												$(document).ready(function(){
+		                          													$('#<%=idIconLinks %>').click(function() {
+		                          														mostraDataElementInfoModal($("#hidden_title_<%=idIconLinks %>").val(), $("#hidden_body_<%=idIconLinks %>").html());
+		                          													});
+		                          												});
+		                          											</script>
+		                          										<%
+		                          											}
+		                          										}
+		                          										%>
+		                          										</div>
+		                          									<% }
 		                               							}
 		                                        				%>
 		                                        				<% if(!deNote.equals("")){ %>
@@ -1335,17 +1381,63 @@ for (int i = 0; i < dati.size(); i++) {
 															      			}
 															      		%>
 			                          									<%
-															      		if(deInfo != null){
-															      			String idDivIconInfo = "divIconInfo_"+i;
-															      			String idIconInfo = "iconInfo_"+i; 
-															      	%> 	<div class="iconInfoBox" id="<%=idDivIconInfo %>">
-															      			<input type="hidden" name="__i_hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
-															      			<input type="hidden" name="__i_hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
-																	      	<span class="spanIconInfoBox">
-																				<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
-																			</span>
-																		</div>
-															      	<% } 
+																      		// icona di info ed eventuali collegamenti verso elementi correlati, posizionati entrambi a fianco del campo
+																      		DataElementLinks deLinks = de.getLinks();
+																      		boolean deLinksPresenti = deLinks != null && !deLinks.isEmpty();
+																      		if(deInfo != null || deLinksPresenti){
+																      			String idDivIconInfo = "divIconInfo_"+i;
+																      			String idIconInfo = "iconInfo_"+i;
+																      		%> 	<div class="iconInfoBox" id="<%=idDivIconInfo %>">
+																      			<%
+																      			if(deInfo != null){
+																      			%>
+																      			<input type="hidden" name="__i_hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
+																      			<input type="hidden" name="__i_hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
+																      			<span class="spanIconInfoBox">
+																      				<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
+																      			</span>
+																      			<%
+																      			}
+																      			if(deLinksPresenti){
+																      				String idIconLinks = "iconLinks_"+i;
+																      				if(deLinks.size()==1){
+																      					// collegamento unico: si atterra direttamente sull'elemento correlato
+																      					DataElementLink deLink = deLinks.getLink(0);
+																      					String deLinkToolTip = ServletUtils.escapeHTMLAttribute(deLink.getToolTip());
+																      					String deLinkTip = !deLinkToolTip.equals("") ? " title=\"" + deLinkToolTip + "\"" : "";
+																      					String deLinkTarget = !deLink.getTarget().equals("") ? (" target=\""+ deLink.getTarget() +"\" rel=\"noopener\"") : "";
+																      			%>
+																      				<a id="<%=idIconLinks %>" class="image-link" <%= deLinkTip %> <%= deLinkTarget %> href="<%= deLink.getUrl() %>">
+																      					<span class="icon-box">
+																      						<i class="material-icons md-24"><%= deLinks.getButtonIcon() %></i>
+																      					</span>
+																      				</a>
+																      			<%
+																      				}
+																      				else {
+																      					// piu' collegamenti: si sceglie l'elemento correlato tramite finestra modale
+																      					String deLinksToolTip = ServletUtils.escapeHTMLAttribute(deLinks.getToolTip());
+																      					String deLinksTip = !deLinksToolTip.equals("") ? " title=\"" + deLinksToolTip + "\"" : "";
+																      					String deLinksTitoloModale = !deLinks.getHeaderFinestraModale().equals("") ? deLinks.getHeaderFinestraModale() : DataElement.checkNull(de.getOriginalLabel());
+																      			%>
+																      				<input type="hidden" name="__i_hidden_title_<%= idIconLinks %>" id="hidden_title_<%= idIconLinks %>" value="<%= ServletUtils.escapeHTMLAttribute(deLinksTitoloModale) %>"/>
+																      				<span id="hidden_body_<%= idIconLinks %>" class="hiddenBox"><%= deLinks.getBodyHtml() %></span>
+																      				<span class="spanIconLinksBox" id="<%=idIconLinks %>" <%= deLinksTip %>>
+																      					<i class="material-icons md-24"><%= deLinks.getButtonIcon() %></i>
+																      				</span>
+																      				<script type="text/javascript" nonce="<%= randomNonce %>">
+																      					$(document).ready(function(){
+																      						$('#<%=idIconLinks %>').click(function() {
+																      							mostraDataElementInfoModal($("#hidden_title_<%=idIconLinks %>").val(), $("#hidden_body_<%=idIconLinks %>").html());
+																      						});
+																      					});
+																      				</script>
+																      			<%
+																      				}
+																      			}
+																      			%>
+																      			</div>
+																      		<% }
 			                               							}
 															      	%>
 			                                        				<% if(!deNote.equals("")){ %>
