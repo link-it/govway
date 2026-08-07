@@ -108,6 +108,7 @@ import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementInfo;
+import org.openspcoop2.web.lib.mvc.DataElementLink;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
@@ -1261,8 +1262,13 @@ public class ConnettoriHelper extends ConsoleHelper {
 		else {
 			de.setPostBack(true);
 		}
+		// link alla token policy selezionata
+		DataElementLink linkTokenPolicy = this.getDataElementLinkVisualizzaTokenPolicyNegoziazione(tokenPolicy);
+		if(linkTokenPolicy!=null) {
+			de.addLink(linkTokenPolicy);
+		}
 		dati.add(de);
-		
+
 		return dati;
 	}
 	

@@ -574,7 +574,8 @@ public class ConfigurazioneCostanti {
 	public static final String LABEL_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_VERIFICA_CONNETTIVITA_DI = CostantiControlStation.LABEL_VERIFICA_CONNETTIVITA_DI;
 	
 	public static final String LABEL_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY = "Attribute Authority";
-	
+	public static final String LABEL_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY_ABBREVIATO = "AA";
+
 	public static final String VALUE_CONFIGURAZIONE_RATE_LIMITING_QUALSIASI = "-*-";
 	public static final String LABEL_CONFIGURAZIONE_RATE_LIMITING_QUALSIASI = CostantiControlStation.LABEL_QUALSIASI;
 	

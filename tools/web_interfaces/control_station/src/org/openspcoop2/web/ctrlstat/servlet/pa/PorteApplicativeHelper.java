@@ -8973,12 +8973,18 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 							pAccessoDaAPS, pConnettoreAccessoDaGruppi, pConnettoreRegistro, pConnettoreAccessoCM);
 					image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_VERIFICA_TOOLTIP_CON_PARAMETRO, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE));
 					image.setImage(CostantiControlStation.ICONA_VERIFICA);
-					
+
 					de.addImage(image);
 				}
-				
+
+				// link alla token policy di negoziazione associata al connettore
+				DataElementImage imageTokenPolicy = this.getDataElementImageVisualizzaTokenPolicyNegoziazione(connettore);
+				if(imageTokenPolicy!=null) {
+					de.addImage(imageTokenPolicy);
+				}
+
 				e.add(de);
-				
+
 				// Filtri
 				boolean showFiltri = behaviourConFiltri;
 				if(showFiltri &&

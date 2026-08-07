@@ -125,7 +125,10 @@ public class DataElement implements Serializable {
 	private Integer minValue = null, maxValue= null;
 	
 	private List<DataElementImage> image = null;
-	
+
+	/** collegamenti verso gli elementi correlati al campo, resi tramite una singola icona a fianco del campo stesso */
+	private DataElementLinks links = null;
+
 	private String icon, url,toolTip, target, onClick = null;
 	
 	private boolean showAjaxStatus = true;
@@ -828,6 +831,19 @@ public class DataElement implements Serializable {
 	
 	public void addImage(DataElementImage icon) {
 		this.image.add(icon);
+	}
+
+	public DataElementLinks getLinks() {
+		return this.links;
+	}
+	public void setLinks(DataElementLinks links) {
+		this.links = links;
+	}
+	public void addLink(DataElementLink link) {
+		if(this.links==null) {
+			this.links = new DataElementLinks();
+		}
+		this.links.addLink(link);
 	}
 
 	public Map<String, String> getDataAttributes() {

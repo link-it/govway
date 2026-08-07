@@ -2303,11 +2303,19 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 					image = new DataElementImage();
 					image.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_VERIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, CostantiControlStation.LABEL_CONFIGURAZIONE_CONNETTIVITA));
 					image.setImage(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_VERIFICA_CONFIGURAZIONE);
-					image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_VERIFICA_CONNETTORE, 
+					image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_VERIFICA_CONNETTORE,
 							listParametersVerificaConnettore.toArray(new Parameter[1]));
 					de.addImage(image);
 				}
-				
+
+				// link alla token policy di negoziazione associata al connettore
+				if(visualizzaLinkConfigurazioneConnettore) {
+					DataElementImage imageTokenPolicy = this.getDataElementImageVisualizzaTokenPolicyNegoziazione(connettore);
+					if(imageTokenPolicy!=null) {
+						de.addImage(imageTokenPolicy);
+					}
+				}
+
 				// link alla configurazione connettori multipli e alla lista dei connettori multipli
 				if(this.core.isConnettoriMultipliEnabled()) {
 					List<Parameter> listParametersConfigutazioneConnettoriMultipli = new ArrayList<>();
@@ -2559,10 +2567,16 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 						
 						image.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_VERIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, CostantiControlStation.LABEL_CONFIGURAZIONE_CONNETTIVITA));
 						image.setImage(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_VERIFICA_CONFIGURAZIONE);
-						image.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_VERIFICA_CONNETTORE, 
+						image.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_VERIFICA_CONNETTORE,
 								listParametersVerificaConnettore.toArray(new Parameter[1]));
-						
+
 						de.addImage(image);
+					}
+
+					// link alla token policy di negoziazione associata al connettore
+					DataElementImage imageTokenPolicy = this.getDataElementImageVisualizzaTokenPolicyNegoziazione(connettore);
+					if(imageTokenPolicy!=null) {
+						de.addImage(imageTokenPolicy);
 					}
 				}
 				else {

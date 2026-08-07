@@ -455,7 +455,10 @@ public class Costanti {
 	public static final String ICONA_UPGRADE = "&#xE3CA;"; // exposure 
 	public static final String ICONA_TOGGLE_ON = "&#xE9F6;"; //"toggle_on"
 	public static final String ICONA_TOGGLE_OFF = "&#xE9F5;"; //"toggle_off"
-	
+
+	// Finestra modale di selezione utilizzata quando un campo possiede piu' collegamenti verso elementi correlati (vedi DataElementLinks)
+	public static final String LABEL_SELEZIONE_LINK_HEADER_BODY = "Seleziona l'elemento da visualizzare:";
+
 	// Icone del set material symbols
 	
 	public static final String ICONA_COPY_LOCK_TOOLTIP = "Copia informazione cifrata";
