@@ -1,3 +1,15 @@
+2026-08-08  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolte le seguenti vulnerabilità relative ai jar di terza parte:
+	- CVE-2026-49875, CVE-2026-50623, CVE-2026-50627, CVE-2026-50628, CVE-2026-50629,
+	  CVE-2026-50630, CVE-2026-50631, CVE-2026-50632, CVE-2026-50633, CVE-2026-50634,
+	  CVE-2026-50645, CVE-2026-54225, CVE-2026-57817, CVE-2026-57818, CVE-2026-57819,
+	  CVE-2026-61466, CVE-2026-63687, CVE-2026-64958, CVE-2026-65432, CVE-2026-65583,
+	  CVE-2026-66909, CVE-2026-68079, CVE-2026-68481: aggiornata libreria 'org.apache.cxf:*' alla versione 3.6.12
+	Aggiornate inoltre le seguenti librerie di terze parti:
+	- aggiornata libreria 'org.ow2.asm:asm' alla versione 9.10.1
+
 2026-08-07  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]
