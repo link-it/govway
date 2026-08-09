@@ -84,8 +84,8 @@ Le versioni si riferiscono all'ultima release pubblicata per ogni linea.
      - 3.3.x
      - 3.2.x
    * - **Apache CXF**
-     - ``4.2.2``
-     - ``3.6.11``
+     - ``4.2.3``
+     - ``3.6.12``
      - ``3.2.6``
    * - **HTTP Client**
      - Apache HttpClient ``5.6.2``, HttpCore ``5.4.3``
