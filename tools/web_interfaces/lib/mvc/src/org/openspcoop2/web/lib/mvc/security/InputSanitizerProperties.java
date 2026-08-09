@@ -20,7 +20,10 @@
 
 package org.openspcoop2.web.lib.mvc.security;
 
+import java.util.HashSet;
+import java.util.Locale;
 import java.util.Properties;
+import java.util.Set;
 
 import org.jsoup.safety.Safelist;
 import org.slf4j.Logger;
@@ -38,6 +41,7 @@ public class InputSanitizerProperties {
 	private static InputSanitizerProperties instance;
 	private Properties properties;
 	private Safelist safelist;
+	private Set<String> cssProperties;
 
 	public static synchronized void init(Properties p, Logger log) {
 		if(InputSanitizerProperties.log == null) {
@@ -55,6 +59,7 @@ public class InputSanitizerProperties {
 	private InputSanitizerProperties(Properties p) {
 		this.properties = p;
 		this.safelist = createSafelist();
+		this.cssProperties = createCssProperties();
 	}
 	
 	private Safelist createSafelist() {
@@ -83,11 +88,24 @@ public class InputSanitizerProperties {
             }
         }
 
-        // Leggi gli attributi CSS
-        String cssAttributes = getProperty("css.attributes");
-        for (String attribute : cssAttributes.split(",")) {
-            customSafelist.addAttributes("style", attribute.trim());
-        }
+        /** Attributi CSS
+         *
+         * Il blocco seguente registrava le proprietà CSS consentite sulla Safelist:
+         *
+         * String cssAttributes = getProperty("css.attributes");
+         * for (String attribute : cssAttributes.split(",")) {
+         *     customSafelist.addAttributes("style", attribute.trim());
+         * }
+         *
+         * Il metodo 'Safelist.addAttributes(tag, attributi)' interpreta però il primo argomento come nome di un
+         * elemento HTML e non di un attributo: la chiamata non filtrava quindi alcuna proprietà CSS (jsoup non
+         * effettua alcun parsing del CSS) e, come effetto collaterale, registrava l'elemento raw-text '<style>'
+         * tra i tag consentiti, facendo ricadere il prodotto nella casistica vulnerabile descritta da CVE-2026-71497.
+         *
+         * Il filtro sulle proprietà CSS è adesso realizzato dalla classe CssSanitizer, applicata dal Validatore
+         * sul documento HTML già sanificato; le proprietà consentite continuano ad essere definite dalla medesima
+         * property 'css.attributes', letta dal metodo createCssProperties() ed esposta da getCssProperties().
+         */
 
         // Leggi i protocolli consentiti
         String protocols = getProperty("protocols.A.href");
@@ -100,11 +118,35 @@ public class InputSanitizerProperties {
         return customSafelist;
     }
 
+	/**
+	 * Legge dalla property 'css.attributes' i nomi delle proprietà CSS ammesse all'interno degli attributi
+	 * 'style' consentiti dalla Safelist. Il filtro è applicato dalla classe CssSanitizer.
+	 */
+	private Set<String> createCssProperties() {
+		Set<String> properties = new HashSet<>();
+
+		String cssAttributes = getProperty("css.attributes");
+		if(cssAttributes != null) {
+			for (String attribute : cssAttributes.split(",")) {
+				String name = attribute.trim().toLowerCase(Locale.ROOT);
+				if(!name.isEmpty()) {
+					properties.add(name);
+				}
+			}
+		}
+
+		return properties;
+	}
+
 	public String getProperty(String property) {
 		return this.properties.getProperty( property );
 	}
 
 	public Safelist getSafelist() {
 		return this.safelist;
+	}
+
+	public Set<String> getCssProperties() {
+		return this.cssProperties;
 	}
 }

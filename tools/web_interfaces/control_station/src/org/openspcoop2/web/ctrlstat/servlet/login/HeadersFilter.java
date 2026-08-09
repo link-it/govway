@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 import java.util.UUID;
 
 import jakarta.servlet.Filter;
@@ -43,6 +44,7 @@ import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
+import org.openspcoop2.web.lib.mvc.security.CssSanitizer;
 import org.openspcoop2.web.lib.mvc.security.InputSanitizerProperties;
 import org.openspcoop2.web.lib.mvc.security.SecurityProperties;
 import org.openspcoop2.web.lib.mvc.security.Validatore;
@@ -53,6 +55,7 @@ import org.springframework.http.HttpStatus;
 
 import org.jsoup.safety.Safelist;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Entities;
 
 
@@ -168,7 +171,8 @@ public class HeadersFilter implements Filter {
 		
         // Crea la safelist personalizzata
         Safelist customSafelist = InputSanitizerProperties.getInstance().getSafelist();
-		
+        Set<String> cssProperties = InputSanitizerProperties.getInstance().getCssProperties();
+
 		// Itera su tutti i parametri della richiesta
         Enumeration<String> parameterNames = request.getParameterNames();
         while (parameterNames.hasMoreElements()) {
@@ -179,7 +183,11 @@ public class HeadersFilter implements Filter {
             // Sanifica ogni valore del parametro
             if(paramValues!=null && paramValues.length>0) {
 	            for (int i = 0; i < paramValues.length; i++) {
-	                parametriCorretti.add(Entities.unescape(Jsoup.parse(Jsoup.clean(paramValues[i], customSafelist)).body().html()));
+	            	Document doc = Jsoup.parse(Jsoup.clean(paramValues[i], customSafelist));
+	            	/** jsoup non effettua alcun parsing del CSS: le proprietà indicate negli attributi 'style'
+	            	 *  consentiti dalla Safelist vengono filtrate dal CssSanitizer. */
+	            	CssSanitizer.sanitize(doc, cssProperties);
+	                parametriCorretti.add(Entities.unescape(doc.body().html()));
 	            }
             }
            

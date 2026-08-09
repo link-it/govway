@@ -1,3 +1,12 @@
+2026-08-09  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole, GovWayMonitor]
+	Risolte le seguenti vulnerabilità relative ai jar di terza parte:
+	- CVE-2026-71497: aggiornata libreria 'org.jsoup:jsoup' alla versione 1.23.1
+	Corretta inoltre la sanificazione degli attributi 'style' nei parametri ricevuti dalle console: la property
+	'console.inputSanitizer.css.attributes' non filtrava alcuna proprietà CSS ed ammetteva l'elemento '<style>';
+	il filtro è ora realizzato dalla nuova classe 'CssSanitizer' e l'elenco delle proprietà consentite è stato esteso.
+
 2026-08-08  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

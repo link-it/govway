@@ -274,6 +274,13 @@ public class Validatore {
 		}
 
 		/** Rimane necessario il jsou.parse per gli altri parametri; valutare se spostare l'escape come fatto per le text area */
-		return Entities.unescape(Jsoup.parse(Jsoup.clean(valueToClean, "", this.safelist, os)).body().html());
+		Document doc = Jsoup.parse(Jsoup.clean(valueToClean, "", this.safelist, os));
+		doc.outputSettings(os);
+
+		/** La Safelist consente l'attributo 'style' su alcuni tag, ma jsoup non effettua alcun parsing del CSS:
+		 *  le proprietà indicate al suo interno vengono filtrate dal CssSanitizer. */
+		CssSanitizer.sanitize(doc, this.isp.getCssProperties());
+
+		return Entities.unescape(doc.body().html());
 	}
 }
