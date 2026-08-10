@@ -4,6 +4,13 @@
 # Falso positivo: Trivy rileva la vulnerabilita' all'interno di hazelcast-5.3.8.jar che
 # embedda jackson-core 2.15.2 'shaded' (com/hazelcast/shaded/com/fasterxml/jackson/...).
 # La CVE riguarda esclusivamente il parser asincrono di Jackson, mai utilizzato dal codice
-# GovWay tramite Hazelcast: la jackson-core di prima classe usata da GovWay e' la 2.21.2
+# GovWay tramite Hazelcast: la jackson-core di prima classe usata da GovWay e' la 2.22.1
 # (gia' fixata) e non transita dalle classi shaded di hazelcast.
 GHSA-72hv-8253-57qq
+
+# GHSA-r7wm-3cxj-wff9 (jackson-core: Async parser maxNumberLength bypass, HIGH)
+# Follow-up di GHSA-72hv-8253-57qq (fix incompleto in 2.18.6/2.21.1, nuove versioni fixate 2.18.8 e 2.21.4).
+# Stesso falso positivo: la segnalazione riguarda la copia shaded di jackson-core 2.15.2 all'interno di
+# hazelcast-5.3.8.jar, non referenziata da alcun codepath di Hazelcast ne' di GovWay; la jackson-core di
+# prima classe utilizzata da GovWay e' la 2.22.1, fuori dai range dell'advisory.
+GHSA-r7wm-3cxj-wff9
