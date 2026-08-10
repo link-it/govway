@@ -5,7 +5,14 @@ ignore:
   # resources/doc/src/manuali/vulnerability-management/falsePositive/CVE-2018-1258.rst
   # mvn/dependencies/owasp/falsePositives/CVE-2018-1258.xml
   - vulnerability: "GHSA-mg83-c7gq-rv5c"
-  # mvn/dependencies/owasp/falsePositives/console-back-office.xml 
-  - package: 
+  # resources/doc/src/manuali/vulnerability-management/falsePositive/GHSA-72hv-8253-57qq.rst
+  - vulnerability: "GHSA-72hv-8253-57qq"
+    package:
+      name: "jackson-core"
+  - vulnerability: "GHSA-r7wm-3cxj-wff9"
+    package:
+      name: "jackson-core"
+  # mvn/dependencies/owasp/falsePositives/console-back-office.xml
+  - package:
       name: "struts-core"
 

@@ -4,6 +4,9 @@ CVE-2022-1471
 # resources/doc/src/manuali/vulnerability-management/falsePositive/CVE-2025-22228.rst
 # mvn/dependencies/owasp/falsePositives/CVE-2025-22228.xml
 CVE-2025-22228
+# resources/doc/src/manuali/vulnerability-management/falsePositive/GHSA-72hv-8253-57qq.rst
+GHSA-72hv-8253-57qq
+GHSA-r7wm-3cxj-wff9
 # mvn/dependencies/owasp/falsePositives/console-back-office.xml
 CVE-2012-1007
 CVE-2016-1182
