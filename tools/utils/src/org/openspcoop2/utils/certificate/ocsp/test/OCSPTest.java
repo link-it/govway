@@ -172,10 +172,15 @@ public class OCSPTest {
 		try {
 			
 			initialize();
-			
-			String host = "google.it";
+
+			/** Anche i certificati di Google Trust Services, da agosto 2026, non hanno più la url del servizio OCSP al loro interno,
+			analogamente a quanto già avvenuto nel 2025 con i certificati lets encrypt.
+			Per questo motivo il test viene spostato da google a 'test-dv-rsa.ssl.com', sito di test mantenuto da SSL.com
+			il cui certificato pubblica ancora il responder OCSP 'http://ocsps.ssl.com' */
+			//String host = "google.it";
+			String host = "test-dv-rsa.ssl.com";
 			int port = 443;
-			
+
 			_check(host, port, "google");
 			
 			_check(host, port, "google-alternative-url");
@@ -630,10 +635,14 @@ public class OCSPTest {
 			certificatePrincipalStatus = OCSPValidator.check(lb, params, crlInput);
 			System.out.println(sbLog.toString());
 			System.out.println("Stato: "+certificatePrincipalStatus);
-			if(!expected.equals(certificatePrincipalStatus.getCode())) {
-				throw new Exception("Atteso stato '"+expected+"'");
+			/** Un certificato di CA radice non è verificabile tramite OCSP/CRL: il validatore ritorna lo stato SELF_SIGNED.
+			Lo stato viene quindi atteso per i certificati self-signed presenti nella catena, poiché non tutti i server
+			inviano durante l'handshake i soli certificati intermedi (es. 'test-dv-rsa.ssl.com' invia anche la CA radice) */
+			CertificateStatusCode expectedChain = c.isSelfSigned() ? CertificateStatusCode.SELF_SIGNED : expected;
+			if(!expectedChain.equals(certificatePrincipalStatus.getCode())) {
+				throw new Exception("Atteso stato '"+expectedChain+"'");
 			}
-			
+
 			index++;
 		}
 	}
