@@ -179,6 +179,7 @@
 				<equals arg1="${as}" arg2="wildfly38" />
 				<equals arg1="${as}" arg2="wildfly39" />
 				<equals arg1="${as}" arg2="wildfly40" />
+				<equals arg1="${as}" arg2="wildfly41" />
 			</or>
 			<then>
 				<copy file="${src}/META-INF/ejb-jar.xml.loaderProperties" tofile="${build}/tmpLoader/META-INF/ejb-jar.xml" />
@@ -339,6 +340,7 @@
 						<equals arg1="${as}" arg2="wildfly38" />
 						<equals arg1="${as}" arg2="wildfly39" />
 						<equals arg1="${as}" arg2="wildfly40" />
+						<equals arg1="${as}" arg2="wildfly41" />
 					</or>
 					<then>
 						<concat destfile="${build}/application.xml" append="yes">
@@ -503,6 +505,7 @@
 				<matches string="${as}" pattern="wildfly38"/>
 				<matches string="${as}" pattern="wildfly39"/>
 				<matches string="${as}" pattern="wildfly40"/>
+				<matches string="${as}" pattern="wildfly41"/>
 			</or>
 			<then>
 				<!-- Creazione mailapi contenente il corretto mailcap per OpenSPCoopDataHandler -->
@@ -632,6 +635,7 @@
 						<equals arg1="${as}" arg2="wildfly38" />
 						<equals arg1="${as}" arg2="wildfly39" />
 						<equals arg1="${as}" arg2="wildfly40" />
+						<equals arg1="${as}" arg2="wildfly41" />
 					</or>
 					<then>
 						<copy file="${src}/META-INF/jboss-deployment-structure.xml.wildfly35" tofile="${build}/tmp/jboss-deployment-structure.xml" />

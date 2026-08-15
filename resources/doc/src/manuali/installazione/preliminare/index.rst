@@ -27,7 +27,7 @@ mancanti.
       (WildFly ≥ 36 e Apache Tomcat 11). Per maggiori dettagli vedi la
       :ref:`nota sulle dipendenze esterne <java25>`.
 
-#. *Application Server WildFly* (http://wildfly.org); viene supportata la versione 27-28 (compatibile con JBoss EAP 8.0) e le versioni dalla 35 alla 40 (compatibile con JBoss EAP 8.1). In alternativa è possibile effettuare
+#. *Application Server WildFly* (http://wildfly.org); viene supportata la versione 27-28 (compatibile con JBoss EAP 8.0) e le versioni dalla 35 alla 41 (compatibile con JBoss EAP 8.1). In alternativa è possibile effettuare
    l'installazione su Apache Tomcat (http://tomcat.apache.org) versione 11.
 
 #. Un *RDBMS* accessibile via JDBC. La release binaria è compatibile con i seguenti database:

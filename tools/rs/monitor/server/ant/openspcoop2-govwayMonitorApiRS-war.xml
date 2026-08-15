@@ -21,6 +21,7 @@
 				<equals arg1="${as}" arg2="wildfly38" />
 				<equals arg1="${as}" arg2="wildfly39" />
 				<equals arg1="${as}" arg2="wildfly40" />
+				<equals arg1="${as}" arg2="wildfly41" />
 			</or>
 			<then>
 				<copy file="${src_govwayMonitorApiRS}/WEB-INF/${jboss_deployment_structure}.wildfly35" tofile="${tmp_jboss_conf}/${jboss_deployment_structure}" />
