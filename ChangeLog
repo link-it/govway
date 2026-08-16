@@ -1,3 +1,9 @@
+2026-08-16  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolte le seguenti vulnerabilità relative ai jar di terza parte:
+	- CVE-2026-64607: aggiornata libreria 'org.apache.httpcomponents.client5:httpclient5' alla versione 5.6.4
+
 2026-08-15  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

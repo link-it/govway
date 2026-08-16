@@ -64,9 +64,9 @@
         <archive path="/op2_3.4.dev/lib/cxf/xmlschema-core-2.3.2.jar"/>
         <archive path="/op2_3.4.dev/lib/cxf/xml-resolver-1.2.jar"/>
 	<!-- httpcore -->
-	<archive path="/op2_3.4.dev/lib/httpcore/httpclient5-5.6.2.jar"/>
-	<archive path="/op2_3.4.dev/lib/httpcore/httpclient5-cache-5.6.2.jar"/>
-	<archive path="/op2_3.4.dev/lib/httpcore/httpclient5-fluent-5.6.2.jar"/>
+	<archive path="/op2_3.4.dev/lib/httpcore/httpclient5-5.6.4.jar"/>
+	<archive path="/op2_3.4.dev/lib/httpcore/httpclient5-cache-5.6.4.jar"/>
+	<archive path="/op2_3.4.dev/lib/httpcore/httpclient5-fluent-5.6.4.jar"/>
 	<archive path="/op2_3.4.dev/lib/httpcore/httpcore5-5.4.3.jar"/>
 	<archive path="/op2_3.4.dev/lib/httpcore/httpcore5-h2-5.4.3.jar"/>
 	<archive path="/op2_3.4.dev/lib/httpcore/httpcore5-testing-5.4.3.jar"/>
