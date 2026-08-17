@@ -40,8 +40,10 @@ import java.nio.file.Path;
 import java.nio.file.attribute.FileAttribute;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
+import java.security.Security;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -1484,5 +1486,55 @@ public class Utilities {
 	    } catch (Exception e) {
 	        throw new UtilsException("setEnvProperty '"+key+"' failed: "+e.getMessage(), e);
 	    }
+	}
+	
+	
+	
+	/**
+	 * Registra il provider BouncyCastle subito dopo i provider standard del jdk, in particolare dopo 'SunJCE'.
+	 *
+	 * La posizione non e' un dettaglio: la classe 'sun.security.pkcs12.PKCS12KeyStore', utilizzata per leggere i keystore PKCS12,
+	 * risolve in modo generico (senza indicare un provider) sia i servizi 'SecretKeyFactory' sia i servizi 'Cipher' necessari
+	 * a decifrare il contenuto del keystore. Se una parte di quei servizi viene servita da BouncyCastle e un'altra da SunJCE,
+	 * le due implementazioni non si accordano sulla codifica della password - UTF-8 per SunJCE, UTF-16BE seguito da 0x0000
+	 * secondo la convenzione PKCS#12 per BouncyCastle - e la lettura fallisce con 'BadPaddingException', segnalata come
+	 * "keystore password was incorrect" oppure "Get Key failed: pad block corrupted", pur essendo file e password corretti.
+	 *
+	 * Anteponendo BouncyCastle a SunJCE si verificano entrambi i disallineamenti:
+	 * - sui keystore cifrati con algoritmi moderni (PBES2/AES-256, default di OpenSSL 3 e di keytool dal jdk 16) la chiave viene
+	 *   prodotta da BouncyCastle tramite l'alias generico 'SecretKeyFactory.PBE' e utilizzata dal cipher di SunJCE;
+	 * - sui keystore cifrati con gli algoritmi PKCS#12 tradizionali la chiave privata viene decifrata dal cipher di BouncyCastle.
+	 * Posponendolo a SunJCE, tutti i servizi coinvolti restano serviti da SunJCE e la lettura funziona in entrambi i casi,
+	 * mentre BouncyCastle continua a fornire tutti gli algoritmi non presenti nei provider del jdk.
+	 **/
+	public static void addBouncyCastleAfterSun(boolean overrideIfExists) {
+		/**Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());*/
+		java.security.Provider provider = new org.bouncycastle.jce.provider.BouncyCastleProvider();
+		if(Security.getProvider(provider.getName())!=null) {
+			if(!overrideIfExists) {
+				return;
+			}
+			Security.removeProvider(provider.getName());
+		}
+		Security.insertProviderAt(provider, getPositionAfterSunJCE());
+	}
+	// NOTA: utility Security.insertProviderAt utilizza una posizione vera e non da programmatore che parte da 0!!!!!!!!!!!
+	public static final String PROVIDER_SUN_JCE = "SunJCE";
+	private static int getPositionAfterSunJCE() {
+		List<java.security.Provider> l = getProviders();
+		for (int i = 0; i < l.size(); i++) {
+			if(PROVIDER_SUN_JCE.equals(l.get(i).getName())) {
+				return i+2; // posizione immediatamente successiva a 'SunJCE'
+			}
+		}
+		return l.size()+1; // 'SunJCE' non presente: il provider viene accodato
+	}
+	public static List<java.security.Provider> getProviders(){
+		List<java.security.Provider> l = new ArrayList<>();
+		java.security.Provider [] p = Security.getProviders();
+		if(p!=null && p.length>0) {
+			l.addAll(Arrays.asList(p));
+		}
+		return l;
 	}
 }

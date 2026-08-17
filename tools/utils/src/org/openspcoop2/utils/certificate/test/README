@@ -202,3 +202,78 @@ cat client-test.rsapss.publicKey.pem >> client-test.rsapss.pkcs8_encrypted.priva
 
 cat client-test.rsapss.publicKey.pem > client-test.rsapss.pkcs8_encrypted.publicPrivateKey.pem
 cat client-test.rsapss.pkcs8_encrypted.privateKey.pem >> client-test.rsapss.pkcs8_encrypted.publicPrivateKey.pem
+
+
+=======
+Keystore e truststore utilizzati da KeystoreTest per verificare l'interazione con il provider BouncyCastle:
+=======
+
+I test 'KeystoreTest.testPrivateKeyInPKCS12*' e 'KeystoreTest.testTruststoreInPKCS12*' verificano la lettura dei keystore PKCS12
+nella configurazione utilizzata a runtime da GovWay, in cui il provider BouncyCastle viene registrato tramite
+'org.openspcoop2.utils.security.ProviderUtils.addBouncyCastleAfterSun'.
+
+La classe 'sun.security.pkcs12.PKCS12KeyStore' del jdk risolve in modo generico, cioe' senza indicare un provider, i servizi
+'SecretKeyFactory' e 'Cipher' necessari a decifrare un keystore PKCS12. Se una parte di quei servizi viene servita da BouncyCastle
+e un'altra da SunJCE, le due implementazioni non si accordano sulla codifica della password (UTF-8 per SunJCE, UTF-16BE seguito da
+0x0000 secondo la convenzione PKCS#12 per BouncyCastle) e la lettura fallisce con BadPaddingException, pur essendo file e password
+corretti. I keystore elencati di seguito coprono entrambi i rami di cifratura interessati.
+
+Per verificare gli algoritmi con cui un keystore e' stato cifrato:
+
+openssl pkcs12 -in <keystore> -passin pass:123456 -nokeys -info -noout
+
+
+-------
+govway_test.p12 (gia' presente) - cifratura PKCS#12 tradizionale
+-------
+
+Chiave privata cifrata con 'pbeWithSHA1And3-KeyTripleDES-CBC', certificati con 'pbeWithSHA1And40BitRC2-CBC', MAC SHA-1.
+E' il ramo utilizzato dai file prodotti con 'openssl pkcs12 -export -legacy' e dalle versioni di keytool precedenti al jdk 16.
+
+
+-------
+govway_test_fromp12.p12 (gia' presente) - cifratura moderna PBES2/AES-256
+-------
+
+Chiave privata e certificati cifrati con 'PBES2, PBKDF2, AES-256-CBC, PRF hmacWithSHA256'.
+E' il ramo utilizzato dai file prodotti con i default di OpenSSL 3 e di keytool dal jdk 16 in poi.
+Il file viene generato dal comando 'keytool -importkeystore' riportato nella sezione precedente di questo README.
+
+
+-------
+govway_test_camellia.p12 - cifratura non fornita da SunJCE
+-------
+
+Keystore cifrato con 'PBES2, PBKDF2, CAMELLIA-256-CBC': l'algoritmo non e' fornito dai provider del jdk, quindi la lettura tramite
+il provider risolto in modo generico fallisce ed e' possibile solo tramite BouncyCastle. Serve a verificare che resti operativo il
+fallback su BouncyCastle implementato in 'KeystoreUtils.readKeystore'.
+
+openssl pkcs12 -in govway_test_fromp12.p12 -passin pass:123456 -nodes -out /tmp/govway_test.plain.pem
+openssl pkcs12 -export -in /tmp/govway_test.plain.pem -name govway_test -out govway_test_camellia.p12 -passout pass:123456 -keypbe camellia-256-cbc -certpbe camellia-256-cbc
+rm -f /tmp/govway_test.plain.pem
+
+
+-------
+govway_test_truststore.p12 - truststore leggibile da java
+-------
+
+Truststore contenente il solo certificato, senza chiave privata. Viene costruito con 'keytool -importcert' poiche' java espone un
+certificato come 'trustedCertEntry' solamente se marcato con l'attributo proprietario oid 2.16.840.1.113894.746875.1.1
+('trustedKeyUsage'), che keytool aggiunge. Per un truststore contenente piu' CA il comando va ripetuto una volta per certificato,
+variando l'alias.
+
+keytool -importcert -noprompt -alias govway_test -file govway_test.cer -keystore govway_test_truststore.p12 -storetype PKCS12 -storepass 123456
+
+
+-------
+govway_test_truststore_openssl.p12 - truststore privo dell'attributo trustedKeyUsage
+-------
+
+Stesso contenuto del precedente, ma costruito con openssl, che non aggiunge l'attributo 'trustedKeyUsage'. Il file viene caricato
+da java senza errori ma risulta privo di alias (size()==0): il test fissa questo comportamento in modo che un'eventuale modifica
+introdotta da una futura versione del jdk venga rilevata.
+
+openssl pkcs12 -export -nokeys -in govway_test.pem -out govway_test_truststore_openssl.p12 -passout pass:123456 -name govway_test
+
+
+Per tutti i keystore e i truststore sopra elencati viene usata la password 123456

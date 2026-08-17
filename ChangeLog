@@ -1,3 +1,11 @@
+2026-08-17  Andrea Poli <apoli@link.it>
+
+	* [Utils]
+	Risolto Bug #1815
+	Il provider 'BouncyCastle', registrato davanti ai provider standard del jdk, impediva la lettura dei keystore PKCS12 cifrati
+	con algoritmi moderni (PBES2/AES-256, default di OpenSSL 3 e di keytool dal jdk 16), che falliva con l'errore fuorviante
+	'keystore password was incorrect'; il provider viene adesso registrato dopo 'SunJCE'.
+
 2026-08-16  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

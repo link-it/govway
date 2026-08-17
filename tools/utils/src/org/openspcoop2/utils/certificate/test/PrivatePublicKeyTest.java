@@ -148,7 +148,7 @@ public class PrivatePublicKeyTest {
 	}
 
 	private static void initBC() {
-		Security.insertProviderAt(new org.bouncycastle.jce.provider.BouncyCastleProvider(), 2); // lasciare alla posizione 1 il provider 'SUN'
+		Utilities.addBouncyCastleAfterSun(true); // registra il provider nella medesima modalita' utilizzata a runtime da GovWay
 	}
 	private static void releaseBC() {
 		Security.removeProvider(org.bouncycastle.jce.provider.BouncyCastleProvider.PROVIDER_NAME);
