@@ -480,7 +480,7 @@ public class ValidazioneDPoPTest extends ConfigLoader {
 
 	static {
 		// Registra temporaneamente il provider BouncyCastle per la gestione delle chiavi cifrate
-		java.security.Security.insertProviderAt(new org.bouncycastle.jce.provider.BouncyCastleProvider(), 2); // lasciare alla posizione 1 il provider 'SUN'
+		org.openspcoop2.utils.security.ProviderUtils.addBouncyCastleAfterSun(true); // registra il provider nella medesima modalita' utilizzata a runtime da GovWay
 		try {
 			// Carica la coppia di chiavi RSA dai file
 			rsaKeyPair = loadKeyPair(RSA_PRIVATE_KEY_PATH, RSA_PUBLIC_KEY_PATH, RSA_KEY_PASSWORD, KeyUtils.ALGO_RSA);

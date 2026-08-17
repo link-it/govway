@@ -53,6 +53,69 @@ public class TestKeystore {
 		
 	}
 	
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".pkcs12"})
+	public void testPrivateKeyPKCS12ModernEncryption() throws Exception{
+
+		TestLogger.info("Run test '"+ID_TEST+".privateKey.pkcs12.modernEncryption' ...");
+		org.openspcoop2.utils.certificate.test.KeystoreTest.testPrivateKeyInPKCS12ModernEncryption();
+		TestLogger.info("Run test '"+ID_TEST+".privateKey.pkcs12.modernEncryption' ok");
+
+	}
+
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".pkcs12"})
+	public void testPrivateKeyPKCS12ModernEncryptionWithBouncyCastle() throws Exception{
+
+		TestLogger.info("Run test '"+ID_TEST+".privateKey.pkcs12.modernEncryption.bouncyCastle' ...");
+		org.openspcoop2.utils.certificate.test.KeystoreTest.testPrivateKeyInPKCS12ModernEncryptionWithBouncyCastle();
+		TestLogger.info("Run test '"+ID_TEST+".privateKey.pkcs12.modernEncryption.bouncyCastle' ok");
+
+	}
+
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".pkcs12"})
+	public void testPrivateKeyPKCS12LegacyEncryptionWithBouncyCastle() throws Exception{
+
+		TestLogger.info("Run test '"+ID_TEST+".privateKey.pkcs12.legacyEncryption.bouncyCastle' ...");
+		org.openspcoop2.utils.certificate.test.KeystoreTest.testPrivateKeyInPKCS12LegacyEncryptionWithBouncyCastle();
+		TestLogger.info("Run test '"+ID_TEST+".privateKey.pkcs12.legacyEncryption.bouncyCastle' ok");
+
+	}
+
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".pkcs12"})
+	public void testPrivateKeyPKCS12WithBouncyCastleWithoutFallback() throws Exception{
+
+		TestLogger.info("Run test '"+ID_TEST+".privateKey.pkcs12.bouncyCastle.withoutFallback' ...");
+		org.openspcoop2.utils.certificate.test.KeystoreTest.testPrivateKeyInPKCS12WithBouncyCastleWithoutFallback();
+		TestLogger.info("Run test '"+ID_TEST+".privateKey.pkcs12.bouncyCastle.withoutFallback' ok");
+
+	}
+
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".pkcs12"})
+	public void testPrivateKeyPKCS12BouncyCastleOnlyEncryption() throws Exception{
+
+		TestLogger.info("Run test '"+ID_TEST+".privateKey.pkcs12.bouncyCastleOnlyEncryption' ...");
+		org.openspcoop2.utils.certificate.test.KeystoreTest.testPrivateKeyInPKCS12BouncyCastleOnlyEncryption();
+		TestLogger.info("Run test '"+ID_TEST+".privateKey.pkcs12.bouncyCastleOnlyEncryption' ok");
+
+	}
+
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".truststore"})
+	public void testTruststorePKCS12() throws Exception{
+
+		TestLogger.info("Run test '"+ID_TEST+".truststore.pkcs12' ...");
+		org.openspcoop2.utils.certificate.test.KeystoreTest.testTruststoreInPKCS12();
+		TestLogger.info("Run test '"+ID_TEST+".truststore.pkcs12' ok");
+
+	}
+
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".truststore"})
+	public void testTruststorePKCS12WithoutTrustedKeyUsage() throws Exception{
+
+		TestLogger.info("Run test '"+ID_TEST+".truststore.pkcs12.withoutTrustedKeyUsage' ...");
+		org.openspcoop2.utils.certificate.test.KeystoreTest.testTruststoreInPKCS12WithoutTrustedKeyUsage();
+		TestLogger.info("Run test '"+ID_TEST+".truststore.pkcs12.withoutTrustedKeyUsage' ok");
+
+	}
+
 	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".pkcs11"})
 	public void testPrivateKeyPKCS11() throws Exception{
 		
