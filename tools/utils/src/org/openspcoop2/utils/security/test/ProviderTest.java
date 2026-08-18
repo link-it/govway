@@ -104,7 +104,7 @@ public class ProviderTest {
 		if(newNames.size()!=newNames2.size()) {
 			throw new UtilsException("Attesi identici provider");
 		}
-		checkPosizioneBouncyCastle(newNames2, bc, useBCFacility);
+		checkPosizioneBouncyCastle(newNames2, bc);
 		
 		// ripeto: essendo già presente alla stessa posizione non viene aggiunto
 		if(useBCFacility) {
@@ -118,7 +118,7 @@ public class ProviderTest {
 		if(newNames.size()!=newNames2.size()) {
 			throw new UtilsException("Attesi identici provider");
 		}
-		checkPosizioneBouncyCastle(newNames2, bc, useBCFacility);
+		checkPosizioneBouncyCastle(newNames2, bc);
 		
 		
 		if(useBCFacility) {
@@ -142,14 +142,14 @@ public class ProviderTest {
 		System.out.println("Testsuite completata (useBCFacility:"+useBCFacility+")");
 	}
 
-	private static void checkPosizioneBouncyCastle(List<String> names, Provider bc, boolean useBCFacility) throws UtilsException {
+	private static void checkPosizioneBouncyCastle(List<String> names, Provider bc) throws UtilsException {
 
 		if(bc.getName().equals(names.get(names.size()-1))) {
 			throw new UtilsException("Non atteso provider BC in fondo");
 		}
 
-		// la utility 'addBouncyCastleAfterSun' registra il provider subito dopo 'SunJCE', mentre 'addOverrideIfExists' rispetta la posizione indicata dal chiamante
-		int indexAtteso = useBCFacility ? (names.indexOf(ProviderUtils.PROVIDER_SUN_JCE)+1) : 1;
+		// sia 'addBouncyCastleAfterSun' sia 'addOverrideIfExists(bc, 2)' registrano il provider alla posizione 2, subito dopo 'SUN'
+		int indexAtteso = 1;
 		int index = names.indexOf(bc.getName());
 		if(index!=indexAtteso) {
 			throw new UtilsException("Atteso provider BC alla posizione "+(indexAtteso+1)+", rilevato invece alla posizione "+(index+1)+": "+names);

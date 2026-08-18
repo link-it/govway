@@ -1490,44 +1490,68 @@ public class Utilities {
 	
 	
 	
+	// ** Security Provider **
+
+	public static final String PROVIDER_SUN_JCE = "SunJCE";
+
+	/** Alias con cui BouncyCastle intercetta le uniche lookup che la classe 'sun.security.pkcs12.PKCS12KeyStore' del jdk
+	 *  effettua in modo generico, cioe' senza indicare un provider, per decifrare un keystore PKCS12.
+	 *  Vengono rimossi dall'istanza del provider prima della registrazione: si veda 'addBouncyCastleAfterSun'. */
+	private static final String [] BOUNCY_CASTLE_ALIAS_PKCS12 = new String[] {
+		"Alg.Alias.SecretKeyFactory.PBE",
+		"Alg.Alias.Cipher.PBEWITHSHA1ANDDESEDE",
+		"Alg.Alias.SecretKeyFactory.PBEWITHSHA1ANDDESEDE"
+	};
+
 	/**
-	 * Registra il provider BouncyCastle subito dopo i provider standard del jdk, in particolare dopo 'SunJCE'.
+	 * Registra il provider BouncyCastle subito dopo il provider 'SUN', quindi davanti a tutti gli altri provider del jdk.
 	 *
-	 * La posizione non e' un dettaglio: la classe 'sun.security.pkcs12.PKCS12KeyStore', utilizzata per leggere i keystore PKCS12,
-	 * risolve in modo generico (senza indicare un provider) sia i servizi 'SecretKeyFactory' sia i servizi 'Cipher' necessari
-	 * a decifrare il contenuto del keystore. Se una parte di quei servizi viene servita da BouncyCastle e un'altra da SunJCE,
-	 * le due implementazioni non si accordano sulla codifica della password - UTF-8 per SunJCE, UTF-16BE seguito da 0x0000
-	 * secondo la convenzione PKCS#12 per BouncyCastle - e la lettura fallisce con 'BadPaddingException', segnalata come
-	 * "keystore password was incorrect" oppure "Get Key failed: pad block corrupted", pur essendo file e password corretti.
+	 * La posizione e' portante e non va modificata: sulla trasformazione 'RSA/ECB/OAEPWithSHA-256AndMGF1Padding' (e sulle
+	 * varianti con SHA-384 e SHA-512) BouncyCastle e SunJCE non sono interoperabili, poiche' SunJCE utilizza MGF1 su SHA-1,
+	 * che e' il default di 'OAEPParameterSpec', mentre BouncyCastle utilizza MGF1 sul digest indicato nel nome. Posponendo
+	 * BouncyCastle a SunJCE diventerebbero illeggibili tutti i segreti gia' cifrati con BYOK e le librerie che non indicano
+	 * parametri OAEP espliciti - fra cui 'cxf-rt-rs-security-jose', che mappa 'RSA-OAEP-256' su quella trasformazione -
+	 * produrrebbero contenuti non conformi a RFC 7518.
 	 *
-	 * Anteponendo BouncyCastle a SunJCE si verificano entrambi i disallineamenti:
-	 * - sui keystore cifrati con algoritmi moderni (PBES2/AES-256, default di OpenSSL 3 e di keytool dal jdk 16) la chiave viene
-	 *   prodotta da BouncyCastle tramite l'alias generico 'SecretKeyFactory.PBE' e utilizzata dal cipher di SunJCE;
-	 * - sui keystore cifrati con gli algoritmi PKCS#12 tradizionali la chiave privata viene decifrata dal cipher di BouncyCastle.
-	 * Posponendolo a SunJCE, tutti i servizi coinvolti restano serviti da SunJCE e la lettura funziona in entrambi i casi,
-	 * mentre BouncyCastle continua a fornire tutti gli algoritmi non presenti nei provider del jdk.
+	 * Vengono pero' rimossi tre alias dall'istanza del provider. La classe 'sun.security.pkcs12.PKCS12KeyStore' risolve in
+	 * modo generico sia i servizi 'SecretKeyFactory' sia i servizi 'Cipher' necessari a decifrare un keystore PKCS12: se una
+	 * parte di quei servizi viene fornita da BouncyCastle e un'altra da SunJCE, le due implementazioni non si accordano sulla
+	 * codifica della password - UTF-8 per SunJCE, UTF-16BE seguito da 0x0000 secondo la convenzione PKCS#12 per BouncyCastle -
+	 * e la lettura fallisce con 'BadPaddingException', segnalata come "keystore password was incorrect" sui keystore cifrati
+	 * con algoritmi moderni (PBES2/AES-256, default di OpenSSL 3 e di keytool dal jdk 16) oppure come "Get Key failed: pad
+	 * block corrupted" su quelli cifrati con gli algoritmi PKCS#12 tradizionali, pur essendo file e password corretti.
+	 * Rimuovendo i tre alias, quelle sole lookup vengono servite da SunJCE in modo coerente e la lettura funziona su entrambi
+	 * i formati, mentre tutti gli altri algoritmi restano forniti da BouncyCastle. Gli alias rimossi non sono utilizzati da
+	 * GovWay ed il nome canonico BouncyCastle 'PBEWITHSHAAND3-KEYTRIPLEDES-CBC' resta comunque disponibile.
+	 *
+	 * NOTA: l'elenco dipende da quali nomi la classe del jdk risolve internamente; una versione futura del jdk potrebbe
+	 * richiederne altri. La copertura e' verificata da 'KeystoreTest' e da 'ProviderBenchmarkTest'.
 	 **/
 	public static void addBouncyCastleAfterSun(boolean overrideIfExists) {
 		/**Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());*/
-		java.security.Provider provider = new org.bouncycastle.jce.provider.BouncyCastleProvider();
+		java.security.Provider provider = newBouncyCastleProvider();
 		if(Security.getProvider(provider.getName())!=null) {
 			if(!overrideIfExists) {
 				return;
 			}
 			Security.removeProvider(provider.getName());
 		}
-		Security.insertProviderAt(provider, getPositionAfterSunJCE());
+		// NOTA: utility Security.insertProviderAt utilizza una posizione vera e non da programmatore che parte da 0!!!!!!!!!!!
+		Security.insertProviderAt(provider, 2); // lasciare alla posizione 1 il provider 'SUN'
 	}
-	// NOTA: utility Security.insertProviderAt utilizza una posizione vera e non da programmatore che parte da 0!!!!!!!!!!!
-	public static final String PROVIDER_SUN_JCE = "SunJCE";
-	private static int getPositionAfterSunJCE() {
-		List<java.security.Provider> l = getProviders();
-		for (int i = 0; i < l.size(); i++) {
-			if(PROVIDER_SUN_JCE.equals(l.get(i).getName())) {
-				return i+2; // posizione immediatamente successiva a 'SunJCE'
-			}
+
+	/** Istanza del provider BouncyCastle priva degli alias che interferiscono con la lettura dei keystore PKCS12 */
+	public static java.security.Provider newBouncyCastleProvider() {
+		java.security.Provider provider = new org.bouncycastle.jce.provider.BouncyCastleProvider();
+		for (String alias : BOUNCY_CASTLE_ALIAS_PKCS12) {
+			provider.remove(alias);
 		}
-		return l.size()+1; // 'SunJCE' non presente: il provider viene accodato
+		return provider;
+	}
+
+	/** Alias rimossi da 'newBouncyCastleProvider' */
+	public static List<String> getBouncyCastleAliasRimossiPkcs12(){
+		return Arrays.asList(BOUNCY_CASTLE_ALIAS_PKCS12);
 	}
 	public static List<java.security.Provider> getProviders(){
 		List<java.security.Provider> l = new ArrayList<>();

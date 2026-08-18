@@ -48,12 +48,48 @@ public class TestProviderBenchmark {
 
 	}
 
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".oaep"})
+	public void testParametriOaep() throws UtilsException {
+
+		TestLogger.info("Run test '"+ID_TEST+".oaep.parametri' ...");
+		org.openspcoop2.utils.security.test.ProviderBenchmarkTest.testParametriOaep();
+		TestLogger.info("Run test '"+ID_TEST+".oaep.parametri' ok");
+
+	}
+
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".oaep"})
+	public void testInteroperabilitaOaep() throws UtilsException {
+
+		TestLogger.info("Run test '"+ID_TEST+".oaep.interoperabilita' ...");
+		org.openspcoop2.utils.security.test.ProviderBenchmarkTest.testInteroperabilitaOaep();
+		TestLogger.info("Run test '"+ID_TEST+".oaep.interoperabilita' ok");
+
+	}
+
 	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".benchmark"})
 	public void testBenchmarkServiziCondivisi() throws UtilsException {
 
 		TestLogger.info("Run test '"+ID_TEST+".benchmark' ...");
 		org.openspcoop2.utils.security.test.ProviderBenchmarkTest.testBenchmarkServiziCondivisi();
 		TestLogger.info("Run test '"+ID_TEST+".benchmark' ok");
+
+	}
+
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".benchmark"})
+	public void testBenchmarkDimensioniMessaggio() throws UtilsException {
+
+		TestLogger.info("Run test '"+ID_TEST+".benchmark.dimensioniMessaggio' ...");
+		org.openspcoop2.utils.security.test.ProviderBenchmarkTest.testBenchmarkDimensioniMessaggio();
+		TestLogger.info("Run test '"+ID_TEST+".benchmark.dimensioniMessaggio' ok");
+
+	}
+
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".benchmark"})
+	public void testBenchmarkTls() throws UtilsException {
+
+		TestLogger.info("Run test '"+ID_TEST+".benchmark.tls' ...");
+		org.openspcoop2.utils.security.test.ProviderBenchmarkTest.testBenchmarkTls();
+		TestLogger.info("Run test '"+ID_TEST+".benchmark.tls' ok");
 
 	}
 

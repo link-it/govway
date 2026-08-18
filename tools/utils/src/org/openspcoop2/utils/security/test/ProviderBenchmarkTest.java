@@ -20,6 +20,8 @@
 
 package org.openspcoop2.utils.security.test;
 
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.MessageDigest;
@@ -28,7 +30,7 @@ import java.security.SecureRandom;
 import java.security.Security;
 import java.security.Signature;
 import java.security.spec.ECGenParameterSpec;
-import java.util.ArrayList;
+import java.security.spec.MGF1ParameterSpec;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -42,8 +44,15 @@ import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.OAEPParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
+import javax.crypto.spec.PSource;
 import javax.crypto.spec.SecretKeySpec;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLServerSocket;
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.TrustManagerFactory;
 
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.Utilities;
@@ -52,21 +61,12 @@ import org.openspcoop2.utils.security.ProviderUtils;
 /**
  * ProviderBenchmarkTest
  *
- * Verifica e documenta la posizione in cui viene registrato il provider BouncyCastle da
- * 'Utilities.addBouncyCastleAfterSun', utilizzata a runtime da tutti i processi GovWay.
+ * Presidia i vincoli che determinano la posizione del provider BouncyCastle nella lista dei provider JCE, registrata da
+ * 'Utilities.addBouncyCastleAfterSun' e utilizzata a runtime da tutti i processi GovWay, e ne misura il costo.
  *
- * Il provider viene registrato dopo 'SunJCE' e non davanti ai provider del jdk, poiche' la classe
- * 'sun.security.pkcs12.PKCS12KeyStore' risolve in modo generico, cioe' senza indicare un provider, sia i servizi
- * 'SecretKeyFactory' sia i servizi 'Cipher' necessari a decifrare un keystore PKCS12: se una parte di quei servizi
- * viene servita da BouncyCastle e un'altra da SunJCE, le due implementazioni non si accordano sulla codifica della
- * password e la lettura del keystore fallisce con 'BadPaddingException'.
- *
- * Questa classe verifica che la scelta non comporti effetti collaterali indesiderati:
- * - 'testServiziCondivisi' elenca i servizi che, per effetto del posizionamento, passano da BouncyCastle a un provider
- *   del jdk, e verifica che i provider registrati DOPO 'SunJCE' non vengano scavalcati (fatta eccezione per i servizi
- *   documentati nella lista sottostante, che erano gia' serviti da BouncyCastle anche in precedenza);
- * - 'testBenchmarkServiziCondivisi' misura i medesimi servizi sulle due implementazioni, per verificare che il
- *   posizionamento non introduca un degrado prestazionale.
+ * Il provider viene registrato alla posizione 2, davanti a tutti i provider del jdk tranne 'SUN', e privato dei tre alias
+ * che impedirebbero al jdk di leggere i keystore PKCS12. Le due cose sono verificate rispettivamente da
+ * 'testParametriOaep' e da 'testServiziCondivisi'.
  *
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$
@@ -76,49 +76,73 @@ public class ProviderBenchmarkTest {
 
 	private ProviderBenchmarkTest(){}
 
-	/** Servizi che BouncyCastle continua a fornire scavalcando un provider registrato dopo 'SunJCE'.
-	 *  Erano serviti da BouncyCastle anche con il posizionamento precedente, quindi non costituiscono una variazione di comportamento. */
-	private static final Set<String> SERVIZI_ATTESI_SCAVALCATI = new TreeSet<>(List.of("CertStore.LDAP"));
-
-	/** Prefisso dei provider PKCS11, esclusi dal confronto.
-	 *  Non fanno parte dell'installazione statica del jdk: vengono registrati a runtime da 'HSMManager.providerInit' per ogni
-	 *  keystore hardware configurato, quindi la loro presenza e la loro posizione dipendono dalla configurazione e, nella
-	 *  testsuite, dall'ordine di esecuzione dei test. In GovWay sono inoltre sempre utilizzati indicando esplicitamente
-	 *  l'istanza del provider (si veda 'HSMKeystore.getInstance'), quindi la precedenza di BouncyCastle e' ininfluente. */
-	private static final String PREFISSO_PROVIDER_PKCS11 = "SunPKCS11";
-
-	private static final String PREFISSO_ALIAS = "Alg.Alias.";
-
-	/** Soglia oltre la quale un servizio servito da un provider del jdk viene considerato in degrado rispetto a BouncyCastle.
-	 *  Volutamente ampia: il test deve intercettare un degrado strutturale, non le oscillazioni di misura di una macchina carica.
-	 *  NOTA: l'unico servizio per cui SunJCE puo' risultare piu' lento di BouncyCastle e' 'Cipher AES/GCM'. Dal jdk 18 la relativa
-	 *  implementazione e' stata riscritta e il percorso ottimizzato richiede il supporto AVX-512: su cpu che non lo espongono
-	 *  il throughput risulta sensibilmente inferiore sia a quello del jdk 11 sia a quello di BouncyCastle. Si tratta di una
-	 *  caratteristica del jdk, non del posizionamento del provider. */
-	private static final double SOGLIA_DEGRADO = 3.0d;
-
-	private static final int DIMENSIONE_PAYLOAD = 1024 * 1024;
-	private static final int ITERAZIONI_WARMUP = 5;
-	private static final int ITERAZIONI_MISURA = 10;
-	private static final int RIPETIZIONI = 3;
-
 	private static final String PROVIDER_BC = org.bouncycastle.jce.provider.BouncyCastleProvider.PROVIDER_NAME;
 	private static final String PROVIDER_SUN = "SUN";
 	private static final String PROVIDER_SUN_RSA_SIGN = "SunRsaSign";
 	private static final String PROVIDER_SUN_EC = "SunEC";
 
+	/** Trasformazione su cui BouncyCastle e SunJCE non sono interoperabili: SunJCE utilizza MGF1 su SHA-1, che e' il default
+	 *  di 'OAEPParameterSpec', mentre BouncyCastle utilizza MGF1 sul digest indicato nel nome. Da essa dipendono il formato
+	 *  dei segreti cifrati con BYOK e la conformita' a RFC 7518 dei JWE prodotti tramite 'cxf-rt-rs-security-jose'. */
+	private static final String TRASFORMAZIONE_OAEP = "RSA/ECB/OAEPWithSHA-256AndMGF1Padding";
+	private static final String DIGEST_OAEP = "SHA-256";
+	private static final String MGF_OAEP = "MGF1";
+
+	/** Servizi che devono restare forniti da BouncyCastle: sono quelli su cui si e' verificata una divergenza di formato
+	 *  oppure quelli usati come sentinella per accorgersi di uno spostamento involontario del provider.
+	 *  NOTA: non vi rientrano i 'MessageDigest', forniti dal provider 'SUN' che precede BouncyCastle e che quindi li serve
+	 *  comunque; a BouncyCastle arrivano solo se richiesto esplicitamente, come fa 'MessageDigestFactory' quando abilitato. */
+	private static final String [] SERVIZI_ATTESI_BOUNCY_CASTLE = new String[] {
+		"Cipher."+TRASFORMAZIONE_OAEP,
+		"Cipher.AES/GCM/NoPadding",
+		"Signature.SHA256withRSA",
+		"SecretKeyFactory.PBKDF2WithHmacSHA256"
+	};
+
+	/** Prefisso dei provider PKCS11, esclusi dal censimento: non fanno parte dell'installazione statica del jdk, vengono
+	 *  registrati a runtime da 'HSMManager.providerInit' per ogni keystore hardware configurato, quindi la loro presenza
+	 *  dipende dalla configurazione e, nella testsuite, dall'ordine di esecuzione dei test. */
+	private static final String PREFISSO_PROVIDER_PKCS11 = "SunPKCS11";
+	private static final String PREFISSO_ALIAS = "Alg.Alias.";
+
+	private static final int DIMENSIONE_PAYLOAD = 1024 * 1024;
+	/** NOTA: l'intrinsic HotSpot di AES-GCM entra in gioco solo dopo alcune centinaia di invocazioni. Con un warmup ridotto
+	 *  la misura risulta falsata di oltre un ordine di grandezza e SunJCE appare piu' lento di BouncyCastle. */
+	private static final int ITERAZIONI_WARMUP = 800;
+	private static final int ITERAZIONI_MISURA = 50;
+	private static final int RIPETIZIONI = 3;
+
+	/* NOTA: i metodi di benchmark non asseriscono soglie temporali, ma verificano unicamente che le operazioni si concludano
+	 * correttamente e ne riportano la misura. I rapporti fra i due provider dipendono in modo determinante dalla versione del
+	 * jdk e dalla cpu: ad esempio la firma ECDSA e' circa 8 volte piu' lenta con 'SunEC' sul jdk 11, mentre sul jdk 21, dove
+	 * l'implementazione e' stata riscritta, e' piu' veloce. Un'asserzione sui tempi sarebbe quindi instabile. */
+
+	private static final String KEYSTORE_TLS = "govway_test.p12";
+	private static final String KEYSTORE_TLS_PASSWORD = "123456";
+	private static final String CIPHER_SUITE_TLS = "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384";
+	private static final int MEGABYTE_TRASFERITI_TLS = 100;
+
+
 	public static void main(String[] args) throws Exception {
 
 		testServiziCondivisi();
 
+		testParametriOaep();
+
+		testInteroperabilitaOaep();
+
 		testBenchmarkServiziCondivisi();
+
+		testBenchmarkDimensioniMessaggio();
+
+		testBenchmarkTls();
 
 		System.out.println("Testsuite terminata");
 
 	}
 
 
-	// ===== Verifica dei servizi condivisi fra BouncyCastle e i provider del jdk =====
+	// ===== Servizi condivisi fra BouncyCastle e i provider del jdk =====
 
 	public static void testServiziCondivisi() throws UtilsException {
 
@@ -129,87 +153,229 @@ public class ProviderBenchmarkTest {
 
 			List<Provider> providers = Utilities.getProviders();
 
-			int posizioneSunJCE = -1;
 			int posizioneBouncyCastle = -1;
 			for (int i = 0; i < providers.size(); i++) {
-				if(ProviderUtils.PROVIDER_SUN_JCE.equals(providers.get(i).getName())) {
-					posizioneSunJCE = i;
-				}
-				else if(PROVIDER_BC.equals(providers.get(i).getName())) {
+				if(PROVIDER_BC.equals(providers.get(i).getName())) {
 					posizioneBouncyCastle = i;
 				}
 			}
 
 			System.out.println("Provider registrati: "+ProviderUtils.getProviderNames());
 
-			if(posizioneSunJCE<0) {
-				throw new UtilsException("Provider '"+ProviderUtils.PROVIDER_SUN_JCE+"' non registrato");
-			}
-			if(posizioneBouncyCastle<0) {
-				throw new UtilsException("Provider '"+PROVIDER_BC+"' non registrato");
-			}
-			if(posizioneBouncyCastle!=(posizioneSunJCE+1)) {
-				throw new UtilsException("Atteso il provider '"+PROVIDER_BC+"' immediatamente dopo '"+ProviderUtils.PROVIDER_SUN_JCE
-						+"' (posizione "+(posizioneSunJCE+2)+"), rilevato invece alla posizione "+(posizioneBouncyCastle+1));
+			if(posizioneBouncyCastle!=1) {
+				throw new UtilsException("Atteso il provider '"+PROVIDER_BC+"' alla posizione 2, subito dopo '"+PROVIDER_SUN
+						+"', rilevato invece alla posizione "+(posizioneBouncyCastle+1));
 			}
 
-			// servizi forniti dai provider che precedono BouncyCastle e da quelli che lo seguono
-			Set<String> serviziPrecedenti = new TreeSet<>();
-			Set<String> serviziSuccessivi = new TreeSet<>();
-			List<String> nomiSuccessivi = new ArrayList<>();
-			for (int i = 0; i < providers.size(); i++) {
-				if(providers.get(i).getName().startsWith(PREFISSO_PROVIDER_PKCS11)) {
-					continue;
-				}
-				if(i<posizioneBouncyCastle) {
-					serviziPrecedenti.addAll(getServizi(providers.get(i)));
-				}
-				else if(i>posizioneBouncyCastle) {
-					serviziSuccessivi.addAll(getServizi(providers.get(i)));
-					nomiSuccessivi.add(providers.get(i).getName());
+			// censimento: quanti servizi sono forniti anche dal jdk e quanti solamente da BouncyCastle
+			Set<String> serviziJdk = new TreeSet<>();
+			for (Provider provider : providers) {
+				if(!PROVIDER_BC.equals(provider.getName()) && !provider.getName().startsWith(PREFISSO_PROVIDER_PKCS11)) {
+					serviziJdk.addAll(getServizi(provider));
 				}
 			}
-
 			Set<String> serviziBouncyCastle = getServizi(providers.get(posizioneBouncyCastle));
 
-			// servizi che, per effetto del posizionamento, sono ora serviti da un provider del jdk
-			Set<String> cedutiAlJdk = new TreeSet<>(serviziBouncyCastle);
-			cedutiAlJdk.retainAll(serviziPrecedenti);
+			Set<String> condivisi = new TreeSet<>(serviziBouncyCastle);
+			condivisi.retainAll(serviziJdk);
+			Set<String> esclusivi = new TreeSet<>(serviziBouncyCastle);
+			esclusivi.removeAll(serviziJdk);
 
-			// servizi che restano appannaggio esclusivo di BouncyCastle
-			Set<String> esclusiviBouncyCastle = new TreeSet<>(serviziBouncyCastle);
-			esclusiviBouncyCastle.removeAll(serviziPrecedenti);
-			esclusiviBouncyCastle.removeAll(serviziSuccessivi);
-
-			// servizi per i quali BouncyCastle scavalca un provider registrato dopo 'SunJCE'
-			Set<String> scavalcati = new TreeSet<>(serviziBouncyCastle);
-			scavalcati.retainAll(serviziSuccessivi);
-			scavalcati.removeAll(serviziPrecedenti);
-
-			System.out.println("Provider successivi a '"+PROVIDER_BC+"': "+nomiSuccessivi);
-			System.out.println("Servizi dichiarati da '"+PROVIDER_BC+"': "+serviziBouncyCastle.size());
-			System.out.println("   serviti da un provider del jdk       : "+cedutiAlJdk.size());
-			System.out.println("   forniti esclusivamente da '"+PROVIDER_BC+"': "+esclusiviBouncyCastle.size());
-			System.out.println("   che scavalcano un provider successivo: "+scavalcati.size()+" "+scavalcati);
+			System.out.println("Servizi dichiarati da '"+PROVIDER_BC+"': "+serviziBouncyCastle.size()
+					+"; condivisi con i provider del jdk: "+condivisi.size()
+					+"; forniti esclusivamente da '"+PROVIDER_BC+"': "+esclusivi.size());
 
 			Map<String,Integer> perTipo = new TreeMap<>();
-			for (String servizio : cedutiAlJdk) {
+			for (String servizio : condivisi) {
 				perTipo.merge(servizio.substring(0, servizio.indexOf('.')), 1, Integer::sum);
 			}
-			System.out.println("Ripartizione per tipo dei servizi serviti da un provider del jdk: "+perTipo);
+			System.out.println("Ripartizione per tipo dei servizi condivisi: "+perTipo);
 
-			if(!SERVIZI_ATTESI_SCAVALCATI.containsAll(scavalcati)) {
-				Set<String> inattesi = new TreeSet<>(scavalcati);
-				inattesi.removeAll(SERVIZI_ATTESI_SCAVALCATI);
-				throw new UtilsException("Il provider '"+PROVIDER_BC+"' scavalca provider del jdk registrati dopo '"
-						+ProviderUtils.PROVIDER_SUN_JCE+"' per servizi non previsti: "+inattesi
-						+"; verificare se il posizionamento del provider vada rivisto");
+			// gli alias rimossi non devono piu' essere serviti da BouncyCastle: e' cio' che consente al jdk di leggere i keystore PKCS12
+			checkProvider("SecretKeyFactory", "PBE", false);
+			checkProvider("Cipher", "PBEWithSHA1AndDESede", false);
+			checkProvider("SecretKeyFactory", "PBEWithSHA1AndDESede", false);
+			System.out.println("Alias rimossi dall'istanza del provider: "+Utilities.getBouncyCastleAliasRimossiPkcs12());
+
+			// tutti gli altri servizi devono continuare ad essere forniti da BouncyCastle
+			for (String servizio : SERVIZI_ATTESI_BOUNCY_CASTLE) {
+				int separatore = servizio.indexOf('.');
+				checkProvider(servizio.substring(0, separatore), servizio.substring(separatore+1), true);
 			}
 
 		}finally {
 			releaseBouncyCastle();
 		}
 
+	}
+
+	private static void checkProvider(String tipo, String algoritmo, boolean attesoBouncyCastle) throws UtilsException {
+		String provider = getProvider(tipo, algoritmo);
+		boolean bouncyCastle = PROVIDER_BC.equals(provider);
+		System.out.println("   "+tipo+"."+algoritmo+" -> "+provider);
+		if(bouncyCastle!=attesoBouncyCastle) {
+			throw new UtilsException("Servizio '"+tipo+"."+algoritmo+"': atteso "+(attesoBouncyCastle?"":"un provider differente da ")
+					+"'"+PROVIDER_BC+"', rilevato invece il provider '"+provider+"'");
+		}
+	}
+
+	private static String getProvider(String tipo, String algoritmo) throws UtilsException {
+		try {
+			switch (tipo) {
+				case "Cipher": return Cipher.getInstance(algoritmo).getProvider().getName();
+				case "SecretKeyFactory": return SecretKeyFactory.getInstance(algoritmo).getProvider().getName();
+				case "Signature": return Signature.getInstance(algoritmo).getProvider().getName();
+				case "MessageDigest": return MessageDigest.getInstance(algoritmo).getProvider().getName();
+				default: throw new UtilsException("Tipo di servizio '"+tipo+"' non gestito");
+			}
+		}catch(UtilsException e) {
+			throw e;
+		}catch(Exception e) {
+			throw new UtilsException("Risoluzione del servizio '"+tipo+"."+algoritmo+"' non riuscita: "+e.getMessage(),e);
+		}
+	}
+
+
+	// ===== Parametri OAEP =====
+
+	public static void testParametriOaep() throws UtilsException {
+
+		System.out.println("========================= Parametri OAEP ==============================");
+
+		initBouncyCastle();
+		try {
+
+			// la risoluzione generica della trasformazione deve produrre MGF1 sul medesimo digest indicato nel nome:
+			// e' l'invariante da cui dipendono il formato dei segreti BYOK gia' scritti e la conformita' a RFC 7518 dei JWE
+			Cipher cipher = Cipher.getInstance(TRASFORMAZIONE_OAEP);
+			KeyPair keyPair = generaKeyPairRsa();
+			try {
+				cipher.init(Cipher.ENCRYPT_MODE, keyPair.getPublic());
+			}catch(Exception e) {
+				throw new UtilsException(e.getMessage(),e);
+			}
+
+			OAEPParameterSpec spec = getOaepParameterSpec(cipher);
+			String digest = spec.getDigestAlgorithm();
+			String mgfDigest = ((MGF1ParameterSpec)spec.getMGFParameters()).getDigestAlgorithm();
+
+			System.out.println("Trasformazione '"+TRASFORMAZIONE_OAEP+"' risolta dal provider '"+cipher.getProvider().getName()
+					+"'; digest="+digest+", MGF1="+mgfDigest);
+
+			if(!DIGEST_OAEP.equals(digest) || !DIGEST_OAEP.equals(mgfDigest)) {
+				throw new UtilsException("Trasformazione '"+TRASFORMAZIONE_OAEP+"' risolta dal provider '"+cipher.getProvider().getName()
+						+"' con digest '"+digest+"' e MGF1 '"+mgfDigest+"'; attesi entrambi '"+DIGEST_OAEP
+						+"'. Con MGF1 su un digest differente diventano illeggibili i segreti gia' cifrati con BYOK ed i contenuti"
+						+" JOSE prodotti non sono conformi a RFC 7518: verificare la posizione del provider '"+PROVIDER_BC+"'");
+			}
+
+			// round trip con la sola risoluzione generica
+			byte [] dati = "GovWay OAEP round trip".getBytes();
+			try {
+				byte [] cifrato = cipher.doFinal(dati);
+				Cipher decipher = Cipher.getInstance(TRASFORMAZIONE_OAEP);
+				decipher.init(Cipher.DECRYPT_MODE, keyPair.getPrivate());
+				if(!java.util.Arrays.equals(dati, decipher.doFinal(cifrato))) {
+					throw new UtilsException("Round trip OAEP non riuscito");
+				}
+			}catch(UtilsException e) {
+				throw e;
+			}catch(Exception e) {
+				throw new UtilsException("Round trip OAEP non riuscito: "+e.getMessage(),e);
+			}
+			System.out.println("Round trip con la risoluzione generica: ok");
+
+		}catch(UtilsException e) {
+			throw e;
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}finally {
+			releaseBouncyCastle();
+		}
+
+	}
+
+	public static void testInteroperabilitaOaep() throws UtilsException {
+
+		System.out.println("========================= Interoperabilita' OAEP fra i provider ==============================");
+
+		initBouncyCastle();
+		try {
+
+			KeyPair keyPair = generaKeyPairRsa();
+			byte [] dati = "GovWay OAEP interop".getBytes();
+
+			String providerJdk = ProviderUtils.PROVIDER_SUN_JCE;
+
+			byte [] cifratoBouncyCastle = cifraOaep(PROVIDER_BC, keyPair, dati, null);
+			byte [] cifratoJdk = cifraOaep(providerJdk, keyPair, dati, null);
+
+			// senza parametri espliciti i due provider non si intendono: e' la ragione per cui la posizione del provider e' portante
+			boolean jdkLeggeBouncyCastle = decifraOaep(providerJdk, keyPair, cifratoBouncyCastle, null, dati);
+			boolean bouncyCastleLeggeJdk = decifraOaep(PROVIDER_BC, keyPair, cifratoJdk, null, dati);
+			System.out.println("Senza parametri espliciti: '"+providerJdk+"' legge '"+PROVIDER_BC+"'="+jdkLeggeBouncyCastle
+					+", '"+PROVIDER_BC+"' legge '"+providerJdk+"'="+bouncyCastleLeggeJdk);
+			if(jdkLeggeBouncyCastle || bouncyCastleLeggeJdk) {
+				throw new UtilsException("Attesa incompatibilita' fra '"+providerJdk+"' e '"+PROVIDER_BC+"' sulla trasformazione '"
+						+TRASFORMAZIONE_OAEP+"' in assenza di parametri espliciti; se la situazione e' cambiata va rivalutato il"
+						+" vincolo sulla posizione del provider");
+			}
+
+			// indicando i parametri, il provider del jdk riproduce esattamente la semantica di BouncyCastle
+			OAEPParameterSpec spec = new OAEPParameterSpec(DIGEST_OAEP, MGF_OAEP, MGF1ParameterSpec.SHA256, PSource.PSpecified.DEFAULT);
+			boolean jdkConParametri = decifraOaep(providerJdk, keyPair, cifratoBouncyCastle, spec, dati);
+			System.out.println("Con OAEPParameterSpec esplicito (MGF1 su "+DIGEST_OAEP+"): '"+providerJdk+"' legge '"+PROVIDER_BC+"'="+jdkConParametri);
+			if(!jdkConParametri) {
+				throw new UtilsException("Il provider '"+providerJdk+"', con parametri OAEP espliciti, deve riprodurre la semantica di '"+PROVIDER_BC+"'");
+			}
+
+		}finally {
+			releaseBouncyCastle();
+		}
+
+	}
+
+	private static OAEPParameterSpec getOaepParameterSpec(Cipher cipher) throws UtilsException {
+		try {
+			if(cipher.getParameters()==null) {
+				throw new UtilsException("Il provider '"+cipher.getProvider().getName()+"' non espone i parametri utilizzati per la trasformazione '"+TRASFORMAZIONE_OAEP+"'");
+			}
+			return cipher.getParameters().getParameterSpec(OAEPParameterSpec.class);
+		}catch(UtilsException e) {
+			throw e;
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
+
+	private static byte[] cifraOaep(String provider, KeyPair keyPair, byte [] dati, OAEPParameterSpec spec) throws UtilsException {
+		try {
+			Cipher cipher = Cipher.getInstance(TRASFORMAZIONE_OAEP, provider);
+			if(spec!=null) {
+				cipher.init(Cipher.ENCRYPT_MODE, keyPair.getPublic(), spec);
+			}
+			else {
+				cipher.init(Cipher.ENCRYPT_MODE, keyPair.getPublic());
+			}
+			return cipher.doFinal(dati);
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
+
+	private static boolean decifraOaep(String provider, KeyPair keyPair, byte [] cifrato, OAEPParameterSpec spec, byte [] atteso) {
+		try {
+			Cipher cipher = Cipher.getInstance(TRASFORMAZIONE_OAEP, provider);
+			if(spec!=null) {
+				cipher.init(Cipher.DECRYPT_MODE, keyPair.getPrivate(), spec);
+			}
+			else {
+				cipher.init(Cipher.DECRYPT_MODE, keyPair.getPrivate());
+			}
+			return java.util.Arrays.equals(atteso, cipher.doFinal(cifrato));
+		}catch(Exception e) {
+			return false;
+		}
 	}
 
 
@@ -275,6 +441,138 @@ public class ProviderBenchmarkTest {
 
 	}
 
+	/** Le dimensioni tipiche dei messaggi trattati dal gateway sono nell'ordine delle decine di KB; il rapporto fra i due
+	 *  provider si mantiene costante gia' a partire da 10 KB, mentre cambia sensibilmente il costo assoluto per operazione. */
+	public static void testBenchmarkDimensioniMessaggio() throws UtilsException {
+
+		System.out.println("========================= Benchmark al variare della dimensione del messaggio ==============================");
+
+		initBouncyCastle();
+		try {
+
+			final byte [] chiave = new byte[32];
+			final SecretKey secretKeyAes = generaSecretKeyAes();
+			final byte [] iv12 = new byte[12];
+
+			int [] dimensioni = new int[] {10*1024, 50*1024, 500*1024};
+			String [] etichette = new String[] {"10 KB", "50 KB", "500 KB"};
+
+			System.out.println(String.format("%-16s %-12s %14s %14s   %s", "servizio", "payload", "jdk", PROVIDER_BC, "esito"));
+			for (int i = 0; i < dimensioni.length; i++) {
+				final byte [] payload = new byte[dimensioni[i]];
+				new SecureRandom().nextBytes(payload);
+				confronta(String.format("%-16s %-12s", "SHA-256", etichette[i]), PROVIDER_SUN,
+						() -> MessageDigest.getInstance("SHA-256", PROVIDER_SUN).digest(payload),
+						() -> MessageDigest.getInstance("SHA-256", PROVIDER_BC).digest(payload));
+				confronta(String.format("%-16s %-12s", "HmacSHA256", etichette[i]), ProviderUtils.PROVIDER_SUN_JCE,
+						() -> eseguiMac(ProviderUtils.PROVIDER_SUN_JCE, chiave, payload),
+						() -> eseguiMac(PROVIDER_BC, chiave, payload));
+				confronta(String.format("%-16s %-12s", "AES-256/GCM", etichette[i]), ProviderUtils.PROVIDER_SUN_JCE,
+						() -> eseguiCipherGcm(ProviderUtils.PROVIDER_SUN_JCE, secretKeyAes, iv12, payload),
+						() -> eseguiCipherGcm(PROVIDER_BC, secretKeyAes, iv12, payload));
+			}
+
+		}finally {
+			releaseBouncyCastle();
+		}
+
+	}
+
+	/** La classe 'sun.security.ssl.SSLCipher' del jdk risolve il cipher di record in modo generico: la posizione del provider
+	 *  determina quindi anche il throughput di ogni connessione TLS gestita dal gateway. */
+	public static void testBenchmarkTls() throws UtilsException {
+
+		System.out.println("========================= Benchmark TLS ==============================");
+
+		initBouncyCastle();
+		try {
+
+			System.out.println("Cipher 'AES/GCM/NoPadding' risolto dal provider '"+getProvider("Cipher", "AES/GCM/NoPadding")+"'");
+
+			SSLContext sslContext = getSSLContext();
+
+			try(SSLServerSocket serverSocket = (SSLServerSocket) sslContext.getServerSocketFactory().createServerSocket(0, 1, java.net.InetAddress.getLoopbackAddress())){
+
+				serverSocket.setEnabledCipherSuites(new String[] {CIPHER_SUITE_TLS});
+
+				final byte [] blocco = new byte[64*1024];
+				final int blocchi = MEGABYTE_TRASFERITI_TLS * 16;
+				Thread server = new Thread(() -> {
+					try(SSLSocket socket = (SSLSocket) serverSocket.accept();
+						OutputStream out = socket.getOutputStream()){
+						for (int i = 0; i < blocchi; i++) {
+							out.write(blocco);
+						}
+						out.flush();
+					}catch(Exception e) {
+						System.out.println("Errore nel server TLS di prova: "+e.getMessage());
+					}
+				});
+				server.setDaemon(true);
+				server.start();
+
+				long letti = 0;
+				double secondi;
+				String cipherSuite;
+				try(SSLSocket socket = (SSLSocket) sslContext.getSocketFactory().createSocket(serverSocket.getInetAddress(), serverSocket.getLocalPort())){
+					socket.setEnabledCipherSuites(new String[] {CIPHER_SUITE_TLS});
+					socket.startHandshake();
+					cipherSuite = socket.getSession().getCipherSuite();
+					byte [] buffer = new byte[64*1024];
+					InputStream in = socket.getInputStream();
+					long inizio = System.nanoTime();
+					int n;
+					while ( (n=in.read(buffer)) > 0 ) {
+						letti += n;
+					}
+					secondi = (System.nanoTime()-inizio) / 1000000000d;
+				}
+				server.join();
+
+				if(!CIPHER_SUITE_TLS.equals(cipherSuite)) {
+					throw new UtilsException("Attesa la cipher suite '"+CIPHER_SUITE_TLS+"', negoziata invece '"+cipherSuite+"'");
+				}
+				long attesi = (long)blocchi * blocco.length;
+				if(letti!=attesi) {
+					throw new UtilsException("Attesi "+attesi+" byte, ricevuti "+letti);
+				}
+				System.out.println(String.format("Cipher suite '%s': trasferiti %d MB in %.2f s -> %.0f MB/s",
+						cipherSuite, MEGABYTE_TRASFERITI_TLS, secondi, letti/1048576d/secondi));
+
+			}catch(UtilsException e) {
+				throw e;
+			}catch(Exception e) {
+				throw new UtilsException(e.getMessage(),e);
+			}
+
+		}finally {
+			releaseBouncyCastle();
+		}
+
+	}
+
+	private static SSLContext getSSLContext() throws UtilsException {
+		try {
+			java.security.KeyStore keystore = java.security.KeyStore.getInstance("PKCS12");
+			try(InputStream is = org.openspcoop2.utils.certificate.test.KeystoreTest.class.getResourceAsStream(
+					org.openspcoop2.utils.certificate.test.KeystoreTest.PREFIX+KEYSTORE_TLS)){
+				keystore.load(is, KEYSTORE_TLS_PASSWORD.toCharArray());
+			}
+			KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance("SunX509");
+			keyManagerFactory.init(keystore, KEYSTORE_TLS_PASSWORD.toCharArray());
+			TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance("SunX509");
+			trustManagerFactory.init(keystore);
+			SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
+			sslContext.init(keyManagerFactory.getKeyManagers(), trustManagerFactory.getTrustManagers(), null);
+			return sslContext;
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
+
+
+	// ===== Misura =====
+
 	private static void confronta(String servizio, String providerJdk, Operazione operazioneJdk, Operazione operazioneBouncyCastle) throws UtilsException {
 
 		double tempoJdk = misura(operazioneJdk);
@@ -286,12 +584,6 @@ public class ProviderBenchmarkTest {
 				: String.format("'%s' piu' veloce di %.1fx", providerJdk, 1/rapporto);
 
 		System.out.println(String.format("%-38s %11.3f ms %11.3f ms   %s", servizio, tempoJdk, tempoBouncyCastle, esito));
-
-		if(rapporto>SOGLIA_DEGRADO) {
-			throw new UtilsException("Servizio '"+servizio+"': il provider '"+providerJdk+"' risulta piu' lento di "
-					+String.format("%.1f", rapporto)+"x rispetto a '"+PROVIDER_BC+"' (soglia "+SOGLIA_DEGRADO+"x);"
-					+" verificare se il posizionamento del provider vada rivisto");
-		}
 
 	}
 
@@ -317,13 +609,13 @@ public class ProviderBenchmarkTest {
 		}
 	}
 
-
-	// ===== Operazioni misurate =====
-
 	@FunctionalInterface
 	private interface Operazione {
 		void esegui() throws Exception;
 	}
+
+
+	// ===== Operazioni misurate =====
 
 	private static void eseguiMac(String provider, byte [] chiave, byte [] payload) throws Exception {
 		Mac mac = Mac.getInstance("HmacSHA256", provider);
@@ -371,8 +663,7 @@ public class ProviderBenchmarkTest {
 	/** Servizi forniti da un provider, nella forma 'tipo.algoritmo'.
 	 *  Vengono raccolti sia i nomi canonici sia gli alias: la risoluzione JCA considera entrambi, e diversi provider
 	 *  registrano il medesimo algoritmo con nomi canonici differenti (ad esempio SunJCE fornisce 'DiffieHellman' con
-	 *  alias 'DH', mentre BouncyCastle utilizza 'DH' come nome canonico). Ignorare gli alias porterebbe a considerare
-	 *  come non condivisi servizi che invece lo sono. */
+	 *  alias 'DH', mentre BouncyCastle utilizza 'DH' come nome canonico). */
 	private static Set<String> getServizi(Provider provider){
 		Set<String> servizi = new TreeSet<>();
 		for (Provider.Service service : provider.getServices()) {
