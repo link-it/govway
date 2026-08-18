@@ -54,15 +54,15 @@ import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.TrustManagerFactory;
 
+import org.openspcoop2.utils.BouncyCastleUtilities;
 import org.openspcoop2.utils.UtilsException;
-import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.security.ProviderUtils;
 
 /**
  * ProviderBenchmarkTest
  *
  * Presidia i vincoli che determinano la posizione del provider BouncyCastle nella lista dei provider JCE, registrata da
- * 'Utilities.addBouncyCastleAfterSun' e utilizzata a runtime da tutti i processi GovWay, e ne misura il costo.
+ * 'BouncyCastleUtilities.addBouncyCastleAfterSun' e utilizzata a runtime da tutti i processi GovWay, e ne misura il costo.
  *
  * Il provider viene registrato alla posizione 2, davanti a tutti i provider del jdk tranne 'SUN', e privato dei tre alias
  * che impedirebbero al jdk di leggere i keystore PKCS12. Le due cose sono verificate rispettivamente da
@@ -151,7 +151,7 @@ public class ProviderBenchmarkTest {
 		initBouncyCastle();
 		try {
 
-			List<Provider> providers = Utilities.getProviders();
+			List<Provider> providers = ProviderUtils.getProviders();
 
 			int posizioneBouncyCastle = -1;
 			for (int i = 0; i < providers.size(); i++) {
@@ -195,7 +195,7 @@ public class ProviderBenchmarkTest {
 			checkProvider("SecretKeyFactory", "PBE", false);
 			checkProvider("Cipher", "PBEWithSHA1AndDESede", false);
 			checkProvider("SecretKeyFactory", "PBEWithSHA1AndDESede", false);
-			System.out.println("Alias rimossi dall'istanza del provider: "+Utilities.getBouncyCastleAliasRimossiPkcs12());
+			System.out.println("Alias rimossi dall'istanza del provider: "+BouncyCastleUtilities.getBouncyCastleAliasRimossiPkcs12());
 
 			// tutti gli altri servizi devono continuare ad essere forniti da BouncyCastle
 			for (String servizio : SERVIZI_ATTESI_BOUNCY_CASTLE) {
@@ -721,7 +721,7 @@ public class ProviderBenchmarkTest {
 
 	private static void initBouncyCastle() {
 		// registra il provider nella medesima modalita' utilizzata a runtime da GovWay
-		Utilities.addBouncyCastleAfterSun(true);
+		BouncyCastleUtilities.addBouncyCastleAfterSun(true);
 	}
 	private static void releaseBouncyCastle() {
 		Security.removeProvider(PROVIDER_BC);

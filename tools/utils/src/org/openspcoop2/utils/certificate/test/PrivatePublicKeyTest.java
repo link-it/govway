@@ -25,6 +25,7 @@ import java.security.Security;
 import java.util.Arrays;
 
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.BouncyCastleUtilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.KeyUtils;
 import org.openspcoop2.utils.certificate.PEMArchive;
@@ -148,7 +149,7 @@ public class PrivatePublicKeyTest {
 	}
 
 	private static void initBC() {
-		Utilities.addBouncyCastleAfterSun(true); // registra il provider nella medesima modalita' utilizzata a runtime da GovWay
+		BouncyCastleUtilities.addBouncyCastleAfterSun(true); // registra il provider nella medesima modalita' utilizzata a runtime da GovWay
 	}
 	private static void releaseBC() {
 		Security.removeProvider(org.bouncycastle.jce.provider.BouncyCastleProvider.PROVIDER_NAME);

@@ -28,6 +28,7 @@ import java.util.Map;
 
 import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.GeneralName;
+import org.openspcoop2.utils.BouncyCastleUtilities;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.ArchiveType;
@@ -97,7 +98,7 @@ public class CertificateTest {
 	}
 
 	private static void initBC() {
-		Utilities.addBouncyCastleAfterSun(true); // registra il provider nella medesima modalita' utilizzata a runtime da GovWay
+		BouncyCastleUtilities.addBouncyCastleAfterSun(true); // registra il provider nella medesima modalita' utilizzata a runtime da GovWay
 	}
 	private static void releaseBC() {
 		Security.removeProvider(org.bouncycastle.jce.provider.BouncyCastleProvider.PROVIDER_NAME);
