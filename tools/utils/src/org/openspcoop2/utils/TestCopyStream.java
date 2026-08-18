@@ -38,6 +38,68 @@ import java.util.Date;
  */
 public class TestCopyStream {
 
+	/** Ritardo introdotto ad ogni lettura dallo stream sorgente nei casi in cui ci si attende il timeout.
+	 *  Deve essere maggiore del timeout impostato in quei casi (2 ms). */
+	private static final int RITARDO_SORGENTE_MS = 20;
+
+	/** Stream che introduce un ritardo ad ogni lettura.
+	 *
+	 *  I casi che si attendono il timeout non possono affidarsi al tempo impiegato a copiare il payload: su una macchina
+	 *  sufficientemente veloce la copia di 10 MB si conclude in circa 2,6 ms, cioe' prima che il controllo del timeout
+	 *  possa rilevare il superamento della soglia, ed il test fallisce in modo non deterministico a seconda dell'hardware,
+	 *  del carico e dello stato della page cache. Interponendo questo stream il tempo trascorso e' garantito: il controllo
+	 *  effettuato prima della seconda lettura rileva il superamento della soglia ed il trasferimento viene interrotto,
+	 *  quindi il ritardo viene di fatto pagato una sola volta per ogni stream. */
+	private static class SlowInputStream extends InputStream {
+
+		private final InputStream isWrapped;
+
+		private SlowInputStream(InputStream isWrapped){
+			this.isWrapped = isWrapped;
+		}
+
+		private void ritarda() {
+			Utilities.sleep(RITARDO_SORGENTE_MS);
+		}
+
+		@Override
+		public int read() throws java.io.IOException {
+			ritarda();
+			return this.isWrapped.read();
+		}
+		@Override
+		public int read(byte[] b) throws java.io.IOException {
+			ritarda();
+			return this.isWrapped.read(b);
+		}
+		@Override
+		public int read(byte[] b, int off, int len) throws java.io.IOException {
+			ritarda();
+			return this.isWrapped.read(b, off, len);
+		}
+		@Override
+		public int available() throws java.io.IOException {
+			return this.isWrapped.available();
+		}
+		@Override
+		public long skip(long n) throws java.io.IOException {
+			return this.isWrapped.skip(n);
+		}
+		@Override
+		public void close() throws java.io.IOException {
+			this.isWrapped.close();
+		}
+	}
+
+	/** Restituisce lo stream sorgente, rallentandolo nei soli casi in cui ci si attende il timeout */
+	private static InputStream sorgente(InputStream is, boolean expectedTimeout){
+		if(expectedTimeout) {
+			return new SlowInputStream(is);
+		}
+		return is;
+	}
+
+
 	public static void main(String[] args) throws Exception {
 		
 		
@@ -108,14 +170,14 @@ public class TestCopyStream {
 			
 			for (CopyStreamMethod copyStreamMethod : methods) {
 				
-				try (ByteArrayInputStream bin = new ByteArrayInputStream(buffer)){
+				try (InputStream bin = sorgente(new ByteArrayInputStream(buffer), expectedTimeout)){
 					testBuffer("Buffer", copyStreamMethod, bin, size, 
 							timeoutMs, expectedTimeout,
 							limitBytes, expectedLimitExceeded);
 				}
 				
 				if(CopyStreamMethod.JAVA.equals(copyStreamMethod)) {
-					try (ByteArrayInputStream bin = new ByteArrayInputStream(buffer)){
+					try (InputStream bin = sorgente(new ByteArrayInputStream(buffer), expectedTimeout)){
 						testBuffer("Buffer-Java-IterazioneBufferSize8192", copyStreamMethod, bin, size, 8192, 
 								timeoutMs, expectedTimeout,
 								limitBytes, expectedLimitExceeded);
@@ -126,7 +188,7 @@ public class TestCopyStream {
 			System.out.println("\n");
 			
 			for (CopyStreamMethod copyStreamMethod : methods) {
-				try (FileInputStream fin = new FileInputStream(fSRC)){
+				try (InputStream fin = sorgente(new FileInputStream(fSRC), expectedTimeout)){
 					testBuffer("File", copyStreamMethod, fin, size, 
 							timeoutMs, expectedTimeout,
 							limitBytes, expectedLimitExceeded);
@@ -139,7 +201,7 @@ public class TestCopyStream {
 			for (CopyStreamMethod copyStreamMethod : methods) {
 				File fout = File.createTempFile("testCopyStreamOut", ".bin");
 				try {
-					try (ByteArrayInputStream bin = new ByteArrayInputStream(buffer)){
+					try (InputStream bin = sorgente(new ByteArrayInputStream(buffer), expectedTimeout)){
 						testFile("Buffer", copyStreamMethod, bin, fout, size, 
 								timeoutMs, expectedTimeout,
 								limitBytes, expectedLimitExceeded);
@@ -150,7 +212,7 @@ public class TestCopyStream {
 			}
 			File fout = File.createTempFile("testCopyFileOut", ".bin");
 			try {
-				try (ByteArrayInputStream bin = new ByteArrayInputStream(buffer)){
+				try (InputStream bin = sorgente(new ByteArrayInputStream(buffer), expectedTimeout)){
 					String path = fout.getAbsolutePath();
 					fout.delete();
 					testFile("Buffer", bin, new File(path), size, 
@@ -166,7 +228,7 @@ public class TestCopyStream {
 			for (CopyStreamMethod copyStreamMethod : methods) {
 				fout = File.createTempFile("testCopyStreamOut", ".bin");
 				try {
-					try (FileInputStream fin = new FileInputStream(fSRC)){
+					try (InputStream fin = sorgente(new FileInputStream(fSRC), expectedTimeout)){
 						testFile("File", copyStreamMethod, fin, fout, size, 
 								timeoutMs, expectedTimeout,
 								limitBytes, expectedLimitExceeded);

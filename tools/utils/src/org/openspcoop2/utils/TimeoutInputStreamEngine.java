@@ -33,8 +33,14 @@ import java.io.OutputStream;
  */
 public class TimeoutInputStreamEngine extends InputStream {
 
+	private static final long NANOSECONDI_PER_MILLISECONDO = 1000000L;
 
-	private long createDateMs;
+
+	/** Istante di creazione dello stream, rilevato con 'System.nanoTime()'.
+	 *  Trattandosi della misura di un intervallo trascorso va utilizzato un orologio monotono: 'System.currentTimeMillis()'
+	 *  e' un orologio di parete, soggetto agli aggiustamenti dell'ora di sistema, ed ha inoltre una granularita' di un
+	 *  millisecondo intero che, sui timeout piu' brevi, rendeva il controllo impreciso fino ad un millisecondo. */
+	private long createDateNs;
 	private volatile int timeoutMs;
 	private InputStream isWrapped = null;
 	private String prefixError = "";
@@ -44,7 +50,7 @@ public class TimeoutInputStreamEngine extends InputStream {
 	private ITimeoutNotifier notifier;
 	
 	protected TimeoutInputStreamEngine(InputStream is, int timeoutMs, String prefixError, Map<Object> ctx, ITimeoutNotifier notifier) throws IOException {
-		this.createDateMs = System.currentTimeMillis();
+		this.createDateNs = System.nanoTime();
 		this.timeoutMs = timeoutMs;
 		this.isWrapped = is;
 		if(prefixError!=null) {
@@ -82,8 +88,9 @@ public class TimeoutInputStreamEngine extends InputStream {
 		if(this.checkDisabled) {
 			return; // e' stato disabilitato dopo averlo creato
 		}
-		long now = System.currentTimeMillis() - this.createDateMs;
-		if(now>this.timeoutMs) {
+		long nowNs = System.nanoTime() - this.createDateNs;
+		if(nowNs>(this.timeoutMs * NANOSECONDI_PER_MILLISECONDO)) {
+			long now = nowNs / NANOSECONDI_PER_MILLISECONDO;
 			String errorMsg = this.prefixError+TimeoutInputStream.ERROR_MSG;
 			if(this.ctx!=null) {
 				this.ctx.put(TimeoutInputStream.ERROR_MSG_KEY, errorMsg);
