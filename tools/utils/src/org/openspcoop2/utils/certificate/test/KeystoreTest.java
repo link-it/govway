@@ -31,6 +31,7 @@ import javax.crypto.SecretKey;
 import org.apache.logging.log4j.Level;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.BouncyCastleUtilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.ArchiveType;
 import org.openspcoop2.utils.certificate.KeyStore;
@@ -402,7 +403,7 @@ public class KeystoreTest {
 	
 	public static void initBouncyCastle() {
 		// registra il provider nella medesima modalita' utilizzata a runtime da GovWay
-		Utilities.addBouncyCastleAfterSun(true);
+		BouncyCastleUtilities.addBouncyCastleAfterSun(true);
 	}
 	public static void releaseBouncyCastle() {
 		java.security.Security.removeProvider(PROVIDER_BC);

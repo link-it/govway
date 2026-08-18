@@ -22,9 +22,10 @@ package org.openspcoop2.utils.security;
 
 import java.security.Security;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.BouncyCastleUtilities;
 
 /**
  * ProviderUtils
@@ -45,15 +46,15 @@ public class ProviderUtils {
 		java.security.Security.addProvider(provider);
 	}
 	
-	public static final String PROVIDER_SUN_JCE = Utilities.PROVIDER_SUN_JCE;
+	public static final String PROVIDER_SUN_JCE = "SunJCE";
 	
 	/**
 	 * Registra il provider BouncyCastle alla posizione 2, subito dopo il provider 'SUN', privandolo dei tre alias che
 	 * impediscono al jdk di leggere i keystore PKCS12.
-	 * La posizione e' portante e non va modificata: si veda la documentazione di 'Utilities.addBouncyCastleAfterSun'.
+	 * La posizione e' portante e non va modificata: si veda la documentazione di 'BouncyCastleUtilities.addBouncyCastleAfterSun'.
 	 **/
 	public static void addBouncyCastleAfterSun(boolean overrideIfExists) {
-		Utilities.addBouncyCastleAfterSun(overrideIfExists);
+		BouncyCastleUtilities.addBouncyCastleAfterSun(overrideIfExists);
 	}
 
 	public static void addIfNotExists(java.security.Provider provider, int position) {
@@ -99,7 +100,12 @@ public class ProviderUtils {
 	}
 	
 	public static List<java.security.Provider> getProviders(){
-		return Utilities.getProviders();
+		List<java.security.Provider> l = new ArrayList<>();
+		java.security.Provider [] p = Security.getProviders();
+		if(p!=null && p.length>0) {
+			l.addAll(Arrays.asList(p));
+		}
+		return l;
 	}
 	public static List<String> getProviderNames(){
 		List<String> l = new ArrayList<>();
