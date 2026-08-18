@@ -48,21 +48,9 @@ public class ProviderUtils {
 	public static final String PROVIDER_SUN_JCE = Utilities.PROVIDER_SUN_JCE;
 	
 	/**
-	 * Registra il provider BouncyCastle subito dopo i provider standard del jdk, in particolare dopo 'SunJCE'.
-	 *
-	 * La posizione non e' un dettaglio: la classe 'sun.security.pkcs12.PKCS12KeyStore', utilizzata per leggere i keystore PKCS12,
-	 * risolve in modo generico (senza indicare un provider) sia i servizi 'SecretKeyFactory' sia i servizi 'Cipher' necessari
-	 * a decifrare il contenuto del keystore. Se una parte di quei servizi viene servita da BouncyCastle e un'altra da SunJCE,
-	 * le due implementazioni non si accordano sulla codifica della password - UTF-8 per SunJCE, UTF-16BE seguito da 0x0000
-	 * secondo la convenzione PKCS#12 per BouncyCastle - e la lettura fallisce con 'BadPaddingException', segnalata come
-	 * "keystore password was incorrect" oppure "Get Key failed: pad block corrupted", pur essendo file e password corretti.
-	 *
-	 * Anteponendo BouncyCastle a SunJCE si verificano entrambi i disallineamenti:
-	 * - sui keystore cifrati con algoritmi moderni (PBES2/AES-256, default di OpenSSL 3 e di keytool dal jdk 16) la chiave viene
-	 *   prodotta da BouncyCastle tramite l'alias generico 'SecretKeyFactory.PBE' e utilizzata dal cipher di SunJCE;
-	 * - sui keystore cifrati con gli algoritmi PKCS#12 tradizionali la chiave privata viene decifrata dal cipher di BouncyCastle.
-	 * Posponendolo a SunJCE, tutti i servizi coinvolti restano serviti da SunJCE e la lettura funziona in entrambi i casi,
-	 * mentre BouncyCastle continua a fornire tutti gli algoritmi non presenti nei provider del jdk.
+	 * Registra il provider BouncyCastle alla posizione 2, subito dopo il provider 'SUN', privandolo dei tre alias che
+	 * impediscono al jdk di leggere i keystore PKCS12.
+	 * La posizione e' portante e non va modificata: si veda la documentazione di 'Utilities.addBouncyCastleAfterSun'.
 	 **/
 	public static void addBouncyCastleAfterSun(boolean overrideIfExists) {
 		Utilities.addBouncyCastleAfterSun(overrideIfExists);
