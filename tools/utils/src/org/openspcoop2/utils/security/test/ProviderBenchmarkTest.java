@@ -56,6 +56,7 @@ import javax.net.ssl.TrustManagerFactory;
 
 import org.openspcoop2.utils.BouncyCastleUtilities;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.random.RandomUtilities;
 import org.openspcoop2.utils.security.ProviderUtils;
 
 /**
@@ -390,7 +391,7 @@ public class ProviderBenchmarkTest {
 
 			final byte [] payload = new byte[DIMENSIONE_PAYLOAD];
 			final byte [] payloadPiccolo = new byte[256];
-			SecureRandom secureRandom = new SecureRandom();
+			SecureRandom secureRandom = RandomUtilities.getSecureRandom();
 			secureRandom.nextBytes(payload);
 			secureRandom.nextBytes(payloadPiccolo);
 
@@ -404,8 +405,8 @@ public class ProviderBenchmarkTest {
 			System.out.println(String.format("%-38s %14s %14s   %s", "servizio", "jdk", PROVIDER_BC, "esito"));
 
 			confronta("MessageDigest SHA-256 (1MB)", PROVIDER_SUN,
-					() -> MessageDigest.getInstance("SHA-256", PROVIDER_SUN).digest(payload),
-					() -> MessageDigest.getInstance("SHA-256", PROVIDER_BC).digest(payload));
+					() -> eseguiDigest(PROVIDER_SUN, payload),
+					() -> eseguiDigest(PROVIDER_BC, payload));
 
 			confronta("Mac HmacSHA256 (1MB)", ProviderUtils.PROVIDER_SUN_JCE,
 					() -> eseguiMac(ProviderUtils.PROVIDER_SUN_JCE, payloadPiccolo, payload),
@@ -460,10 +461,10 @@ public class ProviderBenchmarkTest {
 			System.out.println(String.format("%-16s %-12s %14s %14s   %s", "servizio", "payload", "jdk", PROVIDER_BC, "esito"));
 			for (int i = 0; i < dimensioni.length; i++) {
 				final byte [] payload = new byte[dimensioni[i]];
-				new SecureRandom().nextBytes(payload);
+				RandomUtilities.getSecureRandom().nextBytes(payload);
 				confronta(String.format("%-16s %-12s", "SHA-256", etichette[i]), PROVIDER_SUN,
-						() -> MessageDigest.getInstance("SHA-256", PROVIDER_SUN).digest(payload),
-						() -> MessageDigest.getInstance("SHA-256", PROVIDER_BC).digest(payload));
+						() -> eseguiDigest(PROVIDER_SUN, payload),
+						() -> eseguiDigest(PROVIDER_BC, payload));
 				confronta(String.format("%-16s %-12s", "HmacSHA256", etichette[i]), ProviderUtils.PROVIDER_SUN_JCE,
 						() -> eseguiMac(ProviderUtils.PROVIDER_SUN_JCE, chiave, payload),
 						() -> eseguiMac(PROVIDER_BC, chiave, payload));
@@ -617,26 +618,29 @@ public class ProviderBenchmarkTest {
 
 	// ===== Operazioni misurate =====
 
+	private static void eseguiDigest(String provider, byte [] payload) throws Exception {
+		verificaRisultato(MessageDigest.getInstance("SHA-256", provider).digest(payload));
+	}
 	private static void eseguiMac(String provider, byte [] chiave, byte [] payload) throws Exception {
 		Mac mac = Mac.getInstance("HmacSHA256", provider);
 		mac.init(new SecretKeySpec(chiave, "HmacSHA256"));
-		mac.doFinal(payload);
+		verificaRisultato(mac.doFinal(payload));
 	}
 	private static void eseguiCipherGcm(String provider, SecretKey key, byte [] iv, byte [] payload) throws Exception {
 		Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding", provider);
 		cipher.init(Cipher.ENCRYPT_MODE, key, new GCMParameterSpec(128, iv));
-		cipher.doFinal(payload);
+		verificaRisultato(cipher.doFinal(payload));
 	}
 	private static void eseguiCipherCbc(String provider, SecretKey key, byte [] iv, byte [] payload) throws Exception {
 		Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding", provider);
 		cipher.init(Cipher.ENCRYPT_MODE, key, new IvParameterSpec(iv));
-		cipher.doFinal(payload);
+		verificaRisultato(cipher.doFinal(payload));
 	}
 	private static void eseguiFirmaRsa(String provider, KeyPair keyPair, byte [] payload) throws Exception {
 		Signature signature = Signature.getInstance("SHA256withRSA", provider);
 		signature.initSign(keyPair.getPrivate());
 		signature.update(payload);
-		signature.sign();
+		verificaRisultato(signature.sign());
 	}
 	private static void eseguiVerificaRsa(String provider, KeyPair keyPair, byte [] payload, byte [] firma) throws Exception {
 		Signature signature = Signature.getInstance("SHA256withRSA", provider);
@@ -650,11 +654,19 @@ public class ProviderBenchmarkTest {
 		Signature signature = Signature.getInstance("SHA256withECDSA", provider);
 		signature.initSign(keyPair.getPrivate());
 		signature.update(payload);
-		signature.sign();
+		verificaRisultato(signature.sign());
 	}
 	private static void eseguiPbkdf2(String provider) throws Exception {
-		SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256", provider)
-			.generateSecret(new PBEKeySpec("123456".toCharArray(), new byte[16], 10000, 256));
+		verificaRisultato(SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256", provider)
+			.generateSecret(new PBEKeySpec("123456".toCharArray(), new byte[16], 10000, 256)).getEncoded());
+	}
+
+	/** Verifica il risultato delle operazioni misurate: l'esito non va scartato, sia perche' un risultato vuoto
+	 *  indicherebbe una misura priva di significato, sia per evitare che il calcolo venga eliminato in quanto inutilizzato. */
+	private static void verificaRisultato(byte [] risultato) throws UtilsException {
+		if(risultato==null || risultato.length<=0) {
+			throw new UtilsException("Operazione misurata terminata senza produrre alcun risultato");
+		}
 	}
 
 
