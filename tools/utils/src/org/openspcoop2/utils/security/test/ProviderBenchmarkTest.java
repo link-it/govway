@@ -57,6 +57,9 @@ import javax.net.ssl.TrustManagerFactory;
 import org.openspcoop2.utils.BouncyCastleUtilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.random.RandomUtilities;
+import org.openspcoop2.utils.security.DecryptWrapKey;
+import org.openspcoop2.utils.security.EncryptWrapKey;
+import org.openspcoop2.utils.security.OAEPUtils;
 import org.openspcoop2.utils.security.ProviderUtils;
 
 /**
@@ -89,15 +92,25 @@ public class ProviderBenchmarkTest {
 	private static final String DIGEST_OAEP = "SHA-256";
 	private static final String MGF_OAEP = "MGF1";
 
-	/** Servizi che devono restare forniti da BouncyCastle: sono quelli su cui si e' verificata una divergenza di formato
-	 *  oppure quelli usati come sentinella per accorgersi di uno spostamento involontario del provider.
-	 *  NOTA: non vi rientrano i 'MessageDigest', forniti dal provider 'SUN' che precede BouncyCastle e che quindi li serve
-	 *  comunque; a BouncyCastle arrivano solo se richiesto esplicitamente, come fa 'MessageDigestFactory' quando abilitato. */
-	private static final String [] SERVIZI_ATTESI_BOUNCY_CASTLE = new String[] {
-		"Cipher."+TRASFORMAZIONE_OAEP,
+	/** Algoritmi che devono essere serviti da un provider del jdk, non da BouncyCastle: sono quelli piu' utilizzati e sono
+	 *  accelerati dagli intrinsics di HotSpot. E' la ragione per cui il provider viene registrato dopo 'SunJCE': se venisse
+	 *  nuovamente anteposto, queste asserzioni fallirebbero ed il gateway girerebbe su implementazioni in java puro,
+	 *  con il costo misurato dal benchmark piu' sotto. */
+	private static final String [] SERVIZI_ATTESI_JDK = new String[] {
+		"MessageDigest.SHA-256",
+		"Mac.HmacSHA256",
 		"Cipher.AES/GCM/NoPadding",
+		"Cipher.AES/CBC/PKCS5Padding",
 		"Signature.SHA256withRSA",
-		"SecretKeyFactory.PBKDF2WithHmacSHA256"
+		"SecretKeyFactory.PBKDF2WithHmacSHA256",
+		"Cipher."+TRASFORMAZIONE_OAEP
+	};
+
+	/** Algoritmi che solo BouncyCastle fornisce: sono la ragione per cui il provider resta registrato, e servono ad
+	 *  accorgersi di una rimozione o di un declassamento involontario. */
+	private static final String [] SERVIZI_ATTESI_BOUNCY_CASTLE = new String[] {
+		"MessageDigest.RIPEMD160",
+		"Cipher.Camellia"
 	};
 
 	/** Prefisso dei provider PKCS11, esclusi dal censimento: non fanno parte dell'installazione statica del jdk, vengono
@@ -163,9 +176,10 @@ public class ProviderBenchmarkTest {
 
 			System.out.println("Provider registrati: "+ProviderUtils.getProviderNames());
 
-			if(posizioneBouncyCastle!=1) {
-				throw new UtilsException("Atteso il provider '"+PROVIDER_BC+"' alla posizione 2, subito dopo '"+PROVIDER_SUN
-						+"', rilevato invece alla posizione "+(posizioneBouncyCastle+1));
+			int posizioneSunJce = ProviderUtils.getProviderNames().indexOf(ProviderUtils.PROVIDER_SUN_JCE);
+			if(posizioneBouncyCastle!=(posizioneSunJce+1)) {
+				throw new UtilsException("Atteso il provider '"+PROVIDER_BC+"' immediatamente dopo '"+ProviderUtils.PROVIDER_SUN_JCE
+						+"' (posizione "+(posizioneSunJce+2)+"), rilevato invece alla posizione "+(posizioneBouncyCastle+1));
 			}
 
 			// censimento: quanti servizi sono forniti anche dal jdk e quanti solamente da BouncyCastle
@@ -198,7 +212,13 @@ public class ProviderBenchmarkTest {
 			checkProvider("SecretKeyFactory", "PBEWithSHA1AndDESede", false);
 			System.out.println("Alias rimossi dall'istanza del provider: "+BouncyCastleUtilities.getBouncyCastleAliasRimossiPkcs12());
 
-			// tutti gli altri servizi devono continuare ad essere forniti da BouncyCastle
+			// gli algoritmi piu' utilizzati devono essere serviti dai provider del jdk, che sono accelerati
+			for (String servizio : SERVIZI_ATTESI_JDK) {
+				int separatore = servizio.indexOf('.');
+				checkProvider(servizio.substring(0, separatore), servizio.substring(separatore+1), false);
+			}
+
+			// gli algoritmi che il jdk non fornisce devono continuare ad arrivare da BouncyCastle
 			for (String servizio : SERVIZI_ATTESI_BOUNCY_CASTLE) {
 				int separatore = servizio.indexOf('.');
 				checkProvider(servizio.substring(0, separatore), servizio.substring(separatore+1), true);
@@ -227,6 +247,7 @@ public class ProviderBenchmarkTest {
 				case "SecretKeyFactory": return SecretKeyFactory.getInstance(algoritmo).getProvider().getName();
 				case "Signature": return Signature.getInstance(algoritmo).getProvider().getName();
 				case "MessageDigest": return MessageDigest.getInstance(algoritmo).getProvider().getName();
+				case "Mac": return Mac.getInstance(algoritmo).getProvider().getName();
 				default: throw new UtilsException("Tipo di servizio '"+tipo+"' non gestito");
 			}
 		}catch(UtilsException e) {
@@ -246,45 +267,42 @@ public class ProviderBenchmarkTest {
 		initBouncyCastle();
 		try {
 
-			// la risoluzione generica della trasformazione deve produrre MGF1 sul medesimo digest indicato nel nome:
-			// e' l'invariante da cui dipendono il formato dei segreti BYOK gia' scritti e la conformita' a RFC 7518 dei JWE
-			Cipher cipher = Cipher.getInstance(TRASFORMAZIONE_OAEP);
+			// La trasformazione indica il digest di OAEP ma non quello di MGF1: il provider del jdk assume SHA-1, che e' il
+			// default di 'OAEPParameterSpec', mentre BouncyCastle assume il digest indicato nel nome. Con il provider
+			// registrato dopo 'SunJCE' la risoluzione generica utilizza quindi MGF1 su SHA-1.
 			KeyPair keyPair = generaKeyPairRsa();
-			try {
-				cipher.init(Cipher.ENCRYPT_MODE, keyPair.getPublic());
-			}catch(Exception e) {
-				throw new UtilsException(e.getMessage(),e);
-			}
+			Cipher cipher = Cipher.getInstance(TRASFORMAZIONE_OAEP);
+			cipher.init(Cipher.ENCRYPT_MODE, keyPair.getPublic()); // i parametri effettivi sono esposti solo dopo l'inizializzazione
+			OAEPParameterSpec risoluzioneGenerica = getOaepParameterSpec(cipher);
+			System.out.println("Risoluzione generica di '"+TRASFORMAZIONE_OAEP+"': provider "+cipher.getProvider().getName()
+					+", digest "+risoluzioneGenerica.getDigestAlgorithm()
+					+", MGF1 "+((MGF1ParameterSpec)risoluzioneGenerica.getMGFParameters()).getDigestAlgorithm());
 
-			OAEPParameterSpec spec = getOaepParameterSpec(cipher);
+			// GovWay non si affida quindi ai default: i parametri vengono sempre indicati esplicitamente, con MGF1 sul
+			// medesimo digest della trasformazione, come richiesto da RFC 8017 e RFC 7518 e come faceva BouncyCastle.
+			OAEPParameterSpec spec = OAEPUtils.getOaepParameterSpec(TRASFORMAZIONE_OAEP);
+			if(spec==null) {
+				throw new UtilsException("Parametri OAEP non determinati per la trasformazione '"+TRASFORMAZIONE_OAEP+"'");
+			}
 			String digest = spec.getDigestAlgorithm();
 			String mgfDigest = ((MGF1ParameterSpec)spec.getMGFParameters()).getDigestAlgorithm();
-
-			System.out.println("Trasformazione '"+TRASFORMAZIONE_OAEP+"' risolta dal provider '"+cipher.getProvider().getName()
-					+"'; digest="+digest+", MGF1="+mgfDigest);
-
+			System.out.println("Parametri indicati da GovWay: digest "+digest+", MGF1 "+mgfDigest);
 			if(!DIGEST_OAEP.equals(digest) || !DIGEST_OAEP.equals(mgfDigest)) {
-				throw new UtilsException("Trasformazione '"+TRASFORMAZIONE_OAEP+"' risolta dal provider '"+cipher.getProvider().getName()
-						+"' con digest '"+digest+"' e MGF1 '"+mgfDigest+"'; attesi entrambi '"+DIGEST_OAEP
-						+"'. Con MGF1 su un digest differente diventano illeggibili i segreti gia' cifrati con BYOK ed i contenuti"
-						+" JOSE prodotti non sono conformi a RFC 7518: verificare la posizione del provider '"+PROVIDER_BC+"'");
+				throw new UtilsException("Attesi digest e MGF1 pari a '"+DIGEST_OAEP+"', rilevati '"+digest+"' e '"+mgfDigest
+						+"'. Con MGF1 su un digest differente diventano illeggibili i segreti gia' cifrati con BYOK ed i"
+						+" contenuti JOSE prodotti non sono conformi a RFC 7518");
 			}
 
-			// round trip con la sola risoluzione generica
+			// round trip attraverso le utility che GovWay utilizza per i segreti BYOK
 			byte [] dati = "GovWay OAEP round trip".getBytes();
-			try {
-				byte [] cifrato = cipher.doFinal(dati);
-				Cipher decipher = Cipher.getInstance(TRASFORMAZIONE_OAEP);
-				decipher.init(Cipher.DECRYPT_MODE, keyPair.getPrivate());
-				if(!java.util.Arrays.equals(dati, decipher.doFinal(cifrato))) {
-					throw new UtilsException("Round trip OAEP non riuscito");
-				}
-			}catch(UtilsException e) {
-				throw e;
-			}catch(Exception e) {
-				throw new UtilsException("Round trip OAEP non riuscito: "+e.getMessage(),e);
+			EncryptWrapKey encrypt = new EncryptWrapKey(keyPair.getPublic());
+			byte [] cifrato = encrypt.encrypt(dati, TRASFORMAZIONE_OAEP, "AES/CBC/PKCS5Padding");
+			byte [] letto = new DecryptWrapKey(keyPair.getPrivate()).decrypt(cifrato, encrypt.getWrappedKey(), encrypt.getIV(),
+					TRASFORMAZIONE_OAEP, "AES/CBC/PKCS5Padding");
+			if(!java.util.Arrays.equals(dati, letto)) {
+				throw new UtilsException("Round trip OAEP non riuscito");
 			}
-			System.out.println("Round trip con la risoluzione generica: ok");
+			System.out.println("Round trip con i parametri indicati da GovWay: ok");
 
 		}catch(UtilsException e) {
 			throw e;

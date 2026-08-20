@@ -1,3 +1,11 @@
+2026-08-20  Andrea Poli <apoli@link.it>
+
+	* [Utils, GovWayCore]
+	Il provider 'BouncyCastle' viene adesso registrato dopo i provider del jdk, piu' rapidi sugli algoritmi di uso comune
+	(TLS, SHA-256, HmacSHA256, AES-GCM, AES-CBC, PBKDF2) in quanto accelerati dagli intrinsics di HotSpot.
+	Il formato dei dati prodotti non cambia: i parametri OAEP vengono indicati esplicitamente sia da GovWay sia dalla libreria
+	'cxf-rt-rs-security-jose'.
+
 2026-08-17  Andrea Poli <apoli@link.it>
 
 	* [Utils]

@@ -24,6 +24,8 @@ package org.openspcoop2.utils.security;
 import java.security.Key;
 import java.security.cert.Certificate;
 
+import javax.crypto.spec.OAEPParameterSpec;
+
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
@@ -95,11 +97,25 @@ public class EncryptWrapKey  {
 			
 			// operazione di wrapping con la chiave asincrona
             Cipher cipher = Cipher.getInstance(wrappedKeyAlgorithm);
+            // I parametri OAEP vengono indicati esplicitamente, altrimenti il formato prodotto dipenderebbe da quale
+            // provider risolve la trasformazione; si veda la documentazione di 'OAEPUtils.getOaepParameterSpec'.
+            OAEPParameterSpec oaepParameterSpec = OAEPUtils.getOaepParameterSpec(wrappedKeyAlgorithm);
             if(this.certificate!=null) {
+            	// L'inizializzazione con il certificato viene comunque effettuata, poiche' la jvm vi associa i controlli
+            	// previsti sull'estensione keyUsage; solo successivamente il cipher viene reinizializzato indicando i
+            	// parametri OAEP, che non sono accettati dalla init che riceve un Certificate.
             	cipher.init(Cipher.WRAP_MODE, this.certificate);
+            	if(oaepParameterSpec!=null) {
+            		cipher.init(Cipher.WRAP_MODE, this.certificate.getPublicKey(), oaepParameterSpec);
+            	}
             }
             else {
-            	cipher.init(Cipher.WRAP_MODE, this.key);
+            	if(oaepParameterSpec!=null) {
+            		cipher.init(Cipher.WRAP_MODE, this.key, oaepParameterSpec);
+            	}
+            	else {
+            		cipher.init(Cipher.WRAP_MODE, this.key);
+            	}
             }
 
             // Esegue l'operazione di wrapping della chiave simmetrica con la chiave pubblica RSA

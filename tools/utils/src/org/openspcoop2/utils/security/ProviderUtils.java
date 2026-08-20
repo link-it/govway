@@ -46,11 +46,11 @@ public class ProviderUtils {
 		java.security.Security.addProvider(provider);
 	}
 	
-	public static final String PROVIDER_SUN_JCE = "SunJCE";
+	public static final String PROVIDER_SUN_JCE = BouncyCastleUtilities.PROVIDER_SUN_JCE;
 	
 	/**
-	 * Registra il provider BouncyCastle alla posizione 2, subito dopo il provider 'SUN', privandolo dei tre alias che
-	 * impediscono al jdk di leggere i keystore PKCS12.
+	 * Registra il provider BouncyCastle subito dopo 'SunJCE', privandolo dei tre alias che impedirebbero al jdk di
+	 * leggere i keystore PKCS12.
 	 * La posizione e' portante e non va modificata: si veda la documentazione di 'BouncyCastleUtilities.addBouncyCastleAfterSun'.
 	 **/
 	public static void addBouncyCastleAfterSun(boolean overrideIfExists) {
