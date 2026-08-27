@@ -44,6 +44,7 @@ public class Costanti {
 	
 	public static final String LABEL_VISUALIZZA = "visualizza";
 	public static final String LABEL_NON_DISPONIBILE = "non disp.";
+	public static final String LABEL_VISUALIZZA_INFORMAZIONI_CIFRATE = "Visualizza Informazioni Cifrate";
 	
 	
 	/** ARIA: nomi accessibili dei controlli privi di etichetta visibile */

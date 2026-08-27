@@ -17614,6 +17614,9 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		de = new DataElement();
 		de.setLabel(addTitle ? CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_STATO : "");
+		// senza titolo il select e' affiancato a quello dello stato della porta, che porta l'etichetta
+		// 'Stato': qui l'etichetta non viene resa a schermo ma serve come nome accessibile
+		de.setAccessibleLabel(CostantiControlStation.LABEL_PARAMETRO_CORS_STATO_RIDEFINITO);
 		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_STATO);
 		if(allHidden) {
 			de.setType(DataElementType.HIDDEN);

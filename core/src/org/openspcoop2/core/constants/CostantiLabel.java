@@ -281,6 +281,8 @@ public final class CostantiLabel {
 	public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_LABEL = MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_LABEL_CUSTOM_HEADER_NAME;
 	
 	public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_LABEL = "";
+	/** Nome accessibile del select, privo di etichetta visibile poiche' quella dell'header risiede su un item hidden */
+	public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_ACCESSIBLE_LABEL = "Presenza header " + MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_LABEL_CUSTOM_HEADER_NAME;
 	public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_LABEL_PAYLOAD_HTTP = "Presente solo con payload HTTP";
 	public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_LABEL_ALWAYS = "Presente sempre";
 	public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_LABEL_RICHIESTE_CON_PAYLOAD_HTTP_QUALSIASI_RISPOSTA = "Presente su richieste con payload e su qualsiasi risposta";

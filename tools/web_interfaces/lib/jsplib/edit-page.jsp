@@ -417,6 +417,13 @@ for (int i = 0; i < dati.size(); i++) {
   	String rowName="row_"+deName;
   	String deLabel = !de.getLabel(elementsRequiredEnabled).equals("") ? de.getLabel(elementsRequiredEnabled) : "&nbsp;";
   	String deLabelId = "de_label_"+i;
+  	// nome accessibile per i controlli la cui etichetta e' volutamente non visibile: la <label>
+  	// viene resa vuota, quindi senza questo attributo il controllo resta anonimo. Se l'etichetta
+  	// e' valorizzata non viene emesso nulla, per non mascherare il testo visibile
+  	String deAriaLabelAttr = "";
+  	if(de.isLabelEmpty() && !de.getAccessibleLabel().equals("")) {
+  		deAriaLabelAttr = " aria-label=\"" + ServletUtils.escapeHTMLAttribute(de.getAccessibleLabel()) + "\"";
+  	}
   	String deNote = de.getNote();
   	String classInput= de.getStyleClass();
   	String labelStyleClass= de.getLabelStyleClass();
@@ -816,7 +823,7 @@ for (int i = 0; i < dati.size(); i++) {
 								    			</div><%
 								    	} else {
 								    		String selDataAttributes = !de.getDataAttributesAsString().equals("") ? de.getDataAttributesAsString() : " ";
-								      		%><input type="text" name="<%= deName %>" value="<%= de.getValue() %>" class="<%= classInput %>" <%= selDataAttributes %> id="<%=textId %>" >
+								      		%><input type="text" name="<%= deName %>" value="<%= de.getValue() %>" class="<%= classInput %>" <%= selDataAttributes %> id="<%=textId %>" <%=deAriaLabelAttr %>>
 								      		<%
 								      			if(!de.getDataAttributesAsString().equals("")){
 								      				
@@ -962,7 +969,7 @@ for (int i = 0; i < dati.size(); i++) {
 									    		String maxValue = de.getMaxValue() != null ? " max=\"" + de.getMaxValue() + "\"" : "";
 									    		String customJsFunction = de.getCustomJsFunction() != null && !de.getCustomJsFunction().equals("")  ? " gw-function=\"" + de.getCustomJsFunction() + "\"" : "";
 									    		
-									      		%><input type="number" name="<%= deName %>" value="<%= de.getValue() %>" class="<%= classInput %>" <%=minvalue %> <%=maxValue %> <%=customJsFunction %> id="<%=numberId %>" >
+									      		%><input type="number" name="<%= deName %>" value="<%= de.getValue() %>" class="<%= classInput %>" <%=minvalue %> <%=maxValue %> <%=customJsFunction %> id="<%=numberId %>" <%=deAriaLabelAttr %>>
 									      	<% 
 								      		if(deInfo != null){
 								      			String idDivIconInfo = "divIconInfo_"+i;
@@ -1008,7 +1015,7 @@ for (int i = 0; i < dati.size(); i++) {
 													%>
 													<div class="lock-container">
 														<div class="lock-input-container">
-															<input class="<%= classInput %>" type="<%=dePwdType %>" name="<%= deName  %>" id="<%=idPwd %>" value="<%= dePasswordValue  %>">
+															<input class="<%= classInput %>" type="<%=dePwdType %>" name="<%= deName  %>" id="<%=idPwd %>" value="<%= dePasswordValue  %>" <%=deAriaLabelAttr %>>
 															<%
 									          				if (!bottoneGeneraPassword && visualizzaIconaMostraPassword) {
 										          				%>
@@ -1127,7 +1134,7 @@ for (int i = 0; i < dati.size(); i++) {
 							     					} else {
 							     						String taNoEdit = type.equals("textarea") ? " " : " readonly ";
 							     						%><div class="txtA_div">
-							     							<textarea id="<%=inputId %>" <%=taNoEdit %> rows='<%= de.getRows() %>' cols='<%= de.getCols() %>' name="<%= deName  %>" class="<%= classInput %>"><%= StringEscapeUtils.escapeHtml4(de.getValue()) %></textarea>
+							     							<textarea id="<%=inputId %>" <%=taNoEdit %> rows='<%= de.getRows() %>' cols='<%= de.getCols() %>' name="<%= deName  %>" class="<%= classInput %>" <%=deAriaLabelAttr %>><%= StringEscapeUtils.escapeHtml4(de.getValue()) %></textarea>
 							     							<% 
 													      		if(deInfo != null){
 													      			String idDivIconInfo = "divIconInfo_"+i;
@@ -1186,7 +1193,7 @@ for (int i = 0; i < dati.size(); i++) {
 		                                    	            	%> 
 		                                    	            	<div class="<%=classDivNoEdit %>"> <span class="<%=classSpanNoEdit %>" id="<%=id %>"><%=fileValue %></span></div><%
 		                                    	      		} else {
-		                                    	          		%><input id="<%=id %>" size='<%= de.getSize() %>' type=file name="<%= deName  %>" class="<%= classInput %>"  <%= multipleFiles  %> />
+		                                    	          		%><input id="<%=id %>" size='<%= de.getSize() %>' type=file name="<%= deName  %>" class="<%= classInput %>"  <%= multipleFiles  %> <%=deAriaLabelAttr %>/>
 													  		<% if(!de.getOnChange().equals("")){ 
 													  			String changeHandler = visualizzaAjaxStatus + "postVersion_" + de.getOnChange();
 													  		%>
@@ -1231,7 +1238,7 @@ for (int i = 0; i < dati.size(); i++) {
 		                               								String toolTipVal = ServletUtils.escapeHTMLAttribute(de.getToolTip());
 																	String selTitle = (toolTipVal!=null && !toolTipVal.equals("")) ? ("title='"+toolTipVal+"'") : " ";
 		                               								
-		                          									%><select id="<%= selId  %>" name="<%= deName  %>" <%= selTitle %> class="<%= classInput %>"><%
+		                          									%><select id="<%= selId  %>" name="<%= deName  %>" <%= selTitle %> class="<%= classInput %>" <%=deAriaLabelAttr %>><%
 		                          									String [] values = de.getValues();
 		                                        					if (values != null) {
 		                            									String [] labels = de.getLabels();
@@ -1355,7 +1362,7 @@ for (int i = 0; i < dati.size(); i++) {
 			                               								String selSize = " size='"+de.getRows()+"' ";
 			                               								String selDataAttributes = !de.getDataAttributesAsString().equals("") ? de.getDataAttributesAsString() : " ";
 			                               								
-			                          									%><select id="<%= selId  %>" name="<%= deName  %>" <%= selSize %> class="<%= classInput %>" multiple <%= selDataAttributes %> ><%
+			                          									%><select id="<%= selId  %>" name="<%= deName  %>" <%= selSize %> class="<%= classInput %>" multiple <%= selDataAttributes %> <%=deAriaLabelAttr %>><%
 			                          									String [] values = de.getValues();
 			                                        					if (values != null) {
 			                            									String [] labels = de.getLabels();
@@ -1479,6 +1486,13 @@ for (int i = 0; i < dati.size(); i++) {
 		                                        			} else { // else multi-select
 		                                        				if (type.equals("checkbox")){
 		                                        					String id = "form-checkbox-link_" + i;
+		                                        					// il testo del checkbox risiede in 'labelRight', reso a destra del controllo:
+		                                        					// quando la label a sinistra e' vuota e' quello l'unico nome disponibile
+		                                        					String idLabelRight = "de_label_right_" + i;
+		                                        					String ariaLabelledByChk = deAriaLabelAttr;
+		                                        					if(ariaLabelledByChk.equals("") && de.isLabelEmpty() && !de.getLabelRight().equals("")) {
+		                                        						ariaLabelledByChk = " aria-labelledby=\"" + idLabelRight + "\"";
+		                                        					}
 			                                        				%>
 			                                            			<div class="prop">
 			                                            				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%=id %>"><%=deLabel %></label>
@@ -1496,7 +1510,7 @@ for (int i = 0; i < dati.size(); i++) {
 								    									%>	<table class="<%=controlSetClass %>">
 						    													<tr> 
 						    														<td>
-								   														<input id="<%=id %>" type="checkbox" name="<%= deName  %>" value="yes" <%=chkVal %> <%=disVal %> >
+								   														<input id="<%=id %>" type="checkbox" name="<%= deName  %>" value="yes" <%=chkVal %> <%=disVal %> <%=ariaLabelledByChk %>>
 								   														<% if (!de.getOnClick().equals("")) { %>
 															            					<script type="text/javascript" nonce="<%= randomNonce %>">
 																						      	 $(document).ready(function(){
@@ -1509,7 +1523,7 @@ for (int i = 0; i < dati.size(); i++) {
 								   													</td>
 								   													<% if(!de.getLabelRight().equals("")){ %>
 								   													<td>
-								   														<span class="controlset"><%=de.getLabelRight() %></span>
+								   														<span class="controlset" id="<%=idLabelRight %>"><%=de.getLabelRight() %></span>
 								   													</td>
 								   													<% } %>
 								   													<%
@@ -1607,7 +1621,7 @@ for (int i = 0; i < dati.size(); i++) {
 																			      				String valueI = de.getValues()[z] == null ? "" : de.getValues()[z];
 																			      		%>
 																			      			<div class="intervalInnerDiv">
-																			      				<input type="number" id="<%=id %>" name="<%= nameI %>" value="<%= valueI %>" class="<%= classInput %> intervalInnerInput" <%=minvalue %> <%=maxValue %> <%=customJsFunction %> >
+																			      				<input type="number" id="<%=id %>" name="<%= nameI %>" value="<%= valueI %>" class="<%= classInput %> intervalInnerInput" <%=minvalue %> <%=maxValue %> <%=customJsFunction %> <%=deAriaLabelAttr %>>
 																			      			</div>
 																			      		<%
 																				      		} // end for
@@ -1715,7 +1729,7 @@ for (int i = 0; i < dati.size(); i++) {
 			                        								          				%>
 			                        														<div class="lock-input-container">
 			                        													<% } %>
-				                        													<input class="<%= classInput %>" type="<%=dePwdType %>" name="<%= deName  %>" id="<%=idPwd %>" value="<%= lockValue %>" <%=lockDisabled %> <%=autocompleteAttr %>>
+				                        													<input class="<%= classInput %>" type="<%=dePwdType %>" name="<%= deName  %>" id="<%=idPwd %>" value="<%= lockValue %>" <%=lockDisabled %> <%=autocompleteAttr %> <%=deAriaLabelAttr %>>
 				                        													<input type="hidden" name="<%= hiddenLockName  %>" id="<%=hiddenLockId %>" value="<%= deLockEscapedValue  %>">
 			                        													<%
 			                        							          				if (visualizzaComandiInternoInput) {

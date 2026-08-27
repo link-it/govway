@@ -226,6 +226,12 @@ if (!message.equals("") && messageType.equals(MessageType.DIALOG.toString())) {
 					String deValue = de.getValue();
 					String deName =  "be_name_"+i;
 					String deLabelId = "be_label_"+i;
+					// nome accessibile per i controlli la cui etichetta e' volutamente non visibile;
+					// se l'etichetta e' valorizzata non viene emesso nulla, per non mascherare il testo
+					String deAriaLabelAttr = "";
+					if(de.isLabelEmpty() && !de.getAccessibleLabel().equals("")) {
+						deAriaLabelAttr = " aria-label=\"" + ServletUtils.escapeHTMLAttribute(de.getAccessibleLabel()) + "\"";
+					}
 					String labelStyleClass= de.getLabelStyleClass();
 					String classInput= de.getStyleClass();
 					String iconaCtrlC = Costanti.ICON_COPY;
@@ -266,7 +272,7 @@ if (!message.equals("") && messageType.equals(MessageType.DIALOG.toString())) {
                    				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%=inputId %>"><%=deLabel %></label>
                    				<%
                    					String textNoEdit = " disabled ";
-						      		%><input id="<%=inputId %>" type="text" name="<%= deName %>" value="<%= StringEscapeUtils.escapeHtml4(de.getValue()) %>" class="<%= classInput %>" <%=textNoEdit %> >
+						      		%><input id="<%=inputId %>" type="text" name="<%= deName %>" value="<%= StringEscapeUtils.escapeHtml4(de.getValue()) %>" class="<%= classInput %>" <%=textNoEdit %> <%=deAriaLabelAttr %>>
 						      	<% 
 						      		if(visualizzaIconCopia){
 						      			String idDivIconInfo = "divIconInfo_"+i;
@@ -293,7 +299,7 @@ if (!message.equals("") && messageType.equals(MessageType.DIALOG.toString())) {
                        				<%
 		     						String taNoEdit = " readonly ";
 		     						%><div class="txtA_div_propDialog">
-		     							<textarea id="<%=inputId %>" <%=taNoEdit %> rows='<%= de.getRows() %>' cols='' name="<%= deName  %>" class="<%= classInput %> textAreaNoResize"><%= StringEscapeUtils.escapeHtml4(de.getValue()) %></textarea>
+		     							<textarea id="<%=inputId %>" <%=taNoEdit %> rows='<%= de.getRows() %>' cols='' name="<%= deName  %>" class="<%= classInput %> textAreaNoResize" <%=deAriaLabelAttr %>><%= StringEscapeUtils.escapeHtml4(de.getValue()) %></textarea>
 		     							<% 
 								      		if(visualizzaIconCopia){
 								      			String idDivIconInfo = "divIconInfo_"+i;
@@ -536,11 +542,11 @@ if (!message.equals("") && messageType.equals(MessageType.DIALOG.toString())) {
 <div id="dataElementInfoModal" title="Info">
 	<div id="dataElementInfoModalBody" class="contenutoModal"></div>
 </div>
-<div id="visualizzaInformazioniCifrateModal" title="Visualizza Informazioni Cifrate">
+<div id="visualizzaInformazioniCifrateModal" title="<%= Costanti.LABEL_VISUALIZZA_INFORMAZIONI_CIFRATE %>">
 	<div id="visualizzaInformazioniCifrateModalBody" class="contenutoModal">
 		<div class="propDialog">
 			<div class="txtA_div_propDialog_dec">
-				<textarea id="txtA_ne_dec" readonly rows="3" cols="62" name="txtA_ne_dec" class="inputLinkLong"></textarea>
+				<textarea id="txtA_ne_dec" readonly rows="3" cols="62" name="txtA_ne_dec" class="inputLinkLong" aria-label="<%= Costanti.LABEL_VISUALIZZA_INFORMAZIONI_CIFRATE %>"></textarea>
 			 	<div class="iconCopyBox" id="divIconInfo_dec">
 	      			<input type="hidden" name="__i_hidden_value_iconCopy_dec" id="hidden_value_iconCopy_dec"  value=""/>
 			      	<span class="spanIconCopyBox" title="Copia">

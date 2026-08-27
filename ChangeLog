@@ -1,7 +1,9 @@
 2026-08-27  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]
-	Aggiunto il nome accessibile ('aria-label') alle checkbox di selezione delle righe degli elenchi ed al select del numero di elementi per pagina, che ne erano privi.
+	- Aggiunto il nome accessibile ('aria-label') alle checkbox di selezione delle righe degli elenchi ed al select del numero di elementi per pagina, che ne erano privi.
+	- Aggiunto il nome accessibile ai controlli dei form la cui etichetta non viene resa a schermo, che ne erano privi.
+	- Corretto l'attributo 'for' delle etichette nelle finestre modali, che riferiva un identificativo inesistente.
 
 2026-08-20  Andrea Poli <apoli@link.it>
 

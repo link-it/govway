@@ -83,6 +83,12 @@ Dialog finestraDialog = (Dialog) request.getAttribute(idFinestraModale);
 				String deValue = de.getValue();
 				String deName =  "be_name_"+i;
 				String deLabelId = "be_label_"+i;
+				// nome accessibile per i controlli la cui etichetta e' volutamente non visibile;
+				// se l'etichetta e' valorizzata non viene emesso nulla, per non mascherare il testo
+				String deAriaLabelAttr = "";
+				if(de.isLabelEmpty() && !de.getAccessibleLabel().equals("")) {
+					deAriaLabelAttr = " aria-label=\"" + ServletUtils.escapeHTMLAttribute(de.getAccessibleLabel()) + "\"";
+				}
 				String labelStyleClass= de.getLabelStyleClass();
 				String classInput= de.getStyleClass();
 				String iconaCtrlC = Costanti.ICON_COPY;
@@ -123,7 +129,7 @@ Dialog finestraDialog = (Dialog) request.getAttribute(idFinestraModale);
                   				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%=inputId %>"><%=deLabel %></label>
                   				<%
                   					String textNoEdit = " disabled ";
-					      		%><input id="<%=inputId %>" type="text" name="<%= deName %>" value="<%= de.getValue() %>" class="<%= classInput %>" <%=textNoEdit %> >
+					      		%><input id="<%=inputId %>" type="text" name="<%= deName %>" value="<%= de.getValue() %>" class="<%= classInput %>" <%=textNoEdit %> <%=deAriaLabelAttr %>>
 					      	<% 
 					      		if(visualizzaIconCopia){
 					      			String idDivIconInfo = "divIconInfo_"+i;
@@ -144,9 +150,12 @@ Dialog finestraDialog = (Dialog) request.getAttribute(idFinestraModale);
       	     					if (type.equals("textarea-noedit")){
       								inputId = "txtA_ne" + i; 
       	     					}
+      	     					// l'id della textarea e' prefissato con l'id della finestra modale:
+      	     					// il 'for' della label deve riferire l'id completo, altrimenti l'associazione non si stabilisce
+      	     					String inputIdCompleto = idFinestraModale + "_" + inputId;
                   				%>
                       			<div class="propDialogInfoUso">
-                      				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%=inputId %>"><%=deLabel %></label>
+                      				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%=inputIdCompleto %>"><%=deLabel %></label>
                       				<%
 	     						String taNoEdit = " readonly ";
                       			String taNoResize = " txtA_propDialogInfoUsoNoResize ";
@@ -154,7 +163,7 @@ Dialog finestraDialog = (Dialog) request.getAttribute(idFinestraModale);
                       				taNoResize = " txtA_propDialogInfoUsoResize ";
                       			}
 	     						%><div class="txtA_div_propDialogInfoUso">
-	     							<textarea id="<%= idFinestraModale %>_<%=inputId %>" <%=taNoEdit %> rows='<%= de.getRows() %>' cols='' name="<%= deName  %>" class="<%= classInput %> <%= taNoResize %>"><%= de.getValue() %></textarea>
+	     							<textarea id="<%= inputIdCompleto %>" <%=taNoEdit %> rows='<%= de.getRows() %>' cols='' name="<%= deName  %>" class="<%= classInput %> <%= taNoResize %>" <%=deAriaLabelAttr %>><%= de.getValue() %></textarea>
 	     							<% 
 							      		if(visualizzaIconCopia){
 							      			String idDivIconInfo = "divIconInfo_"+i;

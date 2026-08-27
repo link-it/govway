@@ -824,6 +824,9 @@ public class ServletUtils {
 		BodyElement bodyElement = new Dialog().new BodyElement();
 		bodyElement.setType(DataElementType.TEXT_AREA);
 		bodyElement.setLabel("");
+		// l'etichetta non viene resa a schermo perche' ridondante con l'intestazione del dialogo,
+		// che resta come nome accessibile della textarea
+		bodyElement.setAccessibleLabel(headerRiga1);
 		bodyElement.setValue("");
 		bodyElement.setRows(15);
 		if(resizable!=null) {

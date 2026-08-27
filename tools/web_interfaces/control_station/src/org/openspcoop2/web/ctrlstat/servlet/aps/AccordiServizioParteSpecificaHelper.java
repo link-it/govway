@@ -7109,6 +7109,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				de.setType(DataElementType.TEXT_AREA);
 				de.setRows(CostantiControlStation.TEXT_AREA_DESCRIZIONE_ROWS);
 				de.setLabel(CostantiControlStation.LABEL_PROPRIETA_DESCRIZIONE_EMPTY);
+				// l'etichetta non viene resa a schermo perche' ridondante con il titolo della sezione
+				de.setAccessibleLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_DESCRIZIONE);
 			}
 			else {
 				de.setType(DataElementType.TEXT_EDIT);

@@ -217,6 +217,8 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 					ConsoleItemType.NUMBER,
 					idProfiloSicurezzaMessaggioIatTtlSecondsItem,
 					ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_IAT_SECONDS_LABEL);
+			// l'etichetta e' sul select della riga precedente: il campo resterebbe senza nome accessibile
+			secondsItem.setAccessibleLabel(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_IAT_LABEL_VALORE_RIDEFINITO);
 			secondsItem.setNote(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_IAT_SECONDS_NOTE);
 			secondsItem.setDefaultValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_IAT_SECONDS_DEFAULT_VALUE);
 			secondsItem.setRequired(requiredValue);
@@ -301,6 +303,8 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 						ConsoleItemType.TEXT_AREA,
 						ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_AUDIENCE_RISPOSTA_VALORE_ID, 
 						ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_AUDIENCE_RISPOSTA_VALORE_LABEL);
+				// l'etichetta e' sul checkbox della riga precedente: il campo resterebbe senza nome accessibile
+				audValueItem.setAccessibleLabel(rest ? ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_AUDIENCE_RISPOSTA_REST_LABEL : ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_AUDIENCE_RISPOSTA_SOAP_LABEL);
 				audValueItem.setRows(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_AUDIENCE_ROWS);
 				audValueItem.setColumns(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_AUDIENCE_COLUMNS);
 				audValueItem.setSingleLine(true);
@@ -465,6 +469,8 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 						ConsoleItemType.TEXT_AREA,
 						ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_AUDIENCE_INTEGRITY_RICHIESTA_ID, 
 						ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_AUDIENCE_INTEGRITY_LABEL);
+				// l'etichetta e' sul select della riga precedente: il campo resterebbe senza nome accessibile
+				audValueItem.setAccessibleLabel(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_AUDIENCE_LABEL);
 				audValueItem.setRows(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_AUDIENCE_ROWS);
 				audValueItem.setColumns(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_AUDIENCE_COLUMNS);
 				audValueItem.setSingleLine(true);
@@ -583,6 +589,8 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 					request ? ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_AUDIENCE_INTEGRITY_RICHIESTA_ID :
 						ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_AUDIENCE_INTEGRITY_RISPOSTA_ID, 
 					ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_AUDIENCE_INTEGRITY_LABEL);
+			// l'etichetta e' sul select della riga precedente: il campo resterebbe senza nome accessibile
+			audValueItem.setAccessibleLabel(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_AUDIENCE_LABEL);
 			audValueItem.setRows(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_AUDIENCE_ROWS);
 			audValueItem.setColumns(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_AUDIENCE_COLUMNS);
 			audValueItem.setSingleLine(true);
@@ -736,6 +744,8 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 				ConsoleItemType.TEXT_AREA,
 				ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIENCE_AUDIT_CUSTOM_RICHIESTA_ID, 
 				ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIENCE_AUDIT_CUSTOM_LABEL);
+		// l'etichetta e' sul select della riga precedente: il campo resterebbe senza nome accessibile
+		audValueItem.setAccessibleLabel(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIENCE_LABEL);
 		audValueItem.setRows(2);
 		if(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIENCE_VALUE_DEFAULT.equals(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIENCE_VALUE_SAME)) {
 			audValueItem.setType(ConsoleItemType.HIDDEN);
@@ -790,6 +800,8 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 				ConsoleItemType.TEXT_AREA,
 				ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_SCHEMA_ID_PREFIX+claimConfig.getNome(),
 				ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_SCHEMA_LABEL);
+		// l'etichetta e' sul select della riga precedente, valorizzata con il claim: il campo resterebbe senza nome accessibile
+		ridefineItem.setAccessibleLabel(claimConfig.getLabel());
 		ridefineItem.setRequired(true);
 		ridefineItem.setRows(2);
 		ridefineItem.setInfo(buildConsoleItemInfoCorniceSicurezza(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CODICE_ENTE_MODE_LABEL, rest));
@@ -821,6 +833,8 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 				ConsoleItemType.TEXT_AREA,
 				ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CODICE_ENTE_ID, 
 				ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CODICE_ENTE_LABEL);
+		// l'etichetta e' sul select della riga precedente: il campo resterebbe senza nome accessibile
+		profiloSicurezzaMessaggioCorniceCodiceEnteItem.setAccessibleLabel(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CODICE_ENTE_MODE_LABEL);
 		profiloSicurezzaMessaggioCorniceCodiceEnteItem.setRequired(true);
 		profiloSicurezzaMessaggioCorniceCodiceEnteItem.setRows(2);
 		profiloSicurezzaMessaggioCorniceCodiceEnteItem.setInfo(buildConsoleItemInfoCorniceSicurezza(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CODICE_ENTE_MODE_LABEL, rest));
@@ -848,6 +862,8 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 				ConsoleItemType.TEXT_AREA,
 				ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER_ID, 
 				ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER_LABEL);
+		// l'etichetta e' sul select della riga precedente: il campo resterebbe senza nome accessibile
+		profiloSicurezzaMessaggioCorniceUserItem.setAccessibleLabel(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER_MODE_LABEL);
 		profiloSicurezzaMessaggioCorniceUserItem.setRequired(true);
 		profiloSicurezzaMessaggioCorniceUserItem.setRows(2);
 		profiloSicurezzaMessaggioCorniceUserItem.setInfo(buildConsoleItemInfoCorniceSicurezza(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER_MODE_LABEL, rest));
@@ -875,6 +891,8 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 				ConsoleItemType.TEXT_AREA,
 				ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER_ID, 
 				ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER_LABEL);
+		// l'etichetta e' sul select della riga precedente: il campo resterebbe senza nome accessibile
+		profiloSicurezzaMessaggioCorniceIPUserItem.setAccessibleLabel(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER_MODE_LABEL);
 		profiloSicurezzaMessaggioCorniceIPUserItem.setRequired(true);
 		profiloSicurezzaMessaggioCorniceIPUserItem.setRows(2);
 		profiloSicurezzaMessaggioCorniceIPUserItem.setInfo(buildConsoleItemInfoCorniceSicurezza(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER_MODE_LABEL, rest));
@@ -3701,6 +3719,8 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 				ConsoleItemType.TEXT_AREA,
 				ModIConsoleCostanti.MODIPA_API_IMPL_PUSH_SIGNAL_HUB_PARAM_VALUE_ID_PREFIX+paramConfig.getNome(),
 				ModIConsoleCostanti.MODIPA_API_IMPL_PUSH_SIGNAL_HUB_PARAM_VALUE_LABEL);
+		// l'etichetta e' sul select della riga precedente, valorizzata con il parametro: il campo resterebbe senza nome accessibile
+		ridefineItem.setAccessibleLabel(paramConfig.getLabel());
 		ridefineItem.setRequired(true);
 		ridefineItem.setRows(2);
 		ridefineItem.setInfo(buildConsoleItemInfoCorniceSicurezza(paramConfig.getLabel(), rest));

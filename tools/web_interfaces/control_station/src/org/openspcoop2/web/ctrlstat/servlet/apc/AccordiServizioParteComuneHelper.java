@@ -3456,6 +3456,8 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			if(gestioneDescrizione && !tipoOperazione.equals(TipoOperazione.ADD)) {
 				de.setRows(CostantiControlStation.TEXT_AREA_DESCRIZIONE_ROWS);
 				de.setLabel(CostantiControlStation.LABEL_PROPRIETA_DESCRIZIONE_EMPTY);
+				// l'etichetta non viene resa a schermo perche' ridondante con il titolo della sezione
+				de.setAccessibleLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_DESCRIZIONE);
 			}
 		}else{
 			if(gestioneDescrizione) {

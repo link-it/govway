@@ -48,6 +48,7 @@ public abstract class AbstractConsoleItem<T> extends BaseConsoleItem {
 	private String note;
 	private ConsoleItemInfo info;
 	private String labelRight;
+	private String accessibleLabel;
 
 	protected AbstractConsoleItem(String id, String label, ConsoleItemType type) throws ProtocolException{
 		super(id, label, type);
@@ -157,6 +158,27 @@ public abstract class AbstractConsoleItem<T> extends BaseConsoleItem {
 	}
 	public void setLabelRight(String labelRight) {
 		this.labelRight = labelRight;
+	}
+
+	public String getAccessibleLabel() {
+		return this.accessibleLabel;
+	}
+	/**
+	 * Imposta il nome accessibile del controllo, utilizzato dalla console soltanto quando
+	 * l'etichetta non e' visibile a schermo.
+	 *
+	 * Da valorizzare dove l'etichetta viene volutamente omessa — perche' il testo e' gia' sulla
+	 * riga precedente, condivisa con un altro controllo, oppure nel titolo della sezione: quella
+	 * prossimita' visiva non e' disponibile a chi naviga con uno screen reader, che senza questo
+	 * nome troverebbe un controllo anonimo.
+	 *
+	 * Non altera l'etichetta: se questa e' valorizzata il nome accessibile viene ignorato, per non
+	 * mascherare il testo visibile.
+	 *
+	 * @param accessibleLabel Il nome del controllo
+	 */
+	public void setAccessibleLabel(String accessibleLabel) {
+		this.accessibleLabel = accessibleLabel;
 	}
 	
 	public void setUseDefaultValueForCloseableSection(boolean useDefaultValueForCloseableSection) throws ProtocolException {
