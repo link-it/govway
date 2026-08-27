@@ -1,9 +1,7 @@
 .. _configAvanzataSua:
 
-Adeguamento al formato di errori previsto dai servizi SUAP e SUE
---------------------------------------------------------------------------
-
-Il Sistema degli Sportelli Unici (SSU) comprende sia il SUAP (Sportello Unico per le Attività Produttive), disciplinato dal `DPR 160/2010 <https://github.com/AgID/specifiche-tecniche-DPR-160-2010>`_, sia il SUE (Sportello Unico per l’Edilizia), disciplinato dall’`Allegato Tecnico SUE <https://github.com/AgID/SUE-allegato-tecnico>`_. Entrambe le specifiche adottano la medesima architettura di interoperabilità basata su ModI, con gli stessi attori (BackOffice, FrontOffice, Ente Terzo, Registro Imprese) e lo stesso formato di errori.
+Adeguamento al formato di errori
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Le Linee Guida di Interoperabilità prevedono l’adozione del formato *Problem Details* , come definito nella specifica *RFC 7807* (https://tools.ietf.org/html/rfc7807), per la rappresentazione strutturata delle informazioni di errore.
 
@@ -15,7 +13,7 @@ Al contrario, il formato degli errori previsto dalle specifiche SUAP e SUE non r
 
       { "code": "ERROR_401_001", "message": "PDND token not found"}
 
-Utilizzando GovWay per la gestione dell’interoperabilità ModI, non è possibile delegare direttamente a livello di backend tutti i casi di errore previsti dalle specifiche tecniche (`SUAP - DPR-160 <https://github.com/AgID/specifiche-tecniche-DPR-160-2010/blob/approved01/specifiche_navigabili/08_e-service%20del%20SSU/08_06/08_06.md>`_, `SUE - Allegato Tecnico <https://github.com/AgID/SUE-allegato-tecnico>`_).
+Utilizzando GovWay per la gestione dell’interoperabilità ModI, non è possibile delegare direttamente a livello di backend tutti i casi di errore previsti dalle specifiche tecniche (`SUAP - DPR-160 <https://github.com/AgID/specifiche-tecniche-DPR-160-2010/blob/approved02/specifiche_navigabili/08_e-service%20del%20SSU/08_06/08_06.md>`_, `SUE - Allegato Tecnico <https://github.com/AgID/SUE-allegato-tecnico>`_).
 Ciò è dovuto al fatto che alcune comunicazioni vengono gestite direttamente da GovWay stesso, in presenza di errori di interoperabilità (ad esempio, token PDND non valido) o di problematiche di connettività verso il backend (ad esempio, connection refused o timeout).
 
 Per garantire la conformità con i formati di errore attesi è possibile attivare un plugin di tipo ‘message handler’ (:ref:`configOpzioniAvanzate`) all’interno dell’erogazione dei servizi SUAP o SUE.
@@ -43,7 +41,7 @@ Per attivare il plugin agire come segue:
 
 - Utilizzando la console in modalità avanzata (sezione :ref:`modalitaAvanzata`) accedere al dettaglio dell’erogazione per cui si intende abilitare la gestione personalizzata dell’errore. Entrare quindi nella sezione ‘Configura -> Opzioni Avanzate’
 
-.. figure::  ../_figure_console/ErogazioneSuap1.jpg
+.. figure::  ../../_figure_console/ErogazioneSuap1.jpg
     :scale: 50%
     :align: center
     :name: erogazioneSuap1
@@ -52,7 +50,7 @@ Per attivare il plugin agire come segue:
 
 - Nella sezione  ‘Handlers’, sotto-sezione ‘Handlers per la Risposta’, cliccare sul link ‘Out (precedente all’inoltro dei dati)’ per poter registrare l’handler che realizza la personalizzazione dell’errore come atteso dalle specifiche SUAP/SUE.
 
-.. figure:: ../_figure_console/ErogazioneSuap2.jpg
+.. figure:: ../../_figure_console/ErogazioneSuap2.jpg
     :scale: 70%
     :align: center
     :name: erogazioneSuap2
@@ -61,9 +59,12 @@ Per attivare il plugin agire come segue:
 
 - Infine per gestire l'errore ‘ERROR_400_001’ deve essere abilitata la validazione dei contenuti agendo come segue nella sezione: 'Erogazione -> Dettaglio -> Configurazione -> Validazione'
 
-.. figure:: ../_figure_console/ErogazioneSuapValidazione.jpg
+.. figure:: ../../_figure_console/ErogazioneSuapValidazione.jpg
     :scale: 50%
     :align: center
     :name: erogazioneSuapValidazione
 
     Attivazione validazione dei contenuti per la personalizzazione dell'errore 'ERROR_400_001'
+
+.. note::
+    Le GovLet descritte nella sezione :ref:`configAvanzataSsuGovlet` attivano già il plugin e la validazione dei contenuti su tutte le erogazioni che configurano.

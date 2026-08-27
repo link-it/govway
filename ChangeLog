@@ -1,3 +1,12 @@
+2026-08-27  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità #1793
+	Realizzate le GovLet SUAP in versione 2, allineate alla versione 'approved02' delle specifiche tecniche del DPR 160/2010
+	(https://github.com/AgID/specifiche-tecniche-DPR-160-2010/tree/approved02/openAPI): sono state recepite le nuove operation
+	degli e-service già presenti ed è stato aggiunto il nuovo e-service 'ET-to-ET', relativo al coinvolgimento ricorsivo tra
+	Enti Terzi. Le GovLet allineate alla versione 'approved01' rimangono disponibili come versione 1.
+
 2026-08-17  Andrea Poli <apoli@link.it>
 
 	* [Utils]
