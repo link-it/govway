@@ -178,7 +178,7 @@ if(csrfTokenFromSession == null)
 					  //checkbox remove
 					  %><td class="<%= stile %>">
 					  	<div align="center">
-					  		<input type="checkbox" name="selectcheckbox" value="<%= i %>"/>
+					  		<input type="checkbox" name="selectcheckbox" value="<%= i %>" aria-label="<%= ServletUtils.getAriaLabelSelezioneRiga(e, i) %>"/>
 					  	</div>
 					  </td><%
 					}

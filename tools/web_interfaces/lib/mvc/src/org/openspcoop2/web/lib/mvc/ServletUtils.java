@@ -1590,4 +1590,77 @@ public class ServletUtils {
 		
 		return sanitized;
 	}
+
+	/**
+	 * Costruisce il nome accessibile (attributo {@code aria-label}) della checkbox di selezione
+	 * di una riga di elenco. La checkbox non ha etichetta visibile, poiche' l'intestazione della
+	 * colonna e' vuota: senza {@code aria-label} uno screen reader annuncia soltanto "casella di
+	 * controllo, non selezionata", senza indicare a quale riga si riferisce.
+	 *
+	 * @param riga La riga dell'elenco, ovvero la lista di {@link DataElement} che la compone
+	 * @param indiceRiga Indice della riga nell'elenco, usato per il nome di riserva
+	 * @return Il nome accessibile, sanitizzato e pronto per essere inserito in un attributo HTML
+	 * @see #getTestoIdentificativoRiga(List)
+	 */
+	public static String getAriaLabelSelezioneRiga(List<?> riga, int indiceRiga) {
+		return getAriaLabelSelezioneRiga(getTestoIdentificativoRiga(riga), indiceRiga);
+	}
+
+	/**
+	 * Variante che riceve direttamente il testo identificativo della riga.
+	 *
+	 * Il nome non ha un limite di lunghezza proprio: non essendo reso a schermo non ha vincoli di
+	 * layout, e {@link #escapeHTMLAttribute(String)} tronca gia' a 250 caratteri per compatibilita'
+	 * dell'attributo HTML.
+	 *
+	 * @param labelRiga Testo identificativo della riga; puo' essere null o vuoto
+	 * @param indiceRiga Indice della riga nell'elenco, usato per il nome di riserva
+	 * @return Il nome accessibile, sanitizzato e pronto per essere inserito in un attributo HTML
+	 */
+	public static String getAriaLabelSelezioneRiga(String labelRiga, int indiceRiga) {
+		String label = labelRiga != null ? labelRiga.trim() : "";
+		if (label.isEmpty()) {
+			return escapeHTMLAttribute(Costanti.LABEL_ARIA_SELEZIONA_ELEMENTO_GENERICO_PREFIX + (indiceRiga + 1));
+		}
+		return escapeHTMLAttribute(Costanti.LABEL_ARIA_SELEZIONA_ELEMENTO_PREFIX + label);
+	}
+
+	/**
+	 * Individua il testo che identifica una riga di elenco per l'utente, ovvero il valore del primo
+	 * {@link DataElement} che concorre al riepilogo testuale della riga.
+	 *
+	 * Vengono scartati gli elementi che non fanno parte di quel riepilogo: quelli non visualizzati
+	 * ({@code hidden}) e quelli resi come icona di stato, casella di selezione o etichetta laterale
+	 * ({@code image}, {@code checkbox}, {@code button}). E' la stessa suddivisione applicata dalle
+	 * viste custom degli elenchi ({@code deploy/jsp/list/*.jsp}), che compongono il titolo della
+	 * riga a partire dal primo elemento non classificato in quel modo. I {@link DataElement} delle
+	 * viste custom non hanno il tipo valorizzato, quindi la selezione non puo' basarsi sul tipo
+	 * {@code text}: sarebbe soddisfatta solo dagli elenchi a vista standard.
+	 *
+	 * @param riga La riga dell'elenco, ovvero la lista di {@link DataElement} che la compone
+	 * @return Il testo identificativo della riga, oppure null se la riga non ne ha uno
+	 */
+	public static String getTestoIdentificativoRiga(List<?> riga) {
+		if (riga == null) {
+			return null;
+		}
+		for (Object o : riga) {
+			if (!(o instanceof DataElement)) {
+				continue;
+			}
+			DataElement de = (DataElement) o;
+			String type = de.getType();
+			if (DataElementType.HIDDEN.toString().equals(type)
+					|| DataElementType.IMAGE.toString().equals(type)
+					|| DataElementType.CHECKBOX.toString().equals(type)
+					|| DataElementType.BUTTON.toString().equals(type)) {
+				continue;
+			}
+			String value = de.getValue();
+			if (value != null && !value.trim().isEmpty()) {
+				return value;
+			}
+		}
+		return null;
+	}
 }

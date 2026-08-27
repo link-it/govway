@@ -46,6 +46,14 @@ public class Costanti {
 	public static final String LABEL_NON_DISPONIBILE = "non disp.";
 	
 	
+	/** ARIA: nomi accessibili dei controlli privi di etichetta visibile */
+	
+	public static final String LABEL_ARIA_SELEZIONA_TUTTI = "Seleziona tutti gli elementi dell'elenco";
+	public static final String LABEL_ARIA_SELEZIONA_ELEMENTO_PREFIX = "Seleziona ";
+	public static final String LABEL_ARIA_SELEZIONA_ELEMENTO_GENERICO_PREFIX = "Seleziona elemento ";
+	public static final String LABEL_ARIA_NUMERO_ELEMENTI_PER_PAGINA = "Numero di elementi per pagina";
+	
+	
 	/** Multipart */
 	public static final String MULTIPART = "multipart/form-data";
 	public static final String MULTIPART_FILENAME = "filename";

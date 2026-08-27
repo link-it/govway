@@ -187,7 +187,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 							  %>
 							  <td class="tableHeaderChkAll">
 							  	<div align="center">
-							  		<input id="chkAll" type="checkbox" name="chkAll"/>
+							  		<input id="chkAll" type="checkbox" name="chkAll" aria-label="<%= Costanti.LABEL_ARIA_SELEZIONA_TUTTI %>"/>
 							  		<script type="text/javascript" nonce="<%= randomNonce %>">
 										$(document).ready(function(){
 											$('#chkAll').click(function() {
@@ -244,10 +244,11 @@ if (hidden!=null && !hidden.isEmpty()) {
 								}
 								
 								String idCheckbox = ServletUtils.normalizeId("_" + (idToRemove!=null ? idToRemove : i));
+								String ariaLabelCheckbox = ServletUtils.getAriaLabelSelezioneRiga(e, i);
 							   %>
 								<td class="tdText">
 							   		<div align="center">
-							   			<input id="<%=idCheckbox %>" type="checkbox" name="selectcheckbox" value='<% if(idToRemove!=null) out.write(idToRemove);else out.write(""+i); %>' <%=checkBoxSelected %>/>
+							   			<input id="<%=idCheckbox %>" type="checkbox" name="selectcheckbox" value='<% if(idToRemove!=null) out.write(idToRemove);else out.write(""+i); %>' <%=checkBoxSelected %> aria-label="<%= ariaLabelCheckbox %>"/>
 							   			<script type="text/javascript" nonce="<%= randomNonce %>">
 										      $(document).ready(function(){
 													$('#<%=idCheckbox %>').click(function() {
@@ -700,7 +701,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 										//Scelta numero di entries da visualizzare
 										if ((pd.getNumEntries() > 20) || (pd.getIndex() != 0)) {
 										  %></td>
-											<td><select id="ds_limit_bottom" name="limit"><%
+											<td><select id="ds_limit_bottom" name="limit" aria-label="<%= Costanti.LABEL_ARIA_NUMERO_ELEMENTI_PER_PAGINA %>"><%
 										  switch (pd.getPageSize()) {
 										    case 20 :
 											%>
