@@ -30,5 +30,5 @@ Funzionalità Avanzate
 	byokNodiManager
 	logger/index.rst
 	plugins/index.rst
-	suap
+	suap/index.rst
 	health_check/index.rst
