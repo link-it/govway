@@ -1,110 +1,155 @@
+<p align="right">
+  <b>English</b> | <a href="README.it.md">Italiano</a>
+</p>
+
 <p align="center">
   <img src="https://www.link.it/wp-content/uploads/2025/01/logo-govway.svg" alt="GovWay Logo" width="200"/>
 </p>
 
-# GovWay - API Gateway per la Pubblica Amministrazione
+# GovWay - API Gateway for Public Administration
+
 [![Quality Gate Status](https://jenkins.link.it/govway4-sonarqube-badge)](https://jenkins.link.it/govway4-sonarqube/dashboard?id=govway)
 [![Build Status](https://jenkins.link.it/govway4/buildStatus/icon?job=GovWay&style=plastic)](https://jenkins.link.it/govway4/job/GovWay/)
-[![Docker](https://github.com/link-it/govway/blob/master/resources/images/docker.svg)](https://hub.docker.com/r/linkitaly/govway)
+[![Docker](./resources/images/docker.svg)](https://hub.docker.com/r/linkitaly/govway)
 [![Documentation Status](https://readthedocs.org/projects/govway/badge/?version=latest&style=plastic)](https://govway.readthedocs.io/it/latest/?badge=latest)
-[![License](https://github.com/link-it/govway/blob/master/resources/images/license.svg)](https://raw.githubusercontent.com/link-it/govway/master/LICENSE)
+[![License](./resources/images/license.svg)](https://raw.githubusercontent.com/link-it/govway/3.4.x/LICENSE)
 
-Dall’esperienza della Porta di Dominio italiana, l’API Gateway conforme alle normative della Pubblica Amministrazione:
-- Conformità agli standard di mercato: gestione protocolli standard di mercato, come SOAP 1.1 e 1.2, API restful serializzate in Json o XML o semplici dati binari su Http.
-- Conformità alle specifiche italiane per l'interoperabilità: supporto delle nuove linee guida per l'interoperabilità di AGID (ModI). Viene inoltre assicurata la retrocompatibilità con il protocollo SPCoop, ancora ampiamente adottato per i servizi della PA. 
-- Conformità alle specifiche dell'interoperabilità europea: supporto supporto del protocollo AS4, tramite integrazione con il Building Block eDelivery del progetto europeo CEF (Connecting European Facilities).
-- Conformità alle specifiche per la fatturazione elettronica sul canale SdiCoop.
+Based on the experience of the Italian "Porta di Dominio", GovWay is the API Gateway compliant with Public Administration regulations, able to guarantee:
 
-## Contributi
+- **Compliance with market standards**: support for standard market protocols, such as SOAP 1.1 and 1.2, RESTful APIs serialized in JSON or XML, or simple binary data over HTTP.
 
-È possibile partecipare attraverso la creazione di [issues](https://github.com/link-it/govway/issues) e [pull requests](https://github.com/link-it/govway/pulls).
+- **Compliance with Italian interoperability specifications**: support for AGID's new interoperability guidelines (ModI), including native integration with PDND for consuming and providing e-services. Backward compatibility with the SPCoop protocol, still widely adopted for Public Administration services, is also ensured.
 
-Il progetto possiede un backlog di supporto tecnico costituito dalle [Issue di tipo 'Support'](https://github.com/link-it/govway/issues?utf8=%E2%9C%93&q=is%3Aissue+label%3A%22support%22+).
+- **Compliance with European interoperability specifications**: support for the AS4 protocol, through integration with the eDelivery Building Block of the European CEF (Connecting European Facilities) project.
 
+- **Compliance with the specifications for electronic invoicing** on the SdiCoop channel.
 
-## Documentazione
+## Contributions
 
-Sito WEB del Progetto: 
+You can participate by creating [issues](https://github.com/link-it/govway/issues) and [pull requests](https://github.com/link-it/govway/pulls).
+
+The project maintains a technical support backlog made up of [Issues labeled 'Support'](https://github.com/link-it/govway/issues?utf8=%E2%9C%93&q=is%3Aissue+label%3A%22support%22+).
+
+## Documentation
+
+Project website:
+
 * https://govway.org
 
-Documentazione online:
+Online documentation:
+
 * [Read the docs](https://govway.readthedocs.io/it/latest/) ([download](https://readthedocs.org/projects/govway/downloads/htmlzip/latest/))
-* Backlog di supporto tecnico costituito dalle [Issue di tipo 'Support'](https://github.com/link-it/govway/issues?utf8=%E2%9C%93&q=is%3Aissue+label%3A%22support%22+)
+* Technical support backlog made up of [Issues labeled 'Support'](https://github.com/link-it/govway/issues?utf8=%E2%9C%93&q=is%3Aissue+label%3A%22support%22+)
 
-Documentazione PDF:
-* [Manuale di Installazione](./resources/doc/pdf/GovWay-ManualeInstallazione.pdf)
-* [Manuale Utente](./resources/doc/pdf/GovWay-ManualeUtente.pdf)
-* [Manuale di Monitoraggio](./resources/doc/pdf/GovWay-ManualeMonitoraggio.pdf)
+PDF documentation:
 
+* [Installation Manual](./resources/doc/pdf/GovWay-ManualeInstallazione.pdf)
+* [User Manual](./resources/doc/pdf/GovWay-ManualeUtente.pdf)
+* [Monitoring Manual](./resources/doc/pdf/GovWay-ManualeMonitoraggio.pdf)
 
 ## Docker
 
-Ambienti di prova delle versioni stabili di GovWay, containerizzati in formato Docker, sono disponibile su [Docker Hub
-](https://hub.docker.com/r/linkitaly/govway).
+Test environments for stable GovWay versions, containerized in Docker format, are available on [Docker Hub](https://hub.docker.com/r/linkitaly/govway).
 
-Il progetto [govway-docker](https://github.com/link-it/govway-docker) fornisce tutto il necessario per produrre un nuovo ambiente di prova per GovWay funzionante, containerizzato in formato Docker, a partire anche da versioni non stabili o dai sorgenti.
+The [govway-docker](https://github.com/link-it/govway-docker) project provides everything needed to build a new, ready-to-use GovWay test environment, containerized in Docker format, starting even from unstable versions or from source releases.
 
 ## Govlet
 
-* [Fatturazione Attiva](./resources/doc/govlet/Fatturazione/Govlet_FatturaPA_FatturazioneAttiva.pdf)
-* [Fatturazione Passiva](./resources/doc/govlet/Fatturazione/Govlet_FatturaPA_FatturazionePassiva.pdf)
+* [Active Invoicing](./resources/doc/govlet/Fatturazione/Govlet_FatturaPA_FatturazioneAttiva.pdf)
+* [Passive Invoicing](./resources/doc/govlet/Fatturazione/Govlet_FatturaPA_FatturazionePassiva.pdf)
 * [PagoPA](./resources/doc/govlet/pagoPA/Govlet_pagoPA.pdf)
 * [SIOPE+](./resources/doc/govlet/SiopePlus/Govlet_SiopePlus.pdf)
 * [ANPR](./resources/doc/govlet/ANPR/Govlet_ANPR.pdf)
 
-## Contatti
+## Contacts
 
-- Mailing list: [Utenti GovWay](https://govway.org/mailing)
-- Segnalazioni: [GitHub Issues](https://github.com/link-it/GovWay/issues)
+- Mailing list: [GovWay Users](https://govway.org/mailing)
+- Reports: [GitHub Issues](https://github.com/link-it/govway/issues)
 
-# Le funzionalità principali
-## Standard di Mercato
-Supporto API conformi ai protocolli standard di mercato, come SOAP 1.1 e 1.2, API restful serializzate in Json o XML o semplici dati binari su Http. L'integrazione avviene sempre tramite le API applicative native, indipendentemente dai profili di interoperabilità adottati, gestiti in maniera trasparente dal gateway.
-## Conformità alle specifiche di interoperabilità italiane ed europee
-Conformità delle API (sia in fruzione che in erogazione) alle nuove Linee Guida AGID di Interoperabilità, sia per i profili tecnici previsti dal nuovo modello di interoperabilità (ModI), sia per la gestione dei token rilasciati dalla PDND (signed jwt, purposeId, sessionInfo). Il tutto in maniera trasparente alle applicazioni interne al dominio. 
-Supporto del "building block" eDelivery del progetto europeo CEF (Connecting European Facilities). 
-Retrocompatibilità con il protocollo SPCoop, ancora ampiamente adottato per i servizi della PA.
-## Registro delle API
-La registrazione delle API può avvenire manualmente o tramite caricamento dei descrittori delle interfacce (OpenAPI 3.0 o Swagger 2 per i servizi REST, WSDL per i servizi SOAP, Accordi di Servizio per i servizi SPCoop).
-## Gestione Govlet
-GovWay introduce il concetto di Govlet, un formato di archivio caricabile direttamente dalle Console del prodotto, per una rapida configurazione dei servizi della Pubblica Amministrazione. Ad oggi la libreria di GovLet disponibili per GovWay include i servizi di Fatturazione Elettronica (attiva e passiva), PagoPA e SIOPE+ ed è in rapida espansione.
-## Gestione token
-Gestione token di autenticazione conformi agli standard JWT, OAuth2 e OIDC, sia nella fase di fruizione che di erogazione dei servizi.
-In fase di erogazione: supporto della validazione dei token e della verifica dei claim per le successive fasi di autenticazione e autorizzazione, anche interagendo con Authorization Server esterni tramite funzionalità di Introspection e UserInfo.
-In fase di fruizione: supporto alla negoziazione dei token con grant type Client Credentials, Resource Owner Password e Signed JWT (RFC 7523).
+# Key Features
+
+## Market Standards
+
+Support for APIs compliant with standard market protocols, such as SOAP 1.1 and 1.2, RESTful APIs serialized in JSON or XML, or simple binary data over HTTP. Integration always takes place through native application APIs, regardless of the interoperability profiles adopted, which are handled transparently by the gateway.
+
+## Compliance with Italian and European interoperability specifications
+
+Compliance of APIs (both consumption and provisioning) with AGID's new Interoperability Guidelines, both for the technical profiles required by the new interoperability model (ModI) and for the management of tokens issued by PDND (signed JWT, purposeId, sessionInfo). All of this is handled transparently to the applications internal to the domain managed by the gateway.
+Support for the "eDelivery" building block of the European CEF (Connecting European Facilities) project.
+Backward compatibility with the SPCoop protocol, still widely adopted for Public Administration services.
+
+## API Registry
+
+APIs can be registered manually or by uploading interface descriptors (OpenAPI 3.0 or Swagger 2 for REST services, WSDL for SOAP services, Service Agreements for SPCoop services).
+
+## Govlet Management
+
+GovWay introduces the concept of Govlet, an archive format that can be uploaded directly from the product's Consoles, for rapid configuration of Public Administration services. To date, the library of Govlets available for GovWay includes Electronic Invoicing services (active and passive), PagoPA and SIOPE+, and is rapidly expanding.
+
+## Token Management
+
+Management of authentication tokens compliant with the JWT, OAuth2 and OIDC standards, both during service consumption and provisioning.
+During provisioning: support for token validation and claim verification for subsequent authentication and authorization phases, including interaction with external Authorization Servers via Introspection and UserInfo features.
+During consumption: support for token negotiation with Client Credentials, Resource Owner Password and Signed JWT (RFC 7523) grant types.
+
 ## Rate Limiting
-Regolazione del traffico in ingresso su GovWay, limitando il numero di richieste o la dimensione di banda occupata per specifiche erogazioni o fruizioni, anche in funzione di parametri come il tempo medio di elaborazione, la quantità di errori o in base a caratteristiche delle specifiche richieste applicative.
-## Autenticazione
-Gestione dell'autenticazione delle richieste applicative in ingresso e in uscita dal proprio dominio, tramite supporto nativo dei protocolli HTTP-Basic, TLS e ApiKey o tramite integrazione di sistemi esterni di Identity Management.
-## Autorizzazione
-Gestione dell'autorizzazione delle richieste applicative, tramite registrazione dei fruitori delle API gestite e dei loro ruoli, o tramite integrazione con sistemi esterni di Identity Management. Supporto dei protocolli di Autorizzazione Oauth2 e XACML, con la possibilità di gestire la valutazione delle policy XACML localmente o utilizzando un Policy Decision Point esterno.
-## Trasformazione Messaggi
-È possibile modificare i messaggi in transito, sia per quanto riguarda il Protocollo, da SOAP a REST o viceversa, sia per quanto riguarda la trasformazione dei contenuti dei messaggi (header, properties o payload).
-##  Validazione
-Validazione dei contenuti delle richieste applicative, con verifica dei messaggi XML per i servizi SOAP e JSON o XML per i servizi REST. La validazione viene effettuata rispetto alle descrizioni delle API (OpenAPI, Swagger, WSDL, JSON Schema, XSD) registrate in fase di configurazione del servizio.
-## Caching della Risposta
-Per ogni API è possibile abilitare la funzionalità di cache delle risposte in modo che successive richieste, con le medesime caratteristiche (uri, http header, payload), vengano servite direttamente dal gateway fino alla scadenza di un timeout configurabile.
-## Gestione CORS
-Possibilità di gestire il cross-origin HTTP request (CORS) sia globalmente, in modo che sia valido per tutte le API, che puntualmente, perfezionandolo sulla singola erogazione o fruizione.
-## Tracciamento
-Emissione di tracce conformi alle normative per ogni richiesta applicativa gestita. Oltre ai metadati riguardanti la richiesta di servizio (id transazione, mittente, destinatario, ...) è possibile riportare nelle tracce elementi identificativi estratti dai messaggi in transito; la modalità di estrazione supportate dal prodotto sono: XPath, Espressioni Regolari e JSONPath.
-## Sicurezza dei contenuti
-Il gateway può intervenire per introdurre o verificare la sicurezza delle richieste applicative. Nel caso di API SOAP è supportato lo standard WS-Security. Nel caso di API REST sono supportati i protocolli XMLEncryption e XMLSignature, per i messaggi XML, e JOSE (JWS/JWE) per i messaggi JSON.
-## Gestione del formato MTOM
-Il gateway è in grado di imbustare o sbustare in accordo al protocollo MTOM il messaggio in transito. In caso di validazione di un messaggio MTOM, il gateway potrà normalizzare il messaggio prima di effettuarne la validazione per poi ripristinare il formato originale una volta completato il processo di validazione.
-## Routing della richiesta
-Consegna della richiesta ai servizi di backend, con supporto nativo per i seguenti protocolli di connessione: http, https con mutua autenticazione, jms e scrittura su file. Ulteriori connettori possono essere realizzati come semplici plugin.
-## Console di Gestione
-Cruscotto web per la registrazione di API (interfacce), Erogazioni (implementazioni), Fruizioni (subscription) e delle varie policy che le regolano. La gestione di vari profili di utenza permette di selezionare le funzioni di gestione sulla base dei ruoli dei diversi gestori. Tutte le operazioni sono sottoposte ad auditing, in modo da poter sempre individuare gli autori delle modifiche effettuate alle configurazioni.
-## Console di Monitoraggio
-Cruscotto web rivolto alla diagnostica ed al monitoraggio del traffico gestito dall'API gateway; ai gestori dell'infrastruttura assicura un controllo totale sui messaggi in transito, aiutando a diagnosticare e prevenire qualunque tipo di anomalia; ai responsabili di progetto offre la possibilità di analizzare i flussi di utilizzo, gli esiti e l'efficienza complessiva delle API utilizzate nel proprio progetto.
 
+Regulation of inbound traffic on GovWay, limiting the number of requests or the amount of bandwidth used for specific provisioning or consumption services, also based on parameters such as average processing time, error rate, or characteristics of the specific application requests.
 
-# Licenza
-GovWay - A customizable API Gateway 
+## Authentication
+
+Handles authentication of inbound and outbound application requests to and from the internal domain, through native support for HTTP-Basic, TLS and ApiKey protocols, or through integration with external Identity Management systems.
+
+## Authorization
+
+Handles authorization of application requests, through registration of the consumers of the managed APIs and their roles, or through integration with external Identity Management systems. Support for OAuth2 and XACML Authorization protocols, with the ability to manage the evaluation of XACML policies locally or by using an external Policy Decision Point.
+
+## Message Transformation
+
+Messages in transit can be modified, both in terms of Protocol, from SOAP to REST or vice versa, and in terms of transforming message contents (headers, properties or payload).
+
+## Validation
+
+Validation of application request contents, with verification of XML messages for SOAP services and JSON or XML for REST services. Validation is performed against the API descriptions (OpenAPI, Swagger, WSDL, JSON Schema, XSD) registered during service configuration.
+
+## Response Caching
+
+For each API, it is possible to enable response caching so that subsequent requests with the same characteristics (URI, HTTP headers, payload) are served directly by the gateway until a configurable timeout expires.
+
+## CORS Support
+
+Ability to configure cross-origin HTTP requests (CORS) either globally, so that it applies to all APIs, or specifically, refining it for a single provisioning or consumption service.
+
+## Tracing
+
+Generation of traces compliant with regulations for every managed application request. In addition to metadata regarding the service request (transaction id, sender, recipient, ...), it is possible to include identifying elements extracted from messages in transit in the traces; the extraction methods supported by the product are: XPath, Regular Expressions and JSONPath.
+
+## Content Security
+
+The gateway can add or verify security measures for application requests. For SOAP APIs, the WS-Security standard is supported. For REST APIs, the XMLEncryption and XMLSignature protocols are supported for XML messages, and JOSE (JWS/JWE) for JSON messages.
+
+## MTOM Format Handling
+
+The gateway is able to wrap or unwrap the message in transit according to the MTOM protocol. When validating an MTOM message, the gateway can normalize the message before performing validation and then restore the original format once the validation process is complete.
+
+## Request Routing
+
+Delivery of the request to backend services, with native support for the following connection protocols: HTTP, HTTPS with mutual authentication, JMS and file writing. Additional connectors can be implemented as simple plugins.
+
+## Management Console
+
+Web console for registering APIs (interfaces), Provisioning (implementations), Consumption (subscriptions) and the various policies that govern them. Support for different user profiles allows administrative functions to be selected according to the roles of the various administrators. All operations are subject to auditing, so that the authors of any changes made to the configurations can always be identified.
+
+## Monitoring Console
+
+Web console for diagnostics and monitoring of traffic managed by the API gateway; it provides infrastructure administrators with full control over messages in transit, helping to diagnose and prevent any type of anomaly; for project managers, it offers the ability to analyze usage flows, outcomes and the overall efficiency of the APIs used in their project.
+
+# License
+
+GovWay - A customizable API Gateway
 https://govway.org
 
-Copyright (c) 2005-2026 Link.it srl (https://link.it). 
+Copyright (c) 2005-2026 Link.it srl (https://link.it).
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License version 3, as published by
