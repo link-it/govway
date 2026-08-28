@@ -1794,7 +1794,6 @@ div.txtA_div_propDialog_dec {
     text-align: center;
     border-radius: 3px;
     background: ${api.resources.httpmethod.background.color};
-    text-shadow: 0 1px 0 rgba(0,0,0,.1);
     color: ${api.resources.httpmethod.color};
 }
 
@@ -1804,22 +1803,27 @@ div.txtA_div_propDialog_dec {
 
 .resource-method-block.resource-method-post {
 	 background-color: ${api.resources.httpmethod.background.post.color};
+	 color: ${api.resources.httpmethod.color.dark};
 }
 
 .resource-method-block.resource-method-put {
 	   background-color: ${api.resources.httpmethod.background.put.color};
+	   color: ${api.resources.httpmethod.color.dark};
 }
  
 .resource-method-block.resource-method-delete {
 	  background-color: ${api.resources.httpmethod.background.delete.color};
+	  color: ${api.resources.httpmethod.color.dark};
 }
 
 .resource-method-block.resource-method-get {
 	  background-color: ${api.resources.httpmethod.background.get.color};
+	  color: ${api.resources.httpmethod.color.dark};
 }
 
 .resource-method-block.resource-method-patch {
 	  background-color: ${api.resources.httpmethod.background.patch.color};
+	  color: ${api.resources.httpmethod.color.dark};
 }
 
 .resource-method-block.resource-method-head {
@@ -2655,6 +2659,8 @@ div.txtA_div_propDialogInfoUso {
 li.protocolloItem {
 	list-style-type:disc; 
 	margin-left:12px;
+	/* separazione fra le voci, prima ottenuta con un <br> non ammesso come figlio di <ul> */
+	margin-top:1.2em;
 }
 
 .lock-container {

@@ -4,6 +4,9 @@
 	- Aggiunto il nome accessibile ('aria-label') alle checkbox di selezione delle righe degli elenchi ed al select del numero di elementi per pagina, che ne erano privi.
 	- Aggiunto il nome accessibile ai controlli dei form la cui etichetta non viene resa a schermo, che ne erano privi.
 	- Corretto l'attributo 'for' delle etichette nelle finestre modali, che riferiva un identificativo inesistente.
+	- Corretto il contrasto dei badge dei metodi HTTP nell'elenco delle risorse, che con il testo bianco scendeva fino a 1.60:1 rispetto alla soglia di 4.5:1.
+	- Il badge del metodo PATCH passa al ciano, essendo poco distinguibile da quello del metodo POST.
+	- Rimosso un 'br' emesso come figlio diretto di 'ul' nell'elenco dei protocolli.
 
 2026-08-20  Andrea Poli <apoli@link.it>
 

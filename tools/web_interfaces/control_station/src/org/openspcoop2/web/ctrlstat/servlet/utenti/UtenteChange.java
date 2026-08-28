@@ -326,7 +326,8 @@ public final class UtenteChange extends Action {
 					String webSiteProtocollo = utentiHelper.getWebSiteProtocollo(protocollo);
 					String labelProtocollo = utentiHelper.getLabelProtocollo(protocollo); 
 
-					sbProtocolli.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+					// la spaziatura fra le voci e' governata da 'li.protocolloItem': un <br> qui sarebbe
+					// figlio diretto di <ul>, che ammette solo <li>, <script> e <template>
 					sbProtocolli.append("<li class=\"protocolloItem\">");
 					sbProtocolli.append("<p><i>");
 					String linkSito = "<a href=\""+webSiteProtocollo+"\" target=\"_blank\" rel=\"noopener\">"+labelProtocollo+"</a>";
