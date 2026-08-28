@@ -22,6 +22,10 @@ rm -f jquery.context-menu.min.js
 rm -f jquery.context-menu.min.js
 ./js-minifier.sh jquery.context-menu.src.js jquery.context-menu.min.js
 
+# jquery-ui-tabs-a11y.js
+rm -f jquery-ui-tabs-a11y.min.js
+./js-minifier.sh jquery-ui-tabs-a11y.js jquery-ui-tabs-a11y.min.js
+
 # jquery.searchabledropdown-1.0.8.src.js
 rm -f jquery.searchabledropdown.min.js
 ./js-minifier.sh jquery.searchabledropdown-1.0.8.src.js jquery.searchabledropdown.min.js

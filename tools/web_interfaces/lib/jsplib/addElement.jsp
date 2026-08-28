@@ -68,6 +68,8 @@ String jQueryUiVersion = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUT
 <!-- JQuery lib-->
 <script type="text/javascript" src="<%=MessageFormat.format(Costanti.LIB_JQUERY_PATH, jQueryVersion) %>" nonce="<%= randomNonce %>"></script>
 <script type="text/javascript" src="<%=MessageFormat.format(Costanti.LIB_JQUERY_UI_PATH, jQueryUiVersion) %>" nonce="<%= randomNonce %>"></script>
+<!-- adattamento di accessibilita' del widget 'tabs': deve seguire jquery-ui e precedere ogni chiamata a .tabs() -->
+<script type="text/javascript" src="js/jquery-ui-tabs-a11y.min.js" nonce="<%= randomNonce %>"></script>
 <script type="text/javascript" src="js/ui.datepicker-it.js" nonce="<%= randomNonce %>"></script>
 <jsp:include page="/jsplib/browserUtils.jsp" flush="true" />
 <jsp:include page="/jsplib/utils.jsp" flush="true" />

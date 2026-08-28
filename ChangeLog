@@ -9,6 +9,7 @@
 	- Rimosso un 'br' emesso come figlio diretto di 'ul' nell'elenco dei protocolli.
 	- Aggiunto il nome accessibile ai campi multi-valore generati da 'bootstrap-tagsinput', che ne erano privi, ed escluso dalla navigazione assistita il campo decorativo di 'typeahead'.
 	- I tag dei gruppi di un'API venivano resi con stili diversi a seconda della modalita' della pagina e del numero di tag presenti.
+	- Le schede realizzate con il widget 'tabs' di jQuery UI contenevano un collegamento raggiungibile dalle tecnologie assistive, che veniva annunciato all'interno di ogni scheda.
 
 2026-08-20  Andrea Poli <apoli@link.it>
 

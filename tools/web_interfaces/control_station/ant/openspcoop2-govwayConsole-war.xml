@@ -404,6 +404,7 @@
 				<include name="autocomplete.min.js"/>
 				<include name="bootstrap-tagsinput.min.js"/>
 				<include name="jquery.context-menu.min.js"/>
+				<include name="jquery-ui-tabs-a11y.min.js"/>
 				<include name="jquery.searchabledropdown.min.js"/>
 				<include name="login-utils.min.js"/>
 				<include name="PostBack.min.js"/>
