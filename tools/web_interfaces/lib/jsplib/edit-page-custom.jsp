@@ -66,7 +66,7 @@ if(csrfTokenFromSession == null)
 %>
 
 
-<td valign="top" class="td2PageBody">
+<td valign="top" class="td2PageBody" role="main" id="gw-contenuto">
 	<form name="form" <%=encTypeS %> action="<%= gd.getUrl() %>" method="post">
 		<!-- Breadcrumbs -->
 		<jsp:include page="/jsplib/titlelist.jsp" flush="true" />

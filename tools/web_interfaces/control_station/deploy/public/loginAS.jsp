@@ -104,14 +104,14 @@ $(document).ready(function(){
 </script>
 </head>
 <body marginwidth=0 marginheight=0>
-	<table class="bodyWrapper">
+	<table class="bodyWrapper" role="presentation">
 		<tbody>
 			<% if(StringUtils.isNotEmpty(logoImage)){ %>
 			<!-- TR Logo -->
 			<!-- TR1: Header1 -->
 			<tr class="trPageHeaderLogo">
 			 	<td colspan="2" class="tdPageHeaderLogo">
-					<table class="tablePageHeader">
+					<table class="tablePageHeader" role="presentation">
 						<tbody>
 							 <tr>
 							 	<td colspan="2" align="left">
@@ -131,8 +131,8 @@ $(document).ready(function(){
 			<% } %>
 			<!-- TR1: Header1 -->
 			<tr class="trPageHeader">
-			 	<td colspan="2" class="tdPageHeader">
-					<table class="tablePageHeader">
+			 	<td colspan="2" class="tdPageHeader" role="banner">
+					<table class="tablePageHeader" role="presentation">
 						<tbody>
 							 <tr>
 							  	<td class="td1PageHeader">
@@ -161,7 +161,7 @@ $(document).ready(function(){
 			</tr>
 			<!-- TR3: Body -->
 			<tr class="trPageBody">
-				<td valign="top" class="td2PageBody">
+				<td valign="top" class="td2PageBody" role="main" id="gw-contenuto">
 					<form name="form" action="<%= contextPath %>/j_security_check" method="post">
 						<!-- Breadcrumbs -->
 						<table id="crumbs-table">

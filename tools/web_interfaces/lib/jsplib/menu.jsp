@@ -44,7 +44,7 @@ PageData pd = ServletUtils.getObjectFromSession(request, session, PageData.class
 String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE);
 %>
 
-<td class="td1PageBody" valign='top'>
+<td class="td1PageBody" valign='top' role="navigation" aria-label="<%= Costanti.LABEL_ARIA_MENU_PRINCIPALE %>">
 	<div id="menuct" class="<%= (gd!=null && gd.isMenuDisabled()) ? "menu-disabled" : "" %>">
 		<% 
 			List<?> v = pd.getMenu(); 

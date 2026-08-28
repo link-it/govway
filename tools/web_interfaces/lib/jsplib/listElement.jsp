@@ -245,7 +245,7 @@ function Esporta(tipo) {
 <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
 </head>
 <body marginwidth=0 marginheight=0>
-	<table class="bodyWrapper">
+	<table class="bodyWrapper" role="presentation">
 		<tbody>
 			<jsp:include page="/jsplib/templateHeader.jsp" flush="true" />
 			<tr class="trPageBody">

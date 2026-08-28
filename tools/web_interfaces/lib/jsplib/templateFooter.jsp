@@ -39,7 +39,7 @@ String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CS
 %>
 <!-- TR4: Footer -->
 <tr class="trPageFooter">
-	<td colspan="2" class="tdPageFooter">
+	<td colspan="2" class="tdPageFooter" role="contentinfo">
 		<div>
 			<a href="<%= gd.getLinkFoot() %>" target="_blank" rel="noopener">
 				<img src="images/tema_link/logo_link_footer.png" alt="link.it" />

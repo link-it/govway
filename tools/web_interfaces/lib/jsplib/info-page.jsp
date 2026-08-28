@@ -64,7 +64,7 @@ String csrfTokenFromSession = ServletUtils.leggiTokenCSRF(request, session);
 if(csrfTokenFromSession == null)
 	csrfTokenFromSession = "";
 %>
-<td valign="top" class="td2PageBody">
+<td valign="top" class="td2PageBody" role="main" id="gw-contenuto">
 	<form name="form"  <%=hFormMethod  %> >
 		<%
 		if(!csrfTokenFromSession.equals("")){

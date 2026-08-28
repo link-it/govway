@@ -68,7 +68,7 @@ String jQueryVersion = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_
 </head>
 <body marginwidth=0 marginheight=0>
 	<jsp:include page="/jsplib/versionPopup.jsp" flush="true" />
-	<table class="bodyWrapper">
+	<table class="bodyWrapper" role="presentation">
 		<tbody>
 			<jsp:include page="/jsplib/templateHeader.jsp" flush="true" />
 			<tr class="trPageBody">

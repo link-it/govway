@@ -87,7 +87,7 @@ if(idsPassword == null)
 %>
 
 
-<td class="valignTop" class="td2PageBody">
+<td class="valignTop td2PageBody" role="main" id="gw-contenuto">
 	<form name="form" <%=encTypeS %> action="<%= gd.getUrl() %>" method="post">
 		<!-- Breadcrumbs -->
 		<jsp:include page="/jsplib/titlelist.jsp" flush="true" />
