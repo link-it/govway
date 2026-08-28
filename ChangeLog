@@ -7,6 +7,8 @@
 	- Corretto il contrasto dei badge dei metodi HTTP nell'elenco delle risorse, che con il testo bianco scendeva fino a 1.60:1 rispetto alla soglia di 4.5:1.
 	- Il badge del metodo PATCH passa al ciano, essendo poco distinguibile da quello del metodo POST.
 	- Rimosso un 'br' emesso come figlio diretto di 'ul' nell'elenco dei protocolli.
+	- Aggiunto il nome accessibile ai campi multi-valore generati da 'bootstrap-tagsinput', che ne erano privi, ed escluso dalla navigazione assistita il campo decorativo di 'typeahead'.
+	- I tag dei gruppi di un'API venivano resi con stili diversi a seconda della modalita' della pagina e del numero di tag presenti.
 
 2026-08-20  Andrea Poli <apoli@link.it>
 

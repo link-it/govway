@@ -880,25 +880,25 @@ for (int i = 0; i < dati.size(); i++) {
 									      				    		<%
 									      				    		if(multiColors) { 
 									      				    			String [] supportoColori = de.getStatusValues();
+									      				    			String [] supportoNomi = de.getStatusToolTips();
 									      				    		%>
-										      				    		tagClass: function(item, index) {
-										      				    			
-										      				    			var supportoColori_<%= deName %> = [];	
+										      				    		tagClass: function(item) {
+										      				    			// la classe di ogni tag e' indicizzata per nome del gruppo, non per posizione: la libreria
+										      				    			// passa l'indice soltanto quando il valore iniziale contiene il delimitatore, quindi con un
+										      				    			// solo tag non arrivava e lo stile risultava diverso da quello ottenuto con due o piu' tag
+										      				    			var coloriTag_<%= deName %> = {};
 										      				    			<% 
-												      						if (supportoColori != null) {
-												      							for (int v = 0; v < supportoColori.length; v++) {
-			                            											%> supportoColori_<%= deName %>.push('<%= supportoColori[v]  %>'); <%
-				                            									} //end for values
-												      							%>
-										      				    			<%
-					                                        					}
-												      						%>
-										      				    			if(index !== undefined && index < supportoColori_<%= deName %>.length){
-// 										      				    				return 'label label-info label-info-' + (index % Costanti.NUMERO_GRUPPI_CSS);
-										      				    				return 'label label-info ' + supportoColori_<%= deName %>[index];
-										      				    			}
-										      				    			
-										      				    			return 'label label-info label-info-default';
+												      							if (supportoColori != null && supportoNomi != null) {
+												      								for (int v = 0; v < supportoColori.length && v < supportoNomi.length; v++) {
+												      									if(supportoNomi[v] != null) {
+			                            											%> coloriTag_<%= deName %>['<%= StringEscapeUtils.escapeEcmaScript(supportoNomi[v]) %>'] = '<%= supportoColori[v] %>'; <%
+												      									}
+												      								} //end for values
+												      							}
+										      				    			%>
+										      				    			// un tag digitato e non ancora salvato non ha un colore assegnato: 'label-info-nuovo'
+										      				    			// condivide la resa delle altre classi della famiglia, cosi' non risulta diverso dagli altri
+										      				    			return 'label label-info ' + (coloriTag_<%= deName %>[item] || 'label-info-nuovo');
 										      				    		  }
 									      				    		<% if(multiColors && values != null) { %>
 									      				    		, 	

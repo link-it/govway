@@ -130,7 +130,9 @@
 .label-info.label-info-26,
 .label-info.label-info-27,
 .label-info.label-info-28,
-.label-info.label-info-29 { background-color: transparent; color: ${body.color}; border: 1px solid ${body.color}; font-size: 12px; border-radius: 8px; font-weight: normal;}
+.label-info.label-info-29,
+/* tag digitato e non ancora salvato: nessun colore assegnato, stessa resa degli altri */
+.label-info.label-info-nuovo { background-color: transparent; color: ${body.color}; border: 1px solid ${body.color}; font-size: 12px; border-radius: 8px; font-weight: normal;}
 
 
 

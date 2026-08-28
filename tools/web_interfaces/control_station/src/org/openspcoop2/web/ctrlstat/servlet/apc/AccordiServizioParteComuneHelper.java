@@ -3496,10 +3496,10 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		de.setSize(this.getSize());
 		
 		if(modificheAbilitate) {
-			if(tipoOperazione.equals(TipoOperazione.ADD)) {
-				de.enableTags();
-			} else {
-				de.enableTags(true);
+			// il campo e' multicolore in entrambe le modalita', altrimenti in inserimento i tag
+			// assumerebbero lo stile di ripiego e risulterebbero diversi da quelli in modifica
+			de.enableTags(true);
+			if(!tipoOperazione.equals(TipoOperazione.ADD)) {
 				// supporto con i colori dei tag gia' presenti
 				if(!StringUtils.isBlank(gruppi)) {
 					// colleziono i tags registrati
