@@ -54,7 +54,7 @@ Dialog finestraDialog = (Dialog) request.getAttribute(idFinestraModale);
   			<% if(!"".equals(icona)) { %>
 	  		<div id="finestraDialogInfoUsoModalHeaderSx" class="finestraDialogInfoUsoModalHeaderSx">
 		  		<span class="icon-box">
-					<i class="material-icons md-36"><%= icona %></i>
+					<i class="material-icons md-36" aria-hidden="true"><%= icona %></i>
 				</span>
 			</div>
 			<% }%>
@@ -115,7 +115,7 @@ Dialog finestraDialog = (Dialog) request.getAttribute(idFinestraModale);
 				      	%> 	<div class="iconCopyBox" id="<%=idDivIconInfo %>">
 				      			<input type="hidden" name="__i_hidden_value_<%= idIconCopy %>" id="hidden_value_<%= idIconCopy %>"  value="<%= StringEscapeUtils.escapeHtml4(de.getValue()) %>"/>
 						      	<span class="spanIconCopyBox" <%= iconaCtrlCTitle %> >
-									<i class="material-icons md-18" id="<%=idIconCopy %>"><%= iconaCtrlC %></i>
+									<i class="material-icons md-18" aria-hidden="true" id="<%=idIconCopy %>"><%= iconaCtrlC %></i>
 								</span>
 							</div>
 				      	<% } %>
@@ -137,7 +137,7 @@ Dialog finestraDialog = (Dialog) request.getAttribute(idFinestraModale);
 					      	%> 	<div class="iconCopyBox" id="<%=idDivIconInfo %>">
 					      			<input type="hidden" name="__i_hidden_value_<%= idIconCopy %>" id="hidden_value_<%= idIconCopy %>"  value="<%= StringEscapeUtils.escapeHtml4(de.getValue()) %>"/>
 							      	<span class="spanIconCopyBox" <%= iconaCtrlCTitle %>>
-										<i class="material-icons md-18" id="<%=idIconCopy %>"><%= iconaCtrlC %></i>
+										<i class="material-icons md-18" aria-hidden="true" id="<%=idIconCopy %>"><%= iconaCtrlC %></i>
 									</span>
 								</div>
 					      	<% } 
@@ -171,7 +171,7 @@ Dialog finestraDialog = (Dialog) request.getAttribute(idFinestraModale);
 							      	%> 	<div class="iconCopyBox" id="<%=idDivIconInfo %>">
 							      			<input type="hidden" name="__i_hidden_value_<%= idIconCopy %>" id="hidden_value_<%= idIconCopy %>"  value="<%= StringEscapeUtils.escapeHtml4(de.getValue()) %>"/>
 									      	<span class="spanIconCopyBox" <%= iconaCtrlCTitle %>>
-												<i class="material-icons md-18" id="<%=idIconCopy %>"><%= iconaCtrlC %></i>
+												<i class="material-icons md-18" aria-hidden="true" id="<%=idIconCopy %>"><%= iconaCtrlC %></i>
 											</span>
 										</div>
 							      	<% } %>

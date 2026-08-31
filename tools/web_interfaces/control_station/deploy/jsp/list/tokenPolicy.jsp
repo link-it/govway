@@ -105,7 +105,7 @@ visualizzaMetadati = listRiepilogo.size() > 1;
 				
 					<div class="iconInfoBoxList" id="<%=idDivIconMenu %>" <%=tipComandiMenu %> >
     						<span class="icon-box" id="<%=idSpanMenu %>">
-								<i class="material-icons md-18" id="<%=idIconMenu %>"><%= iconaComandiMenu %></i>
+								<i class="material-icons md-18" aria-hidden="true" id="<%=idIconMenu %>"><%= iconaComandiMenu %></i>
 							</span>
    					</div>
    					

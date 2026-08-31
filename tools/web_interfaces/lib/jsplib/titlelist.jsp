@@ -134,7 +134,7 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 			<td colspan="2">
 				<div class="messages-<%= noticeSeverity %> version-notice">
 					<div class="version-notice-content">
-						<% if(noticeIcon!=null && !noticeIcon.trim().isEmpty()){ %><i class="material-icons md-18 version-notice-icon"><%= noticeIcon %></i><% } %>
+						<% if(noticeIcon!=null && !noticeIcon.trim().isEmpty()){ %><i class="material-icons md-18 version-notice-icon" aria-hidden="true"><%= noticeIcon %></i><% } %>
 						<span class="version-notice-text"><%= noticeMessage %></span>
 						<% if(noticeActionUrl!=null && !noticeActionUrl.trim().isEmpty() && noticeActionLabel!=null && !noticeActionLabel.trim().isEmpty()){ %>
 						<a class="version-notice-action" href="<%= noticeActionUrl %>" target="_blank" rel="noopener"><%= noticeActionLabel %></a>

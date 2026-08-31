@@ -11,6 +11,9 @@
 	- I tag dei gruppi di un'API venivano resi con stili diversi a seconda della modalita' della pagina e del numero di tag presenti.
 	- Le schede realizzate con il widget 'tabs' di jQuery UI contenevano un collegamento raggiungibile dalle tecnologie assistive, che veniva annunciato all'interno di ogni scheda.
 	- Le pagine non offrivano alcun modo per saltare i blocchi ripetuti: sono state introdotte le regioni 'banner', 'navigation', 'main' e 'contentinfo', e le tabelle usate per l'impaginazione non vengono piu' annunciate come tabelle.
+	- Le icone decorative venivano annunciate dalle tecnologie assistive come caratteri privi di significato: sono adesso escluse dalla navigazione assistita.
+	- I comandi resi con la sola icona (mostra/nascondi password, modifica del valore, scorrimento delle schede) hanno adesso un nome accessibile e sono attivabili da tastiera.
+	- La validazione dei campi effettuata al salvataggio prendeva in esame anche i campi nascosti, bloccando l'operazione su valori che l'utente non ha modo di correggere: era il caso della descrizione di un connettore multiplo, non resa a schermo, il cui valore memorizzato terminava con uno spazio.
 
 2026-08-20  Andrea Poli <apoli@link.it>
 

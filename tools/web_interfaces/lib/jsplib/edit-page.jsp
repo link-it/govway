@@ -484,14 +484,14 @@ for (int i = 0; i < dati.size(); i++) {
 		    							<%
 		    							if(gestioneAperturaFieldset){
 		    							%>
-	    									<i class="material-icons md-16" id="<%= deName  %>__icon" title="<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>"><%= Costanti.ICON_VISUALIZZA_SEZIONE_FILTRI_RICERCA%></i>
+	    									<i class="material-icons md-16" aria-hidden="true" id="<%= deName  %>__icon" title="<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>"><%= Costanti.ICON_VISUALIZZA_SEZIONE_FILTRI_RICERCA%></i>
 	    							    <%
 		    							}
 		    	    					%>
 		    	    					<%
 		    							if(refresh){
 		    							%>
-	    									<i class="material-icons md-16" id="<%= deName  %>__icon_refresh" title="<%= Costanti.ICONA_REFRESH_SEZIONE_TOOLTIP%>"><%= Costanti.ICONA_REFRESH_SEZIONE%></i>
+	    									<i class="material-icons md-16" aria-hidden="true" id="<%= deName  %>__icon_refresh" title="<%= Costanti.ICONA_REFRESH_SEZIONE_TOOLTIP%>"><%= Costanti.ICONA_REFRESH_SEZIONE%></i>
 	    							    <%
 		    							}
 		    	    					%>
@@ -576,7 +576,7 @@ for (int i = 0; i < dati.size(); i++) {
    							if(gestioneAperturaSubTitle){
    							%>
 	       					<span class="subtitleAnchor">
-	       						<i class="material-icons md-16" id="<%= deName  %>__icon" title="<%= Costanti.TOOLTIP_VISUALIZZA_SUBTITLE%>"><%= Costanti.ICON_VISUALIZZA_SUBTITLE%></i>
+	       						<i class="material-icons md-16" aria-hidden="true" id="<%= deName  %>__icon" title="<%= Costanti.TOOLTIP_VISUALIZZA_SUBTITLE%>"><%= Costanti.ICON_VISUALIZZA_SUBTITLE%></i>
 	       					</span>
 	       					<%
    							}
@@ -585,7 +585,7 @@ for (int i = 0; i < dati.size(); i++) {
   							if(refresh){
   							%>
 	       					<span class="subtitleRefresh">
-								<i class="material-icons md-16" id="<%= deName  %>__icon_refresh" title="<%= Costanti.ICONA_REFRESH_SEZIONE_TOOLTIP%>"><%= Costanti.ICONA_REFRESH_SEZIONE%></i>
+								<i class="material-icons md-16" aria-hidden="true" id="<%= deName  %>__icon_refresh" title="<%= Costanti.ICONA_REFRESH_SEZIONE_TOOLTIP%>"><%= Costanti.ICONA_REFRESH_SEZIONE%></i>
 	       					</span>
 	       					<%
    							}
@@ -601,7 +601,7 @@ for (int i = 0; i < dati.size(); i++) {
   							%>
   								<span class="subtitle">
 									<span class="subtitleRefresh">
-										<i class="material-icons md-16" id="<%= deName  %>__icon_refresh" title="<%= Costanti.ICONA_REFRESH_SEZIONE_TOOLTIP%>"><%= Costanti.ICONA_REFRESH_SEZIONE%></i>
+										<i class="material-icons md-16" aria-hidden="true" id="<%= deName  %>__icon_refresh" title="<%= Costanti.ICONA_REFRESH_SEZIONE_TOOLTIP%>"><%= Costanti.ICONA_REFRESH_SEZIONE%></i>
 									</span>
 									<a class="<%=cssClassTitle %>" ><%=deLabel %></a>
 								</span>
@@ -740,7 +740,7 @@ for (int i = 0; i < dati.size(); i++) {
 						      			<input type="hidden" name="__i_hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
 						      			<input type="hidden" name="__i_hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
 								      	<span class="spanIconInfoBox">
-											<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
+											<i class="material-icons md-24" aria-hidden="true" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
 										</span>
 									</div>
 						      	<% } %>
@@ -785,7 +785,7 @@ for (int i = 0; i < dati.size(); i++) {
 			                					%>
 			                					<a id="<%=id %>" class="text-action-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" type="button" >
 			                						<span class="icon-box">
-														<i class="material-icons md-16"><%= deIconName %></i>
+														<i class="material-icons md-16" aria-hidden="true"><%= deIconName %></i>
 													</span>
 													<% if (!image.getOnClick().equals("")) {
 											  			String clickHandler = visualizzaAjaxStatus + "postVersion_" + image.getOnClick();
@@ -941,7 +941,7 @@ for (int i = 0; i < dati.size(); i++) {
 								      			<input type="hidden" name="__i_hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
 								      			<input type="hidden" name="__i_hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
 										      	<span class="spanIconInfoBox">
-													<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
+													<i class="material-icons md-24" aria-hidden="true" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
 												</span>
 											</div>
 								      	<% } 
@@ -978,7 +978,7 @@ for (int i = 0; i < dati.size(); i++) {
 									      			<input type="hidden" name="__i_hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
 									      			<input type="hidden" name="__i_hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
 											      	<span class="spanIconInfoBox">
-														<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
+														<i class="material-icons md-24" aria-hidden="true" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
 													</span>
 												</div>
 									      	<% } 
@@ -1020,11 +1020,19 @@ for (int i = 0; i < dati.size(); i++) {
 									          				if (!bottoneGeneraPassword && visualizzaIconaMostraPassword) {
 										          				%>
 										          					<span id="<%=idPwdEyeSpan %>" class="lock-span-comandi-input">
-																  		<i id="<%=idPwdEye %>" class="material-icons md-24" title="<%= Costanti.ICON_VISIBILITY_TOOLTIP %>"><%= Costanti.ICON_VISIBILITY %></i>
+																  		<i id="<%=idPwdEye %>" class="material-icons md-24" role="button" tabindex="0" title="<%= Costanti.ICON_VISIBILITY_TOOLTIP %>" aria-label="<%= Costanti.ICON_VISIBILITY_TOOLTIP %>"><span aria-hidden="true"><%= Costanti.ICON_VISIBILITY %></span></i>
 																  	</span>
 																	<script type="text/javascript" nonce="<%= randomNonce %>">
 																		$(document).ready(function(){
-																			$('#<%=idPwdEye %>').click(function() {
+																			$('#<%=idPwdEye %>').on('keydown', function(e) {
+															// il ruolo 'button' su un <i> non attiva il click da tastiera: lo si emula
+															if(e.key === 'Enter' || e.key === ' ') {
+																e.preventDefault();
+																$(this).trigger('click');
+															}
+														});
+
+														$('#<%=idPwdEye %>').click(function() {
 																				
 																				// toggle the type attribute
 																				var x = document.getElementById("<%=idPwd %>");
@@ -1037,11 +1045,13 @@ for (int i = 0; i < dati.size(); i++) {
 																				  // toggle the eye slash icon
 																			    var eyeIcon = $('#<%=idPwdEye %>');
 																			    if (x.type === 'password') {
-																			        eyeIcon.html('<%= Costanti.ICON_VISIBILITY %>');
+																			        eyeIcon.html('<span aria-hidden="true"><%= Costanti.ICON_VISIBILITY %></span>');
 																			        eyeIcon.attr('title', '<%= Costanti.ICON_VISIBILITY_TOOLTIP %>');
+																						eyeIcon.attr('aria-label', '<%= Costanti.ICON_VISIBILITY_TOOLTIP %>');
 																			    } else {
-																			        eyeIcon.html('<%= Costanti.ICON_VISIBILITY_OFF %>');
+																			        eyeIcon.html('<span aria-hidden="true"><%= Costanti.ICON_VISIBILITY_OFF %></span>');
 																			        eyeIcon.attr('title', '<%= Costanti.ICON_VISIBILITY_OFF_TOOLTIP %>');
+																						eyeIcon.attr('aria-label', '<%= Costanti.ICON_VISIBILITY_OFF_TOOLTIP %>');
 																			    }
 																			    
 																			});
@@ -1103,7 +1113,7 @@ for (int i = 0; i < dati.size(); i++) {
 												      			<input type="hidden" name="__i_hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
 												      			<input type="hidden" name="__i_hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
 														      	<span class="spanIconInfoBox">
-																	<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
+																	<i class="material-icons md-24" aria-hidden="true" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
 																</span>
 																
 															<% } %>	
@@ -1143,7 +1153,7 @@ for (int i = 0; i < dati.size(); i++) {
 													      			<input type="hidden" name="__i_hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
 													      			<input type="hidden" name="__i_hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
 															      	<span class="spanIconInfoBox">
-																		<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
+																		<i class="material-icons md-24" aria-hidden="true" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
 																	</span>
 																</div>
 													      	<% } %>
@@ -1213,7 +1223,7 @@ for (int i = 0; i < dati.size(); i++) {
 													      			<input type="hidden" name="__i_hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
 													      			<input type="hidden" name="__i_hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
 															      	<span class="spanIconInfoBox">
-																		<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
+																		<i class="material-icons md-24" aria-hidden="true" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
 																	</span>
 																</div>
 													      	<% }
@@ -1297,7 +1307,7 @@ for (int i = 0; i < dati.size(); i++) {
 		                          										<input type="hidden" name="__i_hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
 		                          										<input type="hidden" name="__i_hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
 		                          										<span class="spanIconInfoBox">
-		                          											<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
+		                          											<i class="material-icons md-24" aria-hidden="true" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
 		                          										</span>
 		                          										<%
 		                          										}
@@ -1312,7 +1322,7 @@ for (int i = 0; i < dati.size(); i++) {
 		                          										%>
 		                          											<a id="<%=idIconLinks %>" class="image-link" <%= deLinkTip %> <%= deLinkTarget %> href="<%= deLink.getUrl() %>">
 		                          												<span class="icon-box">
-		                          													<i class="material-icons md-24"><%= deLinks.getButtonIcon() %></i>
+		                          													<i class="material-icons md-24" aria-hidden="true"><%= deLinks.getButtonIcon() %></i>
 		                          												</span>
 		                          											</a>
 		                          										<%
@@ -1326,7 +1336,7 @@ for (int i = 0; i < dati.size(); i++) {
 		                          											<input type="hidden" name="__i_hidden_title_<%= idIconLinks %>" id="hidden_title_<%= idIconLinks %>" value="<%= ServletUtils.escapeHTMLAttribute(deLinksTitoloModale) %>"/>
 		                          											<span id="hidden_body_<%= idIconLinks %>" class="hiddenBox"><%= deLinks.getBodyHtml() %></span>
 		                          											<span class="spanIconLinksBox" id="<%=idIconLinks %>" <%= deLinksTip %>>
-		                          												<i class="material-icons md-24"><%= deLinks.getButtonIcon() %></i>
+		                          												<i class="material-icons md-24" aria-hidden="true"><%= deLinks.getButtonIcon() %></i>
 		                          											</span>
 		                          											<script type="text/javascript" nonce="<%= randomNonce %>">
 		                          												$(document).ready(function(){
@@ -1432,7 +1442,7 @@ for (int i = 0; i < dati.size(); i++) {
 																      			<input type="hidden" name="__i_hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
 																      			<input type="hidden" name="__i_hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
 																      			<span class="spanIconInfoBox">
-																      				<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
+																      				<i class="material-icons md-24" aria-hidden="true" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
 																      			</span>
 																      			<%
 																      			}
@@ -1447,7 +1457,7 @@ for (int i = 0; i < dati.size(); i++) {
 																      			%>
 																      				<a id="<%=idIconLinks %>" class="image-link" <%= deLinkTip %> <%= deLinkTarget %> href="<%= deLink.getUrl() %>">
 																      					<span class="icon-box">
-																      						<i class="material-icons md-24"><%= deLinks.getButtonIcon() %></i>
+																      						<i class="material-icons md-24" aria-hidden="true"><%= deLinks.getButtonIcon() %></i>
 																      					</span>
 																      				</a>
 																      			<%
@@ -1461,7 +1471,7 @@ for (int i = 0; i < dati.size(); i++) {
 																      				<input type="hidden" name="__i_hidden_title_<%= idIconLinks %>" id="hidden_title_<%= idIconLinks %>" value="<%= ServletUtils.escapeHTMLAttribute(deLinksTitoloModale) %>"/>
 																      				<span id="hidden_body_<%= idIconLinks %>" class="hiddenBox"><%= deLinks.getBodyHtml() %></span>
 																      				<span class="spanIconLinksBox" id="<%=idIconLinks %>" <%= deLinksTip %>>
-																      					<i class="material-icons md-24"><%= deLinks.getButtonIcon() %></i>
+																      					<i class="material-icons md-24" aria-hidden="true"><%= deLinks.getButtonIcon() %></i>
 																      				</span>
 																      				<script type="text/javascript" nonce="<%= randomNonce %>">
 																      					$(document).ready(function(){
@@ -1544,7 +1554,7 @@ for (int i = 0; i < dati.size(); i++) {
 																				      			<input type="hidden" name="__i_hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
 																				      			<input type="hidden" name="__i_hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
 																						      	<span class="spanIconInfoBox-cb-info">
-																									<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
+																									<i class="material-icons md-24" aria-hidden="true" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
 																								</span>
 																							</div>
 																						</td>
@@ -1635,7 +1645,7 @@ for (int i = 0; i < dati.size(); i++) {
 																			      			<input type="hidden" name="__i_hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
 																			      			<input type="hidden" name="__i_hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
 																					      	<span class="spanIconInfoBox">
-																								<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
+																								<i class="material-icons md-24" aria-hidden="true" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
 																							</span>
 																						</div>
 																			      	<% } 
@@ -1735,8 +1745,8 @@ for (int i = 0; i < dati.size(); i++) {
 			                        							          				if (visualizzaComandiInternoInput) {
 			                        								          				%>
 			                        								          					<span id="<%=idPwdEditSpan %>" class="<%= spanComaniInternoInputClass %>">
-			                        														  		<i id="<%=idPwdEdit %>" class="material-icons md-24" title="<%= titleIconaModifica %>"><%=  Costanti.ICONA_EDIT %></i>
-			                        														  		<i id="<%=idPwdViewInnerLock %>" class="material-icons md-24" title="<%= Costanti.ICON_VISIBILITY_TOOLTIP %>"><%= Costanti.ICON_VISIBILITY %></i>
+			                        														  		<i id="<%=idPwdEdit %>" class="material-icons md-24" role="button" tabindex="0" title="<%= titleIconaModifica %>" aria-label="<%= titleIconaModifica %>"><span aria-hidden="true"><%=  Costanti.ICONA_EDIT %></span></i>
+			                        														  		<i id="<%=idPwdViewInnerLock %>" class="material-icons md-24" role="button" tabindex="0" title="<%= Costanti.ICON_VISIBILITY_TOOLTIP %>" aria-label="<%= Costanti.ICON_VISIBILITY_TOOLTIP %>"><span aria-hidden="true"><%= Costanti.ICON_VISIBILITY %></span></i>
 			                        														  	</span>
 			                        															<script type="text/javascript" nonce="<%= randomNonce %>">
 			                        																$(document).ready(function(){
@@ -1767,7 +1777,15 @@ for (int i = 0; i < dati.size(); i++) {
 																									    }
 	                        																			%>
 			                        																	
-			                        																	$('#<%=idPwdEdit %>').click(function() {
+			                        																	$('#<%=idPwdEdit %>').on('keydown', function(e) {
+															// il ruolo 'button' su un <i> non attiva il click da tastiera: lo si emula
+															if(e.key === 'Enter' || e.key === ' ') {
+																e.preventDefault();
+																$(this).trigger('click');
+															}
+														});
+
+														$('#<%=idPwdEdit %>').click(function() {
 			                        																		
 			                        																		// Abilita l'input di tipo password
 			                        																        $('#<%=idPwd %>').prop('disabled', false);
@@ -1831,7 +1849,15 @@ for (int i = 0; i < dati.size(); i++) {
 			                        																	<% 
 		    			                        									      				if(utilizzaInputPassword){
 		    			                        									      				%>
-			                        																		$('#<%=idPwdViewInnerLock %>').click(function() {
+			                        																		$('#<%=idPwdViewInnerLock %>').on('keydown', function(e) {
+															// il ruolo 'button' su un <i> non attiva il click da tastiera: lo si emula
+															if(e.key === 'Enter' || e.key === ' ') {
+																e.preventDefault();
+																$(this).trigger('click');
+															}
+														});
+
+														$('#<%=idPwdViewInnerLock %>').click(function() {
 			                        																			
 			                        																			// toggle the type attribute
 			                        																			var x = document.getElementById("<%=idPwd %>");
@@ -1844,11 +1870,13 @@ for (int i = 0; i < dati.size(); i++) {
 			                        																			  // toggle the eye slash icon
 			                        																		    var eyeIcon = $('#<%=idPwdViewInnerLock %>');
 			                        																		    if (x.type === 'password') {
-			                        																		        eyeIcon.html('<%= Costanti.ICON_VISIBILITY %>');
+			                        																		        eyeIcon.html('<span aria-hidden="true"><%= Costanti.ICON_VISIBILITY %></span>');
 			                        																		        eyeIcon.attr('title', '<%= Costanti.ICON_VISIBILITY_TOOLTIP %>');
+																						eyeIcon.attr('aria-label', '<%= Costanti.ICON_VISIBILITY_TOOLTIP %>');
 			                        																		    } else {
-			                        																		        eyeIcon.html('<%= Costanti.ICON_VISIBILITY_OFF %>');
+			                        																		        eyeIcon.html('<span aria-hidden="true"><%= Costanti.ICON_VISIBILITY_OFF %></span>');
 			                        																		        eyeIcon.attr('title', '<%= Costanti.ICON_VISIBILITY_OFF_TOOLTIP %>');
+																						eyeIcon.attr('aria-label', '<%= Costanti.ICON_VISIBILITY_OFF_TOOLTIP %>');
 			                        																		    }
 			                        																		    
 			                        																		});
@@ -1875,8 +1903,8 @@ for (int i = 0; i < dati.size(); i++) {
 			                        									      					chiamataEventoPostback+=Costanti.POSTBACK_FUNCTION_WITH_PARAMETER_END;
 			                        									      				%>
 			                        											      			<span class="spanIconInfoBox-lock">
-			                        																<i class="material-icons md-24" id="<%=idPwdLockOpen %>" title="<%= Costanti.ICON_LOCK_OPEN_TOOLTIP %>" ><%=Costanti.ICON_LOCK_OPEN %></i>
-			                        																<i class="material-icons md-24 md-nohover" id="<%=idPwdLock %>"><%=Costanti.ICON_LOCK %></i>
+			                        																<i class="material-icons md-24" aria-hidden="true" id="<%=idPwdLockOpen %>" title="<%= Costanti.ICON_LOCK_OPEN_TOOLTIP %>" ><%=Costanti.ICON_LOCK_OPEN %></i>
+			                        																<i class="material-icons md-24 md-nohover" aria-hidden="true" id="<%=idPwdLock %>"><%=Costanti.ICON_LOCK %></i>
 			                        															</span>
 			                        															<script type="text/javascript" nonce="<%= randomNonce %>">
 			                        																$(document).ready(function(){
@@ -1908,7 +1936,7 @@ for (int i = 0; i < dati.size(); i++) {
 			                        											      			<input type="hidden" name="__i_hidden_body_<%= idPwdCopyLock %>" id="hidden_body_<%= idPwdCopyLock %>"  value="<%= dePwd.getLockWarningMessage() %>"/>
 			                        											      			<input type="hidden" name="__i_hidden_url_<%= idPwdCopyLock %>" id="hidden_url_<%= idPwdCopyLock %>"  value="<%= de.getUrl() %>"/>
 			                        															<span class="spanIconInfoBox-copyLock">
-			                        																<i class="material-icons md-24" id="<%=idPwdCopyLock %>" title="<%= Costanti.ICONA_COPY_LOCK_TOOLTIP %>"><%= Costanti.ICON_COPY %></i>
+			                        																<i class="material-icons md-24" aria-hidden="true" id="<%=idPwdCopyLock %>" title="<%= Costanti.ICONA_COPY_LOCK_TOOLTIP %>"><%= Costanti.ICON_COPY %></i>
 			                        															</span>
 			                        															
 																								<input type="hidden" name="__i_hidden_title_<%= idPwdViewLock %>" id="hidden_title_<%= idPwdViewLock %>"  value="<%= Costanti.TITOLO_FINESTRA_MODALE_VISUALIZZA_MESSAGE_WARNING %>"/>
@@ -1926,7 +1954,7 @@ for (int i = 0; i < dati.size(); i++) {
 			                        											      			<input type="hidden" name="__i_hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
 			                        											      			<input type="hidden" name="__i_hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
 			                        													      	<span class="spanIconInfoBox">
-			                        																<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
+			                        																<i class="material-icons md-24" aria-hidden="true" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
 			                        															</span>
 			                        															
 			                        														<% } %>	

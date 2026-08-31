@@ -311,7 +311,7 @@ $(document).ready(function () {
 					        				<input type="hidden" id="<%= filterName  %>__accordion" value="<%=accordion %>" />
 					        				<span class="subtitleGroup">
 					        					<span class="subtitleAnchor">
-					        						<i class="material-icons md-16" id="<%= filterName  %>__icon" title="<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>"><%= Costanti.ICON_VISUALIZZA_SEZIONE_FILTRI_RICERCA%></i>
+					        						<i class="material-icons md-16" aria-hidden="true" id="<%= filterName  %>__icon" title="<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>"><%= Costanti.ICON_VISUALIZZA_SEZIONE_FILTRI_RICERCA%></i>
 					        					</span>
 					        					<a id="<%= filterName  %>__anchor" name="<%=rowName %>" class="subtitleAnchor" title="<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>"><%=deLabel %></a>
 					        				</span>

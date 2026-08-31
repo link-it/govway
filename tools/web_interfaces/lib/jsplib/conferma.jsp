@@ -197,7 +197,7 @@ if (!message.equals("") && messageType.equals(MessageType.DIALOG.toString())) {
 	  			<% if(!"".equals(icona)) { %>
 		  		<div id="finestraDialogModalHeaderSx" class="finestraDialogModalHeaderSx">
 			  		<span class="icon-box">
-						<i class="material-icons md-48"><%= icona %></i>
+						<i class="material-icons md-48" aria-hidden="true"><%= icona %></i>
 					</span>
 				</div>
 				<% }%>
@@ -258,7 +258,7 @@ if (!message.equals("") && messageType.equals(MessageType.DIALOG.toString())) {
 					      	%> 	<div class="iconCopyBox" id="<%=idDivIconInfo %>">
 					      			<input type="hidden" name="__i_hidden_value_<%= idIconCopy %>" id="hidden_value_<%= idIconCopy %>"  value="<%= StringEscapeUtils.escapeHtml4(de.getValue()) %>"/>
 							      	<span class="spanIconCopyBox" <%= iconaCtrlCTitle %> >
-										<i class="material-icons md-18" id="<%=idIconCopy %>"><%= iconaCtrlC %></i>
+										<i class="material-icons md-18" aria-hidden="true" id="<%=idIconCopy %>"><%= iconaCtrlC %></i>
 									</span>
 								</div>
 					      	<% } %>
@@ -280,7 +280,7 @@ if (!message.equals("") && messageType.equals(MessageType.DIALOG.toString())) {
 						      	%> 	<div class="iconCopyBox" id="<%=idDivIconInfo %>">
 						      			<input type="hidden" name="__i_hidden_value_<%= idIconCopy %>" id="hidden_value_<%= idIconCopy %>"  value="<%= StringEscapeUtils.escapeHtml4(de.getValue()) %>"/>
 								      	<span class="spanIconCopyBox" <%= iconaCtrlCTitle %>>
-											<i class="material-icons md-18" id="<%=idIconCopy %>"><%= iconaCtrlC %></i>
+											<i class="material-icons md-18" aria-hidden="true" id="<%=idIconCopy %>"><%= iconaCtrlC %></i>
 										</span>
 									</div>
 						      	<% } 
@@ -307,7 +307,7 @@ if (!message.equals("") && messageType.equals(MessageType.DIALOG.toString())) {
 								      	%> 	<div class="iconCopyBox" id="<%=idDivIconInfo %>">
 								      			<input type="hidden" name="__i_hidden_value_<%= idIconCopy %>" id="hidden_value_<%= idIconCopy %>"  value="<%= StringEscapeUtils.escapeHtml4(de.getValue()) %>"/>
 										      	<span class="spanIconCopyBox" <%= iconaCtrlCTitle %>>
-													<i class="material-icons md-18" id="<%=idIconCopy %>"><%= iconaCtrlC %></i>
+													<i class="material-icons md-18" aria-hidden="true" id="<%=idIconCopy %>"><%= iconaCtrlC %></i>
 												</span>
 											</div>
 								      	<% } %>
@@ -550,7 +550,7 @@ if (!message.equals("") && messageType.equals(MessageType.DIALOG.toString())) {
 			 	<div class="iconCopyBox" id="divIconInfo_dec">
 	      			<input type="hidden" name="__i_hidden_value_iconCopy_dec" id="hidden_value_iconCopy_dec"  value=""/>
 			      	<span class="spanIconCopyBox" title="Copia">
-						<i class="material-icons md-18" id="iconCopy_dec"><%= Costanti.ICON_COPY %></i>
+						<i class="material-icons md-18" aria-hidden="true" id="iconCopy_dec"><%= Costanti.ICON_COPY %></i>
 					</span>
 				</div>
 			</div>
@@ -584,7 +584,7 @@ if (!message.equals("") && messageType.equals(MessageType.DIALOG.toString())) {
 	<div id="erroreInformazioniCifrateModalHeader" class="finestraDialogModalHeader">
   		<div id="erroreInformazioniCifrateModalHeaderSx" class="finestraDialogModalHeaderSx">
 	  		<span class="icon-box">
-				<i class="material-icons md-48"><%= Costanti.ICON_DIALOG_HEADER %></i>
+				<i class="material-icons md-48" aria-hidden="true"><%= Costanti.ICON_DIALOG_HEADER %></i>
 			</span>
 		</div>
 		<div id="erroreInformazioniCifrateModalHeaderDx" class="finestraDialogModalHeaderDx">
@@ -598,8 +598,8 @@ if (!message.equals("") && messageType.equals(MessageType.DIALOG.toString())) {
 	<div id="operazioneAjaxModalHeader" class="finestraDialogModalHeader">
   		<div id="operazioneAjaxModalHeaderSx" class="finestraDialogModalHeaderSx">
 	  		<span class="icon-box">
-				<i id="operazioneAjaxModalHeaderSxIconKo" class="material-icons md-48"><%= Costanti.ICON_DIALOG_HEADER %></i>
-				<i id="operazioneAjaxModalHeaderSxIconOk" class="material-icons md-48"><%= Costanti.INFO_BUTTON_ICON_WHITE %></i>
+				<i id="operazioneAjaxModalHeaderSxIconKo" class="material-icons md-48" aria-hidden="true"><%= Costanti.ICON_DIALOG_HEADER %></i>
+				<i id="operazioneAjaxModalHeaderSxIconOk" class="material-icons md-48" aria-hidden="true"><%= Costanti.INFO_BUTTON_ICON_WHITE %></i>
 			</span>
 		</div>
 		<div id="operazioneAjaxModalHeaderDx" class="finestraDialogModalHeaderDx">

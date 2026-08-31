@@ -54,6 +54,8 @@ public class Costanti {
 	public static final String LABEL_ARIA_SELEZIONA_ELEMENTO_GENERICO_PREFIX = "Seleziona elemento ";
 	public static final String LABEL_ARIA_NUMERO_ELEMENTI_PER_PAGINA = "Numero di elementi per pagina";
 	public static final String LABEL_ARIA_MENU_PRINCIPALE = "Menu principale";
+	public static final String LABEL_ARIA_SCHEDA_PRECEDENTE = "Scheda precedente";
+	public static final String LABEL_ARIA_SCHEDA_SUCCESSIVA = "Scheda successiva";
 	
 	
 	/** Multipart */

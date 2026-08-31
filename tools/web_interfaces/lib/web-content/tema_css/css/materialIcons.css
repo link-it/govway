@@ -23,6 +23,13 @@
   font-feature-settings: 'liga';
 }
 
+/* Il glifo dei comandi resi dalla sola icona e' incapsulato in uno span escluso dalla navigazione
+   assistita ('aria-hidden'), cosi' da non essere annunciato come contenuto dal lettore di schermo.
+   Il reset universale '* { font-family: Roboto; font-size: 14px }' di linkit-base.css azzera pero'
+   l'ereditarieta' del font, quindi va ripristinata esplicitamente: senza questa regola il glifo
+   viene reso in Roboto a 14px anziche' come icona. */
+.material-icons > span { font-family: inherit; font-size: inherit; line-height: inherit; }
+
 /* Rules for pointer. */
 .material-icons.md-pointer { cursor: pointer; }
 

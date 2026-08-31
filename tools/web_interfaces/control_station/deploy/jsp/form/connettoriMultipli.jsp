@@ -343,7 +343,7 @@ function Esporta(tipo) {
 											                					<% } %>
 											                					<% if(StringUtils.isNotEmpty(copyToClipboard)){ %>
 													                				<span class="copy-box" id="<%= deCopyId%>" title="<%=MessageFormat.format(Costanti.ICON_COPY_TOOLTIP_CON_PARAMETRO, deLabel) %>">
-																						<i class="material-icons md-18"><%= Costanti.ICON_COPY %></i>
+																						<i class="material-icons md-18" aria-hidden="true"><%= Costanti.ICON_COPY %></i>
 																					</span>
 																					
 							        												<div id="<%= deCopyId%>_message" class="copy-message"><%=Costanti.ICON_COPY_ESITO_OPERAZIONE %></div>
@@ -377,7 +377,7 @@ function Esporta(tipo) {
 												                					%>
 												                					<a id="<%=id %>" class="edit-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" type="button">
 												                						<span class="icon-box">
-																							<i class="material-icons md-18"><%= deIconName %></i>
+																							<i class="material-icons md-18" aria-hidden="true"><%= deIconName %></i>
 																						</span>
 												                					</a>
 												                					<script type="text/javascript" nonce="<%= randomNonce %>">
@@ -476,7 +476,7 @@ function Esporta(tipo) {
 															                					%>
 															                					<a id="<%=id %>" class="edit-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" type="button">
 															                						<span class="icon-box">
-																										<i class="material-icons md-18"><%= deIconName %></i>
+																										<i class="material-icons md-18" aria-hidden="true"><%= deIconName %></i>
 																									</span>
 															                					</a>
 															                					<script type="text/javascript" nonce="<%= randomNonce %>">
@@ -581,7 +581,7 @@ function Esporta(tipo) {
 																                					%>
 																                					<a id="<%=id %>"  class="edit-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" type="button">
 																                						<span class="icon-box">
-																											<i class="material-icons md-18"><%= deIconName %></i>
+																											<i class="material-icons md-18" aria-hidden="true"><%= deIconName %></i>
 																										</span>
 																                					</a>
 																                					<script type="text/javascript" nonce="<%= randomNonce %>">
@@ -654,7 +654,7 @@ function Esporta(tipo) {
 																	                					%>
 																	                					<a id="<%=id %>" class="edit-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" type="button">
 																	                						<span class="icon-box">
-																												<i class="material-icons md-18"><%= deIconName %></i>
+																												<i class="material-icons md-18" aria-hidden="true"><%= deIconName %></i>
 																											</span>
 																	                					</a>
 																	                					<script type="text/javascript" nonce="<%= randomNonce %>">
@@ -698,7 +698,7 @@ function Esporta(tipo) {
 											                            											%>
 											                            												<span class="<%=classSpanNoEdit %>-image-msval" <%= statusTooltipTitleAttribute %> id="iconTitoloLeft-<%=i%>_<%=y%>">
 											                            													<span class="icon-box">
-																																<i class="material-icons md-18"><%= statusType %></i>
+																																<i class="material-icons md-18" aria-hidden="true"><%= statusType %></i>
 																															</span>
 																														</span>
 																														<span class="<%=classSpanNoEdit %>-msval" <%= statusTooltipTitleAttribute %> ><%= lab %></span>
@@ -731,7 +731,7 @@ function Esporta(tipo) {
 																		                					%>
 																		                					<a id="<%=id %>" class="edit-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" type="button">
 																		                						<span class="icon-box">
-																													<i class="material-icons md-18"><%= deIconName %></i>
+																													<i class="material-icons md-18" aria-hidden="true"><%= deIconName %></i>
 																												</span>
 																		                					</a>
 																		                					<script type="text/javascript" nonce="<%= randomNonce %>">
@@ -983,8 +983,8 @@ function Esporta(tipo) {
 											
 											var htmlDiv = '<div id="tabsNavDiv" class="tabsNavDiv"></div>';
 											
-											var htmlNext = "<a id='nextTab' href='#' class='next-tab mover' rel='next'><i class=\"material-icons md-40 line-height-06\"><%= Costanti.ICON_CHEVRON_RIGHT %></i></a>";
-											var htmlPrev = "<a id='prevTab' href='#' class='prev-tab mover' rel='prev'><i class=\"material-icons md-40 line-height-06\"><%= Costanti.ICON_CHEVRON_LEFT %></i></a>";
+											var htmlNext = "<a id='nextTab' href='#' class='next-tab mover' rel='next' aria-label='<%= Costanti.LABEL_ARIA_SCHEDA_SUCCESSIVA %>'><i class=\"material-icons md-40 line-height-06\" aria-hidden=\"true\"><%= Costanti.ICON_CHEVRON_RIGHT %></i></a>";
+											var htmlPrev = "<a id='prevTab' href='#' class='prev-tab mover' rel='prev' aria-label='<%= Costanti.LABEL_ARIA_SCHEDA_PRECEDENTE %>'><i class=\"material-icons md-40 line-height-06\" aria-hidden=\"true\"><%= Costanti.ICON_CHEVRON_LEFT %></i></a>";
 											
 											// 1. attacco il div contentitore
 											$tabs.prepend(htmlDiv);

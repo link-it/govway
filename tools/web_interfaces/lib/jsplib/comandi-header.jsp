@@ -114,7 +114,7 @@ boolean inserisciDivComandiAffiancati =
 		  		%>
   					<a id="<%=id %>" class="titoloSezioneAzioneLink <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= de.getUrl() %>" type="button">
   						<span class="icon-box">
-						<i class="material-icons md-24"><%= deIconName %></i>
+						<i class="material-icons md-24" aria-hidden="true"><%= deIconName %></i>
 					</span>
   					</a>
   					<script type="text/javascript" nonce="<%= randomNonce %>">
@@ -131,7 +131,7 @@ boolean inserisciDivComandiAffiancati =
 			// inserisco il comando per espandere i filtri di ricerca
 			if(mostraComandoEspandiFormRicerca) { %>
 			<span class="icon-box" id="iconaPanelListaSpan">
-				<i class="material-icons md-24" id="iconaPanelLista"><%= Costanti.ICON_SEARCH %></i>
+				<i class="material-icons md-24" aria-hidden="true" id="iconaPanelLista"><%= Costanti.ICON_SEARCH %></i>
 			</span>
 		<% }%>
 	
@@ -141,7 +141,7 @@ boolean inserisciDivComandiAffiancati =
 		%>
 				<div class="iconInfoBoxList" id="<%=idDivIconMenu %>" <%=tipComandiMenu %> >
   						<span class="icon-box" id="<%=idSpanMenu %>">
-						<i class="material-icons md-18" id="<%=idIconMenu %>"><%= iconaComandiMenu %></i>
+						<i class="material-icons md-18" aria-hidden="true" id="<%=idIconMenu %>"><%= iconaComandiMenu %></i>
 					</span>
   					</div>
   					

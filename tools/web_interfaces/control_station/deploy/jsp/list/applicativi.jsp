@@ -104,7 +104,7 @@ visualizzaMetadati = listRiepilogo.size() > 1;
 				%>
 				<div id="titolo_<%=numeroEntryS %>_ruoli" class="titoloRuoli">
 					<span class="titoloRuoli-image-sx" id="titolo_<%=numeroEntryS %>_ruoli_icona" <%=ruoliTooltip %> >
-						<i class="material-icons md-18" id="iconInfo_titolo_<%=numeroEntryS %>_ruoli_icona"><%= Costanti.ICON_SUPERVISOR_ACCOUNT %></i>
+						<i class="material-icons md-18" aria-hidden="true" id="iconInfo_titolo_<%=numeroEntryS %>_ruoli_icona"><%= Costanti.ICON_SUPERVISOR_ACCOUNT %></i>
 					</span>
 					<% for(int z = 0; z < listTags.size(); z ++){ 
 						DataElement tag = listTags.get(z);
@@ -142,7 +142,7 @@ visualizzaMetadati = listRiepilogo.size() > 1;
 				
 					<div class="iconInfoBoxList" id="<%=idDivIconMenu %>" <%=tipComandiMenu %> >
     						<span class="icon-box" id="<%=idSpanMenu %>">
-								<i class="material-icons md-18" id="<%=idIconMenu %>"><%= iconaComandiMenu %></i>
+								<i class="material-icons md-18" aria-hidden="true" id="<%=idIconMenu %>"><%= iconaComandiMenu %></i>
 							</span>
    					</div>
    					

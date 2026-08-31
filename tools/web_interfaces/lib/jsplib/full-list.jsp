@@ -342,7 +342,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 								  				
 								  				<a id="<%=id %>" class="edit-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= de.getUrl() %>" type="button">
 			                						<span class="icon-box">
-														<i class="material-icons md-18"><%= deIconName %></i>
+														<i class="material-icons md-18" aria-hidden="true"><%= deIconName %></i>
 													</span>
 			                					</a>
 			                					<script type="text/javascript" nonce="<%= randomNonce %>">
@@ -402,7 +402,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 								  		String deCopyId = "__i_hidden_copy_de_"+i;
 								  		%>
 		                				<span class="copy-box" id="<%= deCopyId%>" title="<%=Costanti.ICON_COPY_TOOLTIP_CON_PARAMETRO %>">
-											<i class="material-icons md-18"><%= Costanti.ICON_COPY %></i>
+											<i class="material-icons md-18" aria-hidden="true"><%= Costanti.ICON_COPY %></i>
 										</span>
 										
 										<div id="<%= deCopyId%>_message" class="copy-message"><%=Costanti.ICON_COPY_ESITO_OPERAZIONE %></div>
@@ -446,7 +446,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 				                					%>
 					                					<a id="<%=id %>" class="image-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" type="button">
 					                						<span class="icon-box">
-																<i class="material-icons md-18"><%= deIconName %></i>
+																<i class="material-icons md-18" aria-hidden="true"><%= deIconName %></i>
 															</span>
 					                					</a>
 					                					<script type="text/javascript" nonce="<%= randomNonce %>">
@@ -461,7 +461,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 											  			%>
 					                					<a id="<%=id %>" class="image-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="" type="button">
 					                						<span class="icon-box">
-																<i class="material-icons md-18"><%= deIconName %></i>
+																<i class="material-icons md-18" aria-hidden="true"><%= deIconName %></i>
 															</span>
 					                					</a>
 					                					<script type="text/javascript" nonce="<%= randomNonce %>">
@@ -475,7 +475,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 											  		} else { // Solo immagine
 											  			%>
 				                						<span class="icon-box" <%= deTip %> >
-															<i class="material-icons md-18"><%= deIconName %></i>
+															<i class="material-icons md-18" aria-hidden="true"><%= deIconName %></i>
 														</span>
 					                				<%
 											  		}
@@ -567,7 +567,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 																<input type="hidden" name="__i_hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
 											   					<input type="hidden" name="__i_hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
 									       						<span class="spanIconInfoBoxList" id="<%=idSpanInfo %>">
-																	<i class="material-icons md-18" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
+																	<i class="material-icons md-18" aria-hidden="true" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
 																</span>
 									       					</div>
 															<script type="text/javascript" nonce="<%= randomNonce %>">
@@ -605,7 +605,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 															<div class="iconUsoBoxList" id="<%=idDivIconUso %>" <%=deTip %> >
 																<input type="hidden" name="__i_hidden_title_<%= idIconUso %>" id="hidden_title_<%= idIconUso %>"  value="<%= urlElement.getUrl() %>"/>
 																<span class="spanIconUsoBoxList" id="<%=idSpanUso %>">
-																	<i class="material-icons md-18" id="<%=idIconUso %>"><%= dialog.getIcona() %></i>
+																	<i class="material-icons md-18" aria-hidden="true" id="<%=idIconUso %>"><%= dialog.getIcona() %></i>
 																</span>
 									       					</div>
 															<jsp:include page="/jsplib/info-uso-modal.jsp" flush="true">
