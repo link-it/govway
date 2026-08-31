@@ -185,7 +185,7 @@ $(document).ready(function () {
 				<tbody>
 					<tr>
 						<td class="titoloSezione" id="searchFormHeader" colspan="<%= colFormHeader %>">
-							<span class="history"><%=titoloSezione %></span>
+							<span class="history" role="heading" aria-level="1"><%=titoloSezione %></span>
 						</td>
 						<% if(mostraComandiHeader) { %>
 							<jsp:include page="/jsplib/comandi-header.jsp" flush="true" >

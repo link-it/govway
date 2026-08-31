@@ -49,7 +49,7 @@ if(csrfTokenFromSession == null)
 	csrfTokenFromSession = "";
 %>
 
-<td valign="top" class="td2PageBody" role="main" id="gw-contenuto">
+<td valign="top" class="td2PageBody" role="main" id="gw-contenuto" tabindex="-1">
 <form name="form" method="post" id="form">
 	<script type="text/javascript" nonce="<%= randomNonce %>">
 	$(document).ready(function(){

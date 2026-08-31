@@ -15,6 +15,8 @@
 	- I comandi resi con la sola icona (mostra/nascondi password, modifica del valore, scorrimento delle schede) hanno adesso un nome accessibile e sono attivabili da tastiera.
 	- La validazione dei campi effettuata al salvataggio prendeva in esame anche i campi nascosti, bloccando l'operazione su valori che l'utente non ha modo di correggere: era il caso della descrizione di un connettore multiplo, non resa a schermo, il cui valore memorizzato terminava con uno spazio.
 	- L'area attivabile delle icone 'Visualizza Token Policy' e 'Visualizza Attribute Authority' era alta 16 pixel anziche' 24: i bordi superiore e inferiore dell'icona non rispondevano al clic.
+	- Le pagine non avevano un'intestazione di primo livello: il titolo della pagina viene adesso annunciato come tale.
+	- Introdotto il collegamento 'Vai al contenuto principale', primo elemento raggiungibile da tastiera e visibile solo quando riceve il focus, per non attraversare il menu su ogni pagina.
 
 2026-08-20  Andrea Poli <apoli@link.it>
 

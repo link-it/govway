@@ -67,6 +67,7 @@ String jQueryVersion = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_
 	<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
 </head>
 <body marginwidth=0 marginheight=0>
+<a class="gw-salta-al-contenuto" href="#gw-contenuto"><%= Costanti.LABEL_ARIA_SALTA_AL_CONTENUTO %></a>
 	<jsp:include page="/jsplib/versionPopup.jsp" flush="true" />
 	<table class="bodyWrapper" role="presentation">
 		<tbody>

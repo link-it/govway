@@ -5,6 +5,26 @@
 	font-size: 14px;
 }
 
+/* Collegamento per saltare i blocchi ripetuti e raggiungere il contenuto (WCAG 2.4.1).
+   Non e' nascosto con 'display:none' ne' con 'visibility:hidden', che lo renderebbero non
+   focalizzabile: viene spostato fuori dall'area visibile e rientra quando riceve il focus
+   da tastiera. Resta quindi invisibile a chi usa il mouse. */
+.gw-salta-al-contenuto {
+	position: absolute;
+	left: -9999px;
+	top: 0;
+	z-index: 1000;
+	padding: 8px 16px;
+	background-color: ${menu.header.background.color};
+	color: ${menu.header.color};
+	text-decoration: none;
+}
+
+.gw-salta-al-contenuto:focus {
+	left: 8px;
+	top: 8px;
+}
+
 h2 {
 	font-size: 197%;
 }

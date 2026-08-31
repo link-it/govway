@@ -87,7 +87,7 @@ if(idsPassword == null)
 %>
 
 
-<td class="valignTop td2PageBody" role="main" id="gw-contenuto">
+<td class="valignTop td2PageBody" role="main" id="gw-contenuto" tabindex="-1">
 	<form name="form" <%=encTypeS %> action="<%= gd.getUrl() %>" method="post">
 		<!-- Breadcrumbs -->
 		<jsp:include page="/jsplib/titlelist.jsp" flush="true" />
@@ -164,7 +164,7 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 					<tbody>
 						<tr>	
 							<td class="titoloSezione" id="dettaglioFormHeader" colspan="<%= colFormHeader %>">
-								<span class="history"><%= titoloSezione %></span>
+								<span class="history" role="heading" aria-level="1"><%= titoloSezione %></span>
 							</td>
 							<% if(mostraComandiHeader) { %>
 								<jsp:include page="/jsplib/comandi-header.jsp" flush="true" />
