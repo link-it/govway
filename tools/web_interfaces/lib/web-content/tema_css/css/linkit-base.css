@@ -2220,6 +2220,10 @@ ul.dataElementLinksList li {
 .image-link {
 	padding: 0px 2px 0px 2px;
 	text-decoration: none;
+	/* Il link contiene la sola icona: da 'inline' la sua area cliccabile sarebbe alta 16px
+	   (interlinea del testo) e l'icona da 24px ne sporgerebbe sopra e sotto, con quei bordi
+	   non attivabili. Con 'inline-block' l'area coincide con l'icona (WCAG 2.5.8). */
+	display: inline-block;
 }
 
 .image-link span.icon-box {

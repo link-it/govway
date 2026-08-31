@@ -14,6 +14,7 @@
 	- Le icone decorative venivano annunciate dalle tecnologie assistive come caratteri privi di significato: sono adesso escluse dalla navigazione assistita.
 	- I comandi resi con la sola icona (mostra/nascondi password, modifica del valore, scorrimento delle schede) hanno adesso un nome accessibile e sono attivabili da tastiera.
 	- La validazione dei campi effettuata al salvataggio prendeva in esame anche i campi nascosti, bloccando l'operazione su valori che l'utente non ha modo di correggere: era il caso della descrizione di un connettore multiplo, non resa a schermo, il cui valore memorizzato terminava con uno spazio.
+	- L'area attivabile delle icone 'Visualizza Token Policy' e 'Visualizza Attribute Authority' era alta 16 pixel anziche' 24: i bordi superiore e inferiore dell'icona non rispondevano al clic.
 
 2026-08-20  Andrea Poli <apoli@link.it>
 
