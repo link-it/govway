@@ -93,7 +93,18 @@ visualizzaMetadati = listRiepilogo.size() > 1;
 				<%
 			%>
 		<div id="titolo_<%=numeroEntryS %>" class="titoloEntry">
-			<span class="titoloEntry"><%=deTitoloValue %>&nbsp;&nbsp;&nbsp;&nbsp;</span>	
+			<%
+					// Il titolo diventa un collegamento vero: la riga intera e' cliccabile ma solo col mouse,
+					// mentre il collegamento la rende raggiungibile da tastiera e annunciabile. La navigazione
+					// resta a carico del gestore della riga (che aggiunge l'identificativo di tab): il default
+					// del collegamento viene annullato in webapps.js.
+					boolean titoloComeLink = !deTitolo.getValue().equals("") && deTitolo.getUrl() != null && !deTitolo.getUrl().equals("");
+					if(titoloComeLink) {
+					%><a class="titoloEntry" href="<%= ServletUtils.escapeHTMLAttributePreservingValue(deTitolo.getUrl()) %>"><%=deTitoloValue %>&nbsp;&nbsp;&nbsp;&nbsp;</a><%
+					} else {
+					%><span class="titoloEntry"><%=deTitoloValue %>&nbsp;&nbsp;&nbsp;&nbsp;</span><%
+					}
+					%>	
 			
 			<% if(listTags.size() > 0){
 				DataElement tag0 = listTags.get(0);
@@ -141,7 +152,7 @@ visualizzaMetadati = listRiepilogo.size() > 1;
 				<div id="titolo_<%=numeroEntryS %>_info" class="titoloInfo">
 				
 					<div class="iconInfoBoxList" id="<%=idDivIconMenu %>" <%=tipComandiMenu %> >
-    						<span class="icon-box" id="<%=idSpanMenu %>">
+    						<span class="icon-box" id="<%=idSpanMenu %>" aria-label="<%= Costanti.LABEL_ARIA_MENU_AZIONI %>">
 								<i class="material-icons md-18" aria-hidden="true" id="<%=idIconMenu %>"><%= iconaComandiMenu %></i>
 							</span>
    					</div>

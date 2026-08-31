@@ -1531,6 +1531,20 @@ public class ServletUtils {
 	 * @return Il testo HTML-escaped, integro nel contenuto
 	 */
 	public static String escapeHTMLAttributeForCopy(String value) {
+		return escapeHTMLAttributePreservingValue(value);
+	}
+
+	/**
+	 * Sanifica un valore destinato ad un attributo HTML che deve restare integro, ad esempio una URL
+	 * in un attributo {@code href}. Diversamente da {@link #escapeHTMLAttribute(String)} NON applica
+	 * trasformazioni "logiche" del contenuto (rimozione tag HTML, markdown, normalizzazione degli
+	 * spazi, troncamento), che su una URL ne altererebbero il significato: applica soltanto l'escape
+	 * HTML necessario alla sintassi dell'attributo.
+	 *
+	 * @param value Il testo da inserire in un attributo HTML preservandone il contenuto
+	 * @return Il testo HTML-escaped, integro nel contenuto
+	 */
+	public static String escapeHTMLAttributePreservingValue(String value) {
 		if (value == null || value.trim().isEmpty()) {
 			return "";
 		}

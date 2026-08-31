@@ -105,11 +105,13 @@ $(document).ready(function () {
             $("#" + iconId).html(iconNascondiSezione);
             $("#" + iconId).attr("title", tooltipNascondiSezione);
             $("#" + anchorId).attr("title", tooltipNascondiSezione);
+        $("#" + anchorId).attr("aria-expanded", "true");
         } else {
             $("#" + sectionId).hide();
             $("#" + iconId).html(iconVisualizzaSezione);
             $("#" + iconId).attr("title", tooltipVisualizzaSezione);
             $("#" + anchorId).attr("title", tooltipVisualizzaSezione);
+        $("#" + anchorId).attr("aria-expanded", "false");
         }
 
      	// Toggle (indipendente per ogni sezione)
@@ -127,6 +129,7 @@ $(document).ready(function () {
         $("#" + sectionId).show();
         $("#" + iconId).html(iconNascondiSezione).attr("title", tooltipNascondiSezione);
         $("#" + anchorId).attr("title", tooltipNascondiSezione);
+        $("#" + anchorId).attr("aria-expanded", "true");
         $("#" + divId).removeClass("subtitleCollapsed").addClass("subtitleOpen");
         inizializzaSelectFiltro();
     }
@@ -140,6 +143,7 @@ $(document).ready(function () {
         $("#" + sectionId).hide();
         $("#" + iconId).html(iconVisualizzaSezione).attr("title", tooltipVisualizzaSezione);
         $("#" + anchorId).attr("title", tooltipVisualizzaSezione);
+        $("#" + anchorId).attr("aria-expanded", "false");
         $("#" + divId).removeClass("subtitleOpen").addClass("subtitleCollapsed");
     }
 
@@ -313,7 +317,7 @@ $(document).ready(function () {
 					        					<span class="subtitleAnchor">
 					        						<i class="material-icons md-16" aria-hidden="true" id="<%= filterName  %>__icon" title="<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>"><%= Costanti.ICON_VISUALIZZA_SEZIONE_FILTRI_RICERCA%></i>
 					        					</span>
-					        					<a id="<%= filterName  %>__anchor" name="<%=rowName %>" class="subtitleAnchor" title="<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>"><%=deLabel %></a>
+					        					<a id="<%= filterName  %>__anchor" name="<%=rowName %>" class="subtitleAnchor" role="button" tabindex="0" aria-controls="<%= filterName %>__id" title="<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>"><%=deLabel %></a>
 					        				</span>
 					        			</div>
 					        			<%

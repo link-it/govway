@@ -5,6 +5,13 @@
 	font-size: 14px;
 }
 
+/* Il titolo di riga degli elenchi e' un collegamento (per essere raggiungibile da tastiera),
+   ma conserva l'aspetto del testo: l'affordance e' data dalla riga intera, che e' cliccabile. */
+a.titoloEntry {
+	color: inherit;
+	text-decoration: none;
+}
+
 /* Collegamento per saltare i blocchi ripetuti e raggiungere il contenuto (WCAG 2.4.1).
    Non e' nascosto con 'display:none' ne' con 'visibility:hidden', che lo renderebbero non
    focalizzabile: viene spostato fuori dall'area visibile e rientra quando riceve il focus

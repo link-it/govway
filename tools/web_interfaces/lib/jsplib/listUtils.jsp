@@ -198,6 +198,7 @@ function togglePanelListaRicerca(panelListaRicercaOpen){
     	
     	if($( "#iconaPanelListaSpan" ).length > 0){
     		$('#iconaPanelListaSpan').prop('title', '<%=Costanti.TOOLTIP_NASCONDI_FILTRI_RICERCA %>');
+				$('#iconaPanelListaSpan').attr('aria-expanded', 'true');
     	}
     	
     	// reinit del filtro
@@ -208,6 +209,7 @@ function togglePanelListaRicerca(panelListaRicercaOpen){
     	
     	if($( "#iconaPanelListaSpan" ).length > 0){
     		$('#iconaPanelListaSpan').prop('title', '<%=Costanti.TOOLTIP_VISUALIZZA_FILTRI_RICERCA %>');
+				$('#iconaPanelListaSpan').attr('aria-expanded', 'false');
     	}
     }
 }

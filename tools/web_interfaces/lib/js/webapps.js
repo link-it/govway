@@ -579,3 +579,128 @@ function customAction(form,functionName) {
 	addHidden(form, functionName , 'true');
 	Search(form);
 }
+
+/* --- Accessibilita': comandi resi con elementi non nativi -------------------------------
+   Diversi comandi della console sono <span> o <a> senza href a cui il JavaScript aggancia un
+   clic. Il browser non li mette nell'ordine di tabulazione e non li attiva con la tastiera,
+   quindi risultano utilizzabili solo col mouse (WCAG 2.1.1). Le due funzioni seguenti li
+   espongono come comandi e ne consentono l'attivazione con Invio e con la barra spaziatrice. */
+
+/* Elementi che il JavaScript rende cliccabili: la lista e' esplicita perche' non ogni
+   gestore di clic identifica un comando (i contenitori che delegano non vanno esposti). */
+var GW_SELETTORI_COMANDI = [
+	'.spanIconInfoBox', '.spanIconInfoBox-copyLock',
+	'.spanIconInfoBox-viewLock', '.spanIconInfoBox-cb-info', '.iconInfoBox-cb-info',
+	'.spanIconInfoBoxList', '.spanIconUsoBoxList',
+	'#iconaPanelListaSpan',      /* comando che apre e chiude i filtri di ricerca */
+	'[id^="spanIconMenu_"]'      /* menu' azioni "tre puntini" delle righe e della barra titolo */
+].join(', ');
+/* NOTA: '.copy-box' e' deliberatamente escluso. E' nascosto con 'visibility: hidden' e reso
+   visibile dal 'mouseenter' (cfr. utils.js, setupCopyButtonEvents): un elemento con
+   'visibility: hidden' non puo' ricevere il focus, quindi 'tabindex' sarebbe inerte.
+   Renderlo utilizzabile da tastiera richiede cambiare il modo in cui viene rivelato. */
+
+/* Il nome accessibile viene preso dal 'title' dell'elemento o, se assente, dal primo
+   antenato che ne ha uno: nel markup della console il tooltip risiede sul contenitore. */
+function gwNomeComando(el) {
+	var $el = jQuery(el);
+	var t = ($el.attr('title') || '').trim();
+	if (t) return t;
+	var $anc = $el.closest('[title]');
+	return $anc.length ? ($anc.attr('title') || '').trim() : '';
+}
+
+function gwEsponiComandi(ambito) {
+	/* Il menu' azioni apre un elenco di voci: va dichiarato, altrimenti l'utente non sa che
+	   attivandolo comparira' un menu'. */
+	jQuery(ambito || document).find('[id^="spanIconMenu_"]').attr('aria-haspopup', 'menu');
+	jQuery(ambito || document).find(GW_SELETTORI_COMANDI).each(function() {
+		var $c = jQuery(this);
+		if ($c.attr('role') === 'button') return;                 // gia' esposto
+		if (this.querySelector('a[href],button,input,select,textarea')) return; // delega a un comando nativo
+		$c.attr('role', 'button');
+		$c.attr('tabindex', '0');
+		if (!$c.attr('aria-label') && !$c.attr('aria-labelledby')) {
+			var nome = gwNomeComando(this);
+			if (nome) $c.attr('aria-label', nome);
+		}
+	});
+}
+
+/* Un'area con contenuto scorrevole deve poter ricevere il focus, altrimenti le frecce non
+   hanno un bersaglio e il testo che eccede l'altezza disponibile risulta illeggibile da
+   tastiera (WCAG 2.1.1). Riguarda le finestre modali della console, che rendono testi di
+   lunghezza non prevedibile. Si marcano solo le aree che scorrono davvero, verificato a
+   finestra aperta: prima dell'apertura le dimensioni non sono ancora definite. */
+function gwEsponiAreeScorrevoli(radice) {
+	var $aree = jQuery();
+	jQuery(radice).find('*').addBack().each(function() {
+		var st = window.getComputedStyle(this);
+		var puoScorrere = /(auto|scroll)/.test(st.overflowY) || /(auto|scroll)/.test(st.overflowX);
+		var scorre = this.scrollHeight > this.clientHeight + 1 || this.scrollWidth > this.clientWidth + 1;
+		if (puoScorrere && scorre) {
+			jQuery(this).attr('tabindex', '0');
+			$aree = $aree.add(this);
+		}
+	});
+	return $aree;
+}
+
+jQuery(function() {
+	gwEsponiComandi(document);
+
+	/* 'role=button' non attiva il clic da tastiera: lo si emula una volta per tutte, con un
+	   gestore delegato che copre anche i comandi aggiunti al DOM successivamente. */
+	jQuery(document).on('keydown', '[role="button"][tabindex="0"]:not([id^="spanIconMenu_"])', function(e) {
+		if (e.key === 'Enter' || e.key === ' ') {
+			e.preventDefault();
+			jQuery(this).trigger('click');
+		}
+	});
+
+	/* Il menu' azioni e' escluso dall'attivatore generico: il plugin 'jquery.context-menu' non
+	   ascolta 'click' ma 'mousedown', verificando quale tasto del mouse e' stato premuto
+	   (cfr. jquery.context-menu.src.js, 'element.mousedown'). Da tastiera si emette quindi
+	   l'evento che il plugin attende, indicando il tasto sinistro. */
+	jQuery(document).on('keydown', '[id^="spanIconMenu_"]', function(e) {
+		if (e.key !== 'Enter' && e.key !== ' ') {
+			return;
+		}
+		e.preventDefault();
+		/* Il plugin posiziona il menu' sull'ultima posizione nota del puntatore, che aprendo da
+		   tastiera e' ferma altrove: il menu' comparirebbe lontano dal comando. Si aggiorna quindi
+		   quella posizione emettendo un 'mousemove' sulle coordinate del comando, il che usa il
+		   meccanismo che il plugin ha gia' (cfr. jquery.context-menu.src.js, '$(window).mousemove'). */
+		var r = this.getBoundingClientRect();
+		jQuery(window).trigger(jQuery.Event('mousemove', {
+			pageX: r.left + window.scrollX,
+			pageY: r.bottom + window.scrollY
+		}));
+		jQuery(this).trigger(jQuery.Event('mousedown', { which: 1 }));
+	});
+
+	/* Nelle viste custom degli elenchi la riga intera e' cliccabile via JavaScript e aggiunge
+	   l'identificativo di tab alla URL. Il collegamento sul titolo serve a rendere la riga
+	   raggiungibile da tastiera e annunciabile: la navigazione resta al gestore della riga,
+	   a cui il clic arriva per propagazione, quindi qui si annulla solo il default. */
+	jQuery(document).on('click', 'a.titoloEntry', function(e) {
+		e.preventDefault();
+	});
+
+	jQuery(document).on('dialogopen', function(e) {
+		var $aree = gwEsponiAreeScorrevoli(e.target);
+		gwEsponiComandi(e.target);
+		if (!$aree.length) {
+			return;
+		}
+		/* Se la finestra non contiene altri comandi (le modali informative sono solo testo) il
+		   focus va sull'area scorrevole, così le frecce funzionano subito. Se invece contiene
+		   campi o pulsanti, jQuery UI ha già portato il focus sul primo: non glielo si toglie. */
+		var altri = jQuery(e.target)
+			.find('a[href], button, input:not([type=hidden]), select, textarea, [role="button"][tabindex="0"]')
+			.not($aree).filter(':visible');
+		if (!altri.length) {
+			$aree.first().trigger('focus');
+		}
+	});
+});

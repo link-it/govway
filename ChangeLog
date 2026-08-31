@@ -17,6 +17,12 @@
 	- L'area attivabile delle icone 'Visualizza Token Policy' e 'Visualizza Attribute Authority' era alta 16 pixel anziche' 24: i bordi superiore e inferiore dell'icona non rispondevano al clic.
 	- Le pagine non avevano un'intestazione di primo livello: il titolo della pagina viene adesso annunciato come tale.
 	- Introdotto il collegamento 'Vai al contenuto principale', primo elemento raggiungibile da tastiera e visibile solo quando riceve il focus, per non attraversare il menu su ogni pagina.
+	- Le sezioni comprimibili delle maschere si aprivano solo col mouse, rendendone il contenuto inaccessibile da tastiera: l'intestazione di sezione e' adesso un comando attivabile con Invio e barra spaziatrice, che espone anche lo stato aperto/chiuso.
+	- Le icone di informazioni e di utilizzo, attivabili solo col mouse, sono adesso raggiungibili e attivabili da tastiera.
+	- Il testo delle finestre informative che eccede l'altezza disponibile non era scorribile da tastiera: l'area di scorrimento riceve adesso il focus all'apertura, quando la finestra non contiene altri comandi.
+	- Negli elenchi l'apertura di un elemento era possibile solo col mouse: il nome dell'elemento e' adesso un collegamento, raggiungibile da tastiera e annunciato come tale.
+	- Il menu' delle azioni ('tre puntini') era privo di nome e attivabile solo col mouse, come il comando che apre i filtri di ricerca: sono adesso comandi con nome, attivabili da tastiera, e le voci del menu' si percorrono con le frecce, si attivano con Invio e si chiudono con Esc.
+	- I comandi di scorrimento delle pagine degli elenchi, le sezioni comprimibili dei filtri di ricerca e i comandi di aggiornamento sezione e di sbloccio di un valore erano attivabili solo col mouse: sono adesso raggiungibili e attivabili da tastiera.
 
 2026-08-20  Andrea Poli <apoli@link.it>
 

@@ -203,11 +203,13 @@ $(document).ready(function () {
             $("#" + iconId).html(iconNascondiSezione);
             $("#" + iconId).attr("title", tooltipNascondiSezione);
             $("#" + anchorId).attr("title", tooltipNascondiSezione);
+$("#" + anchorId).attr("aria-expanded", "true");
         } else {
             $("#" + sectionId).hide();
             $("#" + iconId).html(iconVisualizzaSezione);
             $("#" + iconId).attr("title", tooltipVisualizzaSezione);
             $("#" + anchorId).attr("title", tooltipVisualizzaSezione);
+$("#" + anchorId).attr("aria-expanded", "false");
         }
 
         // Toggle (indipendente per ogni sezione)
@@ -225,6 +227,7 @@ $(document).ready(function () {
         $("#" + sectionId).show();
         $("#" + iconId).html(iconNascondiSezione).attr("title", tooltipNascondiSezione);
         $("#" + anchorId).attr("title", tooltipNascondiSezione);
+$("#" + anchorId).attr("aria-expanded", "true");
         $("#" + fieldsetId).removeClass("fieldsetCollapsed");
         inizializzaSelectSezione(sectionId);
     }
@@ -238,6 +241,7 @@ $(document).ready(function () {
         $("#" + sectionId).hide();
         $("#" + iconId).html(iconVisualizzaSezione).attr("title", tooltipVisualizzaSezione);
         $("#" + anchorId).attr("title", tooltipVisualizzaSezione);
+$("#" + anchorId).attr("aria-expanded", "false");
         $("#" + fieldsetId).addClass("fieldsetCollapsed");
     }
 
@@ -295,11 +299,13 @@ $(document).ready(function () {
             $("#" + iconId).html(iconNascondiSezione);
             $("#" + iconId).attr("title", tooltipNascondiSezione);
             $("#" + anchorId).attr("title", tooltipNascondiSezione);
+$("#" + anchorId).attr("aria-expanded", "true");
         } else {
             $("#" + sectionId).hide();
             $("#" + iconId).html(iconVisualizzaSezione);
             $("#" + iconId).attr("title", tooltipVisualizzaSezione);
             $("#" + anchorId).attr("title", tooltipVisualizzaSezione);
+$("#" + anchorId).attr("aria-expanded", "false");
         }
 
      	// Toggle (indipendente per ogni sezione)
@@ -317,6 +323,7 @@ $(document).ready(function () {
         $("#" + sectionId).show();
         $("#" + iconId).html(iconNascondiSezione).attr("title", tooltipNascondiSezione);
         $("#" + anchorId).attr("title", tooltipNascondiSezione);
+$("#" + anchorId).attr("aria-expanded", "true");
         $("#" + divId).removeClass("subtitleCollapsed").addClass("subtitleOpen");
         inizializzaSelectSezione(sectionId);
     }
@@ -330,6 +337,7 @@ $(document).ready(function () {
         $("#" + sectionId).hide();
         $("#" + iconId).html(iconVisualizzaSezione).attr("title", tooltipVisualizzaSezione);
         $("#" + anchorId).attr("title", tooltipVisualizzaSezione);
+$("#" + anchorId).attr("aria-expanded", "false");
         $("#" + divId).removeClass("subtitleOpen").addClass("subtitleCollapsed");
     }
 
@@ -491,7 +499,7 @@ for (int i = 0; i < dati.size(); i++) {
 		    	    					<%
 		    							if(refresh){
 		    							%>
-	    									<i class="material-icons md-16" aria-hidden="true" id="<%= deName  %>__icon_refresh" title="<%= Costanti.ICONA_REFRESH_SEZIONE_TOOLTIP%>"><%= Costanti.ICONA_REFRESH_SEZIONE%></i>
+	    									<i class="material-icons md-16" role="button" tabindex="0" id="<%= deName  %>__icon_refresh" title="<%= Costanti.ICONA_REFRESH_SEZIONE_TOOLTIP%>" aria-label="<%= Costanti.ICONA_REFRESH_SEZIONE_TOOLTIP%>"><span aria-hidden="true"><%= Costanti.ICONA_REFRESH_SEZIONE%></span></i>
 	    							    <%
 		    							}
 		    	    					%>
@@ -499,7 +507,7 @@ for (int i = 0; i < dati.size(); i++) {
 	    						<%
 	    							}
 	    						%>
-	    						<a id="<%= deName  %>__anchor" class="<%=cssClassTitle %>" <%=titoloComandoApertura %>><%=deLabel %></a>
+	    						<a id="<%= deName  %>__anchor" class="<%=cssClassTitle %>" role="button" tabindex="0" aria-controls="<%= deName %>__id" <%=titoloComandoApertura %>><%=deLabel %></a>
 	    					</legend>
 	    					       <%
 					               if(gestioneAperturaFieldset){
@@ -585,12 +593,12 @@ for (int i = 0; i < dati.size(); i++) {
   							if(refresh){
   							%>
 	       					<span class="subtitleRefresh">
-								<i class="material-icons md-16" aria-hidden="true" id="<%= deName  %>__icon_refresh" title="<%= Costanti.ICONA_REFRESH_SEZIONE_TOOLTIP%>"><%= Costanti.ICONA_REFRESH_SEZIONE%></i>
+								<i class="material-icons md-16" role="button" tabindex="0" id="<%= deName  %>__icon_refresh" title="<%= Costanti.ICONA_REFRESH_SEZIONE_TOOLTIP%>" aria-label="<%= Costanti.ICONA_REFRESH_SEZIONE_TOOLTIP%>"><span aria-hidden="true"><%= Costanti.ICONA_REFRESH_SEZIONE%></span></i>
 	       					</span>
 	       					<%
    							}
    	    					%>
-							<a id="<%= deName  %>__anchor" class="<%=cssClassTitle %>" <%=titoloComandoApertura %>><%=deLabel %></a>
+							<a id="<%= deName  %>__anchor" class="<%=cssClassTitle %>" role="button" tabindex="0" aria-controls="<%= deName %>__id" <%=titoloComandoApertura %>><%=deLabel %></a>
 	       				</span>
 	       				<%
 							} else {
@@ -601,7 +609,7 @@ for (int i = 0; i < dati.size(); i++) {
   							%>
   								<span class="subtitle">
 									<span class="subtitleRefresh">
-										<i class="material-icons md-16" aria-hidden="true" id="<%= deName  %>__icon_refresh" title="<%= Costanti.ICONA_REFRESH_SEZIONE_TOOLTIP%>"><%= Costanti.ICONA_REFRESH_SEZIONE%></i>
+										<i class="material-icons md-16" role="button" tabindex="0" id="<%= deName  %>__icon_refresh" title="<%= Costanti.ICONA_REFRESH_SEZIONE_TOOLTIP%>" aria-label="<%= Costanti.ICONA_REFRESH_SEZIONE_TOOLTIP%>"><span aria-hidden="true"><%= Costanti.ICONA_REFRESH_SEZIONE%></span></i>
 									</span>
 									<a class="<%=cssClassTitle %>" ><%=deLabel %></a>
 								</span>
@@ -1024,15 +1032,7 @@ for (int i = 0; i < dati.size(); i++) {
 																  	</span>
 																	<script type="text/javascript" nonce="<%= randomNonce %>">
 																		$(document).ready(function(){
-																			$('#<%=idPwdEye %>').on('keydown', function(e) {
-															// il ruolo 'button' su un <i> non attiva il click da tastiera: lo si emula
-															if(e.key === 'Enter' || e.key === ' ') {
-																e.preventDefault();
-																$(this).trigger('click');
-															}
-														});
-
-														$('#<%=idPwdEye %>').click(function() {
+																			$('#<%=idPwdEye %>').click(function() {
 																				
 																				// toggle the type attribute
 																				var x = document.getElementById("<%=idPwd %>");
@@ -1777,15 +1777,7 @@ for (int i = 0; i < dati.size(); i++) {
 																									    }
 	                        																			%>
 			                        																	
-			                        																	$('#<%=idPwdEdit %>').on('keydown', function(e) {
-															// il ruolo 'button' su un <i> non attiva il click da tastiera: lo si emula
-															if(e.key === 'Enter' || e.key === ' ') {
-																e.preventDefault();
-																$(this).trigger('click');
-															}
-														});
-
-														$('#<%=idPwdEdit %>').click(function() {
+			                        																	$('#<%=idPwdEdit %>').click(function() {
 			                        																		
 			                        																		// Abilita l'input di tipo password
 			                        																        $('#<%=idPwd %>').prop('disabled', false);
@@ -1849,15 +1841,7 @@ for (int i = 0; i < dati.size(); i++) {
 			                        																	<% 
 		    			                        									      				if(utilizzaInputPassword){
 		    			                        									      				%>
-			                        																		$('#<%=idPwdViewInnerLock %>').on('keydown', function(e) {
-															// il ruolo 'button' su un <i> non attiva il click da tastiera: lo si emula
-															if(e.key === 'Enter' || e.key === ' ') {
-																e.preventDefault();
-																$(this).trigger('click');
-															}
-														});
-
-														$('#<%=idPwdViewInnerLock %>').click(function() {
+			                        																		$('#<%=idPwdViewInnerLock %>').click(function() {
 			                        																			
 			                        																			// toggle the type attribute
 			                        																			var x = document.getElementById("<%=idPwd %>");
@@ -1903,7 +1887,7 @@ for (int i = 0; i < dati.size(); i++) {
 			                        									      					chiamataEventoPostback+=Costanti.POSTBACK_FUNCTION_WITH_PARAMETER_END;
 			                        									      				%>
 			                        											      			<span class="spanIconInfoBox-lock">
-			                        																<i class="material-icons md-24" aria-hidden="true" id="<%=idPwdLockOpen %>" title="<%= Costanti.ICON_LOCK_OPEN_TOOLTIP %>" ><%=Costanti.ICON_LOCK_OPEN %></i>
+			                        																<i class="material-icons md-24" role="button" tabindex="0" id="<%=idPwdLockOpen %>" title="<%= Costanti.ICON_LOCK_OPEN_TOOLTIP %>" aria-label="<%= Costanti.ICON_LOCK_OPEN_TOOLTIP %>"><span aria-hidden="true"><%=Costanti.ICON_LOCK_OPEN %></span></i>
 			                        																<i class="material-icons md-24 md-nohover" aria-hidden="true" id="<%=idPwdLock %>"><%=Costanti.ICON_LOCK %></i>
 			                        															</span>
 			                        															<script type="text/javascript" nonce="<%= randomNonce %>">
