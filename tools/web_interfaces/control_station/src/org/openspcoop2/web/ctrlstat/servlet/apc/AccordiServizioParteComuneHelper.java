@@ -709,6 +709,8 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					else{
 						de = new DataElement();
 						de.setLabel("");//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ALLEGATI_DOCUMENTO);
+						// l'etichetta non viene resa a schermo: il nome accessibile va indicato esplicitamente
+						de.setAccessibleLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ALLEGATI_DOCUMENTO);
 						de.setType(DataElementType.TEXT_AREA_NO_EDIT);
 						de.setValue(contenutoAllegato.toString());
 						de.setRows(CostantiControlStation.LABEL_PARAMETRO_TEXT_AREA_API_SIZE);
@@ -4492,6 +4494,8 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			if(AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_CANALE_STATO_RIDEFINITO.equals(canaleStato)) {
 				de = new DataElement();
 				de.setLabel(""); //(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CANALE);
+				// l'etichetta non viene resa a schermo: il nome accessibile va indicato esplicitamente
+				de.setAccessibleLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CANALE);
 				de.setValue(canale);
 				List<String> canaliListValues = canaleList.stream().map(CanaleConfigurazione::getNome).collect(Collectors.toList());
 				de.setValues(canaliListValues);

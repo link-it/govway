@@ -5827,6 +5827,8 @@ public class ConsoleHelper implements IConsoleHelper {
 				if(policySelezionataValida && !policySelezionataPresente) {
 					de = new DataElement();
 					de.setLabel("");
+					// l'etichetta non viene resa a schermo: il nome accessibile va indicato esplicitamente
+					de.setAccessibleLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_POLICY);
 					de.setType(DataElementType.TEXT);
 					de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_POLICY+"_nonCompatibile");
 					de.setValue(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_POLICY_SELEZIONATA_NON_COMPATIBILE);
@@ -5835,6 +5837,8 @@ public class ConsoleHelper implements IConsoleHelper {
 				else if(!policyDisponibili) {
 					de = new DataElement();
 					de.setLabel("");
+					// l'etichetta non viene resa a schermo: il nome accessibile va indicato esplicitamente
+					de.setAccessibleLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_POLICY);
 					de.setType(DataElementType.TEXT);
 					de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_POLICY+"_nonDisponibili");
 					de.setValue(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_POLICY_NON_COMPATIBILI);
@@ -19955,6 +19959,8 @@ public class ConsoleHelper implements IConsoleHelper {
 		if(!azioniAll) {
 			de = new DataElement();
 			de.setLabel("");
+			// l'etichetta non viene resa a schermo: il nome accessibile va indicato esplicitamente
+			de.setAccessibleLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_AZIONI);
 			de.setValues(azioniDisponibiliList);
 			de.setLabels(azioniDisponibiliLabelList);
 			de.setSelezionati(azioni);
@@ -22991,6 +22997,8 @@ public class ConsoleHelper implements IConsoleHelper {
 			if(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CANALE_STATO_RIDEFINITO.equals(canaleStato)) {
 				de = new DataElement();
 				de.setLabel(""); //(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CANALE);
+				// l'etichetta non viene resa a schermo: il nome accessibile va indicato esplicitamente
+				de.setAccessibleLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CANALE);
 				List<String> canaliListValues = canaleList.stream().map(CanaleConfigurazione::getNome).collect(Collectors.toList());
 				de.setValues(canaliListValues);
 				de.setLabels(canaliListValues);

@@ -586,45 +586,65 @@ function customAction(form,functionName) {
    quindi risultano utilizzabili solo col mouse (WCAG 2.1.1). Le due funzioni seguenti li
    espongono come comandi e ne consentono l'attivazione con Invio e con la barra spaziatrice. */
 
-/* Elementi che il JavaScript rende cliccabili: la lista e' esplicita perche' non ogni
-   gestore di clic identifica un comando (i contenitori che delegano non vanno esposti). */
-var GW_SELETTORI_COMANDI = [
-	'.spanIconInfoBox', '.spanIconInfoBox-copyLock',
-	'.spanIconInfoBox-viewLock', '.spanIconInfoBox-cb-info', '.iconInfoBox-cb-info',
-	'.spanIconInfoBoxList', '.spanIconUsoBoxList',
-	'.spanIconCopyBox',          /* copia negli appunti nelle finestre di dialogo */
-	'.copy-box',                 /* copia negli appunti accanto a un valore: reso visibile dal
-	                                CSS quando il focus entra nella cella (cfr. linkit-base.css) */
-	'#iconaPanelListaSpan',      /* comando che apre e chiude i filtri di ricerca */
-	'[id^="spanIconMenu_"]'      /* menu' azioni "tre puntini" delle righe e della barra titolo */
-].join(', ');
+/* Elementi che il JavaScript rende cliccabili, con il nome da usare quando non se ne trova uno
+   nel markup. La lista e' esplicita perche' non ogni gestore di clic identifica un comando: i
+   contenitori che delegano non vanno esposti. Il nome predefinito non e' un dettaglio: un elemento
+   con 'role=button' e senza nome e' peggio di nessun pulsante, perche' un lettore di schermo lo
+   annuncia come "pulsante" e basta. In diverse pagine questi comandi non hanno alcun 'title', ne'
+   proprio ne' di un antenato. */
+var GW_COMANDI = [
+	{ selettore: '.spanIconInfoBox',          nome: 'Informazioni' },
+	{ selettore: '.spanIconInfoBox-cb-info',  nome: 'Informazioni' },
+	{ selettore: '.iconInfoBox-cb-info',      nome: 'Informazioni' },
+	{ selettore: '.spanIconInfoBoxList',      nome: 'Informazioni' },
+	{ selettore: '.spanIconInfoBox-copyLock', nome: 'Copia informazione cifrata' },
+	{ selettore: '.spanIconInfoBox-viewLock', nome: 'Visualizza informazione cifrata' },
+	{ selettore: '.spanIconUsoBoxList',       nome: 'Utilizzo' },
+	{ selettore: '.spanIconCopyBox',          nome: 'Copia' },
+	{ selettore: '.copy-box',                 nome: 'Copia' },
+	{ selettore: '#iconaPanelListaSpan',      nome: 'Filtri di ricerca' },
+	{ selettore: '[id^="spanIconMenu_"]',     nome: 'Azioni disponibili' }
+];
 
-
-/* Il nome accessibile viene preso dal 'title' dell'elemento o, se assente, dal primo
-   antenato che ne ha uno: nel markup della console il tooltip risiede sul contenitore. */
+/* Il nome accessibile viene preso dal 'title' dell'elemento o, se assente, dal primo antenato che
+   ne ha uno: nel markup della console il tooltip risiede spesso sul contenitore. */
 function gwNomeComando(el) {
 	var $el = jQuery(el);
 	var t = ($el.attr('title') || '').trim();
-	if (t) return t;
+	if (t) {
+		return t;
+	}
 	var $anc = $el.closest('[title]');
 	return $anc.length ? ($anc.attr('title') || '').trim() : '';
 }
 
 function gwEsponiComandi(ambito) {
+	var $ambito = jQuery(ambito || document);
 	/* Il menu' azioni apre un elenco di voci: va dichiarato, altrimenti l'utente non sa che
 	   attivandolo comparira' un menu'. */
-	jQuery(ambito || document).find('[id^="spanIconMenu_"]').attr('aria-haspopup', 'menu');
-	jQuery(ambito || document).find(GW_SELETTORI_COMANDI).each(function() {
-		var $c = jQuery(this);
-		if ($c.attr('role') === 'button') return;                 // gia' esposto
-		if (this.querySelector('a[href],button,input,select,textarea')) return; // delega a un comando nativo
-		$c.attr('role', 'button');
-		$c.attr('tabindex', '0');
-		if (!$c.attr('aria-label') && !$c.attr('aria-labelledby')) {
-			var nome = gwNomeComando(this);
-			if (nome) $c.attr('aria-label', nome);
-		}
-	});
+	$ambito.find('[id^="spanIconMenu_"]').attr('aria-haspopup', 'menu');
+
+	for (var k = 0; k < GW_COMANDI.length; k++) {
+		var voce = GW_COMANDI[k];
+		$ambito.find(voce.selettore).each(function() {
+			var $c = jQuery(this);
+			if ($c.attr('role') === 'button') {
+				return;                                                   // gia' esposto
+			}
+			if (this.querySelector('a[href],button,input,select,textarea')) {
+				return;                                                   // delega a un comando nativo
+			}
+			var nome = $c.attr('aria-label') || ($c.attr('aria-labelledby') ? 'x' : '') || gwNomeComando(this) || voce.nome;
+			if (!nome) {
+				return;   // senza un nome non lo si espone: un pulsante anonimo e' peggio di nessun pulsante
+			}
+			$c.attr('role', 'button');
+			$c.attr('tabindex', '0');
+			if (!$c.attr('aria-label') && !$c.attr('aria-labelledby') && !($c.attr('title') || '').trim()) {
+				$c.attr('aria-label', nome);
+			}
+		});
+	}
 }
 
 /* Un'area con contenuto scorrevole deve poter ricevere il focus, altrimenti le frecce non

@@ -690,6 +690,8 @@ public final class Importer extends Action {
 			
 			de = new DataElement();
 			de.setLabel("");
+			// l'etichetta non viene resa a schermo: il nome accessibile va indicato esplicitamente
+			de.setAccessibleLabel("Resoconto");
 			de.setType(DataElementType.TEXT_AREA_NO_EDIT);
 			de.setValue(esito);
 			de.setName("Resoconto");

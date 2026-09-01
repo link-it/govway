@@ -1944,7 +1944,7 @@ for (int i = 0; i < dati.size(); i++) {
 			                        											      			<input type="hidden" name="__i_hidden_url_<%= idPwdViewLock %>" id="hidden_url_<%= idPwdViewLock %>"  value="<%= de.getUrl() %>"/>
 			                        											      			<input type="hidden" name="__i_hidden_label_<%= idPwdViewLock %>" id="hidden_label_<%= idPwdViewLock %>"  value="<%= de.getOriginalLabel() %>"/>
 			                        													      	<span class="spanIconInfoBox-viewLock">
-			                        																<i class="material-symbols-outlined md-24" id="<%=idPwdViewLock %>" title="<%= Costanti.ICONA_VISIBILITY_LOCK_TOOLTIP %>"><%= Costanti.ICON_VISIBILITY_LOCK %></i>
+			                        																<i class="material-symbols-outlined md-24" aria-hidden="true" id="<%=idPwdViewLock %>" title="<%= Costanti.ICONA_VISIBILITY_LOCK_TOOLTIP %>"><%= Costanti.ICON_VISIBILITY_LOCK %></i>
 			                        															</span>			                        															
 			                        														<% } %>	
 			                        											      			                        											      	

@@ -140,7 +140,7 @@ boolean inserisciDivComandiAffiancati =
 			if(!listaComandiDaVisualizzareNelMenu.isEmpty()) { 
 		%>
 				<div class="iconInfoBoxList" id="<%=idDivIconMenu %>" <%=tipComandiMenu %> >
-  						<span class="icon-box" id="<%=idSpanMenu %>" aria-label="<%= Costanti.LABEL_ARIA_MENU_AZIONI %>">
+  						<span class="icon-box" id="<%=idSpanMenu %>" role="button" tabindex="0" aria-haspopup="menu" aria-label="<%= Costanti.LABEL_ARIA_MENU_AZIONI %>">
 						<i class="material-icons md-18" aria-hidden="true" id="<%=idIconMenu %>"><%= iconaComandiMenu %></i>
 					</span>
   					</div>

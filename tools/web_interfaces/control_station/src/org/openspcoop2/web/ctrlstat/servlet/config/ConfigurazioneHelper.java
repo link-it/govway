@@ -6497,6 +6497,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 								
 								de = newDataElementStyleRuntime();
 								de.setLabel("");
+								// l'etichetta non viene resa a schermo: il nome accessibile va indicato esplicitamente
+								de.setAccessibleLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_STATO);
 								de.setValue("<i>"+internalCacheName+"</i>");
 								de.setType(DataElementType.TEXT);
 								de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_STATO+"_int_"+i);
@@ -18592,6 +18594,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		if(classiPlugin.equals(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_CLASSI_PLUGIN_SELEZIONATE)) {
 			de = new DataElement();
 			de.setLabel("");
+			// l'etichetta non viene resa a schermo: il nome accessibile va indicato esplicitamente
+			de.setAccessibleLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_TIPO_PLUGIN);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_TIPO_PLUGIN);
 			de.setType(DataElementType.MULTI_SELECT);
 			de.setLabels(ConfigurazionePluginsTipoPluginUtils.getLabelsTipoPlugin(this.confCore.isConfigurazioneAllarmiEnabled()));

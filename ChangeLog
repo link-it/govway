@@ -32,6 +32,8 @@
 	- Nella finestra 'Visualizza Informazioni Cifrate' il comando di copia restava raggiungibile da tastiera anche prima che il valore fosse decodificato, intercettando l'attivazione destinata al pulsante 'Visualizza'.
 	- Nei campi a più valori il comando che rimuove un tag era un elemento vuoto, non raggiungibile da tastiera e privo di nome: è adesso un comando che indica quale tag rimuove, raggiungibile con il Tab e attivabile con Invio.
 	- Nei campi a selezione multipla non era indicato come selezionare più elementi: sotto il campo compare adesso la nota 'Tenere premuto Ctrl per selezionare o deselezionare più elementi', associata al campo così da essere annunciata anche dalle tecnologie assistive.
+	- Aggiunto il nome accessibile agli ultimi controlli dei form privi di etichetta a schermo, su percorsi non raggiunti dalle verifiche automatiche: le aree che mostrano il contenuto di un documento allegato e delle interfacce API, la selezione del canale, il tipo di plugin, le azioni di una trasformazione, lo stato delle cache interne, il nome del file allegato e le segnalazioni sulla token policy.
+	- I controlli delle token policy e delle Attribute Authority descritti senza etichetta, perche' accostati a quello che li precede, erano privi di nome: i descrittori dispongono adesso dell'attributo 'accessibleLabel' con cui indicarlo, valorizzato per tutti i casi presenti.
 
 2026-08-20  Andrea Poli <apoli@link.it>
 

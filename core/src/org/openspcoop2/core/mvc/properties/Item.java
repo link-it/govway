@@ -43,6 +43,7 @@ import java.io.Serializable;
  * 		&lt;attribute name="type" type="{http://www.openspcoop2.org/core/mvc/properties}itemType" use="required"/&gt;
  * 		&lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/&gt;
  * 		&lt;attribute name="label" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="accessibleLabel" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
  * 		&lt;attribute name="note" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
  * 		&lt;attribute name="required" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/&gt;
  * 		&lt;attribute name="reloadOnChange" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/&gt;
@@ -138,6 +139,14 @@ public class Item extends org.openspcoop2.utils.beans.BaseBean implements Serial
 
   public void setLabel(java.lang.String label) {
     this.label = label;
+  }
+
+  public java.lang.String getAccessibleLabel() {
+    return this.accessibleLabel;
+  }
+
+  public void setAccessibleLabel(java.lang.String accessibleLabel) {
+    this.accessibleLabel = accessibleLabel;
   }
 
   public java.lang.String getNote() {
@@ -278,6 +287,10 @@ public class Item extends org.openspcoop2.utils.beans.BaseBean implements Serial
   @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="label",required=false)
   protected java.lang.String label;
+
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlAttribute(name="accessibleLabel",required=false)
+  protected java.lang.String accessibleLabel;
 
   @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="note",required=false)

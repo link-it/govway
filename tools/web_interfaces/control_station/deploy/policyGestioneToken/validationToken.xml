@@ -199,7 +199,7 @@
 				<property name="policy.discovery.claimsParser" />
 			</item>
 
-			<item type="select" name="discoveryParserCustomPluginChoice" label="" reloadOnChange="true" >
+			<item type="select" name="discoveryParserCustomPluginChoice" label="" accessibleLabel="Plugin personalizzato" reloadOnChange="true" >
 				<conditions>
 					<condition and="true">
 						<equals name="discoveryType" value="CUSTOM"/>
@@ -333,7 +333,7 @@
 			<property name="policy.validazioneJWT.claimsParser" />
 		</item>
 
-		<item type="select" name="validazioneJwtParserCustomPluginChoice" label="" reloadOnChange="true" >
+		<item type="select" name="validazioneJwtParserCustomPluginChoice" label="" accessibleLabel="Plugin personalizzato" reloadOnChange="true" >
 			<conditions>
 				<condition and="true">
 					<equals name="validazioneJWTParserType" value="CUSTOM"/>
@@ -487,7 +487,7 @@
 				</condition>
 			</conditions>
 
-			<item type="checkbox" name="validazioneJwtHeader" label="" reloadOnChange="true" defaultSelected="false" note="Consente di indicare i valori attesi nell'header">
+			<item type="checkbox" name="validazioneJwtHeader" label="" accessibleLabel="Header" reloadOnChange="true" defaultSelected="false" note="Consente di indicare i valori attesi nell'header">
 				<property name="policy.validazioneJWT.header" />
 			</item>	
 
@@ -1034,7 +1034,7 @@
 				<property name="policy.introspection.claimsParser" />
 			</item>
 
-			<item type="select" name="introspectionParserCustomPluginChoice" label="" reloadOnChange="true" >
+			<item type="select" name="introspectionParserCustomPluginChoice" label="" accessibleLabel="Plugin personalizzato" reloadOnChange="true" >
 				<conditions>
 					<condition and="true">
 						<equals name="introspectionParserType" value="CUSTOM"/>
@@ -1424,7 +1424,7 @@
 				<property name="policy.userInfo.claimsParser" />
 			</item>
 
-			<item type="select" name="userInfoParserCustomPluginChoice" label="" reloadOnChange="true" >
+			<item type="select" name="userInfoParserCustomPluginChoice" label="" accessibleLabel="Plugin personalizzato" reloadOnChange="true" >
 				<conditions>
 					<condition and="true">
 						<equals name="userInfoParserType" value="CUSTOM"/>
@@ -1590,7 +1590,7 @@
 			<property name="policy.validazioneDPoP.claimsParser" />
 		</item>
 
-		<item type="select" name="validazioneDPoPParserCustomPluginChoice" label="" reloadOnChange="true" >
+		<item type="select" name="validazioneDPoPParserCustomPluginChoice" label="" accessibleLabel="Plugin personalizzato" reloadOnChange="true" >
 			<conditions>
 				<condition and="true">
 					<equals name="validazioneDPoPParserType" value="CUSTOM"/>
@@ -1677,7 +1677,7 @@
 
 		<subsection label="Header">
 
-			<item type="checkbox" name="validazioneDPoPHeader" label="" reloadOnChange="true" defaultSelected="true" note="Consente di indicare i valori attesi nell'header">
+			<item type="checkbox" name="validazioneDPoPHeader" label="" accessibleLabel="Header" reloadOnChange="true" defaultSelected="true" note="Consente di indicare i valori attesi nell'header">
 				<property name="policy.validazioneDPoP.header" />
 			</item>	
 

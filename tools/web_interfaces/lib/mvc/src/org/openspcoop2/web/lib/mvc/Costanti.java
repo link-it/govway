@@ -59,6 +59,7 @@ public class Costanti {
 	public static final String LABEL_ARIA_SALTA_AL_CONTENUTO = "Vai al contenuto principale";
 	public static final String LABEL_ARIA_MENU_AZIONI = "Azioni disponibili";
 	public static final String LABEL_NOTA_SELEZIONE_MULTIPLA = "Tenere premuto Ctrl per selezionare o deselezionare più elementi";
+	public static final String LABEL_ARIA_NOME_FILE = "Nome del file";
 	
 	
 	/** Multipart */
