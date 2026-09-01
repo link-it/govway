@@ -592,13 +592,13 @@ var GW_SELETTORI_COMANDI = [
 	'.spanIconInfoBox', '.spanIconInfoBox-copyLock',
 	'.spanIconInfoBox-viewLock', '.spanIconInfoBox-cb-info', '.iconInfoBox-cb-info',
 	'.spanIconInfoBoxList', '.spanIconUsoBoxList',
+	'.spanIconCopyBox',          /* copia negli appunti nelle finestre di dialogo */
+	'.copy-box',                 /* copia negli appunti accanto a un valore: reso visibile dal
+	                                CSS quando il focus entra nella cella (cfr. linkit-base.css) */
 	'#iconaPanelListaSpan',      /* comando che apre e chiude i filtri di ricerca */
 	'[id^="spanIconMenu_"]'      /* menu' azioni "tre puntini" delle righe e della barra titolo */
 ].join(', ');
-/* NOTA: '.copy-box' e' deliberatamente escluso. E' nascosto con 'visibility: hidden' e reso
-   visibile dal 'mouseenter' (cfr. utils.js, setupCopyButtonEvents): un elemento con
-   'visibility: hidden' non puo' ricevere il focus, quindi 'tabindex' sarebbe inerte.
-   Renderlo utilizzabile da tastiera richiede cambiare il modo in cui viene rivelato. */
+
 
 /* Il nome accessibile viene preso dal 'title' dell'elemento o, se assente, dal primo
    antenato che ne ha uno: nel markup della console il tooltip risiede sul contenitore. */

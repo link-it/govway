@@ -365,6 +365,12 @@ if (!message.equals("") && messageType.equals(MessageType.DIALOG.toString())) {
 		 	if($(".spanIconCopyBox").length>0){
 
 		 		$(".spanIconCopyBox").click(function(evt){
+  			// la finestra delle informazioni cifrate ha un proprio gestore, che legge il valore
+  			// dall'area di testo: senza questa uscita scatterebbero entrambi e il secondo
+  			// sovrascriverebbe negli appunti il valore corretto con uno vuoto
+  			if(this.id === 'spanIconCopy_dec'){
+  				return;
+  			}
         			var iconCopyBoxId = $(this).parent().prop('id');
         			var idx = iconCopyBoxId.substring(iconCopyBoxId.indexOf("_")+1);
         			// console.log(idx);
@@ -373,7 +379,7 @@ if (!message.equals("") && messageType.equals(MessageType.DIALOG.toString())) {
         				var copiatoOK = copyTextToClipboard(valueToCopy);
         				
         				if(copiatoOK) {
-        					showTooltip(evt);
+        					showTooltipAndFadeOut(evt);
         				}
         			}
     			});
@@ -393,13 +399,13 @@ if (!message.equals("") && messageType.equals(MessageType.DIALOG.toString())) {
 	$(document).ready(function(){
 	 	
 	// copia contenuto della modale secret
-  	if($("#iconCopy_dec").length>0){
-		$("#iconCopy_dec").click(function(evt){
+  	if($("#spanIconCopy_dec").length>0){
+		$("#spanIconCopy_dec").click(function(evt){
  				var valueToCopy = $("#txtA_ne_dec").val();
  				var copiatoOK = copyTextToClipboard(valueToCopy);
  				
  				if(copiatoOK) {
- 					showTooltip(evt);
+ 					showTooltipAndFadeOut(evt);
  				}
 			});
   		
@@ -482,7 +488,7 @@ if (!message.equals("") && messageType.equals(MessageType.DIALOG.toString())) {
 		
 		$("#txtA_ne_dec").val('');
 		$("#txtA_ne_dec").prop('style','');		
-		$("#iconCopy_dec").hide();
+		$("#spanIconCopy_dec").hide();
 		$("#txtA_ne_dec").hide();
 		$("#visualizzaInformazioniCifrateModalPropNota").show();
 		$("#visualizzaInformazioniCifrateModal").parent().children('.ui-dialog-buttonpane').show();
@@ -549,7 +555,7 @@ if (!message.equals("") && messageType.equals(MessageType.DIALOG.toString())) {
 				<textarea id="txtA_ne_dec" readonly rows="3" cols="62" name="txtA_ne_dec" class="inputLinkLong" aria-label="<%= Costanti.LABEL_VISUALIZZA_INFORMAZIONI_CIFRATE %>"></textarea>
 			 	<div class="iconCopyBox" id="divIconInfo_dec">
 	      			<input type="hidden" name="__i_hidden_value_iconCopy_dec" id="hidden_value_iconCopy_dec"  value=""/>
-			      	<span class="spanIconCopyBox" title="Copia">
+			      	<span class="spanIconCopyBox" id="spanIconCopy_dec" title="Copia">
 						<i class="material-icons md-18" aria-hidden="true" id="iconCopy_dec"><%= Costanti.ICON_COPY %></i>
 					</span>
 				</div>

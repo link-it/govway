@@ -342,11 +342,11 @@ function Esporta(tipo) {
 													                				<input type="hidden" name="<%= deName %>" id="<%= deName %>"  value="<%= StringEscapeUtils.escapeHtml4(de.getValue()) %>"/>
 											                					<% } %>
 											                					<% if(StringUtils.isNotEmpty(copyToClipboard)){ %>
-													                				<span class="copy-box" id="<%= deCopyId%>" title="<%=MessageFormat.format(Costanti.ICON_COPY_TOOLTIP_CON_PARAMETRO, deLabel) %>">
+													                				<span class="copy-box" role="button" tabindex="0" id="<%= deCopyId%>" title="<%=MessageFormat.format(Costanti.ICON_COPY_TOOLTIP_CON_PARAMETRO, deLabel) %>">
 																						<i class="material-icons md-18" aria-hidden="true"><%= Costanti.ICON_COPY %></i>
 																					</span>
 																					
-							        												<div id="<%= deCopyId%>_message" class="copy-message"><%=Costanti.ICON_COPY_ESITO_OPERAZIONE %></div>
+							        												<div id="<%= deCopyId%>_message" class="copy-message" role="status"><%=Costanti.ICON_COPY_ESITO_OPERAZIONE %></div>
 																					<script type="text/javascript" nonce="<%= randomNonce %>">
 																				      	 $(document).ready(function(){
 																				      		 setupCopyButtonEvents('<%= deTextId%>', '<%= deCopyId%>', '<%= deCopyId%>_message'); // imposta gestione eventi per visualizzazione tasto copia

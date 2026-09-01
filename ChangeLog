@@ -23,6 +23,13 @@
 	- Negli elenchi l'apertura di un elemento era possibile solo col mouse: il nome dell'elemento e' adesso un collegamento, raggiungibile da tastiera e annunciato come tale.
 	- Il menu' delle azioni ('tre puntini') era privo di nome e attivabile solo col mouse, come il comando che apre i filtri di ricerca: sono adesso comandi con nome, attivabili da tastiera, e le voci del menu' si percorrono con le frecce, si attivano con Invio e si chiudono con Esc.
 	- I comandi di scorrimento delle pagine degli elenchi, le sezioni comprimibili dei filtri di ricerca e i comandi di aggiornamento sezione e di sbloccio di un valore erano attivabili solo col mouse: sono adesso raggiungibili e attivabili da tastiera.
+	- Il pulsante che copia un valore negli appunti, visibile al passaggio del puntatore, non era utilizzabile da tastiera perche' reso invisibile in un modo che ne impedisce il focus: e' adesso raggiungibile con il Tab, compare quando riceve il focus ed e' attivabile con Invio.
+	- Negli elenchi il tooltip del pulsante di copia mostrava letteralmente 'Copia {0}', per un segnaposto non sostituito.
+	- Nella finestra 'Visualizza Informazioni Cifrate' il valore copiato negli appunti veniva immediatamente sovrascritto con un valore vuoto, per due gestori sovrapposti sullo stesso comando.
+	- Il messaggio 'Copiato negli appunti' compariva una sola volta: nasconderlo azzerava l'opacita', che non veniva poi ripristinata alla comparsa successiva.
+	- Nelle finestre di dialogo la conferma della copia non compariva quando il comando veniva attivato da tastiera, perche' posizionata sulle coordinate del puntatore, inesistenti in quel caso; la sua rimozione era inoltre affidata all'uscita del puntatore dal comando, evento che da tastiera non avviene, e il riquadro restava sullo schermo indefinitamente.
+	- Le conferme di copia non venivano annunciate dalle tecnologie assistive: sono adesso messaggi di stato.
+	- Nella finestra 'Visualizza Informazioni Cifrate' il comando di copia restava raggiungibile da tastiera anche prima che il valore fosse decodificato, intercettando l'attivazione destinata al pulsante 'Visualizza'.
 
 2026-08-20  Andrea Poli <apoli@link.it>
 

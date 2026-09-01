@@ -2753,8 +2753,30 @@ li.protocolloItem {
     position: absolute;
     display: inline-block;
     cursor: pointer;
-    visibility: hidden; 
-    transition: visibility 0s linear 0.3s; /* transizione per la dissolvenza */
+    /* Non si usa 'visibility: hidden': impedirebbe al pulsante di ricevere il focus, rendendolo
+       inutilizzabile da tastiera. Con 'opacity' il pulsante resta nell'ordine di tabulazione e
+       diventa visibile quando riceve il focus, indipendentemente dalla sua posizione nel DOM —
+       che varia fra le viste: negli elenchi segue il valore, nelle schede di riepilogo lo precede.
+       Non si aggiunge 'pointer-events: none': l'elemento deve restare interattivo durante i 300ms
+       di dissolvenza, perche' e' in quell'intervallo che il puntatore lo raggiunge partendo dal
+       valore; e restando raggiungibile dal puntatore, il suo stesso 'mouseenter' lo mantiene
+       visibile. */
+    opacity: 0;
+    transition: opacity 0s linear 0.3s; /* transizione per la dissolvenza */
+}
+
+/* Si usa ':focus-visible' e non ':focus': un clic col puntatore assegna comunque il focus, e con
+   ':focus' l'icona resterebbe accesa dopo il clic, sommandosi a quelle delle righe visitate poi.
+   ':focus-visible' vale solo quando il focus va segnalato, cioe' quando arriva da tastiera. */
+.copy-box.copy-box-visibile,
+.copy-box:focus-visible {
+	opacity: 1;
+}
+
+/* Da tastiera la comparsa deve essere immediata: il ritardo di 0.3s serve alla dissolvenza
+   col puntatore. */
+.copy-box:focus-visible {
+	transition-delay: 0s;
 }
 
 .copy-message {

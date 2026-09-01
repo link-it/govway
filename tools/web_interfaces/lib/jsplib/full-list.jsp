@@ -401,11 +401,11 @@ if (hidden!=null && !hidden.isEmpty()) {
 					      			if(StringUtils.isNotEmpty(copyToClipboard)){ 
 								  		String deCopyId = "__i_hidden_copy_de_"+i;
 								  		%>
-		                				<span class="copy-box" id="<%= deCopyId%>" title="<%=Costanti.ICON_COPY_TOOLTIP_CON_PARAMETRO %>">
+		                				<span class="copy-box" role="button" tabindex="0" id="<%= deCopyId%>" title="<%=Costanti.ICON_COPY_TOOLTIP %>">
 											<i class="material-icons md-18" aria-hidden="true"><%= Costanti.ICON_COPY %></i>
 										</span>
 										
-										<div id="<%= deCopyId%>_message" class="copy-message"><%=Costanti.ICON_COPY_ESITO_OPERAZIONE %></div>
+										<div id="<%= deCopyId%>_message" class="copy-message" role="status"><%=Costanti.ICON_COPY_ESITO_OPERAZIONE %></div>
 										<script type="text/javascript" nonce="<%= randomNonce %>">
 									      	 $(document).ready(function(){
 									      		 setupCopyButtonEvents('<%= deTextId%>', '<%= deCopyId%>', '<%= deCopyId%>_message'); // imposta gestione eventi per visualizzazione tasto copia
