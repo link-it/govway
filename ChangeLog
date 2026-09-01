@@ -8,28 +8,30 @@
 	- Il badge del metodo PATCH passa al ciano, essendo poco distinguibile da quello del metodo POST.
 	- Rimosso un 'br' emesso come figlio diretto di 'ul' nell'elenco dei protocolli.
 	- Aggiunto il nome accessibile ai campi multi-valore generati da 'bootstrap-tagsinput', che ne erano privi, ed escluso dalla navigazione assistita il campo decorativo di 'typeahead'.
-	- I tag dei gruppi di un'API venivano resi con stili diversi a seconda della modalita' della pagina e del numero di tag presenti.
+	- I tag dei gruppi di un'API venivano resi con stili diversi a seconda della modalità della pagina e del numero di tag presenti.
 	- Le schede realizzate con il widget 'tabs' di jQuery UI contenevano un collegamento raggiungibile dalle tecnologie assistive, che veniva annunciato all'interno di ogni scheda.
-	- Le pagine non offrivano alcun modo per saltare i blocchi ripetuti: sono state introdotte le regioni 'banner', 'navigation', 'main' e 'contentinfo', e le tabelle usate per l'impaginazione non vengono piu' annunciate come tabelle.
+	- Le pagine non offrivano alcun modo per saltare i blocchi ripetuti: sono state introdotte le regioni 'banner', 'navigation', 'main' e 'contentinfo', e le tabelle usate per l'impaginazione non vengono più annunciate come tabelle.
 	- Le icone decorative venivano annunciate dalle tecnologie assistive come caratteri privi di significato: sono adesso escluse dalla navigazione assistita.
 	- I comandi resi con la sola icona (mostra/nascondi password, modifica del valore, scorrimento delle schede) hanno adesso un nome accessibile e sono attivabili da tastiera.
 	- La validazione dei campi effettuata al salvataggio prendeva in esame anche i campi nascosti, bloccando l'operazione su valori che l'utente non ha modo di correggere: era il caso della descrizione di un connettore multiplo, non resa a schermo, il cui valore memorizzato terminava con uno spazio.
-	- L'area attivabile delle icone 'Visualizza Token Policy' e 'Visualizza Attribute Authority' era alta 16 pixel anziche' 24: i bordi superiore e inferiore dell'icona non rispondevano al clic.
+	- L'area attivabile delle icone 'Visualizza Token Policy' e 'Visualizza Attribute Authority' era alta 16 pixel anziché 24: i bordi superiore e inferiore dell'icona non rispondevano al clic.
 	- Le pagine non avevano un'intestazione di primo livello: il titolo della pagina viene adesso annunciato come tale.
 	- Introdotto il collegamento 'Vai al contenuto principale', primo elemento raggiungibile da tastiera e visibile solo quando riceve il focus, per non attraversare il menu su ogni pagina.
-	- Le sezioni comprimibili delle maschere si aprivano solo col mouse, rendendone il contenuto inaccessibile da tastiera: l'intestazione di sezione e' adesso un comando attivabile con Invio e barra spaziatrice, che espone anche lo stato aperto/chiuso.
+	- Le sezioni comprimibili delle maschere si aprivano solo col mouse, rendendone il contenuto inaccessibile da tastiera: l'intestazione di sezione è adesso un comando attivabile con Invio e barra spaziatrice, che espone anche lo stato aperto/chiuso.
 	- Le icone di informazioni e di utilizzo, attivabili solo col mouse, sono adesso raggiungibili e attivabili da tastiera.
 	- Il testo delle finestre informative che eccede l'altezza disponibile non era scorribile da tastiera: l'area di scorrimento riceve adesso il focus all'apertura, quando la finestra non contiene altri comandi.
-	- Negli elenchi l'apertura di un elemento era possibile solo col mouse: il nome dell'elemento e' adesso un collegamento, raggiungibile da tastiera e annunciato come tale.
+	- Negli elenchi l'apertura di un elemento era possibile solo col mouse: il nome dell'elemento è adesso un collegamento, raggiungibile da tastiera e annunciato come tale.
 	- Il menu' delle azioni ('tre puntini') era privo di nome e attivabile solo col mouse, come il comando che apre i filtri di ricerca: sono adesso comandi con nome, attivabili da tastiera, e le voci del menu' si percorrono con le frecce, si attivano con Invio e si chiudono con Esc.
 	- I comandi di scorrimento delle pagine degli elenchi, le sezioni comprimibili dei filtri di ricerca e i comandi di aggiornamento sezione e di sbloccio di un valore erano attivabili solo col mouse: sono adesso raggiungibili e attivabili da tastiera.
-	- Il pulsante che copia un valore negli appunti, visibile al passaggio del puntatore, non era utilizzabile da tastiera perche' reso invisibile in un modo che ne impedisce il focus: e' adesso raggiungibile con il Tab, compare quando riceve il focus ed e' attivabile con Invio.
+	- Il pulsante che copia un valore negli appunti, visibile al passaggio del puntatore, non era utilizzabile da tastiera perché reso invisibile in un modo che ne impedisce il focus: è adesso raggiungibile con il Tab, compare quando riceve il focus ed è attivabile con Invio.
 	- Negli elenchi il tooltip del pulsante di copia mostrava letteralmente 'Copia {0}', per un segnaposto non sostituito.
 	- Nella finestra 'Visualizza Informazioni Cifrate' il valore copiato negli appunti veniva immediatamente sovrascritto con un valore vuoto, per due gestori sovrapposti sullo stesso comando.
-	- Il messaggio 'Copiato negli appunti' compariva una sola volta: nasconderlo azzerava l'opacita', che non veniva poi ripristinata alla comparsa successiva.
-	- Nelle finestre di dialogo la conferma della copia non compariva quando il comando veniva attivato da tastiera, perche' posizionata sulle coordinate del puntatore, inesistenti in quel caso; la sua rimozione era inoltre affidata all'uscita del puntatore dal comando, evento che da tastiera non avviene, e il riquadro restava sullo schermo indefinitamente.
+	- Il messaggio 'Copiato negli appunti' compariva una sola volta: nasconderlo azzerava l'opacità, che non veniva poi ripristinata alla comparsa successiva.
+	- Nelle finestre di dialogo la conferma della copia non compariva quando il comando veniva attivato da tastiera, perché posizionata sulle coordinate del puntatore, inesistenti in quel caso; la sua rimozione era inoltre affidata all'uscita del puntatore dal comando, evento che da tastiera non avviene, e il riquadro restava sullo schermo indefinitamente.
 	- Le conferme di copia non venivano annunciate dalle tecnologie assistive: sono adesso messaggi di stato.
 	- Nella finestra 'Visualizza Informazioni Cifrate' il comando di copia restava raggiungibile da tastiera anche prima che il valore fosse decodificato, intercettando l'attivazione destinata al pulsante 'Visualizza'.
+	- Nei campi a più valori il comando che rimuove un tag era un elemento vuoto, non raggiungibile da tastiera e privo di nome: è adesso un comando che indica quale tag rimuove, raggiungibile con il Tab e attivabile con Invio.
+	- Nei campi a selezione multipla non era indicato come selezionare più elementi: sotto il campo compare adesso la nota 'Tenere premuto Ctrl per selezionare o deselezionare più elementi', associata al campo così da essere annunciata anche dalle tecnologie assistive.
 
 2026-08-20  Andrea Poli <apoli@link.it>
 

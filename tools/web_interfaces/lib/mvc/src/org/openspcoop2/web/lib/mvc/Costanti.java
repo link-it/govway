@@ -58,6 +58,7 @@ public class Costanti {
 	public static final String LABEL_ARIA_SCHEDA_SUCCESSIVA = "Scheda successiva";
 	public static final String LABEL_ARIA_SALTA_AL_CONTENUTO = "Vai al contenuto principale";
 	public static final String LABEL_ARIA_MENU_AZIONI = "Azioni disponibili";
+	public static final String LABEL_NOTA_SELEZIONE_MULTIPLA = "Tenere premuto Ctrl per selezionare o deselezionare più elementi";
 	
 	
 	/** Multipart */

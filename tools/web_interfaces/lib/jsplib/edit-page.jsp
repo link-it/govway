@@ -1361,6 +1361,19 @@ for (int i = 0; i < dati.size(); i++) {
 		                                        		} else { // else select
 		                                        			if(type.equals("multi-select")){
 		                                        				String selId = "select_" + i;
+		                                        				// Il suggerimento sull'uso di Ctrl riguarda il solo select nativo: quando il campo
+		                                        				// viene trasformato in un elenco di tag quella combinazione non ha alcun effetto.
+		                                        				boolean multiSelectNativo = de.getDataAttributesAsString().equals("");
+		                                        				boolean multiSelectSoloLettura = pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton");
+		                                        				boolean mostraNotaMultiSelect = multiSelectNativo && !multiSelectSoloLettura;
+		                                        				String idNotaMultiSelect = "nota_multi_select_" + i;
+		                                        				String idNotaDe = "nota_de_" + i;
+		                                        				// le note vengono associate al campo, altrimenti chi usa un lettore di schermo non le riceve
+		                                        				String descrittoDa = !deNote.equals("") ? idNotaDe : "";
+		                                        				if(mostraNotaMultiSelect) {
+		                                        					descrittoDa = descrittoDa.equals("") ? idNotaMultiSelect : (descrittoDa + " " + idNotaMultiSelect);
+		                                        				}
+		                                        				String deDescrittoDaAttr = descrittoDa.equals("") ? "" : (" aria-describedby=\"" + descrittoDa + "\"");
 		                                        				%>
 	                                        					<div class="prop">
 			                                        				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%=selId %>"><%=deLabel %></label>
@@ -1372,7 +1385,7 @@ for (int i = 0; i < dati.size(); i++) {
 			                               								String selSize = " size='"+de.getRows()+"' ";
 			                               								String selDataAttributes = !de.getDataAttributesAsString().equals("") ? de.getDataAttributesAsString() : " ";
 			                               								
-			                          									%><select id="<%= selId  %>" name="<%= deName  %>" <%= selSize %> class="<%= classInput %>" multiple <%= selDataAttributes %> <%=deAriaLabelAttr %>><%
+			                          									%><select id="<%= selId  %>" name="<%= deName  %>" <%= selSize %> class="<%= classInput %>" multiple <%= selDataAttributes %> <%=deAriaLabelAttr %><%= deDescrittoDaAttr %>><%
 			                          									String [] values = de.getValues();
 			                                        					if (values != null) {
 			                            									String [] labels = de.getLabels();
@@ -1489,7 +1502,10 @@ for (int i = 0; i < dati.size(); i++) {
 			                               							}
 															      	%>
 			                                        				<% if(!deNote.equals("")){ %>
-										      							<p class="note <%= labelStyleClass %>"><%=deNote %></p>
+										      							<p class="note <%= labelStyleClass %>" id="<%= idNotaDe %>"><%=deNote %></p>
+										      						<% } %>
+			                                        				<% if(mostraNotaMultiSelect){ %>
+										      							<p class="note <%= labelStyleClass %>" id="<%= idNotaMultiSelect %>"><%= Costanti.LABEL_NOTA_SELEZIONE_MULTIPLA %></p>
 										      						<% } %>
 			                                        			</div>
 		                                        				<%

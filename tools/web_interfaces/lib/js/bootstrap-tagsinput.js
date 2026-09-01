@@ -170,7 +170,13 @@
 
       // add a tag element
 
-      var $tag = $('<span class="tag ' + htmlEncode(tagClass) + (itemTitle !== null ? ('" title="' + itemTitle) : '') + '">' + htmlEncode(itemText) + '<span data-role="remove"></span></span>');
+      /* Accessibilita' (GovWay): il comando di rimozione era uno <span> vuoto, non raggiungibile
+         da tastiera e privo di nome, quindi invisibile alle tecnologie assistive. La rimozione
+         restava possibile con Backspace dal campo, ma nulla lo faceva sapere. Lo si dichiara
+         quindi come comando, con un nome che indica quale tag rimuove; l'attivazione con Invio
+         e barra spaziatrice e' garantita dall'attivatore generico in webapps.js. */
+      var etichettaRimozione = htmlEncode('Rimuovi ' + itemText);
+      var $tag = $('<span class="tag ' + htmlEncode(tagClass) + (itemTitle !== null ? ('" title="' + itemTitle) : '') + '">' + htmlEncode(itemText) + '<span data-role="remove" role="button" tabindex="0" aria-label="' + etichettaRimozione + '" title="' + etichettaRimozione + '"></span></span>');
       $tag.data('item', item);
       self.findInputWrapper().before($tag);
       $tag.after(' ');
