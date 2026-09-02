@@ -254,7 +254,7 @@ if(!tabSessionKey.equals("")){
 												  		</script>
 													
 														<div class="autocomplete">
-															<span class="soggettoAutocomplete">Soggetto:</span>
+															<label class="soggettoAutocomplete" for="menuSoggetto_menuAutocomplete">Soggetto:</label>
 														    <input id="menuSoggetto_menuAutocomplete" type="text" name="soggettoAutoComplete" value="<%=labelSelezionato %>">
 														  </div>
 													
