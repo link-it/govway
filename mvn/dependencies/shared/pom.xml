@@ -45,6 +45,11 @@
 		<jboss-logging.version>3.6.3.Final</jboss-logging.version>
 		<urlrewritefilter.version>5.1.3</urlrewritefilter.version>
 		<micrometer.version>1.16.5</micrometer.version>
+		<prometheus.version>1.4.3</prometheus.version>
+		<opentelemetry-proto.version>1.8.0-alpha</opentelemetry-proto.version>
+		<protobuf.version>4.32.0</protobuf.version>
+		<hdrhistogram.version>2.2.2</hdrhistogram.version>
+		<latencyutils.version>2.0.3</latencyutils.version>
 		<caffeine.version>3.2.3</caffeine.version>
 
 	</properties>
@@ -429,6 +434,158 @@
 			<groupId>io.micrometer</groupId>
 			<artifactId>micrometer-commons</artifactId>
 			<version>${micrometer.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<!-- Micrometer core (registry/metrics) + aggancio Prometheus per l'endpoint /metrics (issue #1783) -->
+		<dependency>
+			<groupId>io.micrometer</groupId>
+			<artifactId>micrometer-core</artifactId>
+			<version>${micrometer.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<!-- transitivi non-opzionali di micrometer-core -->
+		<dependency>
+			<groupId>org.hdrhistogram</groupId>
+			<artifactId>HdrHistogram</artifactId>
+			<version>${hdrhistogram.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.latencyutils</groupId>
+			<artifactId>LatencyUtils</artifactId>
+			<version>${latencyutils.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<!-- registry Prometheus di Micrometer -->
+		<dependency>
+			<groupId>io.micrometer</groupId>
+			<artifactId>micrometer-registry-prometheus</artifactId>
+			<version>${micrometer.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<!-- client Prometheus 1.x richiesto dal registry (tracer-initializer escluso, come da pom del registry) -->
+		<dependency>
+			<groupId>io.prometheus</groupId>
+			<artifactId>prometheus-metrics-core</artifactId>
+			<version>${prometheus.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>io.prometheus</groupId>
+			<artifactId>prometheus-metrics-model</artifactId>
+			<version>${prometheus.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>io.prometheus</groupId>
+			<artifactId>prometheus-metrics-config</artifactId>
+			<version>${prometheus.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>io.prometheus</groupId>
+			<artifactId>prometheus-metrics-tracer-common</artifactId>
+			<version>${prometheus.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>io.prometheus</groupId>
+			<artifactId>prometheus-metrics-exposition-formats</artifactId>
+			<version>${prometheus.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>io.prometheus</groupId>
+			<artifactId>prometheus-metrics-exposition-textformats</artifactId>
+			<version>${prometheus.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<!-- registry OTLP di Micrometer (push OTLP/HTTP verso collector, es. OpenTelemetry Collector) -->
+		<dependency>
+			<groupId>io.micrometer</groupId>
+			<artifactId>micrometer-registry-otlp</artifactId>
+			<version>${micrometer.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<!-- classi protobuf del formato OTLP richieste dal registry (encoding HTTP/protobuf) -->
+		<dependency>
+			<groupId>io.opentelemetry.proto</groupId>
+			<artifactId>opentelemetry-proto</artifactId>
+			<version>${opentelemetry-proto.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.google.protobuf</groupId>
+			<artifactId>protobuf-java</artifactId>
+			<version>${protobuf.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>

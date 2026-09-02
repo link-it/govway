@@ -176,6 +176,11 @@ tematiche:
    È possibile adottare alcune misure di sicurezza per limitare l'esposizione di informazioni relative all'architettura e alle tecnologie utilizzate.
    Indicazioni su come configurare l'application server e altri componenti sono fornite nella sezione :ref:`esposizioneInformazioni`.
 
+#. *Metriche di Osservabilità*
+
+   GovWay può esporre metriche operative (numero di richieste, latenze, dimensioni dei messaggi, stato interno del gateway, risorse JVM, ecc.) verso i sistemi di monitoraggio infrastrutturale, sia in modalità pull tramite un endpoint compatibile Prometheus, sia in modalità push tramite protocollo OTLP verso un collector OpenTelemetry.
+   Le modalità di raccolta, i collettori e il catalogo completo delle metriche sono descritti nella sezione :ref:`osservabilitaInstall`.
+
 
 .. toctree::
         :maxdepth: 2
@@ -200,3 +205,4 @@ tematiche:
 	securityDomainOther
 	cache
 	esposizioneInformazioni
+	osservabilita/index

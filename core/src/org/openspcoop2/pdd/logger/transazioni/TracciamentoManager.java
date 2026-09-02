@@ -66,6 +66,7 @@ import org.openspcoop2.pdd.config.Resource;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.controllo_traffico.CostantiControlloTraffico;
 import org.openspcoop2.pdd.core.controllo_traffico.handler.PostOutResponseHandlerGestioneControlloTraffico;
+import org.openspcoop2.pdd.core.observability.GovwayMeterRegistry;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.handlers.transazioni.ExceptionSerialzerFileSystem;
 import org.openspcoop2.pdd.core.handlers.transazioni.ISalvataggioDiagnosticiManager;
@@ -438,6 +439,12 @@ public class TracciamentoManager {
 			if(times!=null) {
 				long timeEnd =  DateManager.getTimeMillis();
 				long timeProcess = timeEnd-timeStart;
+				// Istogrammi metriche persistenza tracciamento (tutte le transazioni, non solo le lente)
+				if(GovwayMeterRegistry.getInstance().isInitialized()) {
+					GovwayMeterRegistry.getInstance().recordTracciamentoPersistenza(
+							this.fase!=null ? this.fase.name() : null, timeProcess,
+							times.toAggregatedMetricsMap(), times.toDetailedMetricsMap());
+				}
 				if(timeProcess>=this.openspcoopProperties.getTransazioniRegistrazioneSlowLogThresholdMs()) {
 					StringBuilder sb = new StringBuilder();
 					sb.append(timeProcess);

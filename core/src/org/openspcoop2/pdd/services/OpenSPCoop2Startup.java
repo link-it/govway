@@ -166,6 +166,8 @@ import org.openspcoop2.pdd.logger.DiagnosticInputStream;
 import org.openspcoop2.pdd.logger.LogLevels;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
+import org.openspcoop2.pdd.core.observability.GovwayMeterRegistry;
+import org.openspcoop2.pdd.core.observability.ObservabilityProperties;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.logger.filetrace.FileTraceConfig;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
@@ -3511,6 +3513,24 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 
 
 
+			// Inizializzazione configurazione observability (parsing/validazione fail-fast dei collettori metriche)
+			try {
+				ObservabilityProperties.initialize(OpenSPCoop2Startup.log);
+				OpenSPCoop2Startup.logStartupInfo("Inizializzazione configurazione observability effettuata.");
+			}catch(Exception e){
+				msgDiag.logStartupError(e,"Observability");
+				return;
+			}
+
+			// Inizializzazione registry metriche (composite dai collettori observability) per l'endpoint '/metrics'
+			try {
+				GovwayMeterRegistry.getInstance().initialize(OpenSPCoop2Startup.log);
+				OpenSPCoop2Startup.logStartupInfo("Inizializzazione registry metriche effettuata.");
+			}catch(Exception e){
+				msgDiag.logStartupError(e,"MeterRegistry");
+				return;
+			}
+
 			// Inizializzazione delle risorse esterne terminata
 			OpenSPCoop2Startup.initialize = true;
 			Utilities.sleep(1000);
@@ -4348,7 +4368,14 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 	public void contextDestroyed(ServletContextEvent sce) {
 
 		OpenSPCoop2Startup.setContextDestroyed(true);
-		
+
+		// Rilascio registry metriche (Micrometer/Prometheus)
+		try{
+			GovwayMeterRegistry.getInstance().close();
+		}catch(Throwable e){
+			// ignore
+		}
+
 		OpenSPCoop2Properties properties = null;
 		try {
 			properties = OpenSPCoop2Properties.getInstance();

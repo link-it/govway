@@ -237,7 +237,7 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 					if(function.startsWith("/") && function.length()>1) {
 						function = function.substring(1);
 					}
-					if(function.equals(URLProtocolContext.CHECK_FUNCTION) || function.equals(URLProtocolContext.PROXY_FUNCTION)){
+					if(function.equals(URLProtocolContext.CHECK_FUNCTION) || function.equals(URLProtocolContext.PROXY_FUNCTION) || function.equals(URLProtocolContext.METRICS_FUNCTION)){
 						CheckStatoPdD.serializeNotInitializedResponse(res, (logCore!=null) ? logCore : logOpenSPCoop2Servlet);
 						return;
 					}
@@ -542,11 +542,42 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 					}
 				}
 				
-				// Dispatching al servizio 
+				// Dispatching al servizio
 				Proxy proxy = new Proxy();
 				req.setAttribute(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME.getValue(), protocolContext.getProtocolName());
 				proxy.doGet(req, res);
-				
+
+			}
+			else if(function.equals(URLProtocolContext.METRICS_FUNCTION)){
+
+				if(!HttpRequestMethod.GET.equals(method)){
+					// messaggio di errore
+					boolean errore404 = false;
+					if(op2Properties!=null && !op2Properties.isGenerazioneErroreHttpMethodUnsupportedProxyEnabled()){
+						errore404 = true;
+					}
+
+					if(errore404){
+						res.sendError(404,ConnectorUtils.generateError404Message(ConnectorUtils.getFullCodeHttpMethodNotSupported(IDService.PROXY, method)));
+						return;
+					}
+					else{
+
+						res.setStatus(500);
+
+						ConnectorUtils.generateErrorMessage(IDService.PROXY,method,req,res, ConnectorUtils.getMessageHttpMethodNotSupported(method), false, true);
+
+						resFlushAndCloseSafe(res);
+
+						return;
+					}
+				}
+
+				// Dispatching al servizio
+				MetricsExporter metricsExporter = new MetricsExporter();
+				req.setAttribute(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME.getValue(), protocolContext.getProtocolName());
+				metricsExporter.doGet(req, res);
+
 			}
 			else{
 				throw new CoreException(prefixFunction+"not supported");

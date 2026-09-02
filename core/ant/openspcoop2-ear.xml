@@ -818,7 +818,23 @@
 				<include name="${hazelcast-jboss-logging_jar}"/>
 				<include name="ehcache-3.10.0.jar"/>
 				<include name="caffeine-3.2.3.jar"/>
-				<!-- NOTA: 
+				<!-- Observability: Micrometer + registry Prometheus/OTLP (issue #1783) -->
+				<include name="micrometer-commons-1.16.5.jar"/>
+				<include name="micrometer-observation-1.16.5.jar"/>
+				<include name="micrometer-core-1.16.5.jar"/>
+				<include name="HdrHistogram-2.2.2.jar"/>
+				<include name="LatencyUtils-2.0.3.jar"/>
+				<include name="micrometer-registry-prometheus-1.16.5.jar"/>
+				<include name="prometheus-metrics-core-1.4.3.jar"/>
+				<include name="prometheus-metrics-model-1.4.3.jar"/>
+				<include name="prometheus-metrics-config-1.4.3.jar"/>
+				<include name="prometheus-metrics-tracer-common-1.4.3.jar"/>
+				<include name="prometheus-metrics-exposition-formats-1.4.3.jar"/>
+				<include name="prometheus-metrics-exposition-textformats-1.4.3.jar"/>
+				<include name="micrometer-registry-otlp-1.16.5.jar"/>
+				<include name="opentelemetry-proto-1.8.0-alpha.jar"/>
+				<include name="protobuf-java-4.32.0.jar"/>
+				<!-- NOTA:
 					non includere mai nel runtime Saxon-HE-*.jar poiche' fa agganciare il suo Transformer sostituendosi a Xalan (al massimo vedere di levare la dichiarazione in META-INF)
 					Anche se con la versione -gov4j-1 del jar il problema dovrebbe essere risolto, poichè elimina la dichiarazione del trasformer sotto META-INF
 					Se si decidesse di riaggiungerlo, aggiungere anche la dipendenza xmlresolver-4.3.0.jar
@@ -892,6 +908,7 @@
 				<include name="govway.jmsPublisher.properties" />
 				<include name="openspcoop2.autorizzazionePdDConsole.properties" />
 				<include name="govway.pdd.properties" />
+				<include name="govway.observability.properties" />
 				<include name="govway.log4j2.properties" />
 				<include name="govway.protocolAdjunct.log4j2.properties" />
 				<include name="log4j2.properties" />

@@ -22,8 +22,14 @@ package org.openspcoop2.pdd.core.controllo_traffico.handler;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openspcoop2.core.config.Proprieta;
+import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicy;
 import org.openspcoop2.core.controllo_traffico.beans.MisurazioniTransazione;
+import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.pdd.core.ProtocolContext;
+import org.openspcoop2.protocol.sdk.state.RequestConfig;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.core.controllo_traffico.driver.IGestorePolicyAttive;
 import org.openspcoop2.core.controllo_traffico.driver.IPolicyGroupByActiveThreads;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyNotFoundException;
@@ -33,6 +39,7 @@ import org.openspcoop2.pdd.core.controllo_traffico.CostantiControlloTraffico;
 import org.openspcoop2.pdd.core.controllo_traffico.GestoreControlloTraffico;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.config.PolicyConfiguration;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.GestorePolicyAttive;
+import org.openspcoop2.pdd.core.observability.GovwayMeterRegistry;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.logger.transazioni.InformazioniTransazione;
 import org.openspcoop2.pdd.logger.transazioni.TransazioniProcessTimes;
@@ -76,7 +83,38 @@ public class PostOutResponseHandlerGestioneControlloTraffico {
 		try {
 			Logger logControlloTraffico = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(OpenSPCoop2Properties.getInstance().isControlloTrafficoDebug());
 			if(misurazioniTransazione!=null){
-			
+
+				// Hook metriche: una registrazione per transazione, indipendente dalle policy applicabili
+				if(GovwayMeterRegistry.getInstance().isInitialized()) {
+					// Servizio/azione/api dal ProtocolContext (valorizzati in PostOutResponse, coerenti con le
+					// altre metriche di dettaglio); la transazione da aggiornare non li ha ancora impostati.
+					// La versione del servizio (erogazione/fruizione) e quella dell'API (accordo) sono distinte.
+					String servizioMetrica = null;
+					String serviceVersionMetrica = null;
+					String azioneMetrica = null;
+					String apiMetrica = null;
+					String apiVersionMetrica = null;
+					ProtocolContext protocolContext = info.getProtocollo();
+					boolean perServizio = isMetricheServizioAbilitate(context);
+					
+					if(perServizio && protocolContext != null) {
+						servizioMetrica = protocolContext.getServizio();
+						azioneMetrica = protocolContext.getAzione();
+						if(protocolContext.getVersioneServizio()!=null) {
+							serviceVersionMetrica = protocolContext.getVersioneServizio().toString();
+						}
+						IDAccordo idAccordo = protocolContext.getIdAccordo();
+						if(idAccordo!=null) {
+							apiMetrica = idAccordo.getNome();
+							if(idAccordo.getVersione()!=null) {
+								apiVersionMetrica = idAccordo.getVersione().toString();
+							}
+						}
+					}
+					GovwayMeterRegistry.getInstance().recordTransazione(misurazioniTransazione, perServizio,
+							servizioMetrica, serviceVersionMetrica, azioneMetrica, apiMetrica, apiVersionMetrica);
+				}
+
 				if(times!=null) {
 					timeStart = DateManager.getTimeMillis();
 				}
@@ -204,5 +242,41 @@ public class PostOutResponseHandlerGestioneControlloTraffico {
 			logger.error("["+idTransazione+"] Errore durante la registrazione di terminazione del thread (policy inspection)",e);
 		}
 	}
-	
+
+	/**
+	 * Legge dalla configurazione del servizio (proprieta custom) se abilitare l'emissione delle
+	 * metriche per singolo servizio ({@link GovwayMeterRegistry#PROPRIETA_METRICHE_DETAILS}).
+	 * Difensivo: in caso di dato non disponibile ritorna false.
+	 */
+	private static boolean isMetricheServizioAbilitate(Context context) {
+		try {
+			if(context==null) {
+				return false;
+			}
+			RequestInfo requestInfo = (RequestInfo) context.getObject(Costanti.REQUEST_INFO);
+			if(requestInfo==null || requestInfo.getRequestConfig()==null) {
+				return false;
+			}
+			RequestConfig requestConfig = requestInfo.getRequestConfig();
+			List<Proprieta> props = null;
+			if(requestConfig.getPortaApplicativa()!=null) {
+				props = requestConfig.getPortaApplicativa().getProprietaList();
+			}
+			else if(requestConfig.getPortaDelegata()!=null) {
+				props = requestConfig.getPortaDelegata().getProprietaList();
+			}
+			if(props==null) {
+				return false;
+			}
+			for(Proprieta p : props) {
+				if(p!=null && GovwayMeterRegistry.PROPRIETA_METRICHE_DETAILS.equals(p.getNome())) {
+					return "true".equalsIgnoreCase(p.getValore());
+				}
+			}
+			return false;
+		}catch(Exception t) {
+			return false;
+		}
+	}
+
 }

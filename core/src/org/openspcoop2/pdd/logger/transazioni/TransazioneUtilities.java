@@ -24,6 +24,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -104,7 +105,10 @@ import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.constants.TipoSerializzazione;
 import org.openspcoop2.protocol.sdk.dump.Messaggio;
+import org.openspcoop2.protocol.sdk.state.RequestConfig;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
+import org.openspcoop2.pdd.core.observability.GovwayMeterRegistry;
+import org.openspcoop2.pdd.core.observability.TempiElaborazioneAggregation;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.MapKey;
@@ -1232,6 +1236,9 @@ public class TransazioneUtilities {
 				timeStart = DateManager.getTimeMillis();
 			}
 			
+			// Metriche fasi di elaborazione: opt-in per servizio via proprieta custom,
+			recordMetricheTempiElaborazione(transaction, transactionDTO);
+
 			// tempi elaborazione
 			if(this.transazioniRegistrazioneTempiElaborazione && transaction.getTempiElaborazione()!=null) {
 				setTempiElaborazione(transactionDTO, transaction);
@@ -1974,6 +1981,98 @@ public class TransazioneUtilities {
 			// NOTA: questo metodo dovrebbe non lanciare praticamente mai eccezione
 			this.logger.error("TempiElaborazioneUtils.convertToDBValue failed: "+e.getMessage(),e);
 		}
+	}
+
+	/** Nome della proprieta (su erogazione/fruizione) che abilita l'esposizione delle metriche per fase. */
+	private static final String PROPRIETA_METRICHE_DETAILS = GovwayMeterRegistry.PROPRIETA_METRICHE_DETAILS;
+
+	/**
+	 * Espone come metriche i tempi di elaborazione (per fase) del servizio, ma solo
+	 * se abilitato tramite la proprieta custom {@value #PROPRIETA_METRICHE_DETAILS}
+	 * sull'erogazione/fruizione.
+	 */
+	private void recordMetricheTempiElaborazione(Transaction transaction, Transazione transactionDTO) {
+		try {
+			if(!GovwayMeterRegistry.getInstance().isInitialized() || transaction.getTempiElaborazione()==null) {
+				return;
+			}
+			List<Proprieta> proprietaServizio = getProprietaServizio(transaction);
+			if(!"true".equalsIgnoreCase(getProprietaValore(proprietaServizio, PROPRIETA_METRICHE_DETAILS))) {
+				return;
+			}
+			Map<String,String> labels = new LinkedHashMap<>();
+			labels.put("service", nullSafe(transactionDTO.getNomeServizio()));
+			labels.put("service_version", String.valueOf(transactionDTO.getVersioneServizio()));
+			labels.put("action", nullSafe(transactionDTO.getAzione()));
+			labels.put("pdd_role", mapPddRuolo(transactionDTO.getPddRuolo()));
+			IDAccordo idAccordoMetrica = getIdAccordo(transactionDTO.getUriAccordoServizio());
+			labels.put("api", nullSafe(idAccordoMetrica!=null ? idAccordoMetrica.getNome() : null));
+			labels.put("api_version", (idAccordoMetrica!=null && idAccordoMetrica.getVersione()!=null)
+					? idAccordoMetrica.getVersione().toString() : "");
+			// per adesso: tutte le 33 fasi (fasi=null); in futuro pilotabile via proprieta locali/globali
+			GovwayMeterRegistry.getInstance().recordTempiElaborazione(transaction.getTempiElaborazione(), new TempiElaborazioneAggregation(labels, null));
+		}catch(Exception t) {
+			this.logger.debug("Registrazione metriche tempi di elaborazione fallita: "+t.getMessage(), t);
+		}
+	}
+
+	/** Ricava l'IDAccordo (nome+versione dell'API parte comune) dall'URI dell'accordo; {@code null} se non ricavabile. */
+	private static IDAccordo getIdAccordo(String uriAccordoServizio) {
+		if(uriAccordoServizio==null) {
+			return null;
+		}
+		try {
+			return IDAccordoFactory.getInstance().getIDAccordoFromUri(uriAccordoServizio);
+		}catch(Exception e) {
+			return null;
+		}
+	}
+
+	private static List<Proprieta> getProprietaServizio(Transaction transaction) {
+		RequestInfo requestInfo = transaction.getRequestInfo();
+		if(requestInfo==null) {
+			return null;
+		}
+		RequestConfig requestConfig = requestInfo.getRequestConfig();
+		if(requestConfig==null) {
+			return null;
+		}
+		if(requestConfig.getPortaApplicativa()!=null) {
+			return requestConfig.getPortaApplicativa().getProprietaList();
+		}
+		if(requestConfig.getPortaDelegata()!=null) {
+			return requestConfig.getPortaDelegata().getProprietaList();
+		}
+		return null;
+	}
+
+	private static String getProprietaValore(List<Proprieta> proprieta, String nome) {
+		if(proprieta==null) {
+			return null;
+		}
+		for(Proprieta p : proprieta) {
+			if(p!=null && nome.equals(p.getNome())) {
+				return p.getValore();
+			}
+		}
+		return null;
+	}
+
+	private static String mapPddRuolo(PddRuolo ruolo) {
+		if(ruolo==null) {
+			return "unknown";
+		}
+		if(PddRuolo.DELEGATA.equals(ruolo)) {
+			return "outbound";
+		}
+		if(PddRuolo.APPLICATIVA.equals(ruolo)) {
+			return "inbound";
+		}
+		return ruolo.getValue();
+	}
+
+	private static String nullSafe(String s) {
+		return s!=null ? s : "";
 	}
 	
 	private static final MapKey<String> CREDENZIALI_MITTENTE_CLIENT_ADDRESS_RESOLVED = org.openspcoop2.utils.Map.newMapKey("CREDENZIALI_MITTENTE_CLIENT_ADDRESS_RESOLVED");

@@ -62,6 +62,7 @@ public abstract class URLProtocolContext extends HttpServletTransportRequestCont
 	public static final String INTEGRATION_MANAGER_ENGINE_FUNCTION_MESSAGE_BOX = INTEGRATION_MANAGER_ENGINE+"/"+INTEGRATION_MANAGER_SERVICE_MESSAGE_BOX;
 	public static final String CHECK_FUNCTION = "check";
 	public static final String PROXY_FUNCTION = "proxy";
+	public static final String METRICS_FUNCTION = "metrics";
 	
 	protected IDService idServiceCustom;
 	

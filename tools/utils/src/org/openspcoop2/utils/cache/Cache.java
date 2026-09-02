@@ -281,6 +281,26 @@ public class Cache {
 		}
 	}
 	
+	/**
+	 * Restituisce, per ogni cache registrata, il numero di elementi attualmente presenti.
+	 * Operazione economica: usa ICacheImpl.getItemCount() (nessuna serializzazione).
+	 */
+	public static Map<String,Integer> getItemCountByCache() {
+		Map<String,Integer> result = new HashMap<>();
+		if(Cache.caches!=null) {
+			for (Map.Entry<String, ICacheImpl> entry : Cache.caches.entrySet()) {
+				try {
+					if(entry.getValue()!=null) {
+						result.put(entry.getKey(), entry.getValue().getItemCount());
+					}
+				}catch(Exception t) {
+					// ignore
+				}
+			}
+		}
+		return result;
+	}
+
 	public int getItemCount()  throws UtilsException {
 		if(this.cache==null) {
 			throw new RuntimeException("Cache not initialized");

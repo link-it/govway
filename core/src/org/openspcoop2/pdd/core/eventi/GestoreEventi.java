@@ -31,6 +31,7 @@ import org.openspcoop2.generic_project.exception.NotImplementedException;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.pdd.config.DBTransazioniManager;
+import org.openspcoop2.pdd.core.observability.GovwayMeterRegistry;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.Resource;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
@@ -150,6 +151,15 @@ public class GestoreEventi {
     					this.daoFactoryServiceManagerProperties, this.daoFactoryLogger);
     	jdbcServiceManager.getEventoService().create(evento);  	
     	
+    	// Metrica: conteggio eventi per tipo/codice/severita (non deve compromettere la registrazione)
+    	try {
+    		if(GovwayMeterRegistry.getInstance().isInitialized()) {
+    			GovwayMeterRegistry.getInstance().recordEvento(evento.getTipo(), evento.getCodice(), evento.getSeverita(), evento.getClusterId());
+    		}
+    	}catch(Exception t) {
+    		// ignore
+    	}
+
     	String msg = "CREATO EVENTO: "+EventiUtilities.toString(evento);
     	this.daoFactoryLogger.info(msg);
 

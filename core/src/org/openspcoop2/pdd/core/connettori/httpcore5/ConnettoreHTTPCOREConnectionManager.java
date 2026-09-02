@@ -50,6 +50,7 @@ import org.apache.hc.core5.http.impl.DefaultConnectionReuseStrategy;
 import org.apache.hc.core5.io.CloseMode;
 import org.apache.hc.core5.pool.PoolConcurrencyPolicy;
 import org.apache.hc.core5.pool.PoolReusePolicy;
+import org.apache.hc.core5.pool.PoolStats;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.connettori.AbstractConnettoreConnectionConfig;
 import org.openspcoop2.pdd.core.connettori.ConnettoreException;
@@ -112,6 +113,29 @@ public class ConnettoreHTTPCOREConnectionManager {
 			return sb.toString();
 		}
 		return null;
+	}
+
+	/**
+	 * Restituisce le statistiche di tutti i pool di connessioni attivi (per l'esposizione come metriche).
+	 * Lettura best-effort: in caso di errore restituisce quanto raccolto.
+	 */
+	public static List<PoolStats> getPoolsStats() {
+		List<PoolStats> stats = new ArrayList<>();
+		try {
+			SemaphoreLock lock = semaphorePoolingConnectionManager.acquire("getPoolsStats");
+			try {
+				for (PoolingHttpClientConnectionManager cm : mapPoolingConnectionManager.values()) {
+					if(cm!=null) {
+						stats.add(cm.getTotalStats());
+					}
+				}
+			}finally {
+				semaphorePoolingConnectionManager.release(lock, "getPoolsStats");
+			}
+		}catch(Exception e) {
+			// best-effort
+		}
+		return stats;
 	}
 	
 	private static void initialize(String key, TlsSocketStrategy tlsSocketStrategy, 

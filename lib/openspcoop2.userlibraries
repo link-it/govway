@@ -215,6 +215,9 @@
 	<archive path="/op2_3.4.dev/lib/shared/hazelcast-5.3.8.jar"/>
 	<archive path="/op2_3.4.dev/lib/shared/hibernate-core-7.3.2.Final.jar"/>
 	<archive path="/op2_3.4.dev/lib/shared/caffeine-3.2.3.jar"/>
+	<archive path="/op2_3.4.dev/lib/shared/micrometer-core-1.16.5.jar"/>
+	<archive path="/op2_3.4.dev/lib/shared/micrometer-registry-prometheus-1.16.5.jar"/>
+	<archive path="/op2_3.4.dev/lib/shared/micrometer-registry-otlp-1.16.5.jar"/>
 	<!-- spring -->
         <archive path="/op2_3.4.dev/lib/spring/spring-web-7.0.8.jar"/>
         <archive path="/op2_3.4.dev/lib/spring/spring-tx-7.0.8.jar"/>
