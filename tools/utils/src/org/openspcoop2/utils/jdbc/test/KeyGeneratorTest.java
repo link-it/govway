@@ -154,7 +154,7 @@ public class KeyGeneratorTest {
 			break;
 		case MYSQL:
 			url = "jdbc:mysql://localhost/prova";
-			driver = "com.mysql.jdbc.Driver";
+			driver = "com.mysql.cj.jdbc.Driver";
 			userName = "openspcoop2";
 			password = "openspcoop2";
 			keyGeneratorObject = new CustomKeyGeneratorObject("prova", "id","seq_prova", "prova_init_seq");

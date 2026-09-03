@@ -1,3 +1,11 @@
+2026-09-03  Andrea Poli <apoli@link.it>
+
+	* [InstallerVersioneBinaria]
+	Risolto Bug #1818
+	I datasource generati per MySQL dichiaravano la classe driver JDBC 'com.mysql.jdbc.Driver', deprecata dal Connector/J 8.0
+	e supportata solo tramite una classe di compatibilità che emette un avviso ad ogni avvio: viene adesso dichiarata
+	'com.mysql.cj.jdbc.Driver'. Allineati anche i datasource di esempio e le properties degli strumenti a riga di comando.
+
 2026-08-27  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

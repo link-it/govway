@@ -114,7 +114,7 @@ public class ClientTest {
 			break;
 		case MYSQL:
 			url = "jdbc:mysql://localhost/prova";
-			driver = "com.mysql.jdbc.Driver";
+			driver = "com.mysql.cj.jdbc.Driver";
 			userName = "openspcoop2";
 			password = "openspcoop2";
 			break;
