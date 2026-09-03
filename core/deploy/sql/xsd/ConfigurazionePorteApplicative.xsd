@@ -19,6 +19,8 @@
                         <linkit:sql-script generate="true">
                             <linkit:sql-table-list>
                                 <linkit:sql-comment><![CDATA[**** Porte Applicative ****]]></linkit:sql-comment>
+                                <!-- NOTA: su MySQL le colonne VARCHAR(255) di questa tabella sono dichiarate
+                                     VARCHAR(256), per rientrare nel limite InnoDB di 8126 byte sul record size. -->
                                 <linkit:sql-table object-name="porte-applicative" object-type="porte-applicative"/>
                                 <linkit:sql-table object-name="porte-applicative-sa" object-type="porte-applicative-sa"/>
                                 <linkit:sql-table object-name="porte-applicative-sa-prop" object-type="NomeValore"/>

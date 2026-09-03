@@ -1,3 +1,31 @@
+2026-08-31  Andrea Poli <apoli@link.it>
+
+	Solo MySQL: le colonne VARCHAR(255) delle tabelle 'configurazione', 'porte_delegate',
+	'porte_applicative', 'servizi_applicativi' e 'tracce' sono state portate a VARCHAR(256),
+	per rientrare nel limite InnoDB di 8126 byte sul record size che tali tabelle eccedevano.
+	In latin1 una VARCHAR(255) resta appena sotto la soglia dei 255 byte oltre la quale una
+	colonna a lunghezza variabile diventa candidabile alla memorizzazione su pagina di
+	overflow: conta quindi 256 byte inline, mentre dichiarata VARCHAR(256) ne conta 20.
+	Il difetto è emerso su MySQL 8.4.9, che ha reso esatto il calcolo del record size massimo;
+	fino alla 8.4.8 era approssimato e non lo rilevava.
+
+	Essendo una correzione specifica del dialetto MySQL, la patch è presente per il solo
+	mysql e non per gli altri database.
+
+	ATTENZIONE: il passaggio da VARCHAR(255) a VARCHAR(256) cambia il numero di byte di
+	lunghezza da 1 a 2, quindi l'ALTER richiede ALGORITHM=COPY: la tabella viene ricostruita
+	e le scritture sono bloccate per tutta la durata (LOCK=NONE non è ammesso). Su 'tracce'
+	va previsto in una finestra di manutenzione. Senza l'adeguamento, su MySQL >= 8.4.9 tali
+	tabelle non accettano più alcuna ADD COLUMN né DROP COLUMN, di nessun tipo.
+
+	ALTER TABLE configurazione
+		MODIFY cadenza_inoltro VARCHAR(256) NOT NULL,
+		... (91 colonne)
+		ALGORITHM=COPY, LOCK=SHARED;
+
+	Analogamente per porte_delegate (71 colonne), porte_applicative (70 colonne),
+	servizi_applicativi (27 colonne) e tracce (35 colonne), per un totale di 294 colonne.
+
 2026-06-04  Andrea Poli <apoli@link.it>
 
 	Aumentata la dimensione della colonna id_configurazione a 4000 caratteri nella tabella notifiche_eventi

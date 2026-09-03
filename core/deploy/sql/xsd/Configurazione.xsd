@@ -23,6 +23,8 @@
                                 <linkit:sql-table object-name="registri" object-type="registri"/>
                                 <linkit:sql-table object-name="routing" object-type="routing"/>
                                 <linkit:sql-table object-name="response-cache-regola" object-type="response-cache-regola"/>
+                                <!-- NOTA: su MySQL le colonne VARCHAR(255) di questa tabella sono dichiarate
+                                     VARCHAR(256), per rientrare nel limite InnoDB di 8126 byte sul record size. -->
                                 <linkit:sql-table object-name="configurazione" object-type="configurazione"/>
                                 <linkit:sql-comment><![CDATA[**** URLInvocazione ****]]></linkit:sql-comment>
                                 <linkit:sql-table object-name="url-invocazione" object-type="url-invocazione"/>

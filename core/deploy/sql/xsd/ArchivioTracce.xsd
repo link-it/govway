@@ -18,6 +18,8 @@
                     <linkit:sql>
                         <linkit:sql-script generate="true">
                             <linkit:sql-table-list>
+                                <!-- NOTA: su MySQL le colonne VARCHAR(255) di questa tabella sono dichiarate
+                                     VARCHAR(256), per rientrare nel limite InnoDB di 8126 byte sul record size. -->
                                 <linkit:sql-table object-name="tracce" object-type="tracce"/>
                                 <linkit:sql-table object-name="tracce-riscontri" object-type="tracce-riscontri"/>
                                 <linkit:sql-table object-name="tracce-trasmissioni" object-type="tracce-trasmissioni"/>

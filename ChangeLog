@@ -1,5 +1,14 @@
 2026-09-03  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore]
+	Risolto Bug #1817
+	Corretto il fallimento dell'installazione dello schema su MySQL 8.4.9 e successive, che terminava con l'errore 1118
+	'Row size too large': le tabelle 'configurazione', 'porte_delegate', 'porte_applicative' e 'tracce' eccedevano il limite
+	InnoDB di 8126 byte sul record size. Le loro colonne VARCHAR(255), e quelle di 'servizi_applicativi' che era prossima
+	al limite, sono state portate a VARCHAR(256) nel solo dialetto MySQL.
+
+2026-09-03  Andrea Poli <apoli@link.it>
+
 	* [InstallerVersioneBinaria]
 	Risolto Bug #1818
 	I datasource generati per MySQL dichiaravano la classe driver JDBC 'com.mysql.jdbc.Driver', deprecata dal Connector/J 8.0
