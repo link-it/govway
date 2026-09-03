@@ -22,7 +22,7 @@
 		</antcall>
 		<antcall target="replace_token">
 		    <param name="file" value="${file}"/>
-			<param name="token" value="com.mysql.jdbc.Driver"/>
+			<param name="token" value="com.mysql.cj.jdbc.Driver"/>
 			<param name="value" value="${antinstaller_driver_jdbc_classname}"/>
 		</antcall>
 		<antcall target="replace_token">
@@ -303,7 +303,7 @@
 		</antcall>
 		<antcall target="replace_token">
 		    <param name="file" value="${file}"/>
-			<param name="token" value="com.mysql.jdbc.Driver"/>
+			<param name="token" value="com.mysql.cj.jdbc.Driver"/>
 			<param name="value" value="${antinstaller_as4_driver_jdbc_classname}"/>
 		</antcall>
 		<antcall target="replace_token">

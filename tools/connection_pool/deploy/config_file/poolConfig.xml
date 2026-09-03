@@ -54,7 +54,7 @@
    <!-- 
    <datasource jndi-name="org.govway.datasource" 
                connection-url="jdbc:mysql://localhost/openspcoop2"
-               driver-class="com.mysql.jdbc.Driver"
+               driver-class="com.mysql.cj.jdbc.Driver"
                username="openspcoop2" password="openspcoop2"
                prepared-statement-pool="true"
                read-only="false" auto-commit="true"

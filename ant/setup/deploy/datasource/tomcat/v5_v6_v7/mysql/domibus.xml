@@ -2,7 +2,7 @@
 
 	<Resource name="org.govway.datasource.domibus" auth="Container"
 	          type="javax.sql.DataSource"
-	          driverClassName="com.mysql.jdbc.Driver"
+	          driverClassName="com.mysql.cj.jdbc.Driver"
 	          url="jdbc:mysql://@HOST@:@PORT@/@DATABASE@?zeroDateTimeBehavior=convertToNull"
 	          username="@USERNAME@" password="@PASSWORD@"
 	          initialSize="10"

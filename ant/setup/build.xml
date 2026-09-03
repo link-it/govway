@@ -203,7 +203,7 @@
 			antinstaller_as4_jms_password=
 
 		Configurazione Profilo eDelivery (3/3)
-			antinstaller_as4_driver_jdbc_classname=com.mysql.jdbc.Driver
+			antinstaller_as4_driver_jdbc_classname=com.mysql.cj.jdbc.Driver
 			antinstaller_as4_driver_jdbc=NOME_DRIVER_JDBC.jar
 			antinstaller_as4_dbname=domibus
 			antinstaller_as4_dbhost=127.0.0.1

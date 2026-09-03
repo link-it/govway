@@ -37,7 +37,7 @@
 
 	<!-- 
 		mysql:
-		driverClassName="com.mysql.jdbc.Driver"
+		driverClassName="com.mysql.cj.jdbc.Driver"
 		url="jdbc:mysql://localhost/govway?zeroDateTimeBehavior=convertToNull"
 		validationQuery="SELECT 1"
 	-->
@@ -100,7 +100,7 @@
 
 	<!-- 
 		mysql:
-		driverClassName="com.mysql.jdbc.Driver"
+		driverClassName="com.mysql.cj.jdbc.Driver"
 		url="jdbc:mysql://localhost/govway?zeroDateTimeBehavior=convertToNull"
 		validationQuery="SELECT 1"
 	-->

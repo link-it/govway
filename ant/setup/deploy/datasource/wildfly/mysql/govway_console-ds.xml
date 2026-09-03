@@ -8,7 +8,7 @@
 
 		<!-- DriverJDBC -->
 		<driver>NOME_DRIVER_JDBC.jar</driver>
-		<driver-class>com.mysql.jdbc.Driver</driver-class>
+		<driver-class>com.mysql.cj.jdbc.Driver</driver-class>
 
 		<!-- Credenziali -->
 		<security>
