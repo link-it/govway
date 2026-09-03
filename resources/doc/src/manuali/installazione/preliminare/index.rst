@@ -44,6 +44,28 @@ mancanti.
    
    Il database deve essere configurato con un character encoding UTF-8 e una collation case-sensitive per garantire il corretto funzionamento dell'applicazione.
 
+   .. note::
+      **MySQL: charset latin1**
+
+      Su MySQL lo schema di GovWay dichiara esplicitamente, per ogni tabella, il
+      charset *latin1* con collation *latin1_general_cs* (case-sensitive). La
+      dichiarazione a livello di tabella ha precedenza sul default del database,
+      quindi il database va creato in modo coerente:
+
+      ::
+
+         CREATE DATABASE govway CHARACTER SET latin1 COLLATE latin1_general_cs;
+
+      La scelta ha origine storica: *latin1* è stato il charset predefinito di
+      MySQL fino alla versione 8.0, ed è quello con cui lo schema fu definito;
+      l'unica variazione rispetto al default riguardò la collation, portata a
+      *latin1_general_cs* per ottenere il confronto case-sensitive richiesto
+      dall'applicazione. Non è più stata modificata in seguito, sia per non
+      introdurre modifiche non retrocompatibili sugli schemi già in esercizio,
+      sia perché alcune colonne indicizzate hanno oggi dimensioni che, in un
+      charset multibyte, eccederebbero il limite di InnoDB sulla chiave di
+      indice.
+
 La distribuzione GovWay è stata estesamente testata prima del rilascio
 sulla seguente piattaforma di riferimento:
 
