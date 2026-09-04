@@ -841,8 +841,8 @@ CREATE SEQUENCE seq_nodi_runtime AS BIGINT START WITH 1 INCREMENT BY 1 ; -- (Sco
 
 CREATE TABLE nodi_runtime
 (
-	hostname VARCHAR(3000) NOT NULL,
-	gruppo VARCHAR(3000) NOT NULL,
+	hostname VARCHAR(255) NOT NULL,
+	gruppo VARCHAR(255) NOT NULL,
 	data_registrazione TIMESTAMP NOT NULL,
 	data_refresh TIMESTAMP NOT NULL,
 	id_numerico INT NOT NULL,

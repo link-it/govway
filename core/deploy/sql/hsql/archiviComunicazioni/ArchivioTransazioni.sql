@@ -427,8 +427,6 @@ CREATE TABLE dump_messaggi
 
 -- index
 CREATE INDEX index_dump_messaggi_1 ON dump_messaggi (id_transazione);
-CREATE INDEX index_dump_messaggi_2 ON dump_messaggi (post_processed,post_process_timestamp);
-CREATE INDEX index_dump_messaggi_3 ON dump_messaggi (post_process_config_id);
 
 ALTER TABLE dump_messaggi ALTER COLUMN post_processed SET DEFAULT 1;
 

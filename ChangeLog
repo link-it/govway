@@ -1,3 +1,13 @@
+2026-09-04  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug #1819
+	(https://github.com/link-it/govway/issues/234)
+	L'installazione dello schema su SQL Server segnalava, per alcuni indici, il superamento del limite di 1700 byte sulla
+	chiave di indice, con il rischio di fallimento degli inserimenti per i valori più lunghi. Le colonne 'nodi_runtime.hostname'
+	e 'nodi_runtime.gruppo', dichiarate VARCHAR(3000), sono state ridotte a VARCHAR(255); sono stati inoltre eliminati gli indici
+	'index_dump_messaggi_2' e 'index_dump_messaggi_3', relativi all'elaborazione differita del dump non più realizzata nel prodotto.
+
 2026-09-03  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

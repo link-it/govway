@@ -1,0 +1,3 @@
+ALTER TABLE nodi_runtime ALTER COLUMN hostname TYPE VARCHAR(255);
+
+ALTER TABLE nodi_runtime ALTER COLUMN gruppo TYPE VARCHAR(255);
