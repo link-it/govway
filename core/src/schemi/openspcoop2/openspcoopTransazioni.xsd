@@ -2634,14 +2634,6 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 						<linkit:sql-table-index>
 							<linkit:sql-table-index-field name="id-transazione"/>
 						</linkit:sql-table-index>
-					    <!-- Indici per il post process -->
-					    <linkit:sql-table-index>
-					        <linkit:sql-table-index-field name="post-processed"/>
-					    	<linkit:sql-table-index-field name="post-process-timestamp" ignoreTypeCompatibility="true"/>
-					    </linkit:sql-table-index>
-					    <linkit:sql-table-index>
-					        <linkit:sql-table-index-column name="post_process_config_id"/>
-					    </linkit:sql-table-index>
 					</linkit:sql-table-mapping>
 				</linkit:generator>
 			</xsd:appinfo>

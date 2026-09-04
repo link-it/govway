@@ -706,8 +706,8 @@ CREATE UNIQUE INDEX index_config_handlers_1 ON config_handlers (tipologia,tipo);
 
 CREATE TABLE nodi_runtime
 (
-	hostname VARCHAR(3000) NOT NULL,
-	gruppo VARCHAR(3000) NOT NULL,
+	hostname VARCHAR(255) NOT NULL,
+	gruppo VARCHAR(255) NOT NULL,
 	data_registrazione TIMESTAMP NOT NULL,
 	data_refresh TIMESTAMP NOT NULL,
 	id_numerico INT NOT NULL,

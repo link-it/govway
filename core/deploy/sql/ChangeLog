@@ -1,30 +1,35 @@
+2026-09-04  Andrea Poli <apoli@link.it>
+
+	Rimossi gli indici 'index_dump_messaggi_2' e 'index_dump_messaggi_3' sulla tabella
+	'dump_messaggi': servivano l'elaborazione differita del dump ('post process'), priva nel
+	prodotto del batch che la realizzava. L'indice sulla colonna 'post_process_config_id',
+	VARCHAR(2000), eccedeva inoltre il limite di 1700 byte sulla chiave di indice di SQL Server.
+	Le colonne restano invariate.
+
+	DROP INDEX index_dump_messaggi_2 ON dump_messaggi;
+	DROP INDEX index_dump_messaggi_3 ON dump_messaggi;
+
+2026-09-04  Andrea Poli <apoli@link.it>
+
+	Ridotte a VARCHAR(255) le colonne 'nodi_runtime.hostname' e 'nodi_runtime.gruppo', dichiarate
+	VARCHAR(3000): ospitano valori di configurazione ('cluster_id.hostname' e 'group_id') e con quella
+	dimensione i relativi indici eccedevano il limite di 1700 byte sulla chiave di indice di SQL Server.
+
+	ALTER TABLE nodi_runtime MODIFY COLUMN hostname VARCHAR(255) NOT NULL;
+	ALTER TABLE nodi_runtime MODIFY COLUMN gruppo VARCHAR(255) NOT NULL;
+
 2026-08-31  Andrea Poli <apoli@link.it>
 
-	Solo MySQL: le colonne VARCHAR(255) delle tabelle 'configurazione', 'porte_delegate',
-	'porte_applicative', 'servizi_applicativi' e 'tracce' sono state portate a VARCHAR(256),
-	per rientrare nel limite InnoDB di 8126 byte sul record size che tali tabelle eccedevano.
-	In latin1 una VARCHAR(255) resta appena sotto la soglia dei 255 byte oltre la quale una
-	colonna a lunghezza variabile diventa candidabile alla memorizzazione su pagina di
-	overflow: conta quindi 256 byte inline, mentre dichiarata VARCHAR(256) ne conta 20.
-	Il difetto è emerso su MySQL 8.4.9, che ha reso esatto il calcolo del record size massimo;
-	fino alla 8.4.8 era approssimato e non lo rilevava.
+	Solo MySQL: portate a VARCHAR(256) le colonne VARCHAR(255) delle tabelle 'configurazione',
+	'porte_delegate', 'porte_applicative', 'servizi_applicativi' e 'tracce', per rientrare nel limite
+	InnoDB di 8126 byte sul record size che tali tabelle eccedevano. In latin1 una VARCHAR(255) resta
+	sotto la soglia oltre la quale una colonna variabile puo' essere memorizzata su pagina di overflow,
+	quindi conta 256 byte inline; dichiarata VARCHAR(256) ne conta 20. Il difetto e' emerso su MySQL
+	8.4.9, che ha reso esatto il calcolo del record size massimo.
 
-	Essendo una correzione specifica del dialetto MySQL, la patch è presente per il solo
-	mysql e non per gli altri database.
+	ALTER TABLE configurazione MODIFY cadenza_inoltro VARCHAR(256) NOT NULL, ... , ALGORITHM=COPY, LOCK=SHARED;
 
-	ATTENZIONE: il passaggio da VARCHAR(255) a VARCHAR(256) cambia il numero di byte di
-	lunghezza da 1 a 2, quindi l'ALTER richiede ALGORITHM=COPY: la tabella viene ricostruita
-	e le scritture sono bloccate per tutta la durata (LOCK=NONE non è ammesso). Su 'tracce'
-	va previsto in una finestra di manutenzione. Senza l'adeguamento, su MySQL >= 8.4.9 tali
-	tabelle non accettano più alcuna ADD COLUMN né DROP COLUMN, di nessun tipo.
-
-	ALTER TABLE configurazione
-		MODIFY cadenza_inoltro VARCHAR(256) NOT NULL,
-		... (91 colonne)
-		ALGORITHM=COPY, LOCK=SHARED;
-
-	Analogamente per porte_delegate (71 colonne), porte_applicative (70 colonne),
-	servizi_applicativi (27 colonne) e tracce (35 colonne), per un totale di 294 colonne.
+	294 colonne complessive su cinque tabelle.
 
 2026-06-04  Andrea Poli <apoli@link.it>
 

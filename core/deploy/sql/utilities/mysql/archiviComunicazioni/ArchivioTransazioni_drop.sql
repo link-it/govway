@@ -8,8 +8,6 @@
 -- DROP INDEX index_dump_allegati_1 ON dump_allegati ;
 -- DROP INDEX index_dump_header_trasporto_1 ON dump_header_trasporto ;
 -- DROP INDEX index_dump_multipart_header_1 ON dump_multipart_header ;
--- DROP INDEX index_dump_messaggi_3 ON dump_messaggi ;
--- DROP INDEX index_dump_messaggi_2 ON dump_messaggi ;
 -- DROP INDEX index_dump_messaggi_1 ON dump_messaggi ;
 -- DROP INDEX INDEX_TRSA_SEND ON transazioni_sa ;
 -- DROP INDEX INDEX_TRSA_IN_QUEUE ON transazioni_sa ;
