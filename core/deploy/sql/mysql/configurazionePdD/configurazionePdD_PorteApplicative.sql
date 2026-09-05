@@ -148,9 +148,8 @@ CREATE TABLE porte_applicative
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
-CREATE UNIQUE INDEX index_porte_applicative_1 ON porte_applicative (nome_porta);
-CREATE INDEX index_porte_applicative_2 ON porte_applicative (id_soggetto);
-CREATE INDEX index_porte_applicative_3 ON porte_applicative (canale);
+CREATE INDEX index_porte_applicative_1 ON porte_applicative (id_soggetto);
+CREATE INDEX index_porte_applicative_2 ON porte_applicative (canale);
 
 
 
@@ -460,8 +459,6 @@ CREATE TABLE pa_ruoli
 	CONSTRAINT pk_pa_ruoli PRIMARY KEY (id)
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
--- index
-CREATE UNIQUE INDEX index_pa_ruoli_1 ON pa_ruoli (id_porta,ruolo);
 
 
 
@@ -478,8 +475,6 @@ CREATE TABLE pa_scope
 	CONSTRAINT pk_pa_scope PRIMARY KEY (id)
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
--- index
-CREATE UNIQUE INDEX index_pa_scope_1 ON pa_scope (id_porta,scope);
 
 
 
@@ -497,8 +492,6 @@ CREATE TABLE pa_soggetti
 	CONSTRAINT pk_pa_soggetti PRIMARY KEY (id)
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
--- index
-CREATE UNIQUE INDEX index_pa_soggetti_1 ON pa_soggetti (id_porta,tipo_soggetto,nome_soggetto);
 
 
 
@@ -534,8 +527,6 @@ CREATE TABLE pa_azioni
 	CONSTRAINT pk_pa_azioni PRIMARY KEY (id)
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
--- index
-CREATE UNIQUE INDEX index_pa_azioni_1 ON pa_azioni (id_porta,azione);
 
 
 
@@ -592,9 +583,6 @@ CREATE TABLE pa_transform
 	CONSTRAINT pk_pa_transform PRIMARY KEY (id)
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
--- index
-CREATE UNIQUE INDEX index_pa_transform_1 ON pa_transform (id_porta,nome);
-CREATE UNIQUE INDEX index_pa_transform_2 ON pa_transform (id_porta,posizione);
 
 
 
@@ -612,8 +600,6 @@ CREATE TABLE pa_transform_soggetti
 	CONSTRAINT pk_pa_transform_soggetti PRIMARY KEY (id)
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
--- index
-CREATE UNIQUE INDEX index_pa_transform_soggetti_1 ON pa_transform_soggetti (id_trasformazione,tipo_soggetto,nome_soggetto);
 
 
 
@@ -631,8 +617,6 @@ CREATE TABLE pa_transform_sa
 	CONSTRAINT pk_pa_transform_sa PRIMARY KEY (id)
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
--- index
-CREATE UNIQUE INDEX index_pa_transform_sa_1 ON pa_transform_sa (id_trasformazione,id_servizio_applicativo);
 
 
 
@@ -702,9 +686,6 @@ CREATE TABLE pa_transform_risp
 	CONSTRAINT pk_pa_transform_risp PRIMARY KEY (id)
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
--- index
-CREATE UNIQUE INDEX idx_pa_trasf_resp_1 ON pa_transform_risp (id_trasformazione,nome);
-CREATE UNIQUE INDEX idx_pa_trasf_resp_2 ON pa_transform_risp (id_trasformazione,posizione);
 
 
 
@@ -743,8 +724,6 @@ CREATE TABLE pa_handlers
 	CONSTRAINT pk_pa_handlers PRIMARY KEY (id)
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
--- index
-CREATE UNIQUE INDEX index_pa_handlers_1 ON pa_handlers (id_porta,tipologia,tipo);
 
 
 
@@ -762,8 +741,6 @@ CREATE TABLE pa_aa
 	CONSTRAINT pk_pa_aa PRIMARY KEY (id)
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
--- index
-CREATE UNIQUE INDEX index_pa_aa_1 ON pa_aa (id_porta,nome);
 
 
 
@@ -799,7 +776,5 @@ CREATE TABLE pa_token_ruoli
 	CONSTRAINT pk_pa_token_ruoli PRIMARY KEY (id)
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
--- index
-CREATE UNIQUE INDEX index_pa_token_ruoli_1 ON pa_token_ruoli (id_porta,ruolo);
 
 

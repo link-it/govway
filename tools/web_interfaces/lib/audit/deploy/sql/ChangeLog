@@ -1,3 +1,10 @@
+2026-09-04  Andrea Poli <apoli@link.it>
+
+	Rimosso l'indice 'index_audit_binaries_1', che duplicava esattamente il vincolo UNIQUE della
+	tabella: su MySQL, HyperSQL, SQL Server e DB2 il vincolo crea già il proprio indice.
+
+	DROP INDEX index_audit_binaries_1 ON audit_binaries;
+
 2017-11-28  Andrea Poli <apoli@link.it>
 
 	Creato file ChangeLog

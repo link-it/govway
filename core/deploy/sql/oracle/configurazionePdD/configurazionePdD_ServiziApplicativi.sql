@@ -69,6 +69,7 @@ CREATE TABLE servizi_applicativi
 	-- fk/pk keys constraints
 	CONSTRAINT fk_servizi_applicativi_1 FOREIGN KEY (id_connettore_inv) REFERENCES connettori(id),
 	CONSTRAINT fk_servizi_applicativi_2 FOREIGN KEY (id_soggetto) REFERENCES soggetti(id),
+	CONSTRAINT fk_servizi_applicativi_3 FOREIGN KEY (id_connettore_risp) REFERENCES connettori(id),
 	CONSTRAINT pk_servizi_applicativi PRIMARY KEY (id)
 );
 

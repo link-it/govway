@@ -18,8 +18,5 @@ CREATE TABLE stat_personalizzate
 	CONSTRAINT pk_stat_personalizzate PRIMARY KEY (pid)
 );
 
--- index
-CREATE UNIQUE INDEX idx_stat_pers_1 ON stat_personalizzate (id_configurazione,id);
-CREATE UNIQUE INDEX idx_stat_pers_2 ON stat_personalizzate (id_configurazione,id_plugin);
 
 

@@ -74,8 +74,7 @@ CREATE TABLE allarmi
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
-CREATE UNIQUE INDEX idx_allarmi_1 ON allarmi (nome);
-CREATE INDEX idx_allarmi_2 ON allarmi (filtro_ruolo,filtro_porta);
+CREATE INDEX idx_allarmi_1 ON allarmi (filtro_ruolo,filtro_porta);
 
 
 
@@ -93,8 +92,6 @@ CREATE TABLE allarmi_parametri
 	CONSTRAINT pk_allarmi_parametri PRIMARY KEY (chk_param_id)
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
--- index
-CREATE UNIQUE INDEX idx_allarmi_param_1 ON allarmi_parametri (id_allarme,param_id);
 
 
 

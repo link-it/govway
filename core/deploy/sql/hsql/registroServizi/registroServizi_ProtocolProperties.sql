@@ -29,8 +29,6 @@ CREATE TABLE protocol_properties
 	CONSTRAINT pk_protocol_properties PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_protocol_properties_1 ON protocol_properties (tipo_proprietario,id_proprietario,name);
 CREATE TABLE protocol_properties_init_seq (id BIGINT);
 INSERT INTO protocol_properties_init_seq VALUES (NEXT VALUE FOR seq_protocol_properties);
 

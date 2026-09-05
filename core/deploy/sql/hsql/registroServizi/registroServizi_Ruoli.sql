@@ -26,8 +26,6 @@ CREATE TABLE ruoli
 	CONSTRAINT pk_ruoli PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_ruoli_1 ON ruoli (nome);
 
 ALTER TABLE ruoli ALTER COLUMN tipologia SET DEFAULT 'qualsiasi';
 ALTER TABLE ruoli ALTER COLUMN contesto_utilizzo SET DEFAULT 'qualsiasi';

@@ -1,18 +1,4 @@
 -- Gli indici vengono eliminati automaticamente una volta eliminata la tabella
--- DROP INDEX index_pa_token_ruoli_1 ON pa_token_ruoli ;
--- DROP INDEX index_pa_aa_1 ON pa_aa ;
--- DROP INDEX index_pa_handlers_1 ON pa_handlers ;
--- DROP INDEX idx_pa_trasf_resp_2 ON pa_transform_risp ;
--- DROP INDEX idx_pa_trasf_resp_1 ON pa_transform_risp ;
--- DROP INDEX index_pa_transform_sa_1 ON pa_transform_sa ;
--- DROP INDEX index_pa_transform_soggetti_1 ON pa_transform_soggetti ;
--- DROP INDEX index_pa_transform_2 ON pa_transform ;
--- DROP INDEX index_pa_transform_1 ON pa_transform ;
--- DROP INDEX index_pa_azioni_1 ON pa_azioni ;
--- DROP INDEX index_pa_soggetti_1 ON pa_soggetti ;
--- DROP INDEX index_pa_scope_1 ON pa_scope ;
--- DROP INDEX index_pa_ruoli_1 ON pa_ruoli ;
--- DROP INDEX index_porte_applicative_1 ON porte_applicative ;
 -- DROP INDEX INDEX_PA_TOKEN_SA ON pa_token_sa ;
 -- DROP INDEX idx_pa_trasf_hdr_resp_1 ON pa_transform_risp_hdr ;
 -- DROP INDEX idx_pa_trasf_url_1 ON pa_transform_url ;
@@ -36,8 +22,8 @@
 -- DROP INDEX INDEX_PA_SA_CODA_MAX ON porte_applicative_sa ;
 -- DROP INDEX INDEX_PA_SA_CODA ON porte_applicative_sa ;
 -- DROP INDEX INDEX_PA_SA ON porte_applicative_sa ;
--- DROP INDEX index_porte_applicative_3 ON porte_applicative ;
 -- DROP INDEX index_porte_applicative_2 ON porte_applicative ;
+-- DROP INDEX index_porte_applicative_1 ON porte_applicative ;
 DROP TABLE pa_token_ruoli;
 DROP TABLE pa_token_sa;
 DROP TABLE pa_aa;

@@ -20,8 +20,6 @@ CREATE TABLE pdd
 	CONSTRAINT pk_pdd PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_pdd_1 ON pdd (nome);
 
 ALTER TABLE pdd ALTER COLUMN implementazione SET DEFAULT 'standard';
 ALTER TABLE pdd ALTER COLUMN ora_registrazione SET DEFAULT CURRENT_TIMESTAMP;

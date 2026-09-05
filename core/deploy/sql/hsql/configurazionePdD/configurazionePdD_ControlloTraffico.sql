@@ -68,8 +68,7 @@ CREATE TABLE ct_rt_props
 );
 
 -- index
-CREATE UNIQUE INDEX idx_rt_prop_policy_1 ON ct_rt_props (rt_prop_name);
-CREATE INDEX idx_rt_prop_policy_2 ON ct_rt_props (rt_prop_value);
+CREATE INDEX idx_rt_prop_policy_1 ON ct_rt_props (rt_prop_value);
 CREATE TABLE ct_rt_props_init_seq (id BIGINT);
 INSERT INTO ct_rt_props_init_seq VALUES (NEXT VALUE FOR seq_ct_rt_props);
 
@@ -133,8 +132,6 @@ CREATE TABLE ct_config_policy
 	CONSTRAINT pk_ct_config_policy PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX idx_cong_gen_policy_1 ON ct_config_policy (policy_id);
 
 ALTER TABLE ct_config_policy ALTER COLUMN policy_built_in SET DEFAULT false;
 ALTER TABLE ct_config_policy ALTER COLUMN rt_simultanee SET DEFAULT false;
@@ -217,8 +214,7 @@ CREATE TABLE ct_active_policy
 );
 
 -- index
-CREATE UNIQUE INDEX idx_cong_att_policy_1 ON ct_active_policy (active_policy_id);
-CREATE INDEX idx_cong_att_policy_2 ON ct_active_policy (filtro_ruolo,filtro_porta);
+CREATE INDEX idx_cong_att_policy_1 ON ct_active_policy (filtro_ruolo,filtro_porta);
 
 ALTER TABLE ct_active_policy ALTER COLUMN policy_continue SET DEFAULT false;
 ALTER TABLE ct_active_policy ALTER COLUMN policy_warning SET DEFAULT false;

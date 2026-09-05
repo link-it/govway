@@ -67,12 +67,12 @@ CREATE TABLE servizi_applicativi
 	-- fk/pk keys constraints
 	CONSTRAINT fk_servizi_applicativi_1 FOREIGN KEY (id_connettore_inv) REFERENCES connettori(id),
 	CONSTRAINT fk_servizi_applicativi_2 FOREIGN KEY (id_soggetto) REFERENCES soggetti(id),
+	CONSTRAINT fk_servizi_applicativi_3 FOREIGN KEY (id_connettore_risp) REFERENCES connettori(id),
 	CONSTRAINT pk_servizi_applicativi PRIMARY KEY (id)
 );
 
 -- index
-CREATE UNIQUE INDEX index_servizi_applicativi_1 ON servizi_applicativi (nome,id_soggetto);
-CREATE INDEX index_servizi_applicativi_2 ON servizi_applicativi (id_soggetto);
+CREATE INDEX index_servizi_applicativi_1 ON servizi_applicativi (id_soggetto);
 
 
 
@@ -90,7 +90,6 @@ CREATE TABLE sa_ruoli
 );
 
 -- index
-CREATE UNIQUE INDEX index_sa_ruoli_1 ON sa_ruoli (id_servizio_applicativo,ruolo);
 CREATE INDEX INDEX_SA_RUOLI ON sa_ruoli (id_servizio_applicativo);
 
 

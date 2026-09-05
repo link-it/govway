@@ -52,8 +52,7 @@ CREATE TABLE ct_rt_props
 );
 
 -- index
-CREATE UNIQUE INDEX idx_rt_prop_policy_1 ON ct_rt_props (rt_prop_name);
-CREATE INDEX idx_rt_prop_policy_2 ON ct_rt_props (rt_prop_value);
+CREATE INDEX idx_rt_prop_policy_1 ON ct_rt_props (rt_prop_value);
 
 
 
@@ -113,8 +112,6 @@ CREATE TABLE ct_config_policy
 	CONSTRAINT pk_ct_config_policy PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX idx_cong_gen_policy_1 ON ct_config_policy (policy_id);
 
 
 
@@ -184,7 +181,6 @@ CREATE TABLE ct_active_policy
 );
 
 -- index
-CREATE UNIQUE INDEX idx_cong_att_policy_1 ON ct_active_policy (active_policy_id);
-CREATE INDEX idx_cong_att_policy_2 ON ct_active_policy (filtro_ruolo,filtro_porta);
+CREATE INDEX idx_cong_att_policy_1 ON ct_active_policy (filtro_ruolo,filtro_porta);
 
 

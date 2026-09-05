@@ -35,7 +35,5 @@ CREATE TABLE pdd
 	CONSTRAINT pk_pdd PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_pdd_1 ON pdd (nome);
 
 

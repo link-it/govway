@@ -1,16 +1,4 @@
 -- Gli indici vengono eliminati automaticamente una volta eliminata la tabella
--- DROP INDEX index_pd_token_ruoli_1;
--- DROP INDEX index_pd_aa_1;
--- DROP INDEX index_pd_handlers_1;
--- DROP INDEX idx_pd_trasf_resp_2;
--- DROP INDEX idx_pd_trasf_resp_1;
--- DROP INDEX index_pd_transform_sa_1;
--- DROP INDEX index_pd_transform_2;
--- DROP INDEX index_pd_transform_1;
--- DROP INDEX index_pd_azioni_1;
--- DROP INDEX index_pd_scope_1;
--- DROP INDEX index_pd_ruoli_1;
--- DROP INDEX index_porte_delegate_1;
 -- DROP INDEX INDEX_PD_TOKEN_SA;
 -- DROP INDEX idx_pd_trasf_hdr_resp_1;
 -- DROP INDEX idx_pd_trasf_url_1;
@@ -29,8 +17,8 @@
 -- DROP INDEX INDEX_PD_AUTHZ_PROP;
 -- DROP INDEX INDEX_PD_AUTH_PROP;
 -- DROP INDEX INDEX_PD_SA;
--- DROP INDEX index_porte_delegate_3;
 -- DROP INDEX index_porte_delegate_2;
+-- DROP INDEX index_porte_delegate_1;
 DROP TABLE pd_token_ruoli_init_seq;
 DROP TABLE pd_token_ruoli;
 DROP TABLE pd_token_sa_init_seq;

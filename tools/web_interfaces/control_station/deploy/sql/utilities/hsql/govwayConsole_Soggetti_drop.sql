@@ -1,7 +1,4 @@
 -- Gli indici vengono eliminati automaticamente una volta eliminata la tabella
--- DROP INDEX index_soggetti_ruoli_1;
--- DROP INDEX index_soggetti_2;
--- DROP INDEX index_soggetti_1;
 -- DROP INDEX INDEX_SOGGETTI_PROP;
 -- DROP INDEX INDEX_SOGGETTI_CRED;
 -- DROP INDEX INDEX_SOGGETTI_RUOLI;

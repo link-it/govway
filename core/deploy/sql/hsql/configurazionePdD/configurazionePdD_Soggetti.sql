@@ -24,8 +24,6 @@ CREATE TABLE soggetti
 	CONSTRAINT pk_soggetti PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_soggetti_1 ON soggetti (nome_soggetto,tipo_soggetto);
 
 ALTER TABLE soggetti ALTER COLUMN is_default SET DEFAULT 0;
 ALTER TABLE soggetti ALTER COLUMN is_router SET DEFAULT 0;

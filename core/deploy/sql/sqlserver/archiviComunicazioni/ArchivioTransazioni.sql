@@ -15,7 +15,6 @@ CREATE TABLE credenziale_mittente
 );
 
 -- index
-CREATE UNIQUE INDEX index_credenziale_mittente_1 ON credenziale_mittente (tipo,credenziale);
 CREATE INDEX CREDENZIALE_ORAREG ON credenziale_mittente (ora_registrazione);
 CREATE INDEX CREDENZIALE_INTERNAL_REF ON credenziale_mittente (ref_credenziale);
 
@@ -326,9 +325,6 @@ CREATE TABLE transazioni_esiti
 	CONSTRAINT pk_transazioni_esiti PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX idx_tr_esiti_1 ON transazioni_esiti (govway_status);
-CREATE UNIQUE INDEX idx_tr_esiti_2 ON transazioni_esiti (govway_status_key);
 
 
 
@@ -346,8 +342,6 @@ CREATE TABLE transazioni_classe_esiti
 	CONSTRAINT pk_transazioni_classe_esiti PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX idx_tr_classe_esiti_1 ON transazioni_classe_esiti (govway_status);
 
 
 

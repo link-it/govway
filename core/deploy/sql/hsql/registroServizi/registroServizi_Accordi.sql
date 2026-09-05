@@ -28,7 +28,6 @@ CREATE TABLE documenti
 );
 
 -- index
-CREATE UNIQUE INDEX index_documenti_1 ON documenti (ruolo,tipo,nome,id_proprietario,tipo_proprietario);
 CREATE INDEX INDEX_DOC_SEARCH ON documenti (id_proprietario);
 
 ALTER TABLE documenti ALTER COLUMN ora_registrazione SET DEFAULT CURRENT_TIMESTAMP;
@@ -90,8 +89,7 @@ CREATE TABLE accordi
 );
 
 -- index
-CREATE UNIQUE INDEX index_accordi_1 ON accordi (nome,id_referente,versione);
-CREATE INDEX index_accordi_2 ON accordi (canale);
+CREATE INDEX index_accordi_1 ON accordi (canale);
 
 ALTER TABLE accordi ALTER COLUMN id_referente SET DEFAULT 0;
 ALTER TABLE accordi ALTER COLUMN versione SET DEFAULT 1;
@@ -130,8 +128,6 @@ CREATE TABLE accordi_azioni
 	CONSTRAINT pk_accordi_azioni PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_accordi_azioni_1 ON accordi_azioni (id_accordo,nome);
 CREATE TABLE accordi_azioni_init_seq (id BIGINT);
 INSERT INTO accordi_azioni_init_seq VALUES (NEXT VALUE FOR seq_accordi_azioni);
 
@@ -165,8 +161,6 @@ CREATE TABLE port_type
 	CONSTRAINT pk_port_type PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_port_type_1 ON port_type (id_accordo,nome);
 CREATE TABLE port_type_init_seq (id BIGINT);
 INSERT INTO port_type_init_seq VALUES (NEXT VALUE FOR seq_port_type);
 
@@ -209,8 +203,6 @@ CREATE TABLE port_type_azioni
 	CONSTRAINT pk_port_type_azioni PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_port_type_azioni_1 ON port_type_azioni (id_port_type,nome);
 CREATE TABLE port_type_azioni_init_seq (id BIGINT);
 INSERT INTO port_type_azioni_init_seq VALUES (NEXT VALUE FOR seq_port_type_azioni);
 
@@ -275,9 +267,6 @@ CREATE TABLE api_resources
 	CONSTRAINT pk_api_resources PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_api_resources_1 ON api_resources (id_accordo,nome);
-CREATE UNIQUE INDEX index_api_resources_2 ON api_resources (id_accordo,http_method,path);
 CREATE TABLE api_resources_init_seq (id BIGINT);
 INSERT INTO api_resources_init_seq VALUES (NEXT VALUE FOR seq_api_resources);
 
@@ -299,8 +288,6 @@ CREATE TABLE api_resources_response
 	CONSTRAINT pk_api_resources_response PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_api_resp_1 ON api_resources_response (id_resource,status);
 CREATE TABLE api_resources_response_init_seq (id BIGINT);
 INSERT INTO api_resources_response_init_seq VALUES (NEXT VALUE FOR seq_api_resources_response);
 
@@ -378,8 +365,6 @@ CREATE TABLE accordi_gruppi
 	CONSTRAINT pk_accordi_gruppi PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX idx_acc_gruppi_1 ON accordi_gruppi (id_accordo,id_gruppo);
 CREATE TABLE accordi_gruppi_init_seq (id BIGINT);
 INSERT INTO accordi_gruppi_init_seq VALUES (NEXT VALUE FOR seq_accordi_gruppi);
 
@@ -411,8 +396,6 @@ CREATE TABLE accordi_cooperazione
 	CONSTRAINT pk_accordi_cooperazione PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_accordi_cooperazione_1 ON accordi_cooperazione (nome,id_referente,versione);
 
 ALTER TABLE accordi_cooperazione ALTER COLUMN id_referente SET DEFAULT 0;
 ALTER TABLE accordi_cooperazione ALTER COLUMN versione SET DEFAULT 1;
@@ -491,7 +474,6 @@ CREATE TABLE servizi
 );
 
 -- index
-CREATE UNIQUE INDEX index_servizi_1 ON servizi (id_soggetto,tipo_servizio,nome_servizio,versione_servizio);
 CREATE INDEX INDEX_SERV_ACC ON servizi (id_accordo);
 CREATE INDEX INDEX_SERV_SOG ON servizi (id_soggetto);
 
@@ -541,8 +523,6 @@ CREATE TABLE servizi_azione
 	CONSTRAINT pk_servizi_azione PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_servizi_azione_1 ON servizi_azione (nome_azione,id_servizio_azioni);
 CREATE TABLE servizi_azione_init_seq (id BIGINT);
 INSERT INTO servizi_azione_init_seq VALUES (NEXT VALUE FOR seq_servizi_azione);
 
@@ -578,7 +558,6 @@ CREATE TABLE servizi_fruitori
 );
 
 -- index
-CREATE UNIQUE INDEX index_servizi_fruitori_1 ON servizi_fruitori (id_servizio,id_soggetto);
 CREATE INDEX INDEX_SERV_FRU_SOG ON servizi_fruitori (id_soggetto);
 
 ALTER TABLE servizi_fruitori ALTER COLUMN ora_registrazione SET DEFAULT CURRENT_TIMESTAMP;
@@ -625,8 +604,6 @@ CREATE TABLE servizi_fruitori_azione
 	CONSTRAINT pk_servizi_fruitori_azione PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_serv_fru_azione_1 ON servizi_fruitori_azione (nome_azione,id_fruizione_azioni);
 CREATE TABLE servizi_fruitori_azione_init_seq (id BIGINT);
 INSERT INTO servizi_fruitori_azione_init_seq VALUES (NEXT VALUE FOR seq_servizi_fruitori_azione);
 
@@ -651,7 +628,6 @@ CREATE TABLE acc_serv_composti
 );
 
 -- index
-CREATE UNIQUE INDEX index_acc_serv_composti_1 ON acc_serv_composti (id_accordo);
 CREATE INDEX INDEX_AC_SC ON acc_serv_composti (id_accordo_cooperazione);
 CREATE TABLE acc_serv_composti_init_seq (id BIGINT);
 INSERT INTO acc_serv_composti_init_seq VALUES (NEXT VALUE FOR seq_acc_serv_composti);

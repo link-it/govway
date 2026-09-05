@@ -24,7 +24,5 @@ CREATE TABLE ruoli
 	CONSTRAINT pk_ruoli PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_ruoli_1 ON ruoli (nome);
 
 

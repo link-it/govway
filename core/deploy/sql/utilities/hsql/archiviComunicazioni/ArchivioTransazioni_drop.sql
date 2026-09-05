@@ -1,8 +1,4 @@
 -- Gli indici vengono eliminati automaticamente una volta eliminata la tabella
--- DROP INDEX idx_tr_classe_esiti_1;
--- DROP INDEX idx_tr_esiti_2;
--- DROP INDEX idx_tr_esiti_1;
--- DROP INDEX index_credenziale_mittente_1;
 -- DROP INDEX index_dump_contenuti_1;
 -- DROP INDEX index_dump_header_allegato_1;
 -- DROP INDEX index_dump_allegati_1;

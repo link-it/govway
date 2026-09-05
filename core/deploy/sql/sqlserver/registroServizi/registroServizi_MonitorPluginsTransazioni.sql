@@ -13,8 +13,6 @@ CREATE TABLE config_transazioni
 	CONSTRAINT pk_config_transazioni PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX idx_trans_pers_1 ON config_transazioni (id_conf_servizio_azione);
 
 
 
@@ -35,9 +33,6 @@ CREATE TABLE config_tran_plugins
 	CONSTRAINT pk_config_tran_plugins PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX idx_conf_trans_plug_1 ON config_tran_plugins (id_configurazione_transazione,id_conf_trans_plugin);
-CREATE UNIQUE INDEX idx_conf_trans_plug_2 ON config_tran_plugins (id_configurazione_transazione,id_plugin);
 
 
 
@@ -62,8 +57,6 @@ CREATE TABLE configurazione_stati
 	CONSTRAINT pk_configurazione_stati PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX idx_trans_pers_stati_1 ON configurazione_stati (id_configurazione_transazione,nome);
 
 
 
@@ -98,7 +91,5 @@ CREATE TABLE conf_risorse_contenuti
 	CONSTRAINT pk_conf_risorse_contenuti PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX idx_trans_pers_risorse_1 ON conf_risorse_contenuti (id_conf_transazione,nome);
 
 

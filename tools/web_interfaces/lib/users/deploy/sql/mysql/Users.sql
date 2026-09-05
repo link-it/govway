@@ -73,8 +73,6 @@ CREATE TABLE users_soggetti
 	CONSTRAINT pk_users_soggetti PRIMARY KEY (id)
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
--- index
-CREATE UNIQUE INDEX index_users_soggetti_1 ON users_soggetti (id_utente,id_soggetto);
 
 
 
@@ -92,7 +90,5 @@ CREATE TABLE users_servizi
 	CONSTRAINT pk_users_servizi PRIMARY KEY (id)
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
--- index
-CREATE UNIQUE INDEX index_users_servizi_1 ON users_servizi (id_utente,id_servizio);
 
 

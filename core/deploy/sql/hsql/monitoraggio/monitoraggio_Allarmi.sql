@@ -74,8 +74,7 @@ CREATE TABLE allarmi
 );
 
 -- index
-CREATE UNIQUE INDEX idx_allarmi_1 ON allarmi (nome);
-CREATE INDEX idx_allarmi_2 ON allarmi (filtro_ruolo,filtro_porta);
+CREATE INDEX idx_allarmi_1 ON allarmi (filtro_ruolo,filtro_porta);
 
 ALTER TABLE allarmi ALTER COLUMN tipo_allarme SET DEFAULT 'ATTIVO';
 ALTER TABLE allarmi ALTER COLUMN filtro_enabled SET DEFAULT false;
@@ -110,8 +109,6 @@ CREATE TABLE allarmi_parametri
 	CONSTRAINT pk_allarmi_parametri PRIMARY KEY (chk_param_id)
 );
 
--- index
-CREATE UNIQUE INDEX idx_allarmi_param_1 ON allarmi_parametri (id_allarme,param_id);
 CREATE TABLE allarmi_parametri_init_seq (id BIGINT);
 INSERT INTO allarmi_parametri_init_seq VALUES (NEXT VALUE FOR seq_allarmi_parametri);
 

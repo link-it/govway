@@ -1,10 +1,8 @@
 -- Gli indici vengono eliminati automaticamente una volta eliminata la tabella
--- DROP INDEX index_sa_ruoli_1;
--- DROP INDEX index_servizi_applicativi_1;
 -- DROP INDEX INDEX_SA_PROP;
 -- DROP INDEX INDEX_SA_CRED;
 -- DROP INDEX INDEX_SA_RUOLI;
--- DROP INDEX index_servizi_applicativi_2;
+-- DROP INDEX index_servizi_applicativi_1;
 DROP TABLE sa_properties_init_seq;
 DROP TABLE sa_properties;
 DROP TABLE sa_credenziali_init_seq;

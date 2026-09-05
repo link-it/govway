@@ -1,3 +1,11 @@
+2026-09-04  Andrea Poli <apoli@link.it>
+
+	Rimossi gli indici 'index_users_soggetti_1' e 'index_users_servizi_1', che duplicavano
+	esattamente un vincolo UNIQUE: su MySQL, HyperSQL, SQL Server e DB2 il vincolo crea già il
+	proprio indice.
+
+	DROP INDEX index_users_soggetti_1 ON users_soggetti;
+
 2021-04-26  Andrea Poli <apoli@link.it>
 
 	Aggiunte informazioni sulla scadenza delle password

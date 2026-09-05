@@ -19,7 +19,5 @@ CREATE TABLE pdd
 	CONSTRAINT pk_pdd PRIMARY KEY (id)
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
--- index
-CREATE UNIQUE INDEX index_pdd_1 ON pdd (nome);
 
 

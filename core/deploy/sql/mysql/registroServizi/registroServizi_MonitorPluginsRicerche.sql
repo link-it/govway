@@ -18,8 +18,5 @@ CREATE TABLE ricerche_personalizzate
 	CONSTRAINT pk_ricerche_personalizzate PRIMARY KEY (pid)
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
--- index
-CREATE UNIQUE INDEX idx_ricerche_pers_1 ON ricerche_personalizzate (id_configurazione,id);
-CREATE UNIQUE INDEX idx_ricerche_pers_2 ON ricerche_personalizzate (id_configurazione,id_plugin);
 
 

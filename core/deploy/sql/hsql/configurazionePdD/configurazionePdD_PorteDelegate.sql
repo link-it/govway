@@ -157,9 +157,8 @@ CREATE TABLE porte_delegate
 );
 
 -- index
-CREATE UNIQUE INDEX index_porte_delegate_1 ON porte_delegate (nome_porta);
-CREATE INDEX index_porte_delegate_2 ON porte_delegate (id_soggetto);
-CREATE INDEX index_porte_delegate_3 ON porte_delegate (canale);
+CREATE INDEX index_porte_delegate_1 ON porte_delegate (id_soggetto);
+CREATE INDEX index_porte_delegate_2 ON porte_delegate (canale);
 
 ALTER TABLE porte_delegate ALTER COLUMN versione_servizio SET DEFAULT 1;
 ALTER TABLE porte_delegate ALTER COLUMN ora_registrazione SET DEFAULT CURRENT_TIMESTAMP;
@@ -471,8 +470,6 @@ CREATE TABLE pd_ruoli
 	CONSTRAINT pk_pd_ruoli PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_pd_ruoli_1 ON pd_ruoli (id_porta,ruolo);
 CREATE TABLE pd_ruoli_init_seq (id BIGINT);
 INSERT INTO pd_ruoli_init_seq VALUES (NEXT VALUE FOR seq_pd_ruoli);
 
@@ -493,8 +490,6 @@ CREATE TABLE pd_scope
 	CONSTRAINT pk_pd_scope PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_pd_scope_1 ON pd_scope (id_porta,scope);
 CREATE TABLE pd_scope_init_seq (id BIGINT);
 INSERT INTO pd_scope_init_seq VALUES (NEXT VALUE FOR seq_pd_scope);
 
@@ -515,8 +510,6 @@ CREATE TABLE pd_azioni
 	CONSTRAINT pk_pd_azioni PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_pd_azioni_1 ON pd_azioni (id_porta,azione);
 CREATE TABLE pd_azioni_init_seq (id BIGINT);
 INSERT INTO pd_azioni_init_seq VALUES (NEXT VALUE FOR seq_pd_azioni);
 
@@ -586,9 +579,6 @@ CREATE TABLE pd_transform
 	CONSTRAINT pk_pd_transform PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_pd_transform_1 ON pd_transform (id_porta,nome);
-CREATE UNIQUE INDEX index_pd_transform_2 ON pd_transform (id_porta,posizione);
 
 ALTER TABLE pd_transform ALTER COLUMN req_conversione_enabled SET DEFAULT 0;
 ALTER TABLE pd_transform ALTER COLUMN rest_transformation SET DEFAULT 0;
@@ -617,8 +607,6 @@ CREATE TABLE pd_transform_sa
 	CONSTRAINT pk_pd_transform_sa PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_pd_transform_sa_1 ON pd_transform_sa (id_trasformazione,id_servizio_applicativo);
 CREATE TABLE pd_transform_sa_init_seq (id BIGINT);
 INSERT INTO pd_transform_sa_init_seq VALUES (NEXT VALUE FOR seq_pd_transform_sa);
 
@@ -702,9 +690,6 @@ CREATE TABLE pd_transform_risp
 	CONSTRAINT pk_pd_transform_risp PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX idx_pd_trasf_resp_1 ON pd_transform_risp (id_trasformazione,nome);
-CREATE UNIQUE INDEX idx_pd_trasf_resp_2 ON pd_transform_risp (id_trasformazione,posizione);
 
 ALTER TABLE pd_transform_risp ALTER COLUMN conversione_enabled SET DEFAULT 0;
 ALTER TABLE pd_transform_risp ALTER COLUMN soap_envelope SET DEFAULT 0;
@@ -756,8 +741,6 @@ CREATE TABLE pd_handlers
 	CONSTRAINT pk_pd_handlers PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_pd_handlers_1 ON pd_handlers (id_porta,tipologia,tipo);
 CREATE TABLE pd_handlers_init_seq (id BIGINT);
 INSERT INTO pd_handlers_init_seq VALUES (NEXT VALUE FOR seq_pd_handlers);
 
@@ -779,8 +762,6 @@ CREATE TABLE pd_aa
 	CONSTRAINT pk_pd_aa PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_pd_aa_1 ON pd_aa (id_porta,nome);
 CREATE TABLE pd_aa_init_seq (id BIGINT);
 INSERT INTO pd_aa_init_seq VALUES (NEXT VALUE FOR seq_pd_aa);
 
@@ -824,8 +805,6 @@ CREATE TABLE pd_token_ruoli
 	CONSTRAINT pk_pd_token_ruoli PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_pd_token_ruoli_1 ON pd_token_ruoli (id_porta,ruolo);
 CREATE TABLE pd_token_ruoli_init_seq (id BIGINT);
 INSERT INTO pd_token_ruoli_init_seq VALUES (NEXT VALUE FOR seq_pd_token_ruoli);
 

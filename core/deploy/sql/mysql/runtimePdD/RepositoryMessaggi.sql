@@ -166,7 +166,5 @@ CREATE TABLE ct_map
 	CONSTRAINT pk_ct_map PRIMARY KEY (id)
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
--- index
-CREATE UNIQUE INDEX index_ct_map_1 ON ct_map (map_key);
 
 

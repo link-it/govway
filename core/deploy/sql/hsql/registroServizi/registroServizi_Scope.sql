@@ -25,8 +25,6 @@ CREATE TABLE scope
 	CONSTRAINT pk_scope PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_scope_1 ON scope (nome);
 
 ALTER TABLE scope ALTER COLUMN contesto_utilizzo SET DEFAULT 'qualsiasi';
 ALTER TABLE scope ALTER COLUMN ora_registrazione SET DEFAULT CURRENT_TIMESTAMP;

@@ -242,8 +242,6 @@ CREATE TABLE config_url_regole
 	CONSTRAINT pk_config_url_regole PRIMARY KEY (id)
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
--- index
-CREATE UNIQUE INDEX index_config_url_regole_1 ON config_url_regole (nome);
 
 
 
@@ -505,8 +503,6 @@ CREATE TABLE servizi_pdd
 	CONSTRAINT pk_servizi_pdd PRIMARY KEY (id)
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
--- index
-CREATE UNIQUE INDEX index_servizi_pdd_1 ON servizi_pdd (componente);
 
 
 
@@ -551,8 +547,6 @@ CREATE TABLE pdd_sys_props
 	CONSTRAINT pk_pdd_sys_props PRIMARY KEY (id)
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
--- index
-CREATE UNIQUE INDEX index_pdd_sys_props_1 ON pdd_sys_props (nome,valore);
 
 
 
@@ -578,8 +572,6 @@ CREATE TABLE generic_properties
 	CONSTRAINT pk_generic_properties PRIMARY KEY (id)
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
--- index
-CREATE UNIQUE INDEX index_generic_properties_1 ON generic_properties (tipologia,nome);
 
 
 
@@ -656,8 +648,6 @@ CREATE TABLE registro_plugins
 	CONSTRAINT pk_registro_plugins PRIMARY KEY (id)
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
--- index
-CREATE UNIQUE INDEX index_registro_plugins_1 ON registro_plugins (nome);
 
 
 
@@ -701,8 +691,6 @@ CREATE TABLE config_handlers
 	CONSTRAINT pk_config_handlers PRIMARY KEY (id)
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
--- index
-CREATE UNIQUE INDEX index_config_handlers_1 ON config_handlers (tipologia,tipo);
 
 
 
@@ -726,9 +714,6 @@ CREATE TABLE nodi_runtime
 	CONSTRAINT pk_nodi_runtime PRIMARY KEY (id)
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
--- index
-CREATE UNIQUE INDEX index_nodi_runtime_1 ON nodi_runtime (hostname);
-CREATE UNIQUE INDEX index_nodi_runtime_2 ON nodi_runtime (gruppo,id_numerico);
 
 
 
@@ -765,8 +750,6 @@ CREATE TABLE remote_store
 	CONSTRAINT pk_remote_store PRIMARY KEY (id)
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
--- index
-CREATE UNIQUE INDEX index_remote_store_1 ON remote_store (nome);
 
 
 
@@ -794,7 +777,6 @@ CREATE TABLE remote_store_key
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
-CREATE UNIQUE INDEX index_remote_store_key_1 ON remote_store_key (id_remote_store,kid);
 CREATE INDEX REMOTE_STORE_UPDATE ON remote_store_key (data_aggiornamento);
 CREATE INDEX REMOTE_STORE_CREATE ON remote_store_key (data_registrazione);
 

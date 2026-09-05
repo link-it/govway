@@ -1,3 +1,11 @@
+2026-09-04  Andrea Poli <apoli@link.it>
+
+	Rimossi gli indici che duplicavano esattamente un vincolo UNIQUE, sui dialetti che li dichiaravano
+	(MySQL, HyperSQL, SQL Server e DB2): su tali basi dati il vincolo crea già il proprio indice,
+	utilizzato anche dalle ricerche.
+
+	DROP INDEX index_soggetti_1 ON soggetti;
+
 2023-11-10  Andrea Poli <apoli@link.it>
 
 	ALTER TABLE soggetti ALTER COLUMN descrizione TYPE VARCHAR(4000);

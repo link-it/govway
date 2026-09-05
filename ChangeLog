@@ -7,6 +7,9 @@
 	chiave di indice, con il rischio di fallimento degli inserimenti per i valori più lunghi. Le colonne 'nodi_runtime.hostname'
 	e 'nodi_runtime.gruppo', dichiarate VARCHAR(3000), sono state ridotte a VARCHAR(255); sono stati inoltre eliminati gli indici
 	'index_dump_messaggi_2' e 'index_dump_messaggi_3', relativi all'elaborazione differita del dump non più realizzata nel prodotto.
+	Sono stati infine rimossi, sui dialetti MySQL, HyperSQL, SQL Server e DB2, i 92 indici che duplicavano esattamente un
+	vincolo UNIQUE: su tali basi dati il vincolo crea già il proprio indice, utilizzato anche dalle ricerche, come
+	avviene da sempre su PostgreSQL e Oracle.
 
 2026-09-03  Andrea Poli <apoli@link.it>
 

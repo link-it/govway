@@ -1,3 +1,58 @@
 ALTER TABLE nodi_runtime MODIFY COLUMN hostname VARCHAR(255) NOT NULL;
 
 ALTER TABLE nodi_runtime MODIFY COLUMN gruppo VARCHAR(255) NOT NULL;
+
+DROP INDEX index_config_url_regole_1 ON config_url_regole;
+DROP INDEX index_servizi_pdd_1 ON servizi_pdd;
+DROP INDEX index_pdd_sys_props_1 ON pdd_sys_props;
+DROP INDEX index_generic_properties_1 ON generic_properties;
+DROP INDEX index_registro_plugins_1 ON registro_plugins;
+DROP INDEX index_config_handlers_1 ON config_handlers;
+DROP INDEX index_nodi_runtime_1 ON nodi_runtime;
+DROP INDEX index_nodi_runtime_2 ON nodi_runtime;
+DROP INDEX index_remote_store_1 ON remote_store;
+DROP INDEX index_remote_store_key_1 ON remote_store_key;
+-- DROP INDEX index_connettori_1 ON connettori;
+-- DROP INDEX index_connettori_properties_1 ON connettori_properties;
+DROP INDEX idx_rt_prop_policy_1 ON ct_rt_props;
+DROP INDEX idx_cong_gen_policy_1 ON ct_config_policy;
+DROP INDEX idx_cong_att_policy_1 ON ct_active_policy;
+DROP INDEX index_porte_applicative_1 ON porte_applicative;
+DROP INDEX index_pa_ruoli_1 ON pa_ruoli;
+DROP INDEX index_pa_scope_1 ON pa_scope;
+DROP INDEX index_pa_soggetti_1 ON pa_soggetti;
+DROP INDEX index_pa_azioni_1 ON pa_azioni;
+DROP INDEX index_pa_transform_1 ON pa_transform;
+DROP INDEX index_pa_transform_2 ON pa_transform;
+DROP INDEX index_pa_transform_soggetti_1 ON pa_transform_soggetti;
+DROP INDEX index_pa_transform_sa_1 ON pa_transform_sa;
+DROP INDEX idx_pa_trasf_resp_1 ON pa_transform_risp;
+DROP INDEX idx_pa_trasf_resp_2 ON pa_transform_risp;
+DROP INDEX index_pa_handlers_1 ON pa_handlers;
+DROP INDEX index_pa_aa_1 ON pa_aa;
+DROP INDEX index_pa_token_ruoli_1 ON pa_token_ruoli;
+DROP INDEX index_porte_delegate_1 ON porte_delegate;
+DROP INDEX index_pd_ruoli_1 ON pd_ruoli;
+DROP INDEX index_pd_scope_1 ON pd_scope;
+DROP INDEX index_pd_azioni_1 ON pd_azioni;
+DROP INDEX index_pd_transform_1 ON pd_transform;
+DROP INDEX index_pd_transform_2 ON pd_transform;
+DROP INDEX index_pd_transform_sa_1 ON pd_transform_sa;
+DROP INDEX idx_pd_trasf_resp_1 ON pd_transform_risp;
+DROP INDEX idx_pd_trasf_resp_2 ON pd_transform_risp;
+DROP INDEX index_pd_handlers_1 ON pd_handlers;
+DROP INDEX index_pd_aa_1 ON pd_aa;
+DROP INDEX index_pd_token_ruoli_1 ON pd_token_ruoli;
+DROP INDEX index_servizi_applicativi_1 ON servizi_applicativi;
+DROP INDEX index_sa_ruoli_1 ON sa_ruoli;
+-- DROP INDEX index_soggetti_1 ON soggetti;
+
+ALTER TABLE ct_rt_props RENAME INDEX idx_rt_prop_policy_2 TO idx_rt_prop_policy_1;
+ALTER TABLE ct_active_policy RENAME INDEX idx_cong_att_policy_2 TO idx_cong_att_policy_1;
+ALTER TABLE porte_applicative RENAME INDEX index_porte_applicative_2 TO index_porte_applicative_1;
+ALTER TABLE porte_applicative RENAME INDEX index_porte_applicative_3 TO index_porte_applicative_2;
+ALTER TABLE porte_delegate RENAME INDEX index_porte_delegate_2 TO index_porte_delegate_1;
+ALTER TABLE porte_delegate RENAME INDEX index_porte_delegate_3 TO index_porte_delegate_2;
+ALTER TABLE servizi_applicativi RENAME INDEX index_servizi_applicativi_2 TO index_servizi_applicativi_1;
+
+ALTER TABLE servizi_applicativi ADD CONSTRAINT fk_servizi_applicativi_3 FOREIGN KEY (id_connettore_risp) REFERENCES connettori(id);
