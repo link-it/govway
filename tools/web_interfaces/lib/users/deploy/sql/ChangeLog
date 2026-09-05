@@ -1,3 +1,11 @@
+2026-09-04  Andrea Poli <apoli@link.it>
+
+	Rimossi gli indici 'index_users_soggetti_1', 'index_users_servizi_1' e 'index_users_ricerche_1', che duplicavano
+	esattamente un vincolo UNIQUE: su MySQL, HyperSQL, SQL Server e DB2 il vincolo crea già il
+	proprio indice.
+
+	DROP INDEX index_users_soggetti_1 ON users_soggetti;
+
 2024-10-14  Andrea Poli <apoli@link.it>
 
 	Aggiunta tabelle che contiene le ricerche associate ad un utente

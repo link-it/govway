@@ -89,8 +89,6 @@ CREATE TABLE users_soggetti
 	CONSTRAINT pk_users_soggetti PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_users_soggetti_1 ON users_soggetti (id_utente,id_soggetto);
 CREATE TABLE users_soggetti_init_seq (id BIGINT);
 INSERT INTO users_soggetti_init_seq VALUES (NEXT VALUE FOR seq_users_soggetti);
 
@@ -112,8 +110,6 @@ CREATE TABLE users_servizi
 	CONSTRAINT pk_users_servizi PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_users_servizi_1 ON users_servizi (id_utente,id_servizio);
 CREATE TABLE users_servizi_init_seq (id BIGINT);
 INSERT INTO users_servizi_init_seq VALUES (NEXT VALUE FOR seq_users_servizi);
 
@@ -142,8 +138,6 @@ CREATE TABLE users_ricerche
 	CONSTRAINT pk_users_ricerche PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_users_ricerche_1 ON users_ricerche (id_utente,label,modulo,modalita_ricerca);
 
 ALTER TABLE users_ricerche ALTER COLUMN data_creazione SET DEFAULT CURRENT_TIMESTAMP;
 

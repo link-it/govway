@@ -24,7 +24,5 @@ CREATE TABLE gruppi
 	CONSTRAINT pk_gruppi PRIMARY KEY (id)
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
--- index
-CREATE UNIQUE INDEX index_gruppi_1 ON gruppi (nome);
 
 

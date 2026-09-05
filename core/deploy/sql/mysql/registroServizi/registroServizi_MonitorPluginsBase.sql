@@ -18,10 +18,6 @@ CREATE TABLE plugins
 	CONSTRAINT pk_plugins PRIMARY KEY (id)
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
--- index
-CREATE UNIQUE INDEX index_plugins_1 ON plugins (tipo_plugin,class_name);
-CREATE UNIQUE INDEX index_plugins_2 ON plugins (tipo_plugin,tipo);
-CREATE UNIQUE INDEX index_plugins_3 ON plugins (tipo_plugin,label);
 
 
 
@@ -57,8 +53,6 @@ CREATE TABLE plugins_azioni_comp
 	CONSTRAINT pk_plugins_azioni_comp PRIMARY KEY (id)
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
--- index
-CREATE UNIQUE INDEX index_plugins_azioni_comp_1 ON plugins_azioni_comp (id_plugin_servizio_comp,azione);
 
 
 
@@ -114,8 +108,6 @@ CREATE TABLE plugins_conf_azioni
 	CONSTRAINT pk_plugins_conf_azioni PRIMARY KEY (id)
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
--- index
-CREATE UNIQUE INDEX index_plugins_conf_azioni_1 ON plugins_conf_azioni (id_config_servizio,azione);
 
 
 
@@ -145,7 +137,5 @@ CREATE TABLE plugins_conf_filtri
 	CONSTRAINT pk_plugins_conf_filtri PRIMARY KEY (id)
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
--- index
-CREATE UNIQUE INDEX idx_conf_filtri_1 ON plugins_conf_filtri (nome);
 
 

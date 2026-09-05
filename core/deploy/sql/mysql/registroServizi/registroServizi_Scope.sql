@@ -26,7 +26,5 @@ CREATE TABLE scope
 	CONSTRAINT pk_scope PRIMARY KEY (id)
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
--- index
-CREATE UNIQUE INDEX index_scope_1 ON scope (nome);
 
 

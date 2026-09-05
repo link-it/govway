@@ -1,5 +1,4 @@
 -- Gli indici vengono eliminati automaticamente una volta eliminata la tabella
--- DROP INDEX index_ct_map_1 ON ct_map ;
 -- DROP INDEX CORR_APPL_OLD ON CORRELAZIONE_APPLICATIVA ;
 -- DROP INDEX CORR_APPL_SCADUTE ON CORRELAZIONE_APPLICATIVA ;
 -- DROP INDEX MSG_SERV_APPL_RELEASE_SEND ON MSG_SERVIZI_APPLICATIVI ;

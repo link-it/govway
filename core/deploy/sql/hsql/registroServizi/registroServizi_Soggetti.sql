@@ -43,9 +43,6 @@ CREATE TABLE soggetti
 	CONSTRAINT pk_soggetti PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_soggetti_1 ON soggetti (nome_soggetto,tipo_soggetto);
-CREATE UNIQUE INDEX index_soggetti_2 ON soggetti (codice_ipa);
 
 ALTER TABLE soggetti ALTER COLUMN is_default SET DEFAULT 0;
 ALTER TABLE soggetti ALTER COLUMN is_router SET DEFAULT 0;
@@ -74,7 +71,6 @@ CREATE TABLE soggetti_ruoli
 );
 
 -- index
-CREATE UNIQUE INDEX index_soggetti_ruoli_1 ON soggetti_ruoli (id_soggetto,id_ruolo);
 CREATE INDEX INDEX_SOGGETTI_RUOLI ON soggetti_ruoli (id_soggetto);
 CREATE TABLE soggetti_ruoli_init_seq (id BIGINT);
 INSERT INTO soggetti_ruoli_init_seq VALUES (NEXT VALUE FOR seq_soggetti_ruoli);

@@ -67,8 +67,6 @@ CREATE TABLE connettori
 	CONSTRAINT pk_connettori PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_connettori_1 ON connettori (nome_connettore);
 
 ALTER TABLE connettori ALTER COLUMN debug SET DEFAULT 0;
 ALTER TABLE connettori ALTER COLUMN proxy SET DEFAULT 0;
@@ -119,8 +117,6 @@ CREATE TABLE connettori_properties
 	CONSTRAINT pk_connettori_properties PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_connettori_properties_1 ON connettori_properties (nome_connettore);
 CREATE TABLE connettori_properties_init_seq (id BIGINT);
 INSERT INTO connettori_properties_init_seq VALUES (NEXT VALUE FOR seq_connettori_properties);
 

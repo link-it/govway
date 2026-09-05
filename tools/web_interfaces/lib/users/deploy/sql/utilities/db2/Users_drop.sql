@@ -1,7 +1,4 @@
 -- Gli indici vengono eliminati automaticamente una volta eliminata la tabella
--- DROP INDEX index_users_ricerche_1;
--- DROP INDEX index_users_servizi_1;
--- DROP INDEX index_users_soggetti_1;
 DROP TABLE users_ricerche;
 DROP TABLE users_servizi;
 DROP TABLE users_soggetti;

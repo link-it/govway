@@ -1,0 +1,1 @@
+../../../../tools/web_interfaces/lib/audit/deploy/sql/patch/mysql/2026-09-04-patch.sql

@@ -23,7 +23,5 @@ CREATE TABLE scope
 	CONSTRAINT pk_scope PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_scope_1 ON scope (nome);
 
 

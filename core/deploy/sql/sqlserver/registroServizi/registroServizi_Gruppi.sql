@@ -21,7 +21,5 @@ CREATE TABLE gruppi
 	CONSTRAINT pk_gruppi PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_gruppi_1 ON gruppi (nome);
 
 

@@ -147,9 +147,8 @@ CREATE TABLE porte_applicative
 );
 
 -- index
-CREATE UNIQUE INDEX index_porte_applicative_1 ON porte_applicative (nome_porta);
-CREATE INDEX index_porte_applicative_2 ON porte_applicative (id_soggetto);
-CREATE INDEX index_porte_applicative_3 ON porte_applicative (canale);
+CREATE INDEX index_porte_applicative_1 ON porte_applicative (id_soggetto);
+CREATE INDEX index_porte_applicative_2 ON porte_applicative (canale);
 
 ALTER TABLE porte_applicative ALTER COLUMN versione_servizio SET DEFAULT 1;
 ALTER TABLE porte_applicative ALTER COLUMN ora_registrazione SET DEFAULT CURRENT_TIMESTAMP;
@@ -526,8 +525,6 @@ CREATE TABLE pa_ruoli
 	CONSTRAINT pk_pa_ruoli PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_pa_ruoli_1 ON pa_ruoli (id_porta,ruolo);
 CREATE TABLE pa_ruoli_init_seq (id BIGINT);
 INSERT INTO pa_ruoli_init_seq VALUES (NEXT VALUE FOR seq_pa_ruoli);
 
@@ -548,8 +545,6 @@ CREATE TABLE pa_scope
 	CONSTRAINT pk_pa_scope PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_pa_scope_1 ON pa_scope (id_porta,scope);
 CREATE TABLE pa_scope_init_seq (id BIGINT);
 INSERT INTO pa_scope_init_seq VALUES (NEXT VALUE FOR seq_pa_scope);
 
@@ -571,8 +566,6 @@ CREATE TABLE pa_soggetti
 	CONSTRAINT pk_pa_soggetti PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_pa_soggetti_1 ON pa_soggetti (id_porta,tipo_soggetto,nome_soggetto);
 CREATE TABLE pa_soggetti_init_seq (id BIGINT);
 INSERT INTO pa_soggetti_init_seq VALUES (NEXT VALUE FOR seq_pa_soggetti);
 
@@ -616,8 +609,6 @@ CREATE TABLE pa_azioni
 	CONSTRAINT pk_pa_azioni PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_pa_azioni_1 ON pa_azioni (id_porta,azione);
 CREATE TABLE pa_azioni_init_seq (id BIGINT);
 INSERT INTO pa_azioni_init_seq VALUES (NEXT VALUE FOR seq_pa_azioni);
 
@@ -687,9 +678,6 @@ CREATE TABLE pa_transform
 	CONSTRAINT pk_pa_transform PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_pa_transform_1 ON pa_transform (id_porta,nome);
-CREATE UNIQUE INDEX index_pa_transform_2 ON pa_transform (id_porta,posizione);
 
 ALTER TABLE pa_transform ALTER COLUMN req_conversione_enabled SET DEFAULT 0;
 ALTER TABLE pa_transform ALTER COLUMN rest_transformation SET DEFAULT 0;
@@ -718,8 +706,6 @@ CREATE TABLE pa_transform_soggetti
 	CONSTRAINT pk_pa_transform_soggetti PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_pa_transform_soggetti_1 ON pa_transform_soggetti (id_trasformazione,tipo_soggetto,nome_soggetto);
 CREATE TABLE pa_transform_soggetti_init_seq (id BIGINT);
 INSERT INTO pa_transform_soggetti_init_seq VALUES (NEXT VALUE FOR seq_pa_transform_soggetti);
 
@@ -741,8 +727,6 @@ CREATE TABLE pa_transform_sa
 	CONSTRAINT pk_pa_transform_sa PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_pa_transform_sa_1 ON pa_transform_sa (id_trasformazione,id_servizio_applicativo);
 CREATE TABLE pa_transform_sa_init_seq (id BIGINT);
 INSERT INTO pa_transform_sa_init_seq VALUES (NEXT VALUE FOR seq_pa_transform_sa);
 
@@ -826,9 +810,6 @@ CREATE TABLE pa_transform_risp
 	CONSTRAINT pk_pa_transform_risp PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX idx_pa_trasf_resp_1 ON pa_transform_risp (id_trasformazione,nome);
-CREATE UNIQUE INDEX idx_pa_trasf_resp_2 ON pa_transform_risp (id_trasformazione,posizione);
 
 ALTER TABLE pa_transform_risp ALTER COLUMN conversione_enabled SET DEFAULT 0;
 ALTER TABLE pa_transform_risp ALTER COLUMN soap_envelope SET DEFAULT 0;
@@ -880,8 +861,6 @@ CREATE TABLE pa_handlers
 	CONSTRAINT pk_pa_handlers PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_pa_handlers_1 ON pa_handlers (id_porta,tipologia,tipo);
 CREATE TABLE pa_handlers_init_seq (id BIGINT);
 INSERT INTO pa_handlers_init_seq VALUES (NEXT VALUE FOR seq_pa_handlers);
 
@@ -903,8 +882,6 @@ CREATE TABLE pa_aa
 	CONSTRAINT pk_pa_aa PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_pa_aa_1 ON pa_aa (id_porta,nome);
 CREATE TABLE pa_aa_init_seq (id BIGINT);
 INSERT INTO pa_aa_init_seq VALUES (NEXT VALUE FOR seq_pa_aa);
 
@@ -948,8 +925,6 @@ CREATE TABLE pa_token_ruoli
 	CONSTRAINT pk_pa_token_ruoli PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_pa_token_ruoli_1 ON pa_token_ruoli (id_porta,ruolo);
 CREATE TABLE pa_token_ruoli_init_seq (id BIGINT);
 INSERT INTO pa_token_ruoli_init_seq VALUES (NEXT VALUE FOR seq_pa_token_ruoli);
 

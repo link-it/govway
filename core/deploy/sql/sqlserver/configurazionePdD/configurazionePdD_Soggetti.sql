@@ -22,7 +22,5 @@ CREATE TABLE soggetti
 	CONSTRAINT pk_soggetti PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_soggetti_1 ON soggetti (nome_soggetto,tipo_soggetto);
 
 

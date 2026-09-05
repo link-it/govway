@@ -65,8 +65,6 @@ CREATE TABLE connettori
 	CONSTRAINT pk_connettori PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_connettori_1 ON connettori (nome_connettore);
 
 
 
@@ -104,7 +102,5 @@ CREATE TABLE connettori_properties
 	CONSTRAINT pk_connettori_properties PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_connettori_properties_1 ON connettori_properties (nome_connettore);
 
 

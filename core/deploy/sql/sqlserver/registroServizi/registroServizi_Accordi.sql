@@ -26,7 +26,6 @@ CREATE TABLE documenti
 );
 
 -- index
-CREATE UNIQUE INDEX index_documenti_1 ON documenti (ruolo,tipo,nome,id_proprietario,tipo_proprietario);
 CREATE INDEX INDEX_DOC_SEARCH ON documenti (id_proprietario);
 
 
@@ -81,8 +80,7 @@ CREATE TABLE accordi
 );
 
 -- index
-CREATE UNIQUE INDEX index_accordi_1 ON accordi (nome,id_referente,versione);
-CREATE INDEX index_accordi_2 ON accordi (canale);
+CREATE INDEX index_accordi_1 ON accordi (canale);
 
 
 
@@ -109,8 +107,6 @@ CREATE TABLE accordi_azioni
 	CONSTRAINT pk_accordi_azioni PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_accordi_azioni_1 ON accordi_azioni (id_accordo,nome);
 
 
 
@@ -140,8 +136,6 @@ CREATE TABLE port_type
 	CONSTRAINT pk_port_type PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_port_type_1 ON port_type (id_accordo,nome);
 
 
 
@@ -180,8 +174,6 @@ CREATE TABLE port_type_azioni
 	CONSTRAINT pk_port_type_azioni PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_port_type_azioni_1 ON port_type_azioni (id_port_type,nome);
 
 
 
@@ -235,9 +227,6 @@ CREATE TABLE api_resources
 	CONSTRAINT pk_api_resources PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_api_resources_1 ON api_resources (id_accordo,nome);
-CREATE UNIQUE INDEX index_api_resources_2 ON api_resources (id_accordo,http_method,path);
 
 
 
@@ -255,8 +244,6 @@ CREATE TABLE api_resources_response
 	CONSTRAINT pk_api_resources_response PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_api_resp_1 ON api_resources_response (id_resource,status);
 
 
 
@@ -319,8 +306,6 @@ CREATE TABLE accordi_gruppi
 	CONSTRAINT pk_accordi_gruppi PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX idx_acc_gruppi_1 ON accordi_gruppi (id_accordo,id_gruppo);
 
 
 
@@ -348,8 +333,6 @@ CREATE TABLE accordi_cooperazione
 	CONSTRAINT pk_accordi_cooperazione PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_accordi_cooperazione_1 ON accordi_cooperazione (nome,id_referente,versione);
 
 
 
@@ -413,7 +396,6 @@ CREATE TABLE servizi
 );
 
 -- index
-CREATE UNIQUE INDEX index_servizi_1 ON servizi (id_soggetto,tipo_servizio,nome_servizio,versione_servizio);
 CREATE INDEX INDEX_SERV_ACC ON servizi (id_accordo);
 CREATE INDEX INDEX_SERV_SOG ON servizi (id_soggetto);
 
@@ -449,8 +431,6 @@ CREATE TABLE servizi_azione
 	CONSTRAINT pk_servizi_azione PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_servizi_azione_1 ON servizi_azione (nome_azione,id_servizio_azioni);
 
 
 
@@ -482,7 +462,6 @@ CREATE TABLE servizi_fruitori
 );
 
 -- index
-CREATE UNIQUE INDEX index_servizi_fruitori_1 ON servizi_fruitori (id_servizio,id_soggetto);
 CREATE INDEX INDEX_SERV_FRU_SOG ON servizi_fruitori (id_soggetto);
 
 
@@ -517,8 +496,6 @@ CREATE TABLE servizi_fruitori_azione
 	CONSTRAINT pk_servizi_fruitori_azione PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_serv_fru_azione_1 ON servizi_fruitori_azione (nome_azione,id_fruizione_azioni);
 
 
 
@@ -539,7 +516,6 @@ CREATE TABLE acc_serv_composti
 );
 
 -- index
-CREATE UNIQUE INDEX index_acc_serv_composti_1 ON acc_serv_composti (id_accordo);
 CREATE INDEX INDEX_AC_SC ON acc_serv_composti (id_accordo_cooperazione);
 
 

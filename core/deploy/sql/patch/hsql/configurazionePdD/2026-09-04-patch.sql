@@ -1,3 +1,58 @@
 ALTER TABLE nodi_runtime ALTER COLUMN hostname VARCHAR(255);
 
 ALTER TABLE nodi_runtime ALTER COLUMN gruppo VARCHAR(255);
+
+DROP INDEX index_config_url_regole_1;
+DROP INDEX index_servizi_pdd_1;
+DROP INDEX index_pdd_sys_props_1;
+DROP INDEX index_generic_properties_1;
+DROP INDEX index_registro_plugins_1;
+DROP INDEX index_config_handlers_1;
+DROP INDEX index_nodi_runtime_1;
+DROP INDEX index_nodi_runtime_2;
+DROP INDEX index_remote_store_1;
+DROP INDEX index_remote_store_key_1;
+-- DROP INDEX index_connettori_1;
+-- DROP INDEX index_connettori_properties_1;
+DROP INDEX idx_rt_prop_policy_1;
+DROP INDEX idx_cong_gen_policy_1;
+DROP INDEX idx_cong_att_policy_1;
+DROP INDEX index_porte_applicative_1;
+DROP INDEX index_pa_ruoli_1;
+DROP INDEX index_pa_scope_1;
+DROP INDEX index_pa_soggetti_1;
+DROP INDEX index_pa_azioni_1;
+DROP INDEX index_pa_transform_1;
+DROP INDEX index_pa_transform_2;
+DROP INDEX index_pa_transform_soggetti_1;
+DROP INDEX index_pa_transform_sa_1;
+DROP INDEX idx_pa_trasf_resp_1;
+DROP INDEX idx_pa_trasf_resp_2;
+DROP INDEX index_pa_handlers_1;
+DROP INDEX index_pa_aa_1;
+DROP INDEX index_pa_token_ruoli_1;
+DROP INDEX index_porte_delegate_1;
+DROP INDEX index_pd_ruoli_1;
+DROP INDEX index_pd_scope_1;
+DROP INDEX index_pd_azioni_1;
+DROP INDEX index_pd_transform_1;
+DROP INDEX index_pd_transform_2;
+DROP INDEX index_pd_transform_sa_1;
+DROP INDEX idx_pd_trasf_resp_1;
+DROP INDEX idx_pd_trasf_resp_2;
+DROP INDEX index_pd_handlers_1;
+DROP INDEX index_pd_aa_1;
+DROP INDEX index_pd_token_ruoli_1;
+DROP INDEX index_servizi_applicativi_1;
+DROP INDEX index_sa_ruoli_1;
+-- DROP INDEX index_soggetti_1;
+
+ALTER INDEX idx_rt_prop_policy_2 RENAME TO idx_rt_prop_policy_1;
+ALTER INDEX idx_cong_att_policy_2 RENAME TO idx_cong_att_policy_1;
+ALTER INDEX index_porte_applicative_2 RENAME TO index_porte_applicative_1;
+ALTER INDEX index_porte_applicative_3 RENAME TO index_porte_applicative_2;
+ALTER INDEX index_porte_delegate_2 RENAME TO index_porte_delegate_1;
+ALTER INDEX index_porte_delegate_3 RENAME TO index_porte_delegate_2;
+ALTER INDEX index_servizi_applicativi_2 RENAME TO index_servizi_applicativi_1;
+
+ALTER TABLE servizi_applicativi ADD CONSTRAINT fk_servizi_applicativi_3 FOREIGN KEY (id_connettore_risp) REFERENCES connettori(id);

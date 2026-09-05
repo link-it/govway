@@ -51,7 +51,5 @@ CREATE TABLE audit_binaries
 	CONSTRAINT pk_audit_binaries PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_audit_binaries_1 ON audit_binaries (binary_id,id_audit_operation);
 
 

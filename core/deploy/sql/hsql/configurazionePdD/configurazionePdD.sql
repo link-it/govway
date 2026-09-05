@@ -267,8 +267,6 @@ CREATE TABLE config_url_regole
 	CONSTRAINT pk_config_url_regole PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_config_url_regole_1 ON config_url_regole (nome);
 CREATE TABLE config_url_regole_init_seq (id BIGINT);
 INSERT INTO config_url_regole_init_seq VALUES (NEXT VALUE FOR seq_config_url_regole);
 
@@ -590,8 +588,6 @@ CREATE TABLE servizi_pdd
 	CONSTRAINT pk_servizi_pdd PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_servizi_pdd_1 ON servizi_pdd (componente);
 
 ALTER TABLE servizi_pdd ALTER COLUMN stato SET DEFAULT 1;
 
@@ -647,8 +643,6 @@ CREATE TABLE pdd_sys_props
 	CONSTRAINT pk_pdd_sys_props PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_pdd_sys_props_1 ON pdd_sys_props (nome,valore);
 CREATE TABLE pdd_sys_props_init_seq (id BIGINT);
 INSERT INTO pdd_sys_props_init_seq VALUES (NEXT VALUE FOR seq_pdd_sys_props);
 
@@ -676,8 +670,6 @@ CREATE TABLE generic_properties
 	CONSTRAINT pk_generic_properties PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_generic_properties_1 ON generic_properties (tipologia,nome);
 CREATE TABLE generic_properties_init_seq (id BIGINT);
 INSERT INTO generic_properties_init_seq VALUES (NEXT VALUE FOR seq_generic_properties);
 
@@ -769,8 +761,6 @@ CREATE TABLE registro_plugins
 	CONSTRAINT pk_registro_plugins PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_registro_plugins_1 ON registro_plugins (nome);
 
 ALTER TABLE registro_plugins ALTER COLUMN data SET DEFAULT CURRENT_TIMESTAMP;
 
@@ -828,8 +818,6 @@ CREATE TABLE config_handlers
 	CONSTRAINT pk_config_handlers PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_config_handlers_1 ON config_handlers (tipologia,tipo);
 CREATE TABLE config_handlers_init_seq (id BIGINT);
 INSERT INTO config_handlers_init_seq VALUES (NEXT VALUE FOR seq_config_handlers);
 
@@ -855,9 +843,6 @@ CREATE TABLE nodi_runtime
 	CONSTRAINT pk_nodi_runtime PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_nodi_runtime_1 ON nodi_runtime (hostname);
-CREATE UNIQUE INDEX index_nodi_runtime_2 ON nodi_runtime (gruppo,id_numerico);
 CREATE TABLE nodi_runtime_init_seq (id BIGINT);
 INSERT INTO nodi_runtime_init_seq VALUES (NEXT VALUE FOR seq_nodi_runtime);
 
@@ -900,8 +885,6 @@ CREATE TABLE remote_store
 	CONSTRAINT pk_remote_store PRIMARY KEY (id)
 );
 
--- index
-CREATE UNIQUE INDEX index_remote_store_1 ON remote_store (nome);
 CREATE TABLE remote_store_init_seq (id BIGINT);
 INSERT INTO remote_store_init_seq VALUES (NEXT VALUE FOR seq_remote_store);
 
@@ -931,7 +914,6 @@ CREATE TABLE remote_store_key
 );
 
 -- index
-CREATE UNIQUE INDEX index_remote_store_key_1 ON remote_store_key (id_remote_store,kid);
 CREATE INDEX REMOTE_STORE_UPDATE ON remote_store_key (data_aggiornamento);
 CREATE INDEX REMOTE_STORE_CREATE ON remote_store_key (data_registrazione);
 CREATE TABLE remote_store_key_init_seq (id BIGINT);
