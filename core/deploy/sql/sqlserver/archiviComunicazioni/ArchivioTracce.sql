@@ -172,7 +172,7 @@ CREATE TABLE tracce_ext_protocol_info
 (
 	idtraccia BIGINT NOT NULL,
 	name VARCHAR(255) NOT NULL,
-	value VARCHAR(2800),
+	value VARCHAR(1445),
 	ext_value VARCHAR(max),
 	-- Data di registrazione
 	gdo DATETIME2 NOT NULL,
