@@ -1,3 +1,19 @@
+2026-09-06  Andrea Poli <apoli@link.it>
+
+	Solo SQL Server: ridotte le colonne che ospitano nomi precostruiti (porte, connettori, applicativi),
+	dichiarate VARCHAR(2000), con cui gli indici eccedevano il limite di 1700 byte sulla chiave di indice.
+	'msg_servizi_applicativi.servizio_applicativo' passa a VARCHAR(645), il massimo compatibile con il limite
+	di 900 byte della chiave primaria; le altre a VARCHAR(1024). Sugli altri database restano VARCHAR(2000).
+
+	ALTER TABLE porte_delegate ALTER COLUMN nome_porta VARCHAR(1024) NOT NULL;
+	ALTER TABLE porte_applicative ALTER COLUMN nome_porta VARCHAR(1024) NOT NULL;
+	ALTER TABLE servizi_applicativi ALTER COLUMN nome VARCHAR(1024) NOT NULL;
+	ALTER TABLE connettori ALTER COLUMN nome_connettore VARCHAR(1024) NOT NULL;
+	ALTER TABLE ct_active_policy ALTER COLUMN filtro_porta VARCHAR(1024);
+	ALTER TABLE allarmi ALTER COLUMN filtro_porta VARCHAR(1024);
+	ALTER TABLE transazioni_sa ALTER COLUMN servizio_applicativo_erogatore VARCHAR(1024) NOT NULL;
+	ALTER TABLE MSG_SERVIZI_APPLICATIVI ALTER COLUMN SERVIZIO_APPLICATIVO VARCHAR(645) NOT NULL;
+
 2026-09-05  Andrea Poli <apoli@link.it>
 
 	Solo SQL Server: ridotta a VARCHAR(1680) la colonna 'credenziale_mittente.credenziale', dichiarata

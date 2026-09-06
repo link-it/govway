@@ -2,7 +2,7 @@
 
 CREATE TABLE servizi_applicativi
 (
-	nome VARCHAR(2000) NOT NULL,
+	nome VARCHAR(1024) NOT NULL,
 	tipo VARCHAR(255),
 	as_client INT,
 	descrizione VARCHAR(4000),

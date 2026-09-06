@@ -1,0 +1,1 @@
+../../../../core/deploy/sql/patch/sqlserver/runtimePdD/2026-09-06-patch.sql

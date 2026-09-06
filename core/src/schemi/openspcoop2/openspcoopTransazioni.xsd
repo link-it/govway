@@ -106,6 +106,7 @@
 						<xsd:appinfo>
 							<linkit:generator
 								xmlns:linkit="http://www.link.it/project_generator">
+								<!-- NOTA: su SQL Server questa colonna e' dichiarata VARCHAR(1680) -->
 								<linkit:sql-column-mapping name="credenziale" varchar="2900"/>
 								<linkit:sql-ddl-column-comment>Credenziale del mittente</linkit:sql-ddl-column-comment>
 							</linkit:generator>
@@ -1801,6 +1802,7 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 									Viene quindi impostata la dimensione massima associabile ad un nome di un applicativo nel backend: 2000
 									NOTA: in caso di consegna multipla questa colonna non viene utilizzata e la memorizzazione avviene su transazione_applicativo
 								-->
+								<!-- NOTA: su SQL Server questa colonna e' dichiarata VARCHAR(1024) -->
 								<linkit:sql-column-mapping varchar="2000"/>
 								<linkit:sql-ddl-column-comment><![CDATA[Identificativo dell'applicativo erogatore]]></linkit:sql-ddl-column-comment>
 							</linkit:generator>

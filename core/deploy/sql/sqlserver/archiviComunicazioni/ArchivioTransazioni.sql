@@ -193,7 +193,7 @@ CREATE INDEX INDEX_TR_TOKEN_ID ON transazioni (token_id);
 CREATE TABLE transazioni_sa
 (
 	id_transazione VARCHAR(255) NOT NULL,
-	servizio_applicativo_erogatore VARCHAR(2000) NOT NULL,
+	servizio_applicativo_erogatore VARCHAR(1024) NOT NULL,
 	connettore_nome VARCHAR(255),
 	data_registrazione DATETIME2 NOT NULL,
 	-- Esito della Consegna

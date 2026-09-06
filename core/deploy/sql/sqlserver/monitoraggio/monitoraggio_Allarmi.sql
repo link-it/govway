@@ -36,7 +36,7 @@ CREATE TABLE allarmi
 	filtro_enabled BIT NOT NULL DEFAULT 'false',
 	filtro_protocollo VARCHAR(255),
 	filtro_ruolo VARCHAR(255),
-	filtro_porta VARCHAR(2000),
+	filtro_porta VARCHAR(1024),
 	filtro_tipo_fruitore VARCHAR(255),
 	filtro_nome_fruitore VARCHAR(255),
 	filtro_ruolo_fruitore VARCHAR(255),

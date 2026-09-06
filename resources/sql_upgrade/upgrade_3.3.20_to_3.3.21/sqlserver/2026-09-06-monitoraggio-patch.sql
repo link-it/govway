@@ -1,0 +1,1 @@
+../../../../core/deploy/sql/patch/sqlserver/monitoraggio/2026-09-06-patch.sql

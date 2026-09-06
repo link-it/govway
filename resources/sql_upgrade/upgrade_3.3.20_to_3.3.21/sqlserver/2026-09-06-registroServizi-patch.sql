@@ -1,0 +1,1 @@
+../../../../core/deploy/sql/patch/sqlserver/registroServizi/2026-09-06-patch.sql
