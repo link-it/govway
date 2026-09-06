@@ -43,12 +43,15 @@
                         <linkit:sql-table-index name="audit_filter_time">
                             <linkit:sql-table-index-field name="time_request" order="DESC" ignoreTypeCompatibility="true"/>
                         </linkit:sql-table-index>
+                        <!-- NOTA: su SQL Server questo indice non viene creato -->
                         <linkit:sql-table-index name="audit_object_id">
                             <linkit:sql-table-index-field name="object_id"/>
                         </linkit:sql-table-index>
+                        <!-- NOTA: su SQL Server questo indice non viene creato -->
                         <linkit:sql-table-index name="audit_object_old_id">
                             <linkit:sql-table-index-field name="object_old_id"/>
                         </linkit:sql-table-index>
+                        <!-- NOTA: su SQL Server questo indice non comprende la colonna object_id -->
                         <linkit:sql-table-index name="audit_filter">
                             <linkit:sql-table-index-field name="tipo_operazione"/>
                             <linkit:sql-table-index-field name="tipo"/>
