@@ -4,7 +4,7 @@ CREATE TABLE connettori
 (
 	-- (disabilitato,http,jms)
 	endpointtype VARCHAR(255) NOT NULL,
-	nome_connettore VARCHAR(2000) NOT NULL,
+	nome_connettore VARCHAR(1024) NOT NULL,
 	-- url nel caso http
 	url VARCHAR(4000),
 	-- nel caso di http indicazione se usare chunking

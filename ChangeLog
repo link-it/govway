@@ -13,6 +13,9 @@
 	Su SQL Server la colonna 'credenziale_mittente.credenziale' è stata inoltre ridotta a VARCHAR(1680), poiché l'indice
 	su (tipo,credenziale) eccedeva il limite e faceva fallire la registrazione delle credenziali più lunghe; il valore
 	massimo applicato dal gateway viene adeguato automaticamente al database in uso.
+	Sempre su SQL Server sono state ridotte le colonne che ospitano i nomi precostruiti di porte, connettori e applicativi:
+	'msg_servizi_applicativi.servizio_applicativo' a VARCHAR(645), le altre a VARCHAR(1024), a fronte di un massimo reale
+	di 528 caratteri per un nome di porta delegata e 426 per uno di porta applicativa.
 
 2026-09-03  Andrea Poli <apoli@link.it>
 

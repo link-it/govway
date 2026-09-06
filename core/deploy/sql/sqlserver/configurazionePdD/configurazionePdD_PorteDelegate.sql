@@ -2,7 +2,7 @@
 
 CREATE TABLE porte_delegate
 (
-	nome_porta VARCHAR(2000) NOT NULL,
+	nome_porta VARCHAR(1024) NOT NULL,
 	descrizione VARCHAR(4000),
 	-- * Soggetto Erogatore *
 	-- tipo/nome per le modalita static
