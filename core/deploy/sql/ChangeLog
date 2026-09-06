@@ -1,3 +1,12 @@
+2026-09-05  Andrea Poli <apoli@link.it>
+
+	Solo SQL Server: ridotta a VARCHAR(1680) la colonna 'credenziale_mittente.credenziale', dichiarata
+	VARCHAR(2900). L'indice 'unique_credenziale_mittente_1' insiste su (tipo,credenziale) e con quella
+	dimensione eccedeva il limite di 1700 byte sulla chiave di indice, facendo fallire l'inserimento
+	delle credenziali piu' lunghe con l'errore 1946. Sugli altri database la colonna resta VARCHAR(2900).
+
+	ALTER TABLE credenziale_mittente ALTER COLUMN credenziale VARCHAR(1680) NOT NULL;
+
 2026-09-04  Andrea Poli <apoli@link.it>
 
 	Aggiunto il vincolo di integrita' referenziale mancante sulla colonna

@@ -31603,6 +31603,41 @@ public class OpenSPCoop2Properties {
 	
 	// Salvataggio
 	
+	/** Dimensione massima della colonna 'credenziale_mittente.credenziale' imposta dal database.
+	 *  L'indice 'unique_credenziale_mittente_1' insiste su (tipo,credenziale) e su SQL Server la chiave
+	 *  di indice non puo' superare i 1700 byte, con 'tipo' dichiarato VARCHAR(20).
+	 *  Il valore deve restare allineato a quello dichiarato negli script sql del dialetto. */
+	private static final int CREDENZIALI_MITTENTE_MAX_LENGTH_SQLSERVER = 1680;
+	
+	private Boolean isTransazioniCredenzialiMittenteMaxLengthAdeguaTipoDatabase = null;
+	public boolean isTransazioniCredenzialiMittenteMaxLengthAdeguaTipoDatabase() {	
+		if(this.isTransazioniCredenzialiMittenteMaxLengthAdeguaTipoDatabase==null){
+			String pName = "org.openspcoop2.pdd.transazioni.credenzialiMittente.maxLength.adeguaTipoDatabase";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					name="true";
+				}
+				name = name.trim();
+				this.isTransazioniCredenzialiMittenteMaxLengthAdeguaTipoDatabase = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.isTransazioniCredenzialiMittenteMaxLengthAdeguaTipoDatabase = true;
+			}    
+		}
+
+		return this.isTransazioniCredenzialiMittenteMaxLengthAdeguaTipoDatabase;
+	}
+	
+	private int getTransazioniCredenzialiMittenteMaxLengthDatabase() {
+		String tipoDatabase = getDatabaseType();
+		if(tipoDatabase!=null && TipiDatabase.SQLSERVER.getNome().equalsIgnoreCase(tipoDatabase.trim())) {
+			return CREDENZIALI_MITTENTE_MAX_LENGTH_SQLSERVER;
+		}
+		return -1;
+	}
+	
 	private Integer getTransazioniCredenzialiMittenteMaxLength = null;
 	public int getTransazioniCredenzialiMittenteMaxLength() throws CoreException {	
 		if(this.getTransazioniCredenzialiMittenteMaxLength==null){
@@ -31613,7 +31648,15 @@ public class OpenSPCoop2Properties {
 					throw new CoreException("Proprieta' non impostata");
 				}
 				name = name.trim();
-				this.getTransazioniCredenzialiMittenteMaxLength = Integer.valueOf(name);
+				int maxLength = Integer.parseInt(name);
+				if(isTransazioniCredenzialiMittenteMaxLengthAdeguaTipoDatabase()) {
+					int maxLengthDatabase = getTransazioniCredenzialiMittenteMaxLengthDatabase();
+					if(maxLengthDatabase>0 && maxLength>maxLengthDatabase) {
+						this.logWarn("La dimensione massima indicata per le credenziali del mittente ("+maxLength+") eccede quella consentita dal database '"+getDatabaseType()+"' ("+maxLengthDatabase+"); verrà utilizzato quest'ultimo valore");
+						maxLength = maxLengthDatabase;
+					}
+				}
+				this.getTransazioniCredenzialiMittenteMaxLength = maxLength;
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.transazioni.credenzialiMittente.maxLength': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
