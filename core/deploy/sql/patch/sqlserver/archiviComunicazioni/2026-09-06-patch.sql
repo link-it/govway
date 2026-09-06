@@ -11,3 +11,8 @@ CREATE INDEX INDEX_TRSA_SEND ON transazioni_sa (data_uscita_richiesta DESC,servi
 
 -- DROP INDEX INDEX_TR_FULL ON transazioni;
 -- CREATE INDEX INDEX_TR_FULL ON transazioni (data_ingresso_richiesta DESC,esito,esito_contesto,pdd_ruolo,pdd_codice,tipo_soggetto_erogatore,nome_soggetto_erogatore,tipo_servizio,nome_servizio,versione_servizio,azione,tipo_soggetto_fruitore,nome_soggetto_fruitore,servizio_applicativo_fruitore,trasporto_mittente,token_issuer,token_client_id,token_subject,token_username,token_mail,protocollo,client_address,gruppi,uri_api,eventi_gestione,cluster_id) INCLUDE (id_correlazione_applicativa,id_correlazione_risposta);
+
+DROP INDEX TRACCE_EXT_SEARCH ON tracce_ext_protocol_info;
+UPDATE tracce_ext_protocol_info SET value = LEFT(value, 1445) WHERE DATALENGTH(value) > 1445;
+ALTER TABLE tracce_ext_protocol_info ALTER COLUMN value VARCHAR(1445);
+CREATE INDEX TRACCE_EXT_SEARCH ON tracce_ext_protocol_info (name,value);

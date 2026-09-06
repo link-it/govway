@@ -1,5 +1,21 @@
 2026-09-06  Andrea Poli <apoli@link.it>
 
+	Solo SQL Server: ridimensionate le ultime colonne che mandavano fuori limite un indice.
+	Nelle tabelle di sequenza i tipi di soggetto e servizio passano a VARCHAR(20) e i nomi di soggetto
+	a VARCHAR(80), allineandoli al resto del prodotto: la chiave primaria di 'sequenza_da_inviare',
+	su sette colonne, scende da 1785 a 730 byte contro il limite di 900 delle chiavi clustered.
+	In 'tracce_ext_protocol_info' la colonna 'value' passa da VARCHAR(2800) a VARCHAR(1445), cosi' che
+	l'indice su (name,value) resti entro i 1700 byte; il valore integro continua a essere registrato
+	nella colonna 'ext_value'. Sugli altri database le dimensioni restano invariate.
+
+	ALTER TABLE SEQUENZA_DA_INVIARE ALTER COLUMN MITTENTE VARCHAR(80) NOT NULL;
+	ALTER TABLE SEQUENZA_DA_INVIARE ALTER COLUMN TIPO_MITTENTE VARCHAR(20) NOT NULL;
+	ALTER TABLE SEQUENZA_DA_RICEVERE ALTER COLUMN MITTENTE VARCHAR(80) NOT NULL;
+	ALTER TABLE SEQUENZA_DA_RICEVERE ALTER COLUMN TIPO_MITTENTE VARCHAR(20) NOT NULL;
+	ALTER TABLE tracce_ext_protocol_info ALTER COLUMN value VARCHAR(1445);
+
+2026-09-06  Andrea Poli <apoli@link.it>
+
 	Solo SQL Server: sugli indici estesi 'INDEX_TR_SEARCH' e 'INDEX_TR_FULL' della tabella 'transazioni'
 	le colonne 'id_correlazione_applicativa' e 'id_correlazione_risposta' sono state spostate fra le colonne
 	incluse: non entrano piu' nella chiave, che eccedeva il limite di 1700 byte, ma l'indice resta coprente.

@@ -64,6 +64,13 @@ import org.openspcoop2.utils.jdbc.JDBCUtilities;
 
 public class TracciaProducer extends BasicProducer implements ITracciaProducer{
 
+	/** Dimensione massima della colonna 'value' di tracce_ext_protocol_info, imposta dal limite
+	 *  sulla chiave dell'indice TRACCE_EXT_SEARCH su (name,value). Il valore integro viene comunque
+	 *  registrato nella colonna 'ext_value'. Devono restare allineati agli script sql del dialetto. */
+	private static final int LIMIT_VALUE_DEFAULT = 2800;   // MySQL: name+value < 3072
+	private static final int LIMIT_VALUE_SQLSERVER = 1445; // SQL Server: 255 + 1445 = 1700
+
+
 	public TracciaProducer(IProtocolFactory<?> factory) throws ProtocolException{
 		super(factory, BasicProducerType.TRACCE);
 	}
@@ -418,7 +425,7 @@ public class TracciaProducer extends BasicProducer implements ITracciaProducer{
 						v = org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(this.tipoDatabase, v);
 					}
 
-					int limit = 2800; // TRACCE_EXT_SEARCH ON tracce_ext_protocol_info (name,value) la somma di name e value deve essere minore di 3072 bytes per mysql
+					int limit = LIMIT_VALUE_DEFAULT; // TRACCE_EXT_SEARCH ON tracce_ext_protocol_info (name,value) la somma di name e value deve essere minore di 3072 bytes per mysql
 					if(TipiDatabase.POSTGRESQL.equals(this.tipoDatabase)) {
 						// The maximum length for a value in a B-tree index, which includes primary keys, is one third of the size of a buffer page, by default floor(8192/3) = 2730 bytes
 						// Altrimenti si ha un errore del genere:
@@ -435,6 +442,11 @@ public class TracciaProducer extends BasicProducer implements ITracciaProducer{
 						if(sum>2711) {
 							limit = (2711 - 20) - propertiesNames[i].length();
 						}
+					}
+					else if(TipiDatabase.SQLSERVER.equals(this.tipoDatabase)) {
+						// Su SQL Server la chiave di un indice non puo' superare i 1700 byte.
+						// La colonna 'value' e' dichiarata VARCHAR(1445) in quel dialetto: 255 (name) + 1445 = 1700.
+						limit = LIMIT_VALUE_SQLSERVER;
 					}
 					
 					String columnExtV = "";

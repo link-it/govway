@@ -8,12 +8,14 @@
 	valori più lunghi.
 	Sono state ridimensionate le colonne il cui contenuto risulta largamente inferiore alla dimensione dichiarata:
 	'nodi_runtime.hostname' e 'nodi_runtime.gruppo' passano da VARCHAR(3000) a VARCHAR(255) su tutti i database; nel solo
-	dialetto SQL Server 'credenziale_mittente.credenziale' passa a VARCHAR(1680), le colonne che ospitano i nomi
-	precostruiti di porte, connettori e applicativi a VARCHAR(1024), 'msg_servizi_applicativi.servizio_applicativo' a
-	VARCHAR(645), unico valore compatibile con il limite previsto per le chiavi primarie, e le colonne 'mittente' e
-	'destinatario' delle statistiche a VARCHAR(80), allineandole a quanto già dichiarato in 'transazioni' per gli stessi
-	nomi di soggetto. Per le credenziali del mittente la dimensione massima registrata dal gateway viene adeguata
-	automaticamente al database in uso.
+	dialetto SQL Server 'credenziale_mittente.credenziale' passa a VARCHAR(1680), 'tracce_ext_protocol_info.value' a
+	VARCHAR(1445), le colonne che ospitano i nomi precostruiti di porte, connettori e applicativi a VARCHAR(1024),
+	'msg_servizi_applicativi.servizio_applicativo' a VARCHAR(645), unico valore compatibile con il limite previsto per le
+	chiavi primarie, e i tipi e i nomi di soggetto delle statistiche e delle tabelle di sequenza rispettivamente a
+	VARCHAR(20) e VARCHAR(80), allineandoli a quanto già dichiarato in 'transazioni' per gli stessi valori. Le credenziali
+	del mittente e le proprietà di protocollo delle tracce eccedenti la nuova dimensione continuano a essere registrate
+	per intero: le prime tramite l'adeguamento automatico della dimensione massima al database in uso, le seconde nella
+	colonna 'ext_value' già prevista allo scopo.
 	Dove le colonne non erano riducibili si è intervenuti sugli indici. Su SQL Server sono state spostate fra le colonne
 	incluse degli indici estesi di 'transazioni' le due colonne che riportano l'identificativo di correlazione applicativa,
 	che restano così interrogabili senza gravare sulla chiave; sono stati inoltre eliminati gli indici privi di utilità:

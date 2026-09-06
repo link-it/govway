@@ -1014,6 +1014,7 @@ Il valore presente in questo campo contiene la rappresentazione del profilo di c
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
+                                <!-- NOTA: su SQL Server questa colonna e' dichiarata VARCHAR(80) -->
                                 <linkit:sql-column-mapping name="MITTENTE"/>
                                 <linkit:sql-ddl-column-comment>'Nome' del soggetto che ha generato il messaggio</linkit:sql-ddl-column-comment>
                             </linkit:generator>
@@ -1025,6 +1026,7 @@ Il valore presente in questo campo contiene la rappresentazione del profilo di c
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
+                                <!-- NOTA: su SQL Server questa colonna e' dichiarata VARCHAR(20) -->
                                 <linkit:sql-column-mapping name="TIPO_MITTENTE"/>
                                 <linkit:sql-ddl-column-comment>'Tipo' del soggetto che ha generato il messaggio</linkit:sql-ddl-column-comment>
                             </linkit:generator>
@@ -1036,6 +1038,7 @@ Il valore presente in questo campo contiene la rappresentazione del profilo di c
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
+                                <!-- NOTA: su SQL Server questa colonna e' dichiarata VARCHAR(80) -->
                                 <linkit:sql-column-mapping name="DESTINATARIO"/>
                                 <linkit:sql-ddl-column-comment>'Nome' del soggetto destinatario del messaggio</linkit:sql-ddl-column-comment>
                             </linkit:generator>
@@ -1047,6 +1050,7 @@ Il valore presente in questo campo contiene la rappresentazione del profilo di c
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
+                                <!-- NOTA: su SQL Server questa colonna e' dichiarata VARCHAR(20) -->
                                 <linkit:sql-column-mapping name="TIPO_DESTINATARIO"/>
                                 <linkit:sql-ddl-column-comment>'Tipo' del soggetto destinatario del messaggio</linkit:sql-ddl-column-comment>
                             </linkit:generator>
@@ -1069,6 +1073,7 @@ Il valore presente in questo campo contiene la rappresentazione del profilo di c
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
+                                <!-- NOTA: su SQL Server questa colonna e' dichiarata VARCHAR(20) -->
                                 <linkit:sql-column-mapping name="TIPO_SERVIZIO"/>
                                 <linkit:sql-ddl-column-comment>Tipo del servizio</linkit:sql-ddl-column-comment>
                             </linkit:generator>
@@ -1167,6 +1172,7 @@ Il valore presente in questo campo contiene la rappresentazione del profilo di c
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
+                                <!-- NOTA: su SQL Server questa colonna e' dichiarata VARCHAR(80) -->
                                 <linkit:sql-column-mapping name="MITTENTE"/>
                                 <linkit:sql-ddl-column-comment>'Nome' del soggetto che ha generato il messaggio</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[le informazioni su mitt/dest/servizio/azione servono per un controllo di validazione sulla collaborazione]]></linkit:sql-column-comment>
@@ -1179,6 +1185,7 @@ Il valore presente in questo campo contiene la rappresentazione del profilo di c
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
+                                <!-- NOTA: su SQL Server questa colonna e' dichiarata VARCHAR(20) -->
                                 <linkit:sql-column-mapping name="TIPO_MITTENTE"/>
                                 <linkit:sql-ddl-column-comment>'Tipo' del soggetto che ha generato il messaggio</linkit:sql-ddl-column-comment>
                             </linkit:generator>
@@ -1190,6 +1197,7 @@ Il valore presente in questo campo contiene la rappresentazione del profilo di c
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
+                                <!-- NOTA: su SQL Server questa colonna e' dichiarata VARCHAR(80) -->
                                 <linkit:sql-column-mapping name="DESTINATARIO"/>
                                 <linkit:sql-ddl-column-comment>'Nome' del soggetto destinatario del messaggio</linkit:sql-ddl-column-comment>
                             </linkit:generator>
@@ -1201,6 +1209,7 @@ Il valore presente in questo campo contiene la rappresentazione del profilo di c
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
+                                <!-- NOTA: su SQL Server questa colonna e' dichiarata VARCHAR(20) -->
                                 <linkit:sql-column-mapping name="TIPO_DESTINATARIO"/>
                                 <linkit:sql-ddl-column-comment>'Tipo' del soggetto destinatario del messaggio</linkit:sql-ddl-column-comment>
                             </linkit:generator>
@@ -1223,6 +1232,7 @@ Il valore presente in questo campo contiene la rappresentazione del profilo di c
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
+                                <!-- NOTA: su SQL Server questa colonna e' dichiarata VARCHAR(20) -->
                                 <linkit:sql-column-mapping name="TIPO_SERVIZIO"/>
                                 <linkit:sql-ddl-column-comment>Tipo del servizio</linkit:sql-ddl-column-comment>
                             </linkit:generator>
