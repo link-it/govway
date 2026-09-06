@@ -30,9 +30,7 @@ CREATE TABLE audit_operations
 
 -- index
 CREATE INDEX audit_filter_time ON audit_operations (time_request DESC);
-CREATE INDEX audit_object_id ON audit_operations (object_id);
-CREATE INDEX audit_object_old_id ON audit_operations (object_old_id);
-CREATE INDEX audit_filter ON audit_operations (tipo_operazione,tipo,object_id,utente,stato);
+CREATE INDEX audit_filter ON audit_operations (tipo_operazione,tipo,utente,stato);
 
 
 

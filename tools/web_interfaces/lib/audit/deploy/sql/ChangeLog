@@ -1,3 +1,14 @@
+2026-09-06  Andrea Poli <apoli@link.it>
+
+	Solo SQL Server: eliminati gli indici 'audit_object_id' e 'audit_object_old_id' e tolta la colonna
+	'object_id' dall'indice 'audit_filter', con cui le chiavi eccedevano il limite di 1700 byte. La colonna
+	non e' ridimensionabile e le ricerche della console la filtrano con un LIKE che non consente comunque
+	l'uso dell'indice. Sugli altri database i tre indici restano invariati.
+
+	DROP INDEX audit_object_id ON audit_operations;
+	DROP INDEX audit_object_old_id ON audit_operations;
+	CREATE INDEX audit_filter ON audit_operations (tipo_operazione,tipo,utente,stato);
+
 2026-09-04  Andrea Poli <apoli@link.it>
 
 	Rimosso l'indice 'index_audit_binaries_1', che duplicava esattamente il vincolo UNIQUE della
