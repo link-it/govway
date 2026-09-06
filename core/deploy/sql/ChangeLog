@@ -1,5 +1,16 @@
 2026-09-06  Andrea Poli <apoli@link.it>
 
+	Solo SQL Server: sugli indici estesi 'INDEX_TR_SEARCH' e 'INDEX_TR_FULL' della tabella 'transazioni'
+	le colonne 'id_correlazione_applicativa' e 'id_correlazione_risposta' sono state spostate fra le colonne
+	incluse: non entrano piu' nella chiave, che eccedeva il limite di 1700 byte, ma l'indice resta coprente.
+	Le due colonne restano VARCHAR(255) su tutti i database, essendo tale il massimo dichiarato dalla
+	console per l'identificativo di correlazione applicativa.
+
+	CREATE INDEX INDEX_TR_SEARCH ON transazioni (...) INCLUDE (id_correlazione_applicativa,id_correlazione_risposta);
+	CREATE INDEX INDEX_TR_FULL ON transazioni (...) INCLUDE (id_correlazione_applicativa,id_correlazione_risposta);
+
+2026-09-06  Andrea Poli <apoli@link.it>
+
 	Solo SQL Server: allineate a VARCHAR(80) le colonne 'mittente' e 'destinatario' delle tabelle delle
 	statistiche, dichiarate VARCHAR(255), con cui gli indici estesi eccedevano il limite di 1700 byte sulla
 	chiave di indice. Ospitano nomi di soggetto, gli stessi valori che in 'transazioni' sono gia' dichiarati
