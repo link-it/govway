@@ -3,7 +3,7 @@
 CREATE TABLE credenziale_mittente
 (
 	tipo VARCHAR(20) NOT NULL,
-	credenziale VARCHAR(2900) NOT NULL,
+	credenziale VARCHAR(1680) NOT NULL,
 	ora_registrazione DATETIME2 NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	ref_credenziale BIGINT,
 	-- fk/pk columns

@@ -10,6 +10,9 @@
 	Sono stati infine rimossi, sui dialetti MySQL, HyperSQL, SQL Server e DB2, i 92 indici che duplicavano esattamente un
 	vincolo UNIQUE: su tali basi dati il vincolo crea già il proprio indice, utilizzato anche dalle ricerche, come
 	avviene da sempre su PostgreSQL e Oracle.
+	Su SQL Server la colonna 'credenziale_mittente.credenziale' è stata inoltre ridotta a VARCHAR(1680), poiché l'indice
+	su (tipo,credenziale) eccedeva il limite e faceva fallire la registrazione delle credenziali più lunghe; il valore
+	massimo applicato dal gateway viene adeguato automaticamente al database in uso.
 
 2026-09-03  Andrea Poli <apoli@link.it>
 
