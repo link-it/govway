@@ -14,10 +14,13 @@
 	'destinatario' delle statistiche a VARCHAR(80), allineandole a quanto già dichiarato in 'transazioni' per gli stessi
 	nomi di soggetto. Per le credenziali del mittente la dimensione massima registrata dal gateway viene adeguata
 	automaticamente al database in uso.
-	Sono stati poi eliminati gli indici privi di utilità: 'index_dump_messaggi_2' e 'index_dump_messaggi_3', relativi
-	all'elaborazione differita del dump non più realizzata nel prodotto, e su SQL Server i due indici di 'audit_operations'
-	dedicati a 'object_id' e 'object_old_id', che le ricerche dell'auditing non possono utilizzare filtrando quelle colonne
-	con un LIKE; per lo stesso motivo 'object_id' è stata tolta anche dall'indice di ricerca della medesima tabella.
+	Dove le colonne non erano riducibili si è intervenuti sugli indici. Su SQL Server sono state spostate fra le colonne
+	incluse degli indici estesi di 'transazioni' le due colonne che riportano l'identificativo di correlazione applicativa,
+	che restano così interrogabili senza gravare sulla chiave; sono stati inoltre eliminati gli indici privi di utilità:
+	'index_dump_messaggi_2' e 'index_dump_messaggi_3', relativi all'elaborazione differita del dump non più realizzata nel
+	prodotto, e i due indici di 'audit_operations' dedicati a 'object_id' e 'object_old_id', che le ricerche dell'auditing
+	non possono utilizzare filtrando quelle colonne con un LIKE; per lo stesso motivo 'object_id' è stata tolta anche
+	dall'indice di ricerca della medesima tabella.
 	Sono stati infine rimossi, sui dialetti MySQL, HyperSQL, SQL Server e DB2, i 92 indici che duplicavano esattamente un
 	vincolo UNIQUE: su tali basi dati il vincolo crea già il proprio indice, utilizzato anche dalle ricerche, come avviene
 	da sempre su PostgreSQL e Oracle.
