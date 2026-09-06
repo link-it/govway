@@ -9,9 +9,11 @@
 	Sono state ridimensionate le colonne il cui contenuto risulta largamente inferiore alla dimensione dichiarata:
 	'nodi_runtime.hostname' e 'nodi_runtime.gruppo' passano da VARCHAR(3000) a VARCHAR(255) su tutti i database; nel solo
 	dialetto SQL Server 'credenziale_mittente.credenziale' passa a VARCHAR(1680), le colonne che ospitano i nomi
-	precostruiti di porte, connettori e applicativi a VARCHAR(1024), e 'msg_servizi_applicativi.servizio_applicativo' a
-	VARCHAR(645), unico valore compatibile con il limite previsto per le chiavi primarie. Per le credenziali del mittente
-	la dimensione massima registrata dal gateway viene adeguata automaticamente al database in uso.
+	precostruiti di porte, connettori e applicativi a VARCHAR(1024), 'msg_servizi_applicativi.servizio_applicativo' a
+	VARCHAR(645), unico valore compatibile con il limite previsto per le chiavi primarie, e le colonne 'mittente' e
+	'destinatario' delle statistiche a VARCHAR(80), allineandole a quanto già dichiarato in 'transazioni' per gli stessi
+	nomi di soggetto. Per le credenziali del mittente la dimensione massima registrata dal gateway viene adeguata
+	automaticamente al database in uso.
 	Sono stati poi eliminati gli indici privi di utilità: 'index_dump_messaggi_2' e 'index_dump_messaggi_3', relativi
 	all'elaborazione differita del dump non più realizzata nel prodotto, e su SQL Server i due indici di 'audit_operations'
 	dedicati a 'object_id' e 'object_old_id', che le ricerche dell'auditing non possono utilizzare filtrando quelle colonne

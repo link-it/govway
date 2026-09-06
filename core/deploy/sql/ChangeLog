@@ -1,5 +1,21 @@
 2026-09-06  Andrea Poli <apoli@link.it>
 
+	Solo SQL Server: allineate a VARCHAR(80) le colonne 'mittente' e 'destinatario' delle tabelle delle
+	statistiche, dichiarate VARCHAR(255), con cui gli indici estesi eccedevano il limite di 1700 byte sulla
+	chiave di indice. Ospitano nomi di soggetto, gli stessi valori che in 'transazioni' sono gia' dichiarati
+	VARCHAR(80) e da cui le statistiche vengono calcolate. Sugli altri database restano VARCHAR(255).
+
+	ALTER TABLE statistiche_orarie ALTER COLUMN mittente VARCHAR(80) NOT NULL;
+	ALTER TABLE statistiche_orarie ALTER COLUMN destinatario VARCHAR(80) NOT NULL;
+	ALTER TABLE statistiche_giornaliere ALTER COLUMN mittente VARCHAR(80) NOT NULL;
+	ALTER TABLE statistiche_giornaliere ALTER COLUMN destinatario VARCHAR(80) NOT NULL;
+	ALTER TABLE statistiche_settimanali ALTER COLUMN mittente VARCHAR(80) NOT NULL;
+	ALTER TABLE statistiche_settimanali ALTER COLUMN destinatario VARCHAR(80) NOT NULL;
+	ALTER TABLE statistiche_mensili ALTER COLUMN mittente VARCHAR(80) NOT NULL;
+	ALTER TABLE statistiche_mensili ALTER COLUMN destinatario VARCHAR(80) NOT NULL;
+
+2026-09-06  Andrea Poli <apoli@link.it>
+
 	Solo SQL Server: ridotte le colonne che ospitano nomi precostruiti (porte, connettori, applicativi),
 	dichiarate VARCHAR(2000), con cui gli indici eccedevano il limite di 1700 byte sulla chiave di indice.
 	'msg_servizi_applicativi.servizio_applicativo' passa a VARCHAR(645), il massimo compatibile con il limite
