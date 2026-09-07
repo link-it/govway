@@ -1,3 +1,14 @@
+2026-09-07  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolte le seguenti vulnerabilità relative ai jar di terza parte:
+	- CVE-2026-47890, CVE-2026-47891, CVE-2026-47892, CVE-2026-47893, CVE-2026-59280, CVE-2026-59281,
+	  CVE-2026-59282, CVE-2026-59283, CVE-2026-59313, CVE-2026-59314: aggiornata libreria
+	  'org.springframework:*' alla versione 7.0.9
+	- CVE-2026-47841, CVE-2026-47842, CVE-2026-47877, CVE-2026-59270, CVE-2026-59276, CVE-2026-59277:
+	  aggiornata libreria 'org.springframework.security:*' alla versione 7.1.1
+	- CVE-2026-62380: aggiornata libreria 'io.netty:*' alla versione 4.2.17.Final
+
 2026-09-04  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
