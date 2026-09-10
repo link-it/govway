@@ -17,9 +17,11 @@
 	non cambiano.
 
 	* [GovWayCore]
-	Gateway LLM: la risposta in streaming verso il client viene esposta con content type 'text/event-stream'
-	anche quando il provider utilizza un transport differente (es. AWS event-stream), coerentemente con il
-	formato SSE effettivamente prodotto; i body di errore vengono esposti come 'application/json'.
+	Gateway LLM: la risposta in streaming verso il client viene esposta con content type
+	'text/event-stream;charset=UTF-8' anche quando il provider utilizza un transport differente
+	(es. AWS event-stream), coerentemente con il formato SSE effettivamente prodotto; il charset e' dichiarato
+	esplicitamente poiche' lo stream viene sempre riscritto in UTF-8, indipendentemente da quello dichiarato
+	dal provider. I body di errore vengono esposti come 'application/json'.
 
 	* [GovWayCore]
 	Gateway LLM: gli errori vengono restituiti al client nell'envelope di errore del dialetto con cui e'
@@ -30,6 +32,26 @@
 	interpretava quindi la risposta troncata come completa. La tipologia dell'errore e' derivata dallo stato
 	HTTP e mappata sui valori previsti dal dialetto; stato HTTP, header informativi, diagnostici ed esito
 	registrato sulla transazione non cambiano.
+
+	* [GovWayCore]
+	Gateway LLM: le richieste che veicolano allegati (immagini, documenti, audio, video), non gestiti dal
+	modello dei contenuti del gateway, vengono rifiutate con un errore 400 nell'envelope del dialetto del
+	client e il messaggio 'Allegati non supportati'; in precedenza producevano un errore generico di
+	elaborazione 500. Il tipo di contenuto non gestito resta registrato nella diagnostica della transazione.
+
+	* [GovWayCore]
+	Gateway LLM: corretto l'inoltro dei tool verso AWS Bedrock. La dichiarazione dei tool effettuata dal
+	client veniva scartata silenziosamente, con il risultato che il modello rispondeva come se non ne
+	disponesse, ed il risultato di un tool restituito dal client non era veicolabile: entrambi vengono ora
+	tradotti nella forma prevista dalla Converse API ('toolConfig' e blocco 'toolResult'). Gli altri provider
+	non erano interessati dal problema.
+
+	* [GovWayCore]
+	Gateway LLM: gestita la strategia di selezione dei tool ('tool_choice') su tutti i dialetti front-door e
+	verso tutti i provider supportati; in precedenza veniva ignorata. Sono supportate le modalita' automatica,
+	invocazione obbligatoria di un tool qualsiasi, invocazione di un tool specifico e divieto di invocazione,
+	con la traduzione nella forma di ciascun provider. AWS Bedrock non prevede il divieto di invocazione: in
+	quel caso i tool non vengono dichiarati al modello, ottenendo lo stesso effetto.
 
 2026-07-16  Andrea Poli <apoli@link.it>
 

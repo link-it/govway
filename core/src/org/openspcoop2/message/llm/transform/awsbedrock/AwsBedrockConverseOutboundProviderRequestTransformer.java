@@ -27,6 +27,9 @@ import org.openspcoop2.message.llm.CanonicalChatRequest;
 import org.openspcoop2.message.llm.CanonicalContentBlock;
 import org.openspcoop2.message.llm.CanonicalMessage;
 import org.openspcoop2.message.llm.CanonicalTextBlock;
+import org.openspcoop2.message.llm.CanonicalTool;
+import org.openspcoop2.message.llm.CanonicalToolChoice;
+import org.openspcoop2.message.llm.CanonicalToolChoiceMode;
 import org.openspcoop2.message.llm.CanonicalToolResultBlock;
 import org.openspcoop2.message.llm.CanonicalToolUseBlock;
 import org.openspcoop2.message.llm.stream.LLMProviderStreamTransport;
@@ -104,6 +107,10 @@ public class AwsBedrockConverseOutboundProviderRequestTransformer implements LLM
 			if (inference != null) {
 				out.set(AwsBedrockConverseFields.FIELD_INFERENCE_CONFIG, inference);
 			}
+			ObjectNode toolConfig = buildToolConfig(mapper, request);
+			if (toolConfig != null) {
+				out.set(AwsBedrockConverseFields.FIELD_TOOL_CONFIG, toolConfig);
+			}
 
 			byte[] body = mapper.writeValueAsBytes(out);
 			// Nessun header statico: Content-Type lo imposta GovWay; Authorization arriva via SigV4 dalla Token Policy.
@@ -168,11 +175,93 @@ public class AwsBedrockConverseOutboundProviderRequestTransformer implements LLM
 			return node;
 		}
 		if (b instanceof CanonicalToolResultBlock) {
-			// Schema toolResult Bedrock: { "toolUseId": "...", "content": [{"text": "..."}] }.
-			// Per il prototipo non lo emettiamo: i clienti correnti non lo usano in input.
-			throw new LLMTransformException("CanonicalToolResultBlock non ancora supportato in outbound Bedrock");
+			CanonicalToolResultBlock t = (CanonicalToolResultBlock) b;
+			ObjectNode inner = mapper.createObjectNode();
+			if (t.getToolUseId() != null) {
+				inner.put(AwsBedrockConverseFields.FIELD_TOOL_USE_ID, t.getToolUseId());
+			}
+			ObjectNode text = mapper.createObjectNode();
+			text.put(AwsBedrockConverseFields.BLOCK_TEXT, t.getContent() != null ? t.getContent() : "");
+			inner.putArray(AwsBedrockConverseFields.FIELD_CONTENT).add(text);
+			if (Boolean.TRUE.equals(t.getIsError())) {
+				inner.put(AwsBedrockConverseFields.FIELD_TOOL_RESULT_STATUS, AwsBedrockConverseFields.TOOL_RESULT_STATUS_ERROR);
+			}
+			ObjectNode node = mapper.createObjectNode();
+			node.set(AwsBedrockConverseFields.BLOCK_TOOL_RESULT, inner);
+			return node;
 		}
 		throw new LLMTransformException("Tipo blocco canonical non supportato per Bedrock: " + b.getClass().getSimpleName());
+	}
+
+	/**
+	 * Dichiarazione dei tool disponibili al modello. Bedrock usa una forma propria
+	 * ({@code toolConfig.tools[].toolSpec} con {@code inputSchema.json}) rispetto al
+	 * canonical, che segue Anthropic ({@code tools[]} con {@code input_schema}).
+	 */
+	private ObjectNode buildToolConfig(ObjectMapper mapper, CanonicalChatRequest request) {
+		List<CanonicalTool> tools = request.getTools();
+		if (tools == null || tools.isEmpty()) {
+			return null;
+		}
+		CanonicalToolChoice choice = request.getToolChoice();
+		if (choice != null && CanonicalToolChoiceMode.NONE.equals(choice.getMode())) {
+			// Bedrock non prevede un toolChoice 'none': l'unico modo per impedire l'invocazione
+			// di tool e' non dichiararli.
+			return null;
+		}
+		ObjectNode toolConfig = mapper.createObjectNode();
+		ArrayNode array = toolConfig.putArray(AwsBedrockConverseFields.FIELD_TOOLS);
+		for (CanonicalTool tool : tools) {
+			if (tool == null || tool.getName() == null || tool.getName().isEmpty()) {
+				continue;
+			}
+			ObjectNode spec = array.addObject().putObject(AwsBedrockConverseFields.FIELD_TOOL_SPEC);
+			spec.put(AwsBedrockConverseFields.FIELD_TOOL_SPEC_NAME, tool.getName());
+			if (tool.getDescription() != null) {
+				spec.put(AwsBedrockConverseFields.FIELD_TOOL_SPEC_DESCRIPTION, tool.getDescription());
+			}
+			ObjectNode inputSchema = spec.putObject(AwsBedrockConverseFields.FIELD_TOOL_SPEC_INPUT_SCHEMA);
+			inputSchema.set(AwsBedrockConverseFields.FIELD_TOOL_SPEC_INPUT_SCHEMA_JSON,
+					tool.getInputSchema() != null ? mapper.valueToTree(tool.getInputSchema()) : emptyObjectSchema(mapper));
+		}
+		if (array.isEmpty()) {
+			return null;
+		}
+		applyToolChoice(mapper, toolConfig, choice);
+		return toolConfig;
+	}
+
+	/** {@code toolChoice} Bedrock: {@code {"auto":{}}} | {@code {"any":{}}} | {@code {"tool":{"name":"..."}}}. */
+	private void applyToolChoice(ObjectMapper mapper, ObjectNode toolConfig, CanonicalToolChoice choice) {
+		if (choice == null || choice.getMode() == null) {
+			return;
+		}
+		ObjectNode node = mapper.createObjectNode();
+		switch (choice.getMode()) {
+			case AUTO:
+				node.putObject(AwsBedrockConverseFields.TOOL_CHOICE_AUTO);
+				break;
+			case ANY:
+				node.putObject(AwsBedrockConverseFields.TOOL_CHOICE_ANY);
+				break;
+			case TOOL:
+				if (choice.getName() == null) {
+					return;
+				}
+				node.putObject(AwsBedrockConverseFields.TOOL_CHOICE_TOOL)
+						.put(AwsBedrockConverseFields.FIELD_TOOL_CHOICE_NAME, choice.getName());
+				break;
+			default:
+				return;
+		}
+		toolConfig.set(AwsBedrockConverseFields.FIELD_TOOL_CHOICE, node);
+	}
+
+	private ObjectNode emptyObjectSchema(ObjectMapper mapper) {
+		ObjectNode schema = mapper.createObjectNode();
+		schema.put(AwsBedrockConverseFields.JSON_SCHEMA_TYPE, AwsBedrockConverseFields.JSON_SCHEMA_TYPE_OBJECT);
+		schema.putObject(AwsBedrockConverseFields.JSON_SCHEMA_PROPERTIES);
+		return schema;
 	}
 
 	private ArrayNode buildSystem(ObjectMapper mapper, String system) {

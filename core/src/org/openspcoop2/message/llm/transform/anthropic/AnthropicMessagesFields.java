@@ -51,6 +51,7 @@ final class AnthropicMessagesFields {
 	static final String FIELD_STREAM = "stream";
 	static final String FIELD_TOOLS = "tools";
 	static final String FIELD_TOOL_CHOICE = "tool_choice";
+	/* Valori di tool_choice.type: coincidono con quelli canonical (CanonicalToolChoiceMode). */
 
 	/* === message / content === */
 	static final String FIELD_ROLE = "role";

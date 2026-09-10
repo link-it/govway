@@ -29,11 +29,14 @@ import org.openspcoop2.message.llm.CanonicalMessage;
 import org.openspcoop2.message.llm.CanonicalRole;
 import org.openspcoop2.message.llm.CanonicalTextBlock;
 import org.openspcoop2.message.llm.CanonicalTool;
+import org.openspcoop2.message.llm.CanonicalToolChoice;
+import org.openspcoop2.message.llm.CanonicalToolChoiceMode;
 import org.openspcoop2.message.llm.CanonicalToolResultBlock;
 import org.openspcoop2.message.llm.CanonicalToolUseBlock;
 import org.openspcoop2.message.llm.transform.LLMDialect;
 import org.openspcoop2.message.llm.transform.LLMInboundRequestTransformer;
 import org.openspcoop2.message.llm.transform.LLMTransformException;
+import org.openspcoop2.message.llm.transform.LLMUnsupportedContentException;
 import org.openspcoop2.utils.json.JSONUtils;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -87,6 +90,7 @@ public class OpenAIChatInboundRequestTransformer implements LLMInboundRequestTra
 		applyStopSequences(root, out);
 		applyMessages(root, out);
 		applyTools(root, out, mapper);
+		applyToolChoice(root, out);
 		return out;
 	}
 
@@ -174,6 +178,45 @@ public class OpenAIChatInboundRequestTransformer implements LLMInboundRequestTra
 		}
 	}
 
+	/**
+	 * {@code tool_choice} OpenAI: stringa {@code "none"|"auto"|"required"} oppure oggetto
+	 * {@code {"type":"function","function":{"name":"..."}}}. 'required' corrisponde al
+	 * canonical 'any' (invoca un tool qualsiasi tra quelli dichiarati).
+	 */
+	private void applyToolChoice(JsonNode root, CanonicalChatRequest out) {
+		if (!root.hasNonNull(OpenAIChatFields.FIELD_TOOL_CHOICE)) {
+			return;
+		}
+		JsonNode node = root.get(OpenAIChatFields.FIELD_TOOL_CHOICE);
+		if (node.isTextual()) {
+			CanonicalToolChoiceMode mode = fromOpenAIToolChoice(node.asText());
+			if (mode != null) {
+				out.setToolChoice(new CanonicalToolChoice(mode));
+			}
+			return;
+		}
+		if (node.isObject()) {
+			JsonNode function = node.path(OpenAIChatFields.FIELD_FUNCTION);
+			if (function.hasNonNull(OpenAIChatFields.FIELD_NAME)) {
+				out.setToolChoice(new CanonicalToolChoice(CanonicalToolChoiceMode.TOOL,
+						function.get(OpenAIChatFields.FIELD_NAME).asText()));
+			}
+		}
+	}
+
+	private CanonicalToolChoiceMode fromOpenAIToolChoice(String value) {
+		if (OpenAIChatFields.TOOL_CHOICE_NONE.equals(value)) {
+			return CanonicalToolChoiceMode.NONE;
+		}
+		if (OpenAIChatFields.TOOL_CHOICE_AUTO.equals(value)) {
+			return CanonicalToolChoiceMode.AUTO;
+		}
+		if (OpenAIChatFields.TOOL_CHOICE_REQUIRED.equals(value)) {
+			return CanonicalToolChoiceMode.ANY;
+		}
+		return null;
+	}
+
 	private void applyTools(JsonNode root, CanonicalChatRequest out, ObjectMapper mapper) throws LLMTransformException {
 		if (!root.hasNonNull(OpenAIChatFields.FIELD_TOOLS) || !root.get(OpenAIChatFields.FIELD_TOOLS).isArray()) {
 			return;
@@ -229,7 +272,7 @@ public class OpenAIChatInboundRequestTransformer implements LLMInboundRequestTra
 			blocks.add(new CanonicalTextBlock(part.get(OpenAIChatFields.FIELD_TEXT).asText()));
 			return;
 		}
-		throw new LLMTransformException("Tipo di content OpenAI non supportato nel prototipo: " + type);
+		throw LLMUnsupportedContentException.forContentType(type);
 	}
 
 	private CanonicalMessage buildAssistantMessage(JsonNode m) throws LLMTransformException {

@@ -50,6 +50,9 @@ public class CanonicalChatRequest {
 	/** Tool dichiarati per la function calling. */
 	private List<CanonicalTool> tools;
 
+	@JsonProperty("tool_choice")
+	private CanonicalToolChoice toolChoice;
+
 	@JsonProperty("max_tokens")
 	private Integer maxTokens;
 
@@ -104,6 +107,14 @@ public class CanonicalChatRequest {
 
 	public void setTools(List<CanonicalTool> tools) {
 		this.tools = tools;
+	}
+
+	public CanonicalToolChoice getToolChoice() {
+		return this.toolChoice;
+	}
+
+	public void setToolChoice(CanonicalToolChoice toolChoice) {
+		this.toolChoice = toolChoice;
 	}
 
 	public Integer getMaxTokens() {

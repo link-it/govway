@@ -56,6 +56,30 @@ public final class AwsBedrockConverseFields {
 	public static final String FIELD_TOOL_USE_NAME = "name";
 	public static final String FIELD_TOOL_USE_INPUT = "input";
 
+	/* ToolConfig */
+	public static final String FIELD_TOOLS = "tools";
+	public static final String FIELD_TOOL_SPEC = "toolSpec";
+	public static final String FIELD_TOOL_SPEC_NAME = "name";
+	public static final String FIELD_TOOL_SPEC_DESCRIPTION = "description";
+	public static final String FIELD_TOOL_SPEC_INPUT_SCHEMA = "inputSchema";
+	public static final String FIELD_TOOL_SPEC_INPUT_SCHEMA_JSON = "json";
+
+	/* ToolChoice: forma { "auto": {} } | { "any": {} } | { "tool": { "name": "..." } } */
+	public static final String FIELD_TOOL_CHOICE = "toolChoice";
+	public static final String TOOL_CHOICE_AUTO = "auto";
+	public static final String TOOL_CHOICE_ANY = "any";
+	public static final String TOOL_CHOICE_TOOL = "tool";
+	public static final String FIELD_TOOL_CHOICE_NAME = "name";
+
+	/* ToolResult */
+	public static final String FIELD_TOOL_RESULT_STATUS = "status";
+	public static final String TOOL_RESULT_STATUS_ERROR = "error";
+
+	/** Schema minimo valido quando il client non dichiara input_schema: Bedrock lo richiede sempre. */
+	public static final String JSON_SCHEMA_TYPE = "type";
+	public static final String JSON_SCHEMA_TYPE_OBJECT = "object";
+	public static final String JSON_SCHEMA_PROPERTIES = "properties";
+
 	/* InferenceConfig */
 	public static final String FIELD_MAX_TOKENS = "maxTokens";
 	public static final String FIELD_TEMPERATURE = "temperature";

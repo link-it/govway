@@ -108,6 +108,12 @@ final class OpenAIChatFields {
 	static final String BLOCK_TYPE_TEXT = "text";
 	static final String BLOCK_TYPE_TOOL_USE = "tool_use";
 
+	/* === tool choice === */
+	static final String FIELD_TOOL_CHOICE = "tool_choice";
+	static final String TOOL_CHOICE_NONE = "none";
+	static final String TOOL_CHOICE_AUTO = "auto";
+	static final String TOOL_CHOICE_REQUIRED = "required";
+
 	/* === error === */
 	static final String FIELD_ERROR = "error";
 	static final String FIELD_PARAM = "param";

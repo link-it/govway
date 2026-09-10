@@ -29,11 +29,14 @@ import org.openspcoop2.message.llm.CanonicalMessage;
 import org.openspcoop2.message.llm.CanonicalRole;
 import org.openspcoop2.message.llm.CanonicalTextBlock;
 import org.openspcoop2.message.llm.CanonicalTool;
+import org.openspcoop2.message.llm.CanonicalToolChoice;
+import org.openspcoop2.message.llm.CanonicalToolChoiceMode;
 import org.openspcoop2.message.llm.CanonicalToolResultBlock;
 import org.openspcoop2.message.llm.CanonicalToolUseBlock;
 import org.openspcoop2.message.llm.transform.LLMDialect;
 import org.openspcoop2.message.llm.transform.LLMInboundRequestTransformer;
 import org.openspcoop2.message.llm.transform.LLMTransformException;
+import org.openspcoop2.message.llm.transform.LLMUnsupportedContentException;
 import org.openspcoop2.utils.json.JSONUtils;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -86,6 +89,7 @@ public class AnthropicMessagesInboundRequestTransformer implements LLMInboundReq
 		applyGenerationSettings(root, out);
 		applyMessages(root, out, mapper);
 		applyTools(root, out, mapper);
+		applyToolChoice(root, out);
 		return out;
 	}
 
@@ -171,7 +175,7 @@ public class AnthropicMessagesInboundRequestTransformer implements LLMInboundReq
 			case AnthropicMessagesFields.BLOCK_TYPE_TOOL_RESULT:
 				return buildToolResult(part);
 			default:
-				throw new LLMTransformException("Tipo blocco Anthropic non supportato nel prototipo: " + type);
+				throw LLMUnsupportedContentException.forContentType(type);
 		}
 	}
 
@@ -218,6 +222,26 @@ public class AnthropicMessagesInboundRequestTransformer implements LLMInboundReq
 		if (!list.isEmpty()) {
 			out.setTools(list);
 		}
+	}
+
+	/**
+	 * {@code tool_choice} Anthropic: {@code {"type":"auto"|"any"|"none"|"tool","name":"..."}}.
+	 * I valori coincidono con quelli canonical, il nome serve solo per il tipo 'tool'.
+	 */
+	private void applyToolChoice(JsonNode root, CanonicalChatRequest out) {
+		if (!root.hasNonNull(AnthropicMessagesFields.FIELD_TOOL_CHOICE)) {
+			return;
+		}
+		JsonNode node = root.get(AnthropicMessagesFields.FIELD_TOOL_CHOICE);
+		if (!node.isObject() || !node.hasNonNull(AnthropicMessagesFields.FIELD_TYPE)) {
+			return;
+		}
+		CanonicalToolChoiceMode mode = CanonicalToolChoiceMode.tryFromValue(node.get(AnthropicMessagesFields.FIELD_TYPE).asText());
+		if (mode == null) {
+			return;
+		}
+		String name = node.hasNonNull(AnthropicMessagesFields.FIELD_NAME) ? node.get(AnthropicMessagesFields.FIELD_NAME).asText() : null;
+		out.setToolChoice(new CanonicalToolChoice(mode, name));
 	}
 
 	private CanonicalTool buildTool(JsonNode t, ObjectMapper mapper) {

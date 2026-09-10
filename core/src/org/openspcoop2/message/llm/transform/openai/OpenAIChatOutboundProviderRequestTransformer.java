@@ -29,6 +29,7 @@ import org.openspcoop2.message.llm.CanonicalMessage;
 import org.openspcoop2.message.llm.CanonicalRole;
 import org.openspcoop2.message.llm.CanonicalTextBlock;
 import org.openspcoop2.message.llm.CanonicalTool;
+import org.openspcoop2.message.llm.CanonicalToolChoice;
 import org.openspcoop2.message.llm.CanonicalToolResultBlock;
 import org.openspcoop2.message.llm.CanonicalToolUseBlock;
 import org.openspcoop2.message.llm.stream.LLMProviderStreamTransport;
@@ -285,5 +286,36 @@ public class OpenAIChatOutboundProviderRequestTransformer implements LLMOutbound
 			arr.add(toolNode);
 		}
 		out.set(OpenAIChatFields.FIELD_TOOLS, arr);
+		applyToolChoice(in.getToolChoice(), out, mapper);
+	}
+
+	/**
+	 * {@code tool_choice}: OpenAI usa una stringa per auto/none e 'required' per l'equivalente
+	 * del canonical 'any'; per forzare un tool specifico usa un oggetto con la function.
+	 */
+	private void applyToolChoice(CanonicalToolChoice choice, ObjectNode out, ObjectMapper mapper) {
+		if (choice == null || choice.getMode() == null) {
+			return;
+		}
+		switch (choice.getMode()) {
+			case AUTO:
+				out.put(OpenAIChatFields.FIELD_TOOL_CHOICE, OpenAIChatFields.TOOL_CHOICE_AUTO);
+				break;
+			case ANY:
+				out.put(OpenAIChatFields.FIELD_TOOL_CHOICE, OpenAIChatFields.TOOL_CHOICE_REQUIRED);
+				break;
+			case NONE:
+				out.put(OpenAIChatFields.FIELD_TOOL_CHOICE, OpenAIChatFields.TOOL_CHOICE_NONE);
+				break;
+			case TOOL:
+			default:
+				if (choice.getName() != null) {
+					ObjectNode node = mapper.createObjectNode();
+					node.put(OpenAIChatFields.FIELD_TYPE, OpenAIChatFields.TYPE_FUNCTION);
+					node.putObject(OpenAIChatFields.FIELD_FUNCTION).put(OpenAIChatFields.FIELD_NAME, choice.getName());
+					out.set(OpenAIChatFields.FIELD_TOOL_CHOICE, node);
+				}
+				break;
+		}
 	}
 }

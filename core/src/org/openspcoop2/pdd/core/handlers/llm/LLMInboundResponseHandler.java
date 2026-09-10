@@ -66,6 +66,14 @@ import org.openspcoop2.utils.transport.http.HttpConstants;
  */
 public class LLMInboundResponseHandler implements InResponseHandler {
 
+	/**
+	 * Lo stream SSE verso il client e' sempre riscritto in UTF-8 dagli encoder dei chunk,
+	 * indipendentemente dal charset dichiarato dal provider: il content type lo dichiara
+	 * esplicitamente, come fa l'API nativa Anthropic.
+	 */
+	private static final String CONTENT_TYPE_EVENT_STREAM_UTF8 = HttpConstants.CONTENT_TYPE_EVENT_STREAM
+			+ ";" + HttpConstants.CONTENT_TYPE_PARAMETER_CHARSET + "=" + org.openspcoop2.utils.resources.Charset.UTF_8.getValue();
+
 	@Override
 	public void invoke(InResponseContext context) throws HandlerException {
 		org.slf4j.Logger log = context.getLogCore();
@@ -257,7 +265,7 @@ public class LLMInboundResponseHandler implements InResponseHandler {
 			stripContentEncoding(msg);
 			// La front-door espone sempre SSE, qualunque sia il transport del provider
 			// (es. Bedrock risponde application/vnd.amazon.eventstream).
-			forceResponseContentType(msg, HttpConstants.CONTENT_TYPE_EVENT_STREAM);
+			forceResponseContentType(msg, CONTENT_TYPE_EVENT_STREAM_UTF8);
 			dyn.applyStreamWrapper(wrapped);
 			if (log != null) {
 				log.info("LLMInboundResponseHandler: stream wrapper applicato (dialect={} provider={})", dialect.getValue(), providerId);

@@ -28,14 +28,19 @@ import org.openspcoop2.core.registry.constants.FormatoSpecifica;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.llm.CanonicalChatRequest;
+import org.openspcoop2.message.llm.CanonicalError;
+import org.openspcoop2.message.llm.CanonicalErrorType;
 import org.openspcoop2.message.llm.transform.LLMDialect;
 import org.openspcoop2.message.llm.transform.LLMInboundRequestTransformer;
 import org.openspcoop2.message.llm.transform.LLMTransformerRegistry;
+import org.openspcoop2.message.llm.transform.LLMUnsupportedContentException;
 import org.openspcoop2.pdd.core.ProtocolContext;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.handlers.InRequestProtocolContext;
 import org.openspcoop2.pdd.core.handlers.InRequestProtocolHandler;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 
 /**
  * Primo handler della pipeline LLM. Implementato come {@link InRequestProtocolHandler}
@@ -67,6 +72,8 @@ import org.openspcoop2.protocol.registry.RegistroServiziManager;
  * @author Andrea Poli (apoli@link.it)
  */
 public class LLMInboundRequestHandler implements InRequestProtocolHandler {
+
+	private static final String HTTP_STATUS_BAD_REQUEST = "400";
 
 	@Override
 	public void invoke(InRequestProtocolContext context) throws HandlerException {
@@ -101,9 +108,39 @@ public class LLMInboundRequestHandler implements InRequestProtocolHandler {
 			}
 		} catch (HandlerException e) {
 			throw e;
+		} catch (LLMUnsupportedContentException e) {
+			throw buildUnsupportedContentException(e, dialect, log);
 		} catch (Exception e) {
 			throw new HandlerException("LLMInboundRequestHandler: errore nella trasformazione client → canonical (dialetto=" + dialect.getValue() + "): " + e.getMessage(), e);
 		}
+	}
+
+	/**
+	 * Contenuto non gestito dal modello canonical (tipicamente un allegato): non è un errore di
+	 * elaborazione del gateway ma una richiesta non supportata, quindi viene restituito al client
+	 * un 400 con l'envelope di errore del suo dialetto, senza dettagli interni.
+	 */
+	private HandlerException buildUnsupportedContentException(LLMUnsupportedContentException cause, LLMDialect dialect, org.slf4j.Logger log) {
+		if (log != null) {
+			log.info("LLMInboundRequestHandler: richiesta rifiutata, {} (dialetto={})", cause.getMessage(), dialect.getValue());
+		}
+		HandlerException he = new HandlerException(cause.getClientMessage(), cause);
+		he.setIntegrationFunctionError(IntegrationFunctionError.INVALID_REQUEST_CONTENT);
+		he.setCustomizedResponse(true);
+		he.setCustomizedResponseAs4xxCode(true);
+		he.setCustomizedResponseCode(HTTP_STATUS_BAD_REQUEST);
+		he.setResponseCode(HTTP_STATUS_BAD_REQUEST);
+		try {
+			CanonicalError error = new CanonicalError(CanonicalErrorType.INVALID_REQUEST, cause.getClientMessage(), null, 400);
+			he.setResponse(LLMTransformerRegistry.getOutboundFrontDoorResponseTransformer(dialect).transformError(error));
+			he.setResponseContentType(HttpConstants.CONTENT_TYPE_JSON);
+		} catch (Exception e) {
+			// senza envelope specifico il client riceve comunque un 400 con l'errore standard del gateway
+			if (log != null) {
+				log.error("LLMInboundRequestHandler: costruzione envelope di errore nel dialetto {} non riuscita: {}", dialect.getValue(), e.getMessage(), e);
+			}
+		}
+		return he;
 	}
 
 	/**
