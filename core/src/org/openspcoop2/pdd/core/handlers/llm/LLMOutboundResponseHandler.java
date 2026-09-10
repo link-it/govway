@@ -20,6 +20,7 @@
 package org.openspcoop2.pdd.core.handlers.llm;
 
 import org.openspcoop2.message.llm.CanonicalChatResponse;
+import org.openspcoop2.message.llm.CanonicalError;
 import org.openspcoop2.message.llm.transform.LLMDialect;
 import org.openspcoop2.message.llm.transform.LLMOutboundFrontDoorResponseTransformer;
 import org.openspcoop2.message.llm.transform.LLMTransformerRegistry;
@@ -54,6 +55,12 @@ public class LLMOutboundResponseHandler implements OutResponseHandler {
 		if (log != null && log.isDebugEnabled()) {
 			log.debug("LLMOutboundResponseHandler: invocato con dialetto={}", dialect.getValue());
 		}
+		Object providerError = context.getPddContext() != null
+				? context.getPddContext().getObject(LLMHandlerConstants.PDD_CTX_LLM_CANONICAL_ERROR) : null;
+		if (providerError instanceof CanonicalError) {
+			applyProviderError(context, dialect, (CanonicalError) providerError, log);
+			return;
+		}
 		if (LLMHandlerSupport.isLLMStream(context)) {
 			// In modalità stream la trasformazione canonical→dialect avviene chunk-by-chunk
 			// dentro il ChunkTransformInputStream applicato dal LLMInboundResponseHandler.
@@ -84,6 +91,26 @@ public class LLMOutboundResponseHandler implements OutResponseHandler {
 			throw e;
 		} catch (Exception e) {
 			throw new HandlerException("LLMOutboundResponseHandler: errore nella trasformazione canonical → " + dialect.getValue() + ": " + e.getMessage(), e);
+		}
+	}
+
+	/**
+	 * Riscrive il body con l'envelope di errore del dialetto del client. In streaming la
+	 * sostituzione è già avvenuta nell'InResponse handler (il messaggio va riscritto prima
+	 * che venga materializzato), qui resta solo il caso sync.
+	 */
+	private void applyProviderError(OutResponseContext context, LLMDialect dialect, CanonicalError error, org.slf4j.Logger log) throws HandlerException {
+		if (LLMHandlerSupport.isLLMStream(context)) {
+			return;
+		}
+		try {
+			byte[] body = LLMTransformerRegistry.getOutboundFrontDoorResponseTransformer(dialect).transformError(error);
+			LLMHandlerSupport.applyErrorJsonBody(context.getMessaggio(), body);
+			if (log != null && log.isDebugEnabled()) {
+				log.debug("LLMOutboundResponseHandler: errore provider riscritto nel dialetto {} (status={})", dialect.getValue(), error.getHttpStatus());
+			}
+		} catch (Exception e) {
+			throw new HandlerException("LLMOutboundResponseHandler: errore nella serializzazione dell'errore provider nel dialetto " + dialect.getValue() + ": " + e.getMessage(), e);
 		}
 	}
 

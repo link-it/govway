@@ -20,6 +20,7 @@
 package org.openspcoop2.message.llm.transform;
 
 import org.openspcoop2.message.llm.CanonicalChatResponse;
+import org.openspcoop2.message.llm.CanonicalError;
 
 /**
  * Contratto per un trasformatore outbound front-door: CanonicalChatResponse →
@@ -42,4 +43,11 @@ public interface LLMOutboundFrontDoorResponseTransformer {
 	 * nel dialetto richiesto.
 	 */
 	byte[] transform(CanonicalChatResponse response) throws LLMTransformException;
+
+	/**
+	 * Converte un errore canonical nell'envelope di errore del dialetto del client:
+	 * un errore del provider back-end deve essere restituito nella forma che il client
+	 * (e il suo SDK) si aspetta, indipendentemente dal provider che lo ha generato.
+	 */
+	byte[] transformError(CanonicalError error) throws LLMTransformException;
 }

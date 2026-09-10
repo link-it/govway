@@ -27,7 +27,9 @@ import java.util.List;
 
 import org.openspcoop2.message.llm.stream.AwsEventStreamReader;
 import org.openspcoop2.message.llm.stream.CanonicalStreamContentBlockStart;
+import org.openspcoop2.message.llm.CanonicalErrorType;
 import org.openspcoop2.message.llm.stream.CanonicalStreamContentBlockStop;
+import org.openspcoop2.message.llm.stream.CanonicalStreamError;
 import org.openspcoop2.message.llm.stream.CanonicalStreamEvent;
 import org.openspcoop2.message.llm.stream.CanonicalStreamMessageDelta;
 import org.openspcoop2.message.llm.stream.CanonicalStreamMessageStart;
@@ -52,6 +54,8 @@ public class AwsBedrockConverseStreamSmokeTest {
 
 	public static void main(String[] args) throws Exception {
 		runFullStreamScenario();
+		runMessageStopWithoutMetadata();
+		runMidStreamException();
 		runUnknownEventTypeIsSkipped();
 		System.out.println("AwsBedrockConverseStreamSmokeTest: ALL OK");
 	}
@@ -79,10 +83,9 @@ public class AwsBedrockConverseStreamSmokeTest {
 		//   3. CanonicalStreamTextDelta(index=0, text="Hello")
 		//   4. CanonicalStreamTextDelta(index=0, text=" world")
 		//   5. CanonicalStreamContentBlockStop(index=0)
-		//   6. CanonicalStreamMessageDelta(stopReason=end_turn)
+		//   6. CanonicalStreamMessageDelta(stopReason=end_turn, usage=12/3)  -- emesso sul metadata
 		//   7. CanonicalStreamMessageStop()
-		//   8. CanonicalStreamMessageDelta(usage=12/3)
-		assertEqualsInt("event count", 8, events.size());
+		assertEqualsInt("event count", 7, events.size());
 
 		assertInstanceOf("evt#1", CanonicalStreamMessageStart.class, events.get(0));
 		assertInstanceOf("evt#2", CanonicalStreamContentBlockStart.class, events.get(1));
@@ -97,14 +100,53 @@ public class AwsBedrockConverseStreamSmokeTest {
 		CanonicalStreamMessageDelta md1 = (CanonicalStreamMessageDelta) events.get(5);
 		assertEqualsString("evt#6 stopReason", "end_turn",
 				md1.getStopReason() != null ? md1.getStopReason().getValue() : null);
-		assertInstanceOf("evt#7", CanonicalStreamMessageStop.class, events.get(6));
-		assertInstanceOf("evt#8", CanonicalStreamMessageDelta.class, events.get(7));
-		CanonicalStreamMessageDelta md2 = (CanonicalStreamMessageDelta) events.get(7);
-		if (md2.getUsage() == null) {
-			throw new RuntimeException("evt#8 usage atteso non null");
+		if (md1.getUsage() == null) {
+			throw new RuntimeException("evt#6 usage atteso non null");
 		}
-		assertEqualsInt("evt#8 inputTokens", 12, md2.getUsage().getInputTokens());
-		assertEqualsInt("evt#8 outputTokens", 3, md2.getUsage().getOutputTokens());
+		assertEqualsInt("evt#6 inputTokens", 12, md1.getUsage().getInputTokens());
+		assertEqualsInt("evt#6 outputTokens", 3, md1.getUsage().getOutputTokens());
+		assertInstanceOf("evt#7", CanonicalStreamMessageStop.class, events.get(6));
+	}
+
+	/**
+	 * Stream troncato dopo il messageStop (nessun evento metadata): la chiusura del
+	 * messaggio trattenuta dal decoder deve essere emessa dal flush a fine stream.
+	 */
+	public static void runMessageStopWithoutMetadata() throws Exception {
+		ByteArrayOutputStream wire = new ByteArrayOutputStream();
+		writeEventFrame(wire, "messageStart", "{\"role\":\"assistant\"}");
+		writeEventFrame(wire, "messageStop", "{\"stopReason\":\"end_turn\"}");
+
+		List<CanonicalStreamEvent> events = consumeStream(wire.toByteArray());
+
+		assertEqualsInt("event count", 3, events.size());
+		assertInstanceOf("evt#1", CanonicalStreamMessageStart.class, events.get(0));
+		assertInstanceOf("evt#2", CanonicalStreamMessageDelta.class, events.get(1));
+		CanonicalStreamMessageDelta md = (CanonicalStreamMessageDelta) events.get(1);
+		assertEqualsString("evt#2 stopReason", "end_turn",
+				md.getStopReason() != null ? md.getStopReason().getValue() : null);
+		assertInstanceOf("evt#3", CanonicalStreamMessageStop.class, events.get(2));
+	}
+
+	/**
+	 * Errore segnalato da Bedrock a stream avviato: deve essere propagato come
+	 * {@link CanonicalStreamError} (prima veniva scartato come event-type sconosciuto e il
+	 * client leggeva una risposta troncata come se fosse completa).
+	 */
+	public static void runMidStreamException() throws Exception {
+		ByteArrayOutputStream wire = new ByteArrayOutputStream();
+		writeEventFrame(wire, "messageStart", "{\"role\":\"assistant\"}");
+		writeEventFrame(wire, "contentBlockDelta", "{\"contentBlockIndex\":0,\"delta\":{\"text\":\"Hel\"}}");
+		writeEventFrame(wire, "throttlingException", "{\"message\":\"Too many tokens, please wait before trying again.\"}");
+
+		List<CanonicalStreamEvent> events = consumeStream(wire.toByteArray());
+
+		assertEqualsInt("event count", 4, events.size());
+		assertInstanceOf("evt#4", CanonicalStreamError.class, events.get(3));
+		CanonicalStreamError err = (CanonicalStreamError) events.get(3);
+		assertEqualsString("evt#4 code", "throttlingException", err.getError().getCode());
+		assertEqualsString("evt#4 type", CanonicalErrorType.RATE_LIMIT.name(), err.getError().getType().name());
+		assertEqualsString("evt#4 message", "Too many tokens, please wait before trying again.", err.getError().getMessage());
 	}
 
 	/**
@@ -116,7 +158,7 @@ public class AwsBedrockConverseStreamSmokeTest {
 		writeEventFrame(wire, "newFancyEvent_2027", "{\"anything\":true}");
 		writeEventFrame(wire, "messageStop", "{\"stopReason\":\"end_turn\"}");
 		List<CanonicalStreamEvent> events = consumeStream(wire.toByteArray());
-		// 0 dal primo (sconosciuto), 2 dal messageStop (delta + stop) → 2 totale
+		// 0 dal primo (sconosciuto), 2 dal flush di fine stream (delta + stop) → 2 totale
 		assertEqualsInt("count su unknown+stop", 2, events.size());
 		assertInstanceOf("evt#1 (atteso messageDelta)", CanonicalStreamMessageDelta.class, events.get(0));
 		assertInstanceOf("evt#2 (atteso messageStop)", CanonicalStreamMessageStop.class, events.get(1));
@@ -134,6 +176,7 @@ public class AwsBedrockConverseStreamSmokeTest {
 		while ((chunk = reader.readNextChunk()) != null) {
 			all.addAll(decoder.decode(chunk));
 		}
+		all.addAll(decoder.flush());
 		return all;
 	}
 

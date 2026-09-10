@@ -22,7 +22,9 @@ package org.openspcoop2.message.llm.transform.openai;
 import java.nio.charset.StandardCharsets;
 
 import org.openspcoop2.message.llm.CanonicalStopReason;
+import org.openspcoop2.message.llm.CanonicalError;
 import org.openspcoop2.message.llm.CanonicalUsage;
+import org.openspcoop2.message.llm.stream.CanonicalStreamError;
 import org.openspcoop2.message.llm.stream.CanonicalStreamEvent;
 import org.openspcoop2.message.llm.stream.CanonicalStreamMessageDelta;
 import org.openspcoop2.message.llm.stream.CanonicalStreamMessageStart;
@@ -70,6 +72,8 @@ public class OpenAIChatChunkEncoder implements LLMOutboundFrontDoorChunkEncoder 
 	private String id;
 	private String model;
 	private long created;
+	/** Errore emesso a stream avviato: OpenAI in questo caso non invia il marker di fine stream. */
+	private boolean errorEmitted;
 
 	@Override
 	public LLMDialect getSupportedDialect() {
@@ -92,6 +96,10 @@ public class OpenAIChatChunkEncoder implements LLMOutboundFrontDoorChunkEncoder 
 			if (event instanceof CanonicalStreamMessageDelta messageDelta) {
 				return buildChunk(emptyDelta(), messageDelta);
 			}
+			if (event instanceof CanonicalStreamError streamError) {
+				this.errorEmitted = true;
+				return wrapAsSseData(JSONUtils.getObjectMapper().writeValueAsString(buildErrorChunk(streamError)));
+			}
 			// content_block_start/stop, tool_use_delta, ping, message_stop:
 			// niente chunk OpenAI da emettere (data:[DONE] viene da terminator()).
 			return new byte[0];
@@ -102,6 +110,9 @@ public class OpenAIChatChunkEncoder implements LLMOutboundFrontDoorChunkEncoder 
 
 	@Override
 	public byte[] terminator() {
+		if (this.errorEmitted) {
+			return new byte[0];
+		}
 		return TERMINATOR_BYTES;
 	}
 
@@ -157,6 +168,22 @@ public class OpenAIChatChunkEncoder implements LLMOutboundFrontDoorChunkEncoder 
 		usage.put(OpenAIChatFields.FIELD_PROMPT_TOKENS, p);
 		usage.put(OpenAIChatFields.FIELD_COMPLETION_TOKENS, c);
 		usage.put(OpenAIChatFields.FIELD_TOTAL_TOKENS, p + c);
+	}
+
+
+	private ObjectNode buildErrorChunk(CanonicalStreamError e) {
+		ObjectNode chunk = JSONUtils.getObjectMapper().createObjectNode();
+		ObjectNode errorNode = chunk.putObject(OpenAIChatFields.FIELD_ERROR);
+		CanonicalError error = e.getError();
+		errorNode.put(OpenAIChatFields.FIELD_MESSAGE, error != null && error.getMessage() != null ? error.getMessage() : "");
+		errorNode.put(OpenAIChatFields.FIELD_TYPE, OpenAIChatFields.errorType(error != null ? error.getType() : null));
+		errorNode.putNull(OpenAIChatFields.FIELD_PARAM);
+		if (error != null && error.getCode() != null && !error.getCode().isEmpty()) {
+			errorNode.put(OpenAIChatFields.FIELD_CODE, error.getCode());
+		} else {
+			errorNode.putNull(OpenAIChatFields.FIELD_CODE);
+		}
+		return chunk;
 	}
 
 

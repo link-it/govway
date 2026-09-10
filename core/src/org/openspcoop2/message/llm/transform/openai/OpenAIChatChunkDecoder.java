@@ -27,11 +27,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.openspcoop2.message.llm.CanonicalError;
+import org.openspcoop2.message.llm.CanonicalErrorType;
 import org.openspcoop2.message.llm.CanonicalRole;
 import org.openspcoop2.message.llm.CanonicalStopReason;
 import org.openspcoop2.message.llm.CanonicalUsage;
 import org.openspcoop2.message.llm.stream.CanonicalStreamContentBlockStart;
 import org.openspcoop2.message.llm.stream.CanonicalStreamContentBlockStop;
+import org.openspcoop2.message.llm.stream.CanonicalStreamError;
 import org.openspcoop2.message.llm.stream.CanonicalStreamEvent;
 import org.openspcoop2.message.llm.stream.CanonicalStreamMessageDelta;
 import org.openspcoop2.message.llm.stream.CanonicalStreamMessageStart;
@@ -57,14 +60,20 @@ import com.fasterxml.jackson.databind.JsonNode;
  *       chunk del tool_call, quando arriva id e function.name) e {@link CanonicalStreamToolUseDelta}
  *       (per i frammenti successivi di function.arguments)</li>
  *   <li>chunk con {@code finish_reason} valorizzato → emette {@link CanonicalStreamContentBlockStop} per
- *       il blocco aperto e {@link CanonicalStreamMessageDelta} con stop_reason + usage,
- *       seguito da {@link CanonicalStreamMessageStop}</li>
- *   <li>payload {@code [DONE]} → ignorato (il transition message_stop è già stato emesso al finish_reason)</li>
+ *       il blocco aperto; la coppia {@link CanonicalStreamMessageDelta} (stop_reason + usage) +
+ *       {@link CanonicalStreamMessageStop} viene emessa subito se il chunk porta gia' l'usage,
+ *       altrimenti e' trattenuta fino al chunk 'usage-only' finale (GovWay richiede sempre
+ *       {@code stream_options.include_usage=true}) o, in mancanza, fino al {@link #flush()} di
+ *       fine stream: l'usage deve viaggiare nel message_delta che precede il message_stop</li>
+ *   <li>chunk senza {@code choices} con {@code usage} → chiude il messaggio trattenuto veicolando l'usage</li>
+ *   <li>chunk con campo {@code error} (errore a stream avviato) → {@link CanonicalStreamError}</li>
+ *   <li>payload {@code [DONE]} → ignorato</li>
  * </ul>
  * <p>
  * Il decoder è <strong>stateful</strong>: tiene traccia del primo chunk (per emettere
  * message_start una volta sola), dei tool_call iniziati (per emettere content_block_start
- * solo al primo chunk di ogni tool_call) e dell'eventuale blocco di testo aperto.
+ * solo al primo chunk di ogni tool_call), dell'eventuale blocco di testo aperto e della
+ * chiusura messaggio trattenuta in attesa dell'usage.
  * Una nuova istanza deve essere creata per ogni stream.
  * </p>
  *
@@ -76,6 +85,10 @@ public class OpenAIChatChunkDecoder implements LLMInboundProviderChunkDecoder {
 	private boolean textBlockOpened;
 	private final java.util.Set<Integer> toolCallStartedIndexes = new java.util.HashSet<>();
 	private final java.util.List<Integer> openContentBlockIndexes = new java.util.ArrayList<>();
+
+	/** Chiusura messaggio trattenuta in attesa del chunk 'usage-only' di fine stream. */
+	private boolean messageStopPending;
+	private CanonicalStopReason pendingStopReason;
 
 	@Override
 	public String getProviderId() {
@@ -108,6 +121,10 @@ public class OpenAIChatChunkDecoder implements LLMInboundProviderChunkDecoder {
 
 	private List<CanonicalStreamEvent> decodeChunk(JsonNode root) {
 		List<CanonicalStreamEvent> events = new ArrayList<>();
+		if (root.hasNonNull(OpenAIChatFields.FIELD_ERROR) && root.get(OpenAIChatFields.FIELD_ERROR).isObject()) {
+			events.add(decodeError(root.get(OpenAIChatFields.FIELD_ERROR)));
+			return events;
+		}
 		JsonNode choice = firstChoice(root);
 		if (choice == null) {
 			// Chunk senza choices: in streaming OpenAI con stream_options.include_usage=true
@@ -116,6 +133,10 @@ public class OpenAIChatChunkDecoder implements LLMInboundProviderChunkDecoder {
 			// l'observer (necessario per popolare transazioni_llm.token_*). Se anche usage e' assente
 			// e' un vero heartbeat: nulla da emettere.
 			CanonicalUsage usage = parseUsage(root.path(OpenAIChatFields.FIELD_USAGE));
+			if (this.messageStopPending) {
+				events.addAll(closeMessage(usage));
+				return events;
+			}
 			if (usage != null) {
 				CanonicalStreamMessageDelta md = new CanonicalStreamMessageDelta();
 				md.setUsage(usage);
@@ -129,6 +150,37 @@ public class OpenAIChatChunkDecoder implements LLMInboundProviderChunkDecoder {
 		decodeToolCallsDelta(delta, events);
 		maybeEmitFinishReason(root, choice, events);
 		return events;
+	}
+
+	/**
+	 * Errore segnalato a stream avviato (HTTP 200 già inviato): alcuni backend emettono un
+	 * chunk con il solo campo {@code error}. Va propagato al client, altrimenti lo stream si
+	 * chiude senza segnalazione e la risposta troncata sembra completa.
+	 */
+	private CanonicalStreamError decodeError(JsonNode errorNode) {
+		this.messageStopPending = false;
+		this.pendingStopReason = null;
+		CanonicalError error = new CanonicalError();
+		if (errorNode.hasNonNull(OpenAIChatFields.FIELD_MESSAGE)) {
+			error.setMessage(errorNode.get(OpenAIChatFields.FIELD_MESSAGE).asText());
+		}
+		String nativeType = errorNode.hasNonNull(OpenAIChatFields.FIELD_TYPE)
+				? errorNode.get(OpenAIChatFields.FIELD_TYPE).asText() : null;
+		if (errorNode.hasNonNull(OpenAIChatFields.FIELD_CODE)) {
+			error.setCode(errorNode.get(OpenAIChatFields.FIELD_CODE).asText());
+		} else {
+			error.setCode(nativeType);
+		}
+		error.setType(canonicalErrorType(nativeType));
+		return new CanonicalStreamError(error);
+	}
+
+	private static CanonicalErrorType canonicalErrorType(String openaiErrorType) {
+		if (openaiErrorType == null || openaiErrorType.isEmpty()
+				|| OpenAIChatFields.ERROR_TYPE_SERVER.equals(openaiErrorType)) {
+			return CanonicalErrorType.API_ERROR;
+		}
+		return CanonicalErrorType.INVALID_REQUEST;
 	}
 
 	private JsonNode firstChoice(JsonNode root) {
@@ -247,11 +299,42 @@ public class OpenAIChatChunkDecoder implements LLMInboundProviderChunkDecoder {
 		}
 		this.openContentBlockIndexes.clear();
 
+		CanonicalStopReason reason = mapFinishReason(choice.get(OpenAIChatFields.FIELD_FINISH_REASON).asText());
+		CanonicalUsage usage = parseUsage(root.path(OpenAIChatFields.FIELD_USAGE));
+		if (usage != null) {
+			events.addAll(closeMessageWith(reason, usage));
+			return;
+		}
+		// usage assente: GovWay richiede sempre stream_options.include_usage=true, quindi arrivera'
+		// nel chunk 'usage-only' finale. Tratteniamo la chiusura del messaggio per veicolare l'usage
+		// nel message_delta che precede il message_stop (forma attesa dai dialetti front-door).
+		this.pendingStopReason = reason;
+		this.messageStopPending = true;
+	}
+
+	@Override
+	public List<CanonicalStreamEvent> flush() {
+		if (!this.messageStopPending) {
+			return Collections.emptyList();
+		}
+		return closeMessage(null);
+	}
+
+	private List<CanonicalStreamEvent> closeMessage(CanonicalUsage usage) {
+		CanonicalStopReason reason = this.pendingStopReason;
+		this.messageStopPending = false;
+		this.pendingStopReason = null;
+		return closeMessageWith(reason, usage);
+	}
+
+	private List<CanonicalStreamEvent> closeMessageWith(CanonicalStopReason reason, CanonicalUsage usage) {
+		List<CanonicalStreamEvent> events = new ArrayList<>(2);
 		CanonicalStreamMessageDelta md = new CanonicalStreamMessageDelta();
-		md.setStopReason(mapFinishReason(choice.get(OpenAIChatFields.FIELD_FINISH_REASON).asText()));
-		md.setUsage(parseUsage(root.path(OpenAIChatFields.FIELD_USAGE)));
+		md.setStopReason(reason);
+		md.setUsage(usage);
 		events.add(md);
 		events.add(new CanonicalStreamMessageStop());
+		return events;
 	}
 
 	private CanonicalStopReason mapFinishReason(String fr) {

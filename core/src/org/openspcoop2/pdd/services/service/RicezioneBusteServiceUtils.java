@@ -253,6 +253,11 @@ public class RicezioneBusteServiceUtils {
 		PortaApplicativa paDefault = null;
 		if(idServizio!=null){
 			
+			// API LLM: il contesto viene marcato appena l'API e' identificata, cosi' anche gli errori
+			// generati dal gateway prima della pipeline LLM (API sospesa, autenticazione, autorizzazione,
+			// rate limiting, ...) vengono restituiti nell'envelope di errore del dialetto del client.
+			org.openspcoop2.pdd.core.handlers.llm.LLMHandlerSupport.populateLLMContext(pddContextNullable, requestInfo, idServizio);
+			
 			CachedConfigIntegrationReader configIntegrationReader = (CachedConfigIntegrationReader) serviceIdentificationReader.getConfigIntegrationReader();
 			IRegistryReader registryReader = serviceIdentificationReader.getRegistryReader();
 			RegistroServiziManager registroServiziManager = RegistroServiziManager.getInstance();

@@ -19,6 +19,8 @@
  */
 package org.openspcoop2.message.llm.transform.openai;
 
+import org.openspcoop2.message.llm.CanonicalErrorType;
+
 /**
  * Costanti dei nomi di campo e dei valori ricorrenti nel JSON di OpenAI
  * Chat Completions (request e response, sync e streaming). Centralizzate per
@@ -105,4 +107,26 @@ final class OpenAIChatFields {
 	/* === content block types (lato canonical, propagati nello stream) === */
 	static final String BLOCK_TYPE_TEXT = "text";
 	static final String BLOCK_TYPE_TOOL_USE = "tool_use";
+
+	/* === error === */
+	static final String FIELD_ERROR = "error";
+	static final String FIELD_PARAM = "param";
+	static final String FIELD_CODE = "code";
+	static final String ERROR_TYPE_INVALID_REQUEST = "invalid_request_error";
+	static final String ERROR_TYPE_SERVER = "server_error";
+
+	/** Mappa la classificazione canonical sul valore {@code error.type} usato da OpenAI. */
+	static String errorType(CanonicalErrorType type) {
+		if (type == null) {
+			return ERROR_TYPE_SERVER;
+		}
+		switch (type) {
+			case API_ERROR:
+			case OVERLOADED:
+			case TIMEOUT:
+				return ERROR_TYPE_SERVER;
+			default:
+				return ERROR_TYPE_INVALID_REQUEST;
+		}
+	}
 }

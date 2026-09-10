@@ -19,6 +19,9 @@
  */
 package org.openspcoop2.message.llm.transform.anthropic;
 
+import org.openspcoop2.message.llm.CanonicalError;
+import org.openspcoop2.message.llm.CanonicalErrorType;
+
 /**
  * Costanti dei nomi di campo e dei valori ricorrenti nel JSON di Anthropic
  * Messages (request e response, sync e streaming). Centralizzate per evitare
@@ -94,7 +97,81 @@ final class AnthropicMessagesFields {
 	static final String ROLE_USER = "user";
 	static final String ROLE_ASSISTANT = "assistant";
 
+	/* === error === */
+	static final String FIELD_ERROR = "error";
+	static final String TYPE_ERROR = "error";
+	static final String EVENT_ERROR = "error";
+	static final String ERROR_TYPE_INVALID_REQUEST = "invalid_request_error";
+	static final String ERROR_TYPE_AUTHENTICATION = "authentication_error";
+	static final String ERROR_TYPE_BILLING = "billing_error";
+	static final String ERROR_TYPE_PERMISSION = "permission_error";
+	static final String ERROR_TYPE_NOT_FOUND = "not_found_error";
+	static final String ERROR_TYPE_REQUEST_TOO_LARGE = "request_too_large";
+	static final String ERROR_TYPE_RATE_LIMIT = "rate_limit_error";
+	static final String ERROR_TYPE_TIMEOUT = "timeout_error";
+	static final String ERROR_TYPE_API = "api_error";
+	static final String ERROR_TYPE_OVERLOADED = "overloaded_error";
+
 	/* === resource path / header HTTP === */
 	static final String RESOURCE_PATH_MESSAGES = "/messages";
 	static final String HEADER_ANTHROPIC_VERSION = "anthropic-version";
+
+	/**
+	 * Mappa la classificazione canonical sul valore {@code error.type} atteso da Anthropic:
+	 * l'SDK client modella l'errore come union discriminata su questo campo, quindi un valore
+	 * fuori dall'insieme noto non sarebbe deserializzabile.
+	 */
+	static String errorType(CanonicalErrorType type) {
+		if (type == null) {
+			return ERROR_TYPE_API;
+		}
+		switch (type) {
+			case INVALID_REQUEST: return ERROR_TYPE_INVALID_REQUEST;
+			case AUTHENTICATION: return ERROR_TYPE_AUTHENTICATION;
+			case BILLING: return ERROR_TYPE_BILLING;
+			case PERMISSION: return ERROR_TYPE_PERMISSION;
+			case NOT_FOUND: return ERROR_TYPE_NOT_FOUND;
+			case REQUEST_TOO_LARGE: return ERROR_TYPE_REQUEST_TOO_LARGE;
+			case RATE_LIMIT: return ERROR_TYPE_RATE_LIMIT;
+			case TIMEOUT: return ERROR_TYPE_TIMEOUT;
+			case OVERLOADED: return ERROR_TYPE_OVERLOADED;
+			case API_ERROR:
+			default: return ERROR_TYPE_API;
+		}
+	}
+
+	/**
+	 * Messaggio di errore da esporre: l'envelope Anthropic non ha un campo per il codice
+	 * nativo del provider, che viene quindi anteposto al messaggio quando aggiunge informazione.
+	 */
+	static String errorMessage(CanonicalError error, String mappedType) {
+		if (error == null) {
+			return "";
+		}
+		String message = error.getMessage() != null ? error.getMessage() : "";
+		String code = error.getCode();
+		if (code == null || code.isEmpty() || code.equals(mappedType) || code.equals(message)) {
+			return message;
+		}
+		return message.isEmpty() ? code : (code + ": " + message);
+	}
+
+	/** Mapping inverso di {@link #errorType(CanonicalErrorType)}, usato dal decoder degli eventi di errore. */
+	static CanonicalErrorType canonicalErrorType(String anthropicErrorType) {
+		if (anthropicErrorType == null) {
+			return CanonicalErrorType.API_ERROR;
+		}
+		switch (anthropicErrorType) {
+			case ERROR_TYPE_INVALID_REQUEST: return CanonicalErrorType.INVALID_REQUEST;
+			case ERROR_TYPE_AUTHENTICATION: return CanonicalErrorType.AUTHENTICATION;
+			case ERROR_TYPE_BILLING: return CanonicalErrorType.BILLING;
+			case ERROR_TYPE_PERMISSION: return CanonicalErrorType.PERMISSION;
+			case ERROR_TYPE_NOT_FOUND: return CanonicalErrorType.NOT_FOUND;
+			case ERROR_TYPE_REQUEST_TOO_LARGE: return CanonicalErrorType.REQUEST_TOO_LARGE;
+			case ERROR_TYPE_RATE_LIMIT: return CanonicalErrorType.RATE_LIMIT;
+			case ERROR_TYPE_TIMEOUT: return CanonicalErrorType.TIMEOUT;
+			case ERROR_TYPE_OVERLOADED: return CanonicalErrorType.OVERLOADED;
+			default: return CanonicalErrorType.API_ERROR;
+		}
+	}
 }

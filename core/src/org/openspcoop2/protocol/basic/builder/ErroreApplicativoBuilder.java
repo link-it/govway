@@ -935,9 +935,22 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 				
 					codeDetailsErrorWrapper = new CodeDetailsError();
 					bytes = this._buildErroreApplicativo_ByteArray(TipoErroreApplicativo.JSON, !omitXMLDeclaration, codeDetailsErrorWrapper, eccezioneProtocollo, eccezioneIntegrazione);
+					// Solo API LLM (chiave presente nel context unicamente se il FormatoSpecifica
+					// dell'API e' un dialetto LLM): il client parla OpenAI o Anthropic e il suo SDK
+					// attende l'envelope di errore di quel dialetto, non un problem detail.
+					// Sulle altre API il ramo non viene nemmeno valutato e il body resta invariato.
+					boolean llmErrorEnvelope = false;
+					if(context!=null && context.containsKey(org.openspcoop2.message.llm.LLMContextKeys.PDD_CTX_LLM_FORMATO)) {
+						byte[] llmError = org.openspcoop2.message.llm.transform.LLMFrontDoorErrorEnvelope.convert(context, bytes,
+								returnConfig!=null ? returnConfig.getHttpReturnCode() : 0);
+						if(llmError!=null) {
+							bytes = llmError;
+							llmErrorEnvelope = true;
+						}
+					}
 					pr = this.errorFactory.createMessage(messageType, MessageRole.FAULT, HttpConstants.CONTENT_TYPE_JSON, bytes);
 					msg = pr.getMessage_throwParseException();
-					if(useProblemRFC7807) {
+					if(useProblemRFC7807 && !llmErrorEnvelope) {
 						msg.setContentType(HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807);
 					}
 					else {

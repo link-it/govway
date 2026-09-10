@@ -636,6 +636,18 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 						json = org.openspcoop2.core.eccezione.details.utils.XMLUtils.generateDettaglioEccezioneAsJson(dettaglioEccezione).getBytes();
 						contentTypeJson =  HttpConstants.CONTENT_TYPE_JSON;
 					}
+					// Solo API LLM (chiave presente nel context unicamente se il FormatoSpecifica
+					// dell'API e' un dialetto LLM): il client parla OpenAI o Anthropic e il suo SDK
+					// attende l'envelope di errore di quel dialetto, non un problem detail.
+					// Sulle altre API il ramo non viene nemmeno valutato e il body resta invariato.
+					if(context!=null && context.containsKey(org.openspcoop2.message.llm.LLMContextKeys.PDD_CTX_LLM_FORMATO)) {
+						byte[] llmError = org.openspcoop2.message.llm.transform.LLMFrontDoorErrorEnvelope.convert(context, json,
+								returnConfig!=null ? returnConfig.getHttpReturnCode() : 0);
+						if(llmError!=null) {
+							json = llmError;
+							contentTypeJson = HttpConstants.CONTENT_TYPE_JSON;
+						}
+					}
 					pr = mf.createMessage(messageType, MessageRole.FAULT,contentTypeJson, json);
 					msg = pr.getMessage_throwParseException();
 					return msg;

@@ -22,11 +22,14 @@ package org.openspcoop2.message.llm.transform.anthropic;
 import java.util.Collections;
 import java.util.List;
 
+import org.openspcoop2.message.llm.CanonicalError;
+import org.openspcoop2.message.llm.CanonicalErrorType;
 import org.openspcoop2.message.llm.CanonicalRole;
 import org.openspcoop2.message.llm.CanonicalStopReason;
 import org.openspcoop2.message.llm.CanonicalUsage;
 import org.openspcoop2.message.llm.stream.CanonicalStreamContentBlockStart;
 import org.openspcoop2.message.llm.stream.CanonicalStreamContentBlockStop;
+import org.openspcoop2.message.llm.stream.CanonicalStreamError;
 import org.openspcoop2.message.llm.stream.CanonicalStreamEvent;
 import org.openspcoop2.message.llm.stream.CanonicalStreamMessageDelta;
 import org.openspcoop2.message.llm.stream.CanonicalStreamMessageStart;
@@ -59,6 +62,7 @@ import com.fasterxml.jackson.databind.JsonNode;
  *   <li>{@code message_delta} → {@link CanonicalStreamMessageDelta}
  *       (stop_reason + usage finale)</li>
  *   <li>{@code message_stop} → {@link CanonicalStreamMessageStop}</li>
+ *   <li>{@code error} (errore a stream avviato) → {@link CanonicalStreamError}</li>
  * </ul>
  *
  * @author Andrea Poli (apoli@link.it)
@@ -110,11 +114,30 @@ public class AnthropicMessagesChunkDecoder implements LLMInboundProviderChunkDec
 				return Collections.singletonList(decodeMessageDelta(root));
 			case AnthropicMessagesFields.EVENT_MESSAGE_STOP:
 				return Collections.<CanonicalStreamEvent>singletonList(new CanonicalStreamMessageStop());
+			case AnthropicMessagesFields.EVENT_ERROR:
+				return Collections.<CanonicalStreamEvent>singletonList(decodeError(root));
 			default:
 				// Eventi non riconosciuti: ignora silenziosamente per essere tolleranti
 				// a estensioni Anthropic future.
 				return Collections.emptyList();
 		}
+	}
+
+	private CanonicalStreamError decodeError(JsonNode root) {
+		CanonicalError error = new CanonicalError();
+		error.setType(CanonicalErrorType.API_ERROR);
+		JsonNode errorNode = root != null ? root.path(AnthropicMessagesFields.FIELD_ERROR) : null;
+		if (errorNode != null && errorNode.isObject()) {
+			if (errorNode.hasNonNull(AnthropicMessagesFields.FIELD_TYPE)) {
+				String nativeType = errorNode.get(AnthropicMessagesFields.FIELD_TYPE).asText();
+				error.setCode(nativeType);
+				error.setType(AnthropicMessagesFields.canonicalErrorType(nativeType));
+			}
+			if (errorNode.hasNonNull(AnthropicMessagesFields.FIELD_MESSAGE)) {
+				error.setMessage(errorNode.get(AnthropicMessagesFields.FIELD_MESSAGE).asText());
+			}
+		}
+		return new CanonicalStreamError(error);
 	}
 
 	private CanonicalStreamMessageStart decodeMessageStart(JsonNode root) {

@@ -245,6 +245,11 @@ public class RicezioneContenutiApplicativiServiceUtils {
 			
 			if(idServizio!=null){
 				
+				// API LLM: il contesto viene marcato appena l'API e' identificata, cosi' anche gli errori
+				// generati dal gateway prima della pipeline LLM (API sospesa, autenticazione, autorizzazione,
+				// rate limiting, ...) vengono restituiti nell'envelope di errore del dialetto del client.
+				org.openspcoop2.pdd.core.handlers.llm.LLMHandlerSupport.populateLLMContext(pddContextNullable, requestInfo, idServizio);
+				
 				RegistroServiziManager registroServiziManager = RegistroServiziManager.getInstance();
 				
 				// Aggiorno service binding rispetto al servizio localizzato

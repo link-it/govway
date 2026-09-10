@@ -21,11 +21,13 @@ package org.openspcoop2.message.llm.transform.anthropic;
 
 import java.nio.charset.StandardCharsets;
 
+import org.openspcoop2.message.llm.CanonicalError;
 import org.openspcoop2.message.llm.CanonicalRole;
 import org.openspcoop2.message.llm.CanonicalStopReason;
 import org.openspcoop2.message.llm.CanonicalUsage;
 import org.openspcoop2.message.llm.stream.CanonicalStreamContentBlockStart;
 import org.openspcoop2.message.llm.stream.CanonicalStreamContentBlockStop;
+import org.openspcoop2.message.llm.stream.CanonicalStreamError;
 import org.openspcoop2.message.llm.stream.CanonicalStreamEvent;
 import org.openspcoop2.message.llm.stream.CanonicalStreamMessageDelta;
 import org.openspcoop2.message.llm.stream.CanonicalStreamMessageStart;
@@ -85,6 +87,9 @@ public class AnthropicMessagesChunkEncoder implements LLMOutboundFrontDoorChunkE
 			}
 			if (event instanceof CanonicalStreamPing) {
 				return wrap(AnthropicMessagesFields.EVENT_PING, buildPingData());
+			}
+			if (event instanceof CanonicalStreamError e) {
+				return wrap(AnthropicMessagesFields.EVENT_ERROR, buildErrorData(e));
 			}
 			return new byte[0];
 		} catch (Exception e) {
@@ -198,6 +203,18 @@ public class AnthropicMessagesChunkEncoder implements LLMOutboundFrontDoorChunkE
 		ObjectMapper m = JSONUtils.getObjectMapper();
 		ObjectNode root = m.createObjectNode();
 		root.put(AnthropicMessagesFields.FIELD_TYPE, AnthropicMessagesFields.EVENT_MESSAGE_STOP);
+		return root;
+	}
+
+	private ObjectNode buildErrorData(CanonicalStreamError e) {
+		ObjectMapper m = JSONUtils.getObjectMapper();
+		ObjectNode root = m.createObjectNode();
+		root.put(AnthropicMessagesFields.FIELD_TYPE, AnthropicMessagesFields.TYPE_ERROR);
+		ObjectNode errorNode = root.putObject(AnthropicMessagesFields.FIELD_ERROR);
+		CanonicalError error = e.getError();
+		String mappedType = AnthropicMessagesFields.errorType(error != null ? error.getType() : null);
+		errorNode.put(AnthropicMessagesFields.FIELD_TYPE, mappedType);
+		errorNode.put(AnthropicMessagesFields.FIELD_MESSAGE, AnthropicMessagesFields.errorMessage(error, mappedType));
 		return root;
 	}
 

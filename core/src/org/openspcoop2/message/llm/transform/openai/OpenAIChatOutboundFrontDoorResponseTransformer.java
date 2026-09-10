@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.openspcoop2.message.llm.CanonicalChatResponse;
 import org.openspcoop2.message.llm.CanonicalContentBlock;
+import org.openspcoop2.message.llm.CanonicalError;
 import org.openspcoop2.message.llm.CanonicalStopReason;
 import org.openspcoop2.message.llm.CanonicalTextBlock;
 import org.openspcoop2.message.llm.CanonicalToolUseBlock;
@@ -86,6 +87,29 @@ public class OpenAIChatOutboundFrontDoorResponseTransformer implements LLMOutbou
 	}
 
 
+	@Override
+	public byte[] transformError(CanonicalError error) throws LLMTransformException {
+		if (error == null) {
+			throw new LLMTransformException("CanonicalError nullo");
+		}
+		try {
+			ObjectMapper mapper = JSONUtils.getObjectMapper();
+			ObjectNode out = mapper.createObjectNode();
+			ObjectNode errorNode = out.putObject(OpenAIChatFields.FIELD_ERROR);
+			errorNode.put(OpenAIChatFields.FIELD_MESSAGE, error.getMessage() != null ? error.getMessage() : "");
+			errorNode.put(OpenAIChatFields.FIELD_TYPE, OpenAIChatFields.errorType(error.getType()));
+			errorNode.putNull(OpenAIChatFields.FIELD_PARAM);
+			if (error.getCode() != null && !error.getCode().isEmpty()) {
+				errorNode.put(OpenAIChatFields.FIELD_CODE, error.getCode());
+			} else {
+				errorNode.putNull(OpenAIChatFields.FIELD_CODE);
+			}
+			return mapper.writeValueAsBytes(out);
+		} catch (Exception e) {
+			throw new LLMTransformException("Errore nella serializzazione canonical → OpenAI Chat Completions error: " + e.getMessage(), e);
+		}
+	}
+
 	/* === campi top-level === */
 
 	private void applyBasicFields(CanonicalChatResponse in, ObjectNode out) {
@@ -123,9 +147,11 @@ public class OpenAIChatOutboundFrontDoorResponseTransformer implements LLMOutbou
 		buildOpenAIMessage(in, message, mapper);
 		choice.set(OpenAIChatFields.FIELD_MESSAGE, message);
 		String finishReason = mapFinishReason(in.getStopReason());
-		if (finishReason != null) {
-			choice.put(OpenAIChatFields.FIELD_FINISH_REASON, finishReason);
-		}
+		// finish_reason e' obbligatorio nella response sincrona OpenAI: se il provider non ha
+		// veicolato uno stop reason riconosciuto (es. Bedrock 'guardrail_intervened') ripieghiamo
+		// su 'stop', altrimenti gli SDK client falliscono il parsing della response.
+		choice.put(OpenAIChatFields.FIELD_FINISH_REASON,
+				finishReason != null ? finishReason : OpenAIChatFields.FINISH_REASON_STOP);
 		return choice;
 	}
 

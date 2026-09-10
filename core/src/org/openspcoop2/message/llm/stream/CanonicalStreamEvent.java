@@ -48,6 +48,9 @@ package org.openspcoop2.message.llm.stream;
  *       In OpenAI corrisponde a {@code data: [DONE]\n\n}.</li>
  *   <li>{@link CanonicalStreamPing}: keep-alive interno provider, ignorabile o
  *       propagabile come tale.</li>
+ *   <li>{@link CanonicalStreamError}: errore segnalato dal provider a stream avviato.
+ *       Anthropic {@code event: error}, Bedrock event-type di exception, OpenAI chunk
+ *       con campo {@code error}.</li>
  * </ul>
  *
  * @author Andrea Poli (apoli@link.it)

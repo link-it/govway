@@ -20,6 +20,7 @@
 package org.openspcoop2.message.llm.transform;
 
 import org.openspcoop2.message.llm.CanonicalChatResponse;
+import org.openspcoop2.message.llm.CanonicalError;
 
 /**
  * Contratto per un trasformatore inbound back-door: payload di risposta del
@@ -47,4 +48,18 @@ public interface LLMInboundProviderResponseTransformer {
 	 * @throws LLMTransformException se il payload non rispetta lo schema atteso
 	 */
 	CanonicalChatResponse transform(byte[] payload) throws LLMTransformException;
+
+	/**
+	 * Converte il body di una response di errore del provider (HTTP non 2xx) nel modello
+	 * canonical interno. L'implementazione di default copre le forme di errore dei provider
+	 * supportati via {@link LLMProviderErrorParser}; un provider con un envelope di errore
+	 * particolare può ridefinirla.
+	 *
+	 * @param payload bytes del body di errore ricevuto dal provider (può essere vuoto o non JSON)
+	 * @param httpStatus stato HTTP della response del provider
+	 * @return errore canonical, mai null
+	 */
+	default CanonicalError transformError(byte[] payload, int httpStatus) {
+		return LLMProviderErrorParser.parse(payload, httpStatus);
+	}
 }

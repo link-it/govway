@@ -25,11 +25,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.openspcoop2.message.llm.CanonicalError;
+import org.openspcoop2.message.llm.CanonicalErrorType;
 import org.openspcoop2.message.llm.CanonicalRole;
 import org.openspcoop2.message.llm.CanonicalStopReason;
 import org.openspcoop2.message.llm.CanonicalUsage;
 import org.openspcoop2.message.llm.stream.CanonicalStreamContentBlockStart;
 import org.openspcoop2.message.llm.stream.CanonicalStreamContentBlockStop;
+import org.openspcoop2.message.llm.stream.CanonicalStreamError;
 import org.openspcoop2.message.llm.stream.CanonicalStreamEvent;
 import org.openspcoop2.message.llm.stream.CanonicalStreamMessageDelta;
 import org.openspcoop2.message.llm.stream.CanonicalStreamMessageStart;
@@ -59,13 +62,24 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  *       (Bedrock non lo manda per i blocchi text, lo aggiungiamo per uniformità con il flow Anthropic e per
  *       semplificare l'encoder front-door)</td></tr>
  *   <tr><td>{@code contentBlockStop}</td><td>{@link CanonicalStreamContentBlockStop}</td></tr>
- *   <tr><td>{@code messageStop}</td><td>{@link CanonicalStreamMessageDelta} (stopReason) + {@link CanonicalStreamMessageStop}</td></tr>
- *   <tr><td>{@code metadata}</td><td>{@link CanonicalStreamMessageDelta} (usage)</td></tr>
+ *   <tr><td>{@code messageStop}</td><td>nessun evento immediato: lo stopReason viene trattenuto in attesa
+ *       dell'evento {@code metadata} che porta l'usage (Bedrock lo invia dopo il messageStop)</td></tr>
+ *   <tr><td>{@code metadata}</td><td>{@link CanonicalStreamMessageDelta} (stopReason + usage) +
+ *       {@link CanonicalStreamMessageStop}</td></tr>
+ *   <tr><td>{@code internalServerException}, {@code modelStreamErrorException},
+ *       {@code validationException}, {@code throttlingException},
+ *       {@code serviceUnavailableException}</td><td>{@link CanonicalStreamError}</td></tr>
  * </table>
  *
+ * <p>La chiusura del messaggio è posticipata perché nel modello canonical (e nei dialetti
+ * front-door) l'usage finale viaggia nel {@code message_delta} che precede il
+ * {@code message_stop}: emettendo subito la coppia sul {@code messageStop} di Bedrock,
+ * il client riceverebbe usage a zero. Se il {@code metadata} non arriva, la coppia viene
+ * comunque emessa dal {@link #flush()} a fine stream.</p>
+ *
  * <p>Stateful: tiene traccia degli indici di content block per i quali è già stato emesso
- * un implicit text-block-start, perciò il registry registra una factory (nuova istanza
- * per ogni stream).</p>
+ * un implicit text-block-start e della chiusura messaggio pendente, perciò il registry
+ * registra una factory (nuova istanza per ogni stream).</p>
  *
  * @author Andrea Poli (apoli@link.it)
  */
@@ -78,6 +92,13 @@ public class AwsBedrockConverseChunkDecoder implements LLMInboundProviderChunkDe
 	private static final String EVT_CONTENT_BLOCK_STOP = "contentBlockStop";
 	private static final String EVT_MESSAGE_STOP = "messageStop";
 	private static final String EVT_METADATA = "metadata";
+
+	/* Event types di errore emessi da Bedrock ConverseStream a stream avviato. */
+	private static final String EVT_INTERNAL_SERVER_EXCEPTION = "internalServerException";
+	private static final String EVT_MODEL_STREAM_ERROR_EXCEPTION = "modelStreamErrorException";
+	private static final String EVT_VALIDATION_EXCEPTION = "validationException";
+	private static final String EVT_THROTTLING_EXCEPTION = "throttlingException";
+	private static final String EVT_SERVICE_UNAVAILABLE_EXCEPTION = "serviceUnavailableException";
 
 	/* Field names dei payload JSON degli eventi. */
 	private static final String F_ROLE = "role";
@@ -93,6 +114,9 @@ public class AwsBedrockConverseChunkDecoder implements LLMInboundProviderChunkDe
 	private static final String F_USAGE = "usage";
 	private static final String F_INPUT_TOKENS = "inputTokens";
 	private static final String F_OUTPUT_TOKENS = "outputTokens";
+	private static final String F_ORIGINAL_MESSAGE = "originalMessage";
+	private static final String F_ORIGINAL_STATUS_CODE = "originalStatusCode";
+	private static final String F_MESSAGE = "message";
 
 	/** Block type emesso nel CanonicalStreamContentBlockStart implicit per i blocchi text. */
 	private static final String BLOCK_TYPE_TEXT = "text";
@@ -100,6 +124,10 @@ public class AwsBedrockConverseChunkDecoder implements LLMInboundProviderChunkDe
 
 	/** Indici dei content block per cui abbiamo già emesso un implicit text-block-start in questo stream. */
 	private final Set<Integer> textBlockStartEmitted = new HashSet<>();
+
+	/** Chiusura messaggio trattenuta in attesa dell'usage veicolato dall'evento metadata. */
+	private boolean messageStopPending = false;
+	private CanonicalStopReason pendingStopReason;
 
 	@Override
 	public String getProviderId() {
@@ -128,6 +156,12 @@ public class AwsBedrockConverseChunkDecoder implements LLMInboundProviderChunkDe
 					return decodeMessageStop(root);
 				case EVT_METADATA:
 					return decodeMetadata(root);
+				case EVT_INTERNAL_SERVER_EXCEPTION:
+				case EVT_MODEL_STREAM_ERROR_EXCEPTION:
+				case EVT_VALIDATION_EXCEPTION:
+				case EVT_THROTTLING_EXCEPTION:
+				case EVT_SERVICE_UNAVAILABLE_EXCEPTION:
+					return decodeException(eventType, root);
 				default:
 					// event-type sconosciuto: skip senza errore (forward compatibility)
 					return Collections.emptyList();
@@ -198,24 +232,87 @@ public class AwsBedrockConverseChunkDecoder implements LLMInboundProviderChunkDe
 	}
 
 	private List<CanonicalStreamEvent> decodeMessageStop(JsonNode root) {
-		CanonicalStopReason reason = root.hasNonNull(F_STOP_REASON)
+		this.pendingStopReason = root.hasNonNull(F_STOP_REASON)
 				? CanonicalStopReason.tryFromValue(root.get(F_STOP_REASON).asText())
 				: null;
-		// Anthropic-style: prima un message_delta con stopReason, poi un message_stop "vuoto".
+		this.messageStopPending = true;
+		return Collections.emptyList();
+	}
+
+	private List<CanonicalStreamEvent> decodeMetadata(JsonNode root) {
+		CanonicalUsage usage = readUsage(root);
+		if (this.messageStopPending) {
+			return closeMessage(usage);
+		}
+		if (usage == null) {
+			return Collections.emptyList();
+		}
+		return Collections.singletonList((CanonicalStreamEvent) new CanonicalStreamMessageDelta(null, usage));
+	}
+
+	@Override
+	public List<CanonicalStreamEvent> flush() {
+		if (!this.messageStopPending) {
+			return Collections.emptyList();
+		}
+		return closeMessage(null);
+	}
+
+	/**
+	 * Bedrock segnala gli errori a stream avviato con event-type dedicati (HTTP 200 già
+	 * inviato). Vengono propagati come {@link CanonicalStreamError}: senza questo mapping lo
+	 * stream si chiuderebbe senza segnalazione e il client leggerebbe una risposta troncata
+	 * come se fosse completa. L'eventuale chiusura messaggio trattenuta viene annullata.
+	 */
+	private List<CanonicalStreamEvent> decodeException(String eventType, JsonNode root) {
+		this.messageStopPending = false;
+		this.pendingStopReason = null;
+		CanonicalError error = new CanonicalError();
+		error.setCode(eventType);
+		error.setType(canonicalErrorType(eventType));
+		String message = null;
+		if (root.hasNonNull(F_MESSAGE)) {
+			message = root.get(F_MESSAGE).asText();
+		} else if (root.hasNonNull(F_ORIGINAL_MESSAGE)) {
+			message = root.get(F_ORIGINAL_MESSAGE).asText();
+		}
+		error.setMessage(message);
+		if (root.hasNonNull(F_ORIGINAL_STATUS_CODE) && root.get(F_ORIGINAL_STATUS_CODE).isInt()) {
+			error.setHttpStatus(root.get(F_ORIGINAL_STATUS_CODE).asInt());
+		}
+		return Collections.singletonList((CanonicalStreamEvent) new CanonicalStreamError(error));
+	}
+
+	private static CanonicalErrorType canonicalErrorType(String eventType) {
+		switch (eventType) {
+			case EVT_VALIDATION_EXCEPTION: return CanonicalErrorType.INVALID_REQUEST;
+			case EVT_THROTTLING_EXCEPTION: return CanonicalErrorType.RATE_LIMIT;
+			case EVT_SERVICE_UNAVAILABLE_EXCEPTION: return CanonicalErrorType.OVERLOADED;
+			case EVT_INTERNAL_SERVER_EXCEPTION:
+			case EVT_MODEL_STREAM_ERROR_EXCEPTION:
+			default: return CanonicalErrorType.API_ERROR;
+		}
+	}
+
+	private List<CanonicalStreamEvent> closeMessage(CanonicalUsage usage) {
+		CanonicalStopReason reason = this.pendingStopReason;
+		this.messageStopPending = false;
+		this.pendingStopReason = null;
+		// Anthropic-style: prima un message_delta con stopReason e usage, poi un message_stop "vuoto".
 		List<CanonicalStreamEvent> events = new ArrayList<>(2);
-		events.add(new CanonicalStreamMessageDelta(reason, null));
+		events.add(new CanonicalStreamMessageDelta(reason, usage));
 		events.add(new CanonicalStreamMessageStop());
 		return events;
 	}
 
-	private List<CanonicalStreamEvent> decodeMetadata(JsonNode root) {
+	private CanonicalUsage readUsage(JsonNode root) {
 		if (!root.hasNonNull(F_USAGE)) {
-			return Collections.emptyList();
+			return null;
 		}
 		JsonNode usage = root.get(F_USAGE);
 		Integer in = usage.hasNonNull(F_INPUT_TOKENS) ? usage.get(F_INPUT_TOKENS).asInt() : null;
 		Integer outt = usage.hasNonNull(F_OUTPUT_TOKENS) ? usage.get(F_OUTPUT_TOKENS).asInt() : null;
-		return Collections.singletonList((CanonicalStreamEvent) new CanonicalStreamMessageDelta(null, new CanonicalUsage(in, outt)));
+		return new CanonicalUsage(in, outt);
 	}
 
 

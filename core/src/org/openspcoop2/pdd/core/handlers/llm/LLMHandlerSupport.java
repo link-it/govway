@@ -26,8 +26,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
+import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
+import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.constants.FormatoSpecifica;
+import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2RestMessage;
@@ -39,6 +43,9 @@ import org.openspcoop2.message.rest.OpenSPCoop2Message_json_impl;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.handlers.BaseContext;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.protocol.registry.RegistroServiziManager;
+import org.openspcoop2.protocol.sdk.state.RequestConfig;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.utils.CopyStream;
 import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.openspcoop2.utils.transport.TransportResponseContext;
@@ -59,6 +66,9 @@ import org.slf4j.Logger;
 public final class LLMHandlerSupport {
 
 	private static final Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
+
+	private static final String LLM_RESPONSE_ID_PREFIX_ANTHROPIC = "msg_";
+	private static final String LLM_RESPONSE_ID_PREFIX_OPENAI = "chatcmpl-";
 
 	private LLMHandlerSupport() {
 		// utility class
@@ -92,6 +102,43 @@ public final class LLMHandlerSupport {
 			return;
 		}
 		pddContext.addObject(LLMHandlerConstants.PDD_CTX_LLM_FORMATO, dialect);
+	}
+
+	/**
+	 * Variante invocata all'atto dell'identificazione della porta (applicativa o delegata),
+	 * quando l'API è appena stata risolta dalla URL: marcare il contesto già a quel punto
+	 * permette di restituire nel dialetto del client anche gli errori generati dal gateway
+	 * <em>prima</em> della pipeline LLM (API sospesa, autenticazione, autorizzazione, rate
+	 * limiting, ...). Best-effort: se l'API non è risolvibile non fa nulla e la pipeline LLM
+	 * si attiverà comunque nell'{@code LLMInboundRequestHandler}.
+	 */
+	public static void populateLLMContext(PdDContext pddContext, RequestInfo requestInfo, IDServizio idServizio) {
+		if (pddContext == null || idServizio == null || pddContext.containsKey(LLMHandlerConstants.PDD_CTX_LLM_FORMATO)) {
+			return;
+		}
+		try {
+			populateLLMContext(pddContext, resolveAccordo(requestInfo, idServizio));
+		} catch (Exception e) {
+			if (log != null && log.isDebugEnabled()) {
+				log.debug("populateLLMContext: API {} non risolvibile per la marcatura LLM: {}", idServizio, e.getMessage());
+			}
+		}
+	}
+
+	private static AccordoServizioParteComune resolveAccordo(RequestInfo requestInfo, IDServizio idServizio) throws Exception {
+		RequestConfig requestConfig = requestInfo != null ? requestInfo.getRequestConfig() : null;
+		if (requestConfig != null && requestConfig.getAspc() != null) {
+			return requestConfig.getAspc();
+		}
+		RegistroServiziManager registro = RegistroServiziManager.getInstance();
+		AccordoServizioParteSpecifica asps = (requestConfig != null && requestConfig.getAsps() != null)
+				? requestConfig.getAsps()
+				: registro.getAccordoServizioParteSpecifica(idServizio, null, false, requestInfo);
+		if (asps == null || asps.getAccordoServizioParteComune() == null) {
+			return null;
+		}
+		IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
+		return registro.getAccordoServizioParteComune(idAccordo, null, false, false, requestInfo);
 	}
 
 	/**
@@ -129,7 +176,11 @@ public final class LLMHandlerSupport {
 	 * identificatore del file di backing del buffer su disco quando supera la soglia.
 	 */
 	public static String getIdTransazione(BaseContext context) {
-		PdDContext pddContext = context != null ? context.getPddContext() : null;
+		return getIdTransazione(context != null ? context.getPddContext() : null);
+	}
+
+	/** Overload che accetta direttamente il PdDContext. */
+	public static String getIdTransazione(PdDContext pddContext) {
 		if (pddContext == null) {
 			return null;
 		}
@@ -215,10 +266,50 @@ public final class LLMHandlerSupport {
 
 	/** Recupera dal PdDContext il vendor model id (usato dai transformer outbound). */
 	public static String getLLMVendorModelId(BaseContext context) {
-		PdDContext pddContext = context != null ? context.getPddContext() : null;
+		return getLLMVendorModelId(context != null ? context.getPddContext() : null);
+	}
+
+	/** Overload che accetta direttamente il PdDContext. */
+	public static String getLLMVendorModelId(PdDContext pddContext) {
 		if (pddContext == null) return null;
 		Object o = pddContext.getObject(LLMHandlerConstants.PDD_CTX_LLM_VENDOR_MODEL_ID);
 		return o instanceof String ? (String) o : null;
+	}
+
+	/**
+	 * Identificativo del modello da esporre al client nella response (campo {@code model}
+	 * dei dialetti front-door) quando il provider non lo restituisce (es. AWS Bedrock, che
+	 * veicola il modello nella URL della request). Viene usato il nome del Provider Binding,
+	 * ossia il valore che il client stesso ha indicato come {@code model} nella richiesta.
+	 */
+	public static String getLLMResponseModel(PdDContext pddContext) {
+		String bindingName = getLLMProviderBindingName(pddContext);
+		if (bindingName != null && !bindingName.isEmpty()) {
+			return bindingName;
+		}
+		String vendorModelId = getLLMVendorModelId(pddContext);
+		if (vendorModelId != null && !vendorModelId.isEmpty()) {
+			return vendorModelId;
+		}
+		return getLLMModelName(pddContext);
+	}
+
+	/**
+	 * Identificativo del messaggio di response da esporre al client quando il provider non
+	 * lo restituisce (es. AWS Bedrock). Viene derivato dall'idTransazione GovWay, con il
+	 * prefisso atteso dal dialetto front-door, cosi' da restare correlabile alla transazione.
+	 * I client SDK (Anthropic, OpenAI) considerano il campo obbligatorio e falliscono il
+	 * parsing della response se assente.
+	 */
+	public static String buildLLMResponseId(LLMDialect dialect, String idTransazione) {
+		String base = (idTransazione != null && !idTransazione.isEmpty())
+				? idTransazione
+				: java.util.UUID.randomUUID().toString();
+		base = base.replace("-", "");
+		String prefix = LLMDialect.OPENAI_CHAT_V1.equals(dialect)
+				? LLM_RESPONSE_ID_PREFIX_OPENAI
+				: LLM_RESPONSE_ID_PREFIX_ANTHROPIC;
+		return prefix + base;
 	}
 
 	/** Salva il prezzo input (USD/Mtok). Null o non parsabile -> no-op. */
@@ -575,6 +666,27 @@ public final class LLMHandlerSupport {
 		String content = body != null ? new String(body, java.nio.charset.StandardCharsets.UTF_8) : "";
 		rest.updateContent(content);
 		applyHeaders(msg, headers);
+	}
+
+	/**
+	 * Sostituisce il body con il JSON di errore del dialetto front-door. Applicabile solo ai
+	 * messaggi REST con contenuto testuale JSON (il caso dei body di errore dei provider
+	 * supportati): ritorna false se il messaggio ha un'altra rappresentazione, così che il
+	 * chiamante possa lasciare inalterato il body originale del provider.
+	 */
+	public static boolean applyErrorJsonBody(OpenSPCoop2Message msg, byte[] body) throws MessageException, MessageNotSupportedException {
+		if (msg == null) {
+			throw new MessageException("messaggio nullo: impossibile aggiornare il body di errore");
+		}
+		OpenSPCoop2RestMessage<?> rest = msg.castAsRest();
+		if (!(rest instanceof org.openspcoop2.message.OpenSPCoop2RestJsonMessage)) {
+			log.warn("applyErrorJsonBody: messaggio non JSON (contentType={}), body di errore del provider lasciato inalterato", rest.getContentType());
+			return false;
+		}
+		((org.openspcoop2.message.OpenSPCoop2RestJsonMessage) rest)
+				.updateContent(body != null ? new String(body, java.nio.charset.StandardCharsets.UTF_8) : "");
+		msg.setContentType(org.openspcoop2.utils.transport.http.HttpConstants.CONTENT_TYPE_JSON);
+		return true;
 	}
 
 	private static void applyHeaders(OpenSPCoop2Message msg, Map<String, String> headers) {

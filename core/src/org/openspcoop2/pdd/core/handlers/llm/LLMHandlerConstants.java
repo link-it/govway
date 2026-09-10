@@ -36,7 +36,7 @@ public final class LLMHandlerConstants {
 	 * dell'API LLM. Quando presente nel context indica che la transazione è un
 	 * flusso LLM: gli handler LLM si attivano, altrimenti rimangono no-op.
 	 */
-	public static final MapKey<String> PDD_CTX_LLM_FORMATO = Map.newMapKey("llm.formatoSpecifica");
+	public static final MapKey<String> PDD_CTX_LLM_FORMATO = org.openspcoop2.message.llm.LLMContextKeys.PDD_CTX_LLM_FORMATO;
 
 	/**
 	 * Chiave PdDContext che ospita l'identificativo del provider back-end (es. "anthropic").
@@ -136,6 +136,14 @@ public final class LLMHandlerConstants {
 	 * nel messaggio.
 	 */
 	public static final MapKey<String> PDD_CTX_LLM_CANONICAL_RESPONSE = Map.newMapKey("llm.canonicalResponse");
+
+	/**
+	 * Errore del provider (HTTP non 2xx) nel modello canonical, popolato dall'InResponse
+	 * handler e serializzato nell'envelope di errore del dialetto del client
+	 * dall'OutResponse handler. Quando è valorizzata, la chiave
+	 * {@link #PDD_CTX_LLM_CANONICAL_RESPONSE} resta nulla.
+	 */
+	public static final MapKey<String> PDD_CTX_LLM_CANONICAL_ERROR = Map.newMapKey("llm.canonicalError");
 
 	/**
 	 * Chiave PdDContext che indica se la transazione è in modalità streaming

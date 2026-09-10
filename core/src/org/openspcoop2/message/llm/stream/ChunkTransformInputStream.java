@@ -182,27 +182,36 @@ public class ChunkTransformInputStream extends FilterInputStream {
 		if (raw == null) {
 			this.upstreamEof = true;
 			drainUnderlyingOnEof();
+			try {
+				emitEvents(this.decoder.flush());
+			} catch (LLMTransformException e) {
+				throw new IOException("Errore nella trasformazione chunk SSE LLM (flush): " + e.getMessage(), e);
+			}
 			return;
 		}
 		try {
-			List<CanonicalStreamEvent> events = this.decoder.decode(raw);
-			if (events == null || events.isEmpty()) {
-				return; // chunk semanticamente innocuo: salta
-			}
-			notifyUsage(events);
-			if (this.eventInterceptor != null) {
-				events = this.eventInterceptor.apply(events);
-				if (events == null || events.isEmpty()) {
-					return;
-				}
-			}
-			byte[] out = encodeAll(events);
-			if (out.length > 0) {
-				this.outBuffer = out;
-				this.outOffset = 0;
-			}
+			emitEvents(this.decoder.decode(raw));
 		} catch (LLMTransformException e) {
 			throw new IOException("Errore nella trasformazione chunk SSE LLM: " + e.getMessage(), e);
+		}
+	}
+
+	private void emitEvents(List<CanonicalStreamEvent> decoded) throws LLMTransformException {
+		List<CanonicalStreamEvent> events = decoded;
+		if (events == null || events.isEmpty()) {
+			return; // chunk semanticamente innocuo: salta
+		}
+		notifyUsage(events);
+		if (this.eventInterceptor != null) {
+			events = this.eventInterceptor.apply(events);
+			if (events == null || events.isEmpty()) {
+				return;
+			}
+		}
+		byte[] out = encodeAll(events);
+		if (out.length > 0) {
+			this.outBuffer = out;
+			this.outOffset = 0;
 		}
 	}
 

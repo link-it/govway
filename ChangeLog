@@ -1,3 +1,36 @@
+2026-09-10  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Gateway LLM: le risposte veicolano sempre gli identificativi richiesti dagli SDK client. Per i provider
+	che non li restituiscono (es. AWS Bedrock, che non prevede un id di messaggio e trasporta il modello
+	nella URL della richiesta) l'evento di avvio dello stream e la risposta sincrona vengono completati con
+	un id derivato dall'identificativo di transazione GovWay e con il nome del Provider Binding indicato dal
+	client nella richiesta. In assenza di tali campi gli SDK (Anthropic, OpenAI) interrompono l'elaborazione
+	della risposta con un errore di parsing.
+
+	* [GovWayCore]
+	Gateway LLM: corretta la posizione del conteggio dei token nelle risposte in streaming dei provider che
+	lo inviano dopo la chiusura del messaggio (AWS Bedrock con l'evento 'metadata', OpenAI con il chunk
+	finale contenente 'usage'). Il conteggio viene ora veicolato nell'evento che precede la chiusura dello
+	stream, come atteso dai dialetti front-door: in precedenza il client riceveva valori a zero, seguiti da
+	un evento successivo alla chiusura del messaggio. I valori di token e costo registrati sulla transazione
+	non cambiano.
+
+	* [GovWayCore]
+	Gateway LLM: la risposta in streaming verso il client viene esposta con content type 'text/event-stream'
+	anche quando il provider utilizza un transport differente (es. AWS event-stream), coerentemente con il
+	formato SSE effettivamente prodotto; i body di errore vengono esposti come 'application/json'.
+
+	* [GovWayCore]
+	Gateway LLM: gli errori vengono restituiti al client nell'envelope di errore del dialetto con cui e'
+	stata invocata l'API (OpenAI o Anthropic), qualunque ne sia l'origine: errori del provider back-end
+	(normalizzati a partire dalla forma nativa di ciascun provider supportato), errori generati dal gateway
+	(API sospesa, violazione di una policy di rate limiting, autenticazione, autorizzazione, ...) ed errori
+	segnalati dal provider a stream gia' avviato, questi ultimi in precedenza non propagati al client, che
+	interpretava quindi la risposta troncata come completa. La tipologia dell'errore e' derivata dallo stato
+	HTTP e mappata sui valori previsti dal dialetto; stato HTTP, header informativi, diagnostici ed esito
+	registrato sulla transazione non cambiano.
+
 2026-07-16  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole]
@@ -8,7 +41,15 @@
 	di banda: raggiunta la soglia, le richieste successive vengono bloccate. Il valore di token e costo
 	è rilevato a fine risposta (anche in streaming) dai dati LLM della transazione; il costo stimato è
 	espresso in dollari (accumulo interno ad alta precisione). Aggiornati i nuovi diagnostici di
-	violazione policy (codici C18-C21).
+	violazione policy (codici C18-C21). Al client vengono inoltre esposti i relativi header informativi
+	'GovWay-RateLimit-Token*'/'GovWay-RateLimit-Cost-*' (Limit/Remaining/Reset).
+
+	* [GovWayCore]
+	Gateway LLM: introdotto il mascheramento degli header specifici del backend nella risposta verso il
+	client (es. 'anthropic-*', 'x-ratelimit-*', 'x-amzn-*', 'request-id', 'cf-ray'). Gli header restano
+	visibili nella registrazione del messaggio in ingresso ma vengono rimossi da quello in uscita, così
+	da non esporre il provider sottostante. La lista degli header da rimuovere e' configurabile per ogni
+	tipo di provider supportato (anthropic, openai, awsBedrock) ed e' facilmente estendibile a nuovi provider.
 
 2026-07-15  Andrea Poli <apoli@link.it>
 

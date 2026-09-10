@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.message.llm.transform;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.openspcoop2.message.llm.stream.CanonicalStreamEvent;
@@ -50,4 +51,14 @@ public interface LLMInboundProviderChunkDecoder {
 	 * Lista vuota = il chunk è semanticamente innocuo (es. ping ignorato).
 	 */
 	List<CanonicalStreamEvent> decode(LLMProviderRawChunk chunk) throws LLMTransformException;
+
+	/**
+	 * Invocato una sola volta a EOF dello stream sorgente, prima del terminator
+	 * dell'encoder front-door: consente ai decoder stateful di emettere gli eventi
+	 * canonical eventualmente trattenuti (es. un {@code message_stop} posticipato in
+	 * attesa dell'usage finale). Default: nessun evento pendente.
+	 */
+	default List<CanonicalStreamEvent> flush() throws LLMTransformException {
+		return Collections.emptyList();
+	}
 }
