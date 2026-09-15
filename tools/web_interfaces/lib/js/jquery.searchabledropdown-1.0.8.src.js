@@ -335,7 +335,13 @@
                 "left": 0,
                 "width":  self.outerWidth() - 1,
                 "height": self.outerHeight(),
-                "background-color": "transparent"
+                "background-color": "transparent",
+                /* Il velo e' gia' del tutto trasparente, ma resta un elemento sovrapposto al
+                   testo del select: gli strumenti di verifica del contrasto vedono qualcosa
+                   sopra e rinunciano a determinare lo sfondo. Con 'opacity: 0' l'elemento
+                   non e' piu' considerato dipinto, e continua a ricevere i clic — che sono
+                   la sua unica ragione d'essere. */
+                "opacity": 0
             });
 
             // overlay text field for searching capability

@@ -15,14 +15,14 @@ xmlns="http://www.w3.org/1999/xhtml"
 			<li>
 				<a4j:htmlCommandLink action="transazioniStart" value="#{msg['menu.monitoraggio.storico']}" rendered="#{searchFormTransazioni.periodo != 'Live'}"/>
 			</li>
-			<li><h:graphicImage value="/images/tema_link/next_white.png" width="16" height="16"/></li>
+			<li><h:graphicImage alt="" value="/images/tema_link/next_white.png" width="16" height="16"/></li>
 			<a4j:outputPanel rendered="#{searchFormTransazioni.periodo != 'Live' and searchFormTransazioni.livelloRicerca == 2}">
 				<li>
 					<a4j:htmlCommandLink action="transazioni_lvl2"  rendered="#{searchFormTransazioni.livelloRicerca == 2}" value="#{searchFormTransazioni.tipoStoricoLivello2Label}">
 						<f:setPropertyActionListener value="#{searchFormTransazioni.modalitaRicercaStorico}" target="#{transazioniBean.tipoStorico}" />
 					</a4j:htmlCommandLink>
 				</li>
-				<li><h:graphicImage value="/images/tema_link/next_white.png" width="16" height="16"/></li>
+				<li><h:graphicImage alt="" value="/images/tema_link/next_white.png" width="16" height="16"/></li>
 			</a4j:outputPanel>
 			<li><h:outputText id="msgLabelRicercaSceltaDiag" value="#{searchFormTransazioni.tipoStoricoLabel}" styleClass="ultimo-path"/></li>
 		</ul>	
@@ -376,7 +376,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 					</f:facet>
 					<f:facet name="controls">	
 						<h:panelGroup id="panelChiudiExportCsv">
-			                <h:graphicImage value="/images/tema_link/clear_white.png" id="hidelinkplugin"/>
+			                <h:graphicImage alt="Chiudi" value="/images/tema_link/clear_white.png" id="hidelinkplugin"/>
 			                <rich:componentControl id="componentPlugin" for="exportCsvModalPnl" attachTo="hidelinkplugin" operation="hide" event="onclick"/>
 			            </h:panelGroup>
 					</f:facet>
@@ -441,7 +441,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 													        			onmouseup="this.className='rich-list-shuttle-button'" 
 													        			onmouseout="this.className='rich-list-shuttle-button'">
 													        			<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
-													        				<h:graphicImage value="/images/tema_link/move_top.png"/>
+													        				<h:graphicImage alt="Sposta in cima" value="/images/tema_link/move_top.png"/>
 													        			</a4j:outputPanel>
 													        	</a4j:outputPanel>
 													        </f:facet>
@@ -449,7 +449,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 													        <f:facet name="topControlDisabled">
 													        	<a4j:outputPanel styleClass="rich-list-shuttle-button-disabled" layout="block">
 													        		<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
-													        			 <h:graphicImage value="/images/tema_link/move_top_disabilitato.png"/>
+													        			 <h:graphicImage alt="" value="/images/tema_link/move_top_disabilitato.png"/>
 													        		</a4j:outputPanel>
 													        	</a4j:outputPanel>
 													        </f:facet>
@@ -460,7 +460,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 													        			onmouseup="this.className='rich-list-shuttle-button'" 
 													        			onmouseout="this.className='rich-list-shuttle-button'">
 													        			<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
-													        				<h:graphicImage value="/images/tema_link/move_bottom.png"/>
+													        				<h:graphicImage alt="Sposta in fondo" value="/images/tema_link/move_bottom.png"/>
 													        			</a4j:outputPanel>
 													        	 </a4j:outputPanel>
 													        </f:facet>
@@ -468,7 +468,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 													        <f:facet name="bottomControlDisabled">
 													       		<a4j:outputPanel styleClass="rich-list-shuttle-button-disabled" layout="block">
 													        		<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
-													        			<h:graphicImage value="/images/tema_link/move_bottom_disabilitato.png"/>
+													        			<h:graphicImage alt="" value="/images/tema_link/move_bottom_disabilitato.png"/>
 													        		</a4j:outputPanel>
 													        	</a4j:outputPanel>
 													        </f:facet>
@@ -479,7 +479,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 													        			onmouseup="this.className='rich-list-shuttle-button'" 
 													        			onmouseout="this.className='rich-list-shuttle-button'">
 													        			<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
-													        				<h:graphicImage value="/images/tema_link/move_up.png"/>
+													        				<h:graphicImage alt="Sposta in alto" value="/images/tema_link/move_up.png"/>
 													        			</a4j:outputPanel>
 													        	 </a4j:outputPanel>
 													        </f:facet>
@@ -487,7 +487,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 													        <f:facet name="upControlDisabled">
 													        <a4j:outputPanel styleClass="rich-list-shuttle-button-disabled" layout="block">
 													        		<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
-													        			<h:graphicImage value="/images/tema_link/move_up_disabilitato.png"/>
+													        			<h:graphicImage alt="" value="/images/tema_link/move_up_disabilitato.png"/>
 													        		</a4j:outputPanel>
 													        	</a4j:outputPanel>
 													        </f:facet>
@@ -498,7 +498,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 													        			onmouseup="this.className='rich-list-shuttle-button'" 
 													        			onmouseout="this.className='rich-list-shuttle-button'">
 													        			<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
-													        				<h:graphicImage value="/images/tema_link/move_down.png"/>
+													        				<h:graphicImage alt="Sposta in basso" value="/images/tema_link/move_down.png"/>
 													        			</a4j:outputPanel>
 													        	 </a4j:outputPanel>
 													        </f:facet>
@@ -506,7 +506,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 													        <f:facet name="downControlDisabled">
 													        <a4j:outputPanel styleClass="rich-list-shuttle-button-disabled" layout="block">
 													        		<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
-													        			 <h:graphicImage value="/images/tema_link/move_down_disabilitato.png"/>
+													        			 <h:graphicImage alt="" value="/images/tema_link/move_down_disabilitato.png"/>
 													        		</a4j:outputPanel>
 													        	</a4j:outputPanel>
 													        </f:facet>
@@ -517,7 +517,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 													        			onmouseup="this.className='rich-list-shuttle-button'" 
 													        			onmouseout="this.className='rich-list-shuttle-button'">
 													        			<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
-													        				<h:graphicImage value="/images/tema_link/go_next.png"/>
+													        				<h:graphicImage alt="Aggiungi" value="/images/tema_link/go_next.png"/>
 													        			</a4j:outputPanel>
 													        	 </a4j:outputPanel>
 													        </f:facet>
@@ -525,7 +525,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 													        <f:facet name="copyControlDisabled">
 													        <a4j:outputPanel styleClass="rich-list-shuttle-button-disabled" layout="block">
 													        		<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
-													        			<h:graphicImage value="/images/tema_link/go_next_disabilitato.png"/>
+													        			<h:graphicImage alt="" value="/images/tema_link/go_next_disabilitato.png"/>
 													        		</a4j:outputPanel>
 													        	</a4j:outputPanel>
 													        </f:facet>
@@ -536,7 +536,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 													        			onmouseup="this.className='rich-list-shuttle-button'" 
 													        			onmouseout="this.className='rich-list-shuttle-button'">
 													        			<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
-													        				 <h:graphicImage value="/images/tema_link/go_end.png"/>
+													        				 <h:graphicImage alt="Aggiungi tutti" value="/images/tema_link/go_end.png"/>
 													        			</a4j:outputPanel>
 													        	 </a4j:outputPanel>
 													        </f:facet>
@@ -544,7 +544,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 													        <f:facet name="copyAllControlDisabled">
 													        <a4j:outputPanel styleClass="rich-list-shuttle-button-disabled" layout="block">
 													        		<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
-													        			<h:graphicImage value="/images/tema_link/go_end_disabilitato.png"/>
+													        			<h:graphicImage alt="" value="/images/tema_link/go_end_disabilitato.png"/>
 													        		</a4j:outputPanel>
 													        	</a4j:outputPanel>
 													        </f:facet>
@@ -555,7 +555,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 													        			onmouseup="this.className='rich-list-shuttle-button'" 
 													        			onmouseout="this.className='rich-list-shuttle-button'">
 													        			<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
-													        				<h:graphicImage value="/images/tema_link/go_prev.png"/>
+													        				<h:graphicImage alt="Rimuovi" value="/images/tema_link/go_prev.png"/>
 													        			</a4j:outputPanel>
 													        	 </a4j:outputPanel>
 													        </f:facet>
@@ -563,7 +563,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 													        <f:facet name="removeControlDisabled">
 													        <a4j:outputPanel styleClass="rich-list-shuttle-button-disabled" layout="block">
 													        		<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
-													        			<h:graphicImage value="/images/tema_link/go_prev_disabilitato.png"/>
+													        			<h:graphicImage alt="" value="/images/tema_link/go_prev_disabilitato.png"/>
 													        		</a4j:outputPanel>
 													        	</a4j:outputPanel>
 													        </f:facet>
@@ -574,7 +574,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 													        			onmouseup="this.className='rich-list-shuttle-button'" 
 													        			onmouseout="this.className='rich-list-shuttle-button'">
 													        			<a4j:outputPanel layout="block" styleClass="rich-list-shuttle-button-content">
-													        				<h:graphicImage value="/images/tema_link/go_start.png"/>
+													        				<h:graphicImage alt="Rimuovi tutti" value="/images/tema_link/go_start.png"/>
 													        			</a4j:outputPanel>
 													        	 </a4j:outputPanel>
 													        </f:facet>
@@ -582,7 +582,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 													        <f:facet name="removeAllControlDisabled">
 													        	<a4j:outputPanel styleClass="rich-list-shuttle-button-disabled" layout="block">
 													        		<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
-													        			<h:graphicImage value="/images/tema_link/go_start_disabilitato.png"/>
+													        			<h:graphicImage alt="" value="/images/tema_link/go_start_disabilitato.png"/>
 													        		</a4j:outputPanel>
 													        	</a4j:outputPanel>
 													        </f:facet>
@@ -805,7 +805,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 								</style>
 							  <div class="buttonrowmodal">
 							      <h:panelGrid columns="2">
-							        <h:graphicImage value="/images/tema_link/alert_orange.png" />
+							        <h:graphicImage alt="" value="/images/tema_link/alert_orange.png" />
 							        <a4j:outputPanel styleClass="pnl-fnt-wght-bld-txt-align-l">
 							        	<p class="p-modal-riga1">Il server non ha risposto in tempo.</p>
 							        	<p class="p-modal-riga2">Prova a modificare i criteri di ricerca.</p>

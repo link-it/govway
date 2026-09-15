@@ -52,7 +52,7 @@
 	                       
 	                      </h:panelGroup>
 	                    </f:facet>
-	                    <h:selectBooleanCheckbox id="#{id}_column_ckb" value="#{selectionMapTarget}" disabled="false"/>
+	                    <h:selectBooleanCheckbox id="#{id}_column_ckb" title="Seleziona la riga" value="#{selectionMapTarget}" disabled="false"/>
 	                  </rich:column>
 					  
 					  <ui:insert/>
@@ -91,7 +91,7 @@
 			   <div class="form-container noborder">
 				  <div class="buttonrowmodal">
 			      	<h:panelGrid columns="2">
-			        	 <h:graphicImage value="/images/tema_link/alert_orange.png" />
+			        	 <h:graphicImage alt="" value="/images/tema_link/alert_orange.png" />
 				 		<h:outputText value="Eliminare elementi selezionati?" styleClass="output-text-font-weight-bold" />
 			      	</h:panelGrid>
 				</div>

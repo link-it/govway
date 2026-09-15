@@ -44,8 +44,8 @@
 						</a4j:support>
 						<a4j:outputPanel layout="block" id="entryIconeTransazione" styleClass="entryIconeTransazione" rendered="#{visualizzaStoricoCustomColonnaRuoloTransazioneEnabled}">
 							<a4j:outputPanel layout="block" id="entryRuoloTransazione" styleClass="#{item.pddRuolo=='DELEGATA' ? 'entryRuoloTransazioneFruizione' : 'entryRuoloTransazioneErogazione'}">
-								<h:graphicImage value="/images/tema_link/erogazione_white_48.png" rendered="#{item.pddRuolo!='DELEGATA'}"/>
-								<h:graphicImage value="/images/tema_link/fruizione_white_48.png" rendered="#{item.pddRuolo=='DELEGATA'}"/>
+								<h:graphicImage alt="#{item.pddRuoloToolTip}" value="/images/tema_link/erogazione_white_48.png" rendered="#{item.pddRuolo!='DELEGATA'}"/>
+								<h:graphicImage alt="#{item.pddRuoloToolTip}" value="/images/tema_link/fruizione_white_48.png" rendered="#{item.pddRuolo=='DELEGATA'}"/>
 								<rich:toolTip for="entryRuoloTransazione" value="#{item.pddRuoloToolTip}" />
 							</a4j:outputPanel>
 						</a4j:outputPanel>
@@ -70,8 +70,8 @@
 									
 									<a4j:outputPanel layout="block" id="titoloIconaRuolo" styleClass="titoloIconaRuolo">
 										<a4j:outputPanel id="imgRuoloTransazione2">
-											<h:graphicImage value="/images/tema_link/erogazione_black_24.png" rendered="#{item.pddRuolo!='DELEGATA'}"/>
-											<h:graphicImage value="/images/tema_link/fruizione_black_24.png" rendered="#{item.pddRuolo=='DELEGATA'}"/>
+											<h:graphicImage alt="#{item.pddRuoloToolTip}" value="/images/tema_link/erogazione_black_24.png" rendered="#{item.pddRuolo!='DELEGATA'}"/>
+											<h:graphicImage alt="#{item.pddRuoloToolTip}" value="/images/tema_link/fruizione_black_24.png" rendered="#{item.pddRuolo=='DELEGATA'}"/>
 											<rich:toolTip for="imgRuoloTransazione2" value="#{item.pddRuoloToolTip}" rendered="#{not visualizzaStoricoCustomColonnaRuoloTransazioneEnabled}" />
 										</a4j:outputPanel>
 									</a4j:outputPanel>
@@ -85,7 +85,7 @@
 											<h:outputText value="Richiedente: "/>
 											<h:outputText value="#{item.richiedente}" />
 										</rich:toolTip>
-										<h:graphicImage id="outServizioApplicativoFruitoreAnonimo" value="/images/tema_link/anonymous.png" rendered="#{empty item.labelRichiedenteConFruitore}">
+										<h:graphicImage alt="Applicativo fruitore anonimo" id="outServizioApplicativoFruitoreAnonimo" value="/images/tema_link/anonymous.png" rendered="#{empty item.labelRichiedenteConFruitore}">
 											<rich:toolTip for="outServizioApplicativoFruitoreAnonimo">
 												<h:outputText value="Richiesta Anonima" />
 											</rich:toolTip>

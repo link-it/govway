@@ -16,7 +16,18 @@ a.titoloEntry {
    Non e' nascosto con 'display:none' ne' con 'visibility:hidden', che lo renderebbero non
    focalizzabile: viene spostato fuori dall'area visibile e rientra quando riceve il focus
    da tastiera. Resta quindi invisibile a chi usa il mouse. */
-.gw-salta-al-contenuto {
+/* Tutti gli stati in un solo selettore, e non per eleganza: le regole generali 'a:hover' e
+   'a:visited' hanno specificita' (0,1,1) e batterebbero la sola classe (0,1,0). Il
+   collegamento, una volta visitato o sfiorato, prendeva il colore dei collegamenti e
+   spariva sul proprio fondo scuro: chi ci arrivava tornando indietro con Maiusc+Tab
+   trovava un riquadro nero, selezionabile ma illeggibile. Elencando le pseudo-classi la
+   specificita' sale a (0,2,0) e vince. */
+.gw-salta-al-contenuto,
+.gw-salta-al-contenuto:link,
+.gw-salta-al-contenuto:visited,
+.gw-salta-al-contenuto:hover,
+.gw-salta-al-contenuto:focus,
+.gw-salta-al-contenuto:active {
 	position: absolute;
 	left: -9999px;
 	top: 0;
@@ -483,6 +494,7 @@ a.td2PageHeader:visited {
     padding-bottom: 8px;
 }
 
+div.voceMenu:focus-within,
 div.voceMenu:hover {
 	cursor: pointer;
 	background: ${menu.element.hover.background.color};
@@ -501,6 +513,7 @@ div.voceMenu:hover {
 	padding: 0px;
 }
 
+.voceMenu a:focus,
 .voceMenu a:hover{
 	font-weight: 600;
 	color: ${menu.element.hover.color};
@@ -526,6 +539,7 @@ div.voceMenu:hover {
     height: 35px;
 }
 
+div.voceMenuRC:focus-within,
 div.voceMenuRC:hover {
 	cursor: pointer;
 	background: ${menu.element.hover.background.color};
@@ -554,6 +568,11 @@ div.voceMenuRC:hover {
     height: 27px;
 }
 
+/* Il contenitore, evidenziato, prende un bordo sinistro di 12px: il collegamento e'
+   posizionato in modo assoluto rispetto ad esso, quindi si sposterebbe di altrettanto. Il
+   prodotto lo compensa gia' con 'left: -12px' al passaggio del mouse; la stessa
+   compensazione serve al fuoco, altrimenti la voce raggiunta da tastiera appare rientrata. */
+.voceMenuRC a:focus,
 .voceMenuRC a:hover{
 	font-weight: 600;
 	color: ${menu.element.hover.color};
@@ -1265,6 +1284,7 @@ div.container-menu-display-none {
 	padding: 8px 8px 8px 16px; 
 }
 
+.menu-item-no-icon:focus-within,
 .menu-item-no-icon:hover {
 	border-left: 12px solid ${menu.element.hover.border.color};
     padding-left: 4px;
@@ -1280,6 +1300,7 @@ div.container-menu-display-none {
 	padding: 8px 0px 8px 24px; 
 }
 
+.menu-item:focus-within,
 .menu-item:hover {
 	border-left: 12px solid ${menu.element.hover.border.color};
 	background: ${menu.element.hover.background.color};
@@ -1295,6 +1316,7 @@ div.container-menu-display-none {
 	padding: 8px 0px 8px 8px;
 }
 
+.menu-item-with-icon:focus-within,
 .menu-item-with-icon:hover {
 	border-left: 4px solid ${menu.element.hover.border.color};
 	background: ${menu.element.hover.background.color};
@@ -3018,3 +3040,21 @@ div.version-notice {
 	background-position: center center;
 }
 
+/* Stessa resa con il mouse e con la tastiera nei menu della testata. Lo stile di
+   evidenziazione e' definito su ':hover' del contenitore, ma da tastiera il fuoco sta sul
+   collegamento interno: si aggiunge quindi ':focus-within' agli stessi selettori. Il
+   contorno predefinito del browser viene tolto perche' l'evidenziazione — fondo, barra
+   laterale e grassetto — e' gia' l'indicatore del fuoco, ed e' quella che l'applicazione
+   usa da sempre. */
+.menu-item a:focus,
+.menu-item-no-icon a:focus,
+.menu-item-with-icon a:focus {
+	outline: none;
+}
+
+/* Anche nel menu di sinistra l'evidenziazione del prodotto vale come indicatore del fuoco:
+   fondo, barra laterale e grassetto. Il contorno predefinito si sovrapporrebbe soltanto. */
+.voceMenu a:focus,
+.voceMenuRC a:focus {
+	outline: none;
+}

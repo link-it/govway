@@ -210,8 +210,199 @@ function generateChart(id, _dataJson, _type, _size, _barwidth) {
                 var _txWarning = _grid_size.width/2 + (_newXWarning - _warning.getBBox().x);
                 _warning.setAttribute('transform', 'translate('+_txWarning+')');
             }
+            coloraEtichetteFette(_svg);
+            osservaSbiadimentoFette(_svg);
+            descriviGrafico(_svg);
         }
     };
+
+    /*
+     * Le percentuali stampate sopra le fette erano sempre bianche (c3: '.c3-chart-arc text
+     * { fill: #fff }'), ma la tavolozza dei grafici ha 34 colori su 50 sui quali il bianco
+     * non raggiunge il rapporto di contrasto di 4,5:1 richiesto da WCAG 1.4.3: sul giallo
+     * #d8d23a dava 1,59:1. Il colore viene quindi scelto fetta per fetta, secondo la
+     * luminanza dello sfondo: nero sulle fette chiare, bianco sulle scure. Verificato su
+     * tutti e 50 i colori della tavolozza che almeno uno dei due supera 4,5:1 (il caso piu'
+     * stretto e' 4,83:1). Lo sfondo considerato e' quello effettivamente reso, fusione con
+     * il bianco della tela quando la fetta e' sbiadita.
+     */
+    function luminanzaRelativa(colore) {
+        var canali = String(colore).match(/[\d.]+/g);
+        if(!canali || canali.length < 3) {
+            return null;
+        }
+        var lin = canali.slice(0, 3).map(function(v) {
+            var c = v / 255;
+            return (c <= 0.04045) ? (c / 12.92) : Math.pow((c + 0.055) / 1.055, 2.4);
+        });
+        return 0.2126*lin[0] + 0.7152*lin[1] + 0.0722*lin[2];
+    }
+
+    function rapportoContrasto(l1, l2) {
+        return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
+    }
+
+    /*
+     * Un grafico e' un'immagine, e come tale va nominato (WCAG 1.1.1). Il browser espone
+     * l'SVG come immagine e ne costruisce il nome da tutto il testo che contiene: chi usa
+     * uno screen reader si sentiva leggere, in quest'ordine, le percentuali sciolte, le
+     * tacche dell'asse («0, 100000000, 200000000…»), le voci di legenda con i valori e solo
+     * alla fine il titolo — senza sapere, fino a quel momento, cosa stesse ascoltando.
+     *
+     * Il nome viene quindi dichiarato: prima che cos'e' e di che periodo, poi le voci con i
+     * loro valori, prese dalla legenda, che e' gia' formattata e tradotta. Le tacche degli
+     * assi restano fuori: non sono dati, sono la griglia su cui i dati sono disegnati.
+     *
+     * L'elenco delle voci e' limitato: oltre una certa lunghezza un nome non si ascolta, si
+     * subisce. Chi deve leggere tutti i valori ha il report «Tabella» della stessa
+     * distribuzione, che espone gli stessi risultati in una tabella vera.
+     *
+     * Nulla di visibile cambia: sono attributi, non contenuto.
+     */
+    /*
+     * Nella legenda i nomi lunghi sono troncati per stare nello spazio disponibile
+     * («LoadBalanceSessioneStickyParametroUrlRandomMaxAge..»): nel disegno ha senso, letto
+     * ad alta voce e' un nome monco. Il nome intero e' gia' in 'legendTooltip' — quello che
+     * il grafico mostra passandoci sopra col mouse — indicizzato per posizione sulle torte
+     * e per identificativo di serie negli altri grafici, come fa il suggerimento stesso.
+     * Numerazione e valore restano quelli della legenda.
+     */
+    function nomeIntero(elemento, indice, testoLegenda) {
+
+        if(!c3.extra || !c3.extra.legendTooltip) {
+            return testoLegenda;
+        }
+
+        var chiave = indice;
+        if(c3.extra.type !== 'pie') {
+            chiave = (typeof d3 !== 'undefined' && d3.select) ? d3.select(elemento).datum() : null;
+        }
+        if(chiave === null || chiave === undefined) {
+            return testoLegenda;
+        }
+
+        var completo = c3.extra.legendTooltip[chiave];
+        if(!completo) {
+            return testoLegenda;
+        }
+        completo = String(completo).replace(/\s+/g, ' ').trim();
+        if(!completo || completo === testoLegenda) {
+            return testoLegenda;
+        }
+
+        var numero = (testoLegenda.match(/^\s*(\d+)\.\s/) || [])[1];
+        var valore = (testoLegenda.match(/\(([^()]*)\)\s*$/) || [])[1];
+
+        return (numero ? numero + '. ' : '') + completo + (valore ? ' (' + valore + ')' : '');
+    }
+
+    function descriviGrafico(svg) {
+
+        if(!svg || !svg.querySelectorAll) {
+            return;
+        }
+
+        var parti = [];
+        var titolo = svg.querySelector('#title');
+        var sottotitolo = svg.querySelector('#subtitle');
+
+        if(titolo && titolo.textContent.trim()) {
+            parti.push(titolo.textContent.trim());
+        }
+        if(sottotitolo && sottotitolo.textContent.trim()) {
+            parti.push(sottotitolo.textContent.trim());
+        }
+
+        var avviso = svg.querySelector('#warning, text.c3-chart-nodata');
+        if(avviso && avviso.textContent.trim() && avviso.getBoundingClientRect().width > 0) {
+            parti.push(avviso.textContent.trim());
+        } else {
+            var voci = [];
+            var elementi = svg.querySelectorAll('.c3-legend-item');
+            for(var i = 0; i < elementi.length && i < 20; i++) {
+                var voce = elementi[i].textContent.replace(/\s+/g, ' ').trim();
+                if(voce) {
+                    voci.push(nomeIntero(elementi[i], i, voce));
+                }
+            }
+            if(voci.length) {
+                parti.push('Voci: ' + voci.join('; ') + '.');
+                if(elementi.length > voci.length) {
+                    parti.push('Altre ' + (elementi.length - voci.length) + ' voci non elencate.');
+                }
+            }
+            parti.push('Gli stessi dati sono disponibili nel report «Tabella» della stessa distribuzione.');
+        }
+
+        svg.setAttribute('role', 'img');
+        svg.setAttribute('aria-label', parti.join('. ').replace(/\.\s*\./g, '.'));
+    }
+
+    /*
+     * Colore realmente reso dalla fetta: quando la serie non e' quella evidenziata, c3 la
+     * rende semitrasparente, e il colore che conta e' la fusione con il bianco della tela.
+     * Senza questo la scelta si basa sul colore pieno e, sulle fette sbiadite, sbaglia.
+     */
+    function fondoFetta(fetta) {
+        var stile = window.getComputedStyle(fetta);
+        var canali = String(stile.fill).match(/[\d.]+/g);
+        if(!canali || canali.length < 3) {
+            return null;
+        }
+        var alfa = parseFloat(stile.opacity) * parseFloat(stile.fillOpacity || 1);
+        if(!isFinite(alfa)) {
+            alfa = 1;
+        }
+        var fusi = canali.slice(0, 3).map(function(v) {
+            return alfa * v + (1 - alfa) * 255;
+        });
+        return 'rgb(' + fusi.join(',') + ')';
+    }
+
+    function coloraEtichetteFette(svg) {
+        if(!svg || !svg.querySelectorAll) {
+            return;
+        }
+        var etichette = svg.querySelectorAll('.c3-chart-arc text');
+        for(var i = 0; i < etichette.length; i++) {
+            var etichetta = etichette[i];
+            var fetta = etichetta.parentNode ? etichetta.parentNode.querySelector('path') : null;
+            if(!fetta) {
+                continue;
+            }
+            var lSfondo = luminanzaRelativa(fondoFetta(fetta));
+            if(lSfondo === null) {
+                continue;
+            }
+            var suBianco = rapportoContrasto(1, lSfondo);
+            var suNero = rapportoContrasto(0, lSfondo);
+            etichetta.style.fill = (suNero > suBianco) ? '#000000' : '#ffffff';
+        }
+    }
+
+    /*
+     * c3 sbiadisce e riporta a pieno le serie mentre il puntatore si sposta fra le fette e
+     * le voci di legenda: il fondo delle etichette cambia dopo il disegno, quindi il colore
+     * va riscelto ad ogni cambio di stato. Si osserva la sola classe delle fette; il
+     * ricalcolo tocca 'style.fill' del testo e non puo' quindi richiamare l'osservatore.
+     */
+    function osservaSbiadimentoFette(svg) {
+        if(!svg || svg.gwOsservatoSbiadimento || typeof MutationObserver === 'undefined') {
+            return;
+        }
+        svg.gwOsservatoSbiadimento = true;
+        var inCoda = false;
+        new MutationObserver(function() {
+            if(inCoda) {
+                return;
+            }
+            inCoda = true;
+            window.requestAnimationFrame(function() {
+                inCoda = false;
+                coloraEtichetteFette(svg);
+            });
+        }).observe(svg, { attributes: true, attributeFilter: ['class'], subtree: true });
+    }
 
     if(dp.valoreRealeTorta) {
         options.pie = { label: { format: function (value, ratio, id) { return d3.format('.1f')(value*100/c3.extra.pieTotal)+'%'; } } };
@@ -334,6 +525,11 @@ function generateChart(id, _dataJson, _type, _size, _barwidth) {
 
     svg.appendChild(title);
     svg.appendChild(subtitle);
+
+    /* Titolo e sottotitolo nascono qui, dopo la generazione: al primo 'onrendered' non
+       esistevano ancora e il nome del grafico ne restava privo. Lo si dichiara di nuovo
+       adesso; la funzione e' idempotente e ricalcola il nome da quello che trova. */
+    descriviGrafico(svg);
     var s = title.getBBox();
     var st = subtitle.getBBox();
     title.setAttributeNS(null,"x", (dp.size.w-s.width)/2);
@@ -648,7 +844,12 @@ function chartMapping(_dataJson, _type, _size) {
     dpChart.labelRef = labelRef;
     dpChart.catsTooltip = {};
     dpChart.cats = [];
-    if( _type !== 'pie' ||  _type !== 'heatmap') {
+    /* La condizione era '_type !== "pie" || _type !== "heatmap"', vera per qualunque tipo:
+       un valore non puo' essere insieme 'pie' e 'heatmap'. Per le torte il blocco azzerava
+       quindi la mappa dei nomi interi appena costruita poche righe sopra, e il suggerimento
+       della legenda mostrava «undefined». Per gli altri tipi il blocco serve — e' qui che la
+       legenda viene troncata — e resta invariato; il caso 'heatmap' e' lasciato com'era. */
+    if( _type !== 'pie') {
         dpChart.legendTooltip = {};
         Object.keys(dpChart.labelRef).forEach(function(key) {
             dpChart.legendTooltip[key] = dpChart.labelRef[key];

@@ -218,6 +218,9 @@
     padding: 0px;
 }
 
+/* Stessa resa con il mouse e con la tastiera: la classe la mette il componente al
+   passaggio del mouse, il fuoco arriva sullo stesso elemento. */
+.rich-pmenu-item:focus td.rich-pmenu-item-label,
 .rich-pmenu-hovered-element td.rich-pmenu-item-label {
 	color: ${menu.element.hover.color};
 	border-left: 12px solid ${menu.element.hover.border.color};
@@ -232,6 +235,7 @@
 	
 }
 
+.rich-pmenu-item:focus,
 .rich-pmenu-hovered-element {
 	background: ${menu.element.hover.background.color};
 	color: ${menu.element.hover.color};
@@ -383,6 +387,14 @@ th.extdt-empty-cell.rich-extdt-subheadercell {
 	line-height: 36px;
 }
 
+/* Il campo del comboBox e' posizionato in modo assoluto e non contribuisce all'altezza
+   del contenitore: nella paginazione la riga restava alta 11px e le frecce, centrate su
+   di essa, apparivano piu' alte del campo (scostamento misurato: 9,5px). L'altezza si
+   dichiara come già si fa per i form ('div.form-container div.rich-combobox'). */
+.rich-dtascroller-table div.rich-combobox {
+	height: 29px;
+}
+
 .rich-datascr-button {
 	border: none;
 	color: ${table.datascroller.button.color};
@@ -421,6 +433,12 @@ th.extdt-empty-cell.rich-extdt-subheadercell {
 	border-top-color: ${table.thead.action.menu.border.color};
 }
 
+/* Stessa resa con il mouse e con la tastiera. Le classi '-hover' le mette il componente
+   al passaggio del mouse; da tastiera il fuoco e' sull'elemento stesso, quindi le stesse
+   dichiarazioni valgono anche per ':focus'. Senza questo, la voce raggiunta con le frecce
+   mostrava il solo contorno predefinito del browser, diverso dall'evidenziazione del
+   prodotto. */
+.rich-menu-item:focus, .rich-menu-group:focus,
 .rich-menu-item-hover, .rich-menu-group-hover {
 	background-color: ${table.thead.action.menu.item.hover.background.color};
 	border-color: ${table.thead.action.menu.item.hover.border.color};
@@ -532,6 +550,7 @@ span.nomeUtenteImg {
 	display: none;
 }
 
+#menuUtente_menu div.rich-menu-list-bg div.rich-menu-item:focus,
 #menuUtente_menu div.rich-menu-list-bg div.rich-menu-item-hover {
 	text-decoration: ${page.header.text.hover.decoration};
 	color: ${page.header.text.hover.color};
@@ -609,6 +628,10 @@ span.modalitaImg {
 	font-weight: 600;
 }
 
+/* La regola di questo menu elenca due selettori e termina con una virgola: il ':focus' non
+   vi era stato aggiunto, e la voce raggiunta da tastiera ricadeva sulla regola generica dei
+   menu delle tabelle, di tutt'altro colore. */
+#menuModalita_menu div.rich-menu-list-bg div.rich-menu-item:focus,
 #menuModalita_menu div.rich-menu-list-bg div.rich-menu-item-hover,
 #menuModalita_menu div.rich-menu-list-bg div.rich-menu-item.rich-menu-item-disabled:hover  {
 	text-decoration: ${page.header.text.hover.decoration};
@@ -689,6 +712,7 @@ span.soggettoImg {
 	font-weight: 600;
 }
 
+#menuSoggetto_menu div.rich-menu-list-bg div.rich-menu-item:focus,
 #menuSoggetto_menu div.rich-menu-list-bg div.rich-menu-item-hover,
 #menuSoggetto_menu div.rich-menu-list-bg div.rich-menu-item.rich-menu-item-disabled:hover {
 	text-decoration: ${page.header.text.hover.decoration};
@@ -821,8 +845,13 @@ span.soggettoImg {
 	font-size: 14px;
 }
 
+/* Lo stato 'attivo' sostituisce la classe della cella e perdeva le dichiarazioni del
+   carattere, ereditando gli 11px dello skin RichFaces: la voce attiva si rimpiccioliva.
+   Le due dichiarazioni sono quindi ripetute anche qui. */
 .rich-shuttle-source-cell-active, .rich-shuttle-target-cell-active{
 	border:none;
+	font-family: 'Roboto';
+	font-size: 14px;
 }
 
 .rich-shuttle-source-row-selected, .rich-shuttle-target-row-selected {
@@ -1348,13 +1377,21 @@ input.rich-combobox-input{
 	border-color: ${input.border.color};
 }
 
+/* Area di attivazione 24x24 (WCAG 2.5.8) senza deformare la freccia: con
+   'box-sizing: border-box' la spaziatura interna riduce il riquadro dell'immagine a
+   16x8, quasi la dimensione naturale (15x8), mentre il bersaglio misura 24x24. */
 .rich-spinner-btn{
-	margin: 0 4px 0px 2px;
-	width: 15px;
+	margin: 0;
+	width: 24px;
+	height: 24px;
+	padding: 8px 4px;
+	box-sizing: border-box;
 }
 
+/* Il campo ha ora un pulsante per lato, quindi nessun bordo laterale proprio. */
 input.rich-spinner-input {
 	width: 384px;
+	border-left: none;
 	border-right: none;
 }
 
@@ -1424,4 +1461,37 @@ input.rich-spinner-input {
 	background: none; 
 	font-family: 'Roboto';
 	font-size: 14px;
+}
+
+/* Il fuoco da tastiera delle liste di trasferimento sta su un pulsante che il componente
+   tiene fuori schermo: va quindi reso visibile sul contenitore delle voci (WCAG 2.4.7). */
+.rich-shuttle-list-focus {
+	outline: 2px solid #46464e;
+	outline-offset: 1px;
+}
+
+/* Le schede sono raggiungibili con Tab e si scorrono con le frecce: il fuoco deve
+   vedersi (WCAG 2.4.7). Il contorno e' verso l'interno perche' la scheda attiva e'
+   spostata di un pixel per coprire il bordo inferiore, e uno esterno verrebbe tagliato. */
+.rich-tab-header:focus {
+	outline: 2px solid #46464e;
+	outline-offset: -2px;
+}
+
+/* I comandi nella barra del filtro stanno su fondo scuro: il contorno del fuoco deve
+   staccarsi da quello, non dal bianco della pagina (WCAG 2.4.7, 1.4.11). */
+.rich-stglpnl-marker [role="button"]:focus {
+	outline: 2px solid #ffffff;
+	outline-offset: 2px;
+}
+
+/* L'evidenziazione qui sopra e' l'indicatore del fuoco: fondo, barra laterale e grassetto.
+   Il contorno predefinito del browser si sovrapporrebbe soltanto. */
+.rich-menu-item:focus, .rich-menu-group:focus {
+	outline: none;
+}
+
+/* Anche nel menu laterale l'evidenziazione del prodotto e' l'indicatore del fuoco. */
+.rich-pmenu-item:focus {
+	outline: none;
 }

@@ -529,6 +529,14 @@ span[id$='iconLink']{
 	display: flex;
 }
 
+/* La riga e' un comando raggiungibile con Tab: il fuoco deve vedersi (WCAG 2.4.7).
+   Il contorno e' verso l'interno, perche' le righe sono accostate e uno esterno
+   verrebbe coperto da quella successiva. */
+.rowTransazione:focus {
+	outline: 2px solid #46464e;
+	outline-offset: -2px;
+}
+
 .entryIconeTransazione {
 	display: flex;
 	align-items: center;
@@ -829,4 +837,64 @@ span[id$='iconLink']{
 
 .list-style-type-disc {
 	list-style-type:disc;
+}
+
+/* Collegamento per saltare il menu di navigazione e raggiungere il contenuto:
+   fuori dallo schermo, diventa visibile solo quando riceve il fuoco da tastiera. */
+.gw-salta-al-contenuto {
+	position: absolute;
+	left: -9999px;
+	top: 8px;
+	z-index: 10000;
+	padding: 8px 16px;
+	border-radius: 4px;
+}
+
+/* Gli stati del collegamento vanno elencati tutti: 'a:visited' e 'a:hover' definiti
+   sopra hanno specificita' (0,1,1) e batterebbero la sola classe (0,1,0). Il colore
+   di 'a:visited' e' proprio #46464e, quindi dopo la prima attivazione il testo
+   risulterebbe invisibile sullo sfondo. Bianco su #46464e da' 9,28:1. */
+.gw-salta-al-contenuto,
+.gw-salta-al-contenuto:link,
+.gw-salta-al-contenuto:visited,
+.gw-salta-al-contenuto:hover,
+.gw-salta-al-contenuto:focus,
+.gw-salta-al-contenuto:active {
+	background-color: #46464e;
+	color: #ffffff;
+	text-decoration: none;
+}
+
+.gw-salta-al-contenuto:focus {
+	left: 8px;
+}
+
+/* Il contenitore del contenuto principale riceve il fuoco solo per via
+   programmatica, dal collegamento qui sopra: nessun contorno da mostrare. */
+#gw-contenuto:focus {
+	outline: none;
+}
+
+/* Il segnaposto «nessun dato» dei grafici c3 e' grigio (#808080 su bianco: 3,95:1,
+   sotto il minimo di 4,5:1). Il selettore e' piu' specifico di quello di c3
+   ('.c3-text.c3-empty'), che viene caricato dopo questo foglio. */
+svg .c3-text.c3-empty {
+	fill: #46464e;
+}
+
+/* Passando sopra una fetta o una voce di legenda, c3 sbiadisce le serie non evidenziate
+   abbassando l'opacita' del gruppo — che pero' contiene anche l'etichetta della fetta:
+   testo e fondo sbiadiscono insieme verso il bianco e il contrasto scende a 1,5:1, sotto
+   il 4,5:1 di WCAG 1.4.3. Nessun colore del testo puo' rimediare, perche' il limite e' la
+   fusione del gruppo. La trasparenza viene quindi spostata sulla sola fetta: l'indicazione
+   visiva resta, l'etichetta no. Il colore del testo e' poi riscelto sul fondo effettivo da
+   'coloraEtichetteFette' in ChartMap.js. */
+svg .c3-chart-arc.c3-defocused {
+	opacity: 1 !important;
+}
+
+/* '!important' anche qui: c3 fissa l'opacita' della fetta con uno stile in linea, che
+   altrimenti vince sul foglio e la sfumatura sparirebbe del tutto. */
+svg .c3-chart-arc.c3-defocused path {
+	opacity: 0.3 !important;
 }

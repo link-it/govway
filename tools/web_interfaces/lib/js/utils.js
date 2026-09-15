@@ -8,8 +8,23 @@
  * Questo deve essere incluso alla fine di tutte le altre inclusioni di script, nell'header, nella pagina jsp
  * Utilizza la libreria jquery
  */
+/*
+ * jQuery UI chiama «Close» il comando di chiusura delle finestre di dialogo, ed e' il nome
+ * che uno screen reader annuncia: in un'interfaccia dichiarata in italiano lo legge con
+ * pronuncia italiana (WCAG 3.1.2, Lingua delle sezioni). Compariva in tutte le finestre
+ * «Conferma Operazione».
+ *
+ * Il valore predefinito si cambia una volta sola e vale per ogni finestra, comprese quelle
+ * create da altri script. Va fatto al caricamento e non dentro 'ready': le finestre nascono
+ * proprio nei gestori di 'ready', e questo file e' incluso per ultimo, quindi qui jQuery UI
+ * c'e' gia' e nessuna finestra e' ancora stata creata.
+ */
+if (typeof $ !== 'undefined' && $.ui && $.ui.dialog) {
+	$.ui.dialog.prototype.options.closeText = 'Chiudi';
+}
+
  $(document).ready(function(){
- 	
+
  	String.prototype.format = function()
 	{
 	    var str = this;

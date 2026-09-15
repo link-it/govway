@@ -72,13 +72,20 @@
 	   <script type="text/javascript" nonce="#{_csp_random_nonce}" src="#{facesContext.externalContext.request.contextPath}/webjars/jquery-ui/#{__jquery_ui_version__}/jquery-ui.min.js" />
    	  </f:facet>
       <f:facet name="header">
-      	<ui:include src="/commons/includes/header.xhtml" />
+      	<h:panelGroup layout="block">
+      		<a class="gw-salta-al-contenuto" href="#gw-contenuto">Salta al contenuto</a>
+      		<div role="banner">
+      			<ui:include src="/commons/includes/header.xhtml" />
+      		</div>
+      	</h:panelGroup>
       </f:facet>
       
 	
 	<f:facet name="sidebar">
 		<h:panelGroup layout="block" styleClass="#{applicationBean.menuDisabled ? 'menu-disabled' : ''}">
-			<ui:include src="/commons/includes/menu.xhtml" />
+			<nav aria-label="Menu di navigazione">
+				<ui:include src="/commons/includes/menu.xhtml" />
+			</nav>
 		</h:panelGroup>
 	</f:facet>
 	
@@ -111,6 +118,7 @@
 					</rich:layoutPanel>
 
 					<rich:layoutPanel id="body" position="center" >
+					  <div id="gw-contenuto" role="main" tabindex="-1">
 						<a4j:outputPanel id="versionNoticePlaceHolder" layout="block">
 							<h:panelGroup layout="block" styleClass="messages-#{applicationBean.versionNoticeSeverity} version-notice#{applicationBean.menuDisabled ? ' version-notice-topgap' : ''}" rendered="#{applicationBean.versionNoticePresent}">
 								<a4j:outputPanel layout="block" styleClass="version-notice-content">
@@ -159,6 +167,7 @@
 						<h:panelGroup layout="block" rendered="#{not applicationBean.menuDisabled or alwaysShowBody}">
 							<ui:insert name="body"/>
 						</h:panelGroup>
+					  </div>
 					</rich:layoutPanel>
 
 					<rich:layoutPanel position="bottom" width="100%">

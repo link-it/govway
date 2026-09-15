@@ -340,66 +340,9 @@ if (hidden!=null && !hidden.isEmpty()) {
 										if ((pd.getNumEntries() > 20) || (pd.getIndex() != 0)) {
 										  %></td>
 											<td><select id="ds_limit_bottom" name="limit" aria-label="<%= Costanti.LABEL_ARIA_NUMERO_ELEMENTI_PER_PAGINA %>"><%
-										  switch (pd.getPageSize()) {
-										    case 20 :
-											%>
-											<option value="20" selected="selected">20 Entries</option>
-											<option value="75">75 Entries</option>
-											<option value="125">125 Entries</option>
-											<option value="250">250 Entries</option>
-											<option value="500">500 Entries</option>
-											<option value="1000">1000 Entries</option>
-											<%
-											break;
-										    case 75 :
-											%>
-											<option value="20">20 Entries</option>
-											<option value="75" selected="selected">75 Entries</option>
-											<option value="125">125 Entries</option>
-											<option value="250">250 Entries</option>
-											<option value="500">500 Entries</option>
-											<option value="1000">1000 Entries</option>
-											<%
-											break;
-										    case 125 :
-											%><option value="20">20 Entries</option>
-											<option value="75">75 Entries</option>
-											<option value="125" selected="selected">125 Entries</option>
-											<option value="250">250 Entries</option>
-											<option value="500">500 Entries</option>
-											<option value="1000">1000 Entries</option><%
-											break;
-										    case 250 :
-											%>
-											<option value="20">20 Entries</option>
-											<option value="75">75 Entries</option>
-											<option value="125">125 Entries</option>
-											<option value="250" selected="selected">250 Entries</option>
-											<option value="500">500 Entries</option>
-											<option value="1000">1000 Entries</option>
-											<%
-											break;
-										    case 500 :
-										    	%>
-										    	<option value="20">20 Entries</option>
-										    	<option value="75">75 Entries</option>
-										    	<option value="125">125 Entries</option>
-										    	<option value="250">250 Entries</option>
-										    	<option value="500" selected="selected">500 Entries</option>
-										    	<option value="1000">1000 Entries</option>
-										    	<%
-										    	break;
-										    case 1000 :
-										    	%>
-										    	<option value="20">20 Entries</option>
-										    	<option value="75">75 Entries</option>
-										    	<option value="125">125 Entries</option>
-										    	<option value="250">250 Entries</option>
-										    	<option value="500">500 Entries</option>
-										    	<option value="1000" selected="selected">1000 Entries</option>
-										    	<%
-										    	break;
-										  }
+										  for (int dimensionePagina : Costanti.DIMENSIONI_PAGINA) {
+											%><option value="<%= dimensionePagina %>"<%= pd.getPageSize() == dimensionePagina ? " selected=\"selected\"" : "" %>><%= Costanti.getLabelDimensionePagina(dimensionePagina) %></option><%
+										}
 										  %></select>
 										  	<script type="text/javascript" nonce="<%= randomNonce %>">
 													$(document).ready(function(){

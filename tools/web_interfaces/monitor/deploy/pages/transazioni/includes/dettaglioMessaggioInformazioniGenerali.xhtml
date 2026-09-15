@@ -66,7 +66,7 @@
 			<h:outputText id="outRichiedente" value="#{dettagliBean.dettaglio.richiedente}" rendered="#{not empty dettagliBean.dettaglio.richiedente and not dettagliBean.dettaglio.visualizzaTextAreaRichiedente}"/>
 			<h:inputTextarea id="outRichiedenteTextArea" value="#{dettagliBean.dettaglio.richiedente}" readonly="true"  cols="60" rows="5" styleClass="inputLinkLong width-auto"
 				rendered="#{not empty dettagliBean.dettaglio.richiedente and dettagliBean.dettaglio.visualizzaTextAreaRichiedente}" />
-			<h:graphicImage id="outRichiedenteAnonimo" value="/images/tema_link/anonymous.png" rendered="#{empty dettagliBean.dettaglio.richiedente}">
+			<h:graphicImage alt="Richiesta anonima" id="outRichiedenteAnonimo" value="/images/tema_link/anonymous.png" rendered="#{empty dettagliBean.dettaglio.richiedente}">
 				<rich:toolTip for="outRichiedenteAnonimo">
 					<h:outputText value="Richiesta Anonima" />
 				</rich:toolTip>

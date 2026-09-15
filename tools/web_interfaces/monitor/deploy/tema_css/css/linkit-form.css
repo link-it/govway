@@ -69,7 +69,17 @@ div.errorsSpacer {
 	height: 4px;
 }
 
-.rich-messages dt {
+/* I messaggi sono resi come lista non ordinata (prima era un <dl> con soli <dt>).
+   Il reset universale azzera margini e spaziature, ma non i punti elenco.
+   Il colore va riaffermato: un <ul> non erediterebbe quello del contenitore del
+   messaggio, a differenza del <dl> di prima, e il testo risulterebbe nero sul fondo
+   scuro della cornice d'errore (2,24:1 anziche' 9,35:1). */
+.rich-messages {
+	list-style: none;
+	color: inherit;
+}
+
+.rich-messages li {
 	padding-bottom: 4px;
 }
 

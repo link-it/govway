@@ -24,24 +24,24 @@
 					>
 				<rich:column id="colEsitoImg" sortable="false" label="Esito (Immagine)" width="40px" styleClass="text-align-center">
 					<f:facet name="header">
-						<h:graphicImage value="/images/tema_link/circle_light_grey.png" />
+						<h:graphicImage alt="Esito" value="/images/tema_link/circle_light_grey.png" />
 					</f:facet>
-					<h:graphicImage id="outEsitoImgOk" value="/images/tema_link/verified_green.png" rendered="#{item.esitoOk}">
+					<h:graphicImage alt="#{item.esitoLabel}" id="outEsitoImgOk" value="/images/tema_link/verified_green.png" rendered="#{item.esitoOk}">
 						<rich:toolTip for="outEsitoImgOk">
 							<h:outputText value="#{item.esitoLabel}" />
 						</rich:toolTip>
 					</h:graphicImage>
-					<h:graphicImage id="outEsitoImgFaultApplicativo" value="/images/tema_link/alert_yellow.png" rendered="#{item.esitoFaultApplicativo}">
+					<h:graphicImage alt="#{item.esitoLabel}" id="outEsitoImgFaultApplicativo" value="/images/tema_link/alert_yellow.png" rendered="#{item.esitoFaultApplicativo}">
 						<rich:toolTip for="outEsitoImgFaultApplicativo">
 							<h:outputText value="#{item.esitoLabel}" />
 						</rich:toolTip>
 					</h:graphicImage>
-					<h:graphicImage id="outEsitoImgKo" value="/images/tema_link/alert_red.png" rendered="#{item.esitoKo}">
+					<h:graphicImage alt="#{item.esitoLabel}" id="outEsitoImgKo" value="/images/tema_link/alert_red.png" rendered="#{item.esitoKo}">
 						<rich:toolTip for="outEsitoImgKo">
 							<h:outputText value="#{item.esitoLabel}" />
 						</rich:toolTip>
 					</h:graphicImage>
-					<h:graphicImage id="outEsitoImgOther" value="/images/tema_link/ko_red.png" rendered="#{!item.esitoOk and !item.esitoFaultApplicativo and !item.esitoKo}"/>
+					<h:graphicImage alt="#{item.esitoLabel}" id="outEsitoImgOther" value="/images/tema_link/ko_red.png" rendered="#{!item.esitoOk and !item.esitoFaultApplicativo and !item.esitoKo}"/>
 				</rich:column>
 				<rich:column id="colRuoloTransazioneImg" sortable="false" label="Ruolo Transazione (Immagine)" width="42px" styleClass="text-align-center">
 					<f:facet name="header">
@@ -307,7 +307,7 @@
 					</f:facet>
 					<h:outputText id="outServizioApplicativoFruitore" value="#{item.labelRichiedenteConFruitore}" rendered="#{not empty item.labelRichiedenteConFruitore}"/>
 					<rich:toolTip for="outServizioApplicativoFruitore" value="#{item.labelRichiedenteConFruitore}" rendered="#{not empty item.labelRichiedenteConFruitore}"/>
-					<h:graphicImage id="outServizioApplicativoFruitoreAnonimo" value="/images/tema_link/anonymous.png" rendered="#{empty item.labelRichiedenteConFruitore}">
+					<h:graphicImage alt="Applicativo fruitore anonimo" id="outServizioApplicativoFruitoreAnonimo" value="/images/tema_link/anonymous.png" rendered="#{empty item.labelRichiedenteConFruitore}">
 						<rich:toolTip for="outServizioApplicativoFruitoreAnonimo">
 							<h:outputText value="Richiesta Anonima" />
 						</rich:toolTip>
