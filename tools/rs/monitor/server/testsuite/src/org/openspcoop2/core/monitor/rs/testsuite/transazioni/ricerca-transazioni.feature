@@ -596,6 +596,10 @@ Scenario: Ricerca singola transazione per Id Messaggio (Richiesta)
     * eval filtro.api.versione = setup.erogazione_petstore.api_versione
     * eval filtro.intervallo_temporale =  ({ data_inizio: setup.dataInizio, data_fine: setup.dataFine })
 
+    # La ricerca viene limitata alle transazioni completate con successo: su una richiesta rifiutata,
+    # ad esempio in autenticazione, il messaggio non viene registrato e non esiste un id da ricercare
+    * eval filtro.esito = ({ tipo: 'ok' })
+
 
     # Viene fatta prima una ricerca lasca per recuperare delle transazioni qualsiasi
     Given request filtro
@@ -639,6 +643,10 @@ Scenario: Ricerca singola transazione per Id Messaggio (Risposta)
     * eval filtro.api.nome = setup.erogazione_petstore.api_nome
     * eval filtro.api.versione = setup.erogazione_petstore.api_versione
     * eval filtro.intervallo_temporale =  ({ data_inizio: setup.dataInizio, data_fine: setup.dataFine })
+
+    # La ricerca viene limitata alle transazioni completate con successo: su una richiesta rifiutata,
+    # ad esempio in autenticazione, il messaggio non viene registrato e non esiste un id da ricercare
+    * eval filtro.esito = ({ tipo: 'ok' })
 
 
     # Viene fatta prima una ricerca lasca per recuperare delle transazioni qualsiasi

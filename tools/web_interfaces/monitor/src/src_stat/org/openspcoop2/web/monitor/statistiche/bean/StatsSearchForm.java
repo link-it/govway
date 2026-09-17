@@ -986,6 +986,14 @@ public class StatsSearchForm extends BaseSearchForm{
 		this._normalizeDataFine();
 
 	}
+	/**
+	 * Allinea gli estremi dell'intervallo temporale all'unita' temporale impostata.
+	 * Corrisponde alla normalizzazione che, nella console, viene effettuata tramite '_setPeriodo'.
+	 */
+	public void normalizeIntervalloTemporale() {
+		this._normalizeDataInizio();
+		this._normalizeDataFine();
+	}
 	private void _normalizeDataInizio() {
 		if(this.dataInizio!=null) {
 			Calendar inizio = Calendar.getInstance();
