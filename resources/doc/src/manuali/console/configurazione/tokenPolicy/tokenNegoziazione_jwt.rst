@@ -55,4 +55,4 @@ Nella sezione 'JWT Payload' si devono definire i parametri inseriti nella parte 
 
 Tutti i valori definiti nella sezione 'JWT Payload' possono contenere parti dinamiche che verranno risolte a runtime dal Gateway (per maggiori dettagli :ref:`valoriDinamici`).
 
-Inoltre se non si desidera generare un determinato claim è possibile utilizzare la keyword '${undefined}' come valore del campo.
+Inoltre, nei campi che definiscono un singolo claim (Client ID, Audience, Issuer, Subject, Identifier e Purpose ID), se non si desidera generare il claim è possibile utilizzare la keyword '${undefined}' come valore del campo. La keyword non è invece utilizzabile nel campo Claims, per il quale le modalità con cui definire il valore di ogni riga sono quelle descritte nella sezione :ref:`avanzate_generazione_claims`.

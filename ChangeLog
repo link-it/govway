@@ -1,5 +1,20 @@
 2026-09-17  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore]
+	Risolto Bug #1823
+	Un claim definito tramite la forma opzionale '?{..}', la cui risoluzione dinamica non era possibile a runtime,
+	veniva generato con un valore vuoto anziché essere omesso; l'anomalia si manifestava solamente in presenza di almeno
+	un altro claim valorizzato nel medesimo elenco. Un claim vuoto non è equivalente ad un claim assente e comporta il
+	rifiuto dell'asserzione: nel caso segnalato la negoziazione di un token PDND terminava con un errore, senza che dalla
+	configurazione fosse possibile risalirne al motivo. I campi interessati sono i claims e le informazioni di sessione
+	con cui vengono prodotte la client assertion di una token policy di negoziazione e la richiesta di attributi verso
+	una Attribute Authority.
+	Lo stesso avveniva per i parametri e gli header http con cui vengono effettuate la richiesta di un token e la
+	richiesta di attributi, che venivano inviati con un valore vuoto anziché non essere inviati; per tali campi
+	l'utilizzo della forma opzionale è adesso esplicitamente supportato e documentato, come già avveniva per i claims.
+
+2026-09-17  Andrea Poli <apoli@link.it>
+
 	* [ApiRsMonitoraggio]
 	Risolto Bug #1821
 	I report di Analisi Statistica prodotti tramite le API non coincidevano con quelli della console di monitoraggio.

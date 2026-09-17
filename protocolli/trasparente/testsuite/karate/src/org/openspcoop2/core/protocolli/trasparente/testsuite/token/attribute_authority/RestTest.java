@@ -20,6 +20,7 @@
 package org.openspcoop2.core.protocolli.trasparente.testsuite.token.attribute_authority;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -68,6 +69,59 @@ public class RestTest extends ConfigLoader {
 	static final String TIPO_TEST_VALIDITY_CHECK = "validityCheck"; 
 	
 	
+	// *** singleAA: claims della richiesta definiti tramite un placeholder opzionale ***
+
+	/** Il claim 'aOpt' è definito nella policy 'AuthorizationBearer' tramite il placeholder opzionale
+	 *  '?{header:GovWay-TestSuite-AAaOptDynamic}'; l'header di test non viene inviato, quindi il claim non deve
+	 *  essere generato nella richiesta di attributi. Il claim è dichiarato anche tra gli attributi letti dalla
+	 *  risposta, che nel test è l'echo della richiesta: se venisse generato, anche solo con un valore vuoto,
+	 *  comparirebbe tra gli attributi registrati sulla transazione */
+	@Test
+	public void erogazione_singleAA_claimOpzionaleNonRisolto() throws Exception {
+		resetCacheAttributi();
+
+		AAHeaderMap map = new AAHeaderMap();
+		map.applicativo="ApplicativoSoggettoInternoTestFruitore1";
+		HttpResponse response = _test(TipoServizio.EROGAZIONE, "contenuti_singleAA",
+				"singleAA_authzContenuti", null, map);
+
+		String idTransazione = response.getHeaderFirstValue("GovWay-Transaction-ID");
+		assertNotNull(idTransazione);
+
+		String tokenInfo = DBVerifier.readTokenInfo(idTransazione);
+		assertFalse("Attributo '"+AA_CLAIM_OPZIONALE+"' non atteso; informazioni sugli attributi: "+tokenInfo,
+				tokenInfo.contains("\""+AA_CLAIM_OPZIONALE+"\""));
+	}
+
+	/** Il placeholder opzionale è risolvibile: il claim viene generato nella richiesta di attributi
+	 *  e viene quindi ritornato tra gli attributi */
+	@Test
+	public void erogazione_singleAA_claimOpzionaleRisolto() throws Exception {
+		resetCacheAttributi();
+
+		AAHeaderMap map = new AAHeaderMap();
+		map.applicativo="ApplicativoSoggettoInternoTestFruitore1";
+		map.httpHeaders.put(AA_HEADER_TEST_CLAIM_OPZIONALE, AA_VALORE_CLAIM_OPZIONALE);
+		map.expectedAttributes.put(AA_CLAIM_OPZIONALE, "\""+AA_CLAIM_OPZIONALE+"\":\""+AA_VALORE_CLAIM_OPZIONALE+"\"");
+
+		_test(TipoServizio.EROGAZIONE, "contenuti_singleAA",
+				"singleAA_authzContenuti", null, map);
+	}
+
+	/** Claim della policy 'AuthorizationBearer' definito tramite placeholder opzionale, dichiarato anche
+	 *  tra gli attributi letti dalla risposta */
+	private static final String AA_CLAIM_OPZIONALE = "aOpt";
+	private static final String AA_HEADER_TEST_CLAIM_OPZIONALE = "GovWay-TestSuite-AAaOptDynamic";
+	private static final String AA_VALORE_CLAIM_OPZIONALE = "vOpt-OK";
+
+	/** Gli attributi recuperati non devono essere riutilizzati tra le invocazioni, altrimenti la richiesta
+	 *  di attributi non verrebbe effettuata nuovamente; lo stesso vale per l'esito dell'autorizzazione */
+	private static void resetCacheAttributi() {
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAttributeAuthority(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+	}
+
+
 	// *** singleAA: autorizzazione per contenuti (AA JWS Bearer) ***
 	@Test
 	public void erogazione_singleAA_authzContenuti() throws Exception {

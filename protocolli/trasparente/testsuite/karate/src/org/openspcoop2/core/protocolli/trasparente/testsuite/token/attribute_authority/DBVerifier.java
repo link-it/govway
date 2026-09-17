@@ -147,6 +147,27 @@ public class DBVerifier {
 	
 	
 
+	/** Lettura delle informazioni sugli attributi registrate sulla transazione, per le verifiche che
+	 *  richiedono di accertare l'assenza di un attributo, non esprimibile tramite i controlli di 'verify' */
+	public static String readTokenInfo(String idTransazione) throws Exception  {
+
+		String query = "select token_info from transazioni where id = ?";
+		log().info(query);
+
+		String msg = "IdTransazione: "+idTransazione;
+
+		List<Map<String, Object>> rows = dbUtils().readRows(query, idTransazione);
+		assertNotNull(msg, rows);
+		assertEquals(msg, 1, rows.size());
+
+		Object otokenInfo = rows.get(0).get("token_info");
+		assertNotNull(msg, otokenInfo);
+		assertTrue(msg+" token_info classe '"+otokenInfo.getClass().getName()+"'", (otokenInfo instanceof String));
+
+		return (String) otokenInfo;
+
+	}
+
 	public static String getIdTransazione(String idApplicativo) throws Exception  {
 		
 		// La scrittura su database avviene dopo aver risposto al client

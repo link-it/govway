@@ -816,7 +816,14 @@ public class NegoziazioneTokenProvider implements IProvider {
 	}
 	@Override
 	public ProviderInfo getProviderInfo(String id) throws ProviderException{
-		if(isProviderInfoStandard(id)) {
+		if(Costanti.ID_RETRIEVE_FORM_PARAMETERS.equals(id) ||
+				Costanti.ID_RETRIEVE_HTTP_HEADERS.equals(id)) {
+			ProviderInfo pInfo = new ProviderInfo();
+			pInfo.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_NOME_VALORE_OPZIONALE);
+			pInfo.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_NEGOZIAZIONE_TOKEN_INFO_VALORI);
+			return pInfo;
+		}
+		else if(isProviderInfoStandard(id)) {
 			ProviderInfo pInfo = new ProviderInfo();
 			pInfo.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
 			pInfo.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_NEGOZIAZIONE_TOKEN_INFO_VALORI);

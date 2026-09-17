@@ -69,6 +69,10 @@ public class DynamicHelperCostanti {
 		org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE+
 		"È possibile selezionare parti del messaggio, per associarle come contenuto dell'entry, utilizzando le seguenti espressioni dinamiche risolte a runtime dal Gateway:";
 
+	public static final String LABEL_CONFIGURAZIONE_NOME_VALORE_OPZIONALE = LABEL_CONFIGURAZIONE_INFO_TRASPORTO_PREFIX+
+			DOPPIO_A_CAPO_HTML+StringEscapeUtils.escapeHtml("Un valore definito come parte dinamica tramite la sintassi ${..}, la cui risoluzione non è possibile a runtime, comporta un fallimento della richiesta in corso. Per una definizione condizionata al riuscimento della risoluzione dinamica, senza far terminare la richiesta in errore in caso di mancata risoluzione, è possibile usare la forma '?{..}'; l'entry non viene in tal caso inserita nella richiesta.")+
+			DOPPIO_A_CAPO_HTML+LABEL_CONFIGURAZIONE_INFO_TRASPORTO_SUFFIX;
+	
 	public static final String LABEL_CONFIGURAZIONE_CLAIMS = LABEL_CONFIGURAZIONE_INFO_TRASPORTO_PREFIX+
 			DOPPIO_A_CAPO_HTML+StringEscapeUtils.escapeHtml("Un valore definito come parte dinamica tramite la sintassi ${..}, la cui risoluzione non è possibile a runtime, comporta un fallimento della richiesta in corso. Per una aggiunta del claim condizionata al riuscimento della risoluzione dinamica, senza far terminare la richiesta in errore in caso di mancata risoluzione, è possibile usare la forma '?{..}'.")+
 			DOPPIO_A_CAPO_HTML+StringEscapeUtils.escapeHtml("Fornendo un valore che inizia e termina con le parentesi graffe si definisce un oggetto json, come ad esempio:<BR/> claimTest={\"prova\":\"valoreProva\", \"prova2\":\"${header:X-Example}\"}")+

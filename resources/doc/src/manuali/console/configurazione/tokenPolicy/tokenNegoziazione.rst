@@ -55,7 +55,7 @@ Nel caso sia attivato il flag relativo ad un Proxy o una configurazione Https sa
 
 I parametri di configurazione relativi al tipo di negoziazione del token configurato vengono descritti nelle sezioni ':ref:`tokenNegoziazionePolicy_notJwt`', ':ref:`tokenNegoziazionePolicy_jwt`' e ':ref:`tokenNegoziazionePolicy_custom`'.
 
-Nella sezione 'Dati Richiesta' potranno invece essere definiti ulteriori criteri che riguardano la richiesta di un token. I dati presenti possono essere definiti tramite costanti o possono contenere parti dinamiche risolte a runtime dal Gateway (per maggiori dettagli :ref:`valoriDinamici`).
+Nella sezione 'Dati Richiesta' potranno invece essere definiti ulteriori criteri che riguardano la richiesta di un token. I dati presenti possono essere definiti tramite costanti o possono contenere parti dinamiche risolte a runtime dal Gateway (per maggiori dettagli :ref:`valoriDinamici`); nei campi 'Parametri' ed 'Header HTTP' è inoltre utilizzabile la forma opzionale descritta nella sezione :ref:`avanzate_generazione_claims`.
 
 -  *Scope*: elenco di scope utente richiesti;
 
