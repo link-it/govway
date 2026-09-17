@@ -69,6 +69,7 @@ import org.openspcoop2.web.monitor.statistiche.bean.NumeroDimensioni;
 import org.openspcoop2.web.monitor.statistiche.bean.StatistichePersonalizzateSearchForm;
 import org.openspcoop2.web.monitor.statistiche.bean.StatsSearchForm;
 import org.openspcoop2.web.monitor.statistiche.constants.CostantiExporter;
+import org.openspcoop2.web.monitor.statistiche.constants.CostantiGrafici;
 import org.openspcoop2.web.monitor.statistiche.dao.ConfigurazioniGeneraliService;
 import org.openspcoop2.web.monitor.statistiche.mbean.AndamentoTemporaleBean;
 import org.openspcoop2.web.monitor.statistiche.mbean.BaseStatsMBean;
@@ -997,7 +998,9 @@ public class ReportExporter extends HttpServlet{
 
 		statSearchForm.setEsitoGruppo(EsitoUtils.ALL_VALUE);
 		statSearchForm.setEsitoDettaglio(EsitoUtils.ALL_VALUE);
-		statSearchForm.setEscludiRichiesteScartate(true);
+		// NOTA: 'escludiRichiesteScartate' non viene reimpostato; il search form e' gia' inizializzato
+		//       con il default della proprieta' 'transazioni.escludiRichiesteScartate.defaultValue',
+		//       lo stesso utilizzato dalla console di monitoraggio.
 		
 		String esitoGruppo = req.getParameter(CostantiExporter.ESITO_GRUPPO);
 		if(esitoGruppo!=null){
@@ -1143,7 +1146,27 @@ public class ReportExporter extends HttpServlet{
 						+"' sconosciuto. I tipi supportati sono: "+types);
 			}
 		}
-		statSearchForm.setModalitaTemporale(modalitaTemporaleEnum);
+		if(modalitaTemporale!=null){
+			// unita' temporale indicata esplicitamente: viene rispettata
+			statSearchForm.setModalitaTemporale(modalitaTemporaleEnum);
+		}
+		else {
+			// unita' temporale non indicata: viene derivata dall'intervallo come avviene nella console
+			// (StatsSearchForm.periodoListener): per le distribuzioni non temporali l'intervallo indicato e'
+			// un periodo personalizzato e viene quindi utilizzata la base oraria, fermo restando che
+			// StatsUtils.checkStatisticType selezionera' la base giornaliera se l'intervallo copre giorni interi.
+			if(!statSearchForm.isShowUnitaTempo()){
+				statSearchForm.setPeriodo(CostantiGrafici.PERSONALIZZATO_LABEL);
+				statSearchForm.setModalitaTemporale(StatisticType.ORARIA);
+			}
+			else {
+				statSearchForm.setModalitaTemporale(modalitaTemporaleEnum);
+			}
+		}
+		
+		// Gli estremi dell'intervallo vengono allineati all'unita' temporale in uso, altrimenti un intervallo
+		// che non inizia sul confine dell'unita' escluderebbe l'intero primo intervallo di campionamento.
+		statSearchForm.normalizeIntervalloTemporale();
 		
 		
 		// ** tipo informazione visualizzata **

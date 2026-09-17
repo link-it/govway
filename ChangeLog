@@ -1,3 +1,18 @@
+2026-09-17  Andrea Poli <apoli@link.it>
+
+	* [ApiRsMonitoraggio]
+	Risolto Bug #1821
+	I report di Analisi Statistica prodotti tramite le API non coincidevano con quelli della console di monitoraggio.
+	In assenza di un filtro sull'esito venivano riportate le sole transazioni gestite con successo, poiché il criterio
+	'qualsiasi' veniva tradotto nel gruppo 'ok'; le richieste scartate risultavano inoltre escluse per default, in
+	contrasto con la console e con quanto dichiarato dall'interfaccia OpenAPI; l'esclusione per default delle richieste
+	scartate riguardava tutte le API di monitoraggio, quindi anche le ricerche nello storico delle transazioni, i cui
+	risultati adesso le comprendono.
+	L'intervallo temporale indicato non veniva allineato all'unità di campionamento: un estremo che non coincideva con
+	l'inizio di un intervallo di campionamento ne provocava l'esclusione per intero, con la perdita di un'intera giornata
+	di dati nel caso dell'unità giornaliera. L'unità temporale, inoltre, quando non indicata veniva assunta giornaliera
+	anziché essere derivata dall'intervallo come avviene nella console per le distribuzioni non temporali.
+
 2026-09-07  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

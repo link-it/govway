@@ -77,7 +77,6 @@ import org.openspcoop2.core.monitor.rs.server.model.TipoInformazioneReportMultiL
 import org.openspcoop2.core.monitor.rs.server.model.TipoInformazioneReportNumeroTransazioni;
 import org.openspcoop2.core.monitor.rs.server.model.TipoInformazioneReportOccupazioneBanda;
 import org.openspcoop2.core.monitor.rs.server.model.TipoInformazioneReportTempoMedioRisposta;
-import org.openspcoop2.core.monitor.rs.server.model.UnitaTempoReportEnum;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
@@ -124,7 +123,7 @@ public class ReportisticaHelper {
 			
 			switch (tipo) {
 			case QUALSIASI:
-				wrap.overrideParameter(CostantiExporter.ESITO_GRUPPO, CostantiExporter.ESITO_GRUPPO_OK);
+				// NOTA: il gruppo 'qualsiasi' viene indicato all'exporter non fornendo il parametro 'esitoGruppo'
 				setEsitoCodice(tipo, filtro, wrap);
 				if(filtro.isEscludiScartate()!=null) {
 					wrap.overrideParameter(CostantiExporter.ESCLUDI_RICHIESTE_SCARTATE, 
@@ -190,17 +189,18 @@ public class ReportisticaHelper {
 		if (body == null)
 			return;
 
-		// defaults:
-		if (body.getUnitaTempo() == null)
-			body.setUnitaTempo(UnitaTempoReportEnum.GIORNALIERO);
+		// NOTA: l'unita' temporale non viene defaultata; se non indicata dal chiamante il parametro non viene
+		//       fornito all'exporter, che la deriva dall'intervallo temporale come avviene nella console
 		// Intervallo Temporale
 		SimpleDateFormat sdf = DateUtils.getSimpleDateFormatMs();
 		wrap.overrideParameter(CostantiExporter.DATA_INIZIO,
 				sdf.format(body.getIntervalloTemporale().getDataInizio().toDate()));
 		wrap.overrideParameter(CostantiExporter.DATA_FINE,
 				sdf.format(body.getIntervalloTemporale().getDataFine().toDate()));
-		wrap.overrideParameter(CostantiExporter.TIPO_UNITA_TEMPORALE,
-				Enums.toStatisticType.get(body.getUnitaTempo()).toString());
+		if (body.getUnitaTempo() != null) {
+			wrap.overrideParameter(CostantiExporter.TIPO_UNITA_TEMPORALE,
+					Enums.toStatisticType.get(body.getUnitaTempo()).toString());
+		}
 		wrap.overrideParameter(CostantiExporter.TIPOLOGIA,
 				Enums.toTipologiaFiltroRicercaRuoloTransazioneEnum.get(body.getTipo()).toString());
 		if(body.getIdCluster()!=null) {
