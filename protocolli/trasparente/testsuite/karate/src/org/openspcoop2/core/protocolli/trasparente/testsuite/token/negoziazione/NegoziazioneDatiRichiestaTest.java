@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.core.protocolli.trasparente.testsuite.token.negoziazione;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
@@ -37,9 +38,11 @@ import org.openspcoop2.utils.transport.http.HttpResponse;
 * - i parametri e gli header http indicati nella policy vengono inviati al token endpoint, risolvendo le parti dinamiche;
 * - l'header 'Authorization' è definibile manualmente, non essendo attiva alcuna autenticazione client sulla policy;
 * - i parametri e gli header http concorrono alla chiave della cache, ad eccezione dei nomi indicati nella black list
-*   'org.openspcoop2.pdd.retrieveToken.cacheKeyBlackList.*' (per default 'Authorization' e 'DPoP' tra gli header).
+*   'org.openspcoop2.pdd.retrieveToken.cacheKeyBlackList.*' (per default 'Authorization' e 'DPoP' tra gli header);
+* - un parametro o un header http definito tramite un placeholder opzionale '?{...}' non risolvibile non viene
+*   inviato al token endpoint, anzichè essere inviato con un valore vuoto.
 *
-* Configurazione utilizzata: archivio 'datiRichiestaTestBundle.zip'
+* Configurazione utilizzata: archivio 'trasparenteTestBundle.zip'
 * - policy di negoziazione 'TestNegoziazioneDatiRichiesta'
 * - erogazione 'TestNegoziazioneTokenDatiRichiesta' (invocata dal test)
 * - erogazione 'TestNegoziazioneDatiRichiestaTokenEndpoint' (authorization server dummy che verifica, tramite
@@ -64,6 +67,15 @@ public class NegoziazioneDatiRichiestaTest extends ConfigLoader {
 	private static final String HEADER_TEST_PARAMETRO = "test-q2";
 	private static final String HEADER_TEST_HEADER = "test-h2";
 	private static final String HEADER_TEST_AUTHORIZATION = "test-authz";
+
+	/** Parametro ed header http definiti nella policy tramite il placeholder opzionale '?{header:...}',
+	 *  risolvibile solamente se viene inviato il corrispondente header di test */
+	private static final String PARAMETRO_OPZIONALE = "qopt";
+	private static final String HEADER_OPZIONALE = "hopt";
+	private static final String HEADER_TEST_PARAMETRO_OPZIONALE = "test-qopt";
+	private static final String HEADER_TEST_HEADER_OPZIONALE = "test-hopt";
+	private static final String VALORE_PARAMETRO_OPZIONALE = "paramOpzionale1";
+	private static final String VALORE_HEADER_OPZIONALE = "headerOpzionale1";
 
 	/** Risposta del token endpoint: pre-scritta su /tmp e restituita dall'echo (destFile),
 	 *  come già avviene per introspection/userInfo */
@@ -140,6 +152,45 @@ public class NegoziazioneDatiRichiestaTest extends ConfigLoader {
 		headers.put(HEADER_TEST_PARAMETRO, VALORE_ATTESO_PARAMETRO+"-MODIFICATO");
 
 		_negoziazioneErrore(headers);
+
+	}
+
+
+	/** Il placeholder opzionale non è risolvibile, non essendo stati inviati gli header di test:
+	 *  il parametro e l'header http in cui è definito non devono essere inviati al token endpoint */
+	@Test
+	public void datiRichiestaOpzionaliNonRisolti() throws Exception {
+
+		prepare();
+
+		HttpResponse response = _negoziazioneOk(headersDefault());
+
+		String idTransazione = response.getHeaderFirstValue("GovWay-Transaction-ID");
+		assertNotNull(idTransazione);
+
+		String tokenInfo = DBVerifier.readTokenInfo(idTransazione);
+
+		assertFalse("Parametro '"+PARAMETRO_OPZIONALE+"' non atteso; informazioni sul token: "+tokenInfo,
+				tokenInfo.contains("\""+PARAMETRO_OPZIONALE+"\""));
+		assertFalse("Header http '"+HEADER_OPZIONALE+"' non atteso; informazioni sul token: "+tokenInfo,
+				tokenInfo.contains("\""+HEADER_OPZIONALE+"\""));
+
+	}
+
+	/** Il placeholder opzionale è risolvibile: il parametro e l'header http in cui è definito
+	 *  vengono inviati al token endpoint con il valore risolto */
+	@Test
+	public void datiRichiestaOpzionaliRisolti() throws Exception {
+
+		prepare();
+
+		Map<String, String> headers = headersDefault();
+		headers.put(HEADER_TEST_PARAMETRO_OPZIONALE, VALORE_PARAMETRO_OPZIONALE);
+		headers.put(HEADER_TEST_HEADER_OPZIONALE, VALORE_HEADER_OPZIONALE);
+
+		_negoziazioneOk(headers,
+				"\""+PARAMETRO_OPZIONALE+"\":\""+VALORE_PARAMETRO_OPZIONALE+"\"",
+				"\""+HEADER_OPZIONALE+"\":\""+VALORE_HEADER_OPZIONALE+"\"");
 
 	}
 

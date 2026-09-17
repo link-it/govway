@@ -573,12 +573,18 @@ public class AttributeAuthorityProvider implements IProvider {
 				org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_RICHIESTA_JWS_PAYLOAD_SUBJECT.equals(id) ||
 				org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_RICHIESTA_JWS_PAYLOAD_AUDIENCE.equals(id) ||
 				org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_RISPOSTA_JWS_PAYLOAD_AUDIENCE.equals(id) ||
-				org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_RICHIESTA_PARAMETERS.equals(id) ||
-				org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_RICHIESTA_HTTP_HEADERS.equals(id) ||
 				org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_SIGNATURE_KID_VALUE.equals(id)
 				) {
 			ProviderInfo pInfo = new ProviderInfo();
 			pInfo.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
+			pInfo.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY_INFO_VALORI);
+			return pInfo;
+		}
+		else if(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_RICHIESTA_PARAMETERS.equals(id) ||
+				org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_RICHIESTA_HTTP_HEADERS.equals(id)
+				) {
+			ProviderInfo pInfo = new ProviderInfo();
+			pInfo.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_NOME_VALORE_OPZIONALE);
 			pInfo.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY_INFO_VALORI);
 			return pInfo;
 		}

@@ -5,7 +5,7 @@ Personalizzazione richiesta http di negoziazione
 
 La modalità di negoziazione con tipo 'Personalizzato' consente di definire la richiesta http inoltrata all'endpoint di negoziazione token e il parsing della risposta ottenuta.
 
-Nella sezione 'Dati Richiesta' vengono definiti i parametri della richiesta HTTP. I dati presenti possono essere definiti tramite costanti o possono contenere parti dinamiche risolte a runtime dal Gateway (per maggiori dettagli :ref:`valoriDinamici`). 
+Nella sezione 'Dati Richiesta' vengono definiti i parametri della richiesta HTTP. I dati presenti possono essere definiti tramite costanti o possono contenere parti dinamiche risolte a runtime dal Gateway (per maggiori dettagli :ref:`valoriDinamici`); nel campo 'Header HTTP' è inoltre utilizzabile la forma opzionale descritta nella sezione :ref:`avanzate_generazione_claims`. 
 
 -  *Metodo HTTP*: tipo di richiesta (es. GET, POST, ...);
 

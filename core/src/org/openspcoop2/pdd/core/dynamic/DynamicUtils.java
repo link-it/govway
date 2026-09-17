@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
 import jakarta.servlet.http.HttpServletRequest;
 import javax.xml.transform.Source;
@@ -737,6 +738,58 @@ public class DynamicUtils {
 			throw new DynamicException("Proprieta' '"+name+"' contiene un valore non corretto: "+e.getMessage(),e);
 		}
 		return tmp;
+	}
+	
+	/**
+	 * Risolve i valori dinamici presenti in un testo che definisce un elenco di entry 'nome=valore' (una per riga).
+	 * La risoluzione avviene per singola entry, in modo che un placeholder opzionale non risolto comporti 
+	 * l'eliminazione dell'entry e non la sua definizione con un valore vuoto.
+	 **/
+	public static String convertDynamicPropertyValues(String name,String tmpParam,Map<String,Object> dynamicMap,Context pddContext) throws DynamicException{
+		if(tmpParam==null || StringUtils.isEmpty(tmpParam)) {
+			return tmpParam;
+		}
+		StringBuilder sb = new StringBuilder();
+		try(Scanner scanner = new Scanner(tmpParam)){
+			while (scanner.hasNextLine()) {
+				String line = convertDynamicPropertyEntry(name, scanner.nextLine(), dynamicMap, pddContext);
+				if(line==null) {
+					continue; // entry non definita, poiché un placeholder opzionale non è stato risolto
+				}
+				if(!sb.isEmpty()) {
+					sb.append("\n");
+				}
+				sb.append(line);
+			}
+		}
+		return sb.toString();
+	}
+	private static String convertDynamicPropertyEntry(String name,String line,Map<String,Object> dynamicMap,Context pddContext) throws DynamicException{
+		String entry = line!=null ? line.trim() : null;
+		if(entry==null || StringUtils.isEmpty(entry) || entry.startsWith("#") || entry.startsWith("=") || !entry.contains("=")) {
+			return line; // riga non interpretabile come 'nome=valore'; viene lasciata invariata
+		}
+		int index = entry.indexOf("=");
+		String nomeEntry = entry.substring(0, index).trim();
+		String valoreEntry = entry.substring(index+1).trim();
+		
+		String nomeConvertito = nomeEntry;
+		if(!StringUtils.isEmpty(nomeEntry)) {
+			nomeConvertito = convertDynamicPropertyValue(name+" (nome entry)", nomeEntry, dynamicMap, pddContext);
+			if(nomeConvertito==null) {
+				return null;
+			}
+		}
+		
+		String valoreConvertito = valoreEntry;
+		if(!StringUtils.isEmpty(valoreEntry)) {
+			valoreConvertito = convertDynamicPropertyValue(name+" (entry '"+nomeEntry+"')", valoreEntry, dynamicMap, pddContext);
+			if(valoreConvertito==null) {
+				return null;
+			}
+		}
+		
+		return nomeConvertito+"="+valoreConvertito;
 	}
 	
 	private static String processTemplateValueUrlXpathJsonpath(String tmpParam, boolean onlyValidate, Map<String,Object> dynamicMap,

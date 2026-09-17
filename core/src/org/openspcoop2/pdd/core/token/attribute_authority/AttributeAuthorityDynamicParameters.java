@@ -124,12 +124,12 @@ public class AttributeAuthorityDynamicParameters extends AbstractDynamicParamete
 		
 		this.parameters = policyAttributeAuthority.getRequestParameters();
 		if(this.parameters!=null && !"".equals(this.parameters)) {
-			this.parameters = DynamicUtils.convertDynamicPropertyValue("parameters.gwt", this.parameters, dynamicMap, pddContext);
+			this.parameters = DynamicUtils.convertDynamicPropertyValues("parameters.gwt", this.parameters, dynamicMap, pddContext);
 		}
 
 		this.httpHeaders = policyAttributeAuthority.getRequestHttpHeaders();
 		if(this.httpHeaders!=null && !"".equals(this.httpHeaders)) {
-			this.httpHeaders = DynamicUtils.convertDynamicPropertyValue("httpHeaders.gwt", this.httpHeaders, dynamicMap, pddContext);
+			this.httpHeaders = DynamicUtils.convertDynamicPropertyValues("httpHeaders.gwt", this.httpHeaders, dynamicMap, pddContext);
 		}
 
 		if(policyAttributeAuthority.isRequestDynamicPayloadTemplate() || policyAttributeAuthority.isRequestDynamicPayloadJwt()) {
@@ -154,7 +154,7 @@ public class AttributeAuthorityDynamicParameters extends AbstractDynamicParamete
 				
 				this.claims = policyAttributeAuthority.getRequestJwtClaims();
 				if(this.claims!=null && !"".equals(this.claims)) {
-					this.claims = DynamicUtils.convertDynamicPropertyValue("claims.gwt", this.claims, dynamicMap, pddContext);	
+					this.claims = DynamicUtils.convertDynamicPropertyValues("claims.gwt", this.claims, dynamicMap, pddContext);	
 				}
 			}
 		}

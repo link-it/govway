@@ -18,6 +18,8 @@ Le coppie di valori indicate consentono di aggiungere ulteriori claim nel payloa
 
 Un valore definito tramite una parte dinamica, comporta un errore a runtime, se tale risoluzione non è possibile. Ad esempio  definendo un valore come 'claimTest=${header:X-Example}', se poi l'header http 'X-Example' non esiste nella richiesta la transazione abortisce con errore. Per aggiungere il claim solamente se la risoluzione dinamica del valore viene effettuata con successo è possibile usare la forma opzionale '?{..}'. Ad esempio  definendo un valore come 'claimTest=?{header:X-Example}', se poi l'header http 'X-Example' non esiste nella richiesta, l'unico effetto è quello che non sarà aggiunto al JWT Payload il claim 'claimTest'.
 
+La forma opzionale elimina il claim solamente se il valore risulta interamente non risolvibile. Se il placeholder opzionale costituisce una parte del valore, il claim viene comunque aggiunto con la restante parte: definendo un valore come 'claimTest=prefisso-?{header:X-Example}', in assenza dell'header http 'X-Example' il claim 'claimTest' verrà valorizzato con 'prefisso-'.
+
 Fornendo un valore che inizia e termina con le parentesi graffe si definisce un oggetto json. Ad esempio definendo un valore come 'claimTest={"prova":"valoreProva", "prova2":"${header:X-Example}"}' verrà effettuata la seguente aggiunta al payload JWT:
 
    ::
@@ -57,3 +59,5 @@ Per convertire una lista json di tipi primitivi in lista di stringhe è possibil
          ...
          "claimTest": ["1", "2", "3"]
       }
+
+La forma opzionale '?{..}' è utilizzabile anche negli elenchi 'nome=valore' con cui vengono definiti i parametri e gli header HTTP di una richiesta prodotta dal Gateway: la sezione 'Dati Richiesta' di una policy di negoziazione del token (:ref:`tokenNegoziazionePolicy`) e la richiesta di attributi verso una Attribute Authority (:ref:`aaRichiesta`). Anche in tali elenchi, se la risoluzione dinamica del valore non è possibile, l'unico effetto è che il parametro o l'header HTTP non viene inserito nella richiesta, anzichè essere inserito con un valore vuoto. Le restanti modalità descritte in questa sezione riguardano invece solamente la generazione di claims in un payload JWT: il valore di un parametro o di un header HTTP viene sempre utilizzato come semplice testo.

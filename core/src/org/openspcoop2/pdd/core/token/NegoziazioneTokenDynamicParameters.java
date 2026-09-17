@@ -602,14 +602,14 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 				
 				this.signedJwtSessionInfo = policyNegoziazioneToken.getJwtSessionInfo();
 				if(this.signedJwtSessionInfo!=null && !"".equals(this.signedJwtSessionInfo)) {
-					this.signedJwtSessionInfo = DynamicUtils.convertDynamicPropertyValue("sessionInfo.gwt", this.signedJwtSessionInfo, dynamicMap, pddContext);	
+					this.signedJwtSessionInfo = DynamicUtils.convertDynamicPropertyValues("sessionInfo.gwt", this.signedJwtSessionInfo, dynamicMap, pddContext);	
 				}
 				
 			}
 			
 			this.signedJwtClaims = policyNegoziazioneToken.getJwtClaims();
 			if(this.signedJwtClaims!=null && !"".equals(this.signedJwtClaims)) {
-				this.signedJwtClaims = DynamicUtils.convertDynamicPropertyValue("claims.gwt", this.signedJwtClaims, dynamicMap, pddContext);	
+				this.signedJwtClaims = DynamicUtils.convertDynamicPropertyValues("claims.gwt", this.signedJwtClaims, dynamicMap, pddContext);	
 			}
 			
 			if(this.getPddContext()!=null && this.getPddContext().containsKey(Costanti.MODIPA_CONTEXT_AUDIT_DIGEST)) {
@@ -692,7 +692,7 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 		
 		this.parameters = policyNegoziazioneToken.getFormParameters();
 		if(this.parameters!=null && !"".equals(this.parameters)) {
-			this.parameters = DynamicUtils.convertDynamicPropertyValue("parameters.gwt", this.parameters, dynamicMap, pddContext);	
+			this.parameters = DynamicUtils.convertDynamicPropertyValues("parameters.gwt", this.parameters, dynamicMap, pddContext);	
 		}
 		
 		String sHttpMethod = policyNegoziazioneToken.getHttpMethod();
@@ -709,7 +709,7 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 		
 		this.httpHeaders = policyNegoziazioneToken.getHttpHeaders();
 		if(this.httpHeaders!=null && !"".equals(this.httpHeaders)) {
-			this.httpHeaders = DynamicUtils.convertDynamicPropertyValue("httpHeaders.gwt", this.httpHeaders, dynamicMap, pddContext);	
+			this.httpHeaders = DynamicUtils.convertDynamicPropertyValues("httpHeaders.gwt", this.httpHeaders, dynamicMap, pddContext);	
 		}
 		
 		this.httpPayloadTemplateType = policyNegoziazioneToken.getDynamicPayloadType();

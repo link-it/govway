@@ -45,15 +45,24 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
 * - l'header 'Authorization' è definibile manualmente, non essendo attiva alcuna autenticazione client sulla policy;
 * - i parametri e gli header http concorrono alla chiave della cache degli attributi, ad eccezione dei nomi indicati
 *   nella black list 'org.openspcoop2.pdd.gestioneAttributeAuthority.cacheKeyBlackList.*'
-*   (per default 'Authorization' e 'DPoP' tra gli header).
+*   (per default 'Authorization' e 'DPoP' tra gli header);
+* - un parametro o un header http definito tramite un placeholder opzionale '?{...}' non risolvibile non viene
+*   inviato all'AA, anzichè essere inviato con un valore vuoto.
 *
-* Configurazione utilizzata: archivio 'datiRichiestaAATestBundle.zip'
+* Configurazione utilizzata: archivio 'trasparenteTestBundle.zip'
 * - policy AA 'TestAttributeAuthorityDatiRichiestaHeader': l'attributo 'attr' viene veicolato da un header http
 *   definito nella sottosezione 'Dati Richiesta' e restituito dall'AA (echo del TestService), quindi il valore
 *   dell'attributo rivela se l'AA è stata realmente invocata o se la risposta proviene dalla cache;
 * - policy AA 'TestAttributeAuthorityDatiRichiestaParametro': come sopra, ma l'attributo viene veicolato
 *   da un parametro della url;
 * - erogazione 'TestAttributeAuthorityDatiRichiesta', con autorizzazione per contenuti sull'attributo 'attr'.
+*
+* Entrambe le policy definiscono inoltre una entry il cui valore è un placeholder opzionale non risolvibile
+* ('hopt=?{header:test-hopt}' tra gli header http della prima, 'qopt=?{header:test-qopt}' tra i parametri della
+* seconda) e richiedono al TestService, tramite i parametri 'notExistsHttpHeaders' e 'notExistsQueryParameters'
+* presenti nella url dell'endpoint, di non riceverle: se venissero inviate, anche solo con un valore vuoto,
+* il TestService risponderebbe con un errore e gli attributi non sarebbero recuperabili.
+* Quei due parametri della url sono quindi determinanti per i test 'datiRichiestaHeader' e 'datiRichiestaParametro'.
 *
 * @author Poli Andrea (poli@link.it)
 * @author $Author$
@@ -81,7 +90,9 @@ public class AttributeAuthorityDatiRichiestaTest extends ConfigLoader {
 
 	/** I parametri della url e gli header http definiti nella policy vengono inviati all'AA, risolvendo le parti
 	 *  dinamiche: l'attributo restituito, ottenuto dall'echo dell'header http, riporta il valore atteso.
-	 *  Viene inoltre inviato l'header 'Authorization', definito manualmente nella policy e verificato dal TestService */
+	 *  Viene inoltre inviato l'header 'Authorization', definito manualmente nella policy e verificato dal TestService.
+	 *  L'header http definito tramite un placeholder opzionale non risolvibile non viene invece inviato:
+	 *  la verifica è delegata al TestService come descritto nella documentazione della classe */
 	@Test
 	public void datiRichiestaHeader() throws Exception {
 
@@ -91,7 +102,8 @@ public class AttributeAuthorityDatiRichiestaTest extends ConfigLoader {
 
 	}
 
-	/** Come sopra, con l'attributo veicolato da un parametro della url */
+	/** Come sopra, con l'attributo veicolato da un parametro della url e con il parametro definito
+	 *  tramite un placeholder opzionale non risolvibile, che non deve essere inviato */
 	@Test
 	public void datiRichiestaParametro() throws Exception {
 
