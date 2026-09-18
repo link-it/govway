@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.openapi4j.core.model.v3.OAI3Context;
+import org.openapi4j.core.model.v3.OAI3SchemaKeywords;
 import org.openapi4j.core.util.TreeUtil;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.operation.validator.model.Request;
@@ -332,6 +333,64 @@ public class Openapi4jRequestValidator extends AbstractApiValidator implements I
 		}
 	}
 
+	/* Restituisce i media type dichiarati per la risposta con lo status indicato, oppure per la richiesta se lo status non è valorizzato. */
+	private Map<String, org.openapi4j.parser.model.v3.MediaType> getContentMediaTypes(Operation operation, Integer statusRisposta) {
+		if (statusRisposta == null) {
+			org.openapi4j.parser.model.v3.RequestBody requestBodyOpenApi4j = operation.getRequestBody();
+			return requestBodyOpenApi4j != null ? requestBodyOpenApi4j.getContentMediaTypes() : null;
+		}
+		org.openapi4j.parser.model.v3.Response responseOpenApi4j = operation.getResponse(statusRisposta.toString());
+		if (responseOpenApi4j == null) {
+			responseOpenApi4j = operation.getResponse(OAI3SchemaKeywords.DEFAULT);
+		}
+		return responseOpenApi4j != null ? responseOpenApi4j.getContentMediaTypes() : null;
+	}
+
+	/* Per i content-type xml la libreria converte il documento in json prima di verificare se lo schema dichiarato sia in
+	 * grado di accogliere un contenuto strutturato. La conversione rimuove i prefissi di namespace tramite una espressione
+	 * regolare che non gestisce i tag distribuiti su più righe né gli attributi delimitati da apici singoli: in tali casi il
+	 * tag di apertura resta invariato mentre quello di chiusura viene normalizzato, e il documento, benché valido, risulta
+	 * malformato al parser ('Mismatched x:tag and tag').
+	 * Quando lo schema dichiarato non è un object o un array, la libreria scarta comunque il risultato della conversione
+	 * sostituendolo con una stringa vuota: la conversione non serve e la validazione del body viene quindi omessa.
+	 * In ogni situazione non riconducibile con certezza a tale casistica viene mantenuto il comportamento originale. */
+	private boolean isBodyValidabile(Operation operation, String contentType, Integer statusRisposta) {
+		try {
+			if (contentType == null) {
+				return true;
+			}
+			// il tipo va isolato dai parametri prima della verifica, come effettuato dalla libreria in ContentConverter
+			String tipoContentType = org.openapi4j.operation.validator.util.ContentType.getTypeOnly(contentType);
+			if (!org.openapi4j.operation.validator.util.ContentType.isXml(tipoContentType)) {
+				return true;
+			}
+
+			Map<String, org.openapi4j.parser.model.v3.MediaType> mediaTypes = getContentMediaTypes(operation, statusRisposta);
+			if (mediaTypes == null || mediaTypes.isEmpty()) {
+				return true;
+			}
+
+			org.openapi4j.parser.model.v3.MediaType mediaType = mediaTypes.get(tipoContentType);
+			if (mediaType == null) {
+				// media type non individuabile in maniera esatta (es. wildcard): comportamento invariato
+				return true;
+			}
+
+			org.openapi4j.parser.model.v3.Schema schema = mediaType.getSchema();
+			if (schema == null) {
+				return false;
+			}
+			String tipo = schema.getFlatSchema(this.openApi4j.getContext()).getSupposedType(this.openApi4j.getContext());
+			return OAI3SchemaKeywords.TYPE_OBJECT.equals(tipo) || OAI3SchemaKeywords.TYPE_ARRAY.equals(tipo);
+
+		} catch (Exception e) {
+			if (this.log != null) {
+				this.log.debug("Verifica della necessità di validare il body xml non riuscita: " + e.getMessage(), e);
+			}
+			return true;
+		}
+	}
+
 	private void validateWithOpenApi4j(HttpBaseEntity<?> httpEntity, ApiOperation apiOperation)
 			throws ProcessingException, ValidatorException {
 
@@ -382,7 +441,8 @@ public class Openapi4jRequestValidator extends AbstractApiValidator implements I
 				if (this.config.isValidateRequestCookie()) {
 					val.validateCookies(requestOpenApi4j, vData);
 				}
-				if (this.config.isValidateRequestBody()) {
+				if (this.config.isValidateRequestBody()
+						&& isBodyValidabile(operation, httpRequest.getContentType(), null)) {
 					val.validateBody(requestOpenApi4j, vData);
 				}
 			} else if (httpEntity instanceof HttpBaseResponseEntity<?> response) {
@@ -392,7 +452,8 @@ public class Openapi4jRequestValidator extends AbstractApiValidator implements I
 				if (this.config.isValidateResponseHeaders()) {
 					val.validateHeaders(responseOpenApi4j, vData);
 				}
-				if (this.config.isValidateResponseBody()) {
+				if (this.config.isValidateResponseBody()
+						&& isBodyValidabile(operation, response.getContentType(), response.getStatus())) {
 					val.validateBody(responseOpenApi4j, vData);
 				}
 			}

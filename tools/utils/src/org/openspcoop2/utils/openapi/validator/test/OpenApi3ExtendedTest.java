@@ -4398,6 +4398,22 @@ public class OpenApi3ExtendedTest {
 		System.out.println("Test #30.json schema: {} completato\n\n");
 	
 		
+		// ** Test per validare un body xml che utilizza prefissi di namespace **
+		/*
+		 * La libreria openapi4j, per i content-type xml, converte il documento in json rimuovendo i prefissi
+		 * di namespace tramite una espressione regolare che non gestisce i tag distribuiti su più righe
+		 * né gli attributi delimitati da apici singoli: il tag di apertura resta invariato mentre quello di
+		 * chiusura viene normalizzato, e il documento risulta quindi malformato ('Mismatched x:tag and tag').
+		 * L'esito della validazione non deve dipendere dalla formattazione del documento.
+		 */
+
+		System.out.println("Test #31 body xml con prefissi di namespace  ...");
+
+		testXmlNamespaceFormattazione(openAPILibrary, mergeSpec);
+
+		System.out.println("Test #31 body xml con prefissi di namespace completato\n\n");
+
+	
 		System.out.println("Testsuite completata");
 	}
 
@@ -4407,6 +4423,15 @@ public class OpenApi3ExtendedTest {
 	 * librerie carica l'originale 3.0.
 	 * @see <a href="../../../../validator/OpenAPILibrary.html#supportsOpenApi30()">OpenAPILibrary.supportsOpenApi30()</a>
 	 */
+	/**
+	 * Risolve la risorsa xmlNamespace.yaml: per kappa, che supporta solo OpenAPI 3.1, carica la variante 3.1.
+	 */
+	private static String xmlNamespaceResourcePath(OpenAPILibrary openAPILibrary) {
+		return OpenAPILibrary.kappa.equals(openAPILibrary)
+				? "/org/openspcoop2/utils/openapi/test/xmlNamespace_3_1.yaml"
+				: "/org/openspcoop2/utils/openapi/test/xmlNamespace.yaml";
+	}
+
 	private static String allegatiResourcePath(OpenAPILibrary openAPILibrary) {
 		return OpenAPILibrary.kappa.equals(openAPILibrary)
 				? "/org/openspcoop2/utils/openapi/test/allegati_3_1.yaml"
@@ -9320,6 +9345,170 @@ public class OpenApi3ExtendedTest {
 			
 			
 		System.out.println("Verifica schema empty completato!");
+
+	}
+	
+	/* Lo stesso documento xml, con gli stessi namespace e gli stessi dati, espresso con quattro formattazioni differenti.
+	 * Le prime due sono le forme che la libreria openapi4j gestisce correttamente, le altre due no. */
+
+	// Documento interamente su una sola riga
+	private static final String XML_DOCUMENTO_UNA_RIGA =
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+
+			"<ana:elenco xmlns:ana=\"http://example.org/anagrafica/v1\" xmlns:cmn=\"http://example.org/common/v1\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://example.org/anagrafica/v1 anagrafica.xsd\" totale=\"2\">"+
+			"<ana:soggetto cmn:id=\"S-001\"><ana:nome>Mario</ana:nome><ana:cognome>Rossi</ana:cognome></ana:soggetto>"+
+			"<ana:soggetto cmn:id=\"S-002\"><ana:nome>Anna</ana:nome><ana:cognome>Bianchi</ana:cognome></ana:soggetto>"+
+			"</ana:elenco>";
+
+	// Un elemento per riga, con il tag di apertura di ogni elemento su una sola riga
+	private static final String XML_ELEMENTO_PER_RIGA =
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
+			"<ana:elenco xmlns:ana=\"http://example.org/anagrafica/v1\" xmlns:cmn=\"http://example.org/common/v1\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://example.org/anagrafica/v1 anagrafica.xsd\" totale=\"2\">\n"+
+			"  <ana:soggetto cmn:id=\"S-001\">\n"+
+			"    <ana:nome>Mario</ana:nome>\n"+
+			"    <ana:cognome>Rossi</ana:cognome>\n"+
+			"  </ana:soggetto>\n"+
+			"  <ana:soggetto cmn:id=\"S-002\">\n"+
+			"    <ana:nome>Anna</ana:nome>\n"+
+			"    <ana:cognome>Bianchi</ana:cognome>\n"+
+			"  </ana:soggetto>\n"+
+			"</ana:elenco>";
+
+	// Tag di apertura destrutturati: un attributo per riga
+	private static final String XML_ATTRIBUTO_PER_RIGA =
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
+			"<ana:elenco\n"+
+			"   xmlns:ana=\"http://example.org/anagrafica/v1\"\n"+
+			"   xmlns:cmn=\"http://example.org/common/v1\"\n"+
+			"   xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n"+
+			"   xsi:schemaLocation=\"http://example.org/anagrafica/v1 anagrafica.xsd\"\n"+
+			"   totale=\"2\">\n"+
+			"  <ana:soggetto\n"+
+			"     cmn:id=\"S-001\">\n"+
+			"    <ana:nome>Mario</ana:nome>\n"+
+			"    <ana:cognome>Rossi</ana:cognome>\n"+
+			"  </ana:soggetto>\n"+
+			"  <ana:soggetto\n"+
+			"     cmn:id=\"S-002\">\n"+
+			"    <ana:nome>Anna</ana:nome>\n"+
+			"    <ana:cognome>Bianchi</ana:cognome>\n"+
+			"  </ana:soggetto>\n"+
+			"</ana:elenco>";
+
+	// Attributi delimitati da apici singoli
+	private static final String XML_APICI_SINGOLI =
+			"<?xml version='1.0' encoding='UTF-8'?>\n"+
+			"<ana:elenco xmlns:ana='http://example.org/anagrafica/v1' xmlns:cmn='http://example.org/common/v1' totale='2'>\n"+
+			"  <ana:soggetto cmn:id='S-001'>\n"+
+			"    <ana:nome>Mario</ana:nome>\n"+
+			"    <ana:cognome>Rossi</ana:cognome>\n"+
+			"  </ana:soggetto>\n"+
+			"  <ana:soggetto cmn:id='S-002'>\n"+
+			"    <ana:nome>Anna</ana:nome>\n"+
+			"    <ana:cognome>Bianchi</ana:cognome>\n"+
+			"  </ana:soggetto>\n"+
+			"</ana:elenco>";
+
+	private static void testXmlNamespaceFormattazione(OpenAPILibrary openAPILibrary, boolean mergeSpec) throws Exception {
+
+		System.out.println("#### Verifica validazione body xml con prefissi di namespace ####");
+
+		URL url = OpenApi3ExtendedTest.class.getResource(xmlNamespaceResourcePath(openAPILibrary));
+
+		IApiReader apiReader = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
+		ApiReaderConfig configReader = new ApiReaderConfig();
+		configReader.setProcessInclude(false);
+		apiReader.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), new File(url.toURI()), configReader);
+		Api api = apiReader.read();
+
+		try {
+			api.validate();
+		}catch(ParseWarningException warning) {
+			System.out.println("Documento contenente anomalie: "+warning.getMessage());
+		}
+
+		IApiValidator apiValidator = ApiFactory.newApiValidator(openAPILibrary.name());
+		OpenapiApiValidatorConfig configValidator = new OpenapiApiValidatorConfig();
+		configValidator.setEmitLogError(logSystemOutError);
+		configValidator.setOpenApiValidatorConfig(new OpenapiLibraryValidatorConfig());
+		configValidator.getOpenApiValidatorConfig().setOpenApiLibrary(openAPILibrary);
+		configValidator.getOpenApiValidatorConfig().setValidateAPISpec(true);
+		configValidator.getOpenApiValidatorConfig().setMergeAPISpec(mergeSpec);
+		
+		ApiValidatorConfig config = ApiFactory.newApiValidatorConfig(openAPILibrary.name());
+		config.readProperties(configValidator.getOpenApiValidatorConfig()::getProperty);
+		
+		apiValidator.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), api, config);
+
+		// Le tre forme con cui in OpenAPI 3 si dichiara un body non modellato: in nessuna di esse il contenuto
+		// e' descritto, e la formattazione del documento deve quindi risultare ininfluente sull'esito.
+		String [] paths = new String[] {
+				"/anagrafica/stringa",
+				"/anagrafica/binario",
+				"/anagrafica/senza-schema"};
+
+		String [] nomiDocumenti = new String[] {
+				"documento su una sola riga",
+				"un elemento per riga",
+				"un attributo per riga",
+				"attributi con apici singoli"};
+		String [] documenti = new String[] {
+				XML_DOCUMENTO_UNA_RIGA,
+				XML_ELEMENTO_PER_RIGA,
+				XML_ATTRIBUTO_PER_RIGA,
+				XML_APICI_SINGOLI};
+
+		String [] contentTypes = new String[] {
+				HttpConstants.CONTENT_TYPE_XML,
+				HttpConstants.CONTENT_TYPE_XML+"; charset=UTF-8"};
+
+		for (String path : paths) {
+			for (int i = 0; i < documenti.length; i++) {
+				for (String contentType : contentTypes) {
+
+					String tipoTest = "["+openAPILibrary+"] path:"+path+" xml:'"+nomiDocumenti[i]+"' contentType:'"+contentType+"'";
+					byte[] contenuto = documenti[i].getBytes("UTF-8");
+
+					System.out.println("\tTest Risposta "+tipoTest+" ...");
+
+					BinaryHttpResponseEntity response = new BinaryHttpResponseEntity();
+					response.setStatus(200);
+					response.setMethod(HttpRequestMethod.GET);
+					response.setUrl(path);
+					Map<String, List<String>> headersRisposta = new HashMap<>();
+					TransportUtils.setHeader(headersRisposta, HttpConstants.CONTENT_TYPE, contentType);
+					response.setHeaders(headersRisposta);
+					response.setContentType(contentType);
+					response.setContent(contenuto);
+					try {
+						apiValidator.validate(response);
+					} catch (Exception e) {
+						throw new UtilsException("Errore non atteso nella validazione della risposta "+tipoTest+": "+e.getMessage(),e);
+					}
+
+					System.out.println("\tTest Risposta "+tipoTest+" verifica superata");
+
+					System.out.println("\tTest Richiesta "+tipoTest+" ...");
+
+					BinaryHttpRequestEntity request = new BinaryHttpRequestEntity();
+					request.setMethod(HttpRequestMethod.POST);
+					request.setUrl(path);
+					Map<String, List<String>> headersRichiesta = new HashMap<>();
+					TransportUtils.setHeader(headersRichiesta, HttpConstants.CONTENT_TYPE, contentType);
+					request.setHeaders(headersRichiesta);
+					request.setContentType(contentType);
+					request.setContent(contenuto);
+					try {
+						apiValidator.validate(request);
+					} catch (Exception e) {
+						throw new UtilsException("Errore non atteso nella validazione della richiesta "+tipoTest+": "+e.getMessage(),e);
+					}
+
+					System.out.println("\tTest Richiesta "+tipoTest+" verifica superata");
+				}
+			}
+		}
+
+		System.out.println("Verifica validazione body xml con prefissi di namespace completata!");
 
 	}
 }

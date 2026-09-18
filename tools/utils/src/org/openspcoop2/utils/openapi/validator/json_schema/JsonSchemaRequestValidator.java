@@ -148,7 +148,13 @@ public class JsonSchemaRequestValidator extends AbstractApiValidator implements 
 			} else {
 				if (openapiApi != null) {
 
-					Map<String, Schema<?>> definitions = openapiApi.getAllDefinitions();
+					// un media type può non dichiarare alcuno schema: la relativa definizione è nulla e non produce alcun validatore
+					Map<String, Schema<?>> definitions = new HashMap<>();
+					for (Map.Entry<String, Schema<?>> definition : openapiApi.getAllDefinitions().entrySet()) {
+						if (definition.getValue() != null) {
+							definitions.put(definition.getKey(), definition.getValue());
+						}
+					}
 					String definitionString = Json.mapper().writeValueAsString(definitions);
 					definitionString = definitionString.replaceAll("#/components/schemas", "#/definitions");
 					for (String schemaName : definitions.keySet()) {

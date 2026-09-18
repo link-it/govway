@@ -43,12 +43,13 @@ import io.swagger.v3.oas.models.media.Schema;
  */
 public class SwaggerValidatorUtils {
 
+	// lo schema può non essere dichiarato dal media type
 	public static boolean isBase64SchemaFile(Schema<?> schema) {
-		return "string".equals(schema.getType()) && "base64".equals(schema.getFormat());
+		return schema!=null && "string".equals(schema.getType()) && "base64".equals(schema.getFormat());
 	}
 
 	public static boolean isBinarySchemaFile(Schema<?> schema) {
-		return "string".equals(schema.getType()) && "binary".equals(schema.getFormat());
+		return schema!=null && "string".equals(schema.getType()) && "binary".equals(schema.getFormat());
 	}
 
 	// Adattata dalla com.github.fgce...jsonschema

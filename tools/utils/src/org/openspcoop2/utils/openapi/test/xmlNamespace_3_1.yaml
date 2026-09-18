@@ -1,0 +1,99 @@
+openapi: 3.1.0
+
+info:
+  title: Test validazione body XML con prefissi di namespace
+  description: |-
+    Interfaccia utilizzata per verificare che l'esito della validazione di un body XML
+    non dipenda dalla formattazione del documento.
+    La libreria openapi4j, per i content-type xml, converte il documento in json rimuovendo
+    i prefissi di namespace tramite una espressione regolare che non gestisce i tag
+    distribuiti su piu' righe ne' gli attributi delimitati da apici singoli.
+    Le risorse seguenti dichiarano il body come contenuto non modellato nelle tre forme
+    utilizzabili in OpenAPI 3: 'type: string', 'type: string' con 'format: binary' e media
+    type privo di schema. In nessuna delle tre la conversione e' necessaria, poiche' il suo
+    risultato non viene comunque utilizzato.
+  version: 1.0.0
+
+paths:
+
+  /anagrafica/stringa:
+    get:
+      summary: "Risposta XML dichiarata come type: string"
+      responses:
+        "200":
+          description: Elenco dei soggetti
+          content:
+            application/xml:
+              schema:
+                type: string
+        "500":
+          description: Errore interno
+          content:
+            application/problem+json:
+              schema:
+                type: object
+    post:
+      summary: "Richiesta XML dichiarata come type: string"
+      requestBody:
+        required: true
+        content:
+          application/xml:
+            schema:
+              type: string
+      responses:
+        "200":
+          description: Elenco acquisito
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /anagrafica/binario:
+    get:
+      summary: "Risposta XML dichiarata come type: string con format: binary"
+      responses:
+        "200":
+          description: Elenco dei soggetti
+          content:
+            application/xml:
+              schema:
+                type: string
+                format: binary
+    post:
+      summary: "Richiesta XML dichiarata come type: string con format: binary"
+      requestBody:
+        required: true
+        content:
+          application/xml:
+            schema:
+              type: string
+              format: binary
+      responses:
+        "200":
+          description: Elenco acquisito
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /anagrafica/senza-schema:
+    get:
+      summary: Risposta XML priva di schema dichiarato
+      responses:
+        "200":
+          description: Elenco dei soggetti
+          content:
+            application/xml: {}
+    post:
+      summary: Richiesta XML priva di schema dichiarato
+      requestBody:
+        required: true
+        content:
+          application/xml: {}
+      responses:
+        "200":
+          description: Elenco acquisito
+          content:
+            application/json:
+              schema:
+                type: object
