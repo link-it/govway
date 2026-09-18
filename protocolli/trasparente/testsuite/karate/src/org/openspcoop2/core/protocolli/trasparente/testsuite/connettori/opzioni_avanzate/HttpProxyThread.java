@@ -263,8 +263,8 @@ public class HttpProxyThread extends AbstractBaseThread {
 	
 	
 	
-	public static final int PORT_NO_AUTH = 59900;
-	public static final int PORT_AUTH = 59901;
+	public static final int PORT_NO_AUTH = 19900;
+	public static final int PORT_AUTH = 19901;
 
 	private static final int PORT_CHECK_INTERVAL_MS = 500;
 	private static final int PORT_CHECK_TIMEOUT_MS = 30000;

@@ -86,7 +86,7 @@ public class HttpProxyUtils {
 	}
 	
 	// http url connection: Errore avvenuto durante la consegna HTTP: Connection refused (Connection refused)
-	// httpcore: Connect to http://localhost:59900 [localhost/127.0.0.1] failed: Connection refused
+	// httpcore: Connect to http://localhost:19900 [localhost/127.0.0.1] failed: Connection refused
 	// Uso like per prendere entrambi
 	//private static final String CONNECTION_REFUSED_REST = "[proxy: localhost:PORT] http-method:METHOD): Errore avvenuto durante la consegna HTTP: %Connection refused";
 	//private static final String CONNECTION_REFUSED_SOAP = "[proxy: localhost:PORT]): Errore avvenuto durante la consegna HTTP: %Connection refused";
