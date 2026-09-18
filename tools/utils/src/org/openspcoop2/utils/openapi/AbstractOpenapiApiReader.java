@@ -530,7 +530,8 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 
 				String type = null;
 				ApiReference apiRef = null;
-				if(model.get$ref()!= null) {
+				// il media type può non dichiarare alcuno schema; la verifica è già presente sul lato risposta
+				if(model!=null && model.get$ref()!= null) {
 					String href = model.get$ref().trim();
 					if(href.contains("#") && !href.startsWith("#")) {
 						type = href.substring(href.indexOf("#"), href.length());

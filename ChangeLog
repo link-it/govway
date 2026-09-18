@@ -1,3 +1,17 @@
+2026-09-18  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug #1824
+	La validazione dei contenuti applicativi di una API REST che scambia messaggi XML poteva fallire su documenti validi
+	e ben formati, in funzione della sola impaginazione: un elemento radice distribuito su più righe, o attributi
+	delimitati da apici singoli, ne provocavano il rifiuto con un errore 'InvalidResponse' e codice 502, mentre lo
+	stesso contenuto veniva accettato se scritto su una sola riga. Quando la specifica OpenAPI non descrive la struttura
+	del messaggio, come avviene per i documenti la cui struttura è definita da XSD, l'elaborazione che causava
+	l'anomalia non produceva comunque alcun controllo e non viene adesso più intrapresa.
+	È stata inoltre allineata la gestione di un contenuto dichiarato senza schema associato, forma prevista da OpenAPI 3
+	per i corpi non modellati, che non risultava utilizzabile in richiesta e, a seconda della libreria di validazione,
+	nemmeno in risposta.
+
 2026-09-17  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
