@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -107,6 +108,31 @@ public class ConfigLoader {
     }
 
 	
+	/**
+	 * Istante di avvio della classe di test, utilizzato dal presidio sul repository di overflow per
+	 * distinguere i file prodotti dall'esecuzione in corso da quelli residui di esecuzioni precedenti.
+	 */
+	private static long istanteAvvioClasse;
+
+	@BeforeClass
+	public static void registraAvvioClasse() {
+		istanteAvvioClasse = System.currentTimeMillis();
+	}
+
+	/**
+	 * Presidio applicato a tutte le classi di test: verifica che l'esecuzione non abbia lasciato file nel
+	 * repository di overflow dei buffer dei messaggi.
+	 *
+	 * Le verifiche puntuali, dove presenti, controllano la singola transazione; questa invece intercetta
+	 * anche gli scenari privi di verifica dedicata, che sono quelli in cui un difetto di rilascio ha piu'
+	 * probabilita' di passare inosservato. Resta inerte sugli ambienti in cui il repository non e' stato
+	 * indicato nella property 'dumpBinario.repository'.
+	 */
+	@AfterClass
+	public static void verificaRepositoryDumpBinario() {
+		DumpBinarioUtils.verifyNessunResiduoRecente(logCore, istanteAvvioClasse);
+	}
+
 	@BeforeClass
 	public static void setupDbUtils() {
 		Map<String, String> dbConfig = new HashMap<>();

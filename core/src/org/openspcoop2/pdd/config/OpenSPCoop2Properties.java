@@ -1894,6 +1894,8 @@ public class OpenSPCoop2Properties {
 			this.isDumpBinarioRegistrazioneDatabase();
 			this.getDumpBinarioInMemoryThreshold();
 			this.getDumpBinarioRepository();
+			this.isDumpBinarioPuliziaEnabled();
+			this.getDumpBinarioPuliziaGiorni();
 
 			// DumpNotRealtime
 			this.getDumpNonRealtimeInMemoryThreshold();
@@ -20539,6 +20541,44 @@ public class OpenSPCoop2Properties {
 		}
 
 		return this.isDumpBinarioRegistrazioneDatabase;
+	}
+	
+	private Boolean isDumpBinarioPuliziaEnabled = null;
+	public boolean isDumpBinarioPuliziaEnabled(){
+		String pName = "org.openspcoop2.pdd.logger.dumpBinario.pulizia.enabled";
+		if(this.isDumpBinarioPuliziaEnabled==null){
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(pName); 
+				if (value != null){
+					this.isDumpBinarioPuliziaEnabled = Boolean.parseBoolean(value.trim());
+				}else{
+					this.isDumpBinarioPuliziaEnabled = true;
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName,e,true),e);
+				this.isDumpBinarioPuliziaEnabled = true;
+			}
+		}
+		return this.isDumpBinarioPuliziaEnabled;
+	}
+	
+	private Integer getDumpBinarioPuliziaGiorni = null;
+	public int getDumpBinarioPuliziaGiorni() {	
+		String pName = "org.openspcoop2.pdd.logger.dumpBinario.pulizia.giorni";
+		if(this.getDumpBinarioPuliziaGiorni==null){
+			try{ 
+				String name = this.reader.getValueConvertEnvProperties(pName);
+				if(name!=null){
+					this.getDumpBinarioPuliziaGiorni = java.lang.Integer.parseInt(name.trim());
+				}else{
+					this.getDumpBinarioPuliziaGiorni = CostantiPdD.DUMP_BINARIO_PULIZIA_GIORNI;
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName,e,CostantiPdD.DUMP_BINARIO_PULIZIA_GIORNI),e);
+				this.getDumpBinarioPuliziaGiorni = CostantiPdD.DUMP_BINARIO_PULIZIA_GIORNI;
+			}  
+		}
+		return this.getDumpBinarioPuliziaGiorni;
 	}
 	
 	private Integer getDumpBinarioInMemoryThreshold = null;

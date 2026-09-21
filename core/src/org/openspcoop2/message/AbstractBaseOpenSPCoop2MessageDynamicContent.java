@@ -61,6 +61,18 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 	protected OpenSPCoop2MessageSoapStreamReader soapStreamReader;
 
 	protected DumpByteArrayOutputStream contentBuffer;
+
+	/**
+	 * Buffer prodotto dalla bufferizzazione lazy ({@link #setInputStreamLazyBuffer(String)}) e utilizzato da
+	 * {@link #_getInputStream()} per restituire il contenuto gia' letto.
+	 *
+	 * Viene mantenuto ai soli fini del rilascio: a differenza di {@link #contentBuffer} non partecipa alla
+	 * scelta della modalita' di serializzazione, poiche' puo' contenere solo la porzione di messaggio letta
+	 * fino a quel momento, mentre la parte restante rimane sullo stream. Senza questo riferimento il buffer
+	 * resterebbe irraggiungibile e il file eventualmente prodotto oltre soglia non verrebbe mai eliminato.
+	 */
+	private DumpByteArrayOutputStream lazyBuffer;
+
 	private static volatile int soglia;
 	private static File repositoryFile;
 
@@ -193,6 +205,7 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 					AbstractBaseOpenSPCoop2MessageDynamicContent.soglia,
 					AbstractBaseOpenSPCoop2MessageDynamicContent.repositoryFile, idTransazione,
 					this.getMessageRole().name());
+			MessageBufferRegistry.register(idTransazione, contentBuffer);
 			this._countingInputStream = new OpenSPCoop2InputStreamDynamicContent(this._countingInputStream, contentBuffer);
 		}
 		return true; // se è già OpenSPCoop2InputStreamDynamicContent torno true
@@ -208,14 +221,16 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 				if (readOnly && this.supportReadOnly) {
 					if(this._countingInputStream instanceof OpenSPCoop2InputStreamDynamicContent) {
 						// se e' un OpenSPCoop2InputStreamDynamicContent dovrebbe gia' essere stato inizializzato il buffer
-						this._countingInputStream = ((OpenSPCoop2InputStreamDynamicContent)this._countingInputStream).getWrappedInputStream();
-						this.contentBuffer = ((OpenSPCoop2InputStreamDynamicContent)this._countingInputStream).getBuffer();
+						OpenSPCoop2InputStreamDynamicContent dynamicContent = (OpenSPCoop2InputStreamDynamicContent) this._countingInputStream;
+						this._countingInputStream = dynamicContent.getWrappedInputStream();
+						this.contentBuffer = dynamicContent.getBuffer();
 					}
 					else { 
 						this.contentBuffer = new DumpByteArrayOutputStream(
 								AbstractBaseOpenSPCoop2MessageDynamicContent.soglia,
 								AbstractBaseOpenSPCoop2MessageDynamicContent.repositoryFile, idTransazione,
 								this.getMessageRole().name());
+						MessageBufferRegistry.register(idTransazione, this.contentBuffer);
 					}
 					try {
 						CopyStream.copy(this._countingInputStream, this.contentBuffer); // se e' un OpenSPCoop2InputStreamDynamicContent riverso quello che rimane nel buffer
@@ -263,6 +278,22 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 		}
 	}
 
+	/**
+	 * Rilascia il buffer prodotto dalla bufferizzazione lazy, se presente. Va invocato quando il contenuto
+	 * che esso conserva non e' piu' necessario: il file eventualmente prodotto oltre soglia viene eliminato.
+	 */
+	protected void releaseLazyBuffer() {
+		try {
+			if (this.lazyBuffer != null) {
+				this.lazyBuffer.unlock();
+				this.lazyBuffer.clearResources();
+				this.lazyBuffer = null;
+			}
+		} catch (Throwable t) {
+			// il rilascio non deve compromettere l'elaborazione in corso
+		}
+	}
+
 	public InputStream getInputStream() {
 		return this._countingInputStream;
 	}
@@ -272,6 +303,7 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 			OpenSPCoop2InputStreamDynamicContent di = ((OpenSPCoop2InputStreamDynamicContent)this._countingInputStream); 
 			DumpByteArrayOutputStream bf = di.getBuffer();
 			if(bf!=null && bf.size()>0) {
+				this.lazyBuffer = bf; // da qui in avanti il rilascio e' a carico del messaggio
 				this._countingInputStream = di.getWrappedInputStream();
 				InputStream isBuffered = bf.getInputStream();
 				try {
@@ -392,6 +424,7 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 			this.contentBuffer.clearResources();
 			this.contentBuffer = null;
 		}
+		releaseLazyBuffer();
 		if (this.content != null) {
 			this.hasContent = true;
 		} else {
@@ -495,6 +528,7 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 					}
 				} catch (Throwable t) {
 				}
+				releaseLazyBuffer();
 			}
 		}
 	}

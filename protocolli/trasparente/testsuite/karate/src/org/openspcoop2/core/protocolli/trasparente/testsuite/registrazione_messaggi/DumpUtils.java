@@ -33,6 +33,7 @@ import java.util.List;
 import javax.xml.soap.AttachmentPart;
 
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
+import org.openspcoop2.core.protocolli.trasparente.testsuite.DumpBinarioUtils;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.TipoServizio;
 import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.message.OpenSPCoop2Message;
@@ -151,6 +152,13 @@ public class DumpUtils {
 			assertTrue("Verifico content-length '"+response.getContent().length+"' >0", response.getContent().length>0);
 		}
 		
+
+		// I test della registrazione messaggi transitano anche payload da 2 MB, quindi oltre la soglia
+		// 'org.openspcoop2.pdd.logger.dumpBinario.inMemory.threshold': il contenuto viene riversato nel
+		// repository di overflow e il file deve essere eliminato al termine della transazione. Il percorso
+		// e' quello dei buffer del dump raw, distinto da quello dei buffer del messaggio.
+		DumpBinarioUtils.verifyNoResidui(ConfigLoader.getLoggerCore(), idTransazione, "registrazione messaggi");
+
 		DBVerifier.verify(idTransazione, 
 				richiestaIngressoHeader, richiestaIngressoBody,
 				richiestaUscitaHeader, richiestaUscitaBody,
@@ -272,6 +280,9 @@ public class DumpUtils {
 		
 		String idTransazione = response.getHeaderFirstValue("GovWay-Transaction-ID");
 		assertNotNull(idTransazione);
+
+		// come sopra: anche questo percorso transita payload oltre soglia
+		DumpBinarioUtils.verifyNoResidui(ConfigLoader.getLoggerCore(), idTransazione, "registrazione messaggi");
 		
 		assertNotNull(response.getContent());
 		String msgContentLength = "";
