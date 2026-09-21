@@ -1,3 +1,22 @@
+2026-09-21  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug #1826
+	I contenuti dei messaggi che superano la soglia oltre la quale non vengono più mantenuti in memoria sono trasferiti
+	in un file, all'interno della directory 'dumpBinario' posta sotto la directory di log dell'installazione
+	(ad esempio '/var/log/govway/dumpBinario'), e devono essere eliminati al termine della transazione. Tali file
+	sopravvivevano invece all'elaborazione e si accumulavano indefinitamente, fino a compromettere lo spazio
+	disponibile sul volume che ospita i log, senza che venisse prodotta alcuna segnalazione poiché la transazione si
+	concludeva regolarmente.
+	Il caso più frequente riguardava le API REST con validazione dei contenuti abilitata, limitatamente ai messaggi
+	binari e multipart, dove ogni messaggio oltre soglia lasciava un file anche a transazione conclusa con successo.
+	Il rilascio era inoltre subordinato alla serializzazione del messaggio e non avveniva quando l'elaborazione non
+	giungeva alla consegna, ad esempio per una validazione fallita o per una risposta sostituita da un errore; questa
+	seconda casistica riguardava tutti i tipi di messaggio.
+	Il rilascio è adesso garantito al termine di ogni transazione, indipendentemente dal percorso seguito
+	dall'elaborazione. È stata infine introdotta una pulizia periodica della directory, come presidio per i soli casi
+	in cui l'elaborazione non possa giungere a conclusione, quali l'arresto del nodo o l'interruzione di un thread.
+
 2026-09-18  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

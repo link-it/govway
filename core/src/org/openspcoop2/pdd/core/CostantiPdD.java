@@ -155,6 +155,13 @@ public class CostantiPdD {
     
     /** Configurazione soglia per salvataggio in ram */
     public static final int DUMP_BINARIO_THRESHOLD = 1048576; // 1MB (1024*1024)
+
+    /**
+     * Giorni oltre i quali le directory giornaliere del repository di overflow vengono eliminate.
+     * Due giorni, e non uno, per non intervenire su una directory che potrebbe contenere file di
+     * transazioni ancora in corso al passaggio di mezzanotte.
+     */
+    public static final int DUMP_BINARIO_PULIZIA_GIORNI = 2;
     
     /** Configurazione soglia per salvataggio in ram */
     public static final int DUMP_NON_REALTIME_THRESHOLD = 61440;

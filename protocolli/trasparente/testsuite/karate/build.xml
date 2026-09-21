@@ -168,6 +168,13 @@
 				<path refid="karate_testsuite"/>
 			</classpath>
 		</javac>
+		<javac includeantruntime="false" destdir="${build_plugin}" debug="${debug}">
+                        <compilerarg value="-proc:full"/>
+			<src path="${src_testsuite}/org/openspcoop2/core/protocolli/trasparente/testsuite/registrazione_messaggi/classes"/>
+			<classpath>
+				<path refid="karate_testsuite"/>
+			</classpath>
+		</javac>
 		<jar jarfile="${dist_testsuite}/govway_testsuite_plugins.jar">
 			<zipfileset dir="${build_plugin}" />
 		</jar>
@@ -181,6 +188,7 @@
                         <compilerarg value="-proc:full"/>
 			<exclude name="org/openspcoop2/core/protocolli/trasparente/testsuite/plugin/classes/*" />
 			<exclude name="org/openspcoop2/core/protocolli/trasparente/testsuite/tracciamento/classes/*" />
+			<exclude name="org/openspcoop2/core/protocolli/trasparente/testsuite/registrazione_messaggi/classes/*" />
 			<classpath>
 				<path refid="karate_testsuite"/>
 			</classpath>

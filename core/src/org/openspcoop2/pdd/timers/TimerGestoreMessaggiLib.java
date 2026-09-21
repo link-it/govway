@@ -22,6 +22,9 @@
 
 package org.openspcoop2.pdd.timers;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.sql.Connection;
 import java.util.Date;
 import java.util.List;
@@ -50,6 +53,7 @@ import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.id.serial.InfoStatistics;
 import org.openspcoop2.utils.semaphore.Semaphore;
 import org.openspcoop2.utils.semaphore.SemaphoreConfiguration;
@@ -172,6 +176,77 @@ public class TimerGestoreMessaggiLib  {
 	}
 
 
+	/**
+	 * Indica se la directory indicata rientra fra quelle che la pulizia periodica deve eliminare.
+	 *
+	 * Sono gestite solo le directory il cui nome e' una data, che sono quelle prodotte dal repository:
+	 * qualunque altro contenuto non e' stato creato da questo meccanismo e non spetta a questa pulizia
+	 * rimuoverlo. Fra quelle, si escludono le piu' recenti della soglia, che potrebbero ospitare file di
+	 * transazioni ancora in corso.
+	 */
+	private boolean isDirectoryGiornalieraDaEliminare(File dir, String dataLimite) {
+		return dir.isDirectory() &&
+				dir.getName().matches("\\d{8}") &&
+				dir.getName().compareTo(dataLimite) < 0;
+	}
+	/**
+	 * Elimina dal repository di overflow dei buffer dei messaggi le directory giornaliere piu' vecchie di
+	 * quanto indicato dalla proprieta' 'org.openspcoop2.pdd.logger.dumpBinario.pulizia.giorni'.
+	 *
+	 * I file prodotti oltre la soglia 'dumpBinario.inMemory.threshold' vengono eliminati al termine della
+	 * transazione che li ha prodotti. Restano pero' i casi in cui l'elaborazione non arriva alla propria
+	 * conclusione - l'arresto del nodo, l'esaurimento della memoria, un thread interrotto - nei quali
+	 * nessuna gestione applicativa puo' intervenire. Questa pulizia e' l'unico presidio per quei casi.
+	 *
+	 * Vengono considerate solo le directory il cui nome e' una data anteriore alla soglia: una transazione
+	 * non puo' durare giorni, percio' il loro contenuto non e' in uso. Il repository e' locale al nodo,
+	 * quindi in configurazione a piu' nodi ciascuno provvede al proprio senza necessita' di sincronizzazione.
+	 */	
+	private void puliziaRepositoryDumpBinario() {
+		
+		if(!this.propertiesReader.isDumpBinarioPuliziaEnabled()) {
+			return;
+		}
+		
+		try {
+			File repository = this.propertiesReader.getDumpBinarioRepository();
+			if(repository==null || !repository.exists() || !repository.isDirectory()) {
+				return;
+			}
+			
+			int giorni = this.propertiesReader.getDumpBinarioPuliziaGiorni();
+			Calendar limite = Calendar.getInstance();
+			limite.setTime(DateManager.getDate());
+			limite.add(Calendar.DAY_OF_MONTH, -giorni);
+			String dataLimite = new SimpleDateFormat("yyyyMMdd").format(limite.getTime());
+			
+			File[] directory = repository.listFiles();
+			if(directory==null) {
+				return;
+			}
+			
+			int eliminate = 0;
+			for (File dir : directory) {
+				if(isDirectoryGiornalieraDaEliminare(dir, dataLimite) &&
+						FileSystemUtilities.deleteDir(dir)) {
+					eliminate++;
+					this.logTimer.info("[{}] Eliminata la directory '{}' del repository di overflow dei buffer dei messaggi",
+							TimerGestoreMessaggi.ID_MODULO, dir.getName());
+				}
+			}
+			
+			if(eliminate>0) {
+				this.logTimer.info("[{}] Pulizia del repository di overflow completata: {} directory anteriori al {} eliminate",
+						TimerGestoreMessaggi.ID_MODULO, eliminate, dataLimite);
+			}
+			
+		} catch(Exception e) {
+			// la pulizia non deve impedire le altre gestioni del timer
+			this.logTimer.error("[{}] Pulizia del repository di overflow dei buffer dei messaggi non riuscita: {}",
+					TimerGestoreMessaggi.ID_MODULO, e.getMessage(), e);
+		}
+	}
+	
 	public void check() throws TimerException {
 
 		// Controllo che il sistema non sia andando in shutdown
@@ -198,6 +273,11 @@ public class TimerGestoreMessaggiLib  {
 			return;
 		}
 		
+		// Pulizia periodica del repository di overflow dei buffer dei messaggi.
+		// E' indipendente dagli stati che seguono, poiche' non riguarda il repository dei messaggi ma le
+		// risorse su file system, e va effettuata anche quando le altre gestioni sono disabilitate.
+		puliziaRepositoryDumpBinario();
+
 		// Controllo che il timer non sia stato momentaneamente disabilitato
 		if(!TimerState.ENABLED.equals(STATE_MESSAGGI_ELIMINATI) && 
 				!TimerState.ENABLED.equals(STATE_MESSAGGI_SCADUTI) && 

@@ -2585,6 +2585,27 @@ public class GestoreHandlers  {
 
 		// Rilascio risorse per la generazione di date casuali
 		GestoreHandlers.rilasciaRisorseDemoMode((String)context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE));
+		
+		// Rilascio dei buffer utilizzati per i contenuti dei messaggi.
+		// Il rilascio avviene normalmente alla serializzazione del messaggio; qui vengono eliminati i buffer dei
+		// messaggi che non sono stati serializzati, ad esempio perche' sostituiti da un fault o perche' la
+		// transazione si e' interrotta prima. Va eseguito per ultimo, dopo gli handler built-in: e' il
+		// tracciamento a rilasciare i contenuti che ha trattenuto per la registrazione.
+		rilasciaBufferMessaggi(context, log);
+	}
+	private static void rilasciaBufferMessaggi(PostOutResponseContext context, Logger log) {
+		try {
+			String idTransazione = (String) context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
+			int rilasciati = org.openspcoop2.message.MessageBufferRegistry.release(idTransazione);
+			if(rilasciati>0 && log!=null) {
+				log.debug("Rilasciati {} buffer dei contenuti applicativi della transazione [{}]", rilasciati, idTransazione);
+			}
+		} catch(Throwable t) {
+			// il rilascio non deve compromettere la conclusione della transazione
+			if(log!=null) {
+				log.error("Rilascio dei buffer dei contenuti applicativi non riuscito: "+t.getMessage(),t);
+			}
+		}
 	}
 	private static List<Object[]> mergeWithImplementationEngine(PostOutResponseContext context,PostOutResponseHandler [] postOutResponseHandlers,String [] tipiPostOutResponseHandlers,
 			Logger log) {
