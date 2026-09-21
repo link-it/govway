@@ -2,6 +2,7 @@
 
 	* [GovWayCore, InstallerVersioneBinaria]
 	Risolte le seguenti vulnerabilità relative ai jar di terza parte:
+	- CVE-2026-8763, CVE-2026-13506: aggiornata libreria 'org.bouncycastle:*' alla versione 1.86
 	- CVE-2026-84939: aggiornata libreria 'org.freemarker:freemarker' alla versione 2.3.35
 	- CVE-2026-89044: aggiornata libreria 'io.netty:*' alla versione 4.2.18.Final
 	- CVE-2026-78254: aggiornata libreria 'org.apache.ant:*' alla versione 1.10.18

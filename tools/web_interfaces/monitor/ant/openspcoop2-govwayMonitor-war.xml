@@ -300,9 +300,9 @@
 			<lib dir="${required_lib}/security">
 				<include name="xmlsec-4.0.4.jar"/>
 				<include name="neethi-3.2.3.jar" />
-				<include name="bcpkix-jdk18on-1.84.jar"/>
-				<include name="bcprov-jdk18on-1.84.jar"/>
-				<include name="bcutil-jdk18on-1.84.jar"/>
+				<include name="bcpkix-jdk18on-1.86.jar"/>
+				<include name="bcprov-jdk18on-1.86.jar"/>
+				<include name="bcutil-jdk18on-1.86.jar"/>
 				<include name="jasypt-1.9.3.jar"/>
 				<include name="nimbus-jose-jwt-10.9.jar"/>
 			</lib>
