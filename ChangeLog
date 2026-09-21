@@ -1,5 +1,13 @@
 2026-09-21  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore, InstallerVersioneBinaria]
+	Risolte le seguenti vulnerabilità relative ai jar di terza parte:
+	- CVE-2026-84939: aggiornata libreria 'org.freemarker:freemarker' alla versione 2.3.35
+	- CVE-2026-89044: aggiornata libreria 'io.netty:*' alla versione 4.1.138.Final
+	- CVE-2026-78254: aggiornata libreria 'org.apache.ant:*' alla versione 1.10.18
+
+2026-09-21  Andrea Poli <apoli@link.it>
+
 	* [GovWayCore]
 	Risolto Bug #1826
 	I contenuti dei messaggi che superano la soglia oltre la quale non vengono più mantenuti in memoria sono trasferiti

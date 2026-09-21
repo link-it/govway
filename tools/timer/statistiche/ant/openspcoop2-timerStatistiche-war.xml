@@ -76,7 +76,7 @@
 				<include name="mailapi-1.6.7.jar" />
 				<include name="jakarta.activation-1.2.2.jar" />
 				<include name="joda-time-2.12.0.jar"/>
-				<include name="freemarker-2.3.31.jar" />
+				<include name="freemarker-2.3.35.jar" />
 				<include name="velocity-*.jar" />
 				<include name="${xerces_jar}"/>
 				<include name="${xml_apis_jar}"/>
