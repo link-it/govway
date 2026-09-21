@@ -52,7 +52,7 @@
 			<fileset dir="${openspcoop2.lib}" includes="jakarta/jakarta.xml.bind-api-4.0.5.jar"/>
 			<fileset dir="${openspcoop2.lib}" includes="angus/*"/>
 			<fileset dir="${openspcoop2.lib}" includes="httpcore/*"/>
-                        <fileset dir="${openspcoop2.lib}" includes="shared/freemarker-2.3.34.jar"/>
+                        <fileset dir="${openspcoop2.lib}" includes="shared/freemarker-2.3.35.jar"/>
                         <fileset dir="${openspcoop2.lib}" includes="shared/velocity-*.jar"/>
                         <fileset dir="${openspcoop2.lib}" includes="security/bcpkix-jdk18on-1.84.jar"/>
                         <fileset dir="${openspcoop2.lib}" includes="security/bcprov-jdk18on-1.84.jar"/>

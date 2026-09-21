@@ -69,7 +69,7 @@
 
 			<lib dir="${openspcoop2.lib}/shared">
 				<include name="joda-time-2.14.1.jar"/>
-				<include name="freemarker-2.3.34.jar" />
+				<include name="freemarker-2.3.35.jar" />
 				<include name="velocity-*.jar" />
 				<include name="${xerces_jar}"/>
 				<include name="${xml_apis_jar}"/>

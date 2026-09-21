@@ -22,7 +22,7 @@
 		<javassist.version>3.30.2-GA</javassist.version>
 		<aspectjrt.version>1.9.25.1</aspectjrt.version>
 		<aspectjweaver.version>1.9.25.1</aspectjweaver.version>
-		<freemarker.version>2.3.34</freemarker.version>
+		<freemarker.version>2.3.35</freemarker.version>
 		<velocity-core.version>2.4.1</velocity-core.version>
 		<velocity-tools.version>3.1</velocity-tools.version>
 		<guava.version>33.6.0-jre</guava.version>

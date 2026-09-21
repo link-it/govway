@@ -163,14 +163,14 @@
 	<archive path="/op2_3.4.dev/lib/pdf/boxable-1.8.2.jar"/>
 	<!-- redis -->
 	<archive path="/op2_3.4.dev/lib/redis/redisson-4.3.1.jar"/>
-	<archive path="/op2_3.4.dev/lib/redis/netty-resolver-4.2.17.Final.jar"/>
-	<archive path="/op2_3.4.dev/lib/redis/netty-resolver-dns-4.2.17.Final.jar"/>
-	<archive path="/op2_3.4.dev/lib/redis/netty-buffer-4.2.17.Final.jar"/>
-	<archive path="/op2_3.4.dev/lib/redis/netty-common-4.2.17.Final.jar"/>
-	<archive path="/op2_3.4.dev/lib/redis/netty-transport-4.2.17.Final.jar"/>
-	<archive path="/op2_3.4.dev/lib/redis/netty-codec-4.2.17.Final.jar"/>
-	<archive path="/op2_3.4.dev/lib/redis/netty-codec-dns-4.2.17.Final.jar"/>
-	<archive path="/op2_3.4.dev/lib/redis/netty-transport-native-unix-common-4.2.17.Final.jar"/>
+	<archive path="/op2_3.4.dev/lib/redis/netty-resolver-4.2.18.Final.jar"/>
+	<archive path="/op2_3.4.dev/lib/redis/netty-resolver-dns-4.2.18.Final.jar"/>
+	<archive path="/op2_3.4.dev/lib/redis/netty-buffer-4.2.18.Final.jar"/>
+	<archive path="/op2_3.4.dev/lib/redis/netty-common-4.2.18.Final.jar"/>
+	<archive path="/op2_3.4.dev/lib/redis/netty-transport-4.2.18.Final.jar"/>
+	<archive path="/op2_3.4.dev/lib/redis/netty-codec-4.2.18.Final.jar"/>
+	<archive path="/op2_3.4.dev/lib/redis/netty-codec-dns-4.2.18.Final.jar"/>
+	<archive path="/op2_3.4.dev/lib/redis/netty-transport-native-unix-common-4.2.18.Final.jar"/>
 	<!-- reports -->
 	<archive path="/op2_3.4.dev/lib/reports/poi-5.5.1.jar"/>
 	<archive path="/op2_3.4.dev/lib/reports/poi-ooxml-5.5.1.jar"/>
@@ -195,7 +195,7 @@
 	<archive path="/op2_3.4.dev/lib/shared/reflections-0.10.2.jar"/>
 	<archive path="/op2_3.4.dev/lib/shared/javassist-3.30.2-GA.jar"/>
         <archive path="/op2_3.4.dev/lib/shared/aspectjrt-1.9.25.1.jar"/>
-	<archive path="/op2_3.4.dev/lib/shared/freemarker-2.3.34.jar"/>
+	<archive path="/op2_3.4.dev/lib/shared/freemarker-2.3.35.jar"/>
         <archive path="/op2_3.4.dev/lib/shared/velocity-engine-core-2.4.1.jar"/>
 	<archive path="/op2_3.4.dev/lib/shared/guava-33.6.0-jre.jar"/>
 	<archive path="/op2_3.4.dev/lib/shared/java-uuid-generator-5.2.0.jar"/>
