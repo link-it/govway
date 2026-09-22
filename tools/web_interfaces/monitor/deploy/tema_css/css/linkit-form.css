@@ -627,6 +627,13 @@ input[type="submit"]:hover, input[type="button"]:hover, .buttonrow a:hover, .but
 	width: 20px  !important;
 }
 
+/* Il campo 'Tentativi di pubblicazione' del tracciamento PDND usava 'inputLinkLong', pensata
+   per i campi di testo: ne risultava un contatore largo quanto la maschera. E' un numero di
+   al massimo cinque cifre, e occupa lo spazio che gli serve. */
+.spinnerTentativiPubblicazione input.rich-spinner-input{
+	width: 48px  !important;
+}
+
 .comandi-grafici-align-default{
 	width: 33%;
 }

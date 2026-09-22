@@ -112,18 +112,27 @@ visualizzaMetadati = listRiepilogo.size() > 1;
 				
 				%>
 				<div id="titolo_<%=numeroEntryS %>_ruoli" class="titoloRuoli">
-					<span class="titoloRuoli-image-sx" id="titolo_<%=numeroEntryS %>_ruoli_icona" <%=ruoliTooltip %> >
+					<span class="titoloRuoli-image-sx" id="titolo_<%=numeroEntryS %>_ruoli_icona" <%=ruoliTooltip %> role="link" tabindex="0">
 						<i class="material-icons md-18" aria-hidden="true" id="iconInfo_titolo_<%=numeroEntryS %>_ruoli_icona"><%= Costanti.ICON_SUPERVISOR_ACCOUNT %></i>
 					</span>
 					<% for(int z = 0; z < listTags.size(); z ++){ 
 						DataElement tag = listTags.get(z);
 					%>
 						<span class="ruolo label ruolo-label-info <%=tag.getStyleClass() %>" <%=ruoliTooltip %> 
+							role="link" tabindex="0"
 							id="titolo_<%=numeroEntryS %>_ruoli_<%=z %>" ><%= tag.getLabel() %></span>
 					<% } %>
 					<script type="text/javascript" nonce="<%= randomNonce %>">
 						// info
 				    	if($("span[id^='titolo_<%=numeroEntryS %>_ruoli_']").length>0){
+				    		// i chip portano all'elenco dei ruoli: sono comandi, e vanno attivati
+				    		// anche con Invio e barra spaziatrice (WCAG 2.1.1)
+				    		$("span[id^='titolo_<%=numeroEntryS %>_ruoli_']").keydown(function(e){
+				    			if(e.which !== 13 && e.which !== 32) return true;
+				    			e.preventDefault();
+				    			$(this).click();
+				    			return false;
+				    		});
 				    		$("span[id^='titolo_<%=numeroEntryS %>_ruoli_']").click(function(e){
 				    			
 				    			<%=Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>

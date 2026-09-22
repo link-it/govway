@@ -377,11 +377,19 @@ if (hidden!=null && !hidden.isEmpty()) {
 								  			}
 										  //getOnClick
 										  deTextId = id; // fixID
-										  %><span id="<%=id %>" class="<%= classSpan %>" <%= deTip %>  <%= dataCopy %>><%= de.getValue() %></span>
+										  // il valore porta un'azione: e' un comando, non del testo. Senza ruolo ne'
+										  // 'tabindex' sarebbe attivabile con il solo mouse (WCAG 2.1.1)
+										  %><span id="<%=id %>" class="<%= classSpan %>" <%= deTip %>  <%= dataCopy %> role="button" tabindex="0"><%= de.getValue() %></span>
 										  	<script type="text/javascript" nonce="<%= randomNonce %>">
 											      $(document).ready(function(){
 														$('#<%=id %>').click(function() {
 															<%= visualizzaAjaxStatus %><%= de.getOnClick() %>; return false;
+														});
+														$('#<%=id %>').keydown(function(e) {
+															if(e.which !== 13 && e.which !== 32) return true;
+															e.preventDefault();
+															$(this).click();
+															return false;
 														});
 													});
 											  </script>

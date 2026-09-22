@@ -72,6 +72,18 @@
   margin: 0px;
 }
 
+/* I chip dei ruoli e la loro icona portano all'elenco dei ruoli, quindi sono comandi: come tali
+   devono offrire un bersaglio di almeno 24x24 px (WCAG 2.5.8). Erano alti 21 px e impilati senza
+   margine, quindi nemmeno l'eccezione per distanza dai vicini li salvava. */
+.titoloRuoli .ruolo,
+.titoloRuoli .titoloRuoli-image-sx {
+  min-height: 24px;
+  min-width: 24px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+}
+
 .ruolo-label-info {
 	background-color: ${input.tags.card.background.color};
 	text-align: center;

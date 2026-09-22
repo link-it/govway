@@ -1495,3 +1495,43 @@ input.rich-spinner-input {
 .rich-pmenu-item:focus {
 	outline: none;
 }
+
+/* Contrasto del calendario (rich:calendar). I colori arrivano dallo skin e non raggiungevano
+   il minimo di 4,5:1: intestazione di sabato e domenica #ff0000 su #f6f6fc = 3,71:1, giorni
+   festivi #f0641e su #ebf0eb = 2,78:1, giorni dei mesi adiacenti #a0a0a0 su bianco = 2,61:1.
+   Le tinte restano riconoscibili, scurite quanto basta: 5,13:1, 5,11:1 e 5,02:1. */
+.rich-calendar-days.rich-calendar-weekends {
+	color: #d40000;
+}
+.rich-calendar-cell.rich-calendar-holly {
+	color: #ad420b;
+}
+.rich-calendar-cell.rich-calendar-boundary-dates {
+	/* #6f6f6f basta sul bianco (5,02:1) ma non sul fondo delle colonne festive, dove i giorni
+	   di altri mesi cadono di sabato e domenica: li' scendeva a 4,35:1 */
+	color: #666666;
+}
+
+/* Il giorno scelto ha un fondo grigio (#c2c2ca): l'arancio dei festivi vi scende a 3,33:1 e il
+   grigio degli altri mesi a 3,24:1, perche' le due regole qui sopra, piu' specifiche, vincono su
+   '.rich-calendar-select'. Sulla cella scelta si ripristina il colore che il tema le assegna. */
+.rich-calendar-cell.rich-calendar-select {
+	color: ${input.calendar.widget.cell.hover.color};
+}
+
+/* I comandi di mese e anno del calendario misurano 20x20 px, sotto il minimo di 24x24
+   (WCAG 2.5.8): l'area attivabile viene portata alla soglia senza spostare le icone. */
+.rich-calendar-tool-btn,
+.rich-calendar-tool-btn-hover {
+	min-width: 24px;
+	min-height: 24px;
+	box-sizing: border-box;
+}
+
+/* I comandi dell'impaginatore, quando sono la cella stessa a fare da pulsante, misurano
+   25x16 px: sotto il minimo di 24x24 (WCAG 2.5.8), e adiacenti fra loro non godono
+   dell'eccezione per distanza. */
+.rich-datascr-button {
+	min-width: 24px;
+	min-height: 24px;
+}

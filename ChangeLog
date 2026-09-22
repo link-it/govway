@@ -5,8 +5,9 @@
 	L'intervento ha riguardato:
 	- Nome accessibile ai controlli dei form, ai comandi resi con la sola icona e ai campi la cui etichetta
 	  non è resa a schermo; icone e contenuti decorativi esclusi dalla navigazione assistita.
-	- Operabilità completa da tastiera di menu, schede, sezioni comprimibili, elenchi, finestre modali e
-	  di tutti i comandi che rispondevano al solo puntatore.
+	- Operabilità completa da tastiera di menu, schede, sezioni comprimibili, elenchi, finestre modali,
+	  selettori di data, impaginazione degli elenchi, chip dei ruoli, badge dei metodi HTTP e di tutti
+	  gli altri comandi che rispondevano al solo puntatore.
 	- Struttura e orientamento: intestazione di primo livello, regioni 'banner', 'navigation', 'main' e
 	  'contentinfo', collegamento 'Vai al contenuto principale', stato dei componenti annunciato alle
 	  tecnologie assistive (schede selezionate, menu aperti, esiti delle operazioni).
@@ -16,7 +17,10 @@
 	- i tag dei gruppi di un'API erano resi con stili diversi secondo la modalità della pagina;
 	- la legenda dei grafici a torta mostrava «undefined»;
 	- il numero di elementi per pagina era in inglese («25 Entries») e i comandi di scorrimento accanto a quel campo non erano allineati;
-	- il comando di chiusura delle finestre di dialogo ('Close') era in inglese.
+	- il comando di chiusura delle finestre di dialogo ('Close') e le etichette del calendario
+	  ('Today', 'Clean') erano in inglese;
+	- la sezione «Prodotto» della pagina Informazioni si richiudeva al clic senza che nulla lo
+	  indicasse: la funzione, inutilizzata, è stata rimossa.
 	Le verifiche sono automatizzate con lo strumento 'gov-a11y' (axe-core, albero di accessibilità, Lighthouse, screen reader virtuale).
 
 2026-08-20  Andrea Poli <apoli@link.it>
