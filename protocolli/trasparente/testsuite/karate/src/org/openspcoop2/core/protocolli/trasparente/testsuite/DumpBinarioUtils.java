@@ -433,7 +433,8 @@ public class DumpBinarioUtils {
 		if(!f.exists()) {
 			fail("Fotografia del repository dumpBinario non prodotta per la fase '"+fase+"' della transazione ["+idTransazione+
 					"]: file '"+f.getAbsolutePath()+"' non presente. Verificare che l'handler sia associato alla porta e che la "+
-					"richiesta riporti l'header '"+HEADER_SNAPSHOT_DIR+"'");
+					"richiesta riporti l'header '"+HEADER_SNAPSHOT_DIR+"'"+
+					descriviContenutoSnapshotDir(idTransazione));
 		}
 		Properties p = new Properties();
 		try (java.io.InputStream is = java.nio.file.Files.newInputStream(f.toPath())) {
@@ -442,6 +443,40 @@ public class DumpBinarioUtils {
 			fail("Lettura della fotografia '"+f.getAbsolutePath()+"' non riuscita: "+e.getMessage());
 		}
 		return p;
+	}
+
+	/**
+	 * Descrive cosa e' presente nella directory delle fotografie, per rendere diagnosticabile l'assenza
+	 * di quella attesa.
+	 *
+	 * Le fasi presenti per la stessa transazione discriminano fra le due cause possibili: se ne manca
+	 * una sola, l'header e' arrivato e l'handler dell'altra fase ha scritto, quindi il problema riguarda
+	 * la singola fase; se non ce n'e' nessuna mentre altre transazioni hanno prodotto le proprie, non e'
+	 * un problema di visibilita' della directory ma di quella specifica invocazione.
+	 */
+	private static String descriviContenutoSnapshotDir(String idTransazione) {
+		File dir = getSnapshotDir();
+		StringBuilder sb = new StringBuilder();
+		sb.append("\n\tDirectory delle fotografie: ").append(dir.getAbsolutePath());
+		if(!dir.exists()) {
+			sb.append(" (non esistente: nessuna fotografia e' mai stata prodotta, oppure il gateway scrive su un file system differente da quello letto dalla suite)");
+			return sb.toString();
+		}
+		File[] files = dir.listFiles((d, name) -> name.endsWith(SNAPSHOT_SUFFIX));
+		if(files==null || files.length==0) {
+			sb.append(" (vuota)");
+			return sb.toString();
+		}
+		List<String> fasiTransazione = new ArrayList<>();
+		for (File f : files) {
+			if(f.getName().startsWith(idTransazione + ".")) {
+				fasiTransazione.add(f.getName());
+			}
+		}
+		sb.append("\n\tFotografie presenti per questa transazione: ")
+			.append(fasiTransazione.isEmpty() ? "nessuna" : fasiTransazione.toString());
+		sb.append("\n\tFotografie presenti in totale: ").append(files.length);
+		return sb.toString();
 	}
 
 	/**
