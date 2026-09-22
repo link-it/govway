@@ -13,6 +13,23 @@ Background:
     
     * def intervallo_temporale = ({ data_inizio: setup.dataInizioMinuteZero, data_fine: getDate() })
 
+    # Le etichette dei grafici riportano la data del traffico generato dal setup, non quella corrente.
+    # Quando l'esecuzione attraversa la mezzanotte le due differiscono, e la verifica fallirebbe pur
+    # essendo il report corretto; il traffico stesso, inoltre, puo' ricadere a cavallo dei due giorni.
+    # Le etichette del giorno successivo vengono percio' ricondotte a quella attesa prima del confronto,
+    # cosi' da accettarle entrambe senza rinunciare al messaggio di errore puntuale del 'contains'.
+    * def dataTraffico = Java.type('java.time.LocalDate').parse(setup.dataInizioMinuteZero.substring(0,10)).format(java.time.format.DateTimeFormatter.ofPattern('dd/MM/yy'))
+    * def dataTrafficoGiornoSuccessivo = Java.type('java.time.LocalDate').parse(setup.dataInizioMinuteZero.substring(0,10)).plusDays(1).format(java.time.format.DateTimeFormatter.ofPattern('dd/MM/yy'))
+    * def accorpaGiornoSuccessivo =
+"""
+function(risposta) {
+  var atteso = karate.get('dataTraffico');
+  var successivo = karate.get('dataTrafficoGiornoSuccessivo');
+  var s = '' + risposta;
+  return s.replace(new RegExp(successivo, 'g'), atteso);
+}
+"""
+
     * url reportisticaUrl
     * configure headers = ({ "Authorization": govwayMonitorCred }) 
     
@@ -71,7 +88,7 @@ Given path <path-distribuzione>
     When method get
     Then status 200
     Then match karate.toString(response) contains check_response
-    Then match karate.toString(response) contains check_response_dimensioni
+    Then match accorpaGiornoSuccessivo(karate.toString(response)) contains check_response_dimensioni
     
 Examples:
 | nome-statistica | path-distribuzione | filtro-esito | filtro-claim | filtro-informazione | filtro-tipo-identificazione-applicativo | dimensioni-report | info-custom | info-custom-label |
@@ -277,7 +294,7 @@ Given path <path-distribuzione>
     When method post
     Then status 200
     Then match karate.toString(response) contains check_response
-    Then match karate.toString(response) contains check_response_dimensioni
+    Then match accorpaGiornoSuccessivo(karate.toString(response)) contains check_response_dimensioni
     
 Examples:
 | nome-statistica | path-distribuzione | filtro-esito | filtro-claim | filtro-informazione | filtro-tipo-identificazione-applicativo | stringa-verifica | dimensioni-report | info-custom | info-custom-label |
@@ -447,7 +464,7 @@ Given path <path-distribuzione>
     When method get
     Then status 200
     Then match karate.toString(response) contains check_response
-    Then match karate.toString(response) contains check_response_dimensioni
+    Then match accorpaGiornoSuccessivo(karate.toString(response)) contains check_response_dimensioni
     
 Examples:
 | nome-statistica | path-distribuzione | filtro-esito | filtro-claim | filtro-tipo-identificazione-applicativo | dimensioni-report | info-custom | info-custom-label |
@@ -511,7 +528,7 @@ Given path <path-distribuzione>
     When method post
     Then status 200
     Then match karate.toString(response) contains check_response
-    Then match karate.toString(response) contains check_response_dimensioni
+    Then match accorpaGiornoSuccessivo(karate.toString(response)) contains check_response_dimensioni
     
 Examples:
 | nome-statistica | path-distribuzione | filtro-esito | filtro-claim | filtro-tipo-identificazione-applicativo | dimensioni-report | info-custom | info-custom-label |
@@ -594,7 +611,7 @@ Given path <path-distribuzione>
     When method get
     Then status 200
     Then match karate.toString(response) contains check_response
-    Then match karate.toString(response) contains check_response_dimensioni
+    Then match accorpaGiornoSuccessivo(karate.toString(response)) contains check_response_dimensioni
     
 Examples:
 | nome-statistica | path-distribuzione | filtro-esito | filtro-claim | filtro-tipo-identificazione-applicativo | dimensioni-report | info-custom | info-custom-label | profilo |
@@ -659,7 +676,7 @@ Given path <path-distribuzione>
     When method post
     Then status 200
     Then match karate.toString(response) contains check_response
-    Then match karate.toString(response) contains check_response_dimensioni
+    Then match accorpaGiornoSuccessivo(karate.toString(response)) contains check_response_dimensioni
     
 Examples:
 | nome-statistica | path-distribuzione | filtro-esito | filtro-claim | filtro-tipo-identificazione-applicativo | dimensioni-report | info-custom | info-custom-label |
@@ -721,9 +738,7 @@ Scenario Outline: Ricerca di report full statistica <nome-statistica> filtrati p
 
 * def check_response = <stringa-verifica>
 
-* def data_oggi = 31/01/24
-* def today = Java.type('java.time.LocalDate').now()
-* def dataOggi = today.format(java.time.format.DateTimeFormatter.ofPattern('dd/MM/yy'))
+* def dataOggi = dataTraffico
 
 * def check_response_dimensioni = <filtro-report-formato>.contains('xml') ? check_response : <dimensioni-report>.contains('2d') ? check_response : <dimensioni-report>.contains('3dcustom') ? <info-custom-label> : <filtro-report-formato>.contains('json') ? dataOggi : "Data"
     
@@ -732,7 +747,7 @@ Scenario Outline: Ricerca di report full statistica <nome-statistica> filtrati p
 	When method post
 	Then status 200
 	Then match karate.toString(response) contains check_response
-	Then match karate.toString(response) contains check_response_dimensioni
+	Then match accorpaGiornoSuccessivo(karate.toString(response)) contains check_response_dimensioni
 	* def response_qualsiasi = response
 	
 	* eval filtro.tipo = <filtro-tipo-fruizione>
@@ -741,7 +756,7 @@ Scenario Outline: Ricerca di report full statistica <nome-statistica> filtrati p
 	When method post
 	Then status 200
 	Then match karate.toString(response) contains check_response
-	Then match karate.toString(response) contains check_response_dimensioni
+	Then match accorpaGiornoSuccessivo(karate.toString(response)) contains check_response_dimensioni
 	* def response_fruizione = response
 	
 	* eval filtro.tipo = <filtro-tipo-erogazione>
@@ -750,7 +765,7 @@ Scenario Outline: Ricerca di report full statistica <nome-statistica> filtrati p
 	When method post
 	Then status 200
 	Then match karate.toString(response) contains check_response
-	Then match karate.toString(response) contains check_response_dimensioni
+	Then match accorpaGiornoSuccessivo(karate.toString(response)) contains check_response_dimensioni
 	* def response_erogazione = response
     
 Examples:
@@ -904,9 +919,7 @@ Scenario Outline: Ricerca di report full statistica <nome-statistica> filtrati p
 
 * def check_response = <stringa-verifica>
 
-* def data_oggi = 31/01/24
-* def today = Java.type('java.time.LocalDate').now()
-* def dataOggi = today.format(java.time.format.DateTimeFormatter.ofPattern('dd/MM/yy'))
+* def dataOggi = dataTraffico
 
 * def check_response_dimensioni = <dimensioni-report>.contains('2d') ? check_response : <dimensioni-report>.contains('3dcustom') ? <info-custom-label> : <filtro-report-formato>.contains('json') ? dataOggi : "Data"
     
@@ -1004,9 +1017,7 @@ Scenario Outline: Ricerca di report full statistica <nome-statistica> filtrati p
 
 * def check_response = <stringa-verifica>
 
-* def data_oggi = 31/01/24
-* def today = Java.type('java.time.LocalDate').now()
-* def dataOggi = today.format(java.time.format.DateTimeFormatter.ofPattern('dd/MM/yy'))
+* def dataOggi = dataTraffico
 
 * def check_response_dimensioni = <dimensioni-report>.contains('2d') ? check_response : <dimensioni-report>.contains('3dcustom') ? <info-custom-label> : <filtro-report-formato>.contains('json') ? dataOggi : "Data"
     
@@ -1103,9 +1114,7 @@ Scenario Outline: Ricerca di report full statistica <nome-statistica> filtrati p
 
 * def check_response = <stringa-verifica>
 
-* def data_oggi = 31/01/24
-* def today = Java.type('java.time.LocalDate').now()
-* def dataOggi = today.format(java.time.format.DateTimeFormatter.ofPattern('dd/MM/yy'))
+* def dataOggi = dataTraffico
 
 * def check_response_dimensioni = <filtro-report-formato>.contains('xml') ? check_response : <dimensioni-report>.contains('2d') ? check_response : <filtro-report-formato>.contains('json') ? dataOggi : "Data"
     
@@ -1114,7 +1123,7 @@ Scenario Outline: Ricerca di report full statistica <nome-statistica> filtrati p
 	When method post
 	Then status 200
 	Then match karate.toString(response) contains check_response
-	Then match karate.toString(response) contains check_response_dimensioni
+	Then match accorpaGiornoSuccessivo(karate.toString(response)) contains check_response_dimensioni
 	* def response_qualsiasi = response
 	
 	* eval filtro.tipo = <filtro-tipo-fruizione>
@@ -1123,7 +1132,7 @@ Scenario Outline: Ricerca di report full statistica <nome-statistica> filtrati p
 	When method post
 	Then status 200
 	Then match karate.toString(response) contains check_response
-	Then match karate.toString(response) contains check_response_dimensioni
+	Then match accorpaGiornoSuccessivo(karate.toString(response)) contains check_response_dimensioni
 	* def response_fruizione = response
 	
 	* eval filtro.tipo = <filtro-tipo-erogazione>
@@ -1132,7 +1141,7 @@ Scenario Outline: Ricerca di report full statistica <nome-statistica> filtrati p
 	When method post
 	Then status 200
 	Then match karate.toString(response) contains check_response
-	Then match karate.toString(response) contains check_response_dimensioni
+	Then match accorpaGiornoSuccessivo(karate.toString(response)) contains check_response_dimensioni
 	* def response_erogazione = response
     
 Examples:
@@ -1250,9 +1259,7 @@ Scenario Outline: Ricerca di report full statistica <nome-statistica> filtrati p
 
 * def check_response = <stringa-verifica>
 
-* def data_oggi = 31/01/24
-* def today = Java.type('java.time.LocalDate').now()
-* def dataOggi = today.format(java.time.format.DateTimeFormatter.ofPattern('dd/MM/yy'))
+* def dataOggi = dataTraffico
 
 * def check_response_dimensioni = <dimensioni-report>.contains('2d') ? check_response : <filtro-report-formato>.contains('json') ? dataOggi : "Data"
     
@@ -1334,9 +1341,7 @@ Scenario Outline: Ricerca di report full statistica <nome-statistica> filtrati p
 
 * def check_response = <stringa-verifica>
 
-* def data_oggi = 31/01/24
-* def today = Java.type('java.time.LocalDate').now()
-* def dataOggi = today.format(java.time.format.DateTimeFormatter.ofPattern('dd/MM/yy'))
+* def dataOggi = dataTraffico
 
 * def check_response_dimensioni = <dimensioni-report>.contains('2d') ? check_response : <filtro-report-formato>.contains('json') ? dataOggi : "Data"
     
@@ -1420,9 +1425,7 @@ Scenario Outline: Ricerca di report full statistica <nome-statistica> filtrati p
 
 * def check_response = <stringa-verifica>
     
-* def data_oggi = 31/01/24
-* def today = Java.type('java.time.LocalDate').now()
-* def dataOggi = today.format(java.time.format.DateTimeFormatter.ofPattern('dd/MM/yy'))
+* def dataOggi = dataTraffico
 
 * def check_response_dimensioni = <filtro-report-formato>.contains('xml') ? check_response : <dimensioni-report>.contains('2d') ? check_response : <filtro-report-formato>.contains('json') ? dataOggi : "Data"
 
@@ -1431,7 +1434,7 @@ Scenario Outline: Ricerca di report full statistica <nome-statistica> filtrati p
 	When method post
 	Then status 200
 	Then match karate.toString(response) contains check_response
-	Then match karate.toString(response) contains check_response_dimensioni
+	Then match accorpaGiornoSuccessivo(karate.toString(response)) contains check_response_dimensioni
 	* def response_qualsiasi = response
 	
 	# non esistono errori in fruizione, per quello viene indicato sempre 'erogazione' nei valori outline
@@ -1441,7 +1444,7 @@ Scenario Outline: Ricerca di report full statistica <nome-statistica> filtrati p
 	When method post
 	Then status 200
 	Then match karate.toString(response) contains check_response
-	Then match karate.toString(response) contains check_response_dimensioni
+	Then match accorpaGiornoSuccessivo(karate.toString(response)) contains check_response_dimensioni
 	* def response_fruizione = response
 	
 	* eval filtro.tipo = <filtro-tipo-erogazione>
@@ -1450,7 +1453,7 @@ Scenario Outline: Ricerca di report full statistica <nome-statistica> filtrati p
 	When method post
 	Then status 200
 	Then match karate.toString(response) contains check_response
-	Then match karate.toString(response) contains check_response_dimensioni
+	Then match accorpaGiornoSuccessivo(karate.toString(response)) contains check_response_dimensioni
 	* def response_erogazione = response
     
 Examples:
@@ -1569,9 +1572,7 @@ Scenario Outline: Ricerca di report full statistica <nome-statistica> filtrati p
 
 * def check_response = <stringa-verifica>
     
-* def data_oggi = 31/01/24
-* def today = Java.type('java.time.LocalDate').now()
-* def dataOggi = today.format(java.time.format.DateTimeFormatter.ofPattern('dd/MM/yy'))
+* def dataOggi = dataTraffico
 
 * def check_response_dimensioni = <dimensioni-report>.contains('2d') ? check_response : <filtro-report-formato>.contains('json') ? dataOggi : "Data"
 
@@ -1657,9 +1658,7 @@ Scenario Outline: Ricerca di report full statistica <nome-statistica> filtrati p
 
 * def check_response = <stringa-verifica>
     
-* def data_oggi = 31/01/24
-* def today = Java.type('java.time.LocalDate').now()
-* def dataOggi = today.format(java.time.format.DateTimeFormatter.ofPattern('dd/MM/yy'))
+* def dataOggi = dataTraffico
 
 * def check_response_dimensioni = <dimensioni-report>.contains('2d') ? check_response : <filtro-report-formato>.contains('json') ? dataOggi : "Data"
 
@@ -1740,9 +1739,7 @@ Scenario Outline: Ricerca di report full statistica <nome-statistica> filtrati p
     
 * def check_response = <path-distribuzione>.contains('distribuzione-esiti') ? "Ok" : "Numero Transazioni"
 
-* def data_oggi = 31/01/24
-* def today = Java.type('java.time.LocalDate').now()
-* def dataOggi = today.format(java.time.format.DateTimeFormatter.ofPattern('dd/MM/yy'))
+* def dataOggi = dataTraffico
 
 * def check_response_dimensioni = <dimensioni-report>.contains('2d') ? check_response : <dimensioni-report>.contains('3dcustom') ? <info-custom-label> : dataOggi
 
@@ -1752,7 +1749,7 @@ Scenario Outline: Ricerca di report full statistica <nome-statistica> filtrati p
 	When method post
 	Then status 200
 	Then match karate.toString(response) contains check_response
-	Then match karate.toString(response) contains check_response_dimensioni
+	Then match accorpaGiornoSuccessivo(karate.toString(response)) contains check_response_dimensioni
 	* def response_qualsiasi = response
 	
 	* eval filtro.tipo = <filtro-tipo-fruizione>
@@ -1761,7 +1758,7 @@ Scenario Outline: Ricerca di report full statistica <nome-statistica> filtrati p
 	When method post
 	Then status 200
 	Then match karate.toString(response) contains check_response
-	Then match karate.toString(response) contains check_response_dimensioni
+	Then match accorpaGiornoSuccessivo(karate.toString(response)) contains check_response_dimensioni
 	* def response_fruizione = response
 	
 	* eval filtro.tipo = <filtro-tipo-erogazione>
@@ -1770,7 +1767,7 @@ Scenario Outline: Ricerca di report full statistica <nome-statistica> filtrati p
 	When method post
 	Then status 200
 	Then match karate.toString(response) contains check_response
-	Then match karate.toString(response) contains check_response_dimensioni
+	Then match accorpaGiornoSuccessivo(karate.toString(response)) contains check_response_dimensioni
 	* def response_erogazione = response
     
   * def sommaQualsiasi = sommaRisultatiGraficoJSON(response_qualsiasi.dati)
