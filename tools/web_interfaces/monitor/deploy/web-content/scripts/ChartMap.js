@@ -172,8 +172,10 @@ function generateChart(id, _dataJson, _type, _size, _barwidth) {
             var _title = _svg.querySelector('#title');
             var _subtitle = _svg.querySelector('#subtitle');
             var _warning = _svg.querySelector('#warning');
-            if(_svg.style) {
-                _svg.style.fontFamily =  'Roboto';
+            /* il carattere e' gia' dichiarato in ChartMap.css ('.c3-chart-font'): qui basta
+               applicare la classe, invece di ripetere il valore come stile diretto */
+            if(_svg.classList) {
+                _svg.classList.add('c3-chart-font');
              }
             if(_title && _title.innerHTML) {
                 if(_title.getComputedTextLength() > (_svg_width - 15)) {
@@ -441,8 +443,8 @@ function generateChart(id, _dataJson, _type, _size, _barwidth) {
 
     var d = document.getElementById(id);
     var svg = d.querySelector('svg');
-    if(svg.style) {
-        svg.style.fontFamily = 'Roboto';
+    if(svg.classList) {
+        svg.classList.add('c3-chart-font');
     }
 
     if(dp.type != 'pie' && dp.noData != 0) {

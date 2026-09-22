@@ -102,6 +102,19 @@ function aggiungiComandoMostraPassword(inputPasswordId){
 /* L'ultima voce del breadcrumb e' il titolo della pagina, ma e' resa come semplice
    testo: JSF non consente di aggiungere l'attributo 'role' a un h:outputText, quindi
    la semantica di intestazione viene applicata qui. */
+/* Il pie' di pagina e' reso da RichFaces dentro il facet 'footer' del rich:page, dove possono
+   stare solo componenti JSF: un <div role="contentinfo"> scritto nel template non verrebbe reso
+   e il pie' di pagina resterebbe vuoto. Il landmark si applica quindi qui, al contenitore
+   generato, cosi' il suo contenuto non resta fuori da ogni regione della pagina. */
+function gwPiedePagina(){
+
+	const piede = document.querySelector('.rich-page-footer:not([role])');
+
+	if(piede){
+		piede.setAttribute('role', 'contentinfo');
+	}
+}
+
 function gwApplicaTitoloPagina(){
 
 	const titoli = document.querySelectorAll('.ultimo-path:not([role])');
@@ -109,6 +122,41 @@ function gwApplicaTitoloPagina(){
 	for(let i = 0; i < titoli.length; i++){
 		titoli[i].setAttribute('role', 'heading');
 		titoli[i].setAttribute('aria-level', '1');
+	}
+
+	/* Su alcune viste il percorso e' nascosto per scelta grafica, o non c'e' affatto: la pagina
+	   resta senza intestazione di primo livello, e chi naviga per intestazioni non ha un punto
+	   d'ingresso. Si promuove allora il titolo visibile del pannello principale. */
+	const visibile = (e) => e && e.getClientRects().length > 0;
+	const gia = Array.prototype.some.call(
+			document.querySelectorAll('h1, [role="heading"][aria-level="1"]'), visibile);
+	if(gia) return;
+
+	const intestazione = Array.prototype.find.call(
+			document.querySelectorAll('.rich-panel-header, .rich-stglpanel-header, .subtitle, .messages-title'),
+			visibile);
+	if(!intestazione || intestazione.getAttribute('role')) return;
+
+	/* dentro l'intestazione possono esserci marcatori, suggerimenti e blocchi <style>: se si
+	   marcasse l'intero elemento verrebbero letti come parte del titolo. Si prende il solo
+	   testo proprio, quando c'e'. */
+	const testi = Array.prototype.filter.call(intestazione.childNodes,
+			(n) => n.nodeType === 3 && n.textContent.trim().length > 0);
+	if(testi.length === 0){
+		intestazione.setAttribute('role', 'heading');
+		intestazione.setAttribute('aria-level', '1');
+		return;
+	}
+	const titolo = document.createElement('span');
+	/* Lo span serve solo a delimitare il testo del titolo e non deve portare uno stile proprio:
+	   il tema ha una regola '* { font-size: 14px }' che altrimenti lo rimpicciolirebbe rispetto
+	   all'intestazione che lo contiene. Lo stile sta nel foglio di stile, non qui. */
+	titolo.className = 'gw-titolo-pagina';
+	titolo.setAttribute('role', 'heading');
+	titolo.setAttribute('aria-level', '1');
+	intestazione.insertBefore(titolo, testi[0]);
+	for(let i = 0; i < testi.length; i++){
+		titolo.appendChild(testi[i]);
 	}
 }
 
@@ -501,6 +549,22 @@ function gwHaAltroTesto(comando, glifo){
    sono quanto uno screen reader leggerebbe comunque. Si attiva con Invio e non con la
    barra spaziatrice: e' il comportamento dei collegamenti, e in un elenco lungo la barra
    deve continuare a scorrere la pagina. */
+/* Un controllo etichettato dal solo attributo 'title' ha un nome accessibile fragile: il
+   suggerimento non compare da tastiera, non tutte le tecnologie assistive lo leggono e alcune
+   lo annunciano come descrizione anziche' come nome. Lo si promuove a etichetta vera,
+   lasciando il 'title' al suo posto per chi usa il mouse. */
+function gwEtichetteDaSuggerimento(){
+
+	const controlli = document.querySelectorAll('input[title]:not([aria-label]):not([aria-labelledby]), select[title]:not([aria-label]):not([aria-labelledby]), textarea[title]:not([aria-label]):not([aria-labelledby])');
+
+	for(let i = 0; i < controlli.length; i++){
+		const suggerimento = (controlli[i].getAttribute('title') || '').trim();
+		if(suggerimento.length === 0) continue;
+		if(controlli[i].labels && controlli[i].labels.length > 0) continue;
+		controlli[i].setAttribute('aria-label', suggerimento);
+	}
+}
+
 function gwRigheOperabili(){
 
 	const righe = document.querySelectorAll('.rowTransazione:not([data-gw-riga-tastiera])');
@@ -536,6 +600,8 @@ function gwApplicaCorrezioniAccessibilita(){
 	gwPulsantiDiSelezione();
 	gwGlifiDecorativi();
 	gwComandiBarraFiltro();
+	gwPiedePagina();
+	gwEtichetteDaSuggerimento();
 	gwRigheOperabili();
 	gwOrdinaPiediTabella();
 }

@@ -23,7 +23,58 @@ if (typeof $ !== 'undefined' && $.ui && $.ui.dialog) {
 	$.ui.dialog.prototype.options.closeText = 'Chiudi';
 }
 
+/*
+ * Alcune viste sono composte dal solo messaggio di esito (esempio: il passaggio a un altro
+ * profilo, o la pagina di ripristino della console) e restano senza intestazione di primo
+ * livello: chi naviga per intestazioni non ha un punto d'ingresso. Dove manca, si promuove il
+ * titolo gia' visibile del messaggio.
+ */
+function gwTitoloPaginaDiEsito() {
+	var visibile = function (e) { return e && e.getClientRects().length > 0; };
+	var esistenti = document.querySelectorAll('h1, [role="heading"][aria-level="1"]');
+	for (var i = 0; i < esistenti.length; i++) {
+		if (visibile(esistenti[i])) return;
+	}
+	/* in ordine di preferenza il documento li incontra cosi': l'ultima voce del percorso (che e'
+	   il nome della pagina), il titolo di un messaggio, il titolo di sezione. Sulle pagine di
+	   inserimento il titolo di sezione viene soppresso di proposito — varrebbe "Aggiungi" — e
+	   allora il percorso e' l'unico titolo rimasto. */
+	var candidati = document.querySelectorAll('.ultimo-path, .messages-title-text, .history');
+	for (var j = 0; j < candidati.length; j++) {
+		if (!visibile(candidati[j]) || candidati[j].getAttribute('role')) {
+			continue;
+		}
+		/* Nel percorso l'ultima voce e' un <li>, dove il ruolo di intestazione non e' ammesso
+		   (axe: aria-allowed-role) e romperebbe anche la lista che lo contiene (axe: list):
+		   si marca il suo contenuto, che e' gia' un elemento a se'. */
+		var elemento = candidati[j];
+		if (elemento.tagName === 'LI' && elemento.children.length === 1) {
+			elemento = elemento.children[0];
+		}
+		elemento.setAttribute('role', 'heading');
+		elemento.setAttribute('aria-level', '1');
+		return;
+	}
+
+	/* Nelle pagine di inserimento non resta nulla di visibile: il titolo di sezione e' soppresso
+	   perche' varrebbe "Aggiungi", e il percorso e' nascosto dal foglio di stile. Il nome della
+	   pagina c'e' comunque, nell'ultima voce del percorso: lo si riprende in un'intestazione
+	   destinata alle sole tecnologie assistive, senza cambiare nulla a schermo. */
+	var percorso = document.querySelector('.ultimo-path');
+	var nome = percorso ? (percorso.textContent || '').trim() : '';
+	if (nome.length === 0) {
+		return;
+	}
+	var intestazione = document.createElement('h1');
+	intestazione.className = 'gw-solo-lettori';
+	intestazione.textContent = nome;
+	var contenuto = document.getElementById('gw-contenuto') || document.body;
+	contenuto.insertBefore(intestazione, contenuto.firstChild);
+}
+
  $(document).ready(function(){
+
+	gwTitoloPaginaDiEsito();
 
  	String.prototype.format = function()
 	{
@@ -430,17 +481,10 @@ function copyTextToClipboard(text) {
 	  }
 
 	  // Fallback per browser che non supportano navigator.clipboard
+	  // l'area serve solo a ospitare il testo per la copia: la sua presentazione sta nel foglio
+	  // di stile, classe '.gw-area-copia'
 	  var textArea = document.createElement("textarea");
-	  textArea.style.position = 'fixed';
-	  textArea.style.top = 0;
-	  textArea.style.left = 0;
-	  textArea.style.width = '2em';
-	  textArea.style.height = '2em';
-	  textArea.style.padding = 0;
-	  textArea.style.border = 'none';
-	  textArea.style.outline = 'none';
-	  textArea.style.boxShadow = 'none';
-	  textArea.style.background = 'transparent';
+	  textArea.className = 'gw-area-copia';
 
 	  textArea.value = text;
 

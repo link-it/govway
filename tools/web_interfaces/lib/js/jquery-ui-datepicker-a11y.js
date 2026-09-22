@@ -33,20 +33,21 @@
 	var ETICHETTA_MESE_SUCCESSIVO = 'Mese successivo';
 	var ETICHETTA_MESE = 'Mese';
 	var ETICHETTA_ANNO = 'Anno';
+	var ETICHETTA_SETTIMANA = 'Settimana';
 	var ID_ANNUNCI = 'gw-datepicker-annuncio';
 	var prototipo = $.datepicker.constructor.prototype;
 
-	/* Regione 'live' fuori dallo schermo ma non nascosta alle tecnologie assistive:
-	   'display:none' e 'visibility:hidden' non verrebbero letti. */
+	/* Regione 'live' destinata alle sole tecnologie assistive: la presentazione sta nel foglio
+	   di stile, classe '.gw-solo-lettori', che la porta fuori dallo schermo senza nasconderla
+	   ('display:none' e 'visibility:hidden' la toglierebbero anche a loro). */
 	function regioneAnnunci() {
 		var regione = document.getElementById(ID_ANNUNCI);
 		if (!regione) {
 			regione = document.createElement('div');
 			regione.id = ID_ANNUNCI;
+			regione.className = 'gw-solo-lettori';
 			regione.setAttribute('role', 'status');
 			regione.setAttribute('aria-live', 'polite');
-			regione.style.cssText = 'position:absolute;width:1px;height:1px;margin:-1px;padding:0;' +
-					'overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;';
 			document.body.appendChild(regione);
 		}
 		return regione;
@@ -104,6 +105,13 @@
 		tabella.setAttribute('role', 'grid');
 		$(tabella).find('tr').attr('role', 'row');
 		$(tabella).find('thead th').attr('role', 'columnheader');
+		/* la colonna del numero di settimana ha un'intestazione vuota: le si da' un nome, invece
+		   di lasciare una colonna senza intestazione (axe: empty-table-header) */
+		$(tabella).find('th.ui-datepicker-week-col').each(function () {
+			if (!(this.textContent || '').trim() && !this.getAttribute('aria-label')) {
+				this.setAttribute('aria-label', ETICHETTA_SETTIMANA);
+			}
+		});
 		$(tabella).find('tbody td').each(function () {
 			this.setAttribute('role', 'gridcell');
 			var giorno = this.querySelector('a');

@@ -3058,3 +3058,34 @@ div.version-notice {
 .voceMenuRC a:focus {
 	outline: none;
 }
+
+/* Contenuto destinato alle sole tecnologie assistive: fuori dallo schermo ma non nascosto,
+   perche' 'display:none' e 'visibility:hidden' lo toglierebbero anche a loro. Usata per la
+   regione che annuncia gli spostamenti nel calendario. */
+.gw-solo-lettori {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	margin: -1px;
+	padding: 0;
+	overflow: hidden;
+	clip: rect(0 0 0 0);
+	white-space: nowrap;
+	border: 0;
+}
+
+/* Area di appoggio per la copia negli appunti nei browser privi di 'navigator.clipboard':
+   deve stare nella pagina e poter ricevere il fuoco, ma non deve vedersi ne' spostare il
+   contenuto. */
+.gw-area-copia {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 2em;
+	height: 2em;
+	padding: 0;
+	border: none;
+	outline: none;
+	box-shadow: none;
+	background: transparent;
+}

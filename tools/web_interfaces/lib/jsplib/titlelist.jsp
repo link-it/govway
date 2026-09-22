@@ -163,10 +163,18 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 		  %>
 		  	<tr>
 				<td class="messages-td1">
+		  			<%
+		  			// Nei messaggi "sintetici" la pagina e' fatta del solo messaggio e non ha altro
+		  			// titolo: il titolo del messaggio e' allora l'intestazione di primo livello.
+		  			// Nelle altre pagine il titolo c'e' gia' altrove e non va duplicato.
+		  			boolean messaggioUnicoContenuto = messageType.equals(MessageType.INFO_SINTETICO.toString())
+		  					|| messageType.equals(MessageType.ERROR_SINTETICO.toString());
+		  			String titoloPagina = messaggioUnicoContenuto ? " role=\"heading\" aria-level=\"1\"" : "";
+		  			%>
 		  			<div class="messages-<%=messageType %>">
 			  			<div class="messages-title">
 			  				<span class="messages-<%=messageType %>-title-icon">&nbsp;&nbsp;</span>
-			  				<span class="messages-title-text"><%= messageTitle %></span>
+			  				<span class="messages-title-text"<%= titoloPagina %>><%= messageTitle %></span>
 			  			</div>
 			  			<%
 						// messaggio in cima alla pagina solo se non e' un messaggio di conferma

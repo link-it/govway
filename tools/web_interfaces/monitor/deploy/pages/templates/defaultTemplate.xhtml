@@ -108,7 +108,10 @@
 							<input type="hidden" id="_csrfNavbar" name="_csrf" value="#{loginBean.csrf}"/>
 							<h:panelGroup layout="block" rendered="#{not applicationBean.menuDisabled}">
 								<div id="breadcrumb-ct">
-									<div id="crumbs"><ui:insert name="navbar"></ui:insert></div>
+									<!-- Il percorso e' navigazione: senza landmark i suoi collegamenti restano fuori da
+									     qualunque regione della pagina, e chi usa le scorciatoie per regioni non li trova.
+									     Il nome lo distingue dal menu principale. -->
+									<div id="crumbs" role="navigation" aria-label="Percorso"><ui:insert name="navbar"></ui:insert></div>
 								</div>
 							</h:panelGroup>
 						</a4j:form>
@@ -234,6 +237,9 @@
 	</a4j:outputPanel>
 
 	<f:facet name="footer" align="center">
+		<!-- NOTA: qui dentro solo componenti JSF. Un <div> grezzo non viene reso e il piè di
+		     pagina resta vuoto; il landmark 'contentinfo' viene quindi applicato da utils.js
+		     al contenitore che RichFaces genera. -->
 		<h:outputLink value="https://www.link.it" target="_blank">
 			<h:graphicImage value="/images/tema_link/logo_link_footer.png" title="Link.it" alt="Link.it" />
 		</h:outputLink>

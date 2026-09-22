@@ -1535,3 +1535,11 @@ input.rich-spinner-input {
 	min-width: 24px;
 	min-height: 24px;
 }
+
+/* Il titolo di pagina viene delimitato da uno span, per poterlo marcare come intestazione di
+   primo livello senza trascinarsi dentro i marcatori dell'intestazione che lo contiene. Lo
+   span non ha uno stile proprio: senza questa regola vincerebbe '* { font-size: 14px }' e il
+   titolo risulterebbe piu' piccolo dell'intestazione. */
+.gw-titolo-pagina {
+	font: inherit;
+}

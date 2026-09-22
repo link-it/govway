@@ -8,9 +8,10 @@
 	- Operabilità completa da tastiera di menu, schede, sezioni comprimibili, elenchi, finestre modali,
 	  selettori di data, impaginazione degli elenchi, chip dei ruoli, badge dei metodi HTTP e di tutti
 	  gli altri comandi che rispondevano al solo puntatore.
-	- Struttura e orientamento: intestazione di primo livello, regioni 'banner', 'navigation', 'main' e
-	  'contentinfo', collegamento 'Vai al contenuto principale', stato dei componenti annunciato alle
-	  tecnologie assistive (schede selezionate, menu aperti, esiti delle operazioni).
+	- Struttura e orientamento: intestazione di primo livello su ogni vista, regioni 'banner',
+	  'navigation', 'main' e 'contentinfo' — percorso di navigazione e piè di pagina compresi —,
+	  collegamento 'Vai al contenuto principale', stato dei componenti annunciato alle tecnologie
+	  assistive (schede selezionate, menu aperti, esiti delle operazioni).
 	- Contrasto dei testi e dimensione delle aree attivabili portati alle soglie richieste.
 	- Alternative testuali per i contenuti non testuali, grafici statistici compresi.
 	Sono stati inoltre corretti i difetti emersi durante il lavoro:
@@ -21,7 +22,9 @@
 	  ('Today', 'Clean') erano in inglese;
 	- la sezione «Prodotto» della pagina Informazioni si richiudeva al clic senza che nulla lo
 	  indicasse: la funzione, inutilizzata, è stata rimossa.
-	Le verifiche sono automatizzate con lo strumento 'gov-a11y' (axe-core, albero di accessibilità, Lighthouse, screen reader virtuale).
+	Le verifiche sono automatizzate con lo strumento 'gov-a11y' (axe-core, albero di accessibilità, Lighthouse, screen reader virtuale)
+	e comprendono, oltre ai criteri WCAG fino al livello AA, le regole di buona pratica di axe: ogni contenuto dentro una regione della
+	pagina, un'unica intestazione di primo livello per vista, attributi ammessi per l'elemento su cui compaiono.
 
 2026-08-20  Andrea Poli <apoli@link.it>
 
