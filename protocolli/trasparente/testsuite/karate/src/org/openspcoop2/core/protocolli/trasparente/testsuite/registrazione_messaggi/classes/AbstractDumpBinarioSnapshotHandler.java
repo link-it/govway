@@ -21,12 +21,9 @@
 package org.openspcoop2.core.protocolli.trasparente.testsuite.registrazione_messaggi.classes;
 
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Stream;
 
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.PdDContext;
@@ -92,8 +89,11 @@ public abstract class AbstractDumpBinarioSnapshotHandler {
 
 			File dirSnapshot = new File(dir.trim());
 			FileSystemUtilities.mkdir(dirSnapshot);
+			consentiAccessoATutti(dirSnapshot, true);
+
 			File snapshot = new File(dirSnapshot, idTransazione.trim() + "." + fase + SNAPSHOT_SUFFIX);
 			FileSystemUtilities.writeFile(snapshot, sb.toString().getBytes());
+			consentiAccessoATutti(snapshot, false);
 
 		} catch(Exception e) {
 			throw new HandlerException("Fotografia del repository dumpBinario non riuscita (fase "+fase+"): "+e.getMessage(), e);
@@ -101,22 +101,62 @@ public abstract class AbstractDumpBinarioSnapshotHandler {
 	}
 
 
-	private static List<File> find(File repository, String idTransazione) throws HandlerException {
+	/**
+	 * Rende la voce accessibile a qualunque utenza.
+	 *
+	 * Il gateway e la testsuite non girano necessariamente con la stessa utenza: su jenkins GovWay e'
+	 * avviato da root su un Tomcat configurato con 'SecurityListener.UMASK=0027', che produce file 0640
+	 * e directory 0750, mentre i test girano come utente 'jenkins'. Senza questa concessione la suite
+	 * non riesce nemmeno ad attraversare la directory, e la fotografia le risulta inesistente.
+	 *
+	 * Sulla directory serve anche il permesso di esecuzione, che e' quello che ne consente
+	 * l'attraversamento, e quello di scrittura, perche' e' la suite ad eliminare le fotografie gia'
+	 * verificate.
+	 *
+	 * Lo stesso accorgimento e' gia' adottato dagli altri plugin della testsuite che scambiano file con
+	 * i test, si veda 'plugin.classes.Utilities.writeIdentificativoTest'.
+	 */
+	private static void consentiAccessoATutti(File f, boolean directory) {
+		if(!f.setReadable(true, false)) {
+			// ignore: un esito negativo dipende dal file system, e viene segnalato dalla lettura lato test
+		}
+		if(!f.setWritable(true, false)) {
+			// ignore
+		}
+		if(directory && !f.setExecutable(true, false)) {
+			// ignore
+		}
+	}
+
+	/**
+	 * Elenca i file del repository appartenenti alla transazione indicata.
+	 *
+	 * La scansione utilizza 'File.listFiles' e non 'Files.walk': quest'ultima legge gli attributi di
+	 * ciascuna voce dopo averla elencata, percio' un file rilasciato nel frattempo, magari da un'altra
+	 * transazione in transito sul medesimo nodo, la farebbe terminare con 'NoSuchFileException'.
+	 * L'eccezione risalirebbe fino a 'GestoreHandlers', che la rilancia come 'HandlerException' e
+	 * trasformerebbe in errore una transazione altrimenti corretta.
+	 */
+	private static List<File> find(File repository, String idTransazione) {
 		String atteso = "_" + idTransazione.trim().replace('-', '_') + BIN_SUFFIX;
 		List<File> trovati = new ArrayList<>();
-		if(!repository.exists()) {
-			return trovati;
-		}
-		try (Stream<Path> stream = Files.walk(repository.toPath())) {
-			stream.filter(Files::isRegularFile)
-				.map(Path::toFile)
-				.filter(f -> f.getName().endsWith(atteso))
-				.sorted(Comparator.comparing(File::getName))
-				.forEach(trovati::add);
-		} catch(Exception e) {
-			throw new HandlerException("Scansione del repository '"+repository.getAbsolutePath()+"' non riuscita: "+e.getMessage(), e);
-		}
+		raccogli(repository, atteso, trovati);
+		trovati.sort(Comparator.comparing(File::getName));
 		return trovati;
+	}
+	private static void raccogli(File dir, String atteso, List<File> trovati) {
+		File[] contenuto = dir.listFiles();
+		if(contenuto==null) {
+			return; // directory inesistente, eliminata durante la scansione o non leggibile
+		}
+		for (File f : contenuto) {
+			if(f.isDirectory()) {
+				raccogli(f, atteso, trovati);
+			}
+			else if(f.getName().endsWith(atteso)) {
+				trovati.add(f);
+			}
+		}
 	}
 
 
