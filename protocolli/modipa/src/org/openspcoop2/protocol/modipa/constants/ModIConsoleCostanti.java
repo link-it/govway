@@ -1050,6 +1050,9 @@ public class ModIConsoleCostanti {
 	
 	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_NOTE = "Solo l'applicativo indicato o con il ruolo configurato potrà pubblicare segnali di variazione del servizio";
 	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_SA_UNDEFINED = "L'applicativo definito non risulta abilitato alla pubblicazione di segnali";
+	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_SA_NOT_ENABLED_SUFFIX = " (non abilitato)";
+	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_SA_NOT_ENABLED_NOTE = "<b>Attenzione:</b> l'applicativo configurato non risulta abilitato ad autenticarsi sulla fruizione utilizzata per la pubblicazione dei segnali.<BR/>"+
+			"Viene comunque mantenuto per non alterare la configurazione esistente.";
 	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_ROLE_UNDEFINED = "Il ruolo interno indicato non esiste";
 	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_ERROR_UNDEFINED = "Deve essere selezionato un applicativo o un ruolo autorizzato a pubblicare segnali di variazione del servizio";
 

@@ -3116,20 +3116,21 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 			boolean signalHub) throws ProtocolException {
 		AbstractConsoleItem<?> modiSignalHubPublisherSAItem = 	
 				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_SA_ID);
+		StringProperty modiSignalHubPublisherSAItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_SA_ID);
 		if(modiSignalHubPublisherSAItem!=null) {
 			if(signalHub) {
 				modiSignalHubPublisherSAItem.setType(ConsoleItemType.SELECT);
 				addSignalHubServiziApplicativi(registryReader,
 						configIntegrationReader,
 						modiSignalHubPublisherSAItem, log,
-						idServizio);
+						idServizio,
+						modiSignalHubPublisherSAItemValue!=null ? modiSignalHubPublisherSAItemValue.getValue() : null);
 			}
 			else {
 				modiSignalHubPublisherSAItem.setType(ConsoleItemType.HIDDEN);
 				modiSignalHubPublisherSAItem.clearMapLabelValues();
 			}
 		}
-		StringProperty modiSignalHubPublisherSAItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_SA_ID);
 		if(modiSignalHubPublisherSAItemValue!=null && 
 			!signalHub) {
 			modiSignalHubPublisherSAItemValue.setValue(null);
@@ -3206,16 +3207,16 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 		try {
 			List<IDFruizione> list = registryReader.findIdFruizioni(filtro);
 			if(list!=null && !list.isEmpty()) {
-				return readPDSignalHub(configIntegrationReader,list);
+				return readPDSignalHub(configIntegrationReader,list,idAccordoSignalHubPushAPI);
 			}
 		}catch(Exception e) {
 			log.error("Lettura id servizio signalhub api push fallita: "+e.getMessage(),e);
 		}
 		return null;
 	}
-	private static IDPortaDelegata readPDSignalHub(IConfigIntegrationReader configIntegrationReader,List<IDFruizione> list) throws RegistryException {
-		// prendo la prima
-		IDFruizione idF = list.get(0);
+	private static IDPortaDelegata readPDSignalHub(IConfigIntegrationReader configIntegrationReader,List<IDFruizione> list,IDAccordo idAccordoSignalHubPushAPI) throws RegistryException {
+		// prendo la fruizione del servizio omonimo all'API signal hub, altrimenti la prima disponibile
+		IDFruizione idF = findFruizioneSignalHub(list, idAccordoSignalHubPushAPI);
 		if(idF!=null) {
 			List<MappingFruizionePortaDelegata> listMF = configIntegrationReader.getMappingFruizionePortaDelegataList(idF.getIdFruitore(), idF.getIdServizio());
 			if(listMF!=null && !listMF.isEmpty()) {
@@ -3228,17 +3229,30 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 		}
 		return null;
 	}
+	private static IDFruizione findFruizioneSignalHub(List<IDFruizione> list,IDAccordo idAccordoSignalHubPushAPI) {
+		String nomeServizioSignalHub = idAccordoSignalHubPushAPI!=null ? idAccordoSignalHubPushAPI.getNome() : null;
+		if(nomeServizioSignalHub!=null) {
+			for (IDFruizione idFruizione : list) {
+				if(idFruizione!=null && idFruizione.getIdServizio()!=null &&
+						nomeServizioSignalHub.equals(idFruizione.getIdServizio().getNome())) {
+					return idFruizione;
+				}
+			}
+		}
+		return list.get(0);
+	}
+	
 	private static void addSignalHubServiziApplicativi(IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader,
 			AbstractConsoleItem<?> modiSignalHubPublisherSAItem, Logger log,
-			IDServizio idServizio) {
+			IDServizio idServizio, String saConfigurato) {
 		
 		((StringConsoleItem)modiSignalHubPublisherSAItem).addLabelValue(ModIConsoleCostanti.MODIPA_LABEL_UNDEFINED, ModIConsoleCostanti.MODIPA_VALUE_UNDEFINED);
 
+		List<String> nomi = new ArrayList<>();
 		if(idServizio!=null) {
 			try {
 				List<IDServizioApplicativo> idSA = getSignalHubServiziApplicativi(registryReader, configIntegrationReader, idServizio, log);
 				if(idSA!=null && !idSA.isEmpty()) {
-					List<String> nomi = new ArrayList<>();
 					for (IDServizioApplicativo idServizioApplicativo : idSA) {
 						nomi.add(idServizioApplicativo.getNome());
 					}
@@ -3251,6 +3265,19 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 				log.error("Lettura porta delegata per signalhub api push fallita: "+e.getMessage(),e);
 			}
 		}
+		
+		/** L'insieme degli applicativi abilitati dipende dalla configurazione del controllo accessi della fruizione, 
+			che puo' essere modificata successivamente alla scelta del pubblicatore. Per non alterare in modo implicito 
+			una configurazione gia' effettuata, l'applicativo configurato viene comunque proposto, segnalandone il caso */
+		if(isSignalHubPublisherDefined(saConfigurato) && !nomi.contains(saConfigurato)) {
+			((StringConsoleItem)modiSignalHubPublisherSAItem).addLabelValue(
+					saConfigurato+ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_SA_NOT_ENABLED_SUFFIX, saConfigurato);
+			modiSignalHubPublisherSAItem.setNote(ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_SA_NOT_ENABLED_NOTE);
+		}
+	}
+	
+	private static boolean isSignalHubPublisherDefined(String value) {
+		return value!=null && !value.isEmpty() && !ModIConsoleCostanti.MODIPA_VALUE_UNDEFINED.equals(value);
 	}
 	
 	private static List<IDServizioApplicativo> getSignalHubServiziApplicativi(IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDServizio idServizio, Logger log) throws RegistryNotFound, RegistryException, DriverRegistroServiziException, ProtocolException {
@@ -3615,7 +3642,8 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 					List<IDServizioApplicativo> idSAs = getSignalHubServiziApplicativi(registryReader,
 							configIntegrationReader, idServizio, log);
 					long matched = idSAs.stream().filter(id -> id.getNome().equals(finalSAName)).count();
-					if (matched < 1) {
+					if (matched < 1 &&
+						!isSignalHubPublisherSAGiaConfigurato(registryReader, idServizio, finalSAName, log)) {
 						throw new ProtocolException(
 								ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_SA_UNDEFINED);
 					}
@@ -3630,6 +3658,30 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 		return profiloSignalHubSA==null 
 				|| "".equals(profiloSignalHubSA) 
 				|| ModIConsoleCostanti.MODIPA_VALUE_UNDEFINED.equals(profiloSignalHubSA);
+	}
+	
+	/** L'insieme degli applicativi abilitati dipende dal controllo accessi della fruizione, che puo' cambiare
+		dopo la scelta del pubblicatore. Un pubblicatore gia' registrato viene percio' conservato anche se non 
+		risulta piu' abilitato: il salvataggio non deve eliminare una configurazione esistente, la console ne 
+		segnala la condizione nella tendina di selezione. Il vincolo continua invece ad applicarsi ad un 
+		pubblicatore differente da quello gia' registrato */
+	private static boolean isSignalHubPublisherSAGiaConfigurato(IRegistryReader registryReader, IDServizio idServizio, String nomeSA, Logger log) {
+		if(idServizio==null) {
+			return false;
+		}
+		try {
+			AccordoServizioParteSpecifica asps = registryReader.getAccordoServizioParteSpecifica(idServizio, false);
+			if(asps!=null && asps.sizeProtocolPropertyList()>0) {
+				String saRegistrato = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(asps.getProtocolPropertyList(), 
+						ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_SA_ID);
+				return nomeSA.equals(saRegistrato);
+			}
+		}catch(RegistryNotFound notFound) {
+			// erogazione non ancora registrata
+		}catch(Exception e) {
+			log.error("Lettura applicativo pubblicatore signalHub registrato fallita: "+e.getMessage(),e);
+		}
+		return false;
 	}
 	
 	private static boolean validatePdndIfnoSignalHubPublisherRole(IRegistryReader registryReader, ConsoleConfiguration consoleConfiguration, ProtocolProperties properties, Logger log)  throws ProtocolException {

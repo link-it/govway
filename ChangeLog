@@ -1,3 +1,19 @@
+2026-09-22  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole, ProtocolloModIPA]
+	Risolto Bug #1822
+	L'autorizzazione 'signal-Hub', attiva sulla fruizione predefinita utilizzata per la pubblicazione dei segnali,
+	individuava l'applicativo pubblicatore esclusivamente tramite l'autenticazione di trasporto.
+	Una fruizione che identifica l'applicativo con la sola autenticazione token rifiutava quindi ogni richiesta,
+	anche quando l'applicativo riconosciuto dal token era quello indicato come pubblicatore nell'erogazione;
+	la configurazione, per contro, consentiva di selezionarlo e di salvarlo.
+	L'applicativo pubblicatore viene adesso riconosciuto indifferentemente dall'autenticazione di trasporto o dal token,
+	sia per l'assegnazione diretta che tramite ruolo.
+	Nella maschera del controllo accessi della fruizione non vengono più proposte le liste puntuali di applicativi e ruoli associate al token,
+	coerentemente con quanto già avviene per quelle associate al trasporto, poiché con l'autorizzazione 'signal-Hub' il pubblicatore è definito sull'erogazione.
+	L'elenco degli applicativi selezionabili come pubblicatore, infine, tiene adesso conto della token policy quando l'autenticazione di trasporto non è prevista,
+	e conserva l'applicativo già configurato segnalandone la condizione nel caso in cui una successiva modifica del controllo accessi non ne consenta più l'autenticazione.
+
 2026-09-21  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, InstallerVersioneBinaria]
