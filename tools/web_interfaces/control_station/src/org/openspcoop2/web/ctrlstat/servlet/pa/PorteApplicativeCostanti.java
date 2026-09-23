@@ -982,7 +982,7 @@ public class PorteApplicativeCostanti {
 	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTO = CostantiControlStation.LABEL_PARAMETRO_SOGGETTO;
 	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_ABILITATO = "abilitato";
 	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_DISABILITATO = "disabilitato";
-	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_RISULTATI_RICERCA = "Risultati Ricerca";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_RISULTATI_RICERCA = Costanti.PAGE_DATA_TITLE_LABEL_RISULTATI_RICERCA;
 	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_STATO = CostantiControlStation.LABEL_PARAMETRO_PORTE_STATO;
 	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TIPO = CostantiControlStation.LABEL_PARAMETRO_PORTE_TIPO;
 	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_APPLICA_MTOM = CostantiControlStation.LABEL_PARAMETRO_APPLICA_MTOM;

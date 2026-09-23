@@ -53,6 +53,7 @@ public class PageData implements Serializable {
 	String search;
 	String searchDescription;
 	boolean searchNote = false;
+	String searchNoteRicercaAttiva;
 	String searchLabel;
 	int searchNumEntries;
 	String mode;
@@ -108,6 +109,7 @@ public class PageData implements Serializable {
 		this.searchDescription = "";
 		this.searchLabel = "Ricerca";
 		this.searchNote = false;
+		this.searchNoteRicercaAttiva = null;
 		this.searchNumEntries = -1; // Per visualizzare sempre
 		this.mode = "";
 		this.message = "";
@@ -166,6 +168,13 @@ public class PageData implements Serializable {
 	}
 	public void setSearchNote(boolean searchNote) {
 		this.searchNote = searchNote;
+	}
+	
+	public String getSearchNoteRicercaAttiva() {
+		return this.searchNoteRicercaAttiva;
+	}
+	public void setSearchNoteRicercaAttiva(String searchNoteRicercaAttiva) {
+		this.searchNoteRicercaAttiva = searchNoteRicercaAttiva;
 	}
 	
 	public void setSearch(String s) {
@@ -924,6 +933,9 @@ public class PageData implements Serializable {
 		
 		if(searchNoteCheck && !searchDescriptionCheck.equals("")){
 			deValue.setNote(MessageFormat.format(Costanti.SEARCH_PARAMETER_NOTE, searchDescriptionCheck));
+		}
+		else if(this.searchNoteRicercaAttiva!=null && !searchDescriptionCheck.equals("")){
+			deValue.setNote(this.searchNoteRicercaAttiva);
 		}
 		
 		return deValue;

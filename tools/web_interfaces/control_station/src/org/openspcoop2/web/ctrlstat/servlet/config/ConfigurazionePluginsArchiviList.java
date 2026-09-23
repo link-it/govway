@@ -82,24 +82,49 @@ public final class ConfigurazionePluginsArchiviList extends Action {
 			
 			if(StringUtils.isNotEmpty(cambiaPosizione)) {
 				
-				List<Object> pluginsDaSpostare =new ArrayList<>();
+				// Le posizioni non sono necessariamente contigue (la cancellazione di un archivio non ricompatta i successivi),
+				// quindi l'archivio con cui effettuare lo scambio si individua come elemento adiacente nella lista completa
+				// (ordinata per posizione e non filtrata dalla ricerca) e non tramite posizione +/- 1
+				List<RegistroPlugin> listaCompleta = confCore.pluginsArchiviList(new ConsoleSearch(true));
+				int index = -1;
+				for (int i = 0; i < listaCompleta.size(); i++) {
+					if(listaCompleta.get(i).getNome().equals(nome)) {
+						index = i;
+						break;
+					}
+				}
 				
-				RegistroPlugin regolaToMove = confCore.getDatiRegistroPlugin(nome);
+				String nomeToSwitch = null; // se arrivo qua dovrebbe esistere sempre, e' la grafica che me lo assicura
+				if(index>=0) {
+					if(cambiaPosizione.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SU)) {
+						if(index>0) {
+							nomeToSwitch = listaCompleta.get(index-1).getNome();
+						}
+					}
+					else {
+						if(index<(listaCompleta.size()-1)) {
+							nomeToSwitch = listaCompleta.get(index+1).getNome();
+						}
+					}
+				}
 				
-				int posizioneAttuale = regolaToMove.getPosizione();
-				int posizioneNuova = cambiaPosizione.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SU) ? (posizioneAttuale - 1) : (posizioneAttuale + 1);
-				
-				RegistroPlugin regolaToSwitch = confCore.getDatiRegistroPluginFromPosizione(posizioneNuova);
-				
-				regolaToMove.setPosizione(posizioneNuova);
-				regolaToSwitch.setPosizione(posizioneAttuale);
-				
-				pluginsDaSpostare.add(regolaToMove);
-				pluginsDaSpostare.add(regolaToSwitch);
-				
-				confCore.performUpdateOperation(userLogin, confHelper.smista(), pluginsDaSpostare.toArray(new Object[pluginsDaSpostare.size()]));
-				if(CostantiControlStation.VISUALIZZA_MESSAGGIO_CONFERMA_SPOSTAMENTO_PLUGINS_ARCHIVI)
-					pd.setMessage(CostantiControlStation.MESSAGGIO_CONFERMA_PLUGINS_ARCHIVIO_SPOSTATO_CORRETTAMENTE, MessageType.INFO);
+				if(nomeToSwitch!=null) {
+					List<Object> pluginsDaSpostare =new ArrayList<>();
+					
+					RegistroPlugin regolaToMove = confCore.getDatiRegistroPlugin(nome);
+					RegistroPlugin regolaToSwitch = confCore.getDatiRegistroPlugin(nomeToSwitch);
+					
+					int posizioneAttuale = regolaToMove.getPosizione();
+					regolaToMove.setPosizione(regolaToSwitch.getPosizione());
+					regolaToSwitch.setPosizione(posizioneAttuale);
+					
+					pluginsDaSpostare.add(regolaToMove);
+					pluginsDaSpostare.add(regolaToSwitch);
+					
+					confCore.performUpdateOperation(userLogin, confHelper.smista(), pluginsDaSpostare.toArray(new Object[pluginsDaSpostare.size()]));
+					if(CostantiControlStation.VISUALIZZA_MESSAGGIO_CONFERMA_SPOSTAMENTO_PLUGINS_ARCHIVI)
+						pd.setMessage(CostantiControlStation.MESSAGGIO_CONFERMA_PLUGINS_ARCHIVIO_SPOSTATO_CORRETTAMENTE, MessageType.INFO);
+				}
 			}
 
 			// Preparo la lista
