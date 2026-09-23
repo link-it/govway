@@ -8,6 +8,8 @@ Background:
 	* def crypto_info_url_echo = govway_base_path + '/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/SignalHubTest/v1/echo'
 	* def push_signal_url = govway_base_path + '/rest/out/DemoSoggettoErogatore/PDND/api-pdnd-push-signals/v1/signals'
 	* def push_signal_url_default = govway_base_path + '/rest/out/DemoSoggettoErogatore/PDND/api-pdnd-push-signals-default/v1/signals'
+	* def push_signal_url_token = govway_base_path + '/rest/out/DemoSoggettoErogatore2/PDND/api-pdnd-push-signals/v1/signals'
+	* def push_signal_url_mixed = govway_base_path + '/rest/out/DemoSoggettoErogatore3/PDND/api-pdnd-push-signals/v1/signals'
 	* def crypto_info_url_erase = govway_base_path + '/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore2/SignalHubTest/v1/pseudonymization'
 	* def crypto_info_url_no_digest = govway_base_path + '/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/SignalHubTestNoDigest/v1/pseudonymization'
 	* def api_config_url = govway_config_api_path + ''
@@ -26,6 +28,7 @@ Background:
 	* def get_diagnostico = read('classpath:utils/get_diagnostico.js')
 	* def reset_cache = read('classpath:utils/reset-cache.feature')
 	* def basic = read('classpath:utils/basic-auth.js')
+	* def token_interno = read('classpath:utils/token-interno.js')
 	
 	* def signal_hub_erogazione = read('classpath:test/signal_hub/bodies/erogazione_modi_rest_signalhub.json')
 	* def signal_hub_autenticazione = read('classpath:test/signal_hub/bodies/signalhub_autenticazione.json')
@@ -35,6 +38,9 @@ Background:
 	* def auth_push_signal2 = { username: 'DemoSignalHub2', password: '123456' }
 	* def auth_push_signal_role = { username: 'DemoSignalHub1', password: '123456' }
 	* def auth_push_signal_role2 = { username: 'DemoSignalHubRole2', password: '123456' }
+	* def auth_push_signal_mixed = { username: 'DemoSignalHub3', password: '123456' }
+	* def auth_push_signal_mixed_ko = { username: 'DemoSignalHub3KO', password: '123456' }
+	* def auth_push_signal_mixed_role = { username: 'DemoSignalHub3Role', password: '123456' }
     * def getHeader =
     """
     function(name) {
@@ -1118,6 +1124,269 @@ Scenario: push del segnale usando serviceId differenti con stesse credenziali de
 	And match response == unauthorized_error
 
 	
+#
+# TEST SULL'IDENTIFICAZIONE DELL'APPLICATIVO PUBBLICATORE TRAMITE TOKEN
+#
+# La fruizione di DemoSoggettoErogatore2 identifica l'applicativo esclusivamente tramite
+# la token policy, quella di DemoSoggettoErogatore3 prevede sia l'autenticazione di
+# trasporto sia il token.
+#
+
+@test-push
+@test-push-token-sa
+Scenario: push del segnale con applicativo identificato tramite token, indicato come pubblicatore
+
+	Given url push_signal_url_token
+	And param govway_testsuite_objectId = 'objectIdTokenSA'
+	And header Authorization = call token_interno ({ clientId: 'SignalHubTokenPublisher' })
+	And header GovWay-TestSuite-Test-ID = 'push_signal_authz'
+	And header GovWay-Testsuite-ObjectType = 'objectType'
+	And header GovWay-Signal-ServiceId = 'eServiceTokenSA'
+	And request {data:[{signalType: "UPDATE"}]}
+	When method post
+	Then status 200
+
+@test-push
+@test-push-token-role
+Scenario: push del segnale con applicativo identificato tramite token, autorizzato tramite ruolo
+
+	Given url push_signal_url_token
+	And param govway_testsuite_objectId = 'objectIdTokenRole'
+	And header Authorization = call token_interno ({ clientId: 'SignalHubTokenRole' })
+	And header GovWay-TestSuite-Test-ID = 'push_signal_authz'
+	And header GovWay-Testsuite-ObjectType = 'objectType'
+	And header GovWay-Signal-ServiceId = 'eServiceTokenRole'
+	And request {data:[{signalType: "UPDATE"}]}
+	When method post
+	Then status 200
+
+@test-push
+@test-push-token-unauthorized
+Scenario: push del segnale con applicativo identificato tramite token non configurato come pubblicatore
+
+	Given url push_signal_url_token
+	And param govway_testsuite_objectId = 'objectIdTokenKO'
+	And header Authorization = call token_interno ({ clientId: 'SignalHubTokenNotPublisher' })
+	And header GovWay-TestSuite-Test-ID = 'push_signal_authz'
+	And header GovWay-Testsuite-ObjectType = 'objectType'
+	And header GovWay-Signal-ServiceId = 'eServiceTokenSA'
+	And request {data:[{signalType: "UPDATE"}]}
+	When method post
+	Then status 403
+	And match response == unauthorized_error
+
+	* def id_transazione = responseHeaders['GovWay-Transaction-ID'][0]
+	* def msgs = get_diagnostico(id_transazione, 'applicativo autenticato non è configurato come pubblicatore del servizio indicato, né tramite assegnazione diretta né mediante ruolo associato')
+	# l'applicativo segnalato deve essere quello identificato dal token, non l'identita' anonima del trasporto
+	* match msgs[0].MESSAGGIO contains "Il servizio applicativo SignalHubTokenNotPublisher non risulta autorizzato a fruire del servizio richiesto"
+	* if (msgs.length != 1) karate.fail('messaggio di errore non trovato')
+
+#
+# La fruizione di DemoSoggettoErogatore3 prevede sia l'autenticazione di trasporto sia il token, entrambe
+# opzionali: sono percio' possibili tutte le combinazioni di identificazione dell'applicativo pubblicatore.
+#
+
+@test-push
+@test-push-mixed-token
+Scenario: push del segnale con il solo token, applicativo identificato indicato come pubblicatore
+
+	Given url push_signal_url_mixed
+	And param govway_testsuite_objectId = 'objectIdMixedToken'
+	And header GovWay-TestSuite-Token = call token_interno ({ clientId: 'SignalHubTokenPublisher3', prefix: '' })
+	And header GovWay-TestSuite-Test-ID = 'push_signal_authz'
+	And header GovWay-Testsuite-ObjectType = 'objectType'
+	And header GovWay-Signal-ServiceId = 'eServiceMixedToken'
+	And request {data:[{signalType: "UPDATE"}]}
+	When method post
+	Then status 200
+
+@test-push
+@test-push-mixed-trasporto
+Scenario: push del segnale con la sola autenticazione di trasporto, applicativo identificato indicato come pubblicatore
+
+	Given url push_signal_url_mixed
+	And param govway_testsuite_objectId = 'objectIdMixedTrasporto'
+	And header Authorization = call basic (auth_push_signal_mixed)
+	And header GovWay-TestSuite-Test-ID = 'push_signal_authz'
+	And header GovWay-Testsuite-ObjectType = 'objectType'
+	And header GovWay-Signal-ServiceId = 'eServiceMixedTrasporto'
+	And request {data:[{signalType: "UPDATE"}]}
+	When method post
+	Then status 200
+
+@test-push
+@test-push-mixed-token-unauthorized
+Scenario: push del segnale con il solo token, applicativo identificato non indicato come pubblicatore
+
+	Given url push_signal_url_mixed
+	And param govway_testsuite_objectId = 'objectIdMixedTokenKO'
+	And header GovWay-TestSuite-Token = call token_interno ({ clientId: 'SignalHubTokenNotPublisher3', prefix: '' })
+	And header GovWay-TestSuite-Test-ID = 'push_signal_authz'
+	And header GovWay-Testsuite-ObjectType = 'objectType'
+	And header GovWay-Signal-ServiceId = 'eServiceMixedToken'
+	And request {data:[{signalType: "UPDATE"}]}
+	When method post
+	Then status 403
+	And match response == unauthorized_error
+
+	* def id_transazione = responseHeaders['GovWay-Transaction-ID'][0]
+	* def msgs = get_diagnostico(id_transazione, 'applicativo autenticato non è configurato come pubblicatore del servizio indicato, né tramite assegnazione diretta né mediante ruolo associato')
+	* match msgs[0].MESSAGGIO contains "Il servizio applicativo SignalHubTokenNotPublisher3 non risulta autorizzato a fruire del servizio richiesto"
+	* if (msgs.length != 1) karate.fail('messaggio di errore non trovato')
+
+@test-push
+@test-push-mixed-trasporto-unauthorized
+Scenario: push del segnale con la sola autenticazione di trasporto, applicativo identificato non indicato come pubblicatore
+
+	Given url push_signal_url_mixed
+	And param govway_testsuite_objectId = 'objectIdMixedTrasportoKO'
+	And header Authorization = call basic (auth_push_signal_mixed_ko)
+	And header GovWay-TestSuite-Test-ID = 'push_signal_authz'
+	And header GovWay-Testsuite-ObjectType = 'objectType'
+	And header GovWay-Signal-ServiceId = 'eServiceMixedTrasporto'
+	And request {data:[{signalType: "UPDATE"}]}
+	When method post
+	Then status 403
+	And match response == unauthorized_error
+
+	* def id_transazione = responseHeaders['GovWay-Transaction-ID'][0]
+	* def msgs = get_diagnostico(id_transazione, 'applicativo autenticato non è configurato come pubblicatore del servizio indicato, né tramite assegnazione diretta né mediante ruolo associato')
+	* match msgs[0].MESSAGGIO contains "Il servizio applicativo SignalHubTrasportoNotPublisher3 non risulta autorizzato a fruire del servizio richiesto"
+	* if (msgs.length != 1) karate.fail('messaggio di errore non trovato')
+
+@test-push
+@test-push-mixed-anonimo
+Scenario: push del segnale senza alcuna identificazione dell'applicativo
+
+	Given url push_signal_url_mixed
+	And param govway_testsuite_objectId = 'objectIdMixedAnonimo'
+	And header GovWay-TestSuite-Test-ID = 'push_signal_authz'
+	And header GovWay-Testsuite-ObjectType = 'objectType'
+	And header GovWay-Signal-ServiceId = 'eServiceMixedToken'
+	And request {data:[{signalType: "UPDATE"}]}
+	When method post
+	Then status 403
+	And match response == unauthorized_error
+
+@test-push
+@test-push-mixed-entrambi-trasporto
+Scenario: push del segnale con entrambe le identificazioni, pubblicatore individuato dal trasporto
+
+	Given url push_signal_url_mixed
+	And param govway_testsuite_objectId = 'objectIdMixedEntrambiTrasporto'
+	And header Authorization = call basic (auth_push_signal_mixed)
+	And header GovWay-TestSuite-Token = call token_interno ({ clientId: 'SignalHubTokenNotPublisher3', prefix: '' })
+	And header GovWay-TestSuite-Test-ID = 'push_signal_authz'
+	And header GovWay-Testsuite-ObjectType = 'objectType'
+	And header GovWay-Signal-ServiceId = 'eServiceMixedTrasporto'
+	And request {data:[{signalType: "UPDATE"}]}
+	When method post
+	Then status 200
+
+@test-push
+@test-push-mixed-entrambi-token
+Scenario: push del segnale con entrambe le identificazioni, pubblicatore individuato dal token
+
+	Given url push_signal_url_mixed
+	And param govway_testsuite_objectId = 'objectIdMixedEntrambiToken'
+	And header Authorization = call basic (auth_push_signal_mixed)
+	And header GovWay-TestSuite-Token = call token_interno ({ clientId: 'SignalHubTokenPublisher3', prefix: '' })
+	And header GovWay-TestSuite-Test-ID = 'push_signal_authz'
+	And header GovWay-Testsuite-ObjectType = 'objectType'
+	And header GovWay-Signal-ServiceId = 'eServiceMixedToken'
+	And request {data:[{signalType: "UPDATE"}]}
+	When method post
+	Then status 200
+
+@test-push
+@test-push-mixed-entrambi-unauthorized
+Scenario: push del segnale con entrambe le identificazioni, nessuna delle due indicata come pubblicatore
+
+	Given url push_signal_url_mixed
+	And param govway_testsuite_objectId = 'objectIdMixedEntrambiKO'
+	And header Authorization = call basic (auth_push_signal_mixed_ko)
+	And header GovWay-TestSuite-Token = call token_interno ({ clientId: 'SignalHubTokenNotPublisher3', prefix: '' })
+	And header GovWay-TestSuite-Test-ID = 'push_signal_authz'
+	And header GovWay-Testsuite-ObjectType = 'objectType'
+	And header GovWay-Signal-ServiceId = 'eServiceMixedToken'
+	And request {data:[{signalType: "UPDATE"}]}
+	When method post
+	Then status 403
+	And match response == unauthorized_error
+
+	* def id_transazione = responseHeaders['GovWay-Transaction-ID'][0]
+	* def msgs = get_diagnostico(id_transazione, 'applicativo autenticato non è configurato come pubblicatore del servizio indicato, né tramite assegnazione diretta né mediante ruolo associato')
+	* match msgs[0].MESSAGGIO contains "Il servizio applicativo SignalHubTrasportoNotPublisher3 non risulta autorizzato a fruire del servizio richiesto"
+	* if (msgs.length != 1) karate.fail('messaggio di errore non trovato')
+
+@test-push
+@test-push-mixed-ruolo-token
+Scenario: push del segnale su erogazione con il solo ruolo pubblicatore, ruolo posseduto dall'applicativo identificato dal token
+
+	Given url push_signal_url_mixed
+	And param govway_testsuite_objectId = 'objectIdMixedRuoloToken'
+	And header GovWay-TestSuite-Token = call token_interno ({ clientId: 'SignalHubTokenRole3', prefix: '' })
+	And header GovWay-TestSuite-Test-ID = 'push_signal_authz'
+	And header GovWay-Testsuite-ObjectType = 'objectType'
+	And header GovWay-Signal-ServiceId = 'eServiceMixedRuolo'
+	And request {data:[{signalType: "UPDATE"}]}
+	When method post
+	Then status 200
+
+@test-push
+@test-push-mixed-ruolo-trasporto
+Scenario: push del segnale su erogazione con il solo ruolo pubblicatore, ruolo posseduto dall'applicativo identificato dal trasporto
+
+	Given url push_signal_url_mixed
+	And param govway_testsuite_objectId = 'objectIdMixedRuoloTrasporto'
+	And header Authorization = call basic (auth_push_signal_mixed_role)
+	And header GovWay-TestSuite-Test-ID = 'push_signal_authz'
+	And header GovWay-Testsuite-ObjectType = 'objectType'
+	And header GovWay-Signal-ServiceId = 'eServiceMixedRuolo'
+	And request {data:[{signalType: "UPDATE"}]}
+	When method post
+	Then status 200
+
+@test-push
+@test-push-mixed-ruolo-unauthorized
+Scenario: push del segnale su erogazione con il solo ruolo pubblicatore, ruolo non posseduto dall'applicativo identificato
+
+	Given url push_signal_url_mixed
+	And param govway_testsuite_objectId = 'objectIdMixedRuoloKO'
+	And header GovWay-TestSuite-Token = call token_interno ({ clientId: 'SignalHubTokenNotPublisher3', prefix: '' })
+	And header GovWay-TestSuite-Test-ID = 'push_signal_authz'
+	And header GovWay-Testsuite-ObjectType = 'objectType'
+	And header GovWay-Signal-ServiceId = 'eServiceMixedRuolo'
+	And request {data:[{signalType: "UPDATE"}]}
+	When method post
+	Then status 403
+	And match response == unauthorized_error
+
+	* def id_transazione = responseHeaders['GovWay-Transaction-ID'][0]
+	* def msgs = get_diagnostico(id_transazione, 'applicativo autenticato non è configurato come pubblicatore del servizio indicato, né tramite assegnazione diretta né mediante ruolo associato')
+	* match msgs[0].MESSAGGIO contains "Il servizio applicativo SignalHubTokenNotPublisher3 non risulta autorizzato a fruire del servizio richiesto"
+	* if (msgs.length != 1) karate.fail('messaggio di errore non trovato')
+
+@test-push
+@test-push-mixed-omonimo-altro-soggetto
+Scenario: push del segnale con applicativo omonimo del pubblicatore ma appartenente ad un altro soggetto
+
+	# L'applicativo individuato dal token appartiene ad un soggetto differente da quello della fruizione e non
+	# viene quindi identificato: la richiesta e' rifiutata dall'autenticazione, prima dell'autorizzazione, in base
+	# alla proprieta' 'org.openspcoop2.pdd.core.autenticazione.token.portaDelegata.checkSoggettiProprietari'.
+	# Il pubblicatore omonimo di un altro soggetto non risulta percio' utilizzabile su una fruizione.
+
+	Given url push_signal_url_mixed
+	And param govway_testsuite_objectId = 'objectIdMixedOmonimo'
+	And header GovWay-TestSuite-Token = call token_interno ({ clientId: 'SignalHubTokenPublisher3Omonimo', prefix: '' })
+	And header GovWay-TestSuite-Test-ID = 'push_signal_authz'
+	And header GovWay-Testsuite-ObjectType = 'objectType'
+	And header GovWay-Signal-ServiceId = 'eServiceMixedToken'
+	And request {data:[{signalType: "UPDATE"}]}
+	When method post
+	Then status 401
+	And match response contains { title: 'AuthenticationFailed', status: 401 }
+
 @test-push
 @test-push-seed-creation
 Scenario: push del segnale in cui genero anche il seme correttamnete

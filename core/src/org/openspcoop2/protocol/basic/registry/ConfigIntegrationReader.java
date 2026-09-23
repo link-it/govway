@@ -332,10 +332,10 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 						}
 					}
 					if(returnAll) {
-						return findIdServiziApplicativiByAuthTrasporto(idSoggetto, returnAll, pa.getAutenticazione(), tokenPolicy, pa.getProprietaAutenticazione()); 
+						return findIdServiziApplicativiByAuthTrasporto(idSoggetto, returnAll, pa.getAutenticazione(), pa.getProprietaAutenticazione()); 
 					}
 					else {
-						ltrasporto = findIdServiziApplicativiByAuthTrasporto(idSoggetto, returnAll, pa.getAutenticazione(), tokenPolicy, pa.getProprietaAutenticazione());
+						ltrasporto = findIdServiziApplicativiByAuthTrasporto(idSoggetto, returnAll, pa.getAutenticazione(), pa.getProprietaAutenticazione());
 					}
 				}
 				
@@ -400,17 +400,22 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 				// find by credenziali trasporto		
 				List<IDServizioApplicativo> ltrasporto = null;
 				if(authTrasporto) {
+					boolean identificazioneTrasportoNonPrevista = false;
 					if(pd.getAutenticazione()!=null && StringUtils.isNotEmpty(pd.getAutenticazione())) {
 						TipoAutenticazione auth = TipoAutenticazione.toEnumConstant(pd.getAutenticazione(), false);
 						if(auth==null || TipoAutenticazione.DISABILITATO.equals(auth)) {
-							returnAll = true;
+							identificazioneTrasportoNonPrevista = true;
+							/** Senza autenticazione di trasporto l'applicativo viene identificato tramite il token, se risulta configurata una token policy.
+								Solamente in assenza anche della token policy vengono ritornati tutti gli applicativi del soggetto, 
+								poiche' l'identita' puo' essere dichiarata tramite l'header di integrazione */
+							returnAll = !authToken || tokenPolicy==null;
 						}
 					}
 					if(returnAll) {
-						return findIdServiziApplicativiByAuthTrasporto(idSoggetto, returnAll, pd.getAutenticazione(), tokenPolicy, pd.getProprietaAutenticazione()); 
+						return findIdServiziApplicativiByAuthTrasporto(idSoggetto, returnAll, pd.getAutenticazione(), pd.getProprietaAutenticazione()); 
 					}
-					else {
-						ltrasporto = findIdServiziApplicativiByAuthTrasporto(idSoggetto, returnAll, pd.getAutenticazione(), tokenPolicy, pd.getProprietaAutenticazione());
+					else if(!identificazioneTrasportoNonPrevista) {
+						ltrasporto = findIdServiziApplicativiByAuthTrasporto(idSoggetto, returnAll, pd.getAutenticazione(), pd.getProprietaAutenticazione());
 					}
 				}
 				
@@ -455,7 +460,10 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 			throw new RegistryException(e.getMessage(),e);
 		}
 	}
-	private List<IDServizioApplicativo> findIdServiziApplicativiByAuthTrasporto(IDSoggetto idSoggetto, boolean returnAll, String autenticazione, String tokenPolicy, List<Proprieta> listProprietaAutenticazione) throws RegistryNotFound, RegistryException, DriverConfigurazioneException{
+	/** La ricerca riguarda le sole credenziali di trasporto: un'eventuale token policy configurata sulla porta 
+		non deve restringere il risultato, poiche' gli applicativi ad essa associati vengono individuati 
+		dalla ricerca per token ed aggiunti a quelli ritornati da questo metodo */
+	private List<IDServizioApplicativo> findIdServiziApplicativiByAuthTrasporto(IDSoggetto idSoggetto, boolean returnAll, String autenticazione, List<Proprieta> listProprietaAutenticazione) throws RegistryNotFound, RegistryException, DriverConfigurazioneException{
 		// find by credenziali trasporto
 		if(returnAll) {
 			ProtocolFiltroRicercaServiziApplicativi f = new ProtocolFiltroRicercaServiziApplicativi();
@@ -477,6 +485,7 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 			}
 			boolean bothSslAndToken = false;
 			boolean tokenPolicyOR = false;
+			String tokenPolicy = null;
 			List<IDServizioApplicativoDB> ltrasporto = ((DriverConfigurazioneDB)this.driverConfigurazioneGET).soggettiServizioApplicativoList(idSoggetto,null,tipoAutenticazione, 
 					appId, CostantiConfigurazione.CLIENT, 
 					bothSslAndToken, tokenPolicy, tokenPolicyOR);

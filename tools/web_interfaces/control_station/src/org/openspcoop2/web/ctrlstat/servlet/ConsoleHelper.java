@@ -6904,11 +6904,14 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			boolean labelAutorizzazioneTokenAttuata = false;
 			
+			// per signalHub push l'autorizzazione avviene sull'eService dove vengono definiti gli applicativi (o i ruoli) autorizzati
+			boolean autorizzazioneSignalHubPush = AutorizzazioneUtilities.STATO_SIGNAL_HUB_PUSH_SIGNALS.equals(autorizzazione);
+			
 			// ** Token **
 			if(AutorizzazioneUtilities.STATO_DISABILITATO.equals(autorizzazione)==false){
 			
 				// ** Token Richiedente **
-				if( (tokenAbilitato || modiSicurezzaMessaggio) && !AutorizzazioneUtilities.STATO_XACML_POLICY.equals(autorizzazione)) {
+				if( (tokenAbilitato || modiSicurezzaMessaggio) && !autorizzazioneSignalHubPush && !AutorizzazioneUtilities.STATO_XACML_POLICY.equals(autorizzazione)) {
 					
 					boolean autorizzazione_autenticazione_token =  false;
 												
@@ -6986,7 +6989,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				}
 				
 				// ** Token Ruoli **
-				if((tokenAbilitato || modiSicurezzaMessaggio) && !AutorizzazioneUtilities.STATO_XACML_POLICY.equals(autorizzazione)) {
+				if((tokenAbilitato || modiSicurezzaMessaggio) && !autorizzazioneSignalHubPush && !AutorizzazioneUtilities.STATO_XACML_POLICY.equals(autorizzazione)) {
 					
 					boolean autorizzazione_ruoli_token = false;
 						

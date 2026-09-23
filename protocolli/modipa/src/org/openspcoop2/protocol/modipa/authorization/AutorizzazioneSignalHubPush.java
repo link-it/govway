@@ -22,14 +22,21 @@
 
 package org.openspcoop2.protocol.modipa.authorization;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.openspcoop2.core.config.Ruolo;
+import org.openspcoop2.core.config.ServizioApplicativo;
+import org.openspcoop2.core.id.IDServizioApplicativo;
+import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
+import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.autorizzazione.pd.AbstractAutorizzazioneBase;
 import org.openspcoop2.pdd.core.autorizzazione.pd.DatiInvocazionePortaDelegata;
 import org.openspcoop2.pdd.core.autorizzazione.pd.EsitoAutorizzazionePortaDelegata;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;
+import org.openspcoop2.protocol.modipa.constants.ModICostanti;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
@@ -81,50 +88,160 @@ public class AutorizzazioneSignalHubPush extends AbstractAutorizzazioneBase {
 		return esito;
     }
     
-    public EsitoAutorizzazionePortaDelegata processEngine(DatiInvocazionePortaDelegata datiInvocazione) {
-    	EsitoAutorizzazionePortaDelegata esito = new EsitoAutorizzazionePortaDelegata();
+    public EsitoAutorizzazionePortaDelegata processEngine(DatiInvocazionePortaDelegata datiInvocazione) throws ProtocolException {
     	
 		PdDContext context = datiInvocazione.getPddContext();
     	
 		// ottengo le proprieta del protocollo per avere gli applicativi/ruoli autorizzati
 		SignalHubPushParams params = SignalHubPushParams.load(context);
-			
+		
+		// l'applicativo pubblicatore può essere stato identificato sia tramite l'autenticazione di trasporto sia tramite il token
+		List<ApplicativoIdentificato> applicativi = getApplicativiIdentificati(datiInvocazione);
+		if(applicativi.isEmpty()) {
+			EsitoAutorizzazionePortaDelegata esito = new EsitoAutorizzazionePortaDelegata();
+			esito.setAutorizzato(false);
+			esito.setErroreIntegrazione(IntegrationFunctionError.AUTHORIZATION_DENY, ErroriIntegrazione.ERRORE_410_AUTENTICAZIONE_RICHIESTA.getErroreIntegrazione());
+			/**esito.setDetails(ROLE_SERVICE_UNRECOGNIZED);*/
+			return esito;
+		}
+		
+		// il pubblicatore viene ricercato tra gli applicativi del soggetto che eroga il servizio indicato nel segnale
+		IDSoggetto soggettoPubblicatore = params.getIdServizio()!=null ? params.getIdServizio().getSoggettoErogatore() : null;
+		
+		EsitoAutorizzazionePortaDelegata esito = new EsitoAutorizzazionePortaDelegata();
 		for (int i = 0; i < params.getRequiredAuthorizationsSize(); i++) {
-			String allowedRole = params.getRequiredAuthorizationRole(i);
-			String allowedService = params.getRequiredAuthorizationSA(i);
 			
-			List<Ruolo> roles = List.of();
+			esito = authorize(datiInvocazione, applicativi, soggettoPubblicatore,
+					params.getRequiredAuthorizationSA(i), params.getRequiredAuthorizationRole(i));
 			
-			// controllo se sono presenti ruoli nel servizio applicativo
-			if (datiInvocazione.getServizioApplicativo() != null && 
-				datiInvocazione.getServizioApplicativo().getInvocazionePorta() != null &&
-				datiInvocazione.getServizioApplicativo().getInvocazionePorta().getRuoli() != null)
-				roles = datiInvocazione.getServizioApplicativo().getInvocazionePorta().getRuoli().getRuoloList();
-			
-			// controllo se sono presenti ruoli autorizzati
-			for (Ruolo role : roles) {
-				if (role.getNome().equals(allowedRole)) {
-					esito.setAutorizzato(true);
-					return esito;
-				}
-			}
-			
-			// controllo se l'applicativo e' autorizzato
-			if (datiInvocazione.getIdServizioApplicativo() == null) {
-				esito.setAutorizzato(false);
-				esito.setErroreIntegrazione(IntegrationFunctionError.AUTHORIZATION_DENY, ErroriIntegrazione.ERRORE_410_AUTENTICAZIONE_RICHIESTA.getErroreIntegrazione());
-				/**esito.setDetails(ROLE_SERVICE_UNRECOGNIZED);*/
-				
-			} else if (!allowedService.equals(datiInvocazione.getIdServizioApplicativo().getNome())) {
-				esito.setAutorizzato(false);
-				esito.setErroreIntegrazione(IntegrationFunctionError.AUTHORIZATION_DENY, ErroriIntegrazione.ERRORE_404_AUTORIZZAZIONE_FALLITA_SA.getErrore404_AutorizzazioneFallitaServizioApplicativo(datiInvocazione.getIdServizioApplicativo().getNome()));
-				esito.setDetails(ROLE_SERVICE_UNRECOGNIZED);
-			} else {
-				esito.setAutorizzato(true);
+			// tutte le autorizzazioni richieste devono essere soddisfatte
+			if(!esito.isAutorizzato()) {
+				return esito;
 			}
 		}
 		
 		return esito;
+    }
+    
+    private EsitoAutorizzazionePortaDelegata authorize(DatiInvocazionePortaDelegata datiInvocazione, 
+    		List<ApplicativoIdentificato> applicativi, IDSoggetto soggettoPubblicatore,
+    		String allowedService, String allowedRole) throws ProtocolException {
+    	
+    	EsitoAutorizzazionePortaDelegata esito = new EsitoAutorizzazionePortaDelegata();
+    	
+    	// la configurazione dell'applicativo viene letta solamente se e' stato definito un ruolo pubblicatore
+    	boolean verificaRuolo = isDefined(allowedRole);
+    	
+    	// e' sufficiente che una delle identita' associate alla richiesta risulti essere il pubblicatore configurato
+    	for (ApplicativoIdentificato applicativo : applicativi) {
+    		if( matchServizioApplicativo(applicativo.getId(), soggettoPubblicatore, allowedService) ||
+    			(verificaRuolo && matchRuolo(applicativo.getServizioApplicativo(datiInvocazione), allowedRole)) ) {
+    			esito.setAutorizzato(true);
+    			return esito;
+    		}
+		}
+    	
+    	// viene segnalata l'identita' principale, cioe' quella di trasporto se presente, altrimenti quella fornita dal token
+    	String servizioApplicativoNonAutorizzato = applicativi.get(0).getId().getNome();
+    	esito.setAutorizzato(false);
+		esito.setErroreIntegrazione(IntegrationFunctionError.AUTHORIZATION_DENY, ErroriIntegrazione.ERRORE_404_AUTORIZZAZIONE_FALLITA_SA.getErrore404_AutorizzazioneFallitaServizioApplicativo(servizioApplicativoNonAutorizzato));
+		esito.setDetails(ROLE_SERVICE_UNRECOGNIZED);
+		return esito;
+    }
+    
+    private boolean matchServizioApplicativo(IDServizioApplicativo idServizioApplicativo, IDSoggetto soggettoPubblicatore, String allowedService) {
+    	if(!isDefined(allowedService)) {
+    		return false;
+    	}
+    	if(!allowedService.equals(idServizioApplicativo.getNome())) {
+    		return false;
+    	}
+    	// applicativi omonimi appartenenti a soggetti differenti non sono equivalenti
+    	return matchSoggetto(soggettoPubblicatore, idServizioApplicativo.getIdSoggettoProprietario());
+    }
+    
+    private boolean matchSoggetto(IDSoggetto soggettoPubblicatore, IDSoggetto soggettoProprietario) {
+    	if(soggettoPubblicatore==null) {
+    		return true; // non e' stato possibile individuare il soggetto erogatore del servizio indicato nel segnale
+    	}
+    	return soggettoProprietario!=null &&
+    			soggettoPubblicatore.getTipo()!=null && soggettoPubblicatore.getTipo().equals(soggettoProprietario.getTipo()) &&
+    			soggettoPubblicatore.getNome()!=null && soggettoPubblicatore.getNome().equals(soggettoProprietario.getNome());
+    }
+    
+    private boolean matchRuolo(ServizioApplicativo servizioApplicativo, String allowedRole) {
+    	if(!isDefined(allowedRole) ||
+    		servizioApplicativo==null ||
+    		servizioApplicativo.getInvocazionePorta()==null ||
+    		servizioApplicativo.getInvocazionePorta().getRuoli()==null) {
+    		return false;
+    	}
+    	for (Ruolo role : servizioApplicativo.getInvocazionePorta().getRuoli().getRuoloList()) {
+			if(allowedRole.equals(role.getNome())) {
+				return true;
+			}
+		}
+    	return false;
+    }
+    
+    private static boolean isDefined(String value) {
+    	return value!=null && !value.isEmpty() && !ModICostanti.MODIPA_VALUE_UNDEFINED.equals(value);
+    }
+    
+    private List<ApplicativoIdentificato> getApplicativiIdentificati(DatiInvocazionePortaDelegata datiInvocazione) {
+    	
+    	List<ApplicativoIdentificato> applicativi = new ArrayList<>();
+    	
+    	// identita' fornita dall'autenticazione di trasporto o dall'header di integrazione
+    	IDServizioApplicativo idServizioApplicativoTrasporto = datiInvocazione.getIdServizioApplicativo();
+    	if(idServizioApplicativoTrasporto!=null && 
+    		!CostantiPdD.SERVIZIO_APPLICATIVO_ANONIMO.equals(idServizioApplicativoTrasporto.getNome())) {
+    		applicativi.add(new ApplicativoIdentificato(idServizioApplicativoTrasporto, datiInvocazione.getServizioApplicativo()));
+    	}
+    	
+    	// identita' fornita dal token
+    	PdDContext context = datiInvocazione.getPddContext();
+    	if(context!=null && context.containsKey(org.openspcoop2.core.constants.Costanti.ID_APPLICATIVO_TOKEN)) {
+    		IDServizioApplicativo idServizioApplicativoToken = (IDServizioApplicativo) context.getObject(org.openspcoop2.core.constants.Costanti.ID_APPLICATIVO_TOKEN);
+    		if(idServizioApplicativoToken!=null) {
+    			applicativi.add(new ApplicativoIdentificato(idServizioApplicativoToken, null));
+    		}
+    	}
+    	
+    	return applicativi;
+    }
+    
+    /** Applicativo identificato per la richiesta in corso; la configurazione viene letta solamente se richiesta dalla verifica per ruolo */
+    private static class ApplicativoIdentificato {
+    	
+    	private final IDServizioApplicativo id;
+    	private ServizioApplicativo servizioApplicativo;
+    	private boolean letto;
+    	
+    	private ApplicativoIdentificato(IDServizioApplicativo id, ServizioApplicativo servizioApplicativo) {
+    		this.id = id;
+    		this.servizioApplicativo = servizioApplicativo;
+    		this.letto = servizioApplicativo!=null;
+    	}
+    	
+    	private IDServizioApplicativo getId() {
+    		return this.id;
+    	}
+    	
+    	private ServizioApplicativo getServizioApplicativo(DatiInvocazionePortaDelegata datiInvocazione) throws ProtocolException {
+    		if(!this.letto) {
+    			this.letto = true;
+    			try {
+    				this.servizioApplicativo = ConfigurazionePdDManager.getInstance(datiInvocazione.getState()).
+    						getServizioApplicativo(this.id, datiInvocazione.getRequestInfo());
+    			}catch(org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound notFound) {
+    				// applicativo non presente in configurazione; non sara' possibile verificarne i ruoli
+    			}catch(Exception e) {
+    				throw new ProtocolException("Lettura dell'applicativo '"+this.id.getNome()+"' non riuscita: "+e.getMessage(),e);
+    			}
+    		}
+    		return this.servizioApplicativo;
+    	}
     }
 	
 }

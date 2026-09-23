@@ -116,6 +116,25 @@ Scenario: (isTest('seed_failing') || isTest('seed_failing_no_seed')) && request.
     * def responseHeaders = ({ 'GovWay-TestSuite-Seed-Sent': 1})
     * def response = ({ signalId: sigId })
 
+Scenario: isTest('push_signal_authz')
+
+	# Utilizzato dai test sull'autorizzazione del pubblicatore: interessa solamente che la
+	# richiesta raggiunga il backend, la pseudoanonimizzazione e' verificata da altri scenari
+	* match request ==
+		"""
+		{
+			signalId: #number,
+			objectType : '#string',
+  			objectId : '#string',
+  			eserviceId : '#string',
+  			signalType : '#string',
+		}
+		"""
+    * def sigId = request.signalId
+    * def responseStatus = 200
+    * def response = ({ signalId: sigId })
+    * def responseHeaders = ({ 'GovWay-TestSuite-Signal-Sent': 1})
+
 Scenario: isTest('push_multiple_id')
 
 	* match request ==
