@@ -280,14 +280,33 @@
 	prototipo._doKeyDown = function (event) {
 		var aperto = $.datepicker._datepickerShowing && $.datepicker._lastInput === event.target;
 
-		if (aperto && !event.ctrlKey && !event.metaKey && !event.altKey && !event.shiftKey) {
+		if (aperto && !event.ctrlKey && !event.metaKey && !event.altKey) {
+			var inst0 = $.datepicker._getInst(event.target);
+			var giorniDelMese = inst0 ? new Date(inst0.drawYear, inst0.drawMonth + 1, 0).getDate() : 31;
 			var passo = null;
 			switch (event.keyCode) {
-				case 37: passo = -1; break;  /* FRECCIA SINISTRA: giorno precedente */
-				case 39: passo = 1; break;   /* FRECCIA DESTRA:   giorno successivo */
-				case 38: passo = -7; break;  /* FRECCIA SU:       settimana precedente */
-				case 40: passo = 7; break;   /* FRECCIA GIU:      settimana successiva */
+				case 37: passo = event.shiftKey ? null : -1; break;  /* FRECCIA SINISTRA: giorno precedente */
+				case 39: passo = event.shiftKey ? null : 1; break;   /* FRECCIA DESTRA:   giorno successivo */
+				case 38: passo = event.shiftKey ? null : -7; break;  /* FRECCIA SU:       settimana precedente */
+				case 40: passo = event.shiftKey ? null : 7; break;   /* FRECCIA GIU:      settimana successiva */
+				/* Inizio e Fine portano al primo e all'ultimo giorno del mese. Il widget li
+				   riserva alla combinazione con Ctrl, dove pero' significano altro (oggi, e
+				   svuota il campo): premuti da soli non facevano nulla. */
+				case 36: passo = inst0 ? 1 - inst0.selectedDay : null; break;
+				case 35: passo = inst0 ? giorniDelMese - inst0.selectedDay : null; break;
 				default: passo = null;
+			}
+			/* Maiusc con Pagina su e giu' cambia anno: il widget usa Ctrl, che qui resta valido,
+			   ma Maiusc e' la combinazione attesa e senza questo ramo cambiava solo il mese. */
+			if (event.shiftKey && (event.keyCode === 33 || event.keyCode === 34)) {
+				if (inst0) {
+					inst0._keyEvent = true;
+				}
+				$.datepicker._adjustDate(event.target, event.keyCode === 33 ? -1 : 1, 'Y');
+				annunciaGiornoCorrente(event.target);
+				event.preventDefault();
+				event.stopPropagation();
+				return false;
 			}
 			if (event.keyCode === 9 && !event.shiftKey) {    /* TAB: entra nel calendario */
 				var inst9 = $.datepicker._getInst(event.target);
