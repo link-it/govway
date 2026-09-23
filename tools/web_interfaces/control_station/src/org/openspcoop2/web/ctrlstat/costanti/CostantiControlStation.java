@@ -818,6 +818,7 @@ public class CostantiControlStation {
 	
 	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SPOSTA_SU = "Sposta su";
 	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SPOSTA_GIU = "Sposta gi&ugrave;";
+	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_POSIZIONE_NOTE_RICERCA_ATTIVA = "Per modificare l'ordine rimuovere il filtro di ricerca";
 		
 	// POLICY TIPO
 	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPO = "Tipo";

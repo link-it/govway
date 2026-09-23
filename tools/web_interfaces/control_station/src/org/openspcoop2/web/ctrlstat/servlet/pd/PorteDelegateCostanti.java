@@ -733,7 +733,7 @@ public class PorteDelegateCostanti {
 	public static final String LABEL_PARAMETRO_PORTE_DELEGATE_ELEMENTO_XML = CostantiControlStation.LABEL_PARAMETRO_PORTE_ELEMENTO_XML;
 	public static final String LABEL_PARAMETRO_PORTE_DELEGATE_ELEMENTO_XML_BR = CostantiControlStation.LABEL_PARAMETRO_PORTE_ELEMENTO_XML+"<BR/>(Il campo vuoto indica qualsiasi elemento)";
 	public static final String LABEL_PARAMETRO_PORTE_DELEGATE_ELEMENTO_XML_NOTE = "Il campo vuoto indica qualsiasi elemento";
-	public static final String LABEL_PARAMETRO_PORTE_DELEGATE_RISULTATI_RICERCA = "Risultati Ricerca";
+	public static final String LABEL_PARAMETRO_PORTE_DELEGATE_RISULTATI_RICERCA = Costanti.PAGE_DATA_TITLE_LABEL_RISULTATI_RICERCA;
 	public static final String LABEL_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY = "Sicurezza Messaggio";
 	public static final String LABEL_PARAMETRO_PORTE_DELEGATE_GESTIONE_MESSAGGIO = "Trattamento Messaggio";
 	public static final String LABEL_PARAMETRO_PORTE_DELEGATE_MTOM = "MTOM";

@@ -29,6 +29,6 @@ package org.openspcoop2.web.ctrlstat.plugins.servlet;
  */
 public class AbstractServletCostanti {
 
-	public static final String RISULTATI_RICERCA = "Risultati Ricerca";
+	public static final String RISULTATI_RICERCA = org.openspcoop2.web.lib.mvc.Costanti.PAGE_DATA_TITLE_LABEL_RISULTATI_RICERCA;
 	
 }

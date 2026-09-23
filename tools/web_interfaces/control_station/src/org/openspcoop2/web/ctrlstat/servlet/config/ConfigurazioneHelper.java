@@ -8982,9 +8982,17 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			
 			
+			// La colonna posizione e le frecce di spostamento sono calcolate rispetto all'intera lista (policy dello stesso tipo di risorsa)
+			// e non alla singola pagina, in modo da consentire lo spostamento anche oltre il confine di pagina.
+			// Con una ricerca per nome attiva la colonna non viene visualizzata: le righe adiacenti visualizzate non corrispondono
+			// necessariamente a policy adiacenti. Il filtro sul tipo di risorsa invece e' sempre presente e delimita l'insieme ordinato.
+			int numEntries = ricerca.getNumEntries(idLista);
+			boolean visualizzaPosizione = search.equals("") && numEntries > 1;
+			this.pd.setSearchNoteRicercaAttiva(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_POSIZIONE_NOTE_RICERCA_ATTIVA);
+			
 			// setto le label delle colonne
 			List<String> lstLabels = new ArrayList<>();
-			if(lista != null && lista.size() > 1) {
+			if(visualizzaPosizione) {
 				lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POSIZIONE);
 			}
 			lstLabels.add(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO);
@@ -9010,12 +9018,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 			if (lista != null) {
 				
-				int numeroElementi = lista.size();
-				
 				Integer sizeColumn = null;
 				
 				for (int i = 0; i < lista.size(); i++) {
 					AttivazionePolicy policy = lista.get(i);
+					int indiceLista = offset + i;
 					List<DataElement> e = new ArrayList<>();
 					
 					// Fix retrocompatibilita dove il nome non era obbligatorio.
@@ -9042,7 +9049,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 
 					// Posizione
-					if(lista.size() > 1) {
+					if(visualizzaPosizione) {
 						DataElement de = new DataElement();
 						de.setWidthPx(48);
 						de.setType(DataElementType.IMAGE);
@@ -9052,7 +9059,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						Parameter pDirezioneGiu = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POSIZIONE, 
 								CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_POSIZIONE_GIU);
 								
-						if(i > 0) {
+						if(indiceLista > 0) {
 							imageUp.setImage(CostantiControlStation.ICONA_FRECCIA_SU);
 							imageUp.setToolTip(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SPOSTA_SU);
 							List<Parameter> listP = new ArrayList<>();
@@ -9071,7 +9078,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						}
 						de.addImage(imageUp);
 						
-						if(i < numeroElementi -1) {
+						if(indiceLista < numEntries -1) {
 							DataElementImage imageDown = new DataElementImage();
 							imageDown.setImage(CostantiControlStation.ICONA_FRECCIA_GIU);
 							imageDown.setToolTip(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SPOSTA_GIU);
@@ -17575,9 +17582,17 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				ServletUtils.enabledPageDataSearch(this.pd, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_NOME, search);
 			}
 
+			// La colonna posizione e le frecce di spostamento sono calcolate rispetto all'intera lista e non alla singola pagina,
+			// in modo da consentire lo spostamento anche oltre il confine di pagina.
+			// Con una ricerca attiva la colonna non viene visualizzata: le righe adiacenti visualizzate non corrispondono
+			// necessariamente a regole adiacenti.
+			int numEntries = ricerca.getNumEntries(idLista);
+			boolean visualizzaPosizione = search.equals("") && numEntries > 1;
+			this.pd.setSearchNoteRicercaAttiva(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_POSIZIONE_NOTE_RICERCA_ATTIVA);
+			
 			// setto le label delle colonne	
 			List<String> lstLabels = new ArrayList<>();
-			if(lista != null && lista.size() > 1)
+			if(visualizzaPosizione)
 				lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_POSIZIONE);
 			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_STATO);
 			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_NOME);
@@ -17589,8 +17604,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 			if (lista != null) {
 				Iterator<ConfigurazioneUrlInvocazioneRegola> it = lista.iterator();
-				int numeroElementi = lista.size();
-				int i = 0;
+				int i = offset;
 				while (it.hasNext()) {
 					ConfigurazioneUrlInvocazioneRegola regola = it.next();
 
@@ -17598,7 +17612,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					Parameter pIdRegola = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROXY_PASS_ID_REGOLA, regola.getId() + "");
 					
 					// Posizione
-					if(lista.size() > 1) {
+					if(visualizzaPosizione) {
 						DataElement de = new DataElement();
 						de.setWidthPx(48);
 						de.setType(DataElementType.IMAGE);
@@ -17618,7 +17632,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						}
 						de.addImage(imageUp);
 						
-						if(i < numeroElementi -1) {
+						if(i < numEntries -1) {
 							DataElementImage imageDown = new DataElementImage();
 							imageDown.setImage(CostantiControlStation.ICONA_FRECCIA_GIU);
 							imageDown.setToolTip(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SPOSTA_GIU);
@@ -18326,9 +18340,17 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				ServletUtils.enabledPageDataSearch(this.pd, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_NOME, search);
 			}
 
+			// La colonna posizione e le frecce di spostamento sono calcolate rispetto all'intera lista e non alla singola pagina,
+			// in modo da consentire lo spostamento anche oltre il confine di pagina.
+			// Con una ricerca attiva la colonna non viene visualizzata: le righe adiacenti visualizzate non corrispondono
+			// necessariamente ad archivi adiacenti.
+			int numEntries = ricerca.getNumEntries(idLista);
+			boolean visualizzaPosizione = search.equals("") && numEntries > 1;
+			this.pd.setSearchNoteRicercaAttiva(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_POSIZIONE_NOTE_RICERCA_ATTIVA);
+			
 			// setto le label delle colonne	
 			List<String> lstLabels = new ArrayList<>();
-			if(lista != null && lista.size() > 1)
+			if(visualizzaPosizione)
 				lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_POSIZIONE);
 			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_STATO);
 			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_NOME);
@@ -18341,8 +18363,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 			if (lista != null) {
 				Iterator<RegistroPlugin> it = lista.iterator();
-				int numeroElementi = lista.size();
-				int i = 0;
+				int i = offset;
 				while (it.hasNext()) {
 					RegistroPlugin registro = it.next();
 
@@ -18352,7 +18373,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					Parameter pOldNomePlugin = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_OLD_NOME, registro.getNome() + "");
 					
 					// Posizione
-					if(lista.size() > 1) {
+					if(visualizzaPosizione) {
 						DataElement de = new DataElement();
 						de.setWidthPx(48);
 						de.setType(DataElementType.IMAGE);
@@ -18372,7 +18393,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						}
 						de.addImage(imageUp);
 						
-						if(i < numeroElementi -1) {
+						if(i < numEntries -1) {
 							DataElementImage imageDown = new DataElementImage();
 							imageDown.setImage(CostantiControlStation.ICONA_FRECCIA_GIU);
 							imageDown.setToolTip(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SPOSTA_GIU);
@@ -24127,9 +24148,17 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				ServletUtils.enabledPageDataSearch(this.pd, labelHandler, search);
 			}
 		
+			// La colonna posizione e le frecce di spostamento sono calcolate rispetto all'intera lista e non alla singola pagina,
+			// in modo da consentire lo spostamento anche oltre il confine di pagina.
+			// Con una ricerca attiva la colonna non viene visualizzata: le righe adiacenti visualizzate non corrispondono
+			// necessariamente ad handler adiacenti.
+			int numEntries = ricerca.getNumEntries(idLista);
+			boolean visualizzaPosizione = search.equals("") && numEntries > 1;
+			this.pd.setSearchNoteRicercaAttiva(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_POSIZIONE_NOTE_RICERCA_ATTIVA);
+		
 			// setto le label delle colonne	
 			List<String> lstLabels = new ArrayList<>();
-			if(lista != null && lista.size() > 1)
+			if(visualizzaPosizione)
 				lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_HANDLERS_POSIZIONE);
 			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_HANDLERS_STATO);
 			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_HANDLERS_LABEL);
@@ -24141,8 +24170,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 			if (lista != null) {
 				Iterator<ConfigurazioneHandlerBean> it = lista.iterator();
-				int numeroElementi = lista.size();
-				int i = 0;
+				int i = offset;
 				while (it.hasNext()) {
 					ConfigurazioneHandlerBean handler = it.next();
 					
@@ -24156,7 +24184,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					List<DataElement> e = new ArrayList<>();
 					
 					// Posizione
-					if(lista.size() > 1) {
+					if(visualizzaPosizione) {
 						DataElement de = new DataElement();
 						de.setWidthPx(48);
 						de.setType(DataElementType.IMAGE);
@@ -24183,7 +24211,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						}
 						de.addImage(imageUp);
 						
-						if(i < numeroElementi -1) {
+						if(i < numEntries -1) {
 							DataElementImage imageDown = new DataElementImage();
 							imageDown.setImage(CostantiControlStation.ICONA_FRECCIA_GIU);
 							imageDown.setToolTip(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SPOSTA_GIU);

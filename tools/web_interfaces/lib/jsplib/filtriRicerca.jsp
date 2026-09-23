@@ -46,8 +46,9 @@ String titoloSezione = Costanti.LABEL_TITOLO_SEZIONE_DEFAULT;
 if (titlelist != null && titlelist.size() > 0) {
 	
 	int indexLabel = titlelist.size() -1;
-	if(titlelist.size()==2 && Costanti.PAGE_DATA_TITLE_LABEL_RISULTATI_RICERCA.equals(titlelist.get(1).getLabel())){
-		indexLabel = 0;
+	// in caso di risultati di una ricerca il titolo e' quello della lista (voce precedente), a qualsiasi livello di profondita'
+	if(titlelist.size()>=2 && Costanti.PAGE_DATA_TITLE_LABEL_RISULTATI_RICERCA.equals(titlelist.get(indexLabel).getLabel())){
+		indexLabel = indexLabel - 1;
 	}
 	
 	GeneralLink l = titlelist.get(indexLabel);

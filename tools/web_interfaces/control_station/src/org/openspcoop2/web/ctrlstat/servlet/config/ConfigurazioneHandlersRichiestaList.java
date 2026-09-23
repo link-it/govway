@@ -219,16 +219,22 @@ public final class ConfigurazioneHandlersRichiestaList extends Action {
 							
 							int posizioneAttuale = handlerToMove.getPosizione();
 							
-							ConfigurazioneHandler handlerToSwitch = null;
+							ConfigurazioneHandler handlerToSwitch = null; // se arrivo qua dovrebbe esistere sempre, e' la grafica che me lo assicura
 							if(cambiaPosizione.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SU)) {
-								handlerToSwitch = listaDaAggiornare.get(j-1);
+								if(j>0) {
+									handlerToSwitch = listaDaAggiornare.get(j-1);
+								}
 							} else {
-								handlerToSwitch = listaDaAggiornare.get(j+1);
+								if(j<(listaDaAggiornare.size()-1)) {
+									handlerToSwitch = listaDaAggiornare.get(j+1);
+								}
 							}
-							int posizioneNuova = handlerToSwitch.getPosizione();
-							
-							handlerToMove.setPosizione(posizioneNuova);
-							handlerToSwitch.setPosizione(posizioneAttuale);
+							if(handlerToSwitch!=null) {
+								int posizioneNuova = handlerToSwitch.getPosizione();
+								
+								handlerToMove.setPosizione(posizioneNuova);
+								handlerToSwitch.setPosizione(posizioneAttuale);
+							}
 							break;
 						}
 					}

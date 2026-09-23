@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -1534,6 +1536,21 @@ public class ServletUtils {
 		return StringEscapeUtils.escapeHtml4(value);
 	}
 
+	private static final Pattern HTML_ENTITY_LETTERA_ACCENTATA = Pattern.compile("&[a-zA-Z](grave|acute);");
+	private static String unescapeHtmlLettereAccentate(String value) {
+		if(value.indexOf('&')<0) {
+			return value;
+		}
+		Matcher m = HTML_ENTITY_LETTERA_ACCENTATA.matcher(value);
+		StringBuilder sb = new StringBuilder();
+		while (m.find()) {
+			// es. &egrave; -> è ; un'entity non riconosciuta viene lasciata invariata da unescapeHtml4
+			m.appendReplacement(sb, Matcher.quoteReplacement(StringEscapeUtils.unescapeHtml4(m.group())));
+		}
+		m.appendTail(sb);
+		return sb.toString();
+	}
+	
 	/**
 	 * Sanitizza una stringa per essere usata in un attributo HTML title (tooltip).
 	 * Rimuove tag HTML, markdown, normalizza gli spazi e limita la lunghezza.
@@ -1566,6 +1583,10 @@ public class ServletUtils {
 		sanitized = sanitized.replace("&gt;", ">");
 		sanitized = sanitized.replace("&amp;", "&");
 		sanitized = sanitized.replace("&nbsp;", " ");
+		
+		// Converti le lettere accentate (es. &egrave; -> è), altrimenti l'escape finale le codificherebbe nuovamente (&amp;egrave;).
+		// Le altre entities (es. &apos; o le forme numeriche) non vengono convertite: il valore puo' essere usato anche in attributi delimitati da apici o in stringhe javascript.
+		sanitized = unescapeHtmlLettereAccentate(sanitized);
 
 		// Rimuovi caratteri di escape backslash
 		sanitized = sanitized.replace("\\-", "-");

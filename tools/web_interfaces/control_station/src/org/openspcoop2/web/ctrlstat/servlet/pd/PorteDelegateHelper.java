@@ -4587,8 +4587,13 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			}
 			
 			
+			// La colonna posizione e le frecce di spostamento sono calcolate rispetto all'intera lista e non alla singola pagina,
+			// in modo da consentire lo spostamento anche oltre il confine di pagina.
+			int numEntries = ricerca.getNumEntries(idLista);
+			boolean visualizzaPosizione = numEntries > 1;
+			
 			List<String> lstLabels = new ArrayList<>();
-			if(lista != null && lista.size() > 1)
+			if(visualizzaPosizione)
 				lstLabels.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_POSIZIONE);
 			lstLabels.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_STATO);
 			lstLabels.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_NOME);
@@ -4606,15 +4611,14 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 
 			if (lista != null) {
 				Iterator<TrasformazioneRegola> it = lista.iterator();
-				int numeroElementi = lista.size();
-				int i = 0;
+				int i = offset;
 				while (it.hasNext()) {
 					TrasformazioneRegola regola = it.next();
 					Parameter pIdTrasformazione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_TRASFORMAZIONE, regola.getId() + "");
 					List<DataElement> e = new ArrayList<>();
 					
 					// Posizione
-					if(lista.size() > 1) {
+					if(visualizzaPosizione) {
 						DataElement de = new DataElement();
 						de.setWidthPx(48);
 						de.setType(DataElementType.IMAGE);
@@ -4634,7 +4638,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 						}
 						de.addImage(imageUp);
 						
-						if(i < numeroElementi -1) {
+						if(i < numEntries -1) {
 							DataElementImage imageDown = new DataElementImage();
 							imageDown.setImage(CostantiControlStation.ICONA_FRECCIA_GIU);
 							imageDown.setToolTip(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SPOSTA_GIU);
@@ -4881,8 +4885,13 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			this.impostaComandiMenuContestualePD(idsogg, idAsps, idFruizione);
 
 			// setto le label delle colonne
+			// La colonna posizione e le frecce di spostamento sono calcolate rispetto all'intera lista e non alla singola pagina,
+			// in modo da consentire lo spostamento anche oltre il confine di pagina.
+			int numEntries = ricerca.getNumEntries(idLista);
+			boolean visualizzaPosizione = numEntries > 1;
+			
 			List<String> lstLabels = new ArrayList<>();
-			if(lista != null && lista.size() > 1)
+			if(visualizzaPosizione)
 				lstLabels.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_POSIZIONE);
 			lstLabels.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_NOME);
 			lstLabels.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS);
@@ -4896,8 +4905,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 
 			if (lista != null) {
 				Iterator<TrasformazioneRegolaRisposta> it = lista.iterator();
-				int numeroElementi = lista.size();
-				int i = 0;
+				int i = offset;
 				while (it.hasNext()) {
 					TrasformazioneRegolaRisposta risposta = it.next();
 					Parameter pIdTrasformazioneRisposta = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_TRASFORMAZIONE_RISPOSTA, risposta.getId() + "");
@@ -4905,7 +4913,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					List<DataElement> e = new ArrayList<>();
 					
 					// Posizione
-					if(lista.size() > 1) {
+					if(visualizzaPosizione) {
 						DataElement de = new DataElement();
 						de.setWidthPx(48);
 						de.setType(DataElementType.IMAGE);
@@ -4925,7 +4933,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 						}
 						de.addImage(imageUp);
 						
-						if(i < numeroElementi -1) {
+						if(i < numEntries -1) {
 							DataElementImage imageDown = new DataElementImage();
 							imageDown.setImage(CostantiControlStation.ICONA_FRECCIA_GIU);
 							imageDown.setToolTip(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SPOSTA_GIU);

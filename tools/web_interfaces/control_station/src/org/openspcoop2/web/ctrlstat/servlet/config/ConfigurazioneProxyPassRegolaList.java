@@ -88,37 +88,46 @@ public final class ConfigurazioneProxyPassRegolaList extends Action {
 				
 				if(urlInvocazione != null) {
 					long idRegola = Long.parseLong(idRegolaS);
+
+					// La lista e' letta ordinata per posizione (e nome); le posizioni non sono necessariamente contigue
+					// (la cancellazione di una regola non ricompatta le successive), quindi la regola con cui effettuare
+					// lo scambio si individua come elemento adiacente nella lista e non tramite posizione +/- 1
+					List<ConfigurazioneUrlInvocazioneRegola> regole = urlInvocazione.getRegolaList();
 					ConfigurazioneUrlInvocazioneRegola regolaToMove = null;
-					for (ConfigurazioneUrlInvocazioneRegola reg : urlInvocazione.getRegolaList()) {
-						if(reg.getId().longValue() == idRegola) {
-							regolaToMove = reg;
+					int index = -1;
+					for (int i = 0; i < regole.size(); i++) {
+						if(regole.get(i).getId().longValue() == idRegola) {
+							regolaToMove = regole.get(i);
+							index = i;
 							break;
 						}
 					}
 					if(regolaToMove==null) {
 						throw new Exception("Regola da muovere non trovata");
 					}
-					
-					int posizioneAttuale = regolaToMove.getPosizione();
-					int posizioneNuova = cambiaPosizione.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SU) ? (posizioneAttuale - 1) : (posizioneAttuale + 1);
-					
-					ConfigurazioneUrlInvocazioneRegola regolaToSwitch = null;
-					for (ConfigurazioneUrlInvocazioneRegola reg : urlInvocazione.getRegolaList()) {
-						if(reg.getPosizione() == posizioneNuova) {
-							regolaToSwitch = reg;
-							break;
+
+					ConfigurazioneUrlInvocazioneRegola regolaToSwitch = null; // se arrivo qua dovrebbe esistere sempre, e' la grafica che me lo assicura
+					if(cambiaPosizione.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SU)) {
+						if(index>0) {
+							regolaToSwitch = regole.get(index-1);
 						}
 					}
-					if(regolaToSwitch==null) {
-						throw new Exception("Regola con cui fare lo switch non trovata");
+					else {
+						if(index<(regole.size()-1)) {
+							regolaToSwitch = regole.get(index+1);
+						}
 					}
-					
-					regolaToMove.setPosizione(posizioneNuova);
-					regolaToSwitch.setPosizione(posizioneAttuale);
-					
-					confCore.performUpdateOperation(userLogin, confHelper.smista(), configurazioneGenerale);
-					if(CostantiControlStation.VISUALIZZA_MESSAGGIO_CONFERMA_SPOSTAMENTO_REGOLA_PROXY_PASS)
-						pd.setMessage(CostantiControlStation.MESSAGGIO_CONFERMA_REGOLA_PROXY_PASS_SPOSTATA_CORRETTAMENTE, MessageType.INFO);
+
+					if(regolaToSwitch!=null) {
+						int posizioneAttuale = regolaToMove.getPosizione();
+						regolaToMove.setPosizione(regolaToSwitch.getPosizione());
+						regolaToSwitch.setPosizione(posizioneAttuale);
+
+						// aggiorno le sole due regole coinvolte
+						confCore.performUpdateOperation(userLogin, confHelper.smista(), regolaToMove, regolaToSwitch);
+						if(CostantiControlStation.VISUALIZZA_MESSAGGIO_CONFERMA_SPOSTAMENTO_REGOLA_PROXY_PASS)
+							pd.setMessage(CostantiControlStation.MESSAGGIO_CONFERMA_REGOLA_PROXY_PASS_SPOSTATA_CORRETTAMENTE, MessageType.INFO);
+					}
 				}
 			}
 
