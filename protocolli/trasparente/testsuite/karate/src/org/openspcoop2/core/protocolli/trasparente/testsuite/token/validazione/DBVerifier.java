@@ -229,6 +229,23 @@ public class DBVerifier {
 		return dbUtils().readRow(query);
 	}
 	
+	public static void checkNoDiagnostic(String idTransazione, String diagnostico) {
+
+		String msg = "IdTransazione: "+idTransazione;
+
+		String query = "select count(*) from msgdiagnostici where id_transazione = ? and messaggio LIKE '%"+diagnostico.replaceAll("'", "''")+"%'";
+		log().info(query);
+
+		int count = dbUtils().readValue(query, Integer.class, idTransazione);
+		assertEquals(msg+" Dettaglio '"+diagnostico+"' non atteso; count trovati: "+count+"", 0, count);
+	}
+
+	public static String getTokenInfo(String idTransazione) {
+		String query = "select token_info from transazioni where id = ?";
+		log().info(query);
+		return (String) dbUtils().readValue(query, idTransazione);
+	}
+
 	public static void checkDiagnostic(String idTransazione, String diagnostico) {
 		
 		String msg = "IdTransazione: "+idTransazione;

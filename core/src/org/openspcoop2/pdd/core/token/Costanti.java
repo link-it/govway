@@ -229,6 +229,8 @@ public class Costanti {
 
 	public static final String POLICY_INTROSPECTION_STATO = "policy.introspection.stato";
 	public static final String POLICY_INTROSPECTION_SAVE_ERROR_IN_CACHE = "policy.introspection.saveErrorInCache";
+	public static final String POLICY_INTROSPECTION_CACHE_TTL_STATO = "policy.introspection.cache.ttl.stato";
+	public static final String POLICY_INTROSPECTION_CACHE_TTL_SECONDS = "policy.introspection.cache.ttl.seconds";
 	public static final String POLICY_INTROSPECTION_URL = "policy.introspection.endpoint.url";
 	public static final String POLICY_INTROSPECTION_TIPO = "policy.introspection.tipo";
 	public static final String POLICY_INTROSPECTION_HTTP_METHOD = "policy.introspection.httpMethod";
@@ -250,6 +252,8 @@ public class Costanti {
 	
 	public static final String POLICY_USER_INFO_STATO = "policy.userInfo.stato";
 	public static final String POLICY_USER_INFO_SAVE_ERROR_IN_CACHE = "policy.userInfo.saveErrorInCache";
+	public static final String POLICY_USER_INFO_CACHE_TTL_STATO = "policy.userInfo.cache.ttl.stato";
+	public static final String POLICY_USER_INFO_CACHE_TTL_SECONDS = "policy.userInfo.cache.ttl.seconds";
 	public static final String POLICY_USER_INFO_URL = "policy.userInfo.endpoint.url";
 	public static final String POLICY_USER_INFO_TIPO = "policy.userInfo.tipo";
 	public static final String POLICY_USER_INFO_HTTP_METHOD = "policy.userInfo.httpMethod";

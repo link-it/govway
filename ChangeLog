@@ -1,3 +1,13 @@
+2026-09-24  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Aggiunta funzionalità #1812
+	L'esito di Introspection e UserInfo restava in cache per l'intera durata della cache dei token (default 600 secondi),
+	e un token revocato presso l'Authorization Server continuava ad essere accettato fino alla scadenza.
+	I servizi vengono adesso reinvocati trascorso un intervallo definito da una configurazione globale (default 60 secondi),
+	ridefinibile nella token policy di validazione tramite la nuova sottosezione 'Cache'.
+	L'istante dell'ultima invocazione è registrato nella transazione nei campi 'introspectionCheckedAt' e 'userInfoCheckedAt'.
+
 2026-09-23  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]

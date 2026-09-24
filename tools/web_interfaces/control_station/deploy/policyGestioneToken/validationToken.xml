@@ -1180,6 +1180,20 @@
 		      		<property name="token.parser.user.eMail" properties="introspectionTokenParserPropRefId" />
 			</item>
 		</subsection>
+
+		<subsection label="Cache">
+			<item type="checkbox" name="introspectionCacheTtlStato" label="" reloadOnChange="true" defaultSelected="false" note="Consente di definire la durata in cache dell'esito della verifica tramite il servizio di Introspection">
+				<property name="policy.introspection.cache.ttl.stato" />
+			</item>
+			<item type="number" name="introspectionCacheTtlSeconds" label="TTL (secondi)" required="true" min="1" default="60" note="Trascorso l'intervallo il servizio viene nuovamente invocato">
+				<conditions>
+					<condition and="true">
+						<selected name="introspectionCacheTtlStato"/>
+					</condition>
+				</conditions>
+				<property name="policy.introspection.cache.ttl.seconds" />
+			</item>
+		</subsection>
 		
 	</section>
 	
@@ -1568,6 +1582,20 @@
 					</condition>
 				</conditions>
 		      		<property name="token.parser.user.eMail" properties="userInfoTokenParserPropRefId" />
+			</item>
+		</subsection>
+
+		<subsection label="Cache">
+			<item type="checkbox" name="userInfoCacheTtlStato" label="" reloadOnChange="true" defaultSelected="false" note="Consente di definire la durata in cache dell'esito della verifica tramite il servizio di UserInfo">
+				<property name="policy.userInfo.cache.ttl.stato" />
+			</item>
+			<item type="number" name="userInfoCacheTtlSeconds" label="TTL (secondi)" required="true" min="1" default="60" note="Trascorso l'intervallo il servizio viene nuovamente invocato">
+				<conditions>
+					<condition and="true">
+						<selected name="userInfoCacheTtlStato"/>
+					</condition>
+				</conditions>
+				<property name="policy.userInfo.cache.ttl.seconds" />
 			</item>
 		</subsection>
 	

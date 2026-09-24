@@ -21,6 +21,7 @@
 
 package org.openspcoop2.pdd.core.token;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
@@ -1680,15 +1681,18 @@ public class GestoreToken {
 		DynamicDiscovery dynamicDiscovery = esitoDynamicDiscovery!=null ? esitoDynamicDiscovery.getDynamicDiscovery() : null;
 		
 		if(GestoreToken.cacheGestioneToken==null){
+			Date remoteCheckAt = DateManager.getDate();
 			esitoGestioneToken = GestoreTokenValidazioneUtilities.introspectionTokenEngine(log, datiInvocazione, 
 					pddContext, protocolFactory,
 					dynamicDiscovery, token, portaDelegata,
 					busta, idDominio, idServizio);
+			setRemoteCheckAt(esitoGestioneToken, remoteCheckAt, true);
 		}
     	else{
     		String policyName = datiInvocazione.getPolicyGestioneToken().getName();
     		String funzione = INTROSPECTION_FUNCTION;
     		String keyCache = GestoreTokenValidazioneUtilities.buildCacheKeyValidazione(policyName, funzione, portaDelegata, token);
+    		Integer cacheTtlSeconds = getIntrospectionCacheTtlSeconds(datiInvocazione.getPolicyGestioneToken());
 
     		// Fix: devo prima verificare se ho la chiave in cache prima di mettermi in sincronizzazione.
     		
@@ -1696,9 +1700,12 @@ public class GestoreToken {
 					(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheGestioneToken.get(keyCache);
 			if(response != null){
 				if(response.getObject()!=null){
-					GestoreToken.loggerDebug(GestoreToken.getMessageObjectInCache(response, keyCache, funzione));
-					esitoGestioneToken = (EsitoGestioneToken) response.getObject();
-					esitoGestioneToken.setInCache(true);
+					// se l'esito è stato ottenuto da più tempo rispetto al ttl indicato, la verifica verrà ripetuta all'interno del lock
+					if(!isCacheTtlExpired((EsitoGestioneToken) response.getObject(), cacheTtlSeconds, keyCache, funzione, false)) {
+						GestoreToken.loggerDebug(GestoreToken.getMessageObjectInCache(response, keyCache, funzione));
+						esitoGestioneToken = (EsitoGestioneToken) response.getObject();
+						esitoGestioneToken.setInCache(true);
+					}
 				}else if(response.getException()!=null){
 					GestoreToken.loggerDebug(GestoreToken.getMessageEccezioneInCache(response, keyCache, funzione));
 					throw (Exception) response.getException();
@@ -1714,13 +1721,20 @@ public class GestoreToken {
 				SemaphoreLock lock = lockIntrospection.acquire("introspectionToken", idTransazione);
 				try {
 					
+					boolean cacheTtlExpired = false;
 					response = 
 						(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheGestioneToken.get(keyCache);
 					if(response != null){
 						if(response.getObject()!=null){
-							GestoreToken.loggerDebug(GestoreToken.getMessageObjectInCache(response, keyCache, funzione));
-							esitoGestioneToken = (EsitoGestioneToken) response.getObject();
-							esitoGestioneToken.setInCache(true);
+							if(isCacheTtlExpired((EsitoGestioneToken) response.getObject(), cacheTtlSeconds, keyCache, funzione, true)) {
+								// l'esito in cache non viene utilizzato (ne modificato, essendo un'istanza condivisa) e si procede come se non fosse presente
+								cacheTtlExpired = true;
+							}
+							else {
+								GestoreToken.loggerDebug(GestoreToken.getMessageObjectInCache(response, keyCache, funzione));
+								esitoGestioneToken = (EsitoGestioneToken) response.getObject();
+								esitoGestioneToken.setInCache(true);
+							}
 						}else if(response.getException()!=null){
 							GestoreToken.loggerDebug(GestoreToken.getMessageEccezioneInCache(response, keyCache, funzione));
 							throw (Exception) response.getException();
@@ -1732,10 +1746,12 @@ public class GestoreToken {
 					if(esitoGestioneToken==null) {
 						// Effettuo la query
 						GestoreToken.loggerDebug(getPrefixOggettoConChiave(keyCache)+getSuffixEseguiOperazione(funzione));
+						Date remoteCheckAt = DateManager.getDate();
 						esitoGestioneToken = GestoreTokenValidazioneUtilities.introspectionTokenEngine(log, datiInvocazione, 
 								pddContext, protocolFactory,
 								dynamicDiscovery, token, portaDelegata,
 								busta, idDominio, idServizio);
+						setRemoteCheckAt(esitoGestioneToken, remoteCheckAt, true);
 							
 						// Aggiungo la risposta in cache (se esiste una cache)	
 						// Sempre. Se la risposta non deve essere cachata l'implementazione può in alternativa:
@@ -1751,6 +1767,10 @@ public class GestoreToken {
 							}catch(UtilsException e){
 								GestoreToken.loggerError(getMessaggioErroreInserimentoInCache(keyCache, e));
 							}
+						}
+						else if(cacheTtlExpired){
+							// il nuovo esito non viene salvato in cache: elimino il precedente, scaduto rispetto al ttl
+							removeCacheTtlExpired(keyCache);
 						}
 					}
 				}finally {
@@ -1789,15 +1809,18 @@ public class GestoreToken {
 		DynamicDiscovery dynamicDiscovery = esitoDynamicDiscovery!=null ? esitoDynamicDiscovery.getDynamicDiscovery() : null;
 		
 		if(GestoreToken.cacheGestioneToken==null){
+			Date remoteCheckAt = DateManager.getDate();
 			esitoGestioneToken = GestoreTokenValidazioneUtilities.userInfoTokenEngine(log, datiInvocazione, 
 					pddContext, protocolFactory,
 					dynamicDiscovery, token, portaDelegata,
 					busta, idDominio, idServizio);
+			setRemoteCheckAt(esitoGestioneToken, remoteCheckAt, false);
 		}
     	else{
     		String policyName = datiInvocazione.getPolicyGestioneToken().getName();
     		String funzione = USERINFO_FUNCTION;
     		String keyCache = GestoreTokenValidazioneUtilities.buildCacheKeyValidazione(policyName, funzione, portaDelegata, token);
+    		Integer cacheTtlSeconds = getUserInfoCacheTtlSeconds(datiInvocazione.getPolicyGestioneToken());
 
     		// Fix: devo prima verificare se ho la chiave in cache prima di mettermi in sincronizzazione.
     		
@@ -1805,9 +1828,12 @@ public class GestoreToken {
 					(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheGestioneToken.get(keyCache);
 			if(response != null){
 				if(response.getObject()!=null){
-					GestoreToken.loggerDebug(GestoreToken.getMessageObjectInCache(response, keyCache, funzione));
-					esitoGestioneToken = (EsitoGestioneToken) response.getObject();
-					esitoGestioneToken.setInCache(true);
+					// se l'esito è stato ottenuto da più tempo rispetto al ttl indicato, la verifica verrà ripetuta all'interno del lock
+					if(!isCacheTtlExpired((EsitoGestioneToken) response.getObject(), cacheTtlSeconds, keyCache, funzione, false)) {
+						GestoreToken.loggerDebug(GestoreToken.getMessageObjectInCache(response, keyCache, funzione));
+						esitoGestioneToken = (EsitoGestioneToken) response.getObject();
+						esitoGestioneToken.setInCache(true);
+					}
 				}else if(response.getException()!=null){
 					GestoreToken.loggerDebug(GestoreToken.getMessageEccezioneInCache(response, keyCache, funzione));
 					throw (Exception) response.getException();
@@ -1822,13 +1848,20 @@ public class GestoreToken {
 				SemaphoreLock lock = lockUserInfo.acquire("userInfoToken", idTransazione);
 				try {
 					
+					boolean cacheTtlExpired = false;
 					response = 
 						(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheGestioneToken.get(keyCache);
 					if(response != null){
 						if(response.getObject()!=null){
-							GestoreToken.loggerDebug(GestoreToken.getMessageObjectInCache(response, keyCache, funzione));
-							esitoGestioneToken = (EsitoGestioneToken) response.getObject();
-							esitoGestioneToken.setInCache(true);
+							if(isCacheTtlExpired((EsitoGestioneToken) response.getObject(), cacheTtlSeconds, keyCache, funzione, true)) {
+								// l'esito in cache non viene utilizzato (ne modificato, essendo un'istanza condivisa) e si procede come se non fosse presente
+								cacheTtlExpired = true;
+							}
+							else {
+								GestoreToken.loggerDebug(GestoreToken.getMessageObjectInCache(response, keyCache, funzione));
+								esitoGestioneToken = (EsitoGestioneToken) response.getObject();
+								esitoGestioneToken.setInCache(true);
+							}
 						}else if(response.getException()!=null){
 							GestoreToken.loggerDebug(GestoreToken.getMessageEccezioneInCache(response, keyCache, funzione));
 							throw (Exception) response.getException();
@@ -1840,10 +1873,12 @@ public class GestoreToken {
 					if(esitoGestioneToken==null) {
 						// Effettuo la query
 						GestoreToken.loggerDebug(getPrefixOggettoConChiave(keyCache)+getSuffixEseguiOperazione(funzione));
+						Date remoteCheckAt = DateManager.getDate();
 						esitoGestioneToken = GestoreTokenValidazioneUtilities.userInfoTokenEngine(log, datiInvocazione, 
 								pddContext, protocolFactory,
 								dynamicDiscovery, token, portaDelegata,
 								busta, idDominio, idServizio);
+						setRemoteCheckAt(esitoGestioneToken, remoteCheckAt, false);
 							
 						// Aggiungo la risposta in cache (se esiste una cache)	
 						// Sempre. Se la risposta non deve essere cachata l'implementazione può in alternativa:
@@ -1859,6 +1894,10 @@ public class GestoreToken {
 							}catch(UtilsException e){
 								GestoreToken.loggerError(getMessaggioErroreInserimentoInCache(keyCache, e));
 							}
+						}
+						else if(cacheTtlExpired){
+							// il nuovo esito non viene salvato in cache: elimino il precedente, scaduto rispetto al ttl
+							removeCacheTtlExpired(keyCache);
 						}
 					}
 				}finally {
@@ -2112,6 +2151,62 @@ public class GestoreToken {
 
 	}
 
+	
+	
+	// ********* [VALIDAZIONE-TOKEN] TTL ESITI IN CACHE (INTROSPECTION/USER INFO) ****************** */
+	
+	private static Integer getIntrospectionCacheTtlSeconds(PolicyGestioneToken policy) {
+		return getCacheTtlSeconds(policy.isIntrospectionCacheTtlEnabled(), policy.getIntrospectionCacheTtlSeconds(), 
+				OpenSPCoop2Properties.getInstance().getGestioneTokenIntrospectionCacheTtlSeconds());
+	}
+	private static Integer getUserInfoCacheTtlSeconds(PolicyGestioneToken policy) {
+		return getCacheTtlSeconds(policy.isUserInfoCacheTtlEnabled(), policy.getUserInfoCacheTtlSeconds(), 
+				OpenSPCoop2Properties.getInstance().getGestioneTokenUserInfoCacheTtlSeconds());
+	}
+	private static Integer getCacheTtlSeconds(boolean policyTtlEnabled, Integer policyTtlSeconds, Integer globalTtlSeconds) {
+		// Precedenza: valore indicato nella policy -> valore globale (null se disabilitato) 
+		if(policyTtlEnabled && policyTtlSeconds!=null && policyTtlSeconds.intValue()>0) {
+			return policyTtlSeconds;
+		}
+		return globalTtlSeconds;
+	}
+	
+	private static void setRemoteCheckAt(EsitoGestioneToken esitoGestioneToken, Date remoteCheckAt, boolean introspection) {
+		if(esitoGestioneToken!=null) {
+			esitoGestioneToken.setRemoteCheckAt(remoteCheckAt);
+			if(esitoGestioneToken.getInformazioniToken()!=null) {
+				if(introspection) {
+					esitoGestioneToken.getInformazioniToken().setIntrospectionCheckedAt(remoteCheckAt);
+				}
+				else {
+					esitoGestioneToken.getInformazioniToken().setUserInfoCheckedAt(remoteCheckAt);
+				}
+			}
+		}
+	}
+	
+	private static boolean isCacheTtlExpired(EsitoGestioneToken esitoGestioneToken, Integer cacheTtlSeconds, String keyCache, String funzione, boolean log) {
+		if(cacheTtlSeconds==null || esitoGestioneToken.getRemoteCheckAt()==null) {
+			return false;
+		}
+		long age = DateManager.getTimeMillis() - esitoGestioneToken.getRemoteCheckAt().getTime();
+		boolean expired = age > (cacheTtlSeconds.longValue()*1000l);
+		if(expired && log) {
+			SimpleDateFormat sdf = DateUtils.getDefaultDateTimeFormatter(DATE_FORMAT);
+			GestoreToken.loggerInfo("Oggetto con chiave ["+keyCache+"] (method:"+funzione+") presente in cache ma ottenuto in data '"+sdf.format(esitoGestioneToken.getRemoteCheckAt())+
+					"', da più tempo rispetto al ttl di "+cacheTtlSeconds+" secondi: il servizio verrà nuovamente invocato");
+		}
+		return expired;
+	}
+	
+	private static void removeCacheTtlExpired(String keyCache) {
+		try {
+			GestoreToken.cacheGestioneToken.remove(keyCache);
+		}catch(UtilsException e){
+			GestoreToken.loggerError("Errore durante l'eliminazione dalla cache dell'oggetto con chiave ["+keyCache+"]: "+e.getMessage(), e);
+		}
+	}
+	
 	public static List<InformazioniToken> getInformazioniTokenValide(EsitoGestioneToken esitoValidazioneJWT, EsitoGestioneToken esitoIntrospection, EsitoGestioneToken esitoUserInfo){
 		List<InformazioniToken> list = new ArrayList<>();
 		if(esitoValidazioneJWT!=null && esitoValidazioneJWT.isValido() && esitoValidazioneJWT.getInformazioniToken()!=null) {

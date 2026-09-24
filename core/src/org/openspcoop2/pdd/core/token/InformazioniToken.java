@@ -135,6 +135,15 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 			}
 			
 			for (int i = 0; i < informazioniTokens.length; i++) {
+				if(informazioniTokens[i].getIntrospectionCheckedAt()!=null) {
+					this.introspectionCheckedAt = informazioniTokens[i].getIntrospectionCheckedAt();
+				}
+				if(informazioniTokens[i].getUserInfoCheckedAt()!=null) {
+					this.userInfoCheckedAt = informazioniTokens[i].getUserInfoCheckedAt();
+				}
+			}
+			
+			for (int i = 0; i < informazioniTokens.length; i++) {
 				if(informazioniTokens[i].getClaims().size()>0) {
 					this.claims.putAll(informazioniTokens[i].getClaims());
 				}
@@ -351,6 +360,12 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 	// SorgenteInformazioniToken
 	private SorgenteInformazioniToken sourceType;
 	
+	// Istante in cui è stato invocato il servizio di introspection
+	private Date introspectionCheckedAt;
+	
+	// Istante in cui è stato invocato il servizio di userInfo
+	private Date userInfoCheckedAt;
+	
 	// Multiple Source
 	private List<SorgenteInformazioniToken> sourceTypes = null;
 	private Map<SorgenteInformazioniToken,String> sourcesTokenInfo = null;
@@ -511,6 +526,20 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 	}
 	public void setSourceType(SorgenteInformazioniToken sourceType) { 
 		this.sourceType = sourceType;
+	}
+	
+	public Date getIntrospectionCheckedAt() {
+		return this.introspectionCheckedAt;
+	}
+	public void setIntrospectionCheckedAt(Date introspectionCheckedAt) {
+		this.introspectionCheckedAt = introspectionCheckedAt;
+	}
+	
+	public Date getUserInfoCheckedAt() {
+		return this.userInfoCheckedAt;
+	}
+	public void setUserInfoCheckedAt(Date userInfoCheckedAt) {
+		this.userInfoCheckedAt = userInfoCheckedAt;
 	}
 	
 	public Map<SorgenteInformazioniToken, String> getSourcesTokenInfo() {

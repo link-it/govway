@@ -80,6 +80,10 @@ Su tomcat 11, essendo i controlli più rigidi, è necessario aggiungere anche qu
 		org.openspcoop2.pdd.gestioneToken.forward.custom.customClaim.json.name=customClaim
 		org.openspcoop2.pdd.gestioneToken.forward.custom.customClaim.json.pd.set.enabled=true
 		org.openspcoop2.pdd.gestioneToken.forward.custom.customClaim.json.pa.set.enabled=true
+		# Token - Intervallo di riutilizzo degli esiti di introspection e userInfo presenti in cache (default 60 secondi)
+		# Ridotto a 10 secondi per contenere la durata dei test della classe token.validazione.CacheTtlTest
+		org.openspcoop2.pdd.gestioneToken.introspection.cache.ttlSeconds=10
+		org.openspcoop2.pdd.gestioneToken.userInfo.cache.ttlSeconds=10
 
 
 - Abilitare la congestione del traffico impostando una soglia del 55% in modo

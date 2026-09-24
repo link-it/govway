@@ -481,6 +481,12 @@ public class PolicyGestioneToken extends AbstractPolicyToken implements Serializ
 	public boolean isIntrospectionSaveErrorInCache() {
 		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.POLICY_INTROSPECTION_SAVE_ERROR_IN_CACHE);	
 	}
+	public boolean isIntrospectionCacheTtlEnabled() {
+		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.POLICY_INTROSPECTION_CACHE_TTL_STATO);	
+	}
+	public Integer getIntrospectionCacheTtlSeconds() {
+		return getCacheTtlSeconds(Costanti.POLICY_INTROSPECTION_CACHE_TTL_SECONDS);
+	}
 	public HttpRequestMethod getIntrospectionHttpMethod() {
 		return HttpRequestMethod.valueOf(this.defaultProperties.getProperty(Costanti.POLICY_INTROSPECTION_HTTP_METHOD));
 	}
@@ -551,6 +557,16 @@ public class PolicyGestioneToken extends AbstractPolicyToken implements Serializ
 	}
 	public boolean isUserInfoSaveErrorInCache() {
 		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.POLICY_USER_INFO_SAVE_ERROR_IN_CACHE);	
+	}
+	public boolean isUserInfoCacheTtlEnabled() {
+		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.POLICY_USER_INFO_CACHE_TTL_STATO);	
+	}
+	public Integer getUserInfoCacheTtlSeconds() {
+		return getCacheTtlSeconds(Costanti.POLICY_USER_INFO_CACHE_TTL_SECONDS);
+	}
+	private Integer getCacheTtlSeconds(String pName) {
+		String value = this.defaultProperties.getProperty(pName);
+		return value != null && !value.trim().isEmpty() ? Integer.valueOf(value.trim()) : null;
 	}
 	public HttpRequestMethod getUserInfoHttpMethod() {
 		return HttpRequestMethod.valueOf(this.defaultProperties.getProperty(Costanti.POLICY_USER_INFO_HTTP_METHOD));

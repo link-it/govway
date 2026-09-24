@@ -424,6 +424,8 @@ public class TokenProvider implements IProvider {
 		if(ssl) {
 			validateIntrospectionSslCredentials(mapProperties);
 		}
+		
+		validateCacheTtl(pDefault, Costanti.POLICY_INTROSPECTION_CACHE_TTL_STATO, Costanti.POLICY_INTROSPECTION_CACHE_TTL_SECONDS, "Token Introspection");
 	}
 	private TipoTokenRequest validateIntrospectionTipoToken(Properties pDefault) throws ProviderValidationException {
 		String tipoTokenRequest = pDefault.getProperty(Costanti.POLICY_INTROSPECTION_REQUEST_TOKEN_POSITION);
@@ -623,6 +625,24 @@ public class TokenProvider implements IProvider {
 		boolean ssl = TokenUtilities.isEnabled(pDefault, Costanti.POLICY_USER_INFO_AUTH_SSL_STATO);
 		if(ssl) {
 			validateUserInfoSslCredentials(mapProperties);
+		}
+		
+		validateCacheTtl(pDefault, Costanti.POLICY_USER_INFO_CACHE_TTL_STATO, Costanti.POLICY_USER_INFO_CACHE_TTL_SECONDS, "OIDC - UserInfo");
+	}
+	private void validateCacheTtl(Properties pDefault, String pStato, String pSeconds, String funzione) throws ProviderValidationException {
+		if(TokenUtilities.isEnabled(pDefault, pStato)) {
+			String ttl = pDefault.getProperty(pSeconds);
+			int ttlValue = -1;
+			try {
+				if(ttl!=null && StringUtils.isNotEmpty(ttl.trim())) {
+					ttlValue = Integer.parseInt(ttl.trim());
+				}
+			}catch(Exception e) {
+				throw new ProviderValidationException(funzione+" - Cache: il TTL indicato '"+ttl+"' non è un numero intero valido");
+			}
+			if(ttlValue<=0) {
+				throw new ProviderValidationException(funzione+" - Cache: deve essere indicato un TTL maggiore di 0");
+			}
 		}
 	}
 	private TipoTokenRequest validateUserInfoTipoToken(Properties pDefault) throws ProviderValidationException {
