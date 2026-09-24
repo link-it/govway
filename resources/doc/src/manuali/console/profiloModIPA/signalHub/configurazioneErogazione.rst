@@ -32,7 +32,11 @@ Quando la pseudoanonimizzazione è abilitata, è possibile configurare i paramet
 
 **Autorizzazione alla pubblicazione dei segnali**
 
-La seconda parte della configurazione consente di specificare puntualmente gli applicativi o i ruoli che tali applicativi debbano possedere per essere autorizzati alla pubblicazione dei segnali tramite la fruizione descritta nella sezione :ref:`modipa_signalhub_configurazione_fruizione` per il servizio configurato. Gli applicativi selezionabili saranno esclusivamente quelli già presenti nella lista di applicaivi autorizzati come richiedenti nella fruizione built-in ``api-pdnd-push-signals`` descritta nella sezione :ref:`modipa_signalhub_configurazione_fruizione`.
+La seconda parte della configurazione consente di specificare puntualmente gli applicativi o i ruoli che tali applicativi debbano possedere per essere autorizzati alla pubblicazione dei segnali tramite la fruizione descritta nella sezione :ref:`modipa_signalhub_configurazione_fruizione` per il servizio configurato. Gli applicativi selezionabili sono quelli che possono essere identificati sulla fruizione built-in ``api-pdnd-push-signals`` descritta nella sezione :ref:`modipa_signalhub_configurazione_fruizione`, in base al *Controllo degli Accessi* su di essa configurato: gli applicativi del soggetto fruitore le cui credenziali corrispondono all'autenticazione di trasporto prevista, quelli associati alla token policy indicata, oppure entrambi gli insiemi qualora siano state configurate entrambe le modalità di autenticazione. In assenza di entrambe vengono proposti tutti gli applicativi del soggetto fruitore, poiché l'identità dell'applicativo può essere dichiarata tramite l'header di integrazione.
+
+.. note::
+
+	L'elenco dipende dal *Controllo degli Accessi* configurato sulla fruizione. Se una modifica successiva di tale configurazione non consente più di identificare l'applicativo indicato come pubblicatore, questo viene comunque mantenuto e riproposto, segnalandone la condizione, in modo da non alterare in modo implicito la configurazione già effettuata. L'applicativo non potrà però più essere identificato al momento della pubblicazione di un segnale, che verrà quindi rifiutata: la segnalazione serve ad individuare tale incoerenza e correggerla, indicando un altro pubblicatore oppure adeguando il *Controllo degli Accessi* della fruizione.
 
 **Integrazione delle informazioni crittografiche nell'OpenAPI registrato sulla PDND**
 

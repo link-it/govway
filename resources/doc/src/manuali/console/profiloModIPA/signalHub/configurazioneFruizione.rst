@@ -162,7 +162,7 @@ La fruizione built-in ':numref:`SignalHubFuizione`' (chiamata ``api-pdnd-push-si
 
     Fruizione della API di pubblicazione del segnale: profilo 'ModI'
 
-- *Controllo degli Accessi*: si può notare come la fruizione riporta uno "stato rosso" che evidenzia una configurazione incompleta nella parte relativa al *Controllo degli Accessi*. Procedere con la configurazione del :ref:`apiGwControlloAccessi` al fine di registrare almeno un applicativo autorizzato ad invocare la fruizione. Da notare come l'autorizzazione presente 'signal-Hub' attuerà un'ulteriore processo di autorizzazione verificando che l'applicativo identificato sia presente o possieda il ruolo indicato nella configurazione 'Signal-Hub' del servizio per cui si intende depositare un segnale.
+- *Controllo degli Accessi*: si può notare come la fruizione riporta uno "stato rosso" che evidenzia una configurazione incompleta nella parte relativa al *Controllo degli Accessi*. Procedere con la configurazione del :ref:`apiGwControlloAccessi` al fine di definire la modalità con cui viene identificato l'applicativo che invoca la fruizione: l'autenticazione di trasporto, l'autenticazione tramite token o entrambe. Da notare come l'autorizzazione presente 'signal-Hub' attuerà un ulteriore processo di autorizzazione verificando che l'applicativo identificato, indifferentemente tramite l'autenticazione di trasporto o tramite il token, sia presente o possieda il ruolo indicato nella configurazione 'Signal-Hub' del servizio per cui si intende depositare un segnale.
 
 
 
