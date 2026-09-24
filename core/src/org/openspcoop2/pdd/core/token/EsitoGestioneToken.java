@@ -22,6 +22,8 @@
 
 package org.openspcoop2.pdd.core.token;
 
+import java.util.Date;
+
 import org.openspcoop2.protocol.sdk.RestMessageSecurityToken;
 
 /**
@@ -43,6 +45,9 @@ public abstract class EsitoGestioneToken extends AbstractEsitoValidazioneToken i
 	private InformazioniToken informazioniToken;
 	private RestMessageSecurityToken restSecurityToken;
 	
+	/** Istante in cui l'esito è stato ottenuto invocando il servizio remoto (introspection/userInfo) */
+	private Date remoteCheckAt;
+	
 	public InformazioniToken getInformazioniToken() {
 		return this.informazioniToken;
 	}
@@ -54,6 +59,12 @@ public abstract class EsitoGestioneToken extends AbstractEsitoValidazioneToken i
 	}
 	public void setRestSecurityToken(RestMessageSecurityToken restSecurityToken) {
 		this.restSecurityToken = restSecurityToken;
+	}
+	public Date getRemoteCheckAt() {
+		return this.remoteCheckAt;
+	}
+	public void setRemoteCheckAt(Date remoteCheckAt) {
+		this.remoteCheckAt = remoteCheckAt;
 	}
 	
 	@Override

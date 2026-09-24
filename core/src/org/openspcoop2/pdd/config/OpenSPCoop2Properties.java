@@ -2286,6 +2286,8 @@ public class OpenSPCoop2Properties {
 			this.getGestioneTokenValidazioneJWTLockPermits();
 			this.getGestioneTokenIntrospectionLockPermits();
 			this.getGestioneTokenUserInfoLockPermits();
+			this.getGestioneTokenIntrospectionCacheTtlSeconds();
+			this.getGestioneTokenUserInfoCacheTtlSeconds();
 			this.isGestioneTokenDynamicDiscoveryKeyCacheUseToken();
 			this.isGestioneTokenDynamicDiscoveryUseCacheConfig();
 			this.isGestioneTokenIatRequired();
@@ -24491,7 +24493,63 @@ public class OpenSPCoop2Properties {
 
 		return this.getGestioneTokenUserInfoLockPermits;
 	}
-	
+
+	private Boolean getGestioneTokenIntrospectionCacheTtlSecondsRead = null;
+	private Integer getGestioneTokenIntrospectionCacheTtlSeconds = null;
+	public Integer getGestioneTokenIntrospectionCacheTtlSeconds() {
+
+		String pName = "org.openspcoop2.pdd.gestioneToken.introspection.cache.ttlSeconds";
+		if(this.getGestioneTokenIntrospectionCacheTtlSecondsRead==null){
+			try{
+				String value = this.reader.getValueConvertEnvProperties(pName);
+
+				if (value != null){
+					value = value.trim();
+					int ttl = Integer.parseInt(value);
+					if(ttl>0) {
+						// altrimenti il controllo è disabilitato
+						this.getGestioneTokenIntrospectionCacheTtlSeconds = ttl;
+					}
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+			}
+
+			this.getGestioneTokenIntrospectionCacheTtlSecondsRead = true;
+		}
+
+		return this.getGestioneTokenIntrospectionCacheTtlSeconds;
+	}
+
+	private Boolean getGestioneTokenUserInfoCacheTtlSecondsRead = null;
+	private Integer getGestioneTokenUserInfoCacheTtlSeconds = null;
+	public Integer getGestioneTokenUserInfoCacheTtlSeconds() {
+
+		String pName = "org.openspcoop2.pdd.gestioneToken.userInfo.cache.ttlSeconds";
+		if(this.getGestioneTokenUserInfoCacheTtlSecondsRead==null){
+			try{
+				String value = this.reader.getValueConvertEnvProperties(pName);
+
+				if (value != null){
+					value = value.trim();
+					int ttl = Integer.parseInt(value);
+					if(ttl>0) {
+						// altrimenti il controllo è disabilitato
+						this.getGestioneTokenUserInfoCacheTtlSeconds = ttl;
+					}
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+			}
+
+			this.getGestioneTokenUserInfoCacheTtlSecondsRead = true;
+		}
+
+		return this.getGestioneTokenUserInfoCacheTtlSeconds;
+	}
+
 	private Boolean isGestioneTokenDynamicDiscoveryKeyCacheUseToken = null;
 	public boolean isGestioneTokenDynamicDiscoveryKeyCacheUseToken(){
 
