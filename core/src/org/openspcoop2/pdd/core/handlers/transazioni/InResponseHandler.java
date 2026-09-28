@@ -29,6 +29,7 @@ import org.openspcoop2.message.OpenSPCoop2RestMessage;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.message.utils.CompressedContentUtilities;
 import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
@@ -59,6 +60,13 @@ import com.fasterxml.jackson.databind.JsonNode;
  */
 public class InResponseHandler extends FirstPositionHandler implements  org.openspcoop2.pdd.core.handlers.InResponseHandler{
 
+	/** Fault compresso e non decomprimibile: non viene registrato, ma la consegna resta un errore applicativo (GestoreConsegnaMultipla) */
+	private static void segnalaFaultCompressoNonRegistrato(InResponseContext context, String contentEncoding) {
+		if(context.getPddContext()!=null && contentEncoding!=null) {
+			context.getPddContext().addObject(CostantiPdD.FAULT_COMPRESSO_NON_REGISTRATO, contentEncoding);
+		}
+	}
+	
 	@Override
 	public void invoke(InResponseContext context) throws HandlerException {
 		
@@ -110,12 +118,22 @@ public class InResponseHandler extends FirstPositionHandler implements  org.open
 				}
 				else {
 					OpenSPCoop2RestMessage<?> restMsg = context.getMessaggio().castAsRest();
+					if(context.getPddContext()!=null) {
+						// informazione relativa al singolo tentativo di consegna
+						context.getPddContext().removeObject(CostantiPdD.FAULT_COMPRESSO_NON_REGISTRATO);
+					}
 					if(restMsg.isProblemDetailsForHttpApis_RFC7807() || MessageRole.FAULT.equals(restMsg.getMessageRole())) {
 						switch (restMsg.getMessageType()) {
 						case XML:
 							
+							// un fault ricevuto compresso viene registrato decompresso; se non è possibile decomprimerlo non viene registrato
+							byte[] contenutoFault = CompressedContentUtilities.getContentForFault(restMsg, OpenSPCoop2Properties.getInstance().getContentEncodingFaultDecompressMaxBytes());
+							if(contenutoFault==null) {
+								segnalaFaultCompressoNonRegistrato(context, restMsg.getContentEncodingCompressed());
+								break;
+							}
 							ByteArrayOutputStream bout = new ByteArrayOutputStream();
-							restMsg.writeTo(bout, false);
+							bout.write(contenutoFault);
 							bout.flush();
 							bout.close();
 							
@@ -139,8 +157,14 @@ public class InResponseHandler extends FirstPositionHandler implements  org.open
 							
 						case JSON:
 							
+							// un fault ricevuto compresso viene registrato decompresso; se non è possibile decomprimerlo non viene registrato
+							contenutoFault = CompressedContentUtilities.getContentForFault(restMsg, OpenSPCoop2Properties.getInstance().getContentEncodingFaultDecompressMaxBytes());
+							if(contenutoFault==null) {
+								segnalaFaultCompressoNonRegistrato(context, restMsg.getContentEncodingCompressed());
+								break;
+							}
 							bout = new ByteArrayOutputStream();
-							restMsg.writeTo(bout, false);
+							bout.write(contenutoFault);
 							bout.flush();
 							bout.close();
 							

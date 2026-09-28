@@ -76,6 +76,11 @@ import org.w3c.dom.Node;
  * @version $Rev$, $Date$
  */
 public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.message.OpenSPCoop2Message {
+	
+	@Override
+	public String getContentEncodingCompressed() {
+		return null; // ridefinito dai messaggi con contenuto costruito dallo stream ricevuto
+	}
 
 	/* Message Factory */
 	protected OpenSPCoop2MessageFactory messageFactory;

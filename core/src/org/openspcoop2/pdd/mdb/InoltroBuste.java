@@ -74,6 +74,7 @@ import org.openspcoop2.message.exception.MessageNotSupportedException;
 import org.openspcoop2.message.exception.ParseException;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.soap.mtom.MtomXomReference;
+import org.openspcoop2.message.utils.CompressedContentUtilities;
 import org.openspcoop2.message.utils.MessageUtilities;
 import org.openspcoop2.monitor.sdk.transaction.FaseTracciamento;
 import org.openspcoop2.pdd.config.ClassNameProperties;
@@ -197,9 +198,7 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.digest.IDigestReader;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
-import org.openspcoop2.utils.rest.problem.JsonDeserializer;
 import org.openspcoop2.utils.rest.problem.ProblemRFC7807;
-import org.openspcoop2.utils.rest.problem.XmlDeserializer;
 import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.openspcoop2.utils.transport.TransportResponseContext;
 import org.openspcoop2.utils.transport.http.HttpConstants;
@@ -2688,6 +2687,12 @@ public class InoltroBuste extends GenericLib implements IAsyncResponseCallback{
 					// raccolta risultati del connettore
 					this.soapFault = gestoreErrore.getFault();
 					this.restProblem = gestoreErrore.getProblem();
+					if(gestoreErrore.getProblemNonInterpretato()!=null) {
+						// Problem Details ricevuto compresso e non interpretabile: le regole basate sul problem non sono state applicate
+						this.msgDiag.addKeyword(CostantiPdD.KEY_CONTENT_ENCODING, gestoreErrore.getProblemNonInterpretato().getContentEncoding());
+						this.msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, GestoreErroreConnettore.getMotivoProblemNonInterpretato(gestoreErrore.getProblemNonInterpretato()));
+						this.msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_REST_PROBLEM_NON_INTERPRETATO);
+					}
 					this.faultMessageFactory = this.connectorSender.getResponse()!=null ? this.connectorSender.getResponse().getFactory() : OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 					this.codiceRitornato = this.connectorSender.getCodiceTrasporto();
 					this.transportResponseContext = new TransportResponseContext(this.log, this.connectorSender.getCodiceTrasporto()+"", 
@@ -2941,15 +2946,13 @@ public class InoltroBuste extends GenericLib implements IAsyncResponseCallback{
 								if(this.responseMessage instanceof OpenSPCoop2RestJsonMessage ){
 									OpenSPCoop2RestJsonMessage msg = this.responseMessage.castAsRestJson();
 									if(msg.hasContent() && msg.isProblemDetailsForHttpApis_RFC7807()) {
-										JsonDeserializer deserializer = new JsonDeserializer();
-										this.restProblem = deserializer.fromString(msg.getContent(), false);
+										this.restProblem = CompressedContentUtilities.parseProblemRFC7807(msg, OpenSPCoop2Properties.getInstance().getContentEncodingFaultDecompressMaxBytes()); // in chiaro o compresso
 									}
 								}
 								else if(this.responseMessage instanceof OpenSPCoop2RestXmlMessage ){
 									OpenSPCoop2RestXmlMessage msg = this.responseMessage.castAsRestXml();
 									if(msg.hasContent() && msg.isProblemDetailsForHttpApis_RFC7807()) {
-										XmlDeserializer deserializer = new XmlDeserializer();
-										this.restProblem = deserializer.fromNode(msg.getContent(), false);
+										this.restProblem = CompressedContentUtilities.parseProblemRFC7807(msg, OpenSPCoop2Properties.getInstance().getContentEncodingFaultDecompressMaxBytes()); // in chiaro o compresso
 									}
 								}
 							}

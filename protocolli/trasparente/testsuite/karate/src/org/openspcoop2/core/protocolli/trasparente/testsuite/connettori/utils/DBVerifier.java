@@ -28,6 +28,7 @@ import static org.junit.Assert.assertTrue;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Date;
 import java.util.HashSet;
@@ -510,6 +511,66 @@ public class DBVerifier {
 	}
 
 
+	/**
+	 * Come {@link #existsDiagnostico(String, String)}, verificando anche severità e codice del diagnostico
+	 * (severità: valori di LogLevels, 0 fatal ... 2 errorIntegration ... 7 debugHigh; codice: es. '007083').
+	 */
+	/**
+	 * Verifica l'esistenza di un unico diagnostico che contiene tutti i frammenti, nell'ordine indicato.
+	 */
+	public static void existsDiagnosticoFrammenti(String idTransazione, String ... frammenti) throws Exception  {
+		StringBuilder like = new StringBuilder("%");
+		for (String frammento : frammenti) {
+			like.append(frammento).append("%");
+		}
+		String query = "select count(*) from msgdiagnostici where id_transazione = ? and messaggio LIKE ?";
+		int[] attese = {100, 500, 2000, 5000};
+		int count = 0;
+		for (int attesa : attese) {
+			Utilities.sleep(attesa);
+			log().info(query);
+			count = dbUtils().readValue(query, Integer.class, idTransazione, like.toString());
+			if (count > 0) {
+				return;
+			}
+		}
+		assertTrue("IdTransazione: "+idTransazione+" Cerco un diagnostico con i frammenti "+Arrays.toString(frammenti)+"; count trovati: "+count, (count>0));
+	}
+	
+	public static void existsDiagnosticoSeveritaCodice(String idTransazione, int severita, String codice, String diagnostico) throws Exception  {
+		String query = "select count(*) from msgdiagnostici where id_transazione = ? and severita = ? and codice = ? and messaggio LIKE ?";
+		int[] attese = {100, 500, 2000, 5000};
+		int count = 0;
+		for (int attesa : attese) {
+			Utilities.sleep(attesa);
+			log().info(query);
+			count = dbUtils().readValue(query, Integer.class, idTransazione, severita, codice, "%"+diagnostico+"%");
+			if (count > 0) {
+				return;
+			}
+		}
+		assertTrue("IdTransazione: "+idTransazione+" Cerco diagnostico con severita' "+severita+" e codice "+codice+" '"+diagnostico+"'; count trovati: "+count, (count>0));
+	}
+	
+	/**
+	 * Verifica che il frammento sia presente nella colonna 'warning_log' della transazione e assente
+	 * nella colonna 'error_log' (diagnostici classificati come warning in MsgDiagnosticiProperties.MSG_DIAGNOSTICI_WARNING).
+	 */
+	public static void existsWarningLog(String idTransazione, String frammento) throws Exception  {
+		String query = "select count(*) from transazioni where id = ? and warning_log LIKE ? and (error_log is null or error_log NOT LIKE ?)";
+		int[] attese = {100, 500, 2000, 5000};
+		int count = 0;
+		for (int attesa : attese) {
+			Utilities.sleep(attesa);
+			log().info(query);
+			count = dbUtils().readValue(query, Integer.class, idTransazione, "%"+frammento+"%", "%"+frammento+"%");
+			if (count > 0) {
+				return;
+			}
+		}
+		assertTrue("IdTransazione: "+idTransazione+" Cerco warning_log (e assenza in error_log) '"+frammento+"'; count trovati: "+count, (count>0));
+	}
+	
 	public static void notExistsDiagnostico(String idTransazione, String diagnostico) throws Exception  {
 
 		// La scrittura su database avviene dopo aver risposto al client

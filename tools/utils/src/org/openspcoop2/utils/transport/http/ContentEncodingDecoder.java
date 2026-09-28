@@ -150,6 +150,27 @@ public class ContentEncodingDecoder {
 	}
 
 	/**
+	 * Come {@link #decode(InputStream, String)}, calcolando in stream il digest dei byte ricevuti (compressi).
+	 * Il digest è disponibile in {@code wireDigest} dopo che lo stream restituito è stato letto fino alla fine
+	 * (vedi {@link ContentEncodingWireDigest#isCompleted()}).
+	 *
+	 * @param in stream sorgente raw (es. da socket/pipe)
+	 * @param contentEncoding valore dell'header HTTP 'Content-Encoding' del body
+	 * @param wireDigest oggetto su cui calcolare il digest dei byte ricevuti; se null il comportamento è quello di {@link #decode(InputStream, String)}
+	 * @return stream da cui leggere il body decompresso (o {@code in} se nessuna decompressione)
+	 * @throws UtilsException se l'encoding è non null/identity e non è gestito
+	 * @throws IOException se la lettura iniziale dello stream fallisce
+	 */
+	public static InputStream decode(InputStream in, String contentEncoding, ContentEncodingWireDigest wireDigest) throws UtilsException, IOException {
+		if (wireDigest == null || in == null) {
+			return decode(in, contentEncoding);
+		}
+		InputStream received = wireDigest.wrapReceived(in, contentEncoding);
+		InputStream decoded = decode(received, contentEncoding);
+		return wireDigest.wrapDecoded(decoded, received);
+	}
+
+	/**
 	 * Wrap di uno stream 'deflate' con autodetect tra zlib-wrapped (RFC 1950) e raw (RFC 1951).
 	 * Apache HttpClient 5 fa lo stesso fallback perche' molti server interpretano in modo
 	 * incoerente l'encoding 'deflate'. L'autodetect si basa sul primo byte: 0x78 e' il valore

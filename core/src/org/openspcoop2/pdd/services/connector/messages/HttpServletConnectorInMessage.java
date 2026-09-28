@@ -37,6 +37,7 @@ import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.exception.MessageContentCompressedException;
 import org.openspcoop2.message.exception.ParseExceptionUtils;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
@@ -55,6 +56,7 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.IDService;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.state.URLProtocolContext;
@@ -71,6 +73,7 @@ import org.openspcoop2.utils.transport.Credential;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.ContentEncodingDecoder;
+import org.openspcoop2.utils.transport.http.ContentEncodingWireDigest;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.slf4j.Logger;
 
@@ -360,14 +363,42 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 			throw new IOException("Unsupported Content-Encoding: "+contentEncoding);
 		}
 		String contentLengthWire = TransportUtils.getHeaderFirstValue(this.req, HttpConstants.CONTENT_LENGTH);
+		ContentEncodingWireDigest wireDigest = newRequestWireDigest();
 		try {
-			this.is = ContentEncodingDecoder.decode(this.is, contentEncoding);
+			this.is = ContentEncodingDecoder.decode(this.is, contentEncoding, wireDigest);
 		} catch(UtilsException e) {
 			throw new IOException("Errore durante la decompressione del body della richiesta (Content-Encoding: "+contentEncoding+"): "+e.getMessage(), e);
+		}
+		if(wireDigest!=null) {
+			// completato quando il contenuto decompresso viene letto fino alla fine
+			this.context.addObject(org.openspcoop2.core.constants.Costanti.CONTENT_ENCODING_WIRE_DIGEST_REQUEST, wireDigest);
 		}
 		this.requestContentEncodingDecompressionApplied = true;
 		cleanupRequestContentEncodingHeaders();
 		emitDecompressionDecompressedDiagnostic(contentEncoding, contentLengthWire);
+	}
+
+	/**
+	 * Se il protocollo verifica un digest del contenuto (vedi {@link org.openspcoop2.protocol.sdk.config.IProtocolManager#getHttpDigestHeaderName()})
+	 * e l'header è presente nella richiesta, restituisce l'oggetto su cui calcolare il digest dei byte ricevuti durante la decompressione:
+	 * dopo la decompressione i byte ricevuti non sono più disponibili e il digest non potrebbe più essere verificato.
+	 */
+	private ContentEncodingWireDigest newRequestWireDigest() {
+		if(this.context==null || this.requestInfo==null || this.requestInfo.getProtocolFactory()==null) {
+			return null;
+		}
+		try {
+			String digestHeaderName = this.requestInfo.getProtocolFactory().createProtocolManager().getHttpDigestHeaderName();
+			if(digestHeaderName==null) {
+				return null;
+			}
+			return ContentEncodingWireDigest.newInstance(TransportUtils.getHeaderFirstValue(this.req, digestHeaderName));
+		} catch(ProtocolException e) {
+			if(this.log!=null) {
+				this.log.error("Lettura dell'header digest del protocollo fallita: "+e.getMessage(),e);
+			}
+			return null;
+		}
 	}
 
 	/**
@@ -506,6 +537,14 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 					return this.soapReader;
 				}
 				
+				if(!this.decompressRequestContentEncoding &&
+						MessageContentCompressedException.getCompressedContentEncoding(TransportUtils.getHeaderFirstValue(this.req, HttpConstants.CONTENT_ENCODING))!=null) {
+					// Contenuto compresso senza decompressione: il lettore fallirebbe sui byte compressi perdendo quelli già letti.
+					// Senza lettore lo stream resta integro e la costruzione del messaggio segnala esplicitamente il contenuto compresso.
+					// Se la decompressione viene abilitata successivamente (proprietà dell'API) viene applicata alla lettura del messaggio.
+					return null;
+				}
+
 				String contentType = getContentType();
 				if(contentType!=null) {
 					this.soapReader = new OpenSPCoop2MessageSoapStreamReader(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), contentType, 

@@ -328,6 +328,20 @@ public interface IProtocolManager extends IComponentFactory {
      */
     public boolean isBlockedTransaction_responseMessageWithTransportCodeError();
     
+    /**
+     * Nome dell'header HTTP contenente il digest del contenuto (es. 'Digest', RFC 3230) verificato dal protocollo.
+     * Se l'header è presente e il contenuto ricevuto viene decompresso (Content-Encoding), il gateway calcola il digest
+     * sui byte ricevuti (compressi) e lo rende disponibile nel contesto
+     * ({@link org.openspcoop2.core.constants.Costanti#CONTENT_ENCODING_WIRE_DIGEST_REQUEST} e
+     * {@link org.openspcoop2.core.constants.Costanti#CONTENT_ENCODING_WIRE_DIGEST_RESPONSE}), poiché dopo la decompressione
+     * i byte ricevuti non sono più disponibili.
+     * 
+     * @return nome dell'header o null se il protocollo non verifica un digest del contenuto
+     */
+    public default String getHttpDigestHeaderName() {
+    	return null;
+    }
+    
     
 	
 }

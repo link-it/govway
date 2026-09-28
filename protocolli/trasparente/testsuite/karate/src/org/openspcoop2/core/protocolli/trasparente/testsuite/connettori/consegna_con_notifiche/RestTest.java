@@ -64,6 +64,7 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.RequestAndExpectations;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.RequestAndExpectations.TipoFault;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.RequestAndExpectationsFault;
+import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.utils.DBVerifier;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.transport.http.HttpRequest;
@@ -385,12 +386,37 @@ public class RestTest extends ConfigLoader{
 	
 	@Test
 	public void regoleRispedizioneProblem() {
+		_regoleRispedizioneProblem(EROGAZIONE_REGOLE_PROBLEM, null);
+	}
+	
+	/*
+	 * Varianti con Problem Details compresso dal backend (parametro 'problemContentEncoding' della servlet di echo):
+	 * con gli encoding supportati le regole basate sul Problem Detail devono continuare ad essere applicate.
+	 */
+	@Test
+	public void regoleRispedizioneProblemGzip() throws Exception {
+		verificaProblemInterpretato(_regoleRispedizioneProblem(EROGAZIONE_REGOLE_PROBLEM_CONTENT_ENCODING, "gzip"), "gzip");
+	}
+	@Test
+	public void regoleRispedizioneProblemXGzip() throws Exception {
+		verificaProblemInterpretato(_regoleRispedizioneProblem(EROGAZIONE_REGOLE_PROBLEM_CONTENT_ENCODING, "x-gzip"), "x-gzip");
+	}
+	@Test
+	public void regoleRispedizioneProblemDeflate() throws Exception {
+		verificaProblemInterpretato(_regoleRispedizioneProblem(EROGAZIONE_REGOLE_PROBLEM_CONTENT_ENCODING, "deflate"), "deflate");
+	}
+	
+	/* Erogazione originale (trasparenteTestBundle) e sua copia (extraTestBundle) che propaga anche il parametro
+	 * 'problemContentEncoding' verso la servlet di echo: le varianti compresse usano la copia. */
+	private static final String EROGAZIONE_REGOLE_PROBLEM = "TestConsegnaConNotificheRegoleProblem";
+	private static final String EROGAZIONE_REGOLE_PROBLEM_CONTENT_ENCODING = "TestConsegnaConNotificheRegoleProblemContentEncoding";
+	
+	private Map<RequestAndExpectations, List<HttpResponse>> _regoleRispedizioneProblem(String erogazione, String problemContentEncoding) {
 		/**
 		 * Qui si testano le varie regole di rispedizione per i singoli connettori tenendo conto dei campi del Problem.
 		 * Connettore0, Connettore1:  Consegna Fallita Personalizzata
 		 * Connettore2, Connettore3: Consegna  Completata Personalizzata
 		 */
-		final String erogazione = "TestConsegnaConNotificheRegoleProblem";
 
 		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
 		
@@ -398,25 +424,25 @@ public class RestTest extends ConfigLoader{
 		requestRispeditaTuttiValorizzati.setMethod(HttpRequestMethod.GET);
 		requestRispeditaTuttiValorizzati.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test"
 				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX
-				+ "&problem=true&problemStatus=501&problemType=TypeRispedita&problemDetail=detailRispedita");
+				+ "&problem=true"+suffissoContentEncoding(problemContentEncoding)+"&problemStatus=501&problemType=TypeRispedita&problemDetail=detailRispedita");
 		
 		HttpRequest requestRispeditaRegex = new HttpRequest();
 		requestRispeditaRegex.setMethod(HttpRequestMethod.GET);
 		requestRispeditaRegex.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test"
 				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX
-				+ "&problem=true&problemStatus=502&problemType=TypeRispedita123");
+				+ "&problem=true"+suffissoContentEncoding(problemContentEncoding)+"&problemStatus=502&problemType=TypeRispedita123");
 		
 		HttpRequest requestCompletataTuttiValorizzati =  new HttpRequest();
 		requestCompletataTuttiValorizzati.setMethod(HttpRequestMethod.GET);
 		requestCompletataTuttiValorizzati.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test"
 				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX
-				+ "&problem=true&problemStatus=501&problemType=TypeCompletata&problemDetail=detailCompletata");
+				+ "&problem=true"+suffissoContentEncoding(problemContentEncoding)+"&problemStatus=501&problemType=TypeCompletata&problemDetail=detailCompletata");
 		
 		HttpRequest requestCompletataRegex = new HttpRequest();
 		requestCompletataRegex.setMethod(HttpRequestMethod.GET);
 		requestCompletataRegex.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test"
 				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX
-				+ "&problem=true&problemStatus=502&problemType=TypeCompletata123");
+				+ "&problem=true"+suffissoContentEncoding(problemContentEncoding)+"&problemStatus=502&problemType=TypeCompletata123");
 		
 		String  fault = "{\"type\":\"TypeRispedita\",\"title\":\"Not Implemented\",\"status\":501,\"detail\":\"detailRispedita\"}";
 		
@@ -459,6 +485,102 @@ public class RestTest extends ConfigLoader{
 		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
 		
 		CondizionaleByFiltroRestTest.checkResponses(responsesByKind);
+		return responsesByKind;
+	}
+	
+	private static final String DIAG_RICEVUTO_PROBLEM = "Ricevuto un Problem Detail (RFC 7807) in seguito all'invio";
+	/* Nuovo diagnostico (vedi analisi, implementazione I3): il testo deve restare allineato a govway.msgDiagnostici.properties. */
+	private static final String DIAG_PROBLEM_NON_INTERPRETATO_PREFIX = "Problem Detail (RFC 7807) ricevuto con 'Content-Encoding: ";
+	private static final String DIAG_PROBLEM_NON_INTERPRETATO = "' non interpretato: ";
+	private static final String DIAG_MOTIVO_ENCODING_NON_SUPPORTATO = "encoding non supportato";
+	private static final int SEVERITA_ERROR_INTEGRATION = 2;
+	private static final String CODICE_DIAG_NON_INTERPRETATO = "007083"; // consegnaContenutiApplicativi
+	/* Il problem restituito dalla servlet di echo (JSON compatto) ha type 'Type...' (es. TypeRispedita, TypeCompletata123). */
+	private static final String PROBLEM_TYPE_PREFIX = "\"type\":\"Type";
+	/* Diagnostico di consegna della risposta al client: 'Risposta (<contenuto>) consegnata al mittente con codice di trasporto: <status>'. */
+	private static final String DIAG_RISPOSTA = "Risposta";
+	private static final String DIAG_RISPOSTA_CONSEGNATA = ") consegnata al ";
+	private static final String DIAG_RISPOSTA_CODICE_TRASPORTO = "con codice di trasporto: ";
+	private static final String DIAG_RISPOSTA_CONTENUTO_COMPRESSO = "(contenuto compresso, Content-Encoding: ";
+	
+	private static String suffissoContentEncoding(String problemContentEncoding) {
+		return problemContentEncoding!=null ? "&problemContentEncoding="+problemContentEncoding : "";
+	}
+	
+	/**
+	 * Verifica che il parametro 'problemContentEncoding' sia arrivato alla servlet di echo (location delle consegne):
+	 * la regola di trasformazione dell'erogazione ricostruisce i parametri della query e, se non lo propagasse,
+	 * il problem non verrebbe compresso e il test passerebbe senza verificare nulla.
+	 */
+	private static void verificaProblemCompresso(String idTransazione, String problemContentEncoding) throws Exception {
+		DBVerifier.existsDiagnostico(idTransazione, "problemContentEncoding="+problemContentEncoding);
+	}
+	
+	private static void verificaProblemInterpretato(Map<RequestAndExpectations, List<HttpResponse>> responsesByKind, String problemContentEncoding) throws Exception {
+		for (Map.Entry<RequestAndExpectations, List<HttpResponse>> entry : responsesByKind.entrySet()) {
+			int status = entry.getKey().statusCodePrincipale;
+			for (HttpResponse response : entry.getValue()) {
+				String idTransazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
+				verificaProblemCompresso(idTransazione, problemContentEncoding);
+				/* il diagnostico di ricezione e quello di consegna della risposta devono riportare il problem in chiaro */
+				DBVerifier.existsDiagnosticoFrammenti(idTransazione, DIAG_RICEVUTO_PROBLEM, PROBLEM_TYPE_PREFIX);
+				DBVerifier.existsDiagnosticoFrammenti(idTransazione, DIAG_RISPOSTA, " (", PROBLEM_TYPE_PREFIX, DIAG_RISPOSTA_CONSEGNATA, DIAG_RISPOSTA_CODICE_TRASPORTO + status);
+				DBVerifier.notExistsDiagnostico(idTransazione, DIAG_PROBLEM_NON_INTERPRETATO_PREFIX);
+			}
+		}
+	}
+	
+	@Test
+	public void regoleRispedizioneProblemEncodingNonSupportato() throws Exception {
+		/**
+		 * Problem Details con un Content-Encoding non supportato (br): il problem non viene interpretato,
+		 * le regole basate sul Problem Detail non vengono applicate e la consegna segue le regole per
+		 * codice HTTP (5xx = rispedizione) su tutti i connettori, compresi quelli con regola 'Consegna Completata Personalizzata'.
+		 * Deve essere presente il diagnostico che segnala la mancata interpretazione.
+		 */
+		final String erogazione = EROGAZIONE_REGOLE_PROBLEM_CONTENT_ENCODING;
+		final String contentEncoding = "br";
+		
+		String [] query = {
+				"&problemStatus=501&problemType=TypeRispedita&problemDetail=detailRispedita",
+				"&problemStatus=502&problemType=TypeRispedita123",
+				"&problemStatus=501&problemType=TypeCompletata&problemDetail=detailCompletata",
+				"&problemStatus=502&problemType=TypeCompletata123"
+		};
+		int [] status = { 501, 502, 501, 502 };
+		
+		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
+		for (int i = 0; i < query.length; i++) {
+			HttpRequest request = new HttpRequest();
+			request.setMethod(HttpRequestMethod.GET);
+			request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test"
+					+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX
+					+ "&problem=true"+suffissoContentEncoding(contentEncoding)+query[i]);
+			requestsByKind.add(new RequestAndExpectationsFault(
+					request,
+					Set.of(),
+					Set.of(CONNETTORE_0, CONNETTORE_1, CONNETTORE_2, CONNETTORE_3),
+					ESITO_CONSEGNA_MULTIPLA_IN_CORSO, status[i], TipoFault.REST, "", "")
+				);
+		}
+		
+		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
+		
+		CondizionaleByFiltroRestTest.checkResponses(responsesByKind);
+		
+		for (Map.Entry<RequestAndExpectations, List<HttpResponse>> entry : responsesByKind.entrySet()) {
+			int statusPrincipale = entry.getKey().statusCodePrincipale;
+			for (HttpResponse response : entry.getValue()) {
+				String idTransazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
+				verificaProblemCompresso(idTransazione, contentEncoding);
+				DBVerifier.notExistsDiagnostico(idTransazione, DIAG_RICEVUTO_PROBLEM);
+				/* problem non interpretabile: il diagnostico di consegna della risposta ne riporta solo la presenza */
+				DBVerifier.existsDiagnosticoFrammenti(idTransazione, DIAG_RISPOSTA, DIAG_RISPOSTA_CONTENUTO_COMPRESSO + contentEncoding + DIAG_RISPOSTA_CONSEGNATA,
+						DIAG_RISPOSTA_CODICE_TRASPORTO + statusPrincipale);
+				DBVerifier.existsDiagnosticoSeveritaCodice(idTransazione, SEVERITA_ERROR_INTEGRATION, CODICE_DIAG_NON_INTERPRETATO,
+						DIAG_PROBLEM_NON_INTERPRETATO_PREFIX + contentEncoding + DIAG_PROBLEM_NON_INTERPRETATO + DIAG_MOTIVO_ENCODING_NON_SUPPORTATO);
+			}
+		}
 	}
 	
 	

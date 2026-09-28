@@ -947,8 +947,8 @@ public class CostantiProprieta {
 	 * Gli override per-lato ('.request.' o '.response.') hanno priorita' sulla chiave generica
 	 * ('.contentEncoding.decompress'), allineato al pattern usato per multipart.related.missingType.
 	 */
-	private static final String CONNETTORI_HTTP_CONTENT_ENCODING_REQUEST_DECOMPRESS = "connettori.contentEncoding.request.decompress";
-	private static final String CONNETTORI_HTTP_CONTENT_ENCODING_RESPONSE_DECOMPRESS = "connettori.contentEncoding.response.decompress";
+	private static final String CONNETTORI_HTTP_CONTENT_ENCODING_REQUEST_DECOMPRESS = org.openspcoop2.message.constants.Costanti.PROPERTY_CONTENT_ENCODING_REQUEST_DECOMPRESS;
+	private static final String CONNETTORI_HTTP_CONTENT_ENCODING_RESPONSE_DECOMPRESS = org.openspcoop2.message.constants.Costanti.PROPERTY_CONTENT_ENCODING_RESPONSE_DECOMPRESS;
 	private static final String CONNETTORI_HTTP_CONTENT_ENCODING_DECOMPRESS = "connettori.contentEncoding.decompress";
 
 	public static boolean isConnettoriHttpContentEncodingRequestDecompress(List<Proprieta> proprieta, boolean defaultValue) {

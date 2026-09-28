@@ -1278,7 +1278,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService implements IRicezion
 						consume = false; // può essere usato nel post out response handler
 						String contentAsString = null;
 						try {
-							contentAsString = this.responseMessage.castAsRest().getContentAsString();
+							contentAsString = ServicesUtils.getContentAsStringForDiagnostic(this.responseMessage);
 						}catch(Throwable t) {
 							this.logCore.error("Parsing errore non riuscito: "+t.getMessage(),t);
 						}

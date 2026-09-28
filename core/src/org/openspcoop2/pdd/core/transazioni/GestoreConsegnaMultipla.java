@@ -44,6 +44,7 @@ import org.openspcoop2.pdd.config.DBConsegnePreseInCaricoManager;
 import org.openspcoop2.pdd.config.DBTransazioniManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.Resource;
+import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.handlers.transazioni.ExceptionSerialzerFileSystem;
 import org.openspcoop2.pdd.core.state.IOpenSPCoopState;
 import org.openspcoop2.pdd.core.state.OpenSPCoopState;
@@ -880,7 +881,9 @@ public class GestoreConsegnaMultipla {
 		}
 		else {
 			if(transazioneApplicativoServer.getDataUscitaRichiesta()!=null) {
-				if(transazioneApplicativoServer.getFault()!=null) {
+				if(transazioneApplicativoServer.getFault()!=null ||
+						// fault ricevuto compresso e non decomprimibile: non registrato, ma comunque un errore applicativo
+						(context!=null && context.containsKey(CostantiPdD.FAULT_COMPRESSO_NON_REGISTRATO))) {
 					transazioneApplicativoServer.setDettaglioEsito(esitiProperties.convertoToCode(EsitoTransazioneName.ERRORE_APPLICATIVO));
 				}
 				else if(transazioneApplicativoServer.getCodiceRisposta()!=null) {

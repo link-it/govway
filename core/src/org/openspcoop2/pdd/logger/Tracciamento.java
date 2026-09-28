@@ -41,6 +41,7 @@ import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.rest.MultipartContent;
 import org.openspcoop2.message.soap.SoapUtils;
+import org.openspcoop2.message.utils.CompressedContentUtilities;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
@@ -977,16 +978,19 @@ public class Tracciamento {
 				else {
 					if(msg.castAsRest().isProblemDetailsForHttpApis_RFC7807()) {
 						found = true;
-						ByteArrayOutputStream bout = new ByteArrayOutputStream();
-						msg.writeTo(bout, false);
-						bout.flush();
-						bout.close();
+						// un problem ricevuto compresso viene riportato decompresso; se non è possibile decomprimerlo se ne indica la presenza
+						byte[] contenutoProblem = CompressedContentUtilities.getContentForFault(msg, OpenSPCoop2Properties.getInstance().getContentEncodingFaultDecompressMaxBytes());
 						StringBuilder bf = new StringBuilder();
 						if(esito.getDettaglio()!=null){
 							bf.append(esito.getDettaglio());
 							bf.append("\n");
 						}
-						bf.append(bout.toString());
+						if(contenutoProblem!=null) {
+							bf.append(new String(contenutoProblem));
+						}
+						else {
+							bf.append("contenuto compresso, Content-Encoding: ").append(msg.getContentEncodingCompressed());
+						}
 						traccia.getEsitoElaborazioneMessaggioTracciato().setDettaglio(bf.toString());
 					}
 				}

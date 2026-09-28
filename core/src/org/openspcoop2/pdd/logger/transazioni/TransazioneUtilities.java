@@ -63,6 +63,7 @@ import org.openspcoop2.message.OpenSPCoop2RestMessage;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.message.utils.CompressedContentUtilities;
 import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.monitor.engine.condition.EsitoUtils;
 import org.openspcoop2.monitor.sdk.transaction.FaseTracciamento;
@@ -1608,8 +1609,13 @@ public class TransazioneUtilities {
 						switch (restMsg.getMessageType()) {
 						case XML:
 							
+							// un fault ricevuto compresso viene registrato decompresso; se non è possibile decomprimerlo non viene registrato
+							byte[] contenutoFault = CompressedContentUtilities.getContentForFault(restMsg, OpenSPCoop2Properties.getInstance().getContentEncodingFaultDecompressMaxBytes());
+							if(contenutoFault==null) {
+								break;
+							}
 							ByteArrayOutputStream bout = new ByteArrayOutputStream();
-							restMsg.writeTo(bout, false);
+							bout.write(contenutoFault);
 							bout.flush();
 							bout.close();
 							
@@ -1633,8 +1639,13 @@ public class TransazioneUtilities {
 							
 						case JSON:
 							
+							// un fault ricevuto compresso viene registrato decompresso; se non è possibile decomprimerlo non viene registrato
+							contenutoFault = CompressedContentUtilities.getContentForFault(restMsg, OpenSPCoop2Properties.getInstance().getContentEncodingFaultDecompressMaxBytes());
+							if(contenutoFault==null) {
+								break;
+							}
 							bout = new ByteArrayOutputStream();
-							restMsg.writeTo(bout, false);
+							bout.write(contenutoFault);
 							bout.flush();
 							bout.close();
 							

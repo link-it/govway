@@ -321,13 +321,15 @@ public class ConnettoreHTTPCOREResponseCallback implements FutureCallback<Connet
 	
 			/* ------------  Gestione Risposta ------------- */
 
+			// Decompressione opt-in PRIMA del dump cosi' il payload registrato e' in chiaro;
+			// gli header originali (CE+CL) restano in propertiesTrasportoRisposta fino a dopo il dump.
+			// Viene applicata anche prima dei limiti sullo stream (dimensione massima, timeout): la policy di dimensione
+			// massima dei messaggi conta così i byte decompressi (protezione da zip bomb), come per la richiesta.
+			boolean contentEncodingDecompressed = this.connettore.decodeResponseBodyContentEncoding();
+
 			this.connettore.normalizeInputStreamResponse(this.connettore.readConnectionTimeout, this.connettore.readConnectionTimeoutConfigurazioneGlobale);
 
 			this.connettore.initCheckContentTypeConfiguration();
-
-			// Decompressione opt-in PRIMA del dump cosi' il payload registrato e' in chiaro;
-			// gli header originali (CE+CL) restano in propertiesTrasportoRisposta fino a dopo il dump
-			boolean contentEncodingDecompressed = this.connettore.decodeResponseBodyContentEncoding();
 
 			if(this.connettore.isDumpBinarioRisposta() &&
 				!this.connettore.dumpResponse(connettorePropertiesTrasportoRisposta)) {
@@ -363,6 +365,9 @@ public class ConnettoreHTTPCOREResponseCallback implements FutureCallback<Connet
 			this.connettore.configureSSE();
 			
 			this.connettore.setAsyncInvocationSuccess(true);
+			
+			// la risposta NIO è disponibile solo ora: in ConnettoreBase.send non era ancora presente per il salvataggio in cache
+			this.connettore.saveAsyncResponseInCache();
 
 		}  catch(Exception e){ 
 			

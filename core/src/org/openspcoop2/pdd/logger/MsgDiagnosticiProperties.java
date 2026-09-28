@@ -728,6 +728,7 @@ public class MsgDiagnosticiProperties {
 
 		MSG_DIAGNOSTICI_WARNING.add("003060"); // inoltroBuste.validazioneContenutiApplicativiRispostaNonRiuscita.warningOnly
 		MSG_DIAGNOSTICI_WARNING.add("003070"); // inoltroBuste.contentType.multipart.related.missingType.compensated
+		MSG_DIAGNOSTICI_WARNING.add("003074"); // inoltroBuste.ricezioneRestProblemNonInterpretato
 
 		MSG_DIAGNOSTICI_WARNING.add("004092"); // ricezioneBuste.controlloTraffico.policy.violataWarningOnly
 		MSG_DIAGNOSTICI_WARNING.add("004095"); // ricezioneBuste.controlloTraffico.maxRequestsViolatedWarningOnly
@@ -742,6 +743,7 @@ public class MsgDiagnosticiProperties {
 
 		MSG_DIAGNOSTICI_WARNING.add("007059"); // consegnaContenutiApplicativi.validazioneContenutiApplicativiRispostaNonRiuscita.warningOnly
 		MSG_DIAGNOSTICI_WARNING.add("007079"); // consegnaContenutiApplicativi.contentType.multipart.related.missingType.compensated
+		MSG_DIAGNOSTICI_WARNING.add("007083"); // consegnaContenutiApplicativi.ricezioneRestProblemNonInterpretato
 	}
 	
 	/*---------- Codici Consegna Fallita -------------*/
@@ -806,6 +808,7 @@ public class MsgDiagnosticiProperties {
 	public static final String MSG_DIAG_INOLTRO_CON_ERRORE = "inoltroConErrore";
 	public static final String MSG_DIAG_RICEZIONE_SOAP_FAULT = "ricezioneSoapFault";
 	public static final String MSG_DIAG_RICEZIONE_REST_PROBLEM = "ricezioneRestProblem";
+	public static final String MSG_DIAG_RICEZIONE_REST_PROBLEM_NON_INTERPRETATO = "ricezioneRestProblemNonInterpretato";
 	public static final String MSG_DIAG_RICEZIONE_SOAP_MESSAGE_HEADER_PROTOCOLLO_NON_PRESENTE = "ricezioneSoapMessage.headerProtocolloNonPresente";
     public static final String MSG_DIAG_PARSING_EXCEPTION_RICHIESTA = "parsingExceptionRichiesta";
     public static final String MSG_DIAG_PARSING_EXCEPTION_RISPOSTA = "parsingExceptionRisposta";
@@ -1068,6 +1071,7 @@ public class MsgDiagnosticiProperties {
 		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+"contentType.multipart.related.missingType.compensated",
 		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+"contentEncoding.decompressed",
 		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+"contentEncoding.unsupported",
+		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+"ricezioneRestProblemNonInterpretato",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"ricezioneMessaggio",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"ricezioneMessaggioErrore",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"autorizzazioneBusteInCorso",
@@ -1383,6 +1387,7 @@ public class MsgDiagnosticiProperties {
 		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"contentType.multipart.related.missingType.compensated",
 		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"contentEncoding.decompressed",
 		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"contentEncoding.unsupported",
+		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"ricezioneRestProblemNonInterpretato",
 		MsgDiagnosticiProperties.MSG_DIAG_INTEGRATION_MANAGER+"logInvocazioneOperazione",
 		MsgDiagnosticiProperties.MSG_DIAG_INTEGRATION_MANAGER+"autenticazioneNonImpostata",
 		MsgDiagnosticiProperties.MSG_DIAG_INTEGRATION_MANAGER+"servizioApplicativo.identificazioneTramiteCredenziali",
@@ -1425,6 +1430,7 @@ public class MsgDiagnosticiProperties {
 		MsgDiagnosticiProperties.MSG_DIAG_TRACCIAMENTO+"dumpContenutiApplicativiFileTrace.rispostaUscita.inCorso",
 		MsgDiagnosticiProperties.MSG_DIAG_TRACCIAMENTO+"dumpContenutiApplicativiFileTrace.rispostaUscita.completato",
 		MsgDiagnosticiProperties.MSG_DIAG_TRACCIAMENTO+"registrazioneTransazioneNonRiuscita",
+		MsgDiagnosticiProperties.MSG_DIAG_TRACCIAMENTO+"dumpContenutiApplicativi.registrazioneContenutoCompresso",
 		MsgDiagnosticiProperties.MSG_DIAG_TIMER_GESTORE_RISCONTRI_RICEVUTE+"avvioInCorso",
 		MsgDiagnosticiProperties.MSG_DIAG_TIMER_GESTORE_RISCONTRI_RICEVUTE+"avvioEffettuato",
 		MsgDiagnosticiProperties.MSG_DIAG_TIMER_GESTORE_RISCONTRI_RICEVUTE+"timerGiaAvviato",

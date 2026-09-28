@@ -30,6 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.DumpConfigurazione;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
@@ -116,6 +117,7 @@ public class Dump {
 	}
 	
 	private static final String DIAGNOSTICO_REGISTRAZIONE_NON_RIUSCITA = "dumpContenutiApplicativi.registrazioneNonRiuscita";
+	private static final String DIAGNOSTICO_REGISTRAZIONE_CONTENUTO_COMPRESSO = "dumpContenutiApplicativi.registrazioneContenutoCompresso";
 	
 
 	/**  Logger log4j utilizzato per effettuare un dump dei messaggi applicativi */
@@ -1126,7 +1128,13 @@ public class Dump {
 					|| 
 				dumpAttachments
 				) {
-				if(msg!=null){
+				if(msg!=null && msg.getContentEncodingCompressed()!=null){
+					// contenuto ricevuto compresso e non decompresso: il payload-parsing richiederebbe di interpretarlo,
+					// viene registrato il body così come ricevuto (senza attachments) e segnalato con un diagnostico
+					fillMessaggioCompresso(msg, dumpBody, messaggio);
+					emitDiagnosticoContenutoCompresso(tipoMessaggio, msg.getContentEncodingCompressed());
+				}
+				else if(msg!=null){
 					dumpMessaggioConfig = new DumpMessaggioConfig();
 					dumpMessaggio = fillMessaggio(msg, dumpMessaggioConfig,
 							dumpBody, dumpAttachments, dumpMultipartHeaders,
@@ -1326,8 +1334,17 @@ public class Dump {
 				// BODY e ATTACHMENTS
 				
 				if(dumpBody || dumpAttachments) {
-					if(msg!=null){
-	
+					if(msg!=null && msg.getContentEncodingCompressed()!=null){
+						// contenuto compresso (vedi fillMessaggioCompresso): i byte non sono leggibili come testo, se ne riporta la presenza
+						out.append("------ Message ------\n");
+						out.append("Contenuto compresso (Content-Encoding: "+msg.getContentEncodingCompressed());
+						if(messaggio.getBody()!=null) {
+							out.append(", "+messaggio.getBody().size()+" bytes");
+						}
+						out.append("): non riportato poiché non leggibile come testo\n");
+					}
+					else if(msg!=null){
+
 						if(dumpAttachments && !this.properties.isDumpAllAttachments()) {
 							// Ricalcolo gli attachments prendendo solo quelli stampabili
 							if(ServiceBinding.SOAP.equals(msg.getServiceBinding())){
@@ -1412,6 +1429,34 @@ public class Dump {
 			}
 		}
 
+	}
+	
+	private void fillMessaggioCompresso(OpenSPCoop2Message msg, boolean dumpBody, Messaggio messaggio) throws MessageException, CoreException {
+		messaggio.setContentType(msg.getContentType());
+		if(dumpBody) {
+			DumpByteArrayOutputStream bout = new DumpByteArrayOutputStream(this.properties.getDumpBinarioInMemoryThreshold(), this.properties.getDumpBinarioRepository(), 
+					this.idTransazione, messaggio.getTipoMessaggio()!=null ? messaggio.getTipoMessaggio().getValue() : null);
+			try {
+				msg.writeTo(bout, false); // accesso binario: i byte vengono riportati così come ricevuti
+			}finally {
+				try {
+					bout.close();
+				}catch(Exception eClose) {
+					// ignore
+				}
+			}
+			messaggio.setBody(bout);
+		}
+	}
+	
+	private void emitDiagnosticoContenutoCompresso(TipoMessaggio tipoMessaggio, String contentEncoding) {
+		try{
+			this.msgDiagErroreDump.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, tipoMessaggio.getValue());
+			this.msgDiagErroreDump.addKeyword(CostantiPdD.KEY_CONTENT_ENCODING, contentEncoding);
+			this.msgDiagErroreDump.logPersonalizzato(DIAGNOSTICO_REGISTRAZIONE_CONTENUTO_COMPRESSO);
+		}catch(Exception eMsg){
+			// ignore
+		}
 	}
 	
 	public static DumpMessaggio fillMessaggio(OpenSPCoop2Message msg, DumpMessaggioConfig dumpMessaggioConfig,

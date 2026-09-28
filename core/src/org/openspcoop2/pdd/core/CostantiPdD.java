@@ -138,6 +138,10 @@ public class CostantiPdD {
     
     /** Response Caching */
     public static final MapKey<String> RESPONSE_CACHE_REQUEST_DIGEST = Map.newMapKey("RESPONSE_CACHE_REQUEST_DIGEST");
+    
+    /** Fault (es. Problem Details) ricevuto compresso e non decomprimibile, quindi non registrato: valore il Content-Encoding.
+     *  La consegna viene comunque classificata come errore applicativo (vedi GestoreConsegnaMultipla). */
+    public static final MapKey<String> FAULT_COMPRESSO_NON_REGISTRATO = Map.newMapKey("FAULT_COMPRESSO_NON_REGISTRATO");
     /** Response Caching */
     public static final String RESPONSE_CACHE_REQUEST_DIGEST_DEFAULT_ALGORITHM = "MD5";
     

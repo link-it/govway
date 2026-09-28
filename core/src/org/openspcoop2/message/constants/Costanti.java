@@ -99,4 +99,9 @@ public class Costanti {
     public static final String WRITE_MODE_SERIALIZE_CONTENT = "SERIALIZE-CONTENT";
     public static final String WRITE_MODE_SERIALIZE_STREAM_WITH_HEADER = "SERIALIZE-STREAM-WITH-HEADER";
     public static final String WRITE_MODE_SERIALIZE_STREAM = "SERIALIZE-STREAM";
+    
+    /** Proprietà (porta) che abilita la decompressione della richiesta ricevuta compressa (Content-Encoding) */
+    public static final String PROPERTY_CONTENT_ENCODING_REQUEST_DECOMPRESS = "connettori.contentEncoding.request.decompress";
+    /** Proprietà (porta) che abilita la decompressione della risposta ricevuta compressa (Content-Encoding) */
+    public static final String PROPERTY_CONTENT_ENCODING_RESPONSE_DECOMPRESS = "connettori.contentEncoding.response.decompress";
 }

@@ -47,12 +47,15 @@ import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.keystore.GestoreKeystoreCaching;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.utils.CopyStream;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.ContentEncodingDecoder;
+import org.openspcoop2.utils.transport.http.ContentEncodingWireDigest;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
@@ -203,6 +206,17 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 			return false;
 		}
 		String contentEncoding = TransportUtils.getObjectAsString(this.propertiesTrasportoRisposta, HttpConstants.CONTENT_ENCODING);
+		if(contentEncoding!=null && !contentEncoding.trim().isEmpty() && !HttpConstants.CONTENT_ENCODING_VALUE_IDENTITY.equalsIgnoreCase(contentEncoding.trim())) {
+			// invocato prima di normalizeInputStreamResponse: uno stream vuoto (es. 204 con Content-Encoding) non va decompresso
+			try {
+				this.isResponse = Utilities.normalizeStream(this.isResponse, false);
+			}catch(Exception e) {
+				throw new ConnettoreException(e.getMessage(), e);
+			}
+			if(this.isResponse==null) {
+				return false;
+			}
+		}
 		if(contentEncoding==null || contentEncoding.trim().isEmpty()) {
 			return false;
 		}
@@ -211,16 +225,44 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 			return false;
 		}
 		if(ContentEncodingDecoder.isSupported(ce)) {
+			ContentEncodingWireDigest wireDigest = newResponseWireDigest();
 			try {
-				this.isResponse = ContentEncodingDecoder.decode(this.isResponse, contentEncoding);
+				this.isResponse = ContentEncodingDecoder.decode(this.isResponse, contentEncoding, wireDigest);
 			} catch(IOException | UtilsException e) {
 				throw new ConnettoreException("Errore durante la decompressione del body della response (Content-Encoding: "+contentEncoding+"): "+e.getMessage(), e);
+			}
+			if(wireDigest!=null) {
+				// completato quando il contenuto decompresso viene letto fino alla fine
+				this.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CONTENT_ENCODING_WIRE_DIGEST_RESPONSE, wireDigest);
 			}
 			return true;
 		}
 		// encoding non gestito (br/zstd/compress/non standard): emette diagnostico ed eccezione
 		emitDecompressionUnsupportedDiagnostic(contentEncoding);
 		throw new ConnettoreException("Unsupported Content-Encoding: "+contentEncoding);
+	}
+
+	/**
+	 * Se il protocollo verifica un digest del contenuto (vedi {@link org.openspcoop2.protocol.sdk.config.IProtocolManager#getHttpDigestHeaderName()})
+	 * e l'header è presente nella risposta, restituisce l'oggetto su cui calcolare il digest dei byte ricevuti durante la decompressione:
+	 * dopo la decompressione i byte ricevuti non sono più disponibili e il digest non potrebbe più essere verificato.
+	 */
+	private ContentEncodingWireDigest newResponseWireDigest() {
+		if(this.getPddContext()==null || this.getProtocolFactory()==null) {
+			return null;
+		}
+		try {
+			String digestHeaderName = this.getProtocolFactory().createProtocolManager().getHttpDigestHeaderName();
+			if(digestHeaderName==null) {
+				return null;
+			}
+			return ContentEncodingWireDigest.newInstance(TransportUtils.getObjectAsString(this.propertiesTrasportoRisposta, digestHeaderName));
+		} catch(ProtocolException e) {
+			if(this.logger!=null) {
+				this.logger.error("Lettura dell'header digest del protocollo fallita: "+e.getMessage(),e);
+			}
+			return null;
+		}
 	}
 
 	/**

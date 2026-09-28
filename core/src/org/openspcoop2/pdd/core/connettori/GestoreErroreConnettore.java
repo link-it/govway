@@ -45,9 +45,12 @@ import org.openspcoop2.message.OpenSPCoop2RestXmlMessage;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.message.exception.MessageContentDecompressionException;
 import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.message.exception.MessageNotSupportedException;
 import org.openspcoop2.message.soap.SoapUtils;
+import org.openspcoop2.message.utils.CompressedContentUtilities;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.GestoreMessaggiException;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -62,6 +65,7 @@ import org.openspcoop2.utils.rest.problem.JsonDeserializer;
 import org.openspcoop2.utils.rest.problem.ProblemConstants;
 import org.openspcoop2.utils.rest.problem.ProblemRFC7807;
 import org.openspcoop2.utils.rest.problem.XmlDeserializer;
+import org.openspcoop2.utils.transport.http.ContentEncodingDecoder;
 import org.slf4j.Logger;
 
 
@@ -89,6 +93,8 @@ public class GestoreErroreConnettore {
 	private static Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 
 	private static final String ERRORE_APPLICATIVO_SOAP_FAULT = "errore applicativo SoapFault";
+	
+	private MessageContentDecompressionException problemNonInterpretato = null;
 	
 	private static final String INTERVALLO_RISPEDIZIONE_NON_IMPOSTATO = "Intervallo di rispedizione non impostato: ";
 	private static final String SERIALIZZAZIONE_SOAP_FAULT_NON_RIUSCITA = "Serializzazione SOAPFault non riuscita: ";
@@ -883,6 +889,9 @@ public class GestoreErroreConnettore {
 	}
 
 	private ProblemRFC7807 parseJsonProblemRFC7807 (OpenSPCoop2RestJsonMessage msg) throws MessageException, MessageNotSupportedException{
+		if(msg.getContentEncodingCompressed()!=null) {
+			return parseProblemRFC7807Compresso(msg, "JSON");
+		}
 		try {
 			JsonDeserializer deserializer = new JsonDeserializer();
 			return deserializer.fromString(msg.getContent(), false);
@@ -892,11 +901,32 @@ public class GestoreErroreConnettore {
 		}
 	}
 	private ProblemRFC7807 parseXmlProblemRFC7807 (OpenSPCoop2RestXmlMessage msg) throws MessageException, MessageNotSupportedException{
+		if(msg.getContentEncodingCompressed()!=null) {
+			return parseProblemRFC7807Compresso(msg, "XML");
+		}
 		XmlDeserializer deserializer = new XmlDeserializer();
 		try {
 			return deserializer.fromNode(msg.getContent(), false);
 		}catch(Exception e) {
 			GestoreErroreConnettore.log.error("Parsing problem details (RFC7807) XML["+msg.getContent()+"] fallita: "+e.getMessage(),e);
+			return null;
+		}
+	}
+	/**
+	 * Problem Details ricevuto compresso e non decompresso: il parsing avviene su una copia decompressa
+	 * (vedi {@link CompressedContentUtilities}); la risposta inoltrata non viene modificata.
+	 * 
+	 * @return il problem, null se non è possibile decomprimerlo o interpretarlo
+	 */
+	private ProblemRFC7807 parseProblemRFC7807Compresso(OpenSPCoop2Message msg, String formato) {
+		try {
+			return CompressedContentUtilities.parseProblemRFC7807(msg, OpenSPCoop2Properties.getInstance().getContentEncodingFaultDecompressMaxBytes());
+		}catch(MessageContentDecompressionException e) {
+			GestoreErroreConnettore.log.error("Parsing problem details (RFC7807) {} non effettuato: {}", formato, e.getMessage(), e);
+			this.problemNonInterpretato = e; // segnalato con un diagnostico dal chiamante
+			return null;
+		}catch(Exception e) {
+			GestoreErroreConnettore.log.error("Parsing problem details (RFC7807) {} (Content-Encoding: {}) fallita: {}", formato, msg.getContentEncodingCompressed(), e.getMessage(), e);
 			return null;
 		}
 	}
@@ -939,6 +969,33 @@ public class GestoreErroreConnettore {
 	 */
 	public ProblemRFC7807 getProblem() {
 		return this.problem;
+	}
+
+	/**
+	 * @return il motivo per cui un Problem Details ricevuto compresso non è stato interpretato (le regole di gestione della
+	 *         consegna basate sul Problem Details non sono state applicate), null se interpretato o non presente
+	 */
+	public MessageContentDecompressionException getProblemNonInterpretato() {
+		return this.problemNonInterpretato;
+	}
+
+	/**
+	 * Descrizione, per il diagnostico, del motivo per cui un Problem Details ricevuto compresso non è stato interpretato.
+	 */
+	public static String getMotivoProblemNonInterpretato(MessageContentDecompressionException e) {
+		if(e.getMotivo()==null) {
+			return e.getMessage();
+		}
+		switch (e.getMotivo()) {
+		case UNSUPPORTED_ENCODING:
+			return "encoding non supportato (encoding supportati: "+ContentEncodingDecoder.SUPPORTED_DECOMPRESS_LIST+")";
+		case THRESHOLD_EXCEEDED:
+			return "dimensione decompressa superiore alla soglia di "+(e.getMaxBytes()/1024)+" KB";
+		case DECOMPRESSION_FAILED:
+		default:
+			Throwable cause = e.getCause()!=null ? e.getCause() : e;
+			return "decompressione non riuscita: "+cause.getMessage();
+		}
 	}
 
 

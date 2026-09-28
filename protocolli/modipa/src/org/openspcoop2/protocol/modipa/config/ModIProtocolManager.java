@@ -38,6 +38,7 @@ import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.openspcoop2.utils.transport.TransportResponseContext;
 import org.openspcoop2.utils.transport.TransportUtils;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.slf4j.Logger;
 
 /**
@@ -206,6 +207,12 @@ public class ModIProtocolManager extends BasicManager {
 	@Override
 	public boolean isSuccessfulHttpRedirectStatusCode(ServiceBinding serviceBinding) throws ProtocolException{
 		return ServiceBinding.REST.equals(serviceBinding);
+	}
+	
+	@Override
+	public String getHttpDigestHeaderName() {
+		// header Digest del profilo di integrità REST (verificato in ModIValidazioneSintatticaRest)
+		return HttpConstants.DIGEST;
 	}
 	
 }

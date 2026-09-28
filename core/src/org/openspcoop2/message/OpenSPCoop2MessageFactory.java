@@ -38,6 +38,7 @@ import org.openspcoop2.message.config.FaultBuilderConfig;
 import org.openspcoop2.message.constants.Costanti;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.exception.MessageContentCompressedException;
 import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.message.exception.MessageNotSupportedException;
 import org.openspcoop2.message.exception.ParseExceptionUtils;
@@ -372,6 +373,23 @@ public abstract class OpenSPCoop2MessageFactory {
 			}
 			
 			
+			// Contenuto ricevuto compresso e non decompresso (con la decompressione abilitata l'header è già stato rimosso)
+			String contentEncodingCompressed = null;
+			if(transportRequestContext!=null) {
+				contentEncodingCompressed = MessageContentCompressedException.getCompressedContentEncoding(transportRequestContext.getHeader_compactMultipleValues(HttpConstants.CONTENT_ENCODING));
+			}
+			else if(transportResponseContext!=null) {
+				contentEncodingCompressed = MessageContentCompressedException.getCompressedContentEncoding(transportResponseContext.getHeader_compactMultipleValues(HttpConstants.CONTENT_ENCODING));
+			}
+			if(contentEncodingCompressed!=null && is!=null &&
+					(MessageType.SOAP_11.equals(messageType) || MessageType.SOAP_12.equals(messageType))) {
+				// un messaggio SOAP viene sempre interpretato: se compresso non è gestibile (uno stream vuoto invece sì)
+				is = Utilities.normalizeStream(is, false);
+				if(is!=null) {
+					throw new MessageContentCompressedException(contentEncodingCompressed, messageRole, true);
+				}
+			}
+			
 			if(notifierInputStreamParams!=null && is!=null){
 				nis = new NotifierInputStream(is,contentType,notifierInputStreamParams);
 			}
@@ -422,6 +440,9 @@ public abstract class OpenSPCoop2MessageFactory {
 			}
 			if(notifierInputStreamParams!=null && nis!=null){
 				op2Msg.setNotifierInputStream((NotifierInputStream)nis);
+			}
+			if(contentEncodingCompressed!=null && op2Msg instanceof AbstractBaseOpenSPCoop2MessageDynamicContent<?> dynamicContent) {
+				dynamicContent.setContentEncodingCompressed(contentEncodingCompressed);
 			}
 			
 			if(context instanceof TransportRequestContext){

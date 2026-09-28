@@ -100,24 +100,31 @@ public class ConfigLoader {
     
     public static void main(String [] args) throws Exception {
     	boolean load = true;
+    	String pathToLoad = modipaBundlePath;
+    	
     	if(args!=null && args.length>0) {
     		load = Boolean.valueOf(args[0]);
     	}
+    	
+    	if (args != null && args.length > 1) {
+    		pathToLoad = args[1];
+    	}
+    	
     	if(load) {
-    		prepareConfig();
+    		prepareConfig(pathToLoad);
     	}
     	else {
-    		deleteConfig();
+    		deleteConfig(pathToLoad);
     	}
     }
     
-    public static void prepareConfig() throws Exception {
+    public static void prepareConfig(String pathToLoad) throws Exception {
 
         org.slf4j.Logger logger = LoggerWrapperFactory.getLogger("com.intuit.karate");
 
         String configLoaderPath = prop.getProperty("config_loader_path");
         String scriptPath = configLoaderPath + "/" + (FileUtils.isOsWindows() ? "createOrUpdate.cmd" : "createOrUpdate.sh");
-        String modipaBundle = new File(modipaBundlePath).getAbsolutePath();
+        String modipaBundle = new File(pathToLoad).getAbsolutePath();
 
         logger.debug("Script path: " + scriptPath);
         logger.debug("Config loader path: " + configLoaderPath);
@@ -140,11 +147,11 @@ public class ConfigLoader {
 
     }
 
-    public static void deleteConfig() throws Exception {
+    public static void deleteConfig(String pathToLoad) throws Exception {
     	
         String configLoaderPath = prop.getProperty("config_loader_path");
         String scriptPath = configLoaderPath + "/" + (FileUtils.isOsWindows() ? "delete.cmd" : "delete.sh");
-        String modipaBundle = new File("src/configurazioni-govway/modipaTestBundle.zip").getAbsolutePath();
+        String modipaBundle = new File(pathToLoad).getAbsolutePath();
         
         org.slf4j.Logger logger = LoggerWrapperFactory.getLogger("com.intuit.karate");
         

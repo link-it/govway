@@ -452,9 +452,16 @@ public class GestoreTrasformazioniUtilities {
 			boolean trasformazioneSoap_envelope, boolean trasformazioneSoap_envelopeAsAttachment,
 			String trasformazioneSoap_tipoConversione, Template trasformazioneSoap_templateConversione) throws Throwable {
 		
+		List<String> contentEncodingRimosso = null;
 		try {
 		
 			OpenSPCoop2MessageFactory messageFactory = message.getFactory();
+			
+			// Il contenuto viene sostituito dalla trasformazione: il Content-Encoding con cui era stato ricevuto il contenuto originale
+			// (compresso e non decompresso) non descrive il nuovo contenuto, prodotto in chiaro. La mappa 'trasporto' contiene gli header
+			// del messaggio, per cui la rimozione vale sia per un nuovo messaggio sia per l'aggiornamento del contenuto esistente.
+			// Un Content-Encoding impostato dalla trasformazione degli header con un valore differente viene preservato.
+			contentEncodingRimosso = removeContentEncodingOriginale(message, trasporto);
 			
 			// TransportRequest
 			String forceResponseStatus = null;
@@ -959,6 +966,10 @@ public class GestoreTrasformazioniUtilities {
 				
 			}
 		}catch(Throwable t) {
+			if(contentEncodingRimosso!=null) {
+				// trasformazione non riuscita: il messaggio originale mantiene il Content-Encoding dei byte ricevuti
+				trasporto.put(HttpConstants.CONTENT_ENCODING, contentEncodingRimosso);
+			}
 			if(risultato.getContenutoAsString()!=null) {
 				log.error("Trasformazione non riuscita per il contenuto: ["+risultato.getContenutoAsString()+"]",t);
 			}
@@ -978,6 +989,27 @@ public class GestoreTrasformazioniUtilities {
 				message.getTransportRequestContext().setFunctionParameters(newPath);
 			}
 		}
+	}
+	
+	/**
+	 * @return i valori dell'header rimosso (per l'eventuale ripristino), null se non rimosso
+	 */
+	private static List<String> removeContentEncodingOriginale(OpenSPCoop2Message message, Map<String, List<String>> trasporto) {
+		if(trasporto==null) {
+			return null;
+		}
+		String contentEncoding = TransportUtils.getObjectAsString(trasporto, HttpConstants.CONTENT_ENCODING);
+		if(contentEncoding==null) {
+			return null;
+		}
+		String contentEncodingOriginale = message.getContentEncodingCompressed();
+		boolean ereditato = (contentEncodingOriginale!=null && contentEncodingOriginale.equals(contentEncoding.trim())) ||
+				// 'identity' non marca il messaggio come compresso ma descrive comunque il contenuto originale
+				(contentEncodingOriginale==null && HttpConstants.CONTENT_ENCODING_VALUE_IDENTITY.equalsIgnoreCase(contentEncoding.trim()));
+		if(ereditato) {
+			return TransportUtils.removeRawObject(trasporto, HttpConstants.CONTENT_ENCODING);
+		}
+		return null;
 	}
 	
 	public static void addTransportInfo(Map<String, List<String>> forceAddTrasporto, Map<String, List<String>> forceAddUrl, String forceResponseStatus, OpenSPCoop2Message msg) {

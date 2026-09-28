@@ -559,6 +559,8 @@ public class ContentEncodingEngine extends ConfigLoader {
 		String receivedCE    = response.getHeaderFirstValue(ContentEncodingMockServer.HEADER_RECEIVED_CONTENT_ENCODING);
 		assertNotNull(label + " manca header " + ContentEncodingMockServer.HEADER_RECEIVED_BODY_MAGIC, receivedMagic);
 
+		assertEquals(label + " body ricevuto dal backend alterato (sha256)", ContentEncodingMockServer.sha256Hex(expectedBody),
+				response.getHeaderFirstValue(ContentEncodingMockServer.HEADER_RECEIVED_BODY_SHA256));
 		if (decompressed) {
 			/* Il backend ha ricevuto il body decompresso. I primi byte devono essere ASCII JSON. */
 			assertFalse(label + " atteso body decompresso al backend, ma e' gzip (magic 1f 8b): " + receivedMagic,

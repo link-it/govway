@@ -37,6 +37,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.zip.DeflaterOutputStream;
+import java.util.zip.GZIPOutputStream;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletInputStream;
@@ -137,6 +139,21 @@ public class ServletTestService extends HttpServlet {
 			thresholdRequestDump, repositoryRequestDump,
 			null, null, false,
 			addTransferEncodingHeader);
+	}
+	
+	private static byte[] encodeProblemDetail(byte[] problem, String contentEncoding) throws IOException {
+		ByteArrayOutputStream bout = new ByteArrayOutputStream();
+		if(HttpConstants.CONTENT_ENCODING_VALUE_DEFLATE.equalsIgnoreCase(contentEncoding)) {
+			try(DeflaterOutputStream out = new DeflaterOutputStream(bout)){
+				out.write(problem);
+			}
+		}
+		else {
+			try(GZIPOutputStream out = new GZIPOutputStream(bout)){
+				out.write(problem);
+			}
+		}
+		return bout.toByteArray();
 	}
 	
 	private static String getParameterCheckWhiteList(HttpServletRequest request, List<String> whitePropertiesList, String parameter) {
@@ -775,6 +792,7 @@ public class ServletTestService extends HttpServlet {
 			byte[] problemDetailSerialization = null;
 			String problemDetailContentType = null;
 			int problemDetailStatus = -1;
+			String problemDetailContentEncoding = null;
 			if(problem!=null && problem.equalsIgnoreCase("true")){
 				ProblemRFC7807 problemRFC7807 = new ProblemRFC7807();
 				
@@ -821,6 +839,13 @@ public class ServletTestService extends HttpServlet {
 					JsonSerializer jsonSerializer = new JsonSerializer();
 					problemDetailSerialization = jsonSerializer.toByteArray(problemRFC7807);
 					problemDetailContentType = HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807;
+				}
+				
+				// Compressione del problem: gzip, x-gzip e deflate (zlib) applicano la codifica indicata;
+				// qualsiasi altro valore (es. br) viene dichiarato nell'header su byte gzip opachi.
+				problemDetailContentEncoding = getParameterCheckWhiteList(req, this.whitePropertiesList, "problemContentEncoding");
+				if(problemDetailContentEncoding!=null && !"".equals(problemDetailContentEncoding)) {
+					problemDetailSerialization = encodeProblemDetail(problemDetailSerialization, problemDetailContentEncoding);
 				}
 			}
 			
@@ -1419,8 +1444,21 @@ public class ServletTestService extends HttpServlet {
 				
 				res.setStatus(returnCode);
 				
+				// Compressione del SOAP Fault (stessa semantica di 'problemContentEncoding'); il nome inizia per 'fault'
+				// per rientrare nella white list dei parametri inoltrati sulle API SOAP della testsuite.
+				String faultContentEncoding = getParameterCheckWhiteList(req, this.whitePropertiesList, "faultContentEncoding");
+				
 	            ServletOutputStream sout = res.getOutputStream();
-	            msg.writeTo(sout,true);
+	            if(faultContentEncoding!=null && !"".equals(faultContentEncoding)) {
+	            	ByteArrayOutputStream boutFault = new ByteArrayOutputStream();
+	            	msg.writeTo(boutFault,true);
+	            	res.setHeader(HttpConstants.CONTENT_ENCODING, faultContentEncoding);
+	            	sout.write(encodeProblemDetail(boutFault.toByteArray(), faultContentEncoding));
+	            	sout.flush();
+	            }
+	            else {
+	            	msg.writeTo(sout,true);
+	            }
 				
 			}
 			else if(problemDetailSerialization!=null) {
@@ -1439,6 +1477,10 @@ public class ServletTestService extends HttpServlet {
 	            }
 				 
 				 res.setContentType(problemDetailContentType);
+				 
+				 if(problemDetailContentEncoding!=null && !"".equals(problemDetailContentEncoding)) {
+					 res.setHeader(HttpConstants.CONTENT_ENCODING, problemDetailContentEncoding);
+				 }
 				 
 				 res.setStatus(problemDetailStatus);
 				 

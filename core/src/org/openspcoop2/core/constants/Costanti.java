@@ -122,6 +122,11 @@ public class Costanti {
 	
 	public static final MapKey<String> LIMITED_STREAM = Map.newMapKey("LIMITED_STREAM");
 	
+	/** Digest dei byte ricevuti (compressi) calcolato durante la decompressione della richiesta (org.openspcoop2.utils.transport.http.ContentEncodingWireDigest) */
+	public static final MapKey<String> CONTENT_ENCODING_WIRE_DIGEST_REQUEST = Map.newMapKey("CONTENT_ENCODING_WIRE_DIGEST_REQUEST");
+	/** Digest dei byte ricevuti (compressi) calcolato durante la decompressione della risposta (org.openspcoop2.utils.transport.http.ContentEncodingWireDigest) */
+	public static final MapKey<String> CONTENT_ENCODING_WIRE_DIGEST_RESPONSE = Map.newMapKey("CONTENT_ENCODING_WIRE_DIGEST_RESPONSE");
+	
 	public static final MapKey<String> ERRORE_VALIDAZIONE_PROTOCOLLO = Map.newMapKey("ERRORE_PROTOCOLLO");
 	
 	public static final String ERRORE_TRUE = "true";

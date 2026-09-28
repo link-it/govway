@@ -40,6 +40,7 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.rest.AccordoServizioWrapper;
+import org.openspcoop2.message.exception.MessageContentCompressedException;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2RestJsonMessage;
 import org.openspcoop2.message.OpenSPCoop2RestMessage;
@@ -312,12 +313,20 @@ public class ValidatoreMessaggiApplicativiRest {
 			
 			String messaggioErrore = e.getMessage();
 			boolean overwriteMessageError = false;
-			try {
-				messaggioErrore = ErroriProperties.getInstance(this.logger).getGenericDetails_noWrap(isRichiesta ? IntegrationFunctionError.INVALID_REQUEST_CONTENT : IntegrationFunctionError.INVALID_RESPONSE_CONTENT);
-				messaggioErrore = messaggioErrore+": "+ValidatoreMessaggiApplicativi.processValidationErrorMessage(e.getMessage(), this.op2Properties);
+			MessageContentCompressedException compressed = getContentCompressedException(e);
+			if(compressed!=null) {
+				// contenuto non verificabile perché compresso: il messaggio lo spiega già, senza il prefisso di contenuto non conforme
+				messaggioErrore = compressed.getMessage();
 				overwriteMessageError = true;
-			}catch(Exception excp) {
-				// ignore
+			}
+			else {
+				try {
+					messaggioErrore = ErroriProperties.getInstance(this.logger).getGenericDetails_noWrap(isRichiesta ? IntegrationFunctionError.INVALID_REQUEST_CONTENT : IntegrationFunctionError.INVALID_RESPONSE_CONTENT);
+					messaggioErrore = messaggioErrore+": "+ValidatoreMessaggiApplicativi.processValidationErrorMessage(e.getMessage(), this.op2Properties);
+					overwriteMessageError = true;
+				}catch(Exception excp) {
+					// ignore
+				}
 			}
 
 			ValidatoreMessaggiApplicativiException ex 
@@ -469,6 +478,7 @@ public class ValidatoreMessaggiApplicativiRest {
 				case MIME_MULTIPART:
 					OpenSPCoop2RestMessage<?> restMsg = this.message.castAsRest();
 					if(restMsg.hasContent()) {
+						String contentEncodingCompressed = checkCompressedContent(restMsg);
 						boolean lazy = restMsg.setInputStreamLazyBuffer(idTransazione); // bufferizzazione lazy
 						InputStream isLazyContent = lazy ? restMsg.getInputStream() : null;
 						if(isLazyContent!=null) {
@@ -477,7 +487,10 @@ public class ValidatoreMessaggiApplicativiRest {
 							((InputStreamHttpRequestEntity)httpRequest).setContent(isLazyContent);
 						}
 						else {
-							restMsg.initContent(this.bufferMessage_readOnly, idTransazione); // bufferizzo
+							if(contentEncodingCompressed==null) {
+								restMsg.initContent(this.bufferMessage_readOnly, idTransazione); // bufferizzo
+							}
+							// else: binario compresso, i byte così come ricevuti sono già nel buffer (writeTo) o vengono letti tramite writeTo sotto
 							isContent = restMsg.getInputStreamFromContentBuffer();
 							if(isContent!=null) {
 								httpRequest = new InputStreamHttpRequestEntity();
@@ -557,6 +570,7 @@ public class ValidatoreMessaggiApplicativiRest {
 				case MIME_MULTIPART:
 					OpenSPCoop2RestMessage<?> restMsg = this.message.castAsRest();
 					if(restMsg.hasContent()) {
+						String contentEncodingCompressed = checkCompressedContent(restMsg);
 						boolean lazy = restMsg.setInputStreamLazyBuffer(idTransazione); // bufferizzazione lazy
 						InputStream isLazyContent = lazy ? restMsg.getInputStream() : null;
 						if(isLazyContent!=null) {
@@ -565,7 +579,10 @@ public class ValidatoreMessaggiApplicativiRest {
 							((InputStreamHttpResponseEntity)httpResponse).setContent(isLazyContent);
 						}
 						else {
-							restMsg.initContent(this.bufferMessage_readOnly, idTransazione); // bufferizzo
+							if(contentEncodingCompressed==null) {
+								restMsg.initContent(this.bufferMessage_readOnly, idTransazione); // bufferizzo
+							}
+							// else: binario compresso, i byte così come ricevuti sono già nel buffer (writeTo) o vengono letti tramite writeTo sotto
 							isContent = restMsg.getInputStreamFromContentBuffer();
 							if(isContent!=null) {
 								httpResponse = new InputStreamHttpResponseEntity();
@@ -603,12 +620,20 @@ public class ValidatoreMessaggiApplicativiRest {
 			
 			String messaggioErrore = e.getMessage();
 			boolean overwriteMessageError = false;
-			try {
-				messaggioErrore = ErroriProperties.getInstance(this.logger).getGenericDetails_noWrap(isRichiesta ? IntegrationFunctionError.INVALID_REQUEST_CONTENT : IntegrationFunctionError.INVALID_RESPONSE_CONTENT);
-				messaggioErrore = messaggioErrore+": "+ValidatoreMessaggiApplicativi.processValidationErrorMessage(e.getMessage(), this.op2Properties);
+			MessageContentCompressedException compressed = getContentCompressedException(e);
+			if(compressed!=null) {
+				// contenuto non verificabile perché compresso: il messaggio lo spiega già, senza il prefisso di contenuto non conforme
+				messaggioErrore = compressed.getMessage();
 				overwriteMessageError = true;
-			}catch(Exception excp) {
-				// ignore
+			}
+			else {
+				try {
+					messaggioErrore = ErroriProperties.getInstance(this.logger).getGenericDetails_noWrap(isRichiesta ? IntegrationFunctionError.INVALID_REQUEST_CONTENT : IntegrationFunctionError.INVALID_RESPONSE_CONTENT);
+					messaggioErrore = messaggioErrore+": "+ValidatoreMessaggiApplicativi.processValidationErrorMessage(e.getMessage(), this.op2Properties);
+					overwriteMessageError = true;
+				}catch(Exception excp) {
+					// ignore
+				}
 			}
 
 			ValidatoreMessaggiApplicativiException ex 
@@ -659,6 +684,31 @@ public class ValidatoreMessaggiApplicativiRest {
 	 * {@link OpenAPILibrary#supportsOpenApi31()}) provocano una {@link ValidatoreMessaggiApplicativiException}
 	 * fail-fast al caricamento della porta.
 	 */
+	/**
+	 * Contenuto BINARY/MIME_MULTIPART ricevuto compresso e non decompresso: il multipart va interpretato per essere validato
+	 * (errore esplicito), il binario invece viene validato sui byte così come ricevuti.
+	 * 
+	 * @return il Content-Encoding se il contenuto binario è compresso, null se non compresso
+	 */
+	private static MessageContentCompressedException getContentCompressedException(Throwable e) {
+		Throwable t = e;
+		while(t!=null) {
+			if(t instanceof MessageContentCompressedException compressed) {
+				return compressed;
+			}
+			t = t.getCause();
+		}
+		return null;
+	}
+	
+	private static String checkCompressedContent(OpenSPCoop2RestMessage<?> restMsg) throws MessageContentCompressedException {
+		String contentEncodingCompressed = restMsg.getContentEncodingCompressed();
+		if(contentEncodingCompressed!=null && MessageType.MIME_MULTIPART.equals(restMsg.getMessageType())) {
+			throw new MessageContentCompressedException(contentEncodingCompressed, restMsg.getMessageRole(), false);
+		}
+		return contentEncodingCompressed;
+	}
+	
 	private OpenAPILibrary resolveLibraryForCurrentApi(Api api, List<Proprieta> proprieta) throws ValidatoreMessaggiApplicativiException {
 
 		FormatoSpecifica formato = this.accordoServizioWrapper.getAccordoServizio().getFormatoSpecifica();

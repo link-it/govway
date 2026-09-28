@@ -1,3 +1,16 @@
+2026-09-27  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, ProtocolloModIPA]
+	Risolto Bug #1829
+	Una risposta Problem Details (RFC 7807) ricevuta compressa dal backend (es. 'Content-Encoding: gzip') veniva
+	interpretata senza essere decompressa: le regole della gestione della consegna basate sul problem non venivano
+	applicate e la risposta inoltrata al client risultava corrotta.
+	Senza la decompressione automatica un contenuto compresso viene adesso inoltrato sempre così come ricevuto;
+	Problem Details e fault vengono interpretati su una copia decompressa (dimensione massima configurabile,
+	default 1024 KB), mentre le funzionalità che richiedono l'accesso al contenuto segnalano che è compresso.
+	Nel profilo ModI con integrità REST il Digest viene verificato sui byte ricevuti anche quando è abilitata la decompressione.
+	È stata inoltre corretta la memorizzazione in cache delle risposte con il connettore HTTP asincrono (NIO).
+
 2026-09-24  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole]

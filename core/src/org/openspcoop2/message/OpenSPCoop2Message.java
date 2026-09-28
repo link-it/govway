@@ -161,6 +161,15 @@ public interface OpenSPCoop2Message {
 	
 	public boolean isContentBuilded();
 	
+	/**
+	 * Content-Encoding (diverso da 'identity') con cui il contenuto è stato ricevuto senza essere decompresso.
+	 * Un contenuto compresso è inoltrabile così come ricevuto (writeTo) ma non interpretabile:
+	 * l'accesso al contenuto solleva {@link org.openspcoop2.message.exception.MessageContentCompressedException}.
+	 * 
+	 * @return il Content-Encoding se il contenuto è compresso, null altrimenti (anche dopo la sostituzione del contenuto)
+	 */
+	public String getContentEncodingCompressed();
+	
 	public void writeTo(OutputStream os, boolean consume) throws MessageException;
 	
 	public void saveChanges() throws MessageException;

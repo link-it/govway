@@ -2966,4 +2966,9 @@ public class HttpUtilities {
 		boolean rfc3230 = true; // aggiunge prefisso algoritmo=
 		return org.openspcoop2.utils.digest.DigestUtils.getDigestValues(content, algorithm, rfc3230, digestEncoding);
 	}
+	/** Valori dell'header Digest (RFC 3230) per un digest già calcolato (es. in stream, vedi {@link ContentEncodingWireDigest}). */
+	public static Map<DigestEncoding, String> getDigestHeaderValuesFromDigest(byte[] digest, String algorithm, DigestEncoding ... digestEncoding) throws UtilsException{
+		boolean rfc3230 = true; // aggiunge prefisso algoritmo=
+		return org.openspcoop2.utils.digest.DigestUtils.encodeDigestValues(digest, algorithm, rfc3230, digestEncoding);
+	}
 }

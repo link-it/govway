@@ -19,6 +19,9 @@ NOTA x Tomcat:
 Prerequisiti:
 
 + Riportare le indicazioni fornite in protocolli/trasparente/testsuite/karate/RUN.README
+  Tra queste, i test suap (scenario ERROR_500_007) richiedono che sull'host '127.0.2.2' nella porta '7777', se viene instaurata una connessione,
+  questa venga lasciata sospesa. Su sistema operativo 'Fedora' si può utilizzare il comando (la regola non è persistente e va riattivata dopo un riavvio):
+	'iptables -I INPUT 1 -p tcp -d 127.0.2.2 --destination-port 7777 -j DROP'
 
 + Impostare multitenant attivo con:
   - Fruizioni -> Soggetto Erogatore=Escludi Soggetto Fruitore
@@ -433,4 +436,15 @@ Prerequisiti:
 	ant run_test -Dload=false -Ddelete=false -Dtest=NonBloccanteRestTest -Dkarate.options='test/rest/non-bloccante/pull/pull.feature --tags @test-ok'
 
   Per evitare la creazione e la cancellazione della configurazione di govway passare i parametri <-Dload=false> e <-Ddelete=false>
+
+  Parametri:
+	-Dload (possibili valori: extraTestBundle.zip, modipaTestBundle.zip, true, false; default: true) Carica la configurazione di govway all'inizio del test
+	-Ddelete (possibili valori: extraTestBundle.zip, modipaTestBundle.zip, true, false; default: true) Elimina la configurazione di govway alla fine del test
+  Con il valore 'true' vengono considerati tutti gli archivi presenti in src/configurazioni-govway: modipaTestBundle.zip viene caricato per primo ed eliminato per ultimo,
+  poiché gli altri archivi (es. extraTestBundle.zip) ne utilizzano soggetti e applicativi. È possibile indicare più archivi separandoli con ':'.
+
+  Per ricaricare solamente la configurazione aggiuntiva (es. dopo averla modificata) senza eliminarla al termine:
+	ant run_test -Dload=extraTestBundle.zip -Ddelete=false -Dtest=<ClasseDiTest>
+  NOTA: extraTestBundle.zip utilizza i soggetti (DemoSoggettoFruitore, DemoSoggettoErogatore, ENTE) definiti in modipaTestBundle.zip;
+  il caricamento del solo extraTestBundle.zip richiede quindi che modipaTestBundle.zip sia già stato caricato.
 

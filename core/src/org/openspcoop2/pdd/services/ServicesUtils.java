@@ -22,6 +22,8 @@
 package org.openspcoop2.pdd.services;
 
 import java.io.ByteArrayOutputStream;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -71,6 +73,7 @@ import org.openspcoop2.message.exception.MessageNotSupportedException;
 import org.openspcoop2.message.exception.ParseExceptionUtils;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
+import org.openspcoop2.message.utils.CompressedContentUtilities;
 import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.monitor.sdk.transaction.FaseTracciamento;
 import org.openspcoop2.pdd.config.CachedConfigIntegrationReader;
@@ -328,6 +331,29 @@ public class ServicesUtils {
 			throw new UtilsException(e.getMessage(),e);
 		}
 		
+	}
+	
+	/**
+	 * Contenuto di una risposta di errore REST (Problem Details o fault) da riportare nel diagnostico di consegna della risposta.
+	 * Un contenuto ricevuto compresso e non decompresso non viene interpretato: si riporta la sua copia decompressa
+	 * (il messaggio inoltrato non viene modificato) o, se non è possibile decomprimerlo, solamente la sua presenza.
+	 */
+	public static String getContentAsStringForDiagnostic(OpenSPCoop2Message message) throws MessageException, MessageNotSupportedException {
+		String contentEncoding = message.getContentEncodingCompressed();
+		if(contentEncoding==null) {
+			return message.castAsRest().getContentAsString();
+		}
+		byte[] content = CompressedContentUtilities.getContentForFault(message, OpenSPCoop2Properties.getInstance().getContentEncodingFaultDecompressMaxBytes());
+		if(content==null) {
+			return "contenuto compresso, Content-Encoding: "+contentEncoding;
+		}
+		String charset = null;
+		try {
+			charset = ContentTypeUtilities.readCharsetFromContentType(message.getContentType());
+		}catch(Exception e) {
+			// uso il default
+		}
+		return new String(content, charset!=null ? Charset.forName(charset) : StandardCharsets.UTF_8);
 	}
 	
 	public static String checkSOAPEnvelopeNamespace(OpenSPCoop2SoapMessage message, MessageType messageType) throws MessageException{

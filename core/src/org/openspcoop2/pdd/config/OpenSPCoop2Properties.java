@@ -930,6 +930,7 @@ public class OpenSPCoop2Properties {
 			this.isContentEncodingDecompressRicezioneBuste();
 			this.isContentEncodingDecompressInoltroBuste();
 			this.isContentEncodingDecompressConsegnaContenutiApplicativi();
+			this.getContentEncodingFaultDecompressMaxBytes();
 			this.getMultipartRelatedMissingTypeBehaviorRicezioneContenutiApplicativi();
 			this.getMultipartRelatedMissingTypeBehaviorRicezioneBuste();
 			this.getMultipartRelatedMissingTypeBehaviorInoltroBuste();
@@ -10279,6 +10280,35 @@ public class OpenSPCoop2Properties {
 					"org.openspcoop2.pdd.services.consegnaContenutiApplicativi.contentEncoding.decompress");
 		}
 		return this.contentEncodingDecompressConsegnaContenutiApplicativi;
+	}
+
+	private static final long DEFAULT_CONTENT_ENCODING_FAULT_DECOMPRESS_MAX_SIZE_KB = 1024;
+	private Long contentEncodingFaultDecompressMaxBytes = null;
+	/**
+	 * @return dimensione massima (in byte) della copia decompressa di Problem Details e fault ricevuti compressi
+	 */
+	public long getContentEncodingFaultDecompressMaxBytes(){
+		if(this.contentEncodingFaultDecompressMaxBytes==null){
+			String pName = "org.openspcoop2.pdd.contentEncoding.fault.decompress.maxSizeKb";
+			long kb = DEFAULT_CONTENT_ENCODING_FAULT_DECOMPRESS_MAX_SIZE_KB;
+			try{
+				String value = this.reader.getValueConvertEnvProperties(pName);
+				if(value!=null && !"".equals(value.trim())){
+					kb = Long.parseLong(value.trim());
+					if(kb<=0) {
+						throw new CoreException("value must be greater than 0 (KB)");
+					}
+				}
+				else {
+					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+DEFAULT_CONTENT_ENCODING_FAULT_DECOMPRESS_MAX_SIZE_KB);
+				}
+			}catch(java.lang.Exception e){
+				this.logError("Proprieta' di openspcoop '"+pName+"' non leggibile, viene utilizzato il default="+DEFAULT_CONTENT_ENCODING_FAULT_DECOMPRESS_MAX_SIZE_KB+", errore:"+e.getMessage(),e);
+				kb = DEFAULT_CONTENT_ENCODING_FAULT_DECOMPRESS_MAX_SIZE_KB;
+			}
+			this.contentEncodingFaultDecompressMaxBytes = kb * 1024;
+		}
+		return this.contentEncodingFaultDecompressMaxBytes;
 	}
 
 	private boolean readContentEncodingDecompress(String pName){

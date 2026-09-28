@@ -141,7 +141,7 @@ public class EventiUtils {
 		
 		log.debug("======== VERIFICA findEventCongestioneViolata ========");
 		
-		String descrAttesa = "E' stata rilevata una congestione del sistema in seguito al superamento della soglia del";
+		String descrAttesa = "È stata rilevata una congestione del sistema in seguito al superamento della soglia del";
 		
 		return events.stream()
 				.anyMatch( ev -> {

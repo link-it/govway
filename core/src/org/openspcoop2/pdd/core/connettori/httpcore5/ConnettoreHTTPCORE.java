@@ -832,13 +832,15 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 			
 			/* ------------  Gestione Risposta ------------- */
 
+			// Decompressione opt-in PRIMA del dump cosi' il payload registrato e' in chiaro;
+			// gli header originali (CE+CL) restano in propertiesTrasportoRisposta fino a dopo il dump.
+			// Viene applicata anche prima dei limiti sullo stream (dimensione massima, timeout): la policy di dimensione
+			// massima dei messaggi conta così i byte decompressi (protezione da zip bomb), come per la richiesta.
+			boolean contentEncodingDecompressed = this.decodeResponseBodyContentEncoding();
+
 			this.normalizeInputStreamResponse(readConnectionTimeout, readConnectionTimeoutConfigurazioneGlobale);
 
 			this.initCheckContentTypeConfiguration();
-
-			// Decompressione opt-in PRIMA del dump cosi' il payload registrato e' in chiaro;
-			// gli header originali (CE+CL) restano in propertiesTrasportoRisposta fino a dopo il dump
-			boolean contentEncodingDecompressed = this.decodeResponseBodyContentEncoding();
 
 			if(this.isDumpBinarioRisposta() &&
 				!this.dumpResponse(this.propertiesTrasportoRisposta)) {

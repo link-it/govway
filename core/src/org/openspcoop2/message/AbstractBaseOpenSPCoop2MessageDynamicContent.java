@@ -31,6 +31,7 @@ import org.apache.commons.io.input.BoundedInputStream;
 import org.apache.commons.io.output.CountingOutputStream;
 import org.openspcoop2.message.constants.Costanti;
 import org.openspcoop2.message.constants.MessageRole;
+import org.openspcoop2.message.exception.MessageContentCompressedException;
 import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.message.exception.MessageNotSupportedException;
 import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
@@ -65,6 +66,14 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 	protected OpenSPCoop2MessageSoapStreamReader soapStreamReader;
 
 	protected DumpByteArrayOutputStream contentBuffer;
+
+	/**
+	 * Content-Encoding (diverso da 'identity') con cui il contenuto è stato ricevuto e non decompresso:
+	 * i byte sono inoltrabili così come ricevuti ma non interpretabili. Valorizzato dalla factory alla
+	 * creazione del messaggio; con la decompressione abilitata l'header è già stato rimosso e il valore
+	 * resta null. Viene azzerato quando il contenuto viene sostituito.
+	 */
+	private String contentEncodingCompressed;
 
 	/**
 	 * Buffer prodotto dalla bufferizzazione lazy ({@link #setInputStreamLazyBuffer(String)}) e utilizzato da
@@ -202,6 +211,24 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 		}
 	}
 
+	/* Contenuto compresso */
+
+	public void setContentEncodingCompressed(String contentEncoding) {
+		this.contentEncodingCompressed = contentEncoding;
+	}
+	@Override
+	public String getContentEncodingCompressed() {
+		return isContentCompressed() ? this.contentEncodingCompressed : null;
+	}
+	public boolean isContentCompressed() {
+		return this.contentEncodingCompressed!=null && this.content==null;
+	}
+	private void checkContentNotCompressed() throws MessageContentCompressedException {
+		if(this.hasContent && isContentCompressed()) {
+			throw new MessageContentCompressedException(this.contentEncodingCompressed, this.messageRole, false);
+		}
+	}
+
 	/* Input Stream con costruzione del buffer incrementale */
 	
 	public boolean setInputStreamLazyBuffer(String idTransazione) throws MessageException{
@@ -229,6 +256,8 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 	private synchronized void initializeContent(boolean readOnly, String idTransazione) throws MessageException {
 		if (this.hasContent) {
 			if (this.content == null) {
+
+				checkContentNotCompressed();
 
 				if (readOnly && this.supportReadOnly) {
 					if(this._countingInputStream instanceof OpenSPCoop2InputStreamDynamicContent dynamicContent) {
@@ -355,6 +384,7 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 
 	public T getContent(boolean readOnly, String idTransazione) throws MessageException, MessageNotSupportedException {
 		if (this.hasContent) {
+			checkContentNotCompressed(); // prima di rendere il contenuto 'updatable'
 			if (!readOnly) {
 				boolean aggiornaContenuto = false;
 				if (this.content != null && !this.contentUpdatable) {
@@ -431,6 +461,7 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 	public void updateContent(T content) throws MessageException, MessageNotSupportedException {
 		this.content = content;
 		this.contentUpdatable = true;
+		this.contentEncodingCompressed = null;
 		if (this.contentBuffer != null) {
 			this.contentBuffer.clearResources();
 			this.contentBuffer = null;
@@ -481,14 +512,31 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 			throws MessageException {
 		try {
 			if (this.hasContent) {
+				boolean compressed = isContentCompressed();
 				if (!consume && this.content == null) {
-					if (!readOnly) {
-						this.contentUpdatable = true; // riverso soap header eventuale nel content che verrà costruito
+					if (compressed) {
+						/*
+						 * Contenuto compresso: la serializzazione non richiede di interpretarlo, i byte vengono bufferizzati così come ricevuti.
+						 * Non si può usare initializeContent perché:
+						 * - entrambi i suoi rami costruiscono il contenuto (buildContent), cioè lo interpretano: sui byte compressi il
+						 *   parsing fallisce o, peggio, produce un contenuto errato;
+						 * - per il JSON (supportReadOnly=false) il ramo con il buffer non esiste: buildContent() legge lo stream come
+						 *   String, conversione non reversibile sui byte compressi (causa della corruzione del body inoltrato);
+						 * - solleva MessageContentCompressedException, poiché è il punto unico in cui si intercetta l'interpretazione.
+						 * bufferCompressedContent replica solo la copia dei byte in contentBuffer del ramo readOnly, senza buildContent:
+						 * il contenuto resta non costruito e i writeTo successivi riscrivono il buffer identico a quanto ricevuto.
+						 */
+						bufferCompressedContent(idTransazione);
 					}
-					this.initializeContent(readOnly, idTransazione); // per poi entrare nel ramo sotto serializeContent
+					else {
+						if (!readOnly) {
+							this.contentUpdatable = true; // riverso soap header eventuale nel content che verrà costruito
+						}
+						this.initializeContent(readOnly, idTransazione); // per poi entrare nel ramo sotto serializeContent
+					}
 				}
 				CountingOutputStream cos = new CountingOutputStream(os);
-				if (this.contentBuffer != null && !this.contentUpdatable) {
+				if (this.contentBuffer != null && (!this.contentUpdatable || compressed)) {
 					if (this.soapStreamReader != null && this.soapStreamReader.isSoapHeaderModified()
 							&& this.contentType != null) {
 						if (debug != null) {
@@ -551,6 +599,36 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 				releaseLazyBuffer();
 			}
 		}
+	}
+
+	private synchronized void bufferCompressedContent(String idTransazione) throws MessageException {
+		if (this.contentBuffer != null) {
+			return;
+		}
+		DumpByteArrayOutputStream buffer = new DumpByteArrayOutputStream(
+				AbstractBaseOpenSPCoop2MessageDynamicContent.soglia,
+				AbstractBaseOpenSPCoop2MessageDynamicContent.repositoryFile, idTransazione,
+				this.getMessageRole().name());
+		MessageBufferRegistry.register(idTransazione, buffer);
+		InputStream is = this._getInputStream(); // include l'eventuale buffer lazy già letto
+		try {
+			CopyStream.copy(is, buffer);
+		} catch (Exception e) {
+			try {
+				buffer.clearResources();
+			} catch (Exception eClear) {
+				// ignore
+			}
+			throw new MessageException(e.getMessage(), e);
+		} finally {
+			try {
+				is.close();
+			} catch (Exception eClose) {
+				// ignore
+			}
+		}
+		this.contentBuffer = buffer;
+		releaseLazyBuffer(); // i byte sono ora nel contentBuffer
 	}
 
 	@Override

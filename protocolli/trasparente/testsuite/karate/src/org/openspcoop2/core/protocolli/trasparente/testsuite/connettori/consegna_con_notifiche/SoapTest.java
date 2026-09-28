@@ -70,6 +70,7 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.RequestAndExpectations;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.RequestAndExpectations.TipoFault;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.RequestAndExpectationsFault;
+import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.utils.DBVerifier;
 import org.openspcoop2.pdd.services.cxf.IntegrationManagerException_Exception;
 import org.openspcoop2.pdd.services.cxf.MessageBox;
 import org.openspcoop2.utils.UtilsException;
@@ -206,21 +207,65 @@ public class SoapTest extends ConfigLoader {
 	
 	@Test
 	public void  regoleSoapFault() {
-		final String erogazione = "TestConsegnaConNotificheRegoleSoapFault";
+		_regoleSoapFault(EROGAZIONE_REGOLE_SOAP_FAULT, null);
+	}
+	
+	/*
+	 * Varianti con SOAP Fault compresso dal backend (parametro 'faultContentEncoding' della servlet di echo) e
+	 * decompressione della risposta abilitata sulla copia dell'erogazione: le regole basate sul SOAP Fault devono continuare
+	 * ad essere applicate come per il fault in chiaro.
+	 */
+	@Test
+	public void regoleSoapFaultGzip() throws Exception {
+		verificaFaultCompresso(_regoleSoapFault(EROGAZIONE_REGOLE_SOAP_FAULT_CONTENT_ENCODING, "gzip"), "gzip");
+	}
+	@Test
+	public void regoleSoapFaultDeflate() throws Exception {
+		verificaFaultCompresso(_regoleSoapFault(EROGAZIONE_REGOLE_SOAP_FAULT_CONTENT_ENCODING, "deflate"), "deflate");
+	}
+	
+	private static String suffissoFaultContentEncoding(String faultContentEncoding) {
+		return faultContentEncoding!=null ? "&faultContentEncoding="+faultContentEncoding : "";
+	}
+	
+	/**
+	 * Verifica che il fault sia stato davvero compresso dalla servlet di echo (location delle consegne) e
+	 * decompresso da GovWay.
+	 */
+	private static void verificaFaultCompresso(Map<RequestAndExpectations, List<HttpResponse>> responsesByKind, String faultContentEncoding) throws Exception {
+		for (List<HttpResponse> responses : responsesByKind.values()) {
+			for (HttpResponse response : responses) {
+				String idTransazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
+				DBVerifier.existsDiagnostico(idTransazione, "faultContentEncoding="+faultContentEncoding);
+				DBVerifier.existsDiagnostico(idTransazione, "applicata decompressione automatica");
+				/* il diagnostico di ricezione del fault e quello di consegna della risposta devono riportare il fault in chiaro
+				 * (faultActor della servlet di echo: ActorRispedita, ActorCompletata123, ...) */
+				DBVerifier.existsDiagnosticoFrammenti(idTransazione, "Ricevuto un SOAPFault in seguito all'invio", ">Actor");
+				DBVerifier.existsDiagnosticoFrammenti(idTransazione, "Risposta", " (", ">Actor", ") consegnata al ");
+			}
+		}
+	}
+	
+	/* Erogazione originale (trasparenteTestBundle) e sua copia (extraTestBundle) con la decompressione della
+	 * risposta abilitata: le varianti compresse usano la copia. */
+	private static final String EROGAZIONE_REGOLE_SOAP_FAULT = "TestConsegnaConNotificheRegoleSoapFault";
+	private static final String EROGAZIONE_REGOLE_SOAP_FAULT_CONTENT_ENCODING = "TestConsegnaConNotificheRegoleSoapFaultContentEncoding";
+	
+	private Map<RequestAndExpectations, List<HttpResponse>> _regoleSoapFault(String erogazione, String faultContentEncoding) {
 		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
 		
 		HttpRequest requestRispeditaTuttiValorizzati = RequestBuilder.buildSoapRequestFault(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_1 );
-		requestRispeditaTuttiValorizzati.setUrl(requestRispeditaTuttiValorizzati.getUrl()+"&returnCode=501&faultActor=ActorRispedita&faultCode=CodeRispedita&faultMessage=MessageRispedita");	
+		requestRispeditaTuttiValorizzati.setUrl(requestRispeditaTuttiValorizzati.getUrl()+suffissoFaultContentEncoding(faultContentEncoding)+"&returnCode=501&faultActor=ActorRispedita&faultCode=CodeRispedita&faultMessage=MessageRispedita");	
 		
 		HttpRequest requestRispeditaTuttiRegex = RequestBuilder.buildSoapRequestFault(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_1 );
-		requestRispeditaTuttiRegex.setUrl(requestRispeditaTuttiRegex.getUrl()+"&returnCode=502&faultActor=ActorRispedita123&faultCode=CodeRispedita123&faultMessage=MessageRispedita123");
+		requestRispeditaTuttiRegex.setUrl(requestRispeditaTuttiRegex.getUrl()+suffissoFaultContentEncoding(faultContentEncoding)+"&returnCode=502&faultActor=ActorRispedita123&faultCode=CodeRispedita123&faultMessage=MessageRispedita123");
 		
 		HttpRequest requestCompletataTuttiValorizzati = RequestBuilder.buildSoapRequestFault(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_1 );
-		requestCompletataTuttiValorizzati.setUrl(requestCompletataTuttiValorizzati.getUrl()+"&returnCode=503&faultActor=ActorCompletata&faultCode=CodeCompletata&faultMessage=MessageCompletata");
+		requestCompletataTuttiValorizzati.setUrl(requestCompletataTuttiValorizzati.getUrl()+suffissoFaultContentEncoding(faultContentEncoding)+"&returnCode=503&faultActor=ActorCompletata&faultCode=CodeCompletata&faultMessage=MessageCompletata");
 
 		// Questa richiesta testa che sul campo message venga fatto il contains.
 		HttpRequest requestCompletataTuttiRegex =  RequestBuilder.buildSoapRequestFault(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_1 );
-		requestCompletataTuttiRegex.setUrl(requestCompletataTuttiRegex.getUrl()+"&returnCode=504&faultActor=ActorCompletata123&faultCode=CodeCompletata123&faultMessage=MessageCompletata123");
+		requestCompletataTuttiRegex.setUrl(requestCompletataTuttiRegex.getUrl()+suffissoFaultContentEncoding(faultContentEncoding)+"&returnCode=504&faultActor=ActorCompletata123&faultCode=CodeCompletata123&faultMessage=MessageCompletata123");
 	
 		String  fault = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP-ENV:Header/><SOAP-ENV:Body><SOAP-ENV:Fault>"
 				 +"<faultcode xmlns:ns0=\"http://www.openspcoop2.org/example\">ns0:CodeRispedita</faultcode><faultstring>MessageRispedita</faultstring>"
@@ -269,17 +314,17 @@ public class SoapTest extends ConfigLoader {
 			);
 		
 		requestRispeditaTuttiValorizzati = RequestBuilder.buildSoapRequestFault(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_2);
-		requestRispeditaTuttiValorizzati.setUrl(requestRispeditaTuttiValorizzati.getUrl()+"&returnCode=501&faultActor=ActorRispedita&faultCode=CodeRispedita&faultMessage=MessageRispedita");	
+		requestRispeditaTuttiValorizzati.setUrl(requestRispeditaTuttiValorizzati.getUrl()+suffissoFaultContentEncoding(faultContentEncoding)+"&returnCode=501&faultActor=ActorRispedita&faultCode=CodeRispedita&faultMessage=MessageRispedita");	
 		
 		requestRispeditaTuttiRegex = RequestBuilder.buildSoapRequestFault(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_2);
-		requestRispeditaTuttiRegex.setUrl(requestRispeditaTuttiRegex.getUrl()+"&returnCode=502&faultActor=ActorRispedita123&faultCode=CodeRispedita123&faultMessage=MessageRispedita123");
+		requestRispeditaTuttiRegex.setUrl(requestRispeditaTuttiRegex.getUrl()+suffissoFaultContentEncoding(faultContentEncoding)+"&returnCode=502&faultActor=ActorRispedita123&faultCode=CodeRispedita123&faultMessage=MessageRispedita123");
 		
 		requestCompletataTuttiValorizzati = RequestBuilder.buildSoapRequestFault(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_2);
-		requestCompletataTuttiValorizzati.setUrl(requestCompletataTuttiValorizzati.getUrl()+"&returnCode=503&faultActor=ActorCompletata&faultCode=CodeCompletata&faultMessage=MessageCompletata");
+		requestCompletataTuttiValorizzati.setUrl(requestCompletataTuttiValorizzati.getUrl()+suffissoFaultContentEncoding(faultContentEncoding)+"&returnCode=503&faultActor=ActorCompletata&faultCode=CodeCompletata&faultMessage=MessageCompletata");
 
 		// Questa richiesta testa che sul campo message venga fatto il contains.
 		requestCompletataTuttiRegex =  RequestBuilder.buildSoapRequestFault(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_2);
-		requestCompletataTuttiRegex.setUrl(requestCompletataTuttiRegex.getUrl()+"&returnCode=504&faultActor=ActorCompletata123&faultCode=CodeCompletata123&faultMessage=MessageCompletata123");
+		requestCompletataTuttiRegex.setUrl(requestCompletataTuttiRegex.getUrl()+suffissoFaultContentEncoding(faultContentEncoding)+"&returnCode=504&faultActor=ActorCompletata123&faultCode=CodeCompletata123&faultMessage=MessageCompletata123");
 	
 		 fault = "<env:Envelope xmlns:env=\"http://www.w3.org/2003/05/soap-envelope\"><env:Header/><env:Body><env:Fault><env:Code><env:Value>env:Receiver</env:Value>"
 					+ "<env:Subcode><env:Value xmlns:ns1=\"http://www.openspcoop2.org/example\">ns1:CodeRispedita</env:Value></env:Subcode></env:Code><env:Reason>"
@@ -330,7 +375,7 @@ public class SoapTest extends ConfigLoader {
 		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
 		
 		CondizionaleByFiltroSoapTest.checkResponses(responsesByKind);
-		
+		return responsesByKind;
 	}
 	
 	

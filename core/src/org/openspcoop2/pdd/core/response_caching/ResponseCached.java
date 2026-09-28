@@ -25,6 +25,9 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.openspcoop2.message.AbstractBaseOpenSPCoop2MessageDynamicContent;
+import org.openspcoop2.message.exception.MessageContentCompressedException;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.message.AttachmentsProcessingMode;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
@@ -181,6 +184,13 @@ public class ResponseCached implements Serializable {
 				attachmentProcessingMode);
 		OpenSPCoop2Message msg = pr.getMessage_throwParseException();
 		msg.readResourcesFrom(msgContext);
+		
+		// Il messaggio viene ricostruito dal solo Content-Type: gli header (incluso Content-Encoding) sono ripristinati dal contesto.
+		// Una risposta salvata compressa (byte così come ricevuti) deve restare non interpretabile come l'originale.
+		if(msg instanceof AbstractBaseOpenSPCoop2MessageDynamicContent<?> dynamicContent && msg.getTransportResponseContext()!=null) {
+			dynamicContent.setContentEncodingCompressed(MessageContentCompressedException.getCompressedContentEncoding(
+					msg.getTransportResponseContext().getHeader_compactMultipleValues(HttpConstants.CONTENT_ENCODING)));
+		}
 		return msg;
 	}
 	

@@ -77,6 +77,8 @@
 	<property name="src_testsuite" location="src" />
 	<property name="build_testsuite" location="build" />
 	<property name="dist_testsuite" location="dist" />
+	<!-- Bundle principale: caricato per primo ed eliminato per ultimo, poiché gli altri bundle (es. extraTestBundle.zip) ne utilizzano soggetti e applicativi -->
+	<property name="modipa_main_bundle" value="modipaTestBundle.zip" />
 
 	<!-- Ripulisce la distribuzione -->
 	<target name="clean">
@@ -126,49 +128,29 @@
 
 	<target name="delete_config"> <!-- da eseguire con java 21 -->
 		<echo message="Eliminazione configurazione in corso ..." />
-		<java classname="org.openspcoop2.core.protocolli.modipa.testsuite.ConfigLoader" fork="true">
-			<arg value="false" />
-		        <classpath>
-		                <path refid="karate_testsuite" />
-				<path refid="karate_testsuite_dist_govway"/>
-		                <pathelement path="${build_testsuite}"/>
-		        </classpath>
-		</java>
+		<antcall target="-delete_config">
+			<param name="deleteConfig" value="true"/>
+		</antcall>
 		<echo message="Eliminazione configurazione effettuata" />
 	</target>
 
 	<target name="load_config"> <!-- da eseguire con java 21 -->
 		<echo message="Caricamento configurazione in corso (delete) ..." />
-		<java classname="org.openspcoop2.core.protocolli.modipa.testsuite.ConfigLoader" fork="true">
-			<arg value="false" />
-		        <classpath>
-		                <path refid="karate_testsuite" />
-				<path refid="karate_testsuite_dist_govway"/>
-		                <pathelement path="${build_testsuite}"/>
-		        </classpath>
-		</java>
+		<antcall target="-delete_config">
+			<param name="deleteConfig" value="true"/>
+		</antcall>
 		<echo message="Caricamento configurazione in corso (create) ..." />
-		<java classname="org.openspcoop2.core.protocolli.modipa.testsuite.ConfigLoader" fork="true">
-			<arg value="true" />
-		        <classpath>
-		                <path refid="karate_testsuite" />
-				<path refid="karate_testsuite_dist_govway"/>
-		                <pathelement path="${build_testsuite}"/>
-		        </classpath>
-		</java>
+		<antcall target="-load_config">
+			<param name="loadConfig" value="true"/>
+		</antcall>
 		<echo message="Caricamento configurazione completata" />
 	</target>
 	
 	<target name="load_only_config">
 		<echo message="Caricamento configurazione in corso (create senza delete) ..." />
-		<java classname="org.openspcoop2.core.protocolli.modipa.testsuite.ConfigLoader" fork="true">
-			<arg value="true" />
-		        <classpath>
-		                <path refid="karate_testsuite" />
-				<path refid="karate_testsuite_dist_govway"/>
-		                <pathelement path="${build_testsuite}"/>
-		        </classpath>
-		</java>
+		<antcall target="-load_config">
+			<param name="loadConfig" value="true"/>
+		</antcall>
 		<echo message="Caricamento configurazione (senza delete) completata" />
 	</target>	
 
@@ -177,50 +159,13 @@
 		<delete dir="${output}"/>
 		<mkdir dir="${output}"/>
 
-		<var name="loadEnabled" value="true"/>
-		<if>
-			<not>
-				<equals arg1="${load}" arg2="$${load}"/>
-			</not>
-			<then>
-				<var name="loadEnabled" value="${load}"/>
-			</then>
-		</if>
-		<var name="deleteEnabled" value="true"/>
-		<if>
-			<not>
-				<equals arg1="${delete}" arg2="$${delete}"/>
-			</not>
-			<then>
-				<var name="deleteEnabled" value="${delete}"/>
-			</then>
-		</if>
-
-		<if>
-			<equals arg1="${loadEnabled}" arg2="true"/>
-			<then>
-				<!-- da eseguire con java 21 -->
-				<echo message="Caricamento configurazione in corso (delete) ..." />
-				<java classname="org.openspcoop2.core.protocolli.modipa.testsuite.ConfigLoader" fork="true">
-					<arg value="false" />
-				        <classpath>
-				                <path refid="karate_testsuite" />
-						<path refid="karate_testsuite_dist_govway"/>
-				                <pathelement path="${build_testsuite}"/>
-				        </classpath>
-				</java>
-				<echo message="Caricamento configurazione in corso (create) ..." />
-				<java classname="org.openspcoop2.core.protocolli.modipa.testsuite.ConfigLoader" fork="true">
-					<arg value="true" />
-				        <classpath>
-				                <path refid="karate_testsuite" />
-						<path refid="karate_testsuite_dist_govway"/>
-				                <pathelement path="${build_testsuite}"/>
-				        </classpath>
-				</java>
-				<echo message="Caricamento configurazione completata" />
-			</then>
-		</if>
+		<!-- da eseguire con java 21 -->
+		<antcall target="-delete_config">
+			<param name="deleteConfig" value="${load}"/>
+		</antcall>
+		<antcall target="-load_config">
+			<param name="loadConfig" value="${load}"/>
+		</antcall>
 
 		<var name="karateparams" value=""/>
 		<if>
@@ -326,22 +271,10 @@
 			</sequential>
 		</for>
 
-                <if>
-			<equals arg1="${deleteEnabled}" arg2="true"/>
-			<then>
-				<!-- da eseguire con java 21 -->
-				<echo message="Eliminazione configurazione in corso ..." />
-				<java classname="org.openspcoop2.core.protocolli.modipa.testsuite.ConfigLoader" fork="true">
-					<arg value="false" />
-				        <classpath>
-				                <path refid="karate_testsuite" />
-						<path refid="karate_testsuite_dist_govway"/>
-				                <pathelement path="${build_testsuite}"/>
-				        </classpath>
-				</java>
-				<echo message="Eliminazione configurazione effettuata" />
-			</then>
-		</if>
+		<!-- da eseguire con java 21 -->
+		<antcall target="-delete_config">
+			<param name="deleteConfig" value="${delete}"/>
+		</antcall>
 
 		<junitreport todir="${output}">
 			<fileset dir="${output}">
@@ -350,6 +283,126 @@
 			<report format="frames" todir="${output}\html\" />
 		</junitreport>
 
+	</target>
+
+	<!-- Caricamento ed eliminazione dei bundle di configurazione -->
+	<!-- Il parametro (load/delete) può valere 'true' (tutti gli archivi *.zip presenti in configurazioni-govway), 'false' oppure una lista di archivi separati da ':' (es. extraTestBundle.zip) -->
+
+	<target name="-load_config">
+		<var name="loadFiles" value=""/>
+		<if>
+			<or>
+				<equals arg1="${loadConfig}" arg2="$${load}"/>
+				<equals arg1="${loadConfig}" arg2="true" />
+			</or>
+			<then>
+				<path id="configurazione.files">
+					<fileset dir="${src_testsuite}/configurazioni-govway">
+						<include name="*.zip"/>
+						<exclude name="${modipa_main_bundle}"/>
+					</fileset>
+				</path>
+				<!-- solo il nome dell'archivio (il path restituito dal fileset è assoluto) -->
+				<pathconvert property="loadFileProp" refid="configurazione.files" pathsep=":">
+					<flattenmapper/>
+				</pathconvert>
+				<if>
+					<equals arg1="${loadFileProp}" arg2=""/>
+					<then>
+						<var name="loadFiles" value="${modipa_main_bundle}"/>
+					</then>
+					<else>
+						<var name="loadFiles" value="${modipa_main_bundle}:${loadFileProp}"/>
+					</else>
+				</if>
+			</then>
+			<elseif>
+				<not>
+					<equals arg1="${loadConfig}" arg2="false" />
+				</not>
+				<then>
+					<var name="loadFiles" value="${loadConfig}"/>
+				</then>
+			</elseif>
+		</if>
+
+		<echo message="Bundle selezionati creazione: [${loadFiles}]" />
+		<for list="${loadFiles}" delimiter=":" param="loadFile">
+			<sequential>
+				<local name="filename" />
+				<basename property="filename" file="@{loadFile}"/>
+				<echo message="Bundle: ${filename}, caricamento configurazione in corso  ..." />
+				<java classname="org.openspcoop2.core.protocolli.modipa.testsuite.ConfigLoader" fork="true">
+					<arg value="true" />
+					<arg value="${src_testsuite}/configurazioni-govway/${filename}" />
+					<classpath>
+						<path refid="karate_testsuite" />
+						<path refid="karate_testsuite_dist_govway"/>
+						<pathelement path="${build_testsuite}"/>
+					</classpath>
+				</java>
+				<echo message="Bundle: ${filename}, caricamento configurazione completata" />
+			</sequential>
+		</for>
+	</target>
+
+	<target name="-delete_config">
+		<var name="deleteFiles" value=""/>
+		<if>
+			<or>
+				<equals arg1="${deleteConfig}" arg2="$${delete}"/>
+				<equals arg1="${deleteConfig}" arg2="$${load}"/>
+				<equals arg1="${deleteConfig}" arg2="true" />
+			</or>
+			<then>
+				<path id="configurazione.files">
+					<fileset dir="${src_testsuite}/configurazioni-govway">
+						<include name="*.zip"/>
+						<exclude name="${modipa_main_bundle}"/>
+					</fileset>
+				</path>
+				<!-- solo il nome dell'archivio (il path restituito dal fileset è assoluto) -->
+				<pathconvert property="deleteFileProp" refid="configurazione.files" pathsep=":">
+					<flattenmapper/>
+				</pathconvert>
+				<if>
+					<equals arg1="${deleteFileProp}" arg2=""/>
+					<then>
+						<var name="deleteFiles" value="${modipa_main_bundle}"/>
+					</then>
+					<else>
+						<var name="deleteFiles" value="${deleteFileProp}:${modipa_main_bundle}"/>
+					</else>
+				</if>
+			</then>
+			<elseif>
+				<not>
+					<equals arg1="${deleteConfig}" arg2="false" />
+				</not>
+				<then>
+					<var name="deleteFiles" value="${deleteConfig}"/>
+				</then>
+			</elseif>
+		</if>
+
+		<echo message="Bundle selezionati eliminazione: [${deleteFiles}]" />
+		<for list="${deleteFiles}" delimiter=":" param="deleteFile">
+			<sequential>
+				<local name="filename" />
+				<basename property="filename" file="@{deleteFile}"/>
+				<echo message="Bundle: ${filename}, eliminazione configurazione in corso ..." />
+				<java classname="org.openspcoop2.core.protocolli.modipa.testsuite.ConfigLoader" fork="true">
+					<arg value="false" />
+					<arg value="${src_testsuite}/configurazioni-govway/${filename}" />
+					<classpath>
+						<path refid="karate_testsuite" />
+						<path refid="karate_testsuite_dist_govway"/>
+						<pathelement path="${build_testsuite}"/>
+					</classpath>
+				</java>
+				<echo message="Bundle: ${filename}, eliminazione configurazione effettuata" />
+			</sequential>
+		</for>
 	</target>
 
 </project>

@@ -1001,6 +1001,17 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 		}
 	}
 	
+	/**
+	 * Salvataggio in cache della risposta per i connettori asincroni (NIO): la risposta è disponibile solamente al termine
+	 * della callback e non al ritorno di {@link #send(ConnettoreMsg)}. Va invocato dopo l'elaborazione della risposta e prima
+	 * del rilascio delle risorse.
+	 */
+	public void saveAsyncResponseInCache() {
+		if(this.asyncInvocationSuccess) {
+			saveResponseInCache();
+		}
+	}
+	
 	private void saveResponseInCache() {
 				
 		if(this.transactionNullable!=null) {

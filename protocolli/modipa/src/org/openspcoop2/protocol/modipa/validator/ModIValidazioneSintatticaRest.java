@@ -22,6 +22,7 @@ package org.openspcoop2.protocol.modipa.validator;
 
 import java.io.ByteArrayOutputStream;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -77,12 +78,14 @@ import org.openspcoop2.security.message.MessageSecurityContextParameters;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.engine.MessageSecurityContext_impl;
 import org.openspcoop2.security.message.jose.MessageSecurityReceiver_jose;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.certificate.remote.RemoteKeyType;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.digest.DigestEncoding;
 import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.transport.TransportUtils;
+import org.openspcoop2.utils.transport.http.ContentEncodingWireDigest;
 import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
@@ -112,6 +115,39 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 	}
 	private void logError(String msg, Exception e) {
 		this.log.error(msg,e);
+	}
+	
+	/**
+	 * Digest ricalcolato del contenuto. Se il contenuto è stato ricevuto compresso e decompresso dal gateway,
+	 * il Digest (RFC 3230) si riferisce ai byte ricevuti e non al contenuto decompresso: viene utilizzato
+	 * il digest calcolato durante la decompressione (vedi {@link ContentEncodingWireDigest}).
+	 */
+	private Map<DigestEncoding, String> getDigestHeaderValues(ByteArrayOutputStream bout, String algorithm, boolean request, 
+			DigestEncoding[] digestEncoding) throws UtilsException {
+		ContentEncodingWireDigest wireDigest = getContentEncodingWireDigest(request);
+		if(wireDigest!=null && wireDigest.isCompleted() && algorithm.equalsIgnoreCase(wireDigest.getAlgorithm())) {
+			this.log.debug("Digest verificato sul contenuto ricevuto (Content-Encoding: {}) prima della decompressione", wireDigest.getContentEncoding());
+			return HttpUtilities.getDigestHeaderValuesFromDigest(wireDigest.getDigest(), algorithm, digestEncoding);
+		}
+		return HttpUtilities.getDigestHeaderValues(bout.toByteArray(), algorithm, digestEncoding);
+	}
+	/** Header Content-Encoding del contenuto ricevuto, rimosso dal messaggio in seguito alla decompressione. */
+	private List<String> getContentEncodingRimossoDecompressione(boolean request) {
+		List<String> l = new ArrayList<>();
+		ContentEncodingWireDigest wireDigest = getContentEncodingWireDigest(request);
+		if(wireDigest!=null && wireDigest.getContentEncoding()!=null) {
+			l.add(wireDigest.getContentEncoding());
+		}
+		return l;
+	}
+	private ContentEncodingWireDigest getContentEncodingWireDigest(boolean request) {
+		if(this.context==null) {
+			return null;
+		}
+		Object o = this.context.getObject(request ? 
+				org.openspcoop2.core.constants.Costanti.CONTENT_ENCODING_WIRE_DIGEST_REQUEST : 
+				org.openspcoop2.core.constants.Costanti.CONTENT_ENCODING_WIRE_DIGEST_RESPONSE);
+		return (o instanceof ContentEncodingWireDigest) ? (ContentEncodingWireDigest) o : null;
 	}
 	
 	public void validateSyncInteractionProfile(OpenSPCoop2Message msg, boolean request,
@@ -1250,15 +1286,15 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 				Map<DigestEncoding, String> newDigestValue = null;
 				boolean formatoSupportato = true;
 				if(digestValueInHeaderHTTP.startsWith(HttpConstants.DIGEST_ALGO_SHA_256+"=")) {
-					newDigestValue = HttpUtilities.getDigestHeaderValues(bout.toByteArray(), HttpConstants.DIGEST_ALGO_SHA_256,
+					newDigestValue = getDigestHeaderValues(bout, HttpConstants.DIGEST_ALGO_SHA_256, request,
 							digestEncoding.toArray(new DigestEncoding[1]));
 				}
 				else if(digestValueInHeaderHTTP.startsWith(HttpConstants.DIGEST_ALGO_SHA_384+"=")) {
-					newDigestValue = HttpUtilities.getDigestHeaderValues(bout.toByteArray(), HttpConstants.DIGEST_ALGO_SHA_384,
+					newDigestValue = getDigestHeaderValues(bout, HttpConstants.DIGEST_ALGO_SHA_384, request,
 							digestEncoding.toArray(new DigestEncoding[1]));
 				}
 				else if(digestValueInHeaderHTTP.startsWith(HttpConstants.DIGEST_ALGO_SHA_512+"=")) {
-					newDigestValue = HttpUtilities.getDigestHeaderValues(bout.toByteArray(), HttpConstants.DIGEST_ALGO_SHA_512,
+					newDigestValue = getDigestHeaderValues(bout, HttpConstants.DIGEST_ALGO_SHA_512, request,
 							digestEncoding.toArray(new DigestEncoding[1]));
 				}
 				else {
@@ -1348,6 +1384,13 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 								}
 								else if(!request && msg.getTransportResponseContext()!=null) {
 									hdrFound = msg.getTransportResponseContext().getHeaderValues(hdrName);
+								}
+								if((hdrFound==null || hdrFound.isEmpty()) && HttpConstants.CONTENT_ENCODING.equalsIgnoreCase(hdrName)) {
+									// header rimosso in seguito alla decompressione del contenuto ricevuto
+									List<String> hdrRimosso = getContentEncodingRimossoDecompressione(request);
+									if(!hdrRimosso.isEmpty()) {
+										hdrFound = hdrRimosso;
+									}
 								}
 								
 								if(checkHdrAttesiSize && hdrFound!=null) {

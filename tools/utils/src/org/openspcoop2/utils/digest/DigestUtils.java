@@ -96,6 +96,27 @@ public class DigestUtils {
 		return map;
 	}
 	
+	/**
+	 * Codifica un digest già calcolato (es. in stream) nelle codifiche indicate.
+	 * 
+	 * @param digestValue digest già calcolato con l'algoritmo indicato
+	 * @param algorithm algoritmo utilizzato (es. SHA-256), usato come prefisso se rfc3230 è true
+	 * @param rfc3230 true per aggiungere il prefisso 'algoritmo='
+	 * @param digestEncoding codifiche richieste
+	 * @return valori codificati per ciascuna codifica richiesta
+	 * @throws UtilsException se non è indicata alcuna codifica o la codifica non è supportata
+	 */
+	public static Map<DigestEncoding, String> encodeDigestValues(byte[] digestValue, String algorithm, boolean rfc3230, DigestEncoding ... digestEncoding) throws UtilsException{
+		if(digestEncoding==null || digestEncoding.length<=0) {
+			throw newUtilsExceptionDigestEncodingUndefined();
+		}
+		Map<DigestEncoding, String> map = new HashMap<>();
+		for (DigestEncoding de : digestEncoding) {
+			map.put(de, encode(digestValue, de, rfc3230, algorithm));
+		}
+		return map;
+	}
+	
 	private static String encode(byte[] md5Data, DigestEncoding digestEncoding, boolean rfc3230, String algorithm) throws UtilsException{
 
 		if(digestEncoding==null) {
