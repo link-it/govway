@@ -68,7 +68,11 @@ String jQueryUiVersion = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUT
 <!-- JQuery lib-->
 <script type="text/javascript" src="<%=MessageFormat.format(Costanti.LIB_JQUERY_PATH, jQueryVersion) %>" nonce="<%= randomNonce %>"></script>
 <script type="text/javascript" src="<%=MessageFormat.format(Costanti.LIB_JQUERY_UI_PATH, jQueryUiVersion) %>" nonce="<%= randomNonce %>"></script>
+<!-- adattamento di accessibilita' del widget 'tabs': deve seguire jquery-ui e precedere ogni chiamata a .tabs() -->
+<script type="text/javascript" src="js/jquery-ui-tabs-a11y.min.js" nonce="<%= randomNonce %>"></script>
 <script type="text/javascript" src="js/ui.datepicker-it.js" nonce="<%= randomNonce %>"></script>
+<!-- adattamento di accessibilita' del widget 'datepicker': deve seguire jquery-ui e precedere ogni chiamata a .datepicker() -->
+<script type="text/javascript" src="js/jquery-ui-datepicker-a11y.min.js" nonce="<%= randomNonce %>"></script>
 <jsp:include page="/jsplib/browserUtils.jsp" flush="true" />
 <jsp:include page="/jsplib/utils.jsp" flush="true" />
 <script type="text/javascript" src="js/webapps.min.js" nonce="<%= randomNonce %>"></script>
@@ -130,7 +134,8 @@ function CheckDati() {
 <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
 </head>
 <body marginwidth=0 marginheight=0>
-<table class="bodyWrapper">
+<a class="gw-salta-al-contenuto" href="#gw-contenuto"><%= Costanti.LABEL_ARIA_SALTA_AL_CONTENUTO %></a>
+<table class="bodyWrapper" role="presentation">
 	<tbody>
 		<jsp:include page="/jsplib/templateHeader.jsp" flush="true" />
 	

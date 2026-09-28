@@ -1180,6 +1180,8 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 				else{
 					de = new DataElement();
 					de.setLabel("");//AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_DOCUMENTO);
+					// l'etichetta non viene resa a schermo: il nome accessibile va indicato esplicitamente
+					de.setAccessibleLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_DOCUMENTO);
 					de.setType(DataElementType.TEXT_AREA_NO_EDIT);
 					de.setValue(contenutoAllegato.toString());
 					de.setRows(CostantiControlStation.LABEL_PARAMETRO_TEXT_AREA_API_SIZE);

@@ -95,7 +95,7 @@
 						<tbody>
 							<tr>	
 								<td class="titoloSezione" id="dettaglioFormHeader" colspan="<%= colFormHeader %>">
-									<span class="history"><%= titoloSezione %></span>
+									<span class="history" role="heading" aria-level="1"><%= titoloSezione %></span>
 								</td>
 								<% if(mostraComandiHeader) { %>
 									<jsp:include page="/jsplib/comandi-header.jsp" flush="true" />
@@ -203,11 +203,11 @@
 						                				<input type="hidden" name="<%= deName %>" value="<%= StringEscapeUtils.escapeHtml4(de.getValue()) %>" />
 					                				
 					                				<% if(StringUtils.isNotEmpty(copyToClipboard)){ %>
-						                				<span class="copy-box" id="<%= deCopyId%>" title="<%=MessageFormat.format(Costanti.ICON_COPY_TOOLTIP_CON_PARAMETRO, deLabel) %>">
-															<i class="material-icons md-18"><%= Costanti.ICON_COPY %></i>
+						                				<span class="copy-box" role="button" tabindex="0" id="<%= deCopyId%>" title="<%=MessageFormat.format(Costanti.ICON_COPY_TOOLTIP_CON_PARAMETRO, deLabel) %>">
+															<i class="material-icons md-18" aria-hidden="true"><%= Costanti.ICON_COPY %></i>
 														</span>
 														
-        												<div id="<%= deCopyId%>_message" class="copy-message"><%=Costanti.ICON_COPY_ESITO_OPERAZIONE %></div>
+        												<div id="<%= deCopyId%>_message" class="copy-message" role="status"><%=Costanti.ICON_COPY_ESITO_OPERAZIONE %></div>
 														<script type="text/javascript" nonce="<%= randomNonce %>">
 													      	 $(document).ready(function(){
 													      		 setupCopyButtonEvents('<%= deTextId%>', '<%= deCopyId%>', '<%= deCopyId%>_message'); // imposta gestione eventi per visualizzazione tasto copia
@@ -238,7 +238,7 @@
 						                					%>
 						                					<a id="<%=id %>" class="edit-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" type="button">
 						                						<span class="icon-box">
-																	<i class="material-icons md-18"><%= deIconName %></i>
+																	<i class="material-icons md-18" aria-hidden="true"><%= deIconName %></i>
 																</span>
 						                					</a>
 						                					<script type="text/javascript" nonce="<%= randomNonce %>">
@@ -330,7 +330,7 @@
 									                					%>
 									                					<a id="<%=id %>" class="edit-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" type="button">
 									                						<span class="icon-box">
-																				<i class="material-icons md-18"><%= deIconName %></i>
+																				<i class="material-icons md-18" aria-hidden="true"><%= deIconName %></i>
 																			</span>
 									                					</a>
 									                					<script type="text/javascript" nonce="<%= randomNonce %>">
@@ -426,7 +426,7 @@
 										                					%>
 										                					<a id="<%=id %>" class="edit-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" type="button">
 										                						<span class="icon-box">
-																					<i class="material-icons md-18"><%= deIconName %></i>
+																					<i class="material-icons md-18" aria-hidden="true"><%= deIconName %></i>
 																				</span>
 										                					</a>
 										                					<script type="text/javascript" nonce="<%= randomNonce %>">
@@ -499,7 +499,7 @@
 											                					%>
 											                					<a id="<%=id %>" class="edit-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" type="button">
 											                						<span class="icon-box">
-																						<i class="material-icons md-18"><%= deIconName %></i>
+																						<i class="material-icons md-18" aria-hidden="true"><%= deIconName %></i>
 																					</span>
 											                					</a>
 											                					<script type="text/javascript" nonce="<%= randomNonce %>">
@@ -543,7 +543,7 @@
 					                            											%>
 					                            												<span class="<%=classSpanNoEdit %>-image-msval" <%= statusTooltipTitleAttribute %> id="iconTitoloLeft-<%=i%>_<%=y%>">
 					                            													<span class="icon-box">
-																										<i class="material-icons md-18"><%= statusType %></i>
+																										<i class="material-icons md-18" aria-hidden="true"><%= statusType %></i>
 																									</span>
 																								</span>
 																								<span class="<%=classSpanNoEdit %>-msval" <%= statusTooltipTitleAttribute %> ><%= lab %></span>
@@ -576,7 +576,7 @@
 												                					%>
 												                					<a id="<%=id %>" class="edit-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" type="button">
 												                						<span class="icon-box">
-																							<i class="material-icons md-18"><%= deIconName %></i>
+																							<i class="material-icons md-18" aria-hidden="true"><%= deIconName %></i>
 																						</span>
 												                					</a>
 												                					<script type="text/javascript" nonce="<%= randomNonce %>">
@@ -641,7 +641,7 @@
 																</style>
 															<% }%>
 							        						<a id="<%=id %>" href="<%= de.getUrl() %>" <%= deTip %> class="riepilogo-links-button">
-									            				<i class="material-icons md-36"><%=iconLink %></i>							            				
+									            				<i class="material-icons md-36" aria-hidden="true"><%=iconLink %></i>							            				
 									            				<span class="riepilogo-links-button-text"><%= de.getValue() %></span>
 								            				</a>
 								            				<script type="text/javascript" nonce="<%= randomNonce %>">

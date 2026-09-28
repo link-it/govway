@@ -232,24 +232,24 @@
 		
 						<rich:column id="colEsitoImg" styleClass="text-align-center">
 							<f:facet name="header">
-								<h:graphicImage value="/images/tema_link/circle_light_grey.png" />
+								<h:graphicImage alt="Severità" value="/images/tema_link/circle_light_grey.png" />
 							</f:facet>
-							<h:graphicImage id="outEsitoImgOk" value="/images/tema_link/status_green.png" rendered="#{item.severitaReadable=='INFO' or item.severitaReadable=='DEBUG'}">
+							<h:graphicImage alt="#{item.severitaReadable}" id="outEsitoImgOk" value="/images/tema_link/status_green.png" rendered="#{item.severitaReadable=='INFO' or item.severitaReadable=='DEBUG'}">
 								<rich:toolTip for="outEsitoImgOk">
 									<h:outputText value="#{item.severitaReadable}"/>
 								</rich:toolTip>
 							</h:graphicImage>
-							<h:graphicImage id="outEsitoImgWarn" value="/images/tema_link/status_yellow.png" rendered="#{item.severitaReadable=='WARN'}">
+							<h:graphicImage alt="#{item.severitaReadable}" id="outEsitoImgWarn" value="/images/tema_link/status_yellow.png" rendered="#{item.severitaReadable=='WARN'}">
 								<rich:toolTip for="outEsitoImgWarn">
 									<h:outputText value="#{item.severitaReadable}"/>
 								</rich:toolTip>
 							</h:graphicImage>
-							<h:graphicImage id="outEsitoImgKo" value="/images/tema_link/status_red.png" rendered="#{item.severitaReadable=='ERROR' or item.severitaReadable=='FATAL'}">
+							<h:graphicImage alt="#{item.severitaReadable}" id="outEsitoImgKo" value="/images/tema_link/status_red.png" rendered="#{item.severitaReadable=='ERROR' or item.severitaReadable=='FATAL'}">
 								<rich:toolTip for="outEsitoImgKo">
 									<h:outputText value="#{item.severitaReadable}"/>
 								</rich:toolTip>
 							</h:graphicImage>
-							<h:graphicImage id="outEsitoImgOther" value="/images/tema_link/status_red.png" rendered="#{item.severitaReadable!='INFO' and 
+							<h:graphicImage alt="#{item.severitaReadable}" id="outEsitoImgOther" value="/images/tema_link/status_red.png" rendered="#{item.severitaReadable!='INFO' and 
 								item.severitaReadable!='DEBUG' and 
 								item.severitaReadable!='WARN' and 
 								item.severitaReadable!='ERROR' and 

@@ -8,8 +8,74 @@
  * Questo deve essere incluso alla fine di tutte le altre inclusioni di script, nell'header, nella pagina jsp
  * Utilizza la libreria jquery
  */
+/*
+ * jQuery UI chiama «Close» il comando di chiusura delle finestre di dialogo, ed e' il nome
+ * che uno screen reader annuncia: in un'interfaccia dichiarata in italiano lo legge con
+ * pronuncia italiana (WCAG 3.1.2, Lingua delle sezioni). Compariva in tutte le finestre
+ * «Conferma Operazione».
+ *
+ * Il valore predefinito si cambia una volta sola e vale per ogni finestra, comprese quelle
+ * create da altri script. Va fatto al caricamento e non dentro 'ready': le finestre nascono
+ * proprio nei gestori di 'ready', e questo file e' incluso per ultimo, quindi qui jQuery UI
+ * c'e' gia' e nessuna finestra e' ancora stata creata.
+ */
+if (typeof $ !== 'undefined' && $.ui && $.ui.dialog) {
+	$.ui.dialog.prototype.options.closeText = 'Chiudi';
+}
+
+/*
+ * Alcune viste sono composte dal solo messaggio di esito (esempio: il passaggio a un altro
+ * profilo, o la pagina di ripristino della console) e restano senza intestazione di primo
+ * livello: chi naviga per intestazioni non ha un punto d'ingresso. Dove manca, si promuove il
+ * titolo gia' visibile del messaggio.
+ */
+function gwTitoloPaginaDiEsito() {
+	var visibile = function (e) { return e && e.getClientRects().length > 0; };
+	var esistenti = document.querySelectorAll('h1, [role="heading"][aria-level="1"]');
+	for (var i = 0; i < esistenti.length; i++) {
+		if (visibile(esistenti[i])) return;
+	}
+	/* in ordine di preferenza il documento li incontra cosi': l'ultima voce del percorso (che e'
+	   il nome della pagina), il titolo di un messaggio, il titolo di sezione. Sulle pagine di
+	   inserimento il titolo di sezione viene soppresso di proposito — varrebbe "Aggiungi" — e
+	   allora il percorso e' l'unico titolo rimasto. */
+	var candidati = document.querySelectorAll('.ultimo-path, .messages-title-text, .history');
+	for (var j = 0; j < candidati.length; j++) {
+		if (!visibile(candidati[j]) || candidati[j].getAttribute('role')) {
+			continue;
+		}
+		/* Nel percorso l'ultima voce e' un <li>, dove il ruolo di intestazione non e' ammesso
+		   (axe: aria-allowed-role) e romperebbe anche la lista che lo contiene (axe: list):
+		   si marca il suo contenuto, che e' gia' un elemento a se'. */
+		var elemento = candidati[j];
+		if (elemento.tagName === 'LI' && elemento.children.length === 1) {
+			elemento = elemento.children[0];
+		}
+		elemento.setAttribute('role', 'heading');
+		elemento.setAttribute('aria-level', '1');
+		return;
+	}
+
+	/* Nelle pagine di inserimento non resta nulla di visibile: il titolo di sezione e' soppresso
+	   perche' varrebbe "Aggiungi", e il percorso e' nascosto dal foglio di stile. Il nome della
+	   pagina c'e' comunque, nell'ultima voce del percorso: lo si riprende in un'intestazione
+	   destinata alle sole tecnologie assistive, senza cambiare nulla a schermo. */
+	var percorso = document.querySelector('.ultimo-path');
+	var nome = percorso ? (percorso.textContent || '').trim() : '';
+	if (nome.length === 0) {
+		return;
+	}
+	var intestazione = document.createElement('h1');
+	intestazione.className = 'gw-solo-lettori';
+	intestazione.textContent = nome;
+	var contenuto = document.getElementById('gw-contenuto') || document.body;
+	contenuto.insertBefore(intestazione, contenuto.firstChild);
+}
+
  $(document).ready(function(){
- 	
+
+	gwTitoloPaginaDiEsito();
+
  	String.prototype.format = function()
 	{
 	    var str = this;
@@ -224,7 +290,9 @@ function visualizzaValoreDecodificato(evt) {
 				$("#txtA_ne_dec").show();
 				
 				// visualizzo il pulsante di copia
-				$("#iconCopy_dec").show();
+				// si mostra la span, non la sola icona: e' la span il comando raggiungibile da
+				// tastiera, e finche' resta visibile e' attivabile anche senza un valore da copiare
+				$("#spanIconCopy_dec").show();
 				
 				// nascondo la nota
 				$("#visualizzaInformazioniCifrateModalPropNota").hide();
@@ -358,15 +426,37 @@ function setPercentuale(td,value){
 }
 
 function changeTooltipPosition(event) {
-	var tooltipX = event.pageX - 8;
-	var tooltipY = event.pageY + 8;
+	var tooltipX;
+	var tooltipY;
+	/* Distinguere l'attivazione col puntatore da quella da tastiera guardando le coordinate non
+	   funziona: un evento sintetico non ne ha, l'attivazione con Invio di un <button> nativo le
+	   riporta a zero, e in alcuni percorsi arrivano valori residui che sembrano validi. Il
+	   discriminante affidabile e' 'detail', che vale 0 per un'attivazione da tastiera e almeno 1
+	   per un clic vero. */
+	var nativo = event ? event.originalEvent : null;
+	var conPuntatore = !!nativo && typeof nativo.detail === 'number' && nativo.detail > 0
+		&& typeof event.pageX === 'number' && typeof event.pageY === 'number';
+	if (conPuntatore) {
+		tooltipX = event.pageX - 8;
+		tooltipY = event.pageY + 8;
+	} else {
+		/* Attivazione da tastiera: il riquadro va collocato sotto il comando attivato, altrimenti
+		   finirebbe in una posizione priva di senso — invisibile, oppure nell'angolo della pagina. */
+		var $comando = $(event && event.currentTarget ? event.currentTarget : document.activeElement);
+		var pos = $comando.offset() || { top: 0, left: 0 };
+		tooltipX = pos.left;
+		tooltipY = pos.top + ($comando.outerHeight() || 0) + 8;
+	}
 	$('div.copyTooltip').css({top: tooltipY, left: tooltipX});
 };
 
 function showTooltip(event) {
 	$('div.copyTooltip').remove();
-	$('<div class="copyTooltip">Copiato</div>').appendTo('body');
+	var $riquadro = $('<div class="copyTooltip" role="status"></div>').appendTo('body');
 	changeTooltipPosition(event);
+	setTimeout(function() {
+		$riquadro.text('Copiato');
+	}, 0);
 };
 
 function showTooltipAndFadeOut(event) {
@@ -391,17 +481,10 @@ function copyTextToClipboard(text) {
 	  }
 
 	  // Fallback per browser che non supportano navigator.clipboard
+	  // l'area serve solo a ospitare il testo per la copia: la sua presentazione sta nel foglio
+	  // di stile, classe '.gw-area-copia'
 	  var textArea = document.createElement("textarea");
-	  textArea.style.position = 'fixed';
-	  textArea.style.top = 0;
-	  textArea.style.left = 0;
-	  textArea.style.width = '2em';
-	  textArea.style.height = '2em';
-	  textArea.style.padding = 0;
-	  textArea.style.border = 'none';
-	  textArea.style.outline = 'none';
-	  textArea.style.boxShadow = 'none';
-	  textArea.style.background = 'transparent';
+	  textArea.className = 'gw-area-copia';
 
 	  textArea.value = text;
 
@@ -478,12 +561,28 @@ function copyToClipboard(containerId, copyMessageId, event) {
 
 function showCopyMessage(copyMessageId, event) {
     var messageDiv = $('#' + copyMessageId);
+    /* Il riquadro e' una regione 'live' (role="status"), che annuncia le modifiche del proprio
+       contenuto: il testo e' pero' gia' presente nel markup, quindi renderlo visibile non
+       basterebbe a farlo annunciare. Lo si svuota e reinserisce a ogni copia. */
+    var testo = messageDiv.data('gwTesto');
+    if (typeof testo !== 'string') {
+        testo = messageDiv.text();
+        messageDiv.data('gwTesto', testo);
+    }
+    messageDiv.text('');
+    setTimeout(function() {
+        messageDiv.text(testo);
+    }, 0);
 	var targetPosition = $(event.currentTarget).position();
 	var targetWidth = $(event.currentTarget).width();
     messageDiv.css({
 		top: targetPosition.top - 30, // Posiziona il messaggio 30px sopra il button
 		left: targetPosition.left + targetWidth + 10, // Posiziona il messaggio 10px a destra del button
-        visibility: 'visible'
+        visibility: 'visible',
+        /* Va ripristinata anche l'opacita': nasconderlo la porta a 0 come stile in linea, e senza
+           questo il messaggio comparirebbe una volta sola, restando poi invisibile ai clic
+           successivi pur avendo 'visibility: visible'. */
+        opacity: 1
     });
 
     // Nascondi il messaggio dopo 2 secondi
@@ -497,8 +596,16 @@ function showCopyMessage(copyMessageId, event) {
 
 // Funzione per gestire il mouseenter con delay
 function handleMouseEnterTriggerElement(buttonId, delay, hideTimeout) {
+    /* Un solo pulsante visibile alla volta: gli altri vengono spenti subito. Senza questo,
+       passando rapidamente sulle righe di un elenco ogni riga attende il proprio timeout e si
+       vede una scia di icone accese. Cosi' l'attesa prima di nascondere puo' restare comoda
+       per raggiungere il pulsante, senza produrre quella scia. */
+    $('.copy-box').not('#' + buttonId).removeClass('copy-box-visibile');
     setTimeout(function() {
-        $('#' + buttonId).css('visibility', 'visible');
+        /* Si commuta una classe e non lo stile in linea: uno stile in linea vincerebbe sulle
+           regole CSS, impedendo di rendere il pulsante visibile quando la cella che lo contiene
+           riceve il focus da tastiera (cfr. 'td:focus-within .copy-box' in linkit-base.css). */
+        $('#' + buttonId).addClass('copy-box-visibile');
     }, delay); // Delay di visibilità
 	
     clearTimeout(hideTimeout);
@@ -507,20 +614,28 @@ function handleMouseEnterTriggerElement(buttonId, delay, hideTimeout) {
 // Funzione per gestire il mouseleave con timeout
 function handleMouseLeaveHandler(buttonId, timeout) {
     var hideTimeout = setTimeout(function() {
+        /* Il pulsante resta visibile finche' ha il focus grazie alla regola '.copy-box:focus'
+           (cfr. linkit-base.css): qui basta gestire il puntatore. */
         if (!$('#' + buttonId + ':hover').length) {
-			$('#' + buttonId).css('visibility', 'hidden');
+			$('#' + buttonId).removeClass('copy-box-visibile');
         }
     }, timeout); // Timeout per nascondere
 	
 	return hideTimeout;
 }
 
-function setupCopyButtonEvents(triggerElementId, buttonId, copyMessageId) {
-	setupCopyButtonEvents(triggerElementId, buttonId, copyMessageId, 500, 1000);
-}
-
-// Funzione generica per gestire gli eventi del tasto copia
+/* Funzione generica per gestire gli eventi del tasto copia.
+   NOTA: qui esisteva anche una versione a tre parametri che delegava a questa passando 500 e 1000.
+   In JavaScript l'overload non esiste: la seconda definizione sostituiva la prima, e i chiamanti —
+   che passano tre argomenti — lasciavano 'delay' e 'hideTimeoutDelay' a 'undefined'. Poiche'
+   'setTimeout(fn, undefined)' equivale a 0 ms, il pulsante scompariva nell'istante in cui il
+   puntatore lasciava il valore, prima che si potesse raggiungerlo. I valori predefiniti sono
+   quindi dichiarati qui: comparsa immediata, e un'attesa breve prima di nascondere, sufficiente a
+   spostare il puntatore dal valore al pulsante. Che non si accumuli una scia di icone accese lo
+   garantisce 'handleMouseEnterTriggerElement', che ne tiene visibile una sola. */
 function setupCopyButtonEvents(triggerElementId, buttonId, copyMessageId, delay, hideTimeoutDelay) {
+	delay = (typeof delay === 'number') ? delay : 0;
+	hideTimeoutDelay = (typeof hideTimeoutDelay === 'number') ? hideTimeoutDelay : 400;
 	var hideTimeout;
 	
     $('#' + triggerElementId).on('mouseenter', function() {
@@ -532,7 +647,7 @@ function setupCopyButtonEvents(triggerElementId, buttonId, copyMessageId, delay,
     });
 
     $('#' + buttonId).on('mouseenter', function() {
-		$('#' + buttonId).css('visibility', 'visible');
+		$('#' + buttonId).addClass('copy-box-visibile');
         clearTimeout(hideTimeout); // Cancella il timeout
     });
 

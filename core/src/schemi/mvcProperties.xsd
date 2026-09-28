@@ -50,6 +50,7 @@
 		<xsd:attribute name="type" type="itemType" use="required"/>
 		<xsd:attribute name="name" type="xsd:string" use="required"/>
 		<xsd:attribute name="label" type="xsd:string" use="optional"/>
+		<xsd:attribute name="accessibleLabel" type="xsd:string" use="optional"/> <!-- nome per le tecnologie assistive, da indicare quando 'label' e' assente perche' il controllo e' accostato a quello precedente: senza, il campo resta privo di nome -->
 		<xsd:attribute name="note" type="xsd:string" use="optional"/>
 		<xsd:attribute name="required" type="xsd:boolean" default="false"/>
 		<xsd:attribute name="reloadOnChange" type="xsd:boolean" default="false"/>

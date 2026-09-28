@@ -74,6 +74,50 @@ Per creare una tag version:
 17. Verificare che gli indirizzi dei webSite principali dei protocolli siano ancora attivi.
     find protocolli/ -name openspcoop2-manifest.xml | xargs grep webSite
 
+17b. Verifiche di accessibilità delle console (govwayMonitor e govwayConsole).
+    PREREQUISITO: eseguirle su una base dati che contenga le configurazioni di test, e con un
+    numero significativo di transazioni tracciate. Per generarle:
+        cd protocolli/trasparente/testsuite/karate
+        ant run_test -Ddelete=false -Dload=false -Dpackage=other.wssecurity -Dtest=JWSCompactPayloadEnrichmentTest
+
+    Preparazione (una volta):
+        git clone https://github.com/link-it/gov-a11y.git
+        cd gov-a11y
+        npm ci
+        node -e "require('playwright').chromium.launch().then(b=>b.close()).then(()=>console.log('chromium ok'))"
+        node a11y-scan.mjs --check-deps --config ./targets/govway/targets.govway_monitor.json
+
+    NOTA: 'npm ci' scarica gia' Chromium (postinstall del pacchetto); il comando successivo
+    verifica che si avvii, cioe' che le librerie di sistema ci siano. Se fallisce, l'errore le
+    nomina: su Debian/Ubuntu si installano con 'npx playwright install --with-deps chromium',
+    che altrove NON funziona perche' usa apt-get; su RHEL/Amazon Linux (dnf, oppure yum su AL2)
+    servono nss nspr atk at-spi2-atk at-spi2-core cups-libs libdrm libXcomposite libXdamage
+    libXext libXfixes libXrandr mesa-libgbm libxkbcommon libxshmfence alsa-lib pango cairo.
+
+    Esecuzione COMPLETA, cioè con Lighthouse e screen reader attivi (sono il predefinito dei
+    target: non passare --no-lighthouse né --no-screen-reader, che servono solo per le
+    esecuzioni rapide in integrazione continua). Circa un'ora ciascuna.
+
+        A11Y_MONITOR_USER=operatore A11Y_MONITOR_PASS=123456 \
+        node a11y-scan.mjs --base http://localhost:8080 \
+             --config ./targets/govway/targets.govway_monitor.json --out ./report-monitor
+
+        A11Y_CONSOLE_USER=amministratore A11Y_CONSOLE_PASS=123456 \
+        node a11y-scan.mjs --base http://localhost:8080 \
+             --config ./targets/govway/targets.govway_console.json --out ./report-console
+
+    ESITO ATTESO: entrambe devono terminare senza rilevare nulla, cioè con
+        - codice di uscita 0 e «Gate accessibilità superato»
+        - violazioni: 0 di ogni gravità (critiche, serie, moderate, lievi)
+        - elementi interattivi senza nome accessibile: 0
+        - punteggio Lighthouse 1.00 su tutte le viste
+    Le occorrenze «da verificare» sono ammesse solo se coperte dal registro dei falsi positivi
+    (compaiono nel report nella sezione propria, con motivazione e misura). Qualunque
+    occorrenza nuova va esaminata prima del rilascio: o è un difetto da correggere, oppure va
+    aggiunta al registro con la misura che lo dimostra, mai come deroga sulla fiducia.
+
+    Il report leggibile è report.html dentro ciascuna directory indicata con --out.
+
 18. Sistemare docker-compose.yml e database presente in resources/scenari/scenari.zip
    Per farlo, ad esempio se stiamo rilasciando la versione 3.3.16:
    - fare il clone di govway-docker

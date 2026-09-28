@@ -18,6 +18,26 @@ jQuery.fn.collapse = function(options) {
         if(lf.hasClass('collapsible'))
         	return;
         
+        /* La legenda apre e chiude la sezione, ma e' un <legend> nudo: senza ruolo ne'
+           'tabindex' si attiva con il solo mouse (WCAG 2.1.1) e non dichiara il proprio
+           stato (WCAG 4.1.2). Il comando non puo' essere la legenda stessa, perche'
+           'role=button' non e' ammesso su <legend> (axe: aria-allowed-role): si avvolge il
+           suo contenuto in uno <span>, che diventa il comando. */
+        var comando = lf.find('.collapsible-comando');
+        if (comando.length === 0) {
+        	comando = jQuery('<span class="collapsible-comando"></span>');
+        	comando.append(lf.contents());
+        	lf.append(comando);
+        }
+        comando.attr('role', 'button').attr('tabindex', '0')
+          .attr('aria-expanded', settings.closed ? 'false' : 'true')
+          .keydown(function(e) {
+        	if (e.which !== 13 && e.which !== 32) return true;
+        	e.preventDefault();
+        	jQuery(this).click();
+        	return false;
+          });
+
         //attach dell'handler sull'evento click sul tag legend
 		lf.addClass('collapsible').click(function() {
 			if (obj.hasClass('collapsed'))
@@ -27,10 +47,13 @@ jQuery.fn.collapse = function(options) {
 	
 			obj.children().not('legend').toggle("fast", function() {
 			 
-				 if (jQuery(this).is(":visible"))
-					obj.find("legend:first").addClass('collapsible');
-				 else
-					obj.addClass('collapsed').find("legend").addClass('collapsed');
+				 if (jQuery(this).is(":visible")) {
+					obj.find("legend:first").addClass('collapsible')
+					   .find('.collapsible-comando').attr('aria-expanded', 'true');
+				 } else {
+					obj.addClass('collapsed').find("legend").addClass('collapsed')
+					   .find('.collapsible-comando').attr('aria-expanded', 'false');
+				 }
 			 });
 		});
 		

@@ -92,7 +92,18 @@ visualizzaMetadati = listRiepilogo.size() > 1;
 				<%
 			%>
 		<div id="titolo_<%=numeroEntryS %>" class="titoloEntry">
-			<span class="titoloEntry"><%=deTitoloValue %>&nbsp;&nbsp;&nbsp;&nbsp;</span>	
+			<%
+					// Il titolo diventa un collegamento vero: la riga intera e' cliccabile ma solo col mouse,
+					// mentre il collegamento la rende raggiungibile da tastiera e annunciabile. La navigazione
+					// resta a carico del gestore della riga (che aggiunge l'identificativo di tab): il default
+					// del collegamento viene annullato in webapps.js.
+					boolean titoloComeLink = !deTitolo.getValue().equals("") && deTitolo.getUrl() != null && !deTitolo.getUrl().equals("");
+					if(titoloComeLink) {
+					%><a class="titoloEntry" href="<%= ServletUtils.escapeHTMLAttributePreservingValue(deTitolo.getUrl()) %>"><%=deTitoloValue %>&nbsp;&nbsp;&nbsp;&nbsp;</a><%
+					} else {
+					%><span class="titoloEntry"><%=deTitoloValue %>&nbsp;&nbsp;&nbsp;&nbsp;</span><%
+					}
+					%>	
 			
 			<% if(listTags.size() > 0){
 				DataElement tag0 = listTags.get(0);
@@ -101,18 +112,27 @@ visualizzaMetadati = listRiepilogo.size() > 1;
 				
 				%>
 				<div id="titolo_<%=numeroEntryS %>_ruoli" class="titoloRuoli">
-					<span class="titoloRuoli-image-sx" id="titolo_<%=numeroEntryS %>_ruoli_icona" <%=ruoliTooltip %> >
-						<i class="material-icons md-18" id="iconInfo_titolo_<%=numeroEntryS %>_ruoli_icona"><%= Costanti.ICON_SUPERVISOR_ACCOUNT %></i>
+					<span class="titoloRuoli-image-sx" id="titolo_<%=numeroEntryS %>_ruoli_icona" <%=ruoliTooltip %> role="link" tabindex="0">
+						<i class="material-icons md-18" aria-hidden="true" id="iconInfo_titolo_<%=numeroEntryS %>_ruoli_icona"><%= Costanti.ICON_SUPERVISOR_ACCOUNT %></i>
 					</span>
 					<% for(int z = 0; z < listTags.size(); z ++){ 
 						DataElement tag = listTags.get(z);
 					%>
 						<span class="ruolo label ruolo-label-info <%=tag.getStyleClass() %>" <%=ruoliTooltip %> 
+							role="link" tabindex="0"
 							id="titolo_<%=numeroEntryS %>_ruoli_<%=z %>" ><%= tag.getLabel() %></span>
 					<% } %>
 					<script type="text/javascript" nonce="<%= randomNonce %>">
 						// info
 				    	if($("span[id^='titolo_<%=numeroEntryS %>_ruoli_']").length>0){
+				    		// i chip portano all'elenco dei ruoli: sono comandi, e vanno attivati
+				    		// anche con Invio e barra spaziatrice (WCAG 2.1.1)
+				    		$("span[id^='titolo_<%=numeroEntryS %>_ruoli_']").keydown(function(e){
+				    			if(e.which !== 13 && e.which !== 32) return true;
+				    			e.preventDefault();
+				    			$(this).click();
+				    			return false;
+				    		});
 				    		$("span[id^='titolo_<%=numeroEntryS %>_ruoli_']").click(function(e){
 				    			
 				    			<%=Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>
@@ -139,8 +159,8 @@ visualizzaMetadati = listRiepilogo.size() > 1;
 				<div id="titolo_<%=numeroEntryS %>_info" class="titoloInfo">
 				
 					<div class="iconInfoBoxList" id="<%=idDivIconMenu %>" <%=tipComandiMenu %> >
-    						<span class="icon-box" id="<%=idSpanMenu %>">
-								<i class="material-icons md-18" id="<%=idIconMenu %>"><%= iconaComandiMenu %></i>
+    						<span class="icon-box" id="<%=idSpanMenu %>" role="button" tabindex="0" aria-haspopup="menu" aria-label="<%= Costanti.LABEL_ARIA_MENU_AZIONI %>">
+								<i class="material-icons md-18" aria-hidden="true" id="<%=idIconMenu %>"><%= iconaComandiMenu %></i>
 							</span>
    					</div>
    					

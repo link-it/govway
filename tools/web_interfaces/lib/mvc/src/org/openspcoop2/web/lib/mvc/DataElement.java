@@ -90,7 +90,7 @@ public class DataElement implements Serializable {
 		DataElement.escapeMap.put("&lt;/br&gt;", "</br>");
 	}
 
-	String label, labelRight, labelLink, value, type, name, onChange, selected;
+	String label, labelRight, labelLink, accessibleLabel, value, type, name, onChange, selected;
 	/**
 	 * Tipo semantico "protetto" dietro un rendering HIDDEN. Valorizzato solo da
 	 * {@link #setType(DataElementType, DataElementType)} e da {@link #setHiddenType(DataElementType)}.
@@ -191,6 +191,7 @@ public class DataElement implements Serializable {
 		this.labelStyleClass = null;
 		this.labelRight = null;
 		this.labelLink = null;
+		this.accessibleLabel = null;
 		this.dataAttributes = new HashMap<>();
 		this.contextMenu = false;
 		this.copyToClipboard = null;
@@ -781,6 +782,47 @@ public class DataElement implements Serializable {
 
 	public void setLabelRight(String labelRight) {
 		this.labelRight = labelRight;
+	}
+	
+	/**
+	 * Indica se l'elemento e' privo di etichetta visibile.
+	 *
+	 * Da preferire al confronto con {@link #getLabel()}, che decora il testo con l'asterisco dei
+	 * campi obbligatori e con il grassetto: un'etichetta vuota su un campo obbligatorio non
+	 * risulterebbe tale.
+	 *
+	 * @return true se l'etichetta non e' valorizzata
+	 */
+	public boolean isLabelEmpty() {
+		return DataElement.checkNull(this.label).trim().isEmpty();
+	}
+	
+	/**
+	 * Nome accessibile del controllo.
+	 *
+	 * @return Il nome accessibile, stringa vuota se non impostato
+	 * @see #setAccessibleLabel(String)
+	 */
+	public String getAccessibleLabel() {
+		return DataElement.checkNull(this.accessibleLabel);
+	}
+
+	/**
+	 * Imposta il nome accessibile del controllo, reso come attributo {@code aria-label} e utilizzato
+	 * soltanto quando l'etichetta non e' visibile a schermo.
+	 *
+	 * Da valorizzare dove l'etichetta viene volutamente omessa — perche' il testo e' gia' nel titolo
+	 * della sezione, oppure sulla riga precedente condivisa con un altro controllo: quella
+	 * prossimita' visiva non e' disponibile a chi naviga con uno screen reader, che senza questo
+	 * nome troverebbe un controllo anonimo.
+	 *
+	 * Non altera l'etichetta: se questa e' valorizzata, il nome accessibile viene ignorato e non
+	 * viene emesso alcun {@code aria-label}, per non mascherare il testo visibile.
+	 *
+	 * @param accessibleLabel Il nome del controllo
+	 */
+	public void setAccessibleLabel(String accessibleLabel) {
+		this.accessibleLabel = accessibleLabel;
 	}
 	
 	public String getLabelLink() {

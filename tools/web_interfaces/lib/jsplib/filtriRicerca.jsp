@@ -106,11 +106,13 @@ $(document).ready(function () {
             $("#" + iconId).html(iconNascondiSezione);
             $("#" + iconId).attr("title", tooltipNascondiSezione);
             $("#" + anchorId).attr("title", tooltipNascondiSezione);
+        $("#" + anchorId).attr("aria-expanded", "true");
         } else {
             $("#" + sectionId).hide();
             $("#" + iconId).html(iconVisualizzaSezione);
             $("#" + iconId).attr("title", tooltipVisualizzaSezione);
             $("#" + anchorId).attr("title", tooltipVisualizzaSezione);
+        $("#" + anchorId).attr("aria-expanded", "false");
         }
 
      	// Toggle (indipendente per ogni sezione)
@@ -128,6 +130,7 @@ $(document).ready(function () {
         $("#" + sectionId).show();
         $("#" + iconId).html(iconNascondiSezione).attr("title", tooltipNascondiSezione);
         $("#" + anchorId).attr("title", tooltipNascondiSezione);
+        $("#" + anchorId).attr("aria-expanded", "true");
         $("#" + divId).removeClass("subtitleCollapsed").addClass("subtitleOpen");
         inizializzaSelectFiltro();
     }
@@ -141,6 +144,7 @@ $(document).ready(function () {
         $("#" + sectionId).hide();
         $("#" + iconId).html(iconVisualizzaSezione).attr("title", tooltipVisualizzaSezione);
         $("#" + anchorId).attr("title", tooltipVisualizzaSezione);
+        $("#" + anchorId).attr("aria-expanded", "false");
         $("#" + divId).removeClass("subtitleOpen").addClass("subtitleCollapsed");
     }
 
@@ -186,7 +190,7 @@ $(document).ready(function () {
 				<tbody>
 					<tr>
 						<td class="titoloSezione" id="searchFormHeader" colspan="<%= colFormHeader %>">
-							<span class="history"><%=titoloSezione %></span>
+							<span class="history" role="heading" aria-level="1"><%=titoloSezione %></span>
 						</td>
 						<% if(mostraComandiHeader) { %>
 							<jsp:include page="/jsplib/comandi-header.jsp" flush="true" >
@@ -276,6 +280,12 @@ $(document).ready(function () {
 								String labelStyleClass= filtro.getLabelStyleClass();
 								String rowName="row_"+filterName;
 								String deLabelId = "de_label_"+iPD;
+								// nome accessibile per i controlli la cui etichetta e' volutamente non visibile;
+								// se l'etichetta e' valorizzata non viene emesso nulla, per non mascherare il testo
+								String deAriaLabelAttr = "";
+								if(filtro.isLabelEmpty() && !filtro.getAccessibleLabel().equals("")) {
+									deAriaLabelAttr = " aria-label=\"" + ServletUtils.escapeHTMLAttribute(filtro.getAccessibleLabel()) + "\"";
+								}
 								String deNote = filtro.getNote();
 								DataElementInfo deInfo = filtro.getInfo();
 																
@@ -306,9 +316,9 @@ $(document).ready(function () {
 					        				<input type="hidden" id="<%= filterName  %>__accordion" value="<%=accordion %>" />
 					        				<span class="subtitleGroup">
 					        					<span class="subtitleAnchor">
-					        						<i class="material-icons md-16" id="<%= filterName  %>__icon" title="<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>"><%= Costanti.ICON_VISUALIZZA_SEZIONE_FILTRI_RICERCA%></i>
+					        						<i class="material-icons md-16" aria-hidden="true" id="<%= filterName  %>__icon" title="<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>"><%= Costanti.ICON_VISUALIZZA_SEZIONE_FILTRI_RICERCA%></i>
 					        					</span>
-					        					<a id="<%= filterName  %>__anchor" name="<%=rowName %>" class="subtitleAnchor" title="<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>"><%=deLabel %></a>
+					        					<a id="<%= filterName  %>__anchor" name="<%=rowName %>" class="subtitleAnchor" role="button" tabindex="0" aria-controls="<%= filterName %>__id" title="<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>"><%=deLabel %></a>
 					        				</span>
 					        			</div>
 					        			<%
@@ -325,7 +335,7 @@ $(document).ready(function () {
 			                    			<div class="prop">
 			                    				<input type="hidden" name="<%= filtroName.getName() %>" value="<%= filtroName.getValue() %>"/>
 			                    				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%= filterId  %>"><%=deLabel %></label>
-			                    				<input id="<%= filterId  %>" type="text" name="<%= filterName %>" value="<%= StringEscapeUtils.escapeHtml4(filtro.getValue()) %>" class="<%= classInput %>">
+			                    				<input id="<%= filterId  %>" type="text" name="<%= filterName %>" value="<%= StringEscapeUtils.escapeHtml4(filtro.getValue()) %>" class="<%= classInput %>" <%=deAriaLabelAttr %>>
 			                    				<% if(!deNote.equals("")){ %>
 										      		<p class="note-ricerca <%= labelStyleClass %>"><%=deNote %></p>
 										      	<% } %>
@@ -342,7 +352,7 @@ $(document).ready(function () {
 										    		String maxValue = filtro.getMaxValue() != null ? " max=\"" + filtro.getMaxValue() + "\"" : "";
 										    		String customJsFunction = filtro.getCustomJsFunction() != null && !filtro.getCustomJsFunction().equals("")  ? " gw-function=\"" + filtro.getCustomJsFunction() + "\"" : "";
 										    		
-										      		%><input id="<%= filterId  %>" type="number" name="<%= filterName %>" value="<%= StringEscapeUtils.escapeHtml4(filtro.getValue()) %>" class="<%= classInput %>" <%=minvalue %> <%=maxValue %> <%=customJsFunction %> >
+										      		%><input id="<%= filterId  %>" type="number" name="<%= filterName %>" value="<%= StringEscapeUtils.escapeHtml4(filtro.getValue()) %>" class="<%= classInput %>" <%=minvalue %> <%=maxValue %> <%=customJsFunction %> <%=deAriaLabelAttr %>>
 									      		</div>
 										      	<%
 						        			} else { 
@@ -352,7 +362,7 @@ $(document).ready(function () {
 			                            				<input type="hidden" name="<%= filtroName.getName() %>" value="<%= filtroName.getValue() %>"/>
 			                            				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%= filterId  %>"><%=deLabel %></label>
 							     						<div class="txtA_div">
-							     							<textarea id="<%=filterId %>" rows='<%= filtro.getRows() %>' cols='<%= filtro.getCols() %>' name="<%= filterName  %>" class="<%= classInput %>"><%= StringEscapeUtils.escapeHtml4(filtro.getValue()) %></textarea>
+							     							<textarea id="<%=filterId %>" rows='<%= filtro.getRows() %>' cols='<%= filtro.getCols() %>' name="<%= filterName  %>" class="<%= classInput %>" <%=deAriaLabelAttr %>><%= StringEscapeUtils.escapeHtml4(filtro.getValue()) %></textarea>
 						     							</div>
 			                            			</div>
 			                            			<%
@@ -368,7 +378,7 @@ $(document).ready(function () {
 														<div class="prop">
 															<input type="hidden" name="<%= filtroName.getName() %>" value="<%= filtroName.getValue() %>"/>
 															<label for="<%= filterId  %>"><%= filtro.getLabel() %></label>
-														  	<select id="<%= filterId  %>" name="<%= filterName %>" <%= selEvtOnChange %> class="<%= classInput %>">
+														  	<select id="<%= filterId  %>" name="<%= filterName %>" <%= selEvtOnChange %> class="<%= classInput %>" <%=deAriaLabelAttr %>>
 															  	<%
 															  	for (int i = 0; i < values.length; i++) {
 															  		String optionSel = values[i].equals(selezionato) ? " selected " : " ";
@@ -414,12 +424,19 @@ $(document).ready(function () {
 						    										}
 						    									}
 						    									String id = "checkbox_filtri_" + iPD;
+						    									// il testo del checkbox risiede in 'labelRight', reso a destra del controllo:
+						    									// quando la label a sinistra e' vuota e' quello l'unico nome disponibile
+						    									String idLabelRight = "de_label_right_" + iPD;
+						    									String ariaLabelledByChk = deAriaLabelAttr;
+						    									if(ariaLabelledByChk.equals("") && filtro.isLabelEmpty() && !filtro.getLabelRight().equals("")) {
+						    										ariaLabelledByChk = " aria-labelledby=\"" + idLabelRight + "\"";
+						    									}
 						    									%>
 						    									<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%=id %>"><%=deLabel %></label>
 					    										<table class="<%=controlSetClass %>">
 				    													<tr> 
 				    														<td>
-						   														<input id="<%=id %>" type="checkbox" name="<%= filterName  %>" value="yes" <%=chkVal %> <%=disVal %> >
+						   														<input id="<%=id %>" type="checkbox" name="<%= filterName  %>" value="yes" <%=chkVal %> <%=disVal %> <%=ariaLabelledByChk %>>
 						   														<% if(!filtro.getOnClick().equals("")){ %>
 						   															<script type="text/javascript" nonce="<%= randomNonce %>">
 																				      	 $(document).ready(function(){
@@ -432,7 +449,7 @@ $(document).ready(function () {
 						   													</td>
 						   													<% if(!filtro.getLabelRight().equals("")){ %>
 						   													<td>
-						   														<span class="controlset"><%=filtro.getLabelRight() %></span>
+						   														<span class="controlset" id="<%=idLabelRight %>"><%=filtro.getLabelRight() %></span>
 						   													</td>
 						   													<% } %>
 						   													<%
@@ -467,7 +484,7 @@ $(document).ready(function () {
 																      				String valueI = filtro.getValues()[z] == null ? "" : filtro.getValues()[z];
 																      		%>
 																      			<div class="intervalInnerDiv">
-																      				<input id="<%=filterId %>" type="number"  name="<%= nameI %>" value="<%= valueI %>" class="<%= classInput %> intervalInnerInput" <%=minvalue %> <%=maxValue %> <%=customJsFunction %> >
+																      				<input id="<%=filterId %>" type="number"  name="<%= nameI %>" value="<%= valueI %>" class="<%= classInput %> intervalInnerInput" <%=minvalue %> <%=maxValue %> <%=customJsFunction %> <%=deAriaLabelAttr %>>
 																      			</div>
 																      		<%
 																	      		} // end for
@@ -527,6 +544,12 @@ $(document).ready(function () {
 						String labelStyleClass= filtro.getLabelStyleClass();
 						String rowName="row_"+filterName;
 						String deLabelId = "de_label_search";
+						// nome accessibile per i controlli la cui etichetta e' volutamente non visibile;
+						// se l'etichetta e' valorizzata non viene emesso nulla, per non mascherare il testo
+						String deAriaLabelAttrSearch = "";
+						if(filtro.isLabelEmpty() && !filtro.getAccessibleLabel().equals("")) {
+							deAriaLabelAttrSearch = " aria-label=\"" + ServletUtils.escapeHTMLAttribute(filtro.getAccessibleLabel()) + "\"";
+						}
 						String deNote = filtro.getNote();
 						
 						%>
@@ -534,7 +557,7 @@ $(document).ready(function () {
 									<td>
 										<div class="prop">
 		                    				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%= filterId %>"><%=deLabel %></label>
-		                    				<input id="<%=filterId %>" type="text" name="<%= filterName %>" value="<%= filtro.getValue() %>" class="<%= classInput %>">
+		                    				<input id="<%=filterId %>" type="text" name="<%= filterName %>" value="<%= filtro.getValue() %>" class="<%= classInput %>" <%=deAriaLabelAttrSearch %>>
 		                    				<% if(!deNote.equals("")){ %>
 									      		<p class="note-ricerca <%= labelStyleClass %>"><%=deNote %></p>
 									      	<% } %>

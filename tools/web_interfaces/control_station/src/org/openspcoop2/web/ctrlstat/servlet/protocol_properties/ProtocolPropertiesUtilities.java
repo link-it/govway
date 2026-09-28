@@ -291,6 +291,7 @@ public class ProtocolPropertiesUtilities {
 		de.setRequired(item.isRequired());
 		de.setLabel(item.getLabel());
 		de.setLabelRight(item.getLabelRight());
+		de.setAccessibleLabel(item.getAccessibleLabel());
 		if(item.isReloadOnChange()) {
 			if(item.isReloadOnHttpPost()) {
 				de.setPostBack_viaPOST(true); 
@@ -532,6 +533,7 @@ public class ProtocolPropertiesUtilities {
 		de.setRequired(item.isRequired());
 		de.setLabel(item.getLabel());
 		de.setLabelRight(item.getLabelRight());
+		de.setAccessibleLabel(item.getAccessibleLabel());
 		if(item.isReloadOnChange()) {
 			if(item.isReloadOnHttpPost()) {
 				de.setPostBack_viaPOST(true); 
@@ -584,6 +586,7 @@ public class ProtocolPropertiesUtilities {
 		de.setRequired(item.isRequired());
 		de.setLabel(item.getLabel());
 		de.setLabelRight(item.getLabelRight());
+		de.setAccessibleLabel(item.getAccessibleLabel());
 		if(item.isReloadOnChange()) {
 			if(item.isReloadOnHttpPost()) {
 				de.setPostBack_viaPOST(true); 
@@ -659,6 +662,7 @@ public class ProtocolPropertiesUtilities {
 		de.setRequired(item.isRequired());
 		de.setLabel(item.getLabel());
 		de.setLabelRight(item.getLabelRight());
+		de.setAccessibleLabel(item.getAccessibleLabel());
 		if(item.isReloadOnChange()) {
 			if(item.isReloadOnHttpPost()) {
 				de.setPostBack_viaPOST(true); 
@@ -735,6 +739,7 @@ public class ProtocolPropertiesUtilities {
 		de.setRequired(item.isRequired());
 		de.setLabel(item.getLabel());
 		de.setLabelRight(item.getLabelRight());
+		de.setAccessibleLabel(item.getAccessibleLabel());
 		if(item.isReloadOnChange()) {
 			if(item.isReloadOnHttpPost()) {
 				de.setPostBack_viaPOST(true); 

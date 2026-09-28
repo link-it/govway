@@ -29,8 +29,7 @@
 									<p>#{loginBean.modalita == 'qualsiasi' ? applicationBean.labelProfiliCompact.concat(' disponibili:') : applicationBean.labelProfiloCompact.concat(' attuale:')}</p>
 									<ul>
 									<c:forEach items="#{loginBean.listaInformazioniProtocollo}" var="protocollo">
-										<br/>
-										<li class="margin-left-12 list-style-type-disc">
+										<li class="margin-left-12 margin-top list-style-type-disc">
 											<p >
 												<i>
 													<a href="#{protocollo.webSiteProtocollo}" target="_blank">#{protocollo.labelProtocollo}</a>

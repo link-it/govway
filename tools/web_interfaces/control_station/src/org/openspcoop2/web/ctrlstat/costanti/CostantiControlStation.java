@@ -614,6 +614,8 @@ public class CostantiControlStation {
 	public static final String LABEL_PARAMETRO_CORS_STATO_PORTA = "Stato";
 	public static final String LABEL_PARAMETRO_CORS_STATO_PORTA_DEFAULT = "default";
 	public static final String LABEL_PARAMETRO_CORS_STATO_PORTA_RIDEFINITO = "ridefinito";
+	/** Nome accessibile del select affiancato a quello dello stato della porta, privo di etichetta visibile */
+	public static final String LABEL_PARAMETRO_CORS_STATO_RIDEFINITO = "Stato ridefinito";
 	public static final String LABEL_GESTIONE_CORS_MODIFICATA_CON_SUCCESSO = "Configurazione CORS modificata con successo";
 	public static final String LABEL_CONFIGURAZIONE_RESPONSE_CACHING_GENERAZIONE_HASH = "Generazione Hash";
 	public static final String LABEL_GESTIONE_CANALE_MODIFICATA_CON_SUCCESSO = "Configurazione Canale modificata con successo";

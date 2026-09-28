@@ -197,7 +197,7 @@ if (!message.equals("") && messageType.equals(MessageType.DIALOG.toString())) {
 	  			<% if(!"".equals(icona)) { %>
 		  		<div id="finestraDialogModalHeaderSx" class="finestraDialogModalHeaderSx">
 			  		<span class="icon-box">
-						<i class="material-icons md-48"><%= icona %></i>
+						<i class="material-icons md-48" aria-hidden="true"><%= icona %></i>
 					</span>
 				</div>
 				<% }%>
@@ -226,6 +226,12 @@ if (!message.equals("") && messageType.equals(MessageType.DIALOG.toString())) {
 					String deValue = de.getValue();
 					String deName =  "be_name_"+i;
 					String deLabelId = "be_label_"+i;
+					// nome accessibile per i controlli la cui etichetta e' volutamente non visibile;
+					// se l'etichetta e' valorizzata non viene emesso nulla, per non mascherare il testo
+					String deAriaLabelAttr = "";
+					if(de.isLabelEmpty() && !de.getAccessibleLabel().equals("")) {
+						deAriaLabelAttr = " aria-label=\"" + ServletUtils.escapeHTMLAttribute(de.getAccessibleLabel()) + "\"";
+					}
 					String labelStyleClass= de.getLabelStyleClass();
 					String classInput= de.getStyleClass();
 					String iconaCtrlC = Costanti.ICON_COPY;
@@ -252,7 +258,7 @@ if (!message.equals("") && messageType.equals(MessageType.DIALOG.toString())) {
 					      	%> 	<div class="iconCopyBox" id="<%=idDivIconInfo %>">
 					      			<input type="hidden" name="__i_hidden_value_<%= idIconCopy %>" id="hidden_value_<%= idIconCopy %>"  value="<%= StringEscapeUtils.escapeHtml4(de.getValue()) %>"/>
 							      	<span class="spanIconCopyBox" <%= iconaCtrlCTitle %> >
-										<i class="material-icons md-18" id="<%=idIconCopy %>"><%= iconaCtrlC %></i>
+										<i class="material-icons md-18" aria-hidden="true" id="<%=idIconCopy %>"><%= iconaCtrlC %></i>
 									</span>
 								</div>
 					      	<% } %>
@@ -266,7 +272,7 @@ if (!message.equals("") && messageType.equals(MessageType.DIALOG.toString())) {
                    				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%=inputId %>"><%=deLabel %></label>
                    				<%
                    					String textNoEdit = " disabled ";
-						      		%><input id="<%=inputId %>" type="text" name="<%= deName %>" value="<%= StringEscapeUtils.escapeHtml4(de.getValue()) %>" class="<%= classInput %>" <%=textNoEdit %> >
+						      		%><input id="<%=inputId %>" type="text" name="<%= deName %>" value="<%= StringEscapeUtils.escapeHtml4(de.getValue()) %>" class="<%= classInput %>" <%=textNoEdit %> <%=deAriaLabelAttr %>>
 						      	<% 
 						      		if(visualizzaIconCopia){
 						      			String idDivIconInfo = "divIconInfo_"+i;
@@ -274,7 +280,7 @@ if (!message.equals("") && messageType.equals(MessageType.DIALOG.toString())) {
 						      	%> 	<div class="iconCopyBox" id="<%=idDivIconInfo %>">
 						      			<input type="hidden" name="__i_hidden_value_<%= idIconCopy %>" id="hidden_value_<%= idIconCopy %>"  value="<%= StringEscapeUtils.escapeHtml4(de.getValue()) %>"/>
 								      	<span class="spanIconCopyBox" <%= iconaCtrlCTitle %>>
-											<i class="material-icons md-18" id="<%=idIconCopy %>"><%= iconaCtrlC %></i>
+											<i class="material-icons md-18" aria-hidden="true" id="<%=idIconCopy %>"><%= iconaCtrlC %></i>
 										</span>
 									</div>
 						      	<% } 
@@ -293,7 +299,7 @@ if (!message.equals("") && messageType.equals(MessageType.DIALOG.toString())) {
                        				<%
 		     						String taNoEdit = " readonly ";
 		     						%><div class="txtA_div_propDialog">
-		     							<textarea id="<%=inputId %>" <%=taNoEdit %> rows='<%= de.getRows() %>' cols='' name="<%= deName  %>" class="<%= classInput %> textAreaNoResize"><%= StringEscapeUtils.escapeHtml4(de.getValue()) %></textarea>
+		     							<textarea id="<%=inputId %>" <%=taNoEdit %> rows='<%= de.getRows() %>' cols='' name="<%= deName  %>" class="<%= classInput %> textAreaNoResize" <%=deAriaLabelAttr %>><%= StringEscapeUtils.escapeHtml4(de.getValue()) %></textarea>
 		     							<% 
 								      		if(visualizzaIconCopia){
 								      			String idDivIconInfo = "divIconInfo_"+i;
@@ -301,7 +307,7 @@ if (!message.equals("") && messageType.equals(MessageType.DIALOG.toString())) {
 								      	%> 	<div class="iconCopyBox" id="<%=idDivIconInfo %>">
 								      			<input type="hidden" name="__i_hidden_value_<%= idIconCopy %>" id="hidden_value_<%= idIconCopy %>"  value="<%= StringEscapeUtils.escapeHtml4(de.getValue()) %>"/>
 										      	<span class="spanIconCopyBox" <%= iconaCtrlCTitle %>>
-													<i class="material-icons md-18" id="<%=idIconCopy %>"><%= iconaCtrlC %></i>
+													<i class="material-icons md-18" aria-hidden="true" id="<%=idIconCopy %>"><%= iconaCtrlC %></i>
 												</span>
 											</div>
 								      	<% } %>
@@ -359,6 +365,12 @@ if (!message.equals("") && messageType.equals(MessageType.DIALOG.toString())) {
 		 	if($(".spanIconCopyBox").length>0){
 
 		 		$(".spanIconCopyBox").click(function(evt){
+  			// la finestra delle informazioni cifrate ha un proprio gestore, che legge il valore
+  			// dall'area di testo: senza questa uscita scatterebbero entrambi e il secondo
+  			// sovrascriverebbe negli appunti il valore corretto con uno vuoto
+  			if(this.id === 'spanIconCopy_dec'){
+  				return;
+  			}
         			var iconCopyBoxId = $(this).parent().prop('id');
         			var idx = iconCopyBoxId.substring(iconCopyBoxId.indexOf("_")+1);
         			// console.log(idx);
@@ -367,7 +379,7 @@ if (!message.equals("") && messageType.equals(MessageType.DIALOG.toString())) {
         				var copiatoOK = copyTextToClipboard(valueToCopy);
         				
         				if(copiatoOK) {
-        					showTooltip(evt);
+        					showTooltipAndFadeOut(evt);
         				}
         			}
     			});
@@ -387,13 +399,13 @@ if (!message.equals("") && messageType.equals(MessageType.DIALOG.toString())) {
 	$(document).ready(function(){
 	 	
 	// copia contenuto della modale secret
-  	if($("#iconCopy_dec").length>0){
-		$("#iconCopy_dec").click(function(evt){
+  	if($("#spanIconCopy_dec").length>0){
+		$("#spanIconCopy_dec").click(function(evt){
  				var valueToCopy = $("#txtA_ne_dec").val();
  				var copiatoOK = copyTextToClipboard(valueToCopy);
  				
  				if(copiatoOK) {
- 					showTooltip(evt);
+ 					showTooltipAndFadeOut(evt);
  				}
 			});
   		
@@ -476,7 +488,7 @@ if (!message.equals("") && messageType.equals(MessageType.DIALOG.toString())) {
 		
 		$("#txtA_ne_dec").val('');
 		$("#txtA_ne_dec").prop('style','');		
-		$("#iconCopy_dec").hide();
+		$("#spanIconCopy_dec").hide();
 		$("#txtA_ne_dec").hide();
 		$("#visualizzaInformazioniCifrateModalPropNota").show();
 		$("#visualizzaInformazioniCifrateModal").parent().children('.ui-dialog-buttonpane').show();
@@ -536,15 +548,15 @@ if (!message.equals("") && messageType.equals(MessageType.DIALOG.toString())) {
 <div id="dataElementInfoModal" title="Info">
 	<div id="dataElementInfoModalBody" class="contenutoModal"></div>
 </div>
-<div id="visualizzaInformazioniCifrateModal" title="Visualizza Informazioni Cifrate">
+<div id="visualizzaInformazioniCifrateModal" title="<%= Costanti.LABEL_VISUALIZZA_INFORMAZIONI_CIFRATE %>">
 	<div id="visualizzaInformazioniCifrateModalBody" class="contenutoModal">
 		<div class="propDialog">
 			<div class="txtA_div_propDialog_dec">
-				<textarea id="txtA_ne_dec" readonly rows="3" cols="62" name="txtA_ne_dec" class="inputLinkLong"></textarea>
+				<textarea id="txtA_ne_dec" readonly rows="3" cols="62" name="txtA_ne_dec" class="inputLinkLong" aria-label="<%= Costanti.LABEL_VISUALIZZA_INFORMAZIONI_CIFRATE %>"></textarea>
 			 	<div class="iconCopyBox" id="divIconInfo_dec">
 	      			<input type="hidden" name="__i_hidden_value_iconCopy_dec" id="hidden_value_iconCopy_dec"  value=""/>
-			      	<span class="spanIconCopyBox" title="Copia">
-						<i class="material-icons md-18" id="iconCopy_dec"><%= Costanti.ICON_COPY %></i>
+			      	<span class="spanIconCopyBox" id="spanIconCopy_dec" title="Copia">
+						<i class="material-icons md-18" aria-hidden="true" id="iconCopy_dec"><%= Costanti.ICON_COPY %></i>
 					</span>
 				</div>
 			</div>
@@ -578,7 +590,7 @@ if (!message.equals("") && messageType.equals(MessageType.DIALOG.toString())) {
 	<div id="erroreInformazioniCifrateModalHeader" class="finestraDialogModalHeader">
   		<div id="erroreInformazioniCifrateModalHeaderSx" class="finestraDialogModalHeaderSx">
 	  		<span class="icon-box">
-				<i class="material-icons md-48"><%= Costanti.ICON_DIALOG_HEADER %></i>
+				<i class="material-icons md-48" aria-hidden="true"><%= Costanti.ICON_DIALOG_HEADER %></i>
 			</span>
 		</div>
 		<div id="erroreInformazioniCifrateModalHeaderDx" class="finestraDialogModalHeaderDx">
@@ -592,8 +604,8 @@ if (!message.equals("") && messageType.equals(MessageType.DIALOG.toString())) {
 	<div id="operazioneAjaxModalHeader" class="finestraDialogModalHeader">
   		<div id="operazioneAjaxModalHeaderSx" class="finestraDialogModalHeaderSx">
 	  		<span class="icon-box">
-				<i id="operazioneAjaxModalHeaderSxIconKo" class="material-icons md-48"><%= Costanti.ICON_DIALOG_HEADER %></i>
-				<i id="operazioneAjaxModalHeaderSxIconOk" class="material-icons md-48"><%= Costanti.INFO_BUTTON_ICON_WHITE %></i>
+				<i id="operazioneAjaxModalHeaderSxIconKo" class="material-icons md-48" aria-hidden="true"><%= Costanti.ICON_DIALOG_HEADER %></i>
+				<i id="operazioneAjaxModalHeaderSxIconOk" class="material-icons md-48" aria-hidden="true"><%= Costanti.INFO_BUTTON_ICON_WHITE %></i>
 			</span>
 		</div>
 		<div id="operazioneAjaxModalHeaderDx" class="finestraDialogModalHeaderDx">

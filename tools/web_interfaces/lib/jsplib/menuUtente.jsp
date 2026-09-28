@@ -49,7 +49,129 @@ if(v!= null && v.size() > 1) {
 
 <script type="text/javascript" nonce="<%= randomNonce %>">
 
+/*
+ * I due menu della testata si aprono al solo passaggio del mouse, e i loro attivatori sono
+ * '<div>' senza ruolo ne' 'tabindex': da tastiera non si raggiungono, e il loro contenuto
+ * — Informazioni, Profilo Utente, cambio profilo, uscita — resta inarrivabile (WCAG 2.1.1).
+ *
+ * L'apertura non viene riscritta: si richiama la stessa che usa il mouse, emettendo
+ * 'mouseenter' e 'mouseleave' sull'attivatore. Per chi usa il mouse non cambia nulla, e non
+ * esistono due strade che possono divergere.
+ *
+ * Il menu dell'utente mostra solo un'icona: il nome glielo si dichiara, altrimenti sarebbe
+ * un comando muto. Quello del profilo ha gia' un'etichetta visibile, e si usa quella.
+ */
+function gwMenuTestataDaTastiera() {
+
+	['menuUtente', 'menuModalita', 'menuSoggetto'].forEach(function(id) {
+
+		var attivatore = document.getElementById(id);
+		var menu = document.getElementById(id + '_menu');
+		if (!attivatore || !menu || attivatore.getAttribute('data-gw-tastiera') === 'si') {
+			return;
+		}
+		attivatore.setAttribute('data-gw-tastiera', 'si');
+		attivatore.setAttribute('role', 'button');
+		attivatore.setAttribute('tabindex', '0');
+		attivatore.setAttribute('aria-haspopup', 'menu');
+		attivatore.setAttribute('aria-expanded', 'false');
+		menu.setAttribute('role', 'menu');
+
+		if (!attivatore.getAttribute('aria-label')) {
+			var copia = attivatore.cloneNode(true);
+			var annidato = copia.querySelector('#' + id + '_menu');
+			if (annidato) { annidato.parentNode.removeChild(annidato); }
+			[].slice.call(copia.querySelectorAll('script, style')).forEach(function(e) { e.parentNode.removeChild(e); });
+			var etichetta = (copia.textContent || '').replace(/\s+/g, ' ').trim();
+			attivatore.setAttribute('aria-label', etichetta || 'Menu utente');
+		}
+
+		var voci = function() { return [].slice.call(menu.querySelectorAll('a[href]')); };
+		var apri = function() { $(attivatore).trigger('mouseenter'); attivatore.setAttribute('aria-expanded', 'true'); };
+		var chiudi = function() { $(attivatore).trigger('mouseleave'); attivatore.setAttribute('aria-expanded', 'false'); };
+
+		/* Il menu si apre con un'animazione: subito dopo 'apri()' le voci sono ancora
+		   nascoste, e mettere a fuoco un elemento non reso non ha effetto — il fuoco restava
+		   sull'attivatore, dove Invio riapriva e le frecce non trovavano nulla. Si riprova
+		   finche' il menu non e' davvero visibile, per una finestra breve. */
+		/* il menu e' annidato in un contenitore posizionato: 'offsetParent' vi risulta nullo
+		   anche quando e' visibile, quindi si guarda cio' che conta davvero, l'ingombro */
+		var visibile = function() {
+			var r = menu.getBoundingClientRect();
+			return r.height > 0 && r.width > 0 && getComputedStyle(menu).display !== 'none';
+		};
+
+		var portaIlFuoco = function(indice, tentativo) {
+			var elenco = voci();
+			if (visibile() && elenco.length) {
+				var scelta = elenco[Math.min(indice, elenco.length - 1)];
+				scelta.setAttribute('role', 'menuitem');
+				scelta.focus();
+				return;
+			}
+			if (tentativo < 12) {
+				window.setTimeout(function() { portaIlFuoco(indice, tentativo + 1); }, 60);
+			}
+		};
+
+		/* lo stato dichiarato segue anche le aperture fatte col mouse */
+		attivatore.addEventListener('mouseenter', function() { attivatore.setAttribute('aria-expanded', 'true'); });
+		attivatore.addEventListener('mouseleave', function() { attivatore.setAttribute('aria-expanded', 'false'); });
+
+		attivatore.addEventListener('keydown', function(evento) {
+			/* il menu e' annidato nell'attivatore: senza questo, ogni tasto premuto su una
+			   voce risalirebbe fin qui e riaprirebbe, riportando il fuoco sulla prima —
+			   le frecce non avanzavano e Invio non attivava mai nulla */
+			if (menu.contains(evento.target)) {
+				return;
+			}
+			var tasto = evento.keyCode || evento.which;
+			if (tasto === 13 || tasto === 32 || tasto === 40) {
+				evento.preventDefault();
+				apri();
+				portaIlFuoco(0, 0);
+			} else if (tasto === 27) {
+				chiudi();
+			}
+		});
+
+		menu.addEventListener('keydown', function(evento) {
+			var tasto = evento.keyCode || evento.which;
+			/* Invio e barra non lasciano navigare il collegamento da se': il percorso del
+			   mouse passa dal contenitore della voce, che aggiunge l'identificativo di
+			   scheda all'indirizzo. Seguendo il solo 'href' si finisce sulla pagina di
+			   accesso. Si emette quindi il clic sullo stesso contenitore. */
+			if (tasto === 13 || tasto === 32) {
+				var contenitore = evento.target.closest('[class*="menu-item"]');
+				if (contenitore) {
+					evento.preventDefault();
+					$(contenitore).trigger('click');
+				}
+				return;
+			}
+			var elenco = voci();
+			var posizione = elenco.indexOf(document.activeElement);
+			if (tasto === 40 || tasto === 38) {
+				evento.preventDefault();
+				if (!elenco.length) { return; }
+				var destinazione = tasto === 40
+					? (posizione + 1) % elenco.length
+					: (posizione - 1 + elenco.length) % elenco.length;
+				elenco[destinazione].setAttribute('role', 'menuitem');
+				elenco[destinazione].focus();
+			} else if (tasto === 27) {
+				evento.preventDefault();
+				chiudi();
+				attivatore.focus();
+			} else if (tasto === 9) {
+				chiudi();
+			}
+		});
+	});
+}
+
 $(document).ready(function(){
+	gwMenuTestataDaTastiera();
 	$('#menuUtente').hover(
 	        function () {
 	            //mostra sottomenu

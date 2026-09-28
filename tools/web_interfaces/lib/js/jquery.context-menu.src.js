@@ -339,7 +339,7 @@ var mouseButton = {
                     'element' : function () {
                         LOG('Generating context menu HTML.');
 
-                        var _menu_content = $('<ul></ul>');
+                        var _menu_content = $('<ul role="menu"></ul>');
                         menuElement.html('');
                         menuElement.append(_menu_content);
 
@@ -348,12 +348,29 @@ var mouseButton = {
                          */
                         _this.items.forEach(function (item, index) {
                             var _menu_content_item = $('<a></a>');
+                            /* Accessibilita' (GovWay): le voci erano <a> senza href, quindi non
+                               raggiungibili da tastiera. Si dichiarano come voci di menu' con focus
+                               mobile: nessuna nell'ordine di tabulazione, la navigazione avviene con
+                               le frecce (cfr. il gestore in 'open'). */
+                            _menu_content_item.attr('role', 'menuitem');
+                            _menu_content_item.attr('tabindex', '-1');
                             _menu_content_item.html(item['text']);
                             _menu_content_item.on('click', function (event) {
                                 item['click']();
                                 _this.onclick();
+                                /* Accessibilita' (GovWay): se l'azione non ha spostato il focus da se'
+                                   (non apre una finestra ne' cambia pagina) il focus resterebbe sulla
+                                   voce che sta scomparendo, e cadrebbe poi sul documento facendo
+                                   perdere il punto in cui si era. Si verifica quindi anche il caso in
+                                   cui il focus e' ancora dentro il menu' che si sta chiudendo. */
+                                setTimeout(function () {
+                                    var attivo = document.activeElement;
+                                    if (!attivo || attivo === document.body || $.contains(menuElement[0], attivo)) {
+                                        $(element).trigger('focus');
+                                    }
+                                }, 0);
                             });
-                            _menu_content.append($('<li></li>').append(_menu_content_item));
+                            _menu_content.append($('<li role="none"></li>').append(_menu_content_item));
                         });
 
                         LOG('Generated context menu HTML.');
@@ -384,6 +401,74 @@ var mouseButton = {
                 })
 
                 menuElement.contextMenuOpenAnimation(event());
+
+                /* Accessibilita' (GovWay): il menu' puo' essere aperto da tastiera, quindi il focus
+                   deve entrarvi e la navigazione seguire lo schema atteso da un menu': frecce per
+                   spostarsi, Home/End agli estremi, Invio per attivare, Esc per chiudere tornando al
+                   comando. Il Tab chiude il menu' e prosegue nella pagina, come da prassi. */
+                var _elementoMenu = menuElement;
+                var _comando = $(element);
+                _comando.attr('aria-expanded', 'true');
+
+                var _voci = function () {
+                    return _elementoMenu.find('[role="menuitem"]');
+                };
+                var _spostaFocus = function (indice) {
+                    var v = _voci();
+                    if (!v.length) {
+                        return;
+                    }
+                    var i = ((indice % v.length) + v.length) % v.length;
+                    v.attr('tabindex', '-1');
+                    v.eq(i).attr('tabindex', '0').trigger('focus');
+                };
+                var _chiudiEFocus = function () {
+                    _elementoMenu.contextMenuCloseAnimation();
+                    _comando.attr('aria-expanded', 'false');
+                    _comando.trigger('focus');
+                };
+                setTimeout(function () {
+                    _spostaFocus(0);
+                }, 0);
+
+                _elementoMenu.off('keydown.gwAccessibilita').on('keydown.gwAccessibilita', function (evento) {
+                    var v = _voci();
+                    var corrente = v.index(document.activeElement);
+                    switch (evento.key) {
+                        case 'ArrowDown':
+                            evento.preventDefault();
+                            _spostaFocus(corrente + 1);
+                            break;
+                        case 'ArrowUp':
+                            evento.preventDefault();
+                            _spostaFocus(corrente - 1);
+                            break;
+                        case 'Home':
+                            evento.preventDefault();
+                            _spostaFocus(0);
+                            break;
+                        case 'End':
+                            evento.preventDefault();
+                            _spostaFocus(v.length - 1);
+                            break;
+                        case 'Enter':
+                        case ' ':
+                            evento.preventDefault();
+                            $(document.activeElement).trigger('click');
+                            break;
+                        case 'Escape':
+                            evento.preventDefault();
+                            _chiudiEFocus();
+                            break;
+                        case 'Tab':
+                            /* nessun preventDefault: il Tab prosegue dal comando appena rifocalizzato */
+                            _chiudiEFocus();
+                            break;
+                        default:
+                            break;
+                    }
+                });
+
                 this.onopen();
             },
 
@@ -394,6 +479,7 @@ var mouseButton = {
             	event = (typeof event !== 'undefined') ?  event : function () { };
                 var _this = this;
                 LOG('Closing context menu.');
+                $(element).attr('aria-expanded', 'false');
                 menuElement.contextMenuCloseAnimation(function () {
                     // Close context menu after update this.
                     _this.update();

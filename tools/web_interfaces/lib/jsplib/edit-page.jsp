@@ -87,7 +87,7 @@ if(idsPassword == null)
 %>
 
 
-<td class="valignTop" class="td2PageBody">
+<td class="valignTop td2PageBody" role="main" id="gw-contenuto" tabindex="-1">
 	<form name="form" <%=encTypeS %> action="<%= gd.getUrl() %>" method="post">
 		<!-- Breadcrumbs -->
 		<jsp:include page="/jsplib/titlelist.jsp" flush="true" />
@@ -164,7 +164,7 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 					<tbody>
 						<tr>	
 							<td class="titoloSezione" id="dettaglioFormHeader" colspan="<%= colFormHeader %>">
-								<span class="history"><%= titoloSezione %></span>
+								<span class="history" role="heading" aria-level="1"><%= titoloSezione %></span>
 							</td>
 							<% if(mostraComandiHeader) { %>
 								<jsp:include page="/jsplib/comandi-header.jsp" flush="true" />
@@ -203,11 +203,13 @@ $(document).ready(function () {
             $("#" + iconId).html(iconNascondiSezione);
             $("#" + iconId).attr("title", tooltipNascondiSezione);
             $("#" + anchorId).attr("title", tooltipNascondiSezione);
+$("#" + anchorId).attr("aria-expanded", "true");
         } else {
             $("#" + sectionId).hide();
             $("#" + iconId).html(iconVisualizzaSezione);
             $("#" + iconId).attr("title", tooltipVisualizzaSezione);
             $("#" + anchorId).attr("title", tooltipVisualizzaSezione);
+$("#" + anchorId).attr("aria-expanded", "false");
         }
 
         // Toggle (indipendente per ogni sezione)
@@ -225,6 +227,7 @@ $(document).ready(function () {
         $("#" + sectionId).show();
         $("#" + iconId).html(iconNascondiSezione).attr("title", tooltipNascondiSezione);
         $("#" + anchorId).attr("title", tooltipNascondiSezione);
+$("#" + anchorId).attr("aria-expanded", "true");
         $("#" + fieldsetId).removeClass("fieldsetCollapsed");
         inizializzaSelectSezione(sectionId);
     }
@@ -238,6 +241,7 @@ $(document).ready(function () {
         $("#" + sectionId).hide();
         $("#" + iconId).html(iconVisualizzaSezione).attr("title", tooltipVisualizzaSezione);
         $("#" + anchorId).attr("title", tooltipVisualizzaSezione);
+$("#" + anchorId).attr("aria-expanded", "false");
         $("#" + fieldsetId).addClass("fieldsetCollapsed");
     }
 
@@ -295,11 +299,13 @@ $(document).ready(function () {
             $("#" + iconId).html(iconNascondiSezione);
             $("#" + iconId).attr("title", tooltipNascondiSezione);
             $("#" + anchorId).attr("title", tooltipNascondiSezione);
+$("#" + anchorId).attr("aria-expanded", "true");
         } else {
             $("#" + sectionId).hide();
             $("#" + iconId).html(iconVisualizzaSezione);
             $("#" + iconId).attr("title", tooltipVisualizzaSezione);
             $("#" + anchorId).attr("title", tooltipVisualizzaSezione);
+$("#" + anchorId).attr("aria-expanded", "false");
         }
 
      	// Toggle (indipendente per ogni sezione)
@@ -317,6 +323,7 @@ $(document).ready(function () {
         $("#" + sectionId).show();
         $("#" + iconId).html(iconNascondiSezione).attr("title", tooltipNascondiSezione);
         $("#" + anchorId).attr("title", tooltipNascondiSezione);
+$("#" + anchorId).attr("aria-expanded", "true");
         $("#" + divId).removeClass("subtitleCollapsed").addClass("subtitleOpen");
         inizializzaSelectSezione(sectionId);
     }
@@ -330,6 +337,7 @@ $(document).ready(function () {
         $("#" + sectionId).hide();
         $("#" + iconId).html(iconVisualizzaSezione).attr("title", tooltipVisualizzaSezione);
         $("#" + anchorId).attr("title", tooltipVisualizzaSezione);
+$("#" + anchorId).attr("aria-expanded", "false");
         $("#" + divId).removeClass("subtitleOpen").addClass("subtitleCollapsed");
     }
 
@@ -417,6 +425,13 @@ for (int i = 0; i < dati.size(); i++) {
   	String rowName="row_"+deName;
   	String deLabel = !de.getLabel(elementsRequiredEnabled).equals("") ? de.getLabel(elementsRequiredEnabled) : "&nbsp;";
   	String deLabelId = "de_label_"+i;
+  	// nome accessibile per i controlli la cui etichetta e' volutamente non visibile: la <label>
+  	// viene resa vuota, quindi senza questo attributo il controllo resta anonimo. Se l'etichetta
+  	// e' valorizzata non viene emesso nulla, per non mascherare il testo visibile
+  	String deAriaLabelAttr = "";
+  	if(de.isLabelEmpty() && !de.getAccessibleLabel().equals("")) {
+  		deAriaLabelAttr = " aria-label=\"" + ServletUtils.escapeHTMLAttribute(de.getAccessibleLabel()) + "\"";
+  	}
   	String deNote = de.getNote();
   	String classInput= de.getStyleClass();
   	String labelStyleClass= de.getLabelStyleClass();
@@ -477,14 +492,14 @@ for (int i = 0; i < dati.size(); i++) {
 		    							<%
 		    							if(gestioneAperturaFieldset){
 		    							%>
-	    									<i class="material-icons md-16" id="<%= deName  %>__icon" title="<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>"><%= Costanti.ICON_VISUALIZZA_SEZIONE_FILTRI_RICERCA%></i>
+	    									<i class="material-icons md-16" aria-hidden="true" id="<%= deName  %>__icon" title="<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>"><%= Costanti.ICON_VISUALIZZA_SEZIONE_FILTRI_RICERCA%></i>
 	    							    <%
 		    							}
 		    	    					%>
 		    	    					<%
 		    							if(refresh){
 		    							%>
-	    									<i class="material-icons md-16" id="<%= deName  %>__icon_refresh" title="<%= Costanti.ICONA_REFRESH_SEZIONE_TOOLTIP%>"><%= Costanti.ICONA_REFRESH_SEZIONE%></i>
+	    									<i class="material-icons md-16" role="button" tabindex="0" id="<%= deName  %>__icon_refresh" title="<%= Costanti.ICONA_REFRESH_SEZIONE_TOOLTIP%>" aria-label="<%= Costanti.ICONA_REFRESH_SEZIONE_TOOLTIP%>"><span aria-hidden="true"><%= Costanti.ICONA_REFRESH_SEZIONE%></span></i>
 	    							    <%
 		    							}
 		    	    					%>
@@ -492,7 +507,7 @@ for (int i = 0; i < dati.size(); i++) {
 	    						<%
 	    							}
 	    						%>
-	    						<a id="<%= deName  %>__anchor" class="<%=cssClassTitle %>" <%=titoloComandoApertura %>><%=deLabel %></a>
+	    						<a id="<%= deName  %>__anchor" class="<%=cssClassTitle %>" role="button" tabindex="0" aria-controls="<%= deName %>__id" <%=titoloComandoApertura %>><%=deLabel %></a>
 	    					</legend>
 	    					       <%
 					               if(gestioneAperturaFieldset){
@@ -569,7 +584,7 @@ for (int i = 0; i < dati.size(); i++) {
    							if(gestioneAperturaSubTitle){
    							%>
 	       					<span class="subtitleAnchor">
-	       						<i class="material-icons md-16" id="<%= deName  %>__icon" title="<%= Costanti.TOOLTIP_VISUALIZZA_SUBTITLE%>"><%= Costanti.ICON_VISUALIZZA_SUBTITLE%></i>
+	       						<i class="material-icons md-16" aria-hidden="true" id="<%= deName  %>__icon" title="<%= Costanti.TOOLTIP_VISUALIZZA_SUBTITLE%>"><%= Costanti.ICON_VISUALIZZA_SUBTITLE%></i>
 	       					</span>
 	       					<%
    							}
@@ -578,12 +593,12 @@ for (int i = 0; i < dati.size(); i++) {
   							if(refresh){
   							%>
 	       					<span class="subtitleRefresh">
-								<i class="material-icons md-16" id="<%= deName  %>__icon_refresh" title="<%= Costanti.ICONA_REFRESH_SEZIONE_TOOLTIP%>"><%= Costanti.ICONA_REFRESH_SEZIONE%></i>
+								<i class="material-icons md-16" role="button" tabindex="0" id="<%= deName  %>__icon_refresh" title="<%= Costanti.ICONA_REFRESH_SEZIONE_TOOLTIP%>" aria-label="<%= Costanti.ICONA_REFRESH_SEZIONE_TOOLTIP%>"><span aria-hidden="true"><%= Costanti.ICONA_REFRESH_SEZIONE%></span></i>
 	       					</span>
 	       					<%
    							}
    	    					%>
-							<a id="<%= deName  %>__anchor" class="<%=cssClassTitle %>" <%=titoloComandoApertura %>><%=deLabel %></a>
+							<a id="<%= deName  %>__anchor" class="<%=cssClassTitle %>" role="button" tabindex="0" aria-controls="<%= deName %>__id" <%=titoloComandoApertura %>><%=deLabel %></a>
 	       				</span>
 	       				<%
 							} else {
@@ -594,7 +609,7 @@ for (int i = 0; i < dati.size(); i++) {
   							%>
   								<span class="subtitle">
 									<span class="subtitleRefresh">
-										<i class="material-icons md-16" id="<%= deName  %>__icon_refresh" title="<%= Costanti.ICONA_REFRESH_SEZIONE_TOOLTIP%>"><%= Costanti.ICONA_REFRESH_SEZIONE%></i>
+										<i class="material-icons md-16" role="button" tabindex="0" id="<%= deName  %>__icon_refresh" title="<%= Costanti.ICONA_REFRESH_SEZIONE_TOOLTIP%>" aria-label="<%= Costanti.ICONA_REFRESH_SEZIONE_TOOLTIP%>"><span aria-hidden="true"><%= Costanti.ICONA_REFRESH_SEZIONE%></span></i>
 									</span>
 									<a class="<%=cssClassTitle %>" ><%=deLabel %></a>
 								</span>
@@ -733,7 +748,7 @@ for (int i = 0; i < dati.size(); i++) {
 						      			<input type="hidden" name="__i_hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
 						      			<input type="hidden" name="__i_hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
 								      	<span class="spanIconInfoBox">
-											<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
+											<i class="material-icons md-24" aria-hidden="true" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
 										</span>
 									</div>
 						      	<% } %>
@@ -778,7 +793,7 @@ for (int i = 0; i < dati.size(); i++) {
 			                					%>
 			                					<a id="<%=id %>" class="text-action-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" type="button" >
 			                						<span class="icon-box">
-														<i class="material-icons md-16"><%= deIconName %></i>
+														<i class="material-icons md-16" aria-hidden="true"><%= deIconName %></i>
 													</span>
 													<% if (!image.getOnClick().equals("")) {
 											  			String clickHandler = visualizzaAjaxStatus + "postVersion_" + image.getOnClick();
@@ -816,7 +831,7 @@ for (int i = 0; i < dati.size(); i++) {
 								    			</div><%
 								    	} else {
 								    		String selDataAttributes = !de.getDataAttributesAsString().equals("") ? de.getDataAttributesAsString() : " ";
-								      		%><input type="text" name="<%= deName %>" value="<%= de.getValue() %>" class="<%= classInput %>" <%= selDataAttributes %> id="<%=textId %>" >
+								      		%><input type="text" name="<%= deName %>" value="<%= de.getValue() %>" class="<%= classInput %>" <%= selDataAttributes %> id="<%=textId %>" <%=deAriaLabelAttr %>>
 								      		<%
 								      			if(!de.getDataAttributesAsString().equals("")){
 								      				
@@ -873,25 +888,25 @@ for (int i = 0; i < dati.size(); i++) {
 									      				    		<%
 									      				    		if(multiColors) { 
 									      				    			String [] supportoColori = de.getStatusValues();
+									      				    			String [] supportoNomi = de.getStatusToolTips();
 									      				    		%>
-										      				    		tagClass: function(item, index) {
-										      				    			
-										      				    			var supportoColori_<%= deName %> = [];	
+										      				    		tagClass: function(item) {
+										      				    			// la classe di ogni tag e' indicizzata per nome del gruppo, non per posizione: la libreria
+										      				    			// passa l'indice soltanto quando il valore iniziale contiene il delimitatore, quindi con un
+										      				    			// solo tag non arrivava e lo stile risultava diverso da quello ottenuto con due o piu' tag
+										      				    			var coloriTag_<%= deName %> = {};
 										      				    			<% 
-												      						if (supportoColori != null) {
-												      							for (int v = 0; v < supportoColori.length; v++) {
-			                            											%> supportoColori_<%= deName %>.push('<%= supportoColori[v]  %>'); <%
-				                            									} //end for values
-												      							%>
-										      				    			<%
-					                                        					}
-												      						%>
-										      				    			if(index !== undefined && index < supportoColori_<%= deName %>.length){
-// 										      				    				return 'label label-info label-info-' + (index % Costanti.NUMERO_GRUPPI_CSS);
-										      				    				return 'label label-info ' + supportoColori_<%= deName %>[index];
-										      				    			}
-										      				    			
-										      				    			return 'label label-info label-info-default';
+												      							if (supportoColori != null && supportoNomi != null) {
+												      								for (int v = 0; v < supportoColori.length && v < supportoNomi.length; v++) {
+												      									if(supportoNomi[v] != null) {
+			                            											%> coloriTag_<%= deName %>['<%= StringEscapeUtils.escapeEcmaScript(supportoNomi[v]) %>'] = '<%= supportoColori[v] %>'; <%
+												      									}
+												      								} //end for values
+												      							}
+										      				    			%>
+										      				    			// un tag digitato e non ancora salvato non ha un colore assegnato: 'label-info-nuovo'
+										      				    			// condivide la resa delle altre classi della famiglia, cosi' non risulta diverso dagli altri
+										      				    			return 'label label-info ' + (coloriTag_<%= deName %>[item] || 'label-info-nuovo');
 										      				    		  }
 									      				    		<% if(multiColors && values != null) { %>
 									      				    		, 	
@@ -934,7 +949,7 @@ for (int i = 0; i < dati.size(); i++) {
 								      			<input type="hidden" name="__i_hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
 								      			<input type="hidden" name="__i_hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
 										      	<span class="spanIconInfoBox">
-													<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
+													<i class="material-icons md-24" aria-hidden="true" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
 												</span>
 											</div>
 								      	<% } 
@@ -962,7 +977,7 @@ for (int i = 0; i < dati.size(); i++) {
 									    		String maxValue = de.getMaxValue() != null ? " max=\"" + de.getMaxValue() + "\"" : "";
 									    		String customJsFunction = de.getCustomJsFunction() != null && !de.getCustomJsFunction().equals("")  ? " gw-function=\"" + de.getCustomJsFunction() + "\"" : "";
 									    		
-									      		%><input type="number" name="<%= deName %>" value="<%= de.getValue() %>" class="<%= classInput %>" <%=minvalue %> <%=maxValue %> <%=customJsFunction %> id="<%=numberId %>" >
+									      		%><input type="number" name="<%= deName %>" value="<%= de.getValue() %>" class="<%= classInput %>" <%=minvalue %> <%=maxValue %> <%=customJsFunction %> id="<%=numberId %>" <%=deAriaLabelAttr %>>
 									      	<% 
 								      		if(deInfo != null){
 								      			String idDivIconInfo = "divIconInfo_"+i;
@@ -971,7 +986,7 @@ for (int i = 0; i < dati.size(); i++) {
 									      			<input type="hidden" name="__i_hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
 									      			<input type="hidden" name="__i_hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
 											      	<span class="spanIconInfoBox">
-														<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
+														<i class="material-icons md-24" aria-hidden="true" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
 													</span>
 												</div>
 									      	<% } 
@@ -1008,12 +1023,12 @@ for (int i = 0; i < dati.size(); i++) {
 													%>
 													<div class="lock-container">
 														<div class="lock-input-container">
-															<input class="<%= classInput %>" type="<%=dePwdType %>" name="<%= deName  %>" id="<%=idPwd %>" value="<%= dePasswordValue  %>">
+															<input class="<%= classInput %>" type="<%=dePwdType %>" name="<%= deName  %>" id="<%=idPwd %>" value="<%= dePasswordValue  %>" <%=deAriaLabelAttr %>>
 															<%
 									          				if (!bottoneGeneraPassword && visualizzaIconaMostraPassword) {
 										          				%>
 										          					<span id="<%=idPwdEyeSpan %>" class="lock-span-comandi-input">
-																  		<i id="<%=idPwdEye %>" class="material-icons md-24" title="<%= Costanti.ICON_VISIBILITY_TOOLTIP %>"><%= Costanti.ICON_VISIBILITY %></i>
+																  		<i id="<%=idPwdEye %>" class="material-icons md-24" role="button" tabindex="0" title="<%= Costanti.ICON_VISIBILITY_TOOLTIP %>" aria-label="<%= Costanti.ICON_VISIBILITY_TOOLTIP %>"><span aria-hidden="true"><%= Costanti.ICON_VISIBILITY %></span></i>
 																  	</span>
 																	<script type="text/javascript" nonce="<%= randomNonce %>">
 																		$(document).ready(function(){
@@ -1030,11 +1045,13 @@ for (int i = 0; i < dati.size(); i++) {
 																				  // toggle the eye slash icon
 																			    var eyeIcon = $('#<%=idPwdEye %>');
 																			    if (x.type === 'password') {
-																			        eyeIcon.html('<%= Costanti.ICON_VISIBILITY %>');
+																			        eyeIcon.html('<span aria-hidden="true"><%= Costanti.ICON_VISIBILITY %></span>');
 																			        eyeIcon.attr('title', '<%= Costanti.ICON_VISIBILITY_TOOLTIP %>');
+																						eyeIcon.attr('aria-label', '<%= Costanti.ICON_VISIBILITY_TOOLTIP %>');
 																			    } else {
-																			        eyeIcon.html('<%= Costanti.ICON_VISIBILITY_OFF %>');
+																			        eyeIcon.html('<span aria-hidden="true"><%= Costanti.ICON_VISIBILITY_OFF %></span>');
 																			        eyeIcon.attr('title', '<%= Costanti.ICON_VISIBILITY_OFF_TOOLTIP %>');
+																						eyeIcon.attr('aria-label', '<%= Costanti.ICON_VISIBILITY_OFF_TOOLTIP %>');
 																			    }
 																			    
 																			});
@@ -1096,7 +1113,7 @@ for (int i = 0; i < dati.size(); i++) {
 												      			<input type="hidden" name="__i_hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
 												      			<input type="hidden" name="__i_hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
 														      	<span class="spanIconInfoBox">
-																	<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
+																	<i class="material-icons md-24" aria-hidden="true" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
 																</span>
 																
 															<% } %>	
@@ -1127,7 +1144,7 @@ for (int i = 0; i < dati.size(); i++) {
 							     					} else {
 							     						String taNoEdit = type.equals("textarea") ? " " : " readonly ";
 							     						%><div class="txtA_div">
-							     							<textarea id="<%=inputId %>" <%=taNoEdit %> rows='<%= de.getRows() %>' cols='<%= de.getCols() %>' name="<%= deName  %>" class="<%= classInput %>"><%= StringEscapeUtils.escapeHtml4(de.getValue()) %></textarea>
+							     							<textarea id="<%=inputId %>" <%=taNoEdit %> rows='<%= de.getRows() %>' cols='<%= de.getCols() %>' name="<%= deName  %>" class="<%= classInput %>" <%=deAriaLabelAttr %>><%= StringEscapeUtils.escapeHtml4(de.getValue()) %></textarea>
 							     							<% 
 													      		if(deInfo != null){
 													      			String idDivIconInfo = "divIconInfo_"+i;
@@ -1136,7 +1153,7 @@ for (int i = 0; i < dati.size(); i++) {
 													      			<input type="hidden" name="__i_hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
 													      			<input type="hidden" name="__i_hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
 															      	<span class="spanIconInfoBox">
-																		<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
+																		<i class="material-icons md-24" aria-hidden="true" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
 																	</span>
 																</div>
 													      	<% } %>
@@ -1186,7 +1203,7 @@ for (int i = 0; i < dati.size(); i++) {
 		                                    	            	%> 
 		                                    	            	<div class="<%=classDivNoEdit %>"> <span class="<%=classSpanNoEdit %>" id="<%=id %>"><%=fileValue %></span></div><%
 		                                    	      		} else {
-		                                    	          		%><input id="<%=id %>" size='<%= de.getSize() %>' type=file name="<%= deName  %>" class="<%= classInput %>"  <%= multipleFiles  %> />
+		                                    	          		%><input id="<%=id %>" size='<%= de.getSize() %>' type=file name="<%= deName  %>" class="<%= classInput %>"  <%= multipleFiles  %> <%=deAriaLabelAttr %>/>
 													  		<% if(!de.getOnChange().equals("")){ 
 													  			String changeHandler = visualizzaAjaxStatus + "postVersion_" + de.getOnChange();
 													  		%>
@@ -1206,7 +1223,7 @@ for (int i = 0; i < dati.size(); i++) {
 													      			<input type="hidden" name="__i_hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
 													      			<input type="hidden" name="__i_hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
 															      	<span class="spanIconInfoBox">
-																		<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
+																		<i class="material-icons md-24" aria-hidden="true" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
 																	</span>
 																</div>
 													      	<% }
@@ -1231,7 +1248,7 @@ for (int i = 0; i < dati.size(); i++) {
 		                               								String toolTipVal = ServletUtils.escapeHTMLAttribute(de.getToolTip());
 																	String selTitle = (toolTipVal!=null && !toolTipVal.equals("")) ? ("title='"+toolTipVal+"'") : " ";
 		                               								
-		                          									%><select id="<%= selId  %>" name="<%= deName  %>" <%= selTitle %> class="<%= classInput %>"><%
+		                          									%><select id="<%= selId  %>" name="<%= deName  %>" <%= selTitle %> class="<%= classInput %>" <%=deAriaLabelAttr %>><%
 		                          									String [] values = de.getValues();
 		                                        					if (values != null) {
 		                            									String [] labels = de.getLabels();
@@ -1290,7 +1307,7 @@ for (int i = 0; i < dati.size(); i++) {
 		                          										<input type="hidden" name="__i_hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
 		                          										<input type="hidden" name="__i_hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
 		                          										<span class="spanIconInfoBox">
-		                          											<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
+		                          											<i class="material-icons md-24" aria-hidden="true" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
 		                          										</span>
 		                          										<%
 		                          										}
@@ -1305,7 +1322,7 @@ for (int i = 0; i < dati.size(); i++) {
 		                          										%>
 		                          											<a id="<%=idIconLinks %>" class="image-link" <%= deLinkTip %> <%= deLinkTarget %> href="<%= deLink.getUrl() %>">
 		                          												<span class="icon-box">
-		                          													<i class="material-icons md-24"><%= deLinks.getButtonIcon() %></i>
+		                          													<i class="material-icons md-24" aria-hidden="true"><%= deLinks.getButtonIcon() %></i>
 		                          												</span>
 		                          											</a>
 		                          										<%
@@ -1319,7 +1336,7 @@ for (int i = 0; i < dati.size(); i++) {
 		                          											<input type="hidden" name="__i_hidden_title_<%= idIconLinks %>" id="hidden_title_<%= idIconLinks %>" value="<%= ServletUtils.escapeHTMLAttribute(deLinksTitoloModale) %>"/>
 		                          											<span id="hidden_body_<%= idIconLinks %>" class="hiddenBox"><%= deLinks.getBodyHtml() %></span>
 		                          											<span class="spanIconLinksBox" id="<%=idIconLinks %>" <%= deLinksTip %>>
-		                          												<i class="material-icons md-24"><%= deLinks.getButtonIcon() %></i>
+		                          												<i class="material-icons md-24" aria-hidden="true"><%= deLinks.getButtonIcon() %></i>
 		                          											</span>
 		                          											<script type="text/javascript" nonce="<%= randomNonce %>">
 		                          												$(document).ready(function(){
@@ -1344,6 +1361,19 @@ for (int i = 0; i < dati.size(); i++) {
 		                                        		} else { // else select
 		                                        			if(type.equals("multi-select")){
 		                                        				String selId = "select_" + i;
+		                                        				// Il suggerimento sull'uso di Ctrl riguarda il solo select nativo: quando il campo
+		                                        				// viene trasformato in un elenco di tag quella combinazione non ha alcun effetto.
+		                                        				boolean multiSelectNativo = de.getDataAttributesAsString().equals("");
+		                                        				boolean multiSelectSoloLettura = pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton");
+		                                        				boolean mostraNotaMultiSelect = multiSelectNativo && !multiSelectSoloLettura;
+		                                        				String idNotaMultiSelect = "nota_multi_select_" + i;
+		                                        				String idNotaDe = "nota_de_" + i;
+		                                        				// le note vengono associate al campo, altrimenti chi usa un lettore di schermo non le riceve
+		                                        				String descrittoDa = !deNote.equals("") ? idNotaDe : "";
+		                                        				if(mostraNotaMultiSelect) {
+		                                        					descrittoDa = descrittoDa.equals("") ? idNotaMultiSelect : (descrittoDa + " " + idNotaMultiSelect);
+		                                        				}
+		                                        				String deDescrittoDaAttr = descrittoDa.equals("") ? "" : (" aria-describedby=\"" + descrittoDa + "\"");
 		                                        				%>
 	                                        					<div class="prop">
 			                                        				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%=selId %>"><%=deLabel %></label>
@@ -1355,7 +1385,7 @@ for (int i = 0; i < dati.size(); i++) {
 			                               								String selSize = " size='"+de.getRows()+"' ";
 			                               								String selDataAttributes = !de.getDataAttributesAsString().equals("") ? de.getDataAttributesAsString() : " ";
 			                               								
-			                          									%><select id="<%= selId  %>" name="<%= deName  %>" <%= selSize %> class="<%= classInput %>" multiple <%= selDataAttributes %> ><%
+			                          									%><select id="<%= selId  %>" name="<%= deName  %>" <%= selSize %> class="<%= classInput %>" multiple <%= selDataAttributes %> <%=deAriaLabelAttr %><%= deDescrittoDaAttr %>><%
 			                          									String [] values = de.getValues();
 			                                        					if (values != null) {
 			                            									String [] labels = de.getLabels();
@@ -1425,7 +1455,7 @@ for (int i = 0; i < dati.size(); i++) {
 																      			<input type="hidden" name="__i_hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
 																      			<input type="hidden" name="__i_hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
 																      			<span class="spanIconInfoBox">
-																      				<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
+																      				<i class="material-icons md-24" aria-hidden="true" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
 																      			</span>
 																      			<%
 																      			}
@@ -1440,7 +1470,7 @@ for (int i = 0; i < dati.size(); i++) {
 																      			%>
 																      				<a id="<%=idIconLinks %>" class="image-link" <%= deLinkTip %> <%= deLinkTarget %> href="<%= deLink.getUrl() %>">
 																      					<span class="icon-box">
-																      						<i class="material-icons md-24"><%= deLinks.getButtonIcon() %></i>
+																      						<i class="material-icons md-24" aria-hidden="true"><%= deLinks.getButtonIcon() %></i>
 																      					</span>
 																      				</a>
 																      			<%
@@ -1454,7 +1484,7 @@ for (int i = 0; i < dati.size(); i++) {
 																      				<input type="hidden" name="__i_hidden_title_<%= idIconLinks %>" id="hidden_title_<%= idIconLinks %>" value="<%= ServletUtils.escapeHTMLAttribute(deLinksTitoloModale) %>"/>
 																      				<span id="hidden_body_<%= idIconLinks %>" class="hiddenBox"><%= deLinks.getBodyHtml() %></span>
 																      				<span class="spanIconLinksBox" id="<%=idIconLinks %>" <%= deLinksTip %>>
-																      					<i class="material-icons md-24"><%= deLinks.getButtonIcon() %></i>
+																      					<i class="material-icons md-24" aria-hidden="true"><%= deLinks.getButtonIcon() %></i>
 																      				</span>
 																      				<script type="text/javascript" nonce="<%= randomNonce %>">
 																      					$(document).ready(function(){
@@ -1472,13 +1502,23 @@ for (int i = 0; i < dati.size(); i++) {
 			                               							}
 															      	%>
 			                                        				<% if(!deNote.equals("")){ %>
-										      							<p class="note <%= labelStyleClass %>"><%=deNote %></p>
+										      							<p class="note <%= labelStyleClass %>" id="<%= idNotaDe %>"><%=deNote %></p>
+										      						<% } %>
+			                                        				<% if(mostraNotaMultiSelect){ %>
+										      							<p class="note <%= labelStyleClass %>" id="<%= idNotaMultiSelect %>"><%= Costanti.LABEL_NOTA_SELEZIONE_MULTIPLA %></p>
 										      						<% } %>
 			                                        			</div>
 		                                        				<%
 		                                        			} else { // else multi-select
 		                                        				if (type.equals("checkbox")){
 		                                        					String id = "form-checkbox-link_" + i;
+		                                        					// il testo del checkbox risiede in 'labelRight', reso a destra del controllo:
+		                                        					// quando la label a sinistra e' vuota e' quello l'unico nome disponibile
+		                                        					String idLabelRight = "de_label_right_" + i;
+		                                        					String ariaLabelledByChk = deAriaLabelAttr;
+		                                        					if(ariaLabelledByChk.equals("") && de.isLabelEmpty() && !de.getLabelRight().equals("")) {
+		                                        						ariaLabelledByChk = " aria-labelledby=\"" + idLabelRight + "\"";
+		                                        					}
 			                                        				%>
 			                                            			<div class="prop">
 			                                            				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%=id %>"><%=deLabel %></label>
@@ -1496,7 +1536,7 @@ for (int i = 0; i < dati.size(); i++) {
 								    									%>	<table class="<%=controlSetClass %>">
 						    													<tr> 
 						    														<td>
-								   														<input id="<%=id %>" type="checkbox" name="<%= deName  %>" value="yes" <%=chkVal %> <%=disVal %> >
+								   														<input id="<%=id %>" type="checkbox" name="<%= deName  %>" value="yes" <%=chkVal %> <%=disVal %> <%=ariaLabelledByChk %>>
 								   														<% if (!de.getOnClick().equals("")) { %>
 															            					<script type="text/javascript" nonce="<%= randomNonce %>">
 																						      	 $(document).ready(function(){
@@ -1509,7 +1549,7 @@ for (int i = 0; i < dati.size(); i++) {
 								   													</td>
 								   													<% if(!de.getLabelRight().equals("")){ %>
 								   													<td>
-								   														<span class="controlset"><%=de.getLabelRight() %></span>
+								   														<span class="controlset" id="<%=idLabelRight %>"><%=de.getLabelRight() %></span>
 								   													</td>
 								   													<% } %>
 								   													<%
@@ -1530,7 +1570,7 @@ for (int i = 0; i < dati.size(); i++) {
 																				      			<input type="hidden" name="__i_hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
 																				      			<input type="hidden" name="__i_hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
 																						      	<span class="spanIconInfoBox-cb-info">
-																									<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
+																									<i class="material-icons md-24" aria-hidden="true" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
 																								</span>
 																							</div>
 																						</td>
@@ -1607,7 +1647,7 @@ for (int i = 0; i < dati.size(); i++) {
 																			      				String valueI = de.getValues()[z] == null ? "" : de.getValues()[z];
 																			      		%>
 																			      			<div class="intervalInnerDiv">
-																			      				<input type="number" id="<%=id %>" name="<%= nameI %>" value="<%= valueI %>" class="<%= classInput %> intervalInnerInput" <%=minvalue %> <%=maxValue %> <%=customJsFunction %> >
+																			      				<input type="number" id="<%=id %>" name="<%= nameI %>" value="<%= valueI %>" class="<%= classInput %> intervalInnerInput" <%=minvalue %> <%=maxValue %> <%=customJsFunction %> <%=deAriaLabelAttr %>>
 																			      			</div>
 																			      		<%
 																				      		} // end for
@@ -1621,7 +1661,7 @@ for (int i = 0; i < dati.size(); i++) {
 																			      			<input type="hidden" name="__i_hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
 																			      			<input type="hidden" name="__i_hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
 																					      	<span class="spanIconInfoBox">
-																								<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
+																								<i class="material-icons md-24" aria-hidden="true" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
 																							</span>
 																						</div>
 																			      	<% } 
@@ -1715,14 +1755,14 @@ for (int i = 0; i < dati.size(); i++) {
 			                        								          				%>
 			                        														<div class="lock-input-container">
 			                        													<% } %>
-				                        													<input class="<%= classInput %>" type="<%=dePwdType %>" name="<%= deName  %>" id="<%=idPwd %>" value="<%= lockValue %>" <%=lockDisabled %> <%=autocompleteAttr %>>
+				                        													<input class="<%= classInput %>" type="<%=dePwdType %>" name="<%= deName  %>" id="<%=idPwd %>" value="<%= lockValue %>" <%=lockDisabled %> <%=autocompleteAttr %> <%=deAriaLabelAttr %>>
 				                        													<input type="hidden" name="<%= hiddenLockName  %>" id="<%=hiddenLockId %>" value="<%= deLockEscapedValue  %>">
 			                        													<%
 			                        							          				if (visualizzaComandiInternoInput) {
 			                        								          				%>
 			                        								          					<span id="<%=idPwdEditSpan %>" class="<%= spanComaniInternoInputClass %>">
-			                        														  		<i id="<%=idPwdEdit %>" class="material-icons md-24" title="<%= titleIconaModifica %>"><%=  Costanti.ICONA_EDIT %></i>
-			                        														  		<i id="<%=idPwdViewInnerLock %>" class="material-icons md-24" title="<%= Costanti.ICON_VISIBILITY_TOOLTIP %>"><%= Costanti.ICON_VISIBILITY %></i>
+			                        														  		<i id="<%=idPwdEdit %>" class="material-icons md-24" role="button" tabindex="0" title="<%= titleIconaModifica %>" aria-label="<%= titleIconaModifica %>"><span aria-hidden="true"><%=  Costanti.ICONA_EDIT %></span></i>
+			                        														  		<i id="<%=idPwdViewInnerLock %>" class="material-icons md-24" role="button" tabindex="0" title="<%= Costanti.ICON_VISIBILITY_TOOLTIP %>" aria-label="<%= Costanti.ICON_VISIBILITY_TOOLTIP %>"><span aria-hidden="true"><%= Costanti.ICON_VISIBILITY %></span></i>
 			                        														  	</span>
 			                        															<script type="text/javascript" nonce="<%= randomNonce %>">
 			                        																$(document).ready(function(){
@@ -1830,11 +1870,13 @@ for (int i = 0; i < dati.size(); i++) {
 			                        																			  // toggle the eye slash icon
 			                        																		    var eyeIcon = $('#<%=idPwdViewInnerLock %>');
 			                        																		    if (x.type === 'password') {
-			                        																		        eyeIcon.html('<%= Costanti.ICON_VISIBILITY %>');
+			                        																		        eyeIcon.html('<span aria-hidden="true"><%= Costanti.ICON_VISIBILITY %></span>');
 			                        																		        eyeIcon.attr('title', '<%= Costanti.ICON_VISIBILITY_TOOLTIP %>');
+																						eyeIcon.attr('aria-label', '<%= Costanti.ICON_VISIBILITY_TOOLTIP %>');
 			                        																		    } else {
-			                        																		        eyeIcon.html('<%= Costanti.ICON_VISIBILITY_OFF %>');
+			                        																		        eyeIcon.html('<span aria-hidden="true"><%= Costanti.ICON_VISIBILITY_OFF %></span>');
 			                        																		        eyeIcon.attr('title', '<%= Costanti.ICON_VISIBILITY_OFF_TOOLTIP %>');
+																						eyeIcon.attr('aria-label', '<%= Costanti.ICON_VISIBILITY_OFF_TOOLTIP %>');
 			                        																		    }
 			                        																		    
 			                        																		});
@@ -1861,8 +1903,8 @@ for (int i = 0; i < dati.size(); i++) {
 			                        									      					chiamataEventoPostback+=Costanti.POSTBACK_FUNCTION_WITH_PARAMETER_END;
 			                        									      				%>
 			                        											      			<span class="spanIconInfoBox-lock">
-			                        																<i class="material-icons md-24" id="<%=idPwdLockOpen %>" title="<%= Costanti.ICON_LOCK_OPEN_TOOLTIP %>" ><%=Costanti.ICON_LOCK_OPEN %></i>
-			                        																<i class="material-icons md-24 md-nohover" id="<%=idPwdLock %>"><%=Costanti.ICON_LOCK %></i>
+			                        																<i class="material-icons md-24" role="button" tabindex="0" id="<%=idPwdLockOpen %>" title="<%= Costanti.ICON_LOCK_OPEN_TOOLTIP %>" aria-label="<%= Costanti.ICON_LOCK_OPEN_TOOLTIP %>"><span aria-hidden="true"><%=Costanti.ICON_LOCK_OPEN %></span></i>
+			                        																<i class="material-icons md-24 md-nohover" aria-hidden="true" id="<%=idPwdLock %>"><%=Costanti.ICON_LOCK %></i>
 			                        															</span>
 			                        															<script type="text/javascript" nonce="<%= randomNonce %>">
 			                        																$(document).ready(function(){
@@ -1894,7 +1936,7 @@ for (int i = 0; i < dati.size(); i++) {
 			                        											      			<input type="hidden" name="__i_hidden_body_<%= idPwdCopyLock %>" id="hidden_body_<%= idPwdCopyLock %>"  value="<%= dePwd.getLockWarningMessage() %>"/>
 			                        											      			<input type="hidden" name="__i_hidden_url_<%= idPwdCopyLock %>" id="hidden_url_<%= idPwdCopyLock %>"  value="<%= de.getUrl() %>"/>
 			                        															<span class="spanIconInfoBox-copyLock">
-			                        																<i class="material-icons md-24" id="<%=idPwdCopyLock %>" title="<%= Costanti.ICONA_COPY_LOCK_TOOLTIP %>"><%= Costanti.ICON_COPY %></i>
+			                        																<i class="material-icons md-24" aria-hidden="true" id="<%=idPwdCopyLock %>" title="<%= Costanti.ICONA_COPY_LOCK_TOOLTIP %>"><%= Costanti.ICON_COPY %></i>
 			                        															</span>
 			                        															
 																								<input type="hidden" name="__i_hidden_title_<%= idPwdViewLock %>" id="hidden_title_<%= idPwdViewLock %>"  value="<%= Costanti.TITOLO_FINESTRA_MODALE_VISUALIZZA_MESSAGE_WARNING %>"/>
@@ -1902,7 +1944,7 @@ for (int i = 0; i < dati.size(); i++) {
 			                        											      			<input type="hidden" name="__i_hidden_url_<%= idPwdViewLock %>" id="hidden_url_<%= idPwdViewLock %>"  value="<%= de.getUrl() %>"/>
 			                        											      			<input type="hidden" name="__i_hidden_label_<%= idPwdViewLock %>" id="hidden_label_<%= idPwdViewLock %>"  value="<%= de.getOriginalLabel() %>"/>
 			                        													      	<span class="spanIconInfoBox-viewLock">
-			                        																<i class="material-symbols-outlined md-24" id="<%=idPwdViewLock %>" title="<%= Costanti.ICONA_VISIBILITY_LOCK_TOOLTIP %>"><%= Costanti.ICON_VISIBILITY_LOCK %></i>
+			                        																<i class="material-symbols-outlined md-24" aria-hidden="true" id="<%=idPwdViewLock %>" title="<%= Costanti.ICONA_VISIBILITY_LOCK_TOOLTIP %>"><%= Costanti.ICON_VISIBILITY_LOCK %></i>
 			                        															</span>			                        															
 			                        														<% } %>	
 			                        											      			                        											      	
@@ -1912,7 +1954,7 @@ for (int i = 0; i < dati.size(); i++) {
 			                        											      			<input type="hidden" name="__i_hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
 			                        											      			<input type="hidden" name="__i_hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
 			                        													      	<span class="spanIconInfoBox">
-			                        																<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
+			                        																<i class="material-icons md-24" aria-hidden="true" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
 			                        															</span>
 			                        															
 			                        														<% } %>	

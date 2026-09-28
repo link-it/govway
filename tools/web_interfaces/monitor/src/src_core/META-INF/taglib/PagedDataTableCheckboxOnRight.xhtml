@@ -93,44 +93,44 @@
 						</h:panelGrid>
 					</f:facet>
 					<f:facet name="previous">
-						<h:graphicImage id="#{id}_prev_top" value="/images/tema_link/go_prev.png" >
+						<h:graphicImage alt="Pagina precedente" id="#{id}_prev_top" value="/images/tema_link/go_prev.png" >
 							<rich:toolTip for="#{id}_prev_top">
 								<h:outputText value="Precedente" />
 							</rich:toolTip>
 						</h:graphicImage>
 					</f:facet>
 					<f:facet name="next">
-						<h:graphicImage id="#{id}_next_top" value="/images/tema_link/go_next.png" >
+						<h:graphicImage alt="Pagina successiva" id="#{id}_next_top" value="/images/tema_link/go_next.png" >
 							<rich:toolTip for="#{id}_next_top">
 								<h:outputText value="Successiva" />
 							</rich:toolTip>
 						</h:graphicImage>
 					</f:facet>
 					<f:facet name="last">
-						<h:graphicImage id="#{id}_last_top" value="/images/tema_link/go_end.png" >
+						<h:graphicImage alt="Ultima pagina" id="#{id}_last_top" value="/images/tema_link/go_end.png" >
 							<rich:toolTip for="#{id}_last_top">
 								<h:outputText value="Ultima Pagina" />
 							</rich:toolTip>
 						</h:graphicImage>
 					</f:facet>
 					<f:facet name="first">
-						<h:graphicImage id="#{id}_first_top" value="/images/tema_link/go_start.png" >
+						<h:graphicImage alt="Prima pagina" id="#{id}_first_top" value="/images/tema_link/go_start.png" >
 							<rich:toolTip for="#{id}_first_top">
 								<h:outputText value="Prima Pagina" />
 							</rich:toolTip>
 						</h:graphicImage>
 					</f:facet>
 					<f:facet name="previous_disabled">
-						<h:graphicImage id="#{id}_prev_disabled_top" value="/images/tema_link/go_prev_disabilitato.png" />
+						<h:graphicImage alt="" id="#{id}_prev_disabled_top" value="/images/tema_link/go_prev_disabilitato.png" />
 					</f:facet>
 					<f:facet name="next_disabled">
-						<h:graphicImage id="#{id}_next_disabled_top" value="/images/tema_link/go_next_disabilitato.png" />
+						<h:graphicImage alt="" id="#{id}_next_disabled_top" value="/images/tema_link/go_next_disabilitato.png" />
 					</f:facet>
 					<f:facet name="last_disabled">
-						<h:graphicImage id="#{id}_last_disabled_top" value="/images/tema_link/go_end_disabilitato.png" />
+						<h:graphicImage alt="" id="#{id}_last_disabled_top" value="/images/tema_link/go_end_disabilitato.png" />
 					</f:facet>
 					<f:facet name="first_disabled">
-						<h:graphicImage id="#{id}_first_disabled_top" value="/images/tema_link/go_start_disabilitato.png" />
+						<h:graphicImage alt="" id="#{id}_first_disabled_top" value="/images/tema_link/go_start_disabilitato.png" />
 					</f:facet>
 					
 					<ui:insert name="requestParams"/>
@@ -167,7 +167,7 @@
 	                        <h:selectBooleanCheckbox id="#{id}_selectedAllChbx" value="#{mBean.selectedAll}" styleClass="checkbox-display-none"/>
 	                      </h:panelGroup>
 	                    </f:facet>
-	                    <h:selectBooleanCheckbox id="#{id}_column_ckb" value="#{selectionMapTarget}" disabled="false"  onclick="checkVisualizzaSelezionePrimiElementi(); singleCheckboxListener( '#{id}', this.checked , #{showSelectAll} ,#{value.rowCount} , #{rowsToDisplay}, #{useCount} );"/>
+	                    <h:selectBooleanCheckbox id="#{id}_column_ckb" title="Seleziona la riga" value="#{selectionMapTarget}" disabled="false"  onclick="checkVisualizzaSelezionePrimiElementi(); singleCheckboxListener( '#{id}', this.checked , #{showSelectAll} ,#{value.rowCount} , #{rowsToDisplay}, #{useCount} );"/>
 	                  </rich:column>
 					  
 			      <f:facet name="footer">
@@ -249,28 +249,28 @@
 						</f:facet>
 						   
 						<f:facet name="previous">
-							<h:graphicImage id="#{id}_prev" value="/images/tema_link/go_prev.png" >
+							<h:graphicImage alt="Pagina precedente" id="#{id}_prev" value="/images/tema_link/go_prev.png" >
 								<rich:toolTip for="#{id}_prev">
 									<h:outputText value="Precedente" />
 								</rich:toolTip>
 							</h:graphicImage>
 						</f:facet>
 						<f:facet name="next">
-							<h:graphicImage id="#{id}_next" value="/images/tema_link/go_next.png" >
+							<h:graphicImage alt="Pagina successiva" id="#{id}_next" value="/images/tema_link/go_next.png" >
 								<rich:toolTip for="#{id}_next">
 									<h:outputText value="Successiva" />
 								</rich:toolTip>
 							</h:graphicImage>
 						</f:facet>
 						<f:facet name="last">
-							<h:graphicImage id="#{id}_last" value="/images/tema_link/go_end.png" >
+							<h:graphicImage alt="Ultima pagina" id="#{id}_last" value="/images/tema_link/go_end.png" >
 								<rich:toolTip for="#{id}_last">
 									<h:outputText value="Ultima Pagina" />
 								</rich:toolTip>
 							</h:graphicImage>
 						</f:facet>
 						<f:facet name="first">
-							<h:graphicImage id="#{id}_first" value="/images/tema_link/go_start.png" >
+							<h:graphicImage alt="Prima pagina" id="#{id}_first" value="/images/tema_link/go_start.png" >
 								<rich:toolTip for="#{id}_first">
 									<h:outputText value="Prima Pagina" />
 								</rich:toolTip>
@@ -278,16 +278,16 @@
 						</f:facet>
 						
 					<f:facet name="previous_disabled">
-						<h:graphicImage id="#{id}_prev_disabled" value="/images/tema_link/go_prev_disabilitato.png" />
+						<h:graphicImage alt="" id="#{id}_prev_disabled" value="/images/tema_link/go_prev_disabilitato.png" />
 					</f:facet>
 					<f:facet name="next_disabled">
-						<h:graphicImage id="#{id}_next_disabled" value="/images/tema_link/go_next_disabilitato.png" />
+						<h:graphicImage alt="" id="#{id}_next_disabled" value="/images/tema_link/go_next_disabilitato.png" />
 					</f:facet>
 					<f:facet name="last_disabled">
-						<h:graphicImage id="#{id}_last_disabled" value="/images/tema_link/go_end_disabilitato.png" />
+						<h:graphicImage alt="" id="#{id}_last_disabled" value="/images/tema_link/go_end_disabilitato.png" />
 					</f:facet>
 					<f:facet name="first_disabled">
-						<h:graphicImage id="#{id}_first_disabled" value="/images/tema_link/go_start_disabilitato.png" />
+						<h:graphicImage alt="" id="#{id}_first_disabled" value="/images/tema_link/go_start_disabilitato.png" />
 					</f:facet>
 						
 						<ui:insert name="requestParams"/>
@@ -311,10 +311,10 @@
                         <tbody>
                             <tr>
 								<td class="#{value.firstEnabled ? '' : 'rich-datascr-button-dsbld'} rich-datascr-button" id="#{id}_ds_top_first_group">
-									<h:graphicImage id="#{id}_first_disabled_top" value="/images/tema_link/go_start_disabilitato.png" 
+									<h:graphicImage alt="" id="#{id}_first_disabled_top" value="/images/tema_link/go_start_disabilitato.png" 
 										rendered="#{not value.firstEnabled}" />
 									<a4j:commandLink id="#{id}_first_top_link" action="#{value.firstPage}" rendered="#{value.firstEnabled}" reRender="#{reRenderIds}" status="mainStatus">
-										<h:graphicImage id="#{id}_first_top" value="/images/tema_link/go_start.png" >
+										<h:graphicImage alt="Prima pagina" id="#{id}_first_top" value="/images/tema_link/go_start.png" >
 											<rich:toolTip for="#{id}_first_top">
 												<h:outputText value="Prima Pagina" />
 											</rich:toolTip>
@@ -322,10 +322,10 @@
 									</a4j:commandLink>
 								</td>
 								<td class="#{value.prevEnabled ? '' : 'rich-datascr-button-dsbld'} rich-datascr-button" id="#{id}_ds_top_prev_group">
-									<h:graphicImage id="#{id}_prev_disabled_top" value="/images/tema_link/go_prev_disabilitato.png" 
+									<h:graphicImage alt="" id="#{id}_prev_disabled_top" value="/images/tema_link/go_prev_disabilitato.png" 
 										rendered="#{not value.prevEnabled}" />
 									<a4j:commandLink id="#{id}_prev_top_link" action="#{value.prevPage}" rendered="#{value.prevEnabled}" reRender="#{reRenderIds}" status="mainStatus">
-										<h:graphicImage id="#{id}_prev_top" value="/images/tema_link/go_prev.png" >
+										<h:graphicImage alt="Pagina precedente" id="#{id}_prev_top" value="/images/tema_link/go_prev.png" >
 											<rich:toolTip for="#{id}_prev_top">
 												<h:outputText value="Precedente" />
 											</rich:toolTip>
@@ -344,10 +344,10 @@
 									</h:panelGrid>
 								</td>
 								<td class="#{value.nextEnabled ? '' : 'rich-datascr-button-dsbld'} rich-datascr-button" id="#{id}_ds_top_next_group">
-									<h:graphicImage id="#{id}_next_disabled_top" value="/images/tema_link/go_next_disabilitato.png" 
+									<h:graphicImage alt="" id="#{id}_next_disabled_top" value="/images/tema_link/go_next_disabilitato.png" 
 										rendered="#{not value.nextEnabled}" />
 									<a4j:commandLink id="#{id}_next_top_link" action="#{value.nextPage}" reRender="#{reRenderIds}" rendered="#{value.nextEnabled}" status="mainStatus">
-										<h:graphicImage id="#{id}_next_top" value="/images/tema_link/go_next.png" >
+										<h:graphicImage alt="Pagina successiva" id="#{id}_next_top" value="/images/tema_link/go_next.png" >
 											<rich:toolTip for="#{id}_next_top">
 												<h:outputText value="Successiva" />
 											</rich:toolTip>
@@ -368,10 +368,10 @@
 	                        <tbody>
 	                            <tr>
 									<td class="#{value.firstEnabled ? '' : 'rich-datascr-button-dsbld'} rich-datascr-button" id="#{id}_ds_down_first_group">
-										<h:graphicImage id="#{id}_first_disabled_down" value="/images/tema_link/go_start_disabilitato.png" 
+										<h:graphicImage alt="" id="#{id}_first_disabled_down" value="/images/tema_link/go_start_disabilitato.png" 
 											rendered="#{not value.firstEnabled}" />
 										<a4j:commandLink id="#{id}_first_down_link" action="#{value.firstPage}" rendered="#{value.firstEnabled}" reRender="#{reRenderIds}" status="mainStatus">
-											<h:graphicImage id="#{id}_first_down" value="/images/tema_link/go_start.png" >
+											<h:graphicImage alt="Prima pagina" id="#{id}_first_down" value="/images/tema_link/go_start.png" >
 												<rich:toolTip for="#{id}_first_down">
 													<h:outputText value="Prima Pagina" />
 												</rich:toolTip>
@@ -379,10 +379,10 @@
 										</a4j:commandLink>
 									</td>
 									<td class="#{value.prevEnabled ? '' : 'rich-datascr-button-dsbld'} rich-datascr-button" id="#{id}_ds_down_prev_group">
-										<h:graphicImage id="#{id}_prev_disabled_down" value="/images/tema_link/go_prev_disabilitato.png" 
+										<h:graphicImage alt="" id="#{id}_prev_disabled_down" value="/images/tema_link/go_prev_disabilitato.png" 
 											rendered="#{not value.prevEnabled}" />
 										<a4j:commandLink id="#{id}_prev_down_link" action="#{value.prevPage}" rendered="#{value.prevEnabled}" reRender="#{reRenderIds}" status="mainStatus">
-											<h:graphicImage id="#{id}_prev_down" value="/images/tema_link/go_prev.png" >
+											<h:graphicImage alt="Pagina precedente" id="#{id}_prev_down" value="/images/tema_link/go_prev.png" >
 												<rich:toolTip for="#{id}_prev_down">
 													<h:outputText value="Precedente" />
 												</rich:toolTip>
@@ -404,10 +404,10 @@
 										</h:panelGrid>
 									</td>
 									<td class="#{value.nextEnabled ? '' : 'rich-datascr-button-dsbld'} rich-datascr-button" id="#{id}_ds_down_next_group">
-										<h:graphicImage id="#{id}_next_disabled_down" value="/images/tema_link/go_next_disabilitato.png" 
+										<h:graphicImage alt="" id="#{id}_next_disabled_down" value="/images/tema_link/go_next_disabilitato.png" 
 											rendered="#{not value.nextEnabled}" />
 										<a4j:commandLink id="#{id}_next_down_link" action="#{value.nextPage}" reRender="#{reRenderIds}" rendered="#{value.nextEnabled}" status="mainStatus">
-											<h:graphicImage id="#{id}_next_down" value="/images/tema_link/go_next.png" >
+											<h:graphicImage alt="Pagina successiva" id="#{id}_next_down" value="/images/tema_link/go_next.png" >
 												<rich:toolTip for="#{id}_next_down">
 													<h:outputText value="Successiva" />
 												</rich:toolTip>
@@ -453,7 +453,7 @@
 		   <div class="form-container noborder">
 			  <div class="buttonrowmodal">
 		      	<h:panelGrid columns="2">
-		        	<h:graphicImage value="/images/tema_link/alert_orange.png" />
+		        	<h:graphicImage alt="" value="/images/tema_link/alert_orange.png" />
 			 		<h:outputText value="Eliminare elementi selezionati?" styleClass="output-text-font-weight-bold" />
 		      	</h:panelGrid>
 			</div>
@@ -482,7 +482,7 @@
 		   <div class="form-container noborder">
 			  <div class="buttonrowmodal">
 			      <h:panelGrid columns="2">
-			        <h:graphicImage value="/images/tema_link/alert_orange.png" />
+			        <h:graphicImage alt="" value="/images/tema_link/alert_orange.png" />
 				 	<h:outputText value="E' necessario selezionare almeno 1 elemento." styleClass="output-text-font-weight-bold" />
 			      </h:panelGrid>
 			  </div>
@@ -507,7 +507,7 @@
 		   <div class="form-container noborder">
 			  <div class="buttonrowmodal">
 			      <h:panelGrid columns="2">
-			        <h:graphicImage value="/images/tema_link/alert_orange.png" />
+			        <h:graphicImage alt="" value="/images/tema_link/alert_orange.png" />
 			        <a4j:outputPanel styleClass="pnl-fnt-wght-bld-txt-align-l">
 			        	<p class="p-modal-riga1">Il server non ha risposto in tempo.</p>
 			        	<p class="p-modal-riga2">Prova a restringere l'intervallo temporale di ricerca.</p>
@@ -535,7 +535,7 @@
 		   <div class="form-container noborder">
 			  <div class="buttonrowmodal">
 			      <h:panelGrid columns="2">
-			        <h:graphicImage value="/images/tema_link/alert_orange.png" />
+			        <h:graphicImage alt="" value="/images/tema_link/alert_orange.png" />
 			        <a4j:outputPanel styleClass="pnl-fnt-wght-bld-txt-align-l">
 			        	<p class="p-modal-riga1">Il server non ha risposto in tempo.</p>
 			        	<p class="p-modal-riga2">Prova ad effettuare una nuova ricerca.</p>
@@ -563,7 +563,7 @@
 		   <div class="form-container noborder">
 			  <div class="buttonrowmodal">
 			      <h:panelGrid columns="2">
-			        <h:graphicImage value="/images/tema_link/alert_orange.png" />
+			        <h:graphicImage alt="" value="/images/tema_link/alert_orange.png" />
 			        <a4j:outputPanel styleClass="pnl-fnt-wght-bld-txt-align-l">
 				        	<p class="p-modal-riga1">Profilo di Interoperabilità differente.</p>
 				        	<p class="p-modal-riga2">La transazione identificata appartiene ad un profilo di interoperabilità differente da quello selezionato.</p>
@@ -591,7 +591,7 @@
 		   <div class="form-container noborder">
 			  <div class="buttonrowmodal">
 			      <h:panelGrid columns="2">
-			        <h:graphicImage value="/images/tema_link/alert_orange.png" />
+			        <h:graphicImage alt="" value="/images/tema_link/alert_orange.png" />
 			        <a4j:outputPanel styleClass="pnl-fnt-wght-bld-txt-align-l">
 				        	<p class="p-modal-riga1">Dominio del Soggetto differente.</p>
 				        	<p class="p-modal-riga2">La transazione identificata appartiene ad un soggetto differente da quello selezionato.</p>

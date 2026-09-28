@@ -2400,10 +2400,15 @@
         function buildHintFromInput($input, www) {
 		// modifica jquery-1.4
 		// return $input.clone().addClass(www.classes.hint).removeData().css(www.css.hint).css(getBackgroundStyles($input)).prop("readonly", true).removeAttr("id name placeholder required").attr({
-            return $input.clone().addClass(www.classes.hint).removeData().css(www.css.hint).css(getBackgroundStyles($input)).attr("readonly", true).removeAttr("id").removeAttr("name").removeAttr("placeholder").removeAttr("required").attr({
+            // modifica accessibilita': il clone e' puramente decorativo, mostra il completamento
+            // suggerito dietro al testo digitato. Viene tolto dall'albero di accessibilita', altrimenti
+            // uno screen reader vi troverebbe una seconda casella di testo, priva di nome e senza scopo.
+            return $input.clone().addClass(www.classes.hint).removeData().css(www.css.hint).css(getBackgroundStyles($input)).attr("readonly", true).removeAttr("id").removeAttr("name").removeAttr("placeholder").removeAttr("required").removeAttr("aria-label").removeAttr("aria-labelledby").attr({
                 autocomplete: "off",
                 spellcheck: "false",
-                tabindex: -1
+                tabindex: -1,
+                "aria-hidden": "true",
+                role: "presentation"
             });
         }
         function prepInput($input, www) {

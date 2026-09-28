@@ -377,7 +377,7 @@
 				</values>
 			      	<property name="policy.retrieveToken.jwt.signature.include.key.id"/>
 			</item>
-			<item type="textarea" name="jwtSignatureKidValue" label="" required="true" singleLine="true">
+			<item type="textarea" name="jwtSignatureKidValue" label="" accessibleLabel="Key Id (kid) personalizzato" required="true" singleLine="true">
 				<conditions and="false">
 					<condition and="true">
 						<equals name="retrieveTokenMethod" value="rfc7523_clientSecret"/>
@@ -514,7 +514,7 @@
 				</values>
 			      	<property name="policy.retrieveToken.jwt.clientId.mode"/>
 			</item>
-			<item type="textarea" name="jwtClientIdApplicativoModiChoiceInput" label="" required="true" singleLine="true">
+			<item type="textarea" name="jwtClientIdApplicativoModiChoiceInput" label="" accessibleLabel="Client ID personalizzato" required="true" singleLine="true">
 			      	<conditions and="false">
 					<condition>
 						<defined name="jwtClientIdApplicativoModiChoice"/>
@@ -523,7 +523,7 @@
 				</conditions>
 			      	<property name="policy.retrieveToken.jwt.clientId" />
 			</item>
-			<item type="textarea" name="jwtClientIdFruizioneModiChoiceInput" label="" required="true" singleLine="true">
+			<item type="textarea" name="jwtClientIdFruizioneModiChoiceInput" label="" accessibleLabel="Client ID personalizzato" required="true" singleLine="true">
 			      	<conditions and="false">
 					<condition>
 						<defined name="jwtClientIdFruizioneModiChoice"/>
@@ -572,7 +572,7 @@
 				</values>
 			      	<property name="policy.retrieveToken.jwt.issuer.mode"/>
 			</item>
-			<item type="textarea" name="jwtIssuerApplicativoModiChoiceInput" label="" required="true" singleLine="true">
+			<item type="textarea" name="jwtIssuerApplicativoModiChoiceInput" label="" accessibleLabel="Issuer personalizzato" required="true" singleLine="true">
 			      	<conditions and="false">
 					<condition>
 						<defined name="jwtIssuerApplicativoModiChoice"/>
@@ -581,7 +581,7 @@
 				</conditions>
 			      	<property name="policy.retrieveToken.jwt.issuer" />
 			</item>
-			<item type="textarea" name="jwtIssuerFruizioneModiChoiceInput" label="" required="true" singleLine="true">
+			<item type="textarea" name="jwtIssuerFruizioneModiChoiceInput" label="" accessibleLabel="Issuer personalizzato" required="true" singleLine="true">
 			      	<conditions and="false">
 					<condition>
 						<defined name="jwtIssuerFruizioneModiChoice"/>
@@ -630,7 +630,7 @@
 				</values>
 			      	<property name="policy.retrieveToken.jwt.subject.mode"/>
 			</item>
-			<item type="textarea" name="jwtSubjectApplicativoModiChoiceInput" label="" required="true" singleLine="true">
+			<item type="textarea" name="jwtSubjectApplicativoModiChoiceInput" label="" accessibleLabel="Subject personalizzato" required="true" singleLine="true">
 			      	<conditions and="false">
 					<condition>
 						<defined name="jwtSubjectApplicativoModiChoice"/>
@@ -639,7 +639,7 @@
 				</conditions>
 			      	<property name="policy.retrieveToken.jwt.subject" />
 			</item>
-			<item type="textarea" name="jwtSubjectFruizioneModiChoiceInput" label="" required="true" singleLine="true">
+			<item type="textarea" name="jwtSubjectFruizioneModiChoiceInput" label="" accessibleLabel="Subject personalizzato" required="true" singleLine="true">
 			      	<conditions and="false">
 					<condition>
 						<defined name="jwtSubjectFruizioneModiChoice"/>
@@ -752,7 +752,7 @@
 				</values>
 			      	<property name="policy.retrieveToken.formClientId.mode"/>
 			</item>
-			<item type="textarea" name="formClientIdApplicativoModiChoiceInput" label="" required="true" singleLine="true">
+			<item type="textarea" name="formClientIdApplicativoModiChoiceInput" label="" accessibleLabel="Client ID personalizzato" required="true" singleLine="true">
 			      	<conditions and="true">
 					<condition and="false">
 						<selected name="jwtPDND"/>
@@ -764,7 +764,7 @@
 				</conditions>
 			      	<property name="policy.retrieveToken.formClientId" />
 			</item>
-			<item type="textarea" name="formClientIdFruizioneModiChoiceInput" label="" required="true" singleLine="true">
+			<item type="textarea" name="formClientIdFruizioneModiChoiceInput" label="" accessibleLabel="Client ID personalizzato" required="true" singleLine="true">
 			      	<conditions and="true">
 					<condition and="false">
 						<selected name="jwtPDND"/>
@@ -959,7 +959,7 @@
 			</item>
 			
 			<!-- CUSTOM -->
-			<item type="select" name="customTokenParserCustomPluginChoice" label="" reloadOnChange="true" >
+			<item type="select" name="customTokenParserCustomPluginChoice" label="" accessibleLabel="Plugin personalizzato" reloadOnChange="true" >
 				<conditions>
 					<condition and="true">
 						<equals name="customTokenParserType" value="CUSTOM"/>

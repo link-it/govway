@@ -461,7 +461,7 @@
 				</values>
 			      	<property name="policy.attributeAuthority.request.jws.signature.include.key.id"/>
 			</item>
-			<item type="textarea" name="aaSignatureKidValue" label="" required="true" singleLine="true">
+			<item type="textarea" name="aaSignatureKidValue" label="" accessibleLabel="Key Id (kid) personalizzato" required="true" singleLine="true">
 				<conditions and="false">
 					<condition and="false">
 						<equals name="aaSignatureIncludeKid" value="custom"/>

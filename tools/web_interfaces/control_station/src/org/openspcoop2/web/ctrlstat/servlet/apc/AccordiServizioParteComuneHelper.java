@@ -709,6 +709,8 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					else{
 						de = new DataElement();
 						de.setLabel("");//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ALLEGATI_DOCUMENTO);
+						// l'etichetta non viene resa a schermo: il nome accessibile va indicato esplicitamente
+						de.setAccessibleLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ALLEGATI_DOCUMENTO);
 						de.setType(DataElementType.TEXT_AREA_NO_EDIT);
 						de.setValue(contenutoAllegato.toString());
 						de.setRows(CostantiControlStation.LABEL_PARAMETRO_TEXT_AREA_API_SIZE);
@@ -3456,6 +3458,8 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			if(gestioneDescrizione && !tipoOperazione.equals(TipoOperazione.ADD)) {
 				de.setRows(CostantiControlStation.TEXT_AREA_DESCRIZIONE_ROWS);
 				de.setLabel(CostantiControlStation.LABEL_PROPRIETA_DESCRIZIONE_EMPTY);
+				// l'etichetta non viene resa a schermo perche' ridondante con il titolo della sezione
+				de.setAccessibleLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_DESCRIZIONE);
 			}
 		}else{
 			if(gestioneDescrizione) {
@@ -3494,10 +3498,10 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		de.setSize(this.getSize());
 		
 		if(modificheAbilitate) {
-			if(tipoOperazione.equals(TipoOperazione.ADD)) {
-				de.enableTags();
-			} else {
-				de.enableTags(true);
+			// il campo e' multicolore in entrambe le modalita', altrimenti in inserimento i tag
+			// assumerebbero lo stile di ripiego e risulterebbero diversi da quelli in modifica
+			de.enableTags(true);
+			if(!tipoOperazione.equals(TipoOperazione.ADD)) {
 				// supporto con i colori dei tag gia' presenti
 				if(!StringUtils.isBlank(gruppi)) {
 					// colleziono i tags registrati
@@ -4490,6 +4494,8 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			if(AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_CANALE_STATO_RIDEFINITO.equals(canaleStato)) {
 				de = new DataElement();
 				de.setLabel(""); //(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CANALE);
+				// l'etichetta non viene resa a schermo: il nome accessibile va indicato esplicitamente
+				de.setAccessibleLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CANALE);
 				de.setValue(canale);
 				List<String> canaliListValues = canaleList.stream().map(CanaleConfigurazione::getNome).collect(Collectors.toList());
 				de.setValues(canaliListValues);

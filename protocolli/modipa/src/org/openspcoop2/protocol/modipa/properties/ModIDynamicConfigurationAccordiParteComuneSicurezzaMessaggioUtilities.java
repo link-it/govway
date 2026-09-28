@@ -223,6 +223,9 @@ public class ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtiliti
 					ConsoleItemType.SELECT,
 					ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_ID, 
 					ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_LABEL);
+			// l'etichetta dell'header risiede su un item hidden, quindi non e' visibile: senza questo
+			// nome il select resterebbe anonimo
+			profiloSicurezzaMessaggioHeaderCustomModeItem.setAccessibleLabel(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_ACCESSIBLE_LABEL);
 			profiloSicurezzaMessaggioHeaderCustomModeItem.addLabelValue(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_LABEL_PAYLOAD_HTTP,
 					ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_VALUE_PAYLOAD_HTTP);
 			profiloSicurezzaMessaggioHeaderCustomModeItem.addLabelValue(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_LABEL_ALWAYS,

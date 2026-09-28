@@ -35,7 +35,7 @@ if(showVersionPopup!=null && showVersionPopup.booleanValue() && vPopup!=null) {
 <div id="versionPopupOverlay" class="version-popup-overlay">
 	<div class="version-popup-dialog" role="dialog" aria-modal="true">
 		<div class="version-popup-header version-popup-header-<%= vpSeverity %>">
-			<i class="material-icons md-24 version-popup-header-icon"><%= vpIcon %></i>
+			<i class="material-icons md-24 version-popup-header-icon" aria-hidden="true"><%= vpIcon %></i>
 			<span class="version-popup-title"><%= (vPopup.getTitle()!=null) ? vPopup.getTitle() : "" %></span>
 			<% if(vPopup.isClosable()){ %><span class="version-popup-close" id="versionPopupClose" title="Chiudi">&times;</span><% } %>
 		</div>

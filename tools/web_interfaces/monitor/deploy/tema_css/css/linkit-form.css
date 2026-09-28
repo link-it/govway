@@ -69,7 +69,17 @@ div.errorsSpacer {
 	height: 4px;
 }
 
-.rich-messages dt {
+/* I messaggi sono resi come lista non ordinata (prima era un <dl> con soli <dt>).
+   Il reset universale azzera margini e spaziature, ma non i punti elenco.
+   Il colore va riaffermato: un <ul> non erediterebbe quello del contenitore del
+   messaggio, a differenza del <dl> di prima, e il testo risulterebbe nero sul fondo
+   scuro della cornice d'errore (2,24:1 anziche' 9,35:1). */
+.rich-messages {
+	list-style: none;
+	color: inherit;
+}
+
+.rich-messages li {
 	padding-bottom: 4px;
 }
 
@@ -615,6 +625,13 @@ input[type="submit"]:hover, input[type="button"]:hover, .buttonrow a:hover, .but
 
 .spinnerNumeroRisultatiGrafici input.rich-spinner-input{
 	width: 20px  !important;
+}
+
+/* Il campo 'Tentativi di pubblicazione' del tracciamento PDND usava 'inputLinkLong', pensata
+   per i campi di testo: ne risultava un contatore largo quanto la maschera. E' un numero di
+   al massimo cinque cifre, e occupa lo spazio che gli serve. */
+.spinnerTentativiPubblicazione input.rich-spinner-input{
+	width: 48px  !important;
 }
 
 .comandi-grafici-align-default{

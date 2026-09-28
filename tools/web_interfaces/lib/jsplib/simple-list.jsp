@@ -46,7 +46,7 @@ String csrfTokenFromSession = ServletUtils.leggiTokenCSRF(request, session);
 if(csrfTokenFromSession == null)
 	csrfTokenFromSession = "";
 %>
-<td valign="top" class="td2PageBody">
+<td valign="top" class="td2PageBody" role="main" id="gw-contenuto" tabindex="-1">
 	<form name="form" onSubmit ='return false;'>
 	
 	<%
@@ -178,7 +178,7 @@ if(csrfTokenFromSession == null)
 					  //checkbox remove
 					  %><td class="<%= stile %>">
 					  	<div align="center">
-					  		<input type="checkbox" name="selectcheckbox" value="<%= i %>"/>
+					  		<input type="checkbox" name="selectcheckbox" value="<%= i %>" aria-label="<%= ServletUtils.getAriaLabelSelezioneRiga(e, i) %>"/>
 					  	</div>
 					  </td><%
 					}

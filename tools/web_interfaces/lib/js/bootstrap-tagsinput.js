@@ -57,6 +57,28 @@
     this.$container = $('<div class="bootstrap-tagsinput"></div>');
     this.$input = $('<input type="text" placeholder="' + this.placeholderText + '"/>').appendTo(this.$container);
 
+    // modifica accessibilita': l'input interno di digitazione non ha etichetta propria e uno screen
+    // reader lo annuncerebbe come casella di testo anonima. L'elemento originale, che viene nascosto,
+    // il nome ce l'ha: lo si riusa. Si preferisce 'aria-labelledby' quando il riferimento e' un
+    // elemento gia' presente, cosi' il nome annunciato non puo' divergere dal testo a schermo.
+    var riferimentoNome = this.$element.attr('aria-labelledby');
+    var nomeEsplicito = this.$element.attr('aria-label');
+    if (riferimentoNome) {
+      this.$input.attr('aria-labelledby', riferimentoNome);
+    } else if (nomeEsplicito) {
+      this.$input.attr('aria-label', nomeEsplicito);
+    } else {
+      var idOriginale = this.$element.attr('id');
+      var $etichetta = idOriginale ? $('label[for="' + idOriginale + '"]') : $();
+      // $.trim e' stato rimosso in jQuery 4: si usa il metodo nativo
+      var testoEtichetta = $etichetta.length ? ($etichetta.text() || '').trim() : '';
+      if ($etichetta.attr('id') && testoEtichetta) {
+        this.$input.attr('aria-labelledby', $etichetta.attr('id'));
+      } else if (testoEtichetta) {
+        this.$input.attr('aria-label', testoEtichetta);
+      }
+    }
+
     this.$element.before(this.$container);
 
     this.build(options);
@@ -148,7 +170,13 @@
 
       // add a tag element
 
-      var $tag = $('<span class="tag ' + htmlEncode(tagClass) + (itemTitle !== null ? ('" title="' + itemTitle) : '') + '">' + htmlEncode(itemText) + '<span data-role="remove"></span></span>');
+      /* Accessibilita' (GovWay): il comando di rimozione era uno <span> vuoto, non raggiungibile
+         da tastiera e privo di nome, quindi invisibile alle tecnologie assistive. La rimozione
+         restava possibile con Backspace dal campo, ma nulla lo faceva sapere. Lo si dichiara
+         quindi come comando, con un nome che indica quale tag rimuove; l'attivazione con Invio
+         e barra spaziatrice e' garantita dall'attivatore generico in webapps.js. */
+      var etichettaRimozione = htmlEncode('Rimuovi ' + itemText);
+      var $tag = $('<span class="tag ' + htmlEncode(tagClass) + (itemTitle !== null ? ('" title="' + itemTitle) : '') + '">' + htmlEncode(itemText) + '<span data-role="remove" role="button" tabindex="0" aria-label="' + etichettaRimozione + '" title="' + etichettaRimozione + '"></span></span>');
       $tag.data('item', item);
       self.findInputWrapper().before($tag);
       $tag.after(' ');

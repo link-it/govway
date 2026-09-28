@@ -7109,6 +7109,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				de.setType(DataElementType.TEXT_AREA);
 				de.setRows(CostantiControlStation.TEXT_AREA_DESCRIZIONE_ROWS);
 				de.setLabel(CostantiControlStation.LABEL_PROPRIETA_DESCRIZIONE_EMPTY);
+				// l'etichetta non viene resa a schermo perche' ridondante con il titolo della sezione
+				de.setAccessibleLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_DESCRIZIONE);
 			}
 			else {
 				de.setType(DataElementType.TEXT_EDIT);
@@ -8317,6 +8319,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			if(this.core.isShowInterfacceAPI()) {
 				de = new DataElement();
 				de.setLabel("");
+				// l'etichetta non viene resa a schermo: il nome accessibile va indicato esplicitamente
+				de.setAccessibleLabel(AccordiServizioParteComuneCostanti.LABEL_INTERFACCIA);
 				de.setType(DataElementType.TEXT_AREA_NO_EDIT);
 				de.setValue(oldwsdl);
 				de.setRows(CostantiControlStation.LABEL_PARAMETRO_TEXT_AREA_API_SIZE);
@@ -8512,6 +8516,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				if(this.core.isShowInterfacceAPI()) {
 					de = new DataElement();
 					de.setLabel("");
+					// l'etichetta non viene resa a schermo: il nome accessibile va indicato esplicitamente
+					de.setAccessibleLabel(AccordiServizioParteComuneCostanti.LABEL_INTERFACCIA);
 					de.setType(DataElementType.TEXT_AREA_NO_EDIT);
 					de.setValue( wsdl);
 					de.setRows(CostantiControlStation.LABEL_PARAMETRO_TEXT_AREA_API_SIZE);
@@ -9572,6 +9578,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			else{
 				de = new DataElement();
 				de.setLabel("");
+				// l'etichetta non viene resa a schermo: il nome accessibile va indicato esplicitamente
+				de.setAccessibleLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_THE_FILE);
 				de.setType(DataElementType.TEXT_AREA_NO_EDIT);
 				de.setValue(contenutoAllegato.toString());
 				de.setRows(CostantiControlStation.LABEL_PARAMETRO_TEXT_AREA_API_SIZE);

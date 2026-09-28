@@ -49,7 +49,7 @@ if(csrfTokenFromSession == null)
 	csrfTokenFromSession = "";
 %>
 
-<td valign="top" class="td2PageBody">
+<td valign="top" class="td2PageBody" role="main" id="gw-contenuto" tabindex="-1">
 <form name="form" method="post" id="form">
 	<script type="text/javascript" nonce="<%= randomNonce %>">
 	$(document).ready(function(){
@@ -124,7 +124,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 													//Bottone Previous
 													if (pd.getIndex() != 0) {
 														%>							
-														<img id="ds_prev_top" src="images/tema_link/go_prev.png" title="Precedente" alt="Precedente" class="dsImg" />
+														<img id="ds_prev_top" src="images/tema_link/go_prev.png" title="Precedente" alt="Precedente" class="dsImg"  role="button" tabindex="0"/>
 														<script type="text/javascript" nonce="<%= randomNonce %>">
 															$(document).ready(function(){
 																$('#ds_prev_top').click(function() {
@@ -152,7 +152,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 													  if (pd.getIndex()+pd.getPageSize() < pd.getNumEntries()) {
 														  nextTopDisabled = false;
 													   			%>
-													   			<img id="ds_next_top" src="images/tema_link/go_next.png" title="Successiva" alt="Successiva" class="dsImg"/>
+													   			<img id="ds_next_top" src="images/tema_link/go_next.png" title="Successiva" alt="Successiva" class="dsImg" role="button" tabindex="0"/>
 													   			<script type="text/javascript" nonce="<%= randomNonce %>">
 																	$(document).ready(function(){
 																		$('#ds_next_top').click(function() {
@@ -187,7 +187,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 							  %>
 							  <td class="tableHeaderChkAll">
 							  	<div align="center">
-							  		<input id="chkAll" type="checkbox" name="chkAll"/>
+							  		<input id="chkAll" type="checkbox" name="chkAll" aria-label="<%= Costanti.LABEL_ARIA_SELEZIONA_TUTTI %>"/>
 							  		<script type="text/javascript" nonce="<%= randomNonce %>">
 										$(document).ready(function(){
 											$('#chkAll').click(function() {
@@ -244,10 +244,11 @@ if (hidden!=null && !hidden.isEmpty()) {
 								}
 								
 								String idCheckbox = ServletUtils.normalizeId("_" + (idToRemove!=null ? idToRemove : i));
+								String ariaLabelCheckbox = ServletUtils.getAriaLabelSelezioneRiga(e, i);
 							   %>
 								<td class="tdText">
 							   		<div align="center">
-							   			<input id="<%=idCheckbox %>" type="checkbox" name="selectcheckbox" value='<% if(idToRemove!=null) out.write(idToRemove);else out.write(""+i); %>' <%=checkBoxSelected %>/>
+							   			<input id="<%=idCheckbox %>" type="checkbox" name="selectcheckbox" value='<% if(idToRemove!=null) out.write(idToRemove);else out.write(""+i); %>' <%=checkBoxSelected %> aria-label="<%= ariaLabelCheckbox %>"/>
 							   			<script type="text/javascript" nonce="<%= randomNonce %>">
 										      $(document).ready(function(){
 													$('#<%=idCheckbox %>').click(function() {
@@ -341,7 +342,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 								  				
 								  				<a id="<%=id %>" class="edit-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= de.getUrl() %>" type="button">
 			                						<span class="icon-box">
-														<i class="material-icons md-18"><%= deIconName %></i>
+														<i class="material-icons md-18" aria-hidden="true"><%= deIconName %></i>
 													</span>
 			                					</a>
 			                					<script type="text/javascript" nonce="<%= randomNonce %>">
@@ -376,11 +377,19 @@ if (hidden!=null && !hidden.isEmpty()) {
 								  			}
 										  //getOnClick
 										  deTextId = id; // fixID
-										  %><span id="<%=id %>" class="<%= classSpan %>" <%= deTip %>  <%= dataCopy %>><%= de.getValue() %></span>
+										  // il valore porta un'azione: e' un comando, non del testo. Senza ruolo ne'
+										  // 'tabindex' sarebbe attivabile con il solo mouse (WCAG 2.1.1)
+										  %><span id="<%=id %>" class="<%= classSpan %>" <%= deTip %>  <%= dataCopy %> role="button" tabindex="0"><%= de.getValue() %></span>
 										  	<script type="text/javascript" nonce="<%= randomNonce %>">
 											      $(document).ready(function(){
 														$('#<%=id %>').click(function() {
 															<%= visualizzaAjaxStatus %><%= de.getOnClick() %>; return false;
+														});
+														$('#<%=id %>').keydown(function(e) {
+															if(e.which !== 13 && e.which !== 32) return true;
+															e.preventDefault();
+															$(this).click();
+															return false;
 														});
 													});
 											  </script>
@@ -400,11 +409,11 @@ if (hidden!=null && !hidden.isEmpty()) {
 					      			if(StringUtils.isNotEmpty(copyToClipboard)){ 
 								  		String deCopyId = "__i_hidden_copy_de_"+i;
 								  		%>
-		                				<span class="copy-box" id="<%= deCopyId%>" title="<%=Costanti.ICON_COPY_TOOLTIP_CON_PARAMETRO %>">
-											<i class="material-icons md-18"><%= Costanti.ICON_COPY %></i>
+		                				<span class="copy-box" role="button" tabindex="0" id="<%= deCopyId%>" title="<%=Costanti.ICON_COPY_TOOLTIP %>">
+											<i class="material-icons md-18" aria-hidden="true"><%= Costanti.ICON_COPY %></i>
 										</span>
 										
-										<div id="<%= deCopyId%>_message" class="copy-message"><%=Costanti.ICON_COPY_ESITO_OPERAZIONE %></div>
+										<div id="<%= deCopyId%>_message" class="copy-message" role="status"><%=Costanti.ICON_COPY_ESITO_OPERAZIONE %></div>
 										<script type="text/javascript" nonce="<%= randomNonce %>">
 									      	 $(document).ready(function(){
 									      		 setupCopyButtonEvents('<%= deTextId%>', '<%= deCopyId%>', '<%= deCopyId%>_message'); // imposta gestione eventi per visualizzazione tasto copia
@@ -445,7 +454,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 				                					%>
 					                					<a id="<%=id %>" class="image-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" type="button">
 					                						<span class="icon-box">
-																<i class="material-icons md-18"><%= deIconName %></i>
+																<i class="material-icons md-18" aria-hidden="true"><%= deIconName %></i>
 															</span>
 					                					</a>
 					                					<script type="text/javascript" nonce="<%= randomNonce %>">
@@ -460,7 +469,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 											  			%>
 					                					<a id="<%=id %>" class="image-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="" type="button">
 					                						<span class="icon-box">
-																<i class="material-icons md-18"><%= deIconName %></i>
+																<i class="material-icons md-18" aria-hidden="true"><%= deIconName %></i>
 															</span>
 					                					</a>
 					                					<script type="text/javascript" nonce="<%= randomNonce %>">
@@ -474,7 +483,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 											  		} else { // Solo immagine
 											  			%>
 				                						<span class="icon-box" <%= deTip %> >
-															<i class="material-icons md-18"><%= deIconName %></i>
+															<i class="material-icons md-18" aria-hidden="true"><%= deIconName %></i>
 														</span>
 					                				<%
 											  		}
@@ -566,7 +575,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 																<input type="hidden" name="__i_hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
 											   					<input type="hidden" name="__i_hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
 									       						<span class="spanIconInfoBoxList" id="<%=idSpanInfo %>">
-																	<i class="material-icons md-18" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
+																	<i class="material-icons md-18" aria-hidden="true" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
 																</span>
 									       					</div>
 															<script type="text/javascript" nonce="<%= randomNonce %>">
@@ -604,7 +613,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 															<div class="iconUsoBoxList" id="<%=idDivIconUso %>" <%=deTip %> >
 																<input type="hidden" name="__i_hidden_title_<%= idIconUso %>" id="hidden_title_<%= idIconUso %>"  value="<%= urlElement.getUrl() %>"/>
 																<span class="spanIconUsoBoxList" id="<%=idSpanUso %>">
-																	<i class="material-icons md-18" id="<%=idIconUso %>"><%= dialog.getIcona() %></i>
+																	<i class="material-icons md-18" aria-hidden="true" id="<%=idIconUso %>"><%= dialog.getIcona() %></i>
 																</span>
 									       					</div>
 															<jsp:include page="/jsplib/info-uso-modal.jsp" flush="true">
@@ -682,7 +691,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 										//Bottone Previous
 										if (pd.getIndex() != 0) {
 											%>							
-											<img id="ds_prev_bottom" src="images/tema_link/go_prev.png" title="Precedente" alt="Precedente" class="dsImg" />
+											<img id="ds_prev_bottom" src="images/tema_link/go_prev.png" title="Precedente" alt="Precedente" class="dsImg"  role="button" tabindex="0"/>
 											<script type="text/javascript" nonce="<%= randomNonce %>">
 												$(document).ready(function(){
 													$('#ds_prev_bottom').click(function() {
@@ -700,67 +709,10 @@ if (hidden!=null && !hidden.isEmpty()) {
 										//Scelta numero di entries da visualizzare
 										if ((pd.getNumEntries() > 20) || (pd.getIndex() != 0)) {
 										  %></td>
-											<td><select id="ds_limit_bottom" name="limit"><%
-										  switch (pd.getPageSize()) {
-										    case 20 :
-											%>
-											<option value="20" selected="selected">20 Entries</option>
-											<option value="75">75 Entries</option>
-											<option value="125">125 Entries</option>
-											<option value="250">250 Entries</option>
-											<option value="500">500 Entries</option>
-											<option value="1000">1000 Entries</option>
-											<%
-											break;
-										    case 75 :
-											%>
-											<option value="20">20 Entries</option>
-											<option value="75" selected="selected">75 Entries</option>
-											<option value="125">125 Entries</option>
-											<option value="250">250 Entries</option>
-											<option value="500">500 Entries</option>
-											<option value="1000">1000 Entries</option>
-											<%
-											break;
-										    case 125 :
-											%><option value="20">20 Entries</option>
-											<option value="75">75 Entries</option>
-											<option value="125" selected="selected">125 Entries</option>
-											<option value="250">250 Entries</option>
-											<option value="500">500 Entries</option>
-											<option value="1000">1000 Entries</option><%
-											break;
-										    case 250 :
-											%>
-											<option value="20">20 Entries</option>
-											<option value="75">75 Entries</option>
-											<option value="125">125 Entries</option>
-											<option value="250" selected="selected">250 Entries</option>
-											<option value="500">500 Entries</option>
-											<option value="1000">1000 Entries</option>
-											<%
-											break;
-										    case 500 :
-										    	%>
-										    	<option value="20">20 Entries</option>
-										    	<option value="75">75 Entries</option>
-										    	<option value="125">125 Entries</option>
-										    	<option value="250">250 Entries</option>
-										    	<option value="500" selected="selected">500 Entries</option>
-										    	<option value="1000">1000 Entries</option>
-										    	<%
-										    	break;
-										    case 1000 :
-										    	%>
-										    	<option value="20">20 Entries</option>
-										    	<option value="75">75 Entries</option>
-										    	<option value="125">125 Entries</option>
-										    	<option value="250">250 Entries</option>
-										    	<option value="500">500 Entries</option>
-										    	<option value="1000" selected="selected">1000 Entries</option>
-										    	<%
-										    	break;
-										  }
+											<td><select id="ds_limit_bottom" name="limit" aria-label="<%= Costanti.LABEL_ARIA_NUMERO_ELEMENTI_PER_PAGINA %>"><%
+										  for (int dimensionePagina : Costanti.DIMENSIONI_PAGINA) {
+											%><option value="<%= dimensionePagina %>"<%= pd.getPageSize() == dimensionePagina ? " selected=\"selected\"" : "" %>><%= Costanti.getLabelDimensionePagina(dimensionePagina) %></option><%
+										}
 										  %></select>
 										  	<script type="text/javascript" nonce="<%= randomNonce %>">
 													$(document).ready(function(){
@@ -782,7 +734,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 										  if (pd.getIndex()+pd.getPageSize() < pd.getNumEntries()) {
 											  nextBottomDisabled = false;
 										   			%>
-										   			<img id="ds_next_bottom" src="images/tema_link/go_next.png" title="Successiva" alt="Successiva" class="dsImg"/>
+										   			<img id="ds_next_bottom" src="images/tema_link/go_next.png" title="Successiva" alt="Successiva" class="dsImg" role="button" tabindex="0"/>
 										   			<script type="text/javascript" nonce="<%= randomNonce %>">
 														$(document).ready(function(){
 															$('#ds_next_bottom').click(function() {

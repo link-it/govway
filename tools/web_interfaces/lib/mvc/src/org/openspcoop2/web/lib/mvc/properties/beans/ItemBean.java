@@ -134,6 +134,18 @@ public class ItemBean extends BaseItemBean<Item>{
 		else if(this.provider!=null){
 			de.setNote(this.provider.getNote(this.name, this.value));
 		}
+		/* Alcuni descrittori non indicano un'etichetta (label=""), perche' il controllo e' visivamente
+		   accostato a quello che lo precede: il campo resterebbe pero' privo di nome accessibile.
+		   Il nome si prende dall'attributo dedicato del descrittore e, se assente, dalla nota, che
+		   ne descrive comunque la funzione. */
+		if(StringUtils.isEmpty(this.getItem().getLabel())) {
+			if(StringUtils.isNotEmpty(this.getItem().getAccessibleLabel())) {
+				de.setAccessibleLabel(this.getItem().getAccessibleLabel());
+			}
+			else if(StringUtils.isNotEmpty(de.getNote())) {
+				de.setAccessibleLabel(de.getNote());
+			}
+		}
 
 		if(this.provider!=null){
 			addProviderInfo(de);

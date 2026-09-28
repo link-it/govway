@@ -59,7 +59,7 @@ if(!tabSessionKey.equals("")){
 <!-- TR1: Header1 -->
 <tr class="trPageHeaderLogo">
  	<td colspan="2" class="tdPageHeaderLogo">
-		<table class="tablePageHeader">
+		<table class="tablePageHeader" role="presentation">
 			<tbody>
 				 <tr>
 				 	<td colspan="2" align="left">
@@ -79,8 +79,8 @@ if(!tabSessionKey.equals("")){
 <% } %>
 <!-- TR1: Header1 -->
 <tr class="trPageHeader">
- 	<td colspan="2" class="tdPageHeader">
-		<table class="tablePageHeader">
+ 	<td colspan="2" class="tdPageHeader" role="banner">
+		<table class="tablePageHeader" role="presentation">
 			<tbody>
 				 <tr>
 				  	<td class="td1PageHeader">
@@ -254,7 +254,7 @@ if(!tabSessionKey.equals("")){
 												  		</script>
 													
 														<div class="autocomplete">
-															<span class="soggettoAutocomplete">Soggetto:</span>
+															<label class="soggettoAutocomplete" for="menuSoggetto_menuAutocomplete">Soggetto:</label>
 														    <input id="menuSoggetto_menuAutocomplete" type="text" name="soggettoAutoComplete" value="<%=labelSelezionato %>">
 														  </div>
 													

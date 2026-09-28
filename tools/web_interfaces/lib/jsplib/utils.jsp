@@ -265,6 +265,9 @@ function gwInitLiveValidation(form) {
 		el.addEventListener("blur", function(evt) {
 			var target = evt.target;
 			if (!gwIsValidatableElement(target)) return;
+			// lo stato si verifica al blur, non all'aggancio: campi come la password bloccata
+			// nascono disabled e vengono abilitati dopo dal comando "Modifica"
+			if (target.disabled || target.readOnly) return;
 			/* Se l'utente sta cliccando su un bottone (submit/button/reset), NON mutiamo
 			   il DOM qui: l'insert del <p> di errore sposterebbe il bottone verso il
 			   basso, il mouseup cadrebbe fuori e il click NON scatterebbe. Sara' il
@@ -307,12 +310,16 @@ function gwValidateForm(form) {
 	var firstInvalid = null;
 	for (var k = 0; k < form.elements.length; k++) {
 		var el = form.elements[k];
-		if (!el.name || !el.value) continue;
-		// salta i parametri tecnici (CSRF, identificativi, tab key, hidden info dialog ...)
-		if (el.name === GW_PARAM_IDS_TA || el.name === GW_PARAM_IDS_TA_SINGLELINE || el.name === GW_PARAM_IDS_PWD) continue;
-		if (el.name === "_csrf") continue;
-		if (el.name.indexOf("__i_hidden_") === 0) continue;
-		if (el.name === "__tabKey__" || el.name === "__prevTabKey__") continue;
+		if (!el.value) continue;
+		/* Si applica lo stesso criterio della validazione live: sono esclusi i parametri tecnici
+		   (CSRF, identificativi, tab key, hidden info dialog ...) e i campi che l'utente non
+		   digita (hidden, select, checkbox, radio, file). Validare un campo non digitabile
+		   bloccherebbe il salvataggio su un valore che l'utente non ha modo di correggere:
+		   e' il caso dei DataElement resi con setHiddenType(TEXT_AREA), il cui valore viene
+		   riproposto tale e quale dal server. Il controllo sul contenuto resta lato server. */
+		if (!gwIsValidatableElement(el)) continue;
+		// disabled non viene inviato al server; readonly non e' correggibile dall'utente
+		if (el.disabled || el.readOnly) continue;
 		var err = gwFieldError(el);
 		if (err) {
 			gwMarkFieldInvalid(el, err);

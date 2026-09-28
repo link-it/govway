@@ -85,6 +85,8 @@ public class BinaryParameter implements Serializable {
 			de2.setName("_" + Costanti.PARAMETER_FILENAME_PREFIX + this.name);
 			de2.setValue("<I>" + this.filename + "</I>");
 			de2.setLabel("");
+			// l'etichetta non viene resa a schermo: il nome accessibile va indicato esplicitamente
+			de2.setAccessibleLabel(Costanti.LABEL_ARIA_NOME_FILE);
 			de2.setType(DataElementType.TEXT);
 			
 			DataElementImage newImage = new DataElementImage();
@@ -162,6 +164,8 @@ public class BinaryParameter implements Serializable {
 				de2.setName("_" + Costanti.PARAMETER_FILENAME_PREFIX + bp0.getName());
 				de2.setValue("<I>" + fileName + "</I>");
 				de2.setLabel("");
+				// l'etichetta non viene resa a schermo: il nome accessibile va indicato esplicitamente
+				de2.setAccessibleLabel(Costanti.LABEL_ARIA_NOME_FILE);
 				de2.setType(DataElementType.TEXT);
 				
 				DataElementImage newImage = new DataElementImage();

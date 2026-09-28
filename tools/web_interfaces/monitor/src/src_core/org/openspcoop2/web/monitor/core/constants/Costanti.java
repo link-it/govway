@@ -119,14 +119,27 @@ public class Costanti {
 	
 	public static final Integer SELECT_ITEM_VALORE_MASSIMO_ENTRIES = Integer.valueOf(1000);
 	
+	/**
+	 * Dimensioni di pagina offerte dalla scelta in fondo agli elenchi, e relativa dicitura.
+	 *
+	 * La dicitura era in inglese («25 Entries») in un'interfaccia dichiarata in italiano:
+	 * uno screen reader la leggeva con pronuncia italiana (WCAG 3.1.2, Lingua delle
+	 * sezioni). Il testo e' ora coerente con «Seleziona i primi {0} elementi», che compare
+	 * nella stessa barra.
+	 */
+	public static final int[] DIMENSIONI_PAGINA = { 25, 75, 125, 250, 500, 1000 };
+
+	public static final String LABEL_ELEMENTI_PER_PAGINA_SUFFISSO = " elementi";
+
+	public static String getLabelDimensionePagina(int dimensionePagina) {
+		return dimensionePagina + LABEL_ELEMENTI_PER_PAGINA_SUFFISSO;
+	}
+
 	public static final List<SelectItem> SELECT_ITEM_ENTRIES = new ArrayList<>();
 	static {
-		SELECT_ITEM_ENTRIES.add(new SelectItem(Integer.valueOf(25), "25 Entries"));  
-		SELECT_ITEM_ENTRIES.add(new SelectItem(Integer.valueOf(75), "75 Entries"));
-		SELECT_ITEM_ENTRIES.add(new SelectItem(Integer.valueOf(125), "125 Entries"));
-		SELECT_ITEM_ENTRIES.add(new SelectItem(Integer.valueOf(250), "250 Entries"));
-		SELECT_ITEM_ENTRIES.add(new SelectItem(Integer.valueOf(500), "500 Entries"));
-		SELECT_ITEM_ENTRIES.add(new SelectItem(SELECT_ITEM_VALORE_MASSIMO_ENTRIES, "1000 Entries"));
+		for (int dimensionePagina : DIMENSIONI_PAGINA) {
+			SELECT_ITEM_ENTRIES.add(new SelectItem(Integer.valueOf(dimensionePagina), getLabelDimensionePagina(dimensionePagina)));
+		}
 	}
 	
 	public static final String SELECT_ITEM_VALORE_MASSIMO_ENTRIES_LABEL_KEY = "commons.search.selezionaNumeroMassimoEntries.label";

@@ -5,6 +5,44 @@
 	font-size: 14px;
 }
 
+/* Il titolo di riga degli elenchi e' un collegamento (per essere raggiungibile da tastiera),
+   ma conserva l'aspetto del testo: l'affordance e' data dalla riga intera, che e' cliccabile. */
+a.titoloEntry {
+	color: inherit;
+	text-decoration: none;
+}
+
+/* Collegamento per saltare i blocchi ripetuti e raggiungere il contenuto (WCAG 2.4.1).
+   Non e' nascosto con 'display:none' ne' con 'visibility:hidden', che lo renderebbero non
+   focalizzabile: viene spostato fuori dall'area visibile e rientra quando riceve il focus
+   da tastiera. Resta quindi invisibile a chi usa il mouse. */
+/* Tutti gli stati in un solo selettore, e non per eleganza: le regole generali 'a:hover' e
+   'a:visited' hanno specificita' (0,1,1) e batterebbero la sola classe (0,1,0). Il
+   collegamento, una volta visitato o sfiorato, prendeva il colore dei collegamenti e
+   spariva sul proprio fondo scuro: chi ci arrivava tornando indietro con Maiusc+Tab
+   trovava un riquadro nero, selezionabile ma illeggibile. Elencando le pseudo-classi la
+   specificita' sale a (0,2,0) e vince. */
+.gw-salta-al-contenuto,
+.gw-salta-al-contenuto:link,
+.gw-salta-al-contenuto:visited,
+.gw-salta-al-contenuto:hover,
+.gw-salta-al-contenuto:focus,
+.gw-salta-al-contenuto:active {
+	position: absolute;
+	left: -9999px;
+	top: 0;
+	z-index: 1000;
+	padding: 8px 16px;
+	background-color: ${menu.header.background.color};
+	color: ${menu.header.color};
+	text-decoration: none;
+}
+
+.gw-salta-al-contenuto:focus {
+	left: 8px;
+	top: 8px;
+}
+
 h2 {
 	font-size: 197%;
 }
@@ -456,6 +494,7 @@ a.td2PageHeader:visited {
     padding-bottom: 8px;
 }
 
+div.voceMenu:focus-within,
 div.voceMenu:hover {
 	cursor: pointer;
 	background: ${menu.element.hover.background.color};
@@ -474,6 +513,7 @@ div.voceMenu:hover {
 	padding: 0px;
 }
 
+.voceMenu a:focus,
 .voceMenu a:hover{
 	font-weight: 600;
 	color: ${menu.element.hover.color};
@@ -499,6 +539,7 @@ div.voceMenu:hover {
     height: 35px;
 }
 
+div.voceMenuRC:focus-within,
 div.voceMenuRC:hover {
 	cursor: pointer;
 	background: ${menu.element.hover.background.color};
@@ -527,6 +568,11 @@ div.voceMenuRC:hover {
     height: 27px;
 }
 
+/* Il contenitore, evidenziato, prende un bordo sinistro di 12px: il collegamento e'
+   posizionato in modo assoluto rispetto ad esso, quindi si sposterebbe di altrettanto. Il
+   prodotto lo compensa gia' con 'left: -12px' al passaggio del mouse; la stessa
+   compensazione serve al fuoco, altrimenti la voce raggiunta da tastiera appare rientrata. */
+.voceMenuRC a:focus,
 .voceMenuRC a:hover{
 	font-weight: 600;
 	color: ${menu.element.hover.color};
@@ -1238,6 +1284,7 @@ div.container-menu-display-none {
 	padding: 8px 8px 8px 16px; 
 }
 
+.menu-item-no-icon:focus-within,
 .menu-item-no-icon:hover {
 	border-left: 12px solid ${menu.element.hover.border.color};
     padding-left: 4px;
@@ -1253,6 +1300,7 @@ div.container-menu-display-none {
 	padding: 8px 0px 8px 24px; 
 }
 
+.menu-item:focus-within,
 .menu-item:hover {
 	border-left: 12px solid ${menu.element.hover.border.color};
 	background: ${menu.element.hover.background.color};
@@ -1268,6 +1316,7 @@ div.container-menu-display-none {
 	padding: 8px 0px 8px 8px;
 }
 
+.menu-item-with-icon:focus-within,
 .menu-item-with-icon:hover {
 	border-left: 4px solid ${menu.element.hover.border.color};
 	background: ${menu.element.hover.background.color};
@@ -1794,7 +1843,6 @@ div.txtA_div_propDialog_dec {
     text-align: center;
     border-radius: 3px;
     background: ${api.resources.httpmethod.background.color};
-    text-shadow: 0 1px 0 rgba(0,0,0,.1);
     color: ${api.resources.httpmethod.color};
 }
 
@@ -1804,22 +1852,27 @@ div.txtA_div_propDialog_dec {
 
 .resource-method-block.resource-method-post {
 	 background-color: ${api.resources.httpmethod.background.post.color};
+	 color: ${api.resources.httpmethod.color.dark};
 }
 
 .resource-method-block.resource-method-put {
 	   background-color: ${api.resources.httpmethod.background.put.color};
+	   color: ${api.resources.httpmethod.color.dark};
 }
  
 .resource-method-block.resource-method-delete {
 	  background-color: ${api.resources.httpmethod.background.delete.color};
+	  color: ${api.resources.httpmethod.color.dark};
 }
 
 .resource-method-block.resource-method-get {
 	  background-color: ${api.resources.httpmethod.background.get.color};
+	  color: ${api.resources.httpmethod.color.dark};
 }
 
 .resource-method-block.resource-method-patch {
 	  background-color: ${api.resources.httpmethod.background.patch.color};
+	  color: ${api.resources.httpmethod.color.dark};
 }
 
 .resource-method-block.resource-method-head {
@@ -2216,6 +2269,10 @@ ul.dataElementLinksList li {
 .image-link {
 	padding: 0px 2px 0px 2px;
 	text-decoration: none;
+	/* Il link contiene la sola icona: da 'inline' la sua area cliccabile sarebbe alta 16px
+	   (interlinea del testo) e l'icona da 24px ne sporgerebbe sopra e sotto, con quei bordi
+	   non attivabili. Con 'inline-block' l'area coincide con l'icona (WCAG 2.5.8). */
+	display: inline-block;
 }
 
 .image-link span.icon-box {
@@ -2655,6 +2712,8 @@ div.txtA_div_propDialogInfoUso {
 li.protocolloItem {
 	list-style-type:disc; 
 	margin-left:12px;
+	/* separazione fra le voci, prima ottenuta con un <br> non ammesso come figlio di <ul> */
+	margin-top:1.2em;
 }
 
 .lock-container {
@@ -2716,8 +2775,30 @@ li.protocolloItem {
     position: absolute;
     display: inline-block;
     cursor: pointer;
-    visibility: hidden; 
-    transition: visibility 0s linear 0.3s; /* transizione per la dissolvenza */
+    /* Non si usa 'visibility: hidden': impedirebbe al pulsante di ricevere il focus, rendendolo
+       inutilizzabile da tastiera. Con 'opacity' il pulsante resta nell'ordine di tabulazione e
+       diventa visibile quando riceve il focus, indipendentemente dalla sua posizione nel DOM —
+       che varia fra le viste: negli elenchi segue il valore, nelle schede di riepilogo lo precede.
+       Non si aggiunge 'pointer-events: none': l'elemento deve restare interattivo durante i 300ms
+       di dissolvenza, perche' e' in quell'intervallo che il puntatore lo raggiunge partendo dal
+       valore; e restando raggiungibile dal puntatore, il suo stesso 'mouseenter' lo mantiene
+       visibile. */
+    opacity: 0;
+    transition: opacity 0s linear 0.3s; /* transizione per la dissolvenza */
+}
+
+/* Si usa ':focus-visible' e non ':focus': un clic col puntatore assegna comunque il focus, e con
+   ':focus' l'icona resterebbe accesa dopo il clic, sommandosi a quelle delle righe visitate poi.
+   ':focus-visible' vale solo quando il focus va segnalato, cioe' quando arriva da tastiera. */
+.copy-box.copy-box-visibile,
+.copy-box:focus-visible {
+	opacity: 1;
+}
+
+/* Da tastiera la comparsa deve essere immediata: il ritardo di 0.3s serve alla dissolvenza
+   col puntatore. */
+.copy-box:focus-visible {
+	transition-delay: 0s;
 }
 
 .copy-message {
@@ -2959,3 +3040,52 @@ div.version-notice {
 	background-position: center center;
 }
 
+/* Stessa resa con il mouse e con la tastiera nei menu della testata. Lo stile di
+   evidenziazione e' definito su ':hover' del contenitore, ma da tastiera il fuoco sta sul
+   collegamento interno: si aggiunge quindi ':focus-within' agli stessi selettori. Il
+   contorno predefinito del browser viene tolto perche' l'evidenziazione — fondo, barra
+   laterale e grassetto — e' gia' l'indicatore del fuoco, ed e' quella che l'applicazione
+   usa da sempre. */
+.menu-item a:focus,
+.menu-item-no-icon a:focus,
+.menu-item-with-icon a:focus {
+	outline: none;
+}
+
+/* Anche nel menu di sinistra l'evidenziazione del prodotto vale come indicatore del fuoco:
+   fondo, barra laterale e grassetto. Il contorno predefinito si sovrapporrebbe soltanto. */
+.voceMenu a:focus,
+.voceMenuRC a:focus {
+	outline: none;
+}
+
+/* Contenuto destinato alle sole tecnologie assistive: fuori dallo schermo ma non nascosto,
+   perche' 'display:none' e 'visibility:hidden' lo toglierebbero anche a loro. Usata per la
+   regione che annuncia gli spostamenti nel calendario. */
+.gw-solo-lettori {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	margin: -1px;
+	padding: 0;
+	overflow: hidden;
+	clip: rect(0 0 0 0);
+	white-space: nowrap;
+	border: 0;
+}
+
+/* Area di appoggio per la copia negli appunti nei browser privi di 'navigator.clipboard':
+   deve stare nella pagina e poter ricevere il fuoco, ma non deve vedersi ne' spostare il
+   contenuto. */
+.gw-area-copia {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 2em;
+	height: 2em;
+	padding: 0;
+	border: none;
+	outline: none;
+	box-shadow: none;
+	background: transparent;
+}

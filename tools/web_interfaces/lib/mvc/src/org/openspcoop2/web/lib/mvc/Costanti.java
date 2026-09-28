@@ -44,6 +44,38 @@ public class Costanti {
 	
 	public static final String LABEL_VISUALIZZA = "visualizza";
 	public static final String LABEL_NON_DISPONIBILE = "non disp.";
+	public static final String LABEL_VISUALIZZA_INFORMAZIONI_CIFRATE = "Visualizza Informazioni Cifrate";
+	
+	
+	/** ARIA: nomi accessibili dei controlli privi di etichetta visibile */
+	
+	public static final String LABEL_ARIA_SELEZIONA_TUTTI = "Seleziona tutti gli elementi dell'elenco";
+	public static final String LABEL_ARIA_SELEZIONA_ELEMENTO_PREFIX = "Seleziona ";
+	public static final String LABEL_ARIA_SELEZIONA_ELEMENTO_GENERICO_PREFIX = "Seleziona elemento ";
+	public static final String LABEL_ARIA_NUMERO_ELEMENTI_PER_PAGINA = "Numero di elementi per pagina";
+
+	/**
+	 * Dimensioni di pagina offerte dalla scelta «elementi per pagina», e relativa dicitura.
+	 *
+	 * Stavano scritte a mano nei JSP della paginazione, in inglese («20 Entries»), ripetute
+	 * 36 volte per file: un ramo di switch per ogni dimensione preselezionata, con tutte le
+	 * voci ripetute dentro ognuno. L'interfaccia e' dichiarata in italiano, e uno screen
+	 * reader leggeva «Entries» con pronuncia italiana (WCAG 3.1.2, Lingua delle sezioni).
+	 */
+	public static final int[] DIMENSIONI_PAGINA = { 20, 75, 125, 250, 500, 1000 };
+
+	public static final String LABEL_ELEMENTI_PER_PAGINA_SUFFISSO = " elementi";
+
+	public static String getLabelDimensionePagina(int dimensionePagina) {
+		return dimensionePagina + LABEL_ELEMENTI_PER_PAGINA_SUFFISSO;
+	}
+	public static final String LABEL_ARIA_MENU_PRINCIPALE = "Menu principale";
+	public static final String LABEL_ARIA_SCHEDA_PRECEDENTE = "Scheda precedente";
+	public static final String LABEL_ARIA_SCHEDA_SUCCESSIVA = "Scheda successiva";
+	public static final String LABEL_ARIA_SALTA_AL_CONTENUTO = "Vai al contenuto principale";
+	public static final String LABEL_ARIA_MENU_AZIONI = "Azioni disponibili";
+	public static final String LABEL_NOTA_SELEZIONE_MULTIPLA = "Tenere premuto Ctrl per selezionare o deselezionare più elementi";
+	public static final String LABEL_ARIA_NOME_FILE = "Nome del file";
 	
 	
 	/** Multipart */
