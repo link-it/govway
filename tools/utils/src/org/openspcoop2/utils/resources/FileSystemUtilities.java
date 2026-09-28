@@ -461,7 +461,8 @@ public class FileSystemUtilities {
 				return;
 			}
 			FileSystemUtilities.mkdirParentDirectory(p.getParentFile().getAbsolutePath());
-			if(!p.getParentFile().mkdir()){
+			// mkdir() ritorna false anche se la directory è stata creata nel frattempo da un altro thread (verifica exists e creazione non atomiche)
+			if(!p.getParentFile().mkdir() && !p.getParentFile().isDirectory()){
 				throw new UtilsException(DIRECTORY_PREFIX_MSG+p.getParentFile().getAbsolutePath()+"] non esistente e creazione non riuscita");
 			}
 			else {
@@ -601,7 +602,8 @@ public class FileSystemUtilities {
 							executable, executableOwnerOnly);
 				}
 			}
-			if(!dir.mkdir()){
+			// mkdir() ritorna false anche se la directory è stata creata nel frattempo da un altro thread (verifica exists e creazione non atomiche)
+			if(!dir.mkdir() && !dir.isDirectory()){
 				throw new UtilsException("Creazione directory ["+dir.getAbsolutePath()+"] non riuscita");
 			}
 			else {
