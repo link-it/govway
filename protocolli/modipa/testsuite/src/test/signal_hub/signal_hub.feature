@@ -1609,6 +1609,10 @@ Scenario: test per verificare la corretta rimozione dei record nella tabella ser
 
 	* def deleted = remove_seeds();
 	* call reset_cache { cache_name: 'ConfigurazionePdD' }
+	# Il token negoziato dagli scenari iniziali resta in cache per la durata dichiarata dalla simulazione PDND
+	# (expires_in 3600), mentre il JWT restituito scade dopo 300 secondi: se l'esecuzione degli scenari precedenti
+	# supera tale intervallo, il token riutilizzato dalla cache viene rifiutato dall'erogazione come scaduto.
+	* call reset_cache { cache_name: 'GestioneToken' }
 	
 	Given url govway_config_api_path + '/erogazioni'
 	And header Authorization = call basic (auth_api_config)
