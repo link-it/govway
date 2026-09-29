@@ -527,6 +527,7 @@ Di seguito vengono descritti i test del package 'trasformazione':
   ant run_test -Ddelete=false -Dload=false -Dpackage=trasformazione.soap_action
 
 - 'protocollo', verifica la trasformazione utilizzata per effettuare trasformazioni di protocollo rest->soap e viceversa
+  e, su API REST, la trasformazione del contenuto della risposta in presenza della riscrittura del metodo o del path della richiesta (RestRewriteTrasformazioneRispostaTest)
   ant run_test -Ddelete=false -Dload=false -Dpackage=trasformazione.protocollo
 
 - 'info_integrazione', verifica la trasformazione utilizzata per inoltrare informazioni al backend

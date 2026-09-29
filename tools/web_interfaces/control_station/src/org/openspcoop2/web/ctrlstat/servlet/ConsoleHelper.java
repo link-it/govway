@@ -19749,7 +19749,8 @@ public class ConsoleHelper implements IConsoleHelper {
 				
 				boolean trasformazioneRichiestaRestAbilitato = false;
 				if(regolaRichiesta.getRichiesta() != null) {
-					trasformazioneRichiestaRestAbilitato = regolaRichiesta.getRichiesta().getTrasformazioneRest() != null;
+					// su API REST l'elemento 'trasformazione-rest' descrive la sola riscrittura del metodo e/o del path e non una conversione di protocollo SOAP->REST
+					trasformazioneRichiestaRestAbilitato = ServiceBinding.SOAP.equals(serviceBinding) && regolaRichiesta.getRichiesta().getTrasformazioneRest() != null;
 				}
 				
 				String trasformazioneContenutoRispostaAbilitatoS  = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_ENABLED);

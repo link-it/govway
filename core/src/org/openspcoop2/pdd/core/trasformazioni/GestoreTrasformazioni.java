@@ -1093,7 +1093,7 @@ public class GestoreTrasformazioni {
 		
 		// *** EmissioneDiagnostico ****
 		
-		String labelTrasformazione = GestoreTrasformazioniUtilities.getLabelTipoTrasformazioneRisposta(this.regolaTrasformazione.getRichiesta(), trasformazioneRisposta);
+		String labelTrasformazione = GestoreTrasformazioniUtilities.getLabelTipoTrasformazioneRisposta(this.regolaTrasformazione.getRichiesta(), trasformazioneRisposta, this.messageRequest);
 		this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_TRASFORMAZIONE_RISPOSTA, labelTrasformazione);
 		this.msgDiag.logPersonalizzato("trasformazione.processamentoRispostaInCorso");
 		if(this.pddContext!=null) {
@@ -1223,7 +1223,8 @@ public class GestoreTrasformazioni {
 			boolean trasformazioneSoapEnvelopeAsAttachment = false;
 			String trasformazioneSoapTipoConversione = null;
 			Template trasformazioneSoapTemplateConversione = null;
-			if(this.regolaTrasformazione.getRichiesta().getTrasformazioneRest()!=null) {
+			// su una richiesta REST l'elemento 'trasformazione-rest' descrive la sola riscrittura del metodo e/o del path e non una conversione di protocollo
+			if(GestoreTrasformazioniUtilities.isConversioneSoap2Rest(this.regolaTrasformazione.getRichiesta(), this.messageRequest)) {
 				// devo tornare soap
 				trasformazioneSoap = true;
 				if(this.messageRequest!=null) {
