@@ -591,6 +591,10 @@ Di seguito vengono descritti i test del package 'connettori':
    
 - 'opzioni_avanzate', verifica le funzionalità avanzate dei connettori (serializzazione content-transfer-encoding o content-lenth, http-proxy, ...)
    NOTA: utilizza l'opzione -Dwildfly=true su application server wildfly
+   NOTA: i test *FunzionalitaContentEncodingTest (risorsa 'cachingJson') richiedono che sia abilitata la cache delle risposte nella configurazione generale
+         (console: Configurazione -> Generale -> Cache Risposte); la cache viene inizializzata all'avvio, per cui dopo averla abilitata è necessario riavviare GovWay.
+         In alternativa, con GovWay spento, si può abilitare via SQL:
+           UPDATE configurazione set response_cache_statocache='abilitato', response_cache_dimensionecache='10000', response_cache_algoritmocache='lru', response_cache_lifecache='-1';
    ant run_test -Ddelete=false -Dload=false -Dpackage=connettori.opzioni_avanzate [-Dwildfly=true]
 
 Di seguito vengono descritti i test del package 'token':

@@ -1198,12 +1198,8 @@ public class FunzionalitaContentEncodingEngine extends ConfigLoader {
 	 * contenuto: passthrough); con la decompressione ai byte decompressi (protezione zip bomb).
 	 */
 	private void _testDimensione(TipoServizio tipo, Api api, Direzione direzione, Enc enc) throws Exception {
-		StringBuilder sb = new StringBuilder("{\"id\":\"dimensione\",\"riempimento\":\"");
-		while (sb.length() < 64 * 1024) {
-			sb.append("abcdefghijklmnopqrstuvwxyz");
-		}
-		sb.append("\"}");
-		byte[] plain = sb.toString().getBytes(StandardCharsets.UTF_8);
+		int dimensione = 64 * 1024;
+		byte[] plain = ContentEncodingMockServer.generateJsonBody(dimensione);
 		String label = "[" + tipo + "/" + api + "/dimensioneJson/" + direzione + "/" + enc + "]";
 		HttpResponse response;
 		byte[] onWire = null;
@@ -1214,7 +1210,8 @@ public class FunzionalitaContentEncodingEngine extends ConfigLoader {
 					"{\"id\":\"ok\"}".getBytes(StandardCharsets.UTF_8), Enc.NONE);
 		}
 		else {
-			response = invokeRisorsa(tipo, api, "dimensioneJson", "application/json", "{\"id\":\"ok\"}".getBytes(StandardCharsets.UTF_8), "", plain, enc);
+			/* il body di 64 KB viene generato dal mock: in Base64 in un header supererebbe il 'maxHttpHeaderSize' dell'application server (es. 64 KB su Tomcat) */
+			response = invokeRisorsaRispostaGenerata(tipo, api, "dimensioneJson", "application/json", "{\"id\":\"ok\"}".getBytes(StandardCharsets.UTF_8), dimensione, enc);
 		}
 		if (!enc.isPlain() && Api.DECOMPRESS.equals(api) && Direzione.RISPOSTA.equals(direzione)) {
 			/* risposta decompressa: la dimensione si conosce solo leggendo lo stream, come per una risposta chunked. La risposta
@@ -1401,6 +1398,21 @@ public class FunzionalitaContentEncodingEngine extends ConfigLoader {
 		if (replyBody != null) {
 			request.addHeader(ContentEncodingMockServer.HEADER_REPLY_BODY_BASE64, Base64.getEncoder().encodeToString(replyBody));
 		}
+		request.addHeader(ContentEncodingMockServer.HEADER_REPLY_ENCODING, replyEnc.replyEncoding);
+		if (replyEnc.declaredOverride != null) {
+			request.addHeader(ContentEncodingMockServer.HEADER_REPLY_CONTENT_ENCODING, replyEnc.declaredOverride);
+		}
+		request.addHeader(ContentEncodingMockServer.HEADER_REPLY_CONTENT_TYPE, contentType);
+		return send(request);
+	}
+
+	/** Come {@link #invokeRisorsa}, con il body di risposta (di almeno {@code replySize} byte) generato dal mock. */
+	private HttpResponse invokeRisorsaRispostaGenerata(TipoServizio tipo, Api api, String risorsa, String contentType, byte[] requestBody,
+			int replySize, Enc replyEnc) throws Exception {
+		HttpRequest request = baseRequest(tipo, api, risorsa);
+		request.setContentType(contentType);
+		request.setContent(requestBody);
+		request.addHeader(ContentEncodingMockServer.HEADER_REPLY_BODY_GENERATED_SIZE, String.valueOf(replySize));
 		request.addHeader(ContentEncodingMockServer.HEADER_REPLY_ENCODING, replyEnc.replyEncoding);
 		if (replyEnc.declaredOverride != null) {
 			request.addHeader(ContentEncodingMockServer.HEADER_REPLY_CONTENT_ENCODING, replyEnc.declaredOverride);

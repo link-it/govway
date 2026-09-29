@@ -61,6 +61,9 @@ import com.sun.net.httpserver.HttpServer;
  *   <li>Header request {@link #HEADER_REPLY_STATUS}: codice HTTP della response (default 200).</li>
  *   <li>Header request {@link #HEADER_REPLY_BODY_BASE64}: body (Base64) da restituire al posto dell'echo;
  *       viene comunque codificato secondo {@link #HEADER_REPLY_ENCODING}.</li>
+ *   <li>Header request {@link #HEADER_REPLY_BODY_GENERATED_SIZE}: body JSON generato dal mock (vedi {@link #generateJsonBody(int)}),
+ *       per i contenuti grandi che non possono essere veicolati in un header (limite 'maxHttpHeaderSize' dell'application server);
+ *       viene comunque codificato secondo {@link #HEADER_REPLY_ENCODING}.</li>
  *   <li>Header response {@link #HEADER_INVOCATION_ID}: identificativo univoco dell'invocazione.</li>
  *   <li>Header request {@link #HEADER_REPLY_CONTENT_TYPE}: Content-Type della response (default: quello
  *       della request).</li>
@@ -110,6 +113,8 @@ public class ContentEncodingMockServer implements Closeable {
 	public static final String HEADER_REPLY_CONTENT_ENCODING = "govway-testsuite-reply-content-encoding";
 	/** Header request: body (Base64) da restituire al posto dell'echo del body ricevuto. */
 	public static final String HEADER_REPLY_BODY_BASE64 = "govway-testsuite-reply-body-base64";
+	/** Header request: dimensione minima (byte) del body JSON che il mock genera e restituisce (vedi {@link #generateJsonBody(int)}). */
+	public static final String HEADER_REPLY_BODY_GENERATED_SIZE = "govway-testsuite-reply-body-generated-size";
 
 	/* Header response (echo) per asserzione lato test client. Tutti minuscoli e con prefisso 'govway-testsuite-',
 	 * in white list anche sulle API SOAP (dove gli header di trasporto non vengono altrimenti inoltrati). */
@@ -175,6 +180,19 @@ public class ContentEncodingMockServer implements Closeable {
 		System.out.println("ContentEncodingMockServer stopped (port " + this.port + ")");
 	}
 
+	/**
+	 * Body JSON deterministico di almeno {@code minSize} byte, molto comprimibile. Usato dal mock con
+	 * {@link #HEADER_REPLY_BODY_GENERATED_SIZE} e dai test per conoscere il contenuto atteso.
+	 */
+	public static byte[] generateJsonBody(int minSize) {
+		StringBuilder sb = new StringBuilder("{\"id\":\"dimensione\",\"riempimento\":\"");
+		while (sb.length() < minSize) {
+			sb.append("abcdefghijklmnopqrstuvwxyz");
+		}
+		sb.append("\"}");
+		return sb.toString().getBytes(java.nio.charset.StandardCharsets.UTF_8);
+	}
+
 	private static class EchoHandler implements HttpHandler {
 		@Override
 		public void handle(HttpExchange exchange) throws IOException {
@@ -197,6 +215,7 @@ public class ContentEncodingMockServer implements Closeable {
 				String replyContentType        = firstValue(reqHeaders, HEADER_REPLY_CONTENT_TYPE);
 				String replyContentEncoding    = firstValue(reqHeaders, HEADER_REPLY_CONTENT_ENCODING);
 				String replyBodyBase64         = firstValue(reqHeaders, HEADER_REPLY_BODY_BASE64);
+				String replyBodyGeneratedSize  = firstValue(reqHeaders, HEADER_REPLY_BODY_GENERATED_SIZE);
 
 				/* Compone i metadati di echo come header response. */
 				Headers respHeaders = exchange.getResponseHeaders();
@@ -213,7 +232,13 @@ public class ContentEncodingMockServer implements Closeable {
 				}
 
 				/* Calcola il body di response a partire dal body ricevuto (o da quello indicato) e dall'encoding richiesto. */
-				byte[] sourceBody = replyBodyBase64 != null ? Base64.getDecoder().decode(replyBodyBase64.trim()) : receivedBody;
+				byte[] sourceBody;
+				if (replyBodyGeneratedSize != null) {
+					sourceBody = generateJsonBody(Integer.parseInt(replyBodyGeneratedSize.trim()));
+				}
+				else {
+					sourceBody = replyBodyBase64 != null ? Base64.getDecoder().decode(replyBodyBase64.trim()) : receivedBody;
+				}
 				byte[] responseBody = sourceBody;
 				String responseContentEncoding = null;
 				if (replyEncoding != null) {
