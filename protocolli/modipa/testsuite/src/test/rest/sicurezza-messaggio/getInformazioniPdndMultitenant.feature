@@ -79,16 +79,17 @@ And match header GovWay-TestSuite-Reply-GovWay-Token-PDND-OrganizationExternal =
 # controlli tracce credenziali mittente
 
 * def clientIdID = get_id_by_credenziale('token_clientId','DemoSoggettoFruitore/MultitenantApplicativoBlockingIDA01ExampleClient3')
-* def pdndOrganizationName = get_credenziale_by_refid_greather_then_id('pdnd_org_name',clientIdID,credenziale_max_feature['max_id_credenziale'])
-* match pdndOrganizationName == 'Ministero di Esempio '+formattedDate+' MultitenantApplicativoBlockingIDA01ExampleClient3'
+* def expectedOrgName = 'Ministero di Esempio '+formattedDate+' MultitenantApplicativoBlockingIDA01ExampleClient3'
+* def pdndOrganizationName = get_credenziale_by_refid_and_value('pdnd_org_name',clientIdID,expectedOrgName)
+* match pdndOrganizationName == expectedOrgName
 
-* def pdndOrganizationJson = get_credenziale_by_refid_greather_then_id('pdnd_org_json',clientIdID,credenziale_max_feature['max_id_credenziale'])
+* def pdndOrganizationJson = get_credenziale_by_refid_and_value('pdnd_org_json',clientIdID,'"m_m000_'+formattedDate+'_0001"')
 * match pdndOrganizationJson contains '"category":"Ministeri"'
 * match pdndOrganizationJson contains '"externalId":'
 * match pdndOrganizationJson contains '"m_m000_'+formattedDate+'_0001"'
 * match pdndOrganizationJson contains '"name":"Ministero di Esempio '+formattedDate+' MultitenantApplicativoBlockingIDA01ExampleClient3"'
 
-* def pdndClientJson = get_credenziale_by_refid_greather_then_id('pdnd_client_json',clientIdID,credenziale_max_feature['max_id_credenziale'])
+* def pdndClientJson = get_credenziale_by_refid_and_value('pdnd_client_json',clientIdID,'"id":"'+formattedDateYYYYMMDD+'-'+formattedDateHHmm+'-0001-bbbb-12345678f8dd"')
 * match pdndClientJson contains '"consumerId":"'+formattedDateYYYYMMDD+'-'+formattedDateHHmm+'-0001-mmmm-82e210e12345"'
 * match pdndClientJson contains '"id":"'+formattedDateYYYYMMDD+'-'+formattedDateHHmm+'-0001-bbbb-12345678f8dd"'
 
@@ -144,16 +145,17 @@ And match header GovWay-TestSuite-Reply-GovWay-Token-PDND-OrganizationExternal =
 # controlli tracce credenziali mittente
 
 * def clientIdID = get_id_by_credenziale('token_clientId','DemoSoggettoFruitore/MultitenantApplicativoBlockingIDA01ExampleClient3')
-* def pdndOrganizationName = get_credenziale_by_refid_greather_then_id('pdnd_org_name',clientIdID,credenziale_max_feature['max_id_credenziale'])
-* match pdndOrganizationName == 'Ministero di Esempio '+formattedDate+' MultitenantApplicativoBlockingIDA01ExampleClient3'
+* def expectedOrgName = 'Ministero di Esempio '+formattedDate+' MultitenantApplicativoBlockingIDA01ExampleClient3'
+* def pdndOrganizationName = get_credenziale_by_refid_and_value('pdnd_org_name',clientIdID,expectedOrgName)
+* match pdndOrganizationName == expectedOrgName
 
-* def pdndOrganizationJson = get_credenziale_by_refid_greather_then_id('pdnd_org_json',clientIdID,credenziale_max_feature['max_id_credenziale'])
+* def pdndOrganizationJson = get_credenziale_by_refid_and_value('pdnd_org_json',clientIdID,'"m_m000_'+formattedDate+'_0001"')
 * match pdndOrganizationJson contains '"category":"Ministeri"'
 * match pdndOrganizationJson contains '"externalId":'
 * match pdndOrganizationJson contains '"m_m000_'+formattedDate+'_0001"'
 * match pdndOrganizationJson contains '"name":"Ministero di Esempio '+formattedDate+' MultitenantApplicativoBlockingIDA01ExampleClient3"'
 
-* def pdndClientJson = get_credenziale_by_refid_greather_then_id('pdnd_client_json',clientIdID,credenziale_max_feature['max_id_credenziale'])
+* def pdndClientJson = get_credenziale_by_refid_and_value('pdnd_client_json',clientIdID,'"id":"'+formattedDateYYYYMMDD+'-'+formattedDateHHmm+'-0001-bbbb-12345678f8dd"')
 * match pdndClientJson contains '"consumerId":"'+formattedDateYYYYMMDD+'-'+formattedDateHHmm+'-0001-mmmm-82e210e12345"'
 * match pdndClientJson contains '"id":"'+formattedDateYYYYMMDD+'-'+formattedDateHHmm+'-0001-bbbb-12345678f8dd"'
 
@@ -293,16 +295,17 @@ And match header X-RateLimit-Limit == '2'
 # controlli tracce credenziali mittente
 
 * def clientIdID = get_id_by_credenziale('token_clientId','DemoSoggettoFruitore/MultitenantApplicativoBlockingIDA01')
-* def pdndOrganizationName = get_credenziale_by_refid_greather_then_id('pdnd_org_name',clientIdID,credenziale_max_feature['max_id_credenziale'])
-* match pdndOrganizationName == 'Ministero di Esempio '+formattedDate+' MultitenantApplicativoBlockingIDA01' 
+* def expectedOrgName = 'Ministero di Esempio '+formattedDate+' MultitenantApplicativoBlockingIDA01'
+* def pdndOrganizationName = get_credenziale_by_refid_and_value('pdnd_org_name',clientIdID,expectedOrgName)
+* match pdndOrganizationName == expectedOrgName
 
-* def pdndOrganizationJson = get_credenziale_by_refid_greather_then_id('pdnd_org_json',clientIdID,credenziale_max_feature['max_id_credenziale'])
+* def pdndOrganizationJson = get_credenziale_by_refid_and_value('pdnd_org_json',clientIdID,'"m_m000_'+formattedDate+'_0002"')
 * match pdndOrganizationJson contains '"category":"Ministeri"'
 * match pdndOrganizationJson contains '"externalId":'
 * match pdndOrganizationJson contains '"m_m000_'+formattedDate+'_0002"'
 * match pdndOrganizationJson contains '"name":"Ministero di Esempio '+formattedDate+' MultitenantApplicativoBlockingIDA01"'
 
-* def pdndClientJson = get_credenziale_by_refid_greather_then_id('pdnd_client_json',clientIdID,credenziale_max_feature['max_id_credenziale'])
+* def pdndClientJson = get_credenziale_by_refid_and_value('pdnd_client_json',clientIdID,'"id":"'+formattedDateYYYYMMDD+'-'+formattedDateHHmm+'-0002-bbbb-12345678f8dd"')
 * match pdndClientJson contains '"consumerId":"'+formattedDateYYYYMMDD+'-'+formattedDateHHmm+'-0002-mmmm-82e210e12345"'
 * match pdndClientJson contains '"id":"'+formattedDateYYYYMMDD+'-'+formattedDateHHmm+'-0002-bbbb-12345678f8dd"'
 
@@ -398,16 +401,17 @@ And match header X-RateLimit-Limit == '2'
 # controlli tracce credenziali mittente
 
 * def clientIdID = get_id_by_credenziale('token_clientId','DemoSoggettoFruitore/MultitenantApplicativoBlockingIDA01')
-* def pdndOrganizationName = get_credenziale_by_refid_greather_then_id('pdnd_org_name',clientIdID,credenziale_max_feature['max_id_credenziale'])
-* match pdndOrganizationName == 'Ministero di Esempio '+formattedDate+' MultitenantApplicativoBlockingIDA01' 
+* def expectedOrgName = 'Ministero di Esempio '+formattedDate+' MultitenantApplicativoBlockingIDA01'
+* def pdndOrganizationName = get_credenziale_by_refid_and_value('pdnd_org_name',clientIdID,expectedOrgName)
+* match pdndOrganizationName == expectedOrgName
 
-* def pdndOrganizationJson = get_credenziale_by_refid_greather_then_id('pdnd_org_json',clientIdID,credenziale_max_feature['max_id_credenziale'])
+* def pdndOrganizationJson = get_credenziale_by_refid_and_value('pdnd_org_json',clientIdID,'"m_m000_'+formattedDate+'_0002"')
 * match pdndOrganizationJson contains '"category":"Ministeri"'
 * match pdndOrganizationJson contains '"externalId":'
 * match pdndOrganizationJson contains '"m_m000_'+formattedDate+'_0002"'
 * match pdndOrganizationJson contains '"name":"Ministero di Esempio '+formattedDate+' MultitenantApplicativoBlockingIDA01"'
 
-* def pdndClientJson = get_credenziale_by_refid_greather_then_id('pdnd_client_json',clientIdID,credenziale_max_feature['max_id_credenziale'])
+* def pdndClientJson = get_credenziale_by_refid_and_value('pdnd_client_json',clientIdID,'"id":"'+formattedDateYYYYMMDD+'-'+formattedDateHHmm+'-0002-bbbb-12345678f8dd"')
 * match pdndClientJson contains '"consumerId":"'+formattedDateYYYYMMDD+'-'+formattedDateHHmm+'-0002-mmmm-82e210e12345"'
 * match pdndClientJson contains '"id":"'+formattedDateYYYYMMDD+'-'+formattedDateHHmm+'-0002-bbbb-12345678f8dd"'
 
@@ -515,16 +519,17 @@ And match header X-RateLimit-Limit == '4'
 # controlli tracce credenziali mittente
 
 * def clientIdID = get_id_by_credenziale('token_clientId','DemoSoggettoFruitore/KidOnly/MultitenantApplicativoBlockingJWK')
-* def pdndOrganizationName = get_credenziale_by_refid_greather_then_id('pdnd_org_name',clientIdID,credenziale_max_feature['max_id_credenziale'])
-* match pdndOrganizationName == 'Ministero di Esempio '+formattedDate+' MultitenantApplicativoBlockingJWK'
+* def expectedOrgName = 'Ministero di Esempio '+formattedDate+' MultitenantApplicativoBlockingJWK'
+* def pdndOrganizationName = get_credenziale_by_refid_and_value('pdnd_org_name',clientIdID,expectedOrgName)
+* match pdndOrganizationName == expectedOrgName
 
-* def pdndOrganizationJson = get_credenziale_by_refid_greather_then_id('pdnd_org_json',clientIdID,credenziale_max_feature['max_id_credenziale'])
+* def pdndOrganizationJson = get_credenziale_by_refid_and_value('pdnd_org_json',clientIdID,'"m_m000_'+formattedDate+'_0003"')
 * match pdndOrganizationJson contains '"category":"Ministeri"'
 * match pdndOrganizationJson contains '"externalId":'
 * match pdndOrganizationJson contains '"m_m000_'+formattedDate+'_0003"'
 * match pdndOrganizationJson contains '"name":"Ministero di Esempio '+formattedDate+' MultitenantApplicativoBlockingJWK"'
 
-* def pdndClientJson = get_credenziale_by_refid_greather_then_id('pdnd_client_json',clientIdID,credenziale_max_feature['max_id_credenziale'])
+* def pdndClientJson = get_credenziale_by_refid_and_value('pdnd_client_json',clientIdID,'"id":"'+formattedDateYYYYMMDD+'-'+formattedDateHHmm+'-0003-bbbb-12345678f8dd"')
 * match pdndClientJson contains '"consumerId":"'+formattedDateYYYYMMDD+'-'+formattedDateHHmm+'-0003-mmmm-82e210e12345"'
 * match pdndClientJson contains '"id":"'+formattedDateYYYYMMDD+'-'+formattedDateHHmm+'-0003-bbbb-12345678f8dd"'
 
@@ -594,16 +599,17 @@ And match header X-RateLimit-Limit == '4'
 # controlli tracce credenziali mittente
 
 * def clientIdID = get_id_by_credenziale('token_clientId','DemoSoggettoFruitore/KidOnly/MultitenantApplicativoBlockingJWK')
-* def pdndOrganizationName = get_credenziale_by_refid_greather_then_id('pdnd_org_name',clientIdID,credenziale_max_feature['max_id_credenziale'])
-* match pdndOrganizationName == 'Ministero di Esempio '+formattedDate+' MultitenantApplicativoBlockingJWK'
+* def expectedOrgName = 'Ministero di Esempio '+formattedDate+' MultitenantApplicativoBlockingJWK'
+* def pdndOrganizationName = get_credenziale_by_refid_and_value('pdnd_org_name',clientIdID,expectedOrgName)
+* match pdndOrganizationName == expectedOrgName
 
-* def pdndOrganizationJson = get_credenziale_by_refid_greather_then_id('pdnd_org_json',clientIdID,credenziale_max_feature['max_id_credenziale'])
+* def pdndOrganizationJson = get_credenziale_by_refid_and_value('pdnd_org_json',clientIdID,'"m_m000_'+formattedDate+'_0003"')
 * match pdndOrganizationJson contains '"category":"Ministeri"'
 * match pdndOrganizationJson contains '"externalId":'
 * match pdndOrganizationJson contains '"m_m000_'+formattedDate+'_0003"'
 * match pdndOrganizationJson contains '"name":"Ministero di Esempio '+formattedDate+' MultitenantApplicativoBlockingJWK"'
 
-* def pdndClientJson = get_credenziale_by_refid_greather_then_id('pdnd_client_json',clientIdID,credenziale_max_feature['max_id_credenziale'])
+* def pdndClientJson = get_credenziale_by_refid_and_value('pdnd_client_json',clientIdID,'"id":"'+formattedDateYYYYMMDD+'-'+formattedDateHHmm+'-0003-bbbb-12345678f8dd"')
 * match pdndClientJson contains '"consumerId":"'+formattedDateYYYYMMDD+'-'+formattedDateHHmm+'-0003-mmmm-82e210e12345"'
 * match pdndClientJson contains '"id":"'+formattedDateYYYYMMDD+'-'+formattedDateHHmm+'-0003-bbbb-12345678f8dd"'
 
@@ -675,16 +681,17 @@ And match header X-RateLimit-Limit == '4'
 # controlli tracce credenziali mittente
 
 * def clientIdID = get_id_by_credenziale('token_clientId','DemoSoggettoFruitore/KidOnly/MultitenantApplicativoBlockingJWK')
-* def pdndOrganizationName = get_credenziale_by_refid_greather_then_id('pdnd_org_name',clientIdID,credenziale_max_feature['max_id_credenziale'])
-* match pdndOrganizationName == 'Ministero di Esempio '+formattedDate+' MultitenantApplicativoBlockingJWK'
+* def expectedOrgName = 'Ministero di Esempio '+formattedDate+' MultitenantApplicativoBlockingJWK'
+* def pdndOrganizationName = get_credenziale_by_refid_and_value('pdnd_org_name',clientIdID,expectedOrgName)
+* match pdndOrganizationName == expectedOrgName
 
-* def pdndOrganizationJson = get_credenziale_by_refid_greather_then_id('pdnd_org_json',clientIdID,credenziale_max_feature['max_id_credenziale'])
+* def pdndOrganizationJson = get_credenziale_by_refid_and_value('pdnd_org_json',clientIdID,'"m_m000_'+formattedDate+'_0003"')
 * match pdndOrganizationJson contains '"category":"Ministeri"'
 * match pdndOrganizationJson contains '"externalId":'
 * match pdndOrganizationJson contains '"m_m000_'+formattedDate+'_0003"'
 * match pdndOrganizationJson contains '"name":"Ministero di Esempio '+formattedDate+' MultitenantApplicativoBlockingJWK"'
 
-* def pdndClientJson = get_credenziale_by_refid_greather_then_id('pdnd_client_json',clientIdID,credenziale_max_feature['max_id_credenziale'])
+* def pdndClientJson = get_credenziale_by_refid_and_value('pdnd_client_json',clientIdID,'"id":"'+formattedDateYYYYMMDD+'-'+formattedDateHHmm+'-0003-bbbb-12345678f8dd"')
 * match pdndClientJson contains '"consumerId":"'+formattedDateYYYYMMDD+'-'+formattedDateHHmm+'-0003-mmmm-82e210e12345"'
 * match pdndClientJson contains '"id":"'+formattedDateYYYYMMDD+'-'+formattedDateHHmm+'-0003-bbbb-12345678f8dd"'
 
@@ -755,16 +762,17 @@ And match header X-RateLimit-Limit == '4'
 # controlli tracce credenziali mittente
 
 * def clientIdID = get_id_by_credenziale('token_clientId','DemoSoggettoFruitore/KidOnly/MultitenantApplicativoBlockingJWK')
-* def pdndOrganizationName = get_credenziale_by_refid_greather_then_id('pdnd_org_name',clientIdID,credenziale_max_feature['max_id_credenziale'])
-* match pdndOrganizationName == 'Ministero di Esempio '+formattedDate+' MultitenantApplicativoBlockingJWK'
+* def expectedOrgName = 'Ministero di Esempio '+formattedDate+' MultitenantApplicativoBlockingJWK'
+* def pdndOrganizationName = get_credenziale_by_refid_and_value('pdnd_org_name',clientIdID,expectedOrgName)
+* match pdndOrganizationName == expectedOrgName
 
-* def pdndOrganizationJson = get_credenziale_by_refid_greather_then_id('pdnd_org_json',clientIdID,credenziale_max_feature['max_id_credenziale'])
+* def pdndOrganizationJson = get_credenziale_by_refid_and_value('pdnd_org_json',clientIdID,'"m_m000_'+formattedDate+'_0003"')
 * match pdndOrganizationJson contains '"category":"Ministeri"'
 * match pdndOrganizationJson contains '"externalId":'
 * match pdndOrganizationJson contains '"m_m000_'+formattedDate+'_0003"'
 * match pdndOrganizationJson contains '"name":"Ministero di Esempio '+formattedDate+' MultitenantApplicativoBlockingJWK"'
 
-* def pdndClientJson = get_credenziale_by_refid_greather_then_id('pdnd_client_json',clientIdID,credenziale_max_feature['max_id_credenziale'])
+* def pdndClientJson = get_credenziale_by_refid_and_value('pdnd_client_json',clientIdID,'"id":"'+formattedDateYYYYMMDD+'-'+formattedDateHHmm+'-0003-bbbb-12345678f8dd"')
 * match pdndClientJson contains '"consumerId":"'+formattedDateYYYYMMDD+'-'+formattedDateHHmm+'-0003-mmmm-82e210e12345"'
 * match pdndClientJson contains '"id":"'+formattedDateYYYYMMDD+'-'+formattedDateHHmm+'-0003-bbbb-12345678f8dd"'
 
