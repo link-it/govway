@@ -1528,6 +1528,13 @@ input.rich-spinner-input {
 	box-sizing: border-box;
 }
 
+/* Le celle dei giorni del calendario sono alte 23 px, sotto il minimo di 24x24 (WCAG 2.5.8):
+   sono bersagli a tutti gli effetti — si sceglie il giorno facendoci clic — e, adiacenti fra
+   loro in una griglia, non godono dell'eccezione per distanza. */
+.rich-calendar-cell-size {
+	height: 24px;
+}
+
 /* I comandi dell'impaginatore, quando sono la cella stessa a fare da pulsante, misurano
    25x16 px: sotto il minimo di 24x24 (WCAG 2.5.8), e adiacenti fra loro non godono
    dell'eccezione per distanza. */

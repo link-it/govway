@@ -12,7 +12,12 @@
 	  'navigation', 'main' e 'contentinfo' — percorso di navigazione e piè di pagina compresi —,
 	  collegamento 'Vai al contenuto principale', stato dei componenti annunciato alle tecnologie
 	  assistive (schede selezionate, menu aperti, esiti delle operazioni).
-	- Contrasto dei testi e dimensione delle aree attivabili portati alle soglie richieste.
+	- Contrasto dei testi e dimensione delle aree attivabili portati alle soglie richieste, celle dei
+	  calendari comprese.
+	- Annuncio del caricamento durante le richieste asincrone, che avveniva con la sola immagine e
+	  restava quindi muto per chi non vede lo schermo; le correzioni applicate dalle pagine vengono
+	  inoltre attivate insieme al contenuto che le riceve, e non al disegno successivo, così da non
+	  lasciare comandi privi di nome nell'istante in cui compaiono.
 	- Alternative testuali per i contenuti non testuali, grafici statistici compresi.
 	Sono stati inoltre corretti i difetti emersi durante il lavoro:
 	- i tag dei gruppi di un'API erano resi con stili diversi secondo la modalità della pagina;

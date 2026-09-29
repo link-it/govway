@@ -441,7 +441,7 @@
 											</a4j:outputPanel>
 											<h:panelGrid columns="2">
 												<h:outputLabel value="Numero Risultati" styleClass="labelSpinnerGrafici" />
-												<rich:inputNumberSpinner value="#{distribuzionePerAzioneBean.slice}" minValue="#{distribuzionePerAzioneBean.minCategorie}"
+												<rich:inputNumberSpinner id="numeroRisultatiHeatmap" value="#{distribuzionePerAzioneBean.slice}" minValue="#{distribuzionePerAzioneBean.minCategorie}"
 													maxValue="#{distribuzionePerAzioneBean.maxCategorie}" cycled="false"  styleClass="spinnerNumeroRisultatiGrafici">
 													<a4j:support event="onchange" actionListener="#{distribuzionePerAzioneBean.updateChartNumeroRisultati}" reRender="scriptHeatmapChartPanel,gridComandiHeatmap"/>
 												</rich:inputNumberSpinner>

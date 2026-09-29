@@ -115,6 +115,19 @@ function gwPiedePagina(){
 	}
 }
 
+/* La maschera che compare durante le richieste AJAX annuncia il caricamento con una sola
+   immagine: e' un messaggio di stato (WCAG 4.1.3), ma non e' dichiarato come tale, quindi
+   chi non vede lo schermo non ne sa nulla. Il ruolo non puo' essere scritto nel template,
+   perche' l'elemento e' il contenitore generato da 'a4j:status'. */
+function gwRegioneDiStato(){
+
+	const stato = document.querySelector('div.rich-status-display:not([role])');
+
+	if(stato){
+		stato.setAttribute('role', 'status');
+	}
+}
+
 function gwApplicaTitoloPagina(){
 
 	const titoli = document.querySelectorAll('.ultimo-path:not([role])');
@@ -267,6 +280,13 @@ function gwNomiDichiarati(){
 		{ suffisso: 'rowsToDisplayCombocomboboxField',          nome: 'Elementi per pagina' },
 		{ suffisso: 'NumeroDimensioniCombocomboboxField',       nome: 'Numero Dimensioni' },
 		{ suffisso: 'NumeroDimensioniCustomCombocomboboxField', nome: 'Numero Dimensioni' },
+		/* Comandi della mappa di calore: l'etichetta visibile c'e', ma sta in una cella
+		   accanto a un componente che rende piu' campi (il campo di testo della combobox e
+		   i due pulsanti), quindi l'associazione automatica non sa a quale riferirsi. La
+		   dicitura ripete quella a schermo, come richiede il criterio 'etichetta nel nome'. */
+		{ suffisso: 'rotazioneCombocomboboxField',              nome: 'Label' },
+		{ suffisso: 'numeroRisultatiHeatmapInput',              nome: 'Numero Risultati' },
+		{ suffisso: 'visualizzaValoriNelleCellecomboboxField',  nome: 'Mostra Valori' },
 		/* Il menu dell'utente in testata mostra solo un'icona: con il ruolo 'button' che
 		   la libreria gli assegna per renderlo utilizzabile da tastiera, resterebbe un
 		   comando senza nome. */
@@ -601,6 +621,7 @@ function gwApplicaCorrezioniAccessibilita(){
 	gwGlifiDecorativi();
 	gwComandiBarraFiltro();
 	gwPiedePagina();
+	gwRegioneDiStato();
 	gwEtichetteDaSuggerimento();
 	gwRigheOperabili();
 	gwOrdinaPiediTabella();
@@ -617,17 +638,24 @@ function gwOsservaCorrezioniAccessibilita(){
 		return;
 	}
 
-	let inAttesa = false;
+	/* La passata viene eseguita SUBITO, nella stessa esecuzione che ha ricevuto le modifiche:
+	   rinviarla al fotogramma successivo lascia una finestra in cui i controlli appena resi
+	   esistono senza nome, e chi ci arriva con il tabulatore in quell'istante non sente nulla.
+	   Il guardiano evita il rientro mentre la passata modifica a sua volta il DOM; le notifiche
+	   che ne derivano producono un secondo giro senza effetti, perche' la passata non tocca
+	   quel che e' gia' a posto. */
+	let inCorso = false;
 
 	const osservatore = new MutationObserver(function() {
-		if(inAttesa){
+		if(inCorso){
 			return;
 		}
-		inAttesa = true;
-		window.requestAnimationFrame(function() {
-			inAttesa = false;
+		inCorso = true;
+		try {
 			gwApplicaCorrezioniAccessibilita();
-		});
+		} finally {
+			inCorso = false;
+		}
 	});
 
 	osservatore.observe(document.body, { childList: true, subtree: true });

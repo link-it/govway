@@ -25,7 +25,11 @@
 .ui-datepicker table { width: 100%; font-size: .9em; border-collapse: collapse; /*margin: 0 0 .4em;*/ background: ${input.calendar.widget.cell.day.background.color}; }
 .ui-datepicker th { padding: .5em 0em; text-align: center; font-weight: bold; border: 0; border-bottom: 1px solid #c5c5c5; }
 .ui-datepicker td { border: 0; border-bottom: 1px solid #c5c5c5; border-right: 1px solid #c5c5c5; }
-.ui-datepicker td span, .ui-datepicker td a { display: block; padding: .2em; text-align: center; text-decoration: none; background-color: ${input.calendar.widget.cell.background.color} !important; 
+/* Le celle dei giorni sono bersagli — si sceglie il giorno facendoci clic — e alte 21,6 px,
+   sotto il minimo di 24x24 (WCAG 2.5.8); adiacenti fra loro in una griglia, non godono
+   dell'eccezione per distanza. Si aumenta la spaziatura interna, con l'altezza minima a fare
+   da rete di sicurezza se il carattere cambia. */
+.ui-datepicker td span, .ui-datepicker td a { display: block; padding: .3em .2em; min-height: 24px; box-sizing: border-box; text-align: center; text-decoration: none; background-color: ${input.calendar.widget.cell.background.color} !important; 
 border: 0 !important; color: ${input.calendar.widget.color} !important; }
 .ui-datepicker td a:hover { background-color: ${input.calendar.widget.cell.hover.background.color} !important; color: ${input.calendar.widget.cell.hover.color} !important; }
 /* Spostandosi con le frecce, jQuery UI marca il giorno raggiunto con la classe 'ui-state-hover',
