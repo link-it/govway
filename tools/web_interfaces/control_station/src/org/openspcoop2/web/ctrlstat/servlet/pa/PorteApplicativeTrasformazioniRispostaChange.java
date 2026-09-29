@@ -186,7 +186,8 @@ public class PorteApplicativeTrasformazioniRispostaChange extends Action {
 			boolean trasformazioneRichiestaSoapAbilitato = false;
 			if(oldRegola.getRichiesta() != null) {
 				trasformazioneContenutoRichiestaAbilitato = oldRegola.getRichiesta().getConversione();
-				trasformazioneRichiestaRestAbilitato = oldRegola.getRichiesta().getTrasformazioneRest() != null;
+				// su API REST l'elemento 'trasformazione-rest' descrive la sola riscrittura del metodo e/o del path e non una conversione di protocollo SOAP->REST
+				trasformazioneRichiestaRestAbilitato = ServiceBinding.SOAP.equals(serviceBindingMessage) && oldRegola.getRichiesta().getTrasformazioneRest() != null;
 				trasformazioneRichiestaSoapAbilitato = oldRegola.getRichiesta().getTrasformazioneSoap() != null;
 			}
 			

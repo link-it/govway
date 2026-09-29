@@ -1084,11 +1084,24 @@ public class GestoreTrasformazioniUtilities {
 		
 	}
 	
-	public static String getLabelTipoTrasformazioneRisposta(TrasformazioneRegolaRichiesta richiesta,TrasformazioneRegolaRisposta trasformazioneRisposta) {
+	/**
+	 * Indica se l'elemento 'trasformazione-rest' della regola rappresenta una conversione di protocollo della richiesta da SOAP a REST,
+	 * per cui la risposta deve essere riconvertita in SOAP.
+	 * Su una richiesta REST l'elemento descrive invece la sola riscrittura del metodo e/o del path della richiesta.
+	 */
+	public static boolean isConversioneSoap2Rest(TrasformazioneRegolaRichiesta richiesta, OpenSPCoop2Message messageRequest) {
+		if(richiesta==null || richiesta.getTrasformazioneRest()==null) {
+			return false;
+		}
+		// in assenza del messaggio di richiesta (non dovrebbe mai succedere) si mantiene l'interpretazione come conversione di protocollo
+		return messageRequest==null || ServiceBinding.SOAP.equals(messageRequest.getServiceBinding());
+	}
+
+	public static String getLabelTipoTrasformazioneRisposta(TrasformazioneRegolaRichiesta richiesta,TrasformazioneRegolaRisposta trasformazioneRisposta, OpenSPCoop2Message messageRequest) {
 		StringBuilder bf = new StringBuilder();
 		if(trasformazioneRisposta.getConversione()) {
 			// !inverto!
-			if(richiesta.getTrasformazioneRest()!=null) {
+			if(isConversioneSoap2Rest(richiesta, messageRequest)) {
 				bf.append(TIPO_TRASFORMAZIONE_CONVERSIONE_SOAP).append(TIPO_TRASFORMAZIONE_SEPARATOR);	
 			}
 			else if(richiesta.getTrasformazioneSoap()!=null) {

@@ -1,5 +1,18 @@
 2026-09-29  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore, GovWayConsole]
+	Risolto Bug #1834
+	Su un'API REST, una regola di trasformazione che ridefiniva l'HTTP Method e/o il Path della richiesta e trasformava
+	il contenuto della risposta faceva fallire ogni invocazione con un errore 502 ('Trasformazione Risposta Fallita'):
+	la ridefinizione di metodo e path veniva interpretata come una conversione di protocollo da SOAP a REST e il gateway
+	tentava di riportare la risposta in SOAP ("Atteso messaggio di richiesta di tipo SOAP, in presenza di una trasformazione REST attiva").
+	La risposta viene adesso trasformata e restituita in REST e i diagnostici riportano il tipo di trasformazione
+	effettivamente applicato, senza riferimenti a SOAP.
+	Nella console, la risposta di una regola che ridefinisce metodo o path su un'API REST non propone più la sezione
+	di trasformazione SOAP e consente di indicare il Content-Type del contenuto prodotto.
+
+2026-09-29  Andrea Poli <apoli@link.it>
+
 	* [GovWayCore]
 	Risolte le seguenti vulnerabilità relative ai jar di terza parte:
 	- CVE-2026-91863, CVE-2026-91864, CVE-2026-91865, CVE-2026-91866,
