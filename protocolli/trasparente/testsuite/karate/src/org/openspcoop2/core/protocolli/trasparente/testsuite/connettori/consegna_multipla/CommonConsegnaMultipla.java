@@ -320,9 +320,13 @@ public class CommonConsegnaMultipla {
 	public static Map<RequestAndExpectations, List<HttpResponse>> makeRequestsByKind(List<RequestAndExpectations> requests, int requests_per_batch) {
 		Map<RequestAndExpectations,  List<HttpResponse>> responses = new HashMap<>();
 		
-		int nThreads = Common.sogliaRichiesteSimultanee; 
+		// Parallelismo inferiore al limite globale di richieste simultanee del gateway (soglia_richieste_simultanee, es. max_threads=15
+		// su Jenkins): con un pool pari al limite, un thread che invia una nuova richiesta subito dopo averne completata una può essere
+		// rifiutato con 429 (esito CONTROLLO_TRAFFICO_MAX_THREADS), poiché GovWay rilascia il posto solo dopo aver inviato la risposta.
+		// Il parallelismo serve solo a velocizzare l'invio: le verifiche riguardano la consegna asincrona di ciascuna transazione.
+		int nThreads = Math.max(1, Common.sogliaRichiesteSimultanee - 5);
 		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(nThreads);
-		
+
 		for (var request : requests) {
 			responses.put(request, java.util.Collections.synchronizedList(new java.util.ArrayList<>()));
 
