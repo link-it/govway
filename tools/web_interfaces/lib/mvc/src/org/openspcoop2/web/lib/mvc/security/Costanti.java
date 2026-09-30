@@ -49,5 +49,6 @@ public class Costanti {
 	
 	public static final String REQUEST_HEADER_NAME_MAX_LENGTH= "request.headerNameMaxLength";
 	public static final String REQUEST_QUERY_PARAM_NAME_MAX_LENGTH= "request.queryParamNameMaxLength";
+	public static final String REQUEST_MULTIPART_MAX_SIZE= "request.multipart.maxSize";
 
 }

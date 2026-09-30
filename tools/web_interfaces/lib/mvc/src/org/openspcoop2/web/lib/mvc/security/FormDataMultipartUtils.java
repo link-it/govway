@@ -21,6 +21,8 @@
 package org.openspcoop2.web.lib.mvc.security;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -32,6 +34,7 @@ import java.util.Map;
 import jakarta.mail.BodyPart;
 
 import org.apache.commons.io.FilenameUtils;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.mime.MimeMultipart;
 import org.openspcoop2.utils.transport.http.HttpConstants;
@@ -56,6 +59,73 @@ public class FormDataMultipartUtils {
 	private static final String QUOTE = "\"";
 	private static final String PREFIX_CONTENT_DISPOSITION = HttpConstants.CONTENT_DISPOSITION_FORM_DATA_NAME_PREFIX + QUOTE;
 	private static final String PREFIX_FILENAME = HttpConstants.CONTENT_DISPOSITION_FILENAME_PREFIX + QUOTE;
+
+	/** Dimensione massima di default di una richiesta multipart: 250 MB, analoga al limite di default utilizzato dalle azioni struts */
+	public static final long DEFAULT_MAX_SIZE = 250L * 1024L * 1024L;
+
+	/**
+	 * Eccezione sollevata quando il body di una richiesta multipart supera la dimensione massima consentita
+	 */
+	public static class MaxSizeExceededException extends IOException {
+		private static final long serialVersionUID = 1L;
+		private final long maxSize;
+		public MaxSizeExceededException(long maxSize) {
+			super("La dimensione della richiesta supera il limite massimo consentito ("+formatSize(maxSize)+")");
+			this.maxSize = maxSize;
+		}
+		public long getMaxSize() {
+			return this.maxSize;
+		}
+	}
+
+	/**
+	 * Converte la dimensione massima indicata in configurazione (in byte o con suffisso, es. '250M'); un valore negativo indica l'assenza di limite.
+	 *
+	 * @param value valore da convertire
+	 * @param defaultValue valore restituito se il parametro non è valorizzato
+	 * @return dimensione in byte
+	 */
+	public static long parseMaxSize(String value, long defaultValue) {
+		if(value == null || value.trim().isEmpty()) {
+			return defaultValue;
+		}
+		long size = Utilities.convertFormatStringToBytes(value);
+		return size < 0 ? -1L : size;
+	}
+
+	public static String formatSize(long size) {
+		return Utilities.convertBytesToFormatString(size, true, " ");
+	}
+
+	/**
+	 * Legge il contenuto dello stream verificando che non superi la dimensione massima indicata.
+	 *
+	 * @param is stream da leggere
+	 * @param contentLength lunghezza dichiarata nella richiesta (-1 se non disponibile)
+	 * @param maxSize dimensione massima consentita (valore negativo = nessun limite)
+	 * @return contenuto letto
+	 * @throws MaxSizeExceededException se la dimensione massima viene superata
+	 */
+	public static byte[] readWithLimit(InputStream is, long contentLength, long maxSize) throws IOException {
+		if(maxSize >= 0 && contentLength > maxSize) {
+			throw new MaxSizeExceededException(maxSize);
+		}
+		if(maxSize < 0) {
+			return is.readAllBytes();
+		}
+		ByteArrayOutputStream bout = new ByteArrayOutputStream();
+		byte[] buf = new byte[8192];
+		long letti = 0;
+		int n;
+		while((n = is.read(buf)) != -1) {
+			letti += n;
+			if(letti > maxSize) {
+				throw new MaxSizeExceededException(maxSize);
+			}
+			bout.write(buf, 0, n);
+		}
+		return bout.toByteArray();
+	}
 
 	public static boolean isMultipartFormData(String contentType) {
 		return contentType != null && contentType.toLowerCase(Locale.ROOT).contains(HttpConstants.CONTENT_TYPE_MULTIPART_FORM_DATA);

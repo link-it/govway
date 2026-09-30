@@ -757,6 +757,41 @@ public class Utilities {
 
 
 
+	/**
+	 * Operazione inversa di {@link #convertBytesToFormatString(long)}: converte una dimensione espressa in byte,
+	 * eventualmente con suffisso 'b', 'k'/'kb', 'm'/'mb' o 'g'/'gb' (indifferentemente maiuscolo o minuscolo, es. '250M' o '250 MB'),
+	 * nel corrispondente numero di byte.
+	 *
+	 * @param value valore da convertire
+	 * @return dimensione in byte
+	 * @throws NumberFormatException se il valore non è una dimensione valida
+	 */
+	public static long convertFormatStringToBytes(String value) {
+		if(value == null || value.trim().isEmpty()) {
+			throw new NumberFormatException("Dimensione non indicata");
+		}
+		String v = value.trim().toLowerCase();
+		if(v.endsWith("b")) {
+			v = v.substring(0, v.length()-1).trim();
+		}
+		long multiplier = 1L;
+		if(v.endsWith("k")) {
+			multiplier = (long) Utilities.KB;
+		}
+		else if(v.endsWith("m")) {
+			multiplier = (long) Utilities.MB;
+		}
+		else if(v.endsWith("g")) {
+			multiplier = (long) Utilities.GB;
+		}
+		if(multiplier > 1L) {
+			v = v.substring(0, v.length()-1).trim();
+		}
+		return Long.parseLong(v) * multiplier;
+	}
+
+
+
 	/* STRING UTILS NORMALIZE NAME */
 	
 	public static String convertNameToSistemaOperativoCompatible(String nome,boolean convertCharNotPermitted,Character charJollyCharNotPermitted,

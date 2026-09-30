@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
 import org.richfaces.model.UploadItem;
@@ -111,4 +112,30 @@ public abstract class BaseFileUploadBean implements Serializable {
 	}
 	
 	public abstract MediaType[] getAcceptedTypes(); 
+	
+	/** Nome del parametro con cui il client segnala il motivo dell'errore di caricamento */
+	public static final String PARAMETRO_MESSAGGIO_ERRORE_UPLOAD = "param1";
+	
+	/**
+	 * Motivo dell'errore di caricamento restituito dalla servlet di upload (es. dimensione massima superata).
+	 * Viene letto direttamente dalla richiesta poiché l'actionListener della funzione JavaScript viene eseguito
+	 * prima dell'assegnazione dei parametri (a4j:actionparam).
+	 */
+	protected String leggiUploadErrorMessage() {
+		FacesContext fc = FacesContext.getCurrentInstance();
+		if(fc == null) {
+			return null;
+		}
+		String v = fc.getExternalContext().getRequestParameterMap().get(PARAMETRO_MESSAGGIO_ERRORE_UPLOAD);
+		return (v != null && !v.trim().isEmpty()) ? v.trim() : null;
+	}
+	
+	/** Destinazione dell'a4j:actionparam con il motivo dell'errore; il valore viene letto dalla richiesta tramite leggiUploadErrorMessage() */
+	private String uploadErrorMessage = null;
+	public String getUploadErrorMessage() {
+		return this.uploadErrorMessage;
+	}
+	public void setUploadErrorMessage(String uploadErrorMessage) {
+		this.uploadErrorMessage = uploadErrorMessage;
+	}
 }

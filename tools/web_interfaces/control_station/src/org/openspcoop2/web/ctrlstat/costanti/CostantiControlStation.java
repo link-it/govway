@@ -1872,6 +1872,7 @@ public class CostantiControlStation {
 	public static final String MESSAGGIO_ERRORE_MODALITA_IDENTIFICAZIONE_CON_TIPI_POSSIBILI = "Modalit&agrave; identificazione dev'essere disabilitato, headerBased, urlBased, contentBased o inputBased ";
 	public static final String MESSAGGIO_ERRRORE_DATI_INCOMPLETI = "Dati incompleti.";
 	public static final String MESSAGGIO_ERRRORE_CAMPI_DIFFERENTI = "&Egrave; necessario indicare dei valori differenti in {0} e {1}";
+	public static final String MESSAGGIO_ERRORE_DIMENSIONE_RICHIESTA_MULTIPART_SUPERATA = "La dimensione dei dati inviati supera il limite massimo consentito ({0}): operazione non eseguita.";
 	public static final String MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX = "Dati incompleti. &Egrave; necessario indicare: {0}";
 	public static final String MESSAGGIO_ERRRORE_DATI_INCOMPLETI_VALORE_MINORE_DEL_MINIMO = "Il valore indicato per {0} è minore del minimo consentito: ${1}";
 	public static final String MESSAGGIO_ERRRORE_DATI_INCOMPLETI_VALORE_MINORE_DEL_MASSIMO = "Il valore indicato per {0} è maggiore del massimo consentito: ${1}";

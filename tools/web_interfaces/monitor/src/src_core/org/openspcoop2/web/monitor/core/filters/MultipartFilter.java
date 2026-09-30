@@ -20,7 +20,6 @@
 package org.openspcoop2.web.monitor.core.filters;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -34,11 +33,14 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletRequestWrapper;
+import jakarta.servlet.http.HttpServletResponse;
 
+import org.openspcoop2.web.lib.mvc.security.FormDataMultipartUtils;
 import org.slf4j.Logger;
 
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
+import org.openspcoop2.web.monitor.core.servlet.UploadServlet;
 
 /**
  * MultipartFilter
@@ -54,6 +56,7 @@ public class MultipartFilter  implements Filter{
 	private static Logger log = LoggerManager.getPddMonitorCoreLogger();
 
 	private boolean filtroAttivo;
+	private long maxSize = FormDataMultipartUtils.DEFAULT_MAX_SIZE;
 
 	/** Multipart request start */
 	public static final String MULTIPART = "multipart/";
@@ -62,6 +65,7 @@ public class MultipartFilter  implements Filter{
 	public void init(FilterConfig filterConfig) throws ServletException {
 		try{
 			this.filtroAttivo = PddMonitorProperties.getInstance(log).isMultipartRequestCache();
+			this.maxSize = PddMonitorProperties.getInstance(log).getMultipartRequestMaxSize();
 		}catch(Exception e){
 			log.error("Errore durante la init del filtro: "+ e.getMessage(),e);
 			throw new ServletException(e);
@@ -74,14 +78,31 @@ public class MultipartFilter  implements Filter{
 
 		HttpServletRequest httpServletRequest = (HttpServletRequest) request;
 		BufferedRequestWrapper reqWrapper = null;
-		if(this.filtroAttivo && isMultipartRequest(httpServletRequest)){
+		boolean multipart = isMultipartRequest(httpServletRequest);
+		// verifica della dimensione massima dichiarata, prima di leggere il contenuto
+		if(multipart && this.maxSize >= 0 && httpServletRequest.getContentLengthLong() > this.maxSize) {
+			rifiutaRichiesta(httpServletRequest, response);
+			return;
+		}
+		if(this.filtroAttivo && multipart){
 //			log.debug("Ricevuta Richiesta Multipart..."); 
-			reqWrapper = new BufferedRequestWrapper((HttpServletRequest) request);
+			try {
+				reqWrapper = new BufferedRequestWrapper((HttpServletRequest) request, this.maxSize);
+			}catch(FormDataMultipartUtils.MaxSizeExceededException e) {
+				rifiutaRichiesta(httpServletRequest, response);
+				return;
+			}
 //			log.debug("Contenuto: [" +new String(reqWrapper.getBuffer())+"]");
 			chain.doFilter(reqWrapper, response);
 		}else {
 			chain.doFilter(request, response);
 		}
+	}
+
+	private void rifiutaRichiesta(HttpServletRequest request, ServletResponse response) throws IOException {
+		log.error("Richiesta multipart [{}] rifiutata: la dimensione supera il limite massimo consentito ({})", request.getRequestURI(), FormDataMultipartUtils.formatSize(this.maxSize));
+		// risposta nello stesso formato utilizzato dalla servlet di upload, così che il messaggio possa essere mostrato all'utente
+		UploadServlet.rispostaErrore((HttpServletResponse) response, 413, UploadServlet.getMessaggioDimensioneMassimaSuperata(this.maxSize));
 	}
 
 	private boolean isMultipartRequest(HttpServletRequest request) {
@@ -110,22 +131,15 @@ public class MultipartFilter  implements Filter{
 
 		private ByteArrayInputStream bais;
 
-		private ByteArrayOutputStream baos;
-
 		private BufferedServletInputStream bsis;
 
 		private byte[] buffer;
 
-		public BufferedRequestWrapper(HttpServletRequest req) throws IOException {
+		public BufferedRequestWrapper(HttpServletRequest req, long maxSize) throws IOException {
 			super(req);
 			InputStream is = req.getInputStream();
-			this.baos = new ByteArrayOutputStream();
-			byte buf[] = new byte[1024];
-			int letti;
-			while ((letti = is.read(buf)) > 0) {
-				this.baos.write(buf, 0, letti);
-			}
-			this.buffer = this.baos.toByteArray();
+			// lettura con verifica della dimensione massima consentita
+			this.buffer = FormDataMultipartUtils.readWithLimit(is, req.getContentLengthLong(), maxSize);
 		}
 
 		@Override

@@ -352,6 +352,8 @@ public class Costanti {
 	/* NOMI PARAMETRI */
 	
 	public static final String USER_AGENT_HEADER_NAME = "User-Agent";
+	/** Header con cui le chiamate AJAX di upload dei file inviano il token CSRF */
+	public static final String HEADER_CSRF_TOKEN = "x-csrf-token";
 	
 	/* COSTANTI NOMI FILE PROPERTIES */
 	

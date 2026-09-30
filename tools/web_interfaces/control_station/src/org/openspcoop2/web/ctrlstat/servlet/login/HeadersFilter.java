@@ -19,6 +19,9 @@
  */
 package org.openspcoop2.web.ctrlstat.servlet.login;
 
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -45,6 +48,7 @@ import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.security.CssSanitizer;
+import org.openspcoop2.web.lib.mvc.security.FormDataMultipartUtils;
 import org.openspcoop2.web.lib.mvc.security.InputSanitizerProperties;
 import org.openspcoop2.web.lib.mvc.security.SecurityProperties;
 import org.openspcoop2.web.lib.mvc.security.Validatore;
@@ -100,6 +104,15 @@ public class HeadersFilter implements Filter {
 			
 			// i parametri delle form multipart (campi di tipo file) vengono letti dal body e validati
 			SecurityWrappedHttpServletRequest seqReq = new SecurityWrappedHttpServletRequest(request, log, true);
+			
+			// verifica della dimensione massima del body delle richieste multipart, prima di proseguire nell'elaborazione
+			try {
+				seqReq.readMultipartBody();
+			}catch(FormDataMultipartUtils.MaxSizeExceededException e) {
+				log.error("Richiesta multipart rifiutata: {}", e.getMessage());
+				rispostaDimensioneMassimaSuperata(request, response, e.getMaxSize());
+				return;
+			}
 			
 			SecurityWrappedHttpServletResponse seqRes = new SecurityWrappedHttpServletResponse(response, log);
 			
@@ -162,6 +175,19 @@ public class HeadersFilter implements Filter {
 		if(StringUtils.isNoneBlank(this.core.getXContentTypeOptionsHeaderValue())) {
 			response.setHeader(HttpConstants.HEADER_NAME_X_CONTENT_TYPE_OPTIONS, this.core.getXContentTypeOptionsHeaderValue());
 		}
+	}
+	
+	/**
+	 * Risposta alle richieste multipart che superano la dimensione massima consentita.
+	 * Non è possibile inoltrare direttamente alla pagina di errore della console: l'identificativo del tab, necessario per accedere
+	 * ai dati di sessione, viene inviato nel body della richiesta, che non è stato letto. Si effettua quindi un redirect alla pagina
+	 * dei messaggi, che consente inoltre di tornare alla pagina precedente senza ripetere l'invio.
+	 */
+	private static void rispostaDimensioneMassimaSuperata(HttpServletRequest request, HttpServletResponse response, long maxSize) throws IOException {
+		String messaggio = MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_DIMENSIONE_RICHIESTA_MULTIPART_SUPERATA, FormDataMultipartUtils.formatSize(maxSize));
+		String redirect = request.getContextPath() + "/" + LoginCostanti.OBJECT_NAME_MESSAGE_PAGE + ".do" +
+				"?" + CostantiControlStation.PARAMETER_MESSAGE_TEXT + "=" + URLEncoder.encode(messaggio, StandardCharsets.UTF_8);
+		response.sendRedirect(redirect);
 	}
 	
 	private void dumpRichiesta(HttpServletRequest request,	HttpServletResponse response) {

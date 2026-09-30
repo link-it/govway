@@ -23,6 +23,7 @@ import javax.faces.event.ActionEvent;
 
 import org.openspcoop2.web.monitor.core.bean.BaseFileUploadBean;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
+import org.openspcoop2.web.monitor.core.utils.MessageUtils;
 import org.slf4j.Logger;
 import org.springframework.http.MediaType;
 
@@ -78,7 +79,10 @@ public class ArchivioZipFileUploadBean extends BaseFileUploadBean {
 	
 	@Override
 	public final void uploadErrorListener(final ActionEvent e) {
-		//donothing
+		// il motivo dell'errore viene segnalato subito, altrimenti l'utente scoprirebbe l'assenza dell'archivio solo all'avvio dell'analisi
+		String errore = this.leggiUploadErrorMessage();
+		log.debug("Upload Error: {}", errore);
+		MessageUtils.addErrorMsg(errore != null ? errore : "Caricamento dell'archivio non riuscito.");
 	}
 
 	@Override

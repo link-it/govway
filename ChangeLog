@@ -1,5 +1,15 @@
 2026-09-30  Andrea Poli <apoli@link.it>
 
+	* [GovWayConsole, GovWayMonitor]
+	Risolto Bug #1838
+	Il caricamento di file nelle console non prevedeva un limite di dimensione: è stata aggiunta la property
+	'console.security.request.multipart.maxSize' (default 250M) e, nella console di monitoraggio, la verifica del token CSRF.
+	Corretti inoltre nella console di monitoraggio: l'indicatore di operazione in corso che restava visualizzato dopo il
+	caricamento di un file, l'assenza del motivo in caso di errore, la cancellazione dei file in 'Esamina archivio' e il
+	conteggio "record [0 - 0] su 0" nell'elenco delle ricerche salvate.
+
+2026-09-30  Andrea Poli <apoli@link.it>
+
 	* [GovWayConsole]
 	Risolto Bug #1837
 	Negli elenchi, il numero di elementi per pagina scelto veniva perso tornando all'elenco tramite il percorso di navigazione o il menu.

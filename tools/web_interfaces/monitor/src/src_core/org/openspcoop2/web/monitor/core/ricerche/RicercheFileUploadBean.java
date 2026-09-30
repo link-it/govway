@@ -82,7 +82,8 @@ public class RicercheFileUploadBean extends BaseFileUploadBean {
 	
 	@Override
 	public final void uploadErrorListener(final ActionEvent e) {
-		this.mBean.setCaricaRicercheErrorMessage("Import del file ricerche completato con errore."); 
+		String errore = this.leggiUploadErrorMessage();
+		this.mBean.setCaricaRicercheErrorMessage("Import del file ricerche completato con errore." + (errore != null ? " " + errore : "")); 
 	}
 
 	@Override

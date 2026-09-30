@@ -31,6 +31,7 @@ import java.util.Locale;
 import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
+import org.openspcoop2.web.lib.mvc.security.FormDataMultipartUtils;
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.commons.dao.DAOFactoryException;
 import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
@@ -841,6 +842,16 @@ public class PddMonitorProperties {
 	// Abilita il caching delle richieste multipart
 	public boolean isMultipartRequestCache() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("abilitaMultipartRequestCache.enabled", true, true));
+	}
+	
+	// Dimensione massima del body delle richieste multipart (valore negativo = nessun limite)
+	public long getMultipartRequestMaxSize() throws UtilsException{
+		String v = this.appProperties.getProperty("console.security.request.multipart.maxSize", false, true);
+		try {
+			return FormDataMultipartUtils.parseMaxSize(v, FormDataMultipartUtils.DEFAULT_MAX_SIZE);
+		}catch(Exception e) {
+			throw new UtilsException("Valore non valido per la property 'console.security.request.multipart.maxSize' ["+v+"]: "+e.getMessage(),e);
+		}
 	}
 		
 	// Abilita il cluster dinamico

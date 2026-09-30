@@ -38,7 +38,7 @@
 		<a4j:outputPanel layout="block" rendered="#{fileUploadBean.visualizzaComandiEliminaFile}" id="#{id}_infoFileCaricatoPanel">
 			<c:forEach items="#{fileUploadBean.mapChiaviElementi}" var="entry">
 				<a4j:outputPanel layout="block" styleClass="prop">
-			 		<h:outputLabel styleClass="outputFieldLabel" value="&#160;&#160;" rendered="#{true}" />	
+			 		<label class="outputFieldLabel"><h:outputText value="&amp;#160;&amp;#160;" escape="false" /></label>	
 		 			<a4j:outputPanel layout="block" styleClass="divNoEdit">
 			   			<span class="spanNoEdit"><i id="form-file-identificativo-file-caricato">#{entry.value}</i></span>
 			   			<a id="#{id}-delete-cmd_#{entry.key}" class="text-action-link " title="Rimuovi #{entry.value}" target="_self" href="#" type="button">

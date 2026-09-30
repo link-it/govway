@@ -87,10 +87,20 @@ public class SecurityWrappedHttpServletRequest extends HttpServletRequestWrapper
 	/** Parametri testuali (parti prive di filename) della richiesta multipart */
 	private Map<String, List<String>> multipartParameters = null;
 	private boolean multipartParametersRead = false;
+	/** Dimensione massima del body di una richiesta multipart (valore negativo = nessun limite) */
+	private long multipartMaxSize = FormDataMultipartUtils.DEFAULT_MAX_SIZE;
 	
 	public SecurityWrappedHttpServletRequest(HttpServletRequest httpServletRequest, Logger log, boolean gestioneMultipart) {
 		this(httpServletRequest, log);
 		this.gestioneMultipart = gestioneMultipart;
+		if(this.gestioneMultipart) {
+			String maxSize = this.sc.getProperty(Costanti.REQUEST_MULTIPART_MAX_SIZE);
+			try {
+				this.multipartMaxSize = FormDataMultipartUtils.parseMaxSize(maxSize, FormDataMultipartUtils.DEFAULT_MAX_SIZE);
+			} catch (Exception e) {
+				this.log.error("Valore non valido per la property '"+Costanti.REQUEST_MULTIPART_MAX_SIZE+"' ["+maxSize+"], viene utilizzato il valore di default: " + e.getMessage(),e);
+			}
+		}
 	}
 	
 	public SecurityWrappedHttpServletRequest(HttpServletRequest httpServletRequest, Logger log) {
@@ -156,9 +166,29 @@ public class SecurityWrappedHttpServletRequest extends HttpServletRequestWrapper
 	
 	private byte[] getMultipartBody() throws IOException {
 		if(this.multipartBody == null) {
-			this.multipartBody = this.getHttpServletRequest().getInputStream().readAllBytes();
+			this.multipartBody = FormDataMultipartUtils.readWithLimit(this.getHttpServletRequest().getInputStream(), 
+					this.getHttpServletRequest().getContentLengthLong(), this.multipartMaxSize);
 		}
 		return this.multipartBody;
+	}
+	
+	/**
+	 * Legge il body di una richiesta multipart, verificando che non superi la dimensione massima consentita.
+	 * Viene invocato dal filtro della console prima di proseguire nell'elaborazione, così da poter segnalare all'utente il superamento del limite.
+	 * 
+	 * @return true se la richiesta è multipart e il body è stato letto
+	 * @throws FormDataMultipartUtils.MaxSizeExceededException se viene superata la dimensione massima
+	 */
+	public boolean readMultipartBody() throws IOException {
+		if(!this.isMultipart()) {
+			return false;
+		}
+		this.getMultipartBody();
+		return true;
+	}
+	
+	public long getMultipartMaxSize() {
+		return this.multipartMaxSize;
 	}
 	
 	private Map<String, List<String>> getMultipartParameters() {

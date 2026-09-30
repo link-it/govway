@@ -29,12 +29,17 @@ import java.util.UUID;
 
 import org.apache.commons.fileupload2.core.DiskFileItem;
 import org.apache.commons.fileupload2.core.DiskFileItemFactory;
+import org.apache.commons.fileupload2.core.FileUploadSizeException;
 import org.apache.commons.fileupload2.jakarta.JakartaServletDiskFileUpload;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.json.JSONUtils;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
+import org.openspcoop2.web.lib.mvc.security.FormDataMultipartUtils;
 import org.openspcoop2.web.monitor.core.bean.BaseFileUploadBean;
 import org.openspcoop2.web.monitor.core.constants.Costanti;
+import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
+import org.openspcoop2.web.monitor.core.filters.CsrfFilter;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.utils.BrowserInfo;
 import org.openspcoop2.web.monitor.core.utils.BrowserInfo.BrowserFamily;
@@ -85,7 +90,11 @@ public class UploadServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		UploadServlet.log.debug("DoPost!");
+		if(!verificaTokenCsrf(req, resp)) {
+			return;
+		}
 
+		long maxSize = -1;
 		try {
 			ApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
 			
@@ -103,6 +112,12 @@ public class UploadServlet extends HttpServlet {
 
 			DiskFileItemFactory diskFileItemFactory = DiskFileItemFactory.builder().get();
 			JakartaServletDiskFileUpload jakartaServletFileUpload = new JakartaServletDiskFileUpload(diskFileItemFactory);
+			// dimensione massima della richiesta e del singolo file
+			maxSize = PddMonitorProperties.getInstance(UploadServlet.log).getMultipartRequestMaxSize();
+			if(maxSize >= 0) {
+				jakartaServletFileUpload.setMaxSize(maxSize);
+				jakartaServletFileUpload.setMaxFileSize(maxSize);
+			}
 			List<DiskFileItem> multiparts = jakartaServletFileUpload.parseRequest(req);
 			String fileName = "";
 			Iterator<DiskFileItem> iter = multiparts.iterator();
@@ -142,6 +157,9 @@ public class UploadServlet extends HttpServlet {
 			}
 
 			resp.setStatus(200);	
+		}catch(FileUploadSizeException e) {
+			UploadServlet.log.error("Upload rifiutato, la dimensione supera il limite massimo consentito: " + e.getMessage(), e);
+			rispostaErrore(resp, 413, getMessaggioDimensioneMassimaSuperata(maxSize));
 		}catch(UtilsException | IOException | CoreException e) {
 			UploadServlet.log.error("Errore: " + e.getMessage(), e);
 			resp.setStatus(500);
@@ -151,6 +169,43 @@ public class UploadServlet extends HttpServlet {
 			}catch(Exception e) {
 				// ignore
 			}
+		}
+	}
+
+	/**
+	 * Le operazioni di upload e cancellazione dei file avvengono tramite chiamate AJAX, non gestite dal CsrfFilter:
+	 * il token CSRF presente nella pagina viene inviato nell'header dedicato e confrontato con quello salvato in sessione.
+	 * La scadenza del token non viene verificata, poiché il token non viene rigenerato ad ogni caricamento e la pagina
+	 * può restare aperta oltre la validità prevista per le operazioni di salvataggio.
+	 */
+	private boolean verificaTokenCsrf(HttpServletRequest req, HttpServletResponse resp) {
+		String tokenCSRF = req.getHeader(Costanti.HEADER_CSRF_TOKEN);
+		String sessionTokenCSRF = CsrfFilter.leggiTokenCSRF(req.getSession(false));
+		if(ServletUtils.verificaTokenCSRF(tokenCSRF, sessionTokenCSRF, null)) {
+			return true;
+		}
+		UploadServlet.log.error("Operazione [{}] rifiutata: token CSRF non valido", req.getMethod());
+		rispostaErrore(resp, 403, MESSAGGIO_ERRORE_CSRF);
+		return false;
+	}
+	
+	private static final String MESSAGGIO_ERRORE_CSRF = "Controllo di validità CSRF non superato: ricaricare la pagina e ripetere l'operazione.";
+	
+	public static String getMessaggioDimensioneMassimaSuperata(long maxSize) {
+		return "La dimensione dei file supera il limite massimo consentito" + (maxSize >= 0 ? " (" + FormDataMultipartUtils.formatSize(maxSize) + ")" : "") + ".";
+	}
+	
+	public static void rispostaErrore(HttpServletResponse resp, int status, String errore) {
+		try {
+			List<ObjectNode> itemResp = new ArrayList<>();
+			itemResp.add(getDeleteKoResponseItem(errore));
+			ObjectNode responseBody = getResponse(itemResp);
+			resp.setStatus(status);
+			resp.setContentType(MediaType.APPLICATION_JSON_VALUE);
+			JSONUtils.getInstance(true).writeTo(responseBody, resp.getOutputStream());
+			resp.flushBuffer();
+		}catch(Exception e) {
+			UploadServlet.log.error("Errore durante l'invio della risposta: " + e.getMessage(), e);
 		}
 	}
 
@@ -203,6 +258,9 @@ public class UploadServlet extends HttpServlet {
 	@Override
 	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		UploadServlet.log.debug("DoDelete!");
+		if(!verificaTokenCsrf(req, resp)) {
+			return;
+		}
 		List<ObjectNode> itemResp = new ArrayList<>();
 		try {
 			ApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
@@ -210,7 +268,7 @@ public class UploadServlet extends HttpServlet {
 				throw new CoreException("Context is null");
 			}
 			
-			BaseFileUploadBean fileUploadBean = (BaseFileUploadBean)context.getBean("fileUploadBean");
+			BaseFileUploadBean fileUploadBean = (BaseFileUploadBean)context.getBean(this.fileUploadBeanName);
 			Map<String, UploadItem> mapElementiRicevuti = fileUploadBean.getMapElementiRicevuti();
 			Map<String, String> mapChiaviElementi = fileUploadBean.getMapChiaviElementi();
 

@@ -64,7 +64,9 @@ public class RicercheUtenteSearchForm extends AbstractDateSearchForm implements 
 		
 		this.filtroModulo = Costanti.NON_SELEZIONATO;
 		this.filtroModalitaRicerca = Costanti.NON_SELEZIONATO;
-		this.executeQuery = false;
+		// l'elenco delle ricerche viene sempre caricato (RicercheUtenteDM.findObjects), anche prima dell'utilizzo dei filtri:
+		// il conteggio, che con executeQuery disabilitato restituisce 0, deve seguire lo stesso criterio
+		this.executeQuery = true;
 	}
 	
 	@Override

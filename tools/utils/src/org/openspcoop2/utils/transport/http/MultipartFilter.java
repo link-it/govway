@@ -20,7 +20,9 @@
 package org.openspcoop2.utils.transport.http;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
@@ -32,11 +34,17 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletRequestWrapper;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.openspcoop2.utils.Utilities;
 
 /**
 * MultipartFilter
+*
+* Memorizza il body delle richieste multipart per consentirne più letture.
+* Tramite l'init-param opzionale 'maxSize' è possibile indicare la dimensione massima consentita per il body,
+* in byte o con suffisso K, M o G (es. '250M'): le richieste che la superano vengono rifiutate con codice HTTP 413
+* senza memorizzarne il contenuto. In assenza del parametro, o con un valore negativo, non viene applicato alcun limite.
 *
 * @author Andrea Poli (apoli@link.it)
 * @author $Author$
@@ -47,8 +55,24 @@ public class MultipartFilter  implements Filter{
 	/** Multipart request start */
 	public static final String MULTIPART = "multipart/";
 
+	/** Nome dell'init-param con la dimensione massima del body */
+	public static final String INIT_PARAM_MAX_SIZE = "maxSize";
+
+	private static final int HTTP_STATUS_PAYLOAD_TOO_LARGE = 413;
+
+	/** Dimensione massima del body (valore negativo = nessun limite) */
+	private long maxSize = -1;
+
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
+		String v = filterConfig != null ? filterConfig.getInitParameter(INIT_PARAM_MAX_SIZE) : null;
+		if(v != null && !v.trim().isEmpty()) {
+			try {
+				this.maxSize = Utilities.convertFormatStringToBytes(v);
+			}catch(Exception e) {
+				throw new ServletException("Invalid value for init-param '"+INIT_PARAM_MAX_SIZE+"' ["+v+"]: "+e.getMessage(),e);
+			}
+		}
 	}
 
 	@Override
@@ -59,7 +83,16 @@ public class MultipartFilter  implements Filter{
 		BufferedRequestWrapper reqWrapper = null;
 		if(isMultipartRequest(httpServletRequest)){
 //			log.debug("Ricevuta Richiesta Multipart..."); 
-			reqWrapper = new BufferedRequestWrapper((HttpServletRequest) request);
+			if(this.maxSize >= 0 && httpServletRequest.getContentLengthLong() > this.maxSize) {
+				((HttpServletResponse) response).sendError(HTTP_STATUS_PAYLOAD_TOO_LARGE);
+				return;
+			}
+			try {
+				reqWrapper = new BufferedRequestWrapper((HttpServletRequest) request, this.maxSize);
+			}catch(MaxSizeExceededException e) {
+				((HttpServletResponse) response).sendError(HTTP_STATUS_PAYLOAD_TOO_LARGE);
+				return;
+			}
 //			log.debug("Contenuto: [" +new String(reqWrapper.getBuffer())+"]");
 			chain.doFilter(reqWrapper, response);
 		}else {
@@ -89,6 +122,13 @@ public class MultipartFilter  implements Filter{
 	}
 
 
+	private static class MaxSizeExceededException extends IOException {
+		private static final long serialVersionUID = 1L;
+		MaxSizeExceededException(long maxSize) {
+			super("Body size exceeds the maximum allowed ("+maxSize+" bytes)");
+		}
+	}
+
 	private class BufferedRequestWrapper extends HttpServletRequestWrapper {
 
 		private ByteArrayInputStream bais;
@@ -97,13 +137,30 @@ public class MultipartFilter  implements Filter{
 
 		private byte[] buffer;
 
-		public BufferedRequestWrapper(HttpServletRequest req) throws IOException {
+		public BufferedRequestWrapper(HttpServletRequest req, long maxSize) throws IOException {
 			super(req);
-			try {
-				this.buffer = Utilities.getAsByteArray(req.getInputStream());
-			}catch(Exception e) {
-				throw new IOException(e);
+			if(maxSize < 0) {
+				try {
+					this.buffer = Utilities.getAsByteArray(req.getInputStream());
+				}catch(Exception e) {
+					throw new IOException(e);
+				}
+				return;
 			}
+			// lettura con verifica della dimensione massima consentita
+			ByteArrayOutputStream bout = new ByteArrayOutputStream();
+			InputStream is = req.getInputStream();
+			byte[] buf = new byte[8192];
+			long letti = 0;
+			int n;
+			while((n = is.read(buf)) != -1) {
+				letti += n;
+				if(letti > maxSize) {
+					throw new MaxSizeExceededException(maxSize);
+				}
+				bout.write(buf, 0, n);
+			}
+			this.buffer = bout.toByteArray();
 		}
 
 		@Override
