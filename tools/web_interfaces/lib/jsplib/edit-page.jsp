@@ -437,7 +437,7 @@ for (int i = 0; i < dati.size(); i++) {
     			if(!fieldsetOpen){
 	    			%>
 	    				<fieldset id="<%= deName  %>__fieldset" class="<%=cssClassFieldset %>">
-	    					<legend class="<%=cssClassLegend %>">
+	    					<legend class="<%=cssClassLegend %>" id="<%=rowName %>">
 	    						<%
 	    							if(gestioneAperturaFieldset || refresh){
 	    						%>
@@ -532,7 +532,7 @@ for (int i = 0; i < dati.size(); i++) {
 	    				<%
 						if(gestioneAperturaSubTitle){
 	  						%>
-	    				<span class="subtitleGroup">
+	    				<span class="subtitleGroup" id="<%=rowName %>">
 	    					<%
    							if(gestioneAperturaSubTitle){
    							%>
@@ -564,12 +564,12 @@ for (int i = 0; i < dati.size(); i++) {
 									<span class="subtitleRefresh">
 										<i class="material-icons md-16" id="<%= deName  %>__icon_refresh" title="<%= Costanti.ICONA_REFRESH_SEZIONE_TOOLTIP%>"><%= Costanti.ICONA_REFRESH_SEZIONE%></i>
 									</span>
-									<a class="<%=cssClassTitle %>" ><%=deLabel %></a>
+									<a id="<%=rowName %>" class="<%=cssClassTitle %>" ><%=deLabel %></a>
 								</span>
 	       					<%
    							} else {
    	    					%>
-   	    						<span class="subtitle"><a class="<%=cssClassTitle %>" ><%=deLabel %>&nbsp;&nbsp;&nbsp;&nbsp;</a></span>
+   	    						<span class="subtitle"><a id="<%=rowName %>" class="<%=cssClassTitle %>" ><%=deLabel %>&nbsp;&nbsp;&nbsp;&nbsp;</a></span>
    	    					<%
    							}
    	    					%>
