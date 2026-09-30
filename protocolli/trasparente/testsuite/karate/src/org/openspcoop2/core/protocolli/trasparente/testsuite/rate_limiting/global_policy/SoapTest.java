@@ -94,6 +94,11 @@ public class SoapTest extends ConfigLoader {
 		request.addHeader(headerName, RestTest.HEADER_GLOBAL_POLICY_VALUE);
 		
 		List<HttpResponse> responseOk = Utils.makeSequentialRequests(request, maxRequests);
+		
+		// La metrica 'NumeroRichiesteCompletateConSuccesso' viene aggiornata dal gateway dopo la consegna della risposta al client:
+		// senza attendere che il contatore arrivi a maxRequests, la prima richiesta del secondo batch potrebbe non essere bloccata.
+		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, 0);
+		
 		List<HttpResponse> responseBlocked = Utils.makeSequentialRequests(request, maxRequests);
 		
 		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, maxRequests);
