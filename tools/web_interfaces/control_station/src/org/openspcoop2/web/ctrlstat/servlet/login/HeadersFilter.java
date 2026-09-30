@@ -98,7 +98,8 @@ public class HeadersFilter implements Filter {
 			// dump della richiesta prima di passarla al tool di validazione
 			dumpRichiesta(request, response);
 			
-			SecurityWrappedHttpServletRequest seqReq = new SecurityWrappedHttpServletRequest(request, log);
+			// i parametri delle form multipart (campi di tipo file) vengono letti dal body e validati
+			SecurityWrappedHttpServletRequest seqReq = new SecurityWrappedHttpServletRequest(request, log, true);
 			
 			SecurityWrappedHttpServletResponse seqRes = new SecurityWrappedHttpServletResponse(response, log);
 			

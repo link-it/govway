@@ -21,20 +21,28 @@
 package org.openspcoop2.web.lib.mvc.security;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import jakarta.servlet.AsyncContext;
 import jakarta.servlet.DispatcherType;
+import jakarta.servlet.ReadListener;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
@@ -72,6 +80,19 @@ public class SecurityWrappedHttpServletRequest extends HttpServletRequestWrapper
 
 	private static String PREFIX_ERROR_PARAMETER = "Il valore del parametro [";
 	
+	/** Indica se i parametri delle richieste 'multipart/form-data' devono essere letti dal body e validati */
+	private boolean gestioneMultipart = false;
+	/** Body della richiesta multipart, letto una sola volta e restituito ad ogni invocazione di getInputStream() */
+	private byte[] multipartBody = null;
+	/** Parametri testuali (parti prive di filename) della richiesta multipart */
+	private Map<String, List<String>> multipartParameters = null;
+	private boolean multipartParametersRead = false;
+	
+	public SecurityWrappedHttpServletRequest(HttpServletRequest httpServletRequest, Logger log, boolean gestioneMultipart) {
+		this(httpServletRequest, log);
+		this.gestioneMultipart = gestioneMultipart;
+	}
+	
 	public SecurityWrappedHttpServletRequest(HttpServletRequest httpServletRequest, Logger log) {
 		super(httpServletRequest);
 		this.log = log;
@@ -102,28 +123,167 @@ public class SecurityWrappedHttpServletRequest extends HttpServletRequestWrapper
 
 	@Override
 	public ServletInputStream getInputStream() throws IOException {
+		if(this.isMultipart()) {
+			return new BufferedServletInputStream(this.getMultipartBody());
+		}
 		return this.getHttpServletRequest().getInputStream();
 	}
 	
 	@Override
 	public BufferedReader getReader() throws IOException {
+		if(this.isMultipart()) {
+			String encoding = this.getHttpServletRequest().getCharacterEncoding();
+			Charset charset = encoding != null ? Charset.forName(encoding) : StandardCharsets.UTF_8;
+			return new BufferedReader(new InputStreamReader(new ByteArrayInputStream(this.getMultipartBody()), charset));
+		}
 		return this.getHttpServletRequest().getReader();
 	}
 	
+	
+	/* **** Gestione richieste multipart **** */
+	
+	/**
+	 * Le richieste 'multipart/form-data' (form con campi di tipo file) non vengono analizzate dal container:
+	 * i parametri inviati nel body non sarebbero quindi visibili, e di conseguenza neanche validati, tramite
+	 * la request originale. Il body viene letto una sola volta ed i parametri testuali in esso contenuti vengono
+	 * sottoposti alle stesse regole di sanificazione e validazione previste per gli altri parametri.
+	 * Il contenuto dei file non viene invece restituito come parametro testuale: viene letto come binario
+	 * dagli helper, tramite getInputStream().
+	 */
+	private boolean isMultipart() {
+		return this.gestioneMultipart && FormDataMultipartUtils.isMultipartFormData(this.getHttpServletRequest().getContentType());
+	}
+	
+	private byte[] getMultipartBody() throws IOException {
+		if(this.multipartBody == null) {
+			this.multipartBody = this.getHttpServletRequest().getInputStream().readAllBytes();
+		}
+		return this.multipartBody;
+	}
+	
+	private Map<String, List<String>> getMultipartParameters() {
+		if(!this.multipartParametersRead) {
+			this.multipartParametersRead = true;
+			if(this.isMultipart()) {
+				try {
+					this.multipartParameters = FormDataMultipartUtils.readTextParameters(this.getMultipartBody(), this.getHttpServletRequest().getContentType());
+				} catch (Exception e) {
+					this.log.error("Errore durante la lettura dei parametri della richiesta multipart: " + e.getMessage(),e);
+				}
+			}
+		}
+		return this.multipartParameters;
+	}
+	
+	/** Valore non validato del parametro. Per le richieste multipart ha precedenza il valore presente nel body, come per la lettura effettuata dagli helper */
+	private String getRawParameter(String key) {
+		Map<String, List<String>> map = this.getMultipartParameters();
+		if(map != null) {
+			List<String> values = map.get(key);
+			if(values != null && !values.isEmpty()) {
+				return values.get(0);
+			}
+		}
+		return this.getHttpServletRequest().getParameter(key);
+	}
+	
+	private String[] getRawParameterValues(String key) {
+		String[] values = this.getHttpServletRequest().getParameterValues(key);
+		Map<String, List<String>> map = this.getMultipartParameters();
+		List<String> multipartValues = map != null ? map.get(key) : null;
+		if(multipartValues == null || multipartValues.isEmpty()) {
+			return values;
+		}
+		List<String> l = new ArrayList<>(multipartValues);
+		if(values != null) {
+			l.addAll(java.util.Arrays.asList(values));
+		}
+		return l.toArray(new String[l.size()]);
+	}
+	
+	private Map<String, String[]> getRawParameterMap() {
+		Map<String, List<String>> map = this.getMultipartParameters();
+		if(map == null || map.isEmpty()) {
+			return this.getHttpServletRequest().getParameterMap();
+		}
+		Map<String, String[]> rawMap = new LinkedHashMap<>(this.getHttpServletRequest().getParameterMap());
+		for (String name : map.keySet()) {
+			rawMap.put(name, this.getRawParameterValues(name));
+		}
+		return rawMap;
+	}
+	
+	private List<String> getRawParameterNames() {
+		Set<String> names = new LinkedHashSet<>();
+		Enumeration<String> en = this.getHttpServletRequest().getParameterNames();
+		while (en.hasMoreElements()) {
+			names.add(en.nextElement());
+		}
+		Map<String, List<String>> map = this.getMultipartParameters();
+		if(map != null) {
+			names.addAll(map.keySet());
+		}
+		return new ArrayList<>(names);
+	}
+	
+	private boolean usaValidazioneTextArea(String key) {
+		return ServletUtils.usaValidazioneTextAreaByIdentificativi(this.getRawParameter(org.openspcoop2.web.lib.mvc.Costanti.PARAMETRO_IDENTIFICATIVI_TEXT_AREA), key);
+	}
+	private boolean usaValidazioneTextAreaSingleLine(String key) {
+		return ServletUtils.usaValidazioneTextAreaSingleLineByIdentificativi(this.getRawParameter(org.openspcoop2.web.lib.mvc.Costanti.PARAMETRO_IDENTIFICATIVI_TEXT_AREA_SINGLE_LINE), key);
+	}
+	private boolean usaValidazionePassword(String key) {
+		return ServletUtils.usaValidazionePasswordByIdentificativi(this.getRawParameter(org.openspcoop2.web.lib.mvc.Costanti.PARAMETRO_IDENTIFICATIVI_PS), key);
+	}
+	
+	private static class BufferedServletInputStream extends ServletInputStream {
+		private final ByteArrayInputStream bin;
+		BufferedServletInputStream(byte[] content) {
+			this.bin = new ByteArrayInputStream(content);
+		}
+		@Override
+		public int read() {
+			return this.bin.read();
+		}
+		@Override
+		public int read(byte[] b, int off, int len) {
+			return this.bin.read(b, off, len);
+		}
+		@Override
+		public int available() {
+			return this.bin.available();
+		}
+		@Override
+		public boolean isFinished() {
+			return this.bin.available() <= 0;
+		}
+		@Override
+		public boolean isReady() {
+			return true;
+		}
+		@Override
+		public void setReadListener(ReadListener readListener) {
+			throw new UnsupportedOperationException("Non supportato per una richiesta multipart già letta");
+		}
+	}
+	
+	
+	/* **** Accesso ai parametri **** */
+	
 	public String getOriginalParameter(String key) {
-		String value = this.getHttpServletRequest().getParameter(key);
-		boolean skipSanitize = ServletUtils.usaValidazioneTextArea(getHttpServletRequest(), key) || ServletUtils.usaValidazionePassword(getHttpServletRequest(), key);
+		String value = this.getRawParameter(key);
+		boolean skipSanitize = this.usaValidazioneTextArea(key) || this.usaValidazionePassword(key);
 		return this.validator.getParametroSanificato(value, skipSanitize);
 	}
 
 	@Override
 	public String getParameter(String key) {
-		String val = this.getHttpServletRequest().getParameter(key);
+		String val = this.getRawParameter(key);
 		if(val != null) {
 			try {
-				boolean usaValidazioneTextArea = ServletUtils.usaValidazioneTextArea(getHttpServletRequest(), key);
-				boolean usaValidazionePassword = ServletUtils.usaValidazionePassword(getHttpServletRequest(), key);
-				boolean usaValidazioneTextAreaSingleLine = ServletUtils.usaValidazioneTextAreaSingleLine(getHttpServletRequest(), key);
+				boolean usaValidazioneTextArea = this.usaValidazioneTextArea(key);
+				boolean usaValidazionePassword = this.usaValidazionePassword(key);
+				boolean usaValidazioneTextAreaSingleLine = this.usaValidazioneTextAreaSingleLine(key);
 				boolean skipSanitize = usaValidazioneTextArea || usaValidazionePassword || usaValidazioneTextAreaSingleLine;
 				val = this.validator.getParametroSanificato(val, skipSanitize);
 				String pattern;
@@ -152,15 +312,15 @@ public class SecurityWrappedHttpServletRequest extends HttpServletRequestWrapper
 
 	@Override
 	public Map<java.lang.String,java.lang.String[]> getParameterMap() {
-		Map<String,String[]> map = this.getHttpServletRequest().getParameterMap();
+		Map<String,String[]> map = this.getRawParameterMap();
 		Map<String,String[]> cleanMap = new HashMap<>();
 		for (Map.Entry<String, String[]> entry : map.entrySet()) {
 			try {
 				String name = entry.getKey();
 
-				boolean usaValidazioneTextArea = ServletUtils.usaValidazioneTextArea(getHttpServletRequest(), name);
-				boolean usaValidazionePassword = ServletUtils.usaValidazionePassword(getHttpServletRequest(), name);
-				boolean usaValidazioneTextAreaSingleLine = ServletUtils.usaValidazioneTextAreaSingleLine(getHttpServletRequest(), name);
+				boolean usaValidazioneTextArea = this.usaValidazioneTextArea(name);
+				boolean usaValidazionePassword = this.usaValidazionePassword(name);
+				boolean usaValidazioneTextAreaSingleLine = this.usaValidazioneTextAreaSingleLine(name);
 				boolean skipSanitize = usaValidazioneTextArea || usaValidazionePassword || usaValidazioneTextAreaSingleLine;
 				String pattern;
 				boolean checkSqlInjection;
@@ -198,11 +358,8 @@ public class SecurityWrappedHttpServletRequest extends HttpServletRequestWrapper
 	@Override
 	public Enumeration<String> getParameterNames() {
 		List<String> v = new ArrayList<>();
-		Enumeration<String> en = this.getHttpServletRequest().getParameterNames();
-		while (en.hasMoreElements()) {
+		for (String name : this.getRawParameterNames()) {
 			try {
-
-				String name = en.nextElement();
 				String clean = this.validator.validate("Il nome del parametro [" + name + "]", name, this.queryParamNameMaxLength, true, Costanti.PATTERN_REQUEST_HTTP_PARAMETER_NAME);
 				v.add(clean);
 			} catch (ValidationException e) {
@@ -214,16 +371,16 @@ public class SecurityWrappedHttpServletRequest extends HttpServletRequestWrapper
 
 	@Override
 	public String[] getParameterValues(String arg0) {
-		String[] values = this.getHttpServletRequest().getParameterValues(arg0);
+		String[] values = this.getRawParameterValues(arg0);
 		List<String> newValues;
 
 		if(values == null)
 			return values;
 		newValues = new ArrayList<>();
 
-		boolean usaValidazioneTextArea = ServletUtils.usaValidazioneTextArea(getHttpServletRequest(), arg0);
-		boolean usaValidazionePassword = ServletUtils.usaValidazionePassword(getHttpServletRequest(), arg0);
-		boolean usaValidazioneTextAreaSingleLine = ServletUtils.usaValidazioneTextAreaSingleLine(getHttpServletRequest(), arg0);
+		boolean usaValidazioneTextArea = this.usaValidazioneTextArea(arg0);
+		boolean usaValidazionePassword = this.usaValidazionePassword(arg0);
+		boolean usaValidazioneTextAreaSingleLine = this.usaValidazioneTextAreaSingleLine(arg0);
 		boolean skipSanitize = usaValidazioneTextArea || usaValidazionePassword || usaValidazioneTextAreaSingleLine;
 		String pattern;
 		boolean checkSqlInjection;

@@ -1985,10 +1985,14 @@ public class ConnettoriHelper extends ConsoleHelper {
 					de = new DataElement();
 					de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_PASSWORD);
 					de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_PASSWORD);
-					de.setValue(StringEscapeUtils.escapeHtml4(tipoCredenzialiSSLFileCertificatoPassword));
 					if(visualizzaFieldCert && (tipoCredenzialiSSLTipoArchivio.equals(ArchiveType.JKS) || tipoCredenzialiSSLTipoArchivio.equals(ArchiveType.PKCS12))) { 
 						// 1a. Password per gli archivi JKS o PKCS12.
-						de.setType(DataElementType.TEXT_EDIT);
+						// Tipo password affinchè venga validata con il pattern previsto per le password.
+						// Viene visualizzata in chiaro, come in precedenza: il valore deve essere trasportato dai postback (GET) delle select successive (es. alias),
+						// che non includono i campi di input di tipo password.
+						de.setValue(tipoCredenzialiSSLFileCertificatoPassword); // non faccio l'escape per il tipo crypt, verra' gestito nella jsp
+						de.setType(DataElementType.CRYPT);
+						de.getPassword().setVisualizzaPasswordChiaro(true);
 						de.setSize(this.getSize());
 						if(tipoCredenzialiSSLTipoArchivio.equals(ArchiveType.JKS)) {
 							de.setRequired(this.core.isLoadCertificateWizardJksPasswordRequiredRequired());
@@ -2000,7 +2004,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 							de.setRequired(true);
 						}
 					} else {
-						de.setType(DataElementType.HIDDEN);
+						de.setValue(StringEscapeUtils.escapeHtml4(tipoCredenzialiSSLFileCertificatoPassword));
+						de.setHiddenType(DataElementType.CRYPT);
 					}
 					
 					dati.add(de);
@@ -6224,14 +6229,19 @@ public class ConnettoriHelper extends ConsoleHelper {
 				de = new DataElement();
 				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_PASSWORD);
 				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_PASSWORD);
-				de.setValue(StringEscapeUtils.escapeHtml4(tipoCredenzialiSSLFileCertificatoPassword));
 				if(visualizzaFieldCert && (tipoCredenzialiSSLTipoArchivio.equals(ArchiveType.JKS) || tipoCredenzialiSSLTipoArchivio.equals(ArchiveType.PKCS12))) { 
 					// 1a. Password per gli archivi JKS o PKCS12.
-					de.setType(DataElementType.TEXT_EDIT);
+					// Tipo password affinchè venga validata con il pattern previsto per le password.
+					// Viene visualizzata in chiaro, come in precedenza: il valore deve essere trasportato dai postback (GET) delle select successive (es. alias),
+					// che non includono i campi di input di tipo password.
+					de.setValue(tipoCredenzialiSSLFileCertificatoPassword); // non faccio l'escape per il tipo crypt, verra' gestito nella jsp
+					de.setType(DataElementType.CRYPT);
+					de.getPassword().setVisualizzaPasswordChiaro(true);
 					de.setSize(this.getSize());
 					de.setRequired(true);
 				} else {
-					de.setType(DataElementType.HIDDEN);
+					de.setValue(StringEscapeUtils.escapeHtml4(tipoCredenzialiSSLFileCertificatoPassword));
+					de.setHiddenType(DataElementType.CRYPT);
 				}
 				
 				dati.add(de);
@@ -6619,9 +6629,9 @@ public class ConnettoriHelper extends ConsoleHelper {
 				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_PASSWORD);
 				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_PASSWORD);
 				de.setValue(tipoCredenzialiSSLFileCertificatoPassword);
-				de.setType(DataElementType.HIDDEN);
+				de.setHiddenType(DataElementType.CRYPT);
 				dati.add(de);
-				
+
 				// 1a. File Upload
 				String labelCertificato = null;
 				if(ArchiveType.CER.equals(tipoCredenzialiSSLTipoArchivio)) {

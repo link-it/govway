@@ -126,7 +126,9 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 			strutsBean.editMode = apsHelper.getParametroEditMode(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 			strutsBean.id = apsHelper.getParametroLong(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
 			strutsBean.tipo = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO);
-			strutsBean.wsdl = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL);
+			// il campo è di tipo file: il contenuto viene letto come binario
+			byte[] wsdlContent = apsHelper.getBinaryParameterContent(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL);
+			strutsBean.wsdl = wsdlContent != null ? new String(wsdlContent) : null;
 
 			if(apsHelper.isMultipart()){
 				strutsBean.decodeRequestValidazioneDocumenti = true;

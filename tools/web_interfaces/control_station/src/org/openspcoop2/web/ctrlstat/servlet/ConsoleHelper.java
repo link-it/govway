@@ -354,6 +354,7 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
 import org.openspcoop2.web.lib.mvc.properties.beans.BaseItemBean;
 import org.openspcoop2.web.lib.mvc.properties.beans.ConfigBean;
 import org.openspcoop2.web.lib.mvc.properties.exception.UserInputValidationException;
+import org.openspcoop2.web.lib.mvc.security.FormDataMultipartUtils;
 import org.openspcoop2.web.lib.mvc.security.Validatore;
 import org.openspcoop2.web.lib.mvc.security.exception.ValidationException;
 import org.openspcoop2.web.lib.users.dao.InterfaceType;
@@ -888,52 +889,20 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 
 	private String getBodyPartName (BodyPart bodyPart) throws DriverControlStationException{
-		String partName =  null;
-		String[] headers = null;
+		// estrazione condivisa con SecurityWrappedHttpServletRequest, così da classificare le parti allo stesso modo
 		try {
-			headers = bodyPart.getHeader(CostantiControlStation.PARAMETRO_CONTENT_DISPOSITION);
+			return FormDataMultipartUtils.getBodyPartName(bodyPart);
 		}catch(Exception e) {
 			throw new DriverControlStationException(e.getMessage(),e);
 		}
-		if(headers != null && headers.length > 0){
-			String header = headers[0];
-
-			// in due parti perche il suffisso con solo " imbrogliava il controllo
-			int prefixIndex = header.indexOf(CostantiControlStation.PREFIX_CONTENT_DISPOSITION) + CostantiControlStation.PREFIX_CONTENT_DISPOSITION.length();
-			partName = header.substring(prefixIndex);
-
-			int suffixIndex = partName.indexOf(CostantiControlStation.SUFFIX_CONTENT_DISPOSITION);
-			partName = partName.substring(0,suffixIndex);
-		}
-
-		return partName;
 	}
 
 	private String getBodyPartFileName (BodyPart bodyPart) throws DriverControlStationException{
-		String partName =  null;
-		String[] headers = null;
 		try {
-			headers = bodyPart.getHeader(CostantiControlStation.PARAMETRO_CONTENT_DISPOSITION);
+			return FormDataMultipartUtils.getBodyPartFileName(bodyPart);
 		}catch(Exception e) {
 			throw new DriverControlStationException(e.getMessage(),e);
 		}
-		if(headers != null && headers.length > 0){
-			String header = headers[0];
-
-			// in due parti perche il suffisso con solo " imbrogliava il controllo
-			int prefixIndex = header.indexOf(CostantiControlStation.PREFIX_FILENAME);
-			if(prefixIndex > -1){
-				partName = header.substring(prefixIndex + CostantiControlStation.PREFIX_FILENAME.length());
-
-				int suffixIndex = partName.indexOf(CostantiControlStation.SUFFIX_FILENAME);
-				partName = partName.substring(0,suffixIndex);
-				
-				// 20220621 IE invia l'intero path invece che il solo filename, bisogna estrarlo
-				partName = FilenameUtils.getName(partName);
-			}
-		}
-
-		return partName;
 	}
 
 	private void checkErrorInit() throws DriverControlStationException {
@@ -945,56 +914,15 @@ public class ConsoleHelper implements IConsoleHelper {
 	@Override
 	public Enumeration<?> getParameterNames() throws DriverControlStationException {
 		this.checkErrorInit();
-		if(this.multipart){
-			throw new DriverControlStationException("Not Implemented");
-		}
-		else {
-			return this.request.getParameterNames();
-		}
+		// anche in caso di richiesta multipart i parametri testuali vengono restituiti, validati, dalla request (SecurityWrappedHttpServletRequest)
+		return this.request.getParameterNames();
 	}
 	
 	@Override
 	public String [] getParameterValues(String parameterName) throws DriverControlStationException {
 		this.checkErrorInit();
-		if(this.multipart){
-			
-			String [] array = null;
-			if(this.mapParametriReaded.containsKey(parameterName)) {
-				array = (String[]) this.mapParametriReaded.get(parameterName);
-			}
-			else {
-				List<InputStream> list = this.mapParametri.get(parameterName);
-				if(list != null && !list.isEmpty()){
-					StringBuilder sb = new StringBuilder();
-					for (InputStream inputStream : list) {
-						if(inputStream != null){
-							ByteArrayOutputStream baos = new ByteArrayOutputStream();
-							try {
-								IOUtils.copy(inputStream, baos);
-								baos.flush();
-								baos.close();
-							}catch(Exception e) {
-								throw new DriverControlStationException(e.getMessage(),e);
-							}
-							if(sb.length()>0) {
-								sb.append(",");
-							}
-							sb.append(baos.toString());
-						}
-					}
-					if(sb.length()>0) {
-						String v = sb.toString();
-						array = v.split(",");
-						this.mapParametriReaded.put(parameterName, array);
-					}
-				}
-			}
-			return array;
-			
-		}
-		else {
-			return this.request.getParameterValues(parameterName);
-		}
+		// anche in caso di richiesta multipart i parametri testuali vengono restituiti, validati, dalla request (SecurityWrappedHttpServletRequest)
+		return this.request.getParameterValues(parameterName);
 	}
 	
 	@Override
@@ -1022,35 +950,16 @@ public class ConsoleHelper implements IConsoleHelper {
 		String paramAsString = null;
 
 		if(this.multipart){
-			if(this.mapParametriReaded.containsKey(parameterName)) {
-				paramAsString = (String) this.mapParametriReaded.get(parameterName);
+			// La lista dovrebbe al massimo avere sempre un solo valore
+			List<InputStream> list = this.mapParametri.get(parameterName);
+			if(list != null && list.size()>1) {
+				throw new DriverControlStationException("Parametro ["+parameterName+"] Duplicato.");
 			}
-			else {
-				// La lista dovrebbe al massimo avere sempre un solo valore
-				List<InputStream> list = this.mapParametri.get(parameterName);
-				if(list != null && !list.isEmpty()){
-					
-					if(list.size()>1) {
-						throw new DriverControlStationException("Parametro ["+parameterName+"] Duplicato.");
-					}
-					InputStream inputStream = list.get(0);
-					if(inputStream != null){
-						ByteArrayOutputStream baos = new ByteArrayOutputStream();
-						try {
-							IOUtils.copy(inputStream, baos);
-							baos.flush();
-							baos.close();
-						}catch(Exception e) {
-							throw new DriverControlStationException(e.getMessage(),e);
-						}
-						paramAsString = baos.toString();
-						this.mapParametriReaded.put(parameterName, paramAsString);
-					}
-				}
-			}
-		}else{
-			paramAsString = this.request.getParameter(parameterName);
 		}
+		// Anche in caso di richiesta multipart il valore viene letto dalla request (SecurityWrappedHttpServletRequest), che lo estrae dal body
+		// applicando le stesse regole di sanificazione e validazione previste per gli altri parametri.
+		// Le parti che contengono file non vengono restituite: il loro contenuto va letto tramite i metodi getBinaryParameter*
+		paramAsString = this.request.getParameter(parameterName);
 
 		if(paramAsString != null) {
 			
@@ -1143,10 +1052,29 @@ public class ConsoleHelper implements IConsoleHelper {
 				
 		if(this.multipart){
 			List<String> tmp = this.mapNomiFileParametri.get(parameterName);
-			return (tmp != null && tmp.size() > 0) ? tmp.get(0) : null; 
+			return (tmp != null && tmp.size() > 0) ? this.validaNomeFile(parameterName, tmp.get(0)) : null; 
 		} else 
 			return this.request.getParameter(parameterName);
 
+	}
+	
+	/**
+	 * Il nome del file è un valore testuale scelto dal client (attributo 'filename' della parte multipart) e viene
+	 * visualizzato nelle pagine: viene quindi sanificato e validato come i parametri testuali, ammettendo qualsiasi
+	 * carattere ad eccezione di quelli di controllo.
+	 */
+	private String validaNomeFile(String parameterName, String fileName) {
+		if(fileName == null) {
+			return null;
+		}
+		try {
+			String val = Validatore.getInstance().getParametroSanificato(fileName, false);
+			return Validatore.getInstance().validate("Il nome del file associato al parametro [" + parameterName + "]:["+val+"]", val, null, true, false, 
+					org.openspcoop2.web.lib.mvc.security.Costanti.PATTERN_REQUEST_HTTP_PARAMETER_VALUE_TEXT_AREA_SINGLE_LINE);
+		}catch(ValidationException e) {
+			this.log.warn("Errore di validazione: {}", e.getMessage(),e);
+			return "";
+		}
 	}
 	
 	public List<String> getFileNamesParameter(String parameterName) throws DriverControlStationException {
@@ -1155,7 +1083,14 @@ public class ConsoleHelper implements IConsoleHelper {
 				
 		if(this.multipart){
 			List<String> tmp = this.mapNomiFileParametri.get(parameterName);
-			return tmp;
+			if(tmp == null) {
+				return null;
+			}
+			List<String> nomi = new ArrayList<>();
+			for (String nome : tmp) {
+				nomi.add(this.validaNomeFile(parameterName, nome));
+			}
+			return nomi;
 		} else {
 			String[] tmp = this.request.getParameterValues(parameterName);
 			return (tmp != null && tmp.length > 0) ? Arrays.asList(tmp): null; 

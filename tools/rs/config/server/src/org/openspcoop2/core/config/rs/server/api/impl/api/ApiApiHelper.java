@@ -337,12 +337,13 @@ public class ApiApiHelper {
 			else if(body.getTipoInterfaccia() instanceof ApiInterfacciaRest) {
 				ApiInterfacciaRest iRest = (ApiInterfacciaRest) body.getTipoInterfaccia();
 
-				as.setByteWsdlConcettuale(interfaccia != null && !interfaccia.trim().replaceAll("\n", "").equals("") ? interfaccia.trim().getBytes() : null);
 				FormatoRestEnum formatoRest = iRest.getFormato();
 				as.setFormatoSpecifica( BaseHelper.evalorElse( () -> 
 				Enums.formatoSpecificaFromRest.get(formatoRest),
 				FormatoSpecifica.OPEN_API_3
 						)); 
+				// stessa conversione utilizzata dalla console (per le interfacce in formato yaml non viene effettuato il trim)
+				as.setByteWsdlConcettuale(env.apcCore.getInterfaceAsByteArray(as.getFormatoSpecifica(), interfaccia));
 			}
 			else {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il formato dell'interfaccia ("+body.getTipoInterfaccia().getClass().getName()+") risulta sconosciuto e non compatibile con il protocollo REST indicato");
@@ -363,7 +364,7 @@ public class ApiApiHelper {
 						() -> Enums.formatoSpecificaFromSoap.get(formatoSoap), 
 						FormatoSpecifica.WSDL_11 
 						));
-				as.setByteWsdlLogicoErogatore(interfaccia != null && !interfaccia.trim().replaceAll("\n", "").equals("") ? interfaccia.trim().getBytes() : null);	// Da commenti e audit, WSDL solo logico ed erogatore
+				as.setByteWsdlLogicoErogatore(env.apcCore.getInterfaceAsByteArray(as.getFormatoSpecifica(), interfaccia));	// Da commenti e audit, WSDL solo logico ed erogatore
 			}
 			else {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il formato dell'interfaccia ("+body.getTipoInterfaccia().getClass().getName()+") risulta sconosciuto e non compatibile con il protocollo SOAP indicato");

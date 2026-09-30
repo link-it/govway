@@ -141,7 +141,9 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 
 			strutsBean.id = apcHelper.getParametroLong(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
 			strutsBean.tipo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_WSDL);
-			strutsBean.wsdl = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL);
+			// il campo è di tipo file: il contenuto viene letto come binario
+			byte[] wsdlContent = apcHelper.getBinaryParameterContent(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL);
+			strutsBean.wsdl = wsdlContent != null ? new String(wsdlContent) : null;
 			strutsBean.tipoAccordo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO);
 			if("".equals(strutsBean.tipoAccordo))
 				strutsBean.tipoAccordo = null;

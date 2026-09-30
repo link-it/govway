@@ -1,5 +1,22 @@
 2026-09-30  Andrea Poli <apoli@link.it>
 
+	* [GovWayConsole, ApiRsConfigurazione]
+	Risolto Bug #1836
+	Nel form 'Richiesta' di una regola di trasformazione, con una conversione del contenuto tramite template e una
+	trasformazione REST, il salvataggio falliva con l'errore "Dati incompleti. È necessario indicare: HTTP Method"
+	e il campo 'Path' veniva svuotato: nelle form con un campo di tipo file, inviate come 'multipart/form-data',
+	alcuni parametri venivano letti dalla richiesta originale, nella quale risultavano assenti.
+	I parametri delle richieste multipart vengono adesso estratti dal livello di validazione della console e sottoposti
+	alle stesse regole di sanificazione e validazione delle altre richieste; il contenuto dei file resta trattato come binario.
+	Sono stati inoltre corretti:
+	- la password dell'archivio JKS o PKCS12 caricato come credenziale di soggetti e applicativi veniva validata
+	  come un normale campo di testo, rifiutando alcuni caratteri ammessi nelle password;
+	- nella modifica del WSDL di un'API o di un'erogazione/fruizione, il documento veniva salvato con i ritorni a capo convertiti;
+	- nella creazione di un'API REST tramite le API di configurazione, un'interfaccia OpenAPI o Swagger in formato YAML
+	  veniva salvata senza gli spazi iniziali e finali.
+
+2026-09-30  Andrea Poli <apoli@link.it>
+
 	* [GovWayMonitor]
 	Risolto Bug #1835
 	Nella console di monitoraggio installata su Tomcat, quando i soggetti operativi erano tanti da richiedere il campo 'Soggetto' con autocompletamento nell'intestazione,

@@ -955,11 +955,6 @@ public class CostantiControlStation {
 	public static final String PARAMETRO_APPLICA_MTOM_RISPOSTA = "applicaMTOMRes";
 	public static final String PARAMETRO_USAIDSOGG = "usaidsogg";
 	public static final String PARAMETRO_EXTENDED_FORM_ID = "extendedFormUniqueId";
-	public static final String PARAMETRO_CONTENT_DISPOSITION = "Content-Disposition";
-	public static final String PREFIX_CONTENT_DISPOSITION = "form-data; name=\"";
-	public static final String SUFFIX_CONTENT_DISPOSITION = "\"";
-	public static final String PREFIX_FILENAME = "filename=\"";
-	public static final String SUFFIX_FILENAME = "\"";
 	public static final String PARAMETRO_RUOLO = "ruolo";
 	public static final String PARAMETRO_RUOLO_TIPOLOGIA = "ruoloTipologia";
 	public static final String PARAMETRO_RUOLO_MATCH = "ruoloMatch";

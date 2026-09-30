@@ -103,7 +103,9 @@ public final class AccordiServizioParteSpecificaFruitoriWSDLChange extends Actio
 			
 			strutsBean.id = apsHelper.getParametroLong(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
 			strutsBean.tipo = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO);
-			strutsBean.wsdl = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL);
+			// il campo è di tipo file: il contenuto viene letto come binario
+			byte[] wsdlContent = apsHelper.getBinaryParameterContent(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL);
+			strutsBean.wsdl = wsdlContent != null ? new String(wsdlContent) : null;
 
 			strutsBean.idSoggettoErogatoreDelServizio = apsHelper.getParametroLong(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE);
 			if ((strutsBean.idSoggettoErogatoreDelServizio == null) || strutsBean.idSoggettoErogatoreDelServizio.equals("")) {

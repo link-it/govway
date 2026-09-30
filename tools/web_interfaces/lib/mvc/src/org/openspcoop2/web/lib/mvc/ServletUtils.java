@@ -1191,7 +1191,7 @@ public class ServletUtils {
 	 */
 	public static boolean validaParametroResourcePath(HttpServletRequest request, String parameterToCheck) {
 		String parameterValueOriginale = Validatore.getInstance().getParametroOriginale(request, parameterToCheck);
-		
+
 		// parametro originale e' vuoto o null allora e' valido
 		if(StringUtils.isEmpty(parameterValueOriginale)) {
 			return true;
@@ -1208,7 +1208,13 @@ public class ServletUtils {
 	
 	public static boolean usaValidazioneTextArea(HttpServletRequest request, String parameterToCheck) {
 		String parametroIdentificativi = Validatore.getInstance().getParametroOriginale(request, Costanti.PARAMETRO_IDENTIFICATIVI_TEXT_AREA);
-		
+		return usaValidazioneTextAreaByIdentificativi(parametroIdentificativi, parameterToCheck);
+	}
+	/**
+	 * Come {@link #usaValidazioneTextArea(HttpServletRequest, String)}, ricevendo il valore del parametro con gli identificativi
+	 * già letto dalla richiesta (necessario per le richieste 'multipart/form-data', dove il parametro si trova nel body)
+	 */
+	public static boolean usaValidazioneTextAreaByIdentificativi(String parametroIdentificativi, String parameterToCheck) {
 		if(parametroIdentificativi != null) {
 			try {
 				Validatore.getInstance().validate(PREFIX_VALORE_PARAMETRO + Costanti.PARAMETRO_IDENTIFICATIVI_TEXT_AREA + "]:["+parametroIdentificativi+"]",
@@ -1244,7 +1250,13 @@ public class ServletUtils {
 
 	public static boolean usaValidazioneTextAreaSingleLine(HttpServletRequest request, String parameterToCheck) {
 		String parametroIdentificativi = Validatore.getInstance().getParametroOriginale(request, Costanti.PARAMETRO_IDENTIFICATIVI_TEXT_AREA_SINGLE_LINE);
-
+		return usaValidazioneTextAreaSingleLineByIdentificativi(parametroIdentificativi, parameterToCheck);
+	}
+	/**
+	 * Come {@link #usaValidazioneTextAreaSingleLine(HttpServletRequest, String)}, ricevendo il valore del parametro con gli identificativi
+	 * già letto dalla richiesta (necessario per le richieste 'multipart/form-data', dove il parametro si trova nel body)
+	 */
+	public static boolean usaValidazioneTextAreaSingleLineByIdentificativi(String parametroIdentificativi, String parameterToCheck) {
 		if(parametroIdentificativi != null) {
 			try {
 				Validatore.getInstance().validate(PREFIX_VALORE_PARAMETRO + Costanti.PARAMETRO_IDENTIFICATIVI_TEXT_AREA_SINGLE_LINE + "]:["+parametroIdentificativi+"]",
@@ -1267,7 +1279,13 @@ public class ServletUtils {
 
 	public static boolean usaValidazionePassword(HttpServletRequest request, String parameterToCheck) {
 		String parametroIdentificativi = Validatore.getInstance().getParametroOriginale(request, Costanti.PARAMETRO_IDENTIFICATIVI_PS);
-
+		return usaValidazionePasswordByIdentificativi(parametroIdentificativi, parameterToCheck);
+	}
+	/**
+	 * Come {@link #usaValidazionePassword(HttpServletRequest, String)}, ricevendo il valore del parametro con gli identificativi
+	 * già letto dalla richiesta (necessario per le richieste 'multipart/form-data', dove il parametro si trova nel body)
+	 */
+	public static boolean usaValidazionePasswordByIdentificativi(String parametroIdentificativi, String parameterToCheck) {
 		if(parametroIdentificativi != null) {
 			return usaValidazionePassword(parametroIdentificativi, parameterToCheck);
 		} else {
