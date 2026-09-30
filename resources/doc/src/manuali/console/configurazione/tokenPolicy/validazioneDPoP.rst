@@ -61,7 +61,7 @@ La sottosezione *Payload* (:numref:`tokenValidazioneDPoPPayloadFig`) consente di
 
    -  *Cache Locale (LRU Policy)*: i 'jti' vengono memorizzati in una cache locale. In caso di riempimento della cache, vengono rimosse le entry meno recenti (esponendo potenzialmente a replay attack);
 
-   -  *Distribuita (Redis)*: i 'jti' vengono memorizzati in una cache distribuita Redis, utile in ambienti cluster.
+   -  *Distribuita (Redis)*: i 'jti' vengono memorizzati in una cache distribuita Redis, utile in ambienti cluster. La connessione verso il database Redis viene configurata come descritto nella sezione :ref:`headerGWRateLimitingCluster_distribuita_redis_connessione`.
 
    .. warning::
       Il RFC 9449 indica che ogni richiesta HTTP deve essere associata a una nuova DPoP proof con identificativo univoco (jti) per prevenire replay attack. Le modalità di validazione basate su cache locale operano esclusivamente sul singolo nodo: in presenza di un'architettura a più nodi (cluster), per garantire una protezione anti-replay efficace è necessario utilizzare la modalità *Distribuita (Redis)*.
