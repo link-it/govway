@@ -1,3 +1,11 @@
+2026-09-30  Andrea Poli <apoli@link.it>
+
+	* [GovWayMonitor]
+	Risolto Bug #1835
+	Nella console di monitoraggio installata su Tomcat, quando i soggetti operativi erano tanti da richiedere il campo 'Soggetto' con autocompletamento nell'intestazione,
+	il cambio del profilo di interoperabilità e la navigazione tra le sezioni visualizzavano l'errore "Illegal Syntax for Set Operation" relativo al campo stesso,
+	registrato anche nel log dell'application server a ogni operazione.
+
 2026-09-29  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole]
