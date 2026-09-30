@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.utils.pdf;
 
+import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -64,7 +65,10 @@ public class PDFSignature {
 	        byte[] signedContent = this.signature.getSignedContent(pdf);
 
 	        CMSProcessable cmsProcessableInputStream = new CMSProcessableByteArray(signedContent);
-            CMSSignedData cmsSignedData = new CMSSignedData(cmsProcessableInputStream, signatureContent);
+            // Il valore /Contents della firma e' un'area a dimensione fissa riempita di zeri dopo la struttura CMS.
+            // Dalla versione 1.86 di BouncyCastle il costruttore con byte[] rifiuta i byte in eccesso ('Extra data detected in stream'),
+            // mentre la lettura da stream legge il solo oggetto ASN.1 iniziale.
+            CMSSignedData cmsSignedData = new CMSSignedData(cmsProcessableInputStream, new ByteArrayInputStream(signatureContent));
             
             // get certificates
             Store<?> certStore = cmsSignedData.getCertificates();
