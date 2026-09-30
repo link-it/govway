@@ -2091,7 +2091,11 @@ if (pd.getMode().equals("view")) {
 				  	<script type="text/javascript" nonce="<%= randomNonce %>">
 						  	$(document).ready(function(){
 								$('#azioneBtn').click(function() {
+									<% if(pd.isDownloadBottoneInvia()) { %>
+									gwAvviaDownloadConIndicatore(document.form, this, CheckDati);return false;
+									<% } else { %>
 									<%=visualizzaAjax%>CheckDati();return false;
+									<% } %>
 								});
 							});
 					</script>

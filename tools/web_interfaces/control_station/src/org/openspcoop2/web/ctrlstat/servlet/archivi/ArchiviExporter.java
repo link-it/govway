@@ -667,10 +667,15 @@ public class ArchiviExporter extends HttpServlet {
 			HttpUtilities.setOutputFile(response, true, fileName);
 								
 			// export
-			OutputStream out = response.getOutputStream();
 			// archiviCore.export(userLogin, archiviHelper.smista(), protocollo, archive, out, exportModeObject);
 			// Devo far serializzare prima tutto in memoria, altrimenti poi non mi accorgo di eventuali errori di un singolo archivio durante l'export
-			out.write(archiviCore.export(userLogin, archiviHelper.smista(), protocollo, archive, exportModeObject));
+			byte[] archivio = archiviCore.export(userLogin, archiviHelper.smista(), protocollo, archive, exportModeObject);
+			
+			// L'archivio è pronto: si segnala alla pagina l'avvio del download per rimuovere l'indicatore di operazione in corso
+			ServletUtils.addDownloadTokenCookie(request, response, archiviHelper.getParameter(Costanti.PARAMETER_NAME_DOWNLOAD_TOKEN));
+			
+			OutputStream out = response.getOutputStream();
+			out.write(archivio);
 			
 		}catch(Exception e){
 			ControlStationCore.logError("Errore durante l'esportazione dell'archivio: "+e.getMessage(), e);

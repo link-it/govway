@@ -134,9 +134,17 @@ function EsportaImpl(tipo,eseguiExportConGET) {
 
 
 	if(elemToExport !== '') {
-		<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>
+		// Se non sono previste opzioni di esportazione il server avvia direttamente il download, senza cambiare pagina:
+		// il token consente di rimuovere l'indicatore di operazione in corso quando il file è pronto.
+		var downloadToken = (typeof gwAvviaAttesaDownload === 'function') ? gwAvviaAttesaDownload(null, null) : null;
+		if(!downloadToken) {
+			<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>
+		}
 		if(eseguiExportConGET) {
 			var destinazione = "<%= request.getContextPath() %>/export.do?tipoExport="+tipo+"&obj="+elemToExport;
+			if(downloadToken) {
+				destinazione += "&" + GW_DOWNLOAD_TOKEN_PARAM + "=" + downloadToken;
+			}
 			
 			//addTabID
 			destinazione = addTabIdParam(destinazione,true);
@@ -149,6 +157,9 @@ function EsportaImpl(tipo,eseguiExportConGET) {
 	    	
 	    	addHidden(exportForm, 'obj' , elemToExport);
 	    	addHidden(exportForm, 'tipoExport' , tipo);
+	    	if(downloadToken) {
+	    		addHidden(exportForm, GW_DOWNLOAD_TOKEN_PARAM , downloadToken);
+	    	}
 	    	
 	   		// imposto la destinazione
 	   	 	 exportForm.action = nomeServletExport;

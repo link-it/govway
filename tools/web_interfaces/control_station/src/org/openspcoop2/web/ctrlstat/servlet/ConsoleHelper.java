@@ -2544,7 +2544,9 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			if (this.getParameter(Costanti.SEARCH_PAGE_SIZE) != null) {
 				limit = Integer.parseInt(this.getParameter(Costanti.SEARCH_PAGE_SIZE));
-			}else {
+			}else if(limit <= 0) {
+				// In assenza del parametro (es. ritorno alla lista tramite breadcrumb) si mantiene il numero di elementi già scelto
+				// e salvato nella ricerca in sessione; il default viene usato solo se non è valorizzato.
 				limit = Costanti.PAGE_SIZE_DEFAULT;
 			}
 			ricerca.setPageSize(idLista, limit);

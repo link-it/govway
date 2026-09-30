@@ -234,6 +234,167 @@ function nascondiAjaxStatus(){
 	}
 }
 
+/* Download con indicatore di operazione in corso.
+   Un download non provoca il caricamento di una nuova pagina: l'indicatore mostrato al click resterebbe visibile
+   per sempre. La pagina genera quindi un token casuale e lo invia con la richiesta; il server, quando il file è pronto
+   e subito prima di inviarlo, lo restituisce nel cookie GW_DOWNLOAD_<token> (ServletUtils.addDownloadTokenCookie).
+   Alla comparsa del cookie l'indicatore viene rimosso. Il token nel nome del cookie evita che download avviati
+   in parallelo da più schede della console si sovrascrivano o si cancellino a vicenda il cookie.
+   Se la richiesta termina con una pagina (es. errore), la navigazione rimuove l'indicatore senza bisogno del cookie. */
+var GW_DOWNLOAD_TOKEN_PARAM = 'downloadToken';
+var GW_DOWNLOAD_TOKEN_COOKIE_PREFIX = 'GW_DOWNLOAD_';
+var GW_DOWNLOAD_POLL_MS = 500;
+var GW_DOWNLOAD_TIMEOUT_MS = 10 * 60 * 1000;
+var GW_DOWNLOAD_MSG_IN_CORSO = 'Preparazione del file in corso: il download partirà al termine.';
+var GW_DOWNLOAD_MSG_AVVIATO = 'Il file è pronto: download avviato.';
+var GW_DOWNLOAD_MSG_TIMEOUT = 'La preparazione del file sta richiedendo più tempo del previsto: il download partirà comunque al termine.';
+var gwDownloadInCorso = null;
+
+function gwGeneraDownloadToken() {
+	var c = window.crypto || window.msCrypto;
+	if (!c || !c.getRandomValues) {
+		return null;
+	}
+	var bytes = new Uint8Array(16);
+	c.getRandomValues(bytes);
+	var token = '';
+	for (var i = 0; i < bytes.length; i++) {
+		token += ('0' + bytes[i].toString(16)).slice(-2);
+	}
+	return token;
+}
+
+/* Path con cui il server imposta il cookie: il context path della console (le pagine sono servite al primo livello). */
+function gwDownloadCookiePath() {
+	var path = window.location.pathname;
+	var idx = path.lastIndexOf('/');
+	path = idx > 0 ? path.substring(0, idx) : '';
+	return path !== '' ? path : '/';
+}
+
+function gwLeggiDownloadTokenCookie(token) {
+	var nome = GW_DOWNLOAD_TOKEN_COOKIE_PREFIX + token;
+	var cookies = document.cookie ? document.cookie.split(';') : [];
+	for (var i = 0; i < cookies.length; i++) {
+		var c = cookies[i].replace(/^\s+/, '');
+		if (c.indexOf(nome + '=') === 0) {
+			return c.substring(nome.length + 1);
+		}
+	}
+	return null;
+}
+
+function gwCancellaDownloadTokenCookie(token) {
+	var secure = window.location.protocol === 'https:' ? '; Secure' : '';
+	// 'expires' oltre a 'Max-Age': Internet Explorer non supporta 'Max-Age'
+	document.cookie = GW_DOWNLOAD_TOKEN_COOKIE_PREFIX + token + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; Max-Age=0; path=' + gwDownloadCookiePath() + '; SameSite=Strict' + secure;
+}
+
+function gwAnnunciaStatoDownload(messaggio) {
+	var regione = document.getElementById('gw_download_status');
+	if (regione) {
+		regione.textContent = messaggio ? messaggio : '';
+	}
+}
+
+/* Imposta (o sostituisce) un campo hidden: addHidden non aggiorna il valore di un campo già presente. */
+function gwImpostaHidden(theForm, name, value) {
+	var el = theForm.elements[name];
+	if (el && el.type === 'hidden') {
+		el.value = value;
+	} else {
+		addHidden(theForm, name, value);
+	}
+}
+
+/* Avvia l'attesa del download: mostra l'indicatore e restituisce il token da inviare al server
+   (null se il browser non consente di generarlo: in tal caso l'indicatore non viene mostrato). */
+function gwAvviaAttesaDownload(theForm, button) {
+	var token = gwGeneraDownloadToken();
+	if (!token) {
+		return null;
+	}
+	var attesa = { token: token, form: theForm, button: button, avvio: Date.now(), timer: null };
+	gwDownloadInCorso = attesa;
+	visualizzaAjaxStatus();
+	if (theForm) {
+		theForm.setAttribute('aria-busy', 'true');
+	}
+	if (button) {
+		// aria-disabled e non disabled: il bottone mantiene il fuoco, che altrimenti andrebbe perso
+		button.setAttribute('aria-disabled', 'true');
+	}
+	gwAnnunciaStatoDownload(GW_DOWNLOAD_MSG_IN_CORSO);
+	attesa.timer = setInterval(function() {
+		if (gwLeggiDownloadTokenCookie(attesa.token) === attesa.token) {
+			gwTerminaAttesaDownload(attesa, GW_DOWNLOAD_MSG_AVVIATO);
+			if (attesa.onAvviato) {
+				attesa.onAvviato();
+			}
+		} else if (Date.now() - attesa.avvio > GW_DOWNLOAD_TIMEOUT_MS) {
+			gwTerminaAttesaDownload(attesa, GW_DOWNLOAD_MSG_TIMEOUT);
+		}
+	}, GW_DOWNLOAD_POLL_MS);
+	return token;
+}
+
+function gwTerminaAttesaDownload(attesa, messaggio) {
+	if (!attesa || gwDownloadInCorso !== attesa) {
+		return;
+	}
+	gwDownloadInCorso = null;
+	if (attesa.timer) {
+		clearInterval(attesa.timer);
+	}
+	gwCancellaDownloadTokenCookie(attesa.token);
+	nascondiAjaxStatus();
+	if (attesa.form) {
+		attesa.form.removeAttribute('aria-busy');
+		var el = attesa.form.elements[GW_DOWNLOAD_TOKEN_PARAM];
+		if (el && el.parentNode) {
+			el.parentNode.removeChild(el);
+		}
+	}
+	if (attesa.button) {
+		attesa.button.removeAttribute('aria-disabled');
+	}
+	gwAnnunciaStatoDownload(messaggio);
+}
+
+/* Invio di una form il cui esito è il download di un file. 'invia' è la funzione di invio della pagina (es. CheckDati):
+   se restituisce false (es. validazione non superata) l'attesa viene annullata. */
+function gwAvviaDownloadConIndicatore(theForm, button, invia) {
+	if (gwDownloadInCorso) {
+		return false;
+	}
+	var attesa = null;
+	var token = gwAvviaAttesaDownload(theForm, button);
+	if (token) {
+		attesa = gwDownloadInCorso;
+		gwImpostaHidden(theForm, GW_DOWNLOAD_TOKEN_PARAM, token);
+	}
+	var esito = invia();
+	if (esito === false) {
+		gwTerminaAttesaDownload(attesa, null);
+		return false;
+	}
+	if (attesa && typeof nr !== 'undefined') {
+		// la pagina resta la stessa: una volta avviato il download si consente di ripetere l'operazione
+		// (CheckDati blocca gli invii successivi al primo tramite 'nr').
+		attesa.onAvviato = function() {
+			nr = 0;
+		};
+	}
+	return esito;
+}
+
+/* Ritorno alla pagina dalla cache del browser (tasto Indietro): nessun download è in attesa. */
+window.addEventListener('pageshow', function(event) {
+	if (event.persisted && gwDownloadInCorso) {
+		gwTerminaAttesaDownload(gwDownloadInCorso, null);
+	}
+});
+
 function goToLocation(location){
 	if(location) {
 		//addTabID

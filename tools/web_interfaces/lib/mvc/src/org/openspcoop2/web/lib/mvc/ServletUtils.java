@@ -775,6 +775,40 @@ public class ServletUtils {
 		}
 	} 
 	
+	private static final Pattern DOWNLOAD_TOKEN_PATTERN = Pattern.compile(Costanti.PATTERN_DOWNLOAD_TOKEN);
+	
+	/**
+	 * Restituisce il token di download se rispetta il formato atteso (generato dalla pagina), altrimenti null.
+	 * Il valore viene riportato in un url di redirect e in un cookie: non si accettano valori diversi da quelli generati dalla console.
+	 */
+	public static String getDownloadToken(String downloadToken) {
+		if(downloadToken!=null && DOWNLOAD_TOKEN_PATTERN.matcher(downloadToken).matches()) {
+			return downloadToken;
+		}
+		return null;
+	}
+	
+	/**
+	 * Segnala alla pagina che il file richiesto è pronto e il download sta per iniziare.
+	 * Va invocato prima di scrivere il contenuto della risposta. Il cookie non contiene informazioni riservate
+	 * (è il token casuale generato dalla pagina stessa) e deve essere leggibile da JavaScript: non è quindi HttpOnly.
+	 */
+	public static void addDownloadTokenCookie(HttpServletRequest request, HttpServletResponse response, String downloadToken) {
+		String token = getDownloadToken(downloadToken);
+		if(token==null) {
+			return;
+		}
+		// il token (validato: solo caratteri esadecimali) è parte del nome del cookie
+		Cookie cookie = new Cookie(Costanti.COOKIE_NAME_DOWNLOAD_TOKEN_PREFIX + token, token);
+		String contextPath = request.getContextPath();
+		cookie.setPath(StringUtils.isNotEmpty(contextPath) ? contextPath : "/");
+		cookie.setMaxAge(Costanti.COOKIE_DOWNLOAD_TOKEN_MAX_AGE_SECONDS);
+		cookie.setSecure(request.isSecure());
+		cookie.setHttpOnly(false);
+		cookie.setAttribute(Costanti.COOKIE_ATTRIBUTE_SAME_SITE_NAME, Costanti.COOKIE_ATTRIBUTE_SAME_SITE_VALUE_STRICT);
+		response.addCookie(cookie);
+	}
+	
 	public static void saveConfigurazioneBeanIntoSession(HttpServletRequest request, HttpSession session,ConfigBean configurazioneBean, String objectName){
 		setObjectIntoSession(request, session, configurazioneBean, Costanti.SESSION_PARAMETRO_OLD_CONFIGURAZIONE_PROPERTIES_PREFIX + objectName);
 	}

@@ -86,6 +86,7 @@ public class PageData implements Serializable {
 	String funzioneBottoneCustom = null;
 	
 	private boolean showAjaxStatusBottoneInvia = true;
+	private boolean downloadBottoneInvia = false;
 	private boolean showAjaxStatusBottoneFiltra = true;
 	private boolean showAjaxStatusBottoneRipulisci = true;
 	
@@ -884,6 +885,18 @@ public class PageData implements Serializable {
 	
 	public void setDisabilitaAjaxStatusBottoneInvia() {
 		this.showAjaxStatusBottoneInvia = false;
+	}
+	
+	public boolean isDownloadBottoneInvia() {
+		return this.downloadBottoneInvia;
+	}
+	/**
+	 * Il bottone di invio avvia il download di un file: l'indicatore di operazione in corso viene mostrato
+	 * fino a quando il server non segnala, tramite il cookie {@link Costanti#COOKIE_NAME_DOWNLOAD_TOKEN_PREFIX}, che il file è pronto.
+	 * Il servlet che produce il file deve invocare {@link ServletUtils#addDownloadTokenCookie}.
+	 */
+	public void setDownloadBottoneInvia(boolean downloadBottoneInvia) {
+		this.downloadBottoneInvia = downloadBottoneInvia;
 	}
 
 	public boolean isShowAjaxStatusBottoneFiltra() {

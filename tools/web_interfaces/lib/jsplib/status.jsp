@@ -22,6 +22,9 @@
 <div id="ajax_status_div">
 	<span class="rich-mpnl-mask-div mainStatusStartStyle"></span>
 	<span class="mainStatusStartStyleInner">
-		<img src="images/tema_link/ajax_status.gif" alt="loading">
+		<img src="images/tema_link/ajax_status.gif" alt="Operazione in corso">
 	</span>
 </div>
+<%-- Regione che annuncia alle tecnologie assistive l'avanzamento dei download (vedi gwAvviaDownloadConIndicatore in webapps.js):
+     deve essere presente nella pagina prima che il testo cambi, e fuori da #ajax_status_div che viene nascosto con display:none. --%>
+<div id="gw_download_status" class="gw-solo-lettori" role="status" aria-live="polite" aria-atomic="true"></div>

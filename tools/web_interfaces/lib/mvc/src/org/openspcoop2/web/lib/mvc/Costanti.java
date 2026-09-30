@@ -227,6 +227,16 @@ public class Costanti {
 	public static final String COOKIE_ATTRIBUTE_SAME_SITE_VALUE_NONE = "None";
 	public static final String COOKIE_SECURE_ATTRIBUTE_NAME="Secure";
 	
+	/** DOWNLOAD CON INDICATORE DI AVANZAMENTO **/
+	
+	// Token generato dalla pagina all'avvio di un download: il server lo restituisce in un cookie quando il file è pronto,
+	// consentendo alla pagina di rimuovere l'indicatore di operazione in corso (un download non provoca il caricamento di una nuova pagina).
+	// Il token fa parte del nome del cookie: download avviati in parallelo da più schede della console non interferiscono tra loro.
+	public static final String PARAMETER_NAME_DOWNLOAD_TOKEN = "downloadToken";
+	public static final String COOKIE_NAME_DOWNLOAD_TOKEN_PREFIX = "GW_DOWNLOAD_";
+	public static final String PATTERN_DOWNLOAD_TOKEN = "^[0-9a-f]{32}$";
+	public static final int COOKIE_DOWNLOAD_TOKEN_MAX_AGE_SECONDS = 120;
+	
 	/** CSFR **/
 	
 	public static final String SESSION_ATTRIBUTE_CSRF_TOKEN =  SESSION_ATTRIBUTE_TAB_KEY_PREFIX + "csrf";

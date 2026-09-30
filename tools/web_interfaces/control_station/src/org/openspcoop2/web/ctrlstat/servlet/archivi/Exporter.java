@@ -395,6 +395,11 @@ public final class Exporter extends Action {
 				if(protocollo!=null && !"".equals(protocollo)){
 					send = send + "&" + ArchiviCostanti.PARAMETRO_ARCHIVI_PROTOCOLLO+"="+ protocollo;
 				}
+				// Token con cui la pagina rileva l'avvio del download (accettato solo nel formato generato dalla console)
+				String downloadToken = ServletUtils.getDownloadToken(archiviHelper.getParameter(Costanti.PARAMETER_NAME_DOWNLOAD_TOKEN));
+				if(downloadToken!=null) {
+					send = send + "&" + Costanti.PARAMETER_NAME_DOWNLOAD_TOKEN+"="+ downloadToken;
+				}
 				if(exportMode!=null && !"".equals(exportMode)){
 					send = send + "&" + ArchiviCostanti.PARAMETRO_ARCHIVI_TIPOLOGIA_ARCHIVIO+"="+ exportMode;
 				}
@@ -497,6 +502,7 @@ public final class Exporter extends Action {
 
 			pd.setLabelBottoneInvia(ArchiviCostanti.LABEL_ARCHIVI_EXPORT);
 			pd.setDisabilitaAjaxStatusBottoneInvia();
+			pd.setDownloadBottoneInvia(true);
 			
 			if(errore){
 				pd.setMessage(motivoErrore);
