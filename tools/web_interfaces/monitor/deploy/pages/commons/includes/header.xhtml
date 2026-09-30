@@ -119,7 +119,7 @@
 												            <c:if test="#{loginBean.visualizzaLinkSelezioneSoggetto}">
 												            	<a4j:outputPanel layout="block" id="menuSoggettoAutocomplete">
 												            		<h:outputText styleClass="soggettoAutocomplete" id="labelSoggettoAutocomplete" value="Soggetto:" rendered="#{true}" />
-																		<h:inputText id="menuSoggetto_menuAutocomplete" value="#{not empty loginBean.labelSoggettoNormalizedSenzaPrefisso ? loginBean.labelSoggettoNormalizedSenzaPrefisso : loginBean.labelSoggettoSenzaPrefisso}" styleClass="inputLink" />
+																		<h:inputText id="menuSoggetto_menuAutocomplete" value="#{loginBean.labelSoggettoAutocomplete}" styleClass="inputLink" />
 																		<rich:suggestionbox id="menuSoggettoAutocompleteSuggestion" width="300"
 																			for="menuSoggetto_menuAutocomplete" listWidth="300"
 																			suggestionAction="#{loginBean.soggettoPddMonitorAutoComplete}" var="selectItem" fetchValue="#{selectItem.label}"

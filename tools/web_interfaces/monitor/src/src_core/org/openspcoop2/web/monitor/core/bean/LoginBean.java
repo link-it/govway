@@ -946,6 +946,17 @@ public class LoginBean extends AbstractLoginBean {
 	public void setLabelSoggettoSenzaPrefisso(String labelSoggetto) { /* donothing */
 	}
 
+	/* Label mostrata nel campo di selezione del soggetto con autocompletamento dell'header.
+	 * Il campo viene inviato con la form dell'header: la proprietà deve essere scrivibile,
+	 * condizione non soddisfatta da un'espressione EL ternaria su Tomcat ("Illegal Syntax for Set Operation"). */
+	public String getLabelSoggettoAutocomplete() throws UtilsException {
+		String labelNormalized = getLabelSoggettoNormalizedSenzaPrefisso();
+		return StringUtils.isNotEmpty(labelNormalized) ? labelNormalized : getLabelSoggettoSenzaPrefisso();
+	}
+
+	public void setLabelSoggettoAutocomplete(String labelSoggetto) { /* donothing */
+	}
+
 	public List<Soggetto> listaSoggettiDisponibilePerUtentePddMonitor() throws ProtocolException {
 		if(this.listaSoggettiDisponibiliUtente == null) {
 			this.listaSoggettiDisponibiliUtente = listaSoggettiDisponibilePerUtentePddMonitorEngine();
