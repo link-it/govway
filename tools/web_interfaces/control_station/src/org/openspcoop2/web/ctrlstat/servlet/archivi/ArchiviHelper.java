@@ -155,7 +155,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 //		}
 		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_PROTOCOLLO);
 		de.setSize(this.getSize());
-		de.setPostBack(true);
+		de.setPostBack_viaPOST(true);
 		dati.add(de);
 		
 		de = new DataElement();
@@ -207,7 +207,9 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		}
 		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_TIPOLOGIA_ARCHIVIO);
 		de.setSize(this.getSize());
-		de.setPostBack(true);
+		// I postBack della form di export vengono eseguiti via POST: la form contiene gli identificativi di tutti gli oggetti selezionati
+		// e, con un postBack via GET, la url generata poteva superare i limiti dei proxy (es. 414 URI Too Long su Apache httpd).
+		de.setPostBack_viaPOST(true);
 		dati.add(de);
 					
 		if(ArchiveType.CONFIGURAZIONE.equals(servletSourceExport)){
@@ -226,7 +228,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				de.setLabels(ArchiviCostanti.getParametroLabelArchiviExportTipoDump());
 				de.setValues(ArchiviCostanti.getParametroValoriArchiviExportTipoDump());
 				de.setSelected(configurazioneType);
-				de.setPostBack(true); // serve solo a poter riesportare senza dover rientrare nella sezione configurazione una volta esportato
+				de.setPostBack_viaPOST(true); // serve solo a poter riesportare senza dover rientrare nella sezione configurazione una volta esportato
 			}
 			dati.add(de);
 		}
@@ -264,7 +266,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_POLICY_CONFIG);
 		if(cascadeEnabled && showPolicyConfigOption){
 			de.setType(DataElementType.CHECKBOX);
-			de.setPostBack(true);
+			de.setPostBack_viaPOST(true);
 			de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_POLICY_CONFIG_LEFT);
 			if(this.archiviCore.isConfigurazioneAllarmiEnabled()) {
 				de.setLabelRight(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_POLICY_CONFIG_CON_ALLARMI_RIGHT);
@@ -304,7 +306,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_PLUGIN_CONFIG);
 		if(cascadeEnabled && showPluginConfigOption){
 			de.setType(DataElementType.CHECKBOX);
-			de.setPostBack(true);
+			de.setPostBack_viaPOST(true);
 			de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_PLUGIN_CONFIG_LEFT);
 			de.setLabelRight(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_PLUGIN_CONFIG_RIGHT);
 			de.setSelected(ServletUtils.isCheckBoxEnabled(cascadePluginConfig));
@@ -339,7 +341,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE);
 		if(cascadeEnabled && showIncludiElementiRiferitiOption){
 			de.setType(DataElementType.CHECKBOX);
-			de.setPostBack(true);
+			de.setPostBack_viaPOST(true);
 			de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_LEFT);
 			de.setLabelRight(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_RIGHT);
 			de.setSelected(ServletUtils.isCheckBoxEnabled(cascade));
@@ -369,7 +371,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_PDD);
 				de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_PDD);
 				de.setType(DataElementType.CHECKBOX);
-				de.setPostBack(true); // serve solo a poter riesportare senza dover rientrare nella sezione configurazione una volta esportato
+				de.setPostBack_viaPOST(true); // serve solo a poter riesportare senza dover rientrare nella sezione configurazione una volta esportato
 				de.setSelected(cascadePdd);
 				dati.add(de);
 			}
@@ -379,7 +381,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_RUOLI);
 				de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_RUOLI);
 				de.setType(DataElementType.CHECKBOX);
-				de.setPostBack(true); // serve solo a poter riesportare senza dover rientrare nella sezione configurazione una volta esportato
+				de.setPostBack_viaPOST(true); // serve solo a poter riesportare senza dover rientrare nella sezione configurazione una volta esportato
 				de.setSelected(cascadeRuoli);
 				dati.add(de);
 			}
@@ -389,7 +391,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_SCOPE);
 				de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_SCOPE);
 				de.setType(DataElementType.CHECKBOX);
-				de.setPostBack(true); // serve solo a poter riesportare senza dover rientrare nella sezione configurazione una volta esportato
+				de.setPostBack_viaPOST(true); // serve solo a poter riesportare senza dover rientrare nella sezione configurazione una volta esportato
 				de.setSelected(cascadeScope);
 				dati.add(de);
 			}
@@ -399,7 +401,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_SOGGETTI);
 				de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_SOGGETTI);
 				de.setType(DataElementType.CHECKBOX);
-				de.setPostBack(true); // serve solo a poter riesportare senza dover rientrare nella sezione configurazione una volta esportato
+				de.setPostBack_viaPOST(true); // serve solo a poter riesportare senza dover rientrare nella sezione configurazione una volta esportato
 				de.setSelected(cascadeSoggetti);
 				dati.add(de);
 			}
@@ -409,7 +411,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_SERVIZI_APPLICATIVI);
 				de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_SERVIZI_APPLICATIVI);
 				de.setType(DataElementType.CHECKBOX);
-				de.setPostBack(true); // serve solo a poter riesportare senza dover rientrare nella sezione configurazione una volta esportato
+				de.setPostBack_viaPOST(true); // serve solo a poter riesportare senza dover rientrare nella sezione configurazione una volta esportato
 				de.setSelected(cascadeServiziApplicativi);
 				dati.add(de);
 			}
@@ -418,7 +420,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_PORTE_DELEGATE);
 				de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_PORTE_DELEGATE);
 				de.setType(DataElementType.CHECKBOX);
-				de.setPostBack(true); // serve solo a poter riesportare senza dover rientrare nella sezione configurazione una volta esportato
+				de.setPostBack_viaPOST(true); // serve solo a poter riesportare senza dover rientrare nella sezione configurazione una volta esportato
 				de.setSelected(cascadePorteDelegate);
 				dati.add(de);
 			}
@@ -427,7 +429,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_PORTE_APPLICATIVE);
 				de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_PORTE_APPLICATIVE);
 				de.setType(DataElementType.CHECKBOX);
-				de.setPostBack(true); // serve solo a poter riesportare senza dover rientrare nella sezione configurazione una volta esportato
+				de.setPostBack_viaPOST(true); // serve solo a poter riesportare senza dover rientrare nella sezione configurazione una volta esportato
 				de.setSelected(cascadePorteApplicative);
 				dati.add(de);
 			}
@@ -437,7 +439,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_ACCORDI_COOPERAZIONE);
 				de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_ACCORDI_COOPERAZIONE);
 				de.setType(DataElementType.CHECKBOX);
-				de.setPostBack(true); // serve solo a poter riesportare senza dover rientrare nella sezione configurazione una volta esportato
+				de.setPostBack_viaPOST(true); // serve solo a poter riesportare senza dover rientrare nella sezione configurazione una volta esportato
 				de.setSelected(cascadeAc);
 				dati.add(de);
 			}
@@ -446,7 +448,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_ACCORDI_SERVIZIO_PARTE_COMUNE);
 				de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_ACCORDI_SERVIZIO_PARTE_COMUNE);
 				de.setType(DataElementType.CHECKBOX);
-				de.setPostBack(true); // serve solo a poter riesportare senza dover rientrare nella sezione configurazione una volta esportato
+				de.setPostBack_viaPOST(true); // serve solo a poter riesportare senza dover rientrare nella sezione configurazione una volta esportato
 				de.setSelected(cascadeAspc);
 				dati.add(de);
 			}
@@ -455,7 +457,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_ACCORDI_SERVIZIO_COMPOSTO);
 				de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_ACCORDI_SERVIZIO_COMPOSTO);
 				de.setType(DataElementType.CHECKBOX);
-				de.setPostBack(true); // serve solo a poter riesportare senza dover rientrare nella sezione configurazione una volta esportato
+				de.setPostBack_viaPOST(true); // serve solo a poter riesportare senza dover rientrare nella sezione configurazione una volta esportato
 				de.setSelected(cascadeAsc);
 				dati.add(de);
 			}
@@ -464,7 +466,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_ACCORDI_SERVIZIO_PARTE_SPECIFICA);
 				de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_ACCORDI_SERVIZIO_PARTE_SPECIFICA);
 				de.setType(DataElementType.CHECKBOX);
-				de.setPostBack(true); // serve solo a poter riesportare senza dover rientrare nella sezione configurazione una volta esportato
+				de.setPostBack_viaPOST(true); // serve solo a poter riesportare senza dover rientrare nella sezione configurazione una volta esportato
 				de.setSelected(cascadeAsps);
 				dati.add(de);
 			}
@@ -473,7 +475,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_FRUIZIONI);
 				de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_FRUIZIONI);
 				de.setType(DataElementType.CHECKBOX);
-				de.setPostBack(true); // serve solo a poter riesportare senza dover rientrare nella sezione configurazione una volta esportato
+				de.setPostBack_viaPOST(true); // serve solo a poter riesportare senza dover rientrare nella sezione configurazione una volta esportato
 				de.setSelected(cascadeFruizioni);
 				dati.add(de);
 			}

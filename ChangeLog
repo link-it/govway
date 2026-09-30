@@ -1,5 +1,14 @@
 2026-09-30  Andrea Poli <apoli@link.it>
 
+	* [GovWayConsole]
+	Risolto Bug #1837
+	Negli elenchi, il numero di elementi per pagina scelto veniva perso tornando all'elenco tramite il percorso di navigazione o il menu.
+	Esportando molti oggetti (es. più di 75 fruizioni), la pagina di export si apriva correttamente ma la selezione di una delle
+	sue opzioni (es. 'Elementi di Registro') poteva fallire con l'errore "414 URI Too Long": il ricaricamento della pagina riportava
+	nella url gli identificativi di tutti gli oggetti selezionati, superando la lunghezza massima accettata dal server.
+
+2026-09-30  Andrea Poli <apoli@link.it>
+
 	* [GovWayMonitor]
 	Risolto Bug #1835
 	Nella console di monitoraggio installata su Tomcat, quando i soggetti operativi erano tanti da richiedere il campo 'Soggetto' con autocompletamento nell'intestazione,
