@@ -351,8 +351,8 @@ function generateChart(id, _dataJson, _type, _size, _barwidth) {
         if(!canali || canali.length < 3) {
             return null;
         }
-        var alfa = parseFloat(stile.opacity) * parseFloat(stile.fillOpacity || 1);
-        if(!isFinite(alfa)) {
+        var alfa = Number.parseFloat(stile.opacity) * Number.parseFloat(stile.fillOpacity || 1);
+        if(!Number.isFinite(alfa)) {
             alfa = 1;
         }
         var fusi = canali.slice(0, 3).map(function(v) {

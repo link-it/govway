@@ -124,7 +124,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 													//Bottone Previous
 													if (pd.getIndex() != 0) {
 														%>							
-														<img id="ds_prev_top" src="images/tema_link/go_prev.png" title="Precedente" alt="Precedente" class="dsImg"  role="button" tabindex="0"/>
+														<button type="button" id="ds_prev_top" class="dsImg" title="Precedente"><img src="images/tema_link/go_prev.png" alt="Precedente"/></button>
 														<script type="text/javascript" nonce="<%= randomNonce %>">
 															$(document).ready(function(){
 																$('#ds_prev_top').click(function() {
@@ -152,7 +152,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 													  if (pd.getIndex()+pd.getPageSize() < pd.getNumEntries()) {
 														  nextTopDisabled = false;
 													   			%>
-													   			<img id="ds_next_top" src="images/tema_link/go_next.png" title="Successiva" alt="Successiva" class="dsImg" role="button" tabindex="0"/>
+													   			<button type="button" id="ds_next_top" class="dsImg" title="Successiva"><img src="images/tema_link/go_next.png" alt="Successiva"/></button>
 													   			<script type="text/javascript" nonce="<%= randomNonce %>">
 																	$(document).ready(function(){
 																		$('#ds_next_top').click(function() {
@@ -691,7 +691,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 										//Bottone Previous
 										if (pd.getIndex() != 0) {
 											%>							
-											<img id="ds_prev_bottom" src="images/tema_link/go_prev.png" title="Precedente" alt="Precedente" class="dsImg"  role="button" tabindex="0"/>
+											<button type="button" id="ds_prev_bottom" class="dsImg" title="Precedente"><img src="images/tema_link/go_prev.png" alt="Precedente"/></button>
 											<script type="text/javascript" nonce="<%= randomNonce %>">
 												$(document).ready(function(){
 													$('#ds_prev_bottom').click(function() {
@@ -734,7 +734,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 										  if (pd.getIndex()+pd.getPageSize() < pd.getNumEntries()) {
 											  nextBottomDisabled = false;
 										   			%>
-										   			<img id="ds_next_bottom" src="images/tema_link/go_next.png" title="Successiva" alt="Successiva" class="dsImg" role="button" tabindex="0"/>
+										   			<button type="button" id="ds_next_bottom" class="dsImg" title="Successiva"><img src="images/tema_link/go_next.png" alt="Successiva"/></button>
 										   			<script type="text/javascript" nonce="<%= randomNonce %>">
 														$(document).ready(function(){
 															$('#ds_next_bottom').click(function() {

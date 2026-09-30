@@ -96,6 +96,18 @@ span.navigatorAnchorRefresh{
 	vertical-align: middle;
 }
 
+/* Nelle sezioni comprimibili con aggiornamento l'icona 'Refresh' (16px) è adiacente al titolo,
+   anch'esso un comando: senza spazio sufficiente fra i due bersagli l'area attivabile deve essere
+   di almeno 24x24 px (WCAG 2.5.8). Si allarga l'area lasciando invariata la dimensione del glifo. */
+span.navigatorAnchorRefresh > i.material-icons[role="button"] {
+	display: inline-block;
+	width: 24px;
+	height: 24px;
+	line-height: 24px;
+	text-align: center;
+	vertical-align: middle;
+}
+
 legend.navigatorAnchorClosable,
 legend.navigatorAnchorRefresh  {
 	cursor: pointer;
@@ -898,7 +910,20 @@ button:hover, input[type="submit"]:hover, input[type="button"]:hover, .buttonrow
 	background-image: none;
 }
 
-.dsImg {
+/* I comandi di paginazione sono pulsanti nativi che contengono l'icona: si annulla lo stile
+   generico dei 'button' (bordo, sfondo, padding, margini, larghezza minima) così che a video
+   resti la sola immagine. Il contorno del focus non viene toccato: da tastiera deve restare visibile. */
+button.dsImg,
+button.dsImg:hover {
+	color: inherit;
+	border: none;
+	background: none;
+	padding: 0;
+	margin: 0;
+	min-width: 0;
+	border-radius: 0;
+	line-height: 0;
+	vertical-align: middle;
 	cursor: pointer;
 }
 
