@@ -299,6 +299,12 @@ public class GestoreTrasformazioni {
 	
 	
 	private TrasformazioneRegola regolaTrasformazione; // viene valorizzata durante la gestione della richiesta
+	private TrasformazioneRegolaRichiesta getRegolaRichiesta() {
+		// La configurazione può definire una regola che agisce solamente sulla risposta (es. configurazione xml senza l'elemento 'richiesta'):
+		// viene gestita come una regola che non prevede alcuna trasformazione della richiesta
+		TrasformazioneRegolaRichiesta richiesta = this.regolaTrasformazione.getRichiesta();
+		return richiesta!=null ? richiesta : new TrasformazioneRegolaRichiesta();
+	}
 	private boolean trasformazioneContenutoRichiestaEffettuata = false;
 	public boolean isTrasformazioneContenutoRichiestaEffettuata() {
 		return this.trasformazioneContenutoRichiestaEffettuata;
@@ -680,7 +686,7 @@ public class GestoreTrasformazioni {
 		
 		// *** EmissioneDiagnostico ****
 		
-		TrasformazioneRegolaRichiesta richiesta = this.regolaTrasformazione.getRichiesta();
+		TrasformazioneRegolaRichiesta richiesta = getRegolaRichiesta();
 		String labelTrasformazione = GestoreTrasformazioniUtilities.getLabelTipoTrasformazioneRichiesta(richiesta, messageP);
 		this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_TRASFORMAZIONE_RICHIESTA, labelTrasformazione);
 		this.msgDiag.logPersonalizzato( messageTypeForNotifier!=null ? "trasformazione.processamentoNotificaInCorso" : "trasformazione.processamentoRichiestaInCorso");
@@ -1093,7 +1099,7 @@ public class GestoreTrasformazioni {
 		
 		// *** EmissioneDiagnostico ****
 		
-		String labelTrasformazione = GestoreTrasformazioniUtilities.getLabelTipoTrasformazioneRisposta(this.regolaTrasformazione.getRichiesta(), trasformazioneRisposta, this.messageRequest);
+		String labelTrasformazione = GestoreTrasformazioniUtilities.getLabelTipoTrasformazioneRisposta(getRegolaRichiesta(), trasformazioneRisposta, this.messageRequest);
 		this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_TRASFORMAZIONE_RISPOSTA, labelTrasformazione);
 		this.msgDiag.logPersonalizzato("trasformazione.processamentoRispostaInCorso");
 		if(this.pddContext!=null) {
@@ -1212,7 +1218,7 @@ public class GestoreTrasformazioni {
 			
 			// trasformazione contenuto
 			boolean trasformazioneRest = false;
-			if(this.regolaTrasformazione.getRichiesta().getTrasformazioneSoap()!=null) {
+			if(getRegolaRichiesta().getTrasformazioneSoap()!=null) {
 				trasformazioneRest = true; // devo tornare rest
 			}
 			
@@ -1224,7 +1230,7 @@ public class GestoreTrasformazioni {
 			String trasformazioneSoapTipoConversione = null;
 			Template trasformazioneSoapTemplateConversione = null;
 			// su una richiesta REST l'elemento 'trasformazione-rest' descrive la sola riscrittura del metodo e/o del path e non una conversione di protocollo
-			if(GestoreTrasformazioniUtilities.isConversioneSoap2Rest(this.regolaTrasformazione.getRichiesta(), this.messageRequest)) {
+			if(GestoreTrasformazioniUtilities.isConversioneSoap2Rest(getRegolaRichiesta(), this.messageRequest)) {
 				// devo tornare soap
 				trasformazioneSoap = true;
 				if(this.messageRequest!=null) {

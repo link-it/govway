@@ -5020,6 +5020,48 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
                     <servizio-applicativo nome="api"/>
                 </porta-applicativa>
 
+		<!-- Connettore JMS: risposta prodotta dal connettore per le API REST -->
+                <porta-applicativa nome="APIMinisteroErogatore/RESTJMS_TextQueue" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                    <servizio tipo="gw" nome="API"/>
+                    <azione identificazione="static" nome="jmsTextQueue"/>
+                    <servizio-applicativo nome="RESTJMSQueueAsText"/>
+                </porta-applicativa>
+                <porta-applicativa nome="APIMinisteroErogatore/RESTJMS_BytesQueue" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                    <servizio tipo="gw" nome="API"/>
+                    <azione identificazione="static" nome="jmsBytesQueue"/>
+                    <servizio-applicativo nome="RESTJMSQueueAsBytes"/>
+                </porta-applicativa>
+                <porta-applicativa nome="APIMinisteroErogatore/RESTJMS_TextTopic" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                    <servizio tipo="gw" nome="API"/>
+                    <azione identificazione="static" nome="jmsTextTopic"/>
+                    <servizio-applicativo nome="RESTJMSTopicAsText"/>
+                </porta-applicativa>
+                <porta-applicativa nome="APIMinisteroErogatore/RESTJMS_BytesTopic" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                    <servizio tipo="gw" nome="API"/>
+                    <azione identificazione="static" nome="jmsBytesTopic"/>
+                    <servizio-applicativo nome="RESTJMSTopicAsBytes"/>
+                </porta-applicativa>
+                <porta-applicativa nome="APIMinisteroErogatore/RESTJMS_ReturnCode" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                    <servizio tipo="gw" nome="API"/>
+                    <azione identificazione="static" nome="jmsReturnCode"/>
+                    <servizio-applicativo nome="RESTJMSQueueAsText"/>
+                    <proprieta nome="connettori.jms.response.rest.returnCode" valore="202" />
+                </porta-applicativa>
+                <porta-applicativa nome="APIMinisteroErogatore/RESTJMS_TrasformazioneRisposta" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                    <servizio tipo="gw" nome="API"/>
+                    <azione identificazione="static" nome="jmsTrasformazioneRisposta"/>
+                    <servizio-applicativo nome="RESTJMSQueueAsText"/>
+                    <trasformazioni>
+                        <!-- La regola agisce solamente sulla risposta: la risposta vuota generata dal connettore JMS viene sostituita con un esito di avvenuta pubblicazione -->
+                        <regola nome="esitoPubblicazione" posizione="1">
+                            <risposta nome="esitoPubblicazione" posizione="1" conversione="true" conversione-tipo="template" content-type="application/json" return-code="200">
+                                <!-- {"esito":"Messaggio pubblicato","idTransazione":"${transaction:id}"} -->
+                                <conversione-template>eyJlc2l0byI6Ik1lc3NhZ2dpbyBwdWJibGljYXRvIiwiaWRUcmFuc2F6aW9uZSI6IiR7dHJhbnNhY3Rpb246aWR9In0=</conversione-template>
+                            </risposta>
+                        </regola>
+                    </trasformazioni>
+                </porta-applicativa>
+
 
 		<!-- Response Caching -->
 
@@ -9707,6 +9749,68 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 
 
 		<!-- **** Configurazione REST **** -->
+
+                <!-- Connettore JMS -->
+                <servizio-applicativo nome="RESTJMSQueueAsText">
+                        <invocazione-servizio>
+                                <connettore tipo="jms" nome="RESTJMSQueueAsText">
+                                        <property nome="location" valore="queue/openspcoop2TestQueue" />
+                                        <!-- CONTEXT_JMS_FACTORY -->
+                                        <!-- CONTEXT_JMS_PKGS -->
+                                        <!-- CONTEXT_JMS_PROVIDER_URL -->
+                                        <property nome="tipo" valore="queue" />
+                                        <!-- JMS_CONNECTION_FACTORY -->
+                                        <property nome="send-as" valore="TextMessage" />
+                                        <!-- JMS_USERNAME -->
+                                        <!-- JMS_PASSWORD -->
+                                </connettore>
+                        </invocazione-servizio>
+                </servizio-applicativo>
+                <servizio-applicativo nome="RESTJMSQueueAsBytes">
+                        <invocazione-servizio>
+                                <connettore tipo="jms" nome="RESTJMSQueueAsBytes">
+                                        <property nome="location" valore="queue/openspcoop2TestQueue" />
+                                        <!-- CONTEXT_JMS_FACTORY -->
+                                        <!-- CONTEXT_JMS_PKGS -->
+                                        <!-- CONTEXT_JMS_PROVIDER_URL -->
+                                        <property nome="tipo" valore="queue" />
+                                        <!-- JMS_CONNECTION_FACTORY -->
+                                        <property nome="send-as" valore="BytesMessage" />
+                                        <!-- JMS_USERNAME -->
+                                        <!-- JMS_PASSWORD -->
+                                </connettore>
+                        </invocazione-servizio>
+                </servizio-applicativo>
+                <servizio-applicativo nome="RESTJMSTopicAsText">
+                        <invocazione-servizio>
+                                <connettore tipo="jms" nome="RESTJMSTopicAsText">
+                                        <property nome="location" valore="topic/openspcoop2TestTopic" />
+                                        <!-- CONTEXT_JMS_FACTORY -->
+                                        <!-- CONTEXT_JMS_PKGS -->
+                                        <!-- CONTEXT_JMS_PROVIDER_URL -->
+                                        <property nome="tipo" valore="topic" />
+                                        <!-- JMS_CONNECTION_FACTORY -->
+                                        <property nome="send-as" valore="TextMessage" />
+                                        <!-- JMS_USERNAME -->
+                                        <!-- JMS_PASSWORD -->
+                                </connettore>
+                        </invocazione-servizio>
+                </servizio-applicativo>
+                <servizio-applicativo nome="RESTJMSTopicAsBytes">
+                        <invocazione-servizio>
+                                <connettore tipo="jms" nome="RESTJMSTopicAsBytes">
+                                        <property nome="location" valore="topic/openspcoop2TestTopic" />
+                                        <!-- CONTEXT_JMS_FACTORY -->
+                                        <!-- CONTEXT_JMS_PKGS -->
+                                        <!-- CONTEXT_JMS_PROVIDER_URL -->
+                                        <property nome="tipo" valore="topic" />
+                                        <!-- JMS_CONNECTION_FACTORY -->
+                                        <property nome="send-as" valore="BytesMessage" />
+                                        <!-- JMS_USERNAME -->
+                                        <!-- JMS_PASSWORD -->
+                                </connettore>
+                        </invocazione-servizio>
+                </servizio-applicativo>
 
                 <servizio-applicativo nome="api">
                         <invocazione-servizio>

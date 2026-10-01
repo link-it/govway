@@ -1,3 +1,19 @@
+2026-10-01  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità #1831
+	Il connettore JMS può adesso essere utilizzato anche per le API REST e per le azioni SOAP con profilo di collaborazione
+	diverso da oneway (es. sincrono): in precedenza, pur pubblicando il messaggio sulla queue/topic, la transazione terminava
+	con l'errore "risposta applicativa attesa ma non ricevuta" poiché il connettore non generava alcuna risposta.
+	Completata la pubblicazione, viene restituita al client:
+	- per le API REST, una risposta senza contenuto con codice HTTP 204, personalizzabile tramite la proprietà 'connettori.jms.response.rest.returnCode';
+	- per le API SOAP, un SOAP Envelope con Body vuoto oppure, abilitando la proprietà 'connettori.jms.response.soap.operationWrapper',
+	  contenente l'elemento vuoto '<operazione>Response' ricavato dalla richiesta, secondo le convenzioni degli stili RPC e document/literal wrapped.
+	Per le azioni con profilo oneway il comportamento non cambia. Una risposta con un contenuto differente (es. un esito di avvenuta
+	pubblicazione) può essere prodotta tramite una trasformazione della risposta.
+	È stato inoltre corretto un errore 'NullPointerException' che si verificava con una regola di trasformazione priva della sezione
+	relativa alla richiesta, definibile nella configurazione in formato XML.
+
 2026-09-30  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole, GovWayMonitor]

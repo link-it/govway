@@ -18,6 +18,13 @@
 		<resource nome="invokeApiKeyForward" path="invokeApiKeyForward" />
 		<resource nome="invokeAppId" path="invokeAppId" />
 		<resource nome="invokeAppIdForward" path="invokeAppIdForward" />
+		<!-- Connettore JMS -->
+		<resource nome="jmsTextQueue" method="POST" path="jmsTextQueue" />
+		<resource nome="jmsBytesQueue" method="POST" path="jmsBytesQueue" />
+		<resource nome="jmsTextTopic" method="POST" path="jmsTextTopic" />
+		<resource nome="jmsBytesTopic" method="POST" path="jmsBytesTopic" />
+		<resource nome="jmsReturnCode" method="POST" path="jmsReturnCode" />
+		<resource nome="jmsTrasformazioneRisposta" method="POST" path="jmsTrasformazioneRisposta" />
         </accordo-servizio-parte-comune>
 
         <accordo-servizio-parte-comune nome="EsempioCORSviaREST" profilo-collaborazione="sincrono" 

@@ -719,4 +719,45 @@ public class TestSuiteProperties implements UnitsTestSuiteProperties {
 		}
 	}
 	
+	
+	public java.util.Properties getJMS_JNDIContext() {
+		String prefix = "org.openspcoop2.testsuite.jms-lookup.property.";
+		java.util.Properties prop = new java.util.Properties();
+		for (String key : this.reader.stringPropertyNames()) {
+			if(key.startsWith(prefix)) {
+				prop.put(key.substring(prefix.length()), this.reader.getProperty(key).trim());
+			}
+		}
+		return prop;
+	}
+	public String getJMSQueue(){
+		return getJMSProperty("org.openspcoop2.testsuite.jms.queue", true);
+	}
+	public String getJMSTopic(){
+		return getJMSProperty("org.openspcoop2.testsuite.jms.topic", true);
+	}
+	public String getJMSConnectionFactory(){
+		return getJMSProperty("org.openspcoop2.testsuite.jms.connectionFactory", true);
+	}
+	public String getJMSUsername(){
+		return getJMSProperty("org.openspcoop2.testsuite.jms.username", false);
+	}
+	public String getJMSPassword(){
+		return getJMSProperty("org.openspcoop2.testsuite.jms.password", false);
+	}
+	private String getJMSProperty(String name, boolean required){
+		String v = this.reader.getProperty(name);
+		if(v==null){
+			String msgErrore = "TestSuiteProperties, proprieta' '"+name+"' non definita";
+			if(required) {
+				TestSuiteProperties.log.error(msgErrore);
+			}
+			else {
+				TestSuiteProperties.log.warn(msgErrore);
+			}
+			return null;
+		}
+		return v.trim();
+	}
+	
 }

@@ -819,6 +819,45 @@ public class DatabaseMsgDiagnosticiComponent {
 		return resultsList;
 	}
 	
+	/**
+	 * Diagnostici emessi nella transazione, nell'ordine di emissione: ogni elemento contiene codice, severita e messaggio.
+	 */
+	public List<String[]> getDiagnosticiByIdTransazione(String idTransazione)throws TestSuiteException{
+		if(idTransazione==null)throw new TestSuiteException("Il parametro idTransazione vale null");
+		ResultSet res = null;
+		PreparedStatement prep = null;
+		List<String[]> resultsList = new ArrayList<>();
+		try {
+			String sql = "select * from "+CostantiDB.MSG_DIAGNOSTICI+" where "+CostantiDB.MSG_DIAGNOSTICI_COLUMN_ID_TRANSAZIONE+"=? order by "+CostantiDB.MSG_DIAGNOSTICI_COLUMN_GDO;
+			prep = this.connectionMsgDiagnostici.prepareStatement(sql);
+			prep.setString(1, idTransazione);
+			res = prep.executeQuery();
+			while(res.next()){
+				resultsList.add(new String[] {
+						res.getString(CostantiDB.MSG_DIAGNOSTICI_COLUMN_CODICE),
+						res.getString(CostantiDB.MSG_DIAGNOSTICI_COLUMN_SEVERITA),
+						res.getString(CostantiDB.MSG_DIAGNOSTICI_COLUMN_MESSAGGIO)});
+			}
+		} catch (SQLException e) {
+			throw new TestSuiteException("Errore nel database: "+e.getMessage(),
+			"nella fase DBC.getDiagnosticiByIdTransazione");
+		} finally{
+			try{
+				if(res!=null)
+					res.close();
+			}catch(Exception e){
+				// ignore
+			}
+			try{
+				if(prep!=null)
+					prep.close();
+			}catch(Exception e){
+				// ignore
+			}
+		}
+		return resultsList;
+	}
+	
 	public List<String> getMessaggiNonTrasformatiCorrettamente()throws TestSuiteException{
 		ResultSet res = null;
 		PreparedStatement prep = null;

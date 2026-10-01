@@ -59,6 +59,7 @@ import org.openspcoop2.testsuite.axis14.Axis14SoapUtils;
 import org.openspcoop2.testsuite.clients.ClientCore;
 import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
 import org.openspcoop2.testsuite.clients.ClientOneWay;
+import org.openspcoop2.testsuite.core.JMSTestUtilities;
 import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.clients.ClientSincrono;
 import org.openspcoop2.testsuite.core.Repository;
@@ -189,6 +190,17 @@ public class ConnettoriDiversiHTTP {
 		try{
 			if(this.c_topic!=null)this.c_topic.close();
 		}catch(Exception eClose){}
+	}
+	
+	private void svuotaCodaJMS() throws Exception{
+		
+		// I test su coda consumano il primo messaggio disponibile: eventuali messaggi residui (es. di un'esecuzione precedente interrotta o fallita)
+		// verrebbero letti al posto di quello prodotto dal test, facendo fallire a cascata tutti i test successivi su coda.
+		
+		TestSuiteProperties prop = TestSuiteProperties.getInstance();
+		JMSTestUtilities jms = new JMSTestUtilities(prop.getJMS_JNDIContext(), prop.getJMSConnectionFactory(), prop.getJMSUsername(), prop.getJMSPassword());
+		jms.svuotaCoda(prop.getJMSQueue(), 
+				org.openspcoop2.testsuite.core.TestSuiteProperties.getInstance().getIdMessaggioTrasporto().replace("X-", "").replaceAll("-", ""));
 	}
 	
 	private Object readObjectJMS(boolean queue,boolean textMode,boolean checkInfoEGov,String azione,String idEGov) throws Exception{
@@ -501,6 +513,9 @@ public class ConnettoriDiversiHTTP {
 			return;
 		}
 		
+		// Eliminazione di eventuali messaggi residui sulla coda
+		svuotaCodaJMS();
+		
 		// Invocazione SPCoop
 		org.apache.axis.Message sentMessage = this.invocazione(this.repositoryJMS_text_queue,CostantiTestSuite.PORTA_DELEGATA_JMS_TEXT_QUEUE);
 		
@@ -566,6 +581,9 @@ public class ConnettoriDiversiHTTP {
 		if(!this.doTestJMS){
 			return;
 		}
+		
+		// Eliminazione di eventuali messaggi residui sulla coda
+		svuotaCodaJMS();
 		
 		// Invocazione SPCoop
 		org.apache.axis.Message sentMessage = this.invocazione(this.repositoryJMS_bytes_queue,CostantiTestSuite.PORTA_DELEGATA_JMS_BYTES_QUEUE);
@@ -770,6 +788,9 @@ public class ConnettoriDiversiHTTP {
 			return;
 		}
 		
+		// Eliminazione di eventuali messaggi residui sulla coda
+		svuotaCodaJMS();
+		
 		// Invocazione SPCoop
 		org.apache.axis.Message sentMessage = this.invocazione(this.repositoryJMS_text_queue_propagazioneEGov,CostantiTestSuite.PORTA_DELEGATA_JMS_INFO_EGOV_QUEUE);
 		
@@ -905,6 +926,9 @@ public class ConnettoriDiversiHTTP {
 		if(!this.doTestJMS){
 			return;
 		}
+		
+		// Eliminazione di eventuali messaggi residui sulla coda
+		svuotaCodaJMS();
 		
 		// Invocazione SPCoop
 		org.apache.axis.Message sentMessage = this.invocazione(this.repositoryJMS_text_queue_sbustamentoSOAP,CostantiTestSuite.PORTA_DELEGATA_JMS_SBUSTAMENTO_SOAP_QUEUE);
