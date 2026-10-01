@@ -2685,6 +2685,64 @@
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="sendTextOnTopicJMS_Sbustato" />
         </porta-delegata>
+
+        <!-- ConsegnaApplicativa con connettore di tipo JMS e profilo sincrono -->
+        <porta-delegata gestione-manifest="abilitato" nome="JMSSincrono_TextQueue" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />              
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="JMSSincrono_TextQueue" />
+        </porta-delegata>
+        <porta-delegata gestione-manifest="abilitato" nome="JMSSincrono_BytesQueue" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />              
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="JMSSincrono_BytesQueue" />
+        </porta-delegata>
+        <porta-delegata gestione-manifest="abilitato" nome="JMSSincrono_TextTopic" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />              
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="JMSSincrono_TextTopic" />
+        </porta-delegata>
+        <porta-delegata gestione-manifest="abilitato" nome="JMSSincrono_BytesTopic" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />              
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="JMSSincrono_BytesTopic" />
+        </porta-delegata>
+        <porta-delegata gestione-manifest="abilitato" nome="JMSSincrono_PropagazioneInfoEGovQueue" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />              
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="JMSSincrono_PropagazioneInfoEGovQueue" />
+        </porta-delegata>
+        <porta-delegata gestione-manifest="abilitato" nome="JMSSincrono_PropagazioneInfoEGovTopic" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />              
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="JMSSincrono_PropagazioneInfoEGovTopic" />
+        </porta-delegata>
+        <porta-delegata gestione-manifest="abilitato" nome="JMSSincrono_SbustamentoQueue" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />              
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="JMSSincrono_SbustamentoQueue" />
+        </porta-delegata>
+        <porta-delegata gestione-manifest="abilitato" nome="JMSSincrono_SbustamentoTopic" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />              
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="JMSSincrono_SbustamentoTopic" />
+        </porta-delegata>
+        <porta-delegata gestione-manifest="abilitato" nome="JMSSincrono_OperationWrapper" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />              
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="JMSSincrono_OperationWrapper" />
+        </porta-delegata>
+        <porta-delegata gestione-manifest="abilitato" nome="JMSSincrono_TrasformazioneRisposta" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />              
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="JMSSincrono_TrasformazioneRisposta" />
+        </porta-delegata>
+        <!-- ConsegnaApplicativa con connettore di tipo JMS e profilo oneway: la proprieta' operationWrapper non produce una risposta -->
+        <porta-delegata gestione-manifest="abilitato" nome="JMSOneway_OperationWrapper" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />              
+            <servizio tipo="spc" nome="ComunicazioneVariazione" />
+            <azione nome="JMSOneway_OperationWrapper" />
+        </porta-delegata>
         
         <!-- Consegna del contenuto applicativo, sbustato dallo scheletro Soap, al servizio applicativo -->
         <porta-delegata gestione-manifest="abilitato" nome="ConsegnaContenutiApplicativi" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
@@ -7283,6 +7341,125 @@
 	    <soggetti>
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 	    </soggetti>
+        </porta-applicativa>
+
+        <!-- ConsegnaApplicativa con connettore di tipo JMS e profilo sincrono -->
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_JMSSincrono_TextQueue">
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="JMSSincrono_TextQueue" />
+            <servizio-applicativo nome="PubbTestQueueAsText" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
+        </porta-applicativa>
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_JMSSincrono_BytesQueue">
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="JMSSincrono_BytesQueue" />
+            <servizio-applicativo nome="PubbTestQueueAsBytes" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
+        </porta-applicativa>
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_JMSSincrono_TextTopic">
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="JMSSincrono_TextTopic" />
+            <servizio-applicativo nome="PubbTestTopicAsText" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
+        </porta-applicativa>
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_JMSSincrono_BytesTopic">
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="JMSSincrono_BytesTopic" />
+            <servizio-applicativo nome="PubbTestTopicAsBytes" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
+        </porta-applicativa>
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_JMSSincrono_PropagazioneInfoEGovQueue">
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="JMSSincrono_PropagazioneInfoEGovQueue" />
+            <servizio-applicativo nome="PubbTestQueueAsText" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
+            <proprieta nome="tipoMittQUEUE" valore="tipoMittente" />
+            <proprieta nome="mittQUEUE" valore="mittente" />
+            <proprieta nome="tipoDestinatarioQUEUE" valore="tipoDestinatario" />
+            <proprieta nome="destinatarioQUEUE" valore="destinatario" />
+            <proprieta nome="tipoServizioQUEUE" valore="tipoServizio" />
+            <proprieta nome="servizioQUEUE" valore="servizio" />
+            <proprieta nome="azioneQUEUE" valore="azione" />
+            <proprieta nome="idQUEUE" valore="identificativo" />
+        </porta-applicativa>
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_JMSSincrono_PropagazioneInfoEGovTopic">
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="JMSSincrono_PropagazioneInfoEGovTopic" />
+            <servizio-applicativo nome="PubbTestTopicAsText" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
+            <proprieta nome="tipoMittTOPIC" valore="tipoMittente" />
+            <proprieta nome="mittTOPIC" valore="mittente" />
+            <proprieta nome="tipoDestinatarioTOPIC" valore="tipoDestinatario" />
+            <proprieta nome="destinatarioTOPIC" valore="destinatario" />
+            <proprieta nome="tipoServizioTOPIC" valore="tipoServizio" />
+            <proprieta nome="servizioTOPIC" valore="servizio" />
+            <proprieta nome="azioneTOPIC" valore="azione" />
+            <proprieta nome="idTOPIC" valore="identificativo" />
+        </porta-applicativa>
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_JMSSincrono_SbustamentoQueue">
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="JMSSincrono_SbustamentoQueue" />
+            <servizio-applicativo nome="PubbTestQueueAsTextSbustato" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
+        </porta-applicativa>
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_JMSSincrono_SbustamentoTopic">
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="JMSSincrono_SbustamentoTopic" />
+            <servizio-applicativo nome="PubbTestTopicAsTextSbustato" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
+        </porta-applicativa>
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_JMSSincrono_OperationWrapper">
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="JMSSincrono_OperationWrapper" />
+            <servizio-applicativo nome="PubbTestQueueAsText" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
+            <proprieta nome="connettori.jms.response.soap.operationWrapper" valore="true" />
+        </porta-applicativa>
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_JMSSincrono_TrasformazioneRisposta">
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="JMSSincrono_TrasformazioneRisposta" />
+            <servizio-applicativo nome="PubbTestQueueAsText" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
+            <trasformazioni>
+                <!-- La risposta vuota generata dal connettore JMS viene sostituita con un esito di avvenuta pubblicazione -->
+                <!-- La regola agisce solamente sulla risposta: l'elemento 'richiesta' non viene volutamente definito -->
+                <regola nome="esitoPubblicazione" posizione="1">
+                    <risposta nome="esitoPubblicazione" posizione="1" conversione="true" conversione-tipo="template">
+                        <!-- <ns1:getQuoteResponse xmlns:ns1="urn:xmethods-delayed-quotes"><esito>Messaggio pubblicato</esito></ns1:getQuoteResponse> -->
+                        <conversione-template>PG5zMTpnZXRRdW90ZVJlc3BvbnNlIHhtbG5zOm5zMT0idXJuOnhtZXRob2RzLWRlbGF5ZWQtcXVvdGVzIj48ZXNpdG8+TWVzc2FnZ2lvIHB1YmJsaWNhdG88L2VzaXRvPjwvbnMxOmdldFF1b3RlUmVzcG9uc2U+</conversione-template>
+                    </risposta>
+                </regola>
+            </trasformazioni>
+        </porta-applicativa>
+        <!-- ConsegnaApplicativa con connettore di tipo JMS e profilo oneway: la proprieta' operationWrapper non produce una risposta -->
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_JMSOneway_OperationWrapper">
+            <servizio tipo="spc" nome="ComunicazioneVariazione" />
+            <azione nome="JMSOneway_OperationWrapper" />
+            <servizio-applicativo nome="PubbTestQueueAsText" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
+            <proprieta nome="connettori.jms.response.soap.operationWrapper" valore="true" />
         </porta-applicativa>
         
         

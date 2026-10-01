@@ -536,6 +536,30 @@ public class CostantiProprieta {
 	public static boolean existsConnettoriRequestTimeout(List<Proprieta> proprieta) {
 		return readIntValueWithDefault(proprieta, CONNETTORE_TIMEOUT_INPUT_STREAM_REQUEST_TIMEOUT, -1) > 0;
 	}
+
+	public static final int CONNETTORE_JMS_RESPONSE_REST_RETURN_CODE_DEFAULT = 204;
+	private static final String CONNETTORE_JMS_RESPONSE_REST_RETURN_CODE = "connettori.jms.response.rest.returnCode";
+	private static final String CONNETTORE_JMS_RESPONSE_SOAP_OPERATION_WRAPPER = "connettori.jms.response.soap.operationWrapper";
+
+	public static int getConnettoreJmsResponseRestReturnCode(List<Proprieta> proprieta, int defaultValue) throws CoreException {
+		String valueS = readValue(proprieta, CONNETTORE_JMS_RESPONSE_REST_RETURN_CODE);
+		if(valueS==null || StringUtils.isEmpty(valueS)) {
+			return defaultValue;
+		}
+		int value = -1;
+		try {
+			value = Integer.parseInt(valueS);
+		}catch(Exception e) {
+			// gestito sotto
+		}
+		if(value<200 || value>299) {
+			throw new CoreException("Valore '"+valueS+"' della proprietà '"+CONNETTORE_JMS_RESPONSE_REST_RETURN_CODE+"' non valido: atteso un codice HTTP 2xx");
+		}
+		return value;
+	}
+	public static boolean isConnettoreJmsResponseSoapOperationWrapper(List<Proprieta> proprieta, boolean defaultValue) {
+		return readBooleanValueWithDefault(proprieta, CONNETTORE_JMS_RESPONSE_SOAP_OPERATION_WRAPPER, defaultValue, CONNETTORE_VALUE_ENABLED, CONNETTORE_VALUE_DISABLED);
+	}
 	
 	public static final String CONNETTORE_HEADER_VALUE_ENCODING_RFC2047_RICHIESTA_ENABLED = "connettori.header.value.encodingRFC2047.request.enabled";
 	public static final String CONNETTORE_HEADER_VALUE_ENCODING_RFC2047_RISPOSTA_ENABLED = "connettori.header.value.encodingRFC2047.response.enabled";

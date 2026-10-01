@@ -24,6 +24,7 @@
 package org.openspcoop2.pdd.core.connettori;
 
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -39,16 +40,34 @@ import javax.jms.Session;
 import javax.jms.Topic;
 import javax.naming.Context;
 import javax.naming.InitialContext;
+import javax.xml.namespace.QName;
+import javax.xml.soap.SOAPBody;
+import javax.xml.soap.SOAPElement;
+import javax.xml.soap.SOAPException;
 
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
+import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.exception.MessageException;
+import org.openspcoop2.message.exception.MessageNotSupportedException;
+import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.soap.TunnelSoapUtils;
+import org.openspcoop2.pdd.config.CostantiProprieta;
+import org.openspcoop2.pdd.core.Utilities;
+import org.openspcoop2.pdd.services.connector.ConnectorException;
+import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.utils.SemaphoreLock;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
+import org.openspcoop2.utils.transport.TransportResponseContext;
 import org.openspcoop2.utils.transport.TransportUtils;
 
 /**
@@ -73,6 +92,9 @@ public class ConnettoreJMS extends ConnettoreBase {
 
 	/** acknowledgeModeSessione */
 	private int acknowledgeModeSessione = javax.jms.Session.AUTO_ACKNOWLEDGE;
+
+	/** Codice HTTP della risposta generata per le API REST */
+	private int returnCodeRest = CostantiProprieta.CONNETTORE_JMS_RESPONSE_REST_RETURN_CODE_DEFAULT;
 
 
 
@@ -150,6 +172,16 @@ public class ConnettoreJMS extends ConnettoreBase {
 				this.acknowledgeModeSessione = javax.jms.Session.DUPS_OK_ACKNOWLEDGE;
 			else
 				this.logger.error("Tipo di acknowledgeModeSessione non conosciuto (viene utilizzato il default:AUTO_ACKNOWLEDGE)");
+		}
+
+		// codice HTTP della risposta REST: verificato prima della pubblicazione, per non pubblicare messaggi con una configurazione errata
+		if(this.isRest) {
+			try {
+				this.returnCodeRest = CostantiProprieta.getConnettoreJmsResponseRestReturnCode(this.proprietaPorta, CostantiProprieta.CONNETTORE_JMS_RESPONSE_REST_RETURN_CODE_DEFAULT);
+			}catch(CoreException e) {
+				this.errore = e.getMessage();
+				return false;
+			}
 		}
 
 		return sendJMS();
@@ -539,8 +571,8 @@ public class ConnettoreJMS extends ConnettoreBase {
 				this.logger.debug("Connection.close ...");
 			qc.close();
 
-			// codice di consegna per forza uguale a OK
-			this.codice = 200;
+			// codice di consegna: la pubblicazione non prevede una risposta del destinatario
+			this.codice = this.isRest ? this.returnCodeRest : 200;
 
 			if(this.debug)
 				this.logger.debug("Connettore jms ha pubblicato con successo");
@@ -555,6 +587,19 @@ public class ConnettoreJMS extends ConnettoreBase {
 			
 			/* ------------  PostOutRequestHandler ------------- */
 			this.postOutRequest();
+			
+			
+			
+			/* ------------  Risposta ------------- */
+			try {
+				buildResponse();
+			}catch(ConnettoreException e) {
+				this.eccezioneProcessamento = e;
+				String msgErrore = this.readExceptionMessageFromException(e);
+				this.errore = "Messaggio pubblicato tramite connettore JMS; generazione della risposta non riuscita: "+msgErrore;
+				this.logger.error(this.errore,e);
+				return false;
+			}
 			
 			
 			
@@ -620,6 +665,88 @@ public class ConnettoreJMS extends ConnettoreBase {
 			}
 		}
 
+	}
+
+
+
+	/**
+	 * Genera la risposta restituita al client: il destinatario di una pubblicazione JMS non produce alcuna risposta.
+	 * 
+	 * Per le API REST viene sempre generata una risposta senza contenuto con il codice HTTP configurato (default 204).
+	 * Per le API SOAP viene generato un SOAP Envelope con Body vuoto o contenente l'elemento wrapper della risposta 
+	 * dell'operazione (proprietà 'connettori.jms.response.soap.operationWrapper'); nel profilo oneway la risposta 
+	 * non viene generata poiché non verrebbe comunque restituita al client.
+	 */
+	private void buildResponse() throws ConnettoreException {
+		
+		if(this.isSoap && this.busta!=null && ProfiloDiCollaborazione.ONEWAY.equals(this.busta.getProfiloDiCollaborazione())) {
+			if(this.debug)
+				this.logger.debug("Profilo oneway: risposta non generata");
+			return;
+		}
+		if(!this.isSoap && !this.isRest) {
+			return;
+		}
+		
+		try {
+			OpenSPCoop2MessageFactory messageFactory = Utilities.getOpenspcoop2MessageFactory(this.logger.getLogger(),this.requestMsg, this.requestInfo, MessageRole.RESPONSE);
+			
+			TransportResponseContext responseContext = new TransportResponseContext(this.logger.getLogger());
+			responseContext.setCodiceTrasporto(this.codice+"");
+			
+			if(this.isRest) {
+				// risposta senza contenuto, costruita come per un connettore HTTP che riceve una risposta vuota (Content-Length: 0): 
+				// il codice di trasporto viene restituito al client
+				responseContext.setContentLength(0);
+				OpenSPCoop2MessageParseResult pr = messageFactory.createMessage(this.requestMsg.getMessageType(), responseContext,
+						(InputStream) null, null, this.openspcoopProperties.getAttachmentsProcessingMode());
+				if(pr.getParseException()!=null) {
+					throw new ConnettoreException("Costruzione della risposta vuota non riuscita", pr.getParseException().getSourceException());
+				}
+				this.responseMsg = pr.getMessage();
+			}
+			else {
+				// SOAP Envelope con Body vuoto, generato dal connettore: la dimensione non corrisponde ad un contenuto ricevuto e non viene indicata
+				this.responseMsg = messageFactory.createEmptyMessage(this.requestMsg.getMessageType(),MessageRole.RESPONSE);
+				this.responseMsg.setTransportResponseContext(responseContext);
+				if(CostantiProprieta.isConnettoreJmsResponseSoapOperationWrapper(this.proprietaPorta, false)) {
+					addOperationWrapper();
+				}
+			}
+		}catch(ConnectorException | UtilsException | MessageException | MessageNotSupportedException | SOAPException e) {
+			throw new ConnettoreException(e.getMessage(), e);
+		}
+		
+		if(this.debug)
+			this.logger.debug("Generata risposta con codice di trasporto '"+this.codice+"'");
+	}
+	
+	private void addOperationWrapper() throws MessageException, MessageNotSupportedException, SOAPException {
+		SOAPBody bodyRichiesta = this.requestMsg.castAsSoap().getSOAPBody();
+		SOAPElement operazione = bodyRichiesta!=null ? SoapUtils.getNotEmptyFirstChildSOAPElement(bodyRichiesta) : null;
+		if(operazione==null) {
+			if(this.debug)
+				this.logger.debug("SOAP Body della richiesta vuoto: elemento wrapper della risposta non generato");
+			return;
+		}
+		
+		// Convenzione RPC e document/literal wrapped: elemento con il nome dell'operazione e il suffisso 'Response', nello stesso namespace della richiesta
+		String localName = operazione.getLocalName()+"Response";
+		String namespace = operazione.getNamespaceURI();
+		String prefix = operazione.getPrefix();
+		QName qname = null;
+		if(namespace!=null && !"".equals(namespace)) {
+			qname = new QName(namespace, localName, prefix!=null ? prefix : "");
+		}
+		else {
+			qname = new QName(localName);
+		}
+		
+		OpenSPCoop2SoapMessage soapRisposta = this.responseMsg.castAsSoap();
+		soapRisposta.getSOAPBody().addChildElement(qname);
+		
+		if(this.debug)
+			this.logger.debug("Aggiunto elemento wrapper della risposta '"+qname+"'");
 	}
 
 

@@ -29,6 +29,7 @@
         <azione nome="PropagazioneInfoEGovOnTopic"/>
         <azione nome="sendTextOnQueueJMS_Sbustato"/>
         <azione nome="sendTextOnTopicJMS_Sbustato"/>
+        <azione nome="JMSOneway_OperationWrapper"/>
         <!-- SAAJ -->
         <azione nome="saaj"/>
 	<!-- HTTP-CORE -->
@@ -98,6 +99,17 @@
 	<azione nome="WSSEncryptAttachmentsElementOp2Format"/>
 	<azione nome="WSSEncryptAttachmentsOp2FormatOneOnly"/>
         <azione nome="WSSEncryptP12Attachments"/>
+        <!-- JMS -->
+        <azione nome="JMSSincrono_TextQueue"/>
+        <azione nome="JMSSincrono_BytesQueue"/>
+        <azione nome="JMSSincrono_TextTopic"/>
+        <azione nome="JMSSincrono_BytesTopic"/>
+        <azione nome="JMSSincrono_PropagazioneInfoEGovQueue"/>
+        <azione nome="JMSSincrono_PropagazioneInfoEGovTopic"/>
+        <azione nome="JMSSincrono_SbustamentoQueue"/>
+        <azione nome="JMSSincrono_SbustamentoTopic"/>
+        <azione nome="JMSSincrono_OperationWrapper"/>
+        <azione nome="JMSSincrono_TrasformazioneRisposta"/>
 	<azione nome="WSSEncryptLocalForwardSoloRichiesta"/>
         <azione nome="WSSSignature"/>
         <azione nome="WSSSignatureP12"/>

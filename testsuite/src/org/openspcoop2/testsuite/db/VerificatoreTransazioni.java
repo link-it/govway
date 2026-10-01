@@ -104,6 +104,30 @@ public class VerificatoreTransazioni {
 			throws TestSuiteException {
 		return _getValuesTraced(this.prepareStatement(idTransazione),colonna);
 	}
+	/**
+	 * Valori della colonna per le transazioni con l'identificativo di messaggio di richiesta e il ruolo della porta (es. 'delegata' o 'applicativa') indicati.
+	 */
+	public String[] getValuesTracedByIdMessaggio(String idMessaggioRichiesta, String pddRuolo, String colonna)
+			throws TestSuiteException {
+		PreparedStatement pstmt = null;
+		try{
+			pstmt = this.con
+					.prepareStatement("select * from "+CostantiDB.TRANSAZIONI+" where "+this.fieldConverter.toColumn(Transazione.model().ID_MESSAGGIO_RICHIESTA, false)+"=? AND "+
+							this.fieldConverter.toColumn(Transazione.model().PDD_RUOLO, false)+"=?");
+			pstmt.setString(1, idMessaggioRichiesta);
+			pstmt.setString(2, pddRuolo);
+		}catch(Exception e){
+			try{
+				if(pstmt!=null) {
+					pstmt.close();
+				}
+			}catch(Exception eClose){
+				// ignore
+			}
+			throw new TestSuiteException(e,e.getMessage());
+		}
+		return _getValuesTraced(pstmt,colonna);
+	}
 	private String[] _getValuesTraced(PreparedStatement pstmt,String colonna) throws TestSuiteException{
 		ResultSet res = null;
 		try {

@@ -844,6 +844,28 @@ public class CostantiTestSuite {
 	public static final String PORTA_DELEGATA_JMS_SBUSTAMENTO_SOAP_QUEUE = "sendTextOnQueueJMS_Sbustato";
 	/** Porta delegata per verifica connettore JMS: sbustamento soap su topic */
 	public static final String PORTA_DELEGATA_JMS_SBUSTAMENTO_SOAP_TOPIC = "sendTextOnTopicJMS_Sbustato";
+	/** Porta delegata per verifica connettore JMS con profilo sincrono: text su queue */
+	public static final String PORTA_DELEGATA_JMS_SINCRONO_TEXT_QUEUE = "JMSSincrono_TextQueue";
+	/** Porta delegata per verifica connettore JMS con profilo sincrono: bytes su queue */
+	public static final String PORTA_DELEGATA_JMS_SINCRONO_BYTES_QUEUE = "JMSSincrono_BytesQueue";
+	/** Porta delegata per verifica connettore JMS con profilo sincrono: text su topic */
+	public static final String PORTA_DELEGATA_JMS_SINCRONO_TEXT_TOPIC = "JMSSincrono_TextTopic";
+	/** Porta delegata per verifica connettore JMS con profilo sincrono: bytes su topic */
+	public static final String PORTA_DELEGATA_JMS_SINCRONO_BYTES_TOPIC = "JMSSincrono_BytesTopic";
+	/** Porta delegata per verifica connettore JMS con profilo sincrono: propagazione info egov su queue */
+	public static final String PORTA_DELEGATA_JMS_SINCRONO_INFO_EGOV_QUEUE = "JMSSincrono_PropagazioneInfoEGovQueue";
+	/** Porta delegata per verifica connettore JMS con profilo sincrono: propagazione info egov su topic */
+	public static final String PORTA_DELEGATA_JMS_SINCRONO_INFO_EGOV_TOPIC = "JMSSincrono_PropagazioneInfoEGovTopic";
+	/** Porta delegata per verifica connettore JMS con profilo sincrono: sbustamento soap su queue */
+	public static final String PORTA_DELEGATA_JMS_SINCRONO_SBUSTAMENTO_SOAP_QUEUE = "JMSSincrono_SbustamentoQueue";
+	/** Porta delegata per verifica connettore JMS con profilo sincrono: sbustamento soap su topic */
+	public static final String PORTA_DELEGATA_JMS_SINCRONO_SBUSTAMENTO_SOAP_TOPIC = "JMSSincrono_SbustamentoTopic";
+	/** Porta delegata per verifica connettore JMS con profilo sincrono: risposta con elemento wrapper dell'operazione */
+	public static final String PORTA_DELEGATA_JMS_SINCRONO_OPERATION_WRAPPER = "JMSSincrono_OperationWrapper";
+	/** Porta delegata per verifica connettore JMS con profilo sincrono: risposta generata tramite trasformazione */
+	public static final String PORTA_DELEGATA_JMS_SINCRONO_TRASFORMAZIONE_RISPOSTA = "JMSSincrono_TrasformazioneRisposta";
+	/** Porta delegata per verifica connettore JMS con profilo oneway: proprieta' operationWrapper ignorata */
+	public static final String PORTA_DELEGATA_JMS_ONEWAY_OPERATION_WRAPPER = "JMSOneway_OperationWrapper";
 	
 	/** Porta delegata per verifica connettore SAAJ: oneway */
 	public static final String PORTA_DELEGATA_SAAJ_ONEWAY = "SAAJOneway";
@@ -1294,6 +1316,28 @@ public class CostantiTestSuite {
 	public static final String SPCOOP_SERVIZIO_ONEWAY_JMS_SBUSTAMENTO_SOAP_QUEUE = "sendTextOnQueueJMS_Sbustato";
 	/** ENTITA SPCOOP: Nome Azione del Servizio OneWay per verifica connettore JMS: sbustamento soap su topic */
 	public static final String SPCOOP_SERVIZIO_ONEWAY_JMS_SBUSTAMENTO_SOAP_TOPIC = "sendTextOnTopicJMS_Sbustato";
+	/** ENTITA SPCOOP: Nome Azione del Servizio Sincrono per verifica connettore JMS: text su queue */
+	public static final String SPCOOP_SERVIZIO_SINCRONO_JMS_TEXT_QUEUE = "JMSSincrono_TextQueue";
+	/** ENTITA SPCOOP: Nome Azione del Servizio Sincrono per verifica connettore JMS: bytes su queue */
+	public static final String SPCOOP_SERVIZIO_SINCRONO_JMS_BYTES_QUEUE = "JMSSincrono_BytesQueue";
+	/** ENTITA SPCOOP: Nome Azione del Servizio Sincrono per verifica connettore JMS: text su topic */
+	public static final String SPCOOP_SERVIZIO_SINCRONO_JMS_TEXT_TOPIC = "JMSSincrono_TextTopic";
+	/** ENTITA SPCOOP: Nome Azione del Servizio Sincrono per verifica connettore JMS: bytes su topic */
+	public static final String SPCOOP_SERVIZIO_SINCRONO_JMS_BYTES_TOPIC = "JMSSincrono_BytesTopic";
+	/** ENTITA SPCOOP: Nome Azione del Servizio Sincrono per verifica connettore JMS: propagazione info egov su queue */
+	public static final String SPCOOP_SERVIZIO_SINCRONO_JMS_INFO_EGOV_QUEUE = "JMSSincrono_PropagazioneInfoEGovQueue";
+	/** ENTITA SPCOOP: Nome Azione del Servizio Sincrono per verifica connettore JMS: propagazione info egov su topic */
+	public static final String SPCOOP_SERVIZIO_SINCRONO_JMS_INFO_EGOV_TOPIC = "JMSSincrono_PropagazioneInfoEGovTopic";
+	/** ENTITA SPCOOP: Nome Azione del Servizio Sincrono per verifica connettore JMS: sbustamento soap su queue */
+	public static final String SPCOOP_SERVIZIO_SINCRONO_JMS_SBUSTAMENTO_SOAP_QUEUE = "JMSSincrono_SbustamentoQueue";
+	/** ENTITA SPCOOP: Nome Azione del Servizio Sincrono per verifica connettore JMS: sbustamento soap su topic */
+	public static final String SPCOOP_SERVIZIO_SINCRONO_JMS_SBUSTAMENTO_SOAP_TOPIC = "JMSSincrono_SbustamentoTopic";
+	/** ENTITA SPCOOP: Nome Azione del Servizio Sincrono per verifica connettore JMS: risposta con elemento wrapper dell'operazione */
+	public static final String SPCOOP_SERVIZIO_SINCRONO_JMS_OPERATION_WRAPPER = "JMSSincrono_OperationWrapper";
+	/** ENTITA SPCOOP: Nome Azione del Servizio Sincrono per verifica connettore JMS: risposta generata tramite trasformazione */
+	public static final String SPCOOP_SERVIZIO_SINCRONO_JMS_TRASFORMAZIONE_RISPOSTA = "JMSSincrono_TrasformazioneRisposta";
+	/** ENTITA SPCOOP: Nome Azione del Servizio OneWay per verifica connettore JMS: proprieta' operationWrapper ignorata */
+	public static final String SPCOOP_SERVIZIO_ONEWAY_JMS_OPERATION_WRAPPER = "JMSOneway_OperationWrapper";
 	/** ENTITA SPCOOP: Nome Azione del Servizio OneWay per verifica connettore SAAJ */
 	public static final String SPCOOP_SERVIZIO_ONEWAY_SAAJ = "saaj";
 	/** ENTITA SPCOOP: Nome Azione del Servizio OneWay per verifica connettore HTTPCORE */
