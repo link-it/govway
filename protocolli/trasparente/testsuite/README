@@ -128,6 +128,8 @@ Requisiti globali:
         2.c) Deve essere copiato il contenuto del file ./protocolli/trasparente/testsuite/src/testsuite_local.properties in /etc/govway
 3) Impostare un tempo di rispedizione per la coda JMS 'toInoltroBuste' e 'toConsegnaContenutiApplicativi' a 15 secondi
    (<attribute name="RedeliveryDelay">15000</attribute>)
+4) Connettori JMS: su wildfly i test utilizzano il broker JMS interno all'application server, mentre su tomcat o in modalità jenkins (-Djenkins=true)
+   un broker embedded avviato dalla testsuite, che richiede l'aggiunta di librerie nel classpath di GovWay: vedi testsuite/jms.README
 
 ** Porta Delegata (SOAP) **
 

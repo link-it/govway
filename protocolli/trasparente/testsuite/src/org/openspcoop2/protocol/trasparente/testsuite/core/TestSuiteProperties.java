@@ -721,6 +721,9 @@ public class TestSuiteProperties implements UnitsTestSuiteProperties {
 	
 	
 	public java.util.Properties getJMS_JNDIContext() {
+		if(org.openspcoop2.testsuite.core.EmbeddedJMSBroker.isStarted()) {
+			return org.openspcoop2.testsuite.core.EmbeddedJMSBroker.getJNDIContext(getJMSQueue(), getJMSTopic());
+		}
 		String prefix = "org.openspcoop2.testsuite.jms-lookup.property.";
 		java.util.Properties prop = new java.util.Properties();
 		for (String key : this.reader.stringPropertyNames()) {
@@ -737,6 +740,9 @@ public class TestSuiteProperties implements UnitsTestSuiteProperties {
 		return getJMSProperty("org.openspcoop2.testsuite.jms.topic", true);
 	}
 	public String getJMSConnectionFactory(){
+		if(org.openspcoop2.testsuite.core.EmbeddedJMSBroker.isStarted()) {
+			return org.openspcoop2.testsuite.core.EmbeddedJMSBroker.CONNECTION_FACTORY;
+		}
 		return getJMSProperty("org.openspcoop2.testsuite.jms.connectionFactory", true);
 	}
 	public String getJMSUsername(){

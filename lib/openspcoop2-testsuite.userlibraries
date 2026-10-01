@@ -38,6 +38,11 @@
     <library name="openspcoop2_3.4.3_lib_apacheds" systemlibrary="false">
         <archive path="/op2_3.4.dev/lib/testsuite/apacheds/apacheds-all-2.0.0.AM27-gov4j-1.jar"/>
     </library>    
+    <library name="openspcoop2_3.4.3_lib_jms-broker-activemq" systemlibrary="false">
+        <archive path="/op2_3.4.dev/lib/testsuite/jms-broker-activemq/activemq-broker-6.3.2.jar"/>
+        <archive path="/op2_3.4.dev/lib/testsuite/jms-broker-activemq/activemq-client-6.3.2.jar"/>
+        <archive path="/op2_3.4.dev/lib/testsuite/jms-broker-activemq/hawtbuf-1.11.jar"/>
+    </library>
     <library name="openspcoop2_3.4.3_lib_dynamicAnalysis" systemlibrary="false">
         <archive path="/op2_3.4.dev/lib/dynamicAnalysis/zap-clientapi-1.16.0.jar"/>
     </library>

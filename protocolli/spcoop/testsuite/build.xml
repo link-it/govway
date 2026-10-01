@@ -53,6 +53,25 @@
 			<var name="jboss_jars" value="applicationServer"/> <!-- In modo da non rilevare nessun jar -->
 		</then>
 	</if>	
+	<!-- Broker JMS embedded: su tomcat, o in modalità jenkins, viene avviato all'interno della JVM dei test (vedi testsuite/jms.README) -->
+	<var name="jms_broker_jars" value="__nessunJar__"/>
+	<var name="jms_api_jar" value="__nessunJar__"/>
+	<if>
+		<or>
+			<matches string="${as}" pattern="tomcat.*"/>
+			<equals arg1="${jenkins}" arg2="true"/>
+		</or>
+		<then>
+			<var name="jms_broker_jars" value="*.jar"/>
+			<!-- su wildfly le API JMS sono presenti in wildfly-client-all (lib/applicationServer/${as}), che su tomcat non viene incluso -->
+			<if>
+				<matches string="${as}" pattern="tomcat.*"/>
+				<then>
+					<var name="jms_api_jar" value="jakarta.jms-api-3.1.0.jar"/>
+				</then>
+			</if>
+		</then>
+	</if>
 	
 	
 	<!-- CLASSPATH -->
@@ -157,6 +176,10 @@
 			<include name="jakarta.annotation-api-3.0.0.jar"/>
 			<include name="jakarta.jws-api-3.0.0.jar"/>
 			<include name="jakarta.servlet-api-6.1.0.jar"/>
+			<include name="${jms_api_jar}"/>
+		</fileset>
+		<fileset dir="${openspcoop2_lib}/testsuite/jms-broker-activemq" erroronmissingdir="false" >
+			<include name="${jms_broker_jars}"/>
 		</fileset>
 
 	</path>

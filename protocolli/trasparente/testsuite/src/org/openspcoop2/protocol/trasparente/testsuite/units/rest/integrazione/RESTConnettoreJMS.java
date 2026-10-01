@@ -32,13 +32,13 @@ import org.openspcoop2.protocol.trasparente.testsuite.core.DatabaseProperties;
 import org.openspcoop2.protocol.trasparente.testsuite.core.FileSystemUtilities;
 import org.openspcoop2.protocol.trasparente.testsuite.core.TestSuiteProperties;
 import org.openspcoop2.protocol.trasparente.testsuite.core.Utilities;
+import org.openspcoop2.testsuite.core.EmbeddedJMSBroker;
 import org.openspcoop2.testsuite.core.JMSTestUtilities;
 import org.openspcoop2.testsuite.core.JMSTestUtilities.JMSConsumer;
 import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.db.DatabaseMsgDiagnosticiComponent;
 import org.openspcoop2.testsuite.db.VerificatoreTransazioni;
-import org.openspcoop2.testsuite.units.CooperazioneBase;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.transport.http.HttpConstants;
@@ -60,8 +60,8 @@ import org.testng.annotations.Test;
  * personalizzabile tramite la proprietà 'connettori.jms.response.rest.returnCode'
  * ed eventualmente modificabile tramite una trasformazione della risposta.
  *
- * I test richiedono il broker JMS interno all'application server e vengono quindi eseguiti solamente su WildFly
- * e non in ambiente Jenkins.
+ * Su WildFly viene utilizzato il broker JMS interno all'application server; su tomcat, o in modalità jenkins (opzione '-Djenkins=true'),
+ * il broker embedded avviato dalla testsuite (EmbeddedJMSBroker).
  *
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$
@@ -106,19 +106,17 @@ public class RESTConnettoreJMS {
 	public void testOpenspcoopCoreLog_raccoltaTempoAvvioTest() throws TestSuiteException {
 		this.dataAvvioGruppoTest = DateManager.getDate();
 
+		String versionJbossas = null;
 		try{
-			String versionJbossas = Utilities.readApplicationServerVersion();
-			if(versionJbossas.startsWith("tomcat")){
-				System.out.println("WARNING: Verifiche risposta connettore JMS disabilitate per Tomcat");
-				this.doTestJMS = false;
-			}
+			versionJbossas = Utilities.readApplicationServerVersion();
 		}catch(Exception e){
 			System.err.println("Identificazione A.S. non riuscita: "+e.getMessage());
 			e.printStackTrace(System.out);
 		}
-		if(this.doTestJMS && CooperazioneBase.isJenkins()) {
-			System.out.println("WARNING: Verifiche risposta connettore JMS disabilitate in ambiente jenkins");
-			this.doTestJMS = false;
+		
+		// Su tomcat, o in modalità jenkins, le code/topic sono gestite dal broker embedded della testsuite
+		if(EmbeddedJMSBroker.isRequired(versionJbossas)){
+			EmbeddedJMSBroker.start();
 		}
 
 		if(!this.doTestJMS){

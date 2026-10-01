@@ -1,0 +1,50 @@
+Broker JMS embedded per la testsuite (ActiveMQ Classic, licenza Apache 2.0)
+=========================================================================
+
+Utilizzato dai test sui connettori JMS delle testsuite protocolli/spcoop/testsuite e protocolli/trasparente/testsuite.
+Le librerie sono definite nel modulo mvn/dependencies/testsuite/test/jms-broker-activemq e vengono copiate in lib/testsuite/jms-broker-activemq.
+
+Quando viene utilizzato
+-----------------------
+
+Su application server tomcat (che non dispone di un broker JMS interno) o in modalità jenkins
+(opzione '-Djenkins=true'), la testsuite avvia un broker ActiveMQ all'interno della propria JVM
+(classe org.openspcoop2.testsuite.core.EmbeddedJMSBroker) in ascolto su:
+
+	tcp://127.0.0.1:61616
+
+e i test JMS leggono i messaggi pubblicati da GovWay su tale broker.
+Su wildfly, al di fuori della modalità jenkins, viene invece utilizzato il broker interno all'application server.
+
+Configurazione di GovWay
+------------------------
+
+Nelle stesse modalità il target 'preparazioneAmbiente' imposta i connettori JMS della configurazione
+(segnaposto CONTEXT_JMS_* e JMS_CONNECTION_FACTORY di deploy/config_file/configurazioneSoggetti.xml)
+per pubblicare sul broker embedded (testsuite/ant/openspcoop2-commons-testsuite-config.xml):
+
+	context-java.naming.factory.initial = org.apache.activemq.jndi.ActiveMQInitialContextFactory
+	context-java.naming.provider.url = tcp://127.0.0.1:61616
+	context-connectionFactoryNames = ConnectionFactory
+	context-queue.queue/openspcoop2TestQueue = openspcoop2TestQueue
+	context-topic.topic/openspcoop2TestTopic = openspcoop2TestTopic
+	connection-factory = ConnectionFactory
+
+Librerie da aggiungere al classpath di GovWay
+---------------------------------------------
+
+GovWay deve disporre delle librerie client di ActiveMQ:
+
+	activemq-client-<versione>.jar
+	hawtbuf-<versione>.jar
+
+Le restanti dipendenze (jakarta.jms-api 3.1, slf4j-api 2.x) sono già presenti in GovWay.
+Il client ActiveMQ non utilizza netty e non interferisce con le librerie già presenti.
+
+- tomcat: copiare le due librerie in <tomcat>/webapps/govway/WEB-INF/lib/ e riavviare l'application server, es.
+
+	cp lib/testsuite/jms-broker-activemq/activemq-client-*.jar lib/testsuite/jms-broker-activemq/hawtbuf-*.jar <tomcat>/webapps/govway/WEB-INF/lib/
+
+- wildfly (solo per provare la modalità jenkins): aggiungere le due librerie nella directory 'lib' dell'archivio govway.ear,
+  eseguire 'ant preparazioneAmbiente -Djenkins=true' e i test con '-Djenkins=true'.
+  Per tornare al broker interno di wildfly rieseguire 'preparazioneAmbiente' senza l'opzione e rimuovere le due librerie.

@@ -44,6 +44,7 @@ import org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteTransformer;
 import org.openspcoop2.protocol.spcoop.testsuite.core.Utilities;
 import org.openspcoop2.testsuite.clients.ClientOneWay;
 import org.openspcoop2.testsuite.clients.ClientSincrono;
+import org.openspcoop2.testsuite.core.EmbeddedJMSBroker;
 import org.openspcoop2.testsuite.core.JMSTestUtilities;
 import org.openspcoop2.testsuite.core.JMSTestUtilities.JMSConsumer;
 import org.openspcoop2.testsuite.core.Repository;
@@ -73,8 +74,8 @@ import org.w3c.dom.NodeList;
  * o contenente l'elemento wrapper della risposta dell'operazione (proprietà 'connettori.jms.response.soap.operationWrapper'),
  * eventualmente modificabile tramite una trasformazione della risposta.
  *
- * I test richiedono il broker JMS interno all'application server e vengono quindi eseguiti solamente su WildFly
- * e non in ambiente Jenkins.
+ * Su WildFly viene utilizzato il broker JMS interno all'application server; su tomcat, o in modalità jenkins (opzione '-Djenkins=true'),
+ * il broker embedded avviato dalla testsuite (EmbeddedJMSBroker).
  *
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$
@@ -127,19 +128,17 @@ public class ConnettoreJMSRisposta {
 
 		TestSuiteTransformer.sequentialForced = true;
 
+		String version_jbossas = null;
 		try{
-			String version_jbossas = Utilities.readApplicationServerVersion();
-			if(version_jbossas.startsWith("tomcat")){
-				System.out.println("WARNING: Verifiche risposta connettore JMS disabilitate per Tomcat");
-				this.doTestJMS = false;
-			}
+			version_jbossas = Utilities.readApplicationServerVersion();
 		}catch(Exception e){
 			System.err.println("Identificazione A.S. non riuscita: "+e.getMessage());
 			e.printStackTrace(System.out);
 		}
-		if(this.doTestJMS && CooperazioneBase.isJenkins()) {
-			System.out.println("WARNING: Verifiche risposta connettore JMS disabilitate in ambiente jenkins");
-			this.doTestJMS = false;
+		
+		// Su tomcat, o in modalità jenkins, le code/topic sono gestite dal broker embedded della testsuite
+		if(EmbeddedJMSBroker.isRequired(version_jbossas)){
+			EmbeddedJMSBroker.start();
 		}
 
 		if(!this.doTestJMS){

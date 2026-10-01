@@ -1211,6 +1211,9 @@ public class TestSuiteProperties implements UnitsTestSuiteProperties {
 	
 	
 	public java.util.Properties getJMS_JNDIContext() {
+		if(org.openspcoop2.testsuite.core.EmbeddedJMSBroker.isStarted()) {
+			return org.openspcoop2.testsuite.core.EmbeddedJMSBroker.getJNDIContext(getJMSQueue(), getJMSTopic());
+		}
 		java.util.Properties prop = new java.util.Properties();
 		try{ 
 			prop = Utilities.readProperties("org.openspcoop2.testsuite.jms-lookup.property.",this.reader);  
@@ -1240,6 +1243,9 @@ public class TestSuiteProperties implements UnitsTestSuiteProperties {
 		}
 	}
 	public String getJMSConnectionFactory(){
+		if(org.openspcoop2.testsuite.core.EmbeddedJMSBroker.isStarted()) {
+			return org.openspcoop2.testsuite.core.EmbeddedJMSBroker.CONNECTION_FACTORY;
+		}
 		try{
 			return this.reader.getProperty("org.openspcoop2.testsuite.jms.connectionFactory").trim();
 		}catch(Exception e){

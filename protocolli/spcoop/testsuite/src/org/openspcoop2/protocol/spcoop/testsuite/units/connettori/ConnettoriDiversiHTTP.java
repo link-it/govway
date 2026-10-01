@@ -59,6 +59,7 @@ import org.openspcoop2.testsuite.axis14.Axis14SoapUtils;
 import org.openspcoop2.testsuite.clients.ClientCore;
 import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
 import org.openspcoop2.testsuite.clients.ClientOneWay;
+import org.openspcoop2.testsuite.core.EmbeddedJMSBroker;
 import org.openspcoop2.testsuite.core.JMSTestUtilities;
 import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.clients.ClientSincrono;
@@ -111,15 +112,17 @@ public class ConnettoriDiversiHTTP {
 				
 		TestSuiteTransformer.sequentialForced = true;
 		
+		String version_jbossas = null;
 		try{
-			String version_jbossas = Utilities.readApplicationServerVersion();
-			if(version_jbossas.startsWith("tomcat")){
-				System.out.println("WARNING: Verifiche code/topic disabilitate per Tomcat");
-				this.doTestJMS = false;
-			}
+			version_jbossas = Utilities.readApplicationServerVersion();
 		}catch(Exception e){
 			System.err.println("Identificazione A.S. non riuscita: "+e.getMessage());
 			e.printStackTrace(System.out);
+		}
+		
+		// Su tomcat, o in modalità jenkins, le code/topic sono gestite dal broker embedded della testsuite
+		if(EmbeddedJMSBroker.isRequired(version_jbossas)){
+			EmbeddedJMSBroker.start();
 		}
 		
 		if(!this.doTestJMS){

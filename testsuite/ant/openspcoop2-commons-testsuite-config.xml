@@ -363,26 +363,37 @@
 	<target name="-impostazioneValoriAmbienteConfigurazione" >
 		
 		<replace file="${build_testunits}/config.xml" token="@TIPO_DATABASE@" value="${tipoDatabase}"/>
-		
+
+		<!-- Broker JMS: su tomcat, o con l'opzione 'jenkins=true', i connettori JMS pubblicano sul broker embedded (ActiveMQ) avviato dalla testsuite
+		     (vedi testsuite/jms.README); negli altri casi viene utilizzato il broker interno di wildfly -->
+		<var name="jmsBrokerEmbedded" value="false"/>
 		<if>
 			<or>
 				<matches string="${as}" pattern="tomcat.*"/>
+				<equals arg1="${jenkins}" arg2="true"/>
 			</or>
+			<then>
+				<var name="jmsBrokerEmbedded" value="true"/>
+			</then>
+		</if>
+		
+		<if>
+			<istrue value="${jmsBrokerEmbedded}"/>
 			<then>			
 				<antcall target="replace_token">
 				    <param name="file" value="${build_testunits}/config.xml"/>
 					<param name="token" value="&#60;!-- CONTEXT_JMS_FACTORY --&#62;"/>
-					<param name="value" value="&#60;property nome=&#34;context-java.naming.factory.initial&#34; valore=&#34;org.jnp.interfaces.NamingContextFactory&#34; /&#62;"/>
+					<param name="value" value="&#60;property nome=&#34;context-java.naming.factory.initial&#34; valore=&#34;org.apache.activemq.jndi.ActiveMQInitialContextFactory&#34; /&#62;"/>
 				</antcall>
 				<antcall target="replace_token">
 				    <param name="file" value="${build_testunits}/config.xml"/>
 					<param name="token" value="&#60;!-- CONTEXT_JMS_PKGS --&#62;"/>
-					<param name="value" value="&#60;property nome=&#34;context-java.naming.factory.url.pkgs&#34; valore=&#34;org.jnp.interfaces&#34; /&#62;"/>
+					<param name="value" value="&#60;property nome=&#34;context-connectionFactoryNames&#34; valore=&#34;ConnectionFactory&#34; /&#62;&#60;property nome=&#34;context-queue.queue/openspcoop2TestQueue&#34; valore=&#34;openspcoop2TestQueue&#34; /&#62;&#60;property nome=&#34;context-topic.topic/openspcoop2TestTopic&#34; valore=&#34;openspcoop2TestTopic&#34; /&#62;"/>
 				</antcall>
 				<antcall target="replace_token">
 				    <param name="file" value="${build_testunits}/config.xml"/>
 					<param name="token" value="&#60;!-- CONTEXT_JMS_PROVIDER_URL --&#62;"/>
-					<param name="value" value="&#60;property nome=&#34;context-java.naming.provider.url&#34; valore=&#34;127.0.0.1&#34; /&#62;"/>
+					<param name="value" value="&#60;property nome=&#34;context-java.naming.provider.url&#34; valore=&#34;tcp://127.0.0.1:61616&#34; /&#62;"/>
 				</antcall>
 				<antcall target="replace_token">
 				    <param name="file" value="${build_testunits}/config.xml"/>
@@ -403,9 +414,10 @@
 		</if>
 		
 		<if>
-			<or>
+			<and>
 				<matches string="${as}" pattern="wildfly.*"/>
-			</or>
+				<isfalse value="${jmsBrokerEmbedded}"/>
+			</and>
 			<then>			
 				<antcall target="replace_token">
 				    <param name="file" value="${build_testunits}/config.xml"/>
