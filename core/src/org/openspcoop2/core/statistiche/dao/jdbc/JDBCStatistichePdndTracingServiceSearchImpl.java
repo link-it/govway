@@ -441,7 +441,8 @@ public class JDBCStatistichePdndTracingServiceSearchImpl implements IJDBCService
 	}
 
 	public JDBCStream getCsvBytes(Logger log,
-			Connection connection, ISQLQueryObject sqlQueryObject, long tableId)
+			Connection connection, ISQLQueryObject sqlQueryObject, long tableId,
+			JDBCServiceManager connectionServiceManager)
 			throws NotFoundException, ServiceException {
 
 		java.sql.PreparedStatement pstmt = null;
@@ -466,9 +467,15 @@ public class JDBCStatistichePdndTracingServiceSearchImpl implements IJDBCService
 
 			if(rs.next()) {
 				InputStream is = jdbcAdapter.getBinaryStream(rs, "csvContent");
-				return new JDBCStream(is,
+				// la connessione deve essere rilasciata tramite il service manager che l'ha ottenuta:
+				// quello associato a questa classe (JDBCLimitedServiceManager) non consente la chiusura
+				JDBCStream stream = new JDBCStream(is,
           				rs,pstmt,
-          				connection,this.jdbcServiceManager);
+          				connection,connectionServiceManager);
+				// rs e pstmt vengono chiusi dal JDBCStream
+				rs = null;
+				pstmt = null;
+				return stream;
 			}
 			throw new NotFoundException("Entry with id["+tableId+"] not found");
 
@@ -477,11 +484,9 @@ public class JDBCStatistichePdndTracingServiceSearchImpl implements IJDBCService
 		} catch(Exception e) {
 			throw new ServiceException("getCsvBytes(tableId="+tableId+") failed: "+e.getMessage(), e);
 		} finally {
-			/**
-			 * close in JDBCStream
-			try { if(rs!=null) rs.close(); } catch(Exception eClose) {  }
-			try { if(pstmt!=null) pstmt.close(); } catch(Exception eClose) { }
-			*/
+			// valorizzati solo se il JDBCStream non e' stato creato
+			try { if(rs!=null) rs.close(); } catch(Exception eClose) { /* ignore */ }
+			try { if(pstmt!=null) pstmt.close(); } catch(Exception eClose) { /* ignore */ }
 		}
 	}
 

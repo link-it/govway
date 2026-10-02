@@ -1642,7 +1642,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 				byte[] csv = null;
 				try {
 					jdbcStream = pdndService.getCsvInputStream(id);
-					java.io.InputStream csvStream = jdbcStream.getIs();
+					java.io.InputStream csvStream = jdbcStream!=null ? jdbcStream.getIs() : null;
 					if(csvStream == null) {
 						FaultCode.NOT_FOUND.throwException("CSV non disponibile per la traccia con id '"+id+"'");
 					}

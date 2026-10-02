@@ -1,3 +1,15 @@
+2026-10-02  Andrea Poli <apoli@link.it>
+
+	* [GovWayMonitor, ApiRsMonitoraggio, TimerStatistiche]
+	Risolto Bug #1839
+	La lettura dei CSV del Tracciamento PDND non rilasciava la connessione al database, esaurendo nel tempo le connessioni disponibili
+	del datasource e rendendo inutilizzabili le funzionalità che lo utilizzano (es. la console di monitoraggio).
+	Nella console di monitoraggio il problema si manifestava già esportando tutti i tracciati, operazione che inoltre leggeva ogni tracciato
+	più volte, non terminava e produceva un archivio incompleto; ne era interessato anche il download del CSV dal dettaglio di un tracciato.
+	Lo stesso problema riguardava la pubblicazione dei tracciati verso la PDND effettuata dal timer statistiche in modalità applicazione web
+	configurato tramite datasource, mentre il timer del gateway e il batch non erano interessati.
+	Infine l'API di monitoraggio che restituisce il CSV di un tracciato risponde adesso con il codice HTTP 404, anziché 500, quando il CSV non è disponibile.
+
 2026-10-01  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
