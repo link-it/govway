@@ -979,7 +979,7 @@ public class JDBCStatistichePdndTracingServiceSearch implements IDBStatistichePd
 			connection = this.jdbcServiceManager.getConnection();
 
 			csv = ((JDBCStatistichePdndTracingServiceSearchImpl) this.serviceSearch)
-				.getCsvBytes(this.log, connection, sqlQueryObject, tableId);
+				.getCsvBytes(this.log, connection, sqlQueryObject, tableId, this.jdbcServiceManager);
 			if(csv == null) {
 				throw new NotFoundException("CSV data is null for entry with id["+tableId+"]");
 			}
@@ -991,12 +991,10 @@ public class JDBCStatistichePdndTracingServiceSearch implements IDBStatistichePd
 		}catch(Exception e){
 			this.logError(e); throw new ServiceException("getCsvInputStream(tableId) not completed: "+e.getMessage(),e);
 		}finally{
-			/**
-			 * close in JDBCStream
-			if(connection!=null){
+			// in caso di successo la connessione viene chiusa dal JDBCStream
+			if(csv==null && connection!=null){
 				this.jdbcServiceManager.closeConnection(connection);
 			}
-			*/
 		}
 
 		return csv;

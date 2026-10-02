@@ -207,6 +207,9 @@ public class StatistichePdndTracingExporter extends HttpServlet{
 				JDBCStream jdbcStream = null;
 				try {
 					jdbcStream = pdndService.getCsvInputStream(statistichePdndTracingBean.getId());
+					if(jdbcStream == null) {
+						continue;
+					}
 				
 					try (java.io.InputStream csvStream = jdbcStream.getIs()){
 						if(csvStream == null) {
@@ -259,7 +262,7 @@ public class StatistichePdndTracingExporter extends HttpServlet{
 				letti = lstTmp.size();
 				if(letti > 0){
 					lst.addAll(lstTmp);
-					offset++;
+					offset += letti;
 				}
 			}while(letti > 0);
 		} else {

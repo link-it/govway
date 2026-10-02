@@ -205,6 +205,10 @@ DynamicPdDBean<org.openspcoop2.web.monitor.statistiche.bean.StatistichePdndTraci
 		JDBCStream jdbcStream = null;
 		try {
 			jdbcStream = pdndService.getCsvInputStream(this.statisticaPdndTracing.getId());		
+			if(jdbcStream == null) {
+				MessageUtils.addErrorMsg("CSV non disponibile per il tracing selezionato.");
+				return null;
+			}
 			try (java.io.InputStream csvStream = jdbcStream.getIs()){
 				if(csvStream == null) {
 					MessageUtils.addErrorMsg("CSV non disponibile per il tracing selezionato.");
