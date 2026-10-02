@@ -246,7 +246,7 @@ div.form-container form legend,div.form-container .display-form legend, div.form
     color: ${legend.color};
 }
 
-div.form-container label,div.form-container .display-form label {
+div.form-container label,div.form-container .display-form label,div.form-container span.labelSpacer {
     margin-right: 16px;
     padding-right: 16px;
     width: 200px;

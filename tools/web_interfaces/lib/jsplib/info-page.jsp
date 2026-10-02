@@ -74,6 +74,11 @@ if(csrfTokenFromSession == null)
 		}
 		%>
 	
+		<%
+		// la pagina e' fatta del solo messaggio, senza altro titolo: titlelist.jsp ne dichiara
+		// il titolo come intestazione di primo livello, qualunque sia il tipo di messaggio
+		request.setAttribute("gwPaginaSoloMessaggio", Boolean.TRUE);
+		%>
 		<jsp:include page="/jsplib/titlelist.jsp" flush="true" />
 		<table class="tabella-ext">
 		<!-- Riga tabella -->

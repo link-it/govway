@@ -25,7 +25,8 @@
 	</c:if>
 	
 	<link:prop label="#{label}" required="#{required}">
-		<input id="#{id}" size="50" type="file" name="theFile" class="inputLinkLong" multiple="multiple"/>
+		<!-- nome accessibile: l'etichetta se presente, altrimenti 'accessibleLabel' (es. quando il titolo della sezione fa da etichetta e quella del campo è vuota) -->
+		<input id="#{id}" size="50" type="file" name="theFile" class="inputLinkLong" multiple="multiple" aria-label="#{not empty label ? label : accessibleLabel}"/>
 		<script type="text/javascript" nonce="#{_csp_random_nonce}">
 			jQuery(document).ready(function(){
 				jQuery('##{id}').change(function() {
@@ -38,12 +39,12 @@
 		<a4j:outputPanel layout="block" rendered="#{fileUploadBean.visualizzaComandiEliminaFile}" id="#{id}_infoFileCaricatoPanel">
 			<c:forEach items="#{fileUploadBean.mapChiaviElementi}" var="entry">
 				<a4j:outputPanel layout="block" styleClass="prop">
-			 		<label class="outputFieldLabel"><h:outputText value="&amp;#160;&amp;#160;" escape="false" /></label>	
+			 		<span class="outputFieldLabel labelSpacer" aria-hidden="true"><h:outputText value="&amp;#160;&amp;#160;" escape="false" /></span>	
 		 			<a4j:outputPanel layout="block" styleClass="divNoEdit">
-			   			<span class="spanNoEdit"><i id="form-file-identificativo-file-caricato">#{entry.value}</i></span>
+			   			<span class="spanNoEdit"><i id="#{id}-file-caricato_#{entry.key}">#{entry.value}</i></span>
 			   			<a id="#{id}-delete-cmd_#{entry.key}" class="text-action-link " title="Rimuovi #{entry.value}" target="_self" href="#" type="button">
 				      		<span class="icon-box">
-				        		<i class="material-icons md-16">delete</i>
+				        		<i class="material-icons md-16" aria-hidden="true">delete</i>
 				      		</span>
 				      		<script type="text/javascript" nonce="#{_csp_random_nonce}">
 				            	jQuery(document).ready(function(){

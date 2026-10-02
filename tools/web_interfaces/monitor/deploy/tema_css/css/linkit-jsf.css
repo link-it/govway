@@ -1048,6 +1048,19 @@ span.soggettoImg {
 	border: none;
 }
 
+/* L'ombra di RichFaces è un livello nero al 10% con 'z-index:-1' dentro la finestra: a video
+   resta sotto il contenuto, ma gli strumenti che ricostruiscono l'ordine di sovrapposizione
+   (axe) la collocano sopra e misurano i testi su un fondo grigio (#e6e6e6) invece che bianco,
+   segnalando un contrasto insufficiente inesistente. Lo stesso effetto si ottiene con un'ombra
+   del contenitore, che non è un elemento a sé. */
+.rich-mpnl-shadow {
+	display: none;
+}
+
+.rich-mp-container .rich-mpnl-content {
+	box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.1);
+}
+
 .rich-mpnl-controls span a {
 	color: ${panel.header.color};
 }
@@ -1463,8 +1476,8 @@ input.rich-spinner-input {
 	font-size: 14px;
 }
 
-/* Il fuoco da tastiera delle liste di trasferimento sta su un pulsante che il componente
-   tiene fuori schermo: va quindi reso visibile sul contenitore delle voci (WCAG 2.4.7). */
+/* Il fuoco da tastiera delle liste di trasferimento sta sul contenitore delle voci, che fa
+   da lista ('listbox'): il componente lo marca con questa classe (WCAG 2.4.7). */
 .rich-shuttle-list-focus {
 	outline: 2px solid #46464e;
 	outline-offset: 1px;

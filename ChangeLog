@@ -91,7 +91,10 @@
 	- Operabilità completa da tastiera di menu, schede, sezioni comprimibili, elenchi, finestre modali,
 	  selettori di data, impaginazione degli elenchi, chip dei ruoli, badge dei metodi HTTP e di tutti
 	  gli altri comandi che rispondevano al solo puntatore.
-	- Struttura e orientamento: intestazione di primo livello su ogni vista, regioni 'banner',
+	- Finestre modali e liste di trasferimento (es. selezione delle colonne dell'export): ruolo e titolo
+	  dichiarati, fuoco trattenuto nella finestra e restituito alla chiusura, pagina sottostante esclusa
+	  dalla tabulazione, voci annunciate con il loro stato di selezione.
+	- Struttura e orientamento: intestazione di primo livello su ogni vista, pagine di esito e di errore comprese, regioni 'banner',
 	  'navigation', 'main' e 'contentinfo' — percorso di navigazione e piè di pagina compresi —,
 	  collegamento 'Vai al contenuto principale', stato dei componenti annunciato alle tecnologie
 	  assistive (schede selezionate, menu aperti, esiti delle operazioni).

@@ -579,7 +579,7 @@ public final class Importer extends Action {
 				
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, 
-						new Parameter(ArchiviCostanti.LABEL_ARCHIVI_IMPORT,null));
+						new Parameter(deleter ? ArchiviCostanti.LABEL_ARCHIVI_ELIMINA : ArchiviCostanti.LABEL_ARCHIVI_IMPORT,null));
 
 				// preparo i campi
 				List<DataElement> dati = new ArrayList<>();
@@ -643,6 +643,10 @@ public final class Importer extends Action {
 
 			
 			
+			
+			// setto la barra del titolo: senza, la pagina del resoconto resta priva dell'intestazione di primo livello
+			ServletUtils.setPageDataTitle(pd, 
+					new Parameter(deleter ? ArchiviCostanti.LABEL_ARCHIVI_ELIMINA : ArchiviCostanti.LABEL_ARCHIVI_IMPORT,null));
 			
 			List<DataElement> dati = new ArrayList<>();
 

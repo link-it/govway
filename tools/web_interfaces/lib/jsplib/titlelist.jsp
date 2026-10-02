@@ -167,8 +167,11 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 		  			// Nei messaggi "sintetici" la pagina e' fatta del solo messaggio e non ha altro
 		  			// titolo: il titolo del messaggio e' allora l'intestazione di primo livello.
 		  			// Nelle altre pagine il titolo c'e' gia' altrove e non va duplicato.
+		  			// Lo stesso vale per le pagine informative (info-page.jsp), che mostrano il solo
+		  			// messaggio anche quando non e' sintetico (es. l'errore di controllo CSRF).
 		  			boolean messaggioUnicoContenuto = messageType.equals(MessageType.INFO_SINTETICO.toString())
-		  					|| messageType.equals(MessageType.ERROR_SINTETICO.toString());
+		  					|| messageType.equals(MessageType.ERROR_SINTETICO.toString())
+		  					|| Boolean.TRUE.equals(request.getAttribute("gwPaginaSoloMessaggio"));
 		  			String titoloPagina = messaggioUnicoContenuto ? " role=\"heading\" aria-level=\"1\"" : "";
 		  			%>
 		  			<div class="messages-<%=messageType %>">
