@@ -274,6 +274,8 @@ public class DatiStatisticiDAOManager  {
 			
 			IExpression expression = dao.newExpression();
 			expression.between(model.DATA, startDate, endDate);
+			// Record validi: esclude quelli in aggiornamento o eliminati dal timer delle statistiche, altrimenti durante la rigenerazione dell'intervallo corrente le transazioni verrebbero contate due volte
+			StatisticheUtils.selezionaRecordValidi(expression, model);
 			if (esiti != null)
 				expression.in(model.ESITO, esiti);
 			expression.equals(model.SERVIZIO, servizio.getNome());

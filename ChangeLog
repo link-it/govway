@@ -1,3 +1,11 @@
+2026-10-03  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug
+	Il connettore 'Status' con verifica statistica poteva contare due volte le transazioni se interrogato mentre il timer
+	delle statistiche aggiornava l'intervallo corrente, riportando un numero di transazioni errato (es. "trovate: 2 transazioni con errore").
+	Vengono adesso considerati solamente i dati statistici validi, come già avveniva per le policy di Rate Limiting.
+
 2026-10-02  Andrea Poli <apoli@link.it>
 
 	* [GovWayMonitor, ApiRsMonitoraggio, TimerStatistiche]

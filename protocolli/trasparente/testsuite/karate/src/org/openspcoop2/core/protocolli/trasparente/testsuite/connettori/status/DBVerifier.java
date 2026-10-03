@@ -20,9 +20,10 @@
 
 package org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.status;
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -53,33 +54,28 @@ public class DBVerifier {
 		query.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI_COLUMN_ID_TRANSAZIONE + " = ?");
 		query.setANDLogicOperator(true);
 		
-		List<Map<String, Object>> msgs = null;
+		List<String> messaggi = new ArrayList<>();
 		int[] timeouts = {100, 250, 500, 2000, 5000, 5000};
-		int index = 0;
 		
-		// se non trovo nessun messaggio aspetto che magari govway non ha ancora scritto il messaggio sul db
-		while (msgs == null && index < timeouts.length) {
+		// il diagnostico atteso potrebbe non essere ancora stato scritto sul db: si riprova finché non compare o non scadono i tentativi
+		for (int timeout : timeouts) {
 			
-			Utilities.sleep(timeouts[index++]); 
+			Utilities.sleep(timeout);
 			
-			msgs = ConfigLoader.getDbUtils().readRows(query.createSQLQuery(), idTransazione);
-		}
-		assertNotNull(msgs);
-		
-		
-		
-		String predictedCause = ".* il connettore \\[\\d+\\] del gruppo: testRefused check fallito: Connection refused";
-		ConfigLoader.getLoggerCore().debug("errore atteso: {}", predictedCause);
-
-		for (Map<String, Object> msg : msgs) {
-			assertTrue(msg.containsKey(CostantiDB.MSG_DIAGNOSTICI_COLUMN_MESSAGGIO));
-			String message = (String) msg.get(CostantiDB.MSG_DIAGNOSTICI_COLUMN_MESSAGGIO);
-			/**System.out.println("CHECK ["+message+"] reg["+msgRegex+"] V("+message.matches(msgRegex)+")");*/
-			if (message.matches(msgRegex))
-				return;
+			List<Map<String, Object>> msgs = ConfigLoader.getDbUtils().readRows(query.createSQLQuery(), idTransazione);
+			messaggi.clear();
+			if (msgs != null) {
+				for (Map<String, Object> msg : msgs) {
+					assertTrue(msg.containsKey(CostantiDB.MSG_DIAGNOSTICI_COLUMN_MESSAGGIO));
+					String message = (String) msg.get(CostantiDB.MSG_DIAGNOSTICI_COLUMN_MESSAGGIO);
+					if (message.matches(msgRegex))
+						return;
+					messaggi.add(message);
+				}
+			}
 		}
 		
-		assertTrue(false);
+		fail("Diagnostico atteso non trovato per la transazione '" + idTransazione + "'; regex attesa: [" + msgRegex + "]; diagnostici presenti: " + messaggi);
 	}
 	
 	public static void resetStatistiche(String servizio) throws SQLQueryObjectException {
