@@ -22,6 +22,9 @@ Background:
 
     * def decode_base64 = read('classpath:utils/decode-base64.js')
 
+    * def get_response_header = read('classpath:utils/get-response-header.js')
+    * def allinea_data_pdnd = read('classpath:utils/allinea-data-pdnd.js')
+
 
 
 @getInformazioniClientOrganizationApiIDAUTH
@@ -52,6 +55,11 @@ Then status 200
 And match response == read('request.json')
 And match header Authorization == '#notpresent'
 And match header Agid-JWT-Signature == '#notpresent'
+# Allineamento al minuto effettivamente usato dal simulatore PDND, nel caso sia cambiato durante la richiesta
+* def today = allinea_data_pdnd(today, get_response_header('PDND-ExternalId'))
+* def formattedDate = today.format(formatter)
+* def formattedDateYYYYMMDD = today.format(formatterYYYYMMDD)
+* def formattedDateHHmm = today.format(formatterHHmm)
 And match header PDND-ExternalId == 'm_m000_'+formattedDate+'_0001'
 And match header X-RateLimit-Remaining == '1'
 And match header X-RateLimit-Limit == '2'
@@ -233,6 +241,11 @@ Then status 200
 And match response == read('request.json')
 And match header Authorization == '#notpresent'
 And match header Agid-JWT-Signature == '#notpresent'
+# Allineamento al minuto effettivamente usato dal simulatore PDND, nel caso sia cambiato durante la richiesta
+* def today = allinea_data_pdnd(today, get_response_header('PDND-ExternalId'))
+* def formattedDate = today.format(formatter)
+* def formattedDateYYYYMMDD = today.format(formatterYYYYMMDD)
+* def formattedDateHHmm = today.format(formatterHHmm)
 And match header PDND-ExternalId == 'm_m000_'+formattedDate+'_0002'
 And match header X-RateLimit-Remaining == '1'
 And match header X-RateLimit-Limit == '2'
@@ -491,6 +504,11 @@ Then status 200
 And match response == read('request.json')
 And match header Authorization == '#notpresent'
 And match header Agid-JWT-Signature == '#notpresent'
+# Allineamento al minuto effettivamente usato dal simulatore PDND, nel caso sia cambiato durante la richiesta
+* def today = allinea_data_pdnd(today, get_response_header('PDND-ExternalId'))
+* def formattedDate = today.format(formatter)
+* def formattedDateYYYYMMDD = today.format(formatterYYYYMMDD)
+* def formattedDateHHmm = today.format(formatterHHmm)
 And match header PDND-ExternalId == 'm_m000_'+formattedDate+'_0003'
 And match header X-RateLimit-Remaining == '3'
 And match header X-RateLimit-Limit == '4'
