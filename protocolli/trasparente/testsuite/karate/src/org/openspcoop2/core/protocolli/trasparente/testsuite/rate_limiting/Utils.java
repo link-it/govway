@@ -24,9 +24,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreadsType;
@@ -89,6 +91,18 @@ public class Utils {
 	
 	public static List<HttpResponse> makeParallelRequests(HttpRequest request, int count) {
 		return org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.makeParallelRequests(request, count, logRateLimiting);
+	}
+	
+	/**
+	 * Invia le richieste in due ondate: la seconda parte dopo 'attesaMs', quando le richieste della prima sono già in corso.
+	 * Serve a rendere deterministico lo stato del gateway (es. congestione) visto all'ingresso dalle richieste della seconda ondata.
+	 */
+	public static List<HttpResponse> makeParallelRequests(HttpRequest request, int primaOndata, int secondaOndata, int attesaMs) {
+		CompletableFuture<List<HttpResponse>> responsesPrimaOndata = CompletableFuture.supplyAsync(() -> makeParallelRequests(request, primaOndata));
+		org.openspcoop2.utils.Utilities.sleep(attesaMs);
+		List<HttpResponse> responses = new ArrayList<>(makeParallelRequests(request, secondaOndata));
+		responses.addAll(responsesPrimaOndata.join());
+		return responses;
 	}
 	
 	public static HttpResponse makeRequest(HttpRequest request) {

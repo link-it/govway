@@ -81,13 +81,13 @@ public class RestTest extends ConfigLoader {
 	@Test
 	public void congestioneAttivaConViolazioneRLErogazione() {
 		final String idServizio = "SoggettoInternoTest/NumeroRichiesteRest/v1";
-		congestioneAttivaConViolazioneRL(basePath + "/SoggettoInternoTest/NumeroRichiesteRest/v1/richieste-simultanee/?sleep=2000", idServizio);
+		congestioneAttivaConViolazioneRL(basePath + "/SoggettoInternoTest/NumeroRichiesteRest/v1/richieste-simultanee/?sleep=5000", idServizio);
 	}
 	
 	@Test
 	public void congestioneAttivaConViolazioneRLFruizione() {
 		final String idServizio = "SoggettoInternoTestFruitore/SoggettoInternoTest/NumeroRichiesteRest/v1";
-		congestioneAttivaConViolazioneRL(basePath + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/NumeroRichiesteRest/v1/richieste-simultanee?sleep=2000", idServizio);
+		congestioneAttivaConViolazioneRL(basePath + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/NumeroRichiesteRest/v1/richieste-simultanee?sleep=5000", idServizio);
 	}
 	
 	@Test
@@ -497,6 +497,7 @@ public class RestTest extends ConfigLoader {
 	 */
 	public void congestioneAttivaConViolazioneRL(String url, String idErogazione) {
 		EventiUtils.waitForDbEvents();
+		Utils.waitForZeroGovWayThreads();
 
 		
 		final int sogliaRichiesteSimultanee = 10;
@@ -512,9 +513,22 @@ public class RestTest extends ConfigLoader {
 		request.setMethod(HttpRequestMethod.GET);
 		request.setUrl(url);
 		
-		List<HttpResponse> responses = Utils.makeParallelRequests(request, sogliaRichiesteSimultanee+1);
+		List<HttpResponse> responses = makeParallelRequestsCongestioneConViolazioneRL(request, sogliaRichiesteSimultanee);
 		
 		EventiUtils.checkEventiCongestioneAttivaConViolazioneRL(idErogazione, dataSpedizione, Optional.empty(), responses, logRateLimiting);
+	}
+	
+	
+	/**
+	 * La congestione viene valutata all'ingresso della richiesta, la policy di richieste simultanee successivamente:
+	 * inviando tutte le richieste insieme, la richiesta bloccata dalla policy potrebbe essere una di quelle entrate prima della congestione.
+	 * Si inviano quindi prima 'sogliaCongestione' richieste, che restano in corso senza attivare la congestione (attivata oltre la soglia),
+	 * e poi le restanti, che entrano tutte con la congestione attiva e di cui almeno una viola la policy.
+	 * L'attesa tra le due ondate deve restare inferiore alla durata delle richieste della prima ondata (almeno 2,5 secondi: la fruizione SOAP
+	 * usa un connettore con 'sleep=2500' fisso nella location, che prevale su quello indicato nella richiesta).
+	 */
+	public static List<HttpResponse> makeParallelRequestsCongestioneConViolazioneRL(HttpRequest request, int sogliaRichiesteSimultanee) {
+		return Utils.makeParallelRequests(request, sogliaCongestione, sogliaRichiesteSimultanee+1-sogliaCongestione, 1000);
 	}
 	
 	
