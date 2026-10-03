@@ -41,9 +41,11 @@ import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.Property;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
+import org.openspcoop2.utils.sql.SQLQueryObjectException;
 
 /**
  * Classe utilizzata per effettuare query ad un registro dei servizi openspcoop
@@ -58,6 +60,43 @@ import org.openspcoop2.utils.sql.SQLObjectFactory;
 public class DriverRegistroServiziDB_connettoriLIB {
 
 
+	private static void insertProprietaAggiuntiveJms(Connection connection, long idConnettore, Map<String, String> proprietaAggiuntiveJms,
+			IDriverBYOK driverBYOK) throws DriverRegistroServiziException, SQLException, SQLQueryObjectException, UtilsException {
+		if(proprietaAggiuntiveJms==null || proprietaAggiuntiveJms.isEmpty()) {
+			return;
+		}
+		ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+		sqlQueryObject.addInsertTable(CostantiDB.CONNETTORI_CUSTOM);
+		sqlQueryObject.addInsertField(CostantiDB.CONNETTORI_CUSTOM_COLUMN_NAME, "?");
+		sqlQueryObject.addInsertField(CostantiDB.CONNETTORI_CUSTOM_COLUMN_VALUE, "?");
+		sqlQueryObject.addInsertField(CostantiDB.CONNETTORI_CUSTOM_COLUMN_ENC_VALUE, "?");
+		sqlQueryObject.addInsertField(CostantiDB.CONNETTORI_CUSTOM_COLUMN_ID_CONNETTORE, "?");
+		String sqlQuery = sqlQueryObject.createSQLInsert();
+		for (Map.Entry<String, String> entry : proprietaAggiuntiveJms.entrySet()) {
+			String nome = entry.getKey();
+			String valore = entry.getValue();
+			if(valore==null || valore.equals("")){
+				throw new DriverRegistroServiziException("Property ["+nome+"] without value");
+			}
+			String plainValue = valore;
+			String encValue = null;
+			if(driverBYOK!=null && CostantiConnettori.isConfidential(nome)) {
+				BYOKWrappedValue byokValue = driverBYOK.wrap(valore);
+				if(byokValue!=null) {
+					encValue = byokValue.getWrappedValue();
+					plainValue = byokValue.getWrappedPlainValue();
+				}
+			}
+			try(PreparedStatement stm = connection.prepareStatement(sqlQuery)){
+				stm.setString(1, nome);
+				stm.setString(2, plainValue);
+				stm.setString(3, encValue);
+				stm.setLong(4, idConnettore);
+				stm.executeUpdate();
+			}
+		}
+	}
+	
 	/**
 	 * CRUD oggetto Connettore. In caso di CREATE inserisce nel db il dati del
 	 * connettore passato e ritorna l'id dell'oggetto creato Non si occupa di
@@ -278,6 +317,19 @@ public class DriverRegistroServiziDB_connettoriLIB {
 			// extendedProperties
 			if(nomeProperty.startsWith(CostantiConnettori.CONNETTORE_EXTENDED_PREFIX)){
 				extendedProperties.put(nomeProperty, valoreProperty);
+			}
+		}
+		
+		// Proprietà del connettore JMS prive di una colonna dedicata (es. 'context-*', 'pool-*', 'lookupDestination-*', 'locations-cache', 'acknowledgeMode'):
+		// vengono memorizzate nella tabella connettori_custom
+		Map<String, String> proprietaAggiuntiveJms = new HashMap<>();
+		if(TipiConnettore.JMS.getNome().equals(endpointtype) && 
+				(connettore.getCustom()==null || !connettore.getCustom().booleanValue())) {
+			for (Property p : connettore.getPropertyList()) {
+				if(CostantiDB.isConnettoreJmsProprietaAggiuntiva(p.getNome()) &&
+						!propertiesGestiteAttraversoColonneAdHoc.contains(p.getNome())) {
+					proprietaAggiuntiveJms.put(p.getNome(), p.getValore());
+				}
 			}
 		}
 
@@ -541,7 +593,7 @@ public class DriverRegistroServiziDB_connettoriLIB {
 						
 						String plainValue = valoreProperty;
 						String encValue = null;
-						if(driverBYOK!=null && CostantiConnettori.isConfidential(nomeProperty)) {
+						if(driverBYOK!=null && CostantiConnettori.isConfidential(nomeP)) {
 							BYOKWrappedValue byokValue = driverBYOK.wrap(valoreProperty);
 							if(byokValue!=null) {
 								encValue = byokValue.getWrappedValue();
@@ -559,6 +611,9 @@ public class DriverRegistroServiziDB_connettoriLIB {
 					}				
 				}
 				
+				// Proprietà aggiuntive del connettore JMS
+				insertProprietaAggiuntiveJms(connection, idConnettore, proprietaAggiuntiveJms, driverBYOK);
+
 				break;
 
 			case 2:
@@ -812,7 +867,7 @@ public class DriverRegistroServiziDB_connettoriLIB {
 						
 						String plainValue = valoreProperty;
 						String encValue = null;
-						if(driverBYOK!=null && CostantiConnettori.isConfidential(nomeProperty)) {
+						if(driverBYOK!=null && CostantiConnettori.isConfidential(nomeP)) {
 							BYOKWrappedValue byokValue = driverBYOK.wrap(valoreProperty);
 							if(byokValue!=null) {
 								encValue = byokValue.getWrappedValue();
@@ -830,6 +885,9 @@ public class DriverRegistroServiziDB_connettoriLIB {
 					}			
 				}
 				
+				// Proprietà aggiuntive del connettore JMS
+				insertProprietaAggiuntiveJms(connection, idConnettore, proprietaAggiuntiveJms, driverBYOK);
+
 				break;
 
 			case 3:

@@ -2737,6 +2737,11 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="JMSSincrono_TrasformazioneRisposta" />
         </porta-delegata>
+        <porta-delegata gestione-manifest="abilitato" nome="JMSSincrono_CodaDinamica" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />              
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="JMSSincrono_CodaDinamica" />
+        </porta-delegata>
         <!-- ConsegnaApplicativa con connettore di tipo JMS e profilo oneway: la proprieta' operationWrapper non produce una risposta -->
         <porta-delegata gestione-manifest="abilitato" nome="JMSOneway_OperationWrapper" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
             <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />              
@@ -7451,6 +7456,27 @@
                 </regola>
             </trasformazioni>
         </porta-applicativa>
+        <!-- ConsegnaApplicativa con connettore di tipo JMS e nome della coda dinamico: la trasformazione della richiesta legge il nome della coda dal payload
+             (xpath) e lo salva nel contesto, utilizzato poi dal connettore tramite ${context:jmsCoda} -->
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_JMSSincrono_CodaDinamica">
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="JMSSincrono_CodaDinamica" />
+            <servizio-applicativo nome="PubbTestQueueDinamicaAsText" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
+            <trasformazioni>
+                <regola nome="codaDinamica" posizione="1">
+                    <!-- Template Freemarker (Alimentazione Contesto):
+                         <#assign coda = xPath.read("//*[local-name()='coda']/text()")!/>
+                         <#assign tmpPutContext = context?api.put("jmsCoda", coda)!/>
+                    -->
+                    <richiesta conversione="true" conversione-tipo="freemarker-context">
+                        <conversione-template>PCMtLSBpbCBub21lIGRlbGxhIGNvZGEgdmllbmUgbGV0dG8gZGFsIHBheWxvYWQgZSBzYWx2YXRvIG5lbCBjb250ZXN0bzogaWwgY29ubmV0dG9yZSBKTVMgbG8gdXRpbGl6emEgdHJhbWl0ZSAke2NvbnRleHQ6am1zQ29kYX0gLS0+CjwjYXNzaWduIGNvZGEgPSB4UGF0aC5yZWFkKCIvLypbbG9jYWwtbmFtZSgpPSdjb2RhJ10vdGV4dCgpIikhLz4KPCNhc3NpZ24gdG1wUHV0Q29udGV4dCA9IGNvbnRleHQ/YXBpLnB1dCgiam1zQ29kYSIsIGNvZGEpIS8+Cg==</conversione-template>
+                    </richiesta>
+                </regola>
+            </trasformazioni>
+        </porta-applicativa>
         <!-- ConsegnaApplicativa con connettore di tipo JMS e profilo oneway: la proprieta' operationWrapper non produce una risposta -->
         <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_JMSOneway_OperationWrapper">
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
@@ -9177,6 +9203,23 @@
                     <!-- CONTEXT_JMS_FACTORY -->
                     <!-- CONTEXT_JMS_PKGS -->
                     <!-- CONTEXT_JMS_PROVIDER_URL -->
+                    <property nome="tipo" valore="queue" />
+                    <!-- JMS_CONNECTION_FACTORY -->
+                    <property nome="send-as" valore="TextMessage" />
+                    <!-- JMS_USERNAME -->
+                    <!-- JMS_PASSWORD -->
+                </connettore>
+            </invocazione-servizio>
+        </servizio-applicativo>
+        <servizio-applicativo nome="PubbTestQueueDinamicaAsText" >
+            <invocazione-servizio>
+                <connettore tipo="jms" nome="pubJMS">
+                    <!-- nome della coda parzialmente dinamico: queue/openspcoop2TestQueueA, queue/openspcoop2TestQueueB, ... -->
+                    <property nome="location" valore="queue/openspcoop2TestQueue${context:jmsCoda}" />
+                    <!-- CONTEXT_JMS_FACTORY -->
+                    <!-- CONTEXT_JMS_PKGS -->
+                    <!-- CONTEXT_JMS_PROVIDER_URL -->
+                    <!-- CONTEXT_JMS_CODA_DINAMICA -->
                     <property nome="tipo" valore="queue" />
                     <!-- JMS_CONNECTION_FACTORY -->
                     <property nome="send-as" valore="TextMessage" />

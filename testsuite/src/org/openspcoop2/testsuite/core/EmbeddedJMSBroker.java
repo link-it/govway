@@ -105,6 +105,13 @@ public class EmbeddedJMSBroker {
 		}
 		return p;
 	}
+	/**
+	 * Aggiunge al contesto JNDI il binding di un'ulteriore coda (es. queue/openspcoop2TestQueueA).
+	 */
+	public static void addQueue(Properties jndiContext, String queueJndiName) {
+		jndiContext.put("queue."+queueJndiName, getPhysicalName(queueJndiName));
+	}
+	
 	private static String getPhysicalName(String jndiName) {
 		// es. queue/openspcoop2TestQueue -> openspcoop2TestQueue
 		int index = jndiName.lastIndexOf('/');

@@ -134,6 +134,7 @@ Examples:
 |connettore_applicativo_server_jms_send_as_bytes.json|
 |connettore_applicativo_server_jms_tipo_coda_topic.json|
 |connettore_applicativo_server_jms_user_password.json|
+|connettore_applicativo_server_jms_proprieta.json|
 |connettore_applicativo_server_null.json|
 |connettore_applicativo_server_plugin.json|
 |connettore_applicativo_server_plugin_con_properties.json|
@@ -167,13 +168,15 @@ Scenario Outline: Applicativi Server Aggiornamento Connettore 400
     When method put
     Then status 400
     
-    * match response.detail == '<error>' 
+    * match response.detail == "<error>" 
 
     * call delete ({ resourcePath: 'applicativi-server/' + applicativo_key } )
 
 Examples:
 |nome|error|
 |connettore_applicativo_server_plugin_tipo_non_trovato.json|Tipo plugin [tipo_non_trovato] non trovato|
+|connettore_applicativo_server_jms_proprieta_riservata.json|Connettore JMS: la proprietà 'context-java.naming.provider.url' non è indicabile tra le proprietà; deve essere configurata tramite il relativo campo del connettore|
+|connettore_applicativo_server_jms_proprieta_duplicata.json|Connettore JMS: la proprietà 'acknowledgeMode' è indicata più volte|
 
 
 @UpdateDescrizione4000

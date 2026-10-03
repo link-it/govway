@@ -30,6 +30,23 @@ per pubblicare sul broker embedded (testsuite/ant/openspcoop2-commons-testsuite-
 	context-topic.topic/openspcoop2TestTopic = openspcoop2TestTopic
 	connection-factory = ConnectionFactory
 
+Coda con nome dinamico
+----------------------
+
+I test ConnettoreJMSCodaDinamica (spcoop) e RESTConnettoreJMSCodaDinamica (trasparente) utilizzano un connettore JMS con nome della coda
+'queue/openspcoop2TestQueue${context:jmsCoda}', dove 'jmsCoda' viene valorizzato da una trasformazione della richiesta (Alimentazione Contesto)
+con il valore letto dal payload; i test pubblicano sulle code:
+
+	queue/openspcoop2TestQueueA
+	queue/openspcoop2TestQueueB
+
+- broker embedded: il segnaposto CONTEXT_JMS_CODA_DINAMICA viene sostituito con il binding JNDI della coda, definito tramite
+  una proprietà del connettore il cui nome e valore vengono risolti a runtime:
+
+	context-queue.queue/openspcoop2TestQueue${context:jmsCoda} = openspcoop2TestQueue${context:jmsCoda}
+
+- wildfly: le due code devono essere definite nel broker interno (vedi protocolli/spcoop/testsuite/deploy/code_jms/wildfly_ActiveMQArtemis/testsuite-destinations-activemq-jms.xml).
+
 Librerie da aggiungere al classpath di GovWay
 ---------------------------------------------
 

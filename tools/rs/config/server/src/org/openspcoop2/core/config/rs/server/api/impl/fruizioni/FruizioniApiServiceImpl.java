@@ -50,6 +50,7 @@ import org.openspcoop2.core.config.rs.server.model.ApiImplVersioneApi;
 import org.openspcoop2.core.config.rs.server.model.ApiImplVersioneApiView;
 import org.openspcoop2.core.config.rs.server.model.ConnettoreApplicativoServer;
 import org.openspcoop2.core.config.rs.server.model.ConnettoreFruizione;
+import org.openspcoop2.core.config.rs.server.model.ConnettoreJms;
 import org.openspcoop2.core.config.rs.server.model.ConnettoreMessageBox;
 import org.openspcoop2.core.config.rs.server.model.Fruizione;
 import org.openspcoop2.core.config.rs.server.model.FruizioneModI;
@@ -1221,7 +1222,13 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 					throw FaultCode.RICHIESTA_NON_VALIDA.toException(env.pd.getMessage());
 				}
 
-				fruitore.setConnettore(ConnettoreAPIHelper.buildConnettoreRegistro(env, body.getConnettore()));
+				if(body.getConnettore() instanceof ConnettoreJms) {
+					// il connettore esistente, aggiornato da fillConnettoreRegistro, mantiene le proprietà aggiuntive non indicate nella richiesta
+					fruitore.setConnettore(connettore);
+				}
+				else {
+					fruitore.setConnettore(ConnettoreAPIHelper.buildConnettoreRegistro(env, body.getConnettore()));
+				}
 			}
 			
 			fruitori.add(fruitore);

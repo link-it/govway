@@ -23,11 +23,13 @@ import java.util.List;
 
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
+import org.openspcoop2.pdd.core.dynamic.DynamicHelperCostanti;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
+import org.openspcoop2.web.lib.mvc.DataElementInfo;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 
@@ -152,6 +154,7 @@ public class ConnettoreJMSUtils {
 			String provurl, String connfact, String sendas, String objectName, TipoOperazione tipoOperazione,
 			String stato,
 			ControlStationCore core,ConsoleHelper consoleHelper,int pageSize,
+			boolean modi, boolean fruizione, boolean forceNoSec,
 			boolean postBackViaPost) throws UtilsException{
 		
 		if(postBackViaPost || objectName!=null || tipoOperazione!=null) {
@@ -174,6 +177,11 @@ public class ConnettoreJMSUtils {
 		}
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_NOME_CODA);
 		de.setSize(pageSize);
+		// il nome della coda può contenere parti dinamiche risolte a runtime (es. ${context:NAME})
+		DataElementInfo dInfoNomeCoda = new DataElementInfo(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_NOME_CODA);
+		dInfoNomeCoda.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
+		dInfoNomeCoda.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_CONNETTORE_VALORI(modi, fruizione, forceNoSec));
+		de.setInfo(dInfoNomeCoda);
 		dati.add(de);
 
 		de = new DataElement();
@@ -217,6 +225,11 @@ public class ConnettoreJMSUtils {
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_USERNAME);
 		de.setSize(pageSize);
+		// l'utente può contenere parti dinamiche risolte a runtime (es. ${envj:NAME})
+		DataElementInfo dInfoUtente = new DataElementInfo(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_USERNAME);
+		dInfoUtente.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
+		dInfoUtente.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_CONNETTORE_VALORI(modi, fruizione, forceNoSec));
+		de.setInfo(dInfoUtente);
 		dati.add(de);
 
 		de = new DataElement();

@@ -1,0 +1,13 @@
+{
+	"connettore": {
+		"tipo": "jms",
+		"nome": "nome_coda",
+		"connection_factory": "connFactory",
+		"tipo_coda": "queue",
+		"send_as": "text",
+		"proprieta": [
+		{ "nome": "acknowledgeMode", "valore": "AUTO_ACKNOWLEDGE"},
+		{ "nome": "acknowledgeMode", "valore": "CLIENT_ACKNOWLEDGE"}
+		]
+	}
+}

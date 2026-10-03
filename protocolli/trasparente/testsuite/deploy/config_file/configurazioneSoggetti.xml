@@ -5061,6 +5061,24 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
                         </regola>
                     </trasformazioni>
                 </porta-applicativa>
+                <!-- Connettore JMS con nome della coda dinamico: la trasformazione della richiesta legge il nome della coda dal payload (jsonPath)
+                     e lo salva nel contesto, utilizzato poi dal connettore tramite ${context:jmsCoda} -->
+                <porta-applicativa nome="APIMinisteroErogatore/RESTJMS_CodaDinamica" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                    <servizio tipo="gw" nome="API"/>
+                    <azione identificazione="static" nome="jmsCodaDinamica"/>
+                    <servizio-applicativo nome="RESTJMSQueueDinamicaAsText"/>
+                    <trasformazioni>
+                        <regola nome="codaDinamica" posizione="1">
+                            <!-- Template Freemarker (Alimentazione Contesto):
+                                 <#assign coda = jsonPath.read("$.coda")!/>
+                                 <#assign tmpPutContext = context?api.put("jmsCoda", coda)!/>
+                            -->
+                            <richiesta conversione="true" conversione-tipo="freemarker-context">
+                                <conversione-template>PCMtLSBpbCBub21lIGRlbGxhIGNvZGEgdmllbmUgbGV0dG8gZGFsIHBheWxvYWQgZSBzYWx2YXRvIG5lbCBjb250ZXN0bzogaWwgY29ubmV0dG9yZSBKTVMgbG8gdXRpbGl6emEgdHJhbWl0ZSAke2NvbnRleHQ6am1zQ29kYX0gLS0+CjwjYXNzaWduIGNvZGEgPSBqc29uUGF0aC5yZWFkKCIkLmNvZGEiKSEvPgo8I2Fzc2lnbiB0bXBQdXRDb250ZXh0ID0gY29udGV4dD9hcGkucHV0KCJqbXNDb2RhIiwgY29kYSkhLz4K</conversione-template>
+                            </richiesta>
+                        </regola>
+                    </trasformazioni>
+                </porta-applicativa>
 
 
 		<!-- Response Caching -->
@@ -9758,6 +9776,23 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
                                         <!-- CONTEXT_JMS_FACTORY -->
                                         <!-- CONTEXT_JMS_PKGS -->
                                         <!-- CONTEXT_JMS_PROVIDER_URL -->
+                                        <property nome="tipo" valore="queue" />
+                                        <!-- JMS_CONNECTION_FACTORY -->
+                                        <property nome="send-as" valore="TextMessage" />
+                                        <!-- JMS_USERNAME -->
+                                        <!-- JMS_PASSWORD -->
+                                </connettore>
+                        </invocazione-servizio>
+                </servizio-applicativo>
+                <servizio-applicativo nome="RESTJMSQueueDinamicaAsText">
+                        <invocazione-servizio>
+                                <connettore tipo="jms" nome="RESTJMSQueueDinamicaAsText">
+                                        <!-- nome della coda parzialmente dinamico: queue/openspcoop2TestQueueA, queue/openspcoop2TestQueueB, ... -->
+                                        <property nome="location" valore="queue/openspcoop2TestQueue${context:jmsCoda}" />
+                                        <!-- CONTEXT_JMS_FACTORY -->
+                                        <!-- CONTEXT_JMS_PKGS -->
+                                        <!-- CONTEXT_JMS_PROVIDER_URL -->
+                                        <!-- CONTEXT_JMS_CODA_DINAMICA -->
                                         <property nome="tipo" valore="queue" />
                                         <!-- JMS_CONNECTION_FACTORY -->
                                         <property nome="send-as" valore="TextMessage" />

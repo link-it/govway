@@ -62,8 +62,10 @@ Per la modifica del contenuto della richiesta devono essere forniti i seguenti d
     - ZIP Compressor: il contenuto della richiesta verrà trasformato in un archizio zip il cui contenuto viene definito dal file fornito che deve contenere proprietà indicate come nome=valore in ogni linea. Il nome della proprietà corrisponde all'entry name all'interno dell'archivio (es. dir/subDir/entryName1). Il valore della proprietà corrisponde al contenuto dell'entry. È possibile selezionare parti del messaggio, per associarle come contenuto dell'entry, utilizzando le espressioni dinamiche risolte a runtime dal Gateway (sezione :ref:`valoriDinamici`).
     - TGZ Compressor: il contenuto della richiesta verrà trasformato in un archizio tgz il cui contenuto è definito tramite il file fornito che deve possedere la medesima struttura descritta per il tipo 'ZIP'.
     - TAR Compressor: il contenuto della richiesta verrà trasformato in un archizio tar il cui contenuto è definito tramite il file fornito che deve possedere la medesima struttura descritta per il tipo 'ZIP'.
+    - Alimentazione Contesto (Freemarker Template): il template "Freemarker" fornito in configurazione viene eseguito senza modificare il contenuto della richiesta; consente di salvare nel contesto della richiesta valori (es. estratti dal contenuto) riutilizzabili successivamente tramite l'espressione ${context:NOME} (es. per il nome della coda di un connettore JMS, sezione :ref:`avanzate_connettori_jms_codaDinamica`).
+    - Alimentazione Contesto (Velocity Template): analogo al tipo precedente, utilizzando un template "Velocity".
 
-- Template: nei casi che lo prevedono, con questo elemento si fornisce il template da utilizzare per ottenere il nuovo contenuto della richiesta.
+- Template: nei casi che lo prevedono, con questo elemento si fornisce il template da utilizzare per ottenere il nuovo contenuto della richiesta o, per i tipi 'Alimentazione Contesto', il template da eseguire.
 - Content-Type: opzionalmente, tramite questo elemento, è possibile assegnare un content-type alla richiesta modificata.
 
 .. note::

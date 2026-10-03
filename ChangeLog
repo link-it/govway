@@ -1,3 +1,17 @@
+2026-10-03  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole, ApiRsConfigurazione]
+	Aggiunta funzionalità #1831
+	Le proprietà del connettore JMS prive di un campo dedicato (es. 'context-*', 'pool-*', 'lookupDestination-*', 'locations-cache',
+	'acknowledgeMode'), necessarie ad esempio per definire su ActiveMQ il binding JNDI delle code, venivano perse con la configurazione
+	su database (es. dopo un import da archivio o dal formato XML): sono adesso memorizzate e gestibili nella console tramite il link
+	'Proprietà' del connettore JMS e nelle API di configurazione tramite il nuovo campo 'proprieta' del connettore, mantenute se non indicate in un aggiornamento.
+	Il nome della coda, l'utente, la password e il nome e valore delle proprietà possono adesso contenere valori dinamici risolti a runtime
+	(es. ${header:NAME}, ${context:NAME} valorizzato da una trasformazione di tipo 'Alimentazione Contesto' che legge il contenuto della richiesta),
+	consentendo di pubblicare su code differenti in funzione della richiesta; la password non viene più registrata nel log di debug del connettore.
+	Nella console sono stati inoltre corretti, anche per i connettori di tipo plugin: le proprietà del connettore di una fruizione ridefinito
+	in un gruppo, che venivano lette e modificate sul connettore di default, e il percorso di navigazione delle proprietà del connettore di un applicativo.
+
 2026-10-02  Andrea Poli <apoli@link.it>
 
 	* [GovWayMonitor, ApiRsMonitoraggio, TimerStatistiche]

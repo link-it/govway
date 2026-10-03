@@ -35,8 +35,6 @@ import org.govway.struts.action.ActionMapping;
 import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.config.RispostaAsincrona;
 import org.openspcoop2.core.config.ServizioApplicativo;
-import org.openspcoop2.core.constants.CostantiConnettori;
-import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.Fruitore;
@@ -111,6 +109,7 @@ public final class ConnettorePropDel extends Action {
 			String objToRemove = connettoriHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
 			
+			String azioneConnettoreIdPorta = connettoriHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_FRUITORE_VIEW_CONNETTORE_MAPPING_AZIONE_ID_PORTA);
 			String tipoAccordo = connettoriHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_TIPO_ACCORDO);
 			if("".equals(tipoAccordo))
 				tipoAccordo = null;
@@ -144,16 +143,9 @@ public final class ConnettorePropDel extends Action {
 				int idServizioInt = Integer.parseInt(id);
 				AccordoServizioParteSpecifica serviziosp = apsCore.getAccordoServizioParteSpecifica(idServizioInt);
 				int idServizioFruitoreInt = Integer.parseInt(myId);
-				Fruitore servFru = apsCore.getServizioFruitore(idServizioFruitoreInt);
-				// Elimino il vecchio fruitore ed aggiungo il nuovo
-				for (int i = 0; i < serviziosp.sizeFruitoreList(); i++) {
-					Fruitore tmpFru = serviziosp.getFruitore(i);
-					if (tmpFru.getId()!=null && servFru.getId()!=null && (tmpFru.getId().longValue() == servFru.getId().longValue())) {
-						serviziosp.removeFruitore(i);
-						break;
-					}
-				}
-				Connettore connettore = servFru.getConnettore();
+				// immagine del fruitore presente nell'accordo, comprensiva dei connettori ridefiniti nei gruppi: viene modificata direttamente
+				Fruitore servFru = connettoriHelper.getFruitore(serviziosp, idServizioFruitoreInt);
+				Connettore connettore = connettoriHelper.getConnettoreFruizione(servFru, azioneConnettoreIdPorta);
 				// Elimino le proprieta' dal connettore
 				for (int i = 0; i < idsToRemove.size(); i++) {
 					String nomeToDel = idsToRemove.get(i);
@@ -165,8 +157,7 @@ public final class ConnettorePropDel extends Action {
 						}
 					}
 				}
-				servFru.setConnettore(connettore);
-				serviziosp.addFruitore(servFru);
+				// il connettore (di default o ridefinito per un gruppo) è stato modificato direttamente all'interno del fruitore dell'accordo
 				connettoriCore.performUpdateOperation(superUser, connettoriHelper.smista(), serviziosp);
 				// Mi salvo i dati per identificare il fruitore
 				saveNomeFru = servFru.getNome();
@@ -274,8 +265,8 @@ public final class ConnettorePropDel extends Action {
 						break;
 					}
 				}
-				Fruitore servFru = apsCore.getServizioFruitore(newMyId);
-				connettore = servFru.getConnettore();
+				Fruitore servFru = connettoriHelper.getFruitore(serviziosp, newMyId);
+				connettore = connettoriHelper.getConnettoreFruizione(servFru, azioneConnettoreIdPorta);
 			}
 			else if (servlet.equals(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT)) {
 				int idSilInt = Integer.parseInt(idsil);
@@ -305,16 +296,14 @@ public final class ConnettorePropDel extends Action {
 			List<Object> lista = new ArrayList<>();
 			if (connettore != null) {
 				for (int i = 0; i<connettore.sizePropertyList(); i++){
-					if(CostantiDB.CONNETTORE_DEBUG.equals(connettore.getProperty(i).getNome())==false  &&
-							connettore.getProperty(i).getNome().startsWith(CostantiConnettori.CONNETTORE_EXTENDED_PREFIX)==false){
+					if(ConnettoreCustomUtils.isProprietaGestitaTramiteLista(connettore.getTipo(), connettore.getCustom(), connettore.getProperty(i).getNome())){
 						lista.add(connettore.getProperty(i));
 					}
 				}
 			}
 			if (connettoreC != null) {
 				for (int i = 0; i<connettoreC.sizePropertyList(); i++){
-					if(CostantiDB.CONNETTORE_DEBUG.equals(connettoreC.getProperty(i).getNome())==false  &&
-							connettoreC.getProperty(i).getNome().startsWith(CostantiConnettori.CONNETTORE_EXTENDED_PREFIX)==false){
+					if(ConnettoreCustomUtils.isProprietaGestitaTramiteLista(connettoreC.getTipo(), connettoreC.getCustom(), connettoreC.getProperty(i).getNome())){
 						lista.add(connettoreC.getProperty(i));
 					}
 				}

@@ -1,0 +1,12 @@
+{
+	"connettore": {
+		"tipo": "jms",
+		"nome": "nome_coda",
+		"connection_factory": "connFactory",
+		"tipo_coda": "queue",
+		"send_as": "text",
+		"jndi_initial_context": "org.apache.activemq.jndi.ActiveMQInitialContextFactory",
+		"jndi_provider_url": "tcp://127.0.0.1:61616",
+		"proprieta": []
+	}
+}

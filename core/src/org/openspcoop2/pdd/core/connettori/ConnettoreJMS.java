@@ -61,6 +61,8 @@ import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.soap.TunnelSoapUtils;
 import org.openspcoop2.pdd.config.CostantiProprieta;
 import org.openspcoop2.pdd.core.Utilities;
+import org.openspcoop2.pdd.core.dynamic.DynamicException;
+import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.utils.SemaphoreLock;
@@ -112,6 +114,8 @@ public class ConnettoreJMS extends ConnettoreBase {
 	@Override
 	protected boolean send(ConnettoreMsg request) {
 
+		this.connettoreMsgRichiesta = request;
+		
 		// location
 		if(this.properties.get(CostantiConnettori.CONNETTORE_LOCATION)==null){
 			this.errore = "Proprieta' '"+CostantiConnettori.CONNETTORE_LOCATION+"' non fornita e richiesta da questo tipo di connettore ["+request.getTipoConnettore()+"]";
@@ -191,6 +195,22 @@ public class ConnettoreJMS extends ConnettoreBase {
 
 
 
+	private ConnettoreMsg connettoreMsgRichiesta;
+	
+	/**
+	 * Risolve le parti dinamiche (es. ${header:NAME}, ${context:NAME}) eventualmente presenti
+	 * nell'utente, nella password e nei nomi e valori delle proprietà del connettore.
+	 */
+	private String resolveDynamicValue(String name, String value) throws DynamicException {
+		if(value==null || (!value.contains("${") && !value.contains("?{"))) {
+			return value;
+		}
+		if(this.dynamicMap==null) {
+			this.buildDynamicMap(this.connettoreMsgRichiesta);
+		}
+		return DynamicUtils.convertDynamicPropertyValue(name, value, this.dynamicMap, this.getPddContext(), true);
+	}
+	
 	/**
 	 * Si occupa di effettuare la consegna.
 	 *
@@ -265,6 +285,8 @@ public class ConnettoreJMS extends ConnettoreBase {
 				user = this.properties.get(CostantiConnettori.CONNETTORE_USERNAME);
 				password = this.properties.get(CostantiConnettori.CONNETTORE_PASSWORD);
 			}
+			user = resolveDynamicValue(CostantiConnettori.CONNETTORE_USERNAME, user);
+			password = resolveDynamicValue(CostantiConnettori.CONNETTORE_PASSWORD, password);
 
 
 			/* ------ Creazione contesto  ed eventuale pool-local-context ------- */
@@ -287,13 +309,17 @@ public class ConnettoreJMS extends ConnettoreBase {
 				String key = (String) enumCTX.next();
 				String value = this.properties.get(key);
 				if(key.startsWith(CostantiConnettori.CONNETTORE_JMS_CONTEXT_PREFIX)){
-					key = key.substring(CostantiConnettori.CONNETTORE_JMS_CONTEXT_PREFIX.length());
-					propertiesJMS.put(key,value);
+					String nomeProprieta = key;
+					key = resolveDynamicValue(nomeProprieta, key.substring(CostantiConnettori.CONNETTORE_JMS_CONTEXT_PREFIX.length()));
+					propertiesJMS.put(key,resolveDynamicValue(nomeProprieta, value));
 				}else if(key.startsWith(CostantiConnettori.CONNETTORE_JMS_POOL_PREFIX)){
-					key = key.substring(CostantiConnettori.CONNETTORE_JMS_POOL_PREFIX.length());
-					propertiesLocalPool.put(key,value);
+					String nomeProprieta = key;
+					key = resolveDynamicValue(nomeProprieta, key.substring(CostantiConnettori.CONNETTORE_JMS_POOL_PREFIX.length()));
+					propertiesLocalPool.put(key,resolveDynamicValue(nomeProprieta, value));
 				}else if(key.startsWith(CostantiConnettori.CONNETTORE_JMS_LOOKUP_DESTINATION_PREFIX)){
-					key = key.substring(CostantiConnettori.CONNETTORE_JMS_LOOKUP_DESTINATION_PREFIX.length());
+					String nomeProprieta = key;
+					key = resolveDynamicValue(nomeProprieta, key.substring(CostantiConnettori.CONNETTORE_JMS_LOOKUP_DESTINATION_PREFIX.length()));
+					value = resolveDynamicValue(nomeProprieta, value);
 					if(key.indexOf(CostantiConnettori.CONNETTORE_JMS_LOCATION_REPLACE_TOKEN_AZIONE)!=-1 || value.indexOf(CostantiConnettori.CONNETTORE_JMS_LOCATION_REPLACE_TOKEN_AZIONE)!=-1){
 						if(this.busta == null || this.busta.getAzione()== null){
 							throw new Exception("Proprieta' '"+CostantiConnettori.CONNETTORE_LOCATION+"' definita dinamicamente ("+CostantiConnettori.CONNETTORE_JMS_LOCATION_REPLACE_TOKEN_AZIONE+"), ma busta e Azione non definita per questo Connettore["+this.tipoConnettore+"]");
@@ -462,7 +488,7 @@ public class ConnettoreJMS extends ConnettoreBase {
 			// ConnectionFactory
 			if( user!=null && password!=null  ){
 				if(this.debug)
-					this.logger.info("Create connection (user:"+user+" password:"+password+")...",false);
+					this.logger.info("Create connection (user:"+user+" password:***)...",false); // la password non viene registrata nel log
 				qc = qcf.createConnection(user,password);
 			}
 			else{

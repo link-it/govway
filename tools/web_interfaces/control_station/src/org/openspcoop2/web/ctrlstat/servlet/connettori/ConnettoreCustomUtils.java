@@ -21,9 +21,15 @@ package org.openspcoop2.web.ctrlstat.servlet.connettori;
 
 import java.util.List;
 
+import org.openspcoop2.core.constants.CostantiConnettori;
+import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.core.constants.TipiConnettore;
+import org.openspcoop2.pdd.core.dynamic.DynamicHelperCostanti;
+
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
+import org.openspcoop2.web.lib.mvc.DataElementInfo;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 
 /**
@@ -35,13 +41,29 @@ import org.openspcoop2.web.lib.mvc.DataElementType;
  */
 public class ConnettoreCustomUtils {
 	
+	/**
+	 * Le proprietà gestite tramite la lista 'Proprietà' sono:
+	 * - per un connettore custom, tutte le proprietà ad eccezione di 'debug' e delle extended;
+	 * - per un connettore JMS, le sole proprietà prive di un campo dedicato nella maschera del connettore (es. 'context-*', 'locations-cache').
+	 */
+	public static boolean isConnettoreJms(String tipo, Boolean custom) {
+		return TipiConnettore.JMS.getNome().equals(tipo) && (custom==null || !custom.booleanValue());
+	}
+	public static boolean isProprietaGestitaTramiteLista(String tipo, Boolean custom, String nome) {
+		if(isConnettoreJms(tipo, custom)) {
+			return CostantiDB.isConnettoreJmsProprietaAggiuntiva(nome);
+		}
+		return nome!=null && !CostantiDB.CONNETTORE_DEBUG.equals(nome) && !nome.startsWith(CostantiConnettori.CONNETTORE_EXTENDED_PREFIX);
+	}
+	
 	private ConnettoreCustomUtils() {}
 
 	public static void addProprietaConnettoriCustom(List<DataElement> dati,
 			String nome, String valore,
 			String servlet, String id, String nomeprov, String tipoprov,String nomeservizio,String tiposervizio, String versioneservizio,
 			String myId, String correlato, String idSoggErogatore, String nomeservizioApplicativo,String idsil,String tipoAccordo,
-			String provider, String accessoDaAPSParametro, String idPorta, String azioneConnettoreIdPorta)  {
+			String provider, String accessoDaAPSParametro, String idPorta, String azioneConnettoreIdPorta,
+			boolean connettoreJms)  {
 		
 		DataElement de = new DataElement();
 		de.setType(DataElementType.TITLE);
@@ -70,6 +92,14 @@ public class ConnettoreCustomUtils {
 		else
 			de.setValue(valore);
 		de.setRequired(true);
+		if(connettoreJms) {
+			// per il connettore JMS nome e valore della proprietà possono contenere parti dinamiche risolte a runtime (es. ${context:NAME})
+			DataElementInfo dInfoValore = new DataElementInfo(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_CUSTOM_VALORE);
+			dInfoValore.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
+			boolean fruizione = AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE.equals(servlet);
+			dInfoValore.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_CONNETTORE_VALORI(false, fruizione, false));
+			de.setInfo(dInfoValore);
+		}
 		dati.add(de);
 
 		de = new DataElement();

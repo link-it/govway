@@ -1,0 +1,12 @@
+{
+	"connettore": {
+		"tipo": "jms",
+		"nome": "nome_coda",
+		"connection_factory": "connFactory",
+		"tipo_coda": "queue",
+		"send_as": "text",
+		"proprieta": [
+		{ "nome": "context-java.naming.provider.url", "valore": "tcp://127.0.0.1:61616"}
+		]
+	}
+}

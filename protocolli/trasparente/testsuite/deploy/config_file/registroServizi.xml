@@ -25,6 +25,7 @@
 		<resource nome="jmsBytesTopic" method="POST" path="jmsBytesTopic" />
 		<resource nome="jmsReturnCode" method="POST" path="jmsReturnCode" />
 		<resource nome="jmsTrasformazioneRisposta" method="POST" path="jmsTrasformazioneRisposta" />
+		<resource nome="jmsCodaDinamica" method="POST" path="jmsCodaDinamica" />
         </accordo-servizio-parte-comune>
 
         <accordo-servizio-parte-comune nome="EsempioCORSviaREST" profilo-collaborazione="sincrono" 

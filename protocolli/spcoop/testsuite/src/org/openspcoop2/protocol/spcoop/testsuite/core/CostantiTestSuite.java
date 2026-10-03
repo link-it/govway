@@ -843,6 +843,8 @@ public class CostantiTestSuite {
 	public static final String PORTA_DELEGATA_JMS_SINCRONO_OPERATION_WRAPPER = "JMSSincrono_OperationWrapper";
 	/** Porta delegata per verifica connettore JMS con profilo sincrono: risposta generata tramite trasformazione */
 	public static final String PORTA_DELEGATA_JMS_SINCRONO_TRASFORMAZIONE_RISPOSTA = "JMSSincrono_TrasformazioneRisposta";
+	/** Porta delegata per verifica connettore JMS con profilo sincrono: nome della coda dinamico letto dal payload tramite trasformazione */
+	public static final String PORTA_DELEGATA_JMS_SINCRONO_CODA_DINAMICA = "JMSSincrono_CodaDinamica";
 	/** Porta delegata per verifica connettore JMS con profilo oneway: proprieta' operationWrapper ignorata */
 	public static final String PORTA_DELEGATA_JMS_ONEWAY_OPERATION_WRAPPER = "JMSOneway_OperationWrapper";
 	
@@ -1295,6 +1297,8 @@ public class CostantiTestSuite {
 	public static final String SPCOOP_SERVIZIO_SINCRONO_JMS_OPERATION_WRAPPER = "JMSSincrono_OperationWrapper";
 	/** ENTITA SPCOOP: Nome Azione del Servizio Sincrono per verifica connettore JMS: risposta generata tramite trasformazione */
 	public static final String SPCOOP_SERVIZIO_SINCRONO_JMS_TRASFORMAZIONE_RISPOSTA = "JMSSincrono_TrasformazioneRisposta";
+	/** ENTITA SPCOOP: Nome Azione del Servizio Sincrono per verifica connettore JMS: nome della coda dinamico letto dal payload tramite trasformazione */
+	public static final String SPCOOP_SERVIZIO_SINCRONO_JMS_CODA_DINAMICA = "JMSSincrono_CodaDinamica";
 	/** ENTITA SPCOOP: Nome Azione del Servizio OneWay per verifica connettore JMS: proprieta' operationWrapper ignorata */
 	public static final String SPCOOP_SERVIZIO_ONEWAY_JMS_OPERATION_WRAPPER = "JMSOneway_OperationWrapper";
 	/** ENTITA SPCOOP: Nome Azione del Servizio OneWay per verifica connettore SAAJ */

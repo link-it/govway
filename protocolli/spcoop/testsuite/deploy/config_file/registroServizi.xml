@@ -110,6 +110,7 @@
         <azione nome="JMSSincrono_SbustamentoTopic"/>
         <azione nome="JMSSincrono_OperationWrapper"/>
         <azione nome="JMSSincrono_TrasformazioneRisposta"/>
+        <azione nome="JMSSincrono_CodaDinamica"/>
 	<azione nome="WSSEncryptLocalForwardSoloRichiesta"/>
         <azione nome="WSSSignature"/>
         <azione nome="WSSSignatureP12"/>

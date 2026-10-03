@@ -31,8 +31,6 @@ import org.govway.struts.action.ActionMapping;
 import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.config.RispostaAsincrona;
 import org.openspcoop2.core.config.ServizioApplicativo;
-import org.openspcoop2.core.constants.CostantiConnettori;
-import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.Fruitore;
@@ -145,7 +143,8 @@ public final class ConnettorePropAdd extends Action {
 				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				ConnettoreCustomUtils.addProprietaConnettoriCustom(dati, nome, valore, servlet, id, nomeprov, tipoprov, nomeservizio, tiposervizio, versioneservizio,
-						myId, correlato, idSoggErogatore, nomeservizioApplicativo, idsil, tipoAccordo, provider,accessoDaAPSParametro, idPorta, azioneConnettoreIdPorta);
+						myId, correlato, idSoggErogatore, nomeservizioApplicativo, idsil, tipoAccordo, provider,accessoDaAPSParametro, idPorta, azioneConnettoreIdPorta,
+						connettoriHelper.isConnettoreJmsProprieta(servlet, id, myId, idsil, azioneConnettoreIdPorta));
 				
 				pd.setDati(dati);
 
@@ -168,7 +167,8 @@ public final class ConnettorePropAdd extends Action {
 				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				ConnettoreCustomUtils.addProprietaConnettoriCustom(dati, nome, valore, servlet, id, nomeprov, tipoprov, nomeservizio, tiposervizio, versioneservizio,
-						myId, correlato, idSoggErogatore, nomeservizioApplicativo, idsil, tipoAccordo, provider,accessoDaAPSParametro, idPorta, azioneConnettoreIdPorta);
+						myId, correlato, idSoggErogatore, nomeservizioApplicativo, idsil, tipoAccordo, provider,accessoDaAPSParametro, idPorta, azioneConnettoreIdPorta,
+						connettoriHelper.isConnettoreJmsProprieta(servlet, id, myId, idsil, azioneConnettoreIdPorta));
 				
 				pd.setDati(dati);
 
@@ -185,7 +185,9 @@ public final class ConnettorePropAdd extends Action {
 			if (servlet.equals(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE)) {
 				AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Long.parseLong(id));
 				Connettore connettore = asps.getConfigurazioneServizio().getConnettore();
-				connettore.setCustom(true);
+				if(!ConnettoreCustomUtils.isConnettoreJms(connettore.getTipo(), connettore.getCustom())) {
+					connettore.setCustom(true);
+				}
 				Property cp = new Property();
 				cp.setNome(nome);
 				cp.setValore(valore);
@@ -197,23 +199,17 @@ public final class ConnettorePropAdd extends Action {
 				int idServizioInt = Integer.parseInt(id);
 				AccordoServizioParteSpecifica serviziosp = apsCore.getAccordoServizioParteSpecifica(idServizioInt);
 				int idServizioFruitoreInt = Integer.parseInt(myId);
-				Fruitore servFru = apsCore.getServizioFruitore(idServizioFruitoreInt);
-				// Elimino il vecchio fruitore ed aggiungo il nuovo
-				for (int i = 0; i < serviziosp.sizeFruitoreList(); i++) {
-					Fruitore tmpFru = serviziosp.getFruitore(i);
-					if (tmpFru.getId().longValue() == servFru.getId().longValue()) {
-						serviziosp.removeFruitore(i);
-						break;
-					}
+				// immagine del fruitore presente nell'accordo, comprensiva dei connettori ridefiniti nei gruppi: viene modificata direttamente
+				Fruitore servFru = connettoriHelper.getFruitore(serviziosp, idServizioFruitoreInt);
+				Connettore connettore = connettoriHelper.getConnettoreFruizione(servFru, azioneConnettoreIdPorta);
+				if(!ConnettoreCustomUtils.isConnettoreJms(connettore.getTipo(), connettore.getCustom())) {
+					connettore.setCustom(true);
 				}
-				Connettore connettore = servFru.getConnettore();
-				connettore.setCustom(true);
 				Property cp = new Property();
 				cp.setNome(nome);
 				cp.setValore(valore);
 				connettore.addProperty(cp);
-				servFru.setConnettore(connettore);
-				serviziosp.addFruitore(servFru);
+				// il connettore (di default o ridefinito per un gruppo) è stato modificato direttamente all'interno del fruitore dell'accordo
 				connettoriCore.performUpdateOperation(userLogin, connettoriHelper.smista(), serviziosp);
 				// Mi salvo i dati per identificare il fruitore
 				saveNomeFru = servFru.getNome();
@@ -224,7 +220,9 @@ public final class ConnettorePropAdd extends Action {
 				ServizioApplicativo sa = saCore.getServizioApplicativo(idSilInt);
 				InvocazioneServizio is = sa.getInvocazioneServizio();
 				org.openspcoop2.core.config.Connettore connettore = is.getConnettore();
-				connettore.setCustom(true);
+				if(!ConnettoreCustomUtils.isConnettoreJms(connettore.getTipo(), connettore.getCustom())) {
+					connettore.setCustom(true);
+				}
 				org.openspcoop2.core.config.Property cp =
 					new org.openspcoop2.core.config.Property();
 				cp.setNome(nome);
@@ -239,7 +237,9 @@ public final class ConnettorePropAdd extends Action {
 				ServizioApplicativo sa = saCore.getServizioApplicativo(idSilInt);
 				RispostaAsincrona ra = sa.getRispostaAsincrona();
 				org.openspcoop2.core.config.Connettore connettore = ra.getConnettore();
-				connettore.setCustom(true);
+				if(!ConnettoreCustomUtils.isConnettoreJms(connettore.getTipo(), connettore.getCustom())) {
+					connettore.setCustom(true);
+				}
 				org.openspcoop2.core.config.Property cp =
 					new org.openspcoop2.core.config.Property();
 				cp.setNome(nome);
@@ -254,7 +254,9 @@ public final class ConnettorePropAdd extends Action {
 				ServizioApplicativo sa = saCore.getServizioApplicativo(idSilInt);
 				InvocazioneServizio is = sa.getInvocazioneServizio();
 				org.openspcoop2.core.config.Connettore connettore = is.getConnettore();
-				connettore.setCustom(true);
+				if(!ConnettoreCustomUtils.isConnettoreJms(connettore.getTipo(), connettore.getCustom())) {
+					connettore.setCustom(true);
+				}
 				org.openspcoop2.core.config.Property cp =
 					new org.openspcoop2.core.config.Property();
 				cp.setNome(nome);
@@ -270,7 +272,9 @@ public final class ConnettorePropAdd extends Action {
 				Soggetto ss = scs.getSoggettoReg();
 				org.openspcoop2.core.config.Soggetto ssconf = scs.getSoggettoConf();
 				Connettore connettore = ss.getConnettore();
-				connettore.setCustom(true);
+				if(!ConnettoreCustomUtils.isConnettoreJms(connettore.getTipo(), connettore.getCustom())) {
+					connettore.setCustom(true);
+				}
 				Property cp = new Property();
 				cp.setNome(nome);
 				cp.setValore(valore);
@@ -299,8 +303,8 @@ public final class ConnettorePropAdd extends Action {
 						break;
 					}
 				}
-				Fruitore servFru = apsCore.getServizioFruitore(newMyId);
-				connettore = servFru.getConnettore();
+				Fruitore servFru = connettoriHelper.getFruitore(serviziosp, newMyId);
+				connettore = connettoriHelper.getConnettoreFruizione(servFru, azioneConnettoreIdPorta);
 			}
 			else if (servlet.equals(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT)) {
 				int idSilInt = Integer.parseInt(idsil);
@@ -330,16 +334,14 @@ public final class ConnettorePropAdd extends Action {
 			List<Object> lista = new ArrayList<>();
 			if (connettore != null) {
 				for (int i = 0; i<connettore.sizePropertyList(); i++){
-					if(!CostantiDB.CONNETTORE_DEBUG.equals(connettore.getProperty(i).getNome())  &&
-							!connettore.getProperty(i).getNome().startsWith(CostantiConnettori.CONNETTORE_EXTENDED_PREFIX)){
+					if(ConnettoreCustomUtils.isProprietaGestitaTramiteLista(connettore.getTipo(), connettore.getCustom(), connettore.getProperty(i).getNome())){
 						lista.add(connettore.getProperty(i));
 					}
 				}
 			}
 			if (connettoreC != null) {
 				for (int i = 0; i<connettoreC.sizePropertyList(); i++){
-					if(!CostantiDB.CONNETTORE_DEBUG.equals(connettoreC.getProperty(i).getNome())  &&
-							!connettoreC.getProperty(i).getNome().startsWith(CostantiConnettori.CONNETTORE_EXTENDED_PREFIX)){
+					if(ConnettoreCustomUtils.isProprietaGestitaTramiteLista(connettoreC.getTipo(), connettoreC.getCustom(), connettoreC.getProperty(i).getNome())){
 						lista.add(connettoreC.getProperty(i));
 					}
 				}

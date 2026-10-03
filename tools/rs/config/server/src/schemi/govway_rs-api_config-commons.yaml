@@ -1029,6 +1029,11 @@ components:
         jndi_provider_url:
           type: string
           maxLength: 255
+        proprieta:
+          description: "Proprietà aggiuntive del connettore prive di un campo dedicato (es. 'context-*', 'pool-*', 'lookupDestination-*', 'locations-cache', 'acknowledgeMode'). Se non indicate in un aggiornamento, vengono mantenute quelle già presenti."
+          type: array
+          items:
+            $ref: '#/components/schemas/Proprieta'
 
     # ConnettoreNull
     ConnettoreNull:

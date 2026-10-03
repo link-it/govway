@@ -58,6 +58,8 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mvc.properties.provider.InputValidationUtils;
 import org.openspcoop2.core.plugins.constants.TipoPlugin;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
+import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Property;
 import org.openspcoop2.core.registry.Soggetto;
@@ -320,9 +322,9 @@ public class ConnettoriHelper extends ConsoleHelper {
 			ServiziApplicativiHelper saHelper = new ServiziApplicativiHelper(this.request, this.pd, this.session);
 			List<Parameter> lstParm = saHelper.getTitoloSA(parentSA, provider, id, idPorta);
 			
-			String labelPerPorta = null;
 			if(parentSA!=null && (parentSA.intValue() == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_CONFIGURAZIONE)) {
 				
+				String labelPerPorta = null;
 				AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(id));
 				
 				if(accessoDaListaAPS) {
@@ -345,27 +347,33 @@ public class ConnettoriHelper extends ConsoleHelper {
 							PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE,
 							pa);
 				}
+			
+				if(accessoDaListaAPS) {
+					lstParm.remove(lstParm.size()-1);
+				}
+				
+				List<Parameter> lstParameteriSAEndpoint = new ArrayList<>();
+				lstParameteriSAEndpoint.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, id));
+				lstParameteriSAEndpoint.add(new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER, provider));
+				lstParameteriSAEndpoint.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID_SERVIZIO_APPLICATIVO, idsil));
+				lstParameteriSAEndpoint.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_NOME_SERVIZIO_APPLICATIVO,nomeservizioApplicativo ));
+				lstParameteriSAEndpoint.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_PORTA, idPorta ));
+				lstParameteriSAEndpoint.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_DATI_INVOCAZIONE,Costanti.CHECK_BOX_ENABLED_TRUE));
+				lstParameteriSAEndpoint.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS,accessoDaAPSParametro ));
+	
+				lstParm.add(new Parameter(labelPerPorta,ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT, lstParameteriSAEndpoint.toArray(new Parameter[lstParameteriSAEndpoint.size()]))); 
 			}
 			else {
-				/**labelPerPorta = ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_INVOCAZIONE_SERVIZIO_DI+nomeservizioApplicativo;*/
-				
-				labelPerPorta = "Connettore del servizio applicativo (InvocazioneServizio) " + nomeservizioApplicativo+" del soggetto "+sa.getTipoSoggettoProprietario()+"/"+sa.getNomeSoggettoProprietario();
+				// accesso dagli applicativi: come per le proprietà dell'applicativo, la voce precedente è il nome dell'applicativo
+				IDSoggetto idSoggettoProprietario = new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario());
+				Soggetto soggettoProprietario = this.soggettiCore.getSoggettoRegistro(idSoggettoProprietario);
+				String dominio = this.pddCore.isPddEsterna(soggettoProprietario.getPortaDominio()) ? SoggettiCostanti.SOGGETTO_DOMINIO_ESTERNO_VALUE : SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO_VALUE;
+				List<Parameter> parametersServletSAChange = new ArrayList<>();
+				parametersServletSAChange.add(new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID, sa.getId()+""));
+				parametersServletSAChange.add(new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER, sa.getIdSoggetto()+""));
+				parametersServletSAChange.add(new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_DOMINIO, dominio));
+				lstParm.add(new Parameter(sa.getNome(), ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_CHANGE, parametersServletSAChange.toArray(new Parameter[parametersServletSAChange.size()])));
 			}
-			
-			if(accessoDaListaAPS) {
-				lstParm.remove(lstParm.size()-1);
-			}
-			
-			List<Parameter> lstParameteriSAEndpoint = new ArrayList<>();
-			lstParameteriSAEndpoint.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, id));
-			lstParameteriSAEndpoint.add(new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER, provider));
-			lstParameteriSAEndpoint.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID_SERVIZIO_APPLICATIVO, idsil));
-			lstParameteriSAEndpoint.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_NOME_SERVIZIO_APPLICATIVO,nomeservizioApplicativo ));
-			lstParameteriSAEndpoint.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_PORTA, idPorta ));
-			lstParameteriSAEndpoint.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_DATI_INVOCAZIONE,Costanti.CHECK_BOX_ENABLED_TRUE));
-			lstParameteriSAEndpoint.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS,accessoDaAPSParametro ));
-
-			lstParm.add(new Parameter(labelPerPorta,ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT, lstParameteriSAEndpoint.toArray(new Parameter[lstParameteriSAEndpoint.size()]))); 
 					
 			ServletUtils.setPageDataTitle(pd,lstParm);
 		}
@@ -748,6 +756,75 @@ public class ConnettoriHelper extends ConsoleHelper {
 				postBackViaPost);
 	}
 
+	/**
+	 * Indica se il connettore su cui operano le proprietà (servlet chiamante) è di tipo JMS.
+	 */
+	public boolean isConnettoreJmsProprieta(String servlet, String id, String myId, String idsil, String idPortaDelegata) throws DriverConfigurazioneException, DriverConfigurazioneNotFound, DriverRegistroServiziException, DriverControlStationException, DriverRegistroServiziNotFound {
+		String tipo = null;
+		Boolean custom = null;
+		if (AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE.equals(servlet)) {
+			org.openspcoop2.core.registry.Connettore c = this.apsCore.getAccordoServizioParteSpecifica(Long.parseLong(id)).getConfigurazioneServizio().getConnettore();
+			tipo = c.getTipo();
+			custom = c.getCustom();
+		}
+		else if (AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE.equals(servlet)) {
+			AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(Long.parseLong(id));
+			org.openspcoop2.core.registry.Connettore c = this.getConnettoreFruizione(this.getFruitore(asps, Long.parseLong(myId)), idPortaDelegata);
+			tipo = c.getTipo();
+			custom = c.getCustom();
+		}
+		else if (ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT.equals(servlet) ||
+				PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CHANGE.equals(servlet)) {
+			Connettore c = this.saCore.getServizioApplicativo(Long.parseLong(idsil)).getInvocazioneServizio().getConnettore();
+			tipo = c.getTipo();
+			custom = c.getCustom();
+		}
+		else if (ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA.equals(servlet)) {
+			Connettore c = this.saCore.getServizioApplicativo(Long.parseLong(idsil)).getRispostaAsincrona().getConnettore();
+			tipo = c.getTipo();
+			custom = c.getCustom();
+		}
+		else if (SoggettiCostanti.SERVLET_NAME_SOGGETTI_ENDPOINT.equals(servlet)) {
+			org.openspcoop2.core.registry.Connettore c = this.soggettiCore.getSoggettoCtrlStat(Long.parseLong(id)).getSoggettoReg().getConnettore();
+			tipo = c.getTipo();
+			custom = c.getCustom();
+		}
+		return ConnettoreCustomUtils.isConnettoreJms(tipo, custom);
+	}
+	
+	/**
+	 * Restituisce l'immagine del fruitore presente nell'accordo, comprensiva delle configurazioni per azione (connettori ridefiniti nei gruppi),
+	 * non restituite da getServizioFruitore(id).
+	 */
+	public Fruitore getFruitore(AccordoServizioParteSpecifica asps, long idServizioFruitore) throws DriverRegistroServiziException {
+		Fruitore servFru = this.apsCore.getServizioFruitore(idServizioFruitore);
+		for (Fruitore check : asps.getFruitoreList()) {
+			if(check.getTipo().equals(servFru.getTipo()) && check.getNome().equals(servFru.getNome())) {
+				return check;
+			}
+		}
+		return servFru;
+	}
+	
+	/**
+	 * Restituisce il connettore della fruizione su cui operano le proprietà: se l'accesso avviene dal connettore di un gruppo (porta delegata con azioni associate)
+	 * viene restituito il connettore ridefinito per quel gruppo, altrimenti il connettore di default della fruizione.
+	 */
+	public org.openspcoop2.core.registry.Connettore getConnettoreFruizione(Fruitore servFru, String idPortaDelegata) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		if(idPortaDelegata!=null && !"".equals(idPortaDelegata)) {
+			org.openspcoop2.core.config.PortaDelegata pd = this.porteDelegateCore.getPortaDelegata(Long.parseLong(idPortaDelegata));
+			if(pd!=null && pd.getAzione()!=null && pd.getAzione().sizeAzioneDelegataList()>0) {
+				String azioneConnettore = pd.getAzione().getAzioneDelegata(0);
+				for (org.openspcoop2.core.registry.ConfigurazioneServizioAzione check : servFru.getConfigurazioneAzioneList()) {
+					if(check.getAzioneList().contains(azioneConnettore)) {
+						return check.getConnettore();
+					}
+				}
+			}
+		}
+		return servFru.getConnettore();
+	}
+	
 	// Controlla i dati del connettore custom
 	boolean connettorePropCheckData() throws CoreException {
 		try {
@@ -805,9 +882,13 @@ public class ConnettoriHelper extends ConsoleHelper {
 			// registrata
 			boolean giaRegistratoProprietaNormale = false;
 			boolean giaRegistratoProprietaDebug = false;
+			String tipoConnettore = null;
+			Boolean customConnettore = null;
 			if (servlet.equals(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE)) {
 				AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(Long.parseLong(id));
 				org.openspcoop2.core.registry.Connettore connettore = asps.getConfigurazioneServizio().getConnettore();
+				tipoConnettore = connettore.getTipo();
+				customConnettore = connettore.getCustom();
 				for (int j = 0; j < connettore.sizePropertyList(); j++) {
 					Property tmpProp = connettore.getProperty(j);
 					if (tmpProp.getNome().equals(nome)) {
@@ -822,8 +903,11 @@ public class ConnettoriHelper extends ConsoleHelper {
 			}
 			if (servlet.equals(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE)) {
 				int idServizioFruitoreInt = Integer.parseInt(myId);
-				Fruitore servFru = this.apsCore.getServizioFruitore(idServizioFruitoreInt);
-				org.openspcoop2.core.registry.Connettore connettore = servFru.getConnettore();
+				AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(Long.parseLong(id));
+				Fruitore servFru = this.getFruitore(asps, idServizioFruitoreInt);
+				org.openspcoop2.core.registry.Connettore connettore = this.getConnettoreFruizione(servFru, this.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_FRUITORE_VIEW_CONNETTORE_MAPPING_AZIONE_ID_PORTA));
+				tipoConnettore = connettore.getTipo();
+				customConnettore = connettore.getCustom();
 				for (int j = 0; j < connettore.sizePropertyList(); j++) {
 					Property tmpProp = connettore.getProperty(j);
 					if (tmpProp.getNome().equals(nome)) {
@@ -841,6 +925,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 				ServizioApplicativo sa = this.saCore.getServizioApplicativo(idSilInt);
 				InvocazioneServizio is = sa.getInvocazioneServizio();
 				org.openspcoop2.core.config.Connettore connettore = is.getConnettore();
+				tipoConnettore = connettore.getTipo();
+				customConnettore = connettore.getCustom();
 				for (int j = 0; j < connettore.sizePropertyList(); j++) {
 					org.openspcoop2.core.config.Property tmpProp = connettore.getProperty(j);
 					if (tmpProp.getNome().equals(nome)) {
@@ -858,6 +944,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 				ServizioApplicativo sa = this.saCore.getServizioApplicativo(idSilInt);
 				RispostaAsincrona ra = sa.getRispostaAsincrona();
 				org.openspcoop2.core.config.Connettore connettore = ra.getConnettore();
+				tipoConnettore = connettore.getTipo();
+				customConnettore = connettore.getCustom();
 				for (int j = 0; j < connettore.sizePropertyList(); j++) {
 					org.openspcoop2.core.config.Property tmpProp = connettore.getProperty(j);
 					if (tmpProp.getNome().equals(nome)) {
@@ -875,6 +963,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 				SoggettoCtrlStat scs = this.soggettiCore.getSoggettoCtrlStat(idInt);
 				Soggetto ss = scs.getSoggettoReg();
 				org.openspcoop2.core.registry.Connettore connettore = ss.getConnettore();
+				tipoConnettore = connettore.getTipo();
+				customConnettore = connettore.getCustom();
 				for (int j = 0; j < connettore.sizePropertyList(); j++) {
 					Property tmpProp = connettore.getProperty(j);
 					if (tmpProp.getNome().equals(nome)) {
@@ -886,6 +976,31 @@ public class ConnettoriHelper extends ConsoleHelper {
 						break;
 					}
 				}
+			}
+			if (servlet.equals(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CHANGE)) {
+				int idSilInt = Integer.parseInt(idsil);
+				ServizioApplicativo sa = this.saCore.getServizioApplicativo(idSilInt);
+				InvocazioneServizio is = sa.getInvocazioneServizio();
+				org.openspcoop2.core.config.Connettore connettore = is.getConnettore();
+				tipoConnettore = connettore.getTipo();
+				customConnettore = connettore.getCustom();
+				for (int j = 0; j < connettore.sizePropertyList(); j++) {
+					org.openspcoop2.core.config.Property tmpProp = connettore.getProperty(j);
+					if (tmpProp.getNome().equals(nome)) {
+						if(CostantiDB.CONNETTORE_DEBUG.equals(nome)){
+							giaRegistratoProprietaDebug = true;
+						}else{
+							giaRegistratoProprietaNormale = true;
+						}
+						break;
+					}
+				}
+			}
+			
+			// Per il connettore JMS non sono associabili le proprietà gestite tramite i campi della maschera del connettore
+			if(ConnettoreCustomUtils.isConnettoreJms(tipoConnettore, customConnettore) && !CostantiDB.isConnettoreJmsProprietaAggiuntiva(nome)) {
+				this.pd.setMessage("La propriet&agrave; '" + nome + "' non &egrave; associabile al connettore JMS: deve essere configurata tramite il relativo campo della maschera del connettore");
+				return false;
 			}
 
 			if (giaRegistratoProprietaNormale) {
@@ -3526,185 +3641,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					}
 				}
 				if(showProprietaCustom) {
-					de = new DataElement();
-					de.setType(DataElementType.LINK);
-					de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_PROPRIETA);
-					int numProp = 0;
-					try {
-						if (servletChiamante.equals(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE)) {
-							de.setUrl(ConnettoriCostanti.SERVLET_NAME_CONNETTORI_CUSTOM_PROPERTIES_LIST,
-									new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_SERVLET, servletChiamante),
-									new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID, elem1),
-									new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_NOME_SERVIZIO, elem2),
-									new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_TIPO_SERVIZIO, elem3),
-									new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_VERSIONE_SERVIZIO, elem4));
-							AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(Long.parseLong(elem1));
-							org.openspcoop2.core.registry.Connettore connettore = asps.getConfigurazioneServizio().getConnettore();
-							if (connettore != null && (connettore.getCustom()!=null && connettore.getCustom()) ){
-								for (int i = 0; i < connettore.sizePropertyList(); i++) {
-									if(!CostantiDB.CONNETTORE_DEBUG.equals(connettore.getProperty(i).getNome())  &&
-											!connettore.getProperty(i).getNome().startsWith(CostantiConnettori.CONNETTORE_EXTENDED_PREFIX)){
-										numProp++;
-									}
-								}
-								/** Non devo contare la proprietà debug: numProp = connettore.sizePropertyList();*/
-							}
-						}
-						else if (servletChiamante.equals(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE)) {
-							List<Parameter> lstParams = new ArrayList<>();
-							
-							String accessoDaAPSParametro = this.getParametroBoolean(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS);
-							if(accessoDaAPSParametro != null)
-								lstParams.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS, accessoDaAPSParametro));
-							
-							lstParams.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_SERVLET, servletChiamante));
-							lstParams.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID, elem1));
-							lstParams.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_MY_ID, elem2));
-							lstParams.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID_SOGGETTO_EROGATORE, elem3));
-							lstParams.add(new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_FRUITORE_VIEW_CONNETTORE_MAPPING_AZIONE_ID_PORTA, elem4));
-							
-							de.setUrl(ConnettoriCostanti.SERVLET_NAME_CONNETTORI_CUSTOM_PROPERTIES_LIST, lstParams.toArray(new Parameter[lstParams.size()]));
-							
-							
-							int idServizioFruitoreInt = Integer.parseInt(elem2);
-							Fruitore servFru = this.apsCore.getServizioFruitore(idServizioFruitoreInt);
-							org.openspcoop2.core.registry.Connettore connettore = servFru.getConnettore();
-							if (connettore != null && (connettore.getCustom()!=null && connettore.getCustom()) ){
-								for (int i = 0; i < connettore.sizePropertyList(); i++) {
-									if(!CostantiDB.CONNETTORE_DEBUG.equals(connettore.getProperty(i).getNome())  &&
-											!connettore.getProperty(i).getNome().startsWith(CostantiConnettori.CONNETTORE_EXTENDED_PREFIX)){
-										numProp++;
-									}
-								}
-								/** Non devo contare la proprietà debug: numProp = connettore.sizePropertyList();*/
-							}
-						}
-						else if (servletChiamante.equals(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT) ||
-								servletChiamante.equals(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA)) {
-							int idSilInt = Integer.parseInt(elem2);
-							ServizioApplicativo sa = this.saCore.getServizioApplicativo(idSilInt);
-							Soggetto soggetto = this.soggettiCore.getSoggettoRegistro(new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
-							List<Parameter> lstParams = new ArrayList<>();
-							
-							lstParams.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_SERVLET, servletChiamante));
-							lstParams.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_NOME_SERVIZIO_APPLICATIVO, elem1));
-							lstParams.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID_SERVIZIO_APPLICATIVO, elem2));
-							if(elem3 != null)
-								lstParams.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID, elem3));
-							if(elem4 != null)
-								lstParams.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID_PORTA, elem4));
-							lstParams.add(new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER, soggetto.getId()+""));
-							
-							String accessoDaAPSParametro = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS);
-							if(accessoDaAPSParametro != null)
-								lstParams.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS, accessoDaAPSParametro));
-	
-							de.setUrl(ConnettoriCostanti.SERVLET_NAME_CONNETTORI_CUSTOM_PROPERTIES_LIST, lstParams.toArray(new Parameter[lstParams.size()]));
-							
-							if (servletChiamante.equals(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT)) {
-								InvocazioneServizio is = sa.getInvocazioneServizio();
-								Connettore connettore = is.getConnettore();
-								if(connettore!=null && (connettore.getCustom()==null || !connettore.getCustom()) ){
-									// è cambiato il tipo
-									de.setType(DataElementType.HIDDEN);
-								}
-								if (connettore != null && connettore.getCustom()!=null && connettore.getCustom().booleanValue()){
-									for (int i = 0; i < connettore.sizePropertyList(); i++) {
-										if(!CostantiDB.CONNETTORE_DEBUG.equals(connettore.getProperty(i).getNome())  &&
-												!connettore.getProperty(i).getNome().startsWith(CostantiConnettori.CONNETTORE_EXTENDED_PREFIX)){
-											numProp++;
-										}
-									}
-									/** Non devo contare la proprietà debug: numProp = connettore.sizePropertyList();*/
-								}
-							} else {
-								RispostaAsincrona ra = sa.getRispostaAsincrona();
-								Connettore connettore = ra.getConnettore();
-								if(connettore!=null && (connettore.getCustom()==null || !connettore.getCustom()) ){
-									// è cambiato il tipo
-									de.setType(DataElementType.HIDDEN);
-								}
-								if (connettore != null && connettore.getCustom()!=null && connettore.getCustom().booleanValue()){
-									for (int i = 0; i < connettore.sizePropertyList(); i++) {
-										if(!CostantiDB.CONNETTORE_DEBUG.equals(connettore.getProperty(i).getNome())  &&
-												!connettore.getProperty(i).getNome().startsWith(CostantiConnettori.CONNETTORE_EXTENDED_PREFIX)){
-											numProp++;
-										}
-									}
-									/** Non devo contare la proprietà debug: numProp = connettore.sizePropertyList(); */
-								}
-							}
-						}
-						else if (servletChiamante.equals(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CHANGE)) {
-							int idSilInt = Integer.parseInt(elem6);
-							ServizioApplicativo sa = this.saCore.getServizioApplicativo(idSilInt);
-							Soggetto soggetto = this.soggettiCore.getSoggettoRegistro(new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
-							
-							List<Parameter> lstParams = new ArrayList<>();
-							
-							lstParams.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_SERVLET, servletChiamante));
-							lstParams.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_NOME_SERVIZIO_APPLICATIVO, sa.getNome()));
-							lstParams.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID_SERVIZIO_APPLICATIVO, elem6));
-							if(elem3 != null)
-								lstParams.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID, elem3));
-							if(elem1 != null)
-								lstParams.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID_PORTA, elem1));
-							lstParams.add(new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER, soggetto.getId()+""));
-							
-							String accessoDaAPSParametro = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS);
-							String connettoreAccessoGruppi = this.getParameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_GRUPPI);
-							String connettoreRegistro = this.getParameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_REGISTRO);
-							
-							lstParams.add(new Parameter(CostantiControlStation.PARAMETRO_ID_CONN_TAB, elem7));
-							lstParams.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_DATI_GENERALI, Costanti.CHECK_BOX_ENABLED_TRUE));
-							lstParams.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS, accessoDaAPSParametro != null ? accessoDaAPSParametro : ""));
-							lstParams.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_GRUPPI, connettoreAccessoGruppi));
-							lstParams.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_REGISTRO, connettoreRegistro));
-							lstParams.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_LISTA_CONNETTORI_MULTIPLI, "true"));
-							
-							de.setUrl(ConnettoriCostanti.SERVLET_NAME_CONNETTORI_CUSTOM_PROPERTIES_LIST, lstParams.toArray(new Parameter[lstParams.size()]));
-							
-							InvocazioneServizio is = sa.getInvocazioneServizio();
-							Connettore connettore = is.getConnettore();
-							if(connettore==null || connettore.getCustom()==null || !connettore.getCustom().booleanValue()){
-								// è cambiato il tipo
-								de.setType(DataElementType.HIDDEN);
-							}
-							if (connettore != null && connettore.getCustom()!=null && connettore.getCustom().booleanValue()){
-								for (int i = 0; i < connettore.sizePropertyList(); i++) {
-									if(!CostantiDB.CONNETTORE_DEBUG.equals(connettore.getProperty(i).getNome())  &&
-											!connettore.getProperty(i).getNome().startsWith(CostantiConnettori.CONNETTORE_EXTENDED_PREFIX)){
-										numProp++;
-									}
-								}
-								/** Non devo contare la proprietà debug: numProp = connettore.sizePropertyList();*/
-							}
-						}
-						else if (servletChiamante.equals(SoggettiCostanti.SERVLET_NAME_SOGGETTI_ENDPOINT)) {
-							de.setUrl(ConnettoriCostanti.SERVLET_NAME_CONNETTORI_CUSTOM_PROPERTIES_LIST,
-									new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_SERVLET, servletChiamante),
-									new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID, elem1),
-									new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_NOME_SOGGETTO, elem2),
-									new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_TIPO_SOGGETTO, elem3));
-							int idInt = Integer.parseInt(elem1);
-							SoggettoCtrlStat scs = this.soggettiCore.getSoggettoCtrlStat(idInt);
-							Soggetto ss = scs.getSoggettoReg();
-							org.openspcoop2.core.registry.Connettore connettore = ss.getConnettore();
-							if (connettore != null && (connettore.getCustom()!=null && connettore.getCustom()) ){
-								for (int i = 0; i < connettore.sizePropertyList(); i++) {
-									if(!CostantiDB.CONNETTORE_DEBUG.equals(connettore.getProperty(i).getNome())  &&
-											!connettore.getProperty(i).getNome().startsWith(CostantiConnettori.CONNETTORE_EXTENDED_PREFIX)){
-										numProp++;
-									}
-								}
-								/** Non devo contare la proprietà debug: numProp = connettore.sizePropertyList();*/
-							}
-						}
-					} catch (Exception ex) {
-						this.logError("Custom Property Exception: " + ex.getMessage(), ex);
-					}
-					de.setValue(ConnettoriCostanti.LABEL_CONNETTORE_PROPRIETA+"("+numProp+")");
-					dati.add(de);
+					this.addLinkProprietaConnettore(dati, servletChiamante, elem1, elem2, elem3, elem4, elem6, elem7, false);
 				}
 				
 				// Https
@@ -3724,7 +3661,16 @@ public class ConnettoriHelper extends ConsoleHelper {
 					ConnettoreJMSUtils.addJMSDati(dati, nome, tipo, user, password, initcont, urlpgk, 
 							provurl, connfact, sendas, objectName, tipoOperazione, stato,
 							this.core, this, this.getSize(),
+							modi, fruizione, forceNoSec,
 							postBackViaPost);
+					
+					// Proprietà aggiuntive del connettore JMS (es. 'context-*', 'locations-cache'), gestibili sul connettore salvato
+					boolean showProprietaJms = !servletChiamante.equals(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD) &&
+							!servletChiamante.equals(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD) &&
+							!ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE.equals(this.getPostBackElementName());
+					if(showProprietaJms) {
+						this.addLinkProprietaConnettore(dati, servletChiamante, elem1, elem2, elem3, elem4, elem6, elem7, true);
+					}
 				}
 				
 				//status
@@ -3793,6 +3739,177 @@ public class ConnettoriHelper extends ConsoleHelper {
 		dati.add(de);
 		
 		return dati;
+	}
+
+	private void addLinkProprietaConnettore(List<DataElement> dati, String servletChiamante, 
+			String elem1, String elem2, String elem3, String elem4, String elem6, String elem7,
+			boolean jms) {
+		DataElement de = new DataElement();
+		de.setType(DataElementType.LINK);
+		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_PROPRIETA);
+		int numProp = 0;
+		try {
+			if (servletChiamante.equals(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE)) {
+				de.setUrl(ConnettoriCostanti.SERVLET_NAME_CONNETTORI_CUSTOM_PROPERTIES_LIST,
+						new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_SERVLET, servletChiamante),
+						new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID, elem1),
+						new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_NOME_SERVIZIO, elem2),
+						new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_TIPO_SERVIZIO, elem3),
+						new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_VERSIONE_SERVIZIO, elem4));
+				AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(Long.parseLong(elem1));
+				org.openspcoop2.core.registry.Connettore connettore = asps.getConfigurazioneServizio().getConnettore();
+				numProp = this.contaProprietaConnettore(de, connettore, jms, false);
+			}
+			else if (servletChiamante.equals(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE)) {
+				List<Parameter> lstParams = new ArrayList<>();
+				
+				String accessoDaAPSParametro = this.getParametroBoolean(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS);
+				if(accessoDaAPSParametro != null)
+					lstParams.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS, accessoDaAPSParametro));
+				
+				lstParams.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_SERVLET, servletChiamante));
+				lstParams.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID, elem1));
+				lstParams.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_MY_ID, elem2));
+				lstParams.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID_SOGGETTO_EROGATORE, elem3));
+				lstParams.add(new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_FRUITORE_VIEW_CONNETTORE_MAPPING_AZIONE_ID_PORTA, elem4));
+				
+				de.setUrl(ConnettoriCostanti.SERVLET_NAME_CONNETTORI_CUSTOM_PROPERTIES_LIST, lstParams.toArray(new Parameter[lstParams.size()]));
+				
+				
+				int idServizioFruitoreInt = Integer.parseInt(elem2);
+				AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(Long.parseLong(elem1));
+				Fruitore servFru = this.getFruitore(asps, idServizioFruitoreInt);
+				org.openspcoop2.core.registry.Connettore connettore = this.getConnettoreFruizione(servFru, elem4);
+				numProp = this.contaProprietaConnettore(de, connettore, jms, false);
+			}
+			else if (servletChiamante.equals(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT) ||
+					servletChiamante.equals(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA)) {
+				int idSilInt = Integer.parseInt(elem2);
+				ServizioApplicativo sa = this.saCore.getServizioApplicativo(idSilInt);
+				Soggetto soggetto = this.soggettiCore.getSoggettoRegistro(new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
+				List<Parameter> lstParams = new ArrayList<>();
+				
+				lstParams.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_SERVLET, servletChiamante));
+				lstParams.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_NOME_SERVIZIO_APPLICATIVO, elem1));
+				lstParams.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID_SERVIZIO_APPLICATIVO, elem2));
+				if(elem3 != null)
+					lstParams.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID, elem3));
+				if(elem4 != null)
+					lstParams.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID_PORTA, elem4));
+				lstParams.add(new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER, soggetto.getId()+""));
+				
+				String accessoDaAPSParametro = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS);
+				if(accessoDaAPSParametro != null)
+					lstParams.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS, accessoDaAPSParametro));
+	
+				de.setUrl(ConnettoriCostanti.SERVLET_NAME_CONNETTORI_CUSTOM_PROPERTIES_LIST, lstParams.toArray(new Parameter[lstParams.size()]));
+				
+				if (servletChiamante.equals(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT)) {
+					InvocazioneServizio is = sa.getInvocazioneServizio();
+					Connettore connettore = is.getConnettore();
+					numProp = this.contaProprietaConnettore(de, connettore, jms, true);
+				} else {
+					RispostaAsincrona ra = sa.getRispostaAsincrona();
+					Connettore connettore = ra.getConnettore();
+					numProp = this.contaProprietaConnettore(de, connettore, jms, true);
+				}
+			}
+			else if (servletChiamante.equals(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CHANGE)) {
+				int idSilInt = Integer.parseInt(elem6);
+				ServizioApplicativo sa = this.saCore.getServizioApplicativo(idSilInt);
+				Soggetto soggetto = this.soggettiCore.getSoggettoRegistro(new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
+				
+				List<Parameter> lstParams = new ArrayList<>();
+				
+				lstParams.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_SERVLET, servletChiamante));
+				lstParams.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_NOME_SERVIZIO_APPLICATIVO, sa.getNome()));
+				lstParams.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID_SERVIZIO_APPLICATIVO, elem6));
+				if(elem3 != null)
+					lstParams.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID, elem3));
+				if(elem1 != null)
+					lstParams.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID_PORTA, elem1));
+				lstParams.add(new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER, soggetto.getId()+""));
+				
+				String accessoDaAPSParametro = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS);
+				String connettoreAccessoGruppi = this.getParameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_GRUPPI);
+				String connettoreRegistro = this.getParameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_REGISTRO);
+				
+				lstParams.add(new Parameter(CostantiControlStation.PARAMETRO_ID_CONN_TAB, elem7));
+				lstParams.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_DATI_GENERALI, Costanti.CHECK_BOX_ENABLED_TRUE));
+				lstParams.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS, accessoDaAPSParametro != null ? accessoDaAPSParametro : ""));
+				lstParams.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_GRUPPI, connettoreAccessoGruppi));
+				lstParams.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_REGISTRO, connettoreRegistro));
+				lstParams.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_LISTA_CONNETTORI_MULTIPLI, "true"));
+				
+				de.setUrl(ConnettoriCostanti.SERVLET_NAME_CONNETTORI_CUSTOM_PROPERTIES_LIST, lstParams.toArray(new Parameter[lstParams.size()]));
+				
+				InvocazioneServizio is = sa.getInvocazioneServizio();
+				Connettore connettore = is.getConnettore();
+				numProp = this.contaProprietaConnettore(de, connettore, jms, true);
+			}
+			else if (servletChiamante.equals(SoggettiCostanti.SERVLET_NAME_SOGGETTI_ENDPOINT)) {
+				de.setUrl(ConnettoriCostanti.SERVLET_NAME_CONNETTORI_CUSTOM_PROPERTIES_LIST,
+						new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_SERVLET, servletChiamante),
+						new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID, elem1),
+						new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_NOME_SOGGETTO, elem2),
+						new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_TIPO_SOGGETTO, elem3));
+				int idInt = Integer.parseInt(elem1);
+				SoggettoCtrlStat scs = this.soggettiCore.getSoggettoCtrlStat(idInt);
+				Soggetto ss = scs.getSoggettoReg();
+				org.openspcoop2.core.registry.Connettore connettore = ss.getConnettore();
+				numProp = this.contaProprietaConnettore(de, connettore, jms, false);
+			}
+		} catch (Exception ex) {
+			this.logError("Custom Property Exception: " + ex.getMessage(), ex);
+		}
+		de.setValue(ConnettoriCostanti.LABEL_CONNETTORE_PROPRIETA+"("+numProp+")");
+		dati.add(de);
+	}
+	
+	private int contaProprietaConnettore(DataElement de, org.openspcoop2.core.registry.Connettore connettore, boolean jms, boolean verificaTipo) {
+		List<String> nomi = new ArrayList<>();
+		if(connettore!=null) {
+			for (int i = 0; i < connettore.sizePropertyList(); i++) {
+				nomi.add(connettore.getProperty(i).getNome());
+			}
+		}
+		return contaProprietaConnettore(de, connettore!=null, connettore!=null ? connettore.getTipo() : null, connettore!=null ? connettore.getCustom() : null, nomi, jms, verificaTipo);
+	}
+	private int contaProprietaConnettore(DataElement de, Connettore connettore, boolean jms, boolean verificaTipo) {
+		List<String> nomi = new ArrayList<>();
+		if(connettore!=null) {
+			for (int i = 0; i < connettore.sizePropertyList(); i++) {
+				nomi.add(connettore.getProperty(i).getNome());
+			}
+		}
+		return contaProprietaConnettore(de, connettore!=null, connettore!=null ? connettore.getTipo() : null, connettore!=null ? connettore.getCustom() : null, nomi, jms, verificaTipo);
+	}
+	private int contaProprietaConnettore(DataElement de, boolean connettoreEsistente, String tipoConnettore, Boolean custom, List<String> nomiProprieta, 
+			boolean jms, boolean verificaTipo) {
+		boolean isCustom = custom!=null && custom.booleanValue();
+		// Le proprietà sono gestibili solamente sul connettore salvato: se nella maschera è stato cambiato il tipo, il link non viene visualizzato
+		boolean tipoSalvatoCompatibile = connettoreEsistente && 
+				(jms ? (TipiConnettore.JMS.getNome().equals(tipoConnettore) && !isCustom) : isCustom);
+		if(!tipoSalvatoCompatibile) {
+			if(jms || (verificaTipo && (!connettoreEsistente || !isCustom))) {
+				de.setType(DataElementType.HIDDEN);
+			}
+			return 0;
+		}
+		int numProp = 0;
+		for (String nome : nomiProprieta) {
+			if(jms) {
+				// solo le proprietà del connettore JMS prive di un campo dedicato nella maschera
+				if(CostantiDB.isConnettoreJmsProprietaAggiuntiva(nome)) {
+					numProp++;
+				}
+			}
+			else if(!CostantiDB.CONNETTORE_DEBUG.equals(nome) && !nome.startsWith(CostantiConnettori.CONNETTORE_EXTENDED_PREFIX)){
+				// Non devo contare la proprietà debug
+				numProp++;
+			}
+		}
+		return numProp;
 	}
 
 	public List<DataElement> addEndPointToDatiAsHidden(List<DataElement> dati, ServiceBinding serviceBinding, String connettoreDebug,
@@ -5197,10 +5314,22 @@ public class ConnettoriHelper extends ConsoleHelper {
 			// azzero proprieta esistenti precedentemente
 			// (se il connettore è custom lo faccio solo se prima
 			// non era custom)
+			// (le proprietà aggiuntive di un connettore JMS, es. 'context-*', vengono mantenute se il connettore rimane di tipo JMS)
+			List<org.openspcoop2.core.registry.Property> proprietaAggiuntiveJms = new ArrayList<>();
+			if(TipiConnettore.JMS.getNome().equals(tipoConnettore) && ConnettoreCustomUtils.isConnettoreJms(connettore.getTipo(), connettore.getCustom())) {
+				for (org.openspcoop2.core.registry.Property p : connettore.getPropertyList()) {
+					if(CostantiDB.isConnettoreJmsProprietaAggiuntiva(p.getNome())) {
+						proprietaAggiuntiveJms.add(p);
+					}
+				}
+			}
 			if (!tipoConnettore.equals(TipiConnettore.CUSTOM.toString()) ||
 					!tipoConnettore.equals(oldtipo)) {
 				while(connettore.sizePropertyList()>0)
 					connettore.removeProperty(0);
+				for (org.openspcoop2.core.registry.Property p : proprietaAggiuntiveJms) {
+					connettore.addProperty(p);
+				}
 			}
 			
 			String debugValue = null;
@@ -5490,10 +5619,22 @@ public class ConnettoriHelper extends ConsoleHelper {
 			// azzero proprieta esistenti precedentemente
 			// (se il connettore è custom lo faccio solo se prima
 			// non era custom)
+			// (le proprietà aggiuntive di un connettore JMS, es. 'context-*', vengono mantenute se il connettore rimane di tipo JMS)
+			List<org.openspcoop2.core.config.Property> proprietaAggiuntiveJms = new ArrayList<>();
+			if(TipiConnettore.JMS.getNome().equals(tipoConnettore) && ConnettoreCustomUtils.isConnettoreJms(connettore.getTipo(), connettore.getCustom())) {
+				for (org.openspcoop2.core.config.Property p : connettore.getPropertyList()) {
+					if(CostantiDB.isConnettoreJmsProprietaAggiuntiva(p.getNome())) {
+						proprietaAggiuntiveJms.add(p);
+					}
+				}
+			}
 			if (!tipoConnettore.equals(TipiConnettore.CUSTOM.toString()) ||
 					!tipoConnettore.equals(oldtipo)) {
 				while(connettore.sizePropertyList()>0)
 					connettore.removeProperty(0);
+				for (org.openspcoop2.core.config.Property p : proprietaAggiuntiveJms) {
+					connettore.addProperty(p);
+				}
 			}
 
 			

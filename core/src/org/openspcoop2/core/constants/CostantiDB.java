@@ -23,6 +23,7 @@
 package org.openspcoop2.core.constants;
 
 import java.util.Date;
+import java.util.List;
 
 import org.openspcoop2.utils.certificate.KeyUtils;
 import org.openspcoop2.utils.certificate.KeystoreType;
@@ -843,7 +844,18 @@ public final class CostantiDB {
     public static final String CONNETTORE_JMS_CONTEXT_JAVA_NAMING_PROVIDER_URL=CostantiConnettori.CONNETTORE_JMS_CONTEXT_PREFIX+"java.naming.provider.url";
     public static final String CONNETTORE_JMS_CONNECTION_FACTORY=CostantiConnettori.CONNETTORE_JMS_CONNECTION_FACTORY;
     public static final String CONNETTORE_JMS_SEND_AS=CostantiConnettori.CONNETTORE_JMS_SEND_AS;
-    
+    // Proprietà del connettore JMS memorizzate in colonne dedicate della tabella connettori;
+    // le altre proprietà (es. 'context-*', 'pool-*', 'lookupDestination-*', 'locations-cache', 'acknowledgeMode') vengono memorizzate nella tabella connettori_custom
+    private static final List<String> CONNETTORE_JMS_PROPRIETA_COLONNE = List.of(CONNETTORE_JMS_NOME, CONNETTORE_JMS_TIPO, CONNETTORE_USER, CONNETTORE_PWD,
+    		CONNETTORE_JMS_CONTEXT_JAVA_NAMING_FACTORY_INITIAL, CONNETTORE_JMS_CONTEXT_JAVA_NAMING_FACTORY_URL_PKG, CONNETTORE_JMS_CONTEXT_JAVA_NAMING_PROVIDER_URL,
+    		CONNETTORE_JMS_CONNECTION_FACTORY, CONNETTORE_JMS_SEND_AS, CostantiConnettori.CONNETTORE_DEBUG);
+    public static List<String> getConnettoreJmsProprietaColonne() {
+    	return CONNETTORE_JMS_PROPRIETA_COLONNE;
+    }
+    public static boolean isConnettoreJmsProprietaAggiuntiva(String nome) {
+    	return nome!=null && !CONNETTORE_JMS_PROPRIETA_COLONNE.contains(nome) && !nome.startsWith(CostantiConnettori.CONNETTORE_EXTENDED_PREFIX);
+    }
+
     public static final String CONNETTORE_HTTPS_LOCATION = CostantiConnettori.CONNETTORE_LOCATION;
     public static final String CONNETTORE_HTTPS_TRUST_ALL_CERTS = CostantiConnettori.CONNETTORE_HTTPS_TRUST_ALL_CERTS;
     public static final String CONNETTORE_HTTPS_TRUST_STORE_LOCATION = CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_LOCATION;

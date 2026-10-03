@@ -232,6 +232,8 @@ public class DriverRegistroServiziDB_connettoriDriver {
 						readConnettoreHttp(rs, connettore, driverBYOK);
 					} else if (endpoint.equals(TipiConnettore.JMS.getNome())){
 						readConnettoreJms(rs, connettore, driverBYOK);
+						// proprietà prive di una colonna dedicata (es. 'context-*', 'locations-cache')
+						this.readProprietaAggiuntiveJms(idConnettore, connettore, connection, driverBYOK);
 					}else if(endpoint.equals(TipiConnettore.NULL.getNome())){
 						//nessuna proprieta per connettore null
 					}else if(endpoint.equals(TipiConnettore.NULLECHO.getNome())){
@@ -678,6 +680,45 @@ public class DriverRegistroServiziDB_connettoriDriver {
 			prop.setValore(valore);
 		}
 		connettore.addProperty(prop);
+	}
+	
+	protected void readProprietaAggiuntiveJms(long idConnettore, Connettore connettore, Connection connection,
+			IDriverBYOK driverBYOK) throws DriverRegistroServiziException {
+		// Le proprietà del connettore JMS prive di una colonna dedicata sono memorizzate nella tabella connettori_custom,
+		// insieme alle eventuali proprietà extended (prefisso '-#ext#-') lette da readPropertiesConnettoreExtendedInfo
+		PreparedStatement stm = null;
+		ResultSet rsProp = null;
+		try {
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.CONNETTORI_CUSTOM);
+			sqlQueryObject.addSelectField("*");
+			sqlQueryObject.addWhereCondition("id_connettore = ?");
+			String sqlQuery = sqlQueryObject.createSQLQuery();
+			stm = connection.prepareStatement(sqlQuery);
+			stm.setLong(1, idConnettore);
+			rsProp = stm.executeQuery();
+			while (rsProp.next()) {
+				String nome = rsProp.getString(CostantiDB.CONNETTORI_CUSTOM_COLUMN_NAME);
+				if(!CostantiDB.isConnettoreJmsProprietaAggiuntiva(nome)) {
+					continue;
+				}
+				String valore = rsProp.getString(CostantiDB.CONNETTORI_CUSTOM_COLUMN_VALUE);
+				String encValue = rsProp.getString(CostantiDB.CONNETTORI_CUSTOM_COLUMN_ENC_VALUE);
+				Property prop = new Property();
+				prop.setNome(nome);
+				if(encValue!=null && StringUtils.isNotEmpty(encValue)) {
+					prop.setValore(driverBYOK!=null ? driverBYOK.unwrapAsString(encValue) : encValue);
+				}
+				else {
+					prop.setValore(valore);
+				}
+				connettore.addProperty(prop);
+			}
+		} catch (Exception e) {
+			throw new DriverRegistroServiziException("[readProprietaAggiuntiveJms] "+e.getMessage(),e);
+		} finally {
+			JDBCUtilities.closeResources(rsProp, stm);
+		}
 	}
 	
 	protected void readPropertiesConnettoreExtendedInfo(long idConnettore, Connettore connettore, Connection connection,

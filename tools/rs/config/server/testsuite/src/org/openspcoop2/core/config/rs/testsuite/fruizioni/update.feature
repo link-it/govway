@@ -142,6 +142,7 @@ Examples:
 |connettore_fruizione_jms_send_as_bytes.json|[jms] nome_coda|
 |connettore_fruizione_jms_tipo_coda_topic.json|[jms] nome_coda|
 |connettore_fruizione_jms_user_password.json|[jms] nome_coda|
+|connettore_fruizione_jms_proprieta.json|[jms] nome_coda|
 |connettore_fruizione_file.json|[file] /tmp/abc.txt|
 |connettore_fruizione_file_create_parent.json|[file] /tmp/abc.txt|
 |connettore_fruizione_file_headers.json|[file] /tmp/abc.txt|
@@ -176,7 +177,7 @@ Scenario Outline: Erogazioni Update Connettore 400
     When method put
     Then status 400
     
-    * match response.detail == '<error>' 
+    * match response.detail == "<error>" 
     
     * call delete ({ resourcePath: 'fruizioni/' + petstore_key })
     * call delete ({ resourcePath: 'soggetti/' + erogatore.nome })
@@ -185,6 +186,178 @@ Scenario Outline: Erogazioni Update Connettore 400
 Examples:
 |nome|error|
 |connettore_fruizione_plugin_tipo_non_trovato.json|Tipo plugin [tipo_non_trovato] non trovato|
+|connettore_fruizione_jms_proprieta_riservata.json|Connettore JMS: la proprietà 'context-java.naming.provider.url' non è indicabile tra le proprietà; deve essere configurata tramite il relativo campo del connettore|
+|connettore_fruizione_jms_proprieta_duplicata.json|Connettore JMS: la proprietà 'acknowledgeMode' è indicata più volte|
+
+@UpdateConnettoreJmsProprieta204
+Scenario: Fruizioni Update Connettore JMS con proprietà aggiuntive
+
+    * def connettore_proprieta = read('connettore_fruizione_jms_proprieta.json')
+    * def connettore_senza_proprieta = read('connettore_fruizione_jms_send_as_bytes.json')
+    * def connettore_proprieta_modificate = read('connettore_fruizione_jms_proprieta_modificate.json')
+    * def connettore_proprieta_vuote = read('connettore_fruizione_jms_proprieta_vuote.json')
+
+    * call create ({ resourcePath: 'api', body: api_petstore })
+    * call create ({ resourcePath: 'soggetti', body: erogatore })
+    * call create ({ resourcePath: 'fruizioni', body: fruizione_petstore })
+
+    # le proprietà prive di un campo dedicato vengono salvate e restituite (ordinate per nome)
+    Given url configUrl
+    And path 'fruizioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And request connettore_proprieta
+    And params query_params
+    When method put
+    Then status 204
+
+    Given url configUrl
+    And path 'fruizioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method get
+    Then status 200
+    * match response == getExpectedConnettore(connettore_proprieta)
+
+    # un aggiornamento che non indica 'proprieta' mantiene quelle già presenti
+    Given url configUrl
+    And path 'fruizioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And request connettore_senza_proprieta
+    And params query_params
+    When method put
+    Then status 204
+
+    Given url configUrl
+    And path 'fruizioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method get
+    Then status 200
+    * match response.connettore.send_as == 'bytes'
+    * match response.connettore.proprieta == connettore_proprieta.connettore.proprieta
+
+    # le proprietà indicate sostituiscono quelle presenti
+    Given url configUrl
+    And path 'fruizioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And request connettore_proprieta_modificate
+    And params query_params
+    When method put
+    Then status 204
+
+    Given url configUrl
+    And path 'fruizioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method get
+    Then status 200
+    * match response == getExpectedConnettore(connettore_proprieta_modificate)
+
+    # una lista vuota le elimina
+    Given url configUrl
+    And path 'fruizioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And request connettore_proprieta_vuote
+    And params query_params
+    When method put
+    Then status 204
+
+    Given url configUrl
+    And path 'fruizioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method get
+    Then status 200
+    * match response.connettore.proprieta == '#notpresent'
+
+    * call delete ({ resourcePath: 'fruizioni/' + petstore_key })
+    * call delete ({ resourcePath: 'soggetti/' + erogatore.nome })
+    * call delete ({ resourcePath: api_petstore_path })
+
+@UpdateConnettoreGruppoJmsProprieta204
+Scenario: Fruizioni Update Connettore JMS con proprietà aggiuntive ridefinito in un gruppo
+
+    * def gruppo_petstore = read ('gruppo_petstore.json')
+    * def query_params_gruppo = {'gruppo': 'GruppoJson'}
+    * def connettore_proprieta = read('connettore_fruizione_jms_proprieta.json')
+    * def connettore_senza_proprieta = read('connettore_fruizione_jms_send_as_bytes.json')
+    * def connettore_proprieta_modificate = read('connettore_fruizione_jms_proprieta_modificate.json')
+
+    * call create ({ resourcePath: 'api', body: api_petstore })
+    * call create ({ resourcePath: 'soggetti', body: erogatore })
+    * call create ({ resourcePath: 'fruizioni', body: fruizione_petstore })
+    * call create ( { resourcePath: 'fruizioni/' + petstore_key + '/gruppi', body: gruppo_petstore, key: gruppo_petstore.nome})
+
+    # proprietà del connettore ridefinito nel gruppo
+    Given url configUrl
+    And path 'fruizioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And request connettore_proprieta
+    And params query_params_gruppo
+    When method put
+    Then status 204
+
+    Given url configUrl
+    And path 'fruizioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And params query_params_gruppo
+    When method get
+    Then status 200
+    * match response == getExpectedConnettore(connettore_proprieta)
+
+    # il connettore di default non viene modificato
+    Given url configUrl
+    And path 'fruizioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    When method get
+    Then status 200
+    * match response.connettore.tipo == 'http'
+    * match response.connettore.proprieta == '#notpresent'
+
+    # un aggiornamento del gruppo che non indica 'proprieta' mantiene quelle già presenti
+    Given url configUrl
+    And path 'fruizioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And request connettore_senza_proprieta
+    And params query_params_gruppo
+    When method put
+    Then status 204
+
+    Given url configUrl
+    And path 'fruizioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And params query_params_gruppo
+    When method get
+    Then status 200
+    * match response.connettore.send_as == 'bytes'
+    * match response.connettore.proprieta == connettore_proprieta.connettore.proprieta
+
+    # le proprietà del connettore di default sono distinte da quelle del gruppo
+    Given url configUrl
+    And path 'fruizioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And request connettore_proprieta_modificate
+    When method put
+    Then status 204
+
+    Given url configUrl
+    And path 'fruizioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    When method get
+    Then status 200
+    * match response == getExpectedConnettore(connettore_proprieta_modificate)
+    Given url configUrl
+    And path 'fruizioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And params query_params_gruppo
+    When method get
+    Then status 200
+    * match response.connettore.proprieta == connettore_proprieta.connettore.proprieta
+
+    * call delete ({ resourcePath: 'fruizioni/' + petstore_key })
+    * call delete ({ resourcePath: 'soggetti/' + erogatore.nome })
+    * call delete ({ resourcePath: api_petstore_path })
+
 
 @UpdateConnettoreGruppo204
 Scenario: Update Fruizioni Connettore gruppo 204

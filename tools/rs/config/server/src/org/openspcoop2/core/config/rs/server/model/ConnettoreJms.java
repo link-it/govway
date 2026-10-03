@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
+import java.util.List;
 import jakarta.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -59,6 +60,9 @@ public class ConnettoreJms  implements OneOfApplicativoServerConnettore, OneOfCo
   
   @Schema(description = "")
   private String jndiProviderUrl = null;
+  
+  @Schema(description = "Proprietà aggiuntive del connettore prive di un campo dedicato (es. 'context-*', 'pool-*', 'lookupDestination-*', 'locations-cache', 'acknowledgeMode'). Se non indicate in un aggiornamento, vengono mantenute quelle già presenti.")
+  private List<Proprieta> proprieta = null;
  /**
    * Get tipo
    * @return tipo
@@ -274,6 +278,30 @@ public class ConnettoreJms  implements OneOfApplicativoServerConnettore, OneOfCo
     return this;
   }
 
+ /**
+   * Proprietà aggiuntive del connettore prive di un campo dedicato (es. 'context-*', 'pool-*', 'lookupDestination-*', 'locations-cache', 'acknowledgeMode'). Se non indicate in un aggiornamento, vengono mantenute quelle già presenti.
+   * @return proprieta
+  **/
+  @JsonProperty("proprieta")
+  @Valid
+  public List<Proprieta> getProprieta() {
+    return this.proprieta;
+  }
+
+  public void setProprieta(List<Proprieta> proprieta) {
+    this.proprieta = proprieta;
+  }
+
+  public ConnettoreJms proprieta(List<Proprieta> proprieta) {
+    this.proprieta = proprieta;
+    return this;
+  }
+
+  public ConnettoreJms addProprietaItem(Proprieta proprietaItem) {
+    this.proprieta.add(proprietaItem);
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -291,6 +319,7 @@ public class ConnettoreJms  implements OneOfApplicativoServerConnettore, OneOfCo
     sb.append("    jndiInitialContext: ").append(ConnettoreJms.toIndentedString(this.jndiInitialContext)).append("\n");
     sb.append("    jndiUrlPgkPrefixes: ").append(ConnettoreJms.toIndentedString(this.jndiUrlPgkPrefixes)).append("\n");
     sb.append("    jndiProviderUrl: ").append(ConnettoreJms.toIndentedString(this.jndiProviderUrl)).append("\n");
+    sb.append("    proprieta: ").append(ConnettoreJms.toIndentedString(this.proprieta)).append("\n");
     sb.append("}");
     return sb.toString();
   }

@@ -21,8 +21,11 @@ package org.openspcoop2.core.config.rs.server.api.impl.erogazioni;
 
 import static org.openspcoop2.utils.service.beans.utils.BaseHelper.evalnull;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.openspcoop2.core.config.rs.server.model.ConnettoreEnum;
 import org.openspcoop2.core.config.rs.server.model.ConnettoreJms;
@@ -31,10 +34,12 @@ import org.openspcoop2.core.config.rs.server.model.ConnettoreJmsTipoEnum;
 import org.openspcoop2.core.config.rs.server.model.OneOfApplicativoServerConnettore;
 import org.openspcoop2.core.config.rs.server.model.OneOfConnettoreErogazioneConnettore;
 import org.openspcoop2.core.config.rs.server.model.OneOfConnettoreFruizioneConnettore;
+import org.openspcoop2.core.config.rs.server.model.Proprieta;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.registry.Connettore;
+import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.plugins.servlet.ServletExtendedConnettoreUtils;
@@ -68,6 +73,7 @@ public class ConnettoreJmsApiHelper extends AbstractConnettoreApiHelper<Connetto
 	@Override
 	public boolean connettoreCheckData(ConnettoreJms conn, ErogazioniEnv env, boolean erogazione) throws Exception {
 
+		checkProprieta(conn);
 
 	    final String endpointtype = TipiConnettore.JMS.getNome();
 	    
@@ -238,7 +244,22 @@ public class ConnettoreJmsApiHelper extends AbstractConnettoreApiHelper<Connetto
 				null, null, // appIdHeader, appIdValue
 				
 				null, // connettoreStatusParams
-				listExtendedConnettore);				
+				listExtendedConnettore);
+		
+		if(conn.getProprieta()!=null) {
+			// sostituisco le proprietà aggiuntive; se non indicate, quelle presenti vengono mantenute da fillConnettore
+			for (int i = regConnettore.sizePropertyList()-1; i >= 0; i--) {
+				if(CostantiDB.isConnettoreJmsProprietaAggiuntiva(regConnettore.getProperty(i).getNome())) {
+					regConnettore.removeProperty(i);
+				}
+			}
+			for (Proprieta prop : conn.getProprieta()) {
+				org.openspcoop2.core.registry.Property property = new org.openspcoop2.core.registry.Property();
+				property.setNome(prop.getNome());
+				property.setValore(prop.getValore());
+				regConnettore.addProperty(property);
+			}
+		}
 		return regConnettore;
 	}
 
@@ -325,7 +346,22 @@ public class ConnettoreJmsApiHelper extends AbstractConnettoreApiHelper<Connetto
 				null, null, // appIdHeader, appIdValue
 				
 				null, // connettoreStatusParams
-				listExtendedConnettore);		
+				listExtendedConnettore);
+		
+		if(conn.getProprieta()!=null) {
+			// sostituisco le proprietà aggiuntive; se non indicate, quelle presenti vengono mantenute da fillConnettore
+			for (int i = regConnettore.sizePropertyList()-1; i >= 0; i--) {
+				if(CostantiDB.isConnettoreJmsProprietaAggiuntiva(regConnettore.getProperty(i).getNome())) {
+					regConnettore.removeProperty(i);
+				}
+			}
+			for (Proprieta prop : conn.getProprieta()) {
+				org.openspcoop2.core.config.Property property = new org.openspcoop2.core.config.Property();
+				property.setNome(prop.getNome());
+				property.setValore(prop.getValore());
+				regConnettore.addProperty(property);
+			}
+		}
 		return regConnettore;
 	}
 
@@ -353,7 +389,42 @@ public class ConnettoreJmsApiHelper extends AbstractConnettoreApiHelper<Connetto
 		c.setJndiUrlPgkPrefixes(props.get(CostantiDB.CONNETTORE_JMS_CONTEXT_JAVA_NAMING_FACTORY_URL_PKG));
 		c.setJndiProviderUrl(props.get(CostantiDB.CONNETTORE_JMS_CONTEXT_JAVA_NAMING_PROVIDER_URL));
 		
+		List<Proprieta> proprieta = new ArrayList<>();
+		for (Map.Entry<String, String> prop : props.entrySet()) {
+			if(CostantiDB.isConnettoreJmsProprietaAggiuntiva(prop.getKey())) {
+				Proprieta p = new Proprieta();
+				p.setNome(prop.getKey());
+				p.setValore(prop.getValue());
+				proprieta.add(p);
+			}
+		}
+		if(!proprieta.isEmpty()) {
+			proprieta.sort((p1, p2) -> p1.getNome().compareTo(p2.getNome()));
+			c.setProprieta(proprieta);
+		}
+		
 		return c;
+	}
+	
+	private static void checkProprieta(ConnettoreJms conn) {
+		if(conn.getProprieta()==null) {
+			return;
+		}
+		Set<String> nomi = new HashSet<>();
+		for (Proprieta prop : conn.getProprieta()) {
+			if(prop==null || prop.getNome()==null || prop.getNome().trim().isEmpty()) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Connettore JMS: indicare il nome di ogni proprietà");
+			}
+			if(prop.getValore()==null || prop.getValore().isEmpty()) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Connettore JMS: indicare il valore della proprietà '"+prop.getNome()+"'");
+			}
+			if(!CostantiDB.isConnettoreJmsProprietaAggiuntiva(prop.getNome())) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Connettore JMS: la proprietà '"+prop.getNome()+"' non è indicabile tra le proprietà; deve essere configurata tramite il relativo campo del connettore");
+			}
+			if(!nomi.add(prop.getNome())) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Connettore JMS: la proprietà '"+prop.getNome()+"' è indicata più volte");
+			}
+		}
 	}
 
 	@Override

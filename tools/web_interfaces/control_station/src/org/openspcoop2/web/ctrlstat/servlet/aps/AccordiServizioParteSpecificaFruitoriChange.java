@@ -540,6 +540,8 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 					}
 				}
 			}
+			// il link alle proprietà del connettore custom dipende dal connettore salvato del gruppo, se ridefinito, e non da quello di default
+			isConnettoreCustomUltimaImmagineSalvata = connettore.getCustom();
 
 			strutsBean.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
 			strutsBean.consoleDynamicConfiguration =  strutsBean.protocolFactory.createDynamicConfigurationConsole();

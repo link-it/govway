@@ -35,8 +35,6 @@ import org.govway.struts.action.ActionMapping;
 import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.config.RispostaAsincrona;
 import org.openspcoop2.core.config.ServizioApplicativo;
-import org.openspcoop2.core.constants.CostantiConnettori;
-import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.Fruitore;
@@ -104,6 +102,7 @@ public final class ConnettorePropList extends Action {
 //			String nomeservizioApplicativo = connettoriHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_NOME_SERVIZIO_APPLICATIVO);
 			String idsil = connettoriHelper.getParametroLong(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID_SERVIZIO_APPLICATIVO);
 			
+			String azioneConnettoreIdPorta = connettoriHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_FRUITORE_VIEW_CONNETTORE_MAPPING_AZIONE_ID_PORTA);
 			String tipoAccordo = connettoriHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_TIPO_ACCORDO);
 			if("".equals(tipoAccordo))
 				tipoAccordo = null;
@@ -117,8 +116,9 @@ public final class ConnettorePropList extends Action {
 			}
 			else if (servlet.equals(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE)) {
 				int idServizioFruitoreInt = Integer.parseInt(myId);
-				Fruitore servFru = apsCore.getServizioFruitore(idServizioFruitoreInt);
-				connettore = servFru.getConnettore();
+				AccordoServizioParteSpecifica serviziosp = apsCore.getAccordoServizioParteSpecifica(Long.parseLong(id));
+				Fruitore servFru = connettoriHelper.getFruitore(serviziosp, idServizioFruitoreInt);
+				connettore = connettoriHelper.getConnettoreFruizione(servFru, azioneConnettoreIdPorta);
 			}
 			else if (servlet.equals(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT)) {
 				int idSilInt = Integer.parseInt(idsil);
@@ -148,16 +148,14 @@ public final class ConnettorePropList extends Action {
 			List<Object> lista = new ArrayList<>();
 			if (connettore != null) {
 				for (int i = 0; i<connettore.sizePropertyList(); i++){
-					if(CostantiDB.CONNETTORE_DEBUG.equals(connettore.getProperty(i).getNome())==false &&
-							connettore.getProperty(i).getNome().startsWith(CostantiConnettori.CONNETTORE_EXTENDED_PREFIX)==false){
+					if(ConnettoreCustomUtils.isProprietaGestitaTramiteLista(connettore.getTipo(), connettore.getCustom(), connettore.getProperty(i).getNome())){
 						lista.add(connettore.getProperty(i));
 					}
 				}
 			}
 			if (connettoreC != null) {
 				for (int i = 0; i<connettoreC.sizePropertyList(); i++){
-					if(CostantiDB.CONNETTORE_DEBUG.equals(connettoreC.getProperty(i).getNome())==false  &&
-							connettoreC.getProperty(i).getNome().startsWith(CostantiConnettori.CONNETTORE_EXTENDED_PREFIX)==false){
+					if(ConnettoreCustomUtils.isProprietaGestitaTramiteLista(connettoreC.getTipo(), connettoreC.getCustom(), connettoreC.getProperty(i).getNome())){
 						lista.add(connettoreC.getProperty(i));
 					}
 				}

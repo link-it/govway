@@ -258,6 +258,11 @@ Batterie di test che verificano i connettori presenti nella Porta di Dominio
    Verifica inoltre il corretto funzionamento del connettore https e dell'autenticazione 'ssl' lato porta delegata.
 - 'LetturaCredenzialiIngresso' verifica il meccasnimo di plugin per l'implementazione di un gestore delle credenziali
 - 'VerificaTimeoutGestioneContentLength' vengono verificate che le connessioni gestite tramite content-length impostato nell'header http di risposta non provochino attese dovute all'impostazione di un content length errato.
+- 'ConnettoreJMSRisposta' verifica la risposta prodotta dal connettore JMS per le azioni con profilo diverso da oneway (SOAP Envelope con Body vuoto
+   o con l'elemento wrapper dell'operazione, eventualmente modificata tramite una trasformazione della risposta).
+- 'ConnettoreJMSCodaDinamica' verifica il connettore JMS con nome della coda dinamico (queue/openspcoop2TestQueue${context:jmsCoda}):
+   una trasformazione della richiesta (Alimentazione Contesto) legge tramite xpath il nome della coda dal payload; payload differenti
+   vengono pubblicati sulle code 'openspcoop2TestQueueA' e 'openspcoop2TestQueueB'.
 
 !! Pre-requisiti!!
 a. Il test richiede l'installazione delle code jms presenti in ./protocolli/spcoop/testsuite/deploy/code_jms

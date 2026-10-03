@@ -86,6 +86,6 @@ connettore built-in JMS, File e Status.
 	debug
 	encodedWord
 	sse
-	jms
+	jms/index
 	file
 	status

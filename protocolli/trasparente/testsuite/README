@@ -202,6 +202,10 @@ In alternativa sono eseguibili singolarmente con i seguenti gruppi:
 - RESTIntegrazionePortaApplicativa
 - SOAPIntegrazionePortaDelegata
 - SOAPIntegrazionePortaApplicativa
+- RESTConnettoreJMS: risposta prodotta dal connettore JMS per le API REST (codice HTTP 204, personalizzabile o modificabile tramite trasformazione)
+- RESTConnettoreJMSCodaDinamica: connettore JMS con nome della coda dinamico (queue/openspcoop2TestQueue${context:jmsCoda}), valorizzato da una
+  trasformazione della richiesta (Alimentazione Contesto) che legge tramite jsonPath il nome della coda dal payload;
+  richiede le code 'openspcoop2TestQueueA' e 'openspcoop2TestQueueB' (vedi testsuite/jms.README)
 
 
 ** Autenticazione e Autorizzazione **

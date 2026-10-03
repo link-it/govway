@@ -410,6 +410,13 @@
 					<param name="token" value="&#60;!-- JMS_PASSWORD --&#62;"/>
 					<param name="value" value=""/>
 				</antcall>
+				<!-- Connettori con coda dinamica (es. queue/openspcoop2TestQueue${context:jmsCoda}): il binding JNDI della coda di ActiveMQ viene definito
+				     tramite una proprietà il cui nome e valore vengono risolti a runtime ('$$' evita la risoluzione delle proprietà ant) -->
+				<antcall target="replace_token">
+				    <param name="file" value="${build_testunits}/config.xml"/>
+					<param name="token" value="&#60;!-- CONTEXT_JMS_CODA_DINAMICA --&#62;"/>
+					<param name="value" value="&#60;property nome=&#34;context-queue.queue/openspcoop2TestQueue$${context:jmsCoda}&#34; valore=&#34;openspcoop2TestQueue$${context:jmsCoda}&#34; /&#62;"/>
+				</antcall>
 			</then>
 		</if>
 		

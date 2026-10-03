@@ -1,0 +1,19 @@
+{
+	"connettore": {
+		"tipo": "jms",
+		"nome": "nome_coda",
+		"connection_factory": "connFactory",
+		"tipo_coda": "queue",
+		"send_as": "text",
+		"jndi_initial_context": "org.apache.activemq.jndi.ActiveMQInitialContextFactory",
+		"jndi_provider_url": "tcp://127.0.0.1:61616",
+		"proprieta": [
+		{ "nome": "acknowledgeMode", "valore": "DUPS_OK_ACKNOWLEDGE"},
+		{ "nome": "context-connectionFactoryNames", "valore": "connFactory"},
+		{ "nome": "context-queue.nome_coda", "valore": "codaFisica"},
+		{ "nome": "locations-cache", "valore": "abilitata"},
+		{ "nome": "lookupDestination-nome_coda", "valore": "nome_coda"},
+		{ "nome": "pool-java.naming.provider.url", "valore": "tcp://127.0.0.1:61617"}
+		]
+	}
+}
