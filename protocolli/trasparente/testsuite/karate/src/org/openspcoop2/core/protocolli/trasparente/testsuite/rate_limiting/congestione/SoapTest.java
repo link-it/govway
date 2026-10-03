@@ -81,12 +81,12 @@ public class SoapTest extends ConfigLoader {
 	
 	@Test
 	public void congestioneAttivaConViolazioneRLErogazione() {
-		congestioneAttivaConViolazioneRL(basePath + "/SoggettoInternoTest/NumeroRichiesteSoap/v1?sleep=2000", "SoggettoInternoTest/NumeroRichiesteSoap/v1");
+		congestioneAttivaConViolazioneRL(basePath + "/SoggettoInternoTest/NumeroRichiesteSoap/v1?sleep=5000", "SoggettoInternoTest/NumeroRichiesteSoap/v1");
 	}
 	
 	@Test
 	public void congestioneAttivaConViolazioneRLFruizione() {
-		congestioneAttivaConViolazioneRL(basePath + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/NumeroRichiesteSoap/v1?sleep=2000", "SoggettoInternoTestFruitore/SoggettoInternoTest/NumeroRichiesteSoap/v1");
+		congestioneAttivaConViolazioneRL(basePath + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/NumeroRichiesteSoap/v1?sleep=5000", "SoggettoInternoTestFruitore/SoggettoInternoTest/NumeroRichiesteSoap/v1");
 	}
 	
 	@Test
@@ -625,7 +625,7 @@ public class SoapTest extends ConfigLoader {
 		request.setUrl(url);
 		request.setContent(body.getBytes());
 		
-		List<HttpResponse> responses = Utils.makeParallelRequests(request, sogliaRichiesteSimultanee+1);
+		List<HttpResponse> responses = RestTest.makeParallelRequestsCongestioneConViolazioneRL(request, sogliaRichiesteSimultanee);
 		
 		EventiUtils.checkEventiCongestioneAttivaConViolazioneRL(idServizio, dataSpedizione, Optional.of("RichiesteSimultanee"), responses, logRateLimiting);
 	}
