@@ -484,9 +484,8 @@ public class JDBCStatistichePdndTracingServiceSearchImpl implements IJDBCService
 		} catch(Exception e) {
 			throw new ServiceException("getCsvBytes(tableId="+tableId+") failed: "+e.getMessage(), e);
 		} finally {
-			// valorizzati solo se il JDBCStream non e' stato creato
-			try { if(rs!=null) rs.close(); } catch(Exception eClose) { /* ignore */ }
-			try { if(pstmt!=null) pstmt.close(); } catch(Exception eClose) { /* ignore */ }
+			// valorizzati solo se il JDBCStream non è stato creato
+			org.openspcoop2.utils.jdbc.JDBCUtilities.closeResources(rs, pstmt);
 		}
 	}
 
