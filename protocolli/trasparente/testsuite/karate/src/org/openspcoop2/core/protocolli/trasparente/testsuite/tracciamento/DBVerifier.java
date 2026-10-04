@@ -342,6 +342,19 @@ public class DBVerifier {
 		String msg = "IdTransazione: "+idTransazione+ " api:"+api+" operazione:"+operazione+" dump: "+tipo;
 		
 		List<Map<String, Object>> rows = dbUtils().readRows(query, idTransazione);
+		
+		// In caso di errore sul database i dati vengono salvati su file system e reinseriti dal timer di recovery,
+		// che registra i dump dopo la transazione: il dump atteso può quindi comparire successivamente alla transazione
+		if(expected) {
+			int[] attese = {100, 500, 2000, 5000};
+			for (int attesa : attese) {
+				if(rows!=null && !rows.isEmpty()) {
+					break; // dump trovato
+				}
+				Utilities.sleep(attesa);
+				rows = dbUtils().readRows(query, idTransazione);
+			}
+		}
 				
 		if(expected) {
 			assertNotNull(msg, rows);
