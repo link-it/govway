@@ -1371,6 +1371,8 @@ public class CostantiTestSuite {
     public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_ENCRYPT_ATTACH_CONTENT="WSSEncryptAttachmentsContent";
     /** ENTITA SPCOOP: Nome Azione WSSEncryptAttachmentsElement del Servizio RichiestaStatoAvanzamento */
     public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_ENCRYPT_ATTACH_ELEMENT="WSSEncryptAttachmentsElement";
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_ENCRYPT_ATTACH_ELEMENT_NO_CONTENT_TYPE_FALLBACK="WSSEncryptAttachmentsElementNoContentTypeFallback";
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_ENCRYPT_ATTACH_ELEMENT_NO_CONTENT_TYPE="WSSEncryptAttachmentsElementNoContentType";
     /** ENTITA SPCOOP: Nome Azione WSSEncryptAttachmentsContentOp2Format del Servizio RichiestaStatoAvanzamento */
     public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_ENCRYPT_ATTACH_CONTENT_OP2FORMAT="WSSEncryptAttachmentsContentOp2Format";
     /** ENTITA SPCOOP: Nome Azione WSSEncryptAttachmentsElementOp2Format del Servizio RichiestaStatoAvanzamento */

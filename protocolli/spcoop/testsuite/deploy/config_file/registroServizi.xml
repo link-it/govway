@@ -95,6 +95,8 @@
 	<azione nome="WSSEncryptAttachments"/>
 	<azione nome="WSSEncryptAttachmentsContent"/>
 	<azione nome="WSSEncryptAttachmentsElement"/>
+	<azione nome="WSSEncryptAttachmentsElementNoContentTypeFallback"/>
+	<azione nome="WSSEncryptAttachmentsElementNoContentType"/>
 	<azione nome="WSSEncryptAttachmentsContentOp2Format"/>
 	<azione nome="WSSEncryptAttachmentsElementOp2Format"/>
 	<azione nome="WSSEncryptAttachmentsOp2FormatOneOnly"/>

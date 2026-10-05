@@ -690,4 +690,24 @@ public class SecurityConstants {
     public static final boolean ENCRYPT_ATTACHMENT_HEADERS_DEFAULT = Boolean.parseBoolean(ENCRYPT_ATTACHMENT_HEADERS_FALSE);
     public static final String ENCRYPT_ATTACHMENT_HEADERS = "encryptAttachmentHeaders";
     
+    /**
+     * Con la cifratura degli attachment in modalità 'Element' (Attachment-Complete) include il Content-Type dell'attachment
+     * tra gli header MIME cifrati anche se non è abilitata l'opzione 'encryptAttachmentHeaders'
+     */
+    public static final String ENCRYPT_ATTACHMENT_CONTENT_TYPE_FALSE = "false";
+    public static final String ENCRYPT_ATTACHMENT_CONTENT_TYPE_TRUE = "true";
+    public static final boolean ENCRYPT_ATTACHMENT_CONTENT_TYPE_DEFAULT = Boolean.parseBoolean(ENCRYPT_ATTACHMENT_CONTENT_TYPE_TRUE);
+    public static final String ENCRYPT_ATTACHMENT_CONTENT_TYPE = "encryptAttachmentContentType";
+    /** Uso interno: gli attachment vengono cifrati in modalità 'Element' e il Content-Type va incluso tra gli header cifrati */
+    public static final String ENCRYPT_ATTACHMENT_CONTENT_TYPE_INTERNAL = "govway.encryptAttachmentContentType";
+    
+    /**
+     * In ricezione, per un attachment cifrato in modalità 'Element' (Attachment-Complete) i cui header MIME cifrati
+     * non contengono il Content-Type, utilizza il MimeType indicato nell'elemento EncryptedData (retrocompatibilità con
+     * i mittenti che non cifrano gli header MIME degli attachment)
+     */
+    public static final String DECRYPT_ATTACHMENT_MIME_TYPE_FALLBACK_FALSE = "false";
+    public static final String DECRYPT_ATTACHMENT_MIME_TYPE_FALLBACK_TRUE = "true";
+    public static final String DECRYPT_ATTACHMENT_MIME_TYPE_FALLBACK = "decryptAttachmentMimeTypeFallback";
+    
 }

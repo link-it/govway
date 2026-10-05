@@ -1159,6 +1159,61 @@
                 </response-flow>
             </message-security>
         </porta-delegata>
+
+	<porta-delegata gestione-manifest="abilitato" nome="WSSEncryptAttachmentsElementNoContentTypeFallback" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSEncryptAttachmentsElementNoContentTypeFallback" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Encrypt" />
+                    <parameter nome="timeToLive" valore="600" />
+                    <parameter nome="encryptionUser" valore="pa" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="encryptionPropFile" valore="pd-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="encryptionParts" valore="{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Element}cid:Attachments" />
+		    <parameter nome="encryptAttachmentContentType" valore="false" />
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Encrypt" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="decryptionPropFile" valore="pd-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="encryptionParts" valore="{Element}cid:Attachments" />
+		    <parameter nome="decryptAttachmentMimeTypeFallback" valore="true" />
+                </response-flow>
+            </message-security>
+        </porta-delegata>
+
+	<porta-delegata gestione-manifest="abilitato" nome="WSSEncryptAttachmentsElementNoContentType" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSEncryptAttachmentsElementNoContentType" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Encrypt" />
+                    <parameter nome="timeToLive" valore="600" />
+                    <parameter nome="encryptionUser" valore="pa" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="encryptionPropFile" valore="pd-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="encryptionParts" valore="{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Element}cid:Attachments" />
+		    <parameter nome="encryptAttachmentContentType" valore="false" />
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Encrypt" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="decryptionPropFile" valore="pd-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="encryptionParts" valore="{Element}cid:Attachments" />
+                </response-flow>
+            </message-security>
+        </porta-delegata>
         
 	<porta-delegata gestione-manifest="abilitato" nome="WSSEncryptAttachmentsContentOp2Format" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
             <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />
@@ -5251,6 +5306,71 @@
                     <parameter nome="encryptionPropFile" valore="pa-crypto.properties" />
                     <parameter nome="mustUnderstand" valore="false" />
 		    <parameter nome="encryptionParts" valore="{Element}cid:Attachments" />
+                </response-flow>
+            </message-security>
+        </porta-applicativa>
+
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSEncryptAttachmentsElementNoContentTypeFallback">
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSEncryptAttachmentsElementNoContentTypeFallback" />
+            <servizio-applicativo nome="govwayTestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Encrypt" />
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <!-- <parameter nome="encryptionKeyIdentifier" valore="X509KeyIdentifier" /> -->
+                    <parameter nome="decryptionPropFile" valore="pa-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="encryptionParts" valore="{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Element}cid:Attachments" />
+		    <parameter nome="decryptAttachmentMimeTypeFallback" valore="true" />
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Encrypt" />
+                    <parameter nome="timeToLive" valore="600" />
+                    <parameter nome="encryptionUser" valore="pd" />
+                    <!-- <parameter nome="encryptionKeyIdentifier" valore="X509KeyIdentifier" /> -->
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="encryptionPropFile" valore="pa-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="encryptionParts" valore="{Element}cid:Attachments" />
+		    <parameter nome="encryptAttachmentContentType" valore="false" />
+                </response-flow>
+            </message-security>
+        </porta-applicativa>
+
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSEncryptAttachmentsElementNoContentType">
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSEncryptAttachmentsElementNoContentType" />
+            <servizio-applicativo nome="govwayTestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Encrypt" />
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <!-- <parameter nome="encryptionKeyIdentifier" valore="X509KeyIdentifier" /> -->
+                    <parameter nome="decryptionPropFile" valore="pa-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="encryptionParts" valore="{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Element}cid:Attachments" />
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Encrypt" />
+                    <parameter nome="timeToLive" valore="600" />
+                    <parameter nome="encryptionUser" valore="pd" />
+                    <!-- <parameter nome="encryptionKeyIdentifier" valore="X509KeyIdentifier" /> -->
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="encryptionPropFile" valore="pa-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="encryptionParts" valore="{Element}cid:Attachments" />
+		    <parameter nome="encryptAttachmentContentType" valore="false" />
                 </response-flow>
             </message-security>
         </porta-applicativa>
