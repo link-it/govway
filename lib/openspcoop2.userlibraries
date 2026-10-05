@@ -294,13 +294,13 @@
 	<archive path="/op2_3.3.dev/lib/wadl/wadl-xslt-1.1.6.jar"/>
 	<archive path="/op2_3.3.dev/lib/wadl/localizer-1.0.jar"/>
 	<!-- wss4j -->
-	<archive path="/op2_3.3.dev/lib/wss4j/wss4j-bindings-2.4.1.jar"/>
-	<archive path="/op2_3.3.dev/lib/wss4j/wss4j-integration-2.4.1.jar"/>
-	<archive path="/op2_3.3.dev/lib/wss4j/wss4j-policy-2.4.1.jar"/>
-	<archive path="/op2_3.3.dev/lib/wss4j/wss4j-ws-security-common-2.4.1-gov4j-4.jar"/>
-	<archive path="/op2_3.3.dev/lib/wss4j/wss4j-ws-security-dom-2.4.1-gov4j-4.jar"/>
-	<archive path="/op2_3.3.dev/lib/wss4j/wss4j-ws-security-policy-stax-2.4.1.jar"/>
-	<archive path="/op2_3.3.dev/lib/wss4j/wss4j-ws-security-stax-2.4.1.jar"/>
+	<archive path="/op2_3.3.dev/lib/wss4j/wss4j-bindings-2.4.4.jar"/>
+	<archive path="/op2_3.3.dev/lib/wss4j/wss4j-integration-2.4.4.jar"/>
+	<archive path="/op2_3.3.dev/lib/wss4j/wss4j-policy-2.4.4.jar"/>
+	<archive path="/op2_3.3.dev/lib/wss4j/wss4j-ws-security-common-2.4.4-gov4j-1.jar"/>
+	<archive path="/op2_3.3.dev/lib/wss4j/wss4j-ws-security-dom-2.4.4-gov4j-1.jar"/>
+	<archive path="/op2_3.3.dev/lib/wss4j/wss4j-ws-security-policy-stax-2.4.4.jar"/>
+	<archive path="/op2_3.3.dev/lib/wss4j/wss4j-ws-security-stax-2.4.4.jar"/>
     </library>
     <library name="openspcoop2_3.3.16_lib_axiom" systemlibrary="false">
 	<archive path="/op2_3.3.dev/lib/axiom/axiom-api-1.2.13-gov4j-2.jar"/>

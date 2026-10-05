@@ -196,6 +196,10 @@ public class WSSUtilities {
 				at.setHeader(header.getName(), header.getValue());
 			}
 		}
+		else if (Boolean.TRUE.equals(msgCtx.get(SecurityConstants.ENCRYPT_ATTACHMENT_CONTENT_TYPE_INTERNAL)) && ap.getContentType()!=null) {
+			// cifratura in modalità 'Element': il Content-Type viene sempre incluso tra gli header MIME cifrati
+			at.setHeader(HttpConstants.CONTENT_TYPE, ap.getContentType());
+		}
 		
 		if (encodeBase64) {
 			at.setHeader(HttpConstants.CONTENT_TRANSFER_ENCODING, HttpConstants.CONTENT_TRANSFER_ENCODING_VALUE_BASE64);

@@ -2504,6 +2504,7 @@ public class WSSecurity extends GestioneViaJmx {
 				{CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_ENCRYPT_ATTACH},	
 				{CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_ENCRYPT_ATTACH_CONTENT},
 				{CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_ENCRYPT_ATTACH_ELEMENT},	
+				{CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_ENCRYPT_ATTACH_ELEMENT_NO_CONTENT_TYPE_FALLBACK},	
 				{CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_ENCRYPT_ATTACH_CONTENT_OP2FORMAT},
 				{CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_ENCRYPT_ATTACH_ELEMENT_OP2FORMAT},	
 				{CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_ENCRYPT_ATTACH_OP2FORMAT_ONEONLY},
@@ -2565,6 +2566,120 @@ public class WSSecurity extends GestioneViaJmx {
 	
 	
 	
+	
+	
+	
+	
+	
+	
+	
+	/***
+	 * Test per Encrypt Attachments in modalità 'Element' (Attachment-Complete) con un mittente che non include il Content-Type
+	 * tra gli header MIME cifrati (opzione 'encryptAttachmentContentType=false', comportamento delle versioni precedenti di GovWay)
+	 * e un ricevente che non abilita la retrocompatibilità ('decryptAttachmentMimeTypeFallback'): la decifratura deve fallire.
+	 * Il caso con la retrocompatibilità abilitata è verificato dal test 'sincronoWSS_ENCRYPT_ATTACH'.
+	 */
+	@Test(groups={CostantiSicurezza.ID_GRUPPO_SICUREZZA,WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".ENCRYPT_ATTACH_ELEMENT_NO_CONTENT_TYPE"})
+	public void sincronoWSS_ENCRYPT_ATTACH_ELEMENT_NO_CONTENT_TYPE_genericCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_sincronoWSS_ENCRYPT_ATTACH_ELEMENT_NO_CONTENT_TYPE(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiSicurezza.ID_GRUPPO_SICUREZZA,WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".ENCRYPT_ATTACH_ELEMENT_NO_CONTENT_TYPE"})
+	public void sincronoWSS_ENCRYPT_ATTACH_ELEMENT_NO_CONTENT_TYPE_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_sincronoWSS_ENCRYPT_ATTACH_ELEMENT_NO_CONTENT_TYPE(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _sincronoWSS_ENCRYPT_ATTACH_ELEMENT_NO_CONTENT_TYPE(boolean genericCode, boolean unwrap) throws TestSuiteException, Exception{
+		
+		Date dataInizioTest = DateManager.getDate();
+		
+		DatabaseComponent dbComponentFruitore = null;
+		DatabaseComponent dbComponentErogatore = null;
+
+		ClientSincrono client=null;
+		try{
+			// Creazione client Sincrono
+			Repository repositorySincronoWSS_ENCRYPT_ATTACH_ELEMENT_NO_CONTENT_TYPE=new Repository();
+			client=new ClientSincrono(repositorySincronoWSS_ENCRYPT_ATTACH_ELEMENT_NO_CONTENT_TYPE);
+			client.setUrlPortaDiDominio(TestSuiteProperties.getInstance().getServizioRicezioneContenutiApplicativiFruitore());
+			client.setPortaDelegata(CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_ENCRYPT_ATTACH_ELEMENT_NO_CONTENT_TYPE);
+			client.connectToSoapEngine(MessageType.SOAP_11);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapTestWSSecuritySoapBox(), false,addIDUnivoco);
+			client.addAttachment(Utilities.testSuiteProperties.getSoapTestWSSecuritySoapBoxAllegatoXml(),"text/xml");
+			client.addAttachment(Utilities.testSuiteProperties.getSoapTestWSSecuritySoapBoxAllegatoBinario(),"application/octet-stream");
+
+			// AttesaTerminazioneMessaggi
+			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
+				dbComponentFruitore = DatabaseProperties.getDatabaseComponentFruitore();
+				dbComponentErogatore = DatabaseProperties.getDatabaseComponentErogatore();
+				
+				client.setAttesaTerminazioneMessaggi(true);
+				client.setDbAttesaTerminazioneMessaggiFruitore(dbComponentFruitore);
+				client.setDbAttesaTerminazioneMessaggiErogatore(dbComponentErogatore);
+			}
+	
+			client.run();
+			
+			Assert.fail("Attesa decifratura non riuscita: il Content-Type non è presente tra gli header MIME cifrati dell'attachment");
+			
+		} catch (AxisFault error) {
+			
+			String codiceEccezione = Utilities.toString(CodiceErroreCooperazione.SICUREZZA_CIFRATURA_NON_VALIDA);
+			String msgErrore = null;
+			if(genericCode) {
+				IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.WRAP_502_BAD_RESPONSE;
+				if(unwrap) {
+					integrationFunctionError = IntegrationFunctionError.INTEROPERABILITY_PROFILE_RESPONSE_ERROR;
+				}
+				ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+				codiceEccezione = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SERVER +
+						org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+erroriProperties.getErrorType_noWrap(integrationFunctionError);
+				if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+					msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+				}
+			}
+			
+			Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
+			Reporter.log("Controllo fault code ["+codiceEccezione+"]");
+			Assert.assertTrue(codiceEccezione.equals(error.getFaultCode().getLocalPart()));
+			if(msgErrore!=null) {
+				Reporter.log("Controllo fault string ["+msgErrore+"]");
+				Assert.assertTrue(msgErrore.equals(error.getFaultString()));
+			}
+						
+		}finally{
+			if(dbComponentFruitore!=null) {
+				dbComponentFruitore.close();
+			}
+			if(dbComponentErogatore!=null) {
+				dbComponentErogatore.close();
+			}
+		}
+		
+		Date dataFineTest = DateManager.getDate();
+		
+		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
+		err.setIntervalloInferiore(dataInizioTest);
+		err.setIntervalloSuperiore(dataFineTest);
+		err.setMsgErrore("Generatosi errore durante il processamento Message-Security(Receiver): A security error was encountered when verifying the message");
+		this.erroriAttesiOpenSPCoopCore.add(err);
+		
+	}
 	
 	
 	

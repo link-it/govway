@@ -203,6 +203,8 @@ Batterie di test che verificano funzionalita' di sicurezza della Porta.
         omitCanonicalizationInclusiveNamespace [value: boolean, default false]: Non inserisce l'elemento "InclusiveNamespace" all'interno dell'elemento "CanonicalizationMethod"
         addAttachmentIdBrackets [value: boolean, default false]: Aggiunge all'id di riferimento degli allegati delle parentesi unicinate 
         encryptAttachmentHeaders [value: boolean, default false]: Aggiunge gli header dell'Attachment all'interno del messaggio cifrato
+        encryptAttachmentContentType [value: boolean, default true]: Con la cifratura degli attachment in modalità 'Element' include il Content-Type dell'attachment tra gli header MIME cifrati, anche se 'encryptAttachmentHeaders' non è abilitato
+        decryptAttachmentMimeTypeFallback [value: boolean, default false]: In ricezione, per un attachment cifrato in modalità 'Element' senza Content-Type tra gli header MIME cifrati, utilizza il MimeType dell'elemento EncryptedData (retrocompatibilità con i mittenti che non cifrano gli header); per default la sicurezza resta invariata e la decifratura fallisce
 - 'WSSecuritySoapBox' vengono provate alcune funzionalità di WSSecurity tramite libreria 'soapbox', in particolar modo firma e cifratura degli attachments
 !! Pre-requisiti!!
 Il test richiede l'installazione di diversi keystore in /etc/govway/keys:

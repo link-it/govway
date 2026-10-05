@@ -117,6 +117,17 @@ public class MessageSecuritySender_wss4j implements IMessageSecuritySender{
 	        
 	        setOutgoingProperties(wssContext,msgCtx,messageParam,requestInfo,ctx);
 	        
+	        // Con la cifratura degli attachment in modalità 'Element' (Attachment-Complete) il Content-Type deve essere incluso
+	        // tra gli header MIME cifrati: chi riceve ricava il tipo del contenuto esclusivamente dagli header cifrati
+	        boolean encryptAttachmentContentType = msgCtx.containsKey(SecurityConstants.ENCRYPT_ATTACHMENT_CONTENT_TYPE) ?
+	        		SecurityConstants.ENCRYPT_ATTACHMENT_CONTENT_TYPE_TRUE.equals(msgCtx.get(SecurityConstants.ENCRYPT_ATTACHMENT_CONTENT_TYPE)) :
+	        		SecurityConstants.ENCRYPT_ATTACHMENT_CONTENT_TYPE_DEFAULT;
+	        Object encryptionParts = msgCtx.get(SecurityConstants.ENCRYPTION_PARTS);
+	        if(encryptAttachmentContentType &&
+	        		encryptionParts instanceof String && ((String)encryptionParts).contains("{"+SecurityConstants.PART_ELEMENT+"}cid:")) {
+	        	msgCtx.put(SecurityConstants.ENCRYPT_ATTACHMENT_CONTENT_TYPE_INTERNAL, true);
+	        }
+	        
 	        
 	        // ** Registro attachments da trattare **/
 	        

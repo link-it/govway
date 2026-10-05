@@ -1,3 +1,17 @@
+2026-10-05  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolte le seguenti vulnerabilità relative ai jar di terza parte:
+	- CVE-2026-88920, CVE-2026-85532, CVE-2026-92899: aggiornata libreria 'org.apache.wss4j:*' alla versione 2.4.4
+	Risolto Bug
+	Con la sicurezza messaggio WS-Security, la cifratura degli attachment in modalità 'Element' (es. '{Element}cid:Attachments')
+	non includeva il Content-Type tra gli header MIME cifrati se non era abilitata l'opzione 'encryptAttachmentHeaders'.
+	La nuova versione della libreria 'wss4j', che in ricezione ricava il tipo del contenuto esclusivamente dagli header cifrati,
+	non accettava più tali messaggi ("The signature or decryption was invalid"). Il Content-Type viene adesso sempre
+	incluso tra gli header cifrati (opzione 'encryptAttachmentContentType', abilitata per default); per accettare i messaggi
+	prodotti dalle versioni precedenti è possibile abilitare in ricezione l'opzione 'decryptAttachmentMimeTypeFallback',
+	disabilitata per default, che utilizza il MimeType indicato nell'elemento EncryptedData.
+
 2026-10-03  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
