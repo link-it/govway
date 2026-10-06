@@ -1,5 +1,13 @@
 2026-10-06  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore]
+	Risolto Bug
+	Gli eventi di violazione del controllo del traffico (es. violazione di una policy di Rate Limiting) potevano non essere
+	registrati se il timer degli eventi veniva eseguito mentre la violazione rilevata veniva memorizzata; il caso si presentava
+	tipicamente con più raggruppamenti di una stessa policy violati contemporaneamente. La violazione viene adesso sempre registrata.
+
+2026-10-06  Andrea Poli <apoli@link.it>
+
 	* [GovWayMonitor]
 	Aggiunta funzionalità
 	Il titolo della console di monitoraggio si configura adesso con la proprietà 'console.nome.esteso', come per la console di gestione;
