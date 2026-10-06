@@ -233,6 +233,48 @@ public class Utils {
 		//HttpUtilities.check(jmxUrl, System.getProperty("jmx_username"), System.getProperty("jmx_password"));
 	}
 	
+	/**
+	 * Reset dei contatori da usare dopo le richieste che attivano il nuovo motore.
+	 * Il gateway aggiorna i contatori di una richiesta dopo averne inviato la risposta al client: senza attesa,
+	 * l'aggiornamento della richiesta di attivazione può arrivare dopo il reset e sporcare i contatori del test
+	 * (es. un fault già conteggiato e la terza richiesta bloccata con 429).
+	 * Si attende quindi che l'elaborazione si concluda e, se dopo il reset i contatori non risultano azzerati, il reset viene ripetuto.
+	 */
+	public static void resetCountersDopoAttivazioneMotore(String idPolicy) {
+		
+		int remainingChecks = Integer.valueOf(System.getProperty("rl_check_policy_conditions_retry"));
+		int delay = Integer.valueOf(System.getProperty("rl_check_policy_conditions_delay"));
+		
+		org.openspcoop2.utils.Utilities.sleep(delay);
+		
+		while(true) {
+			resetCounters(idPolicy);
+		
+			String jmxPolicyInfo = getPolicy(idPolicy);
+			if (jmxPolicyInfo.equals(PolicyFields.NOPOLICYINFO)) {
+				return;
+			}
+			Map<String, String> policyValues = parsePolicy(jmxPolicyInfo);
+			String attive = policyValues.get(PolicyFields.RichiesteAttive);
+			String conteggiate = policyValues.get(PolicyFields.RichiesteConteggiate);
+			String bloccate = policyValues.get(PolicyFields.RichiesteBloccate);
+			if((attive==null || "0".equals(attive)) &&
+					(conteggiate==null || "0".equals(conteggiate)) &&
+					(bloccate==null || "0".equals(bloccate))) {
+				return;
+			}
+		
+			if(remainingChecks == 0) {
+				// la verifica puntuale viene lasciata ai controlli successivi del test, che prevedono le tolleranze per tipo di policy
+				logRateLimiting.warn("Contatori della policy '"+idPolicy+"' non azzerati dopo il reset (attive:"+attive+" conteggiate:"+conteggiate+" bloccate:"+bloccate+")");
+				return;
+			}
+			logRateLimiting.info("Contatori della policy '"+idPolicy+"' non azzerati dopo il reset (attive:"+attive+" conteggiate:"+conteggiate+" bloccate:"+bloccate+"); ripeto il reset");
+			remainingChecks--;
+			org.openspcoop2.utils.Utilities.sleep(delay);
+		}
+	}
+	
 	public static void ripulisciRiferimentiCacheErogazione(long idErogazione) {
 		Map<String,String> queryParams = Map.of(
 				"resourceName", "ConfigurazionePdD",

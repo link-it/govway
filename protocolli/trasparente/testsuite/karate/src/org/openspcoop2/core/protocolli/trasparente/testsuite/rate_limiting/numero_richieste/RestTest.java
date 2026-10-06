@@ -128,7 +128,7 @@ public class RestTest extends ConfigLoader {
 			Utils.makeParallelRequests(request, 1);
 			
 			String idPolicy = dbUtils.getIdPolicyErogazione("SoggettoInternoTest", servizio, PolicyAlias.MINUTODEFAULT);
-			Utils.resetCounters(idPolicy);
+			Utils.resetCountersDopoAttivazioneMotore(idPolicy);
 			
 			idPolicy = dbUtils.getIdPolicyErogazione("SoggettoInternoTest", servizio, PolicyAlias.MINUTODEFAULT);
 			Utils.checkConditionsNumeroRichieste(idPolicy, 0, 0, 0, policyType, TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE );
@@ -315,7 +315,7 @@ public class RestTest extends ConfigLoader {
 			
 			
 			String idPolicy = dbUtils.getIdPolicyFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", "NumeroRichiesteRest", PolicyAlias.MINUTODEFAULT);
-			Utils.resetCounters(idPolicy);
+			Utils.resetCountersDopoAttivazioneMotore(idPolicy);
 			
 			idPolicy = dbUtils.getIdPolicyFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", "NumeroRichiesteRest", PolicyAlias.MINUTODEFAULT);
 			Utils.checkConditionsNumeroRichieste(idPolicy, 0, 0, 0, policyType, TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE);
@@ -480,7 +480,7 @@ public class RestTest extends ConfigLoader {
 			
 			
 			String idPolicy = dbUtils.getIdPolicyErogazione("SoggettoInternoTest", "NumeroRichiesteRest", PolicyAlias.RICHIESTE_SIMULTANEE);
-			Utils.resetCounters(idPolicy);
+			Utils.resetCountersDopoAttivazioneMotore(idPolicy);
 			
 			idPolicy = dbUtils.getIdPolicyErogazione("SoggettoInternoTest", "NumeroRichiesteRest", PolicyAlias.RICHIESTE_SIMULTANEE);
 			Commons.checkPreConditionsRichiesteSimultanee(idPolicy, policyType);
@@ -532,7 +532,7 @@ public class RestTest extends ConfigLoader {
 			Utils.makeParallelRequests(request, 1);
 			
 			String idPolicy = dbUtils.getIdPolicyFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", "NumeroRichiesteRest", PolicyAlias.RICHIESTE_SIMULTANEE);
-			Utils.resetCounters(idPolicy);
+			Utils.resetCountersDopoAttivazioneMotore(idPolicy);
 	
 			idPolicy = dbUtils.getIdPolicyFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", "NumeroRichiesteRest", PolicyAlias.RICHIESTE_SIMULTANEE);
 			Commons.checkPreConditionsRichiesteSimultanee(idPolicy, policyType);

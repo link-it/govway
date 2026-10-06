@@ -132,7 +132,7 @@ public class RestTest extends ConfigLoader {
 			Utils.waitForPolicy(policy);
 			
 			String idPolicy = dbUtils.getIdPolicyErogazione("SoggettoInternoTest", erogazione, policy);
-			Utils.resetCounters(idPolicy);
+			Utils.resetCountersDopoAttivazioneMotore(idPolicy);
 			
 			idPolicy = dbUtils.getIdPolicyErogazione("SoggettoInternoTest", erogazione, policy);
 			Commons.checkPreConditionsTempoMedioRisposta(idPolicy, policyType);
@@ -237,7 +237,7 @@ public class RestTest extends ConfigLoader {
 			Utils.waitForPolicy(policy);
 			
 			String idPolicy = dbUtils.getIdPolicyFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", erogazione, policy);
-			Utils.resetCounters(idPolicy);
+			Utils.resetCountersDopoAttivazioneMotore(idPolicy);
 			
 			idPolicy = dbUtils.getIdPolicyFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", erogazione, policy);
 			Commons.checkPreConditionsTempoMedioRisposta(idPolicy, policyType);
