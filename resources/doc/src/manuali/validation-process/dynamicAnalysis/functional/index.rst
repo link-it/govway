@@ -70,6 +70,7 @@ Sono inoltre disponibili `report di dettaglio in vari formati <https://jenkins.l
 	mtom
 	correlazioneApplicativa
 	tracciamento
+	osservabilita
         registrazioneMessaggi
 	headerIntegrazione
 	encoding

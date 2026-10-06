@@ -148,8 +148,10 @@
 				<include name="${xalan_jar}"/>
 				<include name="${xalan_serializer_jar}"/>
 				<include name="${jboss-logging_jar}"/>	
-				<include name="micrometer-observation-1.16.5.jar"/>
-				<include name="micrometer-commons-1.16.5.jar"/>
+			</lib>
+			<lib dir="${openspcoop2.lib}/micrometer">
+				<include name="micrometer-observation-1.17.1.jar"/>
+				<include name="micrometer-commons-1.17.1.jar"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/json">
 				<include name="accessors-smart-2.6.0.jar"/>

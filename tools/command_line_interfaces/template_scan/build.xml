@@ -38,6 +38,7 @@
 			<include name="log/*"/>
 			<include name="security/*"/>
 			<include name="shared/*"/>
+			<include name="micrometer/*"/>
 			<include name="soapbox/*"/>
 			<include name="spring/*"/>
 			<include name="spring-security/*"/>
@@ -123,6 +124,8 @@
 			<fileset dir="${openspcoop2.lib}/saaj" includes="*.jar"/>
 			<fileset dir="${openspcoop2.lib}/commons" includes="*.jar"/>
 			<fileset dir="${openspcoop2.lib}/spring" includes="*.jar"/>
+			<fileset dir="${openspcoop2.lib}/micrometer" includes="micrometer-observation-1.17.1.jar"/>
+			<fileset dir="${openspcoop2.lib}/micrometer" includes="micrometer-commons-1.17.1.jar"/>
 			<fileset dir="${openspcoop2.lib}/swagger" includes="*.jar" excludes="swagger-ui-*.jar"/>
 			<fileset dir="${openspcoop2.lib}/openapi4j" includes="*.jar"/>
 			<fileset dir="${openspcoop2.lib}/jackson" includes="*.jar"/>

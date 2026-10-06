@@ -1,3 +1,12 @@
+2026-10-06  Tommaso Burlon <tommaso.burlon@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità #1783
+	Il gateway può adesso esporre metriche operative (richieste, latenze, dimensioni dei messaggi, stato interno, risorse JVM)
+	verso i sistemi di monitoraggio infrastrutturale, sia in formato Prometheus sia verso un collector OpenTelemetry.
+	Le metriche sono disabilitate per default; per i servizi critici è possibile abilitare metriche di dettaglio
+	per erogazione, fruizione e operazione.
+
 2026-10-05  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

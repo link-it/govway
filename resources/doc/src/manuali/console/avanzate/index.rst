@@ -32,3 +32,4 @@ Funzionalità Avanzate
 	plugins/index.rst
 	suap/index.rst
 	health_check/index.rst
+	osservabilita/index.rst

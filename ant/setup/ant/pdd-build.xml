@@ -1279,6 +1279,30 @@
 			
 	</target>
 	
+	<!-- govway.observability.properties -->
+	<target name="pdd_govway_observability_properties_settings">
+		
+		<available file="${file}" property="file.present"/>
+		
+		<if>
+			<istrue value="${file.present}"/>
+			<then>
+				<concat destfile="${file}" append="yes" >
+
+# ----- Personalizzazione Setup GovWay -------------
+				</concat>
+				
+				<!-- Metriche disabilitate per default: i collettori si abilitano in govway_local.observability.properties -->
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="observability.collectors"/>
+					<param name="value" value=""/>
+				</antcall>
+			</then>
+		</if>
+		
+	</target>
+	
 	<!-- govway.classRegistry.properties -->
 	<target name="pdd_govway.classRegistry.properties_settings">
 		

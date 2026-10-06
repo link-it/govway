@@ -30,6 +30,7 @@
 			<include name="commons/*"/>
 			<exclude name="shared/Saxon*"/>
 			<include name="shared/*"/>
+			<include name="micrometer/*"/>
             		<include name="spring/*"/>
 			<include name="jakarta/jakarta.annotation-api-3.0.0.jar"/>
 			<include name="jakarta/jakarta.servlet-api-6.1.0.jar"/>

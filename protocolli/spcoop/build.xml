@@ -42,6 +42,7 @@
 			<include name="log/*"/>
 			<include name="security/*"/>
 			<include name="shared/*"/>
+			<include name="micrometer/*"/>
 			<include name="spring/*"/>
 			<include name="spring-security/*"/>
 			<include name="stub/*"/>

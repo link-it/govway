@@ -21,9 +21,13 @@ package org.openspcoop2.pdd.core.controllo_traffico.handler;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicy;
 import org.openspcoop2.core.controllo_traffico.beans.MisurazioniTransazione;
+import org.openspcoop2.pdd.core.ProtocolContext;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.core.controllo_traffico.driver.IGestorePolicyAttive;
 import org.openspcoop2.core.controllo_traffico.driver.IPolicyGroupByActiveThreads;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyNotFoundException;
@@ -33,6 +37,8 @@ import org.openspcoop2.pdd.core.controllo_traffico.CostantiControlloTraffico;
 import org.openspcoop2.pdd.core.controllo_traffico.GestoreControlloTraffico;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.config.PolicyConfiguration;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.GestorePolicyAttive;
+import org.openspcoop2.pdd.core.observability.GovwayMeterRegistry;
+import org.openspcoop2.pdd.core.observability.ServiceMetricsLabels;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.logger.transazioni.InformazioniTransazione;
 import org.openspcoop2.pdd.logger.transazioni.TransazioniProcessTimes;
@@ -76,7 +82,24 @@ public class PostOutResponseHandlerGestioneControlloTraffico {
 		try {
 			Logger logControlloTraffico = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(OpenSPCoop2Properties.getInstance().isControlloTrafficoDebug());
 			if(misurazioniTransazione!=null){
-			
+
+				// Hook metriche: una registrazione per transazione, indipendente dalle policy applicabili
+				if(GovwayMeterRegistry.isInitialized()) {
+					// Label di dettaglio (opt-in tramite la proprietà sulla configurazione dell'erogazione/fruizione):
+					// azione e API dal ProtocolContext (valorizzati in PostOutResponse), identificativi da RequestInfo
+					Map<String,String> serviceLabels = null;
+					ProtocolContext protocolContext = info.getProtocollo();
+					RequestInfo requestInfoMetrica = context!=null ? (RequestInfo) context.getObject(Costanti.REQUEST_INFO) : null;
+					if(protocolContext!=null && ServiceMetricsLabels.isEnabled(requestInfoMetrica)) {
+						try {
+							serviceLabels = ServiceMetricsLabels.build(requestInfoMetrica, protocolContext.getAzione(), protocolContext.getIdAccordo());
+						}catch(Exception e) {
+							logger.debug("["+idTransazione+"] Errore durante la costruzione delle label delle metriche di dettaglio: "+e.getMessage(),e);
+						}
+					}
+					GovwayMeterRegistry.getInstance().recordTransazione(misurazioniTransazione, info.getReturnCode(), serviceLabels);
+				}
+
 				if(times!=null) {
 					timeStart = DateManager.getTimeMillis();
 				}
@@ -204,5 +227,6 @@ public class PostOutResponseHandlerGestioneControlloTraffico {
 			logger.error("["+idTransazione+"] Errore durante la registrazione di terminazione del thread (policy inspection)",e);
 		}
 	}
-	
+
+
 }

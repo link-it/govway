@@ -24,6 +24,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -106,6 +107,9 @@ import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.constants.TipoSerializzazione;
 import org.openspcoop2.protocol.sdk.dump.Messaggio;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
+import org.openspcoop2.pdd.core.observability.GovwayMeterRegistry;
+import org.openspcoop2.pdd.core.observability.ServiceMetricsLabels;
+import org.openspcoop2.pdd.core.observability.TempiElaborazioneAggregation;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.MapKey;
@@ -1233,6 +1237,9 @@ public class TransazioneUtilities {
 				timeStart = DateManager.getTimeMillis();
 			}
 			
+			// Metriche fasi di elaborazione: opt-in per servizio via proprieta custom,
+			recordMetricheTempiElaborazione(transaction, transactionDTO);
+
 			// tempi elaborazione
 			if(this.transazioniRegistrazioneTempiElaborazione && transaction.getTempiElaborazione()!=null) {
 				setTempiElaborazione(transactionDTO, transaction);
@@ -1986,6 +1993,56 @@ public class TransazioneUtilities {
 			this.logger.error("TempiElaborazioneUtils.convertToDBValue failed: "+e.getMessage(),e);
 		}
 	}
+
+	/**
+	 * Espone come metriche i tempi di elaborazione (per fase) del servizio, ma solo
+	 * se abilitato tramite la proprietà {@value GovwayMeterRegistry#PROPRIETA_METRICHE_DETAILS}
+	 * sulla configurazione (gruppo) dell'erogazione/fruizione.
+	 */
+	private void recordMetricheTempiElaborazione(Transaction transaction, Transazione transactionDTO) {
+		try {
+			if(!GovwayMeterRegistry.isInitialized() || transaction.getTempiElaborazione()==null) {
+				return;
+			}
+			if(!ServiceMetricsLabels.isEnabled(transaction.getRequestInfo())) {
+				return;
+			}
+			Map<String,String> labels = new LinkedHashMap<>();
+			labels.put("role", mapPddRuolo(transactionDTO.getPddRuolo()));
+			labels.putAll(ServiceMetricsLabels.build(transaction.getRequestInfo(), transactionDTO.getAzione(),
+					getIdAccordo(transactionDTO.getUriAccordoServizio())));
+			// per adesso: tutte le 33 fasi (fasi=null); in futuro pilotabile via proprieta locali/globali
+			GovwayMeterRegistry.getInstance().recordTempiElaborazione(transaction.getTempiElaborazione(), new TempiElaborazioneAggregation(labels, null));
+		}catch(Exception t) {
+			this.logger.debug("Registrazione metriche tempi di elaborazione fallita: "+t.getMessage(), t);
+		}
+	}
+
+	/** Ricava l'IDAccordo (nome+versione dell'API parte comune) dall'URI dell'accordo; {@code null} se non ricavabile. */
+	private static IDAccordo getIdAccordo(String uriAccordoServizio) {
+		if(uriAccordoServizio==null) {
+			return null;
+		}
+		try {
+			return IDAccordoFactory.getInstance().getIDAccordoFromUri(uriAccordoServizio);
+		}catch(Exception e) {
+			return null;
+		}
+	}
+
+	private static String mapPddRuolo(PddRuolo ruolo) {
+		if(ruolo==null) {
+			return "unknown";
+		}
+		if(PddRuolo.DELEGATA.equals(ruolo)) {
+			return "outbound";
+		}
+		if(PddRuolo.APPLICATIVA.equals(ruolo)) {
+			return "inbound";
+		}
+		return ruolo.getValue();
+	}
+
 	
 	private static final MapKey<String> CREDENZIALI_MITTENTE_CLIENT_ADDRESS_RESOLVED = org.openspcoop2.utils.Map.newMapKey("CREDENZIALI_MITTENTE_CLIENT_ADDRESS_RESOLVED");
 	private String getCredenzialiMittenteClientAddress(InformazioniTransazione info) {

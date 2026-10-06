@@ -172,6 +172,10 @@
 				<include name="spring-web-7.0.9.jar"/>
 				<include name="spring-core-7.0.9.jar"/>
 			</lib>
+			<lib dir="${required_lib}/micrometer">
+				<include name="micrometer-observation-1.17.1.jar"/>
+				<include name="micrometer-commons-1.17.1.jar"/>
+			</lib>
 			<lib dir="${required_lib}/jaxb">
 				<include name="${jaxb_jar}" />
 			</lib>

@@ -199,6 +199,7 @@ public class URLProtocolContextImpl extends org.openspcoop2.protocol.sdk.state.U
 						protocollo.equals(org.openspcoop2.protocol.sdk.state.URLProtocolContext.INTEGRATION_MANAGER_FUNCTION) ||
 						protocollo.equals(org.openspcoop2.protocol.sdk.state.URLProtocolContext.CHECK_FUNCTION) ||
 						protocollo.equals(org.openspcoop2.protocol.sdk.state.URLProtocolContext.PROXY_FUNCTION) ||
+						protocollo.equals(org.openspcoop2.protocol.sdk.state.URLProtocolContext.METRICS_FUNCTION) ||
 						(customContexts!=null && customContexts.isMatch(protocollo, function))) {
 					// ContextProtocol Empty
 					if(logCore!=null)

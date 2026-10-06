@@ -20,7 +20,9 @@
 
 package org.openspcoop2.pdd.logger.transazioni;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * TransazioniProcessTimes
@@ -31,6 +33,24 @@ import java.util.List;
  * 
  */
 public class TransazioniProcessTimes {
+
+	// Nomi delle componenti della persistenza del tracciamento (usati come valore del tag 'component')
+	public static final String COMPONENT_FILL_TRANSACTION = "fillTransaction";
+	public static final String COMPONENT_CHECK_TRAFFIC = "checkTraffic";
+	public static final String COMPONENT_CHECK_TRAFFIC_REMOVE_THREAD = "checkTrafficRemoveThread";
+	public static final String COMPONENT_CHECK_TRAFFIC_PREPARE_POLICY = "checkTrafficPreparePolicy";
+	public static final String COMPONENT_FILE_TRACE = "fileTrace";
+	public static final String COMPONENT_PROCESS_TRANSACTION_INFO = "processTransactionInfo";
+	public static final String COMPONENT_GET_CONNECTION = "getConnection";
+	public static final String COMPONENT_INSERT_TRANSACTION = "insertTransaction";
+	public static final String COMPONENT_INSERT_DIAGNOSTICS = "insertDiagnostics";
+	public static final String COMPONENT_INSERT_TRACE = "insertTrace";
+	public static final String COMPONENT_INSERT_CONTENTS = "insertContents";
+	public static final String COMPONENT_INSERT_RESOURCES = "insertResources";
+	public static final String COMPONENT_COMMIT = "commit";
+
+	// Componente aggregata delle operazioni su DB (getConnection + insert* + commit)
+	public static final String COMPONENT_WRITE_DATABASE = "writeDatabase";
 
 	String idTransazione;
 	long fillTransaction = -1;
@@ -62,6 +82,64 @@ public class TransazioniProcessTimes {
 		return this.controlloTrafficoPolicyTimes;
 	}
 	
+	/**
+	 * Componenti aggregate (in ms) della persistenza del tracciamento: fillTransaction,
+	 * checkTraffic (controllo traffico) e writeDatabase (operazioni su DB). Include solo le
+	 * componenti effettivamente misurate (valore >= 0). Usato per l'istogramma
+	 * govway_tracing_persistence_components_seconds (component → durata).
+	 */
+	public Map<String,Long> toAggregatedMetricsMap() {
+		Map<String,Long> m = new LinkedHashMap<>();
+		putIfSet(m, COMPONENT_FILL_TRANSACTION, this.fillTransaction);
+		putIfSet(m, COMPONENT_CHECK_TRAFFIC, sum(this.controlloTraffico, this.controlloTrafficoRemoveThread, this.controlloTrafficoPreparePolicy));
+		putIfSet(m, COMPONENT_WRITE_DATABASE, sum(this.getConnection, this.insertTransaction, this.insertDiagnostics,
+				this.insertTrace, this.insertContents, this.insertResources, this.commit));
+		return m;
+	}
+
+	/**
+	 * Tutte le componenti di dettaglio (non aggregate, in ms) della persistenza del tracciamento,
+	 * includendo solo quelle effettivamente misurate (valore >= 0). Usato per l'istogramma
+	 * govway_tracing_persistence_components_details_seconds (component → durata).
+	 */
+	public Map<String,Long> toDetailedMetricsMap() {
+		Map<String,Long> m = new LinkedHashMap<>();
+		putIfSet(m, COMPONENT_FILL_TRANSACTION, this.fillTransaction);
+		putIfSet(m, COMPONENT_CHECK_TRAFFIC, this.controlloTraffico);
+		putIfSet(m, COMPONENT_CHECK_TRAFFIC_REMOVE_THREAD, this.controlloTrafficoRemoveThread);
+		putIfSet(m, COMPONENT_CHECK_TRAFFIC_PREPARE_POLICY, this.controlloTrafficoPreparePolicy);
+		putIfSet(m, COMPONENT_FILE_TRACE, this.fileTrace);
+		putIfSet(m, COMPONENT_PROCESS_TRANSACTION_INFO, this.processTransactionInfo);
+		putIfSet(m, COMPONENT_GET_CONNECTION, this.getConnection);
+		putIfSet(m, COMPONENT_INSERT_TRANSACTION, this.insertTransaction);
+		putIfSet(m, COMPONENT_INSERT_DIAGNOSTICS, this.insertDiagnostics);
+		putIfSet(m, COMPONENT_INSERT_TRACE, this.insertTrace);
+		putIfSet(m, COMPONENT_INSERT_CONTENTS, this.insertContents);
+		putIfSet(m, COMPONENT_INSERT_RESOURCES, this.insertResources);
+		putIfSet(m, COMPONENT_COMMIT, this.commit);
+		return m;
+	}
+
+	private static void putIfSet(Map<String,Long> m, String nome, long valore) {
+		if(valore>=0) {
+			m.put(nome, valore);
+		}
+	}
+
+	/** Somma i valori misurati (>=0); ritorna -1 se nessuno è impostato (cosi' viene escluso da putIfSet). */
+	private static long sum(long... valori) {
+		long total = -1;
+		for (long v : valori) {
+			if(v>=0) {
+				if(total<0) {
+					total = 0;
+				}
+				total += v;
+			}
+		}
+		return total;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();

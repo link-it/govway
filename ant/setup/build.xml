@@ -822,6 +822,9 @@
 				<antcall target="pdd_govway.classRegistry.properties_settings">
 				    <param name="file" value="${tmp_archivi}/govway.ear/properties/govway.classRegistry.properties"/>
 				</antcall>
+				<antcall target="pdd_govway_observability_properties_settings">
+				    <param name="file" value="${tmp_archivi}/govway.ear/properties/govway.observability.properties"/>
+				</antcall>
 				<antcall target="dos2unix">
 					<param name="dir" value="${tmp_archivi}/govway.ear/properties"/>
 				    <param name="file" value="*.properties"/>
@@ -1212,6 +1215,9 @@
 		</antcall>
 		<antcall target="pdd_govway.classRegistry.properties_settings">
 		    <param name="file" value="${tomcat_war}/WEB-INF/classes/govway.classRegistry.properties"/>
+		</antcall>
+		<antcall target="pdd_govway_observability_properties_settings">
+		    <param name="file" value="${tomcat_war}/WEB-INF/classes/govway.observability.properties"/>
 		</antcall>
 		<antcall target="dos2unix">
 		    <param name="dir" value="${tomcat_war}/WEB-INF/classes"/>

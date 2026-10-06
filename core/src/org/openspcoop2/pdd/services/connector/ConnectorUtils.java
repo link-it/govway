@@ -365,6 +365,9 @@ public class ConnectorUtils {
 		case PROXY:
 			risposta.append("<i>Servizio utilizzato in installazioni container dell'API Gateway GovWay</i><br/><br/>\n");
 			break;
+		case METRICS:
+			risposta.append("<i>Servizio utilizzabile per raccogliere le metriche di osservabilità dell'API Gateway GovWay</i><br/><br/>\n");
+			break;
 		default:
 			if(htmlMessage){
 				// use as

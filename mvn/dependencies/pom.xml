@@ -45,6 +45,7 @@
 		<module>kappa</module>
 		<module>log</module>
 		<module>lucene</module>
+		<module>micrometer</module>
 		<module>openapi4j</module>
 		<module>opensaml</module>
 		<module>pdf</module>

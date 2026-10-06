@@ -54,7 +54,8 @@ public enum IDService implements IEnumeration , Serializable , Cloneable {
 	INTEGRATION_MANAGER_SOAP ("IntegrationManager"),
 	
 	CHECK_PDD ("Check"),
-	PROXY ("Proxy");
+	PROXY ("Proxy"),
+	METRICS ("Metrics");
 	
 	public boolean isPortaDelegata() {
 		return PORTA_DELEGATA.equals(this) || 
@@ -92,6 +93,7 @@ public enum IDService implements IEnumeration , Serializable , Cloneable {
 	
 	private static final String ID_CHECK_PDD = "CHKPDD0";
 	private static final String ID_PROXY = "PROXY00";
+	private static final String ID_METRICS = "METRIC0";
 	
 	public String getCode() throws ProtocolException{
 		switch (this) {
@@ -130,6 +132,8 @@ public enum IDService implements IEnumeration , Serializable , Cloneable {
 			return ID_CHECK_PDD;
 		case PROXY:
 			return ID_PROXY;
+		case METRICS:
+			return ID_METRICS;
 			
 		}
 		throw new ProtocolException("Service ["+this.name()+"] unsupported");

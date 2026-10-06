@@ -79,7 +79,7 @@ Ciascun esito riportato nella tabella precedente è riconducibile ad una tra le 
  ================================= ======================================================================= 
  Esito Complessivo                 Codici Corrispondenti                 
  ================================= ======================================================================= 
- Completata con Successo           0,12,38,48,39,47,2,28,19,21,8,34,35   
+ Completata con Successo           0,12,38,48,39,47,28,19,21,8,34,35
  Fault Applicativo                 2
  Richiesta Scartata                16,41,42,15,43,44,13,4,33
  Errore di Consegna                10,49,51,52,11,29,30,40
