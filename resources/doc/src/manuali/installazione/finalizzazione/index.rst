@@ -156,6 +156,10 @@ tematiche:
 
    Nella sezione :ref:`idmEsterno` vengono fornite indicazioni su come sia possibile delegare l'autenticazione delle utenze ad un IdM esterno da cui ottenere il principal dell'utenza.
 
+#. *Titolo delle Console*
+
+   Il titolo riportato nell'intestazione della govwayConsole e della govwayMonitor può essere personalizzato seguendo le indicazioni descritte nella sezione :ref:`titoloConsole`, dove sono riportate anche le modalità con cui indicare caratteri accentati nei file di proprietà.
+
 #. *Richieste 'application/x-www-form-urlencoded' su WildFly*
 
    Per poter gestire correttamente richieste con Content-Type 'application/x-www-form-urlencoded' su application server 'WildFly', è richiesto di abilitare l'attributo 'allow-non-standard-wrappers' nella configurazione dell'A.S. 
@@ -196,6 +200,7 @@ tematiche:
 	cluster/index
 	ssl/index
         idmEsterno/index
+	titoloConsole
 	wildflyUrlEncoded
 	securityDomainOther
 	cache

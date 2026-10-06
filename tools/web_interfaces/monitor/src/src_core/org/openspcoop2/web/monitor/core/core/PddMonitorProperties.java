@@ -104,7 +104,13 @@ public class PddMonitorProperties {
 	}
 	
 	public String getPddMonitorTitle() throws UtilsException{
-		return this.appProperties.getProperty("appTitle", true, true);
+		// 'appTitle' non è più definita nel file di default: se presente proviene da una configurazione locale
+		// delle versioni precedenti e, per retrocompatibilità, ha precedenza su 'console.nome.esteso'
+		String title = this.appProperties.getProperty("appTitle", false, true);
+		if(title!=null && !title.isEmpty()) {
+			return title;
+		}
+		return this.appProperties.getProperty("console.nome.esteso", true, true);
 	}
 
 	public boolean isAttivoModuloTransazioniBase() throws UtilsException{
