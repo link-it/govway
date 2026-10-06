@@ -121,7 +121,7 @@ public class RestTest extends ConfigLoader {
 			
 			String idPolicy = dbUtils.getIdPolicyErogazione("SoggettoInternoTest", "OccupazioneBandaRest",
 					PolicyAlias.MINUTODEFAULT);
-			Utils.resetCounters(idPolicy);
+			Utils.resetCountersDopoAttivazioneMotore(idPolicy);
 	
 			idPolicy = dbUtils.getIdPolicyErogazione("SoggettoInternoTest", "OccupazioneBandaRest", PolicyAlias.MINUTODEFAULT);
 			Commons.checkPreConditionsOccupazioneBanda(idPolicy, policyType);
@@ -272,7 +272,7 @@ public class RestTest extends ConfigLoader {
 			Utils.waitForNewMinute();
 			
 			String idPolicy = dbUtils.getIdPolicyFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", "OccupazioneBandaRest", PolicyAlias.MINUTODEFAULT);
-			Utils.resetCounters(idPolicy);
+			Utils.resetCountersDopoAttivazioneMotore(idPolicy);
 	
 			idPolicy = dbUtils.getIdPolicyFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", "OccupazioneBandaRest", PolicyAlias.MINUTODEFAULT);
 			Commons.checkPreConditionsOccupazioneBanda(idPolicy, policyType);
