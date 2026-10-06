@@ -1,0 +1,52 @@
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
+   <suppress>
+      <notes><![CDATA[
+      file name: opentelemetry-proto-1.11.1-alpha.jar
+      La vulnerabilità rilevata viene descritta come:
+      "OpenTelemetry-Go is the Go implementation of OpenTelemetry. Prior to 1.43.0, the otlp HTTP exporters (traces/metrics/logs) read the full HTTP response body into an in-memory bytes.Buffer without a size cap. This is exploitable for memory exhaustion when the configured collector endpoint is attacker-controlled (or a network attacker can mitm the exporter connection). This vulnerability is fixed in 1.43.0."
+      La CVE riguarda esclusivamente l'implementazione Go di OpenTelemetry (opentelemetry-go, exporter OTLP HTTP < 1.43.0), come indicato anche dal CPE vulnerabile 'cpe:2.3:a:opentelemetry:opentelemetry:*:*:*:*:*:go:*:*'. Il dependency-check produce un falso positivo poiché associa al jar Java 'opentelemetry-proto' il CPE generico 'cpe:2.3:a:opentelemetry:opentelemetry:1.11.1', senza distinguere il linguaggio dell'implementazione (target_sw). La libreria 'opentelemetry-proto' contiene unicamente le classi Java generate dalle definizioni protobuf del protocollo OTLP e non include exporter HTTP né propagatori (baggage, B3, Jaeger). In GovWay viene utilizzata solamente per la serializzazione delle metriche inviate al collector OpenTelemetry.
+      ]]></notes>
+      <packageUrl regex="true">^pkg:maven/io\.opentelemetry\.proto/opentelemetry-proto@.*$</packageUrl>
+      <cve>CVE-2026-39882</cve>
+   </suppress>
+   <suppress>
+      <notes><![CDATA[
+      file name: opentelemetry-proto-1.11.1-alpha.jar
+      La vulnerabilità rilevata viene descritta come:
+      "OpenTelemetry dotnet is a dotnet telemetry framework. In OpenTelemetry.Api 0.5.0-beta.2 to 1.15.2 and OpenTelemetry.Extensions.Propagators 1.3.1 to 1.15.2, The implementation details of the baggage, B3 and Jaeger processing code in the OpenTelemetry.Api and OpenTelemetry.Extensions.Propagators NuGet packages can allocate excessive memory when parsing which could create a potential denial of service (DoS) in the consuming application. This vulnerability is fixed in 1.15.3."
+      La CVE riguarda esclusivamente i pacchetti NuGet .NET di OpenTelemetry (OpenTelemetry.Api e OpenTelemetry.Extensions.Propagators < 1.15.3), come indicato anche dal CPE vulnerabile 'cpe:2.3:a:opentelemetry:opentelemetry:*:*:*:*:*:.net:*:*'. Il dependency-check produce un falso positivo poiché associa al jar Java 'opentelemetry-proto' il CPE generico 'cpe:2.3:a:opentelemetry:opentelemetry:1.11.1', senza distinguere il linguaggio dell'implementazione (target_sw). La libreria 'opentelemetry-proto' contiene unicamente le classi Java generate dalle definizioni protobuf del protocollo OTLP e non include exporter HTTP né propagatori (baggage, B3, Jaeger). In GovWay viene utilizzata solamente per la serializzazione delle metriche inviate al collector OpenTelemetry.
+      ]]></notes>
+      <packageUrl regex="true">^pkg:maven/io\.opentelemetry\.proto/opentelemetry-proto@.*$</packageUrl>
+      <cve>CVE-2026-40894</cve>
+   </suppress>
+   <suppress>
+      <notes><![CDATA[
+      file name: opentelemetry-proto-1.11.1-alpha.jar
+      La vulnerabilità rilevata viene descritta come:
+      "OpenTelemetry-Go is the Go implementation of OpenTelemetry. Versions 1.41.0 and 1.43.0 removed raw-length rejection and it causes `Parse` to process arbitrarily large/invalid baggage headers and log errors, enabling DoS via oversized inputs. Versions 1.42.0 and 1.44.0 fix the issue."
+      La CVE riguarda esclusivamente l'implementazione Go di OpenTelemetry (parsing del baggage in opentelemetry-go), come indicato anche dal CPE vulnerabile 'cpe:2.3:a:opentelemetry:opentelemetry:*:*:*:*:*:go:*:*'. Il dependency-check produce un falso positivo poiché associa al jar Java 'opentelemetry-proto' il CPE generico 'cpe:2.3:a:opentelemetry:opentelemetry:1.11.1', senza distinguere il linguaggio dell'implementazione (target_sw). La libreria 'opentelemetry-proto' contiene unicamente le classi Java generate dalle definizioni protobuf del protocollo OTLP e non include exporter HTTP né propagatori (baggage, B3, Jaeger). In GovWay viene utilizzata solamente per la serializzazione delle metriche inviate al collector OpenTelemetry.
+      ]]></notes>
+      <packageUrl regex="true">^pkg:maven/io\.opentelemetry\.proto/opentelemetry-proto@.*$</packageUrl>
+      <cve>CVE-2026-41178</cve>
+   </suppress>
+   <suppress>
+      <notes><![CDATA[
+      file name: opentelemetry-proto-1.11.1-alpha.jar
+      La vulnerabilità rilevata viene descritta come:
+      "OpenTelemetry-cpp is the C++ implementation of OpenTelemetry. Prior to release 1.27.0, the OTLP HTTP exporters (traces/metrics/logs) read the full HTTP response into an in-memory vector of bytes without a size cap. This is exploitable for memory exhaustion when the configured collector endpoint is attacker-controlled (or a network attacker can MITM the exporter connection). This vulnerability is fixed in opentelemetry-cpp release 1.27.0."
+      La CVE riguarda esclusivamente l'implementazione C++ di OpenTelemetry (opentelemetry-cpp, exporter OTLP HTTP < 1.27.0), come indicato anche dal CPE vulnerabile 'cpe:2.3:a:opentelemetry:opentelemetry:*:*:*:*:*:c\+\+:*:*'. Il dependency-check produce un falso positivo poiché associa al jar Java 'opentelemetry-proto' il CPE generico 'cpe:2.3:a:opentelemetry:opentelemetry:1.11.1', senza distinguere il linguaggio dell'implementazione (target_sw). La libreria 'opentelemetry-proto' contiene unicamente le classi Java generate dalle definizioni protobuf del protocollo OTLP e non include exporter HTTP né propagatori (baggage, B3, Jaeger). In GovWay viene utilizzata solamente per la serializzazione delle metriche inviate al collector OpenTelemetry.
+      ]]></notes>
+      <packageUrl regex="true">^pkg:maven/io\.opentelemetry\.proto/opentelemetry-proto@.*$</packageUrl>
+      <cve>CVE-2026-44967</cve>
+   </suppress>
+   <suppress>
+      <notes><![CDATA[
+      file name: opentelemetry-proto-1.11.1-alpha.jar
+      La vulnerabilità rilevata viene descritta come:
+      "opentelemetry-js is the OpenTelemetry JavaScript Client. Prior to 2.8.0, W3CBaggagePropagator.extract() in @opentelemetry/core does not enforce size limits when parsing inbound baggage HTTP headers. The W3C Baggage specification recommends a maximum of 8,192 bytes and 180 entries; these limits were only enforced on the outbound (inject()) path, not on the inbound (extract()) path. Parsing oversized baggage causes memory allocation proportional to the header size without any cap. This vulnerability is fixed in 2.8.0."
+      La CVE riguarda esclusivamente l'implementazione JavaScript di OpenTelemetry (@opentelemetry/core < 2.8.0), come indicato anche dal CPE vulnerabile 'cpe:2.3:a:opentelemetry:opentelemetry:*:*:*:*:*:node.js:*:*'. Il dependency-check produce un falso positivo poiché associa al jar Java 'opentelemetry-proto' il CPE generico 'cpe:2.3:a:opentelemetry:opentelemetry:1.11.1', senza distinguere il linguaggio dell'implementazione (target_sw). La libreria 'opentelemetry-proto' contiene unicamente le classi Java generate dalle definizioni protobuf del protocollo OTLP e non include exporter HTTP né propagatori (baggage, B3, Jaeger). In GovWay viene utilizzata solamente per la serializzazione delle metriche inviate al collector OpenTelemetry.
+      ]]></notes>
+      <packageUrl regex="true">^pkg:maven/io\.opentelemetry\.proto/opentelemetry-proto@.*$</packageUrl>
+      <cve>CVE-2026-54285</cve>
+   </suppress>
+</suppressions>

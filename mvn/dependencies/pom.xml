@@ -157,6 +157,7 @@
 								<suppressionFile>${owasp.falsePositives.dir}/CVE-2026-53914.xml</suppressionFile>
 								<suppressionFile>${owasp.falsePositives.dir}/swagger-ui.xml</suppressionFile>
 								<suppressionFile>${owasp.falsePositives.dir}/Boxable.xml</suppressionFile>					
+								<suppressionFile>${owasp.falsePositives.dir}/opentelemetry-proto.xml</suppressionFile>
 							</suppressionFiles>
 							<!--
 								Per eliminare il warning
