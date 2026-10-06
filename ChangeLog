@@ -1,3 +1,10 @@
+2026-10-06  Andrea Poli <apoli@link.it>
+
+	* [GovWayMonitor]
+	Aggiunta funzionalità
+	Il titolo della console di monitoraggio si configura adesso con la proprietà 'console.nome.esteso', come per la console di gestione;
+	la proprietà 'appTitle' delle versioni precedenti, se presente nel file 'monitor_local.properties', continua ad essere utilizzata.
+
 2026-10-06  Tommaso Burlon <tommaso.burlon@link.it>
 
 	* [GovWayCore]
