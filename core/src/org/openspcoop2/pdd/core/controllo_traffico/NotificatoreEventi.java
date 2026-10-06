@@ -853,10 +853,13 @@ public class NotificatoreEventi {
 		
 		// Gestione violazione maxThreads
 		
+		// La data della segnalazione viene rilevata prima della sua registrazione in memoria:
+		// se nel frattempo è stato elaborato un intervallo, la data risulta antecedente a 'lastInterval'.
+		// Una segnalazione non ancora consumata dal thread è comunque avvenuta dopo l'ultima elaborazione e non deve essere persa.
 		boolean esisteTHultimoIntervallo = false;
 		if(localInMemory!=null && 
 				localInMemory.data!=null && 
-				localInMemory.data.after(lastInterval)){
+				(localInMemory.data.after(lastInterval) || !localInMemory.datiConsumatiThread)){
 			esisteTHultimoIntervallo = true;
 		}
 		
