@@ -22,7 +22,9 @@ package org.openspcoop2.pdd.core.observability;
 
 import java.time.Duration;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import io.micrometer.registry.otlp.AggregationTemporality;
 import io.micrometer.registry.otlp.OtlpConfig;
@@ -43,11 +45,30 @@ public class GovwayOtlpConfig implements OtlpConfig {
 	private final String url;
 	private final Duration step;
 	private final Map<String,String> headers;
+	private final Map<String,String> resourceAttributes;
 
-	public GovwayOtlpConfig(String url, Duration step, Map<String,String> headers) {
+	/** Nome del servizio di default con cui GovWay si presenta al collector (attributo di risorsa 'service.name'). */
+	public static final String SERVICE_NAME = "govway";
+
+	/**
+	 * @param serviceName nome del servizio (attributo di risorsa 'service.name'); se {@code null} viene utilizzato {@value #SERVICE_NAME}
+	 * @param version versione del prodotto (attributo di risorsa 'service.version'), opzionale
+	 * @param instanceId identificativo del nodo (attributo di risorsa 'service.instance.id'): in push il collector
+	 *        non conosce la sorgente dei dati, per cui senza di esso le serie di nodi diversi coinciderebbero
+	 */
+	public GovwayOtlpConfig(String url, Duration step, Map<String,String> headers, String serviceName, String version, String instanceId) {
 		this.url = url;
 		this.step = step;
 		this.headers = (headers!=null) ? headers : Collections.emptyMap();
+		Map<String,String> attributes = new LinkedHashMap<>();
+		attributes.put("service.name", serviceName!=null ? serviceName : SERVICE_NAME);
+		if(instanceId!=null) {
+			attributes.put("service.instance.id", instanceId);
+		}
+		if(version!=null) {
+			attributes.put("service.version", version);
+		}
+		this.resourceAttributes = Collections.unmodifiableMap(attributes);
 	}
 
 	@Override
@@ -68,7 +89,14 @@ public class GovwayOtlpConfig implements OtlpConfig {
 
 	@Override
 	public Map<String,String> resourceAttributes() {
-		return Collections.singletonMap("service.name", "govway");
+		return this.resourceAttributes;
+	}
+
+	@Override
+	public TimeUnit baseTimeUnit() {
+		// Secondi, come sull'endpoint Prometheus: il default di Micrometer per OTLP sono i millisecondi,
+		// che renderebbero incoerenti i valori delle metriche '*_seconds' tra i due collettori
+		return TimeUnit.SECONDS;
 	}
 
 	@Override

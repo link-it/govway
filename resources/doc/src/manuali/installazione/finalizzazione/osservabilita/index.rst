@@ -57,6 +57,10 @@ Vincoli:
 Tutti i collettori attivi ricevono le stesse misure: la medesima metrica viene pubblicata su tutte
 le destinazioni configurate.
 
+I valori delle proprietà possono riferire variabili di sistema o java tramite la sintassi ``${NOME}``
+(ad esempio ``${HOSTNAME}``), comprese le variabili definite nella *Secrets Map*
+(:ref:`govwaySecretsMap`).
+
 Collettore Prometheus (pull)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -102,4 +106,25 @@ credenziali; in tal caso GovWay invia ad ogni richiesta l'header
 
 .. note::
    Le credenziali possono essere valorizzate tramite le variabili cifrate della *Secrets Map*
-   (:ref:`govwaySecretsMap`) per evitare di indicare la password in chiaro nel file.
+   (:ref:`govwaySecretsMap`), riferite con la sintassi ``${NOME}``, per evitare di indicare la
+   password in chiaro nel file.
+
+**Identificazione del gateway.** Ogni invio riporta gli attributi di risorsa con cui GovWay si
+presenta al collector, ridefinibili per ciascun collettore:
+
+.. code-block:: properties
+
+   # default: govway
+   observability.collector.otel.resource.service.name=govway
+   # default: versione di GovWay (es. 3.4.4)
+   observability.collector.otel.resource.service.version=3.4.4
+   # default: identificativo del nodo (org.openspcoop2.pdd.cluster_id) o, se non definito, nome host
+   observability.collector.otel.resource.service.instance.id=${HOSTNAME}
+
+Per default l'attributo ``service.instance.id`` assume il valore dell'identificativo univoco
+assegnato al nodo in un'installazione in load balancing (proprietà ``org.openspcoop2.pdd.cluster_id``
+del file *<directory-lavoro>/govway_local.properties*, sezione :ref:`cluster`) o, se non definito, il
+nome host della macchina. L'attributo consente al collector di distinguere le metriche dei diversi
+nodi di un cluster e deve quindi essere univoco per nodo: nelle installazioni in cui più istanze
+condividono la stessa configurazione (es. più pod in Kubernetes) può essere valorizzato tramite una
+variabile, come ``${HOSTNAME}`` nell'esempio.

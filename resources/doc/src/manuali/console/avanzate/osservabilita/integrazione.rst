@@ -47,6 +47,21 @@ le metriche a un *OpenTelemetry Collector*, che può a sua volta inoltrarle al b
 ricevitore OTLP/HTTP del collector, comprensivo del path ``/v1/metrics`` (tipicamente sulla porta
 ``4318``), ad esempio ``http://collector:4318/v1/metrics``.
 
+Le metriche inviate hanno gli stessi nomi, label e unità di misura di quelle esposte sull'endpoint
+``/metrics``: in particolare i tempi sono espressi in secondi, sia nei valori sia nei confini dei bucket
+degli istogrammi. Ogni invio riporta inoltre i seguenti attributi di risorsa, che consentono al
+collector di distinguere le metriche provenienti dai diversi nodi di un cluster:
+
+- ``service.name``: per default ``govway``;
+- ``service.instance.id``: identificativo del nodo; per default corrisponde all'identificativo
+  univoco assegnato al nodo in un'installazione in load balancing (proprietà
+  ``org.openspcoop2.pdd.cluster_id`` del file *<directory-lavoro>/govway_local.properties*, descritta
+  nella sezione :ref:`cluster`) o, se non definito, al nome host della macchina;
+- ``service.version``: per default la versione di GovWay.
+
+I valori sono ridefinibili per ciascun collettore, come descritto nella sezione
+:ref:`osservabilitaInstall`.
+
 Esempio minimale di configurazione di un OpenTelemetry Collector che riceve via OTLP/HTTP ed espone
 in modalità Prometheus:
 

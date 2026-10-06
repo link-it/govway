@@ -219,7 +219,7 @@ public class ObservabilityProperties extends InstanceProperties {
 
 	/** Parsa un booleano; ritorna {@code true} se la chiave non e' valorizzata. */
 	private boolean parseBooleanDefaultTrue(String key) throws UtilsException {
-		String v = super.getValue(key);
+		String v = super.getValueConvertEnvProperties(key);
 		if(v==null || v.trim().isEmpty()) {
 			return true;
 		}
@@ -228,7 +228,7 @@ public class ObservabilityProperties extends InstanceProperties {
 
 	/** Parsa una lista di interi positivi separati da virgola ({@code null} se la chiave non e' valorizzata). */
 	private long[] parseLongList(String key) throws UtilsException {
-		String v = super.getValue(key);
+		String v = super.getValueConvertEnvProperties(key);
 		if(v==null || v.trim().isEmpty()) {
 			return new long[0];
 		}
@@ -260,7 +260,7 @@ public class ObservabilityProperties extends InstanceProperties {
 
 	/** Parsa una lista di numeri positivi separati da virgola ({@code null} se la chiave non e' valorizzata). */
 	private double[] parseDoubleList(String key) throws UtilsException {
-		String v = super.getValue(key);
+		String v = super.getValueConvertEnvProperties(key);
 		if(v==null || v.trim().isEmpty()) {
 			return new double[0];
 		}
@@ -292,7 +292,7 @@ public class ObservabilityProperties extends InstanceProperties {
 
 	private List<String> readCollectorNames() throws UtilsException {
 		List<String> names = new ArrayList<>();
-		String v = super.getValue(COLLECTORS_PROP);
+		String v = super.getValueConvertEnvProperties(COLLECTORS_PROP);
 		if(v!=null) {
 			for (String s : v.split(",")) {
 				String t = s.trim();
@@ -314,11 +314,11 @@ public class ObservabilityProperties extends InstanceProperties {
 	 */
 	private String resolveCollectorProperty(String collectorName, String key) {
 		try {
-			String override = super.getValue(COLLECTOR_PREFIX + collectorName + "." + key);
+			String override = super.getValueConvertEnvProperties(COLLECTOR_PREFIX + collectorName + "." + key);
 			if(override!=null) {
 				return override;
 			}
-			return super.getValue(DEFAULT_PREFIX + key);
+			return super.getValueConvertEnvProperties(DEFAULT_PREFIX + key);
 		}catch(UtilsException e) {
 			throw new IllegalStateException("Errore lettura chiave '"+key+"' del collettore '"+collectorName+"': "+e.getMessage(), e);
 		}

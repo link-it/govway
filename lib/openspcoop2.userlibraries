@@ -220,6 +220,8 @@
 	<archive path="/op2_3.4.dev/lib/micrometer/micrometer-registry-prometheus-1.17.1.jar"/>
 	<archive path="/op2_3.4.dev/lib/micrometer/micrometer-registry-otlp-1.17.1.jar"/>
 	<archive path="/op2_3.4.dev/lib/micrometer/prometheus-metrics-exposition-textformats-1.9.0.jar"/>
+	<archive path="/op2_3.4.dev/lib/micrometer/opentelemetry-proto-1.11.1-alpha.jar"/>
+	<archive path="/op2_3.4.dev/lib/micrometer/protobuf-java-4.36.2.jar"/>
 	<!-- spring -->
         <archive path="/op2_3.4.dev/lib/spring/spring-web-7.0.9.jar"/>
         <archive path="/op2_3.4.dev/lib/spring/spring-tx-7.0.9.jar"/>

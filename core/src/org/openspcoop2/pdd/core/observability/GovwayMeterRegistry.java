@@ -61,6 +61,7 @@ import org.openspcoop2.pdd.config.DBManager;
 import org.openspcoop2.pdd.config.DBStatisticheManager;
 import org.openspcoop2.pdd.config.DBTransazioniManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.config.QueueManager;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.logger.filetrace.ResultClass;
@@ -277,7 +278,11 @@ public class GovwayMeterRegistry {
 			headers.put("Authorization", basicAuth);
 		}
 
-		OtlpConfig cfg = new GovwayOtlpConfig(url, step, headers);
+		// Attributi di risorsa: valori del collettore se configurati, altrimenti i default
+		String serviceName = collector.getResourceServiceName();
+		String version = collector.getResourceServiceVersion()!=null ? collector.getResourceServiceVersion() : readVersion();
+		String instanceId = collector.getResourceServiceInstanceId()!=null ? collector.getResourceServiceInstanceId() : readInstanceId();
+		OtlpConfig cfg = new GovwayOtlpConfig(url, step, headers, serviceName, version, instanceId);
 
 		// Thread daemon dedicato e con nome parlante (idioma GovWay, cfr. LocalJtiCacheManager)
 		ThreadFactory tf = r -> {
@@ -289,6 +294,32 @@ public class GovwayMeterRegistry {
 		// Registry OTLP che, prima di ogni pubblicazione periodica, aggiorna le metriche lette "al volo"
 		// (MultiGauge cache/pool) — altrimenti verrebbero inviate con l'ultimo valore campionato allo scrape.
 		return new GovwayOtlpMeterRegistry(cfg, Clock.SYSTEM, tf, this, collectorName, url, this.log);
+	}
+
+	/** Identificativo del nodo inviato al collector OTLP: il cluster id se configurato, altrimenti l'hostname. */
+	private String readInstanceId() {
+		try {
+			OpenSPCoop2Properties prop = OpenSPCoop2Properties.getInstance();
+			String clusterId = prop!=null ? prop.getClusterId(false) : null;
+			if(clusterId!=null && !clusterId.isEmpty()) {
+				return clusterId;
+			}
+			return java.net.InetAddress.getLocalHost().getHostName();
+		}catch(Exception e) {
+			this.log.debug("Observability: identificativo del nodo non disponibile: "+e.getMessage(), e);
+			return null;
+		}
+	}
+
+	/** Versione inviata al collector OTLP, senza il prefisso del prodotto (es. '3.4.3' anziché 'GovWay/3.4.3'). */
+	private static String readVersion() {
+		OpenSPCoop2Properties prop = OpenSPCoop2Properties.getInstance();
+		String versione = prop!=null ? prop.getVersione() : null;
+		String prefisso = CostantiPdD.OPENSPCOOP2_PRODUCT+"/";
+		if(versione!=null && versione.startsWith(prefisso)) {
+			versione = versione.substring(prefisso.length());
+		}
+		return versione;
 	}
 
 	/** Bucket SLO per la persistenza del tracciamento: dalla property 'observability.metrics.persistence-slotMs' (ms), sempre presente nel file base. */

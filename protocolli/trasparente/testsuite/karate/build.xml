@@ -104,6 +104,11 @@
 		<fileset dir="${required_lib}/jackson">
 			<include name="jackson-*.jar"/>
 		</fileset>
+		<!-- decodifica dei payload OTLP ricevuti dal receiver di test (package 'observability') -->
+		<fileset dir="${required_lib}/micrometer">
+			<include name="opentelemetry-proto-*.jar"/>
+			<include name="protobuf-java-*.jar"/>
+		</fileset>
 		<fileset dir="${required_lib}/jetty">
 			<include name="*.jar"/>
 		</fileset>	

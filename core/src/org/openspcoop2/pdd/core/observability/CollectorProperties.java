@@ -80,6 +80,11 @@ public class CollectorProperties {
 	static final String PROP_CREDENTIAL_USERNAME = "credential.username";
 	static final String PROP_CREDENTIAL_PASSWORD = "credential.password";
 
+	/** Attributi di risorsa con cui GovWay si presenta ai collettori push (comuni a tutti i segnali) */
+	static final String PROP_RESOURCE_SERVICE_NAME = "resource.service.name";
+	static final String PROP_RESOURCE_SERVICE_VERSION = "resource.service.version";
+	static final String PROP_RESOURCE_SERVICE_INSTANCE_ID = "resource.service.instance.id";
+
 	private final String name;
 	private final CollectorType type;
 
@@ -89,6 +94,11 @@ public class CollectorProperties {
 	private final Integer metricsStepSeconds;
 	private final String metricsCredentialUsername;
 	private final String metricsCredentialPassword;
+
+	// attributi di risorsa (null se non configurati: vengono utilizzati i valori di default)
+	private final String resourceServiceName;
+	private final String resourceServiceVersion;
+	private final String resourceServiceInstanceId;
 
 	/**
 	 * @param name nome del collettore
@@ -111,6 +121,11 @@ public class CollectorProperties {
 		this.metricsStepSeconds = parseStepSeconds(name, propertyResolver.apply(signalKey(SIGNAL_METRICS, PROP_STEP_SECONDS)));
 		this.metricsCredentialUsername = trimToNull(propertyResolver.apply(signalKey(SIGNAL_METRICS, PROP_CREDENTIAL_USERNAME)));
 		this.metricsCredentialPassword = trimToNull(propertyResolver.apply(signalKey(SIGNAL_METRICS, PROP_CREDENTIAL_PASSWORD)));
+
+		// attributi di risorsa
+		this.resourceServiceName = trimToNull(propertyResolver.apply(PROP_RESOURCE_SERVICE_NAME));
+		this.resourceServiceVersion = trimToNull(propertyResolver.apply(PROP_RESOURCE_SERVICE_VERSION));
+		this.resourceServiceInstanceId = trimToNull(propertyResolver.apply(PROP_RESOURCE_SERVICE_INSTANCE_ID));
 
 		validate();
 	}
@@ -188,6 +203,23 @@ public class CollectorProperties {
 		}
 		String token = this.metricsCredentialUsername + ":" + this.metricsCredentialPassword;
 		return "Basic " + Base64.getEncoder().encodeToString(token.getBytes(StandardCharsets.UTF_8));
+	}
+
+	// ---- attributi di risorsa ----
+
+	/** Attributo di risorsa 'service.name'; {@code null} se non configurato. */
+	public String getResourceServiceName() {
+		return this.resourceServiceName;
+	}
+
+	/** Attributo di risorsa 'service.version'; {@code null} se non configurato. */
+	public String getResourceServiceVersion() {
+		return this.resourceServiceVersion;
+	}
+
+	/** Attributo di risorsa 'service.instance.id'; {@code null} se non configurato. */
+	public String getResourceServiceInstanceId() {
+		return this.resourceServiceInstanceId;
 	}
 
 	@Override

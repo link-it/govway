@@ -221,7 +221,10 @@ Su tomcat 11, essendo i controlli più rigidi, è necessario aggiungere anche qu
 
 - Per i test sulle metriche di osservabilità (package 'observability') copiare in /etc/govway il file
   'src/org/openspcoop2/core/protocolli/trasparente/testsuite/observability/govway_local.observability.properties',
-  che abilita il collettore prometheus; per default le metriche sono disabilitate e l'endpoint '/govway/metrics' risponde con codice HTTP 404.
+  che abilita il collettore prometheus e due collettori OTLP; per default le metriche sono disabilitate e l'endpoint '/govway/metrics' risponde con codice HTTP 404.
+  I collettori OTLP inviano le metriche ogni 5 secondi al receiver di test 'http://localhost:8080/TestService/otlp/v1/metrics'
+  e 'http://localhost:8080/TestService/otlp/custom/v1/metrics':
+  è necessario che sia deployata la versione aggiornata della webapp TestService (example/pdd/server/testService).
 
 - Configurare l'application server in modo tale da supportare connessioni ssl sulla porta 8444, 8445, 8450 e 8451 utilizzando le configurazioni presenti nella directory https:
   a) un connettore HTTPS che esegue autenticazione client (La configurazione di default della testsuite, assume questo connettore attivo sulla porta 8444)
@@ -689,7 +692,9 @@ Di seguito vengono descritti i test del package 'observability':
 
 Per questi test è necessario aver copiato in /etc/govway il file 'govway_local.observability.properties' come descritto nella sezione di preparazione dell'ambiente.
 
-- 'metrics', verifica le metriche esposte sull'endpoint '/govway/metrics' in formato Prometheus: metriche di sistema di GovWay e JVM/process, metriche di transazione (richieste, latenze e dimensioni dei messaggi), tempi delle fasi di elaborazione e persistenza del tracciamento; label delle metriche di dettaglio per erogazioni e fruizioni con e senza gruppi
+- 'metrics', verifica le metriche esposte sull'endpoint '/govway/metrics' in formato Prometheus: metriche di sistema di GovWay e JVM/process, metriche di transazione (richieste, latenze e dimensioni dei messaggi), tempi delle fasi di elaborazione e persistenza del tracciamento; label delle metriche di dettaglio per erogazioni e fruizioni con e senza gruppi;
+  invio in push verso un collector OTLP (protocollo, autenticazione, attributi di risorsa di default e configurati tramite variabili,
+  contatori cumulativi, istogrammi in secondi)
    ant run_test -Ddelete=false -Dload=false -Dpackage=observability.metrics
 
 Di seguito vengono descritti i test del package 'other':

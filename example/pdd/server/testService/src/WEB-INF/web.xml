@@ -28,6 +28,10 @@
     <servlet-name>Soap12StresstestService</servlet-name>
     <servlet-class>org.openspcoop2.example.pdd.server.testservice.Soap12StresstestService</servlet-class>
   </servlet>
+  <servlet>
+    <servlet-name>OtlpReceiverService</servlet-name>
+    <servlet-class>org.openspcoop2.example.pdd.server.testservice.OtlpReceiverService</servlet-class>
+  </servlet>
 
   <servlet-mapping>
     <servlet-name>EchoService</servlet-name>
@@ -52,6 +56,10 @@
   <servlet-mapping>
     <servlet-name>Soap12StresstestService</servlet-name>
     <url-pattern>/stresstestSoap12</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>OtlpReceiverService</servlet-name>
+    <url-pattern>/otlp/*</url-pattern>
   </servlet-mapping>
 
 </web-app>
