@@ -24,7 +24,7 @@
 		<stax2.api.version>4.2.2</stax2.api.version>
 		<woodstock.core.version>6.6.2</woodstock.core.version>
 		<xml.resolver.version>1.2</xml.resolver.version>
-		<xmlschema.core.version>2.3.2</xmlschema.core.version>
+		<xmlschema.core.version>2.3.3</xmlschema.core.version>
 
 	</properties>
 

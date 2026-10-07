@@ -75,7 +75,7 @@
 		<var name="tmp" value="${tmp} ${tmp_prefix}/uddi4j-2.0.5.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/xalan-2.7.3.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/xml-resolver-1.2.jar"/>	
-		<var name="tmp" value="${tmp} ${tmp_prefix}/xmlschema-core-2.3.2.jar"/>	
+		<var name="tmp" value="${tmp} ${tmp_prefix}/xmlschema-core-2.3.3.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/xmlsec-2.3.4-gov4j-1.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/cryptacular-1.2.5.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/jasypt-1.9.3.jar"/>

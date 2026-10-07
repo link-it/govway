@@ -55,7 +55,7 @@
 	<archive path="/op2_3.3.dev/lib/cxf/jakarta.ws.rs-api-2.1.6.jar"/>
         <archive path="/op2_3.3.dev/lib/cxf/stax2-api-4.2.2.jar"/>
         <archive path="/op2_3.3.dev/lib/cxf/woodstox-core-6.6.2.jar"/>
-        <archive path="/op2_3.3.dev/lib/cxf/xmlschema-core-2.3.2.jar"/>
+        <archive path="/op2_3.3.dev/lib/cxf/xmlschema-core-2.3.3.jar"/>
         <archive path="/op2_3.3.dev/lib/cxf/xml-resolver-1.2.jar"/>
 	<!-- httpcore -->
         <archive path="/op2_3.3.dev/lib/httpcore/httpmime-4.5.13.jar"/>
