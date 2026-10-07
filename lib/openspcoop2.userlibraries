@@ -31,7 +31,7 @@
 	<archive path="/op2_3.4.dev/lib/console/govway-monitor-ui-components-20261002.jar"/>
 	<archive path="/op2_3.4.dev/lib/console/jquery-4.0.0.jar"/>
 	<archive path="/op2_3.4.dev/lib/console/jquery-ui-1.14.2.jar"/>
-	<archive path="/op2_3.4.dev/lib/console/jsoup-1.23.1.jar"/>
+	<archive path="/op2_3.4.dev/lib/console/jsoup-1.23.2.jar"/>
 	<!-- cxf -->
         <archive path="/op2_3.4.dev/lib/cxf/cxf-core-4.2.3-gov4j-2.jar"/>
 	<archive path="/op2_3.4.dev/lib/cxf/cxf-rt-bindings-soap-4.2.3.jar"/>
@@ -61,7 +61,7 @@
 	<archive path="/op2_3.4.dev/lib/cxf/asm-9.10.1.jar"/>
         <archive path="/op2_3.4.dev/lib/cxf/stax2-api-4.3.0.jar"/>
         <archive path="/op2_3.4.dev/lib/cxf/woodstox-core-7.2.2.jar"/>
-        <archive path="/op2_3.4.dev/lib/cxf/xmlschema-core-2.3.2.jar"/>
+        <archive path="/op2_3.4.dev/lib/cxf/xmlschema-core-2.3.3.jar"/>
         <archive path="/op2_3.4.dev/lib/cxf/xml-resolver-1.2.jar"/>
 	<!-- httpcore -->
 	<archive path="/op2_3.4.dev/lib/httpcore/httpclient5-5.6.4.jar"/>

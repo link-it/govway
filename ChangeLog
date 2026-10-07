@@ -1,3 +1,10 @@
+2026-10-07  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole, GovWayMonitor]
+	Risolte le seguenti vulnerabilità relative ai jar di terza parte:
+	- CVE-2026-102495, CVE-2026-102496, CVE-2026-102497: aggiornata libreria 'org.apache.ws.xmlschema:xmlschema-core' alla versione 2.3.3
+	- CVE-2026-75140: aggiornata libreria 'org.jsoup:jsoup' alla versione 1.23.2
+
 2026-10-06  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
