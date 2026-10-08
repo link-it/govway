@@ -106,6 +106,9 @@ public class ConnettoriDiversiHTTP {
 	
 	private Date dataAvvioGruppoTest = null;
 	boolean doTestJMS = true;
+	// La consegna asincrona della risposta passa dalle code JMS interne di GovWay (modulo ConsegnaContenutiApplicativi),
+	// disponibili solo su application server j2ee: su tomcat non esistono e il broker embedded della testsuite non le sostituisce
+	boolean doTestCodeJmsInterneGovWay = true;
 	@BeforeGroups (alwaysRun=true , groups=ID_GRUPPO)
 	public void testOpenspcoopCoreLog_raccoltaTempoAvvioTest() throws Exception{
 		this.dataAvvioGruppoTest = DateManager.getDate();
@@ -118,6 +121,11 @@ public class ConnettoriDiversiHTTP {
 		}catch(Exception e){
 			System.err.println("Identificazione A.S. non riuscita: "+e.getMessage());
 			e.printStackTrace(System.out);
+		}
+		
+		if(version_jbossas!=null && version_jbossas.startsWith("tomcat")){
+			System.out.println("WARNING: Verifiche sulla consegna asincrona della risposta (code JMS interne di GovWay) disabilitate per Tomcat");
+			this.doTestCodeJmsInterneGovWay = false;
 		}
 		
 		// Su tomcat, o in modalità jenkins, le code/topic sono gestite dal broker embedded della testsuite
@@ -1588,7 +1596,7 @@ public class ConnettoriDiversiHTTP {
 	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,ConnettoriDiversiHTTP.ID_GRUPPO,ConnettoriDiversiHTTP.ID_GRUPPO+".FILE_serializeAndReturnFileAsync"})
 	public void FILE_serializeAndReturnFileAsync() throws TestSuiteException, Exception{
 	
-		if(!this.doTestJMS){
+		if(!this.doTestCodeJmsInterneGovWay){
 			return;
 		}
 		
@@ -1652,7 +1660,7 @@ public class ConnettoriDiversiHTTP {
 			dataProvider="FILE_serializeAndReturnFileAsync",dependsOnMethods={"FILE_serializeAndReturnFileAsync"})
 	public void testFILE_serializeAndReturnFileAsync(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
 		
-		if(!this.doTestJMS){
+		if(!this.doTestCodeJmsInterneGovWay){
 			return;
 		}
 		
