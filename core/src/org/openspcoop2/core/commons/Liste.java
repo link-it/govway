@@ -181,6 +181,8 @@ public final class Liste
     public static final int CONFIGURAZIONE_HANDLERS_SERVIZIO;
     
     public static final int REMOTE_STORE_KEY;
+    
+    public static final int PDND_INTERAZIONI_ASYNC;
 
 
     private static int numeroListe = 0;
@@ -313,6 +315,7 @@ public final class Liste
     	CONFIGURAZIONE_HANDLERS_RISPOSTA = numeroListe ++;
     	CONFIGURAZIONE_HANDLERS_SERVIZIO = numeroListe ++;
     	REMOTE_STORE_KEY = numeroListe ++;
+    	PDND_INTERAZIONI_ASYNC = numeroListe ++;
     }
     
 	

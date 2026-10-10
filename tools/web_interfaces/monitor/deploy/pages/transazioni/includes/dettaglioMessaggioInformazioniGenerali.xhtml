@@ -82,6 +82,14 @@
 			<h:outputLabel styleClass="outputFieldCollaborazione" id="outLabelCollaborazione" value="ID Conversazione" rendered="#{not empty dettagliBean.dettaglio.idCollaborazione}"/>
 			<h:outputText id="outCollaborazione" value="#{dettagliBean.dettaglio.idCollaborazione}" rendered="#{not empty dettagliBean.dettaglio.idCollaborazione}"/>
 			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelPdndAsyncFase" value="Fase Asincrona" rendered="#{not empty dettagliBean.dettaglio.pdndAsyncFase}"/>
+			<h:outputText id="outPdndAsyncFase" value="#{dettagliBean.dettaglio.pdndAsyncFase}" rendered="#{not empty dettagliBean.dettaglio.pdndAsyncFase}"/>
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelPdndAsyncUrlCallback" value="URL Callback" rendered="#{not empty dettagliBean.dettaglio.pdndAsyncUrlCallback}"/>
+			<h:outputText id="outPdndAsyncUrlCallback" value="#{dettagliBean.dettaglio.pdndAsyncUrlCallback}" rendered="#{not empty dettagliBean.dettaglio.pdndAsyncUrlCallback and not dettagliBean.visualizzaTextAreaPdndAsyncUrlCallback}"/>
+			<h:inputTextarea id="outPdndAsyncUrlCallbackTextArea" value="#{dettagliBean.dettaglio.pdndAsyncUrlCallback}" readonly="true" cols="60" rows="6" styleClass="inputLinkLong width-auto"
+				rendered="#{not empty dettagliBean.dettaglio.pdndAsyncUrlCallback and dettagliBean.visualizzaTextAreaPdndAsyncUrlCallback}" />
+			
 			<h:outputLabel styleClass="outputFieldRiferimentoIdRichiesta" id="outLabelRiferimentoIdRichiesta" value="Riferimento ID Richiesta" rendered="#{not empty dettagliBean.dettaglio.idAsincrono}"/>
 			<h:outputText id="outRiferimentoIdRichiesta" value="#{dettagliBean.dettaglio.idAsincrono}" rendered="#{not empty dettagliBean.dettaglio.idAsincrono}"/>
 										

@@ -622,6 +622,9 @@ public class ConsoleProperties {
 	public boolean isModipaFiltroRicercaProfiloQualsiasiVisualizzaDatiModi() throws UtilsException{
 		return this.readBooleanRequiredProperty("modipa.filtroRicerca.profiloQualsiasi.visualizzaDatiModi");
 	}
+	public boolean isModipaSelezioneApiEscludiScambiAsincroniIncompleti() throws UtilsException{
+		return this.readBooleanRequiredProperty("modipa.selezioneApi.escludiScambiAsincroniIncompleti");
+	}
 	
 	public Boolean isConfigurazionePluginsEnabled() throws UtilsException{
 		return this.readBooleanRequiredProperty("plugins.enabled");
@@ -1292,6 +1295,9 @@ public class ConsoleProperties {
 	}
 	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreCacheChiaviPDND(String alias) throws UtilsException {
 		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerGestoreCacheChiaviPDND");
+	}
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreInterazioniAsincronePDND(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerGestoreInterazioniAsincronePDND");
 	}
 	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreOperazioniRemote(String alias) throws UtilsException {
 		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerGestoreOperazioniRemote");

@@ -64,6 +64,7 @@ import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDPortType;
 import org.openspcoop2.core.id.IDPortTypeAzione;
 import org.openspcoop2.core.id.IDResource;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Operation;
@@ -187,6 +188,8 @@ public class ModiApiApiHelper {
 
 			apimodi.setSicurezzaMessaggio(rid);
 		}
+		
+		apimodi.setFaseAsincrona(ModiApiScambioAsincronoHelper.readFase(p));
 
 		ret.setModi(apimodi);
 
@@ -251,6 +254,8 @@ public class ModiApiApiHelper {
 			rid.setConfigurazione(getSicurezzaMessaggio(p, false));
 			apimodi.setSicurezzaMessaggio(rid);
 		}
+		
+		apimodi.setFaseAsincrona(ModiApiScambioAsincronoHelper.readFase(p));
 
 		ret.setModi(apimodi);
 
@@ -353,6 +358,8 @@ public class ModiApiApiHelper {
 		}
 
 		apimodi.setSicurezzaMessaggio(getSicurezzaMessaggio(p, !isRest));
+		
+		ModiApiScambioAsincronoHelper.readApi(p, apimodi);
 
 		return apimodi;
 	}
@@ -644,10 +651,14 @@ public class ModiApiApiHelper {
 			p.addProperty(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_ACTION_MODE, CostantiDB.MODIPA_PROFILO_RIDEFINISCI);
 			ApiModISicurezzaMessaggioOperazioneRidefinito rid = ((ApiModISicurezzaMessaggioOperazioneRidefinito)modi.getSicurezzaMessaggio());
 
+			ModiApiScambioAsincronoHelper.checkSicurezzaMessaggioOperazione(rid.getConfigurazione());
+
 			if(!rid.getConfigurazione().getPattern().equals(ModISicurezzaMessaggioEnum.DISABILITATO)) {
 				getRESTProperties(rid.getConfigurazione(), p, modIProperties);
 			}
 		}
+		
+		ModiApiScambioAsincronoHelper.addFase(modi.getFaseAsincrona(), p);
 
 		return p;
 	}
@@ -790,9 +801,12 @@ public class ModiApiApiHelper {
 		} else {
 			ApiModISicurezzaMessaggioOperazioneRidefinito rid = ((ApiModISicurezzaMessaggioOperazioneRidefinito)modi.getSicurezzaMessaggio());
 			p.addProperty(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_ACTION_MODE, CostantiDB.MODIPA_PROFILO_RIDEFINISCI);
+			ModiApiScambioAsincronoHelper.checkSicurezzaMessaggioOperazione(rid.getConfigurazione());
 			getSOAPProperties(rid.getConfigurazione(), p, modIProperties);
 
 		}
+		
+		ModiApiScambioAsincronoHelper.addFase(modi.getFaseAsincrona(), p);
 
 		return p;
 	}
@@ -856,8 +870,12 @@ public class ModiApiApiHelper {
 	}
 
 
-	public static ProtocolProperties getProtocolProperties(Api body) {
-		return getModiProtocolProperties(body.getModi(), body.getTipoInterfaccia().getProtocollo());
+	public static ProtocolProperties getProtocolProperties(Api body, AccordoServizioParteComune as) {
+		return getModiProtocolProperties(body.getModi(), body.getTipoInterfaccia().getProtocollo(), getSoggettoReferente(as));
+	}
+	private static IDSoggetto getSoggettoReferente(AccordoServizioParteComune as) {
+		return as!=null && as.getSoggettoReferente()!=null ? 
+				new IDSoggetto(as.getSoggettoReferente().getTipo(), as.getSoggettoReferente().getNome()) : null;
 	}
 
 	public static ProtocolProperties updateModiProtocolProperties(AccordoServizioParteComune as, ProfiloEnum profilo, ApiModI modi) {
@@ -866,11 +884,11 @@ public class ModiApiApiHelper {
 		}
 
 		TipoApiEnum protocollo = as.getFormatoSpecifica().equals(FormatoSpecifica.WSDL_11) ? TipoApiEnum.SOAP: TipoApiEnum.REST;
-		return getModiProtocolProperties(modi, protocollo);
+		return getModiProtocolProperties(modi, protocollo, getSoggettoReferente(as));
 
 	}
 
-	private static ProtocolProperties getModiProtocolProperties(ApiModI modi, TipoApiEnum protocollo) {
+	private static ProtocolProperties getModiProtocolProperties(ApiModI modi, TipoApiEnum protocollo, IDSoggetto soggettoReferente) {
 
 		if(modi == null) {
 			throw FaultCode.RICHIESTA_NON_VALIDA.toException(SPECIFICARE_CONFIGURAZIONE_MODI);
@@ -895,6 +913,8 @@ public class ModiApiApiHelper {
 			p.addProperty(ModICostanti.MODIPA_PROFILO_INTERAZIONE_BULK_RESOURCE, bulk);
 			getRESTProperties(modi.getSicurezzaMessaggio(), p, modIProperties);
 		}
+		
+		ModiApiScambioAsincronoHelper.addApi(modi, soggettoReferente, p);
 
 
 		return p;

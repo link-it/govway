@@ -45,6 +45,7 @@ import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicercaOperations;
+import org.openspcoop2.core.registry.driver.FiltroRicercaAccordi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaProtocolPropertyRegistry;
 import org.openspcoop2.core.registry.driver.FiltroRicercaResources;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
@@ -58,6 +59,13 @@ import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCore;
 import org.openspcoop2.web.lib.mvc.Parameter;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
+import org.openspcoop2.protocol.sdk.properties.IConsoleHelper;
+import org.openspcoop2.protocol.sdk.properties.StatoConfigurazioneAccordo;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
 
 
 /**
@@ -203,6 +211,34 @@ public class AccordiServizioParteComuneUtilities {
 						}
 						
 					}
+				}
+			}
+			
+			// API di callback che riferiscono l'API come API dell'e-service (scambi di dati asincroni PDND)
+			FiltroRicercaAccordi filtroCallback = new FiltroRicercaAccordi();
+			FiltroRicercaProtocolPropertyRegistry filtroCallbackRPP = new FiltroRicercaProtocolPropertyRegistry();
+			filtroCallbackRPP.setName(org.openspcoop2.protocol.engine.constants.Costanti.MODIPA_PDND_ASYNC_API_CORRELATA);
+			filtroCallbackRPP.setValueAsString(oldURI);
+			filtroCallback.addProtocolPropertyAccordo(filtroCallbackRPP);
+			List<IDAccordo> listCallback = null;
+			try {
+				listCallback = apcCore.getAllIdAccordiServizio(filtroCallback);
+			}catch(DriverRegistroServiziNotFound notFound) {
+				// nessuna API di callback
+			}
+			if(listCallback!=null) {
+				for (IDAccordo idCallback : listCallback) {
+					if(idCallback.equals(idAccordoOLD)) {
+						continue;
+					}
+					String uri = idAccordoFactory.getUriFromIDAccordo(idCallback);
+					AccordoServizioParteComune aspc = map.containsKey(uri) ? map.get(uri) : apcCore.getAccordoServizioFull(idCallback);
+					for (ProtocolProperty pp : aspc.getProtocolPropertyList()) {
+						if(org.openspcoop2.protocol.engine.constants.Costanti.MODIPA_PDND_ASYNC_API_CORRELATA.equals(pp.getName())) {
+							pp.setValue(newURI);
+						}
+					}
+					map.put(uri, aspc);
 				}
 			}
 			
@@ -623,6 +659,41 @@ public class AccordiServizioParteComuneUtilities {
 		}
 
 		return lista;
+	}
+	
+	/**
+	 * Ritorna, indicizzati per uri dell'API, gli esiti delle API del profilo indicato che non risultano correttamente configurate 
+	 * secondo il profilo di interoperabilità (es. scambi di dati asincroni PDND con fasi non associate alle risorse/azioni nel profilo ModI)
+	 */
+	public static Map<String, StatoConfigurazioneAccordo> getStatoApiNonConfigurate(ControlStationCore core, IConsoleHelper consoleHelper, String protocollo) throws DriverControlStationException {
+		Map<String, StatoConfigurazioneAccordo> map = new HashMap<>();
+		try {
+			IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
+			IConsoleDynamicConfiguration consoleDynamicConfiguration = protocolFactory.createDynamicConfigurationConsole();
+			List<StatoConfigurazioneAccordo> list = consoleDynamicConfiguration.findStatoAccordiServizioParteComuneNonConfigurati(consoleHelper, 
+					core.getRegistryReader(protocolFactory), core.getConfigIntegrationReader(protocolFactory));
+			if(list!=null) {
+				for (StatoConfigurazioneAccordo stato : list) {
+					map.put(IDAccordoFactory.getInstance().getUriFromIDAccordo(stato.getIdAccordo()), stato);
+				}
+			}
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
+		return map;
+	}
+	/**
+	 * Ritorna l'esito della verifica, secondo il profilo di interoperabilità, della configurazione dell'API indicata o null se correttamente configurata
+	 */
+	public static StatoConfigurazioneAccordo getStatoApi(ControlStationCore core, IConsoleHelper consoleHelper, String protocollo, IDAccordo idAccordo) throws DriverControlStationException {
+		try {
+			IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
+			IConsoleDynamicConfiguration consoleDynamicConfiguration = protocolFactory.createDynamicConfigurationConsole();
+			return consoleDynamicConfiguration.verifyStatoAccordoServizioParteComune(consoleHelper, 
+					core.getRegistryReader(protocolFactory), core.getConfigIntegrationReader(protocolFactory), idAccordo);
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
 	}
 	
 	public static List<IDAccordoDB> idAccordiListFromPermessiUtente(AccordiServizioParteComuneCore core,String userLogin,ConsoleSearch ricerca,boolean[] permessiUtente, 

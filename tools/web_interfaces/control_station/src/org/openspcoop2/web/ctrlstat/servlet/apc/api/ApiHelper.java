@@ -21,7 +21,9 @@ package org.openspcoop2.web.ctrlstat.servlet.apc.api;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -56,6 +58,7 @@ import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
 import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
 import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
+import org.openspcoop2.protocol.sdk.properties.StatoConfigurazioneAccordo;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
@@ -96,6 +99,57 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 	}
 
 
+	/**
+	 * Lo stato dell'API riporta l'esito della verifica del profilo di interoperabilità (es. fasi degli scambi di dati asincroni PDND nel profilo ModI):
+	 * un errore rende l'API non configurata, un avviso la rende parzialmente configurata.
+	 * Nella lista gli esiti vengono calcolati una sola volta per protocollo.
+	 */
+	private void verifyStatoApiProfilo(DataElement de, String protocollo, IDAccordo idAccordo, Map<String, Map<String, StatoConfigurazioneAccordo>> statoApiPerProtocollo) throws DriverControlStationException {
+		if(isStatoDisabilitato(de)) {
+			return;
+		}
+		Map<String, StatoConfigurazioneAccordo> stati = statoApiPerProtocollo.get(protocollo);
+		if(stati==null) {
+			stati = AccordiServizioParteComuneUtilities.getStatoApiNonConfigurate(this.apcCore, this, protocollo);
+			statoApiPerProtocollo.put(protocollo, stati);
+		}
+		try {
+			setStatoApiProfilo(de, stati.get(this.idAccordoFactory.getUriFromIDAccordo(idAccordo)));
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
+	}
+	private void verifyStatoApiProfilo(DataElement de, String protocollo, IDAccordo idAccordo) throws DriverControlStationException {
+		if(isStatoDisabilitato(de)) {
+			return;
+		}
+		setStatoApiProfilo(de, AccordiServizioParteComuneUtilities.getStatoApi(this.apcCore, this, protocollo, idAccordo));
+	}
+	private static boolean isStatoDisabilitato(DataElement de) {
+		String[] stati = de.getStatusTypes();
+		return stati!=null && stati.length>0 && CheckboxStatusType.DISABILITATO.toString().equals(stati[0]);
+	}
+	private static void setStatoApiProfilo(DataElement de, StatoConfigurazioneAccordo stato) {
+		if(stato==null) {
+			return;
+		}
+		if(stato.isErrore()) {
+			de.setStatusType(CheckboxStatusType.DISABILITATO);
+			de.setStatusToolTip(stato.getDescrizione());
+			return;
+		}
+		String[] stati = de.getStatusTypes();
+		String[] tooltips = de.getStatusToolTips();
+		if(stati!=null && stati.length>0 && CheckboxStatusType.WARNING_ONLY.toString().equals(stati[0]) && tooltips!=null && tooltips.length>0) {
+			// avviso già presente (es. servizi senza azioni): vengono riportati entrambi
+			de.setStatusToolTip(tooltips[0]+"; "+stato.getDescrizione());
+		}
+		else {
+			de.setStatusType(CheckboxStatusType.WARNING_ONLY);
+			de.setStatusToolTip(stato.getDescrizione());
+		}
+	}
+	
 	public void prepareApiList(List<AccordoServizioParteComuneSintetico> lista, ISearch ricerca, String tipoAccordo) throws DriverControlStationException {
 		try {
 
@@ -264,6 +318,9 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 				canaleConfigurazioneDefault = getCanaleDefault(canaleList);
 			}
 
+			// stato delle API secondo il profilo di interoperabilità: calcolato una sola volta per protocollo
+			Map<String, Map<String, StatoConfigurazioneAccordo>> statoApiPerProtocollo = new HashMap<>();
+			
 			for (int i = 0; i < lista.size(); i++) {
 				List<DataElement> e = new ArrayList<>();
 				AccordoServizioParteComuneSintetico accordoServizio = lista.get(i);
@@ -385,6 +442,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 					}
 					break;
 				}
+				verifyStatoApiProfilo(de, protocollo, idAccordo, statoApiPerProtocollo);
 				
 				de.setWidthPx(16); 
 				e.add(de);
@@ -718,6 +776,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 			}
 			break;
 		}
+		verifyStatoApiProfilo(de, tipoProtocollo, idAccordo);
 		
 		dati.add(de);
 		

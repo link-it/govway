@@ -41,7 +41,7 @@ public class ApiAzione  {
   private Boolean idCollaborazione = false;
   
   @Schema(example = "false", description = "")
-  private Boolean riferimentoIdRichiesta = null;
+  private Boolean riferimentoIdRichiesta = false;
   
   @Schema(description = "")
   private ApiModIAzioneSoap modi = null;

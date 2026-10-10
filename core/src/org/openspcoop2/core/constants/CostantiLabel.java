@@ -213,6 +213,33 @@ public final class CostantiLabel {
 	
 	public static final String MODIPA_LABEL_UNDEFINED = "-";
     public static final String MODIPA_LABEL_DEFAULT = "Default";
+    
+    // Scambi di dati asincroni PDND: fasi
+    public static final String MODIPA_PDND_ASYNC_FASE_LABEL = "Fase Asincrona";
+    public static final String MODIPA_PDND_ASYNC_FASE_LABEL_START_INTERACTION = "Inizio dell'interazione";
+    public static final String MODIPA_PDND_ASYNC_FASE_LABEL_CALLBACK_INVOCATION = "Invocazione della callback";
+    public static final String MODIPA_PDND_ASYNC_FASE_LABEL_GET_RESOURCE = "Ottenimento della risposta";
+    public static final String MODIPA_PDND_ASYNC_FASE_LABEL_CONFIRMATION = "Conferma di ricezione";
+    public static final String MODIPA_PDND_ASYNC_URL_CALLBACK_LABEL = "URL Callback";
+    /**
+     * Etichetta della fase dello scambio asincrono PDND nel formato 'label (valore)', o null se il valore non è una fase
+     */
+    public static String getLabelFasePdndAsync(String fase) {
+        String label = null;
+        if(CostantiDB.MODIPA_PDND_ASYNC_FASE_VALUE_START_INTERACTION.equals(fase)) {
+            label = MODIPA_PDND_ASYNC_FASE_LABEL_START_INTERACTION;
+        }
+        else if(CostantiDB.MODIPA_PDND_ASYNC_FASE_VALUE_CALLBACK_INVOCATION.equals(fase)) {
+            label = MODIPA_PDND_ASYNC_FASE_LABEL_CALLBACK_INVOCATION;
+        }
+        else if(CostantiDB.MODIPA_PDND_ASYNC_FASE_VALUE_GET_RESOURCE.equals(fase)) {
+            label = MODIPA_PDND_ASYNC_FASE_LABEL_GET_RESOURCE;
+        }
+        else if(CostantiDB.MODIPA_PDND_ASYNC_FASE_VALUE_CONFIRMATION.equals(fase)) {
+            label = MODIPA_PDND_ASYNC_FASE_LABEL_CONFIRMATION;
+        }
+        return label!=null ? label+" ("+fase+")" : null;
+    }
     public static final String MODIPA_LABEL_RIDEFINISCI = "Ridefinito";
     
 	public static final String MODIPA_API_PROFILO_CANALE_LABEL = "Sicurezza Canale";

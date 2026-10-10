@@ -31,16 +31,28 @@ public class CachingRisposta extends ApiImplConfigurazioneStato {
   @Schema(required = true, description = "")
   private StatoDefaultRidefinitoEnum stato = null;
   
-  @Schema(description = "")
+  @Schema(description = "con stato 'ridefinito', se non indicato viene utilizzato lo stato della configurazione generale del caching della risposta")
+ /**
+   * con stato 'ridefinito', se non indicato viene utilizzato lo stato della configurazione generale del caching della risposta  
+  **/
   private Boolean abilitato = null;
   
-  @Schema(description = "")
+  @Schema(description = "con stato 'ridefinito', se non indicato viene utilizzato il valore della configurazione generale del caching della risposta (1 se non definito)")
+ /**
+   * con stato 'ridefinito', se non indicato viene utilizzato il valore della configurazione generale del caching della risposta (1 se non definito)  
+  **/
   private Integer cacheTimeoutSeconds = null;
   
-  @Schema(description = "")
+  @Schema(description = "con stato 'ridefinito', se non indicato viene utilizzata l'impostazione della configurazione generale del caching della risposta")
+ /**
+   * con stato 'ridefinito', se non indicato viene utilizzata l'impostazione della configurazione generale del caching della risposta  
+  **/
   private Boolean maxResponseSize = null;
   
-  @Schema(description = "")
+  @Schema(description = "con stato 'ridefinito', se non indicato viene utilizzato il valore della configurazione generale del caching della risposta")
+ /**
+   * con stato 'ridefinito', se non indicato viene utilizzato il valore della configurazione generale del caching della risposta  
+  **/
   private Long maxResponseSizeKb = null;
   
   @Schema(description = "")
@@ -90,7 +102,7 @@ public class CachingRisposta extends ApiImplConfigurazioneStato {
   }
 
  /**
-   * Get abilitato
+   * con stato 'ridefinito', se non indicato viene utilizzato lo stato della configurazione generale del caching della risposta
    * @return abilitato
   **/
   @JsonProperty("abilitato")
@@ -109,7 +121,7 @@ public class CachingRisposta extends ApiImplConfigurazioneStato {
   }
 
  /**
-   * Get cacheTimeoutSeconds
+   * con stato 'ridefinito', se non indicato viene utilizzato il valore della configurazione generale del caching della risposta (1 se non definito)
    * @return cacheTimeoutSeconds
   **/
   @JsonProperty("cache_timeout_seconds")
@@ -128,7 +140,7 @@ public class CachingRisposta extends ApiImplConfigurazioneStato {
   }
 
  /**
-   * Get maxResponseSize
+   * con stato 'ridefinito', se non indicato viene utilizzata l'impostazione della configurazione generale del caching della risposta
    * @return maxResponseSize
   **/
   @JsonProperty("max_response_size")
@@ -147,7 +159,7 @@ public class CachingRisposta extends ApiImplConfigurazioneStato {
   }
 
  /**
-   * Get maxResponseSizeKb
+   * con stato 'ridefinito', se non indicato viene utilizzato il valore della configurazione generale del caching della risposta
    * @return maxResponseSizeKb
   **/
   @JsonProperty("max_response_size_kb")

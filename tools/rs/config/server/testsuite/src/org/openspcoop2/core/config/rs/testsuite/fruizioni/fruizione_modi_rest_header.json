@@ -12,7 +12,7 @@
 		"protocollo": "rest",
 		"richiesta": {
 			"sicurezza_messaggio": {
-				"header_http_firmare": ["header"],
+				"header_http_firmare": ["header", "Digest", "Content-Type", "Content-Encoding"],
 				"riferimento_x509": [
 					"x5c"
 				]

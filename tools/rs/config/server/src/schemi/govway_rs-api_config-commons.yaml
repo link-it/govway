@@ -334,6 +334,15 @@ components:
            $ref: '#/components/schemas/ApiModISicurezzaCanale'
         sicurezza_messaggio:
            $ref: '#/components/schemas/ApiModISicurezzaMessaggio'
+        scambio_asincrono:
+          oneOf:
+            - $ref: '#/components/schemas/ApiModIScambioAsincronoErogazioneDati'
+            - $ref: '#/components/schemas/ApiModIScambioAsincronoCallback'
+          discriminator:
+            propertyName: ruolo
+            mapping:
+              'erogazione_dati': '#/components/schemas/ApiModIScambioAsincronoErogazioneDati'
+              'callback': '#/components/schemas/ApiModIScambioAsincronoCallback'
     ApiModIPatternInterazioneAPIRest:
       type: object
       properties:
@@ -357,6 +366,9 @@ components:
         generazione_token:
            $ref: '#/components/schemas/ModISicurezzaMessaggioGenerazioneTokenEnum'
         dpop:
+          type: boolean
+          default: false
+        scambio_asincrono:
           type: boolean
           default: false
         digest_richiesta:
@@ -470,6 +482,8 @@ components:
       properties:
         interazione:
            $ref: '#/components/schemas/ApiModIPatternInterazioneRest'
+        fase_asincrona:
+           $ref: '#/components/schemas/ModIScambioAsincronoFaseEnum'
         sicurezza_messaggio:
            type: object
            oneOf:
@@ -488,6 +502,8 @@ components:
       properties:
         interazione:
            $ref: '#/components/schemas/ApiModIPatternInterazioneSoap'
+        fase_asincrona:
+           $ref: '#/components/schemas/ModIScambioAsincronoFaseEnum'
         sicurezza_messaggio:
           type: object
           oneOf:
@@ -515,6 +531,58 @@ components:
            $ref: '#/components/schemas/ModISicurezzaMessaggioOperazioneEnum'
         configurazione:
            $ref: '#/components/schemas/ApiModISicurezzaMessaggio'
+    ApiModIScambioAsincronoErogazioneDati:
+      type: object
+      required:
+        - ruolo
+        - tempo_massimo_risposta
+        - durata_disponibilita
+        - numero_massimo_risultati
+      properties:
+        ruolo:
+           $ref: '#/components/schemas/ModIScambioAsincronoRuoloEnum'
+        tempo_massimo_risposta:
+          description: tempo massimo entro cui è attesa la callback, espresso in secondi
+          type: integer
+          format: int64
+          minimum: 1
+          example: 3600
+        durata_disponibilita:
+          description: durata della disponibilità del dato dopo la callback, espressa in secondi
+          type: integer
+          format: int64
+          minimum: 1
+          example: 86400
+        conferma_recupero:
+          description: richiesta al fruitore della conferma di recupero della risposta (fase confirmation)
+          type: boolean
+          default: false
+        numero_massimo_risultati:
+          type: integer
+          format: int32
+          minimum: 1
+          example: 100
+    ApiModIScambioAsincronoCallback:
+      type: object
+      required:
+        - ruolo
+        - api_erogazione_dati
+      properties:
+        ruolo:
+           $ref: '#/components/schemas/ModIScambioAsincronoRuoloEnum'
+        api_erogazione_dati:
+           $ref: '#/components/schemas/ApiModIScambioAsincronoApiErogazioneDati'
+    ApiModIScambioAsincronoApiErogazioneDati:
+      type: object
+      description: API 'erogazione dati' a cui la callback si riferisce; il referente è il soggetto di default del profilo ModI
+      required:
+        - api_nome
+        - api_versione
+      properties:
+        api_nome:
+          $ref: 'govway_core.yaml#/components/schemas/NCName'
+        api_versione:
+          $ref: 'govway_core.yaml#/components/schemas/Versione'
 
     # Base: Credenziali
     AuthenticationHttpBasic:
@@ -1801,6 +1869,8 @@ components:
             mapping:
               'soap': '#/components/schemas/ErogazioneModISoap'
               'rest': '#/components/schemas/ErogazioneModIRest'      
+        modi_scambio_asincrono:
+           $ref: '#/components/schemas/ErogazioneModIScambioAsincrono'
       
     # ModI Erogazione SOAP
     ErogazioneModISoap:
@@ -2089,6 +2159,21 @@ components:
          pseudoanonimizzazione:
             type: boolean
             default: true
+    # ModI Erogazione: scambio di dati asincrono PDND
+    ErogazioneModIScambioAsincrono:
+      type: object
+      properties:
+        verifica_url_callback:
+          description: verifica della URL di callback rispetto alle fruizioni dell'API di callback (solo API con ruolo 'erogazione_dati')
+          type: boolean
+          default: false
+        codifica_header_url_callback:
+           $ref: '#/components/schemas/ModIScambioAsincronoCodificaEnum'
+        codici_http_esito_positivo:
+          description: codici HTTP (singoli o intervalli separati da virgola) che indicano il completamento della fase; se non indicati viene utilizzata la configurazione di default
+          type: string
+          maxLength: 4000
+          example: '200-299'
     # ModI Fruizione
     FruizioneModI:
       type: object
@@ -2108,6 +2193,8 @@ components:
               'rest': '#/components/schemas/FruizioneModIRest'
         modi_dpop:
            $ref: '#/components/schemas/FruizioneModIDPoP'
+        modi_scambio_asincrono:
+           $ref: '#/components/schemas/FruizioneModIScambioAsincrono'
       
     # ModI Fruizione OAUTH
     BaseFruizioneModIOAuth:
@@ -2155,6 +2242,66 @@ components:
              mapping:
                'default': '#/components/schemas/ModIKeyStoreDefault'
                'ridefinito': '#/components/schemas/ModIKeyStoreRidefinito'
+
+    # ModI Fruizione: scambio di dati asincrono PDND
+    FruizioneModIScambioAsincrono:
+      type: object
+      properties:
+        url_callback:
+          type: object
+          description: modalità con cui viene determinata la URL di callback (solo API con ruolo 'erogazione_dati')
+          oneOf:
+            - $ref: '#/components/schemas/FruizioneModIScambioAsincronoUrlCallbackErogazione'
+            - $ref: '#/components/schemas/FruizioneModIScambioAsincronoUrlCallbackClient'
+          discriminator:
+            propertyName: sorgente
+            mapping:
+              'erogazione': '#/components/schemas/FruizioneModIScambioAsincronoUrlCallbackErogazione'
+              'client': '#/components/schemas/FruizioneModIScambioAsincronoUrlCallbackClient'
+        invio_purpose_id:
+          description: invio del purposeId nelle fasi get_resource e confirmation (solo API con ruolo 'erogazione_dati'); se non indicato viene utilizzata la configurazione di default
+          type: boolean
+        entity_number:
+           # modalità con cui il client fornisce il numero di entità (solo API con ruolo 'callback')
+           $ref: '#/components/schemas/ModIScambioAsincronoParametro'
+        codici_http_esito_positivo:
+          description: codici HTTP (singoli o intervalli separati da virgola) che indicano il completamento della fase; se non indicati viene utilizzata la configurazione di default
+          type: string
+          maxLength: 4000
+          example: '200-299'
+    FruizioneModIScambioAsincronoUrlCallbackErogazione:
+      type: object
+      description: URL di invocazione dell'erogazione dell'API di callback
+      required:
+        - sorgente
+      properties:
+        sorgente:
+           $ref: '#/components/schemas/ModIScambioAsincronoUrlCallbackSorgenteEnum'
+    FruizioneModIScambioAsincronoUrlCallbackClient:
+      type: object
+      description: URL fornita dal client tramite header HTTP o parametro della URL
+      allOf:
+        - $ref: '#/components/schemas/ModIScambioAsincronoParametro'
+        - type: object
+          required:
+            - sorgente
+          properties:
+            sorgente:
+               $ref: '#/components/schemas/ModIScambioAsincronoUrlCallbackSorgenteEnum'
+            codifica:
+               $ref: '#/components/schemas/ModIScambioAsincronoCodificaEnum'
+            obbligatoria:
+              type: boolean
+              default: false
+    ModIScambioAsincronoParametro:
+      type: object
+      properties:
+        modalita:
+           $ref: '#/components/schemas/ModIScambioAsincronoModalitaEnum'
+        nome:
+          description: nome dell'header HTTP o del parametro della URL; se non indicato viene utilizzato il nome di default della modalità
+          type: string
+          maxLength: 255
 
     # ModI Fruizione SOAP
     FruizioneModISoap:
@@ -2859,6 +3006,7 @@ components:
               abilitato:
                 description: indica se la gestione del token è abilitata o meno
                 type: boolean
+                default: false
               policy:
                 description: identificativo della Policy da utilizzare per la gestione del token
                 type: string
@@ -3345,13 +3493,17 @@ components:
               stato:
                 $ref: '#/components/schemas/StatoDefaultRidefinitoEnum'
               abilitato:
+                description: con stato 'ridefinito', se non indicato viene utilizzato lo stato della configurazione generale del caching della risposta
                 type: boolean
               cache_timeout_seconds:
+                description: con stato 'ridefinito', se non indicato viene utilizzato il valore della configurazione generale del caching della risposta (1 se non definito)
                 type: integer
                 format: int32
               max_response_size:
+                description: con stato 'ridefinito', se non indicato viene utilizzata l'impostazione della configurazione generale del caching della risposta
                 type: boolean
               max_response_size_kb:
+                description: con stato 'ridefinito', se non indicato viene utilizzato il valore della configurazione generale del caching della risposta
                 type: integer
                 format: int64
               hash_request_uri:
@@ -3931,6 +4083,22 @@ components:
        enum: ['orario','giornaliero','settimanale','mensile']
        default: giornaliero
     # ModI: Enumeration
+    ModIScambioAsincronoRuoloEnum:
+      type: string
+      enum: ['erogazione_dati', 'callback']
+    ModIScambioAsincronoFaseEnum:
+      type: string
+      enum: ['start_interaction', 'callback_invocation', 'get_resource', 'confirmation']
+    ModIScambioAsincronoUrlCallbackSorgenteEnum:
+      type: string
+      enum: ['erogazione', 'client']
+    ModIScambioAsincronoModalitaEnum:
+      type: string
+      enum: ['header', 'query']
+      default: header
+    ModIScambioAsincronoCodificaEnum:
+      type: string
+      enum: ['none', 'base64', 'hex']
     ModISicurezzaCanaleEnum:
       type: string
       enum: ['auth01', 'auth02']

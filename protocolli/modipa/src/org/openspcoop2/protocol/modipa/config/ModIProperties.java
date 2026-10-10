@@ -488,6 +488,13 @@ public class ModIProperties {
 			this.useEsitoStaticInstance();
 			this.getStaticInstanceConfig();
 			
+			/* **** Scambi di dati asincroni PDND **** */
+			this.isPdndAsyncPurposeIdGetResourceConfirmation();
+			this.getPdndAsyncUrlCallbackHeaderEncoding();
+			this.getPdndAsyncHttpStatusSuccesso();
+			this.getPdndAsyncUrlCallbackHeaderName();
+			this.getPdndAsyncEntityNumberHeaderName();
+			
 			/* **** Signal Hub **** */
 			if(isSignalHubEnabled()) {
 				this.isSignalHubPseudonymizationChoiceEnabled();
@@ -6345,7 +6352,126 @@ public class ModIProperties {
 	
     /* **** Signal Hub **** */
 	
-	// riferito in org.openspcoop2.protocol.utils.ModIUtils
+	/* **** Scambi di dati asincroni PDND **** */
+	
+	private Boolean pdndAsyncPurposeIdGetResourceConfirmation = null;
+	public boolean isPdndAsyncPurposeIdGetResourceConfirmation(){
+		if(this.pdndAsyncPurposeIdGetResourceConfirmation==null){
+			Boolean defaultValue = true;
+			String propertyName = "org.openspcoop2.protocol.modipa.pdnd.async.purposeId.getResourceConfirmation";
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
+				if (value != null){
+					this.pdndAsyncPurposeIdGetResourceConfirmation = Boolean.parseBoolean(value.trim());
+				}else{
+					this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue));
+					this.pdndAsyncPurposeIdGetResourceConfirmation = defaultValue;
+				}
+			}catch(java.lang.Exception e) {
+				this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue)+getSuffixErrore(e));
+				this.pdndAsyncPurposeIdGetResourceConfirmation = defaultValue;
+			}
+		}
+		return this.pdndAsyncPurposeIdGetResourceConfirmation;
+	}
+	
+	private String pdndAsyncUrlCallbackHeaderEncoding = null;
+	public String getPdndAsyncUrlCallbackHeaderEncoding() throws ProtocolException{
+		if(this.pdndAsyncUrlCallbackHeaderEncoding==null){
+			String defaultValue = ModICostanti.MODIPA_PDND_ASYNC_VALUE_CODIFICA_NONE;
+			String propertyName = "org.openspcoop2.protocol.modipa.pdnd.async.urlCallback.header.encoding";
+			String value = null;
+			try{  
+				value = this.reader.getValueConvertEnvProperties(propertyName); 
+			}catch(java.lang.Exception e) {
+				this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue)+getSuffixErrore(e));
+			}
+			if (value == null || "".equals(value.trim())){
+				this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue));
+				value = defaultValue;
+			}
+			value = value.trim();
+			if(!ModICostanti.MODIPA_PDND_ASYNC_VALUE_CODIFICA_NONE.equals(value) &&
+					!ModICostanti.MODIPA_PDND_ASYNC_VALUE_CODIFICA_BASE64.equals(value) &&
+					!ModICostanti.MODIPA_PDND_ASYNC_VALUE_CODIFICA_HEX.equals(value)) {
+				throw new ProtocolException("Valore '"+value+"' non ammesso per la proprietà '"+propertyName+"' (valori ammessi: none, base64, hex)");
+			}
+			this.pdndAsyncUrlCallbackHeaderEncoding = value;
+		}
+		return this.pdndAsyncUrlCallbackHeaderEncoding;
+	}
+	
+	private String pdndAsyncHttpStatusSuccesso = null;
+	public String getPdndAsyncHttpStatusSuccesso() throws ProtocolException{
+		if(this.pdndAsyncHttpStatusSuccesso==null){
+			String defaultValue = "200-299";
+			String propertyName = "org.openspcoop2.protocol.modipa.pdnd.async.httpStatus.successo";
+			String value = null;
+			try{  
+				value = this.reader.getValueConvertEnvProperties(propertyName); 
+			}catch(java.lang.Exception e) {
+				this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue)+getSuffixErrore(e));
+			}
+			if (value != null && !"".equals(value.trim())){
+				value = value.trim();
+				try {
+					org.openspcoop2.protocol.modipa.utils.ModIPdndAsyncUtils.parseCodiciHttp(value);
+				}catch(Exception e) {
+					throw new ProtocolException("Valore '"+value+"' non ammesso per la proprietà '"+propertyName+"': "+e.getMessage(), e);
+				}
+				this.pdndAsyncHttpStatusSuccesso = value;
+			}else{
+				this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue));
+				this.pdndAsyncHttpStatusSuccesso = defaultValue;
+			}
+		}
+		return this.pdndAsyncHttpStatusSuccesso;
+	}
+	
+	private String pdndAsyncEntityNumberHeaderName = null;
+	public String getPdndAsyncEntityNumberHeaderName(){
+		if(this.pdndAsyncEntityNumberHeaderName==null){
+			String defaultValue = "GovWay-PDND-Entity-Number";
+			String propertyName = "org.openspcoop2.protocol.modipa.pdnd.async.entityNumber.header.name";
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
+				if (value != null && !"".equals(value.trim())){
+					this.pdndAsyncEntityNumberHeaderName = value.trim();
+				}else{
+					this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue));
+					this.pdndAsyncEntityNumberHeaderName = defaultValue;
+				}
+			}catch(java.lang.Exception e) {
+				this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue)+getSuffixErrore(e));
+				this.pdndAsyncEntityNumberHeaderName = defaultValue;
+			}
+		}
+		return this.pdndAsyncEntityNumberHeaderName;
+	}
+	
+	private String pdndAsyncUrlCallbackHeaderName = null;
+	public String getPdndAsyncUrlCallbackHeaderName(){
+		if(this.pdndAsyncUrlCallbackHeaderName==null){
+			String defaultValue = "GovWay-PDND-Url-Callback";
+			String propertyName = "org.openspcoop2.protocol.modipa.pdnd.async.urlCallback.header.name";
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
+				if (value != null && !"".equals(value.trim())){
+					this.pdndAsyncUrlCallbackHeaderName = value.trim();
+				}else{
+					this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue));
+					this.pdndAsyncUrlCallbackHeaderName = defaultValue;
+				}
+			}catch(java.lang.Exception e) {
+				this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue)+getSuffixErrore(e));
+				this.pdndAsyncUrlCallbackHeaderName = defaultValue;
+			}
+		}
+		return this.pdndAsyncUrlCallbackHeaderName;
+	}
+	
+	
+		// riferito in org.openspcoop2.protocol.utils.ModIUtils
 	private Boolean signalHubEnabled = null;
 	public boolean isSignalHubEnabled(){
 		if(this.signalHubEnabled==null){

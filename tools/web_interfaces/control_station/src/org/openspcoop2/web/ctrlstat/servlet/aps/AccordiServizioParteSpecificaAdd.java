@@ -665,7 +665,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				accordoPrivato = as.getPrivato()!=null && as.getPrivato();
 				uriAccordo = idAccordoFactory.getUriFromAccordo(as);
 
-				List<PortTypeSintetico> portTypes = AccordiServizioParteSpecificaUtilities.getListaPortTypes(as, apsHelper);
+				List<PortTypeSintetico> portTypes = AccordiServizioParteSpecificaUtilities.getListaPortTypes(as, apsHelper, apsCore, strutsBean.tipoProtocollo);
 				
 				if (!portTypes.isEmpty()) {
 					ptList = new String[portTypes.size() + 1];

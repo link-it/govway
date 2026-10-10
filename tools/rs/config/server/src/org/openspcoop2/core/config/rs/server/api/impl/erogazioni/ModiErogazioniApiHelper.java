@@ -43,6 +43,7 @@ import org.openspcoop2.core.config.rs.server.model.ErogazioneModIRestRisposta;
 import org.openspcoop2.core.config.rs.server.model.ErogazioneModIRestRispostaSicurezzaMessaggio;
 import org.openspcoop2.core.config.rs.server.model.ErogazioneModIRestRispostaSicurezzaMessaggioContemporaneita;
 import org.openspcoop2.core.config.rs.server.model.ErogazioneModIRestRispostaSicurezzaMessaggioModIKeyStoreRidefinito;
+import org.openspcoop2.core.config.rs.server.model.ErogazioneModIScambioAsincrono;
 import org.openspcoop2.core.config.rs.server.model.ErogazioneModISignalHub;
 import org.openspcoop2.core.config.rs.server.model.ErogazioneModISoap;
 import org.openspcoop2.core.config.rs.server.model.ErogazioneModISoapRichiesta;
@@ -63,6 +64,7 @@ import org.openspcoop2.core.config.rs.server.model.FruizioneModIRestRispostaSicu
 import org.openspcoop2.core.config.rs.server.model.FruizioneModIRichiestaInformazioneUtente;
 import org.openspcoop2.core.config.rs.server.model.FruizioneModIRichiestaInformazioneUtenteAudit;
 import org.openspcoop2.core.config.rs.server.model.FruizioneModIRichiestaInformazioniUtenteAudit;
+import org.openspcoop2.core.config.rs.server.model.FruizioneModIScambioAsincrono;
 import org.openspcoop2.core.config.rs.server.model.FruizioneModISoap;
 import org.openspcoop2.core.config.rs.server.model.FruizioneModISoapRichiesta;
 import org.openspcoop2.core.config.rs.server.model.FruizioneModISoapRichiestaSicurezzaMessaggio;
@@ -175,6 +177,9 @@ public class ModiErogazioniApiHelper {
 			if(dpop!=null) {
 				fruizionemodi.setModiDpop(dpop);
 			}
+			
+			// scambio di dati asincrono PDND: presente solamente se l'API implementata lo prevede
+			fruizionemodi.setModiScambioAsincrono(ModiErogazioniScambioAsincronoHelper.readFruizione(aspc, p));
 		}
 
 		return fruizionemodi;
@@ -194,6 +199,9 @@ public class ModiErogazioniApiHelper {
 			} else {
 				erogazionemodi.setModi(ModiErogazioniApiHelper.getRestProperties(aspc, asps, p));
 			}
+			
+			// scambio di dati asincrono PDND: presente solamente se l'API implementata lo prevede
+			erogazionemodi.setModiScambioAsincrono(ModiErogazioniScambioAsincronoHelper.readErogazione(aspc, p));
 		}
 		
 		return erogazionemodi;
@@ -1871,7 +1879,10 @@ public class ModiErogazioniApiHelper {
 
 	public static ProtocolProperties getProtocolProperties(Erogazione body, AccordoServizioParteComune aspc, AccordoServizioParteSpecifica asps, ErogazioniEnv env, boolean required) 
 			throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
-		return ModiErogazioniApiHelper.getModiProtocolProperties(aspc, asps, body.getModi(), ModiErogazioniApiHelper.getErogazioneConf(asps, env), required);
+		ProtocolProperties p = ModiErogazioniApiHelper.getModiProtocolProperties(aspc, asps, body.getModi(), ModiErogazioniApiHelper.getErogazioneConf(asps, env), required);
+		
+		// scambio di dati asincrono PDND
+		return ModiErogazioniScambioAsincronoHelper.addErogazione(body.getModiScambioAsincrono(), aspc, p);
 	}
 
 	public static ProtocolProperties getProtocolProperties(Fruizione body, AccordoServizioParteSpecifica asps, ErogazioniEnv env, boolean required)
@@ -1888,18 +1899,27 @@ public class ModiErogazioniApiHelper {
 			}
 			ModiErogazioniApiHelper.getDPoPProperties(body.getModiDpop(), p);
 		}
-
-		return p;
+		
+		// scambio di dati asincrono PDND
+		return ModiErogazioniScambioAsincronoHelper.addFruizione(body.getModiScambioAsincrono(), aspc, p);
 	}
 
 	public static ProtocolProperties updateModiProtocolProperties(AccordoServizioParteComune aspc, AccordoServizioParteSpecifica asps, ProfiloEnum profilo, OneOfErogazioneModIModi modi, ErogazioniEnv env) 
+			throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
+		return updateModiProtocolProperties(aspc, asps, profilo, modi, null, env);
+	}
+	public static ProtocolProperties updateModiProtocolProperties(AccordoServizioParteComune aspc, AccordoServizioParteSpecifica asps, ProfiloEnum profilo, OneOfErogazioneModIModi modi, 
+			ErogazioneModIScambioAsincrono modiScambioAsincrono, ErogazioniEnv env) 
 			throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
 		if(profilo == null || (!profilo.equals(ProfiloEnum.MODI) && !profilo.equals(ProfiloEnum.MODIPA))) {
 			throw FaultCode.RICHIESTA_NON_VALIDA.toException(ModiErogazioniApiHelper.OPERAZIONE_UTILIZZABILE_SOLO_CON_MODI);
 		}
 
 		ErogazioneConf erogazioneConf = ModiErogazioniApiHelper.getErogazioneConf(asps, env);
-		return ModiErogazioniApiHelper.getModiProtocolProperties(aspc, asps, modi, erogazioneConf);
+		ProtocolProperties p = ModiErogazioniApiHelper.getModiProtocolProperties(aspc, asps, modi, erogazioneConf);
+		
+		// scambio di dati asincrono PDND
+		return ModiErogazioniScambioAsincronoHelper.addErogazione(modiScambioAsincrono, aspc, p);
 
 	}
 
@@ -1909,6 +1929,11 @@ public class ModiErogazioniApiHelper {
 	}
 
 	public static ProtocolProperties updateModiProtocolProperties(AccordoServizioParteSpecifica asps, ProfiloEnum profilo, OneOfFruizioneModIModi modi, FruizioneModIDPoP modiDpop, ErogazioniEnv env)
+			throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
+		return updateModiProtocolProperties(asps, profilo, modi, modiDpop, null, env);
+	}
+	public static ProtocolProperties updateModiProtocolProperties(AccordoServizioParteSpecifica asps, ProfiloEnum profilo, OneOfFruizioneModIModi modi, FruizioneModIDPoP modiDpop, 
+			FruizioneModIScambioAsincrono modiScambioAsincrono, ErogazioniEnv env)
 			throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
 		if(profilo == null || (!profilo.equals(ProfiloEnum.MODI) && !profilo.equals(ProfiloEnum.MODIPA))) {
 			throw FaultCode.RICHIESTA_NON_VALIDA.toException(ModiErogazioniApiHelper.OPERAZIONE_UTILIZZABILE_SOLO_CON_MODI);
@@ -1925,8 +1950,9 @@ public class ModiErogazioniApiHelper {
 		if(modiDpop!=null) {
 			ModiErogazioniApiHelper.getDPoPProperties(modiDpop, p);
 		}
-
-		return p;
+		
+		// scambio di dati asincrono PDND
+		return ModiErogazioniScambioAsincronoHelper.addFruizione(modiScambioAsincrono, aspc, p);
 	}
 
 	private static ProtocolProperties getModiProtocolProperties(AccordoServizioParteComune aspc, AccordoServizioParteSpecifica asps, OneOfErogazioneModIModi modi, ErogazioneConf erogazioneConf) {
@@ -3225,17 +3251,18 @@ public class ModiErogazioniApiHelper {
 			if(modi.getKid()!=null && StringUtils.isNotEmpty(modi.getKid())) {
 				p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_OAUTH_KID, modi.getKid());
 			}
-			if(modi.getKeystore()!=null) {
-				if(modi.getKeystore().getModalita().equals(StatoDefaultRidefinitoEnum.DEFAULT)) {
-					
-					ModiErogazioniApiHelper.setKeystoreDefaultProperties(p);
-					
-				} else {
-	
-					ModIKeyStoreRidefinito keystoreRidefinito = (ModIKeyStoreRidefinito)modi.getKeystore();
-					ModiErogazioniApiHelper.setKeystoreRidefinitoProperties(p, keystoreRidefinito);
-					
-				}
+			if(modi.getKeystore()!=null && !modi.getKeystore().getModalita().equals(StatoDefaultRidefinitoEnum.DEFAULT)) {
+
+				ModIKeyStoreRidefinito keystoreRidefinito = (ModIKeyStoreRidefinito)modi.getKeystore();
+				ModiErogazioniApiHelper.setKeystoreRidefinitoProperties(p, keystoreRidefinito);
+
+			}
+			else {
+
+				// keystore non indicato: viene utilizzato quello di default (come riportato in lettura);
+				// le informazioni salvate consentono inoltre di riconoscere in lettura la configurazione 'oauth' anche senza identificativo e kid
+				ModiErogazioniApiHelper.setKeystoreDefaultProperties(p);
+
 			}
 		}
 	}

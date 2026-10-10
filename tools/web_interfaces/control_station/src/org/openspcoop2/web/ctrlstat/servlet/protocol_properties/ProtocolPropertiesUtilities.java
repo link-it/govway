@@ -47,6 +47,7 @@ import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElement.STATO_APERTURA_SEZIONI;
 import org.openspcoop2.web.lib.mvc.DataElementInfo;
+import org.openspcoop2.web.lib.mvc.DataElementLink;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.Parameter;
 
@@ -169,6 +170,7 @@ public class ProtocolPropertiesUtilities {
 			default:
 				throw new ProtocolException(getPrefixErrorItemConClasse(abItem)+"identificato come tipo AbstractConsoleItem ma con Type: ["+abItem.getType()+"] di tipo titolo o note");
 			}
+			addLinkAccordoServizioParteComune(dati, consoleHelper, abItem);
 		} else {
 			// titoli e note
 			switch (item.getType()) {
@@ -190,6 +192,17 @@ public class ProtocolPropertiesUtilities {
 		}
 
 		return dati;
+	}
+	
+	private static void addLinkAccordoServizioParteComune(List<DataElement> dati, ConsoleHelper consoleHelper, AbstractConsoleItem<?> abItem) {
+		if(abItem.getLinkAccordoServizioParteComune()==null || dati.isEmpty() ||
+				ConsoleItemType.HIDDEN.equals(abItem.getType()) || ConsoleItemType.LOCK_HIDDEN.equals(abItem.getType())) {
+			return;
+		}
+		DataElementLink link = consoleHelper.getDataElementLinkVisualizzaAccordoServizioParteComune(abItem.getLinkAccordoServizioParteComune());
+		if(link!=null) {
+			dati.get(dati.size()-1).addLink(link);
+		}
 	}
 	
 	public static List<DataElement> itemToDataElementAsHidden(List<DataElement> dati ,ConsoleHelper consoleHelper, BaseConsoleItem item, Object defaultItemValue,

@@ -3082,11 +3082,6 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			//  ResponseCachingConfigurazioneGenerale responseCachingGenerale = configurazione.getResponseCaching();
 			//  responseCachingGenerale.getConfigurazione();		
 			
-			if (body.isMaxResponseSize()) {
-				if (body.getMaxResponseSizeKb() == null)
-					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Devi specificare il campo MaxResponseSizeKb");
-			}
-			
 			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
 		
@@ -3094,7 +3089,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
 			
-			ResponseCachingConfigurazione newConfigurazione = ErogazioniApiHelper.buildResponseCachingConfigurazione(body, env.paHelper);
+			ResponseCachingConfigurazione newConfigurazione = ErogazioniApiHelper.buildResponseCachingConfigurazione(body, env.paHelper, env.confCore);
 			
 			pa.setResponseCaching(newConfigurazione);
 			env.paCore.performUpdateOperation(env.userLogin, false, pa);			
@@ -3269,7 +3264,8 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			final PortaApplicativa oldPa = env.paCore.getPortaApplicativa(env.idPa);
 			final PortaApplicativa newPa = env.paCore.getPortaApplicativa(env.idPa);
 			
-			if (body.isAbilitato()) {
+			// abilitato non indicato: gestione del token disabilitata (default dello schema)
+			if (Boolean.TRUE.equals(body.isAbilitato())) {
 				GestioneToken gTok = newPa.getGestioneToken() != null ? newPa.getGestioneToken() : new GestioneToken();
 				ErogazioniApiHelper.fillGestioneToken(gTok, body);
 				newPa.setGestioneToken(gTok);

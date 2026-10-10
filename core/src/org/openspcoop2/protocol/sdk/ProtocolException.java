@@ -38,6 +38,14 @@ public class ProtocolException extends Exception {
 		this.interoperabilityError = interoperabilityError;
 	}
 
+	private org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError integrationFunctionError; // errore da restituire al client se differente da quello di default
+	public org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError getIntegrationFunctionError() {
+		return this.integrationFunctionError;
+	}
+	public void setIntegrationFunctionError(org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError integrationFunctionError) {
+		this.integrationFunctionError = integrationFunctionError;
+	}
+	
 	private boolean forceTrace; // indicazione se deve essere forzato il tracciamento
 	public boolean isForceTrace() {
 		return this.forceTrace;

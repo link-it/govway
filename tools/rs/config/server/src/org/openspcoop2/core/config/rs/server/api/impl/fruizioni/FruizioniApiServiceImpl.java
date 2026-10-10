@@ -186,12 +186,17 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 
 			if (alreadyExists)
 				asps = env.apsCore.getServizio(idAps);
+			// API implementata: necessaria al profilo di interoperabilità per configurare e validare la fruizione (come nell'erogazione)
+			idAps.setUriAccordoServizioParteComune(asps.getAccordoServizioParteComune());
+			idAps.setPortType(asps.getPortType());
 
 			
 			ServletUtils.setObjectIntoSession(context.getServletRequest(), context.getServletRequest().getSession(),
 					AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE,
 					AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 			ErogazioniApiHelper.serviziCheckData(TipoOperazione.ADD, env, as, asps, Optional.of(env.idSoggetto), body);
+			// API configurata per gli scambi di dati asincroni PDND con fasi non associate (come nella selezione dell'API in console)
+			ErogazioniApiHelper.checkScambiAsincroniIncompleti(env, asps.getAccordoServizioParteComune(), asps.getPortType());
 
 			IDFruizione idFruizione = new IDFruizione();
 			
@@ -1021,7 +1026,12 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 						.toException("Nessuna api " + as.getNome() + " e versione " + body.getApiVersione() + " registrata");
 			}
 
-			asps.setAccordoServizioParteComune(env.idAccordoFactory.getUriFromAccordo(newApc.get()));
+			// nuova versione dell'API configurata per gli scambi di dati asincroni PDND con fasi non associate (la versione attuale resta valida)
+			String uriNuovaApi = env.idAccordoFactory.getUriFromAccordo(newApc.get());
+			if(!uriNuovaApi.equals(asps.getAccordoServizioParteComune())) {
+				ErogazioniApiHelper.checkScambiAsincroniIncompleti(env, uriNuovaApi, asps.getPortType());
+			}
+			asps.setAccordoServizioParteComune(uriNuovaApi);
 			asps.setIdAccordo(newApc.get().getId());
 
 			asps.setOldIDServizioForUpdate(env.idServizioFactory.getIDServizioFromAccordo(asps));
@@ -1272,6 +1282,9 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 			
 			final IDServizio idAps = env.idServizioFactory.getIDServizioFromValues(asps.getTipo(), asps.getNome(),
 					new IDSoggetto(asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore()), asps.getVersione());
+			// API implementata: necessaria al profilo di interoperabilità per configurare e validare la fruizione (come nell'erogazione)
+			idAps.setUriAccordoServizioParteComune(asps.getAccordoServizioParteComune());
+			idAps.setPortType(asps.getPortType());
 
 			IDFruizione idFruizione = new IDFruizione();
 			
@@ -1373,6 +1386,9 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 			
 			final IDServizio idAps = env.idServizioFactory.getIDServizioFromValues(asps.getTipo(), asps.getNome(),
 					new IDSoggetto(asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore()), asps.getVersione());
+			// API implementata: necessaria al profilo di interoperabilità per configurare e validare la fruizione (come nell'erogazione)
+			idAps.setUriAccordoServizioParteComune(asps.getAccordoServizioParteComune());
+			idAps.setPortType(asps.getPortType());
 
 			IDFruizione idFruizione = new IDFruizione();
 			
@@ -1384,8 +1400,10 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 			if(profilo != null) {
 				Fruitore f = ErogazioniApiHelper.getFruitore(asps, env.idSoggetto.getNome());
 				ModiErogazioniApiHelper.validateDPoPConfigurationUpdate(body.getModiDpop(), f, env);
+				// token policy del connettore della fruizione: necessaria al profilo per determinare la configurazione OAuth (come in creazione e lettura)
+				ErogazioniApiHelper.addInfoTokenPolicyForModI(f.getConnettore(), env, false);
 
-				protocolProperties = ModiErogazioniApiHelper.updateModiProtocolProperties(asps, profilo, body.getModi(), body.getModiDpop(), env);
+				protocolProperties = ModiErogazioniApiHelper.updateModiProtocolProperties(asps, profilo, body.getModi(), body.getModiDpop(), body.getModiScambioAsincrono(), env);
 
 				if(protocolProperties != null) {
 					f.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(protocolProperties, ConsoleOperationType.ADD, null));

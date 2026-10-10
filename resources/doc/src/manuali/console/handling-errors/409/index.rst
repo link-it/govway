@@ -9,4 +9,5 @@ In questa sezione vengono riportati tutti i possibili codici di errore generati 
         :maxdepth: 2
         
         ConflictInQueue
+	AsyncInteractionInvalidState
 	Conflict

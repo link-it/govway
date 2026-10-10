@@ -42,3 +42,12 @@ All'interno di una traccia vengono fornite le informazioni riguardanti i pattern
     :name: ModIPA-DettaglioTracciaSicurezzaAudit
 
     ModI: informazioni aggiuntive sulla Traccia riguardanti il Pattern di Audit.
+
+- *Scambi di dati asincroni PDND*: per le transazioni relative alle fasi di uno scambio asincrono (:ref:`modipa_scambiAsincroni`), il dettaglio della transazione riporta la *Fase Asincrona* (es. 'Inizio dell'interazione (start_interaction)') e, per la fase di inizio dell'interazione, la *URL Callback* comunicata alla PDND (:numref:`ModIPA-DettaglioTransazionePdndAsync`). L'*ID Conversazione* riporta l'identificativo dell'interazione generato dalla PDND: una ricerca per identificativo di tipo 'Conversazione' (:ref:`mon_transazioni_identificativo`) consente di individuare tutte le transazioni relative alle fasi di una stessa interazione. Nell'esportazione CSV delle transazioni le stesse informazioni sono riportate nella colonna 'Servizio Correlato', con la fase seguita dall'eventuale URL di callback separata da uno spazio.
+
+   .. figure:: ../_figure_monitoraggio/ModIPA-DettaglioTransazionePdndAsync.png
+    :scale: 100%
+    :align: center
+    :name: ModIPA-DettaglioTransazionePdndAsync
+
+    ModI: fase e URL di callback di uno scambio di dati asincrono PDND nel dettaglio della transazione.

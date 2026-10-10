@@ -33,6 +33,8 @@ import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.pdd.core.dynamic.DynamicHelperCostanti;
 import org.openspcoop2.pdd.core.token.parser.Claims;
 import org.openspcoop2.protocol.engine.constants.Costanti;
+import org.openspcoop2.protocol.modipa.utils.ModIPdndAsyncApiConfig;
+import org.openspcoop2.protocol.modipa.utils.ModIPdndAsyncUtils;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;
 import org.openspcoop2.protocol.modipa.constants.ModIConsoleCostanti;
 import org.openspcoop2.protocol.modipa.utils.SOAPHeader;
@@ -65,6 +67,41 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 		return "Lettura API fallita: "+e.getMessage();
 	}
 	static ConsoleConfiguration getDynamicConfigParteSpecifica(Logger log, ModIProperties modiProperties,
+			ConsoleOperationType consoleOperationType,
+			IConsoleHelper consoleHelper, IRegistryReader registryReader,
+			IConfigIntegrationReader configIntegrationReader, IDServizio id, IDSoggetto idFruitore, boolean fruizioni) throws ProtocolException {
+		
+		ConsoleConfiguration configuration = getDynamicConfigParteSpecificaEngine(log, modiProperties,
+				consoleOperationType, consoleHelper, registryReader, configIntegrationReader, id, idFruitore, fruizioni);
+		
+		// La sezione relativa agli scambi di dati asincroni PDND viene aggiunta in fondo alle altre sezioni ModI
+		ModIPdndAsyncApiConfig pdndAsyncConfig = readPdndAsyncConfig(consoleOperationType, consoleHelper, registryReader, id, fruizioni);
+		if(ModIDynamicConfigurationPdndAsyncParteSpecificaUtilities.isSezionePresente(pdndAsyncConfig, fruizioni)) {
+			if(configuration==null) {
+				configuration = new ConsoleConfiguration();
+			}
+			ModIDynamicConfigurationPdndAsyncParteSpecificaUtilities.add(configuration, pdndAsyncConfig, fruizioni);
+		}
+		return configuration;
+	}
+	private static ModIPdndAsyncApiConfig readPdndAsyncConfig(ConsoleOperationType consoleOperationType,
+			IConsoleHelper consoleHelper, IRegistryReader registryReader, IDServizio id, boolean fruizioni) throws ProtocolException {
+		if(consoleHelper.isModalitaCompleta() || ConsoleOperationType.DEL.equals(consoleOperationType) || !isMascheraGestioneFruizioneOrErogazione(consoleHelper)) {
+			return null;
+		}
+		boolean casoSpecialeModificaNomeFruizione = !fruizioni && isMascheraGestioneFruizione(consoleHelper);
+		if(casoSpecialeModificaNomeFruizione || id==null || id.getUriAccordoServizioParteComune()==null) {
+			return null;
+		}
+		try {
+			IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(id.getUriAccordoServizioParteComune());
+			return ModIPdndAsyncUtils.readApiConfig(registryReader.getAccordoServizioParteComune(idAccordo, false, false));
+		}catch(Exception e) {
+			throw new ProtocolException(getErrorLetturaAPIFallita(e),e);
+		}
+	}
+	
+	private static ConsoleConfiguration getDynamicConfigParteSpecificaEngine(Logger log, ModIProperties modiProperties,
 			ConsoleOperationType consoleOperationType,
 			IConsoleHelper consoleHelper, IRegistryReader registryReader,
 			IConfigIntegrationReader configIntegrationReader, IDServizio id, IDSoggetto idFruitore, boolean fruizioni) throws ProtocolException {
@@ -269,6 +306,21 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 			ConsoleConfiguration consoleConfiguration,
 			ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, ProtocolProperties properties,
 			IDServizio id, IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, boolean fruizioni) throws ProtocolException {
+		
+		boolean gestita = updateDynamicConfigParteSpecificaEngine(log, modiProperties,
+				consoleConfiguration, consoleOperationType, consoleHelper, properties, id, registryReader, configIntegrationReader, fruizioni);
+		
+		ModIPdndAsyncApiConfig pdndAsyncConfig = readPdndAsyncConfig(consoleOperationType, consoleHelper, registryReader, id, fruizioni);
+		if(ModIDynamicConfigurationPdndAsyncParteSpecificaUtilities.isSezionePresente(pdndAsyncConfig, fruizioni)) {
+			ModIDynamicConfigurationPdndAsyncParteSpecificaUtilities.update(consoleConfiguration, properties, pdndAsyncConfig, fruizioni);
+			gestita = true;
+		}
+		return gestita;
+	}
+	private static boolean updateDynamicConfigParteSpecificaEngine(Logger log, ModIProperties modiProperties,
+			ConsoleConfiguration consoleConfiguration,
+			ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, ProtocolProperties properties,
+			IDServizio id, IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, boolean fruizioni) throws ProtocolException {
 		if(consoleHelper.isModalitaCompleta()) {
 			return false;
 		}
@@ -425,6 +477,20 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 	private static final String PREFIX_VERIFICATO_QUANTO_INDICATO_IN = "Verificare quanto indicato in ";
 	
 	static boolean validateDynamicConfigParteSpecifica(Logger log, ModIProperties modiProperties,
+			ConsoleConfiguration consoleConfiguration, IConsoleHelper consoleHelper, ProtocolProperties properties, IDServizio id,
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, boolean fruizioni) throws ProtocolException {
+		
+		boolean gestita = validateDynamicConfigParteSpecificaEngine(log, modiProperties,
+				consoleConfiguration, consoleHelper, properties, id, registryReader, configIntegrationReader, fruizioni);
+		
+		ModIPdndAsyncApiConfig pdndAsyncConfig = readPdndAsyncConfig(ConsoleOperationType.CHANGE, consoleHelper, registryReader, id, fruizioni);
+		if(ModIDynamicConfigurationPdndAsyncParteSpecificaUtilities.isSezionePresente(pdndAsyncConfig, fruizioni)) {
+			ModIDynamicConfigurationPdndAsyncParteSpecificaUtilities.validate(properties, pdndAsyncConfig, fruizioni);
+			gestita = true;
+		}
+		return gestita;
+	}
+	private static boolean validateDynamicConfigParteSpecificaEngine(Logger log, ModIProperties modiProperties,
 			ConsoleConfiguration consoleConfiguration, IConsoleHelper consoleHelper, ProtocolProperties properties, IDServizio id,
 			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, boolean fruizioni) throws ProtocolException {
 		

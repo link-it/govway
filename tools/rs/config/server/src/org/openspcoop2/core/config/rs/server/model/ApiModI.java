@@ -35,6 +35,13 @@ public class ApiModI  {
   
   @Schema(required = true, description = "")
   private ApiModISicurezzaMessaggio sicurezzaMessaggio = null;
+  
+  @Schema(description = "")
+  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXISTING_PROPERTY, property = "ruolo", visible = true )
+  @com.fasterxml.jackson.annotation.JsonSubTypes({
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ApiModIScambioAsincronoErogazioneDati.class, name = "erogazione_dati"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ApiModIScambioAsincronoCallback.class, name = "callback")  })
+  private OneOfApiModIScambioAsincrono scambioAsincrono = null;
  /**
    * Get interazione
    * @return interazione
@@ -94,6 +101,25 @@ public class ApiModI  {
     return this;
   }
 
+ /**
+   * Get scambioAsincrono
+   * @return scambioAsincrono
+  **/
+  @JsonProperty("scambio_asincrono")
+  @Valid
+  public OneOfApiModIScambioAsincrono getScambioAsincrono() {
+    return this.scambioAsincrono;
+  }
+
+  public void setScambioAsincrono(OneOfApiModIScambioAsincrono scambioAsincrono) {
+    this.scambioAsincrono = scambioAsincrono;
+  }
+
+  public ApiModI scambioAsincrono(OneOfApiModIScambioAsincrono scambioAsincrono) {
+    this.scambioAsincrono = scambioAsincrono;
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -103,6 +129,7 @@ public class ApiModI  {
     sb.append("    interazione: ").append(ApiModI.toIndentedString(this.interazione)).append("\n");
     sb.append("    sicurezzaCanale: ").append(ApiModI.toIndentedString(this.sicurezzaCanale)).append("\n");
     sb.append("    sicurezzaMessaggio: ").append(ApiModI.toIndentedString(this.sicurezzaMessaggio)).append("\n");
+    sb.append("    scambioAsincrono: ").append(ApiModI.toIndentedString(this.scambioAsincrono)).append("\n");
     sb.append("}");
     return sb.toString();
   }

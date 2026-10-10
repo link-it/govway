@@ -491,9 +491,9 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			
 			if(cambiaAPI) {
 				
-				List<IDAccordoDB> listaIdAPI = AccordiServizioParteSpecificaUtilities.getListaIdAPI(tipoProtocollo, userLogin, apsCore, apsHelper);
-			
 				IDAccordo oldIDAccodo = idAccordoFactory.getIDAccordoFromUri(asps.getAccordoServizioParteComune());
+				List<IDAccordoDB> listaIdAPI = AccordiServizioParteSpecificaUtilities.getListaIdAPI(tipoProtocollo, userLogin, apsCore, apsHelper, oldIDAccodo);
+			
 				IDAccordoDB attuale = null;
 				if (!listaIdAPI.isEmpty()) {
 					int i = 0;
@@ -848,10 +848,11 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				portTypes = portTypesTmp;
 			}
 			else {
-				// filtro pt senza op
+				// filtro pt senza op e servizi non utilizzabili secondo il profilo (es. fasi degli scambi asincroni PDND incomplete), mantenendo il servizio attuale
+				List<String> nonUtilizzabili = AccordiServizioParteSpecificaUtilities.getServiziNonUtilizzabili(as, apsHelper, apsCore, tipoProtocollo, asps.getPortType());
 				portTypes = new ArrayList<>();
 				for (PortType portTypeCheck : portTypesTmp) {
-					if(portTypeCheck.sizeAzioneList()>0) {
+					if(portTypeCheck.sizeAzioneList()>0 && !nonUtilizzabili.contains(portTypeCheck.getNome())) {
 						portTypes.add(portTypeCheck);
 					}
 				}

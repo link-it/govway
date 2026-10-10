@@ -12,7 +12,7 @@ per modificare i parametri di configurazione del gateway.
 
     generale/index
     cache
-    cachePDND
+    cachePDND/index
     controlloTraffico/index
     tracciamento/index
     registrazioneMessaggi

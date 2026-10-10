@@ -1,3 +1,17 @@
+2026-10-07  Andrea Poli <apoli@link.it>
+
+	Aggiunta la tabella 'PDND_INTERAZIONI_ASYNC' nello schema runtime (RepositoryMessaggi) per il supporto agli
+	scambi di dati asincroni PDND del profilo ModI. La tabella mantiene lo stato di ogni interazione
+	(interactionId emesso dalla PDND) rispetto alle fasi start_interaction, callback_invocation, get_resource e
+	confirmation, separatamente per il ruolo di fruitore e di erogatore, insieme ai tempi dichiarati nell'API
+	(tempo massimo di callback e tempo di disponibilità della risorsa) utilizzati per verificare le fasi successive.
+	Le righe vengono eliminate da un timer dopo la scadenza, trascorso un periodo di conservazione configurabile.
+
+	CREATE TABLE PDND_INTERAZIONI_ASYNC (...);
+	CREATE INDEX PDND_ASYNC_SCADENZA ON PDND_INTERAZIONI_ASYNC (DATA_SCADENZA);
+	CREATE INDEX PDND_ASYNC_AGGIORNAMENTO ON PDND_INTERAZIONI_ASYNC (DATA_AGGIORNAMENTO);
+	CREATE INDEX PDND_ASYNC_SEARCH ON PDND_INTERAZIONI_ASYNC (DATA_START,RUOLO);
+
 2026-09-06  Andrea Poli <apoli@link.it>
 
 	Solo SQL Server: ridimensionate le ultime colonne che mandavano fuori limite un indice.

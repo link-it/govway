@@ -22,6 +22,9 @@
 
 package org.openspcoop2.protocol.modipa.validator;
 
+import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.AccordoServizioParteComune;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -58,6 +61,8 @@ import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.protocol.basic.validator.ValidazioneSemantica;
 import org.openspcoop2.protocol.engine.SecurityTokenUtilities;
+import org.openspcoop2.protocol.modipa.utils.ModIPdndAsyncRuntime;
+import org.openspcoop2.protocol.modipa.utils.ModIPdndAsyncException;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
 import org.openspcoop2.protocol.modipa.utils.ModISecurityConfig;
@@ -150,6 +155,11 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 		
 		this.valida(msg,busta,tipoBusta, this.protocolFactory, this.state);
 		
+		IntegrationFunctionError pdndAsyncIntegrationFunctionError = null;
+		if(this.erroriValidazione.isEmpty() && this.erroriProcessamento.isEmpty()) {
+			pdndAsyncIntegrationFunctionError = this.validaPdndAsync(msg, busta, tipoBusta);
+		}
+		
 		java.util.List<Eccezione> erroriValidazioneList = null;
 		if(!this.erroriValidazione.isEmpty()){
 			erroriValidazioneList = this.erroriValidazione;
@@ -161,8 +171,62 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 		if(!this.erroriProcessamento.isEmpty()){
 			erroriValidazioneList = this.erroriProcessamento;
 		}
-		return new ValidazioneSemanticaResult(erroriValidazioneList, erroriProcessamentoList, null, null, null, null);
+		ValidazioneSemanticaResult result = new ValidazioneSemanticaResult(erroriValidazioneList, erroriProcessamentoList, null, null, null, null);
+		if(pdndAsyncIntegrationFunctionError!=null) {
+			result.setErrore_integrationFunctionError(pdndAsyncIntegrationFunctionError);
+		}
+		return result;
 		
+	}
+	
+	/**
+	 * Scambi di dati asincroni PDND: verifica e registrazione della fase dell'interazione 
+	 * (erogazione: richiesta ricevuta dal fruitore; fruizione: risposta ricevuta dall'erogatore)
+	 * 
+	 * @return l'errore da restituire al client se la fase non è ammessa
+	 */
+	private IntegrationFunctionError validaPdndAsync(OpenSPCoop2Message msg, Busta busta, RuoloBusta tipoBusta) throws ProtocolException {
+		if(busta==null || this.context==null) {
+			return null;
+		}
+		boolean isRichiesta = RuoloBusta.RICHIESTA.equals(tipoBusta);
+		try {
+			RequestInfo requestInfo = null;
+			if(this.context.containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)) {
+				requestInfo = (RequestInfo) this.context.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+			}
+			ModIPdndAsyncRuntime runtime = new ModIPdndAsyncRuntime(this.log, this.modiProperties, this.protocolFactory, this.state, this.context, requestInfo);
+			if(!isRichiesta) {
+				runtime.fruizioneRisposta(busta, msg);
+				return null;
+			}
+			IRegistryReader registryReader = this.protocolFactory.getCachedRegistryReader(this.state, requestInfo);
+			IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(busta.getTipoServizio(), busta.getServizio(), 
+					busta.getTipoDestinatario(), busta.getDestinatario(), busta.getVersioneServizio());
+			AccordoServizioParteSpecifica asps = registryReader.getAccordoServizioParteSpecifica(idServizio);
+			AccordoServizioParteComune aspc = registryReader.getAccordoServizioParteComune(IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune()));
+			runtime.erogazioneRichiesta(busta, msg, aspc, asps, registryReader);
+			return null;
+		}catch(ModIPdndAsyncException e) {
+			if(e.getIntegrationFunctionError()!=null && e.getIntegrationFunctionError().isServerError()) {
+				// errore non imputabile al client (es. configurazione incompleta): errore di processamento
+				this.logError("Gestione scambio di dati asincrono PDND fallita: "+e.getMessage(),e);
+				this.erroriProcessamento.add(this.validazioneUtils.newEccezioneProcessamento(CodiceErroreCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO, 
+						e.getMessage(),e));
+				return isRichiesta ? e.getIntegrationFunctionError() : null;
+			}
+			this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.COLLABORAZIONE_NON_VALIDA, e.getMessage()));
+			if(this.context!=null) {
+				this.context.addObject(Costanti.ERRORE_VALIDAZIONE_PROTOCOLLO, Costanti.ERRORE_TRUE);
+			}
+			return e.getIntegrationFunctionError();
+		}catch(Exception e) {
+			this.logError("Gestione scambio di dati asincrono PDND fallita: "+e.getMessage(),e);
+			this.erroriProcessamento.add(this.validazioneUtils.newEccezioneProcessamento(CodiceErroreCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO, 
+					e.getMessage(),e));
+			// errore non imputabile al client
+			return isRichiesta ? IntegrationFunctionError.INTERNAL_REQUEST_ERROR : null;
+		}
 	}
 
 	private void valida(OpenSPCoop2Message msg,Busta busta, RuoloBusta tipoBusta, IProtocolFactory<?> factory, IState state) throws ProtocolException{

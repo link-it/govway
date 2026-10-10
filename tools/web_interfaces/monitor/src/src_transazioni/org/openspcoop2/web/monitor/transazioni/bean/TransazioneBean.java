@@ -1275,6 +1275,20 @@ public class TransazioneBean extends Transazione{
 		return "";
 	}
 	
+	/**
+	 * Scambi di dati asincroni PDND (profilo ModI): la fase e la URL di callback sono salvate nelle colonne del servizio correlato
+	 */
+	public boolean isPdndAsync() {
+		return org.openspcoop2.protocol.engine.constants.Costanti.MODIPA_PROTOCOL_NAME.equals(this.getProtocollo()) &&
+				org.openspcoop2.core.constants.CostantiLabel.getLabelFasePdndAsync(this.getTipoServizioCorrelato())!=null;
+	}
+	public String getPdndAsyncFase() {
+		return isPdndAsync() ? org.openspcoop2.core.constants.CostantiLabel.getLabelFasePdndAsync(this.getTipoServizioCorrelato()) : null;
+	}
+	public String getPdndAsyncUrlCallback() {
+		return isPdndAsync() && StringUtils.isNotEmpty(this.getNomeServizioCorrelato()) ? this.getNomeServizioCorrelato() : null;
+	}
+	
 	public boolean isShowProfiloCollaborazione() {
 		return TipoAPI.SOAP.getValoreAsInt() == this.getTipoApi();
 	}

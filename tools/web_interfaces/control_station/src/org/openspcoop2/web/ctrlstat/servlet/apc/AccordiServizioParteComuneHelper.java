@@ -82,6 +82,7 @@ import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
+import org.openspcoop2.protocol.sdk.properties.StatoConfigurazioneAccordo;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
@@ -6227,6 +6228,23 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		}
 	}
 	
+	private String getMessageWarningStatoProfilo(boolean create, AccordoServizioParteComune as) {
+		try {
+			if(as==null || as.getSoggettoReferente()==null) {
+				return null;
+			}
+			String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getSoggettoReferente().getTipo());
+			StatoConfigurazioneAccordo stato = AccordiServizioParteComuneUtilities.getStatoApi(this.apcCore, this, protocollo, this.idAccordoFactory.getIDAccordoFromAccordo(as));
+			if(stato!=null && stato.getDescrizione()!=null) {
+				String prefix = create ? AccordiServizioParteComuneCostanti.LABEL_CONFIGURAZIONE_INCOMPLETA_PREFIX_CREATE : AccordiServizioParteComuneCostanti.LABEL_CONFIGURAZIONE_INCOMPLETA_PREFIX_UPDATE;
+				return prefix.trim()+". "+stato.getDescrizione();
+			}
+		}catch(Exception e) {
+			this.logError("Verifica dello stato dell'API secondo il profilo di interoperabilità fallita: "+e.getMessage(), e);
+		}
+		return null;
+	}
+	
 	public boolean setMessageWarningStatoConsistenzaAccordo(boolean create, AccordoServizioParteComune as) {
 		
 		String msgError = null;
@@ -6278,6 +6296,11 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					}
 				}
 			}
+		}
+		
+		if(msgError==null) {
+			// configurazione incompleta secondo il profilo di interoperabilità (es. fasi degli scambi di dati asincroni PDND non associate nel profilo ModI)
+			msgError = getMessageWarningStatoProfilo(create, as);
 		}
 		
 		if(msgError!=null) {

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  API di callback di esempio per gli scambi di dati asincroni PDND (versione compatta).
+  Erogata dal fruitore dell'e-service 'PDNDAsyncEServiceCompatta': l'operazione callbackInvocation corrisponde alla fase callback_invocation.
+-->
+<wsdl:definitions name="PDNDAsyncCallbackCompatta"
+	targetNamespace="http://govway.org/example/modipa/pdnd/async/callback"
+	xmlns:tns="http://govway.org/example/modipa/pdnd/async/callback"
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+	<wsdl:types>
+		<xsd:schema targetNamespace="http://govway.org/example/modipa/pdnd/async/callback" elementFormDefault="qualified">
+			<xsd:element name="callbackInvocation">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="status" type="xsd:string"/>
+						<xsd:element name="entities" type="xsd:int" minOccurs="0"/>
+						<xsd:element name="message" type="xsd:string" minOccurs="0"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="callbackInvocationResponse" type="tns:Ack"/>
+			<xsd:complexType name="Ack">
+				<xsd:sequence>
+					<xsd:element name="outcome" type="xsd:string"/>
+				</xsd:sequence>
+			</xsd:complexType>
+		</xsd:schema>
+	</wsdl:types>
+
+	<wsdl:message name="callbackInvocationRequest">
+		<wsdl:part name="parameters" element="tns:callbackInvocation"/>
+	</wsdl:message>
+	<wsdl:message name="callbackInvocationResponse">
+		<wsdl:part name="parameters" element="tns:callbackInvocationResponse"/>
+	</wsdl:message>
+
+	<wsdl:portType name="PDNDAsyncCallbackCompattaPortType">
+		<wsdl:operation name="callbackInvocation">
+			<wsdl:documentation>Invocazione della callback (callback_invocation)</wsdl:documentation>
+			<wsdl:input message="tns:callbackInvocationRequest"/>
+			<wsdl:output message="tns:callbackInvocationResponse"/>
+		</wsdl:operation>
+	</wsdl:portType>
+
+	<wsdl:binding name="PDNDAsyncCallbackCompattaBinding" type="tns:PDNDAsyncCallbackCompattaPortType">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="callbackInvocation">
+			<soap:operation soapAction="callbackInvocation" style="document"/>
+			<wsdl:input><soap:body use="literal"/></wsdl:input>
+			<wsdl:output><soap:body use="literal"/></wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+
+	<wsdl:service name="PDNDAsyncCallbackCompattaService">
+		<wsdl:port name="PDNDAsyncCallbackCompattaPort" binding="tns:PDNDAsyncCallbackCompattaBinding">
+			<soap:address location="http://localhost:9302/"/>
+		</wsdl:port>
+	</wsdl:service>
+
+</wsdl:definitions>

@@ -2794,6 +2794,12 @@ public class OpenSPCoop2Properties {
 				
 			}
 			
+			if(this.isGestoreInterazioniAsincronePDNDEnabled()) {
+				isGestoreInterazioniAsincronePDNDDebug();
+				getGestoreInterazioniAsincronePDNDTimerIntervalloSecondi();
+				getGestoreInterazioniAsincronePDNDConservazioneSecondi();
+			}
+			
 			if(this.isGestoreChiaviPDNDEnabled()) {
 				isGestoreChiaviPDNDDebug();
 				isGestoreChiaviPDNDEventiAdd();
@@ -35639,6 +35645,106 @@ public class OpenSPCoop2Properties {
 
 		return this.pdndTracciamentoPubblicazioneDbBatchSize;
 	}
+	
+	
+	/* ------------- Gestore Interazioni Asincrone PDND ---------------------*/
+	
+	private Boolean isGestoreInterazioniAsincronePDNDEnabled = null;
+	public boolean isGestoreInterazioniAsincronePDNDEnabled() {	
+		if(this.isGestoreInterazioniAsincronePDNDEnabled==null){
+			String pName = "org.openspcoop2.pdd.gestoreInterazioniAsincronePDND.enabled";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
+					name="true";
+				}
+				name = name.trim();
+				this.isGestoreInterazioniAsincronePDNDEnabled = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.isGestoreInterazioniAsincronePDNDEnabled = true;
+			}    
+		}
+
+		return this.isGestoreInterazioniAsincronePDNDEnabled;
+	}
+	
+	private Boolean isGestoreInterazioniAsincronePDNDDebug = null;
+	public boolean isGestoreInterazioniAsincronePDNDDebug() {	
+		if(this.isGestoreInterazioniAsincronePDNDDebug==null){
+			String pName = "org.openspcoop2.pdd.gestoreInterazioniAsincronePDND.debug";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
+					name="false";
+				}
+				name = name.trim();
+				this.isGestoreInterazioniAsincronePDNDDebug = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
+				this.isGestoreInterazioniAsincronePDNDDebug = false;
+			}    
+		}
+
+		return this.isGestoreInterazioniAsincronePDNDDebug;
+	}
+	
+	private Long getGestoreInterazioniAsincronePDNDTimerIntervalloSecondi = null;
+	public long getGestoreInterazioniAsincronePDNDTimerIntervalloSecondi() {	
+		if(this.getGestoreInterazioniAsincronePDNDTimerIntervalloSecondi==null){
+			String pName = "org.openspcoop2.pdd.gestoreInterazioniAsincronePDND.timer.intervalloSecondi";
+			long defaultValue = 3600;
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					this.logWarn(getMessaggioProprietaNonImpostata(pName,defaultValue));
+					name=defaultValue+"";
+				}
+				name = name.trim();
+				this.getGestoreInterazioniAsincronePDNDTimerIntervalloSecondi = Long.valueOf(name);
+				if(this.getGestoreInterazioniAsincronePDNDTimerIntervalloSecondi<=0) {
+					throw new CoreException("Atteso un intervallo maggiore di zero");
+				}
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default="+defaultValue+" : "+e.getMessage(),e);
+				this.getGestoreInterazioniAsincronePDNDTimerIntervalloSecondi = defaultValue;
+			}    
+		}
+
+		return this.getGestoreInterazioniAsincronePDNDTimerIntervalloSecondi;
+	}
+	
+	private Long getGestoreInterazioniAsincronePDNDConservazioneSecondi = null;
+	public long getGestoreInterazioniAsincronePDNDConservazioneSecondi() {	
+		if(this.getGestoreInterazioniAsincronePDNDConservazioneSecondi==null){
+			String pName = "org.openspcoop2.pdd.gestoreInterazioniAsincronePDND.conservazioneSecondi";
+			long defaultValue = 604800;
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					this.logWarn(getMessaggioProprietaNonImpostata(pName,defaultValue));
+					name=defaultValue+"";
+				}
+				name = name.trim();
+				this.getGestoreInterazioniAsincronePDNDConservazioneSecondi = Long.valueOf(name);
+				if(this.getGestoreInterazioniAsincronePDNDConservazioneSecondi<0) {
+					throw new CoreException("Atteso un valore maggiore o uguale a zero");
+				}
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default="+defaultValue+" : "+e.getMessage(),e);
+				this.getGestoreInterazioniAsincronePDNDConservazioneSecondi = defaultValue;
+			}    
+		}
+
+		return this.getGestoreInterazioniAsincronePDNDConservazioneSecondi;
+	}
+	
 	
 	
 	/* ------------- Gestore Chiavi PDND ---------------------*/

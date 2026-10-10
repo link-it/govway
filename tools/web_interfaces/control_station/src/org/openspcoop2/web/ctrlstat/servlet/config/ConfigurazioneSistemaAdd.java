@@ -800,6 +800,13 @@ public final class ConfigurazioneSistemaAdd extends Action {
 						labelDialog = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_TIMER_PREFIX+
 								ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_CACHE_CHIAVI_PDND+ " "+ ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_TIMERS_PDND;
 					}
+					else if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_INTERAZIONI_ASINCRONE_PDND.equals(nomeParametroPostBack)){
+						nomeAttributo = confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreInterazioniAsincronePDND(alias);
+						nuovoStato = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_INTERAZIONI_ASINCRONE_PDND);
+						tipo =ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_STATO_TIMER_PREFIX+"'"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_INTERAZIONI_ASINCRONE_PDND+"'";
+						labelDialog = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_TIMER_PREFIX+
+								ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_INTERAZIONI_ASINCRONE_PDND+ " "+ ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_TIMERS_PDND_INTERAZIONI_ASINCRONE;
+					}
 										
 					if(nomeAttributo!=null){
 						confCore.getInvoker().setJMXAttribute(alias,confCore.getJmxPdDCacheType(alias), 

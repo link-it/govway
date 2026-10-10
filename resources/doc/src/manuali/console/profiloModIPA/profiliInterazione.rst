@@ -17,6 +17,7 @@ La maschera di editing della singola operation/risorsa possiede la sezione ModI 
     + *Tipo*: (solo per il pattern non bloccante) indica se l'interazione prevista è di tipo PUSH (iniziativa del mittente) o PULL (iniziativa del destinatario)
     + *Funzione*: (solo per il pattern non bloccante) indica se l'operation/risorsa ha la funzione di inviare una richiesta, chiedere lo stato di avanzamento dell'elaborazione della risposta o inviare una risposta.
     + *Richiesta Correlata*: (solo per la funzione Richiesta Stato e Risposta) indica l'operation/risorsa correlata che corrisponde all'invio della richiesta.
+    + *Fase Asincrona*: (solo per le API configurate per gli scambi di dati asincroni PDND) indica la fase dello scambio associata all'operation/risorsa; se viene selezionata una fase, il pattern di interazione viene fissato ad 'Accesso CRUD' (REST) o 'Bloccante' (SOAP) (:ref:`modipa_scambiAsincroni_api`).
 
    .. figure:: ../_figure_console/modipa_api_bloccante.png
     :scale: 50%
@@ -31,6 +32,9 @@ La maschera di editing della singola operation/risorsa possiede la sezione ModI 
 Nelle sezioni seguenti vengono forniti maggiori dettagli su come siano gestiti i pattern non bloccanti.
 
 Infine, nella sezione :ref:`modipa_bulkREST` viene descritto il supporto al pattern *BULK_RESOURCE_REST* per la gestione di risorse massive tramite API REST.
+
+.. note::
+    Gli scambi di dati asincroni definiti dalla PDND (:ref:`modipa_scambiAsincroni`) non corrispondono al pattern Non Bloccante: la correlazione tra le fasi non avviene tramite gli header previsti dal pattern (es. 'X-Correlation-ID', 'X-ReplyTo') ma tramite l'identificativo dell'interazione generato dalla PDND, e ogni fase richiede un voucher dedicato. Per le operation/risorse associate ad una fase dello scambio il pattern di interazione viene fissato ad 'Accesso CRUD' per le API REST e a 'Bloccante' per le API SOAP.
 
 .. toctree::
         :maxdepth: 2

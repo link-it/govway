@@ -219,6 +219,26 @@ public class TransazioneUtilities {
 	}
 	
 	
+	private static final int PDND_ASYNC_NOME_SERVIZIO_CORRELATO_MAX_LENGTH = 255;
+	private static void fillPdndAsync(InformazioniTransazione info, Transazione transactionDTO) {
+		if(info.getContext()==null || !info.getContext().containsKey(org.openspcoop2.core.constants.Costanti.PDND_ASYNC_FASE)) {
+			return;
+		}
+		String fase = (String) info.getContext().getObject(org.openspcoop2.core.constants.Costanti.PDND_ASYNC_FASE);
+		transactionDTO.setTipoServizioCorrelato(fase);
+		// la URL di callback viene tracciata solamente nella fase start_interaction, in cui viene comunicata;
+		// nella fase callback_invocation è presente nel contesto solamente per il connettore (${context:pdndAsyncUrlCallback}) ed è già visibile come connettore della transazione
+		if(!org.openspcoop2.core.constants.CostantiDB.MODIPA_PDND_ASYNC_FASE_VALUE_START_INTERACTION.equals(fase)) {
+			return;
+		}
+		Object url = info.getContext().getObject(org.openspcoop2.core.constants.Costanti.PDND_ASYNC_URL_CALLBACK);
+		if(url instanceof String) {
+			String u = (String) url;
+			// la URL completa è conservata nella tabella delle interazioni asincrone; nella transazione viene troncata alla dimensione della colonna
+			transactionDTO.setNomeServizioCorrelato(u.length()>PDND_ASYNC_NOME_SERVIZIO_CORRELATO_MAX_LENGTH ? u.substring(0, PDND_ASYNC_NOME_SERVIZIO_CORRELATO_MAX_LENGTH) : u);
+		}
+	}
+	
 	public Transazione fillTransaction(InformazioniTransazione info, Transaction transaction, IDSoggetto idDominio,
 			TransazioniProcessTimes times, FaseTracciamento fase, 
 			EsitoTransazione esito, String esitoContext,
@@ -795,6 +815,9 @@ public class TransazioneUtilities {
 					transactionDTO.setNomeServizioCorrelato(busta.getServizioCorrelato());
 				}
 			}
+			
+			// Scambi di dati asincroni PDND: fase dello scambio e URL di callback
+			fillPdndAsync(info, transactionDTO);
 			
 			if(transactionDTO.getIdCollaborazione()==null) {
 				if(tracciaRichiesta!=null && tracciaRichiesta.getBusta()!=null && tracciaRichiesta.getBusta().getCollaborazione()!=null) {

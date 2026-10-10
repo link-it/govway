@@ -700,7 +700,8 @@ public class Helper extends org.openspcoop2.utils.service.beans.utils.BaseHelper
 	}
 	
 	public static final StatoFunzionalita boolToStatoFunzionalita(Boolean v) {
-		return v ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO;
+		// valore non indicato nella richiesta: funzionalità disabilitata (come in boolToStatoFunzionalitaConf)
+		return v!=null && v.booleanValue() ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO;
 	}
 	
 	public static final org.openspcoop2.core.config.constants.StatoFunzionalita boolToStatoFunzionalitaConf(Boolean v) {

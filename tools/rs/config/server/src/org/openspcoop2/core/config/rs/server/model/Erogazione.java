@@ -45,6 +45,9 @@ public class Erogazione extends APIImpl {
     @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ErogazioneModISoap.class, name = "soap"),
     @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ErogazioneModIRest.class, name = "rest")  })
   private OneOfErogazioneModi modi = null;
+  
+  @Schema(description = "")
+  private ErogazioneModIScambioAsincrono modiScambioAsincrono = null;
  /**
    * Get descrizione
    * @return descrizione
@@ -140,6 +143,25 @@ public class Erogazione extends APIImpl {
     return this;
   }
 
+ /**
+   * Get modiScambioAsincrono
+   * @return modiScambioAsincrono
+  **/
+  @JsonProperty("modi_scambio_asincrono")
+  @Valid
+  public ErogazioneModIScambioAsincrono getModiScambioAsincrono() {
+    return this.modiScambioAsincrono;
+  }
+
+  public void setModiScambioAsincrono(ErogazioneModIScambioAsincrono modiScambioAsincrono) {
+    this.modiScambioAsincrono = modiScambioAsincrono;
+  }
+
+  public Erogazione modiScambioAsincrono(ErogazioneModIScambioAsincrono modiScambioAsincrono) {
+    this.modiScambioAsincrono = modiScambioAsincrono;
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -151,6 +173,7 @@ public class Erogazione extends APIImpl {
     sb.append("    erogazioneVersione: ").append(Erogazione.toIndentedString(this.erogazioneVersione)).append("\n");
     sb.append("    canale: ").append(Erogazione.toIndentedString(this.canale)).append("\n");
     sb.append("    modi: ").append(Erogazione.toIndentedString(this.modi)).append("\n");
+    sb.append("    modiScambioAsincrono: ").append(Erogazione.toIndentedString(this.modiScambioAsincrono)).append("\n");
     sb.append("}");
     return sb.toString();
   }

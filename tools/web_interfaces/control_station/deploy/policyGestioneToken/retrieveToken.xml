@@ -40,6 +40,17 @@
 		<item type="textarea" name="endpointURL" label="URL" required="true" default="http://">
 			<property name="policy.retrieveToken.endpoint.url" />
 		</item>
+		
+		<item type="textarea" name="endpointURLAsync" label="URL Scambi Asincroni" required="false" 
+			note="URL utilizzata per la negoziazione dei voucher relativi agli scambi di dati asincroni">
+			<conditions>
+				<condition and="true">
+					<selected name="jwtPDND"/>
+					<equals name="retrieveTokenMethod" value="rfc7523_x509"/>
+				</condition>
+			</conditions>
+			<property name="policy.retrieveToken.endpoint.url.async" />
+		</item>
 
 		<item type="number" name="endpointConnectionTimeout" label="Connection Timeout" required="true" default="5000" min="1">
 			<property name="connectionTimeout" properties="endpointConfig" />

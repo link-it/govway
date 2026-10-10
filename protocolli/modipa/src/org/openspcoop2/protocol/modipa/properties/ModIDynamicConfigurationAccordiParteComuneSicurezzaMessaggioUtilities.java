@@ -168,6 +168,14 @@ public class ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtiliti
 		profiloSicurezzaMessaggioSorgenteTokenIdAuthItem.setType(ConsoleItemType.HIDDEN);
 		configuration.addConsoleItem(profiloSicurezzaMessaggioSorgenteTokenIdAuthItem);
 		
+		// visualizzazione in sola lettura (es. API configurata per gli scambi di dati asincroni PDND)
+		StringConsoleItem profiloSicurezzaMessaggioSorgenteTokenIdAuthItemReadOnly = (StringConsoleItem) 
+				ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
+				ConsoleItemType.HIDDEN,
+				ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_ID_INUSE_READONLY, 
+				ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_LABEL);
+		configuration.addConsoleItem(profiloSicurezzaMessaggioSorgenteTokenIdAuthItemReadOnly);
+		
 		if(rest) {
 			
 			// !! Nel caso di 2 header, quello integrity viene prodotto solo se c'è un payload o uno degli header indicati da firmare.
@@ -310,6 +318,11 @@ public class ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtiliti
 		profiloSicurezzaMessaggioCorniceSicurezza.setReloadOnChange(true);
 		configuration.addConsoleItem(profiloSicurezzaMessaggioCorniceSicurezza);
 		
+		// Scambio di dati asincrono PDND: dipende dalla generazione del token 'Authorization PDND' ed è configurabile solamente sull'API
+		if(!action) {
+			ModIDynamicConfigurationPdndAsyncUtilities.addPdndAsyncApiCheckbox(configuration);
+		}
+		
 		
 		// Configurazione
 		
@@ -342,6 +355,14 @@ public class ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtiliti
 		}
 		profiloSicurezzaRichiestaConfigurazioneItem.setReloadOnChange(true);
 		configuration.addConsoleItem(profiloSicurezzaRichiestaConfigurazioneItem);
+		
+		// visualizzazione in sola lettura (es. scambi di dati asincroni PDND, dove la sicurezza sulla richiesta deve essere sempre applicata)
+		StringConsoleItem profiloSicurezzaRichiestaConfigurazioneItemReadOnly = (StringConsoleItem) 
+				ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
+				ConsoleItemType.HIDDEN,
+				ModIConsoleCostanti.MODIPA_API_CONFIGURAZIONE_SICUREZZA_RICHIESTA_MODE_ID_INUSE_READONLY, 
+				ModIConsoleCostanti.MODIPA_API_CONFIGURAZIONE_SICUREZZA_RICHIESTA_MODE_LABEL);
+		configuration.addConsoleItem(profiloSicurezzaRichiestaConfigurazioneItemReadOnly);
 			
 		StringConsoleItem profiloSicurezzaRichiestaConfigurazioneContentTypeItem = (StringConsoleItem) 
 				ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
@@ -479,6 +500,11 @@ public class ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtiliti
 		profiloSicurezzaMessaggioCorniceSicurezzaOpzionale.setDefaultValue(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_OPZIONALE_DEFAULT_VALUE);
 		profiloSicurezzaMessaggioCorniceSicurezzaOpzionale.setReloadOnChange(false);
 		configuration.addConsoleItem(profiloSicurezzaMessaggioCorniceSicurezzaOpzionale);
+		
+		// Sezione dello scambio di dati asincrono PDND
+		if(!action) {
+			ModIDynamicConfigurationPdndAsyncUtilities.addPdndAsyncApiSezione(configuration);
+		}
 
 	}
 	

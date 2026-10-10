@@ -86,6 +86,8 @@ import org.openspcoop2.pdd.timers.pdnd.TimerGestoreCacheChiaviPDND;
 import org.openspcoop2.pdd.timers.pdnd.TimerGestoreCacheChiaviPDNDLib;
 import org.openspcoop2.pdd.timers.pdnd.TimerGestoreChiaviPDND;
 import org.openspcoop2.pdd.timers.pdnd.TimerGestoreChiaviPDNDLib;
+import org.openspcoop2.pdd.timers.pdnd.TimerGestoreInterazioniAsincronePDND;
+import org.openspcoop2.pdd.timers.pdnd.TimerGestoreInterazioniAsincronePDNDLib;
 import org.openspcoop2.pdd.timers.proxy.TimerGestoreOperazioniRemoteLib;
 import org.openspcoop2.pdd.timers.proxy.TimerSvecchiamentoOperazioniRemoteLib;
 import org.openspcoop2.protocol.basic.Costanti;
@@ -149,6 +151,7 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 	public static final String TIMER_TRACING_PDND_PUBBLICAZIONE = "timerTracingPdndPubblicazione";
 	public static final String TIMER_GESTORE_CHIAVI_PDND = "timerGestoreChiaviPDND";
 	public static final String TIMER_GESTORE_CACHE_CHIAVI_PDND = "timerGestoreCacheChiaviPDND";
+	public static final String TIMER_GESTORE_INTERAZIONI_ASINCRONE_PDND = "timerGestoreInterazioniAsincronePDND";
 	public static final String TIMER_GESTORE_OPERAZIONI_REMOTE = "timerGestoreOperazioniRemote";
 	public static final String TIMER_SVECCHIAMENTO_OPERAZIONI_REMOTE = "timerSvecchiamentoOperazioniRemote";
 	public static final String TIMER_THRESHOLD_THREAD = "timerThresholdThread";
@@ -368,6 +371,9 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		if(attributeName.equals(ConfigurazionePdD.TIMER_GESTORE_CACHE_CHIAVI_PDND))
 			return TimerGestoreCacheChiaviPDNDLib.getState().name();
 		
+		if(attributeName.equals(ConfigurazionePdD.TIMER_GESTORE_INTERAZIONI_ASINCRONE_PDND))
+			return TimerGestoreInterazioniAsincronePDNDLib.getState().name();
+		
 		if(attributeName.equals(ConfigurazionePdD.TIMER_GESTORE_OPERAZIONI_REMOTE))
 			return TimerGestoreOperazioniRemoteLib.getState().name();
 		
@@ -539,6 +545,9 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			
 			else if(attribute.getName().equals(ConfigurazionePdD.TIMER_GESTORE_CACHE_CHIAVI_PDND))
 				TimerGestoreCacheChiaviPDNDLib.setState( getTimerState(attribute.getValue()) );
+			
+			else if(attribute.getName().equals(ConfigurazionePdD.TIMER_GESTORE_INTERAZIONI_ASINCRONE_PDND))
+				TimerGestoreInterazioniAsincronePDNDLib.setState( getTimerState(attribute.getValue()) );
 			
 			else if(attribute.getName().equals(ConfigurazionePdD.TIMER_GESTORE_OPERAZIONI_REMOTE))
 				TimerGestoreOperazioniRemoteLib.setState( getTimerState(attribute.getValue()) );
@@ -2003,6 +2012,12 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 						"Indicazione se è abilitato il timer '"+TimerGestoreCacheChiaviPDND.ID_MODULO+"' ("+TimerState.ENABLED.name()+"/"+TimerState.DISABLED.name()+")",
 							JMXUtils.JMX_ATTRIBUTE_READABLE,JMXUtils.JMX_ATTRIBUTE_WRITABLE,!JMXUtils.JMX_ATTRIBUTE_IS_GETTER);
 
+		// MetaData per l'attributo timerGestoreInterazioniAsincronePDNDVAR
+		MBeanAttributeInfo timerGestoreInterazioniAsincronePDNDVAR 
+			= new MBeanAttributeInfo(ConfigurazionePdD.TIMER_GESTORE_INTERAZIONI_ASINCRONE_PDND,String.class.getName(),
+						"Indicazione se è abilitato il timer '"+TimerGestoreInterazioniAsincronePDND.ID_MODULO+"' ("+TimerState.ENABLED.name()+"/"+TimerState.DISABLED.name()+")",
+							JMXUtils.JMX_ATTRIBUTE_READABLE,JMXUtils.JMX_ATTRIBUTE_WRITABLE,!JMXUtils.JMX_ATTRIBUTE_IS_GETTER);
+
 		// MetaData per l'attributo timerThresholdThreadVAR
 		MBeanAttributeInfo timerThresholdThreadVAR 
 			= new MBeanAttributeInfo(ConfigurazionePdD.TIMER_THRESHOLD_THREAD,String.class.getName(),
@@ -2598,7 +2613,7 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 				timerMonitoraggioRisorseThreadVAR, timerThresholdThreadVAR,
 				timerClusterDinamicoVAR,
 				timerRepositoryStatefulThreadVAR,
-				timerGestoreChiaviVAR, timerGestoreCacheChiaviVAR};
+				timerGestoreChiaviVAR, timerGestoreCacheChiaviVAR, timerGestoreInterazioniAsincronePDNDVAR};
 		
 		// Lista Costruttori
 		MBeanConstructorInfo[] constructors = new MBeanConstructorInfo[]{defaultConstructor};

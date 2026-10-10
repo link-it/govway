@@ -33,6 +33,9 @@ public class ErogazioneModI  {
     @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ErogazioneModISoap.class, name = "soap"),
     @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ErogazioneModIRest.class, name = "rest")  })
   private OneOfErogazioneModIModi modi = null;
+  
+  @Schema(description = "")
+  private ErogazioneModIScambioAsincrono modiScambioAsincrono = null;
  /**
    * Get modi
    * @return modi
@@ -53,6 +56,25 @@ public class ErogazioneModI  {
     return this;
   }
 
+ /**
+   * Get modiScambioAsincrono
+   * @return modiScambioAsincrono
+  **/
+  @JsonProperty("modi_scambio_asincrono")
+  @Valid
+  public ErogazioneModIScambioAsincrono getModiScambioAsincrono() {
+    return this.modiScambioAsincrono;
+  }
+
+  public void setModiScambioAsincrono(ErogazioneModIScambioAsincrono modiScambioAsincrono) {
+    this.modiScambioAsincrono = modiScambioAsincrono;
+  }
+
+  public ErogazioneModI modiScambioAsincrono(ErogazioneModIScambioAsincrono modiScambioAsincrono) {
+    this.modiScambioAsincrono = modiScambioAsincrono;
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -60,6 +82,7 @@ public class ErogazioneModI  {
     sb.append("class ErogazioneModI {\n");
     
     sb.append("    modi: ").append(ErogazioneModI.toIndentedString(this.modi)).append("\n");
+    sb.append("    modiScambioAsincrono: ").append(ErogazioneModI.toIndentedString(this.modiScambioAsincrono)).append("\n");
     sb.append("}");
     return sb.toString();
   }

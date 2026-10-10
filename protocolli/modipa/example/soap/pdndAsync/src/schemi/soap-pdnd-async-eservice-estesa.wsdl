@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  E-service di esempio per gli scambi di dati asincroni PDND (versione estesa).
+  Le operazioni startInteraction, getResource e confirmation corrispondono alle fasi start_interaction, get_resource e confirmation;
+  l'identificativo dell'interazione (interactionId) viene gestito da GovWay come identificativo di collaborazione (header 'GovWay-Conversation-ID').
+  Contiene inoltre operazioni sincrone che non partecipano allo scambio asincrono.
+-->
+<wsdl:definitions name="PDNDAsyncEServiceEstesa"
+	targetNamespace="http://govway.org/example/modipa/pdnd/async/eservice"
+	xmlns:tns="http://govway.org/example/modipa/pdnd/async/eservice"
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+	<wsdl:types>
+		<xsd:schema targetNamespace="http://govway.org/example/modipa/pdnd/async/eservice" elementFormDefault="qualified">
+			<xsd:element name="startInteraction">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="subject" type="xsd:string"/>
+						<xsd:element name="entities" type="xsd:int" minOccurs="0"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="startInteractionResponse" type="tns:Outcome"/>
+			<xsd:element name="getResource">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="offset" type="xsd:int" minOccurs="0"/>
+						<xsd:element name="limit" type="xsd:int" minOccurs="0"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="getResourceResponse">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="total" type="xsd:int"/>
+						<xsd:element name="offset" type="xsd:int"/>
+						<xsd:element name="entity" type="tns:Entity" minOccurs="0" maxOccurs="unbounded"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="confirmation">
+				<xsd:complexType>
+					<xsd:sequence/>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="confirmationResponse" type="tns:Outcome"/>
+			<xsd:complexType name="Outcome">
+				<xsd:sequence>
+					<xsd:element name="outcome" type="xsd:string"/>
+				</xsd:sequence>
+			</xsd:complexType>
+			<xsd:complexType name="Entity">
+				<xsd:sequence>
+					<xsd:element name="id" type="xsd:int"/>
+					<xsd:element name="value" type="xsd:string" minOccurs="0"/>
+				</xsd:sequence>
+			</xsd:complexType>
+			<xsd:element name="getCatalogItem">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="code" type="xsd:string"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="getCatalogItemResponse" type="tns:CatalogItem"/>
+			<xsd:element name="updateCatalogItem" type="tns:CatalogItem"/>
+			<xsd:element name="updateCatalogItemResponse" type="tns:Outcome"/>
+			<xsd:element name="health">
+				<xsd:complexType>
+					<xsd:sequence/>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="healthResponse">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="status" type="xsd:string"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:complexType name="CatalogItem">
+				<xsd:sequence>
+					<xsd:element name="code" type="xsd:string"/>
+					<xsd:element name="description" type="xsd:string" minOccurs="0"/>
+				</xsd:sequence>
+			</xsd:complexType>
+		</xsd:schema>
+	</wsdl:types>
+
+	<wsdl:message name="startInteractionRequest">
+		<wsdl:part name="parameters" element="tns:startInteraction"/>
+	</wsdl:message>
+	<wsdl:message name="startInteractionResponse">
+		<wsdl:part name="parameters" element="tns:startInteractionResponse"/>
+	</wsdl:message>
+	<wsdl:message name="getResourceRequest">
+		<wsdl:part name="parameters" element="tns:getResource"/>
+	</wsdl:message>
+	<wsdl:message name="getResourceResponse">
+		<wsdl:part name="parameters" element="tns:getResourceResponse"/>
+	</wsdl:message>
+	<wsdl:message name="confirmationRequest">
+		<wsdl:part name="parameters" element="tns:confirmation"/>
+	</wsdl:message>
+	<wsdl:message name="confirmationResponse">
+		<wsdl:part name="parameters" element="tns:confirmationResponse"/>
+	</wsdl:message>
+	<wsdl:message name="getCatalogItemRequest">
+		<wsdl:part name="parameters" element="tns:getCatalogItem"/>
+	</wsdl:message>
+	<wsdl:message name="getCatalogItemResponse">
+		<wsdl:part name="parameters" element="tns:getCatalogItemResponse"/>
+	</wsdl:message>
+	<wsdl:message name="updateCatalogItemRequest">
+		<wsdl:part name="parameters" element="tns:updateCatalogItem"/>
+	</wsdl:message>
+	<wsdl:message name="updateCatalogItemResponse">
+		<wsdl:part name="parameters" element="tns:updateCatalogItemResponse"/>
+	</wsdl:message>
+	<wsdl:message name="healthRequest">
+		<wsdl:part name="parameters" element="tns:health"/>
+	</wsdl:message>
+	<wsdl:message name="healthResponse">
+		<wsdl:part name="parameters" element="tns:healthResponse"/>
+	</wsdl:message>
+
+	<wsdl:portType name="PDNDAsyncEServiceEstesaPortType">
+		<wsdl:operation name="startInteraction">
+			<wsdl:documentation>Inizio dell&apos;interazione (start_interaction)</wsdl:documentation>
+			<wsdl:input message="tns:startInteractionRequest"/>
+			<wsdl:output message="tns:startInteractionResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="getResource">
+			<wsdl:documentation>Ottenimento della risorsa (get_resource), ripetibile per lo scaricamento a blocchi</wsdl:documentation>
+			<wsdl:input message="tns:getResourceRequest"/>
+			<wsdl:output message="tns:getResourceResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="confirmation">
+			<wsdl:documentation>Conferma di ricezione (confirmation)</wsdl:documentation>
+			<wsdl:input message="tns:confirmationRequest"/>
+			<wsdl:output message="tns:confirmationResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="getCatalogItem">
+			<wsdl:documentation>Lettura di un elemento del catalogo (operazione sincrona)</wsdl:documentation>
+			<wsdl:input message="tns:getCatalogItemRequest"/>
+			<wsdl:output message="tns:getCatalogItemResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="updateCatalogItem">
+			<wsdl:documentation>Aggiornamento di un elemento del catalogo (operazione sincrona)</wsdl:documentation>
+			<wsdl:input message="tns:updateCatalogItemRequest"/>
+			<wsdl:output message="tns:updateCatalogItemResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="health">
+			<wsdl:documentation>Stato del servizio (operazione sincrona)</wsdl:documentation>
+			<wsdl:input message="tns:healthRequest"/>
+			<wsdl:output message="tns:healthResponse"/>
+		</wsdl:operation>
+	</wsdl:portType>
+
+	<wsdl:binding name="PDNDAsyncEServiceEstesaBinding" type="tns:PDNDAsyncEServiceEstesaPortType">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="startInteraction">
+			<soap:operation soapAction="startInteraction" style="document"/>
+			<wsdl:input><soap:body use="literal"/></wsdl:input>
+			<wsdl:output><soap:body use="literal"/></wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="getResource">
+			<soap:operation soapAction="getResource" style="document"/>
+			<wsdl:input><soap:body use="literal"/></wsdl:input>
+			<wsdl:output><soap:body use="literal"/></wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="confirmation">
+			<soap:operation soapAction="confirmation" style="document"/>
+			<wsdl:input><soap:body use="literal"/></wsdl:input>
+			<wsdl:output><soap:body use="literal"/></wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="getCatalogItem">
+			<soap:operation soapAction="getCatalogItem" style="document"/>
+			<wsdl:input><soap:body use="literal"/></wsdl:input>
+			<wsdl:output><soap:body use="literal"/></wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="updateCatalogItem">
+			<soap:operation soapAction="updateCatalogItem" style="document"/>
+			<wsdl:input><soap:body use="literal"/></wsdl:input>
+			<wsdl:output><soap:body use="literal"/></wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="health">
+			<soap:operation soapAction="health" style="document"/>
+			<wsdl:input><soap:body use="literal"/></wsdl:input>
+			<wsdl:output><soap:body use="literal"/></wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+
+	<wsdl:service name="PDNDAsyncEServiceEstesaService">
+		<wsdl:port name="PDNDAsyncEServiceEstesaPort" binding="tns:PDNDAsyncEServiceEstesaBinding">
+			<soap:address location="http://localhost:9301/"/>
+		</wsdl:port>
+	</wsdl:service>
+
+</wsdl:definitions>

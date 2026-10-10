@@ -1,0 +1,28 @@
+# URL della fruizione GovWay dell'e-service (soggetto fruitore -> soggetto erogatore)
+eservice.url=http://127.0.0.1:8080/govway/soap/out/Fruitore/Erogatore/PDNDAsyncEServiceCompatta/v1
+
+# Header con cui viene fornito a GovWay l'identificativo dell'interazione nelle fasi get_resource e confirmation
+header.conversationId=govway-conversation-id
+
+# Dati della fase start_interaction
+start.subject=Richiesta di esempio
+start.entities=10
+
+# URL di callback fornita dal client (solo se nella fruizione "URL di Callback" = "Fornita dal client"; se non indicata non viene inviata).
+# Deve essere la URL dell'API di callback (es. URL di invocazione dell'erogazione dell'API di callback).
+#start.urlCallback=http://127.0.0.1:8080/govway/soap/in/Fruitore/PDNDAsyncCallbackCompatta/v1
+# Modalità (header|query), nome e codifica (none|base64|hex) devono corrispondere a quanto configurato nella fruizione
+#start.urlCallback.modalita=header
+#start.urlCallback.nome=govway-pdnd-url-callback
+#start.urlCallback.codifica=none
+
+# Scaricamento a blocchi nella fase get_resource
+getResource.offset=0
+getResource.limit=10
+
+# Autenticazione BASIC verso GovWay
+#username=username
+#password=123456
+
+# Codice dell'elemento del catalogo letto con l'operazione 'catalog' (solo versione estesa)
+catalog.code=A01

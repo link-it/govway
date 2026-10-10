@@ -39,6 +39,9 @@ L'abilitazione permanente può essere invece effettuata disabilitando la seguent
 	InvalidRequestContent
         UnexpectedInteroperabilityHeader
 	InteroperabilityInvalidRequest
+	AsyncInteractionNotFound
+	AsyncInteractionExpired
+	AsyncInteractionInvalidRequest
 	AttachmentsRequestFailed
 	MessageSecurityRequestFailed
 	InteroperabilityRequestManagementFailed

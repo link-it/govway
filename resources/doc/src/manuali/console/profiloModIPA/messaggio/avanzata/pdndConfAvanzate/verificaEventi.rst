@@ -5,7 +5,7 @@ Verifica della presenza di eventi
 
 Per ogni repository registrato viene verificata la presenza di eventi sulla PDND, che riportano operazioni di modifica o eliminazione di chiavi pubbliche, se risulta attiva la proprietà '*org.openspcoop2.pdd.gestoreChiaviPDND.enabled*' presente nel file "/etc/govway/govway_local.properties" come descritto nell'elenco puntato '*Pull sulla PDND per ottenere gli eventi relativi alle chiavi*' della sezione :ref:`modipa_passiPreliminari_api_pdnd`.
 
-Tramite la console di Gestione è possibile visionare la cache delle chiavi PDND scaricate e l'id dell'ultimo evento acquisito come descritto nella sezione :ref:`configCachePDNDIntro`.
+Tramite la console di Gestione è possibile visionare la cache delle chiavi PDND scaricate e l'id dell'ultimo evento acquisito come descritto nella sezione :ref:`configCachePDNDChiaviClient`.
 
 **Cambio di versione delle API PDND**
 
@@ -29,7 +29,7 @@ Tramite la console di monitoraggio sarà possibile vedere come le transazioni re
   
     Raccolta eventi PDND: formato 'lastEventId' non corretto
     
-Per ripristinare il corretto funzionamento deve essere azzerato l'ultimo identificativo di evento scaricato come descritto nella sezione :ref:`configCachePDNDIntro` tramite il pulsante 'Reset Last Event ID' presente nei filtri di ricerca (:numref:`cachePDNDResetLastEventiID2`).
+Per ripristinare il corretto funzionamento deve essere azzerato l'ultimo identificativo di evento scaricato come descritto nella sezione :ref:`configCachePDNDChiaviClient` tramite il pulsante 'Reset Last Event ID' presente nei filtri di ricerca (:numref:`cachePDNDResetLastEventiID2`).
 
 .. figure:: ../../../../_figure_console/govwayConsole_cachePDND_resetLastEventID.png
     :scale: 80%

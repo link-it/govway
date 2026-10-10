@@ -31,7 +31,7 @@ public class ControlloAccessiGestioneToken extends ApiImplConfigurazioneStato {
  /**
    * indica se la gestione del token è abilitata o meno  
   **/
-  private Boolean abilitato = null;
+  private Boolean abilitato = false;
   
   @Schema(description = "identificativo della Policy da utilizzare per la gestione del token")
  /**

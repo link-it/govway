@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project name="restPdndAsync" basedir=".">
+
+	<import file="./local_env.xml" />
+	<import file="./ant/openspcoop2-build.xml" />
+		
+	<!-- directory root -->
+	<property name="gitrepo_root" location="${openspcoop2}" />
+	
+	<!-- set properties for this build -->
+	<property name="restPdndAsync" location="${basedir}" />
+	
+	<property name="src_restPdndAsync" value="${restPdndAsync}/src" />
+	<property name="build_restPdndAsync" location="build/restPdndAsync" />
+	<property name="dist_restPdndAsync" location="dist" />
+	<property name="doc_restPdndAsync" location="doc" />
+	
+	
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+		<classpath>
+			<pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+		</classpath>
+	</taskdef>
+
+	<!-- CLASSPATH -->
+	<path id="classpath_compile" >
+		<fileset dir="${required_lib}" >
+			<exclude name="**/axis14/*"/>
+			<exclude name="**/*README"/>
+			<exclude name="*.userlibraries"/>
+			<exclude name="axis14/*"/>
+		</fileset>
+		<fileset dir="${openspcoop2.dist}" >
+			<include name="*.jar"/>
+		</fileset>
+	</path>
+	<path id="classpath_dist" >		
+	</path>	
+	<path id="classpath_run" >
+		<fileset dir="${dist_restPdndAsync}" >
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${openspcoop2.dist}" >
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${required_lib}" >
+			<include name="log/*"/>
+			<include name="cxf/*"/>
+			<include name="jetty/*"/>
+			<include name="jackson/*.jar"/>
+			<include name="jax/jaxb-*.jar"/>
+			<include name="jax/jaxws-*.jar"/>
+			<include name="commons/commons-codec-1.15.jar"/>
+			<include name="security/neethi-3.2.4.jar"/>
+			<include name="shared/wsdl4j-1.6.3.jar"/>
+			<include name="shared/joda-time-2.12.0.jar"/>
+			<!-- richiesto dal bus CXF (resolver registrato da cxf-rt-frontend-jaxws), anche per un server JAX-RS -->
+			<include name="shared/jakarta.activation-1.2.2.jar"/>
+			<include name="javax/javax.servlet-api-4.0.1.jar"/>
+			<include name="javax/javax.annotation-api-1.3.2.jar"/>
+		</fileset>
+	</path>
+	
+	<!-- Ripulisce la distribuzione -->
+	<target name="clean_restPdndAsync">
+		<delete dir="${build_restPdndAsync}" />
+		<delete dir="build" />
+		<delete dir="${dist_restPdndAsync}" />
+		<delete dir="${doc_restPdndAsync}" />
+	</target>
+
+	<!-- Create the build directory structure used by compile -->
+	<target name="init_compile_restPdndAsync">
+		<mkdir dir="${build_restPdndAsync}" />
+		<mkdir dir="${build_restPdndAsync}/tmp" />
+		<mkdir dir="${build_restPdndAsync}/tmp_css" />
+		<mkdir dir="${dist_restPdndAsync}" />
+	</target>
+	
+		
+
+	<!-- Compilazione del servizio-->
+	<target name="compile_restPdndAsync" depends="init_compile_restPdndAsync,compile_openspcoop2_restPdndAsync" />
+
+
+	<!-- Creazione del modulo .WAR -->
+	<target name="build_restPdndAsync" depends="compile_restPdndAsync" />
+
+	
+	<!-- alias -->
+	<target name="build" depends="build_restPdndAsync"/>
+	<target name="build_without_dipendencies" depends="compile_openspcoop2_restPdndAsync"/>
+	<target name="clean" depends="clean_restPdndAsync"/>
+
+	<!-- Run the Server (e-service) -->
+	<target name="runServerEService" description="Esegue il server dell'e-service (erogatore)">
+		<java classname="org.openspcoop2.protocol.modipa.example.rest.pdnd_async.ServerEService" fork="true">
+			<classpath>
+				<path refid="classpath_run" />
+				<pathelement path="."/>
+			</classpath>
+		</java>
+	</target>
+
+	<!-- Run the Server (callback) -->
+	<target name="runServerCallback" description="Esegue il server dell'API di callback (fruitore)">
+		<java classname="org.openspcoop2.protocol.modipa.example.rest.pdnd_async.ServerCallback" fork="true">
+			<classpath>
+				<path refid="classpath_run" />
+				<pathelement path="."/>
+			</classpath>
+		</java>
+	</target>
+
+	<!-- Invocazione manuale della callback -->
+	<target name="runCallback" description="Invoca manualmente la callback (callback_invocation) per l'interazione indicata (conversationId; entityNumber opzionale, default 10)">
+		<java classname="org.openspcoop2.protocol.modipa.example.rest.pdnd_async.CallbackInvoker" fork="true">
+			<arg value="${conversationId}" />
+			<arg value="${entityNumber}" />
+			<classpath>
+				<path refid="classpath_run" />
+				<pathelement path="."/>
+			</classpath>
+		</java>
+	</target>
+
+	<!-- Run the Client -->
+	<target name="runClient" description="Esegue il client (operation: start, getResource, confirmation, catalog, health; conversationId per le fasi successive allo start)">
+		<java classname="org.openspcoop2.protocol.modipa.example.rest.pdnd_async.Client" fork="true">
+			<arg value="${operation}" />
+			<arg value="${conversationId}" />
+			<classpath>
+				<path refid="classpath_run" />
+				<pathelement path="."/>
+			</classpath>
+		</java>
+	</target>
+
+</project>

@@ -7052,6 +7052,15 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			addTimerState(dati, alias, this.confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreCacheChiaviPDND(alias), 
 					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_CACHE_CHIAVI_PDND, 
 					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_CACHE_CHIAVI_PDND);
+			
+			de = newDataElementStyleRuntime();
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_TIMERS_PDND_INTERAZIONI_ASINCRONE);
+			de.setType(DataElementType.SUBTITLE);
+			dati.add(de);
+			
+			addTimerState(dati, alias, this.confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreInterazioniAsincronePDND(alias), 
+					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_INTERAZIONI_ASINCRONE_PDND, 
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_INTERAZIONI_ASINCRONE_PDND);
 		}
 			
 		de = newDataElementStyleRuntime();

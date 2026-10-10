@@ -70,6 +70,8 @@ import org.openspcoop2.protocol.modipa.utils.MockHttpServletResponse;
 import org.openspcoop2.protocol.modipa.utils.MockServletInputStream;
 import org.openspcoop2.protocol.modipa.utils.MockServletOutputStream;
 import org.openspcoop2.protocol.modipa.utils.ModIKeystoreConfig;
+import org.openspcoop2.protocol.modipa.utils.ModIPdndAsyncException;
+import org.openspcoop2.protocol.modipa.utils.ModIPdndAsyncRuntime;
 import org.openspcoop2.protocol.modipa.utils.ModIPropertiesUtils;
 import org.openspcoop2.protocol.modipa.utils.ModISecurityConfig;
 import org.openspcoop2.protocol.modipa.utils.ModIUtilities;
@@ -211,6 +213,26 @@ public class ModIImbustamento {
 			RequestInfo requestInfo = null;
 			if(context!=null && context.containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)) {
 				requestInfo = (RequestInfo) context.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+			}
+			
+			/* *** SCAMBI DI DATI ASINCRONI PDND *** */
+			
+			if(RuoloMessaggio.RICHIESTA.equals(ruoloMessaggio) && context!=null) {
+				// fruizione: vengono preparate le informazioni per la negoziazione del voucher e verificato lo stato dell'interazione
+				try {
+					new ModIPdndAsyncRuntime(this.log, this.modiProperties, protocolFactory, state, context, requestInfo)
+						.fruizioneRichiesta(busta, aspc, asps, azione, registryReader, configIntegrationReader);
+				}catch(ModIPdndAsyncException e) {
+					throw e;
+				}catch(Exception e) {
+					// errore non imputabile al client (es. accesso alla base dati)
+					throw ModIPdndAsyncException.internalError(e.getMessage(), e);
+				}
+			}
+			else if(RuoloMessaggio.RISPOSTA.equals(ruoloMessaggio) && context!=null) {
+				// erogazione: la conferma di ricezione viene registrata se l'applicativo erogatore ha risposto con successo
+				new ModIPdndAsyncRuntime(this.log, this.modiProperties, protocolFactory, state, context, requestInfo)
+					.erogazioneRisposta(msg);
 			}
 			
 			ModIImbustamentoRest imbustamentoRest = null;

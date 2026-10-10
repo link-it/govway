@@ -3939,6 +3939,34 @@
             <forward name="remoteStoresKeysDel" path="/jsplib/listElement.jsp"/>
             <forward name="remoteStoresKeysError" path="/jsplib/info.jsp"/>
         </action>
+        
+        <!-- Cache PDND (pagina di ingresso) -->
+
+        <action path="/cachePdndChange" type="org.openspcoop2.web.ctrlstat.servlet.remote_stores.CachePdnd"
+            scope="request" validate="true">
+            <forward name="cachePdndChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="cachePdndError" path="/jsplib/info.jsp"/>
+        </action>
+        
+        <!-- Interazioni Asincrone PDND -->
+
+        <action path="/pdndInterazioniAsyncList" type="org.openspcoop2.web.ctrlstat.servlet.pdnd_async.InterazioniAsincronePDNDList"
+            scope="request" validate="true">
+            <forward name="pdndInterazioniAsyncList" path="/jsplib/listElement.jsp"/>
+            <forward name="pdndInterazioniAsyncError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/pdndInterazioniAsyncChange" type="org.openspcoop2.web.ctrlstat.servlet.pdnd_async.InterazioniAsincronePDNDChange"
+            scope="request" validate="true">
+            <forward name="pdndInterazioniAsyncChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="pdndInterazioniAsyncChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="pdndInterazioniAsyncChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="pdndInterazioniAsyncError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/pdndInterazioniAsyncDel" type="org.openspcoop2.web.ctrlstat.servlet.pdnd_async.InterazioniAsincronePDNDDel"
+            scope="request" validate="true">
+            <forward name="pdndInterazioniAsyncDel" path="/jsplib/listElement.jsp"/>
+            <forward name="pdndInterazioniAsyncError" path="/jsplib/info.jsp"/>
+        </action>
     
     </action-mappings>
 

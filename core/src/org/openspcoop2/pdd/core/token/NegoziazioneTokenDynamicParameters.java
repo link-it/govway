@@ -212,6 +212,30 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 	private static final String ERRORE_CONFIGURAZIONE_MODI_NON_COMPLETA = "nella configurazione 'ModI' non è stato definito un";
 	private static final String ERRORE_RICHIEDE_AUTENTICAZIONE_IDENTIFICAZIONE_APPLICATIVO = "richiede l'autenticazione e l'identificazione di un applicativo fruitore";
 
+	// Scambi di dati asincroni PDND
+	private Map<String, Object> pdndAsyncClaims;
+	private boolean pdndAsyncPurposeIdDisabled = false;
+	private boolean pdndAsyncNoCache = false;
+	
+	@SuppressWarnings("unchecked")
+	private void initPdndAsync(PdDContext pddContext, PolicyNegoziazioneToken policyNegoziazioneToken) throws TokenException {
+		if(pddContext==null || !pddContext.containsKey(Costanti.PDND_ASYNC_CONTEXT_FASE) || !policyNegoziazioneToken.isPDND()) {
+			return;
+		}
+		String fase = (String) pddContext.getObject(Costanti.PDND_ASYNC_CONTEXT_FASE);
+		String endpointAsync = policyNegoziazioneToken.getEndpointAsync();
+		if(endpointAsync==null || "".equals(endpointAsync)) {
+			throw new TokenException("La policy di negoziazione '"+policyNegoziazioneToken.getName()+"' non definisce la URL da utilizzare per gli scambi di dati asincroni (fase '"+fase+"')");
+		}
+		this.endpoint = endpointAsync;
+		Object claims = pddContext.getObject(Costanti.PDND_ASYNC_CONTEXT_CLAIMS);
+		if(claims instanceof Map<?,?>) {
+			this.pdndAsyncClaims = (Map<String, Object>) claims;
+		}
+		this.pdndAsyncPurposeIdDisabled = Boolean.TRUE.equals(pddContext.getObject(Costanti.PDND_ASYNC_CONTEXT_PURPOSE_ID_DISABLED));
+		this.pdndAsyncNoCache = Boolean.TRUE.equals(pddContext.getObject(Costanti.PDND_ASYNC_CONTEXT_NO_CACHE));
+	}
+	
 	public NegoziazioneTokenDynamicParameters(Map<String, Object> dynamicMap, 
 			PdDContext pddContext, RequestInfo requestInfo, Busta busta, IState state, IProtocolFactory<?> protocolFactory,
 			PolicyNegoziazioneToken policyNegoziazioneToken) throws TokenException, DynamicException, ProtocolException {
@@ -220,6 +244,7 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 		this.policyNegoziazioneToken = policyNegoziazioneToken;
 		
 		this.endpoint = policyNegoziazioneToken.getEndpoint();
+		initPdndAsync(pddContext, policyNegoziazioneToken);
 		if(this.endpoint!=null && !"".equals(this.endpoint)) {
 			this.endpoint = DynamicUtils.convertDynamicPropertyValue("endpoint.gwt", this.endpoint, dynamicMap, pddContext);	
 		}
@@ -596,6 +621,10 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 			if(policyNegoziazioneToken.isPDND()) {
 				
 				this.signedJwtPurposeId = policyNegoziazioneToken.getJwtPurposeId();
+				if(this.pdndAsyncPurposeIdDisabled) {
+					// scambi di dati asincroni PDND: fasi in cui il purposeId non deve essere inviato
+					this.signedJwtPurposeId = Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED;
+				}
 				if(this.signedJwtPurposeId!=null && !"".equals(this.signedJwtPurposeId) && !Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED.equals(this.signedJwtPurposeId)) {
 					this.signedJwtPurposeId = DynamicUtils.convertDynamicPropertyValue("jwtPurposeId.gwt", this.signedJwtPurposeId, dynamicMap, pddContext);	
 				}
@@ -777,6 +806,13 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 				sb.append(separator);
 			}
 			sb.append("endpoint:").append(this.endpoint);
+		}
+		if(this.pdndAsyncClaims!=null && !this.pdndAsyncClaims.isEmpty()) {
+			// i claims degli scambi asincroni (es. interactionId) fanno sempre parte della chiave di cache
+			if(sb.length()>0) {
+				sb.append(separator);
+			}
+			sb.append("pdndAsync:").append(new java.util.TreeMap<>(this.pdndAsyncClaims));
 		}
 		if(StringUtils.isNotEmpty(this.basicUsername)) {
 			if(sb.length()>0) {
@@ -977,6 +1013,13 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 		}
 
 		return sb.toString();
+	}
+	
+	public Map<String, Object> getPdndAsyncClaims() {
+		return this.pdndAsyncClaims;
+	}
+	public boolean isPdndAsyncNoCache() {
+		return this.pdndAsyncNoCache;
 	}
 	
 	public String getEndpoint() {

@@ -1,0 +1,99 @@
+openapi: 3.0.3
+info:
+  title: PDNDAsyncCallbackCompatta
+  version: "1.0"
+  description: |-
+    API di callback di esempio per gli scambi di dati asincroni PDND (versione compatta).
+
+    Erogata dal fruitore dell'e-service 'PDNDAsyncEServiceCompatta' e invocata dall'erogatore
+    per notificare che i dati sono disponibili:
+    - POST /notifications -> fase 'callback_invocation'
+
+    L'identificativo dell'interazione (interactionId) e il numero di entità (entityNumber) sono veicolati
+    da GovWay tramite il voucher PDND; all'applicativo l'interactionId viene fornito nell'header 'GovWay-Conversation-ID'.
+  license:
+    name: GPL v3.0
+    url: https://www.gnu.org/licenses/gpl-3.0.txt
+servers:
+  - url: http://localhost:9202
+paths:
+  /notifications:
+    post:
+      tags:
+        - pdnd-async
+      summary: Invocazione della callback (callback_invocation)
+      operationId: callbackInvocation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Notification'
+      responses:
+        "200":
+          description: Notifica ricevuta
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ack'
+        "400":
+          $ref: '#/components/responses/BadRequest'
+        default:
+          $ref: '#/components/responses/Default'
+components:
+  responses:
+    BadRequest:
+      description: Richiesta non valida
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    Default:
+      description: Errore inatteso
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+  schemas:
+    Notification:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - READY
+            - FAILED
+        entities:
+          type: integer
+          format: int32
+          description: Numero di entità disponibili
+        message:
+          type: string
+          maxLength: 1024
+    Ack:
+      type: object
+      required:
+        - outcome
+      properties:
+        outcome:
+          type: string
+          enum:
+            - ACK
+    Problem:
+      type: object
+      properties:
+        type:
+          type: string
+          format: uri
+        title:
+          type: string
+        status:
+          type: integer
+          format: int32
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri

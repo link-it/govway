@@ -4477,8 +4477,11 @@ public class RicezioneContenutiApplicativi {
 						imbustamentoMSG.setRiferimentoServizioCorrelato(riferimentoServizioCorrelato);
 					}
 					// Collaborazione
-					if (headerIntegrazioneRichiesta.getBusta().getIdCollaborazione() != null)
+					if (headerIntegrazioneRichiesta.getBusta().getIdCollaborazione() != null) {
 						imbustamentoMSG.setIdCollaborazione(headerIntegrazioneRichiesta.getBusta().getIdCollaborazione());
+						// reso disponibile al profilo di interoperabilità anche quando l'API non gestisce l'elemento collaborazione (es. scambi di dati asincroni PDND)
+						pddContext.addObject(org.openspcoop2.core.constants.Costanti.ID_COLLABORAZIONE_RICHIESTA_INTEGRAZIONE, headerIntegrazioneRichiesta.getBusta().getIdCollaborazione());
+					}
 					// RiferimentoMessaggio
 					if (headerIntegrazioneRichiesta.getBusta().getRiferimentoMessaggio() != null)
 						imbustamentoMSG.setIdRiferimentoMessaggio(headerIntegrazioneRichiesta.getBusta().getRiferimentoMessaggio());

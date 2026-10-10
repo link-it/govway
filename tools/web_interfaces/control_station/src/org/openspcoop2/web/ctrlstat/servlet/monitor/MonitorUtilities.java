@@ -25,6 +25,8 @@ import java.util.List;
 
 import javax.xml.ws.BindingProvider;
 
+import org.openspcoop2.pdd.core.pdnd.async.InterazioneAsincronaPDND;
+import org.openspcoop2.pdd.core.pdnd.async.InterazioniAsincronePDNDFiltro;
 import org.openspcoop2.pdd.monitor.Messaggio;
 import org.openspcoop2.pdd.monitor.StatoPdd;
 import org.openspcoop2.pdd.monitor.driver.FilterSearch;
@@ -281,4 +283,37 @@ public class MonitorUtilities {
 	
 
 	
+	
+	
+	/* Sorgenti dati runtime (utilizzate anche dalle funzionalità che accedono alla base dati runtime al di fuori della coda messaggi) */
+	
+	public static List<String> getSorgentiDati() throws Exception{
+		Monitor.checkInitMonitoraggio();
+		return Monitor.sorgentiDriverMonitoraggioLocale;
+	}
+	public static List<String> getLabelSorgentiDati() throws Exception{
+		Monitor.checkInitMonitoraggio();
+		return Monitor.labelSorgentiDriverMonitoraggioLocale;
+	}
+	
+	
+	/* Interazioni relative agli scambi di dati asincroni PDND */
+	
+	public static long countInterazioniAsincronePDND(InterazioniAsincronePDNDFiltro filtro, String sorgenteDati) throws Exception{
+		Monitor.checkInitMonitoraggio();
+		return Monitor.driverMonitoraggioLocale.get(sorgenteDati).countInterazioniAsincronePDND(filtro);
+	}
+	public static List<InterazioneAsincronaPDND> getInterazioniAsincronePDND(InterazioniAsincronePDNDFiltro filtro, String sorgenteDati) throws Exception{
+		Monitor.checkInitMonitoraggio();
+		return Monitor.driverMonitoraggioLocale.get(sorgenteDati).getInterazioniAsincronePDND(filtro);
+	}
+	public static InterazioneAsincronaPDND getInterazioneAsincronaPDND(long id, String sorgenteDati) throws Exception{
+		Monitor.checkInitMonitoraggio();
+		return Monitor.driverMonitoraggioLocale.get(sorgenteDati).getInterazioneAsincronaPDND(id);
+	}
+	public static int deleteInterazioneAsincronaPDND(long id, String sorgenteDati) throws Exception{
+		Monitor.checkInitMonitoraggio();
+		return Monitor.driverMonitoraggioLocale.get(sorgenteDati).deleteInterazioneAsincronaPDND(id);
+	}
+
 }

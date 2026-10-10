@@ -41,7 +41,7 @@ public class ApiServizio  {
   private Boolean idCollaborazione = false;
   
   @Schema(example = "false", description = "")
-  private Boolean riferimentoIdRichiesta = null;
+  private Boolean riferimentoIdRichiesta = false;
  /**
    * Get nome
    * @return nome
