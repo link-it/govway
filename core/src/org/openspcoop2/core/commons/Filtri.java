@@ -251,6 +251,12 @@ public final class Filtri
 	public static final String FILTRO_REMOTE_STORE_KEY_ORGANIZZAZIONE = "filtroRemoteStoreKeyOrganizzazione";
 	public static final String FILTRO_REMOTE_STORE_KEY_LAST_EVENT_ID = "filtroRemoteStoreLastEventId"; // no.edit
 	
+	public static final String FILTRO_PDND_ASYNC_SORGENTE = "filtroPdndAsyncSorgente";
+	public static final String FILTRO_PDND_ASYNC_INTERACTION_ID = "filtroPdndAsyncInteractionId";
+	public static final String FILTRO_PDND_ASYNC_RUOLO = "filtroPdndAsyncRuolo";
+	public static final String FILTRO_PDND_ASYNC_FASE = "filtroPdndAsyncFase";
+	public static final String FILTRO_PDND_ASYNC_STATO = "filtroPdndAsyncStato";
+	
 	public static List<String> convertToTipiSoggetti(String filterProtocollo, String filterProtocolli) throws CoreException {
 		List<String> tipoSoggettiProtocollo = null;
 		if(filterProtocollo!=null && !"".equals(filterProtocollo)) {

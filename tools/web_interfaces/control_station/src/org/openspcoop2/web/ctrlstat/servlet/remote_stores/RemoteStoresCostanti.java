@@ -39,6 +39,10 @@ public class RemoteStoresCostanti {
 	
 	public static final String OBJECT_NAME_REMOTE_STORES = "remoteStores";
 	public static final String OBJECT_NAME_REMOTE_STORES_KEYS = "remoteStoresKeys";
+	public static final String OBJECT_NAME_CACHE_PDND = "cachePdnd";
+	
+	/** Pagina di ingresso 'Cache PDND' con i collegamenti alle informazioni conservate (chiavi e client, interazioni asincrone) */
+	public static final String SERVLET_NAME_CACHE_PDND = OBJECT_NAME_CACHE_PDND+Costanti.STRUTS_ACTION_SUFFIX_CHANGE;
 	
 	public static final String SERVLET_NAME_REMOTE_STORES_KEYS_CHANGE = OBJECT_NAME_REMOTE_STORES_KEYS+Costanti.STRUTS_ACTION_SUFFIX_CHANGE;
 	public static final String SERVLET_NAME_REMOTE_STORES_KEYS_DELETE = OBJECT_NAME_REMOTE_STORES_KEYS+Costanti.STRUTS_ACTION_SUFFIX_DELETE;
@@ -51,11 +55,14 @@ public class RemoteStoresCostanti {
 		SERVLET_REMOTE_STORES_KEYS.add(SERVLET_NAME_REMOTE_STORES_KEYS_CHANGE);
 		SERVLET_REMOTE_STORES_KEYS.add(SERVLET_NAME_REMOTE_STORES_KEYS_DELETE);
 		SERVLET_REMOTE_STORES_KEYS.add(SERVLET_NAME_REMOTE_STORES_KEYS_LIST);
+		SERVLET_REMOTE_STORES_KEYS.add(SERVLET_NAME_CACHE_PDND);
 	}
 	
 	public static final String LABEL_CACHE_PDND = "Cache PDND";
+	public static final String LABEL_CHIAVI_CLIENT = "Chiavi e Client";
+	public static final String LABEL_SEZIONE_INFORMAZIONI_PDND = "Informazioni PDND";
 	public static final String getBreadCrumbRemoteStore(String remoteStore) {
-		return LABEL_CACHE_PDND + " (" + remoteStore + ")";
+		return LABEL_CHIAVI_CLIENT + " (" + remoteStore + ")";
 	}
 	
 	public static final String LABEL_REMOTE_STORE = "Remote Store";

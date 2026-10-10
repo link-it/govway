@@ -208,6 +208,8 @@ import org.openspcoop2.pdd.timers.pdnd.TimerGestoreCacheChiaviPDND;
 import org.openspcoop2.pdd.timers.pdnd.TimerGestoreCacheChiaviPDNDLib;
 import org.openspcoop2.pdd.timers.pdnd.TimerGestoreChiaviPDND;
 import org.openspcoop2.pdd.timers.pdnd.TimerGestoreChiaviPDNDLib;
+import org.openspcoop2.pdd.timers.pdnd.TimerGestoreInterazioniAsincronePDND;
+import org.openspcoop2.pdd.timers.pdnd.TimerGestoreInterazioniAsincronePDNDLib;
 import org.openspcoop2.pdd.timers.proxy.TimerGestoreOperazioniRemote;
 import org.openspcoop2.pdd.timers.proxy.TimerGestoreOperazioniRemoteLib;
 import org.openspcoop2.pdd.timers.proxy.TimerSvecchiamentoOperazioniRemote;
@@ -361,6 +363,9 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 	private TimerGestoreChiaviPDND threadGestoreChiaviPDND;
 	private TimerGestoreCacheChiaviPDND threadGestoreCacheChiaviPDND;
 	private boolean threadGestoreChiaviPDNDEnabled = false;
+	
+	/** Timer per l'eliminazione delle interazioni relative agli scambi di dati asincroni PDND */
+	private TimerGestoreInterazioniAsincronePDND threadGestoreInterazioniAsincronePDND;
 	
 	/** Timer per la gestione delle operazioni remote in un cluster dinamico */
 	private TimerGestoreOperazioniRemote threadGestoreOperazioniRemote;
@@ -4056,6 +4061,31 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			
 			
+			/* ------------ Avvia il thread per l'eliminazione delle interazioni relative agli scambi di dati asincroni PDND ------------ */
+			if(protocolFactoryManager.existsProtocolFactory(CostantiLabel.MODIPA_PROTOCOL_NAME)) { // gli scambi asincroni sono previsti solamente nel profilo ModI
+				if(propertiesReader.isGestoreInterazioniAsincronePDNDEnabled()) {
+					try{
+						OpenSPCoop2Startup.this.threadGestoreInterazioniAsincronePDND = 
+								new TimerGestoreInterazioniAsincronePDND(propertiesReader.getGestoreInterazioniAsincronePDNDTimerIntervalloSecondi());
+						OpenSPCoop2Startup.this.threadGestoreInterazioniAsincronePDND.start();
+						TimerGestoreInterazioniAsincronePDNDLib.setState( TimerState.ENABLED );
+					}catch(Exception e){
+						msgDiag.logStartupError(e,"Avvio timer (thread) '"+TimerGestoreInterazioniAsincronePDND.ID_MODULO+"'");
+					}
+				}
+				else {
+					msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_TIMER_GESTORE_INTERAZIONI_ASINCRONE_PDND);
+					msgDiag.addKeyword(CostantiPdD.KEY_TIMER, TimerGestoreInterazioniAsincronePDND.ID_MODULO);
+					msgDiag.logPersonalizzato("disabilitato");
+					msgDiag.setPrefixMsgPersonalizzati(null);
+				}
+			}
+			
+			
+			
+			
+			
+			
 			/* ------------ Avvia il thread per la gestione delle operazioni remote in un cluster dinamico ------------ */
 			
 			if(propertiesReader.isProxyReadJMXResourcesEnabled() && propertiesReader.isProxyReadJMXResourcesAsyncProcessByTimer()) {
@@ -4647,6 +4677,16 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				}else{
 					throw new CoreException("Thread per gestione della cache delle chiavi PDND non trovato");
 				}	
+			}
+		}catch (Throwable e) {
+			// ignore
+		}
+		
+		// Timer per l'eliminazione delle interazioni relative agli scambi di dati asincroni PDND
+		
+		try{
+			if(OpenSPCoop2Startup.this.threadGestoreInterazioniAsincronePDND!=null){
+				OpenSPCoop2Startup.this.threadGestoreInterazioniAsincronePDND.setStop(true);
 			}
 		}catch (Throwable e) {
 			// ignore

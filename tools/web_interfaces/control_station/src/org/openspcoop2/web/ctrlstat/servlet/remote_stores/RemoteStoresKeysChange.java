@@ -39,6 +39,7 @@ import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
+import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 
 /**
@@ -83,7 +84,7 @@ public class RemoteStoresKeysChange extends Action {
 			// nome della breadcrumbs principale, se ci sono piu' store visualizzo quello selezionato nei filtri
 			List<RemoteStore> remoteStoresList = remoteStoresCore.remoteStoresList();
 
-			String labelNomeCache = RemoteStoresCostanti.LABEL_CACHE_PDND;
+			String labelNomeCache = RemoteStoresCostanti.LABEL_CHIAVI_CLIENT;
 			
 			if(remoteStoresList.size() > 1) {
 				String nomeStore = remoteStoresList.stream().filter(f -> f.getId() == remoteStoreId).map(f -> f.getNome()).collect(Collectors.toList()).get(0);
@@ -93,7 +94,10 @@ public class RemoteStoresKeysChange extends Action {
 			String labelNomeEntry = remoteStoreKeyEntry.getClientId() != null ? remoteStoreKeyEntry.getClientId() : remoteStoreKeyEntry.getKid();
 			
 			// setto la barra del titolo
-			ServletUtils.setPageDataTitleServletChange(pd, labelNomeCache, RemoteStoresCostanti.SERVLET_NAME_REMOTE_STORES_KEYS_LIST, labelNomeEntry);
+			ServletUtils.setPageDataTitle(pd, 
+					new Parameter(RemoteStoresCostanti.LABEL_CACHE_PDND, RemoteStoresCostanti.SERVLET_NAME_CACHE_PDND),
+					new Parameter(labelNomeCache, RemoteStoresCostanti.SERVLET_NAME_REMOTE_STORES_KEYS_LIST),
+					new Parameter(labelNomeEntry, null));
 			
 			// preparo i campi
 			List<DataElement> dati = new ArrayList<>();

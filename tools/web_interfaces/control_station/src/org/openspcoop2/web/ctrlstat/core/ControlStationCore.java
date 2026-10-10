@@ -1249,6 +1249,7 @@ public class ControlStationCore {
 	private boolean isModipaFruizioniVerificaCertificati;
 	private boolean isModipaFruizioniConnettoreCheckHttps;
 	private boolean isModipaFiltroRicercaProfiloQualsiasiVisualizzaDatiModi;
+	private boolean isModipaSelezioneApiEscludiScambiAsincroniIncompleti;
 	public boolean isModipaErogazioniVerificaCertificati() {
 		return this.isModipaErogazioniVerificaCertificati;
 	}
@@ -1260,6 +1261,9 @@ public class ControlStationCore {
 	}
 	public boolean isModipaFiltroRicercaProfiloQualsiasiVisualizzaDatiModi() {
 		return this.isModipaFiltroRicercaProfiloQualsiasiVisualizzaDatiModi;
+	}
+	public boolean isModipaSelezioneApiEscludiScambiAsincroniIncompleti() {
+		return this.isModipaSelezioneApiEscludiScambiAsincroniIncompleti;
 	}
 	
 	/** Plugins */
@@ -1858,6 +1862,7 @@ public class ControlStationCore {
 	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoTimerPdndTracciamentoPubblicazione = new HashMap<>();
 	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreChiaviPDND = new HashMap<>();
 	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreCacheChiaviPDND = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreInterazioniAsincronePDND = new HashMap<>();
 	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreOperazioniRemote = new HashMap<>();
 	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoTimerSvecchiamentoOperazioniRemote = new HashMap<>();
 	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoTimerThresholdThread = new HashMap<>();
@@ -2221,6 +2226,9 @@ public class ControlStationCore {
 	}
 	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreCacheChiaviPDND(String alias) {
 		return this.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreCacheChiaviPDND.get(alias);
+	}
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreInterazioniAsincronePDND(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreInterazioniAsincronePDND.get(alias);
 	}
 	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreOperazioniRemote(String alias) {
 		return this.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreOperazioniRemote.get(alias);
@@ -2821,6 +2829,7 @@ public class ControlStationCore {
 		this.isModipaFruizioniVerificaCertificati = core.isModipaFruizioniVerificaCertificati;
 		this.isModipaFruizioniConnettoreCheckHttps = core.isModipaFruizioniConnettoreCheckHttps;
 		this.isModipaFiltroRicercaProfiloQualsiasiVisualizzaDatiModi = core.isModipaFiltroRicercaProfiloQualsiasiVisualizzaDatiModi;
+		this.isModipaSelezioneApiEscludiScambiAsincroniIncompleti = core.isModipaSelezioneApiEscludiScambiAsincroniIncompleti;
 		
 		/** Plugins */
 		this.configurazionePluginsEnabled = core.configurazionePluginsEnabled;
@@ -3055,6 +3064,7 @@ public class ControlStationCore {
 		this.jmxPdDConfigurazioneSistemaNomeAttributoTimerPdndTracciamentoPubblicazione = core.jmxPdDConfigurazioneSistemaNomeAttributoTimerPdndTracciamentoPubblicazione;
 		this.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreChiaviPDND = core.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreChiaviPDND;
 		this.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreCacheChiaviPDND = core.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreCacheChiaviPDND;
+		this.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreInterazioniAsincronePDND = core.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreInterazioniAsincronePDND;
 		this.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreOperazioniRemote = core.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreOperazioniRemote;
 		this.jmxPdDConfigurazioneSistemaNomeAttributoTimerSvecchiamentoOperazioniRemote = core.jmxPdDConfigurazioneSistemaNomeAttributoTimerSvecchiamentoOperazioniRemote;
 		this.jmxPdDConfigurazioneSistemaNomeAttributoTimerThresholdThread = core.jmxPdDConfigurazioneSistemaNomeAttributoTimerThresholdThread;
@@ -3296,6 +3306,7 @@ public class ControlStationCore {
 			this.isModipaFruizioniVerificaCertificati = consoleProperties.isModipaFruizioniVerificaCertificati();
 			this.isModipaFruizioniConnettoreCheckHttps = consoleProperties.isModipaFruizioniConnettoreCheckHttps();
 			this.isModipaFiltroRicercaProfiloQualsiasiVisualizzaDatiModi = consoleProperties.isModipaFiltroRicercaProfiloQualsiasiVisualizzaDatiModi();
+			this.isModipaSelezioneApiEscludiScambiAsincroniIncompleti = consoleProperties.isModipaSelezioneApiEscludiScambiAsincroniIncompleti();
 			this.configurazionePluginsEnabled = consoleProperties.isConfigurazionePluginsEnabled();
 			this.configurazionePluginsSeconds = consoleProperties.getPluginsSeconds();
 			this.configurazioneHandlersEnabled = consoleProperties.isConfigurazioneHandlersEnabled();
@@ -3600,6 +3611,7 @@ public class ControlStationCore {
 					this.jmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheMensili.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheMensili(alias));
 					this.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreChiaviPDND.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreChiaviPDND(alias));
 					this.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreCacheChiaviPDND.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreCacheChiaviPDND(alias));
+					this.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreInterazioniAsincronePDND.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreInterazioniAsincronePDND(alias));
 					this.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreOperazioniRemote.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreOperazioniRemote(alias));
 					this.jmxPdDConfigurazioneSistemaNomeAttributoTimerSvecchiamentoOperazioniRemote.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoTimerSvecchiamentoOperazioniRemote(alias));
 					this.jmxPdDConfigurazioneSistemaNomeAttributoTimerThresholdThread.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoTimerThresholdThread(alias));	

@@ -4598,8 +4598,11 @@ public class RicezioneContenutiApplicativi implements IAsyncResponseCallback {
 						this.imbustamentoMSG.setRiferimentoServizioCorrelato(riferimentoServizioCorrelato);
 					}
 					// Collaborazione
-					if (this.headerIntegrazioneRichiesta.getBusta().getIdCollaborazione() != null)
+					if (this.headerIntegrazioneRichiesta.getBusta().getIdCollaborazione() != null) {
 						this.imbustamentoMSG.setIdCollaborazione(this.headerIntegrazioneRichiesta.getBusta().getIdCollaborazione());
+						// reso disponibile al profilo di interoperabilità anche quando l'API non gestisce l'elemento collaborazione (es. scambi di dati asincroni PDND)
+						pddContext.addObject(org.openspcoop2.core.constants.Costanti.ID_COLLABORAZIONE_RICHIESTA_INTEGRAZIONE, this.headerIntegrazioneRichiesta.getBusta().getIdCollaborazione());
+					}
 					// RiferimentoMessaggio
 					if (this.headerIntegrazioneRichiesta.getBusta().getRiferimentoMessaggio() != null)
 						this.imbustamentoMSG.setIdRiferimentoMessaggio(this.headerIntegrazioneRichiesta.getBusta().getRiferimentoMessaggio());

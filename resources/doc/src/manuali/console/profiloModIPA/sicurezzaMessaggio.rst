@@ -21,6 +21,8 @@ Il pattern di sicurezza sul messaggio definisce le modalità di comunicazione de
 
 - *REST_JWS_2021_POP (DPoP) - Demonstrating Proof-of-Possession*: pattern che estende i precedenti aggiungendo il supporto DPoP come descritto nel RFC 9449. Questo meccanismo vincola l'access token ad una specifica coppia di chiavi crittografiche del client, prevenendo l'utilizzo del token da parte di soggetti non autorizzati che potrebbero averlo intercettato. Il pattern è applicabile solamente con 'Generazione Token' di tipo 'Authorization OAuth' o 'Authorization PDND'.
 
+- *Scambi di dati asincroni PDND*: non si tratta di un pattern di sicurezza ma di una modalità di interazione, definita dalla PDND, in cui la risposta viene resa disponibile in modo differito tramite una callback e ogni fase dello scambio richiede un voucher dedicato. È applicabile solamente con 'Generazione Token' di tipo 'Authorization PDND' e viene abilitata tramite il campo *Scambio Asincrono* della sicurezza messaggio dell'API; maggiori dettagli vengono forniti nella sezione :ref:`modipa_scambiAsincroni`.
+
 Le applicazioni di un dominio interno o esterno, descritte negli scenari del Modello di Interoperabilità, vengono rappresentate in GovWay tramite la registrazione di Applicativi come entità di configurazione. In accordo al modello di GovWay, ciascun applicativo è associato al soggetto di riferimento che, nell'ottica ModI, rappresenta il dominio di appartenenza. Un applicativo viene identificato attraverso il criterio di trust del pattern di sicurezza scelto:
 
 - trust tramite PDND: l'applicativo viene identificato tramite il 'clientId' presente all'interno del token 'Authorization' previsto dal pattern 'ID_AUTH_REST';

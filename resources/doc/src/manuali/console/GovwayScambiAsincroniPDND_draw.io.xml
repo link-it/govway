@@ -1,0 +1,103 @@
+<mxfile host="Electron">
+  <diagram id="pdndAsyncFlusso" name="ScambiAsincroniPDND">
+    <mxGraphModel dx="1414" dy="919" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1450" pageHeight="800" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="pdnd" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;gradientColor=#ffff7d;strokeColor=#999900;fontSize=15;" value="&lt;b&gt;PDND&lt;/b&gt;&lt;br&gt;Authorization Server&lt;br&gt;&lt;i&gt;token.oauth2.async&lt;/i&gt;" vertex="1">
+          <mxGeometry height="80" width="240" x="600" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="domF" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f1d5a5;strokeColor=#996633;verticalAlign=top;fontSize=19;fontStyle=1;fontColor=#333333;arcSize=4;" value="Dominio Fruitore" vertex="1">
+          <mxGeometry height="560" width="560" x="20" y="190" as="geometry" />
+        </mxCell>
+        <mxCell id="domE" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f1d5a5;strokeColor=#996633;verticalAlign=top;fontSize=19;fontStyle=1;fontColor=#333333;arcSize=4;" value="Dominio Erogatore" vertex="1">
+          <mxGeometry height="560" width="560" x="860" y="190" as="geometry" />
+        </mxCell>
+        <mxCell id="client" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ebf1de;strokeColor=#77933c;fontSize=14;fontStyle=1;" value="Applicativo&lt;br&gt;Client" vertex="1">
+          <mxGeometry height="70" width="120" x="40" y="420" as="geometry" />
+        </mxCell>
+        <mxCell id="backend" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ebf1de;strokeColor=#77933c;fontSize=14;fontStyle=1;" value="Applicativo&lt;br&gt;Backend" vertex="1">
+          <mxGeometry height="70" width="120" x="1280" y="420" as="geometry" />
+        </mxCell>
+        <mxCell id="gwF" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d1ebf1;strokeColor=#336699;verticalAlign=top;fontSize=16;fontStyle=1;fontColor=#333333;arcSize=6;" value="GovWay" vertex="1">
+          <mxGeometry height="480" width="360" x="200" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="fruES" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bddffd;strokeColor=#336699;fontSize=13;" value="&lt;b&gt;Fruizione&lt;/b&gt;&lt;br&gt;API Erogazione dati&lt;br&gt;(e-service)" vertex="1">
+          <mxGeometry height="90" width="210" x="330" y="290" as="geometry" />
+        </mxCell>
+        <mxCell id="eroCB" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bddffd;strokeColor=#336699;fontSize=13;" value="&lt;b&gt;Erogazione&lt;/b&gt;&lt;br&gt;API di Callback" vertex="1">
+          <mxGeometry height="80" width="210" x="330" y="580" as="geometry" />
+        </mxCell>
+        <mxCell id="dbF" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#FFFFFF;strokeColor=#336699;fontSize=11;" value="Interazioni&lt;br&gt;asincrone" vertex="1">
+          <mxGeometry height="70" width="90" x="220" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="gwE" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d1ebf1;strokeColor=#336699;verticalAlign=top;fontSize=16;fontStyle=1;fontColor=#333333;arcSize=6;" value="GovWay" vertex="1">
+          <mxGeometry height="480" width="360" x="880" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="eroES" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bddffd;strokeColor=#336699;fontSize=13;" value="&lt;b&gt;Erogazione&lt;/b&gt;&lt;br&gt;API Erogazione dati&lt;br&gt;(e-service)" vertex="1">
+          <mxGeometry height="90" width="210" x="900" y="290" as="geometry" />
+        </mxCell>
+        <mxCell id="fruCB" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bddffd;strokeColor=#336699;fontSize=13;" value="&lt;b&gt;Fruizione&lt;/b&gt;&lt;br&gt;API di Callback&lt;br&gt;&lt;i&gt;connettore: URL di callback del fruitore&lt;/i&gt;" vertex="1">
+          <mxGeometry height="80" width="210" x="900" y="580" as="geometry" />
+        </mxCell>
+        <mxCell id="dbE" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#FFFFFF;strokeColor=#336699;fontSize=11;" value="Interazioni&lt;br&gt;asincrone" vertex="1">
+          <mxGeometry height="70" width="90" x="1130" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="p1" edge="1" parent="1" source="fruES" style="endArrow=classic;html=1;rounded=0;fontSize=12;labelBackgroundColor=#ffffff;exitX=1;exitY=0.2;exitDx=0;exitDy=0;entryX=0;entryY=0.2;entryDx=0;entryDy=0;" target="eroES" value="&lt;b&gt;1&lt;/b&gt; start_interaction">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p3" edge="1" parent="1" source="fruES" style="endArrow=classic;html=1;rounded=0;fontSize=12;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="eroES" value="&lt;b&gt;3&lt;/b&gt; get_resource">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p4" edge="1" parent="1" source="fruES" style="endArrow=classic;html=1;rounded=0;fontSize=12;labelBackgroundColor=#ffffff;exitX=1;exitY=0.8;exitDx=0;exitDy=0;entryX=0;entryY=0.8;entryDx=0;entryDy=0;dashed=1;" target="eroES" value="&lt;b&gt;4&lt;/b&gt; confirmation (opzionale)">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p2" edge="1" parent="1" source="fruCB" style="endArrow=classic;html=1;rounded=0;fontSize=12;labelBackgroundColor=#ffffff;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="eroCB" value="&lt;b&gt;2&lt;/b&gt; callback_invocation (urlCallback)">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c1" edge="1" parent="1" source="client" style="endArrow=classic;html=1;rounded=0;fontSize=12;labelBackgroundColor=#ffffff;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;edgeStyle=orthogonalEdgeStyle;" target="fruES" value="1, 3, 4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c2" edge="1" parent="1" source="eroCB" style="endArrow=classic;html=1;rounded=0;fontSize=12;labelBackgroundColor=#ffffff;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;edgeStyle=orthogonalEdgeStyle;" target="client" value="2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="b1" edge="1" parent="1" source="eroES" style="endArrow=classic;html=1;rounded=0;fontSize=12;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;edgeStyle=orthogonalEdgeStyle;" target="backend" value="1, 3, 4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="b2" edge="1" parent="1" source="backend" style="endArrow=classic;html=1;rounded=0;fontSize=12;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;edgeStyle=orthogonalEdgeStyle;" target="fruCB" value="2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="sF1" edge="1" parent="1" source="fruES" style="endArrow=classic;html=1;rounded=0;fontSize=12;labelBackgroundColor=#ffffff;exitX=0;exitY=0.8;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;dashed=1;dashPattern=1 3;strokeWidth=2;strokeColor=#7EA6E0;endArrow=none;startArrow=none;edgeStyle=orthogonalEdgeStyle;" target="dbF" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="sF2" edge="1" parent="1" source="eroCB" style="endArrow=classic;html=1;rounded=0;fontSize=12;labelBackgroundColor=#ffffff;exitX=0;exitY=0.2;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;dashed=1;dashPattern=1 3;strokeWidth=2;strokeColor=#7EA6E0;endArrow=none;startArrow=none;edgeStyle=orthogonalEdgeStyle;" target="dbF" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="sE1" edge="1" parent="1" source="eroES" style="endArrow=classic;html=1;rounded=0;fontSize=12;labelBackgroundColor=#ffffff;exitX=1;exitY=0.8;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;dashed=1;dashPattern=1 3;strokeWidth=2;strokeColor=#7EA6E0;endArrow=none;startArrow=none;edgeStyle=orthogonalEdgeStyle;" target="dbE" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="sE2" edge="1" parent="1" source="fruCB" style="endArrow=classic;html=1;rounded=0;fontSize=12;labelBackgroundColor=#ffffff;exitX=1;exitY=0.2;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;dashed=1;dashPattern=1 3;strokeWidth=2;strokeColor=#7EA6E0;endArrow=none;startArrow=none;edgeStyle=orthogonalEdgeStyle;" target="dbE" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="vF" edge="1" parent="1" source="fruES" style="endArrow=classic;html=1;rounded=0;fontSize=12;labelBackgroundColor=#ffffff;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;dashed=1;strokeColor=#999900;fontColor=#666600;edgeStyle=orthogonalEdgeStyle;" target="pdnd" value="voucher 1, 3, 4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="vE" edge="1" parent="1" source="gwE" style="endArrow=classic;html=1;rounded=0;fontSize=12;labelBackgroundColor=#ffffff;exitX=0.15;exitY=0;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;dashed=1;strokeColor=#999900;fontColor=#666600;edgeStyle=orthogonalEdgeStyle;" target="pdnd" value="voucher 2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="nF" parent="1" style="shape=note;whiteSpace=wrap;html=1;size=14;fillColor=#f2f2f2;strokeColor=#808080;align=left;verticalAlign=top;spacingLeft=6;fontSize=12;" value="&lt;b&gt;Voucher del fruitore&lt;/b&gt;&lt;br&gt;&lt;b&gt;1&lt;/b&gt; scope=start_interaction, urlCallback, purposeId&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;→ la PDND genera interactionId&lt;br&gt;&lt;b&gt;3&lt;/b&gt; scope=get_resource, interactionId, purposeId (opzionale)&lt;br&gt;&lt;b&gt;4&lt;/b&gt; scope=confirmation, interactionId, purposeId (opzionale)" vertex="1">
+          <mxGeometry height="110" width="370" x="20" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="nE" parent="1" style="shape=note;whiteSpace=wrap;html=1;size=14;fillColor=#f2f2f2;strokeColor=#808080;align=left;verticalAlign=top;spacingLeft=6;fontSize=12;" value="&lt;b&gt;Voucher dell&#39;erogatore&lt;/b&gt;&lt;br&gt;&lt;b&gt;2&lt;/b&gt; scope=callback_invocation, interactionId,&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;entityNumber (≤ Numero massimo risultati)" vertex="1">
+          <mxGeometry height="70" width="330" x="1050" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="hF" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=12;align=left;verticalAlign=top;fontSize=11;" value="&lt;b&gt;1&lt;/b&gt; riceve GovWay-Conversation-ID&lt;br&gt;&lt;b&gt;3, 4&lt;/b&gt; invia GovWay-Conversation-ID&lt;br&gt;&lt;b&gt;2&lt;/b&gt; riceve GovWay-Conversation-ID&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;e GovWay-PDND-Entity-Number" vertex="1">
+          <mxGeometry height="80" width="176" x="22" y="625" as="geometry" />
+        </mxCell>
+        <mxCell id="hE" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=12;align=left;verticalAlign=top;fontSize=11;" value="&lt;b&gt;1&lt;/b&gt; riceve GovWay-Conversation-ID&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;e GovWay-PDND-Url-Callback&lt;br&gt;&lt;b&gt;3, 4&lt;/b&gt; riceve GovWay-Conversation-ID&lt;br&gt;&lt;b&gt;2&lt;/b&gt; invia GovWay-Conversation-ID&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;e GovWay-PDND-Entity-Number" vertex="1">
+          <mxGeometry height="100" width="184" x="1234" y="625" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

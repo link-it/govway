@@ -37,6 +37,9 @@ public class FruizioneModI  {
   
   @Schema(description = "")
   private FruizioneModIDPoP modiDpop = null;
+  
+  @Schema(description = "")
+  private FruizioneModIScambioAsincrono modiScambioAsincrono = null;
  /**
    * Get modi
    * @return modi
@@ -76,6 +79,25 @@ public class FruizioneModI  {
     return this;
   }
 
+ /**
+   * Get modiScambioAsincrono
+   * @return modiScambioAsincrono
+  **/
+  @JsonProperty("modi_scambio_asincrono")
+  @Valid
+  public FruizioneModIScambioAsincrono getModiScambioAsincrono() {
+    return this.modiScambioAsincrono;
+  }
+
+  public void setModiScambioAsincrono(FruizioneModIScambioAsincrono modiScambioAsincrono) {
+    this.modiScambioAsincrono = modiScambioAsincrono;
+  }
+
+  public FruizioneModI modiScambioAsincrono(FruizioneModIScambioAsincrono modiScambioAsincrono) {
+    this.modiScambioAsincrono = modiScambioAsincrono;
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -84,6 +106,7 @@ public class FruizioneModI  {
     
     sb.append("    modi: ").append(FruizioneModI.toIndentedString(this.modi)).append("\n");
     sb.append("    modiDpop: ").append(FruizioneModI.toIndentedString(this.modiDpop)).append("\n");
+    sb.append("    modiScambioAsincrono: ").append(FruizioneModI.toIndentedString(this.modiScambioAsincrono)).append("\n");
     sb.append("}");
     return sb.toString();
   }

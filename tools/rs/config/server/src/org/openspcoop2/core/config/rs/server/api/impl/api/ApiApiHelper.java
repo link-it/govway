@@ -89,6 +89,7 @@ import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
 import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
 import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
+import org.openspcoop2.protocol.sdk.properties.StatoConfigurazioneAccordo;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.utils.service.beans.ProfiloEnum;
@@ -267,7 +268,7 @@ public class ApiApiHelper {
 	}
 
 
-	public static ProtocolProperties getProtocolProperties(Api body, ProfiloEnum profilo) throws Exception {
+	public static ProtocolProperties getProtocolProperties(Api body, ProfiloEnum profilo, AccordoServizioParteComune as) throws Exception {
 
 
 		if(!profilo.equals(ProfiloEnum.MODI) && !profilo.equals(ProfiloEnum.MODIPA) && body.getModi() != null) {
@@ -283,7 +284,7 @@ public class ApiApiHelper {
 			return FatturaPAApiApiHelper.getProtocolProperties(body);
 		case MODI:
 		case MODIPA:
-			return ModiApiApiHelper.getProtocolProperties(body);
+			return ModiApiApiHelper.getProtocolProperties(body, as);
 		case SPCOOP:
 			return SPCoopApiApiHelper.getProtocolProperties(body);
 		}
@@ -840,6 +841,29 @@ public class ApiApiHelper {
 				descrizioneStato = ApiCostanti.APC_API_ICONA_STATO_SERVIZI_PARZIALMENTE_ABILITATI_TOOLTIP;
 			}
 			break;
+		}
+		
+		// verifica del profilo di interoperabilità (es. fasi degli scambi di dati asincroni PDND nel profilo ModI), come in console:
+		// un errore rende l'API non configurata, un avviso la rende parzialmente configurata
+		if(!StatoApiEnum.ERROR.equals(stato)) {
+			StatoConfigurazioneAccordo statoProfilo = null;
+			try {
+				String protocollo = ProtocolFactoryManager.getInstance().getProtocolByOrganizationType(as.getSoggettoReferente().getTipo());
+				statoProfilo = AccordiServizioParteComuneUtilities.getStatoApi(env.apcCore, env.apcHelper, protocollo, env.idAccordoFactory.getIDAccordoFromAccordo(as));
+			} catch (Exception e) { throw new RuntimeException(e); }
+			if(statoProfilo!=null) {
+				if(statoProfilo.isErrore()) {
+					stato = StatoApiEnum.ERROR;
+					descrizioneStato = statoProfilo.getDescrizione();
+				}
+				else if(StatoApiEnum.WARN.equals(stato) && descrizioneStato!=null && !"".equals(descrizioneStato)) {
+					descrizioneStato = descrizioneStato+"; "+statoProfilo.getDescrizione();
+				}
+				else {
+					stato = StatoApiEnum.WARN;
+					descrizioneStato = statoProfilo.getDescrizione();
+				}
+			}
 		}
 
 		ret.setStatoDescrizione(descrizioneStato);

@@ -99,6 +99,31 @@ public class PolicyNegoziazioneToken extends AbstractPolicyToken implements Seri
 		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_URL);
 	}
 	
+	/**
+	 * URL utilizzata per la negoziazione dei voucher relativi agli scambi di dati asincroni PDND.
+	 * Se non configurata nella policy (es. policy create prima dell'introduzione della funzionalità) viene calcolata
+	 * a partire dalla URL della policy, aggiungendo il suffisso '.async' se questa termina con 'token.oauth2'.
+	 * 
+	 * @return URL da utilizzare o null se non configurata e non calcolabile
+	 */
+	public String getEndpointAsync() {
+		String url = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_URL_ASYNC);
+		if(url!=null && !url.trim().isEmpty()) {
+			return url.trim();
+		}
+		return getDefaultEndpointAsync(getEndpoint());
+	}
+	public static String getDefaultEndpointAsync(String url) {
+		if(url==null) {
+			return null;
+		}
+		String u = url.trim();
+		if(u.endsWith(Costanti.POLICY_RETRIEVE_TOKEN_URL_PDND_SUFFIX)) {
+			return u+Costanti.POLICY_RETRIEVE_TOKEN_URL_ASYNC_PDND_SUFFIX;
+		}
+		return null;
+	}
+	
 	public boolean isEndpointHttps() {
 		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.POLICY_ENDPOINT_HTTPS_STATO) 
 				|| isHttpsAuthentication(); // anche solo se è abilitato httpsAuthentication, di fatto è abilitato https	

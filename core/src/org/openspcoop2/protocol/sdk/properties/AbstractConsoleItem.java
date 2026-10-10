@@ -49,6 +49,7 @@ public abstract class AbstractConsoleItem<T> extends BaseConsoleItem {
 	private ConsoleItemInfo info;
 	private String labelRight;
 	private String accessibleLabel;
+	private String linkAccordoServizioParteComune;
 
 	protected AbstractConsoleItem(String id, String label, ConsoleItemType type) throws ProtocolException{
 		super(id, label, type);
@@ -179,6 +180,19 @@ public abstract class AbstractConsoleItem<T> extends BaseConsoleItem {
 	 */
 	public void setAccessibleLabel(String accessibleLabel) {
 		this.accessibleLabel = accessibleLabel;
+	}
+	
+	public String getLinkAccordoServizioParteComune() {
+		return this.linkAccordoServizioParteComune;
+	}
+	/**
+	 * Indica l'API (uri) riferita dal valore del campo: la console aggiunge a fianco del campo
+	 * un collegamento che consente di visualizzare l'API.
+	 *
+	 * @param uriAccordoServizioParteComune uri dell'API riferita
+	 */
+	public void setLinkAccordoServizioParteComune(String uriAccordoServizioParteComune) {
+		this.linkAccordoServizioParteComune = uriAccordoServizioParteComune;
 	}
 	
 	public void setUseDefaultValueForCloseableSection(boolean useDefaultValueForCloseableSection) throws ProtocolException {

@@ -103,6 +103,17 @@ public class Costanti {
 		
 	public static final MapKey<String> EMESSI_DIAGNOSTICI_ERRORE = Map.newMapKey("EMESSI_DIAGNOSTICI_ERRORE");
 	public static final MapKey<String> REQUEST_INFO = Map.newMapKey("REQUEST_INFO");
+	
+	/** Identificativo di collaborazione (conversazione) fornito dal client tramite gli header di integrazione */
+	public static final MapKey<String> ID_COLLABORAZIONE_RICHIESTA_INTEGRAZIONE = Map.newMapKey("ID_COLLABORAZIONE_RICHIESTA_INTEGRAZIONE");
+	/** Scambi di dati asincroni PDND: fase dello scambio registrata nella transazione */
+	public static final MapKey<String> PDND_ASYNC_FASE = Map.newMapKey("PDND_ASYNC_FASE_TRANSAZIONE");
+	/** Scambi di dati asincroni PDND: URL di callback; utilizzabile nel connettore tramite la keyword ${context:pdndAsyncUrlCallback}.
+	 *  Nella fase callback_invocation di un'API REST la URL viene normalizzata eliminando il path della risorsa invocata, se già presente,
+	 *  poiché il connettore lo accoda alla URL */
+	public static final MapKey<String> PDND_ASYNC_URL_CALLBACK = Map.newMapKey("pdndAsyncUrlCallback");
+	/** Scambi di dati asincroni PDND: URL di callback esattamente come comunicata dal fruitore; utilizzabile nel connettore tramite la keyword ${context:pdndAsyncUrlCallbackOriginal} */
+	public static final MapKey<String> PDND_ASYNC_URL_CALLBACK_ORIGINAL = Map.newMapKey("pdndAsyncUrlCallbackOriginal");
 	public static final MapKey<String> REQUEST_INFO_IN_MEMORY = Map.newMapKey("REQUEST_INFO_IN_MEMORY");
 	public static final MapKey<String> EXTENDED_INFO_TRANSAZIONE = Map.newMapKey("EXTENDED_INFO_TRANSAZIONE");
 	public static final MapKey<String> CORS_PREFLIGHT_REQUEST_VIA_GATEWAY = Map.newMapKey("CORS_PREFLIGHT_REQUEST_VIA_GATEWAY");

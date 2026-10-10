@@ -62,6 +62,9 @@ public class ConnettoreJms  implements OneOfApplicativoServerConnettore, OneOfCo
   private String jndiProviderUrl = null;
   
   @Schema(description = "Proprietà aggiuntive del connettore prive di un campo dedicato (es. 'context-*', 'pool-*', 'lookupDestination-*', 'locations-cache', 'acknowledgeMode'). Se non indicate in un aggiornamento, vengono mantenute quelle già presenti.")
+ /**
+   * Proprietà aggiuntive del connettore prive di un campo dedicato (es. 'context-*', 'pool-*', 'lookupDestination-*', 'locations-cache', 'acknowledgeMode'). Se non indicate in un aggiornamento, vengono mantenute quelle già presenti.  
+  **/
   private List<Proprieta> proprieta = null;
  /**
    * Get tipo

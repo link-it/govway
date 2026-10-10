@@ -52,6 +52,9 @@ public class Fruizione extends APIImpl {
   
   @Schema(description = "")
   private FruizioneModIDPoP modiDpop = null;
+  
+  @Schema(description = "")
+  private FruizioneModIScambioAsincrono modiScambioAsincrono = null;
  /**
    * Get descrizione
    * @return descrizione
@@ -186,6 +189,25 @@ public class Fruizione extends APIImpl {
     return this;
   }
 
+ /**
+   * Get modiScambioAsincrono
+   * @return modiScambioAsincrono
+  **/
+  @JsonProperty("modi_scambio_asincrono")
+  @Valid
+  public FruizioneModIScambioAsincrono getModiScambioAsincrono() {
+    return this.modiScambioAsincrono;
+  }
+
+  public void setModiScambioAsincrono(FruizioneModIScambioAsincrono modiScambioAsincrono) {
+    this.modiScambioAsincrono = modiScambioAsincrono;
+  }
+
+  public Fruizione modiScambioAsincrono(FruizioneModIScambioAsincrono modiScambioAsincrono) {
+    this.modiScambioAsincrono = modiScambioAsincrono;
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -199,6 +221,7 @@ public class Fruizione extends APIImpl {
     sb.append("    canale: ").append(Fruizione.toIndentedString(this.canale)).append("\n");
     sb.append("    modi: ").append(Fruizione.toIndentedString(this.modi)).append("\n");
     sb.append("    modiDpop: ").append(Fruizione.toIndentedString(this.modiDpop)).append("\n");
+    sb.append("    modiScambioAsincrono: ").append(Fruizione.toIndentedString(this.modiScambioAsincrono)).append("\n");
     sb.append("}");
     return sb.toString();
   }

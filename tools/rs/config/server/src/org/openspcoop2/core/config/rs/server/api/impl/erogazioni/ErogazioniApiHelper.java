@@ -95,6 +95,7 @@ import org.openspcoop2.core.config.rs.server.api.impl.StatoDescrizione;
 import org.openspcoop2.core.config.rs.server.api.impl.erogazioni.configurazione.ErogazioniConfEnv;
 import org.openspcoop2.core.config.rs.server.api.impl.fruizioni.configurazione.FruizioniConfEnv;
 import org.openspcoop2.core.config.rs.server.config.LoggerProperties;
+import org.openspcoop2.core.config.rs.server.config.ServerProperties;
 import org.openspcoop2.core.config.rs.server.model.*;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.CostantiDB;
@@ -157,6 +158,7 @@ import org.openspcoop2.pdd.core.autorizzazione.canali.CanaliUtils;
 import org.openspcoop2.protocol.basic.Utilities;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.constants.Costanti;
+import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.information_missing.constants.StatoType;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
@@ -166,6 +168,7 @@ import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
 import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
+import org.openspcoop2.protocol.sdk.properties.StatoConfigurazioneAccordo;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.utils.EsitiConfigUtils;
@@ -188,6 +191,7 @@ import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.plugins.servlet.ServletExtendedConnettoreUtils;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaUtilities;
@@ -552,11 +556,13 @@ public class ErogazioniApiHelper {
 				.toArray(String[]::new);
 		
 		// Determino la lista Api
+		// l'API attuale dell'erogazione/fruizione resta valida anche se nel frattempo risulta incompleta (es. fasi degli scambi asincroni PDND)
 		String[] accordiList = AccordiServizioParteSpecificaUtilities.getListaIdAPI(
 				env.tipo_protocollo,
 				env.userLogin,
 				env.apsCore, 
-				env.apsHelper
+				env.apsHelper,
+				env.idAccordoFactory.getIDAccordoFromUri(asps.getAccordoServizioParteComune())
 			).stream()
     		.map( a -> a.getId().toString() )
     		.toArray(String[]::new);
@@ -572,7 +578,7 @@ public class ErogazioniApiHelper {
 		final String endpoint_url = connRegistro.getProperties().get(CostantiDB.CONNETTORE_HTTP_LOCATION);
 		
 		// Recupero i Servizi Esposti dalla API 
-        final String[] ptArray =  AccordiServizioParteSpecificaUtilities.getListaPortTypes(as, env.apsHelper)
+        final String[] ptArray =  AccordiServizioParteSpecificaUtilities.getListaPortTypes(as, env.apsHelper, env.apsCore, env.tipo_protocollo, asps.getPortType())
         		.stream()
          		.map( p -> p.getNome() )
          		.toArray(String[]::new);
@@ -1236,7 +1242,7 @@ public class ErogazioniApiHelper {
 		
 		 boolean accordoPrivato = as.getPrivato()!=null && as.getPrivato();		
          
-         List<PortTypeSintetico> ptList = AccordiServizioParteSpecificaUtilities.getListaPortTypes(as, env.apsHelper);
+         List<PortTypeSintetico> ptList = AccordiServizioParteSpecificaUtilities.getListaPortTypes(as, env.apsHelper, env.apsCore, env.tipo_protocollo);
          
          String[] ptArray =  ptList.stream()
          		.map( p -> p.getNome() )
@@ -4321,18 +4327,43 @@ public class ErogazioniApiHelper {
 		return returnList;
 	}
 
-	public static final ResponseCachingConfigurazione buildResponseCachingConfigurazione(CachingRisposta body, PorteApplicativeHelper paHelper) {
+	public static final ResponseCachingConfigurazione buildResponseCachingConfigurazione(CachingRisposta body, PorteApplicativeHelper paHelper, ConfigurazioneCore confCore) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		ResponseCachingConfigurazione newConfigurazione = null;
 		if (body.getStato() == StatoDefaultRidefinitoEnum.DEFAULT) {
 			
 		}
 		
 		else if ( body.getStato() == StatoDefaultRidefinitoEnum.RIDEFINITO ) {
+			
+			// le informazioni non indicate assumono i valori della configurazione generale, come proposto dalla console con lo stato 'ridefinito'
+			ResponseCachingConfigurazione generale = null;
+			Configurazione configurazione = confCore.getConfigurazioneGenerale();
+			if(configurazione!=null && configurazione.getResponseCaching()!=null && configurazione.getResponseCaching().getConfigurazione()!=null &&
+					StatoFunzionalita.ABILITATO.equals(configurazione.getResponseCaching().getConfigurazione().getStato())) {
+				generale = configurazione.getResponseCaching().getConfigurazione();
+			}
+			boolean abilitato = body.isAbilitato()!=null ? body.isAbilitato().booleanValue() : (generale!=null);
+			int cacheTimeoutSeconds = 1;
+			if(body.getCacheTimeoutSeconds()!=null) {
+				cacheTimeoutSeconds = body.getCacheTimeoutSeconds().intValue();
+			}
+			else if(generale!=null && generale.getCacheTimeoutSeconds()!=null) {
+				cacheTimeoutSeconds = generale.getCacheTimeoutSeconds().intValue();
+			}
+			boolean maxResponseSize = body.isMaxResponseSize()!=null ? body.isMaxResponseSize().booleanValue() : (generale!=null && generale.getMaxMessageSize()!=null);
+			Long maxResponseSizeKb = body.getMaxResponseSizeKb();
+			if(maxResponseSizeKb==null && generale!=null) {
+				maxResponseSizeKb = generale.getMaxMessageSize();
+			}
+			if(maxResponseSize && maxResponseSizeKb==null) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Devi specificare il campo MaxResponseSizeKb");
+			}
+			
 			newConfigurazione = paHelper.getResponseCaching(
-					body.isAbilitato(),  // responseCachingEnabled
-					body.getCacheTimeoutSeconds(), // responseCachingSeconds
-					body.isMaxResponseSize(), // responseCachingMaxResponseSize
-					body.getMaxResponseSizeKb(), // responseCachingMaxResponseSizeBytes
+					abilitato,  // responseCachingEnabled
+					cacheTimeoutSeconds, // responseCachingSeconds
+					maxResponseSize, // responseCachingMaxResponseSize
+					maxResponseSizeKb!=null ? maxResponseSizeKb.longValue() : 1, // responseCachingMaxResponseSizeBytes
 					body.isHashRequestUri(), // responseCachingDigestUrlInvocazione
 					(readHeadersResponseCaching(body.getHashHeaders())!=null), // responseCachingDigestHeaders
 					body.isHashPayload(), // responseCachingDigestPayload
@@ -6536,6 +6567,29 @@ public class ErogazioniApiHelper {
 					}
 				}
 			}
+		}
+	}
+	
+	/**
+	 * Le API configurate per gli scambi di dati asincroni PDND con risorse/azioni non associate a tutte le fasi previste non sono utilizzabili 
+	 * in un'erogazione o in una fruizione (per le API SOAP i servizi incompleti), come nella selezione dell'API in console.
+	 * Il controllo è disattivabile tramite la proprietà 'modipa.selezioneApi.escludiScambiAsincroniIncompleti'.
+	 */
+	public static void checkScambiAsincroniIncompleti(ErogazioniEnv env, String uriAccordoServizioParteComune, String portType) throws Exception {
+		if(uriAccordoServizioParteComune==null || !ServerProperties.getInstance().isModipaSelezioneApiEscludiScambiAsincroniIncompleti()) {
+			return;
+		}
+		IDAccordo idAccordo = env.idAccordoFactory.getIDAccordoFromUri(uriAccordoServizioParteComune);
+		StatoConfigurazioneAccordo stato = AccordiServizioParteComuneUtilities.getStatoApi(env.apsCore, env.apsHelper, env.tipo_protocollo, idAccordo);
+		if(stato==null) {
+			return;
+		}
+		String labelApi = NamingUtils.getLabelAccordoServizioParteComune(idAccordo);
+		if(stato.isErrore()) {
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException("L'API '"+labelApi+"' non è utilizzabile: "+stato.getDescrizione());
+		}
+		if(portType!=null && stato.getServiziNonUtilizzabili()!=null && stato.getServiziNonUtilizzabili().contains(portType)) {
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il servizio '"+portType+"' dell'API '"+labelApi+"' non è utilizzabile: "+stato.getDescrizione());
 		}
 	}
 }

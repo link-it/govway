@@ -309,6 +309,157 @@ public class ModIConsoleCostanti {
 	public static final String MODIPA_API_PROFILO_INTERAZIONE_BULK_RESOURCE_LABEL_RIGHT = "Risorse Massive (BULK_RESOURCE_REST)";
 	public static final String MODIPA_API_PROFILO_INTERAZIONE_BULK_RESOURCE_ID = ModICostanti.MODIPA_PROFILO_INTERAZIONE_BULK_RESOURCE;
 
+	// Scambi di dati asincroni PDND (API)
+	
+	public static final String MODIPA_API_PDND_ASYNC_ID = ModICostanti.MODIPA_PDND_ASYNC;
+	public static final String MODIPA_API_PDND_ASYNC_LABEL = "Scambio Asincrono";
+	public static final String MODIPA_API_PDND_ASYNC_LABEL_RIGHT = "Risposta differita tramite callback (PDND)";
+	
+	public static final String MODIPA_API_PDND_ASYNC_RUOLO_ID = ModICostanti.MODIPA_PDND_ASYNC_RUOLO;
+	public static final String MODIPA_API_PDND_ASYNC_RUOLO_LABEL = "Ruolo";
+	public static final String MODIPA_API_PDND_ASYNC_RUOLO_VALUE_ESERVICE = ModICostanti.MODIPA_PDND_ASYNC_RUOLO_VALUE_ESERVICE;
+	public static final String MODIPA_API_PDND_ASYNC_RUOLO_LABEL_ESERVICE = "Erogazione dati";
+	public static final String MODIPA_API_PDND_ASYNC_RUOLO_VALUE_CALLBACK = ModICostanti.MODIPA_PDND_ASYNC_RUOLO_VALUE_CALLBACK;
+	public static final String MODIPA_API_PDND_ASYNC_RUOLO_LABEL_CALLBACK = "Callback";
+	public static final String MODIPA_API_PDND_ASYNC_RUOLO_DEFAULT_VALUE = MODIPA_API_PDND_ASYNC_RUOLO_VALUE_ESERVICE;
+	
+	public static final String MODIPA_API_PDND_ASYNC_API_CORRELATA_ID = ModICostanti.MODIPA_PDND_ASYNC_API_CORRELATA;
+	public static final String MODIPA_API_PDND_ASYNC_API_CORRELATA_LABEL = "API Erogazione Dati";
+	public static final String MODIPA_API_PDND_ASYNC_API_CORRELATA_NOTE = "API Erogazione Dati a cui la callback si riferisce; i parametri dello scambio asincrono vengono letti da tale API";
+	
+	public static final String MODIPA_API_PDND_ASYNC_SUBTITLE_ID = "modipaAPIPdndAsyncSubTitleId";
+	public static final String MODIPA_API_PDND_ASYNC_SUBTITLE_LABEL = "Scambio di Dati Asincrono";
+	
+	public static final String MODIPA_API_PDND_ASYNC_TEMPO_MAX_CALLBACK_ID = ModICostanti.MODIPA_PDND_ASYNC_TEMPO_MAX_CALLBACK;
+	public static final String MODIPA_API_PDND_ASYNC_TEMPO_MAX_CALLBACK_LABEL = "Tempo massimo di risposta";
+	public static final String MODIPA_API_PDND_ASYNC_TEMPO_MAX_CALLBACK_INFO = "Indicare il tempo massimo di risposta entro cui si impegna a predisporre la risorsa. "
+			+ "Corrisponde ai secondi entro cui l'erogatore deve invocare la callback (callback_invocation), a partire dall'inizio dell'interazione (start_interaction)";
+	
+	public static final String MODIPA_API_PDND_ASYNC_TEMPO_DISPONIBILITA_ID = ModICostanti.MODIPA_PDND_ASYNC_TEMPO_DISPONIBILITA;
+	public static final String MODIPA_API_PDND_ASYNC_TEMPO_DISPONIBILITA_LABEL = "Durata disponibilità dato";
+	public static final String MODIPA_API_PDND_ASYNC_TEMPO_DISPONIBILITA_NOTE = "I tempi indicati sono espressi in secondi";
+	public static final String MODIPA_API_PDND_ASYNC_TEMPO_DISPONIBILITA_INFO = "Specificare la durata di disponibilità del dato, per quanto tempo si impegna a rendere disponibile la risposta. "
+			+ "Corrisponde ai secondi in cui la risposta resta disponibile per il fruitore (get_resource), a partire dall'invocazione della callback";
+	
+	public static final String MODIPA_API_PDND_ASYNC_CONFERMA_RICEZIONE_ID = ModICostanti.MODIPA_PDND_ASYNC_CONFERMA_RICEZIONE;
+	public static final String MODIPA_API_PDND_ASYNC_CONFERMA_RICEZIONE_LABEL = "Conferma recupero risposta";
+	public static final String MODIPA_API_PDND_ASYNC_CONFERMA_RICEZIONE_LABEL_RIGHT = "Richiesta al fruitore (confirmation)";
+	public static final String MODIPA_API_PDND_ASYNC_CONFERMA_RICEZIONE_INFO = "Richiedere al fruitore l'obbligo di confermare il recupero della risposta. "
+			+ "Se abilitato, il fruitore deve confermare il recupero della risposta invocando la fase 'confirmation'; "
+			+ "dopo la conferma la risposta non è più recuperabile (get_resource). "
+			+ "L'opzione è necessaria per poter associare la fase 'confirmation' alle risorse/azioni dell'API";
+	
+	public static final String MODIPA_API_PDND_ASYNC_LIMITE_ENTITA_ID = ModICostanti.MODIPA_PDND_ASYNC_LIMITE_ENTITA;
+	public static final String MODIPA_API_PDND_ASYNC_LIMITE_ENTITA_LABEL = "Numero massimo risultati";
+	public static final String MODIPA_API_PDND_ASYNC_LIMITE_ENTITA_INFO = "Definire il numero massimo di risultati per risposta che si rende disponibile a produrre. "
+			+ "Corrisponde al numero massimo di entità che l'erogatore può dichiarare nella callback (entityNumber)";
+	
+	// Scambi di dati asincroni PDND (Risorse/Azioni)
+	
+	public static final String MODIPA_PDND_ASYNC_FASE_ID = ModICostanti.MODIPA_PDND_ASYNC_FASE;
+	public static final String MODIPA_PDND_ASYNC_FASE_LABEL = CostantiLabel.MODIPA_PDND_ASYNC_FASE_LABEL;
+	public static final String MODIPA_PDND_ASYNC_FASE_VALUE_NESSUNA = ModICostanti.MODIPA_VALUE_UNDEFINED;
+	public static final String MODIPA_PDND_ASYNC_FASE_LABEL_NESSUNA = MODIPA_LABEL_UNDEFINED;
+	public static final String MODIPA_PDND_ASYNC_FASE_VALUE_START_INTERACTION = ModICostanti.MODIPA_PDND_ASYNC_FASE_VALUE_START_INTERACTION;
+	public static final String MODIPA_PDND_ASYNC_FASE_LABEL_START_INTERACTION = CostantiLabel.MODIPA_PDND_ASYNC_FASE_LABEL_START_INTERACTION+" ("+MODIPA_PDND_ASYNC_FASE_VALUE_START_INTERACTION+")";
+	public static final String MODIPA_PDND_ASYNC_FASE_VALUE_GET_RESOURCE = ModICostanti.MODIPA_PDND_ASYNC_FASE_VALUE_GET_RESOURCE;
+	public static final String MODIPA_PDND_ASYNC_FASE_LABEL_GET_RESOURCE = CostantiLabel.MODIPA_PDND_ASYNC_FASE_LABEL_GET_RESOURCE+" ("+MODIPA_PDND_ASYNC_FASE_VALUE_GET_RESOURCE+")";
+	public static final String MODIPA_PDND_ASYNC_FASE_VALUE_CONFIRMATION = ModICostanti.MODIPA_PDND_ASYNC_FASE_VALUE_CONFIRMATION;
+	public static final String MODIPA_PDND_ASYNC_FASE_LABEL_CONFIRMATION = CostantiLabel.MODIPA_PDND_ASYNC_FASE_LABEL_CONFIRMATION+" ("+MODIPA_PDND_ASYNC_FASE_VALUE_CONFIRMATION+")";
+	public static final String MODIPA_PDND_ASYNC_FASE_VALUE_CALLBACK_INVOCATION = ModICostanti.MODIPA_PDND_ASYNC_FASE_VALUE_CALLBACK_INVOCATION;
+	public static final String MODIPA_PDND_ASYNC_FASE_LABEL_CALLBACK_INVOCATION = CostantiLabel.MODIPA_PDND_ASYNC_FASE_LABEL_CALLBACK_INVOCATION+" ("+MODIPA_PDND_ASYNC_FASE_VALUE_CALLBACK_INVOCATION+")";
+	
+	// Scambi di dati asincroni PDND (Fruizioni/Erogazioni)
+	
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_TITLE_ID = "modipaAPIImplPdndAsyncTitleId";
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_TITLE_LABEL = "ModI - Scambi Asincroni";
+	
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_URL_CALLBACK_SORGENTE_ID = ModICostanti.MODIPA_PDND_ASYNC_URL_CALLBACK_SORGENTE;
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_URL_CALLBACK_SORGENTE_LABEL = "URL di Callback";
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_URL_CALLBACK_SORGENTE_VALUE_EROGAZIONE = ModICostanti.MODIPA_PDND_ASYNC_URL_CALLBACK_SORGENTE_VALUE_EROGAZIONE;
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_URL_CALLBACK_SORGENTE_LABEL_EROGAZIONE = "Erogazione API di callback";
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_URL_CALLBACK_SORGENTE_VALUE_CLIENT = ModICostanti.MODIPA_PDND_ASYNC_URL_CALLBACK_SORGENTE_VALUE_CLIENT;
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_URL_CALLBACK_SORGENTE_LABEL_CLIENT = "Fornita dal client";
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_URL_CALLBACK_SORGENTE_DEFAULT_VALUE = MODIPA_API_IMPL_PDND_ASYNC_URL_CALLBACK_SORGENTE_VALUE_EROGAZIONE;
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_URL_CALLBACK_SORGENTE_INFO = "URL di callback inviata alla PDND all'inizio dell'interazione (start_interaction), su cui l'erogatore invocherà la callback.";
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_URL_CALLBACK_SORGENTE_INFO_EROGAZIONE = "Erogazione API di callback: viene utilizzata la URL di invocazione dell'erogazione, da parte del soggetto fruitore, dell'API di callback associata all'API; l'erogazione deve esistere ed essere unica";
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_URL_CALLBACK_SORGENTE_INFO_CLIENT = "Fornita dal client: la URL viene letta da un header HTTP o da un parametro della URL della richiesta del client, eventualmente codificata. "
+			+ "Come previsto dalla PDND deve essere la URL dell'API di callback, in qualsiasi forma, senza il path della risorsa invocata (es. non deve terminare con '/notifications'): il path della risorsa viene aggiunto dall'erogatore al momento dell'invocazione della callback";
+	
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_URL_CALLBACK_MODALITA_ID = ModICostanti.MODIPA_PDND_ASYNC_URL_CALLBACK_MODALITA;
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_URL_CALLBACK_NOME_ID = ModICostanti.MODIPA_PDND_ASYNC_URL_CALLBACK_NOME;
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_URL_CALLBACK_NOME_DEFAULT_VALUE = ModICostanti.MODIPA_PDND_ASYNC_URL_CALLBACK_NOME_DEFAULT;
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_URL_CALLBACK_NOME_QUERY_DEFAULT_VALUE = ModICostanti.MODIPA_PDND_ASYNC_URL_CALLBACK_NOME_QUERY_DEFAULT;
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_URL_CALLBACK_CODIFICA_ID = ModICostanti.MODIPA_PDND_ASYNC_URL_CALLBACK_CODIFICA;
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_URL_CALLBACK_OBBLIGATORIA_ID = ModICostanti.MODIPA_PDND_ASYNC_URL_CALLBACK_OBBLIGATORIA;
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_URL_CALLBACK_OBBLIGATORIA_LABEL = "Obbligatoria";
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_URL_CALLBACK_OBBLIGATORIA_LABEL_RIGHT = "Il client deve fornire la URL";
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_URL_CALLBACK_OBBLIGATORIA_INFO = "Se abilitato, una richiesta del client priva della URL di callback viene rifiutata; altrimenti viene utilizzata la URL di invocazione dell'erogazione dell'API di callback";
+	
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_ENTITY_NUMBER_MODALITA_ID = ModICostanti.MODIPA_PDND_ASYNC_ENTITY_NUMBER_MODALITA;
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_ENTITY_NUMBER_LABEL = "Numero di Entità";
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_ENTITY_NUMBER_INFO = "Modalità con cui il backend fornisce il numero di entità prodotte (entityNumber), inserito da GovWay nel voucher richiesto per l'invocazione della callback (callback_invocation); "
+			+ "il valore non può superare il numero massimo di risultati definito nell'API";
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_ENTITY_NUMBER_NOME_ID = ModICostanti.MODIPA_PDND_ASYNC_ENTITY_NUMBER_NOME;
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_ENTITY_NUMBER_NOME_DEFAULT_VALUE = ModICostanti.MODIPA_PDND_ASYNC_ENTITY_NUMBER_NOME_DEFAULT;
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_ENTITY_NUMBER_NOME_QUERY_DEFAULT_VALUE = ModICostanti.MODIPA_PDND_ASYNC_ENTITY_NUMBER_NOME_QUERY_DEFAULT;
+	
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_MODALITA_LABEL = "Modalità";
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_VALUE_MODALITA_HEADER = ModICostanti.MODIPA_PDND_ASYNC_VALUE_MODALITA_HEADER;
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_LABEL_MODALITA_HEADER = "Header HTTP";
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_VALUE_MODALITA_QUERY = ModICostanti.MODIPA_PDND_ASYNC_VALUE_MODALITA_QUERY;
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_LABEL_MODALITA_QUERY = "Parametro della URL";
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_MODALITA_DEFAULT_VALUE = MODIPA_API_IMPL_PDND_ASYNC_VALUE_MODALITA_HEADER;
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_NOME_LABEL = "Nome";
+	
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_CODIFICA_LABEL = "Codifica";
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_VALUE_CODIFICA_DEFAULT = ModICostanti.MODIPA_PDND_ASYNC_VALUE_CODIFICA_DEFAULT;
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_LABEL_CODIFICA_DEFAULT = "Default";
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_VALUE_CODIFICA_NONE = ModICostanti.MODIPA_PDND_ASYNC_VALUE_CODIFICA_NONE;
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_LABEL_CODIFICA_NONE = "Nessuna (valore in chiaro)";
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_VALUE_CODIFICA_BASE64 = ModICostanti.MODIPA_PDND_ASYNC_VALUE_CODIFICA_BASE64;
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_LABEL_CODIFICA_BASE64 = "Base64";
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_VALUE_CODIFICA_HEX = ModICostanti.MODIPA_PDND_ASYNC_VALUE_CODIFICA_HEX;
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_LABEL_CODIFICA_HEX = "Esadecimale";
+	
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_PURPOSE_ID_ID = ModICostanti.MODIPA_PDND_ASYNC_PURPOSE_ID;
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_PURPOSE_ID_LABEL = "Invio PurposeId";
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_VALUE_DEFAULT = ModICostanti.MODIPA_PDND_ASYNC_VALUE_DEFAULT;
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_LABEL_DEFAULT = "Default";
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_VALUE_ABILITATO = ModICostanti.MODIPA_PDND_ASYNC_VALUE_ABILITATO;
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_LABEL_PURPOSE_ID_ABILITATO = "Abilitato";
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_VALUE_DISABILITATO = ModICostanti.MODIPA_PDND_ASYNC_VALUE_DISABILITATO;
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_LABEL_PURPOSE_ID_DISABILITATO = "Disabilitato";
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_PURPOSE_ID_INFO = "Indica se il purposeId deve essere inserito nella richiesta del voucher per l'ottenimento della risposta (get_resource) e per la conferma di ricezione (confirmation); "
+			+ "nell'inizio dell'interazione (start_interaction) viene sempre inviato. "
+			+ "Con 'Default' l'invio risulta %s";
+	
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_VERIFICA_URL_CALLBACK_ID = ModICostanti.MODIPA_PDND_ASYNC_VERIFICA_URL_CALLBACK;
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_VERIFICA_URL_CALLBACK_LABEL = "URL di Callback";
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_VERIFICA_URL_CALLBACK_LABEL_RIGHT = "Verifica rispetto alle fruizioni";
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_VERIFICA_URL_CALLBACK_INFO = "Se abilitato, all'inizio dell'interazione (start_interaction) viene verificato che la URL di callback presente nel voucher "
+			+ "corrisponda al connettore di una fruizione, da parte del soggetto erogatore, di un'API di callback associata all'API: "
+			+ "la URL di callback deve coincidere con la URL del connettore o estenderla con un ulteriore path (es. la risorsa di callback). "
+			+ "Le fruizioni con un connettore dinamico (es. ${context:pdndAsyncUrlCallback}) non vengono considerate; se esistono solamente fruizioni di questo tipo la verifica non viene effettuata";
+	
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_HTTP_STATUS_MODE_ID = ModICostanti.MODIPA_PDND_ASYNC_HTTP_STATUS_MODE;
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_HTTP_STATUS_MODE_LABEL = "Esito Positivo";
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_HTTP_STATUS_VALUE_DEFAULT = ModICostanti.MODIPA_PDND_ASYNC_VALUE_DEFAULT;
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_HTTP_STATUS_LABEL_DEFAULT = CostantiLabel.MODIPA_LABEL_DEFAULT;
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_HTTP_STATUS_VALUE_RIDEFINITO = ModICostanti.MODIPA_PDND_ASYNC_VALUE_RIDEFINITO;
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_HTTP_STATUS_LABEL_RIDEFINITO = CostantiLabel.MODIPA_LABEL_RIDEFINISCI;
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_HTTP_STATUS_MODE_INFO = "Codici HTTP della risposta con cui la fase dello scambio asincrono viene considerata completata e quindi registrata; "
+			+ "con un codice diverso l'interazione resta nello stato precedente e la fase può essere ripetuta. "
+			+ "Con 'Default' vengono utilizzati i codici '%s'";
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_HTTP_STATUS_ID = ModICostanti.MODIPA_PDND_ASYNC_HTTP_STATUS;
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_HTTP_STATUS_LABEL = "Codici HTTP";
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_HTTP_STATUS_NOTE = "Codici singoli o intervalli separati da virgola (es. 200-299 oppure 200,202,204-206)";
+	
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_URL_CALLBACK_HEADER_CODIFICA_ID = ModICostanti.MODIPA_PDND_ASYNC_URL_CALLBACK_HEADER_CODIFICA;
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_URL_CALLBACK_HEADER_CODIFICA_LABEL = "Codifica Header";
+	public static final String MODIPA_API_IMPL_PDND_ASYNC_URL_CALLBACK_HEADER_CODIFICA_INFO = "Codifica del valore dell'header HTTP '%s' con cui la URL di callback viene inoltrata al backend. "
+			+ "Con 'Default' viene utilizzata la codifica '%s'";
+
 	public static final String MODIPA_API_PROFILO_CANALE_LABEL = CostantiLabel.MODIPA_API_PROFILO_CANALE_LABEL;
 	public static final String MODIPA_API_PROFILO_CANALE_ID = "modipaAPIProfiloSicurezzaSubTitleId";
         
@@ -426,6 +577,7 @@ public class ModIConsoleCostanti {
     
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_LABEL = CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH;
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_ID = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH;
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_ID_INUSE_READONLY = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH+SUFFIX_LABEL;
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_LOCALE = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_LOCALE;
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_LABEL_LOCALE = CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_LOCALE;
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_PDND = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_PDND;
@@ -567,6 +719,7 @@ public class ModIConsoleCostanti {
 	
 	public static final String MODIPA_API_CONFIGURAZIONE_SICUREZZA_RICHIESTA_MODE_LABEL = "Stato";
     public static final String MODIPA_API_CONFIGURAZIONE_SICUREZZA_RICHIESTA_MODE_ID = ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RICHIESTA_MODE;
+    public static final String MODIPA_API_CONFIGURAZIONE_SICUREZZA_RICHIESTA_MODE_ID_INUSE_READONLY = ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RICHIESTA_MODE+SUFFIX_LABEL;
     public static final String MODIPA_API_CONFIGURAZIONE_SICUREZZA_RICHIESTA_MODE_DEFAULT_VALUE = ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RICHIESTA_MODE_VALUE_DEFAULT;
     public static final String MODIPA_API_CONFIGURAZIONE_SICUREZZA_RICHIESTA_MODE_VALUE_ABILITATO = ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RICHIESTA_MODE_VALUE_ABILITATO;
     public static final String MODIPA_API_CONFIGURAZIONE_SICUREZZA_RICHIESTA_MODE_VALUE_DISABILITATO = ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RICHIESTA_MODE_VALUE_DISABILITATO;

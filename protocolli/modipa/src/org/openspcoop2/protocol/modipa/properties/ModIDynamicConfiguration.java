@@ -20,6 +20,9 @@
 
 package org.openspcoop2.protocol.modipa.properties;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDFruizione;
 import org.openspcoop2.core.id.IDPortTypeAzione;
@@ -28,9 +31,11 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
+import org.openspcoop2.core.registry.constants.ServiceBinding;
 import org.openspcoop2.protocol.basic.properties.BasicDynamicConfiguration;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;
 import org.openspcoop2.protocol.modipa.constants.ModIConsoleCostanti;
+import org.openspcoop2.protocol.modipa.utils.ModIPdndAsyncUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ConsoleItemType;
@@ -42,9 +47,11 @@ import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
 import org.openspcoop2.protocol.sdk.properties.IConsoleHelper;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesFactory;
+import org.openspcoop2.protocol.sdk.properties.StatoConfigurazioneAccordo;
 import org.openspcoop2.protocol.sdk.properties.StringConsoleItem;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
+import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.protocol.utils.ModISecurityUtils;
 
 /**
@@ -181,12 +188,11 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 
 		boolean rest = ModIDynamicConfigurationAccordiParteComuneUtilities.isApiRest(consoleOperationType, consoleHelper, registryReader, id);
 
-		// Sezione Interazione (solo per API REST)
+		// Sezione Interazione (le risorse massive sono previste solamente per API REST)
+		configuration.addConsoleItem(ProtocolPropertiesFactory.newSubTitleItem(
+				ModIConsoleCostanti.MODIPA_API_PROFILO_INTERAZIONE_REST_ID,
+				ModIConsoleCostanti.MODIPA_API_PROFILO_INTERAZIONE_REST_LABEL));
 		if (rest) {
-			configuration.addConsoleItem(ProtocolPropertiesFactory.newSubTitleItem(
-					ModIConsoleCostanti.MODIPA_API_PROFILO_INTERAZIONE_REST_ID,
-					ModIConsoleCostanti.MODIPA_API_PROFILO_INTERAZIONE_REST_LABEL));
-
 			BooleanConsoleItem bulkResourceItem = (BooleanConsoleItem)
 					ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.BOOLEAN,
 							ConsoleItemType.CHECKBOX,
@@ -244,8 +250,14 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 		
 		boolean rest = ModIDynamicConfigurationAccordiParteComuneUtilities.isApiRest(consoleOperationType, consoleHelper, registryReader, id);
 		
+		// lo scambio di dati asincrono fissa alcuni valori della sicurezza messaggio, che devono essere impostati prima del suo aggiornamento
+		ModIDynamicConfigurationPdndAsyncUtilities.impostaSicurezzaMessaggioApi(properties);
+		
 		ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.updateProfiloSicurezzaMessaggio(this.modiProperties,
 				consoleConfiguration, consoleHelper, properties, rest, false);
+		
+		// dopo la sicurezza messaggio: lo scambio di dati asincrono dipende dalla generazione del token 'Authorization PDND'
+		ModIDynamicConfigurationPdndAsyncUtilities.updatePdndAsyncApi(consoleConfiguration, properties, registryReader, this.protocolFactory, rest, id);
 		
 	}
 	
@@ -262,6 +274,39 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 		
 		ModIDynamicConfigurationAccordiParteComuneUtilities.validateDynamicConfigAccordoServizioParteComune(consoleOperationType, consoleHelper, properties, 
 				registryReader, id);
+		
+		boolean rest = ModIDynamicConfigurationAccordiParteComuneUtilities.isApiRest(consoleOperationType, consoleHelper, registryReader, id);
+		ModIDynamicConfigurationPdndAsyncUtilities.validatePdndAsyncApi(consoleOperationType, properties, registryReader, rest, id);
+	}
+	
+	@Override
+	public StatoConfigurazioneAccordo verifyStatoAccordoServizioParteComune(IConsoleHelper consoleHelper, 
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDAccordo id) throws ProtocolException {
+		AccordoServizioParteComune api = null;
+		try {
+			api = registryReader.getAccordoServizioParteComune(id, false, false);
+		}catch(RegistryNotFound notFound) {
+			return null;
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
+		// scambi di dati asincroni PDND: le risorse/azioni devono essere associate alle fasi previste
+		return ModIPdndAsyncUtils.verificaFasi(api, ServiceBinding.REST.equals(api.getServiceBinding()));
+	}
+	
+	@Override
+	public List<StatoConfigurazioneAccordo> findStatoAccordiServizioParteComuneNonConfigurati(IConsoleHelper consoleHelper, 
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader) throws ProtocolException {
+		// vengono lette solamente le API configurate per gli scambi di dati asincroni PDND, individuate con un'unica ricerca
+		List<StatoConfigurazioneAccordo> list = new ArrayList<>();
+		for (IDAccordo idAccordo : ModIPdndAsyncUtils.findApiPdndAsync(registryReader)) {
+			StatoConfigurazioneAccordo stato = verifyStatoAccordoServizioParteComune(consoleHelper, registryReader, configIntegrationReader, idAccordo);
+			if(stato!=null) {
+				stato.setIdAccordo(idAccordo);
+				list.add(stato);
+			}
+		}
+		return list;
 	}
 	
 	
@@ -315,6 +360,9 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 		ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.updateProfiloSicurezzaMessaggio(this.modiProperties,
 				consoleConfiguration, consoleHelper, properties, false, true);
 		
+		// una risorsa/azione associata ad una fase dello scambio asincrono non può modificare i valori fissati nella sicurezza messaggio ridefinita
+		ModIDynamicConfigurationPdndAsyncUtilities.updateFaseSicurezzaMessaggio(consoleConfiguration, properties);
+		
 	}
 
 	@Override
@@ -324,6 +372,9 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 			throws ProtocolException {
 
 		ModIDynamicConfigurationAccordiParteComuneUtilities.validateProfiloInterazione(properties, id.getIdPortType().getNome(), false);
+		
+		ModIDynamicConfigurationPdndAsyncUtilities.validateFase(properties, registryReader, id.getIdPortType().getIdAccordo(), 
+				id.getIdPortType().getNome(), id.getNome(), false);
 		
 		ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.validateProfiloSicurezzaMessaggio(properties, false);
 	}
@@ -375,6 +426,9 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 		
 		ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.updateProfiloSicurezzaMessaggio(this.modiProperties,
 				consoleConfiguration, consoleHelper, properties, true, true);
+		
+		// una risorsa/azione associata ad una fase dello scambio asincrono non può modificare i valori fissati nella sicurezza messaggio ridefinita
+		ModIDynamicConfigurationPdndAsyncUtilities.updateFaseSicurezzaMessaggio(consoleConfiguration, properties);
 	}
 	
 	@Override
@@ -384,6 +438,9 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 			throws ProtocolException {
 		
 		ModIDynamicConfigurationAccordiParteComuneUtilities.validateProfiloInterazione(properties, null, true);
+		
+		ModIDynamicConfigurationPdndAsyncUtilities.validateFase(properties, registryReader, id.getIdAccordo(), 
+				null, id.getNome(), true);
 		
 		ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.validateProfiloSicurezzaMessaggio(properties, true);
 	}

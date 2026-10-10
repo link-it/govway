@@ -2329,7 +2329,8 @@ public class GestoreToken {
 				pddContext, requestInfo, busta, state, protocolFactory, 
 				policyNegoziazioneToken);
 		
-		if(GestoreToken.cacheGestioneToken==null){
+		// i voucher degli scambi di dati asincroni PDND utilizzabili una sola volta non vengono gestiti tramite cache
+		if(GestoreToken.cacheGestioneToken==null || dynamicParameters.isPdndAsyncNoCache()){
 			esitoNegoziazioneToken = GestoreTokenNegoziazioneUtilities.endpointTokenEngine(debug, log, policyNegoziazioneToken, 
 					busta, requestInfo, tipoPdD,
 					dynamicParameters, protocolFactory, 

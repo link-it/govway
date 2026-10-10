@@ -43,6 +43,8 @@ La sezione **Informazioni Generali** (:numref:`mon_DettaglioTransazioneInfo_fig`
 
     -  ID Conversazione e/o Riferimento ID Richiesta: informazioni opzionali presenti solamente se attivati nella API
 
+    -  Fase Asincrona e URL Callback: presenti solamente nelle transazioni relative agli scambi di dati asincroni PDND del profilo ModI (:ref:`monitor_profiloModIPA`)
+
     -  ID Applicativo Richiesta e/o Risposta: contiene l'identificativo di correlazione applicativa estratto dal Gateway, se configurato nella API
 
     -  Latenza Totale: rappresenta l'intervallo temporale trascorso dalla ricezione della richiesta alla consegna della risposta al client

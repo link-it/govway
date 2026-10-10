@@ -414,6 +414,23 @@ Prerequisiti:
        org.openspcoop2.pdd.statistiche.pdnd.tracciamento.generazione.enabled=false
        org.openspcoop2.pdd.statistiche.pdnd.tracciamento.pubblicazione.enabled=false
 
++ Scambi di dati asincroni PDND (PdndAsyncRestTest, PdndAsyncSoapTest)
+  La configurazione (API, erogazioni e fruizioni 'PDNDAsync*', erogazione 'AuthorizationServerAsincroniDummy', token policy 'PDNDAsync-*')
+  fa parte di modipaTestBundle.zip. L'authorization server di test emette i voucher firmati con /etc/govway/keys/xca/ExampleServer.p12:
+	- /token.oauth2.async: come la PDND, il voucher della fase callback_invocation non riporta 'entityNumber'
+	- /token.oauth2.async.entityNumber: il voucher della fase callback_invocation riporta 'entityNumber'
+	- /voucher: emette voucher con i claim indicati nei parametri (utilizzato per invocare direttamente le erogazioni con voucher errati)
+  Vengono utilizzati i valori di default di modipa.properties (codici HTTP di esito positivo 200-299, invio del purposeId
+  in get_resource/confirmation, nessuna codifica dell'header della URL di callback).
+  Per verificare in tempi ridotti l'eliminazione delle interazioni scadute (pulizia.feature) aggiungere nel file
+  /etc/govway/govway_local.properties le seguenti proprietà, prima dell'avvio di GovWay e dell'esecuzione di tutti i test:
+	org.openspcoop2.pdd.gestoreInterazioniAsincronePDND.timer.intervalloSecondi=5
+	org.openspcoop2.pdd.gestoreInterazioniAsincronePDND.conservazioneSecondi=20
+  Le API 'PDNDAsyncRestScadenze' e 'PDNDAsyncSoapScadenze' prevedono tempi di 3 secondi per verificare le scadenze.
+  Esecuzione:
+	ant run_test -Dload=false -Ddelete=false -Dtest=PdndAsyncRestTest
+	ant run_test -Dload=false -Ddelete=false -Dtest=PdndAsyncSoapTest
+
 + Compilare i test con
 	ant build
 

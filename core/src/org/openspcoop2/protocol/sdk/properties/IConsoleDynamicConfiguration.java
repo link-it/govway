@@ -19,6 +19,8 @@
  */
 package org.openspcoop2.protocol.sdk.properties;
 
+import java.util.List;
+
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoAzione;
 import org.openspcoop2.core.id.IDFruizione;
@@ -65,6 +67,23 @@ public interface IConsoleDynamicConfiguration {
 			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDAccordo id) throws ProtocolException;
 	public void validateDynamicConfigAccordoServizioParteComune(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, ProtocolProperties properties, 
 			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDAccordo id) throws ProtocolException;
+	/**
+	 * Verifica che l'API risulti completa rispetto alle funzionalità specifiche del profilo di interoperabilità che richiedono
+	 * una configurazione delle risorse o delle azioni (es. fasi degli scambi di dati asincroni PDND nel profilo ModI).
+	 * 
+	 * @return l'esito della verifica, visualizzato nello stato dell'API, oppure null se l'API risulta correttamente configurata
+	 */
+	public StatoConfigurazioneAccordo verifyStatoAccordoServizioParteComune(IConsoleHelper consoleHelper, 
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDAccordo id) throws ProtocolException;
+	/**
+	 * Ritorna, con un'unica elaborazione, le API del profilo di interoperabilità che non risultano correttamente configurate secondo i criteri di 
+	 * {@link #verifyStatoAccordoServizioParteComune(IConsoleHelper, IRegistryReader, IConfigIntegrationReader, IDAccordo)}:
+	 * consente di verificare una lista di API senza doverle leggere singolarmente.
+	 * 
+	 * @return la lista (eventualmente vuota) degli esiti, con l'identificativo dell'API valorizzato
+	 */
+	public List<StatoConfigurazioneAccordo> findStatoAccordiServizioParteComuneNonConfigurati(IConsoleHelper consoleHelper, 
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader) throws ProtocolException;
 	
 	public ConsoleConfiguration getDynamicConfigAccordoServizioComposto(ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, 
 			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDAccordo id) throws ProtocolException;

@@ -37,6 +37,9 @@ import javax.sql.DataSource;
 
 import org.openspcoop2.pdd.core.GestoreMessaggi;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
+import org.openspcoop2.pdd.core.pdnd.async.InterazioneAsincronaPDND;
+import org.openspcoop2.pdd.core.pdnd.async.InterazioniAsincronePDNDDriverUtils;
+import org.openspcoop2.pdd.core.pdnd.async.InterazioniAsincronePDNDFiltro;
 import org.openspcoop2.pdd.mdb.InoltroBuste;
 import org.openspcoop2.pdd.mdb.InoltroRisposte;
 import org.openspcoop2.pdd.monitor.Busta;
@@ -1716,6 +1719,67 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 		sqlQueryObject.addOrderBy(StatoConsegnaAsincrona.ALIAS_SERVIZIO_APPLICATIVO, true);
 			
 		return sqlQueryObject.createSQLUnion(true, sqlQueryObjectRiconsegna, sqlQueryObjectCoda, sqlQueryObjectMessageBox);
+	}
+	
+	
+	
+	
+	/* **** Interazioni relative agli scambi di dati asincroni PDND **** */
+	
+	public long countInterazioniAsincronePDND(InterazioniAsincronePDNDFiltro filtro) throws DriverMonitoraggioException{
+		Connection con = null;
+		try{
+			con = getConnection();
+			checkConnection(con);
+			return InterazioniAsincronePDNDDriverUtils.count(con, this.tipoDatabase, filtro);
+		}catch(Exception e){
+			this.logError("countInterazioniAsincronePDND error",e);
+			throw new DriverMonitoraggioException("countInterazioniAsincronePDND error: "+e.getMessage(),e);
+		}finally{
+			releaseConnection(con);
+		}
+	}
+	
+	public List<InterazioneAsincronaPDND> getInterazioniAsincronePDND(InterazioniAsincronePDNDFiltro filtro) throws DriverMonitoraggioException{
+		Connection con = null;
+		try{
+			con = getConnection();
+			checkConnection(con);
+			return InterazioniAsincronePDNDDriverUtils.find(con, this.tipoDatabase, filtro);
+		}catch(Exception e){
+			this.logError("getInterazioniAsincronePDND error",e);
+			throw new DriverMonitoraggioException("getInterazioniAsincronePDND error: "+e.getMessage(),e);
+		}finally{
+			releaseConnection(con);
+		}
+	}
+	
+	public InterazioneAsincronaPDND getInterazioneAsincronaPDND(long id) throws DriverMonitoraggioException{
+		Connection con = null;
+		try{
+			con = getConnection();
+			checkConnection(con);
+			return InterazioniAsincronePDNDDriverUtils.getById(con, this.tipoDatabase, id);
+		}catch(Exception e){
+			this.logError("getInterazioneAsincronaPDND error",e);
+			throw new DriverMonitoraggioException("getInterazioneAsincronaPDND error: "+e.getMessage(),e);
+		}finally{
+			releaseConnection(con);
+		}
+	}
+	
+	public int deleteInterazioneAsincronaPDND(long id) throws DriverMonitoraggioException{
+		Connection con = null;
+		try{
+			con = getConnection();
+			checkConnection(con);
+			return InterazioniAsincronePDNDDriverUtils.delete(con, this.tipoDatabase, id);
+		}catch(Exception e){
+			this.logError("deleteInterazioneAsincronaPDND error",e);
+			throw new DriverMonitoraggioException("deleteInterazioneAsincronaPDND error: "+e.getMessage(),e);
+		}finally{
+			releaseConnection(con);
+		}
 	}
 	
 	private String getNullTimestampValue() {

@@ -1,0 +1,31 @@
+# ** E-service (erogatore) **
+
+# Endpoint del server che implementa l'e-service (utilizzato come connettore dell'erogazione GovWay)
+eservice.endpoint=http://localhost:9301/
+
+# Invocazione automatica della callback (fase callback_invocation) tramite la fruizione GovWay dell'API di callback.
+# Impostare a false per invocarla solamente manualmente: ant runCallback -DconversationId=<id> [-DentityNumber=<n>]
+# (l'invocazione manuale utilizza comunque le propriet‡ 'eservice.callback.*' seguenti)
+eservice.callback.enabled=true
+# Secondi di attesa, dopo la fase start_interaction, prima di invocare la callback
+eservice.callback.delaySeconds=5
+# URL della fruizione GovWay dell'API di callback (soggetto erogatore -> soggetto fruitore)
+eservice.callback.url=http://127.0.0.1:8080/govway/soap/out/Erogatore/Fruitore/PDNDAsyncCallbackCompatta/v1
+# Header con cui vengono forniti a GovWay l'identificativo dell'interazione e il numero di entit√†
+eservice.callback.header.conversationId=govway-conversation-id
+eservice.callback.header.entityNumber=govway-pdnd-entity-number
+# Autenticazione BASIC verso GovWay
+#eservice.callback.username=username
+#eservice.callback.password=123456
+
+
+# ** API di callback (fruitore) **
+
+# Endpoint del server che implementa l'API di callback (utilizzato come connettore dell'erogazione GovWay della callback)
+callback.endpoint=http://localhost:9302/
+
+
+# ** Header di integrazione ricevuti da GovWay **
+
+header.conversationId=GovWay-Conversation-ID
+header.urlCallback=GovWay-PDND-Url-Callback

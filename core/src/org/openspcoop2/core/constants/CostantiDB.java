@@ -367,6 +367,11 @@ public final class CostantiDB {
     
     public static final String REMOTE_STORE_KEY = "remote_store_key";
     
+    public static final String PDND_INTERAZIONI_ASYNC = "PDND_INTERAZIONI_ASYNC";
+    public static final String PDND_INTERAZIONI_ASYNC_COLUMN_ID = "id";
+    public static final String PDND_INTERAZIONI_ASYNC_SEQUENCE = "seq_PDND_INTERAZIONI_ASYNC";
+    public static final String PDND_INTERAZIONI_ASYNC_TABLE_FOR_ID = "PDND_INTERAZIONI_ASYNC_init_seq";
+    
     /** Costanti Digest Service params **/
     private static boolean serviziDigestEnabled = true;
     public static boolean isServiziDigestEnabled() {
@@ -921,6 +926,52 @@ public final class CostantiDB {
     public static final String MODIPA_PROFILO_INTERAZIONE_ASINCRONA_AZIONE_RICHIESTA_CORRELATA = "modipaInteractionAsyncActionRequest";
 	
     public static final String MODIPA_PROFILO_INTERAZIONE_BULK_RESOURCE = "modipaInteractionBulkResource";
+    
+    // Scambi di dati asincroni PDND (API)
+    public static final String MODIPA_PDND_ASYNC = "modipaPdndAsync";
+    public static final String MODIPA_PDND_ASYNC_RUOLO = "modipaPdndAsyncRole";
+    public static final String MODIPA_PDND_ASYNC_RUOLO_VALUE_ESERVICE = "eservice";
+    public static final String MODIPA_PDND_ASYNC_RUOLO_VALUE_CALLBACK = "callback";
+    public static final String MODIPA_PDND_ASYNC_API_CORRELATA = "modipaPdndAsyncApi";
+    public static final String MODIPA_PDND_ASYNC_TEMPO_MAX_CALLBACK = "modipaPdndAsyncMaxCallbackTime";
+    public static final String MODIPA_PDND_ASYNC_TEMPO_DISPONIBILITA = "modipaPdndAsyncResourceAvailabilityTime";
+    public static final String MODIPA_PDND_ASYNC_CONFERMA_RICEZIONE = "modipaPdndAsyncConfirmation";
+    public static final String MODIPA_PDND_ASYNC_LIMITE_ENTITA = "modipaPdndAsyncMaxEntities";
+    // Scambi di dati asincroni PDND (Risorse/Azioni)
+    public static final String MODIPA_PDND_ASYNC_FASE = "modipaPdndAsyncPhase";
+    public static final String MODIPA_PDND_ASYNC_FASE_VALUE_START_INTERACTION = "start_interaction";
+    public static final String MODIPA_PDND_ASYNC_FASE_VALUE_CALLBACK_INVOCATION = "callback_invocation";
+    public static final String MODIPA_PDND_ASYNC_FASE_VALUE_GET_RESOURCE = "get_resource";
+    public static final String MODIPA_PDND_ASYNC_FASE_VALUE_CONFIRMATION = "confirmation";
+    // Scambi di dati asincroni PDND (Fruizioni/Erogazioni)
+    public static final String MODIPA_PDND_ASYNC_URL_CALLBACK_SORGENTE = "modipaPdndAsyncUrlCallbackSource";
+    public static final String MODIPA_PDND_ASYNC_URL_CALLBACK_SORGENTE_VALUE_EROGAZIONE = "erogazione";
+    public static final String MODIPA_PDND_ASYNC_URL_CALLBACK_SORGENTE_VALUE_CLIENT = "client";
+    public static final String MODIPA_PDND_ASYNC_URL_CALLBACK_MODALITA = "modipaPdndAsyncUrlCallbackMode";
+    public static final String MODIPA_PDND_ASYNC_URL_CALLBACK_NOME = "modipaPdndAsyncUrlCallbackName";
+    public static final String MODIPA_PDND_ASYNC_URL_CALLBACK_CODIFICA = "modipaPdndAsyncUrlCallbackEncoding";
+    public static final String MODIPA_PDND_ASYNC_URL_CALLBACK_OBBLIGATORIA = "modipaPdndAsyncUrlCallbackRequired";
+    public static final String MODIPA_PDND_ASYNC_ENTITY_NUMBER_MODALITA = "modipaPdndAsyncEntityNumberMode";
+    public static final String MODIPA_PDND_ASYNC_ENTITY_NUMBER_NOME = "modipaPdndAsyncEntityNumberName";
+    public static final String MODIPA_PDND_ASYNC_ENTITY_NUMBER_NOME_DEFAULT = "GovWay-PDND-Entity-Number";
+    public static final String MODIPA_PDND_ASYNC_ENTITY_NUMBER_NOME_QUERY_DEFAULT = "govway_pdnd_entity_number";
+    public static final String MODIPA_PDND_ASYNC_URL_CALLBACK_NOME_DEFAULT = "GovWay-PDND-Url-Callback";
+    public static final String MODIPA_PDND_ASYNC_URL_CALLBACK_NOME_QUERY_DEFAULT = "govway_pdnd_url_callback";
+    public static final String MODIPA_PDND_ASYNC_PURPOSE_ID = "modipaPdndAsyncPurposeId";
+    public static final String MODIPA_PDND_ASYNC_VERIFICA_URL_CALLBACK = "modipaPdndAsyncCheckUrlCallback";
+    public static final String MODIPA_PDND_ASYNC_URL_CALLBACK_HEADER_CODIFICA = "modipaPdndAsyncUrlCallbackHeaderEncoding";
+    public static final String MODIPA_PDND_ASYNC_HTTP_STATUS_MODE = "modipaPdndAsyncHttpStatusMode";
+    public static final String MODIPA_PDND_ASYNC_HTTP_STATUS = "modipaPdndAsyncHttpStatus";
+    public static final String MODIPA_PDND_ASYNC_VALUE_MODALITA_HEADER = "header";
+    public static final String MODIPA_PDND_ASYNC_VALUE_MODALITA_QUERY = "query";
+    public static final String MODIPA_PDND_ASYNC_VALUE_CODIFICA_DEFAULT = "default";
+    public static final String MODIPA_PDND_ASYNC_VALUE_CODIFICA_NONE = "none";
+    public static final String MODIPA_PDND_ASYNC_VALUE_CODIFICA_BASE64 = "base64";
+    public static final String MODIPA_PDND_ASYNC_VALUE_CODIFICA_HEX = "hex";
+    public static final String MODIPA_PDND_ASYNC_VALUE_DEFAULT = "default";
+    public static final String MODIPA_PDND_ASYNC_VALUE_ABILITATO = "true";
+    public static final String MODIPA_PDND_ASYNC_VALUE_DISABILITATO = "false";
+    public static final String MODIPA_PDND_ASYNC_VALUE_RIDEFINITO = "ridefinito";
 
     public static final String MODIPA_PROFILO_SICUREZZA_CANALE = "modipaSecurityChannelProfile";
     public static final String MODIPA_PROFILO_SICUREZZA_CANALE_VALUE_IDAC01 = "idac01";

@@ -754,6 +754,7 @@ public class ConfigurazioneCostanti {
 	public static final String LABEL_CONFIGURAZIONE_SISTEMA_TIMERS_MONITORAGGIO = "Monitoraggio Risorse";
 	public static final String LABEL_CONFIGURAZIONE_SISTEMA_TIMERS_SISTEMA = "Attività di Sistema";
 	public static final String LABEL_CONFIGURAZIONE_SISTEMA_TIMERS_PDND = "Repository Chiavi PDND";
+	public static final String LABEL_CONFIGURAZIONE_SISTEMA_TIMERS_PDND_INTERAZIONI_ASINCRONE = "Interazioni Asincrone PDND";
 	public static final String LABEL_CONFIGURAZIONE_SISTEMA_STATO_TIMER_PREFIX = "stato del timer ";
 	
 	public static final String LABEL_CONFIGURAZIONE_REGISTRAZIONE_TRANSAZIONI = "Transazioni";
@@ -1115,6 +1116,7 @@ public class ConfigurazioneCostanti {
 	public static final String PARAMETRO_CONFIGURAZIONE_SISTEMA_ALLARMI_ATTIVI_RESTART = "allarmiAttiviRestart";
 	public static final String PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_CHIAVI_PDND = "timerChiaviPDND";
 	public static final String PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_CACHE_CHIAVI_PDND = "timerCacheChiaviPDND";
+	public static final String PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_INTERAZIONI_ASINCRONE_PDND = "timerInterazioniAsincronePDND";
 	public static final String PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_OPERAZIONI_REMOTE = "timerGestoreOpRemote";
 	public static final String PARAMETRO_CONFIGURAZIONE_SISTEMA_SVECCHIAMENTO_OPERAZIONI_REMOTE = "timerDeleteOpRemote";
 	
@@ -1718,6 +1720,7 @@ public class ConfigurazioneCostanti {
 	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_PDND_TRACCIAMENTO_PUBBLICAZIONE = "Pubblicazione";
 	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_CHIAVI_PDND = "Gestione Eventi";
 	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_CACHE_CHIAVI_PDND = "Gestione Cache";
+	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_INTERAZIONI_ASINCRONE_PDND = "Eliminazione Interazioni Scadute";
 	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_OPERAZIONI_REMOTE = "Esecuzione Operazioni Remote";
 	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_SVECCHIAMENTO_OPERAZIONI_REMOTE = "Svecchiamento Operazioni";
 	

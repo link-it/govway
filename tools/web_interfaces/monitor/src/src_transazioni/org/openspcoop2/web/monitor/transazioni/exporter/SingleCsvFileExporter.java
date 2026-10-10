@@ -838,7 +838,11 @@ public class SingleCsvFileExporter implements IExporter{
 						oneLine.add(CostantiExport.EMPTY_STRING);
 					}
 				} else if(keyColonna.equals(CostantiExport.KEY_COL_SERVIZIO_CORRELATO)){
-					if(StringUtils.isNotEmpty(t.getNomeServizioCorrelato())){
+					if(t.isPdndAsync()) {
+						// scambi di dati asincroni PDND: fase ed eventuale URL di callback (presente solo in alcune fasi) separate da spazio
+						oneLine.add(t.getTipoServizioCorrelato() + (StringUtils.isNotEmpty(t.getNomeServizioCorrelato()) ? " " + t.getNomeServizioCorrelato() : ""));
+					}
+					else if(StringUtils.isNotEmpty(t.getNomeServizioCorrelato())){
 						oneLine.add(t.getTipoServizioCorrelato()+ CostantiExport.SEPARATORE_TIPO_NOME + t.getNomeServizioCorrelato());
 					} else {
 						oneLine.add(CostantiExport.EMPTY_STRING);

@@ -1,0 +1,149 @@
+openapi: 3.0.3
+info:
+  title: PDNDAsyncCallbackEstesa
+  version: "1.0"
+  description: |-
+    API di callback di esempio per gli scambi di dati asincroni PDND (versione estesa).
+
+    Erogata dal fruitore dell'e-service 'PDNDAsyncEServiceEstesa' e invocata dall'erogatore
+    per notificare che i dati sono disponibili:
+    - POST /notifications -> fase 'callback_invocation'
+
+    Ulteriori risorse invocabili normalmente (non partecipano allo scambio asincrono):
+    - POST /notifications/errors -> segnalazione di un errore applicativo
+    - GET  /health               -> stato del servizio
+
+    L'identificativo dell'interazione (interactionId) e il numero di entità (entityNumber) sono veicolati
+    da GovWay tramite il voucher PDND; all'applicativo l'interactionId viene fornito nell'header 'GovWay-Conversation-ID'.
+  license:
+    name: GPL v3.0
+    url: https://www.gnu.org/licenses/gpl-3.0.txt
+servers:
+  - url: http://localhost:9202
+paths:
+  /notifications:
+    post:
+      tags:
+        - pdnd-async
+      summary: Invocazione della callback (callback_invocation)
+      operationId: callbackInvocation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Notification'
+      responses:
+        "200":
+          description: Notifica ricevuta
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ack'
+        "400":
+          $ref: '#/components/responses/BadRequest'
+        default:
+          $ref: '#/components/responses/Default'
+  /notifications/errors:
+    post:
+      tags:
+        - notifications
+      summary: Segnalazione di un errore applicativo
+      operationId: notifyError
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Notification'
+      responses:
+        "200":
+          description: Segnalazione ricevuta
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ack'
+        default:
+          $ref: '#/components/responses/Default'
+  /health:
+    get:
+      tags:
+        - health
+      summary: Stato del servizio
+      operationId: health
+      responses:
+        "200":
+          description: Servizio disponibile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Health'
+        default:
+          $ref: '#/components/responses/Default'
+components:
+  responses:
+    BadRequest:
+      description: Richiesta non valida
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    Default:
+      description: Errore inatteso
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+  schemas:
+    Notification:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - READY
+            - FAILED
+        entities:
+          type: integer
+          format: int32
+          description: Numero di entità disponibili
+        message:
+          type: string
+          maxLength: 1024
+    Ack:
+      type: object
+      required:
+        - outcome
+      properties:
+        outcome:
+          type: string
+          enum:
+            - ACK
+    Health:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - UP
+            - DOWN
+    Problem:
+      type: object
+      properties:
+        type:
+          type: string
+          format: uri
+        title:
+          type: string
+        status:
+          type: integer
+          format: int32
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri

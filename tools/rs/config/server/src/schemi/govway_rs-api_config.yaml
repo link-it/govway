@@ -8449,6 +8449,7 @@ components:
          example: false
        riferimento_id_richiesta:
          type: boolean
+         default: false
          example: false
        modi:
          $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ApiModIRisorsaRest'
@@ -8484,6 +8485,7 @@ components:
          example: false
        riferimento_id_richiesta:
          type: boolean
+         default: false
          example: false
     ListaApiServizi:
        type: object
@@ -8517,6 +8519,7 @@ components:
          example: false
        riferimento_id_richiesta:
          type: boolean
+         default: false
          example: false
        modi:
          $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ApiModIAzioneSoap'
@@ -8558,6 +8561,8 @@ components:
                 mapping:
                   'soap': 'govway_rs-api_config-commons.yaml#/components/schemas/ErogazioneModISoap'
                   'rest': 'govway_rs-api_config-commons.yaml#/components/schemas/ErogazioneModIRest' 
+            modi_scambio_asincrono:
+               $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ErogazioneModIScambioAsincrono'
     ErogazioneItem:
       type: object
       allOf:
@@ -8612,6 +8617,8 @@ components:
                   'rest': 'govway_rs-api_config-commons.yaml#/components/schemas/FruizioneModIRest'
             modi_dpop:
                $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/FruizioneModIDPoP'           
+            modi_scambio_asincrono:
+               $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/FruizioneModIScambioAsincrono'
     FruizioneItem:
       type: object
       allOf:

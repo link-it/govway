@@ -56,6 +56,8 @@ Di seguito vengono riportati tutte le informazioni da registrare nella policy:
 
     Token Policy di Negoziazione PDND (Endpoint)
 
+- URL Scambi Asincroni: endpoint esposto dalla PDND per la negoziazione dei voucher relativi agli scambi di dati asincroni (:ref:`modipa_scambiAsincroni`). Il campo è opzionale: se non viene valorizzato, l'endpoint viene calcolato aggiungendo il suffisso '.async' alla URL precedente, quando questa termina con 'token.oauth2' (es. https://auth.uat.interop.pagopa.it/token.oauth2.async);
+
 - JWT Keystore: parametri di accesso al keystore contenente la chiave privata corrispondente alla chiave pubblica registrata sulla PDND durante la registrazione dell'applicativo client. I parametri variano in funzione del tipo di keystore selezionato:
 
 	- 'JKS', 'PKCS12': deve essere definito il path su filesystem dove risiede il keystore, la password per l'accesso al keystore, l'alias con cui è riferita la chiave privata e la password (:numref:`TokenPDNDNegoziazioneKeystorePKCS12`);

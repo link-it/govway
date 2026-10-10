@@ -1986,7 +1986,8 @@ public class ImporterArchiveUtils {
 		if(aspc!=null) {
 			if(aspc.sizeProtocolPropertyList()>0) {
 				for (ProtocolProperty pp : aspc.getProtocolPropertyList()) {
-					if(CostantiDB.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_API_RICHIESTA_CORRELATA.equals(pp.getName()) && pp.getValue()!=null && StringUtils.isNotEmpty(pp.getValue())) {
+					if((CostantiDB.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_API_RICHIESTA_CORRELATA.equals(pp.getName()) || CostantiDB.MODIPA_PDND_ASYNC_API_CORRELATA.equals(pp.getName())) 
+							&& pp.getValue()!=null && StringUtils.isNotEmpty(pp.getValue()) && !CostantiDB.MODIPA_VALUE_UNDEFINED.equals(pp.getValue())) {
 						modifyUriAccordo(pp, soggettoDefaultProtocollo);
 					}
 				}

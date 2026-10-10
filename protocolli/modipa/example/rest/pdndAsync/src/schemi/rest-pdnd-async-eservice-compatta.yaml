@@ -1,0 +1,189 @@
+openapi: 3.0.3
+info:
+  title: PDNDAsyncEServiceCompatta
+  version: "1.0"
+  description: |-
+    E-service di esempio per gli scambi di dati asincroni PDND (versione compatta).
+
+    Contiene esclusivamente le operazioni dello scambio asincrono:
+    - POST /requests            -> fase 'start_interaction'
+    - GET  /results             -> fase 'get_resource' (ripetibile, scaricamento a blocchi tramite offset/limit)
+    - POST /results/confirmation -> fase 'confirmation'
+
+    L'identificativo dell'interazione (interactionId emesso dalla PDND) non fa parte dell'interfaccia:
+    viene gestito da GovWay come identificativo di collaborazione (header 'GovWay-Conversation-ID').
+  license:
+    name: GPL v3.0
+    url: https://www.gnu.org/licenses/gpl-3.0.txt
+servers:
+  - url: http://localhost:9201
+paths:
+  /requests:
+    post:
+      tags:
+        - pdnd-async
+      summary: Inizio dell'interazione (start_interaction)
+      operationId: startInteraction
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InteractionRequest'
+      responses:
+        "202":
+          description: Richiesta presa in carico; i dati saranno notificati tramite callback
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Outcome'
+        "400":
+          $ref: '#/components/responses/BadRequest'
+        default:
+          $ref: '#/components/responses/Default'
+  /results:
+    get:
+      tags:
+        - pdnd-async
+      summary: Ottenimento della risorsa (get_resource)
+      operationId: getResource
+      parameters:
+        - $ref: '#/components/parameters/Offset'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        "200":
+          description: Entità prodotte per l'interazione
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InteractionResult'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/Default'
+  /results/confirmation:
+    post:
+      tags:
+        - pdnd-async
+      summary: Conferma di ricezione (confirmation)
+      operationId: confirmation
+      responses:
+        "200":
+          description: Conferma registrata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Outcome'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/Default'
+components:
+  parameters:
+    Offset:
+      name: offset
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int32
+        minimum: 0
+        default: 0
+    Limit:
+      name: limit
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int32
+        minimum: 1
+        maximum: 100
+        default: 10
+  responses:
+    BadRequest:
+      description: Richiesta non valida
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    NotFound:
+      description: Interazione non trovata
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    Default:
+      description: Errore inatteso
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+  schemas:
+    InteractionRequest:
+      type: object
+      required:
+        - subject
+      properties:
+        subject:
+          type: string
+          maxLength: 255
+          description: Oggetto della richiesta
+        entities:
+          type: integer
+          format: int32
+          minimum: 1
+          maximum: 1000
+          description: Numero di entità richieste (utilizzato dal server di esempio per produrre la risposta)
+    Outcome:
+      type: object
+      required:
+        - outcome
+      properties:
+        outcome:
+          type: string
+          enum:
+            - ACCEPTED
+            - CONFIRMED
+    InteractionResult:
+      type: object
+      required:
+        - total
+        - items
+      properties:
+        total:
+          type: integer
+          format: int32
+          description: Numero complessivo di entità prodotte
+        offset:
+          type: integer
+          format: int32
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Entity'
+    Entity:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: integer
+          format: int32
+        value:
+          type: string
+    Problem:
+      type: object
+      properties:
+        type:
+          type: string
+          format: uri
+        title:
+          type: string
+        status:
+          type: integer
+          format: int32
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri

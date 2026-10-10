@@ -293,6 +293,7 @@ import org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.apc.api.ApiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
@@ -2049,7 +2050,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			boolean showCodaMessaggi = pu.isCodeMessaggi() && this.core.showCodaMessage();
 			
-			if ( showCodaMessaggi || pu.isAuditing() || 
+			if ( showCodaMessaggi || pu.isAuditing() ||
 					(pu.isSistema() && aliases!=null && aliases.size()>0) ||
 					(listStrumenti!=null && listStrumenti.size()>0) ) {
 				// Se l'utente non ha i permessi "diagnostica", devo
@@ -2191,7 +2192,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				// remote stores
 				if(!isModalitaStandard()) {
 					entries[index][0] = RemoteStoresCostanti.LABEL_CACHE_PDND;
-					entries[index][1] = RemoteStoresCostanti.SERVLET_NAME_REMOTE_STORES_KEYS_LIST;
+					entries[index][1] = RemoteStoresCostanti.SERVLET_NAME_CACHE_PDND;
 					index++;
 				}
 				
@@ -22501,6 +22502,42 @@ public class ConsoleHelper implements IConsoleHelper {
 				ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY_ABBREVIATO+" "+nomeAttributeAuthority);
 	}
 
+	/**
+	 * Collegamento alla maschera di visualizzazione dell'API indicata.
+	 * Ritorna null se l'API non esiste o se l'utente non possiede i permessi per accedere alla sezione delle API.
+	 */
+	public DataElementLink getDataElementLinkVisualizzaAccordoServizioParteComune(String uriAccordoServizioParteComune) {
+		if(uriAccordoServizioParteComune==null || StringUtils.isEmpty(uriAccordoServizioParteComune) || 
+				CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO.equals(uriAccordoServizioParteComune)) {
+			return null;
+		}
+		User user = ServletUtils.getUserFromSession(this.request, this.session);
+		if(user==null || user.getPermessi()==null || !user.getPermessi().isServizi()) {
+			return null;
+		}
+		try {
+			IDAccordo idAccordo = this.idAccordoFactory.getIDAccordoFromUri(uriAccordoServizioParteComune);
+			AccordoServizioParteComuneSintetico as = this.apcCore.getAccordoServizioSintetico(idAccordo);
+			if(as==null) {
+				return null;
+			}
+			String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(idAccordo.getSoggettoReferente().getTipo());
+			String labelAccordo = this.getLabelIdAccordo(protocollo, idAccordo);
+			DataElementLink link = new DataElementLink(labelAccordo);
+			link.setUrl(ApiCostanti.SERVLET_NAME_APC_API_CHANGE, 
+					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, as.getId()+""),
+					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME, as.getNome()),
+					AccordiServizioParteComuneUtilities.getParametroAccordoServizio(as));
+			link.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_VISUALIZZA_TOOLTIP_CON_PARAMETRO, labelAccordo));
+			link.setTarget(TargetType.BLANK);
+			return link;
+		}catch(Exception e) {
+			// API non piu' esistente o non leggibile: non viene fornito alcun link
+			ControlStationCore.logDebug("Lettura dell'API '"+uriAccordoServizioParteComune+"' non riuscita: "+e.getMessage(),e);
+			return null;
+		}
+	}
+	
 	private DataElementLink newDataElementLink(String nome, String url, String labelTooltip) {
 		if(url==null) {
 			return null;

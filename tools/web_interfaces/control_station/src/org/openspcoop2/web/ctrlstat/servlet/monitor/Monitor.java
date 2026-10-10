@@ -125,6 +125,11 @@ public final class Monitor extends Action {
 	 * 
 	 * @throws Exception
 	 */
+	static void checkInitMonitoraggio() throws Exception {
+		if (Monitor.initialized == null) {
+			Monitor.initMonitoraggio();
+		}
+	}
 	private static synchronized void initMonitoraggio() throws Exception {
 
 		if (Monitor.initialized == null) {

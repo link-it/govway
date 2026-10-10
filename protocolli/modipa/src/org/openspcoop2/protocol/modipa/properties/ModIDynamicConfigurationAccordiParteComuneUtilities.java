@@ -179,6 +179,8 @@ public class ModIDynamicConfigurationAccordiParteComuneUtilities {
 		profiloInterazioneAsincronaCorrelataAzioneItem.setReloadOnChange(true);
 		configuration.addConsoleItem(profiloInterazioneAsincronaCorrelataAzioneItem);
 		
+		ModIDynamicConfigurationPdndAsyncUtilities.addFase(configuration);
+		
 	}
 	
 	private static AccordoServizioParteComune getAccordoServizioParteComune(IRegistryReader registryReader, IDAccordo idAccordoSelected) throws RegistryException{
@@ -216,6 +218,9 @@ public class ModIDynamicConfigurationAccordiParteComuneUtilities {
 				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_SERVIZIO_RICHIESTA_CORRELATA_ID);
 		AbstractConsoleItem<?> profiloInterazioneAsincronaCorrelataAzioneItem = 	
 				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_AZIONE_RICHIESTA_CORRELATA_ID);
+		
+		// scambio di dati asincrono PDND: se è selezionata una fase il pattern di interazione viene fissato
+		boolean fasePdndAsync = ModIDynamicConfigurationPdndAsyncUtilities.updateFase(consoleConfiguration, properties, registryReader, idAccordo, rest, idPortType, idAzione);
 		
 		ModIProfiliInterazioneRESTConfig config = null;
 		boolean inUse = false;
@@ -587,6 +592,12 @@ public class ModIDynamicConfigurationAccordiParteComuneUtilities {
 			}
 		}
 		
+		if(fasePdndAsync) {
+			setLabelInUse(consoleConfiguration, properties, profiloInterazioneItem, 
+					ModIConsoleCostanti.MODIPA_PROFILO_INTERAZIONE_ID,
+					ModIConsoleCostanti.MODIPA_PROFILO_INTERAZIONE_ID_INUSE_READONLY);
+		}
+		
 		if(allHidden) {
 			profiloInterazioneAsincronaItem.setType(ConsoleItemType.HIDDEN);
 			profiloInterazioneAsincronaRelazioneItem.setType(ConsoleItemType.HIDDEN);
@@ -630,7 +641,7 @@ public class ModIDynamicConfigurationAccordiParteComuneUtilities {
 				if(map!=null && !map.isEmpty()) {
 					for (String l : map.keys()) {
 						String v = map.get(l);
-						if(v!=null && v.equals(itemValue.getValue())) {
+						if(v!=null && itemValue!=null && v.equals(itemValue.getValue())) {
 							label = l;
 						}
 						if(v!=null && v.equals(item.getDefaultValue())) {
@@ -641,6 +652,11 @@ public class ModIDynamicConfigurationAccordiParteComuneUtilities {
 			}
 
 			StringProperty itemValueReadOnly = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, idReadOnly);
+			if(itemValueReadOnly==null) {
+				// il valore in sola lettura serve solamente alla visualizzazione in console: non è presente quando le proprietà 
+				// non provengono da un form (es. API di configurazione)
+				return;
+			}
 			if(label!=null) {
 				itemValueReadOnly.setValue(label);
 			}

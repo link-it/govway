@@ -220,6 +220,40 @@ public class DBOggettiInUsoUtils_accordi {
 			// Controllo che qualche azione o risorsa non sia stata correlata da un'altra azione tramite ModI
 			if(Costanti.MODIPA_PROTOCOL_NAME.equals(idAccordo.getSoggettoReferente().getTipo())) {
 			
+				// Verifico che l'API non sia riferita come API dell'e-service da un'API di callback (scambi di dati asincroni PDND)
+				
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.ACCORDI);
+				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+				sqlQueryObject.addFromTable(CostantiDB.PROTOCOL_PROPERTIES);
+				sqlQueryObject.addSelectAliasField(CostantiDB.ACCORDI,"nome","nomeApi");
+				sqlQueryObject.addSelectAliasField(CostantiDB.ACCORDI,"versione","versioneApi");
+				sqlQueryObject.addSelectAliasField(CostantiDB.SOGGETTI,"tipo_soggetto","tipoReferenteApi");
+				sqlQueryObject.addSelectAliasField(CostantiDB.SOGGETTI,"nome_soggetto","nomeReferenteApi");
+				sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI + ".id = " + CostantiDB.ACCORDI + ".id_referente");
+				sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI + ".id = " + CostantiDB.PROTOCOL_PROPERTIES + ".id_proprietario");
+				sqlQueryObject.addWhereCondition(CostantiDB.PROTOCOL_PROPERTIES + ".tipo_proprietario=?");
+				sqlQueryObject.addWhereCondition(CostantiDB.PROTOCOL_PROPERTIES + ".name=?");
+				sqlQueryObject.addWhereCondition(CostantiDB.PROTOCOL_PROPERTIES + ".value_string=?");
+				sqlQueryObject.setANDLogicOperator(true);
+				queryString = sqlQueryObject.createSQLQuery();
+				stmt = con.prepareStatement(queryString);
+				stmt.setString(1, ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_COMUNE.name());
+				stmt.setString(2, Costanti.MODIPA_PDND_ASYNC_API_CORRELATA);
+				stmt.setString(3, IDAccordoFactory.getInstance().getUriFromIDAccordo(idAccordo));
+				risultato = stmt.executeQuery();
+				while (risultato.next()){
+					IDAccordo idAPI = IDAccordoFactory.getInstance().getIDAccordoFromValues(risultato.getString("nomeApi"), 
+							risultato.getString("tipoReferenteApi"), risultato.getString("nomeReferenteApi"), risultato.getInt("versioneApi"));
+					if(idAPI.equals(idAccordo)) {
+						continue;
+					}
+					correlazione_list.add("API '"+IDAccordoFactory.getInstance().getUriFromIDAccordo(idAPI)+"' (scambio di dati asincrono PDND: callback)");
+					isInUso = true;
+				}
+				risultato.close();
+				stmt.close();
+			
 				// Recupero tipo REST/SOAP
 				
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);

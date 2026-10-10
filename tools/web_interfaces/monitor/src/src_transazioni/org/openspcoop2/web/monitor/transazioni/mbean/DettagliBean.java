@@ -1006,6 +1006,14 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 	public void setVisualizzaTextAreaUrlInvocazione(boolean visualizzaTextAreaUrlInvocazione) {
 	}
 	
+	public boolean isVisualizzaTextAreaPdndAsyncUrlCallback() {
+		String url = this.dettaglio!=null ? this.dettaglio.getPdndAsyncUrlCallback() : null;
+		return url!=null && url.length() > 150;
+	}
+	public void setVisualizzaTextAreaPdndAsyncUrlCallback(boolean visualizzaTextAreaPdndAsyncUrlCallback) {
+		// nop
+	}
+	
 	public boolean isVisualizzaTextAreaConnettore () {
 		if(StringUtils.isNotEmpty(this.dettaglio.getLocationConnettore())) {
 			if(this.dettaglio.getLocationConnettore().length() > 150)

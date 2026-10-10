@@ -89,6 +89,7 @@ import org.openspcoop2.monitor.engine.alarm.utils.AllarmiUtils;
 import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
+import org.openspcoop2.protocol.sdk.properties.StatoConfigurazioneAccordo;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.config.ProtocolImplementation;
@@ -197,6 +198,13 @@ public class AccordiServizioParteSpecificaUtilities {
 	}
 	
 	public static List<IDAccordoDB> getListaIdAPI(String tipoProtocollo, String userLogin, AccordiServizioParteSpecificaCore apsCore, AccordiServizioParteSpecificaHelper apsHelper) throws DriverControlStationException, DriverRegistroServiziException {
+		return getListaIdAPI(tipoProtocollo, userLogin, apsCore, apsHelper, null);
+	}
+	/**
+	 * @param apiAttuale API attualmente associata (es. cambio dell'API di un'erogazione), mantenuta nella lista anche se risulta incompleta
+	 */
+	public static List<IDAccordoDB> getListaIdAPI(String tipoProtocollo, String userLogin, AccordiServizioParteSpecificaCore apsCore, AccordiServizioParteSpecificaHelper apsHelper,
+			IDAccordo apiAttuale) throws DriverControlStationException, DriverRegistroServiziException {
 		
 		AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(apsCore);
 		
@@ -210,12 +218,39 @@ public class AccordiServizioParteSpecificaUtilities {
 		
 		ConsoleSearch searchAccordi = new ConsoleSearch(true);
 		searchAccordi.addFilter(Liste.ACCORDI, Filtri.FILTRO_PROTOCOLLO, tipoProtocollo);
-		return	AccordiServizioParteComuneUtilities.idAccordiListFromPermessiUtente(apcCore, userLogin, searchAccordi, 
+		List<IDAccordoDB> lista = AccordiServizioParteComuneUtilities.idAccordiListFromPermessiUtente(apcCore, userLogin, searchAccordi, 
 						getPermessiUtente(apsHelper), soloAccordiConsistentiRest, soloAccordiConsistentiSoap);
+		
+		// API ModI configurate per gli scambi di dati asincroni PDND, ma con fasi non associate alle risorse/azioni
+		if(lista!=null && !lista.isEmpty() && isFiltroScambiAsincroniIncompleti(tipoProtocollo, apsCore, apsHelper)) {
+			Map<String, StatoConfigurazioneAccordo> nonConfigurate = AccordiServizioParteComuneUtilities.getStatoApiNonConfigurate(apsCore, apsHelper, tipoProtocollo);
+			if(!nonConfigurate.isEmpty()) {
+				String uriApiAttuale = apiAttuale!=null ? IDAccordoFactory.getInstance().getUriFromIDAccordo(apiAttuale) : null;
+				List<IDAccordoDB> listaFiltrata = new ArrayList<>();
+				for (IDAccordoDB idAccordo : lista) {
+					String uri = IDAccordoFactory.getInstance().getUriFromIDAccordo(idAccordo);
+					StatoConfigurazioneAccordo stato = nonConfigurate.get(uri);
+					// un'API con un avviso resta selezionabile (es. servizi SOAP incompleti non proposti)
+					if(stato==null || !stato.isErrore() || uri.equals(uriApiAttuale)) {
+						listaFiltrata.add(idAccordo);
+					}
+				}
+				lista = listaFiltrata;
+			}
+		}
+		return lista;
 		
 	}
 	
-	public static List<PortTypeSintetico> getListaPortTypes(AccordoServizioParteComuneSintetico as, AccordiServizioParteSpecificaHelper apsHelper) {
+	public static List<PortTypeSintetico> getListaPortTypes(AccordoServizioParteComuneSintetico as, AccordiServizioParteSpecificaHelper apsHelper,
+			AccordiServizioParteSpecificaCore apsCore, String tipoProtocollo) throws DriverControlStationException {
+		return getListaPortTypes(as, apsHelper, apsCore, tipoProtocollo, null);
+	}
+	/**
+	 * @param servizioAttuale servizio attualmente associato (es. aggiornamento di un'erogazione), mantenuto nella lista anche se non utilizzabile
+	 */
+	public static List<PortTypeSintetico> getListaPortTypes(AccordoServizioParteComuneSintetico as, AccordiServizioParteSpecificaHelper apsHelper,
+			AccordiServizioParteSpecificaCore apsCore, String tipoProtocollo, String servizioAttuale) throws DriverControlStationException {
 		
 		List<PortTypeSintetico> portTypesTmp = as.getPortType();
 		List<PortTypeSintetico> portTypes = null;
@@ -224,16 +259,48 @@ public class AccordiServizioParteSpecificaUtilities {
 			portTypes = portTypesTmp;
 		}
 		else {
-			// filtro pt senza op
+			// filtro pt senza op e servizi non utilizzabili secondo il profilo (es. fasi degli scambi asincroni PDND incomplete)
+			List<String> nonUtilizzabili = getServiziNonUtilizzabili(as, apsHelper, apsCore, tipoProtocollo, servizioAttuale);
 			portTypes = new ArrayList<>();
 			for (PortTypeSintetico portType : portTypesTmp) {
-				if(!portType.getAzione().isEmpty()) {
+				if(!portType.getAzione().isEmpty() && !nonUtilizzabili.contains(portType.getNome())) {
 					portTypes.add(portType);
 				}
 			}
 		}
 		
 		return portTypes; 
+	}
+	
+	/**
+	 * Servizi dell'API che, secondo il profilo di interoperabilità, non devono essere proposti nelle erogazioni e fruizioni
+	 * (es. servizi SOAP con fasi degli scambi di dati asincroni PDND incomplete); il servizio attuale indicato viene comunque mantenuto
+	 */
+	public static List<String> getServiziNonUtilizzabili(AccordoServizioParteComuneSintetico as, AccordiServizioParteSpecificaHelper apsHelper,
+			AccordiServizioParteSpecificaCore apsCore, String tipoProtocollo, String servizioAttuale) throws DriverControlStationException {
+		List<String> list = new ArrayList<>();
+		if(as.getPortType()==null || as.getPortType().isEmpty() || !isFiltroScambiAsincroniIncompleti(tipoProtocollo, apsCore, apsHelper)) {
+			return list;
+		}
+		IDAccordo idAccordo = null;
+		try {
+			idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromAccordo(as);
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
+		StatoConfigurazioneAccordo stato = AccordiServizioParteComuneUtilities.getStatoApi(apsCore, apsHelper, tipoProtocollo, idAccordo);
+		if(stato!=null && stato.getServiziNonUtilizzabili()!=null) {
+			for (String s : stato.getServiziNonUtilizzabili()) {
+				if(!s.equals(servizioAttuale)) {
+					list.add(s);
+				}
+			}
+		}
+		return list;
+	}
+	
+	private static boolean isFiltroScambiAsincroniIncompleti(String tipoProtocollo, AccordiServizioParteSpecificaCore apsCore, AccordiServizioParteSpecificaHelper apsHelper) {
+		return !apsHelper.isModalitaCompleta() && apsHelper.isProfiloModIPA(tipoProtocollo) && apsCore.isModipaSelezioneApiEscludiScambiAsincroniIncompleti();
 	}
 	
 	public static boolean isSoggettoOperativo(IDSoggetto idSoggettoErogatore, AccordiServizioParteSpecificaCore apsCore) throws DriverControlStationException, DriverRegistroServiziException, DriverRegistroServiziNotFound, DriverControlStationNotFound {

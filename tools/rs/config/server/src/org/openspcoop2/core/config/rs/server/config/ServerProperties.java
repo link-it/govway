@@ -333,6 +333,12 @@ public class ServerProperties  {
 		return Boolean.parseBoolean(this.readProperty(true, "updateInterfacciaApi.deleteIfNotFound"));
 	}
 	
+	public boolean isModipaSelezioneApiEscludiScambiAsincroniIncompleti() throws UtilsException {
+		String v = this.readProperty(false, "modipa.selezioneApi.escludiScambiAsincroniIncompleti");
+		// default: abilitato
+		return v==null || "".equals(v.trim()) || Boolean.parseBoolean(v.trim());
+	}
+	
 	public boolean isSoggettiApplicativiCredenzialiBasicPermitSameCredentials() throws UtilsException {
 		return Boolean.parseBoolean(this.readProperty(true, "soggettiApplicativi.credenzialiBasic.permitSameCredentials"));
 	}

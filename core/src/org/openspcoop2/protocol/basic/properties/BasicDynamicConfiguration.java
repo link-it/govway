@@ -20,6 +20,9 @@
 
 package org.openspcoop2.protocol.basic.properties;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoAzione;
 import org.openspcoop2.core.id.IDFruizione;
@@ -36,6 +39,7 @@ import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
 import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
 import org.openspcoop2.protocol.sdk.properties.IConsoleHelper;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
+import org.openspcoop2.protocol.sdk.properties.StatoConfigurazioneAccordo;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 
@@ -104,6 +108,18 @@ public class BasicDynamicConfiguration extends BasicComponentFactory implements 
 	public void validateDynamicConfigAccordoServizioParteComune(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, ProtocolProperties properties, 
 			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDAccordo id) throws ProtocolException{
 		// nop
+	}
+	
+	@Override
+	public StatoConfigurazioneAccordo verifyStatoAccordoServizioParteComune(IConsoleHelper consoleHelper, 
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDAccordo id) throws ProtocolException{
+		return null;
+	}
+	
+	@Override
+	public List<StatoConfigurazioneAccordo> findStatoAccordiServizioParteComuneNonConfigurati(IConsoleHelper consoleHelper, 
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader) throws ProtocolException{
+		return new ArrayList<>();
 	}
 	
 	@Override

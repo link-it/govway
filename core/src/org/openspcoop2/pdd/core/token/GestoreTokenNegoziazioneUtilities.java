@@ -1043,7 +1043,29 @@ public class GestoreTokenNegoziazioneUtilities {
 			}
 		}
 		
+		// claims degli scambi di dati asincroni PDND (es. scope, urlCallback, interactionId, entityNumber)
+		addPdndAsyncClaims(jwtPayload, dynamicParameters);
+		
 		return jsonUtils.toString(jwtPayload);
+	}
+	
+	private static void addPdndAsyncClaims(ObjectNode jwtPayload, NegoziazioneTokenDynamicParameters dynamicParameters) {
+		Map<String, Object> pdndAsyncClaims = dynamicParameters.getPdndAsyncClaims();
+		if(pdndAsyncClaims==null) {
+			return;
+		}
+		for (Map.Entry<String, Object> entry : pdndAsyncClaims.entrySet()) {
+			Object v = entry.getValue();
+			if(v instanceof Integer i) {
+				jwtPayload.put(entry.getKey(), i);
+			}
+			else if(v instanceof Long l) {
+				jwtPayload.put(entry.getKey(), l);
+			}
+			else if(v!=null) {
+				jwtPayload.put(entry.getKey(), v.toString());
+			}
+		}
 	}
 	
 	public static KeystoreParams readKeystoreParams(PolicyNegoziazioneToken policyNegoziazioneToken) throws TokenException {

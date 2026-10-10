@@ -68,6 +68,16 @@ public class Costanti {
 	
     public static final MapKey<String> MODIPA_CONTEXT_AUDIT_DIGEST = Map.newMapKey("MODIPA_AUDIT_DIGEST");
     public static final MapKey<String> MODIPA_CONTEXT_AUDIT_DIGEST_ALGO = Map.newMapKey("MODIPA_AUDIT_DIGEST_ALGO");
+    
+    // Scambi di dati asincroni PDND: informazioni impostate dal profilo ModI e utilizzate durante la negoziazione del voucher
+    /** Fase dello scambio asincrono (String): se presente viene utilizzata la URL asincrona della policy */
+    public static final MapKey<String> PDND_ASYNC_CONTEXT_FASE = Map.newMapKey("PDND_ASYNC_FASE");
+    /** Claims da aggiungere all'asserzione ({@code Map<String,Object>}), es. scope, urlCallback, interactionId, entityNumber */
+    public static final MapKey<String> PDND_ASYNC_CONTEXT_CLAIMS = Map.newMapKey("PDND_ASYNC_CLAIMS");
+    /** Indicazione (Boolean) se il purposeId non deve essere inserito nell'asserzione */
+    public static final MapKey<String> PDND_ASYNC_CONTEXT_PURPOSE_ID_DISABLED = Map.newMapKey("PDND_ASYNC_PURPOSE_ID_DISABLED");
+    /** Indicazione (Boolean) se il voucher non deve essere letto da, né salvato in, cache (voucher utilizzabile una sola volta) */
+    public static final MapKey<String> PDND_ASYNC_CONTEXT_NO_CACHE = Map.newMapKey("PDND_ASYNC_NO_CACHE");
 	
 	
 	// Token Retrieve id
@@ -330,6 +340,9 @@ public class Costanti {
 	public static final String POLICY_RETRIEVE_TOKEN_MODE = "policy.retrieveToken.mode";
 	public static final String POLICY_RETRIEVE_TOKEN_MODE_PDND = "policy.retrieveToken.jwt.pdnd";
 	public static final String POLICY_RETRIEVE_TOKEN_URL = "policy.retrieveToken.endpoint.url";
+	public static final String POLICY_RETRIEVE_TOKEN_URL_ASYNC = "policy.retrieveToken.endpoint.url.async";
+	public static final String POLICY_RETRIEVE_TOKEN_URL_PDND_SUFFIX = "token.oauth2";
+	public static final String POLICY_RETRIEVE_TOKEN_URL_ASYNC_PDND_SUFFIX = ".async";
 	public static final String POLICY_RETRIEVE_TOKEN_RESPONSE_TYPE = "policy.retrieveToken.responseType";
 	public static final String POLICY_RETRIEVE_TOKEN_AUTH_BASIC_STATO = "policy.retrieveToken.endpoint.basic.stato";
 	public static final String POLICY_RETRIEVE_TOKEN_AUTH_BASIC_USERNAME = "policy.retrieveToken.endpoint.basic.username";
@@ -469,6 +482,7 @@ public class Costanti {
 	// ELEMENTI ID 
 	
 	public static final String ID_RETRIEVE_ENDPOINT_URL = "endpointURL";
+	public static final String ID_RETRIEVE_ENDPOINT_URL_ASYNC = "endpointURLAsync";
 	public static final String ID_RETRIEVE_AUTENTICAZIONE_USERNAME = "autenticazioneUsername";
 	public static final String ID_RETRIEVE_AUTENTICAZIONE_PASSWORD = "autenticazionePassword";
 	public static final String ID_RETRIEVE_CLIENT_ID = "autenticazioneEndpointBasicUsername";

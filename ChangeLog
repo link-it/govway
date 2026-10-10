@@ -1,3 +1,27 @@
+2026-10-09  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole, GovWayMonitor, ProtocolloModIPA, ApiRsConfigurazione]
+	Aggiunta funzionalità #1832
+	Il profilo ModI supporta adesso gli scambi di dati asincroni PDND (risposta differita tramite callback):
+	un'API può essere configurata come 'Erogazione dati' o come 'Callback' e le sue risorse (REST) o azioni (SOAP)
+	associate alle fasi previste (start_interaction, callback_invocation, get_resource, confirmation).
+	Il gateway negozia i voucher PDND con i claim di ciascuna fase, determina e verifica la URL di callback,
+	tiene traccia dello stato delle interazioni rifiutando le fasi non ammesse o scadute e registra fase e URL di callback nelle transazioni.
+	Le interazioni sono consultabili in console e la configurazione è gestibile anche tramite le API di configurazione.
+
+2026-10-09  Andrea Poli <apoli@link.it>
+
+	* [ApiRsConfigurazione]
+	Risolto Bug
+	- La creazione o modifica di una risorsa, di un'azione o di un servizio senza il campo 'riferimento_id_richiesta', e l'aggiornamento
+	  della gestione token o del caching della risposta senza i campi 'abilitato', 'max_response_size' o 'cache_timeout_seconds',
+	  terminavano con errore 500; i campi assumono adesso il valore di default (per il caching ridefinito quelli della configurazione generale).
+	- Nella creazione e nella modifica della configurazione ModI di una fruizione non veniva effettuata la validazione prevista dal profilo,
+	  consentendo configurazioni non ammesse dalla console (es. header da firmare privi dell'header 'Digest').
+	- Una fruizione ModI 'oauth' creata senza identificativo, kid e keystore non era più leggibile (errore 500); viene adesso
+	  associato il keystore di default.
+	- Nella creazione di un'API SOAP il profilo ModI la trattava come REST durante la validazione.
+
 2026-10-07  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole, GovWayMonitor]

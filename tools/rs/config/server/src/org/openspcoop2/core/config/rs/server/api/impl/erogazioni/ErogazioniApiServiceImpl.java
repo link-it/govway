@@ -225,6 +225,8 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 					AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 
 			ErogazioniApiHelper.serviziCheckData(TipoOperazione.ADD, env, as, asps, Optional.empty(), body);
+			// API configurata per gli scambi di dati asincroni PDND con fasi non associate (come nella selezione dell'API in console)
+			ErogazioniApiHelper.checkScambiAsincroniIncompleti(env, asps.getAccordoServizioParteComune(), asps.getPortType());
 			ErogazioniApiHelper.validateProperties(env, protocolProperties, asps, ConsoleOperationType.ADD);
 
 			org.openspcoop2.core.registry.Connettore regConnettore = ErogazioniApiHelper.buildConnettoreRegistro(env,
@@ -888,7 +890,12 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 				.toException("Nessuna api " + as.getNome() + " e versione " + body.getApiVersione() + " registrata");
 			}
 
-			asps.setAccordoServizioParteComune(env.idAccordoFactory.getUriFromAccordo(newApc.get()));
+			// nuova versione dell'API configurata per gli scambi di dati asincroni PDND con fasi non associate (la versione attuale resta valida)
+			String uriNuovaApi = env.idAccordoFactory.getUriFromAccordo(newApc.get());
+			if(!uriNuovaApi.equals(asps.getAccordoServizioParteComune())) {
+				ErogazioniApiHelper.checkScambiAsincroniIncompleti(env, uriNuovaApi, asps.getPortType());
+			}
+			asps.setAccordoServizioParteComune(uriNuovaApi);
 			asps.setIdAccordo(newApc.get().getId());
 
 			asps.setOldIDServizioForUpdate(env.idServizioFactory.getIDServizioFromAccordo(asps));
@@ -1377,7 +1384,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 				final AccordoServizioParteComune aspc = Helper.getAccordoFull(idAccordo.getNome(), 
 						idAccordo.getVersione(), idAccordo.getSoggettoReferente(), env.apcCore);
 			
-				protocolProperties = ModiErogazioniApiHelper.updateModiProtocolProperties(aspc, asps, profilo, body.getModi(), env);
+				protocolProperties = ModiErogazioniApiHelper.updateModiProtocolProperties(aspc, asps, profilo, body.getModi(), body.getModiScambioAsincrono(), env);
 
 				if(protocolProperties != null) {
 					asps.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(protocolProperties, ConsoleOperationType.ADD, null));

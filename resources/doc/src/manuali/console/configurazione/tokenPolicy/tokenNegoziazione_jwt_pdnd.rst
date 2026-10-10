@@ -42,3 +42,12 @@ I parametri precedentemente descritti sono configurabili attivando la modalità 
 
     Modalità di negoziazione 'Signed JWT' via PDND: parametri 'client_id' e 'resource' nella richiesta 'x-www-form-urlencoded'
 
+
+Per gli scambi di dati asincroni (:ref:`modipa_scambiAsincroni`) la PDND espone un endpoint dedicato alla negoziazione dei voucher delle diverse fasi dello scambio, configurabile nel campo *URL Scambi Asincroni* disponibile in modalità PDND (:numref:`tokenPDNDFigAsync`). Il campo è opzionale: se non viene valorizzato, l'endpoint viene calcolato aggiungendo il suffisso '.async' alla *URL* della policy, quando questa termina con 'token.oauth2' (es. 'https://auth.interop.pagopa.it/token.oauth2' diventa 'https://auth.interop.pagopa.it/token.oauth2.async'). La stessa policy viene quindi utilizzata sia per le fruizioni sincrone che per quelle che prevedono uno scambio asincrono.
+
+   .. figure:: ../../_figure_console/TokenPolicy-negoziazione-pdnd-async.png
+    :scale: 100%
+    :align: center
+    :name: tokenPDNDFigAsync
+
+    Modalità di negoziazione 'Signed JWT' via PDND: endpoint per gli scambi di dati asincroni

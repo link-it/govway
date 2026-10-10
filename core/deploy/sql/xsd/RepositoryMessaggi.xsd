@@ -26,6 +26,8 @@
                                 <linkit:sql-table object-name="correlazione-applicativa" object-type="correlazione-applicativa"/>
  				<linkit:sql-comment><![CDATA[**** Controllo Traffico ****]]></linkit:sql-comment>
                                 <linkit:sql-table object-name="ct-map" object-type="ct-map"/>
+                                <linkit:sql-comment><![CDATA[**** Interazioni Asincrone PDND ****]]></linkit:sql-comment>
+                                <linkit:sql-table object-name="pdnd-interazioni-async" object-type="pdnd-interazioni-async"/>
                             </linkit:sql-table-list>
                         </linkit:sql-script>
                         <linkit:sql-mapping single-table-mapping="false"
@@ -997,6 +999,372 @@
     
     
     
+    <xsd:element name="pdnd-interazioni-async">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="PDND_INTERAZIONI_ASYNC" sequence-cycle="true"
+                                               comment="Stato delle interazioni relative agli scambi di dati asincroni PDND (start_interaction, callback_invocation, get_resource, confirmation)"> 
+                        <!-- Nomi dei vincoli ridotti: alcuni database richiedono nomi inferiori ai 30 caratteri -->
+                        <linkit:sql-table-constraint unique="uniq_pdnd_async" index="idx_pdnd_async"/>
+                        <!-- NOTA: La sommatoria delle colonne per mysql deve essere <=3000 -->
+                        <linkit:sql-table-unique create-index="true">
+                            <linkit:sql-table-unique-field name="interaction_id" />
+                            <linkit:sql-table-unique-field name="ruolo" />
+                        </linkit:sql-table-unique>
+                        <linkit:sql-table-index name="PDND_ASYNC_SCADENZA">
+                            <linkit:sql-table-index-field name="data_scadenza" ignoreTypeCompatibility="true"/>
+                        </linkit:sql-table-index>
+                        <linkit:sql-table-index name="PDND_ASYNC_AGGIORNAMENTO">
+                            <linkit:sql-table-index-field name="data_aggiornamento" ignoreTypeCompatibility="true"/>
+                        </linkit:sql-table-index>
+                        <linkit:sql-table-index name="PDND_ASYNC_SEARCH">
+                            <linkit:sql-table-index-field name="data_start" ignoreTypeCompatibility="true"/>
+                            <linkit:sql-table-index-field name="ruolo"/>
+                        </linkit:sql-table-index>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="interaction_id" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="INTERACTION_ID"/>
+                                <linkit:sql-ddl-column-comment>Identificativo dell'interazione (interactionId) emesso dalla PDND nel voucher di start_interaction</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ruolo" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="RUOLO"/>
+                                <linkit:sql-ddl-column-comment>Ruolo di GovWay nell'interazione: 'delegata' (fruitore dell'e-service) o 'applicativa' (erogatore dell'e-service)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="fase" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="FASE"/>
+                                <linkit:sql-ddl-column-comment>Ultima fase completata (start_interaction, callback_invocation, get_resource, confirmation)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="tipo_fruitore" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="TIPO_FRUITORE"/>
+                                <linkit:sql-ddl-column-comment>'Tipo' del soggetto fruitore dell'e-service (lato erogatore può non essere noto)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="fruitore" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="FRUITORE"/>
+                                <linkit:sql-ddl-column-comment>'Nome' del soggetto fruitore dell'e-service (lato erogatore può non essere noto)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="tipo_erogatore" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="TIPO_EROGATORE"/>
+                                <linkit:sql-ddl-column-comment>'Tipo' del soggetto erogatore dell'e-service</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="erogatore" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="EROGATORE"/>
+                                <linkit:sql-ddl-column-comment>'Nome' del soggetto erogatore dell'e-service</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="tipo_servizio" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="TIPO_SERVIZIO"/>
+                                <linkit:sql-ddl-column-comment>'Tipo' del servizio associato all'e-service</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="servizio" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="SERVIZIO"/>
+                                <linkit:sql-ddl-column-comment>'Nome' del servizio associato all'e-service</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="versione_servizio" type="xsd:int">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="VERSIONE_SERVIZIO"/>
+                                <linkit:sql-ddl-column-comment>Versione del servizio associato all'e-service</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="tipo_servizio_callback" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="TIPO_SERVIZIO_CALLBACK"/>
+                                <linkit:sql-ddl-column-comment>'Tipo' del servizio associato all'API di callback (valorizzato nella fase callback_invocation)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="servizio_callback" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="SERVIZIO_CALLBACK"/>
+                                <linkit:sql-ddl-column-comment>'Nome' del servizio associato all'API di callback (valorizzato nella fase callback_invocation)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="versione_servizio_callback" type="xsd:int" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="VERSIONE_SERVIZIO_CALLBACK"/>
+                                <linkit:sql-ddl-column-comment>Versione del servizio associato all'API di callback (valorizzato nella fase callback_invocation)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="purpose_id" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="PURPOSE_ID"/>
+                                <linkit:sql-ddl-column-comment>PurposeId presente nel voucher di start_interaction</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="consumer_id" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="CONSUMER_ID"/>
+                                <linkit:sql-ddl-column-comment>ConsumerId presente nel voucher di start_interaction (valorizzato dall'erogatore)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="client_id" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="CLIENT_ID"/>
+                                <linkit:sql-ddl-column-comment>ClientId presente nel voucher di start_interaction</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="url_callback" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="URL_CALLBACK" varchar="4000"/>
+                                <linkit:sql-ddl-column-comment>URL di callback indicata dal fruitore nella fase di start_interaction</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="entity_number" type="xsd:int" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="ENTITY_NUMBER"/>
+                                <linkit:sql-ddl-column-comment>Numero di entità dichiarato dall'erogatore nella fase callback_invocation</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="tempo_max_callback" type="xsd:long" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="TEMPO_MAX_CALLBACK"/>
+                                <linkit:sql-ddl-column-comment>Tempo massimo di callback (secondi) definito nell'API al momento della fase di start_interaction</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="tempo_disponibilita" type="xsd:long" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="TEMPO_DISPONIBILITA"/>
+                                <linkit:sql-ddl-column-comment>Tempo di disponibilità della risorsa (secondi) definito nell'API al momento della fase di start_interaction</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="conferma_richiesta" type="xsd:int" default="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="CONFERMA_RICHIESTA"/>
+                                <linkit:sql-ddl-column-comment>Indicazione (1/0) se l'API, al momento della fase di start_interaction, richiede la conferma di ricezione</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="limite_entita" type="xsd:int" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="LIMITE_ENTITA"/>
+                                <linkit:sql-ddl-column-comment>Limite massimo di entità per risposta definito nell'API al momento della fase di start_interaction</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="numero_get_resource" type="xsd:int" default="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="NUMERO_GET_RESOURCE"/>
+                                <linkit:sql-ddl-column-comment>Numero di invocazioni della fase get_resource</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="id_transazione_start" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="ID_TRANSAZIONE_START"/>
+                                <linkit:sql-ddl-column-comment>Identificativo della transazione relativa alla fase di start_interaction</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="data_start" type="xsd:dateTime">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="DATA_START"/>
+                                <linkit:sql-ddl-column-comment>Data della fase di start_interaction</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="data_callback" type="xsd:dateTime" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="DATA_CALLBACK"/>
+                                <linkit:sql-ddl-column-comment>Data della fase di callback_invocation</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="data_get_resource" type="xsd:dateTime" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="DATA_GET_RESOURCE"/>
+                                <linkit:sql-ddl-column-comment>Data dell'ultima invocazione della fase get_resource</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="data_confirmation" type="xsd:dateTime" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="DATA_CONFIRMATION"/>
+                                <linkit:sql-ddl-column-comment>Data della fase di confirmation</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="data_scadenza" type="xsd:dateTime" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="DATA_SCADENZA"/>
+                                <linkit:sql-ddl-column-comment>Data oltre la quale la fase successiva non è più ammessa rispetto ai tempi definiti nell'API; se non valorizzata non è prevista una scadenza</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="data_aggiornamento" type="xsd:dateTime">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="DATA_AGGIORNAMENTO"/>
+                                <linkit:sql-ddl-column-comment>Data dell'ultimo aggiornamento della riga</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+
+
     <xsd:simpleType name="TipoMessaggio">
         <xsd:restriction base="xsd:string">
             <xsd:enumeration value="INBOX"/>

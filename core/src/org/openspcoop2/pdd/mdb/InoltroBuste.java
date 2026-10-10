@@ -1684,10 +1684,19 @@ public class InoltroBuste extends GenericLib implements IAsyncResponseCallback{
 					esito.setEsitoInvocazione(true);
 				}else{
 					if(this.sendRispostaApplicativa){
+						IntegrationFunctionError ife = IntegrationFunctionError.INTEROPERABILITY_PROFILE_ENVELOPING_REQUEST_FAILED;
+						ErroreIntegrazione erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_526_GESTIONE_IMBUSTAMENTO);
+						if(e instanceof ProtocolException pe && pe.getIntegrationFunctionError()!=null) {
+							// errore specifico segnalato dal profilo di interoperabilità (es. scambi di dati asincroni PDND)
+							ife = pe.getIntegrationFunctionError();
+							erroreIntegrazione = ife.isClientError() ?
+									new ErroreIntegrazione(e.getMessage(), CodiceErroreIntegrazione.CODICE_409_RISPOSTA_ASINCRONA_NON_CORRELATA_ALLA_RICHIESTA) :
+									ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(e.getMessage(), CodiceErroreIntegrazione.CODICE_526_GESTIONE_IMBUSTAMENTO);
+						}
 						OpenSPCoop2Message responseMessageError = 
-								this.generatoreErrore.build(this.pddContext,IntegrationFunctionError.INTEROPERABILITY_PROFILE_ENVELOPING_REQUEST_FAILED,
-										ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-											get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_526_GESTIONE_IMBUSTAMENTO),e,
+								this.generatoreErrore.build(this.pddContext,ife,
+										erroreIntegrazione,e,
 												(this.requestMessagePrimaTrasformazione!=null ? this.requestMessagePrimaTrasformazione.getParseException() : null));
 						this.ejbUtils.sendRispostaApplicativaErrore(responseMessageError,this.richiestaDelegata,this.rollbackRichiesta,this.pd,this.sa);
 						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,msgErroreImbusta);
@@ -2064,7 +2073,15 @@ public class InoltroBuste extends GenericLib implements IAsyncResponseCallback{
 					if(this.sendRispostaApplicativa){
 						
 						ErroreIntegrazione erroreIntegrazione = null;
-						if(e instanceof ProtocolException pe && pe.isInteroperabilityError() ) {
+						IntegrationFunctionError ife = IntegrationFunctionError.INTEROPERABILITY_PROFILE_ENVELOPING_REQUEST_FAILED;
+						if(e instanceof ProtocolException pe && pe.getIntegrationFunctionError()!=null) {
+							// errore specifico segnalato dal profilo di interoperabilità (es. scambi di dati asincroni PDND)
+							ife = pe.getIntegrationFunctionError();
+							erroreIntegrazione = ife.isClientError() ?
+									new ErroreIntegrazione(e.getMessage(), CodiceErroreIntegrazione.CODICE_409_RISPOSTA_ASINCRONA_NON_CORRELATA_ALLA_RICHIESTA) :
+									ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(e.getMessage(), CodiceErroreIntegrazione.CODICE_526_GESTIONE_IMBUSTAMENTO);
+						}
+						else if(e instanceof ProtocolException pe && pe.isInteroperabilityError() ) {
 							erroreIntegrazione = ErroriIntegrazione.ERRORE_439_FUNZIONALITA_NOT_SUPPORTED_BY_PROTOCOL.
 									getErrore439_FunzionalitaNotSupportedByProtocol(e.getMessage(), this.protocolFactory);
 						}
@@ -2074,7 +2091,7 @@ public class InoltroBuste extends GenericLib implements IAsyncResponseCallback{
 						}
 						
 						OpenSPCoop2Message responseMessageError = 
-								this.generatoreErrore.build(this.pddContext,IntegrationFunctionError.INTEROPERABILITY_PROFILE_ENVELOPING_REQUEST_FAILED,
+								this.generatoreErrore.build(this.pddContext,ife,
 										erroreIntegrazione,e,
 												(this.requestMessagePrimaTrasformazione!=null ? this.requestMessagePrimaTrasformazione.getParseException() : null));
 						this.ejbUtils.sendRispostaApplicativaErrore(responseMessageError,this.richiestaDelegata,this.rollbackRichiesta,this.pd,this.sa);

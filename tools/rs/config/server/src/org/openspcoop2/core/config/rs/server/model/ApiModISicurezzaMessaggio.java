@@ -37,6 +37,9 @@ public class ApiModISicurezzaMessaggio  {
   private Boolean dpop = false;
   
   @Schema(description = "")
+  private Boolean scambioAsincrono = false;
+  
+  @Schema(description = "")
   private Boolean digestRichiesta = false;
   
   @Schema(description = "")
@@ -117,6 +120,25 @@ public class ApiModISicurezzaMessaggio  {
 
   public ApiModISicurezzaMessaggio dpop(Boolean dpop) {
     this.dpop = dpop;
+    return this;
+  }
+
+ /**
+   * Get scambioAsincrono
+   * @return scambioAsincrono
+  **/
+  @JsonProperty("scambio_asincrono")
+  @Valid
+  public Boolean isScambioAsincrono() {
+    return this.scambioAsincrono;
+  }
+
+  public void setScambioAsincrono(Boolean scambioAsincrono) {
+    this.scambioAsincrono = scambioAsincrono;
+  }
+
+  public ApiModISicurezzaMessaggio scambioAsincrono(Boolean scambioAsincrono) {
+    this.scambioAsincrono = scambioAsincrono;
     return this;
   }
 
@@ -300,6 +322,7 @@ public class ApiModISicurezzaMessaggio  {
     sb.append("    pattern: ").append(ApiModISicurezzaMessaggio.toIndentedString(this.pattern)).append("\n");
     sb.append("    generazioneToken: ").append(ApiModISicurezzaMessaggio.toIndentedString(this.generazioneToken)).append("\n");
     sb.append("    dpop: ").append(ApiModISicurezzaMessaggio.toIndentedString(this.dpop)).append("\n");
+    sb.append("    scambioAsincrono: ").append(ApiModISicurezzaMessaggio.toIndentedString(this.scambioAsincrono)).append("\n");
     sb.append("    digestRichiesta: ").append(ApiModISicurezzaMessaggio.toIndentedString(this.digestRichiesta)).append("\n");
     sb.append("    informazioniUtente: ").append(ApiModISicurezzaMessaggio.toIndentedString(this.informazioniUtente)).append("\n");
     sb.append("    patternAudit: ").append(ApiModISicurezzaMessaggio.toIndentedString(this.patternAudit)).append("\n");

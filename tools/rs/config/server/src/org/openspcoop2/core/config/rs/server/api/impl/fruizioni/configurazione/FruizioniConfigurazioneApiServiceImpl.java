@@ -2620,7 +2620,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(env.pd.getMessage()));
 			}
 			
-			ResponseCachingConfigurazione newConfigurazione = ErogazioniApiHelper.buildResponseCachingConfigurazione(body, env.paHelper);
+			ResponseCachingConfigurazione newConfigurazione = ErogazioniApiHelper.buildResponseCachingConfigurazione(body, env.paHelper, env.confCore);
 			
 			pd.setResponseCaching(newConfigurazione);
 			env.pdCore.performUpdateOperation(env.userLogin, false, pd);			
@@ -2802,7 +2802,8 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			final PortaDelegata newPd = env.pdCore.getPortaDelegata(env.idPd);
 			final PortaDelegata oldPd = env.pdCore.getPortaDelegata(env.idPd);
 			
-			if (body.isAbilitato()) {
+			// abilitato non indicato: gestione del token disabilitata (default dello schema)
+			if (Boolean.TRUE.equals(body.isAbilitato())) {
 				GestioneToken gTok = newPd.getGestioneToken() != null ? newPd.getGestioneToken() : new GestioneToken();
 				ErogazioniApiHelper.fillGestioneToken(gTok, body);
 				newPd.setGestioneToken(gTok);

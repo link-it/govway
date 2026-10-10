@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project name="restPdndAsync_LocalEnv" basedir=".">
+
+      <!-- root di OpenSPCoop -->
+      <property name="openspcoop2" location="../../../../../"/>
+      <property name="openspcoop2.dist" location="${openspcoop2}/core/dist"/>
+      
+      <property name="required_lib_restPdndAsync" location="${openspcoop2}/lib/"/>
+      <property name="required_lib" value="${required_lib_restPdndAsync}"/>
+      <property name="openspcoop2.lib" location="${required_lib_restPdndAsync}"/>
+
+      <!-- Build-Options -->
+      <property name="buildAsRelease" value="false"/>
+      <property name="buildrestPdndAsync" value="true"/>
+      <property name="buildAPI" value="true"/>
+
+       <!-- Specifica se inserire le informazioni di debug nelle classi -->
+      <property name="debug" value="true" />
+      <property name="printServerInfo" value="false" />
+
+</project>

@@ -102,7 +102,8 @@ public class RemoteStoresHelper extends ConsoleHelper{
 
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(this.pd, 
-					new Parameter(RemoteStoresCostanti.LABEL_CACHE_PDND, RemoteStoresCostanti.SERVLET_NAME_REMOTE_STORES_KEYS_LIST));
+					new Parameter(RemoteStoresCostanti.LABEL_CACHE_PDND, RemoteStoresCostanti.SERVLET_NAME_CACHE_PDND),
+					new Parameter(RemoteStoresCostanti.LABEL_CHIAVI_CLIENT, RemoteStoresCostanti.SERVLET_NAME_REMOTE_STORES_KEYS_LIST));
 
 			// Label colonne
 			String[] labels = {

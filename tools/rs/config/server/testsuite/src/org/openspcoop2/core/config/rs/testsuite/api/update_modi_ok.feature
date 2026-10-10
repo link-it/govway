@@ -14,6 +14,7 @@ expected.sicurezza_messaggio.informazioni_utente = expected.sicurezza_messaggio.
 expected.sicurezza_messaggio.soap_firma_allegati = expected.sicurezza_messaggio.soap_firma_allegati != null ? expected.sicurezza_messaggio.soap_firma_allegati : false
 expected.sicurezza_messaggio.digest_richiesta = expected.sicurezza_messaggio.digest_richiesta != null ? expected.sicurezza_messaggio.digest_richiesta : false
 expected.sicurezza_messaggio.dpop = expected.sicurezza_messaggio.dpop != null ? expected.sicurezza_messaggio.dpop : false
+expected.sicurezza_messaggio.scambio_asincrono = expected.sicurezza_messaggio.scambio_asincrono != null ? expected.sicurezza_messaggio.scambio_asincrono : false
 return expected;
 }
 """

@@ -30,6 +30,9 @@ public class ApiModIAzioneSoap  {
   @Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED, description = "")
   private ApiModIPatternInterazioneSoap interazione = null;
   
+  @Schema(description = "")
+  private ModIScambioAsincronoFaseEnum faseAsincrona = null;
+  
   @Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED, description = "")
   @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXISTING_PROPERTY, property = "stato", visible = true )
   @com.fasterxml.jackson.annotation.JsonSubTypes({
@@ -53,6 +56,25 @@ public class ApiModIAzioneSoap  {
 
   public ApiModIAzioneSoap interazione(ApiModIPatternInterazioneSoap interazione) {
     this.interazione = interazione;
+    return this;
+  }
+
+ /**
+   * Get faseAsincrona
+   * @return faseAsincrona
+  **/
+  @JsonProperty("fase_asincrona")
+  @Valid
+  public ModIScambioAsincronoFaseEnum getFaseAsincrona() {
+    return this.faseAsincrona;
+  }
+
+  public void setFaseAsincrona(ModIScambioAsincronoFaseEnum faseAsincrona) {
+    this.faseAsincrona = faseAsincrona;
+  }
+
+  public ApiModIAzioneSoap faseAsincrona(ModIScambioAsincronoFaseEnum faseAsincrona) {
+    this.faseAsincrona = faseAsincrona;
     return this;
   }
 
@@ -83,6 +105,7 @@ public class ApiModIAzioneSoap  {
     sb.append("class ApiModIAzioneSoap {\n");
     
     sb.append("    interazione: ").append(ApiModIAzioneSoap.toIndentedString(this.interazione)).append("\n");
+    sb.append("    faseAsincrona: ").append(ApiModIAzioneSoap.toIndentedString(this.faseAsincrona)).append("\n");
     sb.append("    sicurezzaMessaggio: ").append(ApiModIAzioneSoap.toIndentedString(this.sicurezzaMessaggio)).append("\n");
     sb.append("}");
     return sb.toString();

@@ -798,6 +798,7 @@ public class NegoziazioneTokenProvider implements IProvider {
 	private boolean isProviderInfoStandard(String id) {
 		return 
 			Costanti.ID_RETRIEVE_ENDPOINT_URL.equals(id) ||
+			Costanti.ID_RETRIEVE_ENDPOINT_URL_ASYNC.equals(id) ||
 			Costanti.ID_RETRIEVE_AUTENTICAZIONE_USERNAME.equals(id) ||
 			Costanti.ID_RETRIEVE_AUTENTICAZIONE_PASSWORD.equals(id) ||
 			Costanti.ID_RETRIEVE_CLIENT_ID.equals(id) ||
@@ -1005,6 +1006,9 @@ public class NegoziazioneTokenProvider implements IProvider {
 		else if(Costanti.ID_RETRIEVE_TOKEN_EXPECTED_TOKEN_TYPE.equals(item.getName())) {
 			return dynamicUpdateExpectedTokenType(items, mapNameValue, item, actualValue);
 		}
+		else if(Costanti.ID_RETRIEVE_ENDPOINT_URL_ASYNC.equals(item.getName())) {
+			return dynamicUpdateEndpointAsync(items, mapNameValue, actualValue);
+		}
 		else if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_KEYPAIR_ALGORITHM.equals(item.getName()) ||
 				Costanti.ID_NEGOZIAZIONE_DPOP_KEYSTORE_KEYPAIR_ALGORITHM.equals(item.getName())) {
 			return dynamicUpdateKeyPairAlgorithm(items, mapNameValue, item, actualValue);
@@ -1144,6 +1148,16 @@ public class NegoziazioneTokenProvider implements IProvider {
 		}
 
 		return AbstractSecurityProvider.processStoreByokPolicy(type, items, mapNameValue, item, actualValue);
+	}
+	private String dynamicUpdateEndpointAsync(List<?> items, Map<String, String> mapNameValue, String actualValue) {
+		// Un valore già presente (salvato o indicato dall'utente) viene sempre mantenuto, anche se non allineato alla URL della policy.
+		// Se assente viene proposta la URL calcolata a partire dalla URL della policy, così che l'utente la veda esplicitamente.
+		if(actualValue != null && !actualValue.trim().isEmpty()) {
+			return actualValue;
+		}
+		String url = AbstractSecurityProvider.readValue(Costanti.ID_RETRIEVE_ENDPOINT_URL, items, mapNameValue);
+		String urlAsync = PolicyNegoziazioneToken.getDefaultEndpointAsync(url);
+		return urlAsync!=null ? urlAsync : actualValue;
 	}
 	private String dynamicUpdateExpectedTokenType(List<?> items, Map<String, String> mapNameValue, Item item, String actualValue) {
 		

@@ -148,7 +148,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 
 			ProtocolProperties protocolProperties = null;
 			if(profilo != null) {
-				protocolProperties = ApiApiHelper.getProtocolProperties(body, profilo);
+				protocolProperties = ApiApiHelper.getProtocolProperties(body, profilo, as);
 	
 				if(protocolProperties != null) {
 					as.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(protocolProperties, ConsoleOperationType.ADD, null));
@@ -209,8 +209,12 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(env.pd.getMessage()));
 			}
 			
+			// in creazione il profilo di interoperabilità ricava il tipo dell'API (REST/SOAP) dal parametro della console
+			if(as.getServiceBinding()!=null) {
+				env.requestWrapper.overrideParameter(org.openspcoop2.protocol.engine.constants.Costanti.CONSOLE_PARAMETRO_SERVICE_BINDING, as.getServiceBinding().name());
+			}
 			ApiApiHelper.validateProperties(env, protocolProperties, idAccordoFromAccordo, ConsoleOperationType.ADD);
-			
+
 
 			List<Object> objectToCreate = new ArrayList<>();
 			
