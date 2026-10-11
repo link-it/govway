@@ -2028,7 +2028,8 @@ public class ImporterArchiveUtils {
 		}
 	}
 	private void modifyUriAccordo(ProtocolProperty pp, IDSoggetto soggettoDefaultProtocollo) {
-		if(pp!=null && CostantiDB.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_API_RICHIESTA_CORRELATA.equals(pp.getName()) && pp.getValue()!=null && StringUtils.isNotEmpty(pp.getValue())) {
+		if(pp!=null && (CostantiDB.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_API_RICHIESTA_CORRELATA.equals(pp.getName()) || CostantiDB.MODIPA_PDND_ASYNC_API_CORRELATA.equals(pp.getName())) 
+				&& pp.getValue()!=null && StringUtils.isNotEmpty(pp.getValue())) {
 			String uri = pp.getValue();
 			try {
 				IDAccordo idUri = this.idAccordoFactory.getIDAccordoFromUri(uri);

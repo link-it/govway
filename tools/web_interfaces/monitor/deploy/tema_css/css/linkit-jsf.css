@@ -1525,6 +1525,14 @@ input.rich-spinner-input {
 	color: #666666;
 }
 
+/* Il giorno corrente ha un fondo arancione (#f0641e): quando cade di sabato o domenica l'arancio
+   dei festivi vi scende a 1,83:1, perché la regola dei festivi qui sopra, più specifica, vince su
+   '.rich-calendar-today'. Si ripristina il colore che il tema assegna al giorno corrente (5,04:1).
+   La regola precede quella del giorno scelto, che prevale se il giorno corrente è anche scelto. */
+.rich-calendar-cell.rich-calendar-today {
+	color: ${input.calendar.widget.cell.today.color};
+}
+
 /* Il giorno scelto ha un fondo grigio (#c2c2ca): l'arancio dei festivi vi scende a 3,33:1 e il
    grigio degli altri mesi a 3,24:1, perche' le due regole qui sopra, piu' specifiche, vincono su
    '.rich-calendar-select'. Sulla cella scelta si ripristina il colore che il tema le assegna. */
