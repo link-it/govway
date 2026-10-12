@@ -1,0 +1,13 @@
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope">
+    <soap:Header/>
+    <soap:Body>
+        <soap:Fault>
+            <soap:Code>
+                <soap:Value>soap:Receiver</soap:Value>
+            </soap:Code>
+            <soap:Reason>
+                <soap:Text xml:lang="it">Errore applicativo restituito dal backend</soap:Text>
+            </soap:Reason>
+        </soap:Fault>
+    </soap:Body>
+</soap:Envelope>

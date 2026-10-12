@@ -1,0 +1,6 @@
+<problem xmlns="urn:ietf:rfc:7807">
+    <type>https://govway.org/testsuite/modipa/fault/risposta</type>
+    <title>RispostaProblemDetails</title>
+    <status>500</status>
+    <detail>Errore applicativo restituito dal backend con Content-Type application/problem+xml</detail>
+</problem>

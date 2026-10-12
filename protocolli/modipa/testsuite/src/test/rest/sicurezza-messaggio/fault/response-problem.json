@@ -1,0 +1,6 @@
+{
+    "type": "https://govway.org/testsuite/modipa/fault/risposta",
+    "title": "RispostaProblemDetails",
+    "status": 500,
+    "detail": "Errore applicativo restituito dal backend con Content-Type application/problem+json"
+}

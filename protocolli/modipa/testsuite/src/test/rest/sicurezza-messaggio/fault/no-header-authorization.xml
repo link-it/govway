@@ -1,0 +1,7 @@
+<problem xmlns="urn:ietf:rfc:7807">
+    <type>https://govway.org/handling-errors/400/InteroperabilityInvalidRequest.html</type>
+    <title>InteroperabilityInvalidRequest</title>
+    <status>400</status>
+    <detail>Header HTTP 'Authorization' non presente</detail>
+    <govway_id>#uuid</govway_id>
+</problem>

@@ -104,6 +104,36 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 	private static final String DIAGNOSTIC_IN_CORSO = "inCorso";
 	private static final String DIAGNOSTIC_COMPLETATA = "completata";
 	private static final String DIAGNOSTIC_FALLITA = "fallita";
+	private static final String DIAGNOSTIC_SICUREZZA_MESSAGGIO = "sicurezzaMessaggio";
+	private static final String DIAGNOSTIC_FAULT = "fault";
+
+	private IDSoggetto getIdSoggettoDiagnostico(boolean request, IDSoggetto idSoggettoMittente, IDServizio idServizio, 
+			RequestInfo requestInfo, IRegistryReader registryReader) throws Exception {
+		IDSoggetto idSoggetto = request ? idServizio.getSoggettoErogatore() : idSoggettoMittente;
+		if(idSoggetto==null || idSoggetto.getTipo()==null || idSoggetto.getNome()==null) {
+			idSoggetto = OpenSPCoop2Properties.getInstance().getIdentitaPortaDefault(this.protocolFactory.getProtocol(), requestInfo);
+		}
+		else {
+			idSoggetto.setCodicePorta(registryReader.getDominio(idSoggetto));
+		}
+		return idSoggetto;
+	}
+	private MsgDiagnostico newMsgDiagnostico(boolean request, IDSoggetto idSoggetto, RequestInfo requestInfo) throws Exception {
+		TipoPdD tipoPdD = request ? TipoPdD.APPLICATIVA : TipoPdD.DELEGATA;
+		MsgDiagnostico msgDiag = MsgDiagnostico.newInstance(TipoPdD.DELEGATA,
+				idSoggetto,
+				"ModI", requestInfo!=null && requestInfo.getProtocolContext()!=null ? requestInfo.getProtocolContext().getInterfaceName() : null,
+				requestInfo,
+				this.state);
+		if(TipoPdD.DELEGATA.equals(tipoPdD)){
+			msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI);
+		}
+		else {
+			msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE);
+		}
+		msgDiag.setPddContext(this.context, this.protocolFactory);
+		return msgDiag;
+	}
 
 	
 	@Override
@@ -205,14 +235,8 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 				}
 				
 				
-				// check Fault
-				boolean isFault = false;
-				if(rest) {
-					isFault = msg.isFault() || msg.castAsRest().isProblemDetailsForHttpApis_RFC7807();	
-				}
-				else {
-					isFault = msg.isFault() || msg.castAsSoap().hasSOAPFault();
-				}
+				// check Fault (una richiesta non viene mai considerata un fault)
+				boolean isFault = ModIPropertiesUtils.isFault(msg, request, rest);
 				
 				
 				
@@ -352,9 +376,17 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 				String securityMessageProfileNonFiltratoPDND = ModIPropertiesUtils.readPropertySecurityMessageProfile(aspc, nomePortType, azione, !filterPDND);
 				
 				boolean existsSecurityFlusso =  false;
+				StringBuilder faultDetails = new StringBuilder();
 				if(securityMessageProfileNonFiltratoPDND!=null && !ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_UNDEFINED.equals(securityMessageProfileNonFiltratoPDND)) {
 					existsSecurityFlusso = ModIPropertiesUtils.processSecurity(this.log,aspc, nomePortType, azione, request, 
-								msg, rest, this.modiProperties);
+								msg, rest, this.modiProperties, faultDetails);
+				}
+				
+				if(!existsSecurityFlusso && faultDetails.length()>0) {
+					IDSoggetto idSoggetto = getIdSoggettoDiagnostico(request, idSoggettoMittente, idServizio, requestInfo, registryReader);
+					MsgDiagnostico msgDiag = newMsgDiagnostico(request, idSoggetto, requestInfo);
+					msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, faultDetails.toString());
+					msgDiag.logPersonalizzato(DIAGNOSTIC_SICUREZZA_MESSAGGIO+(request ? ".richiesta." : ".risposta.")+DIAGNOSTIC_FAULT);
 				}
 					
 				if(existsSecurityFlusso) {
@@ -372,27 +404,8 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 					
 					String securityMessageProfile = ModIPropertiesUtils.readPropertySecurityMessageProfile(aspc, nomePortType, azione, filterPDND);
 										
-					MsgDiagnostico msgDiag = null;
-					TipoPdD tipoPdD = request ? TipoPdD.APPLICATIVA : TipoPdD.DELEGATA;
-					IDSoggetto idSoggetto = TipoPdD.DELEGATA.equals(tipoPdD) ? idSoggettoMittente : idServizio.getSoggettoErogatore();
-					if(idSoggetto==null || idSoggetto.getTipo()==null || idSoggetto.getNome()==null) {
-						idSoggetto = OpenSPCoop2Properties.getInstance().getIdentitaPortaDefault(this.protocolFactory.getProtocol(), requestInfo);
-					}
-					else {
-						idSoggetto.setCodicePorta(registryReader.getDominio(idSoggetto));
-					}
-					msgDiag = MsgDiagnostico.newInstance(TipoPdD.DELEGATA, 
-							idSoggetto,
-							"ModI", requestInfo!=null && requestInfo.getProtocolContext()!=null ? requestInfo.getProtocolContext().getInterfaceName() : null,
-							requestInfo,
-							this.state);
-					if(TipoPdD.DELEGATA.equals(tipoPdD)){
-						msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI);
-					}
-					else {
-						msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE);
-					}
-					msgDiag.setPddContext(this.context, this.protocolFactory);
+					IDSoggetto idSoggetto = getIdSoggettoDiagnostico(request, idSoggettoMittente, idServizio, requestInfo, registryReader);
+					MsgDiagnostico msgDiag = newMsgDiagnostico(request, idSoggetto, requestInfo);
 					String tipoDiagnostico = request ? ".richiesta." : ".risposta.";
 					
 					boolean processSecurity = false;

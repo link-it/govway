@@ -128,6 +128,33 @@ public class ModIImbustamento {
 	private static final String DIAGNOSTIC_IN_CORSO = "inCorso";
 	private static final String DIAGNOSTIC_COMPLETATA = "completata";
 	private static final String DIAGNOSTIC_FALLITA = "fallita";
+	private static final String DIAGNOSTIC_SICUREZZA_MESSAGGIO = "sicurezzaMessaggio";
+	private static final String DIAGNOSTIC_FAULT = "fault";
+	
+	private static MsgDiagnostico newMsgDiagnostico(RuoloMessaggio ruoloMessaggio, IDSoggetto idSoggettoMittente, IDSoggetto idSoggettoDestinatario,
+			IRegistryReader registryReader, IProtocolFactory<?> protocolFactory, IState state, RequestInfo requestInfo, Context context) throws Exception {
+		TipoPdD tipoPdD = RuoloMessaggio.RICHIESTA.equals(ruoloMessaggio) ? TipoPdD.DELEGATA : TipoPdD.APPLICATIVA;
+		IDSoggetto idSoggetto = TipoPdD.DELEGATA.equals(tipoPdD) ? idSoggettoMittente : idSoggettoDestinatario;
+		if(idSoggetto==null || idSoggetto.getTipo()==null || idSoggetto.getNome()==null) {
+			idSoggetto = OpenSPCoop2Properties.getInstance().getIdentitaPortaDefault(protocolFactory.getProtocol(), requestInfo);
+		}
+		else {
+			idSoggetto.setCodicePorta(registryReader.getDominio(idSoggetto));
+		}
+		MsgDiagnostico msgDiag = MsgDiagnostico.newInstance(TipoPdD.DELEGATA, 
+				idSoggetto,
+				"ModI", requestInfo!=null && requestInfo.getProtocolContext()!=null ? requestInfo.getProtocolContext().getInterfaceName() : null,
+				requestInfo,
+				state);
+		if(TipoPdD.DELEGATA.equals(tipoPdD)){
+			msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI);
+		}
+		else {
+			msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE);
+		}
+		msgDiag.setPddContext(context, protocolFactory);
+		return msgDiag;
+	}
 	
 	private static String getReplyToErogazione(IDSoggetto idSoggettoMittente, AccordoServizioParteComune aspc, String nomePortType, String azione,
 			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, 
@@ -366,9 +393,18 @@ public class ModIImbustamento {
 			String securityMessageProfileNonFiltratoPDND = ModIPropertiesUtils.readPropertySecurityMessageProfile(aspc, nomePortType, azione, !filterPDND);
 			
 			boolean existsSecurityFlusso =  false;
+			StringBuilder faultDetails = new StringBuilder();
 			if(securityMessageProfileNonFiltratoPDND!=null && !ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_UNDEFINED.equals(securityMessageProfileNonFiltratoPDND)) {
 				existsSecurityFlusso = ModIPropertiesUtils.processSecurity(this.log, aspc, nomePortType, azione, isRichiesta, 
-						msg, rest, this.modiProperties);
+						msg, rest, this.modiProperties, faultDetails);
+			}
+			
+			if(!existsSecurityFlusso && faultDetails.length()>0) {
+				MsgDiagnostico msgDiag = newMsgDiagnostico(ruoloMessaggio, idSoggettoMittente, idSoggettoDestinatario, 
+						registryReader, protocolFactory, state, requestInfo, context);
+				msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, faultDetails.toString());
+				String tipoDiagnostico = RuoloMessaggio.RICHIESTA.equals(ruoloMessaggio) ? ".richiesta." : ".risposta.";
+				msgDiag.logPersonalizzato(DIAGNOSTIC_SICUREZZA_MESSAGGIO+tipoDiagnostico+DIAGNOSTIC_FAULT);
 			}
 			
 			if(existsSecurityFlusso) {
@@ -389,27 +425,8 @@ public class ModIImbustamento {
 				
 				boolean sicurezzaRidefinitaOperazione = ModIPropertiesUtils.readSicurezzaMessaggioRidefinitaOperazioneEngine(aspc, nomePortType, azione);
 								
-				MsgDiagnostico msgDiag = null;
-				TipoPdD tipoPdD = RuoloMessaggio.RICHIESTA.equals(ruoloMessaggio) ? TipoPdD.DELEGATA : TipoPdD.APPLICATIVA;
-				IDSoggetto idSoggetto = TipoPdD.DELEGATA.equals(tipoPdD) ? idSoggettoMittente : idSoggettoDestinatario;
-				if(idSoggetto==null || idSoggetto.getTipo()==null || idSoggetto.getNome()==null) {
-					idSoggetto = OpenSPCoop2Properties.getInstance().getIdentitaPortaDefault(protocolFactory.getProtocol(), requestInfo);
-				}
-				else {
-					idSoggetto.setCodicePorta(registryReader.getDominio(idSoggetto));
-				}
-				msgDiag = MsgDiagnostico.newInstance(TipoPdD.DELEGATA, 
-						idSoggetto,
-						"ModI", requestInfo!=null && requestInfo.getProtocolContext()!=null ? requestInfo.getProtocolContext().getInterfaceName() : null,
-						requestInfo,
-						state);
-				if(TipoPdD.DELEGATA.equals(tipoPdD)){
-					msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI);
-				}
-				else {
-					msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE);
-				}
-				msgDiag.setPddContext(context, protocolFactory);
+				MsgDiagnostico msgDiag = newMsgDiagnostico(ruoloMessaggio, idSoggettoMittente, idSoggettoDestinatario, 
+						registryReader, protocolFactory, state, requestInfo, context);
 				String tipoDiagnostico = RuoloMessaggio.RICHIESTA.equals(ruoloMessaggio) ? ".richiesta." : ".risposta.";
 				
 				// check config

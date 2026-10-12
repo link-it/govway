@@ -1,0 +1,6 @@
+{
+    "type": "https://govway.org/testsuite/modipa/fault/richiesta",
+    "title": "RichiestaProblemDetails",
+    "status": 400,
+    "detail": "Richiesta applicativa inviata con Content-Type application/problem+json"
+}
