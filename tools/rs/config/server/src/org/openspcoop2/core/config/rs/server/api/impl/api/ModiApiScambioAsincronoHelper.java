@@ -158,7 +158,7 @@ public class ModiApiScambioAsincronoHelper {
 			addLongProperty(p, CostantiDB.MODIPA_PDND_ASYNC_TEMPO_MAX_CALLBACK, eservice.getTempoMassimoRisposta());
 			addLongProperty(p, CostantiDB.MODIPA_PDND_ASYNC_TEMPO_DISPONIBILITA, eservice.getDurataDisponibilita());
 			p.addProperty(CostantiDB.MODIPA_PDND_ASYNC_CONFERMA_RICEZIONE, eservice.isConfermaRecupero()!=null && eservice.isConfermaRecupero().booleanValue());
-			addLongProperty(p, CostantiDB.MODIPA_PDND_ASYNC_LIMITE_ENTITA, eservice.getNumeroMassimoRisultati()!=null ? eservice.getNumeroMassimoRisultati().longValue() : null);
+			addLongProperty(p, CostantiDB.MODIPA_PDND_ASYNC_LIMITE_ENTITA, eservice.getNumeroMassimoRisultati());
 		}
 	}
 	private static void checkSicurezzaMessaggioApi(ApiModISicurezzaMessaggio sicurezzaMessaggio) {
@@ -174,7 +174,7 @@ public class ModiApiScambioAsincronoHelper {
 			throw FaultCode.RICHIESTA_NON_VALIDA.toException(PREFIX_SCAMBIO_ASINCRONO+" richiede che lo stato della sicurezza messaggio nella richiesta sia 'abilitato'");
 		}
 	}
-	private static void addLongProperty(ProtocolProperties p, String id, Long value) {
+	private static void addLongProperty(ProtocolProperties p, String id, Number value) {
 		if(value!=null) {
 			p.addProperty(id, value.longValue());
 		}
