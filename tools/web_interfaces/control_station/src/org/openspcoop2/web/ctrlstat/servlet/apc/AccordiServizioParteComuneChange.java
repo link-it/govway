@@ -68,6 +68,7 @@ import org.openspcoop2.core.registry.driver.BeanUtilities;
 import org.openspcoop2.core.registry.driver.FiltroRicercaGruppi;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
+import org.openspcoop2.core.registry.utils.FormatoSpecificaUtilities;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
@@ -903,7 +904,11 @@ public final class AccordiServizioParteComuneChange extends Action {
 		// servicebinding / messagetype / formatospecifica
 		as.setServiceBinding(apcCore.fromMessageServiceBinding(strutsBean.serviceBinding));
 		as.setMessageType(apcCore.fromMessageMessageType(strutsBean.messageType));
-		as.setFormatoSpecifica(apcCore.interfaceType2FormatoSpecifica(strutsBean.interfaceType));
+		if(!FormatoSpecificaUtilities.isFormatoNonSupportato(as)) {
+			as.setFormatoSpecifica(apcCore.interfaceType2FormatoSpecifica(strutsBean.interfaceType));
+		}
+		// else: formato storico non più supportato (es. WADL); il campo nella form contiene il valore di default e non deve sovrascriverlo.
+		//       Il formato viene aggiornato solamente sostituendo l'interfaccia.
 
 		// stato
 		as.setStatoPackage(strutsBean.statoPackage);

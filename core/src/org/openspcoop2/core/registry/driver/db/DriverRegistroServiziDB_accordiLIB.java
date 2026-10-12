@@ -48,7 +48,7 @@ import org.openspcoop2.core.registry.GruppoAccordo;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
-import org.openspcoop2.core.registry.constants.FormatoSpecifica;
+import org.openspcoop2.core.registry.utils.FormatoSpecificaUtilities;
 import org.openspcoop2.core.registry.constants.MessageType;
 import org.openspcoop2.core.registry.constants.ProfiloCollaborazione;
 import org.openspcoop2.core.registry.constants.ProprietariDocumento;
@@ -125,7 +125,6 @@ public class DriverRegistroServiziDB_accordiLIB {
 		String conversazioneFruitore = (accordoServizio.getByteSpecificaConversazioneFruitore()!=null ? new String(accordoServizio.getByteSpecificaConversazioneFruitore()) : null);
 		String superUser = accordoServizio.getSuperUser();
 
-		FormatoSpecifica formatoSpecifica = accordoServizio.getFormatoSpecifica();
 		wsdlConcettuale = wsdlConcettuale!=null && !"".equals(wsdlConcettuale.trim().replace("\n", "")) ? wsdlConcettuale : null;
 		wsdlDefinitorio = wsdlDefinitorio!=null && !"".equals(wsdlDefinitorio.trim().replace("\n", "")) ? wsdlDefinitorio : null;
 		wsdlLogicoErogatore = wsdlLogicoErogatore!=null && !"".equals(wsdlLogicoErogatore.trim().replace("\n", "")) ? wsdlLogicoErogatore : null;
@@ -220,7 +219,7 @@ public class DriverRegistroServiziDB_accordiLIB {
 			stm.setString(index++, nome);
 			stm.setString(index++, DriverRegistroServiziDB_LIB.getValue(profiloCollaborazione));
 			stm.setString(index++, scadenza);
-			stm.setString(index++, DriverRegistroServiziDB_LIB.getValue(formatoSpecifica));
+			stm.setString(index++, FormatoSpecificaUtilities.getValue(accordoServizio)); // preserva l'eventuale formato storico non supportato
 			stm.setString(index++, wsdlConcettuale!=null && !wsdlConcettuale.trim().equals("") ? wsdlConcettuale : null);
 			stm.setString(index++, wsdlDefinitorio!=null && !wsdlDefinitorio.trim().equals("") ? wsdlDefinitorio : null );
 			stm.setString(index++ ,wsdlLogicoErogatore!=null && !wsdlLogicoErogatore.trim().equals("") ? wsdlLogicoErogatore : null );
@@ -405,7 +404,6 @@ public class DriverRegistroServiziDB_accordiLIB {
 		String scadenza = accordoServizio.getScadenza();
 		boolean utilizzioSenzaAzione = accordoServizio.getUtilizzoSenzaAzione();
 
-		FormatoSpecifica formatoSpecifica = accordoServizio.getFormatoSpecifica();
 		
 		String wsdlConcettuale = (accordoServizio.getByteWsdlConcettuale()!=null ? new String(accordoServizio.getByteWsdlConcettuale()) : null);
 		String wsdlDefinitorio = (accordoServizio.getByteWsdlDefinitorio()!=null ? new String(accordoServizio.getByteWsdlDefinitorio()) : null);
@@ -542,7 +540,7 @@ public class DriverRegistroServiziDB_accordiLIB {
 			stm.setString(index++, nome);
 			stm.setString(index++, DriverRegistroServiziDB_LIB.getValue(profiloCollaborazione));
 			stm.setString(index++, scadenza);
-			stm.setString(index++, DriverRegistroServiziDB_LIB.getValue(formatoSpecifica));
+			stm.setString(index++, FormatoSpecificaUtilities.getValue(accordoServizio)); // preserva l'eventuale formato storico non supportato
 			stm.setString(index++, wsdlConcettuale);
 			stm.setString(index++, wsdlDefinitorio);
 			stm.setString(index++, wsdlLogicoErogatore);

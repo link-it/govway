@@ -60,6 +60,7 @@ import org.openspcoop2.core.registry.driver.BeanUtilities;
 import org.openspcoop2.core.registry.driver.FiltroRicercaGruppi;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.utils.FormatoSpecificaUtilities;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
@@ -265,7 +266,9 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 				
 				switch (serviceBinding) {
 				case REST:
-					label = apcHelper.getLabelWSDLFromFormatoSpecifica(formatoSpecifica);
+					label = FormatoSpecificaUtilities.isFormatoNonSupportato(as) ? 
+							apcHelper.getLabelWSDLFromFormatoSpecifica(as) : 
+							apcHelper.getLabelWSDLFromFormatoSpecifica(formatoSpecifica);
 					break;
 				case SOAP:
 				default:
@@ -367,6 +370,13 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 						AccordiServizioParteComuneCostanti.OBJECT_NAME_APC, AccordiServizioParteComuneCostanti.TIPO_OPERAZIONE_WSDL_CHANGE);
 			}
 
+			// API REST con formato storico non più supportato (es. WADL): la sostituzione dell'interfaccia assegna il formato del nuovo documento
+			if(ServiceBinding.REST.equals(serviceBinding) && 
+					strutsBean.tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_CONCETTUALE) &&
+					FormatoSpecificaUtilities.isFormatoNonSupportato(as)) {
+				as.setFormatoSpecifica(FormatoSpecificaUtilities.getFormatoSpecificaRestFromDocument(strutsBean.wsdl));
+			}
+			
 			// Controlli sui campi immessi
 			boolean isOk = apcHelper.accordiWSDLCheckData(pd,strutsBean.tipo, strutsBean.wsdl,as,strutsBean.validazioneDocumenti, protocollo);
 			if (!isOk) {

@@ -77,6 +77,7 @@ import org.openspcoop2.core.registry.constants.HttpMethod;
 import org.openspcoop2.core.registry.constants.ProprietariDocumento;
 import org.openspcoop2.core.registry.constants.ServiceBinding;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.utils.FormatoSpecificaUtilities;
 import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.basic.archive.APIUtils;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
@@ -909,6 +910,13 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 				break;
 			}
 			
+			if(as.getFormatoSpecifica()==null) {
+				// formato storico non più supportato (es. WADL): il documento viene restituito come download generico
+				// (senza impostarlo verrebbe usato il content type 'application/problem+json')
+				Helper.setContentType(context, "interfaccia");
+				return spec;
+			}
+
 			String fileName = null;
 			switch (as.getFormatoSpecifica()) {
 			case WSDL_11:
@@ -2340,6 +2348,11 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 
 			ServerProperties serverProperties = ServerProperties.getInstance();
 			final boolean validazioneDocumenti = serverProperties.isValidazioneDocumenti();
+
+			// API REST con formato storico non più supportato (es. WADL): la sostituzione dell'interfaccia assegna il formato del nuovo documento
+			if(as.getServiceBinding() == ServiceBinding.REST && FormatoSpecificaUtilities.isFormatoNonSupportato(as)) {
+				as.setFormatoSpecifica(FormatoSpecificaUtilities.getFormatoSpecificaRestFromDocument(wsdl));
+			}
 
 			if (!env.apcHelper.accordiWSDLCheckData(env.pd, tipoWsdl, wsdl, as, validazioneDocumenti, env.tipo_protocollo)) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(env.pd.getMessage()));

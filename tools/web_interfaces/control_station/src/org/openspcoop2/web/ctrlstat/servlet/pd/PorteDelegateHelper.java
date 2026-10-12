@@ -926,7 +926,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			}
 		} else {
 				this.validazioneContenuti(tipoOp, dati, true, statoValidazione, tipoValidazione, applicaMTOM,
-						serviceBinding, aspc.getFormatoSpecifica());
+						serviceBinding, aspc.getFormatoSpecifica(), aspc.getFormatoSpecificaNonSupportato());
 		}
 		
 		

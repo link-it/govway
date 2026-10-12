@@ -808,6 +808,10 @@ public class AccordoServizioParteComuneMappingCore extends ControlStationCore {
 		}
 		try {
 			FormatoSpecifica formato = as.getFormatoSpecifica();
+			if(formato==null) {
+				// formato storico non più supportato (es. WADL): non è possibile ricavare l'endpoint dall'interfaccia
+				return null;
+			}
 			String urlSuggerita = null;
 			switch (formato) {
 			case OPEN_API_3:

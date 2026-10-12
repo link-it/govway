@@ -1,5 +1,12 @@
 2026-10-12  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore, GovWayConsole, ApiRsConfigurazione]
+	Risolto Bug #1828
+	Dopo l'aggiornamento dalla 3.3, le API REST con interfaccia WADL rendevano inaccessibile l'elenco delle API della console.
+	Il formato viene ora conservato e presentato come 'WADL (deprecato, non supportato)'; l'interfaccia può essere sostituita con OpenAPI 3 o Swagger 2.
+
+2026-10-12  Andrea Poli <apoli@link.it>
+
 	* [GovWayCore, ProtocolloModIPA]
 	Risolto Bug #1840
 	Nel profilo ModI una richiesta con Content-Type 'application/problem+json' o 'application/problem+xml' (REST) o contenente

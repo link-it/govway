@@ -1955,7 +1955,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		}else {
 			// 	Pintori 08/02/2018 Validazione Contenuti spostata nella servlet PorteApplicativeValidazione, in ADD devo mostrare comunque la form.
 			this.validazioneContenuti(tipoOp, dati, true, false, statoValidazione, tipoValidazione, applicaMTOM,
-					serviceBinding, aspc.getFormatoSpecifica());
+					serviceBinding, aspc.getFormatoSpecifica(), aspc.getFormatoSpecificaNonSupportato());
 		}
 		
 		// *************** Integrazione *********************

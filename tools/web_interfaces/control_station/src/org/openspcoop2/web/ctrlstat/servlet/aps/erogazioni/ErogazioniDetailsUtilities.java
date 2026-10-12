@@ -94,6 +94,7 @@ import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.beans.GruppoSintetico;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
+import org.openspcoop2.core.registry.utils.FormatoSpecificaUtilities;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
 import org.openspcoop2.pdd.config.UrlInvocazioneAPI;
@@ -1833,6 +1834,11 @@ public class ErogazioniDetailsUtilities {
 				String value = null;
 				switch (validazioneContenutiApplicativi.getTipo()) {
 				case INTERFACE:
+					if(aspc.getFormatoSpecifica()==null) {
+						// formato storico non più supportato (es. WADL)
+						value=FormatoSpecificaUtilities.getLabelFormatoNonSupportato(aspc);
+						break;
+					}
 					switch (aspc.getFormatoSpecifica()) {
 					case OPEN_API_3:
 						value=CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_OPEN_API_3;

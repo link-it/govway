@@ -62,6 +62,7 @@ import org.openspcoop2.core.registry.driver.FiltroRicercaGruppi;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
+import org.openspcoop2.core.registry.utils.FormatoSpecificaUtilities;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
@@ -896,6 +897,11 @@ public final class AccordiServizioParteComuneAdd extends Action {
 				as.setByteSpecificaConversazioneConcettuale(aspcOld.getByteSpecificaConversazioneConcettuale());
 				as.setByteSpecificaConversazioneErogatore(aspcOld.getByteSpecificaConversazioneErogatore());
 				as.setByteSpecificaConversazioneFruitore(aspcOld.getByteSpecificaConversazioneFruitore());
+				if(FormatoSpecificaUtilities.isFormatoNonSupportato(aspcOld)) {
+					// l'interfaccia viene copiata così com'è: si mantiene il formato storico (es. WADL) e non quello di default proposto nella form
+					as.setFormatoSpecifica(null);
+					as.setFormatoSpecificaNonSupportato(aspcOld.getFormatoSpecificaNonSupportato());
+				}
 			}
 			
 

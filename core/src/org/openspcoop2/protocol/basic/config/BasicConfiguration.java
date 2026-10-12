@@ -122,6 +122,10 @@ public class BasicConfiguration extends BasicComponentFactory implements org.ope
 	
 	@Override
 	public boolean isSupportoSchemaEsternoInterfaccia(ServiceBinding serviceBinding, InterfaceType interfaceType) {
+		if(interfaceType==null) {
+			// formato storico non più supportato (es. WADL)
+			return false;
+		}
 		switch (serviceBinding) {
 		case SOAP:
 			if(this.bindingManifest.getSoap()!=null && 
@@ -151,6 +155,10 @@ public class BasicConfiguration extends BasicComponentFactory implements org.ope
 	
 	@Override
 	public boolean isSupportoSpecificaConversazioni(ServiceBinding serviceBinding, InterfaceType interfaceType) {
+		if(interfaceType==null) {
+			// formato storico non più supportato (es. WADL)
+			return false;
+		}
 		switch (serviceBinding) {
 		case SOAP:
 			if(this.bindingManifest.getSoap()!=null && 
@@ -180,6 +188,10 @@ public class BasicConfiguration extends BasicComponentFactory implements org.ope
 	
 	@Override
 	public boolean isSupportoPortiAccessoAccordiParteSpecifica(ServiceBinding serviceBinding, InterfaceType interfaceType) {
+		if(interfaceType==null) {
+			// formato storico non più supportato (es. WADL)
+			return false;
+		}
 		switch (serviceBinding) {
 		case SOAP:
 			if(this.bindingManifest.getSoap()!=null && 

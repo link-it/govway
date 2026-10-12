@@ -68,6 +68,7 @@ import org.openspcoop2.core.registry.constants.ProfiloCollaborazione;
 import org.openspcoop2.core.registry.constants.RepresentationType;
 import org.openspcoop2.core.registry.constants.RepresentationXmlType;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
+import org.openspcoop2.core.registry.utils.FormatoSpecificaUtilities;
 import org.openspcoop2.core.registry.constants.StatoFunzionalita;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
@@ -4030,7 +4031,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 									dati.add(saveAs);
 								}
 							} else { // Service Binding REST
-								String labelWsdlCon = this.getLabelWSDLFromFormatoSpecifica(interfaceType);
+								String labelWsdlCon = this.getLabelWSDLConcettualeChange(id, interfaceType);
 								de = new DataElement();
 								de.setType(DataElementType.LINK);
 								de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_WSDL_CHANGE, 
@@ -4136,7 +4137,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 							dati.add(de);
 						} else {
 							if(gestioneSpecificaInterfacce) {
-								String labelWsdlCon = this.getLabelWSDLFromFormatoSpecifica(interfaceType);
+								String labelWsdlCon = this.getLabelWSDLConcettualeChange(id, interfaceType);
 								de = new DataElement();
 								de.setType(DataElementType.LINK);
 								de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_WSDL_CHANGE, 
@@ -4522,7 +4523,30 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		}
 	}
 	
+	private String getLabelWSDLConcettualeChange(String id, org.openspcoop2.protocol.manifest.constants.InterfaceType interfaceType) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
+		// l'API potrebbe avere un formato storico non più supportato (es. WADL), non rappresentabile tramite InterfaceType:
+		// la label viene quindi calcolata a partire dall'API registrata
+		if(id!=null && !"".equals(id)) {
+			return this.getLabelWSDLFromFormatoSpecifica(this.apcCore.getAccordoServizioSintetico(Long.valueOf(id)));
+		}
+		return this.getLabelWSDLFromFormatoSpecifica(interfaceType);
+	}
+	public String getLabelWSDLFromFormatoSpecifica(AccordoServizioParteComune as) {
+		if(FormatoSpecificaUtilities.isFormatoNonSupportato(as)) {
+			return FormatoSpecificaUtilities.getLabelFormatoNonSupportato(as);
+		}
+		return getLabelWSDLFromFormatoSpecifica(this.apcCore.formatoSpecifica2InterfaceType(as.getFormatoSpecifica()));
+	}
+	public String getLabelWSDLFromFormatoSpecifica(AccordoServizioParteComuneSintetico as) {
+		if(FormatoSpecificaUtilities.isFormatoNonSupportato(as)) {
+			return FormatoSpecificaUtilities.getLabelFormatoNonSupportato(as);
+		}
+		return getLabelWSDLFromFormatoSpecifica(this.apcCore.formatoSpecifica2InterfaceType(as.getFormatoSpecifica()));
+	}
 	public String getLabelWSDLFromFormatoSpecifica(org.openspcoop2.protocol.manifest.constants.InterfaceType formatoSpecifica) {
+		if(formatoSpecifica==null) {
+			return AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_INTERFACE_TYPE_OPEN_API_3;
+		}
 		switch (formatoSpecifica) {
 		case SWAGGER_2:
 			return AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_INTERFACE_TYPE_SWAGGER_2;
@@ -4884,7 +4908,9 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 			
 			// formato specifica
-			if (formatoSpecifica ==null) {
+			// In modifica può non essere valorizzato per le API con un formato storico non più supportato (es. WADL),
+			// che viene conservato: il controllo viene quindi effettuato solo in creazione
+			if (formatoSpecifica ==null && TipoOperazione.ADD.equals(tipoOperazione)) {
 				this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare un Formato Specifica");
 				return false;
 			}

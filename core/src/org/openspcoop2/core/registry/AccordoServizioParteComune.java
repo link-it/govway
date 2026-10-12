@@ -127,6 +127,19 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
     this.oldIDAccordoForUpdate=oldIDAccordoForUpdate;
   }
 
+  public String getFormatoSpecificaNonSupportato() {
+    if(this.formatoSpecificaNonSupportato!=null && ("".equals(this.formatoSpecificaNonSupportato)==false)){
+		return this.formatoSpecificaNonSupportato.trim();
+	}else{
+		return null;
+	}
+
+  }
+
+  public void setFormatoSpecificaNonSupportato(String formatoSpecificaNonSupportato) {
+    this.formatoSpecificaNonSupportato=formatoSpecificaNonSupportato;
+  }
+
   public IdSoggetto getSoggettoReferente() {
     return this.soggettoReferente;
   }
@@ -697,6 +710,9 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
 
   @jakarta.xml.bind.annotation.XmlTransient
   protected IDAccordo oldIDAccordoForUpdate;
+
+  @jakarta.xml.bind.annotation.XmlTransient
+  protected String formatoSpecificaNonSupportato;
 
   @XmlElement(name="soggetto-referente",required=false,nillable=false)
   protected IdSoggetto soggettoReferente;

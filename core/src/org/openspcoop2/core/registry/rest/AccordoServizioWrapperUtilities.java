@@ -33,6 +33,7 @@ import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.constants.FormatoSpecifica;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
+import org.openspcoop2.core.registry.utils.FormatoSpecificaUtilities;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.utils.LoggerWrapperFactory;
@@ -109,6 +110,10 @@ public class AccordoServizioWrapperUtilities {
 		AccordoServizioParteComune as = this.accordoServizioWrapper.getAccordoServizio();
 		
 		IApiReader apiReader = null;
+		if(FormatoSpecificaUtilities.isFormatoNonSupportato(as)) {
+			// formato storico non più supportato (es. 'wadl' registrato con la 3.3)
+			throw new DriverRegistroServiziException("Tipo di interfaccia ["+as.getFormatoSpecificaNonSupportato()+"] non supportata");
+		}
 		FormatoSpecifica formato = as.getFormatoSpecifica();
 		if(formato==null) {
 			formato = FormatoSpecifica.OPEN_API_3;

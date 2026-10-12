@@ -40,6 +40,7 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.rest.AccordoServizioWrapper;
+import org.openspcoop2.core.registry.utils.FormatoSpecificaUtilities;
 import org.openspcoop2.message.exception.MessageContentCompressedException;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2RestJsonMessage;
@@ -209,18 +210,18 @@ public class ValidatoreMessaggiApplicativiRest {
 			throw ex;
 		}catch(DriverRegistroServiziException e){
 			
-			FormatoSpecifica formatoSpecifica = null;
+			String formatoSpecifica = null;
 			try {
 				AccordoServizioParteSpecifica asps = this.registroServiziManager.getAccordoServizioParteSpecifica(idServizio, null, false, this.requestInfo);
 				AccordoServizioParteComune apc = this.registroServiziManager.getAccordoServizioParteComune(IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune()), null, false, false, this.requestInfo);
-				formatoSpecifica = apc.getFormatoSpecifica();
+				formatoSpecifica = FormatoSpecificaUtilities.getValue(apc); // comprende l'eventuale formato storico non supportato (es. wadl)
 			}catch(Exception eIgnore) {}
 			
 			this.logger.error("Riscontrato errore durante l'inizializzazione: "+e.getMessage(),e);
 			ValidatoreMessaggiApplicativiException ex 
 				= new ValidatoreMessaggiApplicativiException("Riscontrato errore durante l'inizializzazione: "+e.getMessage(),e);
 			if(e.getMessage()!=null && formatoSpecifica!=null){
-				ex.setErrore(ErroriIntegrazione.ERRORE_417_COSTRUZIONE_VALIDATORE_TRAMITE_INTERFACCIA_FALLITA.getErrore417_CostruzioneValidatoreTramiteInterfacciaFallita(formatoSpecifica.getValue()));
+				ex.setErrore(ErroriIntegrazione.ERRORE_417_COSTRUZIONE_VALIDATORE_TRAMITE_INTERFACCIA_FALLITA.getErrore417_CostruzioneValidatoreTramiteInterfacciaFallita(formatoSpecifica));
 				throw ex;
 			}else{
 				ex.setErrore(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_530_COSTRUZIONE_INTERFACCIA_FALLITA));
@@ -364,7 +365,15 @@ public class ValidatoreMessaggiApplicativiRest {
 		OpenAPILibrary openApiLibrary = null;
 		Api api = this.accordoServizioWrapper.getApi();
 
-		switch (this.accordoServizioWrapper.getAccordoServizio().getFormatoSpecifica()) {
+		AccordoServizioParteComune as = this.accordoServizioWrapper.getAccordoServizio();
+		if(as.getFormatoSpecifica()==null) {
+			// formato storico non più supportato (es. 'wadl' registrato con la 3.3)
+			String formato = FormatoSpecificaUtilities.getValue(as);
+			ValidatoreMessaggiApplicativiException ex = new ValidatoreMessaggiApplicativiException("Tipo di interfaccia ["+formato+"] non supportata");
+			ex.setErrore(ErroriIntegrazione.ERRORE_417_COSTRUZIONE_VALIDATORE_TRAMITE_INTERFACCIA_FALLITA.getErrore417_CostruzioneValidatoreTramiteInterfacciaFallita(formato));
+			throw ex;
+		}
+		switch (as.getFormatoSpecifica()) {
 		case SWAGGER_2:
 			interfaceType = "Interfaccia Swagger 2";
 			break;

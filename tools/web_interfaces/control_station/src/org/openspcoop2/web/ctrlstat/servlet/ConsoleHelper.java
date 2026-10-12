@@ -194,6 +194,7 @@ import org.openspcoop2.core.registry.driver.FiltroRicercaScope;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.core.registry.utils.FormatoSpecificaUtilities;
 import org.openspcoop2.core.transazioni.utils.PropertiesSerializator;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.message.constants.MessageType;
@@ -10142,7 +10143,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 	}
 	
-	public void setStatoValidazioneContenuti(DataElement de, ValidazioneContenutiApplicativi val, FormatoSpecifica formatoSpecifica) throws DriverControlStationException, DriverControlStationNotFound {
+	public void setStatoValidazioneContenuti(DataElement de, ValidazioneContenutiApplicativi val, FormatoSpecifica formatoSpecifica, String formatoSpecificaNonSupportato) throws DriverControlStationException, DriverControlStationNotFound {
 		de.setType(DataElementType.CHECKBOX);
 		if(val!=null && !StatoFunzionalitaConWarning.DISABILITATO.equals(val.getStato())) {
 			String valore = null;
@@ -10157,6 +10158,11 @@ public class ConsoleHelper implements IConsoleHelper {
 			String label = null;
 			switch (val.getTipo()) {
 			case INTERFACE:
+				if(formatoSpecifica==null) {
+					// formato storico non più supportato (es. WADL)
+					label=FormatoSpecificaUtilities.getLabelFormatoNonSupportato(formatoSpecificaNonSupportato);
+					break;
+				}
 				switch (formatoSpecifica) {
 				case OPEN_API_3:
 					label=CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_OPEN_API_3;
@@ -14824,12 +14830,12 @@ public class ConsoleHelper implements IConsoleHelper {
 	// Validazione contenuti
 	
 	public void validazioneContenuti(TipoOperazione tipoOperazione,List<DataElement> dati, boolean isPortaDelegata, String xsd, String tipoValidazione, String applicaMTOM,
-			ServiceBinding serviceBinding, FormatoSpecifica formatoSpecifica) throws DriverControlStationException{
-		validazioneContenuti(tipoOperazione, dati, true,isPortaDelegata,xsd,tipoValidazione,applicaMTOM, serviceBinding, formatoSpecifica);
+			ServiceBinding serviceBinding, FormatoSpecifica formatoSpecifica, String formatoSpecificaNonSupportato) throws DriverControlStationException{
+		validazioneContenuti(tipoOperazione, dati, true,isPortaDelegata,xsd,tipoValidazione,applicaMTOM, serviceBinding, formatoSpecifica, formatoSpecificaNonSupportato);
 	}
 	
 	public void validazioneContenuti(TipoOperazione tipoOperazione,List<DataElement> dati, boolean addSezione,boolean isPortaDelegata, String xsd, String tipoValidazione, String applicaMTOM,
-			ServiceBinding serviceBinding, FormatoSpecifica formatoSpecifica) {
+			ServiceBinding serviceBinding, FormatoSpecifica formatoSpecifica, String formatoSpecificaNonSupportato) {
 		DataElement de = new DataElement();
 		
 		if(addSezione) {
@@ -14856,24 +14862,38 @@ public class ConsoleHelper implements IConsoleHelper {
 		if (CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_VALIDAZIONE_ABILITATO.equals(xsd) ||
 				CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_VALIDAZIONE_WARNING_ONLY.equals(xsd)) {
 			
+			// con un formato storico non più supportato (es. WADL) la validazione tramite interfaccia non viene proposta;
+			// se già configurata rimane selezionabile per evidenziarla, la validazione fallirà a runtime
+			boolean interfaceSupportata = formatoSpecifica!=null;
+			boolean addInterface = interfaceSupportata || CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_TIPO_VALIDAZIONE_INTERFACE.equals(tipoValidazione);
+			
 			List<String> tipiValidazione = new ArrayList<>();
-			tipiValidazione.add(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_TIPO_VALIDAZIONE_INTERFACE);
+			if(addInterface) {
+				tipiValidazione.add(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_TIPO_VALIDAZIONE_INTERFACE);
+			}
 			tipiValidazione.add(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_TIPO_VALIDAZIONE_XSD);
 			if(!this.isModalitaStandard()) {
 				tipiValidazione.add(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_TIPO_VALIDAZIONE_OPENSPCOOP);
 			}
 			
 			List<String> labelTipiValidazione = new ArrayList<>();
-			switch (formatoSpecifica) {
-			case OPEN_API_3:
-				labelTipiValidazione.add(CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_OPEN_API_3);
-				break;
-			case SWAGGER_2:
-				labelTipiValidazione.add(CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_SWAGGER_2);
-				break;
-			case WSDL_11:
-				labelTipiValidazione.add(CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_WSDL_11);
-				break;
+			if(!interfaceSupportata) {
+				if(addInterface) {
+					labelTipiValidazione.add(FormatoSpecificaUtilities.getLabelFormatoNonSupportato(formatoSpecificaNonSupportato));
+				}
+			}
+			else {
+				switch (formatoSpecifica) {
+				case OPEN_API_3:
+					labelTipiValidazione.add(CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_OPEN_API_3);
+					break;
+				case SWAGGER_2:
+					labelTipiValidazione.add(CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_SWAGGER_2);
+					break;
+				case WSDL_11:
+					labelTipiValidazione.add(CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_WSDL_11);
+					break;
+				}
 			}
 			labelTipiValidazione.add(CostantiControlStation.LABEL_PARAMETRO_SCHEMI_XSD);
 			if(!this.isModalitaStandard()) {

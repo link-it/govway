@@ -4289,7 +4289,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						//fix: idsogg e' il soggetto proprietario della porta applicativa, e nn il soggetto virtuale
 						de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI, pIdSogg, pIdPorta, pIdAsps);
 						if(visualizzazioneTabs) {
-							setStatoValidazioneContenuti(de, paAssociata.getValidazioneContenutiApplicativi(), apc.getFormatoSpecifica());
+							setStatoValidazioneContenuti(de, paAssociata.getValidazioneContenutiApplicativi(), apc.getFormatoSpecifica(), apc.getFormatoSpecificaNonSupportato());
 						}
 						else {
 							String statoValidazione = getStatoValidazionePortaApplicativa(paAssociata);
@@ -5996,7 +5996,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI);
 						de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI, pIdPD, pIdSoggPD, pIdAsps, pIdFruitore);
 						if(visualizzazioneTabs) {
-							setStatoValidazioneContenuti(de, pdAssociata.getValidazioneContenutiApplicativi(), apc.getFormatoSpecifica());
+							setStatoValidazioneContenuti(de, pdAssociata.getValidazioneContenutiApplicativi(), apc.getFormatoSpecifica(), apc.getFormatoSpecificaNonSupportato());
 						}
 						else {
 							String statoValidazione = this.getStatoValidazionePortaDelegata(pdAssociata);

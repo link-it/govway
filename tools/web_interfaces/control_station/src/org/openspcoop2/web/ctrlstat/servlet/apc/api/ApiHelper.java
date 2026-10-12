@@ -48,7 +48,6 @@ import org.openspcoop2.core.registry.driver.BeanUtilities;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
-import org.openspcoop2.protocol.manifest.constants.InterfaceType;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
@@ -359,8 +358,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 					labelServiceBinding= CostantiControlStation.LABEL_PARAMETRO_SERVICE_BINDING_SOAP;
 					break;
 				}
-				InterfaceType interfaceType = this.apcCore.formatoSpecifica2InterfaceType(accordoServizio.getFormatoSpecifica());
-				labelServiceBinding = labelServiceBinding + " " + this.getLabelWSDLFromFormatoSpecifica(interfaceType);
+				labelServiceBinding = labelServiceBinding + " " + this.getLabelWSDLFromFormatoSpecifica(accordoServizio);
 				
 				if(gestioneCanaliEnabled) {
 					String labelCanale = accordoServizio.getCanale();
@@ -851,8 +849,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 			break;
 		}
 		
-		InterfaceType interfaceType = this.apcCore.formatoSpecifica2InterfaceType(as.getFormatoSpecifica());
-		String labelWsdlCon = this.getLabelWSDLFromFormatoSpecifica(interfaceType);
+		String labelWsdlCon = this.getLabelWSDLFromFormatoSpecifica(as);
 		StringBuilder sb = new StringBuilder();
 		sb.append(labelServiceBinding).append(" ").append(labelWsdlCon);
 		de.setValue(sb.toString());

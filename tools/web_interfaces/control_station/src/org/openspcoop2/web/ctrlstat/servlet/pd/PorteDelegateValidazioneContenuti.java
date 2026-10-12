@@ -187,7 +187,7 @@ public class PorteDelegateValidazioneContenuti extends Action {
 				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				porteDelegateHelper.validazioneContenuti(TipoOperazione.OTHER,dati, isPortaDelegata, statoValidazione, tipoValidazione, applicaMTOM,
-						ServiceBinding.valueOf(aspc.getServiceBinding().name()), aspc.getFormatoSpecifica());
+						ServiceBinding.valueOf(aspc.getServiceBinding().name()), aspc.getFormatoSpecifica(), aspc.getFormatoSpecificaNonSupportato());
 
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idSoggFruitore, null,idAsps, 
 						idFruizione, portaDelegata.getTipoSoggettoProprietario(), portaDelegata.getNomeSoggettoProprietario(), dati);
@@ -210,7 +210,7 @@ public class PorteDelegateValidazioneContenuti extends Action {
 				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				porteDelegateHelper.validazioneContenuti(TipoOperazione.OTHER,dati, isPortaDelegata, statoValidazione, tipoValidazione, applicaMTOM,
-						ServiceBinding.valueOf(aspc.getServiceBinding().name()), aspc.getFormatoSpecifica());
+						ServiceBinding.valueOf(aspc.getServiceBinding().name()), aspc.getFormatoSpecifica(), aspc.getFormatoSpecificaNonSupportato());
 
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idSoggFruitore, null,idAsps, 
 						idFruizione, portaDelegata.getTipoSoggettoProprietario(), portaDelegata.getNomeSoggettoProprietario(), dati);
@@ -281,7 +281,7 @@ public class PorteDelegateValidazioneContenuti extends Action {
 			}
 
 			porteDelegateHelper.validazioneContenuti(TipoOperazione.OTHER,dati, isPortaDelegata, statoValidazione, tipoValidazione, applicaMTOM,
-					ServiceBinding.valueOf(aspc.getServiceBinding().name()), aspc.getFormatoSpecifica());
+					ServiceBinding.valueOf(aspc.getServiceBinding().name()), aspc.getFormatoSpecifica(), aspc.getFormatoSpecificaNonSupportato());
 
 			dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idSoggFruitore, null,idAsps, 
 					idFruizione, portaDelegata.getTipoSoggettoProprietario(), portaDelegata.getNomeSoggettoProprietario(), dati);

@@ -204,6 +204,10 @@ public class DriverRegistroServiziDB_accordiSinteticiDriver {
 
 				tmp = rs.getString("formato_specifica");
 				accordoServizio.setFormatoSpecifica(DriverRegistroServiziDB_LIB.getEnumFormatoSpecifica((tmp == null || tmp.equals("")) ? null : tmp));
+				if(accordoServizio.getFormatoSpecifica()==null && tmp!=null && !tmp.equals("")) {
+					// formato storico non più supportato (es. 'wadl' registrato con la 3.3): viene conservato per la visualizzazione e per non perderlo negli aggiornamenti
+					accordoServizio.setFormatoSpecificaNonSupportato(tmp);
+				}
 				
 				tmp = rs.getString("wsdl_definitorio");
 				accordoServizio.setByteWsdlDefinitorio(((tmp == null || tmp.trim().equals("")) ? null : tmp.getBytes()));

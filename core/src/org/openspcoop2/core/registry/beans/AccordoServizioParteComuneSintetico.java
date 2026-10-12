@@ -93,6 +93,7 @@ public class AccordoServizioParteComuneSintetico extends org.openspcoop2.utils.b
 		this.descrizione = apc.getDescrizione();
 		this.profiloCollaborazione = apc.getProfiloCollaborazione();
 		this.formatoSpecifica = apc.getFormatoSpecifica();
+		this.formatoSpecificaNonSupportato = apc.getFormatoSpecificaNonSupportato();
 		this.utilizzoSenzaAzione = apc.getUtilizzoSenzaAzione();
 		this.oraRegistrazione = apc.getOraRegistrazione();
 		this.versione = apc.getVersione();
@@ -147,6 +148,8 @@ public class AccordoServizioParteComuneSintetico extends org.openspcoop2.utils.b
 	private ProfiloCollaborazione profiloCollaborazione;
 
 	private FormatoSpecifica formatoSpecifica;
+
+	private String formatoSpecificaNonSupportato;
 
 	private boolean utilizzoSenzaAzione = false;
 
@@ -341,6 +344,14 @@ public class AccordoServizioParteComuneSintetico extends org.openspcoop2.utils.b
 
 	public void setFormatoSpecifica(FormatoSpecifica formatoSpecifica) {
 		this.formatoSpecifica = formatoSpecifica;
+	}
+
+	public String getFormatoSpecificaNonSupportato() {
+		return this.formatoSpecificaNonSupportato;
+	}
+
+	public void setFormatoSpecificaNonSupportato(String formatoSpecificaNonSupportato) {
+		this.formatoSpecificaNonSupportato = formatoSpecificaNonSupportato;
 	}
 
 	public boolean isUtilizzoSenzaAzione() {

@@ -186,7 +186,7 @@ public class PorteApplicativeValidazioneContenuti extends Action {
 				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				porteApplicativeHelper.validazioneContenuti(TipoOperazione.OTHER,dati, isPortaDelegata, statoValidazione, tipoValidazione, applicaMTOM,
-						ServiceBinding.valueOf(aspc.getServiceBinding().name()), aspc.getFormatoSpecifica());
+						ServiceBinding.valueOf(aspc.getServiceBinding().name()), aspc.getFormatoSpecifica(), aspc.getFormatoSpecificaNonSupportato());
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idsogg, null,idAsps, dati);
 
@@ -208,7 +208,7 @@ public class PorteApplicativeValidazioneContenuti extends Action {
 				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				porteApplicativeHelper.validazioneContenuti(TipoOperazione.OTHER,dati, isPortaDelegata, statoValidazione, tipoValidazione, applicaMTOM,
-						ServiceBinding.valueOf(aspc.getServiceBinding().name()), aspc.getFormatoSpecifica());
+						ServiceBinding.valueOf(aspc.getServiceBinding().name()), aspc.getFormatoSpecifica(), aspc.getFormatoSpecificaNonSupportato());
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idsogg, null,idAsps, dati);
 
@@ -278,7 +278,7 @@ public class PorteApplicativeValidazioneContenuti extends Action {
 			}
 
 			porteApplicativeHelper.validazioneContenuti(TipoOperazione.OTHER,dati, isPortaDelegata, statoValidazione, tipoValidazione, applicaMTOM,
-					ServiceBinding.valueOf(aspc.getServiceBinding().name()), aspc.getFormatoSpecifica());
+					ServiceBinding.valueOf(aspc.getServiceBinding().name()), aspc.getFormatoSpecifica(), aspc.getFormatoSpecificaNonSupportato());
 
 			dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idsogg, null,idAsps, dati);
 
