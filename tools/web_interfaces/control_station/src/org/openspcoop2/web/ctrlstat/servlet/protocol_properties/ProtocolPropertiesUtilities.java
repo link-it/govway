@@ -195,7 +195,7 @@ public class ProtocolPropertiesUtilities {
 	}
 	
 	private static void addLinkAccordoServizioParteComune(List<DataElement> dati, ConsoleHelper consoleHelper, AbstractConsoleItem<?> abItem) {
-		if(abItem.getLinkAccordoServizioParteComune()==null || dati.isEmpty() ||
+		if(consoleHelper==null || abItem.getLinkAccordoServizioParteComune()==null || dati.isEmpty() ||
 				ConsoleItemType.HIDDEN.equals(abItem.getType()) || ConsoleItemType.LOCK_HIDDEN.equals(abItem.getType())) {
 			return;
 		}
