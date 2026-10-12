@@ -1,3 +1,14 @@
+2026-10-12  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, ProtocolloModIPA]
+	Risolto Bug #1840
+	Nel profilo ModI una richiesta con Content-Type 'application/problem+json' o 'application/problem+xml' (REST) o contenente
+	un SOAPFault (SOAP) veniva trattata come un messaggio di errore: la sicurezza messaggio prevista dall'API non veniva applicata
+	in fruizione né verificata in erogazione, dove la richiesta veniva inoltrata al backend senza alcuna verifica del token oppure,
+	con l'autorizzazione per applicativi, rifiutata con l'errore 'Applicativo Mittente non identificato'.
+	La sicurezza messaggio, così come i controlli previsti dal profilo di interazione, viene adesso sempre gestita sulle richieste;
+	sulle risposte di errore, per le quali continua a non essere gestita, viene registrato un diagnostico che lo evidenzia.
+
 2026-10-09  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole, GovWayMonitor, ProtocolloModIPA, ApiRsConfigurazione]

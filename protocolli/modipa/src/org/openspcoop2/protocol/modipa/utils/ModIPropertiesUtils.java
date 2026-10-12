@@ -758,7 +758,7 @@ public class ModIPropertiesUtils {
 	}
 
 	public static boolean processSecurity(Logger log, AccordoServizioParteComune aspc, String nomePortType, String azione, boolean isRichiesta, 
-			OpenSPCoop2Message message, boolean rest, ModIProperties modiProperties) throws Exception {
+			OpenSPCoop2Message message, boolean rest, ModIProperties modiProperties, StringBuilder faultDetails) throws Exception {
 		boolean processSecurity = false;
 		String securityMessageApplicabilita = ModIPropertiesUtils.readPropertySecurityMessageApplicabilita(aspc, nomePortType, azione);
 		if(securityMessageApplicabilita==null || StringUtils.isEmpty(securityMessageApplicabilita)) {
@@ -928,27 +928,64 @@ public class ModIPropertiesUtils {
 			
 		}
 		
-		if(processSecurity && !configurazionePersonalizzata) {
-			
+		if(processSecurity && !configurazionePersonalizzata &&
+				!isRichiesta) { // una richiesta non viene mai considerata un fault: la sicurezza messaggio deve essere sempre gestita
+
 			// check Fault (Da properties)
-			boolean isFault = false;
+			boolean isFault = isFault(message, isRichiesta, rest);
 			boolean processFault = false;
 			if(rest) {
-				isFault = message.isFault() || message.castAsRest().isProblemDetailsForHttpApis_RFC7807();	
 				processFault = modiProperties.isRestSecurityTokenFaultProcessEnabled();
 			}
 			else {
-				isFault = message.isFault() || message.castAsSoap().hasSOAPFault();
 				processFault = modiProperties.isSoapSecurityTokenFaultProcessEnabled();
 			}
 			if(isFault && !processFault) {
 				processSecurity = false;
+				if(faultDetails!=null) {
+					faultDetails.append(getFaultDetails(message, rest));
+				}
 			}
-			
+
 		}
-		
+
 		return processSecurity;
-		
+
+	}
+
+	public static boolean isFault(OpenSPCoop2Message message, boolean isRichiesta, boolean rest) throws Exception {
+		if(isRichiesta) {
+			// una richiesta non viene mai considerata un fault, indipendentemente dal Content-Type o dal contenuto
+			return false;
+		}
+		if(rest) {
+			return message.isFault() || message.castAsRest().isProblemDetailsForHttpApis_RFC7807();
+		}
+		else {
+			return message.isFault() || message.castAsSoap().hasSOAPFault();
+		}
+	}
+
+	private static String getFaultDetails(OpenSPCoop2Message message, boolean rest) {
+		StringBuilder sb = new StringBuilder();
+		if(rest) {
+			String contentType = null;
+			try {
+				contentType = message.getContentType();
+			}catch(Exception e) {
+				// ignore
+			}
+			if(contentType!=null && StringUtils.isNotEmpty(contentType)) {
+				sb.append("Content-Type '").append(contentType).append("'");
+			}
+			else {
+				sb.append("Content-Type non definito");
+			}
+		}
+		else {
+			sb.append("SOAPFault");
+		}
+		return sb.toString();
 	}
 	
 	private static List<String> readValues(String v){
