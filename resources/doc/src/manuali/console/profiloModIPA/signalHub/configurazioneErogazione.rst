@@ -14,7 +14,7 @@ Quando la pseudoanonimizzazione è abilitata, è possibile configurare i paramet
 - Risorsa: va selezionata la risorsa che esporrà le informazioni di informazioni crittografiche utilizzate per la pseudoanonimizzazione tramite l'interfaccia descritta di seguito in questa sezione;
 - Algoritmo: algoritmo utilizzato per generare l'hash dell'identificativo del dato oggetto di variazione;
 - Dimensione Seme: la dimensione del seme che concorre alla generazione dell'hash
-- Giorni Rotazione Seme: indicazione in giorni dopo i quali il seme verrà variato e una notifica di variazione di seme verrà inviata ai fruitori.
+- Giorni Rotazione Seme: indicazione in giorni dopo i quali il seme verrà variato e una notifica di variazione di seme verrà inviata ai fruitori. La durata viene associata al seme al momento della sua generazione: una modifica si applica a partire dal seme successivo. La rotazione del seme in uso può essere anticipata tramite la console come descritto nella sezione :ref:`modipa_signalhub_pseudoanonimizzazione_rotazione`.
 
 .. figure:: ../../_figure_console/SignalHubErogazione.png
     :scale: 90%

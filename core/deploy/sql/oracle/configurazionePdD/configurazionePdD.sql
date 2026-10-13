@@ -1237,6 +1237,7 @@ CREATE TABLE servizi_digest_params
 	seed VARCHAR2(4000) NOT NULL,
 	algorithm VARCHAR2(32) NOT NULL,
 	lifetime NUMBER NOT NULL,
+	data_richiesta_rotazione TIMESTAMP,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- fk/pk keys constraints

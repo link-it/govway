@@ -44,6 +44,12 @@ Numero di versioni delle informazioni crittografiche da mantenere dopo ogni rota
 
 ``org.openspcoop2.protocol.modipa.signalHub.seed.history=1``
 
+**Riverifica del seme in uso**
+
+Intervallo massimo, in secondi, entro cui ogni nodo riverifica sulla base dati il seme in uso mantenuto in cache. Una rotazione forzata del seme, richiesta tramite la console (:ref:`modipa_signalhub_pseudoanonimizzazione_rotazione`), diventa effettiva su tutti i nodi trascorso tale intervallo:
+
+``org.openspcoop2.protocol.modipa.signalHub.seed.cache.refreshSeconds=300``
+
 **Concatenazione messaggio e seme**
 
 Personalizzazione della concatenazione tra messaggio (objectId) e seme per la produzione dell’ID cifrato. Il valore è un template nel quale, a runtime, verranno sostituiti `${message}` e `${salt}` con rispettivamente l’ID dell’oggetto e il seme, prima della pseudoanonimizzazione:

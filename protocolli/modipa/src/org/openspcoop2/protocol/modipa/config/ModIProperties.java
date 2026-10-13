@@ -512,6 +512,7 @@ public class ModIProperties {
 				this.getSignalHubConfig();
 				this.getSignalHubSeedSize();
 				this.getSignalHubDigestHistroy();
+				this.getSignalHubSeedCacheRefreshSeconds();
 			}
 			
 
@@ -6876,6 +6877,30 @@ public class ModIProperties {
     	}
     	
     	return this.signalHubDigestHistroy;
+	}
+	
+	private static final int SIGNAL_HUB_SEED_CACHE_REFRESH_SECONDS_DEFAULT = 300;
+	private Integer signalHubSeedCacheRefreshSeconds = null;
+	public int getSignalHubSeedCacheRefreshSeconds() throws ProtocolException{
+    	if(this.signalHubSeedCacheRefreshSeconds==null){
+    		String name = "org.openspcoop2.protocol.modipa.signalHub.seed.cache.refreshSeconds";
+        	try{
+				String value = this.reader.getValueConvertEnvProperties(name);
+				if (value != null && !value.isBlank()){
+					Integer valueInt = Integer.parseInt(value.trim());
+					validateSignalHubInteger("Signal Hub - Seed cache refresh seconds", valueInt);
+					this.signalHubSeedCacheRefreshSeconds = valueInt;
+				}
+				else {
+					this.signalHubSeedCacheRefreshSeconds = SIGNAL_HUB_SEED_CACHE_REFRESH_SECONDS_DEFAULT;
+				}
+			}catch(java.lang.Exception e) {
+				this.logError(getMessaggioErroreProprietaNonCorretta(name, e));
+				throw new ProtocolException(e.getMessage(),e);
+			}
+    	}
+    	
+    	return this.signalHubSeedCacheRefreshSeconds;
 	}
 
 	

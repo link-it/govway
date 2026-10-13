@@ -1107,7 +1107,7 @@ public class ModIImbustamento {
 			throw new ProtocolException("driver db non trovato");
 		
 		// ottengo il driver per le informazioni diagnostiche
-		DigestServiceParamsDriver driver = new DigestServiceParamsDriver((DriverConfigurazioneDB) db);
+		DigestServiceParamsDriver driver = new DigestServiceParamsDriver((DriverConfigurazioneDB) db, this.modiProperties.getSignalHubSeedCacheRefreshSeconds());
 		DigestServiceParams param = driver.getLastEntry(idServizio);
 		
 		// non esiste informazioni crittografiche valide devo rigenerarle

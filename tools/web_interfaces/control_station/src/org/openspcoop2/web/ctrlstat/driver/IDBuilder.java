@@ -75,6 +75,7 @@ import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
 import org.openspcoop2.core.plugins.Plugin;
+import org.openspcoop2.pdd.config.DigestServiceParamsRotationRequest;
 import org.openspcoop2.pdd.core.keystore.RemoteStoreKeyEntry;
 import org.openspcoop2.pdd.monitor.driver.FilterSearch;
 import org.openspcoop2.utils.serialization.IOException;
@@ -101,6 +102,8 @@ import org.openspcoop2.web.lib.users.dao.User;
 public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder {
 
 	private boolean prefix = false;
+	
+	private static final String SIMPLE_NAME_SIGNAL_HUB_SEED_ROTATION = "SignalHubSeedRotation";
 	
 	private IDAccordoFactory idAccordoFactory = null;
 	private IDAccordoCooperazioneFactory idAccordoCooperazioneFactory = null;
@@ -561,6 +564,17 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 				}
 			}
 			
+			// Signal Hub: rotazione forzata del seme
+			else if(o instanceof DigestServiceParamsRotationRequest){
+				DigestServiceParamsRotationRequest rotazione = (DigestServiceParamsRotationRequest) o;
+				String id = rotazione.getServizio();
+				if(this.prefix){
+					return "[SignalHubSeedRotation] "+ id;
+				}else{
+					return id;
+				}
+			}
+			
 			
 						
 		}catch(Exception e){
@@ -977,6 +991,10 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 			else if(o instanceof RemoteStoreKeyEntry){
 				return null; // oggetto non modificabile nei dati identificativi
 			}
+			// Signal Hub: rotazione forzata del seme
+			else if(o instanceof DigestServiceParamsRotationRequest){
+				return null; // oggetto non modificabile nei dati identificativi
+			}
 						
 		}catch(Exception e){
 			throw new IOException("Trasformazione non riuscita: "+e.getMessage(),e);
@@ -1077,6 +1095,9 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 			
 			// Remote Store Key
 			oggetti.add(RemoteStoreKeyEntry.class.getSimpleName());
+			
+			// Signal Hub: rotazione forzata del seme
+			oggetti.add(SIMPLE_NAME_SIGNAL_HUB_SEED_ROTATION);
 		}
 		else{
 		
@@ -1155,6 +1176,9 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 			
 			// Remote Store Key
 			oggetti.add(RemoteStoreKeyEntry.class.getName());
+			
+			// Signal Hub: rotazione forzata del seme
+			oggetti.add(DigestServiceParamsRotationRequest.class.getName());
 		}
 		
 		String[]tmp = new String[1];
@@ -1231,6 +1255,9 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 		}
 		else if(o instanceof RemoteStoreKeyEntry) {
 			return "RemoteStoreKey";
+		}
+		else if(o instanceof DigestServiceParamsRotationRequest) {
+			return SIMPLE_NAME_SIGNAL_HUB_SEED_ROTATION;
 		}
 		else{
 			return o.getClass().getSimpleName();

@@ -366,7 +366,9 @@ public final class CostantiDB {
     public static final String SERVIZI_DIGEST_PARAMS_COLUMN_PERIOD = "lifetime";
     public static final String SERVIZI_DIGEST_PARAMS_COLUMN_DATE = "data_registrazione";
     public static final String SERVIZI_DIGEST_PARAMS_COLUMN_SEED = "seed";
-    
+    public static final String SERVIZI_DIGEST_PARAMS_COLUMN_ROTATION_REQUEST = "data_richiesta_rotazione";
+    public static final String SERVIZI_DIGEST_PARAMS_COLUMN_ID = "id";
+
     
 
     private static boolean allarmiEnabled = false;

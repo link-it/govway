@@ -332,6 +332,8 @@ Prerequisiti:
 		org.openspcoop2.protocol.modipa.signalHub.enabled=true
 		org.openspcoop2.protocol.modipa.signalHub.seed.history=3
 		org.openspcoop2.protocol.modipa.signalHub.pseudonymization.choice.enabled=true
+		org.openspcoop2.protocol.modipa.signalHub.seed.cache.refreshSeconds=10
+	  (l'intervallo ridotto di riverifica della cache dei semi e' necessario ai test sulla rotazione forzata del seme)
 
 + Aggiungere in /etc/hosts la riga
 	127.0.0.1 Erogatore

@@ -1,5 +1,14 @@
 2026-10-12  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore, GovWayConsole, ProtocolloModIPA]
+	Aggiunta funzionalità #1833
+	Nella console, alla voce 'Configurazione > Cache PDND > Semi Signal Hub',
+	sono consultabili i semi di pseudoanonimizzazione Signal Hub delle erogazioni (generazione, scadenza, signalId del SEEDUPDATE, algoritmo, dimensione e storico)
+	ed è possibile forzare la rotazione del seme in uso: il seme viene considerato scaduto in modo coerente su tutti i nodi e sostituito,
+	con l'invio del SEEDUPDATE, al primo segnale pubblicato successivamente (nuova colonna 'data_richiesta_rotazione' della tabella 'servizi_digest_params').
+
+2026-10-12  Andrea Poli <apoli@link.it>
+
 	* [GovWayCore, ProtocolloModIPA]
 	Risolto Bug #1840
 	Nel profilo ModI una richiesta con Content-Type 'application/problem+json' o 'application/problem+xml' (REST) o contenente

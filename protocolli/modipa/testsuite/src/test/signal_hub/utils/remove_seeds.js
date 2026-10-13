@@ -1,4 +1,4 @@
-function remove_seeds() {
+function remove_seeds(nomeSoggetto, nomeServizio) {
 
     govwayDbConfig = { 
         username: karate.properties['db_username'],
@@ -12,7 +12,9 @@ function remove_seeds() {
     java.lang.Thread.sleep(db_sleep_before_read)
     DbUtils = Java.type('org.openspcoop2.core.protocolli.modipa.testsuite.DbUtils')
     db = new DbUtils(govwayDbConfig)
-    dbquery = "DELETE FROM servizi_digest_params"
+    
+    // vengono eliminati solamente i semi dell'erogazione indicata
+    dbquery = "DELETE FROM servizi_digest_params WHERE id_servizio IN (" + "SELECT serv.id FROM servizi serv, soggetti sog WHERE serv.ID_SOGGETTO = sog.id AND sog.TIPO_SOGGETTO = 'modipa' AND sog.NOME_SOGGETTO = '"+nomeSoggetto+"' AND serv.NOME_SERVIZIO = '"+nomeServizio+"'" + ")"
     karate.log("Query: " + dbquery)
     return db.update(dbquery);
 }

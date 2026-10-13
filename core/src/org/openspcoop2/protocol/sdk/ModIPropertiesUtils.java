@@ -177,6 +177,16 @@ public class ModIPropertiesUtils {
 		}
 	}
 	
+	public static int getSignalHubSeedCacheRefreshSeconds() throws ProtocolException {
+		try {
+			Object instance = getModiProperties();
+			Method mGetSignalHubSeedCacheRefreshSeconds = instance.getClass().getMethod("getSignalHubSeedCacheRefreshSeconds");
+			return (Integer) mGetSignalHubSeedCacheRefreshSeconds.invoke(instance);
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
+	}
+	
 	public static boolean isTracingPDNDEnabled() throws ProtocolException {
 		try {
 			Object instance = getModiProperties();

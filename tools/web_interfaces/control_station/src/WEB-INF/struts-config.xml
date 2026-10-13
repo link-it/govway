@@ -3967,6 +3967,21 @@
             <forward name="pdndInterazioniAsyncDel" path="/jsplib/listElement.jsp"/>
             <forward name="pdndInterazioniAsyncError" path="/jsplib/info.jsp"/>
         </action>
+        
+        <!-- Semi Signal Hub -->
+
+        <action path="/signalHubSemiList" type="org.openspcoop2.web.ctrlstat.servlet.signal_hub.SemiSignalHubList"
+            scope="request" validate="true">
+            <forward name="signalHubSemiList" path="/jsplib/listElement.jsp"/>
+            <forward name="signalHubSemiError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/signalHubSemiChange" type="org.openspcoop2.web.ctrlstat.servlet.signal_hub.SemiSignalHubChange"
+            scope="request" validate="true">
+            <forward name="signalHubSemiChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="signalHubSemiChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="signalHubSemiChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="signalHubSemiError" path="/jsplib/info.jsp"/>
+        </action>
     
     </action-mappings>
 

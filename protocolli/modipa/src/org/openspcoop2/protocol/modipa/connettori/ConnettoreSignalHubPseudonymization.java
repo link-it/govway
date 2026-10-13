@@ -293,7 +293,7 @@ public class ConnettoreSignalHubPseudonymization extends ConnettoreBaseWithRespo
 			if (this.responseMsg != null)
 				return;
 			
-			DigestServiceParamsDriver driver = new DigestServiceParamsDriver((DriverConfigurazioneDB) db);
+			DigestServiceParamsDriver driver = new DigestServiceParamsDriver((DriverConfigurazioneDB) db, ModIProperties.getInstance().getSignalHubSeedCacheRefreshSeconds());
 			
 			// se signalId risulta uguale a null ritornero le informazioni critoogtafiche piu recenti
 			param = driver.getEntry(idServizio, signalId);
