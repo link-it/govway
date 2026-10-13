@@ -1,3 +1,10 @@
+2026-10-13  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole, GovWayMonitor, ApiRsConfigurazione, ApiRsMonitoraggio]
+	Risolto Bug #1842
+	Il controllo anti SQL injection sui parametri rifiutava i valori contenenti una parola chiave SQL (es. un'azione 'insert' o 'delete-user'),
+	segnalando in console l'errore fuorviante 'Dati incompleti'. Vengono adesso rilevati i costrutti di SQL injection e non le singole parole chiave.
+
 2026-10-12  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole, ProtocolloModIPA]
