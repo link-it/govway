@@ -168,7 +168,7 @@ public class NonShortCircuitLogicCheck {
 						fileNonValidi.add(f.getAbsolutePath());
 					}
 					else if(andCheck && byteInputBuffer.toString().indexOf(AND_CHECK)>0){
-						if(!byteInputBuffer.toString().contains(" & 0xFF") && !byteInputBuffer.toString().contains("(0xff &")){
+						if(!byteInputBuffer.toString().contains(" & 0xFF") && !byteInputBuffer.toString().contains(" & 0xff") && !byteInputBuffer.toString().contains("(0xff &")){
 							fileNonValidi.add(f.getAbsolutePath());
 						}
 					}

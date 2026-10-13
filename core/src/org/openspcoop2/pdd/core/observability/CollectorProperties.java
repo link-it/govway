@@ -41,7 +41,8 @@ import org.openspcoop2.utils.UtilsException;
  * Parsing e validazione avvengono qui, alla creazione; i valori sono cachati.
  *
  * @author Tommaso Burlon
- * @version $Rev$, $Date$
+* @author $Author$
+* @version $Rev$, $Date$
  */
 public class CollectorProperties {
 

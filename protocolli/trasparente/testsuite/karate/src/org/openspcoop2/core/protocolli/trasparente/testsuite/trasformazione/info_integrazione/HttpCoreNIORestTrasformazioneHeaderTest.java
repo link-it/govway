@@ -24,6 +24,10 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.utils.Ht
 
 /**
 * HttpCoreNIORestTrasformazioneHeaderTest: connettore httpcore5 (NIO)
+* 
+* @author Poli Andrea (poli@link.it)
+* @author $Author$
+* @version $Rev$, $Date$
 */
 public class HttpCoreNIORestTrasformazioneHeaderTest extends RestTrasformazioneHeaderTestEngine {
 	public HttpCoreNIORestTrasformazioneHeaderTest() {

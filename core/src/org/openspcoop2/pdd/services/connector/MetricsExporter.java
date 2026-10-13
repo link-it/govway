@@ -46,7 +46,8 @@ import io.prometheus.metrics.expositionformats.PrometheusTextFormatWriter;
  * al momento dello scrape.
  *
  * @author Burlon Tommaso
- * @version $Rev$, $Date$
+* @author $Author$
+* @version $Rev$, $Date$
  */
 public class MetricsExporter extends HttpServlet {
 

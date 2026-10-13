@@ -50,8 +50,8 @@ Di seguito il frammento del file `mvn/dependencies/pom.xml <https://github.com/l
                             <outputDirectory>../../dependency-check-result</outputDirectory>
                             <format>ALL</format>
                             <suppressionFiles>
-                                <suppressionFile>${owasp.falsePositives.dir}/xercesImpl.xml</suppressionFile>
-                                <suppressionFile>${owasp.falsePositives.dir}/CVE-2022-45688.xml</suppressionFile>
+                                <suppressionFile>${owasp.falsePositives.dir}/swagger-codegen-linkit.xml</suppressionFile>
+                                <suppressionFile>${owasp.falsePositives.dir}/swagger-ui.xml</suppressionFile>
 				...
                             </suppressionFiles>
                         </configuration>

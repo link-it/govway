@@ -24,6 +24,10 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.utils.Ht
 
 /**
 * UrlConnBIORestTrasformazioneHeaderTest: connettore java.net.HttpURLConnection (BIO)
+*
+* @author Poli Andrea (poli@link.it)
+* @author $Author$
+* @version $Rev$, $Date$
 */
 public class UrlConnBIORestTrasformazioneHeaderTest extends RestTrasformazioneHeaderTestEngine {
 	public UrlConnBIORestTrasformazioneHeaderTest() {

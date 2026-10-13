@@ -49,7 +49,8 @@ import org.slf4j.Logger;
  *   observability.<signal>.<prop>=<value>
  *
  * @author Burlon Tommaso
- * @version $Rev$, $Date$
+* @author $Author$
+* @version $Rev$, $Date$
  */
 public class ObservabilityProperties extends InstanceProperties {
 
