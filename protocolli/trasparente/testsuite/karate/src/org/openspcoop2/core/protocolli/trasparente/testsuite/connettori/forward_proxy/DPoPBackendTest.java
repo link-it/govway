@@ -64,6 +64,8 @@ import com.fasterxml.jackson.databind.JsonNode;
  * token_info (campo 'request.dpop.token', il proof base64 inviato, sempre presente) e decodificato nel test.
  *
  * @author Andrea Poli (apoli@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class DPoPBackendTest extends ConfigLoader {
 

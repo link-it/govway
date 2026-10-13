@@ -67,15 +67,9 @@ Esaminando nel dettaglio i file che definiscono i falsi positivi:
 
 - swagger-codegen-linkit.xml: esclude i jar inclusi nel file `mvn/dependencies/swagger-codegen/pom.xml <https://github.com/link-it/govway/blob/master/mvn/dependencies/swagger-codegen/pom.xml>`_ poiché vengono utilizzati solamente durante lo sviluppo per generare alcune classi e non a runtime dal Gateway.
 
-- commons-discovery.xml: :ref:`vulnerabilityManagement_skip_registry_CVE-2022-0869`
-
 - snakeyaml.xml: :ref:`vulnerabilityManagement_skip_registry_CVE-2022-38752`
 
 - spring-web.xml: :ref:`vulnerabilityManagement_skip_registry_CVE-2016-1000027`
-
-- spring-security-crypto.xml: :ref:`vulnerabilityManagement_skip_registry_CVE-2020-5408`
-
-- xercesImpl.xml: :ref:`vulnerabilityManagement_skip_registry_CVE-2017-10355`
 
 - console-back-office.xml: esclude i jar inclusi nel file `mvn/dependencies/faces/pom.xml <https://github.com/link-it/govway/blob/master/mvn/dependencies/faces/pom.xml>`_ poiché utilizzati dalle console di gestione e monitoraggio adibite a funzioni di backoffice che non devono essere esposte al pubblico.
 

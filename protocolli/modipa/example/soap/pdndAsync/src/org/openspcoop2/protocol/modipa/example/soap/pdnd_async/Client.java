@@ -34,7 +34,7 @@ import org.openspcoop2.utils.LoggerWrapperFactory;
 /**
  * Client SOAP di esempio: invoca l'e-service tramite la fruizione GovWay.
  * 
- * Operazioni: start | getResource | confirmation | catalog | health
+ * Operazioni: start, getResource, confirmation, catalog, health
  * L'identificativo dell'interazione restituito da GovWay nella fase start (header GovWay-Conversation-ID)
  * deve essere fornito nelle fasi successive.
  *
