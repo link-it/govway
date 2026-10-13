@@ -80,6 +80,7 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.config.ConfigurazionePdDReader;
+import org.openspcoop2.pdd.config.DigestServiceParams;
 import org.openspcoop2.pdd.config.UrlInvocazioneAPI;
 import org.openspcoop2.pdd.core.connettori.ConnettoreUtils;
 import org.openspcoop2.pdd.core.token.PolicyGestioneToken;
@@ -118,6 +119,9 @@ import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.signal_hub.SemiSignalHubCore;
+import org.openspcoop2.web.ctrlstat.servlet.signal_hub.SemiSignalHubCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.signal_hub.SemiSignalHubHelper;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.AreaBottoni;
 import org.openspcoop2.web.lib.mvc.CheckboxStatusType;
@@ -2082,6 +2086,11 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				image.setImage(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_VERIFICA_CERTIFICATI);
 				de.addImage(image);
 				
+			}
+			
+			// Seme Signal Hub: consultabile, e ruotabile, nella sezione 'Cache PDND' disponibile in modalita' avanzata
+			if(gestioneErogatori && modi && !this.isModalitaStandard() && CostantiDB.isServiziDigestEnabled()) {
+				addIconaSemeSignalHub(de, asps.getId());
 			}
 			
 			dati.add(de);
@@ -4513,5 +4522,31 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				||  AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE.equals(parameterValueFiltrato) 
 				|| AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(parameterValueFiltrato)
 				;
+	}
+
+	private void addIconaSemeSignalHub(DataElement de, long idServizioRef) {
+		try {
+			// il dettaglio e' consultabile dagli utenti abilitati alla configurazione di sistema
+			if(!ServletUtils.getUserFromSession(this.request, this.session).getPermessi().isSistema()) {
+				return;
+			}
+			SemiSignalHubCore semiSignalHubCore = new SemiSignalHubCore(this.core);
+			List<DigestServiceParams> storico = semiSignalHubCore.getStorico(idServizioRef);
+			if(storico.isEmpty()) {
+				return; // nessun seme ancora generato
+			}
+			
+			DataElementImage image = new DataElementImage();
+			image.setUrl(SemiSignalHubCostanti.SERVLET_NAME_SIGNAL_HUB_SEMI_CHANGE, 
+					new Parameter(SemiSignalHubCostanti.PARAMETRO_SIGNAL_HUB_SEMI_ID_SERVIZIO, idServizioRef+""));
+			image.setToolTip(SemiSignalHubCostanti.LABEL_SEME_SIGNAL_HUB+": "+SemiSignalHubHelper.getDescrizioneSemeInUso(storico.get(0), SemiSignalHubCore.getSeedCacheRefreshSeconds()));
+			image.setImage(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_VISUALIZZA);
+			image.setTarget(TargetType.BLANK);
+			image.setDisabilitaAjaxStatus();
+			de.addImage(image);
+		}catch(Exception e) {
+			// l'informazione non deve impedire la visualizzazione dell'erogazione
+			this.log.error("Lettura del seme Signal Hub non riuscita: "+e.getMessage(),e);
+		}
 	}
 }

@@ -9,6 +9,8 @@ Accedendo alla console di gestione in modalità avanzata (:ref:`modalitaAvanzata
 
 - *Interazioni Asincrone*: le interazioni relative agli scambi di dati asincroni PDND (:ref:`modipa_scambiAsincroni`) registrate da GovWay; maggiori dettagli vengono forniti nella sezione :ref:`configCachePDNDInterazioniAsincrone`.
 
+- *Semi Signal Hub*: i semi utilizzati per la pseudoanonimizzazione degli identificativi pubblicati nei segnali Signal Hub (:ref:`modipa_signalhub_pseudoanonimizzazione`), con la possibilità di forzarne la rotazione; maggiori dettagli vengono forniti nella sezione :ref:`configCachePDNDSemiSignalHub`.
+
 .. figure:: ../../_figure_console/govwayConsole_cachePDND_informazioni.png
     :scale: 70%
     :align: center
@@ -21,3 +23,4 @@ Accedendo alla console di gestione in modalità avanzata (:ref:`modalitaAvanzata
 
     chiaviClient
     interazioniAsincrone
+    semiSignalHub

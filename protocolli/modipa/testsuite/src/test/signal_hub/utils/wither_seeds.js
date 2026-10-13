@@ -1,4 +1,4 @@
-function wither_seeds(days) {
+function wither_seeds(nomeSoggetto, nomeServizio, days) {
 
     govwayDbConfig = { 
         username: karate.properties['db_username'],
@@ -12,7 +12,9 @@ function wither_seeds(days) {
     java.lang.Thread.sleep(db_sleep_before_read)
     DbUtils = Java.type('org.openspcoop2.core.protocolli.modipa.testsuite.DbUtils')
     db = new DbUtils(govwayDbConfig)
-    dbquery = "SELECT data_registrazione, id FROM servizi_digest_params"
+    
+    // vengono arretrate di 'days' giorni solamente le date di registrazione dei semi dell'erogazione indicata
+    dbquery = "SELECT data_registrazione, id FROM servizi_digest_params WHERE id_servizio IN (" + "SELECT serv.id FROM servizi serv, soggetti sog WHERE serv.ID_SOGGETTO = sog.id AND sog.TIPO_SOGGETTO = 'modipa' AND sog.NOME_SOGGETTO = '"+nomeSoggetto+"' AND serv.NOME_SERVIZIO = '"+nomeServizio+"'" + ")"
     karate.log("Query: " + dbquery);
     rows = db.readRows(dbquery);
     karate.log(rows)

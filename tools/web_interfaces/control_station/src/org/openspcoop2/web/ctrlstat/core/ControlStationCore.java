@@ -143,6 +143,9 @@ import org.openspcoop2.monitor.engine.dynamic.CorePluginLoader;
 import org.openspcoop2.monitor.engine.dynamic.PluginLoader;
 import org.openspcoop2.pdd.config.ConfigurazioneNodiRuntime;
 import org.openspcoop2.pdd.config.ConfigurazionePriorita;
+import org.openspcoop2.pdd.config.DigestServiceParamsDriver;
+import org.openspcoop2.pdd.config.DigestServiceParamsRotationRequest;
+import org.openspcoop2.pdd.config.DigestServiceParamsRotationResult;
 import org.openspcoop2.pdd.config.InvokerNodiRuntime;
 import org.openspcoop2.pdd.config.OpenSPCoop2ConfigurationException;
 import org.openspcoop2.pdd.core.CostantiPdD;
@@ -4528,6 +4531,18 @@ public class ControlStationCore {
 					}
 					
 					/***********************************************************
+					 * Signal Hub: rotazione forzata del seme *
+					 **********************************************************/
+					if(oggetto instanceof DigestServiceParamsRotationRequest) {
+						DigestServiceParamsRotationRequest rotazione = (DigestServiceParamsRotationRequest) oggetto;
+						DigestServiceParamsRotationResult esito = DigestServiceParamsDriver.richiediRotazione(driver.getDriverConfigurazioneDB(), 
+								rotazione.getIdServizioRef(), rotazione.getIdSeme(), rotazione.getDataRichiesta().toInstant());
+						if(!DigestServiceParamsRotationResult.ROTAZIONE_RICHIESTA.equals(esito)) {
+							throw new ControlStationCoreException("Rotazione del seme non registrata: "+esito);
+						}
+					}
+					
+					/***********************************************************
 					 * Extended *
 					 **********************************************************/
 					if(extendedBean!=null && extendedServlet!=null){
@@ -6023,6 +6038,14 @@ public class ControlStationCore {
 			msg+=":"+oggetto.getClass().getSimpleName();
 			StringBuilder bf = new StringBuilder();
 			bf.append("Kid[").append(key.getKid()).append("]");
+			msg+=":<"+bf.toString()+">";
+		}
+		// Signal Hub: rotazione forzata del seme
+		else if(oggetto instanceof DigestServiceParamsRotationRequest) {
+			DigestServiceParamsRotationRequest rotazione = (DigestServiceParamsRotationRequest) oggetto;
+			msg+=":"+oggetto.getClass().getSimpleName();
+			StringBuilder bf = new StringBuilder();
+			bf.append("Servizio[").append(rotazione.getServizio()).append("] SignalId[").append(rotazione.getSignalId()).append("]");
 			msg+=":<"+bf.toString()+">";
 		}
 		

@@ -42,6 +42,14 @@ public class DigestServiceParams implements Serializable {
 	private Instant dataRegistrazione;
 	private Integer durata;
 	private Long serialNumber;
+	private Long id;
+	private Long idServizioRef;
+	// istante in cui e' stata richiesta la rotazione forzata del seme (null se non richiesta)
+	private Instant dataRichiestaRotazione;
+	// istante in cui l'informazione e' stata letta dalla base dati (utilizzato per limitarne la permanenza in cache)
+	private Instant dataLettura;
+	// dimensione in byte del seme (valorizzata nelle consultazioni che non riportano il seme)
+	private Integer seedSize;
 	
 	public IDServizio getIdServizio() {
 		return this.idServizio;
@@ -78,6 +86,38 @@ public class DigestServiceParams implements Serializable {
 	}
 	public void setSerialNumber(Long serialNumber) {
 		this.serialNumber = serialNumber;
+	}
+	
+	public Long getId() {
+		return this.id;
+	}
+	public void setId(Long id) {
+		this.id = id;
+	}
+	public Instant getDataRichiestaRotazione() {
+		return this.dataRichiestaRotazione;
+	}
+	public void setDataRichiestaRotazione(Instant dataRichiestaRotazione) {
+		this.dataRichiestaRotazione = dataRichiestaRotazione;
+	}
+	public Instant getDataLettura() {
+		return this.dataLettura;
+	}
+	public void setDataLettura(Instant dataLettura) {
+		this.dataLettura = dataLettura;
+	}
+	public Integer getSeedSize() {
+		return this.seedSize;
+	}
+	public void setSeedSize(Integer seedSize) {
+		this.seedSize = seedSize;
+	}
+	
+	public Long getIdServizioRef() {
+		return this.idServizioRef;
+	}
+	public void setIdServizioRef(Long idServizioRef) {
+		this.idServizioRef = idServizioRef;
 	}
 	
 }

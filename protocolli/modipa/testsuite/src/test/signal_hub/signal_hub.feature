@@ -23,7 +23,14 @@ Background:
 	* def remove_seeds = read('classpath:test/signal_hub/utils/remove_seeds.js')
 	* def get_seed = read('classpath:test/signal_hub/utils/get_seed.js')
 	* def count_seeds = read('classpath:test/signal_hub/utils/count_seeds.js')
+	* def count_seeds_id = read('classpath:test/signal_hub/utils/count_seeds_id.js')
+	* def get_id_servizio = read('classpath:test/signal_hub/utils/get_id_servizio.js')
 	* def wither_seeds = read('classpath:test/signal_hub/utils/wither_seeds.js')
+	* def force_seed_rotation = read('classpath:test/signal_hub/utils/force_seed_rotation.js')
+	* def get_seeds = read('classpath:test/signal_hub/utils/get_seeds.js')
+	* def push_rotazione = 'classpath:test/signal_hub/utils/push-rotazione.feature'
+	# attesa superiore all'intervallo di riverifica della cache dei semi (signalHub.seed.cache.refreshSeconds=10 nell'ambiente di test, vedi RUN.README)
+	* def seed_cache_refresh_wait = 11000
 	* def reset_counter = read('classpath:test/signal_hub/utils/reset_counter.js')
 	* def get_diagnostico = read('classpath:utils/get_diagnostico.js')
 	* def reset_cache = read('classpath:utils/reset-cache.feature')
@@ -69,13 +76,17 @@ Background:
 	When method delete
 	Then match responseStatus == "#? _ == 204 || _ == 404"
 
-	# Reset del counter del serial generator e dei seed esistenti per garantire stato
-	# deterministico iniziale: ogni scenario parte da counter=0 e senza seed in DB.
+	# Reset del counter del serial generator per garantire uno stato deterministico iniziale:
+	# ogni scenario parte da counter=0.
+	# I semi delle erogazioni della testsuite vengono eliminati una sola volta, all'avvio della feature,
+	# lasciando inalterati gli altri semi presenti sulla base dati; gli scenari che necessitano di partire
+	# senza seme eliminano solamente quelli dell'erogazione che utilizzano. Al termine dei test restano
+	# quindi disponibili i semi prodotti per ciascuna erogazione.
 	# Il reset della cache ConfigurazionePdD e' necessario perche' DigestServiceParamsDriver
 	# memorizza i seed in cache: senza invalidazione, getLastEntry restituirebbe l'entry
 	# stale del test precedente nonostante remove_seeds abbia cancellato la riga in DB.
 	* def counter_reset = reset_counter()
-	* def seeds_reset = remove_seeds()
+	* def seeds_reset = callonce read('classpath:test/signal_hub/utils/pulizia-semi-test.feature')
 	* call reset_cache { cache_name: 'ConfigurazionePdD' }
 
 #
@@ -101,7 +112,7 @@ Scenario: Invocazione della risorsa base dell'API
 @test-pseudonymization-SOAP-11
 Scenario: Informazioni crittografiche create alla prima richiesta del seme con messaggio SOAP11
 
-	* def deleted = remove_seeds();
+	* def deleted = remove_seeds('DemoSoggettoErogatore','SignalHubTestSOAP11');
 	* call reset_cache { cache_name: 'ConfigurazionePdD' }
 	
 	Given url crypto_info_soap11_url
@@ -127,7 +138,7 @@ Scenario: Informazioni crittografiche create alla prima richiesta del seme con m
 @test-pseudonymization-SOAP-12-custom-ns
 Scenario: Informazioni crittografiche create alla prima richiesta del seme con messaggio SOAP12 e custom namespace
 
-	* def deleted = remove_seeds();
+	* def deleted = remove_seeds('DemoSoggettoErogatore','SignalHubTestSOAP12');
 	* call reset_cache { cache_name: 'ConfigurazionePdD' }
 	
 	Given url crypto_info_soap12_url
@@ -154,7 +165,7 @@ Scenario: Informazioni crittografiche create alla prima richiesta del seme con m
 @test-pseudonymization-fail
 Scenario: Informazioni crittografiche non trovate (identificativo non presente) 
 
-	* def deleted = remove_seeds();
+	* def deleted = remove_seeds('DemoSoggettoErogatore','SignalHubTest');
 	* call reset_cache { cache_name: 'ConfigurazionePdD' }
 	
 	Given url crypto_info_url + "?signalId=100"
@@ -175,7 +186,7 @@ Scenario: Informazioni crittografiche non trovate (identificativo non presente)
 @test-pseudonymization-cache
 Scenario: Controlla il corretto funzionamento della cache (rimuove un seed ma rimane salvato in cache)
 
-	* def deleted = remove_seeds();
+	* def deleted = remove_seeds('DemoSoggettoErogatore','SignalHubTest');
 	* call reset_cache { cache_name: 'ConfigurazionePdD' }
 	
 	Given url crypto_info_url
@@ -191,8 +202,8 @@ Scenario: Controlla il corretto funzionamento della cache (rimuove un seed ma ri
 	# Property exposeSignalId disabilitata (default): il campo signalId NON deve essere presente
 	And match response.signalId == '#notpresent'
 
-	* def deleted = remove_seeds();
-	* def seeds = count_seeds()
+	* def deleted = remove_seeds('DemoSoggettoErogatore','SignalHubTest');
+	* def seeds = count_seeds('DemoSoggettoErogatore','SignalHubTest')
 	And match seeds == 0
 
 	Given url crypto_info_url
@@ -225,7 +236,7 @@ Scenario: Controlla il corretto funzionamento della cache (rimuove un seed ma ri
 @test-pseudonymization-create
 Scenario: Informazioni crittografiche create alla prima richiesta di seme
 
-	* def deleted = remove_seeds();
+	* def deleted = remove_seeds('DemoSoggettoErogatore','SignalHubTest');
 	* call reset_cache { cache_name: 'ConfigurazionePdD' }
 	
 	Given url crypto_info_url
@@ -247,7 +258,7 @@ Scenario: Informazioni crittografiche create alla prima richiesta di seme
 @test-pseudonymization-id
 Scenario: richiesta informazioni crittografiche tramite signalId corrispondente
 
-	* def deleted = remove_seeds();
+	* def deleted = remove_seeds('DemoSoggettoErogatore','SignalHubTest');
 	* call reset_cache { cache_name: 'ConfigurazionePdD' }
 	
 	# il primo seme non ha alcun signalId associato
@@ -264,7 +275,7 @@ Scenario: richiesta informazioni crittografiche tramite signalId corrispondente
 	# primo push: counter 0 -> 1 per signalId (nessuna rotazione)
 	And match response == { signalId: 1 }
 
-	* def invalidates = wither_seeds(100)
+	* def invalidates = wither_seeds('DemoSoggettoErogatore','SignalHubTest', 100)
 	* call reset_cache { cache_name: 'ConfigurazionePdD' }
 
 	# il secondo seme ha un signalId associato
@@ -301,7 +312,7 @@ Scenario: richiesta informazioni crittografiche tramite signalId corrispondente
 @test-pseudonymization-expose-signal-id
 Scenario: signalId esposto e numerico con rotazione del seed quando la property exposeSignalId e' abilitata sull'erogazione
 
-	* def deleted = remove_seeds();
+	* def deleted = remove_seeds('DemoSoggettoErogatore','SignalHubTest');
 	* call reset_cache { cache_name: 'ConfigurazionePdD' }
 
 	# Imposto la property di abilitazione sull'erogazione SignalHubTest.
@@ -343,7 +354,7 @@ Scenario: signalId esposto e numerico con rotazione del seed quando la property 
 	And match response == { signalId: 1 }
 
 	# Invalido il seed esistente per forzare la rotazione al prossimo push
-	* def invalidates = wither_seeds(100)
+	* def invalidates = wither_seeds('DemoSoggettoErogatore','SignalHubTest', 100)
 	* call reset_cache { cache_name: 'ConfigurazionePdD' }
 
 	# Push #2: il seed precedente e' scaduto -> rotazione, nuovo seed con serial > 0 e SEEDUPDATE verso PDND
@@ -379,7 +390,7 @@ Scenario: signalId esposto e numerico con rotazione del seed quando la property 
 @test-pseudonymization-expose-signal-id-soap
 Scenario: signalId esposto e numerico con rotazione del seed quando la property exposeSignalId e' abilitata sull'erogazione SOAP12
 
-	* def deleted = remove_seeds();
+	* def deleted = remove_seeds('DemoSoggettoErogatore','SignalHubTestSOAP12');
 	* call reset_cache { cache_name: 'ConfigurazionePdD' }
 
 	# Imposto la property di abilitazione sull'erogazione SignalHubTestSOAP12.
@@ -429,7 +440,7 @@ Scenario: signalId esposto e numerico con rotazione del seed quando la property 
 	And match response == { signalId: 1 }
 
 	# Invalido il seed esistente per forzare la rotazione al prossimo push
-	* def invalidates = wither_seeds(100)
+	* def invalidates = wither_seeds('DemoSoggettoErogatore','SignalHubTestSOAP12', 100)
 	* call reset_cache { cache_name: 'ConfigurazionePdD' }
 
 	# Push #2 SOAP: il seed precedente e' scaduto -> rotazione, nuovo seed con serial == 2 e SEEDUPDATE verso PDND
@@ -473,7 +484,7 @@ Scenario: signalId esposto e numerico con rotazione del seed quando la property 
 @test-pseudonymization-no-digest
 Scenario: Informazioni crittografiche non disponibili per servizio senza digest richiesta; viene verificato che la richiesta arrivi al backend
 
-	* def deleted = remove_seeds();
+	* def deleted = remove_seeds('DemoSoggettoErogatore','SignalHubTestNoDigest');
 	* call reset_cache { cache_name: 'ConfigurazionePdD' }
 
 	Given url crypto_info_url_no_digest
@@ -1391,7 +1402,7 @@ Scenario: push del segnale con applicativo omonimo del pubblicatore ma appartene
 @test-push-seed-creation
 Scenario: push del segnale in cui genero anche il seme correttamnete
 
-	* def deleted = remove_seeds();
+	* def deleted = remove_seeds('DemoSoggettoErogatore','SignalHubTest');
 	* call reset_cache { cache_name: 'ConfigurazionePdD' }
 	
 	Given url push_signal_url
@@ -1405,14 +1416,14 @@ Scenario: push del segnale in cui genero anche il seme correttamnete
 	When method post
 	Then status 200
 	And match response == { signalId: 1 }
-	* def seeds = count_seeds()
+	* def seeds = count_seeds('DemoSoggettoErogatore','SignalHubTest')
 	And match seeds == 1
 	
 @test-push
 @test-push-seed-failing
 Scenario: push del segnale in cui non riesco a generare il seed dunque non invio nemmeno il segnale
 
-	* def deleted = remove_seeds();
+	* def deleted = remove_seeds('DemoSoggettoErogatore','SignalHubTest');
 	* call reset_cache { cache_name: 'ConfigurazionePdD' }
 	
 	# il primo seed viene creato senza inviare la SEEDUPDATE dunque non puo fallire
@@ -1427,10 +1438,10 @@ Scenario: push del segnale in cui non riesco a generare il seed dunque non invio
 	When method post
 	Then status 200
 	And match response == { signalId: 1 }
-	* def seeds = count_seeds()
+	* def seeds = count_seeds('DemoSoggettoErogatore','SignalHubTest')
 	And match seeds == 1
 	
-	* def invalidates = wither_seeds(100)
+	* def invalidates = wither_seeds('DemoSoggettoErogatore','SignalHubTest', 100)
 	* call reset_cache { cache_name: 'ConfigurazionePdD' }
 	
 	# il secondo seed viene creato inviando la SEEDUPDATE che fallira
@@ -1445,7 +1456,7 @@ Scenario: push del segnale in cui non riesco a generare il seed dunque non invio
 	When method post
 	Then status 400
 	And match response == bad_request
-	* def seeds = count_seeds()
+	* def seeds = count_seeds('DemoSoggettoErogatore','SignalHubTest')
 	And match seeds == 1
 	
 	* def id_transazione = getHeader('GovWay-Transaction-ID')
@@ -1453,10 +1464,265 @@ Scenario: push del segnale in cui non riesco a generare il seed dunque non invio
 	* if (msgs.length != 1) karate.fail('messaggio di errore non trovato')
 	
 @test-push
+@test-push-seed-forced-rotation
+Scenario: rotazione forzata del seme: diventa effettiva trascorso l'intervallo di riverifica della cache e avviene al primo segnale successivo
+
+	* def deleted = remove_seeds('DemoSoggettoErogatore','SignalHubTest');
+	* call reset_cache { cache_name: 'ConfigurazionePdD' }
+
+	# il primo seed viene creato senza inviare la SEEDUPDATE
+	Given url push_signal_url
+	And param govway_testsuite_objectId = 'objectIdForced'
+	And header GovWay-TestSuite-Plain-Object-ID = 'objectIdForced'
+	And header Authorization = call basic (auth_push_signal)
+	And header GovWay-TestSuite-Test-ID = 'push_signal_no_seed'
+	And header GovWay-Testsuite-ObjectType = 'objectType'
+	And header GovWay-Signal-ServiceId = 'eServiceTestID'
+	And request {data:[{signalType: "UPDATE"}]}
+	When method post
+	Then status 200
+	# counter 0 -> 1 per signalId
+	And match response == { signalId: 1 }
+	* def seeds = count_seeds('DemoSoggettoErogatore','SignalHubTest')
+	And match seeds == 1
+	* def seed1 = get_seed('DemoSoggettoErogatore','SignalHubTest')
+
+	# rotazione forzata registrata sulla base dati come avviene tramite la console.
+	# La cache non viene svuotata: il nodo si trova nella stessa condizione di un altro nodo del cluster
+	* def forced = force_seed_rotation('DemoSoggettoErogatore','SignalHubTest')
+	And match forced == 1
+
+	# segnale immediatamente successivo: la rotazione non e' ancora effettiva, il seme non cambia
+	# e non viene inviata la SEEDUPDATE (il mock verifica il digest con il seme presente sulla base dati)
+	Given url push_signal_url
+	And param govway_testsuite_objectId = 'objectIdForced'
+	And header GovWay-TestSuite-Plain-Object-ID = 'objectIdForced'
+	And header Authorization = call basic (auth_push_signal)
+	And header GovWay-TestSuite-Test-ID = 'push_signal_no_seed'
+	And header GovWay-Testsuite-ObjectType = 'objectType'
+	And header GovWay-Signal-ServiceId = 'eServiceTestID'
+	And request {data:[{signalType: "UPDATE"}]}
+	When method post
+	Then status 200
+	# counter 1 -> 2 per signalId
+	And match response == { signalId: 2 }
+	* def seeds = count_seeds('DemoSoggettoErogatore','SignalHubTest')
+	And match seeds == 1
+	* def seedCorrente = get_seed('DemoSoggettoErogatore','SignalHubTest')
+	And match seedCorrente == seed1
+
+	# la risorsa di pseudoanonimizzazione restituisce ancora il seme in uso
+	Given url crypto_info_url
+	And header simulazionepdnd-purposeId = 'purposeId'
+	And header simulazionepdnd-audience = 'audience'
+	And header simulazionepdnd-username = 'ApplicativoBlockingJWK'
+	And header GovWay-TestSuite-Test-ID = 'crypto_info_found'
+	When method get
+	Then status 200
+	And match response == { seed: '#(seed1)', cryptoHashFunction: 'SHA-256' }
+
+	# trascorso l'intervallo di riverifica della cache la rotazione diventa effettiva
+	* java.lang.Thread.sleep(seed_cache_refresh_wait)
+
+	# primo segnale successivo: viene generato un nuovo seme inviando la SEEDUPDATE
+	# e il digest viene calcolato con il nuovo seme (verificato dal mock)
+	Given url push_signal_url
+	And param govway_testsuite_objectId = 'objectIdForced'
+	And header GovWay-TestSuite-Plain-Object-ID = 'objectIdForced'
+	And header Authorization = call basic (auth_push_signal)
+	And header GovWay-TestSuite-Test-ID = 'push_signal'
+	And header GovWay-Testsuite-ObjectType = 'objectType'
+	And header GovWay-Signal-ServiceId = 'eServiceTestID'
+	And request {data:[{signalType: "UPDATE"}]}
+	When method post
+	Then status 200
+	# counter 2 -> 3 per seed serial, counter 3 -> 4 per signalId
+	And match response == { signalId: 4 }
+	* def seeds = count_seeds('DemoSoggettoErogatore','SignalHubTest')
+	And match seeds == 2
+	* def seed2 = get_seed('DemoSoggettoErogatore','SignalHubTest')
+	And match seed2 != seed1
+
+	# la risorsa di pseudoanonimizzazione restituisce il nuovo seme, anche tramite il signalId della SEEDUPDATE
+	Given url crypto_info_url
+	And header simulazionepdnd-purposeId = 'purposeId'
+	And header simulazionepdnd-audience = 'audience'
+	And header simulazionepdnd-username = 'ApplicativoBlockingJWK'
+	And header GovWay-TestSuite-Test-ID = 'crypto_info_found'
+	When method get
+	Then status 200
+	And match response == { seed: '#(seed2)', cryptoHashFunction: 'SHA-256' }
+
+	Given url crypto_info_url
+	And param signalId = 3
+	And header simulazionepdnd-purposeId = 'purposeId'
+	And header simulazionepdnd-audience = 'audience'
+	And header simulazionepdnd-username = 'ApplicativoBlockingJWK'
+	And header GovWay-TestSuite-Test-ID = 'crypto_info_found'
+	When method get
+	Then status 200
+	And match response == { seed: '#(seed2)', cryptoHashFunction: 'SHA-256' }
+
+	# il segnale successivo utilizza il nuovo seme senza ulteriori rotazioni
+	Given url push_signal_url
+	And param govway_testsuite_objectId = 'objectIdForced'
+	And header GovWay-TestSuite-Plain-Object-ID = 'objectIdForced'
+	And header Authorization = call basic (auth_push_signal)
+	And header GovWay-TestSuite-Test-ID = 'push_signal_no_seed'
+	And header GovWay-Testsuite-ObjectType = 'objectType'
+	And header GovWay-Signal-ServiceId = 'eServiceTestID'
+	And request {data:[{signalType: "UPDATE"}]}
+	When method post
+	Then status 200
+	And match response == { signalId: 5 }
+	* def seeds = count_seeds('DemoSoggettoErogatore','SignalHubTest')
+	And match seeds == 2
+
+@test-push
+@test-push-seed-forced-rotation-failing
+Scenario: rotazione forzata del seme con invio della SEEDUPDATE fallito: il seme in uso non cambia e la rotazione viene ritentata al segnale successivo
+
+	* def deleted = remove_seeds('DemoSoggettoErogatore','SignalHubTest');
+	* call reset_cache { cache_name: 'ConfigurazionePdD' }
+
+	# il primo seed viene creato senza inviare la SEEDUPDATE
+	Given url push_signal_url
+	And param govway_testsuite_objectId = 'objectIdForced'
+	And header GovWay-TestSuite-Plain-Object-ID = 'objectIdForced'
+	And header Authorization = call basic (auth_push_signal)
+	And header GovWay-TestSuite-Test-ID = 'push_signal_no_seed'
+	And header GovWay-Testsuite-ObjectType = 'objectType'
+	And header GovWay-Signal-ServiceId = 'eServiceTestID'
+	And request {data:[{signalType: "UPDATE"}]}
+	When method post
+	Then status 200
+	And match response == { signalId: 1 }
+	* def seed1 = get_seed('DemoSoggettoErogatore','SignalHubTest')
+
+	* def forced = force_seed_rotation('DemoSoggettoErogatore','SignalHubTest')
+	And match forced == 1
+	* java.lang.Thread.sleep(seed_cache_refresh_wait)
+
+	# la SEEDUPDATE fallisce: il segnale non viene pubblicato e il seme in uso non cambia
+	Given url push_signal_url
+	And param govway_testsuite_objectId = 'objectIdForced'
+	And header GovWay-TestSuite-Plain-Object-ID = 'objectIdForced'
+	And header Authorization = call basic (auth_push_signal)
+	And header GovWay-TestSuite-Test-ID = 'seed_failing'
+	And header GovWay-Testsuite-ObjectType = 'objectType'
+	And header GovWay-Signal-ServiceId = 'eServiceTestID'
+	And request {data:[{signalType: "UPDATE"}]}
+	When method post
+	Then status 400
+	And match response == bad_request
+	* def seeds = count_seeds('DemoSoggettoErogatore','SignalHubTest')
+	And match seeds == 1
+	* def seedCorrente = get_seed('DemoSoggettoErogatore','SignalHubTest')
+	And match seedCorrente == seed1
+
+	* def id_transazione = getHeader('GovWay-Transaction-ID')
+	* def msgs = get_diagnostico(id_transazione, 'seed update non riuscito')
+	* if (msgs.length != 1) karate.fail('messaggio di errore non trovato')
+
+	# al segnale successivo la rotazione viene ritentata e completata
+	Given url push_signal_url
+	And param govway_testsuite_objectId = 'objectIdForced'
+	And header GovWay-TestSuite-Plain-Object-ID = 'objectIdForced'
+	And header Authorization = call basic (auth_push_signal)
+	And header GovWay-TestSuite-Test-ID = 'push_signal'
+	And header GovWay-Testsuite-ObjectType = 'objectType'
+	And header GovWay-Signal-ServiceId = 'eServiceTestID'
+	And request {data:[{signalType: "UPDATE"}]}
+	When method post
+	Then status 200
+	And match response == { signalId: '#number' }
+	* def seeds = count_seeds('DemoSoggettoErogatore','SignalHubTest')
+	And match seeds == 2
+	* def seed2 = get_seed('DemoSoggettoErogatore','SignalHubTest')
+	And match seed2 != seed1
+
+@test-push
+@test-push-seed-forced-rotation-ripetuta
+Scenario: rotazioni forzate ripetute del seme, con tempi differenti, su un'erogazione di un altro soggetto (SignalHubTestRotazione di DemoSoggettoErogatore3)
+
+	* def deleted = remove_seeds('DemoSoggettoErogatore3','SignalHubTestRotazione');
+	* call reset_cache { cache_name: 'ConfigurazionePdD' }
+
+	# il primo seed viene creato senza inviare la SEEDUPDATE
+	* def r = call read(push_rotazione) { test_id: 'push_signal_no_seed' }
+	* def seeds = get_seeds('DemoSoggettoErogatore3','SignalHubTestRotazione')
+	And match seeds == '#[1]'
+	* def seed1 = seeds[0].seed
+
+	# --- Rotazione 1: richiesta, segnale immediato (nessuna rotazione) e segnale dopo l'intervallo di riverifica della cache
+
+	* def forced = force_seed_rotation('DemoSoggettoErogatore3','SignalHubTestRotazione')
+	And match forced == 1
+	* def r = call read(push_rotazione) { test_id: 'push_signal_no_seed' }
+	* def seeds = get_seeds('DemoSoggettoErogatore3','SignalHubTestRotazione')
+	And match seeds == '#[1]'
+	And match seeds[0].seed == seed1
+	And match seeds[0].rotazioneRichiesta == true
+
+	* java.lang.Thread.sleep(seed_cache_refresh_wait)
+	* def r = call read(push_rotazione) { test_id: 'push_signal' }
+	* def seeds = get_seeds('DemoSoggettoErogatore3','SignalHubTestRotazione')
+	And match seeds == '#[2]'
+	* def seed2 = seeds[0].seed
+	And match seed2 != seed1
+	And match seeds[0].serial == '#notnull'
+	And match seeds[0].rotazioneRichiesta == false
+	And match seeds[1].seed == seed1
+
+	# --- Rotazione 2: richiesta ripetuta (ignorata), segnale a meta' intervallo (nessuna rotazione)
+	#     e primo segnale pubblicato ben oltre la scadenza della rotazione
+
+	* def forced = force_seed_rotation('DemoSoggettoErogatore3','SignalHubTestRotazione')
+	And match forced == 1
+	* def forced = force_seed_rotation('DemoSoggettoErogatore3','SignalHubTestRotazione')
+	And match forced == 0
+	* java.lang.Thread.sleep(5000)
+	* def r = call read(push_rotazione) { test_id: 'push_signal_no_seed' }
+	* def seeds = get_seeds('DemoSoggettoErogatore3','SignalHubTestRotazione')
+	And match seeds == '#[2]'
+	And match seeds[0].seed == seed2
+
+	* java.lang.Thread.sleep(seed_cache_refresh_wait + 5000)
+	* def r = call read(push_rotazione) { test_id: 'push_signal' }
+	* def seeds = get_seeds('DemoSoggettoErogatore3','SignalHubTestRotazione')
+	And match seeds == '#[3]'
+	* def seed3 = seeds[0].seed
+	And match seed3 != seed2
+	And match seed3 != seed1
+	And match seeds[0].rotazioneRichiesta == false
+
+	# --- Rotazione 3: richiesta subito dopo la rotazione precedente, con il nuovo seme appena entrato in cache;
+	#     lo storico e' limitato a 3 semi (signalHub.seed.history=3 nell'ambiente di test) e il primo seme viene eliminato
+
+	* def forced = force_seed_rotation('DemoSoggettoErogatore3','SignalHubTestRotazione')
+	And match forced == 1
+	* java.lang.Thread.sleep(seed_cache_refresh_wait)
+	* def r = call read(push_rotazione) { test_id: 'push_signal' }
+	* def seeds = get_seeds('DemoSoggettoErogatore3','SignalHubTestRotazione')
+	And match seeds == '#[3]'
+	* def seed4 = seeds[0].seed
+	And match seed4 != seed3
+	And match seed4 != seed2
+	And match seed4 != seed1
+	And match seeds[0].rotazioneRichiesta == false
+	And match seeds[1].seed == seed3
+	And match seeds[2].seed == seed2
+
+	# il segnale successivo utilizza l'ultimo seme senza ulteriori rotazioni
+	* def r = call read(push_rotazione) { test_id: 'push_signal_no_seed' }
+	* def seeds = get_seeds('DemoSoggettoErogatore3','SignalHubTestRotazione')
+	And match seeds[0].seed == seed4
+
+@test-push
 @test-push-seed-replace
 Scenario: push del segnale in cui mi tengo lo storico dei semi precedenti e controllo che vengano eliminati i semi troppo vecchi
 
-	* def deleted = remove_seeds();
+	* def deleted = remove_seeds('DemoSoggettoErogatore','SignalHubTest');
 	* call reset_cache { cache_name: 'ConfigurazionePdD' }
 
 	Given url push_signal_url
@@ -1471,10 +1737,10 @@ Scenario: push del segnale in cui mi tengo lo storico dei semi precedenti e cont
 	Then status 200
 	# primo push: counter 0 -> 1 per signalId
 	And match response == { signalId: 1 }
-	* def seeds = count_seeds()
+	* def seeds = count_seeds('DemoSoggettoErogatore','SignalHubTest')
 	And match seeds == 1
 
-	* def invalidates = wither_seeds(100)
+	* def invalidates = wither_seeds('DemoSoggettoErogatore','SignalHubTest', 100)
 	* call reset_cache { cache_name: 'ConfigurazionePdD' }
 
 	Given url push_signal_url
@@ -1489,10 +1755,10 @@ Scenario: push del segnale in cui mi tengo lo storico dei semi precedenti e cont
 	Then status 200
 	# push con rotazione: counter 1->2 per seed, 2->3 per signalId
 	And match response == { signalId: 3 }
-	* def seeds = count_seeds()
+	* def seeds = count_seeds('DemoSoggettoErogatore','SignalHubTest')
 	And match seeds == 2
 
-	* def invalidates = wither_seeds(100)
+	* def invalidates = wither_seeds('DemoSoggettoErogatore','SignalHubTest', 100)
 	* call reset_cache { cache_name: 'ConfigurazionePdD' }
 
 	Given url push_signal_url
@@ -1507,10 +1773,10 @@ Scenario: push del segnale in cui mi tengo lo storico dei semi precedenti e cont
 	Then status 200
 	# push con rotazione: counter 3->4 per seed, 4->5 per signalId
 	And match response == { signalId: 5 }
-	* def seeds = count_seeds()
+	* def seeds = count_seeds('DemoSoggettoErogatore','SignalHubTest')
 	And match seeds == 3
 
-	* def invalidates = wither_seeds(100)
+	* def invalidates = wither_seeds('DemoSoggettoErogatore','SignalHubTest', 100)
 	* call reset_cache { cache_name: 'ConfigurazionePdD' }
 
 	Given url push_signal_url
@@ -1525,14 +1791,14 @@ Scenario: push del segnale in cui mi tengo lo storico dei semi precedenti e cont
 	Then status 200
 	# push con rotazione: counter 5->6 per seed, 6->7 per signalId
 	And match response == { signalId: 7 }
-	* def seeds = count_seeds()
+	* def seeds = count_seeds('DemoSoggettoErogatore','SignalHubTest')
 	And match seeds == 3
 	
 @test-push
 @test-push-seed-keep
 Scenario: push del segnale in cui riutilizzo lo stesso seme fino alla scadenza
 
-	* def deleted = remove_seeds();
+	* def deleted = remove_seeds('DemoSoggettoErogatore','SignalHubTest');
 	* call reset_cache { cache_name: 'ConfigurazionePdD' }
 	
 	Given url push_signal_url
@@ -1547,10 +1813,10 @@ Scenario: push del segnale in cui riutilizzo lo stesso seme fino alla scadenza
 	Then status 200
 	# primo push: counter 0 -> 1 per signalId
 	And match response == { signalId: 1 }
-	* def seeds = count_seeds()
+	* def seeds = count_seeds('DemoSoggettoErogatore','SignalHubTest')
 	And match seeds == 1
 
-	* def invalidates = wither_seeds(1)
+	* def invalidates = wither_seeds('DemoSoggettoErogatore','SignalHubTest', 1)
 	* call reset_cache { cache_name: 'ConfigurazionePdD' }
 
 	Given url push_signal_url
@@ -1565,10 +1831,10 @@ Scenario: push del segnale in cui riutilizzo lo stesso seme fino alla scadenza
 	Then status 200
 	# seed ancora valido: counter 1 -> 2 per signalId (nessuna rotazione)
 	And match response == { signalId: 2 }
-	* def seeds = count_seeds()
+	* def seeds = count_seeds('DemoSoggettoErogatore','SignalHubTest')
 	And match seeds == 1
 
-	* def invalidates = wither_seeds(1)
+	* def invalidates = wither_seeds('DemoSoggettoErogatore','SignalHubTest', 1)
 	* call reset_cache { cache_name: 'ConfigurazionePdD' }
 
 	Given url push_signal_url
@@ -1583,10 +1849,10 @@ Scenario: push del segnale in cui riutilizzo lo stesso seme fino alla scadenza
 	Then status 200
 	# seed ancora valido: counter 2 -> 3 per signalId (nessuna rotazione)
 	And match response == { signalId: 3 }
-	* def seeds = count_seeds()
+	* def seeds = count_seeds('DemoSoggettoErogatore','SignalHubTest')
 	And match seeds == 1
 
-	* def invalidates = wither_seeds(3)
+	* def invalidates = wither_seeds('DemoSoggettoErogatore','SignalHubTest', 3)
 	* call reset_cache { cache_name: 'ConfigurazionePdD' }
 
 	Given url push_signal_url
@@ -1601,13 +1867,13 @@ Scenario: push del segnale in cui riutilizzo lo stesso seme fino alla scadenza
 	Then status 200
 	# seed ora scaduto: counter 3->4 per seed, 4->5 per signalId
 	And match response == { signalId: 5 }
-	* def seeds = count_seeds()
+	* def seeds = count_seeds('DemoSoggettoErogatore','SignalHubTest')
 	And match seeds == 2
 	
 @test-clean
 Scenario: test per verificare la corretta rimozione dei record nella tabella servizi_digest_params alla rimozione di un servizio
 
-	* def deleted = remove_seeds();
+	* def deleted = remove_seeds('DemoSoggettoErogatore','SignalHubErase');
 	* call reset_cache { cache_name: 'ConfigurazionePdD' }
 	# Il token negoziato dagli scenari iniziali resta in cache per la durata dichiarata dalla simulazione PDND
 	# (expires_in 3600), mentre il JWT restituito scade dopo 300 secondi: se l'esecuzione degli scenari precedenti
@@ -1646,7 +1912,9 @@ Scenario: test per verificare la corretta rimozione dei record nella tabella ser
 	When method get
 	Then status 200
 
-	* def seeds = count_seeds()
+	# l'identificativo dell'erogazione viene letto prima dell'eliminazione, per verificare che non restino semi orfani
+	* def idErase = get_id_servizio('DemoSoggettoErogatore','SignalHubErase')
+	* def seeds = count_seeds_id(idErase)
 	And match seeds == 1
 
 	Given url govway_config_api_path + '/erogazioni/' + signal_hub_erogazione.erogazione_nome + '/' + signal_hub_erogazione.erogazione_versione
@@ -1656,6 +1924,6 @@ Scenario: test per verificare la corretta rimozione dei record nella tabella ser
 	When method delete
 	Then status 204
 
-	* def seeds = count_seeds()
+	* def seeds = count_seeds_id(idErase)
 	And match seeds == 0
 

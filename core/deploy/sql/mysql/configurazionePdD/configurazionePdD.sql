@@ -793,6 +793,8 @@ CREATE TABLE servizi_digest_params
 	seed VARCHAR(4000) NOT NULL,
 	algorithm VARCHAR(32) NOT NULL,
 	lifetime INT NOT NULL,
+	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
+	data_richiesta_rotazione TIMESTAMP(3) DEFAULT 0,
 	-- fk/pk columns
 	id BIGINT AUTO_INCREMENT,
 	-- fk/pk keys constraints

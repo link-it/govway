@@ -30,9 +30,11 @@ import org.govway.struts.action.Action;
 import org.govway.struts.action.ActionForm;
 import org.govway.struts.action.ActionForward;
 import org.govway.struts.action.ActionMapping;
+import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pdnd_async.InterazioniAsincronePDNDCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.signal_hub.SemiSignalHubCostanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -94,6 +96,15 @@ public class CachePdnd extends Action {
 				de.setType(DataElementType.LINK);
 				de.setUrl(InterazioniAsincronePDNDCostanti.SERVLET_NAME_PDND_INTERAZIONI_ASYNC_LIST);
 				de.setValue(InterazioniAsincronePDNDCostanti.LABEL_PDND_INTERAZIONI_ASYNC);
+				dati.add(de);
+			}
+			
+			// i semi di pseudoanonimizzazione Signal Hub sono previsti solamente con il profilo ModI e con Signal Hub abilitato
+			if(remoteStoresCore.isProfiloModIPAEnabled() && CostantiDB.isServiziDigestEnabled()) {
+				de = new DataElement();
+				de.setType(DataElementType.LINK);
+				de.setUrl(SemiSignalHubCostanti.SERVLET_NAME_SIGNAL_HUB_SEMI_LIST);
+				de.setValue(SemiSignalHubCostanti.LABEL_SIGNAL_HUB_SEMI);
 				dati.add(de);
 			}
 			

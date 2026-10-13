@@ -1768,6 +1768,42 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 		}
 	}
 	
+	/**
+	 * Ritorna l'ultimo valore generato dal progressivo numerico associato ad un'informazione (es. il signalId di un e-service Signal Hub)
+	 * @param protocollo
+	 * @param infoAssociata
+	 * @return null se il progressivo non e' stato ancora utilizzato
+	 * @throws DriverMonitoraggioException
+	 */
+	public Long getUltimoProgressivoRelativo(String protocollo, String infoAssociata) throws DriverMonitoraggioException{
+		Connection con = null;
+		try{
+			con = getConnection();
+			checkConnection(con);
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
+			sqlQueryObject.addFromTable(org.openspcoop2.utils.id.serial.Constants.TABELLA_ID_RELATIVO_AS_LONG);
+			sqlQueryObject.addSelectField(org.openspcoop2.utils.id.serial.Constants.TABELLA_ID_COLONNA_COUNTER);
+			sqlQueryObject.addWhereCondition(org.openspcoop2.utils.id.serial.Constants.TABELLA_ID_COLONNA_PROTOCOLLO+"=?");
+			sqlQueryObject.addWhereCondition(org.openspcoop2.utils.id.serial.Constants.TABELLA_ID_COLONNA_INFO_ASSOCIATA+"=?");
+			sqlQueryObject.setANDLogicOperator(true);
+			try(PreparedStatement pstmt = con.prepareStatement(sqlQueryObject.createSQLQuery())){
+				pstmt.setString(1, protocollo);
+				pstmt.setString(2, infoAssociata);
+				try(ResultSet rs = pstmt.executeQuery()){
+					if(rs.next()) {
+						return rs.getLong(org.openspcoop2.utils.id.serial.Constants.TABELLA_ID_COLONNA_COUNTER);
+					}
+				}
+			}
+			return null;
+		}catch(Exception e){
+			this.logError("getUltimoProgressivoRelativo error",e);
+			throw new DriverMonitoraggioException("getUltimoProgressivoRelativo error: "+e.getMessage(),e);
+		}finally{
+			releaseConnection(con);
+		}
+	}
+	
 	public int deleteInterazioneAsincronaPDND(long id) throws DriverMonitoraggioException{
 		Connection con = null;
 		try{

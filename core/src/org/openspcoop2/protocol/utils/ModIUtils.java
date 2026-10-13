@@ -1246,6 +1246,10 @@ public class ModIUtils {
 		return ModIPropertiesUtils.isSignalHubEnabled();
 	}
 	
+	public static int getSignalHubSeedCacheRefreshSeconds() throws ProtocolException {
+		return ModIPropertiesUtils.getSignalHubSeedCacheRefreshSeconds();
+	}
+	
 	public static boolean isTracingPDNDEnabled() throws ProtocolException {
 		return ModIPropertiesUtils.isTracingPDNDEnabled();
 	}

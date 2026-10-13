@@ -9,6 +9,8 @@ Si raccomanda la lettura preliminare della :doc:`../panoramica`, dove sono descr
 
 - :ref:`modipa_signalhub_pseudoanonimizzazione_generazione`: descrive come GovWay produce il seed e l'``objectId``, l'algoritmo di hash applicato e la composizione dell'input.
 
+- :ref:`modipa_signalhub_pseudoanonimizzazione_rotazione`: descrive il ciclo di vita del seme, la sua rotazione alla scadenza e la rotazione forzata tramite la console.
+
 - :ref:`modipa_signalhub_pseudoanonimizzazione_verifica`: riporta lo pseudocodice Java per la verifica di un segnale a partire da un identificativo candidato, oltre all'errore tipico da evitare.
 
 - :ref:`modipa_signalhub_pseudoanonimizzazione_conformitaPdnd`: argomenta l'allineamento delle scelte implementative di GovWay rispetto a quanto prescritto dal Manuale Operativo Signal Hub di PDND.
@@ -17,5 +19,6 @@ Si raccomanda la lettura preliminare della :doc:`../panoramica`, dove sono descr
    :maxdepth: 2
 
    generazione
+   rotazione
    verifica
    conformita

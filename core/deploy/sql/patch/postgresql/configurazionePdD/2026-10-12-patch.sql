@@ -1,0 +1,1 @@
+ALTER TABLE servizi_digest_params ADD COLUMN data_richiesta_rotazione TIMESTAMP;

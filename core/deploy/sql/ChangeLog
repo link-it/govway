@@ -1,3 +1,13 @@
+2026-10-12  Andrea Poli <apoli@link.it>
+
+	Aggiunta la colonna 'data_richiesta_rotazione' alla tabella 'servizi_digest_params' dello schema di
+	configurazione, che contiene i semi utilizzati da Signal Hub per la pseudoanonimizzazione. La colonna
+	registra la richiesta di rotazione forzata del seme in uso effettuata tramite la console: il seme viene
+	considerato scaduto da tutti i nodi trascorso l'intervallo di aggiornamento della cache e sostituito,
+	con l'invio del segnale SEEDUPDATE, alla pubblicazione del primo segnale successivo.
+
+	ALTER TABLE servizi_digest_params ADD data_richiesta_rotazione TIMESTAMP;
+
 2026-10-07  Andrea Poli <apoli@link.it>
 
 	Aggiunta la tabella 'PDND_INTERAZIONI_ASYNC' nello schema runtime (RepositoryMessaggi) per il supporto agli

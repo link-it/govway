@@ -37,6 +37,7 @@ Scenario: (isTest('push_signal') || isTest('push_signal_no_seed')) && request.si
 	* def expectedEServiceId = getHeader('GovWay-TestSuite-EService-Id') || 'eServiceTestID'
 	* def expectedAlgorithm = getHeader('GovWay-TestSuite-Algorithm') || 'SHA-256'
 	* def expectedSeedService = getHeader('GovWay-TestSuite-Service-Name-Seed') || 'SignalHubTest'
+	* def expectedSeedSoggetto = getHeader('GovWay-TestSuite-Soggetto-Seed') || 'DemoSoggettoErogatore'
 
 	* match request ==
 		"""
@@ -49,7 +50,7 @@ Scenario: (isTest('push_signal') || isTest('push_signal_no_seed')) && request.si
 		}
 		"""
 	* def objectId = getHeader('GovWay-TestSuite-Plain-Object-ID')
-	* def seedValue = get_seed('DemoSoggettoErogatore', expectedSeedService)
+	* def seedValue = get_seed(expectedSeedSoggetto, expectedSeedService)
 	* def hash = compute_digest(expectedAlgorithm, objectId + seedValue)
 	* karate.log("algorithm: " + expectedAlgorithm + ", plain id: " + objectId + ", seed: " + seedValue)
 	* match hash == request.objectId

@@ -781,6 +781,7 @@ CREATE TABLE servizi_digest_params
 	seed VARCHAR(4000) NOT NULL,
 	algorithm VARCHAR(32) NOT NULL,
 	lifetime INT NOT NULL,
+	data_richiesta_rotazione DATETIME2,
 	-- fk/pk columns
 	id BIGINT IDENTITY,
 	-- fk/pk keys constraints

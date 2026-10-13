@@ -46,6 +46,7 @@ import org.openspcoop2.web.ctrlstat.servlet.remote_stores.RemoteStoresCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.ruoli.RuoliCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.scope.ScopeCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.signal_hub.SemiSignalHubCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.utenti.UtentiCore;
 import org.openspcoop2.web.ctrlstat.servlet.utenti.UtentiCostanti;
@@ -389,6 +390,7 @@ public class GestoreAutorizzazioni {
 			this.servletConfigurazione.addAll(ConfigurazioneCostanti.SERVLET_CONFIGURAZIONE_HANDLERS_SERVIZIO);
 			this.servletConfigurazione.addAll(RemoteStoresCostanti.getServletRuoli());
 			this.servletConfigurazione.addAll(InterazioniAsincronePDNDCostanti.getServletInterazioniAsincronePDND());
+			this.servletConfigurazione.addAll(SemiSignalHubCostanti.getServletSemiSignalHub());
 		}
 		this.servletConfigurazione.addAll(ConfigurazioneCostanti.SERVLET_CONFIGURAZIONE_SISTEMA);
 		this.servletConfigurazione.add(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_EXPORTER);

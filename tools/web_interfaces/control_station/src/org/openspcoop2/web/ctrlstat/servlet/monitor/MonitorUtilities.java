@@ -93,6 +93,10 @@ public class MonitorUtilities {
 		Monitor.checkInitMonitoraggio();
 		return Monitor.driverMonitoraggioLocale.get(sorgenteDati).getInterazioneAsincronaPDND(id);
 	}
+	public static Long getUltimoProgressivoRelativo(String protocollo, String infoAssociata, String sorgenteDati) throws Exception{
+		Monitor.checkInitMonitoraggio();
+		return Monitor.driverMonitoraggioLocale.get(sorgenteDati).getUltimoProgressivoRelativo(protocollo, infoAssociata);
+	}
 	public static int deleteInterazioneAsincronaPDND(long id, String sorgenteDati) throws Exception{
 		Monitor.checkInitMonitoraggio();
 		return Monitor.driverMonitoraggioLocale.get(sorgenteDati).deleteInterazioneAsincronaPDND(id);
