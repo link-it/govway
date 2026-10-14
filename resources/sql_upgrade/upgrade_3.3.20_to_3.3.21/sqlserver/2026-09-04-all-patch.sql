@@ -1,0 +1,1 @@
+../../../../core/deploy/sql/patch/sqlserver/all/2026-09-04-patch.sql

@@ -1,3 +1,14 @@
+2026-10-14  Andrea Poli <apoli@link.it>
+
+	* [InstallerVersioneBinaria]
+	Risolto Bug
+	- SQL Server: negli script di aggiornamento le istruzioni 'ALTER DATABASE' riportavano il segnaposto '@DATABASE@' al posto del nome
+	  del database, impedendo l'esecuzione dell'intero script; viene adesso indicato il nome del database a cui lo script è destinato.
+	- HyperSQL: negli script generati risultava commentata l'inizializzazione delle tabelle 'users_*_init_seq';
+	  l'aggiornamento ripristina inoltre la riga mancante nelle installazioni esistenti.
+	- Gli script SQL completi prodotti in modalità aggiornamento contenevano le utenze delle console con username e password vuoti:
+	  vengono adesso riportati dei segnaposto da valorizzare, con le relative INSERT commentate e le istruzioni in testa allo script.
+
 2026-10-13  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole, GovWayMonitor, ApiRsConfigurazione, ApiRsMonitoraggio]

@@ -1,3 +1,12 @@
+2026-10-14  Andrea Poli <apoli@link.it>
+
+	Su HyperSQL le tabelle 'users_init_seq', 'users_stati_init_seq', 'users_password_init_seq',
+	'users_soggetti_init_seq', 'users_servizi_init_seq' e 'users_ricerche_init_seq' risultavano vuote
+	nelle installazioni esistenti, poiché l'installer ne commentava l'inizializzazione: viene inserita
+	la riga mancante, solo se la tabella è vuota.
+
+	INSERT INTO users_init_seq SELECT NEXT VALUE FOR seq_users FROM (VALUES(0)) WHERE NOT EXISTS (SELECT 1 FROM users_init_seq);
+
 2026-09-04  Andrea Poli <apoli@link.it>
 
 	Rimossi gli indici 'index_users_soggetti_1', 'index_users_servizi_1' e 'index_users_ricerche_1', che duplicavano

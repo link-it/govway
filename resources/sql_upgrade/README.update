@@ -40,10 +40,13 @@ Le patch interne ad ogni directory devono essere applicate nell'ordine crescente
 
 Nel nome del file viene anche indicata l'area di competenza della patch che deve essere ricondotta al corretto schema del database secondo la seguente lista:
 Schema Database | Area
+Tutti gli schemi| all
 Runtime         | runtimePdD
 Tracciamento    | archiviComunicazioni
 Statistiche     | informazioniStatistiche
 Configurazione  | tutte le altre aree: configurazionePdD, registroServizi, users, monitoraggio ...
+
+Le patch dell'area 'all' riguardano tabelle presenti in ogni schema (es. OP2_SEMAPHORE) e devono essere applicate su ciascuno degli schemi utilizzati; in un'installazione con un unico schema vengono quindi applicate una sola volta.
 
 Infine deve essere applicata (indipendentemente dal tipo di database) la patch 'info-patch.sql'.
 

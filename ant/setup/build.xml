@@ -1369,6 +1369,13 @@
 						<include name="*.sql"/>
 					</fileset>
 				</move>
+				<!-- Le utenze delle console non vengono richieste durante un aggiornamento: negli sql completi restano i segnaposto e le INSERT delle utenze vengono commentate -->
+				<replaceregexp match="\A" flags="" replace="-- ATTENZIONE: script generato durante un aggiornamento, nel quale le utenze delle console non vengono richieste.&#10;-- Prima di utilizzarlo per una nuova installazione:&#10;--   - sostituire i segnaposto @PDDCONSOLE_USERNAME@ (utilizzato anche come superuser) e @PDDMONITOR_USERNAME@ con gli username delle utenze;&#10;--   - sostituire i segnaposto @PDDCONSOLE_PASSWORD@ e @PDDMONITOR_PASSWORD@ con le password cifrate in formato SHA-512 crypt;&#10;--   - rimuovere il commento dalle INSERT sulla tabella users.&#10;&#10;">
+					<fileset dir="${tmp_sql_completi}" includes="*_init.sql">
+						<contains text="INSERT INTO users ("/>
+					</fileset>
+				</replaceregexp>
+				<replace dir="${tmp_sql_completi}" includes="*_init.sql" token="INSERT INTO users (" value="-- INSERT INTO users ("/>
 
 				<antcall target="_setup_sql_aggiornamento">
 					<param name="param_db_type" value="${param_db_type}"/>
