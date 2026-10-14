@@ -21535,7 +21535,15 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				}
 				
 				if(component.getRendered()) { // nella versione originale non sono consentiti gli hidden
-					dati.add(component.toDataElement());
+					DataElement deParameter = component.toDataElement();
+					/* Alcuni plugin non indicano un'etichetta per un parametro (label vuota), perché il
+					   campo è visivamente accostato a quello che lo precede: resterebbe però privo di nome
+					   accessibile. Come per i descrittori delle proprietà, il nome si prende dalla nota,
+					   che ne descrive comunque la funzione. */
+					if(deParameter.isLabelEmpty() && StringUtils.isNotEmpty(deParameter.getNote())) {
+						deParameter.setAccessibleLabel(deParameter.getNote());
+					}
+					dati.add(deParameter);
 				}
 				else {
 					Hidden<?> hidden = new Hidden<>(parameter, component.getLoader());

@@ -80,6 +80,18 @@ var mouseButton = {
     var animationTime = 150;
 
     /**
+     * Contenitore dei menu: la regione principale della pagina ('main'), se presente, altrimenti
+     * il body. Aggiunto direttamente al body il menu resta fuori da ogni regione e le tecnologie
+     * assistive non lo collocano nella pagina; il posizionamento non cambia, perché il menu è
+     * 'position: fixed'.
+     * @returns {jQuery}
+     */
+    function contenitoreMenu() {
+        var principale = $('#gw-contenuto');
+        return principale.length ? principale : $('body');
+    }
+
+    /**
      * LOG function.
      * @param data
      * @param isError
@@ -527,9 +539,9 @@ var mouseButton = {
                 if (this.menu().items.length < 1) LOG('No any items added!', true);
 
                 /**
-                 * Add context menu to body and hide.
+                 * Add context menu to the main region (or body) and hide.
                  */
-                $('body').append(this.menu().element);
+                contenitoreMenu().append(this.menu().element);
                 this.menu().element().hide();
 
                 /**
@@ -678,7 +690,7 @@ var mouseButton = {
              */
             'update'    : function () {
                 LOG('Updating context menu.');
-                $('body').append(this.menu().element);
+                contenitoreMenu().append(this.menu().element);
                 this.menu().element().hide();
             }
         }

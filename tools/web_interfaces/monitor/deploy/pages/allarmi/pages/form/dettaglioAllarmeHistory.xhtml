@@ -71,8 +71,8 @@
 						<h:outputLabel styleClass="outputFieldLabel" id="outLabelUtente" value="Utente" rendered="#{not empty allarmiHistoryBean.allarmeHistory.utente}"/>
 						<h:outputText value="#{allarmiHistoryBean.allarmeHistory.utente}" rendered="#{not empty allarmiHistoryBean.allarmeHistory.utente}" id="outUtente"/>
 						
-						<h:outputLabel styleClass="outputFieldLabel" id="outLabelDettaglio" value="Dettaglio" rendered="#{not empty allarmiHistoryBean.allarmeHistory.dettaglioStato}"/>
-						<h:inputTextarea value="#{allarmiHistoryBean.allarmeHistory.dettaglioStato}" readonly="#{true}" 
+						<h:outputLabel styleClass="outputFieldLabel" id="outLabelDettaglio" for="txtDettaglioStato" value="Dettaglio" rendered="#{not empty allarmiHistoryBean.allarmeHistory.dettaglioStato}"/>
+						<h:inputTextarea id="txtDettaglioStato" value="#{allarmiHistoryBean.allarmeHistory.dettaglioStato}" readonly="#{true}" 
 							rendered="#{not empty allarmiHistoryBean.allarmeHistory.dettaglioStato}" styleClass="inputTextAreaLong" rows="7" cols="80"/>
 										
 					</h:panelGrid>

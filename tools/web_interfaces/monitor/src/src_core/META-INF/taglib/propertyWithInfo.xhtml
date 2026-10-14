@@ -37,8 +37,10 @@
 				<ui:insert/>
 				<c:if test="#{not empty dialogInfo}">
 					<div class="iconInfoBox" id="#{id}_divIconInfo">
-				      	<span class="spanIconInfoBox" id="#{id}_spanIconInfo">
-							<i class="material-icons md-24" id="#{id}_icon">#{dialogInfo.buttonIcon}</i>
+				      	<!-- comando reso con la sola icona: ruolo, posizione nel Tab e nome, così la finestra informativa si apre anche da tastiera -->
+				      	<span class="spanIconInfoBox" id="#{id}_spanIconInfo" role="button" tabindex="0" aria-haspopup="dialog"
+				      		aria-label="#{not empty dialogInfo.headerFinestraModale ? dialogInfo.headerFinestraModale : 'Informazioni'}">
+							<i class="material-icons md-24" id="#{id}_icon" aria-hidden="true">#{dialogInfo.buttonIcon}</i>
 						</span>
 						<script type="text/javascript" nonce="#{_csp_random_nonce}">
 							jQuery(document).ready(function() {
@@ -47,6 +49,12 @@
 								jQuery("##{id}_spanIconInfo").click(function(){
 									jQuery("##{id}_dialogInfo_ModalBody").html(#{id}_dialogInfo_hiddenBody_ctn);
 									Richfaces.showModalPanel('#{id}_dialogInfo_Modal');
+				    			});
+								jQuery("##{id}_spanIconInfo").keydown(function(evento){
+									if(evento.which === 13 || evento.which === 32){
+										evento.preventDefault();
+										jQuery(this).click();
+									}
 				    			});
 							 });
 						</script>

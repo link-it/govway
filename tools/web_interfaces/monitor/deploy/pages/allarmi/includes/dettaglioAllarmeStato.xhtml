@@ -20,8 +20,8 @@
 			<h:outputText id="outStatoAttuale" value="#{allarmiBean.labelStato}" rendered="#{allarmiBean.allarme.enabled == 1}"/>
 			<h:outputText id="outStatoAttualeDisabilitato" value="Disabilitato" rendered="#{allarmiBean.allarme.enabled == 0}"/>
 			
-			<h:outputLabel styleClass="outputFieldLabel" id="outLabelDettaglio" value="Dettaglio" rendered="#{not empty allarmiBean.modificaDettaglioStato}"/>
-			<h:inputTextarea value="#{allarmiBean.modificaDettaglioStato}" readonly="#{true}" rendered="#{not empty allarmiBean.modificaDettaglioStato}" styleClass="inputTextAreaLong" rows="7" cols="80"/>
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelDettaglio" for="txtDettaglioStato" value="Dettaglio" rendered="#{not empty allarmiBean.modificaDettaglioStato}"/>
+			<h:inputTextarea id="txtDettaglioStato" value="#{allarmiBean.modificaDettaglioStato}" readonly="#{true}" rendered="#{not empty allarmiBean.modificaDettaglioStato}" styleClass="inputTextAreaLong" rows="7" cols="80"/>
 									
 			<h:outputLabel value="Ultima Verifica" id="dataUltimaModifica" styleClass="outputFieldLabel icon-date" rendered="#{not empty allarmiBean.allarme.lasttimestampUpdate}"/>
 			<h:outputText id="outDataUltimaModifica" value="#{allarmiBean.allarme.lasttimestampUpdate}" rendered="#{not empty allarmiBean.allarme.lasttimestampUpdate}">
@@ -54,8 +54,8 @@
 				<h:outputText value="Criteri Acknowledge" styleClass="subtitle-nopaddingleft-nomarginleft"/>
 			</h:panelGroup>
 						
-			<h:outputLabel styleClass="outputFieldLabel" id="outLabelCriteri" value="Criteri" rendered="#{not empty allarmiBean.allarme.dettaglioAcknowledged}"/>
-			<h:inputTextarea value="#{allarmiBean.allarme.dettaglioAcknowledged}" readonly="#{true}" rendered="#{not empty allarmiBean.allarme.dettaglioAcknowledged}" styleClass="inputTextAreaLong" rows="7" cols="80"/>
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelCriteri" for="txtCriteriAcknowledge" value="Criteri" rendered="#{not empty allarmiBean.allarme.dettaglioAcknowledged}"/>
+			<h:inputTextarea id="txtCriteriAcknowledge" value="#{allarmiBean.allarme.dettaglioAcknowledged}" readonly="#{true}" rendered="#{not empty allarmiBean.allarme.dettaglioAcknowledged}" styleClass="inputTextAreaLong" rows="7" cols="80"/>
 			
 			<h:outputLabel styleClass="outputFieldLabel" id="outLabelAcknowledgde2" value="Acknowledge" rendered="#{allarmiBean.visualizzaAck}"/>
 			<h:outputText id="outAcknowledgde2" value="#{allarmiBean.allarme.acknowledged == 1 ? 'Si' : 'No'}" rendered="#{allarmiBean.visualizzaAck}"/>

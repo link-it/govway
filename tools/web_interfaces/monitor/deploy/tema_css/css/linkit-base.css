@@ -687,6 +687,12 @@ span[id$='iconLink']{
 	color: #C2C2C9 !important;
 }
 
+/* Riepilogo dello stato degli allarmi: il glifo dell'icona, allineato sulla linea di base, risultava
+   più in alto del numero e dell'etichetta accanto; allineato al fondo del testo ne condivide il centro. */
+.rich-panel-reversed [class^="icona-allarme"] > i.material-icons {
+	vertical-align: text-bottom;
+}
+
 .icona-tracingcsv-error {
 	color: #FF2D39 !important;
 }

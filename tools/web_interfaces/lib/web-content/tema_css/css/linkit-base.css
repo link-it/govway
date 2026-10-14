@@ -1972,6 +1972,13 @@ div.txtA_div_propDialog_dec {
 	color: ${body.secondary.color};
 }
 
+/* Sulla riga evidenziata (classe 'active', sfondo del passaggio del mouse) il colore
+   secondario scende sotto il contrasto minimo di 4,5:1 (WCAG 1.4.3): i metadati usano il
+   colore principale del testo. */
+.active .metadatiEntry {
+	color: ${body.color};
+}
+
 .entryErogazione .titoloTags,
 .entryFruizione .titoloTags,
 .entryApi .titoloTags,

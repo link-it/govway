@@ -411,10 +411,32 @@ function gwOrdinaPiediTabella(){
 	}
 }
 
-/* Testo del suggerimento associato a un elemento, se ne ha uno. Il componente tiene
-   sul nodo del suggerimento la propria istanza, con l'id dell'elemento che lo mostra:
-   e' l'unico modo esatto di risalire dall'uno all'altro. Il contenuto e' preso dal
-   riquadro vero e proprio, ripulito dagli script che il componente vi annida. */
+/* Id dell'elemento che mostra il suggerimento. Il componente tiene sul nodo del
+   suggerimento la propria istanza, con quell'id: è l'unico modo esatto di risalire
+   dall'uno all'altro. Dopo un aggiornamento AJAX, però, la passata di accessibilità
+   gira appena il contenuto è inserito, prima che lo script annidato nel suggerimento
+   crei l'istanza: in quel momento l'id si legge dallo script stesso, che lo passa al
+   costruttore ('new ToolTip("<suggerimento>","<elemento>", ...)'). */
+function gwIdElementoDelSuggerimento(suggerimento){
+
+	const istanza = suggerimento.component;
+	if(istanza){
+		return istanza.parentId;
+	}
+
+	const script = suggerimento.querySelectorAll('script');
+	for(let i = 0; i < script.length; i++){
+		const costruttore = /new\s+ToolTip\(\s*"([^"]*)"\s*,\s*"([^"]*)"/.exec(script[i].textContent || '');
+		if(costruttore && costruttore[1] === suggerimento.id){
+			return costruttore[2];
+		}
+	}
+
+	return null;
+}
+
+/* Testo del suggerimento associato a un elemento, se ne ha uno. Il contenuto è preso
+   dal riquadro vero e proprio, ripulito dagli script che il componente vi annida. */
 function gwTestoSuggerimento(elemento){
 
 	if(!elemento.id){
@@ -425,8 +447,7 @@ function gwTestoSuggerimento(elemento){
 
 	for(let i = 0; i < suggerimenti.length; i++){
 
-		const istanza = suggerimenti[i].component;
-		if(!istanza || istanza.parentId !== elemento.id){
+		if(gwIdElementoDelSuggerimento(suggerimenti[i]) !== elemento.id){
 			continue;
 		}
 
@@ -529,6 +550,30 @@ function gwGlifiDecorativi(){
 	}
 }
 
+/* Nelle tabelle i comandi di riga (dettaglio, modifica, acknowledge degli allarmi, ...)
+   sono collegamenti che contengono solo un'icona, con il significato affidato al
+   suggerimento che compare al passaggio del mouse: il suggerimento è nascosto, e il
+   collegamento resta senza nome (WCAG 4.1.2). Il nome viene preso dal suggerimento,
+   come per i comandi della barra del filtro. Un comando che ha già un nome proprio,
+   o che non ha suggerimento, viene lasciato com'è. */
+function gwComandiIconaDaSuggerimento(){
+
+	const comandi = document.querySelectorAll('a[id]:not([aria-label]):not([aria-labelledby]):not([title])');
+
+	for(let i = 0; i < comandi.length; i++){
+
+		const comando = comandi[i];
+		if(!comando.querySelector('i.material-icons, i.material-symbols-outlined') || gwHaAltroTesto(comando, null)){
+			continue;
+		}
+
+		const nome = gwTestoSuggerimento(comando);
+		if(nome){
+			comando.setAttribute('aria-label', nome);
+		}
+	}
+}
+
 /* Vero se il comando conserva del testo anche togliendo il glifo indicato. */
 function gwHaAltroTesto(comando, glifo){
 
@@ -538,8 +583,9 @@ function gwHaAltroTesto(comando, glifo){
 	for(let i = 0; i < glifiCopia.length; i++){
 		glifiCopia[i].remove();
 	}
-	/* script e style stanno nel DOM ma non sono testo letto */
-	const nonTesto = copia.querySelectorAll('script, style');
+	/* script e style stanno nel DOM ma non sono testo letto; il suggerimento annidato nel
+	   comando è nascosto finché non passa il mouse, quindi non ne è il nome */
+	const nonTesto = copia.querySelectorAll('script, style, .rich-tool-tip');
 	for(let i = 0; i < nonTesto.length; i++){
 		nonTesto[i].remove();
 	}
@@ -618,6 +664,9 @@ function gwApplicaCorrezioniAccessibilita(){
 	gwAssociaEtichetteAdiacenti();
 	gwAssociaNomiSlider();
 	gwPulsantiDiSelezione();
+	/* prima dei glifi: un comando che riceve qui il nome non resta muto quando la sua
+	   icona viene nascosta */
+	gwComandiIconaDaSuggerimento();
 	gwGlifiDecorativi();
 	gwComandiBarraFiltro();
 	gwPiedePagina();
