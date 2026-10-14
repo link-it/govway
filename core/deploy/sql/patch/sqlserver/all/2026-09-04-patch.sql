@@ -1,0 +1,1 @@
+DROP INDEX idx_semaphore_1 ON OP2_SEMAPHORE;

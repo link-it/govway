@@ -64,8 +64,8 @@
 	
 		<antcall target="replace_token">
 		    <param name="file" value="${file}"/>
-			<param name="token" value="INSERT INTO users"/>
-			<param name="value" value="-- INSERT INTO users"/>
+			<param name="token" value="INSERT INTO users ("/>
+			<param name="value" value="-- INSERT INTO users ("/>
 		</antcall>
 
 		<concat destfile="${file}" append="yes" >
@@ -77,16 +77,24 @@
 			<filelist dir="${tmp_sql}"
 				files="init_utenzaPddConsole.sql"/>
 		</concat>
-		<antcall target="replace_token">
-		    <param name="file" value="${file}"/>
-			<param name="token" value="@PDDCONSOLE_USERNAME@"/>
-			<param name="value" value="${antinstaller_pddconsole_username}"/>
-		</antcall>
-		<antcall target="replace_token">
-		    <param name="file" value="${file}"/>
-			<param name="token" value="@PDDCONSOLE_PASSWORD@"/>
-			<param name="value" value="${antinstaller_pddconsole_password_md5}"/>
-		</antcall>
+		<!-- Negli sql completi generati durante un aggiornamento le utenze non vengono richieste: si lasciano i segnaposto -->
+		<if>
+			<not>
+				<equals arg1="${sqlForceNuovaInstallazione}" arg2="true"/>
+			</not>
+			<then>
+				<antcall target="replace_token">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="@PDDCONSOLE_USERNAME@"/>
+					<param name="value" value="${antinstaller_pddconsole_username}"/>
+				</antcall>
+				<antcall target="replace_token">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="@PDDCONSOLE_PASSWORD@"/>
+					<param name="value" value="${antinstaller_pddconsole_password_md5}"/>
+				</antcall>
+			</then>
+		</if>
 		<if>
 			<not>
 				<or>
@@ -113,16 +121,23 @@
 			<filelist dir="${tmp_sql}"
 				files="init_utenzaPddMonitor.sql"/>
 		</concat>
-		<antcall target="replace_token">
-		    <param name="file" value="${file}"/>
-			<param name="token" value="@PDDMONITOR_USERNAME@"/>
-			<param name="value" value="${antinstaller_pddmonitor_username}"/>
-		</antcall>
-		<antcall target="replace_token">
-		    <param name="file" value="${file}"/>
-			<param name="token" value="@PDDMONITOR_PASSWORD@"/>
-			<param name="value" value="${antinstaller_pddmonitor_password_md5}"/>
-		</antcall>
+		<if>
+			<not>
+				<equals arg1="${sqlForceNuovaInstallazione}" arg2="true"/>
+			</not>
+			<then>
+				<antcall target="replace_token">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="@PDDMONITOR_USERNAME@"/>
+					<param name="value" value="${antinstaller_pddmonitor_username}"/>
+				</antcall>
+				<antcall target="replace_token">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="@PDDMONITOR_PASSWORD@"/>
+					<param name="value" value="${antinstaller_pddmonitor_password_md5}"/>
+				</antcall>
+			</then>
+		</if>
 	</target>
 	
 	<target name="sql_settings_by_protocol">
@@ -699,6 +714,32 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 			<filelist dir="${tmp_sql}" files="${tmpSqlUpgradeScriptName}.moved"/>
 		</concat>
 		<delete file="${tmp_sql}/${tmpSqlUpgradeScriptName}.moved"/>
+
+		<!-- Nome del database a cui e' destinato lo script, utilizzato dalle istruzioni di inizializzazione (es. sqlserver) -->
+		<var name="sqlUpgradeDbName" value="${antinstaller_dbname}"/>
+		<if>
+			<equals arg1="${nomeSqlUpgrade}" arg2="GovWayConfigurazione.sql"/>
+			<then>
+				<var name="sqlUpgradeDbName" value="${antinstaller_dbname_config}"/>
+			</then>
+		</if>
+		<if>
+			<equals arg1="${nomeSqlUpgrade}" arg2="GovWayTracciamento.sql"/>
+			<then>
+				<var name="sqlUpgradeDbName" value="${antinstaller_dbname_log}"/>
+			</then>
+		</if>
+		<if>
+			<equals arg1="${nomeSqlUpgrade}" arg2="GovWayStatistiche.sql"/>
+			<then>
+				<var name="sqlUpgradeDbName" value="${antinstaller_dbname_stats}"/>
+			</then>
+		</if>
+		<antcall target="replace_token">
+		    <param name="file" value="${tmp_sql}/${tmpSqlUpgradeScriptName}"/>
+			<param name="token" value="@DATABASE@"/>
+			<param name="value" value="${sqlUpgradeDbName}"/>
+		</antcall>
 
 	</target>
 

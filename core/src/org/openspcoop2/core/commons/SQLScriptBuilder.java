@@ -349,7 +349,13 @@ public class SQLScriptBuilder {
 			Arrays.sort(files); // sono ordinati per data
 			for(File upgradeFile : files) {
 				
-				if(upgradeFile.getName().contains("-runtimePdD-")) {
+				if(upgradeFile.getName().contains("-all-")) {
+					// tabelle presenti in ogni database (es. OP2_SEMAPHORE): la patch va riportata su ciascuno di essi
+					if(!configurazioneUpgrade_runtime && !configurazioneUpgrade_config && !configurazioneUpgrade_tracce && !configurazioneUpgrade_statistiche) {
+						continue;
+					}
+				}
+				else if(upgradeFile.getName().contains("-runtimePdD-")) {
 					// runtime
 					if(!configurazioneUpgrade_runtime) {
 						continue;
