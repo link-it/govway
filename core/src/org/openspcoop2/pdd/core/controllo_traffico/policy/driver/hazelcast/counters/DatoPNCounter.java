@@ -100,16 +100,13 @@ public class DatoPNCounter {
 	/**
 	 * Rilascia il contatore in modo sicuro, evitando la 'DistributedObjectDestroyedException'.
 	 *
-	 * Nel CP Subsystem di Hazelcast, una volta chiamato destroy(), il nome dell'oggetto resta "avvelenato"
-	 * e non può essere ricreato: qualsiasi successiva getCPSubsystem().getAtomicLong(stessoNome)
-	 * restituisce un oggetto in stato "destroyed", causando:
-	 * 'com.hazelcast.spi.exception.DistributedObjectDestroyedException: AtomicValue[...] is already destroyed!'
-	 *
-	 * Questo si verifica quando un altro nodo del cluster sta ancora utilizzando il contatore
-	 * nel momento in cui viene distrutto, anche se il destroy avviene su contatori di 2 intervalli indietro (pattern "cestino").
+	 * Un nodo del cluster che sta ancora utilizzando il contatore nel momento in cui viene distrutto,
+	 * anche se il destroy avviene su contatori di 2 intervalli indietro (pattern "cestino"), ottiene
+	 * 'com.hazelcast.spi.exception.DistributedObjectDestroyedException' e deve ricreare il proprio riferimento (vedi failover).
 	 *
 	 * Se il timer di cleanup dei contatori orfani è abilitato (default), il destroy non viene eseguito
-	 * e la pulizia viene delegata al timer (HazelcastManager.cleanupOrphanedAtomicLongCounters).
+	 * e la pulizia viene delegata al timer (HazelcastManager.cleanupOrphanedProxies), che rimuove solamente i contatori
+	 * di intervalli terminati da più della soglia configurata.
 	 * Se il timer è disabilitato, il destroy viene eseguito direttamente;
 	 * eventuali errori vengono solo loggati senza propagare l'eccezione,
 	 * come avviene nel timer di cleanup (HazelcastManager.cleanupOrphanedProxies).

@@ -26,11 +26,9 @@ import java.util.Date;
 import org.openspcoop2.core.controllo_traffico.beans.ActivePolicy;
 import org.openspcoop2.core.controllo_traffico.beans.DatiCollezionati;
 import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicyMapId;
-import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreadsType;
 import org.slf4j.Logger;
 
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.spi.exception.DistributedObjectDestroyedException;
 
 /**
  * 
@@ -44,15 +42,13 @@ public class DatiCollezionatiDistributedAtomicLongAsync extends DatiCollezionati
 
 	private static final long serialVersionUID = 1L;
 
-	public DatiCollezionatiDistributedAtomicLongAsync(Logger log, Date updatePolicyDate, Date gestorePolicyConfigDate, HazelcastInstance hazelcast, IDUnivocoGroupByPolicyMapId groupByPolicyMapId, ActivePolicy activePolicy,
-			PolicyGroupByActiveThreadsType policyType) {
-		super(log, updatePolicyDate, gestorePolicyConfigDate, hazelcast, groupByPolicyMapId, activePolicy, policyType);
+	public DatiCollezionatiDistributedAtomicLongAsync(Logger log, Date updatePolicyDate, Date gestorePolicyConfigDate, HazelcastInstance hazelcast, IDUnivocoGroupByPolicyMapId groupByPolicyMapId, ActivePolicy activePolicy) {
+		super(log, updatePolicyDate, gestorePolicyConfigDate, hazelcast, groupByPolicyMapId, activePolicy);
 	}
 
 
-	public DatiCollezionatiDistributedAtomicLongAsync(Logger log, DatiCollezionati dati, HazelcastInstance hazelcast, IDUnivocoGroupByPolicyMapId groupByPolicyMapId, ActivePolicy activePolicy,
-			PolicyGroupByActiveThreadsType policyType) {
-		super(log, dati, hazelcast, groupByPolicyMapId, activePolicy, policyType);
+	public DatiCollezionatiDistributedAtomicLongAsync(Logger log, DatiCollezionati dati, HazelcastInstance hazelcast, IDUnivocoGroupByPolicyMapId groupByPolicyMapId, ActivePolicy activePolicy) {
+		super(log, dati, hazelcast, groupByPolicyMapId, activePolicy);
 	}
 
 	
@@ -151,36 +147,19 @@ public class DatiCollezionatiDistributedAtomicLongAsync extends DatiCollezionati
 			if(this.richiesteSimultaneeIntervalloSecondi > 0) {
 				checkActiveRequestCounterIntervalChangeForCheck();
 			}
-			try {
-				return this.distributedActiveRequestCounterForCheck.get();
-			} catch (DistributedObjectDestroyedException e) {
-				// Durante lo shutdown o cambio intervallo, il contatore potrebbe essere stato distrutto
-				/**System.out.println("getActiveRequestCounter CATTURATA DistributedObjectDestroyedException: " + e.getClass().getName() + " - " + e.getMessage());*/
-				return super.activeRequestCounter;
-			}
+			return this.distributedActiveRequestCounterForCheck.get();
 		}
 		else {
 			if(this.richiesteSimultaneeIntervalloSecondi > 0) {
 				checkActiveRequestCounterIntervalChangeForStats();
 			}
-			try {
-				return this.distributedActiveRequestCounterForStats.get();
-			} catch (DistributedObjectDestroyedException e) {
-				// Durante lo shutdown o cambio intervallo, il contatore potrebbe essere stato distrutto
-				/**System.out.println("getActiveRequestCounter (stats) CATTURATA DistributedObjectDestroyedException: " + e.getClass().getName() + " - " + e.getMessage());*/
-				return 0L;
-			}
+			return this.distributedActiveRequestCounterForStats.get();
 		}
 	}
 	@Override
 	public Long getPolicyDenyRequestCounter(boolean readRemoteInfo) {
 		if(this.distributedPolicyDenyRequestCounter!=null) {
-			try {
-				return this.distributedPolicyDenyRequestCounter.get();
-			} catch (DistributedObjectDestroyedException e) {
-				// Durante lo shutdown o cambio intervallo, il contatore potrebbe essere stato distrutto
-				return super.policyDenyRequestCounter;
-			}
+			return this.distributedPolicyDenyRequestCounter.get();
 		}
 		else {
 			return null;
@@ -190,12 +169,7 @@ public class DatiCollezionatiDistributedAtomicLongAsync extends DatiCollezionati
 	@Override
 	public Long getPolicyRequestCounter(boolean readRemoteInfo) {
 		if(this.distributedPolicyRequestCounter!=null) {
-			try {
-				return this.distributedPolicyRequestCounter.get();
-			} catch (DistributedObjectDestroyedException e) {
-				// Durante lo shutdown o cambio intervallo, il contatore potrebbe essere stato distrutto
-				return super.policyRequestCounter;
-			}
+			return this.distributedPolicyRequestCounter.get();
 		}
 		else {
 			return null;
@@ -204,12 +178,7 @@ public class DatiCollezionatiDistributedAtomicLongAsync extends DatiCollezionati
 	@Override
 	public Long getPolicyCounter(boolean readRemoteInfo) {
 		if(this.distributedPolicyCounter!=null) {
-			try {
-				return this.distributedPolicyCounter.get();
-			} catch (DistributedObjectDestroyedException e) {
-				// Durante lo shutdown o cambio intervallo, il contatore potrebbe essere stato distrutto
-				return super.policyCounter;
-			}
+			return this.distributedPolicyCounter.get();
 		}
 		else {
 			return null;
@@ -219,12 +188,7 @@ public class DatiCollezionatiDistributedAtomicLongAsync extends DatiCollezionati
 	@Override
 	public Long getPolicyDegradoPrestazionaleRequestCounter(boolean readRemoteInfo) {
 		if(this.distributedPolicyDegradoPrestazionaleRequestCounter!=null) {
-			try {
-				return this.distributedPolicyDegradoPrestazionaleRequestCounter.get();
-			} catch (DistributedObjectDestroyedException e) {
-				// Durante lo shutdown o cambio intervallo, il contatore potrebbe essere stato distrutto
-				return super.policyDegradoPrestazionaleRequestCounter;
-			}
+			return this.distributedPolicyDegradoPrestazionaleRequestCounter.get();
 		}
 		else {
 			return null;
@@ -233,12 +197,7 @@ public class DatiCollezionatiDistributedAtomicLongAsync extends DatiCollezionati
 	@Override
 	public Long getPolicyDegradoPrestazionaleCounter(boolean readRemoteInfo) {
 		if(this.distributedPolicyDegradoPrestazionaleCounter!=null) {
-			try {
-				return this.distributedPolicyDegradoPrestazionaleCounter.get();
-			} catch (DistributedObjectDestroyedException e) {
-				// Durante lo shutdown o cambio intervallo, il contatore potrebbe essere stato distrutto
-				return super.policyDegradoPrestazionaleCounter;
-			}
+			return this.distributedPolicyDegradoPrestazionaleCounter.get();
 		}
 		else {
 			return null;

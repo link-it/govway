@@ -159,13 +159,13 @@ public class BuilderDatiCollezionatiDistributed implements Serializable {
 		
 		switch (this.tipoPolicy) {
 		case HAZELCAST_ATOMIC_LONG:
-			ret = new DatiCollezionatiDistributedAtomicLong(log, dati, this.getHazelcast(), id, activePolicy, this.tipoPolicy);
+			ret = new DatiCollezionatiDistributedAtomicLong(log, dati, this.getHazelcast(), id, activePolicy);
 			break;
 		case HAZELCAST_ATOMIC_LONG_ASYNC:
-			ret = new DatiCollezionatiDistributedAtomicLongAsync(log, dati, this.getHazelcast(), id, activePolicy, this.tipoPolicy);
+			ret = new DatiCollezionatiDistributedAtomicLongAsync(log, dati, this.getHazelcast(), id, activePolicy);
 			break;
 		case HAZELCAST_PNCOUNTER:
-			ret = new DatiCollezionatiDistributedPNCounter(log, dati, this.getHazelcast(), id, activePolicy, this.tipoPolicy);
+			ret = new DatiCollezionatiDistributedPNCounter(log, dati, this.getHazelcast(), id, activePolicy);
 			break;
 		case REDISSON_ATOMIC_LONG:
 			ret = new DatiCollezionatiDistributedRedisAtomicLong(log, dati,  this.getRedisson(), id, activePolicy);
@@ -190,13 +190,13 @@ public class BuilderDatiCollezionatiDistributed implements Serializable {
 				
 		switch (this.tipoPolicy) {
 		case HAZELCAST_ATOMIC_LONG:
-			ret = new DatiCollezionatiDistributedAtomicLong(log, updatePolicyDate, gestorePolicyConfigDate, this.getHazelcast(), id, activePolicy, this.tipoPolicy);
+			ret = new DatiCollezionatiDistributedAtomicLong(log, updatePolicyDate, gestorePolicyConfigDate, this.getHazelcast(), id, activePolicy);
 			break;
 		case HAZELCAST_ATOMIC_LONG_ASYNC:
-			ret = new DatiCollezionatiDistributedAtomicLongAsync(log, updatePolicyDate, gestorePolicyConfigDate, this.getHazelcast(), id, activePolicy, this.tipoPolicy);
+			ret = new DatiCollezionatiDistributedAtomicLongAsync(log, updatePolicyDate, gestorePolicyConfigDate, this.getHazelcast(), id, activePolicy);
 			break;
 		case HAZELCAST_PNCOUNTER:
-			ret = new DatiCollezionatiDistributedPNCounter(log, updatePolicyDate, gestorePolicyConfigDate, this.getHazelcast(), id, activePolicy, this.tipoPolicy);
+			ret = new DatiCollezionatiDistributedPNCounter(log, updatePolicyDate, gestorePolicyConfigDate, this.getHazelcast(), id, activePolicy);
 			break;
 		case REDISSON_ATOMIC_LONG:
 			ret = new DatiCollezionatiDistributedRedisAtomicLong(log, updatePolicyDate, gestorePolicyConfigDate, this.getRedisson(), id, activePolicy);

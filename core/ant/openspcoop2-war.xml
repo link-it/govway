@@ -212,7 +212,7 @@
 				<equals arg1="${hazelcastLibraries}" arg2="true"/>
 			</or>
 			<then>
-				<var name="hazelcast-all_jar" value="hazelcast-5.3.8.jar" />
+				<var name="hazelcast-all_jar" value="hazelcast-5.7.0.jar" />
 				<var name="hazelcast-hibernate_jar" value="hibernate-core-7.3.2.Final.jar" />
 				<var name="hazelcast-jboss-logging_jar" value="jboss-logging-3.6.3.Final.jar" />
 				<var name="hazelcast_properties" value="govway.hazelcast*" />

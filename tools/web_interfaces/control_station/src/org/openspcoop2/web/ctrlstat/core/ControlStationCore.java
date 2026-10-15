@@ -1959,7 +1959,11 @@ public class ControlStationCore {
 	public String getJmxPdDDescrizione(String alias) throws DriverControlStationException, DriverControlStationNotFound {
 		String descrizione = this.jmxPdDDescrizioni.get(alias);
 		if(descrizione==null || "".equals(descrizione)){
-			if(this.singlePdD){
+			if(ConfigurazioneNodiRuntime.ALIAS_DEFAULT.equals(alias)) {
+				// nodo unico non configurato in govway.nodirun.properties: si usa la stessa label della console di monitoraggio
+				descrizione = ConfigurazioneNodiRuntime.DESCRIZIONE_ALIAS_DEFAULT;
+			}
+			else if(this.singlePdD){
 				descrizione = alias; // uso lo stesso nome dell'alias
 			}
 			else{

@@ -30,7 +30,6 @@ import org.openspcoop2.core.controllo_traffico.beans.DatiCollezionati;
 import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicyMapId;
 import org.openspcoop2.core.controllo_traffico.beans.IDatiCollezionatiDistributed;
 import org.openspcoop2.core.controllo_traffico.constants.TipoControlloPeriodo;
-import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreadsType;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.ActiveRequestDistributedIntervalManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.BuilderDatiCollezionatiDistributed;
@@ -52,7 +51,7 @@ import com.hazelcast.spi.exception.DistributedObjectDestroyedException;
  * 
  * 	The updates to the counter are applied locally when invoked on a CRDT replica.
  * 
- *  https://docs.hazelcast.com/hazelcast/5.3/data-structures/pn-counter
+ *  https://docs.hazelcast.com/hazelcast/5.7/data-structures/pn-counter
  *
  * Attenzione:	Nel caso si diminuisse il numero delle repliche per il PNCounter, che di default è a INTEGER.MAX_VALUE per cui ogni membro ha la sua replica, 
  *	gli aggiornamenti potrebbero non raggiungere il membro che ha fatto partire la modifica, sollevando una ConsistencyLostException.
@@ -72,7 +71,6 @@ public class DatiCollezionatiDistributedPNCounter extends DatiCollezionati imple
 	
 	private final transient org.openspcoop2.utils.Semaphore lock = new org.openspcoop2.utils.Semaphore("DatiCollezionatiDistributedPNCounter");
 
-	private final transient PolicyGroupByActiveThreadsType policyType;
 	private final transient HazelcastInstance hazelcast;
 	private final IDUnivocoGroupByPolicyMapId groupByPolicyMapId;
 	private final int groupByPolicyMapIdHashCode;
@@ -140,11 +138,9 @@ public class DatiCollezionatiDistributedPNCounter extends DatiCollezionati imple
 		return PNCOUNTER_PREFIX+this.groupByPolicyMapIdHashCode+"-"+name+t+configDate+"-rl"; // non modificare inizio e fine poichè configurato in hazelcast config
 	}
 	
-	public DatiCollezionatiDistributedPNCounter(Logger log, Date updatePolicyDate, Date gestorePolicyConfigDate, HazelcastInstance hazelcast, IDUnivocoGroupByPolicyMapId groupByPolicyMapId, ActivePolicy activePolicy,
-			PolicyGroupByActiveThreadsType policyType) {
+	public DatiCollezionatiDistributedPNCounter(Logger log, Date updatePolicyDate, Date gestorePolicyConfigDate, HazelcastInstance hazelcast, IDUnivocoGroupByPolicyMapId groupByPolicyMapId, ActivePolicy activePolicy) {
 		super(updatePolicyDate, gestorePolicyConfigDate);
 
-		this.policyType = policyType;
 		this.hazelcast = hazelcast;
 		this.groupByPolicyMapId = groupByPolicyMapId;
 		this.groupByPolicyMapIdHashCode = this.groupByPolicyMapId.hashCode();
@@ -191,15 +187,13 @@ public class DatiCollezionatiDistributedPNCounter extends DatiCollezionati imple
 		this.initialized = true;
 	}
 
-	public DatiCollezionatiDistributedPNCounter(Logger log, DatiCollezionati dati, HazelcastInstance hazelcast, IDUnivocoGroupByPolicyMapId groupByPolicyMapId, ActivePolicy activePolicy,
-			PolicyGroupByActiveThreadsType policyType) {
+	public DatiCollezionatiDistributedPNCounter(Logger log, DatiCollezionati dati, HazelcastInstance hazelcast, IDUnivocoGroupByPolicyMapId groupByPolicyMapId, ActivePolicy activePolicy) {
 		super(dati.getUpdatePolicyDate(), dati.getGestorePolicyConfigDate());
 
 		if(log!=null) {
 			// nop
 		}
 
-		this.policyType = policyType;
 		
 		// Inizializzo il padre
 		dati.setValuesIn(this, false);
@@ -315,8 +309,7 @@ public class DatiCollezionatiDistributedPNCounter extends DatiCollezionati imple
 					ATOMIC_LONG_PREFIX+
 					this.groupByPolicyMapIdHashCode+
 					BuilderDatiCollezionatiDistributed.DISTRUBUITED_POLICY_DATE+
-					(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1),
-					this.policyType);
+					(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1));
 		}
 		return null;
 	}
@@ -326,8 +319,7 @@ public class DatiCollezionatiDistributedPNCounter extends DatiCollezionati imple
 					ATOMIC_LONG_PREFIX+
 					this.groupByPolicyMapIdHashCode+
 					BuilderDatiCollezionatiDistributed.DISTRUBUITED_UPDATE_POLICY_DATE+
-					(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1),
-					this.policyType);
+					(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1));
 		}
 		return null;
 	}
@@ -337,8 +329,7 @@ public class DatiCollezionatiDistributedPNCounter extends DatiCollezionati imple
 					ATOMIC_LONG_PREFIX+
 					this.groupByPolicyMapIdHashCode+
 					BuilderDatiCollezionatiDistributed.DISTRUBUITED_POLICY_DEGRADO_PRESTAZIONALE_DATE+
-					(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1),
-					this.policyType);
+					(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1));
 		}
 		return null;
 	}
@@ -351,8 +342,7 @@ public class DatiCollezionatiDistributedPNCounter extends DatiCollezionati imple
 					this.groupByPolicyMapIdHashCode+
 					BuilderDatiCollezionatiDistributed.DISTRUBUITED_POLICY_DATE+
 					"activeRequest"+
-					(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1),
-					this.policyType);
+					(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1));
 		}
 		return null;
 	}

@@ -56,6 +56,8 @@ public class ConfigurazioneNodiRuntime {
 	public static final String RESOURCE_TIPOLOGIA_ACCESSO_GOVWAY = "govway";
 	
 	public static final String ALIAS_DEFAULT = "pdd";
+	/** Descrizione utilizzata per l'alias di default se non ridefinita nella configurazione (stessa label utilizzata dalla console di monitoraggio) */
+	public static final String DESCRIZIONE_ALIAS_DEFAULT = "Gateway";
 	
 	private static Map<String, ConfigurazioneNodiRuntime> staticInstanceMap = new HashMap<>();
 	private static final String PREFIX_DEFAULT = "";

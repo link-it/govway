@@ -1,9 +1,9 @@
 /*
- * GovWay - A customizable API Gateway 
+ * GovWay - A customizable API Gateway
  * https://govway.org
- * 
- * Copyright (c) 2005-2026 Link.it srl (https://link.it). 
- * 
+ *
+ * Copyright (c) 2005-2026 Link.it srl (https://link.it).
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
  * the Free Software Foundation.
@@ -22,22 +22,31 @@ package org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.coun
 
 import java.util.concurrent.CompletionStage;
 
-import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreadsType;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
-import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.HazelcastManager;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
-import org.openspcoop2.utils.Utilities;
-import org.openspcoop2.utils.UtilsRuntimeException;
 import org.slf4j.Logger;
 
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.MemberLeftException;
-import com.hazelcast.cp.IAtomicLong;
-import com.hazelcast.spi.exception.DistributedObjectDestroyedException;
-import com.hazelcast.spi.exception.TargetNotMemberException;
+import com.hazelcast.map.IMap;
 
 /**
- * DatoAtomicLong
+ * Contatore distribuito di tipo 'long' con operazioni atomiche, utilizzato dalle policy
+ * HAZELCAST_ATOMIC_LONG, HAZELCAST_ATOMIC_LONG_ASYNC e, per le date di coordinamento, HAZELCAST_PNCOUNTER.
+ *
+ * Il contatore è una chiave della IMap {@link #MAP_NAME} (configurata da HazelcastManager) e ogni modifica
+ * viene effettuata tramite gli EntryProcessor di {@link DatoAtomicLongEntryProcessors}, eseguiti in modo esclusivo
+ * sul member proprietario della partizione della chiave e replicati in modo sincrono sul backup.
+ * Una chiave non presente equivale al valore 0, come per un contatore appena creato.
+ *
+ * Rispetto all'IAtomicLong del CP Subsystem (utilizzato fino alla versione 5.3 di Hazelcast, nella Community Edition
+ * solo in modalità 'unsafe'), i contatori sono distribuiti su tutte le partizioni del cluster
+ * e un contatore eliminato può essere ricreato.
+ *
+ * I contatori legati ad un intervallo temporale (nome contenente '-i-') vengono creati con una scadenza pari alla soglia
+ * 'org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST.orphanedProxy.threshold', ricalcolata ad ogni aggiornamento:
+ * in questo modo vengono rimossi anche i contatori non eliminati esplicitamente (es. contatori ricreati da un nodo
+ * che non ha ancora rilevato il cambio di intervallo, o non eliminati a causa del riavvio del nodo).
+ * I contatori di coordinamento (senza intervallo) non hanno scadenza e vengono eliminati con la policy.
  *
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$
@@ -46,270 +55,79 @@ import com.hazelcast.spi.exception.TargetNotMemberException;
 
 public class DatoAtomicLong {
 
-	private HazelcastInstance hazelcast;
-	private String name;
+	/** IMap contenente i contatori; non deve corrispondere al pattern 'hazelcast-*-rate-limiting' utilizzato dalle altre policy */
+	public static final String MAP_NAME = "govway-atomiclong-counters";
 
-	private IAtomicLong counter;
+	private static final String INTERVAL_MARKER = "-i-";
 
-	private int failover = -1;
-	private int failoverCheckEveryMs = -1;
-
-	private Logger logControlloTraffico;
-
-	// Per il registry IMap (cleanup degli orfani)
-	private PolicyGroupByActiveThreadsType policyType;
-	private boolean registryEnabled = false;
-	private boolean cleanupTimerEnabled = false;
+	private final IMap<String, Long> map;
+	private final String name;
+	private final long ttlMs;
 
 	public DatoAtomicLong(HazelcastInstance hazelcast, String name) {
-		this(hazelcast, name, null);
-	}
-
-	public DatoAtomicLong(HazelcastInstance hazelcast, String name, PolicyGroupByActiveThreadsType policyType) {
-		this.hazelcast = hazelcast;
+		this.map = hazelcast.getMap(MAP_NAME);
 		this.name = name;
-		this.policyType = policyType;
-		this.initCounter();
-		OpenSPCoop2Properties op2Props = OpenSPCoop2Properties.getInstance();
-		this.failover = op2Props.getHazelcastCPSubsystemDistributedObjectDestroyedExceptionFailover();
-		this.failoverCheckEveryMs = op2Props.getHazelcastCPSubsystemDistributedObjectDestroyedExceptionFailoverCheckEveryMs();
-		this.logControlloTraffico = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(op2Props.isControlloTrafficoDebug());
-
-		// Registra nel registry se abilitato e il tipo è specificato
-		if(this.policyType != null && op2Props.isControlloTrafficoGestorePolicyInMemoryHazelcastAtomicLongRegistryEnabled()) {
-			this.registryEnabled = true;
-			HazelcastManager.registerAtomicLongCounter(this.policyType, this.name);
+		if(name.contains(INTERVAL_MARKER)) {
+			Long threshold = OpenSPCoop2Properties.getInstance().getControlloTrafficoGestorePolicyInMemoryHazelcastOrphanedProxyThresholdMs();
+			this.ttlMs = threshold!=null ? threshold.longValue() : -1;
 		}
-		this.cleanupTimerEnabled = op2Props.isControlloTrafficoGestorePolicyInMemoryHazelcastOrphanedProxiesCleanupEnabled();
+		else {
+			this.ttlMs = -1;
+		}
 	}
-	private void initCounter() {
-		this.counter = this.hazelcast.getCPSubsystem().getAtomicLong(this.name);
-	}
-	
+
 	public String getName() {
 		return this.name;
 	}
-	
+
 	public void set(long value) {
-		process(AtomicLongOperation.SET, value, -1);
+		this.map.executeOnKey(this.name, new DatoAtomicLongEntryProcessors.SetValue(value, this.ttlMs));
 	}
 	public long get() {
-		AtomicLongResponse r = process(AtomicLongOperation.GET, -1, -1);
-		return r!=null ? r.valueL : -1; // else non dovrebbe succedere mai
+		Long v = this.map.get(this.name);
+		return v!=null ? v.longValue() : 0l;
 	}
 	public long addAndGet(long value) {
-		AtomicLongResponse r = process(AtomicLongOperation.ADD_AND_GET, value, -1);
-		return r!=null ? r.valueL : -1; // else non dovrebbe succedere mai
+		return this.map.executeOnKey(this.name, new DatoAtomicLongEntryProcessors.AddAndGet(value, this.ttlMs));
 	}
 	public long incrementAndGet() {
-		AtomicLongResponse r = process(AtomicLongOperation.INCREMENT_AND_GET, -1, -1);
-		return r!=null ? r.valueL : -1; // else non dovrebbe succedere mai
+		return addAndGet(1);
 	}
 	public long decrementAndGet() {
-		AtomicLongResponse r = process(AtomicLongOperation.DECREMENT_AND_GET, -1, -1);
-		return r!=null ? r.valueL : -1; // else non dovrebbe succedere mai
+		return addAndGet(-1);
 	}
 	public CompletionStage<Long> addAndGetAsync(long value) {
-		AtomicLongResponse r = process(AtomicLongOperation.ADD_AND_GET_ASYNC, value, -1);
-		return r!=null ? r.valueAsync : null; // else non dovrebbe succedere mai
+		return this.map.submitToKey(this.name, new DatoAtomicLongEntryProcessors.AddAndGet(value, this.ttlMs));
 	}
 	public CompletionStage<Long> incrementAndGetAsync() {
-		AtomicLongResponse r = process(AtomicLongOperation.INCREMENT_AND_GET_ASYNC, -1, -1);
-		return r!=null ? r.valueAsync : null; // else non dovrebbe succedere mai
+		return addAndGetAsync(1);
 	}
 	public CompletionStage<Long> decrementAndGetAsync() {
-		AtomicLongResponse r = process(AtomicLongOperation.DECREMENT_AND_GET_ASYNC, -1, -1);
-		return r!=null ? r.valueAsync : null; // else non dovrebbe succedere mai
+		return addAndGetAsync(-1);
 	}
 	public CompletionStage<Long> getAsync() {
-		AtomicLongResponse r = process(AtomicLongOperation.GET_ASYNC, -1, -1);
-		return r!=null ? r.valueAsync : null; // else non dovrebbe succedere mai
+		return this.map.getAsync(this.name).thenApply(v -> v!=null ? v : 0l);
 	}
 	public boolean compareAndSet(long compare, long set) {
-		AtomicLongResponse r = process(AtomicLongOperation.COMPARE_AND_SET, compare, set);
-		return r!=null && r.valueB; // else non dovrebbe succedere mai
+		Boolean r = this.map.executeOnKey(this.name, new DatoAtomicLongEntryProcessors.CompareAndSet(compare, set, this.ttlMs));
+		return r!=null && r.booleanValue();
 	}
 	public void destroy() {
-		process(AtomicLongOperation.DESTROY, -1, -1);
-		// Deregistra dal registry dopo aver distrutto con successo
-		// Se destroy fallisce (lancia eccezione), il contatore rimane nel registry per tentativi futuri
-		if(this.registryEnabled && this.policyType != null) {
-			HazelcastManager.unregisterAtomicLongCounter(this.policyType, this.name);
-		}
+		this.map.delete(this.name);
 	}
 	/**
-	 * Rilascia il contatore in modo sicuro, evitando la 'DistributedObjectDestroyedException'.
+	 * Elimina il contatore registrando nel log un eventuale errore, senza propagarlo al chiamante.
 	 *
-	 * Nel CP Subsystem di Hazelcast, una volta chiamato destroy(), il nome dell'oggetto resta "avvelenato"
-	 * e non può essere ricreato: qualsiasi successiva getCPSubsystem().getAtomicLong(stessoNome)
-	 * restituisce un oggetto in stato "destroyed", causando:
-	 * 'com.hazelcast.spi.exception.DistributedObjectDestroyedException: AtomicValue[...] is already destroyed!'
-	 *
-	 * Questo si verifica quando un altro nodo del cluster sta ancora utilizzando il contatore
-	 * nel momento in cui viene distrutto, anche se il destroy avviene su contatori di 2 intervalli indietro (pattern "cestino").
-	 *
-	 * Se il timer di cleanup dei contatori orfani è abilitato (default), il destroy non viene eseguito
-	 * e la pulizia viene delegata al timer (HazelcastManager.cleanupOrphanedAtomicLongCounters).
-	 * Se il timer è disabilitato, il destroy viene eseguito direttamente;
-	 * eventuali errori vengono solo loggati senza propagare l'eccezione,
-	 * come avviene nel timer di cleanup (HazelcastManager.cleanupOrphanedAtomicLongCounters).
+	 * Un nodo che utilizza ancora il contatore (es. non ha ancora rilevato il cambio di intervallo) lo ricrea al successivo aggiornamento
+	 * partendo da 0: il contatore ricreato appartiene ad un intervallo già concluso e viene rimosso alla scadenza.
 	 */
 	public void destroySafe() {
-		if(this.cleanupTimerEnabled) {
-			return;
-		}
 		try {
 			destroy();
 		} catch(Throwable t) {
-			this.logControlloTraffico.error("[Hazelcast-IAtomicLong-"+this.name+"] destroySafe non riuscito: "+t.getMessage(),t);
+			Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(OpenSPCoop2Properties.getInstance().isControlloTrafficoDebug());
+			log.error("[Hazelcast-AtomicLong-"+this.name+"] destroySafe non riuscito: "+t.getMessage(),t);
 		}
 	}
 
-	private AtomicLongResponse process(AtomicLongOperation op, long arg1, long arg2) {
-		String prefix = "[Hazelcast-IAtomicLong-"+this.name+" operation:"+op+"] ";
-		if(this.failover>0) {
-			return processFailOver(prefix, op, arg1, arg2);
-		}
-		else {
-			return operation(prefix, op, arg1, arg2);
-		}
-	}
-	private AtomicLongResponse processFailOver(String prefix, AtomicLongOperation op, long arg1, long arg2) {
-		boolean success = false;
-		RuntimeException eFinal = null;
-		AtomicLongResponse v = null;
-		for (int i = 0; i < this.failover; i++) {
-			try {
-				if(i>0 && this.failoverCheckEveryMs>0) {
-					Utilities.sleep(this.failoverCheckEveryMs);
-					initCounter();
-				}
-				v = operation(prefix, op, arg1, arg2);
-				success=true;
-				break;
-			} catch (DistributedObjectDestroyedException e) {
-				// Nel CP Subsystem, un nome distrutto è permanentemente avvelenato:
-				// initCounter() restituisce sempre un oggetto in stato "destroyed".
-				// Fail-fast: inutile riprovare, evita latenza (~4.5s) e log massivi.
-				this.logControlloTraffico.debug("{}contatore distrutto (fail-fast, nessun retry): {}", prefix, e.getMessage());
-				throw e;
-			} catch (RuntimeException e) {
-				// Controlla se è causata da MemberLeftException o TargetNotMemberException
-				Throwable cause = e.getCause();
-				String exceptionName = e.getClass().getSimpleName();
-				String causeName = cause != null ? cause.getClass().getSimpleName() : "null";
-
-				if (isMemberRelatedError(e, cause, exceptionName, causeName)) {
-					eFinal = e;
-					if(i==0) {
-						this.logControlloTraffico.error("{}errore relativo a membro cluster ({}/{}) durante operazione (verrà riprovata l'operazione): {}", prefix, exceptionName, causeName, e.getMessage(),e);
-					}
-					else {
-						this.logControlloTraffico.error("{}il tenativo i={} è fallito per errore membro cluster ({}/{}): {}", prefix, i, exceptionName, causeName, e.getMessage(),e);
-					}
-				} else {
-					// Se non è un errore relativo ai membri, rilancia immediatamente
-					throw e;
-				}
-			}
-		}
-		if(!success) {
-			throwDistributedObjectDestroyedException(prefix, eFinal);
-		}
-		return v;
-	}
-
-	private boolean isMemberRelatedError(Throwable e, Throwable cause, String exceptionName, String causeName) {
-		// Controlla prima con instanceof per verifica diretta del tipo
-		if (e instanceof MemberLeftException || e instanceof TargetNotMemberException) {
-			return true;
-		}
-		if (cause instanceof MemberLeftException || cause instanceof TargetNotMemberException) {
-			return true;
-		}
-
-		// Controlla per nome della classe (fallback se instanceof non funziona)
-		if (exceptionName.contains("MemberLeft") || exceptionName.contains("TargetNotMember")) {
-			return true;
-		}
-		if (causeName.contains("MemberLeft") || causeName.contains("TargetNotMember")) {
-			return true;
-		}
-
-		// Controlla anche nel messaggio dell'eccezione
-		String message = e.getMessage();
-		return message != null && (message.contains("Member") && message.contains("left cluster") ||
-		                        message.contains("Not Member") ||
-		                        message.contains("target") && message.contains("not") && message.contains("member"));
-	}
-
-	private void throwDistributedObjectDestroyedException(String prefix, RuntimeException eFinal) {
-		String msg = prefix+"tutti i tentativi di eseguire l'operazione sul contatore sono falliti";
-		this.logControlloTraffico.error(msg);
-		if(eFinal!=null) {
-			throw eFinal;
-		}
-		else {
-			throw new UtilsRuntimeException("tutti i tentativi di eseguire l'operazione sul contatore sono falliti");
-		}
-	}
-	
-	private AtomicLongResponse operation(String prefix, AtomicLongOperation op, long arg1, long arg2){
-		switch (op) {
-		case SET:
-			this.counter.set(arg1);
-			return null;
-		case GET:
-			return new AtomicLongResponse(this.counter.get());
-		case GET_ASYNC:
-			return new AtomicLongResponse(this.counter.getAsync());
-		case ADD_AND_GET:
-			return new AtomicLongResponse(this.counter.addAndGet(arg1));
-		case INCREMENT_AND_GET:
-			return new AtomicLongResponse(this.counter.incrementAndGet());
-		case DECREMENT_AND_GET:
-			return new AtomicLongResponse(this.counter.decrementAndGet());
-		case ADD_AND_GET_ASYNC:
-			return new AtomicLongResponse(this.counter.addAndGetAsync(arg1));
-		case INCREMENT_AND_GET_ASYNC:
-			return new AtomicLongResponse(this.counter.incrementAndGetAsync());
-		case DECREMENT_AND_GET_ASYNC:
-			return new AtomicLongResponse(this.counter.decrementAndGetAsync());
-		case COMPARE_AND_SET:
-			return new AtomicLongResponse(this.counter.compareAndSet(arg1, arg2));
-		case DESTROY:
-			try {
-				this.counter.destroy();
-			}catch(Throwable e) {
-				this.logControlloTraffico.error("{}destroy non riuscito: {}", prefix, e.getMessage(),e);
-				throw e;
-			}
-			return null;		
-		}
-		return null;
-	}
-}
-
-enum AtomicLongOperation {
-	SET,
-	GET, GET_ASYNC,
-	ADD_AND_GET, INCREMENT_AND_GET, DECREMENT_AND_GET,
-	ADD_AND_GET_ASYNC, INCREMENT_AND_GET_ASYNC, DECREMENT_AND_GET_ASYNC,
-	COMPARE_AND_SET,
-	DESTROY
-}
-
-class AtomicLongResponse{
-	AtomicLongResponse(long l){
-		this.valueL = l;
-	}
-	AtomicLongResponse(boolean b){
-		this.valueB = b;
-	}
-	AtomicLongResponse(CompletionStage<Long> v){
-		this.valueAsync = v;
-	}
-	long valueL;	
-	boolean valueB;
-	CompletionStage<Long> valueAsync;
 }

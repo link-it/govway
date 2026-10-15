@@ -31,7 +31,6 @@ import org.openspcoop2.core.controllo_traffico.beans.DatiCollezionati;
 import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicyMapId;
 import org.openspcoop2.core.controllo_traffico.beans.IDatiCollezionatiDistributed;
 import org.openspcoop2.core.controllo_traffico.constants.TipoControlloPeriodo;
-import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreadsType;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.ActiveRequestDistributedIntervalManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.BuilderDatiCollezionatiDistributed;
@@ -40,7 +39,6 @@ import org.openspcoop2.utils.SemaphoreLock;
 import org.slf4j.Logger;
 
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.spi.exception.DistributedObjectDestroyedException;
 
 /**
  * Scelgo questa implementazione, dove la versione distribuita eredita da DatiCollezionati e replica
@@ -49,15 +47,9 @@ import com.hazelcast.spi.exception.DistributedObjectDestroyedException;
  * nella ram del nodo locale, evitando così che il PolicyVerifier o altre classi che utilizzano i DatiCollezionatiDistributed vadano 
  * a fare richieste remote, ottenendo valori che non sono quelli che ci si aspettava dopo la richiesta.
  * 
- *  CP_SUBSYSTEM (https://docs.hazelcast.com/hazelcast/5.3/cp-subsystem/cp-subsystem)
- *	Sottosistema hazelcast che garantisce consistenza e partizionamento per gli IAtomicLong e altri oggetti distribuiti (Non le MAP)
- *	Richide almeno tre nodi nel cluster.
- * - Strong Consistency: La vista dei dati è la stessa per tutti i nodi del cluster, garantida dal sistema CP
- * - Weak Consistency: Dopo un certo lasso di tempo senza aggiornamenti, la vista dei dati diventa la stessa per tutti i nodi del cluster
- * - Partitioning:
- *  	A partition is a communications break within a distributed system—a lost or temporarily delayed connection between two nodes.
- *   	Partition tolerance means that the cluster must continue to work despite any number of communication breakdowns between nodes in the system.	
- * 
+ * I contatori distribuiti sono gestiti tramite {@link DatoAtomicLong}: ogni contatore è una chiave della IMap {@link DatoAtomicLong#MAP_NAME}
+ * aggiornata in modo atomico tramite EntryProcessor sul member proprietario della partizione e replicata in modo sincrono sul backup.
+ *
  * @author Francesco Scarlato (scarlato@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
@@ -70,8 +62,6 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 	public static final String COUNTER_PREFIX = "al-";
 	
 	private final transient org.openspcoop2.utils.Semaphore lock = new org.openspcoop2.utils.Semaphore("DatiCollezionatiDistributedAtomicLong");
-
-	protected final transient PolicyGroupByActiveThreadsType policyType;
 	private final transient HazelcastInstance hazelcast;
 	private final IDUnivocoGroupByPolicyMapId groupByPolicyMapId;
 	private final int groupByPolicyMapIdHashCode;
@@ -125,11 +115,9 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 		return OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(debug);
 	}
 
-	public DatiCollezionatiDistributedAtomicLong(Logger log, Date updatePolicyDate, Date gestorePolicyConfigDate, HazelcastInstance hazelcast, IDUnivocoGroupByPolicyMapId groupByPolicyMapId, ActivePolicy activePolicy,
-			PolicyGroupByActiveThreadsType policyType) {
+	public DatiCollezionatiDistributedAtomicLong(Logger log, Date updatePolicyDate, Date gestorePolicyConfigDate, HazelcastInstance hazelcast, IDUnivocoGroupByPolicyMapId groupByPolicyMapId, ActivePolicy activePolicy) {
 		super(updatePolicyDate, gestorePolicyConfigDate);
 
-		this.policyType = policyType;
 		this.hazelcast = hazelcast;
 		this.groupByPolicyMapId = groupByPolicyMapId;
 		this.groupByPolicyMapIdHashCode = this.groupByPolicyMapId.hashCode();
@@ -176,8 +164,7 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 		this.initialized = true;
 	}
 		
-	public DatiCollezionatiDistributedAtomicLong(Logger log, DatiCollezionati dati, HazelcastInstance hazelcast, IDUnivocoGroupByPolicyMapId groupByPolicyMapId, ActivePolicy activePolicy,
-			PolicyGroupByActiveThreadsType policyType) {
+	public DatiCollezionatiDistributedAtomicLong(Logger log, DatiCollezionati dati, HazelcastInstance hazelcast, IDUnivocoGroupByPolicyMapId groupByPolicyMapId, ActivePolicy activePolicy) {
 		super(dati.getUpdatePolicyDate(), dati.getGestorePolicyConfigDate());
 
 		if(log!=null) {
@@ -187,7 +174,6 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 		// Inizializzo il padre con i valori in RAM, dopo uso 'super' per essere  sicuro di usare quelli
 		dati.setValuesIn(this, false);
 
-		this.policyType = policyType;
 		this.hazelcast = hazelcast;
 		this.groupByPolicyMapId = groupByPolicyMapId;
 		this.groupByPolicyMapIdHashCode = this.groupByPolicyMapId.hashCode();
@@ -299,8 +285,7 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 					COUNTER_PREFIX+
 					this.groupByPolicyMapIdHashCode+
 					BuilderDatiCollezionatiDistributed.DISTRUBUITED_POLICY_DATE+
-					(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1),
-					this.policyType);
+					(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1));
 		}
 		return null;
 	}
@@ -310,8 +295,7 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 					COUNTER_PREFIX+
 					this.groupByPolicyMapIdHashCode+
 					BuilderDatiCollezionatiDistributed.DISTRUBUITED_UPDATE_POLICY_DATE+
-					(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1),
-					this.policyType);
+					(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1));
 		}
 		return null;
 	}
@@ -321,8 +305,7 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 					COUNTER_PREFIX+
 					this.groupByPolicyMapIdHashCode+
 					BuilderDatiCollezionatiDistributed.DISTRUBUITED_POLICY_DEGRADO_PRESTAZIONALE_DATE+
-					(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1),
-					this.policyType);
+					(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1));
 		}
 		return null;
 	}
@@ -335,8 +318,7 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 					this.groupByPolicyMapIdHashCode+
 					BuilderDatiCollezionatiDistributed.DISTRUBUITED_POLICY_DATE+ // riuso lo stesso suffisso
 					"activeRequest"+
-					(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1),
-					this.policyType);
+					(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1));
 		}
 		return null;
 	}
@@ -394,15 +376,13 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 					BuilderDatiCollezionatiDistributed.DISTRUBUITED_INTERVAL_ACTIVE_REQUEST_COUNTER+
 					intervalDate+
 					BuilderDatiCollezionatiDistributed.DISTRUBUITED_SUFFIX_CONFIG_DATE+
-					(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1),
-					this.policyType);
+					(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1));
 		} else {
 			return new DatoAtomicLong(this.hazelcast,
 					COUNTER_PREFIX+
 					this.groupByPolicyMapIdHashCode+
 					BuilderDatiCollezionatiDistributed.DISTRUBUITED_ACTIVE_REQUEST_COUNTER+
-					(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1),
-					this.policyType);
+					(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1));
 		}
 	}
 
@@ -416,8 +396,7 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 					BuilderDatiCollezionatiDistributed.DISTRUBUITED_INTERVAL_POLICY_REQUEST_COUNTER+
 					policyDate+
 					BuilderDatiCollezionatiDistributed.DISTRUBUITED_SUFFIX_CONFIG_DATE+
-					(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1),
-					this.policyType);
+					(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1));
 			/**System.out.println("INIT DATA["+org.openspcoop2.utils.date.DateManager.getDate()+"]["+org.openspcoop2.utils.date.DateManager.getTimeMillis()+"] cout-> ["+this.distributedPolicyRequestCounter.getName()+"]");*/
 
 			this.distributedPolicyDenyRequestCounter = new DatoAtomicLong(this.hazelcast,
@@ -426,8 +405,7 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 					BuilderDatiCollezionatiDistributed.DISTRUBUITED_INTERVAL_POLICY_DENY_REQUEST_COUNTER+
 					policyDate+
 					BuilderDatiCollezionatiDistributed.DISTRUBUITED_SUFFIX_CONFIG_DATE+
-					(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1),
-					this.policyType);
+					(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1));
 			/**System.out.println("INIT DATA["+org.openspcoop2.utils.date.DateManager.getDate()+"]["+org.openspcoop2.utils.date.DateManager.getTimeMillis()+"] cout-> ["+this.distributedPolicyDenyRequestCounter.getName()+"]");*/
 
 			if(this.tipoRisorsa==null || !isRisorsaContaNumeroRichieste(this.tipoRisorsa)){
@@ -437,8 +415,7 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 						BuilderDatiCollezionatiDistributed.DISTRUBUITED_INTERVAL_POLICY_COUNTER+
 						policyDate+
 						BuilderDatiCollezionatiDistributed.DISTRUBUITED_SUFFIX_CONFIG_DATE+
-						(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1),
-						this.policyType);
+						(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1));
 				/**System.out.println("INIT DATA["+org.openspcoop2.utils.date.DateManager.getDate()+"]["+org.openspcoop2.utils.date.DateManager.getTimeMillis()+"] cout-> ["+this.distributedPolicyCounter.getName()+"]");*/
 			}
 		}
@@ -453,8 +430,7 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 					BuilderDatiCollezionatiDistributed.DISTRUBUITED_INTERVAL_POLICY_DEGRADO_PRESTAZIONALE_COUNTER+
 					policyDate+
 					BuilderDatiCollezionatiDistributed.DISTRUBUITED_SUFFIX_CONFIG_DATE+
-					(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1),
-					this.policyType);
+					(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1));
 
 			this.distributedPolicyDegradoPrestazionaleRequestCounter = new DatoAtomicLong(this.hazelcast,
 					COUNTER_PREFIX+
@@ -462,8 +438,7 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 					BuilderDatiCollezionatiDistributed.DISTRUBUITED_INTERVAL_POLICY_DEGRADO_PRESTAZIONALE_REQUEST_COUNTER+
 					policyDate+
 					BuilderDatiCollezionatiDistributed.DISTRUBUITED_SUFFIX_CONFIG_DATE+
-					(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1),
-					this.policyType);
+					(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1));
 		}
 	}
 	
@@ -876,8 +851,7 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 				}
 			}
 		} catch(Throwable e) {
-			// Il contatore è stato distrutto (cambio intervallo): il decremento non è più necessario
-			// poiché il contatore e il suo valore sono già stati abbandonati.
+			// Un errore nel decremento non deve essere propagato alla richiesta in fase di terminazione
 			String counterName = null;
 			try {
 				if(this.distribuitedActiveRequestCounterPolicyRichiesteSimultanee) {
@@ -888,15 +862,9 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 			} catch(Throwable t) {
 				counterName = "error-getting-name";
 			}
-			if(e instanceof DistributedObjectDestroyedException) {
-				getLogControlloTraffico().debug(
-					"[AtomicLong] END-PATH destroyed-counter-caught policy={}: counter={} richiesteSimultanee={} msg={}",
-					this.groupByPolicyMapIdHashCode, counterName, this.distribuitedActiveRequestCounterPolicyRichiesteSimultanee, e.getMessage());
-			} else {
-				getLogControlloTraffico().error(
-					"[AtomicLong] END-PATH unexpected-error policy={}: counter={} richiesteSimultanee={} msg={}",
-					this.groupByPolicyMapIdHashCode, counterName, this.distribuitedActiveRequestCounterPolicyRichiesteSimultanee, e.getMessage(), e);
-			}
+			getLogControlloTraffico().error(
+				"[AtomicLong] END-PATH unexpected-error policy={}: counter={} richiesteSimultanee={} msg={}",
+				this.groupByPolicyMapIdHashCode, counterName, this.distribuitedActiveRequestCounterPolicyRichiesteSimultanee, e.getMessage(), e);
 		}
 	}
 	@Override
@@ -999,13 +967,7 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 				if(this.richiesteSimultaneeIntervalloSecondi > 0) {
 					checkActiveRequestCounterIntervalChangeForCheck();
 				}
-				try {
-					return this.distributedActiveRequestCounterForCheck.get();
-				} catch (DistributedObjectDestroyedException e) {
-					// Durante lo shutdown o cambio intervallo, il contatore potrebbe essere stato distrutto
-					/**System.out.println("getActiveRequestCounter CATTURATA DistributedObjectDestroyedException: " + e.getClass().getName() + " - " + e.getMessage());*/
-					return super.activeRequestCounter;
-				}
+				return this.distributedActiveRequestCounterForCheck.get();
 			}
 			else {
 				return super.activeRequestCounter; // nelle operazioni di incremento/decremento l'ho aggiarnato via via e quindi il check utilizzerà questa informazione nel PolicyVerifier
@@ -1015,13 +977,7 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 			if(this.richiesteSimultaneeIntervalloSecondi > 0) {
 				checkActiveRequestCounterIntervalChangeForStats();
 			}
-			try {
-				return this.distributedActiveRequestCounterForStats.get();
-			} catch (DistributedObjectDestroyedException e) {
-				// Durante lo shutdown o cambio intervallo, il contatore potrebbe essere stato distrutto
-				/**System.out.println("getActiveRequestCounter (stats) CATTURATA DistributedObjectDestroyedException: " + e.getClass().getName() + " - " + e.getMessage());*/
-				return 0L;
-			}
+			return this.distributedActiveRequestCounterForStats.get();
 		}
 	}
 	
@@ -1031,12 +987,7 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 	public Long getPolicyDenyRequestCounter(boolean readRemoteInfo) {
 		if(readRemoteInfo) {
 			if(this.distributedPolicyDenyRequestCounter!=null) {
-				try {
-					return this.distributedPolicyDenyRequestCounter.get();
-				} catch (DistributedObjectDestroyedException e) {
-					// Durante lo shutdown o cambio intervallo, il contatore potrebbe essere stato distrutto
-					return super.getPolicyDenyRequestCounter(false);
-				}
+				return this.distributedPolicyDenyRequestCounter.get();
 			}
 			else {
 				return null;
@@ -1051,12 +1002,7 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 	public Long getPolicyRequestCounter(boolean readRemoteInfo) {
 		if(readRemoteInfo) {
 			if(this.distributedPolicyRequestCounter!=null) {
-				try {
-					return this.distributedPolicyRequestCounter.get();
-				} catch (DistributedObjectDestroyedException e) {
-					// Durante lo shutdown o cambio intervallo, il contatore potrebbe essere stato distrutto
-					return super.getPolicyRequestCounter(false);
-				}
+				return this.distributedPolicyRequestCounter.get();
 			}
 			else {
 				return null;
@@ -1070,12 +1016,7 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 	public Long getPolicyCounter(boolean readRemoteInfo) {
 		if(readRemoteInfo) {
 			if(this.distributedPolicyCounter!=null) {
-				try {
-					return this.distributedPolicyCounter.get();
-				} catch (DistributedObjectDestroyedException e) {
-					// Durante lo shutdown o cambio intervallo, il contatore potrebbe essere stato distrutto
-					return super.getPolicyCounter(false);
-				}
+				return this.distributedPolicyCounter.get();
 			}
 			else {
 				return null;
@@ -1090,12 +1031,7 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 	public Long getPolicyDegradoPrestazionaleRequestCounter(boolean readRemoteInfo) {
 		if(readRemoteInfo) {
 			if(this.distributedPolicyDegradoPrestazionaleRequestCounter!=null) {
-				try {
-					return this.distributedPolicyDegradoPrestazionaleRequestCounter.get();
-				} catch (DistributedObjectDestroyedException e) {
-					// Durante lo shutdown o cambio intervallo, il contatore potrebbe essere stato distrutto
-					return super.getPolicyDegradoPrestazionaleRequestCounter(false);
-				}
+				return this.distributedPolicyDegradoPrestazionaleRequestCounter.get();
 			}
 			else {
 				return null;
@@ -1109,12 +1045,7 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 	public Long getPolicyDegradoPrestazionaleCounter(boolean readRemoteInfo) {
 		if(readRemoteInfo) {
 			if(this.distributedPolicyDegradoPrestazionaleCounter!=null) {
-				try {
-					return this.distributedPolicyDegradoPrestazionaleCounter.get();
-				} catch (DistributedObjectDestroyedException e) {
-					// Durante lo shutdown o cambio intervallo, il contatore potrebbe essere stato distrutto
-					return super.getPolicyDegradoPrestazionaleCounter(false);
-				}
+				return this.distributedPolicyDegradoPrestazionaleCounter.get();
 			}
 			else {
 				return null;

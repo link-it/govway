@@ -3,23 +3,159 @@ ignore:
   #- package:
   #    name: "??"
 
-  # GHSA-72hv-8253-57qq (jackson-core: Number Length Constraint Bypass in Async Parser, MEDIUM)
-  # Falso positivo: la vulnerabilita' viene rilevata su jackson-core 2.15.2 'shaded' all'interno
-  # di hazelcast-5.3.8.jar (com/hazelcast/shaded/com/fasterxml/jackson/...). La jackson-core di
-  # prima classe utilizzata da GovWay e' la 2.22.1 (gia' fixata). Le classi del parser asincrono
-  # vulnerabile sono presenti come bytecode 'morto' (effetto del maven-shade-plugin di Hazelcast)
-  # ma non sono referenziate da alcun codepath non-shaded di Hazelcast ne' di GovWay.
+  # Librerie Jackson incluse ('shaded') in hazelcast-5.7.0.jar (com/hazelcast/shaded/...):
+  # jackson-core e jackson-databind 2.21.2 (com.fasterxml.jackson.core) e 3.1.2 (tools.jackson.core).
+  # Falsi positivi: jackson-core/jackson-databind 2.21.2 e jackson-databind 3.1.2 non sono referenziate da alcuna classe
+  # di Hazelcast (bytecode non raggiungibile); jackson-core 3.1.2 e' usata da Hazelcast solo per valori HazelcastJsonValue,
+  # query su JSON e Jet, funzionalita' non utilizzate da GovWay. Il jackson utilizzato da GovWay (2.22.3) non e' affetto.
   # Documentazione completa:
-  # resources/doc/src/manuali/vulnerability-management/falsePositive/34x/GHSA-72hv-8253-57qq.rst
-  - vulnerability: "GHSA-72hv-8253-57qq"
+  # resources/doc/src/manuali/vulnerability-management/falsePositive/34x/hazelcast.rst
+
+  # GHSA-7hhh-6rmp-j9qf / CVE-2026-89425 (jackson-core: UTF8DataInputJsonParser._reportInvalidToken() missing maxErrorTokenLength limit, HIGH)
+  - vulnerability: "GHSA-7hhh-6rmp-j9qf"
+    package:
+      name: "jackson-core"
+  - vulnerability: "CVE-2026-89425"
     package:
       name: "jackson-core"
 
-  # GHSA-r7wm-3cxj-wff9: follow-up di GHSA-72hv-8253-57qq (fix incompleto in 2.18.6/2.21.1).
-  # Stesse motivazioni: rilevata sulla copia shaded di jackson-core 2.15.2 in hazelcast-5.3.8.jar,
-  # non referenziata da alcun codepath; GovWay utilizza jackson-core 2.22.1. Documentazione completa:
-  # resources/doc/src/manuali/vulnerability-management/falsePositive/34x/GHSA-72hv-8253-57qq.rst
+  # GHSA-p6pp-m3f8-5c89 / CVE-2026-89407 (jackson-core: ReDoS: quadratic backtracking in NumberInput.PATTERN_FLOAT via looksLikeValidNumber(), HIGH)
+  - vulnerability: "GHSA-p6pp-m3f8-5c89"
+    package:
+      name: "jackson-core"
+  - vulnerability: "CVE-2026-89407"
+    package:
+      name: "jackson-core"
+
+  # GHSA-r7wm-3cxj-wff9 / CVE-2026-68494 (jackson-core: Async parser maxNumberLength bypass via chunked digit accumulation, HIGH)
   - vulnerability: "GHSA-r7wm-3cxj-wff9"
     package:
       name: "jackson-core"
+  - vulnerability: "CVE-2026-68494"
+    package:
+      name: "jackson-core"
 
+  # GHSA-j3rv-43j4-c7qm / CVE-2026-54512 (jackson-databind: PolymorphicTypeValidator bypass via generic type parameters, HIGH)
+  - vulnerability: "GHSA-j3rv-43j4-c7qm"
+    package:
+      name: "jackson-databind"
+  - vulnerability: "CVE-2026-54512"
+    package:
+      name: "jackson-databind"
+
+  # GHSA-rmj7-2vxq-3g9f / CVE-2026-54513 (jackson-databind: array subtype allowlist bypass in BasicPolymorphicTypeValidator, HIGH)
+  - vulnerability: "GHSA-rmj7-2vxq-3g9f"
+    package:
+      name: "jackson-databind"
+  - vulnerability: "CVE-2026-54513"
+    package:
+      name: "jackson-databind"
+
+  # GHSA-q4xh-88c3-wmh7 / CVE-2026-68497 (jackson-databind: Duration XMLGregorianCalendar Unbounded Number Parse DoS, HIGH)
+  - vulnerability: "GHSA-q4xh-88c3-wmh7"
+    package:
+      name: "jackson-databind"
+  - vulnerability: "CVE-2026-68497"
+    package:
+      name: "jackson-databind"
+
+  # GHSA-cxp5-3px4-pw24 / CVE-2026-91777 (jackson-databind: quadratic forward-reference completion, HIGH)
+  - vulnerability: "GHSA-cxp5-3px4-pw24"
+    package:
+      name: "jackson-databind"
+  - vulnerability: "CVE-2026-91777"
+    package:
+      name: "jackson-databind"
+
+  # GHSA-wv8q-qhhj-9h54 / CVE-2026-91776 (jackson-databind: retains every unknown raw type ID, HIGH)
+  - vulnerability: "GHSA-wv8q-qhhj-9h54"
+    package:
+      name: "jackson-databind"
+  - vulnerability: "CVE-2026-91776"
+    package:
+      name: "jackson-databind"
+
+  # GHSA-hgj6-7826-r7m5 / CVE-2026-54514 (jackson-databind: InetSocketAddress deserialization triggers eager DNS resolution (SSRF), MEDIUM)
+  - vulnerability: "GHSA-hgj6-7826-r7m5"
+    package:
+      name: "jackson-databind"
+  - vulnerability: "CVE-2026-54514"
+    package:
+      name: "jackson-databind"
+
+  # GHSA-vvgp-rfg2-7rr6 / CVE-2026-77310 (jackson-databind: incomplete fix for CVE-2026-54514 (InetAddress), MEDIUM)
+  - vulnerability: "GHSA-vvgp-rfg2-7rr6"
+    package:
+      name: "jackson-databind"
+  - vulnerability: "CVE-2026-77310"
+    package:
+      name: "jackson-databind"
+
+  # GHSA-wjgm-6hv5-3cvf / CVE-2026-19032 (jackson-databind: Path deserialization missing scheme allowlist for FileSystemProvider resolution, MEDIUM)
+  - vulnerability: "GHSA-wjgm-6hv5-3cvf"
+    package:
+      name: "jackson-databind"
+  - vulnerability: "CVE-2026-19032"
+    package:
+      name: "jackson-databind"
+
+  # GHSA-gx83-3vf8-gh7j / CVE-2026-83557 (jackson-databind: Comparable missing from DefaultBaseTypeLimitingValidator's unsafe base types, MEDIUM)
+  - vulnerability: "GHSA-gx83-3vf8-gh7j"
+    package:
+      name: "jackson-databind"
+  - vulnerability: "CVE-2026-83557"
+    package:
+      name: "jackson-databind"
+
+  # GHSA-5jmj-h7xm-6q6v / CVE-2026-54515 (jackson-databind: case-insensitive deserialization bypasses per-property @JsonIgnoreProperties, MEDIUM)
+  - vulnerability: "GHSA-5jmj-h7xm-6q6v"
+    package:
+      name: "jackson-databind"
+  - vulnerability: "CVE-2026-54515"
+    package:
+      name: "jackson-databind"
+
+  # GHSA-9fxm-vc8v-hj55 / CVE-2026-54516 (jackson-databind: renamed @JsonIgnore'd setters can deserialize via private fields, MEDIUM)
+  - vulnerability: "GHSA-9fxm-vc8v-hj55"
+    package:
+      name: "jackson-databind"
+  - vulnerability: "CVE-2026-54516"
+    package:
+      name: "jackson-databind"
+
+  # GHSA-3pjw-73gf-8qr5 / CVE-2026-59888 (jackson-databind: @JsonIgnore on a Record property is bypassed with a PropertyNamingStrategy, MEDIUM)
+  - vulnerability: "GHSA-3pjw-73gf-8qr5"
+    package:
+      name: "jackson-databind"
+  - vulnerability: "CVE-2026-59888"
+    package:
+      name: "jackson-databind"
+
+  # GHSA-5hh8-q8hv-fr38 / CVE-2026-54517 (jackson-databind: @JsonView bypass for setterless creator properties, MEDIUM)
+  - vulnerability: "GHSA-5hh8-q8hv-fr38"
+    package:
+      name: "jackson-databind"
+  - vulnerability: "CVE-2026-54517"
+    package:
+      name: "jackson-databind"
+
+  # GHSA-rcqc-6cw3-h962 / CVE-2026-54518 (jackson-databind: @JsonView bypass for unwrapped creator parameters, MEDIUM)
+  - vulnerability: "GHSA-rcqc-6cw3-h962"
+    package:
+      name: "jackson-databind"
+  - vulnerability: "CVE-2026-54518"
+    package:
+      name: "jackson-databind"
+
+  # GHSA-5gvw-p9qm-jgwh / CVE-2026-59889 (jackson-databind: @JsonView bypassed for @JsonUnwrapped container properties on deserialization, MEDIUM)
+  - vulnerability: "GHSA-5gvw-p9qm-jgwh"
+    package:
+      name: "jackson-databind"
+  - vulnerability: "CVE-2026-59889"
+    package:
+      name: "jackson-databind"
+
+  # GHSA-mhm7-754m-9p8w (jackson-databind: @JsonView bypass for creator properties with @JsonTypeInfo(include=As.EXTERNAL_PROPERTY), MEDIUM)
+  - vulnerability: "GHSA-mhm7-754m-9p8w"
+    package:
+      name: "jackson-databind"

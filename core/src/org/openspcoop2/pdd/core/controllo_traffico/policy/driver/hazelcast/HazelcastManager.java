@@ -32,7 +32,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyException;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreadsType;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
-import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.counters.DatiCollezionatiDistributedAtomicLong;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.counters.DatoAtomicLong;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.counters.DatoAtomicLongEntryProcessors;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.counters.DatiCollezionatiDistributedPNCounter;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.utils.Utilities;
@@ -46,7 +47,10 @@ import org.slf4j.Logger;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.hazelcast.config.Config;
+import com.hazelcast.config.EvictionPolicy;
+import com.hazelcast.config.InMemoryFormat;
 import com.hazelcast.config.InMemoryYamlConfig;
+import com.hazelcast.config.MapConfig;
 import com.hazelcast.config.NetworkConfig;
 import com.hazelcast.config.YamlConfigBuilder;
 import com.hazelcast.core.Hazelcast;
@@ -64,9 +68,6 @@ public class HazelcastManager {
 	private HazelcastManager() {}
 
 	private static final String GOVWAY_INSTANCE_PORT = "GOVWAY_INSTANCE_PORT";
-
-	// Nome della IMap usata come registry per tracciare i contatori AtomicLong del CP Subsystem
-	private static final String ATOMIC_LONG_REGISTRY_MAP_NAME = "govway-atomiclong-registry";
 
 	private static Map<PolicyGroupByActiveThreadsType, HazelcastInstance> staticMapInstance = null;
 	private static Map<PolicyGroupByActiveThreadsType,String> staticMapConfig = null;
@@ -294,7 +295,12 @@ public class HazelcastManager {
 		InMemoryYamlConfig hazelcastConfig = new InMemoryYamlConfig(content);
 		hazelcastConfig.setClusterName(groupId);
 		setNetwork(hazelcastConfig, content, groupId);
-		
+		if(PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG.equals(type) ||
+				PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG_ASYNC.equals(type) ||
+				PolicyGroupByActiveThreadsType.HAZELCAST_PNCOUNTER.equals(type)) {
+			setAtomicLongCountersMap(hazelcastConfig, groupId);
+		}
+
 		HazelcastInstance hazelcast = Hazelcast.newHazelcastInstance(hazelcastConfig);
 		if(hazelcast==null) {
 			throw new PolicyException("Hazelcast init failed");
@@ -304,6 +310,30 @@ public class HazelcastManager {
 	}
 	
 	private static final String PREFIX_CLUSTER_ID = "(cluster-id";
+
+	/**
+	 * Configurazione della IMap che contiene i contatori gestiti tramite DatoAtomicLong.
+	 * Viene impostata sempre da codice, sovrascrivendo un'eventuale configurazione con lo stesso nome presente nei file yaml, poiché:
+	 * - le operazioni sui contatori devono essere eseguite e lette sempre sul member proprietario della partizione (backup sincrono, nessuna lettura dal backup, nessuna near cache);
+	 * - non deve essere attiva alcuna eviction: la rimozione di un contatore ancora in uso lo riporterebbe a 0;
+	 * - la scadenza viene impostata dai singoli contatori legati ad un intervallo temporale (vedi DatoAtomicLong).
+	 */
+	private static void setAtomicLongCountersMap(Config hazelcastConfig, String groupId) {
+		MapConfig mapConfig = new MapConfig(DatoAtomicLong.MAP_NAME);
+		mapConfig.setInMemoryFormat(InMemoryFormat.OBJECT);
+		mapConfig.setBackupCount(1);
+		mapConfig.setAsyncBackupCount(0);
+		mapConfig.setReadBackupData(false);
+		mapConfig.setTimeToLiveSeconds(MapConfig.DEFAULT_TTL_SECONDS);
+		mapConfig.setMaxIdleSeconds(MapConfig.DEFAULT_MAX_IDLE_SECONDS);
+		mapConfig.getEvictionConfig().setEvictionPolicy(EvictionPolicy.NONE);
+		hazelcastConfig.addMapConfig(mapConfig);
+
+		hazelcastConfig.getSerializationConfig().addDataSerializableFactory(DatoAtomicLongEntryProcessors.FACTORY_ID, new DatoAtomicLongEntryProcessors.Factory());
+
+		debug(PREFIX_CLUSTER_ID+groupId+") map '"+DatoAtomicLong.MAP_NAME+"': " + mapConfig);
+	}
+
 	private static void setNetwork(InMemoryYamlConfig hazelcastConfig, String hazelcastConfigContent, String groupId) throws PolicyException {
 		
 		Config sharedConfig = null;
@@ -471,13 +501,7 @@ public class HazelcastManager {
 					debug(PREFIX_CLUSTER_ID+groupId+") override memcache-protocol: " + ncInstance.getMemcacheProtocolConfig());
 				}
 			}
-			if(ncShared.getRestApiConfig()!=null && ncShared.getRestApiConfig().isEnabled()) {
-				boolean definedInstance = isDefined("rest-api", yamlUtils, engine, instanceNode);
-				if(!definedInstance) {
-					ncInstance.setRestApiConfig(ncShared.getRestApiConfig());
-					debug(PREFIX_CLUSTER_ID+groupId+") override rest-api: " + ncInstance.getRestApiConfig());
-				}
-			}
+			setRestApi(ncShared, ncInstance, instanceNode, groupId);
 			if(ncShared.getSocketInterceptorConfig()!=null && ncShared.getSocketInterceptorConfig().getClassName()!=null) {
 				boolean definedInstance = isDefined("socket-interceptor", yamlUtils, engine, instanceNode);
 				if(!definedInstance) {
@@ -505,6 +529,21 @@ public class HazelcastManager {
 		}
 	}
 	
+	/**
+	 * La configurazione 'rest-api' (server REST legacy) è deprecata da Hazelcast 5.5 e verrà rimossa nella versione 6.0;
+	 * la nuova configurazione 'rest' (Config.getRestConfig()) è disponibile solamente nella Enterprise Edition.
+	 */
+	@SuppressWarnings("removal")
+	private static void setRestApi(NetworkConfig ncShared, NetworkConfig ncInstance, JsonNode instanceNode, String groupId) throws PolicyException {
+		if(ncShared.getRestApiConfig()!=null && ncShared.getRestApiConfig().isEnabled()) {
+			boolean definedInstance = isDefined("rest-api", yamlUtils, engine, instanceNode);
+			if(!definedInstance) {
+				ncInstance.setRestApiConfig(ncShared.getRestApiConfig());
+				debug(PREFIX_CLUSTER_ID+groupId+") override rest-api: " + ncInstance.getRestApiConfig());
+			}
+		}
+	}
+
 	private static boolean isDefined(String pattern, YAMLUtils yamlUtils, JsonPathExpressionEngine engine, JsonNode node) throws PolicyException {
 		if(yamlUtils!=null) {
 			// nop
@@ -547,8 +586,22 @@ public class HazelcastManager {
 	
 	private static final String PREFIX_HAZELCAST_INSTANCE_FOR_TYPE = "Hazelcast instance for type ";
 	
+	private static String formatThreshold(long thresholdMs) {
+		long totalMinutes = thresholdMs / 60000;
+		if(totalMinutes < 60) {
+			return totalMinutes + "m";
+		}
+		long hours = totalMinutes / 60;
+		long minutes = totalMinutes % 60;
+		if(minutes == 0) {
+			return hours + "h";
+		}
+		return hours + "h" + minutes + "m";
+	}
+
 	/**
-	 * Pulisce i proxy Hazelcast orfani (contatori di intervalli passati).
+	 * Pulisce i proxy Hazelcast orfani (contatori PNCounter di intervalli passati) e riporta nel log
+	 * il numero di contatori presenti nella IMap gestita tramite DatoAtomicLong.
 	 *
 	 * <h3>Perché si creano proxy orfani</h3>
 	 * <p>
@@ -577,23 +630,16 @@ public class HazelcastManager {
 	 * Questo metodo risolve il problema facendo una scansione periodica basata sul timestamp
 	 * nel nome del contatore, indipendentemente dallo stato locale del nodo.
 	 * </p>
+	 * 
+	 * <p>
+	 * I contatori delle policy HAZELCAST_ATOMIC_LONG e HAZELCAST_ATOMIC_LONG_ASYNC, e le date di coordinamento delle policy HAZELCAST_PNCOUNTER,
+	 * sono invece chiavi della IMap DatoAtomicLong.MAP_NAME: quelli legati ad un intervallo hanno una scadenza pari alla stessa soglia
+	 * e vengono rimossi da Hazelcast senza necessità di alcuna scansione.
+	 * </p>
 	 *
 	 * @param thresholdMs soglia in millisecondi per considerare un proxy orfano
 	 * @return numero di proxy rimossi
 	 */
-	private static String formatThreshold(long thresholdMs) {
-		long totalMinutes = thresholdMs / 60000;
-		if(totalMinutes < 60) {
-			return totalMinutes + "m";
-		}
-		long hours = totalMinutes / 60;
-		long minutes = totalMinutes % 60;
-		if(minutes == 0) {
-			return hours + "h";
-		}
-		return hours + "h" + minutes + "m";
-	}
-
 	public static int cleanupOrphanedProxies(long thresholdMs) {
 		int removed = 0;
 		if(staticMapInstance == null || staticMapInstance.isEmpty()) {
@@ -619,13 +665,6 @@ public class HazelcastManager {
 			PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG_ASYNC
 		};
 
-		// Verifica se il registry per AtomicLong è abilitato
-		boolean atomicLongRegistryEnabled = OpenSPCoop2Properties.getInstance().isControlloTrafficoGestorePolicyInMemoryHazelcastAtomicLongRegistryEnabled();
-
-		// Verifica se il conteggio delle policy attive è abilitato
-		boolean activePoliciesCountLogEnabled = OpenSPCoop2Properties.getInstance().isControlloTrafficoGestorePolicyInMemoryHazelcastActivePoliciesCountLogEnabled();
-
-
 		for (PolicyGroupByActiveThreadsType type : counterTypes) {
 			HazelcastInstance hazelcast = staticMapInstance.get(type);
 			if(hazelcast == null) {
@@ -641,184 +680,11 @@ public class HazelcastManager {
 				continue;
 			}
 
-			// Per ATOMIC_LONG e ATOMIC_LONG_ASYNC, usa il registry se abilitato
-			// (gli oggetti del CP Subsystem non sono enumerabili tramite getDistributedObjects())
-			if((type == PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG ||
-				type == PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG_ASYNC) && atomicLongRegistryEnabled) {
-				removed += cleanupOrphanedAtomicLongCounters(type, thresholdMs, logControlloTraffico, sdf, activePoliciesCountLogEnabled);
-				continue;
+			if(type == PolicyGroupByActiveThreadsType.HAZELCAST_PNCOUNTER) {
+				removed += cleanupOrphanedPNCounters(type, hazelcast, threshold, logControlloTraffico, sdf);
 			}
-
-			try {
-				java.util.Collection<com.hazelcast.core.DistributedObject> objects = hazelcast.getDistributedObjects();
-
-				int countWithInterval = 0;
-				int countWithoutInterval = 0;
-				int countRecent = 0;
-				int removedForType = 0;
-				int removedWithoutInterval = 0;
-				long oldestInterval = Long.MAX_VALUE;
-				long newestIntervalRemoved = Long.MIN_VALUE;
-				long newestInterval = Long.MIN_VALUE;
-
-				// Raccolta policy con traffico recente (contatori con intervallo non scaduti)
-				List<String> activePolicyIds = new ArrayList<>();
-				// Raccolta policy configurate (con contatori di coordinamento senza intervallo)
-				List<String> configuredPolicyIds = new ArrayList<>();
-				// Raccolta oggetti senza intervallo per la seconda passata
-				List<com.hazelcast.core.DistributedObject> objectsWithoutInterval = new ArrayList<>();
-				boolean isPNCounter = (type == PolicyGroupByActiveThreadsType.HAZELCAST_PNCOUNTER);
-
-				// Prima passata: rimuove i contatori con intervallo orfani e identifica le policy attive
-				for (com.hazelcast.core.DistributedObject obj : objects) {
-					String name = obj.getName();
-					if(name == null) {
-						continue;
-					}
-
-					// Ignora la IMap del registry (non è un contatore)
-					if(ATOMIC_LONG_REGISTRY_MAP_NAME.equals(name)) {
-						continue;
-					}
-
-					// Pulisce SOLO oggetti con intervallo (-i-)
-					// Pattern: ...-policyRequestCounter-i-TIMESTAMP-c-...
-					// Gli oggetti senza -i- (es. activeRequestCounter, updatePolicyDate) sono legati al gruppo
-					// e devono essere distrutti solo quando il gruppo viene rimosso
-					int intervalIndex = name.indexOf("-i-");
-					if(intervalIndex < 0) {
-						// Oggetto senza intervallo, lo salviamo per la seconda passata
-						countWithoutInterval++;
-						objectsWithoutInterval.add(obj);
-						String configPolicyId = extractPolicyId(name, isPNCounter);
-						if(configPolicyId != null && !configuredPolicyIds.contains(configPolicyId)) {
-							configuredPolicyIds.add(configPolicyId);
-						}
-						continue;
-					}
-
-					countWithInterval++;
-
-					// Estrae il timestamp dell'intervallo
-					int timestampStart = intervalIndex + 3;
-					int timestampEnd = name.indexOf("-c-", timestampStart);
-					if(timestampEnd < 0) {
-						timestampEnd = name.length();
-					}
-
-					String timestampStr = name.substring(timestampStart, timestampEnd);
-					try {
-						long timestamp = Long.parseLong(timestampStr);
-
-						// Traccia intervallo più vecchio e più recente
-						if(timestamp < oldestInterval) {
-							oldestInterval = timestamp;
-						}
-						if(timestamp > newestInterval) {
-							newestInterval = timestamp;
-						}
-
-						if(timestamp < threshold) {
-							// Il proxy è orfano (intervallo passato), lo distruggo
-							try {
-								obj.destroy();
-								removed++;
-								removedForType++;
-								if(logControlloTraffico!=null) {
-									String msg = "Destroyed orphaned proxy: " + name + " (intervalDate=" + sdf.format(new java.util.Date(timestamp)) + ")";
-									logControlloTraffico.debug(msg);
-								}
-								if(timestamp > newestIntervalRemoved) {
-									newestIntervalRemoved = timestamp;
-								}
-							} catch(Throwable t) {
-								if(logControlloTraffico!=null) {
-									String msg = "Error destroying orphaned proxy " + name + ": " + t.getMessage();
-									logControlloTraffico.error(msg,t);
-								}
-							}
-						} else {
-							countRecent++;
-							// Policy attiva: estrae e raccoglie il policyId se non già presente
-							String policyId = extractPolicyId(name, isPNCounter);
-							if(policyId != null && !activePolicyIds.contains(policyId)) {
-								activePolicyIds.add(policyId);
-							}
-						}
-					} catch(NumberFormatException nfe) {
-						// Non riesco a parsare il timestamp, salto questo proxy
-						if(logControlloTraffico!=null) {
-							String msg = "Cannot parse timestamp from proxy name: " + name;
-							logControlloTraffico.debug(msg);
-						}
-					}
-				}
-
-				// Seconda passata: rimuove i contatori senza intervallo per policy non più attive (solo se abilitato)
-				if(OpenSPCoop2Properties.getInstance().isControlloTrafficoGestorePolicyInMemoryHazelcastCleanupPNCounterWithoutInterval()) {
-					for (com.hazelcast.core.DistributedObject obj : objectsWithoutInterval) {
-						String name = obj.getName();
-						String policyId = extractPolicyId(name, isPNCounter);
-						if(policyId != null && !activePolicyIds.contains(policyId)) {
-							// Policy non più attiva, rimuove il contatore senza intervallo
-							try {
-								obj.destroy();
-								removed++;
-								removedWithoutInterval++;
-								if(logControlloTraffico!=null) {
-									String msg = "Destroyed orphaned PNCounter without interval: " + name + " (policy no longer active)";
-									logControlloTraffico.debug(msg);
-								}
-							} catch(Throwable t) {
-								if(logControlloTraffico!=null) {
-									String msg = "Error destroying orphaned PNCounter without interval " + name + ": " + t.getMessage();
-									logControlloTraffico.error(msg,t);
-								}
-							}
-						}
-					}
-				}
-
-				StringBuilder sb = new StringBuilder();
-				int finalWithInterval = countWithInterval - removedForType;
-				int finalWithoutInterval = countWithoutInterval - removedWithoutInterval;
-				int total = finalWithInterval + finalWithoutInterval;
-				sb.append("Type ").append(type).append(": total=").append(total);
-				sb.append(", withInterval=").append(finalWithInterval);
-				sb.append(", withoutInterval=").append(finalWithoutInterval);
-				sb.append(", recent=").append(countRecent);
-				sb.append(", removedWithInterval=").append(removedForType);
-				if(removedWithoutInterval > 0) {
-					sb.append(", removedWithoutInterval=").append(removedWithoutInterval);
-				}
-				if(countWithInterval > 0 && oldestInterval != Long.MAX_VALUE) {
-					sb.append(", oldest=").append(sdf.format(new java.util.Date(oldestInterval)));
-				}
-				if(countWithInterval > 0 && newestInterval != Long.MIN_VALUE) {
-					sb.append(", newest=").append(sdf.format(new java.util.Date(newestInterval)));
-				}
-				if(countWithInterval > 0 && newestIntervalRemoved != Long.MIN_VALUE) {
-					sb.append(", newest-removed=").append(sdf.format(new java.util.Date(newestIntervalRemoved)));
-				}
-				if(activePoliciesCountLogEnabled && !isPNCounter) {
-					sb.append(", activePolicies=(configured:").append(configuredPolicyIds.size());
-					sb.append(", recentlyUsed:").append(activePolicyIds.size()).append(')');
-				}
-				if(logControlloTraffico!=null) {
-					logControlloTraffico.info(sb.toString());
-				}
-
-				// Per PNCOUNTER, pulisce e mostra anche i contatori delle date dal registry (sono AtomicLong nel CP Subsystem)
-				if(type == PolicyGroupByActiveThreadsType.HAZELCAST_PNCOUNTER && atomicLongRegistryEnabled) {
-					removed += cleanupAndLogAtomicLongRegistryForPNCounter(type, activePolicyIds, thresholdMs, logControlloTraffico, sdf, activePoliciesCountLogEnabled);
-				}
-
-			} catch(Throwable t) {
-				if(logControlloTraffico!=null) {
-					String msg = "Error during cleanup of orphaned proxies for type " + type + ": " + t.getMessage();
-					logControlloTraffico.error(msg,t);
-				}
-			}
+			
+			logAtomicLongCountersMap(type, hazelcast, logControlloTraffico);
 		}
 
 		if(logControlloTraffico!=null) {
@@ -828,131 +694,44 @@ public class HazelcastManager {
 
 		return removed;
 	}
-
-	/**
-	 * Registra un contatore AtomicLong nel registry IMap.
-	 * Viene usato per tracciare i contatori del CP Subsystem che non sono enumerabili tramite getDistributedObjects().
-	 *
-	 * @param type tipo di policy (HAZELCAST_ATOMIC_LONG o HAZELCAST_ATOMIC_LONG_ASYNC)
-	 * @param counterName nome del contatore
-	 */
-	public static void registerAtomicLongCounter(PolicyGroupByActiveThreadsType type, String counterName) {
-		if(staticMapInstance == null || counterName == null) {
-			return;
-		}
-
-		HazelcastInstance hazelcast = staticMapInstance.get(type);
-		if(hazelcast == null) {
-			return;
-		}
-
-		try {
-			com.hazelcast.map.IMap<String, Long> registry = hazelcast.getMap(ATOMIC_LONG_REGISTRY_MAP_NAME);
-			registry.put(counterName, org.openspcoop2.utils.date.DateManager.getTimeMillis());
-		} catch(Throwable t) {
-			if(log != null) {
-				log.debug("Error registering AtomicLong counter '" + counterName + "': " + t.getMessage(), t);
-			}
-		}
-	}
-
-	/**
-	 * Rimuove un contatore AtomicLong dal registry IMap.
-	 *
-	 * @param type tipo di policy (HAZELCAST_ATOMIC_LONG o HAZELCAST_ATOMIC_LONG_ASYNC)
-	 * @param counterName nome del contatore
-	 */
-	public static void unregisterAtomicLongCounter(PolicyGroupByActiveThreadsType type, String counterName) {
-		if(staticMapInstance == null || counterName == null) {
-			return;
-		}
-
-		HazelcastInstance hazelcast = staticMapInstance.get(type);
-		if(hazelcast == null) {
-			return;
-		}
-
-		try {
-			com.hazelcast.map.IMap<String, Long> registry = hazelcast.getMap(ATOMIC_LONG_REGISTRY_MAP_NAME);
-			registry.remove(counterName);
-		} catch(Throwable t) {
-			if(log != null) {
-				log.debug("Error unregistering AtomicLong counter '" + counterName + "': " + t.getMessage(), t);
-			}
-		}
-	}
-
-	/**
-	 * Pulisce i contatori AtomicLong orfani usando il registry IMap.
-	 *
-	 * @param type tipo di policy (HAZELCAST_ATOMIC_LONG o HAZELCAST_ATOMIC_LONG_ASYNC)
-	 * @param thresholdMs soglia in millisecondi per considerare un contatore orfano
-	 * @param logControlloTraffico logger
-	 * @param sdf formato data per il log
-	 * @param activePoliciesCountLogEnabled true se il conteggio delle policy attive è abilitato
-	 * @return numero di contatori rimossi
-	 */
-	private static int cleanupOrphanedAtomicLongCounters(PolicyGroupByActiveThreadsType type, long thresholdMs,
-			Logger logControlloTraffico, java.text.SimpleDateFormat sdf, boolean activePoliciesCountLogEnabled) {
+	
+	private static int cleanupOrphanedPNCounters(PolicyGroupByActiveThreadsType type, HazelcastInstance hazelcast, long threshold, 
+			Logger logControlloTraffico, java.text.SimpleDateFormat sdf) {
 		int removed = 0;
-
-		HazelcastInstance hazelcast = staticMapInstance.get(type);
-		if(hazelcast == null) {
-			return removed;
-		}
-
-		// Verifica se l'istanza Hazelcast è ancora attiva (evita errori durante lo shutdown)
-		if(!hazelcast.getLifecycleService().isRunning()) {
-			if(logControlloTraffico != null) {
-				String msg = PREFIX_HAZELCAST_INSTANCE_FOR_TYPE + type + " is not active, skipping AtomicLong cleanup";
-				logControlloTraffico.debug(msg);
-			}
-			return removed;
-		}
-
-		long now = org.openspcoop2.utils.date.DateManager.getTimeMillis();
-		long threshold = now - thresholdMs;
-
 		try {
-			com.hazelcast.map.IMap<String, Long> registry = hazelcast.getMap(ATOMIC_LONG_REGISTRY_MAP_NAME);
+			java.util.Collection<com.hazelcast.core.DistributedObject> objects = hazelcast.getDistributedObjects();
 
 			int countWithInterval = 0;
 			int countWithoutInterval = 0;
 			int countRecent = 0;
-			int removedForType = 0;
 			int removedWithoutInterval = 0;
-			int skippedRecent = 0;
 			long oldestInterval = Long.MAX_VALUE;
 			long newestIntervalRemoved = Long.MIN_VALUE;
 			long newestInterval = Long.MIN_VALUE;
 
-			// Soglia temporale: non eliminare contatori registrati entro thresholdMs
-			long registrationThreshold = now - thresholdMs;
-
-			// Raccolta policy attive (con almeno un contatore recente con intervallo)
+			// Raccolta policy con traffico recente (contatori con intervallo non scaduti)
 			List<String> activePolicyIds = new ArrayList<>();
-			// Raccolta policy configurate (con almeno un contatore senza intervallo)
-			List<String> configuredPolicyIds = new ArrayList<>();
-			// Raccolta contatori senza intervallo per la seconda passata (con il loro timestamp di registrazione)
-			List<java.util.Map.Entry<String, Long>> countersWithoutInterval = new ArrayList<>();
+			// Raccolta oggetti senza intervallo per la seconda passata
+			List<com.hazelcast.core.DistributedObject> objectsWithoutInterval = new ArrayList<>();
 
-			// Prima passata: elabora contatori CON intervallo e raccogli quelli SENZA
-			for (java.util.Map.Entry<String, Long> entry : registry.entrySet()) {
-				String name = entry.getKey();
-
-				if(name == null) {
+			// Prima passata: rimuove i contatori con intervallo orfani e identifica le policy attive
+			for (com.hazelcast.core.DistributedObject obj : objects) {
+				String name = obj.getName();
+				
+				// Considera solamente i PNCounter (es. viene ignorata la IMap dei contatori gestiti tramite DatoAtomicLong)
+				if(name == null || !name.startsWith(DatiCollezionatiDistributedPNCounter.PNCOUNTER_PREFIX)) {
 					continue;
 				}
 
+				// Pulisce SOLO oggetti con intervallo (-i-)
+				// Pattern: ...-policyRequestCounter-i-TIMESTAMP-c-...
+				// Gli oggetti senza -i- (es. activeRequestCounter, updatePolicyDate) sono legati al gruppo
+				// e devono essere distrutti solo quando il gruppo viene rimosso
 				int intervalIndex = name.indexOf("-i-");
 				if(intervalIndex < 0) {
-					// Contatore senza intervallo: lo raccogliamo per la seconda passata (con il timestamp di registrazione)
+					// Oggetto senza intervallo, lo salviamo per la seconda passata
 					countWithoutInterval++;
-					countersWithoutInterval.add(entry);
-					String configPolicyId = extractPolicyId(name, false);
-					if(configPolicyId != null && !configuredPolicyIds.contains(configPolicyId)) {
-						configuredPolicyIds.add(configPolicyId);
-					}
+					objectsWithoutInterval.add(obj);
 					continue;
 				}
 
@@ -969,6 +748,7 @@ public class HazelcastManager {
 				try {
 					long timestamp = Long.parseLong(timestampStr);
 
+					// Traccia intervallo più vecchio e più recente
 					if(timestamp < oldestInterval) {
 						oldestInterval = timestamp;
 					}
@@ -977,73 +757,60 @@ public class HazelcastManager {
 					}
 
 					if(timestamp < threshold) {
-						// Il contatore è orfano, lo distruggo
+						// Il proxy è orfano (intervallo passato), lo distruggo
 						try {
-							hazelcast.getCPSubsystem().getAtomicLong(name).destroy();
-							registry.remove(name);
+							obj.destroy();
 							removed++;
-							removedForType++;
-							if(logControlloTraffico != null) {
-								String msg = "Destroyed orphaned AtomicLong counter: " + name + " (intervalDate=" + sdf.format(new java.util.Date(timestamp)) + ")";
+							if(logControlloTraffico!=null) {
+								String msg = "Destroyed orphaned proxy: " + name + " (intervalDate=" + sdf.format(new java.util.Date(timestamp)) + ")";
 								logControlloTraffico.debug(msg);
 							}
 							if(timestamp > newestIntervalRemoved) {
 								newestIntervalRemoved = timestamp;
 							}
 						} catch(Throwable t) {
-							if(logControlloTraffico != null) {
-								String msg = "Error destroying orphaned AtomicLong counter " + name + ": " + t.getMessage();
-								logControlloTraffico.error(msg, t);
+							if(logControlloTraffico!=null) {
+								String msg = "Error destroying orphaned proxy " + name + ": " + t.getMessage();
+								logControlloTraffico.error(msg,t);
 							}
 						}
 					} else {
 						countRecent++;
-						// Contatore recente: la policy è attiva
-						String policyId = extractPolicyId(name, false);
+						// Policy attiva: estrae e raccoglie il policyId se non già presente
+						String policyId = extractPolicyId(name);
 						if(policyId != null && !activePolicyIds.contains(policyId)) {
 							activePolicyIds.add(policyId);
 						}
 					}
 				} catch(NumberFormatException nfe) {
-					if(logControlloTraffico != null) {
-						String msg = "Cannot parse timestamp from counter name: " + name;
+					// Non riesco a parsare il timestamp, salto questo proxy
+					if(logControlloTraffico!=null) {
+						String msg = "Cannot parse timestamp from proxy name: " + name;
 						logControlloTraffico.debug(msg);
 					}
 				}
 			}
+			int removedWithInterval = removed;
 
-			// Seconda passata: rimuovi i contatori senza intervallo di policy non più attive (solo se abilitato)
-			if(OpenSPCoop2Properties.getInstance().isControlloTrafficoGestorePolicyInMemoryHazelcastCleanupAtomicLongWithoutInterval()) {
-				for(java.util.Map.Entry<String, Long> entry : countersWithoutInterval) {
-					String name = entry.getKey();
-					Long registrationTime = entry.getValue();
-					String policyId = extractPolicyId(name, false);
+			// Seconda passata: rimuove i contatori senza intervallo per policy non più attive (solo se abilitato)
+			if(OpenSPCoop2Properties.getInstance().isControlloTrafficoGestorePolicyInMemoryHazelcastCleanupPNCounterWithoutInterval()) {
+				for (com.hazelcast.core.DistributedObject obj : objectsWithoutInterval) {
+					String name = obj.getName();
+					String policyId = extractPolicyId(name);
 					if(policyId != null && !activePolicyIds.contains(policyId)) {
-						// Verifica se il contatore è stato registrato di recente (potrebbe essere in fase di inizializzazione)
-						if(registrationTime != null && registrationTime > registrationThreshold) {
-							// Contatore registrato di recente, non eliminare
-							skippedRecent++;
-							if(logControlloTraffico != null) {
-								String msg = "Skipping recently registered AtomicLong counter: " + name +
-										" (registered=" + sdf.format(new java.util.Date(registrationTime)) + ")";
-								logControlloTraffico.debug(msg);
-							}
-							continue;
-						}
-						// La policy non ha più contatori recenti, rimuovi anche i contatori senza intervallo
+						// Policy non più attiva, rimuove il contatore senza intervallo
 						try {
-							hazelcast.getCPSubsystem().getAtomicLong(name).destroy();
-							registry.remove(name);
+							obj.destroy();
 							removed++;
 							removedWithoutInterval++;
-							if(logControlloTraffico != null) {
-								String msg = "Destroyed orphaned AtomicLong counter (no active policy): " + name;
+							if(logControlloTraffico!=null) {
+								String msg = "Destroyed orphaned PNCounter without interval: " + name + " (policy no longer active)";
 								logControlloTraffico.debug(msg);
 							}
 						} catch(Throwable t) {
-							if(logControlloTraffico != null) {
-								String msg = "Error destroying orphaned AtomicLong counter " + name + ": " + t.getMessage();
-								logControlloTraffico.error(msg, t);
+							if(logControlloTraffico!=null) {
+								String msg = "Error destroying orphaned PNCounter without interval " + name + ": " + t.getMessage();
+								logControlloTraffico.error(msg,t);
 							}
 						}
 					}
@@ -1051,17 +818,16 @@ public class HazelcastManager {
 			}
 
 			StringBuilder sb = new StringBuilder();
-			int finalWithInterval = countWithInterval - removedForType;
+			int finalWithInterval = countWithInterval - removedWithInterval;
 			int finalWithoutInterval = countWithoutInterval - removedWithoutInterval;
 			int total = finalWithInterval + finalWithoutInterval;
-			sb.append("Type ").append(type).append(" (via registry): total=").append(total);
+			sb.append("Type ").append(type).append(": total=").append(total);
 			sb.append(", withInterval=").append(finalWithInterval);
 			sb.append(", withoutInterval=").append(finalWithoutInterval);
 			sb.append(", recent=").append(countRecent);
-			sb.append(", removedWithInterval=").append(removedForType);
-			sb.append(", removedWithoutInterval=").append(removedWithoutInterval);
-			if(skippedRecent > 0) {
-				sb.append(", skippedRecent=").append(skippedRecent);
+			sb.append(", removedWithInterval=").append(removedWithInterval);
+			if(removedWithoutInterval > 0) {
+				sb.append(", removedWithoutInterval=").append(removedWithoutInterval);
 			}
 			if(countWithInterval > 0 && oldestInterval != Long.MAX_VALUE) {
 				sb.append(", oldest=").append(sdf.format(new java.util.Date(oldestInterval)));
@@ -1072,213 +838,61 @@ public class HazelcastManager {
 			if(countWithInterval > 0 && newestIntervalRemoved != Long.MIN_VALUE) {
 				sb.append(", newest-removed=").append(sdf.format(new java.util.Date(newestIntervalRemoved)));
 			}
-			if(activePoliciesCountLogEnabled) {
-				sb.append(", activePolicies=(configured:").append(configuredPolicyIds.size());
-				sb.append(", recentlyUsed:").append(activePolicyIds.size()).append(')');
-			}
-			if(logControlloTraffico != null) {
-				String msg = sb.toString();
-				logControlloTraffico.info(msg);
+			if(logControlloTraffico!=null) {
+				logControlloTraffico.info(sb.toString());
 			}
 
 		} catch(Throwable t) {
-			if(logControlloTraffico != null) {
-				String msg = "Error during cleanup of orphaned AtomicLong counters for type " + type + ": " + t.getMessage();
-				logControlloTraffico.error(msg, t);
+			if(logControlloTraffico!=null) {
+				String msg = "Error during cleanup of orphaned proxies for type " + type + ": " + t.getMessage();
+				logControlloTraffico.error(msg,t);
 			}
 		}
-
 		return removed;
+	}
+	
+	/**
+	 * Riporta nel log il numero di contatori della IMap gestita tramite DatoAtomicLong, utilizzando le statistiche locali del member
+	 * (contatori di cui il member è proprietario e copie di backup): non viene effettuata alcuna scansione della mappa.
+	 */
+	private static void logAtomicLongCountersMap(PolicyGroupByActiveThreadsType type, HazelcastInstance hazelcast, Logger logControlloTraffico) {
+		if(logControlloTraffico==null) {
+			return;
+		}
+		try {
+			com.hazelcast.map.LocalMapStats stats = hazelcast.getMap(DatoAtomicLong.MAP_NAME).getLocalMapStats();
+			StringBuilder sb = new StringBuilder();
+			sb.append("Type ").append(type).append(" (map ").append(DatoAtomicLong.MAP_NAME).append(", local member): owned=").append(stats.getOwnedEntryCount());
+			sb.append(", backup=").append(stats.getBackupEntryCount());
+			logControlloTraffico.info(sb.toString());
+		} catch(Throwable t) {
+			logControlloTraffico.debug("Error reading statistics of map " + DatoAtomicLong.MAP_NAME + " for type " + type + ": " + t.getMessage(), t);
+		}
 	}
 
 	/**
-	 * Estrae l'identificativo della policy (groupByPolicyMapIdHashCode) dal nome del contatore.
+	 * Estrae l'identificativo della policy (groupByPolicyMapIdHashCode) dal nome del contatore PNCounter.
 	 *
-	 * @param counterName nome del contatore (es. "pncounter-1193533566--policyRequestCounter-i-..." o "1193533566-policyRequestCounter-i-...")
-	 * @param isPNCounter true se è un contatore PNCounter (ha prefisso "pncounter-")
+	 * @param counterName nome del contatore (es. "pncounter-1193533566--policyRequestCounter-i-...")
 	 * @return l'hashcode della policy o null se non trovato
 	 */
-	private static String extractPolicyId(String counterName, boolean isPNCounter) {
+	private static String extractPolicyId(String counterName) {
 		if(counterName == null) {
 			return null;
 		}
+		// Il formato è: pncounter-HASHCODE--tipo-i-...
 		String name = counterName;
-		// Per PNCOUNTER il formato è: pncounter-HASHCODE--tipo-i-...
-		// Per AtomicLong il formato è: al-HASHCODE-tipo-i-...
-		// Per AtomicLong ausiliari di PNCounter il formato è: pn_al-HASHCODE-tipo-i-...
-		if(isPNCounter) {
-			String prefix = DatiCollezionatiDistributedPNCounter.PNCOUNTER_PREFIX;
-			if(name.startsWith(prefix)) {
-				name = name.substring(prefix.length());
-			}
-			// Per PNCounter cerchiamo il doppio trattino "--" che separa l'hashcode dal tipo
-			int doubleHyphenIndex = name.indexOf("--");
-			if(doubleHyphenIndex > 0) {
-				return name.substring(0, doubleHyphenIndex);
-			}
-		} else {
-			// Rimuove il prefisso se presente (al- o pn_al-)
-			String alPrefix = DatiCollezionatiDistributedAtomicLong.COUNTER_PREFIX;
-			String pnAlPrefix = DatiCollezionatiDistributedPNCounter.ATOMIC_LONG_PREFIX;
-			if(name.startsWith(alPrefix)) {
-				name = name.substring(alPrefix.length());
-			} else if(name.startsWith(pnAlPrefix)) {
-				name = name.substring(pnAlPrefix.length());
-			}
-			// Per AtomicLong il formato è: HASHCODE-tipo... dove tipo inizia con una lettera
-			// L'hashcode può essere negativo (es. -1193533566), quindi cerchiamo il primo "-" seguito da lettera
-			for(int i = 0; i < name.length() - 1; i++) {
-				if(name.charAt(i) == '-' && Character.isLetter(name.charAt(i + 1))) {
-					return name.substring(0, i);
-				}
-			}
+		String prefix = DatiCollezionatiDistributedPNCounter.PNCOUNTER_PREFIX;
+		if(name.startsWith(prefix)) {
+			name = name.substring(prefix.length());
+		}
+		// Cerchiamo il doppio trattino "--" che separa l'hashcode dal tipo
+		int doubleHyphenIndex = name.indexOf("--");
+		if(doubleHyphenIndex > 0) {
+			return name.substring(0, doubleHyphenIndex);
 		}
 		return null;
 	}
-
-	/**
-	 * Pulisce e mostra nel log i contatori AtomicLong (date) registrati nel registry per PNCOUNTER.
-	 * Questi sono i contatori delle date che non sono visibili tramite getDistributedObjects() perché
-	 * sono nel CP Subsystem.
-	 * I contatori delle date per policy non più attive vengono rimossi.
-	 *
-	 * @param type tipo di policy
-	 * @param activePolicyIds lista delle policy attive (con contatori PNCounter recenti)
-	 * @param thresholdMs soglia in millisecondi - i contatori registrati entro questa soglia non vengono eliminati
-	 * @param logControlloTraffico logger
-	 * @param sdf formato data per il log
-	 * @return numero di contatori rimossi
-	 */
-	private static int cleanupAndLogAtomicLongRegistryForPNCounter(PolicyGroupByActiveThreadsType type,
-			List<String> activePolicyIds, long thresholdMs, Logger logControlloTraffico, java.text.SimpleDateFormat sdf,
-			boolean activePoliciesCountLogEnabled) {
-		int removed = 0;
-
-		if(staticMapInstance == null) {
-			return removed;
-		}
-
-		HazelcastInstance hazelcast = staticMapInstance.get(type);
-		if(hazelcast == null) {
-			return removed;
-		}
-
-		// Verifica se l'istanza Hazelcast è ancora attiva (evita errori durante lo shutdown)
-		if(!hazelcast.getLifecycleService().isRunning()) {
-			if(logControlloTraffico != null) {
-				String msg = PREFIX_HAZELCAST_INSTANCE_FOR_TYPE + type + " is not active, skipping AtomicLong dates cleanup";
-				logControlloTraffico.debug(msg);
-			}
-			return removed;
-		}
-
-		try {
-			com.hazelcast.map.IMap<String, Long> registry = hazelcast.getMap(ATOMIC_LONG_REGISTRY_MAP_NAME);
-			if(registry != null && !registry.isEmpty()) {
-				int countWithInterval = 0;
-				int countWithoutInterval = 0;
-				int removedWithInterval = 0;
-				int removedWithoutInterval = 0;
-				int skippedRecent = 0;
-
-				// Soglia temporale: non eliminare contatori registrati entro thresholdMs
-				long now = org.openspcoop2.utils.date.DateManager.getTimeMillis();
-				long registrationThreshold = now - thresholdMs;
-
-				// Raccolta policy configurate (con contatori di coordinamento senza intervallo)
-				List<String> configuredPolicyIds = new ArrayList<>();
-
-				// Raccoglie i nomi per evitare ConcurrentModificationException
-				List<String> counterNames = new ArrayList<>(registry.keySet());
-
-				for (String name : counterNames) {
-					if(name == null) {
-						continue;
-					}
-
-					// Estrae il policyId (per AtomicLong delle date, il formato è lo stesso di PNCounter senza prefisso)
-					// Il nome è tipo: "pn_al-1193533566-updatePolicyDate" o "al-1193533566-updatePolicyDate-i-TIMESTAMP"
-					String policyId = extractPolicyId(name, false);
-
-					boolean hasInterval = name.contains("-i-");
-					if(hasInterval) {
-						countWithInterval++;
-					} else {
-						countWithoutInterval++;
-						if(policyId != null && !configuredPolicyIds.contains(policyId)) {
-							configuredPolicyIds.add(policyId);
-						}
-					}
-
-					// Se la policy non è più attiva, verifica se il contatore è stato registrato di recente
-					// Per i contatori senza intervallo (coordinamento), la pulizia è condizionata dalla proprietà
-					// per evitare name poisoning nel CP Subsystem su policy temporaneamente inattive.
-					// I contatori con intervallo (-i-) sono sicuri da distruggere (nomi univoci per intervallo).
-					if(policyId != null && !activePolicyIds.contains(policyId)
-							&& (hasInterval || OpenSPCoop2Properties.getInstance().isControlloTrafficoGestorePolicyInMemoryHazelcastCleanupPNCounterAtomicLongDatesWithoutInterval())) {
-						// Legge il timestamp di registrazione dal registry
-						Long registrationTime = registry.get(name);
-						if(registrationTime != null && registrationTime > registrationThreshold) {
-							// Contatore registrato di recente, non eliminare (potrebbe essere in fase di inizializzazione)
-							skippedRecent++;
-							if(logControlloTraffico != null) {
-								String msg = "Skipping recently registered AtomicLong date counter: " + name +
-										" (registered=" + sdf.format(new java.util.Date(registrationTime)) + ")";
-								logControlloTraffico.debug(msg);
-							}
-							continue;
-						}
-
-						try {
-							hazelcast.getCPSubsystem().getAtomicLong(name).destroy();
-							registry.remove(name);
-							removed++;
-							if(hasInterval) {
-								removedWithInterval++;
-							} else {
-								removedWithoutInterval++;
-							}
-							if(logControlloTraffico != null) {
-								String msg = "Destroyed orphaned AtomicLong date counter: " + name + " (policy no longer active)";
-								logControlloTraffico.debug(msg);
-							}
-						} catch(Throwable t) {
-							if(logControlloTraffico != null) {
-								String msg = "Error destroying orphaned AtomicLong date counter " + name + ": " + t.getMessage();
-								logControlloTraffico.error(msg, t);
-							}
-						}
-					}
-				}
-
-				if(logControlloTraffico != null) {
-					int finalWithInterval = countWithInterval - removedWithInterval;
-					int finalWithoutInterval = countWithoutInterval - removedWithoutInterval;
-					int total = finalWithInterval + finalWithoutInterval;
-					StringBuilder sb = new StringBuilder();
-					sb.append("Type ").append(type).append(" (AtomicLong dates via registry): total=").append(total);
-					sb.append(", withInterval=").append(finalWithInterval);
-					sb.append(", withoutInterval=").append(finalWithoutInterval);
-					sb.append(", removed=").append(removedWithInterval + removedWithoutInterval);
-					if(skippedRecent > 0) {
-						sb.append(", skippedRecent=").append(skippedRecent);
-					}
-					if(activePoliciesCountLogEnabled) {
-						sb.append(", activePolicies=(configured:").append(configuredPolicyIds.size());
-						sb.append(", recentlyUsed:").append(activePolicyIds.size()).append(')');
-					}
-					logControlloTraffico.info(sb.toString());
-				}
-			}
-		} catch(Throwable t) {
-			if(logControlloTraffico != null) {
-				logControlloTraffico.debug("Error during cleanup of AtomicLong dates registry for " + type + ": " + t.getMessage(), t);
-			}
-		}
-
-		return removed;
-	}
-
 	public static synchronized void close() {
 		if(HazelcastManager.staticMapInstance!=null && !HazelcastManager.staticMapInstance.isEmpty()) {
 			for (PolicyGroupByActiveThreadsType type : HazelcastManager.staticMapInstance.keySet()) {
