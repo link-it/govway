@@ -727,8 +727,9 @@ public class MsgDiagnosticiProperties {
 		MSG_DIAGNOSTICI_WARNING.add("001162"); // ricezioneContenutiApplicativi.contentType.multipart.related.missingType.compensated
 
 		MSG_DIAGNOSTICI_WARNING.add("003060"); // inoltroBuste.validazioneContenutiApplicativiRispostaNonRiuscita.warningOnly
-		MSG_DIAGNOSTICI_WARNING.add("003070"); // inoltroBuste.contentType.multipart.related.missingType.compensated
+		MSG_DIAGNOSTICI_WARNING.add("003071"); // inoltroBuste.contentType.multipart.related.missingType.compensated
 		MSG_DIAGNOSTICI_WARNING.add("003074"); // inoltroBuste.ricezioneRestProblemNonInterpretato
+		MSG_DIAGNOSTICI_WARNING.add("003075"); // inoltroBuste.contenutoRichiesta.nonInoltrato
 
 		MSG_DIAGNOSTICI_WARNING.add("004092"); // ricezioneBuste.controlloTraffico.policy.violataWarningOnly
 		MSG_DIAGNOSTICI_WARNING.add("004095"); // ricezioneBuste.controlloTraffico.maxRequestsViolatedWarningOnly
@@ -742,8 +743,9 @@ public class MsgDiagnosticiProperties {
 		MSG_DIAGNOSTICI_WARNING.add("004190"); // ricezioneBuste.contentType.multipart.related.missingType.compensated
 
 		MSG_DIAGNOSTICI_WARNING.add("007059"); // consegnaContenutiApplicativi.validazioneContenutiApplicativiRispostaNonRiuscita.warningOnly
-		MSG_DIAGNOSTICI_WARNING.add("007079"); // consegnaContenutiApplicativi.contentType.multipart.related.missingType.compensated
+		MSG_DIAGNOSTICI_WARNING.add("007080"); // consegnaContenutiApplicativi.contentType.multipart.related.missingType.compensated
 		MSG_DIAGNOSTICI_WARNING.add("007083"); // consegnaContenutiApplicativi.ricezioneRestProblemNonInterpretato
+		MSG_DIAGNOSTICI_WARNING.add("007084"); // consegnaContenutiApplicativi.contenutoRichiesta.nonInoltrato
 	}
 	
 	/*---------- Codici Consegna Fallita -------------*/

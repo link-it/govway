@@ -42,14 +42,9 @@ public class HttpBodyParameters {
 			// standard
 		
 			case OPTIONS:
-				// If the OPTIONS request includes an entity-body then the media type MUST be indicated by a Content-Type field. 
-				// non supportato da HttpUrlConnection, throw 'HTTP method OPTIONS doesn't support output'
-				/*if(contentType!=null && !"".equals(contentType)){
-					this.doOutput = true;
-				}
-				else{*/
-				this.doOutput = false;
-				//}
+				// RFC 9110 9.3.7: A client that generates an OPTIONS request containing content MUST send a valid Content-Type header field describing the representation media type.
+				// Il contenuto viene quindi inoltrato solamente in presenza del Content-Type (vedi controllo sottostante)
+				this.doOutput = true;
 				// body is not defined by this specification, but might be defined by future extensions to HTTP.
 				this.doInput = true;
 				break;
@@ -118,6 +113,16 @@ public class HttpBodyParameters {
 
 	public boolean isDoOutput() {
 		return this.doOutput;
+	}
+
+	/**
+	 * Metodi per i quali la specifica HTTP non definisce una semantica del contenuto della richiesta
+	 * (RFC 9110 9.3.1 GET, 9.3.2 HEAD, 9.3.5 DELETE): il contenuto non viene inoltrato per default.
+	 */
+	public static boolean isContentWithoutDefinedSemantics(HttpRequestMethod httpMethod) {
+		return HttpRequestMethod.GET.equals(httpMethod) ||
+				HttpRequestMethod.HEAD.equals(httpMethod) ||
+				HttpRequestMethod.DELETE.equals(httpMethod);
 	}
 
 	public boolean isDoInput() {

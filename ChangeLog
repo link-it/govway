@@ -1,3 +1,19 @@
+2026-10-16  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità #1844
+	Il contenuto delle richieste viene inoltrato al backend in funzione del metodo HTTP, in conformità con RFC 9110 e OpenAPI 3.0:
+	per OPTIONS viene adesso inoltrato se presente l'header 'Content-Type', mentre per GET, HEAD e DELETE, che non ne definiscono
+	una semantica, può essere abilitato tramite la proprietà 'connettori.request.forceSendContent.enabled' dell'erogazione o fruizione.
+	Un contenuto non inoltrato viene scartato insieme all'header 'Content-Type' e segnalato con un diagnostico di warning.
+
+2026-10-16  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayMonitor]
+	Risolto Bug
+	Nella console di monitoraggio il diagnostico 'DPoP backend proof generato (in cache)' veniva classificato come warning,
+	al posto del diagnostico che segnala la compensazione di un Content-Type 'multipart/related' privo del parametro 'type'.
+
 2026-10-15  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

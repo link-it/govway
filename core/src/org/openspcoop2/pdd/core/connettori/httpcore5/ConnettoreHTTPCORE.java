@@ -248,9 +248,16 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 				contentTypeRichiesta = this.requestMsg.getContentType();
 				// Content-Type non obbligatorio in REST
 			}
-			if(this.debug)
-				this.logger.info("Impostazione http Content-Type ["+contentTypeRichiesta+"]",false);
-			if(contentTypeRichiesta!=null){
+			
+			
+			// Inoltro del contenuto
+			boolean sendContent = this.isSendRequestContent(request, contentTypeRichiesta);
+			
+			
+			// Il Content-Type viene inoltrato solamente se viene inoltrato anche il contenuto
+			if(sendContent && contentTypeRichiesta!=null){
+				if(this.debug)
+					this.logger.info("Impostazione http Content-Type ["+contentTypeRichiesta+"]",false);
 				this.setRequestHeader(HttpConstants.CONTENT_TYPE, contentTypeRichiesta, propertiesTrasportoDebug);
 			}
 			
@@ -464,7 +471,7 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 			// Preparazione messaggio da spedire
 			// Spedizione byte
 			MessageWriteToRunnable messageWriteToRunnable = null;
-			if(httpBody.isDoOutput() || request.isForceSendContent()){
+			if(sendContent){
 				boolean consumeRequestMessage = true;
 				if(this.followRedirects && !gestioneRedirectTramiteLibrerieApache){
 					consumeRequestMessage = false;
@@ -574,6 +581,7 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 				}
 			}
 			else {
+				this.emitDiagnosticContenutoRichiestaNonInoltrato(contentTypeRichiesta);
 				if(this.isDumpBinarioRichiesta()) {
 					// devo registrare almeno gli header HTTP
 					this.dumpBinarioRichiestaUscita(null, null, null, this.location, propertiesTrasportoDebug);

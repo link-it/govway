@@ -34,6 +34,8 @@ import org.openspcoop2.core.config.constants.RuoloContesto;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.message.AbstractBaseOpenSPCoop2MessageDynamicContent;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.exception.MessageException;
+import org.openspcoop2.message.exception.MessageNotSupportedException;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.rest.RestUtilities;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
@@ -56,6 +58,7 @@ import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.ContentEncodingDecoder;
 import org.openspcoop2.utils.transport.http.ContentEncodingWireDigest;
+import org.openspcoop2.utils.transport.http.HttpBodyParameters;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
@@ -113,6 +116,63 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 		}
 	}
 	
+	/**
+	 * Indica se il contenuto della richiesta deve essere inoltrato al backend.
+	 *
+	 * Il contenuto viene inoltrato per i metodi che ne prevedono una semantica, in presenza di un Content-Type (vedi {@link HttpBodyParameters}).
+	 * Per i metodi che non ne definiscono una semantica (GET, HEAD, DELETE) viene inoltrato solamente se presente
+	 * ed abilitato tramite la proprieta' '{@value CostantiProprieta#CONNETTORE_REQUEST_FORCE_SEND_CONTENT_ENABLED}'.
+	 */
+	protected boolean isSendRequestContent(ConnettoreMsg request, String contentType) throws UtilsException, MessageException, MessageNotSupportedException {
+		HttpBodyParameters httpBody = new HttpBodyParameters(this.httpMethod, contentType);
+		if(httpBody.isDoOutput() || request.isForceSendContent()) {
+			return true;
+		}
+		return this.forceSendContentWithoutDefinedSemantics &&
+				contentType!=null && !"".equals(contentType) &&
+				HttpBodyParameters.isContentWithoutDefinedSemantics(this.httpMethod) &&
+				hasRequestContent();
+	}
+
+	private boolean hasRequestContent() throws MessageException, MessageNotSupportedException {
+		if(this.isRest) {
+			return this.requestMsg.castAsRest().hasContent();
+		}
+		return true;
+	}
+
+	/**
+	 * Registra un diagnostico se la richiesta possiede un contenuto che non viene inoltrato al backend.
+	 */
+	protected void emitDiagnosticContenutoRichiestaNonInoltrato(String contentType) {
+		if(this.msgDiagnostico==null) {
+			return;
+		}
+		try {
+			if(!hasRequestContent()) {
+				return;
+			}
+			String motivo = null;
+			if(HttpRequestMethod.TRACE.equals(this.httpMethod)) {
+				motivo = "il metodo HTTP "+this.httpMethod+" non ammette un contenuto (RFC 9110, 9.3.8)";
+			}
+			else if(HttpBodyParameters.isContentWithoutDefinedSemantics(this.httpMethod)) {
+				motivo = "il metodo HTTP "+this.httpMethod+" non definisce una semantica per il contenuto (RFC 9110); l'inoltro può essere abilitato tramite la proprietà '"+
+						CostantiProprieta.CONNETTORE_REQUEST_FORCE_SEND_CONTENT_ENABLED+"'";
+			}
+			else if(contentType==null || "".equals(contentType)) {
+				motivo = "Content-Type non presente";
+			}
+			else {
+				motivo = "il metodo HTTP "+this.httpMethod+" non prevede un contenuto";
+			}
+			this.msgDiagnostico.addKeyword(CostantiPdD.KEY_DETAILS, motivo);
+			this.msgDiagnostico.logPersonalizzato("contenutoRichiesta.nonInoltrato");
+		}catch(Exception t) {
+			this.logger.error("Emissione diagnostica 'contenuto richiesta non inoltrato' fallita: "+t.getMessage(),t);
+		}
+	}
+
 	/** SSL Configuration */
 	protected boolean connettoreHttps = false;
 	protected SSLConfig sslContextProperties;
@@ -131,6 +191,9 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 	protected Charset charsetRFC2047 = null;
 	protected RFC2047Encoding encodingAlgorithmRFC2047 = null;
 	protected boolean validazioneHeaderRFC2047 = false;
+	
+	/** Inoltro del contenuto per i metodi HTTP che non ne definiscono una semantica (GET, HEAD, DELETE) */
+	protected boolean forceSendContentWithoutDefinedSemantics = false;
 	
 	
 	/** Proxy Pass Reverse */
@@ -359,6 +422,8 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 			this.validazioneHeaderRFC2047 = CostantiProprieta.isConnettoriHeaderValidationRequestEnabled(this.proprietaPorta, this.validazioneHeaderRFC2047);
 			this.supportSSE = CostantiProprieta.isConnettoriSupportServerSentEventsEnabled(this.proprietaPorta, this.supportSSE);
 			this.decompressResponseContentEncoding = CostantiProprieta.isConnettoriHttpContentEncodingResponseDecompress(this.proprietaPorta, this.decompressResponseContentEncoding);
+			
+			this.forceSendContentWithoutDefinedSemantics = CostantiProprieta.isConnettoriRequestForceSendContentEnabled(this.proprietaPorta, false);
 		}
 		
 		if(!this.forceDisableProxyPassReverse) {

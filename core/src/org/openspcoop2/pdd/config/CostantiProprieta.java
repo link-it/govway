@@ -562,6 +562,13 @@ public class CostantiProprieta {
 	public static boolean existsConnettoriRequestTimeout(List<Proprieta> proprieta) {
 		return readIntValueWithDefault(proprieta, CONNETTORE_TIMEOUT_INPUT_STREAM_REQUEST_TIMEOUT, -1) > 0;
 	}
+	
+	// Inoltro del contenuto della richiesta anche per i metodi HTTP che non ne definiscono una semantica (GET, HEAD, DELETE)
+	public static final String CONNETTORE_REQUEST_FORCE_SEND_CONTENT_ENABLED = "connettori.request.forceSendContent.enabled";
+	
+	public static boolean isConnettoriRequestForceSendContentEnabled(List<Proprieta> proprieta, boolean defaultValue) {
+		return readBooleanValueWithDefault(proprieta, CONNETTORE_REQUEST_FORCE_SEND_CONTENT_ENABLED, defaultValue, CONNETTORE_VALUE_ENABLED, CONNETTORE_VALUE_DISABLED);
+	}
 
 	public static final int CONNETTORE_JMS_RESPONSE_REST_RETURN_CODE_DEFAULT = 204;
 	private static final String CONNETTORE_JMS_RESPONSE_REST_RETURN_CODE = "connettori.jms.response.rest.returnCode";
