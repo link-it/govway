@@ -53,6 +53,7 @@ import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.Costanti;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.soap.TunnelSoapUtils;
+import org.openspcoop2.pdd.config.CostantiProprieta;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.Utilities;
@@ -63,6 +64,7 @@ import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpBodyParameters;
 import org.openspcoop2.utils.transport.http.HttpConstants;
+import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.utils.transport.http.RFC2047Utilities;
 import org.openspcoop2.utils.transport.http.SSLUtilities;
@@ -449,25 +451,36 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 				contentTypeRichiesta = this.requestMsg.getContentType();
 				// Content-Type non obbligatorio in REST
 			}
-			if(this.debug)
-				this.logger.info("Impostazione http Content-Type ["+contentTypeRichiesta+"]",false);
-			if(contentTypeRichiesta!=null){
-				setRequestHeader(HttpConstants.CONTENT_TYPE,contentTypeRichiesta, propertiesTrasportoDebug);
-			}
 			
 			
 			// HttpMethod
 			if(this.httpMethod==null){
 				throw new Exception("HttpRequestMethod non definito");
 			}
+			
+			
+			// Inoltro del contenuto
+			boolean sendContent = this.isSendRequestContent(request, contentTypeRichiesta);
+			if(sendContent && HttpRequestMethod.GET.equals(this.httpMethod) && !request.isForceSendContent()) {
+				// HttpURLConnection trasformerebbe la richiesta in una POST
+				throw new Exception("Inoltro del contenuto della richiesta con metodo HTTP GET non supportato dalla libreria HttpURLConnection (la richiesta verrebbe trasformata in POST); disabilitare la proprietà '"+
+						CostantiProprieta.CONNETTORE_REQUEST_FORCE_SEND_CONTENT_ENABLED+"' o utilizzare un connettore basato sulla libreria HttpCore");
+			}
+			
+			
+			// Il Content-Type viene inoltrato solamente se viene inoltrato anche il contenuto
+			if(sendContent && contentTypeRichiesta!=null){
+				if(this.debug)
+					this.logger.info("Impostazione http Content-Type ["+contentTypeRichiesta+"]",false);
+				setRequestHeader(HttpConstants.CONTENT_TYPE,contentTypeRichiesta, propertiesTrasportoDebug);
+			}
 
 			
 			// Impostazione transfer-length
 			if(this.debug)
 				this.logger.debug("Impostazione transfer-length...");			
-			if(TransferLengthModes.TRANSFER_ENCODING_CHUNKED.equals(this.tlm)){
-				HttpUtilities.setChunkedStreamingMode(this.httpConn, this.chunkLength, this.httpMethod, contentTypeRichiesta);
-				//this.httpConn.setChunkedStreamingMode(chunkLength);
+			if(TransferLengthModes.TRANSFER_ENCODING_CHUNKED.equals(this.tlm) && sendContent){
+				this.httpConn.setChunkedStreamingMode(this.chunkLength);
 			}
 			if(this.debug)
 				this.logger.info("Impostazione transfer-length effettuata (chunkLength:"+this.chunkLength+"): "+this.tlm,false);
@@ -664,12 +677,10 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 
 			
 			// Spedizione byte
-			boolean httpBody_isDoOutput = httpBody.isDoOutput();
-			if(!httpBody.isDoOutput() && request.isForceSendContent()) {
+			if(sendContent && !httpBody.isDoOutput()) {
 				this.httpConn.setDoOutput(true);
-				httpBody_isDoOutput = true;
 			}
-			if(httpBody_isDoOutput){
+			if(sendContent){
 				boolean consumeRequestMessage = true;
 				if(this.followRedirects){
 					consumeRequestMessage = false;
@@ -731,6 +742,7 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 
 			}
 			else {
+				this.emitDiagnosticContenutoRichiestaNonInoltrato(contentTypeRichiesta);
 				if(this.isDumpBinarioRichiesta()) {
 					// devo registrare almeno gli header HTTP
 					this.emitDiagnosticStartDumpBinarioRichiestaUscita();

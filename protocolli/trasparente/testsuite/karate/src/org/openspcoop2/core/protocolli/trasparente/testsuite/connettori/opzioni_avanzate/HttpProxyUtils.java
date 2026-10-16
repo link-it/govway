@@ -313,6 +313,7 @@ public class HttpProxyUtils {
 		case UNLINK:
 		case PUT:
 		case PATCH:
+		case OPTIONS: // il contenuto viene inoltrato anche per OPTIONS (RFC 9110 9.3.7)
 			error = proxyAuth ?
 					HttpProxyUtils.getConnectionErrorMessageProxyAuth(method, soap)
 					:

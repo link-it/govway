@@ -273,47 +273,6 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 				this.logger.info("Creazione connessione alla URL ["+this.location+"]...",false);
 			this.httpClient = buildHttpClient(keepAliveStrategy, buildSSLContextFactory(), ConnettoreHTTPCORE.USE_POOL);
 			
-			// HttpMethod
-			if(this.httpMethod==null){
-				throw new Exception("HttpRequestMethod non definito");
-			}
-			this.httpRequest = null;
-			switch (this.httpMethod) {
-				case GET:
-					this.httpRequest = new HttpGet(url.toString());
-					break;
-				case DELETE:
-					this.httpRequest = new HttpDelete(url.toString());
-					break;
-				case HEAD:
-					this.httpRequest = new HttpHead(url.toString());
-					break;
-				case POST:
-					this.httpRequest = new HttpPost(url.toString());
-					break;
-				case PUT:
-					this.httpRequest = new HttpPost(url.toString());
-					break;
-				case OPTIONS:
-					this.httpRequest = new HttpOptions(url.toString());
-					break;
-				case TRACE:
-					this.httpRequest = new HttpTrace(url.toString());
-					break;
-				case PATCH:
-					this.httpRequest = new HttpPatch(url.toString());
-					break;	
-				default:
-					this.httpRequest = new CustomHttpEntity(this.httpMethod, url.toString());
-					break;
-			}
-			if(this.httpMethod==null){
-				throw new Exception("HttpRequest non definito ?");
-			}
-			RequestConfig.Builder requestConfigBuilder = RequestConfig.custom();
-			
-			
-			
 			// Tipologia di servizio
 			OpenSPCoop2SoapMessage soapMessageRequest = null;
 			MessageType requestMessageType = this.requestMsg.getMessageType();
@@ -349,9 +308,67 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 				contentTypeRichiesta = this.requestMsg.getContentType();
 				// Content-Type non obbligatorio in REST
 			}
-			if(this.debug)
-				this.logger.info("Impostazione http Content-Type ["+contentTypeRichiesta+"]",false);
-			if(contentTypeRichiesta!=null){
+			
+			
+			// HttpMethod
+			if(this.httpMethod==null){
+				throw new Exception("HttpRequestMethod non definito");
+			}
+			
+			
+			// Inoltro del contenuto
+			boolean sendContent = this.isSendRequestContent(request, contentTypeRichiesta);
+			
+			
+			this.httpRequest = null;
+			if(sendContent && 
+					(HttpRequestMethod.GET.equals(this.httpMethod) || HttpRequestMethod.DELETE.equals(this.httpMethod) || 
+					HttpRequestMethod.HEAD.equals(this.httpMethod) || HttpRequestMethod.OPTIONS.equals(this.httpMethod))) {
+				// HttpGet, HttpDelete, HttpHead e HttpOptions non consentono di associare un contenuto alla richiesta
+				this.httpRequest = new CustomHttpEntity(this.httpMethod, url.toString());
+			}
+			else {
+				switch (this.httpMethod) {
+					case GET:
+						this.httpRequest = new HttpGet(url.toString());
+						break;
+					case DELETE:
+						this.httpRequest = new HttpDelete(url.toString());
+						break;
+					case HEAD:
+						this.httpRequest = new HttpHead(url.toString());
+						break;
+					case POST:
+						this.httpRequest = new HttpPost(url.toString());
+						break;
+					case PUT:
+						this.httpRequest = new HttpPost(url.toString());
+						break;
+					case OPTIONS:
+						this.httpRequest = new HttpOptions(url.toString());
+						break;
+					case TRACE:
+						this.httpRequest = new HttpTrace(url.toString());
+						break;
+					case PATCH:
+						this.httpRequest = new HttpPatch(url.toString());
+						break;	
+					default:
+						this.httpRequest = new CustomHttpEntity(this.httpMethod, url.toString());
+						break;
+				}
+			}
+			if(this.httpMethod==null){
+				throw new Exception("HttpRequest non definito ?");
+			}
+			RequestConfig.Builder requestConfigBuilder = RequestConfig.custom();
+			
+			
+			
+			// Il Content-Type viene inoltrato solamente se viene inoltrato anche il contenuto
+			if(sendContent && contentTypeRichiesta!=null){
+				if(this.debug)
+					this.logger.info("Impostazione http Content-Type ["+contentTypeRichiesta+"]",false);
 				this.setRequestHeader(HttpConstants.CONTENT_TYPE, contentTypeRichiesta, propertiesTrasportoDebug);
 			}
 			
@@ -584,7 +601,7 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 			
 			// Preparazione messaggio da spedire
 			// Spedizione byte
-			if(httpBody.isDoOutput()){
+			if(sendContent){
 				if(this.debug)
 					this.logger.debug("Spedizione byte...");
 				boolean hasContentRestBuilded = false;
@@ -650,6 +667,7 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 				}
 			}
 			else {
+				this.emitDiagnosticContenutoRichiestaNonInoltrato(contentTypeRichiesta);
 				if(this.isDumpBinarioRichiesta()) {
 					// devo registrare almeno gli header HTTP
 					this.emitDiagnosticStartDumpBinarioRichiestaUscita();

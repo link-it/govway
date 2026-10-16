@@ -85,6 +85,7 @@ connettore built-in JMS, File e Status.
 	httpOpzioniAvanzate
 	debug
 	encodedWord
+	contenutoRichiesta
 	jms
 	file
 	status

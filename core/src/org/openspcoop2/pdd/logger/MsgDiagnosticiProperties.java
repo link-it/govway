@@ -728,6 +728,7 @@ public class MsgDiagnosticiProperties {
 
 		MSG_DIAGNOSTICI_WARNING.add("003060"); // inoltroBuste.validazioneContenutiApplicativiRispostaNonRiuscita.warningOnly
 		MSG_DIAGNOSTICI_WARNING.add("003070"); // inoltroBuste.contentType.multipart.related.missingType.compensated
+		MSG_DIAGNOSTICI_WARNING.add("003075"); // inoltroBuste.contenutoRichiesta.nonInoltrato
 
 		MSG_DIAGNOSTICI_WARNING.add("004092"); // ricezioneBuste.controlloTraffico.policy.violataWarningOnly
 		MSG_DIAGNOSTICI_WARNING.add("004095"); // ricezioneBuste.controlloTraffico.maxRequestsViolatedWarningOnly
@@ -742,6 +743,7 @@ public class MsgDiagnosticiProperties {
 
 		MSG_DIAGNOSTICI_WARNING.add("007059"); // consegnaContenutiApplicativi.validazioneContenutiApplicativiRispostaNonRiuscita.warningOnly
 		MSG_DIAGNOSTICI_WARNING.add("007079"); // consegnaContenutiApplicativi.contentType.multipart.related.missingType.compensated
+		MSG_DIAGNOSTICI_WARNING.add("007084"); // consegnaContenutiApplicativi.contenutoRichiesta.nonInoltrato
 	}
 	
 	/*---------- Codici Consegna Fallita -------------*/
