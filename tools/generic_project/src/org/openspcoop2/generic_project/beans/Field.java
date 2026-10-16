@@ -74,16 +74,12 @@ public class Field implements IField {
 		}
 		Field f = (Field) o;
 		
-		String thisClassTypeName = this.classType.getName() + "";
-		String fClassTypeName = f.getClassType().getName() + "";
-		
-		String thisFieldTypeName = this.fieldType.getName() + "";
-		String fFieldTypeName = f.getFieldType().getName() + "";
-		
+		// I nomi dei tipi vengono confrontati senza creare nuove stringhe: il metodo viene invocato
+		// molto frequentemente (es. dai FieldConverter durante la registrazione delle transazioni).
 		return this.className.equals(f.getClassName()) && 
-				thisClassTypeName.equals(fClassTypeName) &&
+				this.classType.getName().equals(f.getClassType().getName()) &&
 			this.fieldName.equals(f.getFieldName()) &&
-			thisFieldTypeName.equals(fFieldTypeName);
+			this.fieldType.getName().equals(f.getFieldType().getName());
 	}	
 	
 	@Override 

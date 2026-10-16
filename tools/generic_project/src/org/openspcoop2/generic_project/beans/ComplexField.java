@@ -86,16 +86,12 @@ public class ComplexField implements IField {
 		}
 		ComplexField f = (ComplexField) o;
 		
-		String thisClassTypeName = this.getClassType().getName() + "";
-		String fClassTypeName = f.getClassType().getName() + "";
-		
-		String thisFieldTypeName = this.getFieldType().getName() + "";
-		String fFieldTypeName = f.getFieldType().getName() + "";
-		
+		// I nomi dei tipi vengono confrontati senza creare nuove stringhe: il metodo viene invocato
+		// molto frequentemente (es. dai FieldConverter durante la registrazione delle transazioni).
 		return this.getClassName().equals(f.getClassName()) && 
-				thisClassTypeName.equals(fClassTypeName) &&
+				this.getClassType().getName().equals(f.getClassType().getName()) &&
 			this.getFieldName().equals(f.getFieldName()) &&
-			thisFieldTypeName.equals(fFieldTypeName) && 
+			this.getFieldType().getName().equals(f.getFieldType().getName()) && 
 			this.father.equals(f.getFather());
 	}
 	

@@ -96,6 +96,9 @@ import org.slf4j.Logger;
 public class GovwayMeterRegistry {
 
 	private static GovwayMeterRegistry staticInstance = null;
+	// Letto ad ogni transazione senza acquisire lock: true solo se il registry e' stato inizializzato allo startup.
+	// Con le metriche disabilitate (default) evita che isInitialized() acquisisca il lock di getInstance()
+	private static volatile boolean initialized = false;
 	/**
 	 * Crea l'istanza e inizializza il registry composito a partire dai collettori configurati
 	 * (ObservabilityProperties), collegandovi i binder di default JVM/process.
@@ -111,6 +114,7 @@ public class GovwayMeterRegistry {
 			GovwayMeterRegistry instance = new GovwayMeterRegistry(startupLog);
 			instance.initRegistry(startupLog);
 			staticInstance = instance;
+			initialized = true;
 		}
 	}
 	public static GovwayMeterRegistry getInstance() {
@@ -124,6 +128,9 @@ public class GovwayMeterRegistry {
 	}
 	/** Indica se il registry è stato inizializzato allo startup ed è attivo (non ancora rilasciato allo shutdown) */
 	public static boolean isInitialized() {
+		if(!initialized) {
+			return false; // metriche disabilitate: nessun lock
+		}
 		GovwayMeterRegistry instance = getInstance();
 		return instance!=null && instance.isActive();
 	}

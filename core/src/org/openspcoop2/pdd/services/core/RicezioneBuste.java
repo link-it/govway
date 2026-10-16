@@ -7272,11 +7272,14 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 					tras.setDestinazione(bustaRisposta.getDestinatario());
 					tras.setTipoDestinazione(bustaRisposta.getTipoDestinatario());
 				}
-				try{
-					String dominio = this.registroServiziReader.getDominio(new IDSoggetto(tras.getTipoDestinazione(),tras.getDestinazione()), null, this.protocolFactory, requestInfo);
-					tras.setIdentificativoPortaDestinazione(dominio);
-				}catch(Exception e){
-					// ignore
+				// senza tipo e nome della destinazione il dominio non e' risolvibile: si evita l'eccezione (es. profilo trasparente)
+				if(tras.getTipoDestinazione()!=null && tras.getDestinazione()!=null) {
+					try{
+						String dominio = this.registroServiziReader.getDominio(new IDSoggetto(tras.getTipoDestinazione(),tras.getDestinazione()), null, this.protocolFactory, requestInfo);
+						tras.setIdentificativoPortaDestinazione(dominio);
+					}catch(Exception e){
+						// ignore
+					}
 				}
 				
 				// oraRegistrazione

@@ -53,23 +53,21 @@ public enum HttpLibrary {
 	}
 	
 	public static HttpLibrary getHttpLibrarySafe(String value) {
-		try {
-			return getHttpLibrary(value);
-		}catch(UtilsException e) {
-			// ignore
-		}
-		return null;
-	}
-	public static HttpLibrary getHttpLibrary(String value) throws UtilsException{
+		// invocato ad ogni richiesta (spesso con valore null): non viene sollevata alcuna eccezione
 		if(HTTP_URL_CONNECTION.toString().equalsIgnoreCase(value)){
 			return HTTP_URL_CONNECTION;
 		}
 		else if(HTTP_CORE5.toString().equalsIgnoreCase(value)){
 			return HTTP_CORE5;
 		}
-		else{
+		return null;
+	}
+	public static HttpLibrary getHttpLibrary(String value) throws UtilsException{
+		HttpLibrary lib = getHttpLibrarySafe(value);
+		if(lib==null){
 			throw new UtilsException("Unknown type '"+value+"' (supported values: "+HttpLibrary.stringValues()+"): "+value);
 		}
+		return lib;
 	}
 	
 	public static String stringValues(){

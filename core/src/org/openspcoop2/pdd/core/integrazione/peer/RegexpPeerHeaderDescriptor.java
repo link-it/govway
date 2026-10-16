@@ -20,7 +20,9 @@
 
 package org.openspcoop2.pdd.core.integrazione.peer;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,8 +37,6 @@ import java.util.regex.Pattern;
 import org.openspcoop2.utils.Semaphore;
 import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.UtilsException;
-import org.openspcoop2.utils.regexp.RegExpException;
-import org.openspcoop2.utils.regexp.RegExpNotFoundException;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 
 
@@ -109,23 +109,41 @@ public class RegexpPeerHeaderDescriptor implements PeerHeaderDescriptor {
 		Map<String, String> newHdrs = new HashMap<>();
 		
 		for (String header : headers) {
-			try {
-				List<String> groups = RegularExpressionEngine.getAllStringMatchPattern(header, this.pattern);
-				Matcher m = NAME_PARAM_PATTERN.matcher(this.headerName);
-				String name = m.replaceAll(g -> {
-					String id = g.group(1);
-					int index = Integer.parseInt(id) - 1;
-					if (index < 0)
-						return header;
-					return groups.get(index);
-				});
-				String value = header;
-				newHdrs.put(name, value);
-			} catch (RegExpException | RegExpNotFoundException e) {
+			List<String> groups = getMatchGroups(header);
+			if (groups.isEmpty()) {
 				// regexp non trovata
+				continue;
 			}
+			Matcher m = NAME_PARAM_PATTERN.matcher(this.headerName);
+			String name = m.replaceAll(g -> {
+				String id = g.group(1);
+				int index = Integer.parseInt(id) - 1;
+				if (index < 0)
+					return header;
+				return groups.get(index);
+			});
+			String value = header;
+			newHdrs.put(name, value);
 		}
-		
+
 		return newHdrs;
+	}
+
+	// Il metodo viene invocato per ogni header di ogni messaggio e quasi nessuno corrisponde al pattern:
+	// il mancato match viene segnalato restituendo una lista vuota, senza utilizzare le eccezioni (costose) come controllo di flusso.
+	// La semantica e' la stessa di RegularExpressionEngine.getAllStringMatchPattern (match sull'intero contenuto ed almeno un gruppo).
+	private List<String> getMatchGroups(String header) {
+		if (header == null || header.isEmpty()) {
+			return Collections.emptyList();
+		}
+		Matcher matcher = this.pattern.matcher(header);
+		if (!matcher.matches() || matcher.groupCount() <= 0) {
+			return Collections.emptyList();
+		}
+		List<String> groups = new ArrayList<>(matcher.groupCount());
+		for (int i = 1; i <= matcher.groupCount(); i++) {
+			groups.add(matcher.group(i));
+		}
+		return groups;
 	}
 }

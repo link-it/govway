@@ -53,13 +53,19 @@ public class TransportUtilities {
 	}
 	
 	private static boolean match(String tipoOp, String key, List<String> listParam) {
-		String keyLowerCase = key.toLowerCase();
-
-		return listParam.stream()
-						.map( String::toLowerCase )
-						.anyMatch( (p) -> p.equals(keyLowerCase) ||
-										  p.equals( "*" ) ||
-										  ( p.endsWith( "*" ) && keyLowerCase.startsWith( p.substring(0, p.length()-1) ) ) );
+		// Confronto case-insensitive senza creare nuove stringhe: il metodo viene invocato per ogni header di ogni messaggio
+		for (String p : listParam) {
+			if( p.equals( "*" ) || p.equalsIgnoreCase(key) ) {
+				return true;
+			}
+			if( p.endsWith( "*" ) ) {
+				int prefixLength = p.length()-1;
+				if( key.regionMatches(true, 0, p, 0, prefixLength) ) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 		
 	private static void initializeHeaders(boolean trasporto, OpenSPCoop2MessageProperties op2MessageProperties, MessageRole messageRole, 

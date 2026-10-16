@@ -252,15 +252,17 @@ public class MsgDiagnostico {
 		if(this.openspcoopProperties.generazioneDateCasualiLogAbilitato()){
 			this.generatoreDateCasuali = GeneratoreCasualeDate.getGeneratoreCasualeDate();
 		}
-		try{
-			if(requestInfo!=null && requestInfo.getProtocolFactory()!=null) {
+		// La protocol factory non disponibile viene gestita senza sollevare eccezioni: il costruttore viene invocato per ogni richiesta
+		boolean protocolFactoryDisponibile = requestInfo!=null && requestInfo.getProtocolFactory()!=null;
+		if(protocolFactoryDisponibile) {
+			try{
 				this.protocolFactory = requestInfo.getProtocolFactory();
+				this.traduttore = this.protocolFactory.createTraduttore();
+			} catch(Throwable e){
+				protocolFactoryDisponibile = false;
 			}
-			else {
-				throw new Exception("ProtocolFactory unknow");
-			}
-			this.traduttore = this.protocolFactory.createTraduttore();
-		} catch(Throwable e){
+		}
+		if(!protocolFactoryDisponibile) {
 			// Succede quando non appartiene a nessun protocollo, ad esempio i diagnostici di startup
 			this.protocolFactory = new BasicProtocolFactory(this.loggerOpenSPCoop2Core);
 			try{

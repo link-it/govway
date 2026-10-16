@@ -113,8 +113,7 @@ public class TransportUtils {
 		Iterator<String> keys = p.keySet().iterator();
 		while (keys.hasNext()) {
 			String key = keys.next();
-			String keyCaseInsensitive = key.toLowerCase();
-			if(keyCaseInsensitive.equals( lowerName )) {
+			if(key.equalsIgnoreCase(name)) {
 				return true;
 			}
 		}
@@ -143,9 +142,8 @@ public class TransportUtils {
 			return null;
 		}
 		T value = get ? p.get(name) : p.remove(name);
-		String lowerName = null;
 		if(value==null){
-			lowerName = name.toLowerCase();
+			String lowerName = name.toLowerCase();
 			value = get ? p.get( lowerName ) : p.remove( lowerName );
 		}
 		if(value==null){
@@ -156,11 +154,7 @@ public class TransportUtils {
 			Iterator<String> keys = p.keySet().iterator();
 			while (keys.hasNext()) {
 				String key = keys.next();
-				String keyCaseInsensitive = key.toLowerCase();
-				if ( lowerName == null )
-					lowerName = name.toLowerCase();
-				String nameCaseInsensitive = lowerName;
-				if(keyCaseInsensitive.equals(nameCaseInsensitive)) {
+				if(key.equalsIgnoreCase(name)) {
 					keysFound.add(key);
 				}
 			}
@@ -205,8 +199,7 @@ public class TransportUtils {
 		while (keys.hasNext()) {
 			String key = keys.next();
 			if(key!=null) {
-				String keyCaseInsensitive = key.toLowerCase();
-				if(keyCaseInsensitive.equals( lowerName )) {
+				if(key.equalsIgnoreCase(name)) {
 					return true;
 				}
 			}
@@ -241,10 +234,9 @@ public class TransportUtils {
 		if(name==null) {
 			return null;
 		}
-		String lowerName = null;
 		Object value = get? map.get(name) : map.remove(name);
 		if(value==null){
-			lowerName = name.toLowerCase();
+			String lowerName = name.toLowerCase();
 			value = get? map.get( lowerName ) : map.remove( lowerName );
 		}
 		if(value==null){
@@ -256,11 +248,7 @@ public class TransportUtils {
 			while (keys.hasNext()) {
 				String key = keys.next();
 				if(key!=null) {
-					String keyCaseInsensitive = key.toLowerCase();
-					if ( lowerName == null )
-						lowerName = name.toLowerCase();
-					String nameCaseInsensitive = lowerName;
-					if(keyCaseInsensitive.equals(nameCaseInsensitive)) {
+					if(key.equalsIgnoreCase(name)) {
 						keysFound.add(key);
 					}
 				}
@@ -321,17 +309,12 @@ public class TransportUtils {
 		if(name==null) {
 			return lNullReturn;
 		}
-		String lowerName = null;
 		String exactKeyName = null;
 		Enumeration<String> keys = request.getParameterNames();
 		if(keys!=null) {
 			while (keys.hasMoreElements()) {
 				String key = keys.nextElement();
-				String keyCaseInsensitive = key.toLowerCase();
-				if ( lowerName == null )
-					lowerName = name.toLowerCase();
-				String nameCaseInsensitive = lowerName;
-				if(keyCaseInsensitive.equals(nameCaseInsensitive)) {
+				if(key.equalsIgnoreCase(name)) {
 					exactKeyName = key;
 					break;
 				}
@@ -382,17 +365,12 @@ public class TransportUtils {
 		if(name==null) {
 			return lNullReturn;
 		}
-		String lowerName = null;
 		String exactKeyName = null;
 		Enumeration<String> keys = request.getHeaderNames();
 		if(keys!=null) {
 			while (keys.hasMoreElements()) {
 				String key = keys.nextElement();
-				String keyCaseInsensitive = key.toLowerCase();
-				if ( lowerName == null )
-					lowerName = name.toLowerCase();
-				String nameCaseInsensitive = lowerName;
-				if(keyCaseInsensitive.equals(nameCaseInsensitive)) {
+				if(key.equalsIgnoreCase(name)) {
 					exactKeyName = key;
 					break;
 				}
@@ -446,18 +424,13 @@ public class TransportUtils {
 		if(name==null) {
 			return lNullReturn;
 		}
-		String lowerName = null;
 		String exactKeyName = null;
 		if(response.getHeaderNames()!=null && !response.getHeaderNames().isEmpty()) {
 			Iterator<String> keys = response.getHeaderNames().iterator();
 			if(keys!=null) {
 				while (keys.hasNext()) {
 					String key = keys.next();
-					String keyCaseInsensitive = key.toLowerCase();
-					if ( lowerName == null )
-						lowerName = name.toLowerCase();
-					String nameCaseInsensitive = lowerName;
-					if(keyCaseInsensitive.equals(nameCaseInsensitive)) {
+					if(key.equalsIgnoreCase(name)) {
 						exactKeyName = key;
 					}
 				}
