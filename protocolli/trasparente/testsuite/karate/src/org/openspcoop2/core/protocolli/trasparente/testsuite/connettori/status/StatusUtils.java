@@ -25,9 +25,9 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.ByteArrayOutputStream;
 
+import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.Bodies;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
-import org.openspcoop2.core.protocolli.trasparente.testsuite.Utils;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.TipoServizio;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.pdd.core.connettori.ConnettoreStatus;
@@ -68,6 +68,28 @@ public class StatusUtils {
 	private static final String OPERATION_TEST_ERR = "/test3";
 	
 	public static final String CACHE_CONTROLLO_TRAFFICO = "ControlloTraffico";
+	
+	// lifetime (secondi) della cache dei dati statistici configurato sui connettori dell'operazione 'statusStatisticaLifeTime'
+	private static final long CACHE_LIFETIME_MS = 15000;
+	// margine applicato ai confronti con il lifetime della cache
+	private static final long CACHE_LIFETIME_MARGIN_MS = 1000;
+	
+	private static String getServizio(MessageType messageType) {
+		return isSoap(messageType) ? SERVIZIO_SOAP : SERVIZIO_REST;
+	}
+	
+	/**
+	 * Tabella dei dati statistici letta dal connettore dell'operazione 'statusStatisticaLifeTime':
+	 * l'erogazione REST utilizza un periodo 'mensile' che, con la configurazione di default
+	 * (distribuzioneSettimanale.usaStatisticheGiornaliere=true), viene calcolato sulle statistiche giornaliere;
+	 * gli altri connettori utilizzano un periodo 'orario'.
+	 */
+	private static String getTabellaStatisticheLifetime(MessageType messageType, TipoServizio tipoServizio) {
+		if(!isSoap(messageType) && TipoServizio.EROGAZIONE.equals(tipoServizio)) {
+			return CostantiDB.STATISTICHE_GIORNALIERE;
+		}
+		return CostantiDB.STATISTICHE_ORARIE;
+	}
 	
 	private static String getIdTransazione(HttpResponse response) {
 		return  response.getHeaderFirstValue("GovWay-Transaction-ID");
@@ -220,8 +242,8 @@ public class StatusUtils {
 		// invio richiesta alla porta che produce errori
 		sendRequest(messageType, tipoServizio, StatusUtils.OPERATION_TEST_ERR, 500);
 		
-		// ricarico le statistiche
-		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.waitForDbStats();
+		// attendo che le statistiche (connettore con periodo 'orario') registrino la transazione
+		DBVerifier.waitStatistiche(CostantiDB.STATISTICHE_ORARIE, getServizio(messageType), tipoServizio, 1, 0);
 		HttpResponse response = sendRequest(messageType, tipoServizio, StatusUtils.OPERATION_STATUS_STATISTICA, getReturnCodeError(messageType));
 		String idTransazione = getIdTransazione(response);
 
@@ -240,38 +262,43 @@ public class StatusUtils {
 		// invio richiesta alla porta che non produce errori
 		sendRequest(messageType, tipoServizio,StatusUtils.OPERATION_TEST_OK, 200);
 		
-		// ricarico le statistiche
-		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.waitForDbStats();
+		// attendo che le statistiche (connettore con periodo 'orario') registrino entrambe le transazioni
+		DBVerifier.waitStatistiche(CostantiDB.STATISTICHE_ORARIE, getServizio(messageType), tipoServizio, 2, 1);
 		sendRequest(messageType, tipoServizio, StatusUtils.OPERATION_STATUS_STATISTICA, 200);
 	}
 	
 	public static void testSingleLifetime(MessageType messageType, TipoServizio tipoServizio) throws SQLQueryObjectException, UtilsException, HttpUtilsException {
 		ConfigLoader.getLoggerCore().debug("Inizio test custom cache lifetime {}, tipoServizio:{})", messageType, tipoServizio);
 		
-		DBVerifier.resetStatistiche(isSoap(messageType) ? SERVIZIO_SOAP : SERVIZIO_REST);
+		DBVerifier.resetStatistiche(getServizio(messageType));
 		ConfigLoader.resetCache(false, CACHE_CONTROLLO_TRAFFICO);
 
-		// invio richiesta per inizializzare la cache delle statistiche
+		// invio richiesta per inizializzare la cache delle statistiche: il dato viene salvato in cache tra 'inizioCache' e 'fineCache'
+		long inizioCache = System.currentTimeMillis();
 		sendRequest(messageType, tipoServizio, StatusUtils.OPERATION_STATUS_CACHE_LIFETIME, 200);
+		long fineCache = System.currentTimeMillis();
 		
 		//invio richiesta alla porta che produce errori
 		sendRequest(messageType, tipoServizio, StatusUtils.OPERATION_TEST_ERR, 500);
 		
-		// invio richiesta per ottenere il risultato in cache
-		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.waitForDbStats();
-		sendRequest(messageType, tipoServizio, StatusUtils.OPERATION_STATUS_CACHE_LIFETIME, 200);
+		// attendo che il timer registri l'errore nei dati statistici letti dal connettore
+		DBVerifier.waitStatistiche(getTabellaStatisticheLifetime(messageType, tipoServizio), getServizio(messageType), tipoServizio, 1, 0);
 		
-		// aspetto che il life time custom invalidi la cache
-		if(Utils.isJenkins()) {
-			Utilities.sleep(15000);
+		// se il dato in cache non è ancora scaduto, il connettore non deve rilevare l'errore presente nelle statistiche
+		if(System.currentTimeMillis() + CACHE_LIFETIME_MARGIN_MS < inizioCache + CACHE_LIFETIME_MS) {
+			sendRequest(messageType, tipoServizio, StatusUtils.OPERATION_STATUS_CACHE_LIFETIME, 200);
 		}
 		else {
-			Utilities.sleep(5000);
+			ConfigLoader.getLoggerCore().debug("Statistiche aggiornate dopo la scadenza della cache: verifica del risultato in cache non effettuata");
+		}
+		
+		// aspetto che il life time custom invalidi la cache
+		long attesa = fineCache + CACHE_LIFETIME_MS + CACHE_LIFETIME_MARGIN_MS - System.currentTimeMillis();
+		if(attesa > 0) {
+			Utilities.sleep(attesa);
 		}
 
 		// invio richiesta per ottenere il nuovo risultato
 		sendRequest(messageType, tipoServizio, StatusUtils.OPERATION_STATUS_CACHE_LIFETIME, getReturnCodeError(messageType));
-		
-		
 	}
 }
