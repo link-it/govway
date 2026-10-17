@@ -86,6 +86,8 @@ public class RestTrasformazioneHeaderTestEngine extends ConfigLoader {
 
 	private static final String H_CUSTOM = "X-Custom-Header";
 	private static final String H_SANITY = "X-Sanity-Header";
+	// un contenuto privo di Content-Type non viene inoltrato al backend: diagnostico di warning, transazione 'OK con anomalie'
+	private static final String DIAG_CONTENUTO_NON_INOLTRATO = "Contenuto della richiesta non inoltrato al backend: Content-Type non presente";
 	private static final String H_RESP_CUSTOM = "X-Resp-Custom-Header";
 	private static final String H_RESP_SANITY = "X-Resp-Sanity-Header";
 	private static final String H_RESP_ADD = "X-Resp-Add-Header";
@@ -119,7 +121,12 @@ public class RestTrasformazioneHeaderTestEngine extends ConfigLoader {
 		}
 		assertNull(m+" "+H_CUSTOM+" non eliminato", ric(r, H_CUSTOM));
 		assertNotNull(m+" "+H_SANITY+" (controllo) assente", ric(r, H_SANITY));
-		verificaConnettore(r);
+		if(conPayload) {
+			verificaConnettoreContenutoNonInoltrato(r);
+		}
+		else {
+			verificaConnettore(r);
+		}
 	}
 
 	// delete su header non presente in origine -> no-op (uso reqDeletePing senza inviare X-Custom-Header)
@@ -380,18 +387,23 @@ public class RestTrasformazioneHeaderTestEngine extends ConfigLoader {
 	// ##############################################################################################################
 
 	// richiesta: conversione 'HTTP Payload vuoto' -> nessun Content-Type al backend
-	@Test public void reqContentEmptyErogazione() throws Exception { reqContentCtNull(TipoServizio.EROGAZIONE, "reqContentEmpty"); }
-	@Test public void reqContentEmptyFruizione() throws Exception { reqContentCtNull(TipoServizio.FRUIZIONE, "reqContentEmpty"); }
+	@Test public void reqContentEmptyErogazione() throws Exception { reqContentCtNull(TipoServizio.EROGAZIONE, "reqContentEmpty", false); }
+	@Test public void reqContentEmptyFruizione() throws Exception { reqContentCtNull(TipoServizio.FRUIZIONE, "reqContentEmpty", false); }
 	// richiesta: conversione 'Alimentazione Contesto' + delete Content-Type -> Content-Type eliminato
-	@Test public void reqContentContextErogazione() throws Exception { reqContentCtNull(TipoServizio.EROGAZIONE, "reqContentContext"); }
-	@Test public void reqContentContextFruizione() throws Exception { reqContentCtNull(TipoServizio.FRUIZIONE, "reqContentContext"); }
+	@Test public void reqContentContextErogazione() throws Exception { reqContentCtNull(TipoServizio.EROGAZIONE, "reqContentContext", true); }
+	@Test public void reqContentContextFruizione() throws Exception { reqContentCtNull(TipoServizio.FRUIZIONE, "reqContentContext", true); }
 
-	private void reqContentCtNull(TipoServizio tipo, String azione) throws Exception {
+	private void reqContentCtNull(TipoServizio tipo, String azione, boolean contenutoNonInoltrato) throws Exception {
 		HttpResponse r = invoca(tipo, azione, HttpRequestMethod.POST, true, HttpConstants.CONTENT_TYPE_JSON, null);
 		String m = msg(tipo, azione, r);
 		assertEquals(m, 200, r.getResultHTTPOperation());
 		assertNull(m+" Content-Type presente al backend", ric(r, HttpConstants.CONTENT_TYPE));
-		verificaConnettore(r);
+		if(contenutoNonInoltrato) {
+			verificaConnettoreContenutoNonInoltrato(r);
+		}
+		else {
+			verificaConnettore(r);
+		}
 	}
 
 	// richiesta: conversione 'Template' (produce JSON) + delete Content-Type -> Content-Type dalla conversione (delete ignorata)
@@ -501,6 +513,14 @@ public class RestTrasformazioneHeaderTestEngine extends ConfigLoader {
 		String idTransazione = r.getHeaderFirstValue("GovWay-Transaction-ID");
 		long esitoOk = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.OK);
 		DBVerifier.verify(idTransazione, esitoOk, this.libraryMode);
+	}
+
+	// come verificaConnettore, ma il payload rimasto senza Content-Type non viene inoltrato al backend (warning -> 'OK con anomalie')
+	private void verificaConnettoreContenutoNonInoltrato(HttpResponse r) throws Exception {
+		String idTransazione = r.getHeaderFirstValue("GovWay-Transaction-ID");
+		long esitoOkAnomalie = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.OK_PRESENZA_ANOMALIE);
+		DBVerifier.verify(idTransazione, esitoOkAnomalie, this.libraryMode);
+		DBVerifier.existsDiagnostico(idTransazione, DIAG_CONTENUTO_NON_INOLTRATO);
 	}
 
 	private HttpResponse invoca(TipoServizio tipo, String azione, HttpRequestMethod method, boolean conPayload,
