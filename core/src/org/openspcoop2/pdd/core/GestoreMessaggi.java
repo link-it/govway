@@ -3577,8 +3577,10 @@ public class GestoreMessaggi  {
 				Timestamp leftValue = null;
 				Timestamp rightValue = null;
 				if(oraRegistrazione!=null) {
-					leftValue = new Timestamp(oraRegistrazione.getTime() - (1000*60*5));
-					rightValue = new Timestamp(oraRegistrazione.getTime() + (1000*60*5));
+					// la finestra viene allargata se attraversa un cambio d'ora: la colonna conserva l'ora locale, ambigua nel passaggio all'ora solare
+					long [] window = DaylightSavingUtils.getTimeWindow(oraRegistrazione, 1000l*60l*5l);
+					leftValue = new Timestamp(window[0]);
+					rightValue = new Timestamp(window[1]);
 					pstmt.setTimestamp(index++,leftValue);
 					pstmt.setTimestamp(index++,rightValue);
 					pstmt.setTimestamp(index++,leftValue);
@@ -4838,8 +4840,10 @@ public class GestoreMessaggi  {
 			Timestamp leftValue = null;
 			Timestamp rightValue = null;
 			if(oraRegistrazione!=null) {
-				leftValue = new Timestamp(oraRegistrazione.getTime() - (1000*60*5));
-				rightValue = new Timestamp(oraRegistrazione.getTime() + (1000*60*5));
+				// la finestra viene allargata se attraversa un cambio d'ora: la colonna conserva l'ora locale, ambigua nel passaggio all'ora solare
+				long [] window = DaylightSavingUtils.getTimeWindow(oraRegistrazione, 1000l*60l*5l);
+				leftValue = new Timestamp(window[0]);
+				rightValue = new Timestamp(window[1]);
 			}
 			
 			PreparedStatement pstmtDeleteSIL = null;
