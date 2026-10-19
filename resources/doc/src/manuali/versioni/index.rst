@@ -30,15 +30,15 @@ dell'Application Server, di Java e delle principali librerie di terze parti util
      - **Supportata**
      - 21 \*
      - 11
-     - 35 – 40 (JBoss EAP 8.1), 27 – 28 (JBoss EAP 8.0)
-     - ``3.4.3``
+     - 35 – 41 (JBoss EAP 8.1), 27 – 28 (JBoss EAP 8.0)
+     - ``3.4.4``
      - —
    * - ``3.3.x``
      - **EOL imminente**
      - 11
      - 9
      - 26, 22 – 25 (JBoss EAP 7.4), 18 – 21 (JBoss EAP 7.3)
-     - ``3.3.20``
+     - ``3.3.21``
      - **31/12/2026**
 
 \* Esecuzione possibile anche su **Java 25** a partire da GovWay 3.4.3: vedi la :ref:`nota sulle dipendenze esterne <java25>`.
@@ -84,11 +84,11 @@ Le versioni si riferiscono all'ultima release pubblicata per ogni linea.
      - 3.3.x
      - 3.2.x
    * - **Apache CXF**
-     - ``4.2.3``
-     - ``3.6.12``
+     - ``4.2.4``
+     - ``3.6.13``
      - ``3.2.6``
    * - **HTTP Client**
-     - Apache HttpClient ``5.6.2``, HttpCore ``5.4.3``
+     - Apache HttpClient ``5.6.4``, HttpCore ``5.4.3``
      - HttpURLConnection JDK built-in, opz. Apache HttpClient ``4.5.13``
      - HttpURLConnection JDK built-in
    * - **Java EE / Jakarta EE**
@@ -100,8 +100,8 @@ Le versioni si riferiscono all'ultima release pubblicata per ogni linea.
      - soap-api ``1.4.0``, saaj-impl ``1.5.3``
      - JDK built-in, saaj-impl ``1.3.28``
    * - **Jackson** (JSON / YAML)
-     - ``2.22.1``
-     - ``2.18.9``
+     - ``2.22.3``
+     - ``2.18.11``
      - ``2.9.10``
    * - **Swagger / OpenAPI**
      - core ``2.2.48``, parser ``2.1.40``
@@ -112,24 +112,24 @@ Le versioni si riferiscono all'ultima release pubblicata per ogni linea.
      - Log4j ``2.26.1``
      - Log4j ``2.11.1``
    * - **Spring Framework**
-     - ``7.0.8``
+     - ``7.0.9``
      - ``5.3.39``
      - ``5.1.6``
    * - **Spring Security**
-     - ``7.1.0``
+     - ``7.1.1``
      - ``5.8.16``
      - ``5.1.5``
    * - **Bouncy Castle**
-     - ``1.84``
-     - ``1.84``
+     - ``1.86``
+     - ``1.86``
      - ``1.60``
    * - **Apache Santuario** (XML Security)
      - ``4.0.4``
      - ``2.3.4``
      - ``2.1.1``
    * - **Apache WSS4J**
-     - ``4.0.1``
-     - ``2.4.1``
+     - ``4.0.2``
+     - ``2.4.4``
      - ``2.2.2``
    * - **OpenSAML**
      - ``5.1.6``

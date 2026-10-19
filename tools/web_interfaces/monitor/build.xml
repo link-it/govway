@@ -124,7 +124,7 @@
 			<matches string="${as}" pattern="tomcat.*"/>
 		</or>
 		<then>
-			<var name="stax2-api_jar" value="stax2-api-4.3.0.jar" />
+			<var name="stax2-api_jar" value="stax2-api-4.3.2.jar" />
 		</then>
 	</if>
 
