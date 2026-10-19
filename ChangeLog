@@ -1,3 +1,11 @@
+2026-10-17  Andrea Poli <apoli@link.it>
+
+	* [Utils, GovWayCore]
+	Risolto Bug #1845
+	Nel passaggio all'ora solare i messaggi presi in carico con ora di registrazione tra le 02:00 e le 02:05 venivano consegnati
+	ma non rimossi dalla coda, causando una riconsegna continua; con identificativi Integration Manager nel formato 'data@id'
+	quelli tra le 02:55 e le 03:00 risultavano non trovati. La ricerca per ora di registrazione tiene adesso conto del cambio d'ora.
+
 2026-10-16  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

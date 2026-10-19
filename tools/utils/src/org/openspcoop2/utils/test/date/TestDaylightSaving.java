@@ -72,4 +72,13 @@ public class TestDaylightSaving {
 		
 	}
 	
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".timeWindow"})
+	public void testTimeWindow() throws UtilsException {
+		
+		TestLogger.info("Run test '"+ID_TEST+".timeWindow' ...");
+		org.openspcoop2.utils.date.test.DaylightSavingTest.timeWindowTest();
+		TestLogger.info("Run test '"+ID_TEST+".timeWindow' ok");
+		
+	}
+	
 }

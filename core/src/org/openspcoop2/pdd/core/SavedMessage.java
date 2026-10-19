@@ -59,6 +59,7 @@ import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.beans.WriteToSerializerType;
+import org.openspcoop2.utils.date.DaylightSavingUtils;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.jdbc.IJDBCAdapter;
 import org.openspcoop2.utils.serialization.JavaDeserializer;
@@ -609,8 +610,10 @@ public class SavedMessage implements java.io.Serializable {
 		Timestamp leftValue = null;
 		Timestamp rightValue = null;
 		if(oraRegistrazione!=null) {
-			leftValue = new Timestamp(oraRegistrazione.getTime() - (1000*60*5));
-			rightValue = new Timestamp(oraRegistrazione.getTime() + (1000*60*5));
+			// la finestra viene allargata se attraversa un cambio d'ora: la colonna conserva l'ora locale, ambigua nel passaggio all'ora solare
+			long [] window = DaylightSavingUtils.getTimeWindow(oraRegistrazione, 1000l*60l*5l);
+			leftValue = new Timestamp(window[0]);
+			rightValue = new Timestamp(window[1]);
 			pstmt.setTimestamp(index++,leftValue);
 			pstmt.setTimestamp(index++,rightValue);
 		}

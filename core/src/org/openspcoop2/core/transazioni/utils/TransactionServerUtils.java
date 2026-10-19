@@ -50,6 +50,7 @@ import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
+import org.openspcoop2.utils.date.DaylightSavingUtils;
 import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.Case;
 import org.openspcoop2.utils.sql.CastColumnType;
@@ -474,12 +475,14 @@ public class TransactionServerUtils {
 				Timestamp leftValue = null;
 				Timestamp rightValue = null;
 				if(i==0) {
-					leftValue = new Timestamp(transazioneApplicativoServer.getDataRegistrazione().getTime() - (1000*60*5));
-					rightValue = new Timestamp(transazioneApplicativoServer.getDataRegistrazione().getTime() + (1000*60*5));
+					long [] window = DaylightSavingUtils.getTimeWindow(transazioneApplicativoServer.getDataRegistrazione(), 1000l*60l*5l); // allargata se attraversa un cambio d'ora
+					leftValue = new Timestamp(window[0]);
+					rightValue = new Timestamp(window[1]);
 				}
 				else if(i==1) {
-					leftValue = new Timestamp(transazioneApplicativoServer.getDataRegistrazione().getTime() - (1000*60*60));
-					rightValue = new Timestamp(transazioneApplicativoServer.getDataRegistrazione().getTime() + (1000*60*60));
+					long [] window = DaylightSavingUtils.getTimeWindow(transazioneApplicativoServer.getDataRegistrazione(), 1000l*60l*60l); // allargata se attraversa un cambio d'ora
+					leftValue = new Timestamp(window[0]);
+					rightValue = new Timestamp(window[1]);
 				}
 			
 				esitoTransazione = getEsitoTransazione(transazioneApplicativoServer, connectionDB,
@@ -584,12 +587,14 @@ public class TransactionServerUtils {
 				Timestamp leftValue = null;
 				Timestamp rightValue = null;
 				if(i==0) {
-					leftValue = new Timestamp(transazioneApplicativoServer.getDataRegistrazione().getTime() - (1000*60*5));
-					rightValue = new Timestamp(transazioneApplicativoServer.getDataRegistrazione().getTime() + (1000*60*5));
+					long [] window = DaylightSavingUtils.getTimeWindow(transazioneApplicativoServer.getDataRegistrazione(), 1000l*60l*5l); // allargata se attraversa un cambio d'ora
+					leftValue = new Timestamp(window[0]);
+					rightValue = new Timestamp(window[1]);
 				}
 				else if(i==1) {
-					leftValue = new Timestamp(transazioneApplicativoServer.getDataRegistrazione().getTime() - (1000*60*60));
-					rightValue = new Timestamp(transazioneApplicativoServer.getDataRegistrazione().getTime() + (1000*60*60));
+					long [] window = DaylightSavingUtils.getTimeWindow(transazioneApplicativoServer.getDataRegistrazione(), 1000l*60l*60l); // allargata se attraversa un cambio d'ora
+					leftValue = new Timestamp(window[0]);
+					rightValue = new Timestamp(window[1]);
 				}
 			
 				boolean useSERIALIZABLE = true;

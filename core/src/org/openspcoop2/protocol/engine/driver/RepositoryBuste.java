@@ -60,6 +60,7 @@ import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.SortedMap;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
+import org.openspcoop2.utils.date.DaylightSavingUtils;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 import org.slf4j.Logger;
@@ -2578,8 +2579,10 @@ public class RepositoryBuste  {
 				Timestamp leftValue = null;
 				Timestamp rightValue = null;
 				if(dataRegistrazione!=null) {
-					leftValue = new Timestamp(dataRegistrazione.getTime() - (1000*60*5));
-					rightValue = new Timestamp(dataRegistrazione.getTime() + (1000*60*5));
+					// la finestra viene allargata se attraversa un cambio d'ora: la colonna conserva l'ora locale, ambigua nel passaggio all'ora solare
+					long [] window = DaylightSavingUtils.getTimeWindow(dataRegistrazione, 1000l*60l*5l);
+					leftValue = new Timestamp(window[0]);
+					rightValue = new Timestamp(window[1]);
 					pstmt.setTimestamp(index++,leftValue);
 					pstmt.setTimestamp(index++,rightValue);
 				}
@@ -3045,8 +3048,10 @@ public class RepositoryBuste  {
 				Timestamp leftValue = null;
 				Timestamp rightValue = null;
 				if(dataRegistrazione!=null) {
-					leftValue = new Timestamp(dataRegistrazione.getTime() - (1000*60*5));
-					rightValue = new Timestamp(dataRegistrazione.getTime() + (1000*60*5));
+					// la finestra viene allargata se attraversa un cambio d'ora: la colonna conserva l'ora locale, ambigua nel passaggio all'ora solare
+					long [] window = DaylightSavingUtils.getTimeWindow(dataRegistrazione, 1000l*60l*5l);
+					leftValue = new Timestamp(window[0]);
+					rightValue = new Timestamp(window[1]);
 					pstmtUpdate.setTimestamp(index++,leftValue);
 					pstmtUpdate.setTimestamp(index++,rightValue);
 				}
@@ -3108,8 +3113,10 @@ public class RepositoryBuste  {
 			Timestamp leftValue = null;
 			Timestamp rightValue = null;
 			if(dataRegistrazione!=null) {
-				leftValue = new Timestamp(dataRegistrazione.getTime() - (1000*60*5));
-				rightValue = new Timestamp(dataRegistrazione.getTime() + (1000*60*5));
+				// la finestra viene allargata se attraversa un cambio d'ora: la colonna conserva l'ora locale, ambigua nel passaggio all'ora solare
+				long [] window = DaylightSavingUtils.getTimeWindow(dataRegistrazione, 1000l*60l*5l);
+				leftValue = new Timestamp(window[0]);
+				rightValue = new Timestamp(window[1]);
 				pstmtUpdate.setTimestamp(index++,leftValue);
 				pstmtUpdate.setTimestamp(index++,rightValue);
 			}

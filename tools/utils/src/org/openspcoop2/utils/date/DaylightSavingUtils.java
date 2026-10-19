@@ -328,8 +328,43 @@ public class DaylightSavingUtils {
     
     
     
+    /**
+     * Calcola gli estremi di una finestra temporale centrata sulla data indicata, da usare nelle condizioni
+     * 'BETWEEN' su colonne timestamp prive di fuso orario (es. ORA_REGISTRAZIONE).
+     *
+     * Tali colonne conservano l'ora locale: nel giorno del passaggio dall'ora legale all'ora solare l'intervallo 02:00-02:59 si ripete
+     * e la data letta dal database (o ricavata da un identificativo) può corrispondere a uno qualsiasi dei due istanti.
+     * Con un semplice +/- margine, quando la finestra attraversa il cambio d'ora l'estremo sinistro espresso in ora locale
+     * può risultare successivo a quello destro (es. 02:57-02:07) e la condizione non seleziona alcuna riga.
+     * Per questo motivo, se la finestra contiene una transizione, viene allargata su entrambi i lati della durata del cambio d'ora.
+     *
+     * @param date data di riferimento
+     * @param marginMillis ampiezza della finestra su ciascun lato, in millisecondi
+     * @return array con l'estremo sinistro e destro della finestra, in millisecondi
+     */
+    public static long[] getTimeWindow(java.util.Date date, long marginMillis) {
+    	return getTimeWindow(date, marginMillis, ZONE_ID_DEFAULT);
+    }
+    public static long[] getTimeWindow(java.util.Date date, long marginMillis, ZoneId zoneId) {
+    	long left = date.getTime() - marginMillis;
+    	long right = date.getTime() + marginMillis;
+
+    	ZoneRules zoneRules = zoneId.getRules();
+    	long extension = 0;
+    	// nextTransition restituisce la transizione successiva all'istante indicato: parto da 1ms prima per includere anche quella che coincide con l'estremo sinistro
+    	ZoneOffsetTransition transition = zoneRules.nextTransition(Instant.ofEpochMilli(left - 1));
+    	while(transition!=null && transition.getInstant().toEpochMilli() <= right) {
+    		extension += Math.abs(transition.getDuration().toMillis());
+    		transition = zoneRules.nextTransition(transition.getInstant());
+    	}
+
+    	return new long[] {left - extension, right + extension};
+    }
+
+
+
     /** Parser */
-    
+
     public static LocalDateTime parseLocalDateTime(String inputDate) {
     	return parseLocalDateTime(inputDate, BASIC_FORMATTER);
     }

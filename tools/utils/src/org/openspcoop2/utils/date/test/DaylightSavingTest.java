@@ -19,11 +19,14 @@
  */
 package org.openspcoop2.utils.date.test;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
+import java.util.Date;
 
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DaylightSavingUtils;
@@ -48,6 +51,8 @@ public class DaylightSavingTest {
 		oraLegaleToOraSolareTest();
 		
 		oraSolareToOraLegaleTest();
+		
+		timeWindowTest();
 		
 		debug("\n\n** TESTSUITE COMPLETATA **");
 	}
@@ -265,6 +270,48 @@ public class DaylightSavingTest {
 
 	}
 	
+	public static void timeWindowTest() throws UtilsException {
+
+		ZoneId zoneId = ZoneId.of("Europe/Rome");
+		long margin = 1000l*60l*5l;
+
+		debug("\n\n** timeWindow (giorno senza cambio d'ora) **");
+		ZonedDateTime normale = ZonedDateTime.of(LocalDateTime.of(2026, 10, 24, 2, 58), zoneId);
+		long[] w = DaylightSavingUtils.getTimeWindow(Date.from(normale.toInstant()), margin, zoneId);
+		if(w[0]!=normale.toInstant().toEpochMilli()-margin || w[1]!=normale.toInstant().toEpochMilli()+margin) {
+			throw new UtilsException("Expected window +/- "+margin+"ms without daylight saving transition");
+		}
+
+		debug("\n\n** timeWindow (ora legale -> ora solare) **");
+		timeWindow(LocalDateTime.of(2026, 10, 25, 1, 30), LocalDateTime.of(2026, 10, 25, 3, 30), zoneId, margin);
+
+		debug("\n\n** timeWindow (ora solare -> ora legale) **");
+		timeWindow(LocalDateTime.of(2026, 3, 29, 1, 30), LocalDateTime.of(2026, 3, 29, 3, 30), zoneId, margin);
+
+	}
+	private static void timeWindow(LocalDateTime from, LocalDateTime to, ZoneId zoneId, long margin) throws UtilsException {
+		LocalDateTime ora = from;
+		int verifiche = 0;
+		while(!ora.isAfter(to)) {
+			// l'ora locale salvata su database può corrispondere, nell'ora ripetuta, a due istanti diversi: li verifico entrambi
+			ZonedDateTime zdt = ZonedDateTime.ofLocal(ora, zoneId, null);
+			ZonedDateTime [] istanti = new ZonedDateTime[] {zdt.withEarlierOffsetAtOverlap(), zdt.withLaterOffsetAtOverlap()};
+			for (ZonedDateTime istante : istanti) {
+				LocalDateTime oraSalvata = istante.toLocalDateTime();
+				long[] w = DaylightSavingUtils.getTimeWindow(Date.from(istante.toInstant()), margin, zoneId);
+				// la condizione BETWEEN viene valutata sull'ora locale, come avviene con una colonna timestamp senza fuso orario
+				LocalDateTime left = LocalDateTime.ofInstant(Instant.ofEpochMilli(w[0]), zoneId);
+				LocalDateTime right = LocalDateTime.ofInstant(Instant.ofEpochMilli(w[1]), zoneId);
+				if(oraSalvata.isBefore(left) || oraSalvata.isAfter(right)) {
+					throw new UtilsException("Ora locale '"+oraSalvata+"' (istante "+istante+") non compresa nella finestra ["+left+" - "+right+"]");
+				}
+				verifiche++;
+			}
+			ora = ora.plusMinutes(1);
+		}
+		debug("\tverifiche effettuate: "+verifiche);
+	}
+
 	private static void timeChangePendingToday(String dataParam, String offset, ZoneId zoneId, TimeTransitionType expected, String format, DateTimeFormatter formatter) throws UtilsException {
 		String data = offset!=null ? dataParam+offset : dataParam;
 		debug("\tdate: "+data);
