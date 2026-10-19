@@ -1,0 +1,42 @@
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
+   <suppress>
+      <notes><![CDATA[
+      file name: cxf-core-3.6.x.jar, cxf-rt-transports-http-jetty-3.6.x.jar
+      Le vulnerabilità indicate sono corrette in Apache CXF 3.6.12, come riportato negli advisory ufficiali (https://cxf.apache.org/security-advisories.html):
+       "Users are recommended to upgrade to versions 4.2.2 or 4.1.7 or 3.6.12, which fix this issue."
+      L'NVD pubblica tuttavia per tali CVE i range CPE '< 4.1.7' e '4.2.0 - 4.2.2', senza distinguere la linea 3.6.x, che quindi risulta erroneamente affetta.
+      La versione utilizzata è successiva alla '3.6.12' facendo diventare la segnalazione un falso positivo.
+      La soppressione è limitata alle versioni 3.6.x a partire dalla 3.6.12.
+      ]]></notes>
+      <packageUrl regex="true">^pkg:maven/org\.apache\.cxf/.*@3\.6\.(1[2-9]|[2-9][0-9])$</packageUrl>
+      <cve>CVE-2026-49875</cve>
+      <cve>CVE-2026-50623</cve>
+      <cve>CVE-2026-50627</cve>
+      <cve>CVE-2026-50628</cve>
+      <cve>CVE-2026-50629</cve>
+      <cve>CVE-2026-50630</cve>
+      <cve>CVE-2026-50631</cve>
+      <cve>CVE-2026-50632</cve>
+      <cve>CVE-2026-50633</cve>
+      <cve>CVE-2026-50634</cve>
+      <cve>CVE-2026-50645</cve>
+   </suppress>
+   <suppress>
+      <notes><![CDATA[
+      file name: cxf-core-3.6.x-gov4j-N.jar
+      Versione modificata di org.apache.cxf:cxf-core:3.6.x; valgono le stesse considerazioni riportate per gli artefatti originali di Apache CXF.
+      ]]></notes>
+      <packageUrl regex="true">^pkg:maven/org\.gov4j\.thirdparty\.org\.apache\.cxf/.*@3\.6\.(1[2-9]|[2-9][0-9])-gov4j-.*$</packageUrl>
+      <cve>CVE-2026-49875</cve>
+      <cve>CVE-2026-50623</cve>
+      <cve>CVE-2026-50627</cve>
+      <cve>CVE-2026-50628</cve>
+      <cve>CVE-2026-50629</cve>
+      <cve>CVE-2026-50630</cve>
+      <cve>CVE-2026-50631</cve>
+      <cve>CVE-2026-50632</cve>
+      <cve>CVE-2026-50633</cve>
+      <cve>CVE-2026-50634</cve>
+      <cve>CVE-2026-50645</cve>
+   </suppress>
+</suppressions>

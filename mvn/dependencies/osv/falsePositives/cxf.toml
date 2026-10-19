@@ -1,0 +1,19 @@
+# cxf-core-3.6.x.jar, cxf-rt-rs-security-jose-jaxrs-3.6.x.jar
+#
+# Le vulnerabilita' sono corrette in Apache CXF 3.6.12, come riportato negli advisory ufficiali:
+# "Users are recommended to upgrade to versions 4.2.2 or 4.1.7 or 3.6.12, which fix this issue."
+# Gli advisory GitHub indicano tuttavia come versioni corrette solamente la 4.1.7 e la 4.2.2,
+# senza distinguere la linea 3.6.x, che quindi risulta erroneamente affetta.
+# Riferimenti:
+# - https://cxf.apache.org/security-advisories.data/CVE-2026-49875.txt
+# - https://cxf.apache.org/security-advisories.data/CVE-2026-50634.txt
+#
+# OWASP Suppression: mvn/dependencies/owasp/falsePositives/cxf.xml
+
+[[IgnoredVulns]]
+id = "GHSA-xw5h-cmh3-8j6j"
+reason = "Falso positivo: CVE-2026-49875 e' corretta in Apache CXF 3.6.12 (advisory Apache), GovWay utilizza una versione successiva alla 3.6.12"
+
+[[IgnoredVulns]]
+id = "GHSA-33j8-j763-4fv5"
+reason = "Falso positivo: CVE-2026-50634 e' corretta in Apache CXF 3.6.12 (advisory Apache), GovWay utilizza una versione successiva alla 3.6.12"
