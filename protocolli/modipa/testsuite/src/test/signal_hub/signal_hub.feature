@@ -1469,6 +1469,10 @@ Scenario: rotazione forzata del seme: diventa effettiva trascorso l'intervallo d
 
 	* def deleted = remove_seeds('DemoSoggettoErogatore','SignalHubTest');
 	* call reset_cache { cache_name: 'ConfigurazionePdD' }
+	# Il token negoziato dagli scenari iniziali resta in cache per la durata dichiarata dalla simulazione PDND
+	# (expires_in 3600), mentre il JWT restituito scade dopo 300 secondi: se l'esecuzione degli scenari precedenti
+	# supera tale intervallo, il token riutilizzato dalla cache viene rifiutato dall'erogazione come scaduto.
+	* call reset_cache { cache_name: 'GestioneToken' }
 
 	# il primo seed viene creato senza inviare la SEEDUPDATE
 	Given url push_signal_url
