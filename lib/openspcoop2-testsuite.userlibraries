@@ -25,6 +25,16 @@
         <archive path="/op2_3.4.dev/lib/testsuite/testng/jcommander-1.82.jar"/>
         <archive path="/op2_3.4.dev/lib/testsuite/testng/guice-5.1.0.jar"/>
     </library>
+    <library name="openspcoop2_3.4.3_lib_micrometer" systemlibrary="false">
+        <archive path="/op2_3.4.dev/lib/micrometer/micrometer-commons-1.17.1.jar"/>
+        <archive path="/op2_3.4.dev/lib/micrometer/micrometer-observation-1.17.1.jar"/>
+        <archive path="/op2_3.4.dev/lib/micrometer/HdrHistogram-2.2.2.jar"/>
+        <archive path="/op2_3.4.dev/lib/micrometer/prometheus-metrics-model-1.9.0.jar"/>
+        <archive path="/op2_3.4.dev/lib/micrometer/prometheus-metrics-core-1.9.0.jar"/>
+        <archive path="/op2_3.4.dev/lib/micrometer/prometheus-metrics-config-1.9.0.jar"/>
+        <archive path="/op2_3.4.dev/lib/micrometer/prometheus-metrics-exposition-formats-1.9.0.jar"/>
+        <archive path="/op2_3.4.dev/lib/micrometer/prometheus-metrics-tracer-common-1.9.0.jar"/>
+    </library>
     <library name="openspcoop2_3.4.3_lib_junit4" systemlibrary="false">
 	<archive path="/op2_3.4.dev/lib/testsuite/junit4/junit-4.13.2.jar"/>
         <archive path="/op2_3.4.dev/lib/testsuite/junit4/hamcrest-core-1.3.jar"/>

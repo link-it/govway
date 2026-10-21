@@ -194,6 +194,9 @@ public class RequestConfig implements java.io.Serializable {
 	
 	private transient org.openspcoop2.utils.Semaphore semaphoreTemplate = null; // possono essere alimentati da thread differenti
 	private Map<String, Serializable> template = null;
+
+	/** Label delle metriche di dettaglio per gruppo e azione: costruite una sola volta e invalidate insieme alla RequestConfig */
+	private Map<String, Map<String,String>> metricsLabels = null;
 	
 	
 	
@@ -265,6 +268,8 @@ public class RequestConfig implements java.io.Serializable {
 		this.copyStoreFrom(source);
 		
 		this.copyTemplateFrom(source);
+		
+		this.copyMetricsLabelsFrom(source);
 
 	}
 	private void copyErogatoreFrom(RequestConfig source) {
@@ -468,6 +473,11 @@ public class RequestConfig implements java.io.Serializable {
 	private void copyTemplateFrom(RequestConfig source) {
 		if(source.template!=null) {
 			this.template = source.template;
+		}
+	}
+	private void copyMetricsLabelsFrom(RequestConfig source) {
+		if(source.metricsLabels!=null) {
+			this.metricsLabels = source.metricsLabels;
 		}
 	}
 	
@@ -1681,6 +1691,27 @@ public class RequestConfig implements java.io.Serializable {
 			return null;
 		}
 		return this.template.get(key);
+	}
+
+	
+	private synchronized void initMetricsLabels() {
+		if(this.metricsLabels==null) {
+			this.metricsLabels = new java.util.concurrent.ConcurrentHashMap<>(4);
+		}
+	}
+	/** Registra le label (non modificabili) delle metriche di dettaglio; la mappa e' acceduta in lettura senza lock */
+	public void addMetricsLabels(String key, Map<String,String> labels) {
+		if(this.metricsLabels==null) {
+			initMetricsLabels();
+		}
+		this.metricsLabels.put(key, labels);
+	}
+	public Map<String,String> getMetricsLabels(String key) {
+		Map<String, Map<String,String>> m = this.metricsLabels;
+		if(m==null) {
+			return null;
+		}
+		return m.get(key);
 	}
 
 }

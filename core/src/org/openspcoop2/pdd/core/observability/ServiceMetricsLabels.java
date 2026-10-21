@@ -20,6 +20,7 @@
 
 package org.openspcoop2.pdd.core.observability;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -117,11 +118,44 @@ public class ServiceMetricsLabels {
 	 * che prevedono il soggetto referente dell'API.
 	 */
 	public static Map<String,String> build(RequestInfo requestInfo, String action, IDAccordo idAccordo) throws UtilsException {
+		// Le label dipendono solamente dalla configurazione: sono mantenute nella RequestConfig (in cache e invalidata
+		// ad ogni modifica di API, erogazione/fruizione, porta o soggetto) per gruppo e azione, e restituite non modificabili
+		RequestConfig requestConfig = requestInfo!=null ? requestInfo.getRequestConfig() : null;
+		String key = getCacheKey(requestConfig, action, idAccordo);
+		if(key!=null) {
+			Map<String,String> labels = requestConfig.getMetricsLabels(key);
+			if(labels!=null) {
+				return labels;
+			}
+		}
+		Map<String,String> labels = null;
 		try {
-			return buildEngine(requestInfo, action, idAccordo);
+			labels = Collections.unmodifiableMap(buildEngine(requestInfo, action, idAccordo));
 		}catch(ProtocolException | DriverConfigurazioneException | DriverRegistroServiziException | DriverRegistroServiziNotFound e) {
 			throw new UtilsException("Costruzione delle label delle metriche di dettaglio fallita: "+e.getMessage(), e);
 		}
+		if(key!=null) {
+			requestConfig.addMetricsLabels(key, labels);
+		}
+		return labels;
+	}
+
+	/** Chiave delle label nella RequestConfig: gruppo (porta) che ha gestito la richiesta, azione e presenza dell'API; null se il gruppo non e' identificato */
+	private static String getCacheKey(RequestConfig requestConfig, String action, IDAccordo idAccordo) {
+		if(requestConfig==null) {
+			return null;
+		}
+		String nomePorta = null;
+		if(requestConfig.getIdPortaDelegataDefault()!=null) {
+			nomePorta = requestConfig.getIdPortaDelegata()!=null ? requestConfig.getIdPortaDelegata().getNome() : null;
+		}
+		else {
+			nomePorta = requestConfig.getIdPortaApplicativa()!=null ? requestConfig.getIdPortaApplicativa().getNome() : null;
+		}
+		if(nomePorta==null) {
+			return null;
+		}
+		return nomePorta + "#" + nz(action) + (idAccordo!=null ? "#api" : "#");
 	}
 	private static Map<String,String> buildEngine(RequestInfo requestInfo, String action, IDAccordo idAccordo)
 			throws ProtocolException, DriverConfigurazioneException, DriverRegistroServiziException, DriverRegistroServiziNotFound {

@@ -22,17 +22,19 @@ package org.openspcoop2.pdd.core.observability;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
 
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.DistributionSummary;
 import io.micrometer.core.instrument.Gauge;
+import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.MultiGauge;
-import io.micrometer.core.instrument.Tag;
 import io.micrometer.core.instrument.Tags;
 import io.micrometer.core.instrument.Timer;
 import io.micrometer.core.instrument.composite.CompositeMeterRegistry;
@@ -144,6 +146,16 @@ public class GovwayMeterRegistry {
 	/** Registry composito: tutti i meter vengono pubblicati su tutti i collettori configurati */
 	private CompositeMeterRegistry registry = null;
 
+	/** true dopo l'inizializzazione del registry e fino alla chiusura: letto ad ogni transazione senza acquisire il lock (cfr. isActive) */
+	private volatile boolean active = false;
+
+	/**
+	 * Meter registrati dalle metriche per-transazione, per nome e valori delle label: evita di ricostruire ad ogni
+	 * transazione builder, configurazione degli istogrammi e identificativo del meter (ricerca nel registry).
+	 * Contiene gli stessi meter del registry (stessa cardinalita'); viene svuotata alla chiusura.
+	 */
+	private final Map<MeterKey, Meter> meters = new ConcurrentHashMap<>();
+
 	/** Registry Prometheus (se e' configurato un collettore prometheus): usato da scrape() per l'endpoint /metrics */
 	private PrometheusMeterRegistry prometheusRegistry = null;
 
@@ -203,6 +215,8 @@ public class GovwayMeterRegistry {
 	private static final String PHASE = "phase";
 	private static final String DATASOURCE = "datasource";
 	private static final String COMPONENT = "component";
+	private static final String PROTOCOL = "protocol";
+	private static final String DIRECTION = "direction";
 	private synchronized void initRegistry(Logger startupLog) throws UtilsException {
 
 		CompositeMeterRegistry composite = new CompositeMeterRegistry();
@@ -250,6 +264,7 @@ public class GovwayMeterRegistry {
 			.register(composite);
 
 		this.registry = composite;
+		this.active = true;
 	}
 
 	/** Crea e aggiunge al composite il registry corrispondente al collettore (segnale metrics). */
@@ -364,7 +379,14 @@ public class GovwayMeterRegistry {
 		return bytes;
 	}
 	
-	private synchronized boolean isActive() {
+	private boolean isActive() {
+		// Dopo l'inizializzazione la verifica avviene senza lock (flag volatile): il metodo e' invocato piu' volte per ogni transazione
+		if(this.active) {
+			return true;
+		}
+		return isActiveSynchronized();
+	}
+	private synchronized boolean isActiveSynchronized() {
 		return this.registry!=null;
 	}
 
@@ -525,9 +547,9 @@ public class GovwayMeterRegistry {
 			String resultClass = classifyEsito(protocollo, m.getEsitoTransazione());
 
 			// Istogrammi: solo la classe dell'esito; i contatori riportano anche codice dell'esito e status http
-			Tags base = Tags.of(ROLE, tipoPdd, RESULT_CLASS, resultClass, "protocol", protocollo);
-			Tags result = Tags.of(RESULT_CODE, String.valueOf(m.getEsitoTransazione()),
-					HTTP_STATUS, httpStatus>0 ? String.valueOf(httpStatus) : "");
+			String [] base = {ROLE, tipoPdd, RESULT_CLASS, resultClass, PROTOCOL, protocollo};
+			String [] result = {RESULT_CODE, String.valueOf(m.getEsitoTransazione()),
+					HTTP_STATUS, httpStatus>0 ? String.valueOf(httpStatus) : ""};
 
 			// Valori calcolati una sola volta
 			Long latTotale = diff(m.getDataUscitaRisposta(), m.getDataIngressoRichiesta());
@@ -535,22 +557,14 @@ public class GovwayMeterRegistry {
 			Long latPorta = latenzaPorta(m);
 
 			// --- Aggregato ---
-			Counter.builder(METRIC_REQUESTS_TOTAL)
-				.description("Number of handled requests")
-				.tags(base.and(result))
-				.register(r)
-				.increment();
+			counter(r, METRIC_REQUESTS_TOTAL, "Number of handled requests", concat(base, result)).increment();
 			emitLatenze(r, METRIC_REQUEST_DURATION_SECONDS, base, latTotale, latServizio, latPorta);
 			emitDimensioni(r, METRIC_REQUEST_SIZE_BYTES, base, m);
 
 			// --- Per servizio (opt-in via proprieta, label costruite da ServiceMetricsLabels) ---
 			if(serviceLabels!=null && !serviceLabels.isEmpty()) {
-				Tags svc = base.and(toTags(serviceLabels));
-				Counter.builder(METRIC_SERVICE_REQUESTS_TOTAL)
-					.description("Number of handled requests per service")
-					.tags(svc.and(result))
-					.register(r)
-					.increment();
+				String [] svc = concat(base, toKeyValues(serviceLabels));
+				counter(r, METRIC_SERVICE_REQUESTS_TOTAL, "Number of handled requests per service", concat(svc, result)).increment();
 				emitLatenze(r, METRIC_SERVICE_REQUEST_DURATION_SECONDS, svc, latTotale, latServizio, latPorta);
 				emitDimensioni(r, METRIC_SERVICE_REQUEST_SIZE_BYTES, svc, m);
 			}
@@ -560,42 +574,33 @@ public class GovwayMeterRegistry {
 		}
 	}
 
-	private void emitLatenze(MeterRegistry r, String metricName, Tags tags, Long latTotale, Long latServizio, Long latPorta) {
+	private void emitLatenze(MeterRegistry r, String metricName, String[] tags, Long latTotale, Long latServizio, Long latPorta) {
 		// fase 'totale' = tempo di elaborazione totale; 'servizio'/'porta' = latenza
 		recordLatenza(r, metricName, tags, "total", latTotale);
 		recordLatenza(r, metricName, tags, "service", latServizio);
 		recordLatenza(r, metricName, tags, "gateway", latPorta);
 	}
 
-	private void emitDimensioni(MeterRegistry r, String metricName, Tags tags, MisurazioniTransazione m) {
+	private void emitDimensioni(MeterRegistry r, String metricName, String[] tags, MisurazioniTransazione m) {
 		recordDimensione(r, metricName, tags, "in_req", m.getRichiestaIngressoBytes());
 		recordDimensione(r, metricName, tags, "out_req", m.getRichiestaUscitaBytes());
 		recordDimensione(r, metricName, tags, "in_resp", m.getRispostaIngressoBytes());
 		recordDimensione(r, metricName, tags, "out_resp", m.getRispostaUscitaBytes());
 	}
 
-	private void recordLatenza(MeterRegistry r, String metricName, Tags tags, String fase, Long ms) {
+	private void recordLatenza(MeterRegistry r, String metricName, String[] tags, String fase, Long ms) {
 		if(ms==null || ms.longValue()<0) {
 			return;
 		}
-		Timer.builder(metricName)
-			.description("Request processing latency")
-			.tags(tags).tag(PHASE, fase)
-			.serviceLevelObjectives(this.latencySlo)
-			.register(r)
+		timer(r, metricName, "Request processing latency", this.latencySlo, concat(tags, PHASE, fase))
 			.record(Duration.ofMillis(ms.longValue()));
 	}
 
-	private void recordDimensione(MeterRegistry r, String metricName, Tags tags, String direzione, Long bytes) {
+	private void recordDimensione(MeterRegistry r, String metricName, String[] tags, String direzione, Long bytes) {
 		if(bytes==null || bytes.longValue()<0) {
 			return;
 		}
-		DistributionSummary.builder(metricName)
-			.description("Message size")
-			.baseUnit("bytes")
-			.tags(tags).tag("direction", direzione)
-			.serviceLevelObjectives(this.sizeSlo)
-			.register(r)
+		distributionSummary(r, metricName, "Message size", "bytes", this.sizeSlo, concat(tags, DIRECTION, direzione))
 			.record(bytes.doubleValue());
 	}
 
@@ -658,7 +663,7 @@ public class GovwayMeterRegistry {
 			return;
 		}
 		try {
-			Tags base = toTags(aggregation.getLabels());
+			String [] base = toKeyValues(aggregation.getLabels());
 			List<String> fasi = aggregation.getFasi();
 
 			recordFase(r, base, fasi, "token", te.getToken());
@@ -700,7 +705,7 @@ public class GovwayMeterRegistry {
 		}
 	}
 
-	private void recordFase(MeterRegistry r, Tags base, List<String> fasi, String fase, TempiElaborazioneFunzionalita f) {
+	private void recordFase(MeterRegistry r, String[] base, List<String> fasi, String fase, TempiElaborazioneFunzionalita f) {
 		if(f==null) {
 			return;
 		}
@@ -711,23 +716,96 @@ public class GovwayMeterRegistry {
 		if(lat<0) {
 			return;
 		}
-		Timer.builder(METRIC_PROCESSING_PHASE_SECONDS)
-			.description("Latency per processing phase")
-			.tags(base).tag(PHASE, fase)
-			.serviceLevelObjectives(this.latencySlo)
-			.register(r)
+		timer(r, METRIC_PROCESSING_PHASE_SECONDS, "Latency per processing phase", this.latencySlo, concat(base, PHASE, fase))
 			.record(Duration.ofMillis(lat));
 	}
 
-	private static Tags toTags(Map<String,String> labels) {
+	/** Label nella forma chiave1, valore1, chiave2, valore2, ... */
+	private static String[] toKeyValues(Map<String,String> labels) {
 		if(labels==null || labels.isEmpty()) {
-			return Tags.empty();
+			return new String[0];
 		}
-		List<Tag> l = new ArrayList<>();
+		String [] kv = new String[labels.size()*2];
+		int i = 0;
 		for(Map.Entry<String,String> e : labels.entrySet()) {
-			l.add(Tag.of(e.getKey(), e.getValue()!=null ? e.getValue() : ""));
+			kv[i++] = e.getKey();
+			kv[i++] = e.getValue()!=null ? e.getValue() : "";
 		}
-		return Tags.of(l);
+		return kv;
+	}
+	private static String[] concat(String[] a, String... b) {
+		String [] c = new String[a.length + b.length];
+		System.arraycopy(a, 0, c, 0, a.length);
+		System.arraycopy(b, 0, c, a.length, b.length);
+		return c;
+	}
+
+	/** Chiave dei meter in cache: nome della metrica e label (chiave, valore) nell'ordine di costruzione */
+	private static final class MeterKey {
+		private final String name;
+		private final String[] tags;
+		private final int hash;
+		private MeterKey(String name, String[] tags) {
+			this.name = name;
+			this.tags = tags;
+			this.hash = 31 * name.hashCode() + Arrays.hashCode(tags);
+		}
+		@Override
+		public int hashCode() {
+			return this.hash;
+		}
+		@Override
+		public boolean equals(Object o) {
+			if(this == o) {
+				return true;
+			}
+			if(!(o instanceof MeterKey)) {
+				return false;
+			}
+			MeterKey k = (MeterKey) o;
+			return this.hash == k.hash && this.name.equals(k.name) && Arrays.equals(this.tags, k.tags);
+		}
+	}
+
+	/*
+	 * Meter in cache: il builder (e la registrazione) e' utilizzato solo alla prima occorrenza di nome e label.
+	 * Il registry restituisce comunque lo stesso meter per lo stesso identificativo: la cache non cambia le metriche esposte.
+	 */
+	private Counter counter(MeterRegistry r, String name, String description, String[] tags) {
+		MeterKey key = new MeterKey(name, tags);
+		Meter m = this.meters.get(key);
+		if(m==null) {
+			m = this.meters.computeIfAbsent(key, k -> Counter.builder(name)
+					.description(description)
+					.tags(tags)
+					.register(r));
+		}
+		return (Counter) m;
+	}
+	private Timer timer(MeterRegistry r, String name, String description, Duration[] slo, String[] tags) {
+		MeterKey key = new MeterKey(name, tags);
+		Meter m = this.meters.get(key);
+		if(m==null) {
+			m = this.meters.computeIfAbsent(key, k -> Timer.builder(name)
+					.description(description)
+					.tags(tags)
+					.serviceLevelObjectives(slo)
+					.register(r));
+		}
+		return (Timer) m;
+	}
+	private DistributionSummary distributionSummary(MeterRegistry r, String name, String description, String baseUnit, double[] slo, String[] tags) {
+		MeterKey key = new MeterKey(name, tags);
+		Meter m = this.meters.get(key);
+		if(m==null) {
+			m = this.meters.computeIfAbsent(key, k -> DistributionSummary.builder(name)
+					.description(description)
+					.baseUnit(baseUnit)
+					.tags(tags)
+					.serviceLevelObjectives(slo)
+					.register(r));
+		}
+		return (DistributionSummary) m;
 	}
 
 	// Invocata sia dallo scrape '/metrics' sia dal ciclo di publish di ogni collettore OTLP:
@@ -913,14 +991,10 @@ public class GovwayMeterRegistry {
 			return;
 		}
 		try {
-			Tags base = Tags.of(PHASE, nz(phase));
+			String [] base = {PHASE, nz(phase)};
 
 			if(totalMs>=0) {
-				Timer.builder(METRIC_TRACING_PERSISTENCE_SECONDS)
-					.description("Total duration of the tracing persistence to DB")
-					.tags(base)
-					.serviceLevelObjectives(this.persistenceSlo)
-					.register(r)
+				timer(r, METRIC_TRACING_PERSISTENCE_SECONDS, "Total duration of the tracing persistence to DB", this.persistenceSlo, base)
 					.record(Duration.ofMillis(totalMs));
 			}
 
@@ -937,17 +1011,13 @@ public class GovwayMeterRegistry {
 	}
 
 	/** Registra un istogramma per ciascuna componente misurata (tag 'component' = nome componente). */
-	private void emitTracingComponents(MeterRegistry r, String metricName, String description, Tags base, Map<String,Long> components) {
+	private void emitTracingComponents(MeterRegistry r, String metricName, String description, String[] base, Map<String,Long> components) {
 		if(components==null) {
 			return;
 		}
 		for (Map.Entry<String,Long> e : components.entrySet()) {
 			if(e.getValue()!=null && e.getValue().longValue()>=0) {
-				Timer.builder(metricName)
-					.description(description)
-					.tags(base).tag(COMPONENT, e.getKey())
-					.serviceLevelObjectives(this.persistenceSlo)
-					.register(r)
+				timer(r, metricName, description, this.persistenceSlo, concat(base, COMPONENT, e.getKey()))
 					.record(Duration.ofMillis(e.getValue().longValue()));
 			}
 		}
@@ -986,6 +1056,8 @@ public class GovwayMeterRegistry {
 	}
 
 	public synchronized void close() {
+		this.active = false;
+		this.meters.clear();
 		if(this.jvmGcMetrics!=null) {
 			this.jvmGcMetrics.close();
 			this.jvmGcMetrics = null;
