@@ -26,9 +26,11 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.openspcoop2.utils.TipiDatabase;
 
@@ -153,6 +155,8 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	/** List di Field per l'insert */
 	List<String> insertFieldsName = new ArrayList<>();
 	List<String> insertFieldsValue = new ArrayList<>();
+	/** Nomi dei field per l'insert, utilizzati per verificare in tempo costante l'assenza di duplicati */
+	Set<String> insertFieldsNameSet = new HashSet<>();
 	/** Tabella per l'insert */
 	String insertTable = null;
 
@@ -2985,7 +2989,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 			throw new SQLQueryObjectException(FIELD_NAME_IS_NULL_OR_EMPTY);
 		if(valueField==null)
 			throw new SQLQueryObjectException("Field value is null");
-		if(this.insertFieldsName.contains(nomeField)){
+		if(!this.insertFieldsNameSet.add(nomeField)){
 			throw new SQLQueryObjectException(FIELD_NAME_PREFIX+nomeField+" gia inserito tra gli insert fields");
 		}else{
 			this.insertFieldsName.add(nomeField);

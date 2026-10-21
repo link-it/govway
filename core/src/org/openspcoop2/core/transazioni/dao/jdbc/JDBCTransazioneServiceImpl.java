@@ -23,6 +23,8 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.date.DateUtils;
@@ -89,16 +91,29 @@ public class JDBCTransazioneServiceImpl extends JDBCTransazioneServiceSearchImpl
 		transazione.setEventiGestione(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.sanitize(dbType, transazione.getEventiGestione()));
 	}
 
-	@Override
-	public void create(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, Transazione transazione, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotImplementedException,ServiceException,Exception {
-
-		if(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.needsSanitization(jdbcProperties.getDatabase())){
-			sanitizeTextColumns(jdbcProperties.getDatabase(), transazione);
+	/** SQL di insert già costruiti, per tipo di database, tabella ed eventuali colonne estese; il numero di elementi è limitato */
+	private static final int INSERT_SQL_CACHE_MAX_ENTRIES = 100;
+	private static final Map<String, InsertSqlCacheEntry> INSERT_SQL_CACHE = new ConcurrentHashMap<>();
+	private static final class InsertSqlCacheEntry {
+		private final String sql;
+		private final int numeroParametri;
+		private InsertSqlCacheEntry(String sql, int numeroParametri) {
+			this.sql = sql;
+			this.numeroParametri = numeroParametri;
 		}
-
-		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities jdbcUtilities =
-				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities(sqlQueryObject.getTipoDatabaseOpenSPCoop2(), log, connection);
-
+	}
+	private String buildInsertSqlCacheKey(ISQLQueryObject sqlQueryObject, Transazione transazione) throws ExpressionException, SQLQueryObjectException {
+		StringBuilder sb = new StringBuilder();
+		sb.append(sqlQueryObject.getTipoDatabaseOpenSPCoop2()).append('#').append(this.getTransazioneFieldConverter().toTable(Transazione.model()));
+		if(transazione.sizeTransazioneExtendedInfoList()>0){
+			for (TransazioneExtendedInfo transazioneExtedendInfo : transazione.getTransazioneExtendedInfoList()) {
+				sb.append('#').append(transazioneExtedendInfo.getNome());
+			}
+		}
+		return sb.toString();
+	}
+	private String buildInsertSql(ISQLQueryObject sqlQueryObject, Transazione transazione) throws ExpressionException, SQLQueryObjectException {
+		
 		ISQLQueryObject sqlQueryObjectInsert = sqlQueryObject.newSQLQueryObject();
 				
 
@@ -213,9 +228,27 @@ public class JDBCTransazioneServiceImpl extends JDBCTransazioneServiceSearchImpl
 			}
 		}
 			
+		return sqlQueryObjectInsert.createSQLInsert();
+	}
+	
+	@Override
+	public void create(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, Transazione transazione, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotImplementedException,ServiceException,Exception {
+
+		if(org.openspcoop2.utils.jdbc.NullByteTextColumnSanitizer.needsSanitization(jdbcProperties.getDatabase())){
+			sanitizeTextColumns(jdbcProperties.getDatabase(), transazione);
+		}
+
+		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities jdbcUtilities =
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities(sqlQueryObject.getTipoDatabaseOpenSPCoop2(), log, connection);
+
+		// L'SQL di insert non dipende dai valori della transazione: viene costruito una sola volta per tipo di database,
+		// tabella ed eventuali colonne estese (transazione-extended-info) e mantenuto in cache insieme al numero di parametri
+		String insertSqlCacheKey = this.buildInsertSqlCacheKey(sqlQueryObject, transazione);
+		InsertSqlCacheEntry insertSqlCacheEntry = INSERT_SQL_CACHE.get(insertSqlCacheKey);
+		
 		// Insert transazione
-		String insertSql = sqlQueryObjectInsert.createSQLInsert();
-		List<JDBCObject> listaJDBCObject = new ArrayList<>();
+		String insertSql = insertSqlCacheEntry!=null ? insertSqlCacheEntry.sql : this.buildInsertSql(sqlQueryObject, transazione);
+		List<JDBCObject> listaJDBCObject = insertSqlCacheEntry!=null ? new ArrayList<>(insertSqlCacheEntry.numeroParametri) : new ArrayList<>();
 		listaJDBCObject.add(new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazione.getIdTransazione(),Transazione.model().ID_TRANSAZIONE.getFieldType()) );
 		listaJDBCObject.add(new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazione.getStato(),Transazione.model().STATO.getFieldType()) );
 		listaJDBCObject.add(new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazione.getRuoloTransazione(),Transazione.model().RUOLO_TRANSAZIONE.getFieldType()) );
@@ -323,6 +356,9 @@ public class JDBCTransazioneServiceImpl extends JDBCTransazioneServiceSearchImpl
 			for (TransazioneExtendedInfo transazioneExtedendInfo : transazione.getTransazioneExtendedInfoList()) {
 				listaJDBCObject.add( new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneExtedendInfo.getValore(),String.class));
 			}
+		}
+		if(insertSqlCacheEntry==null && INSERT_SQL_CACHE.size()<INSERT_SQL_CACHE_MAX_ENTRIES) {
+			INSERT_SQL_CACHE.put(insertSqlCacheKey, new InsertSqlCacheEntry(insertSql, listaJDBCObject.size()));
 		}
 		jdbcUtilities.execute(insertSql, jdbcProperties.isShowSql(), 
 				listaJDBCObject.toArray(new JDBCObject[1])

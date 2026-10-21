@@ -288,7 +288,7 @@ public class InformazioniStatoPorta {
 		bf.append("\n");
 		
 		bf.append("===================================\n");
-		bf.append("Informazioni TimeZone\n");
+		bf.append("Informazioni Data e Ora\n");
 		bf.append("===================================\n");
 		bf.append("\n");
 		bf.append(infoTimeZone);

@@ -1369,6 +1369,11 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			}
 
 
+			/*----------- Inizializzazione modalità di clone dei bean  --------------*/
+			org.openspcoop2.utils.beans.BaseBean.setCloneMode(propertiesReader.getBeanCloneMode());
+			OpenSPCoop2Startup.logStartupInfo("Inizializzazione modalità di clone dei bean: "+org.openspcoop2.utils.beans.BaseBean.getCloneMode());
+
+
 
 
 
@@ -1651,7 +1656,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			try{
 				accessoConfigurazione = propertiesReader.getAccessoConfigurazionePdD();
 			}catch(Exception e){
-				this.logError("Riscontrato errore durante la lettura della modalita' di accesso alla configurazione di OpenSPCoop: "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della modalità di accesso alla configurazione di OpenSPCoop: "+e.getMessage(),e);
 				return;
 			}
 			boolean isInitializeConfig = ConfigurazionePdDReader.initialize(accessoConfigurazione,logCore,OpenSPCoop2Startup.log,localConfig,
@@ -3438,6 +3443,16 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						infoConfigSistema.getInformazioniInstallazione(),
 						org.openspcoop2.pdd.core.token.dpop.jti.LocalJtiCacheManager.printStatsAllPolicies(),
 						informazioniStatoPortaCache.toArray(new InformazioniStatoPortaCache[1])));
+
+			// Una lettura lenta dell'orologio di sistema ha un impatto diretto sulle prestazioni: viene segnalata nel log di startup
+			try {
+				String avvisoOrologio = org.openspcoop2.utils.date.SystemClockInfo.read().getWarning();
+				if(avvisoOrologio!=null) {
+					OpenSPCoop2Startup.log.warn("Informazioni Data e Ora: "+avvisoOrologio);
+				}
+			}catch(Throwable t) {
+				// l'informazione e' opzionale: non deve compromettere l'avvio
+			}
 
 			
 			

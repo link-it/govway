@@ -19,13 +19,20 @@
  */
 package org.openspcoop2.generic_project.expression.impl.sql;
 
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.openspcoop2.generic_project.beans.AliasField;
+import org.openspcoop2.generic_project.beans.ComplexField;
 import org.openspcoop2.generic_project.beans.ConstantField;
 import org.openspcoop2.generic_project.beans.CustomField;
+import org.openspcoop2.generic_project.beans.Field;
 import org.openspcoop2.generic_project.beans.IAliasTableField;
 import org.openspcoop2.generic_project.beans.IField;
 import org.openspcoop2.generic_project.beans.IModel;
 import org.openspcoop2.generic_project.exception.ExpressionException;
+import org.openspcoop2.utils.TipiDatabase;
 
 /**
  * AbstractSQLFieldConverter
@@ -111,12 +118,80 @@ public abstract class AbstractSQLFieldConverter implements ISQLFieldConverter {
 	
 	@Override
 	public String toColumn(IField field,boolean appendTablePrefix) throws ExpressionException{
-		return this.toColumn(field, false, appendTablePrefix);
+		return this.toColumnWithCache(field, false, appendTablePrefix);
 	}
-	
+
 	@Override
 	public String toAliasColumn(IField field,boolean appendTablePrefix) throws ExpressionException{
-		return this.toColumn(field, true, appendTablePrefix);
+		return this.toColumnWithCache(field, true, appendTablePrefix);
+	}
+
+
+	/*
+	 * Cache dei nomi delle colonne dei field del modello.
+	 * I converter generati risolvono un field tramite una sequenza di confronti con tutti i field del modello (toColumn con 3 parametri):
+	 * il risultato dipende solamente dalla classe del converter, dal tipo di database, dal field e dai due parametri, ed è quindi mantenuto in cache.
+	 * Vengono mantenuti solamente i field del modello (classi Field e ComplexField), confrontati per identità: i field creati dinamicamente
+	 * (CustomField, ConstantField, AliasField, IAliasTableField) continuano ad essere risolti ad ogni invocazione.
+	 * Il numero di elementi è limitato: superata la soglia, i nuovi field vengono risolti senza essere aggiunti alla cache.
+	 * Le eccezioni non vengono mantenute in cache.
+	 */
+	private static final int TO_COLUMN_CACHE_MAX_ENTRIES = 20000; // circa 4.800 field nei modelli, per 4 combinazioni dei parametri
+	private static final Map<ToColumnCacheKey, String> TO_COLUMN_CACHE = new ConcurrentHashMap<>();
+
+	private static final class ToColumnCacheKey {
+		private final Class<?> converterClass;
+		private final TipiDatabase databaseType;
+		private final IField field;
+		private final boolean returnAlias;
+		private final boolean appendTablePrefix;
+		private final int hash;
+		private ToColumnCacheKey(Class<?> converterClass, TipiDatabase databaseType, IField field, boolean returnAlias, boolean appendTablePrefix) {
+			this.converterClass = converterClass;
+			this.databaseType = databaseType;
+			this.field = field;
+			this.returnAlias = returnAlias;
+			this.appendTablePrefix = appendTablePrefix;
+			this.hash = Objects.hash(converterClass, databaseType, System.identityHashCode(field), returnAlias, appendTablePrefix);
+		}
+		@Override
+		public int hashCode() {
+			return this.hash;
+		}
+		@Override
+		public boolean equals(Object o) {
+			if(this==o) {
+				return true;
+			}
+			if(!(o instanceof ToColumnCacheKey)) {
+				return false;
+			}
+			ToColumnCacheKey k = (ToColumnCacheKey) o;
+			return this.field==k.field && // identità del field
+					this.converterClass==k.converterClass &&
+					this.databaseType==k.databaseType &&
+					this.returnAlias==k.returnAlias &&
+					this.appendTablePrefix==k.appendTablePrefix;
+		}
+	}
+
+	private static boolean isToColumnCacheable(IField field) {
+		return field!=null && (field.getClass()==Field.class || field.getClass()==ComplexField.class);
+	}
+
+	private String toColumnWithCache(IField field,boolean returnAlias,boolean appendTablePrefix) throws ExpressionException{
+		if(!isToColumnCacheable(field)) {
+			return this.toColumn(field, returnAlias, appendTablePrefix);
+		}
+		ToColumnCacheKey key = new ToColumnCacheKey(this.getClass(), this.getDatabaseType(), field, returnAlias, appendTablePrefix);
+		String column = TO_COLUMN_CACHE.get(key);
+		if(column==null) {
+			column = this.toColumn(field, returnAlias, appendTablePrefix);
+			if(column!=null && TO_COLUMN_CACHE.size()<TO_COLUMN_CACHE_MAX_ENTRIES) {
+				TO_COLUMN_CACHE.put(key, column);
+			}
+		}
+		return column;
 	}
 	
 	

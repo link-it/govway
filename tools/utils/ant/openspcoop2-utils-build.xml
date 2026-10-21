@@ -939,6 +939,7 @@
 				
 				<!-- org.openspcoop2.utils -->
 				<var name="packagesCompiled" value="org.openspcoop2.utils.test" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.test.beans" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.test.crypt" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.test.csv" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.test.io" />

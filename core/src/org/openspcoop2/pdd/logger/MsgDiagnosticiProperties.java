@@ -27,7 +27,9 @@ import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.pdd.config.MsgDiagnosticiInstanceProperties;
@@ -689,6 +691,7 @@ public class MsgDiagnosticiProperties {
 				MsgDiagnosticiProperties.messaggiMsgDiagnosticiPersonalizzati = new PropertiesReader(tmpMessaggiMsgDiagnosticiPersonalizzati,true);			
 				MsgDiagnosticiProperties.mappingCodiceToKeywordMsgDiagnosticiPersonalizzati = new PropertiesReader(tmpMappingCodiceToKeywordMsgDiagnosticiPersonalizzati,true);	
 				MsgDiagnosticiProperties.codiciIdentificativiFunzione = new PropertiesReader(tmpCodiciIdentificativiFunzione,true);
+				clearCacheDiagnosticiPersonalizzati();
 
 				MsgDiagnosticiProperties.initMsgDiagnosticiPersonalizzati = true;
 				
@@ -704,6 +707,7 @@ public class MsgDiagnosticiProperties {
 			MsgDiagnosticiProperties.messaggiMsgDiagnosticiPersonalizzati = null;
 			MsgDiagnosticiProperties.mappingCodiceToKeywordMsgDiagnosticiPersonalizzati = null;
 			MsgDiagnosticiProperties.codiciIdentificativiFunzione = null;
+			clearCacheDiagnosticiPersonalizzati();
 			return false;
 		}
 	}
@@ -1601,7 +1605,44 @@ public class MsgDiagnosticiProperties {
 	
 	
 	/*---------- Get -------------*/
+	/*
+	 * Valori dei diagnostici personalizzati già letti (modulo -> chiave -> valore).
+	 * Evitano ad ogni diagnostico la concatenazione della chiave e, per i livelli, la conversione del valore.
+	 * Viene mantenuto il valore così come definito nel file di proprietà: le keyword dei messaggi vengono risolte successivamente ad ogni utilizzo.
+	 * La dimensione è limitata dal numero di diagnostici definiti; i valori non vengono mantenuti in caso di errore di lettura.
+	 */
+	private static final class ValoreDiagnostico {
+		private final String valore;
+		private ValoreDiagnostico(String valore) {
+			this.valore = valore;
+		}
+	}
+	private static final Map<String, Map<String, Integer>> cacheLivelli = new ConcurrentHashMap<>();
+	private static final Map<String, Map<String, ValoreDiagnostico>> cacheCodici = new ConcurrentHashMap<>();
+	private static final Map<String, Map<String, ValoreDiagnostico>> cacheMessaggi = new ConcurrentHashMap<>();
+	private static void clearCacheDiagnosticiPersonalizzati() {
+		cacheLivelli.clear();
+		cacheCodici.clear();
+		cacheMessaggi.clear();
+	}
+
 	public Integer getLivello(String modulo,String keyLivelloPersonalizzato){
+		if(modulo==null || keyLivelloPersonalizzato==null) {
+			Integer livello = readLivello(modulo, keyLivelloPersonalizzato);
+			return livello!=null ? livello : -1;
+		}
+		Map<String, Integer> livelliModulo = cacheLivelli.computeIfAbsent(modulo, m -> new ConcurrentHashMap<>());
+		Integer livello = livelliModulo.get(keyLivelloPersonalizzato);
+		if(livello==null) {
+			livello = readLivello(modulo, keyLivelloPersonalizzato);
+			if(livello==null) {
+				return -1; // errore di lettura: non viene mantenuto in cache
+			}
+			livelliModulo.put(keyLivelloPersonalizzato, livello);
+		}
+		return livello;
+	}
+	private Integer readLivello(String modulo,String keyLivelloPersonalizzato){
 		try{
 			String livello = MsgDiagnosticiProperties.livelliMsgDiagnosticiPersonalizzati.getValue(modulo+keyLivelloPersonalizzato);
 			if(livello!=null){
@@ -1611,22 +1652,37 @@ public class MsgDiagnosticiProperties {
 			}
 		}catch(Exception e){
 			logError("Errore durante l'esecuzione del metodo getLivello("+modulo+","+keyLivelloPersonalizzato+")",e);
-			return -1;
-		}
-	}
-	public String getCodice(String modulo,String keyCodicePersonalizzato){
-		try{
-			return MsgDiagnosticiProperties.codiciMsgDiagnosticiPersonalizzati.getValue(modulo+keyCodicePersonalizzato);
-		}catch(Exception e){
-			logError("Errore durante l'esecuzione del metodo getCodice("+modulo+","+keyCodicePersonalizzato+")",e);
 			return null;
 		}
 	}
+	public String getCodice(String modulo,String keyCodicePersonalizzato){
+		return getValoreDiagnostico(cacheCodici, MsgDiagnosticiProperties.codiciMsgDiagnosticiPersonalizzati, "getCodice", modulo, keyCodicePersonalizzato);
+	}
 	public String getMessaggio(String modulo,String keyMsgPersonalizzato){
+		return getValoreDiagnostico(cacheMessaggi, MsgDiagnosticiProperties.messaggiMsgDiagnosticiPersonalizzati, "getMessaggio", modulo, keyMsgPersonalizzato);
+	}
+	private String getValoreDiagnostico(Map<String, Map<String, ValoreDiagnostico>> cache, PropertiesReader reader, String metodo,
+			String modulo, String key){
+		if(modulo==null || key==null) {
+			ValoreDiagnostico v = readValoreDiagnostico(reader, metodo, modulo, key);
+			return v!=null ? v.valore : null;
+		}
+		Map<String, ValoreDiagnostico> valoriModulo = cache.computeIfAbsent(modulo, m -> new ConcurrentHashMap<>());
+		ValoreDiagnostico v = valoriModulo.get(key);
+		if(v==null) {
+			v = readValoreDiagnostico(reader, metodo, modulo, key);
+			if(v==null) {
+				return null; // errore di lettura: non viene mantenuto in cache
+			}
+			valoriModulo.put(key, v);
+		}
+		return v.valore;
+	}
+	private ValoreDiagnostico readValoreDiagnostico(PropertiesReader reader, String metodo, String modulo, String key){
 		try{
-			return MsgDiagnosticiProperties.messaggiMsgDiagnosticiPersonalizzati.getValue(modulo+keyMsgPersonalizzato);
+			return new ValoreDiagnostico(reader.getValue(modulo+key));
 		}catch(Exception e){
-			logError("Errore durante l'esecuzione del metodo getMessaggio("+modulo+","+keyMsgPersonalizzato+")",e);
+			logError("Errore durante l'esecuzione del metodo "+metodo+"("+modulo+","+key+")",e);
 			return null;
 		}
 	}

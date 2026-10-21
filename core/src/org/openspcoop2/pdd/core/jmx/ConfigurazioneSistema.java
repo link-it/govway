@@ -83,6 +83,7 @@ import org.openspcoop2.utils.certificate.hsm.HSMManager;
 import org.openspcoop2.utils.certificate.ocsp.OCSPManager;
 import org.openspcoop2.utils.datasource.DataSourceFactory;
 import org.openspcoop2.utils.date.DateUtils;
+import org.openspcoop2.utils.date.SystemClockInfo;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.io.HexBinaryUtilities;
 import org.openspcoop2.utils.jdbc.JDBCUtilities;
@@ -992,7 +993,9 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 				bf.append("\n");
 			}
 			bf.append("DateTimeFormatter: "+DateUtils.getDEFAULT_DATA_ENGINE_TYPE());
-			
+
+			addInformazioniOrologio(bf);
+
 			if(bf.length()<=0){
 				throw new CoreException("Non sono disponibili informazioni sulla internazionalizzazione");
 			}else{
@@ -1001,6 +1004,35 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 		}catch(Exception e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	private void addInformazioniOrologio(StringBuilder bf){
+		// Le informazioni sull'orologio sono opzionali: un qualsiasi problema non deve compromettere le altre informazioni riportate
+		SystemClockInfo clockInfo = null;
+		try {
+			clockInfo = SystemClockInfo.read();
+		}catch(Throwable t) {
+			// informazioni non disponibili
+		}
+		if(clockInfo==null) {
+			return;
+		}
+		try {
+			bf.append("\nClocksource: ").append(clockInfo.getClockSource());
+		}catch(Throwable t) {
+			// informazione non disponibile
+		}
+		try {
+			bf.append("\nCosto lettura orologio: ").append(clockInfo.getClockReadCost());
+		}catch(Throwable t) {
+			// informazione non disponibile
+		}
+		try {
+			if(clockInfo.getWarning()!=null) {
+				bf.append("\nAvviso: ").append(clockInfo.getWarning());
+			}
+		}catch(Throwable t) {
+			// informazione non disponibile
 		}
 	}
 	private void addInformazioniTimeZone(StringBuilder bf, boolean all){

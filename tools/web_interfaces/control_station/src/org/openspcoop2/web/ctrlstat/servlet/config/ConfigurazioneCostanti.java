@@ -728,7 +728,7 @@ public class ConfigurazioneCostanti {
 	public static final String LABEL_CONFIGURAZIONE_SISTEMA_INFO_CRYPTOGRAPHY_KEY_LENGTH = "Informazioni Cryptography (Key Length)";
 	public static final String LABEL_CONFIGURAZIONE_SISTEMA_INFO_CHARSET = "Informazioni Charset";
 	public static final String LABEL_CONFIGURAZIONE_SISTEMA_INFO_INTERNAZIONALIZZAZIONE = "Informazioni Internazionalizzazione";
-	public static final String LABEL_CONFIGURAZIONE_SISTEMA_INFO_TIMEZONE = "Informazioni TimeZone";
+	public static final String LABEL_CONFIGURAZIONE_SISTEMA_INFO_TIMEZONE = "Informazioni Data e Ora";
 	public static final String LABEL_CONFIGURAZIONE_SISTEMA_INFO_JAVA_NET = "Informazioni Java Networking";
 	public static final String LABEL_CONFIGURAZIONE_SISTEMA_INFO_PROTOCOLLI = "Informazioni "+CostantiControlStation.LABEL_PARAMETRO_PROTOCOLLI;
 	public static final String LABEL_CONFIGURAZIONE_SISTEMA_CACHE = "Cache ";

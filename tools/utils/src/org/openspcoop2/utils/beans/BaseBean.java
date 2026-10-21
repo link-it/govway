@@ -25,7 +25,9 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import jakarta.xml.bind.annotation.XmlTransient;
 
@@ -998,9 +1000,38 @@ public abstract class BaseBean implements Serializable {
 	
 	
 	/* ********** CLONE ********* */
-	
+
+	/**
+	 * Modalità con cui viene effettuato il clone tramite il metodo clone() (default: {@link CloneMode#REFLECTION_CACHE}).
+	 * Viene impostata all'avvio dei nodi runtime.
+	 */
+	private static volatile CloneMode cloneMode = CloneMode.REFLECTION_CACHE;
+	public static CloneMode getCloneMode() {
+		return cloneMode;
+	}
+	public static void setCloneMode(CloneMode mode) {
+		cloneMode = mode!=null ? mode : CloneMode.REFLECTION_CACHE;
+	}
+
 	@Override
 	public Object clone()  {
+		return this.clone(cloneMode);
+	}
+	public Object clone(CloneMode mode)  {
+		if(CloneMode.REFLECTION.equals(mode)) {
+			return this.cloneWithReflection();
+		}
+		return this.cloneWithReflectionCache();
+	}
+
+	/**
+	 * Clone che ad ogni invocazione ricerca tramite reflection i metodi get, set e clone di ogni field ({@link CloneMode#REFLECTION}).
+	 *
+	 * @deprecated sostituito dalla modalità {@link CloneMode#REFLECTION_CACHE}, che mantiene le informazioni di reflection in una cache per classe.
+	 * Viene mantenuto per poter essere riattivato tramite {@link #setCloneMode(CloneMode)}.
+	 */
+	@Deprecated
+	public Object cloneWithReflection()  {
 		Object clone = null;
 		try{
 			//clono l'oggetto
@@ -1084,15 +1115,21 @@ public abstract class BaseBean implements Serializable {
 	}
 
 	private boolean isSupportedCloneList(java.lang.reflect.Field field){
-		return field.getType().isAssignableFrom(java.util.List.class) ||
-				field.getType().isAssignableFrom(java.util.ArrayList.class)  ||
-				field.getType().isAssignableFrom(java.util.Vector.class) ||
-				field.getType().isAssignableFrom(java.util.Stack.class) ||
-				field.getType().isAssignableFrom(java.util.LinkedList.class) ||
-				field.getType().isAssignableFrom(java.util.concurrent.CopyOnWriteArrayList.class);
+		return isSupportedCloneList(field.getType());
+	}
+	private static boolean isSupportedCloneList(Class<?> fieldType){
+		return fieldType.isAssignableFrom(java.util.List.class) ||
+				fieldType.isAssignableFrom(java.util.ArrayList.class)  ||
+				fieldType.isAssignableFrom(java.util.Vector.class) ||
+				fieldType.isAssignableFrom(java.util.Stack.class) ||
+				fieldType.isAssignableFrom(java.util.LinkedList.class) ||
+				fieldType.isAssignableFrom(java.util.concurrent.CopyOnWriteArrayList.class);
+	}
+	private List<?> cloneList(List<?> listOriginale) throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{
+		return cloneList(listOriginale, false);
 	}
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private List cloneList(List<?> listOriginale) throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{
+	private static List cloneList(List<?> listOriginale, boolean useCache) throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{
 		List listClone  = null;
 		if(listOriginale.getClass().isAssignableFrom(java.util.ArrayList.class)){
 			listClone = new java.util.ArrayList<>();
@@ -1115,7 +1152,7 @@ public abstract class BaseBean implements Serializable {
 				if(oOriginale!=null){
 					if(oOriginale instanceof java.lang.Cloneable){
 						//recupero il metodo clone dal field
-						java.lang.reflect.Method method =  oOriginale.getClass().getMethod("clone");
+						java.lang.reflect.Method method =  useCache ? getCloneMethod(oOriginale.getClass()) : oOriginale.getClass().getMethod("clone");
 						//effettuo il clone del field
 						java.lang.Cloneable oCloned =  (java.lang.Cloneable) method.invoke(oOriginale);
 						//aggiungo il field clonato nella lista
@@ -1134,6 +1171,211 @@ public abstract class BaseBean implements Serializable {
 			}
 		}
 		return listClone;
+	}
+
+
+	/*
+	 * Implementazione del clone con cache delle informazioni di reflection.
+	 * Il comportamento è identico a cloneWithReflection(): le informazioni che dipendono solamente dalla classe (field da copiare,
+	 * metodi get/set/clone e modalità di copia di ogni field) vengono calcolate una sola volta per classe.
+	 * La cache è associata alla classe tramite ClassValue: la sua dimensione è limitata al numero di classi clonate e
+	 * non impedisce lo scaricamento delle classi (es. in caso di redeploy).
+	 * Per le classi per cui non sono disponibili tutti i metodi necessari viene utilizzata la modalità REFLECTION (cloneWithReflection),
+	 * così da riprodurne esattamente il comportamento (incluse le eccezioni sollevate).
+	 */
+
+	private enum TipoCloneField {
+		BYTE_ARRAY, ENUM, LIST, CLONEABLE, SHALLOW
+	}
+	private static final class CloneField {
+		private final TipoCloneField tipo;
+		private final Method getter;
+		private final Method setter;
+		private final Method cloneMethod;
+		private CloneField(TipoCloneField tipo, Method getter, Method setter, Method cloneMethod) {
+			this.tipo = tipo;
+			this.getter = getter;
+			this.setter = setter;
+			this.cloneMethod = cloneMethod;
+		}
+	}
+	private static final class CloneInfo {
+		/** Se valorizzato, la classe non permette il clone tramite cache e viene utilizzata la modalità REFLECTION */
+		private final boolean useReflection;
+		private final List<CloneField> fields;
+		private CloneInfo(boolean useReflection, List<CloneField> fields) {
+			this.useReflection = useReflection;
+			this.fields = fields;
+		}
+	}
+
+	private static final ClassValue<CloneInfo> CLONE_INFO = new ClassValue<CloneInfo>() {
+		@Override
+		protected CloneInfo computeValue(Class<?> type) {
+			return buildCloneInfo(type);
+		}
+	};
+	private static final ClassValue<Optional<Method>> CLONE_METHOD = new ClassValue<Optional<Method>>() {
+		@Override
+		protected Optional<Method> computeValue(Class<?> type) {
+			try {
+				return Optional.of(type.getMethod("clone"));
+			}catch(Exception e) {
+				return Optional.empty();
+			}
+		}
+	};
+
+	private static Method getCloneMethod(Class<?> type) throws NoSuchMethodException {
+		Optional<Method> method = CLONE_METHOD.get(type);
+		if(method.isPresent()) {
+			return method.get();
+		}
+		// metodo non disponibile: la ricerca viene ripetuta per sollevare la stessa eccezione della modalità REFLECTION
+		return type.getMethod("clone");
+	}
+
+	private static String buildAccessorName(String prefix, String fieldName) {
+		StringBuilder methodName = new StringBuilder(prefix);
+		String firstChar = fieldName.charAt(0)+"";
+		methodName.append(firstChar.toUpperCase());
+		if(fieldName.length()>1){
+			methodName.append(fieldName.substring(1));
+		}
+		return methodName.toString();
+	}
+	private static Method findGetter(Class<?> type, String fieldName) {
+		String methodName = buildAccessorName("get", fieldName);
+		try{
+			return type.getMethod(methodName);
+		}catch(Exception e){
+			if("get_default".equals(methodName)){
+				try{
+					return type.getMethod("getDefault");
+				}catch(Exception t){
+					// metodo non disponibile
+				}
+			}
+		}
+		return null;
+	}
+	private static Method findSetter(Class<?> type, String fieldName, Class<?> parameterType) {
+		String methodName = buildAccessorName("set", fieldName);
+		try{
+			return type.getMethod(methodName, parameterType);
+		}catch(Exception e){
+			if("set_default".equals(methodName)){
+				try{
+					return type.getMethod("setDefault", parameterType);
+				}catch(Exception t){
+					// metodo non disponibile
+				}
+			}
+		}
+		return null;
+	}
+
+	private static CloneInfo buildCloneInfo(Class<?> type) {
+		List<CloneField> fields = new ArrayList<>();
+		java.lang.reflect.Field[] declaredFields = type.getDeclaredFields();
+		for (java.lang.reflect.Field field : declaredFields) {
+			if(java.lang.reflect.Modifier.isStatic(field.getModifiers())){
+				continue;
+			}
+			Class<?> fieldType = field.getType();
+			if(fieldType.isAssignableFrom(org.openspcoop2.utils.jaxb.DecimalWrapper.class)){
+				continue;
+			}
+
+			Method getter = findGetter(type, field.getName());
+			if(getter==null) {
+				return new CloneInfo(true, null);
+			}
+
+			TipoCloneField tipo = null;
+			Method cloneMethod = null;
+			if(fieldType.isAssignableFrom(byte[].class)){
+				tipo = TipoCloneField.BYTE_ARRAY;
+			}
+			else if(fieldType.isEnum()){
+				tipo = TipoCloneField.ENUM;
+			}
+			else if(isSupportedCloneList(fieldType)){
+				tipo = TipoCloneField.LIST;
+			}
+			else if(isCloneableInterfaceImplemented(fieldType)) {
+				tipo = TipoCloneField.CLONEABLE;
+				try {
+					cloneMethod = fieldType.getMethod("clone");
+				}catch(Exception e) {
+					return new CloneInfo(true, null);
+				}
+			}
+			else {
+				tipo = TipoCloneField.SHALLOW;
+			}
+
+			Method setter = null;
+			if(!TipoCloneField.SHALLOW.equals(tipo)) {
+				setter = findSetter(type, field.getName(), fieldType);
+				if(setter==null) {
+					return new CloneInfo(true, null);
+				}
+			}
+
+			fields.add(new CloneField(tipo, getter, setter, cloneMethod));
+		}
+		return new CloneInfo(false, fields);
+	}
+	private static boolean isCloneableInterfaceImplemented(Class<?> fieldType) {
+		// stesso criterio della modalità REFLECTION: interfacce dichiarate direttamente dal tipo del field
+		Class<?>[] interfacce = fieldType.getInterfaces();
+		for (Class<?> interfaccia : interfacce) {
+			if(interfaccia.isAssignableFrom(java.lang.Cloneable.class)){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private Object cloneWithReflectionCache()  {
+		CloneInfo cloneInfo = CLONE_INFO.get(this.getClass());
+		if(cloneInfo.useReflection) {
+			return this.cloneWithReflection();
+		}
+		Object clone = null;
+		try{
+			clone = super.clone();
+			for (CloneField field : cloneInfo.fields) {
+				Object fieldValue = field.getter.invoke(this);
+				if(fieldValue==null){
+					continue;
+				}
+				switch (field.tipo) {
+				case BYTE_ARRAY:
+					byte[] originale = (byte[]) fieldValue;
+					field.setter.invoke(clone, Arrays.copyOf(originale, originale.length));
+					break;
+				case ENUM:
+					field.setter.invoke(clone, fieldValue);
+					break;
+				case LIST:
+					field.setter.invoke(clone, cloneList((List<?>) fieldValue, true));
+					break;
+				case CLONEABLE:
+					java.lang.Cloneable ris =  (java.lang.Cloneable) field.cloneMethod.invoke(fieldValue);
+					field.setter.invoke(clone, ris);
+					break;
+				case SHALLOW:
+				default:
+					break;
+				}
+			}
+		}catch (Exception e) {
+			logExceptionStackTrace(e);
+			throw new UtilsRuntimeException(e.toString(),e);
+		}
+		return clone;
 	}
 }
 

@@ -166,6 +166,7 @@ import org.openspcoop2.utils.VersionUtilities;
 import org.openspcoop2.utils.cache.CacheType;
 import org.openspcoop2.utils.certificate.KeystoreType;
 import org.openspcoop2.utils.crypt.CryptConfig;
+import org.openspcoop2.utils.beans.CloneMode;
 import org.openspcoop2.utils.date.DateEngineType;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.date.IDate;
@@ -17880,6 +17881,32 @@ public class OpenSPCoop2Properties {
 		}
 
 		return this.tipoDateTimeFormat;
+	}
+
+	private CloneMode beanCloneMode = null;
+	public CloneMode getBeanCloneMode(){
+
+		String pName = "org.openspcoop2.pdd.beans.clone.mode";
+		
+		if(this.beanCloneMode==null){
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					this.beanCloneMode = CloneMode.valueOf(value);
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, CloneMode.REFLECTION_CACHE.name()));
+					this.beanCloneMode = CloneMode.REFLECTION_CACHE;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, CloneMode.REFLECTION_CACHE.name()),e);
+				this.beanCloneMode = CloneMode.REFLECTION_CACHE;
+			}
+		}
+
+		return this.beanCloneMode;
 	}
 
 	/**

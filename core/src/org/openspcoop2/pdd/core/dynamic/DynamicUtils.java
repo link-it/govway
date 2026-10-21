@@ -796,6 +796,10 @@ public class DynamicUtils {
 			boolean forceStartWithDollaro) throws DynamicException {
 		
 		String tmp = tmpParam;
+		if(tmp==null || tmp.indexOf('{')<0) {
+			// nessun template da risolvere: tutti i prefissi gestiti contengono '{'
+			return tmp;
+		}
 		boolean request = false;
 		boolean response = true;
 		
