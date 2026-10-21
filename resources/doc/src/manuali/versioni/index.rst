@@ -8,8 +8,13 @@ dell'Application Server, di Java e delle principali librerie di terze parti util
 
 .. warning:: **Avviso End of Life — GovWay 3.3.x**
 
-   A partire dal **31 dicembre 2026** la linea **3.3.x** raggiungerà lo stato di End of Life (EOL).
-   Dopo tale data non verranno rilasciati aggiornamenti di sicurezza, patch correttive né nuove funzionalità.
+   La versione **3.3.21** è l'ultima versione stabile della linea **3.3.x**.
+   Non sono previste ulteriori versioni di manutenzione: potranno essere rilasciate esclusivamente
+   patch version (**3.3.21.pX**) per la correzione di problemi critici o vulnerabilità di sicurezza.
+
+   A partire dal **31 dicembre 2026** la linea 3.3.x raggiungerà lo stato di End of Life (EOL).
+   Dopo tale data non verranno rilasciate né patch version né nuove funzionalità.
+
    Si raccomanda di pianificare la migrazione alla versione **3.4.x** il prima possibile.
 
 
