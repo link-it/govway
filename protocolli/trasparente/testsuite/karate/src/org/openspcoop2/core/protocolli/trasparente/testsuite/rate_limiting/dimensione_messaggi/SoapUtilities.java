@@ -40,6 +40,7 @@ import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.utils.EsitiProperties;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
@@ -125,13 +126,22 @@ public class SoapUtilities extends ConfigLoader {
 		}
 		
 		HttpResponse response = null;
+		String idTransazione = null;
 		try {
 			response = HttpUtilities.httpInvoke(request);
 		}catch(Throwable t) {
-			throw t;
+			if(!isConnessioneChiusaPrimaDelTermineInvio(t, chunkedMode, content, headerTest, expectedError)) {
+				throw t;
+			}
+			logCore.info("Connessione chiusa dal gateway durante l'invio della richiesta ("+t.getMessage()+"); la transazione viene cercata sul database");
 		}
 
-		String idTransazione = response.getHeaderFirstValue("GovWay-Transaction-ID");
+		if(response!=null) {
+			idTransazione = response.getHeaderFirstValue("GovWay-Transaction-ID");
+		}
+		else {
+			idTransazione = DBVerifier.getIdTransazioneUltimaRichiesta("DimensioneMassimaMessaggiSOAP", dataSpedizione);
+		}
 		assertNotNull(idTransazione);
 			
 		int httpCodeError = 413;
@@ -171,6 +181,9 @@ public class SoapUtilities extends ConfigLoader {
 			){
 			verifyOk(response, 200); // il codice http e' gia' stato impostato
 		}
+		else if(response==null) {
+			// risposta di errore non ricevuta dal client: l'esito viene verificato solamente sul database
+		}
 		else {
 			if(expectedError) {
 				verifyKo(response, soapPrefixError, errorCode, httpCodeError, errorMessage);
@@ -184,11 +197,25 @@ public class SoapUtilities extends ConfigLoader {
 		
 		if(expectedError && verifyEvents) {
 			DBVerifier.checkEventiConViolazioneRL(idServizio, gruppo, dataSpedizione,
-					response, logRateLimiting, nomePolicy, policyApi);
+					idTransazione, logRateLimiting, nomePolicy, policyApi);
 		}
 		
 		return response;
 		
+	}
+	
+	/**
+	 * Con la richiesta dichiarata tramite Content-Length oltre la soglia, il gateway risponde senza leggere il payload.
+	 * Tomcat scarta il payload non letto solo fino a maxSwallowSize (default 2MB), oltre chiude la connessione:
+	 * se il client sta ancora inviando il payload riceve un 'Broken pipe' (o 'Connection reset') al posto della risposta.
+	 */
+	private static final int MAX_SWALLOW_SIZE = 1024*1024*2;
+	private static boolean isConnessioneChiusaPrimaDelTermineInvio(Throwable t, boolean chunkedMode, byte[] content, String headerTest, boolean expectedError) {
+		if(chunkedMode || !expectedError || "Risposta".equals(headerTest) || content==null || content.length<=MAX_SWALLOW_SIZE) {
+			return false;
+		}
+		String msg = Utilities.getInnerNotEmptyMessageException(t).getMessage();
+		return msg!=null && (msg.contains("Broken pipe") || msg.contains("Connection reset"));
 	}
 	
 	public static final String API_UNAVAILABLE = "APIUnavailable";

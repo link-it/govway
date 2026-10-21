@@ -24,17 +24,19 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.DbUtils;
-import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Headers;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.congestione.EventiUtils;
 import org.openspcoop2.utils.Utilities;
-import org.openspcoop2.utils.transport.http.HttpResponse;
+import org.openspcoop2.utils.sql.ISQLQueryObject;
+import org.openspcoop2.utils.sql.SQLObjectFactory;
 import org.slf4j.Logger;
 
 /**
@@ -173,8 +175,52 @@ public class DBVerifier {
 	}
 	
 	
+	public static String getIdTransazioneUltimaRichiesta(String nomeServizio, LocalDateTime dataSpedizione) throws Exception  {
+		
+		// La scrittura su database avviene dopo aver risposto al client
+		
+		Utilities.sleep(100); 
+		try {
+			return DBVerifier._getIdTransazioneUltimaRichiesta(nomeServizio, dataSpedizione);
+		}catch(Throwable t) {
+			Utilities.sleep(500);
+			try {
+				return DBVerifier._getIdTransazioneUltimaRichiesta(nomeServizio, dataSpedizione);
+			}catch(Throwable t2) {
+				Utilities.sleep(2000);
+				try {
+					return DBVerifier._getIdTransazioneUltimaRichiesta(nomeServizio, dataSpedizione);
+				}catch(Throwable t3) {
+					Utilities.sleep(5000);
+					return DBVerifier._getIdTransazioneUltimaRichiesta(nomeServizio, dataSpedizione);
+				}
+			}
+		}
+	}
+	
+	private static String _getIdTransazioneUltimaRichiesta(String nomeServizio, LocalDateTime dataSpedizione) throws Exception  {
+		
+		// I test vengono eseguiti in sequenza: l'unica transazione registrata sul servizio dopo la data di spedizione è quella della richiesta inviata
+		
+		ISQLQueryObject query = SQLObjectFactory.createSQLQueryObject(dbUtils().tipoDatabase);
+		query.addFromTable(CostantiDB.TRANSAZIONI);
+		query.addSelectField("id");
+		query.setANDLogicOperator(true);
+		query.addWhereCondition("data_ingresso_richiesta >= ?");
+		query.addWhereCondition("nome_servizio = ?");
+		String sql = query.createSQLQuery();
+		log().info(sql);
+		
+		String idTransazione = dbUtils().readValue(sql, String.class, Timestamp.valueOf(dataSpedizione), nomeServizio);
+		assertNotNull("IdTransazione letto per il servizio '"+nomeServizio+"' dopo la data "+dataSpedizione, idTransazione);
+
+		return idTransazione;
+
+	}
+	
+	
 	public static void checkEventiConViolazioneRL(String idServizio, Optional<String> gruppo, LocalDateTime dataSpedizione,
-			HttpResponse response, Logger log, String nomePolicy, boolean policyApi) {
+			String idTransazione, Logger log, String nomePolicy, boolean policyApi) {
 				
 		EventiUtils.waitForDbEvents();
 		
@@ -183,7 +229,7 @@ public class DBVerifier {
 		log.debug("======== VERIFICA checkEventiCongestioneAttivaConViolazioneRL ========");
 		
 		boolean found = EventiUtils.testCredenzialiMittenteTransazione(
-				response.getHeaderFirstValue(Headers.TransactionId),
+				idTransazione,
 							evento -> {						
 								log().info(evento.toString());
 								String credenziale = (String) evento.get("credenziale");
