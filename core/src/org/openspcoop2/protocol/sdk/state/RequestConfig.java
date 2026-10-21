@@ -733,7 +733,10 @@ public class RequestConfig implements java.io.Serializable {
 			return new ArrayList<>();
 		}
 		String keyCache = filtro.toString();
-		return this.listPorteApplicativeByFiltroRicerca.get(keyCache);
+		List<IDPortaApplicativa> list = this.listPorteApplicativeByFiltroRicerca.get(keyCache);
+		// risultato presente in cache (anche lista vuota): il chiamante non deve rieffettuare la ricerca
+		nullConditionsList.setValue(list!=null ? Boolean.TRUE : null);
+		return list;
 	}
 	public Map<String, List<IDPortaApplicativa>> getListPorteApplicativeByFiltroRicerca() {
 		return this.listPorteApplicativeByFiltroRicerca;
@@ -805,7 +808,10 @@ public class RequestConfig implements java.io.Serializable {
 			return new ArrayList<>();
 		}
 		String keyCache = filtro.toString();
-		return this.listPorteDelegateByFiltroRicerca.get(keyCache);
+		List<IDPortaDelegata> list = this.listPorteDelegateByFiltroRicerca.get(keyCache);
+		// risultato presente in cache (anche lista vuota): il chiamante non deve rieffettuare la ricerca
+		nullConditionsList.setValue(list!=null ? Boolean.TRUE : null);
+		return list;
 	}
 	public Map<String, List<IDPortaDelegata>> getListPorteDelegateByFiltroRicerca() {
 		return this.listPorteDelegateByFiltroRicerca;

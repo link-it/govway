@@ -1180,11 +1180,14 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 				for(int i=0;i<listaTrasmissioniBustaRichiesta.size();i++){
 					if( identitaPdD.getTipo().equals(listaTrasmissioniBustaRichiesta.get(i).getTipoDestinazione()) &&
 							identitaPdD.getNome().equals(listaTrasmissioniBustaRichiesta.get(i).getDestinazione()) ){
-						boolean tipoOrigineValido = true;
-						try {
-							this.protocolFactory.createTraduttore().toProtocolOrganizationType(listaTrasmissioniBustaRichiesta.get(i).getTipoOrigine());
-						}catch(Exception e) {
-							tipoOrigineValido = false;
+						// senza tipo l'origine non e' valida: si evita l'eccezione (es. profilo trasparente)
+						boolean tipoOrigineValido = listaTrasmissioniBustaRichiesta.get(i).getTipoOrigine()!=null;
+						if(tipoOrigineValido) {
+							try {
+								this.protocolFactory.createTraduttore().toProtocolOrganizationType(listaTrasmissioniBustaRichiesta.get(i).getTipoOrigine());
+							}catch(Exception e) {
+								tipoOrigineValido = false;
+							}
 						}
 						if(tipoOrigineValido) {
 							tras.setDestinazione(listaTrasmissioniBustaRichiesta.get(i).getOrigine());
@@ -1196,11 +1199,14 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 				if(tras.getDestinazione()==null || tras.getTipoDestinazione()==null){
 					tras.setDestinazione(busta.getDestinatario());
 					tras.setTipoDestinazione(busta.getTipoDestinatario());
-					try{
-						String dominio = RegistroServiziManager.getInstance(this.state).getDominio(new IDSoggetto(tras.getTipoDestinazione(),tras.getDestinazione()), null, this.protocolFactory, requestInfo);
-						tras.setIdentificativoPortaDestinazione(dominio);
-					}catch(Exception e){
-						// ignore
+					// senza tipo e nome della destinazione il dominio non e' risolvibile: si evita l'eccezione (es. profilo trasparente)
+					if(tras.getTipoDestinazione()!=null && tras.getDestinazione()!=null) {
+						try{
+							String dominio = RegistroServiziManager.getInstance(this.state).getDominio(new IDSoggetto(tras.getTipoDestinazione(),tras.getDestinazione()), null, this.protocolFactory, requestInfo);
+							tras.setIdentificativoPortaDestinazione(dominio);
+						}catch(Exception e){
+							// ignore
+						}
 					}
 				}
 				tras.setOraRegistrazione(busta.getOraRegistrazione());
@@ -1375,11 +1381,14 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 				for(int i=0;i<listaTrasmissioniBustaRichiesta.size();i++){
 					if( identitaPdD.getTipo().equals(listaTrasmissioniBustaRichiesta.get(i).getTipoDestinazione()) &&
 							identitaPdD.getNome().equals(listaTrasmissioniBustaRichiesta.get(i).getDestinazione()) ){
-						boolean tipoOrigineValido = true;
-						try {
-							this.protocolFactory.createTraduttore().toProtocolOrganizationType(listaTrasmissioniBustaRichiesta.get(i).getTipoOrigine());
-						}catch(Exception e) {
-							tipoOrigineValido = false;
+						// senza tipo l'origine non e' valida: si evita l'eccezione (es. profilo trasparente)
+						boolean tipoOrigineValido = listaTrasmissioniBustaRichiesta.get(i).getTipoOrigine()!=null;
+						if(tipoOrigineValido) {
+							try {
+								this.protocolFactory.createTraduttore().toProtocolOrganizationType(listaTrasmissioniBustaRichiesta.get(i).getTipoOrigine());
+							}catch(Exception e) {
+								tipoOrigineValido = false;
+							}
 						}
 						if(tipoOrigineValido) {
 							tras.setDestinazione(listaTrasmissioniBustaRichiesta.get(i).getOrigine());
@@ -1391,11 +1400,14 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 				if(tras.getDestinazione()==null || tras.getTipoDestinazione()==null){
 					tras.setDestinazione(busta.getDestinatario());
 					tras.setTipoDestinazione(busta.getTipoDestinatario());
-					try{
-						String dominio = RegistroServiziManager.getInstance(this.state).getDominio(new IDSoggetto(tras.getTipoDestinazione(),tras.getDestinazione()), null, this.protocolFactory, requestInfo);
-						tras.setIdentificativoPortaDestinazione(dominio);
-					}catch(Exception e){
-						// ignore
+					// senza tipo e nome della destinazione il dominio non e' risolvibile: si evita l'eccezione (es. profilo trasparente)
+					if(tras.getTipoDestinazione()!=null && tras.getDestinazione()!=null) {
+						try{
+							String dominio = RegistroServiziManager.getInstance(this.state).getDominio(new IDSoggetto(tras.getTipoDestinazione(),tras.getDestinazione()), null, this.protocolFactory, requestInfo);
+							tras.setIdentificativoPortaDestinazione(dominio);
+						}catch(Exception e){
+							// ignore
+						}
 					}
 				}
 				tras.setOraRegistrazione(busta.getOraRegistrazione());

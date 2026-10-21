@@ -829,42 +829,37 @@ public class MsgDiagnostico {
 		}
 		*/
 		
-		StringBuilder bf = new StringBuilder();
-		StringBuilder keyword = new StringBuilder();
-		boolean separator = false;
-		char separatorChar = '@';
-		for(int i=0; i<msg.length(); i++){
-			char ch = msg.charAt(i);
-			if(separatorChar == ch){
-				if(separator==false){
-					// inizio keyword
-					keyword.append(separatorChar);
-					separator = true;
-				}
-				else{
-					// fine keyword
-					keyword.append(separatorChar);
-					String valoreRimpiazzato = this.keywordLogPersonalizzati.get(keyword.toString());
-					if(valoreRimpiazzato==null){
-						// keyword non esistente, devo utilizzare l'originale
-						bf.append(keyword.toString());
-					}else{
-						bf.append(valoreRimpiazzato);
-					}
-					keyword.setLength(0);
-					separator=false;
-				}
-			}else{
-				if(separator){
-					// sto scrivendo la keyword
-					keyword.append(ch);
-				}else{
-					bf.append(ch);
-				}
-			}
+		return replaceKeywords(msg, this.keywordLogPersonalizzati);
+	}
+	/**
+	 * Sostituisce nel messaggio le keyword nella forma '@nome@' con il valore presente nella mappa;
+	 * una keyword non presente nella mappa, o non terminata, viene mantenuta invariata.
+	 * Il messaggio viene scandito cercando il separatore '@' (indexOf) e copiando i tratti di testo tra le keyword:
+	 * un messaggio senza keyword viene restituito senza copie.
+	 */
+	public static String replaceKeywords(String msg, Map<String,String> keywords){
+		final char separatorChar = '@';
+		int inizioKeyword = msg.indexOf(separatorChar);
+		if(inizioKeyword<0) {
+			return msg; // nessuna keyword
 		}
-		if ( separator )
-			bf.append(keyword.toString());
+		int length = msg.length();
+		StringBuilder bf = new StringBuilder(length + 64);
+		bf.append(msg, 0, inizioKeyword);
+		while(inizioKeyword>=0) {
+			int fineKeyword = msg.indexOf(separatorChar, inizioKeyword+1);
+			if(fineKeyword<0) {
+				// keyword non terminata: viene mantenuta l'originale
+				bf.append(msg, inizioKeyword, length);
+				break;
+			}
+			String keyword = msg.substring(inizioKeyword, fineKeyword+1);
+			String valoreRimpiazzato = keywords.get(keyword);
+			// keyword non esistente: viene mantenuta l'originale
+			bf.append(valoreRimpiazzato!=null ? valoreRimpiazzato : keyword);
+			inizioKeyword = msg.indexOf(separatorChar, fineKeyword+1);
+			bf.append(msg, fineKeyword+1, inizioKeyword>=0 ? inizioKeyword : length);
+		}
 		return bf.toString();
 	}
 	

@@ -399,7 +399,9 @@ public class Imbustamento extends GenericLib{
 				IDServizioApplicativo idSA = new IDServizioApplicativo();
 				idSA.setNome(richiestaDelegata.getServizioApplicativo());
 				idSA.setIdSoggettoProprietario(richiestaDelegata.getIdSoggettoFruitore());
-				sa = configurazionePdDManager.getServizioApplicativo(idSA, requestInfo);
+				// l'applicativo anonimo non e' presente nella configurazione: viene restituito null senza sollevare l'eccezione
+				boolean anonimo = CostantiPdD.SERVIZIO_APPLICATIVO_ANONIMO.equals(richiestaDelegata.getServizioApplicativo());
+				sa = configurazionePdDManager.getServizioApplicativo(idSA, requestInfo, !anonimo);
 			}catch(DriverConfigurazioneNotFound e){
 				if(CostantiPdD.SERVIZIO_APPLICATIVO_ANONIMO.equals(richiestaDelegata.getServizioApplicativo())==false)
 					throw e;

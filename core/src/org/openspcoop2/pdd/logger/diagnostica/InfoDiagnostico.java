@@ -65,7 +65,7 @@ public class InfoDiagnostico {
 	}
 	
 	public String convertToDBValue(){
-		SimpleDateFormat dateformat = DateUtils.getDefaultTimeFormatter("HHmmssSSS");
+		SimpleDateFormat dateformat = DateUtils.getDefaultTimeFormatterShared("HHmmssSSS");
 		StringBuilder bf = new StringBuilder();
 		bf.append(this.code);
 		bf.append(dateformat.format(this.gdo));

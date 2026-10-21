@@ -20,6 +20,7 @@
 package org.openspcoop2.pdd.core.handlers.transazioni;
 
 import java.util.HashMap;
+import java.util.function.Supplier;
 
 import org.openspcoop2.core.transazioni.constants.DiagnosticColumnType;
 
@@ -33,16 +34,30 @@ import org.openspcoop2.core.transazioni.constants.DiagnosticColumnType;
 public class StatoSalvataggioDiagnostici {
 
 	private String informazione;
+	private Supplier<String> informazioneSupplier;
 	private HashMap<DiagnosticColumnType, String> informazioneCompressa = new HashMap<>();
 	private boolean errore;
 	private boolean compresso;
 	
 	public String getInformazione() {
+		if(this.informazione==null && this.informazioneSupplier!=null) {
+			this.informazione = this.informazioneSupplier.get();
+			this.informazioneSupplier = null;
+		}
 		return this.informazione;
 	}
 
 	public void setInformazione(String informazione) {
 		this.informazione = informazione;
+		this.informazioneSupplier = null;
+	}
+	
+	/**
+	 * L'informazione viene calcolata solamente alla prima lettura: e' utilizzata solamente per il log di debug o in caso di errore
+	 */
+	public void setInformazione(Supplier<String> informazioneSupplier) {
+		this.informazione = null;
+		this.informazioneSupplier = informazioneSupplier;
 	}
 
 	public boolean isErrore() {

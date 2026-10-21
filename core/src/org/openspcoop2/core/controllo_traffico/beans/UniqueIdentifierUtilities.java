@@ -42,7 +42,7 @@ public class UniqueIdentifierUtilities {
 	public static String getUniqueId(AttivazionePolicy attivazionePolicy){
 		String idActivePolicy = attivazionePolicy.getIdActivePolicy();
 		
-		SimpleDateFormat dateFormat = DateUtils.getSimpleDateFormatMs();
+		SimpleDateFormat dateFormat = DateUtils.getSimpleDateFormatMsShared();
 		String time = dateFormat.format(attivazionePolicy.getUpdateTime());
 		
 		return idActivePolicy + separator + time;
@@ -50,7 +50,7 @@ public class UniqueIdentifierUtilities {
 	
 	public static String getUniqueId(IdActivePolicy idActivePolicy){
 		
-		SimpleDateFormat dateFormat = DateUtils.getSimpleDateFormatMs();
+		SimpleDateFormat dateFormat = DateUtils.getSimpleDateFormatMsShared();
 		return idActivePolicy.getNome()+separator+dateFormat.format(idActivePolicy.getUpdateTime());
 		
 	}

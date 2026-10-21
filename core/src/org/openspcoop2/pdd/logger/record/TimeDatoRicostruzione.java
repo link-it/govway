@@ -47,7 +47,7 @@ public class TimeDatoRicostruzione extends AbstractDateDatoRicostruzione {
 
 	@Override
 	SimpleDateFormat getDateFormat() {
-		return DateUtils.getDefaultTimeFormatter(DATE_FORMAT_PATTERN);
+		return DateUtils.getDefaultTimeFormatterShared(DATE_FORMAT_PATTERN);
 	}
 	
 }

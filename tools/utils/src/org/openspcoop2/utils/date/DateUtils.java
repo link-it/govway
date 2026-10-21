@@ -33,6 +33,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -515,6 +516,42 @@ public class DateUtils {
 	}
 	public static DateTimeFormatterWrapper getDefaultDateTimeFormatterMs() {
 		return new DateTimeFormatterWrapper(DEFAULT_DATA_ENGINE_TYPE.toDateTimeType(), SIMPLE_DATE_FORMAT_MS, false);
+	}
+	
+	/*
+	 * Formatter condivisi in sola lettura (i metodi che ne modificano lo stato sollevano UnsupportedOperationException).
+	 * La creazione di un DateTimeFormatterWrapper ha un costo non trascurabile (il costruttore di SimpleDateFormat crea un calendario
+	 * e i formattatori numerici, non utilizzati dal wrapper): le istanze condivise sono destinate ai punti eseguiti per ogni richiesta
+	 * che utilizzano solamente format(Date) e parse(String), thread-safe nel wrapper.
+	 * Le istanze sono mantenute per tipo di data e pattern: i pattern sono quelli, in numero limitato, utilizzati nel codice.
+	 */
+	// una mappa (chiave: pattern) per ogni combinazione di tipo di data e timeZone, per non costruire una chiave ad ogni invocazione
+	@SuppressWarnings("unchecked")
+	private static final Map<String, SimpleDateFormat>[] mapSharedFormatter = new Map[DateType.values().length * 2];
+	static {
+		for (int i = 0; i < mapSharedFormatter.length; i++) {
+			mapSharedFormatter[i] = new ConcurrentHashMap<>();
+		}
+	}
+	private static SimpleDateFormat getSharedFormatter(DateType dataType, String format, boolean timeZone) {
+		Map<String, SimpleDateFormat> map = mapSharedFormatter[dataType.ordinal()*2 + (timeZone ? 1 : 0)];
+		SimpleDateFormat sdf = map.get(format);
+		if(sdf==null) {
+			sdf = map.computeIfAbsent(format, k -> new DateTimeFormatterWrapperShared(dataType, format, timeZone));
+		}
+		return sdf;
+	}
+	public static SimpleDateFormat getSimpleDateFormatMsShared() {
+		return getSharedFormatter(DEFAULT_DATA_ENGINE_TYPE.toDateTimeType(), SIMPLE_DATE_FORMAT_MS, false);
+	}
+	public static SimpleDateFormat getDefaultDateTimeFormatterShared(String format) {
+		return getSharedFormatter(DEFAULT_DATA_ENGINE_TYPE.toDateTimeType(), format, false);
+	}
+	public static SimpleDateFormat getDefaultDateFormatterShared(String format) {
+		return getSharedFormatter(DEFAULT_DATA_ENGINE_TYPE.toDateType(), format, false);
+	}
+	public static SimpleDateFormat getDefaultTimeFormatterShared(String format) {
+		return getSharedFormatter(DEFAULT_DATA_ENGINE_TYPE.toTimeType(), format, false);
 	}
 	
 	public static final String SIMPLE_DATE_FORMAT_MS_ISO_8601_TZ = "yyyy-MM-dd_HH:mm:ss.SSSX";

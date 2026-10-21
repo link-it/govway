@@ -40,7 +40,7 @@ import org.openspcoop2.utils.date.DateUtils;
 public class JDBCSqlLogger {
 
 	private org.slf4j.Logger log = null;
-	private SimpleDateFormat dateformat = DateUtils.getDefaultDateTimeFormatter("yyyy-MM-dd HH:mm:ss.SSS");
+	private SimpleDateFormat dateformat = DateUtils.getDefaultDateTimeFormatterShared("yyyy-MM-dd HH:mm:ss.SSS");
 
 	/**
 	 * Costruttore della classe di utilita' per gestire i log sia di debug che di errore delle query effettuate su database

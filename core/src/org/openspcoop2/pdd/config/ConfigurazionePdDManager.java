@@ -1562,6 +1562,13 @@ public class ConfigurazionePdDManager {
 	}
 
 	public ServizioApplicativo getServizioApplicativo(IDServizioApplicativo idSA, RequestInfo requestInfo) throws DriverConfigurazioneNotFound,DriverConfigurazioneException{
+		return getServizioApplicativo(idSA, requestInfo, true);
+	}
+	/**
+	 * Con throwNotFoundIfAnonimo=false, per il servizio applicativo anonimo del fruitore viene restituito null invece di sollevare DriverConfigurazioneNotFound
+	 * (evita la creazione di un'eccezione ad ogni richiesta quando il chiamante gestisce l'applicativo anonimo)
+	 */
+	public ServizioApplicativo getServizioApplicativo(IDServizioApplicativo idSA, RequestInfo requestInfo, boolean throwNotFoundIfAnonimo) throws DriverConfigurazioneNotFound,DriverConfigurazioneException{
 		if(requestInfo!=null && requestInfo.getRequestConfig()!=null && 
 				idSA!=null && idSA.getIdSoggettoProprietario()!=null &&
 				requestInfo.getRequestConfig().getIdServizio()!=null && requestInfo.getRequestConfig().getIdServizio().getSoggettoErogatore()!=null &&
@@ -1597,6 +1604,9 @@ public class ConfigurazionePdDManager {
 			(requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo().getServizioApplicativoFruitoreAnonimo()!=null &&
 					idSA!=null && idSA.getNome()!=null && idSA.getNome().equals(requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo().getServizioApplicativoFruitoreAnonimo())) 
 			){
+			if(!throwNotFoundIfAnonimo) {
+				return null;
+			}
 			throw new DriverConfigurazioneNotFound("Servizio applicativo anonimo");
 		}
 		

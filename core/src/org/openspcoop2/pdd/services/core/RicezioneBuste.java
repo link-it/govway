@@ -7256,11 +7256,14 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 				for(int i=0;i<this.bustaRichiesta.sizeListaTrasmissioni();i++){
 					if( this.identitaPdD.getTipo().equals(this.bustaRichiesta.getTrasmissione(i).getTipoDestinazione()) &&
 							this.identitaPdD.getNome().equals(this.bustaRichiesta.getTrasmissione(i).getDestinazione()) ){
-						boolean tipoOrigineValido = true;
-						try {
-							this.traduttore.toProtocolOrganizationType(this.bustaRichiesta.getTrasmissione(i).getTipoOrigine());
-						}catch(Exception e) {
-							tipoOrigineValido = false;
+						// senza tipo l'origine non e' valida: si evita l'eccezione (es. profilo trasparente)
+						boolean tipoOrigineValido = this.bustaRichiesta.getTrasmissione(i).getTipoOrigine()!=null;
+						if(tipoOrigineValido) {
+							try {
+								this.traduttore.toProtocolOrganizationType(this.bustaRichiesta.getTrasmissione(i).getTipoOrigine());
+							}catch(Exception e) {
+								tipoOrigineValido = false;
+							}
 						}
 						if(tipoOrigineValido) {
 							tras.setDestinazione(this.bustaRichiesta.getTrasmissione(i).getOrigine());

@@ -767,7 +767,9 @@ public class InoltroBuste extends GenericLib implements IAsyncResponseCallback{
 				IDServizioApplicativo idSA = new IDServizioApplicativo();
 				idSA.setNome(this.richiestaDelegata.getServizioApplicativo());
 				idSA.setIdSoggettoProprietario(this.richiestaDelegata.getIdSoggettoFruitore());
-				this.sa = this.configurazionePdDManager.getServizioApplicativo(idSA, this.requestInfo);
+				// l'applicativo anonimo non e' presente nella configurazione: viene restituito null senza sollevare l'eccezione
+				boolean anonimo = CostantiPdD.SERVIZIO_APPLICATIVO_ANONIMO.equals(this.richiestaDelegata.getServizioApplicativo());
+				this.sa = this.configurazionePdDManager.getServizioApplicativo(idSA, this.requestInfo, !anonimo);
 			}catch(Exception e){
 				if( !(e instanceof DriverConfigurazioneNotFound) || 
 						!(CostantiPdD.SERVIZIO_APPLICATIVO_ANONIMO.equals(this.richiestaDelegata.getServizioApplicativo())) ){
@@ -1307,10 +1309,13 @@ public class InoltroBuste extends GenericLib implements IAsyncResponseCallback{
 							this.bustaRichiesta.getDestinatario());	 
 				tras.setDestinazione(destTrasm.getNome());
 				tras.setTipoDestinazione(destTrasm.getTipo());
-				try{
-					String dominio = this.registroServiziManager.getDominio(destTrasm, null, this.protocolFactory, this.requestInfo);
-					tras.setIdentificativoPortaDestinazione(dominio);
-				}catch(Exception e){}
+				// senza tipo e nome della destinazione il dominio non e' risolvibile: si evita l'eccezione
+				if(destTrasm.getTipo()!=null && destTrasm.getNome()!=null) {
+					try{
+						String dominio = this.registroServiziManager.getDominio(destTrasm, null, this.protocolFactory, this.requestInfo);
+						tras.setIdentificativoPortaDestinazione(dominio);
+					}catch(Exception e){}
+				}
 				
 				// oraRegistrazione
 				tras.setOraRegistrazione(this.bustaRichiesta.getOraRegistrazione());
