@@ -13,15 +13,21 @@ Una volta abilitato, nella sezione "Scambio di Dati Asincrono" deve essere indic
 
 **API con ruolo 'Erogazione dati'**
 
-Per un'API con ruolo *Erogazione dati* devono essere indicati i parametri dello scambio, che valgono anche per l'API di callback associata (:numref:`ModIPdndAsyncApiErogazioneDati`):
+Per un'API con ruolo *Erogazione dati* devono essere indicati i parametri dello scambio, che valgono anche per l'API di callback associata (:numref:`ModIPdndAsyncApiErogazioneDati`). I parametri devono corrispondere a quelli dichiarati dall'erogatore nella registrazione dell'e-service sulla PDND (`Scambi di dati asincroni <https://developer.pagopa.it/it/pdnd-interoperabilita/guides/manuale-operativo-pdnd-interoperabilita/v1.0/riferimenti-tecnici/e-service/scambi-di-dati-asincroni>`__), che li utilizza per verificare le richieste dei voucher:
 
-- *Tempo massimo di risposta*: secondi entro cui l'erogatore deve invocare la callback, a partire dall'inizio dell'interazione;
+- *Tempo massimo di risposta*: secondi entro cui l'erogatore si impegna a predisporre la risposta e deve quindi invocare la callback, a partire dall'inizio dell'interazione;
 
-- *Durata disponibilità dato*: secondi in cui la risposta resta disponibile per il fruitore, a partire dall'invocazione della callback;
+- *Durata disponibilità dato*: secondi in cui la risposta resta disponibile per il fruitore, a partire dall'invocazione della callback; entro tale tempo il fruitore deve recuperare l'intera risposta ed eventualmente confermarne il recupero;
 
 - *Conferma recupero risposta*: se abilitata ('Richiesta al fruitore (confirmation)'), il fruitore deve confermare il recupero della risposta invocando la fase di conferma; dopo la conferma la risposta non è più recuperabile. L'opzione è necessaria per poter associare la fase di conferma ad una risorsa o azione dell'API;
 
-- *Numero massimo risultati*: numero massimo di entità che l'erogatore può dichiarare nella callback.
+- *Numero massimo risultati*: corrisponde al 'numero massimo di risultati per risposta' dichiarato sulla PDND; nella callback il numero di entità indicato dall'erogatore (claim 'entityNumber') non può superare tale valore.
+
+**Recupero della risposta a blocchi**
+
+Nella registrazione dell'e-service sulla PDND l'erogatore può consentire al fruitore di recuperare la risposta a blocchi, invocando più volte la fase di ottenimento della risposta, ognuna con il proprio voucher. Il recupero a blocchi è realizzato dall'applicativo erogatore: GovWay non suddivide la risposta, ma ammette ripetute invocazioni della fase *Ottenimento della risposta (get_resource)* entro la *Durata disponibilità dato*.
+
+Se l'e-service REST prevede il recupero a blocchi secondo il pattern *BULK_RESOURCE_REST* delle Linee Guida di Interoperabilità (richiesta di porzioni della risposta tramite l'header *Range*), nella sezione *Interazione* dell'API deve essere abilitata la checkbox *Risorse Massive (BULK_RESOURCE_REST)*, descritta nella sezione :ref:`modipa_bulkREST`, affinché GovWay preservi l'header *Content-Length* delle risposte prodotte dall'applicativo.
 
 .. figure:: ../../_figure_console/modipa_pdnd_async_api_erogazione_dati.png
     :scale: 70%

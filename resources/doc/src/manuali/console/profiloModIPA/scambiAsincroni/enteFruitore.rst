@@ -31,6 +31,10 @@ Alla ricezione della callback GovWay verifica che l'interazione sia stata avviat
 
 - il numero di entità prodotte, nell'header 'GovWay-PDND-Entity-Number' (nome configurabile, :ref:`modipa_scambiAsincroni_properties`), solamente se l'informazione è presente nell'access token rilasciato dalla PDND.
 
+.. note::
+
+    Attualmente la PDND non riporta il numero di entità ('entityNumber') nell'access token rilasciato per l'invocazione della callback: l'header 'GovWay-PDND-Entity-Number' non viene quindi inoltrato all'applicativo. GovWay lo inoltrerà automaticamente se e quando la PDND valorizzerà l'informazione nel token.
+
 Nella sezione "ModI - Scambi Asincroni" dell'erogazione è possibile ridefinire l'*Esito Positivo* (descritto di seguito): la callback viene registrata solamente se l'applicativo risponde con successo; in caso contrario l'erogatore può invocarla nuovamente.
 
 **Fruizione dell'API con ruolo 'Erogazione dati'**
