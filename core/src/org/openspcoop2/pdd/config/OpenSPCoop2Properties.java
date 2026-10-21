@@ -29298,11 +29298,17 @@ public class OpenSPCoop2Properties {
 		}
 		return l;
 	}
+	// La configurazione dipende solamente da proprieta' lette una volta: viene costruita alla prima invocazione e condivisa (liste non modificabili)
+	private volatile ForwardConfig soapServicesUrlParametersForwardConfig = null;
 	public ForwardConfig getSOAPServicesUrlParametersForwardConfig() {
-		ForwardConfig f = new ForwardConfig();
-		f.setForwardEnable(this.isSOAPServicesUrlParametersForward());
-		f.setBlackList(_getSOAPServicesBlackListUrlParameters());
-		f.setWhiteList(_getSOAPServicesWhiteListUrlParameters());
+		ForwardConfig f = this.soapServicesUrlParametersForwardConfig;
+		if(f==null) {
+			f = new ForwardConfig();
+			f.setForwardEnable(this.isSOAPServicesUrlParametersForward());
+			f.setBlackList(Collections.unmodifiableList(_getSOAPServicesBlackListUrlParameters()));
+			f.setWhiteList(Collections.unmodifiableList(_getSOAPServicesWhiteListUrlParameters()));
+			this.soapServicesUrlParametersForwardConfig = f;
+		}
 		return f;
 	}
 	
@@ -29620,11 +29626,23 @@ public class OpenSPCoop2Properties {
 		}
 		return l;
 	}
+	// La configurazione dipende solamente da proprieta' lette una volta: viene costruita alla prima invocazione e condivisa (liste non modificabili)
+	private volatile ForwardConfig soapServicesHeadersForwardConfigRequest = null;
+	private volatile ForwardConfig soapServicesHeadersForwardConfigResponse = null;
 	public ForwardConfig getSOAPServicesHeadersForwardConfig(boolean request) {
-		ForwardConfig f = new ForwardConfig();
-		f.setForwardEnable(this.isSOAPServicesHeadersForward());
-		f.setBlackList(getSOAPServicesBlackListHeaders(request));
-		f.setWhiteList(getSOAPServicesWhiteListHeaders(request));
+		ForwardConfig f = request ? this.soapServicesHeadersForwardConfigRequest : this.soapServicesHeadersForwardConfigResponse;
+		if(f==null) {
+			f = new ForwardConfig();
+			f.setForwardEnable(this.isSOAPServicesHeadersForward());
+			f.setBlackList(Collections.unmodifiableList(getSOAPServicesBlackListHeaders(request)));
+			f.setWhiteList(Collections.unmodifiableList(getSOAPServicesWhiteListHeaders(request)));
+			if(request) {
+				this.soapServicesHeadersForwardConfigRequest = f;
+			}
+			else {
+				this.soapServicesHeadersForwardConfigResponse = f;
+			}
+		}
 		return f;
 	}
 
@@ -30191,11 +30209,17 @@ public class OpenSPCoop2Properties {
 		}
 		return l;
 	}
+	// La configurazione dipende solamente da proprieta' lette una volta: viene costruita alla prima invocazione e condivisa (liste non modificabili)
+	private volatile ForwardConfig restServicesUrlParametersForwardConfig = null;
 	public ForwardConfig getRESTServicesUrlParametersForwardConfig() {
-		ForwardConfig f = new ForwardConfig();
-		f.setForwardEnable(this.isRESTServicesUrlParametersForward());
-		f.setBlackList(_getRESTServicesBlackListUrlParameters());
-		f.setWhiteList(_getRESTServicesWhiteListUrlParameters());
+		ForwardConfig f = this.restServicesUrlParametersForwardConfig;
+		if(f==null) {
+			f = new ForwardConfig();
+			f.setForwardEnable(this.isRESTServicesUrlParametersForward());
+			f.setBlackList(Collections.unmodifiableList(_getRESTServicesBlackListUrlParameters()));
+			f.setWhiteList(Collections.unmodifiableList(_getRESTServicesWhiteListUrlParameters()));
+			this.restServicesUrlParametersForwardConfig = f;
+		}
 		return f;
 	}
 	
@@ -30513,11 +30537,23 @@ public class OpenSPCoop2Properties {
 		}
 		return l;
 	}
+	// La configurazione dipende solamente da proprieta' lette una volta: viene costruita alla prima invocazione e condivisa (liste non modificabili)
+	private volatile ForwardConfig restServicesHeadersForwardConfigRequest = null;
+	private volatile ForwardConfig restServicesHeadersForwardConfigResponse = null;
 	public ForwardConfig getRESTServicesHeadersForwardConfig(boolean request) {
-		ForwardConfig f = new ForwardConfig();
-		f.setForwardEnable(this.isRESTServicesHeadersForward());
-		f.setBlackList(getRESTServicesBlackListHeaders(request));
-		f.setWhiteList(getRESTServicesWhiteListHeaders(request));
+		ForwardConfig f = request ? this.restServicesHeadersForwardConfigRequest : this.restServicesHeadersForwardConfigResponse;
+		if(f==null) {
+			f = new ForwardConfig();
+			f.setForwardEnable(this.isRESTServicesHeadersForward());
+			f.setBlackList(Collections.unmodifiableList(getRESTServicesBlackListHeaders(request)));
+			f.setWhiteList(Collections.unmodifiableList(getRESTServicesWhiteListHeaders(request)));
+			if(request) {
+				this.restServicesHeadersForwardConfigRequest = f;
+			}
+			else {
+				this.restServicesHeadersForwardConfigResponse = f;
+			}
+		}
 		return f;
 	}
 

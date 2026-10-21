@@ -141,7 +141,7 @@ public class MsgDiagnostico {
 	}
 
 	/** Keyword per i log personalizzati */
-	private Map<String,String> keywordLogPersonalizzati = new HashMap<>();	
+	private Map<String,String> keywordLogPersonalizzati = new HashMap<>(64); // dimensionata per le keyword di una transazione, evita i ridimensionamenti
 	public Map<String, String> getKeywordLogPersonalizzati() {
 		return this.keywordLogPersonalizzati;
 	}
