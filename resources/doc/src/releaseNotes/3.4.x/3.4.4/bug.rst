@@ -56,7 +56,8 @@ Sono stati risolti i seguenti bug per la componente runtime del gateway:
   - il connettore 'httpcore5' non registrava, per le richieste con body, la data di uscita della richiesta, visibile nei tempi di dettaglio della transazione;
   - una risposta Problem Details compressa dal backend (es. 'Content-Encoding: gzip') veniva interpretata senza decompressione e inoltrata al client corrotta;
   - l'override della configurazione HTTPS della JVM attivato su un connettore veniva applicato anche alle connessioni verso Token Endpoint e Attribute Authority, causandone il fallimento;
-  - il connettore 'Status' con verifica statistica poteva contare due volte le transazioni.
+  - il connettore 'Status' con verifica statistica poteva contare due volte le transazioni;
+  - il connettore 'httpcore5' (BIO e NIO) continuava a usare il contenuto di truststore, keystore e CRL letto alla creazione del pool di connessioni, ignorando gli aggiornamenti dei file anche dopo il reset della cache: un certificato aggiunto non veniva considerato e uno rimosso restava attendibile fino al riavvio.
 
 - Correlazione Applicativa: un messaggio privo di contenuto (es. risposta con codice HTTP 204) faceva terminare la transazione con errore anche quando l'impostazione 'Identificazione fallita' della regola era 'accetta'. È adesso possibile trattare l'assenza del contenuto come una normale identificazione non riuscita: la transazione termina con errore solo se la regola prevede 'blocca', mentre con 'accetta' prosegue senza registrare l'identificativo di correlazione. Il nuovo comportamento è disabilitato per default, per retrocompatibilità, ed è attivabile separatamente per richiesta e risposta nella configurazione globale.
 

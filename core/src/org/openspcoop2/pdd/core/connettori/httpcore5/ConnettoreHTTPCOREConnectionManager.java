@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
@@ -56,6 +57,7 @@ import org.openspcoop2.pdd.core.connettori.AbstractConnettoreConnectionConfig;
 import org.openspcoop2.pdd.core.connettori.ConnettoreException;
 import org.openspcoop2.pdd.core.connettori.ConnettoreHttpPoolParams;
 import org.openspcoop2.pdd.core.connettori.ConnettoreLogger;
+import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.UtilsMultiException;
@@ -82,8 +84,9 @@ public class ConnettoreHTTPCOREConnectionManager {
 	public static final boolean USE_POOL_CONNECTION = false; // ha senso solo con il NIO dove si utilizza una sola connessione
 	private static final org.openspcoop2.utils.Semaphore semaphoreConnection = new org.openspcoop2.utils.Semaphore(ConnettoreHTTPCORE.ID_HTTPCORE+"-ConnectionManager"); // usato per negoziare una connessione da un pool
 	
-	static Map<String, PoolingHttpClientConnectionManager> mapPoolingConnectionManager = new HashMap<>();
+	static Map<String, PoolingHttpClientConnectionManager> mapPoolingConnectionManager = new ConcurrentHashMap<>();
 	static Map<String, ConnettoreHTTPCOREConnection> mapConnection = new HashMap<>();
+	static final ConnettoreHTTPCOREPoolRegistry poolRegistry = new ConnettoreHTTPCOREPoolRegistry();
 	
 	private static ConnettoreHTTPCOREConnectionEvictor idleConnectionEvictor;
 		
@@ -216,15 +219,71 @@ public class ConnettoreHTTPCOREConnectionManager {
 					 */
 					
 					ConnettoreHTTPCOREConnectionManager.mapPoolingConnectionManager.put(key, poolingConnectionManager);
+					poolRegistry.registraCreazione(key, connectionConfig.toKeyConnectionManagerWithoutContentFingerprint());
 					
 				}catch(Exception t) {
 					throw new ConnettoreException(t.getMessage(),t);
 				}
+				
+				// un nuovo pool può renderne dismesso uno precedente: verifica anche in assenza del timer di controllo delle connessioni
+				closePoolDismessiEngine(logger);
 			}
 		}finally {
 			semaphorePoolingConnectionManager.release(lock, "initPoolingConnectionManager",idTransazione);
 		}
 		
+	}
+	
+	/**
+	 * Chiude i pool dismessi (sostituiti da un pool creato per un contenuto aggiornato dei keystore)
+	 * che non hanno connessioni in uso e non vengono utilizzati da almeno la soglia di inattività.
+	 */
+	public static void closePoolDismessi(ConnettoreLogger logger) {
+		String idTransazione = logger!=null ? logger.getIdTransazione() : null;
+		SemaphoreLock lock = null;
+		try {
+			lock = semaphorePoolingConnectionManager.acquire("closePoolDismessi",idTransazione);
+		}catch(Exception t) {
+			OpenSPCoop2Logger.getLoggerOpenSPCoopConnettori().error("closePoolDismessi: "+t.getMessage(),t);
+			return;
+		}
+		try {
+			closePoolDismessiEngine(logger);
+		}finally {
+			semaphorePoolingConnectionManager.release(lock, "closePoolDismessi",idTransazione);
+		}
+	}
+	private static void closePoolDismessiEngine(ConnettoreLogger logger) {
+		Integer closeIdleConnectionsAfterSeconds = OpenSPCoop2Properties.getInstance().getBIOConfigSyncClientCloseIdleConnectionsAfterSeconds();
+		int inattivita = (closeIdleConnectionsAfterSeconds!=null && closeIdleConnectionsAfterSeconds>0) ? 
+				closeIdleConnectionsAfterSeconds : ConnettoreHTTPCOREPoolRegistry.INATTIVITA_POOL_DISMESSO_DEFAULT_SECONDS;
+		for (String key : poolRegistry.getPoolDismessiDaChiudere(mapPoolingConnectionManager, inattivita)) {
+			PoolingHttpClientConnectionManager cm = mapPoolingConnectionManager.remove(key);
+			if(!poolRegistry.isChiudibile(key, cm, inattivita)) {
+				// utilizzato nel frattempo da una richiesta
+				if(cm!=null) {
+					mapPoolingConnectionManager.put(key, cm);
+				}
+				continue;
+			}
+			poolRegistry.rimuovi(key);
+			List<Throwable> listT = new ArrayList<>();
+			stopConnectionManager(cm, listT);
+			String msg = "ConnectionManager dismesso chiuso ("+key+")";
+			if(!listT.isEmpty()) {
+				msg = msg + ": "+listT.get(0).getMessage();
+			}
+			if(logger!=null) {
+				logger.debug(msg);
+			}
+			else {
+				OpenSPCoop2Logger.getLoggerOpenSPCoopConnettori().debug(msg);
+			}
+		}
+	}
+	
+	static boolean isPoolDismesso(String key) {
+		return poolRegistry.isDismesso(key);
 	}
 	private static ConnectionConfig buildConnectionConfig(ConnettoreHttpPoolParams poolParams, long connectionTimeout) {
 		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
@@ -313,6 +372,7 @@ public class ConnettoreHTTPCOREConnectionManager {
 			}
 			ConnettoreHTTPCOREConnectionManager.mapPoolingConnectionManager.clear();
 		}
+		poolRegistry.clear();
 	}
 	private static void stopConnectionManager(PoolingHttpClientConnectionManager cm, List<Throwable> listT) {
 		if(cm!=null) {
@@ -395,21 +455,24 @@ public class ConnettoreHTTPCOREConnectionManager {
 			// Pool
 			String keyPool = connectionConfig.toKeyConnectionManager();
 			
-			if(!ConnettoreHTTPCOREConnectionManager.mapPoolingConnectionManager.containsKey(keyPool)){
+			// l'utilizzo viene registrato prima del recupero: un pool dismesso utilizzato non viene chiuso
+			poolRegistry.registraUtilizzo(keyPool);
+			PoolingHttpClientConnectionManager cm = ConnettoreHTTPCOREConnectionManager.mapPoolingConnectionManager.get(keyPool);
+			if(cm==null){
 				
 				TlsSocketStrategy tlsStrategy = buildSSLConnectionSocketFactory(connectionConfig,
 						sslSocketFactory,
 						loader, logger);
 				ConnettoreHTTPCOREConnectionManager.initialize(keyPool, tlsStrategy, connectionConfig, logger);
+				cm = ConnettoreHTTPCOREConnectionManager.mapPoolingConnectionManager.get(keyPool);
 			}
-			PoolingHttpClientConnectionManager cm = ConnettoreHTTPCOREConnectionManager.mapPoolingConnectionManager.get(keyPool);
 			
 			HttpClientBuilder httpClientBuilder = HttpClients.custom();
 			httpClientBuilder.setConnectionManager( cm );
 			httpClientBuilder.setConnectionManagerShared(true); // senno' la close di una connessione fa si che venga chiuso il reactor
 			httpClientBuilder.setDefaultRequestConfig(requestConfig);
 			httpClientBuilder.disableAuthCaching();
-			/*
+			/**
 			 * GovWay agisce da gateway: deve essere trasparente verso le risposte del backend.
 			 * Header come 'Retry-After' e status code 429/503 vanno veicolati al client a monte
 			 * senza essere interpretati/consumati dal client HTTP. La decisione di ritentare
@@ -421,7 +484,7 @@ public class ConnettoreHTTPCOREConnectionManager {
 			 * supera il responseTimeout (regressione rispetto a 5.5).
 			 */
 			httpClientBuilder.disableAutomaticRetries();
-			/*
+			/**
 			 * Ulteriori automatismi del client HTTP disabilitati per garantire la trasparenza
 			 * del gateway:
 			 * - cookie management: i cookie vanno propagati come header opachi tra client a
@@ -550,6 +613,10 @@ public class ConnettoreHTTPCOREConnectionManager {
 			Loader loader, ConnettoreLogger logger,
 			ConnectionKeepAliveStrategy keepAliveStrategy,
 			ConnettoreHttpRequestInterceptor httpRequestInterceptor) throws ConnettoreException  {
+		
+		// Il contesto SSL viene creato una sola volta, alla nascita del pool: 
+		// l'impronta del contenuto dei keystore nella chiave fa nascere un nuovo pool quando il contenuto cambia
+		connectionConfig.setSslContentFingerprint(sslSocketFactory!=null ? sslSocketFactory.getContentFingerprint() : null);
 		
 		ConnettoreHTTPCOREConnection connection = null;
 		if(USE_POOL_CONNECTION) {

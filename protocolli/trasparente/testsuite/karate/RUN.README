@@ -584,6 +584,9 @@ Di seguito vengono descritti i test del package 'connettori':
 
 - 'tls', verifica la funzionalità tls
    ant run_test -Ddelete=false -Dload=false -Dpackage=connettori.tls
+   NOTA: i test *AggiornamentoKeystoreTest riscrivono truststore e keystore usati dai connettori nella directory
+         /tmp/govway-testsuite-tls-aggiornamento-keystore, che deve essere scrivibile dall'utente della testsuite
+         e leggibile dal runtime GovWay.
 
 - 'forward_proxy', verifica la funzionalità di forward proxy
    ant run_test -Ddelete=false -Dload=false -Dpackage=connettori.forward_proxy

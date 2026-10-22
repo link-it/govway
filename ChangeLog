@@ -2,6 +2,14 @@
 
 	* Rilasciata versione 3.4.4
 
+2026-10-22  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug #1850
+	I connettori HTTPS con libreria HTTPCore5 (BIO e NIO) continuavano a usare il contenuto di truststore, keystore e CRL
+	letto alla creazione del pool di connessioni, ignorando gli aggiornamenti dei file anche dopo il reset della cache.
+	Un contenuto aggiornato genera adesso un nuovo pool, mentre il precedente viene chiuso al termine delle richieste in corso.
+
 2026-10-19  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

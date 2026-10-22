@@ -20,6 +20,9 @@
 
 package org.openspcoop2.pdd.core.connettori.httpcore5.nio;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.client5.http.HttpRoute;
 import org.apache.hc.client5.http.impl.nio.PoolingAsyncClientConnectionManager;
@@ -57,13 +60,10 @@ public class ConnettoreHTTPCOREConnectionEvictor extends AbstractConnettoreConne
     	
     	if(ConnettoreHTTPCOREConnectionManager.mapPoolingConnectionManager!=null && !ConnettoreHTTPCOREConnectionManager.mapPoolingConnectionManager.isEmpty()) {
     		
-    		print(sb, "ConnectionManager attivi: "+ConnettoreHTTPCOREConnectionManager.mapPoolingConnectionManager.size());	
-    		    		
-			for (String key : ConnettoreHTTPCOREConnectionManager.mapPoolingConnectionManager.keySet()) {
-				if(key!=null) {
-					check(key, sb);
-				}
-			}
+    		// chiusura dei pool sostituiti in seguito a un aggiornamento del contenuto dei keystore, non più utilizzati
+    		ConnettoreHTTPCOREConnectionManager.closePoolDismessi(null);
+    		
+    		checkPool(sb);
 			
 			if(sb!=null && ConnettoreHTTPCOREConnectionManager.USE_POOL_CONNECTION) {
 				super.check(sb);
@@ -75,10 +75,42 @@ public class ConnettoreHTTPCOREConnectionEvictor extends AbstractConnettoreConne
     	return false;
     	
     }
+    /**
+     * Stato dei pool: prima i pool attivi, poi quelli dismessi (sostituiti da un pool creato 
+     * per un contenuto aggiornato dei keystore) non ancora chiusi.
+     */
+    private void checkPool(StringBuilder sb) {
+    	List<String> attivi = new ArrayList<>();
+    	List<String> dismessi = new ArrayList<>();
+    	for (String key : ConnettoreHTTPCOREConnectionManager.mapPoolingConnectionManager.keySet()) {
+    		if(ConnettoreHTTPCOREConnectionManager.isPoolDismesso(key)) {
+    			dismessi.add(key);
+    		}
+    		else {
+    			attivi.add(key);
+    		}
+    	}
+    	
+    	print(sb, "ConnectionManager attivi: "+attivi.size());
+    	for (String key : attivi) {
+    		check(key, sb);
+    	}
+    	
+    	if(!dismessi.isEmpty()) {
+    		print(sb, "ConnectionManager dismessi: "+dismessi.size());
+    		for (String key : dismessi) {
+    			check(key, sb);
+    		}
+    	}
+    }
     private void check(String key, StringBuilder sb) {
     	PoolingAsyncClientConnectionManager connMgr = ConnettoreHTTPCOREConnectionManager.mapPoolingConnectionManager.get(key);
 		ConnettoreHTTPCOREConnection connection = ConnettoreHTTPCOREConnectionManager.mapConnection.get(key);
 		
+    	if(connMgr==null) {
+    		return; // pool chiuso nel frattempo
+    	}
+    	
     	// DEBUG
     	if(this.debug) {
     		
@@ -106,13 +138,11 @@ public class ConnettoreHTTPCOREConnectionEvictor extends AbstractConnettoreConne
     		
     	}
     	
-    	if(connMgr!=null) {
-	    	// Close expired connections
-	    	connMgr.closeExpired();
-	    	// Optionally, close connections
-	    	// that have been idle longer than 30 sec
-	    	connMgr.closeIdle(TimeValue.ofSeconds(this.closeIdleConnectionsAfterSeconds));
-    	}
+    	// Close expired connections
+    	connMgr.closeExpired();
+    	// Optionally, close connections
+    	// that have been idle longer than 30 sec
+    	connMgr.closeIdle(TimeValue.ofSeconds(this.closeIdleConnectionsAfterSeconds));
     }
 
 }

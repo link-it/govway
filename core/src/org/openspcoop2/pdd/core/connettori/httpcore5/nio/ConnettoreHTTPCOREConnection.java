@@ -36,6 +36,7 @@ import org.openspcoop2.pdd.core.connettori.ConnettoreException;
 public class ConnettoreHTTPCOREConnection extends AbstractConnettoreConnection<CloseableHttpAsyncClient>{
 
 	private RequestConfig requestConfig;
+	private String keyPool;
 	
 	public ConnettoreHTTPCOREConnection(String key, CloseableHttpAsyncClient client, RequestConfig requestConfig,
 			int expireUnusedAfterSeconds, int closeUnusedAfterSeconds) {
@@ -60,5 +61,12 @@ public class ConnettoreHTTPCOREConnection extends AbstractConnettoreConnection<C
 
 	public RequestConfig getRequestConfig() {
 		return this.requestConfig;
+	}
+
+	public String getKeyPool() {
+		return this.keyPool;
+	}
+	public void setKeyPool(String keyPool) {
+		this.keyPool = keyPool;
 	}
 }

@@ -41,6 +41,7 @@ public abstract class AbstractConnettoreConnectionConfig {
 	private int maxNumberRedirects = 5;
 	
 	private SSLConfig sslContextProperties;
+	private String sslContentFingerprint;
 	
 	private boolean debug;
 	
@@ -59,10 +60,20 @@ public abstract class AbstractConnettoreConnectionConfig {
 	public String toKeyConnectionManager() {
 		return toString(true);
 	}
+	/**
+	 * Chiave del pool senza l'impronta del contenuto dei keystore: identifica la configurazione del connettore,
+	 * comune ai pool creati per contenuti differenti degli stessi keystore.
+	 */
+	public String toKeyConnectionManagerWithoutContentFingerprint() {
+		return toString(true, false);
+	}
 	public String toKeyConnection() {
 		return toString(false);
 	}
 	public String toString(boolean onlyForConnectionManager) {
+		return toString(onlyForConnectionManager, true);
+	}
+	private String toString(boolean onlyForConnectionManager, boolean includeContentFingerprint) {
 		StringBuilder bf = new StringBuilder(this.type);
 		if(onlyForConnectionManager) {
 			if(this.connectionTimeout!=null) {
@@ -80,6 +91,11 @@ public abstract class AbstractConnettoreConnectionConfig {
 			bf.append(this.sslContextProperties.toString(false));
 			bf.append(" ");
 			bf.append("debug:").append(this.debug); // serve a  WrappedLogSSLSocketFactory
+			if(includeContentFingerprint && this.sslContentFingerprint!=null) {
+				// il contesto SSL viene creato una sola volta per pool: un contenuto differente dei keystore richiede un nuovo pool
+				bf.append(" ");
+				bf.append("contentFingerprint:").append(this.sslContentFingerprint);
+			}
 		}
 		return bf.toString();
 	}
@@ -134,6 +150,12 @@ public abstract class AbstractConnettoreConnectionConfig {
 	}
 	public void setSslContextProperties(SSLConfig sslConfig) {
 		this.sslContextProperties = sslConfig;
+	}
+	public String getSslContentFingerprint() {
+		return this.sslContentFingerprint;
+	}
+	public void setSslContentFingerprint(String sslContentFingerprint) {
+		this.sslContentFingerprint = sslContentFingerprint;
 	}
 	public boolean isFollowRedirect() {
 		return this.followRedirect;

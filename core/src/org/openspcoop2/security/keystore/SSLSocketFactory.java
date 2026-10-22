@@ -56,6 +56,7 @@ public class SSLSocketFactory implements Serializable {
 	private SSLConfig sslConfig;
 	private transient SSLContext sslContext;
 	private transient javax.net.ssl.SSLSocketFactory sslSocketFactoryObject;
+	private transient String contentFingerprint;
 
 	@Override
 	public String toString() {
@@ -145,6 +146,7 @@ public class SSLSocketFactory implements Serializable {
 					StringBuilder bfSSLConfig = new StringBuilder();
 					this.sslContext = SSLUtilities.generateSSLContext(this.sslConfig, ocspValidator, byokManager, bfSSLConfig);
 					this.sslSocketFactoryObject = this.sslContext.getSocketFactory();
+					this.contentFingerprint = SSLContentFingerprint.compute(this.sslConfig);
 					
 					if(this.sslConfig.getLoggerBuffer()!=null) {
 						String msgDebug = bfSSLConfig.toString();
@@ -165,6 +167,14 @@ public class SSLSocketFactory implements Serializable {
 	
 	public SSLContext getSSLContext() {
 		return this.sslContext;
+	}
+	
+	/**
+	 * Impronta del contenuto di keystore, truststore e CRL con cui è stato creato il contesto SSL.
+	 * Usata nella chiave dei pool di connessioni, affinché un aggiornamento del contenuto dei file generi un nuovo pool.
+	 */
+	public String getContentFingerprint() {
+		return this.contentFingerprint;
 	}
 
 

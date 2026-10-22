@@ -21,11 +21,11 @@
 package org.openspcoop2.pdd.core.connettori.httpcore5.nio;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
@@ -58,10 +58,12 @@ import org.openspcoop2.pdd.core.connettori.AbstractConnettoreConnectionConfig;
 import org.openspcoop2.pdd.core.connettori.ConnettoreException;
 import org.openspcoop2.pdd.core.connettori.ConnettoreHttpPoolParams;
 import org.openspcoop2.pdd.core.connettori.ConnettoreLogger;
+import org.openspcoop2.pdd.core.connettori.httpcore5.ConnettoreHTTPCOREPoolRegistry;
 import org.openspcoop2.pdd.core.connettori.httpcore5.ConnettoreHTTPCOREUtils;
 import org.openspcoop2.pdd.core.connettori.httpcore5.ConnettoreHttpRequestInterceptor;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
+import org.openspcoop2.security.keystore.SSLContentFingerprint;
 import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
 import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.UtilsException;
@@ -89,8 +91,10 @@ public class ConnettoreHTTPCOREConnectionManager {
 	public static final boolean USE_POOL_CONNECTION = true; // e' inutilizzabile senza
 	private static final org.openspcoop2.utils.Semaphore semaphoreConnection = new org.openspcoop2.utils.Semaphore(ConnettoreHTTPCORE.ID_HTTPCORE+"-ConnectionManager"); // usato per negoziare una connessione da un pool
 	
-	static Map<String, PoolingAsyncClientConnectionManager> mapPoolingConnectionManager = new HashMap<>();
-	static Map<String, ConnettoreHTTPCOREConnection> mapConnection = new HashMap<>();
+	static Map<String, PoolingAsyncClientConnectionManager> mapPoolingConnectionManager = new ConcurrentHashMap<>();
+	// concorrente: i client associati a un pool dismesso vengono rimossi alla chiusura del pool, senza acquisire 'semaphoreConnection'
+	static Map<String, ConnettoreHTTPCOREConnection> mapConnection = new ConcurrentHashMap<>();
+	static final ConnettoreHTTPCOREPoolRegistry poolRegistry = new ConnettoreHTTPCOREPoolRegistry(); // distinto da quello dei pool BIO
 	
 	private static ConnettoreHTTPCOREConnectionEvictor idleConnectionEvictor;
 		
@@ -169,67 +173,149 @@ public class ConnettoreHTTPCOREConnectionManager {
 			if(!ConnettoreHTTPCOREConnectionManager.mapPoolingConnectionManager.containsKey(key)){
 			
 				try {			
-					PoolingAsyncClientConnectionManagerBuilder poolingConnectionManagerBuilder = PoolingAsyncClientConnectionManagerBuilder.create();
-					
-					if(tlsStrategy!=null) {
-						poolingConnectionManagerBuilder.setTlsStrategy(tlsStrategy);
-					}
-					else {
-						poolingConnectionManagerBuilder.useSystemProperties();
-					}
-										
-					// LAX: Higher concurrency but with lax connection max limit guarantees.
-					// STRICT: Strict connection max limit guarantees.
-					poolingConnectionManagerBuilder.setPoolConcurrencyPolicy(PoolConcurrencyPolicy.LAX);
-	
-					// FIFO: Re-use all connections equally preventing them from becoming idle and expiring.
-					// LIFO: Re-use as few connections as possible making it possible for connections to become idle and expire.
-					poolingConnectionManagerBuilder.setConnPoolPolicy(PoolReusePolicy.FIFO);
-					
-					
-					// PoolingNHttpClientConnectionManager maintains a maximum limit of connection on a per route basis and in total. 
-					// Per default this implementation will create no more than than 2 concurrent connections per given route and no more 20 connections in total.
-					// For many real-world applications these limits may prove too constraining, especially if they use HTTP as a transport protocol for their services. 
-					// Connection limits, however, can be adjusted using ConnPoolControl methods.
-					// Increase max total connection
-					ConnettoreHttpPoolParams poolParams = connectionConfig.getHttpPoolParams();
-					Integer defaultMaxPerRoute = poolParams.getDefaultMaxPerRoute();
-					Integer maxTotal = poolParams.getMaxTotal();
-					if(maxTotal!=null && maxTotal>0) {
-						poolingConnectionManagerBuilder.setMaxConnTotal(poolParams.getMaxTotal());
-					}
-					// Increase default max connection per route
-					if(defaultMaxPerRoute!=null && defaultMaxPerRoute>0) {
-						poolingConnectionManagerBuilder.setMaxConnPerRoute(poolParams.getDefaultMaxPerRoute());
-					}
-					// Increase max connections for localhost:80
-					/**HttpHost localhost = new HttpHost("locahost", 80);
-					poolingConnectionManagerBuilder.setMaxPerRoute(new HttpRoute(localhost), 50);*/
-					
-					ConnectionConfig config = buildConnectionConfig(poolParams, connectionConfig.getConnectionTimeout());
-					poolingConnectionManagerBuilder.setDefaultConnectionConfig(config);
-
-					// HTTP version policy (ALPN): determina se tentare la negoziazione HTTP/2 sulla TLS del pool
-					ConnettoreHTTPCOREVersionPolicy versionPolicy = connectionConfig.getHttpVersionPolicy();
-					if(versionPolicy!=null) {
-						poolingConnectionManagerBuilder.setDefaultTlsConfig(TlsConfig.custom()
-								.setVersionPolicy(versionPolicy.getHttpVersionPolicy())
-								.build());
-					}
-
-					PoolingAsyncClientConnectionManager poolingConnectionManager = poolingConnectionManagerBuilder.build();
+					PoolingAsyncClientConnectionManager poolingConnectionManager = buildPoolingConnectionManager(tlsStrategy, connectionConfig);
 													
 					ConnettoreHTTPCOREConnectionManager.mapPoolingConnectionManager.put(key, poolingConnectionManager);
+					poolRegistry.registraCreazione(key, connectionConfig.toKeyConnectionManagerWithoutContentFingerprint());
 					
 				}catch(Exception t) {
 					throw new ConnettoreException(t.getMessage(),t);
 				}
 				
+				// un nuovo pool può renderne dismesso uno precedente: verifica anche in assenza del timer di controllo delle connessioni
+				closePoolDismessiEngine(logger);
 			}
 		}finally {
 			semaphorePoolingConnectionManager.release(lock, "initPoolingConnectionManager",idTransazione);
 		}
 	}
+	
+	/**
+	 * Chiude i pool dismessi (sostituiti da un pool creato per un contenuto aggiornato dei keystore)
+	 * che non hanno connessioni in uso e non vengono utilizzati da almeno la soglia di inattività,
+	 * insieme ai client che li utilizzano.
+	 */
+	public static void closePoolDismessi(ConnettoreLogger logger) {
+		String idTransazione = logger!=null ? logger.getIdTransazione() : null;
+		SemaphoreLock lock = null;
+		try {
+			lock = semaphorePoolingConnectionManager.acquire("closePoolDismessi",idTransazione);
+		}catch(Exception t) {
+			OpenSPCoop2Logger.getLoggerOpenSPCoopConnettori().error("closePoolDismessi: "+t.getMessage(),t);
+			return;
+		}
+		try {
+			closePoolDismessiEngine(logger);
+		}finally {
+			semaphorePoolingConnectionManager.release(lock, "closePoolDismessi",idTransazione);
+		}
+	}
+	private static void closePoolDismessiEngine(ConnettoreLogger logger) {
+		Integer closeIdleConnectionsAfterSeconds = OpenSPCoop2Properties.getInstance().getNIOConfigAsyncClientCloseIdleConnectionsAfterSeconds();
+		int inattivita = (closeIdleConnectionsAfterSeconds!=null && closeIdleConnectionsAfterSeconds>0) ? 
+				closeIdleConnectionsAfterSeconds : ConnettoreHTTPCOREPoolRegistry.INATTIVITA_POOL_DISMESSO_DEFAULT_SECONDS;
+		for (String key : poolRegistry.getPoolDismessiDaChiudere(mapPoolingConnectionManager, inattivita)) {
+			PoolingAsyncClientConnectionManager cm = mapPoolingConnectionManager.remove(key);
+			if(!poolRegistry.isChiudibile(key, cm, inattivita)) {
+				// utilizzato nel frattempo da una richiesta
+				if(cm!=null) {
+					mapPoolingConnectionManager.put(key, cm);
+				}
+				continue;
+			}
+			poolRegistry.rimuovi(key);
+			List<Throwable> listT = new ArrayList<>();
+			
+			// prima i client che utilizzano il pool, poi il pool
+			closeClients(key, listT);
+			stopConnectionManager(cm, listT);
+			
+			logPoolDismessoChiuso(key, listT, logger);
+		}
+	}
+	private static void closeClients(String keyPool, List<Throwable> listT) {
+		Iterator<Map.Entry<String, ConnettoreHTTPCOREConnection>> it = mapConnection.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry<String, ConnettoreHTTPCOREConnection> entry = it.next();
+			if(keyPool.equals(entry.getValue().getKeyPool())) {
+				it.remove();
+				try {
+					entry.getValue().close();
+				}catch(Exception t) {
+					listT.add(t);
+				}
+			}
+		}
+	}
+	private static void logPoolDismessoChiuso(String keyPool, List<Throwable> listT, ConnettoreLogger logger) {
+		String msg = "ConnectionManager dismesso chiuso ("+keyPool+")";
+		if(!listT.isEmpty()) {
+			msg = msg + ": "+listT.get(0).getMessage();
+		}
+		if(logger!=null) {
+			logger.debug(msg);
+		}
+		else {
+			OpenSPCoop2Logger.getLoggerOpenSPCoopConnettori().debug(msg);
+		}
+	}
+	
+	static boolean isPoolDismesso(String key) {
+		return poolRegistry.isDismesso(key);
+	}
+	private static PoolingAsyncClientConnectionManager buildPoolingConnectionManager(TlsStrategy tlsStrategy, 
+			ConnettoreHTTPCOREConnectionConfig connectionConfig) {
+		PoolingAsyncClientConnectionManagerBuilder poolingConnectionManagerBuilder = PoolingAsyncClientConnectionManagerBuilder.create();
+		
+		if(tlsStrategy!=null) {
+			poolingConnectionManagerBuilder.setTlsStrategy(tlsStrategy);
+		}
+		else {
+			poolingConnectionManagerBuilder.useSystemProperties();
+		}
+							
+		// LAX: Higher concurrency but with lax connection max limit guarantees.
+		// STRICT: Strict connection max limit guarantees.
+		poolingConnectionManagerBuilder.setPoolConcurrencyPolicy(PoolConcurrencyPolicy.LAX);
+	
+		// FIFO: Re-use all connections equally preventing them from becoming idle and expiring.
+		// LIFO: Re-use as few connections as possible making it possible for connections to become idle and expire.
+		poolingConnectionManagerBuilder.setConnPoolPolicy(PoolReusePolicy.FIFO);
+		
+		
+		// PoolingNHttpClientConnectionManager maintains a maximum limit of connection on a per route basis and in total. 
+		// Per default this implementation will create no more than than 2 concurrent connections per given route and no more 20 connections in total.
+		// For many real-world applications these limits may prove too constraining, especially if they use HTTP as a transport protocol for their services. 
+		// Connection limits, however, can be adjusted using ConnPoolControl methods.
+		// Increase max total connection
+		ConnettoreHttpPoolParams poolParams = connectionConfig.getHttpPoolParams();
+		Integer defaultMaxPerRoute = poolParams.getDefaultMaxPerRoute();
+		Integer maxTotal = poolParams.getMaxTotal();
+		if(maxTotal!=null && maxTotal>0) {
+			poolingConnectionManagerBuilder.setMaxConnTotal(poolParams.getMaxTotal());
+		}
+		// Increase default max connection per route
+		if(defaultMaxPerRoute!=null && defaultMaxPerRoute>0) {
+			poolingConnectionManagerBuilder.setMaxConnPerRoute(poolParams.getDefaultMaxPerRoute());
+		}
+		// Increase max connections for localhost:80
+		/**HttpHost localhost = new HttpHost("locahost", 80);
+		poolingConnectionManagerBuilder.setMaxPerRoute(new HttpRoute(localhost), 50);*/
+		
+		ConnectionConfig config = buildConnectionConfig(poolParams, connectionConfig.getConnectionTimeout());
+		poolingConnectionManagerBuilder.setDefaultConnectionConfig(config);
+
+		// HTTP version policy (ALPN): determina se tentare la negoziazione HTTP/2 sulla TLS del pool
+		ConnettoreHTTPCOREVersionPolicy versionPolicy = connectionConfig.getHttpVersionPolicy();
+		if(versionPolicy!=null) {
+			poolingConnectionManagerBuilder.setDefaultTlsConfig(TlsConfig.custom()
+					.setVersionPolicy(versionPolicy.getHttpVersionPolicy())
+					.build());
+		}
+		
+		return poolingConnectionManagerBuilder.build();
+	}
+	
 	private static ConnectionConfig buildConnectionConfig(ConnettoreHttpPoolParams poolParams, long connectionTimeout) {
 		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
 		Integer closeIdleConnectionsAfterSeconds = op2Properties.getNIOConfigAsyncClientCloseIdleConnectionsAfterSeconds();
@@ -316,6 +402,7 @@ public class ConnettoreHTTPCOREConnectionManager {
 			}
 			ConnettoreHTTPCOREConnectionManager.mapPoolingConnectionManager.clear();
 		}
+		poolRegistry.clear();
 	}
 	private static void stopConnectionManager(PoolingAsyncClientConnectionManager cm, List<Throwable> listT) {
 		if(cm!=null) {
@@ -406,12 +493,15 @@ public class ConnettoreHTTPCOREConnectionManager {
 			// Pool
 			String keyPool = connectionConfig.toKeyConnectionManager();
 			
-			if(!ConnettoreHTTPCOREConnectionManager.mapPoolingConnectionManager.containsKey(keyPool)){
+			// l'utilizzo viene registrato prima del recupero: un pool dismesso utilizzato non viene chiuso
+			poolRegistry.registraUtilizzo(keyPool);
+			PoolingAsyncClientConnectionManager cm = ConnettoreHTTPCOREConnectionManager.mapPoolingConnectionManager.get(keyPool);
+			if(cm==null){
 				TlsStrategy tlsStrategy = buildClientTlsStrategyBuilder(connectionConfig, loader, 
 						requestInfo, logger);
 				ConnettoreHTTPCOREConnectionManager.initialize(keyPool, tlsStrategy, connectionConfig, logger);
+				cm = ConnettoreHTTPCOREConnectionManager.mapPoolingConnectionManager.get(keyPool);
 			}
-			PoolingAsyncClientConnectionManager cm = ConnettoreHTTPCOREConnectionManager.mapPoolingConnectionManager.get(keyPool);		
 			
 			HttpAsyncClientBuilder httpClientBuilder =
 					HttpAsyncClients.custom(); // Qua si gestisce il pipe (ci sono i metodi che gestiscono le richieste una dopo l'altra o prima tutte le richieste e poi le risposte ...)
@@ -428,7 +518,7 @@ public class ConnettoreHTTPCOREConnectionManager {
 				httpClientBuilder.setH2Config(h2Config);
 			}
 			httpClientBuilder.disableAuthCaching();
-			/*
+			/**
 			 * GovWay agisce da gateway: deve essere trasparente verso le risposte del backend.
 			 * Header come 'Retry-After' e status code 429/503 vanno veicolati al client a monte
 			 * senza essere interpretati/consumati dal client HTTP. La decisione di ritentare
@@ -440,7 +530,7 @@ public class ConnettoreHTTPCOREConnectionManager {
 			 * supera il responseTimeout (regressione rispetto a 5.5).
 			 */
 			httpClientBuilder.disableAutomaticRetries();
-			/*
+			/**
 			 * Ulteriori automatismi del client HTTP disabilitati per garantire la trasparenza
 			 * del gateway:
 			 * - cookie management: i cookie vanno propagati come header opachi tra client a
@@ -496,21 +586,19 @@ public class ConnettoreHTTPCOREConnectionManager {
 			// ** Proxy **
 			setProxy(httpClientBuilder, connectionConfig);
 			
-			/** ** Reactor **
-			 * Interazione tra PoolingAsyncClientConnectionManager e Thread
-			   Il PoolingAsyncClientConnectionManager è progettato per gestire un pool di connessioni asincrone. 
-			   Ogni connessione è associata a un worker thread solo durante l'esecuzione di operazioni asincrone, 
-			   ma il numero di thread disponibili per gestire queste connessioni dipende dall'IOReactorConfig o dal ExecutorService configurato.
-
-			  Thread I/O (IOReactor): Determinano quanti worker thread possono gestire operazioni asincrone contemporaneamente.
-			  Pool di connessioni (PoolingAsyncClientConnectionManager): Limita il numero massimo di connessioni totali o per host, ma non controlla direttamente il numero di thread.
-			  
-			  Di default il numero di worker thread è uguale al numero di core della CPU disponibile, ricavabile dalla chiamata: Runtime.getRuntime().availableProcessors()
-			  
-			  Di seguito due gli esempi per modificare la configurazione di default
+			/*
+			 * ** Reactor **
+			 * Interazione tra PoolingAsyncClientConnectionManager e Thread.
+			 * Il PoolingAsyncClientConnectionManager è progettato per gestire un pool di connessioni asincrone.
+			 * Ogni connessione è associata a un worker thread solo durante l'esecuzione di operazioni asincrone,
+			 * ma il numero di thread disponibili per gestire queste connessioni dipende dall'IOReactorConfig o dal ExecutorService configurato.
+			 *
+			 * Thread I/O (IOReactor): determinano quanti worker thread possono gestire operazioni asincrone contemporaneamente.
+			 * Pool di connessioni (PoolingAsyncClientConnectionManager): limita il numero massimo di connessioni totali o per host, ma non controlla direttamente il numero di thread.
+			 *
+			 * Di default il numero di worker thread è uguale al numero di core della CPU disponibile, ricavabile dalla chiamata Runtime.getRuntime().availableProcessors().
+			 * Il numero di thread da utilizzare può essere indicato con la proprietà 'org.openspcoop2.pdd.connettori.asyncRequest.httpclient.ioreactor.threadCount'.
 			 */
-			/** Indicare il numero di thread da utilizzare */
-			/**int numeroThread = Runtime.getRuntime().availableProcessors();*/
 			Integer numeroThread = op2.getNIOConfigAsyncHttpclientIoReactorThread();
 			if(numeroThread!=null && numeroThread.intValue()>0) {
 				org.apache.hc.core5.reactor.IOReactorConfig ioReactorConfig = org.apache.hc.core5.reactor.IOReactorConfig.custom()
@@ -518,13 +606,12 @@ public class ConnettoreHTTPCOREConnectionManager {
 				        .build();
 				httpClientBuilder.setIOReactorConfig(ioReactorConfig);
 			}
-			/** Configurazione di un Executor Personalizzato (opzionale)
-			org.apache.hc.core5.reactor.IOReactorConfig ioReactorConfig = null //vedi sopra;
-			org.apache.hc.core5.reactor.DefaultConnectingIOReactor ioReactor = new ConnettoreHTTPCORECustomConnectingIOReactor(.cm..);
-			rimane da capire come si aggancia
+			/*
+			 * Configurazione di un Executor personalizzato (opzionale): rimane da capire come agganciare al client
+			 * un DefaultConnectingIOReactor (es. ConnettoreHTTPCORECustomConnectingIOReactor) costruito sull'IOReactorConfig.
 			 */
 			
-			/** Callback exception */
+			// Callback exception
 			Callback<Exception> callback = e -> {
 			    OpenSPCoop2Logger.getLoggerOpenSPCoopConnettori().error("[IoReactorExceptionCallback] " + e.getMessage(), e);
 			    OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("[IoReactorExceptionCallback] " + e.getMessage(), e);
@@ -538,8 +625,10 @@ public class ConnettoreHTTPCOREConnectionManager {
 			int expireUnusedAfterSeconds = op2.getNIOConfigAsyncClientExpireUnusedAfterSeconds(); 
 			int closeUnusedAfterSeconds = op2.getNIOConfigAsyncClientCloseUnusedAfterSeconds(); 
 			
-			return new ConnettoreHTTPCOREConnection(key, httpclient, requestConfig,
+			ConnettoreHTTPCOREConnection connection = new ConnettoreHTTPCOREConnection(key, httpclient, requestConfig,
 					expireUnusedAfterSeconds, closeUnusedAfterSeconds);
+			connection.setKeyPool(keyPool);
+			return connection;
 			
 		} catch ( Exception t ) {
 			throw new ConnettoreException( t.getMessage(),t );
@@ -592,6 +681,11 @@ public class ConnettoreHTTPCOREConnectionManager {
 	}
 	private static SSLContext buildSSLContext(SSLConfig httpsProperties, RequestInfo requestInfo, 
 			ConnettoreLogger logger, StringBuilder bfLog) throws UtilsException {
+		readStores(httpsProperties, requestInfo, logger);
+		return SSLUtilities.generateSSLContext(httpsProperties, bfLog);
+	}
+	private static void readStores(SSLConfig httpsProperties, RequestInfo requestInfo, 
+			ConnettoreLogger logger) {
 		// provo a leggere i keystore dalla cache
 		if(httpsProperties.getKeyStore()==null &&
 			httpsProperties.getKeyStoreLocation()!=null) {
@@ -622,8 +716,6 @@ public class ConnettoreHTTPCOREConnectionManager {
 				logger.error(msgError, e);
 			}
 		}
-		
-		return SSLUtilities.generateSSLContext(httpsProperties, bfLog);
 	}
 	
 	public static ConnettoreHTTPCOREConnection getConnettoreHTTPCOREConnection(ConnettoreHTTPCOREConnectionConfig connectionConfig,
@@ -632,10 +724,22 @@ public class ConnettoreHTTPCOREConnectionManager {
 			ConnectionKeepAliveStrategy keepAliveStrategy,
 			ConnettoreHttpRequestInterceptor httpRequestInterceptor) throws ConnettoreException  {
 		
+		// Il contesto SSL viene creato una sola volta, alla nascita del pool: 
+		// l'impronta del contenuto dei keystore nelle chiavi di client e pool fa nascere un nuovo pool quando il contenuto cambia
+		// (i keystore letti dalla cache restano nella configurazione e vengono riusati alla creazione del contesto SSL)
+		if(connectionConfig.getSslContextProperties()!=null) {
+			readStores(connectionConfig.getSslContextProperties(), requestInfo, logger);
+			connectionConfig.setSslContentFingerprint(SSLContentFingerprint.compute(connectionConfig.getSslContextProperties()));
+		}
+		
+		// l'utilizzo viene registrato prima del recupero del client (che riferisce il pool): un pool dismesso utilizzato non viene chiuso
+		poolRegistry.registraUtilizzo(connectionConfig.toKeyConnectionManager());
+		
 		ConnettoreHTTPCOREConnection connection = null;
 		if(USE_POOL_CONNECTION) {
 			String key = connectionConfig.toKeyConnection();
-			if(!mapConnection.containsKey(key)) {
+			connection = mapConnection.get(key); // il client può essere rimosso alla chiusura del pool dismesso che utilizza
+			if(connection==null) {
 				init(connectionConfig, 
 						loader, logger, 
 						requestInfo,
@@ -645,7 +749,6 @@ public class ConnettoreHTTPCOREConnectionManager {
 				connection.refresh();
 			}
 			else {
-				connection = mapConnection.get(key);
 				connection.refresh();
 				if(connection.isExpired()) {
 					connection = update(connectionConfig, 
