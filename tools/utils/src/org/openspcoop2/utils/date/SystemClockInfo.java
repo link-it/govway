@@ -65,32 +65,38 @@ public class SystemClockInfo {
 	private String currentClockSource = null;
 	private String availableClockSources = null;
 	private String clockSourceDescription = NON_DISPONIBILE;
-	private long nanoTimeCost = -1;
-	private long currentTimeMillisCost = -1;
+	private final long nanoTimeCost;
+	private final long currentTimeMillisCost;
 	private String warning = null;
 
-	private SystemClockInfo() {}
+	private SystemClockInfo(long nanoTimeCost, long currentTimeMillisCost) {
+		this.nanoTimeCost = nanoTimeCost;
+		this.currentTimeMillisCost = currentTimeMillisCost;
+	}
 
 	/**
 	 * Rileva la sorgente di tempo e misura il costo della lettura dell'orologio.
 	 * La misurazione richiede alcuni millisecondi (qualche decina con sorgenti di tempo lente).
 	 */
 	public static SystemClockInfo read() {
-		SystemClockInfo info = new SystemClockInfo();
+		// costi misurati prima della costruzione: i campi sono final (-1 = non misurato)
+		long nanoTimeCost = -1;
+		try {
+			nanoTimeCost = measureNanoTime();
+		}catch(Throwable t) {
+			// informazione opzionale: resta non misurata
+		}
+		long currentTimeMillisCost = -1;
+		try {
+			currentTimeMillisCost = measureCurrentTimeMillis();
+		}catch(Throwable t) {
+			// informazione opzionale: resta non misurata
+		}
+		SystemClockInfo info = new SystemClockInfo(nanoTimeCost, currentTimeMillisCost);
 		try {
 			info.initClockSource();
 		}catch(Throwable t) {
 			// informazione opzionale: resta 'non disponibile'
-		}
-		try {
-			info.nanoTimeCost = measureNanoTime();
-		}catch(Throwable t) {
-			// informazione opzionale: resta non misurata
-		}
-		try {
-			info.currentTimeMillisCost = measureCurrentTimeMillis();
-		}catch(Throwable t) {
-			// informazione opzionale: resta non misurata
 		}
 		try {
 			info.initWarning();

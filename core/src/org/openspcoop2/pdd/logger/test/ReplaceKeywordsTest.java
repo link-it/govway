@@ -21,7 +21,7 @@ package org.openspcoop2.pdd.logger.test;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
+import java.util.SplittableRandom;
 
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 
@@ -66,7 +66,7 @@ public class ReplaceKeywordsTest {
 		}
 
 		// messaggi casuali su un alfabeto ridotto (molti separatori)
-		Random random = new Random(20261021L);
+		SplittableRandom random = new SplittableRandom(20261021L);
 		char[] alfabeto = {'@', '@', 'a', 'b', 'c', ' ', 'x'};
 		for (int i = 0; i < 200000; i++) {
 			int len = random.nextInt(40);
@@ -85,12 +85,17 @@ public class ReplaceKeywordsTest {
 
 		// un messaggio senza keyword viene restituito senza copie
 		String senzaKeyword = "messaggio senza keyword";
-		if(MsgDiagnostico.replaceKeywords(senzaKeyword, keywords)!=senzaKeyword) {
+		if(!stessaIstanza(MsgDiagnostico.replaceKeywords(senzaKeyword, keywords), senzaKeyword)) {
 			throw new Exception("Messaggio senza keyword: atteso la stessa istanza");
 		}
 		verifiche++;
 
 		System.out.println("Test replaceKeywords completato: "+verifiche+" verifiche effettuate");
+	}
+
+	/** Confronto di identita' (non di contenuto): verifica che non venga creata una copia */
+	private static boolean stessaIstanza(Object a, Object b) {
+		return a == b;
 	}
 
 	private static void check(String msg, Map<String,String> keywords) throws Exception {

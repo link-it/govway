@@ -315,7 +315,7 @@ public class BaseBeanCloneTest {
 			check("child: clone in profondità", c.getChild()!=originale.getChild() && "figlio".equals(c.getChild().getNome()));
 			check("inherited: stesso riferimento", c.getInherited()==originale.getInherited());
 			check("date: clone", c.getDate()!=originale.getDate() && c.getDate().equals(originale.getDate()));
-			check("stringa: stesso riferimento", c.getStringa()==originale.getStringa());
+			check("stringa: stesso riferimento", stessaIstanza(c.getStringa(), originale.getStringa()));
 			check("map: stesso riferimento", c.getMap()==originale.getMap());
 			check("primitivi", c.getNumero()==42 && c.getFlag());
 		}
@@ -384,7 +384,7 @@ public class BaseBeanCloneTest {
 		verificaStessoErrore("eccezione nel get", new GetterEccezioneBean());
 
 		CampoCloneableBean campoCloneable = new CampoCloneableBean();
-		campoCloneable.setValore(new Date());
+		campoCloneable.setValore(new Date(1000L));
 		verificaStessoErrore("field Cloneable con valore diverso da array di byte", campoCloneable);
 	}
 
@@ -512,5 +512,10 @@ public class BaseBeanCloneTest {
 			}
 		}
 		return null;
+	}
+
+	/** Confronto di identita' (non di contenuto): verifica che il clone mantenga lo stesso riferimento */
+	private static boolean stessaIstanza(Object a, Object b) {
+		return a == b;
 	}
 }

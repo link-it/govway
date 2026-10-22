@@ -202,7 +202,7 @@ public class IdentificazionePortaApplicativa extends AbstractIdentificazionePort
 					if(useRequestInfo) {
 						BooleanNullable nullConditionsList = BooleanNullable.NULL();
 						list = this.requestInfo.getRequestConfig().getPorteApplicativeByFiltroRicerca(filtroPA, nullConditionsList);
-						if(nullConditionsList==null || nullConditionsList.getValue()==null) {
+						if(nullConditionsList.getValue()==null) {
 							list = null;
 						}
 					}

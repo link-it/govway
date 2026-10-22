@@ -203,7 +203,7 @@ public class IdentificazionePortaDelegata extends AbstractIdentificazionePorta {
 					if(useRequestInfo) {
 						BooleanNullable nullConditionsList = BooleanNullable.NULL();
 						list = this.requestInfo.getRequestConfig().getPorteDelegateByFiltroRicerca(filtroPD, nullConditionsList);
-						if(nullConditionsList==null || nullConditionsList.getValue()==null) {
+						if(nullConditionsList.getValue()==null) {
 							list = null;
 						}
 					}

@@ -416,8 +416,8 @@ public abstract class BaseBean implements Serializable {
 	/* ********** TO STRING ********* */
 	
 	private static ToStringStyle defaultToStringStyle =  ToStringStyle.MULTI_LINE_STYLE;
-	private static boolean defaultToStringOutputTransients =  false;
-	private static boolean defaultToStringOutputStatics =  false;
+	private static volatile boolean defaultToStringOutputTransients =  false;
+	private static volatile boolean defaultToStringOutputStatics =  false;
 	public static void setDefaultStyleToString(ToStringStyle style,boolean outputTransients,boolean outputStatics){
 		// Il default statico serve per impostare uno "stile" che viene ereditato da tutti gli oggetti che estendono il base bean.
 		// In questa maniera gli oggetti interni all'oggetto stesso vengono serializzati con lo stile impostato.

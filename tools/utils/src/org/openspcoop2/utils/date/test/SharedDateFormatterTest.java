@@ -76,7 +76,7 @@ public class SharedDateFormatterTest {
 		List<Date> l = new ArrayList<>();
 		l.add(new Date(0));
 		l.add(new Date(999));
-		l.add(new Date(System.currentTimeMillis()));
+		l.add(new Date(1792664430123L)); // 2026-10-22T10:20:30.123Z: data fissa con millisecondi (test deterministico)
 		// intorno ai cambi d'ora (Europe/Rome nel 2026: 29 marzo e 25 ottobre)
 		long marzo = 1774746000000L; // 2026-03-29T01:00:00Z
 		long ottobre = 1792890000000L; // 2026-10-25T01:00:00Z
@@ -140,14 +140,14 @@ public class SharedDateFormatterTest {
 		List<Runnable> modifiche = new ArrayList<>();
 		modifiche.add(() -> sdf.setTimeZone(TimeZone.getTimeZone("UTC")));
 		modifiche.add(() -> sdf.setLenient(false));
-		modifiche.add(() -> sdf.setCalendar(java.util.Calendar.getInstance()));
+		modifiche.add(() -> sdf.setCalendar(new java.util.GregorianCalendar(2026, java.util.Calendar.JANUARY, 1)));
 		modifiche.add(() -> sdf.setNumberFormat(java.text.NumberFormat.getInstance()));
-		modifiche.add(() -> sdf.set2DigitYearStart(new Date()));
+		modifiche.add(() -> sdf.set2DigitYearStart(new Date(0)));
 		modifiche.add(() -> sdf.setDateFormatSymbols(new java.text.DateFormatSymbols()));
 		modifiche.add(() -> sdf.applyPattern("yyyy"));
 		modifiche.add(() -> sdf.applyLocalizedPattern("yyyy"));
 		modifiche.add(() -> sdf.parse("2026-10-21_10:00:00.000", new ParsePosition(0)));
-		modifiche.add(() -> sdf.formatToCharacterIterator(new Date()));
+		modifiche.add(() -> sdf.formatToCharacterIterator(new Date(0)));
 		for (int i = 0; i < modifiche.size(); i++) {
 			boolean eccezione = false;
 			try {

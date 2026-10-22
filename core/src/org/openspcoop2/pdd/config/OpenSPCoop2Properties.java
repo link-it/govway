@@ -48,6 +48,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -29299,15 +29300,17 @@ public class OpenSPCoop2Properties {
 		return l;
 	}
 	// La configurazione dipende solamente da proprieta' lette una volta: viene costruita alla prima invocazione e condivisa (liste non modificabili)
-	private volatile ForwardConfig soapServicesUrlParametersForwardConfig = null;
+	private final AtomicReference<ForwardConfig> soapServicesUrlParametersForwardConfig = new AtomicReference<>();
 	public ForwardConfig getSOAPServicesUrlParametersForwardConfig() {
-		ForwardConfig f = this.soapServicesUrlParametersForwardConfig;
+		ForwardConfig f = this.soapServicesUrlParametersForwardConfig.get();
 		if(f==null) {
 			f = new ForwardConfig();
 			f.setForwardEnable(this.isSOAPServicesUrlParametersForward());
 			f.setBlackList(Collections.unmodifiableList(_getSOAPServicesBlackListUrlParameters()));
 			f.setWhiteList(Collections.unmodifiableList(_getSOAPServicesWhiteListUrlParameters()));
-			this.soapServicesUrlParametersForwardConfig = f;
+			// pubblicata solo dopo essere stata completata; in caso di inizializzazioni concorrenti viene mantenuta la prima
+			this.soapServicesUrlParametersForwardConfig.compareAndSet(null, f);
+			f = this.soapServicesUrlParametersForwardConfig.get();
 		}
 		return f;
 	}
@@ -29627,21 +29630,19 @@ public class OpenSPCoop2Properties {
 		return l;
 	}
 	// La configurazione dipende solamente da proprieta' lette una volta: viene costruita alla prima invocazione e condivisa (liste non modificabili)
-	private volatile ForwardConfig soapServicesHeadersForwardConfigRequest = null;
-	private volatile ForwardConfig soapServicesHeadersForwardConfigResponse = null;
+	private final AtomicReference<ForwardConfig> soapServicesHeadersForwardConfigRequest = new AtomicReference<>();
+	private final AtomicReference<ForwardConfig> soapServicesHeadersForwardConfigResponse = new AtomicReference<>();
 	public ForwardConfig getSOAPServicesHeadersForwardConfig(boolean request) {
-		ForwardConfig f = request ? this.soapServicesHeadersForwardConfigRequest : this.soapServicesHeadersForwardConfigResponse;
+		AtomicReference<ForwardConfig> ref = request ? this.soapServicesHeadersForwardConfigRequest : this.soapServicesHeadersForwardConfigResponse;
+		ForwardConfig f = ref.get();
 		if(f==null) {
 			f = new ForwardConfig();
 			f.setForwardEnable(this.isSOAPServicesHeadersForward());
 			f.setBlackList(Collections.unmodifiableList(getSOAPServicesBlackListHeaders(request)));
 			f.setWhiteList(Collections.unmodifiableList(getSOAPServicesWhiteListHeaders(request)));
-			if(request) {
-				this.soapServicesHeadersForwardConfigRequest = f;
-			}
-			else {
-				this.soapServicesHeadersForwardConfigResponse = f;
-			}
+			// pubblicata solo dopo essere stata completata; in caso di inizializzazioni concorrenti viene mantenuta la prima
+			ref.compareAndSet(null, f);
+			f = ref.get();
 		}
 		return f;
 	}
@@ -30210,15 +30211,17 @@ public class OpenSPCoop2Properties {
 		return l;
 	}
 	// La configurazione dipende solamente da proprieta' lette una volta: viene costruita alla prima invocazione e condivisa (liste non modificabili)
-	private volatile ForwardConfig restServicesUrlParametersForwardConfig = null;
+	private final AtomicReference<ForwardConfig> restServicesUrlParametersForwardConfig = new AtomicReference<>();
 	public ForwardConfig getRESTServicesUrlParametersForwardConfig() {
-		ForwardConfig f = this.restServicesUrlParametersForwardConfig;
+		ForwardConfig f = this.restServicesUrlParametersForwardConfig.get();
 		if(f==null) {
 			f = new ForwardConfig();
 			f.setForwardEnable(this.isRESTServicesUrlParametersForward());
 			f.setBlackList(Collections.unmodifiableList(_getRESTServicesBlackListUrlParameters()));
 			f.setWhiteList(Collections.unmodifiableList(_getRESTServicesWhiteListUrlParameters()));
-			this.restServicesUrlParametersForwardConfig = f;
+			// pubblicata solo dopo essere stata completata; in caso di inizializzazioni concorrenti viene mantenuta la prima
+			this.restServicesUrlParametersForwardConfig.compareAndSet(null, f);
+			f = this.restServicesUrlParametersForwardConfig.get();
 		}
 		return f;
 	}
@@ -30538,21 +30541,19 @@ public class OpenSPCoop2Properties {
 		return l;
 	}
 	// La configurazione dipende solamente da proprieta' lette una volta: viene costruita alla prima invocazione e condivisa (liste non modificabili)
-	private volatile ForwardConfig restServicesHeadersForwardConfigRequest = null;
-	private volatile ForwardConfig restServicesHeadersForwardConfigResponse = null;
+	private final AtomicReference<ForwardConfig> restServicesHeadersForwardConfigRequest = new AtomicReference<>();
+	private final AtomicReference<ForwardConfig> restServicesHeadersForwardConfigResponse = new AtomicReference<>();
 	public ForwardConfig getRESTServicesHeadersForwardConfig(boolean request) {
-		ForwardConfig f = request ? this.restServicesHeadersForwardConfigRequest : this.restServicesHeadersForwardConfigResponse;
+		AtomicReference<ForwardConfig> ref = request ? this.restServicesHeadersForwardConfigRequest : this.restServicesHeadersForwardConfigResponse;
+		ForwardConfig f = ref.get();
 		if(f==null) {
 			f = new ForwardConfig();
 			f.setForwardEnable(this.isRESTServicesHeadersForward());
 			f.setBlackList(Collections.unmodifiableList(getRESTServicesBlackListHeaders(request)));
 			f.setWhiteList(Collections.unmodifiableList(getRESTServicesWhiteListHeaders(request)));
-			if(request) {
-				this.restServicesHeadersForwardConfigRequest = f;
-			}
-			else {
-				this.restServicesHeadersForwardConfigResponse = f;
-			}
+			// pubblicata solo dopo essere stata completata; in caso di inizializzazioni concorrenti viene mantenuta la prima
+			ref.compareAndSet(null, f);
+			f = ref.get();
 		}
 		return f;
 	}
