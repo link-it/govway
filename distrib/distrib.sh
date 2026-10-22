@@ -20,7 +20,7 @@ TMP_DIR=/storage/var/data/ambienteRilascio
 #####################################
 # Variabili per la forzatura #######
 #####################################
-UPDATE_DOC=true
+UPDATE_DOC=false
 UPDATE_LIB=true
 REBUILD=true
 READ_GIT_INFO=true
