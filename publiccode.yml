@@ -7,8 +7,8 @@ name: GovWay
 applicationSuite: GovStar
 url: https://github.com/link-it/govway
 landingURL: https://govway.org
-softwareVersion: 3.4.3
-releaseDate: 2026-06-12
+softwareVersion: 3.4.4
+releaseDate: 2026-10-26
 logo: https://raw.githubusercontent.com/link-it/govway/master/resources/images/logo.png
 platforms:
   - web

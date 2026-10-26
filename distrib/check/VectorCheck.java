@@ -89,6 +89,8 @@ public class VectorCheck {
 
 				else if( f.getAbsolutePath().contains("tools/utils/src/org/openspcoop2/utils/beans/BaseBean.java") )
 					jumpCheck = true;
+				else if( f.getAbsolutePath().contains("tools/utils/src/org/openspcoop2/utils/beans/test/BaseBeanCloneTest.java") )
+					jumpCheck = true;					
 
 				else if( f.getAbsolutePath().contains("testsuite/src/org/openspcoop2/testsuite/axis14/Axis14") )
 					jumpCheck = true;
