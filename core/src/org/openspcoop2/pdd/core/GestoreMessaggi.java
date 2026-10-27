@@ -5182,8 +5182,12 @@ public class GestoreMessaggi  {
 
 			List<MessaggioServizioApplicativo> idMsg = new ArrayList<MessaggioServizioApplicativo>();
 
-			Date dataRilascioLock = new Date( DateManager.getTimeMillis() - this.propertiesReader.getTimerConsegnaContenutiApplicativiPresaInConsegnaMaxLife() );
-			
+			// LOCK_CONSEGNA conserva l'ora locale: nel passaggio all'ora solare "adesso - maxLife" può risultare, in ora locale, successivo ad adesso
+			// e un lock appena acquisito verrebbe considerato scaduto, causando consegne concorrenti dello stesso messaggio.
+			// Se l'intervallo attraversa un cambio d'ora la soglia viene anticipata della durata del cambio.
+			long [] windowRilascioLock = DaylightSavingUtils.getTimeWindow(DateManager.getDate(), this.propertiesReader.getTimerConsegnaContenutiApplicativiPresaInConsegnaMaxLife());
+			Date dataRilascioLock = new Date( windowRilascioLock[0] );
+
 			String tipo = Costanti.INBOX;
 						
 			Date dataAttualeVerificaNow = DateManager.getDate();

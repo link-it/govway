@@ -54,6 +54,8 @@ public class DaylightSavingTest {
 		
 		timeWindowTest();
 		
+		lockExpiryTest();
+		
 		debug("\n\n** TESTSUITE COMPLETATA **");
 	}
 
@@ -308,6 +310,44 @@ public class DaylightSavingTest {
 				verifiche++;
 			}
 			ora = ora.plusMinutes(1);
+		}
+		debug("\tverifiche effettuate: "+verifiche);
+	}
+
+	public static void lockExpiryTest() throws UtilsException {
+
+		ZoneId zoneId = ZoneId.of("Europe/Rome");
+		long maxLife = 1000l*60l*30l;
+
+		debug("\n\n** lockExpiry (ora legale -> ora solare) **");
+		lockExpiry(LocalDateTime.of(2026, 10, 25, 0, 0), zoneId, maxLife);
+
+		debug("\n\n** lockExpiry (ora solare -> ora legale) **");
+		lockExpiry(LocalDateTime.of(2026, 3, 29, 0, 0), zoneId, maxLife);
+
+	}
+	private static void lockExpiry(LocalDateTime from, ZoneId zoneId, long maxLife) throws UtilsException {
+		long start = from.atZone(zoneId).toInstant().toEpochMilli();
+		long end = start + (1000l*60l*60l*6l);
+		long unOra = 1000l*60l*60l;
+		int verifiche = 0;
+		for (long now = start; now <= end; now+=(1000l*60l)) {
+			// soglia di scadenza dei lock di presa in carico, calcolata come nel GestoreMessaggi
+			long[] w = DaylightSavingUtils.getTimeWindow(new Date(now), maxLife, zoneId);
+			LocalDateTime soglia = LocalDateTime.ofInstant(Instant.ofEpochMilli(w[0]), zoneId);
+			for (long lock = now - (unOra*3); lock <= now; lock+=(1000l*60l)) {
+				// il lock viene salvato e confrontato sul database in ora locale
+				LocalDateTime lockLocale = LocalDateTime.ofInstant(Instant.ofEpochMilli(lock), zoneId);
+				boolean scaduto = lockLocale.isBefore(soglia);
+				long eta = now - lock;
+				if(eta < maxLife && scaduto) {
+					throw new UtilsException("Lock acquisito alle "+Instant.ofEpochMilli(lock)+" (età "+(eta/1000)+"s) considerato scaduto alle "+Instant.ofEpochMilli(now)+" (soglia locale "+soglia+")");
+				}
+				if(eta > (maxLife + unOra) && !scaduto) {
+					throw new UtilsException("Lock acquisito alle "+Instant.ofEpochMilli(lock)+" (età "+(eta/1000)+"s) non considerato scaduto alle "+Instant.ofEpochMilli(now)+" (soglia locale "+soglia+")");
+				}
+				verifiche++;
+			}
 		}
 		debug("\tverifiche effettuate: "+verifiche);
 	}
