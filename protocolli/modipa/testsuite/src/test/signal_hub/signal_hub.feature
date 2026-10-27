@@ -1856,7 +1856,10 @@ Scenario: push del segnale in cui riutilizzo lo stesso seme fino alla scadenza
 	* def seeds = count_seeds('DemoSoggettoErogatore','SignalHubTest')
 	And match seeds == 1
 
-	* def invalidates = wither_seeds('DemoSoggettoErogatore','SignalHubTest', 3)
+	# il seme viene arretrato di 6 giorni complessivi rispetto alla durata di 5: arretrandolo esattamente della durata
+	# risulterebbe scaduto da pochi secondi e, se le date arretrate cadono nell'ora ripetuta del passaggio all'ora solare,
+	# la rilettura dalla base dati lo sposta in avanti di un'ora facendolo risultare ancora valido
+	* def invalidates = wither_seeds('DemoSoggettoErogatore','SignalHubTest', 4)
 	* call reset_cache { cache_name: 'ConfigurazionePdD' }
 
 	Given url push_signal_url
