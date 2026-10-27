@@ -1,5 +1,13 @@
 2026-10-26  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore]
+	Risolto Bug #1845
+	Nel passaggio all'ora solare, nella prima mezz'ora dopo il cambio, il lock di presa in carico di un messaggio appena acquisito
+	veniva considerato già scaduto e altri thread o nodi lo riconsegnavano in parallelo, causando consegne duplicate.
+	La scadenza del lock tiene adesso conto del cambio d'ora.
+
+2026-10-26  Andrea Poli <apoli@link.it>
+
 	* Rilasciata versione 3.3.21
 
 2026-10-19  Andrea Poli <apoli@link.it>

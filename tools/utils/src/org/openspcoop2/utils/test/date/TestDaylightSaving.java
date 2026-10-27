@@ -81,4 +81,13 @@ public class TestDaylightSaving {
 		
 	}
 	
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".lockExpiry"})
+	public void testLockExpiry() throws UtilsException {
+		
+		TestLogger.info("Run test '"+ID_TEST+".lockExpiry' ...");
+		org.openspcoop2.utils.date.test.DaylightSavingTest.lockExpiryTest();
+		TestLogger.info("Run test '"+ID_TEST+".lockExpiry' ok");
+		
+	}
+	
 }
