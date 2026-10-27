@@ -21,7 +21,6 @@
 package org.openspcoop2.core.protocolli.modipa.testsuite;
 
 import java.sql.Timestamp;
-import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
@@ -81,7 +80,9 @@ public class DbUtils {
     }
     
     public Timestamp addTimestamp(Timestamp timestamp, int days) {
-    	return Timestamp.from(timestamp.toInstant().plus(Duration.ofDays(days)));
+    	// giorni di calendario e non multipli di 24 ore: a cavallo del cambio d'ora sottrarre 24 ore sposta l'orario di un'ora
+    	// e, vicino alla mezzanotte, la data ottenuta cade nel giorno sbagliato rispetto ai giorni di calendario usati dal generatore
+    	return Timestamp.valueOf(timestamp.toLocalDateTime().plusDays(days));
     }
 
 }
