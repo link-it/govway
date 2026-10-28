@@ -1,6 +1,12 @@
 2026-10-28  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
+	Risolte le seguenti vulnerabilità relative ai jar di terza parte:
+	- CVE-2026-102554: aggiornata libreria 'com.google.guava:guava' alla versione 33.7.2-jre
+
+2026-10-28  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
 	Risolto Bug #1852
 	Nella gestione dei nodi dinamica, se la riga del nodo veniva eliminata dalla tabella 'nodi_runtime' (es. dallo svecchiamento
 	durante una temporanea indisponibilità della base dati), il nodo non si registrava più fino al riavvio e le operazioni
