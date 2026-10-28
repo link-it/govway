@@ -34,6 +34,7 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 import org.openspcoop2.utils.sql.SQLQueryObjectException;
+import org.springframework.dao.PessimisticLockingFailureException;
 
 /**
  * Classe di  utilita per le funzioni che interagisocno con il db
@@ -162,7 +163,26 @@ public class DBVerifier {
 			query = SQLObjectFactory.createSQLQueryObject(ConfigLoader.getDbUtils().tipoDatabase);
 			query.addDeleteTable(statistic);
 			query.addWhereCondition("servizio=?");
-			ConfigLoader.getDbUtils().update(query.createSQLDelete(), servizio);
+			deleteStatistiche(query.createSQLDelete(), servizio);
+		}
+	}
+	
+	private static final int DELETE_STATISTICHE_TENTATIVI = 5;
+	private static final int DELETE_STATISTICHE_ATTESA_MS = 500;
+	private static void deleteStatistiche(String sql, String servizio) {
+		// il timer delle statistiche di GovWay può star aggiornando le stesse righe (transazioni del test precedente sul servizio):
+		// la DELETE e l'aggiornamento bloccano le righe in ordine diverso e la base dati può scegliere la DELETE come vittima del deadlock
+		for (int i = 1; ; i++) {
+			try {
+				ConfigLoader.getDbUtils().update(sql, servizio);
+				return;
+			}catch(PessimisticLockingFailureException e) {
+				if(i>=DELETE_STATISTICHE_TENTATIVI) {
+					throw e;
+				}
+				ConfigLoader.getLoggerCore().debug("Eliminazione statistiche del servizio '"+servizio+"' fallita (tentativo "+i+"): "+e.getMessage());
+				Utilities.sleep(DELETE_STATISTICHE_ATTESA_MS);
+			}
 		}
 	}
 	
