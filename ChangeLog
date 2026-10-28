@@ -1,3 +1,12 @@
+2026-10-28  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug #1852
+	Nella gestione dei nodi dinamica, se la riga del nodo veniva eliminata dalla tabella 'nodi_runtime' (es. dallo svecchiamento
+	durante una temporanea indisponibilità della base dati), il nodo non si registrava più fino al riavvio e le operazioni
+	della console tramite il servizio proxy fallivano con 'nodes not found'.
+	Il nodo adesso si registra nuovamente e lo svecchiamento non elimina più il nodo che lo esegue.
+
 2026-10-26  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
