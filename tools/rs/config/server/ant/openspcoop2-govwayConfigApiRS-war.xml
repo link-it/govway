@@ -138,7 +138,7 @@
 				<include name="reflections-0.10.2.jar"/>
 				<include name="joda-time-2.14.1.jar"/>
 				<include name="wsdl4j-1.6.3.jar"/>
-				<include name="guava-33.6.0-jre.jar"/>
+				<include name="guava-33.7.2-jre.jar"/>
 				<include name="snakeyaml-2.6-gov4j-1.jar"/>
 				<include name="javassist-3.30.2-GA.jar"/>
 				<include name="freemarker-2.3.35.jar" />

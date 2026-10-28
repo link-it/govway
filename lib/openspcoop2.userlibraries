@@ -197,7 +197,7 @@
         <archive path="/op2_3.4.dev/lib/shared/aspectjrt-1.9.25.1.jar"/>
 	<archive path="/op2_3.4.dev/lib/shared/freemarker-2.3.35.jar"/>
         <archive path="/op2_3.4.dev/lib/shared/velocity-engine-core-2.4.1.jar"/>
-	<archive path="/op2_3.4.dev/lib/shared/guava-33.6.0-jre.jar"/>
+	<archive path="/op2_3.4.dev/lib/shared/guava-33.7.2-jre.jar"/>
 	<archive path="/op2_3.4.dev/lib/shared/java-uuid-generator-5.2.0.jar"/>
 	<archive path="/op2_3.4.dev/lib/shared/joda-time-2.14.1.jar"/>
 	<archive path="/op2_3.4.dev/lib/shared/Saxon-HE-12.9-gov4j-1.jar"/>
