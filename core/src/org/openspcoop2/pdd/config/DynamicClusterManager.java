@@ -517,7 +517,7 @@ public class DynamicClusterManager {
 			int row = pstmt.executeUpdate();
 			pstmt.close(); pstmt = null;
 			
-			String msg = "Eliminato hostname '"+this.op2Properties.getClusterHostname()+"' dalla tabella '"+CostantiDB.CONFIG_NODI_RUNTIME+"' (update-row: "+row+")";
+			String msg = "Eliminato hostname '"+hostname+"' dalla tabella '"+CostantiDB.CONFIG_NODI_RUNTIME+"' (update-row: "+row+")";
 			log.debug(msg);
 		}
 		catch(Exception e) {
@@ -535,6 +535,18 @@ public class DynamicClusterManager {
 	}
 	
 	public void refresh(Logger log) throws CoreException {
+		int row = refreshDataRefresh(log);
+		if(row<=0) {
+			// La riga del nodo non è più presente (es. eliminata dallo svecchiamento di un altro nodo, o durante un'indisponibilità della base dati):
+			// senza una nuova registrazione il nodo non verrebbe più considerato attivo fino al riavvio.
+			String msg = "Hostname '"+this.op2Properties.getClusterHostname()+"' non presente nella tabella '"+CostantiDB.CONFIG_NODI_RUNTIME+"'; viene effettuata una nuova registrazione del nodo";
+			log.warn(msg);
+			register(log);
+			msg = "Hostname '"+this.op2Properties.getClusterHostname()+"' registrato nuovamente nella tabella '"+CostantiDB.CONFIG_NODI_RUNTIME+"' (identificativo numerico: "+this.identificativoNumerico+")";
+			log.warn(msg);
+		}
+	}
+	private int refreshDataRefresh(Logger log) throws CoreException {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		try {
@@ -560,6 +572,8 @@ public class DynamicClusterManager {
 			
 			String msg = "Aggiornato hostname '"+this.op2Properties.getClusterHostname()+"'"+getSuffixMessageUpdate(row);
 			log.debug(msg);
+			
+			return row;
 		}
 		catch(Exception e) {
 			
@@ -648,8 +662,12 @@ public class DynamicClusterManager {
 					true
 					);
 			if(!listOldHostnames.isEmpty()) {
+				String myHostname = this.op2Properties.getClusterHostname();
 				for (String hostname : listOldHostnames) {
-					unregister(con, log, hostname);
+					// Il nodo corrente non viene mai eliminato: un suo data_refresh non aggiornato indica solamente che il refresh non è riuscito (es. base dati temporaneamente non disponibile)
+					if(hostname!=null && !hostname.equals(myHostname)) {
+						unregister(con, log, hostname);
+					}
 				}
 			}
 			
