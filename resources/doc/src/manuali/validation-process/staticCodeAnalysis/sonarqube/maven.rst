@@ -16,6 +16,8 @@ Al comando devono essere forniti i parametri per l'accesso all'ambiente SonarQub
 
 Al termine dell'analisi viene pubblicato su SonarQube, all'interno dell progetto 'govway', un report consultabile all'indirizzo indicato nella proprietà 'sonar.host.url'.
 
+L'analisi viene eseguita tramite `SonarScanner CLI <https://docs.sonarsource.com/sonarqube-community-build/analyzing-source-code/scanners/sonarscanner/>`_, utilizzando la stessa JVM con cui viene avviato maven. Tutte le proprietà 'sonar.*' fornite sulla linea di comando vengono passate allo scanner; ad esempio, per ottenere il log di debug dell'analisi è possibile aggiungere la proprietà '-Dsonar.verbose=true'.
+
 L'analisi viene effettuata su tutti i sorgenti descritti nella sezione :ref:`releaseProcessGovWay_staticCodeAnalysis_src`. 
 
 È possibile effettuare l'analisi di un solo modulo fornendone l'identificativo tramite la proprietà 'sonar.govway.project'. Gli identificativi dei moduli analizzati sono i seguenti: 
@@ -26,7 +28,7 @@ L'analisi viene effettuata su tutti i sorgenti descritti nella sezione :ref:`rel
 
 - profili di interoperabiltà: protocol-as4, protocol-modipa, protocol-sdi, protocol-spcoop, protocol-trasparente;
 
-- console web: web-lib-audit, web-lib-mvc, web-lib-queue, web-lib-users, web-loader, web-govwayConsole, web-govwayMonitor;
+- console web: web-lib-audit, web-lib-mvc, web-lib-users, web-lib-js, web-lib-jsp, web-lib-css, web-govwayConsole, web-govwayMonitor;
 
 - api di configurazione e monitoraggio: rs-config, rs-monitor;
 

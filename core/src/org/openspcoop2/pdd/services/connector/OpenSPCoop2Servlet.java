@@ -58,18 +58,13 @@ import org.slf4j.Logger;
  */
 @SuppressWarnings("serial")
 public class OpenSPCoop2Servlet extends HttpServlet {
-	private static Logger logger = null;
-
-	private static synchronized Logger getLoggerStartup() {
-		if ( logger == null ) {
-			logger = LoggerWrapperFactory.getLogger("govway.startup");
-		}
-		return logger;
+	// Il logger viene creato al primo utilizzo dalla JVM (inizializzazione della classe interna), senza synchronized
+	private static final class LoggerHolder {
+		private LoggerHolder() {}
+		private static final Logger LOGGER = LoggerWrapperFactory.getLogger("govway.startup");
 	}
 	private static Logger getLogger() {
-		if ( logger == null )
-			getLoggerStartup();
-		return logger;
+		return LoggerHolder.LOGGER;
 	}
 
 	private static volatile boolean checkSecrets = false;

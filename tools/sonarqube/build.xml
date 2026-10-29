@@ -1,4 +1,4 @@
-<project name="sonarqube" basedir="." default="sonar" xmlns:sonar="antlib:org.sonar.ant">
+<project name="sonarqube" basedir="." default="sonar">
 
 	<import file="local_env.xml" />
 	<import file="${openspcoop2}/ant/commons/as-check.xml" />
@@ -8,11 +8,10 @@
 	<import file="${openspcoop2}/ant/commons/utils.xml" />
 	
 	<!-- 
-	     https://docs.sonarqube.org/latest/
-	     https://docs.sonarqube.org/latest/analyzing-source-code/scanners/sonarscanner-for-ant/
-	     https://docs.sonarqube.org/latest/analyzing-source-code/analysis-parameters/
-	     https://docs.sonarqube.org/latest/project-administration/narrowing-the-focus/
-	     https://docs.sonarqube.org/latest/setup-and-upgrade/install-the-server/
+	     https://docs.sonarsource.com/sonarqube-community-build/
+	     https://docs.sonarsource.com/sonarqube-community-build/analyzing-source-code/scanners/sonarscanner/
+	     https://docs.sonarsource.com/sonarqube-community-build/analyzing-source-code/analysis-parameters/
+	     https://docs.sonarsource.com/sonarqube-community-build/project-administration/analysis-scope/
  	-->
 
 	<!-- directory root -->
@@ -25,10 +24,10 @@
 		</classpath>
 	</taskdef>
 
-	<!-- estensione di sonarqube -->
-	<taskdef uri="antlib:org.sonar.ant" resource="org/sonar/ant/antlib.xml">
-		<classpath path="${openspcoop2.lib}/staticAnalysis/sonarqube-ant-task-2.7.1.1951.jar" />
-	</taskdef>
+	<!-- SonarScanner CLI -->
+	<path id="govway.sonarScanner.classpath">
+		<fileset dir="${openspcoop2.lib}/staticAnalysis" includes="sonar-scanner-cli-*.jar"/>
+	</path>
 
 	<!-- local -->
 	<property name="sonar.build" location="build"/>
@@ -779,6 +778,17 @@
 				</if>
 				<var name="sonar.sources.analyze" value="${sonar.sources.analyze},tools/web_interfaces/lib/web-content/tema_css/css/"/>
 
+				<!-- Template css con segnaposto ${...} valorizzati a runtime: non sono css validi -->
+				<var name="govway.binary" value="${govway.binary},tools/web_interfaces/lib/web-content/tema_css/css/bootstrap-tagsinput.css"/>
+				<var name="govway.binary" value="${govway.binary},tools/web_interfaces/lib/web-content/tema_css/css/linkit-base.css"/>
+				<var name="govway.binary" value="${govway.binary},tools/web_interfaces/lib/web-content/tema_css/css/materialIcons.css"/>
+				<var name="govway.binary" value="${govway.binary},tools/web_interfaces/lib/web-content/tema_css/css/materialSymbols.css"/>
+				<var name="govway.binary" value="${govway.binary},tools/web_interfaces/lib/web-content/tema_css/css/ui.datepicker.css"/>
+				<var name="govway.binary" value="${govway.binary},tools/web_interfaces/lib/web-content/tema_css/css/ui.dialog.css"/>
+				<var name="govway.binary" value="${govway.binary},tools/web_interfaces/lib/web-content/tema_css/css/ui.slider.css"/>
+				<var name="govway.binary" value="${govway.binary},tools/web_interfaces/lib/web-content/tema_css/css/ui.tabs.css"/>
+				<var name="govway.binary" value="${govway.binary},tools/web_interfaces/lib/web-content/tema_css/css/ui.theme.css"/>
+
 				<echo message="Analizzo sorgenti: tools/web_interfaces/lib/web-content/css"/>
 			</then>
 			<else>
@@ -854,6 +864,24 @@
 				<var name="sonar.sources.analyze" value="${sonar.sources.analyze},tools/web_interfaces/monitor/src/src_stat"/>
 				<var name="sonar.sources.analyze" value="${sonar.sources.analyze},tools/web_interfaces/monitor/src/src_transazioni"/>
 				<var name="sonar.sources.analyze" value="${sonar.sources.analyze},tools/web_interfaces/monitor/deploy/tema_css/css"/>
+				<!-- Template css con segnaposto ${...} valorizzati a runtime: non sono css validi (linkit-icons.css e' completo e resta analizzato) -->
+				<var name="govway.binary" value="${govway.binary},tools/web_interfaces/monitor/deploy/tema_css/css/bootstrap-tagsinput.css"/>
+				<var name="govway.binary" value="${govway.binary},tools/web_interfaces/monitor/deploy/tema_css/css/linkit-base.css"/>
+				<var name="govway.binary" value="${govway.binary},tools/web_interfaces/monitor/deploy/tema_css/css/linkit-crumbs.css"/>
+				<var name="govway.binary" value="${govway.binary},tools/web_interfaces/monitor/deploy/tema_css/css/linkit-form.css"/>
+				<var name="govway.binary" value="${govway.binary},tools/web_interfaces/monitor/deploy/tema_css/css/linkit-jsf.css"/>
+				<var name="govway.binary" value="${govway.binary},tools/web_interfaces/monitor/deploy/tema_css/css/materialIcons.css"/>
+				<!-- Taglib JSF con espressioni EL #{...} all'interno di blocchi <script>/<style> (es. nonce="#{_csp_random_nonce}", .#{id}_ds_top_table { ... }):
+				     gli analizzatori JavaScript e CSS non conoscono la sintassi EL e non riescono ad effettuarne il parsing ('Failed to parse file').
+				     Le altre taglib della directory, prive di EL in script/style, restano analizzate. -->
+				<var name="govway.binary" value="${govway.binary},tools/web_interfaces/monitor/src/src_core/META-INF/taglib/dialogInfo.xhtml"/>
+				<var name="govway.binary" value="${govway.binary},tools/web_interfaces/monitor/src/src_core/META-INF/taglib/ExtendedPagedDataTable.xhtml"/>
+				<var name="govway.binary" value="${govway.binary},tools/web_interfaces/monitor/src/src_core/META-INF/taglib/fileUpload.xhtml"/>
+				<var name="govway.binary" value="${govway.binary},tools/web_interfaces/monitor/src/src_core/META-INF/taglib/fileUploadSupport.xhtml"/>
+				<var name="govway.binary" value="${govway.binary},tools/web_interfaces/monitor/src/src_core/META-INF/taglib/PagedDataTable.xhtml"/>
+				<var name="govway.binary" value="${govway.binary},tools/web_interfaces/monitor/src/src_core/META-INF/taglib/PagedDataTableCheckboxOnRight.xhtml"/>
+				<var name="govway.binary" value="${govway.binary},tools/web_interfaces/monitor/src/src_core/META-INF/taglib/propertyWithInfo.xhtml"/>
+				<var name="govway.binary" value="${govway.binary},tools/web_interfaces/monitor/src/src_core/META-INF/taglib/SimpleDataTable.xhtml"/>
                                 <!-- css
     				<var name="sonar.sources.analyze" value="${sonar.sources.analyze},tools/web_interfaces/monitor/deploy/web-content/css"/>
                                 -->
@@ -1233,6 +1261,7 @@
 		<property name="sonar.typescript.exclusions" value="${govway.dirExclusion},${govway.exclusion}" />
 		<!-- <property name="sonar.coverage.exclusions" value="${sonar.sources.analyze}" /> --> <!-- i test vengono realizzati su jenkins tramite test funzionali -->
 		<property name="sonar.java.binaries" value="${sonar.build}" />
+		<property name="sonar.java.test.binaries" value="${sonar.build}" />
 		<property name="sonar.token" value="${sonar.token}" />
 
 		<!-- Coverage test with jacoco -->
@@ -1272,6 +1301,7 @@
 				<echo message="sonar.java.libraries=${sonar.java.libraries}${line.separator}" file="${sonar.serializeProperties}" append="true"/>
 				<echo message="sonar.java.test.libraries=${sonar.java.test.libraries}${line.separator}" file="${sonar.serializeProperties}" append="true"/>
 				<echo message="sonar.java.binaries=${sonar.java.binaries}${line.separator}" file="${sonar.serializeProperties}" append="true"/>
+				<echo message="sonar.java.test.binaries=${sonar.java.test.binaries}${line.separator}" file="${sonar.serializeProperties}" append="true"/>
 				<echo message="sonar.java.source=${sonar.java.source}${line.separator}" file="${sonar.serializeProperties}" append="true"/>
 				<echo message="sonar.java.target=${sonar.java.target}${line.separator}" file="${sonar.serializeProperties}" append="true"/>
 				<echo message="sonar.sourceEncoding=${sonar.sourceEncoding}${line.separator}" file="${sonar.serializeProperties}" append="true"/>
@@ -1306,8 +1336,29 @@
 				<delete file="${sonar.build}/_propertiesSonar.tmp"/>
                         </then>
 			<else>
-				<echo message="invoke sonar"/>
-				<sonar:sonar />
+				<!-- Allo SonarScanner CLI vengono fornite tutte le proprieta' 'sonar.*' del progetto Ant (come avveniva con lo scanner per Ant) -->
+				<property name="govway.sonarScanner.propertiesFile" location="${sonar.build}/sonar-scanner.properties"/>
+				<echoproperties destfile="${govway.sonarScanner.propertiesFile}">
+					<propertyset>
+						<propertyref prefix="sonar."/>
+					</propertyset>
+				</echoproperties>
+				<!-- Le credenziali non vengono salvate su file: il token viene fornito tramite variabile d'ambiente -->
+				<replaceregexp file="${govway.sonarScanner.propertiesFile}" match="^sonar\.(token|login|password)=.*$" replace="" byline="true"/>
+
+				<pathconvert property="govway.sonarScanner.jar" refid="govway.sonarScanner.classpath"/>
+				<if>
+					<equals arg1="${govway.sonarScanner.jar}" arg2=""/>
+					<then>
+						<fail message="SonarScanner CLI (sonar-scanner-cli-*.jar) non trovato in '${openspcoop2.lib}/staticAnalysis'"/>
+					</then>
+				</if>
+
+				<echo message="invoke sonar (${govway.sonarScanner.jar})"/>
+				<java classname="org.sonarsource.scanner.cli.Main" classpathref="govway.sonarScanner.classpath" fork="true" failonerror="true" dir="${sonar.projectBaseDir}">
+					<sysproperty key="project.settings" value="${govway.sonarScanner.propertiesFile}"/>
+					<env key="SONAR_TOKEN" value="${sonar.token}"/>
+				</java>
 			</else>
                 </if>
 

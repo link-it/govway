@@ -751,7 +751,16 @@ public class AccordiServizioParteSpecificaUtilities {
 								// se rispetta la regex allora vuol dire che il
 								// pattern azione e' quello di default
 								// e devo effettuare i cambiamenti
-								String regex = "(.*)\\/(.*)\\/(.*)\\/(.*)";
+								/**
+								 * Espressione regolare precedente:
+								 *   String regex = "(.*)\\/(.*)\\/(.*)\\/(.*)";
+								 * 
+								 * È stata sostituita perché i (.*) consecutivi causano un backtracking con costo super-lineare
+								 * sulle stringhe che non la soddisfano (segnalazione SonarQube java:S8786); i gruppi di cattura non erano utilizzati.
+								 * La nuova espressione accetta esattamente le stesse stringhe: le classi negate individuano il primo separatore utile
+								 * senza backtracking ed escludono anche i terminatori di riga, che '.' non accetta.
+								 */
+								String regex = "[^/\\n\\r\\u0085\\u2028\\u2029]*/[^/\\n\\r\\u0085\\u2028\\u2029]*/[^/\\n\\r\\u0085\\u2028\\u2029]*/.*";
 								if (tmpPat.matches(regex)) {
 									String[] val = tmpPat.split("/");
 									String partFruitore = val[0];
@@ -1005,7 +1014,16 @@ public class AccordiServizioParteSpecificaUtilities {
 								// se rispetta la regex allora vuol dire che il
 								// pattern azione e' quello di default
 								// e devo effettuare i cambiamenti
-								String regex = "(.*)\\/(.*)\\/(.*)";
+								/**
+								 * Espressione regolare precedente:
+								 *   String regex = "(.*)\\/(.*)\\/(.*)";
+								 * 
+								 * È stata sostituita perché i (.*) consecutivi causano un backtracking con costo super-lineare
+								 * sulle stringhe che non la soddisfano (segnalazione SonarQube java:S8786); i gruppi di cattura non erano utilizzati.
+								 * La nuova espressione accetta esattamente le stesse stringhe: le classi negate individuano il primo separatore utile
+								 * senza backtracking ed escludono anche i terminatori di riga, che '.' non accetta.
+								 */
+								String regex = "[^/\\n\\r\\u0085\\u2028\\u2029]*/[^/\\n\\r\\u0085\\u2028\\u2029]*/.*";
 								if (tmpPat.matches(regex)) {
 									String[] val = tmpPat.split("/");
 									String partErogatore = val[0];

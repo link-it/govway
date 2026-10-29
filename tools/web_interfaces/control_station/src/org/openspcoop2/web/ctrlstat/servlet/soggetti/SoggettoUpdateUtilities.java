@@ -90,9 +90,27 @@ import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
 public class SoggettoUpdateUtilities {
 
 	// pattern (fruitore)/(erogatore)/....
-	private static final String REGEXP_FRUITORE_EROGATORE_OTHER = ".*\\/.*\\/.*";
+	/**
+	 * Espressione regolare precedente:
+	 *   private static final String REGEXP_FRUITORE_EROGATORE_OTHER = ".*\\/.*\\/.*";
+	 * 
+	 * È stata sostituita perché i .* consecutivi causano un backtracking con costo super-lineare
+	 * sulle stringhe che non la soddisfano (segnalazione SonarQube java:S8786).
+	 * La nuova espressione accetta esattamente le stesse stringhe: le classi negate individuano il primo separatore utile
+	 * senza backtracking ed escludono anche i terminatori di riga, che '.' non accetta.
+	 */
+	private static final String REGEXP_FRUITORE_EROGATORE_OTHER = "[^/\\n\\r\\u0085\\u2028\\u2029]*/[^/\\n\\r\\u0085\\u2028\\u2029]*/.*";
 	
-	private static final String REGEXP_FRUITORE_EROGATORE_OTHER_MATCH = "(.*)\\/(.*)\\/(.*)";
+	/**
+	 * Espressione regolare precedente:
+	 *   private static final String REGEXP_FRUITORE_EROGATORE_OTHER_MATCH = "(.*)\\/(.*)\\/(.*)";
+	 * 
+	 * È stata sostituita perché i (.*) consecutivi causano un backtracking con costo super-lineare
+	 * sulle stringhe che non la soddisfano (segnalazione SonarQube java:S8786); i gruppi di cattura non erano utilizzati.
+	 * La nuova espressione accetta esattamente le stesse stringhe: le classi negate individuano il primo separatore utile
+	 * senza backtracking ed escludono anche i terminatori di riga, che '.' non accetta.
+	 */
+	private static final String REGEXP_FRUITORE_EROGATORE_OTHER_MATCH = "[^/\\n\\r\\u0085\\u2028\\u2029]*/[^/\\n\\r\\u0085\\u2028\\u2029]*/.*";
 	
 	private static final String PATTERN_AZIONE_PREFIX_OLD = ".*/";
 	private static final String PATTERN_AZIONE_SUFFIX_OLD = "/([^/|^?]*).*";

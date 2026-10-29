@@ -496,10 +496,11 @@ if (hidden!=null && !hidden.isEmpty()) {
 									
 											    // Ciclo sulla lista di valori 
 											    for (int r = 0; r < stValues.length; r++) {
+											      String idRadio = "tabella-radio_" + i + "_" + j + "_" + r;
 											      if (stValues[r].equals(de.getSelected())) {
-										                 %><input type="radio" checked name='<%= deName %>' value='<%= stValues[r] %>'>&nbsp;&nbsp;<%= stLabels[r] %><%
+										                 %><input type="radio" checked name='<%= deName %>' value='<%= stValues[r] %>' id="<%= idRadio %>">&nbsp;&nbsp;<label for="<%= idRadio %>"><%= stLabels[r] %></label><%
 											      } else {
-										                 %><input type="radio" name='<%= deName %>' value='<%= stValues[r] %>'>&nbsp;&nbsp;<%= stLabels[r] %><%
+										                 %><input type="radio" name='<%= deName %>' value='<%= stValues[r] %>' id="<%= idRadio %>">&nbsp;&nbsp;<label for="<%= idRadio %>"><%= stLabels[r] %></label><%
 										              }
 										    	  if (r<stValues.length-1) {
 													%><br/><%

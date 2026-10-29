@@ -1117,7 +1117,16 @@ public class DriverRegistroServiziDB_soggettiDriver {
 				// CNT_SF_tipo/nome(fruitore del servizio)+tipo/nome(erogatore del servizio)+tipo/nome(servizio)
 				// "CNT_SF_"  + tipoFruitore  + "/" + nomeFruitore+"_"+  tipoErogatore+"/"+nomeErogatore +"_"+ tiposervizio + "/" + nomeservizio
 				//devo modificare la prima e la seconda parte del pattern
-				String regex = "CNT_SF_(.*)\\/(.*)_(.*)\\/(.*)_(.*)\\/(.*)";
+				/**
+				 * Espressione regolare precedente:
+				 *   String regex = "CNT_SF_(.*)\\/(.*)_(.*)\\/(.*)_(.*)\\/(.*)";
+				 *
+				 * È stata sostituita perché i sei (.*) consecutivi causano un backtracking con costo super-lineare
+				 * sui nomi che non la soddisfano (segnalazione SonarQube java:S8786); i gruppi di cattura non erano utilizzati.
+				 * La nuova espressione accetta esattamente gli stessi nomi: le classi negate individuano il primo separatore utile
+				 * senza backtracking ed escludono anche i terminatori di riga, che '.' non accetta.
+				 */
+				String regex = "CNT_SF_[^/\\n\\r\\u0085\\u2028\\u2029]*/[^_\\n\\r\\u0085\\u2028\\u2029]*_[^/\\n\\r\\u0085\\u2028\\u2029]*/[^_\\n\\r\\u0085\\u2028\\u2029]*_[^/\\n\\r\\u0085\\u2028\\u2029]*/.*";
 
 				//recupero i connettori da modificare dove il soggetto e' erogatore
 				//0 soggetti

@@ -51,6 +51,8 @@ public abstract class Parameter<T> {
 		this.type = p.type;
 		this.refreshParamIds = p.refreshParamIds;
 		this.rendering = p.rendering;
+		// il valore non viene copiato: il nuovo parametro ne eredita solo la definizione
+		this.value = null;
 	}
 	
 	public ParameterType getType() {

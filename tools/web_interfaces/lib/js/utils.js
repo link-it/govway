@@ -547,16 +547,23 @@ function copyToClipboard(containerId, copyMessageId, event) {
     if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(copyText).then(function() {
             showCopyMessage(copyMessageId, event);
+        }, function() {
+            // Copia rifiutata (es. permesso negato o contesto non sicuro): si ripiega sulla copia tramite textarea
+            copyToClipboardFallback(copyText, copyMessageId, event);
         });
     } else {
         // Fallback per browser che non supportano navigator.clipboard
-        var textarea = $('<textarea>');
-        $('body').append(textarea);
-        textarea.val(copyText).select();
-        document.execCommand('copy');
-        textarea.remove();
-        showCopyMessage(copyMessageId, event);
+        copyToClipboardFallback(copyText, copyMessageId, event);
     }
+}
+
+function copyToClipboardFallback(copyText, copyMessageId, event) {
+    var textarea = $('<textarea>');
+    $('body').append(textarea);
+    textarea.val(copyText).select();
+    document.execCommand('copy');
+    textarea.remove();
+    showCopyMessage(copyMessageId, event);
 }
 
 function showCopyMessage(copyMessageId, event) {

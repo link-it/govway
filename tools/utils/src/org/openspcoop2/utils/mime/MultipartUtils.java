@@ -105,10 +105,10 @@ public class MultipartUtils {
 		try{
 
 			boundary = new ByteArrayOutputStream();
-			byte date = 0;
-			while((date=(byte)input.read())!=-1){
+			int date = 0;
+			while((date=input.read())!=-1){
 				boundary.write(date);
-				if(((char)date)=='\n'){
+				if(date=='\n'){
 					if(boundary.toString().startsWith("--"))
 						break;
 					else

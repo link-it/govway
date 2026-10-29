@@ -18,7 +18,7 @@
 		<jar.group.name>staticAnalysis</jar.group.name>
 		
 		<spotbugs.version>4.9.8</spotbugs.version>
-		<sonarqube.version>2.7.1.1951</sonarqube.version>
+		<sonar-scanner-cli.version>8.3.0.16463</sonar-scanner-cli.version>
 
 	</properties>
 
@@ -38,9 +38,9 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.sonarsource.scanner.ant</groupId>
-			<artifactId>sonarqube-ant-task</artifactId>
-			<version>${sonarqube.version}</version>
+			<groupId>org.sonarsource.scanner.cli</groupId>
+			<artifactId>sonar-scanner-cli</artifactId>
+			<version>${sonar-scanner-cli.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>

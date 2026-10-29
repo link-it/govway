@@ -10,13 +10,45 @@
 
 	<!-- Define the SonarQube global properties (the most usual way is to pass these properties via the command line) -->
 	<property name="sonar.host.url" value="http://localhost:9000" />
+	<!-- Lo SonarScanner CLI utilizza la JVM corrente invece di scaricare una JRE dal server SonarQube -->
+	<property name="sonar.scanner.skipJreProvisioning" value="true" />
 
 	<!-- Define the SonarQube project properties -->
 	<property name="sonar.projectKey" value="govway" />
 	<property name="sonar.projectName" value="govway" />
 	<property name="sonar.projectVersion" value="master" />
-	<property name="sonar.java.libraries" value="${required_lib},${openspcoop2}/dist" />
-	<property name="sonar.java.test.libraries" value="${required_lib},${openspcoop2}/dist" />
+	<path id="govway.sonar.libraries">
+		<fileset dir="${required_lib}" includes="**/*.jar">
+			<!--
+			     Jar esclusi dalle librerie fornite all'analisi (NON dal runtime): contengono package che dal JDK 9 appartengono
+			     ai moduli del JDK 'java.xml' (javax.xml.*, org.w3c.dom.*, org.xml.sax.*) e 'java.xml.crypto' (javax.xml.crypto.*).
+			     Il compilatore utilizzato da SonarQube (ECJ) trova lo stesso package sia nel jar che nel modulo del JDK
+			     ('The package ... is accessible from more than one module: <unnamed>, java.xml') e scarta i tipi coinvolti
+			     (Document, Element, DOMSource, SAXParser, DocumentBuilderFactory, ...), rendendo imprecisa l'analisi delle classi XML,
+			     incluse le regole di sicurezza su XXE e configurazione dei parser.
+
+			     - shared/xml-apis-1.4.01.jar: viene incluso in govway.war e govway.ear (wildfly), ma su Java 21 le classi di questi
+			       package vengono comunque caricate dal JDK (Tomcat e WildFly danno precedenza alle classi Java SE rispetto alle
+			       librerie dell'applicazione); 28 dei suoi 29 package sono presenti nel JDK 21 e l'unico restante
+			       (org.apache.xmlcommons) non e' utilizzato dai sorgenti. Escluderlo fa vedere all'analisi le stesse classi del runtime.
+			     - antinstaller/xml-apis_antinstaller-0.8b.jar: copia di xml-apis utilizzata solamente dall'installer.
+			     - axis14/xmlsec-1.4.4.jar: ridefinisce javax.xml.crypto (modulo java.xml.crypto) per la libreria axis 1.4.
+			-->
+			<exclude name="shared/xml-apis-1.4.01.jar"/>
+			<exclude name="antinstaller/xml-apis_antinstaller-0.8b.jar"/>
+			<exclude name="axis14/xmlsec-1.4.4.jar"/>
+			<!--
+			     swagger-codegen/swagger-codegen-cli-*.jar: jar 'fat' utilizzato solamente in fase di build per la generazione del codice
+			     (ant/commons/swagger-codegen.xml) e non dai sorgenti analizzati. Include copie di versioni precedenti di altre librerie
+			     (es. swagger-parser) che nascondono quelle effettivamente utilizzate: ad es. veniva risolta una versione di
+			     io.swagger.v3.parser.OpenAPIResolver priva del costruttore usato in SwaggerRequestValidatorOpenAPI ('The constructor ... is undefined').
+			-->
+			<exclude name="swagger-codegen/swagger-codegen-cli-*.jar"/>
+		</fileset>
+		<fileset dir="${openspcoop2.dist}" includes="*.jar" erroronmissingdir="false"/>
+	</path>
+	<pathconvert property="sonar.java.libraries" refid="govway.sonar.libraries" pathsep=","/>
+	<pathconvert property="sonar.java.test.libraries" refid="govway.sonar.libraries" pathsep=","/>
 	<property name="sonar.java.source" value="21" />
 	<property name="sonar.java.target" value="21" />
 	<property name="sonar.sourceEncoding" value="UTF-8" />
