@@ -229,9 +229,9 @@ public class SoapTest extends ConfigLoader {
 		request.setContent(body.getBytes());
 		
 		List<HttpResponse> responses = Utils.makeParallelRequests(request, 3);
-		
-		responses.addAll(Utils.makeSequentialRequests(request, 1));
 		Utils.waitForZeroActiveRequests(idPolicy, 3);
+		responses.addAll(Utils.makeSequentialRequests(request, 1));
+
 		checkAssertions(responses, 5, 60);		
 		
 		Commons.checkPostConditionsOccupazioneBanda(idPolicy);		
@@ -271,9 +271,9 @@ public class SoapTest extends ConfigLoader {
 		request.setContent(body.getBytes());
 		
 		List<HttpResponse> responses = Utils.makeParallelRequests(request, requestToPass);
-		
-		responses.addAll(Utils.makeSequentialRequests(request, 1));
 		Utils.waitForZeroActiveRequests(idPolicy, requestToPass);
+		responses.addAll(Utils.makeSequentialRequests(request, 1));
+
 		checkAssertions(responses, 1024, 60);		
 		
 		Commons.checkPostConditionsOccupazioneBanda(idPolicy);		
