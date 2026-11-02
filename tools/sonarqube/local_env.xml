@@ -16,7 +16,7 @@
 	<!-- Define the SonarQube project properties -->
 	<property name="sonar.projectKey" value="govway" />
 	<property name="sonar.projectName" value="govway" />
-	<property name="sonar.projectVersion" value="master" />
+	<property name="sonar.projectVersion" value="3.4.x" />
 	<path id="govway.sonar.libraries">
 		<fileset dir="${required_lib}" includes="**/*.jar">
 			<!--

@@ -1292,6 +1292,7 @@
                                 <echo message="serialize sonar properties in '${sonar.serializeProperties}'"/>
 				<echo message="sonar.projectName=${sonar.projectName}${line.separator}" file="${sonar.serializeProperties}" append="false"/>
 				<echo message="sonar.projectKey=${sonar.projectKey}${line.separator}" file="${sonar.serializeProperties}" append="true"/>
+				<echo message="sonar.projectVersion=${sonar.projectVersion}${line.separator}" file="${sonar.serializeProperties}" append="true"/>
 				<echo message="sonar.token=${sonar.token}${line.separator}" file="${sonar.serializeProperties}" append="true"/>
 				<echo message="sonar.projectBaseDir=${sonar.projectBaseDir}${line.separator}" file="${sonar.serializeProperties}" append="true"/>
 				<echo message="sonar.sources=${sonar.sources}${line.separator}" file="${sonar.serializeProperties}" append="true"/>
