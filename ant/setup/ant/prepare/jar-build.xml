@@ -33,9 +33,20 @@
 		<!-- Converto jar in txt -->
 		<antcall target="replace_jar_with_txt">
 			<param name="archiveFileJarLocation" value="${archiveFileJarLocation}"/>
-			<param name="deploy_sw" value="${deploy_sw}"/>		
+			<param name="deploy_sw" value="${deploy_sw}"/>
 		</antcall>
-		
+
+		<!-- Converto font in txt (console e monitor contengono gli stessi font, che verrebbero altrimenti ripetuti in ogni war) -->
+		<if>
+			<available file="${archiveFile}.tmp/fonts" type="dir"/>
+			<then>
+				<antcall target="replace_fonts_with_txt">
+					<param name="archiveFileFontsLocation" value="${archiveFile}.tmp/fonts"/>
+					<param name="deploy_sw" value="${deploy_sw}"/>
+				</antcall>
+			</then>
+		</if>
+
 		<!-- Ripristino archivio in formato compresso con txt al posto dei jar -->
 		<zip destfile="${archiveFile}">
 		    <fileset dir="${archiveFile}.tmp"/>
@@ -73,6 +84,65 @@
 		<move todir="${deploy_sw}/jars" overwrite="true" >
 			<fileset dir="${archiveFileJarLocation}">
 				<include name="**/*.jar"/>
+			</fileset>
+		</move>
+
+	</target>
+
+	<!-- Font: i file binari vengono spostati in ${deploy_sw}/fonts (mantenendo il path relativo) e sostituiti da un file vuoto '.txt';
+	     css, json e codepoints restano nell'archivio. Il ripristino avviene in 'ripristina_jar' (ant/jar-build.xml) -->
+	<patternset id="fonts_binari">
+		<include name="**/*.ttf"/>
+		<include name="**/*.otf"/>
+		<include name="**/*.woff"/>
+		<include name="**/*.woff2"/>
+		<include name="**/*.eot"/>
+		<include name="**/*.svg"/>
+	</patternset>
+
+	<target name="replace_fonts_with_txt">
+
+		<mkdir dir="${deploy_sw}/fonts" />
+
+		<!-- Lo stesso font viene condiviso tra più archivi: se un file con lo stesso path ha un contenuto diverso
+		     la sostituzione non è possibile, perché in fase di setup verrebbe ripristinato il font di un altro archivio. -->
+		<for param="fontFile">
+			<path>
+				<fileset dir="${archiveFileFontsLocation}">
+					<patternset refid="fonts_binari"/>
+				</fileset>
+			</path>
+			<sequential>
+				<pathconvert property="fontRelativePath.@{fontFile}">
+					<path location="@{fontFile}"/>
+					<map from="${archiveFileFontsLocation}/" to=""/>
+				</pathconvert>
+				<if>
+					<and>
+						<available file="${deploy_sw}/fonts/${fontRelativePath.@{fontFile}}"/>
+						<not>
+							<filesmatch file1="@{fontFile}" file2="${deploy_sw}/fonts/${fontRelativePath.@{fontFile}}"/>
+						</not>
+					</and>
+					<then>
+						<fail message="Il font '${fontRelativePath.@{fontFile}}' dell'archivio '${archiveFile}' è diverso da quello già raccolto in '${deploy_sw}/fonts'"/>
+					</then>
+				</if>
+			</sequential>
+		</for>
+
+		<!-- Creazione file vuoto font txt -->
+		<touch>
+			<fileset dir="${archiveFileFontsLocation}">
+				<patternset refid="fonts_binari"/>
+			</fileset>
+			<mapper type="glob" from="*" to="${archiveFileFontsLocation}/*.txt"/>
+		</touch>
+
+		<!-- Move font nella directory fonts -->
+		<move todir="${deploy_sw}/fonts" overwrite="true" >
+			<fileset dir="${archiveFileFontsLocation}">
+				<patternset refid="fonts_binari"/>
 			</fileset>
 		</move>
 

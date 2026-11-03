@@ -85,6 +85,62 @@
 				</if>
 			</sequential>
 		</for>
+
+		<!-- Ripristina font (sostituiti da file '.txt' in fase di prepare, vedi 'replace_fonts_with_txt') -->
+		<if>
+			<available file="${archiveFile}/fonts" type="dir"/>
+			<then>
+				<antcall target="ripristina_fonts">
+					<param name="archiveFileFontsLocation" value="${archiveFile}/fonts"/>
+				</antcall>
+			</then>
+		</if>
+	</target>
+
+	<patternset id="fonts_binari_txt">
+		<include name="**/*.ttf.txt"/>
+		<include name="**/*.otf.txt"/>
+		<include name="**/*.woff.txt"/>
+		<include name="**/*.woff2.txt"/>
+		<include name="**/*.eot.txt"/>
+		<include name="**/*.svg.txt"/>
+	</patternset>
+
+	<target name="ripristina_fonts">
+
+		<var name="fontsDir" value="${deploy_sw}/fonts" />
+
+		<!-- Ogni file '.txt' deve avere il corrispondente font raccolto in fase di prepare -->
+		<resourcecount property="fontsMancanti">
+			<fileset dir="${archiveFileFontsLocation}">
+				<patternset refid="fonts_binari_txt"/>
+				<present present="srconly" targetdir="${fontsDir}">
+					<globmapper from="*.txt" to="*"/>
+				</present>
+			</fileset>
+		</resourcecount>
+		<if>
+			<not>
+				<equals arg1="${fontsMancanti}" arg2="0"/>
+			</not>
+			<then>
+				<fail message="Non sono disponibili in '${fontsDir}' ${fontsMancanti} font richiesti dall'archivio '${archiveFile}'"/>
+			</then>
+		</if>
+
+		<!-- Copia dei soli font per cui l'archivio contiene il file '.txt' -->
+		<copy todir="${archiveFileFontsLocation}">
+			<fileset dir="${fontsDir}">
+				<present present="both" targetdir="${archiveFileFontsLocation}">
+					<globmapper from="*" to="*.txt"/>
+				</present>
+			</fileset>
+		</copy>
+		<delete>
+			<fileset dir="${archiveFileFontsLocation}">
+				<patternset refid="fonts_binari_txt"/>
+			</fileset>
+		</delete>
 	</target>
 	<target name="ripristina_jar_releaseVersion">
 		<propertyregex property="__ripri__fileNameWithoutTXT_releaseVersion"
