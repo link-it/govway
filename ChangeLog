@@ -1,3 +1,9 @@
+2026-11-03  Andrea Poli <apoli@link.it>
+
+	* [InstallerVersioneBinaria]
+	Ridotta la dimensione dell'installer: le librerie dell'archivio 'govwaySec' per Tomcat, finora escluse dall'ottimizzazione
+	già applicata agli altri archivi, e i font comuni alle console non vengono più ripetuti in ogni archivio.
+
 2026-10-28  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
