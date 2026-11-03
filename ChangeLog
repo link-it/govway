@@ -1,5 +1,13 @@
 2026-11-03  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore]
+	Risolto Bug #1856
+	Nei connettori HTTPS con libreria HTTPCore5 (BIO e NIO), e nelle verifiche di connettività della console, la tipologia SSL configurata veniva ignorata:
+	TLSv1 e TLSv1.1 non venivano mai negoziati, anche se abilitati nella JVM, e con tipologia TLSv1 o TLSv1.1 veniva usato TLSv1.2.
+	Vengono adesso usati i protocolli e i cipher abilitati dalla JVM per la tipologia.
+
+2026-11-03  Andrea Poli <apoli@link.it>
+
 	* [InstallerVersioneBinaria]
 	Ridotta la dimensione dell'installer: le librerie dell'archivio 'govwaySec' per Tomcat, finora escluse dall'ottimizzazione
 	già applicata agli altri archivi, e i font comuni alle console non vengono più ripetuti in ogni archivio.

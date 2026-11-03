@@ -187,6 +187,23 @@ Su tomcat 11, essendo i controlli più rigidi, è necessario aggiungere anche qu
   seguenti alias risolvano verso il loopback. Aggiungerli in '/etc/hosts':
 	127.0.0.1   govway_hostname
 	127.0.0.1   srv_test.govway_local
+
+- I test sulle tipologie SSL dei connettori https, presenti nel package 'connettori.tls_deprecato', richiedono che la JVM
+  dell'application server abiliti TLSv1 e TLSv1.1 (disabilitati di default dal JDK): verificano, per ogni tipologia SSL
+  e libreria http (HttpURLConnection, HttpCore BIO e NIO, verifica di connettività della console), protocolli e cipher
+  negoziati con un backend https avviato dal test sulla porta 8097 ('connettori.tls_deprecato.mock.port' nel testsuite.properties).
+  Gli esiti attesi vengono calcolati dalle informazioni SSL lette via JMX (le stesse della sezione 'Runtime' della console);
+  se TLSv1 e TLSv1.1 risultano disabilitati i test falliscono subito.
+  Eseguire i test con la sequenza:
+  a) fermare l'application server;
+  b) aggiungere alle opzioni java (es. JAVA_OPTS):
+	-Djava.security.properties=<testsuite>/src/org/openspcoop2/core/protocolli/trasparente/testsuite/connettori/tls_deprecato/java.security.tls_deprecato
+  c) avviare l'application server ed eseguire i test:
+	ant run_test -Ddelete=false -Dload=false -Dpackage=connettori.tls_deprecato
+  d) fermare l'application server, rimuovere l'opzione e riavviarlo.
+  Il file ridefinisce 'jdk.tls.disabledAlgorithms' partendo dal valore di default di JDK 25: va riallineato quando si
+  aggiorna il JDK dell'ambiente di test (vedi i commenti nel file).
+  
 - HSM per TLS Keystore. Seguire le indicazioni descritte in PKCS11.README
   Poi 'cp tools/utils/src/org/openspcoop2/utils/certificate/test/govway_test_hsm.properties  /etc/govway/hsm.properties'
 
@@ -607,6 +624,13 @@ Di seguito vengono descritti i test del package 'connettori':
          In alternativa, con GovWay spento, si può abilitare via SQL:
            UPDATE configurazione set response_cache_statocache='abilitato', response_cache_dimensionecache='10000', response_cache_algoritmocache='lru', response_cache_lifecache='-1';
    ant run_test -Ddelete=false -Dload=false -Dpackage=connettori.opzioni_avanzate [-Dwildfly=true]
+
+- 'tls_deprecato', verifica che la tipologia SSL configurata nei connettori https (SSL, SSLv3, TLS, TLSv1, TLSv1.1, TLSv1.2,
+   TLSv1.3, SSLv2Hello) determini protocolli e cipher negoziati con il backend, per HttpURLConnection, HttpCore BIO e NIO
+   e per la verifica di connettività della console
+   NOTA: richiede che la JVM dell'application server sia avviata con l'opzione '-Djava.security.properties' indicata
+         nella sezione dei prerequisiti; senza, i test falliscono subito. Al termine rimuovere l'opzione e riavviare.
+   ant run_test -Ddelete=false -Dload=false -Dpackage=connettori.tls_deprecato
 
 Di seguito vengono descritti i test del package 'token':
 

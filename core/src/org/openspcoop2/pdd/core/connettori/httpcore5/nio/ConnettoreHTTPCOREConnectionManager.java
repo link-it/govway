@@ -29,6 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLParameters;
 
 import org.apache.hc.client5.http.ConnectionKeepAliveStrategy;
 import org.apache.hc.client5.http.config.ConnectionConfig;
@@ -663,6 +664,15 @@ public class ConnettoreHTTPCOREConnectionManager {
 			ClientTlsStrategyBuilder tlsBuilder = ClientTlsStrategyBuilder.create();
 			tlsBuilder.setSslContext(sslContext);
 			tlsBuilder.setHostnameVerifier(hostnameVerifier);
+			/*
+			 * Protocolli e cipher abilitati dalla JVM per la tipologia SSL configurata (SSLContext.getInstance(tipologia)),
+			 * gli stessi usati da HttpURLConnection e riportati nella sezione 'Runtime' della console.
+			 * Se non vengono indicati, HttpClient 5 applica TLS.excludeWeak e TlsCiphers.excludeWeak: TLSv1 e TLSv1.1 vengono
+			 * rimossi anche se abilitati nella JVM e, se non rimane alcun protocollo, viene forzato TLSv1.2.
+			 */
+			SSLParameters sslParameters = sslContext.getDefaultSSLParameters();
+			tlsBuilder.setTlsVersions(sslParameters.getProtocols());
+			tlsBuilder.setCiphers(sslParameters.getCipherSuites());
 			/*
 			 * HttpClient 5.6: HostnameVerificationPolicy controlla dove avviene la verifica hostname.
 			 * Con BOTH (default) il JDK imposta endpointIdentificationAlgorithm="HTTPS" sull'SSLEngine,

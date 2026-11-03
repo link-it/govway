@@ -30,6 +30,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLParameters;
 
 import org.apache.hc.client5.http.ConnectionKeepAliveStrategy;
 import org.apache.hc.client5.http.config.ConnectionConfig;
@@ -52,6 +53,7 @@ import org.apache.hc.core5.io.CloseMode;
 import org.apache.hc.core5.pool.PoolConcurrencyPolicy;
 import org.apache.hc.core5.pool.PoolReusePolicy;
 import org.apache.hc.core5.pool.PoolStats;
+import org.apache.hc.core5.reactor.ssl.SSLBufferMode;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.connettori.AbstractConnettoreConnectionConfig;
 import org.openspcoop2.pdd.core.connettori.ConnettoreException;
@@ -596,7 +598,15 @@ public class ConnettoreHTTPCOREConnectionManager {
 			HostnameVerificationPolicy hostnameVerificationPolicy = (hostnameVerifier instanceof DefaultHostnameVerifier)
 					? HostnameVerificationPolicy.BOTH
 					: HostnameVerificationPolicy.CLIENT;
-			tlsSocketStrategy = new DefaultClientTlsStrategy(sslContext, hostnameVerificationPolicy, hostnameVerifier);
+			/*
+			 * Protocolli e cipher abilitati dalla JVM per la tipologia SSL configurata (SSLContext.getInstance(tipologia)),
+			 * gli stessi usati da HttpURLConnection e riportati nella sezione 'Runtime' della console.
+			 * Se non vengono indicati, HttpClient 5 applica TLS.excludeWeak e TlsCiphers.excludeWeak: TLSv1 e TLSv1.1 vengono
+			 * rimossi anche se abilitati nella JVM e, se non rimane alcun protocollo, viene forzato TLSv1.2.
+			 */
+			SSLParameters sslParameters = sslContext.getDefaultSSLParameters();
+			tlsSocketStrategy = new DefaultClientTlsStrategy(sslContext, sslParameters.getProtocols(), sslParameters.getCipherSuites(),
+					SSLBufferMode.STATIC, hostnameVerificationPolicy, hostnameVerifier);
 			
 			if(connectionConfig.isDebug()) {
 				String clientCertificateConfigurated = connectionConfig.getSslContextProperties().getKeyStoreLocation();

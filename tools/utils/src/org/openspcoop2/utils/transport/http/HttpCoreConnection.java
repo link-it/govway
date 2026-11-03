@@ -31,6 +31,7 @@ import java.util.Map;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLParameters;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.client5.http.classic.methods.HttpUriRequestBase;
@@ -59,6 +60,7 @@ import org.apache.hc.core5.http.io.HttpConnectionFactory;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.InputStreamEntity;
 import org.apache.hc.core5.io.CloseMode;
+import org.apache.hc.core5.reactor.ssl.SSLBufferMode;
 import org.apache.hc.core5.util.TimeValue;
 import org.apache.hc.core5.util.Timeout;
 import org.openspcoop2.utils.LoggerWrapperFactory;
@@ -170,7 +172,15 @@ class HttpCoreConnection extends HttpLibraryConnection {
         	HostnameVerificationPolicy hostnameVerificationPolicy = request.isHostnameVerifier()
         			? HostnameVerificationPolicy.BOTH
         			: HostnameVerificationPolicy.CLIENT;
-        	TlsSocketStrategy tlsSocketStrategy = new DefaultClientTlsStrategy(sslContext, hostnameVerificationPolicy, hostnameVerifier);
+        	/*
+        	 * Protocolli e cipher abilitati dalla JVM per la tipologia SSL configurata (SSLContext.getInstance(tipologia)),
+        	 * gli stessi usati da HttpURLConnection e riportati nella sezione 'Runtime' della console.
+        	 * Se non vengono indicati, HttpClient 5 applica TLS.excludeWeak e TlsCiphers.excludeWeak: TLSv1 e TLSv1.1 vengono
+        	 * rimossi anche se abilitati nella JVM e, se non rimane alcun protocollo, viene forzato TLSv1.2.
+        	 */
+        	SSLParameters sslParameters = sslContext.getDefaultSSLParameters();
+        	TlsSocketStrategy tlsSocketStrategy = new DefaultClientTlsStrategy(sslContext, sslParameters.getProtocols(), sslParameters.getCipherSuites(),
+        			SSLBufferMode.STATIC, hostnameVerificationPolicy, hostnameVerifier);
         	if(request.isDebug()) {
 				String clientCertificateConfigurated = request.getKeyStorePath();
 				tlsSocketStrategy = new WrappedLogTlsSocketStrategy(tlsSocketStrategy,

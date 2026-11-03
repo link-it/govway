@@ -1,0 +1,18 @@
+#
+# Override del file 'java.security' del JDK per la JVM di GovWay, usato solo dai test 'connettori/tls_deprecato'.
+# Da passare all'application server con:
+#   -Djava.security.properties=<testsuite>/src/org/openspcoop2/core/protocolli/trasparente/testsuite/connettori/tls_deprecato/java.security.tls_deprecato
+# (un solo '=': le proprietà indicate sostituiscono quelle omonime del JDK, le altre restano invariate).
+#
+# Riabilita TLSv1 e TLSv1.1, rispetto al valore di default di JDK 25 (e degli aggiornamenti recenti di JDK 21).
+# SSLv3 resta disabilitato: nessuna tipologia SSL lo abilita lato client.
+# 3DES resta disabilitato: viene usato dai test come cipher rifiutata da GovWay.
+#
+# Il valore sostituisce per intero quello del JDK: va riallineato quando si aggiorna il JDK dell'ambiente di test,
+# altrimenti verrebbero riabilitati anche gli algoritmi aggiunti dalle nuove versioni.
+# Le voci non riconosciute da JDK meno recenti (es. 'TLS_RSA_*' su JDK 21.0.4) vengono ignorate.
+#
+jdk.tls.disabledAlgorithms=SSLv3, DTLSv1.0, RC4, DES, \
+    MD5withRSA, DH keySize < 1024, EC keySize < 224, 3DES_EDE_CBC, anon, NULL, \
+    ECDH, TLS_RSA_*, rsa_pkcs1_sha1 usage HandshakeSignature, \
+    ecdsa_sha1 usage HandshakeSignature, dsa_sha1 usage HandshakeSignature
