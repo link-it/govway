@@ -25,6 +25,10 @@ Background:
     * def get_response_header = read('classpath:utils/get-response-header.js')
     * def allinea_data_pdnd = read('classpath:utils/allinea-data-pdnd.js')
 
+    # le policy di rate limiting giornaliere ripartono a mezzanotte: si evita che uno scenario attraversi il cambio giorno
+    * def attendi_cambio_giorno = read('classpath:utils/attendi-cambio-giorno.js')
+    * eval attendi_cambio_giorno(60)
+
 
 
 @getInformazioniClientOrganizationApiIDAUTH
