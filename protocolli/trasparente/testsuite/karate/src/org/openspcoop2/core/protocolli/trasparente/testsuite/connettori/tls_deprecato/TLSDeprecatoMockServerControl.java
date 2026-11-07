@@ -179,6 +179,21 @@ public class TLSDeprecatoMockServerControl implements Closeable {
 		return valore.split(" ");
 	}
 
+	/**
+	 * Come {@link #getUltimoHandshake()}, ma da usare quando l'handshake è certamente avvenuto (es. verifica di connettività riuscita):
+	 * con TLSv1.3 l'ultimo messaggio dell'handshake (Finished) è inviato dal client, che può quindi considerarlo concluso e chiudere
+	 * la connessione prima che il backend lo abbia elaborato e registrato. Si attende fino a 'timeoutMs' che l'handshake risulti registrato.
+	 */
+	public String[] attendiUltimoHandshake(long timeoutMs) throws IOException, InterruptedException {
+		long scadenza = System.currentTimeMillis() + timeoutMs;
+		String[] handshake = getUltimoHandshake();
+		while(handshake==null && System.currentTimeMillis() < scadenza) {
+			Thread.sleep(50);
+			handshake = getUltimoHandshake();
+		}
+		return handshake;
+	}
+
 	@Override
 	public void close() {
 		if(this.process!=null) {

@@ -95,7 +95,7 @@ public class ConnettivitaTLSDeprecatoTest extends TLSDeprecatoBase {
 		String esito = new String(HttpUtilities.getHTTPResponse(jmxUrl, System.getProperty("jmx_username"), System.getProperty("jmx_password")).getContent());
 		logCore.debug("Verifica connettività '{}': {}", nomeConnettore, esito);
 		if(JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO.equals(esito.trim())) {
-			String[] handshake = mock.getUltimoHandshake();
+			String[] handshake = mock.attendiUltimoHandshake(5000);
 			if(handshake==null) {
 				return EsitoHandshake.ok(null, null);
 			}
