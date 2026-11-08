@@ -179,6 +179,7 @@ public class StatusUtils {
 		
 		HttpResponse response = HttpUtilities.httpInvoke(request);
 		String idTransazione = getIdTransazione(response);
+		DBVerifier.registraTransazioneInviata(idTransazione);
 		
 		ConfigLoader.getLoggerCore().debug("[{}] invio richiesta alla porta {}, code: {}", idTransazione, operation, response.getResultHTTPOperation());
 		
