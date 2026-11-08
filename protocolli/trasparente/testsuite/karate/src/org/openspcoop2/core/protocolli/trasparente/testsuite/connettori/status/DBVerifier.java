@@ -24,8 +24,10 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
@@ -132,7 +134,13 @@ public class DBVerifier {
 	
 	public static void resetStatistiche(String servizio) throws SQLQueryObjectException {
 		ISQLQueryObject query;
-		
+
+		// GovWay salva la transazione dopo aver inviato la risposta: le transazioni dei test precedenti sullo stesso servizio
+		// (es. le verifiche OK delle altre operazioni di status) potrebbero essere registrate dopo la cancellazione,
+		// finire nelle statistiche e far rilevare al connettore transazioni OK non previste dal test.
+		// Si attende quindi che tutte le transazioni inviate dal test risultino registrate.
+		attendiTransazioniRegistrate();
+
 		// rimuovo messaggi diagnostici
 		ISQLQueryObject idTransazioni = SQLObjectFactory.createSQLQueryObject(ConfigLoader.getDbUtils().tipoDatabase);
 		idTransazioni.addFromTable(CostantiDB.TRANSAZIONI);
@@ -165,6 +173,49 @@ public class DBVerifier {
 			query.addWhereCondition("servizio=?");
 			deleteStatistiche(query.createSQLDelete(), servizio);
 		}
+	}
+	
+	// transazioni generate dal test non ancora verificate come registrate da GovWay
+	private static final Set<String> transazioniInviate = new LinkedHashSet<>();
+	public static void registraTransazioneInviata(String idTransazione) {
+		if(idTransazione!=null) {
+			synchronized (transazioniInviate) {
+				transazioniInviate.add(idTransazione);
+			}
+		}
+	}
+	
+	private static final long ATTESA_TRANSAZIONI_MAX_MS = 15000;
+	private static final long ATTESA_TRANSAZIONI_INTERVALLO_MS = 200;
+	private static void attendiTransazioniRegistrate() throws SQLQueryObjectException {
+		// attende che tutte le transazioni inviate dal test risultino registrate da GovWay
+		ISQLQueryObject query = SQLObjectFactory.createSQLQueryObject(ConfigLoader.getDbUtils().tipoDatabase);
+		query.addFromTable(CostantiDB.TRANSAZIONI);
+		query.addSelectCountField("totale");
+		query.addWhereCondition("id=?");
+		String sql = query.createSQLQuery();
+		
+		synchronized (transazioniInviate) {
+			long scadenza = System.currentTimeMillis() + ATTESA_TRANSAZIONI_MAX_MS;
+			while(true) {
+				transazioniInviate.removeIf(id -> isTransazioneRegistrata(sql, id));
+				if(transazioniInviate.isEmpty()) {
+					return;
+				}
+				if(System.currentTimeMillis() >= scadenza) {
+					// non si fa fallire il test: le transazioni mancanti potrebbero non essere registrate per configurazione
+					ConfigLoader.getLoggerCore().debug("Transazioni non registrate entro {} ms: {}", ATTESA_TRANSAZIONI_MAX_MS, transazioniInviate);
+					transazioniInviate.clear();
+					return;
+				}
+				Utilities.sleep(ATTESA_TRANSAZIONI_INTERVALLO_MS);
+			}
+		}
+	}
+	private static boolean isTransazioneRegistrata(String sql, String idTransazione) {
+		List<Map<String, Object>> rows = ConfigLoader.getDbUtils().readRows(sql, idTransazione);
+		return rows!=null && !rows.isEmpty() && rows.get(0)!=null && rows.get(0).get("totale") instanceof Number &&
+				((Number)rows.get(0).get("totale")).longValue() > 0;
 	}
 	
 	private static final int DELETE_STATISTICHE_TENTATIVI = 5;
