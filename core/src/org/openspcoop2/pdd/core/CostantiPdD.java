@@ -690,6 +690,7 @@ public class CostantiPdD {
     public static final String KEY_PII_MASKING_DETTAGLIO = "@PII_DETTAGLIO@";
     /** Costante che identifica il dettaglio dei valori PII riutilizzati dalla cache di sessione (diagnostici) */
     public static final String KEY_PII_MASKING_RIUSO = "@PII_RIUSO@";
+    public static final String KEY_PII_MASKING_NON_RISOLTI = "@PII_NON_RISOLTI@";
     /** Costante che identifica la condizione estratta per lo sticky */
     public static final String KEY_CONDIZIONE_STICKY =  "@CONDIZIONE_STICKY@";
     

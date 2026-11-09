@@ -44,9 +44,17 @@ public class PiiStreamEventInterceptor implements UnaryOperator<List<CanonicalSt
 	/** indici dei content-block che sono tool_use (per emettere il tipo di delta corretto nel flush). */
 	private final java.util.Set<Integer> toolUseIndices = new java.util.HashSet<>();
 
+	private final java.util.function.Consumer<java.util.Set<String>> unresolvedObserver;
+
 	public PiiStreamEventInterceptor(PiiVault vault, boolean unmaskToolUse) {
-		this.unmasker = new PiiStreamUnmasker(vault);
+		this(vault, unmaskToolUse, false, null);
+	}
+
+	public PiiStreamEventInterceptor(PiiVault vault, boolean unmaskToolUse, boolean placeholderMode,
+			java.util.function.Consumer<java.util.Set<String>> unresolvedObserver) {
+		this.unmasker = new PiiStreamUnmasker(vault, placeholderMode);
 		this.unmaskToolUse = unmaskToolUse;
+		this.unresolvedObserver = unresolvedObserver;
 	}
 
 	@Override
@@ -87,12 +95,20 @@ public class PiiStreamEventInterceptor implements UnaryOperator<List<CanonicalSt
 						out.add(makeTail(e.getKey(), e.getValue()));
 					}
 				}
+				notifyUnresolved();
 				out.add(event);
 			} else {
 				out.add(event);
 			}
 		}
 		return out;
+	}
+
+	private void notifyUnresolved() {
+		if (this.unresolvedObserver != null && !this.unmasker.getUnresolved().isEmpty()) {
+			this.unresolvedObserver.accept(new java.util.LinkedHashSet<>(this.unmasker.getUnresolved()));
+			this.unmasker.getUnresolved().clear();
+		}
 	}
 
 	/** Costruisce il delta di coda con il tipo corretto (tool_use se l'indice è un blocco tool_use). */

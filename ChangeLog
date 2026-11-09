@@ -1,3 +1,21 @@
+2026-11-06  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	PII Masking del gateway LLM: introdotta per ciascuna Regola PII la 'Modalita' di sostituzione'. Oltre al
+	pseudonimo realistico dello stesso formato (comportamento precedente, che resta il default) e' ora
+	disponibile la modalita' 'Segnaposto', in cui il valore individuato viene sostituito con
+	'[[PII:<etichetta>:<n>]]'. L'etichetta, configurabile e precompilata in base alla categoria, descrive il
+	tipo di dato al modello; il progressivo e' univoco per vault (transazione o sessione) e il ripristino
+	nella risposta avviene per progressivo, cosi' da tollerare eventuali alterazioni dell'etichetta da parte
+	del modello. Le due modalita' possono coesistere tra le regole di uno stesso Provider Binding: le regole
+	in modalita' 'Segnaposto' vengono applicate prima di quelle con pseudonimo realistico.
+	Se il binding applica almeno una regola in modalita' 'Segnaposto', al system prompt verso il provider
+	vengono accodate le istruzioni che descrivono il formato, configurabili in govway.properties
+	('org.openspcoop2.pdd.llm.piiMasking.placeholder.instruction' e '...placeholder.escapeInstruction').
+	I segnaposto gia' presenti nel testo del client vengono preservati tramite escape ('[[PII-Escape:...]]',
+	ricorsivo) e restituiti invariati nella risposta. I segnaposto della risposta non ripristinabili (es.
+	inventati dal modello) restano invariati e vengono segnalati da un nuovo diagnostico (codici 074/083).
+
 2026-09-10  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

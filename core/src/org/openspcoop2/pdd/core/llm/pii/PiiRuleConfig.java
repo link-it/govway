@@ -36,6 +36,8 @@ public class PiiRuleConfig {
 	private final boolean validate;
 	private final List<String> patterns = new ArrayList<>();
 	private final String pluginClassName;
+	private String replacementMode = Costanti.PII_REPLACEMENT_MODE_VALUE_PSEUDONYM;
+	private String placeholderLabel;
 
 	public PiiRuleConfig(String name, String detectorType, String category, boolean validate,
 			List<String> patterns, String pluginClassName) {
@@ -55,4 +57,22 @@ public class PiiRuleConfig {
 	public boolean isValidate() { return this.validate; }
 	public List<String> getPatterns() { return this.patterns; }
 	public String getPluginClassName() { return this.pluginClassName; }
+
+	public String getReplacementMode() { return this.replacementMode; }
+	public void setReplacementMode(String replacementMode) {
+		this.replacementMode = (replacementMode == null || replacementMode.trim().isEmpty())
+				? Costanti.PII_REPLACEMENT_MODE_VALUE_PSEUDONYM : replacementMode.trim();
+	}
+	public boolean isPlaceholderMode() {
+		return Costanti.PII_REPLACEMENT_MODE_VALUE_PLACEHOLDER.equals(this.replacementMode);
+	}
+
+	public String getPlaceholderLabel() {
+		String label = PiiPlaceholders.sanitizeLabel(this.placeholderLabel);
+		if (label == null || label.isEmpty()) {
+			label = PiiPlaceholders.sanitizeLabel(PiiDefaultPatterns.getPlaceholderLabel(this.category));
+		}
+		return label;
+	}
+	public void setPlaceholderLabel(String placeholderLabel) { this.placeholderLabel = placeholderLabel; }
 }

@@ -73,6 +73,7 @@ public final class PiiConfigResolver {
 			}
 			result.add(rule);
 		}
+		result.sort((a, b) -> Boolean.compare(!a.isPlaceholderMode(), !b.isPlaceholderMode()));
 		return result;
 	}
 
@@ -87,7 +88,10 @@ public final class PiiConfigResolver {
 			patterns.addAll(Arrays.asList(patternsRaw.split("\\r?\\n")));
 		}
 		String pluginClassName = find(props, Costanti.LLM_PII_PLUGIN_CLASS_NAME);
-		return new PiiRuleConfig(gp.getNome(), detectorType, category, validate, patterns, pluginClassName);
+		PiiRuleConfig rule = new PiiRuleConfig(gp.getNome(), detectorType, category, validate, patterns, pluginClassName);
+		rule.setReplacementMode(find(props, Costanti.LLM_PII_REPLACEMENT_MODE));
+		rule.setPlaceholderLabel(find(props, Costanti.LLM_PII_PLACEHOLDER_LABEL));
+		return rule;
 	}
 
 	private static String find(List<Property> props, String name) {

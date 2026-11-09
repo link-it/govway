@@ -110,6 +110,35 @@ public final class PiiDefaultPatterns {
 		return Collections.unmodifiableMap(m);
 	}
 
+	private static final Map<String, String> DEFAULT_PLACEHOLDER_LABELS = buildDefaultPlaceholderLabels();
+
+	private static Map<String, String> buildDefaultPlaceholderLabels() {
+		Map<String, String> m = new LinkedHashMap<>();
+		m.put(Costanti.PII_CATEGORY_VALUE_EMAIL, "Indirizzo Email");
+		m.put(Costanti.PII_CATEGORY_VALUE_IBAN, "IBAN");
+		m.put(Costanti.PII_CATEGORY_VALUE_CARD, "Carta di Credito");
+		m.put(Costanti.PII_CATEGORY_VALUE_CF, "Codice Fiscale");
+		m.put(Costanti.PII_CATEGORY_VALUE_PHONE, "Numero di Telefono");
+		m.put(Costanti.PII_CATEGORY_VALUE_USERNAME_PATH, "Nome Utente");
+		m.put(Costanti.PII_CATEGORY_VALUE_IP, "Indirizzo IP");
+		m.put(Costanti.PII_CATEGORY_VALUE_PIVA, "Partita IVA");
+		m.put(Costanti.PII_CATEGORY_VALUE_SECRET, "Credenziale");
+		m.put(Costanti.PII_CATEGORY_VALUE_DOC_ID, "Documento d'Identità");
+		m.put(Costanti.PII_CATEGORY_VALUE_PLATE, "Targa");
+		m.put(Costanti.PII_CATEGORY_VALUE_MAC, "MAC Address");
+		m.put(Costanti.PII_CATEGORY_VALUE_CUSTOM, "Dato Riservato");
+		return Collections.unmodifiableMap(m);
+	}
+
+	public static String getPlaceholderLabel(String category) {
+		String label = category != null ? DEFAULT_PLACEHOLDER_LABELS.get(category) : null;
+		return label != null ? label : DEFAULT_PLACEHOLDER_LABELS.get(Costanti.PII_CATEGORY_VALUE_CUSTOM);
+	}
+
+	public static boolean isDefaultPlaceholderLabel(String label) {
+		return label != null && DEFAULT_PLACEHOLDER_LABELS.containsValue(label.trim());
+	}
+
 	/** Restituisce le regex di default della categoria (lista vuota se categoria sconosciuta o custom). */
 	public static List<String> getPatterns(String category) {
 		if (category == null) {

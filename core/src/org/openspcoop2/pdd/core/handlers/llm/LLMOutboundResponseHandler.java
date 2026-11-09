@@ -80,7 +80,11 @@ public class LLMOutboundResponseHandler implements OutResponseHandler {
 				Object cfgObj = context.getPddContext().getObject(LLMHandlerConstants.PDD_CTX_LLM_PII_BINDING_CONFIG);
 				boolean unmaskToolUse = (cfgObj instanceof org.openspcoop2.pdd.core.llm.pii.PiiBindingConfig)
 						&& ((org.openspcoop2.pdd.core.llm.pii.PiiBindingConfig) cfgObj).isMaskToolUse();
-				org.openspcoop2.pdd.core.llm.pii.PiiMaskerEngine.unmaskResponse(canonical, (org.openspcoop2.pdd.core.llm.pii.PiiVault) vault, unmaskToolUse);
+				boolean placeholderMode = LLMHandlerSupport.isPiiPlaceholderMode(context.getPddContext());
+				java.util.Set<String> unresolved = new java.util.LinkedHashSet<>();
+				org.openspcoop2.pdd.core.llm.pii.PiiMaskerEngine.unmaskResponse(canonical, (org.openspcoop2.pdd.core.llm.pii.PiiVault) vault, unmaskToolUse,
+						placeholderMode, unresolved);
+				LLMHandlerSupport.emitPiiPlaceholderNonRisolti(context, unresolved, log);
 			}
 			LLMOutboundFrontDoorResponseTransformer transformer = LLMTransformerRegistry.getOutboundFrontDoorResponseTransformer(dialect);
 			byte[] body = transformer.transform(canonical);

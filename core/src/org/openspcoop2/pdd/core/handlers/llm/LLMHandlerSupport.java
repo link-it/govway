@@ -697,4 +697,48 @@ public final class LLMHandlerSupport {
 			msg.forceTransportHeader(e.getKey(), e.getValue());
 		}
 	}
+	public static boolean isPiiPlaceholderMode(PdDContext pddContext) {
+		return pddContext != null && Boolean.TRUE.equals(pddContext.getObject(LLMHandlerConstants.PDD_CTX_LLM_PII_PLACEHOLDER_MODE));
+	}
+
+	private static final int PII_NON_RISOLTI_MAX = 10;
+
+	public static void emitPiiPlaceholderNonRisolti(BaseContext context, java.util.Set<String> unresolved, Logger log) {
+		if (context == null || unresolved == null || unresolved.isEmpty()) {
+			return;
+		}
+		try {
+			org.openspcoop2.core.constants.TipoPdD tipo = context.getTipoPorta();
+			boolean fruizione = org.openspcoop2.core.constants.TipoPdD.DELEGATA.equals(tipo);
+			String modulo = fruizione ? org.openspcoop2.pdd.mdb.InoltroBuste.ID_MODULO : org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi.ID_MODULO;
+			String moduloFunzionale = fruizione
+					? org.openspcoop2.pdd.logger.MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE
+					: org.openspcoop2.pdd.logger.MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI;
+			PdDContext pddContext = context.getPddContext();
+			Object o = pddContext != null ? pddContext.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO) : null;
+			RequestInfo requestInfo = o instanceof RequestInfo ? (RequestInfo) o : null;
+			org.openspcoop2.pdd.logger.MsgDiagnostico msgDiag =
+					org.openspcoop2.pdd.logger.MsgDiagnostico.newInstance(tipo, modulo, null, requestInfo);
+			msgDiag.setPddContext(pddContext, context.getProtocolFactory());
+			StringBuilder sb = new StringBuilder();
+			int i = 0;
+			for (String p : unresolved) {
+				if (i == PII_NON_RISOLTI_MAX) {
+					sb.append(", ... (").append(unresolved.size() - PII_NON_RISOLTI_MAX).append(" ulteriori)");
+					break;
+				}
+				if (i > 0) {
+					sb.append(", ");
+				}
+				sb.append(p);
+				i++;
+			}
+			msgDiag.addKeyword(org.openspcoop2.pdd.core.CostantiPdD.KEY_PII_MASKING_NON_RISOLTI, sb.toString());
+			msgDiag.logPersonalizzato(moduloFunzionale, "llmPiiMasking.segnapostoNonRisolti");
+		} catch (Exception e) {
+			if (log != null) {
+				log.warn("Emissione diagnostico PII segnaposto non risolti fallita: {}", e.getMessage());
+			}
+		}
+	}
 }

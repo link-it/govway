@@ -35,12 +35,14 @@ import java.util.regex.Pattern;
  */
 public class RegexpPiiRuleMasker implements PiiRuleMasker {
 
+	private final PiiRuleConfig rule;
 	private final String ruleName;
 	private final String category;
 	private final boolean validate;
 	private final List<Pattern> patterns = new ArrayList<>();
 
 	public RegexpPiiRuleMasker(PiiRuleConfig rule) throws PiiMaskingException {
+		this.rule = rule;
 		this.ruleName = rule.getName();
 		this.category = rule.getCategory();
 		this.validate = rule.isValidate();
@@ -83,8 +85,8 @@ public class RegexpPiiRuleMasker implements PiiRuleMasker {
 					if (this.validate && !PiiValidators.isValid(this.category, user)) {
 						return Matcher.quoteReplacement(mr.group());
 					}
-					boolean preEsistente = vault.containsOriginal(this.category, user);
-					String pseudo = vault.tokenize(this.category, user);
+					boolean preEsistente = vault.containsOriginal(this.rule, user);
+					String pseudo = vault.tokenize(this.rule, user);
 					findings.record(getDetectorType(), this.ruleName, pseudo, preEsistente);
 					return Matcher.quoteReplacement(mr.group(1) + pseudo);
 				}
@@ -92,8 +94,8 @@ public class RegexpPiiRuleMasker implements PiiRuleMasker {
 				if (this.validate && !PiiValidators.isValid(this.category, matched)) {
 					return Matcher.quoteReplacement(matched); // falso positivo scartato
 				}
-				boolean preEsistente = vault.containsOriginal(this.category, matched);
-				String pseudo = vault.tokenize(this.category, matched);
+				boolean preEsistente = vault.containsOriginal(this.rule, matched);
+				String pseudo = vault.tokenize(this.rule, matched);
 				findings.record(getDetectorType(), this.ruleName, pseudo, preEsistente);
 				return Matcher.quoteReplacement(pseudo);
 			});

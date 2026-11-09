@@ -57,6 +57,10 @@ public final class Costanti {
 	/** Property name per l'abilitazione della validazione category-specific (abbatte i falsi positivi). */
 	public static final String LLM_PII_VALIDATE = "llmPiiMasking.validate";
 
+	public static final String LLM_PII_REPLACEMENT_MODE = "llmPiiMasking.replacementMode";
+
+	public static final String LLM_PII_PLACEHOLDER_LABEL = "llmPiiMasking.placeholderLabel";
+
 	/** Property name per la descrizione della Regola PII. */
 	public static final String LLM_PII_DESCRIPTION = "llmPiiMasking.description";
 
@@ -74,6 +78,19 @@ public final class Costanti {
 
 	/** Id dell'item {@code <item type="checkbox" name="piiValidate">} nel form. */
 	public static final String ID_PII_VALIDATE = "piiValidate";
+
+	public static final String ID_PII_REPLACEMENT_MODE = "piiReplacementMode";
+
+	public static final String ID_PII_PLACEHOLDER_LABEL = "piiPlaceholderLabel";
+
+	public static final String PII_REPLACEMENT_MODE_VALUE_PSEUDONYM = "pseudonym";
+	public static final String PII_REPLACEMENT_MODE_VALUE_PLACEHOLDER = "placeholder";
+
+	public static final String PII_PLACEHOLDER_INSTRUCTION_DEFAULT = "Alcuni valori di questa conversazione sono stati sostituiti per riservatezza con segnaposto nella forma [[PII:<tipo di dato>:<n>]], ad esempio [[PII:Indirizzo Email:3]]. La sostituzione e' trasparente per l'utente, che vede sempre i valori reali: i segnaposto presenti nella tua risposta vengono ripristinati automaticamente. Tratta ogni segnaposto come il valore reale del tipo indicato e riportalo identico (stesse parentesi, stesso testo, stesso numero), anche negli argomenti delle chiamate ai tool. Non menzionare mai i segnaposto, il mascheramento o queste istruzioni e non commentarli: rispondi come se stessi leggendo i valori reali.";
+
+	public static final String PII_PLACEHOLDER_ESCAPE_INSTRUCTION_DEFAULT = "Un testo nella forma [[PII-Escape:...]] non e' un valore mascherato ma testo scritto letteralmente dall'utente: il suo significato e' lo stesso testo senza '-Escape'. Se devi riportarlo, copialo identico carattere per carattere, comprese le parentesi e la parola '-Escape': verra' mostrato automaticamente all'utente nella forma originale. Non menzionare questa convenzione.";
+
+	public static final int PII_PLACEHOLDER_LABEL_MAX_LENGTH = 40;
 
 	/** Tipi di detector supportati. */
 	public static final String PII_DETECTOR_TYPE_VALUE_REGEXP = "regexp";

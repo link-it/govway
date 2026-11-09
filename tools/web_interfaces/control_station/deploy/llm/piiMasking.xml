@@ -45,6 +45,19 @@
 			<property name="llmPiiMasking.validate" />
 		</item>
 
+		<item type="select" name="piiReplacementMode" label="Modalità di sostituzione" required="true" reloadOnChange="true"
+			note="Pseudonimo realistico dello stesso formato oppure segnaposto [[PII:Etichetta:N]]">
+			<property name="llmPiiMasking.replacementMode" />
+		</item>
+
+		<item type="text" name="piiPlaceholderLabel" label="Etichetta" required="true"
+			note="Descrive al modello il tipo di dato mascherato e viene riportata nel segnaposto [[PII:Etichetta:N]]">
+			<conditions>
+				<condition><equals name="piiReplacementMode" value="placeholder" /></condition>
+			</conditions>
+			<property name="llmPiiMasking.placeholderLabel" />
+		</item>
+
 	</section>
 
 </config>

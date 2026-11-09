@@ -285,6 +285,12 @@ public class LLMOutboundRequestHandler implements OutRequestHandler {
 			if (engine.hasMaskers()) {
 				engine.maskRequest(canonical, cfg, vault, findings);
 			}
+			if (engine.hasPlaceholderRules()) {
+				org.openspcoop2.pdd.config.OpenSPCoop2Properties props = org.openspcoop2.pdd.config.OpenSPCoop2Properties.getInstance();
+				canonical.setSystem(org.openspcoop2.pdd.core.llm.pii.PiiPlaceholders.appendInstructions(canonical.getSystem(),
+						props.getLLMPiiMaskingPlaceholderInstruction(), props.getLLMPiiMaskingPlaceholderEscapeInstruction()));
+				pdd.addObject(LLMHandlerConstants.PDD_CTX_LLM_PII_PLACEHOLDER_MODE, Boolean.TRUE);
+			}
 			pdd.addObject(LLMHandlerConstants.PDD_CTX_LLM_PII_VAULT, vault);
 
 			emitPiiDiagnostics(context, cfg, findings, log);

@@ -177,6 +177,8 @@ public final class LLMHandlerConstants {
 	 */
 	public static final MapKey<String> PDD_CTX_LLM_REQUEST_HEADERS = Map.newMapKey("llm.requestHeaders");
 
+	public static final MapKey<String> PDD_CTX_LLM_PII_PLACEHOLDER_MODE = Map.newMapKey("llm.piiPlaceholderMode");
+
 	private LLMHandlerConstants() {
 		// utility class
 	}

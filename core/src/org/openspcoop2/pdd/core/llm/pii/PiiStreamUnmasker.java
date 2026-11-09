@@ -21,8 +21,10 @@ package org.openspcoop2.pdd.core.llm.pii;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * De-tokenizer stateful per lo streaming: i {@code text_delta} spezzano il testo in punti
@@ -45,11 +47,22 @@ public class PiiStreamUnmasker {
 	 * di ri-allocare la lista ad ogni chunk in {@link #safeCut(StringBuilder)}.
 	 */
 	private final List<String> reversiblePseudonyms;
+	private final boolean placeholderMode;
+	private final Set<String> unresolved = new LinkedHashSet<>();
 
 	public PiiStreamUnmasker(PiiVault vault) {
+		this(vault, false);
+	}
+
+	public PiiStreamUnmasker(PiiVault vault, boolean placeholderMode) {
 		this.vault = vault;
+		this.placeholderMode = placeholderMode;
 		this.maxPseudonymLength = Math.max(1, vault != null ? vault.getMaxReversiblePseudonymLength() : 1);
 		this.reversiblePseudonyms = vault != null ? vault.getReversiblePseudonyms() : Collections.emptyList();
+	}
+
+	public Set<String> getUnresolved() {
+		return this.unresolved;
 	}
 
 	/** Accoda un chunk di TESTO per l'indice e restituisce il prefisso sicuro, già ripristinato. */
@@ -72,6 +85,9 @@ public class PiiStreamUnmasker {
 			sb.append(chunk);
 		}
 		int cut = safeCut(sb);
+		if (this.placeholderMode) {
+			cut = PiiPlaceholders.adjustCut(sb.toString(), cut, json);
+		}
 		if (cut <= 0) {
 			return "";
 		}
@@ -111,7 +127,7 @@ public class PiiStreamUnmasker {
 	}
 
 	private String restore(String text, boolean json) {
-		return json ? this.vault.detokenizeJson(text) : this.vault.detokenize(text);
+		return PiiPlaceholders.restore(text, this.vault, this.placeholderMode, json, this.unresolved);
 	}
 
 	/**

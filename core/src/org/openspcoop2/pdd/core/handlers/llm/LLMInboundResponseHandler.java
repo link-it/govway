@@ -261,7 +261,7 @@ public class LLMInboundResponseHandler implements InResponseHandler {
 		AbstractBaseOpenSPCoop2MessageDynamicContent<?> dyn = (AbstractBaseOpenSPCoop2MessageDynamicContent<?>) msg;
 		final org.openspcoop2.pdd.core.PdDContext pddContext = context.getPddContext();
 		try {
-			InputStream wrapped = buildStreamingWrapper(dyn, dialect, providerId, pddContext);
+			InputStream wrapped = buildStreamingWrapper(context, dyn, dialect, providerId, pddContext, log);
 			stripContentEncoding(msg);
 			// La front-door espone sempre SSE, qualunque sia il transport del provider
 			// (es. Bedrock risponde application/vnd.amazon.eventstream).
@@ -277,8 +277,8 @@ public class LLMInboundResponseHandler implements InResponseHandler {
 		}
 	}
 
-	private InputStream buildStreamingWrapper(AbstractBaseOpenSPCoop2MessageDynamicContent<?> dyn, LLMDialect dialect, String providerId,
-			final org.openspcoop2.pdd.core.PdDContext pddContext) throws Exception {
+	private InputStream buildStreamingWrapper(InResponseContext context, AbstractBaseOpenSPCoop2MessageDynamicContent<?> dyn, LLMDialect dialect, String providerId,
+			final org.openspcoop2.pdd.core.PdDContext pddContext, org.slf4j.Logger log) throws Exception {
 		InputStream rawSrc = dyn.getInputStream();
 		InputStream src = rawSrc;
 		String ce = readContentEncoding(dyn);
@@ -297,12 +297,16 @@ public class LLMInboundResponseHandler implements InResponseHandler {
 		java.util.function.UnaryOperator<java.util.List<org.openspcoop2.message.llm.stream.CanonicalStreamEvent>> piiInterceptor = null;
 		if (pddContext != null) {
 			Object v = pddContext.getObject(LLMHandlerConstants.PDD_CTX_LLM_PII_VAULT);
+			boolean placeholderMode = LLMHandlerSupport.isPiiPlaceholderMode(pddContext);
 			if (v instanceof org.openspcoop2.pdd.core.llm.pii.PiiVault
-					&& !((org.openspcoop2.pdd.core.llm.pii.PiiVault) v).isEmpty()) {
+					&& (placeholderMode || !((org.openspcoop2.pdd.core.llm.pii.PiiVault) v).isEmpty())) {
 				Object cfgObj = pddContext.getObject(LLMHandlerConstants.PDD_CTX_LLM_PII_BINDING_CONFIG);
 				boolean unmaskToolUse = (cfgObj instanceof org.openspcoop2.pdd.core.llm.pii.PiiBindingConfig)
 						&& ((org.openspcoop2.pdd.core.llm.pii.PiiBindingConfig) cfgObj).isMaskToolUse();
-				piiInterceptor = new org.openspcoop2.pdd.core.llm.pii.PiiStreamEventInterceptor((org.openspcoop2.pdd.core.llm.pii.PiiVault) v, unmaskToolUse);
+				final org.openspcoop2.pdd.core.handlers.BaseContext diagContext = context;
+				final org.slf4j.Logger diagLog = log;
+				piiInterceptor = new org.openspcoop2.pdd.core.llm.pii.PiiStreamEventInterceptor((org.openspcoop2.pdd.core.llm.pii.PiiVault) v, unmaskToolUse,
+						placeholderMode, unresolved -> LLMHandlerSupport.emitPiiPlaceholderNonRisolti(diagContext, unresolved, diagLog));
 			}
 		}
 		java.util.function.UnaryOperator<java.util.List<CanonicalStreamEvent>> interceptor =

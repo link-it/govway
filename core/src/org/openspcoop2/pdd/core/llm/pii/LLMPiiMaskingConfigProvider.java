@@ -91,6 +91,14 @@ public class LLMPiiMaskingConfigProvider implements IProvider {
 			"Username (path)",
 			"Altro");
 
+	private static final List<String> SUPPORTED_REPLACEMENT_MODES = Arrays.asList(
+			Costanti.PII_REPLACEMENT_MODE_VALUE_PSEUDONYM,
+			Costanti.PII_REPLACEMENT_MODE_VALUE_PLACEHOLDER);
+
+	private static final List<String> SUPPORTED_REPLACEMENT_MODE_LABELS = Arrays.asList(
+			"Pseudonimo realistico",
+			"Segnaposto");
+
 	/** Tipi detector supportati (per i filtri di ricerca). */
 	public static List<String> supportedDetectorTypes() {
 		return new ArrayList<>(SUPPORTED_DETECTOR_TYPES);
@@ -146,6 +154,32 @@ public class LLMPiiMaskingConfigProvider implements IProvider {
 		}
 		else if (Costanti.PII_DETECTOR_TYPE_VALUE_PLUGIN.equals(detectorType)) {
 			validatePluginClassName(pDefault);
+		}
+		validateReplacementMode(pDefault);
+	}
+
+	private void validateReplacementMode(Properties pDefault) throws ProviderValidationException {
+		String mode = pDefault.getProperty(Costanti.LLM_PII_REPLACEMENT_MODE);
+		if (mode == null || StringUtils.isEmpty(mode)) {
+			return;
+		}
+		if (!SUPPORTED_REPLACEMENT_MODES.contains(mode)) {
+			throw new ProviderValidationException("Modalità di sostituzione non supportata: " + mode
+					+ " (supportate: " + SUPPORTED_REPLACEMENT_MODES + ")");
+		}
+		if (!Costanti.PII_REPLACEMENT_MODE_VALUE_PLACEHOLDER.equals(mode)) {
+			return;
+		}
+		String label = pDefault.getProperty(Costanti.LLM_PII_PLACEHOLDER_LABEL);
+		if (label == null || StringUtils.isEmpty(label.trim())) {
+			throw new ProviderValidationException("Indicare l'Etichetta del segnaposto");
+		}
+		if (label.trim().length() > Costanti.PII_PLACEHOLDER_LABEL_MAX_LENGTH) {
+			throw new ProviderValidationException("L'Etichetta del segnaposto non può superare "
+					+ Costanti.PII_PLACEHOLDER_LABEL_MAX_LENGTH + " caratteri");
+		}
+		if (PiiPlaceholders.containsReservedChars(label)) {
+			throw new ProviderValidationException("L'Etichetta del segnaposto non può contenere i caratteri ':', '[', ']', tabulazioni o ritorni a capo");
 		}
 	}
 
@@ -214,6 +248,9 @@ public class LLMPiiMaskingConfigProvider implements IProvider {
 		if (Costanti.ID_PII_CATEGORY.equals(id)) {
 			return new ArrayList<>(SUPPORTED_CATEGORIES);
 		}
+		if (Costanti.ID_PII_REPLACEMENT_MODE.equals(id)) {
+			return new ArrayList<>(SUPPORTED_REPLACEMENT_MODES);
+		}
 		return new ArrayList<>();
 	}
 
@@ -225,6 +262,9 @@ public class LLMPiiMaskingConfigProvider implements IProvider {
 		if (Costanti.ID_PII_CATEGORY.equals(id)) {
 			return new ArrayList<>(SUPPORTED_CATEGORY_LABELS);
 		}
+		if (Costanti.ID_PII_REPLACEMENT_MODE.equals(id)) {
+			return new ArrayList<>(SUPPORTED_REPLACEMENT_MODE_LABELS);
+		}
 		return new ArrayList<>();
 	}
 
@@ -235,6 +275,9 @@ public class LLMPiiMaskingConfigProvider implements IProvider {
 		}
 		if (Costanti.ID_PII_CATEGORY.equals(id)) {
 			return Costanti.PII_CATEGORY_VALUE_EMAIL;
+		}
+		if (Costanti.ID_PII_REPLACEMENT_MODE.equals(id)) {
+			return Costanti.PII_REPLACEMENT_MODE_VALUE_PSEUDONYM;
 		}
 		return null;
 	}
@@ -248,6 +291,9 @@ public class LLMPiiMaskingConfigProvider implements IProvider {
 	 */
 	@Override
 	public String dynamicUpdate(List<?> items, Map<String, String> mapNameValue, Item item, String actualValue) {
+		if (item != null && Costanti.ID_PII_PLACEHOLDER_LABEL.equals(item.getName())) {
+			return updatePlaceholderLabel(mapNameValue, actualValue);
+		}
 		if (item == null || !Costanti.ID_PII_PATTERNS.equals(item.getName())) {
 			return actualValue;
 		}
@@ -268,6 +314,17 @@ public class LLMPiiMaskingConfigProvider implements IProvider {
 		// personalizzata dall'utente (cioè è vuota o contiene ancora i default di un'altra categoria).
 		if (isBlankOrKnownDefault(actualValue)) {
 			return "";
+		}
+		return actualValue;
+	}
+
+	private String updatePlaceholderLabel(Map<String, String> mapNameValue, String actualValue) {
+		String category = mapNameValue != null ? mapNameValue.get(Costanti.ID_PII_CATEGORY) : null;
+		if (category == null) {
+			return actualValue;
+		}
+		if (actualValue == null || actualValue.trim().isEmpty() || PiiDefaultPatterns.isDefaultPlaceholderLabel(actualValue)) {
+			return PiiDefaultPatterns.getPlaceholderLabel(category);
 		}
 		return actualValue;
 	}

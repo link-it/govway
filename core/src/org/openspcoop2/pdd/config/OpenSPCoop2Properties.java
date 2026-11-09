@@ -35190,6 +35190,38 @@ public class OpenSPCoop2Properties {
 
 	
 	
+	private String llmPiiMaskingPlaceholderInstruction = null;
+	public String getLLMPiiMaskingPlaceholderInstruction() {
+		if(this.llmPiiMaskingPlaceholderInstruction==null){
+			this.llmPiiMaskingPlaceholderInstruction = readLLMPiiMaskingInstruction("org.openspcoop2.pdd.llm.piiMasking.placeholder.instruction",
+					org.openspcoop2.pdd.core.llm.pii.Costanti.PII_PLACEHOLDER_INSTRUCTION_DEFAULT);
+		}
+		return this.llmPiiMaskingPlaceholderInstruction;
+	}
+
+	private String llmPiiMaskingPlaceholderEscapeInstruction = null;
+	public String getLLMPiiMaskingPlaceholderEscapeInstruction() {
+		if(this.llmPiiMaskingPlaceholderEscapeInstruction==null){
+			this.llmPiiMaskingPlaceholderEscapeInstruction = readLLMPiiMaskingInstruction("org.openspcoop2.pdd.llm.piiMasking.placeholder.escapeInstruction",
+					org.openspcoop2.pdd.core.llm.pii.Costanti.PII_PLACEHOLDER_ESCAPE_INSTRUCTION_DEFAULT);
+		}
+		return this.llmPiiMaskingPlaceholderEscapeInstruction;
+	}
+
+	private String readLLMPiiMaskingInstruction(String propertyName, String defaultValue) {
+		try{
+			String value = this.reader.getValueConvertEnvProperties(propertyName);
+			if(value!=null && !value.trim().isEmpty()){
+				return value.trim();
+			}
+			this.logWarn("Proprieta' di govway '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue);
+		}catch(java.lang.Exception e) {
+			this.logError("Riscontrato errore durante la lettura della proprieta' di govway '"+propertyName+"', viene utilizzato il default: "+e.getMessage(),e);
+		}
+		return defaultValue;
+	}
+
+
 	// Header Retry After
 	
 	private String [] getControlloTrafficoRetryAfterHeader = null;
