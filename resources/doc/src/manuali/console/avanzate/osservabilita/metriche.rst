@@ -11,8 +11,7 @@ lettura è descritta nella sezione :ref:`osservabilitaIstogrammi`.
 
 .. _osservabilitaLabelComuni:
 
-Label comuni
-^^^^^^^^^^^^
+**Label comuni**
 
 Alcune label ricorrono in più metriche; se ne riporta qui il significato una volta sola.
 
@@ -45,10 +44,9 @@ Alcune label ricorrono in più metriche; se ne riporta qui il significato una vo
 
 .. _osservabilitaLabelDettaglio:
 
-Label delle metriche di dettaglio
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+**Label delle metriche di dettaglio**
 
-Le metriche di dettaglio per servizio (sezione :ref:`osservabilitaCatalogoDettaglio`) riportano le
+Le metriche di dettaglio per servizio (sezione :ref:`Metriche di dettaglio per servizio <osservabilitaCatalogoDettaglio>`) riportano le
 seguenti label, che identificano l'erogazione o la fruizione che ha gestito la richiesta. I nomi
 riprendono quelli utilizzati negli header di integrazione e nel tracciamento su file. Le label sono
 sempre presenti; quelle non applicabili hanno valore vuoto.
@@ -87,8 +85,7 @@ sempre presenti; quelle non applicabili hanno valore vuoto.
        serie di tutte le API che possiedono un determinato tag si può utilizzare l'espressione
        regolare ``tags=~"(.*,)?Anagrafica(,.*)?"``.
 
-Metriche di sistema di GovWay
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+**Metriche di sistema di GovWay**
 
 Gauge che campionano *live* (ad ogni scrape) lo stato interno del gateway. Sono sempre esposte.
 
@@ -153,8 +150,7 @@ Gauge che campionano *live* (ad ogni scrape) lo stato interno del gateway. Sono 
        (es. ``configurazionePdD``, ``autenticazione``, ``autorizzazione``, ``gestoreRichieste-API``,
        ``responseCaching``, ...).
 
-Metriche di transazione
-^^^^^^^^^^^^^^^^^^^^^^^^
+**Metriche di transazione**
 
 Registrate una volta per transazione. Sono sempre attive (a prescindere dalla proprietà di
 dettaglio per servizio).
@@ -185,15 +181,14 @@ dettaglio per servizio).
 
 .. _osservabilitaCatalogoDettaglio:
 
-Metriche di dettaglio per servizio
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+**Metriche di dettaglio per servizio**
 
 Vengono prodotte **solo per le erogazioni/fruizioni su cui sono abilitate le metriche di
 dettaglio** (sezione :ref:`osservabilitaMetricheDettaglio`). Consentono di analizzare latenze,
 dimensioni e tempi di elaborazione per singola API/servizio/operazione.
 
 Rispetto alle metriche di transazione aggiungono le label descritte nella sezione
-:ref:`osservabilitaLabelDettaglio`.
+:ref:`Label delle metriche di dettaglio <osservabilitaLabelDettaglio>`.
 
 .. list-table::
    :header-rows: 1
@@ -234,8 +229,7 @@ fasi di elaborazione di GovWay: ``token``, ``authentication``, ``tokenAuthentica
 ``responseCachingReadFromCache``, ``responseCachingSaveInCache``, ``requestTransformation``,
 ``responseTransformation``, ``attributeAuthority``.
 
-Metriche di persistenza del tracciamento
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+**Metriche di persistenza del tracciamento**
 
 Misurano il tempo impiegato per la persistenza del tracciamento su database. Vengono registrate per
 **tutte** le transazioni (non solo quelle "lente"), ma **richiedono l'abilitazione dello slow-log**
@@ -268,8 +262,7 @@ vengono prodotte.
        ``insertTransaction``, ``insertDiagnostics``, ``insertTrace``, ``insertContents``,
        ``insertResources``, ``commit``. Bucket: ``persistence-slotMs``.
 
-Metriche degli eventi
-^^^^^^^^^^^^^^^^^^^^^^
+**Metriche degli eventi**
 
 .. list-table::
    :header-rows: 1
@@ -286,8 +279,7 @@ Metriche degli eventi
 
 .. _osservabilitaMetricheJvm:
 
-Metriche di sistema JVM/process
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+**Metriche di sistema JVM/process**
 
 Se abilitate (``observability.metrics.system-metrics.enabled=true``, sezione
 :ref:`osservabilitaConfigurazioneAvanzata`), vengono esposte le metriche

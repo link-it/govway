@@ -42,8 +42,7 @@ Erogatore*, da selezionare come soggetto che eroga il servizio (:numref:`fruizio
     *Connettore*, nel caso della fruizione questi consiste nei dati di
     puntamento al servizio erogato sul dominio esterno.
 
-Condivisione dei dati di integrazione
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+**Condivisione dei dati di integrazione**
 
 Le richieste di fruizione, pervenute a GovWay, vengono elaborate e, nel
 corso dell'operazione, vengono creati i riferimenti alle entità di
@@ -61,8 +60,7 @@ GovWay comunica i dati di contesto ricavati, ai sistemi interlocutori:
 
 Per ulteriori dettagli si consiglia di consultare la sezione :ref:`headerIntegrazione`.
 
-Errori Generati dal Gateway
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+**Errori Generati dal Gateway**
 
 Analogamente a quanto descritto per le erogazioni, la gestione dei casi
 di errore nelle comunicazioni mediate da un Gateway devono tenere conto

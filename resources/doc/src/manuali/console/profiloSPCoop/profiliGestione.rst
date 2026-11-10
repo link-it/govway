@@ -50,8 +50,7 @@ In entrmabi i casi, per erogare il servizio con la giusta modalita
 (linee guida o e-gov 1.1) è *possibile ridefinire il profilo di gestione
 impostandolo nella lista dei fruitori del servizio*.
 
-Profilo di gestione e-Gov 1.1
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+**Profilo di gestione e-Gov 1.1**
 
 Il documento delle linee guida ha deprecato alcune opzioni al fine di
 snellire la specifica. Per mantenere la conpatibilità con la vecchia

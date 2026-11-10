@@ -5,8 +5,7 @@ Configurazione coesistenza degli header in una Fruizione
 
 La configurazione differisce a seconda se il token di sicurezza deve essere generato (Richiesta) o validato (Risposta). Di seguito vengono descritte le opzioni di configurazione possibili per le due fasi.
 
-Richiesta
-^^^^^^^^^^^^^^
+**Richiesta**
 
 Di seguito vengono descritti i parametri di configurazione riguardanti la generazione dei due token nel flusso di richiesta.
 
@@ -38,8 +37,7 @@ Di seguito vengono descritti i parametri di configurazione riguardanti la genera
 - Claims 'Authorization' e 'Agid-JWT-Signature': consente di modificare i valori di default associati ai claim standard e/o di definirne altri solamente all'interno del token dell'header indicato. Per maggiori dettagli sulle configurazioni disponibili si rimanda alla sezione :ref:`modipa_sicurezza_avanzate_claims`.
 
 
-Risposta
-^^^^^^^^^^^^^^
+**Risposta**
 
 Di seguito vengono descritti i parametri di configurazione riguardanti la validazione dei due token nel flusso di risposta.
 

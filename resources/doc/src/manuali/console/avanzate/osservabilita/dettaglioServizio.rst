@@ -21,11 +21,11 @@ vengono prodotte solamente per le azioni dei gruppi in cui la proprietà è stat
 esempio, registrando la proprietà solamente nella configurazione di un gruppo, le azioni degli altri
 gruppi e della configurazione predefinita continuano a produrre le sole metriche aggregate.
 
-Le metriche di dettaglio riportano le label descritte nella sezione :ref:`osservabilitaLabelDettaglio`:
+Le metriche di dettaglio riportano le label descritte nella sezione :ref:`Label delle metriche di dettaglio <osservabilitaLabelDettaglio>`:
 la label ``interface_id`` identifica univocamente l'erogazione o la fruizione (riporta sempre la
 configurazione predefinita, anche quando la richiesta è gestita da un gruppo), mentre la label
 ``group`` indica il gruppo che ha gestito la richiesta. L'elenco delle metriche prodotte è riportato
-nella sezione :ref:`osservabilitaCatalogoDettaglio`.
+nella sezione :ref:`Metriche di dettaglio per servizio <osservabilitaCatalogoDettaglio>`.
 
 .. note::
    Ogni combinazione di valori delle label genera una serie distinta nel sistema di monitoraggio:

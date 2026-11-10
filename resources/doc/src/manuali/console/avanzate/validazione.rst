@@ -5,13 +5,13 @@ Validazione dei messaggi con OpenAPI / Swagger
 
 Nella sezione :ref:`configSpecificaValidazione` è stata descritta la funzionalità di validazione dei messaggi applicativi in transito sul gateway.
 
-GovWay supporta tre formati di specifica per le API REST: *Swagger 2.0*, *OpenAPI 3.0* e *OpenAPI 3.1*. Il formato di alto livello (Swagger 2 oppure Open API 3) viene indicato dall'utente nel campo *Formato Specifica* in fase di registrazione dell'API; per le specifiche Open API 3 la distinzione tra 3.0 e 3.1 avviene poi automaticamente sul valore del campo *openapi* dichiarato nella specifica stessa. Per ciascun formato è definito un motore di validazione di default (le librerie utilizzabili e i rispettivi default sono descritti nella sezione :ref:`configAvanzataValidazioneEngine`). Qualora si desideri utilizzare un motore diverso dal default, è possibile sovrascrivere la scelta a livello di singola erogazione o fruizione registrando una delle seguenti :ref:`configProprieta`:
+GovWay supporta tre formati di specifica per le API REST: *Swagger 2.0*, *OpenAPI 3.0* e *OpenAPI 3.1*. Il formato di alto livello (Swagger 2 oppure Open API 3) viene indicato dall'utente nel campo *Formato Specifica* in fase di registrazione dell'API; per le specifiche Open API 3 la distinzione tra 3.0 e 3.1 avviene poi automaticamente sul valore del campo *openapi* dichiarato nella specifica stessa. Per ciascun formato è definito un motore di validazione di default (le librerie utilizzabili e i rispettivi default sono descritti nella sezione :ref:`Motori di validazione supportati <configAvanzataValidazioneEngine>`). Qualora si desideri utilizzare un motore diverso dal default, è possibile sovrascrivere la scelta a livello di singola erogazione o fruizione registrando una delle seguenti :ref:`configProprieta`:
 
 - *validation.swagger.2.library=<libreria>* (default: json_schema): motore di validazione utilizzato per le specifiche Swagger 2.0;
 - *validation.openApi.30.library=<libreria>* (default: openapi4j): motore di validazione utilizzato per le specifiche OpenAPI 3.0;
 - *validation.openApi.31.library=<libreria>* (default: kappa): motore di validazione utilizzato per le specifiche OpenAPI 3.1.
 
-Per ciascuna property è ammesso solo un motore compatibile con il formato corrispondente (vedi la tabella di compatibilità in :ref:`configAvanzataValidazioneEngine`); l'indicazione di un motore non compatibile è rilevata all'avvio dell'erogazione/fruizione con segnalazione esplicita di errore.
+Per ciascuna property è ammesso solo un motore compatibile con il formato corrispondente (vedi la tabella di compatibilità in :ref:`Motori di validazione supportati <configAvanzataValidazioneEngine>`); l'indicazione di un motore non compatibile è rilevata all'avvio dell'erogazione/fruizione con segnalazione esplicita di errore.
 
 Se si vuole modificare il tipo di validazione effettuata con i motori configurati è possibile farlo abilitando (true) o disabilitando (false) la specifica funzionalità registrando una delle seguenti :ref:`configProprieta` sull'erogazione o sulla fruizione (per default tutte le proprietà elencate sono abilitate):
 
@@ -38,8 +38,7 @@ Per il motore di validazione 'swagger-request-validator' sono disponibili le ult
 
 .. _configAvanzataValidazioneEngine:
 
-Motori di validazione supportati
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+**Motori di validazione supportati**
 
 I motori di validazione disponibili e selezionabili tramite le proprietà *validation.swagger.2.library*, *validation.openApi.30.library* e *validation.openApi.31.library* sono i seguenti.
 
@@ -69,8 +68,7 @@ In sintesi: il default per Swagger 2.0 è *json_schema*, per le specifiche OpenA
 
 .. _configAvanzataValidazioneRetrocompatibilita:
 
-Retrocompatibilità
-^^^^^^^^^^^^^^^^^^
+**Retrocompatibilità**
 
 Le proprietà elencate in questa sezione sono mantenute per garantire la compatibilità con le configurazioni preesistenti ma sono **deprecate** e potrebbero essere rimosse in versioni future. Si raccomanda di sostituirle con le proprietà del modello a tre famiglie descritto nella sezione principale.
 

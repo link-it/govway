@@ -50,8 +50,7 @@ Gli schemi di compressione attualmente gestiti dalla decompressione automatica s
 
 .. _contentEncodingSenzaDecompressione:
 
-Contenuti compressi senza decompressione automatica
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+**Contenuti compressi senza decompressione automatica**
 
 Con la decompressione automatica disabilitata (default) un contenuto compresso viene inoltrato sempre così come ricevuto: i byte e l'header *Content-Encoding* non vengono modificati.
 
@@ -76,8 +75,7 @@ In particolare:
 
 .. _contentEncodingProblemCompressi:
 
-Problem Details e fault compressi
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+**Problem Details e fault compressi**
 
 Anche senza la decompressione automatica, GovWay interpreta un Problem Details (:ref:`rfc7807`) o un fault ricevuto compresso, poiché le relative informazioni sono utilizzate dalle regole della gestione della consegna (es. nelle notifiche), dai diagnostici e dal fault registrato nella transazione. L'interpretazione avviene su una copia decompressa, lasciando invariata la risposta inoltrata al chiamante.
 
@@ -87,8 +85,7 @@ La copia decompressa non può superare la dimensione indicata dalla proprietà *
 
 .. _contentEncodingDigest:
 
-Integrità del payload (Digest) e decompressione
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+**Integrità del payload (Digest) e decompressione**
 
 L'header *Digest* (`RFC 3230 <https://www.rfc-editor.org/rfc/rfc3230>`_), utilizzato ad esempio dai pattern di integrità REST del profilo ModI, si riferisce ai byte trasmessi, cioè al contenuto compresso:
 

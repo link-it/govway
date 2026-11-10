@@ -22,8 +22,7 @@ abilitarle; l'endpoint, il catalogo delle metriche esposte, la configurazione av
 di integrazione con i sistemi di monitoraggio sono descritti nella sezione
 :ref:`configAvanzataOsservabilita`.
 
-File di configurazione
-~~~~~~~~~~~~~~~~~~~~~~
+**File di configurazione**
 
 La configurazione dei collettori si effettua nel file
 *<directory-lavoro>/govway_local.observability.properties*, prodotto dall'installer, che ridefinisce
@@ -61,8 +60,7 @@ I valori delle proprietà possono riferire variabili di sistema o java tramite l
 (ad esempio ``${HOSTNAME}``), comprese le variabili definite nella *Secrets Map*
 (:ref:`govwaySecretsMap`).
 
-Collettore Prometheus (pull)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+**Collettore Prometheus (pull)**
 
 Il file prodotto dall'installer contiene già la definizione del collettore ``prometheus``; per
 abilitarlo è sufficiente indicarlo tra i collettori attivi:
@@ -81,8 +79,7 @@ Le metriche vengono esposte sull'endpoint ``/govway/metrics`` del gateway (sezio
    stato dei pool e della JVM): è necessario regolarne l'accesso a livello di rete o di reverse
    proxy, esponendolo solamente verso il sistema di monitoraggio.
 
-Collettore OTLP (push)
-~~~~~~~~~~~~~~~~~~~~~~
+**Collettore OTLP (push)**
 
 .. code-block:: properties
 

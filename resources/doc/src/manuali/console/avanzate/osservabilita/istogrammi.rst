@@ -8,8 +8,7 @@ metriche di tipo *histogram*. Un istogramma non riporta le singole misurazioni m
 soglia configurata (*bucket*), il numero di misurazioni che non l'hanno superata. Le soglie sono
 definite dalle proprietà descritte nella sezione :ref:`osservabilitaConfigurazioneAvanzata`.
 
-Proprietà e metriche
-^^^^^^^^^^^^^^^^^^^^
+**Proprietà e metriche**
 
 Ogni proprietà definisce le soglie di un gruppo di metriche:
 
@@ -28,8 +27,7 @@ Ogni proprietà definisce le soglie di un gruppo di metriche:
      - ``govway_tracing_persistence_seconds``, ``govway_tracing_persistence_components_seconds``,
        ``govway_tracing_persistence_components_details_seconds``
 
-Dalla proprietà all'output
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+**Dalla proprietà all'output**
 
 Con la configurazione di default:
 
@@ -70,8 +68,7 @@ come previsto dalle convenzioni Prometheus per le metriche con suffisso ``_secon
 ``5`` diventa ``le="0.005"``. Le soglie delle dimensioni restano invece in byte: il valore ``256``
 diventa ``le="256.0"``.
 
-Utilizzo nelle query
-^^^^^^^^^^^^^^^^^^^^
+**Utilizzo nelle query**
 
 **Percentili.** La funzione PromQL ``histogram_quantile`` stima un percentile a partire dai
 bucket. Ad esempio il 95° percentile della latenza negli ultimi 5 minuti:
@@ -95,8 +92,7 @@ entro 500 millisecondi:
 
 Il calcolo è esatto solamente se la soglia di interesse è presente tra quelle configurate.
 
-Scelta delle soglie
-^^^^^^^^^^^^^^^^^^^
+**Scelta delle soglie**
 
 Ogni soglia produce una serie per ciascuna combinazione di label della metrica (ruolo, esito,
 servizio, fase, ...). Aumentare il numero di soglie migliora la precisione dei percentili ma

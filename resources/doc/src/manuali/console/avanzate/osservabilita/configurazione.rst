@@ -7,8 +7,7 @@ Oltre all'abilitazione dei collettori (sezione :ref:`osservabilitaInstall`), il 
 *<directory-lavoro>/govway_local.observability.properties* consente di personalizzare le metriche
 prodotte. Le proprietà vengono lette all'avvio: una modifica richiede il riavvio del gateway.
 
-Default per segnale
-^^^^^^^^^^^^^^^^^^^
+**Default per segnale**
 
 È possibile definire dei **default per segnale**, validi per tutti i collettori, omettendo il
 segmento ``collector.<name>``:
@@ -21,18 +20,16 @@ segmento ``collector.<name>``:
 I valori specifici del collettore (``observability.collector.<name>.<chiave>``) hanno la
 precedenza sui default (``observability.<chiave>``).
 
-Metriche di sistema
-^^^^^^^^^^^^^^^^^^^
+**Metriche di sistema**
 
 L'esposizione delle metriche di sistema JVM/process (memoria, garbage collector, thread, CPU,
-uptime, ecc.) descritte nella sezione :ref:`osservabilitaMetricheJvm` è attivabile/disattivabile con:
+uptime, ecc.) descritte nella sezione :ref:`Metriche di sistema JVM/process <osservabilitaMetricheJvm>` è attivabile/disattivabile con:
 
 .. code-block:: properties
 
    observability.metrics.system-metrics.enabled=true
 
-Bucket degli istogrammi (SLO)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+**Bucket degli istogrammi (SLO)**
 
 I confini (*bucket*) degli istogrammi sono configurabili come liste di valori separati da virgola.
 Sono definiti tre insiemi, applicati rispettivamente alla latenza delle richieste, alla dimensione

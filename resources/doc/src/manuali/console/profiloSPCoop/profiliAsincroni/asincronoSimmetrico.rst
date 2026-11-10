@@ -15,8 +15,7 @@ seguito un esempio di tale configurazione.
 
     Correlazione Asincrona Simmetrica
 
-Ruolo Fruitore
-^^^^^^^^^^^^^^
+**Ruolo Fruitore**
 
 Per poter fruire di un servizio con il profilo asincrono simmetrico come prerequisito è richiesto almeno la registrazione di un applicativo client.
 La registrazione dell'applicativo fruitore deve prevedere, oltre alle normali configurazioni, la definizione di un connettore attraverso il quale la PdD consegnerà la risposta asincrona. 
@@ -49,8 +48,7 @@ Terminata la registrazione della fruizione, dovrà essere registrata un'erogazio
 	Durante la registrazione dell'erogazione del servizio di risposta,  al connettore richiesto dalla maschera di configurazione può essere fornito un endpoint qualsiasi. Tale endpoint non verrà effettivamente utilizzato poiché la risposta asincrona ricevuta verrà inoltrata al backend configurato come 'Risposta Asincrona' dell'applicativo client che ha effettuato la richiesta.
 
 
-Ruolo Erogatore
-^^^^^^^^^^^^^^^
+**Ruolo Erogatore**
 
 Per poter erogare un servizio con il profilo asincrono simmetrico non
 sono richieste particolari configurazioni. Dovrà essere erogato il

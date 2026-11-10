@@ -3,8 +3,7 @@
 Integrazione con i sistemi di monitoraggio
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Prometheus (pull)
-^^^^^^^^^^^^^^^^^
+**Prometheus (pull)**
 
 Per acquisire le metriche esposte da GovWay è sufficiente configurare un *job* di scrape in
 Prometheus che punti all'endpoint ``/metrics`` (vedi :ref:`osservabilitaEndpoint`):
@@ -38,8 +37,7 @@ determinato tag (la label ``tags`` riporta i tag dell'API separati da virgola):
 
    sum by (result_class) (rate(govway_service_requests_total{tags=~"(.*,)?Anagrafica(,.*)?"}[5m]))
 
-OTLP (push)
-^^^^^^^^^^^
+**OTLP (push)**
 
 Configurando un collettore di tipo ``otel`` (sezione :ref:`osservabilitaInstall`), GovWay invia
 le metriche a un *OpenTelemetry Collector*, che può a sua volta inoltrarle al backend desiderato

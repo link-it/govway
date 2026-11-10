@@ -7,8 +7,7 @@ Il gateway indicizza informazioni sul mittente di ogni richiesta (credenziali di
 
 .. _tracciamentoTransazioniDBCredenzialiMittenteAbilitazione:
 
-Abilitazione per tipo di credenziale
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+**Abilitazione per tipo di credenziale**
 
 È possibile disabilitare l'indicizzazione per uno o più tipi di credenziale, evitando la creazione di entry nella tabella *credenziale_mittente* e la valorizzazione della colonna corrispondente nella tabella *transazioni*. Disabilitare i tipi non utilizzati consente di risparmiare risorse database e migliorare le prestazioni.
 
@@ -71,8 +70,7 @@ La tabella seguente riassume i tipi di credenziale configurabili e la colonna de
 
 .. _tracciamentoTransazioniDBCredenzialiMittenteOverride:
 
-Ridefinizione per singola erogazione o fruizione
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+**Ridefinizione per singola erogazione o fruizione**
 
 La configurazione globale può essere ridefinita sulla singola erogazione o fruizione utilizzando le :ref:`configProprieta`. Il nome della proprietà è composto dal prefisso *trace.index.* seguito dal nome del tipo di credenziale indicato nella colonna *Proprietà* della tabella precedente. I valori ammessi sono *true* o *false*.
 
@@ -95,8 +93,7 @@ Se una proprietà non è definita sulla singola erogazione o fruizione, viene ut
 
 .. _tracciamentoTransazioniDBCredenzialiMittenteModI:
 
-Indicizzazione credenziali dal token ModI Authorization
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+**Indicizzazione credenziali dal token ModI Authorization**
 
 Per le API REST con profilo ModI e opzione "Generazione Token: Authorization ModI" (token generato dal fruitore anziché ottenuto dalla PDND), il gateway può indicizzare i claim *issuer*, *subject* e *client_id* estratti dal token JWT presente nell'header Authorization. Le informazioni vengono memorizzate nelle stesse colonne utilizzate per i token gestiti tramite token policy di validazione (*token_issuer*, *token_client_id*, *token_subject*).
 
@@ -123,8 +120,7 @@ La configurazione globale può essere ridefinita sulla singola erogazione o frui
 
 .. _tracciamentoTransazioniDBCredenzialiMittenteUpdateAfterSeconds:
 
-Aggiornamento temporale delle credenziali
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+**Aggiornamento temporale delle credenziali**
 
 Le credenziali salvate nella tabella *credenziale_mittente* contengono un timestamp che indica il momento della creazione. Il gateway aggiorna tale data quando accede ad una credenziale la cui data di creazione è più vecchia della soglia configurata. Questo meccanismo consente di individuare le credenziali non più utilizzate.
 
@@ -136,8 +132,7 @@ Le credenziali salvate nella tabella *credenziale_mittente* contengono un timest
 
 .. _tracciamentoTransazioniDBCredenzialiMittenteSanitizePort:
 
-Sanitizzazione porta indirizzo IP
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+**Sanitizzazione porta indirizzo IP**
 
 L'indirizzo IP del client viene determinato esaminando gli header HTTP della richiesta nel seguente ordine di priorità; viene utilizzato il valore presente nel primo header trovato:
 
