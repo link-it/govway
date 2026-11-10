@@ -8,8 +8,7 @@ Questa sezione consente di definire le policy di rate limiting che hanno un ragg
 L'attivazione di una Policy Globale segue in prevalenza il medesimo criterio già descritto nella sezione :ref:`rateLimiting_attivazioneNuovaPolicy` riguardo il caso della configurazione di una singola erogazione/fruizione. Vi sono però alcune differenze che riguadano i criteri di raggruppamento, per il calcolo dei valori di soglia, e i criteri di filtro per l'applicabilità della policy.
 
 
-Raggruppamento
-++++++++++++++
+**Raggruppamento**
 
 Come descritto nella sezione :ref:`rateLimiting_attivazioneNuovaPolicy` è possibile definire dei criteri di raggruppamento che consentono di verificare i valori di soglia. La logica è del tutto analoga a quella dell'operatore GROUP BY del linguaggio SQL.
 
@@ -39,8 +38,7 @@ I criteri di raggruppamento, per una policy a livello globale, sono maggiori ris
     Definizione criteri di raggruppamento per la policy di rate limiting
 
 
-Filtro
-++++++
+**Filtro**
 
 Abilitando questa sezione è possibile indicare i criteri affinché la policy sia applicabile in base alle caratteristiche di ciascuna richiesta in ingresso. In assenza di filtro, la policy sarà valutata su tutte le richieste in ingresso che riguardano l’erogazione/fruizione che si sta configurando. I criteri di filtro, per una policy a livello globale, sono maggiori rispetto a quelli descritti in precedenza nella sezione :ref:`rateLimiting_attivazioneNuovaPolicy` (:numref:`policyRateLimitingFiltroFig`):
 

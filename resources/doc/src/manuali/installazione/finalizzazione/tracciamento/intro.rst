@@ -3,8 +3,7 @@ Configurazione del Tracciamento
 
 GovWay registra le informazioni relative alle comunicazioni gestite attraverso un sistema di tracciamento altamente configurabile. Durante la fase di finalizzazione dell'installazione è fondamentale valutare attentamente le modalità di tracciamento da attivare, in quanto impattano sia sulle prestazioni del sistema che sui requisiti di storage.
 
-Configurazione di Default
-"""""""""""""""""""""""""
+**Configurazione di Default**
 
 Il sistema viene distribuito con una configurazione di default che prevede:
 
@@ -15,8 +14,7 @@ Il sistema viene distribuito con una configurazione di default che prevede:
 
 Questa configurazione rappresenta un buon compromesso tra completezza delle informazioni registrate e impatto sulle prestazioni, in quanto il tracciamento avviene dopo che la risposta è stata consegnata al client.
 
-Fasi di Tracciamento
-""""""""""""""""""""""
+**Fasi di Tracciamento**
 
 GovWay consente di configurare il tracciamento in diverse fasi del processamento di una richiesta, come descritto dettagliatamente nella sezione :ref:`tracciamentoTransazioniFasi` della documentazione della console:
 
@@ -28,8 +26,7 @@ GovWay consente di configurare il tracciamento in diverse fasi del processamento
 .. note::
    L'attivazione di fasi di tracciamento anticipate (richiesta ricevuta, richiesta in consegna, risposta in consegna) aumenta la completezza delle informazioni registrate ma può impattare sulle prestazioni e sulla disponibilità del servizio se configurate in modalità bloccante.
 
-Tracciamento su Database
-""""""""""""""""""""""""
+**Tracciamento su Database**
 
 Il tracciamento su database, descritto nella sezione :ref:`tracciamentoTransazioniDB`, è la modalità principale per registrare le transazioni gestite dal gateway. Le informazioni vengono salvate in tabelle dedicate e sono consultabili tramite la console di monitoraggio (:ref:`mon_intro`).
 
@@ -60,8 +57,7 @@ Una volta risolto il problema del database, è possibile recuperare manualmente 
 
 Per maggiori dettagli sul recupero manuale delle tracce dalla directory DLQ, consultare la sezione :ref:`tracciamentoInstallDLQ`.
 
-Tracciamento su File
-""""""""""""""""""""""
+**Tracciamento su File**
 
 Il tracciamento su file, descritto nella sezione :ref:`tracciamentoTransazioniFileTrace`, consente di registrare le informazioni delle transazioni direttamente su file di log, facilitando l'integrazione con sistemi di log management esterni (FileBeat, Logstash, Fluentd, Kafka, Splunk, ...).
 

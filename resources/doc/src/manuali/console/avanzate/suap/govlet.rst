@@ -15,8 +15,7 @@ Le GovLet sono organizzate per attore: ogni archivio configura tutti gli e-servi
 
 Ogni archivio contiene inoltre la token policy di validazione del voucher PDND e la registrazione del plugin di adeguamento del formato di errori descritto nella sezione :ref:`configAvanzataSua`, già attivato su tutte le erogazioni interne.
 
-GovLet SUAP
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+**GovLet SUAP**
 
 Le GovLet SUAP sono disponibili in due versioni, ciascuna allineata a una diversa versione approvata delle `specifiche tecniche DPR 160/2010 <https://github.com/AgID/specifiche-tecniche-DPR-160-2010>`_. La versione della specifica determina anche la versione delle API e delle erogazioni create dalla GovLet.
 
@@ -61,8 +60,7 @@ Rispetto alla v1, la v2 recepisce le nuove operation introdotte da *approved02* 
 .. note::
     Le interfacce OpenAPI incluse negli archivi contengono alcune correzioni rispetto a quelle pubblicate da AgID, necessarie affinché la validazione dei contenuti non scarti richieste conformi ai flussi descritti dalle specifiche.
 
-GovLet SUE
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+**GovLet SUE**
 
 Le GovLet SUE hanno la stessa struttura e lo stesso contesto di utilizzo di quelle SUAP e si riferiscono agli e-service descritti nell'`Allegato Tecnico SUE <https://github.com/AgID/SUE-allegato-tecnico>`_, le cui interfacce OpenAPI sono pubblicate nella cartella `OpenAPI <https://github.com/AgID/SUE-allegato-tecnico/tree/main/OpenAPI>`_ del medesimo repository. Gli archivi sono disponibili in `protocolli/modipa/example/config/SUE <https://github.com/link-it/govway/tree/master/protocolli/modipa/example/config/SUE>`_.
 
@@ -81,8 +79,7 @@ Le GovLet SUE hanno la stessa struttura e lo stesso contesto di utilizzo di quel
    * - GovWay_SUE-RI-to-Test
      - SUE-RI-to-BO
 
-Dati richiesti durante l'importazione
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+**Dati richiesti durante l'importazione**
 
 Tutte le GovLet, sia SUAP che SUE, richiedono i medesimi dati:
 

@@ -15,16 +15,14 @@ seguito un esempio di tale configurazione.
 
     Correlazione Asincrona Asimmetrica
 
-Ruolo Fruitore
-^^^^^^^^^^^^^^
+**Ruolo Fruitore**
 
 Per poter fruire un servizio con il profilo asincrono asimmetrico non
 sono richieste particolari configurazioni. Dovrà essere fruito il
 servizio su cui inviare la richiesta e richiedere l'esito della
 risposta.
 
-Ruolo Erogatore
-^^^^^^^^^^^^^^^
+**Ruolo Erogatore**
 
 Per poter erogare un servizio con il profilo asincrono asimmetrico come prerequisito è richiesto la registrazione di un applicativo server.
 Durante la registrazione dell'applicativo possono essere indicati i parametri di accesso al backend a cui consegnare la richiesta asincrona.

@@ -68,8 +68,7 @@ Compilare il form (:numref:`erogazioneNewFig`) inserendo i seguenti dati:
 .. note::
     Se l'API riferita dall'erogazione possiede un descrittore (WSDL, OpenAPI, ecc.) l'interfaccia propone come valore di default per il connettore l'endpoint del servizio.
 
-Completamento configurazione e indirizzamento del servizio
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+**Completamento configurazione e indirizzamento del servizio**
 
 Dopo aver definito le API e registrato la relativa erogazione, come
 descritto nelle sezioni precedenti, si dispone della configurazione di
@@ -150,8 +149,7 @@ La pagina di dettaglio dell'erogazione visualizza i principali elementi di confi
 
 Ulteriori elementi possono essere indicati per specificare il funzionamento dell'erogazione. Si tratta degli elementi di configurazione specifica, per i cui dettagli si rimanda alla sezione :ref:`configSpecifica`.
 
-Condivisione dei dati di integrazione
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+**Condivisione dei dati di integrazione**
 
 Le richieste di erogazione, pervenute a GovWay, vengono elaborate e, nel
 corso dell'operazione, vengono creati i riferimenti alle entità di
@@ -177,8 +175,7 @@ ed in particolare:
 
    -  *GovWay-Transaction-ID*
 
-Errori Generati dal Gateway
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+**Errori Generati dal Gateway**
 
 La gestione dei casi di errore, nelle comunicazioni mediate da un Gateway, deve tener conto di ulteriori casi di errore che possono presentarsi rispetto al dialogo diretto tra gli applicativi.
 Oltre agli errori già previsti nelle interfacce dell'API, gli applicativi client possono pertanto ricevere due tipi di errori generati direttamente da GovWay:

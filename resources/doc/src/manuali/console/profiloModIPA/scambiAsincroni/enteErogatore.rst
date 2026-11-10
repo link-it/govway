@@ -25,7 +25,7 @@ Nelle fasi successive (ottenimento della risposta e conferma) l'identificativo d
 
 Nella sezione "ModI - Scambi Asincroni" dell'erogazione è possibile indicare (:numref:`ModIPdndAsyncErogazioneErogazioneDati`):
 
-- *URL di Callback*: se abilitata la *Verifica rispetto alle fruizioni*, all'inizio dell'interazione viene verificato che la URL di callback presente nel voucher corrisponda al connettore di una fruizione, da parte del soggetto erogatore, di un'API di callback associata all'API: la URL di callback deve coincidere con la URL del connettore o estenderla con un ulteriore path (es. la risorsa di callback). Le fruizioni con un connettore dinamico (es. '${context:pdndAsyncUrlCallback}', :ref:`modipa_scambiAsincroni_erogatore_connettoreDinamico`) non vengono considerate; se esistono solamente fruizioni di questo tipo la verifica non viene effettuata;
+- *URL di Callback*: se abilitata la *Verifica rispetto alle fruizioni*, all'inizio dell'interazione viene verificato che la URL di callback presente nel voucher corrisponda al connettore di una fruizione, da parte del soggetto erogatore, di un'API di callback associata all'API: la URL di callback deve coincidere con la URL del connettore o estenderla con un ulteriore path (es. la risorsa di callback). Le fruizioni con un connettore dinamico (es. '${context:pdndAsyncUrlCallback}', :ref:`Connettore dinamico della fruizione di callback <modipa_scambiAsincroni_erogatore_connettoreDinamico>`) non vengono considerate; se esistono solamente fruizioni di questo tipo la verifica non viene effettuata;
 
 - *Codifica Header*: codifica del valore dell'header con cui la URL di callback viene inoltrata all'applicativo ('Nessuna (valore in chiaro)', 'Base64' o 'Esadecimale'); con *Default* si applica la configurazione globale, che per default inoltra il valore in chiaro (:ref:`modipa_scambiAsincroni_properties`);
 
@@ -61,8 +61,7 @@ Nella sezione "ModI - Scambi Asincroni" della fruizione è possibile indicare (:
 
 .. _modipa_scambiAsincroni_erogatore_connettoreDinamico:
 
-Connettore dinamico della fruizione di callback
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+**Connettore dinamico della fruizione di callback**
 
 In alternativa ad una fruizione per ciascun fruitore, è possibile configurare un'unica fruizione dell'API di callback il cui connettore utilizza la URL di callback ricevuta dalla PDND all'inizio dell'interazione, disponibile tramite la keyword '${context:pdndAsyncUrlCallback}' (:numref:`ModIPdndAsyncConnettoreCallback`). In questo modo la stessa fruizione consente di notificare tutti i fruitori dell'e-service, indipendentemente dal soggetto erogatore indicato nella fruizione; le destinazioni raggiunte non sono però note a priori.
 

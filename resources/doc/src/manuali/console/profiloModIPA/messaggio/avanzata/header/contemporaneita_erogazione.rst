@@ -5,8 +5,7 @@ Configurazione coesistenza degli header in una Erogazione
 
 La configurazione differisce a seconda se il token di sicurezza deve essere validato (Richiesta) o generato (Risposta). Di seguito vengono descritte le opzioni di configurazione possibili per le due fasi.
 
-Richiesta
-^^^^^^^^^^^^^^
+**Richiesta**
 
 Di seguito vengono descritti i parametri di configurazione riguardanti la validazione dei due token nel flusso di richiesta.
 
@@ -22,8 +21,7 @@ Di seguito vengono descritti i parametri di configurazione riguardanti la valida
 - Audience: la configurazione di default si attende un valore del claim 'aud', presente all'interno dei token di sicurezza portati dai due header, con il medesimo identificativo. Il parametro consente di impostare la generazione di un identificativo differente indicando l'audience atteso nell'header Agid-JWT-Signature come mostrato nella figura :numref:`validazione_aud_integrity`.
 
 
-Risposta
-^^^^^^^^^^^^^^
+**Risposta**
 
 Di seguito vengono descritti i parametri di configurazione riguardanti la generazione dei due token nel flusso di risposta.
 

@@ -5,13 +5,11 @@ Recupero Tracce dalla Dead Letter Queue
 
 Quando il processo di failover del tracciamento su database non riesce a riversare le tracce nel database dopo il numero massimo di tentativi configurati (default: 10), queste vengono automaticamente spostate in una directory speciale chiamata **Dead Letter Queue (DLQ)**.
 
-Struttura Directory DLQ
-^^^^^^^^^^^^^^^^^^^^^^^
+**Struttura Directory DLQ**
 
 La directory DLQ si trova all'interno della directory di failover configurata (default: */var/govway/resources*) con la struttura */var/govway/resources/TIPO/dlq/*, dove TIPO può essere: transazioni, diagnostici, messaggi, o altri tipi di informazioni tracciabili.
 
-Verifica Presenza Tracce in DLQ
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+**Verifica Presenza Tracce in DLQ**
 
 Per verificare se sono presenti tracce in DLQ:
 
@@ -26,8 +24,7 @@ Per verificare se sono presenti tracce in DLQ:
           [ $count -gt 0 ] && echo "$(basename $(dirname $dir)): $count file"
       done
 
-Recupero Manuale delle Tracce
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+**Recupero Manuale delle Tracce**
 
 Una volta risolto il problema che impediva la registrazione nel database, è possibile recuperare manualmente le tracce spostate in DLQ.
 
