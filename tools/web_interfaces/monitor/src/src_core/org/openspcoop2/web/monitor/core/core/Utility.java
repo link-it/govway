@@ -1119,7 +1119,7 @@ public class Utility {
 		return false;
 	}
 	
-/**	public static boolean isMultiLoginEnabled() {
+/** {@code	public static boolean isMultiLoginEnabled() {
 //		LoginBean lb = getLoginBean();
 //
 //		if(lb!= null && lb.isLoggedIn()){
@@ -1127,7 +1127,7 @@ public class Utility {
 //		}
 //		
 //		return false;
-//	}*/
+//	} }*/
 	
 	public static boolean isPasswordUtenteObbligatoria() {
 		LoginBean lb = getLoginBean();

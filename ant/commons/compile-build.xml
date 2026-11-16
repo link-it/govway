@@ -184,12 +184,23 @@
 				<var name="compile_src_openspcoop2.SRC_DIR_5" value=""/>
 			</then>
 		</if>
+		<!-- Gestione dei sorgenti compilati implicitamente (raggiunti tramite il sourcepath ma non inclusi): default 'class' (comportamento javac);
+		     'none' evita di generarne le classi quando il package viene compilato da un'altra antcall, che altrimenti finirebbero duplicate nel jar -->
+		<if>
+			<equals arg1="${compile_src_openspcoop2.IMPLICIT}" arg2="$${compile_src_openspcoop2.IMPLICIT}"/>
+			<then>
+				<var name="compile_src_openspcoop2.IMPLICIT" value="class"/>
+			</then>
+		</if>
 		<echo message="compileSRC[${compile_src_openspcoop2.SRC_DIR}]" />
-		<javac includeantruntime="false" destdir="${build}/compile-jar-openspcoop2" debug="${debug}"
+		<!-- createMissingPackageInfoClass=false: la srcdir è la cartella del sottopackage, quindi Ant cercava il package-info.class in un percorso
+		     relativo (es. constants/package-info.class) e, non trovandolo, ne creava uno vuoto che finiva duplicato alla radice del jar -->
+		<javac includeantruntime="false" destdir="${build}/compile-jar-openspcoop2" debug="${debug}" createMissingPackageInfoClass="false"
 			source="${classSourceVersion}" target="${classTargetVersion}" encoding="UTF-8">
 			<compilerarg value="-Xlint:unchecked"/>
 			<compilerarg value="-Xlint:deprecation"/>
 			<compilerarg value="-proc:full"/>
+			<compilerarg value="-implicit:${compile_src_openspcoop2.IMPLICIT}"/>
 
 			<src path="${compile_src_openspcoop2.SRC_DIR}"/>
 			<src path="${compile_src_openspcoop2.SRC_DIR_2}"/>
@@ -352,7 +363,7 @@
 		<if>
 			<equals arg1="${jarDuplicate}" arg2="$${compile_src_openspcoop2.duplicate}" />
 			<then>
-				<var name="jarDuplicate" value="add"/> <!-- Valid values are "add", "preserve", and "fail". The default value is "add". -->
+				<var name="jarDuplicate" value="fail"/> <!-- Valid values are "add", "preserve", and "fail". Default "fail": un jar non deve contenere voci duplicate (unzip le rifiuta come possibile zip bomb) -->
 			</then>
 			<else>
 				<if>
@@ -608,7 +619,7 @@ Last-Changed-Date:  ${git.package.authorDate}
 		<if>
 			<equals arg1="${jarDuplicate}" arg2="$${compile_src_openspcoop2.duplicate}" />
 			<then>
-				<var name="jarDuplicate" value="add"/> <!-- Valid values are "add", "preserve", and "fail". The default value is "add". -->
+				<var name="jarDuplicate" value="fail"/> <!-- Valid values are "add", "preserve", and "fail". Default "fail": un jar non deve contenere voci duplicate (unzip le rifiuta come possibile zip bomb) -->
 			</then>
 			<else>
 				<if>
@@ -827,7 +838,7 @@ Last-Changed-Date:  ${git.authorDate}
 		<if>
 			<equals arg1="${jarDuplicate}" arg2="$${compile_src_openspcoop2.duplicate}" />
 			<then>
-				<var name="jarDuplicate" value="add"/> <!-- Valid values are "add", "preserve", and "fail". The default value is "add". -->
+				<var name="jarDuplicate" value="fail"/> <!-- Valid values are "add", "preserve", and "fail". Default "fail": un jar non deve contenere voci duplicate (unzip le rifiuta come possibile zip bomb) -->
 			</then>
 			<else>
 				<if>
