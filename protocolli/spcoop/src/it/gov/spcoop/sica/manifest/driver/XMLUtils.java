@@ -57,13 +57,41 @@ import it.gov.spcoop.sica.manifest.SpecificaSicurezza;
  */
 
 public class XMLUtils  {
+	
+	private XMLUtils() {}
+
+	private static final String SPECIFICA_SEMIFORMALE_PREFIX = "SpecificaSemiformale[";
+	private static final String DIVERSO_DAI_TIPI_ACCETTATI = "] diverso dai tipi accettati:";
+	private static final String DESCRIZIONE_NON_FORNITA = "Descrizione non fornita\n";
+	private static final String NOME_NON_FORNITO = "Nome non fornito\n";
+	private static final String NOME_FORNITO_PREFIX = "Nome fornito [";
+	private static final String SUPERA_NUMERO_CARATTERI_CONSENTITI = "] supera il numero di caratteri consentiti: ";
+	private static final String DATA_CREAZIONE_NON_FORNITA = "DataCreazione non fornita\n";
+	private static final String ALLEGATO_PREFIX = "Allegato[";
+	private static final String SENZA_DEFINIZIONE_DOCUMENTO = "] senza la definizione del documento\n";
+	private static final String SENZA_LOCATION_DOCUMENTO_SEMIFORMALE = "] senza la location del documento semiformale\n";
+	private static final String SENZA_TIPO_DOCUMENTO_SEMIFORMALE = "] senza il tipo del documento semiformale\n";
+	private static final String CON_TIPO_DOCUMENTO_SEMIFORMALE = "] con tipo del documento semiformale[";
+	private static final String SPECIFICA_SICUREZZA_PREFIX = "SpecificaSicurezza[";
+	private static final String SENZA_LOCATION_DOCUMENTO = "] senza la location del documento \n";
+	private static final String SENZA_TIPO_DOCUMENTO = "] senza il tipo del documento \n";
+	private static final String SPECIFICA_LIVELLI_SERVIZIO_PREFIX = "SpecificaLivelliServizio[";
 
 	
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
 	/** Validatore XSD */
 	static ValidatoreXSD validatoreXSD = null;
-	public static synchronized ValidatoreXSD getValidatoreXSD(Logger log) throws Exception{
+	private static void initValidatoreXSD(Logger log) throws Exception{
+		synchronized (INIT_LOCK) {
+			if(XMLUtils.validatoreXSD==null){
+				XMLUtils.validatoreXSD = new ValidatoreXSD(log,XMLUtils.class.getResourceAsStream("/ManifestPackageSICA_originale.xsd"));
+			}
+		}
+	}
+	public static ValidatoreXSD getValidatoreXSD(Logger log) throws Exception{
 		if(XMLUtils.validatoreXSD==null){
-			XMLUtils.validatoreXSD = new ValidatoreXSD(log,XMLUtils.class.getResourceAsStream("/ManifestPackageSICA_originale.xsd"));
+			initValidatoreXSD(log);
 		}
 		return XMLUtils.validatoreXSD;
 	}
@@ -73,21 +101,21 @@ public class XMLUtils  {
 		
 		// Vincoli ManifestoAccordo
 		if(manifestoAS.getDescrizione()==null){
-			motivoErroreValidazione.append("Descrizione non fornita\n");
+			motivoErroreValidazione.append(DESCRIZIONE_NON_FORNITA);
 		}
 		if(manifestoAS.getNome()==null){
-			motivoErroreValidazione.append("Nome non fornito\n");
+			motivoErroreValidazione.append(NOME_NON_FORNITO);
 		}else if(lunghezzaNomeAccordoLimitata &&  manifestoAS.getNome().length()>Costanti.LUNGHEZZA_MAX_NOME_ACCORDO){
-			motivoErroreValidazione.append("Nome fornito ["+manifestoAS.getNome()+"] supera il numero di caratteri consentiti: "+Costanti.LUNGHEZZA_MAX_NOME_ACCORDO+"\n");
+			motivoErroreValidazione.append(NOME_FORNITO_PREFIX).append(manifestoAS.getNome()).append(SUPERA_NUMERO_CARATTERI_CONSENTITI).append(Costanti.LUNGHEZZA_MAX_NOME_ACCORDO).append("\n");
 		}
 		
 		if(manifestoAS.getDataCreazione()==null){
-			motivoErroreValidazione.append("DataCreazione non fornita\n");
+			motivoErroreValidazione.append(DATA_CREAZIONE_NON_FORNITA);
 		}
 		if(manifestoAS.getAllegati()!=null){
 			for(int i=0; i<manifestoAS.getAllegati().sizeGenericoDocumentoList(); i++){
 				if(manifestoAS.getAllegati().getGenericoDocumento(i)==null){
-					motivoErroreValidazione.append("Allegato["+i+"] senza la definizione del documento\n");
+					motivoErroreValidazione.append(ALLEGATO_PREFIX).append(i).append(SENZA_DEFINIZIONE_DOCUMENTO);
 				}
 			}
 		}
@@ -95,20 +123,20 @@ public class XMLUtils  {
 			for(int i=0; i<manifestoAS.getSpecificaSemiformale().sizeDocumentoSemiformaleList(); i++){
 				DocumentoSemiformale ss = manifestoAS.getSpecificaSemiformale().getDocumentoSemiformale(i);
 				if(ss.getBase()==null){
-					motivoErroreValidazione.append("SpecificaSemiformale["+i+"] senza la location del documento semiformale\n");
+					motivoErroreValidazione.append(SPECIFICA_SEMIFORMALE_PREFIX).append(i).append(SENZA_LOCATION_DOCUMENTO_SEMIFORMALE);
 				}
 				if(ss.getTipo()==null){
-					motivoErroreValidazione.append("SpecificaSemiformale["+i+"] senza il tipo del documento semiformale\n");
+					motivoErroreValidazione.append(SPECIFICA_SEMIFORMALE_PREFIX).append(i).append(SENZA_TIPO_DOCUMENTO_SEMIFORMALE);
 				}else{
-					if(TipiDocumentoSemiformale.HTML.toString().equals(ss.getTipo())==false &&
-							TipiDocumentoSemiformale.UML.toString().equals(ss.getTipo())==false &&
-							TipiDocumentoSemiformale.XML.toString().equals(ss.getTipo())==false &&
-							TipiDocumentoSemiformale.LINGUAGGIO_NATURALE.toString().equals(ss.getTipo())==false ){
-						motivoErroreValidazione.append("SpecificaSemiformale["+i+"] con tipo del documento semiformale["+ss.getTipo()+"] diverso dai tipi accettati:"+
-								TipiDocumentoSemiformale.HTML.toString()+","+
-								TipiDocumentoSemiformale.UML.toString()+","+
-								TipiDocumentoSemiformale.XML.toString()+","+
-								TipiDocumentoSemiformale.LINGUAGGIO_NATURALE.toString()+","+"\n");
+					if(!TipiDocumentoSemiformale.HTML.toString().equals(ss.getTipo()) &&
+							!TipiDocumentoSemiformale.UML.toString().equals(ss.getTipo()) &&
+							!TipiDocumentoSemiformale.XML.toString().equals(ss.getTipo()) &&
+							!TipiDocumentoSemiformale.LINGUAGGIO_NATURALE.toString().equals(ss.getTipo()) ){
+						motivoErroreValidazione.append(SPECIFICA_SEMIFORMALE_PREFIX).append(i).append(CON_TIPO_DOCUMENTO_SEMIFORMALE).append(ss.getTipo()).append(DIVERSO_DAI_TIPI_ACCETTATI)
+								.append(TipiDocumentoSemiformale.HTML.toString()).append(",")
+								.append(TipiDocumentoSemiformale.UML.toString()).append(",")
+								.append(TipiDocumentoSemiformale.XML.toString()).append(",")
+								.append(TipiDocumentoSemiformale.LINGUAGGIO_NATURALE.toString()).append(",").append("\n");
 					}
 				}
 			}
@@ -118,10 +146,9 @@ public class XMLUtils  {
 			motivoErroreValidazione.append("Definita sia una parte comune che una parte specifica\n");
 		}else if(manifestoAS.getParteComune()!=null){
 			AccordoServizioParteComune parteComune = manifestoAS.getParteComune();
-			if(includiInfoRegistroGenerale){
-				if(parteComune.getPubblicatore()==null){
-					motivoErroreValidazione.append("Pubblicatore non definito\n");
-				}
+			if(includiInfoRegistroGenerale &&
+				parteComune.getPubblicatore()==null){
+				motivoErroreValidazione.append("Pubblicatore non definito\n");
 			}
 			if(parteComune.getSpecificaInterfaccia()==null){
 				motivoErroreValidazione.append("SpecificaInterfaccia non definita\n");
@@ -133,8 +160,8 @@ public class XMLUtils  {
 						motivoErroreValidazione.append("contenuto SpecificaInterfacciaConcettuale non definito\n");
 					}
 					if(parteComune.getSpecificaInterfaccia().getInterfacciaConcettuale().getTipo()!=null && 
-							TipiDocumentoInterfaccia.WSDL.toString().equals(parteComune.getSpecificaInterfaccia().getInterfacciaConcettuale().getTipo().name())==false){
-						motivoErroreValidazione.append("tipo SpecificaInterfacciaConcettuale diverso da "+TipiDocumentoInterfaccia.WSDL.toString()+"\n");
+							!TipiDocumentoInterfaccia.WSDL.toString().equals(parteComune.getSpecificaInterfaccia().getInterfacciaConcettuale().getTipo().name())){
+						motivoErroreValidazione.append("tipo SpecificaInterfacciaConcettuale diverso da ").append(TipiDocumentoInterfaccia.WSDL.toString()).append("\n");
 					}
 				}
 				if(parteComune.getSpecificaInterfaccia().getInterfacciaLogicaLatoErogatore()==null){
@@ -144,8 +171,8 @@ public class XMLUtils  {
 						motivoErroreValidazione.append("contenuto SpecificaInterfacciaLogicaLatoErogatore non definito\n");
 					}
 					if(parteComune.getSpecificaInterfaccia().getInterfacciaLogicaLatoErogatore().getTipo()!=null && 
-							TipiDocumentoInterfaccia.WSDL.toString().equals(parteComune.getSpecificaInterfaccia().getInterfacciaLogicaLatoErogatore().getTipo().name())==false){
-						motivoErroreValidazione.append("tipo SpecificaInterfacciaLogicaLatoErogatore diverso da "+TipiDocumentoInterfaccia.WSDL.toString()+"\n");
+							!TipiDocumentoInterfaccia.WSDL.toString().equals(parteComune.getSpecificaInterfaccia().getInterfacciaLogicaLatoErogatore().getTipo().name())){
+						motivoErroreValidazione.append("tipo SpecificaInterfacciaLogicaLatoErogatore diverso da ").append(TipiDocumentoInterfaccia.WSDL.toString()).append("\n");
 					}
 				}
 				if(parteComune.getSpecificaInterfaccia().getInterfacciaLogicaLatoFruitore()!=null){
@@ -153,8 +180,8 @@ public class XMLUtils  {
 						motivoErroreValidazione.append("contenuto SpecificaInterfacciaLogicaLatoFruitore non definito\n");
 					}
 					if(parteComune.getSpecificaInterfaccia().getInterfacciaLogicaLatoFruitore().getTipo()!=null && 
-							TipiDocumentoInterfaccia.WSDL.toString().equals(parteComune.getSpecificaInterfaccia().getInterfacciaLogicaLatoFruitore().getTipo().name())==false){
-						motivoErroreValidazione.append("tipo SpecificaInterfacciaLogicaLatoFruitore diverso da "+TipiDocumentoInterfaccia.WSDL.toString()+"\n");
+							!TipiDocumentoInterfaccia.WSDL.toString().equals(parteComune.getSpecificaInterfaccia().getInterfacciaLogicaLatoFruitore().getTipo().name())){
+						motivoErroreValidazione.append("tipo SpecificaInterfacciaLogicaLatoFruitore diverso da ").append(TipiDocumentoInterfaccia.WSDL.toString()).append("\n");
 					}
 				}
 			}
@@ -164,9 +191,9 @@ public class XMLUtils  {
 						motivoErroreValidazione.append("contenuto ConversazioneConcettuale non definito\n");
 					}
 					if(parteComune.getSpecificaConversazione().getConversazioneConcettuale().getTipo()!=null && 
-							TipiDocumentoConversazione.BPEL.toString().equals(parteComune.getSpecificaConversazione().getConversazioneConcettuale().getTipo().name())==false &&
-							TipiDocumentoConversazione.WSBL.toString().equals(parteComune.getSpecificaConversazione().getConversazioneConcettuale().getTipo().name())==false){
-						motivoErroreValidazione.append("tipo ConversazioneConcettuale diverso da "+TipiDocumentoConversazione.BPEL.toString()+"/"+TipiDocumentoConversazione.WSBL.toString()+"\n");
+							!TipiDocumentoConversazione.BPEL.toString().equals(parteComune.getSpecificaConversazione().getConversazioneConcettuale().getTipo().name()) &&
+							!TipiDocumentoConversazione.WSBL.toString().equals(parteComune.getSpecificaConversazione().getConversazioneConcettuale().getTipo().name())){
+						motivoErroreValidazione.append("tipo ConversazioneConcettuale diverso da ").append(TipiDocumentoConversazione.BPEL.toString()).append("/").append(TipiDocumentoConversazione.WSBL.toString()).append("\n");
 					}
 				}
 				if(parteComune.getSpecificaConversazione().getConversazioneLogicaLatoErogatore()!=null){
@@ -174,9 +201,9 @@ public class XMLUtils  {
 						motivoErroreValidazione.append("contenuto ConversazioneLogicaLatoErogatore non definito\n");
 					}
 					if(parteComune.getSpecificaConversazione().getConversazioneLogicaLatoErogatore().getTipo()!=null && 
-							TipiDocumentoConversazione.BPEL.toString().equals(parteComune.getSpecificaConversazione().getConversazioneLogicaLatoErogatore().getTipo().name())==false &&
-							TipiDocumentoConversazione.WSBL.toString().equals(parteComune.getSpecificaConversazione().getConversazioneLogicaLatoErogatore().getTipo().name())==false){
-						motivoErroreValidazione.append("tipo ConversazioneLogicaLatoErogatore diverso da "+TipiDocumentoConversazione.BPEL.toString()+"/"+TipiDocumentoConversazione.WSBL.toString()+"\n");
+							!TipiDocumentoConversazione.BPEL.toString().equals(parteComune.getSpecificaConversazione().getConversazioneLogicaLatoErogatore().getTipo().name()) &&
+							!TipiDocumentoConversazione.WSBL.toString().equals(parteComune.getSpecificaConversazione().getConversazioneLogicaLatoErogatore().getTipo().name())){
+						motivoErroreValidazione.append("tipo ConversazioneLogicaLatoErogatore diverso da ").append(TipiDocumentoConversazione.BPEL.toString()).append("/").append(TipiDocumentoConversazione.WSBL.toString()).append("\n");
 					}
 				}
 				if(parteComune.getSpecificaConversazione().getConversazioneLogicaLatoFruitore()!=null){
@@ -184,9 +211,9 @@ public class XMLUtils  {
 						motivoErroreValidazione.append("contenuto ConversazioneLogicaLatoFruitore non definito\n");
 					}
 					if(parteComune.getSpecificaConversazione().getConversazioneLogicaLatoFruitore().getTipo()!=null && 
-							TipiDocumentoConversazione.BPEL.toString().equals(parteComune.getSpecificaConversazione().getConversazioneLogicaLatoFruitore().getTipo().name())==false &&
-							TipiDocumentoConversazione.WSBL.toString().equals(parteComune.getSpecificaConversazione().getConversazioneLogicaLatoFruitore().getTipo().name())==false){
-						motivoErroreValidazione.append("tipo ConversazioneLogicaLatoFruitore diverso da "+TipiDocumentoConversazione.BPEL.toString()+"/"+TipiDocumentoConversazione.WSBL.toString()+"\n");
+							!TipiDocumentoConversazione.BPEL.toString().equals(parteComune.getSpecificaConversazione().getConversazioneLogicaLatoFruitore().getTipo().name()) &&
+							!TipiDocumentoConversazione.WSBL.toString().equals(parteComune.getSpecificaConversazione().getConversazioneLogicaLatoFruitore().getTipo().name())){
+						motivoErroreValidazione.append("tipo ConversazioneLogicaLatoFruitore diverso da ").append(TipiDocumentoConversazione.BPEL.toString()).append("/").append(TipiDocumentoConversazione.WSBL.toString()).append("\n");
 					}
 				}
 			}
@@ -196,10 +223,9 @@ public class XMLUtils  {
 			if(parteSpecifica.getAdesione()==null){
 				motivoErroreValidazione.append("Adesione non definita\n");
 			}
-			if(includiInfoRegistroGenerale){
-				if(parteSpecifica.getErogatore()==null){
-					motivoErroreValidazione.append("Erogatore non definito\n");
-				}
+			if(includiInfoRegistroGenerale &&
+				parteSpecifica.getErogatore()==null){
+				motivoErroreValidazione.append("Erogatore non definito\n");
 			}
 			if(parteSpecifica.getRiferimentoParteComune()==null){
 				motivoErroreValidazione.append("RiferimentoParteComune non definito\n");
@@ -210,8 +236,8 @@ public class XMLUtils  {
 						motivoErroreValidazione.append("contenuto PortiAccessoErogatore non definito\n");
 					}
 					if(parteSpecifica.getSpecificaPortiAccesso().getPortiAccessoErogatore().getTipo()!=null && 
-							TipiDocumentoInterfaccia.WSDL.toString().equals(parteSpecifica.getSpecificaPortiAccesso().getPortiAccessoErogatore().getTipo().name())==false){
-						motivoErroreValidazione.append("tipo PortiAccessoErogatore diverso da "+TipiDocumentoInterfaccia.WSDL.toString()+"\n");
+							!TipiDocumentoInterfaccia.WSDL.toString().equals(parteSpecifica.getSpecificaPortiAccesso().getPortiAccessoErogatore().getTipo().name())){
+						motivoErroreValidazione.append("tipo PortiAccessoErogatore diverso da ").append(TipiDocumentoInterfaccia.WSDL.toString()).append("\n");
 					}
 				}
 				if(parteSpecifica.getSpecificaPortiAccesso().getPortiAccessoFruitore()!=null){
@@ -219,8 +245,8 @@ public class XMLUtils  {
 						motivoErroreValidazione.append("contenuto PortiAccessoFruitore non definito\n");
 					}
 					if(parteSpecifica.getSpecificaPortiAccesso().getPortiAccessoFruitore().getTipo()!=null && 
-							TipiDocumentoInterfaccia.WSDL.toString().equals(parteSpecifica.getSpecificaPortiAccesso().getPortiAccessoFruitore().getTipo().name())==false){
-						motivoErroreValidazione.append("tipo PortiAccessoFruitore diverso da "+TipiDocumentoInterfaccia.WSDL.toString()+"\n");
+							!TipiDocumentoInterfaccia.WSDL.toString().equals(parteSpecifica.getSpecificaPortiAccesso().getPortiAccessoFruitore().getTipo().name())){
+						motivoErroreValidazione.append("tipo PortiAccessoFruitore diverso da ").append(TipiDocumentoInterfaccia.WSDL.toString()).append("\n");
 					}
 				}
 			}
@@ -229,15 +255,15 @@ public class XMLUtils  {
 				for(int i=0; i<specificaSicurezza.sizeDocumentoSicurezzaList(); i++){
 					DocumentoSicurezza docS = specificaSicurezza.getDocumentoSicurezza(i);
 					if(docS.getBase()==null){
-						motivoErroreValidazione.append("SpecificaSicurezza["+i+"] senza la location del documento \n");
+						motivoErroreValidazione.append(SPECIFICA_SICUREZZA_PREFIX).append(i).append(SENZA_LOCATION_DOCUMENTO);
 					}
 					if(docS.getTipo()==null){
-						motivoErroreValidazione.append("SpecificaSicurezza["+i+"] senza il tipo del documento \n");
+						motivoErroreValidazione.append(SPECIFICA_SICUREZZA_PREFIX).append(i).append(SENZA_TIPO_DOCUMENTO);
 					}else{
-						if(TipiDocumentoSicurezza.LINGUAGGIO_NATURALE.toString().equals(docS.getTipo())==false &&
-								TipiDocumentoSicurezza.WSPOLICY.toString().equals(docS.getTipo())==false  ){
-							motivoErroreValidazione.append("SpecificaSicurezza["+i+"] con tipo del documento specificaSicurezza["+docS.getTipo()+"] diverso dai tipi accettati:"+
-									TipiDocumentoSicurezza.LINGUAGGIO_NATURALE.toString()+","+TipiDocumentoSicurezza.WSPOLICY.toString()+"\n");
+						if(!TipiDocumentoSicurezza.LINGUAGGIO_NATURALE.toString().equals(docS.getTipo()) &&
+								!TipiDocumentoSicurezza.WSPOLICY.toString().equals(docS.getTipo())  ){
+							motivoErroreValidazione.append(SPECIFICA_SICUREZZA_PREFIX).append(i).append("] con tipo del documento specificaSicurezza[").append(docS.getTipo()).append(DIVERSO_DAI_TIPI_ACCETTATI)
+									.append(TipiDocumentoSicurezza.LINGUAGGIO_NATURALE.toString()).append(",").append(TipiDocumentoSicurezza.WSPOLICY.toString()).append("\n");
 						}
 					}
 				}
@@ -247,15 +273,15 @@ public class XMLUtils  {
 				for(int i=0; i<specificaLivelliServizio.sizeDocumentoLivelloServizioList(); i++){
 					DocumentoLivelloServizio docL = specificaLivelliServizio.getDocumentoLivelloServizio(i);
 					if(docL.getBase()==null){
-						motivoErroreValidazione.append("SpecificaLivelliServizio["+i+"] senza la location del documento \n");
+						motivoErroreValidazione.append(SPECIFICA_LIVELLI_SERVIZIO_PREFIX).append(i).append(SENZA_LOCATION_DOCUMENTO);
 					}
 					if(docL.getTipo()==null){
-						motivoErroreValidazione.append("SpecificaLivelliServizio["+i+"] senza il tipo del documento \n");
+						motivoErroreValidazione.append(SPECIFICA_LIVELLI_SERVIZIO_PREFIX).append(i).append(SENZA_TIPO_DOCUMENTO);
 					}else{
-						if(TipiDocumentoLivelloServizio.WSAGREEMENT.toString().equals(docL.getTipo())==false &&
-								TipiDocumentoLivelloServizio.WSLA.toString().equals(docL.getTipo())==false  ){
-							motivoErroreValidazione.append("SpecificaLivelliServizio["+i+"] con tipo del documento specificaLivelliServizio["+docL.getTipo()+"] diverso dai tipi accettati:"+
-									TipiDocumentoLivelloServizio.WSAGREEMENT.toString()+","+TipiDocumentoLivelloServizio.WSLA.toString()+"\n");
+						if(!TipiDocumentoLivelloServizio.WSAGREEMENT.toString().equals(docL.getTipo()) &&
+								!TipiDocumentoLivelloServizio.WSLA.toString().equals(docL.getTipo())  ){
+							motivoErroreValidazione.append(SPECIFICA_LIVELLI_SERVIZIO_PREFIX).append(i).append("] con tipo del documento specificaLivelliServizio[").append(docL.getTipo()).append(DIVERSO_DAI_TIPI_ACCETTATI)
+									.append(TipiDocumentoLivelloServizio.WSAGREEMENT.toString()).append(",").append(TipiDocumentoLivelloServizio.WSLA.toString()).append("\n");
 						}
 					}
 				}
@@ -265,10 +291,7 @@ public class XMLUtils  {
 			motivoErroreValidazione.append("Una parte comune o una parte specifica non definita\n");
 		}
 		
-		if(motivoErroreValidazione.length()!=size)
-			return false;
-		else
-			return true;
+		return motivoErroreValidazione.length()==size;
 		
 	}
 	public static boolean validateManifestoAC(AccordoCooperazione manifestoAC,StringBuilder motivoErroreValidazione, boolean includiInfoRegistroGenerale,boolean lunghezzaNomeAccordoLimitata){
@@ -277,20 +300,20 @@ public class XMLUtils  {
 		
 		// Vincoli ManifestoAccordo
 		if(manifestoAC.getDescrizione()==null){
-			motivoErroreValidazione.append("Descrizione non fornita\n");
+			motivoErroreValidazione.append(DESCRIZIONE_NON_FORNITA);
 		}
 		if(manifestoAC.getNome()==null){
-			motivoErroreValidazione.append("Nome non fornito\n");
+			motivoErroreValidazione.append(NOME_NON_FORNITO);
 		}else if(lunghezzaNomeAccordoLimitata && manifestoAC.getNome().length()>Costanti.LUNGHEZZA_MAX_NOME_ACCORDO){
-			motivoErroreValidazione.append("Nome fornito ["+manifestoAC.getNome()+"] supera il numero di caratteri consentiti: "+Costanti.LUNGHEZZA_MAX_NOME_ACCORDO+"\n");
+			motivoErroreValidazione.append(NOME_FORNITO_PREFIX).append(manifestoAC.getNome()).append(SUPERA_NUMERO_CARATTERI_CONSENTITI).append(Costanti.LUNGHEZZA_MAX_NOME_ACCORDO).append("\n");
 		}
 		if(manifestoAC.getDataCreazione()==null){
-			motivoErroreValidazione.append("DataCreazione non fornita\n");
+			motivoErroreValidazione.append(DATA_CREAZIONE_NON_FORNITA);
 		}
 		if(manifestoAC.getAllegati()!=null){
 			for(int i=0; i<manifestoAC.getAllegati().sizeGenericoDocumentoList(); i++){
 				if(manifestoAC.getAllegati().getGenericoDocumento(i)==null){
-					motivoErroreValidazione.append("Allegato["+i+"] senza la definizione del documento\n");
+					motivoErroreValidazione.append(ALLEGATO_PREFIX).append(i).append(SENZA_DEFINIZIONE_DOCUMENTO);
 				}
 			}
 		}
@@ -298,29 +321,28 @@ public class XMLUtils  {
 			for(int i=0; i<manifestoAC.getSpecificaSemiformale().sizeDocumentoSemiformaleList(); i++){
 				DocumentoSemiformale ss = manifestoAC.getSpecificaSemiformale().getDocumentoSemiformale(i);
 				if(ss.getBase()==null){
-					motivoErroreValidazione.append("SpecificaSemiformale["+i+"] senza la location del documento semiformale\n");
+					motivoErroreValidazione.append(SPECIFICA_SEMIFORMALE_PREFIX).append(i).append(SENZA_LOCATION_DOCUMENTO_SEMIFORMALE);
 				}
 				if(ss.getTipo()==null){
-					motivoErroreValidazione.append("SpecificaSemiformale["+i+"] senza il tipo del documento semiformale\n");
+					motivoErroreValidazione.append(SPECIFICA_SEMIFORMALE_PREFIX).append(i).append(SENZA_TIPO_DOCUMENTO_SEMIFORMALE);
 				}else{
-					if(TipiDocumentoSemiformale.HTML.toString().equals(ss.getTipo())==false &&
-							TipiDocumentoSemiformale.UML.toString().equals(ss.getTipo())==false &&
-							TipiDocumentoSemiformale.XML.toString().equals(ss.getTipo())==false &&
-							TipiDocumentoSemiformale.LINGUAGGIO_NATURALE.toString().equals(ss.getTipo())==false ){
-						motivoErroreValidazione.append("SpecificaSemiformale["+i+"] con tipo del documento semiformale["+ss.getTipo()+"] diverso dai tipi accettati:"+
-								TipiDocumentoSemiformale.HTML.toString()+","+
-								TipiDocumentoSemiformale.UML.toString()+","+
-								TipiDocumentoSemiformale.XML.toString()+","+
-								TipiDocumentoSemiformale.LINGUAGGIO_NATURALE.toString()+","+"\n");
+					if(!TipiDocumentoSemiformale.HTML.toString().equals(ss.getTipo()) &&
+							!TipiDocumentoSemiformale.UML.toString().equals(ss.getTipo()) &&
+							!TipiDocumentoSemiformale.XML.toString().equals(ss.getTipo()) &&
+							!TipiDocumentoSemiformale.LINGUAGGIO_NATURALE.toString().equals(ss.getTipo()) ){
+						motivoErroreValidazione.append(SPECIFICA_SEMIFORMALE_PREFIX).append(i).append(CON_TIPO_DOCUMENTO_SEMIFORMALE).append(ss.getTipo()).append(DIVERSO_DAI_TIPI_ACCETTATI)
+								.append(TipiDocumentoSemiformale.HTML.toString()).append(",")
+								.append(TipiDocumentoSemiformale.UML.toString()).append(",")
+								.append(TipiDocumentoSemiformale.XML.toString()).append(",")
+								.append(TipiDocumentoSemiformale.LINGUAGGIO_NATURALE.toString()).append(",").append("\n");
 					}
 				}
 			}
 		}
 		
-		if(includiInfoRegistroGenerale){
-			if(manifestoAC.getCoordinatore()==null){
-				motivoErroreValidazione.append("Coordinatore non definito\n");
-			}
+		if(includiInfoRegistroGenerale &&
+			manifestoAC.getCoordinatore()==null){
+			motivoErroreValidazione.append("Coordinatore non definito\n");
 		}
 		if(manifestoAC.getElencoPartecipanti()==null){
 			motivoErroreValidazione.append("ElencoPartecipanti non definito\n");
@@ -330,26 +352,22 @@ public class XMLUtils  {
 			}else{
 				for(int i=0; i<manifestoAC.getElencoPartecipanti().sizePartecipanteList(); i++){
 					if(manifestoAC.getElencoPartecipanti().getPartecipante(i)==null){
-						motivoErroreValidazione.append("ElencoPartecipanti["+i+"] senza il partecipante \n");
+						motivoErroreValidazione.append("ElencoPartecipanti[").append(i).append("] senza il partecipante \n");
 					}
 				}
 			}
 		}
-		if(includiInfoRegistroGenerale){
-			if(manifestoAC.getServiziComposti()!=null){
-				for(int i=0; i<manifestoAC.getServiziComposti().sizeServizioCompostoList(); i++){
-					java.net.URI servComposti = manifestoAC.getServiziComposti().getServizioComposto(i);
-					if(servComposti==null){
-						motivoErroreValidazione.append("ElencoServiziComposti["+i+"] senza il servizio composto \n");
-					}
+		if(includiInfoRegistroGenerale &&
+			manifestoAC.getServiziComposti()!=null){
+			for(int i=0; i<manifestoAC.getServiziComposti().sizeServizioCompostoList(); i++){
+				java.net.URI servComposti = manifestoAC.getServiziComposti().getServizioComposto(i);
+				if(servComposti==null){
+					motivoErroreValidazione.append("ElencoServiziComposti[").append(i).append("] senza il servizio composto \n");
 				}
 			}
 		}
 			
-		if(motivoErroreValidazione.length()!=size)
-			return false;
-		else
-			return true;
+		return motivoErroreValidazione.length()==size;
 		
 	}
 	public static boolean validateManifestoSC(ServizioComposto manifestoSC,StringBuilder motivoErroreValidazione, boolean includiInfoRegistroGenerale,boolean lunghezzaNomeAccordoLimitata){
@@ -358,46 +376,45 @@ public class XMLUtils  {
 		
 		// Vincoli ManifestoAccordo
 		if(manifestoSC.getDescrizione()==null){
-			motivoErroreValidazione.append("Descrizione non fornita\n");
+			motivoErroreValidazione.append(DESCRIZIONE_NON_FORNITA);
 		}
 		if(manifestoSC.getNome()==null){
-			motivoErroreValidazione.append("Nome non fornito\n");
+			motivoErroreValidazione.append(NOME_NON_FORNITO);
 		}else if(lunghezzaNomeAccordoLimitata && manifestoSC.getNome().length()>Costanti.LUNGHEZZA_MAX_NOME_ACCORDO){
-			motivoErroreValidazione.append("Nome fornito ["+manifestoSC.getNome()+"] supera il numero di caratteri consentiti: "+Costanti.LUNGHEZZA_MAX_NOME_ACCORDO+"\n");
+			motivoErroreValidazione.append(NOME_FORNITO_PREFIX).append(manifestoSC.getNome()).append(SUPERA_NUMERO_CARATTERI_CONSENTITI).append(Costanti.LUNGHEZZA_MAX_NOME_ACCORDO).append("\n");
 		}
 		if(manifestoSC.getDataCreazione()==null){
-			motivoErroreValidazione.append("DataCreazione non fornita\n");
+			motivoErroreValidazione.append(DATA_CREAZIONE_NON_FORNITA);
 		}
 		if(manifestoSC.getAllegati()!=null){
 			for(int i=0; i<manifestoSC.getAllegati().sizeGenericoDocumentoList(); i++){
 				if(manifestoSC.getAllegati().getGenericoDocumento(i)==null){
-					motivoErroreValidazione.append("Allegato["+i+"] senza la definizione del documento\n");
+					motivoErroreValidazione.append(ALLEGATO_PREFIX).append(i).append(SENZA_DEFINIZIONE_DOCUMENTO);
 				}
 			}
 		}
-		if(includiInfoRegistroGenerale){
-			if(manifestoSC.getPubblicatore()==null){
-				motivoErroreValidazione.append("Pubblicatore non definito\n");
-			}
+		if(includiInfoRegistroGenerale &&
+			manifestoSC.getPubblicatore()==null){
+			motivoErroreValidazione.append("Pubblicatore non definito\n");
 		}
 		if(manifestoSC.getSpecificaSemiformale()!=null){
 			for(int i=0; i<manifestoSC.getSpecificaSemiformale().sizeDocumentoSemiformaleList(); i++){
 				DocumentoSemiformale ss = manifestoSC.getSpecificaSemiformale().getDocumentoSemiformale(i);
 				if(ss.getBase()==null){
-					motivoErroreValidazione.append("SpecificaSemiformale["+i+"] senza la location del documento semiformale\n");
+					motivoErroreValidazione.append(SPECIFICA_SEMIFORMALE_PREFIX).append(i).append(SENZA_LOCATION_DOCUMENTO_SEMIFORMALE);
 				}
 				if(ss.getTipo()==null){
-					motivoErroreValidazione.append("SpecificaSemiformale["+i+"] senza il tipo del documento semiformale\n");
+					motivoErroreValidazione.append(SPECIFICA_SEMIFORMALE_PREFIX).append(i).append(SENZA_TIPO_DOCUMENTO_SEMIFORMALE);
 				}else{
-					if(TipiDocumentoSemiformale.HTML.toString().equals(ss.getTipo())==false &&
-							TipiDocumentoSemiformale.UML.toString().equals(ss.getTipo())==false &&
-							TipiDocumentoSemiformale.XML.toString().equals(ss.getTipo())==false &&
-							TipiDocumentoSemiformale.LINGUAGGIO_NATURALE.toString().equals(ss.getTipo())==false ){
-						motivoErroreValidazione.append("SpecificaSemiformale["+i+"] con tipo del documento semiformale["+ss.getTipo()+"] diverso dai tipi accettati:"+
-								TipiDocumentoSemiformale.HTML.toString()+","+
-								TipiDocumentoSemiformale.UML.toString()+","+
-								TipiDocumentoSemiformale.XML.toString()+","+
-								TipiDocumentoSemiformale.LINGUAGGIO_NATURALE.toString()+","+"\n");
+					if(!TipiDocumentoSemiformale.HTML.toString().equals(ss.getTipo()) &&
+							!TipiDocumentoSemiformale.UML.toString().equals(ss.getTipo()) &&
+							!TipiDocumentoSemiformale.XML.toString().equals(ss.getTipo()) &&
+							!TipiDocumentoSemiformale.LINGUAGGIO_NATURALE.toString().equals(ss.getTipo()) ){
+						motivoErroreValidazione.append(SPECIFICA_SEMIFORMALE_PREFIX).append(i).append(CON_TIPO_DOCUMENTO_SEMIFORMALE).append(ss.getTipo()).append(DIVERSO_DAI_TIPI_ACCETTATI)
+								.append(TipiDocumentoSemiformale.HTML.toString()).append(",")
+								.append(TipiDocumentoSemiformale.UML.toString()).append(",")
+								.append(TipiDocumentoSemiformale.XML.toString()).append(",")
+								.append(TipiDocumentoSemiformale.LINGUAGGIO_NATURALE.toString()).append(",").append("\n");
 					}
 				}
 			}
@@ -413,8 +430,8 @@ public class XMLUtils  {
 					motivoErroreValidazione.append("contenuto SpecificaInterfacciaConcettuale non definito\n");
 				}
 				if(manifestoSC.getSpecificaInterfaccia().getInterfacciaConcettuale().getTipo()!=null && 
-						TipiDocumentoInterfaccia.WSDL.toString().equals(manifestoSC.getSpecificaInterfaccia().getInterfacciaConcettuale().getTipo().name())==false){
-					motivoErroreValidazione.append("tipo SpecificaInterfacciaConcettuale diverso da "+TipiDocumentoInterfaccia.WSDL.toString()+"\n");
+						!TipiDocumentoInterfaccia.WSDL.toString().equals(manifestoSC.getSpecificaInterfaccia().getInterfacciaConcettuale().getTipo().name())){
+					motivoErroreValidazione.append("tipo SpecificaInterfacciaConcettuale diverso da ").append(TipiDocumentoInterfaccia.WSDL.toString()).append("\n");
 				}
 			}
 			if(manifestoSC.getSpecificaInterfaccia().getInterfacciaLogicaLatoErogatore()==null){
@@ -424,8 +441,8 @@ public class XMLUtils  {
 					motivoErroreValidazione.append("contenuto SpecificaInterfacciaLogicaLatoErogatore non definito\n");
 				}
 				if(manifestoSC.getSpecificaInterfaccia().getInterfacciaLogicaLatoErogatore().getTipo()!=null && 
-						TipiDocumentoInterfaccia.WSDL.toString().equals(manifestoSC.getSpecificaInterfaccia().getInterfacciaLogicaLatoErogatore().getTipo().name())==false){
-					motivoErroreValidazione.append("tipo SpecificaInterfacciaLogicaLatoErogatore diverso da "+TipiDocumentoInterfaccia.WSDL.toString()+"\n");
+						!TipiDocumentoInterfaccia.WSDL.toString().equals(manifestoSC.getSpecificaInterfaccia().getInterfacciaLogicaLatoErogatore().getTipo().name())){
+					motivoErroreValidazione.append("tipo SpecificaInterfacciaLogicaLatoErogatore diverso da ").append(TipiDocumentoInterfaccia.WSDL.toString()).append("\n");
 				}
 			}
 			if(manifestoSC.getSpecificaInterfaccia().getInterfacciaLogicaLatoFruitore()!=null){
@@ -433,8 +450,8 @@ public class XMLUtils  {
 					motivoErroreValidazione.append("contenuto SpecificaInterfacciaLogicaLatoFruitore non definito\n");
 				}
 				if(manifestoSC.getSpecificaInterfaccia().getInterfacciaLogicaLatoFruitore().getTipo()!=null && 
-						TipiDocumentoInterfaccia.WSDL.toString().equals(manifestoSC.getSpecificaInterfaccia().getInterfacciaLogicaLatoFruitore().getTipo().name())==false){
-					motivoErroreValidazione.append("tipo SpecificaInterfacciaLogicaLatoFruitore diverso da "+TipiDocumentoInterfaccia.WSDL.toString()+"\n");
+						!TipiDocumentoInterfaccia.WSDL.toString().equals(manifestoSC.getSpecificaInterfaccia().getInterfacciaLogicaLatoFruitore().getTipo().name())){
+					motivoErroreValidazione.append("tipo SpecificaInterfacciaLogicaLatoFruitore diverso da ").append(TipiDocumentoInterfaccia.WSDL.toString()).append("\n");
 				}
 			}
 		}
@@ -444,9 +461,9 @@ public class XMLUtils  {
 					motivoErroreValidazione.append("contenuto ConversazioneConcettuale non definito\n");
 				}
 				if(manifestoSC.getSpecificaConversazione().getConversazioneConcettuale().getTipo()!=null && 
-						TipiDocumentoConversazione.BPEL.toString().equals(manifestoSC.getSpecificaConversazione().getConversazioneConcettuale().getTipo().name())==false &&
-						TipiDocumentoConversazione.WSBL.toString().equals(manifestoSC.getSpecificaConversazione().getConversazioneConcettuale().getTipo().name())==false){
-					motivoErroreValidazione.append("tipo ConversazioneConcettuale diverso da "+TipiDocumentoConversazione.BPEL.toString()+"/"+TipiDocumentoConversazione.WSBL.toString()+"\n");
+						!TipiDocumentoConversazione.BPEL.toString().equals(manifestoSC.getSpecificaConversazione().getConversazioneConcettuale().getTipo().name()) &&
+						!TipiDocumentoConversazione.WSBL.toString().equals(manifestoSC.getSpecificaConversazione().getConversazioneConcettuale().getTipo().name())){
+					motivoErroreValidazione.append("tipo ConversazioneConcettuale diverso da ").append(TipiDocumentoConversazione.BPEL.toString()).append("/").append(TipiDocumentoConversazione.WSBL.toString()).append("\n");
 				}
 			}
 			if(manifestoSC.getSpecificaConversazione().getConversazioneLogicaLatoErogatore()!=null){
@@ -454,9 +471,9 @@ public class XMLUtils  {
 					motivoErroreValidazione.append("contenuto ConversazioneLogicaLatoErogatore non definito\n");
 				}
 				if(manifestoSC.getSpecificaConversazione().getConversazioneLogicaLatoErogatore().getTipo()!=null && 
-						TipiDocumentoConversazione.BPEL.toString().equals(manifestoSC.getSpecificaConversazione().getConversazioneLogicaLatoErogatore().getTipo().name())==false &&
-						TipiDocumentoConversazione.WSBL.toString().equals(manifestoSC.getSpecificaConversazione().getConversazioneLogicaLatoErogatore().getTipo().name())==false){
-					motivoErroreValidazione.append("tipo ConversazioneLogicaLatoErogatore diverso da "+TipiDocumentoConversazione.BPEL.toString()+"/"+TipiDocumentoConversazione.WSBL.toString()+"\n");
+						!TipiDocumentoConversazione.BPEL.toString().equals(manifestoSC.getSpecificaConversazione().getConversazioneLogicaLatoErogatore().getTipo().name()) &&
+						!TipiDocumentoConversazione.WSBL.toString().equals(manifestoSC.getSpecificaConversazione().getConversazioneLogicaLatoErogatore().getTipo().name())){
+					motivoErroreValidazione.append("tipo ConversazioneLogicaLatoErogatore diverso da ").append(TipiDocumentoConversazione.BPEL.toString()).append("/").append(TipiDocumentoConversazione.WSBL.toString()).append("\n");
 				}
 			}
 			if(manifestoSC.getSpecificaConversazione().getConversazioneLogicaLatoFruitore()!=null){
@@ -464,9 +481,9 @@ public class XMLUtils  {
 					motivoErroreValidazione.append("contenuto ConversazioneLogicaLatoFruitore non definito\n");
 				}
 				if(manifestoSC.getSpecificaConversazione().getConversazioneLogicaLatoFruitore().getTipo()!=null && 
-						TipiDocumentoConversazione.BPEL.toString().equals(manifestoSC.getSpecificaConversazione().getConversazioneLogicaLatoFruitore().getTipo().name())==false &&
-						TipiDocumentoConversazione.WSBL.toString().equals(manifestoSC.getSpecificaConversazione().getConversazioneLogicaLatoFruitore().getTipo().name())==false){
-					motivoErroreValidazione.append("tipo ConversazioneLogicaLatoFruitore diverso da "+TipiDocumentoConversazione.BPEL.toString()+"/"+TipiDocumentoConversazione.WSBL.toString()+"\n");
+						!TipiDocumentoConversazione.BPEL.toString().equals(manifestoSC.getSpecificaConversazione().getConversazioneLogicaLatoFruitore().getTipo().name()) &&
+						!TipiDocumentoConversazione.WSBL.toString().equals(manifestoSC.getSpecificaConversazione().getConversazioneLogicaLatoFruitore().getTipo().name())){
+					motivoErroreValidazione.append("tipo ConversazioneLogicaLatoFruitore diverso da ").append(TipiDocumentoConversazione.BPEL.toString()).append("/").append(TipiDocumentoConversazione.WSBL.toString()).append("\n");
 				}
 			}
 		}
@@ -481,7 +498,7 @@ public class XMLUtils  {
 			for(int i=0; i<manifestoSC.getServiziComponenti().sizeServizioComponenteList(); i++){
 				java.net.URI servComponente = manifestoSC.getServiziComponenti().getServizioComponente(i);
 				if(servComponente==null){
-					motivoErroreValidazione.append("ElencoServiziComponenti["+i+"] senza il servizio componente \n");
+					motivoErroreValidazione.append("ElencoServiziComponenti[").append(i).append("] senza il servizio componente \n");
 				}
 			}
 		}
@@ -491,23 +508,20 @@ public class XMLUtils  {
 			for(int i=0; i<specificaCoordinamento.sizeDocumentoCoordinamentoList(); i++){
 				DocumentoCoordinamento docC = specificaCoordinamento.getDocumentoCoordinamento(i);
 				if(docC.getBase()==null){
-					motivoErroreValidazione.append("SpecificaCoordinamento["+i+"] senza la location del documento \n");
+					motivoErroreValidazione.append("SpecificaCoordinamento[").append(i).append(SENZA_LOCATION_DOCUMENTO);
 				}
 				if(docC.getTipo()==null){
-					motivoErroreValidazione.append("SpecificaCoordinamento["+i+"] senza il tipo del documento \n");
+					motivoErroreValidazione.append("SpecificaCoordinamento[").append(i).append(SENZA_TIPO_DOCUMENTO);
 				}else{
-					if(TipiDocumentoCoordinamento.BPEL.toString().equals(docC.getTipo())==false &&
-							TipiDocumentoCoordinamento.WSCDL.toString().equals(docC.getTipo())==false){
-						motivoErroreValidazione.append("tipo SpecificaCoordinamento["+docC.getTipo()+"] diverso da "+TipiDocumentoCoordinamento.BPEL.toString()+"/"+TipiDocumentoCoordinamento.WSCDL.toString()+"\n");
+					if(!TipiDocumentoCoordinamento.BPEL.toString().equals(docC.getTipo()) &&
+							!TipiDocumentoCoordinamento.WSCDL.toString().equals(docC.getTipo())){
+						motivoErroreValidazione.append("tipo SpecificaCoordinamento[").append(docC.getTipo()).append("] diverso da ").append(TipiDocumentoCoordinamento.BPEL.toString()).append("/").append(TipiDocumentoCoordinamento.WSCDL.toString()).append("\n");
 					}
 				}
 			}
 		}
 		
-		if(motivoErroreValidazione.length()!=size)
-			return false;
-		else
-			return true;
+		return motivoErroreValidazione.length()==size;
 		
 	}
 	
@@ -618,8 +632,8 @@ public class XMLUtils  {
 	public static void generateManifestoAS(AccordoServizio manifest,boolean includiInfoRegistroGenerale,boolean lunghezzaNomeAccordoLimitata,File out) throws XMLUtilsException{
 		try{
 			StringBuilder risultatoValidazione = new StringBuilder();
-			if(XMLUtils.validateManifestoAS(manifest, risultatoValidazione, includiInfoRegistroGenerale, lunghezzaNomeAccordoLimitata)==false){
-				throw new Exception(risultatoValidazione.toString());
+			if(!XMLUtils.validateManifestoAS(manifest, risultatoValidazione, includiInfoRegistroGenerale, lunghezzaNomeAccordoLimitata)){
+				throw new XMLUtilsException(risultatoValidazione.toString());
 			}
 			
 			JaxbUtils.objToXml(out.getName(), AccordoServizio.class, manifest);
@@ -631,8 +645,8 @@ public class XMLUtils  {
 	public static void generateManifestoAS(AccordoServizio manifest,boolean includiInfoRegistroGenerale,boolean lunghezzaNomeAccordoLimitata,String fileName) throws XMLUtilsException{
 		try{
 			StringBuilder risultatoValidazione = new StringBuilder();
-			if(XMLUtils.validateManifestoAS(manifest, risultatoValidazione, includiInfoRegistroGenerale,lunghezzaNomeAccordoLimitata)==false){
-				throw new Exception(risultatoValidazione.toString());
+			if(!XMLUtils.validateManifestoAS(manifest, risultatoValidazione, includiInfoRegistroGenerale,lunghezzaNomeAccordoLimitata)){
+				throw new XMLUtilsException(risultatoValidazione.toString());
 			}
 			
 			JaxbUtils.objToXml(fileName, AccordoServizio.class, manifest);
@@ -656,8 +670,8 @@ public class XMLUtils  {
 	public static void generateManifestoAS(AccordoServizio manifest,boolean includiInfoRegistroGenerale,boolean lunghezzaNomeAccordoLimitata,OutputStream out) throws XMLUtilsException{
 		try{
 			StringBuilder risultatoValidazione = new StringBuilder();
-			if(XMLUtils.validateManifestoAS(manifest, risultatoValidazione, includiInfoRegistroGenerale,lunghezzaNomeAccordoLimitata)==false){
-				throw new Exception(risultatoValidazione.toString());
+			if(!XMLUtils.validateManifestoAS(manifest, risultatoValidazione, includiInfoRegistroGenerale,lunghezzaNomeAccordoLimitata)){
+				throw new XMLUtilsException(risultatoValidazione.toString());
 			}
 			
 			JaxbUtils.objToXml(out, AccordoServizio.class, manifest);
@@ -775,8 +789,8 @@ public class XMLUtils  {
 	public static void generateManifestoAC(AccordoCooperazione manifest,boolean includiInfoRegistroGenerale,boolean lunghezzaNomeAccordoLimitata,File out) throws XMLUtilsException{
 		try{
 			StringBuilder risultatoValidazione = new StringBuilder();
-			if(XMLUtils.validateManifestoAC(manifest, risultatoValidazione, includiInfoRegistroGenerale, lunghezzaNomeAccordoLimitata)==false){
-				throw new Exception(risultatoValidazione.toString());
+			if(!XMLUtils.validateManifestoAC(manifest, risultatoValidazione, includiInfoRegistroGenerale, lunghezzaNomeAccordoLimitata)){
+				throw new XMLUtilsException(risultatoValidazione.toString());
 			}
 			
 			JaxbUtils.objToXml(out.getName(), AccordoCooperazione.class, manifest);
@@ -788,8 +802,8 @@ public class XMLUtils  {
 	public static void generateManifestoAC(AccordoCooperazione manifest,boolean includiInfoRegistroGenerale,boolean lunghezzaNomeAccordoLimitata,String fileName) throws XMLUtilsException{
 		try{
 			StringBuilder risultatoValidazione = new StringBuilder();
-			if(XMLUtils.validateManifestoAC(manifest, risultatoValidazione, includiInfoRegistroGenerale, lunghezzaNomeAccordoLimitata)==false){
-				throw new Exception(risultatoValidazione.toString());
+			if(!XMLUtils.validateManifestoAC(manifest, risultatoValidazione, includiInfoRegistroGenerale, lunghezzaNomeAccordoLimitata)){
+				throw new XMLUtilsException(risultatoValidazione.toString());
 			}
 			
 			JaxbUtils.objToXml(fileName, AccordoCooperazione.class, manifest);
@@ -813,8 +827,8 @@ public class XMLUtils  {
 	public static void generateManifestoAC(AccordoCooperazione manifest,boolean includiInfoRegistroGenerale,boolean lunghezzaNomeAccordoLimitata,OutputStream out) throws XMLUtilsException{
 		try{
 			StringBuilder risultatoValidazione = new StringBuilder();
-			if(XMLUtils.validateManifestoAC(manifest, risultatoValidazione, includiInfoRegistroGenerale, lunghezzaNomeAccordoLimitata)==false){
-				throw new Exception(risultatoValidazione.toString());
+			if(!XMLUtils.validateManifestoAC(manifest, risultatoValidazione, includiInfoRegistroGenerale, lunghezzaNomeAccordoLimitata)){
+				throw new XMLUtilsException(risultatoValidazione.toString());
 			}
 			
 			JaxbUtils.objToXml(out, AccordoCooperazione.class, manifest);
@@ -932,8 +946,8 @@ public class XMLUtils  {
 	public static void generateManifestoSC(ServizioComposto manifest,boolean includiInfoRegistroGenerale,boolean lunghezzaNomeAccordoLimitata, File out) throws XMLUtilsException{
 		try{
 			StringBuilder risultatoValidazione = new StringBuilder();
-			if(XMLUtils.validateManifestoSC(manifest, risultatoValidazione, includiInfoRegistroGenerale, lunghezzaNomeAccordoLimitata)==false){
-				throw new Exception(risultatoValidazione.toString());
+			if(!XMLUtils.validateManifestoSC(manifest, risultatoValidazione, includiInfoRegistroGenerale, lunghezzaNomeAccordoLimitata)){
+				throw new XMLUtilsException(risultatoValidazione.toString());
 			}
 			
 			JaxbUtils.objToXml(out.getName(), ServizioComposto.class, manifest);
@@ -945,7 +959,7 @@ public class XMLUtils  {
 	public static void generateManifestoSC(ServizioComposto manifest,boolean includiInfoRegistroGenerale,boolean lunghezzaNomeAccordoLimitata,String fileName) throws XMLUtilsException{
 		try{
 			StringBuilder risultatoValidazione = new StringBuilder();
-			if(XMLUtils.validateManifestoSC(manifest, risultatoValidazione, includiInfoRegistroGenerale, lunghezzaNomeAccordoLimitata)==false){
+			if(!XMLUtils.validateManifestoSC(manifest, risultatoValidazione, includiInfoRegistroGenerale, lunghezzaNomeAccordoLimitata)){
 				throw new Exception(risultatoValidazione.toString());
 			}
 			
@@ -970,8 +984,8 @@ public class XMLUtils  {
 	public static void generateManifestoSC(ServizioComposto manifest,boolean includiInfoRegistroGenerale,boolean lunghezzaNomeAccordoLimitata,OutputStream out) throws XMLUtilsException{
 		try{
 			StringBuilder risultatoValidazione = new StringBuilder();
-			if(XMLUtils.validateManifestoSC(manifest, risultatoValidazione, includiInfoRegistroGenerale, lunghezzaNomeAccordoLimitata)==false){
-				throw new Exception(risultatoValidazione.toString());
+			if(!XMLUtils.validateManifestoSC(manifest, risultatoValidazione, includiInfoRegistroGenerale, lunghezzaNomeAccordoLimitata)){
+				throw new XMLUtilsException(risultatoValidazione.toString());
 			}
 			
 			JaxbUtils.objToXml(out, ServizioComposto.class, manifest);

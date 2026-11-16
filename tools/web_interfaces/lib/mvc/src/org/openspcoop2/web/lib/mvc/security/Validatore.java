@@ -42,24 +42,30 @@ import jakarta.servlet.http.HttpServletRequest;
  * @version $Rev$, $Date$
  */
 public class Validatore {
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
 
 	private static Logger log;
-	private SecurityProperties sc;
-	private InputSanitizerProperties isp;
+	private final SecurityProperties sc;
+	private final InputSanitizerProperties isp;
 	private static Validatore instance;
-	private Safelist safelist;
+	private final Safelist safelist;
 
-	public static synchronized void init(SecurityProperties sc, InputSanitizerProperties isp,  Logger log) {
-		if(Validatore.log == null) {
-			Validatore.log = log;
-		}
-		if(Validatore.instance == null) {
-			Validatore.instance = new Validatore(sc, isp);
+	public static void init(SecurityProperties sc, InputSanitizerProperties isp,  Logger log) {
+		synchronized (INIT_LOCK) {
+			if(Validatore.log == null) {
+				Validatore.log = log;
+			}
+			if(Validatore.instance == null) {
+				Validatore.instance = new Validatore(sc, isp);
+			}
 		}
 	}
 
-	public static synchronized Validatore getInstance() {
-		return instance;
+	public static Validatore getInstance() {
+		synchronized (INIT_LOCK) {
+			return instance;
+		}
 	}
 
 	private Validatore(SecurityProperties sc, InputSanitizerProperties isp) {

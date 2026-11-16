@@ -41,18 +41,22 @@ import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 public class SICAtoOpenSPCoopContext {
 
 	private static SICAtoOpenSPCoopContext staticContext = null;
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
 	public static void initSICAtoOpenSPCoopContext() throws SICAToOpenSPCoopUtilitiesException{
 		initSICAtoOpenSPCoopContext(null);
 	}
-	public static synchronized void initSICAtoOpenSPCoopContext(String configurationFile) throws SICAToOpenSPCoopUtilitiesException{
-		if(staticContext==null){
-			staticContext = new SICAtoOpenSPCoopContext(configurationFile);
+	public static void initSICAtoOpenSPCoopContext(String configurationFile) throws SICAToOpenSPCoopUtilitiesException{
+		synchronized (INIT_LOCK) {
+			if(staticContext==null){
+				staticContext = new SICAtoOpenSPCoopContext(configurationFile);
+			}
 		}
 	}
 	public static SICAtoOpenSPCoopContext getInstance() throws SICAToOpenSPCoopUtilitiesException{
 		if(staticContext==null){
 			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
-			synchronized (SICAtoOpenSPCoopContext.class) {
+			synchronized (INIT_LOCK) {
 				initSICAtoOpenSPCoopContext(DEFAULT_SICA_PROPERTIES_NAME);
 			}
 		}

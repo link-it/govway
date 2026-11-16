@@ -23,8 +23,8 @@ package org.openspcoop2.pdd.core.keystore;
 import java.io.ByteArrayOutputStream;
 import java.security.PublicKey;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.eventi.Evento;
@@ -68,11 +68,15 @@ public class RemoteStoreProviderDriver implements IRemoteStoreProvider {
 	}
 	
 	
-	private static final Map<String, RemoteStoreProviderDriver> _providerStore = new HashMap<>();
-	public static synchronized void initialize(Logger log, RemoteStoreConfig remoteStoreConfig) throws KeystoreException {
-		String storeConfigName = getRemoteStoreConfigName(remoteStoreConfig);
-		RemoteStoreProviderDriver s = new RemoteStoreProviderDriver(log, remoteStoreConfig);
-		_providerStore.put(storeConfigName, s);
+	private static final Map<String, RemoteStoreProviderDriver> _providerStore = new ConcurrentHashMap<>();
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
+	public static void initialize(Logger log, RemoteStoreConfig remoteStoreConfig) throws KeystoreException {
+		synchronized (INIT_LOCK) {
+			String storeConfigName = getRemoteStoreConfigName(remoteStoreConfig);
+			RemoteStoreProviderDriver s = new RemoteStoreProviderDriver(log, remoteStoreConfig);
+			_providerStore.put(storeConfigName, s);
+		}
 	}
 	static RemoteStoreProviderDriver getProviderStore(String storeConfigName) throws KeystoreException{
 		RemoteStoreProviderDriver s = _providerStore.get(storeConfigName);
@@ -83,20 +87,25 @@ public class RemoteStoreProviderDriver implements IRemoteStoreProvider {
 	}
 	
 	
-	private static final Map<String, org.openspcoop2.utils.Semaphore> _lockStore = new HashMap<>();
-	private static synchronized org.openspcoop2.utils.Semaphore initLockStore(String nomeRemoteStore){
-		org.openspcoop2.utils.Semaphore s = _lockStore.get(nomeRemoteStore);
-		if(s==null) {
-			Integer permits = OpenSPCoop2Properties.getInstance().getGestioneTokenValidazioneJWTLockPermits();
-			if(permits!=null && permits.intValue()>1) {
-				s = new org.openspcoop2.utils.Semaphore("GestoreTokenValidazioneJWT_"+nomeRemoteStore, permits);
+	private static final Map<String, org.openspcoop2.utils.Semaphore> _lockStore = new ConcurrentHashMap<>();
+	private static org.openspcoop2.utils.Semaphore initLockStore(String nomeRemoteStore){
+		synchronized (INIT_LOCK) {
+			org.openspcoop2.utils.Semaphore s = _lockStore.get(nomeRemoteStore);
+			if(s==null) {
+				Integer permits = OpenSPCoop2Properties.getInstance().getGestioneTokenValidazioneJWTLockPermits();
+				if(permits!=null && permits.intValue()>1) {
+					s = new org.openspcoop2.utils.Semaphore("GestoreTokenValidazioneJWT_"+nomeRemoteStore, permits);
+				}
+				else {
+					s = new org.openspcoop2.utils.Semaphore("GestoreTokenValidazioneJWT_"+nomeRemoteStore);
+				}
+				org.openspcoop2.utils.Semaphore previous = _lockStore.putIfAbsent(nomeRemoteStore, s);
+				if(previous!=null) {
+					s = previous;
+				}
 			}
-			else {
-				s = new org.openspcoop2.utils.Semaphore("GestoreTokenValidazioneJWT_"+nomeRemoteStore);
-			}
-			_lockStore.put(nomeRemoteStore, s);
+			return s;
 		}
-		return s;
 	}
 	private static org.openspcoop2.utils.Semaphore getLockStore(String nomeRemoteStore){
 		org.openspcoop2.utils.Semaphore s = _lockStore.get(nomeRemoteStore);

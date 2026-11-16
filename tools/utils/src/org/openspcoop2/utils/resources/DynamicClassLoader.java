@@ -61,7 +61,7 @@ public class DynamicClassLoader extends URLClassLoader {
 	
 	
     @Override
-    public void addURL(URL url) {
+    protected void addURL(URL url) {
         super.addURL(url);
     }
     

@@ -36,6 +36,8 @@ import org.openspcoop2.security.message.MessageSecurityContext;
  * @version $Rev$, $Date$
  */
 public class MessageSecurityContext_wss4j implements IMessageSecurityContext{
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
 
 	private Logger log = null;
 
@@ -57,26 +59,28 @@ public class MessageSecurityContext_wss4j implements IMessageSecurityContext{
 	/** WSS Id Allocator */
 	private static org.apache.wss4j.dom.WsuIdAllocator wsuIdAllocator = null;
 	private static String prefixWsuId = null;
-	public static synchronized void initWsuIdAllocator(String prefixWsuIdParam,Logger log) throws Exception{
-		if(MessageSecurityContext_wss4j.wsuIdAllocator==null){
-			WSSConfig config = WSSConfig.getNewInstance();
-			MessageSecurityContext_wss4j.prefixWsuId=prefixWsuIdParam;
-			if(prefixWsuIdParam==null || "".equals(prefixWsuIdParam)){
-				MessageSecurityContext_wss4j.wsuIdAllocator = config.getIdAllocator(); // Default di wss4j
+	public static void initWsuIdAllocator(String prefixWsuIdParam,Logger log) throws Exception{
+		synchronized (INIT_LOCK) {
+			if(MessageSecurityContext_wss4j.wsuIdAllocator==null){
+				WSSConfig config = WSSConfig.getNewInstance();
+				MessageSecurityContext_wss4j.prefixWsuId=prefixWsuIdParam;
+				if(prefixWsuIdParam==null || "".equals(prefixWsuIdParam)){
+					MessageSecurityContext_wss4j.wsuIdAllocator = config.getIdAllocator(); // Default di wss4j
+				}
+				else{
+					MessageSecurityContext_wss4j.wsuIdAllocator = new org.openspcoop2.security.message.WsuIdAllocator(prefixWsuIdParam);
+					config.setIdAllocator(MessageSecurityContext_wss4j.wsuIdAllocator);
+				}
+				log.info("WsuIdAllocator="+config.getIdAllocator().getClass().getName());
 			}
 			else{
-				MessageSecurityContext_wss4j.wsuIdAllocator = new org.openspcoop2.security.message.WsuIdAllocator(prefixWsuIdParam);
-				config.setIdAllocator(MessageSecurityContext_wss4j.wsuIdAllocator);
-			}
-			log.info("WsuIdAllocator="+config.getIdAllocator().getClass().getName());
-		}
-		else{
-			if(MessageSecurityContext_wss4j.prefixWsuId==null){
-				throw new Exception("WsuIdAllocator istanziato con la classe ["+MessageSecurityContext_wss4j.wsuIdAllocator.getClass().getName()+"] e variabile prefixWsuId non istanziata??");
-			}
-			else if(!MessageSecurityContext_wss4j.prefixWsuId.equals(prefixWsuIdParam)){
-				throw new Exception("WsuIdAllocator gia' istanziato con la classe ["+MessageSecurityContext_wss4j.wsuIdAllocator.getClass().getName()
-						+"] e variabile prefixWsuId uguale al valore ["+MessageSecurityContext_wss4j.prefixWsuId+"]. Nuovo valore ["+prefixWsuIdParam+"] non impostabile.");
+				if(MessageSecurityContext_wss4j.prefixWsuId==null){
+					throw new Exception("WsuIdAllocator istanziato con la classe ["+MessageSecurityContext_wss4j.wsuIdAllocator.getClass().getName()+"] e variabile prefixWsuId non istanziata??");
+				}
+				else if(!MessageSecurityContext_wss4j.prefixWsuId.equals(prefixWsuIdParam)){
+					throw new Exception("WsuIdAllocator gia' istanziato con la classe ["+MessageSecurityContext_wss4j.wsuIdAllocator.getClass().getName()
+							+"] e variabile prefixWsuId uguale al valore ["+MessageSecurityContext_wss4j.prefixWsuId+"]. Nuovo valore ["+prefixWsuIdParam+"] non impostabile.");
+				}
 			}
 		}
 	}

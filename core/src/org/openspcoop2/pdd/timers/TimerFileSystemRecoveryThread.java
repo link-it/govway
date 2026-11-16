@@ -80,30 +80,29 @@ public class TimerFileSystemRecoveryThread extends BaseThread{
 	private static final int MAX_ITERATIONS = 10000;
 
 	/** Logger utilizzato per debug. */
-	private Logger logCore = null;
-	private Logger logSql = null;
-	private Logger logTimer = null;
+	private final Logger logCore;
+	private final Logger logSql;
+	private final Logger logTimer;
 	
 	/** Indicazione se deve essere effettuato il log delle query */
-	private boolean debug = false;	
+	private final boolean debug;	
 	
-	private boolean recoveryEventi;
-	private boolean recoveryTransazioni;
+	private final boolean recoveryEventi;
+	private final boolean recoveryTransazioni;
 	
-	private long recoveryEventiProcessingFileAfterMs;
-	private long recoveryTransazioniProcessingFileAfterMs;
+	private final long recoveryEventiProcessingFileAfterMs;
+	private final long recoveryTransazioniProcessingFileAfterMs;
 	
-	private long recoveryMaxFileLimit;
+	private final long recoveryMaxFileLimit;
 	
-	private OpenSPCoop2Properties properties;
+	private final OpenSPCoop2Properties properties;
 	
 	/** Database */
-	private String tipoDatabaseRuntime = null; //tipoDatabase
-	private DAOFactory daoFactory = null;
+	private final String tipoDatabaseRuntime; //tipoDatabase
+	private final DAOFactory daoFactory;
     private Logger daoFactoryLogger = null;
 	private ServiceManagerProperties daoFactoryServiceManagerPropertiesTransazioni = null;
 	private ServiceManagerProperties daoFactoryServiceManagerPropertiesPluginsEventi = null;
-	/** OpenSPCoopAppender */
 	/** Appender personalizzati per i tracciamenti di OpenSPCoop */
 	private ITracciaProducer loggerTracciamentoOpenSPCoopAppender = null; 
 	/** Appender personalizzati per i messaggi diagnostici di OpenSPCoop2 */
@@ -118,9 +117,9 @@ public class TimerFileSystemRecoveryThread extends BaseThread{
 
 	/** Semaforo */
 	private Semaphore semaphore = null;
-	private InfoStatistics semaphore_statistics;
+	private InfoStatistics semaphoreStatistics;
 	
-	private MsgDiagnostico msgDiag = null;
+	private final MsgDiagnostico msgDiag;
 	
 	/** Costruttore 
 	 * @throws CoreException */
@@ -145,7 +144,9 @@ public class TimerFileSystemRecoveryThread extends BaseThread{
 		}
 		
 		this.msgDiag.logPersonalizzato("avvioInCorso");
-		this.logTimer.info(this.msgDiag.getMessaggio_replaceKeywords("avvioInCorso"));
+		if(this.logTimer.isInfoEnabled()) {
+			this.logTimer.info(this.msgDiag.getMessaggio_replaceKeywords("avvioInCorso"));
+		}
 		
 		this.debug = this.properties.isFileSystemRecoveryDebug();
 		
@@ -277,14 +278,14 @@ public class TimerFileSystemRecoveryThread extends BaseThread{
 			this.timerLock = new TimerLock(TipoLock.GESTIONE_FILESYSTEM_TRACE_RECOVERY);
 	
 			if(this.properties.isTimerLockByDatabase()) {
-				this.semaphore_statistics = new InfoStatistics();
+				this.semaphoreStatistics = new InfoStatistics();
 	
 				SemaphoreConfiguration config = GestoreMessaggi.newSemaphoreConfiguration(this.properties.getFileSystemRecoveryLockMaxLife(), 
 						this.properties.getFileSystemRecoveryLockIdleTime());
 	
 				TipiDatabase databaseType = TipiDatabase.toEnumConstant(this.properties.getDatabaseType());
 				try {
-					this.semaphore = new Semaphore(this.semaphore_statistics, SemaphoreMapping.newInstance(this.timerLock.getIdLock()), 
+					this.semaphore = new Semaphore(this.semaphoreStatistics, SemaphoreMapping.newInstance(this.timerLock.getIdLock()), 
 							config, databaseType, this.logTimer);
 				}catch(Exception e) {
 					throw new TimerException(e.getMessage(),e);
@@ -298,13 +299,15 @@ public class TimerFileSystemRecoveryThread extends BaseThread{
 		this.msgDiag.addKeyword(CostantiPdD.KEY_TIMEOUT, this.getTimeout()+" "+sec);
 		
 		this.msgDiag.logPersonalizzato("avvioEffettuato");
-		this.logTimer.info(this.msgDiag.getMessaggio_replaceKeywords("avvioEffettuato"));
+		if(this.logTimer.isInfoEnabled()) {
+			this.logTimer.info(this.msgDiag.getMessaggio_replaceKeywords("avvioEffettuato"));
+		}
 	}
 	
 	private FSRecoveryConfig conf = null;
 	
 	@Override
-	public boolean initialize(){
+	protected boolean initialize(){
 		try{
 			this.conf = new FSRecoveryConfig(false);
 			
@@ -338,7 +341,7 @@ public class TimerFileSystemRecoveryThread extends BaseThread{
 	}
 	
 	@Override
-	public void process(){
+	protected void process(){
 				
 		if(TimerState.ENABLED.equals(STATE)) {
 		
@@ -461,13 +464,15 @@ public class TimerFileSystemRecoveryThread extends BaseThread{
 		else {
 			this.logCore.info("Timer "+ID_MODULO+" disabilitato");
 			this.msgDiag.logPersonalizzato("disabilitato");
-			this.logTimer.info(this.msgDiag.getMessaggio_replaceKeywords("disabilitato"));
+			if(this.logTimer.isInfoEnabled()) {
+				this.logTimer.info(this.msgDiag.getMessaggio_replaceKeywords("disabilitato"));
+			}
 		}
 				
 	}
 	
 	@Override
-	public void close(){			
+	protected void close(){			
 			
 			this.logCore.info("Thread per il recovery da file system terminato");
 			
@@ -480,7 +485,9 @@ public class TimerFileSystemRecoveryThread extends BaseThread{
 		long startGenerazione = DateManager.getTimeMillis();
 		this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_RECORD, objectType.name()); // riferito a intervallo
 		this.msgDiag.logPersonalizzato("recovery.inCorso");
-		this.logTimer.info(this.msgDiag.getMessaggio_replaceKeywords("recovery.inCorso"));
+		if(this.logTimer.isInfoEnabled()) {
+			this.logTimer.info(this.msgDiag.getMessaggio_replaceKeywords("recovery.inCorso"));
+		}
 		
 		if(this.properties.isFileSystemRecoveryLockEnabled()) {
 			try{
@@ -509,7 +516,9 @@ public class TimerFileSystemRecoveryThread extends BaseThread{
 		this.msgDiag.addKeyword(CostantiPdD.KEY_TEMPO_GENERAZIONE, tempoImpiegato); 
 		this.msgDiag.addKeyword(CostantiPdD.KEY_NUMERO_RECORD, l+""); 
 		this.msgDiag.logPersonalizzato("recovery.effettuata");
-		this.logTimer.info(this.msgDiag.getMessaggio_replaceKeywords("recovery.effettuata"));
+		if(this.logTimer.isInfoEnabled()) {
+			this.logTimer.info(this.msgDiag.getMessaggio_replaceKeywords("recovery.effettuata"));
+		}
 		
 		return l;
 	}

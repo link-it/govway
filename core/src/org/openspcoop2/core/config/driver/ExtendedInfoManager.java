@@ -36,22 +36,26 @@ public class ExtendedInfoManager {
 	// STATIC
 	
 	private static ExtendedInfoManager staticInstance = null;
-	public static synchronized void initialize(
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
+	public static void initialize(
 			Loader openspcoop2Loader,
 			String classExtendedInfoConfigurazione,
 			String classExtendedInfoPortaDelegata, String classExtendedInfoPortaApplicativa){
 		initialize(false, openspcoop2Loader, 
 				classExtendedInfoConfigurazione, classExtendedInfoPortaDelegata, classExtendedInfoPortaApplicativa);
 	}
-	public static synchronized void initialize(
+	public static void initialize(
 			boolean forceOverride,
 			Loader openspcoop2Loader,
 			String classExtendedInfoConfigurazione,
 			String classExtendedInfoPortaDelegata, String classExtendedInfoPortaApplicativa){
-		if(staticInstance==null || forceOverride){
-			staticInstance = new ExtendedInfoManager(openspcoop2Loader,
-					classExtendedInfoConfigurazione,
-					classExtendedInfoPortaDelegata, classExtendedInfoPortaApplicativa);
+		synchronized (INIT_LOCK) {
+			if(staticInstance==null || forceOverride){
+				staticInstance = new ExtendedInfoManager(openspcoop2Loader,
+						classExtendedInfoConfigurazione,
+						classExtendedInfoPortaDelegata, classExtendedInfoPortaApplicativa);
+			}
 		}
 	}
 	public static ExtendedInfoManager getInstance() throws DriverConfigurazioneException{

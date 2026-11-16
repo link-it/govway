@@ -29,7 +29,7 @@ import org.openspcoop2.message.utils.WWWAuthenticateGenerator;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class WWWAuthenticateConfig {
+public class WWWAuthenticateConfig implements Cloneable {
 
 	private String authType;
 	private String realm;

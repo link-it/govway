@@ -282,6 +282,8 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 	
 	/** IGestoreCredenziali: lista di gestori delle credenziali */
 	private static String [] tipiGestoriCredenziali = null;
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
 		
 	/**
 	 * Inizializzatore del servizio RicezioneBuste
@@ -289,7 +291,12 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 	 * 
 	 * @throws Exception
 	 */
-	public static synchronized void initializeService(ClassNameProperties className,OpenSPCoop2Properties propertiesReader,Logger logCore) throws CoreException, ProtocolException{
+	public static void initializeService(ClassNameProperties className,OpenSPCoop2Properties propertiesReader,Logger logCore) throws CoreException, ProtocolException{
+		synchronized (INIT_LOCK) {
+			initializeServiceEngine(className, propertiesReader, logCore);
+		}
+	}
+	private static void initializeServiceEngine(ClassNameProperties className,OpenSPCoop2Properties propertiesReader,Logger logCore) throws CoreException, ProtocolException{
 		if(RicezioneBuste.initializeService)
 			return; // inizializzato da un altro thread
 

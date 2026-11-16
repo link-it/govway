@@ -55,7 +55,7 @@ public class EchoService extends ServletTestService {
 	}
 
 	@Override
-	public void doGet(HttpServletRequest req, HttpServletResponse res)
+	protected void doGet(HttpServletRequest req, HttpServletResponse res)
 	throws ServletException, IOException {
 		Properties headerTrasporto = new Properties();
 		headerTrasporto.put("GovWay", "EchoService");

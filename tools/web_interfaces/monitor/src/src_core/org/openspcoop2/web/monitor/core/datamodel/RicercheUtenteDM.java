@@ -44,7 +44,7 @@ public class RicercheUtenteDM extends BaseDataModelWithSearchForm<Long, RicercaU
 
 	
 	@Override
-	public List<RicercaUtenteBean> findObjects(int start, int limit, String sortField, SortOrder sortOrder) {
+	protected List<RicercaUtenteBean> findObjects(int start, int limit, String sortField, SortOrder sortOrder) {
 		return this.getDataProvider().findAll(start, limit);
 	}
 

@@ -1084,7 +1084,7 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 	// Getters necessari poichè non viene aggiornato il field nella classe nonno DatiCollezionati, poichè i metodi increment, decrement e add non ritornano anche il valore
 
 	@Override
-	public Long getActiveRequestCounter(boolean readRemoteInfo) {
+	protected Long getActiveRequestCounter(boolean readRemoteInfo) {
 		if(this.distribuitedActiveRequestCounterPolicyRichiesteSimultanee){
 			if(readRemoteInfo) {
 				if(this.richiesteSimultaneeIntervalloSecondi > 0) {
@@ -1107,7 +1107,7 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 	// Getters non necessari, sono utili solo se viene richiesta una lettura del dato remoto
 
 	@Override
-	public Long getPolicyDenyRequestCounter(boolean readRemoteInfo) {
+	protected Long getPolicyDenyRequestCounter(boolean readRemoteInfo) {
 		if(readRemoteInfo) {
 			if(this.distributedPolicyDenyRequestCounter!=null) {
 				return this.distributedPolicyDenyRequestCounter.sum();
@@ -1122,7 +1122,7 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 	}
 
 	@Override
-	public Long getPolicyRequestCounter(boolean readRemoteInfo) {
+	protected Long getPolicyRequestCounter(boolean readRemoteInfo) {
 		if(readRemoteInfo) {
 			if(this.distributedPolicyRequestCounter!=null) {
 				return this.distributedPolicyRequestCounter.sum();
@@ -1136,7 +1136,7 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 		}
 	}
 	@Override
-	public Long getPolicyCounter(boolean readRemoteInfo) {
+	protected Long getPolicyCounter(boolean readRemoteInfo) {
 		if(readRemoteInfo) {
 			if(this.distributedPolicyCounter!=null) {
 				return this.distributedPolicyCounter.sum();
@@ -1150,7 +1150,7 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 		}
 	}
 	@Override
-	public Long getPolicyDegradoPrestazionaleRequestCounter(boolean readRemoteInfo) {
+	protected Long getPolicyDegradoPrestazionaleRequestCounter(boolean readRemoteInfo) {
 		if(readRemoteInfo) {
 			if(this.distributedPolicyDegradoPrestazionaleRequestCounter!=null) {
 				return this.distributedPolicyDegradoPrestazionaleRequestCounter.sum();
@@ -1164,7 +1164,7 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 		}
 	}
 	@Override
-	public Long getPolicyDegradoPrestazionaleCounter(boolean readRemoteInfo) {
+	protected Long getPolicyDegradoPrestazionaleCounter(boolean readRemoteInfo) {
 		if(readRemoteInfo) {
 			if(this.distributedPolicyDegradoPrestazionaleCounter!=null) {
 				return this.distributedPolicyDegradoPrestazionaleCounter.sum();

@@ -25,6 +25,7 @@ package org.openspcoop2.pdd.timers;
 import java.io.ByteArrayOutputStream;
 import java.util.List;
 
+import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.eventi.Evento;
 import org.openspcoop2.core.eventi.constants.CodiceEventoStatoGateway;
@@ -98,15 +99,15 @@ public class TimerMonitoraggioRisorseThread extends BaseThread{
 	 
     
 	/** Properties Reader */
-	private OpenSPCoop2Properties propertiesReader;
+	private final OpenSPCoop2Properties propertiesReader;
 	/** MessaggioDiagnostico */
-	private MsgDiagnostico msgDiag;
+	private final MsgDiagnostico msgDiag;
 	
 	/** LastImage */
 	private boolean lastCheck = true;
 	
 	/** Logger per debug */
-	private Logger logger = null;
+	private final Logger logger;
 	private void logDebug(String msg) {
 		if(this.logger!=null) {
 			this.logger.debug(msg);
@@ -138,8 +139,8 @@ public class TimerMonitoraggioRisorseThread extends BaseThread{
 	private GestoreEventi gestoreEventi;
 	
 	/** Costruttore 
-	 * @throws Exception */
-	public TimerMonitoraggioRisorseThread() throws Exception {
+	 * @throws DriverConfigurazioneException */
+	public TimerMonitoraggioRisorseThread() throws DriverConfigurazioneException {
 		this.propertiesReader = OpenSPCoop2Properties.getInstance();
 		
 		this.msgDiag = MsgDiagnostico.newInstance(TimerMonitoraggioRisorseThread.ID_MODULO);
@@ -176,7 +177,7 @@ public class TimerMonitoraggioRisorseThread extends BaseThread{
 	}
 
 	@Override
-	public void process(){
+	protected void process(){
 		// nop: ho ridefinito il metodo run
 	}
 	
@@ -196,7 +197,7 @@ public class TimerMonitoraggioRisorseThread extends BaseThread{
 				boolean checkRisorseDisponibili = true;
 				
 				// Controllo che il sistema non sia andando in shutdown
-				if(OpenSPCoop2Startup.contextDestroyed){
+				if(OpenSPCoop2Startup.contextDestroyedState){
 					this.logger.error("["+TimerMonitoraggioRisorseThread.ID_MODULO+"] Rilevato sistema in shutdown");
 					return;
 				}
@@ -444,7 +445,7 @@ public class TimerMonitoraggioRisorseThread extends BaseThread{
 						}
 						
 						// nel tracciamento considero anche le transazioni
-						if(checkRisorseDisponibili && this.propertiesReader.isTransazioniUsePddRuntimeDatasource()==false) {
+						if(checkRisorseDisponibili && !this.propertiesReader.isTransazioniUsePddRuntimeDatasource()) {
 							try{
 								this.logDebug("Controllo Database Transazioni (iterazioni:"+this.propertiesReader.getNumeroIterazioniFalliteControlloRisorseTracciamentiPersonalizzati()+" checkInterval:"+this.propertiesReader.getIterazioniFalliteCheckIntervalControlloRisorseTracciamentiPersonalizzati()+")");
 								Throwable t = null;
@@ -480,7 +481,7 @@ public class TimerMonitoraggioRisorseThread extends BaseThread{
 					if(risorsaNonDisponibile!=null)
 						this.msgDiag.addKeyword(CostantiPdD.KEY_RISORSA_NON_DISPONIBILE, risorsaNonDisponibile);
 					if(!checkRisorseDisponibili && this.lastCheck){
-						if(risorsaNonDisponibile!=null && (risorsaNonDisponibile.startsWith("[MessaggioDiagnosticoAppender")==false) ){
+						if(risorsaNonDisponibile!=null && (!risorsaNonDisponibile.startsWith("[MessaggioDiagnosticoAppender")) ){
 							if(risorsaNonDisponibile.startsWith("[Validazione semantica")){
 								this.msgDiag.logPersonalizzato("validazioneSemanticaFallita");
 							}else{

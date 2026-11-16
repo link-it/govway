@@ -81,30 +81,36 @@ import org.slf4j.Logger;
 
 
 public class ProtocolFactoryManager {
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
 
 	private static ProtocolFactoryManager protocolFactoryManager = null;
-	public static synchronized void initialize(Logger log,ConfigurazionePdD configPdD,String protocolDefault) throws ProtocolException {
-		if(ProtocolFactoryManager.protocolFactoryManager==null){
-			ProtocolFactoryManager.protocolFactoryManager = new ProtocolFactoryManager(log,configPdD,protocolDefault,false);
-			// Inizializzo anche Esiti.properties
-			EsitiProperties.initialize(configPdD.getConfigurationDir(), log, configPdD.getLoader(), protocolFactoryManager.getProtocolFactories());
-			// Inizializzo risorse statiche che avevano bisogno di altre informazioni (es. esiti properties)
-			protocolFactoryManager.initStaticInstance();
+	public static void initialize(Logger log,ConfigurazionePdD configPdD,String protocolDefault) throws ProtocolException {
+		synchronized (INIT_LOCK) {
+			if(ProtocolFactoryManager.protocolFactoryManager==null){
+				ProtocolFactoryManager.protocolFactoryManager = new ProtocolFactoryManager(log,configPdD,protocolDefault,false);
+				// Inizializzo anche Esiti.properties
+				EsitiProperties.initialize(configPdD.getConfigurationDir(), log, configPdD.getLoader(), protocolFactoryManager.getProtocolFactories());
+				// Inizializzo risorse statiche che avevano bisogno di altre informazioni (es. esiti properties)
+				protocolFactoryManager.initStaticInstance();
+			}
 		}
 	}
-	public static synchronized void initializeSingleProtocol(Logger log,ConfigurazionePdD configPdD,String protocol) throws ProtocolException {
-		if(ProtocolFactoryManager.protocolFactoryManager==null){
-			ProtocolFactoryManager.protocolFactoryManager = new ProtocolFactoryManager(log,configPdD,protocol,true);
-			// Inizializzo anche Esiti.properties
-			EsitiProperties.initialize(configPdD.getConfigurationDir(), log, configPdD.getLoader(), protocolFactoryManager.getProtocolFactories());
-			// Inizializzo risorse statiche che avevano bisogno di altre informazioni (es. esiti properties)
-			protocolFactoryManager.initStaticInstance();
+	public static void initializeSingleProtocol(Logger log,ConfigurazionePdD configPdD,String protocol) throws ProtocolException {
+		synchronized (INIT_LOCK) {
+			if(ProtocolFactoryManager.protocolFactoryManager==null){
+				ProtocolFactoryManager.protocolFactoryManager = new ProtocolFactoryManager(log,configPdD,protocol,true);
+				// Inizializzo anche Esiti.properties
+				EsitiProperties.initialize(configPdD.getConfigurationDir(), log, configPdD.getLoader(), protocolFactoryManager.getProtocolFactories());
+				// Inizializzo risorse statiche che avevano bisogno di altre informazioni (es. esiti properties)
+				protocolFactoryManager.initStaticInstance();
+			}
 		}
 	}
 	public static ProtocolFactoryManager getInstance() throws ProtocolException {
 		if(ProtocolFactoryManager.protocolFactoryManager==null){
 			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
-			synchronized (ProtocolFactoryManager.class) {
+			synchronized (INIT_LOCK) {
 				throw new ProtocolException("ProtocolFactoryManager not initialized");
 			}
 		}

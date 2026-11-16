@@ -65,7 +65,7 @@ public class OpenSPCoop2MessageFactory_impl extends OpenSPCoop2MessageFactory {
 	// ********** SOAP - FACTORY *************
 
 	@Override
-	protected synchronized void initSoapFactory() {
+	protected void initSoapFactory() {
 		try{
             if(OpenSPCoop2MessageFactory.soapFactory11==null || OpenSPCoop2MessageFactory.soapFactory12==null){
             	OpenSPCoop2MessageFactory.initSoapFactory11(new com.sun.xml.messaging.saaj.soap.ver1_1.SOAPFactory1_1Impl());
@@ -77,7 +77,7 @@ public class OpenSPCoop2MessageFactory_impl extends OpenSPCoop2MessageFactory {
 	}
 
 	@Override
-	protected synchronized void initSoapMessageFactory() throws SOAPException {
+	protected void initSoapMessageFactory() throws SOAPException {
 		if(OpenSPCoop2MessageFactory.soapMessageFactory==null){
             OpenSPCoop2MessageFactory.initSoapMessageFactory(new com.sun.xml.messaging.saaj.soap.MessageFactoryImpl());
 		}
@@ -120,7 +120,7 @@ public class OpenSPCoop2MessageFactory_impl extends OpenSPCoop2MessageFactory {
     // ********** OpenSPCoop2Message builder *************
 	
 	@Override
-	public OpenSPCoop2Message _createMessage(MessageType messageType, SOAPMessage soapMsg) throws MessageException {
+	protected OpenSPCoop2Message _createMessage(MessageType messageType, SOAPMessage soapMsg) throws MessageException {
 		OpenSPCoop2Message msg = null;
 		if(MessageType.SOAP_11.equals(messageType)){
 			msg = new OpenSPCoop2Message_saaj_11_impl(this, soapMsg);
@@ -135,7 +135,7 @@ public class OpenSPCoop2MessageFactory_impl extends OpenSPCoop2MessageFactory {
 	}
 	
 	@Override
-	public OpenSPCoop2Message _createEmptyMessage(MessageType messageType) throws MessageException  {
+	protected OpenSPCoop2Message _createEmptyMessage(MessageType messageType) throws MessageException  {
 		OpenSPCoop2Message msg = null;
 		switch (messageType) {
 			case SOAP_11:

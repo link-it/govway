@@ -44,6 +44,8 @@ package org.openspcoop2.utils.resources;
 public class JndiDatasourceNameNormalizer {
 
 	private JndiDatasourceNameNormalizer() {}
+	/** Lock privato per l'accesso alla configurazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object LOCK = new Object();
 
 	/** Prefisso ENC (Environment Naming Context) standard, usato come default. */
 	public static final String DEFAULT_CONTEXT_PREFIX = "java:/comp/env/";
@@ -73,14 +75,18 @@ public class JndiDatasourceNameNormalizer {
 	 * @param contextPrefixValue valore del prefisso ENC (es. 'java:/comp/env/')
 	 * @param expectedInThisAS true se il prefisso e' atteso dall'AS in esecuzione (Tomcat), false altrimenti (WildFly/JBoss)
 	 */
-	public static synchronized void configure(boolean enabledNormalize, String contextPrefixValue, boolean expectedInThisAS) {
-		enabled = enabledNormalize;
-		contextPrefix = (contextPrefixValue!=null) ? contextPrefixValue.trim() : null;
-		expected = expectedInThisAS;
+	public static void configure(boolean enabledNormalize, String contextPrefixValue, boolean expectedInThisAS) {
+		synchronized (LOCK) {
+			enabled = enabledNormalize;
+			contextPrefix = (contextPrefixValue!=null) ? contextPrefixValue.trim() : null;
+			expected = expectedInThisAS;
+		}
 	}
 
-	public static synchronized boolean isEnabled() {
-		return enabled;
+	public static boolean isEnabled() {
+		synchronized (LOCK) {
+			return enabled;
+		}
 	}
 
 	/**
@@ -91,46 +97,48 @@ public class JndiDatasourceNameNormalizer {
 	 * @param jndiName nome JNDI risolto dalla base dati
 	 * @return nome JNDI normalizzato
 	 */
-	public static synchronized String normalize(String jndiName) {
+	public static String normalize(String jndiName) {
+		synchronized (LOCK) {
 
-		if(!enabled || jndiName==null) {
-			return jndiName;
-		}
-
-		String prefix = contextPrefix;
-		if(prefix==null || prefix.isEmpty()) {
-			return jndiName;
-		}
-
-		// Riconoscimento del SOLO prefisso ENC gia' presente: si considerano sia il prefisso configurato sia
-		// le varianti ENC note (es. 'java:comp/env/' senza '/' iniziale). Si verifica dal piu' lungo
-		// al piu' corto per un match deterministico. La radice 'java:/' NON rientra in questa verifica
-		// (gestita separatamente): qui si decide unicamente se aggiungere o rimuovere il prefisso ENC.
-		String matchedEnc = null;
-		for(String p : knownPrefixesLongestFirst(prefix)) {
-			if(p!=null && !p.isEmpty() && jndiName.startsWith(p)) {
-				matchedEnc = p;
-				break;
+			if(!enabled || jndiName==null) {
+				return jndiName;
 			}
-		}
-		boolean present = (matchedEnc != null);
 
-		if(expected) {
-			// AS che attende il prefisso (Tomcat)
+			String prefix = contextPrefix;
+			if(prefix==null || prefix.isEmpty()) {
+				return jndiName;
+			}
+
+			// Riconoscimento del SOLO prefisso ENC gia' presente: si considerano sia il prefisso configurato sia
+			// le varianti ENC note (es. 'java:comp/env/' senza '/' iniziale). Si verifica dal piu' lungo
+			// al piu' corto per un match deterministico. La radice 'java:/' NON rientra in questa verifica
+			// (gestita separatamente): qui si decide unicamente se aggiungere o rimuovere il prefisso ENC.
+			String matchedEnc = null;
+			for(String p : knownPrefixesLongestFirst(prefix)) {
+				if(p!=null && !p.isEmpty() && jndiName.startsWith(p)) {
+					matchedEnc = p;
+					break;
+				}
+			}
+			boolean present = (matchedEnc != null);
+
+			if(expected) {
+				// AS che attende il prefisso (Tomcat)
+				if(present) {
+					return jndiName; // gia' coerente
+				}
+				// aggiungo il prefisso, rimuovendo prima l'eventuale radice 'java:/' (o 'java:') per non duplicarla
+				return prefix + stripJavaRoot(jndiName);
+			}
+
+			// AS che non attende il prefisso (WildFly/JBoss)
 			if(present) {
-				return jndiName; // gia' coerente
+				// rimuovo il prefisso ENC e ripristino la radice canonica 'java:/'
+				return JAVA_ROOT_PREFIX + jndiName.substring(matchedEnc.length());
 			}
-			// aggiungo il prefisso, rimuovendo prima l'eventuale radice 'java:/' (o 'java:') per non duplicarla
-			return prefix + stripJavaRoot(jndiName);
+			// gia' coerente (es. 'java:/org.govway.datasource'): invariato
+			return jndiName;
 		}
-
-		// AS che non attende il prefisso (WildFly/JBoss)
-		if(present) {
-			// rimuovo il prefisso ENC e ripristino la radice canonica 'java:/'
-			return JAVA_ROOT_PREFIX + jndiName.substring(matchedEnc.length());
-		}
-		// gia' coerente (es. 'java:/org.govway.datasource'): invariato
-		return jndiName;
 	}
 
 	private static String stripJavaRoot(String jndiName) {

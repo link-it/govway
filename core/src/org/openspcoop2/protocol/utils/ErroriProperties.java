@@ -40,6 +40,8 @@ import org.slf4j.Logger;
  * @version $Rev$, $Date$
  */
 public class ErroriProperties {
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
 
 	// 400
 	private static volatile boolean FORCE_SPECIFIC_ERROR_TYPE_FOR_INTERNAL_BAD_REQUEST = false;
@@ -90,10 +92,12 @@ public class ErroriProperties {
 		reInit(confDir, log, loader);
 	}
 	
-	private static synchronized void reInit(String confDir,Logger log,Loader loader) throws ProtocolException {
-		ErroriProperties erroriPropertiesNew = new ErroriProperties(confDir, log);
-		erroriPropertiesNew.validaConfigurazione(loader);
-		ErroriProperties.erroriProperties = erroriPropertiesNew; // switch
+	private static void reInit(String confDir,Logger log,Loader loader) throws ProtocolException {
+		synchronized (INIT_LOCK) {
+			ErroriProperties erroriPropertiesNew = new ErroriProperties(confDir, log);
+			erroriPropertiesNew.validaConfigurazione(loader);
+			ErroriProperties.erroriProperties = erroriPropertiesNew; // switch
+		}
 	} 
 	
 	
@@ -161,15 +165,17 @@ public class ErroriProperties {
 	 *
 	 * 
 	 */
-	public static synchronized void initialize(String confDir,Logger log,Loader loader) throws ProtocolException{
+	public static void initialize(String confDir,Logger log,Loader loader) throws ProtocolException{
+		synchronized (INIT_LOCK) {
 
-		if(ErroriProperties.erroriProperties==null){
+			if(ErroriProperties.erroriProperties==null){
 			
-			ErroriProperties.erroriProperties = new ErroriProperties(confDir, log);
-			erroriProperties.validaConfigurazione(loader);
+				ErroriProperties.erroriProperties = new ErroriProperties(confDir, log);
+				erroriProperties.validaConfigurazione(loader);
 						
-		}
+			}
 
+		}
 	}
 
 	/**
@@ -183,7 +189,7 @@ public class ErroriProperties {
 
 		if(ErroriProperties.erroriProperties==null) {
 			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
-			synchronized (ErroriProperties.class) {
+			synchronized (INIT_LOCK) {
 				throw new ProtocolException("ErroriProperties not initialized (use init method in factory)");
 			}
 		}

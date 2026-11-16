@@ -29,6 +29,11 @@ package org.openspcoop2.utils.date;
  * @version $Rev$, $Date$
  */
 public class UniqueIDGenerator {
+	
+	private UniqueIDGenerator() {}
+
+	/** Lock privato per la generazione del numero seriale (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object LOCK = new Object();
 
 	private static long serialNumber = 0;
 	/**
@@ -36,12 +41,14 @@ public class UniqueIDGenerator {
 	 * 
 	 * @return un numero seriale univoco
 	 */
-	public static synchronized String getUniqueID(){
-		if((UniqueIDGenerator.serialNumber+1) > Long.MAX_VALUE){
-			UniqueIDGenerator.serialNumber = 0;
-		} 
-		UniqueIDGenerator.serialNumber++;
-		return "T:"+DateManager.getTimeMillis() +"_S:" +UniqueIDGenerator.serialNumber;
+	public static String getUniqueID(){
+		synchronized (LOCK) {
+			if(UniqueIDGenerator.serialNumber == Long.MAX_VALUE){
+				UniqueIDGenerator.serialNumber = 0;
+			} 
+			UniqueIDGenerator.serialNumber++;
+			return "T:"+DateManager.getTimeMillis() +"_S:" +UniqueIDGenerator.serialNumber;
+		}
 	}
 	
 }

@@ -53,6 +53,8 @@ import org.slf4j.Logger;
  *
  */
 public class ApiMonitorAuditManager {
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
 
 	private static final String AUDIT_LOG4J2_PROPERTIES_API_MONITOR = "monitor.audit.log4j2.properties";
 
@@ -72,48 +74,50 @@ public class ApiMonitorAuditManager {
 		}
 	}
 
-	public static synchronized void initializeAuditManager() throws ApiMonitorAuditException {
-		SemaphoreLock lock = semaphoreAuditLock.acquireThrowRuntime(MODULE_ID);
-		try {
-			if(auditManager==null){
-				auditManager = new AuditAppender();
+	public static void initializeAuditManager() throws ApiMonitorAuditException {
+		synchronized (INIT_LOCK) {
+			SemaphoreLock lock = semaphoreAuditLock.acquireThrowRuntime(MODULE_ID);
+			try {
+				if(auditManager==null){
+					auditManager = new AuditAppender();
 
-				Logger sqlLogger = LoggerWrapperFactory.getLogger(ApiMonitorAuditManager.class);
+					Logger sqlLogger = LoggerWrapperFactory.getLogger(ApiMonitorAuditManager.class);
 
-				Configurazione configurazioneAuditing = null;
-				try {
-					DBManager dbManager = DBManager.getInstance();
-					String tipoDatabase = dbManager.getServiceManagerPropertiesConfig().getDatabaseType();
-					String datasourceJNDIName = dbManager.getDataSourceConfigName();
-					Properties datasourceJNDIContext = dbManager.getDataSourceConfigContext();
-
-					DriverConfigurazioneDB driverConfigDB = new DriverConfigurazioneDB(datasourceJNDIName, datasourceJNDIContext, sqlLogger, tipoDatabase);
-
-					Connection con = null;
+					Configurazione configurazioneAuditing = null;
 					try {
-						con = driverConfigDB.getConnection(MODULE_ID);
-						if(con==null) {
-							throw new ApiMonitorAuditException("Connessione non disponibile");
-						}
-						DriverAudit driverAudit = new DriverAudit(con, tipoDatabase);
-						configurazioneAuditing = driverAudit.getConfigurazione();
-						checkAuditDBAppender(configurazioneAuditing, datasourceJNDIName, datasourceJNDIContext, tipoDatabase);
-						checkAuditLog4jAppender(configurazioneAuditing);
-					} finally {
-						driverConfigDB.releaseConnection(MODULE_ID, con);
-					}
-				} catch(Exception e) {
-					throw new ApiMonitorAuditException("Inizializzazione auditManager non riuscita (LetturaConfigurazione): "+e.getMessage(), e);
-				}
+						DBManager dbManager = DBManager.getInstance();
+						String tipoDatabase = dbManager.getServiceManagerPropertiesConfig().getDatabaseType();
+						String datasourceJNDIName = dbManager.getDataSourceConfigName();
+						Properties datasourceJNDIContext = dbManager.getDataSourceConfigContext();
 
-				try {
-					auditManager.initializeAudit(configurazioneAuditing, IDBuilder.getIDBuilder());
-				} catch(Exception e) {
-					throw new ApiMonitorAuditException("Inizializzazione auditManager non riuscita: "+e.getMessage(), e);
+						DriverConfigurazioneDB driverConfigDB = new DriverConfigurazioneDB(datasourceJNDIName, datasourceJNDIContext, sqlLogger, tipoDatabase);
+
+						Connection con = null;
+						try {
+							con = driverConfigDB.getConnection(MODULE_ID);
+							if(con==null) {
+								throw new ApiMonitorAuditException("Connessione non disponibile");
+							}
+							DriverAudit driverAudit = new DriverAudit(con, tipoDatabase);
+							configurazioneAuditing = driverAudit.getConfigurazione();
+							checkAuditDBAppender(configurazioneAuditing, datasourceJNDIName, datasourceJNDIContext, tipoDatabase);
+							checkAuditLog4jAppender(configurazioneAuditing);
+						} finally {
+							driverConfigDB.releaseConnection(MODULE_ID, con);
+						}
+					} catch(Exception e) {
+						throw new ApiMonitorAuditException("Inizializzazione auditManager non riuscita (LetturaConfigurazione): "+e.getMessage(), e);
+					}
+
+					try {
+						auditManager.initializeAudit(configurazioneAuditing, IDBuilder.getIDBuilder());
+					} catch(Exception e) {
+						throw new ApiMonitorAuditException("Inizializzazione auditManager non riuscita: "+e.getMessage(), e);
+					}
 				}
+			} finally {
+				semaphoreAuditLock.release(lock, MODULE_ID);
 			}
-		} finally {
-			semaphoreAuditLock.release(lock, MODULE_ID);
 		}
 	}
 

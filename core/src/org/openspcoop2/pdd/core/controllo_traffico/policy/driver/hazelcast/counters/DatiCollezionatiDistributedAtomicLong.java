@@ -961,7 +961,7 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 	// Getters necessari poichè non viene aggiornato il field nella classe padre DatiCollezionati, poichè si usa il metodo Async nel caso di informazioni statistiche
 	
 	@Override
-	public Long getActiveRequestCounter(boolean readRemoteInfo) {
+	protected Long getActiveRequestCounter(boolean readRemoteInfo) {
 		if(this.distribuitedActiveRequestCounterPolicyRichiesteSimultanee){
 			if(readRemoteInfo) {
 				if(this.richiesteSimultaneeIntervalloSecondi > 0) {
@@ -984,7 +984,7 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 	// Getters non necessari, sono utili solo se viene richiesta una lettura del dato remoto
 	
 	@Override
-	public Long getPolicyDenyRequestCounter(boolean readRemoteInfo) {
+	protected Long getPolicyDenyRequestCounter(boolean readRemoteInfo) {
 		if(readRemoteInfo) {
 			if(this.distributedPolicyDenyRequestCounter!=null) {
 				return this.distributedPolicyDenyRequestCounter.get();
@@ -999,7 +999,7 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 	}
 	
 	@Override
-	public Long getPolicyRequestCounter(boolean readRemoteInfo) {
+	protected Long getPolicyRequestCounter(boolean readRemoteInfo) {
 		if(readRemoteInfo) {
 			if(this.distributedPolicyRequestCounter!=null) {
 				return this.distributedPolicyRequestCounter.get();
@@ -1013,7 +1013,7 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 		}
 	}
 	@Override
-	public Long getPolicyCounter(boolean readRemoteInfo) {
+	protected Long getPolicyCounter(boolean readRemoteInfo) {
 		if(readRemoteInfo) {
 			if(this.distributedPolicyCounter!=null) {
 				return this.distributedPolicyCounter.get();
@@ -1028,7 +1028,7 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 	}
 
 	@Override
-	public Long getPolicyDegradoPrestazionaleRequestCounter(boolean readRemoteInfo) {
+	protected Long getPolicyDegradoPrestazionaleRequestCounter(boolean readRemoteInfo) {
 		if(readRemoteInfo) {
 			if(this.distributedPolicyDegradoPrestazionaleRequestCounter!=null) {
 				return this.distributedPolicyDegradoPrestazionaleRequestCounter.get();
@@ -1042,7 +1042,7 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 		}
 	}
 	@Override
-	public Long getPolicyDegradoPrestazionaleCounter(boolean readRemoteInfo) {
+	protected Long getPolicyDegradoPrestazionaleCounter(boolean readRemoteInfo) {
 		if(readRemoteInfo) {
 			if(this.distributedPolicyDegradoPrestazionaleCounter!=null) {
 				return this.distributedPolicyDegradoPrestazionaleCounter.get();

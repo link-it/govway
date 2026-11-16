@@ -906,19 +906,16 @@ public class InterceptorPolicyUtilities {
 	private static boolean filter(Properties properties, Map<String, String> datiTransazioneClaims) {
 		if(properties!=null && properties.size()>0) {
 			for (Object o : properties.keySet()) {
-				if(o instanceof String) {
-					String key = (String) o;
-					Boolean v = filterPropertyClaim(key, properties, datiTransazioneClaims);
-					if(v!=null) {
-						return v.booleanValue();
+				if(o instanceof String key) {
+					if(!isPropertyClaimMatching(key, properties, datiTransazioneClaims)) {
+						return false;
 					}
 				}
 			}
 		}
 		return true;
 	}
-	private static Boolean filterPropertyClaim(String key, Properties properties, Map<String, String> datiTransazioneClaims) {
-		Boolean b = null;
+	private static boolean isPropertyClaimMatching(String key, Properties properties, Map<String, String> datiTransazioneClaims) {
 		String value = properties.getProperty(key);
 		if(datiTransazioneClaims==null || datiTransazioneClaims.isEmpty()) {
 			return false;
@@ -937,7 +934,7 @@ public class InterceptorPolicyUtilities {
 				return false;
 			}
 		}
-		return b;
+		return true;
 	}
 	
 }

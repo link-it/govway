@@ -49,7 +49,7 @@ public class SPCoopEsitoBuilder extends EsitoBuilder {
 	}
 	
 	@Override
-	public EsitoTransazione getEsitoMessaggioApplicativo(OpenSPCoop2MessageFactory messageFactory,
+	protected EsitoTransazione getEsitoMessaggioApplicativo(OpenSPCoop2MessageFactory messageFactory,
 			ProprietaErroreApplicativo erroreApplicativo,SOAPBody body,String tipoContext, String erroreGovway, String internalErrorCodeGovWay) throws ProtocolException{
 		Node childNode = body.getFirstChild();
 		if(childNode!=null){

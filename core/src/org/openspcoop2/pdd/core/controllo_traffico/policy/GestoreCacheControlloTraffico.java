@@ -68,15 +68,13 @@ public class GestoreCacheControlloTraffico {
 	private static final String CONTROLLO_TRAFFICO_CACHE_NAME = "controlloTraffico";
 	/** Cache */
 	private static Cache cache = null;
-//	private static final Boolean semaphoreNumeroRichieste = true;
-//	private static final Boolean semaphoreOccupazioneBanda = true;
-//	private static final Boolean semaphoreLatenza = true;
-//	private static final Boolean semaphoreStato = true;
 	private static final org.openspcoop2.utils.Semaphore lockNumeroEsiti = new org.openspcoop2.utils.Semaphore("GestoreCacheControlloTraffico-NumeroEsiti");
 	private static final org.openspcoop2.utils.Semaphore lockNumeroRichieste = new org.openspcoop2.utils.Semaphore("GestoreCacheControlloTraffico-NumeroRichieste");
 	private static final org.openspcoop2.utils.Semaphore lockOccupazioneBanda = new org.openspcoop2.utils.Semaphore("GestoreCacheControlloTraffico-OccupazioneBanda");
 	private static final org.openspcoop2.utils.Semaphore lockLatenza = new org.openspcoop2.utils.Semaphore("GestoreCacheControlloTraffico-Latenza");
 	private static final org.openspcoop2.utils.Semaphore lockStato = new org.openspcoop2.utils.Semaphore("GestoreCacheControlloTraffico-Stato");
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
 
 	/* --------------- Cache --------------------*/
 	public static boolean isCacheAbilitata() throws Exception{
@@ -117,14 +115,16 @@ public class GestoreCacheControlloTraffico {
 			throw new Exception("Abilitazione cache per i dati sul controllo del traffico non riuscita: "+e.getMessage(),e);
 		}
 	}
-	private static synchronized void _abilitaCache() throws Exception{
-		try{
-			if(cache==null) {
-				cache = new Cache(CacheType.JCS, CONTROLLO_TRAFFICO_CACHE_NAME); // lascio JCS come default abilitato via jmx
-				cache.build();
+	private static void _abilitaCache() throws Exception{
+		synchronized (INIT_LOCK) {
+			try{
+				if(cache==null) {
+					cache = new Cache(CacheType.JCS, CONTROLLO_TRAFFICO_CACHE_NAME); // lascio JCS come default abilitato via jmx
+					cache.build();
+				}
+			}catch(Exception e){
+				throw new Exception("Abilitazione cache per i dati sul controllo del traffico non riuscita: "+e.getMessage(),e);
 			}
-		}catch(Exception e){
-			throw new Exception("Abilitazione cache per i dati sul controllo del traffico non riuscita: "+e.getMessage(),e);
 		}
 	}
 	public static void abilitaCache(Long dimensioneCache,Boolean algoritmoCacheLRU,Long itemIdleTime,Long itemLifeSecond, Logger log) throws Exception{
@@ -153,14 +153,16 @@ public class GestoreCacheControlloTraffico {
 			throw new Exception("Disabilitazione cache per i dati sul controllo del traffico non riuscita: "+e.getMessage(),e);
 		}
 	}
-	private static synchronized void _disabilitaCache() throws Exception{
-		try{
-			if(cache!=null){
-				cache.clear();
-				cache = null;
+	private static void _disabilitaCache() throws Exception{
+		synchronized (INIT_LOCK) {
+			try{
+				if(cache!=null){
+					cache.clear();
+					cache = null;
+				}
+			}catch(Exception e){
+				throw new Exception("Disabilitazione cache per i dati sul controllo del traffico non riuscita: "+e.getMessage(),e);
 			}
-		}catch(Exception e){
-			throw new Exception("Disabilitazione cache per i dati sul controllo del traffico non riuscita: "+e.getMessage(),e);
 		}
 	}
 	public static String listKeysCache(String separator) throws Exception{
@@ -307,15 +309,17 @@ public class GestoreCacheControlloTraffico {
 	
 	
 	private static GestoreCacheControlloTraffico staticInstance = null;
-	public static synchronized void initialize(ConfigurazioneGatewayControlloTraffico configurazioneControlloTraffico) throws CoreException{
-		if(staticInstance==null){
-			staticInstance = new GestoreCacheControlloTraffico(configurazioneControlloTraffico);
+	public static void initialize(ConfigurazioneGatewayControlloTraffico configurazioneControlloTraffico) throws CoreException{
+		synchronized (INIT_LOCK) {
+			if(staticInstance==null){
+				staticInstance = new GestoreCacheControlloTraffico(configurazioneControlloTraffico);
+			}
 		}
 	}
 	public static GestoreCacheControlloTraffico getInstance() throws CoreException{
 		if(staticInstance==null){
 			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
-			synchronized (GestoreCacheControlloTraffico.class) {
+			synchronized (INIT_LOCK) {
 				throw new CoreException("GestoreCacheControlloTraffico non inizializzato");
 			}
 		}
@@ -555,7 +559,6 @@ public class GestoreCacheControlloTraffico {
 			}
 			
     		String idTransazione = datiTransazione!=null ? datiTransazione.getIdTransazione() : null;
-			//synchronized (semaphoreNumeroRichieste) {
     		SemaphoreLock lock = lockNumeroRichieste.acquire("readNumeroRichiesteInCache", idTransazione);
 			try {
     			
@@ -708,7 +711,6 @@ public class GestoreCacheControlloTraffico {
 			}
 			
 			String idTransazione = datiTransazione!=null ? datiTransazione.getIdTransazione() : null;
-			//synchronized (semaphoreOccupazioneBanda) {
 			SemaphoreLock lock = lockOccupazioneBanda.acquire("readOccupazioneBandaInCache", idTransazione);
 			try {
     			
@@ -863,7 +865,6 @@ public class GestoreCacheControlloTraffico {
 			}
 			
 			String idTransazione = datiTransazione!=null ? datiTransazione.getIdTransazione() : null;
-			//synchronized (semaphoreLatenza) {
 			SemaphoreLock lock = lockLatenza.acquire("readLatenzaInCache", idTransazione);
 			try {
 				
@@ -986,7 +987,6 @@ public class GestoreCacheControlloTraffico {
 			}
 			
 			String idTransazione = datiTransazione!=null ? datiTransazione.getIdTransazione() : null;
-			//synchronized (semaphoreStato) {
 			SemaphoreLock lock = lockStato.acquire("getStatoInCache", idTransazione);
 			try {
 				

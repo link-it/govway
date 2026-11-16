@@ -51,7 +51,7 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
 public final class PorteDelegateExtendedChange extends AbstractServletListExtendedChange {
 	
 	@Override
-	public void addToHiddenDati(List<DataElement> dati,ConsoleHelper consoleHelper) throws ExtendedException{
+	protected void addToHiddenDati(List<DataElement> dati,ConsoleHelper consoleHelper) throws ExtendedException{
 		PorteDelegateExtendedUtilities.addToHiddenDati(TipoOperazione.CHANGE, dati, consoleHelper);
 	}
 	

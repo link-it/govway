@@ -3629,9 +3629,7 @@ public class SignatureTest {
 					 index++;
 					 System.out.println("NOT STARTED (iteration: "+index+")");
 					 // rilascio risorse
-					 sslThread.setStop(true);
-					 sslThread.waitShutdown(200, 10000);
-					 sslThread.close();
+					 sslThread.shutdown();
 				 }
 			 }
 			 			 
@@ -3643,9 +3641,7 @@ public class SignatureTest {
 	}
 	
 	protected static void stopOpenSSLThread(OpenSSLThread sslThread, String waitStopServer) throws Exception {
-		sslThread.setStop(true);
-		sslThread.waitShutdown(200, 10000);
-		sslThread.close();
+		sslThread.shutdown();
 		
 		// anche se il processo esce, il rilascio della porta serve impiega più tempo
 		try {

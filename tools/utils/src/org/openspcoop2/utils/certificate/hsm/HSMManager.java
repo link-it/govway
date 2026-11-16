@@ -42,17 +42,21 @@ import org.slf4j.Logger;
  * @version $Rev$, $Date$
  */
 public class HSMManager {
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
 
 	private static HSMManager staticInstance;
-	public static synchronized void init(File f, boolean throwNotExists, Logger log, boolean accessKeystore) throws UtilsException {
-		if(staticInstance==null) {
-			staticInstance = new HSMManager(f, throwNotExists, log, accessKeystore);
+	public static void init(File f, boolean throwNotExists, Logger log, boolean accessKeystore) throws UtilsException {
+		synchronized (INIT_LOCK) {
+			if(staticInstance==null) {
+				staticInstance = new HSMManager(f, throwNotExists, log, accessKeystore);
+			}
 		}
 	}
 	public static HSMManager getInstance() {
 		// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
 		if (staticInstance == null) {
-	        synchronized (HSMManager.class) {
+	        synchronized (INIT_LOCK) {
 	            if (staticInstance == null) {
 	                return null;
 	            }

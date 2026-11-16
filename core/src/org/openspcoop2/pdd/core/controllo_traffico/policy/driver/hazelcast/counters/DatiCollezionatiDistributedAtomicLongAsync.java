@@ -142,7 +142,7 @@ public class DatiCollezionatiDistributedAtomicLongAsync extends DatiCollezionati
 	// Quindi in fase di lettura deve SEMPRE essere utilizzato il get
 	
 	@Override
-	public Long getActiveRequestCounter(boolean readRemoteInfo) {
+	protected Long getActiveRequestCounter(boolean readRemoteInfo) {
 		if(this.distribuitedActiveRequestCounterPolicyRichiesteSimultanee){
 			if(this.richiesteSimultaneeIntervalloSecondi > 0) {
 				checkActiveRequestCounterIntervalChangeForCheck();
@@ -157,7 +157,7 @@ public class DatiCollezionatiDistributedAtomicLongAsync extends DatiCollezionati
 		}
 	}
 	@Override
-	public Long getPolicyDenyRequestCounter(boolean readRemoteInfo) {
+	protected Long getPolicyDenyRequestCounter(boolean readRemoteInfo) {
 		if(this.distributedPolicyDenyRequestCounter!=null) {
 			return this.distributedPolicyDenyRequestCounter.get();
 		}
@@ -167,7 +167,7 @@ public class DatiCollezionatiDistributedAtomicLongAsync extends DatiCollezionati
 	}
 
 	@Override
-	public Long getPolicyRequestCounter(boolean readRemoteInfo) {
+	protected Long getPolicyRequestCounter(boolean readRemoteInfo) {
 		if(this.distributedPolicyRequestCounter!=null) {
 			return this.distributedPolicyRequestCounter.get();
 		}
@@ -176,7 +176,7 @@ public class DatiCollezionatiDistributedAtomicLongAsync extends DatiCollezionati
 		}
 	}
 	@Override
-	public Long getPolicyCounter(boolean readRemoteInfo) {
+	protected Long getPolicyCounter(boolean readRemoteInfo) {
 		if(this.distributedPolicyCounter!=null) {
 			return this.distributedPolicyCounter.get();
 		}
@@ -186,7 +186,7 @@ public class DatiCollezionatiDistributedAtomicLongAsync extends DatiCollezionati
 	}
 
 	@Override
-	public Long getPolicyDegradoPrestazionaleRequestCounter(boolean readRemoteInfo) {
+	protected Long getPolicyDegradoPrestazionaleRequestCounter(boolean readRemoteInfo) {
 		if(this.distributedPolicyDegradoPrestazionaleRequestCounter!=null) {
 			return this.distributedPolicyDegradoPrestazionaleRequestCounter.get();
 		}
@@ -195,7 +195,7 @@ public class DatiCollezionatiDistributedAtomicLongAsync extends DatiCollezionati
 		}
 	}
 	@Override
-	public Long getPolicyDegradoPrestazionaleCounter(boolean readRemoteInfo) {
+	protected Long getPolicyDegradoPrestazionaleCounter(boolean readRemoteInfo) {
 		if(this.distributedPolicyDegradoPrestazionaleCounter!=null) {
 			return this.distributedPolicyDegradoPrestazionaleCounter.get();
 		}

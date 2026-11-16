@@ -43,6 +43,8 @@ import org.openspcoop2.utils.resources.Loader;
  * @version $Rev$, $Date$
  */
 public class DateManager {
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
 
 	/** Istanza */
 	private static IDate dataManager;
@@ -53,18 +55,20 @@ public class DateManager {
 	 * Inizializzazione DataManager
 	 * 
 	 */
-	public static synchronized void initializeDataManager(String className,java.util.Properties properties,Logger log)throws UtilsException{
+	public static void initializeDataManager(String className,java.util.Properties properties,Logger log)throws UtilsException{
+		synchronized (INIT_LOCK) {
 		
-		if(DateManager.dataManager==null){
-			try{
-				if(log!=null)
-					DateManager.log = log;
-				else
-					DateManager.log = LoggerWrapperFactory.getLogger(DateManager.class);
-				DateManager.dataManager = (IDate) Loader.getInstance().newInstance(className);
-				DateManager.dataManager.init(properties);
-			}catch(Exception e){
-				throw new UtilsException("Riscontrato errore durante il caricamento del data manager specificato [class:"+className+"]: "+e.getMessage(),e);
+			if(DateManager.dataManager==null){
+				try{
+					if(log!=null)
+						DateManager.log = log;
+					else
+						DateManager.log = LoggerWrapperFactory.getLogger(DateManager.class);
+					DateManager.dataManager = (IDate) Loader.getInstance().newInstance(className);
+					DateManager.dataManager.init(properties);
+				}catch(Exception e){
+					throw new UtilsException("Riscontrato errore durante il caricamento del data manager specificato [class:"+className+"]: "+e.getMessage(),e);
+				}
 			}
 		}
 	}

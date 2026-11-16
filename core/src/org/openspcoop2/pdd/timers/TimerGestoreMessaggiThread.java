@@ -52,23 +52,23 @@ public class TimerGestoreMessaggiThread extends BaseThread{
 	private long scadenzaCorrelazioneApplicativa = 60l * 24l * 5l; // cablato a 5 giorni (60m * 24h * 5giorni).
 	
 	/** Properties Reader */
-	private OpenSPCoop2Properties propertiesReader;
+	private final OpenSPCoop2Properties propertiesReader;
 	/** MsgDiagnostico */
-	private MsgDiagnostico msgDiag;
+	private final MsgDiagnostico msgDiag;
 	
 	/** Logger utilizzato per debug. */
-	private Logger logTimer = null;
+	private final Logger logTimer;
 
 	/** Indicazione se deve essere effettuato il log delle query */
-	private boolean logQuery = false;
+	private final boolean logQuery;
 	/** Numero di messaggi prelevati sulla singola query */
 	private int limit = CostantiPdD.LIMIT_MESSAGGI_GESTORI;
 	/** Indicazione se deve essere effettuato l'order by nelle query */
-	private boolean orderByQuery = false;
+	private final boolean orderByQuery;
 	/** Indicazione se devono essere filtrate le correlazioni applicative scadute rispetto all'ora registrazione */
 	private boolean filtraCorrelazioniApplicativeScaduteRispettoOraRegistrazione = true;
 	/** Indicazione se devono essere filtrate le correlazioni applicative scadute rispetto all'ora registrazione, escludendo pero' quelle che hanno una scadenza impostata */
-	private boolean filtraCorrelazioniApplicativeScaduteRispettoOraRegistrazione_escludiCorrelazioniConScadenzaImpostata = false;
+	private final boolean filtraCorrelazioniApplicativeScaduteRispettoOraRegistrazioneEscludiCorrelazioniConScadenzaImpostata;
 	
 		
 	/** Costruttore */
@@ -77,7 +77,7 @@ public class TimerGestoreMessaggiThread extends BaseThread{
 		// Aspetto inizializzazione di OpenSPCoop (aspetto mezzo minuto e poi segnalo errore)
 		int attesa = 90;
 		int secondi = 0;
-		while( (OpenSPCoop2Startup.initialize==false) && (secondi<attesa) ){
+		while( (!OpenSPCoop2Startup.initialize) && (secondi<attesa) ){
 			Utilities.sleep(1000);
 			secondi++;
 		}
@@ -98,7 +98,9 @@ public class TimerGestoreMessaggiThread extends BaseThread{
 		}
 
 		this.msgDiag.logPersonalizzato("avvioInCorso");
-		this.logTimer.info(this.msgDiag.getMessaggio_replaceKeywords("avvioInCorso"));
+		if(this.logTimer.isInfoEnabled()) {
+			this.logTimer.info(this.msgDiag.getMessaggio_replaceKeywords("avvioInCorso"));
+		}
 		
 		try {
 			this.propertiesReader = OpenSPCoop2Properties.getInstance();
@@ -132,17 +134,19 @@ public class TimerGestoreMessaggiThread extends BaseThread{
 		
 		this.scadenzaCorrelazioneApplicativa = this.propertiesReader.getRepositoryIntervalloScadenzaCorrelazioneApplicativa();
 		this.filtraCorrelazioniApplicativeScaduteRispettoOraRegistrazione = this.propertiesReader.isRepositoryScadenzaCorrelazioneApplicativaFiltraRispettoOraRegistrazione();
-		this.filtraCorrelazioniApplicativeScaduteRispettoOraRegistrazione_escludiCorrelazioniConScadenzaImpostata =
+		this.filtraCorrelazioniApplicativeScaduteRispettoOraRegistrazioneEscludiCorrelazioniConScadenzaImpostata =
 				this.propertiesReader.isRepositoryScadenzaCorrelazioneApplicativaFiltraRispettoOraRegistrazioneEscludiConScadenzaImpostata();
 		
 		this.msgDiag.logPersonalizzato("avvioEffettuato");
-		this.logTimer.info(this.msgDiag.getMessaggio_replaceKeywords("avvioEffettuato"));
+		if(this.logTimer.isInfoEnabled()) {
+			this.logTimer.info(this.msgDiag.getMessaggio_replaceKeywords("avvioEffettuato"));
+		}
 	}
 	
 
 
 	@Override
-	public void process(){
+	protected void process(){
 		try{
 			// Prendo la gestione
 			TimerGestoreMessaggiLib gestoreMessaggiLib = 
@@ -150,14 +154,13 @@ public class TimerGestoreMessaggiThread extends BaseThread{
 					this.scadenzaMessaggio,this.logQuery,
 					this.limit,this.orderByQuery,this.scadenzaCorrelazioneApplicativa, 
 					this.filtraCorrelazioniApplicativeScaduteRispettoOraRegistrazione,
-					this.filtraCorrelazioniApplicativeScaduteRispettoOraRegistrazione_escludiCorrelazioniConScadenzaImpostata);
+					this.filtraCorrelazioniApplicativeScaduteRispettoOraRegistrazioneEscludiCorrelazioniConScadenzaImpostata);
 			
 			gestoreMessaggiLib.check();
 			
 		}catch(Exception e){
 			this.msgDiag.logErroreGenerico(e,"TimerGestoreMessaggiLib.check()");
 			this.logTimer.error("Errore generale: "+e.getMessage(),e);
-		}finally{
 		}
 	}
 }

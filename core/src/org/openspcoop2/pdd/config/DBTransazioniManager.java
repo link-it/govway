@@ -53,21 +53,27 @@ public class DBTransazioniManager implements IMonitoraggioRisorsa {
 	private static final String ID_MODULO = "DBTransazioniManager";
 	
 	private static DBTransazioniManager staticInstanceDBTransazioniManager;
-	public static synchronized void init(DBManager dbManagerRuntimePdD,Logger alog,String tipoDatabase) {
-		if(staticInstanceDBTransazioniManager==null) {
-			staticInstanceDBTransazioniManager = new DBTransazioniManager(dbManagerRuntimePdD, alog, tipoDatabase);
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
+	public static void init(DBManager dbManagerRuntimePdD,Logger alog,String tipoDatabase) {
+		synchronized (INIT_LOCK) {
+			if(staticInstanceDBTransazioniManager==null) {
+				staticInstanceDBTransazioniManager = new DBTransazioniManager(dbManagerRuntimePdD, alog, tipoDatabase);
+			}
 		}
 	}
-	public static synchronized void init(String nomeDataSource, java.util.Properties context,Logger alog,String tipoDatabase, 
+	public static void init(String nomeDataSource, java.util.Properties context,Logger alog,String tipoDatabase, 
 			boolean useOp2UtilsDatasource, boolean bindJMX) throws UtilsException {
-		if(staticInstanceDBTransazioniManager==null) {
-			staticInstanceDBTransazioniManager = new DBTransazioniManager(nomeDataSource, context, alog, tipoDatabase, useOp2UtilsDatasource, bindJMX);
+		synchronized (INIT_LOCK) {
+			if(staticInstanceDBTransazioniManager==null) {
+				staticInstanceDBTransazioniManager = new DBTransazioniManager(nomeDataSource, context, alog, tipoDatabase, useOp2UtilsDatasource, bindJMX);
+			}
 		}
 	}
 	public static DBTransazioniManager getInstance() {
 		// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
 		if (staticInstanceDBTransazioniManager == null) {
-	        synchronized (DBTransazioniManager.class) {
+	        synchronized (INIT_LOCK) {
 	            if (staticInstanceDBTransazioniManager == null) {
 	                return null;
 	            }

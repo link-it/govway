@@ -41,8 +41,7 @@ import org.w3c.dom.NodeList;
  * @version $Rev$, $Date$
  */
 
-public class DynamicNamespaceContext implements javax.xml.namespace.NamespaceContext
-{
+public class DynamicNamespaceContext implements javax.xml.namespace.NamespaceContext, Cloneable {
 
 	/** Variabile contenente i prefix */
 	private java.util.Properties context;

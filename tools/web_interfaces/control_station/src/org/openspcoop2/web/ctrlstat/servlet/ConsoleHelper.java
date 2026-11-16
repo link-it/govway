@@ -375,6 +375,8 @@ import org.slf4j.Logger;
  * 
  */
 public class ConsoleHelper implements IConsoleHelper {
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
 	
 	protected HttpServletRequest request;
 	@Override
@@ -560,20 +562,22 @@ public class ConsoleHelper implements IConsoleHelper {
 		return tmpDirectory;
 	}
 	
-	public static synchronized void initTmpDir() throws DriverControlStationException {
-		if(tmpDirectory == null){
-			File file = null;
-			try {
-				file = FileSystemUtilities.createTempFile(CostantiControlStation.TEMP_FILE_PREFIX, CostantiControlStation.TEMP_FILE_SUFFIX);
-			}catch(Exception e) {
-				throw new DriverControlStationException(e.getMessage(),e);
-			}
-			tmpDirectory = FilenameUtils.getFullPath(file.getAbsolutePath());
-			if(file.exists()) {
+	public static void initTmpDir() throws DriverControlStationException {
+		synchronized (INIT_LOCK) {
+			if(tmpDirectory == null){
+				File file = null;
 				try {
-					java.nio.file.Files.delete(file.toPath());
-				}catch(Exception eIgnore) {
-					// ignore
+					file = FileSystemUtilities.createTempFile(CostantiControlStation.TEMP_FILE_PREFIX, CostantiControlStation.TEMP_FILE_SUFFIX);
+				}catch(Exception e) {
+					throw new DriverControlStationException(e.getMessage(),e);
+				}
+				tmpDirectory = FilenameUtils.getFullPath(file.getAbsolutePath());
+				if(file.exists()) {
+					try {
+						java.nio.file.Files.delete(file.toPath());
+					}catch(Exception eIgnore) {
+						// ignore
+					}
 				}
 			}
 		}

@@ -45,20 +45,20 @@ import org.slf4j.Logger;
 public class GestoreCodaRunnable extends BaseThread{
 	
 	/** Logger utilizzato per debug. */
-	private RunnableLogger log = null;
+	private final RunnableLogger log;
 	
 	/** ThreadsPool */
 	private ExecutorService threadsPool = null;
 	private int poolSize = -1;
 	private int queueSize = -1;
 	private int limit = -1;
-	private Map<String, Runnable> threads = new HashMap<>();
+	private final Map<String, Runnable> threads = new HashMap<>();
     	
 	/** Instance */
-	private IGestoreCodaRunnableInstance gestoreRunnable;
+	private final IGestoreCodaRunnableInstance gestoreRunnable;
 	
 	/** Nome */
-	private String name;
+	private final String name;
 	
 
 	
@@ -129,7 +129,7 @@ public class GestoreCodaRunnable extends BaseThread{
 	}
 	
 	@Override
-	public void process(){
+	protected void process(){
 		// nop: ho ridefinito il metodo run
 	}
 	
@@ -145,7 +145,7 @@ public class GestoreCodaRunnable extends BaseThread{
 			HashMap<String, Object> context = new HashMap<>();
 			this.gestoreRunnable.logCheckInProgress(context);
 			
-			while(this.isStop() == false) {
+			while(!this.isStop()) {
 							
 				// Print actual image status
 				this.log.info("Immagine prima del controllo sui threads terminati: "+this.getThreadsImage());
@@ -242,19 +242,19 @@ public class GestoreCodaRunnable extends BaseThread{
 				// Attendo chiusura dei threads
 				int timeout = 10;
 				boolean terminated = false;
-				while(terminated == false){
+				while(!terminated){
 					this.log.info((this.threads.size())+" threads avviati correttamente, attendo terminazione (timeout "+timeout+"s) ...");
 					for (int i = 0; i < timeout*4; i++) {
 						boolean tmpTerminated = true;
 						Set<String> keySet = this.threads.keySet();
 						for (String threadName : keySet) {
 							Runnable thread = this.threads.get(threadName);
-							if(thread.isFinished()==false){
+							if(!thread.isFinished()){
 								tmpTerminated = false;
 								break;
 							}
 						}
-						if(tmpTerminated==false){
+						if(!tmpTerminated){
 							org.openspcoop2.utils.Utilities.sleep(250);
 						}
 						else{
@@ -266,7 +266,6 @@ public class GestoreCodaRunnable extends BaseThread{
 				
 			}catch(Exception e){
 				this.log.error("Errore durante l'attesa della terminazione dei threads: "+e.getMessage(),e);
-			}finally{
 			}
 		
 		}finally {

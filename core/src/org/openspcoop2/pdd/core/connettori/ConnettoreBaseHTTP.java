@@ -696,7 +696,7 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 	}
 	
 	@Override
-	public boolean dumpResponse(Map<String, List<String>> trasporto) throws Exception{
+	protected boolean dumpResponse(Map<String, List<String>> trasporto) throws Exception{
 		
 		if(this.isRest){
 			if(this.proxyPassReverseEnabled) {
@@ -720,7 +720,7 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 	}
 	
 	@Override
-	public boolean doSoapResponse() throws ConnettoreException{
+	protected boolean doSoapResponse() throws ConnettoreException{
 
 		// gestione ordinaria via WS/SOAP
 		
@@ -793,7 +793,7 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 	}
 	
 	@Override
-	public boolean doRestResponse() throws ConnettoreException{
+	protected boolean doRestResponse() throws ConnettoreException{
 		
 		if(this.proxyPassReverseEnabled) {
 			checkProxyPassReverse();

@@ -249,6 +249,8 @@ import org.slf4j.Logger;
  * 
  */
 public class ControlStationCore {
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
 
 	/* ------- STATIC ----- */
 
@@ -264,9 +266,11 @@ public class ControlStationCore {
 
 	/* ---- STATIC INIT METHOD ----- */
 
-	private static synchronized void initLogger(){
-		// Log4J caricato tramite InitListener
-		ControlStationCore.log = InitListener.log;
+	private static void initLogger(){
+		synchronized (INIT_LOCK) {
+			// Log4J caricato tramite InitListener
+			ControlStationCore.log = InitListener.log;
+		}
 	}
 	private static void checkInitLogger(){
 		if(ControlStationCore.log==null){
@@ -2466,9 +2470,11 @@ public class ControlStationCore {
 	/* --- COSTRUTTORI --- */
 
 	public static Boolean API = null;
-	public static synchronized void initAPIMode() {
-		if(API==null) {
-			API = true;
+	public static void initAPIMode() {
+		synchronized (INIT_LOCK) {
+			if(API==null) {
+				API = true;
+			}
 		}
 	}
 	public static boolean isAPIMode() {
@@ -5174,16 +5180,18 @@ public class ControlStationCore {
 			_verificaConsistenzaProtocolli(core);
 		}
 	}
-	private static synchronized void _verificaConsistenzaProtocolli(ControlStationCore core) {
-		if(verificaConsistenzaProtocolli==null) {
-			StringBuilder verificaConfigurazioneProtocolliBuilder = new StringBuilder();
-			boolean configurazioneCorretta = core.verificaConfigurazioneProtocolliRispettoSoggettiDefault(verificaConfigurazioneProtocolliBuilder); 
+	private static void _verificaConsistenzaProtocolli(ControlStationCore core) {
+		synchronized (INIT_LOCK) {
+			if(verificaConsistenzaProtocolli==null) {
+				StringBuilder verificaConfigurazioneProtocolliBuilder = new StringBuilder();
+				boolean configurazioneCorretta = core.verificaConfigurazioneProtocolliRispettoSoggettiDefault(verificaConfigurazioneProtocolliBuilder); 
 			
-			if(!configurazioneCorretta) {
-				log.error("il controllo di consistenza tra Profili di Interoperabilità attivati e la configurazione del Gateway ha rilevato inconsistenze: \n"+verificaConfigurazioneProtocolliBuilder.toString());
+				if(!configurazioneCorretta) {
+					log.error("il controllo di consistenza tra Profili di Interoperabilità attivati e la configurazione del Gateway ha rilevato inconsistenze: \n"+verificaConfigurazioneProtocolliBuilder.toString());
+				}
+			
+				verificaConsistenzaProtocolli = true;
 			}
-			
-			verificaConsistenzaProtocolli = true;
 		}
 	}
 	
@@ -5285,25 +5293,65 @@ public class ControlStationCore {
 			ControlStationCore.semaphoreAuditLock.release(lock, "clearAuditManager");
 		}
 	}
-	private static synchronized void initializeAuditManager(String tipoDatabase) throws DriverControlStationException{
-		SemaphoreLock lock = ControlStationCore.semaphoreAuditLock.acquireThrowRuntime("initializeAuditManager");
-		try {
-			if(ControlStationCore.auditManager==null){
-				ControlStationCore.auditManager= new AuditAppender();
+	private static void initializeAuditManager(String tipoDatabase) throws DriverControlStationException{
+		synchronized (INIT_LOCK) {
+			SemaphoreLock lock = ControlStationCore.semaphoreAuditLock.acquireThrowRuntime("initializeAuditManager");
+			try {
+				if(ControlStationCore.auditManager==null){
+					ControlStationCore.auditManager= new AuditAppender();
 
+					Connection con = null;
+					org.openspcoop2.web.lib.audit.dao.Configurazione configurazioneAuditing = null;
+					try{
+						con = ControlStationCore.dbM.getConnection();
+						if (con == null)
+							throw new Exception("Connessione non disponibile");
+
+						DriverAudit driverAudit = new DriverAudit(con,tipoDatabase);
+						configurazioneAuditing = driverAudit.getConfigurazione();
+						ControlStationCore.checkAuditDBAppender(configurazioneAuditing, tipoDatabase);
+
+					}catch(Exception e){
+						throw new DriverControlStationException("Inizializzazione auditManager non riuscita (LetturaConfigurazione): "+e.getMessage(),e);
+					}finally{
+						try{
+							JDBCUtilities.closeConnection(DriverControlStationDB.getCheckLogger(), con, DriverControlStationDB.isCheckAutocommit(), DriverControlStationDB.isCheckIsClosed());
+						}catch(Exception e){
+							// close
+						}
+					}
+
+					try{
+						ControlStationCore.auditManager.initializeAudit(configurazioneAuditing, IDBuilder.getIDBuilder());
+					}catch(Exception e){
+						throw new DriverControlStationException("Inizializzazione auditManager non riuscita: "+e.getMessage(),e);
+					}
+				}
+			}finally {
+				ControlStationCore.semaphoreAuditLock.release(lock, "initializeAuditManager");
+			}
+		}
+	}
+	public static void updateAuditManagerConfiguration(String tipoDatabase) throws DriverControlStationException{
+		synchronized (INIT_LOCK) {
+			if(ControlStationCore.auditManager==null){
+				throw new DriverControlStationException("AuditManager non inizializzato");
+			}
+			SemaphoreLock lock = ControlStationCore.semaphoreAuditLock.acquireThrowRuntime("updateAuditManagerConfiguration");
+			try {
 				Connection con = null;
 				org.openspcoop2.web.lib.audit.dao.Configurazione configurazioneAuditing = null;
 				try{
 					con = ControlStationCore.dbM.getConnection();
 					if (con == null)
-						throw new Exception("Connessione non disponibile");
+						throw new DriverControlStationException("Connessione non disponibile");
 
 					DriverAudit driverAudit = new DriverAudit(con,tipoDatabase);
 					configurazioneAuditing = driverAudit.getConfigurazione();
 					ControlStationCore.checkAuditDBAppender(configurazioneAuditing, tipoDatabase);
 
 				}catch(Exception e){
-					throw new DriverControlStationException("Inizializzazione auditManager non riuscita (LetturaConfigurazione): "+e.getMessage(),e);
+					throw new DriverControlStationException("Aggiornamento configurazione auditManager non riuscita (LetturaConfigurazione): "+e.getMessage(),e);
 				}finally{
 					try{
 						JDBCUtilities.closeConnection(DriverControlStationDB.getCheckLogger(), con, DriverControlStationDB.isCheckAutocommit(), DriverControlStationDB.isCheckIsClosed());
@@ -5313,49 +5361,13 @@ public class ControlStationCore {
 				}
 
 				try{
-					ControlStationCore.auditManager.initializeAudit(configurazioneAuditing, IDBuilder.getIDBuilder());
+					ControlStationCore.auditManager.updateConfigurazioneAuditing(configurazioneAuditing);
 				}catch(Exception e){
-					throw new DriverControlStationException("Inizializzazione auditManager non riuscita: "+e.getMessage(),e);
+					throw new DriverControlStationException("Aggiornamento configurazione auditManager non riuscita: "+e.getMessage(),e);
 				}
+			}finally {
+				ControlStationCore.semaphoreAuditLock.release(lock, "updateAuditManagerConfiguration");
 			}
-		}finally {
-			ControlStationCore.semaphoreAuditLock.release(lock, "initializeAuditManager");
-		}
-	}
-	public static synchronized void updateAuditManagerConfiguration(String tipoDatabase) throws DriverControlStationException{
-		if(ControlStationCore.auditManager==null){
-			throw new DriverControlStationException("AuditManager non inizializzato");
-		}
-		SemaphoreLock lock = ControlStationCore.semaphoreAuditLock.acquireThrowRuntime("updateAuditManagerConfiguration");
-		try {
-			Connection con = null;
-			org.openspcoop2.web.lib.audit.dao.Configurazione configurazioneAuditing = null;
-			try{
-				con = ControlStationCore.dbM.getConnection();
-				if (con == null)
-					throw new DriverControlStationException("Connessione non disponibile");
-
-				DriverAudit driverAudit = new DriverAudit(con,tipoDatabase);
-				configurazioneAuditing = driverAudit.getConfigurazione();
-				ControlStationCore.checkAuditDBAppender(configurazioneAuditing, tipoDatabase);
-
-			}catch(Exception e){
-				throw new DriverControlStationException("Aggiornamento configurazione auditManager non riuscita (LetturaConfigurazione): "+e.getMessage(),e);
-			}finally{
-				try{
-					JDBCUtilities.closeConnection(DriverControlStationDB.getCheckLogger(), con, DriverControlStationDB.isCheckAutocommit(), DriverControlStationDB.isCheckIsClosed());
-				}catch(Exception e){
-					// close
-				}
-			}
-
-			try{
-				ControlStationCore.auditManager.updateConfigurazioneAuditing(configurazioneAuditing);
-			}catch(Exception e){
-				throw new DriverControlStationException("Aggiornamento configurazione auditManager non riuscita: "+e.getMessage(),e);
-			}
-		}finally {
-			ControlStationCore.semaphoreAuditLock.release(lock, "updateAuditManagerConfiguration");
 		}
 	}
 	private static void checkAuditDBAppender(org.openspcoop2.web.lib.audit.dao.Configurazione configurazioneAuditing,String tipoDatabase){

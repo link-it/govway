@@ -49,6 +49,8 @@ public class GestoreCacheResponseCaching {
 	/** Cache */
 	private static Cache cache = null;
 	private static final org.openspcoop2.utils.Semaphore lock_cache = new org.openspcoop2.utils.Semaphore("GestoreCacheResponseCaching");
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
 	
 
 	/* --------------- Cache --------------------*/
@@ -90,14 +92,16 @@ public class GestoreCacheResponseCaching {
 			throw new Exception("Abilitazione cache per i dati contenenti le risposte salvate non riuscita: "+e.getMessage(),e);
 		}
 	}
-	private static synchronized void _abilitaCache() throws Exception{
-		try{
-			if(cache==null) {
-				cache = new Cache(CacheType.JCS, RESPONSE_CACHING_CACHE_NAME);  // lascio JCS come default abilitato via jmx
-				cache.build();
+	private static void _abilitaCache() throws Exception{
+		synchronized (INIT_LOCK) {
+			try{
+				if(cache==null) {
+					cache = new Cache(CacheType.JCS, RESPONSE_CACHING_CACHE_NAME);  // lascio JCS come default abilitato via jmx
+					cache.build();
+				}
+			}catch(Exception e){
+				throw new Exception("Abilitazione cache per i dati contenenti le risposte salvate non riuscita: "+e.getMessage(),e);
 			}
-		}catch(Exception e){
-			throw new Exception("Abilitazione cache per i dati contenenti le risposte salvate non riuscita: "+e.getMessage(),e);
 		}
 	}
 	public static void abilitaCache(Long dimensioneCache,Boolean algoritmoCacheLRU,Long itemIdleTime,Long itemLifeSecond, Logger log) throws Exception{
@@ -126,14 +130,16 @@ public class GestoreCacheResponseCaching {
 			throw new Exception("Disabilitazione cache per i dati contenenti le risposte salvate non riuscita: "+e.getMessage(),e);
 		}
 	}	
-	private static synchronized void _disabilitaCache() throws Exception{
-		try{
-			if(cache!=null) {
-				cache.clear();
-				cache = null;
+	private static void _disabilitaCache() throws Exception{
+		synchronized (INIT_LOCK) {
+			try{
+				if(cache!=null) {
+					cache.clear();
+					cache = null;
+				}
+			}catch(Exception e){
+				throw new Exception("Disabilitazione cache per i dati contenenti le risposte salvate non riuscita: "+e.getMessage(),e);
 			}
-		}catch(Exception e){
-			throw new Exception("Disabilitazione cache per i dati contenenti le risposte salvate non riuscita: "+e.getMessage(),e);
 		}
 	}	
 	public static String listKeysCache(String separator) throws Exception{
@@ -294,15 +300,17 @@ public class GestoreCacheResponseCaching {
 	
 	
 	private static GestoreCacheResponseCaching staticInstance = null;
-	public static synchronized void initialize() {
-		if(staticInstance==null){
-			staticInstance = new GestoreCacheResponseCaching();
+	public static void initialize() {
+		synchronized (INIT_LOCK) {
+			if(staticInstance==null){
+				staticInstance = new GestoreCacheResponseCaching();
+			}
 		}
 	}
 	public static GestoreCacheResponseCaching getInstance() throws CoreException{
 		if(staticInstance==null){
 			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
-			synchronized (GestoreCacheResponseCaching.class) {
+			synchronized (INIT_LOCK) {
 				throw new CoreException("GestoreCacheResponseCaching non inizializzato");
 			}
 		}
@@ -349,7 +357,6 @@ public class GestoreCacheResponseCaching {
 				return ((ResponseCached)responseCache.getObject()).getUuid(); // already saved concurrent thread
 			}
 			
-			//synchronized (cache) {
 			SemaphoreLock lock = lock_cache.acquire("save");
 			try {
 				
@@ -437,7 +444,6 @@ public class GestoreCacheResponseCaching {
 				}
 			}
 			
-			//synchronized (cache) {
 			SemaphoreLock lock = lock_cache.acquire("readByUUID");
 			try {
 				
@@ -502,7 +508,6 @@ public class GestoreCacheResponseCaching {
 				return; // messaggio non precedentemente salvato
 			}
 						
-			//synchronized (cache) {
 			SemaphoreLock lock = lock_cache.acquire("removeByUUID");
 			try {
 				
@@ -567,7 +572,6 @@ public class GestoreCacheResponseCaching {
 				return responseCached;
 			}
 						
-			//synchronized (cache) {
 			SemaphoreLock lock = lock_cache.acquire("readByDigest");
 			try {
 				

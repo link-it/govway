@@ -388,7 +388,7 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 	 * @return SQL per una operazione di Delete
 	 */
 	@Override
-	public String createSQLDeleteEngine() throws SQLQueryObjectException{
+	protected String createSQLDeleteEngine() throws SQLQueryObjectException{
 		
 		StringBuilder bf = new StringBuilder();
 				
@@ -1311,7 +1311,7 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 	 * @return SQL per una operazione di Update
 	 */
 	@Override
-	public String createSQLUpdateEngine() throws SQLQueryObjectException{
+	protected String createSQLUpdateEngine() throws SQLQueryObjectException{
 		
 		StringBuilder bf = new StringBuilder();
 		bf.append("UPDATE ");
@@ -1342,7 +1342,7 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 	 * @return SQL Query
 	 */
 	@Override
-	public String createSQLConditionsEngine() throws SQLQueryObjectException{
+	protected String createSQLConditionsEngine() throws SQLQueryObjectException{
 		
 		StringBuilder bf = new StringBuilder();
 		bf.append(getSQL(false,false,true,false));

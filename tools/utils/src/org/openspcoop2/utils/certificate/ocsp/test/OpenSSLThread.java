@@ -35,6 +35,9 @@ import org.openspcoop2.utils.resources.FileSystemUtilities;
  */
 public class OpenSSLThread extends AbstractBaseThread {
 
+	/** Lock privato per la chiusura (evita di sincronizzarsi sul monitor dell'oggetto Thread: SEI CERT LCK00-J) */
+	private final Object closeLock = new Object();
+
 	private Process process;
 	private File fCert;
 	private File fKey;
@@ -113,62 +116,73 @@ public class OpenSSLThread extends AbstractBaseThread {
 		}
 	}
 	
+	/**
+	 * Ferma il thread, ne attende la terminazione e rilascia le risorse (processo openssl, stream e file temporanei)
+	 */
+	public void shutdown() {
+		this.setStop(true);
+		this.waitShutdown(200, 10000);
+		this.close();
+	}
+	
 	@Override
-	public synchronized void close() {
+	protected void close() {
+		synchronized (this.closeLock) {
 		
-		if(this.process!=null) {
-			this.process.descendants().forEach(ph -> {
-			    ph.destroyForcibly();
-			});
+			if(this.process!=null) {
+				this.process.descendants().forEach(ph -> {
+				    ph.destroyForcibly();
+				});
 
-			this.process.destroyForcibly();
+				this.process.destroyForcibly();
 			
-			boolean terminated = false;
-			while(terminated == false){
-				try{
-					Utilities.sleep(500);
-					this.process.exitValue();
-					terminated = true;
-				}catch(java.lang.IllegalThreadStateException exit){}
+				boolean terminated = false;
+				while(terminated == false){
+					try{
+						Utilities.sleep(500);
+						this.process.exitValue();
+						terminated = true;
+					}catch(java.lang.IllegalThreadStateException exit){}
+				}
+			
+				debugMsg(true);
+			
+				this.process = null;
 			}
-			
-			debugMsg(true);
-			
-			this.process = null;
-		}
 		
-		if(this.isDebug!=null) {
-			try {
-				this.isDebug.close();
-			}catch(Throwable t) {}
-			this.isDebug = null;
-		}
-		if(this.isError!=null) {
-			try {
-				this.isError.close();
-			}catch(Throwable t) {}
-			this.isError = null;
-		}
+			if(this.isDebug!=null) {
+				try {
+					this.isDebug.close();
+				}catch(Throwable t) {}
+				this.isDebug = null;
+			}
+			if(this.isError!=null) {
+				try {
+					this.isError.close();
+				}catch(Throwable t) {}
+				this.isError = null;
+			}
 		
-		if(this.fCert!=null) {
-			this.fCert.delete();
-			this.fCert = null;
-		}
-		if(this.fKey!=null) {
-			this.fKey.delete();
-			this.fKey = null;
-		}
-		if(this.fCA!=null) {
-			this.fCA.delete();
-			this.fCA = null;
-		}
-		if(this.fIndex!=null) {
-			this.fIndex.delete();
-			this.fIndex = null;
-		}
-		if(this.fScript!=null) {
-			this.fScript.delete();
-			this.fScript = null;
+			if(this.fCert!=null) {
+				this.fCert.delete();
+				this.fCert = null;
+			}
+			if(this.fKey!=null) {
+				this.fKey.delete();
+				this.fKey = null;
+			}
+			if(this.fCA!=null) {
+				this.fCA.delete();
+				this.fCA = null;
+			}
+			if(this.fIndex!=null) {
+				this.fIndex.delete();
+				this.fIndex = null;
+			}
+			if(this.fScript!=null) {
+				this.fScript.delete();
+				this.fScript = null;
+			}
 		}
 	}
 
@@ -283,9 +297,7 @@ public class OpenSSLThread extends AbstractBaseThread {
 					 index++;
 					 System.out.println("NOT STARTED (iteration: "+index+")");
 					 // rilascio risorse
-					 sslThread.setStop(true);
-					 sslThread.waitShutdown(200, 10000);
-					 sslThread.close();
+					 sslThread.shutdown();
 				 }
 			 }
 			 			 
@@ -297,9 +309,7 @@ public class OpenSSLThread extends AbstractBaseThread {
 	}
 	
 	public static void stopOpenSSLThread(OpenSSLThread sslThread, int waitStopServer) throws Exception {
-		sslThread.setStop(true);
-		sslThread.waitShutdown(200, 10000);
-		sslThread.close();
+		sslThread.shutdown();
 		
 		// anche se il processo esce, il rilascio della porta serve impiega più tempo
 		try {

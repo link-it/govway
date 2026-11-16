@@ -382,9 +382,7 @@ public class OCSPTest {
 			}
 			finally {
 				//System.out.println("STOP...");
-				sslThread.setStop(true);
-				sslThread.waitShutdown(200, 10000);
-				sslThread.close();
+				sslThread.shutdown();
 				//System.out.println("STOP");
 			}
 			
@@ -427,9 +425,7 @@ public class OCSPTest {
 			}
 			finally {
 				//System.out.println("STOP...");
-				sslThread.setStop(true);
-				sslThread.waitShutdown(200, 10000);
-				sslThread.close();
+				sslThread.shutdown();
 				//System.out.println("STOP");
 			}
 			
@@ -509,9 +505,7 @@ public class OCSPTest {
 			}
 			finally {
 				//System.out.println("STOP...");
-				sslThread.setStop(true);
-				sslThread.waitShutdown(200, 10000);
-				sslThread.close();
+				sslThread.shutdown();
 				//System.out.println("STOP");
 			}
 			

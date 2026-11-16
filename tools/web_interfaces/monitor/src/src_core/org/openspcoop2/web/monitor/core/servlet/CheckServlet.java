@@ -61,7 +61,7 @@ public class CheckServlet extends HttpServlet {
 	private static final String SEND_ERROR_FAILED = "SendError failed: ";
 
 	@Override
-	public void doGet(HttpServletRequest req, HttpServletResponse res)
+	protected void doGet(HttpServletRequest req, HttpServletResponse res)
 			throws ServletException, IOException {
 
 		// Verifica se il monitor è inizializzato

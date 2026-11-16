@@ -47,18 +47,18 @@ public class TimerGestoreRepositoryBusteThread extends BaseThread{
 	 */
 	private long scadenzaMessaggio = 60l * 24l * 5l; // cablato a 5 giorni (60m * 24h * 5giorni).
 	/** Properties Reader */
-	private OpenSPCoop2Properties propertiesReader;
+	private final OpenSPCoop2Properties propertiesReader;
 	/** MsgDiagnostico */
-	private MsgDiagnostico msgDiag;
+	private final MsgDiagnostico msgDiag;
 	/** Logger */
-	private Logger logTimer;
+	private final Logger logTimer;
 
 	/** Indicazione se deve essere effettuato il log delle query */
-	private boolean logQuery = false;
+	private final boolean logQuery;
 	/** Numero di messaggi prelevati sulla singola query */
 	private int limit = CostantiPdD.LIMIT_MESSAGGI_GESTORI;
 	/** Indicazione se deve essere effettuato l'order by nelle query */
-	private boolean orderByQuery = false;
+	private final boolean orderByQuery;
 	
 	
 	
@@ -68,7 +68,7 @@ public class TimerGestoreRepositoryBusteThread extends BaseThread{
 		// Aspetto inizializzazione di OpenSPCoop (aspetto mezzo minuto e poi segnalo errore)
 		int attesa = 90;
 		int secondi = 0;
-		while( (OpenSPCoop2Startup.initialize==false) && (secondi<attesa) ){
+		while( (!OpenSPCoop2Startup.initialize) && (secondi<attesa) ){
 			Utilities.sleep(1000);
 			secondi++;
 		}
@@ -89,7 +89,9 @@ public class TimerGestoreRepositoryBusteThread extends BaseThread{
 		}
 
 		this.msgDiag.logPersonalizzato("avvioInCorso");
-		this.logTimer.info(this.msgDiag.getMessaggio_replaceKeywords("avvioInCorso"));
+		if(this.logTimer.isInfoEnabled()) {
+			this.logTimer.info(this.msgDiag.getMessaggio_replaceKeywords("avvioInCorso"));
+		}
 		
 		try {
 			this.propertiesReader = OpenSPCoop2Properties.getInstance();
@@ -122,11 +124,13 @@ public class TimerGestoreRepositoryBusteThread extends BaseThread{
 		this.msgDiag.addKeyword(CostantiPdD.KEY_LIMIT, this.limit+"");
 		
 		this.msgDiag.logPersonalizzato("avvioEffettuato");
-		this.logTimer.info(this.msgDiag.getMessaggio_replaceKeywords("avvioEffettuato"));
+		if(this.logTimer.isInfoEnabled()) {
+			this.logTimer.info(this.msgDiag.getMessaggio_replaceKeywords("avvioEffettuato"));
+		}
 	}
 	
 	@Override
-	public void process(){
+	protected void process(){
 		try{
 			// Prendo la gestione
 			TimerGestoreRepositoryBusteLib gestoreMessaggiLib = 
@@ -137,7 +141,6 @@ public class TimerGestoreRepositoryBusteThread extends BaseThread{
 		}catch(Exception e){
 			this.msgDiag.logErroreGenerico(e,"TimerGestoreRepositoryBusteLib.check()");
 			this.logTimer.error("Errore generale: "+e.getMessage(),e);
-		}finally{
 		}
 	}
 }

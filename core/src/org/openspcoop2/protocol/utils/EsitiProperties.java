@@ -49,6 +49,8 @@ import org.slf4j.Logger;
  * @version $Rev$, $Date$
  */
 public class EsitiProperties {
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
 
 	/** Logger utilizzato per errori eventuali. */
 	private Logger log = null;
@@ -148,93 +150,95 @@ public class EsitiProperties {
 	 *
 	 * 
 	 */
-	public static synchronized void initialize(String confDir,Logger log,Loader loader, MapReader<String, IProtocolFactory<?>> protocols) throws ProtocolException{
+	public static void initialize(String confDir,Logger log,Loader loader, MapReader<String, IProtocolFactory<?>> protocols) throws ProtocolException{
+		synchronized (INIT_LOCK) {
 
-		if(EsitiProperties.esitiPropertiesMap==null){
+			if(EsitiProperties.esitiPropertiesMap==null){
 			
-			EsitiProperties.esitiPropertiesMap = new Map<EsitiProperties>();
+				EsitiProperties.esitiPropertiesMap = new Map<EsitiProperties>();
 			
-			// Aggiungo configurazione speciale usato dal metodo org.openspcoop2.protocol.utils.EsitiConfigUtils
-			// e usata anche per validare il file di properties esiti.properties
-			EsitiProperties esitiProperties = new EsitiProperties(confDir,log,null);
-			esitiProperties.validaConfigurazione(loader);
-			EsitiProperties.esitiPropertiesMap.put(CostantiLabel.NO_PROTOCOL_MAP_KEY, esitiProperties);
+				// Aggiungo configurazione speciale usato dal metodo org.openspcoop2.protocol.utils.EsitiConfigUtils
+				// e usata anche per validare il file di properties esiti.properties
+				EsitiProperties esitiProperties = new EsitiProperties(confDir,log,null);
+				esitiProperties.validaConfigurazione(loader);
+				EsitiProperties.esitiPropertiesMap.put(CostantiLabel.NO_PROTOCOL_MAP_KEY, esitiProperties);
 			
-			if(protocols==null) {
-				return;
-			}
-			Enumeration<String> enP = protocols.keys();
-			while (enP.hasMoreElements()) {
-				String protocol = (String) enP.nextElement();
-				IProtocolFactory<?> pf = protocols.get(protocol);
-				
-				EsitiProperties esitiPropertiesByProtocol = new EsitiProperties(confDir,log,pf);
-				
-				// init reader
-				
-				esitiPropertiesByProtocol.initEsitiCodeSenzaFiltri();
-				esitiPropertiesByProtocol.initEsitiCode();
-				esitiPropertiesByProtocol.initEsitiCodeOk();
-				esitiPropertiesByProtocol.initEsitiCodeOk_senzaFaultApplicativo();
-				esitiPropertiesByProtocol.initEsitiCodeKo();
-				esitiPropertiesByProtocol.initEsitiCodeKo_senzaFaultApplicativo();
-				esitiPropertiesByProtocol.initEsitiCodeFaultApplicativo();
-				
-				esitiPropertiesByProtocol.initEsitiCodeRichiestaScartate();
-				esitiPropertiesByProtocol.initEsitiCodeErroriConsegna();
-				esitiPropertiesByProtocol.initEsitiCodeAutorizzazioneNegata();
-				esitiPropertiesByProtocol.initEsitiCodeControlloTrafficoPolicyViolate();
-				esitiPropertiesByProtocol.initEsitiCodeServizioIntegrationManager();
-				esitiPropertiesByProtocol.initEsitiCodeErroriProcessamentoRichiesta();
-				esitiPropertiesByProtocol.initEsitiCodeErroriProcessamentoRisposta();
-				esitiPropertiesByProtocol.initEsitiCodeErroriClientNonDisponibile();
-				esitiPropertiesByProtocol.initEsitiCodeErroriGenerici();
-				esitiPropertiesByProtocol.initEsitiCodeForSoapFaultIdentificationMode();
-				esitiPropertiesByProtocol.initEsitiCodeForContextPropertyIdentificationMode();
-				esitiPropertiesByProtocol.initEsitiCodeOrderLabel();
-				esitiPropertiesByProtocol.initEsitiOrderLabel();
-				
-				esitiPropertiesByProtocol.initEsitoName();
-				esitiPropertiesByProtocol.initEsitoDescription();
-				esitiPropertiesByProtocol.initEsitoLabel();
-				esitiPropertiesByProtocol.initEsitoLabelSyntetic();
-				esitiPropertiesByProtocol.initEsitoIdentificationMode();
-				esitiPropertiesByProtocol.initEsitoIdentificationModeSoapFaultList();
-				esitiPropertiesByProtocol.initEsitoIdentificationModeContextPropertyList();
-				
-				EsitoTransazioneName[] esiti = EsitoTransazioneName.values();
-				for (EsitoTransazioneName esitoTransazioneName : esiti) {
-					
-					if(EsitoTransazioneName.ERRORE_PROTOCOLLO.equals(esitoTransazioneName) && !esitiPropertiesByProtocol.erroreProtocollo){
-						continue;
-					}
-					else if(EsitoTransazioneName.ERRORE_SERVER.equals(esitoTransazioneName) && !esitiPropertiesByProtocol.faultEsterno){
-						continue;
-					}
-					else if(EsitoTransazioneName.CUSTOM.equals(esitoTransazioneName)) {
-						continue;
-					}
-					
-					int code = esitiPropertiesByProtocol.convertoToCode(esitoTransazioneName);
-					esitiPropertiesByProtocol.initMapEsitoTransazione(esitoTransazioneName, code, CostantiProtocollo.ESITO_TRANSACTION_CONTEXT_STANDARD);	
+				if(protocols==null) {
+					return;
 				}
+				Enumeration<String> enP = protocols.keys();
+				while (enP.hasMoreElements()) {
+					String protocol = (String) enP.nextElement();
+					IProtocolFactory<?> pf = protocols.get(protocol);
 				
-				esitiPropertiesByProtocol.initEsitiTransactionContextCode();
-				esitiPropertiesByProtocol.initEsitiTransactionContextCodeOrderLabel();
-				esitiPropertiesByProtocol.initEsitiTransactionContextOrderLabel();
-				esitiPropertiesByProtocol.initEsitoTransactionContextLabel();
-				esitiPropertiesByProtocol.initEsitoTransactionContextDefault();
-				esitiPropertiesByProtocol.initEsitoTransactionContextHeaderTrasportoName();
-				esitiPropertiesByProtocol.initEsitoTransactionContextFormBasedPropertyName();
-				esitiPropertiesByProtocol.initEsitoTransactionContextHeaderTrasportoDynamicIdentification();
-				esitiPropertiesByProtocol.initEsitoTransactionContextHeaderFormBasedDynamicIdentification();
+					EsitiProperties esitiPropertiesByProtocol = new EsitiProperties(confDir,log,pf);
 				
-				// init mappa delle protocol factory
-				EsitiProperties.esitiPropertiesMap.put(ProtocolUtils.protocolToMapKey(protocol), esitiPropertiesByProtocol);
-			}
+					// init reader
+				
+					esitiPropertiesByProtocol.initEsitiCodeSenzaFiltri();
+					esitiPropertiesByProtocol.initEsitiCode();
+					esitiPropertiesByProtocol.initEsitiCodeOk();
+					esitiPropertiesByProtocol.initEsitiCodeOk_senzaFaultApplicativo();
+					esitiPropertiesByProtocol.initEsitiCodeKo();
+					esitiPropertiesByProtocol.initEsitiCodeKo_senzaFaultApplicativo();
+					esitiPropertiesByProtocol.initEsitiCodeFaultApplicativo();
+				
+					esitiPropertiesByProtocol.initEsitiCodeRichiestaScartate();
+					esitiPropertiesByProtocol.initEsitiCodeErroriConsegna();
+					esitiPropertiesByProtocol.initEsitiCodeAutorizzazioneNegata();
+					esitiPropertiesByProtocol.initEsitiCodeControlloTrafficoPolicyViolate();
+					esitiPropertiesByProtocol.initEsitiCodeServizioIntegrationManager();
+					esitiPropertiesByProtocol.initEsitiCodeErroriProcessamentoRichiesta();
+					esitiPropertiesByProtocol.initEsitiCodeErroriProcessamentoRisposta();
+					esitiPropertiesByProtocol.initEsitiCodeErroriClientNonDisponibile();
+					esitiPropertiesByProtocol.initEsitiCodeErroriGenerici();
+					esitiPropertiesByProtocol.initEsitiCodeForSoapFaultIdentificationMode();
+					esitiPropertiesByProtocol.initEsitiCodeForContextPropertyIdentificationMode();
+					esitiPropertiesByProtocol.initEsitiCodeOrderLabel();
+					esitiPropertiesByProtocol.initEsitiOrderLabel();
+				
+					esitiPropertiesByProtocol.initEsitoName();
+					esitiPropertiesByProtocol.initEsitoDescription();
+					esitiPropertiesByProtocol.initEsitoLabel();
+					esitiPropertiesByProtocol.initEsitoLabelSyntetic();
+					esitiPropertiesByProtocol.initEsitoIdentificationMode();
+					esitiPropertiesByProtocol.initEsitoIdentificationModeSoapFaultList();
+					esitiPropertiesByProtocol.initEsitoIdentificationModeContextPropertyList();
+				
+					EsitoTransazioneName[] esiti = EsitoTransazioneName.values();
+					for (EsitoTransazioneName esitoTransazioneName : esiti) {
+					
+						if(EsitoTransazioneName.ERRORE_PROTOCOLLO.equals(esitoTransazioneName) && !esitiPropertiesByProtocol.erroreProtocollo){
+							continue;
+						}
+						else if(EsitoTransazioneName.ERRORE_SERVER.equals(esitoTransazioneName) && !esitiPropertiesByProtocol.faultEsterno){
+							continue;
+						}
+						else if(EsitoTransazioneName.CUSTOM.equals(esitoTransazioneName)) {
+							continue;
+						}
+					
+						int code = esitiPropertiesByProtocol.convertoToCode(esitoTransazioneName);
+						esitiPropertiesByProtocol.initMapEsitoTransazione(esitoTransazioneName, code, CostantiProtocollo.ESITO_TRANSACTION_CONTEXT_STANDARD);	
+					}
+				
+					esitiPropertiesByProtocol.initEsitiTransactionContextCode();
+					esitiPropertiesByProtocol.initEsitiTransactionContextCodeOrderLabel();
+					esitiPropertiesByProtocol.initEsitiTransactionContextOrderLabel();
+					esitiPropertiesByProtocol.initEsitoTransactionContextLabel();
+					esitiPropertiesByProtocol.initEsitoTransactionContextDefault();
+					esitiPropertiesByProtocol.initEsitoTransactionContextHeaderTrasportoName();
+					esitiPropertiesByProtocol.initEsitoTransactionContextFormBasedPropertyName();
+					esitiPropertiesByProtocol.initEsitoTransactionContextHeaderTrasportoDynamicIdentification();
+					esitiPropertiesByProtocol.initEsitoTransactionContextHeaderFormBasedDynamicIdentification();
+				
+					// init mappa delle protocol factory
+					EsitiProperties.esitiPropertiesMap.put(ProtocolUtils.protocolToMapKey(protocol), esitiPropertiesByProtocol);
+				}
 						
-		}
+			}
 
+		}
 	}
 
 	public static boolean isInitializedProtocol(MapKey<String> protocol) {

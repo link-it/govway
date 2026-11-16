@@ -44,9 +44,13 @@ public class TransactionContext {
 	private static final String INDICAZIONE_GESTIONE_STATEFUL_ERRATA = "Indicazione sulla gestione stateful errata: ";
 	
 	private static Boolean gestioneStateful = null;
-	public static synchronized void initGestioneStateful() {
-		if(gestioneStateful==null){
-			gestioneStateful = OpenSPCoop2Properties.getInstance().isTransazioniStatefulEnabled();
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
+	public static void initGestioneStateful() {
+		synchronized (INIT_LOCK) {
+			if(gestioneStateful==null){
+				gestioneStateful = OpenSPCoop2Properties.getInstance().isTransazioniStatefulEnabled();
+			}
 		}
 	}
 	
@@ -71,13 +75,15 @@ public class TransactionContext {
 	}
 	
 	private static Map<String, Transaction> transactionContextShared = null;
-	public static synchronized void initResources() {
-		if(!useThreadLocal) {
-			if(OpenSPCoop2Properties.getInstance().isConfigurazioneCache_transactionContext_accessiSynchronized()) {
-				transactionContextShared = new java.util.Hashtable<>();
-			}
-			else {
-				transactionContextShared = new ConcurrentHashMap<>();
+	public static void initResources() {
+		synchronized (INIT_LOCK) {
+			if(!useThreadLocal) {
+				if(OpenSPCoop2Properties.getInstance().isConfigurazioneCache_transactionContext_accessiSynchronized()) {
+					transactionContextShared = new java.util.Hashtable<>();
+				}
+				else {
+					transactionContextShared = new ConcurrentHashMap<>();
+				}
 			}
 		}
 	}

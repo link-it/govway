@@ -54,7 +54,7 @@ public class ExampleService extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
 	@Override
-	public void doPost(HttpServletRequest req, HttpServletResponse res)
+	protected void doPost(HttpServletRequest req, HttpServletResponse res)
 	throws ServletException, IOException {
 		try {
 			doGet(req,res);
@@ -68,7 +68,7 @@ public class ExampleService extends HttpServlet {
 	}
 
 	@Override
-	public void doGet(HttpServletRequest req, HttpServletResponse res)
+	protected void doGet(HttpServletRequest req, HttpServletResponse res)
 	throws ServletException, IOException {
 		
 		if(ExampleServletInitListener.isInitialized()==false){

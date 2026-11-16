@@ -47,6 +47,8 @@ public class RedissonManager {
 
 	private static Logger logStartup;
 	private static Logger log;
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
 
 	private static List<String> connectionUrl = null;
 	private static RedissonConnectionMode connectionMode = RedissonConnectionMode.CLUSTER;
@@ -54,55 +56,59 @@ public class RedissonManager {
 
 	private static final String INIZIALIZZAZIONE_FALLITA = "Inizializzazione RedissonClient fallita: ";
 
-	public static synchronized void initialize(Logger logStartup, Logger log, List<String> connectionUrl,
+	public static void initialize(Logger logStartup, Logger log, List<String> connectionUrl,
 			RedissonConnectionMode connectionMode, RedissonSSLConfig sslConfig) {
 
-		if(RedissonManager.connectionUrl==null){
-			RedissonManager.logStartup = logStartup;
-			RedissonManager.log = log;
-			RedissonManager.connectionUrl = connectionUrl;
-			if(connectionMode!=null) {
-				RedissonManager.connectionMode = connectionMode;
+		synchronized (INIT_LOCK) {
+			if(RedissonManager.connectionUrl==null){
+				RedissonManager.logStartup = logStartup;
+				RedissonManager.log = log;
+				RedissonManager.connectionUrl = connectionUrl;
+				if(connectionMode!=null) {
+					RedissonManager.connectionMode = connectionMode;
+				}
+				RedissonManager.sslConfig = sslConfig;
 			}
-			RedissonManager.sslConfig = sslConfig;
 		}
 
 	}
 
 	private static RedissonClient redisson = null;
-	private static synchronized void initRedissonClient(boolean throwInitializingException) throws UtilsException {
-		if(redisson==null) {
+	private static void initRedissonClient(boolean throwInitializingException) throws UtilsException {
+		synchronized (INIT_LOCK) {
+			if(redisson==null) {
 
-			String msg = buildInitMessage();
-			RedissonManager.logStartup.info(msg);
-			RedissonManager.log.info(msg);
+				String msg = buildInitMessage();
+				RedissonManager.logStartup.info(msg);
+				RedissonManager.log.info(msg);
 
-			try {
-				Config redisConf = new Config();
-				applySslConfig(redisConf);
-				if(RedissonConnectionMode.SINGLE.equals(RedissonManager.connectionMode)) {
-					String address = RedissonManager.connectionUrl.get(0);
-					redisConf.useSingleServer()
-						.setAddress(address);
+				try {
+					Config redisConf = new Config();
+					applySslConfig(redisConf);
+					if(RedissonConnectionMode.SINGLE.equals(RedissonManager.connectionMode)) {
+						String address = RedissonManager.connectionUrl.get(0);
+						redisConf.useSingleServer()
+							.setAddress(address);
+					}
+					else {
+						redisConf.useClusterServers()
+							.addNodeAddress(RedissonManager.connectionUrl.toArray(new String[1]))
+							.setReadMode(ReadMode.MASTER_SLAVE);
+					}
+					redisson = Redisson.create(redisConf);
+					RedissonManager.logStartup.info("Inizializzazione RedissonClient effettuata con successo");
+					RedissonManager.log.info("Inizializzazione RedissonClient effettuata con successo");
+				}catch(Exception t) {
+					if(throwInitializingException) {
+						throw new UtilsException(INIZIALIZZAZIONE_FALLITA+t.getMessage(),t);
+					}
+					else {
+						RedissonManager.logStartup.error(INIZIALIZZAZIONE_FALLITA+t.getMessage(),t);
+						RedissonManager.log.error(INIZIALIZZAZIONE_FALLITA+t.getMessage(),t);
+					}
 				}
-				else {
-					redisConf.useClusterServers()
-						.addNodeAddress(RedissonManager.connectionUrl.toArray(new String[1]))
-						.setReadMode(ReadMode.MASTER_SLAVE);
-				}
-				redisson = Redisson.create(redisConf);
-				RedissonManager.logStartup.info("Inizializzazione RedissonClient effettuata con successo");
-				RedissonManager.log.info("Inizializzazione RedissonClient effettuata con successo");
-			}catch(Exception t) {
-				if(throwInitializingException) {
-					throw new UtilsException(INIZIALIZZAZIONE_FALLITA+t.getMessage(),t);
-				}
-				else {
-					RedissonManager.logStartup.error(INIZIALIZZAZIONE_FALLITA+t.getMessage(),t);
-					RedissonManager.log.error(INIZIALIZZAZIONE_FALLITA+t.getMessage(),t);
-				}
+
 			}
-
 		}
 	}
 

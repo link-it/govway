@@ -48,6 +48,8 @@ import net.minidev.json.parser.ParseException;
  * @version $Rev$, $Date$
  */
 public class JsonPathExpressionEngine {
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
 
 	public static void disableCacheJsonPathEngine() {
 		CacheProvider.setCache(new NOOPCache());
@@ -62,9 +64,11 @@ public class JsonPathExpressionEngine {
 	}
 
 	private static JSONUtils jsonUtils;
-	public static synchronized void initJsonUtils() throws UtilsException {
-		if(jsonUtils == null) {
-			jsonUtils = JSONUtils.getInstance();
+	public static void initJsonUtils() throws UtilsException {
+		synchronized (INIT_LOCK) {
+			if(jsonUtils == null) {
+				jsonUtils = JSONUtils.getInstance();
+			}
 		}
 	}
 	public static JSONUtils getJsonUtils() throws UtilsException {
@@ -923,7 +927,7 @@ public class JsonPathExpressionEngine {
 								lReturn.add(s.toString());
 							}
 						}
-						else {
+						else if(s!=null) {
 							lReturn.add(s.toString());
 						}
 					}
@@ -974,7 +978,7 @@ public class JsonPathExpressionEngine {
 								sbReturn.append(s.toString());
 							}
 						}
-						else {
+						else if(s!=null) {
 							sbReturn.append(s.toString());
 						}
 						first=false;

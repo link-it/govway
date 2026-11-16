@@ -794,4 +794,21 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 			}
     	}
     }
+
+	
+	/* Metodi utilizzati da ConnettoreHTTPCOREResponseCallback (stesso package) per completare in modo asincrono la gestione della risposta */
+	
+	boolean sendAsync(ConnettoreMsg request) {
+		// rispedizione della richiesta dopo un redirect
+		return this.send(request);
+	}
+	boolean dumpResponseAsync(Map<String, List<String>> trasporto) throws Exception {
+		return this.dumpResponse(trasporto);
+	}
+	boolean doRestResponseAsync() throws ConnettoreException {
+		return this.doRestResponse();
+	}
+	boolean doSoapResponseAsync() throws ConnettoreException {
+		return this.doSoapResponse();
+	}
 }

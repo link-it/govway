@@ -24,7 +24,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -58,6 +58,8 @@ import org.w3c.dom.Element;
  * @version $Rev$, $Date$
  */
 public class InformazioniServizioURLMapping {
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
 
 	/* ********* STATIC ********* */
 	
@@ -74,54 +76,58 @@ public class InformazioniServizioURLMapping {
 	private static MappingProperties getMappingProperties(IProtocolFactory<?> protocolFactory) throws ProtocolException{
 		
 		Openspcoop2 manifest = protocolFactory.getManifest();
-		if(InformazioniServizioURLMapping.mappingPropertiesTable.containsKey(manifest.getProtocol().getName())==false){
+		MappingProperties m = InformazioniServizioURLMapping.mappingPropertiesTable.get(manifest.getProtocol().getName());
+		if(m==null){
 			InformazioniServizioURLMapping.initMappingProperties(protocolFactory);
+			m = InformazioniServizioURLMapping.mappingPropertiesTable.get(manifest.getProtocol().getName());
 		}
-		return InformazioniServizioURLMapping.mappingPropertiesTable.get(manifest.getProtocol().getName());
+		return m;
 		
 	}
 	
-	private static HashMap<String, MappingProperties> mappingPropertiesTable = new HashMap<String, MappingProperties>();
-	public static synchronized void initMappingProperties(IProtocolFactory<?> protocolFactory) throws ProtocolException{
+	private static ConcurrentHashMap<String, MappingProperties> mappingPropertiesTable = new ConcurrentHashMap<>();
+	public static void initMappingProperties(IProtocolFactory<?> protocolFactory) throws ProtocolException{
+		synchronized (INIT_LOCK) {
 		
-		try{
-			Openspcoop2 manifest = protocolFactory.getManifest();
-			if(InformazioniServizioURLMapping.mappingPropertiesTable.containsKey(manifest.getProtocol().getName())==false){
+			try{
+				Openspcoop2 manifest = protocolFactory.getManifest();
+				if(InformazioniServizioURLMapping.mappingPropertiesTable.containsKey(manifest.getProtocol().getName())==false){
 			
-				UrlMapping urlMapping = manifest.getUrlMapping();
-				if(UrlMappingSourceType.XML.equals(urlMapping.getType())){
-					//TODO IMPLEMENTARE VERSIONE XML
-					throw new ProtocolException("Not implemented");
-				}
-				else if(UrlMappingSourceType.PROPERTIES.equals(urlMapping.getType())){
-					File f = new File(urlMapping.getFile());
-					InputStream is = null;
-					try{
-						if(f.exists()){
-							is = new FileInputStream(f);
-						}
-						else{
-							is = protocolFactory.getClass().getResourceAsStream(urlMapping.getFile());
-						}
-						MappingProperties m = new MappingProperties(urlMapping.getFile(), is, protocolFactory.getLogger());
-						InformazioniServizioURLMapping.mappingPropertiesTable.put(manifest.getProtocol().getName(), m);
-					}finally{
+					UrlMapping urlMapping = manifest.getUrlMapping();
+					if(UrlMappingSourceType.XML.equals(urlMapping.getType())){
+						//TODO IMPLEMENTARE VERSIONE XML
+						throw new ProtocolException("Not implemented");
+					}
+					else if(UrlMappingSourceType.PROPERTIES.equals(urlMapping.getType())){
+						File f = new File(urlMapping.getFile());
+						InputStream is = null;
 						try{
-							if(is!=null){
-								is.close();
+							if(f.exists()){
+								is = new FileInputStream(f);
 							}
-						}catch(Exception eClose){
-							// close
+							else{
+								is = protocolFactory.getClass().getResourceAsStream(urlMapping.getFile());
+							}
+							MappingProperties m = new MappingProperties(urlMapping.getFile(), is, protocolFactory.getLogger());
+							InformazioniServizioURLMapping.mappingPropertiesTable.putIfAbsent(manifest.getProtocol().getName(), m);
+						}finally{
+							try{
+								if(is!=null){
+									is.close();
+								}
+							}catch(Exception eClose){
+								// close
+							}
 						}
 					}
-				}
-				else{
-					throw new ProtocolException("["+urlMapping.getType().getValue()+"] Not supported");
-				}
+					else{
+						throw new ProtocolException("["+urlMapping.getType().getValue()+"] Not supported");
+					}
 			
+				}
+			}catch(Exception e){
+				throw new ProtocolException(e.getMessage(),e);
 			}
-		}catch(Exception e){
-			throw new ProtocolException(e.getMessage(),e);
 		}
 	}
 	

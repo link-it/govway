@@ -20,9 +20,9 @@
 package org.openspcoop2.pdd.core.controllo_traffico.policy.driver;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.openspcoop2.core.controllo_traffico.driver.IGestorePolicyAttive;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyException;
@@ -45,50 +45,56 @@ public class GestorePolicyAttive {
 	private static String urlService;
 	private static Logger logStartup;
 	private static Logger log;
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
 	
-	private static synchronized void initialize(boolean isStartupGovWay, PolicyGroupByActiveThreadsType type) throws PolicyException{
-		if(!GestorePolicyAttive.staticMapInstance.containsKey(type)) {
+	private static void initialize(boolean isStartupGovWay, PolicyGroupByActiveThreadsType type) throws PolicyException{
+		synchronized (INIT_LOCK) {
+			if(!GestorePolicyAttive.staticMapInstance.containsKey(type)) {
 			
-			GestorePolicyAttive.logStartup.info("Inizializzazione Gestore Policy '"+type+"' ...");
-			GestorePolicyAttive.log.info("Inizializzazione Gestore Policy '"+type+"' ...");
+				GestorePolicyAttive.logStartup.info("Inizializzazione Gestore Policy '"+type+"' ...");
+				GestorePolicyAttive.log.info("Inizializzazione Gestore Policy '"+type+"' ...");
 			
-			IGestorePolicyAttive gestore = null;
-			if(TipoGestorePolicy.IN_MEMORY.equals(GestorePolicyAttive.tipo)){
-				gestore = new GestorePolicyAttiveInMemory();
-				gestore.initialize(GestorePolicyAttive.log, isStartupGovWay, type);
+				IGestorePolicyAttive gestore = null;
+				if(TipoGestorePolicy.IN_MEMORY.equals(GestorePolicyAttive.tipo)){
+					gestore = new GestorePolicyAttiveInMemory();
+					gestore.initialize(GestorePolicyAttive.log, isStartupGovWay, type);
+				}
+				else if(TipoGestorePolicy.WS.equals(GestorePolicyAttive.tipo)){
+					gestore = new GestorePolicyAttiveWS();
+					gestore.initialize(GestorePolicyAttive.log, isStartupGovWay, type, GestorePolicyAttive.urlService);
+				}
+				else{
+					throw new PolicyException("Tipo GestorePolicyAttive ["+GestorePolicyAttive.tipo+"] non supportato");
+				}
+				GestorePolicyAttive.staticMapInstance.put(type, gestore);
+				GestorePolicyAttive.staticPolicyRateLimitingImage.put(type, org.openspcoop2.core.controllo_traffico.constants.Costanti.getControlloTrafficoImage(type.name()));
+				GestorePolicyAttive.staticPolicyRateLimitingEventiImage.put(type, org.openspcoop2.core.controllo_traffico.constants.Costanti.getControlloTrafficoEventiImage(type.name()));
+			
+				GestorePolicyAttive.logStartup.info("Inizializzazione Gestore Policy '"+type+"' effettuata con successo");
+				GestorePolicyAttive.log.info("Inizializzazione Gestore Policy '"+type+"' effettuata con successo");
+			
 			}
-			else if(TipoGestorePolicy.WS.equals(GestorePolicyAttive.tipo)){
-				gestore = new GestorePolicyAttiveWS();
-				gestore.initialize(GestorePolicyAttive.log, isStartupGovWay, type, GestorePolicyAttive.urlService);
-			}
-			else{
-				throw new PolicyException("Tipo GestorePolicyAttive ["+GestorePolicyAttive.tipo+"] non supportato");
-			}
-			GestorePolicyAttive.staticMapInstance.put(type, gestore);
-			GestorePolicyAttive.staticPolicyRateLimitingImage.put(type, org.openspcoop2.core.controllo_traffico.constants.Costanti.getControlloTrafficoImage(type.name()));
-			GestorePolicyAttive.staticPolicyRateLimitingEventiImage.put(type, org.openspcoop2.core.controllo_traffico.constants.Costanti.getControlloTrafficoEventiImage(type.name()));
-			
-			GestorePolicyAttive.logStartup.info("Inizializzazione Gestore Policy '"+type+"' effettuata con successo");
-			GestorePolicyAttive.log.info("Inizializzazione Gestore Policy '"+type+"' effettuata con successo");
-			
 		}
 	}
 	
-	public static synchronized void initialize(Logger logStartup, Logger log, TipoGestorePolicy tipo, String urlService, List<PolicyGroupByActiveThreadsType> inMemoryTypes) throws Exception{
-		if(GestorePolicyAttive.staticMapInstance==null){
-			if(inMemoryTypes==null || inMemoryTypes.isEmpty()) {
-				throw new Exception("Almeno un tipo di gestore deve essere definito");
-			}			
-			GestorePolicyAttive.staticMapInstance = new HashMap<PolicyGroupByActiveThreadsType, IGestorePolicyAttive>();
-			GestorePolicyAttive.staticPolicyRateLimitingImage = new HashMap<PolicyGroupByActiveThreadsType, String>();
-			GestorePolicyAttive.staticPolicyRateLimitingEventiImage = new HashMap<PolicyGroupByActiveThreadsType, String>();
-			GestorePolicyAttive.logStartup = logStartup;
-			GestorePolicyAttive.log = log;
-			GestorePolicyAttive.tipo = tipo;
-			GestorePolicyAttive.urlService = urlService;
+	public static void initialize(Logger logStartup, Logger log, TipoGestorePolicy tipo, String urlService, List<PolicyGroupByActiveThreadsType> inMemoryTypes) throws Exception{
+		synchronized (INIT_LOCK) {
+			if(GestorePolicyAttive.staticMapInstance==null){
+				if(inMemoryTypes==null || inMemoryTypes.isEmpty()) {
+					throw new Exception("Almeno un tipo di gestore deve essere definito");
+				}			
+				GestorePolicyAttive.staticMapInstance = new ConcurrentHashMap<>();
+				GestorePolicyAttive.staticPolicyRateLimitingImage = new ConcurrentHashMap<>();
+				GestorePolicyAttive.staticPolicyRateLimitingEventiImage = new ConcurrentHashMap<>();
+				GestorePolicyAttive.logStartup = logStartup;
+				GestorePolicyAttive.log = log;
+				GestorePolicyAttive.tipo = tipo;
+				GestorePolicyAttive.urlService = urlService;
 			
-			for (PolicyGroupByActiveThreadsType type : inMemoryTypes) {
-				initialize(true, type);
+				for (PolicyGroupByActiveThreadsType type : inMemoryTypes) {
+					initialize(true, type);
+				}
 			}
 		}
 	}

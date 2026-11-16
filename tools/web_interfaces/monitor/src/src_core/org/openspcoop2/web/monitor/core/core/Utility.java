@@ -74,6 +74,8 @@ import jakarta.servlet.http.HttpSession;
  *
  */
 public class Utility {
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
 	
 	private Utility () { /* static only*/}
 
@@ -113,10 +115,12 @@ public class Utility {
 		return null;
 	}
 
-	private static synchronized void initFrequenzaInvioDiagnostici() {
-		if (Utility.frequenzaInvioDiagnostici == null) {
-			Utility.frequenzaInvioDiagnostici = Utility
-					.loadAndOrderProps(Utility.REPORTISTICA_DIAGNOSTICI_FREQ_INVIO);
+	private static void initFrequenzaInvioDiagnostici() {
+		synchronized (INIT_LOCK) {
+			if (Utility.frequenzaInvioDiagnostici == null) {
+				Utility.frequenzaInvioDiagnostici = Utility
+						.loadAndOrderProps(Utility.REPORTISTICA_DIAGNOSTICI_FREQ_INVIO);
+			}
 		}
 	}
 	public static List<String> getFrequenzaInvioDiagnostici() {
@@ -126,10 +130,12 @@ public class Utility {
 		return Utility.frequenzaInvioDiagnostici;
 	}
 
-	private static synchronized void initFrequenzaInvioTracce() {
-		if (Utility.frequenzaInvioTracce == null) {
-			Utility.frequenzaInvioTracce = Utility
-					.loadAndOrderProps(Utility.REPORTISTICA_TRACCE_FREQ_INVIO);
+	private static void initFrequenzaInvioTracce() {
+		synchronized (INIT_LOCK) {
+			if (Utility.frequenzaInvioTracce == null) {
+				Utility.frequenzaInvioTracce = Utility
+						.loadAndOrderProps(Utility.REPORTISTICA_TRACCE_FREQ_INVIO);
+			}
 		}
 	}
 	public static List<String> getFrequenzaInvioTracce() {
@@ -139,10 +145,12 @@ public class Utility {
 		return Utility.frequenzaInvioTracce;
 	}
 
-	private static synchronized void initIntervalloInteresseDiagnostici() {
-		if (Utility.intervalloInteresseDiagnostici == null) {
-			Utility.intervalloInteresseDiagnostici = Utility
-					.loadAndOrderProps(Utility.REPORTISTICA_DIAGNOSTICI_INTERVALLO_INTERESSE);
+	private static void initIntervalloInteresseDiagnostici() {
+		synchronized (INIT_LOCK) {
+			if (Utility.intervalloInteresseDiagnostici == null) {
+				Utility.intervalloInteresseDiagnostici = Utility
+						.loadAndOrderProps(Utility.REPORTISTICA_DIAGNOSTICI_INTERVALLO_INTERESSE);
+			}
 		}
 	}
 	public static List<String> getIntervalloInteresseDiagnostici() {
@@ -152,10 +160,12 @@ public class Utility {
 		return Utility.intervalloInteresseDiagnostici;
 	}
 
-	private static synchronized void initIntervalloInteresseTracce() {
-		if (Utility.intervalloInteresseTracce == null) {
-			Utility.intervalloInteresseTracce = Utility
-					.loadAndOrderProps(Utility.REPORTISTICA_TRACCE_INTERVALLO_INTERESSE);
+	private static void initIntervalloInteresseTracce() {
+		synchronized (INIT_LOCK) {
+			if (Utility.intervalloInteresseTracce == null) {
+				Utility.intervalloInteresseTracce = Utility
+						.loadAndOrderProps(Utility.REPORTISTICA_TRACCE_INTERVALLO_INTERESSE);
+			}
 		}
 	}
 	public static List<String> getIntervalloInteresseTracce() {
@@ -165,10 +175,12 @@ public class Utility {
 		return Utility.intervalloInteresseTracce;
 	}
 
-	private static synchronized void initStatoSistemaStorico() {
-		if (Utility.statoSistemaStorico == null) {
-			Utility.statoSistemaStorico = Utility
-					.loadAndOrderProps(Utility.STATUS_INTERVALLO_STORICO);
+	private static void initStatoSistemaStorico() {
+		synchronized (INIT_LOCK) {
+			if (Utility.statoSistemaStorico == null) {
+				Utility.statoSistemaStorico = Utility
+						.loadAndOrderProps(Utility.STATUS_INTERVALLO_STORICO);
+			}
 		}
 	}
 	public static List<String> getStatoSistemaStorico() {
@@ -362,8 +374,10 @@ public class Utility {
 	}
 
 	private static Configurazione configurazioneGenerale;
-	public static synchronized void setStaticConfigurazioneGenerale(Configurazione configurazioneGenerale) {
-		Utility.configurazioneGenerale = configurazioneGenerale;
+	public static void setStaticConfigurazioneGenerale(Configurazione configurazioneGenerale) {
+		synchronized (INIT_LOCK) {
+			Utility.configurazioneGenerale = configurazioneGenerale;
+		}
 	}
 	public static Configurazione getConfigurazioneGenerale() {
 		
@@ -386,8 +400,10 @@ public class Utility {
 	}
 
 	private static Boolean filtroDominioAbilitato;
-	public static synchronized void setStaticFiltroDominioAbilitato(boolean filtroDominioAbilitato) {
-		Utility.filtroDominioAbilitato = filtroDominioAbilitato;
+	public static void setStaticFiltroDominioAbilitato(boolean filtroDominioAbilitato) {
+		synchronized (INIT_LOCK) {
+			Utility.filtroDominioAbilitato = filtroDominioAbilitato;
+		}
 	}
 	
 	public static boolean isFiltroDominioAbilitato() {
@@ -449,10 +465,9 @@ public class Utility {
 			}
 		}
 		
-		if(configurazioneGenerale!=null && configurazioneGenerale.getGestioneCanali() != null) {
-			if(configurazioneGenerale.getGestioneCanali().getStato()!=null) {
-				return StatoFunzionalita.ABILITATO.equals(configurazioneGenerale.getGestioneCanali().getStato());
-			}
+		if(configurazioneGenerale!=null && configurazioneGenerale.getGestioneCanali() != null &&
+			configurazioneGenerale.getGestioneCanali().getStato()!=null) {
+			return StatoFunzionalita.ABILITATO.equals(configurazioneGenerale.getGestioneCanali().getStato());
 		}
 
 		return false;
@@ -478,19 +493,19 @@ public class Utility {
 			}
 		}
 		
-		if(configurazioneGenerale!=null && configurazioneGenerale.getGestioneCanali() != null) {
-			if(configurazioneGenerale.getGestioneCanali().getStato()!=null && StatoFunzionalita.ABILITATO.equals(configurazioneGenerale.getGestioneCanali().getStato())) {
-				List<String> l = new ArrayList<>();
-				if(configurazioneGenerale.getGestioneCanali().sizeCanaleList()>0) {
-					for (CanaleConfigurazione c : configurazioneGenerale.getGestioneCanali().getCanaleList()) {
-						l.add(c.getNome());
-					}
+		List<String> l = null;
+		if(configurazioneGenerale!=null && configurazioneGenerale.getGestioneCanali() != null &&
+			configurazioneGenerale.getGestioneCanali().getStato()!=null && StatoFunzionalita.ABILITATO.equals(configurazioneGenerale.getGestioneCanali().getStato())) {
+			l = new ArrayList<>();
+			if(configurazioneGenerale.getGestioneCanali().sizeCanaleList()>0) {
+				for (CanaleConfigurazione c : configurazioneGenerale.getGestioneCanali().getCanaleList()) {
+					l.add(c.getNome());
 				}
-				return l;
 			}
+			return l;
 		}
 
-		return null;
+		return l;
 	}
 	
 	public static List<String> getNodi(String canale) {
@@ -513,21 +528,21 @@ public class Utility {
 			}
 		}
 		
-		if(configurazioneGenerale!=null && configurazioneGenerale.getGestioneCanali() != null) {
-			if(configurazioneGenerale.getGestioneCanali().getStato()!=null && StatoFunzionalita.ABILITATO.equals(configurazioneGenerale.getGestioneCanali().getStato())) {
-				List<String> l = new ArrayList<>();
-				if(configurazioneGenerale.getGestioneCanali().sizeNodoList()>0) {
-					for (CanaleConfigurazioneNodo nodo : configurazioneGenerale.getGestioneCanali().getNodoList()) {
-						if(nodo.getCanaleList()!=null && nodo.getCanaleList().contains(canale)) {
-							l.add(nodo.getNome());
-						}
+		List<String> l = null;
+		if(configurazioneGenerale!=null && configurazioneGenerale.getGestioneCanali() != null &&
+			configurazioneGenerale.getGestioneCanali().getStato()!=null && StatoFunzionalita.ABILITATO.equals(configurazioneGenerale.getGestioneCanali().getStato())) {
+			l = new ArrayList<>();
+			if(configurazioneGenerale.getGestioneCanali().sizeNodoList()>0) {
+				for (CanaleConfigurazioneNodo nodo : configurazioneGenerale.getGestioneCanali().getNodoList()) {
+					if(nodo.getCanaleList()!=null && nodo.getCanaleList().contains(canale)) {
+						l.add(nodo.getNome());
 					}
 				}
-				return l;
 			}
+			return l;
 		}
 
-		return null;
+		return l;
 	}
 	
 	public static boolean isMultitenantAbilitato() {
@@ -550,10 +565,9 @@ public class Utility {
 			}
 		}
 		
-		if(configurazioneGenerale!=null && configurazioneGenerale.getMultitenant() != null) {
-			if(configurazioneGenerale.getMultitenant().getStato()!=null) {
-				return StatoFunzionalita.ABILITATO.equals(configurazioneGenerale.getMultitenant().getStato());
-			}
+		if(configurazioneGenerale!=null && configurazioneGenerale.getMultitenant() != null &&
+			configurazioneGenerale.getMultitenant().getStato()!=null) {
+			return StatoFunzionalita.ABILITATO.equals(configurazioneGenerale.getMultitenant().getStato());
 		}
 
 		return false;
@@ -774,8 +788,8 @@ public class Utility {
 		return ParseUtility.convertToServizioSoggetto(idServizio);
 	}
 
-	private static Map<String, String> mapIdentificativoPorta = new HashMap<>();
-	public static synchronized void putIdentificativoPorta(String tipoSoggetto,String nomeSoggetto, String idPorta) {
+	private static Map<String, String> mapIdentificativoPorta = Collections.synchronizedMap(new HashMap<>());
+	public static void putIdentificativoPorta(String tipoSoggetto,String nomeSoggetto, String idPorta) {
 		String key = tipoSoggetto+"/"+nomeSoggetto;
 		mapIdentificativoPorta.put(key, idPorta);
 	}
@@ -794,7 +808,6 @@ public class Utility {
 		else {
 			try {	
 				Logger log =  LoggerManager.getPddMonitorSqlLogger();
-				// [TODO] controllare se il tipo di project info e' corretto
 				org.openspcoop2.core.commons.search.utils.ProjectInfo prInfo = org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance();
 				org.openspcoop2.core.commons.search.dao.IServiceManager sm =
 						(org.openspcoop2.core.commons.search.dao.IServiceManager) DAOFactory.getInstance(log).getServiceManager(prInfo,log);
@@ -1106,7 +1119,7 @@ public class Utility {
 		return false;
 	}
 	
-//	public static boolean isMultiLoginEnabled() {
+/**	public static boolean isMultiLoginEnabled() {
 //		LoginBean lb = getLoginBean();
 //
 //		if(lb!= null && lb.isLoggedIn()){
@@ -1114,7 +1127,7 @@ public class Utility {
 //		}
 //		
 //		return false;
-//	}
+//	}*/
 	
 	public static boolean isPasswordUtenteObbligatoria() {
 		LoginBean lb = getLoginBean();

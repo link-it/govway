@@ -69,6 +69,8 @@ public class GestoreKeystoreCaching {
 	private static final String KEYSTORE_CACHE_NAME = "keystore";
 	/** Cache */
 	private static Cache cache = null;
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
 
 	
 	private static KeystoreException newKeystoreExceptionGenericError(Exception e) {
@@ -139,14 +141,16 @@ public class GestoreKeystoreCaching {
 			throw newKeystoreExceptionGenericError(e);
 		}
 	}
-	private static synchronized void abilitaCacheEngine() throws KeystoreException{
-		try{
-			if(cache==null) {
-				cache = new Cache(CacheType.JCS, KEYSTORE_CACHE_NAME); // lascio JCS come default abilitato via jmx
-				cache.build();
+	private static void abilitaCacheEngine() throws KeystoreException{
+		synchronized (INIT_LOCK) {
+			try{
+				if(cache==null) {
+					cache = new Cache(CacheType.JCS, KEYSTORE_CACHE_NAME); // lascio JCS come default abilitato via jmx
+					cache.build();
+				}
+			}catch(Exception e){
+				throw newKeystoreExceptionGenericError(e);
 			}
-		}catch(Exception e){
-			throw newKeystoreExceptionGenericError(e);
 		}
 	}
 	public static void abilitaCache(Long dimensioneCache,Boolean algoritmoCacheLRU,Long itemIdleTime,Long itemLifeSecond, Logger log) throws KeystoreException{
@@ -175,14 +179,16 @@ public class GestoreKeystoreCaching {
 			throw new KeystoreException("Disabilitazione cache per i dati contenenti i keystore non riuscita: "+e.getMessage(),e);
 		}
 	}	
-	private static synchronized void disabilitaCacheEngine() throws KeystoreException{
-		try{
-			if(cache!=null) {
-				cache.clear();
-				cache = null;
+	private static void disabilitaCacheEngine() throws KeystoreException{
+		synchronized (INIT_LOCK) {
+			try{
+				if(cache!=null) {
+					cache.clear();
+					cache = null;
+				}
+			}catch(Exception e){
+				throw new KeystoreException("Disabilitazione cache per i dati contenenti i keystore non riuscita: "+e.getMessage(),e);
 			}
-		}catch(Exception e){
-			throw new KeystoreException("Disabilitazione cache per i dati contenenti i keystore non riuscita: "+e.getMessage(),e);
 		}
 	}	
 	public static String listKeysCache(String separator) throws KeystoreException{
@@ -362,15 +368,17 @@ public class GestoreKeystoreCaching {
 	
 	
 	private static GestoreKeystoreCaching staticInstance = null;
-	public static synchronized void initialize() throws KeystoreException{
-		if(staticInstance==null){
-			staticInstance = new GestoreKeystoreCaching();
+	public static void initialize() throws KeystoreException{
+		synchronized (INIT_LOCK) {
+			if(staticInstance==null){
+				staticInstance = new GestoreKeystoreCaching();
+			}
 		}
 	}
 	public static GestoreKeystoreCaching getInstance() throws KeystoreException{
 		if(staticInstance==null){
 			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
-			synchronized (GestoreKeystoreCaching.class) {
+			synchronized (INIT_LOCK) {
 				throw new KeystoreException("GestoreKeystore non inizializzato");
 			}
 		}

@@ -24,7 +24,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.SequenceInputStream;
 import java.util.Enumeration;
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import jakarta.mail.internet.ContentType;
 import jakarta.xml.soap.MessageFactory;
@@ -89,6 +89,8 @@ public abstract class OpenSPCoop2MessageFactory {
 	}
 
 	protected static OpenSPCoop2MessageFactory openspcoopMessageFactory = null;
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
 	public static OpenSPCoop2MessageFactory getDefaultMessageFactory() {
 		if(OpenSPCoop2MessageFactory.openspcoopMessageFactory == null)
 			try { OpenSPCoop2MessageFactory.initDefaultMessageFactory(); } catch (Exception e) { throw new RuntimeException(e); }
@@ -98,21 +100,23 @@ public abstract class OpenSPCoop2MessageFactory {
 	public static void initDefaultMessageFactory() throws MessageException {
 		initDefaultMessageFactory(false);
 	}
-	public static synchronized void initDefaultMessageFactory(boolean force) throws MessageException {
-		try {
-			if(OpenSPCoop2MessageFactory.openspcoopMessageFactory==null || force){
-				OpenSPCoop2MessageFactory.openspcoopMessageFactory = (OpenSPCoop2MessageFactory) Loader.getInstance().newInstance(OpenSPCoop2MessageFactory.messageFactoryImpl);
+	public static void initDefaultMessageFactory(boolean force) throws MessageException {
+		synchronized (INIT_LOCK) {
+			try {
+				if(OpenSPCoop2MessageFactory.openspcoopMessageFactory==null || force){
+					OpenSPCoop2MessageFactory.openspcoopMessageFactory = (OpenSPCoop2MessageFactory) Loader.getInstance().newInstance(OpenSPCoop2MessageFactory.messageFactoryImpl);
 				
-				SOAPDocumentImpl.setCustomDocumentBuilderFactory(OpenSPCoop2MessageFactory.openspcoopMessageFactory.getDocumentBuilderFactoryClass());
-				SOAPDocumentImpl.setCustomSAXParserFactory(OpenSPCoop2MessageFactory.openspcoopMessageFactory.getSAXParserFactoryClass());
+					SOAPDocumentImpl.setCustomDocumentBuilderFactory(OpenSPCoop2MessageFactory.openspcoopMessageFactory.getDocumentBuilderFactoryClass());
+					SOAPDocumentImpl.setCustomSAXParserFactory(OpenSPCoop2MessageFactory.openspcoopMessageFactory.getSAXParserFactoryClass());
 				
-				/**System.out.println("CREATO F("+force+") ["+OpenSPCoop2MessageFactory.openspcoopMessageFactory+"] ["+OpenSPCoop2MessageFactory.messageFactoryImpl+"]");*/
+					/**System.out.println("CREATO F("+force+") ["+OpenSPCoop2MessageFactory.openspcoopMessageFactory+"] ["+OpenSPCoop2MessageFactory.messageFactoryImpl+"]");*/
+				}
+				/**else{
+					System.out.println("GIA ESISTE ["+OpenSPCoop2MessageFactory.openspcoopMessageFactory+"]");
+				}*/
+			}catch(Exception e) {
+				throw new MessageException(e.getMessage(),e);
 			}
-			/**else{
-				System.out.println("GIA ESISTE ["+OpenSPCoop2MessageFactory.openspcoopMessageFactory+"]");
-			}*/
-		}catch(Exception e) {
-			throw new MessageException(e.getMessage(),e);
 		}
 	}
 	
@@ -135,14 +139,18 @@ public abstract class OpenSPCoop2MessageFactory {
 		}
 		return OpenSPCoop2MessageFactory.soapFactory12;
 	}
-	public static synchronized void initSoapFactory11(SOAPFactory soapFactory) {
-		if(OpenSPCoop2MessageFactory.soapFactory11==null){
-			OpenSPCoop2MessageFactory.soapFactory11=soapFactory;
+	public static void initSoapFactory11(SOAPFactory soapFactory) {
+		synchronized (INIT_LOCK) {
+			if(OpenSPCoop2MessageFactory.soapFactory11==null){
+				OpenSPCoop2MessageFactory.soapFactory11=soapFactory;
+			}
 		}
 	} 
-	public static synchronized void initSoapFactory12(SOAPFactory soapFactory) {
-		if(OpenSPCoop2MessageFactory.soapFactory12==null){
-			OpenSPCoop2MessageFactory.soapFactory12=soapFactory;
+	public static void initSoapFactory12(SOAPFactory soapFactory) {
+		synchronized (INIT_LOCK) {
+			if(OpenSPCoop2MessageFactory.soapFactory12==null){
+				OpenSPCoop2MessageFactory.soapFactory12=soapFactory;
+			}
 		}
 	} 
 	protected abstract void initSoapFactory();
@@ -155,9 +163,11 @@ public abstract class OpenSPCoop2MessageFactory {
 		}
 		return OpenSPCoop2MessageFactory.soapMessageFactory;
 	}
-	public static synchronized void initSoapMessageFactory(MessageFactory soapMessageFactory) {
-		if(OpenSPCoop2MessageFactory.soapMessageFactory==null){
-			OpenSPCoop2MessageFactory.soapMessageFactory=soapMessageFactory;
+	public static void initSoapMessageFactory(MessageFactory soapMessageFactory) {
+		synchronized (INIT_LOCK) {
+			if(OpenSPCoop2MessageFactory.soapMessageFactory==null){
+				OpenSPCoop2MessageFactory.soapMessageFactory=soapMessageFactory;
+			}
 		}
 	} 
 	protected abstract void initSoapMessageFactory() throws SOAPException; 
@@ -170,9 +180,11 @@ public abstract class OpenSPCoop2MessageFactory {
 	// ********** NODE Utilities mediati dall'implementazione dell'OpenSPCoop2Message *************
 	
 	private static OpenSPCoop2Message _instanceForUtilities = null;
-	private static synchronized void initInstanceForUtilities(OpenSPCoop2MessageFactory messageFactory) {
-		if(_instanceForUtilities==null) {
-			_instanceForUtilities = messageFactory.createEmptyMessage(MessageType.SOAP_11,MessageRole.NONE);
+	private static void initInstanceForUtilities(OpenSPCoop2MessageFactory messageFactory) {
+		synchronized (INIT_LOCK) {
+			if(_instanceForUtilities==null) {
+				_instanceForUtilities = messageFactory.createEmptyMessage(MessageType.SOAP_11,MessageRole.NONE);
+			}
 		}
 	}
 	private static OpenSPCoop2Message getInstanceForUtilities(OpenSPCoop2MessageFactory messageFactory) {
@@ -193,11 +205,10 @@ public abstract class OpenSPCoop2MessageFactory {
 	
 	// ********** SOAP Utilities mediati dall'implementazione dell'OpenSPCoop2Message *************
 	
-	private static HashMap<String, OpenSPCoop2Message> internalInstanceForSOAPUtilities = new HashMap<>();
-	private static synchronized void initInstanceForSOAPUtilities(OpenSPCoop2MessageFactory messageFactory, MessageType messageType) {
-		if(!internalInstanceForSOAPUtilities.containsKey(messageType.name())) {
-			OpenSPCoop2Message msg = messageFactory.createEmptyMessage(messageType,MessageRole.NONE);
-			internalInstanceForSOAPUtilities.put(messageType.name(), msg);
+	private static ConcurrentHashMap<String, OpenSPCoop2Message> internalInstanceForSOAPUtilities = new ConcurrentHashMap<>();
+	private static void initInstanceForSOAPUtilities(OpenSPCoop2MessageFactory messageFactory, MessageType messageType) {
+		synchronized (INIT_LOCK) {
+			internalInstanceForSOAPUtilities.computeIfAbsent(messageType.name(), k -> messageFactory.createEmptyMessage(messageType,MessageRole.NONE));
 		}
 	}
 	private static OpenSPCoop2Message getInstanceForSOAPUtilities(OpenSPCoop2MessageFactory messageFactory, MessageType messageType) {

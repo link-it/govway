@@ -103,7 +103,7 @@ public class EsitoAutenticazionePortaApplicativa extends EsitoAutenticazione {
 	
 
 	@Override
-	public String getHeader(){
+	protected String getHeader(){
 		StringBuilder bf = new StringBuilder(super.getHeader());
 		if(this.idSoggetto!=null){
 			bf.append(" IDSoggetto");

@@ -71,11 +71,25 @@ import it.gov.spcoop.sica.wscp.constants.ProfiloDiCollaborazioneType;
 
 public class XMLUtils  {
 
+	private XMLUtils() {}
+
+	private static final String OPERATION_LIST_PREFIX = "OperationList[";
+	private static final String XMLNS = "xmlns";
+	
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
 	/** Validatore XSD */
 	static ValidatoreXSD validatoreXSD = null;
-	public static synchronized ValidatoreXSD getValidatoreXSD(Logger log) throws Exception{
+	private static void initValidatoreXSD(Logger log) throws Exception{
+		synchronized (INIT_LOCK) {
+			if(XMLUtils.validatoreXSD==null){
+				XMLUtils.validatoreXSD = new ValidatoreXSD(log,XMLUtils.class.getResourceAsStream("/SpecificaSemiformaleEGov_ClientSICA.xsd"));
+			}
+		}
+	}
+	public static ValidatoreXSD getValidatoreXSD(Logger log) throws Exception{
 		if(XMLUtils.validatoreXSD==null){
-			XMLUtils.validatoreXSD = new ValidatoreXSD(log,XMLUtils.class.getResourceAsStream("/SpecificaSemiformaleEGov_ClientSICA.xsd"));
+			initValidatoreXSD(log);
 		}
 		return XMLUtils.validatoreXSD;
 	}
@@ -100,27 +114,24 @@ public class XMLUtils  {
 			for(int i=0; i<operations.sizeCollaborazioneList(); i++){
 				OperationType op = operations.getCollaborazione(i);
 				if(op.getServizio()==null){
-					motivoErroreValidazione.append("OperationList["+i+"] senza il servizio\n");
+					motivoErroreValidazione.append(OPERATION_LIST_PREFIX).append(i).append("] senza il servizio\n");
 				}
 				if(op.getOperazione()==null){
-					motivoErroreValidazione.append("OperationList["+i+"] senza l'operation\n");
+					motivoErroreValidazione.append(OPERATION_LIST_PREFIX).append(i).append("] senza l'operation\n");
 				}
 				if(op.getProfiloDiCollaborazione()==null){
-					motivoErroreValidazione.append("OperationList["+i+"] senza un profilo di collaborazione\n");
+					motivoErroreValidazione.append(OPERATION_LIST_PREFIX).append(i).append("] senza un profilo di collaborazione\n");
 				}
-				if(ProfiloDiCollaborazioneType.EGOV_IT_MESSAGGIO_SINGOLO_ONE_WAY.equals(op.getProfiloDiCollaborazione())==false && 
-						ProfiloDiCollaborazioneType.EGOV_IT_SERVIZIO_SINCRONO.equals(op.getProfiloDiCollaborazione())==false &&
-								ProfiloDiCollaborazioneType.EGOV_IT_SERVIZIO_ASINCRONO_SIMMETRICO.equals(op.getProfiloDiCollaborazione())==false &&
-										ProfiloDiCollaborazioneType.EGOV_IT_SERVIZIO_ASINCRONO_ASIMMETRICO.equals(op.getProfiloDiCollaborazione())==false ){
-					motivoErroreValidazione.append("OperationList["+i+"] con un profilo di collaborazione non conosciuto ("+op.getProfiloDiCollaborazione()+")\n");
+				if(!ProfiloDiCollaborazioneType.EGOV_IT_MESSAGGIO_SINGOLO_ONE_WAY.equals(op.getProfiloDiCollaborazione()) && 
+						!ProfiloDiCollaborazioneType.EGOV_IT_SERVIZIO_SINCRONO.equals(op.getProfiloDiCollaborazione()) &&
+								!ProfiloDiCollaborazioneType.EGOV_IT_SERVIZIO_ASINCRONO_SIMMETRICO.equals(op.getProfiloDiCollaborazione()) &&
+										!ProfiloDiCollaborazioneType.EGOV_IT_SERVIZIO_ASINCRONO_ASIMMETRICO.equals(op.getProfiloDiCollaborazione()) ){
+					motivoErroreValidazione.append(OPERATION_LIST_PREFIX).append(i).append("] con un profilo di collaborazione non conosciuto (").append(op.getProfiloDiCollaborazione()).append(")\n");
 				}
 			}
 		}
 		
-		if(motivoErroreValidazione.length()!=size)
-			return false;
-		else
-			return true;
+		return motivoErroreValidazione.length()==size;
 
 	}
 	
@@ -233,10 +244,15 @@ public class XMLUtils  {
 		}
 	}
 	
-	private static byte[] unescapeXMLForClientSICA(byte [] xml) throws Exception{
+	private static byte[] unescapeXMLForClientSICA(byte [] xml) throws XMLUtilsException{
 		
-		AbstractXMLUtils xmlUtils = org.openspcoop2.message.xml.MessageXMLUtils.DEFAULT;		
-		Document docXML = xmlUtils.newDocument(xml);
+		AbstractXMLUtils xmlUtils = org.openspcoop2.message.xml.MessageXMLUtils.DEFAULT;	
+		Document docXML = null;
+		try {
+			docXML = xmlUtils.newDocument(xml);
+		}catch(Exception e) {
+			throw new XMLUtilsException(e.getMessage(),e);
+		}
 		Element elemXML = docXML.getDocumentElement();
 		String prefixRootElement = elemXML.getPrefix();
 		String prefixChildElementEgovVersione = null;
@@ -249,19 +265,12 @@ public class XMLUtils  {
 		if(prefixRootElement!=null && prefixChildElementEgovVersione==null){
 			String xmlS = new String(xml);
 			xmlS = xmlS.replace("<"+prefixRootElement+":"+Costanti.ROOT_LOCAL_NAME,"<"+Costanti.ROOT_LOCAL_NAME);
-			//xmlS = xmlS.replace("xmlns:wscp=\"http://spcoop.gov.it/sica/wscp\" xmlns","xmlns");
-			xmlS = xmlS.replace("xmlns:"+prefixRootElement,"xmlns");
+			/**xmlS = xmlS.replace("xmlns:wscp=\"http://spcoop.gov.it/sica/wscp\" xmlns","xmlns");*/
+			xmlS = xmlS.replace(XMLNS+":"+prefixRootElement,XMLNS);
 			xmlS = xmlS.replace("</"+prefixRootElement+":"+Costanti.ROOT_LOCAL_NAME,"</"+Costanti.ROOT_LOCAL_NAME);
 			xml = xmlS.getBytes();
 		}
 		return xml;
-		/*
-		String xmlS = new String(xml);
-		xmlS = xmlS.replace("<"+Costanti.PREFIX_CLIENT_SICA+":"+Costanti.ROOT_LOCAL_NAME,"<"+Costanti.ROOT_LOCAL_NAME);
-		xmlS = xmlS.replace("xmlns:"+Costanti.PREFIX_CLIENT_SICA+"","xmlns");
-		xmlS = xmlS.replace("</"+Costanti.PREFIX_CLIENT_SICA+":"+Costanti.ROOT_LOCAL_NAME,"</"+Costanti.ROOT_LOCAL_NAME);
-		return xmlS.getBytes();
-		*/
 	}
 	
 	
@@ -272,7 +281,7 @@ public class XMLUtils  {
 		FileOutputStream fout = null;
 		try{
 			fout = new FileOutputStream(out);
-			byte[] xml = XMLUtils.generateDichiarazioneEGov_engine(manifest, buildChildUnqualified);
+			byte[] xml = XMLUtils.generateDichiarazioneEGovEngine(manifest, buildChildUnqualified);
 			fout.write(xml);
 			fout.flush();		
 		}catch(Exception e){
@@ -294,7 +303,7 @@ public class XMLUtils  {
 	
 	public static byte[] generateDichiarazioneEGov(ProfiloCollaborazioneEGOV manifest,boolean buildChildUnqualified) throws XMLUtilsException{
 		try{
-			return XMLUtils.generateDichiarazioneEGov_engine(manifest, buildChildUnqualified);
+			return XMLUtils.generateDichiarazioneEGovEngine(manifest, buildChildUnqualified);
 		}catch(Exception e){
 			throw new XMLUtilsException(e.getMessage(),e);
 		}
@@ -302,22 +311,26 @@ public class XMLUtils  {
 
 	public static void generateDichiarazioneEGov(ProfiloCollaborazioneEGOV manifest,OutputStream out,boolean buildChildUnqualified) throws XMLUtilsException{
 		try{
-			byte[] xml = XMLUtils.generateDichiarazioneEGov_engine(manifest, buildChildUnqualified);
+			byte[] xml = XMLUtils.generateDichiarazioneEGovEngine(manifest, buildChildUnqualified);
 			out.write(xml);		
 		}catch(Exception e){
 			throw new XMLUtilsException(e.getMessage(),e);
 		}
 	}
 	
-	private static byte[] generateDichiarazioneEGov_engine(ProfiloCollaborazioneEGOV manifest,boolean buildChildUnqualified) throws Exception{
+	private static byte[] generateDichiarazioneEGovEngine(ProfiloCollaborazioneEGOV manifest,boolean buildChildUnqualified) throws XMLUtilsException{
 		
 		StringBuilder risultatoValidazione = new StringBuilder();
-		if(XMLUtils.validate(manifest, risultatoValidazione)==false){
-			throw new Exception(risultatoValidazione.toString());
+		if(!XMLUtils.validate(manifest, risultatoValidazione)){
+			throw new XMLUtilsException(risultatoValidazione.toString());
 		}
 		
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
-		JaxbUtils.objToXml(bout, ProfiloCollaborazioneEGOV.class, manifest);
+		try {
+			JaxbUtils.objToXml(bout, ProfiloCollaborazioneEGOV.class, manifest);
+		}catch(Exception e){
+			throw new XMLUtilsException(e.getMessage(),e);
+		}
 		byte[] xml = bout.toByteArray();
 		
 		// Il client SICA si aspetta un file wscp che possiedono un prefix nel root element wscp,
@@ -334,10 +347,10 @@ public class XMLUtils  {
 		return xml;
 	}
 	
-	private static byte[] escapeXMLForClientSICA(byte[] xml) throws Exception{
+	private static byte[] escapeXMLForClientSICA(byte[] xml) {
 		String xmlS = new String(xml);
 		xmlS = xmlS.replace("<"+Costanti.ROOT_LOCAL_NAME, "<"+Costanti.PREFIX_CLIENT_SICA+":"+Costanti.ROOT_LOCAL_NAME);
-		xmlS = xmlS.replace("xmlns", "xmlns:"+Costanti.PREFIX_CLIENT_SICA+"");
+		xmlS = xmlS.replace(XMLNS, XMLNS+":"+Costanti.PREFIX_CLIENT_SICA);
 		xmlS = xmlS.replace("</"+Costanti.ROOT_LOCAL_NAME, "</"+Costanti.PREFIX_CLIENT_SICA+":"+Costanti.ROOT_LOCAL_NAME);
 		return xmlS.getBytes();
 	}
@@ -354,40 +367,35 @@ public class XMLUtils  {
 			AbstractXMLUtils xmlUtils = org.openspcoop2.message.xml.MessageXMLUtils.DEFAULT;		
 			Document docXML = xmlUtils.newDocument(doc);
 			Element elemXML = docXML.getDocumentElement();
-			//System.out.println("LOCAL["+Costanti.ROOT_LOCAL_NAME+"]vs["+elemXML.getLocalName()+"]  NAMESPACE["+Costanti.TARGET_NAMESPACE+"]vs["+elemXML.getNamespaceURI()+"]");
-			if(Costanti.ROOT_LOCAL_NAME.equals(elemXML.getLocalName()) && 
-					Costanti.TARGET_NAMESPACE.equals(elemXML.getNamespaceURI()) ){
-				return true;
-			}
-			else{
-				return false;
-			}
+			/**System.out.println("LOCAL["+Costanti.ROOT_LOCAL_NAME+"]vs["+elemXML.getLocalName()+"]  NAMESPACE["+Costanti.TARGET_NAMESPACE+"]vs["+elemXML.getNamespaceURI()+"]");*/
+			return(Costanti.ROOT_LOCAL_NAME.equals(elemXML.getLocalName()) && 
+					Costanti.TARGET_NAMESPACE.equals(elemXML.getNamespaceURI()) );
 		}catch(Exception e){
-			//System.out.println("NON e' un DOCUMENTO VALIDO: "+e.getMessage());
+			/**System.out.println("NON e' un DOCUMENTO VALIDO: "+e.getMessage());*/
 			return false;
 		}
 	}
 	
-	private static String readNomeSPCoop(String QName,Map<String, String> mapPrefixNamespaces) throws XMLUtilsException{
-		if(QName==null){
+	private static String readNomeSPCoop(String qName,Map<String, String> mapPrefixNamespaces) throws XMLUtilsException{
+		if(qName==null){
 			return null; // per correlati
 		}
 		else{
-			if(QName.contains(":")){
-				String [] split = QName.split(":");
+			if(qName.contains(":")){
+				String [] split = qName.split(":");
 				if(split.length!=2){
-					 throw new XMLUtilsException("QName ["+QName+"] non valido");
+					 throw new XMLUtilsException("QName ["+qName+"] non valido");
 				}
 				String prefix = split[0].trim();
 				String nomeSPCoop = split[1].trim();
 				if(mapPrefixNamespaces.containsKey(prefix)){
-					//System.out.println("EFFETTUATO MAPPING IN: "+nomeSPCoop+" da ["+QName+"] del namespace ["+mapPrefixNamespaces.get(prefix)+"]");
+					/**System.out.println("EFFETTUATO MAPPING IN: "+nomeSPCoop+" da ["+QName+"] del namespace ["+mapPrefixNamespaces.get(prefix)+"]");*/
 					return nomeSPCoop;
 				}else{
-					throw new XMLUtilsException("QName ["+QName+"] non valido, prefix ["+prefix+"] non associato a nessun namespace");
+					throw new XMLUtilsException("QName ["+qName+"] non valido, prefix ["+prefix+"] non associato a nessun namespace");
 				}
 			}else{
-				return QName;
+				return qName;
 			}
 		}
 	}
@@ -410,8 +418,7 @@ public class XMLUtils  {
 			NamedNodeMap map = elemXML.getAttributes();
 			for(int i=0;i<map.getLength();i++){
 				Object o = map.item(i);
-				if(o instanceof Attr){
-					Attr attr = (Attr) o;
+				if(o instanceof Attr attr){
 					String prefix = "";
 					if(attr.getPrefix()!=null){
 						prefix = attr.getLocalName(); // il prefisso sara' xmlns
@@ -511,8 +518,8 @@ public class XMLUtils  {
 		}
 		
 		if(servizi!=null && !servizi.isEmpty()) {
-			for (String pt : servizi.keySet()) {
-				as.addPortType(servizi.get(pt));
+			for (PortType pt : servizi.values()) {
+				as.addPortType(pt);
 			}
 		}
 
@@ -540,23 +547,14 @@ public class XMLUtils  {
 		accServCompostoSICA.addSpecificaSemiformale(docSICA);
 		return docSemiformalePerManifest;
 	}
-	private static it.gov.spcoop.sica.manifest.DocumentoSemiformale generaDocumentoSemiformalePerManifesto() throws XMLUtilsException{
+	private static it.gov.spcoop.sica.manifest.DocumentoSemiformale generaDocumentoSemiformalePerManifesto() {
 		it.gov.spcoop.sica.manifest.DocumentoSemiformale docSemiformale = new it.gov.spcoop.sica.manifest.DocumentoSemiformale();
 		docSemiformale.setTipo(TipiDocumentoSemiformale.XML.toString());
 		docSemiformale.setBase(it.gov.spcoop.sica.wscp.driver.Costanti.SPECIFICA_SEMIFORMALE_INFORMAZIONI_EGOV);
 		return docSemiformale;
 	}
 	private static it.gov.spcoop.sica.dao.Documento generaDocumentoSemiformale(AccordoServizioParteComune as,boolean nomiSPCoopQualified, boolean gestioneChildUnquilified) throws XMLUtilsException{
-		it.gov.spcoop.sica.dao.Documento docSICA = new it.gov.spcoop.sica.dao.Documento();
-		docSICA.setTipo(TipiDocumentoSemiformale.XML.toString());
-		docSICA.setNome(it.gov.spcoop.sica.wscp.driver.Costanti.SPECIFICA_SEMIFORMALE_INFORMAZIONI_EGOV);
-		try{
-			byte[] dichiarazioneEGov = XMLUtils.generaDocumentoEGov(as, nomiSPCoopQualified, gestioneChildUnquilified);
-			docSICA.setContenuto(dichiarazioneEGov);
-		}catch(Exception e){
-			throw new XMLUtilsException("Generazione dichiarazione eGov fallita: "+e.getMessage(),e);
-		}
-		return docSICA;
+		return generaDocumento(as, nomiSPCoopQualified, gestioneChildUnquilified, it.gov.spcoop.sica.wscp.driver.Costanti.SPECIFICA_SEMIFORMALE_INFORMAZIONI_EGOV);
 	}
 	
 	public static String generaGenericoDocumento(AccordoServizioParteComune as,
@@ -573,13 +571,17 @@ public class XMLUtils  {
 		accServCompostoSICA.addAllegato(docSICA);	
 		return genericoDocumentoPerManifest;
 	}
-	private static String generaGenericoDocumentoPerManifesto() throws XMLUtilsException{
+	private static String generaGenericoDocumentoPerManifesto() {
 		return it.gov.spcoop.sica.wscp.driver.Costanti.SPECIFICA_SEMIFORMALE_INFORMAZIONI_EGOV;
 	}
 	private static it.gov.spcoop.sica.dao.Documento generaGenericoDocumento(AccordoServizioParteComune as,boolean nomiSPCoopQualified, boolean gestioneChildUnquilified) throws XMLUtilsException{
+		return generaDocumento(as, nomiSPCoopQualified, gestioneChildUnquilified, it.gov.spcoop.sica.wscp.driver.Costanti.SPECIFICA_SEMIFORMALE_INFORMAZIONI_EGOV);
+	}
+	
+	private static it.gov.spcoop.sica.dao.Documento generaDocumento(AccordoServizioParteComune as,boolean nomiSPCoopQualified, boolean gestioneChildUnquilified, String nome) throws XMLUtilsException{
 		it.gov.spcoop.sica.dao.Documento docSICA = new it.gov.spcoop.sica.dao.Documento();
 		docSICA.setTipo(TipiDocumentoSemiformale.XML.toString());
-		docSICA.setNome(it.gov.spcoop.sica.wscp.driver.Costanti.SPECIFICA_SEMIFORMALE_INFORMAZIONI_EGOV);
+		docSICA.setNome(nome);
 		try{
 			byte[] dichiarazioneEGov = XMLUtils.generaDocumentoEGov(as, nomiSPCoopQualified, gestioneChildUnquilified);
 			docSICA.setContenuto(dichiarazioneEGov);
@@ -609,7 +611,7 @@ public class XMLUtils  {
 					}
 					if(targetNamespace!=null){
 						prefissoNomiSPCoop = prefix+":";
-						namespaceQualified = "xmlns"+":"+prefix+"=\""+targetNamespace+"\"";
+						namespaceQualified = XMLNS+":"+prefix+"=\""+targetNamespace+"\"";
 					}
 				}
 			}catch(Exception e){
@@ -638,7 +640,7 @@ public class XMLUtils  {
 			
 			OperationListType operations = new OperationListType();
 			
-			List<OperationType> operationsSICA_asincrone_nonAncoraInserite = new ArrayList<OperationType>();
+			List<OperationType> operationsSICAAsincroneNonAncoraInserite = new ArrayList<OperationType>();
 					
 			for(int i=0; i<as.sizePortTypeList(); i++){
 				
@@ -672,7 +674,7 @@ public class XMLUtils  {
 						// Se l'operation e' null, viene tenuta in memoria tale operation (asincrona senza correlazione)
 						// Se poi e' presente un'altra azione che contiene la correlazione, tale operation non sara' inserita.
 						
-						// TODO: in futuro fare versione a modo che usa servizio e proprieta getCorrelataServizio in operation
+						// in futuro fare versione che usa servizio e proprieta getCorrelataServizio in operation
 						
 						if(nomeAzioneCorrelata==null){
 							
@@ -685,7 +687,7 @@ public class XMLUtils  {
 							else if(CostantiRegistroServizi.ASINCRONO_SIMMETRICO.equals(profilo))
 								opSICA.setProfiloDiCollaborazione(ProfiloDiCollaborazioneType.EGOV_IT_SERVIZIO_ASINCRONO_SIMMETRICO);
 							opSICA.setServizio(nomeServizio);
-							operationsSICA_asincrone_nonAncoraInserite.add(opSICA);
+							operationsSICAAsincroneNonAncoraInserite.add(opSICA);
 						}else{
 							
 							// Operazione asincrono con info correlata
@@ -720,8 +722,8 @@ public class XMLUtils  {
 			
 			
 			// check operazioni non ancora inserite
-			while(operationsSICA_asincrone_nonAncoraInserite.size()>0){
-				OperationType opSICA = operationsSICA_asincrone_nonAncoraInserite.remove(0);
+			while(!operationsSICAAsincroneNonAncoraInserite.isEmpty()){
+				OperationType opSICA = operationsSICAAsincroneNonAncoraInserite.remove(0);
 				boolean find = false;
 				for(int i=0;i<operations.sizeCollaborazioneList();i++){
 					if(opSICA.getServizio().equals(operations.getCollaborazione(i).getServizio()) &&
@@ -730,7 +732,7 @@ public class XMLUtils  {
 						break;
 					}
 				}
-				if(find==false){
+				if(!find){
 					operations.addCollaborazione(opSICA);
 				}
 			}

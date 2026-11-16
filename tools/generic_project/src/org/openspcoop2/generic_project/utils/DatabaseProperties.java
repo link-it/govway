@@ -34,16 +34,20 @@ import org.openspcoop2.utils.UtilsException;
  * @version $Rev$, $Date$
  */
 public class DatabaseProperties {
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
 
 	
 	/** Copia Statica */
 	private static DatabaseProperties databaseProperties = null;
 
-	public static synchronized void initialize(String propertiesLocalPath, String propertiesName, String nomeFileProperties,org.slf4j.Logger log) throws ServiceException{
+	public static void initialize(String propertiesLocalPath, String propertiesName, String nomeFileProperties,org.slf4j.Logger log) throws ServiceException{
+		synchronized (INIT_LOCK) {
 
-		if(DatabaseProperties.databaseProperties==null)
-			DatabaseProperties.databaseProperties = new DatabaseProperties(propertiesLocalPath,propertiesName,nomeFileProperties,log);	
+			if(DatabaseProperties.databaseProperties==null)
+				DatabaseProperties.databaseProperties = new DatabaseProperties(propertiesLocalPath,propertiesName,nomeFileProperties,log);	
 
+		}
 	}
 
 	public static DatabaseProperties getInstance(org.slf4j.Logger log) throws ServiceException{
@@ -52,7 +56,7 @@ public class DatabaseProperties {
 		}
 		// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
 		if(DatabaseProperties.databaseProperties==null){
-			synchronized (DatabaseProperties.class) {
+			synchronized (INIT_LOCK) {
 				if(DatabaseProperties.databaseProperties==null){
 					throw new ServiceException("DatabaseProperties not initialized, use initialize method");
 				}

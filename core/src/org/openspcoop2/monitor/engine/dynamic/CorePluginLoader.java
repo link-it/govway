@@ -33,20 +33,28 @@ import org.slf4j.Logger;
 public class CorePluginLoader {
 
 	private static IPluginLoader staticInstance;
-	public static synchronized void initialize(Loader loader, Logger log, Class<?> c) throws Exception {
-		staticInstance = (IPluginLoader) loader.newInstance(c);
-		staticInstance.init(loader, log);
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
+	public static void initialize(Loader loader, Logger log, Class<?> c) throws Exception {
+		synchronized (INIT_LOCK) {
+			staticInstance = (IPluginLoader) loader.newInstance(c);
+			staticInstance.init(loader, log);
+		}
 	}
-	public static synchronized void initialize(Loader loader, Logger log, Class<?> c, IRegistroPluginsReader registroPluginsReader, int expireSeconds) throws Exception {
-		staticInstance = (IPluginLoader) loader.newInstance(c);
-		staticInstance.init(loader, log, registroPluginsReader, expireSeconds);
+	public static void initialize(Loader loader, Logger log, Class<?> c, IRegistroPluginsReader registroPluginsReader, int expireSeconds) throws Exception {
+		synchronized (INIT_LOCK) {
+			staticInstance = (IPluginLoader) loader.newInstance(c);
+			staticInstance.init(loader, log, registroPluginsReader, expireSeconds);
+		}
 	}
 	public static IPluginLoader getInstance() {
 		return staticInstance;
 	}
-	public static synchronized void close(Logger log) {
-		if(staticInstance!=null) {
-			staticInstance.close(log);
+	public static void close(Logger log) {
+		synchronized (INIT_LOCK) {
+			if(staticInstance!=null) {
+				staticInstance.close(log);
+			}
 		}
 	}
 }

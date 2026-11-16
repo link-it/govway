@@ -53,19 +53,19 @@ public class TimerGestoreChiaviPDND extends BaseThread{
 	static final String CONNESSIONE_NON_DISPONIBILE = "Connessione al database della configurazione non disponibile";
 	
 	/** Logger utilizzato per debug. */
-	private Logger logTimer = null;
+	private final Logger logTimer;
 	private void logError(String msgErrore, Exception e) {
 		if(this.logTimer!=null) {
 			this.logTimer.error(msgErrore,e);
 		}
 	}
-	private MsgDiagnostico msgDiag = null;
+	private final MsgDiagnostico msgDiag;
 
 	/** OpenSPCoop2Properties */
 	@SuppressWarnings("unused")
-	private OpenSPCoop2Properties op2Properties = null;
+	private final OpenSPCoop2Properties op2Properties;
 	
-	private List<PDNDConfig> remoteStores;
+	private final List<PDNDConfig> remoteStores;
 	private Map<String, String> mapUrlCheckEventi;
 	
 	
@@ -97,7 +97,9 @@ public class TimerGestoreChiaviPDND extends BaseThread{
 		}
 
 		this.msgDiag.logPersonalizzato("avvioInCorso");
-		this.logTimer.info(this.msgDiag.getMessaggio_replaceKeywords("avvioInCorso"));
+		if(this.logTimer.isInfoEnabled()) {
+			this.logTimer.info(this.msgDiag.getMessaggio_replaceKeywords("avvioInCorso"));
+		}
 		
 		try {
 			this.op2Properties = OpenSPCoop2Properties.getInstance();
@@ -120,7 +122,9 @@ public class TimerGestoreChiaviPDND extends BaseThread{
 		this.msgDiag.addKeyword(CostantiPdD.KEY_TIMEOUT, this.getTimeout()+" "+sec);
 		
 		this.msgDiag.logPersonalizzato("avvioEffettuato");
-		this.logTimer.info(this.msgDiag.getMessaggio_replaceKeywords("avvioEffettuato"));
+		if(this.logTimer.isInfoEnabled()) {
+			this.logTimer.info(this.msgDiag.getMessaggio_replaceKeywords("avvioEffettuato"));
+		}
 	}
 	
 	private void initMapUrlCheckEventi() throws TimerException {
@@ -144,7 +148,7 @@ public class TimerGestoreChiaviPDND extends BaseThread{
 	}
 
 	@Override
-	public void process(){
+	protected void process(){
 		
 		try{
 			if(this.remoteStores!=null && !this.remoteStores.isEmpty()) {

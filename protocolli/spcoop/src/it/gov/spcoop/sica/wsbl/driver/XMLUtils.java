@@ -54,11 +54,25 @@ import org.w3c.dom.Element;
 
 public class XMLUtils  {
 
+	private XMLUtils() {}
+
+	private static final String XMLNS = "xmlns";
+	private static final String XMLNS_WSBL = "xmlns:wsbl";
+	
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
 	/** Validatore XSD */
 	static ValidatoreXSD validatoreXSD = null;
-	public static synchronized ValidatoreXSD getValidatoreXSD(Logger log) throws Exception{
+	private static void initValidatoreXSD(Logger log) throws Exception{
+		synchronized (INIT_LOCK) {
+			if(XMLUtils.validatoreXSD==null){
+				XMLUtils.validatoreXSD = new ValidatoreXSD(log,XMLUtils.class.getResourceAsStream("/WSBL_originale.xsd"));
+			}
+		}
+	}
+	public static ValidatoreXSD getValidatoreXSD(Logger log) throws Exception{
 		if(XMLUtils.validatoreXSD==null){
-			XMLUtils.validatoreXSD = new ValidatoreXSD(log,XMLUtils.class.getResourceAsStream("/WSBL_originale.xsd"));
+			initValidatoreXSD(log);
 		}
 		return XMLUtils.validatoreXSD;
 	}
@@ -66,24 +80,22 @@ public class XMLUtils  {
 		
 		int size = motivoErroreValidazione.length();
 		
-		// TODO
+		if(conceptual!=null) {
+			// nop
+		}
 		
-		if(motivoErroreValidazione.length()!=size)
-			return false;
-		else
-			return true;
+		return motivoErroreValidazione.length()==size;
 
 	}
 	public static boolean validate(MessageBehavior conceptual,StringBuilder motivoErroreValidazione){
 		
 		int size = motivoErroreValidazione.length();
 		
-		// TODO
+		if(conceptual!=null) {
+			// nop
+		}
 		
-		if(motivoErroreValidazione.length()!=size)
-			return false;
-		else
-			return true;
+		return motivoErroreValidazione.length()==size;
 
 	}
 	
@@ -182,11 +194,11 @@ public class XMLUtils  {
 		}
 	}
 	
-	private static byte[] unescapeXMLConceptualBehaviorForClientSICA(String xml) throws Exception{
-		String xmlS = new String(xml);
+	private static byte[] unescapeXMLConceptualBehaviorForClientSICA(String xml) {
+		String xmlS = xml;
 		xmlS = xmlS.replace("<wsbl:ConceptualBehavior","<ConceptualBehavior");
-		//xmlS = xmlS.replace("xmlns:wscp=\"http://spcoop.gov.it/sica/wscp\" xmlns","xmlns");
-		xmlS = xmlS.replace("xmlns:wsbl","xmlns");
+		/**xmlS = xmlS.replace("xmlns:wscp=\"http://spcoop.gov.it/sica/wscp\" xmlns","xmlns");*/
+		xmlS = xmlS.replace(XMLNS_WSBL,XMLNS);
 		xmlS = xmlS.replace("</wsbl:ConceptualBehavior","</ConceptualBehavior");
 		return xmlS.getBytes();
 	}
@@ -235,18 +247,22 @@ public class XMLUtils  {
 		}
 	}
 
-	private static byte[] escapeXMLConceptualBehaviorForClientSICA(ConceptualBehavior manifest) throws Exception{
+	private static byte[] escapeXMLConceptualBehaviorForClientSICA(ConceptualBehavior manifest) throws XMLUtilsException{
 		StringBuilder risultatoValidazione = new StringBuilder();
-		if(XMLUtils.validate(manifest, risultatoValidazione)==false){
-			throw new Exception(risultatoValidazione.toString());
+		if(!XMLUtils.validate(manifest, risultatoValidazione)){
+			throw new XMLUtilsException(risultatoValidazione.toString());
 		}
 		
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
-		JaxbUtils.objToXml(bout, ConceptualBehavior.class, manifest);
+		try {
+			JaxbUtils.objToXml(bout, ConceptualBehavior.class, manifest);
+		}catch(Exception e) {
+			throw new XMLUtilsException(e.getMessage(),e);
+		}
 		String xml = bout.toString();
 		xml = xml.replace("<ConceptualBehavior", "<wsbl:ConceptualBehavior");
 		//xml = xml.replace("xmlns", "xmlns:wscp=\"http://spcoop.gov.it/sica/wscp\" xmlns");
-		xml = xml.replace("xmlns", "xmlns:wsbl");
+		xml = xml.replace(XMLNS, XMLNS_WSBL);
 		xml = xml.replace("</ConceptualBehavior", "</wsbl:ConceptualBehavior");
 		return xml.getBytes();
 	}
@@ -261,16 +277,11 @@ public class XMLUtils  {
 			AbstractXMLUtils xmlUtils = org.openspcoop2.message.xml.MessageXMLUtils.DEFAULT;		
 			Document docXML = xmlUtils.newDocument(doc);
 			Element elemXML = docXML.getDocumentElement();
-			//System.out.println("LOCAL["+Costanti.ROOT_LOCAL_NAME+"]vs["+elemXML.getLocalName()+"]  NAMESPACE["+Costanti.TARGET_NAMESPACE+"]vs["+elemXML.getNamespaceURI()+"]");
-			if(Costanti.ROOT_CONCEPTUAL_LOCAL_NAME.equals(elemXML.getLocalName()) && 
-					Costanti.TARGET_NAMESPACE.equals(elemXML.getNamespaceURI()) ){
-				return true;
-			}
-			else{
-				return false;
-			}
+			/**System.out.println("LOCAL["+Costanti.ROOT_LOCAL_NAME+"]vs["+elemXML.getLocalName()+"]  NAMESPACE["+Costanti.TARGET_NAMESPACE+"]vs["+elemXML.getNamespaceURI()+"]");*/
+			return(Costanti.ROOT_CONCEPTUAL_LOCAL_NAME.equals(elemXML.getLocalName()) && 
+					Costanti.TARGET_NAMESPACE.equals(elemXML.getNamespaceURI()) );
 		}catch(Exception e){
-			//System.out.println("NON e' un DOCUMENTO VALIDO: "+e.getMessage());
+			/**System.out.println("NON e' un DOCUMENTO VALIDO: "+e.getMessage());*/
 			return false;
 		}
 	}
@@ -282,55 +293,55 @@ public class XMLUtils  {
 			String statoIniziale = null;
 			String statoFinale = null;
 			if(wsblConcettuale.getStates()==null){
-				throw new Exception("Non sono presenti stati nel documento WSBL ConceptualBehavior");
+				throw new XMLUtilsException("Non sono presenti stati nel documento WSBL ConceptualBehavior");
 			}else{
 				if(wsblConcettuale.getStates().getStateInitial()==null || wsblConcettuale.getStates().getStateInitial().getName()==null){
-					throw new Exception("Stato iniziale non presente nel documento WSBL ConceptualBehavior");
+					throw new XMLUtilsException("Stato iniziale non presente nel documento WSBL ConceptualBehavior");
 				}
 				statoIniziale = wsblConcettuale.getStates().getStateInitial().getName();
 				if(wsblConcettuale.getStates().getStateFinal()==null || wsblConcettuale.getStates().getStateFinal().getName()==null){
-					throw new Exception("Stato finale non presente nel documento WSBL ConceptualBehavior");
+					throw new XMLUtilsException("Stato finale non presente nel documento WSBL ConceptualBehavior");
 				}
 				statoFinale = wsblConcettuale.getStates().getStateFinal().getName();
 			}
 			
 			if(wsblConcettuale.getTransitions()==null || wsblConcettuale.getTransitions().sizeTransitionList()<=0 ){
-				throw new Exception("Non sono presenti transizioni nel documento WSBL ConceptualBehavior");
+				throw new XMLUtilsException("Non sono presenti transizioni nel documento WSBL ConceptualBehavior");
 			}else{
 				for(int i=0; i<wsblConcettuale.getTransitions().sizeTransitionList(); i++){
 					TransitionType tr = wsblConcettuale.getTransitions().getTransition(i);
 					if(tr.getSource()==null){
-						throw new Exception("Presente una transizione con source non definita nel documento WSBL ConceptualBehavior");
+						throw new XMLUtilsException("Presente una transizione con source non definita nel documento WSBL ConceptualBehavior");
 					}
 					if(tr.getTarget()==null){
-						throw new Exception("Presente una transizione con target non definito nel documento WSBL ConceptualBehavior");
+						throw new XMLUtilsException("Presente una transizione con target non definito nel documento WSBL ConceptualBehavior");
 					}
 					if(tr.getSource().equals(statoIniziale)){
 						if(tr.getEvents()==null || tr.getEvents().sizeEventList()<=0){
-							throw new Exception("Presente una transizione senza eventi nel documento WSBL ConceptualBehavior");
+							throw new XMLUtilsException("Presente una transizione senza eventi nel documento WSBL ConceptualBehavior");
 						}
 						operationsAsincrone[0] = tr.getEvents().getEvent(0).getName();
 						if(operationsAsincrone[0]==null){
-							throw new Exception("Presente una transizione con un evento senza nome nel documento WSBL ConceptualBehavior");
+							throw new XMLUtilsException("Presente una transizione con un evento senza nome nel documento WSBL ConceptualBehavior");
 						}
 						continue;
 					}
 					if(tr.getTarget().equals(statoFinale)){
 						if(tr.getEvents()==null || tr.getEvents().sizeEventList()<=0){
-							throw new Exception("Presente una transizione senza eventi nel documento WSBL ConceptualBehavior");
+							throw new XMLUtilsException("Presente una transizione senza eventi nel documento WSBL ConceptualBehavior");
 						}
 						operationsAsincrone[1] = tr.getEvents().getEvent(0).getName();
 						if(operationsAsincrone[1]==null){
-							throw new Exception("Presente una transizione con un evento senza nome nel documento WSBL ConceptualBehavior");
+							throw new XMLUtilsException("Presente una transizione con un evento senza nome nel documento WSBL ConceptualBehavior");
 						}
 						continue;
 					}
 				}
 				if(operationsAsincrone[0]==null){
-					throw new Exception("Non e' stata trovata una transizione che possiede come source lo stato iniziale "+statoIniziale+" nel documento WSBL ConceptualBehavior");
+					throw new XMLUtilsException("Non e' stata trovata una transizione che possiede come source lo stato iniziale "+statoIniziale+" nel documento WSBL ConceptualBehavior");
 				}
 				if(operationsAsincrone[1]==null){
-					throw new Exception("Non e' stata trovata una transizione che possiede come target lo stato finale "+statoFinale+" nel documento WSBL ConceptualBehavior");
+					throw new XMLUtilsException("Non e' stata trovata una transizione che possiede come target lo stato finale "+statoFinale+" nel documento WSBL ConceptualBehavior");
 				}
 				return operationsAsincrone;
 			}
@@ -438,11 +449,11 @@ public class XMLUtils  {
 		}
 	}
 	
-	private static byte[] unescapeXMLMessageBehaviorForClientSICA(String xml) throws Exception{
-		String xmlS = new String(xml);
+	private static byte[] unescapeXMLMessageBehaviorForClientSICA(String xml) {
+		String xmlS = xml;
 		xmlS = xmlS.replace("<wsbl:MessageBehavior","<MessageBehavior");
-		//xmlS = xmlS.replace("xmlns:wscp=\"http://spcoop.gov.it/sica/wscp\" xmlns","xmlns");
-		xmlS = xmlS.replace("xmlns:wsbl","xmlns");
+		/**xmlS = xmlS.replace("xmlns:wscp=\"http://spcoop.gov.it/sica/wscp\" xmlns","xmlns");*/
+		xmlS = xmlS.replace(XMLNS_WSBL,XMLNS);
 		xmlS = xmlS.replace("</wsbl:MessageBehavior","</MessageBehavior");
 		return xmlS.getBytes();
 	}
@@ -493,18 +504,22 @@ public class XMLUtils  {
 		}
 	}
 	
-	private static byte[] escapeXMLMessageBehaviorForClientSICA(MessageBehavior manifest) throws Exception{
+	private static byte[] escapeXMLMessageBehaviorForClientSICA(MessageBehavior manifest) throws XMLUtilsException{
 		StringBuilder risultatoValidazione = new StringBuilder();
-		if(XMLUtils.validate(manifest, risultatoValidazione)==false){
-			throw new Exception(risultatoValidazione.toString());
+		if(!XMLUtils.validate(manifest, risultatoValidazione)){
+			throw new XMLUtilsException(risultatoValidazione.toString());
 		}
 		
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
-		JaxbUtils.objToXml(bout, MessageBehavior.class, manifest);
+		try {
+			JaxbUtils.objToXml(bout, MessageBehavior.class, manifest);
+		}catch(Exception e){
+			throw new XMLUtilsException(e.getMessage(),e);
+		}
 		String xml = bout.toString();
 		xml = xml.replace("<MessageBehavior", "<wsbl:MessageBehavior");
 		//xml = xml.replace("xmlns", "xmlns:wscp=\"http://spcoop.gov.it/sica/wscp\" xmlns");
-		xml = xml.replace("xmlns", "xmlns:wsbl");
+		xml = xml.replace(XMLNS, XMLNS_WSBL);
 		xml = xml.replace("</MessageBehavior", "</wsbl:MessageBehavior");
 		return xml.getBytes();
 	}
@@ -514,16 +529,11 @@ public class XMLUtils  {
 			AbstractXMLUtils xmlUtils = org.openspcoop2.message.xml.MessageXMLUtils.DEFAULT;		
 			Document docXML = xmlUtils.newDocument(doc);
 			Element elemXML = docXML.getDocumentElement();
-			//System.out.println("LOCAL["+Costanti.ROOT_LOCAL_NAME+"]vs["+elemXML.getLocalName()+"]  NAMESPACE["+Costanti.TARGET_NAMESPACE+"]vs["+elemXML.getNamespaceURI()+"]");
-			if(Costanti.ROOT_MESSAGE_LOCAL_NAME.equals(elemXML.getLocalName()) && 
-					Costanti.TARGET_NAMESPACE.equals(elemXML.getNamespaceURI()) ){
-				return true;
-			}
-			else{
-				return false;
-			}
+			/**System.out.println("LOCAL["+Costanti.ROOT_LOCAL_NAME+"]vs["+elemXML.getLocalName()+"]  NAMESPACE["+Costanti.TARGET_NAMESPACE+"]vs["+elemXML.getNamespaceURI()+"]");*/
+			return(Costanti.ROOT_MESSAGE_LOCAL_NAME.equals(elemXML.getLocalName()) && 
+					Costanti.TARGET_NAMESPACE.equals(elemXML.getNamespaceURI()) );
 		}catch(Exception e){
-			//System.out.println("NON e' un DOCUMENTO VALIDO: "+e.getMessage());
+			/**System.out.println("NON e' un DOCUMENTO VALIDO: "+e.getMessage());*/
 			return false;
 		}
 	}

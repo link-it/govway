@@ -298,16 +298,20 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 	private static final String ID_MODULO = "InizializzazioneRisorse";
 
 	/** Indicazione se sta avvendendo un contextDestroyed */
-	public static boolean contextDestroyed = false;
-	public static synchronized void setContextDestroyed(boolean value) {
-		contextDestroyed = value;
+	public static volatile boolean contextDestroyedState = false;
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
+	public static void setContextDestroyed(boolean value) {
+		synchronized (INIT_LOCK) {
+			contextDestroyedState = value;
+		}
 	}
 
 	/** Context della Servlet */
 	ServletContext servletContext;
 
 	/** Indicazione su una corretta inizializzazione */
-	public static boolean initialize = false;
+	public static volatile boolean initialize = false;
 	
 	/** Indicazione su una corretta inizializzazione della configurazione del Logging (Utile per l'integrazione con il pool utils via reflection) */
 	public static boolean initializeLog = false;
@@ -362,7 +366,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 	/** Timer per la gestione delle chiavi da PDND */
 	private TimerGestoreChiaviPDND threadGestoreChiaviPDND;
 	private TimerGestoreCacheChiaviPDND threadGestoreCacheChiaviPDND;
-	private boolean threadGestoreChiaviPDNDEnabled = false;
+	private volatile boolean threadGestoreChiaviPDNDEnabled = false;
 	
 	/** Timer per l'eliminazione delle interazioni relative agli scambi di dati asincroni PDND */
 	private TimerGestoreInterazioniAsincronePDND threadGestoreInterazioniAsincronePDND;
@@ -370,7 +374,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 	/** Timer per la gestione delle operazioni remote in un cluster dinamico */
 	private TimerGestoreOperazioniRemote threadGestoreOperazioniRemote;
 	private TimerSvecchiamentoOperazioniRemote threadSvecchiamentoOperazioniRemote;
-	private boolean threadGestoreOperazioniRemoteEnabled = false;
+	private volatile boolean threadGestoreOperazioniRemoteEnabled = false;
 	
 	/** DynamicCluster */
 	private static TimerClusterDinamicoThread threadClusterDinamico;
@@ -385,8 +389,8 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 	private UniversallyUniqueIdentifierProducer universallyUniqueIdentifierProducer;
 	
 	/** indicazione se è un server j2ee */
-	private boolean serverJ2EE = false;
-	protected long startDate ;
+	private volatile boolean serverJ2EE = false;
+	protected volatile long startDate ;
 
 	/** PdDContext */
 	private PdDContext pddContext = new PdDContext();
@@ -4352,13 +4356,15 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			initTimerClusterDinamicoThread();
 		}
 	}
-	private static synchronized void initTimerClusterDinamicoThread() throws Exception {
-		if(OpenSPCoop2Startup.threadClusterDinamico == null) {
-			Logger forceLogEventi = OpenSPCoop2Logger.getLoggerOpenSPCoopEventi(true);
-			OpenSPCoop2Startup.threadClusterDinamico = new TimerClusterDinamicoThread(OpenSPCoop2Logger.getLoggerOpenSPCoopTimers());
-			OpenSPCoop2Startup.threadClusterDinamico.start();
-			TimerClusterDinamicoThread.setSTATE( TimerState.ENABLED );
-			forceLogEventi.info("Thread per l'aggiornamento del cluster avviato correttamente");
+	private static void initTimerClusterDinamicoThread() throws Exception {
+		synchronized (INIT_LOCK) {
+			if(OpenSPCoop2Startup.threadClusterDinamico == null) {
+				Logger forceLogEventi = OpenSPCoop2Logger.getLoggerOpenSPCoopEventi(true);
+				OpenSPCoop2Startup.threadClusterDinamico = new TimerClusterDinamicoThread(OpenSPCoop2Logger.getLoggerOpenSPCoopTimers());
+				OpenSPCoop2Startup.threadClusterDinamico.start();
+				TimerClusterDinamicoThread.setSTATE( TimerState.ENABLED );
+				forceLogEventi.info("Thread per l'aggiornamento del cluster avviato correttamente");
+			}
 		}
 	}
 	
@@ -4370,14 +4376,16 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			initTimerClusteredRateLimitingLocalCache(gestore);
 		}
 	}
-	private static synchronized void initTimerClusteredRateLimitingLocalCache(GestorePolicyAttiveInMemory gestore) throws Exception {
-		if(OpenSPCoop2Startup.timerClusteredRateLimitingLocalCache == null) {
-			OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance();
-			Logger logControlloTraffico = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(true);//properties.isControlloTrafficoDebug());
-			OpenSPCoop2Startup.timerClusteredRateLimitingLocalCache = new TimerClusteredRateLimitingLocalCache(OpenSPCoop2Logger.getLoggerOpenSPCoopTimers(), gestore);
-			OpenSPCoop2Startup.timerClusteredRateLimitingLocalCache.setTimeout(properties.getControlloTrafficoGestorePolicyInMemoryHazelcastLocalCacheTimerUpdate());
-			OpenSPCoop2Startup.timerClusteredRateLimitingLocalCache.start();
-			logControlloTraffico.info("Thread per l'aggiornamento della LocalCache tramite Hazelcast avviato correttamente");
+	private static void initTimerClusteredRateLimitingLocalCache(GestorePolicyAttiveInMemory gestore) throws Exception {
+		synchronized (INIT_LOCK) {
+			if(OpenSPCoop2Startup.timerClusteredRateLimitingLocalCache == null) {
+				OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance();
+				Logger logControlloTraffico = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(true);//properties.isControlloTrafficoDebug());
+				OpenSPCoop2Startup.timerClusteredRateLimitingLocalCache = new TimerClusteredRateLimitingLocalCache(OpenSPCoop2Logger.getLoggerOpenSPCoopTimers(), gestore);
+				OpenSPCoop2Startup.timerClusteredRateLimitingLocalCache.setTimeout(properties.getControlloTrafficoGestorePolicyInMemoryHazelcastLocalCacheTimerUpdate());
+				OpenSPCoop2Startup.timerClusteredRateLimitingLocalCache.start();
+				logControlloTraffico.info("Thread per l'aggiornamento della LocalCache tramite Hazelcast avviato correttamente");
+			}
 		}
 	}
 
@@ -4389,15 +4397,17 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			initTimerHazelcastOrphanedProxiesCleanup();
 		}
 	}
-	private static synchronized void initTimerHazelcastOrphanedProxiesCleanup() throws Exception {
-		if(OpenSPCoop2Startup.timerHazelcastOrphanedProxiesCleanup == null) {
-			OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance();
-			if(properties.isControlloTrafficoGestorePolicyInMemoryHazelcastOrphanedProxiesCleanupEnabled()) {
-				Logger logControlloTraffico = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(true);
-				OpenSPCoop2Startup.timerHazelcastOrphanedProxiesCleanup = new TimerHazelcastOrphanedProxiesCleanup(OpenSPCoop2Logger.getLoggerOpenSPCoopTimers());
-				OpenSPCoop2Startup.timerHazelcastOrphanedProxiesCleanup.setTimeout(properties.getControlloTrafficoGestorePolicyInMemoryHazelcastOrphanedProxiesCleanupInterval());
-				OpenSPCoop2Startup.timerHazelcastOrphanedProxiesCleanup.start();
-				logControlloTraffico.info("Thread per il cleanup dei proxy Hazelcast orfani avviato correttamente");
+	private static void initTimerHazelcastOrphanedProxiesCleanup() throws Exception {
+		synchronized (INIT_LOCK) {
+			if(OpenSPCoop2Startup.timerHazelcastOrphanedProxiesCleanup == null) {
+				OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance();
+				if(properties.isControlloTrafficoGestorePolicyInMemoryHazelcastOrphanedProxiesCleanupEnabled()) {
+					Logger logControlloTraffico = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(true);
+					OpenSPCoop2Startup.timerHazelcastOrphanedProxiesCleanup = new TimerHazelcastOrphanedProxiesCleanup(OpenSPCoop2Logger.getLoggerOpenSPCoopTimers());
+					OpenSPCoop2Startup.timerHazelcastOrphanedProxiesCleanup.setTimeout(properties.getControlloTrafficoGestorePolicyInMemoryHazelcastOrphanedProxiesCleanupInterval());
+					OpenSPCoop2Startup.timerHazelcastOrphanedProxiesCleanup.start();
+					logControlloTraffico.info("Thread per il cleanup dei proxy Hazelcast orfani avviato correttamente");
+				}
 			}
 		}
 	}

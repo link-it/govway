@@ -1326,7 +1326,7 @@ public final class SoggettiChange extends Action {
 				if ((strutsBean.codiceIpa != null && !"".equals(strutsBean.codiceIpa))) {
 					IDSoggetto oldIdSoggetto = new IDSoggetto(oldtipoprov,oldnomeprov);
 					String oldCodiceIpa = soggettiCore.getCodiceIPADefault(strutsBean.protocollo, oldIdSoggetto, false);
-					boolean isPrecedenteCodice = oldCodiceIpa.equals(strutsBean.codiceIpa);
+					boolean isPrecedenteCodice = oldCodiceIpa!=null && oldCodiceIpa.equals(strutsBean.codiceIpa);
 					if(!isPrecedenteCodice && 
 							oldCodiceIpa!=null && oldCodiceIpa.contains("/") && 
 							!strutsBean.codiceIpa.contains("/") &&

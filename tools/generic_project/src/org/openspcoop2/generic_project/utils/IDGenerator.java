@@ -30,36 +30,44 @@ import org.openspcoop2.generic_project.beans.IField;
  * @version $Rev$, $Date$
  */
 public class IDGenerator {
+	
+	private IDGenerator() {}
 
+	/** Lock privato per la generazione del numero seriale (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object SERIAL_NUMBER_LOCK = new Object();
 	private static long serialNumber = 0;
-    public static synchronized String getUniqueID(){
-            if((IDGenerator.serialNumber+1) > Long.MAX_VALUE){
+    public static String getUniqueID(){
+    	synchronized (SERIAL_NUMBER_LOCK) {
+            if(IDGenerator.serialNumber == Long.MAX_VALUE){
             	IDGenerator.serialNumber = 0;
             } 
             IDGenerator.serialNumber++;
             return "T"+System.currentTimeMillis()+"_" +"S" +IDGenerator.serialNumber;
+    	}
     }
     
+    /** Lock privato per la generazione del valore di sequenza (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+    private static final Object SEQUENCE_LOCK = new Object();
     private static long sequence = 0;
-    public static synchronized long getUniqueSequenceValue(){
-        if((IDGenerator.sequence+1) > Long.MAX_VALUE){
-        	IDGenerator.sequence = 0;
-        } 
-        IDGenerator.sequence++;
-        return IDGenerator.sequence;
-}
+    public static long getUniqueSequenceValue(){
+    	synchronized (SEQUENCE_LOCK) {
+	        if(IDGenerator.sequence == Long.MAX_VALUE){
+	        	IDGenerator.sequence = 0;
+	        } 
+	        IDGenerator.sequence++;
+	        return IDGenerator.sequence;
+    	}
+    }
     
     public static String getUniqueID(IField field){
-    	if(field instanceof ComplexField){
-    		ComplexField cf = (ComplexField) field;
-    		if(cf.getFather()!=null){
-    			return IDGenerator.normalize(cf.getFather().getFieldName()+"_"+field.getFieldName()+"_"+IDGenerator.getUniqueID());
-    		}
+    	if(field instanceof ComplexField cf &&
+    		cf.getFather()!=null){
+    		return IDGenerator.normalize(cf.getFather().getFieldName()+"_"+field.getFieldName()+"_"+IDGenerator.getUniqueID());
     	}
     	return IDGenerator.normalize(field.getClassName()+"_"+field.getFieldName()+"_"+IDGenerator.getUniqueID());
     }
 
     private static String normalize(String value){
-    	return value.replaceAll("-", "_");
+    	return value.replace("-", "_");
     }
 }

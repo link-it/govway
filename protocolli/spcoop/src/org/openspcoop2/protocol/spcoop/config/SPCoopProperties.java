@@ -47,6 +47,8 @@ public class SPCoopProperties {
 
 	/** Copia Statica */
 	private static SPCoopProperties spcoopProperties = null;
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
 
 	/* ********  F I E L D S  P R I V A T I  ******** */
 
@@ -105,10 +107,12 @@ public class SPCoopProperties {
 	 *
 	 * 
 	 */
-	public static synchronized void initialize(String confDir,Logger log) throws ProtocolException{
+	public static void initialize(String confDir,Logger log) throws ProtocolException{
 
-		if(SPCoopProperties.spcoopProperties==null)
-			SPCoopProperties.spcoopProperties = new SPCoopProperties(confDir,log);	
+		synchronized (INIT_LOCK) {
+			if(SPCoopProperties.spcoopProperties==null)
+				SPCoopProperties.spcoopProperties = new SPCoopProperties(confDir,log);
+		}
 
 	}
 
@@ -123,7 +127,7 @@ public class SPCoopProperties {
 
 		if(SPCoopProperties.spcoopProperties==null) {
 			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
-			synchronized (SPCoopProperties.class) {
+			synchronized (INIT_LOCK) {
 				throw new ProtocolException("SPCoopProperties not initialized (use init method in factory)");
 			}
 		}

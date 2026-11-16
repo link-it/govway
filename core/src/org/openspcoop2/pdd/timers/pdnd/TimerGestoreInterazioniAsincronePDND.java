@@ -49,13 +49,13 @@ public class TimerGestoreInterazioniAsincronePDND extends BaseThread{
 	public static final String ID_MODULO = "TimerGestoreInterazioniAsincronePDND";
 	
 	/** Logger utilizzato per debug. */
-	private Logger logTimer = null;
+	private final Logger logTimer;
 	private void logError(String msgErrore, Exception e) {
 		if(this.logTimer!=null) {
 			this.logTimer.error(msgErrore,e);
 		}
 	}
-	private MsgDiagnostico msgDiag = null;
+	private final MsgDiagnostico msgDiag;
 	private void logInfo(String keyMsgDiagnostico) {
 		if(this.logTimer!=null && this.logTimer.isInfoEnabled()) {
 			this.logTimer.info(this.msgDiag.getMessaggio_replaceKeywords(keyMsgDiagnostico));
@@ -63,9 +63,9 @@ public class TimerGestoreInterazioniAsincronePDND extends BaseThread{
 	}
 
 	/** OpenSPCoop2Properties */
-	private OpenSPCoop2Properties op2Properties = null;
+	private final OpenSPCoop2Properties op2Properties;
 	
-	private long conservazioneSecondi;
+	private final long conservazioneSecondi;
 	
 	
 	/** Costruttore */
@@ -121,7 +121,7 @@ public class TimerGestoreInterazioniAsincronePDND extends BaseThread{
 	
 
 	@Override
-	public void process(){
+	protected void process(){
 		
 		try{
 			

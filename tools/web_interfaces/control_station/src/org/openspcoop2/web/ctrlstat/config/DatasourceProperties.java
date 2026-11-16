@@ -43,6 +43,8 @@ import org.openspcoop2.utils.UtilsException;
 
 
 public class DatasourceProperties {	
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
 
 	/** Logger utilizzato per errori eventuali. */
 	private Logger log = null;
@@ -105,29 +107,33 @@ public class DatasourceProperties {
 	 *
 	 * 
 	 */
-	public static synchronized boolean initialize(String confDir, String confPropertyName, String confLocalPathPrefix,Logger log){
+	public static boolean initialize(String confDir, String confPropertyName, String confLocalPathPrefix,Logger log){
+		synchronized (INIT_LOCK) {
 
-		try {
-			if(DatasourceProperties.datasourceProperties==null){
-				DatasourceProperties.datasourceProperties = new DatasourceProperties(confDir,confPropertyName,confLocalPathPrefix,log);
+			try {
+				if(DatasourceProperties.datasourceProperties==null){
+					DatasourceProperties.datasourceProperties = new DatasourceProperties(confDir,confPropertyName,confLocalPathPrefix,log);
+				}
+			    return true;
 			}
-		    return true;
-		}
-		catch(Exception e) {
-			log.error("Inizializzazione fallita: "+e.getMessage(),e);
-		    return false;
+			catch(Exception e) {
+				log.error("Inizializzazione fallita: "+e.getMessage(),e);
+			    return false;
+			}
 		}
 	}
-	public static synchronized boolean initialize(Properties properties,Logger log){
-		try {
-			if(DatasourceProperties.datasourceProperties==null){
-				DatasourceProperties.datasourceProperties = new DatasourceProperties(properties);
+	public static boolean initialize(Properties properties,Logger log){
+		synchronized (INIT_LOCK) {
+			try {
+				if(DatasourceProperties.datasourceProperties==null){
+					DatasourceProperties.datasourceProperties = new DatasourceProperties(properties);
+				}
+			    return true;
 			}
-		    return true;
-		}
-		catch(Exception e) {
-			log.error("Inizializzazione fallita: "+e.getMessage(),e);
-		    return false;
+			catch(Exception e) {
+				log.error("Inizializzazione fallita: "+e.getMessage(),e);
+			    return false;
+			}
 		}
 	}
     
@@ -140,7 +146,7 @@ public class DatasourceProperties {
 	public static DatasourceProperties getInstance() throws OpenSPCoop2ConfigurationException{
 		if(DatasourceProperties.datasourceProperties==null){
 			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
-			synchronized (DatasourceProperties.class) {
+			synchronized (INIT_LOCK) {
 				throw new OpenSPCoop2ConfigurationException("DatasourceProperties non inizializzato");
 			}
 	    }

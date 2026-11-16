@@ -56,15 +56,19 @@ import org.slf4j.Logger;
 public class DynamicClusterManager {
 
 	private static DynamicClusterManager staticInstance = null;
-	public static synchronized void initStaticInstance() throws CoreException {
-		if(staticInstance==null) {
-			staticInstance = new DynamicClusterManager();
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
+	public static void initStaticInstance() throws CoreException {
+		synchronized (INIT_LOCK) {
+			if(staticInstance==null) {
+				staticInstance = new DynamicClusterManager();
+			}
 		}
 	}
 	public static DynamicClusterManager getInstance() throws CoreException {
 		if(staticInstance==null) {
 			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
-			synchronized (DynamicClusterManager.class) {
+			synchronized (INIT_LOCK) {
 				initStaticInstance();
 			}
 		}

@@ -72,6 +72,8 @@ public class GestoreLoadBalancerCaching {
 	/** Cache */
 	private static Cache cache = null;
 	private static final org.openspcoop2.utils.Semaphore lock = new org.openspcoop2.utils.Semaphore("GestoreLoadBalancerCaching");
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
 	
 
 	/* --------------- Cache --------------------*/
@@ -113,14 +115,16 @@ public class GestoreLoadBalancerCaching {
 			throw new Exception("Abilitazione cache per i dati contenenti i dati di bilanciamento del carico non riuscita: "+e.getMessage(),e);
 		}
 	}
-	private static synchronized void _abilitaCache() throws Exception{
-		try{
-			if(cache==null) {
-				cache = new Cache(CacheType.JCS, LOAD_BALANCER_CACHE_NAME);  // lascio JCS come default abilitato via jmx
-				cache.build();
+	private static void _abilitaCache() throws Exception{
+		synchronized (INIT_LOCK) {
+			try{
+				if(cache==null) {
+					cache = new Cache(CacheType.JCS, LOAD_BALANCER_CACHE_NAME);  // lascio JCS come default abilitato via jmx
+					cache.build();
+				}
+			}catch(Exception e){
+				throw new Exception("Abilitazione cache per i dati contenenti i dati di bilanciamento del carico non riuscita: "+e.getMessage(),e);
 			}
-		}catch(Exception e){
-			throw new Exception("Abilitazione cache per i dati contenenti i dati di bilanciamento del carico non riuscita: "+e.getMessage(),e);
 		}
 	}
 	public static void abilitaCache(Long dimensioneCache,Boolean algoritmoCacheLRU,Long itemIdleTime,Long itemLifeSecond, Logger log) throws Exception{
@@ -149,14 +153,16 @@ public class GestoreLoadBalancerCaching {
 			throw new Exception("Disabilitazione cache per i dati contenenti i dati di bilanciamento del carico non riuscita: "+e.getMessage(),e);
 		}
 	}	
-	private static synchronized void _disabilitaCache() throws Exception{
-		try{
-			if(cache!=null) {
-				cache.clear();
-				cache = null;
+	private static void _disabilitaCache() throws Exception{
+		synchronized (INIT_LOCK) {
+			try{
+				if(cache!=null) {
+					cache.clear();
+					cache = null;
+				}
+			}catch(Exception e){
+				throw new Exception("Disabilitazione cache per i dati contenenti i dati di bilanciamento del carico non riuscita: "+e.getMessage(),e);
 			}
-		}catch(Exception e){
-			throw new Exception("Disabilitazione cache per i dati contenenti i dati di bilanciamento del carico non riuscita: "+e.getMessage(),e);
 		}
 	}	
 	public static String listKeysCache(String separator) throws Exception{
@@ -386,16 +392,18 @@ public class GestoreLoadBalancerCaching {
 	
 	
 	private static GestoreLoadBalancerCaching staticInstance = null;
-	public static synchronized void initialize() {
-		if(staticInstance==null){
-			staticInstance = new GestoreLoadBalancerCaching();
+	public static void initialize() {
+		synchronized (INIT_LOCK) {
+			if(staticInstance==null){
+				staticInstance = new GestoreLoadBalancerCaching();
+			}
 		}
 	}
 	public static GestoreLoadBalancerCaching getInstance() throws CoreException{
 		if(staticInstance==null){
 			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
-			synchronized (GestoreLoadBalancerCaching.class) {
-				throw new CoreException("GestoreKeystore non inizializzato");
+			synchronized (INIT_LOCK) {
+				throw new CoreException("GestoreLoadBalancerCaching non inizializzato");
 			}
 		}
 		return staticInstance;
@@ -538,7 +546,6 @@ public class GestoreLoadBalancerCaching {
 			}
     		
 			String idTransazione = (pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null;
-			//synchronized (GestoreLoadBalancerCaching.cache) {
 			SemaphoreLock lock = GestoreLoadBalancerCaching.lock.acquireThrowRuntime("getLoadBalancerPool", idTransazione);
 			try {
 				
@@ -687,7 +694,6 @@ public class GestoreLoadBalancerCaching {
 			}
     		
 			String idTransazione = (pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null;
-			//synchronized (GestoreLoadBalancerCaching.cache) {
 			SemaphoreLock lock = GestoreLoadBalancerCaching.lock.acquireThrowRuntime("getNomeConnettore", idTransazione);
 			try {
 				

@@ -33,38 +33,50 @@ import java.lang.reflect.InvocationTargetException;
  * @version $Rev$, $Date$
  */
 public class Loader {
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
 
 	
 	private static Loader loader = null;
 	public static Loader getInstance(){
 		if(Loader.loader==null){
 			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED'
-			synchronized (Loader.class) {
+			synchronized (INIT_LOCK) {
 				initialize();
 			}
 		}
 		return Loader.loader;
 	}
-	public static synchronized void initialize() {
-		if(Loader.loader==null){
-			Loader.loader = new Loader();
+	public static void initialize() {
+		synchronized (INIT_LOCK) {
+			if(Loader.loader==null){
+				Loader.loader = new Loader();
+			}
 		}
 	}
-	public static synchronized void initialize(String classLoaderName) throws ClassNotFoundException, InstantiationException, IllegalAccessException{
-		if(Loader.loader==null){
+	public static void initialize(String classLoaderName) throws ClassNotFoundException, InstantiationException, IllegalAccessException{
+		synchronized (INIT_LOCK) {
+			if(Loader.loader==null){
+				Loader.loader = new Loader(classLoaderName);
+			}
+		}
+	}
+	public static void initialize(java.lang.ClassLoader classLoader){
+		synchronized (INIT_LOCK) {
+			if(Loader.loader==null){
+				Loader.loader = new Loader(classLoader);
+			}
+		}
+	}
+	public static void update(String classLoaderName) throws ClassNotFoundException, InstantiationException, IllegalAccessException{
+		synchronized (INIT_LOCK) {
 			Loader.loader = new Loader(classLoaderName);
 		}
 	}
-	public static synchronized void initialize(java.lang.ClassLoader classLoader){
-		if(Loader.loader==null){
+	public static void update(java.lang.ClassLoader classLoader){
+		synchronized (INIT_LOCK) {
 			Loader.loader = new Loader(classLoader);
 		}
-	}
-	public static synchronized void update(String classLoaderName) throws ClassNotFoundException, InstantiationException, IllegalAccessException{
-		Loader.loader = new Loader(classLoaderName);
-	}
-	public static synchronized void update(java.lang.ClassLoader classLoader){
-		Loader.loader = new Loader(classLoader);
 	}
 	
 	

@@ -244,7 +244,7 @@ public class ConnettoreHTTPCOREResponseCallback implements FutureCallback<Connet
 						IAsyncResponseCallback callback = this.request.getAsyncResponseCallback();
 						this.request.setAsyncResponseCallback(new ConnettoreHTTPCORERedirectCallback(this, callback));
 						this.connettore.disconnect();
-						this.connettore.send(this.request);
+						this.connettore.sendAsync(this.request);
 						return;
 
 					}else{
@@ -332,7 +332,7 @@ public class ConnettoreHTTPCOREResponseCallback implements FutureCallback<Connet
 			this.connettore.initCheckContentTypeConfiguration();
 
 			if(this.connettore.isDumpBinarioRisposta() &&
-				!this.connettore.dumpResponse(connettorePropertiesTrasportoRisposta)) {
+				!this.connettore.dumpResponseAsync(connettorePropertiesTrasportoRisposta)) {
 				this.connettore.setAsyncInvocationSuccess(false);
 				return;
 			}
@@ -344,7 +344,7 @@ public class ConnettoreHTTPCOREResponseCallback implements FutureCallback<Connet
 	
 			if(this.connettore.isRest()){
 	
-				if(!this.connettore.doRestResponse()){
+				if(!this.connettore.doRestResponseAsync()){
 					this.connettore.setAsyncInvocationSuccess(false);
 					return;
 				}
@@ -352,7 +352,7 @@ public class ConnettoreHTTPCOREResponseCallback implements FutureCallback<Connet
 			}
 			else{
 	
-				if(!this.connettore.doSoapResponse()){
+				if(!this.connettore.doSoapResponseAsync()){
 					this.connettore.setAsyncInvocationSuccess(false);
 					return;
 				}

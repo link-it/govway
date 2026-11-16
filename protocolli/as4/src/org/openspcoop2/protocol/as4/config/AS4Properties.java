@@ -52,6 +52,8 @@ public class AS4Properties {
 
 	/** Copia Statica */
 	private static AS4Properties as4Properties = null;
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
 
 	/* ********  F I E L D S  P R I V A T I  ******** */
 
@@ -115,10 +117,12 @@ public class AS4Properties {
 	 *
 	 * 
 	 */
-	public static synchronized void initialize(String confDir,Logger log) throws ProtocolException{
+	public static void initialize(String confDir,Logger log) throws ProtocolException{
 
-		if(AS4Properties.as4Properties==null)
-			AS4Properties.as4Properties = new AS4Properties(confDir,log);	
+		synchronized (INIT_LOCK) {
+			if(AS4Properties.as4Properties==null)
+				AS4Properties.as4Properties = new AS4Properties(confDir,log);
+		}
 
 	}
 
@@ -133,7 +137,7 @@ public class AS4Properties {
 
 		if(AS4Properties.as4Properties==null) {
 			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
-			synchronized (AS4Properties.class) {
+			synchronized (INIT_LOCK) {
 				throw new ProtocolException("AS4Properties not initialized (use init method in factory)");
 			}
 		}

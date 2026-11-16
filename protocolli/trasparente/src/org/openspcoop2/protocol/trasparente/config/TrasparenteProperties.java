@@ -44,6 +44,8 @@ public class TrasparenteProperties {
 
 	/** Copia Statica */
 	private static TrasparenteProperties trasparenteProperties = null;
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
 
 	/* ********  F I E L D S  P R I V A T I  ******** */
 
@@ -102,10 +104,12 @@ public class TrasparenteProperties {
 	 *
 	 * 
 	 */
-	public static synchronized void initialize(String confDir,Logger log) throws ProtocolException{
+	public static void initialize(String confDir,Logger log) throws ProtocolException{
 
-		if(TrasparenteProperties.trasparenteProperties==null)
-			TrasparenteProperties.trasparenteProperties = new TrasparenteProperties(confDir,log);	
+		synchronized (INIT_LOCK) {
+			if(TrasparenteProperties.trasparenteProperties==null)
+				TrasparenteProperties.trasparenteProperties = new TrasparenteProperties(confDir,log);
+		}
 
 	}
 
@@ -120,7 +124,7 @@ public class TrasparenteProperties {
 
 		if(TrasparenteProperties.trasparenteProperties==null) {
 			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
-			synchronized (TrasparenteProperties.class) {
+			synchronized (INIT_LOCK) {
 				throw new ProtocolException("TrasparenteProperties not initialized (use init method in factory)");
 			}
 		}

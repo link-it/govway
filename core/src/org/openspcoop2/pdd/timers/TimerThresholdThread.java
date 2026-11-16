@@ -64,15 +64,15 @@ public class TimerThresholdThread extends BaseThread{
 	 
     
 	/** Properties Reader */
-	private OpenSPCoop2Properties propertiesReader;
+	private final OpenSPCoop2Properties propertiesReader;
 	/** MessaggioDiagnostico */
-	private MsgDiagnostico msgDiag;
+	private final MsgDiagnostico msgDiag;
 	/** Gestore Soglia */
-	private IThreshold[] gestore = null;
+	private final IThreshold[] gestore;
 	/** tipi Gestore Soglia */
-	private List<String> tipiThreshold = null;
+	private final List<String> tipiThreshold;
 	/** Logger */
-	private Logger log;
+	private final Logger log;
 	/** LastImage */
 	private boolean lastCheck = true;
 	
@@ -105,7 +105,7 @@ public class TimerThresholdThread extends BaseThread{
 	
 
 	@Override
-	public void process(){
+	protected void process(){
 		// nop: ho ridefinito il metodo run
 	}
 	
@@ -123,7 +123,7 @@ public class TimerThresholdThread extends BaseThread{
 			while(!this.isStop()){
 				
 				// Controllo che il sistema non sia andando in shutdown
-				if(OpenSPCoop2Startup.contextDestroyed){
+				if(OpenSPCoop2Startup.contextDestroyedState){
 					this.log.error("["+TimerThresholdThread.ID_MODULO+"] Rilevato sistema in shutdown");
 					return;
 				}
@@ -150,15 +150,15 @@ public class TimerThresholdThread extends BaseThread{
 							checkThreshold = false;
 						}
 						this.log.debug("Verifica '"+this.tipiThreshold.get(i)+"' completato con esito "+(checkThreshold?"ok":"ko"));
-						if(checkThreshold == false)
+						if(!checkThreshold)
 							break;
 					}
 						
 					
 					// avvisi
-					if(checkThreshold==false && this.lastCheck==true){
+					if(!checkThreshold && this.lastCheck){
 						this.msgDiag.logPersonalizzato("risorsaNonDisponibile");
-					}else if(checkThreshold==true && this.lastCheck==false){
+					}else if(checkThreshold && !this.lastCheck){
 						this.msgDiag.logPersonalizzato("risorsaRitornataDisponibile");
 					}
 					this.lastCheck = checkThreshold;

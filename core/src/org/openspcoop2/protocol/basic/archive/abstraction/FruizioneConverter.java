@@ -62,35 +62,39 @@ import org.slf4j.Logger;
  * @version $Rev$, $Date$
  */
 public class FruizioneConverter extends AbstractConverter {
+	/** Lock privato per la generazione dell'identificativo di correlazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object LOCK = new Object();
 
 	// ----- Static method -----
 	
-	public static synchronized ArchiveIdCorrelazione generateIdCorrelazione(
+	public static ArchiveIdCorrelazione generateIdCorrelazione(
 			String tipoSoggettoFruitore,String nomeSoggettoFruitore,
 			String tipoSoggettoErogatore,String nomeSoggettoErogatore,
 			String tipoServizio, String nomeServizio,
 			String descrizione) throws ProtocolException{
+		synchronized (LOCK) {
 		
-		// Identificativo Unico di Correlazione
-		String uuid = "Fruizione_"+
-				tipoSoggettoFruitore+"/"+nomeSoggettoFruitore+"_"+
-				tipoSoggettoErogatore+"/"+nomeSoggettoErogatore+"_"+
-				tipoServizio+"/"+nomeServizio+"_"+System.currentTimeMillis();
+			// Identificativo Unico di Correlazione
+			String uuid = "Fruizione_"+
+					tipoSoggettoFruitore+"/"+nomeSoggettoFruitore+"_"+
+					tipoSoggettoErogatore+"/"+nomeSoggettoErogatore+"_"+
+					tipoServizio+"/"+nomeServizio+"_"+System.currentTimeMillis();
 		
-		Utilities.sleep(1); // per rendere univco il prossimo uuid
+			Utilities.sleep(1); // per rendere univco il prossimo uuid
 	
-		ArchiveIdCorrelazione idCorrelazione = new ArchiveIdCorrelazione(uuid);
+			ArchiveIdCorrelazione idCorrelazione = new ArchiveIdCorrelazione(uuid);
 		
-		String d = null;
-		if(descrizione!=null && !"".equals(descrizione)){
-			d = descrizione;
-		}
-		else{
-			d = "Fruizione "+tipoSoggettoFruitore+"/"+nomeSoggettoFruitore+" -> (servizio:"+tipoServizio+"/"+nomeServizio+" erogatore:"+tipoSoggettoErogatore+"/"+nomeSoggettoErogatore+")";
-		}
-		idCorrelazione.setDescrizione(d);
+			String d = null;
+			if(descrizione!=null && !"".equals(descrizione)){
+				d = descrizione;
+			}
+			else{
+				d = "Fruizione "+tipoSoggettoFruitore+"/"+nomeSoggettoFruitore+" -> (servizio:"+tipoServizio+"/"+nomeServizio+" erogatore:"+tipoSoggettoErogatore+"/"+nomeSoggettoErogatore+")";
+			}
+			idCorrelazione.setDescrizione(d);
 
-		return idCorrelazione;
+			return idCorrelazione;
+		}
 	}
 	
 	
@@ -119,7 +123,7 @@ public class FruizioneConverter extends AbstractConverter {
 					idAccordoServizioParteSpecifica = this.idServizioFactory.getIDServizioFromValues(idAccordoServizioParteSpecifica.getTipo(), idAccordoServizioParteSpecifica.getNome(), 
 							idAccordoServizioParteSpecifica.getSoggettoErogatore(), 1);
 				}
-				if(this.existsAccordoServizioParteSpecifica(archive, registryReader, idAccordoServizioParteSpecifica)==false){
+				if(!this.existsAccordoServizioParteSpecifica(archive, registryReader, idAccordoServizioParteSpecifica)){
 					throw new ProtocolException("Accordo di Servizio Parte Specifica ["+idAccordoServizioParteSpecifica.toString()+"] non esistente");
 				}
 			}
@@ -131,7 +135,7 @@ public class FruizioneConverter extends AbstractConverter {
 							fruizione.getAccordoServizioParteSpecifica().getIdServizio().getTipo(),
 							fruizione.getAccordoServizioParteSpecifica().getIdServizio().getNome(), 
 							1);
-					if(this.existsAccordoServizioParteSpecifica(archive, registryReader, idAccordoServizioParteSpecifica)==false){
+					if(!this.existsAccordoServizioParteSpecifica(archive, registryReader, idAccordoServizioParteSpecifica)){
 						throw new ProtocolException("Accordo di Servizio Parte Specifica ["+idAccordoServizioParteSpecifica.toString()+"] non esistente");
 					}
 				}
@@ -204,7 +208,7 @@ public class FruizioneConverter extends AbstractConverter {
 							throw new ProtocolException("Servizio Applicativo (Autenticazione) non indicato. Questo dato è obbligatorio per una fruizione di tipologia 'interna', quando viene indicato un servizio applicativo non esistente");
 						}
 						datiApplicativoFruitore.setAutenticazione(fruizione.getServizioApplicativo().getDatiApplicativi().getAutenticazione().getValue());
-						if(Autenticazione.NONE.equals(fruizione.getServizioApplicativo().getDatiApplicativi().getAutenticazione())==false){
+						if(!Autenticazione.NONE.equals(fruizione.getServizioApplicativo().getDatiApplicativi().getAutenticazione())){
 							createApplicativoFruitore = true;
 						}
 					}
@@ -213,7 +217,7 @@ public class FruizioneConverter extends AbstractConverter {
 						if(fruizione.getServizioApplicativo().getDatiApplicativi()!=null &&
 								fruizione.getServizioApplicativo().getDatiApplicativi().getAutenticazione() != null	){
 							datiApplicativoFruitore.setAutenticazione(fruizione.getServizioApplicativo().getDatiApplicativi().getAutenticazione().getValue());
-							if(Autenticazione.NONE.equals(fruizione.getServizioApplicativo().getDatiApplicativi().getAutenticazione())==false){
+							if(!Autenticazione.NONE.equals(fruizione.getServizioApplicativo().getDatiApplicativi().getAutenticazione())){
 								createApplicativoFruitore = true;
 							}
 						}
@@ -231,7 +235,7 @@ public class FruizioneConverter extends AbstractConverter {
 						throw new ProtocolException("Servizio Applicativo (Autenticazione) non indicato. Questo dato è obbligatorio per una fruizione di tipologia 'interna', quando non viene indicato un servizio applicativo");
 					}
 					datiApplicativoFruitore.setAutenticazione(fruizione.getServizioApplicativo().getDatiApplicativi().getAutenticazione().getValue());
-					if(Autenticazione.NONE.equals(fruizione.getServizioApplicativo().getDatiApplicativi().getAutenticazione())==false){
+					if(!Autenticazione.NONE.equals(fruizione.getServizioApplicativo().getDatiApplicativi().getAutenticazione())){
 						createApplicativoFruitore = true;
 					}
 				}
@@ -275,7 +279,7 @@ public class FruizioneConverter extends AbstractConverter {
 			boolean createPdd = false;
 			DatiSoggetto datiSoggetto = new DatiSoggetto();
 			datiSoggetto.setId(soggettoFruitore);
-			if(this.existsSoggetto(archive, registryReader, fruizione.getSoggettoFruitore().getIdSoggetto()) == false){
+			if(!this.existsSoggetto(archive, registryReader, fruizione.getSoggettoFruitore().getIdSoggetto())){
 				if(fruizione.getSoggettoFruitore().getNotExistsBehaviour()==null || fruizione.getSoggettoFruitore().getNotExistsBehaviour().isCreate()==false){
 					throw new ProtocolException("Soggetto Fruitore ["+soggettoFruitore.getTipo()+"/"+soggettoFruitore.getNome()+"] non esistente");
 				}
@@ -289,7 +293,7 @@ public class FruizioneConverter extends AbstractConverter {
 					if(datiSoggetto.getPortaDominio()!=null){
 						if(this.existsPdd(archive, registryReader, datiSoggetto.getPortaDominio())){
 							if(Tipologia.INTERNA.equals(fruizione.getTipologia())){
-								if(this.isPddOperativa(archive, registryReader, datiSoggetto.getPortaDominio())==false){
+								if(!this.isPddOperativa(archive, registryReader, datiSoggetto.getPortaDominio())){
 									throw new ProtocolException("La pdd ["+datiSoggetto.getPortaDominio()+
 											"] indicata per il Soggetto Fruitore ["+soggettoFruitore.getTipo()+"/"+soggettoFruitore.getNome()+"] "
 													+ "possiede un tipo 'esterno' non compatibile con una fruizione di tipologia 'interna'. Deve essere associata una pdd di tipo 'operativo'");
@@ -344,7 +348,7 @@ public class FruizioneConverter extends AbstractConverter {
 				try{
 					this.filler.readPortaDominio(archive, new ByteArrayInputStream(xml), xml, "pdd", validationDocuments, idCorrelazione);
 				}catch(Exception e){
-					throw new Exception("XmlTemplate["+new String(xml)+"]\n"+e.getMessage(),e);
+					throw new ProtocolException("XmlTemplate["+new String(xml)+"]\n"+e.getMessage(),e);
 				}
 			}
 			if(createSoggetto){
@@ -353,7 +357,7 @@ public class FruizioneConverter extends AbstractConverter {
 					this.filler.readSoggetto(archive,new ByteArrayInputStream(xml), xml, "soggetto", 
 							soggettoFruitore.getTipo(), soggettoFruitore.getNome(), validationDocuments, idCorrelazione);
 				}catch(Exception e){
-					throw new Exception("XmlTemplate["+new String(xml)+"]\n"+e.getMessage(),e);
+					throw new ProtocolException("XmlTemplate["+new String(xml)+"]\n"+e.getMessage(),e);
 				}
 			}
 			
@@ -366,7 +370,7 @@ public class FruizioneConverter extends AbstractConverter {
 						validationDocuments, idCorrelazione,
 						ArchiveVersion.V_1,null, null);
 			}catch(Exception e){
-				throw new Exception("XmlTemplate["+new String(xml)+"]\n"+e.getMessage(),e);
+				throw new ProtocolException("XmlTemplate["+new String(xml)+"]\n"+e.getMessage(),e);
 			}
 			
 			// Creazione SA
@@ -377,7 +381,7 @@ public class FruizioneConverter extends AbstractConverter {
 						this.filler.readServizioApplicativo(archive, new ByteArrayInputStream(xml), xml, 
 							"sa_"+i, soggettoFruitore.getTipo(), soggettoFruitore.getNome(), validationDocuments, idCorrelazione);
 					}catch(Exception e){
-						throw new Exception("XmlTemplate["+new String(xml)+"]\n"+e.getMessage(),e);
+						throw new ProtocolException("XmlTemplate["+new String(xml)+"]\n"+e.getMessage(),e);
 					}
 				}
 			}
@@ -390,7 +394,7 @@ public class FruizioneConverter extends AbstractConverter {
 						this.filler.readPortaDelegata(archive, new ByteArrayInputStream(xml), xml, 
 							"pd_"+i, soggettoFruitore.getTipo(), soggettoFruitore.getNome(), validationDocuments, idCorrelazione);
 					}catch(Exception e){
-						throw new Exception("XmlTemplate["+new String(xml)+"]\n"+e.getMessage(),e);
+						throw new ProtocolException("XmlTemplate["+new String(xml)+"]\n"+e.getMessage(),e);
 					}
 				}
 			}

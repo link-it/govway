@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
@@ -46,19 +47,20 @@ import org.openspcoop2.utils.properties.PropertiesReader;
 public class ExternalPWCallback
     implements CallbackHandler
 {
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
 
     public ExternalPWCallback()
     {
+    	// nop
     }
 
     @Override
    	public void handle(Callback[] callbacks) throws IOException,
                UnsupportedCallbackException {
         for(int i = 0; i < callbacks.length; i++)
-            if(callbacks[i] instanceof WSPasswordCallback)
+            if(callbacks[i] instanceof WSPasswordCallback pc)
             {
-                WSPasswordCallback pc = (WSPasswordCallback)callbacks[i];
-                
                 Properties pSource = null;
                 try{
                 	pSource = getProperties();
@@ -73,18 +75,16 @@ public class ExternalPWCallback
                 	throw new UnsupportedCallbackException(callbacks[i], "Identifier ["+pc.getIdentifier()+"], occurs error (read password from properties file): "+e.getMessage());
                 }
                 String key = pc.getIdentifier();
-                if(p.containsKey(key)==false){
+                if(!p.containsKey(key)){
                 	
                 	// check se fosse con maiuscolo minuscolo
                 	if(p.size()>0){
                 		Iterator<?> it = p.keySet().iterator();
                 		while (it.hasNext()) {
-							Object keyCheck = (Object) it.next();
-							if(keyCheck instanceof String){
-								String tmp = (String) keyCheck;
-								if(tmp.toLowerCase().equals(key)){
-									key = tmp; // aggiorno la chiave
-								}
+							Object keyCheck = it.next();
+							if(keyCheck instanceof String tmp &&
+								tmp.toLowerCase().equals(key)){
+								key = tmp; // aggiorno la chiave
 							}
 						}
                 	}
@@ -104,65 +104,63 @@ public class ExternalPWCallback
     
     
     private static String propertiesFilePath = "/etc/govway/wssPassword.properties";
-    private static Properties wssProperties = null;
+    private static final AtomicReference<Properties> wssProperties = new AtomicReference<>();
     
     private static String wssRefreshProps = "refresh";
     private static boolean wssRefresh = true; // default
     private static Date wssRead = null;
     private static int wssTime = 1*1000*60; // ogni minuti refresh
     
-    public static synchronized void initialize() throws SecurityException{
-    	initialize(propertiesFilePath);
+    public static void initialize() throws SecurityException{
+    	synchronized (INIT_LOCK) {
+    		initializeEngine(propertiesFilePath);
+    	}
     }
-    public static synchronized void initialize(String path) throws SecurityException{
+    public static void initialize(String path) throws SecurityException{
+    	synchronized (INIT_LOCK) {
+    		initializeEngine(path);
+    	}
+    }
+    private static void initializeEngine(String path) throws SecurityException{
     	
     	propertiesFilePath = path; // aggiorno path nel caso mi venga inizializzato un path differente. Il path verrà utilizzato poi in presenza del file scaduto
     	
-    	if(wssProperties==null || isScaduto()){
-    		FileInputStream fin = null;
-    		try{
-    			File f = new File(path);
-    			if(f.exists()==false){
-    				throw new SecurityException("File properties ["+path+"] doesn't exists");
-    			}
-    			if(f.canRead()==false){
-    				throw new SecurityException("File properties ["+path+"] cannot read");
-    			}
-    			fin = new FileInputStream(f);
+    	if(wssProperties.get()==null || isScaduto()){
+
+			File f = new File(path);
+			if(!f.exists()){
+				throw new SecurityException("File properties ["+path+"] doesn't exists");
+			}
+			if(!f.canRead()){
+				throw new SecurityException("File properties ["+path+"] cannot read");
+			}
+			
+    		try (FileInputStream fin = new FileInputStream(f)){
     			
-    			wssProperties = new Properties();
-    			wssProperties.load(fin);
+    			Properties p = new Properties();
+    			p.load(fin);
     			
-    			if(wssProperties.containsKey(wssRefreshProps)){
-    				String tmp = wssProperties.getProperty(wssRefreshProps);
+    			if(p.containsKey(wssRefreshProps)){
+    				String tmp = p.getProperty(wssRefreshProps);
     				wssRefresh = "true".equalsIgnoreCase(tmp.trim());
     			}
+    			
+    			wssProperties.set(p); // il riferimento viene aggiornato solo a caricamento completato
     			
     			if(wssRefresh){
     				wssRead = DateManager.getDate(); // update date
     			}
     		}
-    		catch(SecurityException e){
-    			throw e;
-    		}
     		catch(Exception e){
     			throw new SecurityException("Errore durante la lettura del file properties ["+path+"]: "+e.getMessage(),e);
-    		}
-    		finally{
-    			try{
-    				if(fin!=null)
-    					fin.close();
-    			}catch(Exception eClose){
-    				// close
-    			}
     		}
     	}
     } 
     public static Properties getProperties() throws SecurityException{
-    	if(wssProperties==null || isScaduto()){
+    	if(wssProperties.get()==null || isScaduto()){
     		initialize();
     	}
-    	return wssProperties;
+    	return wssProperties.get();
     }
     private static boolean isScaduto(){
     	boolean scaduto = false;

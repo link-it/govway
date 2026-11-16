@@ -62,6 +62,8 @@ import net.sf.saxon.s9api.XdmNode;
  */
 
 public abstract class AbstractXQueryExpressionEngine {
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
 
 	private static final boolean DEFAULT_RESULT_AS_XML = false;
 	
@@ -115,19 +117,21 @@ public abstract class AbstractXQueryExpressionEngine {
 		}
 		AbstractXQueryExpressionEngine._initXQueryConfiguration(isConfig);
 	}
-	private static synchronized void _initXQueryConfiguration(InputStream isConfig) throws XQueryException{
-		try{
-			if(AbstractXQueryExpressionEngine.saxonConfig==null){
-				if(isConfig==null){
-					AbstractXQueryExpressionEngine.saxonConfig = Configuration.newConfiguration();
+	private static void _initXQueryConfiguration(InputStream isConfig) throws XQueryException{
+		synchronized (INIT_LOCK) {
+			try{
+				if(AbstractXQueryExpressionEngine.saxonConfig==null){
+					if(isConfig==null){
+						AbstractXQueryExpressionEngine.saxonConfig = Configuration.newConfiguration();
+					}
+					else{
+						StreamSource s = new StreamSource(isConfig);
+						AbstractXQueryExpressionEngine.saxonConfig = Configuration.readConfiguration(s);
+					}
 				}
-				else{
-					StreamSource s = new StreamSource(isConfig);
-					AbstractXQueryExpressionEngine.saxonConfig = Configuration.readConfiguration(s);
-				}
+			}catch(Exception e){
+				throw new XQueryException("Inizializzazione XQueryConfiguration non riuscita",e);
 			}
-		}catch(Exception e){
-			throw new XQueryException("Inizializzazione XQueryConfiguration non riuscita",e);
 		}
 	}
 	
@@ -152,17 +156,19 @@ public abstract class AbstractXQueryExpressionEngine {
 		return AbstractXQueryExpressionEngine.saxonCompiler;
 	}
 	
-	public static synchronized void initXQueryProcessor() throws XQueryException{
-		try{
-			if(AbstractXQueryExpressionEngine.saxonProcessor==null){
-				if(AbstractXQueryExpressionEngine.saxonConfig==null){
-					AbstractXQueryExpressionEngine.initXQueryConfiguration();
+	public static void initXQueryProcessor() throws XQueryException{
+		synchronized (INIT_LOCK) {
+			try{
+				if(AbstractXQueryExpressionEngine.saxonProcessor==null){
+					if(AbstractXQueryExpressionEngine.saxonConfig==null){
+						AbstractXQueryExpressionEngine.initXQueryConfiguration();
+					}
+					AbstractXQueryExpressionEngine.saxonProcessor = new Processor(AbstractXQueryExpressionEngine.saxonConfig);
+					AbstractXQueryExpressionEngine.saxonCompiler = AbstractXQueryExpressionEngine.saxonProcessor.newXQueryCompiler();
 				}
-				AbstractXQueryExpressionEngine.saxonProcessor = new Processor(AbstractXQueryExpressionEngine.saxonConfig);
-				AbstractXQueryExpressionEngine.saxonCompiler = AbstractXQueryExpressionEngine.saxonProcessor.newXQueryCompiler();
+			}catch(Exception e){
+				throw new XQueryException("Inizializzazione XQueryFactory non riuscita",e);
 			}
-		}catch(Exception e){
-			throw new XQueryException("Inizializzazione XQueryFactory non riuscita",e);
 		}
 	}
 	

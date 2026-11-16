@@ -145,7 +145,7 @@ public class HttpsTest extends HttpTest {
 	}
 	
 	@Override
-	public HttpRequest createBaseRequest(HttpLibrary library) {
+	protected HttpRequest createBaseRequest(HttpLibrary library) {
 		HttpRequest req = new HttpRequest();
 		req.setHttpLibrary(library);
 		req.setUrl("https://localhost:" + server.getPort() + "/print");

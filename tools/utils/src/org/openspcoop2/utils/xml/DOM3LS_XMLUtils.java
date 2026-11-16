@@ -49,10 +49,14 @@ import org.w3c.dom.ls.LSSerializer;
  */
 
 public class DOM3LS_XMLUtils {
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
 
 	public static AbstractXMLUtils xmlUtils = XMLUtils.getInstance();
-	public static synchronized void setXMLUtils(AbstractXMLUtils xmlUtilsParam) {
-		DOM3LS_XMLUtils.xmlUtils = xmlUtilsParam;
+	public static void setXMLUtils(AbstractXMLUtils xmlUtilsParam) {
+		synchronized (INIT_LOCK) {
+			DOM3LS_XMLUtils.xmlUtils = xmlUtilsParam;
+		}
 	}
 
 	

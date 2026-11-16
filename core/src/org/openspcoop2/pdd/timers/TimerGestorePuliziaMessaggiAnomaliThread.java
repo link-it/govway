@@ -43,19 +43,19 @@ import org.openspcoop2.utils.threads.BaseThread;
 public class TimerGestorePuliziaMessaggiAnomaliThread extends BaseThread{
 
 	/** Properties Reader */
-	private OpenSPCoop2Properties propertiesReader;
+	private final OpenSPCoop2Properties propertiesReader;
 	/** MsgDiagnostico */
-	private MsgDiagnostico msgDiag;
+	private final MsgDiagnostico msgDiag;
 	
 	/** Logger utilizzato per debug. */
-	private Logger logTimer = null;
+	private final Logger logTimer;
 
 	/** Indicazione se deve essere effettuato il log delle query */
-	private boolean logQuery = false;
+	private final boolean logQuery;
 	/** Numero di messaggi prelevati sulla singola query */
 	private int limit = CostantiPdD.LIMIT_MESSAGGI_GESTORI;
 	/** Indicazione se deve essere effettuato l'order by nelle query */
-	private boolean orderByQuery = false;
+	private final boolean orderByQuery;
 	
 	
 	/** Costruttore */
@@ -64,7 +64,7 @@ public class TimerGestorePuliziaMessaggiAnomaliThread extends BaseThread{
 		// Aspetto inizializzazione di OpenSPCoop (aspetto mezzo minuto e poi segnalo errore)
 		int attesa = 90;
 		int secondi = 0;
-		while( (OpenSPCoop2Startup.initialize==false) && (secondi<attesa) ){
+		while( (!OpenSPCoop2Startup.initialize) && (secondi<attesa) ){
 			Utilities.sleep(1000);
 			secondi++;
 		}
@@ -85,7 +85,9 @@ public class TimerGestorePuliziaMessaggiAnomaliThread extends BaseThread{
 		}
 
 		this.msgDiag.logPersonalizzato("avvioInCorso");
-		this.logTimer.info(this.msgDiag.getMessaggio_replaceKeywords("avvioInCorso"));
+		if(this.logTimer.isInfoEnabled()) {
+			this.logTimer.info(this.msgDiag.getMessaggio_replaceKeywords("avvioInCorso"));
+		}
 		
 		try {
 			this.propertiesReader = OpenSPCoop2Properties.getInstance();
@@ -112,11 +114,13 @@ public class TimerGestorePuliziaMessaggiAnomaliThread extends BaseThread{
 		this.msgDiag.addKeyword(CostantiPdD.KEY_LIMIT, this.limit+"");
 		
 		this.msgDiag.logPersonalizzato("avvioEffettuato");
-		this.logTimer.info(this.msgDiag.getMessaggio_replaceKeywords("avvioEffettuato"));
+		if(this.logTimer.isInfoEnabled()) {
+			this.logTimer.info(this.msgDiag.getMessaggio_replaceKeywords("avvioEffettuato"));
+		}
 	}
 	
 	@Override
-	public void process(){
+	protected void process(){
 		try{
 			// Prendo la gestione
 			TimerGestorePuliziaMessaggiAnomaliLib gestoreMessaggiLib = 
@@ -127,7 +131,6 @@ public class TimerGestorePuliziaMessaggiAnomaliThread extends BaseThread{
 		}catch(Exception e){
 			this.msgDiag.logErroreGenerico(e,"TimerGestorePuliziaMessaggiAnomaliLib.check()");
 			this.logTimer.error("Errore generale: "+e.getMessage(),e);
-		}finally{
 		}
 	}
 }

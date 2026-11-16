@@ -52,20 +52,20 @@ public class TimerSvecchiamentoOperazioniRemote extends BaseThread{
 	
 	
 	/** Logger utilizzato per debug. */
-	private Logger logTimer = null;
+	private final Logger logTimer;
 	private void logError(String msgErrore, Exception e) {
 		if(this.logTimer!=null) {
 			this.logTimer.error(msgErrore,e);
 		}
 	}
-	private MsgDiagnostico msgDiag = null;
+	private final MsgDiagnostico msgDiag;
 
 	/** OpenSPCoop2Properties */
-	private OpenSPCoop2Properties op2Properties = null;
+	private final OpenSPCoop2Properties op2Properties;
 	
-	private int olderThanMinutes;
+	private final int olderThanMinutes;
 	
-	private IProxyOperationService proxyOperationService = null;
+	private final IProxyOperationService proxyOperationService;
 	
 	
 	/** Costruttore */
@@ -95,7 +95,9 @@ public class TimerSvecchiamentoOperazioniRemote extends BaseThread{
 		}
 
 		this.msgDiag.logPersonalizzato("avvioInCorso");
-		this.logTimer.info(this.msgDiag.getMessaggio_replaceKeywords("avvioInCorso"));
+		if(this.logTimer.isInfoEnabled()) {
+			this.logTimer.info(this.msgDiag.getMessaggio_replaceKeywords("avvioInCorso"));
+		}
 		
 		try {
 			this.op2Properties = OpenSPCoop2Properties.getInstance();
@@ -125,13 +127,15 @@ public class TimerSvecchiamentoOperazioniRemote extends BaseThread{
 		this.msgDiag.addKeyword(CostantiPdD.KEY_TIMEOUT, this.getTimeout()+" "+sec);
 		
 		this.msgDiag.logPersonalizzato("avvioEffettuato");
-		this.logTimer.info(this.msgDiag.getMessaggio_replaceKeywords("avvioEffettuato"));
+		if(this.logTimer.isInfoEnabled()) {
+			this.logTimer.info(this.msgDiag.getMessaggio_replaceKeywords("avvioEffettuato"));
+		}
 		
 	}
 	
 
 	@Override
-	public void process(){
+	protected void process(){
 		
 		try{
 			

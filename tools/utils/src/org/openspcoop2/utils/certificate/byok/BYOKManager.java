@@ -45,17 +45,21 @@ import org.slf4j.Logger;
  * @version $Rev$, $Date$
  */
 public class BYOKManager {
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
 
 	private static BYOKManager staticInstance;
-	public static synchronized void init(File f, boolean throwNotExists, Logger log) throws UtilsException {
-		if(staticInstance==null) {
-			staticInstance = new BYOKManager(f, throwNotExists, log);
+	public static void init(File f, boolean throwNotExists, Logger log) throws UtilsException {
+		synchronized (INIT_LOCK) {
+			if(staticInstance==null) {
+				staticInstance = new BYOKManager(f, throwNotExists, log);
+			}
 		}
 	}
 	public static BYOKManager getInstance() {
 		// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
 		if (staticInstance == null) {
-	        synchronized (BYOKManager.class) {
+	        synchronized (INIT_LOCK) {
 	            if (staticInstance == null) {
 	                return null;
 	            }

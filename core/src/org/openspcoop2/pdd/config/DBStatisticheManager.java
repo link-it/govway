@@ -53,26 +53,34 @@ public class DBStatisticheManager implements IMonitoraggioRisorsa {
 	private static final String ID_MODULO = "DBStatisticheManager";
 	
 	private static DBStatisticheManager staticInstanceDBStatisticheManager;
-	public static synchronized void init(DBManager dbManagerRuntimePdD,Logger alog,String tipoDatabase) {
-		if(staticInstanceDBStatisticheManager==null) {
-			staticInstanceDBStatisticheManager = new DBStatisticheManager(dbManagerRuntimePdD, alog, tipoDatabase);
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
+	public static void init(DBManager dbManagerRuntimePdD,Logger alog,String tipoDatabase) {
+		synchronized (INIT_LOCK) {
+			if(staticInstanceDBStatisticheManager==null) {
+				staticInstanceDBStatisticheManager = new DBStatisticheManager(dbManagerRuntimePdD, alog, tipoDatabase);
+			}
 		}
 	}
-	public static synchronized void init(DBTransazioniManager dbManagerTransazioni,Logger alog,String tipoDatabase) {
-		if(staticInstanceDBStatisticheManager==null) {
-			staticInstanceDBStatisticheManager = new DBStatisticheManager(dbManagerTransazioni, alog, tipoDatabase);
+	public static void init(DBTransazioniManager dbManagerTransazioni,Logger alog,String tipoDatabase) {
+		synchronized (INIT_LOCK) {
+			if(staticInstanceDBStatisticheManager==null) {
+				staticInstanceDBStatisticheManager = new DBStatisticheManager(dbManagerTransazioni, alog, tipoDatabase);
+			}
 		}
 	}
-	public static synchronized void init(String nomeDataSource, java.util.Properties context,Logger alog,String tipoDatabase, 
+	public static void init(String nomeDataSource, java.util.Properties context,Logger alog,String tipoDatabase, 
 			boolean useOp2UtilsDatasource, boolean bindJMX) throws UtilsException {
-		if(staticInstanceDBStatisticheManager==null) {
-			staticInstanceDBStatisticheManager = new DBStatisticheManager(nomeDataSource, context, alog, tipoDatabase, useOp2UtilsDatasource, bindJMX);
+		synchronized (INIT_LOCK) {
+			if(staticInstanceDBStatisticheManager==null) {
+				staticInstanceDBStatisticheManager = new DBStatisticheManager(nomeDataSource, context, alog, tipoDatabase, useOp2UtilsDatasource, bindJMX);
+			}
 		}
 	}
 	public static DBStatisticheManager getInstance() {
 		// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
 		if (staticInstanceDBStatisticheManager == null) {
-	        synchronized (DBStatisticheManager.class) {
+	        synchronized (INIT_LOCK) {
 	            if (staticInstanceDBStatisticheManager == null) {
 	                return null;
 	            }

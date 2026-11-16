@@ -52,11 +52,11 @@ public class JDBCLimitedServiceManager extends JDBCServiceManager {
 	private static final String CONNNECTION_MANAGED = "Connection managed from framework";
 	
 	@Override
-	public Connection getConnection() throws ServiceException {
+	protected Connection getConnection() throws ServiceException {
 		throw new ServiceException(CONNNECTION_MANAGED);
 	}
 	@Override
-	public void closeConnection(Connection connection) throws ServiceException {
+	protected void closeConnection(Connection connection) throws ServiceException {
 		throw new ServiceException(CONNNECTION_MANAGED);
 	}
 	@Override

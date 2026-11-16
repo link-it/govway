@@ -40,17 +40,21 @@ import org.slf4j.Logger;
  *
  */
 public class ApplicationProperties {
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
 
 	
 	/** Copia Statica */
 	private static ApplicationProperties applicationProperties = null;
 
-	public static synchronized void initialize(Logger log,
+	public static void initialize(Logger log,
 			String propertiesPath,String localPropertyName,String localPropertiesPath) throws Exception{
+		synchronized (INIT_LOCK) {
 
-		if(ApplicationProperties.applicationProperties==null)
-			ApplicationProperties.applicationProperties = new ApplicationProperties(log, propertiesPath, localPropertyName, localPropertiesPath);	
+			if(ApplicationProperties.applicationProperties==null)
+				ApplicationProperties.applicationProperties = new ApplicationProperties(log, propertiesPath, localPropertyName, localPropertiesPath);	
 
+		}
 	}
 
 	public static ApplicationProperties getInstance(Logger log) throws UtilsException{
@@ -61,7 +65,7 @@ public class ApplicationProperties {
 		
 		if(ApplicationProperties.applicationProperties==null) {
 			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
-			synchronized (ApplicationProperties.class) {
+			synchronized (INIT_LOCK) {
 				throw new UtilsException("Properties not initialized");
 			}
 		}

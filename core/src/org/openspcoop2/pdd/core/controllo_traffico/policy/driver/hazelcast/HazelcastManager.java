@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyException;
@@ -81,126 +82,130 @@ public class HazelcastManager {
 	
 	private static Logger logStartup;
 	private static Logger log;
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
 	
-	public static synchronized void initialize(Logger logStartup, Logger log, Map<PolicyGroupByActiveThreadsType,String> config, String groupId, File shareConfigFile) throws FileNotFoundException, UtilsException, PolicyException {
+	public static void initialize(Logger logStartup, Logger log, Map<PolicyGroupByActiveThreadsType,String> config, String groupId, File shareConfigFile) throws FileNotFoundException, UtilsException, PolicyException {
+		synchronized (INIT_LOCK) {
 		
-		if(HazelcastManager.staticMapInstance==null){
+			if(HazelcastManager.staticMapInstance==null){
 		
-			/*
-			 * This configuration disables the shutdown hook in hazelcast, which ensures that the hazelcast instance shuts down gracefully whenever the product node shuts down. 
-			 * If the hazelcast shutdown hook is enabled (which is the default behavior of a product), 
-			 * you will see errors such as " Hazelcast instance is not active! " at the time of shutting down the product node: 
-			 * This is because the hazelcast instance shuts down too early when the shutdown hook is enabled.
-			 **/
-			System.setProperty("hazelcast.shutdownhook.enabled","false");
+				/*
+				 * This configuration disables the shutdown hook in hazelcast, which ensures that the hazelcast instance shuts down gracefully whenever the product node shuts down. 
+				 * If the hazelcast shutdown hook is enabled (which is the default behavior of a product), 
+				 * you will see errors such as " Hazelcast instance is not active! " at the time of shutting down the product node: 
+				 * This is because the hazelcast instance shuts down too early when the shutdown hook is enabled.
+				 **/
+				System.setProperty("hazelcast.shutdownhook.enabled","false");
 	
-			/*
-			 * This configuration sets the hazelcast logging type to log4j2, which allows hazelcast logs to be written to the govway_hazelcast.log file.
-			 **/
-			System.setProperty("hazelcast.logging.type", "log4j2");
+				/*
+				 * This configuration sets the hazelcast logging type to log4j2, which allows hazelcast logs to be written to the govway_hazelcast.log file.
+				 **/
+				System.setProperty("hazelcast.logging.type", "log4j2");
 			
 			
-			HazelcastManager.staticMapInstance = new HashMap<>();
-			HazelcastManager.staticMapConfig = new HashMap<>();
-			HazelcastManager.groupId = groupId;
-			HazelcastManager.logStartup = logStartup;
-			HazelcastManager.log = log;
+				HazelcastManager.staticMapInstance = new ConcurrentHashMap<>();
+				HazelcastManager.staticMapConfig = new HashMap<>();
+				HazelcastManager.groupId = groupId;
+				HazelcastManager.logStartup = logStartup;
+				HazelcastManager.log = log;
 						
-			if(shareConfigFile!=null) {
+				if(shareConfigFile!=null) {
 				
-				HazelcastManager.shareConfigFile = shareConfigFile;
-				HazelcastManager.yamlUtils = YAMLUtils.getInstance();
-				HazelcastManager.engine = new JsonPathExpressionEngine();
+					HazelcastManager.shareConfigFile = shareConfigFile;
+					HazelcastManager.yamlUtils = YAMLUtils.getInstance();
+					HazelcastManager.engine = new JsonPathExpressionEngine();
 				
-				String sharedContentBytes = FileSystemUtilities.readFile(shareConfigFile); 
+					String sharedContentBytes = FileSystemUtilities.readFile(shareConfigFile); 
 				
-				try {
-					HazelcastManager.sharedConfigNode = yamlUtils.getAsNode(sharedContentBytes.getBytes());
-				}catch(Throwable t) {
-					throw new PolicyException("Configuration '"+shareConfigFile.getAbsolutePath()+"' is not valid yaml config: "+t.getMessage()+"\n"+sharedContentBytes,t);
-				}
-				Config sharedConfig = null;
-				try {
-					// La valido ma poi la ricostruiro' tutte le volte per poi sostituire la porta
-					try(ByteArrayInputStream bin = new ByteArrayInputStream(sharedContentBytes.getBytes())){
-						YamlConfigBuilder builder = new  YamlConfigBuilder(bin);
-						sharedConfig = builder.build();
+					try {
+						HazelcastManager.sharedConfigNode = yamlUtils.getAsNode(sharedContentBytes.getBytes());
+					}catch(Throwable t) {
+						throw new PolicyException("Configuration '"+shareConfigFile.getAbsolutePath()+"' is not valid yaml config: "+t.getMessage()+"\n"+sharedContentBytes,t);
 					}
-				}catch(Throwable t) {
-					throw new PolicyException("Configuration '"+shareConfigFile.getAbsolutePath()+"' is not valid yaml config (YamlConfigBuilder): "+t.getMessage()+"\n"+sharedContentBytes,t);
+					Config sharedConfig = null;
+					try {
+						// La valido ma poi la ricostruiro' tutte le volte per poi sostituire la porta
+						try(ByteArrayInputStream bin = new ByteArrayInputStream(sharedContentBytes.getBytes())){
+							YamlConfigBuilder builder = new  YamlConfigBuilder(bin);
+							sharedConfig = builder.build();
+						}
+					}catch(Throwable t) {
+						throw new PolicyException("Configuration '"+shareConfigFile.getAbsolutePath()+"' is not valid yaml config (YamlConfigBuilder): "+t.getMessage()+"\n"+sharedContentBytes,t);
+					}
+			
+					if(sharedConfig!=null && 
+							sharedConfig.getClusterName()!=null && 
+							StringUtils.isNotEmpty(sharedConfig.getClusterName())) {
+						// Se definita sovrascrive il valore indicato nella proprietà 'org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST.group_id' in govway_local.properties
+						// passato come parametro 'groupId'
+						HazelcastManager.groupId = sharedConfig.getClusterName();
+					}
 				}
 			
-				if(sharedConfig!=null && 
-						sharedConfig.getClusterName()!=null && 
-						StringUtils.isNotEmpty(sharedConfig.getClusterName())) {
-					// Se definita sovrascrive il valore indicato nella proprietà 'org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST.group_id' in govway_local.properties
-					// passato come parametro 'groupId'
-					HazelcastManager.groupId = sharedConfig.getClusterName();
-				}
-			}
-			
-			if(config!=null && !config.isEmpty()) {
-				for (PolicyGroupByActiveThreadsType type : config.keySet()) {
-					String pathConfig = config.get(type);
-					String content = null;
-					if(pathConfig != null) {
-						File hazelcastConfigFile = new File(pathConfig);
-						if(!hazelcastConfigFile.exists()) {
-							//consento di definire la proprietà senza che sia presente il file
-							/**throw new Exception("Hazelcast file config ["+hazelcastConfigFile.getAbsolutePath()+"] not exists");*/
+				if(config!=null && !config.isEmpty()) {
+					for (PolicyGroupByActiveThreadsType type : config.keySet()) {
+						String pathConfig = config.get(type);
+						String content = null;
+						if(pathConfig != null) {
+							File hazelcastConfigFile = new File(pathConfig);
+							if(!hazelcastConfigFile.exists()) {
+								//consento di definire la proprietà senza che sia presente il file
+								/**throw new Exception("Hazelcast file config ["+hazelcastConfigFile.getAbsolutePath()+"] not exists");*/
+							}
+							else {
+								if(!hazelcastConfigFile.canRead()) {
+									throw new PolicyException("Hazelcast (type:"+type+") file config ["+hazelcastConfigFile.getAbsolutePath()+"] cannot read");
+								}
+								content = FileSystemUtilities.readFile(hazelcastConfigFile);
+							}
+						}
+						if(content==null) {
+							// default
+							String name = "";
+							switch (type) {
+							case HAZELCAST_MAP:
+								name = "govway.hazelcast-map.yaml";
+								break;
+							case HAZELCAST_NEAR_CACHE:
+								name = "govway.hazelcast-near-cache.yaml";
+								break;
+							case HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP:
+								name = "govway.hazelcast-near-cache-unsafe-sync-map.yaml";
+								break;
+							case HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP:
+								name = "govway.hazelcast-near-cache-unsafe-async-map.yaml";
+								break;
+							case HAZELCAST_LOCAL_CACHE:
+								name = "govway.hazelcast-local-cache.yaml";
+								break;
+							case HAZELCAST_REPLICATED_MAP:
+								name= "govway.hazelcast-replicated-map.yaml";
+								break;
+							case HAZELCAST_ATOMIC_LONG:
+								name = "govway.hazelcast-atomic-long-counters.yaml";
+								break;
+							case HAZELCAST_ATOMIC_LONG_ASYNC:
+								name = "govway.hazelcast-atomic-long-async-counters.yaml";
+								break;
+							case HAZELCAST_PNCOUNTER:
+								name = "govway.hazelcast-pn-counters.yaml";
+								break;
+							default:
+								throw new PolicyException("Hazelcast type '"+type+"' unsupported");
+							}
+							content = Utilities.getAsString(HazelcastManager.class.getResourceAsStream("/"+name),Charset.UTF_8.getValue());
+						}
+						if(content==null) {
+							throw new PolicyException("Hazelcast (type:"+type+") config undefined");
 						}
 						else {
-							if(!hazelcastConfigFile.canRead()) {
-								throw new PolicyException("Hazelcast (type:"+type+") file config ["+hazelcastConfigFile.getAbsolutePath()+"] cannot read");
-							}
-							content = FileSystemUtilities.readFile(hazelcastConfigFile);
+							HazelcastManager.staticMapConfig.put(type, content);
 						}
-					}
-					if(content==null) {
-						// default
-						String name = "";
-						switch (type) {
-						case HAZELCAST_MAP:
-							name = "govway.hazelcast-map.yaml";
-							break;
-						case HAZELCAST_NEAR_CACHE:
-							name = "govway.hazelcast-near-cache.yaml";
-							break;
-						case HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP:
-							name = "govway.hazelcast-near-cache-unsafe-sync-map.yaml";
-							break;
-						case HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP:
-							name = "govway.hazelcast-near-cache-unsafe-async-map.yaml";
-							break;
-						case HAZELCAST_LOCAL_CACHE:
-							name = "govway.hazelcast-local-cache.yaml";
-							break;
-						case HAZELCAST_REPLICATED_MAP:
-							name= "govway.hazelcast-replicated-map.yaml";
-							break;
-						case HAZELCAST_ATOMIC_LONG:
-							name = "govway.hazelcast-atomic-long-counters.yaml";
-							break;
-						case HAZELCAST_ATOMIC_LONG_ASYNC:
-							name = "govway.hazelcast-atomic-long-async-counters.yaml";
-							break;
-						case HAZELCAST_PNCOUNTER:
-							name = "govway.hazelcast-pn-counters.yaml";
-							break;
-						default:
-							throw new PolicyException("Hazelcast type '"+type+"' unsupported");
-						}
-						content = Utilities.getAsString(HazelcastManager.class.getResourceAsStream("/"+name),Charset.UTF_8.getValue());
-					}
-					if(content==null) {
-						throw new PolicyException("Hazelcast (type:"+type+") config undefined");
-					}
-					else {
-						HazelcastManager.staticMapConfig.put(type, content);
 					}
 				}
-			}
 
+			}
 		}
 	}
 	
@@ -236,19 +241,26 @@ public class HazelcastManager {
 		return gestore;
 	}
 	
-	private static synchronized void initialize(PolicyGroupByActiveThreadsType type) throws PolicyException{
-		if(!HazelcastManager.staticMapInstance.containsKey(type)) {
-			
-			info("Inizializzazione Gestore Hazelcast '"+type+"' ...");
-			
-			HazelcastManager.staticMapInstance.put(type, newInstance(type));
-			
-			info("Inizializzazione Gestore Hazelcast '"+type+"' effettuata con successo");
-			
+	private static void initialize(PolicyGroupByActiveThreadsType type) throws PolicyException{
+		synchronized (INIT_LOCK) {
+			if(!HazelcastManager.staticMapInstance.containsKey(type)) {
+				
+				info("Inizializzazione Gestore Hazelcast '"+type+"' ...");
+				
+				HazelcastManager.staticMapInstance.putIfAbsent(type, newInstance(type));
+				
+				info("Inizializzazione Gestore Hazelcast '"+type+"' effettuata con successo");
+				
+			}
 		}
 	}	
 	
-	private static synchronized HazelcastInstance newInstance(PolicyGroupByActiveThreadsType type) throws PolicyException {
+	private static HazelcastInstance newInstance(PolicyGroupByActiveThreadsType type) throws PolicyException {
+		synchronized (INIT_LOCK) {
+			return newInstanceEngine(type);
+		}
+	}
+	private static HazelcastInstance newInstanceEngine(PolicyGroupByActiveThreadsType type) throws PolicyException {
 		
 		String content = HazelcastManager.staticMapConfig.get(type);
 		if(content==null) {
@@ -893,14 +905,16 @@ public class HazelcastManager {
 		}
 		return null;
 	}
-	public static synchronized void close() {
-		if(HazelcastManager.staticMapInstance!=null && !HazelcastManager.staticMapInstance.isEmpty()) {
-			for (PolicyGroupByActiveThreadsType type : HazelcastManager.staticMapInstance.keySet()) {
-				HazelcastInstance hazelcast = HazelcastManager.staticMapInstance.get(type);
-				try {
-					hazelcast.shutdown();
-				}catch(Throwable t) {
-					HazelcastManager.log.debug("Hazelcast '"+type+"' shutdown failed: " + t.getMessage(),t);
+	public static void close() {
+		synchronized (INIT_LOCK) {
+			if(HazelcastManager.staticMapInstance!=null && !HazelcastManager.staticMapInstance.isEmpty()) {
+				for (PolicyGroupByActiveThreadsType type : HazelcastManager.staticMapInstance.keySet()) {
+					HazelcastInstance hazelcast = HazelcastManager.staticMapInstance.get(type);
+					try {
+						hazelcast.shutdown();
+					}catch(Throwable t) {
+						HazelcastManager.log.debug("Hazelcast '"+type+"' shutdown failed: " + t.getMessage(),t);
+					}
 				}
 			}
 		}

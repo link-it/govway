@@ -101,28 +101,32 @@ public class GovwayMeterRegistry {
 	// Letto ad ogni transazione senza acquisire lock: true solo se il registry e' stato inizializzato allo startup.
 	// Con le metriche disabilitate (default) evita che isInitialized() acquisisca il lock di getInstance()
 	private static volatile boolean initialized = false;
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
 	/**
 	 * Crea l'istanza e inizializza il registry composito a partire dai collettori configurati
 	 * (ObservabilityProperties), collegandovi i binder di default JVM/process.
 	 * Invocato allo startup (OpenSPCoop2Startup); successive invocazioni non hanno effetto.
 	 */
-	public static synchronized void initialize(Logger startupLog) throws UtilsException {
-		if(staticInstance==null) {
-			// Metriche disabilitate se non è configurato alcun collettore con il segnale metrics (default)
-			if(ObservabilityProperties.getInstance().getCollectorsForMetrics().isEmpty()) {
-				startupLog.info("Observability: nessun collettore metrics configurato, metriche disabilitate");
-				return;
+	public static void initialize(Logger startupLog) throws UtilsException {
+		synchronized (INIT_LOCK) {
+			if(staticInstance==null) {
+				// Metriche disabilitate se non è configurato alcun collettore con il segnale metrics (default)
+				if(ObservabilityProperties.getInstance().getCollectorsForMetrics().isEmpty()) {
+					startupLog.info("Observability: nessun collettore metrics configurato, metriche disabilitate");
+					return;
+				}
+				GovwayMeterRegistry instance = new GovwayMeterRegistry(startupLog);
+				instance.initRegistry(startupLog);
+				staticInstance = instance;
+				initialized = true;
 			}
-			GovwayMeterRegistry instance = new GovwayMeterRegistry(startupLog);
-			instance.initRegistry(startupLog);
-			staticInstance = instance;
-			initialized = true;
 		}
 	}
 	public static GovwayMeterRegistry getInstance() {
 		if(staticInstance==null) {
 			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
-			synchronized (GovwayMeterRegistry.class) {
+			synchronized (INIT_LOCK) {
 				return staticInstance;
 			}
 		}
@@ -155,6 +159,9 @@ public class GovwayMeterRegistry {
 	 * Contiene gli stessi meter del registry (stessa cardinalita'); viene svuotata alla chiusura.
 	 */
 	private final Map<MeterKey, Meter> meters = new ConcurrentHashMap<>();
+
+	/** Lock privato dell'istanza (evita di esporre il monitor dell'istanza, raggiungibile tramite getInstance(): SEI CERT LCK00-J) */
+	private final Object instanceLock = new Object();
 
 	/** Registry Prometheus (se e' configurato un collettore prometheus): usato da scrape() per l'endpoint /metrics */
 	private PrometheusMeterRegistry prometheusRegistry = null;
@@ -217,7 +224,12 @@ public class GovwayMeterRegistry {
 	private static final String COMPONENT = "component";
 	private static final String PROTOCOL = "protocol";
 	private static final String DIRECTION = "direction";
-	private synchronized void initRegistry(Logger startupLog) throws UtilsException {
+	private void initRegistry(Logger startupLog) throws UtilsException {
+		synchronized (this.instanceLock) {
+			initRegistryEngine(startupLog);
+		}
+	}
+	private void initRegistryEngine(Logger startupLog) throws UtilsException {
 
 		CompositeMeterRegistry composite = new CompositeMeterRegistry();
 
@@ -386,13 +398,17 @@ public class GovwayMeterRegistry {
 		}
 		return isActiveSynchronized();
 	}
-	private synchronized boolean isActiveSynchronized() {
-		return this.registry!=null;
+	private boolean isActiveSynchronized() {
+		synchronized (this.instanceLock) {
+			return this.registry!=null;
+		}
 	}
 
 	/** Indica se è configurato un collettore prometheus (endpoint '/metrics' disponibile) */
-	public synchronized boolean isPrometheusEnabled() {
-		return this.prometheusRegistry!=null;
+	public boolean isPrometheusEnabled() {
+		synchronized (this.instanceLock) {
+			return this.prometheusRegistry!=null;
+		}
 	}
 
 	/**
@@ -402,7 +418,8 @@ public class GovwayMeterRegistry {
 	 */
 	public String scrape() {
 		this.log.debug("Richiesta di scraping delle metriche");
-		return this.prometheusRegistry!=null ? this.prometheusRegistry.scrape() : "";
+		PrometheusMeterRegistry prom = this.prometheusRegistry;
+		return prom!=null ? prom.scrape() : "";
 	}
 
 	/**
@@ -810,10 +827,12 @@ public class GovwayMeterRegistry {
 
 	// Invocata sia dallo scrape '/metrics' sia dal ciclo di publish di ogni collettore OTLP:
 	// synchronized per evitare re-registrazioni concorrenti delle MultiGauge.
-	public synchronized void refresh() {
-		refreshCacheMetrics();
-		refreshHttpPoolMetrics();
-		refreshDatasourceMetrics();
+	public void refresh() {
+		synchronized (this.instanceLock) {
+			refreshCacheMetrics();
+			refreshHttpPoolMetrics();
+			refreshDatasourceMetrics();
+		}
 	}
 	
 	/**
@@ -1055,32 +1074,34 @@ public class GovwayMeterRegistry {
 		}
 	}
 
-	public synchronized void close() {
-		this.active = false;
-		this.meters.clear();
-		if(this.jvmGcMetrics!=null) {
-			this.jvmGcMetrics.close();
-			this.jvmGcMetrics = null;
-		}
-		// Chiusura dei registry OTLP: ferma lo scheduler ed esegue un ultimo flush
-		for (OtlpMeterRegistry otlp : this.otlpRegistries) {
-			try {
-				otlp.close();
-			}catch(Exception t) {
-				this.log.debug("Error while closing OTLP registry: "+t.getMessage(), t);
+	public void close() {
+		synchronized (this.instanceLock) {
+			this.active = false;
+			this.meters.clear();
+			if(this.jvmGcMetrics!=null) {
+				this.jvmGcMetrics.close();
+				this.jvmGcMetrics = null;
 			}
+			// Chiusura dei registry OTLP: ferma lo scheduler ed esegue un ultimo flush
+			for (OtlpMeterRegistry otlp : this.otlpRegistries) {
+				try {
+					otlp.close();
+				}catch(Exception t) {
+					this.log.debug("Error while closing OTLP registry: "+t.getMessage(), t);
+				}
+			}
+			this.otlpRegistries.clear();
+			if(this.prometheusRegistry!=null) {
+				this.prometheusRegistry.close();
+				this.prometheusRegistry = null;
+			}
+			if(this.registry!=null) {
+				this.registry.close();
+				this.registry = null;
+			}
+			this.cacheElements = null;
+			this.httpPoolConnections = null;
+			this.datasourceConnections = null;
 		}
-		this.otlpRegistries.clear();
-		if(this.prometheusRegistry!=null) {
-			this.prometheusRegistry.close();
-			this.prometheusRegistry = null;
-		}
-		if(this.registry!=null) {
-			this.registry.close();
-			this.registry = null;
-		}
-		this.cacheElements = null;
-		this.httpPoolConnections = null;
-		this.datasourceConnections = null;
 	}
 }

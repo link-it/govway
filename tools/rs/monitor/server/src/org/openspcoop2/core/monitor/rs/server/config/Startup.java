@@ -81,6 +81,8 @@ import jakarta.servlet.ServletContextListener;
 public class Startup implements ServletContextListener {
 
 	private static Logger log = null;
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
 	public static Logger getLog() {
 		return log;
 	}
@@ -119,7 +121,12 @@ public class Startup implements ServletContextListener {
 		return initializedLog;
 	}
 	
-	public static synchronized String initLog(){
+	public static String initLog(){
+		synchronized (INIT_LOCK) {
+			return initLogEngine();
+		}
+	}
+	private static String initLogEngine(){
 		
 		String confDir = null;
 		try(InputStream is = Startup.class.getResourceAsStream("/rs-api-monitor.properties");){
@@ -159,7 +166,12 @@ public class Startup implements ServletContextListener {
 		return initializedResources;
 	}
 	
-	public static synchronized void initResources(){
+	public static void initResources(){
+		synchronized (INIT_LOCK) {
+			initResourcesEngine();
+		}
+	}
+	private static void initResourcesEngine(){
 		if(!Startup.initializedResources){
 			
 			String confDir = Startup.initLog();

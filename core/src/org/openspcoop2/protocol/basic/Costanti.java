@@ -33,6 +33,8 @@ import org.openspcoop2.protocol.sdk.archive.ImportMode;
  * @version $Rev$, $Date$
  */
 public class Costanti {
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
 
 	
 	/** ERRORE APPLICATIVO */
@@ -55,13 +57,15 @@ public class Costanti {
 		}
 		return valuePROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE;
 	}
-	public static synchronized void initPROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE(Boolean v) {
-		if(valuePROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE==null) {
-			if(v!=null){
-				valuePROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE = v;
-			}
-			else {
-				valuePROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE = PROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE;
+	public static void initPROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE(Boolean v) {
+		synchronized (INIT_LOCK) {
+			if(valuePROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE==null) {
+				if(v!=null){
+					valuePROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE = v;
+				}
+				else {
+					valuePROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE = PROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE;
+				}
 			}
 		}
 	}
@@ -76,13 +80,15 @@ public class Costanti {
 		}
 		return valuePROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE_CAMEL_CASE_DECODE;
 	}
-	public static synchronized void initPROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE_CAMEL_CASE_DECODE(Boolean v) {
-		if(valuePROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE_CAMEL_CASE_DECODE==null) {
-			if(v!=null){
-				valuePROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE_CAMEL_CASE_DECODE = v;
-			}
-			else {
-				valuePROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE_CAMEL_CASE_DECODE = PROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE_CAMEL_CASE_DECODE;
+	public static void initPROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE_CAMEL_CASE_DECODE(Boolean v) {
+		synchronized (INIT_LOCK) {
+			if(valuePROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE_CAMEL_CASE_DECODE==null) {
+				if(v!=null){
+					valuePROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE_CAMEL_CASE_DECODE = v;
+				}
+				else {
+					valuePROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE_CAMEL_CASE_DECODE = PROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE_CAMEL_CASE_DECODE;
+				}
 			}
 		}
 	}
@@ -97,13 +103,15 @@ public class Costanti {
 		}
 		return valuePROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE_CUSTOM_CLAIM;
 	}
-	public static synchronized void initPROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE_CUSTOM_CLAIM(Boolean v) {
-		if(valuePROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE_CUSTOM_CLAIM==null) {
-			if(v!=null){
-				valuePROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE_CUSTOM_CLAIM = v;
-			}
-			else {
-				valuePROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE_CUSTOM_CLAIM = PROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE_CUSTOM_CLAIM;
+	public static void initPROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE_CUSTOM_CLAIM(Boolean v) {
+		synchronized (INIT_LOCK) {
+			if(valuePROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE_CUSTOM_CLAIM==null) {
+				if(v!=null){
+					valuePROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE_CUSTOM_CLAIM = v;
+				}
+				else {
+					valuePROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE_CUSTOM_CLAIM = PROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE_CUSTOM_CLAIM;
+				}
 			}
 		}
 	}
@@ -122,13 +130,15 @@ public class Costanti {
 		}
 		return valuePROBLEM_RFC7807_GOVWAY_CODE;
 	}
-	public static synchronized void initPROBLEM_RFC7807_GOVWAY_CODE(String name) {
-		if(valuePROBLEM_RFC7807_GOVWAY_CODE==null) {
-			if(name!=null && !"".equals(name)){
-				valuePROBLEM_RFC7807_GOVWAY_CODE = name;
-			}
-			else {
-				valuePROBLEM_RFC7807_GOVWAY_CODE = PROBLEM_RFC7807_GOVWAY_CODE;
+	public static void initPROBLEM_RFC7807_GOVWAY_CODE(String name) {
+		synchronized (INIT_LOCK) {
+			if(valuePROBLEM_RFC7807_GOVWAY_CODE==null) {
+				if(name!=null && !"".equals(name)){
+					valuePROBLEM_RFC7807_GOVWAY_CODE = name;
+				}
+				else {
+					valuePROBLEM_RFC7807_GOVWAY_CODE = PROBLEM_RFC7807_GOVWAY_CODE;
+				}
 			}
 		}
 	}
@@ -144,13 +154,15 @@ public class Costanti {
 		}
 		return valuePROBLEM_RFC7807_GOVWAY_TYPE;
 	}
-	public static synchronized void initPROBLEM_RFC7807_GOVWAY_TYPE(String name) {
-		if(valuePROBLEM_RFC7807_GOVWAY_TYPE==null) {
-			if(name!=null && !"".equals(name)){
-				valuePROBLEM_RFC7807_GOVWAY_TYPE = name;
-			}
-			else {
-				valuePROBLEM_RFC7807_GOVWAY_TYPE = PROBLEM_RFC7807_GOVWAY_TYPE;
+	public static void initPROBLEM_RFC7807_GOVWAY_TYPE(String name) {
+		synchronized (INIT_LOCK) {
+			if(valuePROBLEM_RFC7807_GOVWAY_TYPE==null) {
+				if(name!=null && !"".equals(name)){
+					valuePROBLEM_RFC7807_GOVWAY_TYPE = name;
+				}
+				else {
+					valuePROBLEM_RFC7807_GOVWAY_TYPE = PROBLEM_RFC7807_GOVWAY_TYPE;
+				}
 			}
 		}
 	}
@@ -169,13 +181,15 @@ public class Costanti {
 		}
 		return valuePROBLEM_RFC7807_GOVWAY_TRANSACTION_ID;
 	}
-	public static synchronized void initPROBLEM_RFC7807_GOVWAY_TRANSACTION_ID(String name) {
-		if(valuePROBLEM_RFC7807_GOVWAY_TRANSACTION_ID==null) {
-			if(name!=null && !"".equals(name)){
-				valuePROBLEM_RFC7807_GOVWAY_TRANSACTION_ID = name;
-			}
-			else {
-				valuePROBLEM_RFC7807_GOVWAY_TRANSACTION_ID = PROBLEM_RFC7807_GOVWAY_TRANSACTION_ID;
+	public static void initPROBLEM_RFC7807_GOVWAY_TRANSACTION_ID(String name) {
+		synchronized (INIT_LOCK) {
+			if(valuePROBLEM_RFC7807_GOVWAY_TRANSACTION_ID==null) {
+				if(name!=null && !"".equals(name)){
+					valuePROBLEM_RFC7807_GOVWAY_TRANSACTION_ID = name;
+				}
+				else {
+					valuePROBLEM_RFC7807_GOVWAY_TRANSACTION_ID = PROBLEM_RFC7807_GOVWAY_TRANSACTION_ID;
+				}
 			}
 		}
 	}
@@ -194,13 +208,15 @@ public class Costanti {
 		}
 		return valueHTTP_HEADER_GOVWAY_ERROR_STATUS;
 	}
-	public static synchronized void initHTTP_HEADER_GOVWAY_ERROR_STATUS(String name) {
-		if(valueHTTP_HEADER_GOVWAY_ERROR_STATUS==null) {
-			if(name!=null && !"".equals(name)){
-				valueHTTP_HEADER_GOVWAY_ERROR_STATUS = name;
-			}
-			else {
-				valueHTTP_HEADER_GOVWAY_ERROR_STATUS = HTTP_HEADER_GOVWAY_ERROR_STATUS;
+	public static void initHTTP_HEADER_GOVWAY_ERROR_STATUS(String name) {
+		synchronized (INIT_LOCK) {
+			if(valueHTTP_HEADER_GOVWAY_ERROR_STATUS==null) {
+				if(name!=null && !"".equals(name)){
+					valueHTTP_HEADER_GOVWAY_ERROR_STATUS = name;
+				}
+				else {
+					valueHTTP_HEADER_GOVWAY_ERROR_STATUS = HTTP_HEADER_GOVWAY_ERROR_STATUS;
+				}
 			}
 		}
 	}
@@ -219,13 +235,15 @@ public class Costanti {
 		}
 		return valueHTTP_HEADER_GOVWAY_ERROR_TYPE;
 	}
-	public static synchronized void initHTTP_HEADER_GOVWAY_ERROR_TYPE(String name) {
-		if(valueHTTP_HEADER_GOVWAY_ERROR_TYPE==null) {
-			if(name!=null && !"".equals(name)){
-				valueHTTP_HEADER_GOVWAY_ERROR_TYPE = name;
-			}
-			else {
-				valueHTTP_HEADER_GOVWAY_ERROR_TYPE = HTTP_HEADER_GOVWAY_ERROR_TYPE;
+	public static void initHTTP_HEADER_GOVWAY_ERROR_TYPE(String name) {
+		synchronized (INIT_LOCK) {
+			if(valueHTTP_HEADER_GOVWAY_ERROR_TYPE==null) {
+				if(name!=null && !"".equals(name)){
+					valueHTTP_HEADER_GOVWAY_ERROR_TYPE = name;
+				}
+				else {
+					valueHTTP_HEADER_GOVWAY_ERROR_TYPE = HTTP_HEADER_GOVWAY_ERROR_TYPE;
+				}
 			}
 		}
 	}
@@ -244,13 +262,15 @@ public class Costanti {
 		}
 		return valueHTTP_HEADER_GOVWAY_ERROR_CODE;
 	}
-	public static synchronized void initHTTP_HEADER_GOVWAY_ERROR_CODE(String name) {
-		if(valueHTTP_HEADER_GOVWAY_ERROR_CODE==null) {
-			if(name!=null && !"".equals(name)){
-				valueHTTP_HEADER_GOVWAY_ERROR_CODE = name;
-			}
-			else {
-				valueHTTP_HEADER_GOVWAY_ERROR_CODE = HTTP_HEADER_GOVWAY_ERROR_CODE;
+	public static void initHTTP_HEADER_GOVWAY_ERROR_CODE(String name) {
+		synchronized (INIT_LOCK) {
+			if(valueHTTP_HEADER_GOVWAY_ERROR_CODE==null) {
+				if(name!=null && !"".equals(name)){
+					valueHTTP_HEADER_GOVWAY_ERROR_CODE = name;
+				}
+				else {
+					valueHTTP_HEADER_GOVWAY_ERROR_CODE = HTTP_HEADER_GOVWAY_ERROR_CODE;
+				}
 			}
 		}
 	}

@@ -246,13 +246,23 @@ public class RicezioneContenutiApplicativi implements IAsyncResponseCallback {
 
 	/** IGestoreCredenziali: lista di gestori delle credenziali */
 	private static String [] tipiGestoriCredenziali = null;
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
 	
 	/**
 	 * Inizializzatore del servizio RicezioneContenutiApplicativi
 	 * 
 	 * @throws Exception
 	 */
-	public static synchronized void initializeService(
+	public static void initializeService(
+			ClassNameProperties className,
+			OpenSPCoop2Properties propertiesReader, Logger logCore)
+			throws CoreException, ProtocolException {
+		synchronized (INIT_LOCK) {
+			initializeServiceEngine(className, propertiesReader, logCore);
+		}
+	}
+	private static void initializeServiceEngine(
 			ClassNameProperties className,
 			OpenSPCoop2Properties propertiesReader, Logger logCore)
 			throws CoreException, ProtocolException {

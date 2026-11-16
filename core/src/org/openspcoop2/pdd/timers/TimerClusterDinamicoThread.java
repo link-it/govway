@@ -21,6 +21,7 @@
 package org.openspcoop2.pdd.timers;
 
 
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.pdd.config.DynamicClusterManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.PolicyVerifier;
@@ -49,15 +50,15 @@ public class TimerClusterDinamicoThread extends BaseThread{
 	public static final String ID_MODULO = "TimerClusterDinamico";
 		
 	/** Logger utilizzato per debug. */
-	private Logger log = null;
+	private final Logger log;
 	
 	/** Variables */	
-	private OpenSPCoop2Properties properties;
-	private DynamicClusterManager manager;
+	private final OpenSPCoop2Properties properties;
+	private final DynamicClusterManager manager;
 	
 	
 	/** Costruttore */
-	public TimerClusterDinamicoThread(Logger log) throws Exception{
+	public TimerClusterDinamicoThread(Logger log) throws CoreException{
 	
 		this.log = log;
 	
@@ -69,7 +70,7 @@ public class TimerClusterDinamicoThread extends BaseThread{
 
 	
 	@Override
-	public void process(){
+	protected void process(){
 	
 		if(TimerState.ENABLED.equals(STATE)) {
 		
@@ -101,7 +102,7 @@ public class TimerClusterDinamicoThread extends BaseThread{
 	}
 	
 	@Override
-	public void close(){
+	protected void close(){
 		this.log.info("Thread per il refresh del cluster id dinamico terminato");
 	}
 		

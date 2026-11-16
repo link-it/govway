@@ -25,8 +25,8 @@ package org.openspcoop2.protocol.spcoop.validator;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.concurrent.ConcurrentHashMap;
 
 import jakarta.xml.soap.SOAPBody;
 import jakarta.xml.soap.SOAPElement;
@@ -64,7 +64,9 @@ import org.xml.sax.SAXException;
 public class SPCoopValidazioneConSchema extends BasicStateComponentFactory implements IValidazioneConSchema {
 
 	/** Validatore della busta SPCoop */
-	private static HashMap<String, ValidatoreXSD> validatoreBustaSPCoop_map = new HashMap<String, ValidatoreXSD>();
+	private static ConcurrentHashMap<String, ValidatoreXSD> validatoreBustaSPCoop_map = new ConcurrentHashMap<>();
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
 
 	
 	
@@ -114,32 +116,34 @@ public class SPCoopValidazioneConSchema extends BasicStateComponentFactory imple
 	 *
 	 * 
 	 */
-	public static synchronized boolean initializeSchema(OpenSPCoop2MessageFactory messageFactory, Logger log) {
-		String key = messageFactory.getClass().getName();
+	public static boolean initializeSchema(OpenSPCoop2MessageFactory messageFactory, Logger log) {
+		synchronized (INIT_LOCK) {
+			String key = messageFactory.getClass().getName();
 			
-		if(!validatoreBustaSPCoop_map.containsKey(key)) {
+			if(!validatoreBustaSPCoop_map.containsKey(key)) {
 			
-			if(log==null)
-				log = LoggerWrapperFactory.getLogger("ValidazioneConSchemaSPCoop");
+				if(log==null)
+					log = LoggerWrapperFactory.getLogger("ValidazioneConSchemaSPCoop");
 			
-			try{
-				SPCoopProperties spcoopProperties = SPCoopProperties.getInstance(log);
+				try{
+					SPCoopProperties spcoopProperties = SPCoopProperties.getInstance(log);
 				
-				log.info("Inizializzazione dello schema per il protocollo spcoop (possono essere necessari alcuni minuti...)");
-				String[] schemiXSDDaImportare = spcoopProperties.getSchemiXSDImportatiValidazioneXSDBusta();
-				String schemaXSD = spcoopProperties.getSchemaXSDValidazioneXSDBusta();
-				ValidatoreXSD val =	SPCoopValidazioneConSchema.createSchemaValidator(messageFactory, log,schemiXSDDaImportare, schemaXSD);
-				validatoreBustaSPCoop_map.put(key, val);
-				log.info("Inizializzazione dello schema per il protocollo spcoop terminata.");
-				return true;
-			}catch (Exception e) {
-				log.error("Riscontrato errore durante l'inizializzazione dello schema per il protocollo spcoop: "+e.getMessage(),e);
-				return false;
-			}
+					log.info("Inizializzazione dello schema per il protocollo spcoop (possono essere necessari alcuni minuti...)");
+					String[] schemiXSDDaImportare = spcoopProperties.getSchemiXSDImportatiValidazioneXSDBusta();
+					String schemaXSD = spcoopProperties.getSchemaXSDValidazioneXSDBusta();
+					ValidatoreXSD val =	SPCoopValidazioneConSchema.createSchemaValidator(messageFactory, log,schemiXSDDaImportare, schemaXSD);
+					validatoreBustaSPCoop_map.putIfAbsent(key, val);
+					log.info("Inizializzazione dello schema per il protocollo spcoop terminata.");
+					return true;
+				}catch (Exception e) {
+					log.error("Riscontrato errore durante l'inizializzazione dello schema per il protocollo spcoop: "+e.getMessage(),e);
+					return false;
+				}
 			
-		}
+			}
 		
-		return true; // gia' inizializzato
+			return true; // gia' inizializzato
+		}
 	}
 
 	private static ValidatoreXSD getValidatoreXSD(OpenSPCoop2MessageFactory messageFactory, Logger log) {

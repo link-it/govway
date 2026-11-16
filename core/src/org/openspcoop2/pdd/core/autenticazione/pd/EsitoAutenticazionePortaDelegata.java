@@ -78,7 +78,7 @@ public class EsitoAutenticazionePortaDelegata extends EsitoAutenticazione {
 
 
 	@Override
-	public String getHeader(){
+	protected String getHeader(){
 		StringBuilder bf = new StringBuilder(super.getHeader());
 		if(this.idServizioApplicativo!=null){
 			bf.append(" IDServizioApplicativo");

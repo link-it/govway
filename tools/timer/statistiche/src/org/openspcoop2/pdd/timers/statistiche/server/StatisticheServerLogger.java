@@ -45,48 +45,50 @@ import org.slf4j.Logger;
  * @version $Rev$, $Date$
  */
 public class StatisticheServerLogger {
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
 
 	private static StatisticheServerLogger instance;
 
 	// Logger Statistiche Orarie
-	private Logger loggerStatisticheOrarie;
-	private Logger loggerStatisticheOrarieError;
-	private Logger loggerStatisticheOrarieSql;
-	private Logger loggerStatisticheOrarieSqlError;
+	private final Logger loggerStatisticheOrarie;
+	private final Logger loggerStatisticheOrarieError;
+	private final Logger loggerStatisticheOrarieSql;
+	private final Logger loggerStatisticheOrarieSqlError;
 
 	// Logger Statistiche Giornaliere
-	private Logger loggerStatisticheGiornaliere;
-	private Logger loggerStatisticheGiornaliereError;
-	private Logger loggerStatisticheGiornaliereSql;
-	private Logger loggerStatisticheGiornaliereSqlError;
+	private final Logger loggerStatisticheGiornaliere;
+	private final Logger loggerStatisticheGiornaliereError;
+	private final Logger loggerStatisticheGiornaliereSql;
+	private final Logger loggerStatisticheGiornaliereSqlError;
 
 	// Logger Statistiche Settimanali
-	private Logger loggerStatisticheSettimanali;
-	private Logger loggerStatisticheSettimanaliError;
-	private Logger loggerStatisticheSettimanaliSql;
-	private Logger loggerStatisticheSettimanaliSqlError;
+	private final Logger loggerStatisticheSettimanali;
+	private final Logger loggerStatisticheSettimanaliError;
+	private final Logger loggerStatisticheSettimanaliSql;
+	private final Logger loggerStatisticheSettimanaliSqlError;
 
 	// Logger Statistiche Mensili
-	private Logger loggerStatisticheMensili;
-	private Logger loggerStatisticheMensiliError;
-	private Logger loggerStatisticheMensiliSql;
-	private Logger loggerStatisticheMensiliSqlError;
+	private final Logger loggerStatisticheMensili;
+	private final Logger loggerStatisticheMensiliError;
+	private final Logger loggerStatisticheMensiliSql;
+	private final Logger loggerStatisticheMensiliSqlError;
 
 	// Logger PDND Generazione
-	private Logger loggerStatistichePdndGenerazione;
-	private Logger loggerStatistichePdndGenerazioneError;
-	private Logger loggerStatistichePdndGenerazioneSql;
-	private Logger loggerStatistichePdndGenerazioneSqlError;
+	private final Logger loggerStatistichePdndGenerazione;
+	private final Logger loggerStatistichePdndGenerazioneError;
+	private final Logger loggerStatistichePdndGenerazioneSql;
+	private final Logger loggerStatistichePdndGenerazioneSqlError;
 
 	// Logger PDND Pubblicazione
-	private Logger loggerStatistichePdndPubblicazione;
-	private Logger loggerStatistichePdndPubblicazioneError;
-	private Logger loggerStatistichePdndPubblicazioneSql;
-	private Logger loggerStatistichePdndPubblicazioneSqlError;
+	private final Logger loggerStatistichePdndPubblicazione;
+	private final Logger loggerStatistichePdndPubblicazioneError;
+	private final Logger loggerStatistichePdndPubblicazioneSql;
+	private final Logger loggerStatistichePdndPubblicazioneSqlError;
 
 	// Logger Server (generale)
-	private Logger loggerServer;
-	private Logger loggerServerError;
+	private final Logger loggerServer;
+	private final Logger loggerServerError;
 
 	private StatisticheServerLogger() {
 		// Statistiche Orarie
@@ -190,11 +192,13 @@ public class StatisticheServerLogger {
 	}
 	
 	
-	public static synchronized StatisticheServerLogger getInstance() {
-		if (instance == null) {
-			instance = new StatisticheServerLogger();
+	public static StatisticheServerLogger getInstance() {
+		synchronized (INIT_LOCK) {
+			if (instance == null) {
+				instance = new StatisticheServerLogger();
+			}
+			return instance;
 		}
-		return instance;
 	}
 
 	/**

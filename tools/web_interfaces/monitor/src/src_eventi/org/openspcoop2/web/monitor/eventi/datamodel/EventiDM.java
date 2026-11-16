@@ -45,7 +45,7 @@ public class EventiDM extends BaseDataModelWithSearchForm<Long, EventoBean, IEve
 
 	
 	@Override
-	public List<EventoBean> findObjects(int start, int limit, String sortField, SortOrder sortOrder) {
+	protected List<EventoBean> findObjects(int start, int limit, String sortField, SortOrder sortOrder) {
 		return this.getDataProvider().findAll(start, limit);
 	}
 

@@ -69,6 +69,8 @@ public class ModIProperties {
 
 	/** Copia Statica */
 	private static ModIProperties modipaProperties = null;
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
 
 	private static final String PREFIX_PROPRIETA = "Proprietà '";
 	private static final String SUFFIX_NON_TROVATA = " non trovata";
@@ -125,10 +127,12 @@ public class ModIProperties {
 	 *
 	 * 
 	 */
-	public static synchronized void initialize(String confDir,Logger log) throws ProtocolException{
+	public static void initialize(String confDir,Logger log) throws ProtocolException{
 
-		if(ModIProperties.modipaProperties==null)
-			ModIProperties.modipaProperties = new ModIProperties(confDir,log);	
+		synchronized (INIT_LOCK) {
+			if(ModIProperties.modipaProperties==null)
+				ModIProperties.modipaProperties = new ModIProperties(confDir,log);
+		}
 
 	}
 
@@ -143,7 +147,7 @@ public class ModIProperties {
 
 		if(ModIProperties.modipaProperties==null) {
 			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
-			synchronized (ModIProperties.class) {
+			synchronized (INIT_LOCK) {
 				throw new ProtocolException("ModIProperties not initialized (use init method in factory)");
 			}
 		}

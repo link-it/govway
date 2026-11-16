@@ -365,6 +365,28 @@
     <Class name="org.openspcoop2.web.monitor.core.utils.MessageManager" />
     <Method name="&lt;init&gt;" isConstructor="true"/>
     <Bug pattern="SING_SINGLETON_HAS_NONPRIVATE_CONSTRUCTOR" />
-  </Match>   
+  </Match>
+  <!-- Object.clone() è protected per progetto: le classi clonabili devono renderlo public.
+       BaseBean non implementa Cloneable volutamente: sono le sottoclassi (i bean generati) a dichiararlo,
+       e la clonazione distingue le sottoclassi che lo dichiarano da quelle che non lo fanno (vedi BaseBeanCloneTest). -->
+  <Match>
+    <Class name="org.openspcoop2.utils.beans.BaseBean" />
+    <Method name="clone" />
+    <Bug pattern="IAOM_DO_NOT_INCREASE_METHOD_ACCESSIBILITY" />
+  </Match>
+  <!-- AlarmStatus (e la sottoclasse AlarmStatusWithAck) implementano clone() come copia manuale, invocata dall'esterno:
+       il metodo deve essere public. -->
+  <Match>
+    <Class name="org.openspcoop2.monitor.sdk.alarm.AlarmStatus" />
+    <Method name="clone" />
+    <Bug pattern="IAOM_DO_NOT_INCREASE_METHOD_ACCESSIBILITY" />
+  </Match>
+  <!-- Il metodo implementa l'acquisizione del semaforo: il lock resta volutamente acquisito e viene restituito al chiamante
+       (SemaphoreLock), che lo rilascia tramite release() in un blocco finally. -->
+  <Match>
+    <Class name="org.openspcoop2.utils.Semaphore" />
+    <Method name="acquireWithoutTimeout" />
+    <Bug pattern="UL_UNRELEASED_LOCK" />
+  </Match>
 
 </FindBugsFilter>

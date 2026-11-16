@@ -22,6 +22,7 @@ package org.openspcoop2.pdd.timers;
 
 import java.sql.Connection;
 
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
@@ -55,31 +56,31 @@ public class TimerRepositoryStatefulThread extends BaseThread{
 	
 	
 	/** Logger utilizzato per debug. */
-	private Logger log = null;
-	private Logger logSql = null;
+	private final Logger log;
+	private final Logger logSql;
 
 	/** Indicazione se deve essere effettuato il log delle query */
-	private boolean debug = false;	
+	private final boolean debug;	
 		
 	/** Database */
-	private String tipoDatabaseRuntime = null; //tipoDatabase
+	private final String tipoDatabaseRuntime; //tipoDatabase
 	
-	private DAOFactory daoFactory = null;
+	private final DAOFactory daoFactory;
     private ServiceManagerProperties daoFactoryServiceManagerPropertiesTransazioni = null;
     private Logger daoFactoryLoggerTransazioni = null;
     
 	/**
 	 * OpenSPCoop2Properties resources
 	 */
-	private OpenSPCoop2Properties openspcoopProperties = null;
+	private final OpenSPCoop2Properties openspcoopProperties;
 	
 	/** Gestore */
-	private GestoreTransazioniStateful gestore = null;
+	private final GestoreTransazioniStateful gestore;
 	
 	
 	
 	/** Costruttore */
-	public TimerRepositoryStatefulThread() throws Exception{
+	public TimerRepositoryStatefulThread() throws CoreException, HandlerException{
 	
 		this.openspcoopProperties = OpenSPCoop2Properties.getInstance();
 		
@@ -94,7 +95,7 @@ public class TimerRepositoryStatefulThread extends BaseThread{
 		try{
 			this.tipoDatabaseRuntime = this.openspcoopProperties.getDatabaseType();
 			if(this.tipoDatabaseRuntime==null){
-				throw new Exception("Tipo Database non definito");
+				throw new CoreException("Tipo Database non definito");
 			}
 
 			DAOFactoryProperties daoFactoryProperties = null;
@@ -113,14 +114,14 @@ public class TimerRepositoryStatefulThread extends BaseThread{
 			this.gestore = new GestoreTransazioniStateful(this.log, this.logSql,
 					this.tipoDatabaseRuntime, this.debug);
 		}catch(Exception e){
-			throw new Exception("Errore durante l'inizializzazione del gestore: "+e.getMessage(),e);
+			throw new HandlerException("Errore durante l'inizializzazione del gestore: "+e.getMessage(),e);
 		}
 		
 		
 	}
 	
 	@Override
-	public boolean initialize(){
+	protected boolean initialize(){
 		if(this.gestore==null){
 			this.log.error("Gestore non correttamente inizializzato");
 			return false;
@@ -128,7 +129,7 @@ public class TimerRepositoryStatefulThread extends BaseThread{
 		return true;
 	}
 	@Override
-	public void process(){
+	protected void process(){
 		if(TimerState.ENABLED.equals(STATE)) {
 			
 			DBTransazioniManager dbManager = null;
@@ -137,11 +138,11 @@ public class TimerRepositoryStatefulThread extends BaseThread{
 				dbManager = DBTransazioniManager.getInstance();
 				r = dbManager.getResource(this.openspcoopProperties.getIdentitaPortaDefaultWithoutProtocol(), ID_MODULO, null);
 				if(r==null){
-					throw new Exception("Risorsa al database non disponibile");
+					throw new CoreException("Risorsa al database non disponibile");
 				}
 				Connection con = (Connection) r.getResource();
 				if(con == null)
-					throw new Exception("Connessione non disponibile");	
+					throw new CoreException("Connessione non disponibile");	
 				
 				if(this.debug){
 					this.log.debug("Esecuzione thread per gestione delle transazioni stateful....");

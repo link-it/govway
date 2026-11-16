@@ -27,6 +27,8 @@ import java.sql.Connection;
 import java.util.Date;
 import java.util.List;
 
+import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreadsType;
 import org.openspcoop2.pdd.config.DBTransazioniManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
@@ -61,13 +63,13 @@ public class TimerEventiThread extends BaseThread{
 	public static final String ID_MODULO = "TimerEventi";
 		
 	/** Logger utilizzato per debug. */
-	private Logger log = null;
+	private final Logger log;
 	
 	/** Indicazione se deve essere effettuato il log delle query */
-	private boolean debug = false;	
+	private final boolean debug;	
 	
 	
-	private OpenSPCoop2Properties properties;
+	private final OpenSPCoop2Properties properties;
 	
 	/** NotificatoreEventi */
 	private NotificatoreEventi notificatoreEventi = null;
@@ -77,16 +79,16 @@ public class TimerEventiThread extends BaseThread{
 	
 	/** ConnectionTimeout */
 	private int checkConnectionTimeoutEveryXTimes = 1;
-	private java.util.concurrent.atomic.AtomicInteger offsetConnectionTimeoutEveryXTimes = new java.util.concurrent.atomic.AtomicInteger(0);
+	private final java.util.concurrent.atomic.AtomicInteger offsetConnectionTimeoutEveryXTimes = new java.util.concurrent.atomic.AtomicInteger(0);
 	private Date lastIntervalConnectionTimeout;
 
 	/** RequestReadTimeout */
 	private int checkRequestReadTimeoutEveryXTimes = 1;
-	private java.util.concurrent.atomic.AtomicInteger offsetRequestReadTimeoutEveryXTimes = new java.util.concurrent.atomic.AtomicInteger(0);
+	private final java.util.concurrent.atomic.AtomicInteger offsetRequestReadTimeoutEveryXTimes = new java.util.concurrent.atomic.AtomicInteger(0);
 	private Date lastIntervalRequestReadTimeout;
 
 	private int checkReadTimeoutEveryXTimes = 1;
-	private java.util.concurrent.atomic.AtomicInteger offsetReadTimeoutEveryXTimes = new java.util.concurrent.atomic.AtomicInteger(0);
+	private final java.util.concurrent.atomic.AtomicInteger offsetReadTimeoutEveryXTimes = new java.util.concurrent.atomic.AtomicInteger(0);
 	private Date lastIntervalReadTimeout;
 
 	/** Immagine */
@@ -103,7 +105,7 @@ public class TimerEventiThread extends BaseThread{
 	
 	/** Costruttore */
 	@SuppressWarnings("deprecation")
-	public TimerEventiThread(Logger log) throws Exception{
+	public TimerEventiThread(Logger log) throws CoreException, DriverConfigurazioneException, HandlerException{
 	
 		this.log = log;
 	
@@ -133,17 +135,17 @@ public class TimerEventiThread extends BaseThread{
 						try{
 							File fRepository = this.properties.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository();
 							if(fRepository!=null){
-								if(fRepository.exists()==false){
-									throw new Exception("Directory ["+fRepository.getAbsolutePath()+"] not exists");
+								if(!fRepository.exists()){
+									throw new CoreException("Directory ["+fRepository.getAbsolutePath()+"] not exists");
 								}
-								if(fRepository.isDirectory()==false){
-									throw new Exception("File ["+fRepository.getAbsolutePath()+"] is not directory");
+								if(!fRepository.isDirectory()){
+									throw new CoreException("File ["+fRepository.getAbsolutePath()+"] is not directory");
 								}
-								if(fRepository.canRead()==false){
-									throw new Exception("File ["+fRepository.getAbsolutePath()+"] cannot read");
+								if(!fRepository.canRead()){
+									throw new CoreException("File ["+fRepository.getAbsolutePath()+"] cannot read");
 								}
-								if(fRepository.canWrite()==false){
-									throw new Exception("File ["+fRepository.getAbsolutePath()+"] cannot write");
+								if(!fRepository.canWrite()){
+									throw new CoreException("File ["+fRepository.getAbsolutePath()+"] cannot write");
 								}
 								fDati = new File(fRepository, GestorePolicyAttive.getControlloTrafficoEventiImage(type));
 								if(fDati.exists() && fDati.canRead() && fDati.length()>0){
@@ -178,7 +180,7 @@ public class TimerEventiThread extends BaseThread{
 	
 	
 	@Override
-	public void process(){
+	protected void process(){
 	
 		if(TimerState.ENABLED.equals(STATE)) {
 		
@@ -264,7 +266,7 @@ public class TimerEventiThread extends BaseThread{
 	}
 	
 	@Override
-	public void close(){
+	protected void close(){
 		this.log.info("Thread per la generazione degli eventi terminato");
 	}
 			

@@ -17,8 +17,9 @@
 
 		<jar.group.name>staticAnalysis</jar.group.name>
 		
-		<spotbugs.version>4.9.8</spotbugs.version>
+		<spotbugs.version>4.10.5</spotbugs.version>
 		<sonar-scanner-cli.version>8.3.0.16463</sonar-scanner-cli.version>
+		<jspecify.version>1.0.1</jspecify.version>
 
 	</properties>
 
@@ -41,6 +42,21 @@
 			<groupId>org.sonarsource.scanner.cli</groupId>
 			<artifactId>sonar-scanner-cli</artifactId>
 			<version>${sonar-scanner-cli.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- Annotazioni JSpecify (@Nullable, @NullMarked) referenziate da alcune librerie (es. jsoup, cxf, log4j-api):
+		     non servono a runtime, ma senza di esse SpotBugs segnala 'classes needed for analysis were missing' -->
+		<dependency>
+			<groupId>org.jspecify</groupId>
+			<artifactId>jspecify</artifactId>
+			<version>${jspecify.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>

@@ -46,7 +46,7 @@ public class MessageSecurityContext_impl extends MessageSecurityContext{
 	
 	/** MessageSecurity Process */
 	@Override
-	public boolean processIncoming(OpenSPCoop2Message message, Busta busta, org.openspcoop2.utils.Map<Object> ctx){
+	protected boolean processIncoming(OpenSPCoop2Message message, Busta busta, org.openspcoop2.utils.Map<Object> ctx){
 		
 		this.receiver = new MessageSecurityReceiver_impl(this);
 		
@@ -70,7 +70,7 @@ public class MessageSecurityContext_impl extends MessageSecurityContext{
 	}
 	
 	@Override
-	public boolean processOutgoing(OpenSPCoop2Message message, org.openspcoop2.utils.Map<Object> ctx){
+	protected boolean processOutgoing(OpenSPCoop2Message message, org.openspcoop2.utils.Map<Object> ctx){
 		
 		this.sender = new MessageSecuritySender_impl(this);
 		

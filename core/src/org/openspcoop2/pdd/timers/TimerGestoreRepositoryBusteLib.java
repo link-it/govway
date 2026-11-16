@@ -113,7 +113,7 @@ public class TimerGestoreRepositoryBusteLib {
 	public void check() throws TimerException {
 
 		// Controllo che il sistema non sia andando in shutdown
-		if(OpenSPCoop2Startup.contextDestroyed){
+		if(OpenSPCoop2Startup.contextDestroyedState){
 			this.logTimer.error("["+TimerGestoreRepositoryBuste.ID_MODULO+"] Rilevato sistema in shutdown");
 			return;
 		}

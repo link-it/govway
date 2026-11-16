@@ -50,13 +50,20 @@ import org.w3c.dom.Element;
  */
 
 public class XMLUtils  {
+	
+	private XMLUtils() {}
+	
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
 
 	/** Validatore XSD */
 	static ValidatoreXSD validatoreXSD = null;
-	public static synchronized void initValidatoreXSD(Logger log) throws Exception{
-		if(XMLUtils.validatoreXSD==null){
-			XMLUtils.validatoreXSD = new ValidatoreXSD(OpenSPCoop2MessageFactory.getDefaultMessageFactory(),
-					log,XMLUtils.class.getResourceAsStream("/protocolManifest.xsd"));
+	public static void initValidatoreXSD(Logger log) throws Exception{
+		synchronized (INIT_LOCK) {
+			if(XMLUtils.validatoreXSD==null){
+				XMLUtils.validatoreXSD = new ValidatoreXSD(OpenSPCoop2MessageFactory.getDefaultMessageFactory(),
+						log,XMLUtils.class.getResourceAsStream("/protocolManifest.xsd"));
+			}
 		}
 	}
 	public static ValidatoreXSD getValidatoreXSD(Logger log) throws Exception{
@@ -128,10 +135,7 @@ public class XMLUtils  {
 		}
 		
 		
-		if(motivoErroreValidazione.length()!=size)
-			return false;
-		else
-			return true;
+		return motivoErroreValidazione.length()==size;
 
 	}
 	
@@ -240,10 +244,10 @@ public class XMLUtils  {
 	public static void generateOpenspcoop2Manifest(Openspcoop2 manifest,File out) throws XMLUtilsException{
 		try{
 			StringBuilder risultatoValidazione = new StringBuilder();
-			if(XMLUtils.validate(manifest, risultatoValidazione)==false){
-				throw new Exception(risultatoValidazione.toString());
+			if(!XMLUtils.validate(manifest, risultatoValidazione)){
+				throw new XMLUtilsException(risultatoValidazione.toString());
 			}
-			org.openspcoop2.utils.xml.JaxbUtils.objToXml(out.getName(),XMLUtils.generateOpenspcoop2Manifest_engine(manifest));
+			org.openspcoop2.utils.xml.JaxbUtils.objToXml(out.getName(),XMLUtils.generateOpenspcoop2ManifestEngine(manifest));
 		}catch(Exception e){
 			throw new XMLUtilsException(e.getMessage(),e);
 		}
@@ -252,10 +256,10 @@ public class XMLUtils  {
 	public static void generateOpenspcoop2Manifest(Openspcoop2 manifest,String fileName) throws XMLUtilsException{
 		try{
 			StringBuilder risultatoValidazione = new StringBuilder();
-			if(XMLUtils.validate(manifest, risultatoValidazione)==false){
-				throw new Exception(risultatoValidazione.toString());
+			if(!XMLUtils.validate(manifest, risultatoValidazione)){
+				throw new XMLUtilsException(risultatoValidazione.toString());
 			}
-			org.openspcoop2.utils.xml.JaxbUtils.objToXml(fileName,XMLUtils.generateOpenspcoop2Manifest_engine(manifest));
+			org.openspcoop2.utils.xml.JaxbUtils.objToXml(fileName,XMLUtils.generateOpenspcoop2ManifestEngine(manifest));
 		}catch(Exception e){
 			throw new XMLUtilsException(e.getMessage(),e);
 		}
@@ -264,10 +268,10 @@ public class XMLUtils  {
 	public static byte[] generateOpenspcoop2Manifest(Openspcoop2 manifest) throws XMLUtilsException{
 		try{
 			StringBuilder risultatoValidazione = new StringBuilder();
-			if(XMLUtils.validate(manifest, risultatoValidazione)==false){
-				throw new Exception(risultatoValidazione.toString());
+			if(!XMLUtils.validate(manifest, risultatoValidazione)){
+				throw new XMLUtilsException(risultatoValidazione.toString());
 			}
-			return XMLUtils.generateOpenspcoop2Manifest_engine(manifest);
+			return XMLUtils.generateOpenspcoop2ManifestEngine(manifest);
 		}catch(Exception e){
 			throw new XMLUtilsException(e.getMessage(),e);
 		}
@@ -276,10 +280,10 @@ public class XMLUtils  {
 	public static void generateOpenspcoop2Manifest(Openspcoop2 manifest,OutputStream out) throws XMLUtilsException{
 		try{
 			StringBuilder risultatoValidazione = new StringBuilder();
-			if(XMLUtils.validate(manifest, risultatoValidazione)==false){
-				throw new Exception(risultatoValidazione.toString());
+			if(!XMLUtils.validate(manifest, risultatoValidazione)){
+				throw new XMLUtilsException(risultatoValidazione.toString());
 			}
-			out.write(XMLUtils.generateOpenspcoop2Manifest_engine(manifest));
+			out.write(XMLUtils.generateOpenspcoop2ManifestEngine(manifest));
 			out.flush();
 			out.close();
 		}catch(Exception e){
@@ -287,12 +291,11 @@ public class XMLUtils  {
 		}
 	}
 	
-	private static byte[] generateOpenspcoop2Manifest_engine(Openspcoop2 manifest) throws XMLUtilsException{
+	private static byte[] generateOpenspcoop2ManifestEngine(Openspcoop2 manifest) throws XMLUtilsException{
 		try{
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
 			org.openspcoop2.utils.xml.JaxbUtils.objToXml(bout, Openspcoop2.class, manifest);
-			byte[] dichiarazione = bout.toByteArray();
-			return dichiarazione;
+			return bout.toByteArray();
 		}catch(Exception e){
 			throw new XMLUtilsException(e.getMessage(),e);
 		}
@@ -309,7 +312,7 @@ public class XMLUtils  {
 			Element elemXML = docXML.getDocumentElement();
 			return XMLUtils.isOpenspcoop2Manifest(elemXML);
 		}catch(Exception e){
-			//System.out.println("NON e' un DOCUMENTO VALIDO: "+e.getMessage());
+			/**System.out.println("NON e' un DOCUMENTO VALIDO: "+e.getMessage());*/
 			return false;
 		}
 	}
@@ -318,23 +321,18 @@ public class XMLUtils  {
 			Element elemXML = docXML.getDocumentElement();
 			return XMLUtils.isOpenspcoop2Manifest(elemXML);
 		}catch(Exception e){
-			//System.out.println("NON e' un DOCUMENTO VALIDO: "+e.getMessage());
+			/**System.out.println("NON e' un DOCUMENTO VALIDO: "+e.getMessage());*/
 			return false;
 		}
 	}
 	public static boolean isOpenspcoop2Manifest(Element elemXML){
 		try{
-			//System.out.println("LOCAL["+Costanti.ROOT_LOCAL_NAME_DETTAGLIO_ECCEZIONE+"]vs["+elemXML.getLocalName()+"]  NAMESPACE["+Costanti.TARGET_NAMESPACE+"]vs["+elemXML.getNamespaceURI()+"]");
-			if(Costanti.ROOT_LOCAL_NAME_OPENSPCOOP2.equals(elemXML.getLocalName()) && 
+			/**System.out.println("LOCAL["+Costanti.ROOT_LOCAL_NAME_DETTAGLIO_ECCEZIONE+"]vs["+elemXML.getLocalName()+"]  NAMESPACE["+Costanti.TARGET_NAMESPACE+"]vs["+elemXML.getNamespaceURI()+"]");*/
+			return (Costanti.ROOT_LOCAL_NAME_OPENSPCOOP2.equals(elemXML.getLocalName()) && 
 					Costanti.TARGET_NAMESPACE.equals(elemXML.getNamespaceURI() ) 
-				){
-				return true;
-			}
-			else{
-				return false;
-			}
+				);
 		}catch(Exception e){
-			//System.out.println("NON e' un DOCUMENTO VALIDO: "+e.getMessage());
+			/**System.out.println("NON e' un DOCUMENTO VALIDO: "+e.getMessage());*/
 			return false;
 		}
 	}
@@ -348,20 +346,20 @@ public class XMLUtils  {
 	public static String toString(Openspcoop2 manifest){
 		StringBuilder bf = new StringBuilder();
 		
-		bf.append(" Protocollo "+manifest.getProtocol().getName()+" \n");
+		bf.append(" Protocollo ").append(manifest.getProtocol().getName()).append(" \n");
 		
-		bf.append("Factory["+manifest.getProtocol().getFactory()+"]\n");
+		bf.append("Factory[").append(manifest.getProtocol().getFactory()).append("]\n");
 		
-		bf.append("Default Binding ["+manifest.getBinding().getDefault()+"]");
-		bf.append("Binding SOAP ["+(manifest.getBinding().getSoap()!=null)+"]\n");
-		bf.append("Binding REST ["+(manifest.getBinding().getRest()!=null)+"]\n");
+		bf.append("Default Binding [").append(manifest.getBinding().getDefault()).append("]");
+		bf.append("Binding SOAP [").append(manifest.getBinding().getSoap()!=null).append("]\n");
+		bf.append("Binding REST [").append(manifest.getBinding().getRest()!=null).append("]\n");
 		
 		Web web = manifest.getWeb();
 		for (int i = 0; i < web.sizeContextList(); i++) {
-			bf.append("Context["+i+"]=["+web.getContext(i).getName()+"]\n");
+			bf.append("Context[").append(i).append("]=[").append(web.getContext(i).getName()).append("]\n");
 		}
 		if(web.getEmptyContext()!=null){
-			bf.append("EmptyContext=["+web.getEmptyContext().getEnabled()+"]\n");
+			bf.append("EmptyContext=[").append(web.getEmptyContext().getEnabled()).append("]\n");
 		}
 		else{
 			bf.append("EmptyContext not defined\n");
@@ -371,19 +369,19 @@ public class XMLUtils  {
 		
 		if(reg.getOrganization()!=null && reg.getOrganization().getTypes()!=null){
 			for (int i = 0; i < reg.getOrganization().getTypes().sizeTypeList(); i++) {
-				bf.append("Organization.type["+i+"]=["+reg.getOrganization().getTypes().getType(i).getName()+"]\n");
+				bf.append("Organization.type[").append(i).append("]=[").append(reg.getOrganization().getTypes().getType(i).getName()).append("]\n");
 			}
 		}
 		
 		if(reg.getService()!=null && reg.getService().getTypes()!=null){
 			for (int i = 0; i < reg.getService().getTypes().sizeTypeList(); i++) {
-				bf.append("Services.type["+i+"]=["+reg.getService().getTypes().getType(i).getName()+"]\n");
+				bf.append("Services.type[").append(i).append("]=[").append(reg.getService().getTypes().getType(i).getName()).append("]\n");
 			}
 		}
 				
 		if(reg.getVersions()!=null){
 			for (int i = 0; i < reg.getVersions().sizeVersionList(); i++) {
-				bf.append("Versions["+i+"]=["+reg.getVersions().getVersion(i).getName()+"]\n");
+				bf.append("Versions[").append(i).append("]=[").append(reg.getVersions().getVersion(i).getName()).append("]\n");
 			}
 		}
 		

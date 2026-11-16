@@ -85,18 +85,24 @@ public class ObservabilityProperties extends InstanceProperties {
 	private final long[] metricsPersistenceSlotMs;
 
 	private static ObservabilityProperties instance = null;
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
 
-	public static synchronized void initialize(Logger log) throws UtilsException {
-		if(instance==null) {
-			instance = new ObservabilityProperties(log);
+	public static void initialize(Logger log) throws UtilsException {
+		synchronized (INIT_LOCK) {
+			if(instance==null) {
+				instance = new ObservabilityProperties(log);
+			}
 		}
 	}
 
-	public static synchronized ObservabilityProperties getInstance() throws UtilsException {
-		if(instance==null) {
-			initialize(LoggerWrapperFactory.getLogger(ObservabilityProperties.class));
+	public static ObservabilityProperties getInstance() throws UtilsException {
+		synchronized (INIT_LOCK) {
+			if(instance==null) {
+				initialize(LoggerWrapperFactory.getLogger(ObservabilityProperties.class));
+			}
+			return instance;
 		}
-		return instance;
 	}
 
 	private ObservabilityProperties(Logger log) throws UtilsException {

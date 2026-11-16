@@ -37,24 +37,30 @@ import org.slf4j.Logger;
  * @version $Rev$, $Date$
  */
 public class SecurityProperties {
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
 
 	private static final Map<String, Pattern> patternCache = new HashMap<>();
 
 	private static Logger log;
 	private static SecurityProperties instance;
-	private Properties properties;
+	private final Properties properties;
 
-	public static synchronized void init(Properties p, Logger log) {
-		if(SecurityProperties.log == null) {
-			SecurityProperties.log = log;
-		}
-		if(SecurityProperties.instance == null) {
-			SecurityProperties.instance = new SecurityProperties(p);
+	public static void init(Properties p, Logger log) {
+		synchronized (INIT_LOCK) {
+			if(SecurityProperties.log == null) {
+				SecurityProperties.log = log;
+			}
+			if(SecurityProperties.instance == null) {
+				SecurityProperties.instance = new SecurityProperties(p);
+			}
 		}
 	}
 
-	public static synchronized SecurityProperties getInstance() {
-		return instance;
+	public static SecurityProperties getInstance() {
+		synchronized (INIT_LOCK) {
+			return instance;
+		}
 	}
 
 	private SecurityProperties(Properties p) {

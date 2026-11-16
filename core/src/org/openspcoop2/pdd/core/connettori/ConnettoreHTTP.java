@@ -966,7 +966,7 @@ class HttpAuthenticator extends Authenticator{
 	}
 	
 	@Override
-	public PasswordAuthentication getPasswordAuthentication(){
+	protected PasswordAuthentication getPasswordAuthentication(){
 		return new PasswordAuthentication(this.username, this.password.toCharArray());
 	}
 }

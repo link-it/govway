@@ -34,18 +34,22 @@ import org.slf4j.Logger;
  * @version $Rev$, $Date$
  */
 public class UniversallyUniqueIdentifierProducer extends AbstractBaseThread {
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
 
 	private static UniversallyUniqueIdentifierProducer staticInstance;
-	public static synchronized void initialize(int buffer, Logger log) {
-		if(staticInstance==null) {
-			staticInstance = new UniversallyUniqueIdentifierProducer(buffer, log);
+	public static void initialize(int buffer, Logger log) {
+		synchronized (INIT_LOCK) {
+			if(staticInstance==null) {
+				staticInstance = new UniversallyUniqueIdentifierProducer(buffer, log);
+			}
 		}
 	}
 	public static UniversallyUniqueIdentifierProducer getInstance() {
 		// volutamente non inizializzo se null, viene fatto allo startup
 		// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
 		if (staticInstance == null) {
-	        synchronized (UniversallyUniqueIdentifierProducer.class) {
+	        synchronized (INIT_LOCK) {
 	            if (staticInstance == null) {
 	                return null;
 	            }

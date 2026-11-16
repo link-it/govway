@@ -27,7 +27,7 @@ package org.openspcoop2.protocol.sdk.archive;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ArchiveCascadeConfiguration {
+public class ArchiveCascadeConfiguration implements Cloneable {
 	
 	public ArchiveCascadeConfiguration(){	
 	}

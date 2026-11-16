@@ -56,6 +56,8 @@ public class SDIProperties {
 
 	/** Copia Statica */
 	private static SDIProperties sdiProperties = null;
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
 
 	/* ********  F I E L D S  P R I V A T I  ******** */
 
@@ -114,10 +116,12 @@ public class SDIProperties {
 	 *
 	 * 
 	 */
-	public static synchronized void initialize(String confDir,Logger log) throws ProtocolException{
+	public static void initialize(String confDir,Logger log) throws ProtocolException{
 
-		if(SDIProperties.sdiProperties==null)
-			SDIProperties.sdiProperties = new SDIProperties(confDir,log);	
+		synchronized (INIT_LOCK) {
+			if(SDIProperties.sdiProperties==null)
+				SDIProperties.sdiProperties = new SDIProperties(confDir,log);
+		}
 
 	}
 
@@ -132,7 +136,7 @@ public class SDIProperties {
 
 		if(SDIProperties.sdiProperties==null) {
 			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
-			synchronized (SDIProperties.class) {
+			synchronized (INIT_LOCK) {
 				throw new ProtocolException("SDIProperties not initialized (use init method in factory)");
 			}
 		}

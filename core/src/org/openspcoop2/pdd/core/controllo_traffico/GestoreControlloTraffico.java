@@ -46,16 +46,20 @@ import org.slf4j.Logger;
 public class GestoreControlloTraffico {
 	
 	private static GestoreControlloTraffico staticInstance = null;
-	public static synchronized void initialize(boolean erroreGenerico){
-		if(staticInstance==null){
-			staticInstance = new GestoreControlloTraffico(erroreGenerico);
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
+	public static void initialize(boolean erroreGenerico){
+		synchronized (INIT_LOCK) {
+			if(staticInstance==null){
+				staticInstance = new GestoreControlloTraffico(erroreGenerico);
+			}
 		}
 	}
 	public static GestoreControlloTraffico getInstance() throws CoreException{
 		if(staticInstance==null){
 			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
-			synchronized (GestoreControlloTraffico.class) {
-				throw new CoreException("GestorePolicyAttive non inizializzato");
+			synchronized (INIT_LOCK) {
+				throw new CoreException("GestoreControlloTraffico non inizializzato");
 			}
 		}
 		return staticInstance;
@@ -69,8 +73,8 @@ public class GestoreControlloTraffico {
 	/** 
 	 * Threads attivi complessivi sulla Porta
 	 **/
-	private AtomicLong activeThreads = new AtomicLong(0l);
-	private boolean erroreGenerico;
+	private final AtomicLong activeThreads = new AtomicLong(0l);
+	private final boolean erroreGenerico;
 	private Long maxThreads = null;
 	private Integer threshold = null;
 	

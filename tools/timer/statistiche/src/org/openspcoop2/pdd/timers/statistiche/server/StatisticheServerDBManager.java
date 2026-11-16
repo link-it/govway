@@ -44,6 +44,8 @@ import org.slf4j.Logger;
  * @version $Rev$, $Date$
  */
 public class StatisticheServerDBManager {
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
 
 	private static Logger checkLogger = null;
 	private static volatile boolean checkIsClosed = true;
@@ -81,7 +83,7 @@ public class StatisticheServerDBManager {
 	private String connectionUsername;
 	private String connectionPassword;
 
-	private boolean useDatasource;
+	private final boolean useDatasource;
 
 	private StatisticheServerDBManager(Logger log) throws Exception {
 		this.log = log;
@@ -136,17 +138,19 @@ public class StatisticheServerDBManager {
 		}
 	}
 
-	public static synchronized StatisticheServerDBManager getInstance(Logger log) throws Exception {
-		if (instance == null) {
-			instance = new StatisticheServerDBManager(log);
+	public static StatisticheServerDBManager getInstance(Logger log) throws Exception {
+		synchronized (INIT_LOCK) {
+			if (instance == null) {
+				instance = new StatisticheServerDBManager(log);
+			}
+			return instance;
 		}
-		return instance;
 	}
 
 	public static StatisticheServerDBManager getInstance()  {
 		// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
 		if(instance==null) {
-			synchronized (StatisticheServerDBManager.class) {
+			synchronized (INIT_LOCK) {
 				throw new IllegalStateException("StatisticheServerDBManager non inizializzato. Chiamare prima getInstance(Logger)");
 			}
 		}

@@ -105,15 +105,19 @@ import org.slf4j.Logger;
 public class DatiStatisticiDAOManager  {
 
 	private static DatiStatisticiDAOManager staticInstance = null;
-	public static synchronized void initialize(ConfigurazioneGatewayControlloTraffico configurazioneControlloTraffico) throws CoreException{
-		if(staticInstance==null){
-			staticInstance = new DatiStatisticiDAOManager(configurazioneControlloTraffico);
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
+	public static void initialize(ConfigurazioneGatewayControlloTraffico configurazioneControlloTraffico) throws CoreException{
+		synchronized (INIT_LOCK) {
+			if(staticInstance==null){
+				staticInstance = new DatiStatisticiDAOManager(configurazioneControlloTraffico);
+			}
 		}
 	}
 	public static DatiStatisticiDAOManager getInstance() throws CoreException{
 		if(staticInstance==null){
 			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
-			synchronized (DatiStatisticiDAOManager.class) {
+			synchronized (INIT_LOCK) {
 				throw new CoreException("DatiStatisticiDAOManager non inizializzato");
 			}
 		}

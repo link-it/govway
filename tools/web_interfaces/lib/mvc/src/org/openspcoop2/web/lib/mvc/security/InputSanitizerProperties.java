@@ -36,24 +36,30 @@ import org.slf4j.Logger;
  * @version $Rev$, $Date$
  */
 public class InputSanitizerProperties {
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
 
 	private static Logger log;
 	private static InputSanitizerProperties instance;
-	private Properties properties;
-	private Safelist safelist;
-	private Set<String> cssProperties;
+	private final Properties properties;
+	private final Safelist safelist;
+	private final Set<String> cssProperties;
 
-	public static synchronized void init(Properties p, Logger log) {
-		if(InputSanitizerProperties.log == null) {
-			InputSanitizerProperties.log = log;
-		}
-		if(InputSanitizerProperties.instance == null) {
-			InputSanitizerProperties.instance = new InputSanitizerProperties(p);
+	public static void init(Properties p, Logger log) {
+		synchronized (INIT_LOCK) {
+			if(InputSanitizerProperties.log == null) {
+				InputSanitizerProperties.log = log;
+			}
+			if(InputSanitizerProperties.instance == null) {
+				InputSanitizerProperties.instance = new InputSanitizerProperties(p);
+			}
 		}
 	}
 
-	public static synchronized InputSanitizerProperties getInstance() {
-		return instance;
+	public static InputSanitizerProperties getInstance() {
+		synchronized (INIT_LOCK) {
+			return instance;
+		}
 	}
 
 	private InputSanitizerProperties(Properties p) {

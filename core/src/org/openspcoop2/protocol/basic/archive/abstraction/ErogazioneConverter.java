@@ -59,30 +59,36 @@ import org.slf4j.Logger;
  * @version $Rev$, $Date$
  */
 public class ErogazioneConverter extends AbstractConverter {
+	/** Lock privato per la generazione dell'identificativo di correlazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object LOCK = new Object();
 
+	private static final String ASPS_PREFIX = "asps_";
+	
 	// ----- Static method -----
 	
-	public static synchronized ArchiveIdCorrelazione generateIdCorrelazione(String tipoSoggettoErogatore,String nomeSoggettoErogatore,
+	public static ArchiveIdCorrelazione generateIdCorrelazione(String tipoSoggettoErogatore,String nomeSoggettoErogatore,
 			String tipoServizio, String nomeServizio,
 			String descrizione) throws ProtocolException{
+		synchronized (LOCK) {
 		
-		// Identificativo Unico di Correlazione
-		String uuid = "Erogazione_"+tipoSoggettoErogatore+"/"+nomeSoggettoErogatore+"_"+tipoServizio+"/"+nomeServizio+"_"+System.currentTimeMillis();
+			// Identificativo Unico di Correlazione
+			String uuid = "Erogazione_"+tipoSoggettoErogatore+"/"+nomeSoggettoErogatore+"_"+tipoServizio+"/"+nomeServizio+"_"+System.currentTimeMillis();
 		
-		Utilities.sleep(1); // per rendere univco il prossimo uuid
+			Utilities.sleep(1); // per rendere univco il prossimo uuid
 		
-		ArchiveIdCorrelazione idCorrelazione = new ArchiveIdCorrelazione(uuid);
+			ArchiveIdCorrelazione idCorrelazione = new ArchiveIdCorrelazione(uuid);
 		
-		String d = null;
-		if(descrizione!=null && !"".equals(descrizione)){
-			d = descrizione;
-		}
-		else{
-			d = "Erogazione servizio:"+tipoServizio+"/"+nomeServizio+" erogatore:"+tipoSoggettoErogatore+"/"+nomeSoggettoErogatore;
-		}
-		idCorrelazione.setDescrizione(d);
+			String d = null;
+			if(descrizione!=null && !"".equals(descrizione)){
+				d = descrizione;
+			}
+			else{
+				d = "Erogazione servizio:"+tipoServizio+"/"+nomeServizio+" erogatore:"+tipoSoggettoErogatore+"/"+nomeSoggettoErogatore;
+			}
+			idCorrelazione.setDescrizione(d);
 
-		return idCorrelazione;
+			return idCorrelazione;
+		}
 	}
 	
 	
@@ -104,7 +110,7 @@ public class ErogazioneConverter extends AbstractConverter {
 			IDAccordo idAccordoServizioParteComune = null;
 			if(erogazione.getAccordoServizioParteComune().getUri()!=null){
 				idAccordoServizioParteComune = this.idAccordoFactory.getIDAccordoFromUri(erogazione.getAccordoServizioParteComune().getUri());
-				if(this.existsAccordoServizioParteComune(archive, registryReader, idAccordoServizioParteComune)==false){
+				if(!this.existsAccordoServizioParteComune(archive, registryReader, idAccordoServizioParteComune)){
 					throw new ProtocolException("Accordo di Servizio Parte Comune ["+idAccordoServizioParteComune.toString()+"] non esistente");
 				}
 			}
@@ -117,7 +123,7 @@ public class ErogazioneConverter extends AbstractConverter {
 									erogazione.getAccordoServizioParteComune().getIdAccordo().getSoggetto().getTipo(), 
 									erogazione.getAccordoServizioParteComune().getIdAccordo().getSoggetto().getNome(), 
 									erogazione.getAccordoServizioParteComune().getIdAccordo().getVersione());
-					if(this.existsAccordoServizioParteComune(archive, registryReader, idAccordoServizioParteComune)==false){
+					if(!this.existsAccordoServizioParteComune(archive, registryReader, idAccordoServizioParteComune)){
 						throw new ProtocolException("Accordo di Servizio Parte Comune ["+idAccordoServizioParteComune.toString()+"] non esistente");
 					}
 				}
@@ -237,8 +243,8 @@ public class ErogazioneConverter extends AbstractConverter {
 			boolean createPdd = false;
 			DatiSoggetto datiSoggetto = new DatiSoggetto();
 			datiSoggetto.setId(soggettoErogatore);
-			if(this.existsSoggetto(archive, registryReader, erogazione.getSoggettoErogatore().getIdSoggetto()) == false){
-				if(erogazione.getSoggettoErogatore().getNotExistsBehaviour()==null || erogazione.getSoggettoErogatore().getNotExistsBehaviour().isCreate()==false){
+			if(!this.existsSoggetto(archive, registryReader, erogazione.getSoggettoErogatore().getIdSoggetto())){
+				if(erogazione.getSoggettoErogatore().getNotExistsBehaviour()==null || !erogazione.getSoggettoErogatore().getNotExistsBehaviour().isCreate()){
 					throw new ProtocolException("Soggetto Erogatore ["+soggettoErogatore.getTipo()+"/"+soggettoErogatore.getNome()+"] non esistente");
 				}
 				else{
@@ -251,7 +257,7 @@ public class ErogazioneConverter extends AbstractConverter {
 					if(datiSoggetto.getPortaDominio()!=null){
 						if(this.existsPdd(archive, registryReader, datiSoggetto.getPortaDominio())){
 							if(Tipologia.INTERNA.equals(erogazione.getTipologia())){
-								if(this.isPddOperativa(archive, registryReader, datiSoggetto.getPortaDominio())==false){
+								if(!this.isPddOperativa(archive, registryReader, datiSoggetto.getPortaDominio())){
 									throw new ProtocolException("La pdd ["+datiSoggetto.getPortaDominio()+
 											"] indicata per il Soggetto Erogatore ["+soggettoErogatore.getTipo()+"/"+soggettoErogatore.getNome()+"] "
 													+ "possiede un tipo 'esterno' non compatibile con una erogazione di tipologia 'interna'. Deve essere associata una pdd di tipo 'operativo'");
@@ -304,7 +310,7 @@ public class ErogazioneConverter extends AbstractConverter {
 				try{
 					this.filler.readPortaDominio(archive, new ByteArrayInputStream(xml), xml, "pdd", validationDocuments, idCorrelazione);
 				}catch(Exception e){
-					throw new Exception("XmlTemplate["+new String(xml)+"]\n"+e.getMessage(),e);
+					throw new ProtocolException("XmlTemplate["+new String(xml)+"]\n"+e.getMessage(),e);
 				}
 			}
 			if(createSoggetto){
@@ -313,7 +319,7 @@ public class ErogazioneConverter extends AbstractConverter {
 					this.filler.readSoggetto(archive,new ByteArrayInputStream(xml), xml, "soggetto", 
 							soggettoErogatore.getTipo(), soggettoErogatore.getNome(), validationDocuments, idCorrelazione);
 				}catch(Exception e){
-					throw new Exception("XmlTemplate["+new String(xml)+"]\n"+e.getMessage(),e);
+					throw new ProtocolException("XmlTemplate["+new String(xml)+"]\n"+e.getMessage(),e);
 				}
 			}
 			
@@ -321,15 +327,15 @@ public class ErogazioneConverter extends AbstractConverter {
 			for (int i = 0; i < templateErogazione.getTemplateAccordiParteSpecifica().size(); i++) {
 				byte[]xml = TemplateUtils.toByteArray(templateErogazione.getTemplateAccordiParteSpecifica().get(i), data);
 				try{
-					//String fileSystemName = this.filler.convertCharNonPermessiQualsiasiSistemaOperativo(datiServizio.getNome(),false);
+					/**String fileSystemName = this.filler.convertCharNonPermessiQualsiasiSistemaOperativo(datiServizio.getNome(),false);*/
 					String tipo = datiServizio.getTipo();
 					String nome = datiServizio.getNome();
 					this.filler.readAccordoServizioParteSpecifica(archive, new ByteArrayInputStream(xml), xml,
-						"asps_"+i, soggettoErogatore.getTipo(), soggettoErogatore.getNome(), "asps_"+i, 
+						ASPS_PREFIX+i, soggettoErogatore.getTipo(), soggettoErogatore.getNome(), ASPS_PREFIX+i, 
 						tipo, nome, ZIPReadUtils.USE_VERSION_XML_BEAN, validationDocuments, idCorrelazione,
 						ArchiveVersion.V_1,null,null,null);
 				}catch(Exception e){
-					throw new Exception("XmlTemplate["+new String(xml)+"]\n"+e.getMessage(),e);
+					throw new ProtocolException("XmlTemplate["+new String(xml)+"]\n"+e.getMessage(),e);
 				}
 			}
 			
@@ -348,11 +354,11 @@ public class ErogazioneConverter extends AbstractConverter {
 					byte[]xml = TemplateUtils.toByteArray(templateErogazione.getTemplateFruitore(), data);
 					try{
 						this.filler.readAccordoServizioParteSpecifica_Fruitore(archive, new ByteArrayInputStream(xml), xml, 
-								"fruitore_"+i, "asps_"+i, soggettoErogatore.getTipo(), soggettoErogatore.getNome(), 
+								"fruitore_"+i, ASPS_PREFIX+i, soggettoErogatore.getTipo(), soggettoErogatore.getNome(), 
 								tipoServizio,nomeServizio, ZIPReadUtils.USE_VERSION_XML_BEAN, validationDocuments, idCorrelazione,
 								ArchiveVersion.V_1,null,null);
 					}catch(Exception e){
-						throw new Exception("XmlTemplate["+new String(xml)+"]\n"+e.getMessage(),e);
+						throw new ProtocolException("XmlTemplate["+new String(xml)+"]\n"+e.getMessage(),e);
 					}
 				}
 			}
@@ -366,7 +372,7 @@ public class ErogazioneConverter extends AbstractConverter {
 						this.filler.readServizioApplicativo(archive, new ByteArrayInputStream(xml), xml, 
 							"sa_"+i, soggettoErogatore.getTipo(), soggettoErogatore.getNome(), validationDocuments, idCorrelazione);
 					}catch(Exception e){
-						throw new Exception("XmlTemplate["+new String(xml)+"]\n"+e.getMessage(),e);
+						throw new ProtocolException("XmlTemplate["+new String(xml)+"]\n"+e.getMessage(),e);
 					}
 				}
 			}
@@ -379,7 +385,7 @@ public class ErogazioneConverter extends AbstractConverter {
 						this.filler.readPortaApplicativa(archive, new ByteArrayInputStream(xml), xml, 
 							"pa_"+i, soggettoErogatore.getTipo(), soggettoErogatore.getNome(), validationDocuments, idCorrelazione);
 					}catch(Exception e){
-						throw new Exception("XmlTemplate["+new String(xml)+"]\n"+e.getMessage(),e);
+						throw new ProtocolException("XmlTemplate["+new String(xml)+"]\n"+e.getMessage(),e);
 					}
 				}
 			}

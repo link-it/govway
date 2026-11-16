@@ -48,15 +48,22 @@ import org.openspcoop2.utils.resources.GestoreJNDI;
  * @version $Rev$, $Date$
  */
 public class DataSourceFactory {
+	
+	private DataSourceFactory() {}
+	
+	/** Lock privato per la registrazione e il rilascio dei datasource (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object LOCK = new Object();
 
 	private static Map<String, org.openspcoop2.utils.datasource.DataSource> mapUUIDtoDatasources = new ConcurrentHashMap<String, org.openspcoop2.utils.datasource.DataSource>();
 	private static Map<String, String> mapApplicativeIDtoUUID = new ConcurrentHashMap<String, String>();
 	private static Map<String, String> mapJndiNametoUUID = new ConcurrentHashMap<String, String>();
 	private static org.openspcoop2.utils.jmx.GestoreRisorseJMX gestoreRisorse = null;
 	
-	private static synchronized void initGestoreRisorseJMX() throws RisorseJMXException{
-		if(gestoreRisorse==null)
-			gestoreRisorse = new org.openspcoop2.utils.jmx.GestoreRisorseJMX();
+	private static void initGestoreRisorseJMX() throws RisorseJMXException{
+		synchronized (LOCK) {
+			if(gestoreRisorse==null)
+				gestoreRisorse = new org.openspcoop2.utils.jmx.GestoreRisorseJMX();
+		}
 	}
 	
 	public static int sizeDatasources(){
@@ -64,26 +71,29 @@ public class DataSourceFactory {
 	}
 	
 	public static List<String> getJndiNameDatasources() {
+		List<String> l = null;
 		if(mapJndiNametoUUID==null || mapJndiNametoUUID.isEmpty()) {
-			return null;
+			return l;
 		}
-		List<String> l = new ArrayList<>();
+		l = new ArrayList<>();
 		l.addAll(mapJndiNametoUUID.keySet());
 		return l;
 	}
 	
 	public static List<String> getApplicativeIdDatasources() {
+		List<String> l = null;
 		if(mapApplicativeIDtoUUID==null || mapApplicativeIDtoUUID.isEmpty()) {
-			return null;
+			return l;
 		}
-		List<String> l = new ArrayList<>();
+		l = new ArrayList<>();
 		l.addAll(mapApplicativeIDtoUUID.keySet());
 		return l;
 	}
 	
-	public static String[] getJmxStatus() throws UtilsException{	
+	public static String[] getJmxStatus() {	
+		String[] s = null;
 		if(mapUUIDtoDatasources==null || mapUUIDtoDatasources.size()<=0)
-			return null;
+			return s;
 	
 		Collection<org.openspcoop2.utils.datasource.DataSource> list = mapUUIDtoDatasources.values();
 		Iterator<org.openspcoop2.utils.datasource.DataSource> it = list.iterator();
@@ -120,7 +130,7 @@ public class DataSourceFactory {
 			Collections.sort(listResource);
 			return listResource.toArray(new String[1]);
 		}else
-			return null;
+			return s;
 		
 	}
 	
@@ -176,55 +186,54 @@ public class DataSourceFactory {
 		return newInstance(datasource, params, null);
 	}
 	
-	public static synchronized DataSource newInstance(javax.sql.DataSource datasource, DataSourceParams params, String jndiName) throws UtilsException, UtilsAlreadyExistsException{
+	public static DataSource newInstance(javax.sql.DataSource datasource, DataSourceParams params, String jndiName) throws UtilsException, UtilsAlreadyExistsException{
+		synchronized (LOCK) {
 		
-		if(params==null){
-			throw new UtilsException("Parameters undefined");
-		}
-		if(params.getDatabaseType()==null){
-			throw new UtilsException("Parameters.databaseType undefined");
-		}
-		try{
-			if(params.getApplicativeId()!=null){
-				if(mapApplicativeIDtoUUID.containsKey(params.getApplicativeId())){
+			if(params==null){
+				throw new UtilsException("Parameters undefined");
+			}
+			if(params.getDatabaseType()==null){
+				throw new UtilsException("Parameters.databaseType undefined");
+			}
+			try{
+				if(params.getApplicativeId()!=null &&
+					mapApplicativeIDtoUUID.containsKey(params.getApplicativeId())){
 					throw new UtilsAlreadyExistsException("Datasource with applicative id ["+params.getApplicativeId()+"] already exists");
 				}
-			}
 			
-			if(jndiName!=null){
-				if(mapJndiNametoUUID.containsKey(jndiName)){
+				if(jndiName!=null &&
+					mapJndiNametoUUID.containsKey(jndiName)){
 					throw new UtilsAlreadyExistsException("Datasource with jndiName ["+jndiName+"] already exists");
 				}
-			}
 			
-			org.openspcoop2.utils.datasource.DataSource ds = 
-					new org.openspcoop2.utils.datasource.DataSource(datasource, params.getDatabaseType(), params.isWrapOriginalMethods(), jndiName, params.getApplicativeId());
+				org.openspcoop2.utils.datasource.DataSource ds = 
+						new org.openspcoop2.utils.datasource.DataSource(datasource, params.getDatabaseType(), params.isWrapOriginalMethods(), jndiName, params.getApplicativeId());
 			
-			String uuidDatasource = ds.getUuidDatasource();
-			mapUUIDtoDatasources.put(uuidDatasource, ds);
-			if(params.getApplicativeId()!=null){
-				mapApplicativeIDtoUUID.put(params.getApplicativeId(), uuidDatasource);
-			}
-			if(jndiName!=null){
-				mapJndiNametoUUID.put(jndiName, uuidDatasource);
-			}
+				String uuidDatasource = ds.getUuidDatasource();
+				mapUUIDtoDatasources.put(uuidDatasource, ds);
+				if(params.getApplicativeId()!=null){
+					mapApplicativeIDtoUUID.put(params.getApplicativeId(), uuidDatasource);
+				}
+				if(jndiName!=null){
+					mapJndiNametoUUID.put(jndiName, uuidDatasource);
+				}
 		
-			if(params.isBindJmx()){
-				if(gestoreRisorse==null){
+				if(params.isBindJmx() &&
+					gestoreRisorse==null){
 					initGestoreRisorseJMX();
 					gestoreRisorse.registerMBean(JmxDataSource.class, params.getJmxDomain(), params.getJmxType(), params.getJmxName(), false);
 				}
-			}
 			
-			return ds;
-		}
-		catch(UtilsAlreadyExistsException e){
-			throw e;
-		}
-		catch(Exception e){
-			throw new UtilsException(e.getMessage(),e);
-		}
+				return ds;
+			}
+			catch(UtilsAlreadyExistsException e){
+				throw e;
+			}
+			catch(Exception e){
+				throw new UtilsException(e.getMessage(),e);
+			}
 		
+		}
 	}
 	
 	// **** Metodi per recuperare il datasource ***
@@ -245,75 +254,77 @@ public class DataSourceFactory {
 	}
 
 	// **** Metodi per rilasciare le risorse ***
-	public static void closeResources() throws UtilsException{
+	public static void closeResources() {
+		synchronized (LOCK) {
 
-		mapApplicativeIDtoUUID.clear();
-		mapJndiNametoUUID.clear();
+			mapApplicativeIDtoUUID.clear();
+			mapJndiNametoUUID.clear();
 
-		Collection<org.openspcoop2.utils.datasource.DataSource> list = mapUUIDtoDatasources.values();
-		Iterator<org.openspcoop2.utils.datasource.DataSource> it = list.iterator();
-		while (it.hasNext()) {
-			org.openspcoop2.utils.datasource.DataSource datasource = (org.openspcoop2.utils.datasource.DataSource) it.next();
-			datasource.setClosed(true);
-		}
-		
-		boolean waitCloseConnection = true;
-		int maxWait = 60000;
-		int sleep = 1000;
-		int index = 0;
-		int count = 1;
-		int total = maxWait / sleep;
-		while(waitCloseConnection && index<maxWait){
-			list = mapUUIDtoDatasources.values();
-			it = list.iterator();
-			boolean closeAll = true;
-			StringBuilder bf = new StringBuilder();
-			boolean debugClose = true;
+			Collection<org.openspcoop2.utils.datasource.DataSource> list = mapUUIDtoDatasources.values();
+			Iterator<org.openspcoop2.utils.datasource.DataSource> it = list.iterator();
 			while (it.hasNext()) {
-				org.openspcoop2.utils.datasource.DataSource datasource = (org.openspcoop2.utils.datasource.DataSource) it.next();
-				if(datasource.size()>0){
-					closeAll = false;
-					bf.append("Find datasource (applicative-id:"+datasource.getApplicativeIdDatasource()+" jndi:"+datasource.getJndiName()+") with "+datasource.size()+" released connection:");
-					String[] status = datasource.getJmxStatus();
-					if(status!=null) {
-						for (int i = 0; i < status.length; i++) {
-							bf.append("\n");
-							bf.append("\t"+status[i]);
+				org.openspcoop2.utils.datasource.DataSource datasource = it.next();
+				datasource.setClosed(true);
+			}
+		
+			boolean waitCloseConnection = true;
+			int maxWait = 60000;
+			int sleep = 1000;
+			int index = 0;
+			int count = 1;
+			int total = maxWait / sleep;
+			while(waitCloseConnection && index<maxWait){
+				list = mapUUIDtoDatasources.values();
+				it = list.iterator();
+				boolean closeAll = true;
+				StringBuilder bf = new StringBuilder();
+				boolean debugClose = true;
+				while (it.hasNext()) {
+					org.openspcoop2.utils.datasource.DataSource datasource = it.next();
+					if(datasource.size()>0){
+						closeAll = false;
+						bf.append("Find datasource (applicative-id:"+datasource.getApplicativeIdDatasource()+" jndi:"+datasource.getJndiName()+") with "+datasource.size()+" released connection:");
+						String[] status = datasource.getJmxStatus();
+						if(status!=null) {
+							for (int i = 0; i < status.length; i++) {
+								bf.append("\n");
+								bf.append("\t"+status[i]);
+							}
 						}
+						break;
 					}
-					break;
+				}
+				if(!closeAll){
+					if(debugClose && ((count%5)==0)) {
+						// stampo la situazione ogni 5 secondi
+						System.out.println(bf.toString());
+					}
+					System.out.println("Wait close connection ("+count+"/"+total+") ...");
+					Utilities.sleep(sleep);
+					index = index + sleep;
+					count++;
+				}
+				else{
+					waitCloseConnection = false;
 				}
 			}
-			if(closeAll==false){
-				if(debugClose && ((count%5)==0)) {
-					// stampo la situazione ogni 5 secondi
-					System.out.println(bf.toString());
-				}
-				System.out.println("Wait close connection ("+count+"/"+total+") ...");
-				Utilities.sleep(sleep);
-				index = index + sleep;
-				count++;
-			}
-			else{
-				waitCloseConnection = false;
-			}
-		}
-		if(waitCloseConnection==true){
-			System.out.println("Forzo chiusura connessioni");
-			// forzo chiusura connessioni
-			list = mapUUIDtoDatasources.values();
-			it = list.iterator();
-			while (it.hasNext()) {
-				org.openspcoop2.utils.datasource.DataSource datasource = (org.openspcoop2.utils.datasource.DataSource) it.next();
-				if(datasource.size()>0){
-					datasource.releaseConnnections();
+			if(waitCloseConnection){
+				System.out.println("Forzo chiusura connessioni");
+				// forzo chiusura connessioni
+				list = mapUUIDtoDatasources.values();
+				it = list.iterator();
+				while (it.hasNext()) {
+					org.openspcoop2.utils.datasource.DataSource datasource = (org.openspcoop2.utils.datasource.DataSource) it.next();
+					if(datasource.size()>0){
+						datasource.releaseConnnections();
+					}
 				}
 			}
-		}
-		mapUUIDtoDatasources.clear();	
+			mapUUIDtoDatasources.clear();	
 		
-		if(gestoreRisorse!=null){
-			gestoreRisorse.unregisterMBeans();
+			if(gestoreRisorse!=null){
+				gestoreRisorse.unregisterMBeans();
+			}
 		}
 	}
 }

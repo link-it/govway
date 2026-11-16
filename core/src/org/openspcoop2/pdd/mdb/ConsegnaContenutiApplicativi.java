@@ -223,13 +223,20 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 	
 	/** Indicazione se sono state inizializzate le variabili del servizio */
 	public static boolean initializeService = false;
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
 
 	/**
 	 * Inizializzatore del servizio ConsegnaContenutiApplicativi
 	 * 
 	 * @throws Exception
 	 */
-	public static synchronized void initializeService(ClassNameProperties className,OpenSPCoop2Properties propertiesReader) {
+	public static void initializeService(ClassNameProperties className,OpenSPCoop2Properties propertiesReader) {
+		synchronized (INIT_LOCK) {
+			initializeServiceEngine(className, propertiesReader);
+		}
+	}
+	private static void initializeServiceEngine(ClassNameProperties className,OpenSPCoop2Properties propertiesReader) {
 
 		if(ConsegnaContenutiApplicativi.initializeService)
 			return;

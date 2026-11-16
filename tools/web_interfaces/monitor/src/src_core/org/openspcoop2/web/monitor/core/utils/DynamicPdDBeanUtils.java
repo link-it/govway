@@ -78,6 +78,8 @@ import org.slf4j.Logger;
  *
  */
 public class DynamicPdDBeanUtils implements Serializable {
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
 
 	/**
 	 * 
@@ -117,7 +119,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 	public static DynamicPdDBeanUtils getInstance(Logger log) {
 		if(DynamicPdDBeanUtils.instance == null) {
 			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
-			synchronized (DynamicPdDBeanUtils.class) {
+			synchronized (INIT_LOCK) {
 				init(log);
 			}
 		}
@@ -125,9 +127,11 @@ public class DynamicPdDBeanUtils implements Serializable {
 		return DynamicPdDBeanUtils.instance;
 	}
 
-	public static synchronized void init(Logger log) {
-		if(DynamicPdDBeanUtils.instance == null)
-			DynamicPdDBeanUtils.instance = new DynamicPdDBeanUtils(log);
+	public static void init(Logger log) {
+		synchronized (INIT_LOCK) {
+			if(DynamicPdDBeanUtils.instance == null)
+				DynamicPdDBeanUtils.instance = new DynamicPdDBeanUtils(log);
+		}
 	}
 
 	public DynamicPdDBeanUtils(Logger log) {

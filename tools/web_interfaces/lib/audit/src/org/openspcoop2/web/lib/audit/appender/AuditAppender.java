@@ -71,6 +71,8 @@ import org.openspcoop2.web.lib.audit.log.constants.Tipologia;
  * 
  */
 public class AuditAppender {
+	/** Lock privato per l'inizializzazione e l'aggiornamento della configurazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object LOCK = new Object();
 
 	private static final String AUDIT_DISABILITATO = "Audit engine disabilitato";
 	private static final String APPENDER_NON_FORNITI = "Appender non forniti";
@@ -85,42 +87,44 @@ public class AuditAppender {
 		initializeAuditEngine(configurazioneAuditing, idBuilder);
 	}
 	
-	private static synchronized void initializeAuditEngine(Configurazione configurazioneAuditing,
+	private static void initializeAuditEngine(Configurazione configurazioneAuditing,
 			IDBuilder idBuilder) throws AuditException{
+		synchronized (LOCK) {
 		
-		try{
+			try{
 		
-			AuditAppender.appenders.clear();	
+				AuditAppender.appenders.clear();	
 			
-			AuditAppender.configurazioneAuditing= configurazioneAuditing;
-			AuditAppender.idBuilder = idBuilder;
+				AuditAppender.configurazioneAuditing= configurazioneAuditing;
+				AuditAppender.idBuilder = idBuilder;
 			
-			for(int i=0; i<AuditAppender.configurazioneAuditing.sizeAppender(); i++){
+				for(int i=0; i<AuditAppender.configurazioneAuditing.sizeAppender(); i++){
 				
-				// Istanzio appender
-				Appender appenderConf = AuditAppender.configurazioneAuditing.getAppender(i);
-				Class<?> c = Class.forName(appenderConf.getClassName());
-				IAuditAppender appender = (IAuditAppender) ClassLoaderUtilities.newInstance(c);
+					// Istanzio appender
+					Appender appenderConf = AuditAppender.configurazioneAuditing.getAppender(i);
+					Class<?> c = Class.forName(appenderConf.getClassName());
+					IAuditAppender appender = (IAuditAppender) ClassLoaderUtilities.newInstance(c);
 				
-				// Inizializzo appender
-				Properties propertiesAppender = new Properties();
-				for(int j=0; j<appenderConf.sizeProperties(); j++){
-					propertiesAppender.put(appenderConf.getProperty(j).getName(), 
-							appenderConf.getProperty(j).getValue());
+					// Inizializzo appender
+					Properties propertiesAppender = new Properties();
+					for(int j=0; j<appenderConf.sizeProperties(); j++){
+						propertiesAppender.put(appenderConf.getProperty(j).getName(), 
+								appenderConf.getProperty(j).getValue());
+					}
+					appender.initAppender(appenderConf.getNome(),propertiesAppender);
+				
+					AuditAppender.appenders.put(appenderConf.getNome(),appender);
 				}
-				appender.initAppender(appenderConf.getNome(),propertiesAppender);
-				
-				AuditAppender.appenders.put(appenderConf.getNome(),appender);
-			}
 			
-		}catch(Exception e){
-			throw new AuditException("InizializzazioneFallita: "+e.getMessage(),e);
+			}catch(Exception e){
+				throw new AuditException("InizializzazioneFallita: "+e.getMessage(),e);
+			}
 		}
 	}
 	
 	public void updateConfigurazioneAuditing(Configurazione configurazioneAuditing) throws AuditException{
 		try{
-			synchronized(AuditAppender.configurazioneAuditing){
+			synchronized(LOCK){
 			
 				AuditAppender.configurazioneAuditing = configurazioneAuditing;
 				
@@ -523,8 +527,7 @@ public class AuditAppender {
 	}
 	
 	private Object byok(DriverBYOKUtilities byok, Object object) throws UtilsException {
-		if (object instanceof StatoWrapper) {
-			StatoWrapper wrapper = (StatoWrapper) object;
+		if (object instanceof StatoWrapper wrapper) {
 			if (wrapper.getObj() == null) {
 				return object;
 			}

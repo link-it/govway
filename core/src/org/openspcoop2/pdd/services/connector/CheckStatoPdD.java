@@ -112,7 +112,7 @@ public class CheckStatoPdD extends HttpServlet {
 		sendError(res, log, msg, 503);  // viene volutamente utilizzato il codice 503
 	}
 
-	@Override public void doGet(HttpServletRequest req, HttpServletResponse res)
+	@Override protected void doGet(HttpServletRequest req, HttpServletResponse res)
 	throws ServletException, IOException {
 				
 		Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();

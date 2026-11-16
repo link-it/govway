@@ -1899,7 +1899,7 @@ public class ServletTestService extends HttpServlet {
 	// La doGet viene implementata normalmente da chi la estende
 	
 	@Override
-	public void doPost(HttpServletRequest req, HttpServletResponse res)
+	protected void doPost(HttpServletRequest req, HttpServletResponse res)
 	throws ServletException, IOException {
 		doGet(req,res);
 	}

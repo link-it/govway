@@ -61,7 +61,7 @@ public class DAOConsolePropertiesFactory extends DAOFactoryProperties {
 	}
 	
 	@Override
-	public String getTipoAccessoDatabase(IProjectInfo tipoDAO) throws Exception {
+	protected String getTipoAccessoDatabase(IProjectInfo tipoDAO) throws Exception {
 		if(isDiag(tipoDAO)) {
 			return super.getTipoAccessoDatabase(tipoDAO);
 		}

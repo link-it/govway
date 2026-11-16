@@ -354,7 +354,7 @@ public class DB2QueryObject extends SQLQueryObjectCore {
 
 
 	@Override
-	public String createSQLDeleteEngine() throws SQLQueryObjectException {
+	protected String createSQLDeleteEngine() throws SQLQueryObjectException {
 
 		StringBuilder bf = new StringBuilder();
 
@@ -1164,7 +1164,7 @@ public class DB2QueryObject extends SQLQueryObjectCore {
 	}
 
 	@Override
-	public String createSQLUpdateEngine() throws SQLQueryObjectException {
+	protected String createSQLUpdateEngine() throws SQLQueryObjectException {
 		
 		StringBuilder bf = new StringBuilder();
 		bf.append("UPDATE ");
@@ -1191,7 +1191,7 @@ public class DB2QueryObject extends SQLQueryObjectCore {
 	/* ---------------- WHERE CONDITIONS ------------------ */
 
 	@Override
-	public String createSQLConditionsEngine() throws SQLQueryObjectException {
+	protected String createSQLConditionsEngine() throws SQLQueryObjectException {
 		
 		StringBuilder bf = new StringBuilder();
 		bf.append(getSQL(false,false,true,false));

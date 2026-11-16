@@ -29,21 +29,20 @@ import org.slf4j.Logger;
  * @version $Rev$, $Date$
  */
 public class RequestThreadContext {
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
 
 	private static Logger log = null;
-	public static synchronized void setLog(Logger log) {
-		if(RequestThreadContext.log==null) {
-			RequestThreadContext.log = log;
+	public static void setLog(Logger log) {
+		synchronized (INIT_LOCK) {
+			if(RequestThreadContext.log==null) {
+				RequestThreadContext.log = log;
+			}
 		}
 	}
 
-	private static final ThreadLocal<RequestThreadContext> transactionContext_threadLocal =  new ThreadLocal<RequestThreadContext>() {
-		 @Override
-		 protected RequestThreadContext initialValue() {
-			 String tName = Thread.currentThread().getName();
-			 return new RequestThreadContext(tName, log);
-		 }
-	};
+	private static final ThreadLocal<RequestThreadContext> transactionContext_threadLocal =
+			ThreadLocal.withInitial(() -> new RequestThreadContext(Thread.currentThread().getName(), log));
 	
 	public static RequestThreadContext getRequestThreadContext() {
 		return transactionContext_threadLocal.get();
@@ -57,11 +56,12 @@ public class RequestThreadContext {
 	public RequestThreadContext(String tName, Logger log) {
 		this.tName = tName;
 		if(log!=null) {
-			log.debug("ThreadLocal request context created for thread '"+tName+"'");
+			String msg = "ThreadLocal request context created for thread '"+tName+"'";
+			log.debug(msg);
 		}
 	}
 	
-	private String tName;
+	private final String tName;
 	
 	private RequestFruitore requestFruitoreTrasportoInfo;
 	private RequestFruitore requestFruitoreTokenInfo;

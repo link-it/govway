@@ -98,23 +98,27 @@ public class ConnettoreHTTPCOREConnectionManager {
 	static final ConnettoreHTTPCOREPoolRegistry poolRegistry = new ConnettoreHTTPCOREPoolRegistry(); // distinto da quello dei pool BIO
 	
 	private static ConnettoreHTTPCOREConnectionEvictor idleConnectionEvictor;
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
 		
-	public static synchronized void initialize() throws ConnettoreException {
-		try {
-			if(ConnettoreHTTPCOREConnectionManager.idleConnectionEvictor==null) {
-				OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
-				Integer closeIdleConnectionsAfterSeconds = op2Properties.getNIOConfigAsyncClientCloseIdleConnectionsAfterSeconds();
-				boolean idleConnectionEvictorEnabled = (closeIdleConnectionsAfterSeconds!=null && closeIdleConnectionsAfterSeconds>0);
-				if(idleConnectionEvictorEnabled) {
-					int sleepTimeSeconds = op2Properties.getNIOConfigAsyncClientCloseIdleConnectionsCheckIntervalSeconds();
-					boolean debug = op2Properties.isNIOConfigAsyncClientCloseIdleConnectionsDebug();
-					ConnettoreHTTPCOREConnectionManager.idleConnectionEvictor = 
-							new ConnettoreHTTPCOREConnectionEvictor(debug, sleepTimeSeconds, closeIdleConnectionsAfterSeconds);
-					idleConnectionEvictor.start();
+	public static void initialize() throws ConnettoreException {
+		synchronized (INIT_LOCK) {
+			try {
+				if(ConnettoreHTTPCOREConnectionManager.idleConnectionEvictor==null) {
+					OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
+					Integer closeIdleConnectionsAfterSeconds = op2Properties.getNIOConfigAsyncClientCloseIdleConnectionsAfterSeconds();
+					boolean idleConnectionEvictorEnabled = (closeIdleConnectionsAfterSeconds!=null && closeIdleConnectionsAfterSeconds>0);
+					if(idleConnectionEvictorEnabled) {
+						int sleepTimeSeconds = op2Properties.getNIOConfigAsyncClientCloseIdleConnectionsCheckIntervalSeconds();
+						boolean debug = op2Properties.isNIOConfigAsyncClientCloseIdleConnectionsDebug();
+						ConnettoreHTTPCOREConnectionManager.idleConnectionEvictor = 
+								new ConnettoreHTTPCOREConnectionEvictor(debug, sleepTimeSeconds, closeIdleConnectionsAfterSeconds);
+						idleConnectionEvictor.start();
+					}
 				}
+			}catch(Exception t) {
+				throw new ConnettoreException(t.getMessage(),t);
 			}
-		}catch(Exception t) {
-			throw new ConnettoreException(t.getMessage(),t);
 		}
 	}
 	
@@ -329,43 +333,47 @@ public class ConnettoreHTTPCOREConnectionManager {
 	}
 	
 	
-	public static synchronized void stop() throws ConnettoreException {
+	public static void stop() throws ConnettoreException {
+		synchronized (INIT_LOCK) {
 			
-		List<Throwable> listT = new ArrayList<>();
+			List<Throwable> listT = new ArrayList<>();
 		
-		// Shut down the evictor thread
-		if(ConnettoreHTTPCOREConnectionManager.idleConnectionEvictor!=null) {
-			try {			
-				ConnettoreHTTPCOREConnectionManager.idleConnectionEvictor.setStop(true);
-				idleConnectionEvictor.waitShutdown();
-			}catch(Exception t) {
-				listT.add(t);
-			}	
+			// Shut down the evictor thread
+			if(ConnettoreHTTPCOREConnectionManager.idleConnectionEvictor!=null) {
+				try {			
+					ConnettoreHTTPCOREConnectionManager.idleConnectionEvictor.setStop(true);
+					idleConnectionEvictor.waitShutdown();
+				}catch(Exception t) {
+					listT.add(t);
+				}	
+			}
+		
+			// close client
+			stopClients(listT);
+		
+			// Shut down connManager
+			stopConnectionManager(listT);
+		
+			// gestione eccezione
+			throwExceptions(listT);
+		
 		}
-		
-		// close client
-		stopClients(listT);
-		
-		// Shut down connManager
-		stopConnectionManager(listT);
-		
-		// gestione eccezione
-		throwExceptions(listT);
-		
 	}
-	public static synchronized void restartConnectionManager() throws ConnettoreException {
+	public static void restartConnectionManager() throws ConnettoreException {
+		synchronized (INIT_LOCK) {
 		
-		List<Throwable> listT = new ArrayList<>();
+			List<Throwable> listT = new ArrayList<>();
 		
-		// close client
-		stopClients(listT);
+			// close client
+			stopClients(listT);
 		
-		// Shut down connManager
-		stopConnectionManager(listT);
+			// Shut down connManager
+			stopConnectionManager(listT);
 		
-		// gestione eccezione
-		throwExceptions(listT);
+			// gestione eccezione
+			throwExceptions(listT);
 		
+		}
 	}
 	private static void throwExceptions(List<Throwable> listT) throws ConnettoreException {
 		if(listT!=null && !listT.isEmpty()) {

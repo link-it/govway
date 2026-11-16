@@ -50,27 +50,35 @@ public class DBConsegneMessageBoxManager implements IMonitoraggioRisorsa {
 
 	
 	private static DBConsegneMessageBoxManager staticInstanceDBRuntimeManager;
-	public static synchronized void initRuntime(DBManager dbManagerRuntimePdD,Logger alog,String tipoDatabase) throws Exception {
-		if(staticInstanceDBRuntimeManager==null) {
-			staticInstanceDBRuntimeManager = new DBConsegneMessageBoxManager(dbManagerRuntimePdD, alog, tipoDatabase);
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
+	public static void initRuntime(DBManager dbManagerRuntimePdD,Logger alog,String tipoDatabase) throws Exception {
+		synchronized (INIT_LOCK) {
+			if(staticInstanceDBRuntimeManager==null) {
+				staticInstanceDBRuntimeManager = new DBConsegneMessageBoxManager(dbManagerRuntimePdD, alog, tipoDatabase);
+			}
 		}
 	}
-	public static synchronized void initRuntime(DBConsegnePreseInCaricoManager dbConsegnePreseInCaricoManager,Logger alog,String tipoDatabase) throws Exception {
-		if(staticInstanceDBRuntimeManager==null) {
-			staticInstanceDBRuntimeManager = new DBConsegneMessageBoxManager(dbConsegnePreseInCaricoManager, alog, tipoDatabase,false);
+	public static void initRuntime(DBConsegnePreseInCaricoManager dbConsegnePreseInCaricoManager,Logger alog,String tipoDatabase) throws Exception {
+		synchronized (INIT_LOCK) {
+			if(staticInstanceDBRuntimeManager==null) {
+				staticInstanceDBRuntimeManager = new DBConsegneMessageBoxManager(dbConsegnePreseInCaricoManager, alog, tipoDatabase,false);
+			}
 		}
 	}
-	public static synchronized void initRuntime(String nomeDataSource, java.util.Properties context,Logger alog,String tipoDatabase, 
+	public static void initRuntime(String nomeDataSource, java.util.Properties context,Logger alog,String tipoDatabase, 
 			boolean useOp2UtilsDatasource, boolean bindJMX) throws Exception {
-		if(staticInstanceDBRuntimeManager==null) {
-			staticInstanceDBRuntimeManager = new DBConsegneMessageBoxManager(nomeDataSource, context, alog, tipoDatabase, useOp2UtilsDatasource, bindJMX,
-					false);
+		synchronized (INIT_LOCK) {
+			if(staticInstanceDBRuntimeManager==null) {
+				staticInstanceDBRuntimeManager = new DBConsegneMessageBoxManager(nomeDataSource, context, alog, tipoDatabase, useOp2UtilsDatasource, bindJMX,
+						false);
+			}
 		}
 	}
 	public static DBConsegneMessageBoxManager getInstanceRuntime() {
 		// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
 		if (staticInstanceDBRuntimeManager == null) {
-	        synchronized (DBConsegneMessageBoxManager.class) {
+	        synchronized (INIT_LOCK) {
 	            if (staticInstanceDBRuntimeManager == null) {
 	                return null;
 	            }
@@ -81,27 +89,33 @@ public class DBConsegneMessageBoxManager implements IMonitoraggioRisorsa {
 	
 	
 	private static DBConsegneMessageBoxManager staticInstanceDBTransazioniManager;
-	public static synchronized void initTransazioni(DBTransazioniManager dbManagerTransazioni,Logger alog,String tipoDatabase) throws Exception {
-		if(staticInstanceDBTransazioniManager==null) {
-			staticInstanceDBTransazioniManager = new DBConsegneMessageBoxManager(dbManagerTransazioni, alog, tipoDatabase);
+	public static void initTransazioni(DBTransazioniManager dbManagerTransazioni,Logger alog,String tipoDatabase) throws Exception {
+		synchronized (INIT_LOCK) {
+			if(staticInstanceDBTransazioniManager==null) {
+				staticInstanceDBTransazioniManager = new DBConsegneMessageBoxManager(dbManagerTransazioni, alog, tipoDatabase);
+			}
 		}
 	}
-	public static synchronized void initTransazioni(DBConsegnePreseInCaricoManager dbConsegnePreseInCaricoManager,Logger alog,String tipoDatabase) throws Exception {
-		if(staticInstanceDBTransazioniManager==null) {
-			staticInstanceDBTransazioniManager = new DBConsegneMessageBoxManager(dbConsegnePreseInCaricoManager, alog, tipoDatabase, true);
+	public static void initTransazioni(DBConsegnePreseInCaricoManager dbConsegnePreseInCaricoManager,Logger alog,String tipoDatabase) throws Exception {
+		synchronized (INIT_LOCK) {
+			if(staticInstanceDBTransazioniManager==null) {
+				staticInstanceDBTransazioniManager = new DBConsegneMessageBoxManager(dbConsegnePreseInCaricoManager, alog, tipoDatabase, true);
+			}
 		}
 	}
-	public static synchronized void initTransazioni(String nomeDataSource, java.util.Properties context,Logger alog,String tipoDatabase, 
+	public static void initTransazioni(String nomeDataSource, java.util.Properties context,Logger alog,String tipoDatabase, 
 			boolean useOp2UtilsDatasource, boolean bindJMX) throws Exception {
-		if(staticInstanceDBTransazioniManager==null) {
-			staticInstanceDBTransazioniManager = new DBConsegneMessageBoxManager(nomeDataSource, context, alog, tipoDatabase, useOp2UtilsDatasource, bindJMX,
-					true);
+		synchronized (INIT_LOCK) {
+			if(staticInstanceDBTransazioniManager==null) {
+				staticInstanceDBTransazioniManager = new DBConsegneMessageBoxManager(nomeDataSource, context, alog, tipoDatabase, useOp2UtilsDatasource, bindJMX,
+						true);
+			}
 		}
 	}
 	public static DBConsegneMessageBoxManager getInstanceTransazioni() {
 		// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
 		if (staticInstanceDBTransazioniManager == null) {
-	        synchronized (DBConsegneMessageBoxManager.class) {
+	        synchronized (INIT_LOCK) {
 	            if (staticInstanceDBTransazioniManager == null) {
 	                return null;
 	            }

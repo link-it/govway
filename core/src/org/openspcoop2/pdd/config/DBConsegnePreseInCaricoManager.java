@@ -49,22 +49,28 @@ import org.slf4j.Logger;
 public class DBConsegnePreseInCaricoManager implements IMonitoraggioRisorsa {
 
 	private static DBConsegnePreseInCaricoManager staticInstanceDBSmistatoreManager;
-	public static synchronized void initSmistatore(DBManager dbManagerRuntimePdD,Logger alog,String tipoDatabase) throws Exception {
-		if(staticInstanceDBSmistatoreManager==null) {
-			staticInstanceDBSmistatoreManager = new DBConsegnePreseInCaricoManager(dbManagerRuntimePdD, alog, tipoDatabase,true);
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
+	public static void initSmistatore(DBManager dbManagerRuntimePdD,Logger alog,String tipoDatabase) throws Exception {
+		synchronized (INIT_LOCK) {
+			if(staticInstanceDBSmistatoreManager==null) {
+				staticInstanceDBSmistatoreManager = new DBConsegnePreseInCaricoManager(dbManagerRuntimePdD, alog, tipoDatabase,true);
+			}
 		}
 	}
-	public static synchronized void initSmistatore(String nomeDataSource, java.util.Properties context,Logger alog,String tipoDatabase, 
+	public static void initSmistatore(String nomeDataSource, java.util.Properties context,Logger alog,String tipoDatabase, 
 			boolean useOp2UtilsDatasource, boolean bindJMX) throws Exception {
-		if(staticInstanceDBSmistatoreManager==null) {
-			staticInstanceDBSmistatoreManager = new DBConsegnePreseInCaricoManager(nomeDataSource, context, alog, tipoDatabase, useOp2UtilsDatasource, bindJMX,
-					true, false);
+		synchronized (INIT_LOCK) {
+			if(staticInstanceDBSmistatoreManager==null) {
+				staticInstanceDBSmistatoreManager = new DBConsegnePreseInCaricoManager(nomeDataSource, context, alog, tipoDatabase, useOp2UtilsDatasource, bindJMX,
+						true, false);
+			}
 		}
 	}
 	public static DBConsegnePreseInCaricoManager getInstanceSmistatore() {
 		// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
 		if (staticInstanceDBSmistatoreManager == null) {
-	        synchronized (DBConsegnePreseInCaricoManager.class) {
+	        synchronized (INIT_LOCK) {
 	            if (staticInstanceDBSmistatoreManager == null) {
 	                return null;
 	            }
@@ -75,22 +81,26 @@ public class DBConsegnePreseInCaricoManager implements IMonitoraggioRisorsa {
 	
 	
 	private static DBConsegnePreseInCaricoManager staticInstanceDBRuntimeManager;
-	public static synchronized void initRuntime(DBManager dbManagerRuntimePdD,Logger alog,String tipoDatabase) throws Exception {
-		if(staticInstanceDBRuntimeManager==null) {
-			staticInstanceDBRuntimeManager = new DBConsegnePreseInCaricoManager(dbManagerRuntimePdD, alog, tipoDatabase,false);
+	public static void initRuntime(DBManager dbManagerRuntimePdD,Logger alog,String tipoDatabase) throws Exception {
+		synchronized (INIT_LOCK) {
+			if(staticInstanceDBRuntimeManager==null) {
+				staticInstanceDBRuntimeManager = new DBConsegnePreseInCaricoManager(dbManagerRuntimePdD, alog, tipoDatabase,false);
+			}
 		}
 	}
-	public static synchronized void initRuntime(String nomeDataSource, java.util.Properties context,Logger alog,String tipoDatabase, 
+	public static void initRuntime(String nomeDataSource, java.util.Properties context,Logger alog,String tipoDatabase, 
 			boolean useOp2UtilsDatasource, boolean bindJMX) throws Exception {
-		if(staticInstanceDBRuntimeManager==null) {
-			staticInstanceDBRuntimeManager = new DBConsegnePreseInCaricoManager(nomeDataSource, context, alog, tipoDatabase, useOp2UtilsDatasource, bindJMX,
-					false, false);
+		synchronized (INIT_LOCK) {
+			if(staticInstanceDBRuntimeManager==null) {
+				staticInstanceDBRuntimeManager = new DBConsegnePreseInCaricoManager(nomeDataSource, context, alog, tipoDatabase, useOp2UtilsDatasource, bindJMX,
+						false, false);
+			}
 		}
 	}
 	public static DBConsegnePreseInCaricoManager getInstanceRuntime() {
 		// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
 		if (staticInstanceDBRuntimeManager == null) {
-	        synchronized (DBConsegnePreseInCaricoManager.class) {
+	        synchronized (INIT_LOCK) {
 	            if (staticInstanceDBRuntimeManager == null) {
 	                return null;
 	            }
@@ -101,22 +111,26 @@ public class DBConsegnePreseInCaricoManager implements IMonitoraggioRisorsa {
 	
 	
 	private static DBConsegnePreseInCaricoManager staticInstanceDBTransazioniManager;
-	public static synchronized void initTransazioni(DBTransazioniManager dbManagerTransazioni,Logger alog,String tipoDatabase) throws Exception {
-		if(staticInstanceDBTransazioniManager==null) {
-			staticInstanceDBTransazioniManager = new DBConsegnePreseInCaricoManager(dbManagerTransazioni, alog, tipoDatabase);
+	public static void initTransazioni(DBTransazioniManager dbManagerTransazioni,Logger alog,String tipoDatabase) throws Exception {
+		synchronized (INIT_LOCK) {
+			if(staticInstanceDBTransazioniManager==null) {
+				staticInstanceDBTransazioniManager = new DBConsegnePreseInCaricoManager(dbManagerTransazioni, alog, tipoDatabase);
+			}
 		}
 	}
-	public static synchronized void initTransazioni(String nomeDataSource, java.util.Properties context,Logger alog,String tipoDatabase, 
+	public static void initTransazioni(String nomeDataSource, java.util.Properties context,Logger alog,String tipoDatabase, 
 			boolean useOp2UtilsDatasource, boolean bindJMX) throws Exception {
-		if(staticInstanceDBTransazioniManager==null) {
-			staticInstanceDBTransazioniManager = new DBConsegnePreseInCaricoManager(nomeDataSource, context, alog, tipoDatabase, useOp2UtilsDatasource, bindJMX,
-					false, true);
+		synchronized (INIT_LOCK) {
+			if(staticInstanceDBTransazioniManager==null) {
+				staticInstanceDBTransazioniManager = new DBConsegnePreseInCaricoManager(nomeDataSource, context, alog, tipoDatabase, useOp2UtilsDatasource, bindJMX,
+						false, true);
+			}
 		}
 	}
 	public static DBConsegnePreseInCaricoManager getInstanceTransazioni() {
 		// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
 		if (staticInstanceDBTransazioniManager == null) {
-	        synchronized (DBConsegnePreseInCaricoManager.class) {
+	        synchronized (INIT_LOCK) {
 	            if (staticInstanceDBTransazioniManager == null) {
 	                return null;
 	            }

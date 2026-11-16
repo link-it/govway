@@ -118,7 +118,7 @@ public abstract class ConnettoreExtBaseHTTP extends ConnettoreBaseHTTP {
 	}
 
 	@Override
-	public boolean send(ConnettoreMsg request) {
+	protected boolean send(ConnettoreMsg request) {
 
 		// HTTPS
 		try{

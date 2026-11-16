@@ -51,7 +51,7 @@ import org.openspcoop2.web.lib.mvc.Parameter;
 public final class ConfigurazioneListExtendedChange extends AbstractServletListExtendedChange {
 	
 	@Override
-	public void addToHiddenDati(List<DataElement> dati,ConsoleHelper consoleHelper) throws ExtendedException{
+	protected void addToHiddenDati(List<DataElement> dati,ConsoleHelper consoleHelper) throws ExtendedException{
 		// NOP
 	}
 	

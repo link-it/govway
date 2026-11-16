@@ -50,6 +50,8 @@ import org.slf4j.Logger;
  *
  */
 public class MonitorCoreAuditManager {
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
 
 	private static final String AUDIT_LOG4J2_PROPERTIES_MONITOR = "monitor.audit.log4j2.properties";
 	private static final String AUDIT_LOG4J2_LOCAL_PROPERTIES_MONITOR = "monitor_local.audit.log4j2.properties";
@@ -69,48 +71,50 @@ public class MonitorCoreAuditManager {
 		}
 	}
 
-	public static synchronized void initializeAuditManager() throws MonitorCoreAuditException {
-		SemaphoreLock lock = semaphoreAuditLock.acquireThrowRuntime("initializeAuditManager");
-		try {
-			if(auditManager==null){
-				auditManager = new AuditAppender();
+	public static void initializeAuditManager() throws MonitorCoreAuditException {
+		synchronized (INIT_LOCK) {
+			SemaphoreLock lock = semaphoreAuditLock.acquireThrowRuntime("initializeAuditManager");
+			try {
+				if(auditManager==null){
+					auditManager = new AuditAppender();
 
-				Configurazione configurazioneAuditing = null;
-				try{
-					Logger sqlLogger = LoggerManager.getPddMonitorSqlLogger();
-					DAOFactoryProperties daoFactoryProperties = DAOFactoryProperties.getInstance(sqlLogger);
-					String tipoDatabase = daoFactoryProperties.getTipoDatabase(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
-					String datasourceJNDIName = daoFactoryProperties.getDatasourceJNDIName(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
-					Properties datasourceJNDIContext = daoFactoryProperties.getDatasourceJNDIContext(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
-
-					DriverConfigurazioneDB driverConfigDB = new DriverConfigurazioneDB(datasourceJNDIName, datasourceJNDIContext, sqlLogger, tipoDatabase);
-
-					Connection con = null;
+					Configurazione configurazioneAuditing = null;
 					try{
-						con = driverConfigDB.getConnection("initializeAuditManager");
-						if (con == null)
-							throw new MonitorCoreAuditException("Connessione non disponibile");
+						Logger sqlLogger = LoggerManager.getPddMonitorSqlLogger();
+						DAOFactoryProperties daoFactoryProperties = DAOFactoryProperties.getInstance(sqlLogger);
+						String tipoDatabase = daoFactoryProperties.getTipoDatabase(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
+						String datasourceJNDIName = daoFactoryProperties.getDatasourceJNDIName(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
+						Properties datasourceJNDIContext = daoFactoryProperties.getDatasourceJNDIContext(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
 
-						DriverAudit driverAudit = new DriverAudit(con, tipoDatabase);
-						configurazioneAuditing = driverAudit.getConfigurazione();
-						checkAuditDBAppender(configurazioneAuditing, datasourceJNDIName, datasourceJNDIContext, tipoDatabase);
-						checkAuditLog4jAppender(configurazioneAuditing);
+						DriverConfigurazioneDB driverConfigDB = new DriverConfigurazioneDB(datasourceJNDIName, datasourceJNDIContext, sqlLogger, tipoDatabase);
 
-					}finally{
-						driverConfigDB.releaseConnection("initializeAuditManager", con);
+						Connection con = null;
+						try{
+							con = driverConfigDB.getConnection("initializeAuditManager");
+							if (con == null)
+								throw new MonitorCoreAuditException("Connessione non disponibile");
+
+							DriverAudit driverAudit = new DriverAudit(con, tipoDatabase);
+							configurazioneAuditing = driverAudit.getConfigurazione();
+							checkAuditDBAppender(configurazioneAuditing, datasourceJNDIName, datasourceJNDIContext, tipoDatabase);
+							checkAuditLog4jAppender(configurazioneAuditing);
+
+						}finally{
+							driverConfigDB.releaseConnection("initializeAuditManager", con);
+						}
+					}catch(Exception e){
+						throw new MonitorCoreAuditException("Inizializzazione auditManager non riuscita (LetturaConfigurazione): "+e.getMessage(),e);
 					}
-				}catch(Exception e){
-					throw new MonitorCoreAuditException("Inizializzazione auditManager non riuscita (LetturaConfigurazione): "+e.getMessage(),e);
-				}
 
-				try{
-					auditManager.initializeAudit(configurazioneAuditing, IDBuilder.getIDBuilder());
-				}catch(Exception e){
-					throw new MonitorCoreAuditException("Inizializzazione auditManager non riuscita: "+e.getMessage(),e);
+					try{
+						auditManager.initializeAudit(configurazioneAuditing, IDBuilder.getIDBuilder());
+					}catch(Exception e){
+						throw new MonitorCoreAuditException("Inizializzazione auditManager non riuscita: "+e.getMessage(),e);
+					}
 				}
+			}finally {
+				semaphoreAuditLock.release(lock, "initializeAuditManager");
 			}
-		}finally {
-			semaphoreAuditLock.release(lock, "initializeAuditManager");
 		}
 	}
 

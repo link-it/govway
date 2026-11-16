@@ -42,13 +42,17 @@ import org.openspcoop2.utils.jdbc.JDBCUtilities;
  * @version $Rev$, $Date$
  */
 public class IDSerialGenerator {
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
 
 	// ** STATIC INIT *** //
 
 	private static DataSource datasourcePdD = null;
-	public static synchronized void init(DataSource ds){
-		if(IDSerialGenerator.datasourcePdD==null){
-			IDSerialGenerator.datasourcePdD = ds;
+	public static void init(DataSource ds){
+		synchronized (INIT_LOCK) {
+			if(IDSerialGenerator.datasourcePdD==null){
+				IDSerialGenerator.datasourcePdD = ds;
+			}
 		}
 	}
 	/**	public static DataSource getDatasourcePdD() {
@@ -93,9 +97,9 @@ public class IDSerialGenerator {
 
 
 
-	private IState state;
-	private Logger log;
-	private TipiDatabase tipoDatabase;
+	private final IState state;
+	private final Logger log;
+	private final TipiDatabase tipoDatabase;
 	public IDSerialGenerator(Logger log, IState state, TipiDatabase tipoDatabase){
 		this.log = log;
 		this.state = state;
@@ -118,12 +122,10 @@ public class IDSerialGenerator {
 		Connection conDB = null;
 		boolean conDBFromDatasource = false;
 		try{
-			if(this.state instanceof StateMessage){
-				StateMessage stateMsg = (StateMessage) this.state;
-				if(stateMsg.getConnectionDB()!=null && !stateMsg.getConnectionDB().isClosed()){
-					/**System.out.println("PRESA DALLO STATO");*/
-					conDB = stateMsg.getConnectionDB();
-				}
+			if(this.state instanceof StateMessage stateMsg &&
+				stateMsg.getConnectionDB()!=null && !stateMsg.getConnectionDB().isClosed()){
+				/**System.out.println("PRESA DALLO STATO");*/
+				conDB = stateMsg.getConnectionDB();
 			}
 			if(conDB==null){
 				/**System.out.println("PRESA DAL DATASOURCE");*/

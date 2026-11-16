@@ -23,8 +23,8 @@ package org.openspcoop2.pdd.core.handlers;
 
 import java.security.SecureRandom;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 
@@ -39,19 +39,23 @@ import org.slf4j.Logger;
 public class GeneratoreCasualeDate {
 
 	private static GeneratoreCasualeDate generatore = null;
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
 	private static long sogliaMsMin = 1; 
 	private static long sogliaMsMax = 20;
 
-	public static synchronized void init(Date intervalloInizio,Date intervalloFine,Logger log){
-		if(GeneratoreCasualeDate.generatore==null){
-			GeneratoreCasualeDate.generatore = new GeneratoreCasualeDate(intervalloInizio,intervalloFine,log);
+	public static void init(Date intervalloInizio,Date intervalloFine,Logger log){
+		synchronized (INIT_LOCK) {
+			if(GeneratoreCasualeDate.generatore==null){
+				GeneratoreCasualeDate.generatore = new GeneratoreCasualeDate(intervalloInizio,intervalloFine,log);
+			}
 		}
 	}
 
 	public static GeneratoreCasualeDate getGeneratoreCasualeDate(){
 		// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
 		if (GeneratoreCasualeDate.generatore == null) {
-	        synchronized (GeneratoreCasualeDate.class) {
+	        synchronized (INIT_LOCK) {
 	            if (GeneratoreCasualeDate.generatore == null) {
 	                return null;
 	            }
@@ -61,9 +65,11 @@ public class GeneratoreCasualeDate {
 	}
 	
 	private static java.util.Random randomEngine = null;
-	private static synchronized void initRandom() {
-		if(randomEngine==null) {
-			randomEngine = new SecureRandom();
+	private static void initRandom() {
+		synchronized (INIT_LOCK) {
+			if(randomEngine==null) {
+				randomEngine = new SecureRandom();
+			}
 		}
 	}
 	public static java.util.Random getRandom() {
@@ -90,12 +96,12 @@ public class GeneratoreCasualeDate {
 		log.info(msg);
 	}
 	
-	private Map<String, Date>  dateGenerate = new HashMap<>();
+	private Map<String, Date>  dateGenerate = new ConcurrentHashMap<>();
 	
 	private Date getNextDate(String idCluster){
 		Date nextDate = null;
-		if(this.dateGenerate.containsKey(idCluster)){
-			Date data = this.dateGenerate.remove(idCluster);
+		Date data = this.dateGenerate.remove(idCluster);
+		if(data!=null){
 			nextDate = new Date(data.getTime()+GeneratoreCasualeDate.getRandom(GeneratoreCasualeDate.sogliaMsMin, GeneratoreCasualeDate.sogliaMsMax));
 		}
 		else{

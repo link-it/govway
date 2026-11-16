@@ -129,7 +129,7 @@ public class Proxy extends HttpServlet {
 		Proxy.saveContextOnlyOperation = saveContextOnlyOperation;
 	}
 	
-	@Override public void doGet(HttpServletRequest req, HttpServletResponse res)
+	@Override protected void doGet(HttpServletRequest req, HttpServletResponse res)
 	throws ServletException, IOException {
 		
 		Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopProxy();

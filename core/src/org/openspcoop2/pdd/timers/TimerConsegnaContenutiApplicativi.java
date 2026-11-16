@@ -224,7 +224,7 @@ public class TimerConsegnaContenutiApplicativi implements IGestoreCodaRunnableIn
 		List<Runnable> returnNull = null;
 		
 		// Controllo che il sistema non sia andando in shutdown
-		if(OpenSPCoop2Startup.contextDestroyed){
+		if(OpenSPCoop2Startup.contextDestroyedState){
 			this.logError("Rilevato sistema in shutdown");
 			return returnNull;
 		}

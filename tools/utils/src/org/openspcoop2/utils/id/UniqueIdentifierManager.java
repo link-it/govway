@@ -34,6 +34,8 @@ import org.openspcoop2.utils.resources.Loader;
  * @version $Rev$, $Date$
  */
 public class UniqueIdentifierManager {
+	/** Lock privato per l'inizializzazione (evita di esporre il monitor della classe: SEI CERT LCK00-J) */
+	private static final Object INIT_LOCK = new Object();
 
 	/** Istanza per creare gli id */
 	private static boolean useThreadLocal = false;
@@ -79,36 +81,40 @@ public class UniqueIdentifierManager {
 		return false;
 	}
 	
-	public static synchronized void inizializzaUniqueIdentifierManager(boolean useThreadLocal, String className,Object ... o)throws UniqueIdentifierException{
-		inizializzaUniqueIdentifierManager(false, useThreadLocal, className, o);
-	}
-	public static synchronized void inizializzaUniqueIdentifierManager(boolean forceInitManager, boolean useThreadLocal, String className,Object ... o)throws UniqueIdentifierException{
-		UniqueIdentifierManager.useThreadLocal = useThreadLocal;
-		if(useThreadLocal) {
-			if(UniqueIdentifierManager.className_threadLocal==null || forceInitManager){
-				UniqueIdentifierManager.className_threadLocal=className;
-				UniqueIdentifierManager.args_threadLocal=o;
-				
-				try{
-            		IUniqueIdentifierGenerator uniqueIdentifierGenerator = (IUniqueIdentifierGenerator) Loader.getInstance().newInstance(className);
-            		UniqueIdentifierManager.bufferSupported_staticInstance = uniqueIdentifierGenerator.isBufferSupperted();
-    			}catch(Exception e){
-    				throw new RuntimeException("Riscontrato errore durante il caricamento del manager specificato [class:"+className_threadLocal+"]: "+e.getMessage(),e);
-    			}
-			}
+	public static void inizializzaUniqueIdentifierManager(boolean useThreadLocal, String className,Object ... o)throws UniqueIdentifierException{
+		synchronized (INIT_LOCK) {
+			inizializzaUniqueIdentifierManager(false, useThreadLocal, className, o);
 		}
-		else {
-			if(UniqueIdentifierManager.uniqueIdentifierGenerator_staticInstance==null || forceInitManager){
-				try{
-					UniqueIdentifierManager.uniqueIdentifierGenerator_staticInstance = (IUniqueIdentifierGenerator) Loader.getInstance().newInstance(className);
-					UniqueIdentifierManager.uniqueIdentifierGenerator_staticInstance.init(o);
-					UniqueIdentifierManager.bufferSupported_staticInstance = UniqueIdentifierManager.uniqueIdentifierGenerator_staticInstance.isBufferSupperted();
-				}catch(Exception e){
-					throw new UniqueIdentifierException("Riscontrato errore durante il caricamento del manager specificato [class:"+className+"]: "+e.getMessage(),e);
+	}
+	public static void inizializzaUniqueIdentifierManager(boolean forceInitManager, boolean useThreadLocal, String className,Object ... o)throws UniqueIdentifierException{
+		synchronized (INIT_LOCK) {
+			UniqueIdentifierManager.useThreadLocal = useThreadLocal;
+			if(useThreadLocal) {
+				if(UniqueIdentifierManager.className_threadLocal==null || forceInitManager){
+					UniqueIdentifierManager.className_threadLocal=className;
+					UniqueIdentifierManager.args_threadLocal=o;
+				
+					try{
+	            		IUniqueIdentifierGenerator uniqueIdentifierGenerator = (IUniqueIdentifierGenerator) Loader.getInstance().newInstance(className);
+	            		UniqueIdentifierManager.bufferSupported_staticInstance = uniqueIdentifierGenerator.isBufferSupperted();
+	    			}catch(Exception e){
+	    				throw new RuntimeException("Riscontrato errore durante il caricamento del manager specificato [class:"+className_threadLocal+"]: "+e.getMessage(),e);
+	    			}
 				}
 			}
-		}
+			else {
+				if(UniqueIdentifierManager.uniqueIdentifierGenerator_staticInstance==null || forceInitManager){
+					try{
+						UniqueIdentifierManager.uniqueIdentifierGenerator_staticInstance = (IUniqueIdentifierGenerator) Loader.getInstance().newInstance(className);
+						UniqueIdentifierManager.uniqueIdentifierGenerator_staticInstance.init(o);
+						UniqueIdentifierManager.bufferSupported_staticInstance = UniqueIdentifierManager.uniqueIdentifierGenerator_staticInstance.isBufferSupperted();
+					}catch(Exception e){
+						throw new UniqueIdentifierException("Riscontrato errore durante il caricamento del manager specificato [class:"+className+"]: "+e.getMessage(),e);
+					}
+				}
+			}
 		
+		}
 	}
 	
 	public static boolean isBufferSupported() {
