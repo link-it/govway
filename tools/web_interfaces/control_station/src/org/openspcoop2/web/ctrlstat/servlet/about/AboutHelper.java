@@ -155,6 +155,10 @@ public class AboutHelper extends ConsoleHelper {
 			de.setValue(AboutCostanti.LICENSE);
 			de.setRows(11);
 		}
+		// il testo della licenza GPL e' in inglese, in una pagina in italiano (WCAG 3.1.2)
+		if(AboutCostanti.LICENSE.equals(de.getValue())) {
+			de.setLang("en");
+		}
 		dati.add(de);
 		
 		if(versionInfo!=null) {

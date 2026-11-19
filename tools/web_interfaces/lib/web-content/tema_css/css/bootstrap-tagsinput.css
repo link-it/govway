@@ -45,6 +45,11 @@
   border: none;
   box-shadow: none;
 }
+/* Il campo di scrittura interno non ha bordo ne' outline: il focus lo segnala il riquadro,
+   con lo stesso bordo degli altri campi (WCAG 2.4.7). */
+.bootstrap-tagsinput:focus-within {
+  border-color: ${input.focus.border.color};
+}
 .bootstrap-tagsinput .tag, 
 .titoloTags .tag {
   margin-right: 2px;

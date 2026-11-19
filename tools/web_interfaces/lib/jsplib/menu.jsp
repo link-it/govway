@@ -45,6 +45,45 @@ String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CS
 %>
 
 <td class="td1PageBody" valign='top' role="navigation" aria-label="<%= Costanti.LABEL_ARIA_MENU_PRINCIPALE %>">
+	<%-- Reflow (WCAG 1.4.10): sotto i 71em (soglia uguale a quella di linkit-base.css) il menu va sopra il contenuto e parte chiuso; questo
+	     pulsante lo apre e lo chiude. Sopra la soglia e' nascosto dal CSS e il menu resta sempre
+	     visibile (la classe gw-menu-chiuso ha effetto solo dentro la media query). --%>
+	<button type="button" id="gw-menu-toggle" class="gw-menu-toggle" aria-expanded="true" aria-controls="menuct">
+		<span class="material-icons" aria-hidden="true">menu</span><span>Menu</span>
+	</button>
+	<script type="text/javascript" nonce="<%= randomNonce %>">
+		(function() {
+			var stretto = window.matchMedia ? window.matchMedia('(max-width: 71em)') : null;
+			var imposta = function(aperto) {
+				var bottone = document.getElementById('gw-menu-toggle');
+				var menu = document.getElementById('menuct');
+				if (!bottone || !menu) return;
+				bottone.setAttribute('aria-expanded', aperto ? 'true' : 'false');
+				if (aperto) menu.classList.remove('gw-menu-chiuso'); else menu.classList.add('gw-menu-chiuso');
+			};
+			var avvia = function() {
+				var bottone = document.getElementById('gw-menu-toggle');
+				if (!bottone) return;
+				bottone.addEventListener('click', function() {
+					imposta(bottone.getAttribute('aria-expanded') !== 'true');
+				});
+				// chiuso quando la vista e' stretta; aperto (e il pulsante nascosto) quando torna larga.
+				// Lo stato cambia solo quando si attraversa la soglia, cosi' non annulla la scelta dell'utente;
+				// oltre all'evento della media query si controllano 'resize' e la larghezza della pagina, perche' non tutti i browser
+				// (WebKit/Safari) segnalano il cambio di media query dovuto allo zoom.
+				var ultimo = !!(stretto && stretto.matches);
+				imposta(!ultimo);
+				if (stretto) {
+					var verifica = function() { if (stretto.matches !== ultimo) { ultimo = stretto.matches; imposta(!ultimo); } };
+					if (stretto.addEventListener) stretto.addEventListener('change', verifica); else if (stretto.addListener) stretto.addListener(verifica);
+					window.addEventListener('resize', verifica);
+					// e la larghezza della pagina stessa: cambia anche con lo zoom, quando gli eventi sopra mancano
+					if (typeof ResizeObserver !== 'undefined') new ResizeObserver(verifica).observe(document.documentElement);
+				}
+			};
+			if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', avvia); else avvia();
+		})();
+	</script>
 	<div id="menuct" class="<%= (gd!=null && gd.isMenuDisabled()) ? "menu-disabled" : "" %>">
 		<% 
 			List<?> v = pd.getMenu(); 

@@ -28,7 +28,13 @@
 	<ui:define name="body">
 		<a4j:keepAlive beanName="allarmiBean" />
 		<a4j:keepAlive beanName="allarmiHistoryBean" />
-		<div class="spacer"></div>
+		<!-- Barra del titolo come nelle altre pagine: le liste la ricevono dal pannello dei filtri,
+		     che qui non c'e', e il dettaglio di una voce dell'archivio usa lo stesso rich:panel.
+		     Il corpo del pannello e' senza margine interno: lo da' gia' panelLista, come nelle altre liste. -->
+		<rich:panel styleClass="noborder" bodyClass="nopadding" id="paginaArchivioStati">
+			<f:facet name="header">
+				<h:outputText id="outTitoloArchivioStati" value="Archivio Stati (#{allarmiHistoryBean.allarme.alias})" />
+			</f:facet>
 		<a4j:outputPanel id="allarmiHistoryTbl" layout="block" styleClass="panelLista">
 			<h:form id="formAllarmi">
 				<input type="hidden" id="_csrfFormAllarmi" name="_csrf" value="#{loginBean.csrf}"/>
@@ -95,6 +101,7 @@
 				</link:dataTable>
 			</h:form>
 		</a4j:outputPanel>
+		</rich:panel>
 
 	</ui:define>
 </ui:composition>

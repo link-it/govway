@@ -29,6 +29,9 @@
 				visualizzaColonnaSelectAll('#{id}');
 			 });
 		</script>
+		<!-- Reflow (WCAG 1.4.10): la tabella di dati e' un contenuto a due dimensioni; sotto la soglia
+		     del tema (linkit-form.css, gw-tabella-dati) scorre dentro questo riquadro e non con la pagina. -->
+		<div class="gw-tabella-dati">
 		<rich:dataTable  
 				value="#{value}"
 				var="item"		
@@ -83,6 +86,7 @@
 					  
 						
 			</rich:dataTable>
+		</div>
 			
 			<rich:modalPanel id="#{id}_deleteConfirmation" width="350" height="200">
 			   <f:facet name="header">

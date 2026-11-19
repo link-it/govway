@@ -1,3 +1,17 @@
+2026-11-19  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole, GovWayMonitor]
+	Proseguito l'adeguamento alle WCAG 2.1 AA:
+	- Riflusso a 320px (zoom al 400%) senza scorrimento orizzontale: il menu va sopra il contenuto
+	  e si apre e chiude con un pulsante, le etichette vanno sopra i campi, tabelle di dati e
+	  grafici scorrono dentro il loro riquadro.
+	- Fuoco visibile anche sul campo dei tag.
+	- Testo della licenza nella pagina Informazioni dichiarato in lingua inglese.
+	- Barra del titolo nella pagina 'Archivio Stati' degli allarmi, come nelle altre pagine.
+	Corretto inoltre il grafico della pagina 'Esiti Live', che non veniva disegnato per una libreria mancante.
+	Le verifiche 'gov-a11y' comprendono adesso anche riflusso, spaziatura del testo, percorso da tastiera
+	e lingua delle parti.
+
 2026-11-16  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

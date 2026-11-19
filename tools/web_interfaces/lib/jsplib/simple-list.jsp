@@ -77,7 +77,7 @@ if(csrfTokenFromSession == null)
 		
 		<tr> 
 			<td valign=top>
-				<table class="tabella">
+				<table class="tabella tabella-lista">
 				<tr>
 				
 				<%

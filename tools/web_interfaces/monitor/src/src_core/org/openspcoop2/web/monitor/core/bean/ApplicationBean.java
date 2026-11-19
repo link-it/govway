@@ -1050,6 +1050,12 @@ public class ApplicationBean implements Serializable {
 		return versionInfo.isMenuDisabled(Utility.getSoggettoSelezionatoPerVersionInfo());
 	}
 
+	/** Lingua del testo della licenza: 'en' per la licenza GPL, che e' in inglese in una pagina in
+	 *  italiano (WCAG 3.1.2); null per un testo diverso, e l'attributo 'lang' non viene scritto. */
+	public String getLicenzaLang() {
+		return CostantiPdD.OPENSPCOOP2_LICENSE.equals(getLicenza()) ? "en" : null;
+	}
+
 	public int getLicenzaRows() {
 		String licenza = getLicenza();
 		String [] split = licenza.split("\n");

@@ -93,7 +93,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 		<tr> 
 			<td valign=top>
 				<div class="panelLista">
-					<table class="tabella">
+					<table class="tabella tabella-lista">
 						<%
 						String [] labels = pd.getLabels();
 						int labelLength = labels != null ? labels.length : 0;

@@ -147,6 +147,9 @@
 				</a4j:outputPanel>
 			</c:if>
 			
+			<!-- Reflow (WCAG 1.4.10): la tabella di dati e' un contenuto a due dimensioni; sotto la soglia
+			     del tema (linkit-form.css, gw-tabella-dati) scorre dentro questo riquadro e non con la pagina. -->
+			<div class="gw-tabella-dati">
 			<rich:dataTable  
 				value="#{value}"
 				var="item"		
@@ -220,6 +223,7 @@
 				      	</a4j:outputPanel>					
 					  </f:facet>
 			</rich:dataTable>
+			</div>
 			<c:if test="#{useCount == true}">
 				<script type="text/javascript" nonce="#{_csp_random_nonce}">	
 					function checkVisualizzaSelezionePrimiElementi(){

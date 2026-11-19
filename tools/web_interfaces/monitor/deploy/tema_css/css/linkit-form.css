@@ -966,3 +966,347 @@ div.version-notice-topgap {
 	pointer-events: none;
 	opacity: 0.6;
 }
+
+/* ---------------------------------------------------------------------------------------------
+   Reflow (WCAG 1.4.10): a 320px di larghezza (uno schermo da 1280px con lo zoom al 400%, o uno
+   schermo stretto) la pagina non deve scorrere in orizzontale. Lo zoom del browser attiva le
+   media query, quindi basta questo blocco: sopra la soglia il monitor resta com'era.
+   Soglia 71em (1136px), la stessa della console di gestione; va tenuta uguale a quella di
+   pages/templates/defaultTemplate.xhtml.
+   - la pagina RichFaces (rich:page) non ha piu' la larghezza minima di 750px (page.css del
+     componente) e il menu laterale va sopra il contenuto, richiudibile con #gw-menu-toggle;
+   - campi, select e textarea non superano la larghezza disponibile;
+   - le tabelle di dati e i grafici, contenuti a due dimensioni che il 1.4.10 ammette, scorrono
+     dentro il loro riquadro e non con la pagina;
+   - testi lunghi senza spazi vanno a capo.
+   Compatibilita': solo CSS supportato da Chrome, Edge, Firefox e Safari, anche non recenti
+   (niente :has(), gap nei flex, :focus-visible).
+   --------------------------------------------------------------------------------------------- */
+.gw-menu-toggle {
+	display: none;
+}
+
+@media (max-width: 71em) {
+	/* impaginazione della pagina RichFaces */
+	div.rich-page {
+		min-width: 0 !important;
+		width: auto !important;
+	}
+	div.rich-page-sidebar, div.rich-page-main {
+		float: none !important;
+		width: auto !important;
+		margin: 0 !important;
+	}
+	div.rich-page-body {
+		margin-left: 0 !important;
+	}
+	.tablePageHeader, .tablePageHeader > tbody, .tablePageHeader > tbody > tr, .tablePageHeader > tbody > tr > td {
+		display: block;
+		width: auto !important;
+	}
+
+	/* menu principale richiudibile */
+	.gw-menu-toggle {
+		display: block;
+		width: 100%;
+		box-sizing: border-box;
+		margin: 0;
+		padding: 10px 20px;
+		border: none;
+		background: ${menu.background.color};
+		color: ${menu.label.color};
+		font: inherit;
+		font-weight: bold;
+		text-align: left;
+		cursor: pointer;
+	}
+	.gw-menu-toggle .material-icons {
+		vertical-align: middle;
+		margin-right: 8px;
+	}
+	.gw-menu-toggle span {
+		vertical-align: middle;
+	}
+	.gw-menu-toggle:focus {
+		outline: 3px solid ${menu.label.color};
+		outline-offset: -4px;
+	}
+	.gw-menu-chiuso {
+		display: none !important;
+	}
+
+	/* menu: rich:panelMenu e' largo il 100% piu' il bordo */
+	div.rich-pmenu {
+		box-sizing: border-box;
+	}
+
+	/* corpo: la tabella di impaginazione di h:panelGrid (#bodyWrapper) e i pannelli di rich:layout
+	   (#mainct, #body: float e larghezza in percentuale generati da RichFaces) diventano blocchi,
+	   e non si allargano piu' sul contenuto piu' largo */
+	#bodyWrapper_body > table, #bodyWrapper_body > table > tbody, #bodyWrapper_body > table > tbody > tr,
+	#bodyWrapper_body > table > tbody > tr > td {
+		display: block;
+		width: auto !important;
+	}
+	#mainct, #mainct > div {
+		float: none !important;
+		width: auto !important;
+		box-sizing: border-box;
+	}
+	fieldset {
+		min-width: 0;
+	}
+
+	/* tabelle di dati (taglib PagedDataTable, ExtendedPagedDataTable, PagedDataTableCheckboxOnRight,
+	   SimpleDataTable): scorrono dentro il loro riquadro */
+	div.gw-tabella-dati {
+		max-width: 100%;
+		overflow-x: auto;
+	}
+	/* grafici (c3): anche loro contenuti a due dimensioni. Si ridisegnano sul 'resize' della finestra,
+	   ma non tutti i browser lo segnalano quando cambia lo zoom (WebKit/Safari): finche' non si
+	   ridisegnano scorrono dentro il loro riquadro e non con la pagina */
+	/* tooltip dei grafici (c3 e heatmap.js): la posizione calcolata dagli script lo porta fuori
+	   dallo schermo, oppure dentro il contenitore del grafico che scorre in orizzontale e lo
+	   taglia; quello della heatmap resta poi nella pagina, trasparente, e la allarga.
+	   Sotto la soglia il tooltip e' una barra fissa in fondo allo schermo, larga quanto lo
+	   schermo, con il testo che va a capo: 'fixed' non viene tagliato dal contenitore e non
+	   allarga la pagina */
+	div.c3-tooltip-container {
+		position: fixed !important;
+		left: 8px !important;
+		right: 8px !important;
+		top: auto !important;
+		bottom: 8px !important;
+		width: auto !important;
+		max-width: none;
+		z-index: 1000 !important;
+	}
+	div.c3-tooltip-container table.c3-tooltip {
+		width: 100%;
+		max-width: none;
+	}
+	/* tooltip della legenda (ChartMap.js): un div largo quattro volte la voce della legenda */
+	div.c3-tooltip-container > div {
+		width: auto !important;
+		max-width: 100%;
+		box-sizing: border-box;
+	}
+	div.c3-tooltip-container table.c3-tooltip th, div.c3-tooltip-container table.c3-tooltip td {
+		white-space: normal !important;
+		word-wrap: break-word;
+		word-break: break-word;
+		overflow-wrap: anywhere;
+	}
+	div.c3 {
+		max-width: 100%;
+		overflow-x: auto;
+	}
+
+	/* campi */
+	input, select, textarea, .bootstrap-tagsinput, div.rich-combobox, div.rich-combobox-shell,
+	.width-260, .width-412, .width-416, input.rich-spinner-input, .version-popup-body {
+		max-width: 100% !important;
+		box-sizing: border-box;
+	}
+	/* il campo del contatore ha una larghezza piccola e fissa (es. 20px per 'Numero Risultati'):
+	   con border-box il bordo e il margine interno gliela mangerebbero e la cifra verrebbe tagliata */
+	input.rich-spinner-input {
+		box-sizing: content-box;
+	}
+	/* le frecce del contatore sono input type="image" in una tabella larga 2%: il limite
+	   max-width:100% dei campi le ridurrebbe a larghezza zero */
+	input.rich-spinner-button {
+		max-width: none !important;
+	}
+
+	/* griglie di impaginazione h:panelGrid (classe borderSpacingTable): le colonne vanno una sotto
+	   l'altra. Non sono tabelle di dati: quelle stanno in div.gw-tabella-dati */
+	table.borderSpacingTable, table.borderSpacingTable > tbody, table.borderSpacingTable > tbody > tr,
+	table.borderSpacingTable > tbody > tr > td {
+		display: block;
+		width: auto !important;
+	}
+
+	/* rich:comboBox misura la tendina con un elemento invisibile a larghezza fissa */
+	div.rich-combobox-strut {
+		max-width: 100%;
+		overflow: hidden;
+	}
+	/* riepiloghi in riga (contatori dello stato allarmi): i riquadri vanno a capo */
+	div.rich-panel-reversed > div.rich-panel-body > table,
+	div.rich-panel-reversed > div.rich-panel-body > table > tbody,
+	div.rich-panel-reversed > div.rich-panel-body > table > tbody > tr {
+		display: block;
+	}
+	div.rich-panel-reversed > div.rich-panel-body > table > tbody > tr > td {
+		display: inline-block;
+		vertical-align: top;
+	}
+
+	/* etichette sopra i campi invece che affiancate con larghezza fissa */
+	div.form-container label, div.form-container .display-form label, div.form-container span.labelSpacer,
+	label.longLabel, .labelAllineataDx, .labelAllineataDxFixedWidth130, .labelAllineataDxFixedWidth170,
+	.labelAllineataDxFixedWidth270, .labelAllineataTopDxFixedWidth130 {
+		float: none !important;
+		width: auto !important;
+		text-align: left !important;
+		margin-right: 0;
+		padding-right: 0;
+	}
+	/* rientri fissi che allineano campi, note, sottotitoli e pulsanti sotto le etichette */
+	.margin-left-170, .buttonrowsonda,
+	div.form-container div.buttonrow, div.form-container .display-form div.buttonrow,
+	div.form-container div.rich-combobox, div.form-container .display-form div.rich-combobox,
+	div.form-container div.controlset div, div.form-container .display-form div.controlset div,
+	div.form-container table.controlset, div.form-container .display-form table.controlset,
+	div.form-container form p.note, div.form-container .display-form p.note, div.prop p.note,
+	.subtitle, div.tableNoData div.buttonrow {
+		margin-left: 0 !important;
+	}
+
+	/* l'asterisco dei campi obbligatori e' posizionato sul bordo destro dell'etichetta, pensata
+	   larga quanto la colonna delle etichette; ora che l'etichetta occupa la riga intera finirebbe
+	   in fondo a destra, lontano dal testo: torna subito dopo il testo */
+	div.form-container label em, div.form-container .display-form label em {
+		position: static;
+		margin-left: 4px;
+	}
+
+	/* liste di trasferimento (rich:listShuttle, es. 'Gruppi Disabilitati' / 'Gruppi Abilitati'):
+	   le due liste hanno una larghezza fissa e restano affiancate con i comandi in mezzo; ognuna
+	   si limita a meta' dello schermo meno lo spazio dei comandi, e le voci lunghe scorrono dentro */
+	table.rich-list-shuttle div.rich-shuttle-list, table.rich-list-shuttle div.rich-shuttle-list-header,
+	table.rich-list-shuttle div.rich-shuttle-list-content {
+		max-width: calc(50vw - 80px) !important;
+		box-sizing: border-box;
+	}
+
+	/* testi lunghi: break-word per i browser che non conoscono overflow-wrap:anywhere */
+	#crumbs li, .messages-errors-text, .messages-info-text, .appTitle, .modalita {
+		white-space: normal !important;
+		word-wrap: break-word;
+		word-break: break-word;
+		overflow-wrap: anywhere;
+	}
+
+	/* percorso (#crumbs, linkit-crumbs.css): altezza fissa di una riga e voci in float. Quando va a
+	   capo la seconda riga uscirebbe dal contenitore e la barra del titolo le passerebbe sopra:
+	   l'altezza segue il contenuto e la lista racchiude le voci (clearfix: overflow:hidden taglierebbe
+	   il contorno del fuoco sui link) */
+	#crumbs {
+		height: auto;
+	}
+	#crumbs ul::after {
+		content: "";
+		display: table;
+		clear: both;
+	}
+
+	/* comandi sotto i grafici delle statistiche: griglia h:panelGrid con id gridComandi,
+	   gridComandiBars, gridComandiHeatmap, gridComandiLine, gridComandiPie, in tutte le pagine dei
+	   grafici (non sempre dentro div#panelComandi). Tre colonne da un terzo ciascuna
+	   (navigazione, opzioni, esportazione) che a 320px escono dalla pagina: le griglie diventano
+	   blocchi impilati. Il cursore della larghezza (rich:inputNumberSlider) resta una tabella e
+	   conserva la sua larghezza: il binario e' disegnato in base a quella. Anche il contatore
+	   (rich:inputNumberSpinner, 'Numero Risultati') resta una tabella: campo e frecce affiancati */
+	table[id*="gridComandi"], table[id*="gridComandi"] tbody, table[id*="gridComandi"] tr,
+	table[id*="gridComandi"] td, table[id*="gridComandi"] table {
+		display: block;
+		max-width: 100%;
+		box-sizing: border-box;
+		text-align: left !important;
+	}
+	table[id*="gridComandi"], table[id*="gridComandi"] > tbody > tr > td {
+		width: auto !important;
+	}
+	table[id*="gridComandi"] table.rich-slider, table[id*="gridComandi"] table.rich-slider table,
+	table[id*="gridComandi"] table.rich-spinner-c {
+		display: table;
+	}
+	table[id*="gridComandi"] table.rich-slider tbody, table[id*="gridComandi"] table.rich-spinner-c tbody { display: table-row-group; }
+	table[id*="gridComandi"] table.rich-slider tr, table[id*="gridComandi"] table.rich-spinner-c tr { display: table-row; }
+	table[id*="gridComandi"] table.rich-slider td, table[id*="gridComandi"] table.rich-spinner-c td { display: table-cell; }
+
+	/* intestazione della paginazione ('Lista Diagnostici: record [1 - 25] su 40'): il
+	   PagedDataTable le da' line-height:0, e se il testo va a capo le righe si sovrappongono */
+	table[id$="_ds_top_table"], table.rich-dtascroller-table {
+		line-height: normal !important;
+		max-width: 100%;
+	}
+
+	/* calendario a comparsa (rich:calendar): la posizione e' calcolata dallo script
+	   all'apertura, vicino al campo; a 320px non deve uscire dalla pagina */
+	table.rich-calendar-popup {
+		left: 8px !important;
+		max-width: calc(100vw - 16px);
+	}
+
+	/* finestre modali (rich:modalPanel, es. Export Transazioni): la larghezza e' fissa
+	   (350-800px) e la posizione calcolata dallo script; a 320px escono dalla pagina */
+	div.rich-mp-container {
+		left: 8px !important;
+		max-width: calc(100vw - 16px);
+	}
+	div.rich-mpnl-shadow, div.rich-mpnl-content, table.rich-mp-content-table {
+		max-width: calc(100vw - 16px) !important;
+		box-sizing: border-box;
+	}
+	div.rich-mpnl-content {
+		width: auto !important;
+	}
+	/* la tabella della finestra (intestazione e corpo, una cella per riga) diventa una pila di
+	   blocchi: WebKit (Safari) non applica max-width alle tabelle */
+	table.rich-mp-content-table, table.rich-mp-content-table > tbody,
+	table.rich-mp-content-table > tbody > tr, table.rich-mp-content-table > tbody > tr > td {
+		display: block;
+	}
+	/* l'altezza fissata dallo script valeva come minima finche' era una tabella; da blocco
+	   taglierebbe il contenuto, che uscirebbe dalla finestra senza sfondo */
+	table.rich-mp-content-table {
+		height: auto !important;
+	}
+	div.rich-mpnl-content select, div.rich-mpnl-content input, div.rich-mpnl-content textarea {
+		max-width: 100% !important;
+		box-sizing: border-box;
+	}
+
+	/* intestazione delle schede (rich:tabPanel): le schede stanno in un'unica riga di tabella
+	   che non va a capo; la riga diventa un contenitore flessibile che le dispone su piu' righe.
+	   table-layout:fixed tiene la tabella delle schede larga quanto la pagina */
+	table.rich-tabpanel, table.rich-tabpanel-content-position {
+		table-layout: fixed;
+	}
+	/* contenuto della scheda: la tabella di dati (es. diagnostici) scorre dentro il suo
+	   contenitore gw-tabella-dati invece di allargare la scheda e la pagina */
+	td.rich-tabpanel-content {
+		max-width: 100%;
+		overflow-x: auto;
+	}
+	td.rich-tab-bottom-line {
+		height: auto;
+	}
+	/* la tabella delle schede non e' sempre figlia diretta della cella (puo' esserci un form in
+	   mezzo): si prendono tutte le tabelle della cella e si ripristinano quelle annidate, che
+	   disegnano la singola scheda */
+	td.rich-tab-bottom-line table, td.rich-tab-bottom-line table > tbody {
+		display: block;
+		max-width: 100%;
+	}
+	td.rich-tab-bottom-line table table {
+		display: table;
+		max-width: none;
+	}
+	td.rich-tab-bottom-line table table > tbody {
+		display: table-row-group;
+	}
+	td.rich-tab-bottom-line tr[role="tablist"],
+	td.rich-tab-bottom-line > table > tbody > tr, td.rich-tab-bottom-line > table > tr {
+		display: -webkit-flex;
+		display: flex;
+		-webkit-flex-wrap: wrap;
+		flex-wrap: wrap;
+		-webkit-align-items: flex-end;
+		align-items: flex-end;
+	}
+}

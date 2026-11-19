@@ -1140,11 +1140,11 @@ for (int i = 0; i < dati.size(); i++) {
 		                            				<%
 							     					if ((pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) && de.isLabelAffiancata()) {
 							     						String taValNoEdit = de.getValue() != null && !de.getValue().equals("") ? de.getValue() : (pd.getMode().equals("view-noeditbutton") ? "&nbsp;" : "not defined");
-							     						%><div class="<%=classDivNoEdit %>"> <span class="<%=classSpanNoEdit %>" id="<%=inputId %>"><%= taValNoEdit %></span></div><%
+							     						%><div class="<%=classDivNoEdit %>"> <span class="<%=classSpanNoEdit %>" id="<%=inputId %>"<%= de.getLangAsAttribute() %>><%= taValNoEdit %></span></div><%
 							     					} else {
 							     						String taNoEdit = type.equals("textarea") ? " " : " readonly ";
 							     						%><div class="txtA_div">
-							     							<textarea id="<%=inputId %>" <%=taNoEdit %> rows='<%= de.getRows() %>' cols='<%= de.getCols() %>' name="<%= deName  %>" class="<%= classInput %>" <%=deAriaLabelAttr %>><%= StringEscapeUtils.escapeHtml4(de.getValue()) %></textarea>
+							     							<textarea id="<%=inputId %>" <%=taNoEdit %> rows='<%= de.getRows() %>' cols='<%= de.getCols() %>' name="<%= deName  %>" class="<%= classInput %>" <%=deAriaLabelAttr %><%= de.getLangAsAttribute() %>><%= StringEscapeUtils.escapeHtml4(de.getValue()) %></textarea>
 							     							<% 
 													      		if(deInfo != null){
 													      			String idDivIconInfo = "divIconInfo_"+i;

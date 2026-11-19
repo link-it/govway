@@ -135,6 +135,9 @@ public class DataElement implements Serializable {
 	
 	private Map<String, String> dataAttributes = null;
 	
+	/** Lingua del valore, se diversa da quella della pagina (attributo 'lang', WCAG 3.1.2) */
+	private String lang = null;
+	
 	private String customJsFunction = null;
 
 	private List<String> statusValues = null, statusToolTips = null, statusTypes = null;
@@ -895,6 +898,17 @@ public class DataElement implements Serializable {
 	@Deprecated
 	public void setDataAttributes(Map<String, String> dataAttributes) {
 		this.dataAttributes = dataAttributes;
+	}
+	
+	public String getLang() {
+		return this.lang;
+	}
+	public void setLang(String lang) {
+		this.lang = lang;
+	}
+	/** Attributo 'lang' da scrivere sull'elemento, vuoto se il valore e' nella lingua della pagina */
+	public String getLangAsAttribute() {
+		return (this.lang != null && !this.lang.isEmpty()) ? " lang=\"" + this.lang + "\"" : "";
 	}
 	
 	public String getDataAttributesAsString() {
