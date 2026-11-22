@@ -1,3 +1,30 @@
+2026-11-20  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole, GovWayMonitor]
+	Proseguito l'adeguamento alle WCAG 2.1 AA, con verifiche anche tramite un secondo motore (IBM Equal Access).
+	L'intervento ha riguardato:
+	- Tabelle usate per l'impaginazione non più annunciate come tabelle di dati; elenchi con intestazioni
+	  di colonna vere, compresa la colonna dello stato.
+	- Etichette: tolte quelle vuote o riferite a campi inesistenti; scelte 'Si'/'No' raggruppate sotto la
+	  domanda a cui rispondono; slider delle soglie annunciato con nome e valore; nome accessibile
+	  all'elenco delle risorse/azioni puntuali nelle policy di Rate Limiting di erogazioni e fruizioni.
+	- Titoli veri, senza cambiarne l'aspetto, per le sezioni del menu laterale, i sottotitoli di form e
+	  dettagli, i riquadri e le finestre.
+	- Icone di stato con un'unica convenzione in console e monitor, nella quale la forma porta il
+	  significato e il colore si aggiunge (spunta = ok, triangolo = avviso, X = errore, mezzo cerchio =
+	  parziale, trattino = disabilitato), con contrasto di almeno 3:1 e testo alternativo che dice lo stato:
+	  stato del gateway, eventi, API, erogazioni, fruizioni, gruppi, connettori, utenti, allarmi, esiti delle
+	  transazioni e Tracciamento PDND.
+	- Informazioni non più affidate al solo colore: stato e modalità degli allarmi, certificati scaduti,
+	  collegamento fra grafici e legenda.
+	- Calendari dei campi data: il fuoco parte dal giorno corrente o scelto, frecce e Invio agiscono sul
+	  giorno raggiunto, un solo contorno ben contrastato, uscita con il Tab e ritorno al campo dopo la scelta.
+	- Form del monitor: scegliendo un'opzione da tastiera il fuoco resta sul campo invece di tornare
+	  all'inizio della pagina.
+	- Comandi a icona e opzioni degli elenchi a scelta multipla alti almeno 24px; il pulsante di copia
+	  negli elenchi della console non fa più scorrere la pagina in orizzontale a 320px.
+	Corretto inoltre l'elenco del Tracciamento PDND, che andava in errore se il filtro 'Stato' non aveva alcun valore.
+
 2026-11-19  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole, GovWayMonitor]

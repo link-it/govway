@@ -119,6 +119,9 @@ Per creare una tag version:
     Il report leggibile è report.html dentro ciascuna directory indicata con --out.
 
 18. Sistemare docker-compose.yml e database presente in resources/scenari/scenari.zip
+
+   !!NOTA!!: Oltre al database, DEVONO essere aggiornate le api-config e api-monitor con le ultime versioni. E attenzione anche alle api-pdnd (signal etc..)
+
    Per farlo, ad esempio se stiamo rilasciando la versione 3.3.16:
    - fare il clone di govway-docker
    - generare una versione dell'installer semi-definitiva (con master build version)

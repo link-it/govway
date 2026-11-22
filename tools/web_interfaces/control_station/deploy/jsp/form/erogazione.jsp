@@ -93,7 +93,7 @@
 		<tr>
 			<td valign=top colspan="2">
 				<div class="<%= classPanelTitolo %>" >
-					<table class="tabella" id="panelDettaglioHeader">
+					<table role="presentation" class="tabella" id="panelDettaglioHeader">
 						<tbody>
 							<tr>	
 								<td class="titoloSezione" id="dettaglioFormHeader" colspan="<%= colFormHeader %>">
@@ -113,13 +113,13 @@
 		<tr> 
 			<td valign=top colspan="2">		
 				<div class="<%=classDivPanelLista %>">
-					<table class="<%=classTabellaPanelLista %>">
+					<table role="presentation" class="<%=classTabellaPanelLista %>">
 					<%
 						%><tr class="even">
 							<td colspan="2">
 							
 							
-							<table class="<%=classTabellaPanelLista %>">
+							<table role="presentation" class="<%=classTabellaPanelLista %>">
 								<%
 									boolean firstText = true;
 							for (int i = 0; i < listRiepilogo.size(); i++) {
@@ -159,7 +159,7 @@
 					    				<tr>
 											<td colspan="2">
 							        			<div class="subtitle <%= labelStyleClass %>">
-							        				<span class="subtitle"><%=deLabel %>&nbsp;&nbsp;&nbsp;&nbsp;</span>
+							        				<span class="subtitle"<%= "&nbsp;".equals(deLabel) ? "" : " role=\"heading\" aria-level=\"2\"" %>><%=deLabel %>&nbsp;&nbsp;&nbsp;&nbsp;</span>
 							        			</div>
 						        			</td>
 										</tr>
@@ -196,7 +196,7 @@
 				            				%>
 				                			<tr class="">
 												<td class="tdTextRiepilogo labelRiepilogo">
-													<label class="<%= labelStyleClass %>" for="<%= deHiddenId%>"><%=deLabel %></label>
+													<label class="<%= labelStyleClass %>"><%=deLabel %></label>
 												</td>
 												<td class="tdTextRiepilogo <%= stile %>">
 													<div class="<%=classDivNoEdit %>"> 
@@ -272,37 +272,18 @@
 													%>
 					                					<tr class="">
 															<td class="tdTextRiepilogo labelRiepilogo">
-																<label class="<%= labelStyleClass %>" for="<%= deHiddenId%>"><%=deLabel %></label>
+																<label class="<%= labelStyleClass %>"><%=deLabel %></label>
 															</td>
 															<td class="tdTextRiepilogo <%= stile %>">
 															<div class="<%=classDivNoEdit %>"> 
 															<input type="hidden" name="<%= deHiddenId %>" value="" id="<%= deHiddenId%>"/>
 																<%  
-																	String imageCheckBox = "status_red.png";
-																 	if("yes".equals(statusType)){
-																 		imageCheckBox = "status_green.png";
-																	}
-																	else if("warn".equals(statusType)){
-																		imageCheckBox = "status_yellow.png";
-																	}
-																	else if("off".equals(statusType)){
-																		imageCheckBox = "disconnected_grey.png";
-																	}
-																	else if("config_enable".equals(statusType)){
-																		imageCheckBox = "verified_green.png";
-																	}
-																	else if("config_warning".equals(statusType)){
-																		imageCheckBox = "verified_yellow.png";
-																	}
-																	else if("config_error".equals(statusType)){
-																		imageCheckBox = "verified_red.png";
-																	}
-																 	else if("config_disable".equals(statusType)){
-																		imageCheckBox = "verified_grey.png";
-																	}
+																	/* scelta dell'icona di stato condivisa con il monitor (IconaStato): forma e colore per ogni significato */
+																	IconaStato iconaStato = IconaStato.fromValoreCheckbox(statusType);
+																	String imageCheckBox = iconaStato.getFile();
 																	%>
 																	<span class="<%=classSpanNoEdit %>-image" <%= statusTooltipTitleAttribute %> id="iconTitoloLeft-<%=i%>">
-																		<img src="images/tema_link/<%= imageCheckBox %>" alt="Stato"/>
+																		<img src="images/tema_link/<%= imageCheckBox %>" alt="<%= iconaStato.getTestoAlternativo(statusTooltip).replace("\"", "&quot;") %>"/>
 																	</span>
 									                				<span class="<%=classSpanNoEdit %>" <%= statusTooltipTitleAttribute %> ><%= statusValueText %></span>
 									                				<% if(firstText){%>
@@ -355,7 +336,7 @@
 					                					%>
 					                					<tr class="">
 															<td class="tdTextRiepilogo labelRiepilogo">
-																<label class="<%= labelStyleClass %>" for="<%= deHiddenId%>"><%=deLabel %></label>
+																<label class="<%= labelStyleClass %>"><%=deLabel %></label>
 															</td>
 															<td class="tdTextRiepilogo <%= stile %>">
 																<div class="<%=classDivNoEdit %>"> 	
@@ -372,31 +353,12 @@
 												                				
 			                            										String lab = values[y]; // testo configurazione
 			                            										
-			                            										String imageCheckBox = "status_red.png";
-																			 	if("yes".equals(statusType)){
-																			 		imageCheckBox = "status_green.png";
-																				}
-																				else if("warn".equals(statusType)){
-																					imageCheckBox = "status_yellow.png";
-																				}
-																				else if("off".equals(statusType)){
-																					imageCheckBox = "disconnected_grey.png";
-																				}
-																				else if("config_enable".equals(statusType)){
-																					imageCheckBox = "verified_green.png";
-																				}
-																				else if("config_warning".equals(statusType)){
-																					imageCheckBox = "verified_yellow.png";
-																				}
-																				else if("config_error".equals(statusType)){
-																					imageCheckBox = "verified_red.png";
-																				}
-																			 	else if("config_disable".equals(statusType)){
-																					imageCheckBox = "verified_grey.png";
-																				}
+			                            										/* scelta dell'icona di stato condivisa con il monitor (IconaStato): forma e colore per ogni significato */
+			                            										IconaStato iconaStato = IconaStato.fromValoreCheckbox(statusType);
+			                            										String imageCheckBox = iconaStato.getFile();
 			                            											%>
 			                            												<span class="<%=classSpanNoEdit %>-image-msval" <%= statusTooltipTitleAttribute %> id="iconTitoloLeft-<%=i%>_<%=y%>">
-																							<img src="images/tema_link/<%= imageCheckBox %>" alt="Stato"/>
+																							<img src="images/tema_link/<%= imageCheckBox %>" alt="<%= iconaStato.getTestoAlternativo(statusTooltip).replace("\"", "&quot;") %>"/>
 																						</span>
 																						<span class="<%=classSpanNoEdit %>-msval" <%= statusTooltipTitleAttribute %> ><%= lab %></span>
 																					<%
@@ -461,7 +423,7 @@
 															%>
 						                					<tr class="">
 																<td class="tdTextRiepilogo labelRiepilogo">
-																	<label class="<%= labelStyleClass %>" for="<%= deHiddenId%>"><%=deLabel %></label>
+																	<label class="<%= labelStyleClass %>"><%=deLabel %></label>
 																</td>
 																<td class="tdTextRiepilogo <%= stile %>">
 																	<div class="<%=classDivNoEdit %>"> 	
@@ -537,7 +499,7 @@
 							                					%>
 							                					<tr class="">
 																	<td class="tdTextRiepilogo labelRiepilogo">
-																		<label class="<%= labelStyleClass %>" for="<%= deHiddenId%>"><%=deLabel %></label>
+																		<label class="<%= labelStyleClass %>"><%=deLabel %></label>
 																	</td>
 																	<td class="tdTextRiepilogo <%= stile %>">
 																		<div class="<%=classDivNoEdit %>"> 	
@@ -803,7 +765,7 @@
 								            				String textValNoEdit = de.getValue() != null && !de.getValue().equals("") ? de.getValue() : (pd.getMode().equals("view-noeditbutton") ? "&nbsp;" : "not defined");
 								            				%>
 								                			<div class="propBox">
-								                				<label class="<%= labelStyleClass %>" for="<%= deHiddenId%>"><%=deLabel %></label>
+								                				<label class="<%= labelStyleClass %>"><%=deLabel %></label>
 								                				<div class="<%=classDivNoEdit %>"> 
 								                					<input type="hidden" name="<%= deHiddenId %>" value="" id="<%= deHiddenId%>"/>	
 									                				<span class="<%=classSpanNoEdit %>" <%= deTip %> ><%= textValNoEdit %></span>
@@ -949,7 +911,7 @@
 						    									String chkVal = deAbilitazione.getSelected().equals("yes") ? " checked='true' " : " ";
 						    									String disVal = "" ; // pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton") ? "disabled=\"disabled\"" : "";
 						    									String id = "checkbox-abilitazione-link_" + z; 
-						    									%>	<table class="controlset">
+						    									%>	<table role="presentation" class="controlset">
 				    													<tr> 
 				    														<td>
 						   														<input id="<%=id %>" type="checkbox" name="<%= deAbilitazioneName  %>" value="yes" <%=chkVal %> <%=disVal %> <%=deAbilitazioneTip %> >

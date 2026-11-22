@@ -533,9 +533,9 @@ public class TransazioneApplicativoServerBean extends TransazioneApplicativoServ
 		if(TransazioniEsitiUtils.isEsitoOk(this.dettaglioEsitoUltimoErrore, this.getProtocollo()))
 			return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_APPLICATIVO_SERVER_ELENCO_ESITO_OK_ICON_KEY);
 		if(TransazioniEsitiUtils.isEsitoFaultApplicativo(this.dettaglioEsitoUltimoErrore, this.getProtocollo()))
-			return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_APPLICATIVO_SERVER_ELENCO_ESITO_ERROR_ICON_KEY);
-		if(TransazioniEsitiUtils.isEsitoKo(this.dettaglioEsitoUltimoErrore, this.getProtocollo()))
 			return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_APPLICATIVO_SERVER_ELENCO_ESITO_WARNING_ICON_KEY);
+		if(TransazioniEsitiUtils.isEsitoKo(this.dettaglioEsitoUltimoErrore, this.getProtocollo()))
+			return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_APPLICATIVO_SERVER_ELENCO_ESITO_ERROR_ICON_KEY);
 
 		return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_APPLICATIVO_SERVER_ELENCO_ESITO_WARNING_ICON_KEY);
 	}
@@ -812,9 +812,9 @@ public class TransazioneApplicativoServerBean extends TransazioneApplicativoServ
 		if(this.isEsitoOk())
 			return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_APPLICATIVO_SERVER_ELENCO_ESITO_OK_ICON_KEY);
 		if(this.isEsitoFaultApplicativo())
-			return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_APPLICATIVO_SERVER_ELENCO_ESITO_ERROR_ICON_KEY);
-		if(this.isEsitoKo())
 			return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_APPLICATIVO_SERVER_ELENCO_ESITO_WARNING_ICON_KEY);
+		if(this.isEsitoKo())
+			return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_APPLICATIVO_SERVER_ELENCO_ESITO_ERROR_ICON_KEY);
 
 		return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_APPLICATIVO_SERVER_ELENCO_ESITO_WARNING_ICON_KEY);
 	}

@@ -2067,13 +2067,17 @@ public class UtentiHelper extends ConsoleHelper {
 					DataElement de = new DataElement();
 					de.setWidthPx(10);
 					de.setType(DataElementType.CHECKBOX);
+					/* Lo stato dell'utente e' l'esito di una verifica, non un'abilitazione: il caso non
+					   valido e' l'errore (cerchio con X). Anche l'utente valido ha un testo, prima
+					   assente: senza, l'icona verde non aveva alcuna alternativa testuale (WCAG 1.1.1). */
 					if(mySU.isConfigurazioneValidaAbilitazioni()){
+						de.setToolTip(UtentiCostanti.LABEL_UTENTI_STATO_ABILITAZIONI_VALIDE);
 						de.setSelected(CheckboxStatusType.ABILITATO);
 					}
 					else{
 						de.setToolTip(mySU.getReasonInvalidConfiguration());
 						de.setValue(mySU.getReasonInvalidConfiguration());
-						de.setSelected(CheckboxStatusType.DISABILITATO);
+						de.setSelected(CheckboxStatusType.ERRORE);
 					}
 					
 					// se e' abilitato il check di scadenza delle password e la password e' scaduta imposto il check rosso
@@ -2082,7 +2086,7 @@ public class UtentiHelper extends ConsoleHelper {
 						passwordVerifier.isPasswordExpire(mySU.getLastUpdatePassword())) {
 						de.setToolTip(UtentiCostanti.LABEL_UTENTI_SCADENZA_PW_SCADUTA);
 						de.setValue(UtentiCostanti.LABEL_UTENTI_SCADENZA_PW_SCADUTA);
-						de.setSelected(CheckboxStatusType.DISABILITATO);
+						de.setSelected(CheckboxStatusType.ERRORE);
 					}
 					
 					de.setUrl(UtentiCostanti.SERVLET_NAME_UTENTI_CHANGE,

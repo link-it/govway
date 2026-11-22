@@ -93,9 +93,11 @@ String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CS
 				  m = (MenuEntry) v.get(i);
 		%>
 			<div class="sezioneMenu">
-				<div class="titoloSezione">
+				<%-- titolo della sezione del menu: un titolo vero (h2), cosi' i lettori di schermo permettono di
+				     saltare da una sezione all'altra; il CSS lo impagina come prima (#menuct h2.titoloSezione) --%>
+				<h2 class="titoloSezione">
 					<span><%= m.getTitle() %></span>
-				</div>		
+				</h2>		
 			
 				<%
 			  		String [][] entries = m.getEntries();
@@ -104,17 +106,19 @@ String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CS
 			  			String divId = "voceMenu_"+i+"_"+j;
 			  			String hrefId = "voceMenuAnchor_"+i+"_"+j;
 			  			
+			  			// il testo della voce e' uno span (impaginato come blocco dal CSS) e non un paragrafo: un <p> dentro
+			  			// il collegamento veniva scambiato per un titolo (IBM Equal Access, text_block_heading)
 			  			%><div class="voceMenuRC" id="<%=divId %>"><%
 		  					if (entries[j].length == 2) {
 		  						%>
 		  						<a class='<%= cssClass %>' title='<%= entries[j][0] %>' href='<%= entries[j][1] %>' id="<%=hrefId %>">
-		      						<p class='<%= cssClass %>'><%= entries[j][0] %></p>
+		      						<span class='<%= cssClass %>'><%= entries[j][0] %></span>
 		      					</a>
 		  						<%
 		  					} else if (entries[j].length == 3) {
 								%>
 		  						<a class='<%= cssClass %>' target='<%= entries[j][2] %>' title='<%= entries[j][0] %>' href='<%= entries[j][1] %>' id="<%=hrefId %>">
-				      				<p class='<%= cssClass %>'><%= entries[j][0] %></p>
+				      				<span class='<%= cssClass %>'><%= entries[j][0] %></span>
 				      			</a>
 		  						<%
 		  					}

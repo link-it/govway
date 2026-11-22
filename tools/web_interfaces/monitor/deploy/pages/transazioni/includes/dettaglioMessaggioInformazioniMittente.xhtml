@@ -12,7 +12,7 @@
     
  		<h:panelGrid id="panelDettaglioInformazioniMittente" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDxFixedWidth130,valueAllineataSx" >
  		
- 			<h:outputLabel styleClass="outputFieldLabel" value="&#160;&#160;" rendered="#{true}" />
+ 			<span class="outputFieldLabel" aria-hidden="true">&#160;&#160;</span>
  			<h:panelGroup layout="block"  class="subtitle-nopaddingleft-nomarginleft">
 				<h:outputText value="Informazioni Mittente" styleClass="subtitle-nopaddingleft-nomarginleft"/>
 			</h:panelGroup>
@@ -51,7 +51,8 @@
 				rendered="#{not empty dettagliBean.textCredenziali and dettagliBean.visualizzaTextAreaCredenziali}" />
 			
 			
-			<h:outputLabel styleClass="outputFieldLabel" value="" id="idTokenInfoSubtitleLabel" 
+			<!-- cella vuota che allinea il sottotitolo: uno span, non un'etichetta senza testo -->
+			<h:outputText styleClass="outputFieldLabel" value="" id="idTokenInfoSubtitleLabel" 
 				rendered="#{not empty dettagliBean.dettaglio.tokenIssuer or not empty dettagliBean.dettaglio.tokenClientId or not empty dettagliBean.dettaglio.tokenSubject or not empty dettagliBean.dettaglio.tokenUsername or not empty dettagliBean.dettaglio.tokenMail or not empty dettagliBean.dettaglio.tokenInfo}"
 				/>
 			<a4j:outputPanel layout="block" styleClass="subtitle-nopaddingleft-nomarginleft"

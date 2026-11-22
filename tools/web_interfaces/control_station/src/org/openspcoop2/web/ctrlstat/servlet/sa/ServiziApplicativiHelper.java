@@ -4634,8 +4634,9 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					de.allineaTdAlCentro();
 					de.setWidthPx(140);
 					if(verificaTuttiCampi && notAfter.before(new Date())) {
-						// bold e rosso
+						// bold e rosso, con il testo che dice cosa indica il rosso
 						de.setLabelStyleClass(Costanti.INPUT_TEXT_BOLD_RED_CSS_CLASS);
+						de.setValue(de.getValue()+" "+Costanti.LABEL_VALORE_SCADUTO);
 						de.setWidthPx(150);
 					}
 					

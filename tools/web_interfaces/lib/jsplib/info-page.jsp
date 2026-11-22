@@ -80,12 +80,12 @@ if(csrfTokenFromSession == null)
 		request.setAttribute("gwPaginaSoloMessaggio", Boolean.TRUE);
 		%>
 		<jsp:include page="/jsplib/titlelist.jsp" flush="true" />
-		<table class="tabella-ext">
+		<table role="presentation" class="tabella-ext">
 		<!-- Riga tabella -->
 			<tr> 
 				<td valign=top>		
 					<div class="<%=classDivPanelLista %>" >
-						<table class="<%=classTabellaPanelLista %>">
+						<table role="presentation" class="<%=classTabellaPanelLista %>">
 							<tr class="buttonrow">
 	  							<td colspan="2">
 	  								<div class="buttonrowform">

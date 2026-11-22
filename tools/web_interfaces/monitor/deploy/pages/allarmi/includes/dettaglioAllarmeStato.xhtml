@@ -11,7 +11,7 @@
     <a4j:outputPanel layout="block" id="informazioniStatoAllarme">
 		<h:panelGrid id="panelGridStatoAllarme" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataTopDxFixedWidth130,valueAllineataSx">
 		
-			<h:outputLabel styleClass="outputFieldLabel" value="&#160;&#160;" rendered="#{true}" />
+			<span class="outputFieldLabel" aria-hidden="true">&#160;&#160;</span>
  			<h:panelGroup layout="block"  class="subtitle-nopaddingleft-nomarginleft">
 				<h:outputText value="Dettagli" styleClass="subtitle-nopaddingleft-nomarginleft"/>
 			</h:panelGroup>
@@ -46,10 +46,10 @@
 		<h:panelGrid id="panelGridAckStatoAllarme" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataTopDxFixedWidth130,valueAllineataSx"
 					 rendered="#{not empty allarmiBean.allarme.dettaglioAcknowledged}">
 		
-			<h:outputLabel styleClass="outputFieldLabel" value="&#160;&#160;" rendered="#{true}" />
+			<span class="outputFieldLabel" aria-hidden="true">&#160;&#160;</span>
 			<h:outputText value="&#160;&#160;" rendered="#{true}" />
 		
-			<h:outputLabel styleClass="outputFieldLabel" value="&#160;&#160;" rendered="#{true}" />
+			<span class="outputFieldLabel" aria-hidden="true">&#160;&#160;</span>
  			<h:panelGroup layout="block"  class="subtitle-nopaddingleft-nomarginleft">
 				<h:outputText value="Criteri Acknowledge" styleClass="subtitle-nopaddingleft-nomarginleft"/>
 			</h:panelGroup>
@@ -64,10 +64,10 @@
 		
 		<h:panelGrid id="panelGridStoricoStatiAllarme" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataTopDxFixedWidth130,valueAllineataSx">
 		
-			<h:outputLabel styleClass="outputFieldLabel" value="&#160;&#160;" rendered="#{true}" />
+			<span class="outputFieldLabel" aria-hidden="true">&#160;&#160;</span>
 			<h:outputText value="&#160;&#160;" rendered="#{true}" />
 		
-			<h:outputLabel styleClass="outputFieldLabel" value="&#160;&#160;" rendered="#{true}" />
+			<span class="outputFieldLabel" aria-hidden="true">&#160;&#160;</span>
  			<h:panelGroup layout="block"  class="subtitle-nopaddingleft-nomarginleft">
 				<h:outputText value="Archivio Stati" styleClass="subtitle-nopaddingleft-nomarginleft"/>
 			</h:panelGroup>
@@ -75,7 +75,7 @@
 			<h:outputLabel styleClass="outputFieldLabel" id="outLabelStatoPrecedente" value="Stato Precedente" rendered="#{true}"/>
 			<h:outputText id="outStatoPrecedente" value="#{allarmiBean.labelPrecedenteStato}" rendered="#{allarmiBean.allarme.enabled == 1}"/>
 			
-			<h:outputLabel styleClass="outputFieldLabel" value="&#160;&#160;" rendered="#{true}" />
+			<span class="outputFieldLabel" aria-hidden="true">&#160;&#160;</span>
 			<a4j:outputPanel layout="block" styleClass="divNoEdit">
 				<a4j:form>
 					<input type="hidden" id="_csrfFormAllarmiArchivioStati" name="_csrf" value="#{loginBean.csrf}"/>

@@ -486,6 +486,11 @@ span[id$='iconLink']{
 .edit-link {
 	float: right;
 	padding: 0px 8px 0px 0px;
+	/* comandi affiancati (matita e lente della lista allarmi): alti 21px, sotto i 24px minimi di un
+	   bersaglio senza spazio attorno (WCAG 2.5.8). L'altezza in piu' e' compensata dal margine, cosi'
+	   la riga non cambia */
+	min-height: 24px;
+	margin-bottom: -3px;
 }
 
 .edit-link span.icon-box {
@@ -671,19 +676,41 @@ span[id$='iconLink']{
     padding: 0px 16px 0px 16px;
 }
 
+/* Icone dello stato degli allarmi: sono grafica che porta informazione, quindi devono avere almeno
+   3:1 con lo sfondo su cui stanno (WCAG 1.4.11). Sul fondo chiaro della tabella (bianco, #f6f6fc
+   delle righe alterne, #daffda della riga sotto il puntatore) verde, arancione e grigio sono piu'
+   scuri: il caso piu' stretto e' 3,26:1; sul fondo scuro del riepilogo (.rich-panel-reversed)
+   restano i colori di prima, tranne il rosso, piu' chiaro. La forma del glifo porta lo stato
+   (WCAG 1.4.1): spunta = Ok, triangolo = Warn, X = Error, trattino = Disabilitato. */
 .icona-allarme-error {
 	color: #FF2D39 !important;
 }
 
 .icona-allarme-warning {
-	color: #FFAB4D !important;
+	color: #B87B36 !important;
 }
 
 .icona-allarme-ok {
-	color: #00B658 !important;
+	color: #009C4B !important;
 }
 
 .icona-allarme-disabilitato {
+	color: #86868B !important;
+}
+
+.rich-panel-reversed .icona-allarme-error {
+	color: #FF5660 !important;
+}
+
+.rich-panel-reversed .icona-allarme-warning {
+	color: #FFAB4D !important;
+}
+
+.rich-panel-reversed .icona-allarme-ok {
+	color: #00B658 !important;
+}
+
+.rich-panel-reversed .icona-allarme-disabilitato {
 	color: #C2C2C9 !important;
 }
 
@@ -693,20 +720,60 @@ span[id$='iconLink']{
 	vertical-align: text-bottom;
 }
 
+/* Elenchi a selezione multipla (es. 'Dettaglio Esito' con Esito = Personalizzato): ogni opzione e'
+   un bersaglio del puntatore e deve essere alta almeno 24px (WCAG 2.5.8). Con il carattere di 16px
+   e il margine azzerato dalla regola generale '* { padding: 0 }' era alta 19px; 3px sopra e sotto
+   la portano a 25px. */
+select[multiple] option,
+select[size]:not([size="1"]) option {
+	padding: 3px 4px;
+}
+
+/* Presa in carico (acknowledge): la stessa icona dello stato con una piccola spunta nell'angolo,
+   invece di un glifo diverso dello stesso colore. La spunta ha il colore dell'icona su un piccolo
+   disco del colore dello sfondo, che la stacca dal glifo: il contrasto e' quello dell'icona. */
+.gw-allarme-ack {
+	position: relative;
+	display: inline-block;
+	line-height: 0;
+	margin-right: 5px;
+}
+.gw-allarme-ack::after {
+	content: "\e86c"; /* check_circle */
+	font-family: 'Material Icons';
+	font-size: 11px;
+	line-height: 1;
+	font-weight: normal;
+	font-style: normal;
+	position: absolute;
+	right: -5px;
+	bottom: -3px;
+	border-radius: 50%;
+	background-color: #ffffff;
+	box-shadow: 0 0 0 1.5px #ffffff;
+}
+.rich-panel-reversed .gw-allarme-ack::after {
+	background-color: ${panel.header.background.color};
+	box-shadow: 0 0 0 1.5px ${panel.header.background.color};
+}
+
+/* Stato dell'invio nel Tracciamento PDND, su fondo chiaro: gli stessi colori della tabella allarmi,
+   con almeno 3:1 sullo sfondo (WCAG 1.4.11; prima arancio 1,9:1, grigio 1,8:1, verde 2,7:1). La
+   forma del glifo porta lo stato (StatistichePdndTracingBean.getGlifoIconaStato). */
 .icona-tracingcsv-error {
 	color: #FF2D39 !important;
 }
 
 .icona-tracingcsv-warning {
-	color: #FFAB4D !important;
+	color: #B87B36 !important;
 }
 
 .icona-tracingcsv-ok {
-	color: #00B658 !important;
+	color: #009C4B !important;
 }
 
 .icona-tracingcsv-grey {
-	color: #C2C2C9 !important;
+	color: #86868B !important;
 }
 
 .icona-tracingcsv-error > i {
@@ -716,19 +783,19 @@ span[id$='iconLink']{
 }
 
 .icona-tracingcsv-warning > i{
-	color: #FFAB4D !important;
+	color: #B87B36 !important;
 	cursor: default;
 	vertical-align: middle;
 }
 
 .icona-tracingcsv-ok > i {
-	color: #00B658 !important;
+	color: #009C4B !important;
 	cursor: default;
 	vertical-align: middle;
 }
 
 .icona-tracingcsv-grey > i{
-	color: #C2C2C9 !important;
+	color: #86868B !important;
 	cursor: default;
 	vertical-align: middle;
 }
@@ -903,4 +970,11 @@ svg .c3-chart-arc.c3-defocused {
    altrimenti vince sul foglio e la sfumatura sparirebbe del tutto. */
 svg .c3-chart-arc.c3-defocused path {
 	opacity: 0.3 !important;
+}
+
+/* Icone il cui nome di glifo (legatura di Material Icons) e' dinamico: lo scrive il CSS da
+   'data-icona'. Scritto come testo dell'elemento risulterebbe il testo visibile del comando che
+   contiene l'icona, diverso dal suo nome accessibile (WCAG 2.5.3 per i motori di verifica). */
+i.material-icons[data-icona]::before {
+	content: attr(data-icona);
 }

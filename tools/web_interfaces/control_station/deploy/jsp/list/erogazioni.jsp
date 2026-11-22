@@ -72,28 +72,9 @@ for (int j = 0; j < riga.size(); j++) {
 		DataElement de = (DataElement) listCheckBox.get(0);
 		
 		String statusType = de.getStatusTypes() != null && de.getStatusTypes().length>0 ? de.getStatusTypes()[0] : "";	
-		String image = "status_red.png";
-	 	if("yes".equals(statusType)){
-	 		image = "status_green.png";
-		}
-		else if("warn".equals(statusType)){
-			image = "status_yellow.png";
-		}
-		else if("off".equals(statusType)){
-			image = "disconnected_grey.png";
-		}
-		else if("config_enable".equals(statusType)){
-			image = "verified_green.png";
-		}
-		else if("config_warning".equals(statusType)){
-			image = "verified_yellow.png";
-		}
-		else if("config_error".equals(statusType)){
-			image = "verified_red.png";
-		}
-	 	else if("config_disable".equals(statusType)){
-	 		image = "verified_grey.png";
-		}
+		/* scelta dell'icona di stato condivisa con il monitor (IconaStato): forma e colore per ogni significato */
+		IconaStato iconaStato = IconaStato.fromValoreCheckbox(statusType);
+		String image = iconaStato.getFile();
 
 	 	String statusTooltip = de.getStatusToolTips() != null && de.getStatusToolTips().length>0 ? de.getStatusToolTips()[0] : "";		
 		String statusTooltipTitleAttribute = statusTooltip != null && !statusTooltip.equals("") ? " title=\"" + statusTooltip + "\"" : "";
@@ -102,7 +83,7 @@ for (int j = 0; j < riga.size(); j++) {
 	<td class="tdText<%=cssClassStato %>">
 		<div id="stato_<%=numeroEntryS %>">
  			<span class="statoErogazioneIcon" id="iconConfigurazione_<%=numeroEntryS %>">
-				<img src="images/tema_link/<%= image %>" <%= statusTooltipTitleAttribute %> alt="Stato"/>
+				<img src="images/tema_link/<%= image %>" <%= statusTooltipTitleAttribute %> alt="<%= iconaStato.getTestoAlternativo(statusTooltip).replace("\"", "&quot;") %>"/>
 			</span>
 			<% if(de.getWidth() != null){ %>
 				<style type="text/css" nonce="<%= randomNonce %>">

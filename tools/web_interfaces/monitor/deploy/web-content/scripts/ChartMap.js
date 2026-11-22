@@ -215,8 +215,93 @@ function generateChart(id, _dataJson, _type, _size, _barwidth) {
             coloraEtichetteFette(_svg);
             osservaSbiadimentoFette(_svg);
             descriviGrafico(_svg);
+            iconeEsito(_svg);
+            /* le barre crescono con una transizione: a fine animazione le icone vanno
+               riposizionate sulla loro altezza finale */
+            window.setTimeout(function() { iconeEsito(_svg); }, 450);
         }
     };
+
+    /*
+     * Barre per esito (Ok, Fault applicativo, Fallite): le tre serie erano distinte dal solo
+     * colore (WCAG 1.4.1). Sopra ogni colonna e nella legenda compare l'icona dell'esito, con la
+     * stessa convenzione di allarmi, transazioni e console: cerchio con spunta = Ok, triangolo
+     * con '!' = Fault applicativo, cerchio con X = Fallite. Le colonne a zero non hanno icona.
+     *
+     * Le icone sono tracciati SVG e non caratteri del font delle icone, cosi' restano corrette
+     * anche nell'esportazione del grafico come immagine. Il colore e' quello della serie, scurito
+     * quanto basta per avere almeno 3:1 sul bianco (WCAG 1.4.11); il simbolo interno e' bianco,
+     * con lo stesso rapporto.
+     */
+    /* solo cerchi, poligoni e spezzate: il foglio di c3 toglie riempimento e colore a ogni
+       'path' e 'line' del grafico ('.c3 path, .c3 line'), e li renderebbe invisibili */
+    var SERIE_ESITO = {
+        'ok': '<circle cx="12" cy="12" r="11"/><polyline points="6.8,12.4 10.4,16 17.2,9" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>',
+        'fault': '<polygon points="12,1.5 23,21.5 1,21.5" stroke-linejoin="round"/><rect x="10.6" y="8" width="2.8" height="7.5" rx="1.2" fill="#fff"/><circle cx="12" cy="18.2" r="1.6" fill="#fff"/>',
+        'errore': '<circle cx="12" cy="12" r="11"/><polyline points="8.2,8.2 15.8,15.8" stroke="#fff" stroke-width="3" stroke-linecap="round"/><polyline points="15.8,8.2 8.2,15.8" stroke="#fff" stroke-width="3" stroke-linecap="round"/>'
+    };
+    var NS_SVG = 'http://www.w3.org/2000/svg';
+
+    function coloreAlmenoTreAUno(colore) {
+        var canali = String(colore).match(/[\d.]+/g);
+        if(!canali || canali.length < 3) {
+            return colore;
+        }
+        var r = Number(canali[0]), g = Number(canali[1]), b = Number(canali[2]);
+        var passi = 0;
+        while(rapportoContrasto(1, luminanzaRelativa('rgb(' + r + ',' + g + ',' + b + ')')) < 3 && passi < 40) {
+            r *= 0.94; g *= 0.94; b *= 0.94;
+            passi++;
+        }
+        return 'rgb(' + Math.round(r) + ',' + Math.round(g) + ',' + Math.round(b) + ')';
+    }
+
+    function nuovaIcona(chiave, colore, x, y, lato) {
+        var icona = document.createElementNS(NS_SVG, 'g');
+        icona.setAttribute('class', 'gw-icona-esito');
+        icona.setAttribute('aria-hidden', 'true');
+        icona.setAttribute('transform', 'translate(' + x + ',' + y + ') scale(' + (lato / 24) + ')');
+        icona.setAttribute('fill', colore);
+        icona.innerHTML = SERIE_ESITO[chiave];
+        return icona;
+    }
+
+    function iconeEsito(svg) {
+        if(!svg || !svg.querySelectorAll || c3.extra.type !== 'bar') {
+            return;
+        }
+        var vecchie = svg.querySelectorAll('.gw-icona-esito');
+        for(var v = 0; v < vecchie.length; v++) {
+            vecchie[v].parentNode.removeChild(vecchie[v]);
+        }
+        Object.keys(SERIE_ESITO).forEach(function(chiave) {
+            var serie = svg.querySelector('g.c3-chart-bar.c3-target-' + chiave);
+            if(!serie) {
+                return;
+            }
+            var barre = serie.querySelectorAll('path.c3-bar');
+            if(!barre.length) {
+                return;
+            }
+            var colore = coloreAlmenoTreAUno(window.getComputedStyle(barre[0]).fill);
+            for(var i = 0; i < barre.length; i++) {
+                var bb = barre[i].getBBox();
+                if(bb.height < 1) {
+                    continue; // nessun dato: nessuna icona
+                }
+                var lato = Math.max(10, Math.min(16, bb.width));
+                barre[i].parentNode.appendChild(nuovaIcona(chiave, colore, bb.x + (bb.width - lato) / 2, bb.y - lato - 3, lato));
+            }
+            var voce = svg.querySelector('g.c3-legend-item-' + chiave);
+            var tessera = voce ? voce.querySelector('.c3-legend-item-tile') : null;
+            if(tessera) {
+                var bt = tessera.getBBox();
+                var latoLegenda = 12;
+                tessera.style.visibility = 'hidden';
+                voce.appendChild(nuovaIcona(chiave, colore, bt.x + (bt.width - latoLegenda) / 2, bt.y + (bt.height - latoLegenda) / 2, latoLegenda));
+            }
+        });
+    }
 
     /*
      * Le percentuali stampate sopra le fette erano sempre bianche (c3: '.c3-chart-arc text
@@ -406,9 +491,23 @@ function generateChart(id, _dataJson, _type, _size, _barwidth) {
         }).observe(svg, { attributes: true, attributeFilter: ['class'], subtree: true });
     }
 
-    if(dp.valoreRealeTorta) {
-        options.pie = { label: { format: function (value, ratio, id) { return d3.format('.1f')(value*100/c3.extra.pieTotal)+'%'; } } };
+    /*
+     * Sulle fette della torta, dopo la percentuale, il numero della voce di legenda
+     * («35.4% (1)»): senza, la fetta si collegava alla sua voce solo dal colore (WCAG 1.4.1).
+     * Il calcolo della percentuale resta quello di prima: sul totale reale quando richiesto,
+     * altrimenti quello predefinito di c3.
+     */
+    function numeroVoce(id) {
+        var numero = String(id).match(/^\s*(\d+)\.\s/);
+        return numero ? numero[1] : null;
     }
+    var percentualeFetta = dp.valoreRealeTorta ?
+        function (value) { return d3.format('.1f')(value*100/c3.extra.pieTotal)+'%'; } :
+        function (value, ratio) { return (ratio * 100).toFixed(1) + '%'; };
+    options.pie = { label: { format: function (value, ratio, id) {
+        var numero = numeroVoce(id);
+        return percentualeFetta(value, ratio) + (numero ? ' (' + numero + ')' : '');
+    } } };
 
     if(dp.type == 'pie') {
         delete options.axis;

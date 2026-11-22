@@ -2,7 +2,9 @@
 /* Written by Apaella (apaella@gmail.com). */
 $(document).ready(function(){
 	$.datepicker.regional['it'] = {clearText: 'Svuota', closeText: 'Chiudi',
-		prevText: '&lt;Prec', nextText: 'Succ&gt;',
+		/* uguali al nome accessibile delle frecce (jquery-ui-datepicker-a11y.js): il testo del comando,
+		   che il widget mette anche nel tooltip, deve essere contenuto nel suo nome (WCAG 2.5.3) */
+		prevText: 'Mese precedente', nextText: 'Mese successivo',
 		currentText: 'Oggi', weekHeader: 'Sett.',   /* la colonna dei numeri di settimana era senza intestazione */
 		dayNamesMin: ['Do','Lu','Ma','Me','Gio','Ve','Sa'],
 		dayNamesShort: ['Dom','Lun','Mar','Mer','Gio','Ven','Sab'],

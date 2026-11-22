@@ -41,7 +41,10 @@ function gwTitoloPaginaDiEsito() {
 	   allora il percorso e' l'unico titolo rimasto. */
 	var candidati = document.querySelectorAll('.ultimo-path, .messages-title-text, .history');
 	for (var j = 0; j < candidati.length; j++) {
-		if (!visibile(candidati[j]) || candidati[j].getAttribute('role')) {
+		/* un titolo gia' marcato come intestazione (il titolo del riquadro del messaggio, di
+		   secondo livello) si promuove; ogni altro ruolo resta com'e' */
+		var ruolo = candidati[j].getAttribute('role');
+		if (!visibile(candidati[j]) || (ruolo && ruolo !== 'heading')) {
 			continue;
 		}
 		/* Nel percorso l'ultima voce e' un <li>, dove il ruolo di intestazione non e' ammesso
@@ -409,6 +412,29 @@ function showSlider(select){
                 });
 
                 select.hide();
+
+                // La maniglia di jQuery UI e' uno <span tabindex="0"> senza ruolo, nome ne' valore: si
+                // raggiunge da tastiera ma un lettore di schermo non sa cosa sia (WCAG 4.1.2). Diventa uno
+                // 'slider' con il nome dell'etichetta del campo e il valore in percentuale. L'etichetta non
+                // punta piu' alla select, che e' nascosta e non riceve il fuoco.
+                var maniglia = slider.find('.ui-slider-handle');
+                var aggiornaValore = function(valore) {
+                        maniglia.attr({ 'aria-valuenow': valore, 'aria-valuetext': valore + '%' });
+                };
+                maniglia.attr({ 'role': 'slider', 'aria-valuemin': 1, 'aria-valuemax': 100 });
+                aggiornaValore(select[0].selectedIndex + 1);
+                // l'etichetta del blocco: la select puo' essere avvolta da un <div> del suo plugin
+                var etichetta = select.closest('div.prop').children('label');
+                if(etichetta.length > 0) {
+                        if(!etichetta.attr('id')) {
+                                etichetta.attr('id', select[0].id + '_etichetta');
+                        }
+                        etichetta.removeAttr('for');
+                        maniglia.attr('aria-labelledby', etichetta.attr('id'));
+                }
+                slider.on('slide slidechange', function(event, ui) {
+                        aggiornaValore(ui.value);
+                });
         }
 }
 

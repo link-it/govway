@@ -2401,7 +2401,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						de.setType(DataElementType.TEXT);
 						// Rendi bold e colora di Rosso la data visualizzata Not After se risulta scaduta.
 						if(this.getSdfCredenziali().parse(tipoCredenzialiSSLAliasCertificatoNotAfter).before(new Date())) {
-							de.setValoreBoldRed();
+							de.setValoreBoldRed(Costanti.LABEL_VALORE_SCADUTO);
 						}
 						
 						
@@ -6641,7 +6641,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					de.setType(DataElementType.TEXT);
 					// Rendi bold e colora di Rosso la data visualizzata Not After se risulta scaduta.
 					if(this.getSdfCredenziali().parse(tipoCredenzialiSSLAliasCertificatoNotAfter).before(new Date())) {
-						de.setValoreBoldRed();
+						de.setValoreBoldRed(Costanti.LABEL_VALORE_SCADUTO);
 					}
 					
 					

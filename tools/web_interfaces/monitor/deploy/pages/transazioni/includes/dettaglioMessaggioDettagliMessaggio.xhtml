@@ -11,7 +11,7 @@
     <a4j:outputPanel layout="block" id="informazioniDettagliRichiesta">
 		<h:panelGrid id="panelGridDettRich" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDxFixedWidth130,valueAllineataSx">
 		
-			<h:outputLabel styleClass="outputFieldLabel" value="&#160;&#160;" rendered="#{true}" />
+			<span class="outputFieldLabel" aria-hidden="true">&#160;&#160;</span>
  			<h:panelGroup layout="block"  class="subtitle-nopaddingleft-nomarginleft">
 				<h:outputText value="Dettagli Richiesta" styleClass="subtitle-nopaddingleft-nomarginleft"/>
 			</h:panelGroup>
@@ -46,7 +46,7 @@
 		
 		</h:panelGrid>
 		<a4j:outputPanel layout="block" rendered="#{true}" styleClass="outputSeparator8">
-			<h:outputLabel value="&#160;&#160;" rendered="#{true}" />
+			<span aria-hidden="true">&#160;&#160;</span>
 		</a4j:outputPanel>
 		<h:panelGrid id="panelGridDettRich2" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDxFixedWidth130,valueAllineataSx">
 			
@@ -120,7 +120,7 @@
 						
 		</h:panelGrid>
 		<a4j:outputPanel layout="block" rendered="#{not empty dettagliBean.dettaglio.dataUscitaRichiesta}" styleClass="outputSeparator8">
-			<h:outputLabel value="&#160;&#160;" rendered="#{true}" />
+			<span aria-hidden="true">&#160;&#160;</span>
 		</a4j:outputPanel>
 		<h:panelGrid id="panelGridDettRich3" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDxFixedWidth130,valueAllineataSx">
 						
@@ -188,7 +188,7 @@
 		</h:panelGrid>
 		
 		<a4j:outputPanel layout="block" rendered="#{not empty dettagliBean.dettaglio.duplicatiRichiesta and ((dettagliBean.dettaglio.duplicatiRichiesta==-1 and not empty dettagliBean.transazioneOriginaleRichiesta) or (dettagliBean.dettaglio.duplicatiRichiesta>0))}" styleClass="outputSeparator8">
-			<h:outputLabel value="&#160;&#160;" rendered="#{true}" />
+			<span aria-hidden="true">&#160;&#160;</span>
 		</a4j:outputPanel>
 		<h:panelGrid id="panelGridDettRich4" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDxFixedWidth130,valueAllineataSx">
 																						
@@ -265,10 +265,10 @@
 		
 		<h:panelGrid id="panelGridDettagliRisp" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDxFixedWidth130,valueAllineataSx" >
 		
-			<h:outputLabel styleClass="outputFieldLabel" value="&#160;&#160;" rendered="#{true}" />
+			<span class="outputFieldLabel" aria-hidden="true">&#160;&#160;</span>
 			<h:outputText value="&#160;&#160;" rendered="#{true}" />
 			
-			<h:outputLabel styleClass="outputFieldLabel" value="&#160;&#160;" rendered="#{true}" />
+			<span class="outputFieldLabel" aria-hidden="true">&#160;&#160;</span>
  			<h:panelGroup layout="block"  class="subtitle-nopaddingleft-nomarginleft">
 				<h:outputText value="Dettagli Risposta" styleClass="subtitle-nopaddingleft-nomarginleft"/>
 			</h:panelGroup>
@@ -300,7 +300,7 @@
 			
 		</h:panelGrid>
 		<a4j:outputPanel layout="block" rendered="#{dettagliBean.existsTracciaRisposta and not empty dettagliBean.dettaglio.dataIngressoRisposta}" styleClass="outputSeparator8">
-			<h:outputLabel value="&#160;&#160;" rendered="#{true}" />
+			<span aria-hidden="true">&#160;&#160;</span>
 		</a4j:outputPanel>
 		<h:panelGrid id="panelGridDettagliRisp2" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDxFixedWidth130,valueAllineataSx" >
 			
@@ -410,7 +410,7 @@
 						
 		</h:panelGrid>
 		<a4j:outputPanel layout="block" rendered="#{true}" styleClass="outputSeparator8">
-			<h:outputLabel value="&#160;&#160;" rendered="#{true}" />
+			<span aria-hidden="true">&#160;&#160;</span>
 		</a4j:outputPanel>
 		<h:panelGrid id="panelGridDettagliRisp3" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDxFixedWidth130,valueAllineataSx" >
 					
@@ -521,7 +521,7 @@
 
 		</h:panelGrid>
 		<a4j:outputPanel layout="block" rendered="#{not empty dettagliBean.dettaglio.duplicatiRisposta and ((dettagliBean.dettaglio.duplicatiRisposta==-1 and not empty dettagliBean.transazioneOriginaleRisposta) or (dettagliBean.dettaglio.duplicatiRisposta>0))}" styleClass="outputSeparator8">
-			<h:outputLabel value="&#160;&#160;" rendered="#{true}" />
+			<span aria-hidden="true">&#160;&#160;</span>
 		</a4j:outputPanel>
 		<h:panelGrid id="panelGridDettagliRisp4" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDxFixedWidth130,valueAllineataSx" >
 					

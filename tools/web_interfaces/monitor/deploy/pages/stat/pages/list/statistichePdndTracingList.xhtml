@@ -242,7 +242,10 @@
 							</f:facet>
 							<h:panelGroup layout="block" styleClass="width-40">
 								<a4j:outputPanel rendered="#{true}" id="statoInvioPnl" styleClass="#{item.coloreIconaStato}">
-									<i class="material-icons md-18" id="iconaStatoCsv">lens</i>
+									<!-- forma secondo lo stato (StatistichePdndTracingBean.getGlifoIconaStato), non il solo colore
+									     (WCAG 1.4.1); lo stato e' detto anche ai lettori di schermo, non solo nel suggerimento -->
+									<i class="material-icons md-18" id="iconaStatoCsv">#{item.glifoIconaStato}</i>
+									<h:outputText styleClass="gw-solo-lettori" value="#{item.statoTooltip}" />
 									<rich:toolTip for="statoInvioPnl" mode="client" value="#{item.statoTooltip}"/>
 								</a4j:outputPanel>
 							</h:panelGroup>

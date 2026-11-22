@@ -15456,6 +15456,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				}
 				else {
 					de.setLabel("");
+					// l'etichetta non viene resa a schermo (l'elenco segue la scelta 'Qualsiasi/Puntuali'): il nome accessibile va indicato esplicitamente
+					de.setAccessibleLabel(serviceBinding!=null ? this.getLabelAzioni(serviceBinding) : ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_AZIONE);
 				}
 				if(protocolloAssociatoFiltroNonSelezionatoUtente) {
 					de.setValue(policy.getFiltro().getAzione());
@@ -19825,17 +19827,25 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de = new DataElement();
 		de.setWidthPx(16);
 		de.setType(DataElementType.CHECKBOX);
+		/* Con gli stati visibili la colonna mostra lo stato di salute dell'allarme (forme degli
+		   allarmi del monitor: spunta, triangolo, X, trattino); senza, se l'allarme e' abilitato
+		   o no (sigillo delle funzionalita'). Un allarme abilitato senza stato non cade piu'
+		   sull'icona rossa senza testo, ma su un'icona grigia che lo dice. */
+		boolean statiVisibili = this.confCore.isShowAllarmiElenchiStatiAllarmi();
 		if(allarme.getEnabled() == 1){
-			if(this.confCore.isShowAllarmiElenchiStatiAllarmi()) {
+			if(statiVisibili) {
 				if(allarme.getStato()!=null && (allarme.getStato().intValue() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_OK.intValue())) {
-					de.setStatusType(CheckboxStatusType.CONFIG_ENABLE);
+					de.setStatusType(CheckboxStatusType.ALLARME_OK);
 					de.setStatusToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_OK);
 				} else if(allarme.getStato()!=null && (allarme.getStato().intValue() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_ERROR.intValue())) {
-					de.setStatusType(CheckboxStatusType.CONFIG_ERROR);
+					de.setStatusType(CheckboxStatusType.ALLARME_ERROR);
 					de.setStatusToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_ERROR);
 				} else if(allarme.getStato()!=null && (allarme.getStato().intValue() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_WARNING.intValue())) {
-					de.setStatusType(CheckboxStatusType.CONFIG_WARNING);
+					de.setStatusType(CheckboxStatusType.ALLARME_WARNING);
 					de.setStatusToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_WARNING);
+				} else {
+					de.setStatusType(CheckboxStatusType.ALLARME_DISABILITATO);
+					de.setStatusToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_NON_DISPONIBILE);
 				}
 			}
 			else {
@@ -19844,7 +19854,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 		}
 		else{
-			de.setStatusType(CheckboxStatusType.CONFIG_DISABLE);
+			de.setStatusType(statiVisibili ? CheckboxStatusType.ALLARME_DISABILITATO : CheckboxStatusType.CONFIG_DISABLE);
 			de.setStatusToolTip(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
 		}
 		e.add(de);

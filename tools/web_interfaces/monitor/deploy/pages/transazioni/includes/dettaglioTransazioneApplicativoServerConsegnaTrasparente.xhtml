@@ -12,7 +12,7 @@
     
  		<h:panelGrid id="panelDettaglioPrincipaleCT" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDxFixedWidth130,valueAllineataSx" >
  		
- 			<h:outputLabel styleClass="outputFieldLabel" value="&#160;&#160;" rendered="#{true}" />
+ 			<span class="outputFieldLabel" aria-hidden="true">&#160;&#160;</span>
  			<h:panelGroup layout="block"  class="subtitle-nopaddingleft-nomarginleft">
 				<h:outputText value="Informazioni Consegna" styleClass="subtitle-nopaddingleft-nomarginleft"/>
 			</h:panelGroup>
@@ -49,10 +49,10 @@
 		<h:panelGrid id="panelDettaglioRichiestaUltimaConsegna" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDxFixedWidth130,valueAllineataSx" 
 			rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.dataUltimaConsegna}">
 			
-			<h:outputLabel styleClass="outputFieldLabel" value="&#160;&#160;" rendered="#{true}" />
+			<span class="outputFieldLabel" aria-hidden="true">&#160;&#160;</span>
 			<h:outputText value="&#160;&#160;" rendered="#{true}" />
 			
-			<h:outputLabel styleClass="outputFieldLabel" value="&#160;&#160;" rendered="#{true}" />
+			<span class="outputFieldLabel" aria-hidden="true">&#160;&#160;</span>
  			<h:panelGroup layout="block"  class="subtitle-nopaddingleft-nomarginleft">
 				<h:outputText value="Dettagli Richiesta Ultima Consegna" styleClass="subtitle-nopaddingleft-nomarginleft"/>
 			</h:panelGroup>
@@ -160,10 +160,10 @@
 		<h:panelGrid id="panelDettaglioRispostaUltimaConsegna" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDxFixedWidth130,valueAllineataSx" 
 				rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.dataUltimaConsegna}">
 			
-			<h:outputLabel styleClass="outputFieldLabel" value="&#160;&#160;" rendered="#{true}" />
+			<span class="outputFieldLabel" aria-hidden="true">&#160;&#160;</span>
 			<h:outputText value="&#160;&#160;" rendered="#{true}" />
 			
-			<h:outputLabel styleClass="outputFieldLabel" value="&#160;&#160;" rendered="#{true}" />
+			<span class="outputFieldLabel" aria-hidden="true">&#160;&#160;</span>
  			<h:panelGroup layout="block"  class="subtitle-nopaddingleft-nomarginleft">
 				<h:outputText value="Dettagli Risposta Ultima Consegna" styleClass="subtitle-nopaddingleft-nomarginleft"/>
 			</h:panelGroup>

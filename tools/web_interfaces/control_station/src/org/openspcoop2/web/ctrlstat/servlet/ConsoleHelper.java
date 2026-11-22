@@ -10353,27 +10353,30 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setType(DataElementType.MULTI_SELECT);
 			}
 			
+			/* Ok, Warning ed Error sono lo stato di salute degli allarmi, non la configurazione di una
+			   funzionalita': hanno le forme degli allarmi del monitor (spunta, triangolo, X). La riga
+			   senza allarmi attivi resta una funzionalita' disabilitata. */
 			if(countOk > 0 || countError > 0 || countWarn > 0) {
 				
 				if(countOk > 0) {
 					StringBuilder bf = new StringBuilder();
 					bf.append(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_OK);
 					bf.append(" (").append(countOk).append(")");
-					de.addStatus(bf.toString(), CheckboxStatusType.CONFIG_ENABLE);
+					de.addStatus(bf.toString(), CheckboxStatusType.ALLARME_OK);
 				}
 				
 				if(countWarn > 0) {
 					StringBuilder bf = new StringBuilder();
 					bf.append(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_WARNING);
 					bf.append(" (").append(countWarn).append(")");
-					de.addStatus(bf.toString(), CheckboxStatusType.CONFIG_WARNING);
+					de.addStatus(bf.toString(), CheckboxStatusType.ALLARME_WARNING);
 				}
 				
 				if(countError > 0) {
 					StringBuilder bf = new StringBuilder();
 					bf.append(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_ERROR);
 					bf.append(" (").append(countError).append(")");
-					de.addStatus(bf.toString(), CheckboxStatusType.CONFIG_ERROR);
+					de.addStatus(bf.toString(), CheckboxStatusType.ALLARME_ERROR);
 				}
 			}
 			else {

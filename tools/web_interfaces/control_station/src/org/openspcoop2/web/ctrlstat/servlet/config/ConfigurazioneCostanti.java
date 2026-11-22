@@ -2421,6 +2421,7 @@ public class ConfigurazioneCostanti {
 	public static final Integer CONFIGURAZIONE_ALLARME_STATO_ERROR = 2;
 	public static final String CONFIGURAZIONE_ALLARME_LABEL_STATO_OK = "Ok";
 	public static final String CONFIGURAZIONE_ALLARME_LABEL_STATO_WARNING = "Warning";
+	public static final String CONFIGURAZIONE_ALLARME_LABEL_STATO_NON_DISPONIBILE = "Stato non disponibile";
 	public static final String CONFIGURAZIONE_ALLARME_LABEL_STATO_ERROR = "Error";
 	
 	public static final String[] CONFIGURAZIONE_STATI_ALLARMI = {

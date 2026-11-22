@@ -186,7 +186,7 @@ $(document).ready(function () {
 
 </script>
 		
-			<table class="tabella" id="panelListaRicercaHeader">
+			<table role="presentation" class="tabella" id="panelListaRicercaHeader">
 				<tbody>
 					<tr>
 						<td class="titoloSezione" id="searchFormHeader" colspan="<%= colFormHeader %>">
@@ -205,7 +205,7 @@ $(document).ready(function () {
 					String visualizzaAjaxStatusFiltra = pd.isShowAjaxStatusBottoneFiltra() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
 					String visualizzaAjaxStatusRipulisci = pd.isShowAjaxStatusBottoneRipulisci() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
 			%>
-			<table class="tabella" id="searchForm">
+			<table role="presentation" class="tabella" id="searchForm">
 				<tbody>
 					<tr>
 						<td class="spazioSottoTitolo">
@@ -433,7 +433,7 @@ $(document).ready(function () {
 						    									}
 						    									%>
 						    									<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%=id %>"><%=deLabel %></label>
-					    										<table class="<%=controlSetClass %>">
+					    										<table role="presentation" class="<%=controlSetClass %>">
 				    													<tr> 
 				    														<td>
 						   														<input id="<%=id %>" type="checkbox" name="<%= filterName  %>" value="yes" <%=chkVal %> <%=disVal %> <%=ariaLabelledByChk %>>
@@ -498,7 +498,8 @@ $(document).ready(function () {
 	                                            					%>
 	                    			                    			<div class="prop">
 	                    			                    				<input type="hidden" name="<%= filtroName.getName() %>" value="<%= filtroName.getValue() %>"/>
-	                    			                    				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%= filterId  %>"><%=deLabel %></label>
+	                    			                    				<%-- valore di sola lettura in un div, che non e' un controllo etichettabile: niente 'for' --%>
+	                    			                    				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>"><%=deLabel %></label>
 	                    			                    				<div id="<%= filterId  %>" class="<%=classDivNoEdit %>"> 
 		                													<span class="<%=classSpanNoEdit %>" id="<%=textId %>"><%= filtro.getValue() %></span>
 		                												</div>

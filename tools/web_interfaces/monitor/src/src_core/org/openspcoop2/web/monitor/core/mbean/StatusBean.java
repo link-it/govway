@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.openspcoop2.monitor.engine.constants.SondaStatus;
+import org.openspcoop2.web.lib.mvc.IconaStato;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.status.ISondaPdd;
@@ -67,9 +68,11 @@ public class StatusBean implements Serializable {
 	
 	private String intervalloRefreshPropValue;
 
-	private static final String ICONA_STATO_OK= "/images/tema_link/status_green.png";
-	private static final String ICONA_STATO_WARN= "/images/tema_link/status_yellow.png";
-	private static final String ICONA_STATO_ERR= "/images/tema_link/status_red.png";
+	/* Icone condivise con la console (IconaStato): cerchio con spunta, triangolo, cerchio con X,
+	   con un alone bianco che le stacca dal blu dell'intestazione (WCAG 1.4.1 e 1.4.11) */
+	private static final String ICONA_STATO_OK= IconaStato.OK.getPercorsoAssoluto();
+	private static final String ICONA_STATO_WARN= IconaStato.AVVISO.getPercorsoAssoluto();
+	private static final String ICONA_STATO_ERR= IconaStato.ERRORE.getPercorsoAssoluto();
 
 	private List<ISondaPdd> sondePdd = null;
 

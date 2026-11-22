@@ -172,11 +172,12 @@
 								<a4j:outputPanel layout="block" id="titoloInfoEsito_ok" styleClass="titoloEntry" rendered="#{item.esitoOk}">
 									<i class="material-icons md-24">check</i>
 								</a4j:outputPanel>	
+								<!-- glifi dell\'esito con la convenzione di allarmi e console: Fault applicativo = triangolo, Fallita = cerchio con X -->	
 								<a4j:outputPanel layout="block" id="titoloInfoEsito_fault" styleClass="titoloEntry" rendered="#{item.esitoFaultApplicativo}">
-									<i class="material-icons md-24">error</i>
+									<i class="material-icons md-24">warning</i>
 								</a4j:outputPanel>	
 								<a4j:outputPanel layout="block" id="titoloInfoEsito_ko" styleClass="titoloEntry" rendered="#{item.esitoKo}">
-									<i class="material-icons md-24">warning</i>
+									<i class="material-icons md-24">cancel</i>
 								</a4j:outputPanel>	
 								<a4j:outputPanel layout="block" id="titoloInfoEsito_def" styleClass="titoloEntry" rendered="#{!item.esitoOk and !item.esitoFaultApplicativo and !item.esitoKo}">
 									<i class="material-icons md-24">warning</i>

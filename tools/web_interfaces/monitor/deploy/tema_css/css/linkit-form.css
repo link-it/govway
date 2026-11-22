@@ -272,7 +272,7 @@ label.longLabel{
 	font-size: 16px;
 }
 
-div.form-container label em ,div.form-container .display-form label em{
+div.form-container label em ,div.form-container .display-form label em,div.form-container span.labelSpacer em{
 	position: absolute;
 	right: 0;
 	font-size: 120%;
@@ -1168,7 +1168,7 @@ div.version-notice-topgap {
 	/* l'asterisco dei campi obbligatori e' posizionato sul bordo destro dell'etichetta, pensata
 	   larga quanto la colonna delle etichette; ora che l'etichetta occupa la riga intera finirebbe
 	   in fondo a destra, lontano dal testo: torna subito dopo il testo */
-	div.form-container label em, div.form-container .display-form label em {
+	div.form-container label em, div.form-container .display-form label em, div.form-container span.labelSpacer em {
 		position: static;
 		margin-left: 4px;
 	}
@@ -1309,4 +1309,24 @@ div.version-notice-topgap {
 		-webkit-align-items: flex-end;
 		align-items: flex-end;
 	}
+}
+
+/* Testo per i soli lettori di schermo: fuori vista ma nell'albero di accessibilita'
+   (es. il nome di un'intestazione di colonna che non si mostra). */
+.gw-solo-lettori {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	margin: -1px;
+	padding: 0;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+}
+/* Il testo fuori vista nelle intestazioni delle tabelle di dati deve restare dentro il riquadro che
+   scorre (div.gw-tabella-dati): senza un contenitore posizionato nella cella esce dal riquadro e
+   allarga la pagina (WCAG 1.4.10, riflusso a 320px). */
+div.gw-tabella-dati th.rich-table-subheadercell {
+	position: relative;
 }

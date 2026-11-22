@@ -47,6 +47,9 @@ Dialog finestraDialog = (Dialog) request.getAttribute(idFinestraModale);
 	String classSpanNoEdit="spanNoEdit";
 	String classDivNoEdit="divNoEdit";
 	String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
+	// id del titolo del riquadro, unico per finestra: in una pagina possono esserci piu' finestre
+	// (es. una per riga di un elenco) e gli id fissi dei blocchi qui sotto si ripetono
+	String idTitoloFinestra = idFinestraModale + "_titolo";
 %>
 <div id="<%= idFinestraModale %>" title="<%= titolo %>">
 	<% if(!"".equals(icona) || !"".equals(header1) || !"".equals(header2)) { %>
@@ -62,7 +65,9 @@ Dialog finestraDialog = (Dialog) request.getAttribute(idFinestraModale);
 			<div id="finestraDialogInfoUsoModalHeaderDx" class="finestraDialogInfoUsoModalHeaderDx">
 				<% if(!"".equals(header1)) { %>
 	  			<div id="finestraDialogInfoUsoModalHeaderDxRiga1" class="finestraDialogInfoUsoModalHeaderDxRiga1">
-		  			<span class="finestraDialogInfoUsoModalHeaderDxRiga1"><%=header1 %></span>	
+		  			<%-- il titolo del contenuto della finestra (es. 'Risultati della ricerca') e' un titolo a vista:
+		  			     lo si dichiara (WCAG 1.3.1), sullo span del testo e non sul blocco --%>
+		  			<span class="finestraDialogInfoUsoModalHeaderDxRiga1" id="<%= idTitoloFinestra %>" role="heading" aria-level="2"><%=header1 %></span>	
 				</div>
 				<%  }%>
 				<% if(!"".equals(header2)) {%>
@@ -83,6 +88,12 @@ Dialog finestraDialog = (Dialog) request.getAttribute(idFinestraModale);
 				String deValue = de.getValue();
 				String deName =  "be_name_"+i;
 				String deLabelId = "be_label_"+i;
+				// etichetta vuota: tiene solo il posto, resa come <span> nascosto ai lettori di schermo
+				// (stesso aspetto, .gw-etichetta-vuota nel CSS); un <label> vuoto e' un'etichetta senza testo
+				boolean deLabelVuota = deLabel == null || deLabel.trim().isEmpty() || "&nbsp;".equals(deLabel);
+				String deTagEtichetta = deLabelVuota ? "span" : "label";
+				String deAttrEtichettaVuota = deLabelVuota ? " aria-hidden=\"true\"" : "";
+				String deClasseEtichettaVuota = deLabelVuota ? " gw-etichetta-vuota" : "";
 				// nome accessibile per i controlli la cui etichetta e' volutamente non visibile;
 				// se l'etichetta e' valorizzata non viene emesso nulla, per non mascherare il testo
 				String deAriaLabelAttr = "";
@@ -101,7 +112,7 @@ Dialog finestraDialog = (Dialog) request.getAttribute(idFinestraModale);
           				String textValNoEdit = de.getValue() != null && !de.getValue().equals("") ? de.getValue() : (pd.getMode().equals("view-noeditbutton") ? "&nbsp;" : "not defined");
           				%>
               			<div class="propDialogInfoUso">
-              				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%=deHiddenId %>"><%=deLabel %></label>
+              				<<%=deTagEtichetta %> class="<%= labelStyleClass %><%=deClasseEtichettaVuota %>" id="<%=deLabelId %>"<%=deAttrEtichettaVuota %>><%=deLabel %></<%=deTagEtichetta %>>
               				<div class="<%=classDivNoEdit %>"> 
 	              				<input type="hidden" name="<%= deHiddenId %>" value="" id="<%= deHiddenId%>"/>
 	               				<span class="<%=classSpanNoEdit %>"><%= textValNoEdit %></span>
@@ -126,7 +137,7 @@ Dialog finestraDialog = (Dialog) request.getAttribute(idFinestraModale);
               				String inputId =  "txtEd" + i;
               				%>
                   			<div class="propDialogInfoUso">
-                  				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%=inputId %>"><%=deLabel %></label>
+                  				<<%=deTagEtichetta %> class="<%= labelStyleClass %><%=deClasseEtichettaVuota %>" id="<%=deLabelId %>"<%= deLabelVuota ? "" : " for=\"" + inputId + "\"" %><%=deAttrEtichettaVuota %>><%=deLabel %></<%=deTagEtichetta %>>
                   				<%
                   					String textNoEdit = " disabled ";
 					      		%><input id="<%=inputId %>" type="text" name="<%= deName %>" value="<%= de.getValue() %>" class="<%= classInput %>" <%=textNoEdit %> <%=deAriaLabelAttr %>>
@@ -153,9 +164,16 @@ Dialog finestraDialog = (Dialog) request.getAttribute(idFinestraModale);
       	     					// l'id della textarea e' prefissato con l'id della finestra modale:
       	     					// il 'for' della label deve riferire l'id completo, altrimenti l'associazione non si stabilisce
       	     					String inputIdCompleto = idFinestraModale + "_" + inputId;
+      	     					// una textarea senza etichetta propria il cui nome e' il titolo della finestra prende il
+      	     					// nome dal titolo visibile (aria-labelledby) invece di ripeterne il testo in un aria-label:
+      	     					// l'etichetta e' cosi' quella che si vede (WCAG 2.5.3, 3.3.2)
+      	     					String taNomeAttr = deAriaLabelAttr;
+      	     					if(de.isLabelEmpty() && header1 != null && !"".equals(header1) && header1.equals(de.getAccessibleLabel())) {
+      	     						taNomeAttr = " aria-labelledby=\"" + idTitoloFinestra + "\"";
+      	     					}
                   				%>
                       			<div class="propDialogInfoUso">
-                      				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%=inputIdCompleto %>"><%=deLabel %></label>
+                      				<<%=deTagEtichetta %> class="<%= labelStyleClass %><%=deClasseEtichettaVuota %>" id="<%=deLabelId %>"<%= deLabelVuota ? "" : " for=\"" + inputIdCompleto + "\"" %><%=deAttrEtichettaVuota %>><%=deLabel %></<%=deTagEtichetta %>>
                       				<%
 	     						String taNoEdit = " readonly ";
                       			String taNoResize = " txtA_propDialogInfoUsoNoResize ";
@@ -163,7 +181,7 @@ Dialog finestraDialog = (Dialog) request.getAttribute(idFinestraModale);
                       				taNoResize = " txtA_propDialogInfoUsoResize ";
                       			}
 	     						%><div class="txtA_div_propDialogInfoUso">
-	     							<textarea id="<%= inputIdCompleto %>" <%=taNoEdit %> rows='<%= de.getRows() %>' cols='' name="<%= deName  %>" class="<%= classInput %> <%= taNoResize %>" <%=deAriaLabelAttr %>><%= de.getValue() %></textarea>
+	     							<textarea id="<%= inputIdCompleto %>" <%=taNoEdit %> rows='<%= de.getRows() %>' cols='' name="<%= deName  %>" class="<%= classInput %> <%= taNoResize %>" <%=taNomeAttr %>><%= de.getValue() %></textarea>
 	     							<% 
 							      		if(visualizzaIconCopia){
 							      			String idDivIconInfo = "divIconInfo_"+i;

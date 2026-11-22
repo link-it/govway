@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openspcoop2.core.transazioni.constants.PddRuolo;
+import org.openspcoop2.web.lib.mvc.IconaStato;
 
 /**
  * ConfigurazioneGenerale
@@ -222,15 +223,19 @@ public class ConfigurazioneGenerale implements Serializable {
 		this.numeroGruppi = numeroGruppi;
 	}
 
+	/* Stato di abilitazione dell'API, con le icone condivise con la console (IconaStato): la
+	   forma porta il significato, il colore si aggiunge (WCAG 1.4.1). Abilitata = cerchio con
+	   spunta, parzialmente abilitata = cerchio pieno a meta', disabilitata = cerchio con trattino.
+	   Il caso senza stato puntava a 'status_grey.png', immagine che non esiste. */
 	public String getStatoImmagine() {
 		if("green".equals(this.statoComplessivo)) {
-			return "/images/tema_link/status_green.png";
+			return IconaStato.OK.getPercorsoAssoluto();
 		} else if("red".equals(this.statoComplessivo)) {
-			return "/images/tema_link/status_red.png";
+			return IconaStato.DISABILITATO.getPercorsoAssoluto();
 		} else if("yellow".equals(this.statoComplessivo)) {
-			return "/images/tema_link/status_yellow.png";
+			return IconaStato.PARZIALE.getPercorsoAssoluto();
 		}
-		return "/images/tema_link/status_grey.png";
+		return IconaStato.NON_ATTIVO.getPercorsoAssoluto();
 	}
 
 	public String getStatoTooltip() {

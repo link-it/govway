@@ -124,16 +124,18 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 		}
 		setStatoApiProfilo(de, AccordiServizioParteComuneUtilities.getStatoApi(this.apcCore, this, protocollo, idAccordo));
 	}
+	/* Un'API senza risorse, servizi o azioni non e' disabilitata ma configurata in modo incompleto:
+	   lo stato e' l'errore (cerchio con X), non il trattino della disabilitazione (WCAG 1.4.1). */
 	private static boolean isStatoDisabilitato(DataElement de) {
 		String[] stati = de.getStatusTypes();
-		return stati!=null && stati.length>0 && CheckboxStatusType.DISABILITATO.toString().equals(stati[0]);
+		return stati!=null && stati.length>0 && CheckboxStatusType.ERRORE.toString().equals(stati[0]);
 	}
 	private static void setStatoApiProfilo(DataElement de, StatoConfigurazioneAccordo stato) {
 		if(stato==null) {
 			return;
 		}
 		if(stato.isErrore()) {
-			de.setStatusType(CheckboxStatusType.DISABILITATO);
+			de.setStatusType(CheckboxStatusType.ERRORE);
 			de.setStatusToolTip(stato.getDescrizione());
 			return;
 		}
@@ -401,7 +403,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 						de.setStatusType(CheckboxStatusType.ABILITATO);
 						de.setStatusToolTip(ApiCostanti.APC_API_ICONA_STATO_RISORSE_TUTTE_ABILITATE_TOOLTIP);
 					} else {
-						de.setStatusType(CheckboxStatusType.DISABILITATO);
+						de.setStatusType(CheckboxStatusType.ERRORE);
 						de.setStatusToolTip(ApiCostanti.APC_API_ICONA_STATO_RISORSE_TUTTE_DISABILITATE_TOOLTIP);
 					}
 					break;
@@ -418,11 +420,11 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 					}
 					
 					if(numeroTotaleServizi == 0) {
-						de.setStatusType(CheckboxStatusType.DISABILITATO);
+						de.setStatusType(CheckboxStatusType.ERRORE);
 						de.setStatusToolTip(ApiCostanti.APC_API_ICONA_STATO_SERVIZI_TUTTI_DISABILITATI_TOOLTIP);
 					}
 					else if(numeroServiziAbilitati==0) {
-						de.setStatusType(CheckboxStatusType.DISABILITATO);
+						de.setStatusType(CheckboxStatusType.ERRORE);
 						if(numeroTotaleServizi==1) {
 							de.setStatusToolTip(ApiCostanti.APC_API_ICONA_STATO_SERVIZIO_PARZIALMENTE_CONFIGURATO_DISABILITATI_TOOLTIP);
 						}
@@ -729,7 +731,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 				de.setStatusType(CheckboxStatusType.ABILITATO);
 				de.setStatusToolTip(ApiCostanti.APC_API_ICONA_STATO_RISORSE_TUTTE_ABILITATE_TOOLTIP);
 			} else {
-				de.setStatusType(CheckboxStatusType.DISABILITATO);
+				de.setStatusType(CheckboxStatusType.ERRORE);
 				de.setStatusToolTip(ApiCostanti.APC_API_ICONA_STATO_RISORSE_TUTTE_DISABILITATE_TOOLTIP);
 			}
 			break;
@@ -746,11 +748,11 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 			}
 			
 			if(numeroTotaleServizi == 0) {
-				de.setStatusType(CheckboxStatusType.DISABILITATO);
+				de.setStatusType(CheckboxStatusType.ERRORE);
 				de.setStatusToolTip(ApiCostanti.APC_API_ICONA_STATO_SERVIZI_TUTTI_DISABILITATI_TOOLTIP);
 			}
 			else if(numeroServiziAbilitati==0) {
-				de.setStatusType(CheckboxStatusType.DISABILITATO);
+				de.setStatusType(CheckboxStatusType.ERRORE);
 				if(numeroTotaleServizi==1) {
 					de.setStatusToolTip(ApiCostanti.APC_API_ICONA_STATO_SERVIZIO_PARZIALMENTE_CONFIGURATO_DISABILITATI_TOOLTIP);
 				}

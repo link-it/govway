@@ -144,7 +144,7 @@ $(document).ready(function(){
 							 		<% } %>
 							    </td>
 							 	<td class="td2PageHeader" align="right">
-							 		<table>
+							 		<table role="presentation">
 							 			<tbody>
 							 				<tr>
 							 					<td>
@@ -163,7 +163,7 @@ $(document).ready(function(){
 				<td valign="top" class="td2PageBody" role="main" id="gw-contenuto">
 					<form name="form" action="<%= contextPath %>/j_security_check" method="post">
 						<!-- Breadcrumbs -->
-						<table id="crumbs-table">
+						<table role="presentation" id="crumbs-table">
 							<tbody>
 								<tr>
 									<td colspan="2">
@@ -193,13 +193,13 @@ $(document).ready(function(){
 							<%			
 						}
 						%>
-						<table class="tabella-ext">
+						<table role="presentation" class="tabella-ext">
 							<!-- Riga tabella -->
 							<tbody>
 								<tr> 
 									<td valign="top" colspan="2">		
 										<div class="panelLista">
-											<table class="tabella">
+											<table role="presentation" class="tabella">
 												<tbody>
 													<tr class="even">
 														<td colspan="2">

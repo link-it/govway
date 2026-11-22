@@ -136,7 +136,8 @@
 								<link:simpleDataTable value="#{configurazioniGeneraliBean.listaConfigurazioniServizi}" id="tableCS" enableDelete="false" showSelectAll="false">
 									<f:facet name="header">
 		                        		<rich:columnGroup>
-			                            	<rich:column colspan="2" styleClass="text-align-left"> 
+			                            	<!-- scope="col": il titolo e' l'intestazione delle due colonne, a cui sono associate le celle (WCAG 1.3.1) -->
+			                            	<rich:column colspan="2" styleClass="text-align-left" scope="col"> 
 		    	                            	<h:outputText value="#{configurazioniGeneraliBean.labelInformazioniServizi}" />
 		        	                    	</rich:column>
 		            	               	</rich:columnGroup>
@@ -155,7 +156,8 @@
 								<link:simpleDataTable value="#{configurazioniGeneraliBean.listaConfigurazioniGenerali}" id="tableCG" enableDelete="false" showSelectAll="false">
 									<f:facet name="header">
 		                        		<rich:columnGroup>
-			                            	<rich:column colspan="2" styleClass="text-align-left">
+			                            	<!-- scope="col": il titolo e' l'intestazione delle due colonne, a cui sono associate le celle (WCAG 1.3.1) -->
+			                            	<rich:column colspan="2" styleClass="text-align-left" scope="col">
 		    	                            	<h:outputText value="#{configurazioniGeneraliBean.labelInformazioniGenerali}" />
 		        	                    	</rich:column>
 		            	               	</rich:columnGroup>
@@ -403,8 +405,9 @@
 								<a4j:outputPanel rendered="#{true}" layout="block">
    									<div class="prop">
    										<a4j:outputPanel rendered="#{true}" layout="block" styleClass="label-descrizione-api-pnl">
-   											<h:outputText id="descrizioneApiLabel" styleClass="label-descrizione-api" value="#{configurazioniGeneraliBean.elementoSelezionatoPerStato.servizio}">
-											</h:outputText>
+   											<!-- il nome dell'API e' l'oggetto dell'operazione: titolo di livello 3 sotto quello della finestra (livello 2) -->
+											<span role="heading" aria-level="3"><h:outputText id="descrizioneApiLabel" styleClass="label-descrizione-api" value="#{configurazioniGeneraliBean.elementoSelezionatoPerStato.servizio}">
+											</h:outputText></span>
 										</a4j:outputPanel>
 										<div class="stato-gruppi-shuttle-headers">
 											<div class="col-list">Gruppi Disabilitati</div>

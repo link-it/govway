@@ -154,6 +154,9 @@ public class DataElement implements Serializable {
 	
 	private Dialog dialog = null;
 	
+	// testo mostrato dopo il valore di un campo di sola lettura (non viene inviato con il form)
+	private String valueSuffix = null;
+	
 	private DataElementConfirm confirm = null;
 	
 	private boolean contextMenu = false;
@@ -1165,6 +1168,23 @@ public class DataElement implements Serializable {
 	
 	public void setValoreBoldRed() {
 		this.setStyleClass(Costanti.INPUT_TEXT_BOLD_RED_CSS_CLASS);
+	}
+	
+	/**
+	 * Come {@link #setValoreBoldRed()}, con un testo dopo il valore che dice cosa indica il rosso
+	 * (es. "(scaduto)"): il colore da solo non basta (WCAG 1.4.1). Il testo non fa parte del valore inviato.
+	 */
+	public void setValoreBoldRed(String testoStato) {
+		this.setValoreBoldRed();
+		this.valueSuffix = testoStato;
+	}
+
+	public String getValueSuffix() {
+		return this.valueSuffix;
+	}
+
+	public void setValueSuffix(String valueSuffix) {
+		this.valueSuffix = valueSuffix;
 	}
 
 	public boolean isVisualizzaSezioneAperta() {

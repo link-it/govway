@@ -210,6 +210,14 @@ option  {
 	font-size: 16px;
 }
 
+/* Negli elenchi a scelta multipla ogni opzione e' un bersaglio da cliccare: con il carattere a 16px
+   le righe sono alte 19px e attaccate, sotto i 24px minimi (WCAG 2.5.8). Lo spazio sopra e sotto il
+   testo le porta a 24px; l'elenco si allunga di conseguenza e mostra lo stesso numero di righe. */
+select[multiple] option {
+	padding-top: 2px;
+	padding-bottom: 3px;
+}
+
 option:checked {
 	background-color: ${option.checked.background.color};
 	color: 	 ${option.checked.color};
@@ -482,6 +490,14 @@ a.td2PageHeader:visited {
 	padding: 16px;
 }
 
+/* titoli delle sezioni del menu come h2: stesso aspetto del div che erano prima */
+#menuct h2.titoloSezione {
+	margin: 0;
+	font-size: inherit;
+	font-weight: inherit;
+	line-height: inherit;
+}
+
 .titoloSezione-right {
 	width: 40px;
 	margin-right: 8px;
@@ -599,7 +615,9 @@ div.voceMenuRC:hover {
     height: 27px;
 }
 
-.voceMenuRC p{
+.voceMenuRC p,
+.voceMenuRC span.voceMenuRC{
+	display: block;
 	margin: 0px;
 	font-size: 16px;
 	padding-top: 0px;
@@ -645,7 +663,9 @@ div.voceMenuRC:hover {
 	padding: 8px;
 }
 
-.tableHeader td{
+/* le celle d'intestazione degli elenchi sono th (WCAG 1.3.1): stesso aspetto delle td di prima */
+.tableHeader td,
+.tableHeader th{
 	padding: 8px;
 	background-image: none;
 	background-color: ${table.thead.background.color};
@@ -658,12 +678,20 @@ div.voceMenuRC:hover {
     font-weight: bold;
 }
 
-td.tableHeaderChkAll {
+td.tableHeaderChkAll,
+th.tableHeaderChkAll {
 	width:30px;
 }
 
-td.tableHeaderChkAll-noList {
+td.tableHeaderChkAll-noList,
+th.tableHeaderChkAll-noList {
 	width:16px;
+}
+/* Intestazione con il solo testo per i lettori di schermo (.gw-solo-lettori): la cella fa da
+   contenitore, cosi' il testo fuori vista non esce dalla tabella e non allarga la pagina (WCAG 1.4.10). */
+td.tableHeaderSoloLettori,
+th.tableHeaderSoloLettori {
+	position: relative;
 }
 
 td.valignTop {
@@ -752,6 +780,17 @@ p.legend em {
 	display: block;
 	float: right;
 	padding-top: 40px;
+}
+
+/* negli elenchi i pulsanti stanno sotto la tabella dei dati, non in una sua riga (WCAG 1.3.1):
+   il contenitore racchiude il float e ha il margine interno laterale della cella (1px) */
+div.panelLista > div.buttonrow {
+	padding: 0 1px;
+}
+div.panelLista > div.buttonrow:after {
+	content: "";
+	display: table;
+	clear: both;
 }
 
 .buttonrowform{
@@ -1484,7 +1523,8 @@ div.prop-link{
 	padding-top: 8px;
 }
 
-div.prop label, span.spanLink{
+/* span.gw-etichetta-vuota: etichetta vuota che tiene solo il posto (edit-page.jsp), stesso aspetto del label */
+div.prop label, span.spanLink, div.prop span.gw-etichetta-vuota{
 	margin-right: 16px;	
 	padding-right: 16px;
 	width: 200px;
@@ -1505,11 +1545,11 @@ div.prop label em {
 	color: ${p.legend.color};
 }
 
-div.prop label.labelMedium{
+div.prop label.labelMedium, div.prop span.gw-etichetta-vuota.labelMedium{
 	width: 230px;
 }
 
-div.prop label.labelLong{
+div.prop label.labelLong, div.prop span.gw-etichetta-vuota.labelLong{
 	width: 270px;
 }
 	
@@ -2221,6 +2261,10 @@ div.propRiepilogo label, span.spanLink{
 .edit-link {
 	float: right;
 	padding: 0px 0px 0px 8px;
+	/* comandi affiancati (riepiloghi ed elenchi): alti 21px, sotto i 24px minimi di un bersaglio senza
+	   spazio attorno (WCAG 2.5.8). L'altezza in piu' e' compensata dal margine, cosi' la riga non cambia */
+	min-height: 24px;
+	margin-bottom: -3px;
 }
 
 .edit-link span.icon-box {
@@ -2581,7 +2625,7 @@ div.propDialogInfoUso-link{
 	padding-top: 8px;
 }
 
-div.propDialogInfoUso label{
+div.propDialogInfoUso label, div.propDialogInfoUso span.gw-etichetta-vuota{
 /* 	margin-right: 16px;	 */
 	padding-right: 16px;
 /* 	width: 130px; */
@@ -2817,6 +2861,15 @@ li.protocolloItem {
        visibile. */
     opacity: 0;
     transition: opacity 0s linear 0.3s; /* transizione per la dissolvenza */
+}
+
+/* Negli elenchi la tabella scorre dentro div.panelLista: senza un contenitore posizionato nella cella,
+   il pulsante (assoluto) avrebbe come riferimento un blocco esterno al pannello e ne uscirebbe,
+   allargando la pagina a 320px (WCAG 1.4.10). La cella posizionata lo tiene nel pannello; la sua
+   posizione non cambia (nessun top/left) e il messaggio di esito, calcolato con jQuery position()
+   rispetto allo stesso riferimento del pulsante, resta dove era. */
+div.panelLista td:has(> span.copy-box) {
+	position: relative;
 }
 
 /* Si usa ':focus-visible' e non ':focus': un clic col puntatore assegna comunque il focus, e con
@@ -3240,7 +3293,7 @@ div.version-notice {
 	fieldset {
 		min-width: 0;
 	}
-	div.prop label, span.spanLink, div.prop label.labelMedium, div.prop label.labelLong {
+	div.prop label, span.spanLink, div.prop label.labelMedium, div.prop label.labelLong, div.prop span.gw-etichetta-vuota {
 		float: none;
 		width: auto !important;
 		margin-right: 0;

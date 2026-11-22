@@ -20,7 +20,13 @@
 					</c:if>
 				</h:outputLabel>
 			</c:if>
-			<c:if test="#{empty labelId}">
+			<!-- etichetta di solo spazio (label="&amp;#160;" o label=" "): serve ad allineare il contenuto, non etichetta un campo.
+			     Distanziatore nascosto ai lettori di schermo, che il CSS impagina come un'etichetta (span.labelSpacer).
+			     Il nome del campo accanto viene da altro (es. le combo 'Numero Dimensioni' sono nominate da utils.js) -->
+			<c:if test="#{empty labelId and (label eq '&#160;' or label eq ' ')}">
+				<span class="labelSpacer #{not empty styleClass ? styleClass : ''}" aria-hidden="true"><h:outputText value="#{label}" /><c:if test="#{required}"><em>*</em></c:if></span>
+			</c:if>
+			<c:if test="#{empty labelId and label ne '&#160;' and label ne ' '}">
 				<h:outputLabel styleClass="#{not empty styleClass ? styleClass : ''}">
 					<h:outputText value="#{label}" />
 					<c:if test="#{required}">

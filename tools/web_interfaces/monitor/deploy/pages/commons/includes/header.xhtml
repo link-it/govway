@@ -9,7 +9,7 @@
 	
 	<h:panelGroup layout="block" id="headerContentParent">
 		<h:panelGroup layout="block" id="headerLogo" styleClass="stileLogo" rendered="#{not empty loginBean.logoHeaderImage}">
-			<table class="tablePageHeaderLogo">
+			<table role="presentation" class="tablePageHeaderLogo">
 				<tbody>
 					<tr class="stileLogo"> 
 						<td colspan="2" align="left">
@@ -27,7 +27,7 @@
 	      	<a4j:region id="headerPaginaLive" renderRegionOnly="true">
 	      		<h:form prependId="false" >
 	      			<a4j:outputPanel layout="block" ajaxRendered="false" id="headerPaginaLivePanel">
-		           		<table class="tablePageHeader">
+		           		<table role="presentation" class="tablePageHeader">
 		            		<tbody>
 			            		<tr>
 			            			<c:if test="#{applicationBean.amministratore or applicationBean.operatore}">
@@ -36,7 +36,7 @@
 												<input type="hidden" id="_csrfHeader" name="_csrf" value="#{loginBean.csrf}"/>
 												<input type="hidden" id="_csrfHeaderCheck" name="_crsfCheck" value="#{_csp_random_nonce}"/>
 												<a href="#{facesContext.externalContext.request.contextPath}/commons/pages/statoPdd.jsf" class="titleStatusIconLinkRight">
-													<h:graphicImage alt="Stato del sistema: #{statusBean.tooltipIconaStato}" value="#{statusBean.iconaStato}" width="16" height="16" id="iconaStatusPdd" styleClass="vertical-align-bottom" >
+													<h:graphicImage alt="Stato del sistema: #{statusBean.tooltipIconaStato}" value="#{statusBean.iconaStato}" width="24" height="24" id="iconaStatusPdd" styleClass="vertical-align-bottom" >
 														<rich:toolTip id="toolIconaStatusPdd" for="iconaStatusPdd" mode="client" value="#{statusBean.tooltipIconaStato}" direction="bottom-left"/>
 													</h:graphicImage>
 												</a>
@@ -96,7 +96,9 @@
 					                <td align="right" class="titleRight">
 					                	<c:if test="#{applicationBean.user}">
 											<h:panelGroup id="pgTitleDx" layout="block">
-												<h:outputLabel id="cdLabel_stPdd" value="#{statusBean.labelStato}" rendered="#{statusBean.enable}"/>
+												<!-- non e' l'etichetta di un campo: e' il punto che il polling dello stato ridisegna (labelStato e' sempre vuota
+												     e ricalcola lo stato). Uno span e non un label, che vuoto e senza campo non ha senso per i lettori di schermo -->
+												<h:outputText id="cdLabel_stPdd" value="#{statusBean.labelStato}" rendered="#{statusBean.enable}"/>
 												<h:panelGrid columns="#{loginBean.colonneUserInfo}">
 													<c:if test="#{loginBean.visualizzaSezioneSoggetto}">
 														<c:if test="#{loginBean.visualizzaMenuSoggetto}">

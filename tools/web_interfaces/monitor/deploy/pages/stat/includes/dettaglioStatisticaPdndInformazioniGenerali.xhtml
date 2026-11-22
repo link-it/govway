@@ -11,7 +11,7 @@
     <a4j:outputPanel layout="block" id="informazioniGeneraliPnl">
 		<h:panelGrid id="panelGridInformazioniGeneraliDettaglio" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDxFixedWidth170,valueAllineataSx">
 		
-			<h:outputLabel styleClass="outputFieldLabel" value="&#160;&#160;" rendered="#{true}" />
+			<span class="outputFieldLabel" aria-hidden="true">&#160;&#160;</span>
  			<h:panelGroup layout="block"  class="subtitle-nopaddingleft-nomarginleft">
 				<h:outputText value="#{msg['statistichePdndTracing.dettaglio.informazioniGenerali.label']}" styleClass="subtitle-nopaddingleft-nomarginleft"/>
 			</h:panelGroup>
@@ -49,7 +49,7 @@
 		
 		<h:panelGrid id="panelGridInformazioniPubblicazioneDettaglio" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDxFixedWidth170,valueAllineataSx">
 		
-			<h:outputLabel styleClass="outputFieldLabel" value="&#160;&#160;" rendered="#{true}" />
+			<span class="outputFieldLabel" aria-hidden="true">&#160;&#160;</span>
  			<h:panelGroup layout="block"  class="subtitle-nopaddingleft-nomarginleft">
 				<h:outputText value="#{msg['statistichePdndTracing.dettaglio.informazioniPubblicazione.label']}" styleClass="subtitle-nopaddingleft-nomarginleft"/>
 			</h:panelGroup>

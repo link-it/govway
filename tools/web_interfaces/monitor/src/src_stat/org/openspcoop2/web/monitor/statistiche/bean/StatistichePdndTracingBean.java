@@ -229,6 +229,25 @@ public class StatistichePdndTracingBean extends StatistichePdndTracing {
 		}
 	}
 	
+	/**
+	 * Glifo dell'icona di stato: la forma porta lo stato, il colore si aggiunge (WCAG 1.4.1).
+	 * Stessa convenzione degli allarmi e della console: cerchio con spunta = pubblicato,
+	 * orologio pieno = in elaborazione, cerchio con X = errore, cerchio con puntini = in attesa.
+	 */
+	public String getGlifoIconaStato() {
+		String colore = getColoreIconaStato();
+		switch (colore) {
+		case "icona-tracingcsv-error":
+			return "cancel";
+		case "icona-tracingcsv-ok":
+			return "check_circle";
+		case "icona-tracingcsv-warning":
+			return "watch_later";
+		default:
+			return "pending";
+		}
+	}
+	
 	public boolean getFailed() {
 		return PossibiliStatiRichieste.FAILED.equals(this.stato);	
 	}

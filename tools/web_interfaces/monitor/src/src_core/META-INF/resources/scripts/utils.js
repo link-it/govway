@@ -148,28 +148,76 @@ function gwApplicaTitoloPagina(){
 	const intestazione = Array.prototype.find.call(
 			document.querySelectorAll('.rich-panel-header, .rich-stglpanel-header, .subtitle, .messages-title'),
 			visibile);
-	if(!intestazione || intestazione.getAttribute('role')) return;
+	if(!intestazione) return;
 
-	/* dentro l'intestazione possono esserci marcatori, suggerimenti e blocchi <style>: se si
-	   marcasse l'intero elemento verrebbero letti come parte del titolo. Si prende il solo
-	   testo proprio, quando c'e'. */
-	const testi = Array.prototype.filter.call(intestazione.childNodes,
-			(n) => n.nodeType === 3 && n.textContent.trim().length > 0);
-	if(testi.length === 0){
-		intestazione.setAttribute('role', 'heading');
-		intestazione.setAttribute('aria-level', '1');
+	/* un titolo gia' marcato (di secondo livello, da gwTitoliPannelli o gwTitoliSottosezioni, in
+	   una passata precedente) si promuove */
+	const marcato = intestazione.getAttribute('role') === 'heading' ? intestazione : intestazione.querySelector('[role="heading"]');
+	if(marcato){
+		marcato.setAttribute('aria-level', '1');
 		return;
 	}
-	const titolo = document.createElement('span');
-	/* Lo span serve solo a delimitare il testo del titolo e non deve portare uno stile proprio:
-	   il tema ha una regola '* { font-size: 14px }' che altrimenti lo rimpicciolirebbe rispetto
-	   all'intestazione che lo contiene. Lo stile sta nel foglio di stile, non qui. */
-	titolo.className = 'gw-titolo-pagina';
+	if(intestazione.getAttribute('role')) return;
+
+	const titolo = gwTestoDelTitolo(intestazione, 'gw-titolo-pagina') || intestazione;
 	titolo.setAttribute('role', 'heading');
 	titolo.setAttribute('aria-level', '1');
-	intestazione.insertBefore(titolo, testi[0]);
-	for(let i = 0; i < testi.length; i++){
-		titolo.appendChild(testi[i]);
+}
+
+/* L'elemento che porta il testo del titolo di un'intestazione di riquadro. Il ruolo di titolo va
+   su di lui e non sul <div> dell'intestazione: dentro possono esserci marcatori, suggerimenti e
+   blocchi <style>, che verrebbero letti come parte del titolo; inoltre un <div> con
+   role="heading" non e' riconosciuto come titolo da tutti i motori di verifica (IBM Equal Access
+   esamina il blocco di testo fermandosi al confine del <div>, prima di guardarne il ruolo).
+   - testo proprio dell'intestazione: viene racchiuso in uno <span> con la classe indicata, che
+     nel foglio di stile eredita il carattere dell'intestazione (nessun effetto sull'aspetto);
+   - un solo <span> figlio con del testo (il caso dei riquadri con il titolo in un h:outputText):
+     e' lui;
+   - altrimenti null. */
+function gwTestoDelTitolo(intestazione, classe){
+	const conTesto = (n) => (n.textContent || '').replace(/\u00a0/g, ' ').trim().length > 0;
+	const testi = Array.prototype.filter.call(intestazione.childNodes, (n) => n.nodeType === 3 && conTesto(n));
+	if(testi.length > 0){
+		const titolo = document.createElement('span');
+		/* Lo span serve solo a delimitare il testo del titolo e non deve portare uno stile proprio:
+		   il tema ha una regola '* { font-size: 14px }' che altrimenti lo rimpicciolirebbe rispetto
+		   all'intestazione che lo contiene. Lo stile sta nel foglio di stile, non qui. */
+		titolo.className = classe;
+		intestazione.insertBefore(titolo, testi[0]);
+		for(let i = 0; i < testi.length; i++){
+			titolo.appendChild(testi[i]);
+		}
+		return titolo;
+	}
+	const figli = intestazione.children;
+	if(figli.length === 1 && figli[0].tagName === 'SPAN' && conTesto(figli[0]) &&
+			!figli[0].querySelector('a, button, input, select, textarea, [role], [tabindex]')){
+		return figli[0];
+	}
+	return null;
+}
+
+/* Le intestazioni dei riquadri (rich:panel) e delle finestre modali (rich:modalPanel) sono titoli a
+   vista ('Aggiornamento Dati Statistici', 'Archivio Stati', 'Export Transazioni', 'Importa
+   Ricerche'), ma per i lettori di schermo sono testo qualunque (WCAG 1.3.1, 2.4.6). Diventano
+   titoli di secondo livello, sotto il titolo della pagina; il riquadro principale, se la pagina non
+   ha altro titolo, e' gia' stato promosso al primo livello da gwApplicaTitoloPagina. Si saltano le
+   intestazioni con comandi dentro. Nessun effetto sull'aspetto. */
+function gwTitoliPannelli(){
+	const intestazioni = document.querySelectorAll('.rich-panel-header, .rich-mpnl-header');
+	for(const intestazione of intestazioni){
+		if(intestazione.getAttribute('role') || intestazione.querySelector('[role="heading"]')){
+			continue;
+		}
+		if(intestazione.querySelector('a, button, input, select, textarea, [tabindex]')){
+			continue;
+		}
+		const titolo = gwTestoDelTitolo(intestazione, 'gw-titolo-pannello');
+		if(!titolo){
+			continue;
+		}
+		titolo.setAttribute('role', 'heading');
+		titolo.setAttribute('aria-level', '2');
 	}
 }
 
@@ -654,15 +702,128 @@ function gwRigheOperabili(){
 	}
 }
 
+/* Le intestazioni dei gruppi del menu laterale ('Monitoraggio', 'Reportistica', 'Configurazione')
+   sono visivamente i titoli delle sezioni, ma rich:panelMenuGroup le rende come una tabella con il
+   testo in una cella: chi usa un lettore di schermo non le trova come titoli e non puo' saltare da
+   una sezione all'altra (WCAG 1.3.1, 2.4.6). La cella del testo diventa un titolo di livello 2 e la
+   tabella, che serve solo a impaginare, viene dichiarata tale. Nessun effetto sull'aspetto. I gruppi
+   del menu non si espandono ne' si chiudono (expandMode="none"): l'intestazione non e' un comando,
+   quindi non c'e' uno stato da annunciare. */
+function gwTitoliSezioniMenu(){
+	const tabelle = document.querySelectorAll('#menuct table.rich-pmenu-top-group');
+	for(const tabella of tabelle){
+		const cella = tabella.querySelector('td.rich-pmenu-top-group-self-label');
+		if(!cella || cella.getAttribute('role') === 'heading'){
+			continue;
+		}
+		if(!(cella.textContent || '').replace(/\u00a0/g, ' ').trim()){
+			continue;
+		}
+		tabella.setAttribute('role', 'presentation');
+		cella.setAttribute('role', 'heading');
+		cella.setAttribute('aria-level', '2');
+	}
+}
+
+/* I sottotitoli delle sezioni dei form e dei dettagli ('Filtro Temporale', 'Dati API', 'Esito',
+   'Informazioni Generali', ...) e il titolo dei riquadri dei messaggi ('Messaggio di Errore',
+   'Messaggio informativo') sono titoli a vista, ma per i lettori di schermo sono testo qualunque:
+   non si raggiungono con la navigazione per titoli e la struttura della pagina non si percepisce
+   (WCAG 1.3.1, 2.4.6). Il ruolo di titolo va sullo <span> del testo, che e' il titolo vero, e non
+   sul blocco che lo contiene: il blocco puo' avere margini e icone propri. Livello 2, sotto il
+   titolo della pagina. Si saltano i sottotitoli che contengono comandi (sezioni apribili), dove
+   il testo e' gia' il nome del comando. Nessun effetto sull'aspetto. */
+function gwTitoliSottosezioni(){
+	const testi = document.querySelectorAll('div.subtitle > span, div.subtitle-nopaddingleft-nomarginleft > span, div.messages-title > span.messages-title-text');
+	for(const testo of testi){
+		if(testo.hasAttribute('role')){
+			continue;
+		}
+		const blocco = testo.parentElement;
+		if(blocco.querySelector('a, button, input, select, textarea, [role], [tabindex]')){
+			continue;
+		}
+		if(!(testo.textContent || '').replace(/\u00a0/g, ' ').trim()){
+			continue;
+		}
+		testo.setAttribute('role', 'heading');
+		testo.setAttribute('aria-level', '2');
+	}
+}
+
+/* Le scelte rese da h:selectOneRadio e h:selectManyCheckbox («Si»/«No» di 'Escludi Scartate',
+   'Ricerca Esatta', ...) stanno in una tabella di impaginazione, e la domanda a cui rispondono e'
+   l'etichetta del blocco 'prop', che non e' collegata a nessuna delle opzioni: chi usa un lettore
+   di schermo sente «Si, pulsante di opzione» senza sapere a cosa si riferisca (WCAG 1.3.1).
+   Le opzioni vengono quindi raccolte in un gruppo ('radiogroup' per i radio, 'group' per le
+   caselle) che prende il nome da quell'etichetta. Il gruppo e' un <div> attorno alla tabella e non
+   il ruolo della tabella stessa, che resterebbe altrimenti una tabella di dati per alcuni motori
+   di verifica. La tabella si riconosce perche' tutte le sue opzioni hanno come 'name' il suo id,
+   come le genera JSF; senza un'etichetta con del testo il gruppo non viene creato, per non
+   lasciarlo senza nome. Un re-render AJAX sostituisce la tabella dentro il gruppo, che resta. */
+function gwGruppiDiOpzioni(){
+
+	const tabelle = document.querySelectorAll('table[id]');
+
+	for(let i = 0; i < tabelle.length; i++){
+
+		const tabella = tabelle[i];
+		const opzioni = tabella.querySelectorAll('input[type="radio"], input[type="checkbox"]');
+		if(opzioni.length < 2){
+			continue;
+		}
+
+		let tipo = null;
+		let uniforme = true;
+		for(let j = 0; j < opzioni.length; j++){
+			if(opzioni[j].name !== tabella.id || (tipo !== null && tipo !== opzioni[j].type)){
+				uniforme = false;
+				break;
+			}
+			tipo = opzioni[j].type;
+		}
+		if(!uniforme || tabella.closest('fieldset, [role="radiogroup"], [role="group"]')){
+			continue;
+		}
+
+		const blocco = tabella.closest('div.prop');
+		let etichetta = null;
+		if(blocco){
+			for(let j = 0; j < blocco.children.length; j++){
+				if(blocco.children[j].tagName === 'LABEL'){
+					etichetta = blocco.children[j];
+					break;
+				}
+			}
+		}
+		if(!etichetta || !(etichetta.textContent || '').replace(/ /g, ' ').trim()){
+			continue;
+		}
+
+		if(!etichetta.id){
+			etichetta.id = tabella.id + '_etichettaGruppo';
+		}
+		const gruppo = document.createElement('div');
+		gruppo.setAttribute('role', tipo === 'radio' ? 'radiogroup' : 'group');
+		gruppo.setAttribute('aria-labelledby', etichetta.id);
+		tabella.parentNode.insertBefore(gruppo, tabella);
+		gruppo.appendChild(tabella);
+	}
+}
+
 function gwApplicaCorrezioniAccessibilita(){
 
 	gwApplicaTitoloPagina();
+	gwTitoliPannelli();
 	/* prima dei due passaggi: cosi' un controllo con nome dichiarato risulta gia'
 	   nominato e nessuna etichetta vuota gli viene associata */
 	gwApplicaNomiDichiarati();
 	gwAssociaEtichette();
 	gwAssociaEtichetteAdiacenti();
 	gwAssociaNomiSlider();
+	gwGruppiDiOpzioni();
+	gwTitoliSezioniMenu();
+	gwTitoliSottosezioni();
 	gwPulsantiDiSelezione();
 	/* prima dei glifi: un comando che riceve qui il nome non resta muto quando la sua
 	   icona viene nascosta */
@@ -711,3 +872,46 @@ function gwOsservaCorrezioniAccessibilita(){
 }
 
 jQuery(document).ready(gwOsservaCorrezioniAccessibilita);
+
+/* Fuoco conservato negli aggiornamenti AJAX. Scegliere un'opzione in molti campi dei form (periodo,
+   profilo, soggetto, tipo...) ridisegna via AJAX la parte del form che contiene il campo stesso: il
+   campo viene sostituito da uno nuovo con lo stesso id e il fuoco finiva sul body. Chi usa la
+   tastiera doveva ripartire dall'inizio della pagina dopo ogni scelta: un cambio di contesto non
+   richiesto (WCAG 3.2.2) e un ordine del fuoco che si perde (2.4.3).
+   Si ricorda l'elemento che ha il fuoco; quando il documento cambia e quell'elemento non e' piu'
+   nel documento, mentre il fuoco e' rimasto sul body, lo si riporta sul nuovo elemento con lo
+   stesso id. Se l'utente ha tolto il fuoco di proposito (clic fuori da un controllo), l'elemento
+   e' ancora nel documento e non si ricorda piu' nulla: nessun salto del fuoco. */
+function gwConservaFuocoNegliAggiornamenti(){
+	let ultimo = null;
+
+	document.addEventListener('focusin', function(e) {
+		ultimo = (e.target && e.target.id) ? e.target : null;
+	});
+	document.addEventListener('focusout', function(e) {
+		const uscito = e.target;
+		window.setTimeout(function() {
+			const fuoco = document.activeElement;
+			if(ultimo === uscito && uscito.isConnected && (!fuoco || fuoco === document.body)) {
+				ultimo = null;
+			}
+		}, 0);
+	});
+
+	new MutationObserver(function() {
+		if(!ultimo || ultimo.isConnected) {
+			return;
+		}
+		const fuoco = document.activeElement;
+		if(fuoco && fuoco !== document.body) {
+			ultimo = null;
+			return;
+		}
+		const nuovo = document.getElementById(ultimo.id);
+		if(nuovo && nuovo !== ultimo && nuovo.offsetParent !== null && !nuovo.disabled) {
+			nuovo.focus({ preventScroll: true });
+		}
+	}).observe(document.body, { childList: true, subtree: true });
+}
+
+jQuery(document).ready(gwConservaFuocoNegliAggiornamenti);

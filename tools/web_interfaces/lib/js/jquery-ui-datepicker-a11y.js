@@ -143,8 +143,18 @@
 			(c.contains('ui-datepicker-today') && !cella.closest('table').querySelector('.ui-datepicker-days-cell-over, .ui-datepicker-current-day'));
 	}
 
+	/* Il giorno su cui portare il fuoco, in ordine di priorita': quello raggiunto con le frecce, poi
+	   quello scelto, poi oggi, infine il primo del mese. Un unico querySelector con la lista dei
+	   selettori non va bene: restituisce il primo elemento nell'ordine del documento che soddisfa
+	   uno qualunque dei selettori, cioe' sempre il giorno 1. Il Tab entrava cosi' sul primo del mese
+	   e, con le frecce, il giorno annunciato si spostava mentre il fuoco tornava sul giorno 1. */
 	function cellaAttiva(pannello) {
-		return pannello.querySelector('td.ui-datepicker-days-cell-over a, td.ui-datepicker-current-day a, td.ui-datepicker-today a, td a');
+		var priorita = ['td.ui-datepicker-days-cell-over a', 'td.ui-datepicker-current-day a', 'td.ui-datepicker-today a', 'td a'];
+		for (var i = 0; i < priorita.length; i++) {
+			var cella = pannello.querySelector(priorita[i]);
+			if (cella) return cella;
+		}
+		return null;
 	}
 
 	function annunciaGiornoCorrente(campo) {
@@ -202,7 +212,9 @@
 	/* jQuery UI appende il pannello in fondo al <body>: nell'ordine del documento viene dopo tutto
 	   il resto, quindi col Tab dal campo si finisce nel campo seguente e ai comandi del calendario
 	   non ci si arriva mai. Il fuoco lo si governa a mano, come in una finestra di dialogo:
-	   campo -> mese precedente -> mese -> anno -> mese successivo -> giorno -> campo. */
+	   campo -> mese precedente -> mese -> anno -> mese successivo -> giorno -> elemento che segue il
+	   campo nella pagina (il calendario si chiude). Con Maiusc+Tab si ripercorre all'indietro fino al
+	   campo. */
 	function comandiInOrdine(pannello) {
 		var lista = ['.ui-datepicker-prev', 'select.ui-datepicker-month', 'select.ui-datepicker-year', '.ui-datepicker-next']
 			.map(function (sel) { return pannello.querySelector(sel); })
@@ -210,6 +222,14 @@
 		var giorno = cellaAttiva(pannello);
 		if (giorno) lista.push(giorno);
 		return lista;
+	}
+
+	/* Il primo elemento raggiungibile col Tab che, nell'ordine della pagina, segue il campo; il
+	   pannello del calendario e' escluso (sta in fondo al <body>, ma e' gia' stato percorso). */
+	function successivoDopoIlCampo(campo, pannello) {
+		var tabulabili = $(':tabbable').filter(function () { return !pannello.contains(this); }).toArray();
+		var posizione = tabulabili.indexOf(campo);
+		return posizione !== -1 && posizione + 1 < tabulabili.length ? tabulabili[posizione + 1] : null;
 	}
 
 	function spostaNelPannello(pannello, campo, indietro) {
@@ -221,7 +241,17 @@
 			return true;
 		}
 		var prossimo = posizione + (indietro ? -1 : 1);
-		if (prossimo < 0 || prossimo >= lista.length) { campo.focus(); return true; }   // si torna al campo
+		if (prossimo < 0) { campo.focus(); return true; }   // Maiusc+Tab dal primo comando: si torna al campo
+		if (prossimo >= lista.length) {
+			/* Tab dall'ultimo comando: si esce dal calendario e si prosegue nella pagina. Tornare al
+			   campo, come prima, lo riapriva e il Tab successivo rientrava nel calendario: chi usa
+			   solo la tastiera restava chiuso in un giro senza uscita (WCAG 2.1.2). Si chiude prima
+			   di spostare il fuoco, perche' il campo riapre il calendario quando lo riceve. */
+			var seguente = successivoDopoIlCampo(campo, pannello);
+			$.datepicker._hideDatepicker();
+			(seguente || campo).focus();
+			return true;
+		}
 		lista[prossimo].focus();
 		return true;
 	}
@@ -251,6 +281,17 @@
 					return;
 				case 13: /* INVIO */
 				case 32: /* SPAZIO */
+					if (suGiorno) {
+						/* Scelto il giorno, jQuery UI chiude il calendario e ne toglie le celle: il fuoco,
+						   che era sulla cella, finiva sull'inizio della pagina (WCAG 2.4.3). Lo si
+						   riporta prima sul campo, che col calendario gia' aperto non lo riapre, e poi si
+						   sceglie il giorno; lo Spazio su un collegamento, da solo, non lo sceglierebbe. */
+						var scelto = document.activeElement;
+						campo.focus();
+						scelto.click();
+						evento.preventDefault(); evento.stopPropagation();
+						return;
+					}
 					if (document.activeElement && document.activeElement.matches('.ui-datepicker-prev, .ui-datepicker-next')) {
 						document.activeElement.click();     // <a> senza href: il clic va scatenato
 						evento.preventDefault(); evento.stopPropagation();

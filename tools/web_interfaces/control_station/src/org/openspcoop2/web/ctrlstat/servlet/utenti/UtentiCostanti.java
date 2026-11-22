@@ -257,6 +257,7 @@ public class UtentiCostanti {
 	public static final String LABEL_NOTA_UTENTI_SCADENZA_ADD = "La password scade dopo {0} giorni";
 	public static final String LABEL_NOTA_UTENTI_SCADENZA_CHANGE = "La password scade fra {0} giorni";
 	public static final String LABEL_UTENTI_SCADENZA_PW_SCADUTA = "Password scaduta";
+	public static final String LABEL_UTENTI_STATO_ABILITAZIONI_VALIDE = "Utente con abilitazioni valide";
 	public static final String LABEL_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO = "Home Page";
 	public static final String LABEL_VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_TRANSAZIONI = "Ricerca Transazioni";
 	public static final String LABEL_VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_STATISTICHE = "Report Statistico";

@@ -184,7 +184,7 @@
 								<link:fieldset legend="Ricerche" rendered="#{not empty utentiBean.user.id and utentiBean.user.id gt 0}" collapsible="false" closed="false">
 									<a4j:outputPanel layout="block" styleClass="prop">
 				
-										<h:outputLabel styleClass="outputFieldLabel" value="&#160;&#160;" rendered="#{true}" />
+										<span class="outputFieldLabel" aria-hidden="true">&#160;&#160;</span>
 										<a4j:outputPanel layout="block" styleClass="divNoEdit">
 											<a4j:htmlCommandLink id="history-iconLink" styleClass="icon-details" 
 												action="#{utentiBean.ricerche}" value="#{utentiBean.labelLinkRicerche}"

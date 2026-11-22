@@ -155,12 +155,12 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 %>
 
 
-<table class="tabella-ext">
+<table role="presentation" class="tabella-ext">
 	<% if(titoloSezione != null) { %>
 	<tr>
 		<td class="valignTop" colspan="2">
 			<div class="<%= classPanelTitolo %>" >
-				<table class="tabella" id="panelDettaglioHeader">
+				<table role="presentation" class="tabella" id="panelDettaglioHeader">
 					<tbody>
 						<tr>	
 							<td class="titoloSezione" id="dettaglioFormHeader" colspan="<%= colFormHeader %>">
@@ -379,7 +379,7 @@ $("#" + anchorId).attr("aria-expanded", "false");
 
 
 </script>
-				<table class="<%=classTabellaPanelLista %>">
+				<table role="presentation" class="<%=classTabellaPanelLista %>">
 
 <%
 
@@ -425,6 +425,13 @@ for (int i = 0; i < dati.size(); i++) {
   	String rowName="row_"+deName;
   	String deLabel = !de.getLabel(elementsRequiredEnabled).equals("") ? de.getLabel(elementsRequiredEnabled) : "&nbsp;";
   	String deLabelId = "de_label_"+i;
+  	// etichetta vuota: tiene il posto per allineare il campo, ma non etichetta nulla. Resa come <span>
+  	// nascosto ai lettori di schermo (stesso aspetto, vedi .gw-etichetta-vuota nel CSS): un <label>
+  	// vuoto e' un'etichetta senza testo
+  	boolean deLabelVuota = "&nbsp;".equals(deLabel);
+  	String deTagEtichetta = deLabelVuota ? "span" : "label";
+  	String deAttrEtichettaVuota = deLabelVuota ? " aria-hidden=\"true\"" : "";
+  	String deClasseEtichettaVuota = deLabelVuota ? " gw-etichetta-vuota" : "";
   	// nome accessibile per i controlli la cui etichetta e' volutamente non visibile: la <label>
   	// viene resa vuota, quindi senza questo attributo il controllo resta anonimo. Se l'etichetta
   	// e' valorizzata non viene emesso nulla, per non mascherare il testo visibile
@@ -616,7 +623,8 @@ for (int i = 0; i < dati.size(); i++) {
 	       					<%
    							} else {
    	    					%>
-   	    						<span class="subtitle"><a id="<%=rowName %>" class="<%=cssClassTitle %>" ><%=deLabel %>&nbsp;&nbsp;&nbsp;&nbsp;</a></span>
+   	    						<%-- titolo della sezione: dichiarato tale ai lettori di schermo (senza testo resta un distanziatore) --%>
+   	    						<span class="subtitle"<%= "&nbsp;".equals(deLabel) ? "" : " role=\"heading\" aria-level=\"2\"" %>><a id="<%=rowName %>" class="<%=cssClassTitle %>" ><%=deLabel %>&nbsp;&nbsp;&nbsp;&nbsp;</a></span>
    	    					<%
    							}
    	    					%>
@@ -667,7 +675,7 @@ for (int i = 0; i < dati.size(); i++) {
 	    				
 	    				%>
 	        			<div class="prop">
-						<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%=noteId %>"><%=deLabel %></label>
+						<<%=deTagEtichetta %> class="<%= labelStyleClass %><%=deClasseEtichettaVuota %>" id="<%=deLabelId %>"<%=deAttrEtichettaVuota %>><%=deLabel %></<%=deTagEtichetta %>>
         					<div class="<%=classDivNoEdit %>">
 								<span class="<%=classSpanNoEdit %>" id="<%=noteId %>"><%=noteValue %></span>
 							</div>
@@ -692,7 +700,7 @@ for (int i = 0; i < dati.size(); i++) {
 							boolean visualizzaConferma = deConfirm != null;
 	        				%>
 	            			<div class="prop prop-link">
-	            				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%=id %>"><%=deLabelLink %></label>
+	            				<%= "&nbsp;".equals(deLabelLink) ? "<span class=\"" + labelStyleClass + " gw-etichetta-vuota\" id=\"" + deLabelId + "\" aria-hidden=\"true\">&nbsp;</span>" : "<label class=\"" + labelStyleClass + "\" id=\"" + deLabelId + "\">" + deLabelLink + "</label>" %><%-- il link non e' un campo etichettabile: niente for --%>
 	            				<div class="<%=classDivNoEdit %>"> 
 	            					<% if (!visualizzaConferma) { %>
 		            					<span class="<%=classSpanNoEdit %>"><a id="<%=id %>" href="<%= de.getUrl() %>" <%=deTarget %> ><%= de.getValue() %></a></span>
@@ -765,9 +773,9 @@ for (int i = 0; i < dati.size(); i++) {
 	            				String textId = "form-text_" + i ;
 	            				%>
 	                			<div class="prop">
-	                				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%=textId %>"><%=deLabel %></label>
+	                				<<%=deTagEtichetta %> class="<%= labelStyleClass %><%=deClasseEtichettaVuota %>" id="<%=deLabelId %>"<%=deAttrEtichettaVuota %>><%=deLabel %></<%=deTagEtichetta %>>
 	                				<div class="<%=classDivNoEdit %>"> 
-		                				<span class="<%=classSpanNoEdit %>" id="<%=textId %>"><%= textValNoEdit %></span>
+		                				<span class="<%=classSpanNoEdit %>" id="<%=textId %>"><%= textValNoEdit %><% if(de.getValueSuffix()!=null && !de.getValueSuffix().isEmpty()){ %> <%= StringEscapeUtils.escapeHtml4(de.getValueSuffix()) %><% } %></span>
 		                				<input type="hidden" name="<%= deName %>" value="<%= StringEscapeUtils.escapeHtml4(de.getValue()) %>"/>
 		                				
 		                				<% 
@@ -822,7 +830,7 @@ for (int i = 0; i < dati.size(); i++) {
 	                				String textId = "form-textedit_" + i ;
 	                				%>
 	                    			<div class="prop">
-	                    				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%=textId %>"><%=deLabel %></label>
+	                    				<<%=deTagEtichetta %> class="<%= labelStyleClass %><%=deClasseEtichettaVuota %>" id="<%=deLabelId %>"<%= (deLabelVuota || pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton") || !de.getDataAttributesAsString().equals("")) ? "" : " for=\"" + textId + "\"" %><%-- in vista e' testo; con i tag (data-role) il campo visibile e' quello del plugin, nominato con aria-labelledby --%><%=deAttrEtichettaVuota %>><%=deLabel %></<%=deTagEtichetta %>>
 	                    				<%
 								    	if (pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) {
 								    		String taeditValNoEdit = de.getValue() != null && !de.getValue().equals("") ? de.getValue() : (pd.getMode().equals("view-noeditbutton") ? "&nbsp;" : "not defined");
@@ -831,7 +839,10 @@ for (int i = 0; i < dati.size(); i++) {
 								    			</div><%
 								    	} else {
 								    		String selDataAttributes = !de.getDataAttributesAsString().equals("") ? de.getDataAttributesAsString() : " ";
-								      		%><input type="text" name="<%= deName %>" value="<%= de.getValue() %>" class="<%= classInput %>" <%= selDataAttributes %> id="<%=textId %>" <%=deAriaLabelAttr %>>
+								      		// con i tag (data-role) il campo visibile e' quello creato dal plugin, che riprende il nome da qui:
+								    		// l'etichetta non punta al campo originale, nascosto, ma gli da' il nome con aria-labelledby
+								    		String deTagsNomeAttr = (!de.getDataAttributesAsString().equals("") && !deLabelVuota && deAriaLabelAttr.equals("")) ? (" aria-labelledby=\"" + deLabelId + "\"") : "";
+								      		%><input type="text" name="<%= deName %>" value="<%= de.getValue() %>" class="<%= classInput %>" <%= selDataAttributes %> id="<%=textId %>" <%=deAriaLabelAttr %><%=deTagsNomeAttr %>>
 								      		<%
 								      			if(!de.getDataAttributesAsString().equals("")){
 								      				
@@ -935,6 +946,10 @@ for (int i = 0; i < dati.size(); i++) {
 							      				    			}
 							      				    			<% } %>
 									      				    );
+									      				    // l'input di suggerimento di typeahead e' solo grafica (aria-hidden, fuori dal Tab): il ruolo
+									      				    // 'presentation' non e' ammesso su un input di testo (ARIA in HTML); prende il nome del campo
+									      				    $("input[data-role=tagsinput][name='<%= deName %>']").parent().find('.bootstrap-tagsinput input.tt-hint')
+									      				    	.removeAttr('role').attr('aria-labelledby', '<%= deLabelId %>');
 									      				  });
 								      					</script>
 								      				<%
@@ -965,7 +980,7 @@ for (int i = 0; i < dati.size(); i++) {
 	                    				String numberId = "form-number_" + i ;
 		                				%>
 		                    			<div class="prop">
-		                    				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%=numberId %>"><%=deLabel %></label>
+		                    				<<%=deTagEtichetta %> class="<%= labelStyleClass %><%=deClasseEtichettaVuota %>" id="<%=deLabelId %>"<%= deLabelVuota ? "" : " for=\"" + numberId + "\"" %><%=deAttrEtichettaVuota %>><%=deLabel %></<%=deTagEtichetta %>>
 		                    				<%
 									    	if (pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) {
 									    		String taeditValNoEdit = de.getValue() != null && !de.getValue().equals("") ? de.getValue() : (pd.getMode().equals("view-noeditbutton") ? "&nbsp;" : "not defined");
@@ -1013,7 +1028,7 @@ for (int i = 0; i < dati.size(); i++) {
 		                    				String idPwd = "pwd_" + i;
 		                    				%>
 		                        			<div class="prop">
-		                        				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%=idPwd %>"><%=deLabel %></label>
+		                        				<<%=deTagEtichetta %> class="<%= labelStyleClass %><%=deClasseEtichettaVuota %>" id="<%=deLabelId %>"<%= deLabelVuota ? "" : " for=\"" + idPwd + "\"" %><%=deAttrEtichettaVuota %>><%=deLabel %></<%=deTagEtichetta %>>
 		                        				<%
 							          			if (pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) {
 													%><div class="<%=classDivNoEdit %>"> <span class="<%=classSpanNoEdit %>" id="<%=idPwd %>"><%=dePwdNoEdit %></span></div><%
@@ -1136,7 +1151,7 @@ for (int i = 0; i < dati.size(); i++) {
 		            	     					}
 		                        				%>
 		                            			<div class="prop">
-		                            				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%=inputId %>"><%=deLabel %></label>
+		                            				<<%=deTagEtichetta %> class="<%= labelStyleClass %><%=deClasseEtichettaVuota %>" id="<%=deLabelId %>"<%= deLabelVuota ? "" : " for=\"" + inputId + "\"" %><%=deAttrEtichettaVuota %>><%=deLabel %></<%=deTagEtichetta %>>
 		                            				<%
 							     					if ((pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) && de.isLabelAffiancata()) {
 							     						String taValNoEdit = de.getValue() != null && !de.getValue().equals("") ? de.getValue() : (pd.getMode().equals("view-noeditbutton") ? "&nbsp;" : "not defined");
@@ -1170,7 +1185,7 @@ for (int i = 0; i < dati.size(); i++) {
 		                            				String id = "form-btn-link_" + i;
 		                            				%>
 		                                			<div class="prop">
-		                                				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%=id %>"><%=deLabel %></label>
+		                                				<<%=deTagEtichetta %> class="<%= labelStyleClass %><%=deClasseEtichettaVuota %>" id="<%=deLabelId %>"<%= deLabelVuota ? "" : " for=\"" + id + "\"" %><%=deAttrEtichettaVuota %>><%=deLabel %></<%=deTagEtichetta %>>
 		                                				<div class="de_buttonrow">
 			                                				<input id="<%=id %>" type="button" value="<%= de.getValue() %>" class="<%= classInput %>" />
 			                                				<% if(!deNote.equals("")){ %>
@@ -1196,7 +1211,7 @@ for (int i = 0; i < dati.size(); i++) {
 		                                				String id = "form-file_" + i;
 		                                				%>
 		                                    			<div class="prop">
-		                                    				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%=id %>"><%=deLabel %></label>
+		                                    				<<%=deTagEtichetta %> class="<%= labelStyleClass %><%=deClasseEtichettaVuota %>" id="<%=deLabelId %>"<%= deLabelVuota ? "" : " for=\"" + id + "\"" %><%=deAttrEtichettaVuota %>><%=deLabel %></<%=deTagEtichetta %>>
 		                                    				<%
 		                                    				if (pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) {
 		                                    	     			String fileValue = (de.getValue() != null && !de.getValue().equals("")) ? de.getValue() : "not defined";
@@ -1239,7 +1254,7 @@ for (int i = 0; i < dati.size(); i++) {
 		                                    				String selId = "select_" + i;
 		                                    				%>
 		                                        			<div class="prop">
-		                                        				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%=selId %>"><%=deLabel %></label>
+		                                        				<<%=deTagEtichetta %> class="<%= labelStyleClass %><%=deClasseEtichettaVuota %>" id="<%=deLabelId %>"<%= (deLabelVuota || pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) ? "" : " for=\"" + selId + "\"" %><%=deAttrEtichettaVuota %>><%=deLabel %></<%=deTagEtichetta %>>
 		                                        				<%
 		                                        				if (pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) {
 		                                      						String selValNoEdit = (de.getSelected() != "") ? de.getSelected() : (pd.getMode().equals("view-noeditbutton") ? "&nbsp;" : "not defined");
@@ -1376,7 +1391,7 @@ for (int i = 0; i < dati.size(); i++) {
 		                                        				String deDescrittoDaAttr = descrittoDa.equals("") ? "" : (" aria-describedby=\"" + descrittoDa + "\"");
 		                                        				%>
 	                                        					<div class="prop">
-			                                        				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%=selId %>"><%=deLabel %></label>
+			                                        				<<%=deTagEtichetta %> class="<%= labelStyleClass %><%=deClasseEtichettaVuota %>" id="<%=deLabelId %>"<%= (deLabelVuota || pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) ? "" : " for=\"" + selId + "\"" %><%=deAttrEtichettaVuota %>><%=deLabel %></<%=deTagEtichetta %>>
 			                                        				<%
 			                                        				if (pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) {
 			                                      						String selValNoEdit = (de.getSelezionatiAsString() != "") ? de.getSelezionatiAsString() : (pd.getMode().equals("view-noeditbutton") ? "&nbsp;" : "not defined");
@@ -1521,7 +1536,7 @@ for (int i = 0; i < dati.size(); i++) {
 		                                        					}
 			                                        				%>
 			                                            			<div class="prop">
-			                                            				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%=id %>"><%=deLabel %></label>
+			                                            				<<%=deTagEtichetta %> class="<%= labelStyleClass %><%=deClasseEtichettaVuota %>" id="<%=deLabelId %>"<%= deLabelVuota ? "" : " for=\"" + id + "\"" %><%=deAttrEtichettaVuota %>><%=deLabel %></<%=deTagEtichetta %>>
 			                                            				<%
 			                                            				
 								    									String chkVal = de.getSelected().equals("yes") ? " checked='true' " : " ";
@@ -1533,7 +1548,7 @@ for (int i = 0; i < dati.size(); i++) {
 								    											controlSetClass = "controlset-cb-note-affiancate";
 								    										}
 								    									}
-								    									%>	<table class="<%=controlSetClass %>">
+								    									%>	<table role="presentation" class="<%=controlSetClass %>">
 						    													<tr> 
 						    														<td>
 								   														<input id="<%=id %>" type="checkbox" name="<%= deName  %>" value="yes" <%=chkVal %> <%=disVal %> <%=ariaLabelledByChk %>>
@@ -1588,14 +1603,14 @@ for (int i = 0; i < dati.size(); i++) {
 			                                            				String idControlSet = "form-radio-link_" + i;
 			                                            				%>
 			                                                			<div class="prop">
-			                                                				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%=idControlSet %>"><%=deLabel %></label>
+			                                                				<<%=deTagEtichetta %> class="<%= labelStyleClass %><%=deClasseEtichettaVuota %>" id="<%=deLabelId %>"<%= deLabelVuota ? "" : " for=\"" + idControlSet + "\"" %><%=deAttrEtichettaVuota %>><%=deLabel %></<%=deTagEtichetta %>>
 			                                                				<%
 						   	        										if (pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) {
 						   	        											String radioValNoEdit = !de.getSelected().equals("") ? de.getSelected() : "not defined";
 						    													%><div class="<%=classDivNoEdit %>"> <span class="<%=classSpanNoEdit %>" id="<%=idControlSet %>" ><%=radioValNoEdit %></span></div><%
 						    												} else {
 						    													%>
-						    													<table class="controlset" id="<%=idControlSet %>">
+						    													<table role="presentation" class="controlset" id="<%=idControlSet %>">
 						    														<tr>
 						    													<%
 							  													String [] values = de.getValues();
@@ -1627,7 +1642,7 @@ for (int i = 0; i < dati.size(); i++) {
 			                                                				String id = "form-interval-number_" + i;
 			                                                				%>
 			                                                					<div class="prop">
-												                    				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%=id %>"><%=deLabel %></label>
+												                    				<<%=deTagEtichetta %> class="<%= labelStyleClass %><%=deClasseEtichettaVuota %>" id="<%=deLabelId %>"<%= deLabelVuota ? "" : " for=\"" + id + "\"" %><%=deAttrEtichettaVuota %>><%=deLabel %></<%=deTagEtichetta %>>
 												                    				<%
 																			    	if (pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) {
 																			    		String taeditValNoEdit = de.getValuesNoEdit(pd.getMode());
@@ -1677,7 +1692,7 @@ for (int i = 0; i < dati.size(); i++) {
 			                        		                    				String idPwd = "pwd_" + i;
 			                        		                    				%>
 			                        		                        			<div class="prop">
-			                        		                        				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%=idPwd %>" ><%=deLabel %></label>
+			                        		                        				<<%=deTagEtichetta %> class="<%= labelStyleClass %><%=deClasseEtichettaVuota %>" id="<%=deLabelId %>"<%= deLabelVuota ? "" : " for=\"" + idPwd + "\"" %><%=deAttrEtichettaVuota %>><%=deLabel %></<%=deTagEtichetta %>>
 			                        		                        				<%
 			                        							          			if (pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) {
 			                        													%><div class="<%=classDivNoEdit %>"> <span class="<%=classSpanNoEdit %>"><%= Costanti.PARAMETER_LOCK_DEFAULT_VALUE  %></span></div><%

@@ -79,7 +79,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 	<jsp:param name="showListInfos" value="true"/>
 </jsp:include>
 
-<table class="tabella-ext">
+<table role="presentation" class="tabella-ext">
 	<!-- filtri di ricerca -->
 	<jsp:include page="/jsplib/filtriRicerca.jsp" flush="true"/>
 	
@@ -93,7 +93,6 @@ if (hidden!=null && !hidden.isEmpty()) {
 		<tr> 
 			<td valign=top>
 				<div class="panelLista">
-					<table class="tabella tabella-lista">
 						<%
 						String [] labels = pd.getLabels();
 						int labelLength = labels != null ? labels.length : 0;
@@ -112,11 +111,9 @@ if (hidden!=null && !hidden.isEmpty()) {
 						if (pd.isPaginazione()){
 						%>
 					
-						<!-- data scroller top -->
-						<tr>
-							<td colspan="<%= labelLength + 1%>">
+						<!-- data scroller top: fuori dalla tabella dei dati, che contiene solo intestazione e righe (WCAG 1.3.1) -->
 								<div class="buttonrowdatascroller dsTop" align="center">
-									<table>
+									<table role="presentation">
 										<tbody>
 											<tr>
 												<td>
@@ -175,17 +172,23 @@ if (hidden!=null && !hidden.isEmpty()) {
 										</tbody>
 									</table>
 								</div>
-							</td>
-						</tr>
 						<%
 						}
 						%>
 					
+						<%
+						// tabella di dati solo con intestazioni e righe: un elenco vuoto mostra le sole intestazioni,
+						// che senza dati restano impaginazione (celle td, come le th nell'aspetto)
+						boolean tabellaDati = labels != null && v.size() > 0;
+						String cellaIntestazione = tabellaDati ? "th scope=\"col\"" : "td";
+						String fineCellaIntestazione = tabellaDati ? "th" : "td";
+						%>
+						<table class="tabella tabella-lista"<%= tabellaDati ? "" : " role=\"presentation\"" %>>
 						<tr class="tableHeader">
 							<%
 							if (v.size()> 0 && pd.getSelect()) {
 							  %>
-							  <td class="tableHeaderChkAll">
+							  <th scope="col" class="tableHeaderChkAll">
 							  	<div align="center">
 							  		<input id="chkAll" type="checkbox" name="chkAll" aria-label="<%= Costanti.LABEL_ARIA_SELEZIONA_TUTTI %>"/>
 							  		<script type="text/javascript" nonce="<%= randomNonce %>">
@@ -196,7 +199,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 										});
 									</script> 
 							  	</div>
-							  </td>
+							  </th>
 							  <%
 							}
 							%>
@@ -205,7 +208,12 @@ if (hidden!=null && !hidden.isEmpty()) {
 							
 							if(labels!=null){
 								for (int i = 0; i < labelLength ;i++) {
-								  %><td><span><%= labels[i] %></span></td><%
+								  // colonna senza titolo visibile (lo stato, mostrato con un'icona): il nome resta ai lettori di schermo
+								  if (labels[i] == null || labels[i].trim().isEmpty()) {
+								    %><<%= cellaIntestazione %> class="tableHeaderSoloLettori"><span class="gw-solo-lettori"><%= Costanti.LABEL_ARIA_COLONNA_STATO %></span></<%= fineCellaIntestazione %>><%
+								  } else {
+								    %><<%= cellaIntestazione %>><span><%= labels[i] %></span></<%= fineCellaIntestazione %>><%
+								  }
 								}
 							}
 							%>
@@ -508,31 +516,12 @@ if (hidden!=null && !hidden.isEmpty()) {
 										    	}
 									  		} else { 
 									  			 if (de.getType().equals("checkbox")) {
-												 	String image = "status_red.png";
-												 	if("yes".equals(de.getSelected())){
-														image = "status_green.png";
-													}
-													else if("warn".equals(de.getSelected())){
-														image = "status_yellow.png";
-													}
-													else if("off".equals(de.getSelected())){
-														image = "disconnected_grey.png";
-													}
-													else if("config_enable".equals(de.getSelected())){
-														image = "verified_green.png";
-													}
-													else if("config_warning".equals(de.getSelected())){
-														image = "verified_yellow.png";
-													}
-													else if("config_error".equals(de.getSelected())){
-														image = "verified_red.png";
-													}
-												 	else if("config_disable".equals(de.getSelected())){
-												 		image = "verified_grey.png";
-													}
+												 	/* scelta dell'icona di stato condivisa con il monitor (IconaStato): forma e colore per ogni significato */
+												 	IconaStato iconaStato = IconaStato.fromValoreCheckbox(de.getSelected());
+												 	String image = iconaStato.getFile();
 												 	String toolTipVal = ServletUtils.escapeHTMLAttribute(de.getToolTip());
 									  				String tooltip = !toolTipVal.equals("") ? " title=\"" + toolTipVal + "\"" : ""; 
-									  				String altImg = !toolTipVal.equals("") ? toolTipVal : "-"; 
+									  				String altImg = !toolTipVal.equals("") ? toolTipVal : ServletUtils.escapeHTMLAttribute(iconaStato.getDescrizione()); 
 									  				 
 									  				String visualizzaAjaxStatus = de.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
 									  				String id = "tabella-checkbox-link_" + i;
@@ -677,14 +666,15 @@ if (hidden!=null && !hidden.isEmpty()) {
 					}
 					
 					//fine entries
+					%>
+					</table>
+					<%
 					
 					//navigazione tra la pagine visualizzata se il numero di entries > 20
 					if (pd.isPaginazione() && pd.getNumEntries() > 20){
 						%>
-						<tr>
-							<td colspan="<%= labelLength + 1 %>">
 								<div class="buttonrowdatascroller dsBottom" align="center" >
-									<table>
+									<table role="presentation">
 										<tbody>
 											<tr>
 											<td>
@@ -758,8 +748,6 @@ if (hidden!=null && !hidden.isEmpty()) {
 										</tbody>
 									</table>
 										</div>
-								</td>
-							</tr>
 						
 						<%
 					
@@ -768,8 +756,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 					//Bottoni 
 					if (pd.getSelect()) {
 						%>
-						<tr>
-							<td colspan=<%= labelLength + 1 %> class="buttonrow">
+						<div class="buttonrow">
 								<div class="buttonrowlista">
 									<%
 									List<?> areaBottoni = pd.getAreaBottoni();
@@ -815,13 +802,11 @@ if (hidden!=null && !hidden.isEmpty()) {
 									
 									%>
 								</div>
-							</td>
-						</tr>
+						</div>
 						<% 
 					} else if(pd.getAddButton()) {
 						%>
-						<tr>
-							<td colspan=<%= labelLength + 1 %> class="buttonrow">
+						<div class="buttonrow">
 								<div class="buttonrowlista">
 									<input id="aggiungiBtn" type="button" value='Aggiungi' />
 									<script type="text/javascript" nonce="<%= randomNonce %>">
@@ -832,18 +817,14 @@ if (hidden!=null && !hidden.isEmpty()) {
 											});
 									</script>
 								</div>
-							</td>
-						</tr>
+						</div>
 						<%
 					} else{
 						%>
-						 <tr class="buttonrownobuttons">
-						  <td colspan="<%= labelLength + 1 %>">&nbsp;</td>
-					  	</tr>
+						 <div class="buttonrownobuttons">&nbsp;</div>
 					  	<%
 					}
 					%>
-					</table>
 				</div>
 			</td>
 		</tr>

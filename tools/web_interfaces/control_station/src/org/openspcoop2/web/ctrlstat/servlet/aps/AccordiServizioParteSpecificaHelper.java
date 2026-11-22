@@ -3684,6 +3684,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						de.setStatusToolTip(statoPA ? CostantiControlStation.LABEL_PARAMETRO_PORTA_ABILITATO_TOOLTIP_NO_ACTION : CostantiControlStation.LABEL_PARAMETRO_PORTA_DISABILITATO_TOOLTIP_NO_ACTION);
 						if(statoPAallRedefined!=null) {
 							de.setStatusType(statoPAallRedefined);
+							/* il gruppo predefinito non e' disabilitato: tutte le risorse/azioni sono state
+							   riassegnate ad altri gruppi; il testo lo dice, invece di «Configurazione disabilitata» */
+							de.setStatusToolTip(statoMapping);
 						}
 						else {
 							de.setStatusType(statoPA ? CheckboxStatusType.ABILITATO : CheckboxStatusType.DISABILITATO);
@@ -5539,6 +5542,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						de.setStatusToolTip(statoPD ? CostantiControlStation.LABEL_PARAMETRO_PORTA_ABILITATO_TOOLTIP_NO_ACTION : CostantiControlStation.LABEL_PARAMETRO_PORTA_DISABILITATO_TOOLTIP_NO_ACTION);
 						if(statoPDallRedefined!=null) {
 							de.setStatusType(statoPDallRedefined);
+							/* il gruppo predefinito non e' disabilitato: tutte le risorse/azioni sono state
+							   riassegnate ad altri gruppi; il testo lo dice, invece di «Configurazione disabilitata» */
+							de.setStatusToolTip(statoMapping);
 						}
 						else {
 							de.setStatusType(statoPD ? CheckboxStatusType.ABILITATO : CheckboxStatusType.DISABILITATO);

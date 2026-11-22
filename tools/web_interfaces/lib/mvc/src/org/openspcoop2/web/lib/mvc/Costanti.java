@@ -53,6 +53,8 @@ public class Costanti {
 	public static final String LABEL_ARIA_SELEZIONA_ELEMENTO_PREFIX = "Seleziona ";
 	public static final String LABEL_ARIA_SELEZIONA_ELEMENTO_GENERICO_PREFIX = "Seleziona elemento ";
 	public static final String LABEL_ARIA_NUMERO_ELEMENTI_PER_PAGINA = "Numero di elementi per pagina";
+	/** Colonna degli elenchi senza titolo visibile (lo stato, mostrato con un'icona) */
+	public static final String LABEL_ARIA_COLONNA_STATO = "Stato";
 
 	/**
 	 * Dimensioni di pagina offerte dalla scelta «elementi per pagina», e relativa dicitura.
@@ -164,6 +166,14 @@ public class Costanti {
 	public static final String CHECK_BOX_CONFIG_WARNING = "config_warning";
 	public static final String CHECK_BOX_CONFIG_ERROR = "config_error";
 	public static final String CHECK_BOX_CONFIG_DISABLE = "config_disable";
+	/* Valori di stato con un significato proprio, che non passa dal solo colore (WCAG 1.4.1): vedi IconaStato */
+	public static final String CHECK_BOX_PARTIAL = "partial";
+	public static final String CHECK_BOX_ERROR = "error";
+	public static final String CHECK_BOX_OFF = "off";
+	public static final String CHECK_BOX_ALARM_OK = "alarm_ok";
+	public static final String CHECK_BOX_ALARM_WARNING = "alarm_warning";
+	public static final String CHECK_BOX_ALARM_ERROR = "alarm_error";
+	public static final String CHECK_BOX_ALARM_DISABLE = "alarm_disable";
 	
 	
 	/** PAGE DATA TITLE */
@@ -381,6 +391,8 @@ public class Costanti {
 	public static final String INPUT_TEXT_DEFAULT_CSS_CLASS = "spanNoEdit";
 	public static final String INPUT_TEXT_BOLD_CSS_CLASS = "spanNoEdit-bold";
 	public static final String INPUT_TEXT_BOLD_RED_CSS_CLASS = "spanNoEdit-bold-red";
+	/** Testo accanto a una data resa in rosso perche' scaduta: il colore da solo non basta a dirlo (WCAG 1.4.1) */
+	public static final String LABEL_VALORE_SCADUTO = "(scaduto)";
 	public static final String INPUT_TEXT_DEFAULT_CSS_CLASS_FONT_SIZE_16 = "spanNoEdit16";
 	public static final String INPUT_BUTTON_DEFAULT_CSS_CLASS = "deButton";
 	

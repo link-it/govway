@@ -79,7 +79,7 @@ if(csrfTokenFromSession == null)
 		}
 		%>
 
-		<table class="tabella-ext">
+		<table role="presentation" class="tabella-ext">
 			<% if(customListViewName.equals("erogazione")){ %>
 				<jsp:include page="/jsp/form/erogazione.jsp" flush="true"/>
 			<% } else if(customListViewName.equals("fruizione")){ %>

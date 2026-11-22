@@ -1540,6 +1540,15 @@ input.rich-spinner-input {
 	color: ${input.calendar.widget.cell.hover.color};
 }
 
+/* Il giorno col fuoco aveva il solo anello predefinito del browser, sottile e diverso da browser a
+   browser (in Chromium 1 px quasi nero, in Firefox 1 px del colore del testo). Si usa lo stesso
+   contorno del calendario della console di gestione: 2 px #22232b, sopra 4,6:1 su tutti i fondi
+   del calendario, compreso l'arancione del giorno corrente (WCAG 1.4.11, 2.4.7). */
+table.rich-calendar-popup td.rich-calendar-cell:focus {
+	outline: 2px solid #22232b;
+	outline-offset: -2px;
+}
+
 /* I comandi di mese e anno del calendario misurano 20x20 px, sotto il minimo di 24x24
    (WCAG 2.5.8): l'area attivabile viene portata alla soglia senza spostare le icone. */
 .rich-calendar-tool-btn,
@@ -1567,7 +1576,9 @@ input.rich-spinner-input {
 /* Il titolo di pagina viene delimitato da uno span, per poterlo marcare come intestazione di
    primo livello senza trascinarsi dentro i marcatori dell'intestazione che lo contiene. Lo
    span non ha uno stile proprio: senza questa regola vincerebbe '* { font-size: 14px }' e il
-   titolo risulterebbe piu' piccolo dell'intestazione. */
-.gw-titolo-pagina {
+   titolo risulterebbe piu' piccolo dell'intestazione. Lo stesso vale per i titoli di secondo
+   livello degli altri riquadri. */
+.gw-titolo-pagina,
+.gw-titolo-pannello {
 	font: inherit;
 }

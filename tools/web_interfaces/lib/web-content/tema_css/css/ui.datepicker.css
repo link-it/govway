@@ -38,6 +38,16 @@ border: 0 !important; color: ${input.calendar.widget.color} !important; }
 .ui-datepicker td a.ui-state-hover { background-color: ${input.calendar.widget.cell.hover.background.color} !important;
 	color: ${input.calendar.widget.cell.hover.color} !important; outline: 2px solid ${input.calendar.widget.color}; outline-offset: -2px; }
 .ui-datepicker td a:focus { outline: 2px solid ${input.calendar.widget.color}; outline-offset: -2px; }
+/* Il contorno di 'ui-state-hover' serve quando il fuoco resta nel campo di testo e ci si sposta
+   con le scorciatoie di jQuery UI. Quando invece il fuoco entra nel calendario (Tab e frecce),
+   jQuery UI lascia quella classe sul giorno di partenza, di solito oggi: con lo stesso contorno
+   del fuoco sembrerebbero focalizzati due giorni (WCAG 2.4.7). Lì l'unico contorno è quello del fuoco. */
+.ui-datepicker:focus-within td a.ui-state-hover:not(:focus) { outline: none; }
+/* Il contorno del giorno col fuoco ha il colore del testo (#46464e), che sul fondo arancione del
+   giorno corrente scende a 2,91:1, sotto il minimo di 3:1 per un indicatore del fuoco (WCAG 1.4.11).
+   Con #22232b resta sopra 4,6:1 su tutti i fondi del calendario (oggi, festivi, scelto, normale),
+   ed e' lo stesso contorno del calendario della console di monitoraggio. */
+.ui-datepicker td a:focus, .ui-datepicker td a.ui-state-hover { outline-color: #22232b; }
 .ui-datepicker .ui-datepicker-buttonpane { background-image: none; margin: .7em 0 0 0; padding: 0 .2em; border-left: 0; border-right: 0; border-bottom: 0; }
 .ui-datepicker .ui-datepicker-buttonpane button { float: right; margin: .5em .2em .4em; cursor: pointer; padding: .2em .6em .3em .6em; width: auto; overflow: visible; }
 .ui-datepicker .ui-datepicker-buttonpane button.ui-datepicker-current { float: left; }

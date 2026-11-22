@@ -174,7 +174,7 @@
 									<f:setPropertyActionListener value="#{dettagliDumpMultipart.tipoMessaggio}" target="#{dettagliDumpMultipart.tipoMessaggio}" />
 									<f:setPropertyActionListener value="false" target="#{dettagliDumpMultipart.base64Decode}" />
 								</a4j:htmlCommandLink>
-								<h:outputLabel value="&#160;&#160;" />
+								<span aria-hidden="true">&#160;&#160;</span>
 								<a4j:htmlCommandLink id="iconLink2" title="#{allegato.contentId}" action="#{dettagliDumpMultipart.download}" 
 									target="_blank"  value="[Decodifica Base64]"
 									rendered="#{dettagliDump.visualizzaLinkEsporta and allegato.base64}">

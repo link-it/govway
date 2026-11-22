@@ -35,7 +35,16 @@ public enum CheckboxStatusType {
 	CONFIG_ENABLE(Costanti.CHECK_BOX_CONFIG_ENABLE),
 	CONFIG_WARNING(Costanti.CHECK_BOX_CONFIG_WARNING),
 	CONFIG_ERROR(Costanti.CHECK_BOX_CONFIG_ERROR),
-	CONFIG_DISABLE(Costanti.CHECK_BOX_CONFIG_DISABLE);
+	CONFIG_DISABLE(Costanti.CHECK_BOX_CONFIG_DISABLE),
+	/* Parzialmente abilitato ed errore hanno un'icona propria, distinta da avviso e disabilitato (vedi IconaStato) */
+	PARZIALE(Costanti.CHECK_BOX_PARTIAL),
+	ERRORE(Costanti.CHECK_BOX_ERROR),
+	NON_ATTIVO(Costanti.CHECK_BOX_OFF),
+	/* Stato di salute degli allarmi, distinto dallo stato di configurazione di una funzionalita' */
+	ALLARME_OK(Costanti.CHECK_BOX_ALARM_OK),
+	ALLARME_WARNING(Costanti.CHECK_BOX_ALARM_WARNING),
+	ALLARME_ERROR(Costanti.CHECK_BOX_ALARM_ERROR),
+	ALLARME_DISABILITATO(Costanti.CHECK_BOX_ALARM_DISABLE);
 	
 	private String value;
 	CheckboxStatusType(String value){

@@ -12,7 +12,7 @@
     <a4j:outputPanel layout="block" id="parametriConfigurazionePnl">
 		<h:panelGrid id="panelGridParametriAllarme" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDxFixedWidth130,valueAllineataSx" rendered="#{allarmiBean.visualizzaParametri}">
 		
-			<h:outputLabel styleClass="outputFieldLabel" value="&#160;&#160;" rendered="#{true}" />
+			<span class="outputFieldLabel" aria-hidden="true">&#160;&#160;</span>
  			<h:panelGroup layout="block"  class="subtitle-nopaddingleft-nomarginleft">
 				<h:outputText value="Parametri" styleClass="subtitle-nopaddingleft-nomarginleft"/>
 			</h:panelGroup>
@@ -25,10 +25,10 @@
 		
 		<h:panelGrid id="panelGridGroupBy" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataTopDxFixedWidth130,valueAllineataSx" rendered="#{allarmiBean.showGroupBy}">
 		
-			<h:outputLabel styleClass="outputFieldLabel" value="&#160;&#160;" rendered="#{true}" />
+			<span class="outputFieldLabel" aria-hidden="true">&#160;&#160;</span>
 			<h:outputText value="&#160;&#160;" rendered="#{true}" />
 			
-			<h:outputLabel styleClass="outputFieldLabel" value="&#160;&#160;" rendered="#{true}" />
+			<span class="outputFieldLabel" aria-hidden="true">&#160;&#160;</span>
  			<h:panelGroup layout="block"  class="subtitle-nopaddingleft-nomarginleft">
 				<h:outputText value="Raggruppamento" styleClass="subtitle-nopaddingleft-nomarginleft"/>
 			</h:panelGroup>

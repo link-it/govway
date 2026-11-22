@@ -2254,8 +2254,9 @@ public class SoggettiHelper extends ConnettoriHelper {
 				de.allineaTdAlCentro();
 				de.setWidthPx(140);
 				if(notAfter.before(new Date())) {
-					// bold e rosso
+					// bold e rosso, con il testo che dice cosa indica il rosso
 					de.setLabelStyleClass(Costanti.INPUT_TEXT_BOLD_RED_CSS_CLASS);
+					de.setValue(verificaTuttiCampi ? de.getValue()+" "+Costanti.LABEL_VALORE_SCADUTO : Costanti.LABEL_VALORE_SCADUTO);
 					de.setWidthPx(150);
 				}
 				e.add(de);

@@ -358,7 +358,8 @@ DynamicPdDBean<org.openspcoop2.web.monitor.statistiche.bean.StatistichePdndTraci
 	}
 	
 	public boolean getForcePublishSelectedEnabled() {
-		return ((StatistichePdndTracingSearchForm)this.search).getStato().equals(PossibiliStatiRichieste.FAILED.toString());
+		// lo stato del filtro puo' essere null (nessuna scelta): il confronto parte dalla costante
+		return PossibiliStatiRichieste.FAILED.toString().equals(((StatistichePdndTracingSearchForm)this.search).getStato());
 	}
 	
 	public String resetAttempts() {

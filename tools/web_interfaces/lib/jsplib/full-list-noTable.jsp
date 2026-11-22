@@ -79,7 +79,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 	<jsp:param name="showListInfos" value="true"/>
 </jsp:include>
 
-<table class="tabella-ext">
+<table role="presentation" class="tabella-ext">
 	<!-- filtri di ricerca -->
 	<jsp:include page="/jsplib/filtriRicerca.jsp" flush="true"/>
 
@@ -93,7 +93,6 @@ if (hidden!=null && !hidden.isEmpty()) {
 		<tr> 
 			<td valign=top>
 				<div class="panelLista">
-					<table class="tabella tabella-lista">
 						<%
 						String [] labels = pd.getLabels();
 						int baseLength = pd.getSelect() ? 1 : 0;
@@ -112,11 +111,9 @@ if (hidden!=null && !hidden.isEmpty()) {
 						List<String> idsDaVisualizzareSelezionati =  pd.getIdsDaVisualizzareSelezionati();
 						%>
 					
-						<!-- data scroller top -->
-						<tr>
-							<td colspan="<%= colSpanLength %>">
+						<!-- data scroller top: fuori dalla tabella dei dati, che contiene solo intestazione e righe (WCAG 1.3.1) -->
 								<div class="buttonrowdatascroller dsTop" align="center">
-									<table>
+									<table role="presentation">
 										<tbody>
 											<tr>
 												<td>
@@ -175,15 +172,21 @@ if (hidden!=null && !hidden.isEmpty()) {
 										</tbody>
 									</table>
 								</div>
-							</td>
-						</tr>
 						
+						<%
+						// tabella di dati solo con intestazioni e righe: un elenco vuoto mostra le sole intestazioni,
+						// che senza dati restano impaginazione (celle td, come le th nell'aspetto)
+						boolean tabellaDati = labels != null && v.size() > 0;
+						String cellaIntestazione = tabellaDati ? "th scope=\"col\"" : "td";
+						String fineCellaIntestazione = tabellaDati ? "th" : "td";
+						%>
+						<table class="tabella tabella-lista"<%= tabellaDati ? "" : " role=\"presentation\"" %>>
 						<% if(labels!=null){ %>
 						<tr class="tableHeader">
 							<%
 							if (v.size()> 0 && pd.getSelect()) {
 							  %>
-							  <td class="tableHeaderChkAll-noList">
+							  <th scope="col" class="tableHeaderChkAll-noList">
 							  	<div align="center">
 							  		<input id="chkAll" type="checkbox" name="chkAll" aria-label="<%= Costanti.LABEL_ARIA_SELEZIONA_TUTTI %>"/> 
 							  		<script type="text/javascript" nonce="<%= randomNonce %>">
@@ -194,14 +197,19 @@ if (hidden!=null && !hidden.isEmpty()) {
 										});
 									</script> 
 							  	</div>
-							  </td>
+							  </th>
 							  <%
 							}
 							%>
 					
 							<%
 								for (int i = 0; i < labelLength ;i++) {
-								  %><td><span><%= labels[i] %></span></td><%
+								  // colonna senza titolo visibile (lo stato, mostrato con un'icona): il nome resta ai lettori di schermo
+								  if (labels[i] == null || labels[i].trim().isEmpty()) {
+								    %><<%= cellaIntestazione %> class="tableHeaderSoloLettori"><span class="gw-solo-lettori"><%= Costanti.LABEL_ARIA_COLONNA_STATO %></span></<%= fineCellaIntestazione %>><%
+								  } else {
+								    %><<%= cellaIntestazione %>><span><%= labels[i] %></span></<%= fineCellaIntestazione %>><%
+								  }
 								}
 							%>
 					
@@ -306,14 +314,15 @@ if (hidden!=null && !hidden.isEmpty()) {
 					}
 					
 					//fine entries
+					%>
+					</table>
+					<%
 					
 					//navigazione tra la pagine visualizzata se il numero di entries > 20
 					if (pd.getNumEntries() > 20){
 						%>
-						<tr>
-							<td colspan="<%= colSpanLength %>">
 								<div class="buttonrowdatascroller dsBottom" align="center" >
-									<table>
+									<table role="presentation">
 										<tbody>
 											<tr>
 											<td>
@@ -387,8 +396,6 @@ if (hidden!=null && !hidden.isEmpty()) {
 										</tbody>
 									</table>
 										</div>
-								</td>
-							</tr>
 						
 						<%
 					
@@ -397,8 +404,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 					//Bottoni 
 					if (pd.getSelect()) {
 						%>
-						<tr>
-							<td colspan=<%= colSpanLength %> class="buttonrow">
+						<div class="buttonrow">
 								<div class="buttonrowlista">
 									<%
 									List<?> areaBottoni = pd.getAreaBottoni();
@@ -444,19 +450,15 @@ if (hidden!=null && !hidden.isEmpty()) {
 									
 									%>
 								</div>
-							</td>
-						</tr>
+						</div>
 						<% 
 					}
 					else{
 						%>
-						 <tr class="buttonrownobuttons">
-						  <td colspan="<%= colSpanLength %>">&nbsp;</td>
-					  	</tr>
+						 <div class="buttonrownobuttons">&nbsp;</div>
 					  	<%
 					}
 					%>
-					</table>
 				</div>
 			</td>
 		</tr>

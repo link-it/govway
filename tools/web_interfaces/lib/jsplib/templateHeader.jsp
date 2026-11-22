@@ -94,7 +94,7 @@ if(!tabSessionKey.equals("")){
 				 		<% } %>
 				    </td>
 				 	<td class="td2PageHeader" align="right">
-				 		<table>
+				 		<table role="presentation">
 				 			<tbody>
 				 				<tr>
 				 					<%

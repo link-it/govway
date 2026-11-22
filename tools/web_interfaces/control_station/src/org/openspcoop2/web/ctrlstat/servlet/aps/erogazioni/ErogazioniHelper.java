@@ -525,8 +525,11 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			de.setName(ErogazioniCostanti.ASPS_EROGAZIONI_PARAMETRO_STATO_CONFIGURAZIONI);
 		}
 		de.setType(DataElementType.CHECKBOX);
+		/* Errore e disabilitazione erano lo stesso valore, e quindi la stessa icona rossa:
+		   l'errore di configurazione ha ora il proprio stato (cerchio con X), la
+		   disabilitazione resta il cerchio con il trattino (WCAG 1.4.1). */
 		if(msgControlloAccessiMalConfiguratoError!=null) {
-			de.setStatusType(CheckboxStatusType.DISABILITATO);
+			de.setStatusType(CheckboxStatusType.ERRORE);
 			de.setStatusToolTip(msgControlloAccessiMalConfiguratoError);
 		}
 		else if(msgControlloAccessiMalConfiguratoWarning!=null) {
@@ -551,7 +554,8 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				de.setStatusToolTip(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_TUTTE_ABILITATE_TOOLTIP);
 			}
 		} else  {
-			de.setStatusType(CheckboxStatusType.WARNING_ONLY);
+			/* parzialmente abilitata: non e' un avviso, ha il proprio stato (cerchio pieno a meta') */
+			de.setStatusType(CheckboxStatusType.PARZIALE);
 			de.setStatusToolTip(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_PARZIALMENTE_ABILITATE_TOOLTIP);
 		}
 		if(setWidthPx) {

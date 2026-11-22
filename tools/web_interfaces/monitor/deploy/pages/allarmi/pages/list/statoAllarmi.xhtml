@@ -14,6 +14,10 @@
 			#crumbs {display: none;	}		
 		</style>
 		<a4j:outputPanel id="panelPaginaRicerca" layout="block">
+			<!-- Stato degli allarmi: la forma porta lo stato, il colore si aggiunge (WCAG 1.4.1). Ok = cerchio con
+			     spunta, Warn = triangolo, Error = cerchio con X, Disabilitato = cerchio con trattino; la presa in
+			     carico (acknowledge) e' la piccola spunta sull'icona (classe gw-allarme-ack). Stessa convenzione
+			     della console (IconaStato). -->
 			<rich:panel id="statusPnl" rendered="#{allarmiBean.allarmiAssociazioneAcknowledgedStatoAllarme==false}" styleClass="rich-panel-reversed">
 				<f:facet name="header">	
 					<h:outputText value="Stato Allarmi" rendered="#{false}"/>
@@ -25,7 +29,7 @@
 							<h:outputText value="#{allarmiBean.totOk}" styleClass="outputTextNumeroAllarmiReversed" />
 							<h:outputText value="&#160;" />
 							<a4j:outputPanel styleClass="icona-allarme-ok">
-								<i class="material-icons md-18" id="iconaSearchOpen">lens</i>
+								<i class="material-icons md-18" id="iconaSearchOpen">check_circle</i>
 							</a4j:outputPanel>
 						</h:panelGrid>
 					</h:panelGrid>
@@ -37,7 +41,7 @@
 							<h:outputText value="#{allarmiBean.totWarn}" styleClass="outputTextNumeroAllarmiReversed" />
 							<h:outputText value="&#160;" />
 							<a4j:outputPanel styleClass="icona-allarme-warning">
-								<i class="material-icons md-18" id="iconaSearchOpen">lens</i>
+								<i class="material-icons md-18" id="iconaSearchOpen">warning</i>
 							</a4j:outputPanel>
 						</h:panelGrid>
 					</h:panelGrid>
@@ -49,7 +53,7 @@
 							<h:outputText value="#{allarmiBean.totError}" styleClass="outputTextNumeroAllarmiReversed" />
 							<h:outputText value="&#160;" />
 							<a4j:outputPanel styleClass="icona-allarme-error">
-								<i class="material-icons md-18" id="iconaSearchOpen">lens</i>
+								<i class="material-icons md-18" id="iconaSearchOpen">cancel</i>
 							</a4j:outputPanel>
 						</h:panelGrid>
 					</h:panelGrid>
@@ -61,7 +65,7 @@
 							<h:outputText value="#{allarmiBean.totDisabilitati}" styleClass="outputTextNumeroAllarmiReversed" />
 							<h:outputText value="&#160;" />
 							<a4j:outputPanel styleClass="icona-allarme-disabilitato">
-								<i class="material-icons md-18" id="iconaSearchOpen">lens</i>
+								<i class="material-icons md-18" id="iconaSearchOpen">do_not_disturb_on</i>
 							</a4j:outputPanel>
 						</h:panelGrid>
 					</h:panelGrid>
@@ -78,7 +82,7 @@
 							<h:outputText value="#{allarmiBean.totOk}" styleClass="outputTextNumeroAllarmiReversed" />
 							<h:outputText value="&#160;" />
 							<a4j:outputPanel styleClass="icona-allarme-ok">
-								<i class="material-icons md-18" id="iconaSearchOpen">lens</i>
+								<i class="material-icons md-18" id="iconaSearchOpen">check_circle</i>
 							</a4j:outputPanel>
 						</h:panelGrid>
 					</h:panelGrid>
@@ -89,15 +93,21 @@
 						<h:panelGrid columns="7">
 							<h:outputText value="#{allarmiBean.totWarnNoAck}" styleClass="outputTextNumeroAllarmiReversed" />
 							<h:outputText value="&#160;" />
-							<a4j:outputPanel styleClass="icona-allarme-warning">
-								<i class="material-icons md-18" id="iconaSearchOpen">error</i>
-							</a4j:outputPanel>
+							<h:panelGroup>
+								<a4j:outputPanel styleClass="icona-allarme-warning">
+									<i class="material-icons md-18" id="iconaSearchOpen">warning</i>
+								</a4j:outputPanel>
+								<span class="gw-solo-lettori"> non acknowledged</span>
+							</h:panelGroup>
 							<h:outputText value="&#160;&#160;" />
 							<h:outputText value="#{allarmiBean.totWarnAck}" styleClass="outputTextNumeroAllarmiReversed" />
 							<h:outputText value="&#160;" />
-							<a4j:outputPanel styleClass="icona-allarme-warning">
-								<i class="material-icons md-18" id="iconaSearchOpen">check_circle</i>
-							</a4j:outputPanel>
+							<h:panelGroup>
+								<a4j:outputPanel styleClass="icona-allarme-warning gw-allarme-ack">
+									<i class="material-icons md-18" id="iconaSearchOpen">warning</i>
+								</a4j:outputPanel>
+								<span class="gw-solo-lettori"> acknowledged</span>
+							</h:panelGroup>
 						</h:panelGrid>
 					</h:panelGrid>
 					<h:outputText value="&#160;&#160;&#160;&#160;&#160;&#160;" />
@@ -107,15 +117,21 @@
 						<h:panelGrid columns="7">
 							<h:outputText value="#{allarmiBean.totErrorNoAck}" styleClass="outputTextNumeroAllarmiReversed" />
 							<h:outputText value="&#160;" />
-							<a4j:outputPanel styleClass="icona-allarme-error">
-								<i class="material-icons md-18" id="iconaSearchOpen">error</i>
-							</a4j:outputPanel>
+							<h:panelGroup>
+								<a4j:outputPanel styleClass="icona-allarme-error">
+									<i class="material-icons md-18" id="iconaSearchOpen">cancel</i>
+								</a4j:outputPanel>
+								<span class="gw-solo-lettori"> non acknowledged</span>
+							</h:panelGroup>
 							<h:outputText value="&#160;&#160;" />
 							<h:outputText value="#{allarmiBean.totErrorAck}" styleClass="outputTextNumeroAllarmiReversed" />
 							<h:outputText value="&#160;" />
-							<a4j:outputPanel styleClass="icona-allarme-error">
-								<i class="material-icons md-18" id="iconaSearchOpen">check_circle</i>
-							</a4j:outputPanel>
+							<h:panelGroup>
+								<a4j:outputPanel styleClass="icona-allarme-error gw-allarme-ack">
+									<i class="material-icons md-18" id="iconaSearchOpen">cancel</i>
+								</a4j:outputPanel>
+								<span class="gw-solo-lettori"> acknowledged</span>
+							</h:panelGroup>
 						</h:panelGrid>
 					</h:panelGrid>
 					<h:outputText value="&#160;&#160;&#160;&#160;&#160;&#160;" />
@@ -126,7 +142,7 @@
 							<h:outputText value="#{allarmiBean.totDisabilitati}" styleClass="outputTextNumeroAllarmiReversed" />
 							<h:outputText value="&#160;" />
 							<a4j:outputPanel styleClass="icona-allarme-disabilitato">
-								<i class="material-icons md-18" id="iconaSearchOpen">lens</i>
+								<i class="material-icons md-18" id="iconaSearchOpen">do_not_disturb_on</i>
 							</a4j:outputPanel>
 						</h:panelGrid>
 					</h:panelGrid>
@@ -292,10 +308,13 @@
 								<h:outputText value="Stato" id="outStato"/>
 							</f:facet>
 							<h:panelGroup layout="block" styleClass="width-40">
-								<a4j:outputPanel rendered="#{item.enabled==0}" id="alarmDisabledPnl" styleClass="icona-allarme-disabilitato">
-									<i class="material-icons md-18" id="iconaSearchOpen">lens</i>
-									<rich:toolTip for="alarmDisabledPnl" mode="client" value="Disabilitato"/>
-								</a4j:outputPanel>
+								<h:panelGroup rendered="#{item.enabled==0}">
+									<a4j:outputPanel id="alarmDisabledPnl" styleClass="icona-allarme-disabilitato">
+										<i class="material-icons md-18" id="iconaSearchOpen">do_not_disturb_on</i>
+										<rich:toolTip for="alarmDisabledPnl" mode="client" value="Disabilitato"/>
+									</a4j:outputPanel>
+									<span class="gw-solo-lettori">Stato: Disabilitato</span>
+								</h:panelGroup>
 								<a4j:outputPanel rendered="#{ 
 										(item.enabled>0) 
 										and 
@@ -307,12 +326,15 @@
 											(item.invocaScriptAlert==1 and item.scriptAckMode==1)
 										) 
 									}">
-									<a4j:outputPanel styleClass="icona-allarme-ok" rendered="#{item.stato==0}" id="imgStatoOk">
-										<i class="material-icons md-18" id="iconaSearchOpen">lens</i>
-										<rich:toolTip mode="client" for="imgStatoOk">
-											<h:outputText value="Ok" />
-										</rich:toolTip>
-									</a4j:outputPanel>
+									<h:panelGroup rendered="#{item.stato==0}">
+										<a4j:outputPanel id="imgStatoOk" styleClass="icona-allarme-ok">
+											<i class="material-icons md-18" id="iconaSearchOpen">check_circle</i>
+											<rich:toolTip mode="client" for="imgStatoOk">
+												<h:outputText value="Ok" />
+											</rich:toolTip>
+										</a4j:outputPanel>
+										<span class="gw-solo-lettori">Stato: Ok</span>
+									</h:panelGroup>
 									<rich:toolTip mode="client" for="ackLinkT">
 										<h:outputText value="Click to Acknowledge." />
 									</rich:toolTip>
@@ -324,14 +346,16 @@
 										 reRender="allarmiTbl,statusPnlWithAcknoledged">
 										<f:setPropertyActionListener value="#{item}" target="#{allarmiBean.allarme}" />
 										<a4j:actionparam name="ack" value="true" assignTo="#{allarmiBean.ack}" actionListener="#{allarmiBean.toggleAck}"/>
-										<i class="material-icons md-18" id="iconaSearchOpen">error</i>
+										<i class="material-icons md-18" id="iconaSearchOpen">#{item.stato==1 ? 'warning' : 'cancel'}</i>
+										<span class="gw-solo-lettori">Stato: #{item.stato==1 ? 'Warn' : 'Error'}, non acknowledged. Esegui l'acknowledge</span>
 									</a4j:commandLink>					
-									<a4j:commandLink id="ackLinkF" styleClass="#{item.stato==1 ? 'icona-allarme-warning' : 'icona-allarme-error'}"
+									<a4j:commandLink id="ackLinkF" styleClass="#{item.stato==1 ? 'icona-allarme-warning gw-allarme-ack' : 'icona-allarme-error gw-allarme-ack'}"
 										rendered="#{(item.acknowledged==1) and (item.stato>0)}"
 										 reRender="allarmiTbl,statusPnlWithAcknoledged">
 										<f:setPropertyActionListener value="#{item}" target="#{allarmiBean.allarme}" />
 										<a4j:actionparam name="ack" value="false" assignTo="#{allarmiBean.ack}" actionListener="#{allarmiBean.toggleAck}"/>
-										<i class="material-icons md-18" id="iconaSearchOpen">check_circle</i>
+										<i class="material-icons md-18" id="iconaSearchOpen">#{item.stato==1 ? 'warning' : 'cancel'}</i>
+										<span class="gw-solo-lettori">Stato: #{item.stato==1 ? 'Warn' : 'Error'}, acknowledged. Annulla l'acknowledge</span>
 									</a4j:commandLink>
 								</a4j:outputPanel> 
 								<a4j:outputPanel rendered="#{ 
@@ -345,24 +369,33 @@
 											(item.invocaScriptAlert==1 and item.scriptAckMode==1)
 										) 
 									}">
-									<a4j:outputPanel styleClass="icona-allarme-ok" rendered="#{item.stato==0}" id="imgStatoOk_NA">
-										<i class="material-icons md-18" id="iconaSearchOpen">lens</i>
-										<rich:toolTip mode="client" for="imgStatoOk_NA">
-											<h:outputText value="Ok" />
-										</rich:toolTip>
-									</a4j:outputPanel>
-									<a4j:outputPanel styleClass="icona-allarme-error" rendered="#{item.stato==2}" id="imgStatoError_NA">
-										<i class="material-icons md-18" id="iconaSearchOpen">lens</i>
-										<rich:toolTip mode="client" for="imgStatoError_NA">
-											<h:outputText value="Error" />
-										</rich:toolTip>
-									</a4j:outputPanel>
-									<a4j:outputPanel styleClass="icona-allarme-warning" rendered="#{item.stato==1}" id="imgStatoWarn_NA">
-										<i class="material-icons md-18" id="iconaSearchOpen">lens</i>
-										<rich:toolTip mode="client" for="imgStatoWarn_NA">
-											<h:outputText value="Warn" />
-										</rich:toolTip>
-									</a4j:outputPanel>
+									<h:panelGroup rendered="#{item.stato==0}">
+										<a4j:outputPanel id="imgStatoOk_NA" styleClass="icona-allarme-ok">
+											<i class="material-icons md-18" id="iconaSearchOpen">check_circle</i>
+											<rich:toolTip mode="client" for="imgStatoOk_NA">
+												<h:outputText value="Ok" />
+											</rich:toolTip>
+										</a4j:outputPanel>
+										<span class="gw-solo-lettori">Stato: Ok</span>
+									</h:panelGroup>
+									<h:panelGroup rendered="#{item.stato==2}">
+										<a4j:outputPanel id="imgStatoError_NA" styleClass="icona-allarme-error">
+											<i class="material-icons md-18" id="iconaSearchOpen">cancel</i>
+											<rich:toolTip mode="client" for="imgStatoError_NA">
+												<h:outputText value="Error" />
+											</rich:toolTip>
+										</a4j:outputPanel>
+										<span class="gw-solo-lettori">Stato: Error</span>
+									</h:panelGroup>
+									<h:panelGroup rendered="#{item.stato==1}">
+										<a4j:outputPanel id="imgStatoWarn_NA" styleClass="icona-allarme-warning">
+											<i class="material-icons md-18" id="iconaSearchOpen">warning</i>
+											<rich:toolTip mode="client" for="imgStatoWarn_NA">
+												<h:outputText value="Warn" />
+											</rich:toolTip>
+										</a4j:outputPanel>
+										<span class="gw-solo-lettori">Stato: Warn</span>
+									</h:panelGroup>
 								</a4j:outputPanel> 
 							</h:panelGroup>
 						</rich:column>
@@ -374,6 +407,9 @@
 							<h:panelGroup layout="block" styleClass="width-30">
 								<a4j:outputPanel rendered="#{true}" id="alarmModalitaPnl">
 									<i class="material-icons md-18" id="iconaModalitaOpen">#{item.modalitaAttiva ? 'alarm' : 'alarm_off'}</i>
+									<!-- la modalita' e' detta dalla sola icona (e dal suggerimento al passaggio del mouse): il testo
+									     per i lettori di schermo la rende disponibile anche a chi non vede l'icona (WCAG 1.1.1, 1.3.1) -->
+									<h:outputText styleClass="gw-solo-lettori" value="#{item.modalitaAttiva ? 'Attiva' : 'Passiva'}" />
 									<rich:toolTip for="alarmModalitaPnl" mode="client" value="#{item.modalitaAttiva ? 'Attiva' : 'Passiva'}"/>
 								</a4j:outputPanel>
 							</h:panelGroup>
@@ -422,7 +458,7 @@
 										 or
 										 (item.manuallyAckCriteria and (item.modalitaAttiva ? allarmiBean.allarmiConsultazioneModificaAckCriteriaAllarmeAttivo : allarmiBean.allarmiConsultazioneModificaAckCriteriaAllarmePassivo))
 										 )}">
-									<i class="material-icons md-18" id="iconaModificaOpen">edit</i>
+									<i class="material-icons md-18" id="iconaModificaOpen">&#xE3C9;</i><!-- 'edit' per codice, come l'icona del dettaglio: scritto per nome risulterebbe testo visibile diverso dal nome del comando -->
 									<rich:toolTip id="editToolLink" for="edit-iconLink" mode="client" value="#{(item.manuallyUpdateState and (item.modalitaAttiva ? allarmiBean.allarmiConsultazioneModificaStatoAbilitataAllarmeAttivo : allarmiBean.allarmiConsultazioneModificaStatoAbilitataAllarmePassivo)) ? 
 										'Modifica Stato' : 'Modifica Criteri Acknowledge'}" />
 									<f:setPropertyActionListener value="#{item}" target="#{allarmiBean.allarme}" />
