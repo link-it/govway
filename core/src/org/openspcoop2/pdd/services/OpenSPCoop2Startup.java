@@ -94,6 +94,7 @@ import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.rest.AbstractLazyContent;
 import org.openspcoop2.message.soap.SoapUtils;
+import org.openspcoop2.message.soap.SoapEnvelopeStructureValidator;
 import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
 import org.openspcoop2.message.utils.DumpMessaggio;
 import org.openspcoop2.monitor.engine.dynamic.CorePluginLoader;
@@ -1132,6 +1133,16 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				boolean soapPassthroughImpl = propertiesReader.useSoapMessagePassthrough();
 				OpenSPCoop2Startup.logStartupInfo("OpenSPCoop2MessageFactory_impl soapPassthroughImpl="+soapPassthroughImpl);
 				OpenSPCoop2MessageFactory_impl.setSoapPassthroughImpl(soapPassthroughImpl);
+				
+				// Struttura Envelope SOAP
+				OpenSPCoop2Startup.logStartupInfo("SOAP Envelope structure validation request="+propertiesReader.isSoapMessageEnvelopeStructureValidationRequest()+
+						" response="+propertiesReader.isSoapMessageEnvelopeStructureValidationResponse()+
+						" soap11AllowElementsAfterBody="+propertiesReader.isSoapMessageEnvelopeStructureSoap11AllowElementsAfterBody()+
+						" readerFullCheck="+propertiesReader.isSoapMessageEnvelopeStructureReaderFullCheck()+
+						" forwardCheck="+propertiesReader.isSoapMessageEnvelopeStructureForwardCheck());
+				SoapEnvelopeStructureValidator.setRequestValidationEnabled(propertiesReader.isSoapMessageEnvelopeStructureValidationRequest());
+				SoapEnvelopeStructureValidator.setResponseValidationEnabled(propertiesReader.isSoapMessageEnvelopeStructureValidationResponse());
+				SoapEnvelopeStructureValidator.setSoap11OtherNamespaceElementsAfterBodyAllowed(propertiesReader.isSoapMessageEnvelopeStructureSoap11AllowElementsAfterBody());
 								
 				// Locale SOAPFault String
 				Locale localeSoapFaultString = propertiesReader.getLocaleSOAPFaultString();

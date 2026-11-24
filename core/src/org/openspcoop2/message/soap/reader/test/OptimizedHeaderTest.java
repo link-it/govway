@@ -74,7 +74,30 @@ public class OptimizedHeaderTest {
 	public static void test() throws Exception {
 		test(null);
 	}
+	/**
+	 * Verifiche della struttura dell'Envelope (controllo completo nel reader e controllo durante l'inoltro): la seconda esecuzione
+	 * le abilita entrambe per verificare che modalità di serializzazione e contenuto serializzato restino invariati.
+	 */
+	private static boolean controlliStrutturaEnvelope = false;
+	private static void applicaControlliStrutturaEnvelope(OpenSPCoop2Message msg) {
+		if(controlliStrutturaEnvelope && msg instanceof AbstractOpenSPCoop2Message_soap_impl<?> soapMsg) {
+			soapMsg.setEnvelopeStructureForwardCheck(true);
+		}
+	}
+	
 	public static void test(String[] args) throws Exception {
+		testEngine(args);
+		
+		System.out.println("\n\n*** Esecuzione con i controlli della struttura dell'Envelope abilitati (controllo completo nel reader e durante l'inoltro) ***");
+		controlliStrutturaEnvelope = true;
+		try {
+			testEngine(args);
+		}finally {
+			controlliStrutturaEnvelope = false;
+		}
+		System.out.println("\n\nTestsuite con i controlli della struttura dell'Envelope completata con successo");
+	}
+	private static void testEngine(String[] args) throws Exception {
 	
 		Integer testDimensioneKb = null;
 		
@@ -923,6 +946,7 @@ public class OptimizedHeaderTest {
 						contentType, 
 						isMessage, 
 						bufferThresholdKb);
+				streamReader.setEnvelopeStructureFullCheck(controlliStrutturaEnvelope);
 				InputStream is = null;
 				try {
 					streamReader.read();
@@ -935,6 +959,7 @@ public class OptimizedHeaderTest {
 				
 				OpenSPCoop2MessageParseResult parser = factory.createMessage(messageType, req, is, null, streamReader);
 				OpenSPCoop2Message msg = parser.getMessage_throwParseException();
+				applicaControlliStrutturaEnvelope(msg);
 				print(i, "OpenSPCoop2Message-init", msg, initial, rapporto_left_interval, bufferThresholdKb==1 ? rapporto_min : rapporto_stream_reader);
 				
 				if(!streamReader.isSoapHeaderOptimizable()) {
@@ -1007,6 +1032,7 @@ public class OptimizedHeaderTest {
 						contentType, 
 						isMessage, 
 						bufferThresholdKb);
+				streamReader.setEnvelopeStructureFullCheck(controlliStrutturaEnvelope);
 				InputStream is = null;
 				try {
 					streamReader.read();
@@ -1019,6 +1045,7 @@ public class OptimizedHeaderTest {
 				
 				OpenSPCoop2MessageParseResult parser = factory.createMessage(messageType, req, is, null, streamReader);
 				OpenSPCoop2Message msg = parser.getMessage_throwParseException();
+				applicaControlliStrutturaEnvelope(msg);
 				print(i, "OpenSPCoop2Message-init", msg, initial, rapporto_left_interval, bufferThresholdKb==1 ? rapporto_min : rapporto_stream_reader);
 				
 				boolean isOptimizable = streamReader.isSoapHeaderOptimizable();
@@ -1323,6 +1350,7 @@ public class OptimizedHeaderTest {
 						contentType, 
 						isMessage, 
 						bufferThresholdKb);
+				streamReader.setEnvelopeStructureFullCheck(controlliStrutturaEnvelope);
 				InputStream is = null;
 				try {
 					streamReader.read();
@@ -1335,6 +1363,7 @@ public class OptimizedHeaderTest {
 				
 				OpenSPCoop2MessageParseResult parser = factory.createMessage(messageType, req, is, null, streamReader);
 				OpenSPCoop2Message msg = parser.getMessage_throwParseException();
+				applicaControlliStrutturaEnvelope(msg);
 				print(i, "OpenSPCoop2Message-init", msg, initial, rapporto_left_interval, bufferThresholdKb==1 ? rapporto_min : rapporto_stream_reader);
 				
 				boolean isOptimizable = streamReader.isSoapHeaderOptimizable();
@@ -1813,6 +1842,7 @@ public class OptimizedHeaderTest {
 						contentType, 
 						isMessage, 
 						bufferThresholdKb);
+				streamReader.setEnvelopeStructureFullCheck(controlliStrutturaEnvelope);
 				InputStream is = null;
 				try {
 					streamReader.read();
@@ -1825,6 +1855,7 @@ public class OptimizedHeaderTest {
 				
 				OpenSPCoop2MessageParseResult parser = factory.createMessage(messageType, req, is, null, streamReader);
 				OpenSPCoop2Message msg = parser.getMessage_throwParseException();
+				applicaControlliStrutturaEnvelope(msg);
 				print(i, "OpenSPCoop2Message-init", msg, initial, rapporto_left_interval, bufferThresholdKb==1 ? rapporto_min : rapporto_stream_reader);
 				
 				boolean isOptimizable = streamReader.isSoapHeaderOptimizable();
@@ -1919,6 +1950,7 @@ public class OptimizedHeaderTest {
 						contentType, 
 						isMessage, 
 						bufferThresholdKb);
+				streamReader.setEnvelopeStructureFullCheck(controlliStrutturaEnvelope);
 				InputStream is = null;
 				try {
 					streamReader.read();
@@ -1931,6 +1963,7 @@ public class OptimizedHeaderTest {
 				
 				OpenSPCoop2MessageParseResult parser = factory.createMessage(messageType, req, is, null, streamReader);
 				OpenSPCoop2Message msg = parser.getMessage_throwParseException();
+				applicaControlliStrutturaEnvelope(msg);
 				print(i, "OpenSPCoop2Message-init", msg, initial, rapporto_left_interval, bufferThresholdKb==1 ? rapporto_min : rapporto_stream_reader);
 				
 				boolean isOptimizable = streamReader.isSoapHeaderOptimizable();

@@ -3959,7 +3959,12 @@ public class InoltroBuste extends GenericLib implements IAsyncResponseCallback{
 								}
 							}
 							
-							if(this.requestMessagePrimaTrasformazione.getParseException()!=null || 
+							// anomalia rilevata durante l'inoltro (es. struttura dell'Envelope SOAP): registrata sul messaggio inviato dal connettore
+							ParseException requestParseException = this.requestMessagePrimaTrasformazione.getParseException();
+							if(requestParseException==null && this.requestMessageTrasformato!=null) {
+								requestParseException = this.requestMessageTrasformato.getParseException();
+							}
+							if(requestParseException!=null || 
 									requestReadTimeout!=null || 
 									requestLimitExceeded!=null){
 								this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO, true);
@@ -3976,7 +3981,7 @@ public class InoltroBuste extends GenericLib implements IAsyncResponseCallback{
 									errorMsg = tParsing.getMessage();
 								}
 								else {
-									parseException = this.requestMessagePrimaTrasformazione.getParseException();
+									parseException = requestParseException;
 									tParsing = parseException.getParseException();
 									errorMsg = tParsing.getMessage();
 								}
@@ -3988,12 +3993,12 @@ public class InoltroBuste extends GenericLib implements IAsyncResponseCallback{
 								else if(requestLimitExceeded!=null) {
 									integrationFunctionError = IntegrationFunctionError.REQUEST_SIZE_EXCEEDED;
 								}
-								else if(this.requestMessagePrimaTrasformazione.getParseException().getSourceException()!=null &&
-										TimeoutIOException.isTimeoutIOException(this.requestMessagePrimaTrasformazione.getParseException().getSourceException())) {
+								else if(requestParseException.getSourceException()!=null &&
+										TimeoutIOException.isTimeoutIOException(requestParseException.getSourceException())) {
 									integrationFunctionError = IntegrationFunctionError.REQUEST_TIMED_OUT;
 								}
-								else if(this.requestMessagePrimaTrasformazione.getParseException().getSourceException()!=null &&
-										LimitExceededIOException.isLimitExceededIOException(this.requestMessagePrimaTrasformazione.getParseException().getSourceException())) {
+								else if(requestParseException.getSourceException()!=null &&
+										LimitExceededIOException.isLimitExceededIOException(requestParseException.getSourceException())) {
 									integrationFunctionError = IntegrationFunctionError.REQUEST_SIZE_EXCEEDED;
 								}
 								

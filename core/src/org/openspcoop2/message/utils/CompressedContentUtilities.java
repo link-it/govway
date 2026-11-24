@@ -31,6 +31,7 @@ import org.openspcoop2.message.exception.MessageContentDecompressionException;
 import org.openspcoop2.message.exception.MessageContentDecompressionException.Motivo;
 import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.message.exception.MessageNotSupportedException;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.rest.problem.JsonDeserializer;
 import org.openspcoop2.utils.rest.problem.ProblemRFC7807;
@@ -76,7 +77,7 @@ public class CompressedContentUtilities {
 		msg.writeTo(wire, false); // accesso binario: byte così come ricevuti
 		ByteArrayOutputStream decompressed = new ByteArrayOutputStream();
 		try(InputStream is = ContentEncodingDecoder.decode(new ByteArrayInputStream(wire.toByteArray()), contentEncoding)){
-			byte[] buffer = new byte[8192];
+			byte[] buffer = new byte[Utilities.DIMENSIONE_BUFFER_8K];
 			long total = 0;
 			int letti;
 			while((letti = is.read(buffer))!=-1) {

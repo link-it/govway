@@ -163,31 +163,67 @@ public class RisorseEsterne extends GestioneViaJmx {
 	
 	
 	
-	public static MBeanServerConnection getMBeanServerConnection(UnitsTestSuiteProperties unitsTestsuiteProperties) throws Exception{
+	/*
+	 * Connessione JMX condivisa: in precedenza ogni chiamata apriva un nuovo JMXConnector senza mai chiuderlo
+	 * (lockForCode/unlockForCode la usano più volte per ogni test) e, dopo alcune migliaia di test,
+	 * l'application server smetteva di accettare connessioni bloccando la testsuite.
+	 */
+	private static JMXConnector jmxConnectorCondiviso = null;
+	private static String jmxConnectorCondivisoId = null;
+
+	public static synchronized MBeanServerConnection getMBeanServerConnection(UnitsTestSuiteProperties unitsTestsuiteProperties) throws Exception{
 		// Controllo JMX
-		
+
 		String version_jbossas = unitsTestsuiteProperties.getApplicationServerVersion();
 		//System.out.println("JBOSS_VERSIONE["+version_jbossas+"]");
-		
-		MBeanServerConnection jmxconn = null;
+
 		// eliminato supporto di jboss
-			
+
 		String as = version_jbossas;
 		if(version_jbossas.startsWith("tomcat")){
 			as = "tomcat";
 		}
-		
-		JMXServiceURL serviceURL = new JMXServiceURL(unitsTestsuiteProperties.getJMXServiceURL(as));   
+
+		String url = unitsTestsuiteProperties.getJMXServiceURL(as);
+		String id = url+"@"+unitsTestsuiteProperties.getJMXUsername();
+
+		// riuso la connessione se riferita allo stesso server e ancora attiva
+		if(jmxConnectorCondiviso!=null) {
+			if(id.equals(jmxConnectorCondivisoId)) {
+				try {
+					MBeanServerConnection jmxconn = jmxConnectorCondiviso.getMBeanServerConnection();
+					jmxconn.getMBeanCount();
+					return jmxconn;
+				}catch(Exception e) {
+					// connessione non più valida (es. riavvio dell'application server): la ricreo
+				}
+			}
+			chiudiConnessioneJmxCondivisa();
+		}
+
+		JMXServiceURL serviceURL = new JMXServiceURL(url);
 		Map<String, Object> env = null;
 		if(unitsTestsuiteProperties.getJMXUsername()!=null && unitsTestsuiteProperties.getJMXPassword()!=null){
 			String[] creds = {unitsTestsuiteProperties.getJMXUsername(), unitsTestsuiteProperties.getJMXPassword()};
 			env = new HashMap<>();
 			env.put(JMXConnector.CREDENTIALS, creds);
 		}
-		JMXConnector jmxConnector = JMXConnectorFactory.connect(serviceURL, env);           
-		jmxconn = jmxConnector.getMBeanServerConnection();	
-		
-		return jmxconn;
+		jmxConnectorCondiviso = JMXConnectorFactory.connect(serviceURL, env);
+		jmxConnectorCondivisoId = id;
+
+		return jmxConnectorCondiviso.getMBeanServerConnection();
+	}
+
+	private static void chiudiConnessioneJmxCondivisa() {
+		try {
+			if(jmxConnectorCondiviso!=null) {
+				jmxConnectorCondiviso.close();
+			}
+		}catch(Exception e) {
+			// ignore
+		}
+		jmxConnectorCondiviso = null;
+		jmxConnectorCondivisoId = null;
 	}
 	
 	@DataProvider (name="testRisorseJMX")

@@ -573,6 +573,13 @@ public class OpenSPCoop2Properties {
 			
 			this.useSoapMessagePassthrough();
 			
+			// Struttura Envelope SOAP
+			this.isSoapMessageEnvelopeStructureValidationRequest();
+			this.isSoapMessageEnvelopeStructureValidationResponse();
+			this.isSoapMessageEnvelopeStructureSoap11AllowElementsAfterBody();
+			this.isSoapMessageEnvelopeStructureReaderFullCheck();
+			this.isSoapMessageEnvelopeStructureForwardCheck();
+			
 			this.getSoapMessageSaajSaxParserPoolSize();
 			// AlternativeContentTypeSoap12
 			this.getAlternativeContentTypeSoap12();
@@ -7777,6 +7784,118 @@ public class OpenSPCoop2Properties {
 		}
 
 		return this.useSoapMessagePassthrough;
+	}
+	
+	// Verifica della struttura dell'Envelope SOAP
+	
+	private Boolean isSoapMessageEnvelopeStructureValidationRequest = null;
+	public boolean isSoapMessageEnvelopeStructureValidationRequest() {	
+		if(this.isSoapMessageEnvelopeStructureValidationRequest==null){
+			String pName = "org.openspcoop2.pdd.soapMessage.envelopeStructure.validation.request";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
+					name="true";
+				}
+				name = name.trim();
+				this.isSoapMessageEnvelopeStructureValidationRequest = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
+				this.isSoapMessageEnvelopeStructureValidationRequest = true;
+			}    
+		}
+
+		return this.isSoapMessageEnvelopeStructureValidationRequest;
+	}
+	
+	private Boolean isSoapMessageEnvelopeStructureValidationResponse = null;
+	public boolean isSoapMessageEnvelopeStructureValidationResponse() {	
+		if(this.isSoapMessageEnvelopeStructureValidationResponse==null){
+			String pName = "org.openspcoop2.pdd.soapMessage.envelopeStructure.validation.response";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
+					name="true";
+				}
+				name = name.trim();
+				this.isSoapMessageEnvelopeStructureValidationResponse = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
+				this.isSoapMessageEnvelopeStructureValidationResponse = true;
+			}    
+		}
+
+		return this.isSoapMessageEnvelopeStructureValidationResponse;
+	}
+	
+	private Boolean isSoapMessageEnvelopeStructureSoap11AllowElementsAfterBody = null;
+	public boolean isSoapMessageEnvelopeStructureSoap11AllowElementsAfterBody() {	
+		if(this.isSoapMessageEnvelopeStructureSoap11AllowElementsAfterBody==null){
+			String pName = "org.openspcoop2.pdd.soapMessage.envelopeStructure.soap11.allowElementsAfterBody";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
+					name="false";
+				}
+				name = name.trim();
+				this.isSoapMessageEnvelopeStructureSoap11AllowElementsAfterBody = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
+				this.isSoapMessageEnvelopeStructureSoap11AllowElementsAfterBody = false;
+			}    
+		}
+
+		return this.isSoapMessageEnvelopeStructureSoap11AllowElementsAfterBody;
+	}
+	
+	private Boolean isSoapMessageEnvelopeStructureReaderFullCheck = null;
+	public boolean isSoapMessageEnvelopeStructureReaderFullCheck() {	
+		if(this.isSoapMessageEnvelopeStructureReaderFullCheck==null){
+			String pName = "org.openspcoop2.pdd.soapMessage.envelopeStructure.reader.fullCheck";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
+					name="false";
+				}
+				name = name.trim();
+				this.isSoapMessageEnvelopeStructureReaderFullCheck = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
+				this.isSoapMessageEnvelopeStructureReaderFullCheck = false;
+			}    
+		}
+
+		return this.isSoapMessageEnvelopeStructureReaderFullCheck;
+	}
+	
+	private Boolean isSoapMessageEnvelopeStructureForwardCheck = null;
+	public boolean isSoapMessageEnvelopeStructureForwardCheck() {	
+		if(this.isSoapMessageEnvelopeStructureForwardCheck==null){
+			String pName = "org.openspcoop2.pdd.soapMessage.envelopeStructure.forward.check";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
+					name="false";
+				}
+				name = name.trim();
+				this.isSoapMessageEnvelopeStructureForwardCheck = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
+				this.isSoapMessageEnvelopeStructureForwardCheck = false;
+			}    
+		}
+
+		return this.isSoapMessageEnvelopeStructureForwardCheck;
 	}
 	
 	private Integer soapMessageSaajSaxParserPoolSize = null;

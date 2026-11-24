@@ -43,6 +43,7 @@ import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.message.exception.MessageNotSupportedException;
 import org.openspcoop2.message.exception.ParseExceptionUtils;
 import org.openspcoop2.message.soap.AbstractOpenSPCoop2Message_soap_impl;
+import org.openspcoop2.message.soap.SoapEnvelopeStructureValidator;
 import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
 import org.openspcoop2.message.utils.MessageUtilities;
 import org.openspcoop2.utils.Utilities;
@@ -472,9 +473,13 @@ public abstract class OpenSPCoop2MessageFactory {
 			if(MessageType.SOAP_11.equals(messageType) || MessageType.SOAP_12.equals(messageType)){
 				if(! (op2Msg instanceof AbstractOpenSPCoop2Message_soap_impl)) {
 					op2Msg.castAsSoap().getSOAPHeader(); // Verifica struttura
+					// Verifica della struttura dell'Envelope (più Header o Body, ordine, Fault)
+					SoapEnvelopeStructureValidator.validate(op2Msg.castAsSoap().getSOAPPart().getEnvelope(), messageType, messageRole);
 				}
 				else {
 					// la verifica verra' fatta quando viene costruito il contenuto saaj
+					// le anomalie della struttura dell'Envelope già rilevate dalla lettura in streaming vengono verificate subito
+					((AbstractOpenSPCoop2Message_soap_impl<?>)op2Msg).checkEnvelopeStructureFromSoapReader();
 				}
 			}
 			

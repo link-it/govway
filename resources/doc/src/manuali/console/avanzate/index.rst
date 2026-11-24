@@ -25,6 +25,7 @@ Funzionalità Avanzate
 	dynamic_config
 	contentBased
 	validazione
+	strutturaEnvelopeSoap
 	password
 	info_confidenziali
 	byokNodiManager

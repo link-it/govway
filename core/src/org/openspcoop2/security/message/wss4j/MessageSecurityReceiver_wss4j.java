@@ -88,6 +88,8 @@ import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.id.IDUtilities;
 import org.openspcoop2.utils.transport.http.IOCSPValidator;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 
 
@@ -156,6 +158,16 @@ public class MessageSecurityReceiver_wss4j extends AbstractSOAPMessageSecurityRe
 	        		msgCtx.setAttachments(listAttachments);
 	        	}
 	        }
+	        else {
+	        	// Nessuna parte sugli allegati indicata in configurazione (es. 'Elementi firmati/cifrati attesi' = 'Qualsiasi'):
+	        	// vengono forniti a WSS4J gli allegati referenziati dall'header WS-Security (raccolti da getDirtyElements),
+	        	// altrimenti un messaggio con allegati firmati o cifrati verrebbe rifiutato ("Attachment not found").
+	        	List<String> cidReferences = AttachmentsConfigReaderUtils.getListCIDAttachmentsForSecurity(wssContext);
+	        	listAttachments = org.openspcoop2.security.message.wss4j.WSSUtilities.readReferencedAttachments(cidReferences, message, msgCtx);
+	        	if(listAttachments!=null && !listAttachments.isEmpty()){
+	        		msgCtx.setAttachments(listAttachments);
+	        	}
+	        }
 	        
 	        
 	        // ** Applico sicurezza tramite CXF **/
@@ -174,7 +186,15 @@ public class MessageSecurityReceiver_wss4j extends AbstractSOAPMessageSecurityRe
 			// ** Lettura Subject Certificato e informazioni relative al processamento effettuato **/
 			
 			boolean validateX509 = this.examineResults(msgCtx, wssContext.getActor());
-			
+
+
+			// ** Verifica che l'elemento Body protetto (firmato o cifrato) sia il Body del messaggio **
+			// WSS4J risolve i riferimenti ovunque nel documento: un Body protetto spostato altrove (es. in un header o dentro il payload)
+			// renderebbe valida la verifica mentre viene elaborato un Body diverso, non protetto (XML Signature Wrapping)
+
+			verificaCoperturaBody(this.signatureRefs, message.getMessageType());
+			verificaCoperturaBody(this.encryptionRefs, message.getMessageType());
+
 			
 			// ** Validazione CRL se non effettuata dall'handler (indicazione arriva dal metodo examineResults) **
 			
@@ -301,6 +321,46 @@ public class MessageSecurityReceiver_wss4j extends AbstractSOAPMessageSecurityRe
 			throw wssException;
 		}
 
+	}
+
+	public static final String ERROR_PROTECTED_BODY_NOT_SOAP_BODY = org.openspcoop2.message.constants.Costanti.WSS_ERROR_PROTECTED_BODY_NOT_SOAP_BODY;
+
+	/**
+	 * Ogni elemento protetto che è un Body SOAP deve essere figlio diretto dell'Envelope, elemento radice del documento.
+	 * Insieme alla verifica della struttura dell'Envelope (un solo Body), garantisce che sia il Body elaborato dal gateway.
+	 */
+	private static void verificaCoperturaBody(List<WSDataRef> refs, MessageType messageType) throws SecurityException {
+		if(refs==null || refs.isEmpty()) {
+			return;
+		}
+		String soapNamespace = MessageType.SOAP_12.equals(messageType) ?
+				org.openspcoop2.message.constants.Costanti.SOAP12_ENVELOPE_NAMESPACE :
+				org.openspcoop2.message.constants.Costanti.SOAP_ENVELOPE_NAMESPACE;
+		for (WSDataRef ref : refs) {
+			Element protectedElement = ref.getProtectedElement();
+			if(protectedElement!=null && isSoapElement(protectedElement, soapNamespace, "Body")) {
+				Node parent = protectedElement.getParentNode();
+				boolean figlioEnvelope = parent!=null && parent.getNodeType()==Node.ELEMENT_NODE &&
+						isSoapElement(parent, soapNamespace, "Envelope") &&
+						parent.getParentNode()!=null && parent.getParentNode().getNodeType()==Node.DOCUMENT_NODE;
+				if(!figlioEnvelope) {
+					throw new SecurityException(ERROR_PROTECTED_BODY_NOT_SOAP_BODY+" (reference '"+ref.getWsuId()+"')");
+				}
+			}
+		}
+	}
+	private static boolean isSoapElement(Node node, String soapNamespace, String localName) {
+		if(!soapNamespace.equals(node.getNamespaceURI())) {
+			return false;
+		}
+		String ln = node.getLocalName();
+		if(ln==null) {
+			ln = node.getNodeName();
+			if(ln!=null && ln.contains(":")) {
+				ln = ln.substring(ln.indexOf(':')+1);
+			}
+		}
+		return localName.equals(ln);
 	}
 
 	private Timestamp timestamp;

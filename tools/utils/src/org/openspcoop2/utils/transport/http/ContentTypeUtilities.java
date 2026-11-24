@@ -549,6 +549,22 @@ public class ContentTypeUtilities {
 		}
 	}
 
+	/**
+	 * @return il parametro 'start' (Content-ID della parte radice) di un Content-Type multipart/related, o null se assente
+	 */
+	public static String readMultipartStartFromContentType(String cType) throws UtilsException {
+		try{
+			ContentType contentType = new ContentType(cType);
+			String startParam = contentType.getParameter(HttpConstants.CONTENT_TYPE_MULTIPART_PARAMETER_START);
+			if (startParam != null) {
+				return startParam.trim();
+			}
+			return null;
+		} catch (Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
+
 	public static String readMultipartTypeFromContentType(String cType) throws UtilsException {
 		try{
 			ContentType contentType = new ContentType(cType);

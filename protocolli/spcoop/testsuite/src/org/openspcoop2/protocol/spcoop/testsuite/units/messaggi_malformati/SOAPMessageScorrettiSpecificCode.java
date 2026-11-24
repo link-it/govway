@@ -26,6 +26,7 @@ import java.util.List;
 
 import javax.xml.soap.SOAPException;
 
+import org.openspcoop2.testsuite.core.StrutturaEnvelopeSoap11;
 import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
@@ -355,5 +356,244 @@ public class SOAPMessageScorrettiSpecificCode extends SOAPMessageScorretti {
 	public void strutturaXMLErrata_integrationManager(byte[] messaggioXMLRichiesta,String identificativoTest,List<String> motivoErroreParser,List<String> listErroriAttesi)throws TestSuiteException,SOAPException, Exception{
 		super._strutturaXMLErrata_integrationManager(messaggioXMLRichiesta, identificativoTest, motivoErroreParser, listErroriAttesi);
 	}
+
+
+
+
+	// ------------- STRUTTURA ENVELOPE NON CONFORME ------------------
+	// Casi #00-#12 (e varianti) descritti in org.openspcoop2.testsuite.core.StrutturaEnvelopeSoap11
+
+	@DataProvider (name="strutturaEnvelopeSoapErrata")
+	public Object[][] strutturaEnvelopeSoapErrata() throws Exception{
+		return super._strutturaEnvelopeSoapErrata();
+	}
+	@DataProvider (name="strutturaEnvelopeSoapErrataPA")
+	public Object[][] strutturaEnvelopeSoapErrataPA() throws Exception{
+		return super._strutturaEnvelopeSoapErrataPA();
+	}
+	@DataProvider (name="strutturaEnvelopeSoapCorrettaPD")
+	public Object[][] strutturaEnvelopeSoapCorrettaPD() throws Exception{
+		return super._strutturaEnvelopeSoapCorretta(false);
+	}
+	@DataProvider (name="strutturaEnvelopeSoapCorrettaPA")
+	public Object[][] strutturaEnvelopeSoapCorrettaPA() throws Exception{
+		return super._strutturaEnvelopeSoapCorretta(true);
+	}
+	@DataProvider (name="casiStrutturaEnvelopeSoapErrata")
+	public Object[][] casiStrutturaEnvelopeSoapErrata() throws Exception{
+		return super._casiStrutturaEnvelopeSoapErrata();
+	}
+	@DataProvider (name="casiStrutturaEnvelopeSoapCorrettaRispostaPA")
+	public Object[][] casiStrutturaEnvelopeSoapCorrettaRispostaPA() throws Exception{
+		return super._casiStrutturaEnvelopeSoapCorretta(false);
+	}
+	@DataProvider (name="casiStrutturaEnvelopeSoapCorrettaRispostaPD")
+	public Object[][] casiStrutturaEnvelopeSoapCorrettaRispostaPD() throws Exception{
+		return super._casiStrutturaEnvelopeSoapCorretta(true);
+	}
+
+	@DataProvider (name="casiStrutturaEnvelopeSoapXSW")
+	public Object[][] casiStrutturaEnvelopeSoapXSW() throws Exception{
+		return super._casiStrutturaEnvelopeSoapXSW();
+	}
+
+	// --- Richiesta ---
+
+	@Test(groups={SOAPMessageScorretti.ID_GRUPPO,
+			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_ENVELOPE",
+			SOAPMessageScorretti.ID_GRUPPO+".PD_XML_RICHIESTA",
+			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_ENVELOPE_PD_RICHIESTA"},dataProvider="strutturaEnvelopeSoapErrata")
+	public void strutturaEnvelopeErrata_PortaDelegata_Richiesta(byte[] messaggioXMLRichiesta,String identificativoTest,List<String> motivoErroreParser,List<String> listErroriAttesi)throws TestSuiteException,SOAPException, Exception{
+		super.senzaAttesaServizioPA(() -> super._strutturaXMLErrata_PortaDelegata_Richiesta(messaggioXMLRichiesta, identificativoTest, motivoErroreParser, listErroriAttesi));
+	}
+
+	@Test(groups={SOAPMessageScorretti.ID_GRUPPO,
+			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_ENVELOPE",
+			SOAPMessageScorretti.ID_GRUPPO+".PD_XML_RICHIESTA",
+			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_ENVELOPE_PD_STATEFUL_RICHIESTA"},dataProvider="strutturaEnvelopeSoapErrata")
+	public void strutturaEnvelopeErrata_PortaDelegata_stateful_Richiesta(byte[] messaggioXMLRichiesta,String identificativoTest,List<String> motivoErroreParser,List<String> listErroriAttesi)throws TestSuiteException,SOAPException, Exception{
+		super.senzaAttesaServizioPA(() -> super._strutturaXMLErrata_PortaDelegata_stateful_Richiesta(messaggioXMLRichiesta, identificativoTest, motivoErroreParser, listErroriAttesi));
+	}
+
+	@Test(groups={SOAPMessageScorretti.ID_GRUPPO,
+			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_ENVELOPE",
+			SOAPMessageScorretti.ID_GRUPPO+".PD_XML_RICHIESTA",
+			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_ENVELOPE_PD_INTEGRAZIONE_CONTENT_BASED_RICHIESTA"},dataProvider="strutturaEnvelopeSoapErrata")
+	public void strutturaEnvelopeErrata_PortaDelegata_integrazioneContentBased_Richiesta(byte[] messaggioXMLRichiesta,String identificativoTest,List<String> motivoErroreParser,List<String> listErroriAttesi)throws TestSuiteException,SOAPException, Exception{
+		super.senzaAttesaServizioPA(() -> super._strutturaXMLErrata_PortaDelegata_integrazioneContentBased_Richiesta(messaggioXMLRichiesta, identificativoTest, motivoErroreParser, listErroriAttesi));
+	}
+
+	@Test(groups={SOAPMessageScorretti.ID_GRUPPO,
+			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_ENVELOPE",
+			SOAPMessageScorretti.ID_GRUPPO+".PD_XML_RICHIESTA",
+			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_ENVELOPE_PD_CORRELAZIONE_APPLICATIVA_CONTENT_BASED_RICHIESTA"},dataProvider="strutturaEnvelopeSoapErrata")
+	public void strutturaEnvelopeErrata_PortaDelegata_correlazioneApplicativaContentBased_Richiesta(byte[] messaggioXMLRichiesta,String identificativoTest,List<String> motivoErroreParser,List<String> listErroriAttesi)throws TestSuiteException,SOAPException, Exception{
+		super.senzaAttesaServizioPA(() -> super._strutturaXMLErrata_PortaDelegata_correlazioneApplicativaContentBased_Richiesta(messaggioXMLRichiesta, identificativoTest, motivoErroreParser, listErroriAttesi));
+	}
+
+	@Test(groups={SOAPMessageScorretti.ID_GRUPPO,
+			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_ENVELOPE",
+			SOAPMessageScorretti.ID_GRUPPO+".PD_XML_RICHIESTA",
+			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_ENVELOPE_PD_VALIDAZIONE_CONTENUTI_WARN_RICHIESTA"},dataProvider="strutturaEnvelopeSoapErrata")
+	public void strutturaEnvelopeErrata_PortaDelegata_validazioneContenutiApplicativiWarningOnly_Richiesta(byte[] messaggioXMLRichiesta,String identificativoTest,List<String> motivoErroreParser,List<String> listErroriAttesi)throws TestSuiteException,SOAPException, Exception{
+		super.senzaAttesaServizioPA(() -> super._strutturaXMLErrata_PortaDelegata_validazioneContenutiApplicativiWarningOnly_Richiesta(messaggioXMLRichiesta, identificativoTest, motivoErroreParser, listErroriAttesi));
+	}
+
+	@Test(groups={SOAPMessageScorretti.ID_GRUPPO,
+			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_ENVELOPE",
+			SOAPMessageScorretti.ID_GRUPPO+".PD_XML_RICHIESTA",
+			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_ENVELOPE_PD_VALIDAZIONE_CONTENUTI_RICHIESTA"},dataProvider="strutturaEnvelopeSoapErrata")
+	public void strutturaEnvelopeErrata_PortaDelegata_validazioneContenutiApplicativi_Richiesta(byte[] messaggioXMLRichiesta,String identificativoTest,List<String> motivoErroreParser,List<String> listErroriAttesi)throws TestSuiteException,SOAPException, Exception{
+		super.senzaAttesaServizioPA(() -> super._strutturaXMLErrata_PortaDelegata_validazioneContenutiApplicativi_Richiesta(messaggioXMLRichiesta, identificativoTest, motivoErroreParser, listErroriAttesi));
+	}
+
+	@Test(groups={SOAPMessageScorretti.ID_GRUPPO,
+			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_ENVELOPE",
+			SOAPMessageScorretti.ID_GRUPPO+".PD_XML_RICHIESTA",
+			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_ENVELOPE_PD_WSS_ENCRYPT_RICHIESTA"},dataProvider="strutturaEnvelopeSoapErrata")
+	public void strutturaEnvelopeErrata_PortaDelegata_WSSecurityEncrypt_Richiesta(byte[] messaggioXMLRichiesta,String identificativoTest,List<String> motivoErroreParser,List<String> listErroriAttesi)throws TestSuiteException,SOAPException, Exception{
+		super.senzaAttesaServizioPA(() -> super._strutturaXMLErrata_PortaDelegata_WSSecurityEncrypt_Richiesta(messaggioXMLRichiesta, identificativoTest, motivoErroreParser, listErroriAttesi));
+	}
+
+	@Test(groups={SOAPMessageScorretti.ID_GRUPPO,
+			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_ENVELOPE",
+			SOAPMessageScorretti.ID_GRUPPO+".PD_XML_RICHIESTA",
+			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_ENVELOPE_PD_WSS_SIGNATURE_RICHIESTA"},dataProvider="strutturaEnvelopeSoapErrata")
+	public void strutturaEnvelopeErrata_PortaDelegata_WSSecuritySignature_Richiesta(byte[] messaggioXMLRichiesta,String identificativoTest,List<String> motivoErroreParser,List<String> listErroriAttesi)throws TestSuiteException,SOAPException, Exception{
+		super.senzaAttesaServizioPA(() -> super._strutturaXMLErrata_PortaDelegata_WSSecuritySignature_Richiesta(messaggioXMLRichiesta, identificativoTest, motivoErroreParser, listErroriAttesi));
+	}
+
+	@Test(groups={SOAPMessageScorretti.ID_GRUPPO,
+			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_ENVELOPE",
+			SOAPMessageScorretti.ID_GRUPPO+".PA_XML_RICHIESTA",
+			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_ENVELOPE_PA_RICHIESTA"},dataProvider="strutturaEnvelopeSoapErrataPA")
+	public void strutturaEnvelopeErrata_PortaApplicativa_Richiesta(byte[] messaggioXMLRichiesta,String identificativoTest,List<String> motivoErroreParser,List<String> listErroriAttesi)throws TestSuiteException,SOAPException, Exception{
+		super.senzaAttesaServizioPA(() -> super._strutturaXMLErrata_PortaApplicativa_Richiesta(messaggioXMLRichiesta, identificativoTest, motivoErroreParser, listErroriAttesi));
+	}
+
+	@Test(groups={SOAPMessageScorretti.ID_GRUPPO,
+			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_ENVELOPE",
+			SOAPMessageScorretti.ID_GRUPPO+".PA_XML_RICHIESTA",
+			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_ENVELOPE_PA_STATEFUL_RICHIESTA"},dataProvider="strutturaEnvelopeSoapErrataPA")
+	public void strutturaEnvelopeErrata_PortaApplicativa_stateful_Richiesta(byte[] messaggioXMLRichiesta,String identificativoTest,List<String> motivoErroreParser,List<String> listErroriAttesi)throws TestSuiteException,SOAPException, Exception{
+		super.senzaAttesaServizioPA(() -> super._strutturaXMLErrata_PortaApplicativa_stateful_Richiesta(messaggioXMLRichiesta, identificativoTest, motivoErroreParser, listErroriAttesi));
+	}
+
+	@Test(groups={SOAPMessageScorretti.ID_GRUPPO,
+			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_ENVELOPE",
+			SOAPMessageScorretti.ID_GRUPPO+".PA_XML_RICHIESTA",
+			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_ENVELOPE_PA_CORRELAZIONE_APPLICATIVA_CONTENT_BASED_RICHIESTA"},dataProvider="strutturaEnvelopeSoapErrataPA")
+	public void strutturaEnvelopeErrata_PortaApplicativa_correlazioneApplicativaContentBased_Richiesta(byte[] messaggioXMLRichiesta,String identificativoTest,List<String> motivoErroreParser,List<String> listErroriAttesi)throws TestSuiteException,SOAPException, Exception{
+		super.senzaAttesaServizioPA(() -> super._strutturaXMLErrata_PortaApplicativa_correlazioneApplicativaContentBased_Richiesta(messaggioXMLRichiesta, identificativoTest, motivoErroreParser, listErroriAttesi));
+	}
+
+	@Test(groups={SOAPMessageScorretti.ID_GRUPPO,
+			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_ENVELOPE",
+			SOAPMessageScorretti.ID_GRUPPO+".PA_XML_RICHIESTA",
+			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_ENVELOPE_PA_VALIDAZIONE_CONTENUTI_RICHIESTA"},dataProvider="strutturaEnvelopeSoapErrataPA")
+	public void strutturaEnvelopeErrata_PortaApplicativa_validazioneContenutiApplicativi_Richiesta(byte[] messaggioXMLRichiesta,String identificativoTest,List<String> motivoErroreParser,List<String> listErroriAttesi)throws TestSuiteException,SOAPException, Exception{
+		super.senzaAttesaServizioPA(() -> super._strutturaXMLErrata_PortaApplicativa_validazioneContenutiApplicativi_Richiesta(messaggioXMLRichiesta, identificativoTest, motivoErroreParser, listErroriAttesi));
+	}
+
+	@Test(groups={SOAPMessageScorretti.ID_GRUPPO,
+			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_ENVELOPE",
+			SOAPMessageScorretti.ID_GRUPPO+".PA_XML_RICHIESTA",
+			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_ENVELOPE_PA_WSS_ENCRYPT_RICHIESTA"},dataProvider="strutturaEnvelopeSoapErrataPA")
+	public void strutturaEnvelopeErrata_PortaApplicativa_WSSecurityEncrypt_Richiesta(byte[] messaggioXMLRichiesta,String identificativoTest,List<String> motivoErroreParser,List<String> listErroriAttesi)throws TestSuiteException,SOAPException, Exception{
+		super.senzaAttesaServizioPA(() -> super._strutturaXMLErrata_PortaApplicativa_WSSecurityEncrypt_Richiesta(messaggioXMLRichiesta, identificativoTest, motivoErroreParser, listErroriAttesi));
+	}
+
+	@Test(groups={SOAPMessageScorretti.ID_GRUPPO,
+			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_ENVELOPE",
+			SOAPMessageScorretti.ID_GRUPPO+".PA_XML_RICHIESTA",
+			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_ENVELOPE_PA_WSS_SIGNATURE_RICHIESTA"},dataProvider="strutturaEnvelopeSoapErrataPA")
+	public void strutturaEnvelopeErrata_PortaApplicativa_WSSecuritySignature_Richiesta(byte[] messaggioXMLRichiesta,String identificativoTest,List<String> motivoErroreParser,List<String> listErroriAttesi)throws TestSuiteException,SOAPException, Exception{
+		super.senzaAttesaServizioPA(() -> super._strutturaXMLErrata_PortaApplicativa_WSSecuritySignature_Richiesta(messaggioXMLRichiesta, identificativoTest, motivoErroreParser, listErroriAttesi));
+	}
+
+	@Test(groups={SOAPMessageScorretti.ID_GRUPPO,
+			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_ENVELOPE",
+			SOAPMessageScorretti.ID_GRUPPO+".PD_XML_RICHIESTA",
+			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_ENVELOPE_PD_CORRETTA_RICHIESTA"},dataProvider="strutturaEnvelopeSoapCorrettaPD")
+	public void strutturaEnvelopeCorretta_PortaDelegata_Richiesta(byte[] messaggioXMLRichiesta,String identificativoTest)throws TestSuiteException,SOAPException, Exception{
+		super._strutturaEnvelopeCorretta_PortaDelegata_Richiesta(messaggioXMLRichiesta, identificativoTest);
+	}
+
+	@Test(groups={SOAPMessageScorretti.ID_GRUPPO,
+			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_ENVELOPE",
+			SOAPMessageScorretti.ID_GRUPPO+".PA_XML_RICHIESTA",
+			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_ENVELOPE_PA_CORRETTA_RICHIESTA"},dataProvider="strutturaEnvelopeSoapCorrettaPA")
+	public void strutturaEnvelopeCorretta_PortaApplicativa_Richiesta(byte[] messaggioXMLRichiesta,String identificativoTest)throws TestSuiteException,SOAPException, Exception{
+		super._strutturaEnvelopeCorretta_PortaApplicativa_Richiesta(messaggioXMLRichiesta, identificativoTest);
+	}
+
+	@Test(groups={SOAPMessageScorretti.ID_GRUPPO,
+			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_ENVELOPE",
+			SOAPMessageScorretti.ID_GRUPPO+".PA_XML_RICHIESTA",
+			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_ENVELOPE_PA_INTESTAZIONE_DUPLICATA_RICHIESTA"})
+	public void strutturaEnvelope_PortaApplicativa_Richiesta_IntestazioneDuplicata()throws TestSuiteException,SOAPException, Exception{
+		super._strutturaEnvelope_PortaApplicativa_Richiesta_IntestazioneDuplicata();
+	}
+
+	// --- Risposta ---
+
+	@Test(groups={SOAPMessageScorretti.ID_GRUPPO,
+			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_ENVELOPE",
+			SOAPMessageScorretti.ID_GRUPPO+".PA_XML_RISPOSTA",
+			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_ENVELOPE_PA_RISPOSTA"},dataProvider="casiStrutturaEnvelopeSoapErrata")
+	public void strutturaEnvelopeErrata_PA_RispostaApplicativa(StrutturaEnvelopeSoap11.Caso caso)throws TestSuiteException,SOAPException, Exception{
+		super._strutturaEnvelopeErrata_PA_RispostaApplicativa(caso, false, false);
+	}
+
+	@Test(groups={SOAPMessageScorretti.ID_GRUPPO,
+			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_ENVELOPE",
+			SOAPMessageScorretti.ID_GRUPPO+".PA_XML_RISPOSTA",
+			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_ENVELOPE_PA_STATEFUL_RISPOSTA"},dataProvider="casiStrutturaEnvelopeSoapErrata")
+	public void strutturaEnvelopeErrata_PA_RispostaApplicativa_Stateful(StrutturaEnvelopeSoap11.Caso caso)throws TestSuiteException,SOAPException, Exception{
+		super._strutturaEnvelopeErrata_PA_RispostaApplicativa(caso, true, false);
+	}
+
+	@Test(groups={SOAPMessageScorretti.ID_GRUPPO,
+			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_ENVELOPE",
+			SOAPMessageScorretti.ID_GRUPPO+".PD_XML_RISPOSTA",
+			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_ENVELOPE_PD_RISPOSTA_PDD"},dataProvider="casiStrutturaEnvelopeSoapErrata")
+	public void strutturaEnvelopeErrata_PD_RispostaPdD(StrutturaEnvelopeSoap11.Caso caso)throws TestSuiteException,SOAPException, Exception{
+		super._strutturaEnvelopeErrata_PD_RispostaPdD(caso, false);
+	}
+
+	@Test(groups={SOAPMessageScorretti.ID_GRUPPO,
+			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_ENVELOPE",
+			SOAPMessageScorretti.ID_GRUPPO+".PA_XML_RISPOSTA",
+			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_ENVELOPE_PA_CORRETTA_RISPOSTA"},dataProvider="casiStrutturaEnvelopeSoapCorrettaRispostaPA")
+	public void strutturaEnvelopeCorretta_PA_RispostaApplicativa(StrutturaEnvelopeSoap11.Caso caso)throws TestSuiteException,SOAPException, Exception{
+		super._strutturaEnvelopeCorretta_PA_RispostaApplicativa(caso, false);
+	}
+
+	@Test(groups={SOAPMessageScorretti.ID_GRUPPO,
+			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_ENVELOPE",
+			SOAPMessageScorretti.ID_GRUPPO+".PA_XML_RISPOSTA",
+			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_ENVELOPE_PA_STATEFUL_CORRETTA_RISPOSTA"},dataProvider="casiStrutturaEnvelopeSoapCorrettaRispostaPA")
+	public void strutturaEnvelopeCorretta_PA_RispostaApplicativa_Stateful(StrutturaEnvelopeSoap11.Caso caso)throws TestSuiteException,SOAPException, Exception{
+		super._strutturaEnvelopeCorretta_PA_RispostaApplicativa(caso, true);
+	}
+
+	@Test(groups={SOAPMessageScorretti.ID_GRUPPO,
+			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_ENVELOPE",
+			SOAPMessageScorretti.ID_GRUPPO+".PD_XML_RISPOSTA",
+			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_ENVELOPE_PD_CORRETTA_RISPOSTA_PDD"},dataProvider="casiStrutturaEnvelopeSoapCorrettaRispostaPD")
+	public void strutturaEnvelopeCorretta_PD_RispostaPdD(StrutturaEnvelopeSoap11.Caso caso)throws TestSuiteException,SOAPException, Exception{
+		super._strutturaEnvelopeCorretta_PD_RispostaPdD(caso);
+	}
+
+	// --- XML Signature Wrapping (WS-Security Signature) ---
+
+	@Test(groups={SOAPMessageScorretti.ID_GRUPPO,
+			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_ENVELOPE",
+			SOAPMessageScorretti.ID_GRUPPO+".PA_XML_RICHIESTA",
+			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_ENVELOPE_XSW_WSS_SIGNATURE"},dataProvider="casiStrutturaEnvelopeSoapXSW")
+	public void strutturaEnvelopeXSW_WSSecuritySignature(StrutturaEnvelopeSoap11.Caso caso)throws TestSuiteException,SOAPException, Exception{
+		super._strutturaEnvelopeXSW_WSSecuritySignature(caso);
+	}
+
 
 }

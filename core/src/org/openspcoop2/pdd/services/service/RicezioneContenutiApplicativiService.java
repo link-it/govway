@@ -1349,6 +1349,7 @@ public class RicezioneContenutiApplicativiService implements IRicezioneService, 
 		boolean erroreConnessioneClient = false;
 		boolean erroreResponseTimeout = false;
 		boolean erroreResponsePayloadTooLarge = false;
+		boolean erroreResponseEnvelopeStructure = false;
 		boolean sendInvoked = false;
 		boolean registraTracciaOutResponse = false;
 		try{
@@ -1564,6 +1565,10 @@ public class RicezioneContenutiApplicativiService implements IRicezioneService, 
 			if(!erroreConnessioneClient && !erroreResponseTimeout && ServicesUtils.isResponsePayloadTooLarge(e)) {
 				erroreResponsePayloadTooLarge = true;  // non e' stato possibile consegnare tutta la risposta. Il client ha ricevuto 200 ma non ha ricevuto la risposta per intero
 				erroreConsegnaRisposta = new CoreException("Risposta ricevuta dal backend dell'API non gestibile: "+e.getMessage(),e);
+			}
+			if(!erroreConnessioneClient && !erroreResponseTimeout && !erroreResponsePayloadTooLarge && ServicesUtils.isResponseEnvelopeStructureError(e)) {
+				erroreResponseEnvelopeStructure = true; // anomalia della struttura dell'Envelope rilevata durante l'inoltro: se la consegna era già iniziata il client ha ricevuto una risposta incompleta
+				erroreConsegnaRisposta = new CoreException("Risposta ricevuta dal backend dell'API non valida: "+e.getMessage(),e);
 			}
 			
 			// Genero risposta con errore
@@ -1810,6 +1815,14 @@ public class RicezioneContenutiApplicativiService implements IRicezioneService, 
 			// forzo esito errore dovuto alla policy di rate limiting
 			try{
 				esito = this.protocolFactory.createEsitoBuilder().getEsito(this.req.getURLProtocolContext(),EsitoTransazioneName.CONTROLLO_TRAFFICO_POLICY_VIOLATA);
+			}catch(Exception eBuildError){
+				esito = EsitoTransazione.ESITO_TRANSAZIONE_ERROR;
+			}
+		}
+		else if(erroreResponseEnvelopeStructure){
+			// forzo esito contenuto risposta non riconosciuto
+			try{
+				esito = this.protocolFactory.createEsitoBuilder().getEsito(this.req.getURLProtocolContext(),EsitoTransazioneName.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO);
 			}catch(Exception eBuildError){
 				esito = EsitoTransazione.ESITO_TRANSAZIONE_ERROR;
 			}

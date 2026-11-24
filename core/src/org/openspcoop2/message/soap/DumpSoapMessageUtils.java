@@ -41,6 +41,7 @@ import org.openspcoop2.message.utils.DumpMessaggio;
 import org.openspcoop2.message.utils.DumpMessaggioConfig;
 import org.openspcoop2.message.utils.DumpMessaggioMultipartInfo;
 import org.openspcoop2.message.xml.MessageXMLUtils;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsMultiException;
 import org.openspcoop2.utils.dch.MailcapActivationReader;
 import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
@@ -490,7 +491,7 @@ public class DumpSoapMessageUtils {
 				}
 				else if(o instanceof InputStream is){
 					bout = new java.io.ByteArrayOutputStream();
-			    	byte [] readB = new byte[8192];
+			    	byte [] readB = new byte[Utilities.DIMENSIONE_BUFFER_8K];
 					int readByte = 0;
 					while((readByte = is.read(readB))!= -1)
 						bout.write(readB,0,readByte);
@@ -511,7 +512,7 @@ public class DumpSoapMessageUtils {
 						jakarta.activation.DataHandler dh= ap.getDataHandler();  
 				    	java.io.InputStream inputDH = dh.getInputStream();
 						bout = new java.io.ByteArrayOutputStream();
-				    	byte [] readB = new byte[8192];
+				    	byte [] readB = new byte[Utilities.DIMENSIONE_BUFFER_8K];
 						int readByte = 0;
 						while((readByte = inputDH.read(readB))!= -1)
 							bout.write(readB,0,readByte);
@@ -541,7 +542,7 @@ public class DumpSoapMessageUtils {
 				jakarta.activation.DataHandler dh= ap.getDataHandler();  
 		    	java.io.InputStream inputDH = dh.getInputStream();
 				bout = new java.io.ByteArrayOutputStream();
-		    	byte [] readB = new byte[8192];
+		    	byte [] readB = new byte[Utilities.DIMENSIONE_BUFFER_8K];
 				int readByte = 0;
 				while((readByte = inputDH.read(readB))!= -1)
 					bout.write(readB,0,readByte);
@@ -609,7 +610,7 @@ public class DumpSoapMessageUtils {
 			jakarta.activation.DataHandler dh= ap.getDataHandler();  
 	    	java.io.InputStream inputDH = dh.getInputStream();
 			java.io.ByteArrayOutputStream bout = new java.io.ByteArrayOutputStream();
-	    	byte [] readB = new byte[8192];
+	    	byte [] readB = new byte[Utilities.DIMENSIONE_BUFFER_8K];
 			int readByte = 0;
 			while((readByte = inputDH.read(readB))!= -1)
 				bout.write(readB,0,readByte);

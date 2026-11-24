@@ -999,6 +999,33 @@ public class CostantiProprieta {
 
 
 
+	// ****  STRUTTURA ENVELOPE SOAP  *****
+
+	/**
+	 * Controllo completo della struttura dell'Envelope SOAP durante la lettura in streaming (passthrough, senza DOM):
+	 * la lettura prosegue oltre il primo figlio del Body fino alla soglia del buffer del reader
+	 * ('org.openspcoop2.pdd.soapMessage.reader.bufferThreshold'); i messaggi più grandi sono verificati solo nella parte letta.
+	 * Per la richiesta il valore viene letto solo dalla configurazione predefinita dell'erogazione o della fruizione
+	 * (il reader opera prima dell'identificazione del gruppo); per la risposta anche dal gruppo.
+	 * Default: 'org.openspcoop2.pdd.soapMessage.envelopeStructure.reader.fullCheck' (govway.properties).
+	 */
+	private static final String SOAP_ENVELOPE_STRUCTURE_READER_FULL_CHECK = "soap.envelopeStructure.reader.fullCheck.enabled";
+	/**
+	 * Controllo della struttura dell'Envelope SOAP durante l'inoltro in streaming del messaggio (richiesta verso il backend,
+	 * risposta verso il client), senza limiti di dimensione. In caso di anomalia l'inoltro viene interrotto prima della parte non conforme.
+	 * Default: 'org.openspcoop2.pdd.soapMessage.envelopeStructure.forward.check' (govway.properties).
+	 */
+	private static final String SOAP_ENVELOPE_STRUCTURE_FORWARD_CHECK = "soap.envelopeStructure.forward.check.enabled";
+
+	public static boolean isSoapEnvelopeStructureReaderFullCheckEnabled(List<Proprieta> proprieta, boolean defaultValue) {
+		return readBooleanValueWithDefault(proprieta, SOAP_ENVELOPE_STRUCTURE_READER_FULL_CHECK, defaultValue, VALUE_ENABLED, VALUE_DISABLED);
+	}
+	public static boolean isSoapEnvelopeStructureForwardCheckEnabled(List<Proprieta> proprieta, boolean defaultValue) {
+		return readBooleanValueWithDefault(proprieta, SOAP_ENVELOPE_STRUCTURE_FORWARD_CHECK, defaultValue, VALUE_ENABLED, VALUE_DISABLED);
+	}
+
+
+
 	// ****  CONNETTORI HTTP MULTIPART *****
 
 	private static final String CONNETTORI_HTTP_MULTIPART_RELATED_MISSING_TYPE_RICHIESTA_BEHAVIOR = "connettori.multipart.related.missingType.request.behavior";

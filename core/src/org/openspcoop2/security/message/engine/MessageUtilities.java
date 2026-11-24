@@ -33,6 +33,7 @@ import jakarta.xml.soap.AttachmentPart;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.message.exception.MessageNotSupportedException;
@@ -111,6 +112,19 @@ public class MessageUtilities {
 		}
 	}
 
+	/**
+	 * Le parti indicate in configurazione possono usare il segnaposto del namespace SOAP (come in spedizione): viene sostituito con quello del messaggio
+	 */
+	private static Object normalizeSoapNamespaceTemplate(Object parts, OpenSPCoop2SoapMessage message) {
+		if(!(parts instanceof String) || !((String)parts).contains(SecurityConstants.SOAP_NAMESPACE_TEMPLATE)) {
+			return parts;
+		}
+		String namespace = MessageType.SOAP_12.equals(message.getMessageType()) ? 
+				org.openspcoop2.message.constants.Costanti.SOAP12_ENVELOPE_NAMESPACE : 
+				org.openspcoop2.message.constants.Costanti.SOAP_ENVELOPE_NAMESPACE;
+		return ((String)parts).replace(SecurityConstants.SOAP_NAMESPACE_TEMPLATE, namespace);
+	}
+
 	public static Map<QName, QName> checkEncryptSignatureParts(MessageSecurityContext messageSecurityContext,List<Reference> elementsToClean, OpenSPCoop2SoapMessage message,
 			List<SubErrorCodeSecurity> codiciErrore, QName qnameSecurity) throws SecurityException {
 
@@ -136,7 +150,7 @@ public class MessageUtilities {
 			// *** ENCRYPT VERIFY ***
 			Map<QName, QName> notResolvedMap = new HashMap<>();
 			Object encryptionPartsVerify = messageSecurityContext.getIncomingProperties().get(SecurityConstants.ENCRYPTION_PARTS_VERIFY);
-			Object encryptionParts = messageSecurityContext.getIncomingProperties().get(SecurityConstants.ENCRYPTION_PARTS);
+			Object encryptionParts = normalizeSoapNamespaceTemplate(messageSecurityContext.getIncomingProperties().get(SecurityConstants.ENCRYPTION_PARTS), message);
 			if(encryptionPartsVerify!=null && "true".equalsIgnoreCase(((String)encryptionPartsVerify).trim()) &&
 					encryptionParts==null){
 				// Se forzo la proprietà verify allora devo indicare le encryption parts
@@ -374,7 +388,7 @@ public class MessageUtilities {
 
 			// *** SIGNATURE VERIFY ***
 			Object signaturePartsVerify = messageSecurityContext.getIncomingProperties().get(SecurityConstants.SIGNATURE_PARTS_VERIFY);
-			Object signatureParts = messageSecurityContext.getIncomingProperties().get(SecurityConstants.SIGNATURE_PARTS);
+			Object signatureParts = normalizeSoapNamespaceTemplate(messageSecurityContext.getIncomingProperties().get(SecurityConstants.SIGNATURE_PARTS), message);
 			if(signaturePartsVerify!=null && "true".equalsIgnoreCase(((String)signaturePartsVerify).trim()) &&
 					signatureParts==null){
 				// Se forzo la proprietà verify allora devo indicare le signature parts

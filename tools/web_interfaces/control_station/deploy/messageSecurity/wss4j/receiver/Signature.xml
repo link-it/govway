@@ -62,6 +62,122 @@
 
 	<section label="Signature">
 
+		<!-- Verifica degli elementi protetti (opzionale): se indicati, il messaggio deve contenere esattamente gli elementi cifrati/firmati attesi.
+		     Il valore predefinito non verifica alcun elemento, come le configurazioni precedenti in cui la proprietà non è presente. -->
+		<item type="select" name="signaturePartsVerifySelectWithTimestamp" label="Elementi firmati attesi" default="none" reloadOnChange="true"
+			note="Gli elementi firmati devono corrispondere a quelli indicati.&lt;BR/>Con 'Qualsiasi' non ne viene richiesto nessuno in particolare e viene verificata la firma di quelli presenti">
+			<conditions>
+				<condition>
+					<selected name="timestampAction"/>
+				</condition>
+			</conditions>
+			<values>
+				<value value="none" label="Qualsiasi"/>
+				<value value="body" label="Body"/>
+				<value value="timestamp" label="Timestamp"/>
+				<value value="timestampBody" label="Timestamp Body"/>
+				<value value="attachments" label="Attachments"/>
+				<value value="timestampAttachments" label="Timestamp Attachments"/>
+				<value value="bodyAttachments" label="Body Attachments"/>
+				<value value="timestampBodyAttachments" label="Timestamp Body Attachments"/>
+				<value value="custom" label="Configurazione Manuale"/>
+			</values>
+			<property name="signaturePartsVerifySelectWithTimestamp" />
+		</item>
+		<item type="select" name="signaturePartsVerifySelect" label="Elementi firmati attesi" default="none" reloadOnChange="true"
+			note="Gli elementi firmati devono corrispondere a quelli indicati.&lt;BR/>Con 'Qualsiasi' non ne viene richiesto nessuno in particolare e viene verificata la firma di quelli presenti">
+			<conditions>
+				<condition not="true">
+					<selected name="timestampAction"/>
+				</condition>
+			</conditions>
+			<values>
+				<value value="none" label="Qualsiasi"/>
+				<value value="body" label="Body"/>
+				<value value="attachments" label="Attachments"/>
+				<value value="bodyAttachments" label="Body Attachments"/>
+				<value value="custom" label="Configurazione Manuale"/>
+			</values>
+			<property name="signaturePartsVerifySelect" />
+		</item>
+		<item type="hidden" name="signaturePartsVerifyBody" value="{Element}{SOAP_TEMPLATE_NS}Body">
+			<conditions and="false">
+				<condition>
+					<equals name="signaturePartsVerifySelect" value="body"/>
+				</condition>
+				<condition>
+					<equals name="signaturePartsVerifySelectWithTimestamp" value="body"/>
+				</condition>
+			</conditions>
+		    <property name="signatureParts" />
+		</item>
+		<item type="hidden" name="signaturePartsVerifyTimestamp" value="{Element}{http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd}Timestamp">
+			<conditions>
+				<condition>
+					<equals name="signaturePartsVerifySelectWithTimestamp" value="timestamp"/>
+				</condition>
+			</conditions>
+		    <property name="signatureParts" />
+		</item>
+		<item type="hidden" name="signaturePartsVerifyTimestampBody" value="{Element}{http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd}Timestamp;{Element}{SOAP_TEMPLATE_NS}Body">
+			<conditions>
+				<condition>
+					<equals name="signaturePartsVerifySelectWithTimestamp" value="timestampBody"/>
+				</condition>
+			</conditions>
+		    <property name="signatureParts" />
+		</item>
+		<item type="hidden" name="signaturePartsVerifyAttachments" value="{}cid:Attachments">
+			<conditions and="false">
+				<condition>
+					<equals name="signaturePartsVerifySelect" value="attachments"/>
+				</condition>
+				<condition>
+					<equals name="signaturePartsVerifySelectWithTimestamp" value="attachments"/>
+				</condition>
+			</conditions>
+		    <property name="signatureParts" />
+		</item>
+		<item type="hidden" name="signaturePartsVerifyTimestampAttachments" value="{Element}{http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd}Timestamp;{}cid:Attachments">
+			<conditions>
+				<condition>
+					<equals name="signaturePartsVerifySelectWithTimestamp" value="timestampAttachments"/>
+				</condition>
+			</conditions>
+		    <property name="signatureParts" />
+		</item>
+		<item type="hidden" name="signaturePartsVerifyBodyAttachments" value="{Element}{SOAP_TEMPLATE_NS}Body;{}cid:Attachments">
+			<conditions and="false">
+				<condition>
+					<equals name="signaturePartsVerifySelect" value="bodyAttachments"/>
+				</condition>
+				<condition>
+					<equals name="signaturePartsVerifySelectWithTimestamp" value="bodyAttachments"/>
+				</condition>
+			</conditions>
+		    <property name="signatureParts" />
+		</item>
+		<item type="hidden" name="signaturePartsVerifyTimestampBodyAttachments" value="{Element}{http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd}Timestamp;{Element}{SOAP_TEMPLATE_NS}Body;{}cid:Attachments">
+			<conditions>
+				<condition>
+					<equals name="signaturePartsVerifySelectWithTimestamp" value="timestampBodyAttachments"/>
+				</condition>
+			</conditions>
+		    <property name="signatureParts" />
+		</item>
+		<item type="textarea" name="signaturePartsVerifyCustom" label="Elementi Attesi" required="true" note="{Element}{namespace}localName separati da ; (cid:Attachments in localName per gli allegati SWA)">
+			<conditions and="false">
+				<condition>
+					<equals name="signaturePartsVerifySelect" value="custom"/>
+				</condition>
+				<condition>
+					<equals name="signaturePartsVerifySelectWithTimestamp" value="custom"/>
+				</condition>
+			</conditions>
+		    <property name="signatureParts" />
+		</item>
+
+
 		<subsection label="TrustStore">
 
 			<item type="hidden" name="signatureCryptoProvider" value="org.openspcoop2.security.keystore.MerlinProvider">

@@ -30,6 +30,7 @@ import jakarta.xml.soap.SOAPHeader;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.constants.Costanti;
 import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.soap.SoapEnvelopeStructureValidator;
 import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.resources.Charset;
@@ -993,7 +994,138 @@ public class ReaderTest {
 				ROOT_ELEMENT_SKCOT,	HEADER_SOAP_NON_ATTESO);
 		
 		
+		
+		testStrutturaEnvelope();
+		
 		System.out.println("\n\nTestsuite completata con successo");
+	}
+	
+	
+	
+	// ---- Struttura dell'Envelope ----
+	// Reader senza controllo completo: anomalie nella parte iniziale del messaggio (fino al primo figlio del Body), senza leggere byte aggiuntivi.
+	// Reader con controllo completo: lettura fino alla soglia del buffer e verifica di tutto quanto letto.
+	// Il controllo in streaming e lo stream usato durante l'inoltro sono verificati in SoapEnvelopeStructureCheckTest.
+	
+	/** Soglia del buffer del reader usata nei test (kb) */
+	private static final int SOGLIA_KB = 10;
+	
+	private static void testStrutturaEnvelope() throws Exception {
+		testStrutturaEnvelope(MessageType.SOAP_11);
+		testStrutturaEnvelope(MessageType.SOAP_12);
+	}
+	private static void testStrutturaEnvelope(MessageType messageType) throws Exception {
+		System.out.println("\n\n*** TEST Struttura Envelope "+messageType+" ***");
+		
+		for (StrutturaEnvelopeCasi.Caso caso : StrutturaEnvelopeCasi.getCasi(messageType)) {
+			testStrutturaEnvelope(caso, true);
+		}
+		// multipart: con l'envelope in una parte successiva (start) il reader non ne analizza la parte iniziale
+		for (StrutturaEnvelopeCasi.Caso caso : StrutturaEnvelopeCasi.getCasiMultipart(messageType)) {
+			testStrutturaEnvelope(caso, false);
+		}
+		
+		StrutturaEnvelopeCasi.Parti p = new StrutturaEnvelopeCasi.Parti(messageType);
+		String ct = StrutturaEnvelopeCasi.getContentType(messageType);
+		
+		// SOAP 1.1: elementi di altro namespace dopo il Body ammessi tramite configurazione ('soap11.allowElementsAfterBody')
+		boolean allow = SoapEnvelopeStructureValidator.isSoap11OtherNamespaceElementsAfterBodyAllowed();
+		try {
+			SoapEnvelopeStructureValidator.setSoap11OtherNamespaceElementsAfterBodyAllowed(true);
+			String estensione = "<t:estensione xmlns:t=\""+StrutturaEnvelopeCasi.NS_TEST+"\">estensione</t:estensione>";
+			boolean soap11 = MessageType.SOAP_11.equals(messageType);
+			testStrutturaEnvelope(new StrutturaEnvelopeCasi.Caso("elemento altro namespace dopo un body vuoto (ammesso in SOAP 1.1)", 
+					p.envelope(p.h, "<soap:Body/>", estensione), ct, 
+					soap11 ? StrutturaEnvelopeCasi.NON_RILEVATO : StrutturaEnvelopeCasi.ERR_DOPO_BODY, 
+					soap11 ? StrutturaEnvelopeCasi.NON_RILEVATO : StrutturaEnvelopeCasi.ERR_DOPO_BODY), true);
+		}finally {
+			SoapEnvelopeStructureValidator.setSoap11OtherNamespaceElementsAfterBodyAllowed(allow);
+		}
+		
+		// messaggio più grande della soglia del buffer: il controllo completo verifica solo la parte letta
+		String bGrande = p.bodyGrande((SOGLIA_KB+5)*1024);
+		testStrutturaEnvelopeOltreSoglia("busta corretta oltre la soglia", p.envelope(p.h, bGrande), ct, StrutturaEnvelopeCasi.NON_RILEVATO);
+		testStrutturaEnvelopeOltreSoglia("2 body oltre la soglia", p.envelope(p.h, bGrande, p.b2), ct, StrutturaEnvelopeCasi.NON_RILEVATO);
+		testStrutturaEnvelopeOltreSoglia("2 body entro la soglia in un messaggio più grande", p.envelope(p.h, p.b, p.b2, bGrande), ct, StrutturaEnvelopeCasi.ERR_BODY);
+	}
+	
+	private static OpenSPCoop2MessageSoapStreamReader leggi(String descrizione, byte[] bytes, String contentType, boolean controlloCompleto) throws Exception {
+		OpenSPCoop2MessageSoapStreamReader streamReader = new OpenSPCoop2MessageSoapStreamReader(OpenSPCoop2MessageFactory.getDefaultMessageFactory(),
+				contentType, new ByteArrayInputStream(bytes), SOGLIA_KB);
+		streamReader.setEnvelopeStructureFullCheck(controlloCompleto);
+		InputStream is = null;
+		try {
+			streamReader.read();
+		}finally {
+			is = streamReader.getBufferedInputStream();
+		}
+		// il reader non deve alterare il contenuto restituito
+		byte[] letti = Utilities.getAsByteArray(is);
+		if(!java.util.Arrays.equals(bytes, letti)) {
+			throw new Exception("["+descrizione+"] Messaggio ottenuto dal reader (controllo completo: "+controlloCompleto+") differente da quello originale");
+		}
+		return streamReader;
+	}
+	private static String getErrore(OpenSPCoop2MessageSoapStreamReader streamReader) {
+		return streamReader.getEnvelopeStructureError()!=null ? streamReader.getEnvelopeStructureError().getMessage() : null;
+	}
+	
+	static void verificaErrore(String descrizione, String controllo, String errore, String erroreAtteso) throws Exception {
+		if(erroreAtteso==null) {
+			if(errore!=null) {
+				throw new Exception("["+descrizione+"] "+controllo+": anomalia non attesa: "+errore);
+			}
+		}
+		else {
+			if(errore==null) {
+				throw new Exception("["+descrizione+"] "+controllo+": anomalia attesa '"+erroreAtteso+"' non rilevata");
+			}
+			if(!errore.contains(erroreAtteso)) {
+				throw new Exception("["+descrizione+"] "+controllo+": anomalia rilevata '"+errore+"' differente da quella attesa '"+erroreAtteso+"'");
+			}
+		}
+	}
+	
+	/**
+	 * @param verificaCompletezza true se il messaggio corretto deve risultare verificato interamente dal controllo completo
+	 */
+	private static void testStrutturaEnvelope(StrutturaEnvelopeCasi.Caso caso, boolean verificaCompletezza) throws Exception {
+		String descrizione = caso.getDescrizione();
+		System.out.println("- "+descrizione+" ...");
+		byte[] bytes = caso.getMessaggio().getBytes(Charset.UTF_8.getValue());
+		
+		OpenSPCoop2MessageSoapStreamReader streamReader = leggi(descrizione, bytes, caso.getContentType(), false);
+		String errore = getErrore(streamReader);
+		verificaErrore(descrizione, "reader", errore, caso.getErroreParteIniziale());
+		if(streamReader.isEnvelopeStructureFullyChecked()) {
+			throw new Exception("["+descrizione+"] reader: verifica completa non attesa senza controllo completo");
+		}
+		
+		streamReader = leggi(descrizione, bytes, caso.getContentType(), true);
+		String erroreCompleto = getErrore(streamReader);
+		verificaErrore(descrizione, "reader con controllo completo", erroreCompleto, caso.getErroreCompleto());
+		if(verificaCompletezza && caso.getErroreCompleto()==null && !streamReader.isEnvelopeStructureFullyChecked()) {
+			throw new Exception("["+descrizione+"] reader con controllo completo: messaggio entro la soglia non verificato interamente");
+		}
+		
+		System.out.println("- "+descrizione+" ok"+(errore!=null ? " (reader: "+errore+")" : "")+(erroreCompleto!=null ? " (controllo completo: "+erroreCompleto+")" : ""));
+	}
+	
+	private static void testStrutturaEnvelopeOltreSoglia(String descrizione, String messaggio, String contentType, String erroreReaderCompleto) throws Exception {
+		System.out.println("- "+descrizione+" ...");
+		byte[] bytes = messaggio.getBytes(Charset.UTF_8.getValue());
+		if(bytes.length <= SOGLIA_KB*1024) {
+			throw new Exception("["+descrizione+"] messaggio non più grande della soglia");
+		}
+		OpenSPCoop2MessageSoapStreamReader streamReader = leggi(descrizione, bytes, contentType, true);
+		verificaErrore(descrizione, "reader con controllo completo", getErrore(streamReader), erroreReaderCompleto);
+		if(streamReader.isEnvelopeStructureFullyChecked()) {
+			throw new Exception("["+descrizione+"] reader con controllo completo: messaggio oltre la soglia indicato come verificato interamente");
+		}
+		if(streamReader.getBufferSize() > SOGLIA_KB*1024) {
+			throw new Exception("["+descrizione+"] reader con controllo completo: letti "+streamReader.getBufferSize()+" byte, oltre la soglia");
+		}
+		System.out.println("- "+descrizione+" ok");
 	}
 	
 	

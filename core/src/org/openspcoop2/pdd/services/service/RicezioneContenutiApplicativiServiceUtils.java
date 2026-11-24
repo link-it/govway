@@ -45,7 +45,9 @@ import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
 import org.openspcoop2.pdd.config.CachedConfigIntegrationReader;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
+import org.openspcoop2.pdd.config.CostantiProprieta;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.pdd.services.connector.messages.HttpServletConnectorInMessage;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.GestoreRichieste;
 import org.openspcoop2.pdd.core.PdDContext;
@@ -275,18 +277,6 @@ public class RicezioneContenutiApplicativiServiceUtils {
 							IntegrationFunctionError.INTERNAL_REQUEST_ERROR, error, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
 				}
 				
-				// Provo ad ottenere il reader soap
-				OpenSPCoop2MessageSoapStreamReader soapStreamReader = null;
-				if(ServiceBinding.SOAP.equals(integrationServiceBinding) && !IDService.PORTA_DELEGATA_XML_TO_SOAP.equals(idModuloAsServiceNullable)) {
-					try{
-						if(req!=null) {
-							soapStreamReader = req.getSoapReader();
-						}
-					}catch(Exception e){
-						logCore.debug("SOAPStream lettura non riuscita: "+e.getMessage(),e);
-					}
-				}
-				
 				// PortaDelegata Default
 				try{
 					if(requestInfo.getRequestConfig()!=null && requestInfo.getRequestConfig().getPortaDelegataDefault()!=null) {
@@ -300,6 +290,25 @@ public class RicezioneContenutiApplicativiServiceUtils {
 					}
 				}catch(Exception e){
 					logCore.debug("Recupero porta default fallita: "+e.getMessage(),e);
+				}
+				
+				// Controllo completo della struttura dell'Envelope SOAP nel reader: la richiesta viene letta prima dell'identificazione del gruppo,
+				// per cui la proprietà viene letta dalla configurazione predefinita (caricata prima del reader)
+				if(req instanceof HttpServletConnectorInMessage httpInMessage) {
+					httpInMessage.setSoapEnvelopeStructureFullCheck(CostantiProprieta.isSoapEnvelopeStructureReaderFullCheckEnabled(pdDefault!=null ? pdDefault.getProprietaList() : null,
+							OpenSPCoop2Properties.getInstance().isSoapMessageEnvelopeStructureReaderFullCheck()));
+				}
+				
+				// Provo ad ottenere il reader soap
+				OpenSPCoop2MessageSoapStreamReader soapStreamReader = null;
+				if(ServiceBinding.SOAP.equals(integrationServiceBinding) && !IDService.PORTA_DELEGATA_XML_TO_SOAP.equals(idModuloAsServiceNullable)) {
+					try{
+						if(req!=null) {
+							soapStreamReader = req.getSoapReader();
+						}
+					}catch(Exception e){
+						logCore.debug("SOAPStream lettura non riuscita: "+e.getMessage(),e);
+					}
 				}
 				
 				// Verifico che la modalità di riconoscimento dell'azione sia compatibile

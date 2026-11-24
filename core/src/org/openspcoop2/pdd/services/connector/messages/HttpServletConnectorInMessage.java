@@ -525,6 +525,15 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 		}
 	}
 	
+	// Controllo completo della struttura dell'Envelope SOAP nel reader: se non impostato vale il default di govway.properties
+	private Boolean soapEnvelopeStructureFullCheck = null;
+	/**
+	 * Va impostato prima della creazione del reader ({@link #getSoapReader()}).
+	 */
+	public void setSoapEnvelopeStructureFullCheck(boolean soapEnvelopeStructureFullCheck) {
+		this.soapEnvelopeStructureFullCheck = soapEnvelopeStructureFullCheck;
+	}
+	
 	@Override
 	public OpenSPCoop2MessageSoapStreamReader getSoapReader() throws ConnectorException{
 		try{
@@ -549,6 +558,8 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 				if(contentType!=null) {
 					this.soapReader = new OpenSPCoop2MessageSoapStreamReader(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), contentType, 
 							this.buildInputStream(), this.openspcoopProperties.getSoapMessageReaderBufferThresholdKb());
+					this.soapReader.setEnvelopeStructureFullCheck(this.soapEnvelopeStructureFullCheck!=null ? 
+							this.soapEnvelopeStructureFullCheck : this.openspcoopProperties.isSoapMessageEnvelopeStructureReaderFullCheck());
 					try {
 						this.soapReader.read();
 					}finally {

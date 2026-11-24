@@ -197,6 +197,21 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 	protected void setUpdatableContent() throws MessageException {
 	}
 
+	/* Verifiche sul contenuto serializzato senza costruirlo (es. struttura dell'Envelope SOAP durante l'inoltro) */
+
+	/**
+	 * Contenuto serializzato dallo stream ricevuto: le implementazioni possono restituire uno stream che verifica i byte letti.
+	 */
+	protected InputStream checkStreamOnWrite(InputStream is) throws MessageException {
+		return is;
+	}
+	/**
+	 * Contenuto serializzato dal buffer (non compresso): le implementazioni possono verificarlo prima della scrittura.
+	 */
+	protected void checkBufferOnWrite(DumpByteArrayOutputStream buffer) throws MessageException {
+		// nessuna verifica
+	}
+
 	/* Informazioni SOAP (senza costruire il DOM) */
 
 	public OpenSPCoop2MessageSoapStreamReader getSoapReader() {
@@ -253,9 +268,26 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 	
 	/* Contenuto */
 
+	/**
+	 * Errore della costruzione del contenuto: lo stream ricevuto è stato consumato, per cui un nuovo tentativo non può riuscire
+	 * e produrrebbe un errore fuorviante (es. 'Premature end of file') al posto di quello originale (es. struttura dell'Envelope non conforme).
+	 */
+	private Throwable buildContentError = null;
+	private MessageException registerBuildContentError(Throwable t) {
+		MessageUtils.registerParseException(this, t, true);
+		if(this.buildContentError==null) {
+			this.buildContentError = t;
+		}
+		return new MessageException(t.getMessage(), t);
+	}
+
 	private synchronized void initializeContent(boolean readOnly, String idTransazione) throws MessageException {
 		if (this.hasContent) {
 			if (this.content == null) {
+
+				if (this.buildContentError != null) {
+					throw new MessageException(this.buildContentError.getMessage(), this.buildContentError);
+				}
 
 				checkContentNotCompressed();
 
@@ -276,8 +308,7 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 						CopyStream.copy(this._countingInputStream, this.contentBuffer); // se e' un OpenSPCoop2InputStreamDynamicContent riverso quello che rimane nel buffer
 						this.content = this.buildContent(this.contentBuffer);
 					} catch (Throwable t) {
-						MessageUtils.registerParseException(this, t, true);
-						throw new MessageException(t.getMessage(), t);
+						throw registerBuildContentError(t);
 					} finally {
 						try {
 							this._countingInputStream.close();
@@ -288,8 +319,7 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 					try {
 						this.content = this.buildContent();
 					} catch (Throwable t) {
-						MessageUtils.registerParseException(this, t, true);
-						throw new MessageException(t.getMessage(), t);
+						throw registerBuildContentError(t);
 					}
 				}
 
@@ -460,6 +490,7 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 
 	public void updateContent(T content) throws MessageException, MessageNotSupportedException {
 		this.content = content;
+		this.buildContentError = null; // nuovo contenuto
 		this.contentUpdatable = true;
 		this.contentEncodingCompressed = null;
 		if (this.contentBuffer != null) {
@@ -537,6 +568,9 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 				}
 				CountingOutputStream cos = new CountingOutputStream(os);
 				if (this.contentBuffer != null && (!this.contentUpdatable || compressed)) {
+					if (!compressed) {
+						this.checkBufferOnWrite(this.contentBuffer);
+					}
 					if (this.soapStreamReader != null && this.soapStreamReader.isSoapHeaderModified()
 							&& this.contentType != null) {
 						if (debug != null) {
@@ -559,7 +593,7 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 						if (debug != null) {
 							debug.append(Costanti.WRITE_MODE_SERIALIZE_STREAM_WITH_HEADER);
 						}
-						this.soapStreamReader.writeOptimizedHeaderTo(this._getInputStream(), cos, consume);
+						this.soapStreamReader.writeOptimizedHeaderTo(this.checkStreamOnWrite(this._getInputStream()), cos, consume);
 					} else {
 						if (debug != null) {
 							debug.append(Costanti.WRITE_MODE_SERIALIZE_STREAM);
@@ -573,7 +607,7 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 							Utilities.copyServerSentEvents(this._getInputStream(), cos, contentEncoding);
 						}
 						else {
-							Utilities.copy(this._getInputStream(), cos);
+							Utilities.copy(this.checkStreamOnWrite(this._getInputStream()), cos);
 						}
 						this._getInputStream().close();
 					}

@@ -27,6 +27,8 @@ import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -34,6 +36,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.axis.Message;
 import org.openspcoop2.testsuite.axis14.Axis14SoapUtils;
+import org.openspcoop2.testsuite.core.StrutturaEnvelopeSoap11;
 
 
 
@@ -82,6 +85,14 @@ public class ServerAlterazioneWSS extends ServerCore{
 				urlForward = urlForward.trim();
 			}
 			
+			String propStrutturaEnvelope = request.getParameter("strutturaEnvelope");
+			if(propStrutturaEnvelope!=null && Boolean.parseBoolean(propStrutturaEnvelope.trim())) {
+				// XML Signature Wrapping: la struttura dell'Envelope firmato viene alterata (es. aggiunta di un Body non firmato)
+				// e il messaggio viene inoltrato così com'è, senza passare da un parser SOAP che lo normalizzerebbe
+				inoltroStrutturaEnvelopeAlterata(request, response, bout.toString(), urlForward);
+				return;
+			}
+
 			Message msg = Axis14SoapUtils.build(bout.toByteArray(), false);
 			
 			// Alterazione msg
@@ -110,6 +121,53 @@ public class ServerAlterazioneWSS extends ServerCore{
 			this.log.error("Errore durante la gestione di una richiesta: "+e.getMessage(),e);
 			throw new ServletException("Errore durante la gestione di una richiesta: "+e.getMessage(),e);
 		}
+	}
+
+	private void inoltroStrutturaEnvelopeAlterata(HttpServletRequest request,HttpServletResponse response, String msgS, String urlForward) throws Exception {
+
+		StrutturaEnvelopeSoap11.Caso caso = StrutturaEnvelopeSoap11.getCasoDaMarcatore(msgS);
+		if(caso==null) {
+			throw new ServletException("Marcatore del caso di struttura dell'Envelope non presente nella richiesta");
+		}
+		this.log.info("Struttura Envelope (messaggio firmato): "+caso.name()+" ("+caso.getDescrizione()+")");
+		byte[] alterato = caso.applica(msgS).getBytes();
+
+		HttpURLConnection conn = (HttpURLConnection) new java.net.URI(urlForward).toURL().openConnection();
+		conn.setRequestMethod("POST");
+		conn.setDoInput(true);
+		conn.setDoOutput(true);
+		String contentType = request.getContentType();
+		conn.setRequestProperty("Content-Type", contentType!=null ? contentType : "text/xml; charset=utf-8");
+		String soapAction = request.getHeader("SOAPAction");
+		if(soapAction!=null) {
+			conn.setRequestProperty("SOAPAction", soapAction);
+		}
+		conn.setFixedLengthStreamingMode(alterato.length);
+		try(OutputStream out = conn.getOutputStream()){
+			out.write(alterato);
+		}
+
+		int status = conn.getResponseCode();
+		InputStream is = status<300 ? conn.getInputStream() : conn.getErrorStream();
+		byte[] risposta = null;
+		if(is!=null) {
+			try(InputStream isClose = is){
+				risposta = isClose.readAllBytes();
+			}
+		}
+		response.setStatus(status);
+		if(risposta!=null && risposta.length>0) {
+			if(conn.getContentType()!=null) {
+				response.setContentType(conn.getContentType());
+			}
+			response.setContentLength(risposta.length);
+			try(OutputStream os = response.getOutputStream()){
+				os.write(risposta);
+				os.flush();
+			}
+		}
+
+		this.log.info("Inoltrato messaggio con struttura alterata (http "+status+"):\n"+new String(alterato));
 	}
 
 	@Override

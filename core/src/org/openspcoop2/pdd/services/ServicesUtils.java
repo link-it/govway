@@ -217,6 +217,19 @@ public class ServicesUtils {
 		return false;
 	}
 	
+	/**
+	 * @return true se la risposta non è stata consegnata per intero perché, durante l'inoltro in streaming, è stata rilevata
+	 * un'anomalia della struttura dell'Envelope SOAP
+	 */
+	public static boolean isResponseEnvelopeStructureError(Throwable t){
+		try {
+			return t instanceof org.openspcoop2.message.exception.SoapEnvelopeStructureException ||
+					Utilities.existsInnerException(t, org.openspcoop2.message.exception.SoapEnvelopeStructureException.class);
+		}catch(Throwable tIgnore) {
+			return false;
+		}
+	}
+	
 	public static boolean isResponsePayloadTooLarge(Throwable t){
 		try {
 			if(LimitExceededIOException.isLimitExceededIOException(t) && t.getMessage()!=null && t.getMessage().startsWith(CostantiPdD.PREFIX_LIMITED_RESPONSE)) {

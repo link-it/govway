@@ -68,6 +68,8 @@ public class Costanti {
 	/** Costanti per posizione errore degli id WSSecurity */
 	public static final String FIND_ERROR_ENCRYPTED_REFERENCES = "[WSS-Encrypt ReferencesSearch]";
 	public static final String FIND_ERROR_SIGNATURE_REFERENCES = "[WSS-Signature ReferencesSearch]";
+	/** Elemento Body protetto (firmato o cifrato) che non è il Body del messaggio (es. spostato in un header o dentro il payload) */
+	public static final String WSS_ERROR_PROTECTED_BODY_NOT_SOAP_BODY = "WS-Security protected element is not the SOAP Body";
 		
 	/** Context Empty */
 	public static final String CONTEXT_EMPTY = "@EMPTY@";

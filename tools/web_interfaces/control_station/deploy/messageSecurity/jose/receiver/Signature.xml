@@ -82,7 +82,7 @@
                 </conditions>
 		      	<property name="signatureDetachedHeader" />
 			</item>
-			<item type="text" name="detachedUrl" label="Header Name" required="true">
+			<item type="text" name="detachedUrl" label="Nome Parametro URL" required="true">
 			    <conditions>
                         <condition>
                                 <equals name="detachedType" value="url"/>
