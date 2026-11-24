@@ -99,7 +99,7 @@
 	<archive path="/op2_3.4.dev/lib/jakarta/jakarta.xml.bind-api-4.0.5.jar"/>
 	<archive path="/op2_3.4.dev/lib/jakarta/jakarta.el-api-5.0.1.jar"/>
 	<!-- json -->
-	<archive path="/op2_3.4.dev/lib/json/json-20251224.jar"/>
+	<archive path="/op2_3.4.dev/lib/json/json-20260814.jar"/>
 	<archive path="/op2_3.4.dev/lib/json/networknt_json-schema-validator-1.5.9.jar"/>
 	<archive path="/op2_3.4.dev/lib/json/itu-1.14.0.jar"/>
 	<archive path="/op2_3.4.dev/lib/json/github_json-schema-validator-2.2.14-gov4j-1.jar"/>

@@ -1,5 +1,11 @@
 2026-11-24  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore]
+	Risolte le seguenti vulnerabilità relative ai jar di terza parte:
+	- CVE-2026-59171: aggiornata libreria 'org.json:json' alla versione 20260814
+
+2026-11-24  Andrea Poli <apoli@link.it>
+
 	* [GovWayConsole]
 	Sugli schermi stretti (o con zoom elevato) il pulsante 'Genera' della password di soggetti, applicativi e utenti usciva
 	dalla pagina, costringendo a scorrere in orizzontale: va adesso a capo sotto il campo.
