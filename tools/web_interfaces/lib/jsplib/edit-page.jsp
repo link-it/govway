@@ -1083,7 +1083,7 @@ for (int i = 0; i < dati.size(); i++) {
 										      			String idDivIconInfo = "divIconInfo_"+i;
 										      			String idIconInfo = "iconInfo_"+i; 
 										      			
-												      	%> 	<div class="iconInfoBox" id="<%=idDivIconInfo %>">
+												      	%> 	<div class="iconInfoBox<%= bottoneGeneraPassword ? " iconInfoBoxGenera" : "" %>" id="<%=idDivIconInfo %>">
 												      		<% 
 										      				if(bottoneGeneraPassword){
 										      					PasswordGenerator pwdGen = dePwd.getPasswordGenerator();

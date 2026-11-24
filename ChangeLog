@@ -1,5 +1,11 @@
 2026-11-24  Andrea Poli <apoli@link.it>
 
+	* [GovWayConsole]
+	Sugli schermi stretti (o con zoom elevato) il pulsante 'Genera' della password di soggetti, applicativi e utenti usciva
+	dalla pagina, costringendo a scorrere in orizzontale: va adesso a capo sotto il campo.
+
+2026-11-24  Andrea Poli <apoli@link.it>
+
 	* [GovWayConsole, GovWayMonitor]
 	Corrette le segnalazioni di SonarQube introdotte dall'adeguamento alle WCAG: le etichette dei valori in sola lettura
 	e dei link non sono più elementi <label> privi di un campo associato (l'aspetto non cambia).

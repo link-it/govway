@@ -3362,3 +3362,14 @@ div.version-notice {
 		box-sizing: border-box;
 	}
 }
+
+/* Schermi stretti (fino a 480px, es. 1280px con zoom al 400%): il riquadro col pulsante 'Genera' della password e' in posizione
+   assoluta a destra del campo e usciva dalla pagina (a 320px il documento arrivava a 358px, WCAG 1.4.10). Nel flusso resta accanto
+   al campo se c'e' spazio, altrimenti va a capo sotto. Sopra i 480px l'aspetto non cambia. */
+@media (max-width: 30em) {
+	div.iconInfoBox.iconInfoBoxGenera {
+		position: static;
+		display: inline-block;
+		vertical-align: top;
+	}
+}
