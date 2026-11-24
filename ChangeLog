@@ -1,5 +1,12 @@
 2026-11-24  Andrea Poli <apoli@link.it>
 
+	* [GovWayConsole]
+	Il riepilogo 'Visualizza dettagli della configurazione' di erogazioni e fruizioni impiegava diversi secondi sulle API
+	con molte risorse (es. api-config), perché leggeva anche media type, parametri e risposte di ogni risorsa, non necessari
+	al riepilogo. Vengono adesso lette solo le informazioni utilizzate.
+
+2026-11-24  Andrea Poli <apoli@link.it>
+
 	* [GovWayCore, GovWayConsole]
 	Risolto Bug #1867
 	I messaggi SOAP con struttura dell'Envelope non conforme (più Body o Header, ordine errato, Fault non unico figlio del Body,

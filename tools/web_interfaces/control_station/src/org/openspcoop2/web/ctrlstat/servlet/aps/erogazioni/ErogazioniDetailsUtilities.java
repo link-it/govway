@@ -218,7 +218,10 @@ public class ErogazioniDetailsUtilities {
 		
 		AccordoServizioParteSpecifica asps = apsCore.getServizio(idServizio);
 		AccordoServizioParteComuneSintetico as = apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
-		AccordoServizioParteComune asFull = apcCore.getAccordoServizioFull(asps.getIdAccordo());
+		// Dell'API servono solo i dati generali e le proprieta' di protocollo (anche di risorse e operazioni, per il profilo ModI):
+		// non si leggono i dettagli di richiesta e risposte delle risorse, che con molte risorse richiedono migliaia di query
+		boolean readDatiRegistro = false;
+		AccordoServizioParteComune asFull = apcCore.getAccordoServizioFull(asps.getIdAccordo(), readDatiRegistro);
 		ServiceBinding serviceBinding = apcCore.toMessageServiceBinding(as.getServiceBinding());
 		
 		idServizio.setPortType(asps.getPortType());
