@@ -30,6 +30,7 @@ import java.util.Map;
 import org.apache.commons.io.input.CountingInputStream;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
@@ -37,6 +38,7 @@ import org.openspcoop2.message.exception.ParseExceptionUtils;
 import org.openspcoop2.message.soap.AbstractOpenSPCoop2Message_soap_impl;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.soap.TunnelSoapUtils;
+import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.controllo_traffico.DimensioneMessaggiUtils;
 import org.openspcoop2.pdd.core.controllo_traffico.LimitExceededNotifier;
@@ -603,6 +605,40 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 	
 	private String contentTypeMessaggioOriginale_tunnelSoap = null; // serve per funzionalità TunnelSOAP;
 	
+	/**
+	 * Reader della risposta SOAP con il controllo completo della struttura dell'Envelope, se abilitato per la porta
+	 * (altrimenti null: il reader viene creato, se previsto, alla costruzione del messaggio).
+	 * Le risposte con Content-Encoding (es. compresse) non vengono considerate: il reader opererebbe sui byte codificati.
+	 */
+	private OpenSPCoop2MessageSoapStreamReader buildSoapResponseReaderEnvelopeStructure(TransportResponseContext responseContext) {
+		if(!this.soapEnvelopeStructureReaderFullCheck || this.isResponse==null || !this.openspcoopProperties.useSoapMessageReader()) {
+			return null;
+		}
+		try {
+			String contentType = responseContext.getContentType();
+			String contentEncoding = responseContext.getHeaderFirstValue(HttpConstants.CONTENT_ENCODING);
+			if(contentType==null ||
+					(contentEncoding!=null && !contentEncoding.trim().isEmpty() && !"identity".equalsIgnoreCase(contentEncoding.trim()))) {
+				return null;
+			}
+			OpenSPCoop2MessageSoapStreamReader reader = new OpenSPCoop2MessageSoapStreamReader(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), contentType, 
+					this.isResponse, this.openspcoopProperties.getSoapMessageReaderBufferThresholdKb());
+			reader.setEnvelopeStructureFullCheck(true);
+			try {
+				reader.read();
+			}catch(Exception e) {
+				// l'errore di lettura resta registrato nel reader e viene sollevato alla costruzione del messaggio
+			}finally {
+				// anche in caso di eccezione devo cmq aggiornare is
+				this.isResponse = reader.getBufferedInputStream();
+			}
+			return reader;
+		}catch(Exception e) {
+			this.logger.error("Creazione reader della risposta SOAP non riuscita: "+e.getMessage(),e);
+			return null;
+		}
+	}
+	
 	protected boolean doSoapResponse() throws Exception{
 
 		String tipoLetturaRisposta = null;
@@ -631,11 +667,14 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 					
 					// Ricostruzione messaggio soap: secondo parametro a false, indica che il messaggio e' gia un SOAPMessage
 					tipoLetturaRisposta = "Parsing Risposta SOAP";
+					
+					OpenSPCoop2MessageSoapStreamReader soapReaderEnvelopeStructure = this.contentLength!=0 ? buildSoapResponseReaderEnvelopeStructure(responseContext) : null;
 						
 					if(this.contentLength>0){
 						OpenSPCoop2MessageParseResult pr = org.openspcoop2.pdd.core.Utilities.getOpenspcoop2MessageFactory(this.logger.getLogger(),this.requestMsg, this.requestInfo,MessageRole.RESPONSE).
 								createMessage(this.messageTypeResponse,responseContext,
 										this.isResponse,this.notifierInputStreamParams,
+										soapReaderEnvelopeStructure,
 										this.openspcoopProperties.getAttachmentsProcessingMode());	
 						if(pr.getParseException()!=null){
 							this.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION, pr.getParseException());
@@ -653,6 +692,7 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 							OpenSPCoop2MessageParseResult pr = org.openspcoop2.pdd.core.Utilities.getOpenspcoop2MessageFactory(this.logger.getLogger(),this.requestMsg, this.requestInfo,MessageRole.RESPONSE)
 									.createMessage(this.messageTypeResponse,responseContext,
 											this.isResponse,this.notifierInputStreamParams,
+											soapReaderEnvelopeStructure,
 											this.openspcoopProperties.getAttachmentsProcessingMode());
 							if(pr.getParseException()!=null){
 								this.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION, pr.getParseException());

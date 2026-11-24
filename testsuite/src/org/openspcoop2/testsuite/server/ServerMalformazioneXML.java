@@ -31,6 +31,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openspcoop2.testsuite.core.StrutturaEnvelopeSoap11;
+
 
 
 /**
@@ -74,7 +76,13 @@ public class ServerMalformazioneXML extends ServerCore{
 			
 			String malformazioneBody = "";
 			malformazioneBody = request.getParameter("body");
-			
+
+			// Struttura dell'Envelope non conforme: il caso è indicato dal marcatore presente nel Body della richiesta
+			boolean malformazioneStrutturaEnvelope = false;
+			String propStrutturaEnvelope = request.getParameter("strutturaEnvelope");
+			if(propStrutturaEnvelope!=null)
+				malformazioneStrutturaEnvelope = Boolean.parseBoolean(propStrutturaEnvelope.trim());
+
 			
 			// Lettura Richiesta
 			InputStream in=request.getInputStream();
@@ -114,7 +122,15 @@ public class ServerMalformazioneXML extends ServerCore{
 				this.log.info("Malformazione body applicativo");
 				msgS = msgS.replace("</b>", "</bX>");
 			}
-			
+			if(malformazioneStrutturaEnvelope){
+				StrutturaEnvelopeSoap11.Caso caso = StrutturaEnvelopeSoap11.getCasoDaMarcatore(msgS);
+				if(caso==null) {
+					throw new ServletException("Marcatore del caso di struttura dell'Envelope non presente nella richiesta");
+				}
+				this.log.info("Struttura Envelope: "+caso.name()+" ("+caso.getDescrizione()+")");
+				msgS = caso.applica(msgS);
+			}
+
 			
 			byte [] bytes = msgS.getBytes();
 			

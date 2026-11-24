@@ -166,6 +166,8 @@ public class CostantiTestSuite {
 	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_XML_ERRATO_HEADER_RISPOSTA_PDD="TestXMLErratoHeaderRisposta";
 	/** Porte Delegate per il test dei profili di collaborazione: ContentTypeRisposta errato della PdD */
 	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_CONTENT_TYPE_ERRATO_HEADER_RISPOSTA_PDD="TestContentTypeErratoRisposta";
+	/** Porte Delegate per il test dei profili di collaborazione: struttura dell'Envelope non conforme nella risposta della PdD */
+	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_STRUTTURA_ENVELOPE_ERRATA_RISPOSTA_PDD="TestStrutturaEnvelopeErrataRisposta";
 	
 	/** Porte Delegate per il test dei profili di collaborazione: AsincronoAsimmetrico modalita' asincrona, richiesta */
 	public static final String PORTA_DELEGATA_PROFILO_ASINCRONO_ASIMMETRICO_MODALITA_ASINCRONA="CooperazioneAsincronaAsimmetrica_richiestaAsincrona";
@@ -330,6 +332,8 @@ public class CostantiTestSuite {
 	public static final String PORTA_DELEGATA_WSS_ENCRYPT_MESSAGGIO_ALTERATO="WSSEncryptError";
 	/** Porte Delegate per WS-Security: WSSSignature, con configurazione errata. Deve essere tornato un codice EGOV_IT_202*/
 	public static final String PORTA_DELEGATA_WSS_SIGNATURE_MESSAGGIO_ALTERATO="WSSSignatureError";
+	/** Porte Delegate per WS-Security: WSSSignature con struttura dell'Envelope alterata dopo la firma (XML Signature Wrapping) */
+	public static final String PORTA_DELEGATA_WSS_SIGNATURE_STRUTTURA_ENVELOPE_ALTERATA="WSSSignatureStrutturaEnvelopeAlterata";
 	/** Porte Delegate per WS-Security: WSS*/
 	public static final String PORTA_DELEGATA_WSS_ALL_FUNCTION="WSS";
 	/** Porte Delegate per WS-Security: CooperazioneAffidabileConFiltroDuplicatiWSS*/
@@ -1628,6 +1632,9 @@ public class CostantiTestSuite {
 	public static final String SPCOOP_SERVIZIO_SINCRONO_XML_MALFORMATO_BODY_BODY_STATEFUL = "malformazioneXMLBody_Body_Stateful";
 	public static final String SPCOOP_SERVIZIO_SINCRONO_XML_MALFORMATO_BODY_BODYFIRSTCHILD_STATEFUL = "malformazioneXMLBody_BodyFirstChild_Stateful";
 	public static final String SPCOOP_SERVIZIO_SINCRONO_XML_MALFORMATO_BODY_INSIDEBODY_STATEFUL = "malformazioneXMLBody_InsideBody_Stateful";
+	/** ENTITA SPCOOP: Nome Azione del Servizio Sincrono per verifica della struttura dell'Envelope nella risposta del servizio applicativo */
+	public static final String SPCOOP_SERVIZIO_SINCRONO_STRUTTURA_ENVELOPE_ERRATA = "malformazioneStrutturaEnvelope_SA";
+	public static final String SPCOOP_SERVIZIO_SINCRONO_STRUTTURA_ENVELOPE_ERRATA_STATEFUL = "malformazioneStrutturaEnvelope_SA_Stateful";
 	/** ENTITA SPCOOP: Nome Azione del Servizio Sincrono con Correlazione Applicativa risposta: content based */
     public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_TEST_CORRELAZIONE_APPLICATIVA_RISPOSTA_CONTENT_BASED_SOAP_STATELESS="testCorrelazioneApplicativaRisposta_ContentBased_SOAP_stateless";
 	/** ENTITA SPCOOP: Nome Azione del Servizio Sincrono con Correlazione Applicativa risposta: content based */

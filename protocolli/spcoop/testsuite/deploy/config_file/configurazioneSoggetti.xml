@@ -1905,6 +1905,26 @@
             </message-security>
         </porta-delegata>
         
+        <!-- XML Signature Wrapping: il messaggio firmato viene alterato nella struttura dell'Envelope (es. Body non firmato aggiunto) prima di arrivare alla Porta Applicativa -->
+        <porta-delegata gestione-manifest="abilitato" nome="WSSSignatureStrutturaEnvelopeAlterata" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSignatureStrutturaEnvelopeAlterata" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Signature" />
+                    <parameter nome="timeToLive" valore="600" />
+                    <parameter nome="user" valore="pd" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="signatureKeyIdentifier" valore="DirectReference" />
+                    <parameter nome="signaturePropFile" valore="pd-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+                    <parameter nome="signatureParts" valore="{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Content}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}IntestazioneMessaggio" />
+                </request-flow>
+            </message-security>
+        </porta-delegata>
+
         <!-- Funzionalita' di Signature, con configurazione sbagliata lato Porta Applicativa. Deve essere ritornato un codice EGOV_IT_202 -->
         <porta-delegata gestione-manifest="abilitato" nome="WSSSignatureError" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
             <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />
@@ -4208,6 +4228,12 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="malformazioneContentTypeRisposta"/>
         </porta-delegata>
+        <!-- Struttura dell'Envelope non conforme nella risposta della PdD (caso indicato nel Body della richiesta) -->
+        <porta-delegata gestione-manifest="abilitato" nome="TestStrutturaEnvelopeErrataRisposta" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="malformazioneStrutturaEnvelope"/>
+        </porta-delegata>
         
         <porta-delegata gestione-manifest="abilitato" nome="TestXMLErratoHeaderRisposta_Stateful" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap" stateless="disabilitato">
             <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />
@@ -6189,6 +6215,27 @@
             </message-security>
         </porta-applicativa>
         
+        <!-- XML Signature Wrapping: la firma resta valida ma la struttura dell'Envelope è stata alterata dopo la firma -->
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSSignatureStrutturaEnvelopeAlterata">
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSignatureStrutturaEnvelopeAlterata" />
+            <servizio-applicativo nome="govwayTestSuite" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
+            <proprieta nome="DestinatarioSPCoop" valore="destinatario" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Signature" />
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="signatureKeyIdentifier" valore="DirectReference" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="signaturePropFile" valore="pa-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+                </request-flow>
+            </message-security>
+        </porta-applicativa>
+
         <!-- Funzionalita' di Signature, con configurazione errata. Deve essere tornato un codice EGOV_IT_202 -->
         <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSSignatureError">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
@@ -8814,6 +8861,23 @@
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 	    </soggetti>
         </porta-applicativa>
+        <!-- Struttura dell'Envelope non conforme nella risposta del servizio applicativo (caso indicato nel Body della richiesta) -->
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="MalformazioneRispostaApplicativa_StrutturaEnvelope" >
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="malformazioneStrutturaEnvelope_SA"/>
+            <servizio-applicativo nome="MalformazioneStrutturaEnvelope" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
+        </porta-applicativa>
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="MalformazioneRispostaApplicativa_StrutturaEnvelope_Stateful" stateless="disabilitato">
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="malformazioneStrutturaEnvelope_SA_Stateful"/>
+            <servizio-applicativo nome="MalformazioneStrutturaEnvelope" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
+        </porta-applicativa>
         <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="MalformazioneRispostaApplicativa_Body" >
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="malformazioneXMLBody_Body"/>
@@ -9628,6 +9692,14 @@
             </invocazione-servizio>  
         </servizio-applicativo>
         
+        <servizio-applicativo nome="MalformazioneStrutturaEnvelope" >
+            <invocazione-servizio>
+                <connettore tipo="http" nome="malformazioneStrutturaEnvelope">
+                    <property nome="location" valore="http://localhost:8080/govwayTestSuite/verificaXMLMalformati?strutturaEnvelope=true" />
+                </connettore>
+            </invocazione-servizio>
+        </servizio-applicativo>
+
         <servizio-applicativo nome="MalformazioneXMLBody_Body" >
             <invocazione-servizio>
                 <connettore tipo="http" nome="malformazioneBody_Body">

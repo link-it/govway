@@ -55,6 +55,7 @@ import org.openspcoop2.protocol.utils.ErroriProperties;
 import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
 import org.openspcoop2.testsuite.core.ErroreAttesoOpenSPCoopLogCore;
 import org.openspcoop2.testsuite.core.Repository;
+import org.openspcoop2.testsuite.core.StrutturaEnvelopeSoap11;
 import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.db.DatabaseMsgDiagnosticiComponent;
@@ -735,6 +736,132 @@ public class SOAPMessageScorretti extends GestioneViaJmx  {
 
 
 
+	// ------------- ATTESE ------------------
+	
+	/** Attese progressive per la scrittura dei diagnostici: in totale 2000ms, come la precedente attesa fissa */
+	private static final int[] ATTESE_DIAGNOSTICO_MS = {50, 100, 200, 400, 800, 450};
+	
+	private static boolean isDiagnosticoPresente(DatabaseMsgDiagnosticiComponent db, Date dataInizioTest, String codice, List<String> motivoErroreParser) {
+		try {
+			if(!db.isTracedCodice(dataInizioTest, codice)) {
+				return false;
+			}
+			if(motivoErroreParser==null || motivoErroreParser.isEmpty()) {
+				return true;
+			}
+			for (String erroreParser : motivoErroreParser) {
+				if(db.isTracedMessaggioWithLike(dataInizioTest, erroreParser)) {
+					return true;
+				}
+			}
+			return false;
+		}catch(Exception e) {
+			return false;
+		}
+	}
+	/**
+	 * Attende che il diagnostico venga scritto, verificandolo dopo attese crescenti (al massimo 2000ms complessivi).
+	 * Le asserzioni restano a carico del chiamante.
+	 */
+	private static void attendiDiagnostico(DatabaseMsgDiagnosticiComponent db, Date dataInizioTest, String codice, List<String> motivoErroreParser) {
+		for (int attesa : ATTESE_DIAGNOSTICO_MS) {
+			try{
+				Thread.sleep(attesa);
+			}catch(InterruptedException e){
+				Thread.currentThread().interrupt();
+				return;
+			}
+			if(isDiagnosticoPresente(db, dataInizioTest, codice, motivoErroreParser)) {
+				return;
+			}
+		}
+	}
+	
+	/**
+	 * Attesa, al termine dell'invocazione, che anche il servizio PA processi l'eventuale richiesta ricevuta (broken pipe su XML troncato).
+	 * Disabilitata solo per i test sulla struttura dell'Envelope: i messaggi sono ben formati e completi, non c'è un inoltro interrotto.
+	 */
+	private boolean attesaServizioPA = true;
+	
+	/**
+	 * Come {@link #attendiDiagnostico} ma senza vincolo sul codice del diagnostico.
+	 */
+	private static void attendiDiagnosticoMessaggio(DatabaseMsgDiagnosticiComponent db, Date dataInizioTest, List<String> messaggi) {
+		for (int attesa : ATTESE_DIAGNOSTICO_MS) {
+			try{
+				Thread.sleep(attesa);
+			}catch(InterruptedException e){
+				Thread.currentThread().interrupt();
+				return;
+			}
+			for (String messaggio : messaggi) {
+				try {
+					if(db.isTracedMessaggioWithLike(dataInizioTest, messaggio)) {
+						return;
+					}
+				}catch(Exception e) {
+					// riprovo
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Verifica che tra i diagnostici emessi dall'inizio del test ve ne sia uno contenente almeno uno dei frammenti attesi per il caso.
+	 * Necessario quando il fault restituito è generico (dettagli nascosti) e non permette di capire il motivo del rifiuto.
+	 */
+	/**
+	 * Verifica che tra i diagnostici emessi dall'inizio del test vi sia quello con il codice indicato, contenente il frammento atteso.
+	 */
+	private static void verificaDiagnostico(DatabaseMsgDiagnosticiComponent db, Date dataInizioTest, StrutturaEnvelopeSoap11.Caso caso, 
+			String codice, String frammento) throws Exception {
+		try {
+			attendiDiagnostico(db, dataInizioTest, codice, java.util.Arrays.asList(frammento));
+			boolean codiceTracciato = db.isTracedCodice(dataInizioTest, codice);
+			boolean messaggioTracciato = db.isTracedMessaggioWithLike(dataInizioTest, frammento);
+			Reporter.log("Check diagnostico "+codice+" ("+codiceTracciato+") rispetto a ["+frammento+"]: "+messaggioTracciato);
+			Assert.assertTrue(codiceTracciato && messaggioTracciato, "Diagnostico "+codice+" ["+frammento+"] non trovato ("+caso.name()+")");
+		}finally {
+			try{
+				db.close();
+			}catch(Exception eClose){}
+		}
+	}
+	
+	private static void verificaDiagnosticoStrutturaEnvelope(DatabaseMsgDiagnosticiComponent db, Date dataInizioTest, StrutturaEnvelopeSoap11.Caso caso) throws Exception {
+		try {
+			attendiDiagnosticoMessaggio(db, dataInizioTest, caso.getErroriAttesi());
+			boolean match = false;
+			for (String erroreAtteso : caso.getErroriAttesi()) {
+				boolean m = db.isTracedMessaggioWithLike(dataInizioTest, erroreAtteso);
+				Reporter.log("Check diagnostico rispetto a ["+erroreAtteso+"]: "+m);
+				if(m) {
+					match = true;
+					break;
+				}
+			}
+			Assert.assertTrue(match, "Nessun diagnostico relativo alla struttura dell'Envelope ("+caso.name()+") tra: "+caso.getErroriAttesi());
+		}finally {
+			try{
+				db.close();
+			}catch(Exception eClose){}
+		}
+	}
+	
+	protected interface InvocazioneTest {
+		void invoca() throws Exception;
+	}
+	protected void senzaAttesaServizioPA(InvocazioneTest test) throws Exception {
+		this.attesaServizioPA = false;
+		try {
+			test.invoca();
+		}finally {
+			this.attesaServizioPA = true;
+		}
+	}
+	
+	
+	
 	// ------------- STRUTTURA XML ERRATA ------------------
 
 	private static final String TEMPLATE_HEADER = "<!-- EGOV -->";
@@ -1180,9 +1307,15 @@ public class SOAPMessageScorretti extends GestioneViaJmx  {
 					throw error;
 				}
 				
-				try{
-					Thread.sleep(2000); // aspetto scrittura diagnostici in streaming che avviene dopo
-				}catch(Exception e){}
+				if(checkDiagnostico){
+					// attesa progressiva (al massimo come la precedente attesa fissa) della scrittura dei diagnostici in streaming
+					attendiDiagnostico(dbDiagnosticFruitore, dataInizioTest, "001054", motivoErroreParser);
+				}
+				else{
+					try{
+						Thread.sleep(2000); // aspetto scrittura diagnostici in streaming che avviene dopo
+					}catch(Exception e){}
+				}
 				
 				String codiceErrore = Utilities.toString(codiceErroreIntegrazione);
 				String msgErrore = null;
@@ -1252,10 +1385,12 @@ public class SOAPMessageScorretti extends GestioneViaJmx  {
 				dbDiagnosticFruitore.close();
 			}catch(Exception eClose){}
 
-			try{
-				// Aspetto che anche il servizio PA processi con errore l'eventuale richiesta che riceve (Poi troverà broken pipe)
-				Thread.sleep(2000);
-			}catch(Exception e){}
+			if(this.attesaServizioPA){
+				try{
+					// Aspetto che anche il servizio PA processi con errore l'eventuale richiesta che riceve (Poi troverà broken pipe)
+					Thread.sleep(2000);
+				}catch(Exception e){}
+			}
 			
 			super.unlockForCode(this.genericCode);
 		}
@@ -1531,9 +1666,15 @@ public class SOAPMessageScorretti extends GestioneViaJmx  {
 				throw new Exception("Attesa eccezione per xml errato ("+identificativoTest+")");
 			} catch (AxisFault error) {
 				
-				try{
-					Thread.sleep(2000); // aspetto scrittura diagnostici in streaming che avviene dopo
-				}catch(Exception e){}
+				if(checkDiagnostico){
+					// attesa progressiva (al massimo come la precedente attesa fissa) della scrittura dei diagnostici in streaming
+					attendiDiagnostico(dbDiagnosticErogatore, dataInizioTest, getCodiceDiagnosticoRichiestaPA(motivoErroreParser), motivoErroreParser);
+				}
+				else{
+					try{
+						Thread.sleep(2000); // aspetto scrittura diagnostici in streaming che avviene dopo
+					}catch(Exception e){}
+				}
 				
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 				String msgErrore = null;
@@ -1555,8 +1696,9 @@ public class SOAPMessageScorretti extends GestioneViaJmx  {
 
 				if(checkDiagnostico){
 					SimpleDateFormat dateformat = new SimpleDateFormat ("yyyy-MM-dd_HH:mm:ss.SSS");
-					Reporter.log("Check diagnostico 004071 rispetto a data ["+dateformat.format(dataInizioTest)+"]");
-					Assert.assertTrue(dbDiagnosticErogatore.isTracedCodice(dataInizioTest, "004071"));
+					String codiceDiagnostico = getCodiceDiagnosticoRichiestaPA(motivoErroreParser);
+					Reporter.log("Check diagnostico "+codiceDiagnostico+" rispetto a data ["+dateformat.format(dataInizioTest)+"]");
+					Assert.assertTrue(dbDiagnosticErogatore.isTracedCodice(dataInizioTest, codiceDiagnostico));
 					
 					boolean faultStringMatch = false;
 					for (String erroreParser : motivoErroreParser) {
@@ -1589,10 +1731,12 @@ public class SOAPMessageScorretti extends GestioneViaJmx  {
 				dbDiagnosticErogatore.close();
 			}catch(Exception eClose){}
 
-			try{
-				// Aspetto che anche il servizio PA processi con errore l'eventuale richiesta che riceve (Poi troverà broken pipe)
-				Thread.sleep(2000);
-			}catch(Exception e){}
+			if(this.attesaServizioPA){
+				try{
+					// Aspetto che anche il servizio PA processi con errore l'eventuale richiesta che riceve (Poi troverà broken pipe)
+					Thread.sleep(2000);
+				}catch(Exception e){}
+			}
 			
 			super.unlockForCode(this.genericCode);
 		}
@@ -1852,9 +1996,15 @@ public class SOAPMessageScorretti extends GestioneViaJmx  {
 				throw new Exception("Attesa eccezione per xml errato ("+identificativoTest+")");
 			} catch (AxisFault error) {
 				
-				try{
-					Thread.sleep(2000); // aspetto scrittura diagnostici in streaming che avviene dopo
-				}catch(Exception e){}
+				if(checkDiagnostico){
+					// attesa progressiva (al massimo come la precedente attesa fissa) della scrittura dei diagnostici in streaming
+					attendiDiagnostico(dbDiagnosticErogatore, dataInizioTest, getCodiceDiagnosticoRichiestaPA(motivoErroreParser), motivoErroreParser);
+				}
+				else{
+					try{
+						Thread.sleep(2000); // aspetto scrittura diagnostici in streaming che avviene dopo
+					}catch(Exception e){}
+				}
 				
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 				String msgErrore = null;
@@ -1876,8 +2026,9 @@ public class SOAPMessageScorretti extends GestioneViaJmx  {
 
 				if(checkDiagnostico){
 					SimpleDateFormat dateformat = new SimpleDateFormat ("yyyy-MM-dd_HH:mm:ss.SSS");
-					Reporter.log("Check diagnostico 004071 rispetto a data ["+dateformat.format(dataInizioTest)+"]");
-					Assert.assertTrue(dbDiagnosticErogatore.isTracedCodice(dataInizioTest, "004071"));
+					String codiceDiagnostico = getCodiceDiagnosticoRichiestaPA(motivoErroreParser);
+					Reporter.log("Check diagnostico "+codiceDiagnostico+" rispetto a data ["+dateformat.format(dataInizioTest)+"]");
+					Assert.assertTrue(dbDiagnosticErogatore.isTracedCodice(dataInizioTest, codiceDiagnostico));
 					
 					boolean faultStringMatch = false;
 					for (String erroreParser : motivoErroreParser) {
@@ -1910,10 +2061,12 @@ public class SOAPMessageScorretti extends GestioneViaJmx  {
 				dbDiagnosticErogatore.close();
 			}catch(Exception eClose){}
 
-			try{
-				// Aspetto che anche il servizio PA processi con errore l'eventuale richiesta che riceve (Poi troverà broken pipe)
-				Thread.sleep(2000);
-			}catch(Exception e){}
+			if(this.attesaServizioPA){
+				try{
+					// Aspetto che anche il servizio PA processi con errore l'eventuale richiesta che riceve (Poi troverà broken pipe)
+					Thread.sleep(2000);
+				}catch(Exception e){}
+			}
 			
 			super.unlockForCode(this.genericCode);
 		}
@@ -3198,5 +3351,621 @@ public class SOAPMessageScorretti extends GestioneViaJmx  {
 		Reporter.log("MessaggioErrore ["+e.getDescrizioneEccezione()+"]");
 		Reporter.log("confronto con ["+msgErrore+"]");
 		Assert.assertTrue(e.getDescrizioneEccezione().contains(msgErrore));
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	// ------------- STRUTTURA ENVELOPE NON CONFORME ------------------
+	// Envelope ben formati ma con struttura non conforme (più Header o Body, ordine errato, Fault multipli o fuori posto,
+	// elementi non previsti come figli dell'Envelope). L'anomalia va rifiutata come contenuto non processabile:
+	// - richiesta: CODICE_432_PARSING_EXCEPTION_RICHIESTA (UNPROCESSABLE_REQUEST_CONTENT) con diagnostico parsingExceptionRichiesta
+	// - risposta: CODICE_440_PARSING_EXCEPTION_RISPOSTA (UNPROCESSABLE_RESPONSE_CONTENT)
+	// I messaggi sono inviati come byte grezzi, senza passare da un parser SOAP lato client.
+	
+	// Intestazione e-Gov dopo il Body (StrutturaEnvelopeSoap11.Caso.isIntestazioneDopoBody): l'intestazione non si trova nella parte
+	// iniziale del messaggio letta in streaming e il messaggio viene rifiutato dal protocollo prima della verifica della struttura
+	/** Richiesta verso la PA: validazione sintattica della busta (diagnostico 005003) */
+	private static final String DIAGNOSTICO_HEADER_EGOV_NON_PRESENTE = "Header eGov non presente";
+	private static final String CODICE_DIAGNOSTICO_VALIDAZIONE_SINTATTICA = "005003";
+	/** Risposta ricevuta dalla PD: messaggio privo di informazioni di protocollo ignorato (diagnostico 003016) */
+	private static final String DIAGNOSTICO_RISPOSTA_SENZA_PROTOCOLLO = "non contiene informazioni di protocollo";
+	private static final String CODICE_DIAGNOSTICO_RISPOSTA_SENZA_PROTOCOLLO = "003016";
+	private static final String CODICE_DIAGNOSTICO_PARSING_RICHIESTA = "004071";
+	/** Fault (codice specifico) restituito quando la risposta senza informazioni di protocollo viene ignorata */
+	private static final String DESCRIZIONE_ERRORE_INTERNO = "Sistema non disponibile";
+	
+	/**
+	 * @return frammenti attesi nei diagnostici per una richiesta, contenente la busta e-Gov, ricevuta dalla PA
+	 */
+	private static List<String> getDiagnosticiAttesiRichiestaPA(StrutturaEnvelopeSoap11.Caso caso){
+		if(caso.isIntestazioneDopoBody()) {
+			return new ArrayList<>(java.util.Arrays.asList(DIAGNOSTICO_HEADER_EGOV_NON_PRESENTE));
+		}
+		return new ArrayList<>(caso.getErroriAttesi());
+	}
+	/**
+	 * @return codice del diagnostico atteso per una richiesta rifiutata dalla PA
+	 */
+	private static String getCodiceDiagnosticoRichiestaPA(List<String> motivoErroreParser) {
+		// richiesta rifiutata dal protocollo (intestazione e-Gov non presente nella parte iniziale del messaggio) o perché non processabile
+		return motivoErroreParser!=null && motivoErroreParser.contains(DIAGNOSTICO_HEADER_EGOV_NON_PRESENTE) ?
+				CODICE_DIAGNOSTICO_VALIDAZIONE_SINTATTICA : CODICE_DIAGNOSTICO_PARSING_RICHIESTA;
+	}
+	
+	private static final String[] ERRORI_ATTESI_STRUTTURA_ENVELOPE = {
+			"parsingExceptionRichiesta",
+			"parsingExceptionRisposta",
+			"Invalid SOAP Envelope",
+			"ErroreGenerale",
+			"Chiusura stream non riuscita",
+			"Generazione di un risposta errore non riuscita",
+			"Invalid chunk header",
+			"ParseError at",
+			"Errore avvenuto durante la consegna HTTP (Parsing Risposta SOAP)",
+			"Registrazione messaggio di risposta nel RepositoryMessaggi non riuscita.",
+			"SendResponse error",
+			"validazioneSemantica_afterMessageSecurity"
+	};
+	
+	private void registraErroriAttesi(Date dataInizioTest, List<String> listErroriAttesi) {
+		Date dataFineTest = DateManager.getDate();
+		if(listErroriAttesi!=null) {
+			for (String motivoErrore : listErroriAttesi) {
+				ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
+				err.setIntervalloInferiore(dataInizioTest);
+				err.setIntervalloSuperiore(dataFineTest);
+				err.setMsgErrore(motivoErrore);
+				this.erroriAttesiOpenSPCoopCore.add(err);
+			}
+		}
+	}
+	private static List<String> getErroriAttesi(StrutturaEnvelopeSoap11.Caso caso){
+		List<String> listErroriAttesi = new ArrayList<>();
+		listErroriAttesi.addAll(caso.getErroriAttesi());
+		listErroriAttesi.addAll(java.util.Arrays.asList(ERRORI_ATTESI_STRUTTURA_ENVELOPE));
+		return listErroriAttesi;
+	}
+	private static String getIdentificativoTest(StrutturaEnvelopeSoap11.Caso caso) {
+		return caso.name()+" - "+caso.getDescrizione();
+	}
+	
+	
+	/**
+	 * Parametri: messaggio, identificativo, frammenti attesi nel fault/diagnostico (almeno uno), errori attesi nel log del core.
+	 * Stessa firma di {@link #_strutturaSoapErrata()}, in modo da riusare i metodi _strutturaXMLErrata_*_Richiesta.
+	 */
+	protected Object[][] _strutturaEnvelopeSoapErrata() throws Exception{
+		List<StrutturaEnvelopeSoap11.Caso> casi = StrutturaEnvelopeSoap11.getCasiErrati();
+		String xml = readFile(Utilities.testSuiteProperties.getSoap11FileName());
+		Object[][] params = new Object[casi.size()][4];
+		int index = 0;
+		for (StrutturaEnvelopeSoap11.Caso caso : casi) {
+			params[index][0] = caso.applica(xml).getBytes();
+			params[index][1] = getIdentificativoTest(caso);
+			params[index][2] = new ArrayList<>(caso.getErroriAttesi());
+			params[index][3] = getErroriAttesi(caso);
+			index++;
+		}
+		return params;
+	}
+	
+	/**
+	 * Come {@link #_strutturaEnvelopeSoapErrata()}, per le richieste ricevute dalla PA (contenenti la busta e-Gov):
+	 * per i casi con l'intestazione dopo il Body è atteso il rifiuto da parte del protocollo.
+	 */
+	protected Object[][] _strutturaEnvelopeSoapErrataPA() throws Exception{
+		List<StrutturaEnvelopeSoap11.Caso> casi = StrutturaEnvelopeSoap11.getCasiErrati();
+		String xml = readFile(Utilities.testSuiteProperties.getSoap11FileName());
+		Object[][] params = new Object[casi.size()][4];
+		int index = 0;
+		for (StrutturaEnvelopeSoap11.Caso caso : casi) {
+			params[index][0] = caso.applica(xml).getBytes();
+			params[index][1] = getIdentificativoTest(caso);
+			params[index][2] = getDiagnosticiAttesiRichiestaPA(caso);
+			params[index][3] = getErroriAttesi(caso);
+			index++;
+		}
+		return params;
+	}
+	
+	/**
+	 * Casi con struttura corretta (#00 e controlli di non regressione): devono essere accettati.
+	 */
+	protected Object[][] _strutturaEnvelopeSoapCorretta(boolean headerProtocolloNecessario) throws Exception{
+		String xml = readFile(Utilities.testSuiteProperties.getSoap11FileName());
+		List<Object[]> l = new ArrayList<>();
+		for (StrutturaEnvelopeSoap11.Caso caso : StrutturaEnvelopeSoap11.getCasiCorretti()) {
+			if(headerProtocolloNecessario && !caso.isHeaderPreservato()) {
+				continue;
+			}
+			l.add(new Object[] {caso.applica(xml).getBytes(), getIdentificativoTest(caso)});
+		}
+		return l.toArray(new Object[1][1]);
+	}
+	
+	protected Object[][] _casiStrutturaEnvelopeSoapErrata() throws Exception{
+		List<StrutturaEnvelopeSoap11.Caso> casi = StrutturaEnvelopeSoap11.getCasiErrati();
+		Object[][] params = new Object[casi.size()][1];
+		int index = 0;
+		for (StrutturaEnvelopeSoap11.Caso caso : casi) {
+			params[index++][0] = caso;
+		}
+		return params;
+	}
+	protected Object[][] _casiStrutturaEnvelopeSoapCorretta(boolean headerProtocolloNecessario) throws Exception{
+		List<Object[]> l = new ArrayList<>();
+		for (StrutturaEnvelopeSoap11.Caso caso : StrutturaEnvelopeSoap11.getCasiCorretti()) {
+			if(headerProtocolloNecessario && !caso.isHeaderPreservato()) {
+				continue;
+			}
+			l.add(new Object[] {caso});
+		}
+		return l.toArray(new Object[1][1]);
+	}
+	
+	/**
+	 * Casi di XML Signature Wrapping: alterazioni della struttura applicate al messaggio già firmato.
+	 */
+	protected Object[][] _casiStrutturaEnvelopeSoapXSW() throws Exception{
+		return new Object[][] {
+			{StrutturaEnvelopeSoap11.Caso.DOPPIO_BODY}, // Body firmato seguito da un Body non firmato
+			{StrutturaEnvelopeSoap11.Caso.DOPPIO_BODY_INVERTITO}, // Body non firmato seguito dal Body firmato
+			{StrutturaEnvelopeSoap11.Caso.DOPPIO_BODY_PRIMO_VUOTO},
+			{StrutturaEnvelopeSoap11.Caso.BODY_FAULT_E_BODY_PAYLOAD},
+			{StrutturaEnvelopeSoap11.Caso.DOPPIO_HEADER_PRIMO_DIVERSO}, // wsse:Security nel secondo Header
+			{StrutturaEnvelopeSoap11.Caso.DOPPIO_HEADER_PRIMO_VUOTO},
+			{StrutturaEnvelopeSoap11.Caso.HEADER_DOPO_BODY},
+			{StrutturaEnvelopeSoap11.Caso.BODY_CON_FAULT_PRIMA_DI_HEADER},
+			{StrutturaEnvelopeSoap11.Caso.HEADER_BODY_HEADER},
+			// struttura valida: il Body firmato viene spostato e sostituito da un Body non firmato
+			{StrutturaEnvelopeSoap11.Caso.COPERTURA_BODY_PROTETTO_IN_HEADER},
+			{StrutturaEnvelopeSoap11.Caso.COPERTURA_BODY_PROTETTO_NEL_PAYLOAD},
+		};
+	}
+	
+	
+	
+	// --- Richiesta, casi corretti ---
+	
+	private Repository repositoryStrutturaEnvelopeCorrettaPortaDelegata=new Repository();
+	protected void _strutturaEnvelopeCorretta_PortaDelegata_Richiesta(byte[] messaggioXMLRichiesta,String identificativoTest)throws TestSuiteException,SOAPException, Exception{
+		DatabaseComponent dbComponentErogatore = null;
+		try{
+			super.lockForCode(this.genericCode, false);
+			
+			Reporter.log("Test ["+identificativoTest+"]");
+			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryStrutturaEnvelopeCorrettaPortaDelegata);
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
+			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO);
+			client.connectToSoapEngine();
+			client.setMessaggioXMLRichiesta(messaggioXMLRichiesta);
+			client.setConnectionReadTimeout(READ_TIMEOUT);
+			client.setRispostaDaGestire(true);
+			client.setForceResponseAsSOAPProcessor(true);
+			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
+				dbComponentErogatore = DatabaseProperties.getDatabaseComponentErogatore();
+				client.setAttesaTerminazioneMessaggi(true);
+				client.setDbAttesaTerminazioneMessaggiErogatore(dbComponentErogatore);
+			}
+			client.run();
+			Reporter.log("Codice HTTP ["+client.getCodiceStatoHTTP()+"]");
+			Assert.assertEquals(client.getCodiceStatoHTTP(), 200);
+		}finally{
+			try{
+				if(dbComponentErogatore!=null) dbComponentErogatore.close();
+			}catch(Exception eClose){}
+			super.unlockForCode(this.genericCode);
+		}
+	}
+	
+	private Repository repositoryStrutturaEnvelopeCorrettaPortaApplicativa=new Repository();
+	protected void _strutturaEnvelopeCorretta_PortaApplicativa_Richiesta(byte[] messaggioXMLRichiesta,String identificativoTest)throws TestSuiteException,SOAPException, Exception{
+		DatabaseComponent dbComponentErogatore = null;
+		try{
+			super.lockForCode(this.genericCode, false);
+			
+			String msgXmlRichiesta = new String(messaggioXMLRichiesta);
+			msgXmlRichiesta = msgXmlRichiesta.replace(TEMPLATE_HEADER, this.getHeaderBusta(CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,null));
+			
+			Reporter.log("Test ["+identificativoTest+"]");
+			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryStrutturaEnvelopeCorrettaPortaApplicativa);
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
+			client.connectToSoapEngine();
+			client.setMessaggioXMLRichiesta(msgXmlRichiesta.getBytes());
+			client.setConnectionReadTimeout(READ_TIMEOUT);
+			client.setRispostaDaGestire(true);
+			client.setForceResponseAsSOAPProcessor(true);
+			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
+				dbComponentErogatore = DatabaseProperties.getDatabaseComponentErogatore();
+				client.setAttesaTerminazioneMessaggi(true);
+				client.setDbAttesaTerminazioneMessaggiErogatore(dbComponentErogatore);
+			}
+			client.run();
+			Reporter.log("Codice HTTP ["+client.getCodiceStatoHTTP()+"]");
+			Assert.assertEquals(client.getCodiceStatoHTTP(), 200);
+		}finally{
+			try{
+				if(dbComponentErogatore!=null) dbComponentErogatore.close();
+			}catch(Exception eClose){}
+			super.unlockForCode(this.genericCode);
+		}
+	}
+	
+	
+	
+	// --- Richiesta, #01 intestazione di protocollo duplicata nello stesso Header (controllo del protocollo SPCoop) ---
+	
+	private Repository repositoryStrutturaEnvelopeIntestazioneDuplicata=new Repository();
+	protected void _strutturaEnvelope_PortaApplicativa_Richiesta_IntestazioneDuplicata()throws TestSuiteException,SOAPException, Exception{
+		StrutturaEnvelopeSoap11.Caso caso = StrutturaEnvelopeSoap11.Caso.DOPPIA_INTESTAZIONE_STESSO_HEADER;
+		String xml = readFile(Utilities.testSuiteProperties.getSoap11FileName());
+		Date dataInizioTest = DateManager.getDate();
+		List<String> listErroriAttesi = getErroriAttesi(caso);
+		listErroriAttesi.add("Header eGov");
+		// fault di validazione SPCoop (Client); il diagnostico non è quello di parsing, quindi non viene verificato
+		senzaAttesaServizioPA(() -> this.invocazionePA(caso.applica(xml).getBytes(), getIdentificativoTest(caso), new ArrayList<>(caso.getErroriAttesi()), null, 
+				this.repositoryStrutturaEnvelopeIntestazioneDuplicata, 
+				CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO, 
+				null,
+				true,false));
+		registraErroriAttesi(dataInizioTest, listErroriAttesi);
+	}
+	
+	
+	
+	// --- Risposta del servizio applicativo (Porta Applicativa) ---
+	
+	private byte[] getBustaStrutturaEnvelope(String azione, StrutturaEnvelopeSoap11.Caso caso) throws ProtocolException{
+		String identificativoEGov=UtilitiesEGov.getIDEGov(CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE,
+				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
+		String bustaSOAP=UtilitiesEGov.getBustaEGov(CostantiTestSuite.SPCOOP_TIPO_SOGGETTO_FRUITORE,
+				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE,
+				CostantiTestSuite.SPCOOP_TIPO_SOGGETTO_EROGATORE,
+				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_EROGATORE,
+				SPCoopCostanti.PROFILO_COLLABORAZIONE_SINCRONO,
+				CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+				CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
+				identificativoEGov,
+				false,
+				SPCoopCostanti.PROFILO_TRASMISSIONE_SENZA_DUPLICATI,
+				false,
+				azione,
+				null,
+				SPCoopCostanti.TIPO_TEMPO_SPC,
+				DateManager.getDate(),
+				"<helloworld><a>Hello World</a><b>Hello World</b></helloworld>\n"+StrutturaEnvelopeSoap11.getElementoMarcatore(caso)+"\n");
+		return bustaSOAP.getBytes();
+	}
+	
+	private Repository repositoryStrutturaEnvelopePA_RispostaApplicativa=new Repository();
+	protected void _strutturaEnvelopeErrata_PA_RispostaApplicativa(StrutturaEnvelopeSoap11.Caso caso, boolean stateful, boolean unwrap)throws TestSuiteException,SOAPException, Exception{
+		Date dataInizioTest = DateManager.getDate();
+		
+		String azione = stateful ? CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_STRUTTURA_ENVELOPE_ERRATA_STATEFUL : CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_STRUTTURA_ENVELOPE_ERRATA;
+		byte[] busta = getBustaStrutturaEnvelope(azione, caso);
+
+		DatabaseComponent dbComponentErogatore = null;
+		try{
+			super.lockForCode(this.genericCode, unwrap);
+			
+			Reporter.log("Test ["+getIdentificativoTest(caso)+"] stateful["+stateful+"]");
+			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryStrutturaEnvelopePA_RispostaApplicativa);
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
+			client.connectToSoapEngine();
+			client.setMessaggioXMLRichiesta(busta);
+			client.setConnectionReadTimeout(READ_TIMEOUT);
+			client.setRispostaDaGestire(true);
+			client.setForceResponseAsSOAPProcessor(true);
+			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
+				dbComponentErogatore = DatabaseProperties.getDatabaseComponentErogatore();
+				client.setAttesaTerminazioneMessaggi(true);
+				client.setDbAttesaTerminazioneMessaggiErogatore(dbComponentErogatore);
+			}
+
+			try {
+				client.run();
+				throw new Exception("Attesa eccezione per risposta con struttura dell'Envelope non conforme ("+caso.name()+"), ottenuto codice http "+client.getCodiceStatoHTTP());
+			} catch (AxisFault error) {
+				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
+				Assert.assertTrue(SPCoopCostanti.FAULT_CODE_PROCESSAMENTO_SPCOOP.equals(error.getFaultCode().getLocalPart()) ||
+						SPCoopCostanti.FAULT_CODE_PROCESSAMENTO_SPCOOP.equals("soap:"+error.getFaultCode().getLocalPart()) ||
+						SPCoopCostanti.FAULT_CODE_PROCESSAMENTO_SPCOOP.equals("soapenv:"+error.getFaultCode().getLocalPart()));
+				Reporter.log("Controllo fault string ["+SPCoopCostanti.FAULT_STRING_PROCESSAMENTO_SPCOOP+"]");
+				Assert.assertTrue(SPCoopCostanti.FAULT_STRING_PROCESSAMENTO_SPCOOP.equals(error.getFaultString()));
+
+				List<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail> eccezioni = new ArrayList<>();
+				
+				if(stateful && !this.genericCode) {
+					org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail ecc = new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail();
+					ecc.setCodice("EGOV_IT_300");
+					ecc.setDescrizione(SPCoopCostanti.FAULT_STRING_PROCESSAMENTO_SPCOOP_SENZA_CODICE);
+					ecc.setCheckDescrizioneTramiteMatchEsatto(false);
+					eccezioni.add(ecc);
+	
+					org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail ecc2 = new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail();
+					ecc2.setCodice("EGOV_IT_300");
+					ecc2.setDescrizione(CostantiErroriIntegrazione.MSG_516_SERVIZIO_APPLICATIVO_NON_DISPONIBILE);
+					ecc2.setCheckDescrizioneTramiteMatchEsatto(false);
+					eccezioni.add(ecc2);
+				}
+				
+				String codiceErrore = Utilities.toString(CodiceErroreIntegrazione.CODICE_440_PARSING_EXCEPTION_RISPOSTA);
+				List<String> descrizioni = new ArrayList<>(caso.getErroriAttesi());
+				boolean checkEqualsMatch = false;
+				if(this.genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.WRAP_502_BAD_RESPONSE;
+					if(unwrap) {
+						integrationFunctionError = IntegrationFunctionError.UNPROCESSABLE_RESPONSE_CONTENT;
+					}
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceErrore = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						descrizioni.clear();
+						descrizioni.add(erroriProperties.getGenericDetails_noWrap(integrationFunctionError));
+						checkEqualsMatch = true;
+					}
+				}
+				for (String descrizione : descrizioni) {
+					org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail ecc = new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail();
+					ecc.setCodice(codiceErrore);
+					ecc.setDescrizione(descrizione);
+					ecc.setCheckDescrizioneTramiteMatchEsatto(checkEqualsMatch);
+					eccezioni.add(ecc);
+				}
+
+				Assert.assertTrue(OpenSPCoopDetailsUtilities.existsOpenSPCoopDetails(error)); 
+				String[] identificativiFunzione = new String[3];
+				identificativiFunzione[0] = "MinisteroErogatoreSPCoopIT";
+				identificativiFunzione[1] = "RicezioneBuste";
+				identificativiFunzione[2] = "ConsegnaContenutiApplicativi";
+				OpenSPCoopDetailsUtilities.verificaFaultOpenSPCoopDetail(error, 
+						CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,TipoPdD.APPLICATIVA,identificativiFunzione, 
+						eccezioni, new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>(), false);
+			}
+
+		}finally{
+			try{
+				if(dbComponentErogatore!=null) dbComponentErogatore.close();
+			}catch(Exception eClose){}
+			super.unlockForCode(this.genericCode);
+		}
+		
+		// il fault (anche generico, con il codice di errore 'wrap') deve essere dovuto alla struttura dell'Envelope
+		verificaDiagnosticoStrutturaEnvelope(DatabaseProperties.getDatabaseComponentDiagnosticaErogatore(), dataInizioTest, caso);
+
+		registraErroriAttesi(dataInizioTest, getErroriAttesi(caso));
+	}
+	
+	protected void _strutturaEnvelopeCorretta_PA_RispostaApplicativa(StrutturaEnvelopeSoap11.Caso caso, boolean stateful)throws TestSuiteException,SOAPException, Exception{
+		String azione = stateful ? CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_STRUTTURA_ENVELOPE_ERRATA_STATEFUL : CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_STRUTTURA_ENVELOPE_ERRATA;
+		byte[] busta = getBustaStrutturaEnvelope(azione, caso);
+
+		DatabaseComponent dbComponentErogatore = null;
+		try{
+			super.lockForCode(this.genericCode, false);
+			
+			Reporter.log("Test ["+getIdentificativoTest(caso)+"] stateful["+stateful+"]");
+			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryStrutturaEnvelopePA_RispostaApplicativa);
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
+			client.connectToSoapEngine();
+			client.setMessaggioXMLRichiesta(busta);
+			client.setConnectionReadTimeout(READ_TIMEOUT);
+			client.setRispostaDaGestire(true);
+			client.setForceResponseAsSOAPProcessor(true);
+			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
+				dbComponentErogatore = DatabaseProperties.getDatabaseComponentErogatore();
+				client.setAttesaTerminazioneMessaggi(true);
+				client.setDbAttesaTerminazioneMessaggiErogatore(dbComponentErogatore);
+			}
+			client.run();
+			Reporter.log("Codice HTTP ["+client.getCodiceStatoHTTP()+"]");
+			Assert.assertEquals(client.getCodiceStatoHTTP(), 200);
+		}finally{
+			try{
+				if(dbComponentErogatore!=null) dbComponentErogatore.close();
+			}catch(Exception eClose){}
+			super.unlockForCode(this.genericCode);
+		}
+	}
+	
+	
+	
+	// --- Risposta della PdD destinataria (Porta Delegata) ---
+	
+	private byte[] getRichiestaStrutturaEnvelope(StrutturaEnvelopeSoap11.Caso caso) throws Exception{
+		String xml = FileSystemUtilities.readFile(Utilities.testSuiteProperties.getSoap11FileName());
+		xml = xml.replace("<soapenv:Body>", "<soapenv:Body>"+StrutturaEnvelopeSoap11.getElementoMarcatore(caso));
+		return xml.getBytes();
+	}
+	
+	private Repository repositoryStrutturaEnvelopeRispostaPdD=new Repository();
+	protected void _strutturaEnvelopeErrata_PD_RispostaPdD(StrutturaEnvelopeSoap11.Caso caso, boolean unwrap)throws TestSuiteException,SOAPException, Exception{
+		Date dataInizioTest = DateManager.getDate();
+		
+		// intestazione e-Gov dopo il Body: la risposta non contiene (nella parte iniziale letta in streaming) informazioni di protocollo
+		// e viene ignorata, con un errore interno al posto dell'errore di struttura (il caso con il Fault viene invece interpretato costruendo il DOM)
+		boolean intestazioneDopoBody = caso.isIntestazioneDopoBody() && !caso.isFaultPrimoFiglioBody();
+
+		DatabaseComponent dbComponentErogatore = null;
+		try{
+			super.lockForCode(this.genericCode, unwrap);
+			
+			Reporter.log("Test ["+getIdentificativoTest(caso)+"]");
+			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryStrutturaEnvelopeRispostaPdD);
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
+			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_STRUTTURA_ENVELOPE_ERRATA_RISPOSTA_PDD);
+			client.connectToSoapEngine();
+			client.setMessaggioXMLRichiesta(getRichiestaStrutturaEnvelope(caso));
+			client.setConnectionReadTimeout(READ_TIMEOUT);
+			client.setRispostaDaGestire(true);
+			client.setForceResponseAsSOAPProcessor(true);
+			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
+				dbComponentErogatore = DatabaseProperties.getDatabaseComponentErogatore();
+				client.setAttesaTerminazioneMessaggi(true);
+				client.setDbAttesaTerminazioneMessaggiErogatore(dbComponentErogatore);
+			}
+
+			try {
+				client.run();
+				throw new Exception("Attesa eccezione per risposta con struttura dell'Envelope non conforme ("+caso.name()+"), ottenuto codice http "+client.getCodiceStatoHTTP());
+			} catch (AxisFault error) {
+				
+				String codiceErrore = Utilities.toString(intestazioneDopoBody ? 
+						CodiceErroreIntegrazione.CODICE_500_ERRORE_INTERNO : CodiceErroreIntegrazione.CODICE_440_PARSING_EXCEPTION_RISPOSTA);
+				List<String> descrizioni = new ArrayList<>(intestazioneDopoBody ? 
+						java.util.Arrays.asList(DESCRIZIONE_ERRORE_INTERNO) : caso.getErroriAttesi());
+				boolean checkEquals = false;
+				if(this.genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.WRAP_502_BAD_RESPONSE;
+					if(unwrap) {
+						integrationFunctionError = intestazioneDopoBody ? IntegrationFunctionError.BAD_RESPONSE : IntegrationFunctionError.UNPROCESSABLE_RESPONSE_CONTENT;
+					}
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceErrore = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SERVER +
+							org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						descrizioni.clear();
+						descrizioni.add(erroriProperties.getGenericDetails_noWrap(integrationFunctionError));
+						checkEquals = true;
+					}
+				}
+				
+				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor ["+error.getFaultActor()+"]: "+error.getFaultString());
+				Reporter.log("Controllo fault code. Atteso ["+codiceErrore+"] - Trovato [" + error.getFaultCode().getLocalPart() + "]");
+				Assert.assertTrue(codiceErrore.equals(error.getFaultCode().getLocalPart()));
+				boolean match = false;
+				for (String descrizione : descrizioni) {
+					boolean m = checkEquals ? descrizione.equals(error.getFaultString()) : error.getFaultString().contains(descrizione);
+					Reporter.log("Controllo fault string rispetto a ["+descrizione+"]: "+m);
+					if(m) {
+						match = true;
+						break;
+					}
+				}
+				Assert.assertTrue(match);
+				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
+				Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
+			}
+
+		}finally{
+			try{
+				if(dbComponentErogatore!=null) dbComponentErogatore.close();
+			}catch(Exception eClose){}
+			super.unlockForCode(this.genericCode);
+		}
+		
+		if(intestazioneDopoBody) {
+			verificaDiagnostico(DatabaseProperties.getDatabaseComponentDiagnosticaFruitore(), dataInizioTest, caso, 
+					CODICE_DIAGNOSTICO_RISPOSTA_SENZA_PROTOCOLLO, DIAGNOSTICO_RISPOSTA_SENZA_PROTOCOLLO);
+		}
+		else {
+			// il fault (anche generico, con il codice di errore 'wrap') deve essere dovuto alla struttura dell'Envelope
+			verificaDiagnosticoStrutturaEnvelope(DatabaseProperties.getDatabaseComponentDiagnosticaFruitore(), dataInizioTest, caso);
+		}
+
+		registraErroriAttesi(dataInizioTest, getErroriAttesi(caso));
+	}
+	
+	protected void _strutturaEnvelopeCorretta_PD_RispostaPdD(StrutturaEnvelopeSoap11.Caso caso)throws TestSuiteException,SOAPException, Exception{
+		DatabaseComponent dbComponentErogatore = null;
+		try{
+			super.lockForCode(this.genericCode, false);
+			
+			Reporter.log("Test ["+getIdentificativoTest(caso)+"]");
+			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryStrutturaEnvelopeRispostaPdD);
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
+			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_STRUTTURA_ENVELOPE_ERRATA_RISPOSTA_PDD);
+			client.connectToSoapEngine();
+			client.setMessaggioXMLRichiesta(getRichiestaStrutturaEnvelope(caso));
+			client.setConnectionReadTimeout(READ_TIMEOUT);
+			client.setRispostaDaGestire(true);
+			client.setForceResponseAsSOAPProcessor(true);
+			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
+				dbComponentErogatore = DatabaseProperties.getDatabaseComponentErogatore();
+				client.setAttesaTerminazioneMessaggi(true);
+				client.setDbAttesaTerminazioneMessaggiErogatore(dbComponentErogatore);
+			}
+			client.run();
+			Reporter.log("Codice HTTP ["+client.getCodiceStatoHTTP()+"]");
+			Assert.assertEquals(client.getCodiceStatoHTTP(), 200);
+		}finally{
+			try{
+				if(dbComponentErogatore!=null) dbComponentErogatore.close();
+			}catch(Exception eClose){}
+			super.unlockForCode(this.genericCode);
+		}
+	}
+	
+	
+	
+	// --- XML Signature Wrapping: struttura alterata dopo la firma WS-Security, con firma ancora valida ---
+	
+	private Repository repositoryStrutturaEnvelopeXSW=new Repository();
+	protected void _strutturaEnvelopeXSW_WSSecuritySignature(StrutturaEnvelopeSoap11.Caso caso)throws TestSuiteException,SOAPException, Exception{
+		Date dataInizioTest = DateManager.getDate();
+
+		DatabaseComponent dbComponentErogatore = null;
+		DatabaseMsgDiagnosticiComponent dbDiagnosticErogatore = null;
+		try{
+			super.lockForCode(this.genericCode, false);
+			
+			Reporter.log("Test XSW ["+getIdentificativoTest(caso)+"]");
+			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryStrutturaEnvelopeXSW);
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
+			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_WSS_SIGNATURE_STRUTTURA_ENVELOPE_ALTERATA);
+			client.connectToSoapEngine();
+			client.setMessaggioXMLRichiesta(getRichiestaStrutturaEnvelope(caso));
+			client.setConnectionReadTimeout(READ_TIMEOUT);
+			client.setRispostaDaGestire(true);
+			client.setForceResponseAsSOAPProcessor(true);
+			dbDiagnosticErogatore = DatabaseProperties.getDatabaseComponentDiagnosticaErogatore();
+			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
+				dbComponentErogatore = DatabaseProperties.getDatabaseComponentErogatore();
+				client.setAttesaTerminazioneMessaggi(true);
+				client.setDbAttesaTerminazioneMessaggiErogatore(dbComponentErogatore);
+			}
+
+			try {
+				client.run();
+				Reporter.log("Codice HTTP ["+client.getCodiceStatoHTTP()+"]");
+				Assert.assertTrue(client.getCodiceStatoHTTP()>=400, 
+						"Messaggio firmato con struttura alterata ("+caso.name()+") accettato: codice http "+client.getCodiceStatoHTTP());
+			} catch (AxisFault error) {
+				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
+			}
+			
+			// l'anomalia deve essere rilevata dalla PdD erogatrice, che riceve il messaggio alterato
+			List<String> diagnosticiAttesi = getDiagnosticiAttesiRichiestaPA(caso);
+			attendiDiagnosticoMessaggio(dbDiagnosticErogatore, dataInizioTest, diagnosticiAttesi);
+			boolean match = false;
+			for (String erroreAtteso : diagnosticiAttesi) {
+				boolean m = dbDiagnosticErogatore.isTracedMessaggioWithLike(dataInizioTest, erroreAtteso);
+				Reporter.log("Check diagnostico rispetto a ["+erroreAtteso+"]: "+m);
+				if(m) {
+					match = true;
+					break;
+				}
+			}
+			Assert.assertTrue(match);
+			
+		}finally{
+			try{
+				if(dbComponentErogatore!=null) dbComponentErogatore.close();
+			}catch(Exception eClose){}
+			try{
+				if(dbDiagnosticErogatore!=null) dbDiagnosticErogatore.close();
+			}catch(Exception eClose){}
+			super.unlockForCode(this.genericCode);
+		}
+
+		List<String> listErroriAttesi = getErroriAttesi(caso);
+		listErroriAttesi.add("Message-Security");
+		registraErroriAttesi(dataInizioTest, listErroriAttesi);
 	}
 }

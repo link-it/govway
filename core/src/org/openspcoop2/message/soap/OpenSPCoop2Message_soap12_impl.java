@@ -102,6 +102,9 @@ public class OpenSPCoop2Message_soap12_impl extends AbstractOpenSPCoop2Message_s
 			SOAPEnvelope envelope = msg.getSOAPPart().getEnvelope();
 			msg.countAttachments();
 			
+			// Verifica della struttura dell'Envelope (più Header o Body, ordine, Fault): SAAJ restituirebbe il primo elemento trovato ignorando gli altri
+			SoapEnvelopeStructureValidator.validate(envelope, this.messageType, this.messageRole);
+			
 			this.addSoapHeaderModifiedIntoSoapReader(hdr, envelope);
 			
 			return msg;

@@ -56,6 +56,7 @@
 
 	<section label="Encrypt">
 
+		<!-- Le proprietà sono quelle lette da WSS4J ('encryptionParts', 'optionalEncryptionParts'); il Body viene cifrato nel contenuto ({Content}). -->
 		<item type="select" name="encryptPartsSelect" label="Elementi da cifrare" default="body" reloadOnChange="true">
 			<values>
 				<value value="body" label="Body"/>
@@ -65,13 +66,13 @@
 			</values>
 			<property name="encryptPartsSelect" />
 		</item>
-		<item type="hidden" name="encryptPartsBody" value="{Element}{SOAP_TEMPLATE_NS}Body">
+		<item type="hidden" name="encryptPartsBody" value="{Content}{SOAP_TEMPLATE_NS}Body">
 			<conditions and="false">
 				<condition>
 					<equals name="encryptPartsSelect" value="body"/>
 				</condition>
 			</conditions>
-		    <property name="encryptParts" />
+		    <property name="encryptionParts" />
 		</item>
 		<item type="hidden" name="encryptPartsAttachments" value="{}cid:Attachments">
 			<conditions and="false">
@@ -79,15 +80,15 @@
 					<equals name="encryptPartsSelect" value="attachments"/>
 				</condition>
 			</conditions>
-		    <property name="encryptParts" />
+		    <property name="encryptionParts" />
 		</item>
-		<item type="hidden" name="encryptPartsBodyAttachments" value="{Element}{SOAP_TEMPLATE_NS}Body;{}cid:Attachments">
+		<item type="hidden" name="encryptPartsBodyAttachments" value="{Content}{SOAP_TEMPLATE_NS}Body;{}cid:Attachments">
 			<conditions and="false">
 				<condition>
 					<equals name="encryptPartsSelect" value="bodyAttachments"/>
 				</condition>
 			</conditions>
-		    <property name="encryptParts" />
+		    <property name="encryptionParts" />
 		</item>
 		<item type="textarea" name="encryptPartsCustom" label="Elementi Obbligatori" required="true" >
 			<conditions and="false">
@@ -95,7 +96,7 @@
 					<equals name="encryptPartsSelect" value="custom"/>
 				</condition>
 			</conditions>
-		    <property name="encryptParts" />
+		    <property name="encryptionParts" />
 		</item>
 		<item type="textarea" name="optionalencryptPartsCustom" label="Elementi Opzionali" required="false" note="{Content/Element}{namespace}localName (cid:Attachments in localName for SWA)">
 			<conditions and="false">
@@ -103,7 +104,7 @@
 					<equals name="encryptPartsSelect" value="custom"/>
 				</condition>
 			</conditions>
-		    <property name="optionalencryptParts" />
+		    <property name="optionalEncryptionParts" />
 		</item>
 		
 		<!--

@@ -3743,7 +3743,12 @@ public class InoltroBuste extends GenericLib{
 								}
 							}
 							
-							if(requestMessagePrimaTrasformazione.getParseException()!=null || 
+							// anomalia rilevata durante l'inoltro (es. struttura dell'Envelope SOAP): registrata sul messaggio inviato dal connettore
+							ParseException requestParseException = requestMessagePrimaTrasformazione.getParseException();
+							if(requestParseException==null && requestMessageTrasformato!=null) {
+								requestParseException = requestMessageTrasformato.getParseException();
+							}
+							if(requestParseException!=null || 
 									requestReadTimeout!=null || 
 									requestLimitExceeded!=null){
 								pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO, true);
@@ -3760,7 +3765,7 @@ public class InoltroBuste extends GenericLib{
 									errorMsg = tParsing.getMessage();
 								}
 								else {
-									parseException = requestMessagePrimaTrasformazione.getParseException();
+									parseException = requestParseException;
 									tParsing = parseException.getParseException();
 									errorMsg = tParsing.getMessage();
 								}
@@ -3772,12 +3777,12 @@ public class InoltroBuste extends GenericLib{
 								else if(requestLimitExceeded!=null) {
 									integrationFunctionError = IntegrationFunctionError.REQUEST_SIZE_EXCEEDED;
 								}
-								else if(requestMessagePrimaTrasformazione.getParseException().getSourceException()!=null &&
-										TimeoutIOException.isTimeoutIOException(requestMessagePrimaTrasformazione.getParseException().getSourceException())) {
+								else if(requestParseException.getSourceException()!=null &&
+										TimeoutIOException.isTimeoutIOException(requestParseException.getSourceException())) {
 									integrationFunctionError = IntegrationFunctionError.REQUEST_TIMED_OUT;
 								}
-								else if(requestMessagePrimaTrasformazione.getParseException().getSourceException()!=null &&
-										LimitExceededIOException.isLimitExceededIOException(requestMessagePrimaTrasformazione.getParseException().getSourceException())) {
+								else if(requestParseException.getSourceException()!=null &&
+										LimitExceededIOException.isLimitExceededIOException(requestParseException.getSourceException())) {
 									integrationFunctionError = IntegrationFunctionError.REQUEST_SIZE_EXCEEDED;
 								}
 								

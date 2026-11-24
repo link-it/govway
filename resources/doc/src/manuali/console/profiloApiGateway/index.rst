@@ -27,7 +27,7 @@ nell'intestazione della pagina.
 	rateLimiting/index
 	validazione/index
 	cacheRisposta
-	sicurezzaMessaggio
+	sicurezzaMessaggio/index
 	trasformazioni/index
 	tracciamento
 	correlazione/index

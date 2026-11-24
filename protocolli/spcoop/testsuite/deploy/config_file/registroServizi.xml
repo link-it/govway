@@ -131,6 +131,7 @@
 	<azione nome="WSSEncryptSignatureAttachments"/>
         <azione nome="WSSEncryptError"/>
         <azione nome="WSSSignatureError"/>
+        <azione nome="WSSSignatureStrutturaEnvelopeAlterata"/>
 	<azione nome="WSSSaml20Unsigned"/>
 	<azione nome="WSSSaml20Signed"/>
 	<azione nome="WSSSaml20SignedP12"/>
@@ -271,6 +272,9 @@
         <azione nome="malformazioneXMLBody_BodyFirstChild_Stateful"/>
         <azione nome="malformazioneXMLBody_InsideBody_Stateful"/>
 	<azione nome="malformazioneContentTypeRisposta"/>
+        <azione nome="malformazioneStrutturaEnvelope"/>
+        <azione nome="malformazioneStrutturaEnvelope_SA"/>
+        <azione nome="malformazioneStrutturaEnvelope_SA_Stateful"/>
 	<!-- FaultErrati -->
 	<azione nome="soapFaultPdDConPrefixErrato"/>
 	<azione nome="soapFaultSAConPrefixErrato"/>
@@ -1026,6 +1030,15 @@
                     </connettore>
 		    <azione>WSSSignatureError</azione>
                 </configurazione-azione>
+                <!-- XML Signature Wrapping: la struttura dell'Envelope firmato viene alterata prima dell'inoltro (caso indicato nel Body) -->
+                <configurazione-azione>
+                    <connettore tipo="http" nome="PdDAlterazioneStrutturaEnvelopeWSS">
+                        <property nome="location"
+                            valore="http://localhost:8080/govwayTestSuite/alterazioneMsgWSS?strutturaEnvelope=true&amp;forward=http://127.0.0.1:8080/govway/spcoop/in"
+                        />
+                    </connettore>
+		    <azione>WSSSignatureStrutturaEnvelopeAlterata</azione>
+                </configurazione-azione>
 
                 <!-- TEST HTTPS -->
                 <configurazione-azione>
@@ -1139,6 +1152,14 @@
                         />
                     </connettore>
 		    <azione>malformazioneContentTypeRisposta</azione>
+                </configurazione-azione>
+                <configurazione-azione>
+                    <connettore tipo="http" nome="malformazioneStrutturaEnvelope">
+                        <property nome="location"
+                            valore="http://localhost:8080/govwayTestSuite/verificaXMLMalformati?strutturaEnvelope=true"
+                        />
+                    </connettore>
+		    <azione>malformazioneStrutturaEnvelope</azione>
                 </configurazione-azione>
 
 		<!-- FaultErrati -->

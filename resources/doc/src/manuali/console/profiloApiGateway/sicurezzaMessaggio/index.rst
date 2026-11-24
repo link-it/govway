@@ -14,7 +14,7 @@ sicurezza, impostare il valore dello stato su abilitato e confermare con
 il pulsante *Invia*. Appariranno gli elementi *Richiesta* e *Risposta*,
 come nella figura seguente.
 
-   .. figure:: ../_figure_console/SicurezzaMessaggio.png
+   .. figure:: ../../_figure_console/SicurezzaMessaggio.png
     :scale: 100%
     :align: center
     :name: sicurezza
@@ -103,3 +103,14 @@ seguente casistica:
     *Receiver* nel caso della risposta. Gli schemi di sicurezza
     disponibili, nel caso della fruizione, rimangono quelli già
     descritti per Sender e Receiver.
+
+Le sezioni seguenti descrivono i campi delle maschere di configurazione di ciascuno schema di sicurezza.
+
+.. toctree::
+        :maxdepth: 2
+
+        wssecurity/index
+        jose/index
+        xml/index
+        configurazioneManuale
+        keystore

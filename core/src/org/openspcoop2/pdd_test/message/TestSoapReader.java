@@ -50,7 +50,16 @@ public class TestSoapReader {
 		TestLogger.info("Run test '"+ID_TEST+"'.testOptimizedHeader ...");
 		org.openspcoop2.message.soap.reader.test.OptimizedHeaderTest.test();
 		TestLogger.info("Run test '"+ID_TEST+"'.testOptimizedHeader ok");
-		
+
 	}
-	
+
+	@Test(groups={Costanti.GRUPPO_PDD,Costanti.GRUPPO_PDD+"."+ID_TEST})
+	public void testSoapEnvelopeStructureCheck() throws Exception{
+
+		TestLogger.info("Run test '"+ID_TEST+"'.testSoapEnvelopeStructureCheck ...");
+		org.openspcoop2.message.soap.reader.test.SoapEnvelopeStructureCheckTest.test();
+		TestLogger.info("Run test '"+ID_TEST+"'.testSoapEnvelopeStructureCheck ok");
+
+	}
+
 }

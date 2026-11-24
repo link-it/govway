@@ -46,7 +46,10 @@ import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageProperties;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.context.MessageContext;
+import org.openspcoop2.message.constants.Costanti;
+import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.exception.MessageException;
+import org.openspcoop2.message.exception.SoapEnvelopeStructureIOException;
 import org.openspcoop2.message.exception.MessageNotSupportedException;
 import org.openspcoop2.message.soap.dynamic.DynamicSOAPHeader;
 import org.openspcoop2.message.soap.dynamic.DynamicSOAPMessage;
@@ -55,8 +58,12 @@ import org.openspcoop2.message.soap.mtom.MTOMUtilities;
 import org.openspcoop2.message.soap.mtom.MtomXomPackageInfo;
 import org.openspcoop2.message.soap.mtom.MtomXomReference;
 import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
+import org.openspcoop2.message.soap.reader.SoapEnvelopeStructureCheckInputStream;
+import org.openspcoop2.message.soap.reader.SoapEnvelopeStructureStreamChecker;
 import org.openspcoop2.message.soap.reference.Reference;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsRuntimeException;
+import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -548,6 +555,67 @@ public abstract class AbstractOpenSPCoop2Message_soap_impl<T extends AbstractOpe
 	
 	
 	// ------------ Metodi SAAJ wrappati con la chiamata 'getContent' che fa si che venga costruito il messaggio --------------------
+	
+	/**
+	 * Verifica della struttura dell'Envelope sulle anomalie rilevate dalla lettura in streaming (senza costruzione del DOM)
+	 */
+	public void checkEnvelopeStructureFromSoapReader() throws MessageException {
+		OpenSPCoop2MessageSoapStreamReader reader = this.getSoapReader();
+		if(reader!=null) {
+			SoapEnvelopeStructureValidator.validate(reader.getEnvelopeStructureError(), this.getMessageRole());
+		}
+	}
+	
+	// Verifica della struttura dell'Envelope durante la serializzazione del messaggio non costruito (es. inoltro in passthrough):
+	// copre la parte del messaggio non analizzata dal reader (dopo il primo figlio del Body o oltre la soglia del buffer).
+	private boolean envelopeStructureForwardCheck = false;
+	private boolean envelopeStructureBufferChecked = false;
+	public boolean isEnvelopeStructureForwardCheck() {
+		return this.envelopeStructureForwardCheck;
+	}
+	public void setEnvelopeStructureForwardCheck(boolean envelopeStructureForwardCheck) {
+		this.envelopeStructureForwardCheck = envelopeStructureForwardCheck;
+	}
+	private boolean isEnvelopeStructureForwardCheckActive() {
+		if(!this.envelopeStructureForwardCheck ||
+				!SoapEnvelopeStructureValidator.isValidationEnabled(this.getMessageRole())) {
+			return false;
+		}
+		OpenSPCoop2MessageSoapStreamReader reader = this.getSoapReader();
+		// messaggio già verificato interamente dal reader (controllo completo, messaggio entro la soglia del buffer)
+		return reader==null || !reader.isEnvelopeStructureFullyChecked();
+	}
+	private SoapEnvelopeStructureCheckInputStream newEnvelopeStructureCheckInputStream(InputStream is) {
+		String namespace = MessageType.SOAP_11.equals(this.getMessageType()) ? Costanti.SOAP_ENVELOPE_NAMESPACE : Costanti.SOAP12_ENVELOPE_NAMESPACE;
+		SoapEnvelopeStructureStreamChecker checker = new SoapEnvelopeStructureStreamChecker(namespace, this.contentType,
+				SoapEnvelopeStructureValidator.isSoap11OtherNamespaceElementsAfterBodyAllowed());
+		return new SoapEnvelopeStructureCheckInputStream(is, checker, this);
+	}
+	@Override
+	protected InputStream checkStreamOnWrite(InputStream is) throws MessageException {
+		if(is==null || this.envelopeStructureBufferChecked || !isEnvelopeStructureForwardCheckActive()) {
+			return is;
+		}
+		return newEnvelopeStructureCheckInputStream(is);
+	}
+	@Override
+	protected void checkBufferOnWrite(DumpByteArrayOutputStream buffer) throws MessageException {
+		if(buffer==null || this.envelopeStructureBufferChecked || !isEnvelopeStructureForwardCheckActive()) {
+			return;
+		}
+		// contenuto già disponibile: viene verificato per intero prima di iniziare la scrittura
+		byte[] b = new byte[Utilities.DIMENSIONE_BUFFER];
+		try(InputStream is = newEnvelopeStructureCheckInputStream(buffer.getInputStream())){
+			while(is.read(b)!=-1) {
+				// verifica
+			}
+		}catch(SoapEnvelopeStructureIOException e) {
+			throw e.getStructureException();
+		}catch(Exception e) {
+			throw new MessageException(e.getMessage(),e);
+		}
+		this.envelopeStructureBufferChecked = true;
+	}
 	
 	public boolean isSoapHeaderOptimizable() {
 		OpenSPCoop2MessageSoapStreamReader soapReader = this.getSoapReader();

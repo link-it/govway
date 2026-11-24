@@ -31,6 +31,7 @@ import javax.xml.soap.MimeHeader;
 import javax.xml.soap.MimeHeaders;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.codec.binary.Base64InputStream;
 import org.apache.commons.lang.StringEscapeUtils;
@@ -102,6 +103,34 @@ public class WSSUtilities {
         return listAttachments;
 	}
 	
+	/**
+	 * Allegati referenziati dall'header WS-Security del messaggio (riferimenti 'cid:' di firma o cifratura),
+	 * usati in ricezione quando la configurazione non indica le parti attese sugli allegati.
+	 * Un riferimento senza allegato corrispondente viene ignorato: sarà WSS4J a rifiutare il messaggio.
+	 */
+	public static List<Attachment> readReferencedAttachments(List<String> cidReferences,OpenSPCoop2SoapMessage message, SoapMessage msgCtx) throws Exception{
+		List<Attachment> listAttachments = null;
+		if(cidReferences!=null && !cidReferences.isEmpty()){
+			List<String> cidLetti = new ArrayList<>();
+			for (String cid : cidReferences) {
+				if(cid==null || cidLetti.contains(cid)) {
+					continue;
+				}
+				cidLetti.add(cid);
+				MimeHeaders mhs = new MimeHeaders();
+				mhs.addHeader(HttpConstants.CONTENT_ID, cid);
+				Iterator<?> itAttach = message.getAttachments(mhs);
+				if(itAttach!=null && itAttach.hasNext()){
+					if(listAttachments==null) {
+						listAttachments = new ArrayList<>();
+					}
+					listAttachments.add(convertToCxfAttachment((AttachmentPart) itAttach.next(), msgCtx));
+				}
+			}
+		}
+		return listAttachments;
+	}
+
 	public static List<Attachment> readAttachments(AttachmentProcessingPart app,OpenSPCoop2SoapMessage message, SoapMessage msgCtx) throws Exception{
         List<Attachment> listAttachments = null;
         if(app!=null){
@@ -209,6 +238,39 @@ public class WSSUtilities {
 		return at;
 	}
 	
+	/**
+	 * Per gli allegati XML il DataHandler di SAAJ restituisce un javax.xml.transform.Source (es. StreamSource):
+	 * viene ricondotto ai tipi gestiti (InputStream, String o Node), altrimenti l'oggetto è restituito invariato.
+	 */
+	private static Object readXmlSource(Object o) {
+		if(o instanceof StreamSource) {
+			StreamSource ss = (StreamSource) o;
+			if(ss.getInputStream()!=null) {
+				return ss.getInputStream();
+			}
+			if(ss.getReader()!=null) {
+				try (java.io.Reader r = ss.getReader()){
+					StringBuilder sb = new StringBuilder();
+					char[] buf = new char[Utilities.DIMENSIONE_BUFFER_8K];
+					int letti;
+					while((letti = r.read(buf))!=-1) {
+						sb.append(buf, 0, letti);
+					}
+					return sb.toString();
+				}catch(Exception e) {
+					return o;
+				}
+			}
+		}
+		else if(o instanceof DOMSource) {
+			Node n = ((DOMSource) o).getNode();
+			if(n!=null) {
+				return n;
+			}
+		}
+		return o;
+	}
+
 	private static Object postProcessAttachment(Object o, SoapMessage msgCtx) {
 		boolean decodeBase64 = msgCtx.containsKey(SecurityConstants.POST_BASE64_DECODING_ATTACHMENT) ?
 				msgCtx.get(SecurityConstants.POST_BASE64_DECODING_ATTACHMENT).equals(SecurityConstants.POST_BASE64_DECODING_ATTACHMENT_TRUE) :
@@ -275,7 +337,7 @@ public class WSSUtilities {
 						RegularExpressionEngine.isMatch(dh.getContentType(),".*\\+xml")){
 					// potenziale xml
 					
-					Object o = dh.getContent();
+					Object o = readXmlSource(dh.getContent());
 					boolean testXml = false;
 					boolean updated = false;
 					Node n = null;

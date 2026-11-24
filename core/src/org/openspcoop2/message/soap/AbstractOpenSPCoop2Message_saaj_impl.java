@@ -564,8 +564,9 @@ public abstract class AbstractOpenSPCoop2Message_saaj_impl extends AbstractBaseO
 			    		// Il riferimento presenta un # prima dell'identificativo se e' un elemento o cid: se e' un attachment
 			    		if(referenceWithSharp.startsWith("#")){
 				    		String reference = referenceWithSharp.substring(1);
-				    		// Vado a vedere se ' cifrato {Content} o {Element}
+				    		/** Vado a vedere se cifrato {Content} o {Element}*/
 				    		SOAPElement encryptedElement = (SOAPElement) org.apache.wss4j.common.util.XMLUtils.findElementById(this.getSOAPPartForSearchWSSecurity().getEnvelope(), reference, true);
+				    		checkProtectedBodyPosition(this.getSOAPPartForSearchWSSecurity().getEnvelope(), encryptedElement, reference, true);
 				    		if(encryptedElement==null){
 				    			throw new SOAPException("Element with 'Id' attribute value ("+referenceWithSharp+") not found "+Costanti.FIND_ERROR_ENCRYPTED_REFERENCES);
 				    		}
@@ -620,6 +621,7 @@ public abstract class AbstractOpenSPCoop2Message_saaj_impl extends AbstractBaseO
 				    		SOAPEnvelope soapEnvelope = this.getSOAPPartForSearchWSSecurity().getEnvelope();
 				    		
 				    		SOAPElement signedElement = (SOAPElement) org.apache.wss4j.common.util.XMLUtils.findElementById(soapEnvelope, reference, true);
+				    		checkProtectedBodyPosition(soapEnvelope, signedElement, reference, false);
 				    		if(signedElement==null){
 				    			
 				    			// Provo a vedere se l'elemento firmato e' una Assertion
@@ -667,6 +669,59 @@ public abstract class AbstractOpenSPCoop2Message_saaj_impl extends AbstractBaseO
 		}
 	}
 	
+
+	/**
+	 * Un Body SOAP protetto da WS-Security (firmato, o contenitore di un EncryptedData) deve essere il Body del messaggio,
+	 * cioè figlio diretto dell'Envelope radice del documento. Un Body protetto spostato altrove (es. in un header o dentro il payload)
+	 * renderebbe valida la verifica mentre viene elaborato un Body diverso, non protetto (XML Signature Wrapping).
+	 * 
+	 * @param envelope Envelope del messaggio
+	 * @param resolved elemento risolto dal riferimento (null se non risolto, es. Id duplicati): in tal caso vengono verificati tutti gli elementi con l'Id indicato
+	 * @param id identificativo referenziato
+	 * @param encrypted true se l'elemento referenziato è un EncryptedData (si verifica il suo contenitore)
+	 */
+	private void checkProtectedBodyPosition(SOAPEnvelope envelope, org.w3c.dom.Element resolved, String id, boolean encrypted) throws SOAPException {
+		if(envelope==null) {
+			return;
+		}
+		String soapNamespace = MessageType.SOAP_12.equals(this.getMessageType()) ? Costanti.SOAP12_ENVELOPE_NAMESPACE : Costanti.SOAP_ENVELOPE_NAMESPACE;
+		if(resolved!=null) {
+			checkProtectedBodyPosition(resolved, soapNamespace, id, encrypted);
+			return;
+		}
+		org.w3c.dom.NodeList all = envelope.getElementsByTagNameNS("*", "*");
+		for (int i = 0; i < all.getLength(); i++) {
+			org.w3c.dom.Element element = (org.w3c.dom.Element) all.item(i);
+			if(id.equals(element.getAttributeNS(WSS4JConstants.WSU_NS, "Id")) || id.equals(element.getAttributeNS(null, "Id"))) {
+				checkProtectedBodyPosition(element, soapNamespace, id, encrypted);
+			}
+		}
+	}
+	private static void checkProtectedBodyPosition(org.w3c.dom.Element element, String soapNamespace, String id, boolean encrypted) throws SOAPException {
+		org.w3c.dom.Node target = encrypted ? element.getParentNode() : element;
+		if(target==null || target.getNodeType()!=org.w3c.dom.Node.ELEMENT_NODE || !isSoapElement(target, soapNamespace, "Body")) {
+			return;
+		}
+		org.w3c.dom.Node parent = target.getParentNode();
+		boolean figlioEnvelope = parent!=null && parent.getNodeType()==org.w3c.dom.Node.ELEMENT_NODE && isSoapElement(parent, soapNamespace, "Envelope") &&
+				parent.getParentNode()!=null && parent.getParentNode().getNodeType()==org.w3c.dom.Node.DOCUMENT_NODE;
+		if(!figlioEnvelope) {
+			throw new SOAPException(Costanti.WSS_ERROR_PROTECTED_BODY_NOT_SOAP_BODY+" (reference '#"+id+"')");
+		}
+	}
+	private static boolean isSoapElement(org.w3c.dom.Node node, String soapNamespace, String localName) {
+		if(!soapNamespace.equals(node.getNamespaceURI())) {
+			return false;
+		}
+		String ln = node.getLocalName();
+		if(ln==null) {
+			ln = node.getNodeName();
+			if(ln!=null && ln.contains(":")) {
+				ln = ln.substring(ln.indexOf(':')+1);
+			}
+		}
+		return localName.equals(ln);
+	}
 
 	@Override
 	public void cleanWSSDirtyElements(String actor, boolean mustUnderstand, List<Reference> references, boolean detachHeaderWSSecurity, boolean removeAllIdRef) throws MessageException,MessageNotSupportedException {

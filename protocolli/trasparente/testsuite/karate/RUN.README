@@ -652,6 +652,9 @@ Di seguito vengono descritti i test del package 'other':
 - 'ocsp', verifica l'utilizzo del servizio OCSP
    ant run_test -Ddelete=false -Dload=false -Dpackage=other.ocsp
 
+- 'soap', verifica la struttura dell'Envelope SOAP (più Header o Body, ordine errato, Fault fuori posto, elementi non previsti), anche con i controlli opzionali per i messaggi gestiti in streaming senza DOM
+   ant run_test -Ddelete=false -Dload=false -Dpackage=other.soap
+
 - 'wssecurity', verifica funzionalità specifica di WSSecurity
    ant run_test -Ddelete=false -Dload=false -Dpackage=other.wssecurity
 

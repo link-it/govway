@@ -51,6 +51,8 @@ import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.soap.AbstractOpenSPCoop2Message_soap_impl;
+import org.openspcoop2.pdd.config.CostantiProprieta;
 import org.openspcoop2.message.OpenSPCoop2MessageProperties;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
@@ -260,6 +262,10 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 	protected boolean useDiagnosticInputStream = false;
 	
 	protected List<Proprieta> proprietaPorta;
+	
+	// Struttura dell'Envelope SOAP (vedi CostantiProprieta): controllo completo nel reader della risposta e controllo durante l'inoltro
+	protected boolean soapEnvelopeStructureReaderFullCheck = false;
+	protected boolean soapEnvelopeStructureForwardCheck = false;
 	
 	protected ConnettoreBase(){
 		this.creationDate = DateManager.getDate();
@@ -500,6 +506,15 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 			}
 		}
 		
+		
+		// Struttura dell'Envelope SOAP
+		if(this.idModulo!=null) {
+			this.soapEnvelopeStructureReaderFullCheck = CostantiProprieta.isSoapEnvelopeStructureReaderFullCheckEnabled(this.proprietaPorta, 
+					this.openspcoopProperties.isSoapMessageEnvelopeStructureReaderFullCheck());
+			this.soapEnvelopeStructureForwardCheck = CostantiProprieta.isSoapEnvelopeStructureForwardCheckEnabled(this.proprietaPorta, 
+					this.openspcoopProperties.isSoapMessageEnvelopeStructureForwardCheck());
+			applyEnvelopeStructureForwardCheck(this.requestMsg);
+		}
 		
 		// IdTransazione
 		if(this.getPddContext()!=null) {
@@ -1167,6 +1182,15 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     }
 	
 	/**
+	 * Abilita sul messaggio SOAP la verifica della struttura dell'Envelope durante l'inoltro in streaming
+	 */
+	protected void applyEnvelopeStructureForwardCheck(OpenSPCoop2Message msg) {
+		if(this.soapEnvelopeStructureForwardCheck && msg instanceof AbstractOpenSPCoop2Message_soap_impl<?>) {
+			((AbstractOpenSPCoop2Message_soap_impl<?>) msg).setEnvelopeStructureForwardCheck(true);
+		}
+	}
+	
+	/**
 	 * Ritorna la risposta pervenuta in seguita alla consegna effettuata
 	 *
 	 * @return la risposta.
@@ -1175,6 +1199,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 	@Override
 	public OpenSPCoop2Message getResponse(){
 		if(this.responseMsg!=null) {
+			applyEnvelopeStructureForwardCheck(this.responseMsg);
 			if(this.getProtocolFactory()!=null) {
 				this.responseMsg.setProtocolName(this.getProtocolFactory().getProtocol());
 			}

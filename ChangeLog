@@ -1,3 +1,19 @@
+2026-11-24  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Risolto Bug #1867
+	I messaggi SOAP con struttura dell'Envelope non conforme (più Body o Header, ordine errato, Fault non unico figlio del Body,
+	elementi dopo il Body) venivano accettati elaborando il primo elemento trovato; con WS-Security ciò consentiva attacchi
+	XML Signature Wrapping (XSW), con firma valida su un Body diverso da quello elaborato.
+	Gli Envelope non conformi vengono adesso rifiutati in richiesta e in risposta, con controlli opzionali per i messaggi
+	gestiti in streaming ('soap.envelopeStructure.reader.fullCheck.enabled' e 'soap.envelopeStructure.forward.check.enabled'),
+	e in ricezione WS-Security viene verificato che l'elemento protetto sia il Body effettivo del messaggio.
+	Le maschere di ricezione WS-Security Signature e Decrypt consentono inoltre di indicare gli elementi firmati o cifrati attesi.
+	Corretti anche:
+	- la maschera WS-Security Encrypt in spedizione, che cifrava sempre il solo Body ignorando gli elementi selezionati;
+	- la firma e la decifratura degli allegati XML, che fallivano con errore 'Attach-XML ... with type not supported';
+	- la ricezione di messaggi con allegati firmati o cifrati senza elementi attesi configurati, rifiutati con 'Attachment not found'.
+
 2026-11-03  Andrea Poli <apoli@link.it>
 
 	* [InstallerVersioneBinaria]

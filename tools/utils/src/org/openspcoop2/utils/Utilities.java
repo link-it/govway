@@ -157,8 +157,12 @@ public class Utilities {
 	
 
 
-	/** ArrayBuffer utilizzato per la lettura */
-	public static final int DIMENSIONE_BUFFER = 65536;
+	/** ArrayBuffer da 8K, per letture in cui un buffer più ampio aumenterebbe solo l'allocazione per messaggio */
+	public static final int DIMENSIONE_BUFFER_8K = 8 * 1024;
+	/** ArrayBuffer da 64K */
+	public static final int DIMENSIONE_BUFFER_64K = 64 * 1024;
+	/** ArrayBuffer utilizzato per la lettura (alias di {@link #DIMENSIONE_BUFFER_64K}) */
+	public static final int DIMENSIONE_BUFFER = DIMENSIONE_BUFFER_64K;
 	
 	
 	/** String with charset Processing */

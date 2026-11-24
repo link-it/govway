@@ -38,6 +38,8 @@ import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.constants.Costanti;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.exception.MessageException;
+import org.openspcoop2.message.exception.SoapEnvelopeStructureException;
+import org.openspcoop2.message.soap.SoapEnvelopeStructureValidator;
 import org.openspcoop2.message.soap.OpenSPCoop2Message_saaj_11_impl;
 import org.openspcoop2.message.soap.OpenSPCoop2Message_saaj_12_impl;
 import org.openspcoop2.message.soap.SoapUtils;
@@ -130,7 +132,9 @@ public class OpenSPCoop2MessageSoapStreamReader {
 		boolean multipart = false;
 		try {
 			multipart = ContentTypeUtilities.isMultipartType(this.contentType);
-		}catch(Throwable t) {}
+		}catch(Throwable t) {
+			// ignore
+		}
 		String charset = null;
 		try {
 			if(!multipart) {
@@ -219,6 +223,9 @@ public class OpenSPCoop2MessageSoapStreamReader {
 								sbActual.setLength(0);
 								sbActualOffsetStart = i+bLetti;
 								
+								if(envelopeFound && !bodyFound && headerClosure==null) {
+									annotaTestoFiglioEnvelope(sPreClosure);
+								}
 								if(sPreClosure.startsWith("<![CDATA[")) {
 									//System.out.println("FOND CDATA! in sPreClosure");
 									cdataFound=true;
@@ -371,6 +378,7 @@ public class OpenSPCoop2MessageSoapStreamReader {
 							
 							if(headerBuilder==null && isOpenedElement(s,"<Header")) {
 								//System.out.println("INIZIALIZZO HEADER ["+s+"]");
+								annotaHeader(s, "", bodyFound);
 								//headerBuilder = new StringBuilder(s);
 								headerBuilder = new StringBuilder();
 								if(!s.endsWith("/>")) {
@@ -389,6 +397,7 @@ public class OpenSPCoop2MessageSoapStreamReader {
 								String sPrefix = s.substring(0, s.indexOf(":Header"));
 								if(sPrefix.startsWith("<") && !sPrefix.contains(" ") && sPrefix.length()>1) {
 									//System.out.println("INIZIALIZZO HEADER ["+s+"]");
+									annotaHeader(s, sPrefix.substring(1), bodyFound);
 									//headerBuilder = new StringBuilder(s);
 									headerBuilder = new StringBuilder();
 									if(!s.endsWith("/>")) {
@@ -410,6 +419,7 @@ public class OpenSPCoop2MessageSoapStreamReader {
 							}
 							else if(!bodyFound && isOpenedElement(s,"<Body")) {
 								//System.out.println("INIZIALIZZO BODY ["+s+"]");
+								annotaElementoSoapConNamespaceErrato(s, "");
 								this.body = s;
 								bodyFound = true;
 								prefixBody = "";
@@ -424,6 +434,7 @@ public class OpenSPCoop2MessageSoapStreamReader {
 								String sPrefix = s.substring(0, s.indexOf(":Body"));
 								if(sPrefix.startsWith("<") && !sPrefix.contains(" ") && sPrefix.length()>1) {
 									//System.out.println("INIZIALIZZO BODY ["+s+"]");
+									annotaElementoSoapConNamespaceErrato(s, sPrefix.substring(1));
 									this.body = s;
 									bodyFound = true;
 									prefixBody = sPrefix.substring(1)+":";
@@ -440,6 +451,10 @@ public class OpenSPCoop2MessageSoapStreamReader {
 								}
 							}
 							else if(bodyFound) {
+								if(this.body.endsWith("/>")) {
+									// Body vuoto (auto-chiuso): l'elemento che segue è un altro figlio dell'Envelope
+									annotaFiglioEnvelopeDopoBodyVuoto(s);
+								}
 								if(this.fault==null && isOpenedElement(s,"<Fault")) {
 									//System.out.println("INIZIALIZZO FAULT ["+s+"]");
 									this.fault = s;
@@ -475,6 +490,10 @@ public class OpenSPCoop2MessageSoapStreamReader {
 									break;
 								}
 							}
+							else {
+								// figlio dell'Envelope prima del Body diverso dal primo Header (secondo Header o altro elemento)
+								annotaFiglioEnvelopePrimaDelBody(s, headerBuilder!=null);
+							}
 							
 						}
 					}
@@ -487,6 +506,22 @@ public class OpenSPCoop2MessageSoapStreamReader {
 					// buffer dimensione massima raggiunta
 					break;
 				}
+			}
+			
+			// controllo completo della struttura dell'Envelope (proseguendo la lettura fino alla soglia del buffer)
+			if(this.envelopeStructureFullCheck && envelopeFound && this.envelopeStructureError==null) {
+				boolean eof = lettiBuffer==-1;
+				while(!eof && kbLetti<this.bufferThresholdKb) {
+					lettiBuffer = this.is.read(bufferRaw);
+					if(lettiBuffer==-1) {
+						eof = true;
+					}
+					else {
+						bufferReaded.write(bufferRaw, 0, lettiBuffer);
+						kbLetti++;
+					}
+				}
+				verificaStrutturaCompleta(bufferReaded.toByteArray(), eof);
 			}
 			
 			// svuoto
@@ -752,6 +787,203 @@ public class OpenSPCoop2MessageSoapStreamReader {
 		return;
 		
 	}
+	
+	// ---- Struttura dell'Envelope ----
+	// Anomalie rilevate sulla parte del messaggio già letta (fino al primo figlio del Body), senza leggere byte aggiuntivi.
+	// Vengono solo annotate: la lettura prosegue come in assenza di verifica e l'errore viene sollevato,
+	// se la verifica è abilitata per il ruolo del messaggio, alla creazione del messaggio (vedi SoapEnvelopeStructureValidator).
+	
+	private SoapEnvelopeStructureException envelopeStructureError;
+	
+	// Controllo completo: la lettura prosegue oltre il primo figlio del Body fino alla soglia del buffer (bufferThresholdKb)
+	// e i byte letti vengono verificati con SoapEnvelopeStructureStreamChecker. Se il messaggio termina entro la soglia
+	// la verifica è completa; altrimenti sono verificati i soli byte letti.
+	private boolean envelopeStructureFullCheck = false;
+	private boolean envelopeStructureFullyChecked = false;
+	/**
+	 * Abilita il controllo completo della struttura dell'Envelope; va impostato prima di {@link #read()}.
+	 */
+	public void setEnvelopeStructureFullCheck(boolean envelopeStructureFullCheck) {
+		this.envelopeStructureFullCheck = envelopeStructureFullCheck;
+	}
+	public boolean isEnvelopeStructureFullCheck() {
+		return this.envelopeStructureFullCheck;
+	}
+	/**
+	 * @return true se il messaggio, terminato entro la soglia del buffer, è stato verificato interamente senza anomalie
+	 */
+	public boolean isEnvelopeStructureFullyChecked() {
+		return this.envelopeStructureFullyChecked;
+	}
+	private void verificaStrutturaCompleta(byte[] letti, boolean eof) {
+		SoapEnvelopeStructureStreamChecker checker = new SoapEnvelopeStructureStreamChecker(this.namespace, this.contentType,
+				SoapEnvelopeStructureValidator.isSoap11OtherNamespaceElementsAfterBodyAllowed());
+		try {
+			checker.update(letti, 0, letti.length);
+			if(eof) {
+				checker.end();
+				this.envelopeStructureFullyChecked = checker.isCompleted();
+			}
+		}catch(SoapEnvelopeStructureException e) {
+			this.envelopeStructureError = e;
+		}
+	}
+	/**
+	 * @return la prima anomalia della struttura dell'Envelope rilevata durante la lettura, o null
+	 */
+	public SoapEnvelopeStructureException getEnvelopeStructureError() {
+		return this.envelopeStructureError;
+	}
+	private void annotaErroreStruttura(String msg) {
+		if(this.envelopeStructureError==null) {
+			this.envelopeStructureError = new SoapEnvelopeStructureException(msg);
+		}
+	}
+	private void annotaTestoFiglioEnvelope(String sPreClosure) {
+		if(this.envelopeStructureError!=null || sPreClosure.startsWith("<![CDATA[") || sPreClosure.startsWith("<!--")) {
+			return;
+		}
+		int lastTag = sPreClosure.lastIndexOf('>');
+		String text = lastTag>=0 ? sPreClosure.substring(lastTag+1) : sPreClosure;
+		if(!text.trim().isEmpty()) {
+			annotaErroreStruttura(SoapEnvelopeStructureValidator.ERROR_UNEXPECTED_TEXT);
+		}
+	}
+	private void annotaFiglioEnvelopePrimaDelBody(String tag, boolean headerPresente) {
+		if(this.envelopeStructureError!=null) {
+			return;
+		}
+		if(tag.startsWith("</")) {
+			// chiusura dell'Envelope senza aver incontrato il Body; le altre chiusure appartengono a elementi già segnalati
+			if(isClosedElement(tag, "</"+this.prefixEnvelope+"Envelope")) {
+				annotaErroreStruttura(SoapEnvelopeStructureValidator.ERROR_BODY_NOT_FOUND);
+			}
+			return;
+		}
+		String qname = getTagName(tag);
+		if(qname==null || qname.isEmpty()) {
+			return;
+		}
+		int sep = qname.indexOf(':');
+		String prefix = sep>0 ? qname.substring(0, sep) : "";
+		String localName = sep>0 ? qname.substring(sep+1) : qname;
+		if(headerPresente && "Header".equals(localName) && isNamespaceSoap(tag, prefix)) {
+			annotaErroreStruttura(SoapEnvelopeStructureValidator.ERROR_MORE_THAN_ONE_HEADER+" (2)");
+		}
+		else {
+			annotaErroreStruttura(SoapEnvelopeStructureValidator.ERROR_UNEXPECTED_ENVELOPE_CHILD+" '"+qname+"'");
+		}
+	}
+	/**
+	 * Elemento con nome locale 'Header': prima del Body è un figlio dell'Envelope (verifica del namespace); dopo il Body è un figlio
+	 * dell'Envelope solo se il Body è vuoto (auto-chiuso), altrimenti è l'elemento radice del payload e non va verificato.
+	 */
+	private void annotaHeader(String tag, String prefix, boolean bodyFound) {
+		if(!bodyFound) {
+			annotaElementoSoapConNamespaceErrato(tag, prefix);
+		}
+		else if(this.body!=null && this.body.endsWith("/>")) {
+			annotaFiglioEnvelopeDopoBodyVuoto(tag);
+		}
+	}
+	/**
+	 * Elemento che segue un Body vuoto (auto-chiuso): essendo un figlio dell'Envelope dopo il Body, viene verificato con le regole
+	 * di {@link SoapEnvelopeStructureValidator} (la chiusura dell'Envelope, commenti e istruzioni di elaborazione non sono elementi).
+	 */
+	private void annotaFiglioEnvelopeDopoBodyVuoto(String tag) {
+		if(this.envelopeStructureError!=null || tag.startsWith("</") || tag.startsWith("<!") || tag.startsWith("<?")) {
+			return;
+		}
+		String qname = getTagName(tag);
+		if(qname==null || qname.isEmpty()) {
+			return;
+		}
+		int sep = qname.indexOf(':');
+		String prefix = sep>0 ? qname.substring(0, sep) : "";
+		String localName = sep>0 ? qname.substring(sep+1) : qname;
+		String attr = prefix.isEmpty() ? "xmlns" : "xmlns:"+prefix;
+		String ns = readNamespaceDeclaration(tag, attr);
+		if(ns==null && this.envelope!=null) {
+			ns = readNamespaceDeclaration(this.envelope, attr);
+		}
+		if(this.namespace!=null && this.namespace.equals(ns)) {
+			if("Body".equals(localName)) {
+				annotaErroreStruttura(SoapEnvelopeStructureValidator.ERROR_MORE_THAN_ONE_BODY+" (2)");
+			}
+			else if("Header".equals(localName)) {
+				annotaErroreStruttura(SoapEnvelopeStructureValidator.ERROR_HEADER_AFTER_BODY);
+			}
+			else {
+				annotaErroreStruttura(SoapEnvelopeStructureValidator.ERROR_UNEXPECTED_ENVELOPE_CHILD+" '"+qname+"'");
+			}
+		}
+		else if(!(SoapEnvelopeStructureValidator.isSoap11OtherNamespaceElementsAfterBodyAllowed() && Costanti.SOAP_ENVELOPE_NAMESPACE.equals(this.namespace))) {
+			annotaErroreStruttura(SoapEnvelopeStructureValidator.ERROR_ELEMENT_AFTER_BODY+" '"+qname+"'");
+		}
+	}
+	/**
+	 * Header e Body vengono riconosciuti per nome locale: se il prefisso è associato a un namespace diverso da quello dell'Envelope
+	 * (es. un Body SOAP 1.2 in un Envelope SOAP 1.1) non si tratta di un elemento SOAP.
+	 */
+	private void annotaElementoSoapConNamespaceErrato(String tag, String prefix) {
+		if(this.envelopeStructureError!=null || isNamespaceSoap(tag, prefix)) {
+			return;
+		}
+		annotaErroreStruttura(SoapEnvelopeStructureValidator.ERROR_UNEXPECTED_ENVELOPE_CHILD+" '"+getTagName(tag)+"'");
+	}
+	/** @return false solo se il prefisso è dichiarato (nel tag o nell'Envelope) con un namespace diverso da quello dell'Envelope */
+	private boolean isNamespaceSoap(String tag, String prefix) {
+		String attr = prefix.isEmpty() ? "xmlns" : "xmlns:"+prefix;
+		String ns = readNamespaceDeclaration(tag, attr);
+		if(ns==null && this.envelope!=null) {
+			ns = readNamespaceDeclaration(this.envelope, attr);
+		}
+		return ns==null || ns.equals(this.namespace);
+	}
+	private static String readNamespaceDeclaration(String tag, String attr) {
+		int from = 0;
+		while(true) {
+			int idx = tag.indexOf(attr, from);
+			if(idx<0) {
+				return null;
+			}
+			from = idx+attr.length();
+			char before = idx>0 ? tag.charAt(idx-1) : ' ';
+			int i = from;
+			while(i<tag.length() && Character.isWhitespace(tag.charAt(i))) {
+				i++;
+			}
+			if(Character.isWhitespace(before) && i<tag.length() && tag.charAt(i)=='=') {
+				i++;
+				while(i<tag.length() && Character.isWhitespace(tag.charAt(i))) {
+					i++;
+				}
+				if(i<tag.length() && (tag.charAt(i)=='"' || tag.charAt(i)=='\'')) {
+					char quote = tag.charAt(i);
+					int end = tag.indexOf(quote, i+1);
+					if(end>i) {
+						return tag.substring(i+1, end);
+					}
+				}
+				return null;
+			}
+		}
+	}
+	private static String getTagName(String tag) {
+		if(tag==null || !tag.startsWith("<")) {
+			return null;
+		}
+		int i = 1;
+		while(i<tag.length()) {
+			char c = tag.charAt(i);
+			if(c=='>' || c=='/' || Character.isWhitespace(c)) {
+				break;
+			}
+			i++;
+		}
+		return tag.substring(1, i);
+	}
+	
 	private boolean endsWithGreaterThan( String s ) {
 		if ( s == null || s.length() < 4 )
 			return false;

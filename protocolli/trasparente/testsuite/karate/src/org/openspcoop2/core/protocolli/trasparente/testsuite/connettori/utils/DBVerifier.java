@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 import java.util.Optional;
 
 import org.openspcoop2.core.eventi.constants.TipoEvento;
@@ -59,6 +60,50 @@ public class DBVerifier {
 	
 	private static Logger log() {
 		return ConfigLoader.getLoggerCore();
+	}
+	
+	public static void verify(String idTransazione, 
+			long esitoExpected) throws Exception  {
+		verify(idTransazione, esitoExpected, (String) null);
+	}
+	
+	/**
+	 * Verifica l'esito della transazione e la presenza di un diagnostico il cui messaggio corrisponde interamente al pattern indicato
+	 */
+	public static void verifyDiagnosticoPattern(String idTransazione, 
+			long esitoExpected, Pattern msgErrore) throws Exception  {
+		int[] timeouts = {100, 250, 500, 2000, 5000};
+		for (int i = 0; i < timeouts.length; i++) {
+			Utilities.sleep(timeouts[i]);
+			try {
+				DBVerifier._verify(idTransazione, esitoExpected, null);
+				if(msgErrore!=null) {
+					checkMsg(idTransazione, msgErrore);
+				}
+				return;
+			}catch(Throwable t) {
+				if(i == timeouts.length-1) {
+					throw t;
+				}
+			}
+		}
+	}
+	
+	private static void checkMsg(String idTransazione, Pattern pattern) {
+		String query = "select messaggio from msgdiagnostici where id_transazione = ?";
+		log().info(query);
+		List<Map<String, Object>> rows = dbUtils().readRows(query, idTransazione);
+		boolean trovato = false;
+		if(rows!=null) {
+			for (Map<String, Object> row : rows) {
+				Object messaggio = row.get("messaggio");
+				if(messaggio instanceof String && pattern.matcher((String)messaggio).matches()) {
+					trovato = true;
+					break;
+				}
+			}
+		}
+		assertTrue("IdTransazione: "+idTransazione+" diagnostico non trovato: "+pattern, trovato);
 	}
 	
 	public static void verify(String idTransazione, 
@@ -273,6 +318,31 @@ public class DBVerifier {
 		assertTrue(msg+" Atteso almeno 1 dump_messaggi per tipo_messaggio='"+tipoMessaggio+"', trovati: "+count, count>0);
 	}
 
+
+	/**
+	 * @return il contenuto (body) del messaggio registrato del tipo indicato; attende la scrittura su database
+	 */
+	public static byte[] getDumpMessaggioBody(String idTransazione, String tipoMessaggio) throws Exception {
+		int[] attese = {100, 500, 2000, 5000};
+		Throwable errore = null;
+		for (int attesa : attese) {
+			Utilities.sleep(attesa);
+			try {
+				String query = "select body from dump_messaggi where id_transazione = ? and tipo_messaggio = ?";
+				log().info(query);
+				List<Map<String, Object>> rows = dbUtils().readRows(query, idTransazione, tipoMessaggio);
+				String msg = "IdTransazione: "+idTransazione+" tipo_messaggio='"+tipoMessaggio+"'";
+				assertNotNull(msg, rows);
+				assertEquals(msg+" righe in dump_messaggi", 1, rows.size());
+				Object oBody = rows.get(0).get("body");
+				assertNotNull(msg+" body non presente", oBody);
+				return (byte[]) oBody;
+			}catch(Throwable t) {
+				errore = t;
+			}
+		}
+		throw new AssertionError("IdTransazione: "+idTransazione+" dump_messaggi per tipo_messaggio='"+tipoMessaggio+"' non trovato: "+errore.getMessage(), errore);
+	}
 
 	public static void existsDumpMessaggioWithContentType(String idTransazione, String tipoMessaggio, String contentTypeAtteso) throws Exception {
 		Utilities.sleep(100);
