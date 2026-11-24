@@ -1,5 +1,12 @@
 2026-11-24  Andrea Poli <apoli@link.it>
 
+	* [GovWayConsole]
+	Il riepilogo 'Visualizza dettagli della configurazione' di erogazioni e fruizioni impiegava diversi secondi sulle API
+	con molte risorse (es. api-config), perché leggeva anche media type, parametri e risposte di ogni risorsa, non necessari
+	al riepilogo. Vengono adesso lette solo le informazioni utilizzate.
+
+2026-11-24  Andrea Poli <apoli@link.it>
+
 	* [GovWayConsole, GovWayMonitor]
 	L'header Content-Security-Policy delle console non limitava l'elemento '<base>': aggiunta la direttiva "base-uri 'self'".
 	L'analisi dinamica ZAP non riusciva ad autenticarsi sulla console di monitoraggio e non produceva report: il form di login ha

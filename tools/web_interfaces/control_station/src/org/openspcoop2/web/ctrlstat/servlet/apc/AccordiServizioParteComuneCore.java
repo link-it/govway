@@ -478,6 +478,14 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 	}
 	
 	public AccordoServizioParteComune getAccordoServizioFull(long id) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
+		boolean readDatiRegistro = true; // servono nelle varie pagine della console
+		return getAccordoServizioFull(id, readDatiRegistro);
+	}
+	/**
+	 * Con readDatiRegistro=false delle risorse non vengono letti i dettagli di richiesta e risposte (media type, parametri),
+	 * che richiedono diverse query per ogni risorsa; restano lette le proprieta' di protocollo di API, risorse e operazioni.
+	 */
+	public AccordoServizioParteComune getAccordoServizioFull(long id, boolean readDatiRegistro) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "getAccordoServizio";
 		DriverControlStationDB driver = null;
@@ -489,7 +497,6 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
 			boolean readContenutoAllegati = false;
-			boolean readDatiRegistro = true; // servono nelle varie pagine della console
 			return driver.getDriverRegistroServiziDB().getAccordoServizioParteComune(id, readContenutoAllegati, readDatiRegistro);
 
 		} catch (DriverRegistroServiziNotFound de) {
