@@ -67,10 +67,11 @@ String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CS
 				bottone.addEventListener('click', function() {
 					imposta(bottone.getAttribute('aria-expanded') !== 'true');
 				});
-				// chiuso quando la vista e' stretta; aperto (e il pulsante nascosto) quando torna larga.
-				// Lo stato cambia solo quando si attraversa la soglia, cosi' non annulla la scelta dell'utente;
-				// oltre all'evento della media query si controllano 'resize' e la larghezza della pagina, perche' non tutti i browser
-				// (WebKit/Safari) segnalano il cambio di media query dovuto allo zoom.
+				<%-- Chiuso quando la vista è stretta; aperto (e il pulsante nascosto) quando torna larga.
+				     Lo stato cambia solo quando si attraversa la soglia, così non annulla la scelta dell'utente;
+				     oltre all'evento della media query si controllano 'resize' e la larghezza della pagina, perché non tutti i browser
+				     (WebKit/Safari) segnalano il cambio di media query dovuto allo zoom.
+				     Commento JSP e non JavaScript: non viene inviato al browser. --%>
 				var ultimo = !!(stretto && stretto.matches);
 				imposta(!ultimo);
 				if (stretto) {

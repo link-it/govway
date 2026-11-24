@@ -1,5 +1,12 @@
 2026-11-24  Andrea Poli <apoli@link.it>
 
+	* [GovWayConsole, GovWayMonitor]
+	L'header Content-Security-Policy delle console non limitava l'elemento '<base>': aggiunta la direttiva "base-uri 'self'".
+	L'analisi dinamica ZAP non riusciva ad autenticarsi sulla console di monitoraggio e non produceva report: il form di login ha
+	adesso un identificativo stabile e gli errori di esecuzione delle analisi vengono segnalati; ridotta inoltre la dimensione dei report.
+
+2026-11-24  Andrea Poli <apoli@link.it>
+
 	* [GovWayCore, GovWayConsole]
 	Risolto Bug #1867
 	I messaggi SOAP con struttura dell'Envelope non conforme (più Body o Header, ordine errato, Fault non unico figlio del Body,

@@ -31,6 +31,12 @@
 	<property name="stop_zap" value="${scripts_zap}/stopZAProxy.sh" />
 	<property name="wait_start_zap" value="${scripts_zap}/waitStartZAProxy.sh" />
 
+	<!-- Errori di esecuzione delle analisi (login fallito, errore di ZAP, timeout, ...): non riguardano le vulnerabilità trovate,
+	     che non fanno mai fallire il build. Le analisi proseguono comunque; al termine di 'analizeGovWay' gli errori vengono elencati
+	     e, se 'zaproxy.failOnError' vale true, il build fallisce. Con false resta il file, che può essere verificato dopo la pubblicazione dei report. -->
+	<property name="zaproxy.errors.file" location="${zaproxy.report.dir}/zap_errori_esecuzione.txt" />
+	<property name="zaproxy.failOnError" value="false" />
+
 	<!-- <echo message="INPUT zaproxy.report.dir [${zaproxy.report.dir}]"/>
 	<echo message="INPUT zap_dir [${zap_dir}]"/>
 	<echo message="INPUT govway.console.config.scanUrls [${govway.console.config.scanUrls}]"/> -->
@@ -219,6 +225,14 @@
 
 			<catch>
 				<echo message="Execute '${zap_target}' failed"/>
+				<var name="_zapErrorPackage" value=""/>
+				<if>
+					<isset property="configBaseName"/>
+					<then>
+						<var name="_zapErrorPackage" value=" pacchetto '${configBaseName}'"/>
+					</then>
+				</if>
+				<echo file="${zaproxy.errors.file}" append="true" message="[${zap_target}] '${zaproxy.report.title}'${_zapErrorPackage} (${zaproxy.report.dir}): ${error.message}${line.separator}"/>
 			</catch>
 
 			<finally>
@@ -357,7 +371,7 @@
 	</target>
 	<target name="-analizeOpenAPI">	
 		<echo message="OpenAPI Api Key: '${zap-api-key}'"/>
-		<java classname="org.openspcoop2.testsuite.zap.OpenAPI" fork="true">
+		<java classname="org.openspcoop2.testsuite.zap.OpenAPI" fork="true" failonerror="true">
 			<sysproperty key="zaproxy.report.includedRisks.serif" value="${zaproxy.report.includedRisks.serif}" />
 			<sysproperty key="zaproxy.report.includedRisks.api.serif" value="${zaproxy.report.includedRisks.api.serif}" />
 			<arg value="${zaproxy.address}" />
@@ -431,7 +445,7 @@
 	</target>
 	<target name="-analizeSoap">
 		<echo message="SOAP Api Key: '${zap-api-key}'"/>
-		<java classname="org.openspcoop2.testsuite.zap.Soap" fork="true">
+		<java classname="org.openspcoop2.testsuite.zap.Soap" fork="true" failonerror="true">
 			<sysproperty key="zaproxy.report.includedRisks.serif" value="${zaproxy.report.includedRisks.serif}" />
 			<sysproperty key="zaproxy.report.includedRisks.api.serif" value="${zaproxy.report.includedRisks.api.serif}" />
 			<arg value="${zaproxy.address}" />
@@ -656,7 +670,7 @@
 	</target>
 	<target name="-analizeGovWayConsole">
 		<echo message="GovWayConsole Api Key: '${zap-api-key}'"/>
-		<java classname="org.openspcoop2.testsuite.zap.GovWayConsole" fork="true">
+		<java classname="org.openspcoop2.testsuite.zap.GovWayConsole" fork="true" failonerror="true">
 			<sysproperty key="zaproxy.report.includedRisks.serif" value="${zaproxy.report.includedRisks.serif}" />
 			<sysproperty key="zaproxy.report.includedRisks.console.serif" value="${zaproxy.report.includedRisks.console.serif}" />
 			<arg value="${zaproxy.address}" />
@@ -774,7 +788,7 @@
 	<target name="-analizeGovWayMonitor">
 
 		<echo message="GovWayMonitor Api Key: '${zap-api-key}'"/>
-		<java classname="org.openspcoop2.testsuite.zap.GovWayMonitor" fork="true">
+		<java classname="org.openspcoop2.testsuite.zap.GovWayMonitor" fork="true" failonerror="true">
 			<sysproperty key="zaproxy.report.includedRisks.serif" value="${zaproxy.report.includedRisks.serif}" />
 			<sysproperty key="zaproxy.report.includedRisks.console.serif" value="${zaproxy.report.includedRisks.console.serif}" />
 			<arg value="${zaproxy.address}" />
@@ -1165,5 +1179,27 @@
 	</target>
 
 	<!-- Effettuata tutti i test -->
-	<target name="analizeGovWay" depends="analizeGovWayAPI,analizeGovWayConsoles"/>
+	<target name="analizeGovWay" depends="-zapErrorsInit,analizeGovWayAPI,analizeGovWayConsoles,-zapErrorsCheck"/>
+
+	<target name="-zapErrorsInit">
+		<delete file="${zaproxy.errors.file}" quiet="true"/>
+	</target>
+	<target name="-zapErrorsCheck">
+		<if>
+			<available file="${zaproxy.errors.file}"/>
+			<then>
+				<loadfile property="_zapErrors" srcFile="${zaproxy.errors.file}"/>
+				<echo message="ATTENZIONE: analisi non completate (dettagli in '${zaproxy.errors.file}'):${line.separator}${_zapErrors}"/>
+				<if>
+					<equals arg1="${zaproxy.failOnError}" arg2="true"/>
+					<then>
+						<fail message="Analisi ZAP non completate per errori di esecuzione (vedi '${zaproxy.errors.file}')"/>
+					</then>
+				</if>
+			</then>
+			<else>
+				<echo message="Tutte le analisi ZAP sono state completate senza errori di esecuzione"/>
+			</else>
+		</if>
+	</target>
 </project>

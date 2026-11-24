@@ -134,7 +134,8 @@
 					<link:fieldset legend="#{msg['login.fieldset.title']}" rendered="#{true}" collapsible="false" closed="false">
 					
 						<c:if test="#{loginBean.loginApplication}">
-						<h:form prependId="false">
+						<ui:remove>id esplicito: usato dagli strumenti di analisi (es. ZAP) per inviare il login, non deve dipendere dagli id generati da JSF</ui:remove>
+						<h:form id="loginForm" prependId="false">
 							<input type="hidden" id="_csrfLogin" name="_csrf" value="#{loginBean.csrf}"/>
 							<a4j:outputPanel id="loginApplicationExPanel" layout="block" rendered="#{true}">
 								<c:if test="#{loginBean.multiLoginEnabled}">

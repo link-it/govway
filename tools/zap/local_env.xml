@@ -99,7 +99,7 @@
 	<property name="zaproxy.report.traditional-json" value="traditional-json none none" />
 	<property name="zaproxy.report.traditional-xml" value="traditional-xml none none" />
 	<property name="zaproxy.report.traditional-pdf" value="traditional-pdf none alertcount|instancecount|alertdetails" />
-	<property name="zaproxy.report.traditional-md" value="traditional-pdf none alertcount|instancecount|alertdetails" />
+	<property name="zaproxy.report.traditional-md" value="traditional-md none alertcount|instancecount|alertdetails" />
 	<property name="zaproxy.report.traditional-html" value="traditional-html none alertcount|instancecount|alertdetails" />
 	<property name="zaproxy.report.sarif-json" value="sarif-json none none" />
 	<property name="zaproxy.report.modern" value="modern marketing chart|alertcount|instancecount|passingrules|alertdetails|statistics|params" /> <!-- themas: console, construction, corporate, marketing, mountain, nature, ocean, plutonium, skyline, technology' -->

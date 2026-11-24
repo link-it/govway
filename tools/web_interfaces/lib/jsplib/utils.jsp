@@ -311,12 +311,13 @@ function gwValidateForm(form) {
 	for (var k = 0; k < form.elements.length; k++) {
 		var el = form.elements[k];
 		if (!el.value) continue;
-		/* Si applica lo stesso criterio della validazione live: sono esclusi i parametri tecnici
-		   (CSRF, identificativi, tab key, hidden info dialog ...) e i campi che l'utente non
-		   digita (hidden, select, checkbox, radio, file). Validare un campo non digitabile
-		   bloccherebbe il salvataggio su un valore che l'utente non ha modo di correggere:
-		   e' il caso dei DataElement resi con setHiddenType(TEXT_AREA), il cui valore viene
-		   riproposto tale e quale dal server. Il controllo sul contenuto resta lato server. */
+		<%-- Si applica lo stesso criterio della validazione live: sono esclusi i parametri tecnici
+		     (CSRF, identificativi, tab key, hidden info dialog ...) e i campi che l'utente non
+		     digita (hidden, select, checkbox, radio, file). Validare un campo non digitabile
+		     bloccherebbe il salvataggio su un valore che l'utente non ha modo di correggere:
+		     è il caso dei DataElement resi con setHiddenType(TEXT_AREA), il cui valore viene
+		     riproposto tale e quale dal server. Il controllo sul contenuto resta lato server.
+		     Commento JSP e non JavaScript: non viene inviato al browser. --%>
 		if (!gwIsValidatableElement(el)) continue;
 		// disabled non viene inviato al server; readonly non e' correggibile dall'utente
 		if (el.disabled || el.readOnly) continue;

@@ -7,3 +7,8 @@ ModernWebApplication.enabled=true
 ModernWebApplication.description=Come indicato in 'https://www.zaproxy.org/docs/alerts/10109/': This is an informational alert and so no changes are required.
 ModernWebApplication.id=10109
 ModernWebApplication.urlRegExp=.*/govwayMonitor.*
+
+UserControllableHtmlAttribute.enabled=true
+UserControllableHtmlAttribute.description=Come indicato in 'https://www.zaproxy.org/docs/alerts/10031/' si tratta di un alert informativo che segnala i valori dei parametri riproposti in un attributo HTML, da verificare manualmente: sono valori enumerati (es. soap, abilitato, nomi dei filtri) o il testo di ricerca riproposto nel campo. Le iniezioni XSS effettive sono verificate dalle regole della scansione active (40012, 40014, 40026, ...).
+UserControllableHtmlAttribute.id=10031
+UserControllableHtmlAttribute.urlRegExp=.*/govwayMonitor.*
