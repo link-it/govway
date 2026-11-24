@@ -700,7 +700,7 @@ for (int i = 0; i < dati.size(); i++) {
 							boolean visualizzaConferma = deConfirm != null;
 	        				%>
 	            			<div class="prop prop-link">
-	            				<%= "&nbsp;".equals(deLabelLink) ? "<span class=\"" + labelStyleClass + " gw-etichetta-vuota\" id=\"" + deLabelId + "\" aria-hidden=\"true\">&nbsp;</span>" : "<label class=\"" + labelStyleClass + "\" id=\"" + deLabelId + "\">" + deLabelLink + "</label>" %><%-- il link non e' un campo etichettabile: niente for --%>
+	            				<%= "&nbsp;".equals(deLabelLink) ? "<span class=\"" + labelStyleClass + " gw-etichetta-vuota\" id=\"" + deLabelId + "\" aria-hidden=\"true\">&nbsp;</span>" : "<span class=\"" + labelStyleClass + " gw-etichetta\" id=\"" + deLabelId + "\">" + deLabelLink + "</span>" %><%-- il link non e' un campo etichettabile: non e' una label, stesso aspetto (gw-etichetta) --%>
 	            				<div class="<%=classDivNoEdit %>"> 
 	            					<% if (!visualizzaConferma) { %>
 		            					<span class="<%=classSpanNoEdit %>"><a id="<%=id %>" href="<%= de.getUrl() %>" <%=deTarget %> ><%= de.getValue() %></a></span>

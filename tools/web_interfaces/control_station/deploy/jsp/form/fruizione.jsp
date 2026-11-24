@@ -196,7 +196,7 @@
 				            				%>
 				                			<tr class="">
 												<td class="tdTextRiepilogo labelRiepilogo">
-													<label class="<%= labelStyleClass %>"><%=deLabel %></label>
+													<span class="<%= labelStyleClass %>"><%=deLabel %></span>
 												</td>
 												<td class="tdTextRiepilogo <%= stile %>">
 													<div class="<%=classDivNoEdit %>"> 
@@ -272,7 +272,7 @@
 													%>
 					                					<tr class="">
 															<td class="tdTextRiepilogo labelRiepilogo">
-																<label class="<%= labelStyleClass %>"><%=deLabel %></label>
+																<span class="<%= labelStyleClass %>"><%=deLabel %></span>
 															</td>
 															<td class="tdTextRiepilogo <%= stile %>">
 															<div class="<%=classDivNoEdit %>"> 
@@ -336,7 +336,7 @@
 					                					%>
 					                					<tr class="">
 															<td class="tdTextRiepilogo labelRiepilogo">
-																<label class="<%= labelStyleClass %>"><%=deLabel %></label>
+																<span class="<%= labelStyleClass %>"><%=deLabel %></span>
 															</td>
 															<td class="tdTextRiepilogo <%= stile %>">
 																<div class="<%=classDivNoEdit %>"> 	
@@ -423,7 +423,7 @@
 															%>
 						                					<tr class="">
 																<td class="tdTextRiepilogo labelRiepilogo">
-																	<label class="<%= labelStyleClass %>"><%=deLabel %></label>
+																	<span class="<%= labelStyleClass %>"><%=deLabel %></span>
 																</td>
 																<td class="tdTextRiepilogo <%= stile %>">
 																	<div class="<%=classDivNoEdit %>"> 	
@@ -499,7 +499,7 @@
 							                					%>
 							                					<tr class="">
 																	<td class="tdTextRiepilogo labelRiepilogo">
-																		<label class="<%= labelStyleClass %>"><%=deLabel %></label>
+																		<span class="<%= labelStyleClass %>"><%=deLabel %></span>
 																	</td>
 																	<td class="tdTextRiepilogo <%= stile %>">
 																		<div class="<%=classDivNoEdit %>"> 	
@@ -765,7 +765,7 @@
 								            				String textValNoEdit = de.getValue() != null && !de.getValue().equals("") ? de.getValue() : (pd.getMode().equals("view-noeditbutton") ? "&nbsp;" : "not defined");
 								            				%>
 								                			<div class="propBox">
-								                				<label class="<%= labelStyleClass %>"><%=deLabel %></label>
+								                				<span class="<%= labelStyleClass %> gw-etichetta"><%=deLabel %></span>
 								                				<div class="<%=classDivNoEdit %>"> 
 								                					<input type="hidden" name="<%= deHiddenId %>" value="" id="<%= deHiddenId%>"/>	
 									                				<span class="<%=classSpanNoEdit %>" <%= deTip %> ><%= textValNoEdit %></span>

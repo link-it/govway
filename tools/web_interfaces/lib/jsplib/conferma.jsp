@@ -244,7 +244,7 @@ if (!message.equals("") && messageType.equals(MessageType.DIALOG.toString())) {
            				String textValNoEdit = de.getValue() != null && !de.getValue().equals("") ? de.getValue() : (pd.getMode().equals("view-noeditbutton") ? "&nbsp;" : "not defined");
            				%>
                			<div class="propDialog">
-               				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>"><%=deLabel %></label>
+               				<span class="<%= labelStyleClass %> gw-etichetta" id="<%=deLabelId %>"><%=deLabel %></span>
                				<div class="<%=classDivNoEdit %>"> 
                					<input type="hidden" name="<%= deHiddenId %>" value="" id="<%= deHiddenId%>"/>
                 				<span class="<%=classSpanNoEdit %>"><%= textValNoEdit %></span>

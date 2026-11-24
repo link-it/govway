@@ -1,5 +1,11 @@
 2026-11-24  Andrea Poli <apoli@link.it>
 
+	* [GovWayConsole, GovWayMonitor]
+	Corrette le segnalazioni di SonarQube introdotte dall'adeguamento alle WCAG: le etichette dei valori in sola lettura
+	e dei link non sono più elementi <label> privi di un campo associato (l'aspetto non cambia).
+
+2026-11-24  Andrea Poli <apoli@link.it>
+
 	* [GovWayConsole]
 	Il riepilogo 'Visualizza dettagli della configurazione' di erogazioni e fruizioni impiegava diversi secondi sulle API
 	con molte risorse (es. api-config), perché leggeva anche media type, parametri e risposte di ogni risorsa, non necessari

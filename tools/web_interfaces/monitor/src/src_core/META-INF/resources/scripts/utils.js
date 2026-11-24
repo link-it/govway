@@ -175,7 +175,7 @@ function gwApplicaTitoloPagina(){
      e' lui;
    - altrimenti null. */
 function gwTestoDelTitolo(intestazione, classe){
-	const conTesto = (n) => (n.textContent || '').replace(/\u00a0/g, ' ').trim().length > 0;
+	const conTesto = (n) => (n.textContent || '').replaceAll(/\u00a0/g, ' ').trim().length > 0;
 	const testi = Array.prototype.filter.call(intestazione.childNodes, (n) => n.nodeType === 3 && conTesto(n));
 	if(testi.length > 0){
 		const titolo = document.createElement('span');
@@ -506,7 +506,7 @@ function gwTestoSuggerimento(elemento){
 			nonTesto[j].remove();
 		}
 
-		const testo = (copia.textContent || '').replace(/\s+/g, ' ').trim();
+		const testo = (copia.textContent || '').replaceAll(/\s+/g, ' ').trim();
 		return testo || null;
 	}
 
@@ -716,7 +716,7 @@ function gwTitoliSezioniMenu(){
 		if(!cella || cella.getAttribute('role') === 'heading'){
 			continue;
 		}
-		if(!(cella.textContent || '').replace(/\u00a0/g, ' ').trim()){
+		if(!(cella.textContent || '').replaceAll(/\u00a0/g, ' ').trim()){
 			continue;
 		}
 		tabella.setAttribute('role', 'presentation');
@@ -743,7 +743,7 @@ function gwTitoliSottosezioni(){
 		if(blocco.querySelector('a, button, input, select, textarea, [role], [tabindex]')){
 			continue;
 		}
-		if(!(testo.textContent || '').replace(/\u00a0/g, ' ').trim()){
+		if(!(testo.textContent || '').replaceAll(/\u00a0/g, ' ').trim()){
 			continue;
 		}
 		testo.setAttribute('role', 'heading');
@@ -796,7 +796,7 @@ function gwGruppiDiOpzioni(){
 				}
 			}
 		}
-		if(!etichetta || !(etichetta.textContent || '').replace(/ /g, ' ').trim()){
+		if(!etichetta || !(etichetta.textContent || '').replaceAll(/\u00a0/g, ' ').trim()){
 			continue;
 		}
 

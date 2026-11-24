@@ -498,8 +498,8 @@ $(document).ready(function () {
 	                                            					%>
 	                    			                    			<div class="prop">
 	                    			                    				<input type="hidden" name="<%= filtroName.getName() %>" value="<%= filtroName.getValue() %>"/>
-	                    			                    				<%-- valore di sola lettura in un div, che non e' un controllo etichettabile: niente 'for' --%>
-	                    			                    				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>"><%=deLabel %></label>
+	                    			                    				<%-- valore di sola lettura in un div, che non e' un controllo etichettabile: non e' una label, stesso aspetto (gw-etichetta) --%>
+	                    			                    				<span class="<%= labelStyleClass %> gw-etichetta" id="<%=deLabelId %>"><%=deLabel %></span>
 	                    			                    				<div id="<%= filterId  %>" class="<%=classDivNoEdit %>"> 
 		                													<span class="<%=classSpanNoEdit %>" id="<%=textId %>"><%= filtro.getValue() %></span>
 		                												</div>

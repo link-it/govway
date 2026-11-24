@@ -325,7 +325,7 @@ function Esporta(tipo) {
 										            				%>
 										                			<tr class="">
 																		<td class="tdTextRiepilogo labelRiepilogo">
-																			<label class="<%= labelStyleClass %>"><%=deLabel %></label>
+																			<span class="<%= labelStyleClass %>"><%=deLabel %></span>
 																		</td>
 																		<td class="tdTextRiepilogo <%= stile %>">
 																			<div class="<%=classDivNoEdit %>"> 
@@ -409,7 +409,7 @@ function Esporta(tipo) {
 																			%>
 											                					<tr class="">
 																					<td class="tdTextRiepilogo labelRiepilogo">
-																						<label class="<%= labelStyleClass %>"><%=deLabel %></label>
+																						<span class="<%= labelStyleClass %>"><%=deLabel %></span>
 																					</td>
 																					<td class="tdTextRiepilogo <%= stile %>">
 																					<div class="<%=classDivNoEdit %>"> 
@@ -480,7 +480,7 @@ function Esporta(tipo) {
 											                					%>
 											                					<tr class="">
 																					<td class="tdTextRiepilogo labelRiepilogo">
-																						<label class="<%= labelStyleClass %>"><%=deLabel %></label>
+																						<span class="<%= labelStyleClass %>"><%=deLabel %></span>
 																					</td>
 																					<td class="tdTextRiepilogo <%= stile %>">
 																						<div class="<%=classDivNoEdit %>"> 
@@ -567,7 +567,7 @@ function Esporta(tipo) {
 																					%>
 												                					<tr class="">
 																						<td class="tdTextRiepilogo labelRiepilogo">
-																							<label class="<%= labelStyleClass %>"><%=deLabel %></label>
+																							<span class="<%= labelStyleClass %>"><%=deLabel %></span>
 																						</td>
 																						<td class="tdTextRiepilogo <%= stile %>">
 																							<div class="<%=classDivNoEdit %>"> 		
@@ -640,7 +640,7 @@ function Esporta(tipo) {
 													                					%>
 													                					<tr class="">
 																							<td class="tdTextRiepilogo labelRiepilogo">
-																								<label class="<%= labelStyleClass %>"><%=deLabel %></label>
+																								<span class="<%= labelStyleClass %>"><%=deLabel %></span>
 																							</td>
 																							<td class="tdTextRiepilogo <%= stile %>">
 																								<div class="<%=classDivNoEdit %>"> 	

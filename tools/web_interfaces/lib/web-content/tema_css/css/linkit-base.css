@@ -1523,8 +1523,10 @@ div.prop-link{
 	padding-top: 8px;
 }
 
-/* span.gw-etichetta-vuota: etichetta vuota che tiene solo il posto (edit-page.jsp), stesso aspetto del label */
-div.prop label, span.spanLink, div.prop span.gw-etichetta-vuota{
+/* span.gw-etichetta-vuota: etichetta vuota che tiene solo il posto (edit-page.jsp), stesso aspetto del label;
+   span.gw-etichetta: etichetta di un valore in sola lettura o di un link, che non sono controlli etichettabili
+   (una <label> senza controllo associato non e' valida), stesso aspetto del label */
+div.prop label, span.spanLink, div.prop span.gw-etichetta-vuota, div.prop span.gw-etichetta{
 	margin-right: 16px;	
 	padding-right: 16px;
 	width: 200px;
@@ -1537,7 +1539,7 @@ div.prop label, span.spanLink, div.prop span.gw-etichetta-vuota{
 	font-size: 16px;
 }
 
-div.prop label em {
+div.prop label em, div.prop span.gw-etichetta em {
 	position: absolute;
 	right: 0;
 	font-size: 120%;
@@ -1545,11 +1547,11 @@ div.prop label em {
 	color: ${p.legend.color};
 }
 
-div.prop label.labelMedium, div.prop span.gw-etichetta-vuota.labelMedium{
+div.prop label.labelMedium, div.prop span.gw-etichetta-vuota.labelMedium, div.prop span.gw-etichetta.labelMedium{
 	width: 230px;
 }
 
-div.prop label.labelLong, div.prop span.gw-etichetta-vuota.labelLong{
+div.prop label.labelLong, div.prop span.gw-etichetta-vuota.labelLong, div.prop span.gw-etichetta.labelLong{
 	width: 270px;
 }
 	
@@ -1848,7 +1850,7 @@ div.propDialog-link{
 	padding-top: 8px;
 }
 
-div.propDialog label{
+div.propDialog label, div.propDialog span.gw-etichetta{
 /* 	margin-right: 16px;	 */
 	padding-right: 16px;
 	width: 130px;
@@ -1861,11 +1863,11 @@ div.propDialog label{
 	font-size: 16px;
 }
 
-div.propDialog label.labelMedium{
+div.propDialog label.labelMedium, div.propDialog span.gw-etichetta.labelMedium{
 	width: 200px;
 }
 
-div.propDialog label.labelLong{
+div.propDialog label.labelLong, div.propDialog span.gw-etichetta.labelLong{
 	width: 240px;
 }
 
@@ -2178,7 +2180,7 @@ div.txtA_div_propDialog_dec {
 	padding: 2px 0px;
 }
 
-div.propBox label, span.spanLink{
+div.propBox label, div.propBox span.gw-etichetta, span.spanLink{
 	margin-right: 10px;	
 /* 	padding-right: 10px; */
 	width: 88px;
@@ -3293,7 +3295,7 @@ div.version-notice {
 	fieldset {
 		min-width: 0;
 	}
-	div.prop label, span.spanLink, div.prop label.labelMedium, div.prop label.labelLong, div.prop span.gw-etichetta-vuota {
+	div.prop label, span.spanLink, div.prop label.labelMedium, div.prop label.labelLong, div.prop span.gw-etichetta-vuota, div.prop span.gw-etichetta {
 		float: none;
 		width: auto !important;
 		margin-right: 0;
