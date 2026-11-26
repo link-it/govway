@@ -149,11 +149,13 @@ public class CostantiProprieta {
 	public static final String MESSAGE_SECURITY_WSS4J_RECEIVER_ENCRYPT_ID = "messageSecurity.wss4j.receiver.encrypt";
 	public static final String MESSAGE_SECURITY_WSS4J_RECEIVER_SAML_ID = "messageSecurity.wss4j.receiver.saml";
 	public static final String MESSAGE_SECURITY_WSS4J_RECEIVER_SIGNATURE_ID = "messageSecurity.wss4j.receiver.signature";
+	public static final String MESSAGE_SECURITY_WSS4J_RECEIVER_SIGNATURE_ENCRYPT_ID = "messageSecurity.wss4j.receiver.signatureEncrypt";
 	public static final String MESSAGE_SECURITY_WSS4J_RECEIVER_TIMESTAMP_ID = "messageSecurity.wss4j.receiver.timestamp";
 	public static final String MESSAGE_SECURITY_WSS4J_RECEIVER_USERNAME_TOKEN_ID = "messageSecurity.wss4j.receiver.usernameToken";
 	public static final String MESSAGE_SECURITY_WSS4J_SENDER_ENCRYPT_ID = "messageSecurity.wss4j.sender.encrypt";
 	public static final String MESSAGE_SECURITY_WSS4J_SENDER_SAML_ID = "messageSecurity.wss4j.sender.saml";
 	public static final String MESSAGE_SECURITY_WSS4J_SENDER_SIGNATURE_ID = "messageSecurity.wss4j.sender.signature";
+	public static final String MESSAGE_SECURITY_WSS4J_SENDER_SIGNATURE_ENCRYPT_ID = "messageSecurity.wss4j.sender.signatureEncrypt";
 	public static final String MESSAGE_SECURITY_WSS4J_SENDER_TIMESTAMP_ID = "messageSecurity.wss4j.sender.timestamp";
 	public static final String MESSAGE_SECURITY_WSS4J_SENDER_USERNAME_TOKEN_ID = "messageSecurity.wss4j.sender.usernameToken";
 	
@@ -175,11 +177,13 @@ public class CostantiProprieta {
 		messageSecurityIds.add(MESSAGE_SECURITY_WSS4J_RECEIVER_ENCRYPT_ID);
 		messageSecurityIds.add(MESSAGE_SECURITY_WSS4J_RECEIVER_SAML_ID);
 		messageSecurityIds.add(MESSAGE_SECURITY_WSS4J_RECEIVER_SIGNATURE_ID);
+		messageSecurityIds.add(MESSAGE_SECURITY_WSS4J_RECEIVER_SIGNATURE_ENCRYPT_ID);
 		messageSecurityIds.add(MESSAGE_SECURITY_WSS4J_RECEIVER_TIMESTAMP_ID);
 		messageSecurityIds.add(MESSAGE_SECURITY_WSS4J_RECEIVER_USERNAME_TOKEN_ID);
 		messageSecurityIds.add(MESSAGE_SECURITY_WSS4J_SENDER_ENCRYPT_ID);
 		messageSecurityIds.add(MESSAGE_SECURITY_WSS4J_SENDER_SAML_ID);
 		messageSecurityIds.add(MESSAGE_SECURITY_WSS4J_SENDER_SIGNATURE_ID);
+		messageSecurityIds.add(MESSAGE_SECURITY_WSS4J_SENDER_SIGNATURE_ENCRYPT_ID);
 		messageSecurityIds.add(MESSAGE_SECURITY_WSS4J_SENDER_TIMESTAMP_ID);
 		messageSecurityIds.add(MESSAGE_SECURITY_WSS4J_SENDER_USERNAME_TOKEN_ID);
 	}
@@ -262,11 +266,13 @@ public class CostantiProprieta {
 		else if(MESSAGE_SECURITY_WSS4J_RECEIVER_ENCRYPT_ID.equals(id) ||
 				MESSAGE_SECURITY_WSS4J_RECEIVER_SAML_ID.equals(id) ||
 				MESSAGE_SECURITY_WSS4J_RECEIVER_SIGNATURE_ID.equals(id) ||
+				MESSAGE_SECURITY_WSS4J_RECEIVER_SIGNATURE_ENCRYPT_ID.equals(id) ||
 				MESSAGE_SECURITY_WSS4J_RECEIVER_TIMESTAMP_ID.equals(id) ||
 				MESSAGE_SECURITY_WSS4J_RECEIVER_USERNAME_TOKEN_ID.equals(id) ||
 				MESSAGE_SECURITY_WSS4J_SENDER_ENCRYPT_ID.equals(id) ||
 				MESSAGE_SECURITY_WSS4J_SENDER_SAML_ID.equals(id) ||
 				MESSAGE_SECURITY_WSS4J_SENDER_SIGNATURE_ID.equals(id) ||
+				MESSAGE_SECURITY_WSS4J_SENDER_SIGNATURE_ENCRYPT_ID.equals(id) ||
 				MESSAGE_SECURITY_WSS4J_SENDER_TIMESTAMP_ID.equals(id) ||
 				MESSAGE_SECURITY_WSS4J_SENDER_USERNAME_TOKEN_ID.equals(id)){
 			l = messageSecurityWss4jProperties;

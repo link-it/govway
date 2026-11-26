@@ -132,7 +132,6 @@
 							  	String deNote = de.getNote();
 							  	String classInput= de.getStyleClass();
 							  	String labelStyleClass= de.getLabelStyleClass();
-							  	String deHiddenId = "__i_hidden_lbl_de_"+i;
 							  	String deCopyId = "__i_hidden_copy_de_"+i;
 							  	
 							  	String stile=null;
@@ -200,7 +199,6 @@
 												</td>
 												<td class="tdTextRiepilogo <%= stile %>">
 													<div class="<%=classDivNoEdit %>"> 
-														<input type="hidden" name="<%= deHiddenId %>" value="" id="<%= deHiddenId%>"/>
 						                				<span class="<%=classSpanNoEdit %>" <%= tooltipTextValNoEdit %>  <%= dataCopy %> id="<%= deTextId%>"><%= textValNoEdit %></span>
 						                				<input type="hidden" name="<%= deName %>" value="<%= StringEscapeUtils.escapeHtml4(de.getValue()) %>"/>
 						                				
@@ -276,7 +274,6 @@
 															</td>
 															<td class="tdTextRiepilogo <%= stile %>">
 															<div class="<%=classDivNoEdit %>"> 
-															<input type="hidden" name="<%= deHiddenId %>" value="" id="<%= deHiddenId%>"/>
 																<%  
 																	/* scelta dell'icona di stato condivisa con il monitor (IconaStato): forma e colore per ogni significato */
 																	IconaStato iconaStato = IconaStato.fromValoreCheckbox(statusType);
@@ -340,7 +337,6 @@
 															</td>
 															<td class="tdTextRiepilogo <%= stile %>">
 																<div class="<%=classDivNoEdit %>"> 	
-																<input type="hidden" name="<%= deHiddenId %>" value="" id="<%= deHiddenId%>"/>																
 																	<%
 			                          									String [] values = de.getStatusValues();
 			                                        					if (values != null) {
@@ -427,7 +423,6 @@
 																</td>
 																<td class="tdTextRiepilogo <%= stile %>">
 																	<div class="<%=classDivNoEdit %>"> 	
-																		<input type="hidden" name="<%= deHiddenId %>" value="" id="<%= deHiddenId%>"/>																																																		
 																		<span class="<%=classSpanNoEdit %>" <%= tooltipTextValNoEdit %> ><%= textValNoEdit %>&nbsp;&nbsp;&nbsp;&nbsp;</span>
 						                								<input type="hidden" name="<%= deName %>" value="<%= StringEscapeUtils.escapeHtml4(de.getValue()) %>"/>																
 																		<%
@@ -503,7 +498,6 @@
 																	</td>
 																	<td class="tdTextRiepilogo <%= stile %>">
 																		<div class="<%=classDivNoEdit %>"> 	
-																		<input type="hidden" name="<%= deHiddenId %>" value="" id="<%= deHiddenId%>"/>																
 																			<%
 					                          									String [] values = de.getStatusValues();
 					                                        					if (values != null) {
@@ -706,7 +700,6 @@
 										  	String labelStyleClass= de.getLabelStyleClass();
 										  	String deToolTipVal = ServletUtils.escapeHTMLAttribute(de.getToolTip());
 										  	String deTip =  deToolTipVal != null && !deToolTipVal.equals("") ? " title=\"" + deToolTipVal + "\"" : "";
-										  	String deHiddenId = "__i_hidden_lbl_de_"+z+"_"+i;
 										  	
 										  	if (type.equals("hidden")) {
 										  		if(deName.equals(ErogazioniCostanti.ASPS_EROGAZIONI_PARAMETRO_NUMERO_CONFIGURAZIONI_ATTIVE))
@@ -767,7 +760,6 @@
 								                			<div class="propBox">
 								                				<span class="<%= labelStyleClass %> gw-etichetta"><%=deLabel %></span>
 								                				<div class="<%=classDivNoEdit %>"> 
-								                					<input type="hidden" name="<%= deHiddenId %>" value="" id="<%= deHiddenId%>"/>	
 									                				<span class="<%=classSpanNoEdit %>" <%= deTip %> ><%= textValNoEdit %></span>
 									                				<input type="hidden" name="<%= deName %>" value="<%= StringEscapeUtils.escapeHtml4(de.getValue()) %>"/>
 									                			</div>

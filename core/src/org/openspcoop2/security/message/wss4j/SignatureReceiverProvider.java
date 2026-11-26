@@ -27,6 +27,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.mvc.properties.provider.InputValidationUtils;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
+import org.openspcoop2.core.mvc.properties.utils.MultiPropertiesUtilities;
+import org.openspcoop2.security.message.constants.SecurityConstants;
 
 /**     
  * SignatureReceiverProvider
@@ -61,6 +63,31 @@ public class SignatureReceiverProvider extends TrustStoreSecurityProvider {
 			}
 		}	
 		
+		validateAlgoritmiAccettati(mapProperties);
+	}
+	
+	/**
+	 * Verifica gli elenchi degli algoritmi accettati in ricezione ('Algoritmi accettati' = 'Elenco'):
+	 * URI separati da ',' senza elementi vuoti.
+	 */
+	static void validateAlgoritmiAccettati(Map<String, Properties> mapProperties) throws ProviderValidationException {
+		Properties defaultP = MultiPropertiesUtilities.getDefaultProperties(mapProperties);
+		if(defaultP==null) {
+			return;
+		}
+		validateAlgoritmiAccettati(defaultP.getProperty(SecurityConstants.SIGNATURE_ALGORITHM), "Signature - Algoritmi accettati - Signature Algorithm");
+		validateAlgoritmiAccettati(defaultP.getProperty(SecurityConstants.SIGNATURE_DIGEST_ALGORITHM), "Signature - Algoritmi accettati - Digest Algorithm");
+	}
+	private static void validateAlgoritmiAccettati(String value, String fieldName) throws ProviderValidationException {
+		if(value==null || StringUtils.isEmpty(value)) {
+			return;
+		}
+		InputValidationUtils.validateTextAreaInput(value, fieldName);
+		for (String algoritmo : value.split(WSS4JInInterceptorAlgorithmList.SEPARATORE, -1)) {
+			if(StringUtils.isBlank(algoritmo)) {
+				throw new ProviderValidationException("Il campo '"+fieldName+"' contiene un algoritmo vuoto");
+			}
+		}
 	}
 	
 }

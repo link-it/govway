@@ -105,7 +105,6 @@ Dialog finestraDialog = (Dialog) request.getAttribute(idFinestraModale);
 				String iconaCtrlC = Costanti.ICON_COPY;
 				String toolTipVal = ServletUtils.escapeHTMLAttribute(de.getTooltipCopyAction());
 				String iconaCtrlCTitle = (toolTipVal!=null && !toolTipVal.equals("")) ? ("title='"+toolTipVal+"'") : " ";
-				String deHiddenId = "__i_hidden_lbl_de_"+i;
 				
 				boolean visualizzaIconCopia = de.isVisualizzaCopyAction();
 				if (type.equals("text")){
@@ -114,7 +113,6 @@ Dialog finestraDialog = (Dialog) request.getAttribute(idFinestraModale);
               			<div class="propDialogInfoUso">
               				<<%=deTagEtichetta %> class="<%= labelStyleClass %><%=deClasseEtichettaVuota %>" id="<%=deLabelId %>"<%=deAttrEtichettaVuota %>><%=deLabel %></<%=deTagEtichetta %>>
               				<div class="<%=classDivNoEdit %>"> 
-	              				<input type="hidden" name="<%= deHiddenId %>" value="" id="<%= deHiddenId%>"/>
 	               				<span class="<%=classSpanNoEdit %>"><%= textValNoEdit %></span>
 	               				<input type="hidden" name="<%= deName %>" value="<%= StringEscapeUtils.escapeHtml4(de.getValue()) %>"/>
 	               			</div>

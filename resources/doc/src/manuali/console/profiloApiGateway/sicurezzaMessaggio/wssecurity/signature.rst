@@ -18,6 +18,7 @@ Viene verificata la firma presente nel messaggio ricevuto (:numref:`wssReceiverS
 
 - *Timestamp*: richiede anche la presenza di un elemento Timestamp nell'header WS-Security; il campo *Future Time to Live (seconds)* è descritto nella sezione :ref:`sicurezzaLivelloMessaggioWSSecurityTimestamp`;
 - *Elementi firmati attesi* (default: *Qualsiasi*): elementi che devono risultare firmati (vedi :ref:`sicurezzaLivelloMessaggioWSSecurityPartiAttese`);
+- *Algoritmi accettati* (default: *Qualsiasi*): algoritmi di firma e di digest accettati (vedi :ref:`sicurezzaLivelloMessaggioWSSecurityAlgoritmiAccettati`);
 - *TrustStore*: truststore con i certificati utilizzati per validare il certificato di firma, comprensivo delle eventuali verifiche di revoca tramite OCSP o CRL (vedi :ref:`sicurezzaLivelloMessaggioKeystore`).
 
 **Spedizione (Sender)**

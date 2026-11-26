@@ -60,6 +60,25 @@ public class WSSecurityTest extends ConfigLoader {
 				null, KeystoreTest.DN_PKCS11_CLIENT2.replaceAll(" ", ""),  KeystoreTest.DN_PKCS11_SERVER.replaceAll(" ", ""));
 	}
 	
+	/*
+	 * Firma e cifratura nella stessa configurazione (maschere 'WS-Security Signature Encrypt' e 'WS-Security Signature Decrypt',
+	 * ordine 'Cifratura >> Firma' con 'Decifra solo Firmati') con chiavi HSM:
+	 * richiesta firmata da client1 (HSM) e cifrata per client2 (decifrata con la chiave HSM di client2),
+	 * risposta firmata da server2 (HSM) e cifrata per server (decifrata con la chiave HSM di server).
+	 */
+	@Test
+	public void signature_encrypt_soap11() throws Exception {
+		Utils.testSoap11(logCore, api, "signature-encrypt", 
+				null, null, 
+				null, KeystoreTest.DN_PKCS11_CLIENT1.replaceAll(" ", ""),  KeystoreTest.DN_PKCS11_SERVER2.replaceAll(" ", ""));
+	}
+	@Test
+	public void signature_encrypt_soap12() throws Exception {
+		Utils.testSoap12(logCore, api, "signature-encrypt", 
+				null, null, 
+				null, KeystoreTest.DN_PKCS11_CLIENT1.replaceAll(" ", ""),  KeystoreTest.DN_PKCS11_SERVER2.replaceAll(" ", ""));
+	}
+	
 	@Test
 	public void saml_bearer_soap11() throws Exception {
 		Utils.testSoap11(logCore, api, "saml-bearer", 

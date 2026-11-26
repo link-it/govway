@@ -177,6 +177,35 @@
 		    <property name="signatureParts" />
 		</item>
 
+		<!-- Algoritmi accettati (opzionale): con 'Qualsiasi' non viene impostata alcuna proprietà, come nelle configurazioni precedenti. -->
+		<item type="select" name="signatureAlgorithmVerifySelect" label="Algoritmi accettati" default="any" reloadOnChange="true"
+			note="Con 'Qualsiasi' viene accettato ogni algoritmo supportato; con 'Elenco' solo quelli indicati">
+			<values>
+				<value value="any" label="Qualsiasi"/>
+				<value value="list" label="Elenco"/>
+			</values>
+			<property name="signatureAlgorithmVerifySelect" />
+		</item>
+		<item type="textarea" name="signatureAlgorithmVerifyList" label="Signature Algorithm" required="true" default="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"
+			note="URI degli algoritmi di firma accettati, separati da ','">
+			<conditions>
+				<condition>
+					<equals name="signatureAlgorithmVerifySelect" value="list"/>
+				</condition>
+			</conditions>
+		    <property name="signatureAlgorithm" />
+		</item>
+		<!-- obbligatorio: sempre salvato, così alla riapertura il default non può introdurre una restrizione non configurata -->
+		<item type="textarea" name="signatureDigestAlgorithmVerifyList" label="Digest Algorithm" required="true" default="http://www.w3.org/2001/04/xmlenc#sha256"
+			note="URI degli algoritmi di digest accettati nei riferimenti della firma, separati da ','">
+			<conditions>
+				<condition>
+					<equals name="signatureAlgorithmVerifySelect" value="list"/>
+				</condition>
+			</conditions>
+		    <property name="signatureDigestAlgorithm" />
+		</item>
+
 
 		<subsection label="TrustStore">
 

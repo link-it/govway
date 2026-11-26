@@ -1,0 +1,378 @@
+<config id="messageSecurity.wss4j.receiver.signatureEncrypt" label="WS-Security Signature Decrypt" xmlns="http://www.openspcoop2.org/core/mvc/properties"
+	provider="org.openspcoop2.security.message.wss4j.SignatureDecryptReceiverProvider">
+
+        <compatibility not="false" and="false">
+                <tags and="true">
+                        <tag>SOAP</tag>
+                        <tag>RESPONSE</tag>
+                        <tag>OUT</tag>
+                </tags>
+                <tags and="true">
+                        <tag>SOAP</tag>
+                        <tag>REQUEST</tag>
+                        <tag>IN</tag>
+                </tags>
+        </compatibility>
+
+	<properties>
+		<collection name="signaturePropRefId"/>
+		<collection name="decryptionPropRefId"/>
+	</properties>
+
+	<section label="Informazioni Generali">
+
+		<item type="hidden" name="securityEngine" value="wss4j">
+			<property name="securityEngine" force="true"/>
+		</item>
+
+		<item type="textarea" name="actor" singleLine="true" label="Actor" required="false" validation="(.+)">
+			<property name="actor" />
+		</item>
+		<item type="checkbox" name="mustUnderstand" label="MustUnderstand" defaultSelected="false">
+			<property name="mustUnderstand" />
+		</item>
+		<item type="checkbox" name="timestampAction" label="Timestamp" reloadOnChange="true" defaultSelected="false">
+			<property name="action" append="true" appendSeparator=" " selectedValue="Timestamp" unselectedValue=""/>
+		</item>
+
+		<!-- In ricezione le azioni vengono verificate in qualsiasi ordine: l'ordine 'Cifratura &gt;&gt; Firma' viene imposto solo
+		     richiedendo che vengano decifrati i soli elementi coperti da una firma già verificata ('requireSignedEncryptedDataElements'). -->
+		<item type="select" name="signatureEncryptOrder" label="Ordine" default="encryptSignature" reloadOnChange="true"
+			note="Ordine delle operazioni effettuate dal mittente">
+			<values>
+				<value value="encryptSignature" label="Cifratura &gt;&gt; Firma"/>
+				<value value="signatureEncrypt" label="Firma &gt;&gt; Cifratura"/>
+			</values>
+			<property name="signatureEncryptOrder" />
+		</item>
+		<item type="hidden" name="signatureActionBeforeEncrypt" value="Signature">
+			<conditions>
+				<condition>
+					<equals name="signatureEncryptOrder" value="signatureEncrypt"/>
+				</condition>
+			</conditions>
+			<property name="action" append="true" appendSeparator=" "/>
+		</item>
+		<item type="hidden" name="encryptAction" value="Encrypt">
+			<property name="action" append="true" appendSeparator=" " force="true"/>
+		</item>
+		<item type="hidden" name="signatureActionAfterEncrypt" value="Signature">
+			<conditions>
+				<condition>
+					<equals name="signatureEncryptOrder" value="encryptSignature"/>
+				</condition>
+			</conditions>
+			<property name="action" append="true" appendSeparator=" "/>
+		</item>
+		<!-- la spiegazione è fornita come info (i) dal provider (SignatureDecryptReceiverProvider.getProviderInfo) -->
+		<item type="checkbox" name="requireSignedEncryptedDataElements" label="Decifra solo Firmati" defaultSelected="true">
+			<conditions>
+				<condition>
+					<equals name="signatureEncryptOrder" value="encryptSignature"/>
+				</condition>
+			</conditions>
+			<property name="requireSignedEncryptedDataElements" selectedValue="true" unselectedValue="false"/>
+		</item>
+
+		<item type="checkbox" name="isBSPCompliant" label="Compliance BSP 1.1" defaultSelected="true">
+			<property name="isBSPCompliant" />
+		</item>
+		<item type="checkbox" name="allowRSA15KeyTransportAlgorithm" label="RSA15 Key Wrap Algorithm " defaultSelected="false">
+			<property name="allowRSA15KeyTransportAlgorithm" />
+		</item>
+		<item type="checkbox" name="cleanSecurityInfo" label="Ripulisci Messaggio dalle Informazioni Sicurezza" defaultSelected="true">
+			<property name="detachSecurityInfo" />
+		</item>
+
+	</section>
+
+	<section label="Timestamp">
+
+		<conditions>
+			<condition>
+				<selected name="timestampAction"/>
+			</condition>
+		</conditions>
+
+		<item type="number" name="futureTimeToLive" label="Future Time to Live (seconds)" min="1" max="999999999" default="60"
+			note="The time in seconds in the future within which the Created time of an incoming Timestamp is valid">
+			<property name="futureTimeToLive" />
+		</item>
+	</section>
+
+	<section label="Signature">
+
+		<!-- Verifica degli elementi protetti (opzionale): se indicati, il messaggio deve contenere esattamente gli elementi firmati attesi. -->
+		<item type="select" name="signaturePartsVerifySelectWithTimestamp" label="Elementi firmati attesi" default="none" reloadOnChange="true"
+			note="Gli elementi firmati devono corrispondere a quelli indicati.&lt;BR/>Con 'Qualsiasi' non ne viene richiesto nessuno in particolare e viene verificata la firma di quelli presenti">
+			<conditions>
+				<condition>
+					<selected name="timestampAction"/>
+				</condition>
+			</conditions>
+			<values>
+				<value value="none" label="Qualsiasi"/>
+				<value value="body" label="Body"/>
+				<value value="timestamp" label="Timestamp"/>
+				<value value="timestampBody" label="Timestamp Body"/>
+				<value value="attachments" label="Attachments"/>
+				<value value="timestampAttachments" label="Timestamp Attachments"/>
+				<value value="bodyAttachments" label="Body Attachments"/>
+				<value value="timestampBodyAttachments" label="Timestamp Body Attachments"/>
+				<value value="custom" label="Configurazione Manuale"/>
+			</values>
+			<property name="signaturePartsVerifySelectWithTimestamp" />
+		</item>
+		<item type="select" name="signaturePartsVerifySelect" label="Elementi firmati attesi" default="none" reloadOnChange="true"
+			note="Gli elementi firmati devono corrispondere a quelli indicati.&lt;BR/>Con 'Qualsiasi' non ne viene richiesto nessuno in particolare e viene verificata la firma di quelli presenti">
+			<conditions>
+				<condition not="true">
+					<selected name="timestampAction"/>
+				</condition>
+			</conditions>
+			<values>
+				<value value="none" label="Qualsiasi"/>
+				<value value="body" label="Body"/>
+				<value value="attachments" label="Attachments"/>
+				<value value="bodyAttachments" label="Body Attachments"/>
+				<value value="custom" label="Configurazione Manuale"/>
+			</values>
+			<property name="signaturePartsVerifySelect" />
+		</item>
+		<item type="hidden" name="signaturePartsVerifyBody" value="{Element}{SOAP_TEMPLATE_NS}Body">
+			<conditions and="false">
+				<condition>
+					<equals name="signaturePartsVerifySelect" value="body"/>
+				</condition>
+				<condition>
+					<equals name="signaturePartsVerifySelectWithTimestamp" value="body"/>
+				</condition>
+			</conditions>
+		    <property name="signatureParts" />
+		</item>
+		<item type="hidden" name="signaturePartsVerifyTimestamp" value="{Element}{http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd}Timestamp">
+			<conditions>
+				<condition>
+					<equals name="signaturePartsVerifySelectWithTimestamp" value="timestamp"/>
+				</condition>
+			</conditions>
+		    <property name="signatureParts" />
+		</item>
+		<item type="hidden" name="signaturePartsVerifyTimestampBody" value="{Element}{http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd}Timestamp;{Element}{SOAP_TEMPLATE_NS}Body">
+			<conditions>
+				<condition>
+					<equals name="signaturePartsVerifySelectWithTimestamp" value="timestampBody"/>
+				</condition>
+			</conditions>
+		    <property name="signatureParts" />
+		</item>
+		<item type="hidden" name="signaturePartsVerifyAttachments" value="{}cid:Attachments">
+			<conditions and="false">
+				<condition>
+					<equals name="signaturePartsVerifySelect" value="attachments"/>
+				</condition>
+				<condition>
+					<equals name="signaturePartsVerifySelectWithTimestamp" value="attachments"/>
+				</condition>
+			</conditions>
+		    <property name="signatureParts" />
+		</item>
+		<item type="hidden" name="signaturePartsVerifyTimestampAttachments" value="{Element}{http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd}Timestamp;{}cid:Attachments">
+			<conditions>
+				<condition>
+					<equals name="signaturePartsVerifySelectWithTimestamp" value="timestampAttachments"/>
+				</condition>
+			</conditions>
+		    <property name="signatureParts" />
+		</item>
+		<item type="hidden" name="signaturePartsVerifyBodyAttachments" value="{Element}{SOAP_TEMPLATE_NS}Body;{}cid:Attachments">
+			<conditions and="false">
+				<condition>
+					<equals name="signaturePartsVerifySelect" value="bodyAttachments"/>
+				</condition>
+				<condition>
+					<equals name="signaturePartsVerifySelectWithTimestamp" value="bodyAttachments"/>
+				</condition>
+			</conditions>
+		    <property name="signatureParts" />
+		</item>
+		<item type="hidden" name="signaturePartsVerifyTimestampBodyAttachments" value="{Element}{http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd}Timestamp;{Element}{SOAP_TEMPLATE_NS}Body;{}cid:Attachments">
+			<conditions>
+				<condition>
+					<equals name="signaturePartsVerifySelectWithTimestamp" value="timestampBodyAttachments"/>
+				</condition>
+			</conditions>
+		    <property name="signatureParts" />
+		</item>
+		<item type="textarea" name="signaturePartsVerifyCustom" label="Elementi Attesi" required="true" note="{Element}{namespace}localName separati da ; (cid:Attachments in localName per gli allegati SWA)">
+			<conditions and="false">
+				<condition>
+					<equals name="signaturePartsVerifySelect" value="custom"/>
+				</condition>
+				<condition>
+					<equals name="signaturePartsVerifySelectWithTimestamp" value="custom"/>
+				</condition>
+			</conditions>
+		    <property name="signatureParts" />
+		</item>
+
+		<!-- Algoritmi accettati (opzionale): con 'Qualsiasi' non viene impostata alcuna proprietà, come nelle configurazioni precedenti. -->
+		<item type="select" name="signatureAlgorithmVerifySelect" label="Algoritmi accettati" default="any" reloadOnChange="true"
+			note="Con 'Qualsiasi' viene accettato ogni algoritmo supportato; con 'Elenco' solo quelli indicati">
+			<values>
+				<value value="any" label="Qualsiasi"/>
+				<value value="list" label="Elenco"/>
+			</values>
+			<property name="signatureAlgorithmVerifySelect" />
+		</item>
+		<item type="textarea" name="signatureAlgorithmVerifyList" label="Signature Algorithm" required="true" default="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"
+			note="URI degli algoritmi di firma accettati, separati da ','">
+			<conditions>
+				<condition>
+					<equals name="signatureAlgorithmVerifySelect" value="list"/>
+				</condition>
+			</conditions>
+		    <property name="signatureAlgorithm" />
+		</item>
+		<!-- obbligatorio: sempre salvato, così alla riapertura il default non può introdurre una restrizione non configurata -->
+		<item type="textarea" name="signatureDigestAlgorithmVerifyList" label="Digest Algorithm" required="true" default="http://www.w3.org/2001/04/xmlenc#sha256"
+			note="URI degli algoritmi di digest accettati nei riferimenti della firma, separati da ','">
+			<conditions>
+				<condition>
+					<equals name="signatureAlgorithmVerifySelect" value="list"/>
+				</condition>
+			</conditions>
+		    <property name="signatureDigestAlgorithm" />
+		</item>
+
+
+		<subsection label="TrustStore">
+
+			<item type="hidden" name="signatureCryptoProvider" value="org.openspcoop2.security.keystore.MerlinProvider">
+				<property name="org.apache.ws.security.crypto.provider" force="true" properties="signaturePropRefId"/>
+			</item>
+
+			<item type="select" name="truststoreType" label="Tipo" default="jks" reloadOnChange="true">
+				<property name="org.apache.ws.security.crypto.merlin.keystore.type" properties="signaturePropRefId" />
+			</item>
+			<item type="textarea" name="truststoreFile" label="Path" required="true">
+			      	<property name="org.apache.ws.security.crypto.merlin.file" properties="signaturePropRefId" />
+			</item>
+			<item type="lock" name="truststorePassword" label="Password" required="true">
+			      	<property name="org.apache.ws.security.crypto.merlin.keystore.password" properties="signaturePropRefId" />
+			</item>
+			<item type="select" name="truststoreOcspPolicy" label="OCSP Policy" default="" reloadOnChange="true">
+				<property name="signatureOCSP" />
+			</item>
+			<item type="checkbox" name="enableRevocation" label="CRL" reloadOnChange="true" defaultSelected="false">
+				<conditions>
+					<condition and="false">
+						<defined not="true" name="truststoreOcspPolicy"/>
+						<equals name="truststoreOcspPolicy" value=""/>
+					</condition>
+				</conditions>
+				<property name="enableRevocation" />
+			</item>
+			<item type="textarea" name="crlFiles" label="CRL File(s)" required="true" note="Elencare più file separandoli con la ','">
+				<conditions>
+					<condition>
+						<selected name="enableRevocation"/>
+					</condition>
+				</conditions>
+			      	<property name="org.apache.ws.security.crypto.merlin.x509crl.file" properties="signaturePropRefId" />
+			</item>
+			<item type="textarea" name="crlFilesOcsp" label="CRL File(s)" required="false" note="Elencare più file separandoli con la ','">
+				<conditions>
+					<condition and="true">
+						<defined name="truststoreOcspPolicy"/>
+						<equals not="true" name="truststoreOcspPolicy" value=""/>
+					</condition>
+				</conditions>
+			      	<property name="signatureCRL" />
+			</item>
+
+		</subsection>
+
+	</section>
+
+	<section label="Decryption">
+
+		<!-- Verifica degli elementi protetti (opzionale): se indicati, il messaggio deve contenere esattamente gli elementi cifrati attesi. -->
+		<item type="select" name="encryptionPartsVerifySelect" label="Elementi cifrati attesi" default="none" reloadOnChange="true"
+			note="Gli elementi cifrati devono corrispondere a quelli indicati.&lt;BR/>Con 'Qualsiasi' non ne viene richiesto nessuno in particolare e vengono decifrati quelli presenti">
+			<values>
+				<value value="none" label="Qualsiasi"/>
+				<value value="body" label="Body"/>
+				<value value="attachments" label="Attachments"/>
+				<value value="bodyAttachments" label="Body Attachments"/>
+				<value value="custom" label="Configurazione Manuale"/>
+			</values>
+			<property name="encryptionPartsVerifySelect" />
+		</item>
+		<item type="hidden" name="encryptionPartsVerifyBody" value="{Content}{SOAP_TEMPLATE_NS}Body">
+			<conditions>
+				<condition>
+					<equals name="encryptionPartsVerifySelect" value="body"/>
+				</condition>
+			</conditions>
+		    <property name="encryptionParts" />
+		</item>
+		<item type="hidden" name="encryptionPartsVerifyAttachments" value="{}cid:Attachments">
+			<conditions>
+				<condition>
+					<equals name="encryptionPartsVerifySelect" value="attachments"/>
+				</condition>
+			</conditions>
+		    <property name="encryptionParts" />
+		</item>
+		<item type="hidden" name="encryptionPartsVerifyBodyAttachments" value="{Content}{SOAP_TEMPLATE_NS}Body;{}cid:Attachments">
+			<conditions>
+				<condition>
+					<equals name="encryptionPartsVerifySelect" value="bodyAttachments"/>
+				</condition>
+			</conditions>
+		    <property name="encryptionParts" />
+		</item>
+		<item type="textarea" name="encryptionPartsVerifyCustom" label="Elementi Attesi" required="true" note="{Content/Element}{namespace}localName separati da ; (cid:Attachments in localName per gli allegati SWA)">
+			<conditions>
+				<condition>
+					<equals name="encryptionPartsVerifySelect" value="custom"/>
+				</condition>
+			</conditions>
+		    <property name="encryptionParts" />
+		</item>
+
+
+		<subsection label="KeyStore">
+
+			<item type="hidden" name="decryptionCryptoProvider" value="org.openspcoop2.security.keystore.MerlinProvider">
+				<property name="org.apache.ws.security.crypto.provider" force="true" properties="decryptionPropRefId"/>
+			</item>
+
+			<item type="select" name="keystoreType" label="Tipo" default="jks" reloadOnChange="true">
+				<property name="org.apache.ws.security.crypto.merlin.keystore.type" properties="decryptionPropRefId" />
+			</item>
+			<item type="textarea" name="keystoreFile" label="Path" required="true">
+			      	<property name="org.apache.ws.security.crypto.merlin.file" properties="decryptionPropRefId" />
+			</item>
+			<item type="lock" name="keystorePassword" label="Password" required="true">
+			      	<property name="org.apache.ws.security.crypto.merlin.keystore.password" properties="decryptionPropRefId" />
+			</item>
+			<item type="text" name="keystorePrivateKeyAlias" label="Alias Chiave Privata" required="true">
+			      	<property name="decryptionUser" />
+			</item>
+			<item type="lock" name="keystorePrivateKeyPassword" label="Password Chiave Privata" required="true">
+			      	<property name="decryptionPassword" />
+			</item>
+			<item type="hidden" name="keystorePrivateKeyPasswordCallback" value="true">
+			      	<property name="passwordCallbackRef" />
+			</item>
+			<item type="select" name="keystoreByokPolicy" label="BYOK Policy" default="" reloadOnChange="true">
+				<property name="org.apache.ws.security.crypto.merlin.file.byok" properties="decryptionPropRefId" />
+			</item>
+
+		</subsection>
+
+	</section>
+
+</config>

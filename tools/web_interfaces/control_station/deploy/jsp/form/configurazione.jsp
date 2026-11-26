@@ -255,7 +255,6 @@ function Esporta(tipo) {
 												  	String deNote = de.getNote();
 												  	String classInput= de.getStyleClass();
 												  	String labelStyleClass= de.getLabelStyleClass();
-												  	String deHiddenId = "__i_hidden_lbl_de_"+z+"_"+i;
 												  	String deCopyId = "__i_hidden_copy_de_"+z+"_"+i;
 												  	
 												  	String stile=null;
@@ -323,7 +322,6 @@ function Esporta(tipo) {
 																	</td>
 																	<td class="tdTextRiepilogo <%= stile %>">
 																		<div class="<%=classDivNoEdit %>"> 
-																		<input type="hidden" name="<%= deHiddenId %>" value="" id="<%= deHiddenId%>"/>	
 																			<%
 																		   		String idToRemoveTab = de.getIdToRemove() != null ? de.getIdToRemove() : "";
 																		   		if(firstText && StringUtils.isNotEmpty(idToRemoveTab)){
@@ -407,7 +405,6 @@ function Esporta(tipo) {
 																				</td>
 																				<td class="tdTextRiepilogo <%= stile %>">
 																				<div class="<%=classDivNoEdit %>"> 
-																				<input type="hidden" name="<%= deHiddenId %>" value="" id="<%= deHiddenId%>"/>	
 																					<%  
 																						/* scelta dell'icona di stato condivisa con il monitor (IconaStato): forma e colore per ogni significato */
 																						IconaStato iconaStato = IconaStato.fromValoreCheckbox(statusType);
@@ -478,7 +475,6 @@ function Esporta(tipo) {
 																				</td>
 																				<td class="tdTextRiepilogo <%= stile %>">
 																					<div class="<%=classDivNoEdit %>"> 
-																					<input type="hidden" name="<%= deHiddenId %>" value="" id="<%= deHiddenId%>"/>	
 																						<%
 																					   		String idToRemoveTab = de.getIdToRemove() != null ? de.getIdToRemove() : "";
 																					   		if(firstText && StringUtils.isNotEmpty(idToRemoveTab)){
@@ -565,7 +561,6 @@ function Esporta(tipo) {
 																					</td>
 																					<td class="tdTextRiepilogo <%= stile %>">
 																						<div class="<%=classDivNoEdit %>"> 		
-																						<input type="hidden" name="<%= deHiddenId %>" value="" id="<%= deHiddenId%>"/>																
 																							<%
 									                          									String [] values = de.getStatusValues();
 									                                        					if (values != null) {

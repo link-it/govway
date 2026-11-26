@@ -184,6 +184,8 @@ public class SecretsTest extends ConfigLoader {
 	
 	public static final String API_MESSAGE_SECURITY_WSS = "TestVaultWSSecurity";
 	public static final String API_MESSAGE_SECURITY_WSS_OP_ENCRYPT = "encrypt";
+	/** maschere 'WS-Security Signature Encrypt' / 'WS-Security Signature Decrypt': firma e cifratura nella stessa configurazione */
+	public static final String API_MESSAGE_SECURITY_WSS_OP_SIGNATURE_ENCRYPT = "signature-encrypt";
 	public static final String API_MESSAGE_SECURITY_WSS_OP_SIGNATURE = "signature";
 	public static final String API_MESSAGE_SECURITY_WSS_OP_SAML_BEARER = "saml-bearer";
 	public static final String API_MESSAGE_SECURITY_WSS_OP_SAML_HOLDER_OF_KEY = "saml-holder-of-key";
@@ -1063,6 +1065,9 @@ public class SecretsTest extends ConfigLoader {
 		logCoreInfo(prefixLogFruizione+API_MESSAGE_SECURITY_WSS_OP_ENCRYPT);		
 		Utilities.testSoap(logCore, TipoServizio.FRUIZIONE, API_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_ENCRYPT);
 	
+		logCoreInfo(prefixLogFruizione+API_MESSAGE_SECURITY_WSS_OP_SIGNATURE_ENCRYPT);		
+		Utilities.testSoap(logCore, TipoServizio.FRUIZIONE, API_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_SIGNATURE_ENCRYPT);
+	
 		logCoreInfo(prefixLogFruizione+API_MESSAGE_SECURITY_WSS_OP_SAML_BEARER);		
 		Utilities.testSoap(logCore, TipoServizio.FRUIZIONE, API_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_SAML_BEARER);
 	
@@ -1935,6 +1940,23 @@ public class SecretsTest extends ConfigLoader {
 		
 	}
 	
+	/** Mittente 'WS-Security Signature Encrypt': keystore (BYOK) e chiave di firma, truststore di cifratura */
+	private static Map<String, String> getVerificheSignatureEncryptSender() {
+		Map<String, String> verifiche = new HashMap<>();
+		verifiche.put(SecurityConstants.SIGNATURE_PASSWORD, PASSWORD_123456);
+		verifiche.put(SIGNATURE_PROP_REF_ID+CostantiProprieta.KEY_PROPERTIES_CUSTOM_SEPARATOR+Merlin.OLD_PREFIX+Merlin.KEYSTORE_PASSWORD, PASSWORD_123456);
+		verifiche.put(ENCRYPTION_PROP_REF_ID+CostantiProprieta.KEY_PROPERTIES_CUSTOM_SEPARATOR+Merlin.OLD_PREFIX+Merlin.KEYSTORE_PASSWORD, STORE_PASSWORD_OPENSPCOOP);
+		return verifiche;
+	}
+	/** Ricevente 'WS-Security Signature Decrypt': truststore di verifica della firma, keystore (BYOK) e chiave di decifratura */
+	private static Map<String, String> getVerificheSignatureEncryptReceiver() {
+		Map<String, String> verifiche = new HashMap<>();
+		verifiche.put(SIGNATURE_PROP_REF_ID+CostantiProprieta.KEY_PROPERTIES_CUSTOM_SEPARATOR+Merlin.OLD_PREFIX+Merlin.KEYSTORE_PASSWORD, PASSWORD_123456);
+		verifiche.put(SecurityConstants.DECRYPTION_PASSWORD, STORE_PASSWORD_OPENSPCOOP);
+		verifiche.put(DECRYPTION_PROP_REF_ID+CostantiProprieta.KEY_PROPERTIES_CUSTOM_SEPARATOR+Merlin.OLD_PREFIX+Merlin.KEYSTORE_PASSWORD, STORE_PASSWORD_OPENSPCOOP_JKS);
+		return verifiche;
+	}
+	
 	private void verificheDatabaseInChiaroMessageSecurityWSSecurity() throws UtilsException {
 		
 		// ** signature **
@@ -1974,6 +1996,20 @@ public class SecretsTest extends ConfigLoader {
 		for (Entry<String, String> entry : verifiche.entrySet()) {
 			verificheDatabaseInChiaroMessageSecurityPortaDelegataRequest(entry, PORTA_DELEGATA_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_ENCRYPT);
 			verificheDatabaseInChiaroMessageSecurityPortaApplicativaResponse(entry, PORTA_APPLICATIVA_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_ENCRYPT);
+		}
+		
+		
+		// ** signature-encrypt **
+		// nella stessa configurazione sono presenti piu' collection (signature/encryption/decryption) con password diverse:
+		// le proprieta' vengono verificate con il nome completo della collection
+		
+		for (Entry<String, String> entry : getVerificheSignatureEncryptSender().entrySet()) {
+			verificheDatabaseInChiaroMessageSecurityPortaDelegataRequest(entry, PORTA_DELEGATA_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_SIGNATURE_ENCRYPT);
+			verificheDatabaseInChiaroMessageSecurityPortaApplicativaResponse(entry, PORTA_APPLICATIVA_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_SIGNATURE_ENCRYPT);
+		}
+		for (Entry<String, String> entry : getVerificheSignatureEncryptReceiver().entrySet()) {
+			verificheDatabaseInChiaroMessageSecurityPortaDelegataResponse(entry, PORTA_DELEGATA_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_SIGNATURE_ENCRYPT);
+			verificheDatabaseInChiaroMessageSecurityPortaApplicativaRequest(entry, PORTA_APPLICATIVA_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_SIGNATURE_ENCRYPT);
 		}
 		
 		
@@ -3190,6 +3226,18 @@ public class SecretsTest extends ConfigLoader {
 		for (Entry<String, String> entry : verifiche.entrySet()) {
 			verificheDatabaseCifratoMessageSecurityPortaDelegataRequest(entry, PORTA_DELEGATA_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_ENCRYPT, prefix);
 			verificheDatabaseCifratoMessageSecurityPortaApplicativaResponse(entry, PORTA_APPLICATIVA_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_ENCRYPT, prefix);
+		}
+		
+		
+		// ** signature-encrypt **
+		
+		for (Entry<String, String> entry : getVerificheSignatureEncryptSender().entrySet()) {
+			verificheDatabaseCifratoMessageSecurityPortaDelegataRequest(entry, PORTA_DELEGATA_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_SIGNATURE_ENCRYPT, prefix);
+			verificheDatabaseCifratoMessageSecurityPortaApplicativaResponse(entry, PORTA_APPLICATIVA_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_SIGNATURE_ENCRYPT, prefix);
+		}
+		for (Entry<String, String> entry : getVerificheSignatureEncryptReceiver().entrySet()) {
+			verificheDatabaseCifratoMessageSecurityPortaDelegataResponse(entry, PORTA_DELEGATA_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_SIGNATURE_ENCRYPT, prefix);
+			verificheDatabaseCifratoMessageSecurityPortaApplicativaRequest(entry, PORTA_APPLICATIVA_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_SIGNATURE_ENCRYPT, prefix);
 		}
 		
 		
