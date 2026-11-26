@@ -48,7 +48,8 @@ public class SoapEnvelopeStructureCheckInputStream extends FilterInputStream {
 	private final SoapEnvelopeStructureStreamChecker checker;
 	private final OpenSPCoop2Message message;
 	private SoapEnvelopeStructureIOException error;
-	private boolean ended = false;
+	// volatile: mark/reset sono synchronized come in FilterInputStream, quindi SpotBugs considera la classe condivisa tra thread (AT_STALE_THREAD_WRITE_OF_PRIMITIVE)
+	private volatile boolean ended = false;
 
 	public SoapEnvelopeStructureCheckInputStream(InputStream in, SoapEnvelopeStructureStreamChecker checker, OpenSPCoop2Message message) {
 		super(in);
