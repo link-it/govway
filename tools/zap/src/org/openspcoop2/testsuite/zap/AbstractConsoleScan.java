@@ -94,6 +94,8 @@ public abstract class AbstractConsoleScan {
 		int scanNum = 1;
 				
 		ConsolePathParams pathParams = new ConsolePathParams(consoleParams.getBaseConfigDirName());
+		
+		List<String> urlNonAnalizzate = new ArrayList<>();
 				
 		for (String tipoTestUrl : targetUrls.keys()) {
 			
@@ -149,15 +151,27 @@ public abstract class AbstractConsoleScan {
 	        }
 	        
 	        if(scanTypes.isActive()) {
-	        	this.urlVisitateActiveScan =ConsoleUtils.initVisitedUrlsFile(this.reportDir, ConsoleScanTypes.SCAN_TYPE_ACTIVE);
-	        	ConsoleUtils.active(baseUrl, zapClientApi, userId, 
-	        			report, pathParams,
-	        			this.urlVisitateActiveScan);
+	        	if(ConsoleUtils.isUrlRaccolta(api, url)) {
+		        	this.urlVisitateActiveScan =ConsoleUtils.initVisitedUrlsFile(this.reportDir, ConsoleScanTypes.SCAN_TYPE_ACTIVE);
+		        	ConsoleUtils.active(baseUrl, zapClientApi, userId, 
+		        			report, pathParams,
+		        			this.urlVisitateActiveScan);
+	        	}
+	        	else {
+	        		// Si prosegue con le url successive; l'errore viene segnalato alla fine del pacchetto
+	        		String msg = "'"+tipoTestUrl+"' ("+url+"): url non raccolta da ZAP (login non riuscito o applicazione lenta durante lo spider), scansione attiva non eseguita";
+	        		LoggerManager.info("ERROR; "+msg);
+	        		urlNonAnalizzate.add(msg);
+	        	}
 	        }
 	        
 			LoggerManager.info("Analisi "+scanNum+"/"+targetUrls.size()+" '"+tipoTestUrl+"' (url:"+url+") terminata");
 			
 			scanNum++;
+		}
+		
+		if(!urlNonAnalizzate.isEmpty()) {
+			throw new UtilsException("Analisi non completata per "+urlNonAnalizzate.size()+" url: "+String.join("; ", urlNonAnalizzate));
 		}
 
 	}

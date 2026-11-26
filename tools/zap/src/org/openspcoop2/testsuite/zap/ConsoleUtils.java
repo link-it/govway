@@ -69,6 +69,12 @@ public class ConsoleUtils {
 			Utilities.sleep(1000); // Attendere per un secondo
 			if (System.currentTimeMillis() - startTime > SPIDER_TIMEOUT_MS) {
 				LoggerManager.info("Spider timeout reached (" + (SPIDER_TIMEOUT_MS/1000) + "s), proceeding with partial results");
+				// Lo spider va fermato: altrimenti continua a girare in ZAP (login e richieste comprese)
+				// in parallelo alla scansione attiva, caricando ulteriormente l'applicazione.
+				for (String scanId : scanIds) {
+					api.spider.stop(scanId);
+					LoggerManager.info("Spider stopped (id:"+scanId+")");
+				}
 				break;
 			}
 			allScansCompleted = true;
@@ -436,6 +442,22 @@ public class ConsoleUtils {
 	
 	
 	// ** VISITED URLS ** 
+	
+	/**
+	 * Indica se l'url (o una sua variante con parametri) è tra quelle raccolte da ZAP: la scansione attiva
+	 * di un'url assente fallisce con URL_NOT_FOUND (es. login non riuscito durante lo spider).
+	 */
+	public static boolean isUrlRaccolta(ClientApi api, String url) throws ClientApiException {
+		ApiResponse response = api.core.urls(url);
+		for (ApiResponse item : ((ApiResponseList) response).getItems()) {
+			String urlRaccolta = ((ApiResponseElement)item).getValue();
+			if(urlRaccolta!=null && urlRaccolta.startsWith(url)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	
 	private static void addVisitedUrls(ClientApi api, List<String> urlVisitate) throws ClientApiException {
         ApiResponse response1 = api.core.urls();

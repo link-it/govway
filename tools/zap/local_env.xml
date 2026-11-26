@@ -37,7 +37,7 @@
 	<property name="zaproxy.home" value="" />
 
 	<!-- Number of milliseconds before execution is terminated -->
-	<property name="zaproxy.timeout" value="600000"/> <!-- 10 minuti -->
+	<property name="zaproxy.timeout" value="1800000"/> <!-- 30 minuti: vale per l'intero pacchetto di url (es. registry ne ha 5, circa 2 minuti ciascuna) -->
 
 	<!-- Parametri di connessione a zap proxy -->
 	<property name="zaproxy.address" value="127.0.0.1"/>

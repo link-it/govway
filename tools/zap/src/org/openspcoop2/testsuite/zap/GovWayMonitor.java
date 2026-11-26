@@ -54,13 +54,22 @@ public class GovWayMonitor extends AbstractConsoleScan {
 		return "AJAXREQUEST=_viewRoot&loginForm=loginForm&username={%username%}&password={%password%}&javax.faces.ViewState=j_id1&loginBtn=loginBtn&";
 	}
 	
+	/* Indicatori di sessione per ZAP (verificati su ogni risposta, header compresi). Una risposta è autenticata
+	   se contiene l'indicatore di login, oppure se non contiene quello di logout.
+	   - login: 'menuUtente', il menu utente dell'header, presente solo nelle pagine autenticate (anche nella
+	     risposta alla POST di login riuscita). 'welcome.jsf' non va bene: è il link del titolo e compare anche
+	     nella pagina di login, di sessione scaduta e di errore, oltre che dopo un login fallito.
+	   - logout: '/govwayMonitor/public/', nel Location del 302 con cui il monitor risponde senza sessione
+	     (anche alle richieste AJAX) e nei form delle pagine pubbliche; assente nelle pagine autenticate.
+	     Senza indicatore di logout ZAP rifaceva il login per ogni risposta priva dell'indicatore di login
+	     (risorse statiche, risposte AJAX), sovraccaricando il monitor. */
 	@Override
 	protected String getLoggedInIndicator() {
-		return "welcome.jsf";
+		return "menuUtente";
 	}
 	@Override
 	protected String getLoggedOutIndicator() {
-		return null;
+		return "/govwayMonitor/public/";
 	}
 	
 	@Override

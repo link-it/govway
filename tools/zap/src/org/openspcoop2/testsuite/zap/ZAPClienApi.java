@@ -36,6 +36,8 @@ import org.zaproxy.clientapi.core.ClientApiException;
  */
 public class ZAPClienApi {
 
+	private static final int ZAP_TIMEOUT_SECONDS = 60;
+	
 	private ClientApi clientApi;
 	private String contextName;
 	private String contextId;
@@ -43,6 +45,10 @@ public class ZAPClienApi {
 	public ZAPClienApi(String address, int port, String apiKey, boolean debug) throws ClientApiException {
 		
 		this.clientApi = new ClientApi(address, port, apiKey, debug);
+		
+		// Timeout di lettura delle richieste inviate da ZAP all'applicazione (login compreso): con il default
+		// di ZAP una console lenta a rispondere fa fallire l'autenticazione e lo spider non raccoglie le pagine.
+		this.clientApi.core.setOptionTimeoutInSecs(ZAP_TIMEOUT_SECONDS);
 		
 		this.contextName = apiKey+RandomUtilities.getRandom().nextInt();
 		this.clientApi.context.newContext(this.contextName);
