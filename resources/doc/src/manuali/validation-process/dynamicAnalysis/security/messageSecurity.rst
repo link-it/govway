@@ -18,7 +18,7 @@ Evidenze disponibili in:
 - `WSSecurity <https://jenkins.link.it/govway-testsuite/spcoop/Sicurezza/default/>`_
 - `XML Signature Wrapping (XSW) <https://jenkins.link.it/govway-testsuite/spcoop/SOAPMessageScorretti/default/>`_
 
-Sono inoltre disponibili ulteriori test che verificano la funzionalità 'Username Token', il rifiuto dei messaggi con struttura dell'Envelope SOAP non conforme o con elemento firmato o cifrato diverso dal Body effettivo, come negli attacchi di tipo XML Signature Wrapping (XSW), e la verifica degli elementi firmati e cifrati attesi in ricezione per tutte le combinazioni configurabili da console (Body, Timestamp, Attachments) rispetto agli elementi protetti in spedizione, anche su messaggi SOAP With Attachments.
+Sono inoltre disponibili ulteriori test che verificano la funzionalità 'Username Token', il rifiuto dei messaggi con struttura dell'Envelope SOAP non conforme o con elemento firmato o cifrato diverso dal Body effettivo, come negli attacchi di tipo XML Signature Wrapping (XSW), la verifica degli elementi firmati e cifrati attesi in ricezione per tutte le combinazioni configurabili da console (Body, Timestamp, Attachments) rispetto agli elementi protetti in spedizione, anche su messaggi SOAP With Attachments, la firma e la cifratura nella stessa configurazione in entrambi gli ordini (Cifratura >> Firma e Firma >> Cifratura), con e senza Timestamp e allegati, la protezione degli elementi cifrati ('Decifra solo Firmati') rispetto a messaggi alterati per ottenere la decifratura prima della verifica della firma (attacchi 'padding oracle'), gli algoritmi di firma e di digest accettati in ricezione e la firma di header SOAP indicati con la configurazione manuale.
 
 I sorgenti sono disponibili in `protocolli/trasparente/testsuite/karate/src <https://github.com/link-it/govway/tree/master/protocolli/trasparente/testsuite/karate/src>`_ relativamente ai seguenti package:
 
@@ -26,7 +26,7 @@ I sorgenti sono disponibili in `protocolli/trasparente/testsuite/karate/src <htt
 
 Evidenze disponibili in:
 
-- `WSSecurity (Username, Struttura Envelope, Elementi attesi) <https://jenkins.link.it/govway-testsuite/trasparente_karate/OtherWSSecurity/html/>`_
+- `WSSecurity (Username, Struttura Envelope, Elementi attesi, Firma e Cifratura, Algoritmi accettati) <https://jenkins.link.it/govway-testsuite/trasparente_karate/OtherWSSecurity/html/>`_
 
 **JOSE per API REST**
 

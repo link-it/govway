@@ -62,6 +62,9 @@ public class AttachmentsConfigReaderUtils {
 		else
 			wssProperties = wssContext.getIncomingProperties();
 		if (wssProperties != null && wssProperties.size() > 0) {
+			// Vengono esaminate sia le parti cifrate sia quelle firmate: con la cifratura che non riguarda gli allegati
+			// (es. solo il Body) gli allegati da trattare sono quelli indicati per la firma.
+			// Se gli allegati sono indicati in entrambe, findAttachmentProcessingPart verifica che la configurazione coincida.
 			if(wssProperties.containsKey(SecurityConstants.ENCRYPTION_PARTS)){
 				String value = (String) wssProperties.get(SecurityConstants.ENCRYPTION_PARTS);
 				List<ProcessingPart<?,?>> listProcessingParts = ProcessingPartUtils.getEncryptionInstance().getProcessingParts(value);
@@ -70,7 +73,7 @@ public class AttachmentsConfigReaderUtils {
 					ap = apFound;
 				}
 			}
-			else if(wssProperties.containsKey(SecurityConstants.SIGNATURE_PARTS)){
+			if(wssProperties.containsKey(SecurityConstants.SIGNATURE_PARTS)){
 				String value = (String) wssProperties.get(SecurityConstants.SIGNATURE_PARTS);
 				List<ProcessingPart<?,?>> listProcessingParts = ProcessingPartUtils.getEncryptionInstance().getProcessingParts(value);
 				AttachmentProcessingPart apFound = findAttachmentProcessingPart(listProcessingParts, ap, SecurityConstants.SIGNATURE_PARTS); 
@@ -88,7 +91,7 @@ public class AttachmentsConfigReaderUtils {
 					ap = apFound;
 				}
 			}
-			else if(wssContext.getManualAttachmentsSignaturePart()!=null) {
+			if(wssContext.getManualAttachmentsSignaturePart()!=null) {
 				List<ProcessingPart<?,?>> listProcessingParts = ProcessingPartUtils.getEncryptionInstance().getProcessingParts(wssContext.getManualAttachmentsSignaturePart());
 				AttachmentProcessingPart apFound = findAttachmentProcessingPart(listProcessingParts, ap, SecurityConstants.SIGNATURE_PARTS); 
 				if(ap==null){

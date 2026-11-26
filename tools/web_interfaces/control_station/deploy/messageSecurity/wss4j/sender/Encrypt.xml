@@ -165,14 +165,6 @@
 				</values>
 				<property name="encryptionKeyIdentifier" />
 			</item>
-			<item type="checkbox" name="useSingleCertificate" label="Certificato Singolo" defaultSelected="true">
-				<conditions>
-				    <condition>
-				    	<equals name="encryptKeyIdentifier" value="DirectReference" />
-				    </condition>
-			   	</conditions>
-				<property name="useSingleCertificate" selectedValue="true" unselectedValue="false"/>
-			</item>
 			<item type="checkbox" name="includeEncryptionToken" label="Include Encryption Token" defaultSelected="false">
 				<conditions>
 		            <condition and="false">

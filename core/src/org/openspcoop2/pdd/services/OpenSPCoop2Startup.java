@@ -872,7 +872,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			 * Inizializzazione Resource Bundle:
 			 * - org/apache/xml/security/resource/xmlsecurity_en.properties (xmlsec-2.3.0.jar)
 			 * - org/apache/xml/security/resource/xmlsecurity_de.properties (xmlsec-2.3.0.jar)
-			 * - messages/wss4j_errors.properties (wss4j-ws-security-common-2.4.1.jar)
+			 * - messages/wss4j_errors.properties (wss4j-ws-security-common-2.4.*.jar)
 			 * 
 			 * L'inizializzazione di questa classe DEVE essere all'inizio altrimenti si puo' incorrere in errori tipo il seguente:
 			 * Caused by: org.apache.wss4j.common.ext.WSSecurityException: No message with ID "noUserCertsFound" found in resource bundle "org/apache/xml/security/resource/xmlsecurity"

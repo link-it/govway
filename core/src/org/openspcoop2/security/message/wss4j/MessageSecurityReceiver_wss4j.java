@@ -130,7 +130,8 @@ public class MessageSecurityReceiver_wss4j extends AbstractSOAPMessageSecurityRe
 			
 			// ** Inizializzo handler CXF **/
 			
-			WSS4JInInterceptor inHandler = new WSS4JInInterceptor();
+			// consente di indicare piu' algoritmi di firma/digest accettati, separati da virgola
+			WSS4JInInterceptor inHandler = new WSS4JInInterceptorAlgorithmList();
 			SoapMessage msgCtx = new SoapMessage(new MessageImpl());
 			msgCtx.setVersion(MessageType.SOAP_12.equals(message.getMessageType()) ? org.apache.cxf.binding.soap.Soap12.getInstance() : org.apache.cxf.binding.soap.Soap11.getInstance());
 			Exchange ex = new ExchangeImpl();

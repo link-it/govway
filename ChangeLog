@@ -1,3 +1,26 @@
+2026-11-26  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Aggiunta funzionalità #1870
+	Le nuove maschere 'WS-Security Signature Encrypt' (spedizione) e 'WS-Security Signature Decrypt' (ricezione) consentono di
+	configurare insieme la firma e la cifratura del messaggio, con Timestamp opzionale e ordine delle operazioni selezionabile
+	('Cifratura >> Firma' o 'Firma >> Cifratura'). In ricezione l'opzione 'Decifra solo Firmati' fa decifrare solo gli elementi
+	coperti da una firma già verificata: gli altri messaggi vengono rifiutati prima della decifratura, con un errore che non
+	dipende dall'esito della decifratura (protezione dagli attacchi di tipo 'padding oracle').
+	Le maschere di ricezione 'WS-Security Signature' e 'WS-Security Signature Decrypt' consentono inoltre di indicare gli
+	algoritmi di firma e di digest accettati ('Algoritmi accettati'); i messaggi firmati con altri algoritmi vengono rifiutati.
+	Rimossa dalla maschera 'WS-Security Encrypt' in spedizione l'opzione 'Certificato Singolo', che non aveva effetto sulla
+	cifratura: con 'Binary Security Token' viene incluso sempre il solo certificato del destinatario.
+
+2026-11-26  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug
+	In WS-Security, se gli allegati erano indicati solo tra gli elementi da firmare mentre la cifratura riguardava altri elementi
+	(es. il solo Body), la firma degli allegati veniva ignorata; con i soli allegati da firmare la spedizione falliva con l'errore
+	'list of references must contain at least one entry'. Gli allegati da firmare vengono adesso sempre considerati, anche in
+	presenza di una cifratura che non li riguarda.
+
 2026-11-24  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]
