@@ -46,9 +46,10 @@ public class ZAPClienApi {
 		
 		this.clientApi = new ClientApi(address, port, apiKey, debug);
 		
-		// Timeout di lettura delle richieste inviate da ZAP all'applicazione (login compreso): con il default
-		// di ZAP una console lenta a rispondere fa fallire l'autenticazione e lo spider non raccoglie le pagine.
-		this.clientApi.core.setOptionTimeoutInSecs(ZAP_TIMEOUT_SECONDS);
+		// Timeout (connessione e lettura) delle richieste inviate da ZAP all'applicazione, login compreso: con il
+		// default di ZAP una console lenta a rispondere fa fallire l'autenticazione e lo spider non raccoglie le pagine.
+		// Si imposta tramite l'add-on Network: 'core.setOptionTimeoutInSecs' è deprecato.
+		this.clientApi.network.setConnectionTimeout(String.valueOf(ZAP_TIMEOUT_SECONDS));
 		
 		this.contextName = apiKey+RandomUtilities.getRandom().nextInt();
 		this.clientApi.context.newContext(this.contextName);
