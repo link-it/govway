@@ -20,6 +20,8 @@
 package org.openspcoop2.testsuite.zap;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.openspcoop2.utils.UtilsException;
 import org.zaproxy.clientapi.core.ClientApiException;
@@ -59,17 +61,33 @@ public class GovWayMonitor extends AbstractConsoleScan {
 	   - login: 'menuUtente', il menu utente dell'header, presente solo nelle pagine autenticate (anche nella
 	     risposta alla POST di login riuscita). 'welcome.jsf' non va bene: è il link del titolo e compare anche
 	     nella pagina di login, di sessione scaduta e di errore, oltre che dopo un login fallito.
-	   - logout: '/govwayMonitor/public/', nel Location del 302 con cui il monitor risponde senza sessione
-	     (anche alle richieste AJAX) e nei form delle pagine pubbliche; assente nelle pagine autenticate.
+	   - logout: il form della pagina di login ('loginForm') o il link di quella di sessione scaduta ('tornaAlLoginLink'),
+	     oppure il redirect verso la pagina di login, con cui il monitor risponde quando la sessione esiste ma non è autenticata.
 	     Senza indicatore di logout ZAP rifaceva il login per ogni risposta priva dell'indicatore di login
-	     (risorse statiche, risposte AJAX), sovraccaricando il monitor. */
+	     (risorse statiche, risposte AJAX). Non va usato il Location '/govwayMonitor/public/timeoutPage.jsf':
+	     il monitor lo restituisce anche, a sessione valida, alla POST di un form con un ViewState non più valido;
+	     ZAP rifaceva il login, la nuova sessione invalidava i ViewState dei form già raccolti e i login si susseguivano a cascata. */
 	@Override
 	protected String getLoggedInIndicator() {
 		return "menuUtente";
 	}
 	@Override
 	protected String getLoggedOutIndicator() {
-		return "/govwayMonitor/public/";
+		return "id=\"(loginForm|tornaAlLoginLink)\"|Location: [^\\r\\n]*/govwayMonitor/public/login\\.jsf";
+	}
+	@Override
+	protected boolean isLoggedOutIndicatorRegExp() {
+		return true;
+	}
+
+	/* Lo stato delle viste JSF è salvato sul server: ZAP deve rigenerare il ViewState (oltre al token '_csrf',
+	   già noto a ZAP) prima di ripetere un form, altrimenti la scansione attiva riceve solo la pagina di sessione scaduta. */
+	@Override
+	protected List<String> getAntiCsrfTokens() {
+		List<String> l = new ArrayList<>();
+		l.add("javax.faces.ViewState");
+		l.add("_csrf");
+		return l;
 	}
 	
 	@Override

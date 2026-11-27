@@ -28,3 +28,8 @@ soggetti_authenticationRequestIdentified.description=La pagina richiede la creaz
 soggetti_authenticationRequestIdentified.id=10111
 soggetti_authenticationRequestIdentified.urlRegExp=.*/govway/[A-Za-z0-9]+/api-config/v1/soggetti\?.*
 
+
+apiConfigCollezioni_pathTraversal.enabled=true
+apiConfigCollezioni_pathTraversal.description=La regola sostituisce il valore di un campo con l'ultimo segmento dell'url (es. nome='ruoli' su POST /ruoli): il nome di esempio importato dal contratto ('John Doe') viene rifiutato perche' non valido con 400, mentre 'ruoli' e' un nome valido e la risorsa viene creata (201). ZAP interpreta la differenza come accesso a un file; sugli url di collezione i parametri sono nomi di entita' salvate su base dati, non percorsi.
+apiConfigCollezioni_pathTraversal.id=6
+apiConfigCollezioni_pathTraversal.urlRegExp=.*/govway/[A-Za-z0-9]+/api-config/v1/[a-z-]+(\?.*)?

@@ -49,6 +49,14 @@ public abstract class AbstractConsoleScan {
 	protected abstract String getLoginRequestData();
 	protected abstract String getLoggedInIndicator();
 	protected abstract String getLoggedOutIndicator();
+	/** true se l'indicatore di logout è già un'espressione regolare (altrimenti viene usato come testo letterale) */
+	protected boolean isLoggedOutIndicatorRegExp() {
+		return false;
+	}
+	/** Nomi dei parametri che ZAP deve trattare come token anti-CSRF, rigenerandoli prima di ripetere un form */
+	protected List<String> getAntiCsrfTokens() {
+		return new ArrayList<>();
+	}
 	
 	protected abstract boolean isDebug();
 	
@@ -126,7 +134,9 @@ public abstract class AbstractConsoleScan {
 			String logoutUrl = this.getLogoutUrl(baseUrl);
 			
 			setIncludeAndExcludeInContext(api, contextName, baseUrl, logoutUrl);
-			
+
+			addAntiCsrfTokens(api);
+
 			StringBuilder cookieValueHolder = new StringBuilder();
 			String userId = setFormBasedAuthentication(api, loginUrl, contextId, 
 					username, password, cookieValueHolder);
@@ -184,6 +194,18 @@ public abstract class AbstractConsoleScan {
 		LoggerManager.info("Include["+include+"] Exclude["+logoutUrl+"]");
 	}
 	
+	private void addAntiCsrfTokens(ClientApi api) {
+		for (String token : this.getAntiCsrfTokens()) {
+			try {
+				api.acsrf.addOptionToken(token);
+				LoggerManager.info("Registrato token anti-CSRF '"+token+"'");
+			}catch(ClientApiException e) {
+				// l'opzione è globale per l'istanza ZAP: alla seconda url del pacchetto il token è già presente
+				LoggerManager.info("Token anti-CSRF '"+token+"' non registrato: "+e.getMessage());
+			}
+		}
+	}
+
 	private String setFormBasedAuthentication(ClientApi api, String loginUrl, String contextId, 
 			String username, String password, StringBuilder tokenHolder) throws UnsupportedEncodingException, ClientApiException {
 		
@@ -211,7 +233,8 @@ public abstract class AbstractConsoleScan {
 		String loggedOutIndicator = this.getLoggedOutIndicator();
 		api.authentication.setLoggedInIndicator(contextId, java.util.regex.Pattern.quote(loggedInIndicator));
 		if(loggedOutIndicator!=null) {
-			api.authentication.setLoggedOutIndicator(contextId, java.util.regex.Pattern.quote(loggedOutIndicator));
+			api.authentication.setLoggedOutIndicator(contextId,
+					this.isLoggedOutIndicatorRegExp() ? loggedOutIndicator : java.util.regex.Pattern.quote(loggedOutIndicator));
 		}
 		LoggerManager.info("Configured logged in indicator regex: "
 				+ ((ApiResponseElement) api.authentication.getLoggedInIndicator(contextId)).getValue());

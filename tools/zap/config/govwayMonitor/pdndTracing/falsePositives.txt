@@ -1,0 +1,4 @@
+#<nome>.enabled=true
+#<nome>.description=xxxx
+#<nome>.id=
+#<nome>.urlRegExp

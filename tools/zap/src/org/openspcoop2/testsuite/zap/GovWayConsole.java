@@ -58,9 +58,13 @@ public class GovWayConsole extends AbstractConsoleScan {
 	protected String getLoggedInIndicator() {
 		return "Profilo:";
 	}
+	/* Testo letterale (viene quotato prima di passarlo a ZAP): presente nella risposta 401 senza sessione
+	   ('La sessione è scaduta. Effettuare il login') e assente nelle pagine autenticate.
+	   Il valore precedente '.*Effettuare il login.*', quotato, veniva cercato con '.*' letterali e non corrispondeva mai:
+	   ZAP non si accorgeva di un'eventuale perdita della sessione. */
 	@Override
 	protected String getLoggedOutIndicator() {
-		return ".*Effettuare il login.*";
+		return "Effettuare il login";
 	}
 	
 	@Override

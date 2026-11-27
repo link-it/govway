@@ -1,0 +1,3 @@
+# Indicare solo i contesti dopo http://.../govwayMonitor/
+pdndTracing=stat/pages/form/statistichePdndTracingTipiRicerca.jsf
+pdndTracingList=stat/pages/list/statistichePdndTracingList.jsf

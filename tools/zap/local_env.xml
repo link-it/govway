@@ -13,6 +13,9 @@
 	<property name="govway.endpoint" value="http://127.0.0.1:8080"/>
 	<property name="govway.ente" value="ENTE"/>
 	<!-- Parametri API -->
+	<!-- Scansione attiva delle API sulle richieste generate dall'import del contratto; durata massima per API (minuti), entro zaproxy.timeout -->
+	<property name="zaproxy.api.active" value="true"/>
+	<property name="zaproxy.api.active.maxDurationMinutes" value="20"/>
         <property name="govway.openapi.config.globalFalsePositives" value="${zap_dir}/config/openapi_globalFalsePositive.txt"/>
         <property name="govway.soap.config.globalFalsePositives" value="${zap_dir}/config/soap_globalFalsePositive.txt"/>
 	<!-- Parametri connessione GovWay Console -->
@@ -28,7 +31,7 @@
 	<property name="govway.console.monitor.password" value="123456"/>
 	<property name="govway.console.monitor.scanUrls" value="${zap_dir}/config/govwayMonitor"/>
 	<property name="govway.console.monitor.scanUrls.templates" value="${zap_dir}/template/govwayMonitor"/>
-	<property name="govway.console.monitor.scanType.ajaxSpider" value="false"/>
+	<property name="govway.console.monitor.scanType.ajaxSpider" value="false"/> <!-- se abilitato: solo sulla url di partenza, max 3 minuti; sul monitor ricarica migliaia di risorse statiche per poche pagine nuove -->
 	<property name="govway.console.monitor.scanType.active" value="true"/>
         <property name="govway.console.monitor.globalFalsePositives" value="${zap_dir}/config/govwayMonitor_globalFalsePositive.txt"/>
 
@@ -37,7 +40,7 @@
 	<property name="zaproxy.home" value="" />
 
 	<!-- Number of milliseconds before execution is terminated -->
-	<property name="zaproxy.timeout" value="1800000"/> <!-- 30 minuti: vale per l'intero pacchetto di url (es. registry ne ha 5, circa 2 minuti ciascuna) -->
+	<property name="zaproxy.timeout" value="3600000"/> <!-- 60 minuti: vale per l'intero pacchetto di url (es. registry ne ha 5: spider fino a 5 minuti e scansione attiva fino a 5 minuti ciascuna) -->
 
 	<!-- Parametri di connessione a zap proxy -->
 	<property name="zaproxy.address" value="127.0.0.1"/>
@@ -45,6 +48,12 @@
 	<property name="zaproxy.api-key" value="govway-test"/>
 	<property name="zaproxy.debug" value="true"/>
         <property name="zaproxy.session" value="/tmp/goway-test/session"/>
+	<!-- Durata massima della scansione attiva di ogni url delle console e di ogni sua regola (minuti) -->
+	<property name="zaproxy.console.active.maxDurationMinutes" value="5"/>
+	<property name="zaproxy.console.active.maxRuleDurationMinutes" value="1"/>
+	<!-- Archivia la sessione ZAP di ogni pacchetto in <dir>/<analisi>/<pacchetto>/zap_session.zip (fuori dai report pubblicati) -->
+	<property name="zaproxy.session.archive" value="true"/>
+	<property name="zaproxy.session.archive.dir" location="${zap_dir}/sessions"/>
 
 	<!-- Parametri verifica OpenAPI -->
 	<property name="zaproxy.openapi" value=""/>

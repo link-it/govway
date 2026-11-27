@@ -1,0 +1,4 @@
+# Indicare solo i contesti dopo http://.../govwayMonitor/
+profiloUtente=core/pages/form/user.jsf
+ricercheUtente=core/pages/list/ricercheUtenteList.jsf
+statoGovWay=commons/pages/statoPdd.jsf

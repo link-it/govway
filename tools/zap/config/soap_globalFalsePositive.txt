@@ -4,3 +4,8 @@
 #<nome>.urlRegExp
 
 
+
+soapStatus_formatStringError.enabled=true
+soapStatus_formatStringError.description=La scansione attiva inserisce sequenze di formato (es. '%n%s') nella dichiarazione XML della richiesta (attributo 'encoding'): GovWay rifiuta il messaggio con un SOAP Fault 'Client.UnprocessableRequestContent' dal contenuto generico, restituito con HTTP 500 come previsto per i fault SOAP 1.1; ZAP interpreta la risposta 500 come chiusura della connessione.
+soapStatus_formatStringError.id=30002
+soapStatus_formatStringError.urlRegExp=.*/govway/[A-Za-z0-9]+/api-soap-status/v1.*

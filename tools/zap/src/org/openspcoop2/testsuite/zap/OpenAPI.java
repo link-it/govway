@@ -118,6 +118,8 @@ public class OpenAPI {
 			api.openapi.importUrl(openapiUrl, targetUrl, contextId);
 		}
 		
+		ApiActiveScan.scan(api, targetUrl, contextId);
+		
 		for (ZAPReportTemplate rt : report.getTemplates()) {
 			api.reports.generate(report.getTitle(), 
 					rt.template, 

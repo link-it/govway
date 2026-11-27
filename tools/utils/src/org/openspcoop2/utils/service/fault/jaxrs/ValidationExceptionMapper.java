@@ -20,6 +20,10 @@
 
 package org.openspcoop2.utils.service.fault.jaxrs;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.ValidationException;
@@ -69,7 +73,15 @@ public class ValidationExceptionMapper implements ExceptionMapper<ValidationExce
 		if (exception instanceof ConstraintViolationException) {
 			final ConstraintViolationException constraint = (ConstraintViolationException) exception;
 
-			for (final ConstraintViolation< ? > violation: constraint.getConstraintViolations()) {
+			// Le violazioni arrivano in un Set senza ordine garantito: vengono ordinate per parametro e messaggio
+			// in modo che la stessa richiesta produca sempre la stessa risposta.
+			List<ConstraintViolation< ? >> violations = new ArrayList<>();
+			if(constraint.getConstraintViolations()!=null) {
+				violations.addAll(constraint.getConstraintViolations());
+			}
+			violations.sort(Comparator.comparing((ConstraintViolation< ? > v) -> String.valueOf(v.getPropertyPath()))
+					.thenComparing(v -> String.valueOf(v.getMessage())));
+			for (final ConstraintViolation< ? > violation: violations) {
 				problem.addInvalidParam(violation.getPropertyPath().toString(), violation.getMessage(), violation.getInvalidValue());
 			}
 		} 

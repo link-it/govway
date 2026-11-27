@@ -1,4 +1,5 @@
 # Ignore everything in this directory
 reports
+sessions
 # Except this file
 !.gitignore

@@ -183,6 +183,8 @@ public class Soap {
 			@SuppressWarnings("unused")
 			ApiResponse response = api.soap.importFile(fTmp.getAbsolutePath());
 			
+			ApiActiveScan.scan(api, targetUrl, contextId);
+			
 			for (ZAPReportTemplate rt : report.getTemplates()) {
 				api.reports.generate(report.getTitle(), 
 						rt.template, 

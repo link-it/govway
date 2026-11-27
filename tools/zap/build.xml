@@ -241,9 +241,45 @@
 					<arg value="false" />
 				</exec>
 				<echo message="Finally stop ZAP completed"/>
+				<antcall target="-archiveZapSession" />
 			</finally>
 		</trycatch>
 
+	</target>
+	<!-- La sessione ZAP (storico di richieste e risposte) viene svuotata a ogni avvio: a ZAP fermo la si archivia
+	     in 'zaproxy.session.archive.dir', fuori dai report pubblicati, con la stessa struttura
+	     (<analisi>/<pacchetto>/zap_session.zip), così resta consultabile (es. con 'zap.sh -session') dopo la build. -->
+	<target name="-archiveZapSession">
+		<if>
+			<equals arg1="${zaproxy.session.archive}" arg2="true"/>
+			<then>
+				<dirname property="_zapSessionDir" file="${zaproxy.session}"/>
+				<basename property="_zapSessionAnalysis" file="${zaproxy.report.dir}"/>
+				<var name="_zapSessionZip" value="${zaproxy.session.archive.dir}/${_zapSessionAnalysis}/zap_session.zip"/>
+				<if>
+					<isset property="configBaseName"/>
+					<then>
+						<var name="_zapSessionZip" value="${zaproxy.session.archive.dir}/${_zapSessionAnalysis}/${configBaseName}/zap_session.zip"/>
+					</then>
+				</if>
+				<if>
+					<available file="${_zapSessionDir}" type="dir"/>
+					<then>
+						<trycatch property="errorArchive.message">
+							<try>
+								<dirname property="_zapSessionZipDir" file="${_zapSessionZip}"/>
+								<mkdir dir="${_zapSessionZipDir}"/>
+								<zip destfile="${_zapSessionZip}" basedir="${_zapSessionDir}" level="9"/>
+								<echo message="Sessione ZAP archiviata in '${_zapSessionZip}'"/>
+							</try>
+							<catch>
+								<echo message="WARN: archiviazione sessione ZAP non riuscita: ${errorArchive.message}"/>
+							</catch>
+						</trycatch>
+					</then>
+				</if>
+			</then>
+		</if>
 	</target>
 
 
@@ -372,6 +408,8 @@
 	<target name="-analizeOpenAPI">	
 		<echo message="OpenAPI Api Key: '${zap-api-key}'"/>
 		<java classname="org.openspcoop2.testsuite.zap.OpenAPI" fork="true" failonerror="true">
+			<sysproperty key="zaproxy.api.active" value="${zaproxy.api.active}" />
+			<sysproperty key="zaproxy.api.active.maxDurationMinutes" value="${zaproxy.api.active.maxDurationMinutes}" />
 			<sysproperty key="zaproxy.report.includedRisks.serif" value="${zaproxy.report.includedRisks.serif}" />
 			<sysproperty key="zaproxy.report.includedRisks.api.serif" value="${zaproxy.report.includedRisks.api.serif}" />
 			<arg value="${zaproxy.address}" />
@@ -446,6 +484,8 @@
 	<target name="-analizeSoap">
 		<echo message="SOAP Api Key: '${zap-api-key}'"/>
 		<java classname="org.openspcoop2.testsuite.zap.Soap" fork="true" failonerror="true">
+			<sysproperty key="zaproxy.api.active" value="${zaproxy.api.active}" />
+			<sysproperty key="zaproxy.api.active.maxDurationMinutes" value="${zaproxy.api.active.maxDurationMinutes}" />
 			<sysproperty key="zaproxy.report.includedRisks.serif" value="${zaproxy.report.includedRisks.serif}" />
 			<sysproperty key="zaproxy.report.includedRisks.api.serif" value="${zaproxy.report.includedRisks.api.serif}" />
 			<arg value="${zaproxy.address}" />
@@ -673,6 +713,8 @@
 		<java classname="org.openspcoop2.testsuite.zap.GovWayConsole" fork="true" failonerror="true">
 			<sysproperty key="zaproxy.report.includedRisks.serif" value="${zaproxy.report.includedRisks.serif}" />
 			<sysproperty key="zaproxy.report.includedRisks.console.serif" value="${zaproxy.report.includedRisks.console.serif}" />
+			<sysproperty key="zaproxy.console.active.maxDurationMinutes" value="${zaproxy.console.active.maxDurationMinutes}" />
+			<sysproperty key="zaproxy.console.active.maxRuleDurationMinutes" value="${zaproxy.console.active.maxRuleDurationMinutes}" />
 			<arg value="${zaproxy.address}" />
 			<arg value="${zaproxy.port}" />
 			<arg value="${zaproxy.session}" />
@@ -791,6 +833,8 @@
 		<java classname="org.openspcoop2.testsuite.zap.GovWayMonitor" fork="true" failonerror="true">
 			<sysproperty key="zaproxy.report.includedRisks.serif" value="${zaproxy.report.includedRisks.serif}" />
 			<sysproperty key="zaproxy.report.includedRisks.console.serif" value="${zaproxy.report.includedRisks.console.serif}" />
+			<sysproperty key="zaproxy.console.active.maxDurationMinutes" value="${zaproxy.console.active.maxDurationMinutes}" />
+			<sysproperty key="zaproxy.console.active.maxRuleDurationMinutes" value="${zaproxy.console.active.maxRuleDurationMinutes}" />
 			<arg value="${zaproxy.address}" />
 			<arg value="${zaproxy.port}" />
 			<arg value="${zaproxy.session}" />
@@ -1183,6 +1227,8 @@
 
 	<target name="-zapErrorsInit">
 		<delete file="${zaproxy.errors.file}" quiet="true"/>
+		<!-- Sessioni archiviate dall'esecuzione precedente -->
+		<delete dir="${zaproxy.session.archive.dir}" quiet="true"/>
 	</target>
 	<target name="-zapErrorsCheck">
 		<if>

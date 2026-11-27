@@ -25,9 +25,7 @@ import java.io.FileNotFoundException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 
 import org.openspcoop2.utils.Utilities;
@@ -95,7 +93,7 @@ public class ConsoleUtils {
 		LoggerManager.info("Spider complete");
 	}
 	
-	private static void waitPassiveScanInProgress(ClientApi api) throws NumberFormatException, ClientApiException {
+	static void waitPassiveScanInProgress(ClientApi api) throws NumberFormatException, ClientApiException {
 		
 		// Poll the number of records the passive scanner still has to scan until it completes
 		while (true) {
@@ -158,6 +156,10 @@ public class ConsoleUtils {
 	
 	// ** AJAX SPIDER **
 	
+	/* Lo spider AJAX (browser headless) viene eseguito solo sull'url di partenza dell'analisi, con una durata massima:
+	   eseguirlo su ogni url raccolta dallo spider (risorse statiche comprese) superava il timeout del pacchetto. */
+	private static final int AJAX_SPIDER_MAX_DURATION_MINUTES = 3;
+	
 	public static void ajaxSpider(String baseUrl, ZAPClienApi zapClientApi, String username,
 			ZAPReport report, ConsolePathParams pathParams,
 			List<String> urlVisitateIterazioneInCorso) throws ClientApiException, UtilsException {
@@ -165,9 +167,8 @@ public class ConsoleUtils {
 		ClientApi api = zapClientApi.getClientApi();
 		String contextName = zapClientApi.getContextName();
 		
-		int indexUrl = 0;
-		
-		api.ajaxSpider.setOptionClickDefaultElems(true); // valore di default
+		// Si cliccano tutti gli elementi e non solo link, bottoni e input: i comandi RichFaces (menu, tab) sono div e span
+		api.ajaxSpider.setOptionClickDefaultElems(false);
 		ApiResponse resp = api.ajaxSpider.optionClickDefaultElems();
         ApiResponseElement re2 = (ApiResponseElement) resp;
         LoggerManager.info("optionClickDefaultElems:"+re2.getName()+"="+re2.getValue());
@@ -182,7 +183,7 @@ public class ConsoleUtils {
         re2 = (ApiResponseElement) resp;
         LoggerManager.info("optionRandomInputs:"+re2.getName()+"="+re2.getValue());
         
-    	api.ajaxSpider.setOptionMaxCrawlStates(10); // il default è 0, cioè infinito https://www.zaproxy.org/docs/desktop/addons/ajax-spider/options/
+    	api.ajaxSpider.setOptionMaxCrawlStates(0); // nessun limite sugli stati: limita la durata
     	resp = api.ajaxSpider.optionMaxCrawlStates();
         re2 = (ApiResponseElement) resp;
         LoggerManager.info("optionMaxCrawlStates:"+re2.getName()+"="+re2.getValue());
@@ -192,67 +193,60 @@ public class ConsoleUtils {
         re2 = (ApiResponseElement) resp;
         LoggerManager.info("optionMaxCrawlDepth:"+re2.getName()+"="+re2.getValue());
         
-        api.ajaxSpider.setOptionMaxDuration(2); // minuti, il default è 60 minuti
+        api.ajaxSpider.setOptionMaxDuration(AJAX_SPIDER_MAX_DURATION_MINUTES); // minuti, il default è 60 minuti
 		resp = api.ajaxSpider.optionMaxDuration();
         re2 = (ApiResponseElement) resp;
         LoggerManager.info("optionMaxDuration:"+re2.getName()+"="+re2.getValue());
 		
+        // Il comando di logout (voce del menu utente nel monitor, link nella console) non va cliccato
+        for (String element : new String [] {"a", "div", "span"}) {
+        	try {
+        		api.ajaxSpider.addExcludedElement(contextName, "logout-"+element, element, null, "Logout", null, null, "true");
+        	}catch(ClientApiException e) {
+        		LoggerManager.info("Esclusione 'Logout' ("+element+") non registrata: "+e.getMessage());
+        	}
+        }
         resp = api.ajaxSpider.excludedElements(contextName);
         LoggerManager.info("excludedElements");
         print(resp);
-		                 
-    	int urls = urlVisitateIterazioneInCorso.size();
-    	    	
-    	for (String urlSpider : urlVisitateIterazioneInCorso) {
-	        indexUrl++;
-	        
-	        String logPrefix = "("+indexUrl+"/"+urls+") Analizy url '"+urlSpider+"' con AjaxSpider ";
-	        
-    		LoggerManager.info(logPrefix+"...");
-    		
-    		if(!urlSpider.startsWith(baseUrl)) {
-    			// escludo: http://127.0.0.1:8080
-    			continue;
-    		}
-    		            		
-			api.ajaxSpider.scanAsUser(contextName, username, urlSpider, ConsoleParams.SUBTREE_ONLY_ENABLED);
-    		/**api.ajaxSpider.scan(urlSpider, ConsoleParams.INSCOPE_ONLY_ENABLED, contextName, ConsoleParams.SUBTREE_ONLY_ENABLED);*/
-			
-	        // Poll the status until it completes
-            long startTime = System.currentTimeMillis();
-            long timeout = 60000;
-	        String status = null;
-	        boolean run = true;
-	        while (run) {
-	        	Utilities.sleep(1000);
-	            status = (((ApiResponseElement) api.ajaxSpider.status()).getValue());
-	            LoggerManager.info(logPrefix+"status : " + status);
-	            if ( "stopped".equals(status) ) {
-	            	LoggerManager.info(logPrefix+"complete (STOP)");
-	            	run = false;
-	            	continue;
-                }
-	            LoggerManager.info("("+indexUrl+"/"+urls+") TIMEOUT ("+(System.currentTimeMillis() - startTime)+") < "+timeout+"_timeout ??? ");
-	            if ( (System.currentTimeMillis() - startTime) > timeout) {
-	            	ApiResponse stopResponse = api.ajaxSpider.stop();
-	            	LoggerManager.info(stopResponse.getName()+"="+stopResponse.getClass().getName());
-	            	org.zaproxy.clientapi.core.ApiResponseElement re = (org.zaproxy.clientapi.core.ApiResponseElement) stopResponse;
-	            	LoggerManager.info(re.getName()+"="+re.getValue());
-	            	LoggerManager.info(logPrefix+"complete (TIMEOUT)");
-	            	Utilities.sleep(5000);
-	            	run = false;
-                }
-	            
-	            ApiResponseSet rSet = (ApiResponseSet) api.ajaxSpider.fullResults();
-	            LoggerManager.info("inScope ---------");
-	            print(rSet.getValue("inScope"));
-	            LoggerManager.info("outOfScope ---------");
-	            print(rSet.getValue("outOfScope"));
-	            LoggerManager.info("ERROR ---------");
-	            print(rSet.getValue("errors"));
-
-	        }
-		}
+		
+        String urlSpider = pathParams.getUrl();
+        String logPrefix = "Analizy url '"+urlSpider+"' con AjaxSpider ";
+		LoggerManager.info(logPrefix+"...");
+		
+		// Non limitato al sottoalbero dell'url: il browser deve caricare script e stili della console e seguire il menu.
+		// I confini sono quelli del contesto (console, esclusa la url di logout).
+		api.ajaxSpider.scanAsUser(contextName, username, urlSpider, "false");
+		
+        // Poll the status until it completes (il limite di ZAP più un margine)
+        long startTime = System.currentTimeMillis();
+        long timeout = (AJAX_SPIDER_MAX_DURATION_MINUTES * 60000l) + 60000l;
+        boolean run = true;
+        while (run) {
+        	Utilities.sleep(5000);
+        	String status = (((ApiResponseElement) api.ajaxSpider.status()).getValue());
+        	ApiResponseElement nr = (ApiResponseElement) api.ajaxSpider.numberOfResults();
+        	LoggerManager.info(logPrefix+"status : " + status+" (risultati: "+nr.getValue()+")");
+            if ( "stopped".equals(status) ) {
+            	LoggerManager.info(logPrefix+"complete (STOP)");
+            	run = false;
+            }
+            else if ( (System.currentTimeMillis() - startTime) > timeout) {
+            	api.ajaxSpider.stop();
+            	LoggerManager.info(logPrefix+"complete (TIMEOUT)");
+            	Utilities.sleep(5000);
+            	run = false;
+            }
+        }
+        
+        ApiResponseSet rSet = (ApiResponseSet) api.ajaxSpider.fullResults();
+        LoggerManager.info("inScope ---------");
+        print(rSet.getValue("inScope"));
+        LoggerManager.info("outOfScope ---------");
+        print(rSet.getValue("outOfScope"));
+        LoggerManager.info("ERROR ---------");
+        print(rSet.getValue("errors"));
+        
         LoggerManager.info("AjaxSpider complete");
         
         
@@ -265,58 +259,72 @@ public class ConsoleUtils {
 	
 	// ** ACTIVE **
 	
-	private static void waitActiveScanInProgress(ClientApi api, String ... scanIds) throws NumberFormatException, ClientApiException {
+	/* Durata della scansione attiva di ogni url: ZAP ferma da solo la singola regola e l'intera scansione allo scadere dei limiti.
+	   In precedenza la scansione veniva abbandonata (senza fermarla) dopo 20 secondi con l'avanzamento fermo: restava
+	   ferma al 33% sulle regole più lente, non produceva risultati e continuava in background durante l'analisi successiva. */
+	private static final String PROP_ACTIVE_MAX_DURATION = "zaproxy.console.active.maxDurationMinutes";
+	private static final String PROP_ACTIVE_MAX_RULE_DURATION = "zaproxy.console.active.maxRuleDurationMinutes";
+	private static final int DEFAULT_ACTIVE_MAX_DURATION_MINUTES = 5;
+	private static final int DEFAULT_ACTIVE_MAX_RULE_DURATION_MINUTES = 1;
+	
+	static int readIntProperty(String name, int defaultValue) {
+		String v = System.getProperty(name);
+		if(v==null || v.trim().isEmpty() || v.startsWith("${")) {
+			return defaultValue;
+		}
+		try {
+			return Integer.parseInt(v.trim());
+		}catch(NumberFormatException e) {
+			LoggerManager.info("Valore '"+v+"' non valido per '"+name+"', uso il default "+defaultValue);
+			return defaultValue;
+		}
+	}
+	
+	private static void waitActiveScanInProgress(ClientApi api, String scanId, int maxDurationMinutes) throws NumberFormatException, ClientApiException {
 		
-		int maxSameProgress = 20;
-		Map<String, Integer> mapScanProgress = new HashMap<>();
-		List<String> scanIdSkipTimeout = new ArrayList<>();
-				
-		// Attende il completamento di tutti gli scan
-		boolean allScansCompleted = false;
-		while (!allScansCompleted) {
-			Utilities.sleep(1000); // Attendere per un secondo
-			allScansCompleted = true;
-			
-			for (String scanId : scanIds) {
-
-				if(scanIdSkipTimeout.contains(scanId)) {
-					continue;
-				}
-								
-				int progress =
-						Integer.parseInt(
-								((ApiResponseElement) api.ascan.status(scanId)).getValue());
+		// ZAP ferma la scansione allo scadere della durata massima; il margine copre la chiusura delle regole in corso
+		long timeout = (maxDurationMinutes + 2) * 60000l;
+		long start = System.currentTimeMillis();
+		int lastProgress = -1;
+		long lastChange = start;
+		while (true) {
+			Utilities.sleep(2000);
+			int progress = Integer.parseInt(((ApiResponseElement) api.ascan.status(scanId)).getValue());
+			long now = System.currentTimeMillis();
+			if(progress!=lastProgress) {
 				LoggerManager.info("Active scan progress (id:"+scanId+") : " + progress + "%");
-
-				int actual = readActualActiveProgress(scanId, progress, mapScanProgress, maxSameProgress);				
-				if(actual==maxSameProgress) {
-					LoggerManager.info("ERROR; max same progress timed out");
-					scanIdSkipTimeout.add(scanId);
-				}
-				
-				print(api.ascan.attackModeQueue());
-				
-				if (progress < 100) {
-					allScansCompleted = false;
-				}
-
+				lastProgress = progress;
+				lastChange = now;
+			}
+			else if((now - lastChange) > 60000l) {
+				// avanzamento fermo da un minuto: si registrano le regole in esecuzione
+				LoggerManager.info("Active scan progress (id:"+scanId+") fermo al " + progress + "%; regole in corso:");
+				printRunningRules(api, scanId);
+				lastChange = now;
+			}
+			if (progress >= 100) {
+				break;
+			}
+			if ((now - start) > timeout) {
+				api.ascan.stop(scanId);
+				LoggerManager.info("ERROR; active scan (id:"+scanId+") fermata per timeout ("+(timeout/60000l)+" minuti) al "+progress+"%");
+				break;
 			}
 		}
-		
-		LoggerManager.info("Active complete");
+		LoggerManager.info("Active complete ("+((System.currentTimeMillis()-start)/1000)+"s)");
 	}
-	private static int readActualActiveProgress(String scanId, int progress, Map<String, Integer> mapScanProgress, int maxSameProgress) {
-		String idMap = scanId + "_"+ progress;
-		Integer actual = mapScanProgress.remove(idMap);
-		if(actual!=null) {
-			actual = actual.intValue()+1;
+	private static void printRunningRules(ClientApi api, String scanId) {
+		try {
+			ApiResponse r = api.ascan.scanProgress(scanId);
+			String out = r.toString(0);
+			for (String line : out.split("\n")) {
+				if(line.contains("Running") || line.contains("Pending")) {
+					LoggerManager.info("  "+line.trim());
+				}
+			}
+		}catch(Exception e) {
+			LoggerManager.info("scanProgress non disponibile: "+e.getMessage());
 		}
-		else {
-			actual=1;
-		}
-		mapScanProgress.put(idMap, actual);
-		LoggerManager.info("Active check ["+idMap+"] "+actual+"/"+maxSameProgress+ " ...");
-		return actual.intValue();
 	}
 	
 	public static void active(String baseUrl, ZAPClienApi zapClientApi, String userId, 
@@ -353,11 +361,17 @@ public class ConsoleUtils {
 		LoggerManager.info("Active ...");
         
 		/**ApiResponse resp = api.ascan.scan(url, ConsoleParams.RECURSE_ENABLED, ConsoleParams.INSCOPE_ONLY_ENABLED, null, null, null);*/
+        int maxDuration = readIntProperty(PROP_ACTIVE_MAX_DURATION, DEFAULT_ACTIVE_MAX_DURATION_MINUTES);
+        int maxRuleDuration = readIntProperty(PROP_ACTIVE_MAX_RULE_DURATION, DEFAULT_ACTIVE_MAX_RULE_DURATION_MINUTES);
+        api.ascan.setOptionMaxScanDurationInMins(maxDuration);
+        api.ascan.setOptionMaxRuleDurationInMins(maxRuleDuration);
+        LoggerManager.info("Active scan: durata massima "+maxDuration+" minuti, per regola "+maxRuleDuration+" minuti");
+        
         ApiResponse resp = api.ascan.scanAsUser(pathParams.getUrl(), contextId, userId, ConsoleParams.RECURSE_ENABLED, null, null, null);
 		
         String scanid = ConsoleUtils.getScanId(resp);
         	
-        ConsoleUtils.waitActiveScanInProgress(api, scanid);
+        ConsoleUtils.waitActiveScanInProgress(api, scanid, maxDuration);
         	        	
         ConsoleUtils.generateReport(ConsoleScanTypes.SCAN_TYPE_ACTIVE, api, contextName, report, 
         		pathParams);
