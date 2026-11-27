@@ -477,7 +477,8 @@ public class ConfigurazioniGeneraliBean extends DynamicPdDBean<ConfigurazioneGen
 		if(this.selectedKey != null) {
 			try {
 				ConfigurazioneGeneralePK pk = new ConfigurazioneGeneralePK(this.selectedKey);
-				this.elementoSelezionatoPerStato = this.service.findById(pk);
+				// solo nome, stato e gruppi: il dettaglio completo (findById) non serve e fallisce sulle porte senza mapping
+				this.elementoSelezionatoPerStato = this.service.findStatoById(pk);
 			} catch(Exception e) {
 				log.error("preparaToggleStato: errore nel recupero elemento con key [{}]: {}",
 						this.selectedKey, e.getMessage(), e);
@@ -652,17 +653,30 @@ public class ConfigurazioniGeneraliBean extends DynamicPdDBean<ConfigurazioneGen
 		this.gruppiDisabilitatiItems = gruppiDisabilitatiItems;
 	}
 
+	/** Il cambio di stato si può proporre solo se la configurazione selezionata è stata letta con i suoi gruppi. */
+	public boolean isCambioStatoDisponibile() {
+		return this.elementoSelezionatoPerStato != null && this.elementoSelezionatoPerStato.getGruppiStati() != null
+				&& !this.elementoSelezionatoPerStato.getGruppiStati().isEmpty();
+	}
+
+	/** Finestra semplice anche quando il cambio di stato non è disponibile: vi si mostra il motivo. */
 	public boolean isSingoloGruppo() {
-		return this.elementoSelezionatoPerStato != null && this.elementoSelezionatoPerStato.getNumeroGruppi() <= 1;
+		return !isCambioStatoDisponibile() || this.elementoSelezionatoPerStato.getNumeroGruppi() <= 1;
 	}
 
 	public String getMessaggioConfermaToggle() {
-		if(this.elementoSelezionatoPerStato == null) return "";
+		if(!isCambioStatoDisponibile()) {
+			return "Non è stato possibile leggere la configurazione dell'API selezionata: il cambio di stato non è disponibile.";
+		}
 		List<GruppoStato> gruppi = this.elementoSelezionatoPerStato.getGruppiStati();
 		if(!gruppi.isEmpty()) {
 			boolean attualmenteAbilitato = gruppi.get(0).isAbilitato();
 			String articolo = attualmenteAbilitato ? "la disabilitazione" : "l'abilitazione";
 			String nomeApi = this.elementoSelezionatoPerStato.getServizio();
+			if(this.elementoSelezionatoPerStato.isPortaSenzaMapping()) {
+				// la stessa API puo' avere piu' porte senza mapping: si indica quale si sta cambiando
+				return "Procedere con " + articolo + " della porta " + this.elementoSelezionatoPerStato.getLabel() + " dell'API " + nomeApi + "?";
+			}
 			return "Procedere con " + articolo + " dell'API " + nomeApi + "?";
 		}
 		return "";

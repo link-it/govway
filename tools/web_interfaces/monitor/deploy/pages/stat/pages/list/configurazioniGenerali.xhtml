@@ -271,6 +271,8 @@
 								<h:outputText value="#{msg['commons.servizio.label']}"  id="outServizio"/>
 							</f:facet>
 							<h:outputText value="#{item.servizio}" />
+							<!-- porta senza mapping: piu' porte della stessa API, si distinguono dal nome della porta -->
+							<h:outputText rendered="#{item.portaSenzaMapping}" value=" (porta #{item.label})" />
 						</rich:column>
 						
 						<ui:define name="buttons">
@@ -355,6 +357,7 @@
 							<p><h:outputText value="#{configurazioniGeneraliBean.messaggioConfermaToggle}" /></p>
 							<div class="buttonrowmodal">
 								<h:commandButton id="confermaToggleBtn" value="Conferma" styleClass="positive"
+									rendered="#{configurazioniGeneraliBean.cambioStatoDisponibile}"
 									action="#{configurazioniGeneraliBean.confermaCambioStatoAction}" />
 								<a4j:commandButton id="annullaToggleBtn" value="Annulla"
 									action="#{configurazioniGeneraliBean.annullaCambioStato}"
@@ -404,8 +407,9 @@
 							<a4j:outputPanel id="selezioneGruppiCtr" diplay="block" rendered="#{true}">
 								<a4j:outputPanel rendered="#{true}" layout="block">
    									<div class="prop">
-   										<a4j:outputPanel rendered="#{true}" layout="block" styleClass="label-descrizione-api-pnl">
-   											<!-- il nome dell'API e' l'oggetto dell'operazione: titolo di livello 3 sotto quello della finestra (livello 2) -->
+   										<a4j:outputPanel rendered="#{not empty configurazioniGeneraliBean.elementoSelezionatoPerStato.servizio}" layout="block" styleClass="label-descrizione-api-pnl">
+   											<!-- il nome dell'API e' l'oggetto dell'operazione: titolo di livello 3 sotto quello della finestra (livello 2);
+   											     senza nome il titolo non si disegna, per non lasciare un titolo vuoto -->
 											<span role="heading" aria-level="3"><h:outputText id="descrizioneApiLabel" styleClass="label-descrizione-api" value="#{configurazioniGeneraliBean.elementoSelezionatoPerStato.servizio}">
 											</h:outputText></span>
 										</a4j:outputPanel>

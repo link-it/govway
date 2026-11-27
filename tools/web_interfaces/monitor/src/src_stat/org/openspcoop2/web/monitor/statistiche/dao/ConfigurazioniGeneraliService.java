@@ -1712,6 +1712,35 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 	}
 
 	@Override
+	public ConfigurazioneGenerale findStatoById(ConfigurazioneGeneralePK key) throws ServiceException {
+		ConfigurazioniGeneraliService.log.debug("Metodo FindStatoById: [{}]", key);
+		try {
+			if(PddRuolo.DELEGATA.equals(key.getRuolo())){
+				PortaDelegata portaDelegata = ((IDBPortaDelegataServiceSearch) this.portaDelegataDAO).get(key.getId());
+				return this.fromPD(portaDelegata);
+			} else {
+				PortaApplicativa portaApplicativa = ((IDBPortaApplicativaServiceSearch) this.portaApplicativaDAO).get(key.getId());
+				return this.fromPA(portaApplicativa);
+			}
+		} catch (Exception e) {
+			throw new ServiceException("Lettura della configurazione ["+key+"] non riuscita: "+e.getMessage(), e);
+		}
+	}
+
+	/* Porta senza mapping di erogazione o fruizione (es. configurazione caricata senza mapping, come quelle
+	   delle testsuite): non appartiene a nessun gruppo dell'API, il suo stato e' quello della porta stessa
+	   e il cambio di stato agisce solo su di lei. */
+	private static void impostaPortaSenzaGruppi(ConfigurazioneGenerale config, String statoPorta, Long idPorta, String nomePorta, boolean senzaMapping) {
+		config.setPortaSenzaMapping(senzaMapping);
+		boolean abilitato = statoPorta == null || "abilitato".equals(statoPorta);
+		List<GruppoStato> gruppi = new java.util.ArrayList<>();
+		gruppi.add(new GruppoStato(nomePorta, abilitato, idPorta != null ? idPorta : -1L, nomePorta, false));
+		config.setGruppiStati(gruppi);
+		config.setNumeroGruppi(1);
+		config.setStatoComplessivo(abilitato ? "green" : "red");
+	}
+
+	@Override
 	public void toggleStatoPorta(String nomePorta, PddRuolo ruolo, boolean enable, String utente) throws ServiceException {
 		AuditAppender auditAppender;
 		try {
@@ -1754,8 +1783,11 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 					portaApplicativa.getVersioneServizio());
 			List<MappingErogazionePortaApplicativa> mappings =
 					DBMappingUtils.mappingErogazionePortaApplicativaList(con, this.driverConfigDB.getTipoDB(), idServizio, true);
+			// i gruppi dell'erogazione valgono solo per una porta che vi appartiene
+			boolean portaNeiMapping = mappings != null && mappings.stream().anyMatch(m -> m.getIdPortaApplicativa() != null
+					&& portaApplicativa.getNome().equals(m.getIdPortaApplicativa().getNome()));
 
-			if(mappings != null && !mappings.isEmpty()) {
+			if(portaNeiMapping) {
 				int abilitati = 0;
 				List<GruppoStato> gruppi = new java.util.ArrayList<>();
 				for(MappingErogazionePortaApplicativa mapping : mappings) {
@@ -1778,14 +1810,12 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 					config.setStatoComplessivo("yellow");
 				}
 			} else {
-				// nessun mapping, uso lo stato diretto della porta
-				boolean abilitato = portaApplicativa.getStato() == null || "abilitato".equals(portaApplicativa.getStato());
-				config.setStatoComplessivo(abilitato ? "green" : "red");
+				// porta senza mapping: stato e gruppo sono quelli della porta stessa
+				impostaPortaSenzaGruppi(config, portaApplicativa.getStato(), portaApplicativa.getId(), portaApplicativa.getNome(), true);
 			}
 		} catch(Exception e) {
 			log.error("Errore nel calcolo stato complessivo PA: " + e.getMessage(), e);
-			boolean abilitato = portaApplicativa.getStato() == null || "abilitato".equals(portaApplicativa.getStato());
-			config.setStatoComplessivo(abilitato ? "green" : "red");
+			impostaPortaSenzaGruppi(config, portaApplicativa.getStato(), portaApplicativa.getId(), portaApplicativa.getNome(), false);
 		} finally {
 			this.driverConfigDB.releaseConnection(con);
 		}
@@ -1802,8 +1832,11 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 			IDSoggetto idFruitore = new IDSoggetto(portaDelegata.getIdSoggetto().getTipo(), portaDelegata.getIdSoggetto().getNome());
 			List<MappingFruizionePortaDelegata> mappings =
 					DBMappingUtils.mappingFruizionePortaDelegataList(con, this.driverConfigDB.getTipoDB(), idFruitore, idServizio, true);
+			// i gruppi della fruizione valgono solo per una porta che vi appartiene
+			boolean portaNeiMapping = mappings != null && mappings.stream().anyMatch(m -> m.getIdPortaDelegata() != null
+					&& portaDelegata.getNome().equals(m.getIdPortaDelegata().getNome()));
 
-			if(mappings != null && !mappings.isEmpty()) {
+			if(portaNeiMapping) {
 				int abilitati = 0;
 				List<GruppoStato> gruppi = new java.util.ArrayList<>();
 				for(MappingFruizionePortaDelegata mapping : mappings) {
@@ -1826,13 +1859,12 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 					config.setStatoComplessivo("yellow");
 				}
 			} else {
-				boolean abilitato = portaDelegata.getStato() == null || "abilitato".equals(portaDelegata.getStato());
-				config.setStatoComplessivo(abilitato ? "green" : "red");
+				// porta senza mapping: stato e gruppo sono quelli della porta stessa
+				impostaPortaSenzaGruppi(config, portaDelegata.getStato(), portaDelegata.getId(), portaDelegata.getNome(), true);
 			}
 		} catch(Exception e) {
 			log.error("Errore nel calcolo stato complessivo PD: " + e.getMessage(), e);
-			boolean abilitato = portaDelegata.getStato() == null || "abilitato".equals(portaDelegata.getStato());
-			config.setStatoComplessivo(abilitato ? "green" : "red");
+			impostaPortaSenzaGruppi(config, portaDelegata.getStato(), portaDelegata.getId(), portaDelegata.getNome(), false);
 		} finally {
 			this.driverConfigDB.releaseConnection(con);
 		}

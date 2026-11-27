@@ -65,6 +65,16 @@ public class ConfigurazioneGenerale implements Serializable {
 	private String statoComplessivo = null;
 	private List<GruppoStato> gruppiStati = new ArrayList<>();
 	private int numeroGruppi = 1;
+	// porta senza mapping di erogazione o fruizione: più porte della stessa API, distinte solo dal nome della porta
+	private boolean portaSenzaMapping = false;
+
+	public boolean isPortaSenzaMapping() {
+		return this.portaSenzaMapping;
+	}
+
+	public void setPortaSenzaMapping(boolean portaSenzaMapping) {
+		this.portaSenzaMapping = portaSenzaMapping;
+	}
 	
 	public ConfigurazioneGenerale(){
 		this.label = "";

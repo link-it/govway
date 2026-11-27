@@ -48,4 +48,10 @@ ConfigurazioniGeneraliSearchForm> {
 	public List<ConfigurazioneGenerale> findConfigurazioniFiglie(String nomePorta, PddRuolo ruolo) throws ServiceException;
 
 	public void toggleStatoPorta(String nomePorta, PddRuolo ruolo, boolean enable, String utente) throws ServiceException;
+
+	/**
+	 * Carica i soli dati necessari al cambio di stato (nome dell'API, stato e gruppi), senza il dettaglio
+	 * completo della configurazione: vale anche per le porte prive di mapping di erogazione o fruizione.
+	 */
+	public ConfigurazioneGenerale findStatoById(ConfigurazioneGeneralePK key) throws ServiceException;
 }
